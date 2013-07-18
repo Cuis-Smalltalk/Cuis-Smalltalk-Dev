@@ -1,0 +1,69 @@
+#!/bin/bash
+
+ASPELL=aspell
+HUNSPELL=hunspell
+
+set -e
+
+export LANG=C
+export LC_ALL=C
+export LC_CTYPE=C
+export LC_COLLATE=C
+
+prep() {
+  echo prep 
+
+  cat misc/{offensive.1,offensive.2,profane.1} | sort -u > nosug
+
+  cp en.aff eng_affix.dat
+
+  cat << EOF > eng.dat
+name eng
+charset iso8859-1
+special ' -*-
+affix eng
+EOF
+}
+
+doit() {
+  echo creating en_$1.dic
+
+  cat en-common.wl en_$1-wo_accents-only.wl | sort -u > en_$1.0
+
+  comm en_$1.0 nosug -12 > en_$1-nosug.1
+
+  comm en_$1.0 nosug -23 > en_$1.1
+
+  $ASPELL -l ./eng munch-list < en_$1-nosug.1 | grep -v '^\(XXX\|>>>\)' | ./add-no-suggest > en_$1.2
+
+  $ASPELL -l ./eng munch-list < en_$1.1 | grep -v '^\(XXX\|>>>\)' >> en_$1.2
+
+  cat en.dic.supp >> en_$1.2
+
+  wc -l en_$1.2 | cut -d' ' -f1 > en_$1.dic
+  cat en_$1.2 | sort >> en_$1.dic
+
+  cp en.aff en_$1.aff
+  
+  cat README_en.txt.in ../Copyright > README_en_$1.txt
+  echo >> README_en_$1.txt
+  echo "Build Date: `date`" >> README_en_$1.txt
+
+  zip -9 en_$1.zip README_en_$1.txt en_$1.dic en_$1.aff
+
+  cp -p en_$1.zip hunspell/
+
+  #echo check
+
+  cat en_$1-nosug.1 en_$1.1 | sort -u > en_$1.tocheck
+
+  #hunspell -l -d ./en_$1 < en_$1.dic.tocheck > misspelled
+}
+
+
+prep
+
+doit US
+doit CA
+
+rm eng*.dat nosug en_US*.? en_CA*.?

@@ -1,0 +1,180 @@
+l:
+  abbreviations/
+  accented/
+  add-affixes/
+  add-possessive/
+  hacker/
+  include/
+  levels
+  not-abbreviations/
+  proper-names/
+  supplement/
+  upper/
+
+l/abbreviations:
+  6213acro.nym -> ../../r/mwords/6213acro.nym
+  abbr.txt -> ../../r/alt12dicts/abbr.txt
+  abbreviations -> ../../r/special/abbreviations
+  abbreviations-also -> ../../r/special/abbreviations-also
+  lcacr.lst -> ../../r/enable-sup/lcacr.lst
+  ucacr.lst -> ../../r/enable-sup/ucacr.lst
+
+l/accented:
+  squashed-accented.lst -> ../../r/ukacd/squashed-accented.lst
+
+l/add-affixes:
+  35/
+  40/
+  50/
+  60/
+  70/
+  max-level
+
+l/add-affixes/35:
+  11of12.lst -> ../../../r/alt12dicts/11of12.lst
+
+l/add-affixes/40:
+  3esl.lst -> ../../../r/alt12dicts/3esl.lst
+
+l/add-affixes/50:
+  05of12.lst -> ../../../r/alt12dicts/05of12.lst
+  4of12upper.lst -> ../../../r/alt12dicts/4of12upper.lst
+  signature.lst -> ../../../r/alt12dicts/signature.lst
+
+l/add-affixes/60:
+  02of12.lst -> ../../../r/alt12dicts/02of12.lst
+
+l/add-affixes/70:
+  5desk.lst -> ../../../r/alt12dicts/5desk.lst
+  74550com.mon -> ../../../r/mwords/74550com.mon
+
+l/add-possessive:
+  50/
+  95/
+
+l/add-possessive/50:
+  dist.all.last.lst -> ../../../r/census/dist.all.last.lst
+  dist.female.first.lst -> ../../../r/census/dist.female.first.lst
+  dist.male.first.lst -> ../../../r/census/dist.male.first.lst
+  names.from_alan_beale -> ../../../r/special/names.from_alan_beale
+  proper-names -> ../../../r/special/proper-names
+
+l/add-possessive/95:
+  21986na.mes -> ../../../r/mwords/21986na.mes
+  3897male.nam -> ../../../r/mwords/3897male.nam
+  4946fema.len -> ../../../r/mwords/4946fema.len
+
+l/hacker:
+  common.lst -> ../../r/jargon-wl/common.lst
+  unix-terms -> ../../r/special/unix-terms
+  word.lst -> ../../r/jargon-wl/word.lst
+
+l/include:
+  70/
+  80/
+
+l/include/70:
+  uk.00 -> ../../../r/uk-freq-class/uk.00
+
+l/include/80:
+  squashed.lst -> ../../../r/ukacd/squashed.lst
+
+l/not-abbreviations:
+  letters -> ../../r/special/letters
+  not-abbr.lst -> ../../r/alt12dicts/not-abbr.lst
+
+l/proper-names:
+  10196pla.ces -> ../../r/mwords/10196pla.ces
+  21986na.mes -> ../../r/mwords/21986na.mes
+  3897male.nam -> ../../r/mwords/3897male.nam
+  4946fema.len -> ../../r/mwords/4946fema.len
+  dist.all.last.lst -> ../../r/census/dist.all.last.lst
+  dist.female.first.lst -> ../../r/census/dist.female.first.lst
+  dist.male.first.lst -> ../../r/census/dist.male.first.lst
+  names-part -> ../../r/special/names-part
+  names.from_alan_beale -> ../../r/special/names.from_alan_beale
+
+l/supplement:
+  10/
+  20/
+  35/
+  50/
+  55/
+  60/
+  70/
+  80/
+  95/
+
+l/supplement/10:
+  frequent.lst -> ../../../r/special/frequent.lst
+  uk.16 -> ../../../r/uk-freq-class/uk.16
+
+l/supplement/20:
+  uk.07 -> ../../../r/uk-freq-class/uk.07
+  uk.08 -> ../../../r/uk-freq-class/uk.08
+  uk.09 -> ../../../r/uk-freq-class/uk.09
+  uk.10 -> ../../../r/uk-freq-class/uk.10
+  uk.11 -> ../../../r/uk-freq-class/uk.11
+  uk.12 -> ../../../r/uk-freq-class/uk.12
+  uk.13 -> ../../../r/uk-freq-class/uk.13
+  uk.14 -> ../../../r/uk-freq-class/uk.14
+  uk.15 -> ../../../r/uk-freq-class/uk.15
+
+l/supplement/35:
+  nopos.lst -> ../../../r/enable-sup/nopos.lst
+  signature.35 -> ../../../r/special/signature.35
+  uk.02 -> ../../../r/uk-freq-class/uk.02
+  uk.03 -> ../../../r/uk-freq-class/uk.03
+  uk.04 -> ../../../r/uk-freq-class/uk.04
+  uk.05 -> ../../../r/uk-freq-class/uk.05
+  uk.06 -> ../../../r/uk-freq-class/uk.06
+
+l/supplement/50:
+  abbreviations -> ../../../r/special/abbreviations
+  names-part -> ../../../r/special/names-part
+  signature.50 -> ../../../r/special/signature.50
+  uk.01 -> ../../../r/uk-freq-class/uk.01
+
+l/supplement/55:
+  2of4brif.lst -> ../../../r/alt12dicts/2of4brif.lst
+
+l/supplement/60:
+  signature.60 -> ../../../r/special/signature.60
+
+l/supplement/70:
+  signature.70 -> ../../../r/special/signature.70
+
+l/supplement/80:
+  10196pla.ces -> ../../../r/mwords/10196pla.ces
+  2dicts.lst -> ../../../r/enable-sup/2dicts.lst
+  deaccented.lst -> ../../../r/ukacd/deaccented.lst
+  lcacr.lst -> ../../../r/enable-sup/lcacr.lst
+  letters.lst -> ../../../r/enable-sup/letters.lst
+  ospdadd.lst -> ../../../r/enable-sup/ospdadd.lst
+  plurals.lst -> ../../../r/enable-sup/plurals.lst
+  ucacr.lst -> ../../../r/enable-sup/ucacr.lst
+  upper.lst -> ../../../r/enable-sup/upper.lst
+  word.lst -> ../../../r/enable/word.lst
+
+l/supplement/95:
+  113809of.fic -> ../../../r/mwords/113809of.fic
+  256772co.mpo -> ../../../r/mwords/256772co.mpo
+  354984si.ngl -> ../../../r/mwords/354984si.ngl
+  4160offi.cia -> ../../../r/mwords/4160offi.cia
+  able.lst -> ../../../r/enable-sup/able.lst
+  sigword.list -> ../../../r/yawl/sigword.list
+  uk.00 -> ../../../r/uk-freq-class/uk.00
+  word.lst -> ../../../r/pos/word.lst
+
+l/upper:
+  02of12.lst -> ../../r/alt12dicts/02of12.lst
+  05of12.lst -> ../../r/alt12dicts/05of12.lst
+  11of12.lst -> ../../r/alt12dicts/11of12.lst
+  4of12upper.lst -> ../../r/alt12dicts/4of12upper.lst
+  74550com.mon -> ../../r/mwords/74550com.mon
+  abbr.lst -> ../../r/alt12dicts/abbr.lst
+  letters -> ../../r/special/letters
+  not-abbr.lst -> ../../r/alt12dicts/not-abbr.lst
+  upper.lst -> ../../r/enable-sup/upper.lst
+  variant-maybe.lst -> ../../r/alt12dicts/variant-maybe.lst
+  variant-yes.lst -> ../../r/alt12dicts/variant-yes.lst

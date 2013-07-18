@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cat working/proper-names.lst                 \
+  | comm -23 - r/special/not-possessive      \
+  | grep -v "'"                              \
+  | src/remove-plurals                       \
+  | cat - r/special/add-possessive           \
+  | sort | uniq > working/possessive-also.lst
