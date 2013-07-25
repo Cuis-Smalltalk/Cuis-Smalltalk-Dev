@@ -5,7 +5,7 @@ Cuis
 
 Cuis is
 
-* Simple
+* Easy to understand and extend
 * Small
 * Clean
  
