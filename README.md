@@ -31,10 +31,11 @@ Cuis is continuously evolving towards simplicity. Each release is better (i.e. s
 Please check the [Release Notes](http://www.jvuletich.org/Cuis/CuisReleaseNotes.html) and [Code Management in Cuis 4](http://www.jvuletich.org/Cuis/CodeManagementInCuis4.html), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](http://www.jvuletich.org/Cuis/CuisAndGitHub.html).
 
 Cuis is maintained on https://github.com/Cuis-Smalltalk. To contribute code, please use an image with all included packages already loaded, and include new versions of affected packages. This will ensure we don't break them while we evolve Cuis.
-Here is a script to load all packages:
+Here is a script to load all packages currently included:
 ```
 #('Graphics-Files-Additional' 'Network-Kernel' 'SignalProcessing' 'Tests' 'Theme-Themes')
 	do: [:each | (Feature name: each asSymbol) require]
 ```
+In addition, please load the StyledTextInstaller package in the StyledTextEditor subdirectory using a FileList.
 
 Cuis is distributed subject to the MIT License. See the LICENSE file. Any contribution submitted for incorporation into or for distribution with Cuis shall be presumed subject to the same license.
