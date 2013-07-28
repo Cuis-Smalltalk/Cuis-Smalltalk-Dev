@@ -28,7 +28,17 @@ This is important. Complexity puts a limit to the level of understanding of the 
 
 Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any bugs fixed. Cuis includes recent enhancements from Squeak, but only those that meet Cuis objectives: stuff whose complexity outweighs its utility is not included.
 
-Please check the [Release Notes](http://www.jvuletich.org/Cuis/CuisReleaseNotes.html) and [Code Management in Cuis 4](http://www.jvuletich.org/Cuis/CodeManagementInCuis4.html), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](http://www.jvuletich.org/Cuis/CuisAndGitHub.html).
+Please check the [Release Notes](http://www.jvuletich.org/Cuis/CuisReleaseNotes.html)
+
+### Getting started ###
+If you have Git installed and configured you can use the following in a shell. (Disclaimer: I only tested it on OS X. Feel free to send pull requests for other platforms.)
+```
+mkdir CuisDevelopment
+cd CuisDevelopment
+git clone https://github.com/bpieber/Cuis-Smalltalk-Dev.git
+Cuis-Smalltalk-Dev/bin/newImage.sh MyProject
+```
+Please [Code Management in Cuis 4](http://www.jvuletich.org/Cuis/CodeManagementInCuis4.html), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](http://www.jvuletich.org/Cuis/CuisAndGitHub.html).
 
 Cuis is maintained on https://github.com/Cuis-Smalltalk. To contribute code, please use an image with all included packages already loaded, and include new versions of affected packages. This will ensure we don't break them while we evolve Cuis.
 Here is a script to load all packages currently included:
@@ -36,6 +46,5 @@ Here is a script to load all packages currently included:
 #('Graphics-Files-Additional' 'Network-Kernel' 'SignalProcessing' 'Tests' 'Theme-Themes')
 	do: [:each | (Feature name: each asSymbol) require]
 ```
-In addition, please load the StyledTextInstaller package in the StyledTextEditor subdirectory using a FileList.
 
 Cuis is distributed subject to the MIT License. See the LICENSE file. Any contribution submitted for incorporation into or for distribution with Cuis shall be presumed subject to the same license.
