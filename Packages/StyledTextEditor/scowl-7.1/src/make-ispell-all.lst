@@ -1,3 +1,0 @@
-#!/bin/sh
-
-cat r/ispell/*.$1 | ispell -e | tr ' ' '\n' | sort | uniq > r/ispell/all.$1

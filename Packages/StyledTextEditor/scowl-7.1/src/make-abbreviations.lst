@@ -1,6 +1,0 @@
-#!/bin/sh
-
-comm -23 working/abbreviations.lst.pre \
-         working/proper-names.lst      \
-  > working/abbreviations.lst
-

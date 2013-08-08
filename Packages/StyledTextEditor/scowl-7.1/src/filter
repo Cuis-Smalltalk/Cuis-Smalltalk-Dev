@@ -1,3 +1,0 @@
-#!/bin/sh
-
-tr -d '\r' | grep "^[A-Za-z][A-Za-z']*[A-Za-z.]\$\|^[A-Za-z]$" | tr -d '.'

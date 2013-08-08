@@ -1,7 +1,0 @@
-#!/bin/sh
-
-find l/ -printf "%p %l\n" \
-  | sed -n 's/\([^ ]*\).*\/\(r\/.*\)/\1: \2/p' \
-  > .symbolic-deps
-
-
