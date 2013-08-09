@@ -1,7 +1,0 @@
-#!/bin/sh
-
-cat working/words.`src/get-level max`                 \
-  | grep "'" | grep -v "'s$" | grep -v "^[A-Z]'[A-Z]" \
-  > working/contractions.lst
-
-
