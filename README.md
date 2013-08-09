@@ -44,7 +44,7 @@ Cuis is maintained on https://github.com/Cuis-Smalltalk. To contribute code, ple
 Here is a Smalltalk script to load all packages currently included:
 ```
 #('Graphics-Files-Additional' 'Network-Kernel' 'SignalProcessing' 'Tests' 'Theme-Themes')
-	do: [:each | (Feature name: each asSymbol) require]
+    do: [:each | Feature require: each]
 ```
 
 Cuis is distributed subject to the MIT License. See the LICENSE file. Any contribution submitted for incorporation into or for distribution with Cuis shall be presumed subject to the same license.
