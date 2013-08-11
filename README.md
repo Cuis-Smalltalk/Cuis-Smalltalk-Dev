@@ -60,7 +60,7 @@ Please read [Code Management in Cuis 4](http://www.cuis-smalltalk.org/CodeManage
 To contribute code, please use an image with all included packages already loaded, and include new versions of affected packages. This will ensure we don't break them while we evolve Cuis.
 Here is a Smalltalk script to load all packages currently included:
 ```
-#('Graphics-Files-Additional' 'Network-Kernel' 'SignalProcessing' 'Tests' 'Theme-Themes')
+#('Graphics-Files-Additional' 'Network-Kernel' 'SignalProcessing' 'Tests' 'Theme-Themes' 'FFITests')
     do: [:each | Feature require: each]
 ```
 
