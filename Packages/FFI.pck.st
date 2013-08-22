@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1788] on 11 August 2013 at 11:05:50.786595 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1807] on 21 August 2013 at 5:48:05.654299 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 2!
+!provides: 'FFI' 1 3!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -100,6 +100,7 @@ Object subclass: #ExternalType
 !classDefinition: 'ExternalType class' category: #'FFI-Kernel'!
 ExternalType class
 	instanceVariableNames: ''!
+
 
 !ExternalAddress commentStamp: '<historical>' prior: 0!
 An ExternalAddress is an opaque handle to objects outside Smalltalk memory (e.g., a pointer).!
@@ -1304,6 +1305,10 @@ fileOutOn: aFileStream moveSource: moveSource toFile: fileIndex initializing: aB
 fromHandle: aHandle
 	^self basicNew setHandle: aHandle! !
 
+!ExternalStructure class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:38'!
+initialize
+	self compileFields! !
+
 !ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 12/1/1999 15:58'!
 new
 	^self fromHandle: (ByteArray new: self byteSize)! !
@@ -1381,6 +1386,10 @@ fromHandle: aHandle type: aType
 	"Create a pointer to the given type"
 	"ExternalData fromHandle: ExternalAddress new type: ExternalType float"
 	^self basicNew setHandle: aHandle type: aType! !
+
+!ExternalData class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:38'!
+initialize
+	self compileFields! !
 
 !ExternalData class methodsFor: 'instance creation' stamp: 'ar 11/22/1999 04:28'!
 new
@@ -1882,8 +1891,9 @@ ushort
 !ExternalType class methodsFor: 'type constants' stamp: 'ar 12/2/1999 16:58'!
 void
 	^AtomicTypes at: 'void'! !
-
 FFIConstants initialize!
 ExternalObject initialize!
 ExternalFunction initialize!
+ExternalStructure initialize!
+ExternalData initialize!
 ExternalType initialize!

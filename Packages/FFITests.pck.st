@@ -1,7 +1,7 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1788] on 11 August 2013 at 4:42:23.23009 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1807] on 21 August 2013 at 5:48:07.71418 pm'!
 'Description Please enter a description for this package'!
-!provides: 'FFITests' 1 0!
-!requires: 'FFI' 1 nil!
+!provides: 'FFITests' 1 2!
+!requires: 'FFI' 1 nil nil!
 !classDefinition: #FFITestLibrary category: #FFITests!
 ExternalLibrary subclass: #FFITestLibrary
 	instanceVariableNames: ''
@@ -187,6 +187,10 @@ fields
 		(y	'long')
 	)! !
 
+!FFITestPoint2 class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:39'!
+initialize
+	self compileFields! !
+
 !FFITestPoint4 methodsFor: 'accessing' stamp: 'ar 12/1/1999 16:41'!
 w
 	"This method was automatically generated"
@@ -237,11 +241,16 @@ fields
 		(w	'long')
 	)! !
 
-!FFIPluginTests methodsFor: 'external form tests' stamp: 'tbn 4/26/2012 14:15'!
+!FFITestPoint4 class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:39'!
+initialize
+	self compileFields! !
+
+!FFIPluginTests methodsFor: 'external form tests' stamp: 'jmv 8/21/2013 17:30'!
 testBlitToAndFromExternalForm
 	"Ensure that we can blit to/from all 4 permutatations of Form and ExternalForm."
 	| source external1 external2 destination |
-	source := Cursor wait asCursorForm asFormOfDepth: 32.
+	"Avoid translucency."
+	source := (Cursor wait asCursorForm asFormOfDepth: 1) asFormOfDepth: 32.
 	destination := Form extent: source extent depth: 32.
 	external1 := ExternalForm extent: source extent depth: 32.
 	external1 allocateSpace.
@@ -454,3 +463,5 @@ testUlongRange
 	| result |
 	self shouldnt:[result := FFITestLibrary ffiTestUlong: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339] raise: Error.
 	self should: result =  1912741382.! !
+FFITestPoint2 initialize!
+FFITestPoint4 initialize!
