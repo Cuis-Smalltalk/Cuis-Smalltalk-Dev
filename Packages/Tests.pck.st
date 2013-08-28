@@ -1,7 +1,7 @@
-'From Cuis 4.1 of 12 December 2012 [latest update: #1752] on 14 July 2013 at 5:17:41.121295 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1811] on 28 August 2013 at 5:29:28.135202 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 0!
-!requires: 'Compression' 1 nil!
+!provides: 'Tests' 1 1!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -7727,10 +7727,10 @@ setUp
 	morph _ Morph new.
 	task _ TaskbarTask new minimize: morph! !
 
-!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'cbr 4/19/2011 18:22'!
+!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/28/2013 17:28'!
 testMinimize
 
-	task restore: morph.
+	task restore.
 	task minimize: morph.
 	self shouldnt: [ morph visible ]! !
 
@@ -7738,10 +7738,10 @@ testMinimize
 testMorph
 	self should: [ task respondsTo: #morph ]! !
 
-!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'cbr 4/19/2011 18:20'!
+!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/28/2013 17:28'!
 testRestore
 
-	task restore: morph.
+	task restore.
 	self should: [ morph visible ]! !
 
 !TaskbarTest methodsFor: 'Running' stamp: 'jmv 10/23/2012 23:18'!
