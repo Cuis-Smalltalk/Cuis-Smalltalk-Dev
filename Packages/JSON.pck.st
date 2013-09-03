@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1808] on 28 August 2013 at 12:29:47.115312 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1815] on 3 September 2013 at 5:01:28.212224 pm'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 1!
+!provides: 'JSON' 1 2!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -358,14 +358,18 @@ stream
 
 	^ stream! !
 
-!Json methodsFor: 'accessing' stamp: 'jmv 8/28/2013 11:47'!
+!Json methodsFor: 'accessing' stamp: 'jmv 9/3/2013 12:59'!
 stream: aStream
 	"Set the value of stream"
 	"aStream must be on a String.
 	This means that it should contain only Characters (i.e. ISO 8859-15)"
 	aStream isCharacters.
 	stream := aStream.
-	stream reset! !
+	
+	"Do not reset the stream"
+	"
+	stream reset
+	"! !
 
 !Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:17'!
 unescapeUnicodeTo: aStream

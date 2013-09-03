@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1811] on 28 August 2013 at 5:29:28.135202 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1811] on 30 August 2013 at 12:33:29.738092 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 1!
+!provides: 'Tests' 1 2!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -2584,7 +2584,7 @@ testCopyNonLocalReturn
 		shouldnt: [self methodWithNonLocalReturn]
 		raise: Error! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'jmv 12/20/2012 21:41'!
+!ClosureTests methodsFor: 'testing' stamp: 'jmv 8/30/2013 12:31'!
 testIsClean
 	"
 	ClosureTests new testIsClean
@@ -2594,11 +2594,24 @@ testIsClean
 	self assert: [ 3 + 4 ] isClean.
 	self assert: [ :a | a * 2 ] isClean.
 	self assert: [ Smalltalk size ] isClean.
+	self assert: [ ClosureTests selectors size ] isClean.
 	self assert: [ :blockArg | blockArg printString ] isClean.
 	self assert: [ | blockTemp | blockTemp printString ] isClean.
 	self assert: [ | blockTemp | blockTemp _ 7 ] isClean.
+	self assert: [ | c | c _ [ :a :b | a+b ]. c value: 3 value: 4 ] isClean.
+
+	self assert: [ | outerBlockTemp | [ outerBlockTemp printString ] ] isClean.
+	self assert: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] ] isClean.
+	self assert: [ | outerBlockTemp | [[ outerBlockTemp printString ]] ] isClean.
+	self assert: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] ] isClean.
+	self assert: [ [| outerBlockTemp | [ outerBlockTemp printString ]] ] isClean.
+	self assert: [ [| outerBlockTemp | [ outerBlockTemp _ 7 ]] ] isClean.
+
 	self deny: [ | outerBlockTemp | [ outerBlockTemp printString ] isClean ] value.
 	self deny: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] isClean ] value.
+	self deny: [ | outerBlockTemp | [[ outerBlockTemp printString ]] isClean ] value.
+	self deny: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] isClean ] value.
+
 	self deny: [ tempVar + 1 ] isClean.
 	self deny: [ tempVar _ 1 ] isClean.
 	self deny: [ ivar + 1 ] isClean.
