@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1815] on 3 September 2013 at 5:01:28.212224 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1820] on 10 September 2013 at 5:26:43.624534 pm'!
 'Description Please enter a description for this package '!
 !provides: 'JSON' 1 3!
 !classDefinition: #JsonObject category: #JSON!
