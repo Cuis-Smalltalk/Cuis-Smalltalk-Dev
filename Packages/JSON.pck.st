@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #1815] on 3 September 2013 at 5:01:28.212224 pm'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 2!
+!provides: 'JSON' 1 3!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -405,9 +405,9 @@ initialize
 		escapeArray at: each key asciiValue + 1 put: each value ].
 ! !
 
-!Json class methodsFor: 'as yet unclassified' stamp: 'tonyg 8/24/2005 14:48'!
+!Json class methodsFor: 'as yet unclassified' stamp: 'DSG 9/10/2013 17:26'!
 mimeType
-	^ 'application/x-json'! !
+	^ 'application/json'! !
 
 !Json class methodsFor: 'as yet unclassified' stamp: 'dkb 12/25/2009 02:51'!
 newWithConstructors: aCollection
