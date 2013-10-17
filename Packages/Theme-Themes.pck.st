@@ -1,7 +1,7 @@
-'From Cuis 4.1 of 12 December 2012 [latest update: #1752] on 14 July 2013 at 5:17:38.730639 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 16 October 2013 at 10:43:27.173062 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Theme-Themes' 1 0!
-!requires: 'Compression' 1 nil!
+!provides: 'Theme-Themes' 1 1!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #BlueTheme category: #'Theme-Themes'!
 Theme subclass: #BlueTheme
 	instanceVariableNames: ''
@@ -553,10 +553,6 @@ defaultWindowColor
 focusIndicator
 	^ Color cyan muchDarker! !
 
-!HighContrastBlackTheme methodsFor: 'colors' stamp: 'cbr 11/8/2010 00:06'!
-insertionPoint
-	^ super textHighlight! !
-
 !HighContrastBlackTheme methodsFor: 'colors' stamp: 'jmv 11/23/2010 11:05'!
 listMultiHighlightFocused: aBoolean
 	^ (self listHighlightFocused: aBoolean) 
@@ -603,6 +599,10 @@ shout
 text
 	^ Color white! !
 
+!HighContrastBlackTheme methodsFor: 'colors' stamp: 'jmv 10/16/2013 22:08'!
+textCursor
+	^ super textHighlight! !
+
 !HighContrastBlackTheme methodsFor: 'colors' stamp: 'cbr 12/18/2010 17:12'!
 textHighlight
 	^ Color red muchDarker darker! !
@@ -631,13 +631,13 @@ buttonLabel
 defaultWindowColor
 	^ Color white duller! !
 
-!HighContrastWhiteTheme methodsFor: 'colors' stamp: 'cbr 11/7/2010 12:00'!
-insertionPoint
-	^ super textHighlight muchDarker! !
-
 !HighContrastWhiteTheme methodsFor: 'menu colors' stamp: 'cbr 11/7/2010 12:00'!
 menu
 	^ Color lightGray muchLighter! !
+
+!HighContrastWhiteTheme methodsFor: 'colors' stamp: 'jmv 10/16/2013 22:08'!
+textCursor
+	^ super textHighlight muchDarker! !
 
 !HighContrastWhiteTheme methodsFor: 'colors' stamp: 'cbr 11/7/2010 12:00'!
 textHighlight

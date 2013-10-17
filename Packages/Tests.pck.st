@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1811] on 30 August 2013 at 12:33:29.738092 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 16 October 2013 at 10:43:23.137498 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 2!
+!provides: 'Tests' 1 3!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -600,7 +600,7 @@ Here are a bunch of methods that can help improving the decompiler:
 	- decompilerDiscrepancies are the results of running decompileTestHelper..as you see the pattern 	
 	is quite present.!
 
-!DecompilerTestFailuresCollector commentStamp: '<historical>' prior: 0!
+!DecompilerTestFailuresCollector commentStamp: 'jmv 10/16/2013 19:44' prior: 0!
 (| dtfc |
 dtfc := DecompilerTestFailuresCollector new.
 (dtfc class superclass organization listAtCategoryNamed: #tests) do:
@@ -688,7 +688,7 @@ MultiByteFileStream. #next:.
 MViewPane. #reconstructEnabledDocuments.
 MViewPane. #reconstructOpenDocuments.
 MViewPane. #reconstructSelectionList.
-NewParagraph. #selectionRectsFrom:to:.
+TextComposition. #selectionRectsFrom:to:.
 Object. #instanceFields.
 OldSocket. #getResponseNoLF.
 PasteUpMorph. #dropFiles:.
@@ -3014,7 +3014,7 @@ decompileClassesSelect: aBlock
 					ifFalse: [ "
 				self checkDecompileMethod: meth]]]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 11/2/2011 15:45'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 10/16/2013 19:33'!
 decompilerFailures
 	"here is the list of failures: DNU resulting in trying to decompile the following methods"
 
@@ -3067,7 +3067,6 @@ decompilerFailures
 		(MultiByteFileStream next:)
 		(MVCProject textWindows)
 		(MVCToolBuilder setLayout:in:)
-		(Paragraph selectionRectsFrom:to:)
 		(PasteUpMorph dropFiles:)
 		(Player veryDeepFixupWith:)
 		(PluggableTabButtonMorph calculateArcLengths)
@@ -7979,12 +7978,12 @@ testSimpleEditor
 				stamp: 0)
 	] raise: Exception! !
 
-!TextEditorTest methodsFor: 'testing' stamp: 'jmv 12/4/2011 22:20'!
+!TextEditorTest methodsFor: 'testing' stamp: 'jmv 10/16/2013 20:05'!
 testUndoRedo
 	"
 	TextEditorTest new testUndoRedo
 	"
-	| editor model paragraph m text1 text0 text2 |
+	| editor model textComposition m text1 text0 text2 |
 	text0 _ ''.
 	model _ TextModel withText: text0 copy.
 	editor _ TextEditor new.
@@ -7993,13 +7992,13 @@ testUndoRedo
 	editor morph: m.
 	editor instVarNamed: 'emphasisHere' put: Array new.
 	editor model: model.
-	paragraph _ Paragraph new.
-	paragraph
+	textComposition _ TextComposition new.
+	textComposition
 		setModel: model;
 		extentForComposing: 300@300.
-	editor paragraph: paragraph.
-	paragraph editor: editor.
-	paragraph composeAll.
+	editor textComposition: textComposition.
+	textComposition editor: editor.
+	textComposition composeAll.
 
 	text1 _ 'some words' asText.
 	editor addString: text1.
