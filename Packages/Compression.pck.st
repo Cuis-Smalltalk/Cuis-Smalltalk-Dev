@@ -1,6 +1,6 @@
-'From Cuis 4.1 of 12 December 2012 [latest update: #1753] on 14 July 2013 at 6:21:48.70473 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:54.108212 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 0!
+!provides: 'Compression' 1 1!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -2915,7 +2915,7 @@ nextSingleBits: n
 	1 to: n do:[:i| out _ (out bitShift: 1) + (self nextBits: 1)].
 	^out! !
 
-!InflateStream methodsFor: 'initialize' stamp: 'jmv 1/12/2010 11:51'!
+!InflateStream methodsFor: 'initialization' stamp: 'jmv 1/12/2010 11:51'!
 on: aCollectionOrStream
 	(aCollectionOrStream is: #Stream)
 		ifTrue: [	aCollectionOrStream binary.
@@ -2924,7 +2924,7 @@ on: aCollectionOrStream
 		ifFalse: [ source _ aCollectionOrStream].
 	^self on: source from: 1 to: source size.! !
 
-!InflateStream methodsFor: 'initialize' stamp: 'ar 12/23/1999 15:35'!
+!InflateStream methodsFor: 'initialization' stamp: 'ar 12/23/1999 15:35'!
 on: aCollection from: firstIndex to: lastIndex
 	bitBuf _ bitPos _ 0.
 	"The decompression buffer has a size of at 64k,
@@ -3043,7 +3043,7 @@ profile
 	"Profile the decompression speed"
 	MessageTally spyOn:[self decompressAll].! !
 
-!InflateStream methodsFor: 'initialize' stamp: 'ar 12/3/1998 16:32'!
+!InflateStream methodsFor: 'initialization' stamp: 'ar 12/3/1998 16:32'!
 reset
 	"Position zero - nothing decoded yet"
 	position _ readLimit _ 0.
@@ -3231,7 +3231,7 @@ initialize
 				huffmanTableFrom: FixedDistCodes
 				mappedBy: DistanceMap.! !
 
-!GZipReadStream methodsFor: 'initialize' stamp: 'ar 2/29/2004 03:32'!
+!GZipReadStream methodsFor: 'initialization' stamp: 'ar 2/29/2004 03:32'!
 on: aCollection from: firstIndex to: lastIndex
 	"Check the header of the GZIP stream."
 	| method magic flags length |
@@ -3345,7 +3345,7 @@ viewContents: fullFileName
 	(FileStream readOnlyFileNamed: fullFileName) ifNotNil: [ :aStream | 
 		aStream viewGZipContents]! !
 
-!ZLibReadStream methodsFor: 'initialize' stamp: 'ar 2/29/2004 03:31'!
+!ZLibReadStream methodsFor: 'initialization' stamp: 'ar 2/29/2004 03:31'!
 on: aCollection from: firstIndex to: lastIndex
 	"Check the header of the ZLib stream."
 	| method byte |
@@ -3380,7 +3380,7 @@ expectedCrc: aNumberOrNil
 	This number should be the number read from the Zip header (which is the bitwise complement of my crc if all is working correctly)"
 	expectedCrc _ aNumberOrNil! !
 
-!ZipReadStream methodsFor: 'initialize' stamp: 'nk 3/7/2004 15:31'!
+!ZipReadStream methodsFor: 'initialization' stamp: 'nk 3/7/2004 15:31'!
 on: aCollection from: firstIndex to: lastIndex
 	super on: aCollection from: firstIndex to: lastIndex.
 	crc _ 16rFFFFFFFF.
@@ -3575,7 +3575,7 @@ findMatch: here lastLength: lastLength lastMatch: lastMatch chainLength: maxChai
 	].
 	^matchResult! !
 
-!DeflateStream methodsFor: 'initialize-release' stamp: 'ar 12/29/1999 17:30'!
+!DeflateStream methodsFor: 'initialization' stamp: 'ar 12/29/1999 17:30'!
 flush
 	"Force compression"
 	self deflateBlock.! !
@@ -3596,14 +3596,14 @@ hashChainLength
 	Higher values will result in better compression but take more time."
 	^4096 "Best compression"! !
 
-!DeflateStream methodsFor: 'initialize-release' stamp: 'ar 12/31/1999 18:00'!
+!DeflateStream methodsFor: 'initialization' stamp: 'ar 12/31/1999 18:00'!
 initialize
 	blockStart _ nil.
 	blockPosition _ 0.
 	hashValue _ 0.
 	self initializeHashTables.! !
 
-!DeflateStream methodsFor: 'initialize-release' stamp: 'ar 12/29/1999 17:32'!
+!DeflateStream methodsFor: 'initialization' stamp: 'ar 12/29/1999 17:32'!
 initializeHashTables
 	hashHead _ WordArray new: 1 << HashBits.
 	hashTail _ WordArray new: WindowSize.
@@ -3668,12 +3668,12 @@ nextPutAll: aCollection
 		position _ position + max].
 	^aCollection! !
 
-!DeflateStream methodsFor: 'initialize-release' stamp: 'ar 12/29/1999 17:33'!
+!DeflateStream methodsFor: 'initialization' stamp: 'ar 12/29/1999 17:33'!
 on: aCollection
 	self initialize.
 	super on: (aCollection species new: WindowSize * 2).! !
 
-!DeflateStream methodsFor: 'initialize-release' stamp: 'ar 12/28/1999 17:34'!
+!DeflateStream methodsFor: 'initialization' stamp: 'ar 12/28/1999 17:34'!
 on: aCollection from: firstIndex to: lastIndex
 	"Not for DeflateStreams please"
 	^self shouldNotImplement! !
@@ -3713,7 +3713,7 @@ validateMatchAt: pos from: startPos to: endPos
 			ifFalse:[^self error:'Not a match']].
 	^true! !
 
-!ZipWriteStream methodsFor: 'initialize-release' stamp: 'ar 2/28/2001 13:39'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'ar 2/28/2001 13:39'!
 close
 	self deflateBlock.
 	self flushBlock: true.
@@ -3806,7 +3806,7 @@ encodeMatch: length distance: dist
 encodedStream
 	^encoder encodedStream! !
 
-!ZipWriteStream methodsFor: 'initialize-release' stamp: 'ar 2/27/2001 13:23'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'ar 2/27/2001 13:23'!
 finish
 	"Finish pending operation. Do not close output stream."
 	self deflateBlock.
@@ -3916,7 +3916,7 @@ forcedMethod
 		#dynamic	- use dynamic huffman trees."
 	^nil! !
 
-!ZipWriteStream methodsFor: 'initialize-release' stamp: 'ar 12/30/1999 00:40'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'ar 12/30/1999 00:40'!
 initialize
 	super initialize.
 	literals _ ByteArray new: WindowSize.
@@ -3926,7 +3926,7 @@ initialize
 	self initializeNewBlock.
 ! !
 
-!ZipWriteStream methodsFor: 'initialize-release' stamp: 'ar 12/29/1999 18:29'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'ar 12/29/1999 18:29'!
 initializeNewBlock
 	"Initialize the encoder for a new block of data"
 	literalFreq atAllPut: 0.
@@ -3942,7 +3942,7 @@ moveContentsToFront
 	super moveContentsToFront.
 	crcPosition _ position + 1.! !
 
-!ZipWriteStream methodsFor: 'initialize-release' stamp: 'ar 2/24/2001 19:43'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'ar 2/24/2001 19:43'!
 on: aCollectionOrStream
 	crc _ 16rFFFFFFFF.
 	crcPosition _ 1.
@@ -3954,7 +3954,7 @@ on: aCollectionOrStream
 	self writeHeader.
 ! !
 
-!ZipWriteStream methodsFor: 'initialize-release' stamp: 'nk 2/17/2004 16:31'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'nk 2/17/2004 16:31'!
 release
 	"We're done with compression. Do some cleanup."
 	literals _ distances _ literalFreq _ distanceFreq _ nil.
@@ -4140,12 +4140,12 @@ updateCrc
 updateCrc: oldCrc from: start to: stop in: aCollection
 	^self class updateCrc: oldCrc from: start to: stop in: aCollection! !
 
-!ZipWriteStream methodsFor: 'initialize-release' stamp: 'nk 2/17/2004 16:30'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'nk 2/17/2004 16:30'!
 writeFooter
 	"Write footer information if necessary"
 	crc _ crc bitXor: 16rFFFFFFFF.! !
 
-!ZipWriteStream methodsFor: 'initialize-release' stamp: 'ar 2/24/2001 19:44'!
+!ZipWriteStream methodsFor: 'initialization' stamp: 'ar 2/24/2001 19:44'!
 writeHeader
 	"Write header information if necessary"! !
 
@@ -4407,14 +4407,14 @@ updateCrc: oldCrc from: start to: stop in: aCollection
 	].
 	^newCrc! !
 
-!GZipWriteStream methodsFor: 'initialize-release' stamp: 'nk 2/19/2004 08:31'!
+!GZipWriteStream methodsFor: 'initialization' stamp: 'nk 2/19/2004 08:31'!
 writeFooter
 	"Write some footer information for the crc"
 	super writeFooter.
 	0 to: 3 do:[:i| encoder nextBytePut: (crc >> (i*8) bitAnd: 255)].
 	0 to: 3 do:[:i| encoder nextBytePut: (bytesWritten >> (i*8) bitAnd: 255)].! !
 
-!GZipWriteStream methodsFor: 'initialize-release' stamp: 'ar 12/30/1999 11:41'!
+!GZipWriteStream methodsFor: 'initialization' stamp: 'ar 12/30/1999 11:41'!
 writeHeader
 	"Write the GZip header"
 	encoder nextBits: 16 put: GZipMagic.
@@ -4460,22 +4460,22 @@ serviceCompressFile
 unload
 	FileList unregisterFileReader: self! !
 
-!ZLibWriteStream methodsFor: 'initialize-release' stamp: 'nk 2/17/2004 16:28'!
+!ZLibWriteStream methodsFor: 'initialization' stamp: 'nk 2/17/2004 16:28'!
 on: aCollectionOrStream
 	super on: aCollectionOrStream.
 	crc _ 1.! !
 
-!ZLibWriteStream methodsFor: 'initialize-release' stamp: 'nk 2/17/2004 16:53'!
+!ZLibWriteStream methodsFor: 'initialization' stamp: 'nk 2/17/2004 16:53'!
 updateCrc: adler from: start to: stop in: aCollection
 	"Update crc using the Adler32 checksum technique from RFC1950"
 	^self class updateAdler32: adler from:  start to:  stop in: aCollection! !
 
-!ZLibWriteStream methodsFor: 'initialize-release' stamp: 'ar 2/29/2004 04:40'!
+!ZLibWriteStream methodsFor: 'initialization' stamp: 'ar 2/29/2004 04:40'!
 writeFooter
 	"Store the Adler32 checksum as the last 4 bytes."
 	3 to: 0 by: -1 do:[:i| encoder nextBytePut: (crc >> (i*8) bitAnd: 255)].! !
 
-!ZLibWriteStream methodsFor: 'initialize-release' stamp: 'nk 2/17/2004 18:23'!
+!ZLibWriteStream methodsFor: 'initialization' stamp: 'nk 2/17/2004 18:23'!
 writeHeader
 	"Write header information"
 	encoder nextBits: 8 put: 120. "deflate method with 15bit window size"
@@ -4509,12 +4509,12 @@ updateAdler32: adler from: start to: stop in: aCollection
 bitPosition
 	^encodedStream position + position * 8 + bitPosition.! !
 
-!ZipEncoder methodsFor: 'initialize-release' stamp: 'sd 1/30/2004 15:24'!
+!ZipEncoder methodsFor: 'initialization' stamp: 'sd 1/30/2004 15:24'!
 close
 	self flush.
 	encodedStream close.! !
 
-!ZipEncoder methodsFor: 'initialize-release' stamp: 'ar 12/30/1999 15:51'!
+!ZipEncoder methodsFor: 'initialization' stamp: 'ar 12/30/1999 15:51'!
 commit
 	encodedStream next: position putAll: collection.
 	position _ readLimit _ 0.! !
@@ -4523,12 +4523,12 @@ commit
 encodedStream
 	^encodedStream! !
 
-!ZipEncoder methodsFor: 'initialize-release' stamp: 'ar 12/30/1999 15:51'!
+!ZipEncoder methodsFor: 'initialization' stamp: 'ar 12/30/1999 15:51'!
 flush
 	self flushBits.
 	self commit.! !
 
-!ZipEncoder methodsFor: 'initialize-release' stamp: 'ar 1/2/2000 16:35'!
+!ZipEncoder methodsFor: 'initialization' stamp: 'ar 1/2/2000 16:35'!
 flushBits
 	"Flush currently unsent bits"
 	[bitPosition > 0] whileTrue:[
@@ -4564,7 +4564,7 @@ nextBytePut: anObject
 			[position _ position + 1.
 			^collection byteAt: position put: anObject]! !
 
-!ZipEncoder methodsFor: 'initialize-release' stamp: 'jmv 2/17/2010 22:09'!
+!ZipEncoder methodsFor: 'initialization' stamp: 'jmv 2/17/2010 22:09'!
 on: aCollectionOrStream
 	(aCollectionOrStream is: #Stream)
 		ifTrue:[encodedStream _ aCollectionOrStream]

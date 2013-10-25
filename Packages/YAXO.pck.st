@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1824] on 18 September 2013 at 3:25:57.376058 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:29.802939 pm'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 1!
+!provides: 'YAXO' 1 2!
 !requires: 'Network-Kernel' 1 nil nil!
 !classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
@@ -468,7 +468,7 @@ ignorableWhitespace: aString
 	"This call corresonds to the Java SAX call
 	ignorableWhitespace(char[] ch, int start, int length)."! !
 
-!SAXHandler methodsFor: 'initialize' stamp: 'mir 1/8/2002 18:18'!
+!SAXHandler methodsFor: 'initialization' stamp: 'mir 1/8/2002 18:18'!
 initialize
 	eod _ false! !
 
@@ -647,7 +647,7 @@ incremental
 incremental: aBoolean
 	incremental _ aBoolean! !
 
-!XMLDOMParser methodsFor: 'initialize' stamp: 'mir 1/8/2001 12:05'!
+!XMLDOMParser methodsFor: 'initialization' stamp: 'mir 1/8/2001 12:05'!
 initialize
 	super initialize.
 	stack _ OrderedCollection new.
@@ -1032,7 +1032,7 @@ version
 version: aString	
 	version _ aString! !
 
-!XMLElement methodsFor: 'initialize' stamp: 'mir 8/14/2000 17:58'!
+!XMLElement methodsFor: 'initialization' stamp: 'mir 8/14/2000 17:58'!
 addContent: contentString
 	self contents add: contentString! !
 
@@ -1122,7 +1122,7 @@ localName
 name
 	^ self qualifiedName! !
 
-!XMLElement methodsFor: 'initialize' stamp: 'mir 1/17/2002 15:24'!
+!XMLElement methodsFor: 'initialization' stamp: 'mir 1/17/2002 15:24'!
 name: aString
 	name _ aString asSymbol! !
 
@@ -1144,7 +1144,7 @@ qualifiedName
 		ifNil: [self localName]
 		ifNotNil: [self namespace , ':' , self localName]! !
 
-!XMLElement methodsFor: 'initialize' stamp: 'mir 3/7/2000 16:43'!
+!XMLElement methodsFor: 'initialization' stamp: 'mir 3/7/2000 16:43'!
 setAttributes: newAttributes
 	attributes _ newAttributes! !
 
@@ -1464,7 +1464,7 @@ initEntities
 		at: 'lt' put: (DTDEntityDeclaration name: 'lt' value: $<).
 	^ents! !
 
-!XMLTokenizer methodsFor: 'initialize' stamp: 'mir 3/14/2003 19:27'!
+!XMLTokenizer methodsFor: 'initialization' stamp: 'mir 3/14/2003 19:27'!
 initialize
 	parsingMarkup _ false.
 	validating _ false.
@@ -2626,7 +2626,7 @@ eq
 flush
 	self stream flush! !
 
-!XMLWriter methodsFor: 'initialize' stamp: 'mir 6/24/2003 13:41'!
+!XMLWriter methodsFor: 'initialization' stamp: 'mir 6/24/2003 13:41'!
 initialize
 	stack _ OrderedCollection new.
 	canonical _ false.

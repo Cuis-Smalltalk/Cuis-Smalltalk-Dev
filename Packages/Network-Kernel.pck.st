@@ -1,6 +1,6 @@
-'From Cuis 4.1 of 12 December 2012 [latest update: #1752] on 14 July 2013 at 5:12:39.435718 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:43.543858 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Network-Kernel' 1 0!
+!provides: 'Network-Kernel' 1 1!
 !classDefinition: #ConnectionQueue category: #'Network-Kernel'!
 Object subclass: #ConnectionQueue
 	instanceVariableNames: 'portNumber maxQueueLength connections accessSema socket process'
@@ -2421,7 +2421,7 @@ debug
 			nextPutAll: 'OutBuffer data size: ', (outNextToWrite - 1) asString; newLine;
 			nextPutAll: 'Out data (20):', (outBuffer copyFrom: 1 to: ((outNextToWrite - 1) min: 20)); newLine]! !
 
-!SocketStream methodsFor: 'initialize-release' stamp: 'ar 7/24/2010 15:13'!
+!SocketStream methodsFor: 'initialization' stamp: 'ar 7/24/2010 15:13'!
 destroy
 	"Destroy the receiver and its underlying socket. Does not attempt to flush the output buffers. For a graceful close use SocketStream>>close instead."
 
@@ -2451,7 +2451,7 @@ inBufferSize
 
 	^inNextToWrite - lastRead - 1! !
 
-!SocketStream methodsFor: 'initialize-release' stamp: 'gk 2/25/2005 14:20'!
+!SocketStream methodsFor: 'initialization' stamp: 'gk 2/25/2005 14:20'!
 initialize
 	autoFlush := true.
 	shouldSignal := true.

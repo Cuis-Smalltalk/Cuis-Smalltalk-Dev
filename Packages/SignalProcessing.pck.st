@@ -1,8 +1,8 @@
-'From Cuis 4.1 of 12 December 2012 [latest update: #1758] on 16 July 2013 at 6:16:29.217 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1855] on 25 October 2013 at 5:50:04.671796 pm'!
 'Description Please enter a description for this package '!
-!provides: 'SignalProcessing' 1 0!
-!requires: 'LinearAlgebra' 1 nil!
-!requires: 'Sound' 1 nil!
+!provides: 'SignalProcessing' 1 1!
+!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -517,8 +517,23 @@ fillLowPassGaussian: cutoff
 				self i: i j: j put:
 					(self lowPassGaussian: cutoff i: i j: j)]]! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/28/2007 19:52'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 10/25/2013 17:47'!
 gaussianI: i j: j sigma: sigma
+	" Comment based on http://en.wikipedia.org/wiki/Gaussian_function
+	| ary expectedValue r standardDeviation a b c f x |
+	expectedValue _ 0.0.
+	standardDeviation _ 1.0.
+	ary _ FloatArray new: 1000.
+	1 to: 1000 do: [ :i |
+		x _ i - 500 / 200.
+		a _ 1 / (standardDeviation * (2.0 * Float pi )sqrt).
+		b _ expectedValue.
+		c _ standardDeviation.
+		f _ ((x-b) squared / (2.0 * c squared)) negated exp * a.
+		ary at: i put: f ].
+	r _ 10@10 extent: 100@50.
+	FFT new plot: ary in: r color: Color blue min: 0 max: ary max.
+	"
 	^ (j squared + i squared / (2 * sigma squared)) negated exp "/ (2 * Float pi * sigma squared)"! !
 
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/18/2007 13:58'!

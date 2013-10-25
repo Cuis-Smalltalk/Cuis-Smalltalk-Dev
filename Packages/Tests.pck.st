@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 16 October 2013 at 10:43:23.137498 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:32.586993 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 3!
+!provides: 'Tests' 1 4!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -1416,7 +1416,7 @@ warningTest
 	Warning signal: 'Ouch'.
 	self log: 'Warning signal handled and resumed.'! !
 
-!ArrayLiteralTest methodsFor: 'initialize-release' stamp: 'avi 2/16/2004 21:09'!
+!ArrayLiteralTest methodsFor: 'running' stamp: 'avi 2/16/2004 21:09'!
 tearDown
 	self class removeSelector: #array! !
 

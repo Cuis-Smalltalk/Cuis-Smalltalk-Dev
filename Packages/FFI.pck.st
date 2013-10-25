@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1807] on 21 August 2013 at 5:48:05.654299 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:48.519003 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 3!
+!provides: 'FFI' 1 4!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -559,7 +559,7 @@ asInteger
 	"convert address to integer"
 	^ self asByteArrayPointer unsignedLongAt: 1! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'ar 11/22/1999 04:25'!
+!ExternalAddress methodsFor: 'release' stamp: 'ar 11/22/1999 04:25'!
 beNull
 	"Make the receiver a NULL pointer"
 	self atAllPut: 0.! !
@@ -580,14 +580,14 @@ clone
 	<primitive: 148>
 	self primitiveFailed! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'nice 5/19/2006 03:17'!
+!ExternalAddress methodsFor: 'release' stamp: 'nice 5/19/2006 03:17'!
 finalize
 	"I am an executor (a copy) of an ExternalAddress that was just garbage collected.
 	I must finalize. my mission is to free memory"
 	
 	self free! !
 
-!ExternalAddress methodsFor: 'initialize-release' stamp: 'ar 11/28/1999 23:40'!
+!ExternalAddress methodsFor: 'release' stamp: 'ar 11/28/1999 23:40'!
 free
 	"Primitive. Free the object pointed to on the external heap.
 	Dangerous - may break your system if the receiver hasn't been
@@ -662,7 +662,7 @@ new: n
 startUp: resuming
 	resuming ifTrue:[self allInstancesDo:[:addr| addr beNull]].! !
 
-!ExternalForm methodsFor: 'initialize' stamp: 'jcg 6/6/2010 14:32'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 6/6/2010 14:32'!
 allocateSpace
 	"Convenient way to allocate space for the pixels.  This isn't done by default, because it is common to use a pointer obtained from elsewhere."
 	| addr |
@@ -670,7 +670,7 @@ allocateSpace
 	addr := ExternalAddress gcallocate: width*height * depth/8. "area times bytes/pixel"
 	self setManualSurfacePointer: addr.! !
 
-!ExternalForm methodsFor: 'initialize' stamp: 'jcg 1/29/2010 01:29'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:29'!
 destroySurface
 	"Users must call this explicitly when this object is no longer needed; otherwise, resource-leakage will occur in the SurfacePlugin"
 	bits ifNotNil: [:surfaceID |
@@ -678,7 +678,7 @@ destroySurface
 		self primDestroyManualSurface: surfaceID
 	].! !
 
-!ExternalForm methodsFor: 'initialize' stamp: 'jcg 6/4/2010 02:04'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 6/4/2010 02:04'!
 initialize
 	super initialize.
 	pointer := nil.
@@ -707,7 +707,7 @@ primManualSurface: surfaceID setPointer: pointer
 	self primitiveFailed
 ! !
 
-!ExternalForm methodsFor: 'initialize' stamp: 'jcg 1/26/2010 02:00'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/26/2010 02:00'!
 setExtent: extent depth: bitsPerPixel
 	bits ifNotNil: [self error: 'bits are already set'].
 	bitsPerPixel == 32 ifFalse: [self error: 'only 32 bits for now'.  "see 'rowPitch' below"].
@@ -723,12 +723,12 @@ setExtent: extent depth: bitsPerPixel
 		depth: bitsPerPixel
 		isMSB: true.! !
 
-!ExternalForm methodsFor: 'initialize' stamp: 'jcg 1/29/2010 01:31'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:31'!
 setExtent: extent depth: bitsPerPixel bits: pointer
 	self setExtent: extent depth: bitsPerPixel.
 	self setManualSurfacePointer: pointer.! !
 
-!ExternalForm methodsFor: 'initialize' stamp: 'jmv 1/13/2011 10:57'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 1/13/2011 10:57'!
 setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 	"Set the memory-location of the image data.  It is OK to set a NULL pointer; in this case, any attempt to BitBlt to or from the form will result in a primitive-failure."
 	| integer |
@@ -811,7 +811,7 @@ errorCodeName
 flags
 	^flags! !
 
-!ExternalFunction methodsFor: 'initialize-release' stamp: 'ar 11/29/1999 00:35'!
+!ExternalFunction methodsFor: 'initialization' stamp: 'ar 11/29/1999 00:35'!
 initialize
 	"Initialize the receiver"
 	handle := ExternalAddress new.! !
@@ -1049,7 +1049,7 @@ name: aName module: aModule callType: callType returnType: retType argumentTypes
 		flags: callType
 		argTypes: (Array with: retType), argTypes! !
 
-!ExternalLibrary methodsFor: 'initialize-release' stamp: 'ar 12/8/1999 21:49'!
+!ExternalLibrary methodsFor: 'initialization' stamp: 'ar 12/8/1999 21:49'!
 forceLoading
 	"Primitive. Force loading the given library.
 	The primitive will fail if the library is not available
@@ -1061,7 +1061,7 @@ forceLoading
 handle
 	^handle! !
 
-!ExternalLibrary methodsFor: 'initialize-release' stamp: 'ar 11/29/1999 00:35'!
+!ExternalLibrary methodsFor: 'initialization' stamp: 'ar 11/29/1999 00:35'!
 initialize
 	"Initialize the receiver"
 	name := self class moduleName.
@@ -1076,7 +1076,7 @@ moduleName
 	"Return the name of the module for this library"
 	^nil! !
 
-!ExternalStructure methodsFor: 'initialize-release' stamp: 'ar 11/28/1999 23:21'!
+!ExternalStructure methodsFor: 'release' stamp: 'ar 11/28/1999 23:21'!
 free
 	"Free the handle pointed to by the receiver"
 	(handle ~~ nil and:[handle isExternalAddress]) ifTrue:[handle free].
