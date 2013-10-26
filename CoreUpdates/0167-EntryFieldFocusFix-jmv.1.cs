@@ -1,0 +1,1 @@
+'From Squeak3.7 of ''4 September 2004'' [latest update: #5989] on 1 April 2009 at 11:12:37 am'!!EntryField2LW methodsFor: 'updating' stamp: 'jmv 4/1/2009 10:31'!modelChanged	contents _ self targetAspect.	actionPending _ false.	editor _ nil.	ActiveHand newKeyboardFocus: nil.	super modelChanged! !

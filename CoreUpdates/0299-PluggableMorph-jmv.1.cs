@@ -1,0 +1,1 @@
+'From Cuis 1.0 of 4 September 2009 [latest update: #290] on 16 September 2009 at 9:57:28 am'!Smalltalk renameClassNamed: #MorphWithModel as: #PluggableMorph!

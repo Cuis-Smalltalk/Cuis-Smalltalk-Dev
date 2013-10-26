@@ -1,0 +1,1 @@
+'From Cuis 2.9 of 5 November 2010 [latest update: #634] on 14 December 2010 at 2:12:17 am'!!Theme class methodsFor: 'as yet unclassified' stamp: 'cbr 12/14/2010 02:04'!current	^ CurrentTheme! !!classDefinition: #Theme category: #'Theme-Core'!Object subclass: #Theme	instanceVariableNames: ''	classVariableNames: 'CurrentTheme'	poolDictionaries: ''	category: 'Theme-Core'!

@@ -1,0 +1,1 @@
+'From Cuis 1.0 of 6 March 2009 [latest update: #5989] on 24 March 2009 at 9:34:32 am'!!classDefinition: #SemaphoreTest category: #'System Tests'!TestCase subclass: #SemaphoreTest	instanceVariableNames: ''	classVariableNames: ''	poolDictionaries: ''	category: 'System Tests'!

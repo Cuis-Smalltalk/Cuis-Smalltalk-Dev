@@ -1,0 +1,1 @@
+'From Cuis 2.9 of 5 November 2010 [latest update: #634] on 18 December 2010 at 6:07:55 pm'!!Theme methodsFor: 'tool colors' stamp: 'cbr 12/18/2010 17:56'!versionsBrowser	^ self useUniformColors		ifTrue: [ self defaultWindowColor ]		ifFalse: [ (Color r: 0.869 g: 0.753 b: 1.0) duller ]! !

@@ -1,0 +1,1 @@
+'From Cuis 2.7 of 3 September 2010 [latest update: #600] on 3 November 2010 at 10:23:38 am'!!BlockClosure methodsFor: 'events-support' stamp: 'jmv 11/3/2010 10:08'!isReceiverOrAnyArgumentGarbage	"For use in the when:evaluate: protocol, i.e., 		foo when: #bar evaluate:[self handleBar].."	^ false! !BlockClosure removeSelector: #isValid!

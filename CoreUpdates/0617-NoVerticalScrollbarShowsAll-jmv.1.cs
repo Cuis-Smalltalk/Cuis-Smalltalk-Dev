@@ -1,0 +1,1 @@
+'From Cuis 2.7 of 3 September 2010 [latest update: #600] on 14 October 2010 at 10:20:05 pm'!!ScrollPane methodsFor: 'scrolling' stamp: 'jmv 10/14/2010 17:07'!vHideScrollBar	self vIsScrollbarShowing ifFalse: [^self].	self removeMorph: scrollBar.	scroller offset: scroller offset x@ 0.	retractableScrollBar ifFalse: [self resetExtent].	! !

@@ -1,0 +1,1 @@
+'From Cuis 2.3 of 22 March 2010 [latest update: #472] on 7 May 2010 at 2:11:13 pm'!!BitBlt methodsFor: 'private' stamp: 'jmv 5/3/2010 09:32'!setHalftoneForm: aBitmap	halftoneForm _ aBitmap! !

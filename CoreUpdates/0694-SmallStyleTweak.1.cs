@@ -1,0 +1,1 @@
+'From Cuis 2.9 of 5 November 2010 [latest update: #634] on 6 December 2010 at 9:26:47 am'!!HighContrastDarkTheme methodsFor: 'menu colors' stamp: 'jmv 12/6/2010 09:11'!menuTitleBar	^ self menu darker! !

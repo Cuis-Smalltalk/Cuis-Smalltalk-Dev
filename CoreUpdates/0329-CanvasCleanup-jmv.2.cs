@@ -1,0 +1,1 @@
+'From Cuis 1.0 of 2 October 2009 [latest update: #316] on 9 October 2009 at 9:34:45 am'!!Canvas methodsFor: 'converting' stamp: 'jmv 10/9/2009 09:31'!asShadowDrawingCanvas: aColor	"We could bring back ShadowDrawingCanvas if we ever need it"	^self subclassResponsibility! !Smalltalk removeClassNamed: #ColorMappingCanvas!Smalltalk removeClassNamed: #ShadowDrawingCanvas!

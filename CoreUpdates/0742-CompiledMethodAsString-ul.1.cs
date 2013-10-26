@@ -1,0 +1,1 @@
+'From Cuis 2.9 of 5 November 2010 [latest update: #634] on 28 December 2010 at 12:31:56 pm'!!CompiledMethod methodsFor: 'converting' stamp: 'ul 12/8/2010 03:24'!asString	^self printString! !

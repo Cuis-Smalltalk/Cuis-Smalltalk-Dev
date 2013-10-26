@@ -1,0 +1,1 @@
+'From Cuis 3.3 of 2 June 2011 [latest update: #1024] on 3 August 2011 at 10:23:05 am'!!Text methodsFor: 'accessing' stamp: 'jmv 8/3/2011 08:39'!customizeExplorerContents	^ false! !

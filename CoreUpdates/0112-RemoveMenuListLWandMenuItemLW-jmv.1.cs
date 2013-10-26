@@ -1,0 +1,1 @@
+'From Squeak3.7 of ''4 September 2004'' [latest update: #5989] on 27 January 2009 at 12:34:35 pm'!Smalltalk removeClassNamed: #MenuItemLW!Smalltalk removeClassNamed: #MenuListLW!

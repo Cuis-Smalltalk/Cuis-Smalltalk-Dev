@@ -1,0 +1,1 @@
+'From Cuis 2.9 of 5 November 2010 [latest update: #634] on 13 January 2011 at 4:21:20 pm'!!Rectangle methodsFor: 'truncation and round off' stamp: 'fbs 12/17/2010 07:24'!rounded	"Answer a Rectangle whose origin and corner are rounded."	^Rectangle origin: origin rounded extent: self extent rounded! !

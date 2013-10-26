@@ -1,0 +1,1 @@
+'From Cuis 2.6 of 10 August 2010 [latest update: #540] on 29 August 2010 at 4:37:54 pm'!!Float methodsFor: 'arithmetic' stamp: 'nice 8/21/2010 22:31'!abs	"This is faster than using Number abs and works for negativeZero."	self <= 0.0		ifTrue: [^ 0.0 - self]		ifFalse: [^ self]! !

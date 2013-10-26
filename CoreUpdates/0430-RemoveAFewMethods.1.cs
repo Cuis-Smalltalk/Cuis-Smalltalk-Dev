@@ -1,0 +1,1 @@
+'From Cuis 2.0 of 12 February 2010 [latest update: #418] on 18 February 2010 at 2:54:24 pm'!Form removeSelector: #pageImage:at:corner:!

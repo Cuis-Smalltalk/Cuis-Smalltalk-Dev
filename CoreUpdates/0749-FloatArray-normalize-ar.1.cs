@@ -1,0 +1,1 @@
+'From Cuis 2.9 of 5 November 2010 [latest update: #634] on 13 January 2011 at 4:14:12 pm'!!FloatArray methodsFor: 'arithmetic' stamp: 'ar 12/14/2010 08:20'!normalize	"Unsafely normalize the receiver in-place (become a unit vector). 	 Div-by-Zero raised if len 0."	<primitive: 'primitiveNormalize' module: 'FloatArrayPlugin'>	self /= self length.! !

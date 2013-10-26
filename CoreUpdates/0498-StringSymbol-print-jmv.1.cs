@@ -1,0 +1,1 @@
+'From Cuis 2.3 of 22 March 2010 [latest update: #472] on 29 April 2010 at 5:05:10 pm'!!String methodsFor: 'printing' stamp: 'jmv 4/26/2010 15:26'!print	Transcript cr; show: self! !!Symbol methodsFor: 'printing' stamp: 'jmv 4/26/2010 15:27'!print	Transcript cr; show: self printString! !

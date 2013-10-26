@@ -1,0 +1,1 @@
+'From Squeak3.7 of ''4 September 2004'' [latest update: #5989] on 26 September 2008 at 12:44:18 pm'!!ButtonLW methodsFor: 'focus handling' stamp: 'jmv 9/25/2008 11:35'!seizesNavigationFocus	^owner notNil and: [owner seizesNavigationFocus]! !

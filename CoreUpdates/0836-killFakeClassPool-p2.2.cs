@@ -1,0 +1,1 @@
+'From Cuis 3.0 of 18 January 2011 [latest update: #768] on 2 March 2011 at 5:24:08 pm'!Smalltalk removeClassNamed: #FakeClassPool!

@@ -1,0 +1,1 @@
+'From Cuis 3.0 of 31 January 2011 [latest update: #790] on 17 February 2011 at 4:43:42 pm'!!PluggableButtonMorph methodsFor: 'private' stamp: 'jmv 2/17/2011 16:43'!yellowButtonActivity	"Nothing to do right now..."! !

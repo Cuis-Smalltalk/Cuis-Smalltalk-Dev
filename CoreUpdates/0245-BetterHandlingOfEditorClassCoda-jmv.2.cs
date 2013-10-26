@@ -1,0 +1,1 @@
+'From Cuis 1.0 of 28 July 2009 [latest update: #242] on 30 July 2009 at 11:47:46 am'!!TextMorphForEditView methodsFor: 'private' stamp: 'jmv 7/30/2009 11:28'!editorClass	^editView editorClass! !TranscriptStream removeSelector: #is:!StringHolder removeSelector: #is:!ObjectExplorer removeSelector: #is:!

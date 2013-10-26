@@ -1,0 +1,1 @@
+'From Cuis 2.6 of 10 August 2010 [latest update: #540] on 29 August 2010 at 9:47:55 am'!"Change Set:		0578-RemoveBytecodeAgnosticMethodNode-jmvDate:			29 August 2010Author:			Juan Vuletich<your descriptive text goes here>"DebuggerMethodMap voidMapCache. Smalltalk garbageCollect!Smalltalk removeClassNamed: #BytecodeAgnosticMethodNode!
