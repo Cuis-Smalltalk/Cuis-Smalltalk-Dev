@@ -1894,6 +1894,6 @@ void
 FFIConstants initialize!
 ExternalObject initialize!
 ExternalFunction initialize!
-ExternalStructure initialize!
 ExternalData initialize!
 ExternalType initialize!
+ExternalStructure initialize!
