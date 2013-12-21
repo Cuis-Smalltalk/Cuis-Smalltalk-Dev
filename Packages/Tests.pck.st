@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:32.586993 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1891] on 21 December 2013 at 2:31:59.604992 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 4!
+!provides: 'Tests' 1 5!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -7733,11 +7733,12 @@ testPointersToEachIn
 	p2 remove: thisContext ifAbsent: [].
 	self assert: p1 = p2.! !
 
-!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'cbr 4/19/2011 18:18'!
+!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'jmv 12/21/2013 09:53'!
 setUp
 
 	morph _ Morph new.
-	task _ TaskbarTask new minimize: morph! !
+	task _ TaskbarTask new.
+	task minimize: morph! !
 
 !TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/28/2013 17:28'!
 testMinimize
@@ -7756,27 +7757,10 @@ testRestore
 	task restore.
 	self should: [ morph visible ]! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 10/23/2012 23:18'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/21/2013 10:01'!
 setUp
 
-	Taskbar reset.	
-	taskbar _ Taskbar singleton.
-	needsDelete _ taskbar owner isNil.
-	needsDelete ifTrue: [ taskbar openInWorld: ProjectX ui ].
-	taskbar visible: false.
-	taskbar step! !
-
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 10/23/2012 23:12'!
-tearDown
-
-	needsDelete ifTrue: [
-		taskbar delete ]! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 03:05'!
-testClassHide
-
-	taskbar class hide.
-	self shouldnt: [ taskbar visible ]! !
+	taskbar _ Taskbar singleton! !
 
 !TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 03:07'!
 testClassMinimize
@@ -7785,21 +7769,6 @@ testClassMinimize
 
 	taskbar class minimize: m.
 	self shouldnt: [ m visible ]! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 03:11'!
-testClassReset
-
-	| a b |
-	a _ Morph new.
-	b _ Morph new. 
-
-	taskbar
-		minimize: a;
-		minimize: b.
-		
-	taskbar class reset.
-
-	self shouldnt: [ a isInWorld & b isInWorld ]! !
 
 !TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 03:16'!
 testClassRestore
@@ -7814,12 +7783,6 @@ testClassRestore
 
 	self should: [ m visible ]! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 10/23/2012 23:28'!
-testClassShow
-	taskbar class show.
-	self should: [ taskbar isInWorld ].
-	ProjectX ui removeMorph: taskbar! !
-
 !TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 18:13'!
 testClassSingleton
 
@@ -7831,11 +7794,6 @@ testClassVisible
 
 	self should: [ taskbar visible = taskbar class visible ].
 ! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 5/15/2012 17:41'!
-testHeight
-	
-	self should: [ taskbar morphHeight = 18 ]! !
 
 !TaskbarTest methodsFor: 'test cases' stamp: 'jmv 9/4/2012 17:30'!
 testHorizontalAlignment

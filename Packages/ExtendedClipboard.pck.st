@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1865] on 12 November 2013 at 8:59:29.986517 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1880] on 21 December 2013 at 9:47:48.452067 am'!
 'Description Please enter a description for this package.'!
-!provides: 'ExtendedClipboard' 1 4!
+!provides: 'ExtendedClipboard' 1 6!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #ExtendedClipboardInterface category: #ExtendedClipboard!
@@ -107,21 +107,21 @@ createClipboard
 	clipboard = 0 ifTrue: [^self].
 	^ self primCreateClipboard! !
 
-!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 1/26/2011 10:26'!
+!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 12/21/2013 09:30'!
 fromBMPBytes: bytes
-	^ (BMPReadWriter on: bytes readStream) nextImage! !
+	^ (BMPReadWriter onBinaryStream: bytes readStream) nextImage! !
 
-!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 1/26/2011 10:24'!
+!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 12/21/2013 09:30'!
 fromJPEGBytes: bytes
-	^ (JPEGReadWriter2 on: bytes readStream) nextImage! !
+	^ (JPEGReadWriter2 onBinaryStream: bytes readStream) nextImage! !
 
 !ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 1/26/2011 10:25'!
 fromMacRomanBytes: bytes
 	^ (bytes collect: [ :c | Character macRomanToLatin1: c]) asString! !
 
-!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 1/26/2011 10:24'!
+!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 12/21/2013 09:31'!
 fromPNGBytes: bytes
-	^ (PNGReadWriter on: bytes readStream) nextImage! !
+	^ (PNGReadWriter onBinaryStream: bytes readStream) nextImage! !
 
 !ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 3/17/2011 09:23'!
 fromRefStreamBytes: bytes
@@ -320,7 +320,7 @@ storeString: aString id: otherString
 		"
 	self addClipboardData: otherString dataFormat: 'cuis-id'! !
 
-!ExtendedClipboardMacInterface methodsFor: 'api - store' stamp: 'jmv 2/14/2013 12:21'!
+!ExtendedClipboardMacInterface methodsFor: 'api - store' stamp: 'jmv 11/13/2013 07:59'!
 storeText: aText id: otherString
 	"I presume the order is: most preferred format first, least desirable format last.
 	Cuis object id is usually at the end, but don't include it if we include a streamed representation."
@@ -329,8 +329,9 @@ storeText: aText id: otherString
 	"SmartRefStream handles class changes, but a little testing shows stuff is twice as big, and takes 20 times more time to generate"
 	self addClipboardData: (ReferenceStream streamedRepresentationOf: aText) dataFormat: 'cuis-refStreamed'.
 
-	"RTF format"
-	self addClipboardData: aText rtfString dataFormat: 'public.rtf'.
+	"RTF format
+	#rtfString might not be loaded (Package RTFExporting)"
+	[ self addClipboardData: aText rtfString dataFormat: 'public.rtf' ] on: MessageNotUnderstood do: [].
 
 	"Just the string"
 	self

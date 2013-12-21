@@ -1,7 +1,7 @@
-'From Cuis 4.1 of 12 December 2012 [latest update: #1752] on 14 July 2013 at 5:13:48.13667 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1880] on 21 December 2013 at 9:47:54.120437 am'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 0!
-!requires: 'Compression' 1 nil!
+!provides: 'Graphics-Files-Additional' 1 1!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
 	instanceVariableNames: 'chunk form width height depth backColor bitsPerChannel colorType interlaceMethod bitsPerPixel bytesPerScanline thisScanline prevScanline rowSize globalDataChunk unknownChunks palette transparentPixelValue filtersSeen cachedDecoderMap bigEndian auxBitBlt auxSource auxDest auxCMap'
@@ -821,7 +821,7 @@ grayColorsFor: d
 		].
 ! !
 
-!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 3/13/2012 12:41'!
+!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 12/21/2013 09:43'!
 nextImage
 	bigEndian := Smalltalk isBigEndian.
 	filtersSeen _ Bag new.
@@ -829,7 +829,6 @@ nextImage
 	transparentPixelValue _ nil.
 	unknownChunks _ Set new.
 	stream reset.
-	stream binary.
 	stream skip: 8.
 	[stream atEnd] whileFalse: [self processNextChunk].
 	"Set up our form"
@@ -1466,30 +1465,30 @@ typicalFileExtensions
 	"Answer a collection of file extensions (lowercase) which files that I can read might commonly have"
 	^#('png')! !
 
-!TIFFReadWriter methodsFor: 'accessing' stamp: 'mrm 7/27/2001 21:54'!
+!TIFFReadWriter methodsFor: 'private' stamp: 'jmv 12/21/2013 09:26'!
+binaryStream: aPositionableStream
+	"Reset the given Stream, wrap it in a TIFFStream, and set it as my stream."
+
+	| bigEndian |
+	super binaryStream: aPositionableStream.
+	bigEndian _ (aPositionableStream peek) = 16r4D. 
+		"Assume 16r49 or 16r4D. Bad first byte caught later by TIFFStructure>>validateHeaderOf:"
+	stream _ TIFFStream 
+		on: aPositionableStream 
+		bigEndian: bigEndian.! !
+
+!TIFFReadWriter methodsFor: 'accessing' stamp: 'jmv 12/21/2013 09:29'!
 nextImage
 	"Decode an image on my stream and answer the image as a Form."
 	| reader |
-	reader _ TIFFReader on: stream.
-	^ reader readForm.! !
+	reader _ TIFFReader onTiffStream: stream.
+	^ reader readForm! !
 
 !TIFFReadWriter methodsFor: 'accessing' stamp: 'mrm 7/22/2001 18:46'!
 nextPutImage: aForm
 	"Encode aForm into TIFF form and write on my stream."
 
 	^self error: 'Not Yet Implemented.'.! !
-
-!TIFFReadWriter methodsFor: 'private' stamp: 'mrm 7/27/2001 21:51'!
-on: aPositionableStream
-	"Reset the given Stream, wrap it in a TIFFStream, and set it as my stream."
-
-	| bigEndian |
-	super on: aPositionableStream.
-	bigEndian _ (aPositionableStream peek) = 16r4D. 
-		"Assume 16r49 or 16r4D. Bad first byte caught later by TIFFStructure>>validateHeaderOf:"
-	stream _ TIFFStream 
-		on: aPositionableStream 
-		bigEndian: bigEndian.! !
 
 !TIFFReadWriter methodsFor: 'testing' stamp: 'mrm 7/22/2001 19:07'!
 understandsImageFormat
@@ -1923,13 +1922,6 @@ extent
 	^ (structure at: #ImageWidth) @ (structure at: #ImageLength).
 ! !
 
-!TIFFReader methodsFor: 'private' stamp: 'mrm 7/27/2001 22:10'!
-on: aTIFFStream
-	"Set the given stream as my stream, and read the TIFF's structure from that stream."
-	stream _ aTIFFStream.
-	structure _ TIFFStructure parseFrom: stream.
-! !
-
 !TIFFReader methodsFor: 'private' stamp: 'jmv 1/12/2011 16:52'!
 positionStreamToStripNum: anInteger
 	"Position my TIFFStream at the start of the given strip, where 1 is the first strip."
@@ -1993,6 +1985,13 @@ readPixelsInto: aForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalP
 		pixel _ (r << 16) + (g << 8) + b + (a << 24).
 		bits at: pixNum put: pixel.].! !
 
+!TIFFReader methodsFor: 'private' stamp: 'jmv 12/21/2013 09:28'!
+tiffStream: aTIFFStream
+	"Set the given stream as my stream, and read the TIFF's structure from that stream."
+	stream _ aTIFFStream.
+	structure _ TIFFStructure parseFrom: stream.
+! !
+
 !TIFFReader methodsFor: 'private' stamp: 'jmv 1/12/2011 16:02'!
 validateTIFFType
 	"Examine my structure to see if it represents a TIFF that I know how to read. 
@@ -2019,10 +2018,10 @@ validateTIFFType
 		ifFalse: [self error: 'Cannot read, this TIFF is not a 24-bit RGB TIFF (or same with an 8-bit alpha channel).'].
 ! !
 
-!TIFFReader class methodsFor: 'instance creation' stamp: 'mrm 7/27/2001 22:08'!
-on: aTIFFStream
+!TIFFReader class methodsFor: 'instance creation' stamp: 'jmv 12/21/2013 09:28'!
+onTiffStream: aTIFFStream
 	"Create and answer an instance of the receiver based on the given TIFFStream. Parse the structure at this time as well."
-	^ self new on: aTIFFStream.
+	^ self new tiffStream: aTIFFStream.
 ! !
 
 !TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 16:52'!
