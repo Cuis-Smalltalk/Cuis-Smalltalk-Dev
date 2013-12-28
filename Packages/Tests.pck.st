@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1891] on 21 December 2013 at 2:31:59.604992 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1910] on 28 December 2013 at 7:08:43.732539 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 5!
+!provides: 'Tests' 1 6!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -2162,11 +2162,11 @@ testBlockNumberingForInjectInto
 	self assert: ((tempRefs includesKey: (2 to: 4))
 				and: [(tempRefs at: (2 to: 4)) hasEqualElements: #(('each' 1) ('binaryBlock' 2) ('nextValue' (3 1)))])! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:00'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:00'!
 testDebuggerTempAccess
 
+	"This test also fails in Squeak. Check if it is ever fixed."
 	self flag: #expectedFailure.
-	true ifTrue: [^self].
 
 	self doTestDebuggerTempAccessWith: 1 with: 2! !
 
@@ -2201,7 +2201,7 @@ testDecompiledDoitMethodTempNames
 		mns first nodesDo: removeComments.
 		self assert: (mnps := mns first printString) = (mps := m methodNode printString)]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:00'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:00'!
 testInjectIntoDecompilations
 	"Test various compilations decompile to the same code for a method sufficiently
 	 simple that this is possible and sufficiently complex that the code generated
@@ -2209,8 +2209,8 @@ testInjectIntoDecompilations
 	"self new testInjectIntoDecompilations"
 	| source |
 
+	"This test also fails in Squeak. Check if it is ever fixed."
 	self flag: #expectedFailure.
-	true ifTrue: [^self].
 
 	source := (Collection sourceCodeAt: #inject:into:) asString.
 	{ Encoder.
@@ -2229,14 +2229,14 @@ testInjectIntoDecompilations
 							self do: [ ':t4' | t3 ':=' t2 value: t3 value: t4 ] .
 							^ t3)]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:01'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:00'!
 testInjectIntoDecompiledDebugs
 	"Test various debugs of the decompiled form debug correctly."
 	"self new testInjectIntoDecompiledDebugs"
 	| source |
 
+	"This test also fails in Squeak. Check if it is ever fixed."
 	self flag: #expectedFailure.
-	true ifTrue: [^self].
 
 	source := (Collection sourceCodeAt: #inject:into:) asString.
 	{ Encoder.
@@ -3116,7 +3116,7 @@ decompilerFailures
 
 		"(PNMReadWriter nextImage) (Collection #ifEmpty:ifNotEmpty:) (Collection #ifEmpty:) (Collection #ifNotEmpty:ifEmpty:) (Text #alignmentAt:ifAbsent:) (ObjectWithDocumentation propertyAt:ifAbsent:)")! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 8/30/2011 08:35'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 12/28/2013 19:02'!
 isFailure: cls sel: selector 
 	"self new isKnowProblem: PNMReaderWriter sel: #nextImage"
 	"#((PNMReadWriter nextImage)) includes: {PNMReadWriter
@@ -3124,7 +3124,6 @@ isFailure: cls sel: selector
 
 	"Too many failures here. May be check #decompilerFailures when the decompiler is enhanced..."
 	self flag: #expectedFailure.
-	true ifTrue: [^true].
 
 	^self decompilerFailures includes: {cls name asSymbol. selector}! !
 
@@ -3336,13 +3335,9 @@ testDecompilerInClassesZAtoZM
 testDecompilerInClassesZNtoZZ
 	self decompileClassesSelect: [:cn| cn first = $Z and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:01'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:04'!
 testRemoteTemp
 	| aBlock |
-
-	self flag: #expectedFailure.
-	true ifTrue: [^self].
-
 	aBlock := Compiler evaluate: '| x y |  [:a :b | x := a. y := b. x+y]'.
 	self shouldnt: [aBlock decompile] raise: Error
 	! !
@@ -3570,22 +3565,19 @@ testDoublePassOuter
 testDoubleResume
 	self assertSuccess: (ExceptionTester new runTest: #doubleResumeTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'jmv 4/12/2012 21:58'!
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'jmv 12/28/2013 18:58'!
 testHandlerFromAction
 	"A test ensuring that nested exceptions work as expected."
 
 	| result |
 	"This test also fails in Squeak. Check if it is ever fixed."
 	self flag: #expectedFailure.
-	true ifTrue: [^self].
-
 	result := [
 		[
 			[self error: 'trigger error'] on: ZeroDivide do: [ :ex | 'inner' ]
 		] on: Error do: [ :ex | 3 / 0 ]
 	] on: ZeroDivide do: [ :ex | 'outer' ].
-	self assert: result = 'outer'.
-! !
+	self assert: result = 'outer'! !
 
 !ExceptionTests methodsFor: 'testing' stamp: 'ar 9/1/2010 22:43'!
 testHandlerReentrancy
@@ -6326,12 +6318,12 @@ testLayout3
 
 	pane delete! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:00'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorAt
 	| stackpBefore stackpAfter array byteArray |
 
-	self flag: #expectedFailure.
-	Smalltalk isRunningCog ifFalse: [^self].
+	Smalltalk isRunningCog ifFalse: [
+		^self assert: false description: 'Needs Cog' ].
 
 	stackpBefore := thisContext stackPtr.
 	array := { 1. 2. 3 }.
@@ -6358,12 +6350,12 @@ testMirrorClass
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter "Make sure primitives pop all their arguments"! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:01'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorEqEq
 	| stackpBefore stackpAfter |
 
-	self flag: #expectedFailure.
-	Smalltalk isRunningCog ifFalse: [^self].
+	Smalltalk isRunningCog ifFalse: [
+		^self assert: false description: 'Needs Cog' ].
 
 	stackpBefore := thisContext stackPtr.
 	self assert: (thisContext object: Array new eqeq: Array new) == false.
@@ -6371,12 +6363,12 @@ testMirrorEqEq
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter "Make sure primitives pop all their arguments"! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:01'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorInstVarAt
 	| stackpBefore stackpAfter array point |
 
-	self flag: #expectedFailure.
-	Smalltalk isRunningCog ifFalse: [^self].
+	Smalltalk isRunningCog ifFalse: [
+		^self assert: false description: 'Needs Cog' ].
 
 	stackpBefore := thisContext stackPtr.
 	array := { 1. 2. 3 }.
@@ -6392,12 +6384,12 @@ testMirrorInstVarAt
 	self should: [thisContext object: array instVarAt: 4] raise: Error.
 	self should: [thisContext object: point instVarAt: 3] raise: Error! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:01'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorPerform
 	| stackpBefore stackpAfter anInterval |
 
-	self flag: #expectedFailure.
-	Smalltalk isRunningCog ifFalse: [^self].
+	Smalltalk isRunningCog ifFalse: [
+		^self assert: false description: 'Needs Cog' ].
 
 	stackpBefore := thisContext stackPtr.
 	anInterval := 1 to: 2.
@@ -6410,12 +6402,12 @@ testMirrorPerform
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter "Make sure primitives pop all their arguments"! !
 
-!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 8/9/2010 23:01'!
+!MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorSize
 	| stackpBefore stackpAfter |
 
-	self flag: #expectedFailure.
-	Smalltalk isRunningCog ifFalse: [^self].
+	Smalltalk isRunningCog ifFalse: [
+		^self assert: false description: 'Needs Cog' ].
 
 	stackpBefore := thisContext stackPtr.
 	self assert: (thisContext objectSize: #(1 2 3)) = 3.
