@@ -1,6 +1,6 @@
-'From Cuis 4.1 of 12 December 2012 [latest update: #1752] on 14 July 2013 at 5:11:16.384964 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:41:06.084223 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 0!
+!provides: 'LinearAlgebra' 1 1!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -1059,15 +1059,14 @@ preMultiplyByGivensRotationRowI: i rowK: k titaCosine: c titaSine: s
 		self i: i j: j put: c*elemI - (s*elemK).
 		self i: k j: j put: s*elemI + (c*elemK) ].! !
 
-!FloatMatrix methodsFor: 'printing' stamp: 'jmv 8/27/2012 18:31'!
+!FloatMatrix methodsFor: 'printing' stamp: 'jmv 1/9/2014 21:28'!
 printOn: aStream
 	aStream newLine.
 	1 to: height do: [ :i |
 		aStream nextPutAll: '| '.
 		1 to: width do: [ :j |
-			aStream nextPutAll: ((self i: i j: j) printPaddedLeft: 1 decimalPlaces: 3).
-			"aStream print: ((self i: i j: j) roundTo: 0.001)."
-			aStream nextPut: $  ].
+			(self i: i j: j) printOn: aStream integerDigits: 1 fractionDigits: 3.
+			aStream space ].
 		aStream nextPut: $|; newLine ]! !
 
 !FloatMatrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:19'!

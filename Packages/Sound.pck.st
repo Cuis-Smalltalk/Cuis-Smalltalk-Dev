@@ -1,7 +1,7 @@
-'From Cuis 4.1 of 12 December 2012 [latest update: #1752] on 14 July 2013 at 5:17:01.740841 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:41:10.363571 am'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 0!
-!requires: 'Compression' 1 nil!
+!provides: 'Sound' 1 1!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
 	instanceVariableNames: 'in fileType channelCount frameCount bitsPerSample samplingRate channelData channelDataOffset markers pitch gain isLooped skipDataChunk mergeIfStereo'
@@ -3051,32 +3051,6 @@ dur: d
 	"Return a rest of the given duration."
 
 	^ self basicNew setDur: d
-! !
-
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 9/24/2012 19:42'!
-fileInSoundLibrary
-	"Prompt the user for a file name and the file in the sound library with that name."
-	"AbstractSound fileInSoundLibrary"
-
-	| fileName |
-	fileName _ FillInTheBlankMorph request: 'Sound library file name?'.
-	fileName isEmptyOrNil ifTrue: [^ self].
-	(fileName endsWith: '.sounds') ifFalse: [fileName _ fileName, '.sounds'].
-	self fileInSoundLibraryNamed: fileName.
-! !
-
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 2/6/2010 20:25'!
-fileInSoundLibraryNamed: fileName
-	"File in the sound library with the given file name, and add its contents to the current sound library."
-
-	| s newSounds |
-	s _ FileStream oldFileNamed: fileName.
-	newSounds _ [ s fileInObjectAndCode ]
-		ensure: [ s close ].
-	newSounds associationsDo: [ :assoc | 
-		self storeFiledInSound: assoc value named: assoc key].
-	AbstractSound updateScorePlayers.
-	Smalltalk garbageCollect.  "Large objects may have been released"
 ! !
 
 !AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 8/19/1998 12:42'!

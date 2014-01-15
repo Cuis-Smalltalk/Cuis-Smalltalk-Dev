@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:48.519003 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:40:59.193055001 am'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 4!
+!provides: 'FFI' 1 5!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -620,11 +620,11 @@ isNull
 	1 to: self size do:[:i| (self at: i) = 0 ifFalse:[^false]].
 	^true! !
 
-!ExternalAddress methodsFor: 'printing' stamp: 'laza 3/29/2004 18:33'!
+!ExternalAddress methodsFor: 'printing' stamp: 'jmv 1/9/2014 21:37'!
 printOn: aStream
 	"print this as a hex address ('@ 16rFFFFFFFF') to distinguish it from ByteArrays"
 
-	aStream nextPutAll: '@ '; nextPutAll: (self asInteger storeStringBase: 16 length: 11 padded: true)! !
+	aStream nextPutAll: '@ '; nextPutAll: self asInteger hex8! !
 
 !ExternalAddress methodsFor: 'copying' stamp: 'ar 5/23/2006 13:09'!
 shallowCopy
@@ -1894,6 +1894,6 @@ void
 FFIConstants initialize!
 ExternalObject initialize!
 ExternalFunction initialize!
+ExternalStructure initialize!
 ExternalData initialize!
 ExternalType initialize!
-ExternalStructure initialize!

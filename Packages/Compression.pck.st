@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:54.108212 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:40:53.520013 am'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 1!
+!provides: 'Compression' 1 2!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -399,7 +399,7 @@ serviceBrowseMCZCode
 			argumentGetter: [ :fileList |
 				fileList readOnlyStream ]! !
 
-!ChangeList class methodsFor: '*Compression' stamp: 'jmv 7/4/2013 22:25'!
+!ChangeList class methodsFor: '*Compression' stamp: 'jmv 1/9/2014 23:31'!
 browseMCZContents: aStream
 	"Browse the selected file."
 	|  unzipped changeList fullName packageFile pkName |
@@ -425,7 +425,7 @@ browseMCZContents: aStream
 	packageFile methodsToRemove do: [ :methodReference |
 		changeList
 			addItem: (MethodDeletionChangeRecord new methodReference: methodReference)
-			text: 'method no longer in package: ', methodReference asStringOrText ].
+			text: 'method no longer in package: ', methodReference stringVersion ].
 	packageFile classesToRemove do: [ :clsName |
 		changeList
 			addItem: (ClassDeletionChangeRecord new clsName: clsName)
@@ -4286,7 +4286,7 @@ maxDistanceCodes
 maxLiteralCodes
 	^MaxLiteralCodes! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 3/13/2012 15:34'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 1/9/2014 23:32'!
 printRegressionStats: stats from: fd
 	| raw compressed numFiles |
 	raw _ stats at: #rawSize ifAbsent:[0].
@@ -4294,8 +4294,8 @@ printRegressionStats: stats from: fd
 	compressed _ stats at: #compressedSize ifAbsent:[0].
 	numFiles _ stats at: #numFiles ifAbsent:[0].
 	Transcript newLine; nextPutAll: fd pathName.
-	Transcript newLine; tab; nextPutAll:'Files compressed: ', numFiles asStringWithCommas.
-	Transcript newLine; tab; nextPutAll:'Bytes compressed: ', raw asStringWithCommas.
+	Transcript newLine; tab; nextPutAll:'Files compressed: ', numFiles printStringWithCommas.
+	Transcript newLine; tab; nextPutAll:'Bytes compressed: ', raw printStringWithCommas.
 	Transcript newLine; tab; nextPutAll:'Avg. compression ratio: ';
 		print: ((compressed / raw asFloat * 100.0) truncateTo: 0.01).
 	Transcript endEntry.! !
