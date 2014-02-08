@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:40:59.193055001 am'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 5!
+!provides: 'FFI' 1 6!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -1894,6 +1894,6 @@ void
 FFIConstants initialize!
 ExternalObject initialize!
 ExternalFunction initialize!
-ExternalStructure initialize!
 ExternalData initialize!
 ExternalType initialize!
+ExternalStructure initialize!

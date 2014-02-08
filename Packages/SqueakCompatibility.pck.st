@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1885] on 18 December 2013 at 1:05:37.558007 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1918] on 2 January 2014 at 7:11:52.733 pm'!
 'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 3!
+!provides: 'SqueakCompatibility' 1 5!
 !classDefinition: #Model category: #SqueakCompatibility!
 ActiveModel subclass: #Model
 	instanceVariableNames: ''
@@ -9,6 +9,16 @@ ActiveModel subclass: #Model
 	category: 'SqueakCompatibility'!
 !classDefinition: 'Model class' category: #SqueakCompatibility!
 Model class
+	instanceVariableNames: ''!
+
+!classDefinition: #TimeStamp category: #SqueakCompatibility!
+DateAndTime subclass: #TimeStamp
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TimeStamp class' category: #SqueakCompatibility!
+TimeStamp class
 	instanceVariableNames: ''!
 
 
@@ -32,11 +42,7 @@ crlf
 lf
 	^self lfString! !
 
-!StandardFileStream methodsFor: '*squeakCompatibility' stamp: 'jmv 12/18/2013 00:03'!
-fileID
-	^fileID! !
-
 !UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 12/18/2013 00:02'!
-ifNotNilDo:  ifNotNilBlock
+ifNotNilDo: ifNotNilBlock
 	"Compatibility. Prefer #ifNotNil:"
 	^self ifNotNil: ifNotNilBlock! !

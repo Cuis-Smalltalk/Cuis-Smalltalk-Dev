@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:29.802939 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1962] on 7 February 2014 at 9:01:58.253073 pm'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 2!
+!provides: 'YAXO' 1 3!
 !requires: 'Network-Kernel' 1 nil nil!
 !classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
@@ -531,10 +531,6 @@ startPrefixMapping: prefix uri: uri
 !SAXHandler methodsFor: 'accessing' stamp: 'mir 6/5/2003 19:28'!
 useNamespaces: aBoolean
 	self driver useNamespaces: aBoolean! !
-
-!SAXHandler class methodsFor: 'instance creation' stamp: 'mir 8/14/2000 18:29'!
-new
-	^super new initialize! !
 
 !SAXHandler class methodsFor: 'instance creation' stamp: 'sd 5/23/2003 15:19'!
 on: aStream
@@ -2293,10 +2289,6 @@ initialize
 isCharEscape: aChar
 	^CharEscapes includes: aChar! !
 
-!XMLTokenizer class methodsFor: 'instance creation' stamp: 'mir 8/2/2000 19:25'!
-new
-	^super new initialize! !
-
 !XMLTokenizer class methodsFor: 'instance creation' stamp: 'mir 11/16/2000 07:58'!
 on: aStream
 	^self new parseStream: aStream! !
@@ -2795,9 +2787,9 @@ initialize
 	XMLTranslation keysDo:[:ch| XMLTranslationMap at: ch asciiValue+1 put: 1].
 ! !
 
-!XMLWriter class methodsFor: 'instance creation' stamp: 'mir 12/8/2000 17:54'!
+!XMLWriter class methodsFor: 'instance creation' stamp: 'jmv 2/2/2014 00:42'!
 on: aStream
-	^self basicNew initialize stream: aStream! !
+	^self new stream: aStream! !
 DTDEntityDeclaration initialize!
 DTDExternalEntityDeclaration initialize!
 DTDParameterEntityDeclaration initialize!
