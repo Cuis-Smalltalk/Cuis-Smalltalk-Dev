@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1855] on 25 October 2013 at 5:50:04.671796 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1969] on 26 February 2014 at 8:00:26.235062 pm'!
 'Description Please enter a description for this package '!
-!provides: 'SignalProcessing' 1 1!
+!provides: 'SignalProcessing' 1 2!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
@@ -51,6 +51,16 @@ Object subclass: #FloatImage
 	category: 'SignalProcessing-Images'!
 !classDefinition: 'FloatImage class' category: #'SignalProcessing-Images'!
 FloatImage class
+	instanceVariableNames: ''!
+
+!classDefinition: #IrregularSampledImage category: #'SignalProcessing-Images'!
+FloatImage subclass: #IrregularSampledImage
+	instanceVariableNames: 'closestKnownX closestKnownY possibleTriPoints'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SignalProcessing-Images'!
+!classDefinition: 'IrregularSampledImage class' category: #'SignalProcessing-Images'!
+IrregularSampledImage class
 	instanceVariableNames: ''!
 
 !classDefinition: #GeneralizedInterpolatingImage category: #'SignalProcessing-Images'!
@@ -173,6 +183,11 @@ The following changes from cody's listings should also be noted...
 
 !FloatImage commentStamp: '<historical>' prior: 0!
 My instances are 1-band images suitable for Image Processing algorithms. Pixel values are 32-bit Float.!
+
+!IrregularSampledImage commentStamp: '<historical>' prior: 0!
+Some real, known, pixels are added one by one (pixel position is usually random). At any point, all the other pixels can quickly be interpolated.
+Allows for progressive reconstruction, with higher quality, as new data is available.
+Can compute Digital Voronoi diagrams and Digital Delaunay Triangulation.!
 
 !GeneralizedInterpolatingImage commentStamp: '<historical>' prior: 0!
 A kind of FloatImage that can interpolate values at any Float position (inside its bounds). Allows for "Generalized Interpolation" as described in:
@@ -1575,6 +1590,13 @@ bSplineTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 				scaled x: x y: y put: v ]]].
 	^scaled! !
 
+!FloatImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:47'!
+basicX: x y: y put: aNumber
+	"Set the pixel at coordinates x@y.
+	x and y are integers in [1 .. width] and [1 .. height]"
+
+	^values at:  y-1 * width + x put: aNumber! !
+
 !FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 12/12/2012 16:00'!
 beMagnitudeOfComplexesWith: imaginary
 	"Warning. Modifies self to store result. In the process, modifies the argument."
@@ -2280,6 +2302,127 @@ oldx: x y: y lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore:
 	
 	^sum! !
 
+!FloatImage methodsFor: 'iterating' stamp: 'jmv 2/18/2014 10:09'!
+pixelsAtChebyshevDistance: distance ofX: baseX y: baseY do: aBlock
+	"Iterate thos pixels that are, based on (x@y), at the required Chebysev distance.
+	See http://en.wikipedia.org/wiki/Chebyshev_distance
+	aBlock has 3 arguments: :x :y :i , where i is the index to use to access values and the other array ivars
+	"
+	"
+	Testing code. The example is the one from wikipedia. Should give answer shown below.
+	| image |
+	image _ FloatImage width: 8 height: 8.
+	1 to: 12 do: [ :d |
+		image
+			pixelsAtChebyshevDistance: d ofX: 6 y: 3 do: [ :x :y : i |
+				(image x: x y: y) = 0 ifFalse: [ self error: 'two writes at same position!!!!!!!!!!' ].
+				image x: x y: y put: d ]].
+	image asFloatMatrix print
+
+| 5.000 4.000 3.000 2.000 2.000 2.000 2.000 2.000 |
+| 5.000 4.000 3.000 2.000 1.000 1.000 1.000 2.000 |
+| 5.000 4.000 3.000 2.000 1.000 0.000 1.000 2.000 |
+| 5.000 4.000 3.000 2.000 1.000 1.000 1.000 2.000 |
+| 5.000 4.000 3.000 2.000 2.000 2.000 2.000 2.000 |
+| 5.000 4.000 3.000 3.000 3.000 3.000 3.000 3.000 |
+| 5.000 4.000 4.000 4.000 4.000 4.000 4.000 4.000 |
+| 5.000 5.000 5.000 5.000 5.000 5.000 5.000 5.000 |
+	"
+	0 to: 3 do: [ :quadrant |
+		self pixelsAtChebyshevDistance: distance ofX: baseX y: baseY inQuadrant: quadrant do: aBlock ]! !
+
+!FloatImage methodsFor: 'iterating' stamp: 'jmv 2/18/2014 10:04'!
+pixelsAtChebyshevDistance: distance ofX: baseX y: baseY inQuadrant: quadrantIndex do: aBlock
+	"Iterate thos pixels that are, based on (x@y), at the required Chebysev distance and in the required quadrant.
+	See http://en.wikipedia.org/wiki/Chebyshev_distance
+	quadrantIndex is:
+		0: NE or NorthEast. UpOrEq and rightOrEq of (x@y). This is { (x1@y1) / x1 >= x and y1 <= y }
+		1: NW or NorthWest. UpOrEq and left of (x@y). This is { (x1@y1) / x1 < x and y1 <= y }
+		2: SW or SouthWest. Down and left of (x@y). This is { (x1@y1) / x1 < x and y1 > y }
+		3: SE or ShouthEast. Up and rightOrEq of (x@y). This is { (x1@y1) / x1 >= x and y1 > y }
+	So, NE includes row y and column x. NW does include row y but not column x.
+	SW includes neither row y nor column x. SE includes column x, but not row y.
+	aBlock has 3 arguments: :x :y :i , where i is the index to use to access values and the other array ivars
+	"
+	"
+	Testing code. The example is the one from wikipedia. Should give answer shown below.
+	| image |
+	image _ IrregularSampledImage width: 8 height: 8.
+	1 to: 12 do: [ :d |
+		0 to: 3 do: [ :q |
+			image
+				pixelsAtChebyshevDistance: d
+				ofX: 6 y: 3 inQuadrant: q
+				do: [ :x :y : i |
+					(image x: x y: y) = 0 ifFalse: [ self error: 'two writes at same position!!!!!!!!!!' ].
+					image x: x y: y put: d ]]].
+	image asFloatMatrix print
+
+| 5.000 4.000 3.000 2.000 2.000 2.000 2.000 2.000 |
+| 5.000 4.000 3.000 2.000 1.000 1.000 1.000 2.000 |
+| 5.000 4.000 3.000 2.000 1.000 0.000 1.000 2.000 |
+| 5.000 4.000 3.000 2.000 1.000 1.000 1.000 2.000 |
+| 5.000 4.000 3.000 2.000 2.000 2.000 2.000 2.000 |
+| 5.000 4.000 3.000 3.000 3.000 3.000 3.000 3.000 |
+| 5.000 4.000 4.000 4.000 4.000 4.000 4.000 4.000 |
+| 5.000 5.000 5.000 5.000 5.000 5.000 5.000 5.000 |
+	"
+	| byX byY firstX firstY lastX lastY i |
+	(quadrantIndex = 0 or: [ quadrantIndex = 1 ]) ifTrue: [
+		firstY _ baseY.
+		byY _ -1 ]
+	ifFalse: [
+		firstY _ baseY + 1.
+		byY _ 1 ].
+	(quadrantIndex = 0 or: [ quadrantIndex = 3 ]) ifTrue: [
+		firstX _ baseX.
+		byX _ 1 ]
+	ifFalse: [
+		firstX _ baseX-1.
+		byX _ -1 ].
+	lastX _ distance * byX + baseX.
+	lastY _ distance * byY + baseY.
+	(lastY between: 1 and: height) ifTrue: [
+		firstX to: (lastX min: width max: 1) by: byX do: [ :x |
+			i _ lastY-1 * width + x.
+			aBlock value: x value: lastY value: i ]].
+	(lastX between: 1 and: width) ifTrue: [
+		(lastY-byY min: height max: 1) to: firstY by: byY negated do: [ :y |
+			i _ y-1 * width + lastX.
+			aBlock value: lastX value: y value: i ]]! !
+
+!FloatImage methodsFor: 'iterating' stamp: 'jmv 2/18/2014 11:50'!
+pixelsCloserThanOrAtChebyshevDistance: distance ofX: baseX y: baseY do: aBlock
+	"Iterate thos pixels that are, based on (x@y), at the required Chebysev distance.
+	See http://en.wikipedia.org/wiki/Chebyshev_distance
+	aBlock has 3 arguments: :x :y :i , where i is the index to use to access values and the other array ivars
+	"
+	"
+	Testing code. The example is the one from wikipedia. Should give answer shown below.
+	| image |
+	image _ FloatImage width: 8 height: 8.
+	{4. 2} do: [ :d |
+		image
+			pixelsCloserThanChebyshevDistance: d ofX: 6 y: 3 do: [ :x :y : i |
+				image x: x y: y put: d ]].
+	image asFloatMatrix print
+
+| 0.000 4.000 4.000 2.000 2.000 2.000 2.000 2.000 |
+| 0.000 4.000 4.000 2.000 2.000 2.000 2.000 2.000 |
+| 0.000 4.000 4.000 2.000 2.000 2.000 2.000 2.000 |
+| 0.000 4.000 4.000 2.000 2.000 2.000 2.000 2.000 |
+| 0.000 4.000 4.000 2.000 2.000 2.000 2.000 2.000 |
+| 0.000 4.000 4.000 4.000 4.000 4.000 4.000 4.000 |
+| 0.000 4.000 4.000 4.000 4.000 4.000 4.000 4.000 |
+| 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 |
+	"
+
+	| i |
+	(baseY - distance max: 1) to: (baseY + distance min: height) do: [ :y |
+		(baseX - distance max: 1) to: (baseX + distance min: width) do: [ :x|
+			i _ y-1 * width + x.
+			aBlock value: x value: y value: i ]]! !
+
 !FloatImage methodsFor: 'copying' stamp: 'jmv 7/26/2012 22:20'!
 postCopy
 
@@ -2570,12 +2713,12 @@ x: x y: y lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yF
 			sum _ (self x: xxx y: yyy) * (xFilter at: xxx+xFilterOffset) * (yFilter at: yyy+yFilterOffset) + sum ]].
 	^sum! !
 
-!FloatImage methodsFor: 'accessing' stamp: 'jmv 8/15/2012 11:11'!
+!FloatImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:47'!
 x: x y: y put: aNumber
-	"Answer the pixel at coordinates x@y.
+	"Set the pixel at coordinates x@y.
 	x and y are integers in [1 .. width] and [1 .. height]"
 
-	^values at:  y-1 * width + x put: aNumber! !
+	^self basicX: x y: y put: aNumber! !
 
 !FloatImage methodsFor: 'accessing' stamp: 'jmv 11/30/2012 10:35'!
 xyForMax
@@ -4213,6 +4356,272 @@ testRotations
 !FloatImage class methodsFor: 'instance creation' stamp: 'jmv 7/26/2012 22:16'!
 width: w height: h
 	^self basicNew width: w height: h; yourself! !
+
+!IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:37'!
+addVoronoiCellX: seedX y: seedY
+	"Add a new Voronoi cell to the diagram
+	x and y are integers in [1 .. width] and [1 .. height]"
+	"Builds a Digital Voronoi diagram (digital because it is pixel based, i.e. discrete).
+	The Voronoi diagram might not be perfect. No 'debris' points are added (see http://pub.ist.ac.at/~edels/Papers/2010-R-07-DigitalDelaunay2D.pdf )"
+
+	| i chebyshevDist continue thisPoint oldCellSeed newCellSeed |
+	"Add the new cell seed"
+	i _ seedY-1 * width + seedX.
+	closestKnownX at: i put: seedX.
+	closestKnownY at: i put: seedY.
+
+	"Update Voronoi diagram."
+	newCellSeed _ seedX@seedY.
+	chebyshevDist _ 0.
+	continue _ true.
+	[ continue ] whileTrue: [
+		continue _ false.
+		chebyshevDist _ chebyshevDist + 1.
+		self pixelsAtChebyshevDistance: chebyshevDist ofX: seedX y: seedY do: [ :xx :yy :index |
+			thisPoint _ xx@yy.
+			oldCellSeed _ (closestKnownX at: index)@(closestKnownY at: index).
+			((closestKnownX at: index) = 0 or: [ (thisPoint squaredDistanceTo: newCellSeed) < (thisPoint squaredDistanceTo: oldCellSeed) ]) ifTrue: [
+				continue _ true.
+				closestKnownX at: index put: seedX.
+				closestKnownY at: index put: seedY ]]]! !
+
+!IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:21'!
+clean
+	"Zero values for all pixels except the seeds of the Voronoi cells"
+	| i |
+	1 to: height do: [ :yy |
+		1 to: width do: [ :xx |
+			i _ yy-1 * width + xx.
+			((closestKnownX at: i) = xx and: [ (closestKnownY at: i) = yy ]) ifFalse: [
+				values at: i put: 0 ]]]! !
+
+!IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:24'!
+delaunayTrianglesDo: aBlock
+	"We already have a Voronoi diagram. Based on it, iterate over the Delaunay triangulation.
+	To do this, iterate over all pixels, and for the points where 3 (or 4) Voronoi cells meet, we have one (or 2) Delaunay triangles."
+	"see http://pub.ist.ac.at/~edels/Papers/2010-R-07-DigitalDelaunay2D.pdf "
+
+	| cornerCount vertices pp p1 p2 p3 p4 |
+	vertices _ Array new: 4.
+	1 to: height do: [ :yy | 1 to: width do: [ :xx |
+		pp _ xx@yy.
+		cornerCount _ self voronoiCellsFor: pp on: vertices.
+		cornerCount = 3 ifTrue: [
+			p1 _ vertices first.
+			p2 _ vertices second.
+			p3 _ vertices third.
+			aBlock value: p1 value: p2 value: p3 ].
+		cornerCount = 4 ifTrue: [
+			p1 _ vertices first.
+			p2 _ vertices second.
+			p3 _ vertices third.
+			p4 _ vertices fourth.
+			(p1 squaredDistanceTo: p3) < (p2 squaredDistanceTo: p4) ifTrue: [
+				aBlock value: p1 value: p3 value: p2.
+				aBlock value: p1 value: p3 value: p4 ]
+			ifFalse: [
+				aBlock value: p2 value: p4 value: p1.
+				aBlock value: p2 value: p4 value: p3 ]]]]! !
+
+!IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:57'!
+interpolateBarycentric
+	"Do a barycentric interpolation in each Delanuay triangle"
+	| v x0 x1 y0 y1 v1 v2 v3 |
+	self delaunayTrianglesDo:  [ :p1 :p2 :p3 |
+		v1 _ self x: p1 x y: p1 y.
+		v2 _ self x: p2 x y: p2 y.
+		v3 _ self x: p3 x y: p3 y.
+		y0 _ (p1 y min: p2 y) min: p3 y.
+		y1 _ (p1 y max: p2 y) max: p3 y.
+		x0 _ (p1 x min: p2 x) min: p3 x.
+		x1 _ (p1 x max: p2 x) max: p3 x.
+		y0 to: y1 do: [ :y |
+			x0 to: x1 do: [ :x |
+				x@y barycentricCoordinatesInTriangle: p1 with: p2 with: p3 into: [ :b1 :b2 :b3 |
+					(b1 >= 0 and: [ b2 >= 0 and: [ b3 >= 0 ]]) ifTrue: [
+						v _ (v1 * b1) + (v2 * b2) + (v3 * b3).
+						self basicX: x y: y put: v ]]
+				 ifDegenerate: []]]]! !
+
+!IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 11:18'!
+interpolateBarycentricInLinearGammaSpace
+	"Do a barycentric interpolation in each Delanuay triangle"
+	| v x0 x1 y0 y1 v1 v2 v3 |
+	self delaunayTrianglesDo:  [ :p1 :p2 :p3 |
+		v1 _ self x: p1 x y: p1 y.
+		v2 _ self x: p2 x y: p2 y.
+		v3 _ self x: p3 x y: p3 y.
+		v1 _ v1 raisedTo: 2.2.
+		v2 _ v2 raisedTo: 2.2.
+		v3 _ v3 raisedTo: 2.2.
+		y0 _ (p1 y min: p2 y) min: p3 y.
+		y1 _ (p1 y max: p2 y) max: p3 y.
+		x0 _ (p1 x min: p2 x) min: p3 x.
+		x1 _ (p1 x max: p2 x) max: p3 x.
+		y0 to: y1 do: [ :y |
+			x0 to: x1 do: [ :x |
+				x@y barycentricCoordinatesInTriangle: p1 with: p2 with: p3 into: [ :b1 :b2 :b3 |
+					(b1 >= 0 and: [ b2 >= 0 and: [ b3 >= 0 ]]) ifTrue: [
+						v _ (v1 * b1) + (v2 * b2) + (v3 * b3).
+						v _ v raisedTo: 1/2.2.
+						self basicX: x y: y put: v ]]
+				 ifDegenerate: []]]]! !
+
+!IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 11:04'!
+interpolateNearestNeighbor
+	"Simply fill each pixel with the value of the seed of its Voronoi cell.
+	This is what most people expect as a Voronoi diagram"
+
+	| seed |
+	1 to: height do: [ :y |
+		1 to: width do: [ :x |
+			seed _ self voronoiCellSeedFor: x@y.
+			self basicX: x y: y  put: (self x: seed x y: seed y) ]]! !
+
+!IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/18/2014 15:34'!
+voronoiCellSeedFor: aPoint
+	"Answer the point that is the seed for the cell we lie in"
+
+	| i |
+	i _ aPoint y-1 * width + aPoint x.
+	^(closestKnownX at: i) @ (closestKnownY at: i)! !
+
+!IrregularSampledImage methodsFor: 'testing' stamp: 'jmv 2/25/2014 11:00'!
+voronoiCellsFor: aPoint on: anArray
+	"Find the voronoi cells for aPoint together with its right, rightDown and down neighbors.
+	Store them in anArray, and answer how many were found.
+	Don't care about points that lie in a border of the image."
+
+	| cell1 cell2 cell3 cell4 count |
+	cell1 _ self voronoiCellSeedFor: aPoint.
+	count _ 1.
+	anArray at: count put: cell1.
+
+	(aPoint between: 1@1 and: width@height -1) ifTrue: [
+
+		cell2 _ self voronoiCellSeedFor: aPoint + (1@0).
+		cell2 ~= cell1 ifTrue: [
+			count _ count + 1.
+			anArray at: count put: cell2 ].
+	
+		cell3 _ self voronoiCellSeedFor: aPoint + (1@1).
+		(cell3 ~= cell1 and: [ cell3 ~= cell2 ]) ifTrue: [
+			count _ count + 1.
+			anArray at: count put: cell3 ].
+	
+		cell4 _ self voronoiCellSeedFor: aPoint + (0@1).
+		(cell4 ~= cell1 and: [ cell4 ~= cell2 and: [ cell4 ~= cell3 ]]) ifTrue: [
+			count _ count + 1.
+			anArray at: count put: cell4 ].
+		
+		"Region necks are not valid Voronoi vertexes
+		(see http://pub.ist.ac.at/~edels/Papers/2010-R-07-DigitalDelaunay2D.pdf )"
+		(cell1 = cell3 or: [ cell2 = cell4 ]) ifTrue: [
+			count _ 0 ].
+	].
+
+	^count! !
+
+!IrregularSampledImage methodsFor: 'initialization' stamp: 'jmv 2/18/2014 15:34'!
+width: w height: h
+
+	| s |
+	super width: w height: h.
+	s _ width * height roundUpTo: 2.
+	closestKnownX _ ShortIntegerArray new: s.
+	closestKnownY _ ShortIntegerArray new: s.
+	possibleTriPoints _ OrderedCollection new! !
+
+!IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:47'!
+x: x y: y put: aNumber
+	"Set the pixel at coordinates x@y.
+	x and y are integers in [1 .. width] and [1 .. height]"
+	"Builds a Digital Voronoi diagram (digital because it is pixel based, i.e. discrete).
+	Answer the last Chebisev distance evaluated. This is (at least) one pixel bigger that the new Voronoi cell.
+	The Voronoi diagram might not be perfect. No 'debris' points are added (see http://pub.ist.ac.at/~edels/Papers/2010-R-07-DigitalDelaunay2D.pdf )"
+
+	self basicX: x y: y put: aNumber.
+
+	"Update Voronoi diagram."
+	self addVoronoiCellX: x y: y! !
+
+!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 2/25/2014 12:52'!
+test1
+	"
+	[ IrregularSampledImage test1 ] forkAt: 30
+	"
+	| h original r rebuilt w x y |
+	original _ Form fromFileNamed: '2013-06-15 19.44.04gray.jpg'.
+	original _ FloatImage from32BitColorForm: original component: #green.
+	original _ original scaledBy: 0.5.
+	w _ original width.
+	h _ original height.
+	rebuilt _ IrregularSampledImage width: w height: h.
+	r _ Random new.
+	r seed: 0.5.
+	0 to: w*h// 4 do: [ :i |
+		x _ r nextInt: w.
+		y _ r nextInt: h.
+		rebuilt x: x y: y put: (original x: x y: y).
+		i \\ 100 = 0 ifTrue: [
+			i print.
+			rebuilt
+				clean; displayAt: 0 @ 0;
+				interpolateNearestNeighbor; displayAt: w @ 0;
+				clean; interpolateBarycentric; displayAt: w*2 @ 0;
+				clean; interpolateBarycentricInLinearGammaSpace; displayAt: w*3 @ 0.
+			Processor yield ]]! !
+
+!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 2/25/2014 11:56'!
+test2
+	"
+	[ IrregularSampledImage test2 ] forkAt: 30
+	"
+	| h original r rebuilt w x y |
+	original _ Form fromFileNamed: '2013-06-15 19.44.04gray.jpg'.
+	original _ FloatImage from32BitColorForm: original component: #green.
+	original _ original scaledBy: 0.5.
+	w _ original width.
+	h _ original height.
+	rebuilt _ IrregularSampledImage width: w height: h.
+	r _ Random new.
+	r seed: 0.5.
+	0 to: 100 do: [ :i |
+		x _ r nextInt: w-24.
+		y _ r nextInt: h-16.
+		0 to: 24 by:4 do: [ :xx |
+			0 to: 16 by: 4 do: [ :yy |
+				rebuilt x: x+xx y:y+ yy put: (original x: x+xx y: y+yy) ]].
+		i \\ 1 = 0 ifTrue: [
+			i print.
+			rebuilt
+				clean; displayAt: 0 @ 0;
+				interpolateNearestNeighbor; displayAt: w @ 0;
+				clean; interpolateBarycentric; displayAt: w*2 @ 0;
+				clean; interpolateBarycentricInLinearGammaSpace; displayAt: w*3 @ 0 ]]! !
+
+!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 2/25/2014 12:53'!
+test3
+	"
+	[ IrregularSampledImage test3 ] forkAt: 30
+	"
+	| h original rebuilt w ss |
+	ss _ 2.
+	original _ Form fromFileNamed: '2013-06-15 19.44.04gray.jpg'.
+	original _ FloatImage from32BitColorForm: original component: #green.
+	original _ original scaledBy: 0.5.
+	w _ original width.
+	h _ original height.
+	rebuilt _ IrregularSampledImage width: w height: h.
+	1 to: h by: ss do: [ :y |
+		1 to: w by: ss do: [ :x |
+			rebuilt x: x y: y put: (original x: x y: y) ].
+		rebuilt
+			clean; displayAt: 0 @ h;
+			interpolateNearestNeighbor; displayAt: w @ h;
+			clean; interpolateBarycentric; displayAt: w*2 @ h;
+			clean; interpolateBarycentricInLinearGammaSpace; displayAt: w*3 @ h.
+		Processor yield ]! !
 
 !BSplineInterpolatingImage methodsFor: 'private' stamp: 'jmv 8/13/2012 17:00'!
 coefficientAtX: x y: y
