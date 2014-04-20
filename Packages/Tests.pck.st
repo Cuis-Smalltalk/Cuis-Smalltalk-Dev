@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:41:16.648002 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1978] on 19 April 2014 at 7:36:29.487205 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 7!
+!provides: 'Tests' 1 8!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -300,6 +300,16 @@ TestCase subclass: #NumberTest
 	category: 'Tests-Kernel-Numbers'!
 !classDefinition: 'NumberTest class' category: #'Tests-Kernel-Numbers'!
 NumberTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrettyPrintingTest category: #'Tests-Compiler'!
+TestCase subclass: #PrettyPrintingTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Compiler'!
+!classDefinition: 'PrettyPrintingTest class' category: #'Tests-Compiler'!
+PrettyPrintingTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ProcessTerminateBug category: #'Tests-Exceptions'!
@@ -6533,6 +6543,138 @@ testReciprocal
 		assert: -3 reciprocal = (-1/3).
 		
 	self should: [ 0 reciprocal ] raise: ZeroDivide! !
+
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:39'!
+test1
+	"
+	self new test1
+	"
+	| prettyPrinted source |
+
+	source _ 
+'sample1: x
+	x with: [
+		self print.
+		self print ].'.
+
+	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+
+	self assert: source equals: prettyPrinted! !
+
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:39'!
+test2
+	"
+	self new test2
+	"
+	| prettyPrinted source |
+
+	source _ 
+'sample2: x
+	x
+		print;
+		with: [ :a :b :c | | d e f |
+			self print.
+			self print.
+			self do: [ :each |
+				self print.
+				self print.
+				x size + each size ]].'.
+
+	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+
+	self assert: source equals: prettyPrinted! !
+
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:40'!
+test3
+	"
+	self new test3
+	"
+	| prettyPrinted source |
+
+	source _ 
+'sample3: x
+	x
+		print;
+		with: [ :a :b :c |
+			self print.
+			self print.
+			self do: [ :each |
+				self print.
+				self print.
+				x size + each size ]].'.
+
+	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+
+	self assert: source equals: prettyPrinted! !
+
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:40'!
+test4
+	"
+	self new test4
+	"
+	| prettyPrinted source |
+
+	source _ 
+'sample4: x
+	x
+		print;
+		with: [ | d e f |
+			self print.
+			self print.
+			self do: [ :each |
+				self print.
+				self print.
+				x size + each size ]].'.
+
+	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+
+	self assert: source equals: prettyPrinted! !
+
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:41'!
+test5
+	"
+	self new test5
+	"
+	| prettyPrinted source |
+
+	source _ 
+'sample5: x
+	x
+		print;
+		print;
+		print;
+		
+			with: [
+				self print.
+				self print ]
+			do: [
+				self print.
+				self print ].'.
+
+	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+
+	self assert: source equals: prettyPrinted! !
+
+!PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:40'!
+test6
+	"
+	self new test6
+	"
+	| prettyPrinted source |
+
+	source _ 
+'sample6: x
+	x
+		with: [
+			self print.
+			self print ]
+		do: [
+			self print.
+			self print ].'.
+
+	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
+
+	self assert: source equals: prettyPrinted! !
 
 !ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:15'!
 testSchedulerTermination
