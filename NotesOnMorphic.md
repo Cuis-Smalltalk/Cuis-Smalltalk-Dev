@@ -1,3 +1,5 @@
+Notes on Morphic
+================
 
 Part of the Cuis development is the move to a new version of Morphic called *Morphic3*.
 
@@ -10,6 +12,7 @@ Scalable graphics instead of bitmapped graphics
 Morphic3 will have scalable graphics.
 
 To achieve this the follwoing changes have been made
+
 1. Integer coordinates of Squeak have been changed into float coordinates.
 2. Morphs be positioned relative to their container, rather than a single, global screen position (absolute positioning).
    
@@ -23,7 +26,7 @@ A **Cuis Morph** has
 
 This means that the origin of its rectangle is always 0@0.
 
-You can see this in the difference in #drawOn: Squeak and CUIS.
+You can see this in the difference in #drawOn: Squeak and **Cuis**.
 
 
            [Squeak]Morph>>drawOn: aCanvas
