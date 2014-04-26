@@ -59,6 +59,11 @@ coglinux/bin/squeak MyProject.image
 
 Disclaimer: It should work on OS X and Unix. However, it is only tested on OS X and Ubuntu 12.04. Please test on other platforms and let us know the results. Feel free to send pull requests!
 
+
+
+### Towards Morphic 3
+In Cuis work is on the way to restructure and upgrade the Morphic classes. For more see [Notes on Morphic](NotesOnMorphic.md).
+
 ### Contributing to Cuis ###
 Cuis is maintained on https://github.com/Cuis-Smalltalk.
 
