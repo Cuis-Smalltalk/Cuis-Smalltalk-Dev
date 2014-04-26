@@ -54,3 +54,31 @@ Squeak Morphs look slimmer in terms of number of variables, but a Squeak morph t
 a MorphExtension instance -- which is not slim at all.
 
 Cuis Morphs just use properties where needed.
+
+
+Classes Rectangle and RectangleLikeMorph
+----------------------------------------
+
+
+
+**Rectangle** in *Cuis*:
+
+    Object subclass: #Rectangle
+    
+"I represent a rectangular area of the screen. Arithmetic functions take points as arguments 
+      and carry out scaling and translating operations to create new instances of me. Rectangle functions create new instances by determining intersections of rectangles with rectangles.
+Note that only rectangles parallel to reference frame (Screen) can be represented by this class."
+
+
+**RectangleLikeMorph** in *Cuis*:
+
+      Morph subclass: #RectangleLikeMorph
+    
+"Hierarchy for morphs that are rectangle like. Including rectangles with rounded corners and such. The idea is that the 'extent' ivar is all that's needed to establish our dimensions and shape. Subclasses can add things like 'roundedCornerRadious' or such."
+
+
+**Conclusion**
+
+- A Cuis Rectangle is very much like Squeak Rectangle. 
+- A Cuis RectangleLikeMorph is not too unlike Squeak RectangleMorph.
+
