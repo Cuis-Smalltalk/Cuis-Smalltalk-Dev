@@ -11,7 +11,7 @@ Scalable graphics instead of bitmapped graphics
 
 Morphic3 will have scalable graphics.
 
-To achieve this the follwoing changes have been made
+To achieve this the following changes have been made
 
 1. Integer coordinates of Squeak have been changed into float coordinates.
 2. Morphs be positioned relative to their container, rather than a single, global screen position (absolute positioning).
