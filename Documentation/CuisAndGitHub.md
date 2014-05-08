@@ -1,4 +1,5 @@
-# Using Git and GitHub to host and manage Cuis code
+# Using Git and GitHub
+## to host and manage Cuis code
 
 Cuis 4 includes new tools and new suggested procedures for managing Smalltalk code. Central to this is the management of Packages and Package Files (.pck). But Cuis doesn't do version control. Instead, we suggest using external VCS tools.  In particular, we're using GitHub, and the first project we're hosting there is StyledTextEditor.
 
