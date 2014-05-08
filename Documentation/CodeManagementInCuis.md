@@ -18,7 +18,9 @@ The operations available on installed or newly created packages are:
 
 **[Browse unsaved Changes]** This opens a ChangeSorter on the ChangeSet that captures all the changes done to the Package since it was last saved. Therefore it shows the work done on the package that would be lost if the package is not saved.
 
-**[Browse Package Code]** This opens a Class Browser that only shows the code that belongs in the package. This is useful for working on a package, or studying it.
+**[Browse package code]** This opens a Class Browser that only shows the code that belongs in the package. This is useful for working on a package, or studying it.
+
+**[Add requirement]** This opens a select list of loaded packages.  Each package provides a *Feature*.  You can CANCEL, require the current Cuis base version (at a minimum) or require any of the packages on the list.  Required packages will be loaded before the selected package (**Feature require: #'your-package'.**).  When a package is selected, the lower browser pane shows its requirents, which may be deleted.  Don't forget to *Save* your package after adding or deleting  requirements!
 
 The tool shows, for each Package, the name, whether it is dirty (has unsaved changes) and the file it was installed from / saved to.
 
