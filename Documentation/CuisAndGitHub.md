@@ -2,7 +2,7 @@
 
 Cuis 4 includes new tools and new suggested procedures for managing Smalltalk code. Central to this is the management of Packages and Package Files (.pck). But Cuis doesn't do version control. Instead, we suggest using external VCS tools.  In particular, we're using [GitHub](http://www.github.com/), and the first project we're hosting there is [StyledTextEditor](https://github.com/bpieber/Cuis-StyledTextEditor).
 
-The guiding principle is do not duplicate concepts and behavior. As we're using an external tool (Git) for version control, then use it as it meant to be used. Most people use Git for version control and a file based IDE such as Eclipse for development. Such IDEs don't do version control themselves. It is done by Git. Do the same: do not include package version control in Cuis. This is a departure from the Monticello /Git integration (smallsource and MonticelloFileTree) by Otto Behrens, Dale Henrichs, etc.
+The guiding principle is to *not duplicate concepts and behavior*. As we're using an external tool (Git) for version control, then we use it as it meant to be used. Most people use Git for version control and a file based IDE such as Eclipse for development. Such IDEs don't do version control themselves. It is done by Git. Do the same: do not include package version control in Cuis. This is a departure from the Monticello /Git integration (smallsource and MonticelloFileTree) by Otto Behrens, Dale Henrichs, etc.
 
 We use GitHub to host, version, diff and merge external packages (.pck files), i.e. code that is maintained independently and outside Cuis.
 
