@@ -67,11 +67,11 @@ Here is a Smalltalk script to load all packages currently included:
 Cuis is distributed subject to the MIT License. See the LICENSE file. Any contribution submitted for incorporation into or for distribution with Cuis shall be presumed subject to the same license.
 
 
-Code Management in Cuis 4.0
+# Code Management in Cuis 4.0
 
 Cuis 4 includes new tools and new suggested procedures for managing Smalltalk code. Code that is not part of the Cuis Core image itself, like applications, frameworks and libraries, should be stored in Packages. New code that is meant as patches, fixes or additions; that could eventually become part of Cuis itself, is not part of any Package, and is therefore automatically stored in Change Sets.
 
-Packages
+## Packages
 
 Let's start with Packages. The Package implementation in Cuis 4 is based on PackageInfo, the standard way to specify packages in Squeak and its derivatives, and used, for example, by Monticello. It uses Package names, to specify prefixes for Class and Method categories. Classes and Methods whose categories match a Package's prefixes belong in that Package. More details about how PackageInfo decides what code belongs in a package are available at http://wiki.squeak.org/squeak/3329 .
 
@@ -95,7 +95,7 @@ Handling Packages like this, Cuis behaves as a sort of document editor (like, fo
 
 This is not unlike using Git or GitHub with a more conventional development environment such as Eclipse or a text editor. Like Cuis 4, these tools don't do version handling themselves, they just load and save files; and let Git do its magic.
 
-Changes to the Cuis base image
+## Changes to the Cuis base image
 
 The way ChangeSets are created and managed in Cuis 4 is very different from previous versions of Cuis (and Squeak & derivatives). This was done to make ChangeSets a good way to manage changes to the base Cuis Core image, while keeping code in Pakges out of the way, so they don't get mixed together.
 
@@ -105,7 +105,7 @@ Opening a Change Sorter will show the CuisCore change set. This is useful, for e
 
 When the changes to the base system are complete, it is a good time to review the CuisCore change set and, maybe remove from it changes that we don't want to keep (for example, experiments, halts, etc). Then, just do right click / File out and remove. This saves the ChangeSet on disk. It also removes it from the ChangeSorter (but it doesn't remove any code). This is good, because the next changes done will end in a new CuisCore change set, and there's no risk of having undesired changes in the old one. As changes to the base image progress, and several CuisCore change sets are saved to disk, these numbered files are created in sequence. They will be ready to be loaded back in proper order in a fresh Cuis image, or to be sent to Cuis maintainers for integration in the update stream and in next releases of Cuis.
 
-Loading ChangeSet files into Cuis
+## Loading ChangeSet files into Cuis
 
 There are two ways to load ChangeSet files (.cs): [FileIn] and [Install].
 
