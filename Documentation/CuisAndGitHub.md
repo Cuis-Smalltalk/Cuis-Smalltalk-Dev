@@ -1,67 +1,31 @@
-Cuis
-----
+# Using Git and GitHub to host and manage Cuis code
 
-[Cuis](http://www.cuis-smalltalk.org) is a free Smalltalk-80 environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from supercomputers to tablets and smart phones, and everything in between, including regular PCs.
+Cuis 4 includes new tools and new suggested procedures for managing Smalltalk code. Central to this is the management of Packages and Package Files (.pck). But Cuis doesn't do version control. Instead, we suggest using external VCS tools.  In particular, we're using GitHub, and the first project we're hosting there is StyledTextEditor.
 
-Cuis is
+The guiding principle is do not duplicate concepts and behavior. As we're using an external tool (Git) for version control, then use it as it meant to be used. Most people use Git for version control and a file based IDE such as Eclipse for development. Such IDEs don't do version control themselves. It is done by Git. Do the same: do not include package version control in Cuis. This is a departure from the Monticello /Git integration (smallsource and MonticelloFileTree) by Otto Behrens, Dale Henrichs, etc.
 
-* Easy to understand and extend
-* Small
-* Clean
- 
-Like Squeak, Pharo and other Squeak variants, Cuis is also:
-* Open Source
-* Multiplatform
+We use GitHub to host, version, diff and merge external packages (.pck files), i.e. code that is maintained independently and outside Cuis.
 
-Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis is also:
-* A complete development environment written in itself
-* A pure Object Oriented language
+Package files need to be simple text files. Cuis encoding for latin alphabet (ISO 8859-15) is handled without problems by GitHub. Cuis uses the LF (ascii code 10) newline convention, as preferred in GitHub. This allows Git/GitHub to diff versions, and merge branches.
 
+Each GitHub repository has one set of users and permissions. Each GitHub repository has one state (Git commits repositories, not individual files). Branch and merges are done on the whole repository and not on individual files. Therefore, we need a separate GitHub repository for each project, i.e., for each package or set of closely related packages that are always loaded and maintained together as a whole.
 
-Cuis is different from other Squeak variants in that it takes an active attitude towards system complexity.
+## Development process for External Packages
 
-As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity grows without control. At some point, the system can't evolve anymore and becomes "legacy code".
+This is the suggested procedure for developing external packages. Usually do this every day.
 
-The only way to avoid this is by understanding the complete system, and reengineering the whole system all the time. Keeping it simple and consistent.
+* Start with a standard (i.e. fresh) Cuis image. Never save the image.
 
-This is important. Complexity puts a limit to the level of understanding of the system a person might reach, and therefore limits the things that can be done with it. Dan Ingalls says all this in ["Design Principles Behind Smalltalk"](http://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html). Even if you have already done so, please go and read it again!
+* Set up Git repositories for external packages (if not already done)
 
-Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any bugs fixed. Cuis includes recent enhancements from Squeak, but only those that meet Cuis objectives: stuff the complexity of which outweighs its utility is not included.
+* Install packages from Git repositories.
 
-If you want to know how Cuis evolved please check the [Release Notes](http://www.cuis-smalltalk.org/CuisReleaseNotes.html).
+* Develop. Modify and/or create packages.
 
-### Getting Started ###
-To get started with Cuis you need to do the following:
+* Save own packages (to Git repositories).
 
-1. Download Cuis by clicking on [Download ZIP](https://github.com/bpieber/Cuis-Smalltalk-Dev/archive/master.zip).
+* Git add / commit / push as appropriate.
 
-2. Extract the downloaded ZIP archive.
+* Fileout changes that are not part of any package. These are automatically captured in numbered changesets, separated from changes to packages.
 
-3. Get a VM for your platform. You can run Cuis with Squeak's official Virtual Machines from http://www.squeakvm.org or the faster Cog VMs from [Eliot Miranda's site](http://www.mirandabanda.org/files/Cog/VM/). (Please use the non-MT variants of Eliot's latest release.)
-
-4. Start Cuis by dragging the Cuis 4.2 image onto the VM.
-
-As an alternative you can use the following in a shell if you have Git installed and configured:
-```
-mkdir CuisDevelopment
-cd CuisDevelopment
-git clone https://github.com/bpieber/Cuis-Smalltalk-Dev.git
-Cuis-Smalltalk-Dev/bin/newImage.sh MyProject
-```
-The last line creates a new image with a current Cog VM in a folder named MyProject. Start Cuis by dragging MyProject.image onto the Cog VM. This method has the advantage to set you up to easily contribute code back to Cuis packages.
-
-Disclaimer: It should work on OS X and Unix. However, I only tested it on OS X. Please test on other platforms and let me know the results. Feel free to send pull requests!
-
-### Contributing to Cuis ###
-Cuis is maintained on https://github.com/Cuis-Smalltalk.
-
-Please read [Code Management in Cuis 4](http://www.cuis-smalltalk.org/CodeManagementInCuis4.html), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](http://www.cuis-smalltalk.org/CuisAndGitHub.html). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
-
-To contribute code, please use an image with all included packages already loaded, and include new versions of affected packages. This will ensure we don't break them while we evolve Cuis.
-Here is a Smalltalk script to load all packages currently included:
-```
-#('Graphics-Files-Additional' 'Network-Kernel' 'SignalProcessing' 'Tests' 'Theme-Themes' 'FFITests' 'JSON')
-    do: [:each | Feature require: each]
-```
-
-Cuis is distributed subject to the MIT License. See the LICENSE file. Any contribution submitted for incorporation into or for distribution with Cuis shall be presumed subject to the same license.
+* Exit the image. Usually without saving.
