@@ -10,7 +10,7 @@ Package files need to be simple text files. Cuis encoding for latin alphabet (IS
 
 Each GitHub repository has one set of users and permissions. Each GitHub repository has one state (Git commits repositories, not individual files). Branch and merges are done on the whole repository and not on individual files. Therefore, we need a separate GitHub repository for each project, i.e., for each package or set of closely related packages that are always loaded and maintained together as a whole.
 
-## Development process for External Packages
+### Development process for External Packages
 
 This is the suggested procedure for developing external packages. Usually do this every day.
 
