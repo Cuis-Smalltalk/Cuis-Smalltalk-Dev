@@ -1,5 +1,4 @@
-Cuis
-----
+# Cuis
 
 [Cuis](http://www.cuis-smalltalk.org) is a free Smalltalk-80 environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from supercomputers to tablets and smart phones, and everything in between, including regular PCs.
 
@@ -8,7 +7,7 @@ Cuis is
 * Easy to understand and extend
 * Small
 * Clean
- 
+
 Like Squeak, Pharo and other Squeak variants, Cuis is also:
 * Open Source
 * Multiplatform
@@ -16,7 +15,6 @@ Like Squeak, Pharo and other Squeak variants, Cuis is also:
 Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis is also:
 * A complete development environment written in itself
 * A pure Object Oriented language
-
 
 Cuis is different from other Squeak variants in that it takes an active attitude towards system complexity.
 
@@ -33,13 +31,11 @@ If you want to know how Cuis evolved please check the [Release Notes](http://www
 ### Getting Started ###
 To get started with Cuis you need to do the following:
 
-1. Download Cuis by clicking on [Download ZIP](https://github.com/bpieber/Cuis-Smalltalk-Dev/archive/master.zip).
+1. Download Cuis by downloading and unzipping this repo.
+ 
+2. Get a VM for your platform. You can run Cuis with Squeak's official Virtual Machines from http://www.squeakvm.org or the faster Cog VMs from [Eliot Miranda's site](http://www.mirandabanda.org/files/Cog/VM/). (Please use the non-MT variants of Eliot's latest release.)
 
-2. Extract the downloaded ZIP archive.
-
-3. Get a VM for your platform. You can run Cuis with Squeak's official Virtual Machines from http://www.squeakvm.org or the faster Cog VMs from [Eliot Miranda's site](http://www.mirandabanda.org/files/Cog/VM/). (Please use the non-MT variants of Eliot's latest release.)
-
-4. Start Cuis by dragging the Cuis 4.2 image onto the VM.
+3. Start Cuis by dragging the Cuis image onto the VM.
 
 As an alternative you can use the following in a shell if you have Git installed and configured:
 ```
@@ -59,15 +55,13 @@ coglinux/bin/squeak MyProject.image
 
 Disclaimer: It should work on OS X and Unix. However, it is only tested on OS X and Ubuntu 12.04. Please test on other platforms and let us know the results. Feel free to send pull requests!
 
-
-
 ### Towards Morphic 3
-In Cuis work is on the way to restructure and upgrade the Morphic classes. For more see [Notes on Morphic](NotesOnMorphic.md).
+In Cuis work is on the way to restructure and upgrade the Morphic classes. For more see [Notes on Morphic](Documentation/NotesOnMorphic.md).
 
 ### Contributing to Cuis ###
 Cuis is maintained on https://github.com/Cuis-Smalltalk.
 
-Please read [Code Management in Cuis 4](http://www.cuis-smalltalk.org/CodeManagementInCuis4.html), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](http://www.cuis-smalltalk.org/CuisAndGitHub.html). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
+Please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
 
 To contribute code, please use an image with all included packages already loaded, and include new versions of affected packages. This will ensure we don't break them while we evolve Cuis.
 Here is a Smalltalk script to load all packages currently included:
