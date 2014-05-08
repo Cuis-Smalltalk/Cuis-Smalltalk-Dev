@@ -6,7 +6,7 @@ Cuis 4 includes new tools and new suggested procedures for managing Smalltalk co
 
 Let's start with *Packages*. The Package implementation in Cuis 4 is based on PackageInfo, the standard way to specify packages in Squeak and its derivatives, and used, for example, by Monticello. It uses Package names, to specify prefixes for Class and Method categories. Classes and Methods whose categories match a Package's prefixes belong in that Package. More details about how PackageInfo decides what code belongs in a package are available at http://wiki.squeak.org/squeak/3329 .
 
-To install packages *(.pck files)* in Cuis, use the **FileList**, navigate to the appropriate directory (on disk, or in a GitHub repository, etc), select the package file and click on **[Install Package]**.
+To install packages *(.pck.st files)* in Cuis, use the **FileList**, navigate to the appropriate directory (on disk, or in a GitHub repository, etc), select the package file and click on **[Install Package]**.
 
 Cuis includes a tool to manage installed *Packages*. It is at *World / Open / Installed Packages*. To create a new package (instead of installing an existing one from a file), click on **[Create Package]** This creates a new package, and associates with it all the existing code in the image that matches the package name.
 
@@ -22,7 +22,7 @@ The operations available on installed or newly created packages are:
 
 The tool shows, for each Package, the name, whether it is dirty (has unsaved changes) and the file it was installed from / saved to.
 
-Handling Packages like this, Cuis behaves as a sort of document editor (like, for example a regular text editor) whose documents are *Package* files *(.pck)*. Cuis doesn't handle Package versions, ancestries, etc. If versioning of Packages is desired, the best is to use a versioning file repository, such as Git or Mercurial. The recommendation is to use a GitHub repository with a name beginning with 'Cuis-', so it will be easy for anybody to find it. Cuis *Package* files are uncompressed, use Lf (ASCII 10) as newLine, and are encoded in ISO 8859-15. This means they are Git friendly, and Git/GitHub can diff and merge them, and browse them with syntax highlighting.
+Handling Packages like this, Cuis behaves as a sort of document editor (like, for example a regular text editor) whose documents are *Package* files *(.pck.st)*. Cuis doesn't handle Package versions, ancestries, etc. If versioning of Packages is desired, the best is to use a versioning file repository, such as Git or Mercurial. The recommendation is to use a GitHub repository with a name beginning with 'Cuis-', so it will be easy for anybody to find it. Cuis *Package* files are uncompressed, use Lf (ASCII 10) as newLine, and are encoded in ISO 8859-15. This means they are Git friendly, and Git/GitHub can diff and merge them, and browse them with syntax highlighting.
 
 This is not unlike using Git or GitHub with a file-based development environment such as Eclipse or a text editor. Like Cuis 4, these tools don't do version handling themselves, they just load and save files; and let Git do its magic.
 
