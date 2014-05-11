@@ -13,7 +13,7 @@ The middle mouse button on the FileList window activates the halos.
 
 ![Halos around the FileList window](pictures/CuisFileListWindowWithHalos.png)
 
-Repeated clicks with the middle mouse button onthe install button brings up the halos for the install button.
+Repeated clicks with the middle mouse button on the *install button* brings up the **halos** for the *install button*. The *halos* are the colored dots. They serve as menus to access properties of the morphs.
 
 ![Install button with halos](pictures/CuisFileListWindowWithHalosAroundInstallPackageButton.png)
 
