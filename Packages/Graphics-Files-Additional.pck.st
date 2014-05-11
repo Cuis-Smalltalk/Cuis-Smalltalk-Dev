@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1880] on 21 December 2013 at 9:47:54.120437 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1982] on 11 May 2014 at 12:01:00.599537 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 1!
+!provides: 'Graphics-Files-Additional' 1 2!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -195,7 +195,7 @@ copyPixels: y at: startX by: incX
 	self perform: s asSymbol with: y with: startX with: incX
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/15/2013 18:24'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:03'!
 copyPixelsGray: y
 	"Handle non-interlaced grayscale color mode (colorType = 0)"
 
@@ -204,8 +204,14 @@ copyPixelsGray: y
 		| blitter |
 		blitter := BitBlt bitPokerToForm: form.
 		0 to: width - 1 do: [ :x |
-			blitter pixelAt: x @ y put: 255 - (thisScanline at: x * 2 + 1) ].
-			^self ].
+ 			| high low value |
+ 			high := thisScanline at: x * 2 + 1.
+ 			low := thisScanline at: x * 2 + 2.
+ 			value := (high * 256 + low = transparentPixelValue)
+ 				ifTrue: [0 "transparent"]
+ 				ifFalse: [high max: 1].
+ 			blitter pixelAt: x @ y put: value ].
+  			^self ].
 
 	"Just copy the bits"
 	"This interesting technique (By Andreas Raab) is a bit obscure, but it is so fast that we leave it active"
@@ -237,19 +243,24 @@ copyPixelsGray: y
 		bits at: base + (thisScanline size // 4) put: word ].
 	"! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 9/23/2012 21:46'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:14'!
 copyPixelsGray: y at: startX by: incX
 	"Handle interlaced grayscale color mode (colorType = 0)"
 
 	| offset bits blitter pixPerByte shifts b pixel mask pixelNumber |
 	bitsPerChannel = 16
 		ifTrue: [
-			b := BitBlt bitPokerToForm: form.
+			"Warning: This is extremely slow. Besides we are downsampling to 8 bits!!!!"
+			blitter := BitBlt bitPokerToForm: form.
 			startX to: width-1 by: incX do: [ :x |
-				b pixelAt: x@y put: 255 - (thisScanline at: (x//incX<<1)+1).
-				].
-			^ self
-			].
+				| high low value |
+				high := thisScanline at: x//incX<<1 + 1.
+				low := thisScanline at: x//incX<<1 + 2.
+				value := (high * 256 + low = transparentPixelValue)
+					ifTrue: [0 "transparent"]
+					ifFalse: [high max: 1].
+				blitter pixelAt: x @ y put: value ].
+			^self ].
 	offset := y*rowSize+1.
 	bits := form bits.
 	bitsPerChannel = 8 ifTrue: [
@@ -544,93 +555,93 @@ copyPixelsIndexed: y at: startX by: incX
 	].
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'RAA 11/7/2000 09:30'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:20'!
 copyPixelsRGB: y
 	"Handle non-interlaced RGB color mode (colorType = 2)"
 
 	| i pixel tempForm tempBits |
-
-	tempForm _ Form extent: width@1 depth: 32.
+	tempForm _ Form extent: width @ 1 depth: 32.
 	tempBits _ tempForm bits.
-	pixel := LargePositiveInteger new: 4.
-	pixel at: 4 put: 16rFF.
-	bitsPerChannel = 8 ifTrue: [
-		i := 1.
-		1 to: width do: [ :x |
-			pixel
-				at: 3 put: (thisScanline at: i);
-				at: 2 put: (thisScanline at: i+1);
-				at: 1 put: (thisScanline at: i+2).
-			tempBits at: x put: pixel.
-			i _ i + 3.
-		]
-	] ifFalse: [
-		i := 1.
-		1 to: width do: [ :x |
-			pixel
-				at: 3 put: (thisScanline at: i);
-				at: 2 put: (thisScanline at: i+2);
-				at: 1 put: (thisScanline at: i+4).
-			tempBits at: x put: pixel.
-			i _ i + 6.
-		]
-	].
-	transparentPixelValue ifNotNil: [
-		1 to: width do: [ :x |
-			(tempBits at: x) = transparentPixelValue ifTrue: [
-				tempBits at: x put: 0.
-			].
-		].
-	].
-	tempForm displayOn: form at: 0@y rule: Form paint.
-! !
+	pixel _ LargePositiveInteger new: 4.
+	pixel at: 4 put: 255.
+	bitsPerChannel = 8
+		ifTrue: [
+			i _ 1.
+			1 to: width do: [ :x |
+				pixel
+					at: 3 put: (thisScanline at: i);
+					at: 2 put: (thisScanline at: i + 1);
+					at: 1 put: (thisScanline at: i + 2).
+				tempBits at: x put: pixel.
+				i _ i + 3 ].
+			transparentPixelValue ifNotNil: [
+				1 to: width do: [ :x |
+					(tempBits at: x) = transparentPixelValue ifTrue: [
+						tempBits at: x put: 0 ]]]]
+		ifFalse: [
+			i _ 1.
+			1 to: width do: [ :x |
+				(transparentPixelValue == nil or: [
+					(1 to: 6) anySatisfy: [ :k |
+						(transparentPixelValue digitAt: k) ~= (thisScanline at: i + 6 - k) ]])
+					ifTrue: [
+						pixel
+							at: 3 put: (thisScanline at: i);
+							at: 2 put: (thisScanline at: i + 2);
+							at: 1 put: (thisScanline at: i + 4).
+						tempBits at: x put: pixel ]
+					ifFalse: [
+						tempBits at: x put: 0 ].
+					i _ i + 6 ]].
+	tempForm displayOn: form at: 0 @ y rule: Form over! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nk 7/27/2004 17:18'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:23'!
 copyPixelsRGB: y at: startX by: incX
 	"Handle interlaced RGB color mode (colorType = 2)"
-
 	| i pixel tempForm tempBits xx loopsToDo |
-
-	tempForm := Form extent: width@1 depth: 32.
-	tempBits := tempForm bits.
-	pixel := LargePositiveInteger new: 4.
-	pixel at: 4 put: 16rFF.
-	loopsToDo := width - startX + incX - 1 // incX.
-	bitsPerChannel = 8 ifTrue: [
-		i := (startX // incX * 3) + 1.
-		xx := startX+1.
-		1 to: loopsToDo do: [ :j |
-			pixel
-				at: 3 put: (thisScanline at: i);
-				at: 2 put: (thisScanline at: i+1);
-				at: 1 put: (thisScanline at: i+2).
-			tempBits at: xx put: pixel.
-			i := i + 3.
-			xx := xx + incX.
-		]
-	] ifFalse: [
-		i := (startX // incX * 6) + 1.
-		xx := startX+1.
-		1 to: loopsToDo do: [ :j |
-			pixel
-				at: 3 put: (thisScanline at: i);
-				at: 2 put: (thisScanline at: i+2);
-				at: 1 put: (thisScanline at: i+4).
-			tempBits at: xx put: pixel.
-			i := i + 6.
-			xx := xx + incX.
-		].
-	].
-	transparentPixelValue ifNotNil: [
-		startX to: width-1 by: incX do: [ :x |
-			(tempBits at: x+1) = transparentPixelValue ifTrue: [
-				tempBits at: x+1 put: 0.
-			].
-		].
-	].
-	tempForm displayOn: form at: 0@y rule: Form paint.
-
-! !
+	tempForm _ Form
+		extent: width @ 1
+		depth: 32.
+	tempBits _ tempForm bits.
+	pixel _ LargePositiveInteger new: 4.
+	pixel
+		at: 4
+		put: 255.
+	loopsToDo _ width - startX + incX - 1 // incX.
+	bitsPerChannel = 8
+		ifTrue: [
+			i _ startX // incX * 3 + 1.
+			xx _ startX + 1.
+			1 to: loopsToDo do: [ :j |
+				pixel
+					at: 3 put: (thisScanline at: i);
+					at: 2 put: (thisScanline at: i + 1);
+					at: 1 put: (thisScanline at: i + 2).
+				tempBits at: xx put: pixel.
+				i _ i + 3.
+				xx _ xx + incX ].
+			transparentPixelValue ifNotNil: [
+				startX to: width - 1 by: incX do: [ :x |
+					(tempBits at: x + 1) = transparentPixelValue ifTrue: [
+						tempBits at: x + 1 put: 0 ]]]]
+		ifFalse: [
+			i _ startX // incX * 6 + 1.
+			xx _ startX + 1.
+			1 to: loopsToDo do: [ :j |
+				(transparentPixelValue == nil or: [
+					(1 to: 6) anySatisfy: [ :k |
+						(transparentPixelValue digitAt: k) ~= (thisScanline at: i + 6 - k) ]])
+					ifTrue: [
+						pixel
+							at: 3 put: (thisScanline at: i);
+							at: 2 put: (thisScanline at: i + 2);
+							at: 1 put: (thisScanline at: i + 4).
+						tempBits at: xx put: pixel ]
+					ifFalse: [
+						tempBits at: xx put: 0 ].
+					i _ i + 6.
+					xx _ xx + incX ]].
+	tempForm displayOn: form at: 0 @ y rule: Form over! !
 
 !PNGReadWriter methodsFor: 'pixel copies' stamp: 'ar 2/18/2004 23:58'!
 copyPixelsRGBA: y
@@ -1158,31 +1169,31 @@ processSBITChunk
 		depth := 16.
 	].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 4/15/2010 10:18'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'nice 5/10/2014 20:25'!
 processTransparencyChunk
-
-	| red green blue |
 
 	"Transcript show: '  TRANSPARENCY ',chunk printString."
 	colorType = 0 ifTrue: [
 		transparentPixelValue _ chunk unsignedShortAt: 1 bigEndian: true.
-		palette at: transparentPixelValue put: Color transparent.
-		^self
-	].
+		bitsPerChannel <= 8
+			ifTrue: [
+				palette at: transparentPixelValue + 1 put: Color transparent ]
+			ifFalse: [
+				palette at: 1 put: Color transparent ].
+		^ self ].
 	colorType = 2 ifTrue: [
-		red _ chunk at: 2.
-		green _ chunk at: 2.
-		blue _ chunk at: 2.
-		transparentPixelValue _ 16rFF00 + red << 8 + green << 8 + blue.
-		^self
-	].
+		| red green blue |
+		red _ chunk unsignedShortAt: 1 bigEndian: true.
+		green _ chunk unsignedShortAt: 3 bigEndian: true.
+		blue _ chunk unsignedShortAt: 5 bigEndian: true.
+		transparentPixelValue _ bitsPerChannel <= 8
+			ifTrue: [ 16rFF00 + red << 8 + green << 8 + blue ]
+			ifFalse: [ red << 16 + green << 16 + blue ].
+		^ self ].
 	colorType = 3 ifTrue: [
 		chunk withIndexDo: [ :alpha :index |
-			palette at: index put: ((palette at: index) alpha: alpha/255)
-		].
-		^self
-	].
-! !
+			palette at: index put: ((palette at: index) alpha: alpha / 255) ].
+		^ self ]! !
 
 !PNGReadWriter methodsFor: 'pixel copies' stamp: 'ar 2/19/2004 00:10'!
 rgbaDecoderMapForDepth: decoderDepth

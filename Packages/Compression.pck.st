@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:40:53.520013 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1982] on 11 May 2014 at 12:00:58.228537 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 2!
+!provides: 'Compression' 1 3!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -2692,13 +2692,13 @@ decompressAll
 		self next "Provokes decompression"
 	].! !
 
-!InflateStream methodsFor: 'inflating' stamp: 'ar 3/15/1999 15:38'!
+!InflateStream methodsFor: 'inflating' stamp: 'yo 5/9/2014 15:19'!
 decompressBlock: llTable with: dTable
 	"Process the compressed data in the block.
 	llTable is the huffman table for literal/length codes
 	and dTable is the huffman table for distance codes."
 	| value extra length distance oldPos oldBits oldBitPos |
-	[readLimit < collection size and:[sourcePos <= sourceLimit]] whileTrue:[
+	[readLimit < collection size and: [sourcePos <= sourceLimit]] whileTrue: [
 		"Back up stuff if we're running out of space"
 		oldBits _ bitBuf.
 		oldBitPos _ bitPos.
@@ -2706,7 +2706,7 @@ decompressBlock: llTable with: dTable
 		value _ self decodeValueFrom: llTable.
 		value < 256 ifTrue:[ "A literal"
 			collection byteAt: (readLimit _ readLimit + 1) put: value.
-		] ifFalse:["length/distance or end of block"
+		] ifFalse: ["length/distance or end of block"
 			value = 256 ifTrue:["End of block"
 				state _ state bitAnd: StateNoMoreData.
 				^self].
@@ -2719,7 +2719,7 @@ decompressBlock: llTable with: dTable
 			extra _ #(0 0 0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8 9 9 10 10 11 11 12 12 13 13) at: value+1.
 			distance _ #(1 2 3 4 5 7 9 13 17 25 33 49 65 97 129 193 257 385 513 769
 						1025 1537 2049 3073 4097 6145 8193 12289 16385 24577) at: value+1.
-			extra > 0 ifTrue:[distance _ distance + (self nextBits: extra)].
+			extra > 0 ifTrue: [distance _ distance + (self nextBits: extra)].
 			(readLimit + length >= collection size) ifTrue:[
 				bitBuf _ oldBits.
 				bitPos _ oldBitPos.
@@ -2727,7 +2727,7 @@ decompressBlock: llTable with: dTable
 				^self].
 			collection 
 					replaceFrom: readLimit+1 
-					to: readLimit + length + 1 
+					to: readLimit + length
 					with: collection 
 					startingAt: readLimit - distance + 1.
 			readLimit _ readLimit + length.
@@ -3121,7 +3121,7 @@ initialize
 					((281 to: 288) collect:[:i| 8]).
 	FixedDistCodes _ ((1 to: 32) collect:[:i| 5]).! !
 
-!FastInflateStream methodsFor: 'inflating' stamp: 'ar 2/2/2001 15:47'!
+!FastInflateStream methodsFor: 'inflating' stamp: 'yo 5/9/2014 15:19'!
 decompressBlock: llTable with: dTable
 	"Process the compressed data in the block.
 	llTable is the huffman table for literal/length codes
@@ -3136,7 +3136,7 @@ decompressBlock: llTable with: dTable
 		value _ self decodeValueFrom: llTable.
 		value < 256 ifTrue:[ "A literal"
 			collection byteAt: (readLimit _ readLimit + 1) put: value.
-		] ifFalse:["length/distance or end of block"
+		] ifFalse: ["length/distance or end of block"
 			value = 256 ifTrue:["End of block"
 				state _ state bitAnd: StateNoMoreData.
 				^self].
@@ -3148,7 +3148,7 @@ decompressBlock: llTable with: dTable
 			value _ self decodeValueFrom: dTable.
 			extra _ (value bitShift: -16).
 			distance _ value bitAnd: 16rFFFF.
-			extra > 0 ifTrue:[distance _ distance + (self nextBits: extra)].
+			extra > 0 ifTrue: [distance _ distance + (self nextBits: extra)].
 			(readLimit + length >= collection size) ifTrue:[
 				bitBuf _ oldBits.
 				bitPos _ oldBitPos.
@@ -3156,7 +3156,7 @@ decompressBlock: llTable with: dTable
 				^self].
 			collection 
 					replaceFrom: readLimit+1 
-					to: readLimit + length + 1 
+					to: readLimit + length
 					with: collection 
 					startingAt: readLimit - distance + 1.
 			readLimit _ readLimit + length.
