@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1978] on 19 April 2014 at 7:36:29.487205 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2009] on 29 May 2014 at 10:12:10.625968 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 8!
+!provides: 'Tests' 1 9!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -2211,7 +2211,7 @@ testDecompiledDoitMethodTempNames
 		mns first nodesDo: removeComments.
 		self assert: (mnps := mns first printString) = (mps := m methodNode printString)]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:00'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/29/2014 08:35'!
 testInjectIntoDecompilations
 	"Test various compilations decompile to the same code for a method sufficiently
 	 simple that this is possible and sufficiently complex that the code generated
@@ -2223,9 +2223,9 @@ testInjectIntoDecompilations
 	self flag: #expectedFailure.
 
 	source := (Collection sourceCodeAt: #inject:into:) asString.
-	{ Encoder.
-	   EncoderForV3. EncoderForLongFormV3.
-	   EncoderForV3PlusClosures. EncoderForLongFormV3PlusClosures } do:
+	{ "Encoder."
+	   EncoderForV3.
+	   EncoderForV3PlusClosures } do:
 		[:encoderClass| | method |
 		method := (Parser new
 							encoderClass: encoderClass;
@@ -2239,7 +2239,7 @@ testInjectIntoDecompilations
 							self do: [ ':t4' | t3 ':=' t2 value: t3 value: t4 ] .
 							^ t3)]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:00'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/29/2014 08:35'!
 testInjectIntoDecompiledDebugs
 	"Test various debugs of the decompiled form debug correctly."
 	"self new testInjectIntoDecompiledDebugs"
@@ -2249,8 +2249,8 @@ testInjectIntoDecompiledDebugs
 	self flag: #expectedFailure.
 
 	source := (Collection sourceCodeAt: #inject:into:) asString.
-	{ Encoder.
-	   EncoderForV3PlusClosures. EncoderForLongFormV3PlusClosures } do:
+	{ "Encoder."
+	   EncoderForV3PlusClosures } do:
 		[:encoderClass| | method |
 		method := (Parser new
 							encoderClass: encoderClass;
@@ -2364,19 +2364,6 @@ testSourceRangeAccessForBlueBookInjectInto
 	self supportTestSourceRangeAccessForInjectInto: method source: source! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 15:20'!
-testSourceRangeAccessForBlueBookLongFormInjectInto
-	"Test debugger source range selection for inject:into: for a version compiled with closures"
-	"self new testSourceRangeAccessForBlueBookLongFormInjectInto"
-	| source method |
-	source := (Collection sourceCodeAt: #inject:into:) asString.
-	method := (Parser new
-						encoderClass: EncoderForLongFormV3;
-						parse: source
-						class: Collection)
-					generate: (Collection compiledMethodAt: #inject:into:) trailer.
-	self supportTestSourceRangeAccessForInjectInto: method source: source! !
-
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 15:20'!
 testSourceRangeAccessForClosureBytecodeInjectInto
 	"Test debugger source range selection for inject:into: for a version compiled with closures"
 	"self new testSourceRangeAccessForClosureBytecodeInjectInto"
@@ -2384,19 +2371,6 @@ testSourceRangeAccessForClosureBytecodeInjectInto
 	source := (Collection sourceCodeAt: #inject:into:) asString.
 	method := (Parser new
 						encoderClass: EncoderForV3PlusClosures;
-						parse: source
-						class: Collection)
-					generate: (Collection compiledMethodAt: #inject:into:) trailer.
-	self supportTestSourceRangeAccessForInjectInto: method source: source! !
-
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 15:20'!
-testSourceRangeAccessForClosureLongFormBytecodeInjectInto
-	"Test debugger source range selection for inject:into: for a version compiled with closures"
-	"self new testSourceRangeAccessForClosureLongFormBytecodeInjectInto"
-	| source method |
-	source := (Collection sourceCodeAt: #inject:into:) asString.
-	method := (Parser new
-						encoderClass: EncoderForLongFormV3PlusClosures;
 						parse: source
 						class: Collection)
 					generate: (Collection compiledMethodAt: #inject:into:) trailer.
@@ -7998,27 +7972,15 @@ testGenerateShoutConfig
 	self assert: 
 		(self shoutArray = theme new generateShoutConfig asArray)! !
 
-!TimeTest methodsFor: 'Tests' stamp: 'jmv 4/16/2013 22:17'!
+!TimeTest methodsFor: 'Tests' stamp: 'jmv 5/27/2014 22:46'!
 testSqueakInquiries
-	| timewords totalseconds condensed corrected |
-	self assert: 
-		(Time namesForTimes: #(2 10000023 10000026))
-			= #('January, 1901' 'April, 1901, 4/26/1901, 5:47 pm' 'April, 1901, 4/26/1901, 5:47 pm').
+	| timewords |
 
 	timewords := #(0.5 30 62 130 4000 10000 60000 86401) 
 		collect: [ :ss | Time humanWordsForSecondsAgo: ss ].
 	self assert: 
 		timewords = #('a second ago' '30 seconds ago' 'a minute ago' '2 minutes ago' 
-			'an hour ago' '2 hours ago' '16 hours ago' 'yesterday').
-
-	totalseconds :=  Time primSecondsClock.
-	condensed := Time condenseBunches: 
-		(#(20 400 401  20000 20200 20300 40000 45000  200000 201000 202000) 
-			collect: [:tt | totalseconds - tt]).
-	corrected := condensed collect: [ :e | totalseconds - e ].
-	self
-		assert: (corrected includesAllOf: #(20 400 401 20000 40000 45000 200000)).
-! !
+			'an hour ago' '2 hours ago' '16 hours ago' 'yesterday').! !
 
 !TrieTest methodsFor: 'aux' stamp: 'jmv 6/21/2011 22:05'!
 assert: subject isEquivalentToDictionary: controlGroup
