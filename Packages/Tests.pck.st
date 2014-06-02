@@ -182,6 +182,16 @@ TestCase subclass: #DifferenceFinderTest
 DifferenceFinderTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #DirectoryEntryTest category: #'Tests-System-Files'!
+TestCase subclass: #DirectoryEntryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-System-Files'!
+!classDefinition: 'DirectoryEntryTest class' category: #'Tests-System-Files'!
+DirectoryEntryTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #ExceptionTests category: #'Tests-Exceptions'!
 TestCase subclass: #ExceptionTests
 	instanceVariableNames: ''
@@ -3531,6 +3541,10 @@ testWords
 					ifTrue: [strm nextPutAll: chunk]]].
 		self assert: y = ian]
 ! !
+
+!DirectoryEntryTest methodsFor: 'as yet unclassified' stamp: 'bp 6/2/2014 11:19'!
+testSplitNameVersionExtension
+	self assert: 3 equals: FileDirectory default directoryEntry splitNameVersionExtension size! !
 
 !ExceptionTests methodsFor: 'private' stamp: 'md 3/25/2003 23:40'!
 assertSuccess: anExceptionTester
