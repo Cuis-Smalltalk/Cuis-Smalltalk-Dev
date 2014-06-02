@@ -14,7 +14,7 @@ Morphic3 will have scalable graphics.
 To achieve this the following changes have been made
 
 1. Integer coordinates of Squeak have been changed into float coordinates.
-2. Morphs be positioned relative to their container, rather than a single, global screen position (absolute positioning).
+2. Morphs are positioned relative to their container (relative positioning), rather than a single, global screen position (absolute positioning).
    
    
 Cuis Morph attributes
@@ -81,4 +81,11 @@ Note that only rectangles parallel to reference frame (Screen) can be represente
 
 - A Cuis Rectangle is very much like Squeak Rectangle. 
 - A Cuis RectangleLikeMorph is not too unlike Squeak RectangleMorph.
+
+
+
+How to analyse a Morphic GUI
+----------------------------
+
+[These notes](HowToAnalyseAMorphicGUI.md) show you how an existing Morphic GUI like the FileList browser may be taken apart to see how it is constructed. It is possible to find out live which instances of model classes certain GUI elements activate.
 

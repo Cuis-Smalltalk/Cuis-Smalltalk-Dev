@@ -26,7 +26,7 @@ than 255 code points.
 
 The rest is converted to numerical character entities when reading from a file or when text is pasted through the clipboard.
 
-
+Note: if you need to display non-latin characters (Japanese, Chinese, Cyrillic, Tamil,...) there is an experimental 'UniCodes' package at https://github.com/KenDickey/Cuis-Smalltalk-Unicode.
 
 ### Construction of example data for UTF8 test
 
