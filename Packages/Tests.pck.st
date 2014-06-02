@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1978] on 19 April 2014 at 7:36:29.487205 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #1982] on 2 June 2014 at 11:21:19.629771 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 8!
+!provides: 'Tests' 1 9!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -180,6 +180,16 @@ TestCase subclass: #DifferenceFinderTest
 	category: 'Tests-Code Differ'!
 !classDefinition: 'DifferenceFinderTest class' category: #'Tests-Code Differ'!
 DifferenceFinderTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DirectoryEntryTest category: #'Tests-System-Files'!
+TestCase subclass: #DirectoryEntryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-System-Files'!
+!classDefinition: 'DirectoryEntryTest class' category: #'Tests-System-Files'!
+DirectoryEntryTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTests category: #'Tests-Exceptions'!
@@ -3557,6 +3567,10 @@ testWords
 					ifTrue: [strm nextPutAll: chunk]]].
 		self assert: y = ian]
 ! !
+
+!DirectoryEntryTest methodsFor: 'as yet unclassified' stamp: 'bp 6/2/2014 11:19'!
+testSplitNameVersionExtension
+	self assert: 3 equals: FileDirectory default directoryEntry splitNameVersionExtension size! !
 
 !ExceptionTests methodsFor: 'private' stamp: 'md 3/25/2003 23:40'!
 assertSuccess: anExceptionTester
