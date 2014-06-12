@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1851] on 17 October 2013 at 7:11:43.543858 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2021] on 12 June 2014 at 9:26:12.205663 am'!
 'Description Please enter a description for this package '!
-!provides: 'Network-Kernel' 1 1!
+!provides: 'Network-Kernel' 1 2!
 !classDefinition: #ConnectionQueue category: #'Network-Kernel'!
 Object subclass: #ConnectionQueue
 	instanceVariableNames: 'portNumber maxQueueLength connections accessSema socket process'
@@ -1781,15 +1781,15 @@ waitForConnectionFor: timeout
 		ifTimedOut: [ConnectionTimedOut signal: 'Failed to connect in ', timeout asString, ' seconds']
 ! !
 
-!Socket methodsFor: 'waiting' stamp: 'nice 4/28/2009 21:26'!
+!Socket methodsFor: 'waiting' stamp: 'jmv 6/11/2014 19:35'!
 waitForConnectionFor: timeout ifTimedOut: timeoutBlock
 	"Wait up until the given deadline for a connection to be established. Return true if it is established by the deadline, false if not."
 
 	| startTime msecsDelta msecsEllapsed status |
-	startTime := Time millisecondClockValue.
+	startTime := Time localMillisecondClock.
 	msecsDelta := (timeout * 1000) truncated.
 	status := self primSocketConnectionStatus: socketHandle.
-	[(status = WaitingForConnection) and: [(msecsEllapsed := Time millisecondsSince: startTime) < msecsDelta]]
+	[(status = WaitingForConnection) and: [(msecsEllapsed := Time localMillisecondClock - startTime) < msecsDelta]]
 		whileTrue: [
 			semaphore waitTimeoutMSecs: msecsDelta - msecsEllapsed.
 			status := self primSocketConnectionStatus: socketHandle].
@@ -1817,20 +1817,20 @@ waitForDataFor: timeout
 		ifTimedOut: [ConnectionTimedOut signal: 'Data receive timed out.']
 ! !
 
-!Socket methodsFor: 'waiting' stamp: 'nice 4/29/2009 21:25'!
+!Socket methodsFor: 'waiting' stamp: 'jmv 6/11/2014 19:35'!
 waitForDataFor: timeout ifClosed: closedBlock ifTimedOut: timedOutBlock
 	"Wait for the given nr of seconds for data to arrive."
 	
 	| startTime msecsDelta |
-	startTime := Time millisecondClockValue.
+	startTime := Time localMillisecondClock.
 	msecsDelta := (timeout * 1000) truncated.
-	[(Time millisecondsSince: startTime) < msecsDelta] whileTrue: [
+	[(Time localMillisecondClock - startTime) < msecsDelta] whileTrue: [
 		(self primSocketReceiveDataAvailable: socketHandle)
 			ifTrue: [^self].
 		self isConnected
 			ifFalse: [^closedBlock value].
 		self readSemaphore waitTimeoutMSecs: 
-			(msecsDelta - (Time millisecondsSince: startTime) max: 0).
+			(msecsDelta - (Time localMillisecondClock - startTime) max: 0).
 	].
 
 	(self primSocketReceiveDataAvailable: socketHandle)
@@ -1852,7 +1852,7 @@ waitForDataIfClosed: closedBlock
 		self readSemaphore wait ] repeat
 ! !
 
-!Socket methodsFor: 'waiting' stamp: 'nice 4/28/2009 21:20'!
+!Socket methodsFor: 'waiting' stamp: 'jmv 6/11/2014 19:36'!
 waitForDisconnectionFor: timeout
 	"Wait for the given nr of seconds for the connection to be broken.
 	Return true if it is broken by the deadline, false if not.
@@ -1861,27 +1861,27 @@ waitForDisconnectionFor: timeout
 	before calling this method."
 
 	| startTime msecsDelta status |
-	startTime := Time millisecondClockValue.
+	startTime := Time localMillisecondClock.
 	msecsDelta := (timeout * 1000) truncated.
 	status := self primSocketConnectionStatus: socketHandle.
 	[((status == Connected) or: [(status == ThisEndClosed)]) and:
-	 [(Time millisecondsSince: startTime) < msecsDelta]] whileTrue: [
+	 [(Time localMillisecondClock - startTime) < msecsDelta]] whileTrue: [
 		self discardReceivedData.
 		self readSemaphore waitTimeoutMSecs: 
-			(msecsDelta - (Time millisecondsSince: startTime) max: 0).
+			(msecsDelta - (Time localMillisecondClock - startTime) max: 0).
 		status := self primSocketConnectionStatus: socketHandle].
 	^ status ~= Connected! !
 
-!Socket methodsFor: 'waiting' stamp: 'Pmm 11/20/2010 23:47'!
+!Socket methodsFor: 'waiting' stamp: 'jmv 6/11/2014 19:36'!
 waitForSendDoneFor: timeout
 	"Wait up until the given deadline for the current send operation to complete. Return true if it completes by the deadline, false if not."
 
 	| startTime msecsDelta msecsEllapsed sendDone |
-	startTime := Time millisecondClockValue.
+	startTime := Time localMillisecondClock.
 	msecsDelta := (timeout * 1000) truncated.
 	[(sendDone := self primSocketSendDone: socketHandle) not and: [ self isConnected
 			"Connection end and final data can happen fast, so test in this order"
-		and: [(msecsEllapsed := Time millisecondsSince: startTime) < msecsDelta]]] whileTrue: [
+		and: [(msecsEllapsed := Time localMillisecondClock - startTime) < msecsDelta]]] whileTrue: [
 			self writeSemaphore waitTimeoutMSecs: msecsDelta - msecsEllapsed].
 
 	^ sendDone! !
@@ -2061,7 +2061,7 @@ newUDP
 	^[ super new initialize: UDPSocketType ]
 		repeatWithGCIf: [ :socket | socket isValid not ]! !
 
-!Socket class methodsFor: 'utilities' stamp: 'jmv 3/2/2010 11:29'!
+!Socket class methodsFor: 'utilities' stamp: 'jmv 6/11/2014 19:36'!
 ping: hostName
 	"Ping the given host. Useful for checking network connectivity. The host must be running a TCP echo server."
 	"Socket ping: 'squeak.cs.uiuc.edu'"
@@ -2085,18 +2085,18 @@ ping: hostName
 					^ self]].
 
 	sock sendData: 'echo!!'.
-	startTime _ Time millisecondClockValue.
+	startTime _ Time localMillisecondClock.
 	[sock waitForDataFor: 15]
 		on: ConnectionTimedOut
 		do: [:ex | (self confirm: 'Packet sent but no echo yet; keep waiting?')
 			ifTrue: [ex retry]].
-	echoTime _ Time millisecondClockValue - startTime.
+	echoTime _ Time localMillisecondClock - startTime.
 
 	sock destroy.
 	self inform: hostName, ' responded in ', echoTime printString, ' milliseconds'.
 ! !
 
-!Socket class methodsFor: 'utilities' stamp: 'ul 11/25/2010 21:34'!
+!Socket class methodsFor: 'utilities' stamp: 'jmv 6/11/2014 19:37'!
 pingPorts: portList on: hostName timeOutSecs: timeOutSecs
 	"Attempt to connect to each of the given sockets on the given host. Wait at most timeOutSecs for the connections to be established. Answer an array of strings indicating the available ports."
 
@@ -2115,7 +2115,7 @@ pingPorts: portList on: hostName timeOutSecs: timeOutSecs
 				on: ConnectionTimedOut
 				do: [ ].
 			sock ].
-	startTime := Time millisecondClockValue.
+	startTime := Time localMillisecondClock.
 	timeoutMsecs := (1000 * timeOutSecs) truncated.
 	done := false.
 	[ done ]
@@ -2136,7 +2136,7 @@ pingPorts: portList on: hostName timeOutSecs: timeOutSecs
 				ifTrue: [ done := true ].
 			connectedCount = sockets size
 				ifTrue: [ done := true ].
-			(Time millisecondsSince: startTime) >= timeoutMsecs
+			(Time localMillisecondClock - startTime) >= timeoutMsecs
 				ifTrue: [ done := true ] ].
 	result := (sockets select: [ :s | s isConnected ]) collect: [ :s | self nameForWellKnownTCPPort: s remotePort ].
 	sockets do: [ :s | s destroy ].
