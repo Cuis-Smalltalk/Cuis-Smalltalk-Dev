@@ -12,16 +12,16 @@ Other packages are being developed by members of the Cuis community, but haven't
 Some of the repos owner by community members, and including packages for Cuis are:
 (Note: some of these repos also include stuff that is not for Cuis. But .pck.st files are Cuis packages.)
 
-https://github.com/KenDickey?tab=repositories
-https://github.com/hhzl?tab=repositories
-https://github.com/dtlewis290?tab=repositories
-https://github.com/davidgraham?tab=repositories
-https://github.com/muspellsson?tab=repositories
-https://github.com/garduino?tab=repositories
-https://github.com/bpieber?tab=repositories
-https://github.com/pmon?tab=repositories
-https://github.com/mumez?tab=repositories
-https://github.com/TakuriTakahashi?tab=repositories
+- https://github.com/KenDickey?tab=repositories
+- https://github.com/hhzl?tab=repositories
+- https://github.com/dtlewis290?tab=repositories
+- https://github.com/davidgraham?tab=repositories
+- https://github.com/muspellsson?tab=repositories
+- https://github.com/garduino?tab=repositories
+- https://github.com/bpieber?tab=repositories
+- https://github.com/pmon?tab=repositories
+- https://github.com/mumez?tab=repositories
+- https://github.com/TakuriTakahashi?tab=repositories
 
 (if your repo with Cuis stuff is missing, please email the Cuis mail list)
 
