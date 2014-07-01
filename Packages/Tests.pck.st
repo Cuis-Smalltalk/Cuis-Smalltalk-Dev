@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2009] on 29 May 2014 at 10:12:10.625968 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2026] on 1 July 2014 at 10:06:39.487413 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 9!
+!provides: 'Tests' 1 10!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -2190,7 +2190,7 @@ testDebuggerTempAccess
 
 	self doTestDebuggerTempAccessWith: 1 with: 2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'nice 2/23/2011 21:39'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 6/29/2014 19:57'!
 testDecompiledDoitMethodTempNames
 	"self new testDecompiledDoitMethodTempNames"
 	"Test that a decompiled doit that has been copied with temps decompiles to the input"
@@ -2200,17 +2200,16 @@ testDecompiledDoitMethodTempNames
 		[:source| | mns m mps mnps |
 		"Need to compare an ungenerated tree with the generated method's methodNode
 		 because generating code alters the tree when it introduces remote temp vectors."
-		mns := #(first last) collect:
-					[:ignored|
+		mns := #(first last) collect: [ :ignored |
 					source first isLetter
-						ifTrue:
-							[self class compilerClass new
+						ifTrue: [
+							Compiler new
 								compile: source
 								in: self class
 								notifying: nil
 								ifFail: [self error: 'compilation error']]
-						ifFalse:
-							[self class compilerClass new
+						ifFalse: [
+							Compiler new
 								compileNoPattern: source
 								in: self class
 								context: nil
@@ -2327,24 +2326,23 @@ testInlineBlockCollectionSD1
 	b2 := b2 asArray collect: [:b | b value].
 	self assert: b1 = b2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 1/17/2011 00:13'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 6/29/2014 19:58'!
 testMethodAndNodeTempNames
 	"self new testMethodAndNodeTempNames"
 	"Test that BytecodeAgnosticMethodNode>>blockExtentsToTempRefs answers the same
 	 structure as CompiledMethod>>blockExtentsToTempRefs when the method has been
 	 copied with the appropriate temps.  This tests whether doit methods are debuggable
 	 since they carry their own temps."
-	self closureCases do:
-		[:source| | mn om m mbe obe |
+	self closureCases do: [ :source | | mn om m mbe obe |
 		mn := source first isLetter
-					ifTrue:
-						[self class compilerClass new
+					ifTrue: [
+						Compiler new
 							compile: source
 							in: self class
 							notifying: nil
 							ifFail: [self error: 'compilation error']]
-					ifFalse:
-						[self class compilerClass new
+					ifFalse: [
+						Compiler new
 							compileNoPattern: source
 							in: self class
 							context: nil
@@ -2951,20 +2949,20 @@ blockingClasses
 
 	^ #(CompiledMethod)! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 3/2/2010 09:52'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 6/29/2014 19:59'!
 checkDecompileMethod: oldMethod
 	
 	| cls selector oldMethodNode methodNode newMethod oldCodeString newCodeString |
 	cls := oldMethod methodClass.
 	selector := oldMethod selector.
-	oldMethodNode := cls decompilerClass new
+	oldMethodNode := Decompiler new
 						decompile: selector
 						in: cls
 						method: oldMethod.
 	[oldMethodNode properties includesKey: #warning] whileTrue:
 		[oldMethodNode properties removeKey: #warning].
 	oldCodeString := oldMethodNode decompileString.
-	methodNode := [cls compilerClass new
+	methodNode := [ Compiler new
 						compile: oldCodeString
 						in: cls
 						notifying: nil
@@ -2977,7 +2975,7 @@ checkDecompileMethod: oldMethod
 	"Ignore cannot store into block arg errors; they're not our issue."
 	methodNode ~~ #badStore ifTrue:
 		[newMethod := methodNode generate: #(0 0 0 0).
-		 newCodeString := (cls decompilerClass new
+		 newCodeString := (Decompiler new
 							decompile: selector
 							in: cls
 							method: newMethod) decompileString.
@@ -7985,6 +7983,39 @@ testGenerateShoutConfig
 
 	self assert: 
 		(self shoutArray = theme new generateShoutConfig asArray)! !
+
+!TimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:32'!
+testCreation
+	"
+	self new testCreation
+	"
+	| t |
+	
+	t _ Time seconds: 52262.
+	self assert: t hour = 14.
+	self assert: t minute = 31.
+	self assert: t second = 2.
+
+	t _ Time seconds: 52262 nanoSeconds: 414712000.
+	self assert: t hour = 14.
+	self assert: t minute = 31.
+	self assert: t second = 2.
+	self assert: t nanoSecond = 414712000! !
+
+!TimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:34'!
+testEqual
+	"
+	self new testEqual
+	"
+	| t1 t2 |
+	
+	t1 _ Time seconds: 52262.
+	t2 _ Time seconds: 52262 nanoSeconds: 0.
+	self assert: t1 = t2.
+	t2 _ Time seconds: 52262 nanoSeconds: 1234.
+	self deny: t1 = t2.
+	t2 _ Time seconds: 52263 nanoSeconds: 0.
+	self deny: t1 = t2.! !
 
 !TimeTest methodsFor: 'Tests' stamp: 'jmv 5/27/2014 22:46'!
 testSqueakInquiries
