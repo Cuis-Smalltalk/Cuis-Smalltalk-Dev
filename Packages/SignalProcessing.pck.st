@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1969] on 26 February 2014 at 8:00:26.235062 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2079] on 9 August 2014 at 10:53:56.703875 am'!
 'Description Please enter a description for this package '!
-!provides: 'SignalProcessing' 1 2!
+!provides: 'SignalProcessing' 1 3!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
@@ -165,7 +165,7 @@ Each instance caches tables used for transforming a given size (n = 2^nu samples
 It would have been cleaner using complex numbers, but often the data is all real.!
 
 !FFT2D commentStamp: '<historical>' prior: 0!
-My instances provide for 2D FFT on FloatMatrix'es. I rely on FFT for succesive transform by rows and by columns.!
+My instances provide for 2D FFT on FloatMatrix'es and FloatImages. I rely on FFT for succesive transform by rows and by columns.!
 
 !FWT commentStamp: '<historical>' prior: 0!
 This class implements the Fast Wavelet Transform.  It follows Mac Cody's article in Dr. Dobb's Journal, April 1992.  See also... 
@@ -429,7 +429,7 @@ clearHighFftFrequencies
 					(self i: i j: j) *
 						(self lowPassGaussian: cutoff i: i j: j)]]! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 7/19/2012 11:14'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/4/2014 16:21'!
 convolutionLinearWith: aForm
 	"Linear convolution. Warning: Slow.
 	It is usually preferred to do a circular convolution via FFT and take care of border effects."
@@ -438,7 +438,7 @@ convolutionLinearWith: aForm
 	f _ Form fromUser.
 	m _ FloatMatrix m: 3 n: 3.
 	m fillGaussian.
-	(m convolutionWith: f) display
+	(m convolutionLinearWith: f) display
 	"
 
 	| resultWidth resultHeight result xx yy blue c green red k |
@@ -470,17 +470,17 @@ convolutionLinearWith: aForm
 	].
 	^result! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 7/26/2011 17:49'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/4/2014 16:23'!
 convolveWith: aMatrix
 	"Compute convolution with aMatrix, usig 2D FFT. Store the result on self.
 	Note: The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	Note 2: This method does a Circular Convolution.
 	| f m fm r1 |
 	f _ Form fromDisplay: (Rectangle fromUser origin extent: 128@128).
 	fm _ FloatMatrix form: f color: #green.
-	f _ fm asForm.
 	m _ FloatMatrix m: 3 n: 3.
 	m fillGaussian.
-	[ r1 _ m convolutionWith: f.] timeToRun print.
+	[ r1 _ m convolutionLinearWith: f.] timeToRun print.
 	r1 displayAt: 10@10.
 	[ fm convolveWith: m ] timeToRun print.
 	fm asForm displayAt: 138@10
@@ -1489,25 +1489,54 @@ asFloatMatrix
 	answer elements += values.
 	^answer! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 7/26/2012 21:11'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 8/7/2014 11:33'!
 asForm
 	"Answer a 32bit Form with gray values.
-	Clip values outside [0.0 .. 1.0]"
-	| answer |
+	Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
+	Assume receiver is in gamma space (as a Form, and as jpg or png files)
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+
+	^ self asFormEvaluating: [ :index :word | | value |
+		value _ values at: index.
+		value _ (value * 255) rounded min: 255 max: 0.
+		word at: 1 put: value; at: 2 put: value; at: 3 put: value ]! !
+
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 8/7/2014 11:28'!
+asFormEvaluating: aBlock
+	"Fill 32bit Form with gray values.
+	doScaleActualRange
+		ifTrue: [ Scale actual used values to possible pixel values ]
+		ifFalse: [ Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range. ]
+	isILinearSpace ifTrue: [
+		Apply gamma encoding, to adapt data in linear space for better viewing ]"
+
+	| answer bits word index |
 	answer _ Form extent: width@height depth: 32.
-	self fill32BitForm: answer.
+	bits _ answer bits.
+	word _ 16rFF000000.
+	index _ 1.
+	1 to: height do: [ :y |
+		1 to: width do: [ :x |
+			aBlock value: index value: word.
+			bits at: index put: word.
+			index _ index + 1 ]].
 	^answer! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 10/10/2012 16:29'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 8/7/2014 11:37'!
 asFormG: greenImage b: blueImage
 	"Answer a 32bit Form with gray values.
-	Clip values outside [0.0 .. 1.0]"
-	| answer |
-	answer _ Form
-		extent: ((self extent min: greenImage extent) min: blueImage extent)
-		depth: 32.
-	self withG: greenImage b: blueImage fill32BitForm: answer.
-	^answer! !
+	Clip values outside [0.0 .. 1.0].
+	Assume arguments are in gamma space (as a Form, and as jpg or png files)
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+
+	| blueValues greenValues scaledB scaledG scaledR |
+	greenValues _ greenImage values.
+	blueValues _ blueImage values.
+	^ self asFormEvaluating: [ :index :word |
+		scaledR _ ((values at: index) * 255) rounded min: 255 max: 0.
+		scaledG _ ((greenValues at: index) * 255) rounded min: 255 max: 0.
+		scaledB _ ((blueValues at: index) * 255) rounded min: 255 max: 0.
+		word at: 1 put: scaledB; at: 2 put: scaledG; at: 3 put: scaledR ]! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 8/9/2012 15:44'!
 average
@@ -1720,6 +1749,69 @@ crazyFactor _ 1.8892666638.
 
 	^centroidX @ centroidY! !
 
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/6/2014 12:49'!
+convolutionLinearWith: aFloatMatrix
+	"Linear convolution. Warning: Slow.
+	It is usually preferred to do a circular convolution via FFT and take care of border effects.
+	Answer a new FLoatImage. Don't modify receiver or argument."
+
+	| answer h w v |
+	h _ aFloatMatrix height.
+	w _ aFloatMatrix width.
+	answer _ FloatImage width: width + aFloatMatrix width height: height + aFloatMatrix height.
+	1 to: height do: [ :y |
+		1 to: width do: [ :x |
+			v _ self x: x y: y.
+			1 to: h do: [ :i |
+				1 to: w do: [ :j |
+					answer x: x + j-1 y: y + i-1 put: v * (aFloatMatrix i: i j: j) + (answer x: x + j-1 y: y + i-1) ]]]].
+	^answer! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/7/2014 10:17'!
+convolve: aMatrixOrFloatImage
+	"Compute convolution with aMatrix, usig 2D FFT. Store the result on self.
+	Note: The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	Note 2: This method does a Circular Convolution.
+	| f m fm |
+	f _ Form fromDisplay: (Rectangle fromUser origin extent: 128@128).
+	fm _ FloatImage from32BitColorForm: f component: #green.
+	fm displayAt: 10@10.
+	m _ FloatMatrix m: 3 n: 3.
+	m fillGaussian; normalizeSum.
+	[ fm convolve: m ] timeToRun print.
+	fm displayAt: 138@10.
+	"
+	| imaginary argumentReal argumentImaginary fft a b c d e f |
+	
+	"prepare arguments"
+	imaginary _ FloatImage width: width height: height.
+	"Always make a copy, as we are going to modify it"
+	argumentReal _ FloatImage width: width height: height.
+	argumentReal fillWith: aMatrixOrFloatImage.
+	argumentImaginary _ FloatImage width: width height: height.
+
+	"Transform both to Fourier space. Allocate space for imaginary coefficients."
+	fft _ FFT2D new.
+	fft realData: argumentReal imagData: argumentImaginary.
+	fft transformForward: true.
+	fft realData: self imagData: imaginary.
+	fft transformForward: true.
+
+	"Multiply"
+	1 to: height do: [ :y |
+		1 to: width do: [ :x |
+			a _ self x: x y: y.
+			b _ imaginary x: x y: y.
+			c _ argumentReal x: x y: y.
+			d _ argumentImaginary x: x y: y.
+			e _ a * c - (b * d).
+			f _ b * c + (a * d).
+			self x: x y: y put: e.
+			imaginary x: x y: y put: f ]].
+
+	"And transform back self"
+	fft transformForward: false! !
+
 !FloatImage methodsFor: 'copying' stamp: 'jmv 9/25/2012 16:56'!
 copy: aRectangle
 	"
@@ -1783,6 +1875,45 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	"And transform back self"
 	fft transformForward: false! !
 
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/7/2014 10:23'!
+deconvolve: aMatrixOrFloatImage threshold: threshold
+	"Compute deconvolution with aMatrixOrFloatImage, usig 2D FFT. Store the result on self.
+	Note: The deconvolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	Note 2: This method does a Circular Deconvolution.
+	
+	Play with the example to understand the effect of quantization and threshold (balance between noise and high frequency preservation)
+	
+	| f m fm fm1 |
+	f _ Form fromDisplay: (Rectangle fromUser origin extent: 128@128).
+	fm _ FloatImage from32BitColorForm: f component: #green.
+	fm displayAt: 10@10.
+	m _ FloatMatrix m: 8 n: 8.
+	m fillGaussian; normalizeSum.
+	[ fm convolve: m ] timeToRun print.
+	fm displayAt: 138@10.
+	fm1 _ fm copy.
+	[ fm1 deconvolve: m threshold: 0 ] timeToRun print.
+	fm1 displayAt: 266@10.
+	fm1 _ fm copy.
+	[ fm1 deconvolve: m threshold: 0.0001 ] timeToRun print.
+	fm1 displayAt: 266@138.
+	fm1 _ fm copy.
+	fm1 quantizeTo: 8.
+	[ fm1 deconvolve: m threshold: 0 ] timeToRun print.
+	fm1 displayAt: 394@10.
+	fm1 _ fm copy.
+	fm1 quantizeTo: 8.
+	[ fm1 deconvolve: m threshold: 0.0001 ] timeToRun print.
+	fm1 displayAt: 394@138.
+	"
+
+	| fft |
+	"Compute deconvolution, but leave result in Fourier space"
+	fft _ self fourierDeconvolve: aMatrixOrFloatImage threshold: threshold.
+
+	"And transform back self"
+	fft transformForward: false! !
+
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 12/11/2012 15:48'!
 deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw
 	"Compute the image registration between self and anImage. Answer the delta aFloatImage should be moved to align perfectly with self.
@@ -1836,15 +1967,24 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw
 	dy > (height//2) ifTrue: [ dy _ dy - height ].
 	^dx @dy! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/27/2012 18:06'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/4/2014 15:37'!
 display
-	self asForm display! !
+	self displayAt: 0@0! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 9/25/2012 16:48'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 11:33'!
 displayAt: aPoint
-	self asForm displayAt: aPoint! !
+	"Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
+	Assume receiver is in gamma space (as a Form, and as jpg or png files)
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
 
-!FloatImage methodsFor: 'copying' stamp: 'jmv 4/4/2013 17:47'!
+	| f |
+	f _ self asFormEvaluating: [ :index :word | | value |
+		value _ values at: index.
+		value _ (value * 255) rounded min: 255 max: 0.
+		word at: 1 put: value; at: 2 put: value; at: 3 put: value ].
+	f displayAt: aPoint! !
+
+!FloatImage methodsFor: 'copying' stamp: 'jmv 8/5/2014 14:04'!
 expandTo: newExtent
 	"
 	| i |
@@ -1852,63 +1992,22 @@ expandTo: newExtent
 	i x: 5 y: 5 put: Float pi.
 	i expandTo:10@10
 	"
-	| answer dx dy |
+	| answer dx dy x0 xz y0 yz |
 	answer _ FloatImage width: newExtent x height: newExtent y.
 	dx _  newExtent x - width // 2.
 	dy _  newExtent y - height // 2.
-	1 to: height do: [ :y |
-		1 to: width do: [ :x |
+	y0 _ 1-dy max: 1.
+	yz _ newExtent y-dy min: height.
+	x0 _ 1-dx max: 1.
+	xz _ newExtent x-dx min: width.
+	y0 to: yz do: [ :y |
+		x0 to: xz do: [ :x |
 			answer x: x+dx y: y+dy put: (self x: x y: y) ]].
 	^answer! !
 
 !FloatImage methodsFor: 'accessing' stamp: 'jmv 8/28/2012 15:08'!
 extent
 	^width@height! !
-
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 10/10/2012 16:31'!
-fastWithG: greenImage b: blueImage fill32BitForm: aForm
-	"Answer a 32bit Form with color values.
-	Clip values outside [0.0 .. 1.0]
-	Assume 3 images are the same extent"
-"
-Era mejor bitOr: o + _
-"
-	| formWidth formHeight bits value index blueValues greenValues scaledB scaledG scaledR |
-	formHeight _ aForm extent y.
-	formWidth _ aForm extent x.
-	bits _ aForm bits.
-	greenValues _ greenImage values.
-	blueValues _ blueImage values.
-	1 to: (height min: formHeight) do: [ :y |
-		index _ y-1 * width.
-		1 to: (width min: formWidth) do: [ :x |
-			index _ index + 1.
-			scaledR _ ((values at: index) * 255) rounded min: 255 max: 0.
-			scaledG _ ((greenValues at: index) * 255) rounded min: 255 max: 0.
-			scaledB _ ((blueValues at: index) * 255) rounded min: 255 max: 0.
-			value _ 16rFF000000 bitOr: (scaledR << 16 bitOr: (scaledG << 8 bitOr: scaledB)).
-			bits at: index put: value ]].
-	^aForm! !
-
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 7/26/2012 21:14'!
-fill32BitForm: aForm
-	"Answer a 32bit Form with gray values.
-	Clip values outside [0.0 .. 1.0]"
-"
-Era mejor bitOr: o + _
-"
-	| formWidth formHeight bits scaled value index |
-	formHeight _ aForm extent y.
-	formWidth _ aForm extent x.
-	bits _ aForm bits.
-	1 to: (height min: formHeight) do: [ :y |
-		index _ y-1 * width.
-		1 to: (width min: formWidth) do: [ :x |
-			index _ index + 1.
-			scaled _ ((values at: index) * 255) rounded min: 255 max: 0.
-			value _ 16rFF000000 bitOr: (scaled << 16 bitOr: (scaled << 8 bitOr: scaled)).
-			bits at: index put: value ]].
-	^aForm! !
 
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 8/14/2012 11:00'!
 fillFrom32BitColorForm: aForm component: aSymbol
@@ -1963,12 +2062,273 @@ Era mejor bitOr: o + ?
 		]
 	]! !
 
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 8/5/2014 11:12'!
+fillFromArrayOfArrays: anArray
+
+	1 to: height do: [ :y |
+		1 to: width do: [ :x |
+			self x: x y: y put: ((anArray at: y) at: x) ]]! !
+
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 8/9/2012 17:43'!
 fillFromFloatMatrix: aFloatMatrix
 
 	1 to: (height min: aFloatMatrix height) do: [ :y |
 		1 to: (width min: aFloatMatrix width) do: [ :x |
 			self x: x y: y put: (aFloatMatrix i: y j: x) ]]! !
+
+!FloatImage methodsFor: 'copying' stamp: 'jmv 8/5/2014 12:26'!
+fillWith: aFloatImageOrFloatMatrix
+
+	1 to: (height min: aFloatImageOrFloatMatrix height) do: [ :y |
+		1 to: (width min: aFloatImageOrFloatMatrix width) do: [ :x |
+			self x: x y: y put: (aFloatImageOrFloatMatrix x: x y: y) ] ]! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/7/2014 10:25'!
+fillWithDeconvolutionOf: blurredImages deconvolve: kernels
+	"
+	blurredImages are the results of the convolution of some unknown image with various kernels.
+	Try to rebuild the original unknown image: Fill the receiver with the result of joint deconvolution.
+	Note: Deconvolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	Note 2: This method does a Circular Deconvolution."
+	"
+	A vast improvement in efficiency could be to take small blurKernels, not requiring them to be of the same size as the images,
+	and it could build just one larger 1-d array for the row/column fft."
+	
+	| fft |
+	"Compute deconvolution, but leave result in Fourier space"
+	fft _ self fourierDeconvolutionOf: blurredImages deconvolve: kernels.
+
+	"And transform back self"
+	fft transformForward: false! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/7/2014 13:02'!
+fourierDeconvolutionOf: blurredImages deconvolve: kernels
+	"
+	blurredImages are the results of the convolution of some unknown image with various kernels.
+	Try to rebuild the original unknown image: Fill the receiver with the result of joint deconvolution.
+	Note: Deconvolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	Note 2: This method does a Circular Deconvolution.
+	
+	Do Not perform the final inverse FFT, but answer it.
+	Let callers do it if desired (or maybe, do stuff with coefficients in Fourier space)
+	"
+	"
+	A vast improvement in efficiency could be to take small blurKernels, not requiring them to be of the same size as the images, and it could build just one larger 1-d array for the row/column fft."
+	| count imageReals imageImaginaries kernelReals kernelImaginaries resultI fft a b c d e f operandNormSquared weight weightSum |
+	count _ blurredImages size.
+	imageReals _ Array new: count.
+	imageImaginaries _ Array new: count.
+	kernelReals _ Array new: count.
+	kernelImaginaries _ Array new: count.
+	fft _ FFT2D new.
+	1 to: count do: [ :idx | | imageR imageI kernelR kernelI |
+		imageR _ (blurredImages at: idx) copy.
+		imageReals at: idx put: imageR.
+		imageI _ FloatImage width: width height: height.
+		imageImaginaries at: idx put: imageI.
+		fft realData: imageR imagData: imageI.
+		fft transformForward: true.
+		kernelR _ FloatImage width: width height: height.
+		kernelR fillWith: (kernels at: idx).
+		kernelReals at: idx put: kernelR.
+		kernelI _ FloatImage width: width height: height.
+		kernelImaginaries at: idx put: kernelI.
+		fft realData: kernelR imagData: kernelI.
+		fft transformForward: true ].
+	resultI _ FloatImage width: width height: height.
+	1 to: height do: [ :y |
+		1 to: width do: [ :x |
+			e _ 0.0.
+			f _ 0.0.
+			weightSum _ 0.0.
+			1 to: count do: [ :idx |
+				c _ (kernelReals at: idx) x: x y: y.
+				d _ (kernelImaginaries at: idx) x: x y: y.
+				operandNormSquared _ c * c + (d * d).
+				"operandNormSquared = 0.0 ifFalse: ["
+				operandNormSquared > 0.0 ifTrue: [
+					a _ (imageReals at: idx) x: x y: y.
+					b _ (imageImaginaries at: idx) x: x y: y.
+					"operandNormSquared and weight kept just to illustrate what the heck are we doing here..."
+					weight _ operandNormSquared sqrt.
+					e _ a * c + (b * d) / operandNormSquared * weight + e.
+					f _ b * c - (a * d) / operandNormSquared * weight + f.
+					weightSum _ weightSum + weight ]].
+			weightSum = 0.0 ifFalse: [
+				e _ e / weightSum.
+				f _ f / weightSum ].
+			self x: x y: y put: e.
+			resultI x: x y: y put: f ]].
+	fft realData: self imagData: resultI.
+	"Do not transform back self"
+	"fft transformForward: false"
+	^fft! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/7/2014 12:20'!
+fourierDeconvolve: aMatrixOrFloatImage threshold: threshold
+	"Compute deconvolution with aMatrixOrFloatImage, usig 2D FFT. Store the result on self.
+	Note: The deconvolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	Note 2: This method does a Circular Deconvolution.
+	
+	Do Not perform the final inverse FFT, but answer it.
+	Let callers do it if desired (or maybe, do stuff with coefficients in Fourier space)
+	"
+	| imaginary argumentReal argumentImaginary fft a b c d e f operandNormSquared |
+	
+	"prepare arguments"
+	imaginary _ FloatImage width: width height: height.
+	"Always make a copy, as we are going to modify it"
+	argumentReal _ FloatImage width: width height: height.
+	argumentReal fillWith: aMatrixOrFloatImage.
+	argumentImaginary _ FloatImage width: width height: height.
+
+	"Transform both to Fourier space. Allocate space for imaginary coefficients."
+	fft _ FFT2D new.
+	fft realData: argumentReal imagData: argumentImaginary.
+	fft transformForward: true.
+	fft realData: self imagData: imaginary.
+	fft transformForward: true.
+
+	"Divide (multiply with inverse)"
+	1 to: height do: [ :y |
+		1 to: width do: [ :x |
+			e _ 0.0.
+			f _ 0.0.
+			c _ argumentReal x: x y: y.
+			d _ argumentImaginary x: x y: y.
+			operandNormSquared _ c * c + (d * d).
+			"Values from 0.001 to 0.01 seem to give best results
+			Bigger values: less banding but blurrier
+			Smaller values: sharper, but with banding
+			(both sharpness and banding are also heavily affected by blur size)"
+			operandNormSquared > threshold ifTrue: [
+				a _ self x: x y: y.
+				b _ imaginary x: x y: y.
+				e _ a * c + (b * d) / operandNormSquared.
+				f _ b * c - (a * d) / operandNormSquared.
+				].
+			self x: x y: y put: e.
+			imaginary x: x y: y put: f ]].
+
+	"Do not transform back self"
+	"fft transformForward: false"
+	^fft! !
+
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 11:33'!
+fullRangeDisplayAt: aPoint
+	"Assume the values are not normalized in the scale 0.0 to 1.0.
+	Apply appropriate scaling to use viewable dynamic range to show receiver actual range of values.
+	Assume receiver is in linear scale.
+	Apply appropriate gamma encoding to make good use of pixel dynamic range.
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+
+	| f min scale |
+	min _ values min.
+	scale _ values max-min.
+	scale _ scale > 0.0
+		ifTrue: [ 1.0 / scale ]
+		ifFalse: [ 1.0 ].
+	f _ self asFormEvaluating: [ :index :word | | value |
+		value _ Color linearTosRGBGamma: (values at: index)-min * scale.
+		value _ (value * 255) rounded.
+		word at: 1 put: value; at: 2 put: value; at: 3 put: value ].
+	f displayAt: aPoint! !
+
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/4/2014 15:25'!
+gammaEncodedToLinearSpace
+	"Assume the receiver is in gamma encoded space (values are proportional luminance, framebuffer contents).
+	Modify it so values are proportional to photon count (intensity of light, radiance flux).
+	Useful, for example, for taking an image read from a jpg or png file (gamma encoded)
+	and preparing it for processing in the linear space.
+	"
+	self replaceValues: [ :v | Color sRGBGammaToLinear: v ]! !
+
+!FloatImage methodsFor: 'operations' stamp: 'jmv 8/5/2014 16:46'!
+guardZone: aPoint
+	"Guard Zones
+	((FloatImage fromArrayOfArrays: #(
+		(9 9 9 9 9 9)
+		(9 9 9 9 9 9)
+		(9 9 9 0 9 9)
+		(9 9 9 0 9 9)
+		(9 9 9 0 9 9)
+		(9 9 9 9 9 9)
+		))
+			guardZone: 1@2;
+			asFloatMatrix)
+			print
+	"
+	self guardZone: aPoint topLeftNullFill: 0@0 bottomRightNullFill: 0@0! !
+
+!FloatImage methodsFor: 'private' stamp: 'jmv 8/5/2014 16:43'!
+guardZone: guardZone topLeftNullFill: leadingNulls bottomRightNullFill: trailingNulls
+	"Guard Zones
+	((((FloatImage fromArrayOfArrays: #(
+		(9 9 9 9 9 9 9 9)
+		(9 9 9 9 9 9 9 9)
+		(9 9 9 9 9 9 9 9)
+		(9 9 9 -9 -9 -9 9 9)
+		(9 9 9 -9 -9 -9 -9 9)
+		(9 9 9 -9 -9 -9 9 9)
+		(9 9 9 -9 -9 -9 9 9)
+		(9 9 9 9 9 9 9 9)
+		))
+			guardZone: 3@2 topLeftZeroFill: 1@0 bottomRightZeroFill: 0@1;
+			asFloatMatrix)
+			print;
+			asForm) magnifyTo: 80@80) display
+	"
+	| outerRect innerRect nullValue |
+	self assert: width > (guardZone x * 2 + leadingNulls x + trailingNulls x).
+	self assert: height > (guardZone y * 2 + leadingNulls y + trailingNulls y).
+	nullValue _ values sum / values size.
+	outerRect _ 1@1 extent: width@height.
+	innerRect _ outerRect insetBy: (leadingNulls + guardZone abs ceiling corner: trailingNulls + guardZone abs ceiling).
+	outerRect areasOutside: innerRect do: [ :rect |
+		rect top to: rect bottom-1 do: [ :y |
+			rect left to: rect right-1 do: [ :x |
+				self guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValue ]]]! !
+
+!FloatImage methodsFor: 'private' stamp: 'jmv 8/5/2014 11:06'!
+guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValue
+	"nullValue is the value to be used outside the guardZone, and the value the guardZone gradient goes to.
+	It used to be zero, but it is better to be a parameter"
+	| f xb yb keepLeft keepRight keepTop keepBottom |
+	keepLeft _ innerRect left.
+	keepTop _ innerRect top.
+	keepRight _ innerRect right - 1.
+	keepBottom _ innerRect bottom -1.
+	guardZone x = 0 ifFalse: [
+		x < keepLeft
+			ifTrue: [
+				xb _ keepLeft.
+				yb _ xb-x / guardZone x * guardZone y + y.
+				(yb >= keepTop and: [ yb <= keepBottom ]) ifTrue: [
+					f _ x-xb / guardZone x abs+1 max: 0.0.
+					^self x: x y: y put: (self linearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]].
+		x > keepRight
+			ifTrue: [
+				xb _ keepRight.
+				yb _ xb-x / guardZone x * guardZone y + y.
+				(yb >= keepTop and: [ yb <= keepBottom ]) ifTrue: [
+					f _ xb-x / guardZone x abs+1 max: 0.0.
+					^self x: x y: y put: (self linearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
+	guardZone y = 0 ifFalse: [
+		y < keepTop
+			ifTrue: [
+				yb _ keepTop.
+				xb _ yb-y / guardZone y * guardZone x + x.
+				(xb >= keepLeft and: [ xb <= keepRight ]) ifTrue: [
+					f _ y - yb / guardZone y abs+1 max: 0.0.
+					^self x: x y: y put: (self linearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]].
+		y > keepBottom
+			ifTrue: [
+				yb _ keepBottom.
+				xb _ yb-y / guardZone y * guardZone x + x.
+				(xb >= keepLeft and: [ xb <= keepRight ]) ifTrue: [
+					f _ yb-y / guardZone y abs+1 max: 0.0.
+					^self x: x y: y put: (self linearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
+	self x: x y: y put: nullValue! !
 
 !FloatImage methodsFor: 'accessing' stamp: 'jmv 7/26/2012 20:46'!
 height
@@ -2100,6 +2460,20 @@ lanczosTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 				scaled x: x y: y put: v ]]].
 	^scaled! !
 
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 11:33'!
+linearDisplayAt: aPoint
+	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
+	Assume receiver is in linear scale.
+	Apply appropriate gamma encoding to make good use of pixel dynamic range.
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+
+	| f |
+	f _ self asFormEvaluating: [ :index :word | | value |
+		value _ Color linearTosRGBGamma: ((values at: index) min: 1.0 max: 0.0).
+		value _ (value * 255) rounded.
+		word at: 1 put: value; at: 2 put: value; at: 3 put: value ].
+	f displayAt: aPoint! !
+
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:29'!
 linearInterpolatedValueAtX: x y: y
 	"Evaluate a bilinear (i.e. cheap) interpolation"
@@ -2181,6 +2555,15 @@ linearScaledBy: scale
 			yp _ y-0.5/scale+0.5.
 			scaled x: x y: y put: (self linearInterpolatedValueAtX: xp y: yp) ]].
 	^scaled! !
+
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/4/2014 15:32'!
+linearSpaceToGammaEncoded
+	"Assume the receiver is in linear space (values are proportional to photon count).
+	Modify it so values are proportional to human perceived brightness.
+	Useful, for example, for displaying:
+		aFloatImageInLinearSpace copy linearSpaceToGammaEncoded displayAt: 0@0
+	"
+	self replaceValues: [ :v | Color linearTosRGBGamma: v ]! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:41'!
 linearTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
@@ -2428,6 +2811,18 @@ postCopy
 
 	values _ values copy! !
 
+!FloatImage methodsFor: 'quantization' stamp: 'jmv 8/4/2014 15:55'!
+quantizeTo: bits
+	"Simulate quantization to the specified number of bits.
+	Modify the receiver.
+	Use no more than 2^bits different values.
+	Clamp values outside (0.0 .. 1.0)
+	Note: Range still will be (0.0 .. 1.0).
+	"
+	| q |
+	q _ 1.0 / (2 raisedTo: bits).
+	self replaceValues: [ :v | (v roundTo: q) min: 1.0 max: 0.0 ]! !
+
 !FloatImage methodsFor: 'operations' stamp: 'jmv 8/2/2012 16:56'!
 replaceValues: aBlock
 	1
@@ -2541,6 +2936,22 @@ shiftedLinearTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 				scaled x: x y: y put: v ]]].
 	^scaled! !
 
+!FloatImage methodsFor: 'noise generation' stamp: 'jmv 8/5/2014 13:18'!
+simulatePhotonNoise: fullWellElectrons
+	"Simulate photon noise, assuming 1.0 means fullWellElectrons"
+
+	| random |
+	random _ NormalRandom new.
+	self replaceValues: [ :v | (v / fullWellElectrons max: 0) sqrt * random next + v ]! !
+
+!FloatImage methodsFor: 'noise generation' stamp: 'jmv 8/4/2014 16:41'!
+simulateReadNoise: sd
+	"Simulate Read Noise"
+
+	| random |
+	random _ NormalRandom new.
+	self replaceValues: [ :v | sd * random next + v ]! !
+
 !FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 8/3/2012 15:14'!
 squared
 	"Answer the receiver multipled by itself."
@@ -2582,27 +2993,40 @@ with: anotherImage replaceValues: aBlock
 				at: i
 				put: (aBlock value: (values at: i) value: (otherValues at: i)) ]! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 10/10/2012 16:57'!
-withG: greenImage b: blueImage fill32BitForm: aForm
-	"Answer a 32bit Form with color values.
-	Clip values outside [0.0 .. 1.0]"
-"
-Era mejor bitOr: o + _
-"
-	| formWidth formHeight bits value index scaledB scaledG scaledR |
-	formHeight _ aForm extent y.
-	formWidth _ aForm extent x.
-	bits _ aForm bits.
-	1 to: (height min: formHeight) do: [ :y |
-		index _ y-1 * formWidth.
-		1 to: (width min: formWidth) do: [ :x |
-			index _ index + 1.
-			scaledR _ ((self x: x y: y) * 255) rounded min: 255 max: 0.
-			scaledG _ ((greenImage x: x y: y) * 255) rounded min: 255 max: 0.
-			scaledB _ ((blueImage x: x y: y)*255) rounded min: 255 max: 0.
-			value _ 16rFF000000 bitOr: (scaledR << 16 bitOr: (scaledG << 8 bitOr: scaledB)).
-			bits at: index put: value ]].
-	^aForm! !
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 10:37'!
+withImaginary: aFloatImage displayMagnitudeAt: aPoint! !
+
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 12:21'!
+withImaginary: aFloatImage displayMagnitudeLogAt: aPoint
+	"Show logarithm of magnitude of receiver and argument considered as a Complex image"
+
+	| f imaginaryValues complex magnitude scaled first |
+	imaginaryValues _ aFloatImage values.
+	complex _ 1 + 1i.
+	first _ nil.
+	f _ self asFormEvaluating: [ :index :word |
+		complex real: (values at: index) imaginary: (imaginaryValues at: index).
+		magnitude _ complex magnitude.
+		first ifNil: [ first _ magnitude/30 ].
+		magnitude _ magnitude / first.
+		scaled _ (magnitude * 255) rounded min: 255 max: 0.
+		word at: 1 put: scaled; at: 2 put: scaled; at: 3 put: scaled ].
+	f displayAt: aPoint! !
+
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 11:49'!
+withImaginary: aFloatImage displayPhaseAt: aPoint
+	"Show phase of receiver and argument considered as a Complex image"
+
+	| f imaginaryValues complex twoPi phase scaled |
+	imaginaryValues _ aFloatImage values.
+	complex _ 1 + 1i.
+	twoPi _ Float twoPi.
+	f _ self asFormEvaluating: [ :index :word |
+		complex real: (values at: index) imaginary: (imaginaryValues at: index).
+		phase _ complex phase.
+		scaled _ (phase / twoPi + 0.5 * 255) rounded.
+		word at: 1 put: scaled; at: 2 put: scaled; at: 3 put: scaled ].
+	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'file operations' stamp: 'jmv 9/21/2012 14:07'!
 writeFileNamed: filename
@@ -2819,6 +3243,25 @@ from8BitColorForm: aForm
 	instance _ self width: aForm width height: aForm height.
 	instance fillFrom8BitColorForm: aForm.
 	^instance! !
+
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 8/5/2014 11:12'!
+fromArrayOfArrays: anArray
+	"Example:
+	FloatImage fromArrayOfArrays: #(
+		#(1 2 0 0 0 0 3) 
+		#(2 4 1 0 0 -4 3) 
+		#(0 1 1 1 0 0 3)
+		#(0 0 1 1 1 0 3)
+		#(0 0 0 1 1 1 3)
+		#(0 1 0 0 1 1 3)
+	).
+	"
+
+	| result |
+	result _ self width: anArray first size height: anArray size.
+	result fillFromArrayOfArrays: anArray.
+	^result
+! !
 
 !FloatImage class methodsFor: 'instance creation' stamp: 'jmv 10/10/2012 13:57'!
 fromFileNamed: filename

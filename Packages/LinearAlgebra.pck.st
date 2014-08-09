@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:41:06.084223 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2079] on 9 August 2014 at 10:53:54.078875 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 1!
+!provides: 'LinearAlgebra' 1 2!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -840,6 +840,15 @@ fillWithIdentity
 	self fillWithZeroes.
 	1 to: (width min: height) do: [ :j |
 		self i: j j: j put: 1 ]! !
+
+!FloatMatrix methodsFor: 'filling' stamp: 'jmv 8/4/2014 16:03'!
+fillWithOnes
+	self fillWithValue: 1.0! !
+
+!FloatMatrix methodsFor: 'filling' stamp: 'jmv 8/4/2014 16:05'!
+fillWithValue: value
+	elements *= 0.0.
+	elements += value! !
 
 !FloatMatrix methodsFor: 'accessing' stamp: 'jmv 9/17/2007 12:43'!
 fillWithZeroes
