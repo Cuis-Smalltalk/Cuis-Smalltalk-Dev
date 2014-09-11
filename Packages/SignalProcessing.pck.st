@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2089] on 2 September 2014 at 12:16:06.703653 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2089] on 8 September 2014 at 4:26:30.532938 pm'!
 'Description Please enter a description for this package '!
-!provides: 'SignalProcessing' 1 6!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 8!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -418,16 +418,17 @@ sonogramMorph: height from: start to: stop nPoints: nPoints
 	
 ! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/28/2007 19:54'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/8/2014 13:04'!
 clearHighFftFrequencies
-	"Remove high FFT frequencies. Assume I was the result of some FFT"
+	"Remove high FFT frequencies. Assume I was the result of some FFT.
+	Before using this, reevaluate assumtions, etc. This is not a good filter by most measures..."
 	| cutoff |
 	cutoff _ 0.5.
 	1 to: height do: [ :i |
 		1 to: width do: [ :j |	
 				self i: i j: j put:
 					(self i: i j: j) *
-						(self lowPassGaussian: cutoff i: i j: j)]]! !
+						(self lowPassGaussianI: i j: j sigmaY: cutoff sigmaX: cutoff) ]]! !
 
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 10:12'!
 convolutionLinearWith: aForm
@@ -524,15 +525,22 @@ fftRealForward: forward
 	transform realData: self.
 	transform transformForward: forward! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/28/2007 19:53'!
-fillLowPassGaussian: cutoff
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 15:33'!
+fillLowPassGaussianSigmaY: sigmaY sigmaX: sigmaX
+	"
+	| f |
+	f _ FloatMatrix height: 100 width: 100.
+	f fillLowPassGaussianSigmaY: 0.2 sigmaX: 0.5.
+	f _ f moveOriginToCenter: true.
+	f asForm display
+	"
 	1 to: height do: [ :i |
 		1 to: width do: [ :j |	
 				self i: i j: j put:
-					(self lowPassGaussian: cutoff i: i j: j)]]! !
+					(self lowPassGaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX)]]! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 10/25/2013 17:47'!
-gaussianI: i j: j sigma: sigma
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 15:32'!
+gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX
 	" Comment based on http://en.wikipedia.org/wiki/Gaussian_function
 	| ary expectedValue r standardDeviation a b c f x |
 	expectedValue _ 0.0.
@@ -548,12 +556,13 @@ gaussianI: i j: j sigma: sigma
 	r _ 10@10 extent: 100@50.
 	FFT new plot: ary in: r color: Color blue min: 0 max: ary max.
 	"
-	^ (j squared + i squared / (2 * sigma squared)) negated exp "/ (2 * Float pi * sigma squared)"! !
+	^ (((j/sigmaX) squared + (i/sigmaY) squared) / 2) negated exp! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/23/2014 23:26'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/8/2014 13:04'!
 lowPassFilter
 	"Apply a low pass filtar to remove the high half frequency content.
-	width and height must be an integer power of 2."
+	width and height must be an integer power of 2.
+	Before using this, reevaluate assumtions, etc. This is not a good filter by most measures..."
 	
 	| imaginary transform |
 	imaginary _ FloatMatrix height: height width: width.
@@ -564,8 +573,8 @@ lowPassFilter
 	imaginary clearHighFftFrequencies.
 	transform transformForward: false! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/28/2007 19:52'!
-lowPassGaussian: cutoff i: i j: j
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 15:26'!
+lowPassGaussianI:i j: j sigmaY: sigmaY sigmaX: sigmaX
 	| halfHeight halfWidth ii jj |
 	halfHeight _ height // 2.
 	halfWidth _ width // 2.
@@ -573,7 +582,7 @@ lowPassGaussian: cutoff i: i j: j
 	ii _ i > halfHeight ifTrue: [height-i+1/halfHeight] ifFalse: [i-1/halfHeight].
 	jj _ j > halfWidth ifTrue: [width-j+1/halfWidth] ifFalse: [j-1/halfWidth].
 	
-	^self gaussianI: ii j: jj sigma: cutoff! !
+	^self gaussianI: ii j: jj sigmaY: sigmaY sigmaX: sigmaX! !
 
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/17/2011 13:21'!
 normalizeMax
@@ -756,6 +765,31 @@ from: anImageHistogram
 		ifFalse: [
 			self validateSameSize: aFloatImageOrNumber.
 			elements /= aFloatImageOrNumber elements ]! !
+
+!FloatImage methodsFor: 'metrics' stamp: 'jmv 9/2/2014 13:22'!
+acutance
+	"Measure image acutance."
+	| aux eAcutance nAcutance neAcutance nwAcutance |
+	aux _ FloatImage extent: self extent.
+	eAcutance _ self acutanceAt: 1@0 aux: aux.
+	neAcutance _ (self acutanceAt: 1@1 aux: aux) * 0.75.
+	nAcutance _ self acutanceAt: 0@1 aux: aux.
+	nwAcutance _ (self acutanceAt: -1@1 aux: aux) * 0.75.
+	^((eAcutance max: neAcutance) max: nAcutance) max: nwAcutance! !
+
+!FloatImage methodsFor: 'metrics' stamp: 'jmv 9/4/2014 15:53'!
+acutanceAt: delta aux: auxImage
+	"Note: auxImage extent must equal self extent"
+
+	auxImage fillWith: self cheaplyDisplaced: delta.
+	auxImage -= self.
+	auxImage *= auxImage.
+	auxImage replaceValues: [ :i :j :v |
+		((i between: delta y+1 and: height + delta y) and: [
+			(j between: delta x+1 and: width + delta x) ])
+				ifTrue: [v sqrt] 
+				ifFalse: [0]].
+	^auxImage mean! !
 
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 8/23/2014 23:56'!
 addFrom8BitColorForm: aForm
@@ -945,6 +979,41 @@ beMagnitudeOfComplexesWith: imaginary
 	iv *= iv.
 	elements += iv.
 	self replaceValues: [ :i :j :v | v sqrt ]! !
+
+!FloatImage methodsFor: 'metrics' stamp: 'jmv 9/4/2014 14:22'!
+blurEstimator
+	"Estimate blur"
+	| aux eBlur nBlur |
+	aux _ FloatImage extent: self extent.
+	eBlur _ self blurEstimatorDirection: 1@0 aux: aux.
+	nBlur _ self blurEstimatorDirection: 0@1 aux: aux.
+	^eBlur @ nBlur! !
+
+!FloatImage methodsFor: 'metrics' stamp: 'jmv 9/8/2014 16:25'!
+blurEstimatorDirection: direction aux: auxImage
+"aca lo que buscamos es que la derivada del 'accutance' baje a la mitad del primer valor..."
+"
+Anda bien para blurs de entre 1 y 40 pixels
+Nunca iterar mas de 100 veces, ni contestar valores mayores que 100
+FloatImage blurEstimationExperiment
+"
+	| butLastValue lastValue delta derivative firstValueOfDerivative stepCount |
+	delta _ direction.
+	butLastValue _ self acutanceAt: delta aux: auxImage.
+	delta _ delta + direction. 
+	lastValue _ self acutanceAt: delta aux: auxImage.
+	derivative _ lastValue - butLastValue.
+	firstValueOfDerivative _ derivative.
+	firstValueOfDerivative < 1.2e-4 ifTrue: [ ^ 100 ].
+	delta _ delta + direction. 
+	stepCount _ 0.
+	[ derivative > (firstValueOfDerivative / 2) and: [stepCount < 100]] whileTrue: [
+		butLastValue _ lastValue.
+		lastValue _ self acutanceAt: delta aux: auxImage.
+		derivative _ lastValue - butLastValue.
+		stepCount _ stepCount + 1.
+		delta _ delta + direction. ].
+	^stepCount! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 12/3/2012 17:12'!
 centroidAround4: aPoint
@@ -2369,6 +2438,71 @@ xyForMax
 	x _ index - 1 \\ width + 1.
 	y _ index - x / width + 1.
 	^x@y
+! !
+
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 9/8/2014 16:24'!
+blurEstimationExperiment
+
+| answer aux bits blur blurred electronsPerDN estimation exposure f fullWell gap maxD maxDN original plotter r readNoiseElectrons sharpnessessX sharpnessessY xDer xDerDer xDerDerDer xDerDerDerDer zeros |
+Display fill: (0@0 extent: 1900@800) fillColor: Color white.
+gap _ 40.
+fullWell _ 22050.
+bits _ 8.
+maxDN _ 1 << bits - 1.
+electronsPerDN _ fullWell / maxDN.
+readNoiseElectrons _ 43.	"Vita 25 specs say 2 DN10 22050/1024*2.0"
+exposure _ 0.5.
+exposure _ 0.1.
+exposure _ 0.9.
+exposure _ 0.3.
+original _ DeblurExperiments exampleLinear.
+original _ original copy: (1@1 extent: 256@128).
+aux _ FloatImage extent: original extent.
+f _ fullWell*exposure.
+maxD _ 20.
+sharpnessessX _ FloatArray new: maxD.
+sharpnessessY _ FloatArray new: maxD.
+zeros _ FloatArray new: maxD.
+"#(0.5 0.7 1 1.2 1.5 2 3 4 5 6 7 8 9 10 15 20 22 25 28 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100) doWithIndex: [ :b :blurIndex |"
+"#(10 15 20 25 30 35 40) doWithIndex: [ :b :blurIndex |"
+"#(1.5 2 3 4 5 6 ) doWithIndex: [ :b :blurIndex |"
+"#(0.5 1 1.2 1.3 1.4 1.5) doWithIndex: [ :b :blurIndex |"
+"#(0.5 1 1.2 1.3 1.4 1.5 2 4 6 8 10 20 30 40) doWithIndex: [ :b :blurIndex |"
+"#(44 45 46 47 48 49 50 51 ) doWithIndex: [ :b :blurIndex |"
+#(1 1.2 2 4 6 8 10) doWithIndex: [ :b :blurIndex |
+	blur _ FloatMatrix newSize: original extent.
+"	blur fillLowPassGaussian: b / 256; normalizeSum."
+	blur fillLowPassGaussianSigmaY: b / 256 sigmaX: 3*b/256; normalizeSum.
+	blurred _ original copy convolveWith: blur copy.
+	""
+	blurred *= f.
+	blurred simulatePhotonNoise.
+	blurred simulateReadNoise: readNoiseElectrons.
+	blurred /= f.
+	""
+	
+	blurred linearDisplayAt: (blurIndex-1*(256+gap))+2@0.
+	1 to: maxD do: [ :d |
+		sharpnessessX at: d put: (blurred acutanceAt: d@0 aux: aux).
+	].
+sharpnessessY _ sharpnessessX copy.
+	xDer _ sharpnessessX derivative.
+	xDerDer _ xDer derivative.
+	xDerDerDer _ xDerDer derivative.
+	xDerDerDerDer _ xDerDerDer derivative.
+	plotter _ FFT new.
+	r _ (blurIndex-1*(256+gap))+2@257 extent:256@512.
+	plotter plot: zeros in: r color: Color green min: -0.01 max: 0.01.
+	plotter verticalLine: b range: maxD in: r color: Color green.
+	plotter plot: sharpnessessX in: r color: Color blue min: -0.1 max: 0.1.
+	plotter plot: xDer in: r color: Color cyan min: -0.01 max: 0.01.
+	estimation _ blurred blurEstimator.
+	{3*b@b. blurred blurEstimator. estimation. sharpnessessX first. blurred acutance} print.
+"	blurred blurEstimator."
+	plotter verticalLine: blurred blurEstimator x range: maxD in: r color: Color blue.
+"	plotter verticalLine: blurred blurEstimator y range: maxD in: r color: Color blue."
+].
+answer.
 ! !
 
 !FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 8/28/2012 17:24'!
