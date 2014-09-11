@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2026] on 1 July 2014 at 10:06:39.487413 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2093] on 11 September 2014 at 9:33:29.462152 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 10!
+!provides: 'Tests' 1 13!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -310,6 +310,16 @@ TestCase subclass: #NumberTest
 	category: 'Tests-Kernel-Numbers'!
 !classDefinition: 'NumberTest class' category: #'Tests-Kernel-Numbers'!
 NumberTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedCollectionTest category: #'Tests-Kernel-Collections'!
+TestCase subclass: #OrderedCollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Collections'!
+!classDefinition: 'OrderedCollectionTest class' category: #'Tests-Kernel-Collections'!
+OrderedCollectionTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #PrettyPrintingTest category: #'Tests-Compiler'!
@@ -3560,55 +3570,17 @@ testDoublePassOuter
 testDoubleResume
 	self assertSuccess: (ExceptionTester new runTest: #doubleResumeTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'jmv 12/28/2013 18:58'!
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'SqR 8/28/2014 22:45'!
 testHandlerFromAction
 	"A test ensuring that nested exceptions work as expected."
 
 	| result |
-	"This test also fails in Squeak. Check if it is ever fixed."
-	self flag: #expectedFailure.
 	result := [
 		[
 			[self error: 'trigger error'] on: ZeroDivide do: [ :ex | 'inner' ]
 		] on: Error do: [ :ex | 3 / 0 ]
 	] on: ZeroDivide do: [ :ex | 'outer' ].
 	self assert: result = 'outer'! !
-
-!ExceptionTests methodsFor: 'testing' stamp: 'ar 9/1/2010 22:43'!
-testHandlerReentrancy
-
-	| callingOrder |
-	"Handlers are not re-entrant by default, so inner is not activated twice"
-	callingOrder := String streamContents: [:stream |
-		[[stream nextPut: $s. Notification signal]
-		
-			"Inner handler"
-			on: Notification do: [:ex |
-				stream nextPut: $i.
-				ex pass]]
-		
-			"outer handler"
-			on: Notification do: [:ex |
-				stream nextPut: $o.
-				Notification signal]].
-		
-	self assert: callingOrder = 'sio'.
-
-	"Now make inner re-entrant"
-	callingOrder := String streamContents: [:stream |
-		[[stream nextPut: $s. Notification signal]
-		
-			"Inner handler"
-			on: Notification do: [:ex |
-				stream nextPut: $i.
-				ex rearmHandlerDuring: [ex pass]]]
-		
-			"outer handler"
-			on: Notification do: [:ex |
-				stream nextPut: $o.
-				Notification signal]].
-		
-	self assert: callingOrder = 'sioi'.! !
 
 !ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:42'!
 testNoTimeout
@@ -6530,6 +6502,58 @@ testReciprocal
 		
 	self should: [ 0 reciprocal ] raise: ZeroDivide! !
 
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 9/8/2014 12:02'!
+testCollect
+	"
+	This test modifies a collection while iterating it.
+	This is very bad practice and should never be done.
+	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #collect:
+
+	OrderedCollectionTest new testCollect
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ OrderedCollection new.
+	col collect: [ :elem | 
+		result add: elem.
+		elem < 4 ifTrue: [ col add: col size + 1 ]].
+	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 9/8/2014 12:02'!
+testDo
+	"
+	This test modifies a collection while iterating it.
+	This is very bad practice and should never be done.
+	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #do:
+
+	OrderedCollectionTest new testDo
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ OrderedCollection new.
+	col do: [ :elem | 
+		result add: elem.
+		elem < 4 ifTrue: [ col add: col size + 1 ]].
+	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 9/8/2014 12:02'!
+testReverseDo
+	"
+	This test modifies a collection while iterating it.
+	This is very bad practice and should never be done.
+	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:by:do:,  as called by #reverseDo:
+
+	OrderedCollectionTest new testReverseDo
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ OrderedCollection new.
+	col reverseDo: [ :elem |
+		result add: elem.
+		col size > 3 ifTrue: [ col removeFirst ]].
+	"Not nice, but what can we expect if we remove stuff during iteration?"
+	self assert: result = #(nil nil 3 4 5) asOrderedCollection reversed! !
+
 !PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:39'!
 test1
 	"
@@ -7974,9 +7998,9 @@ setUp
 	}
 '! !
 
-!ThemesTest methodsFor: 'as yet unclassified' stamp: 'jmv 6/6/2012 22:42'!
+!ThemesTest methodsFor: 'as yet unclassified' stamp: 'jmv 9/11/2014 09:29'!
 shoutArray
-	^  #(#(#invalid #green) #(#excessCode #green) #(#'$' #green) #(#undefinedKeyword #green) #(#undefinedBinary #green) #(#undefinedUnary #green) #(#character #(#red #muchDarker)) #(#integer #(#red #muchDarker)) #(#number #(#red #muchDarker)) #(#- #(#red #muchDarker)) #(#blockStart3 #(#red #muchDarker)) #(#blockEnd3 #(#red #muchDarker)) #(#leftParenthesis3 #(#red #muchDarker)) #(#rightParenthesis3 #(#red #muchDarker)) #(#default #black) #(#arrayStart #black) #(#arrayEnd #black) #(#arrayStart1 #black) #(#arrayEnd1 #black) #(#leftBrace #black) #(#rightBrace #black) #(#cascadeSeparator #black) #(#statementSeparator #black) #(#externalCallType #black) #(#externalCallTypePointerIndicator #black) #(#rightParenthesis1 #black) #(#blockArgColon #black) #(#leftParenthesis #black) #(#rightParenthesis #black) #(#blockStart #black) #(#blockEnd #black) #(#self #(#red #muchDarker)) #(#super #(#red #muchDarker)) #(#true #(#red #muchDarker)) #(#false #(#red #muchDarker)) #(#nil #(#red #muchDarker)) #(#thisContext #(#red #muchDarker)) #(#return #(#red #muchDarker)) #(#blockStart4 #(#green #darker)) #(#blockEnd4 #(#green #darker)) #(#leftParenthesis4 #(#green #darker)) #(#rightParenthesis4 #(#green #darker)) #(#instVar #(#magenta #muchDarker)) #(#blockStart2 #(#magenta #muchDarker)) #(#blockEnd2 #(#magenta #muchDarker)) #(#leftParenthesis2 #(#magenta #muchDarker)) #(#rightParenthesis2 #(#magenta #muchDarker)) #(#keyword #(#blue #muchDarker)) #(#binary #(#blue #muchDarker)) #(#unary #(#blue #muchDarker)) #(#leftParenthesis5 #(#orange #darker)) #(#rightParenthesis5 #(#orange #darker)) #(#blockStart5 #(#orange #darker)) #(#blockEnd5 #(#orange #darker)) #(#leftParenthesis6 #(#magenta #darker)) #(#rightParenthesis6 #(#magenta #darker)) #(#blockStart6 #(#magenta #darker)) #(#blockEnd6 #(#magenta #darker)) #(#leftParenthesis7 #blue) #(#rightParenthesis7 #blue) #(#blockStart7 #blue) #(#blockEnd7 #blue) #(#methodTempBar #gray) #(#blockTempBar #gray) #(#blockArgsBar #gray) #(#primitive #(#green #muchDarker) #bold) #(#pragmaKeyword #(#green #muchDarker) #bold) #(#pragmaUnary #(#green #muchDarker) #bold) #(#pragmaBinary #(#green #muchDarker) #bold) #(#externalFunctionCallingConvention #(#green #muchDarker) #bold) #(#module #(#green #muchDarker) #bold) #(#primitiveOrExternalCallStart #black #bold) #(#primitiveOrExternalCallEnd #black #bold) #(#globalVar #black #bold) #(#workspaceVar #black #bold) #(#incompleteKeyword #(#gray #veryMuchDarker) #underlined) #(#incompleteBinary #(#gray #veryMuchDarker) #underlined) #(#incompleteUnary #(#gray #veryMuchDarker) #underlined) #(#patternArg #(#cyan #muchDarker) #italic) #(#methodArg #(#cyan #muchDarker) #italic) #(#blockPatternArg #(#cyan #muchDarker) #italic) #(#blockArg #(#cyan #muchDarker) #italic) #(#argument #(#cyan #muchDarker) #italic) #(#symbol #(#blue #muchDarker) #bold) #(#stringSymbol #(#blue #muchDarker) #bold) #(#literalArray #(#blue #muchDarker) #bold) #(#assignment nil #bold) #(#ansiAssignment nil #bold) #(#patternKeyword nil #bold) #(#patternBinary nil #bold) #(#patternUnary nil #bold) #(#tempVar #(#gray #muchDarker) #italic) #(#patternTempVar #(#gray #muchDarker) #italic) #(#poolConstant #(#gray #muchDarker) #italic) #(#blockTempVar #gray #italic) #(#blockPatternTempVar #gray #italic) #(#unfinishedString #green #normal) #(#undefinedIdentifier #green #bold) #(#unfinishedComment #(#red #muchDarker) #italic) #(#comment #(#green #muchDarker) #italic) #(#string #(#magenta #muchDarker) #normal) #(#literal nil #italic) #(#incompleteIdentifier #(#gray #muchDarker) #(#italic #underlined)) #(#classVar #(#gray #muchDarker) #bold))! !
+	^  #(#(#invalid #green) #(#excessCode #green) #(#'$' #green) #(#undefinedKeyword #green) #(#undefinedBinary #green) #(#undefinedUnary #green) #(#character #(#red #muchDarker)) #(#integer #(#red #muchDarker)) #(#number #(#red #muchDarker)) #(#- #(#red #muchDarker)) #(#blockStart3 #(#red #muchDarker)) #(#blockEnd3 #(#red #muchDarker)) #(#leftParenthesis3 #(#red #muchDarker)) #(#rightParenthesis3 #(#red #muchDarker)) #(#default #black) #(#arrayStart #black) #(#arrayEnd #black) #(#arrayStart1 #black) #(#arrayEnd1 #black) #(#leftBrace #black) #(#rightBrace #black) #(#cascadeSeparator #black) #(#chainSeparator #black) #(#statementSeparator #black) #(#externalCallType #black) #(#externalCallTypePointerIndicator #black) #(#rightParenthesis1 #black) #(#blockArgColon #black) #(#leftParenthesis #black) #(#rightParenthesis #black) #(#blockStart #black) #(#blockEnd #black) #(#self #(#red #muchDarker)) #(#super #(#red #muchDarker)) #(#true #(#red #muchDarker)) #(#false #(#red #muchDarker)) #(#nil #(#red #muchDarker)) #(#thisContext #(#red #muchDarker)) #(#return #(#red #muchDarker)) #(#blockStart4 #(#green #darker)) #(#blockEnd4 #(#green #darker)) #(#leftParenthesis4 #(#green #darker)) #(#rightParenthesis4 #(#green #darker)) #(#instVar #(#magenta #muchDarker)) #(#blockStart2 #(#magenta #muchDarker)) #(#blockEnd2 #(#magenta #muchDarker)) #(#leftParenthesis2 #(#magenta #muchDarker)) #(#rightParenthesis2 #(#magenta #muchDarker)) #(#keyword #(#blue #muchDarker)) #(#binary #(#blue #muchDarker)) #(#unary #(#blue #muchDarker)) #(#leftParenthesis5 #(#orange #darker)) #(#rightParenthesis5 #(#orange #darker)) #(#blockStart5 #(#orange #darker)) #(#blockEnd5 #(#orange #darker)) #(#leftParenthesis6 #(#magenta #darker)) #(#rightParenthesis6 #(#magenta #darker)) #(#blockStart6 #(#magenta #darker)) #(#blockEnd6 #(#magenta #darker)) #(#leftParenthesis7 #blue) #(#rightParenthesis7 #blue) #(#blockStart7 #blue) #(#blockEnd7 #blue) #(#methodTempBar #gray) #(#blockTempBar #gray) #(#blockArgsBar #gray) #(#primitive #(#green #muchDarker) #bold) #(#pragmaKeyword #(#green #muchDarker) #bold) #(#pragmaUnary #(#green #muchDarker) #bold) #(#pragmaBinary #(#green #muchDarker) #bold) #(#externalFunctionCallingConvention #(#green #muchDarker) #bold) #(#module #(#green #muchDarker) #bold) #(#primitiveOrExternalCallStart #black #bold) #(#primitiveOrExternalCallEnd #black #bold) #(#globalVar #black #bold) #(#workspaceVar #black #bold) #(#incompleteKeyword #(#gray #veryMuchDarker) #underlined) #(#incompleteBinary #(#gray #veryMuchDarker) #underlined) #(#incompleteUnary #(#gray #veryMuchDarker) #underlined) #(#patternArg #(#cyan #muchDarker) #italic) #(#methodArg #(#cyan #muchDarker) #italic) #(#blockPatternArg #(#cyan #muchDarker) #italic) #(#blockArg #(#cyan #muchDarker) #italic) #(#argument #(#cyan #muchDarker) #italic) #(#symbol #(#blue #muchDarker) #bold) #(#stringSymbol #(#blue #muchDarker) #bold) #(#literalArray #(#blue #muchDarker) #bold) #(#assignment nil #bold) #(#ansiAssignment nil #bold) #(#patternKeyword nil #bold) #(#patternBinary nil #bold) #(#patternUnary nil #bold) #(#tempVar #(#gray #muchDarker) #italic) #(#patternTempVar #(#gray #muchDarker) #italic) #(#poolConstant #(#gray #muchDarker) #italic) #(#blockTempVar #gray #italic) #(#blockPatternTempVar #gray #italic) #(#unfinishedString #green #normal) #(#undefinedIdentifier #green #bold) #(#unfinishedComment #(#red #muchDarker) #italic) #(#comment #(#green #muchDarker) #italic) #(#string #(#magenta #muchDarker) #normal) #(#literal nil #italic) #(#incompleteIdentifier #(#gray #muchDarker) #(#italic #underlined)) #(#classVar #(#gray #muchDarker) #bold))! !
 
 !ThemesTest methodsFor: 'as yet unclassified' stamp: 'cbr 12/17/2010 21:01'!
 testGenerateShoutConfig

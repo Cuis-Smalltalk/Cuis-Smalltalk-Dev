@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2079] on 9 August 2014 at 10:53:54.078875 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2089] on 2 September 2014 at 12:16:05.007653 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 2!
+!provides: 'LinearAlgebra' 1 4!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -43,12 +43,12 @@ My instances are m x n matrices of Float values, where m is the height and n the
 !FloatBandMatrix commentStamp: '<historical>' prior: 0!
 My instances can have non-zero values only in the diagonal, and a band of certain width around it. Save space.!
 
-!MatrixTransform2x3 methodsFor: '*LinearAlgebra' stamp: 'jmv 6/16/2013 20:14'!
+!MatrixTransform2x3 methodsFor: '*LinearAlgebra' stamp: 'jmv 8/23/2014 23:29'!
 asMatrix
 	"Answer a FloatMatrix."
 
 	| answer |
-	answer _ FloatMatrix newHeight: 3 width: 3.
+	answer _ FloatMatrix height: 3 width: 3.
 	answer i: 1 j: 1 put: self a11.
 	answer i: 1 j: 2 put: self a12.
 	answer i: 1 j: 3 put: self a13.
@@ -58,13 +58,13 @@ asMatrix
 	answer i: 3 j: 3 put: 1.
 	^answer! !
 
-!Matrix methodsFor: 'aritmethic' stamp: 'jmv 11/16/2012 12:14'!
+!Matrix methodsFor: 'aritmethic' stamp: 'jmv 8/23/2014 23:27'!
 * aMatrixOrNumber
 	"Standard matrix multiplication"
 	| result |
 	(aMatrixOrNumber is: #Matrix) ifTrue: [
 		width = aMatrixOrNumber height ifFalse: [ ^self error: 'Matrix sizes do not match' ].
-		result _ self appropriateResultClass newHeight: height width: aMatrixOrNumber width.
+		result _ self appropriateResultClass height: height width: aMatrixOrNumber width.
 		result fillWith: self multipliedBy: aMatrixOrNumber ]
 	ifFalse: [
 		result _ self copy.
@@ -72,14 +72,14 @@ asMatrix
 	^result
 	! !
 
-!Matrix methodsFor: 'aritmethic' stamp: 'jmv 11/16/2012 12:14'!
+!Matrix methodsFor: 'aritmethic' stamp: 'jmv 8/23/2014 23:27'!
 + aMatrixOrNumber
 	"Add element by element"
 	| result |
 	(aMatrixOrNumber is: #Matrix) ifTrue: [
 		(width = aMatrixOrNumber width) & (height = aMatrixOrNumber height)
 			ifFalse: [ ^self error: 'Matrix sizes do not match' ].
-		result _ self appropriateResultClass newHeight: height width: width.
+		result _ self appropriateResultClass height: height width: width.
 		result fillWith: self plus: aMatrixOrNumber ]
 	ifFalse: [
 		result _ self copy.
@@ -87,14 +87,14 @@ asMatrix
 	^result
 	! !
 
-!Matrix methodsFor: 'aritmethic' stamp: 'jmv 11/16/2012 12:15'!
+!Matrix methodsFor: 'aritmethic' stamp: 'jmv 8/23/2014 23:27'!
 - aMatrixOrNumber
 	"Substract element by element"
 	| result |
 	(aMatrixOrNumber is: #Matrix) ifTrue: [
 		(width = aMatrixOrNumber width) & (height = aMatrixOrNumber height)
 			ifFalse: [ ^self error: 'Matrix sizes do not match' ].
-		result _ self appropriateResultClass newHeight: height width: width.
+		result _ self appropriateResultClass height: height width: width.
 		result fillWith: self minus: aMatrixOrNumber ]
 	ifFalse: [
 		result _ self copy.
@@ -119,55 +119,63 @@ appropriateResultClass
 
 	^self class! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 9/28/2007 19:58'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:07'!
 asForm
-	| answer min max |
+	"Answer a 32bit Form with gray values."
+
+	^self asFormMin: self min max: self max! !
+
+!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 11:41'!
+asFormEvaluating: aBlock
+	"Fill 32bit Form with gray values.
+	doScaleActualRange
+		ifTrue: [ Scale actual used values to possible pixel values ]
+		ifFalse: [ Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range. ]
+	isILinearSpace ifTrue: [
+		Apply gamma encoding, to adapt data in linear space for better viewing ]"
+
+	| answer bits word index |
 	answer _ Form extent: width@height depth: 32.
-	min _ self min.
-	max _ self max.
-	0 to: height-1 do: [ :i |
-		0 to: width-1 do: [ :j |
-			answer colorAt: j@i put: (Color gray: 
-				(self i: i+1 j: j+1) - min / (max - min)
-			)]].
+	bits _ answer bits.
+	word _ 16rFF000000 copy.
+	index _ 1.
+	1 to: height do: [ :y |
+		1 to: width do: [ :x |
+			aBlock value: index value: word.
+			bits at: index put: word.
+			index _ index + 1 ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2011 15:41'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:07'!
 asFormG: greenMatrix b: blueMatrix
-	| answer min max b g r |
-	answer _ Form extent: width@height depth: 32.
+
+	| min max |
 	min _ (self min min: greenMatrix min) min: blueMatrix min.
 	max _ (self max max: greenMatrix max) max: blueMatrix max.
-	0 to: height-1 do: [ :i |
-		0 to: width-1 do: [ :j |
-			r _ (self i: i+1 j: j+1) - min / (max - min) min: 1.0 max: 0.0.
-			g _ (greenMatrix i: i+1 j: j+1) - min / (max - min) min: 1.0 max: 0.0.
-			b _ (blueMatrix i: i+1 j: j+1) - min / (max - min) min: 1.0 max: 0.0.
-			answer colorAt: j@i put: (Color  r: r g: g b: b)]].
-	^answer! !
+	^self asFormG: greenMatrix b: blueMatrix min: min max: max! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2011 15:41'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:01'!
 asFormG: greenMatrix b: blueMatrix min: min max: max
-	| answer b g r |
-	answer _ Form extent: width@height depth: 32.
-	0 to: height-1 do: [ :i |
-		0 to: width-1 do: [ :j |
-			r _ (self i: i+1 j: j+1) - min / (max - min) min: 1.0 max: 0.0.
-			g _ (greenMatrix i: i+1 j: j+1) - min / (max - min) min: 1.0 max: 0.0.
-			b _ (blueMatrix i: i+1 j: j+1) - min / (max - min) min: 1.0 max: 0.0.
-			answer colorAt: j@i put: (Color  r: r g: g b: b)]].
-	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 7/26/2011 18:12'!
+	| k r g b blueElements greenElements |
+	k _ 255.0 / (max-min).
+	greenElements _ greenMatrix elements.
+	blueElements _ blueMatrix elements.
+	^ self asFormEvaluating: [ :index :word |
+		r _ (((elements at: index) - min) * k) rounded min: 255 max: 0.
+		g _ (((greenElements at: index) - min) * k) rounded min: 255 max: 0.
+		b _ (((blueElements at: index) - min) * k) rounded min: 255 max: 0.
+		word at: 1 put: b; at: 2 put: g; at: 3 put: r ]! !
+
+!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:04'!
 asFormMin: min max: max
-	| answer |
-	answer _ Form extent: width@height depth: 32.
-	0 to: height-1 do: [ :i |
-		0 to: width-1 do: [ :j |
-			answer colorAt: j@i put: (Color gray: 
-				((self i: i+1 j: j+1) - min / (max - min) min: 1.0 max: 0.0)
-			)]].
-	^answer! !
+	"Answer a 32bit Form with gray values."
+
+	| k |
+	k _ 255.0 / (max-min).
+	^ self asFormEvaluating: [ :index :word | | value |
+		value _(((elements at: index) - min) * k) rounded min: 255 max: 0.
+		word at: 1 put: value; at: 2 put: value; at: 3 put: value ]! !
 
 !Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
 columnsWithoutPivot: count
@@ -371,15 +379,15 @@ Tomar esto para lo que realmente hace falta. Ver el otro browser
 	"
 	^result! !
 
-!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:36'!
+!Matrix methodsFor: 'operations' stamp: 'jmv 8/23/2014 23:27'!
 inverse
 	"Answers the inverse matrix"
 
 	| zeroElement bigMatrix result |
 	zeroElement _ self zeroElement.
 	self isSquare ifFalse: [ ^self error: 'Only for Square Matrices' ].
-	result _ self appropriateResultClass newHeight: height width: width.
-	bigMatrix _ self appropriateResultClass newHeight: height width: width + 1.
+	result _ self appropriateResultClass height: height width: width.
+	bigMatrix _ self appropriateResultClass height: height width: width + 1.
 	1 to: width do: [ :i |
 		bigMatrix fillWith: self.
 		1 to: width do: [ :j | bigMatrix i: j j: width+1 put: zeroElement ].
@@ -418,6 +426,14 @@ m
 	"Usual name in Linear Algebra"
 
 	^height! !
+
+!Matrix methodsFor: 'accessing' stamp: 'jmv 9/2/2014 12:00'!
+max
+	^ elements max! !
+
+!Matrix methodsFor: 'accessing' stamp: 'jmv 9/2/2014 12:00'!
+min
+	^ elements min! !
 
 !Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:21'!
 moveOriginToCenter: aBoolean
@@ -607,12 +623,12 @@ transpose
 			self i: ii j: jj put: (self i: jj j: ii).
 			self i: jj j: ii put: (aux) ] ].! !
 
-!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:17'!
+!Matrix methodsFor: 'operations' stamp: 'jmv 8/23/2014 23:27'!
 transposed
 	"Answer a new matrix, transposed."
 
 	| result |
-	result _ self appropriateResultClass newHeight: width width: height.
+	result _ self appropriateResultClass height: width width: height.
 	1 to: result height do: [ :i |
 		1 to: result width do: [ :j |
 			result i: i j: j put: (self i: j j: i) ] ].
@@ -654,51 +670,51 @@ zeroElement
 
 	^elements first class zero! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 9/28/2007 19:33'!
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:27'!
 columnFrom: anArray	
 "Example:
 	FloatMatrix columnFrom: #(1 2 0 0 0 0 3)."
 
 	| result |
-	result _ self newHeight: anArray size width: 1.
+	result _ self height: anArray size width: 1.
 	1 to: result height do: [ :i |
 		result i: i j: 1 put: (anArray at: i) ].
 	^result! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 7/3/2001 17:54'!
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:28'!
 identity: size
 
 	| result |
-	result _ self newHeight: size width: size.
+	result _ self height: size width: size.
 	result fillWithIdentity.
 	^result
 ! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 9/30/2007 19:11'!
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 9/2/2014 10:10'!
 m: height n: width
 
-	^self new initHeight: height width: width! !
+	^self basicNew initHeight: height width: width! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 7/3/2001 19:43'!
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:28'!
 newColumnVectorSize: size
 	"A column vector is just a matrix with width 1"
 
-	^self newHeight: size width: 1! !
+	^self height: size width: 1! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 7/3/2001 18:29'!
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:28'!
 newIdentity: size
 
 	| result |
-	result _ self newHeight: size width: size.
+	result _ self height: size width: size.
 	result fillWithIdentity.
 	^result
 ! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 7/3/2001 20:42'!
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:28'!
 newRowVectorSize: size
 	"A row vector is just a matrix with height 1"
 
-	^self newHeight: 1 width: size! !
+	^self height: 1 width: size! !
 
 !Matrix class methodsFor: 'instance creation' stamp: 'jmv 7/3/2001 19:41'!
 newVectorSize: size
@@ -706,13 +722,13 @@ newVectorSize: size
 
 	^self newColumnVectorSize: size! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 9/28/2007 19:34'!
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:28'!
 rowFrom: anArray	
 "Example:
 	FloatMatrix rowFrom: #(1 2 0 0 0 0 3)."
 
 	| result |
-	result _ self newHeight: 1 width: anArray size.
+	result _ self height: 1 width: anArray size.
 	1 to: result width do: [ :j |
 		result i: 1 j: j put: (anArray at: j) ].
 	^result! !
@@ -756,7 +772,7 @@ eigenvaluesAndEigenvectors
 
 	^ self eigenvaluesAndEigenvectorsByQR! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 7/19/2012 11:17'!
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 8/23/2014 23:25'!
 eigenvaluesAndEigenvectorsByQR
 	"Answers a transposed vector (a row matrix) of eigenvalues and a matrix of eigenvectors.
 	Each eigenvector is a column of the eigenvector matrix. Column k is the eigenvector for the
@@ -771,10 +787,10 @@ eigenvaluesAndEigenvectorsByQR
 	eigenvalues _ Bag new.
 	1 to: eigenvaluesVector height do: [ :j |
 		eigenvalues add: (eigenvaluesVector i: j j: 1) ].
-	eigenvectorSystem _ self appropriateResultClass newHeight: height width: width+1.
+	eigenvectorSystem _ self appropriateResultClass height: height width: width+1.
 	resultIndex _ 1.
 	resultEigenvalues _ self appropriateResultClass newRowVectorSize: width.
-	resultEigenvectors _ self appropriateResultClass newHeight: height width: width.
+	resultEigenvectors _ self appropriateResultClass height: height width: width.
 	eigenvalues asSet do: [ :eigenvalue |
 		"For each occurrence of an eigenvalue find a different eigenvector.
 		This part could be optimized. The correct way would be to implement a method
@@ -806,7 +822,7 @@ eigenvaluesAndEigenvectorsByQR
 	result at: #eigenvectors put: resultEigenvectors.
 	^result! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 7/19/2012 11:15'!
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 8/23/2014 23:26'!
 eigenvaluesByQR
 	"This implementation only works if all the eigenvalues are real."
 	"(FloatMatrix fromArrayOfArrays: #(
@@ -818,8 +834,8 @@ eigenvaluesByQR
 
 	| h q r loopCount |
 	h _ self hessembergSuperior.
-	q _ self appropriateResultClass newHeight: height width: width.
-	r _ self appropriateResultClass newHeight: height width: width.
+	q _ self appropriateResultClass height: height width: width.
+	r _ self appropriateResultClass height: height width: width.
 	loopCount _ 0.
 	[ h isFirstSubdiagonalZero ] whileFalse: [
 		h storeQRDecompositionOfHessemberSuperiorOnQ: q r: r.
@@ -854,7 +870,7 @@ fillWithValue: value
 fillWithZeroes
 	elements *= 0.0! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 7/19/2012 11:15'!
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 8/23/2014 23:26'!
 hessembergSuperior
 	"Answers a new matrix that is the Hessember Superior transform of the receiver.
 	A Hessember Superior matrix has zero entries below the first subdiagonal.
@@ -863,7 +879,7 @@ hessembergSuperior
 	| result u |
 	self isSquare ifFalse: [ ^self error: 'Only for Square Matrices' ].
 	result _ self copy.
-	u _ self appropriateResultClass newHeight: height width: width.
+	u _ self appropriateResultClass height: height width: width.
 	1 to: width-2 do: [ :j |
 		(result storeHouseholderTransformOn: u column: j forQR: false) ifTrue: [
 			result _ u * result * u.
@@ -1022,14 +1038,6 @@ magnitudeWithImaginary: imaginaryPart
 			result i: i j: j put: magnitude ]].
 	^result! !
 
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 9/18/2007 08:09'!
-max
-	^ elements max! !
-
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 9/18/2007 08:09'!
-min
-	^ elements min! !
-
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
 norm
 	"
@@ -1078,7 +1086,7 @@ printOn: aStream
 			aStream space ].
 		aStream nextPut: $|; newLine ]! !
 
-!FloatMatrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:19'!
+!FloatMatrix methodsFor: 'operations' stamp: 'jmv 9/2/2014 11:28'!
 round
 
 	| a b |
@@ -1087,7 +1095,7 @@ round
 			(self i: i j: j) = 0.0 ifFalse: [
 				a _ self i: i j: j.
 				b _ (10.0 raisedTo: a abs log truncated - 5).
-				self i: i j: j put: (a / b) rounded * b ] ] ]! !
+				self i: i j: j put: (a roundTo: b) ] ] ]! !
 
 !FloatMatrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:01'!
 rowsCloserToZero: count
@@ -1153,12 +1161,12 @@ storeQRDecompositionOfHessemberSuperiorOnQ: q r: r
 			q preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s ] ].
 	q transpose.! !
 
-!FloatMatrix class methodsFor: 'instance creation' stamp: 'jmv 9/28/2007 20:02'!
+!FloatMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:26'!
 form: aForm color: aSymbol
 	| h w answer color |
 	h _ aForm height.
 	w _ aForm width.
-	answer _ self newHeight: h width: w.
+	answer _ self height: h width: w.
 	1 to: h do: [ :i |
 		1 to: w do: [ :j |
 			color _ aForm colorAt: (j-1@(i-1)).
@@ -1180,11 +1188,11 @@ elementsIndexForI: i j: j
 		ifTrue: [ i*bandWidth + j-i ]
 		ifFalse: [ nil ]! !
 
-!FloatBandMatrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 10:27'!
+!FloatBandMatrix methodsFor: 'accessing' stamp: 'jmv 9/2/2014 10:11'!
 i: i j: j
 	"Answer element at row i, column j"
 
-	(self elementsIndexForI: i j: j)
+	^(self elementsIndexForI: i j: j)
 		ifNotNil: [ :position | elements at: position ]
 		ifNil: [ 0.0 ]! !
 
@@ -1209,42 +1217,48 @@ initializeElements
 
 	elements _ FloatArray new: height * bandWidth! !
 
-!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 9/30/2007 19:12'!
+!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:33'!
+height: height width: width
+
+	^self error: 'Please call #heightAndWidth:bandWidth: for Band Matrices'! !
+
+!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:32'!
+heightAndWidth: aNumber bandWidth: bw
+	"Must be square!!"
+
+	^self basicNew initHeightAndWidth: aNumber bandWidth: bw! !
+
+!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 9/2/2014 10:10'!
 m: size bandWidth: bw
 
-	^self new initHeightAndWidth: size bandWidth: bw! !
+	^self basicNew initHeightAndWidth: size bandWidth: bw! !
 
 !FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 9/30/2007 19:12'!
 m: height n: width
 
 	^self error: 'Please call #m:bandWidth: for Band Matrices'! !
 
-!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 7/3/2001 17:52'!
-newHeight: height width: width
-
-	^self error: 'Please call #newHeightAndWidth:bandWidth: for Band Matrices'! !
-
-!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 7/3/2001 17:43'!
-newHeightAndWidth: size bandWidth: bw
-
-	^self new initHeightAndWidth: size bandWidth: bw! !
-
-!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 7/3/2001 18:28'!
+!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:32'!
 newIdentity: size
 
 	| result |
-	result _ self newHeightAndWidth: size bandWidth: 1.
+	result _ self heightAndWidth: size bandWidth: 1.
 	result fillWithIdentity.
 	^result
 ! !
 
-!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 7/4/2001 11:41'!
+!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:33'!
 newWithDiagonalValues: aVectorOrArray
 
 	| size result |
 	size _ aVectorOrArray size.
 	size isPoint ifTrue: [ size _ size x max: size y ].
-	result _ self newHeightAndWidth: size bandWidth: 1.
+	result _ self heightAndWidth: size bandWidth: 1.
 	result fillDiagonalWith: aVectorOrArray.
 	^result
 ! !
+
+!FloatBandMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:35'!
+width: w height: h
+
+	^self error: 'Please call #heightAndWidth:bandWidth: for Band Matrices'! !
