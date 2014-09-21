@@ -44,16 +44,17 @@ cd MyProject
 git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 Cuis-Smalltalk-Dev/bin/newImage.sh MyProject
 ```
-The last line creates a new image with a current Cog VM in a folder named MyProject. Start Cuis by dragging MyProject.image onto the Cog VM. This method has the advantage to set you up to easily contribute code back to Cuis packages.
+The last line creates a new image  named MyProject with a current Cog VM. Start Cuis by dragging MyProject.image onto the Cog VM.
 
-Alternatively on OS X
+To start the new Cuis image execute the following on OS X:
 ```
 Cog.app/Contents/MacOS/Squeak MyProject.image
 ```
-or on Linux
+or on Linux:
 ```
 coglinux/bin/squeak MyProject.image
 ```
+This method has the advantage to set you up to easily contribute code back to Cuis packages.
 
 Disclaimer: It should work on OS X and Unix. However, it is only tested on OS X and Ubuntu 12.04. Please test on other platforms and let us know the results. Feel free to send pull requests!
 
