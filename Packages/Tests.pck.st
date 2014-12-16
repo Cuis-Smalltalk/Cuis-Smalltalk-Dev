@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2093] on 11 September 2014 at 9:33:29.462152 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:13.526603 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 13!
+!provides: 'Tests' 1 14!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -100,6 +100,16 @@ TestCase subclass: #ClosureTests
 	category: 'Tests-Compiler'!
 !classDefinition: 'ClosureTests class' category: #'Tests-Compiler'!
 ClosureTests class
+	instanceVariableNames: ''!
+
+!classDefinition: #CollectTest category: #'Tests-Kernel-Collections'!
+TestCase subclass: #CollectTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Collections'!
+!classDefinition: 'CollectTest class' category: #'Tests-Kernel-Collections'!
+CollectTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #CompilerExceptionsTest category: #'Tests-Compiler'!
@@ -2749,6 +2759,52 @@ testWhileWithTempNotInlined
 		collection add: [ temp ] ].
 	[ index < 5 ] whileTrue: block.
 	self assertValues: #(1 2 3 4 5)! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+testIdentitySet
+	"
+	CollectTest  new testIdentitySet
+	"
+	| col result |
+	col _ #(1 2 3 1.0 2.0 3.0) asIdentitySet.
+	result _ col collect: [ :elem |  elem yourself ].
+	self assert: result class = IdentitySet.
+	self assert: result = #(1 2 3 1.0 2.0 3.0) asIdentitySet.
+	self assert: result = col! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 10:51'!
+testOrderedCollection
+	"
+	CollectTest  new testOrderedCollection
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ col collect: [ :elem |  elem * 2 ].
+	self assert: result class = OrderedCollection.
+	self assert: result = #(2 4 6 8 10) asOrderedCollection! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+testSet
+	"
+	CollectTest  new testSet
+	"
+	| col result |
+	col _ #(1 2 3 1.0 2.0 3.0) asSet.
+	result _ col collect: [ :elem |  elem yourself ].
+	self assert: result class = Set.
+	self assert: result = #(1 2 3) asSet.
+	self assert: result = col! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:01'!
+testSortedCollection
+	"
+	CollectTest  new testSortedCollection
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asSortedCollection: [ :a :b | a > b ].
+	result _ col collect: [ :elem |  elem * 2 ].
+	self assert: result class = OrderedCollection.
+	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
 
 !CompilerExceptionsTest methodsFor: 'as yet unclassified' stamp: 'cwp 8/25/2009 20:27'!
 griffle | goo |! !
@@ -6502,14 +6558,14 @@ testReciprocal
 		
 	self should: [ 0 reciprocal ] raise: ZeroDivide! !
 
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 9/8/2014 12:02'!
-testCollect
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
+testCollectAsReceiverIsModified
 	"
 	This test modifies a collection while iterating it.
 	This is very bad practice and should never be done.
 	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #collect:
 
-	OrderedCollectionTest new testCollect
+	OrderedCollectionTest new testCollectAsReceiverIsModified
 	"
 	| col result |
 	col _ #(1 2 3 4 5) asOrderedCollection.
@@ -6519,14 +6575,14 @@ testCollect
 		elem < 4 ifTrue: [ col add: col size + 1 ]].
 	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
 
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 9/8/2014 12:02'!
-testDo
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
+testDoAsReceiverIsModified
 	"
 	This test modifies a collection while iterating it.
 	This is very bad practice and should never be done.
 	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #do:
 
-	OrderedCollectionTest new testDo
+	OrderedCollectionTest new testDoAsReceiverIsModified
 	"
 	| col result |
 	col _ #(1 2 3 4 5) asOrderedCollection.
@@ -6536,14 +6592,14 @@ testDo
 		elem < 4 ifTrue: [ col add: col size + 1 ]].
 	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
 
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 9/8/2014 12:02'!
-testReverseDo
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
+testReverseDoAsReceiverIsModified
 	"
 	This test modifies a collection while iterating it.
 	This is very bad practice and should never be done.
 	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:by:do:,  as called by #reverseDo:
 
-	OrderedCollectionTest new testReverseDo
+	OrderedCollectionTest new testReverseDoAsReceiverIsModified
 	"
 	| col result |
 	col _ #(1 2 3 4 5) asOrderedCollection.
@@ -8050,6 +8106,12 @@ testSqueakInquiries
 	self assert: 
 		timewords = #('a second ago' '30 seconds ago' 'a minute ago' '2 minutes ago' 
 			'an hour ago' '2 hours ago' '16 hours ago' 'yesterday').! !
+
+!TimeTest methodsFor: 'tests' stamp: 'jmv 11/11/2014 09:26'!
+testTimePartsArePositive
+	self assert: (Time afterMidnight: -10 minutes) minute > 0.
+	self assert: (Time afterMidnight: -10 minutes) hour = 23.
+	self assert: (Time afterMidnight: -10 minutes) minute = 50.! !
 
 !TrieTest methodsFor: 'aux' stamp: 'jmv 6/21/2011 22:05'!
 assert: subject isEquivalentToDictionary: controlGroup

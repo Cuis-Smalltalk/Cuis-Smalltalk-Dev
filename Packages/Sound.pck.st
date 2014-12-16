@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:41:10.363571 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:08.612603 am'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 1!
+!provides: 'Sound' 1 2!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
@@ -6080,10 +6080,6 @@ isDone
 	^ true
 ! !
 
-!ScorePlayer methodsFor: 'sound generation' stamp: 'di 8/5/1998 23:07'!
-isPlaying
-	^ SoundPlayer isPlaying: self! !
-
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 12/16/2001 20:20'!
 isStereo
 
@@ -7616,6 +7612,11 @@ fromByteArray: aByteArray
 	^ buf
 ! !
 
+!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 12/15/2014 21:51'!
+initialize
+	"SoundBuffer initialize"
+	Smalltalk addToStartUpList: self! !
+
 !SoundBuffer class methodsFor: 'instance creation' stamp: 'jm 9/17/97 13:25'!
 new: anInteger
 	"See the comment in newMonoSampleCount:. To avoid confusion, it is best to create new instances using newMonoSampleCount: or newStereoSampleCount:."
@@ -7638,16 +7639,17 @@ newStereoSampleCount: anInteger
 	^ self basicNew: anInteger
 ! !
 
-!SoundBuffer class methodsFor: 'objects from disk' stamp: 'tk 10/24/2001 18:38'!
+!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 12/15/2014 21:59'!
 startUp
 	"Check if the word order has changed from the last save."
 
 	| la |
 	la _ ShortIntegerArray classPool at: #LastSaveOrder.
 	((la at: 2) = 42 and: [(la at: 1) = 13]) 
-		ifTrue: [^self swapHalves]. "Reverse the two 16-bit halves."
-				"Another reversal happened automatically which reversed the bytes."
-! !
+		ifTrue: [
+			self allInstancesDo: [ :each | each swapHalves ]]
+			"Reverse the two 16-bit halves."
+			"Another reversal happened automatically which reversed the bytes."! !
 
 !CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 08:15'!
 asSound
@@ -10580,7 +10582,7 @@ initialize
 	DefaultPortNumber _ 0.
 ! !
 
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 17:57'!
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 12/15/2014 22:03'!
 inputPortNumFromUser
 	"Prompt the user for a MIDI input port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
 	"SimpleMIDIPort inputPortNumFromUser"
@@ -10593,8 +10595,7 @@ inputPortNumFromUser
 		dir _ self primPortDirectionalityOf: i.
 		(dir = 1) | (dir = 3) ifTrue:[
 			aMenu add: (self portDescription: i) action: i]].
-	 ^ aMenu startUp
-! !
+	 ^ aMenu startUpMenu! !
 
 !SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 18:10'!
 midiIsSupported
@@ -10623,7 +10624,7 @@ openOnPortNumber: portNum
 	^ super new openOnPortNumber: portNum
 ! !
 
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 2/22/2011 22:48'!
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 12/15/2014 22:03'!
 outputPortNumFromUser
 	"Prompt the user for a MIDI output port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
 	"SimpleMIDIPort outputPortNumFromUser"
@@ -10636,8 +10637,7 @@ outputPortNumFromUser
 		dir _ self primPortDirectionalityOf: i.
 		(dir = 2) | (dir = 3) ifTrue:[
 			aMenu add: (self portDescription: i) action: i]].
-	 ^ aMenu startUp
-! !
+	 ^ aMenu startUpMenu! !
 
 !SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 17:46'!
 portDescription: portNum
@@ -13140,6 +13140,7 @@ AbstractSound initialize!
 FMSound initialize!
 LoopedSampledSound initialize!
 SampledSound initialize!
+SoundBuffer initialize!
 MIDIInputParser initialize!
 SimpleMIDIPort initialize!
 MuLawCodec initialize!

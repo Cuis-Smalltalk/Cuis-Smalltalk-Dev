@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1918] on 2 January 2014 at 7:11:52.733 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:11.240603 am'!
 'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 5!
+!provides: 'SqueakCompatibility' 1 6!
 !classDefinition: #Model category: #SqueakCompatibility!
 ActiveModel subclass: #Model
 	instanceVariableNames: ''
@@ -41,8 +41,3 @@ crlf
 !String class methodsFor: '*squeakCompatibility' stamp: 'jmv 12/18/2013 00:42'!
 lf
 	^self lfString! !
-
-!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 12/18/2013 00:02'!
-ifNotNilDo: ifNotNilBlock
-	"Compatibility. Prefer #ifNotNil:"
-	^self ifNotNil: ifNotNilBlock! !

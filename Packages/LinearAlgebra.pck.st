@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2089] on 2 September 2014 at 12:16:05.007653 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:06.220603 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 4!
+!provides: 'LinearAlgebra' 1 5!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -681,6 +681,19 @@ columnFrom: anArray
 		result i: i j: 1 put: (anArray at: i) ].
 	^result! !
 
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 11/16/2014 19:56'!
+hilbert: n
+"
+(Matrix hilbert: 15) inverse inverse
+(FloatMatrix hilbert: 15) inverse inverse
+"
+	| result |
+	result _ self height: n width: n.
+	1 to: n do: [ :i |
+		1 to: n do: [ :j |
+			result i: j j: i put: 1/(i+j+1) ] ].
+	^result! !
+
 !Matrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:28'!
 identity: size
 
@@ -844,11 +857,11 @@ eigenvaluesByQR
 		loopCount > 200 ifTrue: [^self error: 'Could not find real eigenvalues'] ].
 	^h diagonal! !
 
-!FloatMatrix methodsFor: 'private' stamp: 'jmv 7/19/2012 12:18'!
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 11/16/2014 19:52'!
 epsilon
 	"Something better is needed. For example, taking into accoung the largest elements, or the norm, or something like that... In any case it is better to check senders, and use a different strategy for ending iterative methods or such..."
 
-	^1e-3 asFloat! !
+	^1e-9 asFloat! !
 
 !FloatMatrix methodsFor: 'filling' stamp: 'jmv 7/19/2012 10:46'!
 fillWithIdentity
