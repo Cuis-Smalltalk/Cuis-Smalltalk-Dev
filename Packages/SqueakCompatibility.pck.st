@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2093] on 29 November 2014 at 5:51:43.714597 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:11.240603 am'!
 'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 6!
+!provides: 'SqueakCompatibility' 1 7!
 !classDefinition: #Model category: #SqueakCompatibility!
 ActiveModel subclass: #Model
 	instanceVariableNames: ''
@@ -85,8 +85,3 @@ asUnicode
 	"self leadingChar = 0 ifTrue: [^ self asInteger].
 	^self encodedCharSet charsetClass convertToUnicode: self charCode"
 	^self asInteger! !
-
-!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 12/18/2013 00:02'!
-ifNotNilDo: ifNotNilBlock
-	"Compatibility. Prefer #ifNotNil:"
-	^self ifNotNil: ifNotNilBlock! !

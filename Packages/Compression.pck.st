@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1982] on 11 May 2014 at 12:00:58.228537 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:01.116603 am'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 3!
+!provides: 'Compression' 1 4!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -1959,10 +1959,6 @@ newFromString: aString named: aFileName
 !ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/21/2001 20:40'!
 newFromZipFile: stream named: fileName
 	^ZipFileMember newFrom: stream named: fileName! !
-
-!ZipFileMember methodsFor: 'private' stamp: 'nk 2/21/2001 21:55'!
-asDirectory
-	^ZipDirectoryMember new copyFrom: self! !
 
 !ZipFileMember methodsFor: 'private-reading' stamp: 'nk 11/11/2002 21:46'!
 canonicalizeFileName

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1939] on 15 January 2014 at 9:40:59.193055001 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:03.846603 am'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 6!
+!provides: 'FFI' 1 7!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -647,6 +647,11 @@ gcallocate: byteSize
 	externalAddress := self allocate: byteSize.
 	self finalizationRegistry add: externalAddress.
 	^externalAddress! !
+
+!ExternalAddress class methodsFor: 'class initialization' stamp: 'jmv 12/15/2014 21:46'!
+initialize
+	"ExternalAddress initialize"
+	Smalltalk addToStartUpList: self! !
 
 !ExternalAddress class methodsFor: 'instance creation' stamp: 'ar 11/21/1999 15:44'!
 new
@@ -1893,7 +1898,8 @@ void
 	^AtomicTypes at: 'void'! !
 FFIConstants initialize!
 ExternalObject initialize!
+ExternalAddress initialize!
 ExternalFunction initialize!
-ExternalData initialize!
 ExternalType initialize!
 ExternalStructure initialize!
+ExternalData initialize!
