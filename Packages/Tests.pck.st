@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:13.526603 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2147] on 2 January 2015 at 2:02:19.207751 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 14!
+!provides: 'Tests' 1 15!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -3745,6 +3745,29 @@ testSimpleReturn
 !ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:41'!
 testTimeoutWithZeroDuration
 	self assertSuccess: (ExceptionTester new runTest: #simpleTimeoutWithZeroDurationTest ) ! !
+
+!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/2/2015 09:29'!
+test32bitConversion
+	"Except for NaN, we can convert a 32bits float to a 64bits float exactly.
+	Thus we can convert the 64bits float to the original 32bits float pattern."
+ 
+	#(
+		16r0 				"zero"
+		16r80000000 		"negative zero"
+		16r1 				"min unormalized"
+		16r12345 			"a unnormalized"
+		16r801FEDCB 		"a negative unnormalized"
+		16r7FFFFF 			"largest unnormalized"
+		16r800000 		"smallest normalized"
+		16r468ACDEF 		"a normalized float"
+		16rCABD1234 		"a negative normalized float"
+		16r7F7FFFFF 		"largest finite float"
+		16r7F800000 		"positive infinity"
+		16rFF800000 		"negative infinity"
+		16r803FFFFC
+		16r803FFFFD
+	)
+		do: [ :originalWord | self assert: (Float fromIEEE32Bit: originalWord) asIEEE32BitWord = originalWord ]! !
 
 !FloatTest methodsFor: 'IEEE 754' stamp: 'nice 5/30/2006 02:34'!
 test32bitGradualUnderflow
