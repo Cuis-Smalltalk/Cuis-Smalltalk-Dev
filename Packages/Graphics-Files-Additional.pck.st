@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1982] on 11 May 2014 at 12:01:00.599537 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2155] on 12 January 2015 at 11:18:46.697758 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 2!
+!provides: 'Graphics-Files-Additional' 1 3!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1550,19 +1550,20 @@ printOn: aStream
 	super printOn: aStream.
 	values printOn: aStream.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 17:34'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 1/8/2015 18:50'!
 read: count charsFrom: aTIFFStream
 	"Read count bytes from the current position of aTIFFStream and return them as an Array of Strings, using NUL as the separating character between strings. Don't worry about the ending position of aTIFFStream."
 	| strings oneString size |
 	strings _ OrderedCollection new.
 	oneString _ OrderedCollection new.
-	(1 to: count) do: 
-		[:i | (aTIFFStream peek = 0)
-			ifFalse: [oneString add: aTIFFStream nextByte.]
-			ifTrue: "Null, so that's the end of this string. "
-				[size _ oneString size.
-				strings add: ((String new: size) replaceFrom: 1 to: size with: oneString).].].
-	^ strings asArray.! !
+	1 to: count do: [ :i |
+		aTIFFStream peek = 0
+			ifFalse: [
+				oneString add: (Character value: aTIFFStream nextByte) ]
+			ifTrue: [ "Null, so that's the end of this string. "
+				size _ oneString size.
+				strings add: ((String new: size) replaceFrom: 1 to: size with: oneString) ]].
+	^ strings asArray! !
 
 !TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:56'!
 readAsciiValuesFrom: aTIFFStream
@@ -1939,33 +1940,110 @@ positionStreamToStripNum: anInteger
 	stream position: ((structure at: #StripOffsets) at: anInteger).
 	stream newStrip! !
 
-!TIFFReader methodsFor: 'reading' stamp: 'jmv 1/12/2011 16:45'!
+!TIFFReader methodsFor: 'reading' stamp: 'jmv 1/9/2015 12:26'!
 readForm
 	"Answer a Form created from the data in my stream and structure."
-	| result |
+	| result bps |
 	self validateTIFFType. "Make sure it's a type we can handle."
-	result _ Form 
+	
+	(structure at: #SamplesPerPixel) >= 3 ifTrue: [
+		result _ Form 
 				extent: self extent
-				depth: 32. "We only do 32-bit Forms for now."
-	self
-		readPixelsInto: result
-		readAlpha: (structure at: #SamplesPerPixel) = 4
-		horizontalPredictor: ((structure at: #Predictor) = 2).
+				depth: 32. "32 bits form with RGB or RGBA"
+		self
+			readRGB8PixelsInto: result
+			readAlpha: (structure at: #SamplesPerPixel) = 4
+			horizontalPredictor: ((structure at: #Predictor) = 2) ].
+	
+	(structure at: #SamplesPerPixel) = 1 ifTrue: [
+		bps _ (structure at: #BitsPerSample) at: 1.
+		bps caseOf: {
+			[ 8 ] -> [
+				"ColorForm set for 8bpp gray scale images"
+				result _ ColorForm grayScaleExtent: self extent.
+				self
+					readGray8PixelsInto: result
+					horizontalPredictor: ((structure at: #Predictor) = 2) ].
+
+			[ 16 ] -> [
+				"float image"
+				result _ (Smalltalk at: #FloatImage ifAbsent: [
+						self error: '16bpp TIFF requires FloatImage (SignalProcessing package)' ])
+					extent: self extent. 
+				self readGray16PixelsInto: result ] }].
+
 	^ result! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 1/13/2011 10:14'!
-readPixelsInto: aForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalPredictor
-	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent. Only handles 32-bit pixels on both source and destination."
+!TIFFReader methodsFor: 'private' stamp: 'jmv 1/9/2015 12:24'!
+readGray16PixelsInto: aFloatMatrix
+	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
+	Handles 16 bit pixels on source, float as destination."
+
+	| floats totalPixels pixelsPerStrip currentStripNum pixel | 
+	floats _ aFloatMatrix elements.
+	totalPixels _ floats size.
+	pixelsPerStrip _ aFloatMatrix extent x * (structure at: #RowsPerStrip).
+	currentStripNum _ 0.
+
+	(1 to: totalPixels) do: [ :pixNum |
+		(pixNum-1 \\ aFloatMatrix width = 0) ifTrue: [
+			(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
+				"Time to go to next strip"
+				currentStripNum _ currentStripNum + 1.
+				self positionStreamToStripNum: currentStripNum ]].
+
+		pixel _ stream nextShort / 65535.0.
+		floats at: pixNum put: pixel ]! !
+
+!TIFFReader methodsFor: 'private' stamp: 'jmv 1/9/2015 12:25'!
+readGray8PixelsInto: aColorForm horizontalPredictor: useHorizontalPredictor
+	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
+	Only handles 8-bit gray pixels on both source and destination."
+
+	| bits totalPixels pixelsPerStrip currentStripNum g gg pixel bytesPerRow row column |
+	bits _ aColorForm bits.
+	totalPixels _ aColorForm width * aColorForm height.
+	pixelsPerStrip _ aColorForm width * (structure at: #RowsPerStrip).
+	currentStripNum _ 0.
+	row _ -1.
+	column _ 0.
+	bytesPerRow _ aColorForm width + 3 // 4 * 4.
+	(1 to: totalPixels) do: [ :pixNum |
+		(pixNum-1 \\ aColorForm width = 0) ifTrue: [
+			row _ row + 1.
+			column _ 0.
+			(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
+				"Time to go to next strip"
+				currentStripNum _ currentStripNum + 1.
+				self positionStreamToStripNum: currentStripNum ].
+			useHorizontalPredictor ifTrue: [
+				g _ 0 ]].
+		column _ column + 1.
+
+		gg _ stream nextByteInBody.
+
+		useHorizontalPredictor
+			ifTrue: [
+				g _ (g + gg) bitAnd: 255 ]
+			ifFalse: [
+				g _ gg ].
+		pixel _ g.
+		bits byteAt: (row *  bytesPerRow) + column put: pixel ]! !
+
+!TIFFReader methodsFor: 'private' stamp: 'jmv 1/9/2015 12:25'!
+readRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalPredictor
+	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
+	Handles 24 or 32-bit pixels on source, and destination of 32 bits per pixel."
 
 	| bits totalPixels pixelsPerStrip currentStripNum pixel a b g r aa bb rr gg | 
-	bits _ aForm bits.
+	bits _ a32BitForm bits.
 	totalPixels _ bits size.
-	pixelsPerStrip _ aForm extent x * (structure at: #RowsPerStrip).
+	pixelsPerStrip _ a32BitForm extent x * (structure at: #RowsPerStrip).
 	currentStripNum _ 0.
 	a _ 255.
 
 	(1 to: totalPixels) do: [ :pixNum |
-		(pixNum-1 \\ aForm width = 0) ifTrue: [
+		(pixNum-1 \\ a32BitForm width = 0) ifTrue: [
 			(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
 				"Time to go to next strip"
 				currentStripNum _ currentStripNum + 1.
@@ -2003,15 +2081,21 @@ tiffStream: aTIFFStream
 	structure _ TIFFStructure parseFrom: stream.
 ! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 1/12/2011 16:02'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 1/9/2015 08:10'!
 validateTIFFType
 	"Examine my structure to see if it represents a TIFF that I know how to read. 
-	At the moment, I can read only RGB 32-bit TIFFs with an alpha channel, uncompressed, chunky."
+	At the moment, I can read only
+		Gray 8-bit
+		Gray 16-bit
+		RGB 24-bit 
+		RGB 32-bit with an alpha channel,
+	uncompressed, chunky TIFFs ."
+
 	| bpsArray compression predictor |
-	((structure at: #PhotometricInterpretation) = 2) "RGB"
-		ifFalse: [self error: 'Cannot read, this is not an RGB TIFF.'].
-	((structure at: #SamplesPerPixel) between: 3 and: 4) 
-		ifFalse: [self error: 'Cannot read, this TIFF is not a RGB TIFF or RGBA TIFF.'].
+	((structure at: #PhotometricInterpretation) between: 1 and: 2) "Black is zero: 1, RGB: 2"
+		ifFalse: [self error: 'Cannot read, this is not an Gray or RGB TIFF.'].
+	(#(1 3 4) includes: (structure at: #SamplesPerPixel))  "gray/bilevel: 1, RGB: 3, RGBA: 4"
+		ifFalse: [self error: 'Cannot read, this TIFF is not a Gray, Bilevel, RGB, or RGBA TIFF.'].
 	compression _ structure at: #Compression.
 	(compression = 1 or: [ compression = 5 ]) "Uncompressed (1) or LZW (5)"
 		ifFalse: [self error: 'Cannot read, this TIFF is compressed with an unsupported algorithm.'].
@@ -2025,8 +2109,8 @@ validateTIFFType
 	((structure at: #PlanarConfiguration) = 1) 
 		ifFalse: [self error: 'Cannot read, this TIFF is planar, not chunky.'].
 	bpsArray _ structure at: #BitsPerSample.
-	((bpsArray size = 3 or: [ bpsArray size = 4 ]) and: [ bpsArray allSatisfy: [ :d | d = 8 ] ])
-		ifFalse: [self error: 'Cannot read, this TIFF is not a 24-bit RGB TIFF (or same with an 8-bit alpha channel).'].
+	((#(1 3 4) includes: bpsArray size) and: [ (bpsArray allSatisfy: [ :d | d = 8 ]) or: [bpsArray = #(16)]])
+		ifFalse: [self error: 'Cannot read, this TIFF is not a Gray, RGB or RGBA TIFF with 8bpp or Gray 16bpp.'].
 ! !
 
 !TIFFReader class methodsFor: 'instance creation' stamp: 'jmv 12/21/2013 09:28'!

@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2089] on 8 September 2014 at 4:26:30.532938 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2155] on 12 January 2015 at 11:18:09.564758 pm'!
 'Description Please enter a description for this package '!
-!provides: 'SignalProcessing' 1 8!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'SignalProcessing' 1 9!
 !requires: 'Sound' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -1275,7 +1275,7 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw
 display
 	self displayAt: 0@0! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/27/2014 12:19'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:20'!
 displayAt: aPoint
 	"Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
 	Assume receiver is in gamma space (as a Form, and as jpg or png files)
@@ -1283,10 +1283,9 @@ displayAt: aPoint
 	#linearDisplayAt:"
 
 	| f |
-	f _ self asFormEvaluating: [ :index :word | | value |
+	f _ self as8bitFormEvaluating: [ :index | | value |
 		value _ elements at: index.
-		value _ (value * 255) rounded min: 255 max: 0.
-		word at: 1 put: value; at: 2 put: value; at: 3 put: value ].
+		(value * 255) rounded min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'copying' stamp: 'jmv 8/5/2014 14:04'!
@@ -1539,7 +1538,7 @@ fourierDeconvolve: aMatrixOrFloatImage maxNoiseAmplification: maxNoiseFactor
 	"fft transformForward: false"
 	^fft! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/23/2014 23:55'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:21'!
 fullRangeDisplayAt: aPoint
 	"Assume the values are not normalized in the scale 0.0 to 1.0.
 	Apply appropriate scaling to use viewable dynamic range to show receiver actual range of values.
@@ -1553,10 +1552,9 @@ fullRangeDisplayAt: aPoint
 	scale _ scale > 0.0
 		ifTrue: [ 1.0 / scale ]
 		ifFalse: [ 1.0 ].
-	f _ self asFormEvaluating: [ :index :word | | value |
+	f _ self as8bitFormEvaluating: [ :index | | value |
 		value _ Color linearTosRGBGamma: (elements at: index)-min * scale.
-		value _ (value * 255) rounded.
-		word at: 1 put: value; at: 2 put: value; at: 3 put: value ].
+		(value * 255) rounded ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
@@ -1780,7 +1778,7 @@ lanczosTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 				scaled x: x y: y put: v ]]].
 	^scaled! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/23/2014 23:47'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:22'!
 linearDisplayAt: aPoint
 	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
 	Assume receiver is in linear scale.
@@ -1788,10 +1786,9 @@ linearDisplayAt: aPoint
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
 
 	| f |
-	f _ self asFormEvaluating: [ :index :word | | value |
+	f _ self as8bitFormEvaluating: [ :index | | value |
 		value _ Color linearTosRGBGamma: ((elements at: index) min: 1.0 max: 0.0).
-		value _ (value * 255) rounded.
-		word at: 1 put: value; at: 2 put: value; at: 3 put: value ].
+		(value * 255) rounded ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:29'!
@@ -2296,36 +2293,34 @@ with: anotherImage replaceValues: aBlock
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 10:37'!
 withImaginary: aFloatImage displayMagnitudeAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/23/2014 23:44'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:24'!
 withImaginary: aFloatImage displayMagnitudeLogAt: aPoint
 	"Show logarithm of magnitude of receiver and argument considered as a Complex image"
 
-	| f imaginaryValues complex magnitude scaled first |
+	| f imaginaryValues complex magnitude first |
 	imaginaryValues _ aFloatImage elements.
 	complex _ 1 + 1i.
 	first _ nil.
-	f _ self asFormEvaluating: [ :index :word |
+	f _ self as8bitFormEvaluating: [ :index |
 		complex real: (elements at: index) imaginary: (imaginaryValues at: index).
 		magnitude _ complex magnitude.
 		first ifNil: [ first _ magnitude/70 ].
 		magnitude _ magnitude / first.
-		scaled _ (magnitude * 255) rounded min: 255 max: 0.
-		word at: 1 put: scaled; at: 2 put: scaled; at: 3 put: scaled ].
+		(magnitude * 255) rounded min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/23/2014 23:44'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:25'!
 withImaginary: aFloatImage displayPhaseAt: aPoint
 	"Show phase of receiver and argument considered as a Complex image"
 
-	| f imaginaryValues complex twoPi phase scaled |
+	| f imaginaryValues complex twoPi phase |
 	imaginaryValues _ aFloatImage elements.
 	complex _ 1 + 1i.
 	twoPi _ Float twoPi.
-	f _ self asFormEvaluating: [ :index :word |
+	f _ self as8bitFormEvaluating: [ :index |
 		complex real: (elements at: index) imaginary: (imaginaryValues at: index).
 		phase _ complex phase.
-		scaled _ (phase / twoPi + 0.5 * 255) rounded.
-		word at: 1 put: scaled; at: 2 put: scaled; at: 3 put: scaled ].
+		(phase / twoPi + 0.5 * 255) rounded ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'file operations' stamp: 'jmv 9/21/2012 14:07'!
@@ -2604,7 +2599,7 @@ fromFileNamed: filename
 		refStream close ].
 	^answer! !
 
-!FloatImage class methodsFor: 'experiments' stamp: 'jmv 4/4/2013 16:00'!
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 1/8/2015 18:29'!
 interpolationExperiment
 	"
 	self interpolationExperiment
@@ -2622,14 +2617,14 @@ interpolationExperiment
 
 	original _ FloatImage checkerboard: 100@100 n: 25.
 	original display.
-	((original asForm magnifyBy: 2.23) rotateBy:(-0.2 /Float pi * 180)) display.
+	((original asForm magnifyBy: 2.23) rotatedByDegrees:(-0.2 /Float pi * 180)) display.
 	(original shiftedLinearRotatedBy: -0.2 scaledBy: 2.23) display.
 	(original bSplineRotatedBy: -0.2 scaledBy: 2.23) display.
 	(original lanczosRotatedBy: -0.2 scaledBy: 2.23) display.
 
 	original _ FloatImage lena.
 	original display.
-	((original asForm magnifyBy: 1) rotateBy:-15) display.
+	((original asForm magnifyBy: 1) rotatedByDegrees:-15) display.
 	(original shiftedLinearRotatedBy: -15/180*Float pi scaledBy: 1) display.
 	(original bSplineRotatedBy: -15/180*Float pi scaledBy: 1) display.
 	(original lanczosRotatedBy: -15/180*Float pi scaledBy: 1) display! !

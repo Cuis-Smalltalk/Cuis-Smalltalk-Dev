@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:06.220603 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2155] on 12 January 2015 at 11:17:00.561758 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 5!
+!provides: 'LinearAlgebra' 1 6!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -119,14 +119,8 @@ appropriateResultClass
 
 	^self class! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:07'!
-asForm
-	"Answer a 32bit Form with gray values."
-
-	^self asFormMin: self min max: self max! !
-
-!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 11:41'!
-asFormEvaluating: aBlock
+!Matrix methodsFor: 'conversion' stamp: 'jmv 1/9/2015 14:53'!
+as32bitFormEvaluating: aBlock
 	"Fill 32bit Form with gray values.
 	doScaleActualRange
 		ifTrue: [ Scale actual used values to possible pixel values ]
@@ -146,6 +140,34 @@ asFormEvaluating: aBlock
 			index _ index + 1 ]].
 	^answer! !
 
+!Matrix methodsFor: 'conversion' stamp: 'jmv 1/9/2015 15:14'!
+as8bitFormEvaluating: aBlock
+	"Fill an 8-bit ColorForm with gray values.
+	doScaleActualRange
+		ifTrue: [ Scale actual used values to possible pixel values ]
+		ifFalse: [ Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range. ]
+	isILinearSpace ifTrue: [
+		Apply gamma encoding, to adapt data in linear space for better viewing ]"
+
+	| answer bits index bytesPerRow |
+	bytesPerRow _ width + 3 // 4 * 4.
+	answer _ ColorForm grayScaleExtent: width@height.
+	bits _ answer bits.
+	index _ 1.
+	1 to: height do: [ :y |
+		index _ y-1 * bytesPerRow.
+		1 to: width do: [ :x |
+			index _ index + 1.
+			bits byteAt: index put: (aBlock value: index). ].
+		].
+	^answer! !
+
+!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:07'!
+asForm
+	"Answer a 32bit Form with gray values."
+
+	^self asFormMin: self min max: self max! !
+
 !Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:07'!
 asFormG: greenMatrix b: blueMatrix
 
@@ -154,28 +176,27 @@ asFormG: greenMatrix b: blueMatrix
 	max _ (self max max: greenMatrix max) max: blueMatrix max.
 	^self asFormG: greenMatrix b: blueMatrix min: min max: max! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:01'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 1/9/2015 17:26'!
 asFormG: greenMatrix b: blueMatrix min: min max: max
 
 	| k r g b blueElements greenElements |
 	k _ 255.0 / (max-min).
 	greenElements _ greenMatrix elements.
 	blueElements _ blueMatrix elements.
-	^ self asFormEvaluating: [ :index :word |
+	^ self as32bitFormEvaluating: [ :index :word |
 		r _ (((elements at: index) - min) * k) rounded min: 255 max: 0.
 		g _ (((greenElements at: index) - min) * k) rounded min: 255 max: 0.
 		b _ (((blueElements at: index) - min) * k) rounded min: 255 max: 0.
 		word at: 1 put: b; at: 2 put: g; at: 3 put: r ]! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:04'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 1/9/2015 17:29'!
 asFormMin: min max: max
 	"Answer a 32bit Form with gray values."
 
 	| k |
 	k _ 255.0 / (max-min).
-	^ self asFormEvaluating: [ :index :word | | value |
-		value _(((elements at: index) - min) * k) rounded min: 255 max: 0.
-		word at: 1 put: value; at: 2 put: value; at: 3 put: value ]! !
+	^ self as8bitFormEvaluating: [ :index |
+		(((elements at: index) - min) * k) rounded min: 255 max: 0 ]! !
 
 !Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
 columnsWithoutPivot: count

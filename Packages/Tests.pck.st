@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2147] on 2 January 2015 at 2:02:19.207751 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2155] on 12 January 2015 at 11:15:58.989758 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 15!
+!provides: 'Tests' 1 16!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -152,6 +152,16 @@ TestCase subclass: #CuisSourceFileArrayTest
 CuisSourceFileArrayTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #DateAndTimeTest category: #'Tests-Kernel-Chronology'!
+TestCase subclass: #DateAndTimeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Chronology'!
+!classDefinition: 'DateAndTimeTest class' category: #'Tests-Kernel-Chronology'!
+DateAndTimeTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #DecompilerTests category: #'Tests-Compiler'!
 TestCase subclass: #DecompilerTests
 	instanceVariableNames: ''
@@ -172,13 +182,13 @@ DecompilerTests subclass: #DecompilerTestFailuresCollector
 DecompilerTestFailuresCollector class
 	instanceVariableNames: ''!
 
-!classDefinition: #DelayTest category: #'Tests-Kernel--Processes'!
+!classDefinition: #DelayTest category: #'Tests-Kernel-Processes'!
 TestCase subclass: #DelayTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Tests-Kernel--Processes'!
-!classDefinition: 'DelayTest class' category: #'Tests-Kernel--Processes'!
+	category: 'Tests-Kernel-Processes'!
+!classDefinition: 'DelayTest class' category: #'Tests-Kernel-Processes'!
 DelayTest class
 	instanceVariableNames: ''!
 
@@ -282,14 +292,24 @@ TestCase subclass: #LargePositiveIntegerTest
 LargePositiveIntegerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LayoutMorphTest category: #'Tests-Morphic'!
+!classDefinition: #LayoutMorphTest category: #'Tests-Morphic-Kernel'!
 TestCase subclass: #LayoutMorphTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Tests-Morphic'!
-!classDefinition: 'LayoutMorphTest class' category: #'Tests-Morphic'!
+	category: 'Tests-Morphic-Kernel'!
+!classDefinition: 'LayoutMorphTest class' category: #'Tests-Morphic-Kernel'!
 LayoutMorphTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MatrixTransform2x3Test category: #'Tests-Morphic-Kernel'!
+TestCase subclass: #MatrixTransform2x3Test
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Morphic-Kernel'!
+!classDefinition: 'MatrixTransform2x3Test class' category: #'Tests-Morphic-Kernel'!
+MatrixTransform2x3Test class
 	instanceVariableNames: ''!
 
 !classDefinition: #MirrorPrimitiveTests category: #'Tests-Compiler'!
@@ -302,14 +322,34 @@ TestCase subclass: #MirrorPrimitiveTests
 MirrorPrimitiveTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #MonitorTest category: #'Tests-Kernel--Processes'!
+!classDefinition: #MonitorTest category: #'Tests-Kernel-Processes'!
 TestCase subclass: #MonitorTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Tests-Kernel--Processes'!
-!classDefinition: 'MonitorTest class' category: #'Tests-Kernel--Processes'!
+	category: 'Tests-Kernel-Processes'!
+!classDefinition: 'MonitorTest class' category: #'Tests-Kernel-Processes'!
 MonitorTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MorphicLocationTest category: #'Tests-Morphic-Kernel'!
+TestCase subclass: #MorphicLocationTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Morphic-Kernel'!
+!classDefinition: 'MorphicLocationTest class' category: #'Tests-Morphic-Kernel'!
+MorphicLocationTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MorphicTranslationTest category: #'Tests-Morphic-Kernel'!
+TestCase subclass: #MorphicTranslationTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Morphic-Kernel'!
+!classDefinition: 'MorphicTranslationTest class' category: #'Tests-Morphic-Kernel'!
+MorphicTranslationTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #NumberTest category: #'Tests-Kernel-Numbers'!
@@ -352,13 +392,13 @@ TestCase subclass: #ProcessTerminateBug
 ProcessTerminateBug class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProcessTest category: #'Tests-Kernel--Processes'!
+!classDefinition: #ProcessTest category: #'Tests-Kernel-Processes'!
 TestCase subclass: #ProcessTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Tests-Kernel--Processes'!
-!classDefinition: 'ProcessTest class' category: #'Tests-Kernel--Processes'!
+	category: 'Tests-Kernel-Processes'!
+!classDefinition: 'ProcessTest class' category: #'Tests-Kernel-Processes'!
 ProcessTest class
 	instanceVariableNames: ''!
 
@@ -402,13 +442,13 @@ TestCase subclass: #ScannerTest
 ScannerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SemaphoreTest category: #'Tests-Kernel--Processes'!
+!classDefinition: #SemaphoreTest category: #'Tests-Kernel-Processes'!
 TestCase subclass: #SemaphoreTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Tests-Kernel--Processes'!
-!classDefinition: 'SemaphoreTest class' category: #'Tests-Kernel--Processes'!
+	category: 'Tests-Kernel-Processes'!
+!classDefinition: 'SemaphoreTest class' category: #'Tests-Kernel-Processes'!
 SemaphoreTest class
 	instanceVariableNames: ''!
 
@@ -562,13 +602,13 @@ TestCase subclass: #ThemesTest
 ThemesTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TimeTest category: #'Tests-Kernel'!
+!classDefinition: #TimeTest category: #'Tests-Kernel-Chronology'!
 TestCase subclass: #TimeTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Tests-Kernel'!
-!classDefinition: 'TimeTest class' category: #'Tests-Kernel'!
+	category: 'Tests-Kernel-Chronology'!
+!classDefinition: 'TimeTest class' category: #'Tests-Kernel-Chronology'!
 TimeTest class
 	instanceVariableNames: ''!
 
@@ -602,13 +642,13 @@ TestCase subclass: #WeakIdentitySetTest
 WeakIdentitySetTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WorldTest category: #'Tests-Morphic'!
+!classDefinition: #WorldTest category: #'Tests-Morphic-Kernel'!
 TestCase subclass: #WorldTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Tests-Morphic'!
-!classDefinition: 'WorldTest class' category: #'Tests-Morphic'!
+	category: 'Tests-Morphic-Kernel'!
+!classDefinition: 'WorldTest class' category: #'Tests-Morphic-Kernel'!
 WorldTest class
 	instanceVariableNames: ''!
 
@@ -801,6 +841,15 @@ WeakSet. #scanForLoadedSymbol:.
 
 !FloatTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
 I provide a test suite for Float values. Examine my tests to see how Floats should behave, and see how to use them.!
+
+!MatrixTransform2x3Test commentStamp: '<historical>' prior: 0!
+Tests for MatrixTransform2x3!
+
+!MorphicLocationTest commentStamp: '<historical>' prior: 0!
+Tests for composition of MatrixTransform2x3 and MorphicTranslation!
+
+!MorphicTranslationTest commentStamp: '<historical>' prior: 0!
+Tests for MorphicTranslation!
 
 !ProcessTest commentStamp: 'ul 8/16/2011 11:35' prior: 0!
 I hold test cases for generic Process-related behaviour.!
@@ -3008,6 +3057,69 @@ testSourcesFileAddressRange
 		self assert: (a between: 16r1000000 and: 16r2FFFFFF)]
 
 ! !
+
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:29'!
+testCreation
+	"
+	self new testCreation
+	"
+	| d |
+	d _ (DateAndTime julianDayNumber: 2456814) date.
+	self assert: d yearNumber = 2014.
+	self assert: d monthIndex = 6.
+	self assert: d dayOfMonth = 5.
+	
+	d _ (DateAndTime fromSeconds: 3579379200) date.
+	self assert: d yearNumber = 2014.
+	self assert: d monthIndex = 6.
+	self assert: d dayOfMonth = 5.
+	
+	d _ DateAndTime fromSeconds: 3579431284.
+	self assert: d yearNumber = 2014.
+	self assert: d monthIndex = 6.
+	self assert: d dayOfMonth = 5.
+	self assert: d hour = 14.
+	self assert: d minute = 28.
+	self assert: d second = 4.
+	self assert: d nanoSecond = 0! !
+
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:22'!
+testOperations
+	"
+	self new testOperations
+	"
+	| d dt |
+	dt _ DateAndTime now.
+
+	d _ 1 hours.
+	self assert: dt < (dt + d).
+	self assert: dt - d < dt.
+	self assert: dt + d - d = dt.
+
+	d _ 1 minutes.
+	self assert: dt < (dt + d).
+	self assert: dt - d < dt.
+	self assert: dt + d - d = dt.
+
+	d _ 1 seconds.
+	self assert: dt < (dt + d).
+	self assert: dt - d < dt.
+	self assert: dt + d - d = dt.
+
+	d _ -1 hours.
+	self assert: dt < (dt - d).
+	self assert: dt + d < dt.
+	self assert: dt + d - d = dt.
+
+	d _ -1 minutes.
+	self assert: dt < (dt - d).
+	self assert: dt + d < dt.
+	self assert: dt + d - d = dt.
+
+	d _ -1 seconds.
+	self assert: dt < (dt - d).
+	self assert: dt + d < dt.
+	self assert: dt + d - d = dt.! !
 
 !DecompilerTests methodsFor: 'utilities' stamp: 'sd 9/25/2004 15:30'!
 blockingClasses
@@ -6233,6 +6345,129 @@ testLayout3
 
 	pane delete! !
 
+!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:45'!
+testComposition
+	"
+	MatrixTransform2x3Test new testComposition
+	"
+	| composition inner outer |
+
+	outer _ MatrixTransform2x3 withTranslation: 3@5.
+	inner _ MatrixTransform2x3 withRadians: 0.3.
+	composition _ outer composedWith: inner.
+	self assert: composition translation = outer translation.
+	self assert: (outer externalizePosition: (inner externalizePosition: 3@4)) = (composition externalizePosition: 3@4).
+	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
+	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
+	self assert: (inner internalizePosition: (outer internalizePosition: 3@4)) = (composition internalizePosition: 3@4).
+	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
+	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).
+
+
+	outer _ MatrixTransform2x3 withRadians: 0.3.
+	inner _ MatrixTransform2x3 withTranslation: 3@5.
+	composition _ outer composedWith: inner.
+	self assert: composition radians = outer radians.
+	self assert: ((outer externalizePosition: (inner externalizePosition: 3@4)) - (composition externalizePosition: 3@4)) r < 0.0001.
+	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
+	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
+	self assert: ((inner internalizePosition: (outer internalizePosition: 3@4)) - (composition internalizePosition: 3@4)) r < 0.0001.
+	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
+	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
+
+!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:17'!
+testDisplayBounds
+	"
+	MatrixTransform2x3Test new testDisplayBounds
+	"
+	self assert:
+		((MatrixTransform2x3 withRadians: 0.3) displayBoundsOfTransformOf: (10@10 extent: 20@30))
+			= (-2@13 corner: 26@47).
+
+	self assert: (MatrixTransform2x3 new displayBoundsOfTransformOf: (-2@ 2 extent: 10@10)) = (-2@2 corner: 8@12).
+	self assert: (MatrixTransform2x3 new displayBoundsOfTransformOf: (-12@ 12 extent: 10@10)) = (-12@12 corner: -2@22).
+	self assert: ((MatrixTransform2x3 withTranslation: 2)  displayBoundsOfTransformOf: (-4@ 2  extent: 10@10)) = (-2@4 corner: 8@14).
+	self assert: ((MatrixTransform2x3 withTranslation: -4)  displayBoundsOfTransformOf: (2@ 2  extent: 10@10)) = (-2@-2 corner: 8@8).
+	self assert: ((MatrixTransform2x3 withTranslation: 2)  displayBoundsOfTransformOf: (-14@ 2  extent: 10@10)) = (-12@4 corner: -2@14).
+	self assert: ((MatrixTransform2x3 withTranslation: 4)  displayBoundsOfTransformOf: (-12@ 2  extent: 10@10)) = (-8@6 corner: 2@16).
+	self assert: ((MatrixTransform2x3 withTranslation: -4)  displayBoundsOfTransformOf: (12@ 2  extent: 10@10)) = (8@-2 corner: 18@8).
+	self assert: ((MatrixTransform2x3 withTranslation: -2)  displayBoundsOfTransformOf: (4@ 2  extent: 10@10)) = (2@0 corner: 12@10).
+	self assert: ((MatrixTransform2x3 withTranslation: 4)  displayBoundsOfTransformOf: (-2@ 2  extent: 10@10)) = (2@6 corner: 12@16).! !
+
+!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:11'!
+testFloatInverseTransform
+	"
+	MatrixTransform2x3Test new testFloatInverseTransform
+	"
+	self assert: (MatrixTransform2x3 new floatInverseTransform: (-2@ 2)) = (-2@2).
+	self assert: ((MatrixTransform2x3 withTranslation: 2)  floatInverseTransform: (-4@ 2)) = (-6@0).
+	self assert: ((MatrixTransform2x3 withTranslation: 4)  floatInverseTransform: (-2@ 2)) = (-6@-2).
+	self assert: ((MatrixTransform2x3 withTranslation: -2)  floatInverseTransform: (4@ 2)) = (6@4).
+	self assert: ((MatrixTransform2x3 withTranslation: -4)  floatInverseTransform: (2@ 2)) = (6@6)! !
+
+!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:11'!
+testFloatTransform
+	"
+	MatrixTransform2x3Test new testFloatTransform
+	"
+	self assert: (MatrixTransform2x3 new floatTransform: (-2@ 2)) = (-2@2).
+	self assert: ((MatrixTransform2x3 withTranslation: 2)  floatTransform: (-4@ 2)) = (-2@4).
+	self assert: ((MatrixTransform2x3 withTranslation: 4)  floatTransform: (-2@ 2)) = (2@6).
+	self assert: ((MatrixTransform2x3 withTranslation: -2)  floatTransform: (4@ 2)) = (2@0).
+	self assert: ((MatrixTransform2x3 withTranslation: -4)  floatTransform: (2@ 2)) = (-2@-2)! !
+
+!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:11'!
+testIntInverseTransform
+	"
+	MatrixTransform2x3Test new testIntInverseTransform
+	"
+	self assert: (MatrixTransform2x3 new intInverseTransform: (-2@ 2)) = (-2@2).
+	self assert: ((MatrixTransform2x3 withTranslation: 2)  intInverseTransform: (-4@ 2)) = (-6@0).
+	self assert: ((MatrixTransform2x3 withTranslation: 4)  intInverseTransform: (-2@ 2)) = (-6@-2).
+	self assert: ((MatrixTransform2x3 withTranslation: -2)  intInverseTransform: (4@ 2)) = (6@4).
+	self assert: ((MatrixTransform2x3 withTranslation: -4)  intInverseTransform: (2@ 2)) = (6@6)! !
+
+!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:11'!
+testIntTransform
+	"
+	MatrixTransform2x3Test new testIntTransform
+	"
+	self assert: (MatrixTransform2x3 new intTransform: (-2@ 2)) = (-2@2).
+	self assert: ((MatrixTransform2x3 withTranslation: 2)  intTransform: (-4@ 2)) = (-2@4).
+	self assert: ((MatrixTransform2x3 withTranslation: 4)  intTransform: (-2@ 2)) = (2@6).
+	self assert: ((MatrixTransform2x3 withTranslation: -2)  intTransform: (4@ 2)) = (2@0).
+	self assert: ((MatrixTransform2x3 withTranslation: -4)  intTransform: (2@ 2)) = (-2@-2)! !
+
+!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:45'!
+testInverseTransformation
+	"
+	MatrixTransform2x3Test new testInverseTransformation
+	"
+	| forward inverse |
+
+	forward _ MatrixTransform2x3 withTranslation: 3@5.
+	inverse _ forward inverseTransformation.
+	
+	self assert: inverse translation = forward translation negated.
+	self assert: (inverse externalizePosition: 3@4) = (forward internalizePosition: 3@4).
+	self assert: (inverse externalizeDelta: 3@4) = (forward internalizeDelta: 3@4).
+	self assert: (inverse externalizeScalar: 7) = (forward internalizeScalar: 7).
+	self assert: (inverse internalizePosition: 3@4) = (forward externalizePosition: 3@4).
+	self assert: (inverse internalizeDelta: 3@4) = (forward externalizeDelta: 3@4).
+	self assert: (inverse internalizeScalar: 7) = (forward externalizeScalar: 7).
+
+
+	forward _ MatrixTransform2x3 withRadians: 0.25.
+	inverse _ forward inverseTransformation.
+
+	self assert: inverse radians = forward radians negated.
+	self assert: ((inverse externalizePosition: 3@4) - (forward internalizePosition: 3@4)) r < 0.0001.
+	self assert: ((inverse externalizeDelta: 3@4) - (forward internalizeDelta: 3@4)) r < 0.0001.
+	self assert: ((inverse externalizeScalar: 7) - (forward internalizeScalar: 7)) abs < 0.0001.
+	self assert: ((inverse internalizePosition: 3@4) - (forward externalizePosition: 3@4)) r < 0.0001.
+	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
+	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
+
 !MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorAt
 	| stackpBefore stackpAfter array byteArray |
@@ -6439,6 +6674,133 @@ testMonitorNotGainingUnwantedSignalsDuringUnwinding
 	50 milliSeconds asDelay wait.
 	process terminate.
 	self assert: 1 equals: ((monitor instVarNamed: #mutex) instVarNamed: #excessSignals)! !
+
+!MorphicLocationTest methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:45'!
+testComposition
+	"
+	MorphicLocationTest new testComposition
+	"
+	| composition inner outer |
+
+	outer _ MorphicTranslation withTranslation: 3@5.
+	inner _ MatrixTransform2x3 withRadians: 0.3.
+	composition _ outer composedWith: inner.
+	self assert: composition translation = outer translation.
+	self assert: (outer externalizePosition: (inner externalizePosition: 3@4)) = (composition externalizePosition: 3@4).
+	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
+	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
+	self assert: (inner internalizePosition: (outer internalizePosition: 3@4)) = (composition internalizePosition: 3@4).
+	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
+	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).
+
+
+	outer _ MatrixTransform2x3 withRadians: 0.3.
+	inner _ MorphicTranslation withTranslation: 3@5.
+	composition _ outer composedWith: inner.
+	self assert: composition radians = outer radians.
+	self assert: ((outer externalizePosition: (inner externalizePosition: 3@4)) - (composition externalizePosition: 3@4)) r < 0.0001.
+	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
+	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
+	self assert: ((inner internalizePosition: (outer internalizePosition: 3@4)) - (composition internalizePosition: 3@4)) r < 0.0001.
+	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
+	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
+
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:46'!
+testComposition
+	"
+	MorphicTranslationTest new testComposition
+	"
+	| composition inner outer |
+
+	outer _ MorphicTranslation withTranslation: 3@5.
+	inner _ MorphicTranslation withTranslation: -1@2.
+	composition _ outer composedWith: inner.
+	self assert: composition translation = (outer translation + inner translation).
+	self assert: (outer externalizePosition: (inner externalizePosition: 3@4)) = (composition externalizePosition: 3@4).
+	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
+	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
+	self assert: (inner internalizePosition: (outer internalizePosition: 3@4)) = (composition internalizePosition: 3@4).
+	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
+	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).
+
+
+	outer _ MorphicTranslation withTranslation: -1@2.
+	inner _ MorphicTranslation withTranslation: 3@5.
+	composition _ outer composedWith: inner.
+	self assert: composition radians = outer radians.
+	self assert: (outer externalizePosition: (inner externalizePosition: 3@4)) = (composition externalizePosition: 3@4).
+	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
+	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
+	self assert: (inner internalizePosition: (outer internalizePosition: 3@4)) = (composition internalizePosition: 3@4).
+	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
+	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
+
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:19'!
+testDisplayBounds
+	"
+	MorphicTranslationTest new testDisplayBounds
+	"
+
+	self assert: (MorphicTranslation new displayBoundsOfTransformOf: (-2@ 2 extent: 10@10)) = (-2@2 corner: 8@12).
+	self assert: (MorphicTranslation new displayBoundsOfTransformOf: (-12@ 12 extent: 10@10)) = (-12@12 corner: -2@22).
+	self assert: ((MorphicTranslation withTranslation: 2)  displayBoundsOfTransformOf: (-4@ 2  extent: 10@10)) = (-2@4 corner: 8@14).
+	self assert: ((MorphicTranslation withTranslation: -4)  displayBoundsOfTransformOf: (2@ 2  extent: 10@10)) = (-2@-2 corner: 8@8).
+	self assert: ((MorphicTranslation withTranslation: 2)  displayBoundsOfTransformOf: (-14@ 2  extent: 10@10)) = (-12@4 corner: -2@14).
+	self assert: ((MorphicTranslation withTranslation: 4)  displayBoundsOfTransformOf: (-12@ 2  extent: 10@10)) = (-8@6 corner: 2@16).
+	self assert: ((MorphicTranslation withTranslation: -4)  displayBoundsOfTransformOf: (12@ 2  extent: 10@10)) = (8@-2 corner: 18@8).
+	self assert: ((MorphicTranslation withTranslation: -2)  displayBoundsOfTransformOf: (4@ 2  extent: 10@10)) = (2@0 corner: 12@10).
+	self assert: ((MorphicTranslation withTranslation: 4)  displayBoundsOfTransformOf: (-2@ 2  extent: 10@10)) = (2@6 corner: 12@16).! !
+
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:20'!
+testIntTransform
+	"
+	MorphicTranslationTest new testIntTransform
+	"
+	self assert: (MorphicTranslation new intTransform: (-2@ 2)) = (-2@2).
+	self assert: ((MorphicTranslation withTranslation: 2)  intTransform: (-4@ 2)) = (-2@4).
+	self assert: ((MorphicTranslation withTranslation: 4)  intTransform: (-2@ 2)) = (2@6).
+	self assert: ((MorphicTranslation withTranslation: -2)  intTransform: (4@ 2)) = (2@0).
+	self assert: ((MorphicTranslation withTranslation: -4)  intTransform: (2@ 2)) = (-2@-2)! !
+
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:21'!
+testInverseTransform
+	"
+	MorphicTranslationTest new testInverseTransform
+	"
+	self assert: (MorphicTranslation new inverseTransform: (-2@ 2)) = (-2@2).
+	self assert: ((MorphicTranslation withTranslation: 2)  inverseTransform: (-4@ 2)) = (-6@0).
+	self assert: ((MorphicTranslation withTranslation: 4)  inverseTransform: (-2@ 2)) = (-6@-2).
+	self assert: ((MorphicTranslation withTranslation: -2)  inverseTransform: (4@ 2)) = (6@4).
+	self assert: ((MorphicTranslation withTranslation: -4)  inverseTransform: (2@ 2)) = (6@6)! !
+
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:46'!
+testInverseTransformation
+	"
+	MorphicTranslationTest new testInverseTransformation
+	"
+	| forward inverse |
+
+	forward _ MorphicTranslation withTranslation: 3@5.
+	inverse _ forward inverseTransformation.
+	
+	self assert: inverse translation = forward translation negated.
+	self assert: (inverse externalizePosition: 3@4) = (forward internalizePosition: 3@4).
+	self assert: (inverse externalizeDelta: 3@4) = (forward internalizeDelta: 3@4).
+	self assert: (inverse externalizeScalar: 7) = (forward internalizeScalar: 7).
+	self assert: (inverse internalizePosition: 3@4) = (forward externalizePosition: 3@4).
+	self assert: (inverse internalizeDelta: 3@4) = (forward externalizeDelta: 3@4).
+	self assert: (inverse internalizeScalar: 7) = (forward externalizeScalar: 7)! !
+
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:22'!
+testTransform
+	"
+	MorphicTranslationTest new testTransform
+	"
+	self assert: (MorphicTranslation new transform: (-2@ 2)) = (-2@2).
+	self assert: ((MorphicTranslation withTranslation: 2)  transform: (-4@ 2)) = (-2@4).
+	self assert: ((MorphicTranslation withTranslation: 4)  transform: (-2@ 2)) = (2@6).
+	self assert: ((MorphicTranslation withTranslation: -2)  transform: (4@ 2)) = (2@0).
+	self assert: ((MorphicTranslation withTranslation: -4)  transform: (2@ 2)) = (-2@-2)! !
 
 !NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/26/2009 21:57'!
 testFractionPart
