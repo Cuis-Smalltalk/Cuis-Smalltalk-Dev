@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2155] on 12 January 2015 at 11:18:09.564758 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2162] on 21 January 2015 at 1:12:51.866496 pm'!
 'Description Please enter a description for this package '!
-!provides: 'SignalProcessing' 1 9!
+!provides: 'SignalProcessing' 1 11!
 !requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
@@ -91,6 +91,16 @@ GeneralizedInterpolatingImage subclass: #ShiftedLinearInterpolatingImage
 	category: 'SignalProcessing-Images'!
 !classDefinition: 'ShiftedLinearInterpolatingImage class' category: #'SignalProcessing-Images'!
 ShiftedLinearInterpolatingImage class
+	instanceVariableNames: ''!
+
+!classDefinition: #PerspectiveTransformation category: #'SignalProcessing-Images'!
+GeometryTransformation variableWordSubclass: #PerspectiveTransformation
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SignalProcessing-Images'!
+!classDefinition: 'PerspectiveTransformation class' category: #'SignalProcessing-Images'!
+PerspectiveTransformation class
 	instanceVariableNames: ''!
 
 !classDefinition: #ImageHistogram category: #'SignalProcessing-Images'!
@@ -229,6 +239,13 @@ Warning - Notes
 2) Generally, results are very good. The paper says SNR is good up to 3/4 Nyquist frequency. But in practice, images look very sharp, especially very fine textures. It appears that the lost high frequency content is replaced by good looking aliasing.
 
 3) Successive interpolations are not really stable. The image value at the neighbourhood of some points seems to diverge to positive infinity, and for others, to negative infinity. This effect is even visible at the great Java demo at http://bigwww.epfl.ch/demo/jshiftlinear/start.php , if one choses 7 iterations. See FloatImage>>#testRotations .!
+
+!PerspectiveTransformation commentStamp: '<historical>' prior: 0!
+A perspective transformation for resampling images (for example). Can apply or correct for the perspective resulting from taking a photograph to a 2D object that is not perpendicular to the camera axis (for example, taking an image of the ground ahead of the camera).
+
+http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#warpperspective
+
+!
 
 !ImageHistogram commentStamp: '<historical>' prior: 0!
 An ImageHistogram records the number of pixels in an image for each pixel value (actually for a number of pixel value intervals).
@@ -892,7 +909,7 @@ asFormG: greenImage b: blueImage
 average
 	^elements average! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 3/22/2013 15:38'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/14/2015 14:27'!
 bSplineRotatedBy: radians scaledBy: scale
 	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
 	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
@@ -906,14 +923,14 @@ bSplineRotatedBy: radians scaledBy: scale
 	"
 
 	| halfOrig t1 r halfResult t |
-	t1 _ (MatrixTransform2x3 withRadians: radians) composedWith:
-				(MatrixTransform2x3 withScale: scale).
+	t1 _ (AffineTransformation withRadians: radians) composedWith:
+				(AffineTransformation withScale: scale).
 	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: width@ height).
 	halfOrig _ self extent / 2.0+0.5.
 	halfResult _ r extent / 2.0+0.5.
-	t _ (MatrixTransform2x3 withPosition: halfResult) composedWith:
+	t _ (AffineTransformation withTranslation: halfResult) composedWith:
 			(t1 composedWith:
-					(MatrixTransform2x3 withPosition: halfOrig negated)).
+					(AffineTransformation withTranslation: halfOrig negated)).
 	^self bSplineTransformedBy: t resultExtent: r extent ceiling! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 4/4/2013 14:40'!
@@ -946,10 +963,10 @@ bSplineScaledBy: scale
 			scaled x: x y: y put: (interpolated interpolatedValueAtX: xp y: yp) ]].
 	^scaled! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/4/2013 15:20'!
-bSplineTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:05'!
+bSplineTransformedBy: anAffineTransformation resultExtent: resultExtent
 	"Answer a new image.
-	aMatrixTransform2x3 specifies the transformation from us to the result image.
+	anAffineTransformation specifies the transformation from us to the result image.
 	Warning: there could be black areas in the result, and/or some image content in self could be lost.
 	This depends on the arguments.
 
@@ -963,7 +980,7 @@ bSplineTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 	interpolated _ BSplineInterpolatingImage from: self.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
-			p _ aMatrixTransform2x3 floatInverseTransform: x@y.
+			p _ anAffineTransformation inverseTransform: x@y.
 			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
 				v _ interpolated interpolatedValueAtX: p x y: p y.
 				scaled x: x y: y put: v ]]].
@@ -1679,7 +1696,7 @@ histogramEq
 			self x: x y: y put:
 				(histogram countAt: (self x: x y: y)) / (width * height) ]]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 12/13/2012 17:40'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/14/2015 14:28'!
 lanczosRotatedBy: radians scaledBy: scale
 	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
 	Gives very good results for any scale values, including very large and very small.
@@ -1696,14 +1713,14 @@ lanczosRotatedBy: radians scaledBy: scale
 	"
 
 	| halfOrig t1 r halfResult t |
-	t1 _ (MatrixTransform2x3 withRadians: radians) composedWith:
-				(MatrixTransform2x3 withScale: scale).
+	t1 _ (AffineTransformation withRadians: radians) composedWith:
+				(AffineTransformation withScale: scale).
 	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: width@ height).
 	halfOrig _ self extent / 2.0+0.5.
 	halfResult _ r extent / 2.0+0.5.
-	t _ (MatrixTransform2x3 withPosition: halfResult) composedWith:
+	t _ (AffineTransformation withTranslation: halfResult) composedWith:
 			(t1 composedWith:
-					(MatrixTransform2x3 withPosition: halfOrig negated)).
+					(AffineTransformation withTranslation: halfOrig negated)).
 	^self lanczosTransformedBy: t resultExtent: r extent ceiling! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 12/10/2012 15:51'!
@@ -1746,10 +1763,10 @@ lanczosScaledBy: scale
 			scaled x: x y: y put: (self x: xp y: yp lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter) ]].
 	^scaled! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/4/2013 15:20'!
-lanczosTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:05'!
+lanczosTransformedBy: anAffineTransformation resultExtent: resultExtent
 	"Answer a new image.
-	aMatrixTransform2x3 specifies the transformation from us to the result image.
+	anAffineTransformation specifies the transformation from us to the result image.
 	Warning: there could be black areas in the result, and/or some image content in self could be lost.
 	This depends on the arguments.
 .....
@@ -1772,7 +1789,7 @@ lanczosTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 	yFilter _ FloatArray new: n.
 	1 to: resultHeight do: [ :y |
 		1 to: resultWidth do: [ :x |
-			p _ aMatrixTransform2x3 floatInverseTransform: x@y.
+			p _ anAffineTransformation inverseTransform: x@y.
 			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
 				v _ self x: p x y: p y lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter.
 				scaled x: x y: y put: v ]]].
@@ -1824,7 +1841,7 @@ linearInterpolatedValueAtX: x y: y
 
 	^interpolated! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:41'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/14/2015 14:29'!
 linearRotatedBy: radians scaledBy: scale
 	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
 	Evaluate a bilinear (i.e. cheap) interpolation.
@@ -1837,14 +1854,14 @@ linearRotatedBy: radians scaledBy: scale
 	"
 
 	| halfOrig t1 r halfResult t |
-	t1 _ (MatrixTransform2x3 withRadians: radians) composedWith:
-				(MatrixTransform2x3 withScale: scale).
+	t1 _ (AffineTransformation withRadians: radians) composedWith:
+				(AffineTransformation withScale: scale).
 	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: width@ height).
 	halfOrig _ self extent / 2.0+0.5.
 	halfResult _ r extent / 2.0+0.5.
-	t _ (MatrixTransform2x3 withPosition: halfResult) composedWith:
+	t _ (AffineTransformation withTranslation: halfResult) composedWith:
 			(t1 composedWith:
-					(MatrixTransform2x3 withPosition: halfOrig negated)).
+					(AffineTransformation withTranslation: halfOrig negated)).
 	^self linearTransformedBy: t resultExtent: r extent ceiling! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:41'!
@@ -1882,10 +1899,10 @@ linearSpaceToGammaEncoded
 	"
 	self replaceValues: [ :i :j :v | Color linearTosRGBGamma: v ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:41'!
-linearTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:05'!
+linearTransformedBy: anAffineTransformation resultExtent: resultExtent
 	"Answer a new image.
-	aMatrixTransform2x3 specifies the transformation from us to the result image.
+	anAffineTransformation specifies the transformation from us to the result image.
 	Warning: there could be black areas in the result, and/or some image content in self could be lost.
 	This depends on the arguments.
 
@@ -1897,7 +1914,7 @@ linearTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 	scaled _ FloatImage width: resultWidth height: resultHeight.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
-			p _ aMatrixTransform2x3 floatInverseTransform: x@y.
+			p _ anAffineTransformation inverseTransform: x@y.
 			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
 				v _ self linearInterpolatedValueAtX: p x y: p y.
 				scaled x: x y: y put: v 
@@ -1925,10 +1942,10 @@ mean: aRect
 			mean _ mean + (self x: x y: y) ]].
 	^mean / count! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:45'!
-nearestNeighborTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:06'!
+nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtent
 	"Answer a new image.
-	aMatrixTransform2x3 specifies the transformation from us to the result image.
+	anAffineTransformation specifies the transformation from us to the result image.
 	Warning: there could be black areas in the result, and/or some image content in self could be lost.
 	This depends on the arguments.
 
@@ -1940,7 +1957,7 @@ nearestNeighborTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 	scaled _ FloatImage width: resultWidth height: resultHeight.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
-			p _ aMatrixTransform2x3 floatInverseTransform: x@y.
+			p _ anAffineTransformation inverseTransform: x@y.
 			(p >= (0.5@0.5) and: [ p < (width@height + 0.5) ]) ifTrue: [
 				v _ self x: p x rounded y: p y rounded.
 				scaled x: x y: y put: v 
@@ -2163,7 +2180,7 @@ scaledBy: scale
 		ifTrue: [ self lanczosScaledBy: scale ]
 		ifFalse: [self bSplineScaledBy: scale ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 13:11'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/14/2015 14:29'!
 shiftedLinearRotatedBy: radians scaledBy: scale
 	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
 	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
@@ -2179,14 +2196,14 @@ shiftedLinearRotatedBy: radians scaledBy: scale
 	"
 
 	| halfOrig t1 r halfResult t |
-	t1 _ (MatrixTransform2x3 withRadians: radians) composedWith:
-				(MatrixTransform2x3 withScale: scale).
+	t1 _ (AffineTransformation withRadians: radians) composedWith:
+				(AffineTransformation withScale: scale).
 	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: width@ height).
 	halfOrig _ self extent / 2.0+0.5.
 	halfResult _ r extent / 2.0+0.5.
-	t _ (MatrixTransform2x3 withPosition: halfResult) composedWith:
+	t _ (AffineTransformation withTranslation: halfResult) composedWith:
 			(t1 composedWith:
-					(MatrixTransform2x3 withPosition: halfOrig negated)).
+					(AffineTransformation withTranslation: halfOrig negated)).
 	^self shiftedLinearTransformedBy: t resultExtent: r extent ceiling! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 13:11'!
@@ -2219,10 +2236,10 @@ shiftedLinearScaledBy: scale
 			scaled x: x y: y put: (interpolated interpolatedValueAtX: xp y: yp) ]].
 	^scaled! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 13:11'!
-shiftedLinearTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:06'!
+shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtent
 	"Answer a new image.
-	aMatrixTransform2x3 specifies the transformation from us to the result image.
+	anAffineTransformation specifies the transformation from us to the result image.
 	Warning: there could be black areas in the result, and/or some image content in self could be lost.
 	This depends on the arguments.
 
@@ -2238,7 +2255,7 @@ shiftedLinearTransformedBy: aMatrixTransform2x3 resultExtent: resultExtent
 	interpolated _ ShiftedLinearInterpolatingImage from: self.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
-			p _ aMatrixTransform2x3 floatInverseTransform: x@y.
+			p _ anAffineTransformation inverseTransform: x@y.
 			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
 				v _ interpolated interpolatedValueAtX: p x y: p y.
 				scaled x: x y: y put: v ]]].
@@ -4049,7 +4066,7 @@ meanOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
 	mean *= (1.0/n).
 	^mean! !
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 4/16/2013 13:40'!
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 1/14/2015 14:30'!
 testRotations
 	"
 	FloatImage testRotations
@@ -4062,10 +4079,10 @@ testRotations
 " 	original with: original replaceValues: [ :v :dummy | (v-0.055) * (0.8196-0.0848/(0.965-0.055))+0.0848]."
 	original displayAt: 256@0.
 	e _ original extent.
-	t _ (MatrixTransform2x3 withRadians: a/180*Float pi ).
-	t _ (MatrixTransform2x3 withPosition: e // 2) composedWith:
+	t _ (AffineTransformation withRadians: a/180*Float pi ).
+	t _ (AffineTransformation withTranslation: e // 2) composedWith:
 			(t composedWith:
-					(MatrixTransform2x3 withPosition: e // 2  negated)).
+					(AffineTransformation withTranslation: e // 2  negated)).
 	
 	rotated _ original.
 	c timesRepeat: [
@@ -5555,6 +5572,106 @@ showApparentDisplacement
 	((original shiftedLinearScaledBy: 14.0)-bspline +0.5) display.
 	((original shiftedLinearScaledBy: 14.0)-(linear+bspline*0.5)+0.5) display.
 ! !
+
+!PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:05'!
+a0
+	^self at: 1! !
+
+!PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:05'!
+a1
+	^self at: 2! !
+
+!PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:07'!
+a2
+	^self at: 3! !
+
+!PerspectiveTransformation methodsFor: 'private access' stamp: 'jmv 1/13/2015 17:09'!
+at: index
+	<primitive: 'primitiveAt' module: 'FloatArrayPlugin'>
+	^Float fromIEEE32Bit: (self basicAt: index)! !
+
+!PerspectiveTransformation methodsFor: 'private access' stamp: 'jmv 1/13/2015 17:09'!
+at: index put: value
+	<primitive: 'primitiveAtPut' module: 'FloatArrayPlugin'>
+	value isFloat 
+		ifTrue:[self basicAt: index put: value asIEEE32BitWord]
+		ifFalse:[self at: index put: value asFloat].
+	^value! !
+
+!PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:05'!
+b0
+	^self at: 4! !
+
+!PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:05'!
+b1
+	^self at: 5! !
+
+!PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:05'!
+b2
+	^self at: 6! !
+
+!PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:05'!
+c0
+	^self at: 7! !
+
+!PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:05'!
+c1
+	^self at: 8! !
+
+!PerspectiveTransformation methodsFor: 'converting coordinates' stamp: 'jmv 1/13/2015 17:08'!
+map: aPoint
+	| xx yy zz |
+	xx _ (self a0 * aPoint x) + (self a1 * aPoint y) + self a2.
+	yy _ (self b0 * aPoint x) + (self b1 * aPoint y) + self b2.
+	zz _ (self c0 * aPoint x) + (self c1 * aPoint y) + 1.
+	^(xx / zz) @ (yy / zz)! !
+
+!PerspectiveTransformation class methodsFor: 'instance creation' stamp: 'jmv 1/13/2015 17:38'!
+map: sourcePoints to: targetPoints
+	"Both arguments must be of size 4.
+	This method builds an instance, using an implementation of:
+		http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#Mat getPerspectiveTransform(InputArray src, InputArray dst)
+	according to:
+		http://math.stackexchange.com/questions/441597/how-to-calculate-what-matrix-will-transform-specified-points-to-other-specified
+	
+	(PerspectiveTransformation
+		map: {3@5. 5@5. 2@2. 6@1}
+		to: {0@3. 3@3. 0@0. 3@0})
+		map: 3@5
+	"
+	
+	| m x y u v elements result |
+	m _ FloatMatrix m: 8 n: 9.
+	1 to: 4 do: [ :i |
+		x _ (sourcePoints at: i) x.
+		y _ (sourcePoints at: i) y.
+		u _ (targetPoints at: i) x.
+		v _ (targetPoints at: i) y.
+		m i: i j: 1 put: x.
+		m i: i j: 2 put: y.
+		m i: i j: 3 put: 1.
+		m i: i j: 7 put: x negated * u.
+		m i: i j: 8 put: y negated * u.
+		m i: i j: 9 put: u.
+		m i: i+4 j: 4 put: x.
+		m i: i+4 j: 5 put: y.
+		m i: i+4 j: 6 put: 1.
+		m i: i+4 j: 7 put: x negated * v.
+		m i: i+4 j: 8 put: y negated * v.
+		m i: i+4 j: 9 put: v ].
+	elements _ m solveLinearSystem.
+	result _ self new.
+	1 to: 8 do: [ :i | result at: i put: (elements at: i) ].
+	^result! !
+
+!PerspectiveTransformation class methodsFor: 'instance creation' stamp: 'jmv 1/13/2015 17:04'!
+new
+	^(self basicNew: 8) initialize! !
+
+!PerspectiveTransformation class methodsFor: 'instance creation' stamp: 'jmv 1/13/2015 17:04'!
+new: s
+	self error: 'Please call PerspectiveTransformation>>#new (without arguments).'.
+	^self new! !
 
 !ImageHistogram methodsFor: 'operations' stamp: 'jmv 7/24/2012 18:15'!
 accumulate

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2135] on 16 December 2014 at 9:17:08.612603 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2166] on 22 January 2015 at 11:37:06.343444 am'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 2!
+!provides: 'Sound' 1 3!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
@@ -10001,11 +10001,10 @@ morphExtent: newExtent
 		as: Bitmap.
 ! !
 
-!Sonogram methodsFor: 'all' stamp: 'jmv 9/17/2012 21:05'!
+!Sonogram methodsFor: 'all' stamp: 'jmv 1/21/2015 23:56'!
 plotColumn: dataArray
 
 	| chm1 i normVal r |
-	columnForm unhibernate.
 	chm1 _ columnForm height - 1.
 	0 to: chm1 do: [ :y | 
 		i _ y*(dataArray size-1)//chm1 + 1.
@@ -10019,7 +10018,7 @@ plotColumn: dataArray
 			from: (32//image depth-1)@0
 			in: columnForm rule: Form over.
 	"self changed."
-	self invalidateRect: r! !
+	self invalidateLocalRect: r! !
 
 !Sonogram methodsFor: 'all' stamp: 'jmv 3/14/2011 09:26'!
 scroll

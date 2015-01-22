@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2155] on 12 January 2015 at 11:17:00.561758 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2157] on 14 January 2015 at 3:13:26.565678 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 6!
+!provides: 'LinearAlgebra' 1 8!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -43,7 +43,7 @@ My instances are m x n matrices of Float values, where m is the height and n the
 !FloatBandMatrix commentStamp: '<historical>' prior: 0!
 My instances can have non-zero values only in the diagonal, and a band of certain width around it. Save space.!
 
-!MatrixTransform2x3 methodsFor: '*LinearAlgebra' stamp: 'jmv 8/23/2014 23:29'!
+!AffineTransformation methodsFor: '*LinearAlgebra' stamp: 'jmv 8/23/2014 23:29'!
 asMatrix
 	"Answer a FloatMatrix."
 
@@ -119,14 +119,9 @@ appropriateResultClass
 
 	^self class! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 1/9/2015 14:53'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 1/14/2015 12:55'!
 as32bitFormEvaluating: aBlock
-	"Fill 32bit Form with gray values.
-	doScaleActualRange
-		ifTrue: [ Scale actual used values to possible pixel values ]
-		ifFalse: [ Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range. ]
-	isILinearSpace ifTrue: [
-		Apply gamma encoding, to adapt data in linear space for better viewing ]"
+	"Fill 32bit Form with gray values."
 
 	| answer bits word index |
 	answer _ Form extent: width@height depth: 32.
@@ -140,26 +135,21 @@ as32bitFormEvaluating: aBlock
 			index _ index + 1 ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 1/9/2015 15:14'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 1/14/2015 13:04'!
 as8bitFormEvaluating: aBlock
-	"Fill an 8-bit ColorForm with gray values.
-	doScaleActualRange
-		ifTrue: [ Scale actual used values to possible pixel values ]
-		ifFalse: [ Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range. ]
-	isILinearSpace ifTrue: [
-		Apply gamma encoding, to adapt data in linear space for better viewing ]"
+	"Fill an 8-bit ColorForm with gray values."
 
-	| answer bits index bytesPerRow |
+	| answer bits bitsIndex elementsIndex bytesPerRow |
 	bytesPerRow _ width + 3 // 4 * 4.
 	answer _ ColorForm grayScaleExtent: width@height.
 	bits _ answer bits.
-	index _ 1.
+	elementsIndex _ 0.
 	1 to: height do: [ :y |
-		index _ y-1 * bytesPerRow.
+		bitsIndex _ y-1 * bytesPerRow.
 		1 to: width do: [ :x |
-			index _ index + 1.
-			bits byteAt: index put: (aBlock value: index). ].
-		].
+			elementsIndex _ elementsIndex + 1.
+			bitsIndex _ bitsIndex + 1.
+			bits byteAt: bitsIndex put: (aBlock value: elementsIndex) ]].
 	^answer! !
 
 !Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:07'!

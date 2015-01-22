@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2155] on 12 January 2015 at 11:15:58.989758 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2166] on 22 January 2015 at 11:37:08.322444 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 16!
+!provides: 'Tests' 1 20!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -40,6 +40,16 @@ Object subclass: #ExceptionTester
 	category: 'Tests-Exceptions'!
 !classDefinition: 'ExceptionTester class' category: #'Tests-Exceptions'!
 ExceptionTester class
+	instanceVariableNames: ''!
+
+!classDefinition: #AffineTransformationTest category: #'Tests-Morphic-Kernel'!
+TestCase subclass: #AffineTransformationTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Morphic-Kernel'!
+!classDefinition: 'AffineTransformationTest class' category: #'Tests-Morphic-Kernel'!
+AffineTransformationTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ArrayLiteralTest category: #'Tests-Compiler'!
@@ -300,16 +310,6 @@ TestCase subclass: #LayoutMorphTest
 	category: 'Tests-Morphic-Kernel'!
 !classDefinition: 'LayoutMorphTest class' category: #'Tests-Morphic-Kernel'!
 LayoutMorphTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #MatrixTransform2x3Test category: #'Tests-Morphic-Kernel'!
-TestCase subclass: #MatrixTransform2x3Test
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Morphic-Kernel'!
-!classDefinition: 'MatrixTransform2x3Test class' category: #'Tests-Morphic-Kernel'!
-MatrixTransform2x3Test class
 	instanceVariableNames: ''!
 
 !classDefinition: #MirrorPrimitiveTests category: #'Tests-Compiler'!
@@ -663,6 +663,9 @@ ZipCrcTests class
 	instanceVariableNames: ''!
 
 
+!AffineTransformationTest commentStamp: '<historical>' prior: 0!
+Tests for MatrixTransform2x3!
+
 !CompilerTest commentStamp: 'nice 12/3/2007 22:15' prior: 0!
 CompilerTest is a holder for SUnit test of Compiler!
 
@@ -842,11 +845,8 @@ WeakSet. #scanForLoadedSymbol:.
 !FloatTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
 I provide a test suite for Float values. Examine my tests to see how Floats should behave, and see how to use them.!
 
-!MatrixTransform2x3Test commentStamp: '<historical>' prior: 0!
-Tests for MatrixTransform2x3!
-
-!MorphicLocationTest commentStamp: '<historical>' prior: 0!
-Tests for composition of MatrixTransform2x3 and MorphicTranslation!
+!MorphicLocationTest commentStamp: 'jmv 1/14/2015 14:32' prior: 0!
+Tests for composition of AffineTransformation and MorphicTranslation!
 
 !MorphicTranslationTest commentStamp: '<historical>' prior: 0!
 Tests for MorphicTranslation!
@@ -1505,6 +1505,107 @@ warningTest
 	Warning signal: 'Ouch'.
 	self log: 'Warning signal handled and resumed.'! !
 
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:11'!
+testComposition
+	"
+	AffineTransformationTest new testComposition
+	"
+	| composition inner outer |
+
+	outer _ AffineTransformation withTranslation: 3@5.
+	inner _ AffineTransformation withRadians: 0.3.
+	composition _ outer composedWith: inner.
+	self assert: composition translation = outer translation.
+	self assert: (outer externalizePosition: (inner externalizePosition: 3@4)) = (composition externalizePosition: 3@4).
+	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
+	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
+	self assert: (inner internalizePosition: (outer internalizePosition: 3@4)) = (composition internalizePosition: 3@4).
+	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
+	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).
+
+
+	outer _ AffineTransformation withRadians: 0.3.
+	inner _ AffineTransformation withTranslation: 3@5.
+	composition _ outer composedWith: inner.
+	self assert: composition radians = outer radians.
+	self assert: ((outer externalizePosition: (inner externalizePosition: 3@4)) - (composition externalizePosition: 3@4)) r < 0.0001.
+	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
+	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
+	self assert: ((inner internalizePosition: (outer internalizePosition: 3@4)) - (composition internalizePosition: 3@4)) r < 0.0001.
+	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
+	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
+
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:11'!
+testDisplayBounds
+	"
+	AffineTransformationTest new testDisplayBounds
+	"
+	self assert:
+		((AffineTransformation withRadians: 0.3) displayBoundsOfTransformOf: (10@10 extent: 20@30))
+			= (-2@13 corner: 26@47).
+
+	self assert: (AffineTransformation new displayBoundsOfTransformOf: (-2@ 2 extent: 10@10)) = (-2@2 corner: 8@12).
+	self assert: (AffineTransformation new displayBoundsOfTransformOf: (-12@ 12 extent: 10@10)) = (-12@12 corner: -2@22).
+	self assert: ((AffineTransformation withTranslation: 2)  displayBoundsOfTransformOf: (-4@ 2  extent: 10@10)) = (-2@4 corner: 8@14).
+	self assert: ((AffineTransformation withTranslation: -4)  displayBoundsOfTransformOf: (2@ 2  extent: 10@10)) = (-2@-2 corner: 8@8).
+	self assert: ((AffineTransformation withTranslation: 2)  displayBoundsOfTransformOf: (-14@ 2  extent: 10@10)) = (-12@4 corner: -2@14).
+	self assert: ((AffineTransformation withTranslation: 4)  displayBoundsOfTransformOf: (-12@ 2  extent: 10@10)) = (-8@6 corner: 2@16).
+	self assert: ((AffineTransformation withTranslation: -4)  displayBoundsOfTransformOf: (12@ 2  extent: 10@10)) = (8@-2 corner: 18@8).
+	self assert: ((AffineTransformation withTranslation: -2)  displayBoundsOfTransformOf: (4@ 2  extent: 10@10)) = (2@0 corner: 12@10).
+	self assert: ((AffineTransformation withTranslation: 4)  displayBoundsOfTransformOf: (-2@ 2  extent: 10@10)) = (2@6 corner: 12@16).! !
+
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/21/2015 13:05'!
+testFloatInverseTransform
+	"
+	AffineTransformationTest new testFloatInverseTransform
+	"
+	self assert: (AffineTransformation new inverseTransform: (-2@ 2)) = (-2@2).
+	self assert: ((AffineTransformation withTranslation: 2) inverseTransform: (-4@ 2)) = (-6@0).
+	self assert: ((AffineTransformation withTranslation: 4) inverseTransform: (-2@ 2)) = (-6@-2).
+	self assert: ((AffineTransformation withTranslation: -2) inverseTransform: (4@ 2)) = (6@4).
+	self assert: ((AffineTransformation withTranslation: -4) inverseTransform: (2@ 2)) = (6@6)! !
+
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/21/2015 13:06'!
+testFloatTransform
+	"
+	AffineTransformationTest new testFloatTransform
+	"
+	self assert: (AffineTransformation new transform: (-2@ 2)) = (-2@2).
+	self assert: ((AffineTransformation withTranslation: 2) transform: (-4@ 2)) = (-2@4).
+	self assert: ((AffineTransformation withTranslation: 4) transform: (-2@ 2)) = (2@6).
+	self assert: ((AffineTransformation withTranslation: -2) transform: (4@ 2)) = (2@0).
+	self assert: ((AffineTransformation withTranslation: -4) transform: (2@ 2)) = (-2@-2)! !
+
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:12'!
+testInverseTransformation
+	"
+	AffineTransformationTest new testInverseTransformation
+	"
+	| forward inverse |
+
+	forward _ AffineTransformation withTranslation: 3@5.
+	inverse _ forward inverseTransformation.
+	
+	self assert: inverse translation = forward translation negated.
+	self assert: (inverse externalizePosition: 3@4) = (forward internalizePosition: 3@4).
+	self assert: (inverse externalizeDelta: 3@4) = (forward internalizeDelta: 3@4).
+	self assert: (inverse externalizeScalar: 7) = (forward internalizeScalar: 7).
+	self assert: (inverse internalizePosition: 3@4) = (forward externalizePosition: 3@4).
+	self assert: (inverse internalizeDelta: 3@4) = (forward externalizeDelta: 3@4).
+	self assert: (inverse internalizeScalar: 7) = (forward externalizeScalar: 7).
+
+
+	forward _ AffineTransformation withRadians: 0.25.
+	inverse _ forward inverseTransformation.
+
+	self assert: inverse radians = forward radians negated.
+	self assert: ((inverse externalizePosition: 3@4) - (forward internalizePosition: 3@4)) r < 0.0001.
+	self assert: ((inverse externalizeDelta: 3@4) - (forward internalizeDelta: 3@4)) r < 0.0001.
+	self assert: ((inverse externalizeScalar: 7) - (forward internalizeScalar: 7)) abs < 0.0001.
+	self assert: ((inverse internalizePosition: 3@4) - (forward externalizePosition: 3@4)) r < 0.0001.
+	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
+	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
+
 !ArrayLiteralTest methodsFor: 'running' stamp: 'avi 2/16/2004 21:09'!
 tearDown
 	self class removeSelector: #array! !
@@ -1713,24 +1814,6 @@ testAlphaCompositing2
 		self assert: (result red - mixColor alpha) abs < eps.
 		self assert: result alpha = mixColor alpha.
 	].! !
-
-!BitBltTest methodsFor: 'bugs' stamp: 'sd 6/5/2005 10:13'!
-testPeekerUnhibernateBug
-	"self run: #testPeekerUnhibernateBug"
-
-	| bitBlt |
-	bitBlt := BitBlt bitPeekerFromForm: Display.
-	bitBlt destForm hibernate.
-	self shouldnt:[bitBlt pixelAt: 1@1] raise: Error.! !
-
-!BitBltTest methodsFor: 'bugs' stamp: 'sd 6/5/2005 10:14'!
-testPokerUnhibernateBug
-	"self run: #testPokerUnhibernateBug"
-
-	| bitBlt |
-	bitBlt := BitBlt bitPokerToForm: Display.
-	bitBlt sourceForm hibernate.
-	self shouldnt:[bitBlt pixelAt: 1@1 put: 0] raise: Error.! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
 testCaseConversion
@@ -4972,6 +5055,150 @@ assert: a classAndValueEquals: b
 	self assert: a class = b class.
 	self assert: a = b! !
 
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:01'!
+testBackslashBackslashLnLn
+
+	self assert: -42391158275216203514294433200 \\ -14130386091738734504764811067 = -14130386091738734504764811066.
+	self assert: -42391158275216203514294433201 \\ -14130386091738734504764811067 = 0.
+	self assert: -42391158275216203514294433202 \\ -14130386091738734504764811067 = -1.
+	self assert: -8727963568087712425891397479476727340041448 \\ -79766443076872509863361 = -79766443076872509863360.
+	self assert: -8727963568087712425891397479476727340041449 \\ -79766443076872509863361 = 0.
+	self assert: -8727963568087712425891397479476727340041450 \\ -79766443076872509863361 = -1! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:00'!
+testBackslashBackslashLnLp
+
+	self assert: -42391158275216203514294433200 \\ 14130386091738734504764811067 = 1.
+	self assert: -42391158275216203514294433201 \\ 14130386091738734504764811067 = 0.
+	self assert: -42391158275216203514294433202 \\ 14130386091738734504764811067 = 14130386091738734504764811066.
+	self assert: -8727963568087712425891397479476727340041448 \\ 79766443076872509863361 = 1.
+	self assert: -8727963568087712425891397479476727340041449 \\ 79766443076872509863361 = 0.
+	self assert: -8727963568087712425891397479476727340041450 \\ 79766443076872509863361 = 79766443076872509863360! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:01'!
+testBackslashBackslashLnSn
+
+	self assert: -42391158275216203514294433201 \\ -3 = 0.
+	self assert: -42391158275216203514294433202 \\ -3 = -1.
+	self assert: -42391158275216203514294433203 \\ -3 = -2.
+	self assert: -42391158275216203514294433204 \\ -3 = 0! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:02'!
+testBackslashBackslashLnSp
+
+	self assert: -42391158275216203514294433201 \\ 3 = 0.
+	self assert: -42391158275216203514294433202 \\ 3 = 2.
+	self assert: -42391158275216203514294433203 \\ 3 = 1.
+	self assert: -42391158275216203514294433204 \\ 3 = 0! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:04'!
+testBackslashBackslashLpLn
+
+	self assert: 42391158275216203514294433200 \\ -14130386091738734504764811067 = -1.
+	self assert: 42391158275216203514294433201 \\ -14130386091738734504764811067 = 0.
+	self assert: 42391158275216203514294433202 \\ -14130386091738734504764811067 = -14130386091738734504764811066.
+	self assert: 8727963568087712425891397479476727340041448 \\ -79766443076872509863361 = -1.
+	self assert: 8727963568087712425891397479476727340041449 \\ -79766443076872509863361 = 0.
+	self assert: 8727963568087712425891397479476727340041450 \\ -79766443076872509863361 = -79766443076872509863360! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:05'!
+testBackslashBackslashLpLp
+
+	self assert: 42391158275216203514294433200 \\ 14130386091738734504764811067 = 14130386091738734504764811066.
+	self assert: 42391158275216203514294433201 \\ 14130386091738734504764811067 = 0.
+	self assert: 42391158275216203514294433202 \\ 14130386091738734504764811067 = 1.
+	self assert: 8727963568087712425891397479476727340041448 \\ 79766443076872509863361 = 79766443076872509863360.
+	self assert: 8727963568087712425891397479476727340041449 \\ 79766443076872509863361 = 0.
+	self assert: 8727963568087712425891397479476727340041450 \\ 79766443076872509863361 = 1! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:06'!
+testBackslashBackslashLpSn
+
+	self assert: 42391158275216203514294433201 \\ -3 = 0.
+	self assert: 42391158275216203514294433202 \\ -3 = -2.
+	self assert: 42391158275216203514294433203 \\ -3 = -1.
+	self assert: 42391158275216203514294433204 \\ -3 = 0! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:07'!
+testBackslashBackslashLpSp
+
+	self assert: 42391158275216203514294433201 \\ 3 = 0.
+	self assert: 42391158275216203514294433202 \\ 3 = 1.
+	self assert: 42391158275216203514294433203 \\ 3 = 2.
+	self assert: 42391158275216203514294433204 \\ 3 = 0! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:08'!
+testBackslashBackslashSnLn
+
+	self assert: 0 \\ -42391158275216203514294433201 = 0.
+	self assert: -1 \\ -42391158275216203514294433201 = -1.
+	self assert: -14348907 \\ -42391158275216203514294433201 = -14348907! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:09'!
+testBackslashBackslashSnLp
+
+	self assert: 0 \\ 42391158275216203514294433201 = 0.
+	self assert: -1 \\ 42391158275216203514294433201 =  42391158275216203514294433200.
+	self assert: -14348907 \\ 42391158275216203514294433201 = 42391158275216203514280084294! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:09'!
+testBackslashBackslashSnSn
+
+	self assert: 0 \\ -3 = 0.
+	self assert: -1 \\ -3 = -1.
+	self assert: -9 \\ -3 = 0.
+	self assert: -10 \\ -3 = -1.
+	self assert: -11 \\ -3 = -2.
+	self assert: -12 \\ -3 = 0.
+	self assert: -13 \\ -3 = -1! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:10'!
+testBackslashBackslashSnSp
+
+	self assert: 0 \\ 3 = 0.
+	self assert: -1 \\ 3 = 2.
+	self assert: -9 \\ 3 = 0.
+	self assert: -10 \\ 3 = 2.
+	self assert: -11 \\ 3 = 1.
+	self assert: -12 \\ 3 = 0.
+	self assert: -13 \\ 3 = 2! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:11'!
+testBackslashBackslashSpLn
+
+	self assert: 0 \\ -42391158275216203514294433201 = 0.
+	self assert: 1 \\ -42391158275216203514294433201 = -42391158275216203514294433200.
+	self assert: 14348907 \\ -42391158275216203514294433201 = -42391158275216203514280084294! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:12'!
+testBackslashBackslashSpLp
+
+	self assert: 0 \\ 42391158275216203514294433201 = 0.
+	self assert: 1 \\ 42391158275216203514294433201 = 1.
+	self assert: 14348907 \\ 42391158275216203514294433201 = 14348907! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:13'!
+testBackslashBackslashSpSn
+
+	self assert: 0 \\ -3 = 0.
+	self assert: 1 \\ -3 = -2.
+	self assert: 9 \\ -3 = 0.
+	self assert: 10 \\ -3 = -2.
+	self assert: 11 \\ -3 = -1.
+	self assert: 12 \\ -3 = 0.
+	self assert: 13 \\ -3 = -2! !
+
+!IntegerTest methodsFor: 'tests - division - \\' stamp: 'sqr 1/25/2014 14:13'!
+testBackslashBackslashSpSp
+
+	self assert: 0 \\ 3 = 0.
+	self assert: 1 \\ 3 = 1.
+	self assert: 9 \\ 3 = 0.
+	self assert: 10 \\ 3 = 1.
+	self assert: 11 \\ 3 = 2.
+	self assert: 12 \\ 3 = 0.
+	self assert: 13 \\ 3 = 1! !
+
 !IntegerTest methodsFor: 'tests - benchmarks' stamp: 'sd 6/5/2005 08:37'!
 testBenchFib
 
@@ -5263,6 +5490,150 @@ testDifferentBases
 	self assert: -35rYXWVUTSRQPONMLKJIHGFEDCBA9876543210 = -1101553773143634726491620528194292510495517905608180485.
 	self assert: -36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210 = -106300512100105327644605138221229898724869759421181854980.! !
 
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:53'!
+testDivLnLn
+
+	self assert: (-42391158275216203514294433200 div: -14130386091738734504764811067) = 3.
+	self assert: (-42391158275216203514294433201 div: -14130386091738734504764811067) = 3.
+	self assert: (-42391158275216203514294433202 div: -14130386091738734504764811067) = 4.
+	self assert: (-8727963568087712425891397479476727340041448 div: -79766443076872509863361) = 109418989131512359209.
+	self assert: (-8727963568087712425891397479476727340041449 div: -79766443076872509863361) = 109418989131512359209.
+	self assert: (-8727963568087712425891397479476727340041450 div: -79766443076872509863361) = 109418989131512359210! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:53'!
+testDivLnLp
+
+	self assert: (-42391158275216203514294433200 div: 14130386091738734504764811067) = -3.
+	self assert: (-42391158275216203514294433201 div: 14130386091738734504764811067) = -3.
+	self assert: (-42391158275216203514294433202 div: 14130386091738734504764811067) = -4.
+	self assert: (-8727963568087712425891397479476727340041448 div: 79766443076872509863361) = -109418989131512359209.
+	self assert: (-8727963568087712425891397479476727340041449 div: 79766443076872509863361) = -109418989131512359209.
+	self assert: (-8727963568087712425891397479476727340041450 div: 79766443076872509863361) = -109418989131512359210! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:54'!
+testDivLnSn
+
+	self assert: (-42391158275216203514294433201 div: -3) = 14130386091738734504764811067.
+	self assert: (-42391158275216203514294433202 div: -3) = 14130386091738734504764811068.
+	self assert: (-42391158275216203514294433203 div: -3) = 14130386091738734504764811068.
+	self assert: (-42391158275216203514294433204 div: -3) = 14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+testDivLnSp
+
+	self assert: (-42391158275216203514294433201 div: 3) = -14130386091738734504764811067.
+	self assert: (-42391158275216203514294433202 div: 3) = -14130386091738734504764811068.
+	self assert: (-42391158275216203514294433203 div: 3) = -14130386091738734504764811068.
+	self assert: (-42391158275216203514294433204 div: 3) = -14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:54'!
+testDivLpLn
+
+	self assert: (42391158275216203514294433200 div: -14130386091738734504764811067) = -2.
+	self assert: (42391158275216203514294433201 div: -14130386091738734504764811067) = -3.
+	self assert: (42391158275216203514294433202 div: -14130386091738734504764811067) = -3.
+	self assert: (8727963568087712425891397479476727340041448 div: -79766443076872509863361) = -109418989131512359208.
+	self assert: (8727963568087712425891397479476727340041449 div: -79766443076872509863361) = -109418989131512359209.
+	self assert: (8727963568087712425891397479476727340041450 div: -79766443076872509863361) = -109418989131512359209! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+testDivLpLp
+
+	self assert: (42391158275216203514294433200 div: 14130386091738734504764811067) = 2.
+	self assert: (42391158275216203514294433201 div: 14130386091738734504764811067) = 3.
+	self assert: (42391158275216203514294433202 div: 14130386091738734504764811067) = 3.
+	self assert: (8727963568087712425891397479476727340041448 div: 79766443076872509863361) = 109418989131512359208.
+	self assert: (8727963568087712425891397479476727340041449 div: 79766443076872509863361) = 109418989131512359209.
+	self assert: (8727963568087712425891397479476727340041450 div: 79766443076872509863361) = 109418989131512359209! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:55'!
+testDivLpSn
+
+	self assert: (42391158275216203514294433201 div: -3) = -14130386091738734504764811067.
+	self assert: (42391158275216203514294433202 div: -3) = -14130386091738734504764811067.
+	self assert: (42391158275216203514294433203 div: -3) = -14130386091738734504764811067.
+	self assert: (42391158275216203514294433204 div: -3) = -14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+testDivLpSp
+
+	self assert: (42391158275216203514294433201 div: 3) = 14130386091738734504764811067.
+	self assert: (42391158275216203514294433202 div: 3) = 14130386091738734504764811067.
+	self assert: (42391158275216203514294433203 div: 3) = 14130386091738734504764811067.
+	self assert: (42391158275216203514294433204 div: 3) = 14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:55'!
+testDivSnLn
+
+	self assert: (0 div: -42391158275216203514294433201) = 0.
+	self assert: (-1 div: -42391158275216203514294433201) = 1.
+	self assert: (-14348907 div: -42391158275216203514294433201) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+testDivSnLp
+
+	self assert: (0 div: 42391158275216203514294433201) = 0.
+	self assert: (-1 div: 42391158275216203514294433201) = -1.
+	self assert: (-14348907 div: 42391158275216203514294433201) = -1! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:56'!
+testDivSnSn
+
+	self assert: (0 div: -3) = 0.
+	self assert: (-1 div: -3) = 1.
+	self assert: (-9 div: -3) = 3.
+	self assert: (-10 div: -3) = 4.
+	self assert: (-11 div: -3) = 4.
+	self assert: (-12 div: -3) = 4.
+	self assert: (-13 div: -3) = 5! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+testDivSnSp
+
+	self assert: (0 div: 3) = 0.
+	self assert: (-1 div: 3) = -1.
+	self assert: (-9 div: 3) = -3.
+	self assert: (-10 div: 3) = -4.
+	self assert: (-11 div: 3) = -4.
+	self assert: (-12 div: 3) = -4.
+	self assert: (-13 div: 3) = -5! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:55'!
+testDivSpLn
+
+	self assert: (0 div: -42391158275216203514294433201) = 0.
+	self assert: (1 div: -42391158275216203514294433201) = 0.
+	self assert: (14348907 div: -42391158275216203514294433201) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+testDivSpLp
+
+	self assert: (0 div: 42391158275216203514294433201) = 0.
+	self assert: (1 div: 42391158275216203514294433201) = 0.
+	self assert: (14348907 div: 42391158275216203514294433201) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:54'!
+testDivSpSn
+
+	self assert: (0 div: -3) = 0.
+	self assert: (1 div: -3) = 0.
+	self assert: (9 div: -3) = -3.
+	self assert: (10 div: -3) = -3.
+	self assert: (11 div: -3) = -3.
+	self assert: (12 div: -3) = -4.
+	self assert: (13 div: -3) = -4! !
+
+!IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:36'!
+testDivSpSp
+
+	self assert: (0 div: 3) = 0.
+	self assert: (1 div: 3) = 0.
+	self assert: (9 div: 3) = 3.
+	self assert: (10 div: 3) = 3.
+	self assert: (11 div: 3) = 3.
+	self assert: (12 div: 3) = 4.
+	self assert: (13 div: 3) = 4! !
+
 !IntegerTest methodsFor: 'tests - basic' stamp: 'md 4/21/2003 16:17'!
 testEven
 	
@@ -5498,6 +5869,150 @@ testLowBit
 			ifFalse: [(1 to: anInteger highBit) detect: [:bitIndex | (anInteger bitAnd: (1 bitShift: bitIndex-1)) ~= 0] ifNone: [0]].
 		self assert: anInteger lowBit = lowBit.
 		self assert: anInteger negated lowBit = lowBit].! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:57'!
+testModLnLn
+
+	self assert: (-42391158275216203514294433200 mod: -14130386091738734504764811067) = 1.
+	self assert: (-42391158275216203514294433201 mod: -14130386091738734504764811067) = 0.
+	self assert: (-42391158275216203514294433202 mod: -14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (-8727963568087712425891397479476727340041448 mod: -79766443076872509863361) = 1.
+	self assert: (-8727963568087712425891397479476727340041449 mod: -79766443076872509863361) = 0.
+	self assert: (-8727963568087712425891397479476727340041450 mod: -79766443076872509863361) = 79766443076872509863360! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModLnLp
+
+	self assert: (-42391158275216203514294433200 mod: 14130386091738734504764811067) = 1.
+	self assert: (-42391158275216203514294433201 mod: 14130386091738734504764811067) = 0.
+	self assert: (-42391158275216203514294433202 mod: 14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (-8727963568087712425891397479476727340041448 mod: 79766443076872509863361) = 1.
+	self assert: (-8727963568087712425891397479476727340041449 mod: 79766443076872509863361) = 0.
+	self assert: (-8727963568087712425891397479476727340041450 mod: 79766443076872509863361) = 79766443076872509863360! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+testModLnSn
+
+	self assert: (-42391158275216203514294433201 mod: -3) = 0.
+	self assert: (-42391158275216203514294433202 mod: -3) = 2.
+	self assert: (-42391158275216203514294433203 mod: -3) = 1.
+	self assert: (-42391158275216203514294433204 mod: -3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModLnSp
+
+	self assert: (-42391158275216203514294433201 mod: 3) = 0.
+	self assert: (-42391158275216203514294433202 mod: 3) = 2.
+	self assert: (-42391158275216203514294433203 mod: 3) = 1.
+	self assert: (-42391158275216203514294433204 mod: 3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+testModLpLn
+
+	self assert: (42391158275216203514294433200 mod: -14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (42391158275216203514294433201 mod: -14130386091738734504764811067) = 0.
+	self assert: (42391158275216203514294433202 mod: -14130386091738734504764811067) = 1.
+	self assert: (8727963568087712425891397479476727340041448 mod: -79766443076872509863361) = 79766443076872509863360.
+	self assert: (8727963568087712425891397479476727340041449 mod: -79766443076872509863361) = 0.
+	self assert: (8727963568087712425891397479476727340041450 mod: -79766443076872509863361) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModLpLp
+
+	self assert: (42391158275216203514294433200 mod: 14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (42391158275216203514294433201 mod: 14130386091738734504764811067) = 0.
+	self assert: (42391158275216203514294433202 mod: 14130386091738734504764811067) = 1.
+	self assert: (8727963568087712425891397479476727340041448 mod: 79766443076872509863361) = 79766443076872509863360.
+	self assert: (8727963568087712425891397479476727340041449 mod: 79766443076872509863361) = 0.
+	self assert: (8727963568087712425891397479476727340041450 mod: 79766443076872509863361) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:04'!
+testModLpSn
+
+	self assert: (42391158275216203514294433201 mod: -3) = 0.
+	self assert: (42391158275216203514294433202 mod: -3) = 1.
+	self assert: (42391158275216203514294433203 mod: -3) = 2.
+	self assert: (42391158275216203514294433204 mod: -3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModLpSp
+
+	self assert: (42391158275216203514294433201 mod: 3) = 0.
+	self assert: (42391158275216203514294433202 mod: 3) = 1.
+	self assert: (42391158275216203514294433203 mod: 3) = 2.
+	self assert: (42391158275216203514294433204 mod: 3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:04'!
+testModSnLn
+
+	self assert: (0 mod: -42391158275216203514294433201) = 0.
+	self assert: (-1 mod: -42391158275216203514294433201) = 42391158275216203514294433200.
+	self assert: (-14348907 mod: -42391158275216203514294433201) = 42391158275216203514280084294! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModSnLp
+
+	self assert: (0 mod: 42391158275216203514294433201) = 0.
+	self assert: (-1 mod: 42391158275216203514294433201) =  42391158275216203514294433200.
+	self assert: (-14348907 mod: 42391158275216203514294433201) = 42391158275216203514280084294! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:00'!
+testModSnSn
+
+	self assert: (0 mod: -3) = 0.
+	self assert: (-1 mod: -3) = 2.
+	self assert: (-9 mod: -3) = 0.
+	self assert: (-10 mod: -3) = 2.
+	self assert: (-11 mod: -3) = 1.
+	self assert: (-12 mod: -3) = 0.
+	self assert: (-13 mod: -3) = 2! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:59'!
+testModSnSp
+
+	self assert: (0 mod: 3) = 0.
+	self assert: (-1 mod: 3) = 2.
+	self assert: (-9 mod: 3) = 0.
+	self assert: (-10 mod: 3) = 2.
+	self assert: (-11 mod: 3) = 1.
+	self assert: (-12 mod: 3) = 0.
+	self assert: (-13 mod: 3) = 2! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+testModSpLn
+
+	self assert: (0 mod: -42391158275216203514294433201) = 0.
+	self assert: (1 mod: -42391158275216203514294433201) = 1.
+	self assert: (14348907 mod: -42391158275216203514294433201) = 14348907! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModSpLp
+
+	self assert: (0 mod: 42391158275216203514294433201) = 0.
+	self assert: (1 mod: 42391158275216203514294433201) = 1.
+	self assert: (14348907 mod: 42391158275216203514294433201) = 14348907! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:58'!
+testModSpSn
+
+	self assert: (0 mod: -3) = 0.
+	self assert: (1 mod: -3) = 1.
+	self assert: (9 mod: -3) = 0.
+	self assert: (10 mod: -3) = 1.
+	self assert: (11 mod: -3) = 2.
+	self assert: (12 mod: -3) = 0.
+	self assert: (13 mod: -3) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModSpSp
+
+	self assert: (0 mod: 3) = 0.
+	self assert: (1 mod: 3) = 1.
+	self assert: (9 mod: 3) = 0.
+	self assert: (10 mod: 3) = 1.
+	self assert: (11 mod: 3) = 2.
+	self assert: (12 mod: 3) = 0.
+	self assert: (13 mod: 3) = 1! !
 
 !IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 1/9/2014 22:54'!
 testNegativeIntegerPrinting
@@ -5885,6 +6400,150 @@ testPrintStringBase
 			self assert: (bRaisedToN negated printStringBase: b) = ('-1' , (String new: n withAll: $0))]].
 ! !
 
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:36'!
+testQuoLnLn
+
+	self assert: (-42391158275216203514294433200 quo: -14130386091738734504764811067) = 2.
+	self assert: (-42391158275216203514294433201 quo: -14130386091738734504764811067) = 3.
+	self assert: (-42391158275216203514294433202 quo: -14130386091738734504764811067) = 3.
+	self assert: (-8727963568087712425891397479476727340041448 quo: -79766443076872509863361) = 109418989131512359208.
+	self assert: (-8727963568087712425891397479476727340041449 quo: -79766443076872509863361) = 109418989131512359209.
+	self assert: (-8727963568087712425891397479476727340041450 quo: -79766443076872509863361) = 109418989131512359209! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:51'!
+testQuoLnLp
+
+	self assert: (-42391158275216203514294433200 quo: 14130386091738734504764811067) = -2.
+	self assert: (-42391158275216203514294433201 quo: 14130386091738734504764811067) = -3.
+	self assert: (-42391158275216203514294433202 quo: 14130386091738734504764811067) = -3.
+	self assert: (-8727963568087712425891397479476727340041448 quo: 79766443076872509863361) = -109418989131512359208.
+	self assert: (-8727963568087712425891397479476727340041449 quo: 79766443076872509863361) = -109418989131512359209.
+	self assert: (-8727963568087712425891397479476727340041450 quo: 79766443076872509863361) = -109418989131512359209! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+testQuoLnSn
+
+	self assert: (-42391158275216203514294433201 quo: -3) = 14130386091738734504764811067.
+	self assert: (-42391158275216203514294433202 quo: -3) = 14130386091738734504764811067.
+	self assert: (-42391158275216203514294433203 quo: -3) = 14130386091738734504764811067.
+	self assert: (-42391158275216203514294433204 quo: -3) = 14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:51'!
+testQuoLnSp
+
+	self assert: (-42391158275216203514294433201 quo: 3) = -14130386091738734504764811067.
+	self assert: (-42391158275216203514294433202 quo: 3) = -14130386091738734504764811067.
+	self assert: (-42391158275216203514294433203 quo: 3) = -14130386091738734504764811067.
+	self assert: (-42391158275216203514294433204 quo: 3) = -14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:52'!
+testQuoLpLn
+
+	self assert: (42391158275216203514294433200 quo: -14130386091738734504764811067) = -2.
+	self assert: (42391158275216203514294433201 quo: -14130386091738734504764811067) = -3.
+	self assert: (42391158275216203514294433202 quo: -14130386091738734504764811067) = -3.
+	self assert: (8727963568087712425891397479476727340041448 quo: -79766443076872509863361) = -109418989131512359208.
+	self assert: (8727963568087712425891397479476727340041449 quo: -79766443076872509863361) = -109418989131512359209.
+	self assert: (8727963568087712425891397479476727340041450 quo: -79766443076872509863361) = -109418989131512359209! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+testQuoLpLp
+
+	self assert: (42391158275216203514294433200 quo: 14130386091738734504764811067) = 2.
+	self assert: (42391158275216203514294433201 quo: 14130386091738734504764811067) = 3.
+	self assert: (42391158275216203514294433202 quo: 14130386091738734504764811067) = 3.
+	self assert: (8727963568087712425891397479476727340041448 quo: 79766443076872509863361) = 109418989131512359208.
+	self assert: (8727963568087712425891397479476727340041449 quo: 79766443076872509863361) = 109418989131512359209.
+	self assert: (8727963568087712425891397479476727340041450 quo: 79766443076872509863361) = 109418989131512359209! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:50'!
+testQuoLpSn
+
+	self assert: (42391158275216203514294433201 quo: -3) = -14130386091738734504764811067.
+	self assert: (42391158275216203514294433202 quo: -3) = -14130386091738734504764811067.
+	self assert: (42391158275216203514294433203 quo: -3) = -14130386091738734504764811067.
+	self assert: (42391158275216203514294433204 quo: -3) = -14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+testQuoLpSp
+
+	self assert: (42391158275216203514294433201 quo: 3) = 14130386091738734504764811067.
+	self assert: (42391158275216203514294433202 quo: 3) = 14130386091738734504764811067.
+	self assert: (42391158275216203514294433203 quo: 3) = 14130386091738734504764811067.
+	self assert: (42391158275216203514294433204 quo: 3) = 14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+testQuoSnLn
+
+	self assert: (0 quo: -42391158275216203514294433201) = 0.
+	self assert: (-1 quo: -42391158275216203514294433201) = 0.
+	self assert: (-14348907 quo: -42391158275216203514294433201) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:50'!
+testQuoSnLp
+
+	self assert: (0 quo: 42391158275216203514294433201) = 0.
+	self assert: (-1 quo: 42391158275216203514294433201) = 0.
+	self assert: (-14348907 quo: 42391158275216203514294433201) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+testQuoSnSn
+
+	self assert: (0 quo: -3) = 0.
+	self assert: (-1 quo: -3) = 0.
+	self assert: (-9 quo: -3) = 3.
+	self assert: (-10 quo: -3) = 3.
+	self assert: (-11 quo: -3) = 3.
+	self assert: (-12 quo: -3) = 4.
+	self assert: (-13 quo: -3) = 4! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:51'!
+testQuoSnSp
+
+	self assert: (0 quo: 3) = 0.
+	self assert: (-1 quo: 3) = 0.
+	self assert: (-9 quo: 3) = -3.
+	self assert: (-10 quo: 3) = -3.
+	self assert: (-11 quo: 3) = -3.
+	self assert: (-12 quo: 3) = -4.
+	self assert: (-13 quo: 3) = -4! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:52'!
+testQuoSpLn
+
+	self assert: (0 quo: -42391158275216203514294433201) = 0.
+	self assert: (1 quo: -42391158275216203514294433201) = 0.
+	self assert: (14348907 quo: -42391158275216203514294433201) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+testQuoSpLp
+
+	self assert: (0 quo: 42391158275216203514294433201) = 0.
+	self assert: (1 quo: 42391158275216203514294433201) = 0.
+	self assert: (14348907 quo: 42391158275216203514294433201) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:50'!
+testQuoSpSn
+
+	self assert: (0 quo: -3) = 0.
+	self assert: (1 quo: -3) = 0.
+	self assert: (9 quo: -3) = -3.
+	self assert: (10 quo: -3) = -3.
+	self assert: (11 quo: -3) = -3.
+	self assert: (12 quo: -3) = -4.
+	self assert: (13 quo: -3) = -4! !
+
+!IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:33'!
+testQuoSpSp
+
+	self assert: (0 quo: 3) = 0.
+	self assert: (1 quo: 3) = 0.
+	self assert: (9 quo: 3) = 3.
+	self assert: (10 quo: 3) = 3.
+	self assert: (11 quo: 3) = 3.
+	self assert: (12 quo: 3) = 4.
+	self assert: (13 quo: 3) = 4! !
+
 !IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:45'!
 testRaisedToErrorConditions
 	"
@@ -5922,6 +6581,150 @@ testReadFrom
 	s := rs upToEnd.
 	self assert: '.s could be confused with a ScaledDecimal' = s
 ! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+testRemLnLn
+
+	self assert: (-42391158275216203514294433200 rem: -14130386091738734504764811067) = -14130386091738734504764811066.
+	self assert: (-42391158275216203514294433201 rem: -14130386091738734504764811067) = 0.
+	self assert: (-42391158275216203514294433202 rem: -14130386091738734504764811067) = -1.
+	self assert: (-8727963568087712425891397479476727340041448 rem: -79766443076872509863361) = -79766443076872509863360.
+	self assert: (-8727963568087712425891397479476727340041449 rem: -79766443076872509863361) = 0.
+	self assert: (-8727963568087712425891397479476727340041450 rem: -79766443076872509863361) = -1! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:47'!
+testRemLnLp
+
+	self assert: (-42391158275216203514294433200 rem: 14130386091738734504764811067) = -14130386091738734504764811066.
+	self assert: (-42391158275216203514294433201 rem: 14130386091738734504764811067) = 0.
+	self assert: (-42391158275216203514294433202 rem: 14130386091738734504764811067) = -1.
+	self assert: (-8727963568087712425891397479476727340041448 rem: 79766443076872509863361) = -79766443076872509863360.
+	self assert: (-8727963568087712425891397479476727340041449 rem: 79766443076872509863361) = 0.
+	self assert: (-8727963568087712425891397479476727340041450 rem: 79766443076872509863361) = -1! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+testRemLnSn
+
+	self assert: (-42391158275216203514294433201 rem: -3) = 0.
+	self assert: (-42391158275216203514294433202 rem: -3) = -1.
+	self assert: (-42391158275216203514294433203 rem: -3) = -2.
+	self assert: (-42391158275216203514294433204 rem: -3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:49'!
+testRemLnSp
+
+	self assert: (-42391158275216203514294433201 rem: 3) = 0.
+	self assert: (-42391158275216203514294433202 rem: 3) = -1.
+	self assert: (-42391158275216203514294433203 rem: 3) = -2.
+	self assert: (-42391158275216203514294433204 rem: 3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:48'!
+testRemLpLn
+
+	self assert: (42391158275216203514294433200 rem: -14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (42391158275216203514294433201 rem: -14130386091738734504764811067) = 0.
+	self assert: (42391158275216203514294433202 rem: -14130386091738734504764811067) = 1.
+	self assert: (8727963568087712425891397479476727340041448 rem: -79766443076872509863361) = 79766443076872509863360.
+	self assert: (8727963568087712425891397479476727340041449 rem: -79766443076872509863361) = 0.
+	self assert: (8727963568087712425891397479476727340041450 rem: -79766443076872509863361) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+testRemLpLp
+
+	self assert: (42391158275216203514294433200 rem: 14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (42391158275216203514294433201 rem: 14130386091738734504764811067) = 0.
+	self assert: (42391158275216203514294433202 rem: 14130386091738734504764811067) = 1.
+	self assert: (8727963568087712425891397479476727340041448 rem: 79766443076872509863361) = 79766443076872509863360.
+	self assert: (8727963568087712425891397479476727340041449 rem: 79766443076872509863361) = 0.
+	self assert: (8727963568087712425891397479476727340041450 rem: 79766443076872509863361) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:49'!
+testRemLpSn
+
+	self assert: (42391158275216203514294433201 rem: -3) = 0.
+	self assert: (42391158275216203514294433202 rem: -3) = 1.
+	self assert: (42391158275216203514294433203 rem: -3) = 2.
+	self assert: (42391158275216203514294433204 rem: -3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+testRemLpSp
+
+	self assert: (42391158275216203514294433201 rem: 3) = 0.
+	self assert: (42391158275216203514294433202 rem: 3) = 1.
+	self assert: (42391158275216203514294433203 rem: 3) = 2.
+	self assert: (42391158275216203514294433204 rem: 3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+testRemSnLn
+
+	self assert: (0 rem: -42391158275216203514294433201) = 0.
+	self assert: (-1 rem: -42391158275216203514294433201) = -1.
+	self assert: (-14348907 rem: -42391158275216203514294433201) = -14348907! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:47'!
+testRemSnLp
+
+	self assert: (0 rem: 42391158275216203514294433201) = 0.
+	self assert: (-1 rem: 42391158275216203514294433201) = -1.
+	self assert: (-14348907 rem: 42391158275216203514294433201) = -14348907! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+testRemSnSn
+
+	self assert: (0 rem: -3) = 0.
+	self assert: (-1 rem: -3) = -1.
+	self assert: (-9 rem: -3) = 0.
+	self assert: (-10 rem: -3) = -1.
+	self assert: (-11 rem: -3) = -2.
+	self assert: (-12 rem: -3) = 0.
+	self assert: (-13 rem: -3) = -1! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:37'!
+testRemSnSp
+
+	self assert: (0 rem: 3) = 0.
+	self assert: (-1 rem: 3) = -1.
+	self assert: (-9 rem: 3) = 0.
+	self assert: (-10 rem: 3) = -1.
+	self assert: (-11 rem: 3) = -2.
+	self assert: (-12 rem: 3) = 0.
+	self assert: (-13 rem: 3) = -1! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:38'!
+testRemSpLn
+
+	self assert: (0 rem: -42391158275216203514294433201) = 0.
+	self assert: (1 rem: -42391158275216203514294433201) = 1.
+	self assert: (14348907 rem: -42391158275216203514294433201) = 14348907! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+testRemSpLp
+
+	self assert: (0 rem: 42391158275216203514294433201) = 0.
+	self assert: (1 rem: 42391158275216203514294433201) = 1.
+	self assert: (14348907 rem: 42391158275216203514294433201) = 14348907! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:48'!
+testRemSpSn
+
+	self assert: (0 rem: -3) = 0.
+	self assert: (1 rem: -3) = 1.
+	self assert: (9 rem: -3) = 0.
+	self assert: (10 rem: -3) = 1.
+	self assert: (11 rem: -3) = 2.
+	self assert: (12 rem: -3) = 0.
+	self assert: (13 rem: -3) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
+testRemSpSp
+
+	self assert: (0 rem: 3) = 0.
+	self assert: (1 rem: 3) = 1.
+	self assert: (9 rem: 3) = 0.
+	self assert: (10 rem: 3) = 1.
+	self assert: (11 rem: 3) = 2.
+	self assert: (12 rem: 3) = 0.
+	self assert: (13 rem: 3) = 1! !
 
 !IntegerTest methodsFor: 'tests - printing' stamp: 'laza 3/30/2004 09:23'!
 testRomanPrinting
@@ -6015,6 +6818,150 @@ testRomanPrinting
 	self assert: -9 printStringRoman = '-IX'.
 	self assert: -10 printStringRoman = '-X'.
 ! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:56'!
+testSlashSlashLnLn
+
+	self assert: -42391158275216203514294433200 // -14130386091738734504764811067 = 2.
+	self assert: -42391158275216203514294433201 // -14130386091738734504764811067 = 3.
+	self assert: -42391158275216203514294433202 // -14130386091738734504764811067 = 3.
+	self assert: -8727963568087712425891397479476727340041448 // -79766443076872509863361 = 109418989131512359208.
+	self assert: -8727963568087712425891397479476727340041449 // -79766443076872509863361 = 109418989131512359209.
+	self assert: -8727963568087712425891397479476727340041450 // -79766443076872509863361 = 109418989131512359209! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:47'!
+testSlashSlashLnLp
+
+	self assert: -42391158275216203514294433200 // 14130386091738734504764811067 = -3.
+	self assert: -42391158275216203514294433201 // 14130386091738734504764811067 = -3.
+	self assert: -42391158275216203514294433202 // 14130386091738734504764811067 = -4.
+	self assert: -8727963568087712425891397479476727340041448 // 79766443076872509863361 = -109418989131512359209.
+	self assert: -8727963568087712425891397479476727340041449 // 79766443076872509863361 = -109418989131512359209.
+	self assert: -8727963568087712425891397479476727340041450 // 79766443076872509863361 = -109418989131512359210! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:54'!
+testSlashSlashLnSn
+
+	self assert: -42391158275216203514294433201 // -3 = 14130386091738734504764811067.
+	self assert: -42391158275216203514294433202 // -3 = 14130386091738734504764811067.
+	self assert: -42391158275216203514294433203 // -3 = 14130386091738734504764811067.
+	self assert: -42391158275216203514294433204 // -3 = 14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:45'!
+testSlashSlashLnSp
+
+	self assert: -42391158275216203514294433201 // 3 = -14130386091738734504764811067.
+	self assert: -42391158275216203514294433202 // 3 = -14130386091738734504764811068.
+	self assert: -42391158275216203514294433203 // 3 = -14130386091738734504764811068.
+	self assert: -42391158275216203514294433204 // 3 = -14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:54'!
+testSlashSlashLpLn
+
+	self assert: 42391158275216203514294433200 // -14130386091738734504764811067 = -3.
+	self assert: 42391158275216203514294433201 // -14130386091738734504764811067 = -3.
+	self assert: 42391158275216203514294433202 // -14130386091738734504764811067 = -4.
+	self assert: 8727963568087712425891397479476727340041448 // -79766443076872509863361 = -109418989131512359209.
+	self assert: 8727963568087712425891397479476727340041449 // -79766443076872509863361 = -109418989131512359209.
+	self assert: 8727963568087712425891397479476727340041450 // -79766443076872509863361 = -109418989131512359210! !
+
+!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 1/25/2014 13:38'!
+testSlashSlashLpLp
+
+	self assert: 42391158275216203514294433200 // 14130386091738734504764811067 = 2.
+	self assert: 42391158275216203514294433201 // 14130386091738734504764811067 = 3.
+	self assert: 42391158275216203514294433202 // 14130386091738734504764811067 = 3.
+	self assert: 8727963568087712425891397479476727340041448 // 79766443076872509863361 = 109418989131512359208.
+	self assert: 8727963568087712425891397479476727340041449 // 79766443076872509863361 = 109418989131512359209.
+	self assert: 8727963568087712425891397479476727340041450 // 79766443076872509863361 = 109418989131512359209! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:52'!
+testSlashSlashLpSn
+
+	self assert: 42391158275216203514294433201 // -3 = -14130386091738734504764811067.
+	self assert: 42391158275216203514294433202 // -3 = -14130386091738734504764811068.
+	self assert: 42391158275216203514294433203 // -3 = -14130386091738734504764811068.
+	self assert: 42391158275216203514294433204 // -3 = -14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 1/25/2014 13:33'!
+testSlashSlashLpSp
+
+	self assert: 42391158275216203514294433201 // 3 = 14130386091738734504764811067.
+	self assert: 42391158275216203514294433202 // 3 = 14130386091738734504764811067.
+	self assert: 42391158275216203514294433203 // 3 = 14130386091738734504764811067.
+	self assert: 42391158275216203514294433204 // 3 = 14130386091738734504764811068! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:52'!
+testSlashSlashSnLn
+
+	self assert: 0 // -42391158275216203514294433201 = 0.
+	self assert: -1 // -42391158275216203514294433201 = 0.
+	self assert: -14348907 // -42391158275216203514294433201 = 0! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:44'!
+testSlashSlashSnLp
+
+	self assert: 0 // 42391158275216203514294433201 = 0.
+	self assert: -1 // 42391158275216203514294433201 = -1.
+	self assert: -14348907 // 42391158275216203514294433201 = -1! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:51'!
+testSlashSlashSnSn
+
+	self assert: 0 // -3 = 0.
+	self assert: -1 // -3 = 0.
+	self assert: -9 // -3 = 3.
+	self assert: -10 // -3 = 3.
+	self assert: -11 // -3 = 3.
+	self assert: -12 // -3 = 4.
+	self assert: -13 // -3 = 4! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:42'!
+testSlashSlashSnSp
+
+	self assert: 0 // 3 = 0.
+	self assert: -1 // 3 = -1.
+	self assert: -9 // 3 = -3.
+	self assert: -10 // 3 = -4.
+	self assert: -11 // 3 = -4.
+	self assert: -12 // 3 = -4.
+	self assert: -13 // 3 = -5! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:51'!
+testSlashSlashSpLn
+
+	self assert: 0 // -42391158275216203514294433201 = 0.
+	self assert: 1 // -42391158275216203514294433201 = -1.
+	self assert: 14348907 // -42391158275216203514294433201 = -1! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:44'!
+testSlashSlashSpLp
+
+	self assert: 0 // 42391158275216203514294433201 = 0.
+	self assert: 1 // 42391158275216203514294433201 = 0.
+	self assert: 14348907 // 42391158275216203514294433201 = 0! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:50'!
+testSlashSlashSpSn
+
+	self assert: 0 // -3 = 0.
+	self assert: 1 // -3 = -1.
+	self assert: 9 // -3 = -3.
+	self assert: 10 // -3 = -4.
+	self assert: 11 // -3 = -4.
+	self assert: 12 // -3 = -4.
+	self assert: 13 // -3 = -5! !
+
+!IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:42'!
+testSlashSlashSpSp
+
+	self assert: 0 // 3 = 0.
+	self assert: 1 // 3 = 0.
+	self assert: 9 // 3 = 3.
+	self assert: 10 // 3 = 3.
+	self assert: 11 // 3 = 3.
+	self assert: 12 // 3 = 4.
+	self assert: 13 // 3 = 4! !
 
 !IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
 testSqrtErrorConditions
@@ -6345,129 +7292,6 @@ testLayout3
 
 	pane delete! !
 
-!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:45'!
-testComposition
-	"
-	MatrixTransform2x3Test new testComposition
-	"
-	| composition inner outer |
-
-	outer _ MatrixTransform2x3 withTranslation: 3@5.
-	inner _ MatrixTransform2x3 withRadians: 0.3.
-	composition _ outer composedWith: inner.
-	self assert: composition translation = outer translation.
-	self assert: (outer externalizePosition: (inner externalizePosition: 3@4)) = (composition externalizePosition: 3@4).
-	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
-	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
-	self assert: (inner internalizePosition: (outer internalizePosition: 3@4)) = (composition internalizePosition: 3@4).
-	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
-	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).
-
-
-	outer _ MatrixTransform2x3 withRadians: 0.3.
-	inner _ MatrixTransform2x3 withTranslation: 3@5.
-	composition _ outer composedWith: inner.
-	self assert: composition radians = outer radians.
-	self assert: ((outer externalizePosition: (inner externalizePosition: 3@4)) - (composition externalizePosition: 3@4)) r < 0.0001.
-	self assert: (outer externalizeDelta: (inner externalizeDelta: 3@4)) = (composition externalizeDelta: 3@4).
-	self assert: (outer externalizeScalar: (inner externalizeScalar: 7)) = (composition externalizeScalar: 7).
-	self assert: ((inner internalizePosition: (outer internalizePosition: 3@4)) - (composition internalizePosition: 3@4)) r < 0.0001.
-	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
-	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
-
-!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:17'!
-testDisplayBounds
-	"
-	MatrixTransform2x3Test new testDisplayBounds
-	"
-	self assert:
-		((MatrixTransform2x3 withRadians: 0.3) displayBoundsOfTransformOf: (10@10 extent: 20@30))
-			= (-2@13 corner: 26@47).
-
-	self assert: (MatrixTransform2x3 new displayBoundsOfTransformOf: (-2@ 2 extent: 10@10)) = (-2@2 corner: 8@12).
-	self assert: (MatrixTransform2x3 new displayBoundsOfTransformOf: (-12@ 12 extent: 10@10)) = (-12@12 corner: -2@22).
-	self assert: ((MatrixTransform2x3 withTranslation: 2)  displayBoundsOfTransformOf: (-4@ 2  extent: 10@10)) = (-2@4 corner: 8@14).
-	self assert: ((MatrixTransform2x3 withTranslation: -4)  displayBoundsOfTransformOf: (2@ 2  extent: 10@10)) = (-2@-2 corner: 8@8).
-	self assert: ((MatrixTransform2x3 withTranslation: 2)  displayBoundsOfTransformOf: (-14@ 2  extent: 10@10)) = (-12@4 corner: -2@14).
-	self assert: ((MatrixTransform2x3 withTranslation: 4)  displayBoundsOfTransformOf: (-12@ 2  extent: 10@10)) = (-8@6 corner: 2@16).
-	self assert: ((MatrixTransform2x3 withTranslation: -4)  displayBoundsOfTransformOf: (12@ 2  extent: 10@10)) = (8@-2 corner: 18@8).
-	self assert: ((MatrixTransform2x3 withTranslation: -2)  displayBoundsOfTransformOf: (4@ 2  extent: 10@10)) = (2@0 corner: 12@10).
-	self assert: ((MatrixTransform2x3 withTranslation: 4)  displayBoundsOfTransformOf: (-2@ 2  extent: 10@10)) = (2@6 corner: 12@16).! !
-
-!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:11'!
-testFloatInverseTransform
-	"
-	MatrixTransform2x3Test new testFloatInverseTransform
-	"
-	self assert: (MatrixTransform2x3 new floatInverseTransform: (-2@ 2)) = (-2@2).
-	self assert: ((MatrixTransform2x3 withTranslation: 2)  floatInverseTransform: (-4@ 2)) = (-6@0).
-	self assert: ((MatrixTransform2x3 withTranslation: 4)  floatInverseTransform: (-2@ 2)) = (-6@-2).
-	self assert: ((MatrixTransform2x3 withTranslation: -2)  floatInverseTransform: (4@ 2)) = (6@4).
-	self assert: ((MatrixTransform2x3 withTranslation: -4)  floatInverseTransform: (2@ 2)) = (6@6)! !
-
-!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:11'!
-testFloatTransform
-	"
-	MatrixTransform2x3Test new testFloatTransform
-	"
-	self assert: (MatrixTransform2x3 new floatTransform: (-2@ 2)) = (-2@2).
-	self assert: ((MatrixTransform2x3 withTranslation: 2)  floatTransform: (-4@ 2)) = (-2@4).
-	self assert: ((MatrixTransform2x3 withTranslation: 4)  floatTransform: (-2@ 2)) = (2@6).
-	self assert: ((MatrixTransform2x3 withTranslation: -2)  floatTransform: (4@ 2)) = (2@0).
-	self assert: ((MatrixTransform2x3 withTranslation: -4)  floatTransform: (2@ 2)) = (-2@-2)! !
-
-!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:11'!
-testIntInverseTransform
-	"
-	MatrixTransform2x3Test new testIntInverseTransform
-	"
-	self assert: (MatrixTransform2x3 new intInverseTransform: (-2@ 2)) = (-2@2).
-	self assert: ((MatrixTransform2x3 withTranslation: 2)  intInverseTransform: (-4@ 2)) = (-6@0).
-	self assert: ((MatrixTransform2x3 withTranslation: 4)  intInverseTransform: (-2@ 2)) = (-6@-2).
-	self assert: ((MatrixTransform2x3 withTranslation: -2)  intInverseTransform: (4@ 2)) = (6@4).
-	self assert: ((MatrixTransform2x3 withTranslation: -4)  intInverseTransform: (2@ 2)) = (6@6)! !
-
-!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:11'!
-testIntTransform
-	"
-	MatrixTransform2x3Test new testIntTransform
-	"
-	self assert: (MatrixTransform2x3 new intTransform: (-2@ 2)) = (-2@2).
-	self assert: ((MatrixTransform2x3 withTranslation: 2)  intTransform: (-4@ 2)) = (-2@4).
-	self assert: ((MatrixTransform2x3 withTranslation: 4)  intTransform: (-2@ 2)) = (2@6).
-	self assert: ((MatrixTransform2x3 withTranslation: -2)  intTransform: (4@ 2)) = (2@0).
-	self assert: ((MatrixTransform2x3 withTranslation: -4)  intTransform: (2@ 2)) = (-2@-2)! !
-
-!MatrixTransform2x3Test methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:45'!
-testInverseTransformation
-	"
-	MatrixTransform2x3Test new testInverseTransformation
-	"
-	| forward inverse |
-
-	forward _ MatrixTransform2x3 withTranslation: 3@5.
-	inverse _ forward inverseTransformation.
-	
-	self assert: inverse translation = forward translation negated.
-	self assert: (inverse externalizePosition: 3@4) = (forward internalizePosition: 3@4).
-	self assert: (inverse externalizeDelta: 3@4) = (forward internalizeDelta: 3@4).
-	self assert: (inverse externalizeScalar: 7) = (forward internalizeScalar: 7).
-	self assert: (inverse internalizePosition: 3@4) = (forward externalizePosition: 3@4).
-	self assert: (inverse internalizeDelta: 3@4) = (forward externalizeDelta: 3@4).
-	self assert: (inverse internalizeScalar: 7) = (forward externalizeScalar: 7).
-
-
-	forward _ MatrixTransform2x3 withRadians: 0.25.
-	inverse _ forward inverseTransformation.
-
-	self assert: inverse radians = forward radians negated.
-	self assert: ((inverse externalizePosition: 3@4) - (forward internalizePosition: 3@4)) r < 0.0001.
-	self assert: ((inverse externalizeDelta: 3@4) - (forward internalizeDelta: 3@4)) r < 0.0001.
-	self assert: ((inverse externalizeScalar: 7) - (forward internalizeScalar: 7)) abs < 0.0001.
-	self assert: ((inverse internalizePosition: 3@4) - (forward externalizePosition: 3@4)) r < 0.0001.
-	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
-	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
-
 !MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorAt
 	| stackpBefore stackpAfter array byteArray |
@@ -6675,7 +7499,7 @@ testMonitorNotGainingUnwantedSignalsDuringUnwinding
 	process terminate.
 	self assert: 1 equals: ((monitor instVarNamed: #mutex) instVarNamed: #excessSignals)! !
 
-!MorphicLocationTest methodsFor: 'testing' stamp: 'jmv 1/12/2015 15:45'!
+!MorphicLocationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 14:32'!
 testComposition
 	"
 	MorphicLocationTest new testComposition
@@ -6683,7 +7507,7 @@ testComposition
 	| composition inner outer |
 
 	outer _ MorphicTranslation withTranslation: 3@5.
-	inner _ MatrixTransform2x3 withRadians: 0.3.
+	inner _ AffineTransformation withRadians: 0.3.
 	composition _ outer composedWith: inner.
 	self assert: composition translation = outer translation.
 	self assert: (outer externalizePosition: (inner externalizePosition: 3@4)) = (composition externalizePosition: 3@4).
@@ -6694,7 +7518,7 @@ testComposition
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).
 
 
-	outer _ MatrixTransform2x3 withRadians: 0.3.
+	outer _ AffineTransformation withRadians: 0.3.
 	inner _ MorphicTranslation withTranslation: 3@5.
 	composition _ outer composedWith: inner.
 	self assert: composition radians = outer radians.
@@ -6751,17 +7575,6 @@ testDisplayBounds
 	self assert: ((MorphicTranslation withTranslation: -2)  displayBoundsOfTransformOf: (4@ 2  extent: 10@10)) = (2@0 corner: 12@10).
 	self assert: ((MorphicTranslation withTranslation: 4)  displayBoundsOfTransformOf: (-2@ 2  extent: 10@10)) = (2@6 corner: 12@16).! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:20'!
-testIntTransform
-	"
-	MorphicTranslationTest new testIntTransform
-	"
-	self assert: (MorphicTranslation new intTransform: (-2@ 2)) = (-2@2).
-	self assert: ((MorphicTranslation withTranslation: 2)  intTransform: (-4@ 2)) = (-2@4).
-	self assert: ((MorphicTranslation withTranslation: 4)  intTransform: (-2@ 2)) = (2@6).
-	self assert: ((MorphicTranslation withTranslation: -2)  intTransform: (4@ 2)) = (2@0).
-	self assert: ((MorphicTranslation withTranslation: -4)  intTransform: (2@ 2)) = (-2@-2)! !
-
 !MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:21'!
 testInverseTransform
 	"
@@ -6791,16 +7604,16 @@ testInverseTransformation
 	self assert: (inverse internalizeDelta: 3@4) = (forward externalizeDelta: 3@4).
 	self assert: (inverse internalizeScalar: 7) = (forward externalizeScalar: 7)! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:22'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/21/2015 13:08'!
 testTransform
 	"
 	MorphicTranslationTest new testTransform
 	"
 	self assert: (MorphicTranslation new transform: (-2@ 2)) = (-2@2).
-	self assert: ((MorphicTranslation withTranslation: 2)  transform: (-4@ 2)) = (-2@4).
-	self assert: ((MorphicTranslation withTranslation: 4)  transform: (-2@ 2)) = (2@6).
-	self assert: ((MorphicTranslation withTranslation: -2)  transform: (4@ 2)) = (2@0).
-	self assert: ((MorphicTranslation withTranslation: -4)  transform: (2@ 2)) = (-2@-2)! !
+	self assert: ((MorphicTranslation withTranslation: 2) transform: (-4@ 2)) = (-2@4).
+	self assert: ((MorphicTranslation withTranslation: 4) transform: (-2@ 2)) = (2@6).
+	self assert: ((MorphicTranslation withTranslation: -2) transform: (4@ 2)) = (2@0).
+	self assert: ((MorphicTranslation withTranslation: -4) transform: (2@ 2)) = (-2@-2)! !
 
 !NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/26/2009 21:57'!
 testFractionPart
