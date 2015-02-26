@@ -69,8 +69,7 @@ Please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), ab
 To contribute code, please use an image with all included packages already loaded, and include new versions of affected packages. This will ensure we don't break them while we evolve Cuis.
 Here is a Smalltalk script to load all packages currently included:
 ```
-#('Graphics-Files-Additional' 'Network-Kernel' 'SignalProcessing' 'Tests' 'Theme-Themes' 'FFITests' 'JSON')
-    do: [:each | Feature require: each]
+Feature require: 'Core-Packages'
 ```
 
 Cuis is distributed subject to the MIT License. See the LICENSE file. Any contribution submitted for incorporation into or for distribution with Cuis shall be presumed subject to the same license.
