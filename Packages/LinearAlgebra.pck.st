@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2157] on 14 January 2015 at 3:13:26.565678 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2170] on 27 January 2015 at 3:46:31.317854 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 8!
+!provides: 'LinearAlgebra' 1 9!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -762,26 +762,6 @@ addNormalNoise: standardDeviation seed: randomSeed
 	| random |
 	random _ NormalRandom new seed: randomSeed.
 	self replaceValues: [ :i :j :v | random next * standardDeviation + v ]! !
-
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 8/1/2011 10:04'!
-bilinearInterpolationAtX: x y: y
-	"x and y are Floats"
-	| x1 x2 y1 y2 result f |
-	x1 _ x floor.
-	x2 _ x1 + 1.
-	y1 _ y floor.
-	y2 _ y1 + 1.
-	result _ ((self x: x1 y: y1) * (x2 - x) * (y2 - y)).
-	f _ (x2 - x) * (y - y1).
-	f = 0.0 ifFalse: [
-		result _ (self x: x1 y: y2) * f + result ].
-	f _ (x - x1) * (y2 - y).
-	f = 0.0 ifFalse: [
-		result _ (self x: x2 y: y1) * f + result ].
-	f _ (x - x1) * (y - y1).
-	f = 0.0 ifFalse: [
-		result _ (self x: x2 y: y2) * f + result].
-	^result! !
 
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
 conditionNumber

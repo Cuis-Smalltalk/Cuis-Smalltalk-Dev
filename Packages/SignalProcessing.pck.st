@@ -1,6 +1,7 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2162] on 21 January 2015 at 1:12:51.866496 pm'!
-'Description Please enter a description for this package '!
-!provides: 'SignalProcessing' 1 11!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2198] on 25 February 2015 at 11:20:15.432788 pm'!
+'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
+!provides: 'SignalProcessing' 1 15!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
@@ -220,7 +221,7 @@ C code and paper are available at: http://bigwww.epfl.ch/thevenaz/interpolation/
 I implement only the cubic case (degree=3), the most useful in practice.
 The original C code does mirroring at the bounds. This version extends the edge values.
 
-The original image was to be evaluated at integer indexes in (1 to: width) x (1 to height). My instance can be evaluated at any Float coordinates in (0.5 to: width+0.5) x (0.5 to: height+0.5). This is good for image zooming with proper bounds.!
+The original image was to be evaluated at integer indexes in (1 to: width) x (1 to height). My instance can be evaluated at any Float coordinates in (0.5 to: width+0.5) x (0.5 to: height+0.5). This is good for image zooming with proper bounds. See AffineTransformation>>#forImageZoom:!
 
 !ShiftedLinearInterpolatingImage commentStamp: 'jmv 4/16/2013 13:40' prior: 0!
 Shifted Linear Image Interpolation. Based on:
@@ -655,14 +656,53 @@ subsampled: n
 			answer i: i j: j put: (self i: i*n j: j*n) ]].
 	^ answer! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/23/2011 16:04'!
-subsampled: subSamplingFactor extent: desiredExtent
-	| answer |
-	answer _ FloatMatrix newSize: desiredExtent.
-	1 to: answer height do: [ :i |
-		1 to: answer width do: [ :j |
-			answer i: i j: j put: (self bilinearInterpolationAtX: j*subSamplingFactor y: i*subSamplingFactor) ]].
-	^ answer! !
+!AffineTransformation class methodsFor: '*SignalProcessing-Images' stamp: 'jmv 1/27/2015 13:48'!
+forImageRotation: radians zoom: scale originalExtent: originalExtent
+	"
+	Good for processing FloatImages
+
+	Assume that a pixel covers a square centered at its coordinates, with area 1@1.
+	Also assume that origin is 1@1 (this is true for FloatImage, but not for Form!!)
+	
+	Apply enough displacement to avoid clipping the result
+
+	| original t e |
+	original _ FloatImage checkerboard: 100@100 n: 25.
+	t _ AffineTransformation forImageRotation: -0.2 zoom: 2.23 originalExtent: original extent.
+	e _ original resultExtentFor: t.
+	(original  areaTransformedBy: t resultExtent: e) display. (Delay forSeconds: 0.3) wait.
+	(original  bSplineTransformedBy: t resultExtent: e) display. (Delay forSeconds: 0.3) wait.
+	(original  bicubicTransformedBy: t resultExtent: e) display. (Delay forSeconds: 0.3) wait.
+	(original  bilinearTransformedBy: t resultExtent: e) display. (Delay forSeconds: 0.3) wait.
+	(original  lanczosTransformedBy: t resultExtent: e) display. (Delay forSeconds: 0.3) wait.
+	(original  nearestNeighborTransformedBy: t resultExtent: e) display. (Delay forSeconds: 0.3) wait.
+	(original  shiftedLinearTransformedBy: t resultExtent: e) display. (Delay forSeconds: 0.3) wait.
+	"
+
+	| halfOrig t1 r halfResult |
+	t1 _ (AffineTransformation withRadians: radians) composedWith:
+				(AffineTransformation withScale: scale).
+	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: originalExtent).
+	halfOrig _ originalExtent / 2.0+0.5.
+	halfResult _ r extent / 2.0+0.5.
+	^ (AffineTransformation withTranslation: halfResult) composedWith:
+			(t1 composedWith:
+					(AffineTransformation withTranslation: halfOrig negated))! !
+
+!AffineTransformation class methodsFor: '*SignalProcessing-Images' stamp: 'jmv 1/27/2015 12:46'!
+forImageZoom: scale
+	"
+	Good for doing zoom in and zoom out of images.
+	scale is the scale factor to apply (i.e. 0.5 means result is half the size of original image).
+
+	Assume that a pixel covers a square centered at its coordinates, with area 1@1.
+	Also assume that origin is 1@1 (this is true for FloatImage, but not for Form!!)
+	Therefore, map 0.5@0.5 to 0.5@0.5.
+	(AffineTransformation forImageZoom: 5) transform: 0.5@0.5
+	"
+	| dummyExtent |
+	dummyExtent _ 100@100.
+	^self transformFrom: (0.5@0.5 extent: dummyExtent) to: (0.5@0.5 extent: scale*dummyExtent)! !
 
 !AccumulatedImageHistogram methodsFor: 'accessing' stamp: 'jmv 4/24/2013 15:22'!
 countAt: value
@@ -887,6 +927,74 @@ Era mejor bitOr: o + ?
 		]
 	]! !
 
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 15:04'!
+areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
+	"Answer an interpolated value at (most likely) non-integer x@y.
+	x and y can be any Float values in in [1.0 .. width] and [1.0 .. height].
+	
+	Akin to OpenCV's CV_INTER_AREA.
+	Applies a step filter over the samples in the receiver that lie in a rectangle centered at x@y, as specified by hw and hh.
+	
+	Note: We could also consider the pixels in the receiver as squares and compute area intersection with result pixel.
+	Results would be slightly better. But here we are focused on speed. If you need higher quality, please use Lanczos.
+
+	Computationally very cheap.
+	Avoids aliasing while reasonably keeps detail.
+	Gives very good results for strong subsampling (zoom out, scale factors less than 0.4).
+
+	Compute parameters as (scale usually <= 0.25):
+		hw _ 1 / scale / 2.0.
+		hh _ 1 / scale / 2.0.
+	or (resultWidth usually much smaller than original, same for height):
+		hw _ originalWidth / resultWidth / 2.0.
+		hh _ originalHeight / resultHeight / 2.0.
+	"
+	| xStart xStop yStart yStop sum |
+	
+	xStart _ (x - hw) rounded max: 1.
+	xStop _ (x + hw) rounded min: width.
+	yStart _ (y - hh) rounded max: 1.
+	yStop _ (y + hh) rounded min: height.
+
+	"Apply filter."
+	sum _ 0.0.
+	yStart to: yStop do: [ :yyy |
+		xStart to: xStop do: [ :xxx |
+			sum _ (self x: xxx y: yyy) + sum ]].
+	sum = 0.0 ifTrue: [ ^0.0 ].
+	^sum / ((xStop-xStart+1) * (yStop-yStart+1))! !
+
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 13:21'!
+areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Apply a pixel area filtering for interpolation, akin to OpenCV's CV_INTER_AREA.
+	Very fast. Very good for strong zoom out (like building image thumbnails).
+	"
+	| scaled resultHeight resultWidth p v hh hw inverseTransformation e |
+
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ FloatImage width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	hw _ width / resultWidth / 2.0.
+	hh _ height / resultHeight / 2.0.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
+				v _ self areaFilteredValueAtX: p x y: p y halfWidth: hw halfHeight: hh.
+				scaled x: x y: y put: v 
+			]
+		]].
+	^scaled! !
+
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:05'!
 asForm
 	"Answer a 32bit Form with gray values.
@@ -909,80 +1017,31 @@ asFormG: greenImage b: blueImage
 average
 	^elements average! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/14/2015 14:27'!
-bSplineRotatedBy: radians scaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
-	as #lanczosRotatedBy:scaledBy: to avoid aliasing.
-
-	Prepare appropriate transformation and result size, so that the resampled image fits exactly.
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 25.
-	(original bSplineRotatedBy: -0.2 scaledBy: 2.23) display
-	"
-
-	| halfOrig t1 r halfResult t |
-	t1 _ (AffineTransformation withRadians: radians) composedWith:
-				(AffineTransformation withScale: scale).
-	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: width@ height).
-	halfOrig _ self extent / 2.0+0.5.
-	halfResult _ r extent / 2.0+0.5.
-	t _ (AffineTransformation withTranslation: halfResult) composedWith:
-			(t1 composedWith:
-					(AffineTransformation withTranslation: halfOrig negated)).
-	^self bSplineTransformedBy: t resultExtent: r extent ceiling! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/4/2013 14:40'!
-bSplineScaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
-	as #lanczosScaledBy: to avoid aliasing.
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 50.
-	(original bSplineScaledBy: 4.0) display.
-	original display.
-	(original bSplineScaledBy: 0.25) display.
-
-	| original |
-	original _ FloatImage from8BitColorForm: Cursor read as8BitColorForm.
-	(original bSplineScaledBy: 4.0) display.
-	original asForm displayAt: 16@0.
-	(original bSplineScaledBy: 0.7) display.
-
-	Smaller images are sharper than they should!! They include a bit of aliasing.
-	"
-	| scaled xp yp interpolated |
-	scaled _ FloatImage width: (width*scale) rounded height: (height*scale) rounded.	
-	interpolated _ BSplineInterpolatingImage from: self.
-	1 to: scaled height do: [ :y |
-		1to: scaled width do: [ :x |
-			xp _ x-0.5/scale+0.5.
-			yp _ y-0.5/scale+0.5.
-			scaled x: x y: y put: (interpolated interpolatedValueAtX: xp y: yp) ]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:05'!
-bSplineTransformedBy: anAffineTransformation resultExtent: resultExtent
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:21'!
+bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
 	Warning: there could be black areas in the result, and/or some image content in self could be lost.
 	This depends on the arguments.
 
-	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
-	as #lanczosTransformedBy:resultExtent: to avoid aliasing.
+	See comment at BSplineInterpolatingImage. Not available in OpenCV.
+	Gives top quality results for large scale values (not much smaller than 1.0)
+	 In such cases, prefer a filtering technique such as Area or Lanczos to avoid aliasing.
 	"
-	| scaled interpolated resultHeight resultWidth p v |
-	resultWidth _ resultExtent x.
-	resultHeight _ resultExtent y.
+	| scaled interpolator resultHeight resultWidth p v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
 	scaled _ FloatImage width: resultWidth height: resultHeight.	
-	interpolated _ BSplineInterpolatingImage from: self.
+	interpolator _ BSplineInterpolatingImage from: self.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
-			p _ anAffineTransformation inverseTransform: x@y.
+			p _ inverseTransformation transform: x@y.
 			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ interpolated interpolatedValueAtX: p x y: p y.
+				v _ interpolator interpolatedValueAtX: p x y: p y.
 				scaled x: x y: y put: v ]]].
 	^scaled! !
 
@@ -996,6 +1055,139 @@ beMagnitudeOfComplexesWith: imaginary
 	iv *= iv.
 	elements += iv.
 	self replaceValues: [ :i :j :v | v sqrt ]! !
+
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 14:22'!
+bicubicInterpolatedValueAtX: x y: y xFilterStore: xFilter
+	"Evaluate a bicubic (i.e. good quality) interpolation
+	http://en.wikipedia.org/wiki/Bicubic_interpolation
+	http://www.engr.mun.ca/~baxter/Publications/ImageZooming.pdf
+	
+	Like OpenCV's CV_INTER_CUBIC"
+
+	| interpolated yIndex0 xIndex0 dy dx uy ux xInSource xInSourceClamped yInSource yInSourceClamped dxSquared dySquared |
+	xIndex0 _ x floor - 1.
+	0 to: 3 do: [ :i |
+		dx _ (x - (xIndex0 + i)) abs.
+		dxSquared _ dx*dx.
+		ux _ dx < 2
+			ifTrue: [
+				dx < 1
+					ifTrue: [ (1.5*dx*dxSquared) - (2.5*dxSquared)+1 ]
+					ifFalse: [ (-0.5*dx*dxSquared) + (2.5*dxSquared) - (4*dx) + 2 ]]
+			ifFalse: [0.0].
+		xFilter at: i+1 put: ux ].
+
+	interpolated _ 0.0.
+	yIndex0 _ y floor - 1.
+	0 to: 3 do: [ :i |
+		dy _ (y - (yIndex0 + i)) abs.
+		dySquared _ dy*dy.
+		uy _ dy < 2
+			ifTrue: [
+				dy < 1
+					ifTrue: [ (1.5*dy*dySquared) - (2.5*dySquared)+1 ]
+					ifFalse: [ (-0.5*dy*dySquared) + (2.5*dySquared) - (4*dy) + 2 ]]
+			ifFalse: [0.0].
+		
+		yInSource _ yIndex0 + i.
+		yInSourceClamped _ yInSource min: height max: 1.
+		0 to: 3 do: [ :j |
+			xInSource _ xIndex0 + j.
+			ux _ xFilter at: j+1.
+			xInSourceClamped _ xInSource min: width max: 1.
+			interpolated _ (self x: xInSourceClamped y: yInSourceClamped) * uy * ux + interpolated ]].
+	
+	^interpolated! !
+
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:22'!
+bicubicTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Evaluate a bicubic (i.e. good quality) interpolation. Like OpenCV's CV_INTER_CUBIC
+	"
+	| scaled resultHeight resultWidth p v xFilter inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ FloatImage width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	xFilter _ FloatArray new: 4.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
+				v _ self bicubicInterpolatedValueAtX: p x y: p y xFilterStore: xFilter.
+				scaled x: x y: y put: v 
+			]
+		]].
+	^scaled! !
+
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 14:22'!
+bilinearInterpolatedValueAtX: x y: y
+	"Evaluate a bilinear (i.e. cheap) interpolation
+	Like OpenCV's CV_INTER_LINEAR"
+
+	| w interpolated xWeight1 xWeight0 yWeight1 yWeight0 xIndex0 xIndex1 yIndex0 yIndex1 |
+	xIndex0 _ x floor.
+	xIndex1 _ xIndex0+1.
+
+	xWeight1 _ x - xIndex0.
+	xWeight0 _ 1.0 - xWeight1.
+
+	yIndex0 _ y floor.
+	yIndex1 _ yIndex0+1.
+
+	yWeight1 _ y - yIndex0.
+	yWeight0 _ 1.0 - yWeight1.
+
+	xIndex0 _ xIndex0 min: width max: 1.
+	xIndex1 _ xIndex1 min: width max: 1.
+	yIndex0 _ yIndex0 min: height max: 1.
+	yIndex1 _ yIndex1 min: height max: 1.
+
+	"/* perform interpolation */"
+	w _ (xWeight0 * (self x: xIndex0 y: yIndex0)) +
+		(xWeight1 * (self x: xIndex1 y: yIndex0)).
+	interpolated _ yWeight0 * w.
+
+	w _ (xWeight0 * (self x: xIndex0 y: yIndex1)) +
+		(xWeight1 * (self x: xIndex1 y: yIndex1)).
+	interpolated _ yWeight1 * w + interpolated.
+
+	^interpolated! !
+
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:22'!
+bilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Evaluate a bilinear (i.e. cheap) interpolation.
+	Like OpenCV's CV_INTER_LINEAR"
+
+	| scaled resultHeight resultWidth p v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ FloatImage width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
+				v _ self bilinearInterpolatedValueAtX: p x y: p y.
+				scaled x: x y: y put: v 
+			]
+		]].
+	^scaled! !
 
 !FloatImage methodsFor: 'metrics' stamp: 'jmv 9/4/2014 14:22'!
 blurEstimator
@@ -1172,7 +1364,7 @@ convolutionLinearWith: aFloatMatrix
 					answer x: x + j-1 y: y + i-1 put: v * (aFloatMatrix i: i j: j) + (answer x: x + j-1 y: y + i-1) ]]]].
 	^answer! !
 
-!FloatImage methodsFor: 'copying' stamp: 'jmv 9/25/2012 16:56'!
+!FloatImage methodsFor: 'copying' stamp: 'jmv 10/10/2014 12:18'!
 copy: aRectangle
 	"
 	| i |
@@ -1180,12 +1372,14 @@ copy: aRectangle
 	i x: 10 y: 10 put: Float pi.
 	i copy: (1@1 extent: 10@10)
 	"
-	| answer dx dy |
+	| answer dx dy x0 x1 |
 	answer _ FloatImage width: aRectangle width height: aRectangle height.
 	dx _  aRectangle left - 1.
 	dy _ aRectangle top - 1.
-	1 to: answer height do: [ :y |
-		1 to: answer width do: [ :x |
+	x0 _ 1 max: 1-dx.
+	x1 _ answer width min: width-dx.
+	(1 max: 1-dy) to: (answer height min: height-dy) do: [ :y |
+		x0 to: x1 do: [ :x |
 			answer x: x y: y put: (self x: x + dx y: y + dy) ]].
 	^answer! !
 
@@ -1629,7 +1823,7 @@ guardZone: guardZone topLeftNullFill: leadingNulls bottomRightNullFill: trailing
 			rect left to: rect right-1 do: [ :x |
 				self guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValue ]]]! !
 
-!FloatImage methodsFor: 'private' stamp: 'jmv 8/5/2014 11:06'!
+!FloatImage methodsFor: 'private' stamp: 'jmv 1/26/2015 15:33'!
 guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValue
 	"nullValue is the value to be used outside the guardZone, and the value the guardZone gradient goes to.
 	It used to be zero, but it is better to be a parameter"
@@ -1645,14 +1839,14 @@ guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValu
 				yb _ xb-x / guardZone x * guardZone y + y.
 				(yb >= keepTop and: [ yb <= keepBottom ]) ifTrue: [
 					f _ x-xb / guardZone x abs+1 max: 0.0.
-					^self x: x y: y put: (self linearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]].
+					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]].
 		x > keepRight
 			ifTrue: [
 				xb _ keepRight.
 				yb _ xb-x / guardZone x * guardZone y + y.
 				(yb >= keepTop and: [ yb <= keepBottom ]) ifTrue: [
 					f _ xb-x / guardZone x abs+1 max: 0.0.
-					^self x: x y: y put: (self linearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
+					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
 	guardZone y = 0 ifFalse: [
 		y < keepTop
 			ifTrue: [
@@ -1660,14 +1854,14 @@ guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValu
 				xb _ yb-y / guardZone y * guardZone x + x.
 				(xb >= keepLeft and: [ xb <= keepRight ]) ifTrue: [
 					f _ y - yb / guardZone y abs+1 max: 0.0.
-					^self x: x y: y put: (self linearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]].
+					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]].
 		y > keepBottom
 			ifTrue: [
 				yb _ keepBottom.
 				xb _ yb-y / guardZone y * guardZone x + x.
 				(xb >= keepLeft and: [ xb <= keepRight ]) ifTrue: [
 					f _ yb-y / guardZone y abs+1 max: 0.0.
-					^self x: x y: y put: (self linearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
+					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
 	self x: x y: y put: nullValue! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 8/9/2012 15:42'!
@@ -1696,292 +1890,97 @@ histogramEq
 			self x: x y: y put:
 				(histogram countAt: (self x: x y: y)) / (width * height) ]]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/14/2015 14:28'!
-lanczosRotatedBy: radians scaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Gives very good results for any scale values, including very large and very small.
-
-	This method of image resampling is very good for scale < 0.9, because of good filtering.
-	For scale close to 1.0 and greater, no filtering is needed. In such cases a good interpolation
-	like #bSplineRotatedBy:scaledBy: could give slightly better results, and better performance.
-
-	Prepare appropriate transformation and result size, so that the resampled image fits exactly.
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 25.
-	(original lanczosRotatedBy: -0.2 scaledBy: 1.23) display
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 11:47'!
+lanczosFilteredValueAtX: x y: y filterScale: filterScale
+	"Apply a Lanczos resampling filter at x@y, answer the filtered value.
+	Do not modify receiver in any way.
+	
+	This method is just a convenience call for #x:y:lanczosFilterScale:xFilterStore:yFilterStore:, useful if a single call is needed.
 	"
+	| n xFilter yFilter |
 
-	| halfOrig t1 r halfResult t |
-	t1 _ (AffineTransformation withRadians: radians) composedWith:
-				(AffineTransformation withScale: scale).
-	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: width@ height).
-	halfOrig _ self extent / 2.0+0.5.
-	halfResult _ r extent / 2.0+0.5.
-	t _ (AffineTransformation withTranslation: halfResult) composedWith:
-			(t1 composedWith:
-					(AffineTransformation withTranslation: halfOrig negated)).
-	^self lanczosTransformedBy: t resultExtent: r extent ceiling! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 12/10/2012 15:51'!
-lanczosScaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Gives very good results for any scale values, including very large and very small.
-
-	This method of image resampling is very good for scale < 0.9, because of good filtering.
-	For scale close to 1.0 and greater, no filtering is needed. In such cases a good interpolation
-	like #bSplineScaledBy: could give slightly better results, and better performance.
-
-	See http://en.wikipedia.org/wiki/Lanczos_resampling
-	We use a Lanczos filter with a=2
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 50.
-	(original lanczosScaledBy: 4.0) display.
-	original display.
-	(original lanczosScaledBy: 0.25) display.
-
-	| original |
-	original _ FloatImage from8BitColorForm: Cursor read as8BitColorForm.
-	(original lanczosScaledBy: 4.0) display.
-	original asForm displayAt: 16@0.
-	(original lanczosScaledBy: 0.7) display.
-	"
-	| filterScale scaled xp yp n xFilter yFilter |
-	scaled _ FloatImage width: (width*scale) rounded height: (height*scale) rounded.
-
-	"If downscaling (sf<1) remove frequencies above sf, as they would become aliasing in the result.
-	If upscaling (sf > 1), avoid creating frequencies above 1 in the result, as they were not in ourselves."
-	filterScale _ scale min: 1.
+	"Build arrays for filters"
 	n _ (4 / filterScale) floor +1.
 	xFilter _ FloatArray new: n.
 	yFilter _ FloatArray new: n.
-	1 to: scaled height do: [ :y |
-		1to: scaled width do: [ :x |
-			xp _ x-0.5/scale+0.5.
-			yp _ y-0.5/scale+0.5.
-			scaled x: x y: y put: (self x: xp y: yp lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter) ]].
-	^scaled! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:05'!
-lanczosTransformedBy: anAffineTransformation resultExtent: resultExtent
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-.....
-	Gives very good results for any scale values, including very large and very small.
+	"And call real method"
+	^self lanczosFilteredValueAtX: x y: y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter! !
 
-	This method of image resampling is very good for scale < 0.9, because of good filtering.
-	For scale close to 1.0 and greater, no filtering is needed. In such cases a good interpolation
-	like #bSplineTransformedBy:resultExtent: could give slightly better results, and better performance.
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 11:47'!
+lanczosFilteredValueAtX: x y: y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter
+	"Apply a Lanczos resampling filter at x@y, answer the filtered value.
+	Do not modify receiver in any way.
+	
+	xFilter and yFilter are filled here, but they are parameters so they can be reused for the many calls to resample an image.
+
+	x and y can be any Float values in in [1.0 .. width] and [1.0 .. height].
+	filterScale is the scale factor of the image resampling for which we build the Lanczos filter.
+	For example, to build a result image of half the size of the original, use filterScale=0.5.
+	It must be more than zero, and no more than 1. (0.0 .. 1.0].
 	"
-	| scaled resultHeight resultWidth p filterScale n xFilter yFilter v |
-	resultWidth _ resultExtent x.
-	resultHeight _ resultExtent y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.
+	| xStart xStop yStart yStop xn yn xx yy sum xFilterOffset yFilterOffset |
 
-	"If downscaling (sf<1) remove frequencies above sf, as they would become aliasing in the result.
-	If upscaling (sf > 1), avoid creating frequencies above 1 in the result, as they were not in ourselves."
-	filterScale _ ((resultWidth / width) min: (resultHeight / height)) min: 1.0.
-	n _ (4 / filterScale) floor +1.
-	xFilter _ FloatArray new: n.
-	yFilter _ FloatArray new: n.
-	1 to: resultHeight do: [ :y |
-		1 to: resultWidth do: [ :x |
-			p _ anAffineTransformation inverseTransform: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ self x: p x y: p y lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter.
-				scaled x: x y: y put: v ]]].
-	^scaled! !
+	"Image area used by the filter. If it goes outside image bounds, it will be corrected below."
+	xStart _ (x - (2/filterScale)) ceiling.
+	xStop _ (x + (2/filterScale)) floor.
+	yStart _ (y - (2/filterScale)) ceiling.
+	yStop _ (y + (2/filterScale)) floor.
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:22'!
-linearDisplayAt: aPoint
-	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
-	Assume receiver is in linear scale.
-	Apply appropriate gamma encoding to make good use of pixel dynamic range.
-	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+	"Filter size"
+	xn _ xStop - xStart + 1.
+	yn _ yStop - yStart + 1.
 
-	| f |
-	f _ self as8bitFormEvaluating: [ :index | | value |
-		value _ Color linearTosRGBGamma: ((elements at: index) min: 1.0 max: 0.0).
-		(value * 255) rounded ].
-	f displayAt: aPoint! !
+	"Build filters"
+	1 to: xn do: [ :i |
+		xx _  (i+xStart-1-x) * filterScale.
+		xFilter at: i put: (FloatImage lanczosFilter2: xx) ].
+	"Filter normalization is needed to avoid a slight cuadricule like pattern when resizing"
+	xFilter *= (1.0/xFilter sum).
+	1 to: yn do: [ :i |
+		yy _  (i+yStart-1-y) * filterScale.
+		yFilter at: i put: (FloatImage lanczosFilter2: yy) ].
+	"Same as for x filter."
+	yFilter *= (1.0/yFilter sum).
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:29'!
-linearInterpolatedValueAtX: x y: y
-	"Evaluate a bilinear (i.e. cheap) interpolation"
+	"If filters should have gone outside image bounds, act as if image values at bounds extended beyond them.
+	For this, reduce iteration bounds, and accumulate filter coefficients that would be ignored at the correct filter end."
+	xFilterOffset _ 1-xStart.
+	xStart < 1 ifTrue: [
+		sum _ 0.0.
+		1 to: xFilterOffset+1 do: [ :xxx |
+			sum _ (xFilter at: xxx) + sum ].
+		xFilter at: xFilterOffset+1 put: sum.
+		xStart _ 1 ].
+	xStop > width ifTrue: [
+		sum _ 0.0.
+		width+xFilterOffset to: xn do: [ :xxx |
+			sum _ (xFilter at: xxx) + sum ].
+		xFilter at: width+xFilterOffset put: sum.
+		xStop _ width ].
+	yFilterOffset _ 1-yStart.
+	yStart < 1 ifTrue: [
+		sum _ 0.0.
+		1 to: yFilterOffset+1 do: [ :yyy |
+			sum _ (yFilter at: yyy) + sum ].
+		yFilter at: yFilterOffset+1 put: sum.
+		yStart _ 1 ].
+	yStop > height ifTrue: [
+		sum _ 0.0.
+		height+yFilterOffset to: yn do: [ :yyy |
+			sum _ (yFilter at: yyy) + sum ].
+		yFilter at: height+yFilterOffset put: sum.
+		yStop _ height ].
 
-	| w interpolated xWeight1 xWeight0 yWeight1 yWeight0 xIndex0 xIndex1 yIndex0 yIndex1 |
-	xIndex0 _ x floor.
-	xIndex1 _ xIndex0+1.
+	"Apply filter."
+	sum _ 0.0.
+	yStart to: yStop do: [ :yyy |
+		xStart to: xStop do: [ :xxx |
+			sum _ (self x: xxx y: yyy) * (xFilter at: xxx+xFilterOffset) * (yFilter at: yyy+yFilterOffset) + sum ]].
+	^sum! !
 
-	xWeight1 _ x - xIndex0.
-	xWeight0 _ 1.0 - xWeight1.
-
-	yIndex0 _ y floor.
-	yIndex1 _ yIndex0+1.
-
-	yWeight1 _ y - yIndex0.
-	yWeight0 _ 1.0 - yWeight1.
-
-	xIndex0 _ xIndex0 min: width max: 1.
-	xIndex1 _ xIndex1 min: width max: 1.
-	yIndex0 _ yIndex0 min: height max: 1.
-	yIndex1 _ yIndex1 min: height max: 1.
-
-	"/* perform interpolation */"
-	w _ (xWeight0 * (self x: xIndex0 y: yIndex0)) +
-		(xWeight1 * (self x: xIndex1 y: yIndex0)).
-	interpolated _ yWeight0 * w.
-
-	w _ (xWeight0 * (self x: xIndex0 y: yIndex1)) +
-		(xWeight1 * (self x: xIndex1 y: yIndex1)).
-	interpolated _ yWeight1 * w + interpolated.
-
-	^interpolated! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/14/2015 14:29'!
-linearRotatedBy: radians scaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Evaluate a bilinear (i.e. cheap) interpolation.
-
-	Prepare appropriate transformation and result size, so that the resampled image fits exactly.
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 25.
-	(original linearRotatedBy: -0.2 scaledBy: 2.23) display
-	"
-
-	| halfOrig t1 r halfResult t |
-	t1 _ (AffineTransformation withRadians: radians) composedWith:
-				(AffineTransformation withScale: scale).
-	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: width@ height).
-	halfOrig _ self extent / 2.0+0.5.
-	halfResult _ r extent / 2.0+0.5.
-	t _ (AffineTransformation withTranslation: halfResult) composedWith:
-			(t1 composedWith:
-					(AffineTransformation withTranslation: halfOrig negated)).
-	^self linearTransformedBy: t resultExtent: r extent ceiling! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 12:41'!
-linearScaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Evaluate a bilinear (i.e. cheap) interpolation.
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 50.
-	(original linearScaledBy: 4.0) display.
-	original display.
-	(original linearScaledBy: 0.25) display.
-
-	| original |
-	original _ FloatImage from8BitColorForm: Cursor read as8BitColorForm.
-	(original linearScaledBy: 4.0) display.
-	original asForm displayAt: 16@0.
-	(original linearScaledBy: 0.7) display.
-	"
-	| scaled xp yp |
-	scaled _ FloatImage width: (width*scale) rounded height: (height*scale) rounded.	
-	1 to: scaled height do: [ :y |
-		1to: scaled width do: [ :x |
-			xp _ x-0.5/scale+0.5.
-			yp _ y-0.5/scale+0.5.
-			scaled x: x y: y put: (self linearInterpolatedValueAtX: xp y: yp) ]].
-	^scaled! !
-
-!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
-linearSpaceToGammaEncoded
-	"Assume the receiver is in linear space (values are proportional to photon count).
-	Modify it so values are proportional to human perceived brightness.
-	Useful, for example, for displaying:
-		aFloatImageInLinearSpace copy linearSpaceToGammaEncoded displayAt: 0@0
-	"
-	self replaceValues: [ :i :j :v | Color linearTosRGBGamma: v ]! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:05'!
-linearTransformedBy: anAffineTransformation resultExtent: resultExtent
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-
-	Evaluate a bilinear (i.e. cheap) interpolation.
-	"
-	| scaled resultHeight resultWidth p v |
-	resultWidth _ resultExtent x.
-	resultHeight _ resultExtent y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ anAffineTransformation inverseTransform: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ self linearInterpolatedValueAtX: p x y: p y.
-				scaled x: x y: y put: v 
-			]
-		]].
-	^scaled! !
-
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 9/25/2012 15:28'!
-mean
-	^self average! !
-
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 9/25/2012 15:33'!
-mean: aRect
-	"
-	| i |
-	i _ FloatImage width: 1 height: 1.
-	i += 1.
-	(i mean: (1@1 extent: 1@1)) print
-	"
-	| count mean |
-	count _ aRect area.
-	mean _ 0.0.
-	aRect top to: aRect bottom-1 do: [ :y |
-		aRect left to: aRect right-1 do: [ :x |
-			mean _ mean + (self x: x y: y) ]].
-	^mean / count! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:06'!
-nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtent
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-
-	Evaluate a bilinear (i.e. cheap) interpolation.
-	"
-	| scaled resultHeight resultWidth p v |
-	resultWidth _ resultExtent x.
-	resultHeight _ resultExtent y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ anAffineTransformation inverseTransform: x@y.
-			(p >= (0.5@0.5) and: [ p < (width@height + 0.5) ]) ifTrue: [
-				v _ self x: p x rounded y: p y rounded.
-				scaled x: x y: y put: v 
-			]
-		]].
-	^scaled! !
-
-!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:46'!
-normalizeValues
-	"Make min pixel value 0.0, and max pixel value 1.0.
-	Adjust pixel values proportionally"
-
-	elements -= elements min.
-	elements *= (1.0 / elements max)! !
-
-!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
-normalizeValuesFloor: min ceiling: max
-	"Make argument min pixel value 0.0, and argument max pixel value 1.0.
-	Adjust pixel values proportionally. Clamp values outside."
-
-	self replaceValues: [ :i :j :v | v - min / max min: 1.0 max: 0.0 ]! !
-
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/24/2012 18:33'!
-oldx: x y: y lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 11:47'!
+lanczosFilteredValueOLDAtX: x y: y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter
 	"Apply a Lanczos resampling filter at x@y, answer the filtered value.
 	Do not modify receiver in any way.
 	
@@ -2018,6 +2017,160 @@ oldx: x y: y lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore:
 			sum _ (self x: (xxx min: width max: 1) y: (yyy min: height max: 1)) * (xFilter at: xxx-xStart+1) * (yFilter at: yyy-yStart+1) + sum ]].
 	
 	^sum! !
+
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 2/24/2015 12:39'!
+lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+	
+	Note about OpenCV's INTER_LANCZOS4:
+		According to online documentation, It looks like OpenCV a Lanczos filter of fixed support. 
+		That means that the filter is fitted to the sampling frequency of the source image.
+		So, no real filtering is done, just interpolation. Aliasing is expected when zooming out!!
+		http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize
+
+	This method of image resampling is very good for scale < 0.9, because of good filtering.
+	Even in these cases, Area filtering might be preferred, because it is quite good and much faster.
+
+	For scale close to 1.0 and greater, no filtering is needed. In such cases a good interpolation
+	like #bSplineTransformedBy:resultExtent: could give better results, and better performance
+	(especially if many resamplings will be done on the same source image).
+	"
+	| scaled resultHeight resultWidth p filterScale n xFilter yFilter v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ FloatImage width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+
+	"If downscaling (zooming out, filterScale<1, subsampling) remove frequencies above sf, as they would become aliasing in the result.
+	If upscaling (zooming in, filterScale > 1), avoid creating frequencies above 1 in the result, as they were not in ourselves."
+	filterScale _ ((resultWidth / width) min: (resultHeight / height)) min: 1.0.
+	n _ (4 / filterScale) floor +1.
+	xFilter _ FloatArray new: n.
+	yFilter _ FloatArray new: n.
+	1 to: resultHeight do: [ :y |
+		1 to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
+				v _ self lanczosFilteredValueAtX: p x y: p y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter.
+				scaled x: x y: y put: v ]]].
+	^scaled! !
+
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:22'!
+linearDisplayAt: aPoint
+	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
+	Assume receiver is in linear scale.
+	Apply appropriate gamma encoding to make good use of pixel dynamic range.
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+
+	| f |
+	f _ self as8bitFormEvaluating: [ :index | | value |
+		value _ Color linearTosRGBGamma: ((elements at: index) min: 1.0 max: 0.0).
+		(value * 255) rounded ].
+	f displayAt: aPoint! !
+
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
+linearSpaceToGammaEncoded
+	"Assume the receiver is in linear space (values are proportional to photon count).
+	Modify it so values are proportional to human perceived brightness.
+	Useful, for example, for displaying:
+		aFloatImageInLinearSpace copy linearSpaceToGammaEncoded displayAt: 0@0
+	"
+	self replaceValues: [ :i :j :v | Color linearTosRGBGamma: v ]! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 9/25/2012 15:28'!
+mean
+	^self average! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 9/25/2012 15:33'!
+mean: aRect
+	"
+	| i |
+	i _ FloatImage width: 1 height: 1.
+	i += 1.
+	(i mean: (1@1 extent: 1@1)) print
+	"
+	| count mean |
+	count _ aRect area.
+	mean _ 0.0.
+	aRect top to: aRect bottom-1 do: [ :y |
+		aRect left to: aRect right-1 do: [ :x |
+			mean _ mean + (self x: x y: y) ]].
+	^mean / count! !
+
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:24'!
+nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Evaluate a Nearest Neighbor (i.e. very cheap, low quality) interpolation.
+	Like OpenCV's CV_INTER_NN
+	"
+	| scaled resultHeight resultWidth p v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ FloatImage width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			(p >= (0.5@0.5) and: [ p < (width@height + 0.5) ]) ifTrue: [
+				v _ self x: p x rounded y: p y rounded.
+				scaled x: x y: y put: v 
+			]
+		]].
+	^scaled! !
+
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:46'!
+normalizeValues
+	"Make min pixel value 0.0, and max pixel value 1.0.
+	Adjust pixel values proportionally"
+
+	elements -= elements min.
+	elements *= (1.0 / elements max)! !
+
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
+normalizeValuesFloor: min ceiling: max
+	"Make argument min pixel value 0.0, and argument max pixel value 1.0.
+	Adjust pixel values proportionally. Clamp values outside."
+
+	self replaceValues: [ :i :j :v | v - min / max min: 1.0 max: 0.0 ]! !
+
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 15:32'!
+perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft bottomRight: bottomRight
+	"Resample the receiver to a new Float image.
+	The arguments specify which point in the receiver maps to each corner of the result.
+	The arguments might be Integer or Float points.
+	Apply a PerspectiveTransformation"
+
+	| scaled resultHeight resultWidth p v cornersInSource transformation resultCorners interpolator |
+	cornersInSource _ {topLeft. topRight. bottomLeft. bottomRight }.
+	resultWidth _ width.
+	resultHeight _ height.
+	
+	scaled _ FloatImage width: resultWidth height: resultHeight.
+	resultCorners _ { 1@1. resultWidth@1. 1@resultHeight. resultWidth@resultHeight }.
+	
+	transformation _ PerspectiveTransformation map: resultCorners to: cornersInSource.	
+	interpolator _ BSplineInterpolatingImage from: self.
+
+	1 to: resultHeight do: [ :y |
+		1 to: resultWidth do: [ :x |
+			p _ transformation map: x@y.
+			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
+				v _ interpolator interpolatedValueAtX: p x y: p y.
+				scaled x: x y: y put: v ]]].
+	^scaled! !
 
 !FloatImage methodsFor: 'iterating' stamp: 'jmv 8/24/2014 00:12'!
 pixelsAtChebyshevDistance: distance ofX: baseX y: baseY do: aBlock
@@ -2152,12 +2305,21 @@ quantizeTo: bits
 	q _ 1.0 / (2 raisedTo: bits).
 	self replaceValues: [ :i :j :v | (v roundTo: q) min: 1.0 max: 0.0 ]! !
 
+!FloatImage methodsFor: 'resampling-aux' stamp: 'jmv 1/27/2015 14:26'!
+resultExtentFor: anAffineTransformation
+	"Compute an appropriate extent for the result of applying anAffineTransformation to self.
+	Guarantees that the image bottomRight is enough.
+	Does not prevent clipping if result would require x or y with values less than 1!!"
+
+	^(anAffineTransformation displayBoundsOfTransformOf: (0@0 extent: width@ height))
+		corner! !
+
 !FloatImage methodsFor: 'quantization' stamp: 'jmv 8/23/2014 23:41'!
 round
 
 	self replaceValues: [ :i :j :v | v rounded ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 8/24/2012 19:06'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:11'!
 scaledBy: scale
 	"Answer a new image. Extent is multiplied by sf (i.e. sf=0.5 means half size, sf=2 means twice size.
 	Gives very good results for any scale values, including very large and very small.
@@ -2176,70 +2338,18 @@ scaledBy: scale
 	original asForm displayAt: 16@0.
 	(original scaledBy: 0.7) display.
 	"
+	| t |
+	t _ AffineTransformation forImageZoom: scale.
 	^scale < 1
-		ifTrue: [ self lanczosScaledBy: scale ]
-		ifFalse: [self bSplineScaledBy: scale ]! !
+		ifTrue: [ self lanczosTransformedBy: t resultExtent: nil ]
+		ifFalse: [self bSplineTransformedBy: t resultExtent: nil ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/14/2015 14:29'!
-shiftedLinearRotatedBy: radians scaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
-	as #lanczosRotatedBy:scaledBy: to avoid aliasing.
-
-	Prepare appropriate transformation and result size, so that the resampled image fits exactly.
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 25.
-	(original shiftedLinearRotatedBy: -0.2 scaledBy: 2.23) display
-
-	See ShiftedLinearInterpolatingImage class comment.
-	"
-
-	| halfOrig t1 r halfResult t |
-	t1 _ (AffineTransformation withRadians: radians) composedWith:
-				(AffineTransformation withScale: scale).
-	r _ t1 displayBoundsOfTransformOf: (0.5@0.5 extent: width@ height).
-	halfOrig _ self extent / 2.0+0.5.
-	halfResult _ r extent / 2.0+0.5.
-	t _ (AffineTransformation withTranslation: halfResult) composedWith:
-			(t1 composedWith:
-					(AffineTransformation withTranslation: halfOrig negated)).
-	^self shiftedLinearTransformedBy: t resultExtent: r extent ceiling! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/16/2013 13:11'!
-shiftedLinearScaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
-	as #lanczosScaledBy: to avoid aliasing.
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 50.
-	(original shiftedLinearScaledBy: 4.0) display.
-	original display.
-	(original shiftedLinearScaledBy: 0.25) display.
-
-	| original |
-	original _ FloatImage from8BitColorForm: Cursor read as8BitColorForm.
-	(original shiftedLinearScaledBy: 4.0) display.
-	original asForm displayAt: 16@0.
-	(original shiftedLinearScaledBy: 0.7) display.
-
-	See ShiftedLinearInterpolatingImage class comment.
-	"
-	| scaled xp yp interpolated |
-	scaled _ FloatImage width: (width*scale) rounded height: (height*scale) rounded.	
-	interpolated _ ShiftedLinearInterpolatingImage from: self.
-	1 to: scaled height do: [ :y |
-		1to: scaled width do: [ :x |
-			xp _ x-0.5/scale+0.5.
-			yp _ y-0.5/scale+0.5.
-			scaled x: x y: y put: (interpolated interpolatedValueAtX: xp y: yp) ]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/21/2015 13:06'!
-shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtent
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:24'!
+shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
 	Warning: there could be black areas in the result, and/or some image content in self could be lost.
 	This depends on the arguments.
 
@@ -2247,23 +2357,26 @@ shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtent
 	as #lanczosTransformedBy:resultExtent: to avoid aliasing.
 
 	See ShiftedLinearInterpolatingImage class comment.
+	Not available in OpenCV.
 	"
-	| scaled interpolated resultHeight resultWidth p v |
-	resultWidth _ resultExtent x.
-	resultHeight _ resultExtent y.
+	| scaled interpolator resultHeight resultWidth p v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
 	scaled _ FloatImage width: resultWidth height: resultHeight.	
-	interpolated _ ShiftedLinearInterpolatingImage from: self.
+	interpolator _ ShiftedLinearInterpolatingImage from: self.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
-			p _ anAffineTransformation inverseTransform: x@y.
+			p _ inverseTransformation transform: x@y.
 			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ interpolated interpolatedValueAtX: p x y: p y.
+				v _ interpolator interpolatedValueAtX: p x y: p y.
 				scaled x: x y: y put: v ]]].
 	^scaled! !
 
-!FloatImage methodsFor: 'noise generation' stamp: 'jmv 8/23/2014 23:41'!
+!FloatImage methodsFor: 'noise generation' stamp: 'jmv 9/29/2014 17:06'!
 simulatePhotonNoise
-	"Simulate photon noise, assuming 1.0 means fullWellElectrons"
+	"Simulate photon noise, assuming we count electrons. See senders."
 
 	| random |
 	random _ NormalRandom new.
@@ -2353,95 +2466,6 @@ writePNGfileNamed: fName
 
 	self asForm writePNGfileNamed: fName! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/24/2012 17:38'!
-x: x y: y lanczosFilterScale: filterScale
-	"Apply a Lanczos resampling filter at x@y, answer the filtered value.
-	Do not modify receiver in any way.
-	
-	This method is just a convenience call for #x:y:lanczosFilterScale:xFilterStore:yFilterStore:, useful if a single call is needed.
-	"
-	| n xFilter yFilter |
-
-	"Build arrays for filters"
-	n _ (4 / filterScale) floor +1.
-	xFilter _ FloatArray new: n.
-	yFilter _ FloatArray new: n.
-
-	"And call real method"
-	^self x: x y: y lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter! !
-
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/27/2012 13:19'!
-x: x y: y lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter
-	"Apply a Lanczos resampling filter at x@y, answer the filtered value.
-	Do not modify receiver in any way.
-	
-	xFilter and yFilter are filled here, but they are parameters so they can be reused for the many calls to resample an image.
-
-	x and y can be any Float values in in [1.0 .. width] and [1.0 .. height].
-	filterScale is the scale factor of the image resampling for which we build the Lanczos filter.
-	For example, to build a result image of half the size of the original, use filterScale=0.5.
-	It must be more than zero, and no more than 1. (0.0 .. 1.0].
-	"
-	| xStart xStop yStart yStop xn yn xx yy sum xFilterOffset yFilterOffset |
-
-	"Image area used by the filter. If it goes outside image bounds, it will be corrected below."
-	xStart _ (x - (2/filterScale)) ceiling.
-	xStop _ (x + (2/filterScale)) floor.
-	yStart _ (y - (2/filterScale)) ceiling.
-	yStop _ (y + (2/filterScale)) floor.
-
-	"Filter size"
-	xn _ xStop - xStart + 1.
-	yn _ yStop - yStart + 1.
-
-	"Build filters"
-	1 to: xn do: [ :i |
-		xx _  (i+xStart-1-x) * filterScale.
-		xFilter at: i put: (FloatImage lanczosFilter2: xx) ].
-	"Filter normalization is needed to avoid a slight cuadricule like pattern when resizing"
-	xFilter *= (1.0/xFilter sum).
-	1 to: yn do: [ :i |
-		yy _  (i+yStart-1-y) * filterScale.
-		yFilter at: i put: (FloatImage lanczosFilter2: yy) ].
-	"Same as for x filter."
-	yFilter *= (1.0/yFilter sum).
-
-	"If filters should have gone outside image bounds, act as if image values at bounds extended beyond them.
-	For this, reduce iteration bounds, and accumulate filter coefficients that would be ignored at the correct filter end."
-	xFilterOffset _ 1-xStart.
-	xStart < 1 ifTrue: [
-		sum _ 0.0.
-		1 to: xFilterOffset+1 do: [ :xxx |
-			sum _ (xFilter at: xxx) + sum ].
-		xFilter at: xFilterOffset+1 put: sum.
-		xStart _ 1 ].
-	xStop > width ifTrue: [
-		sum _ 0.0.
-		width+xFilterOffset to: xn do: [ :xxx |
-			sum _ (xFilter at: xxx) + sum ].
-		xFilter at: width+xFilterOffset put: sum.
-		xStop _ width ].
-	yFilterOffset _ 1-yStart.
-	yStart < 1 ifTrue: [
-		sum _ 0.0.
-		1 to: yFilterOffset+1 do: [ :yyy |
-			sum _ (yFilter at: yyy) + sum ].
-		yFilter at: yFilterOffset+1 put: sum.
-		yStart _ 1 ].
-	yStop > height ifTrue: [
-		sum _ 0.0.
-		height+yFilterOffset to: yn do: [ :yyy |
-			sum _ (yFilter at: yyy) + sum ].
-		yFilter at: height+yFilterOffset put: sum.
-		yStop _ height ].
-
-	"Apply filter."
-	sum _ 0.0.
-	yStart to: yStop do: [ :yyy |
-		xStart to: xStop do: [ :xxx |
-			sum _ (self x: xxx y: yyy) * (xFilter at: xxx+xFilterOffset) * (yFilter at: yyy+yFilterOffset) + sum ]].
-	^sum! !
-
 !FloatImage methodsFor: 'accessing' stamp: 'jmv 8/23/2014 23:46'!
 xyForMax
 	"Find max"
@@ -2530,14 +2554,14 @@ checkerboard: extent n: n
 			answer x: x y: y put: (x-1//cellExtent x) + (y-1//cellExtent y) +1 \\ 2 ]].
 	^answer! !
 
-!FloatImage class methodsFor: 'examples' stamp: 'jmv 2/8/2013 18:22'!
+!FloatImage class methodsFor: 'examples' stamp: 'jmv 1/27/2015 14:13'!
 example3
 	"Use a portion of display to show behavior on colored input.
 	Try it with a real photo, results are much better
 	Similar to BSplineInterpolatedImage>>example3 but using Lanczos.
-	It is hard to pick a winner!!
-	NOTE: this method should be rewritten to use the proper image resampling method. Same for the other implementor."
-	| original originalB originalG originalR scale bigger biggerB biggerG biggerR |
+	FloatImage example3
+	"
+	| original originalB originalG originalR scale bigger biggerB biggerG biggerR t |
 	original _ Display copy: (0@0 extent: 60@60).
 	scale _ 10.
 "	original _ (Form fromFileNamed: 'IMG_2365.JPG') copy: (1100@1800 extent: 500@500)."
@@ -2545,14 +2569,15 @@ example3
 	originalG _ FloatImage from32BitColorForm: original component: #green.
 	originalB _ FloatImage from32BitColorForm: original component: #blue.
 	original display.
-	biggerR _ originalR lanczosScaledBy: scale.
-	biggerG _ originalG lanczosScaledBy: scale.
-	biggerB _ originalB lanczosScaledBy: scale.
+	t _ AffineTransformation forImageZoom: scale.
+	biggerR _ originalR lanczosTransformedBy: t resultExtent: nil.
+	biggerG _ originalG lanczosTransformedBy: t resultExtent: nil.
+	biggerB _ originalB lanczosTransformedBy: t resultExtent: nil.
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
 
-!FloatImage class methodsFor: 'examples' stamp: 'jmv 2/8/2013 18:09'!
+!FloatImage class methodsFor: 'examples' stamp: 'jmv 1/26/2015 17:09'!
 example4
 	"FOR SUBPIXEL RENDERED STUFF
 	Use a portion of display to show behavior on colored input.
@@ -2581,9 +2606,9 @@ example4
 	biggerB _ FloatImage width: w height: h.
 	1 to: h do: [ :y |
 		1 to: w do: [ :x |
-			biggerR x: x y: y put: (originalR x: x-0.5-d/scale+0.5+d y: y-0.5/scale+0.5 lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter).
-			biggerG x: x y: y put: (originalG x: x-0.5/scale+0.5 y: y-0.5/scale+0.5 lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter).
-			biggerB x: x y: y put: (originalB x: x-0.5+d/scale+0.5-d y: y-0.5/scale+0.5 lanczosFilterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter) ]].
+			biggerR x: x y: y put: (originalR lanczosFilteredValueAtX: x-0.5-d/scale+0.5+d y: y-0.5/scale+0.5 filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter).
+			biggerG x: x y: y put: (originalG lanczosFilteredValueAtX: x-0.5/scale+0.5 y: y-0.5/scale+0.5 filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter).
+			biggerB x: x y: y put: (originalB lanczosFilteredValueAtX: x-0.5+d/scale+0.5-d y: y-0.5/scale+0.5 filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter) ]].
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
@@ -2616,35 +2641,91 @@ fromFileNamed: filename
 		refStream close ].
 	^answer! !
 
-!FloatImage class methodsFor: 'experiments' stamp: 'jmv 1/8/2015 18:29'!
-interpolationExperiment
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 1/27/2015 13:59'!
+interpolationExperiment1
 	"
-	self interpolationExperiment
+	self interpolationExperiment1
 	
 	Or play with this in a workspace
 	"
-	| original |
-	
+
+	| original t e p |
 	original _ FloatImage from8BitColorForm: Cursor read as8BitColorForm.
-	original display.
-	(original asForm magnifyBy: 20) display.
-	(original shiftedLinearScaledBy: 20.0) display.
-	(original bSplineScaledBy: 20.0) display.
-	(original lanczosScaledBy: 20.0) display.
+	t _ AffineTransformation forImageRotation: -0.2 zoom: 10.23 originalExtent: original extent.
+	e _ original resultExtentFor: t.
+	p _ 0@0.
+	original displayAt: p.
+	p _ p + (original width@0).
+	(original areaTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bSplineTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bicubicTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bilinearTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original lanczosTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original nearestNeighborTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original shiftedLinearTransformedBy: t resultExtent: e) displayAt: p.! !
 
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 1/27/2015 14:00'!
+interpolationExperiment2
+	"
+	self interpolationExperiment2
+	
+	Or play with this in a workspace
+	"
+
+	| original t e p |
 	original _ FloatImage checkerboard: 100@100 n: 25.
-	original display.
-	((original asForm magnifyBy: 2.23) rotatedByDegrees:(-0.2 /Float pi * 180)) display.
-	(original shiftedLinearRotatedBy: -0.2 scaledBy: 2.23) display.
-	(original bSplineRotatedBy: -0.2 scaledBy: 2.23) display.
-	(original lanczosRotatedBy: -0.2 scaledBy: 2.23) display.
+	t _ AffineTransformation forImageRotation: -0.2 zoom: 2.13 originalExtent: original extent.
+	e _ original resultExtentFor: t.
+	p _ 0@0.
+	original displayAt: p.
+	p _ p + (original width@0).
+	(original areaTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bSplineTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bicubicTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bilinearTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original lanczosTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original nearestNeighborTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original shiftedLinearTransformedBy: t resultExtent: e) displayAt: p.! !
 
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 1/27/2015 14:01'!
+interpolationExperiment3
+	"
+	self interpolationExperiment3
+	
+	Or play with this in a workspace
+	"
+
+	| original t e p |
 	original _ FloatImage lena.
-	original display.
-	((original asForm magnifyBy: 1) rotatedByDegrees:-15) display.
-	(original shiftedLinearRotatedBy: -15/180*Float pi scaledBy: 1) display.
-	(original bSplineRotatedBy: -15/180*Float pi scaledBy: 1) display.
-	(original lanczosRotatedBy: -15/180*Float pi scaledBy: 1) display! !
+	t _ AffineTransformation forImageRotation: -0.2 zoom: 0.93 originalExtent: original extent.
+	e _ original resultExtentFor: t.
+	original displayAt: 0@256.
+	p _ 0@0.
+	(original areaTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bSplineTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bicubicTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original bilinearTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original lanczosTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original nearestNeighborTransformedBy: t resultExtent: e) displayAt: p.
+	p _ p + (e x@0).
+	(original shiftedLinearTransformedBy: t resultExtent: e) displayAt: p.! !
 
 !FloatImage class methodsFor: 'useful functions' stamp: 'jmv 5/5/2013 22:32'!
 lanczosFilter2: x
@@ -4066,67 +4147,233 @@ meanOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
 	mean *= (1.0/n).
 	^mean! !
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 1/14/2015 14:30'!
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 1/26/2015 18:14'!
 testRotations
 	"
 	FloatImage testRotations
-	"
-	| a c e original rotated t |
-	c _ 12.
-	a _ -360.0 / c.
 
+	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
+	"
+	| a c e original rotated t xx |
+	Transcript newLine.
+	'Test resampling algorithms without significant scaling.' print.
+	'The approach is to do successive rotations.'  print.
+	'BSpline gives outstanding results. Next comes BiCubic and Lanczos.' print.
+	'The extra cost of Lanczos doesnt seem worth in this case.' print.
+
+	c _ 140.	"Evidencia la falta de nitidez de BiCubic, y tambien cierta deformación geométrica de Lanczos. BSpline es impresionante."
+	c _ 27.
+	a _ -360.0 / (c+1).
+
+	xx _ 0.
 	original _ FloatImage lena.
-" 	original with: original replaceValues: [ :v :dummy | (v-0.055) * (0.8196-0.0848/(0.965-0.055))+0.0848]."
-	original displayAt: 256@0.
+	original displayAt: 0@0.
 	e _ original extent.
-	t _ (AffineTransformation withRadians: a/180*Float pi ).
+	t _ (AffineTransformation withRadians: a/180*Float pi ) scaledBy: 1/1.0.
 	t _ (AffineTransformation withTranslation: e // 2) composedWith:
 			(t composedWith:
 					(AffineTransformation withTranslation: e // 2  negated)).
-	
+
+	xx _ xx + 256.
 	rotated _ original.
 	c timesRepeat: [
 		rotated _ rotated nearestNeighborTransformedBy: t resultExtent: e.
-		rotated display ].
-	rotated display.
-	
-	rotated _ original.
-	c timesRepeat: [
-		rotated _ rotated linearTransformedBy: t resultExtent: e.
-		rotated display ].
-	rotated display.
-	
-	rotated _ original.
-	c timesRepeat: [
-		rotated _ rotated shiftedLinearTransformedBy: t resultExtent: e.
-		rotated display ].
-	rotated display.
+		rotated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
+	[ rotated _ rotated nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
+	rotated displayAt: xx@0.
 
+	xx _ xx + 256.
 	rotated _ original.
 	c timesRepeat: [
-		rotated _ rotated bSplineTransformedBy: t resultExtent: e.
-		rotated display ].
-	rotated display.
+		rotated _ rotated bilinearTransformedBy: t resultExtent: e.
+		rotated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
+	[ rotated _ rotated bilinearTransformedBy: t resultExtent: e ] timeToRun print.
+	rotated displayAt: xx@0.
 
+	xx _ xx + 256.
+	rotated _ original.
+	c timesRepeat: [
+		rotated _ rotated bicubicTransformedBy: t resultExtent: e.
+		rotated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
+	[ rotated _ rotated bicubicTransformedBy: t resultExtent: e ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + 256.
 	rotated _ original.
 	c timesRepeat: [
 		rotated _ rotated lanczosTransformedBy: t resultExtent: e.
-		rotated display ].
-	rotated display.
+		rotated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
+	[ rotated _ rotated lanczosTransformedBy: t resultExtent: e ] timeToRun print.
+	rotated displayAt: xx@0.
 
-	"
-	(original linearRotatedBy: -15/180*Float pi scaledBy: 1) display.
-	(original shiftedLinearRotatedBy: -15/180*Float pi scaledBy: 1) display.
-	(original bSplineRotatedBy: -15/180*Float pi scaledBy: 1) display.
-	(original lanczosRotatedBy: -15/180*Float pi scaledBy: 1) display.
-	"
+	xx _ xx + 256.
+	rotated _ original.
+	c timesRepeat: [
+		rotated _ rotated bSplineTransformedBy: t resultExtent: e.
+		rotated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
+	[ rotated _ rotated bSplineTransformedBy: t resultExtent: e ] timeToRun print.
+	rotated displayAt: xx@0.
 
+	xx _ xx + 256.
+	rotated _ original.
+	c timesRepeat: [
+		rotated _ rotated shiftedLinearTransformedBy: t resultExtent: e.
+		rotated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
+	[ rotated _ rotated shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
+	rotated displayAt: xx@0.! !
+
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 1/27/2015 13:35'!
+testZoomIn
 	"
-	rotated asForm  writePNGfileNamed: 'shiftedLinear300.png'.
-	rotated asForm writePNGfileNamed: 'nn.png'.
-	rotated asForm  writePNGfileNamed: 'shiftedLinearzz2.png'.
-	rotated asForm  writePNGfileNamed: 'shiftedLinearzz1.png'.
-	"! !
+	FloatImage testZoomIn
+
+	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
+	"
+	| original rotated t xx e scale |
+	Transcript newLine.
+	'Test image enlarging algorithms.' print.
+	'BSpline gives best results. Next comes BiCubic and Lanczos.' print.
+	'The extra cost of Lanczos doesnt seem worth in this case.' print.
+	'Bilinear gives reasonable results in this case.' print.
+
+	scale _ 2.7.
+	xx _ 0.
+	original _ FloatImage lena copy: (100@100 extent: 100@100).
+	e _ (original extent * scale) rounded.
+	original displayAt: 0@0.
+	t _ AffineTransformation forImageZoom: scale.
+
+	xx _ xx + original  width.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
+	[ rotated _ rotated nearestNeighborTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
+	[ rotated _ rotated areaTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
+	[ rotated _ rotated bilinearTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
+	[ rotated _ rotated bicubicTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
+	[ rotated _ rotated lanczosTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
+	[ rotated _ rotated bSplineTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
+	[ rotated _ rotated shiftedLinearTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.! !
+
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 1/27/2015 13:25'!
+testZoomOut
+	"
+	FloatImage testZoomOut
+
+	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
+	"
+	| original rotated t xx e scale |
+	Transcript newLine.
+	'Test subsampling algorithms.' print.
+	'Lanczos gives best avoidance of aliasing effects. Area is really good, and very very cheap.' print.
+
+	scale _ 0.71.
+	scale _ 0.371.
+	scale _ 0.55.
+	scale _ 0.25.
+	xx _ 0.
+	original _ FloatImage lena.
+	e _ (original extent * scale) rounded.
+	original displayAt: 0@0.
+	t _ AffineTransformation forImageZoom: scale.
+
+	xx _ xx + original  width.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
+	[ rotated _ rotated nearestNeighborTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
+	[ rotated _ rotated bilinearTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
+	[ rotated _ rotated bicubicTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
+	[ rotated _ rotated areaTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
+	[ rotated _ rotated lanczosTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
+	[ rotated _ rotated bSplineTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.
+
+	xx _ xx + e x.
+	rotated _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
+	[ rotated _ rotated shiftedLinearTransformedBy: t resultExtent: nil ] timeToRun print.
+	rotated displayAt: xx@0.! !
 
 !IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:37'!
 addVoronoiCellX: seedX y: seedY
@@ -5297,11 +5544,13 @@ example2
 	bigger display.
 	original display! !
 
-!BSplineInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 2/8/2013 18:22'!
+!BSplineInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 1/27/2015 14:06'!
 example3
 	"Use a portion of display to show behavior on colored input.
-	Try it with a real photo, results are much better"
-	| original originalB originalG originalR bigger biggerB biggerG biggerR scale |
+	Try it with a real photo, results are much better
+	BSplineInterpolatingImage example3
+	"
+	| original originalB originalG originalR bigger biggerB biggerG biggerR scale t |
 	original _ Display copy: (0@0 extent: 100@100).
 	scale _ 10.
 "	original _ (Form fromFileNamed: 'IMG_2365.JPG') copy: (1100@1800 extent: 500@500)."
@@ -5309,9 +5558,10 @@ example3
 	originalG _ FloatImage from32BitColorForm: original component: #green.
 	originalB _ FloatImage from32BitColorForm: original component: #blue.
 	original display.
-	biggerR _ originalR bSplineScaledBy: scale.
-	biggerG _ originalG bSplineScaledBy: scale.
-	biggerB _ originalB bSplineScaledBy: scale.
+	t _ AffineTransformation forImageZoom: scale.
+	biggerR _ originalR bSplineTransformedBy: t resultExtent: nil.
+	biggerG _ originalG bSplineTransformedBy: t resultExtent: nil.
+	biggerB _ originalB bSplineTransformedBy: t resultExtent: nil.
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
@@ -5496,11 +5746,13 @@ example2
 	bigger display.
 	original display! !
 
-!ShiftedLinearInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 2/8/2013 18:22'!
+!ShiftedLinearInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 1/27/2015 14:09'!
 example3
 	"Use a portion of display to show behavior on colored input.
-	Try it with a real photo, results are much better"
-	| original originalB originalG originalR bigger biggerB biggerG biggerR scale |
+	Try it with a real photo, results are much better
+	ShiftedLinearInterpolatingImage example3
+	"
+	| original originalB originalG originalR bigger biggerB biggerG biggerR scale t |
 	original _ Display copy: (0@0 extent: 100@100).
 	scale _ 10.
 "	original _ (Form fromFileNamed: 'IMG_2365.JPG') copy: (1100@1800 extent: 500@500)."
@@ -5508,9 +5760,10 @@ example3
 	originalG _ FloatImage from32BitColorForm: original component: #green.
 	originalB _ FloatImage from32BitColorForm: original component: #blue.
 	original display.
-	biggerR _ originalR bSplineScaledBy: scale.
-	biggerG _ originalG bSplineScaledBy: scale.
-	biggerB _ originalB bSplineScaledBy: scale.
+	t _ AffineTransformation forImageZoom: scale.
+	biggerR _ originalR shiftedLinearTransformedBy: t resultExtent: nil.
+	biggerG _ originalG shiftedLinearTransformedBy: t resultExtent: nil.
+	biggerB _ originalB shiftedLinearTransformedBy: t resultExtent: nil.
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
@@ -5551,26 +5804,27 @@ from: aFloatImage
 
 	^self new initializeFrom: aFloatImage! !
 
-!ShiftedLinearInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 4/16/2013 13:34'!
+!ShiftedLinearInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 1/27/2015 14:05'!
 showApparentDisplacement
 	"
 	Play with this stuff in a Workspace.
 	ShiftedLinearInterpolatingImage showApparentDisplacement
 	"
 
-	| bspline linear original |
+	| bspline linear original t |
 	original _ FloatImage from8BitColorForm: Cursor read as8BitColorForm.
 	original asForm displayAt: 16@0.
-	linear _ original linearScaledBy: 14.0.
-	bspline _ original bSplineScaledBy:14.0.
+	t _ AffineTransformation forImageZoom: 14.
+	linear _ original bilinearTransformedBy: t resultExtent: nil.
+	bspline _ original bSplineTransformedBy: t resultExtent: nil.
 	linear display.
 	bspline display.
 	(linear-bspline+0.5) display.
-	(original shiftedLinearScaledBy: 14.0) display.
+	(original shiftedLinearTransformedBy: t resultExtent: nil) display.
 
-	((original shiftedLinearScaledBy: 14.0)-linear + 0.5) display.
-	((original shiftedLinearScaledBy: 14.0)-bspline +0.5) display.
-	((original shiftedLinearScaledBy: 14.0)-(linear+bspline*0.5)+0.5) display.
+	((original shiftedLinearTransformedBy: t resultExtent: nil)-linear + 0.5) display.
+	((original shiftedLinearTransformedBy: t resultExtent: nil)-bspline +0.5) display.
+	((original shiftedLinearTransformedBy: t resultExtent: nil)-(linear+bspline*0.5)+0.5) display.
 ! !
 
 !PerspectiveTransformation methodsFor: 'element access' stamp: 'jmv 1/13/2015 17:05'!
