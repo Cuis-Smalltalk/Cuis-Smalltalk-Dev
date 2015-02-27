@@ -24,7 +24,7 @@ The only way to avoid this is by understanding the complete system, and reengine
 
 This is important. Complexity puts a limit to the level of understanding of the system a person might reach, and therefore limits the things that can be done with it. Dan Ingalls says all this in ["Design Principles Behind Smalltalk"](http://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html). Even if you have already done so, please go and read it again!
 
-Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any bugs fixed. Cuis includes recent enhancements from Squeak, but only those that meet Cuis objectives: stuff the complexity of which outweighs its utility is not included.
+Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any bugs fixed. Cuis includes recent enhancements from Squeak, but only those that meet Cuis objectives: stuff whose complexity outweighs its value is not included.
 
 If you want to know how Cuis evolved please check the [Release Notes](http://www.cuis-smalltalk.org/CuisReleaseNotes.html).
 
@@ -55,8 +55,6 @@ or on Linux:
 coglinux/bin/squeak MyProject.image
 ```
 This method has the advantage to set you up to easily contribute code back to Cuis packages.
-
-Disclaimer: It should work on OS X and Unix. However, it is only tested on OS X and Ubuntu 12.04. Please test on other platforms and let us know the results. Feel free to send pull requests!
 
 ### Towards Morphic 3
 In Cuis work is on the way to restructure and upgrade the Morphic classes. For more see [Notes on Morphic](Documentation/NotesOnMorphic.md).
