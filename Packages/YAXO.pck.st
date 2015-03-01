@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1962] on 7 February 2014 at 9:01:58.253073 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2203] on 1 March 2015 at 6:02:28.958479 pm'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 3!
+!provides: 'YAXO' 1 4!
 !requires: 'Network-Kernel' 1 nil nil!
 !classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
@@ -585,13 +585,6 @@ parserOnFileNamed: fileName readIntoMemory: readIntoMemory
 		ifTrue: [stream _ stream contentsOfEntireFile readStream].
 	^self on: stream! !
 
-!XMLDOMParser methodsFor: 'content' stamp: 'mir 10/25/2000 11:30'!
-characters: aString
-	| newElement |
-	newElement _ XMLStringNode string: aString.
-	self top addContent: newElement.
-! !
-
 !XMLDOMParser methodsFor: 'private' stamp: 'mir 6/16/2003 17:20'!
 defaultNamespace
 	^self top
@@ -670,12 +663,6 @@ pop
 	entity _ oldTop.
 	^oldTop! !
 
-!XMLDOMParser methodsFor: 'content' stamp: 'mir 3/6/2002 10:49'!
-processingInstruction: piName data: dataString
-	| newElement |
-	newElement _ XMLPI target: piName data: dataString.
-	self top addElement: newElement! !
-
 !XMLDOMParser methodsFor: 'private' stamp: 'mir 1/8/2001 12:02'!
 push: anObject
 	self stack add: anObject.
@@ -690,15 +677,6 @@ stack
 startDocument
 	self document: XMLDocument new.
 	self push: self document ! !
-
-!XMLDOMParser methodsFor: 'content' stamp: 'mir 3/6/2002 10:49'!
-startElement: elementName attributeList: attributeList
-	| newElement |
-	newElement _ XMLElement named: elementName attributes: attributeList.
-	self incremental
-		ifFalse: [self stack isEmpty
-			ifFalse: [self top addElement: newElement]].
-	self push: newElement! !
 
 !XMLDOMParser methodsFor: 'content' stamp: 'mir 6/24/2003 18:52'!
 startElement: localName namespaceURI: namespaceUri namespace: namespace attributeList: attributeList
@@ -2707,10 +2685,10 @@ startDeclaration: dtdName
 		nextPut: $[;
 		cr! !
 
-!XMLWriter methodsFor: 'writing xml' stamp: 'nice 10/21/2009 00:01'!
+!XMLWriter methodsFor: 'writing xml' stamp: 'pb 3/1/2015 18:02'!
 startElement: elementName attributeList: attributeList
 	self canonical
-		ifFalse: [self stream cr].
+		ifFalse: [self stream lf].
 	self startTag: elementName.
 	attributeList keys asArray sort do: [:key |
 		self attribute: key value: (attributeList at: key)]! !
