@@ -1,24 +1,24 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2169] on 26 February 2015 at 1:40:35.94027 pm'!
-'Description Displays topics intended to aid programmers in writing code for Cuis. Needs to be sanitized for changes in selectors, missing classes, etc. UI needs work.'!
-!provides: 'TerseGuide' 1 19!
-!classDefinition: #TerseGuideWindow category: #TerseGuide!
-SystemWindow subclass: #TerseGuideWindow
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TerseGuide'!
-!classDefinition: 'TerseGuideWindow class' category: #TerseGuide!
-TerseGuideWindow class
-	instanceVariableNames: ''!
-
+'From Cuis 4.2 of 25 July 2013 [latest update: #2169] on 3 March 2015 at 12:40:42.361071 pm'!
+'Description Displays topics intended to aid programmers in writing code for Cuis. Needs to be sanitized for changes in selectors, missing classes, etc. UI needs to let the text pane work like a Workspace.'!
+!provides: 'TerseGuide' 1 27!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
-Object subclass: #TerseGuideHelp
-	instanceVariableNames: 'topicListIndex selectedTopic topicList'
+Workspace subclass: #TerseGuideHelp
+	instanceVariableNames: 'topicListIndex selectedTopic topicList window textPane'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
 !classDefinition: 'TerseGuideHelp class' category: #TerseGuide!
 TerseGuideHelp class
+	instanceVariableNames: ''!
+
+!classDefinition: #TerseGuideWindow category: #TerseGuide!
+SystemWindow subclass: #TerseGuideWindow
+	instanceVariableNames: 'textMorph'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerseGuide'!
+!classDefinition: 'TerseGuideWindow class' category: #TerseGuide!
+TerseGuideWindow class
 	instanceVariableNames: ''!
 
 
@@ -32,81 +32,88 @@ TerseGuideHelp display: #array
 TerseGuideHelp display: #transcript
 !
 
-!TerseGuideWindow methodsFor: 'as yet unclassified' stamp: 'dhn 2/25/2015 09:51'!
-buildMorphicWindow
-	"Answer a window for Terse Guide"
-	| aTextMorph list1 row |
-	list1 _ PluggableListMorph
-				model: model
-				listGetter: #topicList
-				indexGetter: #topicListIndex
-				indexSetter: #topicListIndex:
-				mainView: self
-				menuGetter: nil
-				keystrokeAction: nil.
-	aTextMorph _ TextModelMorph
-				textProvider: model
-				textGetter: #selectedTopic.
-	aTextMorph askBeforeDiscardingEdits: false.
-	row _ LayoutMorph newRow.
-	row
-		addMorph: list1 proportionalWidth: 0.2;
-		addAdjusterAndMorph: aTextMorph proportionalWidth: 0.8.
-	self layoutMorph
-		addMorph: row.
-	self setLabel: 'Terse Guide'! !
-
-!TerseGuideWindow class methodsFor: 'as yet unclassified' stamp: 'dhn 2/24/2015 21:48'!
-openTerseGuide
-	TerseGuideWindow open: TerseGuideHelp new label: nil! !
-
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/25/2015 13:34'!
-editorClass
-	^SmalltalkEditor! !
-
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 08:08'!
+!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 07:07'!
 initialize
+	super initialize.
 	topicList _ self class pages.
 ! !
+
+!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 15:57'!
+openLabel: aString 
+	"Create a standard system view of the model, me, and open it."
+	| view inner |
+	view _ WorkspaceWindow editText: self label: aString wrap: true.
+	inner _ view findDeepSubmorphThat: [ :m |
+			m is: #InnerTextMorph] ifAbsent: [ ^nil ].
+	inner askBeforeDiscardingEdits: false.
+	self changed: #actualContents! !
 
 !TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 08:26'!
 selectedTopic
 	"Answer the text of the selected topic"
 	^ self updateTopicText! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 08:22'!
+!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 11:22'!
 selectedTopic: aTopic
 	selectedTopic _ aTopic.
-	self updateTopicText.
+	textPane model actualContents: self updateTopicText.
 	self changed: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 09:04'!
-text
-	^ self selectedTopic
-! !
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/28/2015 11:17'!
+textPane
+	"Answer the value of textPane"
+
+	^ textPane! !
+
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/28/2015 11:17'!
+textPane: anObject
+	"Set the value of textPane"
+
+	textPane _ anObject! !
 
 !TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 07:59'!
 topicList
 	^ topicList! !
+
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:07'!
+topicList: anObject
+	"Set the value of topicList"
+
+	topicList _ anObject! !
 
 !TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 08:42'!
 topicListIndex
 	topicList ifNil: [ ^ topicListIndex _ 0 ].
 	^ topicList indexOf: selectedTopic! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 08:41'!
+!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 06:56'!
 topicListIndex: index
 	topicListIndex _ index.
 	self selectedTopic: 
 		(topicList at: index ifAbsent: nil)! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 08:33'!
+!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 3/1/2015 22:08'!
 updateTopicText
 	"Answer the text of the selected topic"
+	| topic |
 	self topicListIndex = 0 ifTrue: [^ ''].
-	^ self class perform: (self topicList at: self topicListIndex)! !
+	topic _ self topicList at: self topicListIndex.
+	window setLabel: ('Terse Guide to ', (self class class firstCommentAt: topic)).
+	^ self class perform: topic! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:29'!
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:07'!
+window
+	"Answer the value of window"
+
+	^ window! !
+
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:07'!
+window: anObject
+	"Set the value of window"
+
+	window _ anObject! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 14:26'!
 arithmetic
 	"Arithmetic Expressions"
 	^
@@ -136,12 +143,12 @@ x _ 3.99 rounded.						"round"
 x _ 3.99 truncated.					"truncate"
 x _ 3.99 roundTo: 1.					"round to specified decimal places"
 x _ 3.99 truncateTo: 1.					"truncate to specified decimal places"
-x _ 3.99 floor.							"truncate"
-x _ 3.99 ceiling.						"round up"
+x _ 3.99 floor.							"integer nearest the receiver toward negative infinity"
+x _ 3.99 ceiling.						"integer nearest the receiver toward  infinity"
 x _ 5 factorial.							"factorial"
 x _ -5 quo: 3.							"integer divide rounded toward zero"
 x _ -5 rem: 3.							"integer remainder rounded toward zero"
-x _ 28 gcd: 12.						"greatest common denominator"
+x _ 28 gcd: 12.						"greatest common divisor"
 x _ 28 lcm: 12.							"least common multiple"
 x _ 100 ln.								"natural logarithm"
 x _ 100 log.							"base 10 logarithm"
@@ -215,13 +222,13 @@ y _ x asSet.									"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:30'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 12:56'!
 assignment
 	"Assignment"
 	^
 '| x y z |
 x _ 4.									"assignment (Cuis)"
-x _ 5.									"assignment"
+x := 5.									"assignment"
 x _ y _ z _ 6.							"compound assignment"
 x _ (y _ 6) + 1.
 x _ Object new.						"bind to allocated instance of a class"
@@ -232,8 +239,8 @@ x _ Integer allSuperclasses.			"get all superclasses of a class"
 x _ 1.2 hash.							"hash value for object"
 y _ x copy.								"copy object"
 y _ x shallowCopy.						"copy object (not overridden)"
-y _ x deepCopy.						"copy object and instance vars"
-y _ x veryDeepCopy.					"complete tree copy using a dictionary"
+"y _ x deepCopy."						"copy object and instance vars"
+"y _ x veryDeepCopy."					"complete tree copy using a dictionary"
 
 '! !
 
@@ -287,7 +294,7 @@ y _ x asSet.									"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:31'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 14:48'!
 bitwise
 	"Bitwise Manipulation"
 	^
@@ -300,13 +307,13 @@ x _ 16r0F bitShift: 4.				"left shift"
 x _ 16rF0 bitShift: -4.				"right shift"
 x _ 16r80 bitAt: 8.					"bit at position (0|1)"
 x _ 16r80 highBit.					"position of highest bit set"
-b _ 16rFF allMask: 16r0F.			"test if all bits set in mask set in receiver"
-b _ 16rFF anyMask: 16r0F.			"test if any bits set in mask set in receiver"
-b _ 16rFF noMask: 16r0F.			"test if all bits set in mask clear in receiver"
+b _ 16rFF allMask: 16r0F.			"test if all bits set in mask are set in receiver"
+b _ 16rFF anyMask: 16r0F.			"test if any bits set in mask are set in receiver"
+b _ 16rFF noMask: 16r0F.			"test if all bits set in mask are clear in receiver"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/25/2015 20:54'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 16:21'!
 block
 	"Blocks"
 	^
@@ -325,7 +332,7 @@ x _ [ :argOne :argTwo |   argOne, '' and '' , argTwo.].	"set up block with argum
 Transcript show: (x value: ''First'' value: ''Second''); newLine.	"use block with argument passing"
 x _ [:e | | v | v _ 1. e + v] value: 2.					"localvar in a block"
 fac _ [ :n | n > 1 ifTrue:  [n * (fac value: n-1)] ifFalse: [1]].	"closure on block variable"
-fac value: 5.											"closure variable scoped to its block"
+fac value: 5.										"closure variable scoped to its block"
 
 '! !
 
@@ -452,7 +459,7 @@ x _ #(''abc'' 2 $a).						"mixing of types allowed"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:33'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 16:10'!
 conversion
 	"Conversion"
 	^
@@ -464,33 +471,31 @@ x _ 65 asCharacter.			"convert integer to character"
 x _ $A asciiValue.				"convert character to integer"
 x _ 3.99 printString.			"convert object to string via printOn:"
 x _ 3.99 storeString.			"convert object to string via storeOn:"
-x _ 15 radix: 16.				"convert to string in given base"
+"x _ 15 radix: 16."				"convert to string in given base"
 x _ 15 printStringBase: 16.
 x _ 15 storeStringBase: 16.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:37'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 20:25'!
 date
 	"Date"
 	^
-'| x y b |
+'| x y b block str fmt |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 x _ Date today.								"create date for today"
 x _ Date dateAndTimeNow.					"create date from current time/date"
-x _ Date readFromString: ''01/02/1999''.		"create date from formatted string"
 x _ Date newDay: 12 month: #July year: 1999.	"create date from parts"
 x _ Date fromDays: 36000.					"create date from elapsed days since 1/1/1901"
 y _ Date dayOfWeek: #Monday.				"day of week as int (1-7)"
-y _ Date indexOfMonth: #January.			"month of year as int (1-12)"
+y _ Date indexOfMonth: #August.			"month of year as int (1-12)"
 y _ Date daysInMonth: 2 forYear: 1996.		"day of month as int (1-31)"
 y _ Date daysInYear: 1996.					"days in year (365|366)"
 y _ Date nameOfDay: 1.						"weekday name (#Monday,...)"
-y _ Date nameOfMonth: 1.					"month name (#January,...)"
-y _ Date leapYear: 1996.						"1 if leap year; 0 if not leap year"
+y _ Date nameOfMonth: 3.					"month name (#January,...)"
+y _ Date leapYear: 1997.						"1 if leap year; 0 if not leap year"
 y _ x weekday.								"day of week (#Monday,...)"
 y _ x previous: #Monday.					"date for previous day of week"
 y _ x dayOfMonth.								"day of month (1-31)"
-y _ x day.										"day of year (1-366)"
 y _ x firstDayOfMonth.							"day of year for first day of month"
 y _ x monthName.								"month of year (#January,...)"
 y _ x monthIndex.								"month of year (1-12)"
@@ -498,12 +503,47 @@ y _ x daysInMonth.								"days in month (1-31)"
 y _ x year.										"year (19xx)"
 y _ x daysInYear.								"days in year (365|366)"
 y _ x daysLeftInYear.							"days left in year (364|365)"
-y _ x asSeconds.								"seconds elapsed since 1/1/1901"
-y _ x addDays: 10.								"add days to date object"
-y _ x subtractDays: 10.						"subtract days to date object"
-y _ x subtractDate: (Date today).				"subtract date (result in days)"
 y _ x printFormat: #(2 1 3 $/ 1 1).				"print formatted date"
 b _ (x <= Date today).						"comparison"
+y _ x julianDayNumber.
+y _ x mmddyyyy.	"Answer the receiver rendered in standard fmt mm/dd/yyyy.  Good for avoiding year 2000 bugs.  Note that the name here is slightly misleading -- the month and day numbers don''t show leading zeros, so that for example feb 1 1996 is 2/1/96"
+y _ x month.
+y _ x monthAbbreviation.
+y _ x monthIndex.
+y _ x monthName.
+fmt _ #(1 2 3 $  3 1 ).			"Specify a format for the date, in the following scheme:"
+									"#(item item item sep monthfmt yearfmt twoDigits) 
+									items: 1=day 2=month 3=year will appear in the order given, 
+									separated by sep which is eaither an ascii code or character. 
+									monthFmt: 1=09 2=Sep 3=September 
+									yearFmt: 1=1996 2=96 
+									digits: (missing or)1=9 2=09. 
+								See the examples in printOn: and mmddyy"
+y _ x printFormat: fmt. 	"Answer a String describing the receiver using the format denoted by the argument, fmt"
+str _ ReadWriteStream on: String new.		"Specify a stream"
+y _ x printOn: str.
+y _ x printOn: str format: #(3 2 1 $.  1 2 ).
+y _ x secondsSinceSqueakEpoch. "Answer the seconds since the Squeak epoch: 1 January 1901"
+y _ x storeOn: str.
+y _ x week.
+y _ x weekday. 	"Answer the name of the day of the week on which the receiver falls."
+y _ x weekdayIndex. "Sunday=1, ... , Saturday=7"
+y _ x year.
+y _ x yearNumber.
+y _ x yyyymmdd. "Format the date in ISO 8601 standard like ''2002-10-22''."
+block _ [ :d :m :y | {d. m. y} ].		"Specify an order for the date"
+y _ x dayMonthYearDo: block. "Supply integers for day, month and year to aBlock and return the result"
+y _ x dayMonthYearDo: [ :d :m :y | {y. m. d.} ].	"Order determined by block, not method name"
+y _ x dayOfMonth. 	"Answer the day of the month represented by the receiver."
+y _ x dayOfWeek. 	"Answer the day of the week represented by the receiver."
+y _ x dayOfWeekName. "Answer the day of the week represented by the receiver."
+y _ x dayOfYear. "Answer the day of the year represented by the receiver."
+y _ x daysInMonth.
+y _ x daysInYear.	"Answer the number of days in the month represented by the receiver."
+y _ x daysLeftInYear.
+y _ x firstDayOfMonth.
+y _ x isLeapYear.
+y _ x julianDayNumber.
 
 '! !
 
@@ -535,7 +575,7 @@ x doesNotUnderstand: (Message selector: #foo).	"flag message is not handled"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/25/2015 21:48'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 15:45'!
 dictionary
 	"Dictionary"
 	^
@@ -543,13 +583,13 @@ dictionary
 	Dictionary:
 	IdentityDictionary:   uses identity test (== rather than =)
 "
-| b x y sum max aDx |
+| b x y sum max aDx |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 x _ Dictionary new.							"allocate collection"
 x add: #a->4; add: #b->3; add: #c->1; add: #d->2; yourself.	"add element to collection"
 x at: #e put: 3.									"set element at index; see NOTE"
 b _ x isEmpty.									"test if empty"
 y _ x size.										"number of elements"
-y _ x at: #a ifAbsent: [].						"retrieve element at index"
+y _ x at: #a ifAbsent: [].						"retrieve value for key #a"
 y _ x keyAtValue: 3 ifAbsent: [].				"retrieve key for given value with error block"
 y _ x removeKey: #e ifAbsent: [].				"remove element from collection"
 b _ x includes: 3.								"test if element is in values collection"
@@ -564,20 +604,20 @@ x keysAndValuesDo: [:aKey :aValue | Transcript	"iterate over keys and values"
    show: aKey printString; space;
    show: aValue printString; newLine].
 b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
-y _ x select: [:a | a > 2].						"return collection of elements that pass test"
-y _ x reject: [:a | a < 2].						"return collection of elements that fail test"
-y _ x collect: [:a | a + a].						"transform each element for new collection"
-y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
-sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum elements"
-sum _ x inject: 0 into: [:a :c | a + c].			"sum elements"
-max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
+y _ x select: [:a | a > 2].						"return a dictionary with values that pass test"
+y _ x reject: [:a | a < 2].						"return a dictionary with values that fail test"
+y _ x collect: [:a | a + a].						"transform each element for new dictionary"
+y _ x detect: [:a | a > 3] ifNone: [].				"return first value that passes test"
+sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum the values"
+sum _ x inject: 0 into: [:a :c | a + c].			"sum the values"
+max _ x inject: 0 into: [:a :c | (a > c)			"find max value in collection"
    ifTrue: [a]
    ifFalse: [c]].
-y _ x asArray.									"convert to array"
-y _ x asOrderedCollection.					"convert to ordered collection"
-y _ x asSortedCollection.						"convert to sorted collection"
-y _ x asBag.									"convert to bag collection"
-y _ x asSet.									"convert to set collection"
+y _ x asArray.									"collect values in an array"
+y _ x asOrderedCollection.					"collect values in an ordered collection"
+y _ x asSortedCollection.						"collect values in a sorted collection"
+y _ x asBag.									"collect values in a bag"
+y _ x asSet.									"collect values in a set"
 
 Smalltalk at: #CMRGlobal put: ''CMR entry''.	"put global in Smalltalk Dictionary"
 x _ Smalltalk at: #CMRGlobal.				"read global from Smalltalk Dictionary"
@@ -610,12 +650,12 @@ Smalltalk removeKey: #CMRGlobal ifAbsent: [].	"remove entry from Smalltalk dicti
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 2/25/2015 19:54'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 2/28/2015 15:45'!
 display: aSelector
 	"Open a Workspace on the text in aSelector"
 	| window |
-	window _ Workspace new.
-	window 	contents: (self perform: aSelector).
+	window _ TerseGuideHelp new.
+	window 	actualContents: (self perform: aSelector).
 	window	openLabel: ('Terse Guide to ', (self class firstCommentAt: aSelector))! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:38'!
@@ -658,39 +698,53 @@ result _ (Message
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/25/2015 18:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 20:59'!
 fileStream
 	"FileStream"
 	^
 '| b x ios |
-ios _ FileStream newFileNamed: ''ios.txt''.
-ios nextPut: $H; cr.
-ios nextPutAll: ''Hello File''; cr.
+ios _ FileStream newFileNamed: ''ios.txt''.	"Open a file for output"
+ios nextPut: $H; newLine.					"Put data in the file buffer"
+ios nextPutAll: ''Hello File''; newLine.
 ''Hello File'' printOn: ios.
 ''Hello File'' storeOn: ios.
-ios close.
+ios close.								"Flush the buffer, write and close the file"
 
-ios _ FileStream oldFileNamed: ''ios.txt''.
+ios _ FileStream oldFileNamed: ''ios.txt''.	"Open the file for input"
 [(x _ ios nextLine) notNil]
-   whileTrue: [Transcript show: x; cr].
-ios position: 3.
-x _ ios position.
-x _ ios next.
-x _ ios peek.
-b _ ios atEnd.
-ios close.
+   whileTrue: [Transcript show: x; newLine].
+ios position: 3.							"Position a pointer to a byte in the file"
+x _ ios position.						"Answer where the pointer is"
+x _ ios next.							"Answer the byte pointed to by the pointer"
+x _ ios peek.							"Answer the next byte beyond the pointer"
+b _ ios atEnd.							"Answer whether the position is at the end of the file"
+ios close.								"Close the file"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:38'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 13:50'!
+heap
+	"Heap"
+	^
+'| x sort |
+x _ Heap new.					"Answer a heap of default size"
+x _ Heap new: n.					"Answer a heap of size n"
+x _ Heap with: #purple with: #green. 	"Answer a Heap with the two arguments as elements."
+sort _ [:a :c | a > c].				"Define a sorting order"
+x _ Heap withAll: #(11 32 19 21).	"Create a new heap with all the elements from a collection"
+x sortBlock: sort.					"Specify how to sort the heap"
+x _ Heap withAll: #(11 32 19 21) sortBlock: sort.	"Create a new heap sorted according to a sortBlock"
+'! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 16:01'!
 internalStream
 	"Internal Stream"
 	^
-'| b x ios |
+'| b x ios |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 ios _ ReadStream on: ''Hello read stream''.
 ios _ ReadStream on: ''Hello read stream'' from: 1 to: 5.
 [(x _ ios nextLine) notNil]
-   whileTrue: [Transcript show: x; cr].
+   whileTrue: [Transcript show: x; newLine].
 ios position: 3.
 ios position.
 x _ ios next.
@@ -704,7 +758,7 @@ ios _ ReadWriteStream with: ''Hello read stream''.
 ios _ ReadWriteStream with: ''Hello read stream'' from: 1 to: 10.
 ios position: 0.
 [(x _ ios nextLine) notNil]
-   whileTrue: [Transcript show: x; cr].
+   whileTrue: [Transcript show: x; newLine].
 ios position: 6.
 ios position.
 ios nextPutAll: ''Chris''.
@@ -715,7 +769,7 @@ b _ ios atEnd.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/25/2015 22:03'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 21:00'!
 interval
 	"Interval"
 	^
@@ -735,7 +789,7 @@ y _ x collect: [:a | a + a].						"transform each element for new collection"
 y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
 y _ x findFirst: [:a | a > 6].						"find position of first element that passes test"
 sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum elements"
-sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)].	"sum elements"
+sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)]. sum.	"sum elements"
 sum _ x inject: 0 into: [:a :c | a + c].			"sum elements"
 max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
    ifTrue: [a]
@@ -834,7 +888,7 @@ Object withAllSubclasses size.		"get total number of class entries"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:40'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 16:25'!
 methodCall
 	"Method Call"
 	^
@@ -859,12 +913,12 @@ methodCall
 x _ 2 sqrt.									"unary message"
 x _ 2 raisedTo: 10.							"keyword message"
 x _ 194 * 9.								"binary message"
-Transcript show: (194 * 9) printString; cr.	"combination (chaining)"
+Transcript show: (194 * 9) printString; newLine.	"combination (chaining)"
 x _ 2 perform: #sqrt.						"indirect method invocation"
 Transcript								"cascading - send multiple messages to receiver"
    show: ''hello '';
    show: ''world'';
-   cr.
+   newLine.
 x _ 3 + 2; * 100.							"result=300. Sends message to same receiver (3)"
 
 '! !
@@ -878,19 +932,21 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlank request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/25/2015 19:53'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 16:01'!
 orderedCollection
 	"OrderedCollection"
 	^
-'| b x y sum max |
+'| b x y sum max |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 x _ OrderedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with up to 4 elements"
 x _ OrderedCollection new.					"allocate collection"
 x add: 3; add: 2; add: 1; add: 4; yourself.		"add element to collection"
-y _ x addFirst: 5.								"add element at beginning of collection"
+y _ x addFirst: 5;								"add element at beginning of collection"
+	yourself.									"see the resulting collection"
 y _ x removeFirst.								"remove first element in collection"
 y _ x addLast: 6.								"add element at end of collection"
 y _ x removeLast.								"remove last element in collection"
-y _ x addAll: #(7 8 9).							"add elements to the collection and answer the added elements"
+y _ x addAll: #(7 8 9);							"add elements to the collection and answer the added elements"
+	yourself.									"see the resulting collection"
 y _ x removeAll: #(7 8 9).						"remove elements from the collection and answer the removed elements"
 x at: 2 put: 3.									"set element at index"
 y _ x remove: 5 ifAbsent: [].					"remove element from collection"
@@ -911,7 +967,7 @@ y _ x collect: [:a | a + a].						"transform each element for new collection"
 y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
 y _ x findFirst: [:a | a < 2].						"find position of first element that passes test"
 sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum elements"
-sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)].	"sum elements"
+sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)]. sum.		"sum elements"
 sum _ x inject: 0 into: [:a :c | a + c].			"sum elements"
 max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
    ifTrue: [a]
@@ -925,15 +981,15 @@ y _ x asSet.									"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 2/24/2015 17:01'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 3/1/2015 14:12'!
 pages
 
 	^ #( introduction transcript assignment constants boolean arithmetic
 		bitwise conversion block methodCall conditionalStatement
 		iterationStatement character symbol string array orderedCollection
-		sortedCollection bag set interval association dictionary internalStream
+		sortedCollection bag set interval association dictionary trie heap internalStream
 		fileStream date time point rectangle pen dynamic metaclass debugging
-		misc )! !
+		misc primitive )! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:45'!
 pen
@@ -991,6 +1047,65 @@ x _ 20@5 dotProduct: 10@2.					"sum of product (x1*x2 + y1*y2)"
 
 '! !
 
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 12:58'!
+primitive
+	"Primitive"
+	^
+'	"Some messages in the system are responded to primitively. A primitive   
+	response is performed directly by the interpreter rather than by evaluating   
+	expressions in a method. The methods for these messages indicate the   
+	presence of a primitive response by including <primitive: xx> before the   
+	first expression in the method.   
+	  
+	Primitives exist for several reasons. Certain basic or ''primitive'' 
+	operations cannot be performed in any other way. Smalltalk without 
+	primitives can move values from one variable to another, but cannot add two 
+	SmallIntegers together. Many methods for arithmetic and comparison 
+	between numbers are primitives. Some primitives allow Smalltalk to 
+	communicate with I/O devices such as the disk, the display, and the keyboard. 
+	Some primitives exist only to make the system run faster; each does the same 
+	thing as a certain Smalltalk method, and its implementation as a primitive is 
+	optional.  
+	  
+	When the Smalltalk interpreter begins to execute a method which specifies a 
+	primitive response, it tries to perform the primitive action and to return a 
+	result. If the routine in the interpreter for this primitive is successful, 
+	it will return a value and the expressions in the method will not be evaluated. 
+	If the primitive routine is not successful, the primitive ''fails'', and the 
+	Smalltalk expressions in the method are executed instead. These 
+	expressions are evaluated as though the primitive routine had not been 
+	called.  
+	  
+	The Smalltalk code that is evaluated when a primitive fails usually 
+	anticipates why that primitive might fail. If the primitive is optional, the 
+	expressions in the method do exactly what the primitive would have done (See 
+	Number @). If the primitive only works on certain classes of arguments, the 
+	Smalltalk code tries to coerce the argument or appeals to a superclass to find 
+	a more general way of doing the operation (see SmallInteger +). If the 
+	primitive is never supposed to fail, the expressions signal an error (see 
+	SmallInteger asFloat).  
+	  
+	Each method that specifies a primitive has a comment in it. If the primitive is 
+	optional, the comment will say ''Optional''. An optional primitive that is not 
+	implemented always fails, and the Smalltalk expressions do the work 
+	instead.  
+	 
+	If a primitive is not optional, the comment will say, ''Essential''. Some 
+	methods will have the comment, ''No Lookup''. See Object 
+	howToModifyPrimitives for an explanation of special selectors which are 
+	not looked up.  
+	  
+	For the primitives for +, -, *, and bitShift: in SmallInteger, and truncated 
+	in Float, the primitive constructs and returns a 16-bit 
+	LargePositiveInteger when the result warrants it. Returning 16-bit 
+	LargePositiveIntegers from these primitives instead of failing is 
+	optional in the same sense that the LargePositiveInteger arithmetic 
+	primitives are optional. The comments in the SmallInteger primitives say, 
+	''Fails if result is not a SmallInteger'', even though the implementor has the 
+	option to construct a LargePositiveInteger. For further information on 
+	primitives, see the ''Primitive Methods'' part of the chapter on the formal 
+	specification of the interpreter in the Smalltalk book."'! !
+
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:50'!
 rectangle
 	"Rectangle"
@@ -998,7 +1113,7 @@ rectangle
 'Rectangle fromUser.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/25/2015 20:07'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 20:48'!
 set
 	"Set"
 	^
@@ -1012,7 +1127,7 @@ y _ x remove: 4 ifAbsent: [].					"remove element from collection"
 b _ x isEmpty.									"test if empty"
 y _ x size.										"number of elements"
 x includes: 4.									"test if element is in collection"
-x do: [:a | Transcript show: a printString; cr].	"iterate over the collection"
+x do: [:a | Transcript show: a printString; newLine].	"iterate over the collection"
 b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
 y _ x select: [:a | a > 2].						"return collection of elements that pass test"
 y _ x reject: [:a | a < 2].						"return collection of elements that fail test"
@@ -1031,20 +1146,21 @@ y _ x asSet.									"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/25/2015 20:07'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 15:56'!
 sortedCollection
 	"SortedCollection"
 	^
-'| b x y sum max |
+'| b x y sum max |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 x _ SortedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with up to 4 elements"
 x _ SortedCollection new.						"allocate collection"
 x _ SortedCollection sortBlock: [:a :c | a > c].	"set sort criteria"
 x add: 3; add: 2; add: 1; add: 4; yourself.			"add element to collection"
-"y _ x addFirst: 5."									"add element at beginning of collection"
+y _ x addFirst: 5.									"Error: Not Appropriate for a SortedCollection"
 y _ x removeFirst.									"remove first element in collection"
 y _ x addLast: 6.									"add element at end of collection"
 y _ x removeLast.									"remove last element in collection"
 y _ x addAll: #(7 8 9).								"add elements to the collection and answer the added elements"
+x sortBlock: [:a :c | a > c].							"sort in descending order"
 y _ x removeAll: #(7 8 9).							"remove elements from the collection and answer the removed elements"
 y _ x remove: 5 ifAbsent: [].						"remove element from collection"
 b _ x isEmpty.										"test if empty"
@@ -1056,7 +1172,7 @@ b _ x includes: 4.									"test if element is in collection"
 y _ x copyFrom: 2 to: 3.							"subcollection"
 y _ x indexOf: 3 ifAbsent: [0].						"first position of element within collection"
 y _ x occurrencesOf: 3.							"number of times object in collection"
-x do: [:a | Transcript show: a printString; cr].		"iterate over the collection"
+x do: [:a | Transcript show: a printString; newLine].		"iterate over the collection"
 b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].			"test if all elements meet condition"
 y _ x select: [:a | a > 2].							"return collection of elements that pass test"
 y _ x reject: [:a | a < 2].							"return collection of elements that fail test"
@@ -1064,7 +1180,7 @@ y _ x collect: [:a | a + a].							"transform each element for new collection"
 y _ x detect: [:a | a > 3] ifNone: [].					"return first element that passes test"
 y _ x findFirst: [:a | a < 3].							"find position of first element that passes test"
 sum _ 0. x do: [:a | sum _ sum + a]. sum.			"sum elements"
-sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)].	"sum elements"
+sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)]. sum.	"sum elements"
 sum _ x inject: 0 into: [:a :c | a + c].				"sum elements"
 max _ x inject: 0 into: [:a :c | (a > c)				"find max element in collection"
    ifTrue: [a]
@@ -1077,7 +1193,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:08'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 18:49'!
 string
 	"String"
 	^
@@ -1096,7 +1212,7 @@ x											"set string elements"
    at: 3 put: $c;
    at: 4 put: $e.
 x _ String with: $a with: $b with: $c with: $d.	"set up to 4 elements at a time"
-x do: [:a | Transcript show: a printString; cr].	"iterate over the string"
+x do: [:a | Transcript show: a printString; newLine].	"iterate over the string"
 b _ x allSatisfy: [:a | (a >= $a) & (a <= $z)].	"test if all elements meet condition"
 y _ x select: [:a | a > $a].					"return all elements that meet condition"
 y _ x asSymbol.							"convert string to symbol"
@@ -1110,7 +1226,7 @@ y _ x shuffled.								"randomly shuffle string"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:13'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 18:39'!
 symbol
 	"Symbol"
 	^
@@ -1122,7 +1238,7 @@ y _ x size.									"string size"
 y _ x at: 2.									"char at location"
 y _ x copyFrom: 2 to: 4.					"substring"
 y _ x indexOf: $e ifAbsent: [0].				"first position of character within string"
-x do: [:a | Transcript show: a printString; cr].	"iterate over the string"
+x do: [:a | Transcript show: a printString; newLine].	"iterate over the string"
 b _ x allSatisfy: [:a | (a >= $a) & (a <= $z)].	"test if all elements meet condition"
 y _ x select: [:a | a > $a].					"return all elements that meet condition"
 y _ x asString.								"convert symbol to string"
@@ -1155,7 +1271,7 @@ b _ (x <= Time now).							"comparison"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:20'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 13:48'!
 transcript
 	"Transcript"
 	^
@@ -1165,9 +1281,69 @@ Transcript nextPutAll: ''Hello World''.	"output string in transcript window"
 Transcript nextPut: $A.				"output character in transcript window"
 Transcript space.						"output space character in transcript window"
 Transcript tab.						"output tab character in transcript window"
-Transcript cr.							"carriage return / linefeed"
+Transcript newLine.					"linefeed"
 ''Hello'' printOn: Transcript.			"append print string into the window"
 ''Hello'' storeOn: Transcript.			"append store string into the window"
 Transcript endEntry.					"flush the output buffer"
 
 '! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 14:56'!
+trie
+	"Trie"
+	^
+'| t |
+t _ Trie new.
+t add: ''car''.
+t at: ''car'' put: Float pi.
+t at: ''cat'' put: Date today.
+t explore.
+(t includesKey: ''car'') print.
+(t includes: ''cat'') print.
+t _ Trie new.
+Smalltalk allImplementedMessages do: [ :s | t add: s ].
+t explore'
+! !
+
+!TerseGuideWindow methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 07:01'!
+buildMorphicWindow
+	"Answer a window for Terse Guide"
+	| list1 row |
+	list1 _ PluggableListMorph
+				model: model
+				listGetter: #topicList
+				indexGetter: #topicListIndex
+				indexSetter: #topicListIndex:
+				mainView: self
+				menuGetter: nil
+				keystrokeAction: nil.
+	textMorph _ TextModelMorph
+				textProvider: model
+				textGetter: #selectedTopic.
+	textMorph askBeforeDiscardingEdits: false.
+	row _ LayoutMorph newRow.
+	row
+		addMorph: list1 proportionalWidth: 0.2;
+		addAdjusterAndMorph: textMorph proportionalWidth: 0.8.
+	self layoutMorph
+		addMorph: row.
+	self setLabel: 'Terse Guide'! !
+
+!TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:16'!
+textMorph
+	"Answer the value of textMorph"
+
+	^ textMorph! !
+
+!TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:16'!
+textMorph: anObject
+	"Set the value of textMorph"
+
+	textMorph _ anObject! !
+
+!TerseGuideWindow class methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 11:21'!
+openTerseGuide
+	| window help |
+	help _ TerseGuideHelp new.
+	help window: (window _ TerseGuideWindow open: help label: nil).
+	help textPane: window textMorph! !
