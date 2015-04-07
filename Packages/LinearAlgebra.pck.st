@@ -1,6 +1,7 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2170] on 27 January 2015 at 3:46:31.317854 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2225] on 6 April 2015 at 12:33:27.592097 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 9!
+!provides: 'LinearAlgebra' 1 11!
+!requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -757,11 +758,11 @@ rowFrom: anArray
 		result i: 1 j: j put: (anArray at: j) ].
 	^result! !
 
-!FloatMatrix methodsFor: 'misc' stamp: 'jmv 11/16/2012 12:14'!
-addNormalNoise: standardDeviation seed: randomSeed
+!FloatMatrix methodsFor: 'noise generation' stamp: 'jmv 4/6/2015 12:30'!
+addNormalNoise: standardDeviation
 	| random |
-	random _ NormalRandom new seed: randomSeed.
-	self replaceValues: [ :i :j :v | random next * standardDeviation + v ]! !
+	random _ NormalProbabilityDistribution mean: 0.0 standardDeviation: standardDeviation.
+	self replaceValues: [ :i :j :v | random nextRandomNumber + v ]! !
 
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
 conditionNumber

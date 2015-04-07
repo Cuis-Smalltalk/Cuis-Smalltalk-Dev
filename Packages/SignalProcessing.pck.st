@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2198] on 25 February 2015 at 11:20:15.432788 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2226] on 6 April 2015 at 12:54:47.660851 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 15!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'SignalProcessing' 1 19!
 !requires: 'Sound' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
@@ -834,9 +834,11 @@ acutance
 	nwAcutance _ (self acutanceAt: -1@1 aux: aux) * 0.75.
 	^((eAcutance max: neAcutance) max: nAcutance) max: nwAcutance! !
 
-!FloatImage methodsFor: 'metrics' stamp: 'jmv 9/4/2014 15:53'!
+!FloatImage methodsFor: 'metrics' stamp: 'jmv 3/25/2015 09:48'!
 acutanceAt: delta aux: auxImage
-	"Note: auxImage extent must equal self extent"
+	"Note: auxImage extent must equal self extent
+		displacement is integer!!
+	"
 
 	auxImage fillWith: self cheaplyDisplaced: delta.
 	auxImage -= self.
@@ -1013,9 +1015,9 @@ asFormG: greenImage b: blueImage
 
 	^self asFormG: greenImage b: blueImage min: 0.0 max: 1.0! !
 
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 8/23/2014 23:46'!
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 3/25/2015 10:01'!
 average
-	^elements average! !
+	^self mean! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:21'!
 bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
@@ -1336,10 +1338,11 @@ crazyFactor _ 1.8892666638.
 
 	^centroidX @ centroidY! !
 
-!FloatImage methodsFor: 'copying' stamp: 'jmv 8/28/2014 14:38'!
+!FloatImage methodsFor: 'copying' stamp: 'jmv 3/25/2015 09:48'!
 cheapDisplacedBy: deltaPoint
 	"Answer a new image our contents, sort of displaced by aPoint.
-	Not really precise. Shift in the X direction wrap around the next or previous line!!"
+	Not really precise. Shift in the X direction wrap around the next or previous line!!
+			displacement is integer!!"
 	
 	| answer |
 	answer _ FloatImage width: width height: height.
@@ -1589,12 +1592,13 @@ fillWith: aFloatImage at: topLeft
 		(1 max: 1-dx) to: (width-dx min: aFloatImage width) do: [ :x |
 			self x: x+dx y: y+dy put: (aFloatImage x: x y: y) ]]! !
 
-!FloatImage methodsFor: 'copying' stamp: 'jmv 8/28/2014 14:39'!
+!FloatImage methodsFor: 'copying' stamp: 'jmv 3/25/2015 09:47'!
 fillWith: aFloatImage cheaplyDisplaced: deltaPoint
 	"Answer a new image our contents, sort of displaced by aPoint.
 	Not really precise. Shift in the X direction wrap around the next or previous line!!
 	Warning: Assumes 
 		aFloatImage extent = self extent
+		displacement is integer!!
 	"
 	
 	self fillWith: aFloatImage elements displacedBy: deltaPoint y*width + deltaPoint x! !
@@ -2083,9 +2087,9 @@ linearSpaceToGammaEncoded
 	"
 	self replaceValues: [ :i :j :v | Color linearTosRGBGamma: v ]! !
 
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 9/25/2012 15:28'!
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 3/25/2015 10:01'!
 mean
-	^self average! !
+	^elements mean! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 9/25/2012 15:33'!
 mean: aRect
@@ -2374,21 +2378,19 @@ shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrN
 				scaled x: x y: y put: v ]]].
 	^scaled! !
 
-!FloatImage methodsFor: 'noise generation' stamp: 'jmv 9/29/2014 17:06'!
+!FloatImage methodsFor: 'noise generation' stamp: 'jmv 4/6/2015 12:29'!
 simulatePhotonNoise
 	"Simulate photon noise, assuming we count electrons. See senders."
 
 	| random |
-	random _ NormalRandom new.
-	self replaceValues: [ :i :j :v | v sqrt * random next + v max: 0 ]! !
+	random _ NormalProbabilityDistribution new.
+	self replaceValues: [ :i :j :v | v sqrt * random nextRandomNumber + v max: 0 ]! !
 
-!FloatImage methodsFor: 'noise generation' stamp: 'jmv 8/23/2014 23:41'!
+!FloatImage methodsFor: 'noise generation' stamp: 'jmv 4/6/2015 12:30'!
 simulateReadNoise: electrons
 	"Simulate Read Noise"
 
-	| random |
-	random _ NormalRandom new.
-	self replaceValues: [ :i :j :v | electrons * random next + v ]! !
+	self addNormalNoise: electrons! !
 
 !FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 8/29/2014 10:58'!
 sqrt
@@ -2476,7 +2478,7 @@ xyForMax
 	^x@y
 ! !
 
-!FloatImage class methodsFor: 'experiments' stamp: 'jmv 9/8/2014 16:24'!
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 4/6/2015 12:52'!
 blurEstimationExperiment
 
 | answer aux bits blur blurred electronsPerDN estimation exposure f fullWell gap maxD maxDN original plotter r readNoiseElectrons sharpnessessX sharpnessessY xDer xDerDer xDerDerDer xDerDerDerDer zeros |
@@ -2491,7 +2493,7 @@ exposure _ 0.5.
 exposure _ 0.1.
 exposure _ 0.9.
 exposure _ 0.3.
-original _ DeblurExperiments exampleLinear.
+original _ FloatImage lena.
 original _ original copy: (1@1 extent: 256@128).
 aux _ FloatImage extent: original extent.
 f _ fullWell*exposure.
@@ -4147,7 +4149,7 @@ meanOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
 	mean *= (1.0/n).
 	^mean! !
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 1/26/2015 18:14'!
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 3/16/2015 12:50'!
 testRotations
 	"
 	FloatImage testRotations
@@ -4158,8 +4160,6 @@ testRotations
 	Transcript newLine.
 	'Test resampling algorithms without significant scaling.' print.
 	'The approach is to do successive rotations.'  print.
-	'BSpline gives outstanding results. Next comes BiCubic and Lanczos.' print.
-	'The extra cost of Lanczos doesnt seem worth in this case.' print.
 
 	c _ 140.	"Evidencia la falta de nitidez de BiCubic, y tambien cierta deformación geométrica de Lanczos. BSpline es impresionante."
 	c _ 27.
@@ -4168,6 +4168,7 @@ testRotations
 	xx _ 0.
 	original _ FloatImage lena.
 	original displayAt: 0@0.
+	Display getCanvas drawStringEmbossed: 'Original' at: xx@260 font: nil color: Color lightBrown.
 	e _ original extent.
 	t _ (AffineTransformation withRadians: a/180*Float pi ) scaledBy: 1/1.0.
 	t _ (AffineTransformation withTranslation: e // 2) composedWith:
@@ -4183,6 +4184,20 @@ testRotations
 	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
 	[ rotated _ rotated nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Nearest Neighbor, like CV_INTER_NN' at: xx@260 font: nil color: Color lightBrown.
+
+"
+	xx _ xx + 256.
+	rotated _ original.
+	c timesRepeat: [
+		rotated _ rotated nearestNeighborTransformedBy: t resultExtent: e.
+		rotated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
+	[ rotated _ rotated areaTransformedBy: t resultExtent: e ] timeToRun print.
+	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Area, like CV_INTER_AREA' at: xx@260 font: nil color: Color lightBrown.
+"
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4193,6 +4208,7 @@ testRotations
 	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
 	[ rotated _ rotated bilinearTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Bilinear, like CV_INTER_LINEAR' at: xx@260 font: nil color: Color lightBrown.
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4203,6 +4219,7 @@ testRotations
 	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
 	[ rotated _ rotated bicubicTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'BiCubic, like CV_INTER_CUBIC' at: xx@260 font: nil color: Color lightBrown.
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4213,6 +4230,7 @@ testRotations
 	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
 	[ rotated _ rotated lanczosTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Lanczos, like INTER_LANCZOS4' at: xx@260 font: nil color: Color lightBrown.
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4223,6 +4241,7 @@ testRotations
 	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
 	[ rotated _ rotated bSplineTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'BSpline, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown.
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4232,9 +4251,118 @@ testRotations
 	Smalltalk garbageCollect.
 	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
 	[ rotated _ rotated shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
-	rotated displayAt: xx@0.! !
+	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Shifted Linear, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown.
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 1/27/2015 13:35'!
+	'=== BSpline gives outstanding results. Next comes BiCubic and Lanczos.' print.
+	'=== The extra cost of Lanczos doesnt seem worth in this case.' print.! !
+
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 3/16/2015 12:49'!
+testTranslation
+	"
+	FloatImage testTranslation
+
+	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
+	"
+	| c e original translated t xx |
+	Transcript newLine.
+	'Test resampling algorithms without significant scaling.' print.
+	'The approach is to do successive translations.'  print.
+
+	c _ 140.	"Evidencia la falta de nitidez de BiCubic, y tambien cierta deformación geométrica de Lanczos. BSpline es impresionante."
+	c _ 27.
+
+	xx _ 0.
+	original _ FloatImage lena.
+	original displayAt: 0@0.
+	Display getCanvas drawStringEmbossed: 'Original' at: xx@260 font: nil color: Color lightBrown.
+	e _ original extent.
+	t _ AffineTransformation withTranslation: 15.0 / c @ (3.0/c).
+
+	xx _ xx + 256.
+	translated _ original.
+	c timesRepeat: [
+		translated _ translated nearestNeighborTransformedBy: t resultExtent: e.
+		translated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
+	[ translated _ translated nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
+	translated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Nearest Neighbor, like CV_INTER_NN' at: xx@260 font: nil color: Color lightBrown.
+
+"
+	xx _ xx + 256.
+	translated _ original.
+	c timesRepeat: [
+		translated _ translated nearestNeighborTransformedBy: t resultExtent: e.
+		translated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
+	[ translated _ translated areaTransformedBy: t resultExtent: e ] timeToRun print.
+	translated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Area, like CV_INTER_AREA' at: xx@260 font: nil color: Color lightBrown.
+"
+
+	xx _ xx + 256.
+	translated _ original.
+	c timesRepeat: [
+		translated _ translated bilinearTransformedBy: t resultExtent: e.
+		translated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
+	[ translated _ translated bilinearTransformedBy: t resultExtent: e ] timeToRun print.
+	translated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Bilinear, like CV_INTER_LINEAR' at: xx@260 font: nil color: Color lightBrown.
+
+	xx _ xx + 256.
+	translated _ original.
+	c timesRepeat: [
+		translated _ translated bicubicTransformedBy: t resultExtent: e.
+		translated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
+	[ translated _ translated bicubicTransformedBy: t resultExtent: e ] timeToRun print.
+	translated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'BiCubic, like CV_INTER_CUBIC' at: xx@260 font: nil color: Color lightBrown.
+
+	xx _ xx + 256.
+	translated _ original.
+	c timesRepeat: [
+		translated _ translated lanczosTransformedBy: t resultExtent: e.
+		translated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
+	[ translated _ translated lanczosTransformedBy: t resultExtent: e ] timeToRun print.
+	translated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Lanczos, like INTER_LANCZOS4' at: xx@260 font: nil color: Color lightBrown.
+
+	xx _ xx + 256.
+	translated _ original.
+	c timesRepeat: [
+		translated _ translated bSplineTransformedBy: t resultExtent: e.
+		translated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
+	[ translated _ translated bSplineTransformedBy: t resultExtent: e ] timeToRun print.
+	translated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'BSpline, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown.
+
+	xx _ xx + 256.
+	translated _ original.
+	c timesRepeat: [
+		translated _ translated shiftedLinearTransformedBy: t resultExtent: e.
+		translated displayAt: xx@0 ].
+	Smalltalk garbageCollect.
+	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
+	[ translated _ translated shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
+	translated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Shifted Linear, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown.
+
+	'=== BSpline gives outstanding results. Next comes BiCubic and Lanczos.' print.
+	'=== The extra cost of Lanczos doesnt seem worth in this case.' print.
+	'=== Nearest Neighbor and Shifted Linear dont give consistent results across different transformations' print.! !
+
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 3/16/2015 12:36'!
 testZoomIn
 	"
 	FloatImage testZoomIn
@@ -4244,15 +4372,13 @@ testZoomIn
 	| original rotated t xx e scale |
 	Transcript newLine.
 	'Test image enlarging algorithms.' print.
-	'BSpline gives best results. Next comes BiCubic and Lanczos.' print.
-	'The extra cost of Lanczos doesnt seem worth in this case.' print.
-	'Bilinear gives reasonable results in this case.' print.
 
 	scale _ 2.7.
 	xx _ 0.
 	original _ FloatImage lena copy: (100@100 extent: 100@100).
 	e _ (original extent * scale) rounded.
 	original displayAt: 0@0.
+	Display getCanvas drawStringEmbossed: 'Original' at: xx@270 font: nil color: Color lightBrown.
 	t _ AffineTransformation forImageZoom: scale.
 
 	xx _ xx + original  width.
@@ -4261,6 +4387,7 @@ testZoomIn
 	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
 	[ rotated _ rotated nearestNeighborTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Nearest Neighbor, like CV_INTER_NN' at: xx@270 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4268,6 +4395,7 @@ testZoomIn
 	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
 	[ rotated _ rotated areaTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Area, like CV_INTER_AREA' at: xx@270 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4275,6 +4403,7 @@ testZoomIn
 	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
 	[ rotated _ rotated bilinearTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Bilinear, like CV_INTER_LINEAR' at: xx@270 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4282,6 +4411,7 @@ testZoomIn
 	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
 	[ rotated _ rotated bicubicTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'BiCubic, like CV_INTER_CUBIC' at: xx@270 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4289,6 +4419,7 @@ testZoomIn
 	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
 	[ rotated _ rotated lanczosTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Lanczos, like INTER_LANCZOS4' at: xx@270 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4296,15 +4427,21 @@ testZoomIn
 	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
 	[ rotated _ rotated bSplineTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'BSpline, unavailable in OpenCV' at: xx@270 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
 	Smalltalk garbageCollect.
 	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
 	[ rotated _ rotated shiftedLinearTransformedBy: t resultExtent: nil ] timeToRun print.
-	rotated displayAt: xx@0.! !
+	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Shifted Linear, unavailable in OpenCV' at: xx@270 font: nil color: Color lightBrown.
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 1/27/2015 13:25'!
+	'=== BSpline gives best results. Next comes BiCubic and Lanczos.' print.
+	'=== The extra cost of Lanczos doesnt seem worth in this case.' print.
+	'=== Bilinear gives reasonable results in this case.' print.! !
+
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 3/16/2015 12:35'!
 testZoomOut
 	"
 	FloatImage testZoomOut
@@ -4314,7 +4451,6 @@ testZoomOut
 	| original rotated t xx e scale |
 	Transcript newLine.
 	'Test subsampling algorithms.' print.
-	'Lanczos gives best avoidance of aliasing effects. Area is really good, and very very cheap.' print.
 
 	scale _ 0.71.
 	scale _ 0.371.
@@ -4324,6 +4460,7 @@ testZoomOut
 	original _ FloatImage lena.
 	e _ (original extent * scale) rounded.
 	original displayAt: 0@0.
+	Display getCanvas drawStringEmbossed: 'Original' at: xx@270 font: nil color: Color lightBrown.
 	t _ AffineTransformation forImageZoom: scale.
 
 	xx _ xx + original  width.
@@ -4332,6 +4469,7 @@ testZoomOut
 	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
 	[ rotated _ rotated nearestNeighborTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Nearest Neighbor, like CV_INTER_NN' at: xx@70 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4339,6 +4477,7 @@ testZoomOut
 	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
 	[ rotated _ rotated bilinearTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Bilinear, like CV_INTER_LINEAR' at: xx@85 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4346,6 +4485,7 @@ testZoomOut
 	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
 	[ rotated _ rotated bicubicTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'BiCubic, like CV_INTER_CUBIC' at: xx@100 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4353,6 +4493,7 @@ testZoomOut
 	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
 	[ rotated _ rotated areaTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Area, like CV_INTER_AREA' at: xx@115 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4360,6 +4501,7 @@ testZoomOut
 	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
 	[ rotated _ rotated lanczosTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Lanczos, like INTER_LANCZOS4' at: xx@130 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
@@ -4367,13 +4509,17 @@ testZoomOut
 	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
 	[ rotated _ rotated bSplineTransformedBy: t resultExtent: nil ] timeToRun print.
 	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'BSpline, unavailable in OpenCV' at: xx@145 font: nil color: Color lightBrown.
 
 	xx _ xx + e x.
 	rotated _ original.
 	Smalltalk garbageCollect.
 	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
 	[ rotated _ rotated shiftedLinearTransformedBy: t resultExtent: nil ] timeToRun print.
-	rotated displayAt: xx@0.! !
+	rotated displayAt: xx@0.
+	Display getCanvas drawStringEmbossed: 'Shifted Linear, unavailable in OpenCV' at: xx@160 font: nil color: Color lightBrown.
+	
+	'=== Lanczos gives best avoidance of aliasing effects. Area is really good, and very very cheap.' print.! !
 
 !IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:37'!
 addVoronoiCellX: seedX y: seedY
@@ -5960,9 +6106,12 @@ initialize: anInteger
 
 	tallies _ WordArray new: anInteger! !
 
-!ImageHistogram methodsFor: 'aux' stamp: 'jmv 7/24/2012 20:26'!
+!ImageHistogram methodsFor: 'aux' stamp: 'jmv 4/6/2015 11:39'!
 plot
-FFT new plot: tallies in: (10@10 extent: 768@400)! !
+	| rect |
+	rect _ 10@10 extent: 768@400.
+	Display fillWhite: rect; border: (rect expandBy: 2) width: 2.
+	FFT new plot: tallies in: rect color: Color black min: 0.0 max: tallies max! !
 
 !ImageHistogram methodsFor: 'aux' stamp: 'jmv 7/26/2012 15:49'!
 plotIn: rect color: aColor min: min max: max
