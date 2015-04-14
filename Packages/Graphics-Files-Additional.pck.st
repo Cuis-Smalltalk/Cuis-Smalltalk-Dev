@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2155] on 12 January 2015 at 11:18:46.697758 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2232] on 9 April 2015 at 3:35:16.265159 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 3!
+!provides: 'Graphics-Files-Additional' 1 5!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1488,18 +1488,22 @@ binaryStream: aPositionableStream
 		on: aPositionableStream 
 		bigEndian: bigEndian.! !
 
-!TIFFReadWriter methodsFor: 'accessing' stamp: 'jmv 12/21/2013 09:29'!
+!TIFFReadWriter methodsFor: 'accessing' stamp: 'jmv 4/8/2015 15:39'!
 nextImage
 	"Decode an image on my stream and answer the image as a Form."
-	| reader |
-	reader _ TIFFReader onTiffStream: stream.
-	^ reader readForm! !
+	^ self reader readForm! !
 
 !TIFFReadWriter methodsFor: 'accessing' stamp: 'mrm 7/22/2001 18:46'!
 nextPutImage: aForm
 	"Encode aForm into TIFF form and write on my stream."
 
 	^self error: 'Not Yet Implemented.'.! !
+
+!TIFFReadWriter methodsFor: 'accessing' stamp: 'jmv 4/8/2015 15:39'!
+reader
+	| reader |
+	reader _ TIFFReader onTiffStream: stream.
+	^ reader! !
 
 !TIFFReadWriter methodsFor: 'testing' stamp: 'mrm 7/22/2001 19:07'!
 understandsImageFormat
@@ -1587,12 +1591,12 @@ readByteValuesFrom: aTIFFStream
 		ifFalse: [self readIndirect: count bytesFrom: aTIFFStream.].
 ! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:19'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 4/7/2015 16:32'!
 readImmediate: count bytesFrom: aTIFFStream
 	"Put the next count bytes in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 4."
 	| position |
 	position _ aTIFFStream position.
-	(1 to: count) do: [:i | values at: i put: aTIFFStream nextByte].
+	1 to: count do: [ :i | values at: i put: aTIFFStream nextByte].
 	aTIFFStream position: position + 4.
 	! !
 
@@ -1605,32 +1609,32 @@ readImmediate: count charsFrom: aTIFFStream
 	aTIFFStream position: position + 4.
 	^ result.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:41'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 4/7/2015 16:33'!
 readImmediate: count longsFrom: aTIFFStream
 	"Put the next count 32-bit longs in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 1."
 	| position |
 	position _ aTIFFStream position.
-	(1 to: count) do: [:i | values at: i put: aTIFFStream nextLong].
+	1 to: count do: [:i | values at: i put: aTIFFStream nextLong].
 	aTIFFStream position: position + 4.
 	! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:37'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 4/7/2015 16:33'!
 readImmediate: count shortsFrom: aTIFFStream
 	"Put the next count 16-bit shorts in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position. Count must be <= 2."
 	| position |
 	position _ aTIFFStream position.
-	(1 to: count) do: [:i | values at: i put: aTIFFStream nextShort].
+	1 to: count do: [:i | values at: i put: aTIFFStream nextShort].
 	aTIFFStream position: position + 4.
 	! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:23'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 4/7/2015 16:33'!
 readIndirect: count bytesFrom: aTIFFStream
 	"Read a long offset from aTIFFStream, then read count bytes from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
 	offset _ aTIFFStream nextLong.
 	position _ aTIFFStream position.
 	aTIFFStream position: offset.
-	(1 to: count) do: [:i | values at: i put: aTIFFStream nextByte].
+	1 to: count do: [:i | values at: i put: aTIFFStream nextByte].
 	aTIFFStream position: position.! !
 
 !TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:59'!
@@ -1644,34 +1648,34 @@ readIndirect: count charsFrom: aTIFFStream
 	aTIFFStream position: position.
 	^ result.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:42'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 4/7/2015 16:33'!
 readIndirect: count longsFrom: aTIFFStream
 	"Read a 32-bit offset from aTIFFStream, then read count 32-bit longs from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
 	offset _ aTIFFStream nextLong.
 	position _ aTIFFStream position.
 	aTIFFStream position: offset.
-	(1 to: count) do: [:i | values at: i put: aTIFFStream nextLong].
+	1 to: count do: [:i | values at: i put: aTIFFStream nextLong].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:47'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 4/7/2015 16:33'!
 readIndirect: count rationalsFrom: aTIFFStream
 	"Read a 32-bit offset from aTIFFStream, then read count 32-bit longs from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
 	offset _ aTIFFStream nextLong.
 	position _ aTIFFStream position.
 	aTIFFStream position: offset.
-	(1 to: count) do: [:i | values at: i put: (aTIFFStream nextLong / aTIFFStream nextLong)].
+	1 to: count do: [:i | values at: i put: (aTIFFStream nextLong / aTIFFStream nextLong)].
 	aTIFFStream position: position.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:27'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 4/7/2015 16:33'!
 readIndirect: count shortsFrom: aTIFFStream
 	"Read a long offset from aTIFFStream, then read count 16-bit shorts from that offset in aTIFFStream into my values array, starting from values at: 1. Leave aTIFFStream positioned four bytes past its starting position."
 	| offset position |
 	offset _ aTIFFStream nextLong.
 	position _ aTIFFStream position.
 	aTIFFStream position: offset.
-	(1 to: count) do: [:i | values at: i put: aTIFFStream nextShort].
+	1 to: count do: [:i | values at: i put: aTIFFStream nextShort].
 	aTIFFStream position: position.! !
 
 !TIFFField methodsFor: 'private-value reading' stamp: 'mrm 7/27/2001 16:40'!
@@ -1940,7 +1944,7 @@ positionStreamToStripNum: anInteger
 	stream position: ((structure at: #StripOffsets) at: anInteger).
 	stream newStrip! !
 
-!TIFFReader methodsFor: 'reading' stamp: 'jmv 1/9/2015 12:26'!
+!TIFFReader methodsFor: 'reading' stamp: 'jmv 4/8/2015 11:14'!
 readForm
 	"Answer a Form created from the data in my stream and structure."
 	| result bps |
@@ -1950,10 +1954,18 @@ readForm
 		result _ Form 
 				extent: self extent
 				depth: 32. "32 bits form with RGB or RGBA"
-		self
-			readRGB8PixelsInto: result
-			readAlpha: (structure at: #SamplesPerPixel) = 4
-			horizontalPredictor: ((structure at: #Predictor) = 2) ].
+		
+		((structure at: #PlanarConfiguration) = 1)
+		ifTrue: [ 	"chunky" 
+			self
+				readRGB8PixelsInto: result
+				readAlpha: (structure at: #SamplesPerPixel) = 4
+				horizontalPredictor: ((structure at: #Predictor) = 2) ]
+		ifFalse: [ 	"planar"
+			self
+				readPlanarRGB8PixelsInto: result
+				readAlpha: (structure at: #SamplesPerPixel) = 4
+				horizontalPredictor: (structure at: #Predictor) = 2 ]].
 	
 	(structure at: #SamplesPerPixel) = 1 ifTrue: [
 		bps _ (structure at: #BitsPerSample) at: 1.
@@ -1974,7 +1986,7 @@ readForm
 
 	^ result! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 1/9/2015 12:24'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 4/7/2015 16:33'!
 readGray16PixelsInto: aFloatMatrix
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Handles 16 bit pixels on source, float as destination."
@@ -1985,7 +1997,7 @@ readGray16PixelsInto: aFloatMatrix
 	pixelsPerStrip _ aFloatMatrix extent x * (structure at: #RowsPerStrip).
 	currentStripNum _ 0.
 
-	(1 to: totalPixels) do: [ :pixNum |
+	1 to: totalPixels do: [ :pixNum |
 		(pixNum-1 \\ aFloatMatrix width = 0) ifTrue: [
 			(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
 				"Time to go to next strip"
@@ -1995,7 +2007,7 @@ readGray16PixelsInto: aFloatMatrix
 		pixel _ stream nextShort / 65535.0.
 		floats at: pixNum put: pixel ]! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 1/9/2015 12:25'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 4/7/2015 16:34'!
 readGray8PixelsInto: aColorForm horizontalPredictor: useHorizontalPredictor
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Only handles 8-bit gray pixels on both source and destination."
@@ -2008,7 +2020,7 @@ readGray8PixelsInto: aColorForm horizontalPredictor: useHorizontalPredictor
 	row _ -1.
 	column _ 0.
 	bytesPerRow _ aColorForm width + 3 // 4 * 4.
-	(1 to: totalPixels) do: [ :pixNum |
+	1 to: totalPixels do: [ :pixNum |
 		(pixNum-1 \\ aColorForm width = 0) ifTrue: [
 			row _ row + 1.
 			column _ 0.
@@ -2030,7 +2042,45 @@ readGray8PixelsInto: aColorForm horizontalPredictor: useHorizontalPredictor
 		pixel _ g.
 		bits byteAt: (row *  bytesPerRow) + column put: pixel ]! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 1/9/2015 12:25'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 4/8/2015 11:54'!
+readPlanarRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalPredictor
+	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
+	Handles 24 or 32-bit pixels on source, and destination of 32 bits per pixel."
+
+	| bits totalPixels pixelsPerStrip currentStripNum pixel component componentByte shifts | 
+	bits _ a32BitForm bits.
+	totalPixels _ bits size.
+	pixelsPerStrip _ a32BitForm extent x * (structure at: #RowsPerStrip).
+	currentStripNum _ 0.
+
+	shifts _ doReadAlpha
+		ifTrue: [ #( 24 16 8 0 ) ]
+		ifFalse: [ #( 16 8 0 ) ].
+
+	shifts do: [ :shift |
+		1 to: totalPixels do: [ :pixNum |
+			(pixNum-1 \\ a32BitForm width = 0) ifTrue: [
+				(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
+					"Time to go to next strip"
+					currentStripNum _ currentStripNum + 1.
+					self positionStreamToStripNum: currentStripNum ].
+				useHorizontalPredictor ifTrue: [
+					component _ 0 ]].
+
+			componentByte _ stream nextByteInBody.
+			component _ useHorizontalPredictor
+				ifTrue: [ (component + componentByte) bitAnd: 255 ]
+				ifFalse: [ componentByte ].
+
+			pixel _ component << shift + (bits at: pixNum).
+			bits at: pixNum put: pixel ]].
+
+	"Alpha set at the end, to avoid LargIntegers in the code above
+	(a32BitForm came with all zeros, see senders)"
+	doReadAlpha ifFalse: [
+		a32BitForm makeAllPixelsOpaque ]! !
+
+!TIFFReader methodsFor: 'private' stamp: 'jmv 4/7/2015 16:34'!
 readRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalPredictor
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Handles 24 or 32-bit pixels on source, and destination of 32 bits per pixel."
@@ -2042,7 +2092,7 @@ readRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHo
 	currentStripNum _ 0.
 	a _ 255.
 
-	(1 to: totalPixels) do: [ :pixNum |
+	1 to: totalPixels do: [ :pixNum |
 		(pixNum-1 \\ a32BitForm width = 0) ifTrue: [
 			(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
 				"Time to go to next strip"
@@ -2081,7 +2131,7 @@ tiffStream: aTIFFStream
 	structure _ TIFFStructure parseFrom: stream.
 ! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 1/9/2015 08:10'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 4/8/2015 11:13'!
 validateTIFFType
 	"Examine my structure to see if it represents a TIFF that I know how to read. 
 	At the moment, I can read only
@@ -2106,12 +2156,9 @@ validateTIFFType
 		ifFalse: [self error: 'Cannot read, this TIFF has a FillOrder other than 1.'].
 	((structure at: #Orientation) = 1) 
 		ifFalse: [self error: 'Cannot read, this TIFF has an Orientation other than 1.'].
-	((structure at: #PlanarConfiguration) = 1) 
-		ifFalse: [self error: 'Cannot read, this TIFF is planar, not chunky.'].
 	bpsArray _ structure at: #BitsPerSample.
 	((#(1 3 4) includes: bpsArray size) and: [ (bpsArray allSatisfy: [ :d | d = 8 ]) or: [bpsArray = #(16)]])
-		ifFalse: [self error: 'Cannot read, this TIFF is not a Gray, RGB or RGBA TIFF with 8bpp or Gray 16bpp.'].
-! !
+		ifFalse: [self error: 'Cannot read, this TIFF is not a Gray, RGB or RGBA TIFF with 8bpp or Gray 16bpp.']! !
 
 !TIFFReader class methodsFor: 'instance creation' stamp: 'jmv 12/21/2013 09:28'!
 onTiffStream: aTIFFStream

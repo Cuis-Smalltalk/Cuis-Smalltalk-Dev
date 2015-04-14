@@ -1,7 +1,8 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #1978] on 7 April 2015 at 2:23:26.360998 pm'!
 'Requiring this package  loads all Cuis core packages'!
 !requires: 'Cuis-Base' 42 1960 nil!
-!provides: 'Core-Packages' 1 2!
+!provides: 'Core-Packages' 1 3!
+!requires: 'TerseGuide' 1 0 nil!
 !requires: 'Theme-Themes' 1 1 nil!
 !requires: 'JSON' 1 3 nil!
 !requires: 'FFITests' 1 2 nil!

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2226] on 6 April 2015 at 12:50:03.834851 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2237] on 13 April 2015 at 12:38:45.641527 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Probabilities-and-Statistics' 1 3!
+!provides: 'Probabilities-and-Statistics' 1 4!
 !classDefinition: #Histogram category: #'Probabilities-and-Statistics'!
 Object subclass: #Histogram
 	instanceVariableNames: 'tallies extraBinsForClampedValues lowBinCenter highBinCenter'
@@ -90,6 +90,17 @@ h _ Histogram binCount: 500 minValue: 0 maxValue: 20.
 1000000 timesRepeat: [ h addValue: r nextRandomNumber  ].
 h plot.!
 
+!Histogram methodsFor: 'building' stamp: 'jmv 4/10/2015 16:12'!
+accumulate
+
+	2 to: tallies size do: [ :i |
+		tallies at: i put: (tallies at: i) + (tallies at: i-1) ]! !
+
+!Histogram methodsFor: 'building' stamp: 'jmv 4/10/2015 16:13'!
+accumulated
+
+	^self copy accumulate! !
+
 !Histogram methodsFor: 'building' stamp: 'jmv 4/6/2015 11:37'!
 addValue: aNumber
 
@@ -97,29 +108,33 @@ addValue: aNumber
 	i _ self indexFor: aNumber.
 	tallies at: i put: (tallies at: i) + 1! !
 
+!Histogram methodsFor: 'accessing' stamp: 'jmv 4/10/2015 16:11'!
+countAt: value
+	^tallies at: (self indexFor: value)! !
+
 !Histogram methodsFor: 'private' stamp: 'jmv 4/6/2015 11:43'!
 indexFor: aValue
 	| slotIndex |
 	slotIndex _ ((aValue - lowBinCenter / (highBinCenter -lowBinCenter )) * (tallies size-1)) rounded + 1.
 	^slotIndex min: tallies size max: 1.! !
 
-!Histogram methodsFor: 'aux' stamp: 'jmv 4/6/2015 12:49'!
+!Histogram methodsFor: 'aux' stamp: 'jmv 4/10/2015 15:45'!
 plot
 	| rect |
 	rect _ 10@10 extent: 768@400.
 	Display fillWhite: rect; border: (rect expandBy: 2) width: 2.
-	self plot: tallies in: rect color: Color black min: 0.0 max: tallies max! !
+	self plotIn: rect color: Color black min: 0.0 max: tallies max! !
 
-!Histogram methodsFor: 'aux' stamp: 'jmv 4/6/2015 12:49'!
-plot: samples in: rect color: aColor min: min max: max
+!Histogram methodsFor: 'aux' stamp: 'jmv 4/10/2015 15:44'!
+plotIn: rect color: aColor min: min max: max
 	"Throw-away code just to check out a couple of examples"
 	| x dx pen y |
 	pen _ Pen new.
 	pen color: aColor.
 	pen up.
 	x _ rect left.
-	dx _ rect width asFloat / (samples size-1).
-	samples do: [ :v |
+	dx _ rect width asFloat / (tallies size-1).
+	tallies do: [ :v |
 		y _ (max-v) / (max-min) * rect height asFloat.
 		y _ y min: rect height.
 		y _ y max: 0.
@@ -128,6 +143,10 @@ plot: samples in: rect color: aColor min: min max: max
 		x _ x + dx].
 	max printString displayOn: Display at: (x+2) @ (rect top-9).
 	min printString displayOn: Display at: (x+2) @ (rect bottom - 9)! !
+
+!Histogram methodsFor: 'copying' stamp: 'jmv 4/10/2015 16:16'!
+postCopy
+	tallies _ tallies copy! !
 
 !Histogram methodsFor: 'private' stamp: 'jmv 4/6/2015 11:18'!
 regularTalliesCount
