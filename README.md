@@ -42,7 +42,7 @@ sudo apt-get update
 sudo aptitude install ia32-libs
 ```
 
-Now you can start Cuis by dragging the Cuis image onto the VM. The simplest is to have the VM in the same directory as the Cuis image. On Linux you can also do:
+The simplest is to have the VM in the same directory as the Cuis image. Now you can start Cuis by dragging the Cuis image onto the VM. On Linux you can also do:
 ```
 ./squeak Cuis4.2-xxxx.image
 ```
