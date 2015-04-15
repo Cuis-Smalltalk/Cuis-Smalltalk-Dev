@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2237] on 13 April 2015 at 12:38:45.641527 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2239] on 14 April 2015 at 2:40:35.681135 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Probabilities-and-Statistics' 1 4!
+!provides: 'Probabilities-and-Statistics' 1 5!
 !classDefinition: #Histogram category: #'Probabilities-and-Statistics'!
 Object subclass: #Histogram
 	instanceVariableNames: 'tallies extraBinsForClampedValues lowBinCenter highBinCenter'
@@ -124,6 +124,10 @@ plot
 	rect _ 10@10 extent: 768@400.
 	Display fillWhite: rect; border: (rect expandBy: 2) width: 2.
 	self plotIn: rect color: Color black min: 0.0 max: tallies max! !
+
+!Histogram methodsFor: 'aux' stamp: 'jmv 4/14/2015 13:01'!
+plotIn: rect color: aColor
+	self plotIn: rect color: aColor min: 0.0 max: tallies max! !
 
 !Histogram methodsFor: 'aux' stamp: 'jmv 4/10/2015 15:44'!
 plotIn: rect color: aColor min: min max: max

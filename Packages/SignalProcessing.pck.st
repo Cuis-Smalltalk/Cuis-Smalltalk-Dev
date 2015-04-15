@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2237] on 13 April 2015 at 12:38:47.317527 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2239] on 14 April 2015 at 2:40:06.860135 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 22!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 23!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
@@ -879,84 +879,23 @@ acutanceAt: delta aux: auxImage
 				ifFalse: [0]].
 	^auxImage mean! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 8/23/2014 23:56'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/14/2015 11:08'!
 addFrom8BitColorForm: aForm
-	"Assume that aForm has a colormap with 256 gray levels, going from black to white.
+	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file"
-"
-Era mejor bitOr: o + ?
-"
 
-	|  word lineWidth formHeight formWidth formLineWidth i1 i2 |
-	formHeight _ aForm extent y.
-	formWidth _ aForm extent x.
-	width \\ 4 = 0 ifFalse: [ self error: 'only for images with width multiple of 4' ].
-	lineWidth _ width / 4.
-	formWidth \\ 4 = 0 ifFalse: [ self error: 'only for forms with width multiple of 4' ].
-	formLineWidth _ formWidth / 4.
+	self with8BitColorForm: aForm do: [ :i2 :v |
+		elements at: i2 put: v + (elements at: i2) ]! !
 
-	1 to: (height min: formHeight) do: [ :y |
-		i1 _ y-1 * formLineWidth.
-		i2 _ y-1 * width.
-		1 to: (lineWidth min: formLineWidth) do: [ :x |
-			i1 _ i1 + 1.
-			word _ aForm bits at: i1.
-			i2 _ i2 + 1.
-			elements
-				at: i2
-				put: ((word bitShift: -24) bitAnd: 16rFF) / 255.0 + (elements at: i2).
-			i2 _ i2 + 1.
-			elements
-				at: i2
-				put: ((word bitShift: -16) bitAnd: 16rFF) / 255.0 + (elements at: i2).
-			i2 _ i2 + 1.
-			elements
-				at: i2
-				put: ((word bitShift: -8) bitAnd: 16rFF) / 255.0 + (elements at: i2).
-			i2 _ i2 + 1.
-			elements
-				at: i2
-				put: (word bitAnd: 16rFF) / 255.0 + (elements at: i2).
-		]
-	]! !
-
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 8/23/2014 23:45'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/14/2015 11:08'!
 addToStDevFrom8BitColorForm: aForm meanImage: meanImage
-	"Assume that aForm has a colormap with 256 gray levels, going from black to white.
+	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file"
-"
-Era mejor bitOr: o + ?
-"
 
-	|  word lineWidth formHeight formWidth formLineWidth i1 i2 v meanValues |
-	formHeight _ aForm extent y.
-	formWidth _ aForm extent x.
-	width \\ 4 = 0 ifFalse: [ self error: 'only for images with width multiple of 4' ].
-	lineWidth _ width / 4.
-	formWidth \\ 4 = 0 ifFalse: [ self error: 'only for forms with width multiple of 4' ].
-	formLineWidth _ formWidth / 4.
+	|  meanValues |
 	meanValues _ meanImage elements.
-
-	1 to: (height min: formHeight) do: [ :y |
-		i1 _ y-1 * formLineWidth.
-		i2 _ y-1 * width.
-		1 to: (lineWidth min: formLineWidth) do: [ :x |
-			i1 _ i1 + 1.
-			word _ aForm bits at: i1.
-			i2 _ i2 + 1.
-			v _ (((word bitShift: -24) bitAnd: 16rFF) / 255.0 - (meanValues at: i2)) squared + (elements at: i2).
-			elements at: i2 put: v.
-			i2 _ i2 + 1.
-			v _ (((word bitShift: -16) bitAnd: 16rFF) / 255.0 - (meanValues at: i2)) squared + (elements at: i2).
-			elements at: i2 put: v.
-			i2 _ i2 + 1.
-			v _ (((word bitShift: -8) bitAnd: 16rFF) / 255.0 - (meanValues at: i2)) squared + (elements at: i2).
-			elements at: i2 put: v.
-			i2 _ i2 + 1.
-			v _ ((word bitAnd: 16rFF) / 255.0 - (meanValues at: i2)) squared + (elements at: i2).
-			elements at: i2 put: v.
-		]
-	]! !
+	self with8BitColorForm: aForm do: [ :i2 :v |
+		elements at: i2 put: (v - (meanValues at: i2)) squared + (elements at: i2) ]! !
 
 !FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 15:04'!
 areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
@@ -1572,38 +1511,13 @@ fillFrom32BitColorForm: aForm component: aSymbol
 		]
 	]! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 8/23/2014 23:47'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/14/2015 11:08'!
 fillFrom8BitColorForm: aForm
-	"Assume that aForm has a colormap with 256 gray levels, going from black to white.
+	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file"
-"
-Era mejor bitOr: o + ?
-"
 
-	|  word lineWidth formHeight formWidth formLineWidth i1 i2 |
-	formHeight _ aForm extent y.
-	formWidth _ aForm extent x.
-	width \\ 4 = 0 ifFalse: [ self error: 'only for images with width multiple of 4' ].
-	lineWidth _ width / 4.
-	formWidth \\ 4 = 0 ifFalse: [ self error: 'only for forms with width multiple of 4' ].
-	formLineWidth _ formWidth / 4.
-
-	1 to: (height min: formHeight) do: [ :y |
-		i1 _ y-1 * formLineWidth.
-		i2 _ y-1 * width.
-		1 to: (lineWidth min: formLineWidth) do: [ :x |
-			i1 _ i1 + 1.
-			word _ aForm bits at: i1.
-			i2 _ i2 + 1.
-			elements at: i2 put: ((word bitShift: -24) bitAnd: 16rFF) / 255.0.
-			i2 _ i2 + 1.
-			elements at: i2 put: ((word bitShift: -16) bitAnd: 16rFF) / 255.0.
-			i2 _ i2 + 1.
-			elements at: i2 put: ((word bitShift: -8) bitAnd: 16rFF) / 255.0.
-			i2 _ i2 + 1.
-			elements at: i2 put: (word bitAnd: 16rFF) / 255.0.
-		]
-	]! !
+	self with8BitColorForm: aForm do: [ :i2 :v |
+		elements at: i2 put: v ]! !
 
 !FloatImage methodsFor: 'operations' stamp: 'jmv 9/1/2014 14:27'!
 fillRect: aRectangle with: aFloat
@@ -2443,6 +2357,57 @@ validateSameSize: aFloatImage
 
 	(height = aFloatImage height and: [ width = aFloatImage width ]) ifFalse: [
 		self error: 'Receiver and argument should be of the same size' ]! !
+
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/14/2015 12:08'!
+with8BitColorForm: aForm do: aBlock
+	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
+	This is what we get, for instance, when reading a gray 8 bit bmp file.
+	Don't assume anything about the color palette."
+
+	|  word aFormHeight aFormWidth i2 aFormBits aFormColorsReds c wholeLineWords aFormTotalLineWords loseElementsAtRight ii1 lineBase |
+	aFormHeight _ aForm extent y.
+	aFormWidth _ aForm extent x.
+	
+	wholeLineWords _ (width min: aFormWidth) // 4.
+	loseElementsAtRight _ (width min: aFormWidth) \\ 4.
+	
+	aFormTotalLineWords _ aFormWidth-1 // 4+1.
+	aFormBits _ aForm bits.
+	aFormColorsReds _ aForm colors collect: [ :each | each blue ].
+
+	1 to: (height min: aFormHeight) do: [ :y |
+		i2 _ y-1 * width.
+		lineBase _ y-1 * aFormTotalLineWords.
+		lineBase+1 to: lineBase+wholeLineWords do: [ :i1 |
+			word _ aFormBits at: i1.
+			i2 _ i2 + 1.
+			c _ word bitShift: -24.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+			i2 _ i2 + 1.
+			c _ (word bitShift: -16) bitAnd: 16rFF.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+			i2 _ i2 + 1.
+			c _ (word bitShift: -8) bitAnd: 16rFF.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+			i2 _ i2 + 1.
+			c _ word bitAnd: 16rFF.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+		].
+		loseElementsAtRight > 0 ifTrue: [
+			ii1 _ lineBase+wholeLineWords + 1.
+			word _ aFormBits at: ii1.
+			i2 _ i2 + 1.
+			c _ word bitShift: -24.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+			loseElementsAtRight > 1 ifTrue: [
+				i2 _ i2 + 1.
+				c _ (word bitShift: -16) bitAnd: 16rFF.
+				aBlock value: i2 value: (aFormColorsReds at: c+1).
+				loseElementsAtRight = 3 ifTrue: [
+					i2 _ i2 + 1.
+					c _ (word bitShift: -8) bitAnd: 16rFF.
+					aBlock value: i2 value: (aFormColorsReds at: c+1) ]]].
+	]! !
 
 !FloatImage methodsFor: 'operations' stamp: 'jmv 8/23/2014 23:44'!
 with: anotherImage replaceValues: aBlock
