@@ -33,13 +33,19 @@ To get started with Cuis you need to do the following:
 
 1. Download Cuis by downloading and unzipping this repo.
  
-2. Get a VM for your platform. You can run Cuis with Squeak's official Virtual Machines from http://www.squeakvm.org or the faster Cog VMs from [Eliot Miranda's site](http://www.mirandabanda.org/files/Cog/VM/). (Please use the non-MT variants of Eliot's latest release.) If you are on Linux, you might need to install 32-bit libraries. The following was tested on Debian Jessie, and should work on Ubuntu and other Debian derivatives:
-	sudo dpkg --add-architecture i386
-	sudo apt-get update
-	sudo aptitude install ia32-libs
+2. Get a VM for your platform. For Linux, MacOs and Windows, the recommended is the latest Cog VMs from [Eliot Miranda's site](http://www.mirandabanda.org/files/Cog/VM/). (Please use the non-HT variants.) For other platforms, you can use Squeak's official Virtual Machines from http://www.squeakvm.org or build one yourself from sources.
+
+If you are on Linux, you might need to install 32-bit libraries. The following was tested on Debian Jessie, and should work on Ubuntu and other Debian derivatives:
+```
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo aptitude install ia32-libs
+```
 
 3. Start Cuis by dragging the Cuis image onto the VM. The simplest is to have the VM in the same directory as the Cuis image. On Linux you can also do:
-	./squeak Cuis4.2-xxxx.image (
+```
+./squeak Cuis4.2-xxxx.image
+```
 
 As an alternative you can use the following in a shell if you have Git installed and configured:
 ```
