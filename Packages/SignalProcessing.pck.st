@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2239] on 14 April 2015 at 2:40:06.860135 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2243] on 17 April 2015 at 6:58:34.549076 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 23!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'SignalProcessing' 1 24!
 !requires: 'Sound' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -436,18 +436,6 @@ sonogramMorph: height from: start to: stop nPoints: nPoints
 	
 ! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/8/2014 13:04'!
-clearHighFftFrequencies
-	"Remove high FFT frequencies. Assume I was the result of some FFT.
-	Before using this, reevaluate assumtions, etc. This is not a good filter by most measures..."
-	| cutoff |
-	cutoff _ 0.5.
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |	
-				self i: i j: j put:
-					(self i: i j: j) *
-						(self lowPassGaussianI: i j: j sigmaY: cutoff sigmaX: cutoff) ]]! !
-
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 10:12'!
 convolutionLinearWith: aForm
 	"Linear convolution. Warning: Slow.
@@ -543,37 +531,56 @@ fftRealForward: forward
 	transform realData: self.
 	transform transformForward: forward! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 15:33'!
-fillLowPassGaussianSigmaY: sigmaY sigmaX: sigmaX
-	"
-	| f |
-	f _ FloatMatrix height: 100 width: 100.
-	f fillLowPassGaussianSigmaY: 0.2 sigmaX: 0.5.
-	f _ f moveOriginToCenter: true.
-	f asForm display
-	"
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |	
-				self i: i j: j put:
-					(self lowPassGaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX)]]! !
-
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/8/2015 15:05'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/16/2015 12:27'!
 fillWithGaussianKernelSigmaY: sigmaY sigmaX: sigmaX
 	"
 	Fill the receiver with a gaussian function. sigmaX and sigmaY are the standard deviation of the gaussian, measured in elements (i.e. 'pixels').
 	Origin is at topLeft, appropriate for doing a convolution.
 	#moveOriginToCenter to make it more confortable to see.
+
 	| f |
-	f _ FloatMatrix height: 100 width: 100.
-	f fillWithGaussianKernelSigmaY: 2 sigmaX: 12.5.
+	f _ FloatMatrix height: 16 width: 16.
+	f fillWithGaussianKernelSigmaY: 1 sigmaX: 1.
 	f _ f moveOriginToCenter: true.
 	f asForm display.
-	FFT new plot: (f i: 50) elements in: (0@0 extent: 200@100) color: Color red min: 0 max: 1
+	FFT new plot: (f i: f height//2+1) elements in: (0@0 extent: 200@100) color: Color red min: 0 max: 1
+
+	| f |
+	f _ FloatMatrix height: 1000 width: 1000.
+	f fillWithGaussianKernelSigmaY: 22 sigmaX: 12.5.
+	f _ f moveOriginToCenter: true.
+	f asForm display.
+	FFT new plot: (f i: f height//2+1) elements in: (0@0 extent: 200@100) color: Color red min: 0 max: 1
 	"
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |	
-				self i: i j: j put:
-					(self gaussianKernelI: i j: j sigmaY: sigmaY sigmaX: sigmaX)]]! !
+	| supportH supportW v |
+	"15 sigmas is enough for the exponential function to underflow in 32 bit Float
+	(and gives a big performance gain compared with filling everything with zeros)"
+	supportH _ height//2 min: (15 * sigmaY) ceiling.
+	supportW _ width//2 min: (15 * sigmaX) ceiling.
+
+	"0@0"
+	self i: 1 j: 1 put: 1.
+
+	"j@0"
+	1 to: supportW do: [ :j |
+		v _ self gaussianI: 0 j: j sigmaY: sigmaY sigmaX: sigmaX.
+		self i: 1 j: j+1 put: v .
+		self i: 1 j: width-j+1 put: v ].
+
+	"i@0"
+	1 to: supportH do: [ :i |
+		v _ self gaussianI: i j: 0 sigmaY: sigmaY sigmaX: sigmaX.
+		self i: i+1 j: 1 put: v.
+		self i: height-i+1 j: 1 put: v ].
+
+	"i@j"
+	1 to: supportH do: [ :i |
+		1 to: supportW do: [ :j |
+			v _ self gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX.
+			self i: i+1 j: j+1 put: v.
+			self i: i+1 j: width-j+1 put: v.
+			self i: height-i+1 j: j+1 put: v.
+			self i: height-i+1 j: width-j+1 put: v ]]! !
 
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 15:32'!
 gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX
@@ -594,42 +601,24 @@ gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX
 	"
 	^ (((j/sigmaX) squared + (i/sigmaY) squared) / 2) negated exp! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/8/2015 14:58'!
-gaussianKernelI:i j: j sigmaY: sigmaY sigmaX: sigmaX
-	| halfHeight halfWidth ii jj |
-	halfHeight _ height // 2.
-	halfWidth _ width // 2.
-	
-	ii _ i > halfHeight ifTrue: [height-i+1] ifFalse: [i-1].
-	jj _ j > halfWidth ifTrue: [width-j+1] ifFalse: [j-1].
-	
-	^self gaussianI: ii j: jj sigmaY: sigmaY sigmaX: sigmaX! !
-
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/8/2014 13:04'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/16/2015 12:25'!
 lowPassFilter
 	"Apply a low pass filtar to remove the high half frequency content.
 	width and height must be an integer power of 2.
 	Before using this, reevaluate assumtions, etc. This is not a good filter by most measures..."
 	
-	| imaginary transform |
+	| imaginary transform blur |
 	imaginary _ FloatMatrix height: height width: width.
 	transform _ FFT2D new.
 	transform realData: self imagData: imaginary.
 	transform transformForward: true.
-	self clearHighFftFrequencies.
-	imaginary clearHighFftFrequencies.
-	transform transformForward: false! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 15:26'!
-lowPassGaussianI:i j: j sigmaY: sigmaY sigmaX: sigmaX
-	| halfHeight halfWidth ii jj |
-	halfHeight _ height // 2.
-	halfWidth _ width // 2.
-	
-	ii _ i > halfHeight ifTrue: [height-i+1/halfHeight] ifFalse: [i-1/halfHeight].
-	jj _ j > halfWidth ifTrue: [width-j+1/halfWidth] ifFalse: [j-1/halfWidth].
-	
-	^self gaussianI: ii j: jj sigmaY: sigmaY sigmaX: sigmaX! !
+	blur _ FloatMatrix height: height width: width.
+	blur fillWithGaussianKernelSigmaY: 16 sigmaX: 16.
+	self elements *= blur elements.
+	imaginary elements *= blur elements.
+
+	transform transformForward: false! !
 
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/17/2011 13:21'!
 normalizeMax
@@ -2477,7 +2466,7 @@ xyForMax
 	^x@y
 ! !
 
-!FloatImage class methodsFor: 'experiments' stamp: 'jmv 4/6/2015 12:52'!
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 4/16/2015 12:13'!
 blurEstimationExperiment
 
 | answer aux bits blur blurred electronsPerDN estimation exposure f fullWell gap maxD maxDN original plotter r readNoiseElectrons sharpnessessX sharpnessessY xDer xDerDer xDerDerDer xDerDerDerDer zeros |
@@ -2508,8 +2497,7 @@ zeros _ FloatArray new: maxD.
 "#(44 45 46 47 48 49 50 51 ) doWithIndex: [ :b :blurIndex |"
 #(1 1.2 2 4 6 8 10) doWithIndex: [ :b :blurIndex |
 	blur _ FloatMatrix newSize: original extent.
-"	blur fillLowPassGaussian: b / 256; normalizeSum."
-	blur fillLowPassGaussianSigmaY: b / 256 sigmaX: 3*b/256; normalizeSum.
+	blur fillWithGaussianKernelSigmaY: b sigmaX: 3*b/2; normalizeSum.
 	blurred _ original copy convolveWith: blur copy.
 	""
 	blurred *= f.
