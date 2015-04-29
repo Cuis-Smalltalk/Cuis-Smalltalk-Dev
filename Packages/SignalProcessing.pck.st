@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2243] on 17 April 2015 at 6:58:34.549076 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2280] on 28 April 2015 at 12:22:34.319904 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 24!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 26!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -436,23 +436,26 @@ sonogramMorph: height from: start to: stop nPoints: nPoints
 	
 ! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 10:12'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/24/2015 11:06'!
 convolutionLinearWith: aForm
-	"Linear convolution. Warning: Slow.
+	"Apply a linear convolution with self to aForm. Warning: Slow.
 	It is usually preferred to do a circular convolution via FFT and take care of border effects."
 	"
 	| f m |
 	f _ Form fromUser.
 	m _ FloatMatrix m: 7 n: 7.
-	m fillLowPassGaussian: 0.5.
+	m fillWithGaussianKernelSigmaY: 1 sigmaX: 1.
+	m _ m moveOriginToCenter: true.
 	(m convolutionLinearWith: f) display
 	"
 
-	| resultWidth resultHeight result xx yy blue c green red k |
-	resultWidth _ width + aForm width - 1.
-	resultHeight _ height + aForm height - 1.
+	| resultWidth resultHeight result xx yy blue c green red k deltaI deltaJ |
+	resultWidth _ aForm width.
+	resultHeight _ aForm height.
 	k _ 1.0 / elements sum.
 	result _ Form extent: resultWidth@resultHeight depth: 32.
+	deltaI _ height // 2 + 1.
+	deltaJ _ width // 2 + 1.
 	1 to: resultHeight do: [ :y |
 		1 to: resultWidth do: [ :x |
 			red _ 0.0.
@@ -460,8 +463,8 @@ convolutionLinearWith: aForm
 			blue _ 0.0.
 			1 to: height do: [ :j |
 				1 to: width do: [ :i |
-					xx _ x-i+1.
-					yy _ y-j+1.
+					xx _ x-i+deltaI.
+					yy _ y-j+deltaJ.
 					(xx > 0) & (xx <= aForm width) & (yy > 0) & (yy <= aForm height)
 						ifTrue: [
 							c _ aForm colorAt: xx@yy.
@@ -477,7 +480,7 @@ convolutionLinearWith: aForm
 	].
 	^result! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 10:23'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/27/2015 12:09'!
 convolveWith: aMatrixOrFloatImage
 	"Compute convolution with aMatrix, usig 2D FFT. Store the result on self.
 	Note: The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
@@ -493,12 +496,12 @@ convolveWith: aMatrixOrFloatImage
 	fm asForm displayAt: 138@10
 	"
 	| imaginary argumentReal argumentImaginary fft |
-
 	"prepare arguments"
 	imaginary _ FloatImage width: width height: height.
 	"Always make a copy, as we are going to modify it"
-	argumentReal _ FloatImage width: width height: height.
-	argumentReal fillWith: aMatrixOrFloatImage.
+"	argumentReal _ FloatImage width: width height: height.
+	argumentReal fillWith: aMatrixOrFloatImage."
+	argumentReal _ aMatrixOrFloatImage copy.
 	argumentImaginary _ FloatImage width: width height: height.
 
 	"Transform both to Fourier space. Allocate space for imaginary coefficients."
@@ -582,7 +585,7 @@ fillWithGaussianKernelSigmaY: sigmaY sigmaX: sigmaX
 			self i: height-i+1 j: j+1 put: v.
 			self i: height-i+1 j: width-j+1 put: v ]]! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/2/2014 15:32'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/27/2015 15:34'!
 gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX
 	" Comment based on http://en.wikipedia.org/wiki/Gaussian_function
 	| ary expectedValue r standardDeviation a b c f x |
@@ -599,7 +602,7 @@ gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX
 	r _ 10@10 extent: 100@50.
 	FFT new plot: ary in: r color: Color blue min: 0 max: ary max.
 	"
-	^ (((j/sigmaX) squared + (i/sigmaY) squared) / 2) negated exp! !
+	^ (((1.0*j/sigmaX) squared + (1.0*i/sigmaY) squared) / 2) negated exp! !
 
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/16/2015 12:25'!
 lowPassFilter
@@ -656,19 +659,19 @@ scatterPlotWith: aFloatMatrix size: n
 
 	^scatterPlot! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/23/2014 23:26'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/24/2015 10:26'!
 subsampled
 	| answer |
-	answer _ FloatMatrix height: height//2 width: width//2.
+	answer _ self appropriateResultClass height: height//2 width: width//2.
 	1 to: answer height do: [ :i |
 		1 to: answer width do: [ :j |
 			answer i: i j: j put: (self i: i*2 j: j*2) ]].
 	^ answer! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/23/2014 23:26'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/24/2015 10:26'!
 subsampled: n
 	| answer |
-	answer _ FloatMatrix height: height//n width: width//n.
+	answer _ self appropriateResultClass height: height//n width: width//n.
 	1 to: answer height do: [ :i |
 		1 to: answer width do: [ :j |
 			answer i: i j: j put: (self i: i*n j: j*n) ]].
@@ -923,7 +926,7 @@ areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	sum = 0.0 ifTrue: [ ^0.0 ].
 	^sum / ((xStop-xStart+1) * (yStop-yStart+1))! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 13:21'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/27/2015 15:37'!
 areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -942,8 +945,8 @@ areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	resultHeight _ e y.
 	scaled _ FloatImage width: resultWidth height: resultHeight.
 	inverseTransformation _ anAffineTransformation inverseTransformation.
-	hw _ width / resultWidth / 2.0.
-	hh _ height / resultHeight / 2.0.
+	hw _ 0.5 * width / resultWidth.
+	hh _ 0.5 * height / resultHeight.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
@@ -954,23 +957,37 @@ areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 		]].
 	^scaled! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:05'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:57'!
 asForm
 	"Answer a 32bit Form with gray values.
-	Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
+	Assume the receiver is normalized in [0.0 .. 0.996].
+	Values are simply multiplied by 256.0 and truncated, to produce 8bit pixel values.
 	Assume receiver is in gamma space (as a Form, and as jpg or png files)
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+	"Warning: No clamping of values out of range. 
+	If needed, callers might do something like
+		image replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ]"
 
-	^ self asFormMin: 0.0 max: 1.0! !
+	| answer |
+	answer _ Form extent: width@height depth: 32.
+	self fill32BitForm: answer.
+	^answer! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 9/2/2014 11:56'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:58'!
 asFormG: greenImage b: blueImage
-	"Answer a 32bit Form with gray values.
-	Clip values outside [0.0 .. 1.0].
-	Assume arguments are in gamma space (as a Form, and as jpg or png files)
+	"Answer a 32bit Form with color values.
+	Assume the receiver is normalized in [0.0 .. 0.996].
+	Values are simply multiplied by 256.0 and truncated, to produce 8bit pixel values.
+	Assume receiver is in gamma space (as a Form, and as jpg or png files)
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+	"Warning: No clamping of values out of range. 
+	If needed, callers might do something like
+		image replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ]"
 
-	^self asFormG: greenImage b: blueImage min: 0.0 max: 1.0! !
+	| answer |
+	answer _ Form extent: width@height depth: 32.
+	self fill32BitForm: answer withG: greenImage b: blueImage.
+	^answer! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 3/25/2015 10:01'!
 average
@@ -1306,22 +1323,60 @@ cheapDisplacedBy: deltaPoint
 	answer fillWith: self cheaplyDisplaced: deltaPoint.
 	^answer! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/6/2014 12:49'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 4/24/2015 11:10'!
 convolutionLinearWith: aFloatMatrix
 	"Linear convolution. Warning: Slow.
+	Answer if of enough size to hold the whole convolution
 	It is usually preferred to do a circular convolution via FFT and take care of border effects.
-	Answer a new FLoatImage. Don't modify receiver or argument."
+	But this one might be preferred if the receiver is big, and the argument is very small
+	Answer a new FloatImage. Don't modify receiver or argument."
 
 	| answer h w v |
 	h _ aFloatMatrix height.
 	w _ aFloatMatrix width.
-	answer _ FloatImage width: width + aFloatMatrix width height: height + aFloatMatrix height.
+	answer _ FloatImage width: width + aFloatMatrix width - 1 height: height + aFloatMatrix height - 1.
 	1 to: height do: [ :y |
 		1 to: width do: [ :x |
 			v _ self x: x y: y.
 			1 to: h do: [ :i |
 				1 to: w do: [ :j |
-					answer x: x + j-1 y: y + i-1 put: v * (aFloatMatrix i: i j: j) + (answer x: x + j-1 y: y + i-1) ]]]].
+					answer
+						x: x + j-1 y: y + i-1
+						put: v * (aFloatMatrix i: i j: j) + (answer x: x + j-1 y: y + i-1)
+					]]]].
+	^answer! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 4/24/2015 11:10'!
+convolutionLinearWithSmallKernel: kernel
+	"Linear convolution. Warning: Slow.
+	Answer is same extent as receiver.
+	It is usually preferred to do a circular convolution via FFT and take care of border effects.
+	But this one might be preferred if the receiver is big, and the argument is very small
+	Answer a new FloatImage. Don't modify receiver or argument."
+
+	| answer kernelH kernelW v deltaI deltaJ iMax iMin jMax jMin xx yy |
+	kernelH _ kernel height.
+	kernelW _ kernel width.
+	deltaI _ kernelH // 2 + 1.
+	deltaJ _ kernelW // 2 + 1.
+	
+	answer _ FloatImage width: width height: height.
+	
+	1 to: height do: [ :y |
+		iMin _ 1 max: y+deltaI-height.
+		iMax _ kernelH min: y+deltaI-1.
+		
+		1 to: width do: [ :x |
+			jMin _ 1 max: x+deltaJ-width.
+			jMax _ kernelW min: x+deltaJ-1.
+
+			v _ 0.0.	
+			iMin to: iMax do: [ :i |
+				yy _ y-i+deltaI.
+				jMin to: jMax do: [ :j |
+					xx _ x-j+deltaJ.
+					v _ (self x: xx y: yy) * (kernel i: i j: j) + v ]].
+			answer x: x y: y put: v ]].
 	^answer! !
 
 !FloatImage methodsFor: 'copying' stamp: 'jmv 10/10/2014 12:18'!
@@ -1446,7 +1501,7 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw
 display
 	self displayAt: 0@0! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:20'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 4/28/2015 09:11'!
 displayAt: aPoint
 	"Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
 	Assume receiver is in gamma space (as a Form, and as jpg or png files)
@@ -1456,7 +1511,7 @@ displayAt: aPoint
 	| f |
 	f _ self as8bitFormEvaluating: [ :index | | value |
 		value _ elements at: index.
-		(value * 255) rounded min: 255 max: 0 ].
+		(value * 255 + 0.5) truncated min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'copying' stamp: 'jmv 8/5/2014 14:04'!
@@ -1480,25 +1535,76 @@ expandTo: newExtent
 			answer x: x+dx y: y+dy put: (self x: x y: y) ]].
 	^answer! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 8/23/2014 23:46'!
-fillFrom32BitColorForm: aForm component: aSymbol
-	"aSymbol must be in #(red green blue alpha)"
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:13'!
+fill32BitForm: a32BitForm
+"Se podria pensar en meter min y max, y clamping, multiplicando por una cte, y usando un Bitmap de 2^24 entradas (16Mb!!) como colorMap, para mappear todas las combinaciones posibles que overfloween, a 255 en el form destino.
+Esto serviria para, por ejemplo, ajustes de brillo, etc en una gui"
 
-	| formHeight formWidth i1 i2 componentIndex rgba shift |
-	formHeight _ aForm extent y.
-	formWidth _ aForm extent x.
+	| bb magic |
+	a32BitForm makeAllPixelsOpaqueBlack.
+	magic _ 128.0.
+	bb _ BitBlt toForm: a32BitForm.
+	bb combinationRule: 7. "or"
+	bb sourceX: 0; sourceY: 0.
+	bb destX: 0 destY: 0 width: width height: height.
+
+	self += magic.
+	bb sourceForm: (Form new hackBitsForFloatMatrix: self).
+	bb colorMap: (ColorMap masks: { 0. 16rFF00. 16rFF00. 16rFF00 } shifts: { 0. 8. 0. -8 }).
+	bb copyBits.
+	self -= magic! !
+
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:11'!
+fill32BitForm: a32BitForm withG: greenMatrix b: blueMatrix 
+"Se podria pensar en meter min y max, y clamping, multiplicando por una cte, y usando un Bitmap de 2^24 entradas (16Mb!!) como colorMap, para mappear todas las combinaciones posibles que overfloween, a 255 en el form destino.
+Esto serviria para, por ejemplo, ajustes de brillo, etc en una gui"
+
+	| bb magic |
+	a32BitForm makeAllPixelsOpaqueBlack.
+	magic _ 128.0.
+	bb _ BitBlt toForm: a32BitForm.
+	bb combinationRule: 7. "or"
+	bb sourceX: 0; sourceY: 0.
+	bb destX: 0 destY: 0 width: width height: height.
+
+	self += magic.
+	bb sourceForm: (Form new hackBitsForFloatMatrix: self).
+	bb colorMap: (ColorMap masks: { 16rFF00. 0. 0. 0 } shifts: { 8. 0. 0. 0 }).
+	bb copyBits.
+	self -= magic.
+
+	greenMatrix += magic.
+	bb sourceForm: (Form new hackBitsForFloatMatrix: greenMatrix).
+	bb colorMap: (ColorMap masks: { 16rFF00. 0. 0. 0 } shifts: { 0. 0. 0. 0 }).
+	bb copyBits.
+	greenMatrix -= magic.
+
+	blueMatrix += magic.
+	bb sourceForm: (Form new hackBitsForFloatMatrix: blueMatrix).
+	bb colorMap: (ColorMap masks: { 16rFF00. 0. 0. 0 } shifts: { -8. 0. 0. 0 }).
+	bb copyBits.
+	blueMatrix -= magic.! !
+
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 12:17'!
+fillFrom32BitForm: aForm component: aSymbol
+	"aSymbol must be in #(red green blue alpha)
+	Assume aForm is filled with zeros"
+
+	| componentIndex shift mask magic bb |
+	magic _ 128.0.
 	componentIndex _ #(red green blue alpha) indexOf: aSymbol.
-	shift _ #(-16 -8 0 -24) at: componentIndex.
-	1 to: (height min: formHeight) do: [ :y |
-		i1 _ y-1 * formWidth.
-		i2 _ y-1 * width.
-		1 to: (width min: formWidth) do: [ :x |
-			i1 _ i1 + 1.
-			rgba _ aForm bits at: i1.
-			i2 _ i2 + 1.
-			elements at: i2 put: ((rgba bitShift: shift) bitAnd: 16rFF) / 255.0.
-		]
-	]! !
+	shift _ #(-8 0 8 -16) at: componentIndex.
+	mask _ #( 16rFF0000 16rFF00 16rFF 16rFF000000 ) at: componentIndex.
+	bb _ BitBlt toForm: (Form new hackBitsForFloatMatrix: self).
+	bb sourceForm: aForm.
+	bb combinationRule: 7. "or"
+	bb sourceX: 0; sourceY: 0.
+	bb destX: 0 destY: 0 width: width height: height.
+	bb colorMap: (ColorMap masks: { mask. 0. 0. 0 } shifts: { shift. 0. 0. 0 }).
+
+	elements += magic.
+	bb copyBits.
+	elements -= magic! !
 
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 4/14/2015 11:08'!
 fillFrom8BitColorForm: aForm
@@ -1685,7 +1791,7 @@ fourierDeconvolve: aMatrixOrFloatImage maxNoiseAmplification: maxNoiseFactor
 	"fft transformForward: false"
 	^fft! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:21'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 4/28/2015 11:03'!
 fullRangeDisplayAt: aPoint
 	"Assume the values are not normalized in the scale 0.0 to 1.0.
 	Apply appropriate scaling to use viewable dynamic range to show receiver actual range of values.
@@ -1701,7 +1807,7 @@ fullRangeDisplayAt: aPoint
 		ifFalse: [ 1.0 ].
 	f _ self as8bitFormEvaluating: [ :index | | value |
 		value _ Color linearTosRGBGamma: (elements at: index)-min * scale.
-		(value * 255) rounded ].
+		(value * 255 + 0.5) truncated ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
@@ -1998,7 +2104,7 @@ lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 				scaled x: x y: y put: v ]]].
 	^scaled! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:22'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 4/28/2015 11:03'!
 linearDisplayAt: aPoint
 	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
 	Assume receiver is in linear scale.
@@ -2008,7 +2114,7 @@ linearDisplayAt: aPoint
 	| f |
 	f _ self as8bitFormEvaluating: [ :index | | value |
 		value _ Color linearTosRGBGamma: ((elements at: index) min: 1.0 max: 0.0).
-		(value * 255) rounded ].
+		(value * 255 + 0.5) truncated ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
@@ -2347,11 +2453,12 @@ validateSameSize: aFloatImage
 	(height = aFloatImage height and: [ width = aFloatImage width ]) ifFalse: [
 		self error: 'Receiver and argument should be of the same size' ]! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/14/2015 12:08'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 09:15'!
 with8BitColorForm: aForm do: aBlock
 	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file.
-	Don't assume anything about the color palette."
+	Don't assume anything about the color palette
+	(i.e. don't assume all 256 gray levels will be present, and don't assume a prticular order of the entries)."
 
 	|  word aFormHeight aFormWidth i2 aFormBits aFormColorsReds c wholeLineWords aFormTotalLineWords loseElementsAtRight ii1 lineBase |
 	aFormHeight _ aForm extent y.
@@ -2413,7 +2520,7 @@ with: anotherImage replaceValues: aBlock
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 10:37'!
 withImaginary: aFloatImage displayMagnitudeAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:24'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 4/28/2015 11:03'!
 withImaginary: aFloatImage displayMagnitudeLogAt: aPoint
 	"Show logarithm of magnitude of receiver and argument considered as a Complex image"
 
@@ -2426,7 +2533,7 @@ withImaginary: aFloatImage displayMagnitudeLogAt: aPoint
 		magnitude _ complex magnitude.
 		first ifNil: [ first _ magnitude/70 ].
 		magnitude _ magnitude / first.
-		(magnitude * 255) rounded min: 255 max: 0 ].
+		(magnitude * 255 + 0.5) truncated min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:25'!
@@ -2451,9 +2558,10 @@ writeFileNamed: filename
 	[ refStream nextPut: self ] ensure: [
 		refStream close ]! !
 
-!FloatImage methodsFor: 'file operations' stamp: 'jmv 9/21/2012 14:09'!
+!FloatImage methodsFor: 'file operations' stamp: 'jmv 4/28/2015 11:59'!
 writePNGfileNamed: fName
 
+	self replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
 	self asForm writePNGfileNamed: fName! !
 
 !FloatImage methodsFor: 'accessing' stamp: 'jmv 8/23/2014 23:46'!
@@ -2543,7 +2651,7 @@ checkerboard: extent n: n
 			answer x: x y: y put: (x-1//cellExtent x) + (y-1//cellExtent y) +1 \\ 2 ]].
 	^answer! !
 
-!FloatImage class methodsFor: 'examples' stamp: 'jmv 1/27/2015 14:13'!
+!FloatImage class methodsFor: 'examples' stamp: 'jmv 4/28/2015 12:00'!
 example3
 	"Use a portion of display to show behavior on colored input.
 	Try it with a real photo, results are much better
@@ -2562,15 +2670,19 @@ example3
 	biggerR _ originalR lanczosTransformedBy: t resultExtent: nil.
 	biggerG _ originalG lanczosTransformedBy: t resultExtent: nil.
 	biggerB _ originalB lanczosTransformedBy: t resultExtent: nil.
+	biggerR replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerG replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerB replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
 
-!FloatImage class methodsFor: 'examples' stamp: 'jmv 1/26/2015 17:09'!
+!FloatImage class methodsFor: 'examples' stamp: 'jmv 4/28/2015 12:01'!
 example4
 	"FOR SUBPIXEL RENDERED STUFF
 	Use a portion of display to show behavior on colored input.
 	Try it with a real photo, results are much better
+	FloatImage example4
 	Similar to BSplineInterpolatedImage>>example4 but using Lanczos.
 	It is hard to pick a winner!!"
 	| d bigger h origH origW original w biggerB biggerG biggerR originalB originalG originalR n scale filterScale xFilter yFilter |
@@ -2598,17 +2710,20 @@ example4
 			biggerR x: x y: y put: (originalR lanczosFilteredValueAtX: x-0.5-d/scale+0.5+d y: y-0.5/scale+0.5 filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter).
 			biggerG x: x y: y put: (originalG lanczosFilteredValueAtX: x-0.5/scale+0.5 y: y-0.5/scale+0.5 filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter).
 			biggerB x: x y: y put: (originalB lanczosFilteredValueAtX: x-0.5+d/scale+0.5-d y: y-0.5/scale+0.5 filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter) ]].
+	biggerR replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerG replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerB replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 8/14/2012 11:02'!
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 4/28/2015 11:29'!
 from32BitColorForm: aForm component: aSymbol
 	"aSymbol must be in #(red green blue alpha)"
 
 	| instance |
 	instance _ self width: aForm width height: aForm height.
-	instance fillFrom32BitColorForm: aForm component: aSymbol.
+	instance fillFrom32BitForm: aForm component: aSymbol.
 	^instance! !
 
 !FloatImage class methodsFor: 'instance creation' stamp: 'jmv 8/14/2012 11:01'!
@@ -5116,52 +5231,44 @@ realData: real imagData: imag
 	realMatrix _ real.
 	imagMatrix _ imag! !
 
-!FFT2D methodsFor: 'computing' stamp: 'jmv 11/16/2012 15:33'!
+!FFT2D methodsFor: 'computing' stamp: 'jmv 4/27/2015 10:39'!
 transformColumns: forward
 	| transform height realColumn imagColumn |
 	height _ realMatrix height.
 	transform _ FFT new: height.
-	realColumn _ FloatArray new: height.
-	imagColumn _ FloatArray new: height.
-	1 to: realMatrix width do: [ :x |
-		1 to: height do: [ :y |
-			realColumn at: y put: (realMatrix x: x y: y)].
+	realColumn _ FloatMatrix newColumnVectorSize: height.
+	imagColumn _ FloatMatrix newColumnVectorSize: height.
+	1 to: realMatrix width do: [ :j |
+		realMatrix j: j copyTo: realColumn.
 		imagMatrix ifNotNil: [
-			1 to: height do: [ :y |
-				imagColumn at: y put: (imagMatrix x: x y: y)]].
-		transform realData: realColumn imagData: imagColumn.
+			imagMatrix j: j copyTo: imagColumn ].
+		transform realData: realColumn elements imagData: imagColumn elements.
 		transform transformForward: forward.
-		1 to: height do: [ :y |
-			realMatrix x: x y: y put: (realColumn at: y)].
+		realMatrix j: j put: realColumn.
 		imagMatrix ifNotNil: [
-			1 to: height do: [ :y |
-				imagMatrix x: x y: y put: (imagColumn at: y)]]]! !
+			imagMatrix j: j put: imagColumn ]]! !
 
 !FFT2D methodsFor: 'computing' stamp: 'jmv 9/17/2007 09:56'!
 transformForward: forward 
 	self transformRows: forward;
 		 transformColumns: forward! !
 
-!FFT2D methodsFor: 'computing' stamp: 'jmv 11/16/2012 15:35'!
+!FFT2D methodsFor: 'computing' stamp: 'jmv 4/27/2015 10:39'!
 transformRows: forward
 	| transform width realRow imagRow |
 	width _ realMatrix width.
 	transform _ FFT new: width.
-	realRow _ FloatArray new: width.
-	imagRow _ FloatArray new: width.
-	1 to: realMatrix height do: [ :y |
-		1 to: width do: [ :x |
-			realRow at: x put: (realMatrix x: x y: y)].
+	realRow _ FloatMatrix newRowVectorSize: width.
+	imagRow _ FloatMatrix newRowVectorSize: width.
+	1 to: realMatrix height do: [ :i |
+		realMatrix i: i copyTo: realRow.
 		imagMatrix ifNotNil: [
-			1 to: width do: [ :x |
-				imagRow at: x put: (imagMatrix x: x y: y)]].
-		transform realData: realRow imagData: imagRow.
+			imagMatrix i: i copyTo: imagRow ].
+		transform realData: realRow elements imagData: imagRow elements.
 		transform transformForward: forward.
-		1 to: width do: [ :x |
-			realMatrix x: x y: y put: (realRow at: x)].
+		realMatrix i: i put: realRow.
 		imagMatrix ifNotNil: [
-			1 to: width do: [ :x |
-				imagMatrix x: x y: y put: (imagRow at: x)]]]! !
+			imagMatrix i: i put: imagRow ]]! !
 
 !FWT methodsFor: 'access' stamp: 'di 10/31/1998 12:19'!
 coeffs
@@ -5677,7 +5784,7 @@ example2
 	bigger display.
 	original display! !
 
-!BSplineInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 1/27/2015 14:06'!
+!BSplineInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 4/28/2015 11:59'!
 example3
 	"Use a portion of display to show behavior on colored input.
 	Try it with a real photo, results are much better
@@ -5695,11 +5802,14 @@ example3
 	biggerR _ originalR bSplineTransformedBy: t resultExtent: nil.
 	biggerG _ originalG bSplineTransformedBy: t resultExtent: nil.
 	biggerB _ originalB bSplineTransformedBy: t resultExtent: nil.
+	biggerR replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerG replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerB replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
 
-!BSplineInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 2/8/2013 18:09'!
+!BSplineInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 4/28/2015 12:00'!
 example4
 	"FOR SUBPIXEL RENDERED STUFF
 	Use a portion of display to show behavior on colored input.
@@ -5726,6 +5836,9 @@ example4
 			biggerR x: x y: y put: (interpolatedR interpolatedValueAtX: x-0.5-d/w*origW+0.5+d y: y-0.5/h*origH+0.5).
 			biggerG x: x y: y put: (interpolatedG interpolatedValueAtX: x-0.5/w*origW+0.5 y: y-0.5/h*origH+0.5).
 			biggerB x: x y: y put: (interpolatedB interpolatedValueAtX: x-0.5+d/w*origW+0.5-d y: y-0.5/h*origH+0.5) ]].
+	biggerR replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerG replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerB replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
@@ -5879,7 +5992,7 @@ example2
 	bigger display.
 	original display! !
 
-!ShiftedLinearInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 1/27/2015 14:09'!
+!ShiftedLinearInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 4/28/2015 12:02'!
 example3
 	"Use a portion of display to show behavior on colored input.
 	Try it with a real photo, results are much better
@@ -5897,14 +6010,18 @@ example3
 	biggerR _ originalR shiftedLinearTransformedBy: t resultExtent: nil.
 	biggerG _ originalG shiftedLinearTransformedBy: t resultExtent: nil.
 	biggerB _ originalB shiftedLinearTransformedBy: t resultExtent: nil.
+	biggerR replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerG replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerB replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !
 
-!ShiftedLinearInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 2/8/2013 18:09'!
+!ShiftedLinearInterpolatingImage class methodsFor: 'examples' stamp: 'jmv 4/28/2015 12:03'!
 example4
 	"FOR SUBPIXEL RENDERED STUFF
 	Use a portion of display to show behavior on colored input.
+	ShiftedLinearInterpolatingImage example4
 	Simulate the effect of subpixel AA in the source image, and also do subpixel AA in the result"
 	| bigger h origH origW original w biggerB biggerG biggerR interpolatedB interpolatedG interpolatedR originalB originalG originalR d |
 	w _ 1000.
@@ -5928,6 +6045,9 @@ example4
 			biggerR x: x y: y put: (interpolatedR interpolatedValueAtX: x-0.5-d/w*origW+0.5+d y: y-0.5/h*origH+0.5).
 			biggerG x: x y: y put: (interpolatedG interpolatedValueAtX: x-0.5/w*origW+0.5 y: y-0.5/h*origH+0.5).
 			biggerB x: x y: y put: (interpolatedB interpolatedValueAtX: x-0.5+d/w*origW+0.5-d y: y-0.5/h*origH+0.5) ]].
+	biggerR replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerG replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	biggerB replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
 	bigger _ biggerR asFormG: biggerG b: biggerB.
 	bigger display.
 	original display! !

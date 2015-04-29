@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2225] on 6 April 2015 at 12:33:27.592097 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2280] on 28 April 2015 at 12:22:18.003904 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 11!
+!provides: 'LinearAlgebra' 1 13!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -43,6 +43,14 @@ My instances are m x n matrices of Float values, where m is the height and n the
 
 !FloatBandMatrix commentStamp: '<historical>' prior: 0!
 My instances can have non-zero values only in the diagonal, and a band of certain width around it. Save space.!
+
+!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 4/27/2015 10:03'!
+hackBitsForFloatMatrix: aFloatMatrix
+	"Quite like #hackBits"
+	depth _ 32.
+	width _ aFloatMatrix width.
+	height _ aFloatMatrix height.
+	bits _ aFloatMatrix elements! !
 
 !AffineTransformation methodsFor: '*LinearAlgebra' stamp: 'jmv 8/23/2014 23:29'!
 asMatrix
@@ -153,9 +161,9 @@ as8bitFormEvaluating: aBlock
 			bits byteAt: bitsIndex put: (aBlock value: elementsIndex) ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:07'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:14'!
 asForm
-	"Answer a 32bit Form with gray values."
+	"Answer a Form with gray values."
 
 	^self asFormMin: self min max: self max! !
 
@@ -167,27 +175,26 @@ asFormG: greenMatrix b: blueMatrix
 	max _ (self max max: greenMatrix max) max: blueMatrix max.
 	^self asFormG: greenMatrix b: blueMatrix min: min max: max! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 1/9/2015 17:26'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 4/28/2015 10:26'!
 asFormG: greenMatrix b: blueMatrix min: min max: max
-
 	| k r g b blueElements greenElements |
 	k _ 255.0 / (max-min).
 	greenElements _ greenMatrix elements.
 	blueElements _ blueMatrix elements.
 	^ self as32bitFormEvaluating: [ :index :word |
-		r _ (((elements at: index) - min) * k) rounded min: 255 max: 0.
-		g _ (((greenElements at: index) - min) * k) rounded min: 255 max: 0.
-		b _ (((blueElements at: index) - min) * k) rounded min: 255 max: 0.
+		r _ (((elements at: index) - min) * k + 0.5) truncated min: 255 max: 0.
+		g _ (((greenElements at: index) - min) * k + 0.5) truncated min: 255 max: 0.
+		b _ (((blueElements at: index) - min) * k + 0.5) truncated min: 255 max: 0.
 		word at: 1 put: b; at: 2 put: g; at: 3 put: r ]! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 1/9/2015 17:29'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:04'!
 asFormMin: min max: max
 	"Answer a 32bit Form with gray values."
 
 	| k |
 	k _ 255.0 / (max-min).
 	^ self as8bitFormEvaluating: [ :index |
-		(((elements at: index) - min) * k) rounded min: 255 max: 0 ]! !
+		(((elements at: index) - min) * k + 0.5) truncated min: 255 max: 0 ]! !
 
 !Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
 columnsWithoutPivot: count
@@ -893,6 +900,43 @@ hessembergSuperior
 	^ result
 ! !
 
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:09'!
+i: i
+	"Answers a row vector with the values at row y
+	Optimized for large Matrices
+	|m w h |
+	w _ 8. h _ 8.
+	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
+	m i: 3
+	"
+
+	| result |
+	result _ self appropriateResultClass newRowVectorSize: width.
+	self i: i copyTo: result.
+	^result! !
+
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 4/27/2015 10:21'!
+i: i copyTo: row
+	"Assumes row is of of apropriate size"
+	| ss |
+	ss _ i-1 * width + 1.
+	row elements replaceFrom: 1 to: width with: elements startingAt: ss! !
+
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:01'!
+i: i put: row
+	"aVector must be a row vector, i.e. a matrix with height 1.
+	Optimized for large Matrices
+	|m w h |
+	w _ 8. h _ 8.
+	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
+	m i: 7 put: (m i: 2).
+	m print.
+	"
+
+	| ss |
+	ss _ i-1 * width + 1.
+	elements replaceFrom: ss to: ss+width-1 with: row elements startingAt: 1! !
+
 !FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 7/19/2012 11:15'!
 imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart
 	"The receiver and imaginaryPart conform a complex matrix.
@@ -989,13 +1033,14 @@ imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImag
 			self i: i j: j put: e.
 			imaginaryPart i: i j: j put: f ]]! !
 
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 7/19/2012 11:15'!
+!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 4/27/2015 12:26'!
 imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandImaginaryPart
 	"The receiver and imaginaryPart conform a complex matrix.
 	operandRealPart and operandImaginaryPart conform another complex matrix.
 	fill the receiver (and imaginaryPart) with the result of complex multiplication with operand, element by element.
 	I.e., at each position of the matrix, compute (e+if) = (a+ib) * (c+id)"
 
+"
 	| a b c d e f |
 	1 to: height do: [ :i |
 		1 to: width do: [ :j |
@@ -1006,7 +1051,40 @@ imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandIm
 			e _ a * c - (b * d).
 			f _ b * c + (a * d).
 			self i: i j: j put: e.
-			imaginaryPart i: i j: j put: f ]]! !
+			imaginaryPart i: i j: j put: f ]]
+"
+	| c d aByC bByC aByD bByD e f |
+	c _ FloatMatrix newRowVectorSize: width.
+	d _ FloatMatrix newRowVectorSize: width.
+	aByC _ FloatMatrix newRowVectorSize: width.
+	bByC _ FloatMatrix newRowVectorSize: width.
+	aByD _ FloatMatrix newRowVectorSize: width.
+	bByD _ FloatMatrix newRowVectorSize: width.
+	1 to: height do: [ :i |
+		
+		" Compute:
+		e _ a * c - (b * d).
+		f _ b * c + (a * d)."
+		
+		operandRealPart i: i copyTo: c.
+		self i: i copyTo: aByC.
+		aByC elements *= c elements.
+		imaginaryPart i: i copyTo: bByC.
+		bByC elements *= c elements.
+		
+		operandImaginaryPart i: i copyTo: d.
+		self i: i copyTo: aByD.
+		aByD elements *= d elements.
+		imaginaryPart i: i copyTo: bByD.
+		bByD elements *= d elements.
+		
+		e _ aByC.
+		e elements -= bByD elements.
+		f _ bByC.
+		f elements += aByD elements.
+
+		self i: i put: e.
+		imaginaryPart i: i put: f ]! !
 
 !FloatMatrix methodsFor: 'initialization' stamp: 'jmv 6/18/2001 19:10'!
 initializeElements
@@ -1019,6 +1097,53 @@ isFirstSubdiagonalZero
 	^(1 to: width-1) inject: true into: [ :previousValue :each |
 		previousValue and: [ (self i: each + 1 j: each) abs <= self epsilon ] ]! !
 
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:11'!
+j: j
+	"Answers a column vector with the values at column x.
+	Optimized for large Matrices
+	|m w h |
+	w _ 8. h _ 8.
+	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
+	m j: 3
+	"
+
+	| result |
+	result _ self appropriateResultClass newColumnVectorSize: height.
+	self j: j copyTo: result.
+	^result! !
+
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 4/27/2015 11:25'!
+j: j copyTo: column
+	"Assumes column is of of apropriate size"
+	| bb formColumn formSelf |
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formColumn _ Form new hackBitsForFloatMatrix: column.
+	bb _ (BitBlt toForm: formColumn) sourceForm: formSelf.
+	bb combinationRule: Form over.
+	bb sourceX: j-1; sourceY: 0.
+	bb destX: 0 destY: 0 width: 1 height: height.
+	bb copyBits! !
+
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 11:26'!
+j: j put: column
+	"column can be a column vector (m x 1 matrix), or a kind of Array.
+	Optimized for large Matrices
+	|m w h |
+	w _ 8. h _ 8.
+	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
+	m j: 3 put: (m j: 1).
+	m print.
+	"
+
+	| bb formSelf formColumn |
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formColumn _ Form new hackBitsForFloatMatrix: column.
+	bb _ (BitBlt toForm: formSelf) sourceForm: formColumn.
+	bb combinationRule: Form over.
+	bb sourceX: 0; sourceY: 0.
+	bb destX: j-1 destY: 0 width: 1 height: height.
+	bb copyBits! !
+
 !FloatMatrix methodsFor: 'linear equation systems' stamp: 'jmv 7/19/2012 11:16'!
 linesLost
 
@@ -1030,11 +1155,11 @@ linesLost
 	] whileTrue: [ result _ result + 1 ].
 	^result! !
 
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 7/19/2012 11:16'!
+!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 4/24/2015 10:27'!
 magnitudeWithImaginary: imaginaryPart
 	"answer a new matrix"
 	| result a b magnitude |
-	result _ FloatMatrix newSize: self size.
+	result _ self appropriateResultClass newSize: self size.
 	1 to: height do: [ :i |
 		1 to: width do: [ :j |
 			a _ self i: i j: j.

@@ -47,7 +47,7 @@ The simplest is to have the VM in the same directory as the Cuis image. Now you 
 ./squeak Cuis4.2-xxxx.image
 ```
 
-#### Alternative way to get Cuis and VM ####
+#### Alternative way to get Cuis and VM (Only for Linux or OS X) ####
 As an alternative you can use the following in a shell if you have Git installed and configured:
 ```
 mkdir MyProject
