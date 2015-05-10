@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2203] on 31 March 2015 at 11:10:56.174387 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2243] on 10 May 2015 at 1:27:40.945214 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 44!
+!provides: 'TerseGuide' 1 46!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -70,7 +70,7 @@ selectedTopic: aTopic
 	textPane model actualContents: self updateTopicText.
 	self changed: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 3/18/2015 15:49'!
+!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 5/9/2015 19:24'!
 terseTopics
 	"Translate a list item to a class method selector"
 	^ Dictionary new
@@ -108,6 +108,9 @@ terseTopics
 	at: 'Rectangle' put: #rectangle;
 	at: 'Pen' put: #pen;
 	at: 'Forms' put: #form;
+	at: 'Morphs' put: #morph;
+	at: 'Layout Morph' put: #layoutMorph;
+	at: 'Layout Spec' put: #layoutSpec;
 	at: 'Dynamic Messages' put: #dynamic;
 	at: 'PopUpMenu' put: #popUpMenu;
 	at: 'Object' put: #anObject;
@@ -1086,6 +1089,191 @@ x timesRepeat: [y _ y * 2].					"times repeat loop (i _ 1 to x)"
 
 '! !
 
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/10/2015 12:22'!
+layoutMorph
+	"Layout Morph"
+	^
+'| x area column row |
+x _ LayoutMorph new.		"this illustrates a mistake"
+area _ LayoutMorph newColumn name: #AREA.
+column _ LayoutMorph newColumn name: #COL.
+row _ LayoutMorph newRow name: #ROW.
+
+row addMorph: column layoutSpec: LayoutSpec useAll.
+	"Add a submorph, at the bottom or right, with aLayoutSpec"
+
+row addMorph: area proportionalHeight: 0.8.	"Convenience method.	Add others as necessary."
+
+row addMorphUseAll: area.				"Convenience method.	Add others as necessary."
+
+row addMorphs: {column. area}.		"All morphs are made equal width"
+
+area beColumn.
+
+area beRow.
+
+row defaultColor.
+
+area direction.
+
+column _ LayoutMorph initializedInstance.
+
+column _ LayoutMorph newColumn.
+
+row _ LayoutMorph newRow.
+
+row is: #Morph.
+
+row layoutBounds.		"Return the bounds for laying out children of the receiver"
+
+row layoutSubmorphs.	"Compute a new layout based on the given layout bounds."
+
+row padding: #right..
+	"This sets how extra space is used when doing layout. For example, a column might have extra , unneded vertical space. #top means widgets are set close to the top, and extra space is at bottom. Conversely, #bottom means widgets are set close to the bottom, and extra space is at top. Valid values include #left and #right (for rows) and #center. Alternatively, any number between 0.0 and 1.0 might be used.
+	self new padding: #center
+	self new padding: 0.9
+	"
+
+area separation: 8@5.	"set the amount of separation for submorphs"
+
+area xSeparation.		"answer the x component of the specified separation"
+
+area ySeparation.		"answer the y component of the specified separation"
+
+'! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/9/2015 20:31'!
+layoutSpec
+	"Layout Specification"
+	^
+'| x y height width padding myLayout available |
+x _ LayoutSpec useAll.		"Use all available space"
+myLayout _ LayoutMorph newRow.	"define a layout for these specifications"
+height _ 85.
+width _ 120.
+padding _ 0.3.
+available _ Rectangle origin: 0@0 corner: 300@200. 
+
+y _ LayoutSpec fixedExtent: 350@300.
+
+x fixedHeight.
+	"If proportional is zero, answer stored fixed extent, or actual morph extent if undefined. (no proportional extent is computed)
+	Otherwise, we do proportional layout, and the stored extent is a minimum extent, so we don''t  really a fixed extent."
+
+y _ LayoutSpec fixedHeight: height.
+	"the parameter is taken as the fixed height to use.
+	No proportional part."
+	
+y _ LayoutSpec fixedWidth: 100.	"Will use all available height"
+
+y _ LayoutSpec fixedWidth: 100 fixedHeight: 50.
+
+y _ LayoutSpec fixedWidth: 100 fixedHeight: 50 minorDirectionPadding: #bottom.
+
+y _ LayoutSpec fixedWidth: 150 proportionalHeight: 0.8.
+
+y _ LayoutSpec fixedWidth: 140 proportionalHeight: 0.75 minorDirectionPadding: #center.
+
+x fixedOrMorphHeight: height.
+	"the parameter is taken as the fixed height to use.
+	No proportional part."
+
+x fixedOrMorphWidth: width.
+	"the parameter is taken as the fixed width to use.
+	No proportional part."
+
+x fixedWidth.
+	"If proportional is zero, answer stored fixed extent, or actual morph extent if undefined. (no proportional extent is computed)
+	Otherwise, we do proportional layout, and the stored extent is a minimum extent, so we don''t  really a fixed extent."
+
+x fixedWidth: width.
+	"the parameter is taken as the fixed width to use.
+	No proportional part."
+
+x heightFor: available.
+	"If proportional is zero, answer stored fixed extent, or actual morph extent if undefined.
+	Otherwise, we do proportional layout, and the stored extent is a minimum extent.
+	If there is no minimum extent, it should be set to zero."
+
+x isProportionalHeight.
+
+x isProportionalWidth.
+
+y _ LayoutSpec keepMorphExtent.
+
+x minorDirectionPadding.
+
+x minorDirectionPadding: #top.
+	"This sets how padding is done in the secondary direction. For instance, if the owning morph is set in a row, the row will control horizontal layout. But if there is unused vertical space, it will be used according to this parameter. For instance, #top sets the owning morph at the top. Same for #bottom and #center. If the owner is contained in a column, #left, #center or #right should be used. Alternatively, any number between 0.0 and 1.0 can be used.
+	self new minorDirectionPadding: #center
+	self new minorDirectionPadding: 0.9
+	"
+
+x morph: myLayout.
+
+y _ LayoutSpec morphHeightFixedWidth: 90.
+
+y _ LayoutSpec morphHeightProportionalWidth: 0.4.
+
+y _ LayoutSpec morphWidthFixedHeight: 65.
+
+y _ LayoutSpec morphWidthProportionalHeight: 0.7.
+
+y _ LayoutSpec proportionalHeight: 0.8.
+
+y _ LayoutSpec proportionalWidth: 0.2.	"Will use all available height"
+
+y _ LayoutSpec proportionalWidth: 0.3 fixedHeight: 80.
+
+y _ LayoutSpec proportionalWidth: 0.3 fixedHeight: 80 minorDirectionPadding: #left.
+
+y _ LayoutSpec proportionalWidth: 0.25 proportionalHeight: 0.8.
+
+y _ LayoutSpec proportionalWidth: 0.2 proportionalHeight: 0.7 minorDirectionPadding: #top.
+
+y _ LayoutSpec useAll.		"Use all available space"
+
+x proportionalHeight.
+
+x proportionalHeight: height.
+
+x proportionalHeight: height minimum: 90.
+	"Alternatives: same as in #proportionalWidth:minimum:, see comment there"
+
+x proportionalWidth.
+
+x proportionalWidth: width.
+
+x proportionalWidth: width minimum: 150.
+	"Alternatives:
+		- proportionalWidth notNil, fixedWidth notNil	->		Use fraction of available space, take fixedWidth as minimum desired width
+		- proportionalWidth isNil, fixedWidth isNil		->		Use current morph width
+		- proportionalWidth isNil, fixedWidth notNil	->		Use fixedWidth
+		- proportionalWidth notNil, fixedWidth isNil	->		NOT VALID"
+
+x setProportionalHeight: height.
+	"Alternatives: same as in #proportionalWidth:minimum:, see comment there"
+
+x setProportionalWidth: width.
+	"Alternatives:
+		- proportionalWidth notNil, fixedWidth notNil	->		Use fraction of available space, take fixedWidth as minimum desired width
+		- proportionalWidth isNil, fixedWidth isNil		->		Use current morph width
+		- proportionalWidth isNil, fixedWidth notNil	->		Use fixedWidth
+		- proportionalWidth notNil, fixedWidth isNil	->		NOT VALID"
+
+x useMorphHeight.
+	"Do not attempt to layout height. Use current morph height if at all possible."
+
+x useMorphWidth.
+	"Do not attempt to layout width. Use current morph width if at all possible."
+
+x widthFor: available.
+	"If proportional is zero, answer stored fixed extent, or actual morph extent if undefined.
+	Otherwise, we do proportional layout, and the stored extent is a minimum extent.
+	If there is no minimum extent, it should be set to zero."
+
+'! !
+
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/12/2015 14:04'!
 literals
 	"Literals"
@@ -1193,6 +1381,34 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/10/2015 13:24'!
+morph
+	"Morphs"
+	^
+'| x y |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+x _ Morph new.			"a new but invisible morph"
+x openInWorld.				"make visible in upper left of screen"
+x openInHand.				"make visible at cursor location"
+							"drag with the left button; show halos with the middle button"
+x name: #MyName.		"used in the halos"
+x name: ''My Name''.			"alternative, allowing imbedded blanks"
+x morphPosition: 100@65.	"set the morph location"
+y _ FillInTheBlankMorph request: ''Please Enter Something''.	"prompt user for input"
+x _ FunctionGraphMorph example2.	"plot two functions"
+x _ SystemWindow new openInWorld.	"open a window"
+x setLabel: ''Label for It''.
+y _ LayoutMorph example10.	"organizing several morphs"
+x addMorph: y.					"place morphs in a SystemWindow"
+
+LayoutMorph includeInNewMorphMenu.
+	"Return true for all classes that can be instantiated from the menu"
+
+y _ Morph initializedInstance.
+	"Answer an instance of the receiver which in some sense is initialized.  In the case of Morphs, this will yield an instance that can be attached to the Hand after having received the same kind of basic initialization that would be obtained from an instance chosen from the ''new morph'' menu.
+	Return nil if the receiver is reluctant for some reason to return such a thing"
+
+'! !
+
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:42'!
 orderedCollection
 	"Ordered Collections"
@@ -1242,7 +1458,7 @@ y _ x asSet.									"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 3/18/2015 16:04'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 5/9/2015 19:27'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^  OrderedCollection new
@@ -1280,8 +1496,11 @@ pages
 		add: 'Rectangle'; 
 		add: 'Pen'; 
 		add: 'Forms'; 
-		add: 'Dynamic Messages'; 
+		add: 'Morphs'; 
+		add: 'Layout Morph'; 
+		add: 'Layout Spec'; 
 		add: 'PopUpMenu'; 
+		add: 'Dynamic Messages'; 
 		add: 'Object'; 
 		add: 'Metaclass'; 
 		add: 'Debugging'; 
@@ -1289,7 +1508,7 @@ pages
 		add: 'Primitives'; 
 		yourself! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/15/2015 22:13'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/9/2015 16:37'!
 pen
 	"Pen"
 	^
@@ -1309,10 +1528,7 @@ block _ [:p | | center |					"set a program for drawing with a pen, p"
 	p goto: 200@200.					"move to the specified point"
 	p north.								"set the direction"
 	p go: 180.							"move the pen"
-	p goto: center.						"close the polygon figure"
-	Display 
-		floodFill2: Color orange 
-		at: center - (50@0)]. 			"color the polygon which encloses the point"
+	p goto: center].						"close the polygon figure"
 
 Display restoreAfter: [				"a click will restore Display"
 	Display fillWhite.					"a blank Display"
@@ -1745,7 +1961,7 @@ Smalltalk allImplementedMessages do: [ :s | t add: s ].
 t explore'
 ! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/11/2015 12:23'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 4/12/2015 14:24'!
 usage
 	"Using Terse Guide"
 	^
@@ -1754,7 +1970,7 @@ The text pane of the Terse Guide window is a kind of Workspace and is managed by
 
 The SmalltalkEditor enables you to do or print a statement when the cursor is in the statement. It is not necessary to first highlight the entire statement, unless it continues on more than one line.
 
-The text pane is refreshed each time it is accessed. You can change the examples and run them without hurting anything.
+The text pane is refreshed each time it is accessed. You can modify the examples in the text pane and run them without hurting anything.
 "
 '! !
 
@@ -1792,11 +2008,10 @@ textMorph: anObject
 
 	textMorph _ anObject! !
 
-!TerseGuideWindow class methodsFor: 'as yet unclassified' stamp: 'dhn 3/4/2015 17:35'!
+!TerseGuideWindow class methodsFor: 'as yet unclassified' stamp: 'dhn 4/12/2015 14:31'!
 openTerseGuide
 	| window help |
 	help _ TerseGuideHelp new.
-	"help window: (window _ TerseGuideWindow editText: help label: 'Terse Guide' wrap: true)."
 	help window: (window _ TerseGuideWindow new model: help).
 	window buildMorphicWindow.
 	window openInWorld.

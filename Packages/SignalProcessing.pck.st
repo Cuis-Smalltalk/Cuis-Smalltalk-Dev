@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2280] on 28 April 2015 at 12:22:34.319904 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2308] on 4 May 2015 at 3:04:06.233526 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 26!
+!provides: 'SignalProcessing' 1 27!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -889,7 +889,7 @@ addToStDevFrom8BitColorForm: aForm meanImage: meanImage
 	self with8BitColorForm: aForm do: [ :i2 :v |
 		elements at: i2 put: (v - (meanValues at: i2)) squared + (elements at: i2) ]! !
 
-!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 15:04'!
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 13:45'!
 areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	"Answer an interpolated value at (most likely) non-integer x@y.
 	x and y can be any Float values in in [1.0 .. width] and [1.0 .. height].
@@ -911,8 +911,24 @@ areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 		hw _ originalWidth / resultWidth / 2.0.
 		hh _ originalHeight / resultHeight / 2.0.
 	"
-	| xStart xStop yStart yStop sum |
-	
+	| xStart xStop yStart yStop sum xIndex0 yIndex0 |
+
+	"Validate inside some reasonable bounds. We allow extending up to 0.8 in any direction"
+	xIndex0 _ x floor - 1.
+	"x < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	xIndex0 < -1 ifTrue: [ ^0.0 ].
+	(xIndex0 = -1 and: [x < 0.2]) ifTrue: [ ^0.0 ].
+	"x > (width + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	xIndex0 > width ifTrue: [ ^0.0 ].
+	(xIndex0 = width and: [x > (width + 0.8)]) ifTrue: [ ^0.0 ].
+	yIndex0 _ y floor - 1.
+	"y < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	yIndex0 < -1 ifTrue: [ ^0.0 ].
+	(yIndex0 = -1 and: [y < 0.2]) ifTrue: [ ^0.0 ].
+	"y > (height + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	yIndex0 > height ifTrue: [ ^0.0 ].
+	(yIndex0 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
+
 	xStart _ (x - hw) rounded max: 1.
 	xStop _ (x + hw) rounded min: width.
 	yStart _ (y - hh) rounded max: 1.
@@ -926,7 +942,7 @@ areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	sum = 0.0 ifTrue: [ ^0.0 ].
 	^sum / ((xStop-xStart+1) * (yStop-yStart+1))! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/27/2015 15:37'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:46'!
 areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -950,10 +966,8 @@ areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ self areaFilteredValueAtX: p x y: p y halfWidth: hw halfHeight: hh.
-				scaled x: x y: y put: v 
-			]
+			v _ self areaFilteredValueAtX: p x y: p y halfWidth: hw halfHeight: hh.
+			scaled x: x y: y put: v 
 		]].
 	^scaled! !
 
@@ -993,7 +1007,7 @@ asFormG: greenImage b: blueImage
 average
 	^self mean! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:21'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:23'!
 bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -1016,9 +1030,8 @@ bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ interpolator interpolatedValueAtX: p x y: p y.
-				scaled x: x y: y put: v ]]].
+			v _ interpolator interpolatedValueAtX: p x y: p y.
+			scaled x: x y: y put: v ]].
 	^scaled! !
 
 !FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 8/23/2014 23:40'!
@@ -1032,7 +1045,7 @@ beMagnitudeOfComplexesWith: imaginary
 	elements += iv.
 	self replaceValues: [ :i :j :v | v sqrt ]! !
 
-!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 14:22'!
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 13:44'!
 bicubicInterpolatedValueAtX: x y: y xFilterStore: xFilter
 	"Evaluate a bicubic (i.e. good quality) interpolation
 	http://en.wikipedia.org/wiki/Bicubic_interpolation
@@ -1042,6 +1055,24 @@ bicubicInterpolatedValueAtX: x y: y xFilterStore: xFilter
 
 	| interpolated yIndex0 xIndex0 dy dx uy ux xInSource xInSourceClamped yInSource yInSourceClamped dxSquared dySquared |
 	xIndex0 _ x floor - 1.
+
+	"x < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	xIndex0 < -1 ifTrue: [ ^0.0 ].
+	(xIndex0 = -1 and: [x < 0.2]) ifTrue: [ ^0.0 ].
+	"x > (width + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	xIndex0 > width ifTrue: [ ^0.0 ].
+	(xIndex0 = width and: [x > (width + 0.8)]) ifTrue: [ ^0.0 ].
+
+
+	yIndex0 _ y floor - 1.
+
+	"y < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	yIndex0 < -1 ifTrue: [ ^0.0 ].
+	(yIndex0 = -1 and: [y < 0.2]) ifTrue: [ ^0.0 ].
+	"y > (height + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	yIndex0 > height ifTrue: [ ^0.0 ].
+	(yIndex0 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
+
 	0 to: 3 do: [ :i |
 		dx _ (x - (xIndex0 + i)) abs.
 		dxSquared _ dx*dx.
@@ -1054,7 +1085,6 @@ bicubicInterpolatedValueAtX: x y: y xFilterStore: xFilter
 		xFilter at: i+1 put: ux ].
 
 	interpolated _ 0.0.
-	yIndex0 _ y floor - 1.
 	0 to: 3 do: [ :i |
 		dy _ (y - (yIndex0 + i)) abs.
 		dySquared _ dy*dy.
@@ -1075,7 +1105,7 @@ bicubicInterpolatedValueAtX: x y: y xFilterStore: xFilter
 	
 	^interpolated! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:22'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 12:55'!
 bicubicTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -1096,35 +1126,39 @@ bicubicTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ self bicubicInterpolatedValueAtX: p x y: p y xFilterStore: xFilter.
-				scaled x: x y: y put: v 
-			]
+			v _ self bicubicInterpolatedValueAtX: p x y: p y xFilterStore: xFilter.
+			scaled x: x y: y put: v
 		]].
 	^scaled! !
 
-!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 14:22'!
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 15:02'!
 bilinearInterpolatedValueAtX: x y: y
 	"Evaluate a bilinear (i.e. cheap) interpolation
-	Like OpenCV's CV_INTER_LINEAR"
+	Like OpenCV's CV_INTER_LINEAR
+	Answer 0.0 if outside image bounds."
 
 	| w interpolated xWeight1 xWeight0 yWeight1 yWeight0 xIndex0 xIndex1 yIndex0 yIndex1 |
-	xIndex0 _ x floor.
-	xIndex1 _ xIndex0+1.
+	xIndex0 _ x truncated. 		"Could be #floor. But as we only care for values >=1, it is the same. But faster."
+	xIndex0 < 1 ifTrue: [ ^0.0 ].
+	xIndex0 > width ifTrue: [ ^0.0 ].
+	(xIndex0 = width and: [ x > width ]) ifTrue: [ ^0.0 ].
+	xIndex1 _ xIndex0 = width 	"Avoid the invalid access if this was true, but don't make it slower the most common, general case."
+		ifFalse: [ xIndex0 + 1 ]
+		ifTrue: [ xIndex0 ].
+
+	yIndex0 _ y truncated.			"Could be #floor. But as we only care for values >=1, it is the same. But faster."
+	yIndex0 < 1 ifTrue: [ ^0.0 ].
+	yIndex0 > height ifTrue: [ ^0.0 ].
+	(yIndex0 = height and: [ y > height ]) ifTrue: [ ^0.0 ].
+	yIndex1 _ yIndex0 = height 	"Avoid the invalid access if this was true, but don't make it slower the most common, general case."
+		ifFalse: [ yIndex0 + 1 ]
+		ifTrue: [ yIndex0 ].
 
 	xWeight1 _ x - xIndex0.
 	xWeight0 _ 1.0 - xWeight1.
 
-	yIndex0 _ y floor.
-	yIndex1 _ yIndex0+1.
-
 	yWeight1 _ y - yIndex0.
 	yWeight0 _ 1.0 - yWeight1.
-
-	xIndex0 _ xIndex0 min: width max: 1.
-	xIndex1 _ xIndex1 min: width max: 1.
-	yIndex0 _ yIndex0 min: height max: 1.
-	yIndex1 _ yIndex1 min: height max: 1.
 
 	"/* perform interpolation */"
 	w _ (xWeight0 * (self x: xIndex0 y: yIndex0)) +
@@ -1137,7 +1171,7 @@ bilinearInterpolatedValueAtX: x y: y
 
 	^interpolated! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:22'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 12:51'!
 bilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -1158,10 +1192,8 @@ bilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ self bilinearInterpolatedValueAtX: p x y: p y.
-				scaled x: x y: y put: v 
-			]
+			v _ self bilinearInterpolatedValueAtX: p x y: p y.
+			scaled x: x y: y put: v
 		]].
 	^scaled! !
 
@@ -1950,7 +1982,7 @@ lanczosFilteredValueAtX: x y: y filterScale: filterScale
 	"And call real method"
 	^self lanczosFilteredValueAtX: x y: y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter! !
 
-!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 11:47'!
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 13:45'!
 lanczosFilteredValueAtX: x y: y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter
 	"Apply a Lanczos resampling filter at x@y, answer the filtered value.
 	Do not modify receiver in any way.
@@ -1962,7 +1994,23 @@ lanczosFilteredValueAtX: x y: y filterScale: filterScale xFilterStore: xFilter y
 	For example, to build a result image of half the size of the original, use filterScale=0.5.
 	It must be more than zero, and no more than 1. (0.0 .. 1.0].
 	"
-	| xStart xStop yStart yStop xn yn xx yy sum xFilterOffset yFilterOffset |
+	| xStart xStop yStart yStop xn yn xx yy sum xFilterOffset yFilterOffset xIndex0 yIndex0 |
+
+	"Validate inside some reasonable bounds. We allow extending up to 0.8 in any direction"
+	xIndex0 _ x floor - 1.
+	"x < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	xIndex0 < -1 ifTrue: [ ^0.0 ].
+	(xIndex0 = -1 and: [x < 0.2]) ifTrue: [ ^0.0 ].
+	"x > (width + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	xIndex0 > width ifTrue: [ ^0.0 ].
+	(xIndex0 = width and: [x > (width + 0.8)]) ifTrue: [ ^0.0 ].
+	yIndex0 _ y floor - 1.
+	"y < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	yIndex0 < -1 ifTrue: [ ^0.0 ].
+	(yIndex0 = -1 and: [y < 0.2]) ifTrue: [ ^0.0 ].
+	"y > (height + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	yIndex0 > height ifTrue: [ ^0.0 ].
+	(yIndex0 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
 
 	"Image area used by the filter. If it goes outside image bounds, it will be corrected below."
 	xStart _ (x - (2/filterScale)) ceiling.
@@ -2061,7 +2109,7 @@ lanczosFilteredValueOLDAtX: x y: y filterScale: filterScale xFilterStore: xFilte
 	
 	^sum! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 2/24/2015 12:39'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:15'!
 lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -2099,9 +2147,8 @@ lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	1 to: resultHeight do: [ :y |
 		1 to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ self lanczosFilteredValueAtX: p x y: p y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter.
-				scaled x: x y: y put: v ]]].
+			v _ self lanczosFilteredValueAtX: p x y: p y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter.
+			scaled x: x y: y put: v ]].
 	^scaled! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 4/28/2015 11:03'!
@@ -2146,7 +2193,7 @@ mean: aRect
 			mean _ mean + (self x: x y: y) ]].
 	^mean / count! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:24'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 12:46'!
 nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -2167,6 +2214,7 @@ nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentO
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
+			"Protect against invalid access"
 			(p >= (0.5@0.5) and: [ p < (width@height + 0.5) ]) ifTrue: [
 				v _ self x: p x rounded y: p y rounded.
 				scaled x: x y: y put: v 
@@ -2189,7 +2237,7 @@ normalizeValuesFloor: min ceiling: max
 
 	self replaceValues: [ :i :j :v | v - min / max min: 1.0 max: 0.0 ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 15:32'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:42'!
 perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft bottomRight: bottomRight
 	"Resample the receiver to a new Float image.
 	The arguments specify which point in the receiver maps to each corner of the result.
@@ -2210,9 +2258,8 @@ perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft b
 	1 to: resultHeight do: [ :y |
 		1 to: resultWidth do: [ :x |
 			p _ transformation map: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ interpolator interpolatedValueAtX: p x y: p y.
-				scaled x: x y: y put: v ]]].
+			v _ interpolator interpolatedValueAtX: p x y: p y.
+			scaled x: x y: y put: v ]].
 	^scaled! !
 
 !FloatImage methodsFor: 'iterating' stamp: 'jmv 8/24/2014 00:12'!
@@ -2390,7 +2437,7 @@ scaledBy: scale
 				ifFalse: [self lanczosTransformedBy: t resultExtent: nil]]
 		ifFalse: [self bSplineTransformedBy: t resultExtent: nil ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 1/27/2015 14:24'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:23'!
 shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -2415,9 +2462,8 @@ shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrN
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
-			(p >= (0.2@0.2) and: [ p <= (width@height + 0.8) ]) ifTrue: [
-				v _ interpolator interpolatedValueAtX: p x y: p y.
-				scaled x: x y: y put: v ]]].
+			v _ interpolator interpolatedValueAtX: p x y: p y.
+			scaled x: x y: y put: v ]].
 	^scaled! !
 
 !FloatImage methodsFor: 'noise generation' stamp: 'jmv 4/8/2015 16:07'!
@@ -4251,7 +4297,7 @@ meanOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
 	mean *= (1.0/n).
 	^mean! !
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 4/7/2015 15:35'!
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 5/4/2015 11:46'!
 testRotations
 	"
 	FloatImage testRotations
@@ -4270,7 +4316,7 @@ testRotations
 	xx _ 0.
 	original _ FloatImage lena.
 	original displayAt: 0@0.
-	Display getCanvas drawStringEmbossed: 'Original' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Original' at: xx@260 font: nil color: Color lightBrown embossed: true.
 	e _ original extent.
 	t _ (AffineTransformation withRadians: a/180*Float pi ) scaledBy: 1/1.0.
 	t _ (AffineTransformation withTranslation: e // 2) composedWith:
@@ -4286,7 +4332,7 @@ testRotations
 	Smalltalk garbageCollect.
 	[ rotated _ rotated nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Nearest Neighbor, like CV_INTER_NN' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 "
 	xx _ xx + 256.
@@ -4298,7 +4344,7 @@ testRotations
 	Smalltalk garbageCollect.
 	[ rotated _ rotated areaTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Area, like CV_INTER_AREA' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@260 font: nil color: Color lightBrown embossed: true.
 "
 
 	xx _ xx + 256.
@@ -4310,7 +4356,7 @@ testRotations
 	Smalltalk garbageCollect.
 	[ rotated _ rotated bilinearTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Bilinear, like CV_INTER_LINEAR' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4321,7 +4367,7 @@ testRotations
 	Smalltalk garbageCollect.
 	[ rotated _ rotated bicubicTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'BiCubic, like CV_INTER_CUBIC' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4332,7 +4378,7 @@ testRotations
 	Smalltalk garbageCollect.
 	[ rotated _ rotated lanczosTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Lanczos, like INTER_LANCZOS4' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4343,7 +4389,7 @@ testRotations
 	Smalltalk garbageCollect.
 	[ rotated _ rotated bSplineTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'BSpline, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + 256.
 	rotated _ original.
@@ -4354,12 +4400,12 @@ testRotations
 	Smalltalk garbageCollect.
 	[ rotated _ rotated shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
 	rotated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Shifted Linear, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Shifted Linear, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	'=== BSpline gives outstanding results. Next comes BiCubic and Lanczos.' print.
 	'=== The extra cost of Lanczos doesnt seem worth in this case.' print.! !
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 4/8/2015 10:05'!
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 5/4/2015 11:47'!
 testTranslation
 	"
 	FloatImage testTranslation
@@ -4377,7 +4423,7 @@ testTranslation
 	xx _ 0.
 	original _ FloatImage lena.
 	original displayAt: 0@0.
-	Display getCanvas drawStringEmbossed: 'Original' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Original' at: xx@260 font: nil color: Color lightBrown embossed: true.
 	e _ original extent.
 	t _ AffineTransformation withTranslation: 15.0 / c @ (3.0/c).
 
@@ -4390,7 +4436,7 @@ testTranslation
 	Smalltalk garbageCollect.
 	[ translated _ translated nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
 	translated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Nearest Neighbor, like CV_INTER_NN' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 "
 	xx _ xx + 256.
@@ -4402,7 +4448,7 @@ testTranslation
 	Smalltalk garbageCollect.
 	[ translated _ translated areaTransformedBy: t resultExtent: e ] timeToRun print.
 	translated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Area, like CV_INTER_AREA' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@260 font: nil color: Color lightBrown embossed: true.
 "
 
 	xx _ xx + 256.
@@ -4414,7 +4460,7 @@ testTranslation
 	Smalltalk garbageCollect.
 	[ translated _ translated bilinearTransformedBy: t resultExtent: e ] timeToRun print.
 	translated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Bilinear, like CV_INTER_LINEAR' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + 256.
 	translated _ original.
@@ -4425,7 +4471,7 @@ testTranslation
 	Smalltalk garbageCollect.
 	[ translated _ translated bicubicTransformedBy: t resultExtent: e ] timeToRun print.
 	translated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'BiCubic, like CV_INTER_CUBIC' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + 256.
 	translated _ original.
@@ -4436,7 +4482,7 @@ testTranslation
 	Smalltalk garbageCollect.
 	[ translated _ translated lanczosTransformedBy: t resultExtent: e ] timeToRun print.
 	translated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Lanczos, like INTER_LANCZOS4' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + 256.
 	translated _ original.
@@ -4447,7 +4493,7 @@ testTranslation
 	Smalltalk garbageCollect.
 	[ translated _ translated bSplineTransformedBy: t resultExtent: e ] timeToRun print.
 	translated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'BSpline, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + 256.
 	translated _ original.
@@ -4458,13 +4504,13 @@ testTranslation
 	Smalltalk garbageCollect.
 	[ translated _ translated shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
 	translated displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Shifted Linear, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Shifted Linear, unavailable in OpenCV' at: xx@260 font: nil color: Color lightBrown embossed: true.
 
 	'=== BSpline gives outstanding results. Next comes BiCubic and Lanczos.' print.
 	'=== The extra cost of Lanczos doesnt seem worth in this case.' print.
 	'=== Nearest Neighbor and Shifted Linear dont give consistent results across different transformations' print.! !
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 4/7/2015 15:24'!
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 5/4/2015 11:42'!
 testZoomIn
 	"
 	FloatImage testZoomIn
@@ -4480,7 +4526,7 @@ testZoomIn
 	original _ FloatImage lena copy: (100@100 extent: 100@100).
 	e _ (original extent * scale) rounded.
 	original displayAt: 0@0.
-	Display getCanvas drawStringEmbossed: 'Original' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Original' at: xx@270 font: nil color: Color lightBrown embossed: true.
 	t _ AffineTransformation forImageZoom: scale.
 
 	xx _ xx + original  width.
@@ -4489,7 +4535,7 @@ testZoomIn
 	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
 	[ zoomed _ zoomed nearestNeighborTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Nearest Neighbor, like CV_INTER_NN' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@270 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4497,7 +4543,7 @@ testZoomIn
 	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
 	[ zoomed _ zoomed areaTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Area, like CV_INTER_AREA' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@270 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4505,7 +4551,7 @@ testZoomIn
 	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
 	[ zoomed _ zoomed bilinearTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Bilinear, like CV_INTER_LINEAR' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@270 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4513,7 +4559,7 @@ testZoomIn
 	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
 	[ zoomed _ zoomed bicubicTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'BiCubic, like CV_INTER_CUBIC' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@270 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4521,7 +4567,7 @@ testZoomIn
 	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
 	[ zoomed _ zoomed lanczosTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Lanczos, like INTER_LANCZOS4' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@270 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4529,7 +4575,7 @@ testZoomIn
 	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
 	[ zoomed _ zoomed bSplineTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'BSpline, unavailable in OpenCV' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@270 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4537,13 +4583,13 @@ testZoomIn
 	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
 	[ zoomed _ zoomed shiftedLinearTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Shifted Linear, unavailable in OpenCV' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Shifted Linear, unavailable in OpenCV' at: xx@270 font: nil color: Color lightBrown embossed: true.
 
 	'=== BSpline gives best results. Next comes BiCubic and Lanczos.' print.
 	'=== The extra cost of Lanczos doesnt seem worth in this case.' print.
 	'=== Bilinear gives reasonable results in this case.' print.! !
 
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 4/7/2015 15:25'!
+!FloatImage class methodsFor: 'testing' stamp: 'jmv 5/4/2015 11:43'!
 testZoomOut
 	"
 	FloatImage testZoomOut
@@ -4562,7 +4608,7 @@ testZoomOut
 	original _ FloatImage lena.
 	e _ (original extent * scale) rounded.
 	original displayAt: 0@0.
-	Display getCanvas drawStringEmbossed: 'Original' at: xx@270 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Original' at: xx@270 font: nil color: Color lightBrown embossed: true.
 	t _ AffineTransformation forImageZoom: scale.
 
 	xx _ xx + original  width.
@@ -4571,7 +4617,7 @@ testZoomOut
 	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
 	[ zoomed _ zoomed nearestNeighborTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Nearest Neighbor, like CV_INTER_NN' at: xx@70 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@70 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4579,7 +4625,7 @@ testZoomOut
 	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
 	[ zoomed _ zoomed bilinearTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Bilinear, like CV_INTER_LINEAR' at: xx@85 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@85 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4587,7 +4633,7 @@ testZoomOut
 	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
 	[ zoomed _ zoomed bicubicTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'BiCubic, like CV_INTER_CUBIC' at: xx@100 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@100 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4595,7 +4641,7 @@ testZoomOut
 	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
 	[ zoomed _ zoomed areaTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Area, like CV_INTER_AREA' at: xx@115 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@115 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4603,7 +4649,7 @@ testZoomOut
 	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
 	[ zoomed _ zoomed lanczosTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Lanczos, like INTER_LANCZOS4' at: xx@130 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@130 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4611,7 +4657,7 @@ testZoomOut
 	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
 	[ zoomed _ zoomed bSplineTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'BSpline, unavailable in OpenCV' at: xx@145 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@145 font: nil color: Color lightBrown embossed: true.
 
 	xx _ xx + e x.
 	zoomed _ original.
@@ -4619,7 +4665,7 @@ testZoomOut
 	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
 	[ zoomed _ zoomed shiftedLinearTransformedBy: t resultExtent: nil ] timeToRun print.
 	zoomed displayAt: xx@0.
-	Display getCanvas drawStringEmbossed: 'Shifted Linear, unavailable in OpenCV' at: xx@160 font: nil color: Color lightBrown.
+	Display getCanvas drawString: 'Shifted Linear, unavailable in OpenCV' at: xx@160 font: nil color: Color lightBrown embossed: true.
 	
 	'=== Lanczos gives best avoidance of aliasing effects. Area is really good, and very very cheap.' print.! !
 
@@ -5677,7 +5723,7 @@ initializeFrom: aFloatImage
 	-1 to: width+2 do: [ :j |
 		self convertColumn: j ]! !
 
-!BSplineInterpolatingImage methodsFor: 'interpolating' stamp: 'jmv 8/13/2012 17:00'!
+!BSplineInterpolatingImage methodsFor: 'interpolating' stamp: 'jmv 5/4/2015 13:29'!
 interpolatedValueAtX: x y: y
 	"Evaluate the interpolated function. See class comment"
 
@@ -5690,25 +5736,39 @@ interpolatedValueAtX: x y: y
 (self xDomain rangeIncludes: x) ifFalse: [^0.0].
 (self yDomain rangeIncludes: y) ifFalse: [ ^0.0].
 "
-	oneSixth _ 1.0 / 6.0.
-
 	xIndex2 _ x floor.
 	xIndex3 _ xIndex2+1.
-	w _ x - xIndex2.
 	xIndex1 _ xIndex2-1.
 	xIndex4 _ xIndex2+2.
 
+	yIndex2 _ y floor.
+	yIndex3 _ yIndex2+1.
+	yIndex1 _ yIndex2-1.
+	yIndex4 _ yIndex2+2.
+
+	"Validate inside some reasonable bounds. We allow extending up to 0.8 in any direction"
+	"x < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	xIndex1 < -1 ifTrue: [ ^0.0 ].
+	(xIndex1 = -1 and: [x < 0.2]) ifTrue: [ ^0.0 ].
+	"x > (width + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	xIndex1 > width ifTrue: [ ^0.0 ].
+	(xIndex1 = width and: [x > (width + 0.8)]) ifTrue: [ ^0.0 ].
+	"y < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	yIndex1 < -1 ifTrue: [ ^0.0 ].
+	(yIndex1 = -1 and: [y < 0.2]) ifTrue: [ ^0.0 ].
+	"y > (height + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	yIndex1 > height ifTrue: [ ^0.0 ].
+	(yIndex1 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
+
+	oneSixth _ 1.0 / 6.0.
+
+	w _ x - xIndex2.
 	xWeight4 _ oneSixth * w * w * w.
 	xWeight1 _ oneSixth + ((w * w - w) * 0.5) - xWeight4.
 	xWeight3 _ w + xWeight1 - (2.0 * xWeight4).
 	xWeight2 _ 1.0 - (xWeight1 + xWeight3 + xWeight4).
 
-	yIndex2 _ y floor.
-	yIndex3 _ yIndex2+1.
 	w _ y - yIndex2.
-	yIndex1 _ yIndex2-1.
-	yIndex4 _ yIndex2+2.
-
 	yWeight4 _ oneSixth * w * w * w .
 	yWeight1 _ oneSixth + ((w * w - w) * 0.5) - yWeight4.
 	yWeight3 _ w + yWeight1 - (2.0 * yWeight4).
@@ -5901,11 +5961,11 @@ initializeFrom: aFloatImage
 	1 to: width do: [ :j |
 		self convertColumn: j ]! !
 
-!ShiftedLinearInterpolatingImage methodsFor: 'interpolating' stamp: 'jmv 4/16/2013 13:43'!
+!ShiftedLinearInterpolatingImage methodsFor: 'interpolating' stamp: 'jmv 5/4/2015 13:36'!
 interpolatedValueAtX: xx y: yy
 	"Evaluate the interpolated function. See class comment"
 
-	| w interpolated xWeight1 xWeight0 yWeight1 yWeight0 xIndex0 xIndex1 yIndex0 yIndex1 basisShift x y |
+	| w interpolated xWeight1 xWeight0 yWeight1 yWeight0 xIndex0 xIndex1 yIndex0 yIndex1 basisShift x y xIndexCheck yIndexCheck |
 	"
 	Podria ser que esto ocurra si los argumentos estan mal... habria que validar, pero no en cada evaluacion!!
 	"
@@ -5923,20 +5983,35 @@ interpolatedValueAtX: xx y: yy
 
 	xIndex0 _ x floor.
 	xIndex1 _ xIndex0+1.
+	yIndex0 _ y floor.
+	yIndex1 _ yIndex0+1.
+
+	"Validate inside some reasonable bounds. We allow extending up to 0.8 in any direction"
+	"x < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	xIndex0 < 0 ifTrue: [ ^0.0 ].
+	(xIndex0 = 0 and: [x < 0.2]) ifTrue: [ ^0.0 ].
+	"x > (width + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	xIndexCheck _ xIndex0 - 1.
+	xIndexCheck > width ifTrue: [ ^0.0 ].
+	(xIndexCheck = width and: [x > (width + 0.8)]) ifTrue: [ ^0.0 ].
+	"y < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	yIndex0 < 0 ifTrue: [ ^0.0 ].
+	(yIndex0 = 0 and: [y < 0.2]) ifTrue: [ ^0.0 ].
+	"y > (height + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	yIndexCheck _ yIndex0 - 1.
+	yIndexCheck > height ifTrue: [ ^0.0 ].
+	(yIndexCheck = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
 
 	xWeight1 _ x - xIndex0.
 	xWeight0 _ 1.0 - xWeight1.
-
-	yIndex0 _ y floor.
-	yIndex1 _ yIndex0+1.
 
 	yWeight1 _ y - yIndex0.
 	yWeight0 _ 1.0 - yWeight1.
 
 	xIndex0 _ xIndex0 min: width max: 1.
-	xIndex1 _ xIndex1 min: width max: 1.
+	xIndex1 _ xIndex1 min: width.
 	yIndex0 _ yIndex0 min: height max: 1.
-	yIndex1 _ yIndex1 min: height max: 1.
+	yIndex1 _ yIndex1 min: height.
 
 	"/* perform interpolation */"
 	w _ (xWeight0 * (self coefficientAtX: xIndex0 y: yIndex0)) +
