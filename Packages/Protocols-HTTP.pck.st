@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 3:40:41.927197 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 4:53:44.7581 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Protocols-HTTP' 1 11!
+!provides: 'Protocols-HTTP' 1 12!
 !requires: 'Identities-UUID' 1 1 nil!
-!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
 !requires: 'Network-Kernel' 1 2 nil!
+!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
 	instanceVariableNames: 'client request response authParams message'
@@ -700,12 +700,11 @@ defaultPort
 		ifTrue:[443]
 		ifFalse:[80]! !
 
-!HTTPClient methodsFor: 'initialize' stamp: 'ar 2/12/2012 21:03'!
+!HTTPClient methodsFor: 'initialize' stamp: 'DSG 5/13/2015 16:52'!
 defaultUserAgent
 	"Answer the default User-Agent string to use for HTTPClient"
 
 	^'HTTPClient/1.5 (', 
-		HTTPUtils mcVersion, '; ', 
 		SystemVersion current version,'-', 
 		SystemVersion current highestUpdate printString, '; ', 
 		HTTPUtils platformName,')'.
@@ -4309,12 +4308,11 @@ serverDate
 		s nextPutAll: ' GMT'.
 	].! !
 
-!HTTPServer class methodsFor: 'accessing' stamp: 'DSG 3/29/2015 17:13'!
+!HTTPServer class methodsFor: 'accessing' stamp: 'DSG 5/13/2015 16:52'!
 serverString
 	"Returns the server string to be used in responses"
 
-	^'HTTPServer/1.0 (', 
-		HTTPUtils mcVersion, '; ', 
+	^'HTTPServer/1.0 (',
 		SystemVersion current version,'-', 
 		SystemVersion current highestUpdate printString, '; ', 
 		HTTPUtils platformName,')'.
@@ -4540,16 +4538,6 @@ logRequest: request response: response on: streamOrFilename
 		ifTrue:[stream flush]
 		ifFalse:[stream close].
 ! !
-
-!HTTPUtils class methodsFor: 'misc' stamp: 'ar 7/21/2010 00:09'!
-mcVersion
-	"Answers the Monticello version of HTTPServer's MC package"
-
-	| version |
-	Smalltalk at: #MCWorkingCopy ifPresent:[:mc|
-		mc managersForClass: self do:[:wc|
-			wc ancestors ifNotEmpty:[:ancestry| version := ancestry first name]]].
-	^version ifNil:[''].! !
 
 !HTTPUtils class methodsFor: 'md5' stamp: 'ar 2/20/2010 12:45'!
 md5Digest: aStringOrByteArray
