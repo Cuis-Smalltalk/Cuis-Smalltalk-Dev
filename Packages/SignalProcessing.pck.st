@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2308] on 4 May 2015 at 3:04:06.233526 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 7:03:57.886637 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 27!
+!provides: 'SignalProcessing' 1 28!
 !requires: 'Sound' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
@@ -1002,10 +1002,6 @@ asFormG: greenImage b: blueImage
 	answer _ Form extent: width@height depth: 32.
 	self fill32BitForm: answer withG: greenImage b: blueImage.
 	^answer! !
-
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 3/25/2015 10:01'!
-average
-	^self mean! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:23'!
 bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
@@ -2172,10 +2168,6 @@ linearSpaceToGammaEncoded
 		aFloatImageInLinearSpace copy linearSpaceToGammaEncoded displayAt: 0@0
 	"
 	self replaceValues: [ :i :j :v | Color linearTosRGBGamma: v ]! !
-
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 3/25/2015 10:01'!
-mean
-	^elements mean! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 9/25/2012 15:33'!
 mean: aRect

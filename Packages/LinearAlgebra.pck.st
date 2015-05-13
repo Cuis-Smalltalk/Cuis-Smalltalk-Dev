@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2280] on 28 April 2015 at 12:22:18.003904 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 7:03:55.332637 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 13!
+!provides: 'LinearAlgebra' 1 14!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -195,6 +195,10 @@ asFormMin: min max: max
 	k _ 255.0 / (max-min).
 	^ self as8bitFormEvaluating: [ :index |
 		(((elements at: index) - min) * k + 0.5) truncated min: 255 max: 0 ]! !
+
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:56'!
+average
+	^self mean! !
 
 !Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
 columnsWithoutPivot: count
@@ -446,11 +450,15 @@ m
 
 	^height! !
 
-!Matrix methodsFor: 'accessing' stamp: 'jmv 9/2/2014 12:00'!
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:52'!
 max
 	^ elements max! !
 
-!Matrix methodsFor: 'accessing' stamp: 'jmv 9/2/2014 12:00'!
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:55'!
+mean
+	^elements mean! !
+
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:52'!
 min
 	^ elements min! !
 
@@ -630,6 +638,10 @@ substractRow: i multipliedBy: factor to: k startingAtColumn: jStart
 	jStart+1 to: width do: [ :j |
 		self i: k j: j put:
 			(self i: k j: j) - ((self i: i j: j) * factor) ]! !
+
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:56'!
+sum
+	^elements sum! !
 
 !Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:17'!
 transpose
