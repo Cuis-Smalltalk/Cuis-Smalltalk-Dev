@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2211] on 20 March 2015 at 11:37:29.053494 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:20.5814 pm'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (instead of 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 3!
+!provides: 'Math 3D' 1 4!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -661,10 +661,11 @@ inplaceHouseHolderTransform: aVector
 	^Float64Vector4 x: (x at: 1) y: (x at: 2) z: (x at: 3) w: (x at: 4)
 ! !
 
-!Float64Matrix4x4 methodsFor: 'transforming' stamp: 'ar 5/21/2000 16:34'!
+!Float64Matrix4x4 methodsFor: 'transforming' stamp: 'jmv 5/14/2015 09:51'!
 inverseTransformation
 	"Return the inverse matrix of the receiver."
-	^self clone inplaceHouseHolderInvert.! !
+
+	^ self copy inplaceHouseHolderInvert! !
 
 !Float64Matrix4x4 methodsFor: 'testing' stamp: 'ar 2/1/1999 21:54'!
 isIdentity
@@ -711,14 +712,14 @@ localPointToGlobal: aVector
 
 	^Float64Vector3 x:(rx/rw) y: (ry/rw) z: (rz/rw)! !
 
-!Float64Matrix4x4 methodsFor: 'transforming' stamp: 'jmv 2/26/2015 13:25'!
+!Float64Matrix4x4 methodsFor: 'transforming' stamp: 'jmv 5/14/2015 09:51'!
 orthoNormInverse
 	| m x y z rx ry rz |
 	"It would be nice to have a plugin for this...
 	<primitive: 'Float64OrthoNormInverseMatrix' module: 'Squeak3D'>"
 	self flag: #Float64Primitive.
 
-	m := self clone.
+	m := self copy.
 	"transpose upper 3x3 matrix"
 	m a11: self a11; a12: self a21; a13: self a31.
 	m a21: self a12; a22: self a22; a23: self a32.
@@ -1266,21 +1267,21 @@ skew: vector
 	self a23: vector x negated.
 ! !
 
-!Float64Matrix4x4 methodsFor: 'solving' stamp: 'ar 6/23/2002 14:28'!
+!Float64Matrix4x4 methodsFor: 'solving' stamp: 'jmv 5/14/2015 09:52'!
 solve3x3: aVector
 	"Solve a 3x3 system of linear equations. Assume that all the a[4,x] and a[x,4] are zero.
 	NOTE: This is a hack, but it's the fastest way for now."
 	| m |
-	m := self clone.
+	m := self copy.
 	m a44: 1. "need this for inversion"
 	m := m inplaceHouseHolderInvert.
 	m ifNil:[^nil].
 	^m localDirToGlobal: aVector.! !
 
-!Float64Matrix4x4 methodsFor: 'solving' stamp: 'ar 2/1/1999 21:52'!
+!Float64Matrix4x4 methodsFor: 'solving' stamp: 'jmv 5/14/2015 09:52'!
 solve: aVector
 
-	^self clone inplaceHouseHolderTransform: aVector
+	^ self copy inplaceHouseHolderTransform: aVector
 	"or:
 	^self clone inplaceDecomposeLU solveLU: aVector
 	"! !

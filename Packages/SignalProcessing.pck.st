@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 7:03:57.886637 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:32.3294 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 28!
+!provides: 'SignalProcessing' 1 29!
+!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -2491,7 +2491,7 @@ validateSameSize: aFloatImage
 	(height = aFloatImage height and: [ width = aFloatImage width ]) ifFalse: [
 		self error: 'Receiver and argument should be of the same size' ]! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 09:15'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 5/14/2015 12:12'!
 with8BitColorForm: aForm do: aBlock
 	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file.
@@ -2507,7 +2507,7 @@ with8BitColorForm: aForm do: aBlock
 	
 	aFormTotalLineWords _ aFormWidth-1 // 4+1.
 	aFormBits _ aForm bits.
-	aFormColorsReds _ aForm colors collect: [ :each | each blue ].
+	aFormColorsReds _ aForm colors collect: [ :each | each red ].
 
 	1 to: (height min: aFormHeight) do: [ :y |
 		i2 _ y-1 * width.

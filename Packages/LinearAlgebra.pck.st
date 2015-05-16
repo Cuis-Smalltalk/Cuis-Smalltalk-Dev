@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 7:03:55.332637 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:09.2684 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 14!
+!provides: 'LinearAlgebra' 1 15!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -615,6 +615,17 @@ solveLinearSystem
 			sum _ sum - ((self i: i j: k) * (x i: k j: 1)) ].
 		x i: i j: 1 put: sum / (self i: i j: i) ].
 	^x! !
+
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/14/2015 13:04'!
+standardDeviation
+	"
+	See
+		http://en.wikipedia.org/wiki/Variance
+		http://www.mathsisfun.com/data/standard-deviation.html
+	{600. 470. 170. 430. 300} standardDeviation
+	"
+
+	^elements standardDeviation! !
 
 !Matrix methodsFor: 'accessing' stamp: 'jmv 9/30/2007 09:30'!
 subMatrixTopLeft: aPoint bottomRight: bPoint

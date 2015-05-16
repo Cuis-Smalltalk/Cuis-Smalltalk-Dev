@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2166] on 22 January 2015 at 11:37:06.343444 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:43.7824 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 3!
+!provides: 'Sound' 1 4!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
@@ -1537,13 +1537,6 @@ controlRate
 	^ 100
 ! !
 
-!AbstractSound methodsFor: 'copying' stamp: 'jm 12/15/97 19:15'!
-copy
-	"A sound should copy all of the state needed to play itself, allowing two copies of a sound to play at the same time. These semantics require a recursive copy but only down to the level of immutable data. For example, a SampledSound need not copy its sample buffer. Subclasses overriding this method should include a resend to super."
-
-	^ self clone copyEnvelopes
-! !
-
 !AbstractSound methodsFor: 'copying' stamp: 'jm 12/17/97 22:22'!
 copyEnvelopes
 	"Private!! Support for copying. Copy my envelopes."
@@ -1751,6 +1744,12 @@ playSilentlyUntil: startTime
 		self playSampleCount: n into: buf startingAt: 1.
 		nextSample _ nextSample + n].
 ! !
+
+!AbstractSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:55'!
+postCopy
+	"A sound should copy all of the state needed to play itself, allowing two copies of a sound to play at the same time. These semantics require a recursive copy but only down to the level of immutable data. For example, a SampledSound need not copy its sample buffer. Subclasses overriding this method should include a resend to super."
+
+	self copyEnvelopes! !
 
 !AbstractSound methodsFor: 'envelopes' stamp: 'jm 8/18/1998 09:57'!
 removeAllEnvelopes
@@ -4631,13 +4630,6 @@ add: aSound pan: leftRightPan volume: volume
 	rightVols _ rightVols copyWith: (pan * vol) // ScaleFactor.
 ! !
 
-!MixedSound methodsFor: 'copying' stamp: 'jm 12/15/97 19:13'!
-copy
-	"Copy my component sounds."
-
-	^ super copy copySounds
-! !
-
 !MixedSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:33'!
 copySounds
 	"Private!! Support for copying. Copy my component sounds and settings array."
@@ -4694,6 +4686,13 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 				ifFalse: [soundDone at: i put: true]]].
 ! !
 
+!MixedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:57'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds! !
+
 !MixedSound methodsFor: 'sound generation' stamp: 'jm 12/8/97 17:07'!
 reset
 
@@ -4726,12 +4725,6 @@ stopGracefully
 
 	super stopGracefully.
 	sounds do: [:s | s stopGracefully].
-! !
-
-!PluckedSound methodsFor: 'copying' stamp: 'jm 12/15/97 19:13'!
-copy
-
-	^ super copy copyRing
 ! !
 
 !PluckedSound methodsFor: 'copying' stamp: 'jm 11/4/97 08:25'!
@@ -4801,6 +4794,13 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 
 	scaledIndex _ scaledNextIndex.
 	count _ count - n.
+! !
+
+!PluckedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:56'!
+postCopy
+
+	super postCopy.
+	self copyRing
 ! !
 
 !PluckedSound methodsFor: 'sound generation' stamp: 'jm 12/17/97 21:35'!
@@ -4946,13 +4946,6 @@ startTime
 startTime: anInteger
 	startTime _ anInteger! !
 
-!RepeatingSound methodsFor: 'copying' stamp: 'jm 12/15/97 19:13'!
-copy
-	"Copy my component sound."
-
-	^ super copy copySound
-! !
-
 !RepeatingSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:34'!
 copySound
 	"Private!! Support for copying. Copy my component sound."
@@ -5007,6 +5000,14 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 			rightVol: rightVol.
 		i _ i + count.
 		samplesNeeded _ samplesNeeded - count].
+! !
+
+!RepeatingSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sound."
+
+	super postCopy.
+	self copySound
 ! !
 
 !RepeatingSound methodsFor: 'sound generation' stamp: 'jm 6/30/1998 18:28'!
@@ -5175,20 +5176,13 @@ applyReverbTo: aSoundBuffer startingAt: startIndex count: n
 		bufferIndex _ (bufferIndex \\ bufferSize) + 1].
 ! !
 
-!ReverbSound methodsFor: 'copying' stamp: 'jm 1/21/98 14:29'!
-copy
-	"Copy my component sound."
-
-	^ super copy copySound
-! !
-
-!ReverbSound methodsFor: 'copying' stamp: 'jm 1/21/98 16:18'!
+!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:53'!
 copySound
 	"Private!! Support for copying. Copy my component sound."
 
 	sound _ sound copy.
-	leftBuffer _ leftBuffer clone.
-	rightBuffer _ rightBuffer clone.
+	leftBuffer _ leftBuffer copy.
+	rightBuffer _ rightBuffer copy.
 ! !
 
 !ReverbSound methodsFor: 'sound generation' stamp: 'jm 1/21/98 14:32'!
@@ -5208,6 +5202,14 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 		leftVol: leftVol
 		rightVol: rightVol.
 	self applyReverbTo: aSoundBuffer startingAt: startIndex count: n.
+! !
+
+!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sound."
+
+	super postCopy.
+	self copySound
 ! !
 
 !ReverbSound methodsFor: 'sound generation' stamp: 'jm 1/21/98 16:47'!
@@ -5968,13 +5970,6 @@ closeMIDIPort
 	midiPort _ nil.
 ! !
 
-!ScorePlayer methodsFor: 'copying' stamp: 'jm 12/15/97 19:13'!
-copy
-	"Copy my component sounds."
-
-	^ super copy copySounds
-! !
-
 !ScorePlayer methodsFor: 'copying' stamp: 'jm 1/29/98 18:32'!
 copySounds
 	"Private!! Support for copying."
@@ -6283,6 +6278,14 @@ positionInScore: pos
 	ticksSinceStart _ pos * durationInTicks.
 	done _ false.
 
+! !
+
+!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
 ! !
 
 !ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:10'!
@@ -6635,13 +6638,6 @@ compressWith: codecClass
 compressWith: codecClass atRate: aSamplingRate
 	^ self copy transformSounds: [:s | s compressWith: codecClass atRate: aSamplingRate]! !
 
-!SequentialSound methodsFor: 'copying' stamp: 'jm 12/15/97 19:10'!
-copy
-	"Copy my component sounds."
-
-	^ super copy copySounds
-! !
-
 !SequentialSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:48'!
 copySounds
 	"Private!! Support for copying. Copy my component sounds."
@@ -6701,6 +6697,14 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 		remaining < count ifTrue: [count _ remaining].
 		snd mixSampleCount: count into: aSoundBuffer startingAt: i leftVol: leftVol rightVol: rightVol.
 		i _ i + count].
+! !
+
+!SequentialSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
 ! !
 
 !SequentialSound methodsFor: 'composition' stamp: 'jm 4/14/1999 10:05'!
@@ -7404,13 +7408,13 @@ indexOfLastSampleOver: threshold
 	^ 0
 ! !
 
-!SoundBuffer methodsFor: 'utilities' stamp: 'jm 10/21/2001 10:43'!
+!SoundBuffer methodsFor: 'utilities' stamp: 'jmv 5/14/2015 09:54'!
 lowPassFiltered
 	"Answer a simple low-pass filtered copy of this buffer. Assume it is monophonic."
 
 	| sz out last this |
 	sz _ self monoSampleCount.
-	out _ self clone.
+	out _ self copy.
 	last _ self at: 1.
 	2 to: sz do: [:i |
 		this _ self at: i.

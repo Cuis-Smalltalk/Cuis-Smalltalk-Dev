@@ -66,6 +66,8 @@ or on Linux:
 coglinux/bin/squeak MyProject.image
 ```
 This method has the advantage to set you up to easily contribute code back to Cuis packages.
+If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files. Alternatively, get the zip file from github.
+
 
 ### Towards Morphic 3
 In Cuis work is on the way to restructure and upgrade the Morphic classes. For more see [Notes on Morphic](Documentation/NotesOnMorphic.md).
