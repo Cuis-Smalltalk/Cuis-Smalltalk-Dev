@@ -1,9 +1,10 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2308] on 8 May 2015 at 11:34:34.676482 am'!
 'Description Please enter a description for this package'!
-!provides: 'VMMaker' 1 4!
-!requires: 'SqueakCompatibility' 1 nil nil!
+!provides: 'VMMaker' 1 6!
 !requires: 'Balloon' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Identities-UUID' 1 nil nil!
+!requires: 'SqueakCompatibility' 1 nil nil!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
 !classDefinition: #VMBasicConstants category: #'VMMaker-Interpreter'!

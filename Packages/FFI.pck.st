@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:28:55.4964 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 8!
+!provides: 'FFI' 1 9!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -1893,9 +1893,9 @@ setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 				bigEndian: Smalltalk isBigEndian.
 	self primManualSurface: bits setPointer: integer.! !
 FFIConstants initialize!
-ExternalAddress initialize!
 ExternalObject initialize!
+ExternalAddress initialize!
 ExternalFunction initialize!
+ExternalType initialize!
 ExternalStructure initialize!
 ExternalData initialize!
-ExternalType initialize!

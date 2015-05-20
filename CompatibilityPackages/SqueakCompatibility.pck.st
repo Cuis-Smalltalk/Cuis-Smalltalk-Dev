@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:55.7364 pm'!
 'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 13!
+!provides: 'SqueakCompatibility' 1 14!
 !classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
 	instanceVariableNames: ''
@@ -259,16 +259,6 @@ UnsupportedInCuis subclass: #UIManager
 	category: 'SqueakCompatibility'!
 !classDefinition: 'UIManager class' category: #SqueakCompatibility!
 UIManager class
-	instanceVariableNames: ''!
-
-!classDefinition: #UUID category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #UUID
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'UUID class' category: #SqueakCompatibility!
-UUID class
 	instanceVariableNames: ''!
 
 
