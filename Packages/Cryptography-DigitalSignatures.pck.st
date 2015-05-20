@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 3:29:30.899296 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2329] on 20 May 2015 at 9:11:13.295632 am'!
 'Description Please enter a description for this package'!
-!provides: 'Cryptography-DigitalSignatures' 1 1!
+!provides: 'Cryptography-DigitalSignatures' 1 2!
 !requires: 'Sound' 1 3 nil!
 !classDefinition: #DigitalSignatureAlgorithm category: #'Cryptography-DigitalSignatures'!
 Object subclass: #DigitalSignatureAlgorithm
@@ -113,7 +113,7 @@ computeSignatureForMessageHash: hash privateKey: privateKey
 	^ Array with: r with: s
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'DSG 12/4/2013 17:45'!
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'jmv 5/19/2015 21:41'!
 generateKeySet
 	"Generate and answer a key set for DSA. The result is a pair (<private key><public key>). Each key is an array of four large integers. The private key is (p, q, g, x); the public one is (p, q, g, y). The signer must be sure to record (p, q, g, x), and must keep x secret to prevent someone from forging their signature."
 	"Note: Key generation can take some time. Open a transcript so you can see what's happening and take a coffee break!!"
@@ -126,18 +126,18 @@ generateKeySet
 	exp := (p - 1) / q.
 	h := 2.
 	[g := h raisedTo: exp modulo: p. g = 1] whileTrue: [h := h + 1].
-	Transcript show: 'done.'; finishEntry.
+	Transcript show: 'done.'; newLine.
 	Transcript show: 'Computing x and y...'.
 	x := self nextRandom160.
 	y := g raisedTo: x modulo: p.
-	Transcript show: 'done.'; finishEntry.
-	Transcript show: 'Key generation complete!!'; finishEntry.
+	Transcript show: 'done.'; newLine.
+	Transcript show: 'Key generation complete!!'; newLine.
 	^ Array
 		with: (Array with: p with: q with: g with: x)
 		with: (Array with: p with: q with: g with: y)
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'DSG 12/4/2013 17:44'!
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jmv 5/19/2015 21:41'!
 generateQandP
 	"Generate the two industrial-grade primes, q (160-bits) and p (512-bit) needed to build a key set. Answer the array (q, p, s), where s is the seed that from which q and p were created. This seed is normally discarded, but can be used to verify the key generation process if desired."
 
@@ -146,10 +146,10 @@ generateQandP
 	halfTwoToTheP := 2 raisedTo: (pBits - 1).
 	chunkCount := pBits // 160.
 
-	Transcript show: 'Searching for primes q and p...'; finishEntry.
+	Transcript show: 'Searching for primes q and p...'; newLine.
 	[
 		sAndq := self generateSandQ.
-		Transcript show: '  Found a candidate q.';finishEntry.
+		Transcript show: '  Found a candidate q.';newLine.
 		s := sAndq first.
 		q := sAndq last.
 		twoQ := q bitShift: 1.
@@ -160,9 +160,9 @@ generateQandP
 			x := w + halfTwoToTheP.
 			p := (x - ( x \\ twoQ)) + 1.
 			p highBit = pBits ifTrue: [
-				Transcript show: '    Testing potential p ', (c + 1) printString, '...'; finishEntry.
+				Transcript show: '    Testing potential p ', (c + 1) printString, '...'; newLine.
 				(self isProbablyPrime: p) ifTrue: [
-					Transcript show: '  Found p!!'; finishEntry .
+					Transcript show: '  Found p!!'; newLine .
 					^ Array with: q with: p with: s]].
 			n := n + chunkCount + 1.
 			c := c + 1]] repeat! !
@@ -198,14 +198,14 @@ generateSandQ
 		q := u bitOr: ((1 bitShift: 159) bitOr: 1).
 		(self isProbablyPrime: q) ifTrue: [^ Array with: s with: q]] repeat! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'DSG 5/28/2013 10:38'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 5/19/2015 21:41'!
 initRandom: randomInteger
 	"Initialize the the secure random number generator with the given value. The argument should be a positive integer of up to 512 bits chosen randomly to avoid someone being able to predict the sequence of random values generated."
 	"Note: The random generator must be initialized before generating a key set or signature. Signature verification does not require initialization of the random generator."
 
 	randSeed := 16rEFCDAB8998BADCFE10325476C3D2E1F067452301.  "initial seed"
 	randKey := randomInteger.
-	Transcript show: 'Random seed: ', randomInteger printString; finishEntry.
+	Transcript show: 'Random seed: ', randomInteger printString; newLine.
 ! !
 
 !DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'nice 12/14/2010 15:10'!
@@ -291,7 +291,7 @@ inverseOf: x mod: n
 	^ u - u2
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'large integer arithmetic' stamp: 'DSG 12/4/2013 17:44'!
+!DigitalSignatureAlgorithm methodsFor: 'large integer arithmetic' stamp: 'jmv 5/19/2015 21:46'!
 isProbablyPrime: p
 	"Answer true if p is prime with very high probability. Such a number is sometimes called an 'industrial grade prime'--a large number that is so extremely likely to be prime that it can assumed that it actually is prime for all practical purposes. This implementation uses the Rabin-Miller algorithm (Schneier, p. 159)."
 
@@ -319,15 +319,15 @@ isProbablyPrime: p
 		z := (a raisedTo: m modulo: p) normalize.
 		couldBePrime := z = 1.
 		[couldBePrime] whileFalse: [
-			z = 1 ifTrue: [Transcript show: 'failed!!'; cr. ^ false].  "not prime"
+			z = 1 ifTrue: [Transcript show: 'failed!!'; newLine. ^ false].  "not prime"
 			z = pMinusOne
 				ifTrue: [couldBePrime := true]
 				ifFalse: [
 					(j := j + 1) < b
 						ifTrue: [z := (z * z) \\ p]
-						ifFalse: [Transcript show: 'failed!!'; finishEntry. ^ false]]]].  "not prime"
+						ifFalse: [Transcript show: 'failed!!'; newLine. ^ false]]]].  "not prime"
 
-	Transcript show: 'passed!!'; finishEntry.
+	Transcript show: 'passed!!'; newLine.
 	^ true  "passed all tests; probably prime"
 ! !
 
@@ -480,7 +480,7 @@ sign: aStringOrStream privateKey: privateKey dsa: dsa
 	^ dsa signatureToString: sig
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'nice 1/12/2010 09:07'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 5/19/2015 21:47'!
 testExamplesFromDisk
 	"verify messages from file on disk"
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -493,7 +493,7 @@ testExamplesFromDisk
 			msg := file nextChunk.
 			publicKey := Compiler evaluate: file nextChunk.
 			(self verify: sig isSignatureOf: msg publicKey: publicKey) ifTrue: [
-				Transcript show: 'SUCCESS: ',msg; cr.
+				Transcript show: 'SUCCESS: ',msg; newLine.
 			] ifFalse: [
 				self error: 'ERROR!! Signature verification failed'
 			].
@@ -542,12 +542,12 @@ timeDecode: count
 	].
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'testing' stamp: 'RAA 5/31/2000 08:40'!
+!DigitalSignatureAlgorithm class methodsFor: 'testing' stamp: 'jmv 5/19/2015 21:48'!
 timeDirect: aBlock as: aString count: anInteger
 
-	Transcript show: anInteger asStringWithCommas,'  ',
+	Transcript show: anInteger printStringWithCommas,'  ',
 		aString ,' took ',
-		(Time millisecondsToRun: aBlock) asStringWithCommas,' ms'; cr
+		(Time millisecondsToRun: aBlock) printStringWithCommas,' ms'; newLine
 ! !
 
 !DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'jm 12/22/1999 11:20'!

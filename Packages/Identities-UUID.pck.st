@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 3:34:52.097328 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2329] on 20 May 2015 at 9:07:53.704632 am'!
 'Description Please enter a description for this package'!
-!provides: 'Identities-UUID' 1 1!
+!provides: 'Identities-UUID' 1 2!
 !requires: 'Sound' 1 3 nil!
 !classDefinition: #UUID category: #'Identities-UUID'!
 ByteArray variableByteSubclass: #UUID
@@ -354,7 +354,7 @@ initialize
 	semaphoreForGenerator := Semaphore forMutualExclusion.
 	! !
 
-!UUIDGenerator methodsFor: 'random seed' stamp: 'dew 2/8/2003 00:28'!
+!UUIDGenerator methodsFor: 'random seed' stamp: 'jmv 5/19/2015 23:34'!
 makeSeed
 	"Try various methods of getting good seeds"
 	| seed |
@@ -367,7 +367,7 @@ makeSeed
 	
 	"default"
 	[seed := (Time millisecondClockValue bitAnd: 16r3FFFFFFF) bitXor: self hash.
-	seed := seed bitXor: (Time totalSeconds bitAnd: 16r3FFFFFFF).
+	seed := seed bitXor: (Time primLocalSecondsClock bitAnd: 16r3FFFFFFF).
 	seed = 0] whileTrue: ["Try again if ever get a seed = 0"].
 
 	^seed

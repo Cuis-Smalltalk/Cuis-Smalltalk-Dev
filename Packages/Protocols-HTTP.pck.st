@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2322] on 13 May 2015 at 4:53:44.7581 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2329] on 20 May 2015 at 9:28:26.607632 am'!
 'Description Please enter a description for this package'!
-!provides: 'Protocols-HTTP' 1 12!
-!requires: 'Identities-UUID' 1 1 nil!
-!requires: 'Network-Kernel' 1 2 nil!
+!provides: 'Protocols-HTTP' 1 13!
 !requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!requires: 'Network-Kernel' 1 2 nil!
+!requires: 'Identities-UUID' 1 1 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
 	instanceVariableNames: 'client request response authParams message'
@@ -1643,7 +1643,7 @@ proxyHandler: anObject
 
 	ProxyHandler := anObject! !
 
-!HTTPClient class methodsFor: 'benchmark' stamp: 'ar 6/2/2010 10:32'!
+!HTTPClient class methodsFor: 'benchmark' stamp: 'jmv 5/19/2015 21:51'!
 requestBenchmark: url persistent: aBool
 	"Run a HTTPClient benchmark to measure request handling speed.
 	Try using a persistent connection if requested.
@@ -1664,16 +1664,16 @@ requestBenchmark: url persistent: aBool
 	| time resp startTime endTime count client |
 	count := 0.
 	client := HTTPClient new.
-	startTime := Time millisecondClockValue.
-	[endTime := Time millisecondClockValue.
-	(time := Time milliseconds: endTime since: startTime) < 5000] whileTrue:[
+	startTime := Time localMillisecondClock.
+	[endTime := Time localMillisecondClock.
+	(time := endTime - startTime) < 5000] whileTrue:[
 		resp := client httpGet: url.
 		resp isSuccess ifFalse:[self error: resp status].
 		resp content.
 		aBool ifFalse:[resp close].
 		count := count + 1.
 	].
-	^(count  * 1000 // time) asStringWithCommas, ' requests/sec'
+	^(count  * 1000 // time) printStringWithCommas, ' requests/sec'
 ! !
 
 !HTTPClient class methodsFor: 'websockets' stamp: 'ar 9/26/2011 10:39'!
@@ -2095,15 +2095,15 @@ contentType: aString
 
 	^self headerAt: 'Content-Type' put: aString! !
 
-!HTTPMessage methodsFor: 'accessing' stamp: 'DSG 12/5/2013 10:50'!
+!HTTPMessage methodsFor: 'accessing' stamp: 'jmv 5/19/2015 23:51'!
 contentWithProgress: progressBlock
 	"Reads and caches available content and returns it."
 
 	^content ifNil:[	| length |
 		length := self contentLength.
 		content := (stream isBinary ifTrue:[ByteArray] ifFalse:[String]) 
-			new: (length ifNil:[1000])
-			streamContents:[:s| self streamFrom: stream to: s size: length progress: progressBlock]].! !
+			streamContents:[:s| self streamFrom: stream to: s size: length progress: progressBlock]
+			estimatedSize: (length ifNil:[1000]) ]! !
 
 !HTTPMessage methodsFor: 'initialize' stamp: 'ar 5/4/2010 20:02'!
 destroy
@@ -2901,14 +2901,14 @@ send405Response: allowed content: body
 	]).
 	^self sendResponse: resp content: body.! !
 
-!HTTPRequest methodsFor: 'responses' stamp: 'DSG 3/28/2015 21:12'!
+!HTTPRequest methodsFor: 'responses' stamp: 'jmv 5/19/2015 22:03'!
 send500Response: errReport
 	"Send a 500 internal server error response"
 
 	| errLog |
 	errLog := '<html><head><title>500 Internal Server Error</title></head><body>',
 		'<h1>Internal Server Error</h1><pre>',
-		(errReport  copyReplaceAll: String cr with: String crlfString),
+		(errReport  withLineEndings: String crlfString),
 		'</pre></body></html>'.
 
 	self sendResponseCode: 500
@@ -3585,16 +3585,16 @@ errorReportFor: anError
 		].
 	] on: Error do: [:ex| ex pass. 'error reporting failed'].! !
 
-!HTTPServer methodsFor: 'errors' stamp: 'ar 2/20/2010 10:35'!
+!HTTPServer methodsFor: 'errors' stamp: 'jmv 5/19/2015 21:55'!
 errorReportFor: anError stack: preStack on: strm
 	"Provide a report for an error that's been caught during processing"
 
 	self errorStackFor: anError stack: preStack on: strm.
-	strm cr; nextPutAll: '-----------------------------------------------------------------'; cr; cr.
+	strm newLine; nextPutAll: '-----------------------------------------------------------------'; newLine; newLine.
 	self systemInfoOn: strm.
 ! !
 
-!HTTPServer methodsFor: 'errors' stamp: 'ar 2/20/2010 10:35'!
+!HTTPServer methodsFor: 'errors' stamp: 'jmv 5/19/2015 21:55'!
 errorStackFor: anError stack: preStack on: strm
 	"Provide a report for an error that's been caught during processing"
 
@@ -3602,17 +3602,17 @@ errorStackFor: anError stack: preStack on: strm
 	cnt := 0.
 	(preStack copyFrom: 1 to: (5 min: preStack size)) do:[:ctx|
 		ctx printDetails: strm.	"variable values"
-		strm cr.
+		strm newLine.
 	].
 
-	strm cr; nextPutAll: '--- The full stack ---'; cr.
+	strm newLine; nextPutAll: '--- The full stack ---'; newLine.
 	cnt := 0.
 
 	preStack do:[:ctx|
 		cnt := cnt + 1.
 		cnt = 5 ifTrue: [
-			strm nextPutAll: ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'; cr].
-		strm print: ctx; cr.  "just class>>selector"
+			strm nextPutAll: ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'; newLine].
+		strm print: ctx; newLine.  "just class>>selector"
 	].
 ! !
 
@@ -3677,7 +3677,7 @@ handleConnectionFrom: aSocket
 		].
 	].! !
 
-!HTTPServer methodsFor: 'errors' stamp: 'ar 7/28/2010 20:35'!
+!HTTPServer methodsFor: 'errors' stamp: 'jmv 5/19/2015 23:48'!
 handleError: ex request: aRequest
 	"The default error handling during processing. Sends a 500 response."
 
@@ -3689,7 +3689,7 @@ handleError: ex request: aRequest
 		ex2 return: '<error report failed>'.
 	].
 	[self log: errLabel] on: Error do:[:ex2| ex return].
-	[self log: String cr, errReport] on: Error do:[:ex2| ex return].
+	[self log: String newLineString, errReport] on: Error do:[:ex2| ex return].
 	aRequest send500Response: errReport. ! !
 
 !HTTPServer methodsFor: 'authentication' stamp: 'ar 3/30/2010 20:36'!
@@ -3998,7 +3998,7 @@ stopListener
 	listenerProcess ifNotNil:[listenerProcess terminate].
 	listenerProcess := nil.! !
 
-!HTTPServer methodsFor: 'errors' stamp: 'DSG 12/4/2013 23:01'!
+!HTTPServer methodsFor: 'errors' stamp: 'jmv 5/19/2015 21:57'!
 systemInfoOn: strm
 	"Provides system information for a server error report"
 
@@ -4006,16 +4006,16 @@ systemInfoOn: strm
 		nextPutAll:  HTTPUtils platformName;
 		nextPutAll: ' - ';
 		nextPutAll: HTTPUtils vmVersion;
-		cr.
+		newLine.
 
 	strm nextPutAll: 'Image: ';
 		nextPutAll:  SystemVersion current version asString;
 		nextPutAll: ' [';
 		nextPutAll: Smalltalk lastUpdateString asString;
 		nextPutAll: ']';
-		cr.
+		newLine.
 
-	strm cr.
+	strm newLine.
 
 	"SecurityManager default printStateOn: strm."
 
@@ -4023,8 +4023,7 @@ systemInfoOn: strm
 	HTTPUtils platformName = 'Win32' ifTrue:[
 		10001 to: 10003 do:[:i| | info |
 			info := (Smalltalk getSystemAttribute: i) ifNil:[''].
-			info := info copyReplaceAll: String lf with: String cr.
-			info isEmpty ifFalse:[strm cr; nextPutAll: info]]].
+			info isEmpty ifFalse:[strm newLine; nextPutAll: info]]].
 ! !
 
 !HTTPServer methodsFor: 'accessing' stamp: 'ar 2/20/2010 12:03'!
@@ -4079,14 +4078,15 @@ browseDir: directory request: request
 
 ! !
 
-!HTTPServer class methodsFor: 'examples' stamp: 'ar 2/25/2010 16:33'!
+!HTTPServer class methodsFor: 'examples' stamp: 'jmv 5/19/2015 23:52'!
 browseFile: file request: request
 	"Responds with a file back to the original request"
 
 	| fileSize mimeTypes resp |
 	file binary.
 	fileSize := file size.
-	mimeTypes := file mimeTypes ifNil:[#('application/octet-stream')].
+"	mimeTypes := file mimeTypes ifNil:[#('application/octet-stream')]."
+	mimeTypes := nil ifNil:[#('application/octet-stream')].
 	resp := request newResponse protocol: 'HTTP/1.1' code: 200.
 	resp headerAt: 'Content-Type' put: mimeTypes first.
 	request sendResponse: resp contentStream: file size: fileSize.! !
@@ -4318,7 +4318,7 @@ serverString
 		HTTPUtils platformName,')'.
 ! !
 
-!HTTPUtils class methodsFor: 'decoding' stamp: 'DSG 5/29/2012 16:53'!
+!HTTPUtils class methodsFor: 'decoding' stamp: 'jmv 5/19/2015 22:36'!
 decodeMultipartForm: aStream boundary: boundary do: aBlock
 	"Parse the contents of a multipart/form-data submission.
 
@@ -4330,7 +4330,7 @@ decodeMultipartForm: aStream boundary: boundary do: aBlock
 	| skip headers content disposition index params |
 	aStream upToAll: '--', boundary.
 	[aStream atEnd or:[(skip := aStream next: 2) = '--']] whileFalse:[
-		skip = String crlf ifFalse:[self error: 'Error decoding multipart/form-data fields'].
+		skip = String crlfString ifFalse:[self error: 'Error decoding multipart/form-data fields'].
 		headers := Dictionary new.
 		(HTTPUtils readHeadersFrom: aStream) do:[:hdr| headers add: hdr].
 		content := aStream upToAll: String crlfString, '--', boundary.
@@ -4393,7 +4393,7 @@ defaultProxyServer
 	"Answer the default proxy server to use."
 	^''! !
 
-!HTTPUtils class methodsFor: 'decoding' stamp: 'ar 6/1/2010 20:21'!
+!HTTPUtils class methodsFor: 'decoding' stamp: 'jmv 5/19/2015 23:52'!
 encodeUrlEncodedForm: fieldMap
 	"Encodes the fieldsMap in the form of var1=val1&var2=val2.
 	The fieldMap can be EITHER an array of associations OR a Dictionary of 
@@ -4401,7 +4401,7 @@ encodeUrlEncodedForm: fieldMap
 	specifying the order of fields)."
 
 	| associations |
-	associations := fieldMap isDictionary ifTrue:[fieldMap associations] ifFalse:[fieldMap].
+	associations := (fieldMap isKindOf: Dictionary) ifTrue:[fieldMap associations] ifFalse:[fieldMap].
 	^String streamContents:[:s|
 		associations do:[:assoc|
 			s nextPutAll: assoc key encodeForHTTP.
@@ -4515,7 +4515,7 @@ logEntryFor: request response: response
 	^entry
 ! !
 
-!HTTPUtils class methodsFor: 'misc' stamp: 'ar 7/28/2010 20:01'!
+!HTTPUtils class methodsFor: 'misc' stamp: 'jmv 5/19/2015 21:59'!
 logRequest: request response: response on: streamOrFilename
 	"Log a request in common log format on the given stream / file."
 
@@ -4529,10 +4529,10 @@ logRequest: request response: response on: streamOrFilename
 		stream := [FileStream oldFileNamed: streamOrFilename] 
 			on: FileDoesNotExistException
 			do:[FileStream newFileNamed: streamOrFilename].
-		stream wantsLineEndConversion: true; setToEnd.
+		stream "wantsLineEndConversion: true; "setToEnd.
 	] ifFalse:[stream := streamOrFilename].
 
-	stream nextPutAll: entry; cr.
+	stream nextPutAll: entry; newLine.
 
 	stream == streamOrFilename 
 		ifTrue:[stream flush]
@@ -4677,11 +4677,11 @@ md5Transform: in hash: hash
 
 	^hash! !
 
-!HTTPUtils class methodsFor: 'decoding' stamp: 'ar 7/20/2010 20:06'!
+!HTTPUtils class methodsFor: 'decoding' stamp: 'jmv 5/19/2015 21:52'!
 multipartBoundary
 	"Answer a string to be used as multpart boundary in posts"
 
-	^'----squeak-', Date today,'-', Time millisecondClockValue, '-webclient-----'.! !
+	^'----squeak-', Date today printString,'-', Time localMillisecondClock printString, '-webclient-----'.! !
 
 !HTTPUtils class methodsFor: 'oauth' stamp: 'DSG 3/29/2015 08:41'!
 oAuthSign: webRequest url: requestUrl extra: postFields using: params
@@ -5282,7 +5282,7 @@ testCookieExpiryParsing
 	self assert: b expiry = exp asUTC.
 ! !
 
-!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 20:05'!
+!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'jmv 5/19/2015 22:35'!
 testCookieParsing
 	"Test client and server handling of cookies"
 
@@ -5301,10 +5301,10 @@ testCookieParsing
 	resp content; close.
 	self assert: resp code = 200.
 	self assert: resp content 
-		equals: 	'foo=bar', String cr,
-				'key=value', String cr,
-				'x=32', String cr,
-				'y=55', String cr.
+		equals: 	'foo=bar', String crString,
+				'key=value', String crString,
+				'x=32', String crString,
+				'y=55', String crString.
 
 	client := HTTPClient new.
 	resp := client httpGet: self localHostUrl,'/cookieA' do:[:req|
@@ -5316,10 +5316,10 @@ testCookieParsing
 	resp content; close.
 	self assert: resp code = 200.
 	self assert: resp content 
-		equals: 	'foo=bar', String cr,
-				'key=value', String cr,
-				'x=32', String cr,
-				'y=55', String cr.
+		equals: 	'foo=bar', String crString,
+				'key=value', String crString,
+				'x=32', String crString,
+				'y=55', String crString.
 ! !
 
 !HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:36'!
@@ -5523,7 +5523,7 @@ testHttpOptions
 	self assert: resp content = ''.
 	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,PUT,DELETE'.! !
 
-!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'dsg 3/12/2015 10:43'!
+!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'jmv 5/19/2015 22:36'!
 testHttpTrace
 	"Test for handling the TRACE request"
 
@@ -5531,7 +5531,7 @@ testHttpTrace
 	resp := HTTPClient httpTrace: self localHostUrl, '/bar'.
 	self assert: resp code = 200.
 	self assert: resp contentType = 'message/http'.
-	self assert: resp content = ('TRACE /bar HTTP/1.1' , String crlf , 'user-agent: ' , HTTPClient new userAgent , String crlf , 'host: localhost:' , self port printString , String crlf , String crlf)
+	self assert: resp content = ('TRACE /bar HTTP/1.1' , String crlfString , 'user-agent: ' , HTTPClient new userAgent , String crlfString , 'host: localhost:' , self port printString , String crlfString , String crlfString)
 ! !
 
 !HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 5/11/2010 20:42'!
@@ -5633,7 +5633,7 @@ testListenOnInterface
 	self assert: resp content = 'ok'.
 ! !
 
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 7/28/2010 20:56'!
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 5/19/2015 22:38'!
 testLogging200
 	"Test logging a regular 200 a-ok response"
 
@@ -5648,13 +5648,13 @@ testLogging200
 	self assert: resp code = 200.
 
 	log := server accessLog contents.
-	self assert: ('127.0.0.1 - - [*] "GET /test HTTP/1.1" 200 2', String cr match: log).
+	self assert: ('127.0.0.1 - - [*] "GET /test HTTP/1.1" 200 2', String lfString match: log).
 
 	log := client accessLog contents.
-	self assert: ('localhost - - [*] "GET /test HTTP/1.1" 200 2', String cr match: log).
+	self assert: ('localhost - - [*] "GET /test HTTP/1.1" 200 2', String lfString match: log).
 ! !
 
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 7/28/2010 20:54'!
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 5/19/2015 22:39'!
 testLogging404
 	"Test logging a 404 response"
 
@@ -5667,10 +5667,10 @@ testLogging404
 	self assert: resp code = 404.
 
 	log := server accessLog contents.
-	self assert: ('127.0.0.1 - - [*] "GET / HTTP/1.1" 404 145', String cr match: log).
+	self assert: ('127.0.0.1 - - [*] "GET / HTTP/1.1" 404 145', String lfString match: log).
 
 	log := client accessLog contents.
-	self assert: ('localhost - - [*] "GET / HTTP/1.1" 404 145', String cr match: log).
+	self assert: ('localhost - - [*] "GET / HTTP/1.1" 404 145', String lfString match: log).
 ! !
 
 !HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:32'!
@@ -6307,7 +6307,7 @@ testWebSockets: aBlock
 	self assert: (resp = nil).
 ! !
 
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'DSG 3/28/2015 21:38'!
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'jmv 5/19/2015 22:31'!
 testWebSocketsFraming
 	"Test the WebSocket 00 framing"
 
@@ -6328,14 +6328,14 @@ testWebSocketsFraming
 	cws onClose:[resp := nil. frameType := 255. sema signal].
 	cws fork.
 
-	cws send: 'Ãœber-cool'.
+	cws send: 'Über-cool'.
 	sema wait.
-	self assert: (resp = 'Ãœber-cool').
+	self assert: (resp = 'Über-cool').
 	self assert: (frameType = 0).
 
-	cws send: 'Ãœber-funny' type: 15.
+	cws send: 'Über-funny' type: 15.
 	sema wait.
-	self assert: (resp = 'Ãœber-funny').
+	self assert: (resp = 'Über-funny').
 	self assert: (frameType = 15).
 
 	cws send: (String new: 100) type: 0.
@@ -6574,7 +6574,7 @@ close
 	].
 ! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'DSG 3/28/2015 21:42'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 5/20/2015 09:14'!
 readMessage
 	"Reads one frame worth of data"
 
@@ -6585,7 +6585,7 @@ readMessage
 	frameType := byte asInteger.
 	frameType < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
-		frameData := (stream upTo: 255 asCharacter) asUtf8.
+		frameData := String fromUtf8: (stream upTo: 255 asCharacter).
 	] ifFalse:[
 		"Frame type >= 128: Binary data with length prefix"
 		length := 0.
@@ -6653,12 +6653,12 @@ close
 		self send: #[] code: 8.
 	].! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'ar 9/26/2011 12:48'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
 firstFragment: aStringOrBytes
 	"Writes the first fragment of data"
 
 	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes squeakToUtf8 code: 1 final: false]
+		ifTrue:[^self send: aStringOrBytes asUtf8 code: 1 final: false]
 		ifFalse:[^self send: aStringOrBytes code: 2 final: false].! !
 
 !WebSocket07 methodsFor: 'control requests' stamp: 'ar 9/26/2011 13:07'!
@@ -6706,13 +6706,13 @@ initialize
 	"http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-07#section-4.1 says
 	''Frames sent from the client to the server are masked to avoid confusing network intermediaries, such as intercepting proxies.''"! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'ar 9/26/2011 13:07'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
 lastFragment: aStringOrBytes
 	"Writes the last fragment of data.
 	Note: Spec says that code is ZERO for final fragment."
 
 	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes squeakToUtf8 code: 0 final: true]
+		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: true]
 		ifFalse:[^self send: aStringOrBytes code: 0 final: true].! !
 
 !WebSocket07 methodsFor: 'accessing' stamp: 'ar 9/27/2011 13:47'!
@@ -6727,13 +6727,13 @@ masking: aBool
 
 	masking := aBool! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'ar 9/26/2011 13:08'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
 nextFragment: aStringOrBytes
 	"Writes the first fragment of data
 	Note: Spec says that code is ZERO for intermediate fragments."
 
 	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes squeakToUtf8 code: 0 final: false]
+		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: false]
 		ifFalse:[^self send: aStringOrBytes code: 0 final: false].! !
 
 !WebSocket07 methodsFor: 'private' stamp: 'ar 10/5/2011 19:43'!
@@ -6775,7 +6775,7 @@ readFrame
 
 	^self readFrameFrom: stream! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'DSG 3/28/2015 20:04'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/20/2015 09:15'!
 readFrameFrom: aStream
 	"Reads one frame worth of data"
 
@@ -6825,7 +6825,7 @@ readFrameFrom: aStream
 							inject: frameData first 
 							into:[:each :next| each, next].
 		].
-		frameType = 1 ifTrue:[payload := payload asString asUtf8 ].
+		frameType = 1 ifTrue:[payload := String fromUtf8: payload ].
 		self handleMessage: payload type: frameType.
 		frameType := frameData := nil.
 	].
