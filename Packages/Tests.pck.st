@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2166] on 22 January 2015 at 11:37:08.322444 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2203] on 7 March 2015 at 8:28:36.291286 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 20!
+!provides: 'Tests' 1 21!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -50,6 +50,16 @@ TestCase subclass: #AffineTransformationTest
 	category: 'Tests-Morphic-Kernel'!
 !classDefinition: 'AffineTransformationTest class' category: #'Tests-Morphic-Kernel'!
 AffineTransformationTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ApiFile category: #'Tests-Files'!
+TestCase subclass: #ApiFile
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Files'!
+!classDefinition: 'ApiFile class' category: #'Tests-Files'!
+ApiFile class
 	instanceVariableNames: ''!
 
 !classDefinition: #ArrayLiteralTest category: #'Tests-Compiler'!
@@ -665,6 +675,9 @@ ZipCrcTests class
 
 !AffineTransformationTest commentStamp: '<historical>' prior: 0!
 Tests for MatrixTransform2x3!
+
+!ApiFile commentStamp: '<historical>' prior: 0!
+The data*Stream methods are located here in an attempt to keep them in a centralized location.  Eventually there would likely be more added to include sound, XML, etc. test data.!
 
 !CompilerTest commentStamp: 'nice 12/3/2007 22:15' prior: 0!
 CompilerTest is a holder for SUnit test of Compiler!
@@ -1605,6 +1618,169 @@ testInverseTransformation
 	self assert: ((inverse internalizePosition: 3@4) - (forward externalizePosition: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:26'!
+dataImagePNGFilename
+	^ 'testDataImage.png'! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:26'!
+dataImagePNGStream
+	^ Base64MimeConverter mimeDecodeToBytes: (ReadStream on: 'iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAL
+EwAACxMBAJqcGAAABCJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6
+eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYg
+eG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4K
+ICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlm
+Zj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmV4aWY9
+Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIgogICAgICAgICAgICB4bWxuczpkYz0iaHR0
+cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgICAgICAgICAgIHhtbG5zOnhtcD0iaHR0
+cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+CiAgICAgICAgIDx0aWZmOlJlc29sdXRpb25Vbml0
+PjE8L3RpZmY6UmVzb2x1dGlvblVuaXQ+CiAgICAgICAgIDx0aWZmOkNvbXByZXNzaW9uPjU8L3Rp
+ZmY6Q29tcHJlc3Npb24+CiAgICAgICAgIDx0aWZmOlhSZXNvbHV0aW9uPjcyPC90aWZmOlhSZXNv
+bHV0aW9uPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgog
+ICAgICAgICA8dGlmZjpZUmVzb2x1dGlvbj43MjwvdGlmZjpZUmVzb2x1dGlvbj4KICAgICAgICAg
+PGV4aWY6UGl4ZWxYRGltZW5zaW9uPjQ4PC9leGlmOlBpeGVsWERpbWVuc2lvbj4KICAgICAgICAg
+PGV4aWY6Q29sb3JTcGFjZT4xPC9leGlmOkNvbG9yU3BhY2U+CiAgICAgICAgIDxleGlmOlBpeGVs
+WURpbWVuc2lvbj40ODwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiAgICAgICAgIDxkYzpzdWJqZWN0
+PgogICAgICAgICAgICA8cmRmOkJhZy8+CiAgICAgICAgIDwvZGM6c3ViamVjdD4KICAgICAgICAg
+PHhtcDpNb2RpZnlEYXRlPjIwMTQtMDgtMTZUMTA6MDg6NDk8L3htcDpNb2RpZnlEYXRlPgogICAg
+ICAgICA8eG1wOkNyZWF0b3JUb29sPlBpeGVsbWF0b3IgMy4yPC94bXA6Q3JlYXRvclRvb2w+CiAg
+ICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgqxMjGhAAAH
+XklEQVRYCe3YZ6yO2RYH8Dkcvfd69c7o0SMIQaImiEQkoiV6i2gRIYIvIiKRICR69CA6IRJRopdB
+EL333pkfz9xnXs/7zpwzI3fufLA/vGeXtdf+r/9ae639nKTPnz//9G9qaf5NYL5g+QEoJY/8YOgH
+QykxkNJ6ckKBd+/eXb169f3795UqVUoo8D2TL1++PHr06OvXr6tVq1agQIGIqgSAHj58OGfOnL17
+9759+7Z58+a9e/eO3xbRkvrhlStXpk6deunSpY8fP1auXHnatGlZs2aN3Z7gli1YsODIkSMjRoyY
+NGnStWvX+vfvf/Hixdg9f7t/6NChAQMG5M+ff+bMmZMnT+aBHTt2fPr06RuFSkdswyQEs2fP/vDh
+g/k7d+4MGTKkQ4cOd+/ejRX7G/1bt261bdt2+PDhz549C7YvXLhwzJgxjx8/jtUWZYg0KMWLF0+b
+Ni3gnDVlypS8efOOHj06aso3dqUwYCcoJUuWREy2bNkCaWqhEVKxm6OA3rx5k5ycnD179lAoc+bM
+MNk2b948WMP51HeES+Agv5kyZQo36j958iQFQAIZpowZM4bbdPLlyzds2LDly5dv3749dj6V/Z07
+d+7fv3/ChAkhN8HG9OnTM56/YvVEGSKhsSlWSL9q1ar169dfunQpmyJLfz4UhSKyW7du7lREkvEo
+T5PmGwzfDGyAOikpKUKjeY4bOHCgUJg7d27EpsgxkSFeyXfq1ClyMDG3DGcRbyQARPTFixfxpxYq
+VIih27ZtO378eOTUPxqePXt248aN3bt3z5IlS7zMq1evAGJq7FIUkGUMPXjwIN5rTGzcuHG5cuUW
+LVqUmuhm0tq1a3lKdhUGsacGfX6QFSNLUTmmpEuX7ubNm0I7kkNpEd1jx469cOFCKlNAixYtZJBc
+uXIlRHP//v0SJUpEyIsCCk69d+8er8UDsvqfry3+gPgZTNepUyd+Ppihnx/KlCkTJLxQLOoyCwUL
+FiT69OnTUOh/0ZESXdgiRYrAHas/AaCaNWvyrusaKxfp79q1S8lDZGQ+9cMbN24IxPiynQCQV4Hg
+FygJI9fVcPN79eo1cuTI9u3bQxYJf6lBuhLIXbt2PXXqVEKINF++fNktyZMnT1TAXYhvEydOVGKR
+FL+0b9++ihUr0sKzEkGjRo1u374digG3YsUKlYcjXI4aNWp4OISrYUepHjp06Pjx48OZsJOAIYc1
+aNCABfEese3MmTOyCxkEzJgx49GjR7GPE9dz1qxZKrT04SGFidWrV4vfCA00kyxbtmxk3jAxoKZN
+myrFMEEQuwcBz58/D2Ykfs3bUniGWYC/PL4IuKGDBw+uVavWyZMn4wEJZ85q1qxZrPKgn+DaW3AV
+R40aJUMAFHsLzPOU8gLHypUrWa9iyyVhWSAQJAsghJqcXqFChUjqo58rixUr5orFA/rJkX+pnT9/
+vk2bNr9Zk5zcr18/nIUaPH979uwZHgPf/PnzoQ8FUuz8ZUC8c+DAgc6dO3OrN5dvgcgZhw8ftuSd
+igM3Q6xEBP58mGQ5NCj1HUbLVQlrAiV4QiRvVqlSxV1LvVqSCQCpYg7zBNaUG3EagPZOEB/sFkaF
+CxcO44YWktevX4dAKYhUb6tinwaPjQCZoBSFWjCM/P4W1EC4Hdrp06cZx0T7RUDu3LnhCJKKGRdK
+tBoqaKVLl+7Ro4dy6/LLPUoN+fLlyw8aNMj14SkJgkNhlc9YGBgmEVAIOnZZ5UJ4aBctWjRM2cli
+YsuWLRs2bPDFo++kunXrSn2CwLag+AdWUipNswzcgwcPOpL8+vXrp0+fLjcGhkpRcgzyTpw4sXnz
+ZlxCzHF4ZQZtLJel7GUAy8m4g87yKPj5a/vypIW9du3azLUNfHXDqfb4VvQWVnRocZ4lJNHrF08i
+V1ry/orkz2PHju3Zs6d169boZDdhpVofSny76p4AKEEVtSyUWiU8dO7evXvx4sXJeG7Xrp1jgugT
+rd6Ea9askX8Z51O6S5cugX0AQQ+EMyiiXfLEaIYMGQzDUOCLUqVKyQW8z2VoxoG9ZjjBlyGCUeuh
+16pVKxmE45zSsmVLAlj4PajxxBGrVq1SVps0aeIVTC+zhCR6hReqKIIpR44cQCBZGDnDlyQiJV/C
+oHuwjhs3Dm4o7dVhJGsFu1/gSLIWi46zRYUGi21IYdUXQBpWfUdu2rSpevXq1Fm2RpGYEF7nzp0L
+VNMeMIEkkdunT5+cOXNinhkKuzvoiejjhEKHLVu2zC42MFX0gCKE69Wrh4+gyFv1QeLTyrBv377S
+t2j5Aoh2j19N9WnYsGFwJNeuW7fOQ8Kj2Kc0LWp7sORXOnAAqpgYToYduEWSOi9anYEYESMv/PK1
+2aXuQsabtqBf6LinTnFDv2Rq+wWmuNMPmr5vZ+a6RIGb/rvyvX9Botlryf8bYv9fsHXrVi4SRolL
+B09xnP/ifO/5f7Af9x07dlyyZEn8+u9BHRL+D3TgEHM8I24ix/1/AEVAxA4ThGTs8j/f/wEoJc5/
+MJQSQ78CH8DDI8jA+10AAAAASUVORK5CYII=
+').! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:26'!
+dataTextFilename
+		^ 'testDataText.txt'.! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:26'!
+dataTextStream
+	^ ReadStream on: 'Cuis
+Cuis is a free Smalltalk-80 environment originally derived from Squeak with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from supercomputers to tablets and smart phones, and everything in between, including regular PCs.
+
+Cuis is
+
+Easy to understand and extend
+Small
+Clean
+Like Squeak, Pharo and other Squeak variants, Cuis is also:
+
+Open Source
+Multiplatform
+Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis is also:
+
+A complete development environment written in itself
+A pure Object Oriented language
+Cuis is different from other Squeak variants in that it takes an active attitude towards system complexity.
+
+As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity grows without control. At some point, the system can''t evolve anymore and becomes "legacy code".
+
+The only way to avoid this is by understanding the complete system, and reengineering the whole system all the time. Keeping it simple and consistent.
+
+This is important. Complexity puts a limit to the level of understanding of the system a person might reach, and therefore limits the things that can be done with it. Dan Ingalls says all this in "Design Principles Behind Smalltalk". Even if you have already done so, please go and read it again!!
+
+Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any bugs fixed. Cuis includes recent enhancements from Squeak, but only those that meet Cuis objectives: stuff the complexity of which outweighs its utility is not included.
+
+If you want to know how Cuis evolved please check the Release Notes.'.
+! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:26'!
+deleteExistingFile: filename
+	self ensureTestFileDirectory deleteFileNamed: filename.
+! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:26'!
+ensureTestFileDirectory
+	|  baseDir subDir |
+	baseDir := FileDirectory on: Smalltalk imagePath.
+	subDir := 'TestFiles'.
+	(baseDir directoryExists: subDir) ifFalse: [
+		baseDir createDirectory: subDir.
+		].
+	^ baseDir directoryNamed: subDir! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:26'!
+fileNamed: testFilename
+	^ self ensureTestFileDirectory fileNamed: testFilename.! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:27'!
+readStreamFromFile: filename
+	^ (FileStream readOnlyFileNamed: (self fileNamed: filename) name).
+! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:27'!
+testImagePNG01WriteToFile
+	self flag: #FIXME.
+	"Not sure if there's a better way other than using method naming to handle dependencies.  This must be run before the ReadFromFile test or else the file will not exist..."
+	self writeStream: self dataImagePNGStream toFile: self dataImagePNGFilename.
+! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:27'!
+testImagePNG02ReadFromFile
+	| stream |
+	stream := (self readStreamFromFile: self dataImagePNGFilename) useBytes.
+	self should: (stream size = 3047).
+ 	ImageReadWriter formFromStream: stream.
+! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:27'!
+testText01WriteToFile
+	self flag: #FIXME.
+	"Not sure if there's a better way other than using method naming to handle dependencies.  This must be run before the ReadFromFile test or else the file will not exist..."
+	self writeStream: self dataTextStream toFile: self dataTextFilename.
+! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:27'!
+testText02ReadFromFile
+	| stream |
+	stream := (self readStreamFromFile: self dataTextFilename).
+	self should: (stream size = 1939).
+	"
+ 	ImageReadWriter formFromStream: stream.
+"! !
+
+!ApiFile methodsFor: 'as yet unclassified' stamp: 'pb 3/7/2015 20:28'!
+writeStream: stream toFile: filename
+	| filepath |
+	filepath := (self fileNamed: filename) name.
+	"If tests are run more than once or a test previously failed for a given file, the file may already exist so delete it if it does"
+	self deleteExistingFile: filepath.
+	(FileStream newFileNamed: filepath)
+		nextPutAll: stream contents;
+		flush;
+		close.! !
 
 !ArrayLiteralTest methodsFor: 'running' stamp: 'avi 2/16/2004 21:09'!
 tearDown
