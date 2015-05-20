@@ -1,5 +1,9 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2308] on 8 May 2015 at 11:34:34.676482 am'!
-'Description Please enter a description for this package'!
+'Description VMMaker is the main package for Cuis, Squeak and Pharo for VM and VM plugin work. It can run the VM code in smalltalk, running a separate Smalltalk image. It can also translate the VM and plugins to C.
+
+This package is in Cuis .pck.st format and started from VMMaker-tfel.363.mcz from http://source.squeak.org/VMMaker.html and http://source.squeak.org/VMMaker/ as a verbatim copy, except for one extremely long method in GeniePlugin that exceeded some compiler limit, and convertion to LF for line endings.
+
+It is currently updated up to VMMaker-tfel.363.mcz (please keep this reference updated)'!
 !provides: 'VMMaker' 1 6!
 !requires: 'Balloon' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
