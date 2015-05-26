@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2329] on 20 May 2015 at 9:11:13.295632 am'!
-'Description Please enter a description for this package'!
-!provides: 'Cryptography-DigitalSignatures' 1 2!
+'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
+!provides: 'Cryptography-DigitalSignatures' 1 3!
 !requires: 'Sound' 1 3 nil!
 !classDefinition: #DigitalSignatureAlgorithm category: #'Cryptography-DigitalSignatures'!
 Object subclass: #DigitalSignatureAlgorithm

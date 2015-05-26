@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:28:40.8284 pm'!
-'Description Please enter a description for this package'!
-!provides: 'Balloon' 1 2!
+'Description This package includes code required by VMMaker for building the Balloon VM plugin. In any case, Cuis does not use Balloon at all, so this code is only for use by VMMaker'!
+!provides: 'Balloon' 1 3!
 !classDefinition: #BalloonEngineConstants category: #'Balloon-Engine-Pools'!
 SharedPool subclass: #BalloonEngineConstants
 	instanceVariableNames: ''
