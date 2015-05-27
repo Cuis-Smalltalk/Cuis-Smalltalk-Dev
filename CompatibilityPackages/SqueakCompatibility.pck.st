@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:55.7364 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2336] on 26 May 2015 at 9:51:27.971979 am'!
 'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 14!
+!provides: 'SqueakCompatibility' 1 15!
 !classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
 	instanceVariableNames: ''
@@ -280,6 +280,11 @@ ifNotNilDo: ifNotNilBlock
 isCharacter
 	^false! !
 
+!Behavior methodsFor: '*squeakCompatibility' stamp: 'jmv 11/1/2011 23:15'!
+environment
+	"Return the environment in which the receiver is visible"
+	^Smalltalk! !
+
 !BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
 cull: firstArg
 	"Activate the receiver, with one or zero arguments."
@@ -425,6 +430,12 @@ isCharacter
 totalSeconds
 	^self primLocalSecondsClock ! !
 
+!Encoder methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 11:18'!
+environment
+	"Answer the environment of the current compilation context,
+	 be it in a class or global (e.g. a workspace)"
+	^Smalltalk "No environments in Cuis..."! !
+
 !WriteStream methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 14:58'!
 crtab
 	"Append a return character, followed by anInteger tab characters, to the 
@@ -443,6 +454,12 @@ crtab: anInteger
 !Transcript class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:41'!
 cr
 	self newLine! !
+
+!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
+environment
+	"Necessary to support disjoint class hierarchies."
+
+	^Smalltalk		"No environments in Cuis..."! !
 
 !KlattResonatorIndices class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 20:17'!
 initialize

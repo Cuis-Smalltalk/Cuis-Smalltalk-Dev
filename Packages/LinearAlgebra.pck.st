@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:09.2684 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2336] on 26 May 2015 at 10:06:09.702901 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 15!
+!provides: 'LinearAlgebra' 1 16!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -10,6 +10,16 @@ Array2D subclass: #Matrix
 	category: 'LinearAlgebra'!
 !classDefinition: 'Matrix class' category: #LinearAlgebra!
 Matrix class
+	instanceVariableNames: ''!
+
+!classDefinition: #ByteMatrix category: #LinearAlgebra!
+Matrix subclass: #ByteMatrix
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'LinearAlgebra'!
+!classDefinition: 'ByteMatrix class' category: #LinearAlgebra!
+ByteMatrix class
 	instanceVariableNames: ''!
 
 !classDefinition: #FloatMatrix category: #LinearAlgebra!
@@ -44,9 +54,9 @@ My instances are m x n matrices of Float values, where m is the height and n the
 !FloatBandMatrix commentStamp: '<historical>' prior: 0!
 My instances can have non-zero values only in the diagonal, and a band of certain width around it. Save space.!
 
-!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 4/27/2015 10:03'!
+!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 5/21/2015 11:34'!
 hackBitsForFloatMatrix: aFloatMatrix
-	"Quite like #hackBits"
+	"Quite like #hackBits: but we know that FloatMatrixes use 32 bits per element"
 	depth _ 32.
 	width _ aFloatMatrix width.
 	height _ aFloatMatrix height.
@@ -788,6 +798,11 @@ rowFrom: anArray
 		result i: 1 j: j put: (anArray at: j) ].
 	^result! !
 
+!ByteMatrix methodsFor: 'initialization' stamp: 'jmv 5/18/2015 14:27'!
+initializeElements
+
+	elements _ ByteArray new: height * width! !
+
 !FloatMatrix methodsFor: 'noise generation' stamp: 'jmv 4/6/2015 12:30'!
 addNormalNoise: standardDeviation
 	| random |
@@ -797,6 +812,79 @@ addNormalNoise: standardDeviation
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
 conditionNumber
 	^self norm * self inverse norm! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:21'!
+copy: aRectangle
+	"
+	| i |
+	i _ FloatMatrix width: 10 height: 10.
+	i x: 10 y: 10 put: Float pi.
+	i copy: (1@1 extent: 10@10)
+	"
+	| answer |
+	answer _ self appropriateResultClass width: aRectangle width height: aRectangle height.
+	self copyToTile: answer position: aRectangle origin.
+	^answer! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:24'!
+copyFromTile: aFloatMatrix position: aPoint
+	"
+	aPoint is the position in self where the contents of aFloatMatrix are to be stored
+	As in all Matrix protocol, aPoint is 1-based
+	"
+	| blitter formArgument formSelf |
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: aPoint-1 sourceOrigin: 0@0.
+	blitter copyBits! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:25'!
+copyFromTile: aFloatMatrix position: aPoint guardZone: borderWidth
+	"
+	aPoint is the position in self where the contents of aFloatMatrix are to be stored
+	As in all Matrix protocol, aPoint is 1-based
+	Exclude a border of width borderWidth from the copy
+
+	| i t |
+	t _ FloatImage from32BitColorForm: (Display copy: (100@100 extent: 100@100)) component: #red.
+	i _ FloatImage extent: 256@256.
+	i copyFromTile: t position: 10@10 guardZone: 10.
+	i display.
+	"
+
+	| blitter formArgument formSelf |
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: aPoint-1 + borderWidth sourceOrigin: borderWidth@borderWidth
+		extent: (formArgument width - (2*borderWidth))@(formArgument height - (2*borderWidth)).
+	blitter copyBits! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:24'!
+copyToTile: aFloatMatrix position: aPoint
+	"
+	aPoint is the position in self where the contents of aFloatMatrix are to be taken from
+	As in all Matrix protocol, aPoint is 1-based
+
+	| i t |
+	i _ FloatImage from32BitColorForm: (Display copy: (1@1 extent: 100@100)) component: #red.
+	t _ FloatImage extent: 256@256.
+	i copyToTile: t position: -10@0.
+	t display.
+	"
+	| blitter formArgument formSelf |
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: formArgument sourceForm: formSelf
+		destOrigin: 0@0 sourceOrigin: aPoint-1.
+	blitter copyBits! !
 
 !FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 7/19/2012 10:56'!
 eigenvaluesAndEigenvectors
@@ -884,6 +972,95 @@ epsilon
 	"Something better is needed. For example, taking into accoung the largest elements, or the norm, or something like that... In any case it is better to check senders, and use a different strategy for ending iterative methods or such..."
 
 	^1e-9 asFloat! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:23'!
+expandTo: newExtent
+	"
+	| i |
+	i _ FloatMatrix width: 5 height: 5.
+	i x: 5 y: 5 put: Float pi.
+	i expandTo:10@10
+	"
+	| answer |
+	answer _ self appropriateResultClass width: newExtent x height: newExtent y.
+	self copyToTile: answer position: 1@1.
+	^answer! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:17'!
+fillWith: aFloatMatrix
+	| blitter formArgument formSelf |
+
+	"Use inherited, more general and slower code if needed."
+	(aFloatMatrix is: #FloatMatrix) ifFalse: [
+		^super fillWith: aFloatMatrix ].
+
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: 0@0 sourceOrigin: 0@0.
+	blitter copyBits! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:14'!
+fillWith: aFloatMatrix displaced: deltaPoint
+	"
+	Assume self and argument are of the same extent
+	Do a  simple displacement. Leave unaffected areas unchanged.
+	deltaPoint is integer. Can be negative. (no resampling or interpolation)
+
+	| i1 i2 |
+	i1 _ FloatImage lena.
+	i2 _ FloatImage extent: i1 extent.
+	i1 displayAt: 0@0.
+	i2 fillWith: i1 displaced: 40@-30.
+	i2 displayAt: 256@0.
+	"
+	
+	| blitter formArgument formSelf |
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: deltaPoint sourceOrigin: 0@0.
+	blitter copyBits.! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:12'!
+fillWith: aFloatMatrix displacedCircular: deltaPoint
+	"
+	Assume self and argument are of the same extent
+	Do a 'circular' displacement. deltaPoint is integer. Can be negative. (no resampling or interpolation)
+	| i1 i2 |
+	i1 _ FloatImage lena.
+	i2 _ FloatImage extent: i1 extent.
+	i1 displayAt: 0@0.
+	i2 fillWith: i1 displacedCircular: 120@140.
+	i2 displayAt: 256@0.
+	"
+	
+	| blitter formArgument formSelf deltaI deltaJ |
+	deltaI _ deltaPoint y \\ height.
+	deltaJ _ deltaPoint x \\ width.
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: deltaJ@deltaI sourceOrigin: 0@0.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: deltaJ-width@deltaI sourceOrigin: 0@0.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: deltaJ@(deltaI-height) sourceOrigin: 0@0.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: deltaJ-width@(deltaI-height) sourceOrigin: 0@0.
+	blitter copyBits.! !
 
 !FloatMatrix methodsFor: 'filling' stamp: 'jmv 7/19/2012 10:46'!
 fillWithIdentity
@@ -1114,6 +1291,10 @@ initializeElements
 
 	elements _ FloatArray new: height * width! !
 
+!FloatMatrix methodsFor: 'testing' stamp: 'jmv 5/22/2015 12:16'!
+is: aSymbol
+	^ aSymbol == #FloatMatrix or: [ super is: aSymbol ]! !
+
 !FloatMatrix methodsFor: 'testing' stamp: 'jmv 7/19/2012 13:06'!
 isFirstSubdiagonalZero
 
@@ -1135,37 +1316,23 @@ j: j
 	self j: j copyTo: result.
 	^result! !
 
-!FloatMatrix methodsFor: 'private' stamp: 'jmv 4/27/2015 11:25'!
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 5/21/2015 12:44'!
 j: j copyTo: column
 	"Assumes column is of of apropriate size"
-	| bb formColumn formSelf |
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formColumn _ Form new hackBitsForFloatMatrix: column.
-	bb _ (BitBlt toForm: formColumn) sourceForm: formSelf.
-	bb combinationRule: Form over.
-	bb sourceX: j-1; sourceY: 0.
-	bb destX: 0 destY: 0 width: 1 height: height.
-	bb copyBits! !
+	self copyToTile: column position: j@1! !
 
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 11:26'!
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 5/21/2015 12:45'!
 j: j put: column
 	"column can be a column vector (m x 1 matrix), or a kind of Array.
 	Optimized for large Matrices
-	|m w h |
+	| m w h |
 	w _ 8. h _ 8.
 	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
 	m j: 3 put: (m j: 1).
 	m print.
 	"
 
-	| bb formSelf formColumn |
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formColumn _ Form new hackBitsForFloatMatrix: column.
-	bb _ (BitBlt toForm: formSelf) sourceForm: formColumn.
-	bb combinationRule: Form over.
-	bb sourceX: 0; sourceY: 0.
-	bb destX: j-1 destY: 0 width: 1 height: height.
-	bb copyBits! !
+	self copyFromTile: column position: j@1! !
 
 !FloatMatrix methodsFor: 'linear equation systems' stamp: 'jmv 7/19/2012 11:16'!
 linesLost

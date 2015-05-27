@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:32.3294 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2336] on 26 May 2015 at 10:06:21.919901 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 29!
+!provides: 'SignalProcessing' 1 30!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -480,7 +480,7 @@ convolutionLinearWith: aForm
 	].
 	^result! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/27/2015 12:09'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 5/22/2015 12:28'!
 convolveWith: aMatrixOrFloatImage
 	"Compute convolution with aMatrix, usig 2D FFT. Store the result on self.
 	Note: The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
@@ -497,12 +497,12 @@ convolveWith: aMatrixOrFloatImage
 	"
 	| imaginary argumentReal argumentImaginary fft |
 	"prepare arguments"
-	imaginary _ FloatImage width: width height: height.
+	imaginary _ self appropriateResultClass width: width height: height.
 	"Always make a copy, as we are going to modify it"
 "	argumentReal _ FloatImage width: width height: height.
 	argumentReal fillWith: aMatrixOrFloatImage."
 	argumentReal _ aMatrixOrFloatImage copy.
-	argumentImaginary _ FloatImage width: width height: height.
+	argumentImaginary _ self appropriateResultClass width: width height: height.
 
 	"Transform both to Fourier space. Allocate space for imaginary coefficients."
 	fft _ FFT2D new.
@@ -942,7 +942,7 @@ areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	sum = 0.0 ifTrue: [ ^0.0 ].
 	^sum / ((xStop-xStart+1) * (yStop-yStart+1))! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:46'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
 areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -959,7 +959,7 @@ areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
 	resultWidth _ e x.
 	resultHeight _ e y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
 	inverseTransformation _ anAffineTransformation inverseTransformation.
 	hw _ 0.5 * width / resultWidth.
 	hh _ 0.5 * height / resultHeight.
@@ -1003,7 +1003,7 @@ asFormG: greenImage b: blueImage
 	self fill32BitForm: answer withG: greenImage b: blueImage.
 	^answer! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:23'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
 bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -1020,7 +1020,7 @@ bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
 	resultWidth _ e x.
 	resultHeight _ e y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.	
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.	
 	interpolator _ BSplineInterpolatingImage from: self.
 	inverseTransformation _ anAffineTransformation inverseTransformation.
 	1 to: resultHeight do: [ :y |
@@ -1101,7 +1101,7 @@ bicubicInterpolatedValueAtX: x y: y xFilterStore: xFilter
 	
 	^interpolated! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 12:55'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
 bicubicTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -1116,7 +1116,7 @@ bicubicTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
 	resultWidth _ e x.
 	resultHeight _ e y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
 	inverseTransformation _ anAffineTransformation inverseTransformation.
 	xFilter _ FloatArray new: 4.
 	1 to: resultHeight do: [ :y |
@@ -1167,7 +1167,7 @@ bilinearInterpolatedValueAtX: x y: y
 
 	^interpolated! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 12:51'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
 bilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -1183,7 +1183,7 @@ bilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
 	resultWidth _ e x.
 	resultHeight _ e y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
 	inverseTransformation _ anAffineTransformation inverseTransformation.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
@@ -1340,29 +1340,32 @@ crazyFactor _ 1.8892666638.
 
 	^centroidX @ centroidY! !
 
-!FloatImage methodsFor: 'copying' stamp: 'jmv 3/25/2015 09:48'!
+!FloatImage methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:25'!
 cheapDisplacedBy: deltaPoint
 	"Answer a new image our contents, sort of displaced by aPoint.
 	Not really precise. Shift in the X direction wrap around the next or previous line!!
 			displacement is integer!!"
 	
 	| answer |
-	answer _ FloatImage width: width height: height.
+	answer _ self appropriateResultClass width: width height: height.
 	answer fillWith: self cheaplyDisplaced: deltaPoint.
 	^answer! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 4/24/2015 11:10'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 5/22/2015 13:08'!
 convolutionLinearWith: aFloatMatrix
 	"Linear convolution. Warning: Slow.
-	Answer if of enough size to hold the whole convolution
+	Answer is of enough size to hold the whole convolution
 	It is usually preferred to do a circular convolution via FFT and take care of border effects.
 	But this one might be preferred if the receiver is big, and the argument is very small
-	Answer a new FloatImage. Don't modify receiver or argument."
+	Answer a new FloatImage. Don't modify receiver or argument.
+	
+	Performance could be enhanced using the fast #fillWith:displaced: on a temporal image, for each nonzero element of the kernel,
+	and multiply and add with fast floatArray operations"
 
 	| answer h w v |
 	h _ aFloatMatrix height.
 	w _ aFloatMatrix width.
-	answer _ FloatImage width: width + aFloatMatrix width - 1 height: height + aFloatMatrix height - 1.
+	answer _ self appropriateResultClass width: width + aFloatMatrix width - 1 height: height + aFloatMatrix height - 1.
 	1 to: height do: [ :y |
 		1 to: width do: [ :x |
 			v _ self x: x y: y.
@@ -1374,13 +1377,16 @@ convolutionLinearWith: aFloatMatrix
 					]]]].
 	^answer! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 4/24/2015 11:10'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 5/22/2015 13:08'!
 convolutionLinearWithSmallKernel: kernel
 	"Linear convolution. Warning: Slow.
 	Answer is same extent as receiver.
 	It is usually preferred to do a circular convolution via FFT and take care of border effects.
 	But this one might be preferred if the receiver is big, and the argument is very small
-	Answer a new FloatImage. Don't modify receiver or argument."
+	Answer a new FloatImage. Don't modify receiver or argument.
+
+	Performance could be enhanced using the fast #fillWith:displaced: on a temporal image, for each nonzero element of the kernel,
+	and multiply and add with fast floatArray operations"
 
 	| answer kernelH kernelW v deltaI deltaJ iMax iMin jMax jMin xx yy |
 	kernelH _ kernel height.
@@ -1388,7 +1394,7 @@ convolutionLinearWithSmallKernel: kernel
 	deltaI _ kernelH // 2 + 1.
 	deltaJ _ kernelW // 2 + 1.
 	
-	answer _ FloatImage width: width height: height.
+	answer _ self appropriateResultClass width: width height: height.
 	
 	1 to: height do: [ :y |
 		iMin _ 1 max: y+deltaI-height.
@@ -1405,25 +1411,6 @@ convolutionLinearWithSmallKernel: kernel
 					xx _ x-j+deltaJ.
 					v _ (self x: xx y: yy) * (kernel i: i j: j) + v ]].
 			answer x: x y: y put: v ]].
-	^answer! !
-
-!FloatImage methodsFor: 'copying' stamp: 'jmv 10/10/2014 12:18'!
-copy: aRectangle
-	"
-	| i |
-	i _ FloatImage width: 10 height: 10.
-	i x: 10 y: 10 put: Float pi.
-	i copy: (1@1 extent: 10@10)
-	"
-	| answer dx dy x0 x1 |
-	answer _ FloatImage width: aRectangle width height: aRectangle height.
-	dx _  aRectangle left - 1.
-	dy _ aRectangle top - 1.
-	x0 _ 1 max: 1-dx.
-	x1 _ answer width min: width-dx.
-	(1 max: 1-dy) to: (answer height min: height-dy) do: [ :y |
-		x0 to: x1 do: [ :x |
-			answer x: x y: y put: (self x: x + dx y: y + dy) ]].
 	^answer! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 12/10/2012 18:00'!
@@ -1542,27 +1529,6 @@ displayAt: aPoint
 		(value * 255 + 0.5) truncated min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
-!FloatImage methodsFor: 'copying' stamp: 'jmv 8/5/2014 14:04'!
-expandTo: newExtent
-	"
-	| i |
-	i _ FloatImage width: 5 height: 5.
-	i x: 5 y: 5 put: Float pi.
-	i expandTo:10@10
-	"
-	| answer dx dy x0 xz y0 yz |
-	answer _ FloatImage width: newExtent x height: newExtent y.
-	dx _  newExtent x - width // 2.
-	dy _  newExtent y - height // 2.
-	y0 _ 1-dy max: 1.
-	yz _ newExtent y-dy min: height.
-	x0 _ 1-dx max: 1.
-	xz _ newExtent x-dx min: width.
-	y0 to: yz do: [ :y |
-		x0 to: xz do: [ :x |
-			answer x: x+dx y: y+dy put: (self x: x y: y) ]].
-	^answer! !
-
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:13'!
 fill32BitForm: a32BitForm
 "Se podria pensar en meter min y max, y clamping, multiplicando por una cte, y usando un Bitmap de 2^24 entradas (16Mb!!) como colorMap, para mappear todas las combinaciones posibles que overfloween, a 255 en el form destino.
@@ -1613,6 +1579,17 @@ Esto serviria para, por ejemplo, ajustes de brillo, etc en una gui"
 	bb copyBits.
 	blueMatrix -= magic.! !
 
+!FloatImage methodsFor: 'private' stamp: 'jmv 5/22/2015 12:19'!
+fillElementsWith: aFloatArray displacedBy: anInteger
+
+	anInteger < 0
+		ifTrue: [
+			elements replaceFrom: 1 to: elements size + anInteger with: aFloatArray startingAt: 1 - anInteger.
+			elements replaceFrom: elements size + anInteger+1 to: elements size with: aFloatArray startingAt: 1
+		] ifFalse: [
+			elements replaceFrom: 1+anInteger to: elements size with: aFloatArray startingAt: 1.
+			elements replaceFrom: 1 to: 1 + anInteger - 1 with: aFloatArray startingAt: elements size - anInteger+1 ]! !
+
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 12:17'!
 fillFrom32BitForm: aForm component: aSymbol
 	"aSymbol must be in #(red green blue alpha)
@@ -1648,17 +1625,7 @@ fillRect: aRectangle with: aFloat
 		aRectangle left to: aRectangle right-1 do: [ :x |
 			self x: x y: y put: aFloat ]]! !
 
-!FloatImage methodsFor: 'copying' stamp: 'jmv 9/1/2014 12:26'!
-fillWith: aFloatImage at: topLeft
-
-	| dx dy |
-	dx _ topLeft x-1.
-	dy _ topLeft y-1.
-	(1 max: 1-dy) to: (height-dy min: aFloatImage height) do: [ :y |
-		(1 max: 1-dx) to: (width-dx min: aFloatImage width) do: [ :x |
-			self x: x+dx y: y+dy put: (aFloatImage x: x y: y) ]]! !
-
-!FloatImage methodsFor: 'copying' stamp: 'jmv 3/25/2015 09:47'!
+!FloatImage methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:19'!
 fillWith: aFloatImage cheaplyDisplaced: deltaPoint
 	"Answer a new image our contents, sort of displaced by aPoint.
 	Not really precise. Shift in the X direction wrap around the next or previous line!!
@@ -1667,18 +1634,7 @@ fillWith: aFloatImage cheaplyDisplaced: deltaPoint
 		displacement is integer!!
 	"
 	
-	self fillWith: aFloatImage elements displacedBy: deltaPoint y*width + deltaPoint x! !
-
-!FloatImage methodsFor: 'private' stamp: 'jmv 8/28/2014 12:01'!
-fillWith: aFloatArray displacedBy: anInteger
-
-	anInteger < 0
-		ifTrue: [
-			elements replaceFrom: 1 to: elements size + anInteger with: aFloatArray startingAt: 1 - anInteger.
-			elements replaceFrom: elements size + anInteger+1 to: elements size with: aFloatArray startingAt: 1
-		] ifFalse: [
-			elements replaceFrom: 1+anInteger to: elements size with: aFloatArray startingAt: 1.
-			elements replaceFrom: 1 to: 1 + anInteger - 1 with: aFloatArray startingAt: elements size - anInteger+1 ]! !
+	self fillElementsWith: aFloatImage elements displacedBy: deltaPoint y*width + deltaPoint x! !
 
 !FloatImage methodsFor: 'filtering' stamp: 'jmv 8/15/2014 16:01'!
 fillWithDeconvolutionOf: blurredImages deconvolve: kernels
@@ -1864,10 +1820,10 @@ guardZone: aPoint
 	"
 	self guardZone: aPoint topLeftNullFill: 0@0 bottomRightNullFill: 0@0! !
 
-!FloatImage methodsFor: 'private' stamp: 'jmv 8/23/2014 23:55'!
+!FloatImage methodsFor: 'private' stamp: 'jmv 5/21/2015 11:02'!
 guardZone: guardZone topLeftNullFill: leadingNulls bottomRightNullFill: trailingNulls
 	"Guard Zones
-	((((FloatImage fromArrayOfArrays: #(
+	(((FloatImage fromArrayOfArrays: #(
 		(9 9 9 9 9 9 9 9)
 		(9 9 9 9 9 9 9 9)
 		(9 9 9 9 9 9 9 9)
@@ -1877,8 +1833,7 @@ guardZone: guardZone topLeftNullFill: leadingNulls bottomRightNullFill: trailing
 		(9 9 9 -9 -9 -9 9 9)
 		(9 9 9 9 9 9 9 9)
 		))
-			guardZone: 3@2 topLeftZeroFill: 1@0 bottomRightZeroFill: 0@1;
-			asFloatMatrix)
+			guardZone: 3@2 topLeftNullFill: 1@0 bottomRightNullFill: 0@1;
 			print;
 			asForm) magnifyTo: 80@80) display
 	"
@@ -2105,7 +2060,7 @@ lanczosFilteredValueOLDAtX: x y: y filterScale: filterScale xFilterStore: xFilte
 	
 	^sum! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:15'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -2131,7 +2086,7 @@ lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
 	resultWidth _ e x.
 	resultHeight _ e y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
 	inverseTransformation _ anAffineTransformation inverseTransformation.
 
 	"If downscaling (zooming out, filterScale<1, subsampling) remove frequencies above sf, as they would become aliasing in the result.
@@ -2185,7 +2140,7 @@ mean: aRect
 			mean _ mean + (self x: x y: y) ]].
 	^mean / count! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 12:46'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -2201,7 +2156,7 @@ nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentO
 	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
 	resultWidth _ e x.
 	resultHeight _ e y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
 	inverseTransformation _ anAffineTransformation inverseTransformation.
 	1 to: resultHeight do: [ :y |
 		1to: resultWidth do: [ :x |
@@ -2229,7 +2184,7 @@ normalizeValuesFloor: min ceiling: max
 
 	self replaceValues: [ :i :j :v | v - min / max min: 1.0 max: 0.0 ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:42'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft bottomRight: bottomRight
 	"Resample the receiver to a new Float image.
 	The arguments specify which point in the receiver maps to each corner of the result.
@@ -2241,7 +2196,7 @@ perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft b
 	resultWidth _ width.
 	resultHeight _ height.
 	
-	scaled _ FloatImage width: resultWidth height: resultHeight.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
 	resultCorners _ { 1@1. resultWidth@1. 1@resultHeight. resultWidth@resultHeight }.
 	
 	transformation _ PerspectiveTransformation map: resultCorners to: cornersInSource.	
@@ -2429,7 +2384,7 @@ scaledBy: scale
 				ifFalse: [self lanczosTransformedBy: t resultExtent: nil]]
 		ifFalse: [self bSplineTransformedBy: t resultExtent: nil ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/4/2015 13:23'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
 	anAffineTransformation specifies the transformation from us to the result image.
@@ -2448,7 +2403,7 @@ shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrN
 	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
 	resultWidth _ e x.
 	resultHeight _ e y.
-	scaled _ FloatImage width: resultWidth height: resultHeight.	
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.	
 	interpolator _ ShiftedLinearInterpolatingImage from: self.
 	inverseTransformation _ anAffineTransformation inverseTransformation.
 	1 to: resultHeight do: [ :y |
