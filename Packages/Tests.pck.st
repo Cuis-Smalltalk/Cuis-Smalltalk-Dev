@@ -1,7 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2203] on 7 March 2015 at 8:28:36.291286 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2342] on 27 May 2015 at 3:35:42.80774 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 21!
+!provides: 'Tests' 1 24!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -564,7 +565,7 @@ SystemDictionaryTest class
 
 !classDefinition: #TaskbarTaskTest category: #'Tests-Taskbar'!
 TestCase subclass: #TaskbarTaskTest
-	instanceVariableNames: 'task morph'
+	instanceVariableNames: 'task morph needsDelete taskbar'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Taskbar'!
@@ -2340,21 +2341,21 @@ doTestDebuggerTempAccessWith: one with: two
 	self assert: local1 = 25.
 	self assert: remote1 = (6/7)! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 16:58'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/27/2015 13:03'!
 supportTestSourceRangeAccessForDecompiledInjectInto: method source: source
 	"Test debugger source range selection for inject:into:"
 	^self
 		supportTestSourceRangeAccessForInjectInto: method
 		source: source
-		selectionSequence: #(	':= t1'
-								'do: [:t4 | t3 := t2 value: t3 value: t4]'
-								'value: t3 value: t4'
-								':= t2 value: t3 value: t4'
-								']'
-								'value: t3 value: t4'
-								':= t2 value: t3 value: t4'
-								']'
-								'^t3')! !
+		selectionSequence: #(	'_ arg1'
+								'do: [:arg5 | temp3 _ arg2 value: temp3 value: arg5]'
+								'value: temp3 value: arg5'
+								'_ arg2 value: temp3 value: arg5'
+								'temp3 _ arg2 value: temp3 value: arg5'
+								'value: temp3 value: arg5'
+								'_ arg2 value: temp3 value: arg5'
+								'temp3 _ arg2 value: temp3 value: arg5'
+								'^temp3')! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 19:44'!
 supportTestSourceRangeAccessForDecompiledNoBytecodeInjectInto: method source: source
@@ -2548,21 +2549,16 @@ testDecompiledDoitMethodTempNames
 		mns first nodesDo: removeComments.
 		self assert: (mnps := mns first printString) = (mps := m methodNode printString)]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/29/2014 08:35'!
-testInjectIntoDecompilations
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/27/2015 13:52'!
+testInjectIntoDecompilationsEncoderForV3
 	"Test various compilations decompile to the same code for a method sufficiently
 	 simple that this is possible and sufficiently complex that the code generated
 	 varies between the compilations."
-	"self new testInjectIntoDecompilations"
+	"self new testInjectIntoDecompilationsEncoderForV3"
 	| source |
 
-	"This test also fails in Squeak. Check if it is ever fixed."
-	self flag: #expectedFailure.
-
 	source := (Collection sourceCodeAt: #inject:into:) asString.
-	{ "Encoder."
-	   EncoderForV3.
-	   EncoderForV3PlusClosures } do:
+	{ EncoderForV3 } do:
 		[:encoderClass| | method |
 		method := (Parser new
 							encoderClass: encoderClass;
@@ -2570,24 +2566,43 @@ testInjectIntoDecompilations
 							class: Collection)
 						generate: #(0 0 0 0).
 		self assert: (Scanner new scanTokens: method decompileString)
-					= #(inject: t1 into: t2
-							| t3 |
-							t3 ':=' t1 .
-							self do: [ ':t4' | t3 ':=' t2 value: t3 value: t4 ] .
-							^ t3)]! !
+					= #(inject: arg1 into: arg2
+							| temp3 |
+							temp3 _ arg1 .
+							self do: [ ':temp4' | temp3 _ arg2 value: temp3 value: temp4 ] .
+							^ temp3 . )]! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/29/2014 08:35'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/27/2015 13:52'!
+testInjectIntoDecompilationsEncoderForV3PlusClosures
+	"Test various compilations decompile to the same code for a method sufficiently
+	 simple that this is possible and sufficiently complex that the code generated
+	 varies between the compilations."
+	"self new testInjectIntoDecompilationsEncoderForV3PlusClosures"
+	| source |
+
+	source := (Collection sourceCodeAt: #inject:into:) asString.
+	{ EncoderForV3PlusClosures } do:
+		[:encoderClass| | method |
+		method := (Parser new
+							encoderClass: encoderClass;
+							parse: source
+							class: Collection)
+						generate: #(0 0 0 0).
+		self assert: (Scanner new scanTokens: method decompileString)
+					= #(inject: arg1 into: arg2
+							| temp3 |
+							temp3 _ arg1 .
+							self do: [ ':arg5' | temp3 _ arg2 value: temp3 value: arg5 ] .
+							^ temp3 . )]! !
+
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/27/2015 13:04'!
 testInjectIntoDecompiledDebugs
 	"Test various debugs of the decompiled form debug correctly."
 	"self new testInjectIntoDecompiledDebugs"
 	| source |
 
-	"This test also fails in Squeak. Check if it is ever fixed."
-	self flag: #expectedFailure.
-
 	source := (Collection sourceCodeAt: #inject:into:) asString.
-	{ "Encoder."
-	   EncoderForV3PlusClosures } do:
+	{ EncoderForV3PlusClosures } do:
 		[:encoderClass| | method |
 		method := (Parser new
 							encoderClass: encoderClass;
@@ -2904,43 +2919,43 @@ testCopyNonLocalReturn
 		shouldnt: [self methodWithNonLocalReturn]
 		raise: Error! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'jmv 8/30/2013 12:31'!
-testIsClean
+!ClosureTests methodsFor: 'testing' stamp: 'jmv 5/26/2015 16:33'!
+testIsTrivialClosure
 	"
-	ClosureTests new testIsClean
+	ClosureTests new testIsTrivialClosure
 	"
 	| tempVar |
 	tempVar _ 1.
-	self assert: [ 3 + 4 ] isClean.
-	self assert: [ :a | a * 2 ] isClean.
-	self assert: [ Smalltalk size ] isClean.
-	self assert: [ ClosureTests selectors size ] isClean.
-	self assert: [ :blockArg | blockArg printString ] isClean.
-	self assert: [ | blockTemp | blockTemp printString ] isClean.
-	self assert: [ | blockTemp | blockTemp _ 7 ] isClean.
-	self assert: [ | c | c _ [ :a :b | a+b ]. c value: 3 value: 4 ] isClean.
+	self assert: [ 3 + 4 ] isTrivialClosure.
+	self assert: [ :a | a * 2 ] isTrivialClosure.
+	self assert: [ Smalltalk size ] isTrivialClosure.
+	self assert: [ ClosureTests selectors size ] isTrivialClosure.
+	self assert: [ :blockArg | blockArg printString ] isTrivialClosure.
+	self assert: [ | blockTemp | blockTemp printString ] isTrivialClosure.
+	self assert: [ | blockTemp | blockTemp _ 7 ] isTrivialClosure.
+	self assert: [ | c | c _ [ :a :b | a+b ]. c value: 3 value: 4 ] isTrivialClosure.
 
-	self assert: [ | outerBlockTemp | [ outerBlockTemp printString ] ] isClean.
-	self assert: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] ] isClean.
-	self assert: [ | outerBlockTemp | [[ outerBlockTemp printString ]] ] isClean.
-	self assert: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] ] isClean.
-	self assert: [ [| outerBlockTemp | [ outerBlockTemp printString ]] ] isClean.
-	self assert: [ [| outerBlockTemp | [ outerBlockTemp _ 7 ]] ] isClean.
+	self assert: [ | outerBlockTemp | [ outerBlockTemp printString ] ] isTrivialClosure.
+	self assert: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] ] isTrivialClosure.
+	self assert: [ | outerBlockTemp | [[ outerBlockTemp printString ]] ] isTrivialClosure.
+	self assert: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] ] isTrivialClosure.
+	self assert: [ [| outerBlockTemp | [ outerBlockTemp printString ]] ] isTrivialClosure.
+	self assert: [ [| outerBlockTemp | [ outerBlockTemp _ 7 ]] ] isTrivialClosure.
 
-	self deny: [ | outerBlockTemp | [ outerBlockTemp printString ] isClean ] value.
-	self deny: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] isClean ] value.
-	self deny: [ | outerBlockTemp | [[ outerBlockTemp printString ]] isClean ] value.
-	self deny: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] isClean ] value.
+	self deny: [ | outerBlockTemp | [ outerBlockTemp printString ] isTrivialClosure ] value.
+	self deny: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] isTrivialClosure ] value.
+	self deny: [ | outerBlockTemp | [[ outerBlockTemp printString ]] isTrivialClosure ] value.
+	self deny: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] isTrivialClosure ] value.
 
-	self deny: [ tempVar + 1 ] isClean.
-	self deny: [ tempVar _ 1 ] isClean.
-	self deny: [ ivar + 1 ] isClean.
-	self deny: [ ivar _ 1 ] isClean.
-	self deny: [ ^ true ] isClean.
-	self deny: [ self printString ] isClean.
-	self deny: [ ^ self ] isClean.
-	self deny: [ ClassVar + 1 ] isClean.
-	self deny: [ ClassVar _ 1 ] isClean! !
+	self deny: [ tempVar + 1 ] isTrivialClosure.
+	self deny: [ tempVar _ 1 ] isTrivialClosure.
+	self deny: [ ivar + 1 ] isTrivialClosure.
+	self deny: [ ivar _ 1 ] isTrivialClosure.
+	self deny: [ ^ true ] isTrivialClosure.
+	self deny: [ self printString ] isTrivialClosure.
+	self deny: [ ^ self ] isTrivialClosure.
+	self deny: [ ClassVar + 1 ] isTrivialClosure.
+	self deny: [ ClassVar _ 1 ] isTrivialClosure! !
 
 !ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:36'!
 testMethodArgument
@@ -3426,134 +3441,13 @@ checkDecompileMethod: oldMethod
 			description: cls name asString, ' ', selector asString
 			resumable: true]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 8/9/2010 22:39'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 5/27/2015 13:58'!
 decompileClassesSelect: aBlock
-	
-	(Smalltalk classNames select: aBlock) do:
-		[:cn | | cls |
-		cls := Smalltalk at: cn.
-		 cls selectorsAndMethodsDo:
-			[:selector :meth |
-			(self isFailure: cls sel: selector) ifFalse:
-				[" to help making progress
-					(self
-						isStoredProblems: cls theNonMetaClass
-						sel: selector
-						meta: cls isMeta)
-					ifFalse: [ "
-				self checkDecompileMethod: meth]]]! !
-
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 1/5/2014 14:21'!
-decompilerFailures
-	"here is the list of failures: DNU resulting in trying to decompile the following methods"
-
-	^ #((AdditionalMethodState at:ifAbsent:)
-		(AdditionalMethodState at:ifAbsentPut:)
-		(AdditionalMethodState at:put:)
-		(AdditionalMethodState hasLiteralSuchThat:)
-		(AdditionalMethodState hasLiteralThorough:)
-		(AdditionalMethodState includesProperty:)
-		(AdditionalMethodState keysAndValuesDo:)
-		(AdditionalMethodState pragmas)
-		(AdditionalMethodState properties)
-		(AdditionalMethodState propertyKeysAndValuesDo:)
-		(AdditionalMethodState propertyValueAt:ifAbsent:)
-		(AdditionalMethodState removeKey:ifAbsent:)
-		(AdditionalMethodState setMethod:)
-		(BalloonEngineSimulation circleCosTable "-0.3826834323650903 => -0.38268343236509 or -0.3826834323650902")
-		 (BalloonEngineSimulation circleSinTable "-0.3826834323650903 => -0.38268343236509 or -0.3826834323650902")
-		(BlockNode emitCodeExceptLast:encoder:)
-		(BlockNode sizeCodeExceptLast:)
-		(Categorizer changeFromCategorySpecs:)
-		(Categorizer elementCategoryDict)
-		(ChatNotes storeAIFFOnFile:)
-		(ClosureTests testToDoInsideTemp)
-		(Command veryDeepFixupWith:)
-		(CompiledMethod =)
-		(CompiledMethod getPreambleFrom:at:)
-		(CompiledMethod hasLiteralSuchThat:)
-		(CompiledMethod hasLiteralThorough:)
-		(CompiledMethod sameTraitCodeAs:)
-		(Date printOn:)
-		(EventSensor eventTickler)
-		(FMSound mixSampleCount:into:startingAt:leftVol:rightVol:)
-		(Form preMultiplyAlpha)
-		(FTPClient getDataInto:)
-		 (GeniePlugin primSameClassAbsoluteStrokeDistanceMyPoints:otherPoints:myVectors:otherVectors:mySquaredLengths:otherSquaredLengths:myAngles:otherAngles:maxSizeAndReferenceFlag:rowBase:rowInsertRemove:rowInsertRemoveCount: "Cannot compile -- stack including temps is too deep")
-		(GZipReadStream on:from:to:)
-		(GraphMorph drawDataOn:)
-		(HttpUrl checkAuthorization:retry:)
-		(Integer asBytesDescription)
-		(IntegerTest testNumberOfDigits)
-		(IntegerTest testPrintStringBase)
-		(JPEGReadWriter decodeBlockInto:component:dcTable:acTable:)
-		(LoopedSampledSound mixSampleCount:into:startingAt:leftVol:rightVol:)
-		(MessageTally treePrintOn:tabs:thisTab:total:totalTime:tallyExact:orThreshold:)
-		(MessageTrace selectAllBetweenAnchorAnd:)
-		(MethodPragmaTest testCompileCharacter)
-		(MultiByteBinaryOrTextStream next:)
-		(MultiByteFileStream next:)
-		(MVCProject textWindows)
-		(MVCToolBuilder setLayout:in:)
-		(PasteUpMorph dropFiles:)
-		(Player veryDeepFixupWith:)
-		(PluggableTabButtonMorph calculateArcLengths)
-		(PluggableTabButtonMorph drawTabOn:)
-		(PluckedSound reset)
-		(PNGReadWriter copyPixelsGray:)
-		(PNGReadWriter processInterlaced)
-		(PNMReadWriter nextPutRGB:)
-		(PNMReadWriter nextPutBW:reverse:)
-		(PNMReadWriter readBWreverse:)
-		(PNMReadWriter readGray)
-		(PNMReadWriter readPlainRGB)
-		(PNMReadWriter writeHeader:)
-		(PointTest testTheta)
-		(PopUpMenu readKeyboard)
-		(PostscriptCanvas outlineQuadraticBezierShape:)
-		(QPickable2D pick:) "foo ifTrue: [^bar] ifFalse: [^baz]. ^huh?"
-		(QUsersPane userEntryCompare:to:) "foo ifTrue: [^bar] ifFalse: [^baz]. ^huh?"
-		(RelativeInstructionPrinter print:)
-		(RemoteHandMorph appendNewDataToReceiveBuffer)
-		(ScaledDecimalTest testConvertFromFraction)
-		(SHMCClassDefinition allInstVarNames)
-		(SHMCClassDefinition withAllSuperclasses)
-		(ShortIntegerArray writeOn:)
-		(SHParserST80 isBinary)
-		(StandardScriptingSystem holderWithAlphabet)
-		(StrikeFontSet displayStringR2L:on:from:to:at:kern:)
-		(String howManyMatch:)
-		(String keywords)
-		(StringTest testWthNoLineLongerThan)
-		(SyntaxMorph replaceKeyWord:menuItem:)
-		(SyntaxMorph replaceSel:menuItem:)
-		(TextDiffBuilder lcsFor:and:)
-		(TextURL actOnClickFor:)
-		(TShaderProgram vertexStrings) "foo ifTrue: []. => foo. => ."
-		(TShaderProgram fragmentStrings) "foo ifTrue: []. => foo. => ."
-		(TTContourConstruction segmentsDo:) "out of scope variable"
-		(TTCFontReader processCharacterMappingTable:)
-		(TTFileDescription getGlyphFlagsFrom:size:)
-		(TTFileDescription processCharacterMappingTable:)
-		(TTFontReader getGlyphFlagsFrom:size:)
-		(TTFontReader processCharacterMappingTable:)
-		(TTFontReader processHorizontalMetricsTable:length:)
-		(TWindow zoomWindow:) "foo ifTrue: [^bar] ifFalse: [^baz]. ^huh?"
-		(WaveEditor showEnvelope)
-		(WeakSet scanForLoadedSymbol:)
-
-		"(PNMReadWriter nextImage) (Collection #ifEmpty:ifNotEmpty:) (Collection #ifEmpty:) (Collection #ifNotEmpty:ifEmpty:) (Text #alignmentAt:ifAbsent:) (ObjectWithDocumentation propertyAt:ifAbsent:)")! !
-
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 12/28/2013 19:02'!
-isFailure: cls sel: selector 
-	"self new isKnowProblem: PNMReaderWriter sel: #nextImage"
-	"#((PNMReadWriter nextImage)) includes: {PNMReadWriter
-	name asSymbol . #nextImage}."
-
-	"Too many failures here. May be check #decompilerFailures when the decompiler is enhanced..."
-	self flag: #expectedFailure.
-
-	^self decompilerFailures includes: {cls name asSymbol. selector}! !
+	| cls |
+	(Smalltalk classNames select: aBlock) do: [ :cn |
+		cls _ Smalltalk at: cn.
+		 cls selectorsAndMethodsDo: [ :selector :meth |
+				self checkDecompileMethod: meth ]]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesAAtoAM
@@ -4140,7 +4034,7 @@ test32bitConversion
 	)
 		do: [ :originalWord | self assert: (Float fromIEEE32Bit: originalWord) asIEEE32BitWord = originalWord ]! !
 
-!FloatTest methodsFor: 'IEEE 754' stamp: 'nice 5/30/2006 02:34'!
+!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 5/27/2015 13:38'!
 test32bitGradualUnderflow
 	"method asIEEE32BitWord did not respect IEEE gradual underflow"
 	
@@ -4161,7 +4055,7 @@ test32bitGradualUnderflow
 	self assert: expected = conv.
 	
 	"case 2: smallest number"
-	conv := 2r0.00000000000000000000001e-126 asIEEE32BitWord.
+	conv := (Compiler evaluate: '2r0.00000000000000000000001e-126') asIEEE32BitWord.
 	expected := exponentPart bitOr: 2r1.
 	self assert: expected = conv.
 	
@@ -4315,7 +4209,7 @@ testCharacterization
 	self assert: Float infinity hex = '7FF0000000000000'.
 	self assert: Float infinity negated hex = 'FFF0000000000000'.! !
 
-!FloatTest methodsFor: 'testing compare' stamp: 'nice 7/19/2009 19:24'!
+!FloatTest methodsFor: 'testing compare' stamp: 'jmv 5/27/2015 13:35'!
 testCloseTo
 	self deny: (Float nan closeTo: Float nan) description: 'NaN isn''t close to anything'.
 	self deny: (Float nan closeTo: 1.0) description: 'NaN isn''t close to anything'.
@@ -4330,7 +4224,7 @@ testCloseTo
 	self assert: (0 closeTo: 1.0e-8).
 	self assert: (1+1.0e-8 closeTo: 1.0).
 	
-	self assert: (1000000001.0 closeTo: 1000000000.0).
+	self assert: (1000000001 * 1.0 closeTo: 1000000000.0).
 	self deny: (1000000001 closeTo: 1000000000) description: 'exact representation are considered closeTo: only if equal'.! !
 
 !FloatTest methodsFor: 'testing compare' stamp: 'jmv 9/1/2010 11:58'!
@@ -6361,11 +6255,11 @@ testNthRootErrorConditions
 	self should: [ -2 nthRoot: 1/4 ] raise: ArithmeticError.
 	self should: [ -2 nthRoot: 1.24 ] raise: ArithmeticError.! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 10/19/2011 21:03'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/27/2015 13:43'!
 testNthRootTruncated
 	<timeout:  5 "seconds">
-	| tooBigToBeAFloat large |
-	tooBigToBeAFloat := 1 << 2000.
+	| tooBigToBeAFloat large theTruncatedRoot |
+	tooBigToBeAFloat _ 1 << 2000.
 	self assert: (tooBigToBeAFloat nthRootTruncated: 100) equals: 1 << 20.
 	self assert: (tooBigToBeAFloat + 1 nthRootTruncated: 100) equals: 1 << 20.
 	self assert: (tooBigToBeAFloat - 1 nthRootTruncated: 100) equals: 1 << 20 - 1.
@@ -6377,17 +6271,16 @@ testNthRootTruncated
 	
 	2 to: 10 do: [:thePower |
 		1 to: 10000 do: [:n |
-			| theTruncatedRoot |
-			theTruncatedRoot := n nthRootTruncated: thePower.
+			theTruncatedRoot _ n nthRootTruncated: thePower.
 			self assert: (theTruncatedRoot raisedTo: thePower) <= n.
 			self assert: (theTruncatedRoot + 1 raisedTo: thePower) > n]]! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'nice 2/15/2008 22:23'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 5/27/2015 14:04'!
 testNumberOfDigits
-	
-	2 to: 32 do: [:b |
-		1 to: 1000//b do: [:n |
-			| bRaisedToN |
+
+	| bRaisedToN |
+	2 to: 32 do: [ :b |
+		1 to: 1000//b do: [ :n |
 			bRaisedToN := b raisedTo: n.
 			self assert: (bRaisedToN - 1 numberOfDigitsInBase: b) = n.
 			self assert: (bRaisedToN numberOfDigitsInBase: b) = (n+1).
@@ -6562,12 +6455,12 @@ testPrimesUpTo
 	self deny: (Integer primesUpTo: nn) last = nn.
 	self assert: (Integer primesUpTo: nn + 1) last  = nn.! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'nice 2/15/2008 22:31'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 5/27/2015 14:05'!
 testPrintStringBase
 	
-	2 to: 32 do: [:b |
-		1 to: 1000//b do: [:n |
-			| bRaisedToN |
+	| bRaisedToN |
+	2 to: 32 do: [ :b |
+		1 to: 1000//b do: [ :n |
 			bRaisedToN := b raisedTo: n.
 			self assert: (bRaisedToN - 1 printStringBase: b) = (String new: n withAll: (Character digitValue: b-1)).
 			self assert: (bRaisedToN printStringBase: b) = ('1' , (String new: n withAll: $0)).
@@ -9139,12 +9032,20 @@ testMethodsWithUnboundGlobals
 	"
 	self assert: Smalltalk methodsWithUnboundGlobals isEmpty! !
 
-!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'jmv 12/21/2013 09:53'!
+!TaskbarTaskTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:30'!
 setUp
 
+	needsDelete _ ProjectX ui taskbar isNil.
+	taskbar _ ProjectX ui hideTaskbar; showTaskbar; taskbar.
 	morph _ Morph new.
-	task _ TaskbarTask new.
+	task _ TaskbarTask forTaskbar: taskbar.
 	task minimize: morph! !
+
+!TaskbarTaskTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:47'!
+tearDown
+
+	needsDelete ifTrue: [
+		ProjectX ui hideTaskbar ]! !
 
 !TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/28/2013 17:28'!
 testMinimize
@@ -9163,20 +9064,32 @@ testRestore
 	task restore.
 	self should: [ morph visible ]! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/21/2013 10:01'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:48'!
 setUp
 
-	taskbar _ Taskbar singleton! !
+	needsDelete _ ProjectX ui taskbar isNil.
+	taskbar _ ProjectX ui hideTaskbar; showTaskbar; taskbar.
+	taskbar screenSizeChanged.
+	taskbar world runStepMethods! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 03:07'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:31'!
+tearDown
+
+	needsDelete ifTrue: [
+		ProjectX ui hideTaskbar ]! !
+
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 5/27/2015 10:10'!
 testClassMinimize
+	"
+	TaskbarTest new setUp testClassMinimize tearDown
+	"
 
 	| m | m _ Morph new.
 
-	taskbar class minimize: m.
+	taskbar minimize: m.
 	self shouldnt: [ m visible ]! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 03:16'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 5/26/2015 16:45'!
 testClassRestore
 
 	| m | m _ Morph new. 
@@ -9185,20 +9098,14 @@ testClassRestore
 	
 	self should: [ m visible not ].
 
-	taskbar class restore: m.
+	taskbar restore: m.
 
 	self should: [ m visible ]! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 18:13'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 5/26/2015 16:46'!
 testClassSingleton
 
-	self should: [ taskbar == taskbar class singleton ].
-! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 18:13'!
-testClassVisible
-
-	self should: [ taskbar visible = taskbar class visible ].
+	self should: [ taskbar == ProjectX ui taskbar ].
 ! !
 
 !TaskbarTest methodsFor: 'test cases' stamp: 'jmv 9/4/2012 17:30'!

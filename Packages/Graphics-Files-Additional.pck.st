@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2232] on 9 April 2015 at 3:35:16.265159 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2342] on 27 May 2015 at 3:35:39.35174 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 5!
+!provides: 'Graphics-Files-Additional' 1 6!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -195,16 +195,15 @@ copyPixels: y at: startX by: incX
 	self perform: s asSymbol with: y with: startX with: incX
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:03'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 5/27/2015 14:07'!
 copyPixelsGray: y
 	"Handle non-interlaced grayscale color mode (colorType = 0)"
 
+	| blitter high low value |
 	bitsPerChannel = 16 ifTrue: [
 		"Warning: This is extremely slow. Besides we are downsampling to 8 bits!!"
-		| blitter |
 		blitter := BitBlt bitPokerToForm: form.
 		0 to: width - 1 do: [ :x |
- 			| high low value |
  			high := thisScanline at: x * 2 + 1.
  			low := thisScanline at: x * 2 + 2.
  			value := (high * 256 + low = transparentPixelValue)
