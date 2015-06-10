@@ -1,10 +1,20 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2214] on 27 March 2015 at 11:51:39.89567 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2355] on 9 June 2015 at 10:06:15.280162 am'!
 'Description Please enter a description for this package'!
-!provides: 'SUnit XML reports' 1 1!
+!provides: 'SUnit XML reports' 1 2!
 !requires: 'YAXO' 1 nil nil!
 
-!TestRunner methodsFor: '*SUnit XML reports' stamp: 'jmv 3/27/2015 11:51'!
+!TestRunner methodsFor: '*SUnit XML reports' stamp: 'jmv 6/5/2015 10:48'!
 runTestsAndBuildReport
+"
+TestRunner new runTestsAndBuildReport edit
+"
+	| xmlDoc |
+	xmlDoc _ self runTestsAndBuildReportXMLDoc.
+	^String streamContents: [ :strm |
+		xmlDoc printXMLOn: (XMLWriter on: strm) ]! !
+
+!TestRunner methodsFor: '*SUnit XML reports' stamp: 'jmv 6/5/2015 10:47'!
+runTestsAndBuildReportXMLDoc
 "
 TestRunner new runTestsAndBuildReport edit
 "
@@ -16,17 +26,17 @@ TestRunner new runTestsAndBuildReport edit
 	runSemaphore wait.
 	^self xmlReport: suite! !
 
-!TestRunner methodsFor: '*SUnit XML reports' stamp: 'jmv 3/27/2015 11:51'!
+!TestRunner methodsFor: '*SUnit XML reports' stamp: 'jmv 6/5/2015 10:46'!
 xmlReport: suite
 	"See http://llg.cubic.org/docs/junit/"
 	" a description of the JUnit XML format and how Jenkins parses it. See also junit.xsd "
 	"Notes:
 		- just one suite
 		- Use current results"
-	| doc suiteAttributes suiteNode |
-	doc _ XMLDocument new.
-	doc encoding: 'UTF-8'.
-	doc version: '1.0'.
+	| xmlDoc suiteAttributes suiteNode |
+	xmlDoc _ XMLDocument new.
+	xmlDoc encoding: 'UTF-8'.
+	xmlDoc version: '1.0'.
 
 	"testsuite can appear multiple times, if contained in a testsuites element. It can also be the root element."
 	suiteNode _ XMLElement named: 'testsuite'.
@@ -49,7 +59,7 @@ xmlReport: suite
 		
 		yourself.
 	suiteNode setAttributes: suiteAttributes.
-	doc addElement: suiteNode.
+	xmlDoc addElement: suiteNode.
 
 	result passed do: [ :passedTestCase | | caseNode caseAttributes |
 		"testcase can appear multiple times, see /testsuites/testsuite@tests"
@@ -118,4 +128,20 @@ xmlReport: suite
 		caseNode addElement: caseErroed.
 		].
 
-	^String streamContents: [ :strm | doc printXMLOn: (XMLWriter on: strm) ]! !
+	^xmlDoc! !
+
+!TestRunner class methodsFor: '*SUnit XML reports' stamp: 'jmv 6/5/2015 10:52'!
+buildTestRunnerApp
+	"
+	TestRunner buildTestRunnerApp
+	"
+	AppLauncher appGlobalName: self name appSelector: #runTestsAndSaveReportTo:.
+	Smalltalk saveAs: 'TestRunner', FileDirectory dot,  FileDirectory imageSuffix andQuit: true clearAllClassState: false! !
+
+!TestRunner class methodsFor: '*SUnit XML reports' stamp: 'jmv 6/5/2015 10:53'!
+runTestsAndSaveReportTo: outputFileName
+	| xmlDoc |
+	xmlDoc _ self new runTestsAndBuildReportXMLDoc.
+	FileDirectory default forceNewFileNamed: outputFileName do:  [ :strm |
+		xmlDoc printXMLOn: (XMLWriter on: strm) ].
+	Smalltalk snapshot: false andQuit: true embedded: false clearAllClassState: false! !

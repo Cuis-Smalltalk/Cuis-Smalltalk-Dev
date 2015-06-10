@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2336] on 26 May 2015 at 10:06:21.919901 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 9 June 2015 at 11:03:46.04163 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 30!
+!provides: 'SignalProcessing' 1 32!
+!requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -165,8 +165,13 @@ FloatImageTest class
 	instanceVariableNames: ''!
 
 
-!AccumulatedImageHistogram commentStamp: '<historical>' prior: 0!
-Used by Histogram Equalization.!
+!AccumulatedImageHistogram commentStamp: 'jmv 6/4/2015 10:17' prior: 0!
+Used by Histogram Equalization.
+
+======================================================
+ImageHistogram, ImageHistogram2, ImageHistogram3, AccumulatedImageHistogram
+are now obsolete. They have been superseded by Histogram and UnitaryMonotonicMap
+======================================================!
 
 !FloatImage commentStamp: '<historical>' prior: 0!
 My instances are 1-band images suitable for Image Processing algorithms. Pixel values are 32-bit Float.!
@@ -248,7 +253,7 @@ http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#warppe
 
 !
 
-!ImageHistogram commentStamp: '<historical>' prior: 0!
+!ImageHistogram commentStamp: 'jmv 6/4/2015 10:16' prior: 0!
 An ImageHistogram records the number of pixels in an image for each pixel value (actually for a number of pixel value intervals).
 
 See ImageHistogram2 for a possibly better approach.
@@ -273,18 +278,28 @@ n _ 256.
 
 In reality, the first and last slots will count also pixels with values less than 0.0 and greater than 1.0 respectively. I.e. they act as if the image was clipped. In this example, we can think that all slots have an interval of size 1, and that the first interval is [-0.5/255 .. 0.5/255) and that the last interval is [254.5/255 .. 255.5/255).
 
-Each slot can count up to (2 raisedTo:32)-1 pixels. If it is ever needed to use larger counts, replace the WordArray by an Array initialized from zeros.!
+Each slot can count up to (2 raisedTo:32)-1 pixels. If it is ever needed to use larger counts, replace the WordArray by an Array initialized from zeros.
 
-!ImageHistogram2 commentStamp: 'jmv 4/24/2013 14:07' prior: 0!
+======================================================
+ImageHistogram, ImageHistogram2, ImageHistogram3, AccumulatedImageHistogram
+are now obsolete. They have been superseded by Histogram and UnitaryMonotonicMap
+======================================================!
+
+!ImageHistogram2 commentStamp: 'jmv 6/4/2015 10:16' prior: 0!
 An ImageHistogram2 is a kind of image histogram, but it doesn't record exact pixel counts. They are especially useful for images with Float values, or when using significantly less histogram bins than pixel values.
 
 Pixel values are assumed to lie in the [0.0 .. 1.0] interval. Being N the size of the tallies array, there are N slots. centered at values 0.0, 1/(N-1), 2/(N-1), ..., 1.0. A pixel with value exactly k/(N-1) will add 1.0 to the correspoinding tally. A pixel with value z such that k / (N-1) < z < (k+1) / (N-1) will contribute to 2 tallies, in inverse proportion to the distance to each of them.
 
 In reality, the first and last slots will count also pixels with values less than 0.0 and greater than 1.0 respectively. I.e. they act as if the image was clipped.
 
-This class had problems at the first and last bins when used for histogram equalization. The solution is ImageHistogran3 + AccumulatedImageHistogram!
+This class had problems at the first and last bins when used for histogram equalization. The solution is ImageHistogran3 + AccumulatedImageHistogram
 
-!ImageHistogram3 commentStamp: 'jmv 4/24/2013 15:11' prior: 0!
+======================================================
+ImageHistogram, ImageHistogram2, ImageHistogram3, AccumulatedImageHistogram
+are now obsolete. They have been superseded by Histogram and UnitaryMonotonicMap
+======================================================!
+
+!ImageHistogram3 commentStamp: 'jmv 6/4/2015 10:16' prior: 0!
 An ImageHistogram3 is a kind of image histogram, but it doesn't record exact pixel counts. They are especially useful for images with Float values, or when using significantly less histogram bins than pixel values.
 
 Pixel values are assumed to lie in the [0.0 .. 1.0] interval. Being N the size of the tallies array, there are N slots or bins of equal width that span that interval. For example, for 5 bins:
@@ -299,7 +314,12 @@ For example, for 5 bins:
 (1 to: 5) collect: [ :i | i-0.5/5 ] 
 #(0.1 0.3 0.5 0.7 0.9)
 
-A pixel with value exactly k-0.5/N will add 1.0 to the correspoinding tally. Pixels to the in the first half of the first bin belong in the first bin. Same for pixels in the second half of the last bin. Any other pixel value will contribute to 2 tallies, in inverse proportion to the distance to their center.!
+A pixel with value exactly k-0.5/N will add 1.0 to the correspoinding tally. Pixels to the in the first half of the first bin belong in the first bin. Same for pixels in the second half of the last bin. Any other pixel value will contribute to 2 tallies, in inverse proportion to the distance to their center.
+
+======================================================
+ImageHistogram, ImageHistogram2, ImageHistogram3, AccumulatedImageHistogram
+are now obsolete. They have been superseded by Histogram and UnitaryMonotonicMap
+======================================================!
 
 !MultiBandImage commentStamp: 'jmv 7/23/2012 09:01' prior: 0!
 a Multi Band Image is composed of several Single Band Images.
@@ -888,6 +908,14 @@ addToStDevFrom8BitColorForm: aForm meanImage: meanImage
 	meanValues _ meanImage elements.
 	self with8BitColorForm: aForm do: [ :i2 :v |
 		elements at: i2 put: (v - (meanValues at: i2)) squared + (elements at: i2) ]! !
+
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 6/3/2015 21:49'!
+applyMap: map
+	self replaceValues: [ :i :j :v | map valueAt: (self i: i j: j)]! !
+
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 6/3/2015 22:20'!
+applyMapInverse: map
+	self replaceValues: [ :i :j :v | map inverseValueAt: (self i: i j: j)]! !
 
 !FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 13:45'!
 areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
@@ -1529,6 +1557,20 @@ displayAt: aPoint
 		(value * 255 + 0.5) truncated min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 6/4/2015 10:56'!
+ditherForHistogramEq
+	"Add some uniform random noise so image values are distributed over the entire real [0.0 .. 1.0] interval.
+	This is good, for example, for histogram equalization, as it allows getting a really flat histogram after equalization,
+	covering esentially all possible values.
+	Assume 256 levels, i.e. an image built from an 8bpp Form or file.
+	Tweak as needed, etc."
+
+	| k random levelsInOriginalImage |
+	levelsInOriginalImage _ 256.
+	k _ 1.0 / (levelsInOriginalImage-1).
+	random _ Random new.
+	self replaceValues: [ :i :j :v | v + (random next - 0.5*k) min: 1 max: 0 ].! !
+
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:13'!
 fill32BitForm: a32BitForm
 "Se podria pensar en meter min y max, y clamping, multiplicando por una cte, y usando un Bitmap de 2^24 entradas (16Mb!!) como colorMap, para mappear todas las combinaciones posibles que overfloween, a 255 en el form destino.
@@ -1902,19 +1944,20 @@ histogram: slotCount
 		answer addValue: pixelValue ].
 	^answer! !
 
-!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 4/24/2013 14:45'!
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 6/4/2015 10:55'!
 histogramEq
 	"Could include random noise to distribute pixels over all possible values... Dithering...
 	To do this properly we'd need to know more about distribution of values. For instance, if an 8-bit image, just use a 256 bins histogram and dither.
-	But if the image is really Float, then do nothing!!"
-	| histogram |
-	"Some testing with random images suggest that 1024 is enough."
-	histogram _ self histogram: 1024.
-	histogram _ histogram accumulated.
-	1 to: height do: [ :y |
-		1 to: width do: [ :x |
-			self x: x y: y put:
-				(histogram countAt: (self x: x y: y)) / (width * height) ]]! !
+	But if the image is really Float, then do nothing!!
+
+	FloatImage lena histogramEq; displayAt: 0@0.
+	FloatImage lena ditherForHistogramEq; histogramEq; displayAt: 256@0.
+
+	(FloatImage lena histogramEq; histogram) plot.
+	(FloatImage lena ditherForHistogramEq; histogramEq; histogram) plot.
+	"
+
+	self applyMap: self histogram accumulatedAsMap! !
 
 !FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/27/2015 11:47'!
 lanczosFilteredValueAtX: x y: y filterScale: filterScale
@@ -2330,17 +2373,32 @@ pixelsCloserThanOrAtChebyshevDistance: distance ofX: baseX y: baseY do: aBlock
 			i _ y-1 * width + x.
 			aBlock value: x value: y value: i ]]! !
 
-!FloatImage methodsFor: 'quantization' stamp: 'jmv 8/23/2014 23:41'!
+!FloatImage methodsFor: 'quantization' stamp: 'jmv 6/9/2015 15:22'!
 quantizeTo: bits
 	"Simulate quantization to the specified number of bits.
 	Modify the receiver.
 	Use no more than 2^bits different values.
+	Assume input values in (0.0 .. 1.0)
+	Truncate values. Result is less than 1.0.
 	Clamp values outside (0.0 .. 1.0)
-	Note: Range still will be (0.0 .. 1.0).
+	
+	Multiplying by 2^bits  gives all integer values, in the range [0 .. 2^bits-1].
+	Useful for doing #asForm or #asFormG:b:
+
+	| i bits |
+	bits _ 3.
+	i _ FloatImage fromArrayOfArrays: { (0.0 to: 1.0 count: 20) asFloatArray }.
+	(i quantizeTo: bits ) * (2 raisedTo: bits)
+
+	| i |
+	i _ FloatImage fromArrayOfArrays: { (0.0 to: 1.0 count: 100000) asFloatArray }.
+	(i quantizeTo: 3 ) elements asBag instVarNamed: 'contents'
 	"
-	| q |
-	q _ 1.0 / (2 raisedTo: bits).
-	self replaceValues: [ :i :j :v | (v roundTo: q) min: 1.0 max: 0.0 ]! !
+	| n q k |
+	n _ 2 raisedTo: bits.
+	k _ (n-1.0)/n.
+	q _ 1.0/ n.
+	self replaceValues: [ :i :j :v | (v truncateTo: q) min: k max: 0.0 ]! !
 
 !FloatImage methodsFor: 'resampling-aux' stamp: 'jmv 1/27/2015 14:26'!
 resultExtentFor: anAffineTransformation

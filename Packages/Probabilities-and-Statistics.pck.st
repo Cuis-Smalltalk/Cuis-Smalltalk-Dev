@@ -1,6 +1,16 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2239] on 14 April 2015 at 2:40:35.681135 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2355] on 9 June 2015 at 10:08:11.439162 am'!
 'Description Please enter a description for this package'!
-!provides: 'Probabilities-and-Statistics' 1 5!
+!provides: 'Probabilities-and-Statistics' 1 6!
+!classDefinition: #UnitaryMonotonicMap category: #'Probabilities-and-Statistics'!
+FloatArray variableWordSubclass: #UnitaryMonotonicMap
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Probabilities-and-Statistics'!
+!classDefinition: 'UnitaryMonotonicMap class' category: #'Probabilities-and-Statistics'!
+UnitaryMonotonicMap class
+	instanceVariableNames: ''!
+
 !classDefinition: #Histogram category: #'Probabilities-and-Statistics'!
 Object subclass: #Histogram
 	instanceVariableNames: 'tallies extraBinsForClampedValues lowBinCenter highBinCenter'
@@ -52,6 +62,10 @@ RayleighProbabilityDistribution class
 	instanceVariableNames: ''!
 
 
+!UnitaryMonotonicMap commentStamp: '<historical>' prior: 0!
+We need a better name for this!!
+My instances are continuous monotonic increasing functions. Domain is [0..1]. Function values are also in [0..1]. f(0) = 0. f(1) = 1. They have inverse, and the inverse has the same properties.!
+
 !Histogram commentStamp: '<historical>' prior: 0!
 Histograms to be used for statistical purposes. Useful, for example, for many image processing algorithms. See http://en.wikipedia.org/wiki/Histogram .
 Counts are currently held in a WordArray, and limited to about 4 billion counts (32 bit unsigned integers)
@@ -90,6 +104,29 @@ h _ Histogram binCount: 500 minValue: 0 maxValue: 20.
 1000000 timesRepeat: [ h addValue: r nextRandomNumber  ].
 h plot.!
 
+!UnitaryMonotonicMap methodsFor: 'accessing' stamp: 'jmv 6/3/2015 22:22'!
+inverseValueAt: y
+	"y in [0.0 .. 1.0]"
+	| fracIndex y0 y1 |
+	self
+		findBinaryIndex: [ :yi | y - yi ]
+		do: [ :foundIndex | fracIndex _ foundIndex ]
+		ifNone: [ :i0 :i1 |
+			y0 _ self at: i0.
+			y1 _ self at: i1.
+			fracIndex _ i0 interpolateTo: i1 at: y-y0 / (y1-y0) ].
+	^fracIndex - 1.0 / (self size-1)! !
+
+!UnitaryMonotonicMap methodsFor: 'accessing' stamp: 'jmv 6/3/2015 22:06'!
+valueAt: x
+	"x in [0.0 .. 1.0]"
+	| i i0 |
+	i _ (x * (self size-1)) + 1.
+	i0 _ i floor.
+	^ i = i0
+		ifTrue: [ self at: i0 ]
+		ifFalse: [ (self at: i0) interpolateTo: (self at: i0+1) at: i-i0 ]! !
+
 !Histogram methodsFor: 'building' stamp: 'jmv 4/10/2015 16:12'!
 accumulate
 
@@ -100,6 +137,17 @@ accumulate
 accumulated
 
 	^self copy accumulate! !
+
+!Histogram methodsFor: 'building' stamp: 'jmv 6/4/2015 10:53'!
+accumulatedAsMap
+
+	| answer |
+	answer _ UnitaryMonotonicMap new: tallies size+1.
+	answer at: 1 put: 0.0.
+	1 to: tallies size do: [ :i |
+		answer at: i+1 put: (answer at: i) + (tallies at: i) ].
+	answer /= answer last.
+	^answer! !
 
 !Histogram methodsFor: 'building' stamp: 'jmv 4/6/2015 11:37'!
 addValue: aNumber
@@ -117,6 +165,27 @@ indexFor: aValue
 	| slotIndex |
 	slotIndex _ ((aValue - lowBinCenter / (highBinCenter -lowBinCenter )) * (tallies size-1)) rounded + 1.
 	^slotIndex min: tallies size max: 1.! !
+
+!Histogram methodsFor: 'building' stamp: 'jmv 6/4/2015 09:46'!
+inverted
+	"For accumulated histograms, compute de inverse cummulative function.
+	This is not an exact inverse, and is so far an experiment.
+	Some tests to ensure good properties, and maybe more work, are in order. "
+	| answer answerTallies n i k |
+	n _ self regularTalliesCount.
+	answerTallies _ WordArray new: n.
+	answer _ Histogram basicNew
+		tallies: answerTallies
+		lowBinCenter: 0
+		highBinCenter: n
+		extraBinsForClampedValues: false.
+	i _ 1.
+	k _ 1.0 * n / tallies last.
+	1 to: n do: [ :j |
+		[ (tallies at: i) * k < j ] whileTrue: [ i _ i + 1 ].
+		answerTallies at: j put: i
+		].
+	^answer! !
 
 !Histogram methodsFor: 'aux' stamp: 'jmv 4/10/2015 15:45'!
 plot

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2243] on 10 May 2015 at 1:27:40.945214 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2346] on 9 June 2015 at 12:12:10.876539 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 46!
+!provides: 'TerseGuide' 1 48!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -319,7 +319,7 @@ y ~~ #foo.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 14:26'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 11:57'!
 arithmetic
 	"Arithmetic Expressions"
 	^
@@ -329,7 +329,7 @@ x _ 6 - 3.								"subtraction"
 x _ 6 * 3.								"multiplication"
 x _ 1 + 2 * 3.							"evaluation always left to right (1 + 2) * 3"
 x _ 5 / 3.								"division with fractional result"
-x _ 5.0 / 3.0.							"division with float result"
+x _ 5 / 3.0.								"division with float result"
 x _ 5.0 // 3.0.							"integer divide"
 x _ 5.0 \\ 3.0.							"integer remainder"
 x _ -5.									"unary minus"
@@ -379,7 +379,7 @@ x _ 100 atRandom.						"quick random number"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/25/2015 20:51'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 15:06'!
 array
 	"Arrays"
 	^
@@ -388,15 +388,16 @@ array
 	ByteArray:     Array limited to byte elements (0-255)
 	WordArray:     Array limited to word elements (0-2^32)
 "
-| b x y sum max |
+| b x y sum max |	"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 x _ #(4 3 2 1).									"constant array"
-x _ Array with: 5 with: 4 with: 3 with: 2.		"create array with up to 4 elements"
+x _ Array with: 5 with: 4 with: 3 with: 2.		"create array with 4 elements"
 x _ Array new: 4.								"allocate an array with specified size"
 x												"set array elements"
    at: 1 put: 5;
    at: 2 put: 4;
    at: 3 put: 3;
-   at: 4 put: 2.
+   at: 4 put: 2;
+   yourself.
 b _ x isEmpty.									"test if array is empty"
 y _ x size.										"array size"
 y _ x at: 4.										"get array element at index"
@@ -450,12 +451,12 @@ y _ x veryDeepCopy.					"complete tree copy using a dictionary"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:30'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 12:37'!
 association
 	"Associations"
 	^
 '| x y |
-x _ #myVar->''hello''.
+x _ #myVar->''hello''.		"Create an association"
 y _ x key.
 y _ x value.
 
@@ -542,7 +543,7 @@ fac value: 5.										"closure variable scoped to its block"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:32'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 11:55'!
 boolean
 	"Booleans"
 	^
@@ -578,6 +579,7 @@ b _ x isLiteral.							"test if literal constant"
 b _ x isInteger.						"test if object is integer"
 b _ x isFloat.							"test if object is float"
 b _ x isNumber.						"test if object is number"
+b _ x isSymbol.						"test if object is a Symbol"
 b _ $A isUppercase.					"test if upper case character"
 b _ $A isLowercase.					"test if lower case character"
 
@@ -665,7 +667,7 @@ x _ #(''abc'' 2 $a).						"mixing of types allowed"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 16:10'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 11:59'!
 conversion
 	"Conversion"
 	^
@@ -677,7 +679,6 @@ x _ 65 asCharacter.			"convert integer to character"
 x _ $A asciiValue.				"convert character to integer"
 x _ 3.99 printString.			"convert object to string via printOn:"
 x _ 3.99 storeString.			"convert object to string via storeOn:"
-"x _ 15 radix: 16."				"convert to string in given base"
 x _ 15 printStringBase: 16.
 x _ 15 storeStringBase: 16.
 
@@ -753,7 +754,7 @@ y _ x julianDayNumber.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/13/2015 14:46'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/9/2015 12:10'!
 debugging
 	"Debugging"
 	^
@@ -778,6 +779,10 @@ x primitiveFailed.						"system primitive failed"
 
 a _ ''A1''. b _ ''B2''. a become: b.			"switch two objects, if neither is a SmallInteger"
 Transcript show: a, b; newLine.
+
+"Doing ''self halt.'' in Morphic code can be risky, because it can open an infinite sequence of debuggers."
+{2. x. a.} print. 							"alternative to ''self halt.''"
+thisContext printStack: 10.				"alternative to ''self halt.'' showing n lines of the call stack"
 
 x doesNotUnderstand: (Message selector: #foo).	"flag message is not handled"
 
@@ -906,13 +911,15 @@ result _ (Message
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:44'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 12:22'!
 fileStream
 	"File Streams"
 	^
 '| b x ios |
 ios _ FileStream newFileNamed: ''ios.txt''.	"Open a file for output"
-ios nextPut: $H; newLine.					"Put data in the file buffer"
+ios nextPut: $H; newLine.				"Put data in the file buffer"
+ios close.								"Flush the buffer, write and close the file"
+ios _ FileStream forceNewFileNamed: ''ios.txt''.	"Suppress warning dialog"
 ios nextPutAll: ''Hello File''; newLine.
 ''Hello File'' printOn: ios.
 ''Hello File'' storeOn: ios.
@@ -1074,19 +1081,24 @@ The Terse Guide does not attempt to provide the entire protocol of a topic. You 
 "
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:39'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 12:10'!
 iterationStatement
 	"Iterations"
 	^
 '| x y |
 x _ 4. y _ 1.
 [x > 0] whileTrue: [x _ x - 1. y _ y * 2].	"while true loop"
+Transcript newLine; show: y.
 [x >= 4] whileFalse: [x _ x + 1. y _ y * 2].	"while false loop"
+Transcript newLine; show: y.
 x timesRepeat: [y _ y * 2].					"times repeat loop (i _ 1 to x)"
+Transcript newLine; show: y.
 1 to: x do: [:a | y _ y * 2].					"for loop"
+Transcript newLine; show: y.
 1 to: x by: 2 do: [:a | y _ y / 2].				"for loop with specified increment"
+Transcript newLine; show: y.
 #(5 4 3) do: [:a | x _ x + a].				"iterate over array elements"
-
+Transcript newLine; show: x.
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/10/2015 12:22'!
@@ -1274,7 +1286,7 @@ x widthFor: available.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/12/2015 14:04'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 11:53'!
 literals
 	"Literals"
 	^
@@ -1286,7 +1298,7 @@ x _ 1.									"integer constant"
 x _ 3.14.								"float constant"
 x _ 2e-2.								"fractional constant"
 x _ 2.0e-2.								"float constant"
-x _ (7/8).								"fractional constant"
+x _ 7/8.								"fractional constant"
 x _ 16r0F.								"small integer constant".
 x _ 16rFFFFFFFF.						"large positive integer constant".
 x _ 16rFFFFFFFF negated.				"large negative integer constant".
@@ -1409,23 +1421,21 @@ y _ Morph initializedInstance.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:42'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 15:49'!
 orderedCollection
 	"Ordered Collections"
 	^
 '| b x y sum max |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
-x _ OrderedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with up to 4 elements"
+x _ OrderedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with 4 elements"
 x _ OrderedCollection new.					"allocate collection"
 x add: 3; add: 2; add: 1; add: 4; yourself.		"add element to collection"
-y _ x addFirst: 5;								"add element at beginning of collection"
-	yourself.									"see the resulting collection"
-y _ x removeFirst.								"remove first element in collection"
-y _ x addLast: 6.								"add element at end of collection"
-y _ x removeLast.								"remove last element in collection"
-y _ x addAll: #(7 8 9);							"add elements to the collection and answer the added elements"
-	yourself.									"see the resulting collection"
-y _ x removeAll: #(7 8 9).						"remove elements from the collection and answer the removed elements"
-x at: 2 put: 3.									"set element at index"
+y _ x addFirst: 5; yourself.						"add element at beginning of collection"
+y _ x removeFirst;	yourself.					"remove first element in collection"
+y _ x addLast: 6; yourself.						"add element at end of collection"
+y _ x removeLast;	yourself.					"remove last element in collection"
+y _ x addAll: #(7 8 9); yourself.				"add elements to the collection"
+y _ x removeAll: #(1 8 7).						"remove elements from the collection and answer the removed elements"
+x at: 2 put: 3; yourself.							"set element at index"
 y _ x remove: 5 ifAbsent: [].					"remove element from collection"
 b _ x isEmpty.									"test if empty"
 y _ x size.										"number of elements"
@@ -1798,7 +1808,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:41'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 15:04'!
 string
 	"Strings"
 	^
@@ -1815,8 +1825,9 @@ x											"set string elements"
    at: 1 put: $a;
    at: 2 put: $b;
    at: 3 put: $c;
-   at: 4 put: $e.
-x _ String with: $a with: $b with: $c with: $d.	"set up to 4 elements at a time"
+   at: 4 put: $e;
+   yourself.
+x _ String with: $a with: $b with: $c with: $d.	"set up 4 elements at a time"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the string"
 b _ x allSatisfy: [:a | (a >= $a) & (a <= $z)].	"test if all elements meet condition"
 y _ x select: [:a | a > $a].					"return all elements that meet condition"
@@ -1827,7 +1838,7 @@ y _ x asOrderedCollection.				"convert string to ordered collection"
 y _ x asSortedCollection.					"convert string to sorted collection"
 y _ x asBag.								"convert string to bag collection"
 y _ x asSet.								"convert string to set collection"
-y _ x shuffled.								"randomly shuffle string"
+y _ ''world'' shuffled.							"randomly shuffle string"
 
 '! !
 
@@ -1895,7 +1906,7 @@ syntax
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/5/2015 23:16'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 12:34'!
 time
 	"Time"
 	^
@@ -1908,7 +1919,7 @@ b _ x < Time now.						"compare times"
 b _ y = x.								"check if equal"
 d1 _ Time now asDurationSinceMidnight.
 d2 _ Time now asDurationSinceMidnight.
-y _ x hhmm24							"Return a string of the form 2154 (for 9:54 pm), of exactly 4 digits"
+y _ x hhmm24.							"Return a string of the form 2154 (for 9:54 pm), of exactly 4 digits"
 y _ x hour.								"answer the number of hours in the receiver"
 y _ x hour12.
 y _ x hour24.
