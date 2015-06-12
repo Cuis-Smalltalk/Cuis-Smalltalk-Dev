@@ -22,8 +22,8 @@ Some of the repos owner by community members, and including packages for Cuis ar
 - https://github.com/pmon?tab=repositories
 - https://github.com/mumez?tab=repositories
 - https://github.com/TakuriTakahashi?tab=repositories
-- https://github.com/pbella/Cuis-Ports
-- https://github.com/dhnorton/Cuis-Smalltalk-pck
+- https://github.com/pbella?tab=repositories
+- https://github.com/dhnorton?tab=repositories
 
 (if your repo with Cuis stuff is missing, please email the Cuis mail list)
 
