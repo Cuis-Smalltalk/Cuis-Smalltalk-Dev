@@ -1,1 +1,0 @@
-'From Cuis 2.0 of 24 February 2010 [latest update: #440] on 2 March 2010 at 2:42:41 pm'!!Debugger methodsFor: 'controls' stamp: 'jmv 3/2/2010 14:42'!optionalButtonTuples	"No [show...] button in debugger"	^super optionalButtonTuples reject: [ :tuple |		tuple third = #offerWhatToShowMenu ]! !

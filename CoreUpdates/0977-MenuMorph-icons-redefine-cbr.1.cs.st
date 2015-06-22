@@ -1,1 +1,0 @@
-'From Cuis 3.2 of 12 April 2011 [latest update: #914] on 9 May 2011 at 4:01:43 am'!!classDefinition: #MenuMorph category: #'Morphic-Menus'!BorderedMorph subclass: #MenuMorph	instanceVariableNames: 'defaultTarget selectedItem stayUp popUpOwner activeSubMenu titleMorph'	classVariableNames: ''	poolDictionaries: ''	category: 'Morphic-Menus'!

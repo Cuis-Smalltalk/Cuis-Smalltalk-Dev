@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2329] on 20 May 2015 at 9:07:53.704632 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 6:04:17.377572 pm'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Identities-UUID' 1 3!
+!provides: 'Identities-UUID' 1 4!
 !requires: 'Sound' 1 3 nil!
 !classDefinition: #UUID category: #'Identities-UUID'!
 ByteArray variableByteSubclass: #UUID
@@ -57,12 +57,12 @@ by John M McIntosh johnmci@smalltalkconsulting.com
 
 See http://www.webdav.org/specs/draft-leach-uuids-guids-01.txt!
 
-!UUID methodsFor: 'comparing' stamp: 'ul 11/9/2011 23:01'!
+!UUID methodsFor: 'comparing' stamp: 'jmv 6/17/2015 18:03'!
 < aMagnitude 
 	"Answer whether the receiver is less than the argument."
 
+	| x y |
 	1 to: self size do: [ :i |
-		| x y |
 		(x := self at: i) = (y := aMagnitude at: i) ifFalse: [ ^x < y ] ].
 	^false.! !
 

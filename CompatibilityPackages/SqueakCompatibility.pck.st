@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2336] on 26 May 2015 at 9:51:27.971979 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 5:25:22.474572 pm'!
 'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 15!
+!provides: 'SqueakCompatibility' 1 16!
 !classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
 	instanceVariableNames: ''
@@ -410,6 +410,37 @@ lf
 !Symbol methodsFor: '*squeakCompatibility' stamp: 'hjh 5/9/2015 17:37'!
 value: anObject 
 	^anObject perform: self.! !
+
+!FileDirectory class methodsFor: '*squeakCompatibility' stamp: 'jmv 6/17/2015 17:24'!
+default
+	"Old squeak protocol. Removed from Cuis to avoid false polymorphism and ambiguity
+	(i.e. to make it easier to spot & change stuff)
+	For Cuis code, use:
+		#smalltalkImageDirectory (usually preferred for Smalltalk related files) or 
+		#currentDirectory (usually preferred for other files, and especially for arguments of shell scripts)
+	Answer #currentDirectory, even if Squeak answers #smalltalkImageDirectory, for consistency with
+		FileStream fileNamed: 'filename.extension'
+	without path, that is assumed to mean #currentDirectory."
+	^ self currentDirectory! !
+
+!FileDirectory class methodsFor: '*squeakCompatibility' stamp: 'jmv 6/17/2015 13:45'!
+deleteFilePath: fileName
+	"Delete the file after finding its directory"
+	"este quiere un fullPath. Y el unico sender le manda un nombre simple...
+	Modificarlo para que ande en ambos casos!! (incluso en freakin linux)
+	directoryEntryFor: filenameOrPath
+	"
+
+	| dir fullName |
+	
+	fullName _ FileDirectory default fullNameFor: fileName.
+	dir _ self forFullFileName: fullName.
+	dir deleteFileNamed: (self localNameFor: fileName).
+! !
+
+!FileDirectory class methodsFor: '*squeakCompatibility' stamp: 'jmv 6/17/2015 13:14'!
+directoryEntryFor: filenameOrPath
+	^self default directoryEntryFor: filenameOrPath! !
 
 !InputSensor methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:47'!
 cursorPoint

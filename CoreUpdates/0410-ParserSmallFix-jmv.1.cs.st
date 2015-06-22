@@ -1,1 +1,0 @@
-'From Cuis 2.0 of 4 January 2010 [latest update: #393] on 8 February 2010 at 11:40:08 am'!!Parser methodsFor: 'error handling' stamp: 'jmv 2/8/2010 11:38'!fail	| exitBlock |	(encoder notNil and: [ (encoder == self) not ])		ifTrue: [			encoder release.			encoder := nil ]. "break cycle"	exitBlock := failBlock.	failBlock := nil.	^exitBlock value! !

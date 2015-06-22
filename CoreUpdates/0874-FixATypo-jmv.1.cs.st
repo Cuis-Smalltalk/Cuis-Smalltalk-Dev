@@ -1,1 +1,0 @@
-'From Cuis 3.1 of 4 March 2011 [latest update: #850] on 17 March 2011 at 9:27:46 am'!!RunArray methodsFor: 'accessing' stamp: 'jmv 3/17/2011 08:50'!canJoinMessage: aMessageSend	canJoinMessage _ aMessageSend! !

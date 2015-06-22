@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2355] on 9 June 2015 at 10:12:54.748162 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 6:04:58.099572 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 25!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Tests' 1 27!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -3894,9 +3894,9 @@ testWords
 		self assert: y = ian]
 ! !
 
-!DirectoryEntryTest methodsFor: 'as yet unclassified' stamp: 'bp 6/2/2014 11:19'!
+!DirectoryEntryTest methodsFor: 'as yet unclassified' stamp: 'jmv 6/17/2015 11:20'!
 testSplitNameVersionExtension
-	self assert: 3 equals: FileDirectory default directoryEntry splitNameVersionExtension size! !
+	self assert: 3 equals: FileDirectory smalltalkImageDirectory directoryEntry splitNameVersionExtension size! !
 
 !ExceptionTests methodsFor: 'private' stamp: 'md 3/25/2003 23:40'!
 assertSuccess: anExceptionTester

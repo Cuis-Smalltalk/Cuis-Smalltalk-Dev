@@ -1,1 +1,0 @@
-'From Cuis 4.0 of 16 November 2011 [latest update: #1144] on 27 November 2011 at 2:36:53 pm'!!SystemWindow methodsFor: 'initialization' stamp: 'jmv 11/27/2011 14:33'!                       openInWorld	"Ensure all widgets have proper colors before opening"	self widgetsColor.	super openInWorld! !

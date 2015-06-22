@@ -1,1 +1,0 @@
-'From Cuis 2.6 of 10 August 2010 [latest update: #540] on 1 September 2010 at 9:44:39 am'!!Float methodsFor: 'testing' stamp: 'nice 3/14/2008 23:45'!isFinite	"simple, byte-order independent test for rejecting Not-a-Number and (Negative)Infinity"	^(self - self) = 0.0! !

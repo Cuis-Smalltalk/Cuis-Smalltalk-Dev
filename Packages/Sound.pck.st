@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:29:43.7824 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 5:44:51.455572 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 4!
+!provides: 'Sound' 1 5!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
@@ -5496,7 +5496,7 @@ volumeForm: height from: start to: stop nSamplesPerPixel: nPerPixel
 	
 ! !
 
-!SampledSound class methodsFor: 'sound library' stamp: 'jm 1/14/1999 10:59'!
+!SampledSound class methodsFor: 'sound library' stamp: 'jmv 6/17/2015 11:26'!
 addLibrarySoundNamed: aString fromAIFFfileNamed: fileName
 	"Add a sound from the given AIFF file to the library."
 	"SampledSound
@@ -5504,7 +5504,7 @@ addLibrarySoundNamed: aString fromAIFFfileNamed: fileName
 		fromAIFFfileNamed: '7.aif'"
 	"Add all .aif files in the current directory to the sound library:
 	| fileNames |
-	fileNames _ FileDirectory default fileNamesMatching: '*.aif'.
+	fileNames _ FileDirectory smalltalkImageDirectory fileNamesMatching: '*.aif'.
 	fileNames do: [:fName |
 		SampledSound
 			addLibrarySoundNamed: (fName copyUpTo: $.)
@@ -5629,12 +5629,12 @@ defaultSamples: anArray repeated: n
 	DefaultSampleTable _ data contents.
 ! !
 
-!SampledSound class methodsFor: 'instance creation' stamp: 'jm 1/14/1999 10:34'!
+!SampledSound class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:26'!
 fromAIFFfileNamed: fileName
 	"Read a SampledSound from the AIFF file of the given name, merging stereo to mono if necessary."
 	"(SampledSound fromAIFFfileNamed: '1.aif') play"
 	"| snd |
-	 FileDirectory default fileNames do: [:n |
+	 FileDirectory smalltalkImageDirectory fileNames do: [:n |
 		(n endsWith: '.aif')
 			ifTrue: [
 				snd _ SampledSound fromAIFFfileNamed: n.
@@ -7196,22 +7196,22 @@ volume: aNumber
 	self createMixer.
 ! !
 
-!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jm 11/16/2001 16:57'!
+!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:44'!
 onFileNamed: fileName
 	"Answer an instance of me for playing the file with the given name."
 
 	| f |
-	f _ FileDirectory default readOnlyFileNamed: fileName.
+	f _ FileDirectory currentDirectory readOnlyFileNamed: fileName.
 	f ifNil: [^ self error: 'could not open ', fileName].
 	^ self new initStream: f headerStart: 0
 ! !
 
-!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jm 11/16/2001 10:25'!
+!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:44'!
 onFileNamed: fileName headerStart: anInteger
 	"Answer an instance of me for playing audio data starting at the given position in the file with the given name."
 
 	| f |
-	f _ FileDirectory default readOnlyFileNamed: fileName.
+	f _ FileDirectory currentDirectory readOnlyFileNamed: fileName.
 	f ifNil: [^ self error: 'could not open ', fileName].
 	^ self new initStream: f headerStart: anInteger
 ! !
@@ -10160,33 +10160,32 @@ pruneToSingleNote: aNote
 	staccatoSoft _ oneNoteMap.
 ! !
 
-!SampledInstrument methodsFor: 'other' stamp: 'jm 8/4/1998 18:22'!
+!SampledInstrument methodsFor: 'other' stamp: 'jmv 6/17/2015 10:48'!
 readSampleSetFrom: dirName
 	"Answer a collection of sounds read from AIFF files in the given directory and sorted in ascending pitch order."
 
 	| all dir fullName snd |
 	all _ SortedCollection sortBlock: [:s1 :s2 | s1 pitch < s2 pitch].
-	dir _ FileDirectory default on: dirName.
-	dir fileNames do: [:n |
+	dir _ FileDirectory on: dirName.
+	dir fileNames do: [ :n |
 		fullName _ dir fullNameFor: n.
 		Utilities
 			informUser: 'Reading AIFF file ', n
-			during:
-				[snd _ LoopedSampledSound new
+			during: [
+				snd _ LoopedSampledSound new
 					fromAIFFFileNamed: fullName
 					mergeIfStereo: true].
 		all add: snd].
-	^ all asArray
-! !
+	^ all asArray! !
 
-!SampledInstrument methodsFor: 'other' stamp: 'jm 8/2/1998 20:32'!
+!SampledInstrument methodsFor: 'other' stamp: 'jmv 6/17/2015 10:48'!
 readSampleSetInfoFrom: dirName
 	"MessageTally spyOn: [SampledInstrument new readSampleSetFrom: 'Tosh:Desktop Folder:AAA Squeak2.0 Beta:Organ Samples:Flute8'] timeToRun"
 
 	| all dir fullName info |
 	all _ OrderedCollection new.
-	dir _ FileDirectory default on: dirName.
-	dir fileNames do: [:n |
+	dir _ FileDirectory on: dirName.
+	dir fileNames do: [ :n |
 		fullName _ dir fullNameFor: n.
 		info _ AIFFFileReader new readFromFile: fullName
 			mergeIfStereo: false
@@ -12907,12 +12906,12 @@ playSoundNamed: soundName
 	Preferences soundsEnabled ifTrue: [
 		SampledSound playSoundNamed: soundName asString]! !
 
-!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
+!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/17/2015 11:26'!
 playSoundNamed: soundName ifAbsentReadFrom: aifFileName
 
 	Preferences soundsEnabled ifTrue: [
 		(SampledSound soundNames includes: soundName) ifFalse: [
-			(FileDirectory default fileExists: aifFileName) ifTrue: [
+			(FileDirectory smalltalkImageDirectory fileExists: aifFileName) ifTrue: [
 				SampledSound
 					addLibrarySoundNamed: soundName
 					fromAIFFfileNamed: aifFileName]].
@@ -13022,16 +13021,14 @@ appendSamples: aSoundBuffer
 	self appendBytes: s contents.
 ! !
 
-!SunAudioFileWriter methodsFor: 'other' stamp: 'jm 11/16/2001 22:09'!
+!SunAudioFileWriter methodsFor: 'other' stamp: 'jmv 6/17/2015 10:30'!
 closeFile
 	"Update the Sun audio file header to reflect the final size of the sound data. If my stream is a file stream, close it and, on a Macintosh, set the file type and creator to that used by SoundApp for Sun Audio files. (This does nothing on other platforms.)"
 
 	self ensureOpen.
 	self updateHeaderDataSize.
 	(stream isKindOf: StandardFileStream) ifTrue: [
-		stream close.
-		FileDirectory default setMacFileNamed: stream name type: 'ULAW' creator: 'SCPL'].
-! !
+		stream close ]! !
 
 !SunAudioFileWriter methodsFor: 'other' stamp: 'sd 1/30/2004 15:23'!
 ensureOpen

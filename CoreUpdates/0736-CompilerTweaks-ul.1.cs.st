@@ -1,1 +1,0 @@
-'From Cuis 2.9 of 5 November 2010 [latest update: #634] on 28 December 2010 at 11:26:10 am'!!ParseNode methodsFor: 'testing' stamp: 'ul 11/23/2010 13:06'!isLiteralNode	^ false! !!LiteralNode methodsFor: 'testing' stamp: 'ul 11/23/2010 13:06'!isLiteralNode	^ true! !LiteralNode removeSelector: #isLiteral!ParseNode removeSelector: #isLiteral!

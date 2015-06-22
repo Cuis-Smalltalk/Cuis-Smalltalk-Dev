@@ -1,1 +1,0 @@
-'From Cuis 2.4 of 17 June 2010 [latest update: #509] on 7 July 2010 at 4:08:16 pm'!!PositionableStream methodsFor: '*swhttpclient' stamp: 'jmv 12/17/2009 11:46'!nextAvailable: aNumber	^self next: aNumber! !

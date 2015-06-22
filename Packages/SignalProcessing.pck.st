@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 9 June 2015 at 11:03:46.04163 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 6:04:45.968572 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 32!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 34!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -1632,8 +1632,8 @@ fillElementsWith: aFloatArray displacedBy: anInteger
 			elements replaceFrom: 1+anInteger to: elements size with: aFloatArray startingAt: 1.
 			elements replaceFrom: 1 to: 1 + anInteger - 1 with: aFloatArray startingAt: elements size - anInteger+1 ]! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 12:17'!
-fillFrom32BitForm: aForm component: aSymbol
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 6/15/2015 15:48'!
+fillFrom32BitForm: aForm component: aSymbol offset: aPoint
 	"aSymbol must be in #(red green blue alpha)
 	Assume aForm is filled with zeros"
 
@@ -1646,7 +1646,7 @@ fillFrom32BitForm: aForm component: aSymbol
 	bb sourceForm: aForm.
 	bb combinationRule: 7. "or"
 	bb sourceX: 0; sourceY: 0.
-	bb destX: 0 destY: 0 width: width height: height.
+	bb destX: aPoint x destY: aPoint y width: width height: height.
 	bb colorMap: (ColorMap masks: { mask. 0. 0. 0 } shifts: { shift. 0. 0. 0 }).
 
 	elements += magic.
@@ -1696,7 +1696,7 @@ fillWithDeconvolutionOf: blurredImages deconvolve: kernels
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/15/2014 15:56'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 6/17/2015 17:59'!
 fourierDeconvolutionOf: blurredImages deconvolve: kernels maxNoiseAmplification: maxNoiseFactor
 	"
 	blurredImages are the results of the convolution of some unknown image with various kernels.
@@ -1710,14 +1710,17 @@ fourierDeconvolutionOf: blurredImages deconvolve: kernels maxNoiseAmplification:
 	"
 	A vast improvement in efficiency could be to take small blurKernels, not requiring them to be of the same size as the images, and it could build just one larger 1-d array for the row/column fft."
 	" maxNoiseFactor era 'infinito' hasta que me di cuenta que en algunos casos ayuda"
-	| count imageReals imageImaginaries kernelReals kernelImaginaries resultI fft operandNormSquared weight weightSum amplificationFactor |
+	| count imageReals imageImaginaries kernelReals kernelImaginaries resultI fft operandNormSquared weight weightSum amplificationFactor
+	imageR imageI kernelR kernelI
+	eSum fSum
+	a b c d e f |
 	count _ blurredImages size.
 	imageReals _ Array new: count.
 	imageImaginaries _ Array new: count.
 	kernelReals _ Array new: count.
 	kernelImaginaries _ Array new: count.
 	fft _ FFT2D new.
-	1 to: count do: [ :idx | | imageR imageI kernelR kernelI |
+	1 to: count do: [ :idx |
 		imageR _ (blurredImages at: idx) copy.
 		imageReals at: idx put: imageR.
 		imageI _ FloatImage width: width height: height.
@@ -1733,11 +1736,11 @@ fourierDeconvolutionOf: blurredImages deconvolve: kernels maxNoiseAmplification:
 		fft transformForward: true ].
 	resultI _ FloatImage width: width height: height.
 	1 to: height do: [ :y |
-		1 to: width do: [ :x | | eSum fSum |
+		1 to: width do: [ :x |
 			eSum _ 0.0.
 			fSum _ 0.0.
 			weightSum _ 0.0.
-			1 to: count do: [ :idx | | a b c d e f |
+			1 to: count do: [ :idx |
 				c _ (kernelReals at: idx) x: x y: y.
 				d _ (kernelImaginaries at: idx) x: x y: y.
 				operandNormSquared _ c * c + (d * d).
@@ -2227,13 +2230,21 @@ normalizeValuesFloor: min ceiling: max
 
 	self replaceValues: [ :i :j :v | v - min / max min: 1.0 max: 0.0 ]! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 6/15/2015 16:30'!
 perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft bottomRight: bottomRight
 	"Resample the receiver to a new Float image.
 	The arguments specify which point in the receiver maps to each corner of the result.
 	The arguments might be Integer or Float points.
 	Apply a PerspectiveTransformation"
-
+"
+| i p r |
+i _ FloatImage lena.
+p _ i perspectiveTransformTopLeft: -800@1 topRight: 256+800@1bottomLeft: 1@256 bottomRight: 256@256.
+r _ p perspectiveTransformTopLeft: 111.1+0@1 topRight: 146+0.1@1bottomLeft: 1@256 bottomRight: 256@256.
+i displayAt: 0@0.
+p displayAt: 256@0.
+r displayAt: 512@0.
+"
 	| scaled resultHeight resultWidth p v cornersInSource transformation resultCorners interpolator |
 	cornersInSource _ {topLeft. topRight. bottomLeft. bottomRight }.
 	resultWidth _ width.
@@ -2601,11 +2612,11 @@ withImaginary: aFloatImage displayPhaseAt: aPoint
 		(phase / twoPi + 0.5 * 255) rounded ].
 	f displayAt: aPoint! !
 
-!FloatImage methodsFor: 'file operations' stamp: 'jmv 9/21/2012 14:07'!
+!FloatImage methodsFor: 'file operations' stamp: 'jmv 6/17/2015 13:33'!
 writeFileNamed: filename
 
 	| refStream |
-	refStream _ ReferenceStream fileNamed: filename.
+	refStream _ ReferenceStream forceNewFileNamed: filename.
 	[ refStream nextPut: self ] ensure: [
 		refStream close ]! !
 
@@ -2768,13 +2779,13 @@ example4
 	bigger display.
 	original display! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 4/28/2015 11:29'!
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 6/16/2015 10:46'!
 from32BitColorForm: aForm component: aSymbol
 	"aSymbol must be in #(red green blue alpha)"
 
 	| instance |
 	instance _ self width: aForm width height: aForm height.
-	instance fillFrom32BitForm: aForm component: aSymbol.
+	instance fillFrom32BitForm: aForm component: aSymbol offset: 0@0.
 	^instance! !
 
 !FloatImage class methodsFor: 'instance creation' stamp: 'jmv 8/14/2012 11:01'!

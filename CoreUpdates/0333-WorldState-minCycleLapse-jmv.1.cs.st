@@ -1,1 +1,0 @@
-'From Cuis 1.0 of 2 October 2009 [latest update: #316] on 6 November 2009 at 12:38:20 pm'!!WorldState class methodsFor: 'class initialization' stamp: 'jmv 11/6/2009 12:37'!minCycleLapse: anInteger	MinCycleLapse _ anInteger! !

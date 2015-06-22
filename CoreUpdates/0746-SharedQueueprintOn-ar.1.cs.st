@@ -1,1 +1,0 @@
-'From Cuis 2.9 of 5 November 2010 [latest update: #634] on 13 January 2011 at 4:05:27 pm'!!SharedQueue methodsFor: 'private' stamp: 'ar 10/4/2006 12:43'!printOn: aStream	super printOn: aStream.	"Print a guesstimate of the size of the queue without aquiring the lock properly"	aStream nextPut: $(.	aStream print: writePosition - readPosition.	aStream nextPut: $).! !

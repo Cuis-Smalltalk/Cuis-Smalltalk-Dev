@@ -1,1 +1,0 @@
-'From Cuis 1.0 of 28 November 2009 [latest update: #337] on 19 December 2009 at 12:33:40 am'!Metaclass removeSelector: #browserDefinition:!Compiler removeSelector: #format:in:notifying:contentsSymbol:!ClassDescription removeSelector: #browserDefinition:!

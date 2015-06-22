@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2329] on 20 May 2015 at 9:28:26.607632 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 6:04:30.290572 pm'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 14!
-!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!provides: 'Protocols-HTTP' 1 16!
 !requires: 'Network-Kernel' 1 2 nil!
+!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
 !requires: 'Identities-UUID' 1 1 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
@@ -4002,10 +4002,10 @@ stopListener
 	listenerProcess ifNotNil:[listenerProcess terminate].
 	listenerProcess := nil.! !
 
-!HTTPServer methodsFor: 'errors' stamp: 'jmv 5/19/2015 21:57'!
+!HTTPServer methodsFor: 'errors' stamp: 'jmv 6/17/2015 18:00'!
 systemInfoOn: strm
 	"Provides system information for a server error report"
-
+	| info |
 	strm nextPutAll: 'VM: ';
 		nextPutAll:  HTTPUtils platformName;
 		nextPutAll: ' - ';
@@ -4025,10 +4025,9 @@ systemInfoOn: strm
 
 	"Additional info available from the windows VM"
 	HTTPUtils platformName = 'Win32' ifTrue:[
-		10001 to: 10003 do:[:i| | info |
+		10001 to: 10003 do: [ :i |
 			info := (Smalltalk getSystemAttribute: i) ifNil:[''].
-			info isEmpty ifFalse:[strm newLine; nextPutAll: info]]].
-! !
+			info isEmpty ifFalse:[strm newLine; nextPutAll: info]]]! !
 
 !HTTPServer methodsFor: 'accessing' stamp: 'ar 2/20/2010 12:03'!
 vault
@@ -4095,7 +4094,7 @@ browseFile: file request: request
 	resp headerAt: 'Content-Type' put: mimeTypes first.
 	request sendResponse: resp contentStream: file size: fileSize.! !
 
-!HTTPServer class methodsFor: 'examples' stamp: 'ar 8/26/2010 07:49'!
+!HTTPServer class methodsFor: 'examples' stamp: 'jmv 6/17/2015 11:44'!
 browseRequest: request
 	"Handle an HTTP request for browsing some resource"
 
@@ -4103,11 +4102,11 @@ browseRequest: request
 
 	"Extract the file path from the request"
 	path := request url findTokens: '/'.
-	path ifEmpty:[^self browseDir: FileDirectory default request: request.].
+	path ifEmpty: [ ^self browseDir: FileDirectory currentDirectory request: request ].
 
 	"Find the directory entry for the resource"
-	fd := path allButLast inject: FileDirectory default into:[:dir :part| dir directoryNamed: part].
-	entry := fd entryAt: path last ifAbsent:[^request send404Response].
+	fd := path allButLast inject: FileDirectory currentDirectory into: [ :dir :part | dir directoryNamed: part ].
+	entry := fd entryAt: path last ifAbsent: [ ^request send404Response ].
 
 	"Reply with the proper resource"
 	entry isDirectory ifTrue:[
@@ -4122,12 +4121,11 @@ browseRequest: request
 		This makes the code below a bit ugly"
 		[[
 			file := fd readOnlyFileNamed: entry name.
-			[self browseFile: file request: request.] 
-				ensure:[file close] 	"close file even in case of error"
-		] on: Error do:[]				"ignore errors altogether"
-		] fork. 						"fork it"
-	].
-! !
+			[ self browseFile: file request: request ]
+				ensure: [ file close ] 	"close file even in case of error"
+		] on: Error do: []				"ignore errors altogether"
+		] fork. 							"fork it"
+	]! !
 
 !HTTPServer class methodsFor: 'accessing' stamp: 'ar 2/23/2010 09:29'!
 default

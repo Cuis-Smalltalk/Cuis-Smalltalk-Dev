@@ -1,1 +1,0 @@
-'From Cuis 2.3 of 22 March 2010 [latest update: #472] on 7 May 2010 at 2:10:47 pm'!!Morph methodsFor: 'geometry' stamp: 'jmv 4/30/2010 13:50'!externalizePositionToWorld: pointInSelf	"aPoint is in our coordinate system	answer is in World's coordinateSystem"	^self externalizePosition: pointInSelf to: self world! !
