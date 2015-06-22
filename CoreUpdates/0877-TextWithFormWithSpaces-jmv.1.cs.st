@@ -1,1 +1,0 @@
-'From Cuis 3.1 of 4 March 2011 [latest update: #850] on 17 March 2011 at 3:59:13 pm'!!Text class methodsFor: 'instance creation' stamp: 'jmv 3/17/2011 15:41'!withForm: aForm	"	('Hello', (Text withForm: EllipseMorph new imageForm), 'world') edit	"	^' ', (Text string: '*' attribute: (TextAnchor new anchoredFormOrMorph: aForm)), ' '! !

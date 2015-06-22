@@ -1,1 +1,0 @@
-'From Cuis 3.2 of 12 April 2011 [latest update: #914] on 20 May 2011 at 9:59 am'!!Taskbar methodsFor: 'initialization' stamp: 'jmv 5/20/2011 09:58'!initialize	super initialize.	self		color: Theme current menu;		step;		startStepping! !

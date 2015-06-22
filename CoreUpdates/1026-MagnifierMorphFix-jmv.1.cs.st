@@ -1,1 +1,0 @@
-'From Cuis 3.3 of 2 June 2011 [latest update: #1024] on 5 June 2011 at 4:22:30 pm'!!MagnifierMorph methodsFor: 'magnifying' stamp: 'jmv 6/4/2011 10:39'!sourcePoint	"If we are being dragged use our center, otherwise use pointer position"	^ (trackPointer not or: [owner notNil and: [owner is: #HandMorph]])		ifTrue: [ bounds center ]		ifFalse: [ self activeHand position ]! !

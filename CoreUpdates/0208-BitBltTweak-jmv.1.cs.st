@@ -1,1 +1,0 @@
-'From Cuis 1.0 of 21 May 2009 [latest update: #204] on 22 May 2009 at 10:48:38 pm'!BitBlt removeSelector: #colorConvertingMap:from:to:!

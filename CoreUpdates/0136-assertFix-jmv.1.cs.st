@@ -1,1 +1,0 @@
-'From Cuis 1.0 of 6 March 2009 [latest update: #5989] on 24 March 2009 at 9:54:59 am'!!TestCase methodsFor: 'Accessing' stamp: 'jmv 3/24/2009 09:54'!assert: aBoolean	aBoolean value ifFalse: [self signalFailure: 'Assertion failed']			! !

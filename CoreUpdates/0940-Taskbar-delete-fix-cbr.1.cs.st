@@ -1,1 +1,0 @@
-'From Cuis 3.2 of 12 April 2011 [latest update: #914] on 19 April 2011 at 8:32:46 pm'!!Taskbar methodsFor: 'change reporting' stamp: 'cbr 4/19/2011 20:28'!delete	self restoreAll.	super delete.	! !!Taskbar class methodsFor: 'class initialization' stamp: 'cbr 4/19/2011 20:29'!reset	self singleton delete.	SoleInstance _ nil! !

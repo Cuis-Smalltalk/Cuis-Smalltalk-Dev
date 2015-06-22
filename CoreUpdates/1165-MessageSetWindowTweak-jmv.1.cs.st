@@ -1,1 +1,0 @@
-'From Cuis 4.0 of 16 November 2011 [latest update: #1144] on 6 December 2011 at 8:52:51 am'!!MessageSetWindow methodsFor: 'top window' stamp: 'jmv 12/6/2011 08:28'!                         activateAndSendTopToBack: aBoolean	super activateAndSendTopToBack: aBoolean.	self isCollapsed 		ifFalse: [			model messageListIndex = 0				ifTrue: [ model messageListIndex: 1 ]]! !

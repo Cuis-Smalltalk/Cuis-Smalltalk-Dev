@@ -1,1 +1,0 @@
-'From Cuis 2.4 of 17 June 2010 [latest update: #509] on 2 August 2010 at 2:08:44 pm'!!TextMorphForEditView methodsFor: 'event handling' stamp: 'jmv 8/2/2010 14:08'!doubleClick: evt	super doubleClick: evt.	editView scrollSelectionIntoView: evt.! !

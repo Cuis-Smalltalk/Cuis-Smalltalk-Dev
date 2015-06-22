@@ -1,1 +1,0 @@
-'From Cuis 2.0 of 24 February 2010 [latest update: #440] on 11 March 2010 at 12:38:02 pm'!!FilePackage methodsFor: 'change record types' stamp: 'jmv 3/11/2010 12:34'!preamble: chgRec	self doIt: chgRec! !

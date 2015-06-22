@@ -1,1 +1,0 @@
-'From Cuis 3.2 of 12 April 2011 [latest update: #914] on 9 May 2011 at 1:19:07 am'!MenuMorph class removeSelector: #initialize!MenuMorph class removeSelector: #pushPinIcon!!MenuMorph class reorganize!('example' example example2)('instance creation' entitled:)!

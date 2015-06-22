@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2166] on 22 January 2015 at 11:37:03.930444 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 5:35:07.632572 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 5!
+!provides: 'Compression' 1 6!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -292,7 +292,7 @@ Their data comes from external file streams.!
 ZipStringMember instances are used to represent files that are going to be written to a ZipArchive.
 Their data comes from in-image strings, though.!
 
-!GZipSurrogateStream commentStamp: '<historical>' prior: 0!
+!GZipSurrogateStream commentStamp: 'jmv 6/17/2015 11:47' prior: 0!
 A pseudo stream that allows SmartRefStream to write directly to a gzipped file. There are some peculiarities of the project exporting process that require:
 
 1. We ignore #close since the file is closed and may be reopened to continue writing. We implement #reallyClose for when we know that all writing is over.
@@ -303,7 +303,7 @@ A pseudo stream that allows SmartRefStream to write directly to a gzipped file. 
 
 wa _ WordArrayForSegment new: 30000.
 1 to: wa size do: [ :i | wa at: i put: i].
-fileStream _ GZipSurrogateStream newFileNamed: 'xxx3.gz' inDirectory: FileDirectory default.
+fileStream _ GZipSurrogateStream newFileNamed: 'xxx3.gz' inDirectory: FileDirectory smalltalkImageDirectory.
 fileStream nextPutAll: 'this is a test'.
 fileStream nextPutAll: wa.
 fileStream reallyClose.
@@ -601,15 +601,14 @@ viewGZipContents
 		contents: stringContents;
 		openLabel: 'Decompressed contents of: ', self localName! !
 
-!StandardFileStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:38'!
+!StandardFileStream methodsFor: '*Compression' stamp: 'jmv 6/17/2015 10:30'!
 compressFile
 	"Write a new file that has the data in me compressed in GZip format."
 	|  zipped buffer |
 
 	self readOnly; binary.
 	zipped _ self directory newFileNamed: (self name, FileDirectory dot, 'gz').
-	zipped binary; setFileTypeToObject.
-		"Type and Creator not to be text, so can be enclosed in an email"
+	zipped binary.
 	zipped _ GZipWriteStream on: zipped.
 	buffer _ ByteArray new: 50000.
 	'Compressing ', self fullName displayProgressAt: Sensor mousePoint
@@ -860,12 +859,12 @@ contentsOf: aMemberOrName
 	member ifNil: [ ^nil ].
 	^member contents! !
 
-!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 14:48'!
+!Archive methodsFor: 'archive operations' stamp: 'jmv 6/17/2015 11:43'!
 extractMember: aMemberOrName
 	| member |
 	member _ self member: aMemberOrName.
 	member ifNil: [ ^nil ].
-	member extractToFileNamed: member localFileName inDirectory: FileDirectory default.! !
+	member extractToFileNamed: member localFileName inDirectory: FileDirectory currentDirectory! !
 
 !Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
 extractMember: aMemberOrName toFileNamed: aFileName
@@ -874,9 +873,9 @@ extractMember: aMemberOrName toFileNamed: aFileName
 	member ifNil: [ ^nil ].
 	member extractToFileNamed: aFileName! !
 
-!Archive methodsFor: 'archive operations' stamp: 'nk 11/11/2002 14:09'!
+!Archive methodsFor: 'archive operations' stamp: 'jmv 6/17/2015 11:43'!
 extractMemberWithoutPath: aMemberOrName
-	self extractMemberWithoutPath: aMemberOrName inDirectory: FileDirectory default.! !
+	self extractMemberWithoutPath: aMemberOrName inDirectory: FileDirectory currentDirectory! !
 
 !Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 14:48'!
 extractMemberWithoutPath: aMemberOrName inDirectory: dir
@@ -1609,16 +1608,16 @@ extractTo: aStream from: start to: finish
 	self desiredCompressionMethod: oldCompression.
 	self endRead.! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'nk 11/11/2002 14:08'!
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 6/17/2015 11:44'!
 extractToFileNamed: aFileName
-	self extractToFileNamed: aFileName inDirectory: FileDirectory default.! !
+	self extractToFileNamed: aFileName inDirectory: FileDirectory currentDirectory! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'nk 2/26/2003 13:06'!
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 6/17/2015 13:50'!
 extractToFileNamed: aLocalFileName inDirectory: dir
 	| stream fullName fullDir |
 	self isEncrypted ifTrue: [ ^self error: 'encryption unsupported' ].
 	fullName _ dir fullNameFor: aLocalFileName.
-	fullDir _ FileDirectory forFileName: fullName.
+	fullDir _ FileDirectory forFullFileName: fullName.
 	fullDir assureExistence.
 	self isDirectory ifFalse: [
 		stream _ fullDir forceNewFileNamed: (FileDirectory localNameFor: fullName).
@@ -1699,14 +1698,14 @@ lastModTime
 
 	^self dosToSqueakTime: lastModFileDateTime! !
 
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 3/13/2003 09:23'!
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'jmv 6/17/2015 10:50'!
 localFileName
 	"Answer my fileName in terms of the local directory naming convention"
 	| localName |
 	localName _ fileName copyReplaceAll: '/' with: FileDirectory slash.
 	^(fileName first = $/)
-		ifTrue: [ FileDirectory default class makeAbsolute: localName ]
-		ifFalse: [ FileDirectory default class makeRelative: localName ]! !
+		ifTrue: [ FileDirectory activeDirectoryClass makeAbsolute: localName ]
+		ifFalse: [ FileDirectory activeDirectoryClass makeRelative: localName ]! !
 
 !ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/21/2001 20:38'!
 looksLikeDirectory
@@ -2113,10 +2112,10 @@ uncompressDataTo: aStream from: start to: finish
 	].
 ! !
 
-!ZipFileMember methodsFor: 'testing' stamp: 'nk 2/24/2001 14:07'!
+!ZipFileMember methodsFor: 'testing' stamp: 'jmv 6/17/2015 11:44'!
 usesFileNamed: aFileName
 	"Do I require aFileName? That is, do I care if it's clobbered?"
-	^(FileDirectory default fullNameFor: externalFileName) = (FileDirectory default fullNameFor: aFileName)! !
+	^(FileDirectory currentDirectory fullNameFor: externalFileName) = (FileDirectory currentDirectory fullNameFor: aFileName)! !
 
 !ZipFileMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/22/2001 17:31'!
 newFrom: stream named: fileName
@@ -2138,12 +2137,12 @@ initialize
 isDirectory
 	^true! !
 
-!ZipDirectoryMember methodsFor: 'accessing' stamp: 'nk 12/20/2002 14:45'!
+!ZipDirectoryMember methodsFor: 'accessing' stamp: 'jmv 6/17/2015 11:44'!
 localFileName: aString
 	| dir entry parent |
 	super localFileName: aString.
 	fileName last = $/ ifFalse: [ fileName _ fileName, '/' ].
-	parent _ FileDirectory default.
+	parent _ FileDirectory currentDirectory.
 	(parent directoryExists: fileName) ifTrue: [
 		dir _ FileDirectory on: (parent fullNameFor: fileName).
 		entry _ dir directoryEntry.
@@ -2198,10 +2197,10 @@ rewindData
 	readDataRemaining _ stream size.
 	stream position: 0.! !
 
-!ZipNewFileMember methodsFor: 'testing' stamp: 'nk 2/24/2001 15:03'!
+!ZipNewFileMember methodsFor: 'testing' stamp: 'jmv 6/17/2015 11:44'!
 usesFileNamed: aFileName
 	"Do I require aFileName? That is, do I care if it's clobbered?"
-	^(FileDirectory default fullNameFor: externalFileName) = (FileDirectory default fullNameFor: aFileName)! !
+	^(FileDirectory currentDirectory fullNameFor: externalFileName) = (FileDirectory currentDirectory fullNameFor: aFileName)! !
 
 !ZipNewFileMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:27'!
 newNamed: aFileName
@@ -2305,13 +2304,12 @@ flushBuffer
 	bufferStream _ nil.
 ! !
 
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:12'!
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 6/17/2015 10:30'!
 newFileNamed: fName inDirectory: aDirectory
 
 	positionThusFar _ 0.
 	zippedFileStream _ aDirectory newFileNamed: fName.
-	zippedFileStream binary; setFileTypeToObject.
-		"Type and Creator not to be text, so can be enclosed in an email"
+	zippedFileStream binary.
 	gZipStream _ GZipWriteStream on: zippedFileStream.
 ! !
 
@@ -2434,11 +2432,6 @@ reallyClose
 
 !GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:30'!
 reopen
-
-	"ignore"! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/22/2000 18:36'!
-setFileTypeToObject
 
 	"ignore"! !
 
@@ -4123,7 +4116,7 @@ baseDistance
 baseLength
 	^BaseLength! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 3/13/2012 13:00'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 6/17/2015 11:35'!
 compressAndDecompress: aFile using: tempName stats: stats
 	| fileSize tempFile result |
 	aFile
@@ -4141,7 +4134,7 @@ compressAndDecompress: aFile using: tempName stats: stats
 				result _ self regressionDecompress: aFile from: tempFile notifying: bar stats: stats]].
 	aFile close.
 	tempFile close.
-	FileDirectory default deleteFileNamed: tempName ifAbsent: nil.
+	FileDirectory smalltalkImageDirectory deleteFileNamed: tempName ifAbsent: nil.
 	result ~~ false ifTrue:[
 		Transcript show:' ok (', (result * 100 truncateTo: 0.01) printString,')'].
 	^result! !
@@ -4313,13 +4306,16 @@ regressionDecompress: aFile from: tempFile notifying: progressBar stats: stats
 		(stats at: #compressedSize ifAbsent:[0]) + compressedSize.
 	^compressedSize asFloat / rawSize asFloat.! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'ar 12/31/1999 17:48'!
-regressionTest "ZipWriteStream regressionTest"
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 6/17/2015 11:35'!
+regressionTest 
+	"
+	ZipWriteStream regressionTest
+	"
 	"Compress and decompress everything we can 
 	find to validate that compression works as expected."
-	self regressionTestFrom: (FileDirectory default).! !
+	self regressionTestFrom: FileDirectory smalltalkImageDirectory! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'ar 12/29/1999 23:46'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 6/17/2015 11:35'!
 regressionTestFrom: fd
 	"ZipWriteStream regressionTestFrom: FileDirectory default"
 	"ZipWriteStream regressionTestFrom: (FileDirectory on:'')"
@@ -4327,8 +4323,8 @@ regressionTestFrom: fd
 	| tempName stats |
 	Transcript clear.
 	stats _ Dictionary new.
-	tempName _ FileDirectory default fullNameFor: '$$sqcompress$$'.
-	FileDirectory default deleteFileNamed: tempName.
+	tempName _ FileDirectory smalltalkImageDirectory fullNameFor: '$$sqcompress$$'.
+	FileDirectory smalltalkImageDirectory deleteFileNamed: tempName.
 	self regressionTestFrom: fd using: tempName stats: stats.! !
 
 !ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 8/23/2010 09:59'!

@@ -1,1 +1,0 @@
-'From Cuis 3.0 of 31 January 2011 [latest update: #790] on 25 February 2011 at 4:36:45 pm'!!Preferences class methodsFor: 'scrollbar parameters' stamp: 'jmv 2/25/2011 16:35'!scrollbarThickness	"Includes border"	^Preferences standardListFont pointSize + 4! !

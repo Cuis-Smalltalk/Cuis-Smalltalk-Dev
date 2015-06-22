@@ -1,1 +1,0 @@
-'From Cuis 2.6 of 10 August 2010 [latest update: #540] on 29 August 2010 at 9:12:07 am'!!Time class methodsFor: 'clock' stamp: 'dtl 8/14/2010 15:25'!primMicrosecondClock	"Answer the number of microseconds since the microsecond clock	was last reset or rolled over. Answer zero if the primitive fails."	<primitive: 'primitiveMicrosecondClock'>	^ 0! !

@@ -1,1 +1,0 @@
-'From Cuis 3.2 of 12 April 2011 [latest update: #914] on 14 April 2011 at 8:44:53 am'!Morph removeSelector: #highlight!Morph removeSelector: #highlightColor!
