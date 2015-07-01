@@ -17,3 +17,4 @@
 !requires: 'YAXO' 1 0 nil!
 !requires: 'Tests' 1 8 nil!
 !requires: 'Math 3D' 1 0 nil!
+!requires: 'BouncingAtoms' 1 8 nil!

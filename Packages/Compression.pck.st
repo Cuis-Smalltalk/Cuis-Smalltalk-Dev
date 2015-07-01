@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 5:35:07.632572 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2395] on 30 June 2015 at 11:34:06.089079 am'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 6!
+!provides: 'Compression' 1 7!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -4315,9 +4315,9 @@ regressionTest
 	find to validate that compression works as expected."
 	self regressionTestFrom: FileDirectory smalltalkImageDirectory! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 6/17/2015 11:35'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 6/27/2015 09:39'!
 regressionTestFrom: fd
-	"ZipWriteStream regressionTestFrom: FileDirectory default"
+	"ZipWriteStream regressionTestFrom: FileDirectory currentDirectory"
 	"ZipWriteStream regressionTestFrom: (FileDirectory on:'')"
 	"ZipWriteStream regressionTestFrom: (FileDirectory on:'C:')"
 	| tempName stats |
