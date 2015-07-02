@@ -24,50 +24,17 @@ The only way to avoid this is by understanding the complete system, and reengine
 
 This is important. Complexity puts a limit to the level of understanding of the system a person might reach, and therefore limits the things that can be done with it. Dan Ingalls says all this in ["Design Principles Behind Smalltalk"](http://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html). Even if you have already done so, please go and read it again!
 
-Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any bugs fixed. Cuis includes recent enhancements from Squeak, but only those that meet Cuis objectives: stuff whose complexity outweighs its value is not included.
+This presentation by Rich Hickey, ["Simple made Easy"](http://www.infoq.com/presentations/Simple-Made-Easy) is also an excellent reflection on these issues.
 
-If you want to know how Cuis evolved please check the [Release Notes](http://www.cuis-smalltalk.org/CuisReleaseNotes.html).
+Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. Cuis includes recent enhancements from Squeak, but only those that meet Cuis objectives: stuff whose complexity outweighs its value is not included.
+
+If you want to know how Cuis has evolved in the past, check the [Release Notes](http://www.cuis-smalltalk.org/CuisReleaseNotes.html).
 
 ### Getting Started ###
-To get started with Cuis you need to do the following:
-
-1. Download Cuis by downloading and unzipping this repo.
- 
-2. Get a VM for your platform. For Linux, MacOs and Windows, the recommended is the latest Cog VMs from [Eliot Miranda's site](http://www.mirandabanda.org/files/Cog/VM/). (Please use the non-HT variants.) For other platforms, you can use Squeak's official Virtual Machines from http://www.squeakvm.org or build one yourself from sources.
-
-If you are on Linux, you might need to install 32-bit libraries. The following was tested on Debian Jessie, and should work on Ubuntu and other Debian derivatives:
-```
-sudo dpkg --add-architecture i386
-sudo apt-get update
-sudo aptitude install ia32-libs
-```
-
-The simplest is to have the VM in the same directory as the Cuis image. Now you can start Cuis by dragging the Cuis image onto the VM. On Linux you can also do:
-```
-./squeak Cuis4.2-xxxx.image
-```
-
-#### Alternative way to get Cuis and VM (Only for Linux or OS X) ####
-As an alternative you can use the following in a shell if you have Git installed and configured:
-```
-mkdir MyProject
-cd MyProject
-git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
-Cuis-Smalltalk-Dev/bin/newImage.sh MyProject
-```
-The last line creates a new image  named MyProject with a current Cog VM. Start Cuis by dragging MyProject.image onto the Cog VM.
-
-To start the new Cuis image execute the following on OS X:
-```
-Cog.app/Contents/MacOS/Squeak MyProject.image
-```
-or on Linux:
-```
-coglinux/bin/squeak MyProject.image
-```
-This method has the advantage to set you up to easily contribute code back to Cuis packages.
-If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files. Alternatively, get the zip file from github.
-
+If you are on Windows, follow the instructions in (Getting started using GUI)[Documentation/GettingStarted-UsingGUI.md]
+If you are on Linux, follow the instructions in (Getting started using commandline)[Documentation/GettingStarted-UsingCommandline.md]
+If you are on Mac OS X, you might follow any of the above. If you are comfortable with Terminal, (Getting started using commandline)[Documentation/GettingStarted-UsingCommandline.md] is probably best.
+Alternatively, you might also follow (Getting started: Alternative method using Git and commandline)[Documentation/GettingStarted-AlternativeMethodUsingGitAndCommandline.md]
 
 ### Towards Morphic 3
 In Cuis work is on the way to restructure and upgrade the Morphic classes. For more see [Notes on Morphic](Documentation/NotesOnMorphic.md).
