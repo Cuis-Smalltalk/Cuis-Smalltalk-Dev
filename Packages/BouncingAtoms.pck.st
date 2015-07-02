@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2390] on 27 June 2015 at 3:24:53.754316 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2399] on 2 July 2015 at 1:01:55.319885 am'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 8!
+!provides: 'BouncingAtoms' 1 9!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
 	instanceVariableNames: 'velocity'
@@ -304,20 +304,12 @@ drawAsRect
 handlesMouseDown: aMouseButtonEvent
 	^ true! !
 
-!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'dhn 5/27/2015 19:45'!
+!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'pb 7/2/2015 00:53'!
 initialize
 	"initialize the state of the receiver"
-	| win |
 	super initialize.
 	self reset.
-	win _ self embeddedInMorphicWindowLabeled: 'Bouncing Atoms'.
-	win 	setProperty: #minimumExtent toValue: 88@85.
-	self setProperty: #drawAsRect toValue: false.
-	win model: self.
-	win openInWorld.
-	win owner doOneCycleNow.
 	self addAtoms: 30.
-	self when: #morphicStep evaluate: [ :v | self step].
 	self startSteppingStepTime: 20
 
 ! !
@@ -422,8 +414,8 @@ startInfection
 	self startStepping.
 ! !
 
-!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'dhn 6/17/2015 18:08'!
-step
+!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'pb 7/2/2015 00:49'!
+stepAt: millisecondClockValue
 	"Bounce those atoms!!"
 
 	| r bounces |
@@ -485,16 +477,28 @@ updateTemperature: currentTemperature
 velocityChange: atom1 and: atom2
 	! !
 
-!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'dhn 4/18/2015 15:52'!
+!BouncingAtomsMorph methodsFor: 'stepping' stamp: 'pb 7/2/2015 01:00'!
+wantsSteps
+	^ true! !
+
+!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'pb 7/2/2015 00:51'!
 how
 "
-	BouncingAtomsMorph new.
+	Start from World->New Morph... menu or:
+	BouncingAtomsMorph initializedInstance.
 "! !
 
-!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'dhn 6/17/2015 11:25'!
-includeInNewMorphMenu
-	"Not to be instantiated from the menu"
-	^ false! !
+!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'pb 7/2/2015 00:42'!
+initializedInstance
+	| win morph |
+	morph _ self new.
+	win _ morph embeddedInMorphicWindowLabeled: 'Bouncing Atoms'.
+	win setProperty: #minimumExtent toValue: 88@85.
+	morph setProperty: #drawAsRect toValue: false.
+	win model: morph.
+	win openInWorld.
+	win owner doOneCycleNow.
+	^ win! !
 
 !GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 20:12'!
 asNormalizedPoints: aCollection
