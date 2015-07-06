@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2399] on 2 July 2015 at 1:01:55.319885 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2400] on 5 July 2015 at 11:56:58.7033 am'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 9!
+!provides: 'BouncingAtoms' 1 15!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
 	instanceVariableNames: 'velocity'
@@ -56,8 +56,11 @@ to open the gas simulation or:
 
 to open an instance in the current world!
 
-!BouncingAtomsMorph commentStamp: 'dhn 6/3/2015 16:20' prior: 0!
-This morph shows how an ideal gas simulation might work. When it gets step messages, it makes all its atom submorphs move along their velocity vectors, bouncing when they hit a wall. It also exercises the Morphic damage reporting and display architecture. Here are some things to try:
+!HeaterCoolerAtom commentStamp: 'dhn 7/4/2015 13:53' prior: 0!
+A heater atom or a cooler atom, its temperature determined by the sign of its velocityDelta property.!
+
+!BouncingAtomsMorph commentStamp: 'dhn 7/4/2015 17:01' prior: 0!
+This morph shows how simulation of an ideal gas might work. When the morph gets step messages, it makes all its atom submorphs move along their velocity vectors, bouncing when they hit the window sides. It also exercises the Morphic damage reporting and display architecture. Here are some things to try:
 
   1. Resize this morph as the atoms bounce around.
   2. Use the pop-up menu, try the available choices.
@@ -65,10 +68,10 @@ This morph shows how an ideal gas simulation might work. When it gets step messa
   4. Start an infection.
   5. Show infection history.
   6. Start another infection with the history window open.
-  7. Set the atom count morph size for a low density of atoms. Start an infection.
-     Quickly add a Heater/Cooler Atom with a velocity change factor.
-     Note the effect on atoms passing over it.
-!
+  7. Set the atom count, then
+     add a Heater/Cooler Atom(s), then
+     start an infection and note the effect as atoms pass over the Heater/Cooler Atom(s).
+  8. Repeatedly start an infection with the same atoms from step 7.!
 
 !GraphMorph commentStamp: '<historical>' prior: 0!
 Normalize points in a collection, plot them in a graph, with lines drawn between them.!
@@ -156,7 +159,7 @@ randomPositionIn: aRectangle maxVelocity: maxVelocity
 	| origin xtent |
 	origin := aRectangle origin.
 	xtent := (aRectangle extent - self morphExtent) rounded.
-	self morphPosition:		"dhn 4/4/2015"
+	self morphPosition:	
 		(origin x + xtent x atRandom) @
 		(origin y + xtent y atRandom).
 	velocity :=
@@ -197,21 +200,21 @@ bounceIn: aRect
 	^ super bounceIn: aRect
 ! !
 
-!HeaterCoolerAtom methodsFor: 'initialization' stamp: 'dhn 6/3/2015 16:14'!
+!HeaterCoolerAtom methodsFor: 'initialization' stamp: 'dhn 7/5/2015 11:43'!
 defaultColor
 	"Set the color of the receiver based on property #velocityDelta"
 	
 	self valueOfProperty: #velocityDelta ifPresentDo: [:x |
 	x < 0
-		ifTrue: [^ Color lightGray]
-		ifFalse: [^ Color pink]]! !
+		ifTrue: [^ (Color white darkShades: x negated) at: x negated]
+		ifFalse: [^ (Color lightPink darkShades: x) at: x]]! !
 
 !HeaterCoolerAtom methodsFor: 'drawing' stamp: 'dhn 6/17/2015 18:02'!
 drawOn: aCanvas
 
 	super drawOn: aCanvas! !
 
-!HeaterCoolerAtom methodsFor: 'initialization' stamp: 'dhn 6/4/2015 12:21'!
+!HeaterCoolerAtom methodsFor: 'initialization' stamp: 'dhn 7/5/2015 11:39'!
 initialize
 	| f x |
 	f _ FillInTheBlankMorph
@@ -221,6 +224,7 @@ initialize
 	(x > -100 and: x < 100) 
 		ifTrue: [self setProperty: #velocityDelta toValue: x]
 		ifFalse: [self setProperty: #velocityDelta toValue: 0].
+	color _ self defaultColor.
 	super initialize.
 ! !
 
@@ -304,17 +308,14 @@ drawAsRect
 handlesMouseDown: aMouseButtonEvent
 	^ true! !
 
-!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'pb 7/2/2015 00:53'!
+!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'dhn 7/4/2015 16:04'!
 initialize
 	"initialize the state of the receiver"
 	super initialize.
-	self reset.
-	self addAtoms: 30.
-	self startSteppingStepTime: 20
-
+	self reset
 ! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/27/2015 14:50'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 7/4/2015 13:46'!
 installHeaterCooler
 	"Replace an atom with a heater/cooler atom"
 	| a x |
@@ -325,7 +326,6 @@ installHeaterCooler
 
 	a _ HeaterCoolerAtom new.
 	a randomPositionIn: self morphLocalBounds maxVelocity: 10.
-	{(a valueOfProperty: #velocityDelta) < 0} print.
 	self addMorph: a.	"Add an atom"
 ! !
 
@@ -346,9 +346,9 @@ mouseButton2Activity
 	index > 0 ifTrue: [self perform: ((tuples at: index) at: 2)]
 ! !
 
-!BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 6/27/2015 15:10'!
+!BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 7/4/2015 13:50'!
 reportInfection
-
+	"Produce a graph of infection history"
 	| count |
 	self collisionPairs do: [:pair | | infected |
 		infected := false.
@@ -473,10 +473,6 @@ updateTemperature: currentTemperature
 	recentTemperatures addFirst: currentTemperature.
 	temperature := recentTemperatures sum asFloat / recentTemperatures size! !
 
-!BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 6/3/2015 13:25'!
-velocityChange: atom1 and: atom2
-	! !
-
 !BouncingAtomsMorph methodsFor: 'stepping' stamp: 'pb 7/2/2015 01:00'!
 wantsSteps
 	^ true! !
@@ -488,7 +484,7 @@ how
 	BouncingAtomsMorph initializedInstance.
 "! !
 
-!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'pb 7/2/2015 00:42'!
+!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'dhn 7/4/2015 16:00'!
 initializedInstance
 	| win morph |
 	morph _ self new.
@@ -497,7 +493,10 @@ initializedInstance
 	morph setProperty: #drawAsRect toValue: false.
 	win model: morph.
 	win openInWorld.
+	morph morphExtent: win morphExtent.
+	morph addAtoms: 30.
 	win owner doOneCycleNow.
+	morph startSteppingStepTime: 20.
 	^ win! !
 
 !GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 20:12'!
