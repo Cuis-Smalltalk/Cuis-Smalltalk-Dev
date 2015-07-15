@@ -8,7 +8,7 @@ $ mkdir MyProject
 $ cd MyProject
 $ wget https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ wget -O coglinux.tgz www.mirandabanda.org/files/Cog/VM/VM.r3386/coglinux-15.25.3390.tgz
+$ wget -O coglinux.tgz www.mirandabanda.org/files/Cog/VM/VM.r3395/coglinux-15.26.3395.tgz
 $ tar -zxvf coglinux.tgz
 ```
 If this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries:
@@ -18,7 +18,7 @@ sudo apt-get update
 sudo aptitude install ia32-libs
 ```
 ```
-$ coglinux/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2400.image
+$ coglinux/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2404.image
 ```
 
 ### On Mac OS X ###
@@ -27,7 +27,7 @@ $ mkdir MyProject
 $ cd MyProject
 $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ curl -o Cog.app.tgz www.mirandabanda.org/files/Cog/VM/VM.r3386/Cog.app-15.25.3390.tgz
+$ curl -o Cog.app.tgz www.mirandabanda.org/files/Cog/VM/VM.r3395/Cog.app-15.26.3395.tgz
 $ tar -zxvf Cog.app.tgz
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2400.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2404.image
 ```
