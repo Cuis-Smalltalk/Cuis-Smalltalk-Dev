@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2400] on 5 July 2015 at 11:56:58.7033 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2404] on 16 July 2015 at 9:56:37.975581 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 15!
+!provides: 'BouncingAtoms' 1 16!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
 	instanceVariableNames: 'velocity'
@@ -23,7 +23,7 @@ HeaterCoolerAtom class
 
 !classDefinition: #BouncingAtomsMorph category: #BouncingAtoms!
 RectangleLikeMorph subclass: #BouncingAtomsMorph
-	instanceVariableNames: 'infectionHistory transmitInfection recentTemperatures temperature historyWindow nAtoms'
+	instanceVariableNames: 'infectionHistory transmitInfection recentTemperatures temperature historyWindow nAtoms fpsEnabled fps fpsCurrentFrameCount fpsFrameCountSince'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BouncingAtoms'!
@@ -304,16 +304,29 @@ drawAsRect
 		toValue: (self valueOfProperty: #drawAsRect) not
 ! !
 
+!BouncingAtomsMorph methodsFor: 'drawing' stamp: 'pb 7/16/2015 21:09'!
+drawOn: aCanvas
+	super drawOn: aCanvas.
+	fpsEnabled ifTrue: [
+		aCanvas
+			drawString: fps asString
+			at: 10 @ 10
+			font: nil
+			color: Color black ].! !
+
 !BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 4/23/2015 18:05'!
 handlesMouseDown: aMouseButtonEvent
 	^ true! !
 
-!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'dhn 7/4/2015 16:04'!
+!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'pb 7/16/2015 20:27'!
 initialize
 	"initialize the state of the receiver"
 	super initialize.
-	self reset
-! !
+	fpsEnabled _ false.
+	fps _ 0.
+	fpsFrameCountSince _ 0.
+	fpsCurrentFrameCount _ 0.
+	self reset.! !
 
 !BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 7/4/2015 13:46'!
 installHeaterCooler
@@ -329,22 +342,15 @@ installHeaterCooler
 	self addMorph: a.	"Add an atom"
 ! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/2/2015 20:16'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'pb 7/16/2015 19:59'!
 mouseButton2Activity
 	"Show a pop-up menu"
 	| tuples list index |
-	tuples _ #(
-		('Set Atom Count...'				#setAtomCount)
-		('Start Infection'				#startInfection)
-		('Show Infection History'		#showInfectionHistory)
-		('Toggle Atom as Rectangle'	#drawAsRect)
-		('Heater/Cooler Atom'			#installHeaterCooler)
-	).
-	list _ tuples collect: [:ea | ea first].
-	index _ (PopUpMenu labelArray: list) 
-		startUpWithCaption: 'Bouncing Atoms'.
-	index > 0 ifTrue: [self perform: ((tuples at: index) at: 2)]
-! !
+	tuples _ #(#('Set Atom Count...' #setAtomCount) #('Start Infection' #startInfection) #('Show Infection History' #showInfectionHistory) #('Toggle Atom as Rectangle' #drawAsRect) #('Heater/Cooler Atom' #installHeaterCooler) #('Toggle FPS' #toggleFPS) ).
+	list _ tuples collect: [ :ea |
+		ea first ].
+	index _ (PopUpMenu labelArray: list) startUpWithCaption: 'Bouncing Atoms'.
+	index > 0 ifTrue: [ self perform: ((tuples at: index) at: 2) ].! !
 
 !BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 7/4/2015 13:50'!
 reportInfection
@@ -414,28 +420,38 @@ startInfection
 	self startStepping.
 ! !
 
-!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'pb 7/2/2015 00:49'!
+!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'pb 7/16/2015 20:29'!
 stepAt: millisecondClockValue
 	"Bounce those atoms!!"
-
 	| r bounces |
 	bounces := 0.
-	r := 0@0 corner: (self morphExtent - (8@8)).
+	r := 0 @ 0 corner: self morphExtent - (8 @ 8).
 	self submorphsDo: [ :m |
 		(m isKindOf: AtomMorph) ifTrue: [
-			(m bounceIn: r) ifTrue: [bounces := bounces + 1]]].
+			(m bounceIn: r) ifTrue: [ bounces := bounces + 1 ]]].
 	"compute a 'temperature' that is proportional to the number of bounces
 	 divided by the circumference of the enclosing rectangle"
-	self updateTemperature: (10000.0 * bounces) / (r width + r height).
-	transmitInfection ifTrue: [self reportInfection].
-! !
+	self updateTemperature: 10000.0 * bounces / (r width + r height).
+	transmitInfection ifTrue: [ self reportInfection ].
+	fpsEnabled ifTrue: [ | tmpCum delta |
+		delta := millisecondClockValue- fpsFrameCountSince.
+		delta < 1000
+			ifTrue: [
+				fpsCurrentFrameCount := fpsCurrentFrameCount + 1.
+				]
+			ifFalse: [
+				fps := fpsCurrentFrameCount.
+				fpsCurrentFrameCount := 1.
+				fpsFrameCountSince := millisecondClockValue ]].! !
 
-!BouncingAtomsMorph methodsFor: 'testing' stamp: 'dhn 4/16/2015 13:03'!
+!BouncingAtomsMorph methodsFor: 'testing' stamp: 'pb 7/16/2015 21:07'!
 stepTime
-	"As fast as possible."
-	"^ 0  entirely too fast"
-	^ 20.	"let's try this"
-! !
+	"desired step time in milliseconds: 0 to update as often as possible, 17 for ~60fps, 33 for ~30fps.  Note: at 30fps and above, Morphic will not reliably match the requested framerate"
+	^ 33.! !
+
+!BouncingAtomsMorph methodsFor: 'as yet unclassified' stamp: 'pb 7/16/2015 19:59'!
+toggleFPS
+	fpsEnabled _ fpsEnabled not! !
 
 !BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 5/26/2015 19:40'!
 transmitInfection
