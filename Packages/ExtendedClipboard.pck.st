@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1880] on 21 December 2013 at 9:47:48.452067 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2424] on 18 July 2015 at 7:09:19.964834 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'ExtendedClipboard' 1 6!
+!provides: 'ExtendedClipboard' 1 7!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #ExtendedClipboardInterface category: #ExtendedClipboard!
@@ -888,15 +888,13 @@ fields
 } BITMAP"
 ! !
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 12/7/2012 22:27'!
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
 testStar16BitToAndFromImageClipboard
 	"
 	ExtendedClipboardTest new testStar16BitToAndFromImageClipboard
 	"
 	| form form1 form2 |
-		form _ EllipseMorph new
-		morphExtent: 100@100;
-		imageForm: 16.
+	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 16.
 
 	"This will use a refStreamed object"
 	Clipboard default storeObject: form.
@@ -914,15 +912,13 @@ testStar16BitToAndFromImageClipboard
 	form1 addDeltasFrom: form2.
 	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 12/7/2012 22:27'!
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
 testStar8BitToAndFromImageClipboard
 	"
 	ExtendedClipboardTest new testStar8BitToAndFromImageClipboard
 	"
 	| form form1 form2 |
-	form _ EllipseMorph new
-		morphExtent: 100@100;
-		imageForm: 8.
+	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 8.
 
 	"This will use a refStreamed object"
 	Clipboard default storeObject: form.
@@ -940,15 +936,13 @@ testStar8BitToAndFromImageClipboard
 	form1 addDeltasFrom: form2.
 	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 12/7/2012 22:28'!
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
 testStarToAndFromImageClipboard
 	"
 	ExtendedClipboardTest new testStarToAndFromImageClipboard
 	"
 	| form form1 form2 |
-	form _ EllipseMorph new
-		morphExtent: 100@100;
-		imageForm: 32.
+	form _ Display copy: (10@10 extent: 60@40).
 
 	"This will use a refStreamed object"
 	Clipboard default storeObject: form.
