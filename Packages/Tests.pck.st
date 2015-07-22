@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 6:04:58.099572 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2424] on 18 July 2015 at 7:09:24.325834 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 27!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 28!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -101,16 +101,6 @@ TestCase subclass: #ClosureCompilerTest
 	category: 'Tests-Compiler'!
 !classDefinition: 'ClosureCompilerTest class' category: #'Tests-Compiler'!
 ClosureCompilerTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #MethodHighlightingTests category: #'Tests-Compiler'!
-ClosureCompilerTest subclass: #MethodHighlightingTests
-	instanceVariableNames: 'creator timeStamp duration tracks'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Compiler'!
-!classDefinition: 'MethodHighlightingTests class' category: #'Tests-Compiler'!
-MethodHighlightingTests class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClosureTests category: #'Tests-Compiler'!
@@ -1970,17 +1960,19 @@ testAllAlphasRgbSub
       ]].
      self assert: correctAlphas = 65536 description: 'Some incorrect alpha values computed for BitBlt rule rgbSub'! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'sd 6/5/2005 10:12'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 7/12/2015 22:27'!
 testAlphaCompositing
-	"self run: #testAlphaCompositing"
+	"
+	BitBltTest new testAlphaCompositing
+	"
 
 	| bb f1 f2 mixColor result eps |
 	f1 := Form extent: 1@1 depth: 32.
 	f2 := Form extent: 1@1 depth: 32.
 	eps := 0.5 / 255.
 	0 to: 255 do:[:i|
-		f1 colorAt: 0@0 put: Color blue.
-		mixColor := Color red alpha: i / 255.0.
+		f1 colorAt: 0@0 put: (Color r: 0 g: 0 b: 1).
+		mixColor := Color r: 1 g: 0 b: 0 alpha: i / 255.0.
 		f2 colorAt: 0@0 put: mixColor.
 		mixColor := f2 colorAt: 0@0.
 		bb := BitBlt toForm: f1.
@@ -1993,9 +1985,11 @@ testAlphaCompositing
 		self assert: result alpha = 1.0.
 	].! !
 
-!BitBltTest methodsFor: 'bugs' stamp: 'sd 6/5/2005 10:12'!
+!BitBltTest methodsFor: 'bugs' stamp: 'jmv 7/12/2015 22:27'!
 testAlphaCompositing2
-	"self run: #testAlphaCompositing2"
+	"
+	BitBltTest new testAlphaCompositing2
+	"
 
 	| bb f1 f2 mixColor result eps |
 	f1 := Form extent: 1@1 depth: 32.
@@ -2003,7 +1997,7 @@ testAlphaCompositing2
 	eps := 0.5 / 255.
 	0 to: 255 do:[:i|
 		f1 colorAt: 0@0 put: Color transparent.
-		mixColor := Color red alpha: i / 255.0.
+		mixColor := Color r: 1 g: 0 b: 0 alpha: i / 255.0.
 		f2 colorAt: 0@0 put: mixColor.
 		mixColor := f2 colorAt: 0@0.
 		bb := BitBlt toForm: f1.
