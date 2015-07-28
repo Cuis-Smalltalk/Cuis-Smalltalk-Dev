@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2424] on 18 July 2015 at 7:09:19.964834 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2435] on 27 July 2015 at 3:58:22.588097 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'ExtendedClipboard' 1 7!
+!provides: 'ExtendedClipboard' 1 8!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #ExtendedClipboardInterface category: #ExtendedClipboard!
@@ -427,6 +427,11 @@ storeText: aText id: otherString
 	whether it is present in memory (because we stored it in the clipboard) or not (because some other Cuis image did it)"
 	self addClipboardData: otherString dataFormat: 'cuis-id'! !
 
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 7/27/2015 15:44'!
+addClipboardData: data dataFormat: aFormat
+	self canStore ifFalse: [
+		self error: 'Writing to Extended Clipboard not implemented in Windows' ]! !
+
 !ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'jmv 11/10/2013 09:55'!
 attemptCloseClipboard
 	"ExtendedClipboardWinInterface new closeClipboard"
@@ -442,6 +447,11 @@ BOOL CloseClipboard(
 canStore
 	"Store into clipboard not yet implemented on Windows"
 	^false! !
+
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 7/27/2015 15:45'!
+clearClipboard
+	self canStore ifFalse: [
+		self error: 'Writing to Extended Clipboard not implemented in Windows' ]! !
 
 !ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'mir 2/14/2008 23:56'!
 clipboardAvailable: format
@@ -466,6 +476,11 @@ BOOL CloseClipboard(
 );"
 	<apicall: long 'CloseClipboard' () module: 'user32.dll'>
 	^self externalCallFailed! !
+
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 7/27/2015 15:46'!
+createClipboard
+	"Not on Windows"
+	clipboard := 0! !
 
 !ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'mir 5/10/2006 16:09'!
 format: format
