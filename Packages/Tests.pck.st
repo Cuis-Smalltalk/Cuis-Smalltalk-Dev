@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2424] on 18 July 2015 at 7:09:24.325834 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2459] on 15 August 2015 at 6:57:59.704015 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 28!
+!provides: 'Tests' 1 29!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -4848,7 +4848,7 @@ testConcatenation
 	self shouldnt: [dir exists].
 	self shouldnt: ['./subDir' asDirectoryEntry exists].! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 23:17'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 7/27/2015 11:30'!
 testCopy
 	"FmFileManTest debug: #testCopy" 
 	| file1 file2 |
@@ -4857,7 +4857,8 @@ testCopy
 
 	file1 fileContents: 'This is a test'.
 
-	self should: [file2 fileContents isEmpty].
+"	self should: [file2 fileContents isEmpty]."
+	self should: [file2 exists not].
 
 	file1 copyTo: file2.
 
@@ -4950,7 +4951,7 @@ testPathComponents
 	pathComponents _ pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd')! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 23:27'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 7/27/2015 11:32'!
 testPipe
 	"FmFileManTest debug: #testPipe" 
 	| reverseFilter file1 file2 file3 |
@@ -4967,7 +4968,8 @@ testPipe
 
 	self should: [('.' asDirectoryEntry at: file1 name) = 'This is a pipe test'].	
 	self should: [(file2 fileContents) = 'tset epip a si sihT'].	
-	self should: [(file3 fileContents) isEmpty].	
+"	self should: [(file3 fileContents) isEmpty]."
+	self should: [file3 exists not].
 
 	file2 pipe: reverseFilter to: file3.
 	self should: [(file3 fileContents) = 'This is a pipe test'].	
