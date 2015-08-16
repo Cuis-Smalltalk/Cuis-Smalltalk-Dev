@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2404] on 16 July 2015 at 9:56:37.975581 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2459] on 16 August 2015 at 11:45:53.024733 am'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 16!
+!provides: 'BouncingAtoms' 1 17!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
 	instanceVariableNames: 'velocity'
@@ -48,7 +48,7 @@ an ideal gas. It's container is typically a BouncingAtomsMorph.
 
 Try:
 
-	BouncingAtomsMorph  new
+	BouncingAtomsMorph  initializedInstance openInWorld
 
 to open the gas simulation or:
 
@@ -152,6 +152,10 @@ initialize
 		randomPositionIn: (0 @ 0 corner: 300 @ 300)
 		maxVelocity: 10! !
 
+!AtomMorph methodsFor: 'testing' stamp: 'jmv 8/16/2015 11:40'!
+is: aSymbol
+	^aSymbol == #AtomMorph or: [ super is: aSymbol ]! !
+
 !AtomMorph methodsFor: 'initialization' stamp: 'jmv 6/16/2015 09:57'!
 randomPositionIn: aRectangle maxVelocity: maxVelocity
 	"Give this atom a random position and velocity."
@@ -166,6 +170,12 @@ randomPositionIn: aRectangle maxVelocity: maxVelocity
 		(maxVelocity - (2 * maxVelocity) atRandom) @
 		(maxVelocity - (2 * maxVelocity) atRandom).
 ! !
+
+!AtomMorph methodsFor: 'updating' stamp: 'jmv 8/16/2015 11:41'!
+redrawNeeded
+
+	(owner is: #BouncingAtomsMorph) ifFalse: [
+		super redrawNeeded ]! !
 
 !AtomMorph methodsFor: 'accessing'!
 velocity
@@ -304,10 +314,11 @@ drawAsRect
 		toValue: (self valueOfProperty: #drawAsRect) not
 ! !
 
-!BouncingAtomsMorph methodsFor: 'drawing' stamp: 'pb 7/16/2015 21:09'!
+!BouncingAtomsMorph methodsFor: 'drawing' stamp: 'jmv 8/15/2015 19:50'!
 drawOn: aCanvas
 	super drawOn: aCanvas.
 	fpsEnabled ifTrue: [
+		aCanvas fillRectangle: (10@10 extent: 20@15) color: Color lightGray.
 		aCanvas
 			drawString: fps asString
 			at: 10 @ 10
@@ -341,6 +352,10 @@ installHeaterCooler
 	a randomPositionIn: self morphLocalBounds maxVelocity: 10.
 	self addMorph: a.	"Add an atom"
 ! !
+
+!BouncingAtomsMorph methodsFor: 'testing' stamp: 'jmv 8/16/2015 11:41'!
+is: aSymbol
+	^aSymbol == #BouncingAtomsMorph or: [ super is: aSymbol ]! !
 
 !BouncingAtomsMorph methodsFor: 'menu' stamp: 'pb 7/16/2015 19:59'!
 mouseButton2Activity
@@ -420,20 +435,20 @@ startInfection
 	self startStepping.
 ! !
 
-!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'pb 7/16/2015 20:29'!
+!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'jmv 8/16/2015 11:41'!
 stepAt: millisecondClockValue
 	"Bounce those atoms!!"
 	| r bounces |
 	bounces := 0.
 	r := 0 @ 0 corner: self morphExtent - (8 @ 8).
 	self submorphsDo: [ :m |
-		(m isKindOf: AtomMorph) ifTrue: [
+		(m is: #AtomMorph) ifTrue: [
 			(m bounceIn: r) ifTrue: [ bounces := bounces + 1 ]]].
 	"compute a 'temperature' that is proportional to the number of bounces
 	 divided by the circumference of the enclosing rectangle"
 	self updateTemperature: 10000.0 * bounces / (r width + r height).
 	transmitInfection ifTrue: [ self reportInfection ].
-	fpsEnabled ifTrue: [ | tmpCum delta |
+	fpsEnabled ifTrue: [ | delta |
 		delta := millisecondClockValue- fpsFrameCountSince.
 		delta < 1000
 			ifTrue: [
@@ -442,12 +457,17 @@ stepAt: millisecondClockValue
 			ifFalse: [
 				fps := fpsCurrentFrameCount.
 				fpsCurrentFrameCount := 1.
-				fpsFrameCountSince := millisecondClockValue ]].! !
+				fpsFrameCountSince := millisecondClockValue ]].
+	self redrawNeeded! !
 
 !BouncingAtomsMorph methodsFor: 'testing' stamp: 'pb 7/16/2015 21:07'!
 stepTime
 	"desired step time in milliseconds: 0 to update as often as possible, 17 for ~60fps, 33 for ~30fps.  Note: at 30fps and above, Morphic will not reliably match the requested framerate"
 	^ 33.! !
+
+!BouncingAtomsMorph methodsFor: 'submorphs-accessing' stamp: 'jmv 8/15/2015 21:15'!
+submorphsDrawingOutsideReverseDo: aBlock
+	"All our submorphs are inside us"! !
 
 !BouncingAtomsMorph methodsFor: 'as yet unclassified' stamp: 'pb 7/16/2015 19:59'!
 toggleFPS
