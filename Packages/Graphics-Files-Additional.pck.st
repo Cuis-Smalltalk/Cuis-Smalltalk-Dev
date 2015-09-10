@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2342] on 27 May 2015 at 3:35:39.35174 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2475] on 8 September 2015 at 5:17:18.780487 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 6!
+!provides: 'Graphics-Files-Additional' 1 7!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1061,14 +1061,20 @@ processInterlaced
 	].
 	z atEnd ifFalse:[self error:'Unexpected data'].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'ar 2/11/2004 12:14'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 9/7/2015 12:52'!
 processNextChunk
 
 	| length chunkType crc chunkCrc |
 
 	length _ self nextLong.
-
 	chunkType _ (self next: 4) asString.
+
+	"If someone appended garbage at the end of the file, don't let that bite us."
+	fileSize - self position < length ifTrue: [
+		unknownChunks add: chunkType.
+		stream setToEnd.
+		^self ].
+
 	chunk _ self next: length.
 	chunkCrc := self nextLong bitXor: 16rFFFFFFFF.
 	crc := self updateCrc: 16rFFFFFFFF from: 1 to: 4 in: chunkType.

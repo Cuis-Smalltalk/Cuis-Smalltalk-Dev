@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2336] on 26 May 2015 at 10:06:09.702901 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2475] on 8 September 2015 at 5:23:12.756487 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 16!
+!provides: 'LinearAlgebra' 1 18!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -42,17 +42,61 @@ FloatMatrix subclass: #FloatBandMatrix
 FloatBandMatrix class
 	instanceVariableNames: ''!
 
+!classDefinition: #IntegerMatrix category: #LinearAlgebra!
+Matrix subclass: #IntegerMatrix
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'LinearAlgebra'!
+!classDefinition: 'IntegerMatrix class' category: #LinearAlgebra!
+IntegerMatrix class
+	instanceVariableNames: ''!
+
+!classDefinition: #ShortIntegerMatrix category: #LinearAlgebra!
+Matrix subclass: #ShortIntegerMatrix
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'LinearAlgebra'!
+!classDefinition: 'ShortIntegerMatrix class' category: #LinearAlgebra!
+ShortIntegerMatrix class
+	instanceVariableNames: ''!
+
 
 !Matrix commentStamp: 'jmv 7/19/2012 11:52' prior: 0!
 My instances are m x n matrices, where m is the height and n the width. A matrix is a kind of 2-d array. A Matrix whose width is 1 is called a "Column Vector". A Matrix whose height is 1 is called a "Row Vector".
 
 My instances can hold elements of any kind, but include some methods that assume that the elements understand arithmetic operations. These are useful for Matrices whose elements are Fractions, LargeIntegers, Matrices and Vectors (column or row Matrices). They are also suitable for Complex numbers, but in such cases, an alternative is to use different FloatMatrices for Real and Imaginary parts.!
 
+!ByteMatrix commentStamp: 'jmv 9/4/2015 10:44' prior: 0!
+Elements are integers between 0 and 255, i.e. bytes.
+
+ByteMatrix fromArrayOfArrays: #(
+	#[ 0 		255 	94  ]
+	#[4 		127 	128]
+	#[ 1 		254	3 ])!
+
 !FloatMatrix commentStamp: '<historical>' prior: 0!
 My instances are m x n matrices of Float values, where m is the height and n the width. Suitable for LinearAlgebra and SignalProcessing suff, among many other possible applications. It is possible to build VM plugins for fast processing.!
 
 !FloatBandMatrix commentStamp: '<historical>' prior: 0!
 My instances can have non-zero values only in the diagonal, and a band of certain width around it. Save space.!
+
+!IntegerMatrix commentStamp: '<historical>' prior: 0!
+Elements are integers between -16r80000000 and 16r7FFFFFFF, i.e. signed 16-bit words.
+
+IntegerMatrix fromArrayOfArrays: {
+	{ 0. 									1. 						-1 }.
+	{ (2 raisedTo: 31) negated.	-10000.   				-16r80000000}.
+	{ (2 raisedTo: 31) -1. 			12 factorial.			16r7FFFFFFF }}!
+
+!ShortIntegerMatrix commentStamp: 'jmv 9/4/2015 12:58' prior: 0!
+Elements are integers between -32768 and 32767, i.e. signed 16-bit words.
+
+ShortIntegerMatrix fromArrayOfArrays: #(
+	#( 0 			255 	94)
+	#(-4 			127 	128)
+	#( -32768 	254	32767 ))!
 
 !Form methodsFor: '*LinearAlgebra' stamp: 'jmv 5/21/2015 11:34'!
 hackBitsForFloatMatrix: aFloatMatrix
@@ -986,6 +1030,60 @@ expandTo: newExtent
 	self copyToTile: answer position: 1@1.
 	^answer! !
 
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 8/28/2015 11:29'!
+fillLowFFTFrequenciesWith: aFloatMatrix
+	"
+	Assume self extent > argument extent.
+	Assume frequency zero is at i=1;j=1 (topLeft) as #fftImaginary:forward: leaves them
+	fill low frequencies (i.e. areas closer to the 4 corners) with argument.
+	The effect is to zero-pad higher frequecies.
+
+	| i1 i2 |
+	i1 := FloatImage lena.
+	i2 := FloatImage extent: i1 extent * 2.
+	i2 += 0.5.
+	i1 displayAt: 0@0.
+	i2 fillLowFFTFrequenciesWith: i1.
+	i2 displayAt: 256@0.
+
+	| i1 i2 |
+	i1 := FloatImage lena.
+	i2 := FloatImage extent: i1 extent * 3//4.
+	i2 += 0.5.
+	i1 displayAt: 0@0.
+	i2 fillLowFFTFrequenciesWith: i1.
+	i2 displayAt: 256@0.
+	"
+	
+	| blitter formArgument formSelf deltaI deltaJ quarterExtent |
+	deltaI _ height // 2.
+	deltaJ _ width // 2.
+	quarterExtent _ aFloatMatrix extent // 2 min: deltaJ@deltaI.
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: 0@0 sourceOrigin: 0@0
+		extent: quarterExtent.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: width-quarterExtent x@0 sourceOrigin: aFloatMatrix width - quarterExtent x@0
+		extent: quarterExtent.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: 0@(height-quarterExtent) y sourceOrigin: 0@(aFloatMatrix height - quarterExtent y)
+		extent: quarterExtent.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: width@height-quarterExtent sourceOrigin: aFloatMatrix extent -quarterExtent
+		extent: quarterExtent.
+	blitter copyBits.! !
+
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:17'!
 fillWith: aFloatMatrix
 	| blitter formArgument formSelf |
@@ -1582,3 +1680,25 @@ newWithDiagonalValues: aVectorOrArray
 width: w height: h
 
 	^self error: 'Please call #heightAndWidth:bandWidth: for Band Matrices'! !
+
+!IntegerMatrix methodsFor: 'accessing' stamp: 'jmv 9/4/2015 10:59'!
+at: aPointOrIndex put: aNumber
+	
+	(aNumber between: -16r80000000 and: 16r7FFFFFFF)
+		ifTrue: [ self errorImproperStore ].
+
+	^super at: aPointOrIndex put: aNumber! !
+
+!IntegerMatrix methodsFor: 'initialization' stamp: 'jmv 9/4/2015 10:36'!
+initializeElements
+
+	elements _ IntegerArray new: height * width! !
+
+!ShortIntegerMatrix methodsFor: 'initialization' stamp: 'jmv 9/4/2015 13:12'!
+initializeElements
+
+	| n |
+	n _ height * width.
+	n even ifFalse: [
+		n _ n + 1 ].
+	elements _ ShortIntegerArray new: n! !

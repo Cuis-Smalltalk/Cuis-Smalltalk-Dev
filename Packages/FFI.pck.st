@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:28:55.4964 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2475] on 8 September 2015 at 5:12:48.309487 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 9!
+!provides: 'FFI' 1 10!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -190,7 +190,7 @@ Note that all combinations of the flags FFIFlagPointer, FFIFlagAtomic, and FFIFl
 [Note: Other combinations may be allowed in the future]
 !
 
-!ExternalForm commentStamp: 'jcg 1/29/2010 01:00' prior: 0!
+!ExternalForm commentStamp: '<historical>' prior: 0!
 An ExternalForm is a specialized Form whose pixel-data is stored in memory that the user provides a pointer to.  This can simply be memory on the C heap, or (the motivating use-case...) it can be a pointer that is temporarily "mapped" from GPU memory by an API such as OpenCL.
 
 The user is responsible for both releasing the image-memory, as well as destroying the surface handle (perhaps the latter should be handled by automatic finalization).
@@ -202,8 +202,8 @@ extent := 400@300.
 form := ExternalForm extent: extent depth: 32.
 ptr := ExternalAddress gcallocate: (extent x * extent y * 4).
 form setManualSurfacePointer: ptr.
-Display displayScaledOn: form.
-form displayAt: 0@0.
+Display displayOn: form.
+form displayAt: 100@500.
 form destroySurface.
 !
 

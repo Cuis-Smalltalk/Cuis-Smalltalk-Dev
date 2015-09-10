@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2459] on 15 August 2015 at 6:57:59.704015 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2477] on 9 September 2015 at 10:39:03.532339 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 29!
+!provides: 'Tests' 1 30!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -4833,7 +4833,7 @@ testConcatenation
 	FmFileManTest debug: #testConcatenation
 	"
 	| dir |
-	dir _ ('./subDir' asDirectoryEntry / 'aaa/bbb' / 'ccc' / 'ddd\eee' / 'fff:ggg').
+	dir := ('./subDir' asDirectoryEntry / 'aaa/bbb' / 'ccc' / 'ddd\eee' / 'fff:ggg').
 	dir at: 'test1' put: 'RecursiveDeleted!!'.
 
 	self assert: dir name = 'ggg'.
@@ -4848,7 +4848,7 @@ testConcatenation
 	self shouldnt: [dir exists].
 	self shouldnt: ['./subDir' asDirectoryEntry exists].! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 7/27/2015 11:30'!
+!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 23:17'!
 testCopy
 	"FmFileManTest debug: #testCopy" 
 	| file1 file2 |
@@ -4857,8 +4857,7 @@ testCopy
 
 	file1 fileContents: 'This is a test'.
 
-"	self should: [file2 fileContents isEmpty]."
-	self should: [file2 exists not].
+	self should: [file2 fileContents isEmpty].
 
 	file1 copyTo: file2.
 
@@ -4882,7 +4881,7 @@ testDefaultDirectory
 
 	self assert: '' asDirectoryEntry =  FmDirectoryEntry default.
 
-	pathComponents _ '' asDirectoryEntry pathComponents.
+	pathComponents := '' asDirectoryEntry pathComponents.
 	self assert: pathComponents = FmDirectoryEntry default pathComponents! !
 
 !FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 20:33'!
@@ -4939,19 +4938,19 @@ testPathComponents
 	"
 	| pathComponents |
 
-	pathComponents _ './aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
-	pathComponents _ pathComponents last: 4.
+	pathComponents := './aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd').
 
-	pathComponents _ '/aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
-	pathComponents _ pathComponents last: 4.
+	pathComponents := '/aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd').
 
-	pathComponents _ 'aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
-	pathComponents _ pathComponents last: 4.
+	pathComponents := 'aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd')! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 7/27/2015 11:32'!
+!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 23:27'!
 testPipe
 	"FmFileManTest debug: #testPipe" 
 	| reverseFilter file1 file2 file3 |
@@ -4968,8 +4967,7 @@ testPipe
 
 	self should: [('.' asDirectoryEntry at: file1 name) = 'This is a pipe test'].	
 	self should: [(file2 fileContents) = 'tset epip a si sihT'].	
-"	self should: [(file3 fileContents) isEmpty]."
-	self should: [file3 exists not].
+	self should: [(file3 fileContents) isEmpty].	
 
 	file2 pipe: reverseFilter to: file3.
 	self should: [(file3 fileContents) = 'This is a pipe test'].	
@@ -5070,6 +5068,68 @@ testStream
 
 	file1 delete.
 	self should: [file1 exists not].
+	! !
+
+!FmFileManTest methodsFor: 'testing' stamp: 'mu 9/4/2015 00:46'!
+testTryReadStream
+	"FmFileManTest debug: #testTryReadStream" 
+	| file1 readStream |
+	file1 := self randomFileName asFileEntry.
+	self deny: (file1 exists).
+
+	self should: [readStream := file1 tryReadStream] raise: FmFileIOAccessor fileDoesNotExistException.
+	self deny: (file1 exists).
+	self assert: (readStream isNil).
+	
+	readStream := file1 readStreamIfError: [:ex | 'NotExist'].
+	
+	self assert: (readStream = 'NotExist').
+	self deny: (file1 exists).
+
+	file1 assureExistence.
+	self assert: (file1 exists).
+	
+	readStream := file1 readStreamIfError: [:ex | 'NotExist'].
+	self deny: (readStream = 'NotExist').
+	
+	self assert: (readStream contents isEmpty).
+	readStream close.
+	
+	file1 delete.
+	self deny: (file1 exists).
+	
+	
+	! !
+
+!FmFileManTest methodsFor: 'testing' stamp: 'mu 9/4/2015 00:44'!
+testTryWriteStream
+	"FmFileManTest debug: #testTryWriteStream" 
+	| file1 writeStream |
+	file1 := self randomFileName asFileEntry assureExistence.
+	self assert: (file1 exists).
+
+	self should: [writeStream := file1 tryWriteStream] raise: FmFileIOAccessor fileExistsException.
+	self assert: (file1 exists).
+	self assert: (writeStream isNil).
+	
+	writeStream := file1 writeStreamIfError: [:ex | 'Exists'].
+	
+	self assert: (writeStream = 'Exists').
+	self assert: (file1 exists).
+	
+	file1 delete.
+	self deny: (file1 exists).
+	
+	writeStream := file1 writeStreamIfError: [:ex | 'Exists'].
+	self deny: (writeStream = 'Exists').
+	writeStream nextPutAll: 'Test'; close.
+	
+	self assert: (file1 textContents = 'Test').
+	
+	file1 delete.
+	self deny: (file1 exists).
+	
+	
 	! !
 
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!

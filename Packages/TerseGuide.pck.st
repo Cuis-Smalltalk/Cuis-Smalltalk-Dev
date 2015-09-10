@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2346] on 9 June 2015 at 12:12:10.876539 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 5 September 2015 at 9:17:55.2968 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 48!
+!provides: 'TerseGuide' 1 58!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -70,7 +70,7 @@ selectedTopic: aTopic
 	textPane model actualContents: self updateTopicText.
 	self changed: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 5/9/2015 19:24'!
+!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 9/1/2015 15:18'!
 terseTopics
 	"Translate a list item to a class method selector"
 	^ Dictionary new
@@ -90,6 +90,7 @@ terseTopics
 	at: 'Character' put: #character;
 	at: 'Symbols' put: #symbol;
 	at: 'Strings' put: #string;
+	at: 'Fonts' put: #font;
 	at: 'Arrays' put: #array;
 	at: 'Ordered Collections' put: #orderedCollection;
 	at: 'Sorted Collections' put: #sortedCollection;
@@ -319,67 +320,67 @@ y ~~ #foo.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 11:57'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:33'!
 arithmetic
 	"Arithmetic Expressions"
 	^
 '| x |
-x _ 6 + 3.								"addition"
+x _ 6 + 3.							"addition"
 x _ 6 - 3.								"subtraction"
 x _ 6 * 3.								"multiplication"
-x _ 1 + 2 * 3.							"evaluation always left to right (1 + 2) * 3"
+x _ 1 + 2 * 3.						"evaluation always left to right (1 + 2) * 3"
 x _ 5 / 3.								"division with fractional result"
-x _ 5 / 3.0.								"division with float result"
-x _ 5.0 // 3.0.							"integer divide"
-x _ 5.0 \\ 3.0.							"integer remainder"
-x _ -5.									"unary minus"
-x _ 5 sign.								"numeric sign (1, -1 or 0)"
-x _ 5 negated.							"negate receiver"
+x _ 5 / 3.0.							"division with float result"
+x _ 5.0 // 3.0.						"integer divide"
+x _ 5.0 \\ 3.0.						"integer remainder"
+x _ -5.								"unary minus"
+x _ 5 sign.							"numeric sign (1, -1 or 0)"
+x _ 5 negated.						"negate receiver"
 x _ 1.2 integerPart.					"integer part of number (1.0)"
-x _ 1.2 fractionPart.					"fractional part of number (0.2)"
+x _ 1.2 fractionPart.				"fractional part of number (0.2)"
 x _ 5 reciprocal.						"reciprocal function"
 x _ 6 * 3.1.							"auto convert to float"
-x _ 5 squared.							"square function"
+x _ 5 squared.						"square function"
 x _ 25 sqrt.							"square root"
-x _ 5 raisedTo: 2.						"power function"
-x _ 5 raisedToInteger: 2.				"power function with integer"
-x _ 5 exp.								"exponential"
-x _ -5 abs.								"absolute value"
-x _ 3.99 rounded.						"round"
+x _ 5 raisedTo: 2.					"power function"
+x _ 5 raisedToInteger: 2.			"power function with integer"
+x _ 5 exp.							"exponential"
+x _ -5 abs.							"absolute value"
+x _ 3.99 rounded.					"round"
 x _ 3.99 truncated.					"truncate"
-x _ 3.99 roundTo: 1.					"round to specified decimal places"
-x _ 3.99 truncateTo: 1.					"truncate to specified decimal places"
-x _ 3.99 floor.							"integer nearest the receiver toward negative infinity"
+x _ 3.99 roundTo: 1.				"round to specified decimal places"
+x _ 3.99 truncateTo: 1.				"truncate to specified decimal places"
+x _ 3.99 floor.						"integer nearest the receiver toward negative infinity"
 x _ 3.99 ceiling.						"integer nearest the receiver toward  infinity"
-x _ 5 factorial.							"factorial"
-x _ -5 quo: 3.							"integer divide rounded toward zero"
-x _ -5 rem: 3.							"integer remainder rounded toward zero"
+x _ 5 factorial.						"factorial"
+x _ -5 quo: 3.						"integer divide rounded toward zero"
+x _ -5 rem: 3.						"integer remainder rounded toward zero"
 x _ 28 gcd: 12.						"greatest common divisor"
-x _ 28 lcm: 12.							"least common multiple"
-x _ 100 ln.								"natural logarithm"
+x _ 28 lcm: 12.						"least common multiple"
+x _ 100 ln.							"natural logarithm"
 x _ 100 log.							"base 10 logarithm"
 x _ 100 log: 10	.					"logarithm with specified base"
-x _ 100 floorLog: 10.					"floor of the log"
-x _ 180 degreesToRadians.			"convert degrees to radians"
-x _ 3.14 radiansToDegrees.			"convert radians to degrees"
-x _ 0.7 sin.								"sine"
+x _ 100 floorLog: 10.				"floor of the log"
+x _ 180 degreesToRadians.		"convert degrees to radians"
+x _ 3.14 radiansToDegrees.		"convert radians to degrees"
+x _ 0.7 sin.							"sine"
 x _ 0.7 cos.							"cosine"
 x _ 0.7 tan.							"tangent"
-x _ 0.7 arcSin.							"arcsine"
+x _ 0.7 arcSin.						"arcsine"
 x _ 0.7 arcCos.						"arccosine"
-x _ 0.7 arcTan.							"arctangent"
+x _ 0.7 arcTan.						"arctangent"
 x _ 10 max: 20.						"get maximum of two numbers"
-x _ 10 min: 20.							"get minimum of two numbers"
+x _ 10 min: 20.						"get minimum of two numbers"
 x _ Float pi.							"pi"
 x _ Float e.							"exp constant"
-x _ Float infinity.						"infinity"
-x _ Float nan.							"not-a-number"
+x _ Float infinity.					"infinity"
+x _ Float nan.						"not-a-number"
 x _ Random new next; yourself. x next.	"random number stream (0.0 to 1.0)"
-x _ 100 atRandom.						"quick random number"
+x _ 100 atRandom.					"quick random number"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 15:06'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:43'!
 array
 	"Arrays"
 	^
@@ -392,7 +393,7 @@ array
 x _ #(4 3 2 1).									"constant array"
 x _ Array with: 5 with: 4 with: 3 with: 2.		"create array with 4 elements"
 x _ Array new: 4.								"allocate an array with specified size"
-x												"set array elements"
+x													"set array elements"
    at: 1 put: 5;
    at: 2 put: 4;
    at: 3 put: 3;
@@ -406,13 +407,13 @@ y _ x copyFrom: 2 to: 4.						"subarray"
 y _ x indexOf: 3 ifAbsent: [0].					"first position of element within array"
 y _ x occurrencesOf: 3.						"number of times object in collection"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the array"
-b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
+b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].	"test if all elements meet condition"
 y _ x select: [:a | a > 2].						"return collection of elements that pass test"
 y _ x reject: [:a | a < 2].						"return collection of elements that fail test"
 y _ x collect: [:a | a + a].						"transform each element for new collection"
-y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
+y _ x detect: [:a | a > 3] ifNone: [].			"return first element that passes test"
 y _ x findFirst: [:a | a < 3].						"find position of first element that passes test"
-sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum array elements"
+sum _ 0. x do: [:a | sum _ sum + a]. sum.	"sum array elements"
 sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)].	"sum array elements"
 sum _ x inject: 0 into: [:a :c | a + c].			"sum array elements"
 max _ x inject: 0 into: [:a :c | (a > c)			"find max element in array"
@@ -421,21 +422,21 @@ max _ x inject: 0 into: [:a :c | (a > c)			"find max element in array"
 y _ x shuffled.									"randomly shuffle collection"
 y _ x asArray.									"convert to array"
 y _ x asByteArray.								"convert to byte array"
-y _ x asWordArray.							"convert to word array"
+y _ x asWordArray.								"convert to word array"
 y _ x asOrderedCollection.					"convert to ordered collection"
 y _ x asSortedCollection.						"convert to sorted collection"
-y _ x asBag.									"convert to bag collection"
-y _ x asSet.									"convert to set collection"
+y _ x asBag.										"convert to bag collection"
+y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/31/2015 11:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:25'!
 assignment
 	"Assignment"
 	^
 '| x y z |
-x _ 4.									"assignment (Cuis)"
-										"either '':='' or ''_'' can be used for assignment"
+x _ 4.										"assignment (Cuis)"
+											"either '':='' or ''_'' can be used for assignment"
 Compiler evaluate: ''| w | w := 7.''.		"assignment (ASCII)"
 x _ y _ z _ 6.							"compound assignment"
 x _ (y _ 6) + 1.
@@ -444,7 +445,7 @@ x _ 123 class.							"discover the object class"
 x _ Integer superclass.				"discover the superclass of a class"
 x _ Object allInstances.				"get an array of all instances of a class"
 x _ Integer allSuperclasses.			"get all superclasses of a class"
-x _ 1.2 hash.							"hash value for object"
+x _ 1.2 hash.								"hash value for object"
 y _ x copy.								"copy object"
 y _ x shallowCopy.						"copy object (not overridden)"
 y _ x veryDeepCopy.					"complete tree copy using a dictionary"
@@ -462,14 +463,14 @@ y _ x value.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:42'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:51'!
 bag
 	"Bags"
 	^
 '| b x y sum max |
-x _ Bag with: 4 with: 3 with: 2 with: 1.			"create collection with up to 4 elements"
+x _ Bag with: 4 with: 3 with: 2 with: 1.		"create collection with 4 elements"
 x _ Bag new.									"allocate collection"
-x add: 4; add: 3; add: 1; add: 2; yourself.		"add element to collection; see NOTE"
+x add: 4; add: 3; add: 1; add: 2; yourself.	"add element to collection; see NOTE"
 x add: 3 withOccurrences: 2.					"add multiple copies to collection"
 y _ x addAll: #(7 8 9).							"add elements to the collection and answer the added elements; see NOTE"
 y _ x removeAll: #(7 8 9).						"remove elements from the collection and answer the removed elements; see NOTE"
@@ -479,20 +480,20 @@ y _ x size.										"number of elements"
 b _ x includes: 3.								"test if element is in collection"
 y _ x occurrencesOf: 3.						"number of times object in collection"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the collection"
-b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
+b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].	"test if all elements meet condition"
 y _ x select: [:a | a > 2].						"return collection of elements that pass test"
 y _ x reject: [:a | a < 2].						"return collection of elements that fail test"
 y _ x collect: [:a | a + a].						"transform each element for new collection"
-y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
-sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum elements"
+y _ x detect: [:a | a > 3] ifNone: [].			"return first element that passes test"
+sum _ 0. x do: [:a | sum _ sum + a]. sum.	"sum elements"
 sum _ x inject: 0 into: [:a :c | a + c].			"sum elements"
 max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
    ifTrue: [a]
    ifFalse: [c]].
 y _ x asOrderedCollection.					"convert to ordered collection"
 y _ x asSortedCollection.						"convert to sorted collection"
-y _ x asBag.									"convert to bag collection"
-y _ x asSet.									"convert to set collection"
+y _ x asBag.										"convert to bag collection"
+y _ x asSet.										"convert to set collection"
 
 "NOTE: methods in subclasses of Collection, of which Bag is one, answer
  the ARGUMENT instead of the resulting collection. Examples of such 
@@ -501,7 +502,7 @@ y _ x asSet.									"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 14:48'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:34'!
 bitwise
 	"Bitwise Manipulation"
 	^
@@ -520,7 +521,7 @@ b _ 16rFF noMask: 16r0F.			"test if all bits set in mask are clear in receiver"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/28/2015 16:21'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:36'!
 block
 	"Blocks"
 	^
@@ -534,81 +535,81 @@ block
 		- blocks intended for long term storage should not contain ^
 "
 | x y z fac |
-x _ [ y _ 1. z _ 2. ]. x value.						"simple block usage"
+x _ [ y _ 1. z _ 2. ]. x value.					"simple block usage"
 x _ [ :argOne :argTwo |   argOne, '' and '' , argTwo.].	"set up block with argument passing"
 Transcript show: (x value: ''First'' value: ''Second''); newLine.	"use block with argument passing"
-x _ [:e | | v | v _ 1. e + v] value: 2.					"localvar in a block"
+x _ [:e | | v | v _ 1. e + v] value: 2.			"localvar in a block"
 fac _ [ :n | n > 1 ifTrue:  [n * (fac value: n-1)] ifFalse: [1]].	"closure on block variable"
 fac value: 5.										"closure variable scoped to its block"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 11:55'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:30'!
 boolean
 	"Booleans"
 	^
 '| b x y |
 x _ 1. y _ 2.
-b _ (x = y).								"equals"
+b _ (x = y).							"equals"
 b _ (x ~= y).							"not equals"
 b _ (x == y).							"identical"
 b _ (x ~~ y).							"not identical"
-b _ (x > y).								"greater than"
-b _ (x < y).								"less than"
+b _ (x > y).							"greater than"
+b _ (x < y).							"less than"
 b _ (x >= y).							"greater than or equal"
 b _ (x <= y).							"less than or equal"
-b _ b not.								"boolean not"
-b _ (x < 5) & (y > 1).					"boolean and"
+b _ b not.							"boolean not"
+b _ (x < 5) & (y > 1).				"boolean and"
 b _ (x < 5) | (y > 1).					"boolean or"
-b _ (x < 5) and: [y > 1].				"boolean and (short-circuit)"
-b _ (x < 5) or: [y > 1].					"boolean or (short-circuit)"
-b _ (x < 5) eqv: (y > 1).				"test if both true or both false"
+b _ (x < 5) and: [y > 1].			"boolean and (short-circuit)"
+b _ (x < 5) or: [y > 1].				"boolean or (short-circuit)"
+b _ (x < 5) eqv: (y > 1).			"test if both true or both false"
 b _ (x < 5) xor: (y > 1).				"test if one true and other false"
-b _ 5 between: 3 and: 12.				"between (inclusive)"
-b _ 123 isKindOf: Number.			"test if object is class or subclass of"
+b _ 5 between: 3 and: 12.			"between (inclusive)"
+b _ 123 isKindOf: Number.		"test if object is class or subclass of"
 b _ 123 isMemberOf: SmallInteger.	"test if object is type of class"
-b _ 123 respondsTo: #sqrt.			"test if object responds to message"
-b _ x isNil.								"test if object is nil"
+b _ 123 respondsTo: #sqrt.		"test if object responds to message"
+b _ x isNil.							"test if object is nil"
 b _ x isZero.							"test if number is zero"
-b _ x positive.							"test if number is positive"
-b _ x strictlyPositive.					"test if number is greater than zero"
-b _ x negative.							"test if number is negative"
+b _ x positive.						"test if number is positive"
+b _ x strictlyPositive.				"test if number is greater than zero"
+b _ x negative.						"test if number is negative"
 b _ x even.							"test if number is even"
-b _ x odd.								"test if number is odd"
-b _ x isLiteral.							"test if literal constant"
+b _ x odd.							"test if number is odd"
+b _ x isLiteral.						"test if literal constant"
 b _ x isInteger.						"test if object is integer"
 b _ x isFloat.							"test if object is float"
 b _ x isNumber.						"test if object is number"
 b _ x isSymbol.						"test if object is a Symbol"
-b _ $A isUppercase.					"test if upper case character"
-b _ $A isLowercase.					"test if lower case character"
+b _ $A isUppercase.				"test if upper case character"
+b _ $A isLowercase.				"test if lower case character"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 16:32'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:39'!
 character
 	"Character"
 	^
 '| x y b |
-x _ $A.										"character assignment"
-y _ x isLowercase.							"test if lower case"
-y _ x isUppercase.							"test if upper case"
-y _ x isLetter.								"test if letter"
+x _ $A.									"character assignment"
+y _ x isLowercase.						"test if lower case"
+y _ x isUppercase.						"test if upper case"
+y _ x isLetter.							"test if letter"
 y _ x isDigit.								"test if digit"
-y _ x isAlphaNumeric.						"test if alphanumeric"
-y _ x isSeparator.							"test if seperator char"
-y _ x isVowel.								"test if vowel"
+y _ x isAlphaNumeric.					"test if alphanumeric"
+y _ x isSeparator.						"test if seperator char"
+y _ x isVowel.							"test if vowel"
 y _ x digitValue.							"convert to numeric digit value"
 y _ x asLowercase.						"convert to lower case"
 y _ x asUppercase.						"convert to upper case"
 y _ x asciiValue.							"convert to numeric ascii value"
-y _ x asString.								"convert to string"
-b _ $A <= $B.								"comparison"
+y _ x asString.							"convert to string"
+b _ $A <= $B.							"comparison"
 y _ $A max: $B.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:40'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:37'!
 conditionalStatement
 	"Conditional Statements"
 	^
@@ -616,10 +617,10 @@ conditionalStatement
 x _ 11.
 x > 10 ifTrue: [Transcript show: ''ifTrue''; newLine].	"if then"
 x > 10 ifFalse: [Transcript show: ''ifFalse''; newLine].	"if else"
-x > 10											"if then else"
+x > 10										"if then else"
    ifTrue: [Transcript show: ''ifTrue''; newLine]
    ifFalse: [Transcript show: ''ifFalse''; newLine].
-x > 10											"if else then"
+x > 10										"if else then"
    ifFalse: [Transcript show: ''ifFalse''; newLine]
    ifTrue: [Transcript show: ''ifTrue''; newLine].
 Transcript
@@ -636,7 +637,7 @@ Transcript									"nested if then else"
             ifFalse: [''B'']]
          ifFalse: [''C'']);
    newLine.
-switch _ Dictionary new.						"switch (case) functionality"
+switch _ Dictionary new.					"switch (case) functionality"
 switch at: $A put: [Transcript show: ''Case A''; newLine].
 switch at: $B put: [Transcript show: ''Case B''; newLine].
 switch at: $C put: [Transcript show: ''Case C''; newLine].
@@ -667,24 +668,24 @@ x _ #(''abc'' 2 $a).						"mixing of types allowed"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 11:59'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:35'!
 conversion
 	"Conversion"
 	^
 '| x |
-x _ 3.99 asInteger.				"convert number to integer (truncates in Squeak)"
+x _ 3.99 asInteger.			"convert number to integer (truncates in Cuis)"
 x _ 3.99 asFraction.			"convert number to fraction"
-x _ 3 asFloat.					"convert number to float"
+x _ 3 asFloat.				"convert number to float"
 x _ 65 asCharacter.			"convert integer to character"
-x _ $A asciiValue.				"convert character to integer"
-x _ 3.99 printString.			"convert object to string via printOn:"
-x _ 3.99 storeString.			"convert object to string via storeOn:"
+x _ $A asciiValue.			"convert character to integer"
+x _ 3.99 printString.		"convert object to string via printOn:"
+x _ 3.99 storeString.		"convert object to string via storeOn:"
 x _ 15 printStringBase: 16.
 x _ 15 storeStringBase: 16.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 20:25'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:05'!
 date
 	"Date"
 	^
@@ -692,15 +693,15 @@ date
 x _ Date today.								"create date for today"
 x _ Date dateAndTimeNow.					"create date from current time/date"
 x _ Date newDay: 12 month: #July year: 1999.	"create date from parts"
-x _ Date fromDays: 36000.					"create date from elapsed days since 1/1/1901"
-y _ Date dayOfWeek: #Monday.				"day of week as int (1-7)"
+x _ Date fromDays: 36002.					"create date from elapsed days since 1/1/1901"
+y _ Date dayOfWeek: #Monday.			"day of week as int (1-7)"
 y _ Date indexOfMonth: #August.			"month of year as int (1-12)"
 y _ Date daysInMonth: 2 forYear: 1996.		"day of month as int (1-31)"
 y _ Date daysInYear: 1996.					"days in year (365|366)"
 y _ Date nameOfDay: 1.						"weekday name (#Monday,...)"
 y _ Date nameOfMonth: 3.					"month name (#January,...)"
 y _ Date leapYear: 1997.						"1 if leap year; 0 if not leap year"
-y _ x weekday.								"day of week (#Monday,...)"
+y _ x weekday.									"day of week (#Monday,...)"
 y _ x previous: #Monday.					"date for previous day of week"
 y _ x dayOfMonth.								"day of month (1-31)"
 y _ x firstDayOfMonth.							"day of year for first day of month"
@@ -710,10 +711,10 @@ y _ x daysInMonth.								"days in month (1-31)"
 y _ x year.										"year (19xx)"
 y _ x daysInYear.								"days in year (365|366)"
 y _ x daysLeftInYear.							"days left in year (364|365)"
-y _ x printFormat: #(2 1 3 $/ 1 1).				"print formatted date"
+y _ x printFormat: #(2 1 3 $/ 1 1).			"print formatted date"
 b _ (x <= Date today).						"comparison"
 y _ x julianDayNumber.
-y _ x mmddyyyy.	"Answer the receiver rendered in standard fmt mm/dd/yyyy.  Good for avoiding year 2000 bugs.  Note that the name here is slightly misleading -- the month and day numbers don''t show leading zeros, so that for example feb 1 1996 is 2/1/96"
+y _ x mmddyyyy.	"Answer the receiver rendered in standard fmt mm/dd/yyyy. Note that the name #mmddyyyy is slightly misleading -- the month and day numbers don''t show leading zeros, so that for example feb 1 1996 is 2/1/96"
 y _ x month.
 y _ x monthAbbreviation.
 y _ x monthIndex.
@@ -721,32 +722,36 @@ y _ x monthName.
 fmt _ #(1 2 3 $  3 1 ).			"Specify a format for the date, in the following scheme:"
 									"#(item item item sep monthfmt yearfmt twoDigits) 
 									items: 1=day 2=month 3=year will appear in the order given, 
-									separated by sep which is eaither an ascii code or character. 
+									separated by sep which is either an ascii code or character. 
 									monthFmt: 1=09 2=Sep 3=September 
 									yearFmt: 1=1996 2=96 
 									digits: (missing or)1=9 2=09. 
-								See the examples in printOn: and mmddyy"
-y _ x printFormat: fmt. 	"Answer a String describing the receiver using the format denoted by the argument, fmt"
+									See the examples in printOn: and mmddyy"
+y _ x printFormat: fmt.		 	"Answer a String describing the receiver using the format denoted by the argument, fmt"
 str _ ReadWriteStream on: String new.		"Specify a stream"
 y _ x printOn: str.
-y _ x printOn: str format: #(3 2 1 $.  1 2 ).
-y _ x secondsSinceSqueakEpoch. "Answer the seconds since the Squeak epoch: 1 January 1901"
+
+str _ String new writeStream.	
+y _ x printOn: str format: #(3 2 1 $.  1 2 ).	"the stream, not the receiver, contains the date in the specified format"
+str contents.
+
+y _ x secondsSinceSqueakEpoch.		"Answer the seconds since the Squeak epoch: 1 January 1901"
 y _ x storeOn: str.
 y _ x week.
-y _ x weekday. 	"Answer the name of the day of the week on which the receiver falls."
-y _ x weekdayIndex. "Sunday=1, ... , Saturday=7"
+y _ x weekday. 				"Answer the name of the day of the week on which the receiver falls."
+y _ x weekdayIndex. 		"Sunday=1, ... , Saturday=7"
 y _ x year.
 y _ x yearNumber.
-y _ x yyyymmdd. "Format the date in ISO 8601 standard like ''2002-10-22''."
+y _ x yyyymmdd. 			"Format the date in ISO 8601 standard like ''2002-10-22''."
 block _ [ :d :m :y | {d. m. y} ].		"Specify an order for the date"
 y _ x dayMonthYearDo: block. "Supply integers for day, month and year to aBlock and return the result"
 y _ x dayMonthYearDo: [ :d :m :y | {y. m. d.} ].	"Order determined by block, not method name"
-y _ x dayOfMonth. 	"Answer the day of the month represented by the receiver."
-y _ x dayOfWeek. 	"Answer the day of the week represented by the receiver."
-y _ x dayOfWeekName. "Answer the day of the week represented by the receiver."
-y _ x dayOfYear. "Answer the day of the year represented by the receiver."
+y _ x dayOfMonth. 			"Answer the day of the month represented by the receiver."
+y _ x dayOfWeek. 			"Answer the day of the week represented by the receiver."
+y _ x dayOfWeekName. 	"Answer the day of the week represented by the receiver."
+y _ x dayOfYear.			"Answer the day of the year represented by the receiver."
 y _ x daysInMonth.
-y _ x daysInYear.	"Answer the number of days in the month represented by the receiver."
+y _ x daysInYear.			"Answer the number of days in the month represented by the receiver."
 y _ x daysLeftInYear.
 y _ x firstDayOfMonth.
 y _ x isLeapYear.
@@ -754,7 +759,7 @@ y _ x julianDayNumber.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/9/2015 12:10'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:14'!
 debugging
 	"Debugging"
 	^
@@ -762,10 +767,10 @@ debugging
 	"Some statements in this topic are designed to cause an error."
 x _ Object new.
 x yourself.								"returns receiver"
-String browse.						"browse specified class"
-x inspect.								"open object inspector window"
+String browse.							"browse specified class"
+x inspect.									"open object inspector window"
 x confirm: ''Is this correct?''.
-x halt.									"breakpoint to open debugger window"
+x halt.										"breakpoint to open debugger window"
 x halt: ''Halt message''.
 x notify: ''Notify text''.
 x error: ''Error string''.					"open up error window with title"
@@ -775,9 +780,9 @@ x subclassResponsibility.				"flag message as abstract"
 x errorImproperStore.					"flag an improper store into indexable object"
 x errorNonIntegerIndex.				"flag only integers should be used as index"
 x errorSubscriptBounds: 13.			"flag subscript out of bounds"
-x primitiveFailed.						"system primitive failed"
+x primitiveFailed.							"system primitive failed"
 
-a _ ''A1''. b _ ''B2''. a become: b.			"switch two objects, if neither is a SmallInteger"
+a _ ''A1''. b _ ''B2''. a become: b.		"switch two objects, if neither is a SmallInteger"
 Transcript show: a, b; newLine.
 
 "Doing ''self halt.'' in Morphic code can be risky, because it can open an infinite sequence of debuggers."
@@ -788,7 +793,7 @@ x doesNotUnderstand: (Message selector: #foo).	"flag message is not handled"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 15:45'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:56'!
 dictionary
 	"Dictionary"
 	^
@@ -804,24 +809,24 @@ b _ x isEmpty.									"test if empty"
 y _ x size.										"number of elements"
 y _ x at: #a ifAbsent: [].						"retrieve value for key #a"
 y _ x keyAtValue: 3 ifAbsent: [].				"retrieve key for given value with error block"
-y _ x removeKey: #e ifAbsent: [].				"remove element from collection"
+y _ x removeKey: #e ifAbsent: [].			"remove element from collection"
 b _ x includes: 3.								"test if element is in values collection"
 b _ x includesKey: #a.							"test if element is in keys collection"
 y _ x occurrencesOf: 3.						"number of times object in collection"
 y _ x keys.										"set of keys"
-y _ x values.									"bag of values"
+y _ x values.										"bag of values"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the values collection"
 x keysDo: [:a | Transcript show: a printString; newLine].	"iterate over the keys collection"
 x associationsDo: [:a | Transcript show: a printString; newLine].	"iterate over the associations"
 x keysAndValuesDo: [:aKey :aValue | Transcript	"iterate over keys and values"
    show: aKey printString; space;
    show: aValue printString; newLine].
-b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
+b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].	"test if all elements meet condition"
 y _ x select: [:a | a > 2].						"return a dictionary with values that pass test"
 y _ x reject: [:a | a < 2].						"return a dictionary with values that fail test"
 y _ x collect: [:a | a + a].						"transform each element for new dictionary"
-y _ x detect: [:a | a > 3] ifNone: [].				"return first value that passes test"
-sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum the values"
+y _ x detect: [:a | a > 3] ifNone: [].			"return first value that passes test"
+sum _ 0. x do: [:a | sum _ sum + a]. sum.	"sum the values"
 sum _ x inject: 0 into: [:a :c | a + c].			"sum the values"
 max _ x inject: 0 into: [:a :c | (a > c)			"find max value in collection"
    ifTrue: [a]
@@ -829,8 +834,8 @@ max _ x inject: 0 into: [:a :c | (a > c)			"find max value in collection"
 y _ x asArray.									"collect values in an array"
 y _ x asOrderedCollection.					"collect values in an ordered collection"
 y _ x asSortedCollection.						"collect values in a sorted collection"
-y _ x asBag.									"collect values in a bag"
-y _ x asSet.									"collect values in a set"
+y _ x asBag.										"collect values in a bag"
+y _ x asSet.										"collect values in a set"
 
 Smalltalk at: #CMRGlobal put: ''CMR entry''.	"put global in Smalltalk Dictionary"
 x _ Smalltalk at: #CMRGlobal.				"read global from Smalltalk Dictionary"
@@ -839,14 +844,14 @@ Smalltalk keys do: [ :k |						"print out all classes"
    ((Smalltalk at: k) isKindOf: Class)
       ifFalse: [Transcript show: k printString; newLine]].
 aDx _ Dictionary new.						"set up user defined dictionary"
-aDx at: #MyVar1 put: ''hello1''.					"put entry in dictionary; see NOTE"
+aDx at: #MyVar1 put: ''hello1''.				"put entry in dictionary; see NOTE"
 aDx add: #MyVar2->''hello2''.					"add entry to dictionary use key->value combo; see NOTE"
 aDx size.		"dictionary size"
 aDx keys do: [ :k |								"print out keys in dictionary"
    Transcript show: k printString; newLine].
 aDx values do: [ :k |								"print out values in dictionary"
    Transcript show: k printString; newLine].
-aDx keysAndValuesDo: [:aKey :aValue |			"print out keys and values"
+aDx keysAndValuesDo: [:aKey :aValue |		"print out keys and values"
    Transcript
       show: aKey printString;
       space;
@@ -911,13 +916,13 @@ result _ (Message
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 12:22'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:59'!
 fileStream
 	"File Streams"
 	^
 '| b x ios |
 ios _ FileStream newFileNamed: ''ios.txt''.	"Open a file for output"
-ios nextPut: $H; newLine.				"Put data in the file buffer"
+ios nextPut: $H; newLine.			"Put data in the file buffer"
 ios close.								"Flush the buffer, write and close the file"
 ios _ FileStream forceNewFileNamed: ''ios.txt''.	"Suppress warning dialog"
 ios nextPutAll: ''Hello File''; newLine.
@@ -928,13 +933,41 @@ ios close.								"Flush the buffer, write and close the file"
 ios _ FileStream oldFileNamed: ''ios.txt''.	"Open the file for input"
 [(x _ ios nextLine) notNil]
    whileTrue: [Transcript show: x; newLine].
-ios position: 3.							"Position a pointer to a byte in the file"
+ios position: 3.						"Position a pointer to a byte in the file"
 x _ ios position.						"Answer where the pointer is"
 x _ ios next.							"Answer the byte pointed to by the pointer"
 x _ ios peek.							"Answer the next byte beyond the pointer"
-b _ ios atEnd.							"Answer whether the position is at the end of the file"
+b _ ios atEnd.						"Answer whether the position is at the end of the file"
 ios close.								"Close the file"
 
+'! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:41'!
+font
+	"Fonts"
+	^
+'"
+Cuis fonts are strike fonts. In order to add a font, 
+	- create the directory ''AdditionalFontData''  within the directory containing the image
+	- place the .bmp and .txt files for the strike font in the ''AdditionalFontData'' directory
+	- use StrikeFont install: ''<familyname>''
+"
+| x y str |
+
+x _ AbstractFont default.				"answer the default font"
+
+StrikeFont install: ''DejaVu Sans Mono''.	"install the font with the specified family name"
+
+AbstractFont familyNames     
+	detect: [:f | f = ''DejaVu Sans Mono''] ifNone: [^ AbstractFont default].
+^ AbstractFont familyName: ''DejaVu Sans Mono'' aroundPointSize: 10.
+	"answer DejaVu Sans Mono font if available; otherwise, answer the default font"
+
+str _ String new writeStream 			"prepare a string"
+	nextPutAll: ''foo''; newLine;
+	nextPutAll: ''bar''.
+
+y _ Text initialFont: x stringOrText: str contents. 	"specify text with font and string"
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/18/2015 18:19'!
@@ -978,21 +1011,21 @@ y _ x magnifyBy: 1.5.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 13:50'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:57'!
 heap
 	"Heap"
 	^
 '| x sort |
-x _ Heap new.					"Answer a heap of default size"
+x _ Heap new.						"Answer a heap of default size"
 x _ Heap new: n.					"Answer a heap of size n"
 x _ Heap with: #purple with: #green. 	"Answer a Heap with the two arguments as elements."
-sort _ [:a :c | a > c].				"Define a sorting order"
+sort _ [:a :c | a > c].					"Define a sorting order"
 x _ Heap withAll: #(11 32 19 21).	"Create a new heap with all the elements from a collection"
-x sortBlock: sort.					"Specify how to sort the heap"
+x sortBlock: sort.						"Specify how to sort the heap"
 x _ Heap withAll: #(11 32 19 21) sortBlock: sort.	"Create a new heap sorted according to a sortBlock"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/13/2015 14:33'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:58'!
 internalStream
 	"Internal  Streams"
 	^
@@ -1009,6 +1042,7 @@ x _ ios contents.
 b _ ios atEnd.
 
 ios _ ReadWriteStream on: ''Hello read stream''.
+ios _ ReadWriteStream on: String new.
 ios _ ReadWriteStream on: ''Hello read stream'' from: 1 to: 5.
 ios _ ReadWriteStream with: ''Hello read stream''.
 ios _ ReadWriteStream with: ''Hello read stream'' from: 1 to: 10.
@@ -1023,36 +1057,36 @@ x _ ios peek.
 x _ ios contents.
 b _ ios atEnd.
 
-str _ String new writeStream.				"use a stream to form a string"
+str _ String new writeStream.			"use a stream to form a string"
 str nextPutAll: ''As of ''.						"more efficient than concatenation"
 str nextPutAll: Date today asString.
 str nextPut: $,; space.						"newLine and tab are also possible"
 str nextPutAll: (Complex real: 4.7 imaginary: -2.2) printString.
 str nextPutAll: '' is the location of the pole.''.	"complete the formation"
-x _ str contents.							"to get the results"
+x _ str contents.								"to get the results"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:43'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:53'!
 interval
 	"Intervals"
 	^
 '| b x y sum max |
 x _ Interval from: 5 to: 10.					"create interval object"
 x _ 5 to: 10.
-x _ Interval from: 5 to: 10 by: 2.				"create interval object with specified increment"
+x _ Interval from: 5 to: 10 by: 2.			"create interval object with specified increment"
 x _ 5 to: 10 by: 2.
 b _ x isEmpty.									"test if empty"
 y _ x size.										"number of elements"
-x includes: 9.									"test if element is in collection"
+x includes: 9.										"test if element is in collection"
 x do: [:k | Transcript show: k printString; newLine].	"iterate over interval"
-b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
+b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].	"test if all elements meet condition"
 y _ x select: [:a | a > 7].						"return collection of elements that pass test"
 y _ x reject: [:a | a < 2].						"return collection of elements that fail test"
 y _ x collect: [:a | a + a].						"transform each element for new collection"
-y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
+y _ x detect: [:a | a > 3] ifNone: [].			"return first element that passes test"
 y _ x findFirst: [:a | a > 6].						"find position of first element that passes test"
-sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum elements"
+sum _ 0. x do: [:a | sum _ sum + a]. sum.	"sum elements"
 sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)]. sum.	"sum elements"
 sum _ x inject: 0 into: [:a :c | a + c].			"sum elements"
 max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
@@ -1061,8 +1095,8 @@ max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
 y _ x asArray.									"convert to array"
 y _ x asOrderedCollection.					"convert to ordered collection"
 y _ x asSortedCollection.						"convert to sorted collection"
-y _ x asBag.									"convert to bag collection"
-y _ x asSet.									"convert to set collection"
+y _ x asBag.										"convert to bag collection"
+y _ x asSet.										"convert to set collection"
 
 '! !
 
@@ -1081,7 +1115,7 @@ The Terse Guide does not attempt to provide the entire protocol of a topic. You 
 "
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 12:10'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/10/2015 18:27'!
 iterationStatement
 	"Iterations"
 	^
@@ -1095,7 +1129,7 @@ x timesRepeat: [y _ y * 2].					"times repeat loop (i _ 1 to x)"
 Transcript newLine; show: y.
 1 to: x do: [:a | y _ y * 2].					"for loop"
 Transcript newLine; show: y.
-1 to: x by: 2 do: [:a | y _ y / 2].				"for loop with specified increment"
+1 to: x by: 2 do: [:a | y _ y / 2].			"for loop with specified increment"
 Transcript newLine; show: y.
 #(5 4 3) do: [:a | x _ x + a].				"iterate over array elements"
 Transcript newLine; show: x.
@@ -1154,7 +1188,7 @@ area ySeparation.		"answer the y component of the specified separation"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/9/2015 20:31'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:12'!
 layoutSpec
 	"Layout Specification"
 	^
@@ -1259,7 +1293,7 @@ x proportionalWidth: width.
 x proportionalWidth: width minimum: 150.
 	"Alternatives:
 		- proportionalWidth notNil, fixedWidth notNil	->		Use fraction of available space, take fixedWidth as minimum desired width
-		- proportionalWidth isNil, fixedWidth isNil		->		Use current morph width
+		- proportionalWidth isNil, fixedWidth isNil	->		Use current morph width
 		- proportionalWidth isNil, fixedWidth notNil	->		Use fixedWidth
 		- proportionalWidth notNil, fixedWidth isNil	->		NOT VALID"
 
@@ -1268,10 +1302,10 @@ x setProportionalHeight: height.
 
 x setProportionalWidth: width.
 	"Alternatives:
-		- proportionalWidth notNil, fixedWidth notNil	->		Use fraction of available space, take fixedWidth as minimum desired width
+		- proportionalWidth notNil, fixedWidth notNil		->		Use fraction of available space, take fixedWidth as minimum desired width
 		- proportionalWidth isNil, fixedWidth isNil		->		Use current morph width
-		- proportionalWidth isNil, fixedWidth notNil	->		Use fixedWidth
-		- proportionalWidth notNil, fixedWidth isNil	->		NOT VALID"
+		- proportionalWidth isNil, fixedWidth notNil		->		Use fixedWidth
+		- proportionalWidth notNil, fixedWidth isNil		->		NOT VALID"
 
 x useMorphHeight.
 	"Do not attempt to layout height. Use current morph height if at all possible."
@@ -1286,34 +1320,34 @@ x widthFor: available.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 11:53'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:27'!
 literals
 	"Literals"
 	^
 '| b x |
 b _ true.								"true pseudo-variable"
 b _ false.								"false pseudo-variable"
-x _ nil.									"nil object pseudo-variable"
+x _ nil.								"nil object pseudo-variable"
 x _ 1.									"integer constant"
 x _ 3.14.								"float constant"
 x _ 2e-2.								"fractional constant"
-x _ 2.0e-2.								"float constant"
+x _ 2.0e-2.							"float constant"
 x _ 7/8.								"fractional constant"
-x _ 16r0F.								"small integer constant".
+x _ 16r0F.							"small integer constant".
 x _ 16rFFFFFFFF.						"large positive integer constant".
-x _ 16rFFFFFFFF negated.				"large negative integer constant".
-x _ -1.									"negative integer constant"
-x _ ''Hello''.								"string constant"
-x _ ''I''''m here''.							"single quote escape"
-x _ $A.									"character constant"
-x _ $ .									"character constant (space)"
+x _ 16rFFFFFFFF negated.			"large negative integer constant".
+x _ -1.								"negative integer constant"
+x _ ''Hello''.							"string constant"
+x _ ''I''''m here''.						"single quote escape"
+x _ $A.								"character constant"
+x _ $ .								"character constant (space)"
 x _ #aSymbol.						"symbol constants"
 x _ #(3 2 1).							"array constant"
-x _ #(''abc'' 2 $a).						"mixing of types allowed"
+x _ #(''abc'' 2 $a).					"mixing of types allowed"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:39'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:13'!
 metaclass
 	"Class / Metaclass"
 	^
@@ -1328,28 +1362,28 @@ x _ String allInstVarNames.			"accumulated instance variable names"
 x _ String classVarNames.			"immediate class variable names"
 x _ String allClassVarNames.			"accumulated class variable names"
 x _ String sharedPools.				"immediate dictionaries used as shared pools"
-x _ String allSharedPools.				"accumulated dictionaries used as shared pools"
+x _ String allSharedPools.			"accumulated dictionaries used as shared pools"
 x _ String selectors.					"message selectors for class"
 x _ String sourceCodeAt: #indexOf:.	"source code for specified method"
 x _ String allInstances.				"collection of all instances of class"
-x _ String superclass.				"immediate superclass"
+x _ String superclass.					"immediate superclass"
 x _ String allSuperclasses.			"accumulated superclasses"
 x _ String withAllSuperclasses.		"receiver class and accumulated superclasses"
 x _ String subclasses.				"immediate subclasses"
 x _ String allSubclasses.				"accumulated subclasses"
 x _ String withAllSubclasses.			"receiver class and accumulated subclasses"
 b _ String instSize.					"number of named instance variables"
-b _ String isFixed.					"true if no indexed instance variables"
+b _ String isFixed.						"true if no indexed instance variables"
 b _ String isVariable.					"true if has indexed instance variables"
 b _ String isPointers.					"true if index instance vars contain objects"
 b _ String isBits.						"true if index instance vars contain bytes/words"
-b _ String isBytes.					"true if index instance vars contain bytes"
+b _ String isBytes.						"true if index instance vars contain bytes"
 b _ String isWords.					"true if index instance vars contain words"
 Object withAllSubclasses size.		"get total number of class entries"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:40'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:36'!
 methodCall
 	"Method Calls"
 	^
@@ -1371,16 +1405,16 @@ methodCall
 		- instance-creation     (class methods for creating instance)
 "
 | x |
-x _ 2 sqrt.									"unary message"
-x _ 2 raisedTo: 10.							"keyword message"
+x _ 2 sqrt.								"unary message"
+x _ 2 raisedTo: 10.						"keyword message"
 x _ 194 * 9.								"binary message"
 Transcript show: (194 * 9) printString; newLine.	"combination (chaining)"
-x _ 2 perform: #sqrt.						"indirect method invocation"
+x _ 2 perform: #sqrt.					"indirect method invocation"
 Transcript								"cascading - send multiple messages to receiver"
    show: ''hello '';
    show: ''world'';
    newLine.
-x _ 3 + 2; * 100.							"result=300. Sends message to same receiver (3)"
+x _ 3 + 2; * 100.						"result=300. Sends message to same receiver (3)"
 
 '! !
 
@@ -1393,7 +1427,7 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/10/2015 13:24'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:09'!
 morph
 	"Morphs"
 	^
@@ -1401,7 +1435,7 @@ morph
 x _ Morph new.			"a new but invisible morph"
 x openInWorld.				"make visible in upper left of screen"
 x openInHand.				"make visible at cursor location"
-							"drag with the left button; show halos with the middle button"
+								"drag with the left button; show halos with the middle button"
 x name: #MyName.		"used in the halos"
 x name: ''My Name''.			"alternative, allowing imbedded blanks"
 x morphPosition: 100@65.	"set the morph location"
@@ -1410,7 +1444,7 @@ x _ FunctionGraphMorph example2.	"plot two functions"
 x _ SystemWindow new openInWorld.	"open a window"
 x setLabel: ''Label for It''.
 y _ LayoutMorph example10.	"organizing several morphs"
-x addMorph: y.					"place morphs in a SystemWindow"
+x addMorph: y.				"place morphs in a SystemWindow"
 
 LayoutMorph includeInNewMorphMenu.
 	"Return true for all classes that can be instantiated from the menu"
@@ -1421,14 +1455,14 @@ y _ Morph initializedInstance.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 15:49'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:48'!
 orderedCollection
 	"Ordered Collections"
 	^
 '| b x y sum max |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 x _ OrderedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with 4 elements"
-x _ OrderedCollection new.					"allocate collection"
-x add: 3; add: 2; add: 1; add: 4; yourself.		"add element to collection"
+x _ OrderedCollection new.				"allocate collection"
+x add: 3; add: 2; add: 1; add: 4; yourself.	"add element to collection"
 y _ x addFirst: 5; yourself.						"add element at beginning of collection"
 y _ x removeFirst;	yourself.					"remove first element in collection"
 y _ x addLast: 6; yourself.						"add element at end of collection"
@@ -1447,14 +1481,14 @@ y _ x copyFrom: 2 to: 3.						"subcollection"
 y _ x indexOf: 3 ifAbsent: [0].					"first position of element within collection"
 y _ x occurrencesOf: 3.						"number of times object in collection"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the collection"
-b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
+b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].	"test if all elements meet condition"
 y _ x select: [:a | a > 2].						"return collection of elements that pass test"
 y _ x reject: [:a | a < 2].						"return collection of elements that fail test"
 y _ x collect: [:a | a + a].						"transform each element for new collection"
-y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
+y _ x detect: [:a | a > 3] ifNone: [].			"return first element that passes test"
 y _ x findFirst: [:a | a < 2].						"find position of first element that passes test"
-sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum elements"
-sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)]. sum.		"sum elements"
+sum _ 0. x do: [:a | sum _ sum + a]. sum.	"sum elements"
+sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)]. sum."sum elements"
 sum _ x inject: 0 into: [:a :c | a + c].			"sum elements"
 max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
    ifTrue: [a]
@@ -1463,12 +1497,12 @@ y _ x shuffled.									"randomly shuffle collection"
 y _ x asArray.									"convert to array"
 y _ x asOrderedCollection.					"convert to ordered collection"
 y _ x asSortedCollection.						"convert to sorted collection"
-y _ x asBag.									"convert to bag collection"
-y _ x asSet.									"convert to set collection"
+y _ x asBag.										"convert to bag collection"
+y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 5/9/2015 19:27'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 9/1/2015 15:17'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^  OrderedCollection new
@@ -1488,6 +1522,7 @@ pages
 		add: 'Character'; 
 		add: 'Symbols'; 
 		add: 'Strings'; 
+		add: 'Fonts'; 
 		add: 'Arrays'; 
 		add: 'Ordered Collections'; 
 		add: 'Sorted Collections'; 
@@ -1518,7 +1553,7 @@ pages
 		add: 'Primitives'; 
 		yourself! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/9/2015 16:37'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:08'!
 pen
 	"Pen"
 	^
@@ -1526,28 +1561,28 @@ pen
 block _ [:p | | center |					"set a program for drawing with a pen, p"
 	p squareNib: 6.						"set shape and size of the nib"
 	p color: (Color blue).				"set pen color"
-	p home.							"position pen at center of display"
+	p home.								"position pen at center of display"
 	center _ p location.					"remember the center location"	
-	p up.								"makes nib unable to draw"
+	p up.									"makes nib unable to draw"
 	p down.								"enable the nib to draw"
 	p north.								"point direction toward the top"
-	p turn: -180.						"change direction 180 degrees"
+	p turn: -180.							"change direction 180 degrees"
 	p direction.							"get the current angle of pen"
-	p go: 50.							"move the pen 50 pixels"
+	p go: 50.								"move the pen 50 pixels"
 	p location.							"get the pen position"
 	p goto: 200@200.					"move to the specified point"
 	p north.								"set the direction"
 	p go: 180.							"move the pen"
 	p goto: center].						"close the polygon figure"
 
-Display restoreAfter: [				"a click will restore Display"
+Display restoreAfter: [					"a click will restore Display"
 	Display fillWhite.					"a blank Display"
 	myPen _ Pen new.					"get graphic pen"
 	myPen fill: block color: nil].			"follow the program named ''block'' defined above"
 
-Display extent.						"get display width@height"
+Display extent.							"get display width@height"
 Display width.							"get display width"
-Display height.						"get display height"
+Display height.							"get display height"
 
 myPen := Pen new defaultNib: 2.		"a small drawing program"
 myPen up; goto: Sensor mousePoint; down.
@@ -1559,15 +1594,15 @@ Display restore.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:49'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:07'!
 point
 	"Point"
 	^
 '| x y |
 x _ 200@100.									"obtain a new point"
-y _ x x.										"x coordinate"
-y _ x y.										"y coordinate"
-x _ 200@100 negated.						"negates x and y"
+y _ x x.											"x coordinate"
+y _ x y.											"y coordinate"
+x _ 200@100 negated.							"negates x and y"
 x _ (-200@ -100) abs.							"absolute value of x and y"
 x _ (200.5@100.5) rounded.					"round x and y"
 x _ (200.5@100.5) truncated.					"truncate x and y"
@@ -1671,14 +1706,14 @@ primitive
 	primitives, see the ''Primitive Methods'' part of the chapter on the formal 
 	specification of the interpreter in the Smalltalk book."'! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/18/2015 15:22'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:07'!
 rectangle
 	"Rectangle"
 	^
 '| x y b |
 x _ Rectangle fromUser.	"Have the user designate the top left and bottom right corners of a rectangle."
 y _ Form fromDisplay: x.	"Create a virtual bit map from the rectangle." 
-y display.					"Show the rectangle at 0@0 on the display."
+y display.						"Show the rectangle at 0@0 on the display."
 Display restore.			"Erase the rectangle."
 		
 b _ x containsPoint: 195@150.
@@ -1728,27 +1763,27 @@ x _ Rectangle originFromUser: 400@300.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:43'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:52'!
 set
 	"Sets"
 	^
 '| b x y sum max |
-x _ Set with: 4 with: 3 with: 2 with: 1.			"create collection with up to 4 elements"
+x _ Set with: 4 with: 3 with: 2 with: 1.		"create collection with 4 elements"
 x _ Set new.									"allocate collection"
-x add: 4; add: 3; add: 1; add: 2; yourself.		"add element to collection"
+x add: 4; add: 3; add: 1; add: 2; yourself.	"add element to collection"
 y _ x addAll: #(7 8 9).							"add elements to the collection and answer the added elements"
 y _ x removeAll: #(7 8 9).						"remove elements from the collection and answer the removed elements"
 y _ x remove: 4 ifAbsent: [].					"remove element from collection"
 b _ x isEmpty.									"test if empty"
 y _ x size.										"number of elements"
-x includes: 4.									"test if element is in collection"
+x includes: 4.										"test if element is in collection"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the collection"
-b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
+b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].	"test if all elements meet condition"
 y _ x select: [:a | a > 2].						"return collection of elements that pass test"
 y _ x reject: [:a | a < 2].						"return collection of elements that fail test"
 y _ x collect: [:a | a + a].						"transform each element for new collection"
-y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
-sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum elements"
+y _ x detect: [:a | a > 3] ifNone: [].			"return first element that passes test"
+sum _ 0. x do: [:a | sum _ sum + a]. sum.	"sum elements"
 sum _ x inject: 0 into: [:a :c | a + c].			"sum elements"
 max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
    ifTrue: [a]
@@ -1756,20 +1791,20 @@ max _ x inject: 0 into: [:a :c | (a > c)			"find max element in collection"
 y _ x asArray.									"convert to array"
 y _ x asOrderedCollection.					"convert to ordered collection"
 y _ x asSortedCollection.						"convert to sorted collection"
-y _ x asBag.									"convert to bag collection"
-y _ x asSet.									"convert to set collection"
+y _ x asBag.										"convert to bag collection"
+y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:42'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:50'!
 sortedCollection
 	"Sorted Collections"
 	^
 '| b x y sum max |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
-x _ SortedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with up to 4 elements"
+x _ SortedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with 4 elements"
 x _ SortedCollection new.						"allocate collection"
-x _ SortedCollection sortBlock: [:a :c | a > c].	"set sort criteria"
-x add: 3; add: 2; add: 1; add: 4; yourself.			"add element to collection"
+x _ SortedCollection sortBlock: [:a :c | a > c]."set sort criteria"
+x add: 3; add: 2; add: 1; add: 4; yourself.		"add element to collection"
 y _ x addFirst: 5.									"Error: Not Appropriate for a SortedCollection"
 y _ x removeFirst.									"remove first element in collection"
 y _ x addLast: 6.									"add element at end of collection"
@@ -1787,14 +1822,14 @@ b _ x includes: 4.									"test if element is in collection"
 y _ x copyFrom: 2 to: 3.							"subcollection"
 y _ x indexOf: 3 ifAbsent: [0].						"first position of element within collection"
 y _ x occurrencesOf: 3.							"number of times object in collection"
-x do: [:a | Transcript show: a printString; newLine].		"iterate over the collection"
-b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].			"test if all elements meet condition"
+x do: [:a | Transcript show: a printString; newLine].	"iterate over the collection"
+b _ x allSatisfy: [:a | (a >= 1) & (a <= 4)].		"test if all elements meet condition"
 y _ x select: [:a | a > 2].							"return collection of elements that pass test"
 y _ x reject: [:a | a < 2].							"return collection of elements that fail test"
 y _ x collect: [:a | a + a].							"transform each element for new collection"
-y _ x detect: [:a | a > 3] ifNone: [].					"return first element that passes test"
+y _ x detect: [:a | a > 3] ifNone: [].				"return first element that passes test"
 y _ x findFirst: [:a | a < 3].							"find position of first element that passes test"
-sum _ 0. x do: [:a | sum _ sum + a]. sum.			"sum elements"
+sum _ 0. x do: [:a | sum _ sum + a]. sum.		"sum elements"
 sum _ 0. 1 to: (x size) do: [:a | sum _ sum + (x at: a)]. sum.	"sum elements"
 sum _ x inject: 0 into: [:a :c | a + c].				"sum elements"
 max _ x inject: 0 into: [:a :c | (a > c)				"find max element in collection"
@@ -1803,12 +1838,12 @@ max _ x inject: 0 into: [:a :c | (a > c)				"find max element in collection"
 y _ x asArray.										"convert to array"
 y _ x asOrderedCollection.						"convert to ordered collection"
 y _ x asSortedCollection.							"convert to sorted collection"
-y _ x asBag.										"convert to bag collection"
-y _ x asSet.										"convert to set collection"
+y _ x asBag.											"convert to bag collection"
+y _ x asSet.											"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 15:04'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:40'!
 string
 	"Strings"
 	^
@@ -1819,9 +1854,9 @@ b _ x isEmpty.								"test if string is empty"
 y _ x size.									"string size"
 y _ x at: 2.									"char at location"
 y _ x copyFrom: 2 to: 4.					"substring"
-y _ x indexOf: $a ifAbsent: [0].				"first position of character within string"
+y _ x indexOf: $a ifAbsent: [0].			"first position of character within string"
 x _ String new: 4.							"allocate string object"
-x											"set string elements"
+x												"set string elements"
    at: 1 put: $a;
    at: 2 put: $b;
    at: 3 put: $c;
@@ -1831,29 +1866,29 @@ x _ String with: $a with: $b with: $c with: $d.	"set up 4 elements at a time"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the string"
 b _ x allSatisfy: [:a | (a >= $a) & (a <= $z)].	"test if all elements meet condition"
 y _ x select: [:a | a > $a].					"return all elements that meet condition"
-y _ x asSymbol.							"convert string to symbol"
+y _ x asSymbol.								"convert string to symbol"
 y _ x asArray.								"convert string to array"
 x _ ''ABCD'' asByteArray.					"convert string to byte array"
 y _ x asOrderedCollection.				"convert string to ordered collection"
 y _ x asSortedCollection.					"convert string to sorted collection"
-y _ x asBag.								"convert string to bag collection"
-y _ x asSet.								"convert string to set collection"
+y _ x asBag.									"convert string to bag collection"
+y _ x asSet.									"convert string to set collection"
 y _ ''world'' shuffled.							"randomly shuffle string"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/10/2015 21:41'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:39'!
 symbol
 	"Symbols"
 	^
 '| b x y |
-x _ #Hello.								"symbol assignment"
-y _ #String , #Concatenation.			"symbol concatenation (result is string)"
+x _ #Hello.									"symbol assignment"
+y _ #String , #Concatenation.		"symbol concatenation (result is string)"
 b _ x isEmpty.								"test if symbol is empty"
 y _ x size.									"string size"
 y _ x at: 2.									"char at location"
 y _ x copyFrom: 2 to: 4.					"substring"
-y _ x indexOf: $e ifAbsent: [0].				"first position of character within string"
+y _ x indexOf: $e ifAbsent: [0].			"first position of character within string"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the string"
 b _ x allSatisfy: [:a | (a >= $a) & (a <= $z)].	"test if all elements meet condition"
 y _ x select: [:a | a > $a].					"return all elements that meet condition"
@@ -1862,8 +1897,8 @@ y _ x asText.								"convert symbol to text"
 y _ x asArray.								"convert symbol to array"
 y _ x asOrderedCollection.				"convert symbol to ordered collection"
 y _ x asSortedCollection.					"convert symbol to sorted collection"
-y _ x asBag.								"convert symbol to bag collection"
-y _ x asSet.								"convert symbol to set collection"
+y _ x asBag.									"convert symbol to bag collection"
+y _ x asSet.									"convert symbol to set collection"
 
 '! !
 
@@ -1906,7 +1941,7 @@ syntax
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/7/2015 12:34'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:06'!
 time
 	"Time"
 	^
@@ -1924,7 +1959,7 @@ y _ x hour.								"answer the number of hours in the receiver"
 y _ x hour12.
 y _ x hour24.
 y _ x meridianAbbreviation.			"answer ''AM'' or ''PM''"
-y _ x minute.							"answer the number of minutes in the receiver"
+y _ x minute.								"answer the number of minutes in the receiver"
 y _ x nanoSecond.						"answer the number of nanoSeconds in the receiver"
 y _ x print24.							"Return microseconds expressed in 24-hour format"
 String streamContents: [:s | Time now print24: true on: s].	"Format is ''hh:mm:ss'' if true or ''h:mm:ss am'' if false"
@@ -1932,12 +1967,12 @@ y _ x printMinutes.						"Return as string ''hh:mm pm''  "
 String streamContents: [:s | Time now printOn: s].
 y _ x second.							"answer the number of seconds in the receiver"
 String streamContents: [:s | Time now storeOn: s].
-x _ Time millisecondsToRun: [					"timing facility"
+x _ Time millisecondsToRun: [		"timing facility"
    1 to: 1000 do: [:index | y _ 400 factorial * index]].
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/31/2015 11:08'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:24'!
 transcript
 	"Transcript"
 	^
@@ -1947,7 +1982,7 @@ Transcript show: ''Hello World''.		"output string in transcript window"
 Transcript nextPutAll: ''Hello World''.	"output string in transcript window"
 Transcript nextPut: $A.				"output character in transcript window"
 Transcript space.						"output space character in transcript window"
-Transcript tab.						"output tab character in transcript window"
+Transcript tab.							"output tab character in transcript window"
 Transcript newLine.					"linefeed"
 ''Hello'' printOn: Transcript.			"append print string into the window"
 ''Hello'' storeOn: Transcript.			"append store string into the window"
@@ -1955,11 +1990,11 @@ Transcript endEntry.					"flush the output buffer"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 14:56'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/22/2015 12:56'!
 trie
 	"Trie"
 	^
-'| t |
+'| t |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 t _ Trie new.
 t add: ''car''.
 t at: ''car'' put: Float pi.
@@ -1967,9 +2002,15 @@ t at: ''cat'' put: Date today.
 t explore.
 (t includesKey: ''car'') print.
 (t includes: ''cat'') print.
+t at: ''crow'' put: 7.
+t forPrefix: ''c'' keysAndValuesDo: [:key :val | {key} print].
+t forPrefix: ''ca'' keysAndValuesDo: [:key :val | {key} print].
+
 t _ Trie new.
 Smalltalk allImplementedMessages do: [ :s | t add: s ].
-t explore'
+t explore.
+
+'
 ! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 4/12/2015 14:24'!
