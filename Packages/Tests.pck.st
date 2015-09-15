@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2477] on 9 September 2015 at 10:39:03.532339 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2491] on 15 September 2015 at 6:56:31.156189 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 30!
+!provides: 'Tests' 1 32!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -4848,7 +4848,7 @@ testConcatenation
 	self shouldnt: [dir exists].
 	self shouldnt: ['./subDir' asDirectoryEntry exists].! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 23:17'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 7/27/2015 11:30'!
 testCopy
 	"FmFileManTest debug: #testCopy" 
 	| file1 file2 |
@@ -4857,7 +4857,8 @@ testCopy
 
 	file1 fileContents: 'This is a test'.
 
-	self should: [file2 fileContents isEmpty].
+"	self should: [file2 fileContents isEmpty]."
+	self should: [file2 exists not].
 
 	file1 copyTo: file2.
 
@@ -4950,7 +4951,7 @@ testPathComponents
 	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd')! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 23:27'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 7/27/2015 11:32'!
 testPipe
 	"FmFileManTest debug: #testPipe" 
 	| reverseFilter file1 file2 file3 |
@@ -4967,7 +4968,8 @@ testPipe
 
 	self should: [('.' asDirectoryEntry at: file1 name) = 'This is a pipe test'].	
 	self should: [(file2 fileContents) = 'tset epip a si sihT'].	
-	self should: [(file3 fileContents) isEmpty].	
+"	self should: [(file3 fileContents) isEmpty]."
+	self should: [file3 exists not].
 
 	file2 pipe: reverseFilter to: file3.
 	self should: [(file3 fileContents) = 'This is a pipe test'].	
@@ -5070,14 +5072,14 @@ testStream
 	self should: [file1 exists not].
 	! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 9/4/2015 00:46'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 9/13/2015 22:04'!
 testTryReadStream
 	"FmFileManTest debug: #testTryReadStream" 
 	| file1 readStream |
 	file1 := self randomFileName asFileEntry.
 	self deny: (file1 exists).
 
-	self should: [readStream := file1 tryReadStream] raise: FmFileIOAccessor fileDoesNotExistException.
+	self should: [readStream := file1 tryReadStream] raise: FileDoesNotExistException.
 	self deny: (file1 exists).
 	self assert: (readStream isNil).
 	
@@ -5101,14 +5103,14 @@ testTryReadStream
 	
 	! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 9/4/2015 00:44'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 9/13/2015 22:04'!
 testTryWriteStream
 	"FmFileManTest debug: #testTryWriteStream" 
 	| file1 writeStream |
 	file1 := self randomFileName asFileEntry assureExistence.
 	self assert: (file1 exists).
 
-	self should: [writeStream := file1 tryWriteStream] raise: FmFileIOAccessor fileExistsException.
+	self should: [writeStream := file1 tryWriteStream] raise: FileExistsException.
 	self assert: (file1 exists).
 	self assert: (writeStream isNil).
 	
