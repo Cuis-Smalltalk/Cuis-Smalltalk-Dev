@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2477] on 9 September 2015 at 3:26:21.374088 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2498] on 16 September 2015 at 5:34:20.849881 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 0!
-!requires: 'FFI' 1 nil nil!
+!provides: 'OpenCL' 1 1!
 !requires: 'SignalProcessing' 1 37 nil!
+!requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -538,8 +538,10 @@ Subclasses wrap an instance of the corresponding OpenCLOpaqueHandle type.  Provi
 !OpenCLDevice commentStamp: 'jcg 1/14/2010 01:58' prior: 0!
 Encapsulates a CLDeviceID, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLDeviceID, and this class deleted (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI)..!
 
-!OpenCLPlatform commentStamp: 'jcg 1/14/2010 01:58' prior: 0!
-Encapsulates a CLPlatformID, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLPlatformID, and this class deleted  (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI).!
+!OpenCLPlatform commentStamp: 'jmv 9/16/2015 17:28' prior: 0!
+Encapsulates a CLPlatformID, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLPlatformID, and this class deleted  (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI).
+
+OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].!
 
 !OpenCLRefCountedObject commentStamp: 'jcg 1/15/2010 02:01' prior: 0!
 Objects in the OpenCL Runtime layer are ref-counted (as opposed to platforms and devices in the Platform layer).  This class, along with OpenCLRefCounter, provides a framework for managing the ref-counts, as well as a finalization mechanism so that OpenCL resources are not leaked when these objects are garbage-collected while their ref-count is > 0.
@@ -583,7 +585,7 @@ Private to the OpenCL framework; users of the framework will never directly touc
 Keeps track of the reference-count of an OpenCLRefCountedObject.  The reason that this is a separate class is that it also acts as the executor for finalizing the object.
 !
 
-!OpenCLTest commentStamp: 'jcg 1/15/2010 00:03' prior: 0!
+!OpenCLTest commentStamp: '<historical>' prior: 0!
 Test and document usage of OpenCL framework.
 
 Things we still need to test:
@@ -593,7 +595,10 @@ For example:
 evt := [commandQueue someCommandThatWillFailToEnqueue] 
 		on: OpenCLError 
 		do: [:err | err resume].
-self should: [evt getHandle = #[0 0 0 0] ].!
+self should: [evt getHandle = #[0 0 0 0] ].
+
+Additionally, try:
+	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].!
 
 !Object methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:08'!
 asOpenCLArg
@@ -1548,11 +1553,13 @@ destroy
 	].
 	! !
 
-!OpenCLExample methodsFor: 'initialize' stamp: 'jmv 9/1/2015 15:10'!
+!OpenCLExample methodsFor: 'initialize' stamp: 'jmv 9/16/2015 17:30'!
 initialize
 	self destroy. "reset to initial state"
 "	device := OpenCLPlatform allPlatforms first allGPUs first."
-	device := (OpenCLPlatform allPlatforms collect: [:platform | platform allGPUs, platform allCPUs]) concatenation first.
+"	device := (OpenCLPlatform allPlatforms collect: [:platform |
+		platform allGPUs, platform allCPUs]) concatenation first."
+	device := OpenCLPlatform allPlatforms first allDevices first.
 	context := OpenCLContext newForDevices: {device}.
 	queue := context commandQueueOn: device.
 	program := context programWithSource: self sourceCode.
@@ -2541,10 +2548,12 @@ example1
 	
 ! !
 
-!OpenCLFill256 methodsFor: 'initialize' stamp: 'jmv 8/5/2015 16:40'!
+!OpenCLFill256 methodsFor: 'initialize' stamp: 'jmv 9/16/2015 17:31'!
 initialize
 "	device := OpenCLPlatform allPlatforms first allGPUs first."
-	device := (OpenCLPlatform allPlatforms collect: [:platform | platform allGPUs, platform allCPUs]) concatenation first.
+"	device := (OpenCLPlatform allPlatforms collect: [:platform |
+		platform allGPUs, platform allCPUs]) concatenation first."
+	device := OpenCLPlatform allPlatforms first allDevices first.
 	context := OpenCLContext newForDevices: {device}.
 	queue := context commandQueueOn: device.
 	program := context programWithSource: self sourceCode.
@@ -4163,8 +4172,16 @@ queueProperties
 These properties are described in the table for clCreateCommandQueue. The mandated minimum capability is CL_QUEUE_PROFILING_ENABLE."
 	^self bitfieldProperty: CL_DEVICE_QUEUE_PROPERTIES! !
 
-!OpenCLDevice methodsFor: 'report' stamp: 'jmv 8/19/2015 15:12'!
-reportOn: aStream
+!OpenCLDevice methodsFor: 'report' stamp: 'jmv 9/16/2015 17:09'!
+reportExtensionsOn: aStream
+	"
+	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
+	"
+	aStream nextPutAll: 'Extensions: '; newLine.
+	self extensions do: [ :extension | aStream nextPut: $	 ; nextPutAll: extension; newLine ]! !
+
+!OpenCLDevice methodsFor: 'report' stamp: 'jmv 9/16/2015 17:08'!
+reportGeneralOn: aStream
 	"
 	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
 	"
@@ -4223,9 +4240,7 @@ reportOn: aStream
 	aStream nextPutAll: 'SinglePrecisionConfig: '; nextPutAll: self singlePrecisionConfig printString; newLine.
 	aStream nextPutAll: 'SupportsErrorCorrection: '; nextPutAll: self supportsErrorCorrection printString; newLine.
 	aStream nextPutAll: 'Type: '; nextPutAll: self type printString; newLine.
-	aStream nextPutAll: 'VendorID: '; nextPutAll: self vendorID printString; newLine.
-	aStream nextPutAll: 'Extensions: '; newLine.
-	self extensions do: [ :extension | aStream nextPut: $	 ; nextPutAll: extension; newLine ]! !
+	aStream nextPutAll: 'VendorID: '; nextPutAll: self vendorID printString; newLine.! !
 
 !OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:47'!
 singlePrecisionConfig
@@ -4388,40 +4403,39 @@ name
 profile
 	^profile! !
 
-!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 9/9/2015 15:17'!
-reportImageFormatsOn: aStream
-	"
-	OpenCLPlatform allPlatforms do: [ :platform | platform reportImageFormatsOn: Transcript ].
-	"
-OpenCLPlatform allPlatforms do: [ :platform |
-	aStream nextPutAll: '===================='; newLine.
-	aStream nextPutAll: ('Platform: ' , platform name); newLine.
-	platform allGPUs do: [ :gpu |
-		aStream nextPutAll: ('GPU: ', gpu name); newLine.
-		aStream nextPutAll: '--- Image formats for CL_MEM_READ_WRITE ---'; newLine.
-		((OpenCLContext newForDevices: { gpu }) supportedImageFormats: 1 "CL_MEM_READ_WRITE" type: 16r10F1"CL_MEM_OBJECT_IMAGE2D") do: [ :each |
-			aStream nextPutAll: each printString; newLine ].
-		aStream nextPutAll: '--- Image formats for CL_MEM_WRITE_ONLY ---'; newLine.
-		((OpenCLContext newForDevices: { gpu }) supportedImageFormats: 2 "CL_MEM_WRITE_ONLY" type: 16r10F1"CL_MEM_OBJECT_IMAGE2D") do: [ :each | 
-			aStream nextPutAll: each printString; newLine ].
-		aStream nextPutAll: '--- Image formats for CL_MEM_READ_ONLY ---'; newLine.
-		((OpenCLContext newForDevices: { gpu }) supportedImageFormats: 4 "CL_MEM_READ_ONLY" type: 16r10F1"CL_MEM_OBJECT_IMAGE2D") do: [ :each |
-			aStream nextPutAll: each printString; newLine ].
-	]
-].
-aStream nextPutAll: '==================' ; newLine.! !
-
-!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 8/20/2015 20:01'!
+!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 9/16/2015 17:25'!
 reportOn: aStream
 	"
 	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
 	"
+	| context |
 	aStream nextPutAll: '=================== '; newLine.
 	aStream nextPutAll: 'Platform: '; nextPutAll: name; newLine.
 	aStream nextPutAll: '=================== '; newLine.
-	self allGPUs do: [ :gpu | gpu reportOn: aStream ].
+	aStream nextPutAll: '-----GPUs---------------------------- '; newLine.
 	aStream nextPutAll: '--------------------------------------- '; newLine.
-	self allCPUs do: [ :cpu | cpu reportOn: aStream ].
+	self allGPUs do: [ :gpu |
+			gpu reportGeneralOn: aStream.
+			aStream nextPutAll: '--------------------------------------- '; newLine.
+			gpu reportExtensionsOn: aStream.
+			aStream nextPutAll: '--------------------------------------- '; newLine.
+			(OpenCLContext newForDevices: {gpu})
+				reportImageFormatsOn: aStream ]
+		separatedBy: [aStream nextPutAll: '--------------------------------------- '; newLine].
+	aStream nextPutAll: '--------------------------------------- '; newLine.
+	aStream nextPutAll: '-----CPUs---------------------------- '; newLine.
+	aStream nextPutAll: '--------------------------------------- '; newLine.
+	self allCPUs do: [ :cpu |
+			cpu reportGeneralOn: aStream.
+			aStream nextPutAll: '--------------------------------------- '; newLine.
+			cpu reportExtensionsOn: aStream.
+			aStream nextPutAll: '--------------------------------------- '; newLine.
+			(OpenCLContext newForDevices: {cpu})
+				reportImageFormatsOn: aStream ]
+		separatedBy: [aStream nextPutAll: '--------------------------------------- '; newLine].
+	aStream nextPutAll: '=================== '; newLine.
+	context _ OpenCLContext newForDevices: self allDevices.
+	context reportImageFormatsOn: aStream.
 	aStream nextPutAll: '=================== '; newLine.! !
 
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
@@ -4709,6 +4723,24 @@ readOnlyBufferOfSize: byteSize
 readWriteBufferOfSize: byteSize
 	"Create an OpenCLBuffer that is both readable and writeable."
 	^self newBuffer: CL_MEM_READ_WRITE ofSize: byteSize! !
+
+!OpenCLContext methodsFor: 'report' stamp: 'jmv 9/16/2015 17:20'!
+reportImageFormatsOn: aStream
+	"
+	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
+	"
+	aStream nextPutAll: 'Image Formats for devices: { ['.
+	self devices do: [ :device | aStream nextPutAll: device name ] separatedBy: [ aStream nextPutAll: '], [' ].
+	aStream nextPutAll: '] }'; newLine.
+	aStream nextPutAll: '--- Image formats for CL_MEM_READ_WRITE ---'; newLine.
+	(self supportedImageFormats: 1 "CL_MEM_READ_WRITE" type: 16r10F1"CL_MEM_OBJECT_IMAGE2D") do: [ :each |
+		aStream nextPutAll: each printString; newLine ].
+	aStream nextPutAll: '--- Image formats for CL_MEM_WRITE_ONLY ---'; newLine.
+	(self supportedImageFormats: 2 "CL_MEM_WRITE_ONLY" type: 16r10F1"CL_MEM_OBJECT_IMAGE2D") do: [ :each | 
+		aStream nextPutAll: each printString; newLine ].
+	aStream nextPutAll: '--- Image formats for CL_MEM_READ_ONLY ---'; newLine.
+	(self supportedImageFormats: 4 "CL_MEM_READ_ONLY" type: 16r10F1"CL_MEM_OBJECT_IMAGE2D") do: [ :each |
+		aStream nextPutAll: each printString; newLine ]! !
 
 !OpenCLContext methodsFor: 'sampler creation' stamp: 'jmv 9/9/2015 12:27'!
 sampler: useNormalizedCoords addressing: addressingMode filter: filterMode
@@ -9560,10 +9592,12 @@ initialize
 	"OpenCLRefCounter initialize"
 	Smalltalk removeFromStartUpList: self.! !
 
-!OpenCLTest methodsFor: 'running' stamp: 'jmv 8/5/2015 16:39'!
+!OpenCLTest methodsFor: 'running' stamp: 'jmv 9/16/2015 17:32'!
 setUp
 	| gpus |
-	gpus := OpenCLPlatform allPlatforms collect: [:platform | platform allGPUs, platform allCPUs].
+	"gpus := OpenCLPlatform allPlatforms collect: [ :platform |
+		platform allGPUs, platform allCPUs ]."
+	gpus := OpenCLPlatform allPlatforms collect: [ :platform | platform allGPUs ].
 	gpus := gpus concatenation.
 	context := OpenCLContext newForDevices: gpus.
 	q1 := context commandQueueOn: gpus first.
@@ -9612,8 +9646,8 @@ testFinalization
 	self should: [refCounter count = 0].
 ! !
 
-!OpenCLTest methodsFor: 'running' stamp: 'jmv 9/9/2015 11:55'!
-dontTestMapAndCopyImage
+!OpenCLTest methodsFor: 'running' stamp: 'jmv 9/16/2015 17:33'!
+testMapAndCopyImage
 	
 	| inputForm outputForm mapForm imageFormat image1 image2 ptr map1evt map2evt unmap1evt unmap2evt copyEvt |
 	
