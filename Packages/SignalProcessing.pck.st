@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2475] on 8 September 2015 at 5:25:32.947487 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2504] on 19 September 2015 at 6:39:10.462943 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 37!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 38!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -174,7 +174,20 @@ are now obsolete. They have been superseded by Histogram and UnitaryMonotonicMap
 ======================================================!
 
 !FloatImage commentStamp: '<historical>' prior: 0!
-My instances are 1-band images suitable for Image Processing algorithms. Pixel values are 32-bit Float.!
+My instances are 1-band images suitable for Image Processing algorithms. Pixel values are 32-bit Float.
+
+A glimpse of the things you can do:
+
+	| tiff jpg component iTiff iJpg diff |
+	tiff _ '../../4.2.04.tiff' asFileEntry form.
+	jpg _ '../../4.2.04.jpg' asFileEntry form.
+	jpg _ '../../4.2.04-95.jpg' asFileEntry form.
+	component _ #green.
+	iTiff _ FloatImage from32BitColorForm: tiff component: component.
+	iJpg _ FloatImage from32BitColorForm: jpg component: component.
+	diff _ iTiff - iJpg * 14 + 0.5.
+	diff histogram plot.
+!
 
 !IrregularSampledImage commentStamp: '<historical>' prior: 0!
 Some real, known, pixels are added one by one (pixel position is usually random). At any point, all the other pixels can quickly be interpolated.

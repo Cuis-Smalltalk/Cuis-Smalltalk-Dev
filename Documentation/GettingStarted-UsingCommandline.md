@@ -18,7 +18,7 @@ sudo apt-get update
 sudo aptitude install ia32-libs
 ```
 ```
-$ coglinux/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2502.image
+$ coglinux/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2504.image
 ```
 
 ### On Mac OS X ###
@@ -29,5 +29,5 @@ $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/ar
 $ unzip master.zip
 $ curl -o Cog.app.tgz www.mirandabanda.org/files/Cog/VM/VM.r3395/Cog.app-15.22.3370.tgz
 $ tar -zxvf Cog.app.tgz
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2502.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2504.image
 ```
