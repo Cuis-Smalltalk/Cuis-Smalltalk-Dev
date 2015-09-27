@@ -31,13 +31,13 @@ Cuis is continuously evolving towards simplicity. Each release is better (i.e. s
 If you want to know how Cuis has evolved in the past, check the [Release Notes](http://www.cuis-smalltalk.org/CuisReleaseNotes.html).
 
 ### Getting Started ###
-If you are on Windows, follow the instructions in [Getting started using GUI](Documentation/GettingStarted-UsingGUI.md) .
+If you are on Windows, and not familiar with Git, follow the instructions in [Getting started using GUI](Documentation/GettingStarted-UsingGUI.md) .
 
-If you are on Linux, follow the instructions in [Getting started using commandline](Documentation/GettingStarted-UsingCommandline.md) .
+If you are on Linux, and not familiar with Git, follow the instructions in [Getting started using commandline](Documentation/GettingStarted-UsingCommandline.md) .
 
-If you are on Mac OS X, you might follow any of the above. If you are comfortable with Terminal, [Getting started using commandline](Documentation/GettingStarted-UsingCommandline.md) is probably best.
+If you are on Mac OS X, and not familiar with Git, you might follow any of the above. If you are comfortable with Terminal, [Getting started using commandline](Documentation/GettingStarted-UsingCommandline.md) is probably best.
 
-Alternatively, you might also follow [Getting started: Alternative method using Git and commandline](Documentation/GettingStarted-AlternativeMethodUsingGitAndCommandline.md) .
+Finally, if you are familiar with Git, it might be best to follow  .
 
 ### Towards Morphic 3
 In Cuis work is on the way to restructure and upgrade the Morphic classes. For more see [Notes on Morphic](Documentation/NotesOnMorphic.md).

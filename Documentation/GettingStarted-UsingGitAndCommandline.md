@@ -1,6 +1,6 @@
 ## Setting up and starting Cuis using Git and the command line
 
-Instructions for setting up Cuis. For Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests.
+Instructions for setting up Cuis, for Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests.
 
 ### Create project folder and add Cuis Smalltalk ###
 ```
@@ -50,7 +50,7 @@ $  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2505.image
 ```
 MacOSX:
 ```
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2505.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2505.image
 ```
 Linux:
 ```

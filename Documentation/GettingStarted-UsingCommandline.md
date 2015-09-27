@@ -1,6 +1,8 @@
 ## Setting up and starting Cuis using a command line
 
-What follows are instructions for setting up Cuis on Linux or Mac OS X using the command line. If you are familiar with Git, you can use it, but that is not described here. If you are on Windows, there are instructions for using the Windows file explorer in another document. This document is intended for beginners, and tries to require as little previous knowledge as possible.
+What follows are instructions for setting up Cuis on Linux or Mac OS X using the command line. If you are familiar with Git, please see [Getting started using Git Bash](Documentation/GettingStarted-UsingGitAndCommandline.md) . If you are on Windows, there are instructions for using the Windows file explorer in another document. This document is intended for beginners, and tries to require as little previous knowledge as possible.
+
+If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org , and email your code there.
 
 ### On Linux ###
 ```
