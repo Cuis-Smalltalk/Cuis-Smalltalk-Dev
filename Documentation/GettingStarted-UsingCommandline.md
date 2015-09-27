@@ -13,7 +13,8 @@ $ unzip master.zip
 $ wget -O coglinuxht.tgz www.mirandabanda.org/files/Cog/VM/VM.r3370/coglinuxht-15.22.3370.tgz
 $ tar -zxvf coglinuxht.tgz
 ```
-If this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries:
+If this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
+(This was tested on Debian 8)
 ```
 sudo dpkg --add-architecture i386
 sudo apt-get update
