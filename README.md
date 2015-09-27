@@ -37,7 +37,7 @@ If you are on Linux, and not familiar with Git, follow the instructions in [Gett
 
 If you are on Mac OS X, and not familiar with Git, you might follow any of the above. If you are comfortable with Terminal, [Getting started using commandline](Documentation/GettingStarted-UsingCommandline.md) is probably best.
 
-Finally, if you are familiar with Git, it might be best to follow  .
+Finally, if you are familiar with Git, it might be best to follow [Getting started using Git Bash](Documentation/GettingStarted-UsingGitAndCommandline.md) .
 
 ### Towards Morphic 3
 In Cuis work is on the way to restructure and upgrade the Morphic classes. For more see [Notes on Morphic](Documentation/NotesOnMorphic.md).
