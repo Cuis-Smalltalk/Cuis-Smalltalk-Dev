@@ -43,6 +43,8 @@ Cuis is maintained on https://github.com/Cuis-Smalltalk.
 
 Please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
 
+In any case, we also accept contributions as ChangeSet files in email. Any contribution must be under the MIT license.
+
 To contribute code, please use an image with all included packages already loaded, and include new versions of affected packages. This will ensure we don't break them while we evolve Cuis.
 Here is a Smalltalk script to load all packages currently included:
 ```
