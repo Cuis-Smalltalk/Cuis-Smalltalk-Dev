@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2491] on 15 September 2015 at 6:56:31.156189 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2513] on 2 October 2015 at 5:10:30.977765 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 32!
+!provides: 'Tests' 1 34!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -4746,9 +4746,9 @@ testZeroSignificandAsInteger
 	
 	self assert: 0.0 significandAsInteger = 0! !
 
-!FmFileIOAccessorTest methodsFor: 'private' stamp: 'mu 3/15/2007 11:10'!
+!FmFileIOAccessorTest methodsFor: 'private' stamp: 'jmv 9/28/2015 14:02'!
 defaultDirectoryPath
-	^FmFileIOAccessor defaultDirectoryPath! !
+	^FmDirectoryEntry currentDirectory pathName! !
 
 !FmFileIOAccessorTest methodsFor: 'testing' stamp: 'mu 3/15/2007 11:15'!
 testDirectoryExists
@@ -4903,7 +4903,7 @@ testFileContents
 	file2 delete.
 	self should: [file2 exists not]! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 6/6/2015 23:21'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 9/28/2015 14:01'!
 testIsAbsolutePathName
 	"
 	FmFileManTest debug: #testIsAbsolutePathName
@@ -4911,8 +4911,10 @@ testIsAbsolutePathName
 	self assert: '/' isAbsolutePathName.
 	self assert: '/temp/' isAbsolutePathName.
 	self assert: '/temp/a' isAbsolutePathName.
-	self assert: 'C:/temp/b' isAbsolutePathName.
-"	self assert: 'Macintosh HD/tmp' isAbsolutePathName."
+	Smalltalk platformName = 'Win32' ifTrue: [
+		self assert: 'C:/temp/b' isAbsolutePathName ].
+	Smalltalk platformName = 'Mac OS' ifTrue: [
+		self assert: 'Macintosh HD/tmp' isAbsolutePathName ].
 	
 	self deny: './' isAbsolutePathName.
 	self deny: '../' isAbsolutePathName.
@@ -5051,87 +5053,25 @@ testRoot
 	
 	! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/15/2006 20:15'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/2/2015 16:42'!
 testStream
 	"FmFileManTest debug: #testStream" 
 	| file1 contents formerContents allContents |
 	file1 := self randomFileName asFileEntry.
-	file1 writeStreamContents: [:str | str nextPutAll: 'HELLO!!'].
-	contents := file1 readStreamContents: [:str | str upToEnd].
+	file1 writeStream: [:str | str nextPutAll: 'HELLO!!'].
+	contents := file1 readStream: [:str | str upToEnd].
 	self should: [contents = 'HELLO!!'].
 
-	file1 appendStreamContents: [:str | str nextPutAll: 'AGAIN!!'].
+	file1 appendStream: [:str | str nextPutAll: 'AGAIN!!'].
 
-	formerContents := file1 readStreamContents: [:str | str upTo:$!!].
+	formerContents := file1 readStream: [:str | str upTo:$!!].
 	self should: [formerContents = 'HELLO'].
 
-	allContents := file1 readStreamContents: [:str | str upToEnd].
+	allContents := file1 readStream: [:str | str upToEnd].
 	self should: [allContents = 'HELLO!!AGAIN!!'].
 
 	file1 delete.
 	self should: [file1 exists not].
-	! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 9/13/2015 22:04'!
-testTryReadStream
-	"FmFileManTest debug: #testTryReadStream" 
-	| file1 readStream |
-	file1 := self randomFileName asFileEntry.
-	self deny: (file1 exists).
-
-	self should: [readStream := file1 tryReadStream] raise: FileDoesNotExistException.
-	self deny: (file1 exists).
-	self assert: (readStream isNil).
-	
-	readStream := file1 readStreamIfError: [:ex | 'NotExist'].
-	
-	self assert: (readStream = 'NotExist').
-	self deny: (file1 exists).
-
-	file1 assureExistence.
-	self assert: (file1 exists).
-	
-	readStream := file1 readStreamIfError: [:ex | 'NotExist'].
-	self deny: (readStream = 'NotExist').
-	
-	self assert: (readStream contents isEmpty).
-	readStream close.
-	
-	file1 delete.
-	self deny: (file1 exists).
-	
-	
-	! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 9/13/2015 22:04'!
-testTryWriteStream
-	"FmFileManTest debug: #testTryWriteStream" 
-	| file1 writeStream |
-	file1 := self randomFileName asFileEntry assureExistence.
-	self assert: (file1 exists).
-
-	self should: [writeStream := file1 tryWriteStream] raise: FileExistsException.
-	self assert: (file1 exists).
-	self assert: (writeStream isNil).
-	
-	writeStream := file1 writeStreamIfError: [:ex | 'Exists'].
-	
-	self assert: (writeStream = 'Exists').
-	self assert: (file1 exists).
-	
-	file1 delete.
-	self deny: (file1 exists).
-	
-	writeStream := file1 writeStreamIfError: [:ex | 'Exists'].
-	self deny: (writeStream = 'Exists').
-	writeStream nextPutAll: 'Test'; close.
-	
-	self assert: (file1 textContents = 'Test').
-	
-	file1 delete.
-	self deny: (file1 exists).
-	
-	
 	! !
 
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!

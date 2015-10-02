@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 5:44:51.455572 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2513] on 2 October 2015 at 5:06:39.301765 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 5!
+!provides: 'Sound' 1 6!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
@@ -843,16 +843,14 @@ readFromFile: fileName
 		skipDataChunk: false.
 ! !
 
-!AIFFFileReader methodsFor: 'reading' stamp: 'jmv 8/13/2008 12:59'!
+!AIFFFileReader methodsFor: 'reading' stamp: 'jmv 10/2/2015 16:41'!
 readFromFile: fileName mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag
 	"Read the AIFF file of the given name. See comment in readFromStream:mergeIfStereo:skipDataChunk:."
 	"AIFFFileReader new readFromFile: 'test.aiff' mergeIfStereo: false skipDataChunk: true"
 
-	| f |
-	f _ (FileStream readOnlyFileNamed: fileName) binary.
-	[ self readFromStream: f mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag ]
-		ensure: [ f close ]
-! !
+	fileName asFileEntry readStream: [ :strm |
+		strm binary.
+		self readFromStream: strm mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag ]! !
 
 !AIFFFileReader methodsFor: 'reading'!
 readFromStream: aBinaryStream mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag

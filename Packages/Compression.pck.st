@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2395] on 30 June 2015 at 11:34:06.089079 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2513] on 2 October 2015 at 5:06:23.517765 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 7!
+!provides: 'Compression' 1 8!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -376,17 +376,13 @@ Instance variables:
 	codes		<WordArray>	 - Codes for each value
 	maxCode		<Integer>	- Maximum value with non-zero frequency!
 
-!CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:45'!
-browseMCZCode: aStream
+!CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:55'!
+browseMCZCode: aFileEntry
 	"Browse the selected file."
-	| unzipped |
-	unzipped _ aStream asUnZippedStream: 'snapshot/source.st'.
-	unzipped ascii.
-	CodeFileBrowserWindow
-		browseStream: unzipped
-		named: aStream name! !
 
-!CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:46'!
+	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
+
+!CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:52'!
 serviceBrowseMCZCode
 	"Answer a service for opening a changelist browser on a file"
 
@@ -397,10 +393,10 @@ serviceBrowseMCZCode
 		description: 'open a "file-contents browser" on this file, allowing you to view and selectively load its code'
 		buttonLabel: 'code')
 			argumentGetter: [ :fileList |
-				fileList readOnlyStream ]! !
+				fileList selectedFileEntry ]! !
 
-!ChangeList class methodsFor: '*Compression' stamp: 'jmv 1/9/2014 23:31'!
-browseMCZContents: aStream
+!ChangeList class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:50'!
+browseMCZContents: aFileEntry
 	"Browse the selected file."
 	|  unzipped changeList fullName packageFile pkName |
 	
@@ -410,16 +406,18 @@ browseMCZContents: aStream
 	However, this was never tested to run!!"
 	self flag: #jmvVer.
 
-	fullName _ aStream name.
+	fullName _ aFileEntry pathName.
 	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
-	unzipped _ aStream asUnZippedStream: 'snapshot/source.st'.
-	unzipped ascii.
-	changeList _ self new scanFile: unzipped from: 0 to: unzipped size.
-	aStream reset.
-	packageFile _ CodePackageFile
-		buildFileStream: unzipped
-		packageName: pkName
-		fullName: fullName.
+	aFileEntry readStream: [ :stream |
+		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
+		unzipped ascii.
+		changeList _ self new scanFile: unzipped from: 0 to: unzipped size.
+		stream reset.
+		packageFile _ CodePackageFile
+			buildFileStream: unzipped
+			packageName: pkName
+			fullName: fullName.
+	].
 	"Add deletions of methods and classes that are in the CodePackage (i.e., active in the system)
 	but are no longer in the CodePackageFile being viewed."
 	packageFile methodsToRemove do: [ :methodReference |
@@ -431,9 +429,9 @@ browseMCZContents: aStream
 			addItem: (ClassDeletionChangeRecord new clsName: clsName)
 			text: 'class no longer in package: ', clsName ].
 	changeList clearSelections.
-	ChangeListWindow open: changeList label: aStream name! !
+	ChangeListWindow open: changeList label: aFileEntry pathName! !
 
-!ChangeList class methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:44'!
+!ChangeList class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:51'!
 serviceMCZContents
 	"Answer a service for opening a changelist browser on a file"
 
@@ -444,7 +442,7 @@ serviceMCZContents
 		description: 'open a code file contents tool on this file'
 		buttonLabel: 'contents')
 			argumentGetter: [ :fileList |
-				fileList readOnlyStream ]! !
+				fileList selectedFileEntry ]! !
 
 !FileList methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:41'!
 compressFile
@@ -465,28 +463,25 @@ serviceCompressFile
 		description: 'compress file'
 		buttonLabel: 'compress'! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:43'!
-browseMCZCode: aStream
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:55'!
+browseMCZCode: aFileEntry
 	"Browse the selected file."
-	| unzipped |
-	unzipped _ aStream asUnZippedStream: 'snapshot/source.st'.
-	unzipped ascii.
-	CodeFileBrowserWindow
-		browseStream: unzipped
-		named: aStream name! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:42'!
-installMonticelloPackageStream: aStream
+	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
+
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 17:00'!
+installMonticelloPackage: anFmFileEntry
 	
-	|  stream fullName pkName |
-	fullName _ aStream name.
+	| fullName pkName unzip |
+	fullName _ anFmFileEntry pathName.
 	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
-	stream _ aStream asUnZippedStream: 'snapshot/source.st'.
-	stream ascii.
-	CodePackageFile
-		installFileStream: stream
-		packageName: pkName
-		fullName: fullName! !
+	anFmFileEntry readStream: [ :stream |
+		unzip _ stream asUnZippedStream: 'snapshot/source.st'.
+		unzip ascii.
+		CodePackageFile
+			installFileStream: unzip
+			packageName: pkName
+			fullName: fullName ]! !
 
 !CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:42'!
 monticelloPackageNameFrom: fullName
@@ -496,7 +491,7 @@ monticelloPackageNameFrom: fullName
 		ifNotNil: [ :ary | ary first ]
 		ifNil: [ localName sansPeriodSuffix ]! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:43'!
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:52'!
 serviceBrowseMCZCode
 	"Answer a service for opening a changelist browser on a file"
 
@@ -506,19 +501,19 @@ serviceBrowseMCZCode
 		selector: #browseMCZCode:
 		description: 'open a "file-contents browser" on this file, allowing you to view and selectively load its code'
 		buttonLabel: 'code')
-			argumentGetter: [ :fileList | fileList readOnlyStream ] ! !
+			argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 7/4/2013 22:29'!
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 17:00'!
 serviceInstallMonticelloPackage
 	"Answer the service of installing a Monticello package file (Squeak's compressed chunk format file for a package)"
 
 	^ (SimpleServiceEntry
 		provider: self 
 		label: 'install Monticello package'
-		selector: #installMonticelloPackageStream:
+		selector: #installMonticelloPackage:
 		description: 'install the Monticello package, replacing all existing code in the package (if any); create a new change set just for the installation'
 		buttonLabel: 'install package')
-		argumentGetter: [ :fileList | fileList readOnlyStream ] ! !
+		argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
 
 !ArrayedCollection methodsFor: '*Compression' stamp: 'tk 3/7/2001 18:07'!
 writeOnGZIPByteStream: aStream 
@@ -536,6 +531,23 @@ unzipped
 	magic2 _ (self at: 2) asInteger.
 	(magic1 = 16r1F and:[magic2 = 16r8B]) ifFalse: [ ^self ].
 	^ (GZipReadStream on: self) upToEnd! !
+
+!CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 17:05'!
+browseMCZFile: aFileEntry
+
+	| codeFile organizer browser unzipped |
+	organizer _ SystemOrganizer defaultList: Array new.
+	aFileEntry readStream: [ :stream |
+		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
+		unzipped ascii.
+		codeFile _ (CodeFile new fullName: aFileEntry pathName; buildFrom: unzipped) ].
+	organizer 
+		classifyAll: codeFile classes keys 
+		under: codeFile name.
+	(browser _ CodeFileBrowser new)
+		systemOrganizer: organizer;
+		codeFile: codeFile.
+	CodeFileBrowserWindow open: browser label: nil! !
 
 !PositionableStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:40'!
 asZLibReadStream
@@ -945,15 +957,14 @@ setContentsOf: aMemberOrName to: aString
 writeTo: aStream
 	self subclassResponsibility! !
 
-!Archive methodsFor: 'archive operations' stamp: 'jmv 8/13/2008 13:02'!
+!Archive methodsFor: 'archive operations' stamp: 'jmv 10/2/2015 16:41'!
 writeToFileNamed: aFileName
-	| stream |
+
 	"Catch attempts to overwrite existing zip file"
 	(self canWriteToFileNamed: aFileName)
 		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	stream _ StandardFileStream forceNewFileNamed: aFileName.
-	[ self writeTo: stream ]
-		ensure: [ stream close ]! !
+	aFileName asFileEntry writeStream: [ :stream |
+		self writeTo: stream ]! !
 
 !ZipArchive methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:47'!
 close
