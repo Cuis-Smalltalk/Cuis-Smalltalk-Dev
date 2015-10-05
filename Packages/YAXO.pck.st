@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 5:38:56.752572 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:09:14.501236 pm'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 6!
+!provides: 'YAXO' 1 7!
 !requires: 'Network-Kernel' 1 nil nil!
 !classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
@@ -563,15 +563,14 @@ parseDocumentFrom: aStream
 parseDocumentFromFileNamed: fileName
 	^self parseDocumentFromFileNamed: fileName readIntoMemory: false! !
 
-!SAXHandler class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:44'!
+!SAXHandler class methodsFor: 'instance creation' stamp: 'jmv 10/3/2015 12:30'!
 parseDocumentFromFileNamed: fileName readIntoMemory: readIntoMemory
-	| stream xmlDoc |
-	stream _ FileDirectory currentDirectory readOnlyFileNamed: fileName.
-	readIntoMemory
-		ifTrue: [stream _ stream contentsOfEntireFile readStream].
-	[xmlDoc _ self parseDocumentFrom: stream]
-		ensure: [stream close].
-	^xmlDoc! !
+
+	^fileName asFileEntry readStream: [ :stream |
+		self parseDocumentFrom: 
+			(readIntoMemory
+				ifTrue: [ stream contentsOfEntireFile readStream ]
+				ifFalse: [ stream ])]! !
 
 !SAXHandler class methodsFor: 'instance creation' stamp: 'mir 6/5/2003 19:15'!
 parserOnFileNamed: fileName

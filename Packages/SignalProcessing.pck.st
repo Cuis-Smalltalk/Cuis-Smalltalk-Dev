@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2504] on 19 September 2015 at 6:39:10.462943 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:03:02.583904 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 38!
+!provides: 'SignalProcessing' 1 39!
+!requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -2662,13 +2662,12 @@ withImaginary: aFloatImage displayPhaseAt: aPoint
 		(phase / twoPi + 0.5 * 255) rounded ].
 	f displayAt: aPoint! !
 
-!FloatImage methodsFor: 'file operations' stamp: 'jmv 6/17/2015 13:33'!
+!FloatImage methodsFor: 'file operations' stamp: 'jmv 10/3/2015 19:07'!
 writeFileNamed: filename
 
-	| refStream |
-	refStream _ ReferenceStream forceNewFileNamed: filename.
-	[ refStream nextPut: self ] ensure: [
-		refStream close ]! !
+	filename asFileEntry forceWriteStream: [ :stream |
+		(ReferenceStream on: stream)
+			nextPut: self ]! !
 
 !FloatImage methodsFor: 'file operations' stamp: 'jmv 4/28/2015 11:59'!
 writePNGfileNamed: fName
@@ -2848,14 +2847,12 @@ from8BitColorForm: aForm
 	instance fillFrom8BitColorForm: aForm.
 	^instance! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 10/10/2012 13:57'!
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 10/3/2015 19:53'!
 fromFileNamed: filename
 
-	| answer refStream |
-	refStream _ ReferenceStream oldFileNamed: filename.
-	[ answer _ refStream next ] ensure: [
-		refStream close ].
-	^answer! !
+	^filename asFileEntry readStream: [ :stream |
+		(ReferenceStream on: stream)
+			next ]! !
 
 !FloatImage class methodsFor: 'instance creation' stamp: 'jmv 9/7/2015 13:03'!
 fromForm: aForm

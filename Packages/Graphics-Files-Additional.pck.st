@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2475] on 8 September 2015 at 5:17:18.780487 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:05:38.459613 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 7!
+!provides: 'Graphics-Files-Additional' 1 8!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1330,7 +1330,7 @@ writeTRNSChunkOn: aStream
 		aStream nextPut: (aColor alpha * 255) truncated.
 	].! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 6/30/2011 10:22'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/3/2015 14:18'!
 writeType3DataOn: zStream
 	"Write color indexed data."
 	| scanline hack hackBlt swizzleBlt swizzleHack hackDepth |
@@ -1354,10 +1354,9 @@ writeType3DataOn: zStream
 		swizzleBlt ifNotNil:[swizzleBlt copyBits].
 		zStream nextPut: 0. "filterType"
 		zStream next: bytesPerScanline putAll: scanline startingAt: 1.
-	].
-	zStream close! !
+	]! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'ar 2/19/2004 00:10'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/3/2015 14:19'!
 writeType6DataOn: zStream
 	"Write RGBA data."
 	| scanline hack hackBlt cm miscBlt |
@@ -1396,8 +1395,7 @@ writeType6DataOn: zStream
 		].
 		zStream nextPut: 0. "filterType"
 		zStream nextPutAll: scanline.
-	].
-	zStream close.! !
+	]! !
 
 !PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'ar 2/11/2004 00:54'!
 computeSwizzleMapForDepth: depth
@@ -2177,10 +2175,6 @@ checkLZWCodeSize
 	(freeCode+1 > maxCode and: [ codeSize < 12 ]) ifTrue: [
 		codeSize := codeSize + 1.
 		maxCode := (1 bitShift: codeSize) - 1 ]! !
-
-!TIFFStream methodsFor: 'stream access' stamp: 'jmv 1/12/2011 13:12'!
-close
-	stream close! !
 
 !TIFFStream methodsFor: 'accessing' stamp: 'jmv 1/12/2011 16:05'!
 compressionType: aNumber

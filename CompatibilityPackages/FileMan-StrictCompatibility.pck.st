@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2513] on 2 October 2015 at 5:10:10.777765 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:24:40.318655 pm'!
 'Description Please enter a description for this package'!
-!provides: 'FileMan-StrictCompatibility' 1 4!
+!provides: 'FileMan-StrictCompatibility' 1 5!
 !requires: 'Tests' 1 33 nil!
 
 !String methodsFor: '*FileMan-StrictCompatibility' stamp: 'jmv 9/27/2015 20:38'!
@@ -108,6 +108,14 @@ writeStreamIfError: errorHandlingBlock
 	^[self fileAccessor newFileNamed: self pathName]
 		on: FileExistsException
 		do: [:ex | errorHandlingBlock value: ex]! !
+
+!FmDirectoryEntry class methodsFor: '*FileMan-StrictCompatibility' stamp: 'jmv 10/5/2015 12:24'!
+default 
+	"Compatibility with other implementations of FileMan.
+	For Cuis specific code, it is advisable to call #currentDirectory, #smalltalkImageDirectory or #vmDirectory
+	FmDirectoryEntry default
+	"
+	^self currentDirectory! !
 
 !FmFileManTest methodsFor: '*FileMan-StrictCompatibility' stamp: 'jmv 10/2/2015 17:09'!
 testTryReadStream

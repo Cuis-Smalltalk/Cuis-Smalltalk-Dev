@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2375] on 17 June 2015 at 6:04:30.290572 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:14:25.827323 pm'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 16!
-!requires: 'Network-Kernel' 1 2 nil!
-!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!provides: 'Protocols-HTTP' 1 17!
 !requires: 'Identities-UUID' 1 1 nil!
+!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!requires: 'Network-Kernel' 1 2 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
 	instanceVariableNames: 'client request response authParams message'
@@ -4517,29 +4517,23 @@ logEntryFor: request response: response
 	^entry
 ! !
 
-!HTTPUtils class methodsFor: 'misc' stamp: 'jmv 5/19/2015 21:59'!
+!HTTPUtils class methodsFor: 'misc' stamp: 'jmv 10/3/2015 19:26'!
 logRequest: request response: response on: streamOrFilename
 	"Log a request in common log format on the given stream / file."
 
-	| entry stream |
+	| entry |
 
 	"Create the log entry for the request/response pair"
 	entry := self logEntryFor: request response: response.
 
 	"If the argument is a string, it represents the file name to log to"
-	streamOrFilename isString ifTrue:[
-		stream := [FileStream oldFileNamed: streamOrFilename] 
-			on: FileDoesNotExistException
-			do:[FileStream newFileNamed: streamOrFilename].
-		stream "wantsLineEndConversion: true; "setToEnd.
-	] ifFalse:[stream := streamOrFilename].
-
-	stream nextPutAll: entry; newLine.
-
-	stream == streamOrFilename 
-		ifTrue:[stream flush]
-		ifFalse:[stream close].
-! !
+	streamOrFilename isString
+		ifTrue: [
+			streamOrFilename asFileEntry appendStream: [ :stream |
+				stream nextPutAll: entry; newLine ]]
+		ifFalse: [
+			streamOrFilename nextPutAll: entry; newLine.
+			streamOrFilename flush ]! !
 
 !HTTPUtils class methodsFor: 'md5' stamp: 'ar 2/20/2010 12:45'!
 md5Digest: aStringOrByteArray

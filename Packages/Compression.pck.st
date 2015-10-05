@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2513] on 2 October 2015 at 5:06:23.517765 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:07:44.122579 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 8!
+!provides: 'Compression' 1 9!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -4229,17 +4229,15 @@ initializeCrcTable
   16r2D02EF8D
 ).! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 3/13/2012 12:58'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/3/2015 16:50'!
 logProblem: reason for: aFile
-	| errFile |
-	errFile _ FileStream fileNamed:'problems.log'.
-	errFile position: errFile size.
-	errFile
-		newLine;
-		nextPutAll: aFile name;
-		newLine;
-		nextPutAll: reason.
-	errFile close.
+
+	'problems.log' asFileEntry appendStream: [ :errFile |
+		errFile
+			newLine;
+			nextPutAll: aFile name;
+			newLine;
+			nextPutAll: reason ].
 	Transcript show:' failed (', reason,')'.
 	aFile close.
 	^false! !

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2513] on 2 October 2015 at 5:06:39.301765 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:14:05.158445 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 6!
+!provides: 'Sound' 1 7!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
@@ -462,16 +462,6 @@ Object subclass: #SoundSystem
 SoundSystem class
 	instanceVariableNames: ''!
 
-!classDefinition: #SunAudioFileWriter category: #'Sound-Synthesis'!
-Object subclass: #SunAudioFileWriter
-	instanceVariableNames: 'stream headerStart'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Sound-Synthesis'!
-!classDefinition: 'SunAudioFileWriter class' category: #'Sound-Synthesis'!
-SunAudioFileWriter class
-	instanceVariableNames: ''!
-
 
 !AIFFFileReader commentStamp: '<historical>' prior: 0!
 I am a parser for AIFF (audio interchange file format) files. I can read uncompressed 8-bit and 16-bit mono, stereo, or multichannel AIFF files. I read the marker information used by the TransferStation utility to mark the loop points in sounds extracted from commercial sampled-sound CD-ROMs.
@@ -670,10 +660,6 @@ SoundService default playSoundNamed: 'croak'
 The idea is that as much sound playing as possible should go through this facade. This way we decouple the sound system from the rest of Squeak and make it pluggable. It also is a perfect spot to check for the Preference class>>soundsEnabled.
 
 Two basic subclasses exist at the time of this writing, the BaseSoundSystem which represents the standard Squeak sound system, and the DummySoundSystem which is a dummy implementation that can be used when there is no sound card available, or when the base sound system isn't in the image, or when you simply don't want to use the available sound card.!
-
-!SunAudioFileWriter commentStamp: '<historical>' prior: 0!
-I encode monophonic sampled sounds in Sun audio (.au) file format. Sun audio files have a very simple format but can store both compressed and uncompressed sample data. I can write this format either directly into a file or onto any writable binary stream.
-!
 
 !AIFFFileReader methodsFor: 'accessing' stamp: 'jm 8/2/1998 21:25'!
 bitsPerSample
@@ -1859,15 +1845,13 @@ stopGracefully
 	self stopAfterMSecs: decayInMs.
 ! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 8/13/2008 13:00'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 10/3/2015 11:40'!
 storeAIFFOnFileNamed: fileName
 	"Store this sound as a AIFF file of the given name."
 
-	| f |
-	f _ (FileStream fileNamed: fileName) binary.
-	[ self storeAIFFSamplesOn: f ]
-		ensure: [ f close ]
-! !
+	fileName asFileEntry writeStream: [ :strm |
+		strm binary.
+		self storeAIFFSamplesOn: strm ]! !
 
 !AbstractSound methodsFor: 'file i/o' stamp: 'jm 12/16/2001 22:31'!
 storeAIFFSamplesOn: aBinaryStream
@@ -1965,46 +1949,13 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 				remaining _ remaining - bufSize]].
 ! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 8/13/2008 13:00'!
-storeSunAudioOnFileNamed: fileName
-	"Store this sound as an uncompressed Sun audio file of the given name."
-
-	| f |
-	f _ (FileStream fileNamed: fileName) binary.
-	[ self storeSunAudioSamplesOn: f]
-		ensure: [ f close ]! !
-
-!AbstractSound methodsFor: 'file i/o' stamp: 'jm 12/16/2001 22:32'!
-storeSunAudioSamplesOn: aBinaryStream
-	"Store this sound as a 16-bit Sun audio file at the current SoundPlayer sampling rate. Store both channels if self isStereo is true; otherwise, store the left channel only as a mono sound."
-
-
-	| samplesToStore channelCount dataByteCount |
-	samplesToStore _ (self duration * self samplingRate) ceiling.
-	channelCount _ self isStereo ifTrue: [2] ifFalse: [1].
-	dataByteCount _ samplesToStore * channelCount * 2.
-
-	"write Sun audio file header"
-	channelCount _ self isStereo ifTrue: [2] ifFalse: [1].
-	aBinaryStream nextPutAll: '.snd' asByteArray.
-	aBinaryStream uint32: 24.	"header size in bytes"
-	aBinaryStream uint32: dataByteCount.
-	aBinaryStream uint32: 3.	"format: 16-bit linear"
-	aBinaryStream uint32: self samplingRate truncated.
-	aBinaryStream uint32: channelCount.
-
-	"write data:"
-	self storeSampleCount: samplesToStore bigEndian: true on: aBinaryStream.
-! !
-
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 8/13/2008 13:00'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 10/3/2015 11:42'!
 storeWAVOnFileNamed: fileName
 	"Store this sound as a 16-bit Windows WAV file of the given name."
 
-	| f |
-	f _ (FileStream fileNamed: fileName) binary.
-	[ self storeWAVSamplesOn: f ]
-		ensure: [ f close ]! !
+	fileName asFileEntry writeStream: [ :strm |
+		strm binary.
+		self storeWAVSamplesOn: strm ]! !
 
 !AbstractSound methodsFor: 'file i/o' stamp: 'jm 12/16/2001 22:32'!
 storeWAVSamplesOn: aBinaryStream
@@ -3058,7 +3009,7 @@ fileOutSoundLibrary
 	self fileOutSoundLibrary: Sounds.
 ! !
 
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 9/24/2012 19:42'!
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 10/3/2015 16:29'!
 fileOutSoundLibrary: aDictionary
 	"File out the given dictionary, which is assumed to contain sound and instrument objects keyed by their names."
 	"Note: This method is separated out so that one can file out edited sound libraries, as well as the system sound library. To make such a collection, you can inspect AbstractSound sounds and remove the items you don't want. Then do: 'AbstractSound fileOutSoundLibrary: self' from the Dictionary inspector."
@@ -3068,9 +3019,9 @@ fileOutSoundLibrary: aDictionary
 		ifFalse: [self error: 'arg should be a dictionary of sounds'].
 	fileName _ FillInTheBlankMorph request: 'Sound library file name?'.
 	fileName isEmptyOrNil ifTrue: [^ self].
-	refStream _ SmartRefStream fileNamed: fileName, '.sounds'.
-	[ refStream nextPut: aDictionary ]
-		ensure: [ refStream close ]! !
+	(fileName, '.sounds') asFileEntry writeStream: [ :file |
+		refStream _ SmartRefStream on: file.
+		[ refStream nextPut: aDictionary ]]! !
 
 !AbstractSound class methodsFor: 'utilities' stamp: 'DSM 9/5/2000 13:50'!
 hangUpWarning: count
@@ -5649,7 +5600,7 @@ fromAIFFfileNamed: fileName
 		samplingRate: aiffFileReader samplingRate
 ! !
 
-!SampledSound class methodsFor: 'instance creation'!
+!SampledSound class methodsFor: 'instance creation' stamp: 'jmv 10/3/2015 19:54'!
 fromWaveFileNamed: fileName
 	"(SampledSound fromWaveFileNamed: 'c:\windows\media\chimes.wav') play"
 	"| snd fd |
@@ -5661,7 +5612,8 @@ fromWaveFileNamed: fileName
 				snd play.
 				SoundPlayer waitUntilDonePlaying: snd]]."
 
-	^self fromWaveStream: (FileStream oldFileNamed: fileName)
+	^ fileName asFileEntry readStream: [ :strm |
+		self fromWaveStream: strm ]
 ! !
 
 !SampledSound class methodsFor: 'instance creation'!
@@ -6981,7 +6933,7 @@ readAIFFHeader
 	codec _ nil.
 ! !
 
-!StreamingMonoSound methodsFor: 'private' stamp: 'jm 11/16/2001 10:32'!
+!StreamingMonoSound methodsFor: 'private' stamp: 'jmv 10/5/2015 12:12'!
 readHeader
 	"Read the sound file header from my stream."
 
@@ -6989,55 +6941,8 @@ readHeader
 	stream position: headerStart.
 	id _ (stream next: 4) asString.
 	stream position: headerStart.
-	id = '.snd' ifTrue: [^ self readSunAudioHeader].
 	id = 'FORM' ifTrue: [^ self readAIFFHeader].
 	self error: 'unrecognized sound file format'.
-! !
-
-!StreamingMonoSound methodsFor: 'private' stamp: 'jm 11/21/2001 13:02'!
-readSunAudioHeader
-	"Read a Sun audio file header from my stream."
-
-	| id headerBytes dataBytes format channelCount |
-	id _ (stream next: 4) asString.
-	headerBytes _ stream uint32.  "header bytes"
-	dataBytes _ stream uint32.
-	format _ stream uint32.
-	streamSamplingRate _ stream uint32.
-	channelCount _ stream uint32.
-
-	id = '.snd' ifFalse: [self error: 'not Sun audio format'].
-	dataBytes _ dataBytes min: (stream size - headerBytes).
-	channelCount = 1 ifFalse: [self error: 'not monophonic'].
-	audioDataStart _ headerStart + headerBytes.
-	codec _ nil.
-	format = 1 ifTrue: [  "8-bit u-LAW"
-		codec _ MuLawCodec new.
-		totalSamples _ dataBytes.
-		^ self].
-	format = 3 ifTrue: [  "16-bit linear"
-		totalSamples _ dataBytes // 2.
-		^ self].
-	format = 23 ifTrue: [  "ADPCM-4 bit (CCITT G.721)"
-		codec _ ADPCMCodec new
-			initializeForBitsPerSample: 4 samplesPerFrame: 0.
-		totalSamples _ (dataBytes // 4) * 8.
-		^ self].
-	format = 25 ifTrue: [  "ADPCM-3 bit (CCITT G.723)"
-		codec _ ADPCMCodec new
-			initializeForBitsPerSample: 3 samplesPerFrame: 0.
-		totalSamples _ (dataBytes // 3) * 8.
-		^ self].
-	format = 26 ifTrue: [  "ADPCM-5 bit (CCITT G.723)"
-		codec _ ADPCMCodec new
-			initializeForBitsPerSample: 5 samplesPerFrame: 0.
-		totalSamples _ (dataBytes // 5) * 8.
-		^ self].
-	format = 610 ifTrue: [  "GSM 06.10 (this format was added by Squeak)"
-		codec _ GSMCodec new.
-		totalSamples _ (dataBytes // 33) * 160.
-		^ self].
-	self error: 'unsupported Sun audio format ', format printString
 ! !
 
 !StreamingMonoSound methodsFor: 'accessing' stamp: 'jm 10/18/2001 15:46'!
@@ -7076,16 +6981,6 @@ samplesRemaining
 		codec _ nil ].
 	^ result! !
 
-!StreamingMonoSound methodsFor: 'converting' stamp: 'jm 12/13/2001 20:08'!
-saveAsFileNamed: newFileName compressionType: compressionTypeString
-	"Store this sound in a new file with the given name using the given compression type. Useful for converting between compression formats."
-
-	| outFile |
-	outFile _ (FileStream newFileNamed: newFileName) binary.
-	self storeSunAudioOn: outFile compressionType: compressionTypeString.
-	outFile close.
-! !
-
 !StreamingMonoSound methodsFor: 'accessing' stamp: 'jm 11/16/2001 17:05'!
 soundPosition
 	"Answer the relative position of sound playback as a number between 0.0 and 1.0."
@@ -7117,59 +7012,6 @@ startOver
 	leftoverSamples _ SoundBuffer new.
 	lastBufferMSecs _ 0.
 	mutex _ Semaphore forMutualExclusion.
-! !
-
-!StreamingMonoSound methodsFor: 'converting' stamp: 'jmv 4/18/2011 14:40'!
-storeSunAudioOn: aBinaryStream compressionType: compressionName
-	"Store myself on the given stream as a monophonic sound compressed with the given type of compression. The sampling rate is reduced to 22050 samples/second if it is higher."
-
-	| fmt inBufSize samplesPerFrame outCodec compressed outSamplingRate audioWriter samplesRemaining inBuf outBuf counts byteCount |
-	self pause; reset.  "stop playing and return to beginning"
-
-	fmt _ SunAudioFileWriter formatCodeForCompressionType: compressionName.
-	inBufSize _ 64000.
-	samplesPerFrame _ 1.
-	outCodec _ SunAudioFileWriter codecForFormatCode: fmt.
-	outCodec ifNotNil: [
-		samplesPerFrame _ outCodec samplesPerFrame.
-		inBufSize _ inBufSize roundUpTo: (2 * samplesPerFrame).
-		compressed _ ByteArray new:
-			(inBufSize // samplesPerFrame) * outCodec bytesPerEncodedFrame].
-	outSamplingRate _ streamSamplingRate.
-	streamSamplingRate > 22050 ifTrue: [
-		streamSamplingRate = 44100 ifFalse: [self error: 'unexpected MP3 sampling rate'].
-		outSamplingRate _ 22050].
-
-	"write audio header"
-	audioWriter _ SunAudioFileWriter onStream: aBinaryStream.
-	audioWriter writeHeaderSamplingRate: outSamplingRate format: fmt.
-
-	"convert and write sound data"
-	'Storing audio...' displayProgressAt: Sensor mousePoint
-		from: 0 to: totalSamples during: [:bar |
-			samplesRemaining _ totalSamples.
-			[samplesRemaining > 0] whileTrue: [
-				bar value: totalSamples - samplesRemaining.
-				self loadBuffersForSampleCount: (inBufSize min: samplesRemaining).
-				inBuf _ mixer sounds first samples.
-				outSamplingRate < streamSamplingRate
-					ifTrue: [outBuf _ inBuf downSampledLowPassFiltering: true]
-					ifFalse: [outBuf _ inBuf].
-				outCodec
-					ifNil: [audioWriter appendSamples: outBuf]
-					ifNotNil: [
-						counts _ outCodec
-							encodeFrames: (outBuf size // samplesPerFrame)
-							from: outBuf at: 1
-							into: compressed at: 1.
-						byteCount _ counts last.
-						byteCount = compressed size
-							ifTrue: [audioWriter appendBytes: compressed]
-							ifFalse: [audioWriter appendBytes: (compressed copyFrom: 1 to: byteCount)]].
-				samplesRemaining _ samplesRemaining - inBuf monoSampleCount]].
-
-	"update audio header"
-	audioWriter updateHeaderDataSize.
 ! !
 
 !StreamingMonoSound methodsFor: 'accessing' stamp: 'jm 11/20/2001 16:59'!
@@ -12992,148 +12834,6 @@ initialize
 !SoundSystem class methodsFor: 'as yet unclassified' stamp: 'jmv 6/7/2013 22:05'!
 shutDown
 	SoundPlayer shutDown! !
-
-!SunAudioFileWriter methodsFor: 'other' stamp: 'jm 11/16/2001 18:02'!
-appendBytes: aByteArray
-	"Append the given sample data to my stream."
-
-	stream nextPutAll: aByteArray.
-! !
-
-!SunAudioFileWriter methodsFor: 'other' stamp: 'jmv 2/15/2008 00:49'!
-appendSamples: aSoundBuffer
-	"Append the given SoundBuffer to my stream."
-
-	| swapBytes s |
-	(stream isKindOf: StandardFileStream) ifTrue: [
-		"optimization: write sound buffer directly to file"
-		swapBytes _ Smalltalk isLittleEndian.
-		swapBytes ifTrue: [aSoundBuffer reverseEndianness].  "make big endian"
-		stream next: (aSoundBuffer size // 2) putAll: aSoundBuffer startingAt: 1.  "size in words"
-		swapBytes ifTrue: [aSoundBuffer reverseEndianness].  "revert to little endian"
-		^ self].
-
-	"for non-file streams:"
-	s _ WriteStream on: (ByteArray new: 2 * aSoundBuffer monoSampleCount).
-	1 to: aSoundBuffer monoSampleCount do: [:i | s int16: (aSoundBuffer at: i)].
-	self appendBytes: s contents.
-! !
-
-!SunAudioFileWriter methodsFor: 'other' stamp: 'jmv 6/17/2015 10:30'!
-closeFile
-	"Update the Sun audio file header to reflect the final size of the sound data. If my stream is a file stream, close it and, on a Macintosh, set the file type and creator to that used by SoundApp for Sun Audio files. (This does nothing on other platforms.)"
-
-	self ensureOpen.
-	self updateHeaderDataSize.
-	(stream isKindOf: StandardFileStream) ifTrue: [
-		stream close ]! !
-
-!SunAudioFileWriter methodsFor: 'other' stamp: 'sd 1/30/2004 15:23'!
-ensureOpen
-	"Ensure that my stream is open."
-
-	stream closed ifTrue: [stream reopen; binary].
-! !
-
-!SunAudioFileWriter methodsFor: 'initialization' stamp: 'jm 11/16/2001 17:51'!
-setStream: aBinaryStream
-	"Initialize myself for writing on the given stream."
-
-	stream _ aBinaryStream.
-	headerStart _ aBinaryStream position.
-! !
-
-!SunAudioFileWriter methodsFor: 'other' stamp: 'jm 11/16/2001 17:55'!
-updateHeaderDataSize
-	"Update the Sun audio file header to reflect the final size of the sound data."
-
-	| byteCount |
-	byteCount _ stream position - (headerStart + 24).
-	stream position: headerStart + 8.
-	stream uint32: byteCount.
-! !
-
-!SunAudioFileWriter methodsFor: 'other' stamp: 'jm 11/16/2001 17:55'!
-writeHeaderSamplingRate: samplingRate
-	"Write a Sun audio file header for 16-bit linear format."
-
-	self writeHeaderSamplingRate: samplingRate format: 3.
-! !
-
-!SunAudioFileWriter methodsFor: 'other' stamp: 'jm 11/16/2001 22:10'!
-writeHeaderSamplingRate: samplingRate format: audioFormat
-	"Write a Sun audio file header for the given sampling rate and format. Currently, only monophonic files are supported."
-
-	self ensureOpen.
-	stream position: headerStart.
-	stream nextPutAll: '.snd' asByteArray.
-	stream uint32: 24.	"header size in bytes"
-	stream uint32: 0.	"sample data size in bytes; fill in later"
-	stream uint32: audioFormat.
-	stream uint32: samplingRate truncated.
-	stream uint32: 1.	"channel count"
-! !
-
-!SunAudioFileWriter class methodsFor: 'sound storing' stamp: 'jm 11/21/2001 15:42'!
-codecForFormatCode: formatCode
-	"Answer the codec for the given Sun audio file format number."
-
-	formatCode = 1 ifTrue: [^ MuLawCodec new].
-	formatCode = 3 ifTrue: [^ nil].  "uncompressed"
-	formatCode = 23 ifTrue: [^ ADPCMCodec newBitsPerSample: 4].
-	formatCode = 25 ifTrue: [^ ADPCMCodec newBitsPerSample: 3].
-	formatCode = 26 ifTrue: [^ ADPCMCodec newBitsPerSample: 5].
-	formatCode = 610 ifTrue: [^ GSMCodec new].
-	self error: 'unsupported Sun audio format'
-! !
-
-!SunAudioFileWriter class methodsFor: 'sound storing' stamp: 'jm 11/21/2001 15:42'!
-formatCodeForCompressionType: aString
-	"Answer the Sun audio file format number for the given compression type name."
-
-	| lowercase |
-	lowercase _ aString asLowercase.
-	'mulaw' = lowercase ifTrue: [^ 1].
-	'none' = lowercase ifTrue: [^ 3].
-	'adpcm3' = lowercase ifTrue: [^ 25].
-	'adpcm4' = lowercase ifTrue: [^ 23].
-	'adpcm5' = lowercase ifTrue: [^ 26].
-	'gsm' = lowercase ifTrue: [^ 610].
-	self error: 'unknown compression style'
-! !
-
-!SunAudioFileWriter class methodsFor: 'instance creation' stamp: 'jm 11/16/2001 17:49'!
-onFileNamed: fileName
-	"Answer an instance of me on a newly created file with the given name."
-
-	| file |
-	file _ (FileStream newFileNamed: fileName) binary.
-	^ self new setStream: file
-! !
-
-!SunAudioFileWriter class methodsFor: 'instance creation' stamp: 'jm 11/16/2001 17:50'!
-onStream: aBinaryStream
-	"Answer an instance of me on the given binary stream."
-
-	^ self new setStream: aBinaryStream
-! !
-
-!SunAudioFileWriter class methodsFor: 'sound storing' stamp: 'jm 12/16/2001 21:37'!
-storeSampledSound: aSampledSound onFileNamed: fileName compressionType: aString
-	"Store the samples of the given sampled sound on a file with the given name using the given type of compression. See formatCodeForCompressionType: for the list of compression types."
-
-	| fmt codec f compressed |
-	fmt _ self formatCodeForCompressionType: aString.
-	codec _ self codecForFormatCode: fmt.
-	f _ self onFileNamed: fileName.
-	f writeHeaderSamplingRate: aSampledSound originalSamplingRate format: fmt.
-	codec
-		ifNil: [f appendSamples: aSampledSound samples]
-		ifNotNil: [
-			compressed _ codec encodeSoundBuffer: aSampledSound samples.
-			f appendBytes: compressed].
-	f closeFile.
-! !
 AbstractSound initialize!
 FMSound initialize!
 LoopedSampledSound initialize!

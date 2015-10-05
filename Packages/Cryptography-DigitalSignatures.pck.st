@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2329] on 20 May 2015 at 9:11:13.295632 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:06:55.297113 pm'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Cryptography-DigitalSignatures' 1 3!
+!provides: 'Cryptography-DigitalSignatures' 1 4!
 !requires: 'Sound' 1 3 nil!
 !classDefinition: #DigitalSignatureAlgorithm category: #'Cryptography-DigitalSignatures'!
 Object subclass: #DigitalSignatureAlgorithm
@@ -480,18 +480,18 @@ sign: aStringOrStream privateKey: privateKey dsa: dsa
 	^ dsa signatureToString: sig
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 5/19/2015 21:47'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 10/3/2015 14:30'!
 testExamplesFromDisk
 	"verify messages from file on disk"
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
 	"DigitalSignatureAlgorithm testExamplesFromDisk"
 
-	FileStream readOnlyFileNamed: 'dsa.test.out' do: [:file |
+	'dsa.test.out' asFileEntry readStream: [ :stream |
 		| msg  sig publicKey |
-		[file atEnd] whileFalse: [
-			sig := file nextChunk.
-			msg := file nextChunk.
-			publicKey := Compiler evaluate: file nextChunk.
+		[stream atEnd] whileFalse: [
+			sig := stream nextChunk.
+			msg := stream nextChunk.
+			publicKey := Compiler evaluate: stream nextChunk.
 			(self verify: sig isSignatureOf: msg publicKey: publicKey) ifTrue: [
 				Transcript show: 'SUCCESS: ',msg; newLine.
 			] ifFalse: [
@@ -565,7 +565,7 @@ verify: signatureString isSignatureOf: aStringOrStream publicKey: publicKey
 	^ dsa verifySignature: sig ofMessageHash: h publicKey: publicKey
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'nice 1/12/2010 09:07'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 10/3/2015 14:27'!
 writeExamplesToDisk
 	"Example of signing a message and verifying its signature. Used to create samples from one implementation that could later be tested with a different implementation"
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -577,13 +577,13 @@ writeExamplesToDisk
 	self inform: 'About to generate 5 key sets. Will take a while'.
 	keyList := {self testKeySet},((1 to: 5) collect: [ :ignore | self generateKeySet]).
 	msgList := {'This is a test...'. 'This is the second test period.'. 'And finally, a third message'}.
-	FileStream newFileNamed: 'dsa.test.out' do: [:file |
+	'dsa.test.out' asFileEntry writeStream: [ :stream |
 		msgList do: [ :msg |
 			keyList do: [ :keys |
 				| sig |
 				sig := self sign: msg privateKey: keys first dsa: dsa.
 				(self verify: sig isSignatureOf: msg publicKey: keys last) ifTrue: [
-					file
+					stream
 						nextChunkPut: sig;
 						nextChunkPut: msg;
 						nextChunkPut: keys last storeString.
@@ -592,8 +592,7 @@ writeExamplesToDisk
 				].
 			].
 		].
-	]
-! !
+	]! !
 
 !SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/7/1999 23:25'!
 constantForStep: i
