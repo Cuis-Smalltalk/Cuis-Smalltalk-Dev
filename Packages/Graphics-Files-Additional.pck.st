@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:05:38.459613 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2525] on 7 October 2015 at 3:54:58.566153 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 8!
+!provides: 'Graphics-Files-Additional' 1 9!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1262,22 +1262,22 @@ writeChunk: crcStream
 writeFileSignature
 	stream nextPutAll: #[ 16r89 16r50 16r4E  16r47 16r0D 16r0A 16r1A 16r0A ]! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 3/13/2012 12:41'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/7/2015 15:53'!
 writeIDATChunkOn: aStream
 	"Write the IDAT chunk"
 	| z |
 	aStream nextPutAll: 'IDAT' asByteArray.
 	z _ ZLibWriteStream on: aStream.
 	form depth <= 8 
-		ifTrue:[self writeType3DataOn: z]
-		ifFalse:[ self writeType6DataOn: z].
+		ifTrue: [ self writeType3DataOn: z ]
+		ifFalse: [ self writeType6DataOn: z ].
+	z close.
 	self debugging ifTrue: [
 		Transcript newLine;
 			nextPutAll: 'compressed size=';
 			print: aStream position;
 			nextPutAll: ' uncompressed size=';
-			print: z position  ]
-! !
+			print: z position ]! !
 
 !PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 17:08'!
 writeIENDChunkOn: aStream
