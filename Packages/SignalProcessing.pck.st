@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:03:02.583904 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 2:58:23.672744 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 39!
+!provides: 'SignalProcessing' 1 40!
 !requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
@@ -4336,7 +4336,7 @@ Krf7W2XyH8kZofGsb0wZAAAAAElFTkSuQmCC'
 				base64Decoded asByteArray readStream.
 	^FloatImage from32BitColorForm: form component: #green! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:41'!
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 10/16/2015 17:13'!
 meanAndStDevOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
 	"
 	| pair |
@@ -4350,30 +4350,28 @@ meanAndStDevOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
 
 	FloatImage fromFileNamed: 'darkframe-scm-0-344-350-mean.floatImage'
 	"
-	| fn form stdev slash mean |
+	| fn form stdev mean |
 	mean _ FloatImage meanOfFolder: folder baseName: base n: n extentOrNil: extentOrNil.
-	slash _ FileDirectory pathNameDelimiter asString.
 	stdev _ FloatImage width: mean width height: mean height.
 	0 to: n-1 do: [ :i |
-		fn _ folder, slash, base, (i printStringBase: 10 length: 5 padded: true), '.bmp'.
+		fn _ folder, '/', base, (i printStringBase: 10 length: 5 padded: true), '.bmp'.
 		form _ Form fromFileNamed: fn.
 		fn print.
 		stdev addToStDevFrom8BitColorForm: form meanImage: mean ].
 	stdev replaceValues: [ :i :j :v | (v / (n-1)) sqrt ].
 	^{ mean . stdev }! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 9/25/2012 14:38'!
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 10/16/2015 17:13'!
 meanOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
 	"
 	extentOrNil can be a Point to take the topLeft part of the images, or nil, to take the whole images.
 	FloatImage meanOfFolder: 'DarkFrames' baseName: 'darkframe-scm-0-1-344-' n: 19
 	FloatImage meanOfFolder: 'DarkFrames' baseName: 'darkframe-scm-0-1-344-' n: 3 extentOrNil:512@512
 	"
-	| fn form mean slash |
-	slash _ FileDirectory pathNameDelimiter asString.
+	| fn form mean |
 	mean _ extentOrNil ifNotNil: [ FloatImage width: extentOrNil x height: extentOrNil y ].
 	0 to: n-1 do: [ :i |
-		fn _ folder, slash, base, (i printStringBase: 10 length: 5 padded: true), '.bmp'.
+		fn _ folder, '/', base, (i printStringBase: 10 length: 5 padded: true), '.bmp'.
 		form _ Form fromFileNamed: fn.
 		fn print.
 		mean

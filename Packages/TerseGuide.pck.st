@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 5 September 2015 at 9:17:55.2968 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2528] on 18 October 2015 at 9:19:17.399793 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 58!
+!provides: 'TerseGuide' 1 63!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -42,35 +42,22 @@ Show a terse guide to Cuis in a system window. The window has a text pane with a
 TerseGuideWindow openTerseGuide
 !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 3/10/2015 19:20'!
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 3/10/2015 19:20'!
 initialize
 	super initialize.
 	topics _ self terseTopics.
 	topicList _ self class pages.
 ! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 15:57'!
-openLabel: aString 
-	"Create a standard system view of the model, me, and open it."
-	| view inner |
-	view _ WorkspaceWindow editText: self label: aString wrap: true.
-	inner _ view findDeepSubmorphThat: [ :m |
-			m is: #InnerTextMorph] ifAbsent: [ ^nil ].
-	inner askBeforeDiscardingEdits: false.
-	self changed: #actualContents! !
-
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 08:26'!
-selectedTopic
-	"Answer the text of the selected topic"
-	^ self updateTopicText! !
-
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 11:22'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 10/18/2015 19:54'!
 selectedTopic: aTopic
+	"Set the value of selectedTopic and set the contents of the text pane"
+	
 	selectedTopic _ aTopic.
 	textPane model actualContents: self updateTopicText.
 	self changed: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 9/1/2015 15:18'!
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 9/1/2015 15:18'!
 terseTopics
 	"Translate a list item to a class method selector"
 	^ Dictionary new
@@ -121,53 +108,41 @@ terseTopics
 	at: 'Primitives' put: #primitive;
 	yourself! !
 
-!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/28/2015 11:17'!
-textPane
-	"Answer the value of textPane"
-
-	^ textPane! !
-
-!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/28/2015 11:17'!
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 10/18/2015 20:01'!
 textPane: anObject
 	"Set the value of textPane"
-
+	
 	textPane _ anObject! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 07:59'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 2/26/2015 07:59'!
 topicList
 	^ topicList! !
 
-!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:07'!
-topicList: anObject
-	"Set the value of topicList"
-
-	topicList _ anObject! !
-
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/26/2015 08:42'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 2/26/2015 08:42'!
 topicListIndex
 	topicList ifNil: [ ^ topicListIndex _ 0 ].
 	^ topicList indexOf: selectedTopic! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 2/28/2015 06:56'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 10/18/2015 20:20'!
 topicListIndex: index
+	"Set the vakue of topicListIndex and set the value of selectedTopic"
+	
 	topicListIndex _ index.
 	self selectedTopic: 
 		(topicList at: index ifAbsent: nil)! !
 
-!TerseGuideHelp methodsFor: 'as yet unclassified' stamp: 'dhn 3/10/2015 21:33'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 10/18/2015 20:48'!
 updateTopicText
-	"Answer the text of the selected topic"
+	"Answer the text of the selected topic and change the window label accordingly"
 	| topic |
-	self topicListIndex = 0 ifTrue: [^ ''].
-	topic _ topics at: (self topicList at: self topicListIndex).
+	
+	topicListIndex = 0 
+		ifTrue: [
+			window setLabel: 'Terse Guide'.
+			^ ''].
+	topic _ topics at: selectedTopic.
 	window setLabel: ('Terse Guide to ', (self class class firstPrecodeCommentFor: topic)).
 	^ self class perform: topic! !
-
-!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:07'!
-window
-	"Answer the value of window"
-
-	^ window! !
 
 !TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:07'!
 window: anObject
@@ -868,14 +843,6 @@ Smalltalk removeKey: #CMRGlobal ifAbsent: [].	"remove entry from Smalltalk dicti
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 3/3/2015 20:48'!
-display: aSelector
-	"Open a Workspace on the text in aSelector"
-	| window |
-	window _ TerseGuideHelp new.
-	window 	actualContents: (self perform: aSelector).
-	window	openLabel: ('Terse Guide to ', (self class firstPrecodeCommentFor: aSelector))! !
-
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:38'!
 dynamic
 	"Dynamic Message Calling/Compiling"
@@ -916,7 +883,7 @@ result _ (Message
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:59'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/13/2015 12:25'!
 fileStream
 	"File Streams"
 	^
@@ -939,6 +906,48 @@ x _ ios next.							"Answer the byte pointed to by the pointer"
 x _ ios peek.							"Answer the next byte beyond the pointer"
 b _ ios atEnd.						"Answer whether the position is at the end of the file"
 ios close.								"Close the file"
+
+''testFile.txt'' asFileEntry fileContents: ''Test me now''.
+''testFile.txt'' asFileEntry fileContents.			"print it"
+
+''testFile.txt'' asFileEntry
+	forceWriteStream: [ :ios |					"overwrite old"
+		ios nextPut: $M.
+		ios nextPutAll: ''y text ''.
+		ios nextPutAll: ''data''.
+		].
+''testFile.txt'' asFileEntry fileContents.			"print it"
+
+''testFile.txt'' asFileEntry appendStream: [ :fileStream |
+	fileStream newLine.
+	fileStream nextPutAll: ''Second text line''.
+	].
+''testFile.txt'' asFileEntry fileContents. 			"print it"
+
+''testFile.txt'' asFileEntry forceWriteStream: [ :fileStream |
+	| refStyream sharedPoint input |
+	"Construct the test data."
+	refStyream _ ReferenceStream on: fileStream.
+	input _ Array new: 9.
+	input at: 1 put: nil.
+	input at: 2 put: true.
+	input at: 3 put: false.
+	input at: 4 put: #(-4 -4.0 ''four'' four).
+	input at: 5 put: (Form extent: 63 @ 50 depth: 8).
+	(input at: 5) fillWithColor: Color lightOrange.
+	input at: 6 put: 1024 @ -2048.
+	input at: 7 put: input.							"a cycle"
+	input at: 8 put: (Array with: (sharedPoint _ 0 @ -30000)).
+	input at: 9 put: sharedPoint.
+	refStyream nextPut: input
+	].
+(''testFile.txt'' asFileEntry readStream: [ :fileStream |
+	(ReferenceStream on: fileStream) next.
+	]) explore.
+
+''testFile.txt'' asFileEntry delete.				"remove the test file"
+
+"Note FmFileEntry class examples"
 
 '! !
 
@@ -2013,35 +2022,27 @@ t explore.
 '
 ! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 4/12/2015 14:24'!
-usage
-	"Using Terse Guide"
-	^
-'"
-The text pane of the Terse Guide window is a kind of Workspace and is managed by the SmalltalkEditor of Cuis. This means that you can do (cmd-d) or print (cmd-p) statements in order to see the result. If you have a Transcript open, the result will appear in it.
-
-The SmalltalkEditor enables you to do or print a statement when the cursor is in the statement. It is not necessary to first highlight the entire statement, unless it continues on more than one line.
-
-The text pane is refreshed each time it is accessed. You can modify the examples in the text pane and run them without hurting anything.
-"
-'! !
-
-!TerseGuideWindow methodsFor: 'as yet unclassified' stamp: 'dhn 3/4/2015 18:38'!
+!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 10/18/2015 20:31'!
 buildMorphicWindow
-	"Answer a window for Terse Guide"
+	"Define the window layout for Terse Guide"
 	| list1 row |
-	list1 _ PluggableListMorph
+	
+	list1 _ (PluggableListMorph
 				model: model
 				listGetter: #topicList
 				indexGetter: #topicListIndex
 				indexSetter: #topicListIndex:
 				mainView: self
 				menuGetter: nil
-				keystrokeAction: nil.
+				keystrokeAction: nil)
+					name: 'Topic List'.
 	textMorph _ TextModelMorph withModel: model.
-	textMorph askBeforeDiscardingEdits: false.
+	textMorph 
+		askBeforeDiscardingEdits: false;
+		name: 'Work Space'.
 	row _ LayoutMorph newRow.
 	row
+		name: #Row;
 		addMorph: list1 proportionalWidth: 0.2;
 		addAdjusterAndMorph: textMorph proportionalWidth: 0.8.
 	self layoutMorph
@@ -2054,19 +2055,14 @@ textMorph
 
 	^ textMorph! !
 
-!TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:16'!
-textMorph: anObject
-	"Set the value of textMorph"
-
-	textMorph _ anObject! !
-
-!TerseGuideWindow class methodsFor: 'as yet unclassified' stamp: 'dhn 4/12/2015 14:31'!
+!TerseGuideWindow class methodsFor: 'instance creation' stamp: 'dhn 10/18/2015 21:12'!
 openTerseGuide
+"
+	TerseGuideWindow openTerseGuide.
+"
 	| window help |
-	help _ TerseGuideHelp new.
-	help window: (window _ TerseGuideWindow new model: help).
-	window buildMorphicWindow.
-	window openInWorld.
-	help changed: #actualContents.
+
+	(window _ TerseGuideWindow open: (help _ TerseGuideHelp new) label: 'Terse Guide')
+		setWindowColor:  Theme current workspace.
 	help textPane: window textMorph.
-! !
+	help window: window! !

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:14:05.158445 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 2:59:25.185285 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 7!
+!provides: 'Sound' 1 8!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
@@ -7036,24 +7036,20 @@ volume: aNumber
 	self createMixer.
 ! !
 
-!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:44'!
+!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jmv 10/14/2015 17:26'!
 onFileNamed: fileName
 	"Answer an instance of me for playing the file with the given name."
 
-	| f |
-	f _ FileDirectory currentDirectory readOnlyFileNamed: fileName.
-	f ifNil: [^ self error: 'could not open ', fileName].
-	^ self new initStream: f headerStart: 0
-! !
+	^self onFileNamed: fileName headerStart: 0! !
 
-!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:44'!
+!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jmv 10/14/2015 17:26'!
 onFileNamed: fileName headerStart: anInteger
 	"Answer an instance of me for playing audio data starting at the given position in the file with the given name."
 
-	| f |
-	f _ FileDirectory currentDirectory readOnlyFileNamed: fileName.
-	f ifNil: [^ self error: 'could not open ', fileName].
-	^ self new initStream: f headerStart: anInteger
+	| answer |
+	fileName asFileEntry readStream: [ :f |
+		answer _ self new initStream: f headerStart: anInteger ].
+	^answer
 ! !
 
 !Beeper methodsFor: 'play interface' stamp: 'jmv 6/7/2013 22:03'!
@@ -10000,15 +9996,15 @@ pruneToSingleNote: aNote
 	staccatoSoft _ oneNoteMap.
 ! !
 
-!SampledInstrument methodsFor: 'other' stamp: 'jmv 6/17/2015 10:48'!
+!SampledInstrument methodsFor: 'other' stamp: 'jmv 10/14/2015 17:46'!
 readSampleSetFrom: dirName
 	"Answer a collection of sounds read from AIFF files in the given directory and sorted in ascending pitch order."
 
 	| all dir fullName snd |
 	all _ SortedCollection sortBlock: [:s1 :s2 | s1 pitch < s2 pitch].
-	dir _ FileDirectory on: dirName.
+	dir _ dirName asDirectoryEntry.
 	dir fileNames do: [ :n |
-		fullName _ dir fullNameFor: n.
+		fullName _ (dir / n) pathName.
 		Utilities
 			informUser: 'Reading AIFF file ', n
 			during: [
@@ -10018,15 +10014,15 @@ readSampleSetFrom: dirName
 		all add: snd].
 	^ all asArray! !
 
-!SampledInstrument methodsFor: 'other' stamp: 'jmv 6/17/2015 10:48'!
+!SampledInstrument methodsFor: 'other' stamp: 'jmv 10/14/2015 17:47'!
 readSampleSetInfoFrom: dirName
 	"MessageTally spyOn: [SampledInstrument new readSampleSetFrom: 'Tosh:Desktop Folder:AAA Squeak2.0 Beta:Organ Samples:Flute8'] timeToRun"
 
 	| all dir fullName info |
 	all _ OrderedCollection new.
-	dir _ FileDirectory on: dirName.
+	dir _ dirName asDirectoryEntry.
 	dir fileNames do: [ :n |
-		fullName _ dir fullNameFor: n.
+		fullName _ (dir / n) pathName.
 		info _ AIFFFileReader new readFromFile: fullName
 			mergeIfStereo: false
 			skipDataChunk: true.

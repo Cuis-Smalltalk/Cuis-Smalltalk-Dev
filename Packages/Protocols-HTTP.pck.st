@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:14:25.827323 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 2:57:47.753551 pm'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 17!
+!provides: 'Protocols-HTTP' 1 18!
 !requires: 'Identities-UUID' 1 1 nil!
-!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
 !requires: 'Network-Kernel' 1 2 nil!
+!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
 	instanceVariableNames: 'client request response authParams message'
@@ -4094,7 +4094,7 @@ browseFile: file request: request
 	resp headerAt: 'Content-Type' put: mimeTypes first.
 	request sendResponse: resp contentStream: file size: fileSize.! !
 
-!HTTPServer class methodsFor: 'examples' stamp: 'jmv 6/17/2015 11:44'!
+!HTTPServer class methodsFor: 'examples' stamp: 'jmv 10/21/2015 12:25'!
 browseRequest: request
 	"Handle an HTTP request for browsing some resource"
 
@@ -4105,13 +4105,13 @@ browseRequest: request
 	path ifEmpty: [ ^self browseDir: FileDirectory currentDirectory request: request ].
 
 	"Find the directory entry for the resource"
-	fd := path allButLast inject: FileDirectory currentDirectory into: [ :dir :part | dir directoryNamed: part ].
+	fd := path allButLast inject: FileDirectory currentDirectory into: [ :dir :part | dir / part ].
 	entry := fd entryAt: path last ifAbsent: [ ^request send404Response ].
 
 	"Reply with the proper resource"
 	entry isDirectory ifTrue:[
 		"Send file listing. We handle this synchronously for simplicity."
-		self browseDir: (fd directoryNamed: entry name) request: request.
+		self browseDir: (fd / entry name) request: request.
 	] ifFalse:[
 		"Send file content. Since files can be large, we fork this off.
 		However, since we forked it, we need to handle two different

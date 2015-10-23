@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:07:44.122579 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 3:01:04.160781 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 9!
+!provides: 'Compression' 1 10!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -483,10 +483,10 @@ installMonticelloPackage: anFmFileEntry
 			packageName: pkName
 			fullName: fullName ]! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:42'!
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/14/2015 17:36'!
 monticelloPackageNameFrom: fullName
 	| localName |
-	localName _ FileDirectory localNameFor: fullName.
+	localName _ fullName asFileEntry name.
 	^(localName prefixAndSuffix: $-)
 		ifNotNil: [ :ary | ary first ]
 		ifNil: [ localName sansPeriodSuffix ]! !
@@ -613,13 +613,13 @@ viewGZipContents
 		contents: stringContents;
 		openLabel: 'Decompressed contents of: ', self localName! !
 
-!StandardFileStream methodsFor: '*Compression' stamp: 'jmv 6/17/2015 10:30'!
+!StandardFileStream methodsFor: '*Compression' stamp: 'jmv 10/16/2015 16:33'!
 compressFile
 	"Write a new file that has the data in me compressed in GZip format."
 	|  zipped buffer |
 
 	self readOnly; binary.
-	zipped _ self directory newFileNamed: (self name, FileDirectory dot, 'gz').
+	zipped _ self directory newFileNamed: (self name, '.gz').
 	zipped binary.
 	zipped _ GZipWriteStream on: zipped.
 	buffer _ ByteArray new: 50000.
@@ -839,25 +839,6 @@ addString: aString as: aFileName
 	newMember localFileName: aFileName.
 	^newMember! !
 
-!Archive methodsFor: 'archive operations' stamp: 'jmv 2/6/2010 08:31'!
-addTree: aFileNameOrDirectory removingFirstCharacters: n
-	| dir fullPath relativePath |
-	dir _ (aFileNameOrDirectory isString)
-		ifTrue: [ FileDirectory on: aFileNameOrDirectory ]
-		ifFalse: [ aFileNameOrDirectory ].
-	fullPath _ dir fullNameFor: ''.	"this could be a bug..."
-	relativePath _ fullPath copyFrom: n + 1 to: fullPath size.
-	dir entries do: [ :ea | | fullName newMember |
-		fullName _ fullPath, ea name.
-		newMember _ ea isDirectory
-				ifTrue: [ self memberClass newFromDirectory: fullName ]
-				ifFalse: [ self memberClass newFromFile: fullName ].
-		newMember localFileName: relativePath, ea name.
-		self addMember: newMember.
-		ea isDirectory ifTrue: [ self addTree: fullName removingFirstCharacters: n ].
-	].
-! !
-
 !Archive methodsFor: 'archive operations' stamp: 'nk 2/24/2001 14:12'!
 canWriteToFileNamed: aFileName
 	"Catch attempts to overwrite existing zip file"
@@ -871,12 +852,12 @@ contentsOf: aMemberOrName
 	member ifNil: [ ^nil ].
 	^member contents! !
 
-!Archive methodsFor: 'archive operations' stamp: 'jmv 6/17/2015 11:43'!
+!Archive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 17:23'!
 extractMember: aMemberOrName
 	| member |
 	member _ self member: aMemberOrName.
 	member ifNil: [ ^nil ].
-	member extractToFileNamed: member localFileName inDirectory: FileDirectory currentDirectory! !
+	member extractToFileNamed: member localFileName inDirectory: FmDirectoryEntry currentDirectory! !
 
 !Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
 extractMember: aMemberOrName toFileNamed: aFileName
@@ -885,16 +866,16 @@ extractMember: aMemberOrName toFileNamed: aFileName
 	member ifNil: [ ^nil ].
 	member extractToFileNamed: aFileName! !
 
-!Archive methodsFor: 'archive operations' stamp: 'jmv 6/17/2015 11:43'!
+!Archive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 17:18'!
 extractMemberWithoutPath: aMemberOrName
-	self extractMemberWithoutPath: aMemberOrName inDirectory: FileDirectory currentDirectory! !
+	self extractMemberWithoutPath: aMemberOrName inDirectory: FmDirectoryEntry currentDirectory! !
 
-!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 14:48'!
-extractMemberWithoutPath: aMemberOrName inDirectory: dir
+!Archive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 17:24'!
+extractMemberWithoutPath: aMemberOrName inDirectory: anFmDirectoryEntry
 	| member |
 	member _ self member: aMemberOrName.
 	member ifNil: [ ^nil ].
-	member extractToFileNamed: (FileDirectory localNameFor: member localFileName) inDirectory: dir! !
+	member extractToFileNamed: member localFileName asFileEntry name inDirectory: anFmDirectoryEntry! !
 
 !Archive methodsFor: 'initialization' stamp: 'nk 2/21/2001 17:58'!
 initialize
@@ -970,17 +951,17 @@ writeToFileNamed: aFileName
 close
 	self members do:[:m| m close].! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'ar 2/6/2004 13:20'!
-extractAllTo: aDirectory
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 18:06'!
+extractAllTo: anFmDirectoryEntry
 	"Extract all elements to the given directory"
-	Utilities informUserDuring:[:bar|self extractAllTo: aDirectory informing: bar].! !
+	Utilities informUserDuring: [ :bar | self extractAllTo: anFmDirectoryEntry informing: bar]! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'ar 2/6/2004 13:20'!
-extractAllTo: aDirectory informing: bar
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 18:06'!
+extractAllTo: anFmDirectoryEntry informing: bar
 	"Extract all elements to the given directory"
-	^self extractAllTo: aDirectory informing: bar overwrite: false! !
+	^self extractAllTo: anFmDirectoryEntry informing: bar overwrite: false! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'ar 2/6/2004 13:20'!
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/21/2015 12:25'!
 extractAllTo: aDirectory informing: bar overwrite: allOverwrite
 	"Extract all elements to the given directory"
 	| dir overwriteAll response |
@@ -989,7 +970,7 @@ extractAllTo: aDirectory informing: bar overwrite: allOverwrite
 		entry isDirectory ifTrue:[
 			bar ifNotNil:[bar value: 'Creating ', entry fileName].
 			dir := (entry fileName findTokens:'/') 
-					inject: aDirectory into:[:base :part| base directoryNamed: part].
+					inject: aDirectory into:[:base :part| base / part].
 			dir assureExistence.
 		].
 	].
@@ -1155,25 +1136,23 @@ writeTo: stream prependingFileNamed: aFileName
 	self writeCentralDirectoryTo: stream.
 	! !
 
-!ZipArchive methodsFor: 'writing' stamp: 'nk 3/27/2002 12:45'!
+!ZipArchive methodsFor: 'writing' stamp: 'jmv 10/14/2015 18:03'!
 writeToFileNamed: aFileName prepending: aString
-	| stream |
-	"Catch attempts to overwrite existing zip file"
-	(self canWriteToFileNamed: aFileName)
-		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	stream _ StandardFileStream forceNewFileNamed: aFileName.
-	self writeTo: stream prepending: aString.
-	stream close.! !
 
-!ZipArchive methodsFor: 'writing' stamp: 'nk 3/27/2002 12:58'!
-writeToFileNamed: aFileName prependingFileNamed: anotherFileName
-	| stream |
 	"Catch attempts to overwrite existing zip file"
 	(self canWriteToFileNamed: aFileName)
 		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	stream _ StandardFileStream forceNewFileNamed: aFileName.
-	self writeTo: stream prependingFileNamed: anotherFileName.
-	stream close.! !
+	aFileName asFileEntry forceWriteStream: [ :stream |
+		self writeTo: stream prepending: aString ]! !
+
+!ZipArchive methodsFor: 'writing' stamp: 'jmv 10/14/2015 18:04'!
+writeToFileNamed: aFileName prependingFileNamed: anotherFileName
+
+	"Catch attempts to overwrite existing zip file"
+	(self canWriteToFileNamed: aFileName)
+		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
+	aFileName asFileEntry forceWriteStream: [ :stream |
+		self writeTo: stream prependingFileNamed: anotherFileName ]! !
 
 !ZipArchive methodsFor: 'accessing' stamp: 'nk 2/24/2001 13:44'!
 zipFileComment
@@ -1563,18 +1542,19 @@ dosToSqueakTime: dt
 endRead
 	readDataRemaining _ 0.! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'nk 12/20/2002 14:49'!
-extractInDirectory: dir
-	self extractToFileNamed: self localFileName inDirectory: dir
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/14/2015 17:24'!
+extractInDirectory: anFmDirectoryEntry
+
+	self extractToFileNamed: self localFileName inDirectory: anFmDirectoryEntry
 ! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'nk 4/22/2004 13:34'!
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/21/2015 12:25'!
 extractInDirectory: aDirectory overwrite: overwriteAll
 	"Extract this entry into the given directory. Answer #okay, #failed, #abort, or #retryWithOverwrite."
 	| path fileDir file index localName |
 	path := fileName findTokens:'/'.
 	localName := path last.
-	fileDir := path allButLast inject: aDirectory into:[:base :part| base directoryNamed: part].
+	fileDir := path allButLast inject: aDirectory into:[:base :part| base / part].
 	fileDir assureExistence.
 	file := [fileDir newFileNamed: localName] on: FileExistsException do:[:ex| ex return: nil].
 	file ifNil:[
@@ -1619,23 +1599,21 @@ extractTo: aStream from: start to: finish
 	self desiredCompressionMethod: oldCompression.
 	self endRead.! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 6/17/2015 11:44'!
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/14/2015 17:23'!
 extractToFileNamed: aFileName
-	self extractToFileNamed: aFileName inDirectory: FileDirectory currentDirectory! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 6/17/2015 13:50'!
-extractToFileNamed: aLocalFileName inDirectory: dir
-	| stream fullName fullDir |
+	self extractToFileNamed: aFileName inDirectory: FmDirectoryEntry currentDirectory! !
+
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/14/2015 17:24'!
+extractToFileNamed: aLocalFileName inDirectory: anFmDirectoryEntry
+
 	self isEncrypted ifTrue: [ ^self error: 'encryption unsupported' ].
-	fullName _ dir fullNameFor: aLocalFileName.
-	fullDir _ FileDirectory forFullFileName: fullName.
-	fullDir assureExistence.
-	self isDirectory ifFalse: [
-		stream _ fullDir forceNewFileNamed: (FileDirectory localNameFor: fullName).
-		self extractTo: stream.
-		stream close.
-	] ifTrue: [ fullDir assureExistence ]
-! !
+	self isDirectory
+		ifFalse: [
+			anFmDirectoryEntry / aLocalFileName forceWriteStream: [ :stream |
+				self extractTo: stream ] ]
+		ifTrue: [
+			(anFmDirectoryEntry / aLocalFileName) asDirectoryEntry assureExistence ]! !
 
 !ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:25'!
 fileComment
@@ -2123,10 +2101,11 @@ uncompressDataTo: aStream from: start to: finish
 	].
 ! !
 
-!ZipFileMember methodsFor: 'testing' stamp: 'jmv 6/17/2015 11:44'!
+!ZipFileMember methodsFor: 'testing' stamp: 'jmv 10/14/2015 17:28'!
 usesFileNamed: aFileName
 	"Do I require aFileName? That is, do I care if it's clobbered?"
-	^(FileDirectory currentDirectory fullNameFor: externalFileName) = (FileDirectory currentDirectory fullNameFor: aFileName)! !
+
+	^externalFileName asFileEntry = aFileName asFileEntry! !
 
 !ZipFileMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/22/2001 17:31'!
 newFrom: stream named: fileName
@@ -2148,18 +2127,14 @@ initialize
 isDirectory
 	^true! !
 
-!ZipDirectoryMember methodsFor: 'accessing' stamp: 'jmv 6/17/2015 11:44'!
+!ZipDirectoryMember methodsFor: 'accessing' stamp: 'jmv 10/14/2015 17:34'!
 localFileName: aString
-	| dir entry parent |
+	| fe |
 	super localFileName: aString.
 	fileName last = $/ ifFalse: [ fileName _ fileName, '/' ].
-	parent _ FileDirectory currentDirectory.
-	(parent directoryExists: fileName) ifTrue: [
-		dir _ FileDirectory on: (parent fullNameFor: fileName).
-		entry _ dir directoryEntry.
-		self setLastModFileDateTimeFrom: entry modificationTime
-	]
-! !
+	fe _ fileName asDirectoryEntry.
+	fe exists ifTrue: [
+		self setLastModFileDateTimeFrom: fe modificationTime ]! !
 
 !ZipDirectoryMember methodsFor: 'private' stamp: 'nk 3/27/2002 11:30'!
 rewindData! !
@@ -2180,14 +2155,14 @@ newNamed: aFileName
 close
 	stream ifNotNil:[stream close].! !
 
-!ZipNewFileMember methodsFor: 'initialization' stamp: 'nk 12/20/2002 15:01'!
+!ZipNewFileMember methodsFor: 'initialization' stamp: 'jmv 10/16/2015 16:30'!
 from: aFileName
 	| entry |
 	compressionMethod _ CompressionStored.
 	"Now get the size, attributes, and timestamps, and see if the file exists"
 	stream _ StandardFileStream readOnlyFileNamed: aFileName.
 	self localFileName: (externalFileName _ stream name).
-	entry _ stream directoryEntry.
+	entry _ aFileName asFileEntry.
 	compressedSize _ uncompressedSize _ entry fileSize.
 	desiredCompressionMethod _ compressedSize > 0 ifTrue: [ CompressionDeflated ] ifFalse: [ CompressionStored ].
 	self setLastModFileDateTimeFrom: entry modificationTime
@@ -2208,10 +2183,11 @@ rewindData
 	readDataRemaining _ stream size.
 	stream position: 0.! !
 
-!ZipNewFileMember methodsFor: 'testing' stamp: 'jmv 6/17/2015 11:44'!
+!ZipNewFileMember methodsFor: 'testing' stamp: 'jmv 10/14/2015 17:28'!
 usesFileNamed: aFileName
 	"Do I require aFileName? That is, do I care if it's clobbered?"
-	^(FileDirectory currentDirectory fullNameFor: externalFileName) = (FileDirectory currentDirectory fullNameFor: aFileName)! !
+
+	^externalFileName asFileEntry = aFileName asFileEntry! !
 
 !ZipNewFileMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:27'!
 newNamed: aFileName
@@ -2313,15 +2289,6 @@ flushBuffer
 	gZipStream nextPutAll: data.
 	positionThusFar _ positionThusFar + data size.
 	bufferStream _ nil.
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 6/17/2015 10:30'!
-newFileNamed: fName inDirectory: aDirectory
-
-	positionThusFar _ 0.
-	zippedFileStream _ aDirectory newFileNamed: fName.
-	zippedFileStream binary.
-	gZipStream _ GZipWriteStream on: zippedFileStream.
 ! !
 
 !GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 3/13/2012 12:12'!
@@ -2463,11 +2430,6 @@ timeStamp
 	self bufferStream nextChunkPut:	"double string quotes and !!s"
 		(String streamContents: [:s | Smalltalk timeStamp: s]) printString.
 	self bufferStream newLine! !
-
-!GZipSurrogateStream class methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 11:50'!
-newFileNamed: fName inDirectory: aDirectory
-
-	^self new newFileNamed: fName inDirectory: aDirectory! !
 
 !InflateStream methodsFor: 'testing' stamp: 'jmv 3/1/2010 11:28'!
 atEnd
@@ -3262,26 +3224,25 @@ initialize
 
 	FileList registerFileReader: self! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 12/30/2012 13:55'!
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 10/16/2015 14:36'!
 saveContents: fullFileName
 	"Save the contents of a gzipped file"
-	| zipped buffer unzipped newName |
-	newName _ FileDirectory baseNameFor: fullFileName.
-	unzipped _ FileStream newFileNamed: newName.
-	unzipped binary.
-	zipped _ GZipReadStream on: (FileStream readOnlyFileNamed: fullFileName).
-	buffer _ ByteArray new: 50000.
-	'Extracting ' , fullFileName
-		displayProgressAt: Sensor mousePoint
-		from: 0
-		to: zipped sourceStream size
-		during: [ :bar | 
-			[ zipped atEnd ]
-				whileFalse: [
-					bar value: zipped sourceStream position.
-					unzipped nextPutAll: (zipped nextInto: buffer) ].
-			zipped close.
-			unzipped close ].
+	| zipped buffer newName |
+	newName _ FmFileIOAccessor default baseNameFor: fullFileName.
+	newName asFileEntry writeStream: [ :unzipped |
+		unzipped binary.
+		fullFileName asFileEntry readStream: [ :zipContents |
+			zipped _ GZipReadStream on: zipContents.
+			buffer _ ByteArray new: 50000.
+			'Extracting ' , fullFileName
+				displayProgressAt: Sensor mousePoint
+				from: 0
+				to: zipped sourceStream size
+				during: [ :bar | 
+					[ zipped atEnd ]
+						whileFalse: [
+							bar value: zipped sourceStream position.
+							unzipped nextPutAll: (zipped nextInto: buffer) ]]]].
 	^ newName! !
 
 !GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 4/19/2011 11:19'!
@@ -4336,7 +4297,7 @@ regressionTestFrom: fd
 	FileDirectory smalltalkImageDirectory deleteFileNamed: tempName.
 	self regressionTestFrom: fd using: tempName stats: stats.! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 8/23/2010 09:59'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/21/2015 12:25'!
 regressionTestFrom: fd using: tempName stats: stats
 	| files file fullName |
 	files _ fd fileNames asArray sort.
@@ -4363,7 +4324,7 @@ regressionTestFrom: fd using: tempName stats: stats
 		from: fd.
 	fd directoryNames asArray sort do: [ :dName |
 		self
-			regressionTestFrom: (fd directoryNamed: dName)
+			regressionTestFrom: fd / dName
 			using: tempName
 			stats: stats ].! !
 

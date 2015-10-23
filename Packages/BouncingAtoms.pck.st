@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2459] on 16 August 2015 at 11:45:53.024733 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 3:06:11.559323 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
 !provides: 'BouncingAtoms' 1 17!
 !classDefinition: #AtomMorph category: #BouncingAtoms!

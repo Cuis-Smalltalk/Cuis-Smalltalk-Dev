@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:18:08.479623 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 2:56:56.895179 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 35!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 36!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -201,16 +201,6 @@ TestCase subclass: #DifferenceFinderTest
 	category: 'Tests-Code Differ'!
 !classDefinition: 'DifferenceFinderTest class' category: #'Tests-Code Differ'!
 DifferenceFinderTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #DirectoryEntryTest category: #'Tests-System-Files'!
-TestCase subclass: #DirectoryEntryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-System-Files'!
-!classDefinition: 'DirectoryEntryTest class' category: #'Tests-System-Files'!
-DirectoryEntryTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTests category: #'Tests-Exceptions'!
@@ -3712,10 +3702,6 @@ testWords
 		self assert: y = ian]
 ! !
 
-!DirectoryEntryTest methodsFor: 'as yet unclassified' stamp: 'jmv 6/17/2015 11:20'!
-testSplitNameVersionExtension
-	self assert: 3 equals: FileDirectory smalltalkImageDirectory directoryEntry splitNameVersionExtension size! !
-
 !ExceptionTests methodsFor: 'private' stamp: 'md 3/25/2003 23:40'!
 assertSuccess: anExceptionTester
 	self should: [ ( anExceptionTester suiteLog first) endsWith:  'succeeded'].! !
@@ -4574,7 +4560,7 @@ testZeroSignificandAsInteger
 defaultDirectoryPath
 	^FmDirectoryEntry currentDirectory pathName! !
 
-!FmFileIOAccessorTest methodsFor: 'testing' stamp: 'mu 3/15/2007 11:15'!
+!FmFileIOAccessorTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 11:22'!
 testDirectoryExists
 	"FmFileIOAccessorTest debug: #testDirectoryExists"
 	| subDirString dirString |
@@ -4583,13 +4569,11 @@ testDirectoryExists
 
 	FmFileIOAccessor default createDirectory: dirString.
 
-	self should: [FmFileIOAccessor default directoryExists: dirString].
-	self should: [FmFileIOAccessor default directoryExists: subDirString in: self defaultDirectoryPath].
+	self should: [ dirString asDirectoryEntry exists ].
 
 	FmFileIOAccessor default deleteDirectory: dirString.
 
-	self shouldnt: [FmFileIOAccessor default directoryExists: dirString].
-	self shouldnt: [FmFileIOAccessor default directoryExists: subDirString in: self defaultDirectoryPath].! !
+	self shouldnt: [ dirString asDirectoryEntry exists ].! !
 
 !FmFileManTest methodsFor: 'private' stamp: 'mu 11/6/2006 20:35'!
 directoryEntryForTest
@@ -4672,19 +4656,19 @@ testConcatenation
 	self shouldnt: [dir exists].
 	self shouldnt: ['./subDir' asDirectoryEntry exists].! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 7/27/2015 11:30'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 12:08'!
 testCopy
 	"FmFileManTest debug: #testCopy" 
 	| file1 file2 |
 	file1 := self randomFileName asFileEntry.
-	file2 := (file1 parent / self randomFileName) asFileEntry.
+	file2 := file1 parent // self randomFileName.
 
 	file1 fileContents: 'This is a test'.
 
 "	self should: [file2 fileContents isEmpty]."
 	self should: [file2 exists not].
 
-	file1 copyTo: file2.
+	file1 copyTo: file2 pathName.
 
 	self should: [file2 fileContents = 'This is a test'].
 
@@ -4777,7 +4761,7 @@ testPathComponents
 	pathComponents := pathComponents last: 4.
 	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd')! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 7/27/2015 11:32'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 11:28'!
 testPipe
 	"FmFileManTest debug: #testPipe" 
 	| reverseFilter file1 file2 file3 |
@@ -4790,14 +4774,14 @@ testPipe
 
 	file1 fileContents: 'This is a pipe test'.
 
-	file1 pipe: reverseFilter to: file2.
+	file1 pipe: reverseFilter to: file2 pathName.
 
 	self should: [('.' asDirectoryEntry at: file1 name) = 'This is a pipe test'].	
 	self should: [(file2 fileContents) = 'tset epip a si sihT'].	
 "	self should: [(file3 fileContents) isEmpty]."
 	self should: [file3 exists not].
 
-	file2 pipe: reverseFilter to: file3.
+	file2 pipe: reverseFilter to: file3 pathName.
 	self should: [(file3 fileContents) = 'This is a pipe test'].	
 
 	file1 delete.
@@ -4810,7 +4794,7 @@ testPipe
 	
 	! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 3/19/2013 17:28'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 12:09'!
 testRecursiveDelete
 	"FmFileManTest debug: #testRecursiveDelete" 
 	| dir |
@@ -4820,7 +4804,7 @@ testRecursiveDelete
 
 	dir removeKey: 'test1'.
 
-	self shouldnt: [(dir / 'test1') exists].
+	self shouldnt: [(dir // 'test1') exists].
 
 	'./subDir' asDirectoryEntry recursiveDelete.
 	self shouldnt: [dir exists].
@@ -4865,17 +4849,16 @@ testRename
 	self should: [file1 exists not].
 	! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 3/3/2007 18:38'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 11:31'!
 testRoot
 	"FmFileManTest debug: #testRoot"
 	| root |
-	root := FmDirectoryEntry root.
+	root := FmDirectoryEntry roots first.
 	self should: [root pathComponents isEmpty].
-	self should: [root = '\' asDirectoryEntry]. 
-	self should: [root = ':' asDirectoryEntry]. 
-	self should: [root = '/' asDirectoryEntry]. 
-	
-	! !
+	FmFileIOAccessor default onUnix ifTrue: [
+		self should: [root = '\' asDirectoryEntry]. 
+		self should: [root = ':' asDirectoryEntry]. 
+		self should: [root = '/' asDirectoryEntry]]! !
 
 !FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/2/2015 16:42'!
 testStream
