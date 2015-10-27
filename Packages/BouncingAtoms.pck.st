@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 3:06:11.559323 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2555] on 27 October 2015 at 4:01:58.32102 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 17!
+!provides: 'BouncingAtoms' 1 18!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
 	instanceVariableNames: 'velocity'
@@ -397,7 +397,7 @@ reset
 	transmitInfection _ false.
 ! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 4/18/2015 17:04'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'jmv 10/24/2015 23:30'!
 setAtomCount
 
 	| countString count |
@@ -409,8 +409,7 @@ setAtomCount
 	count _ countString asInteger.
 	self addAtoms: count.
 	self reset.
-	self startSteppingStepTime: 20.
-! !
+	self startStepping.! !
 
 !BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 5/26/2015 19:49'!
 showInfectionHistory
@@ -520,7 +519,7 @@ how
 	BouncingAtomsMorph initializedInstance.
 "! !
 
-!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'dhn 7/4/2015 16:00'!
+!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'jmv 10/25/2015 19:17'!
 initializedInstance
 	| win morph |
 	morph _ self new.
@@ -528,11 +527,7 @@ initializedInstance
 	win setProperty: #minimumExtent toValue: 88@85.
 	morph setProperty: #drawAsRect toValue: false.
 	win model: morph.
-	win openInWorld.
-	morph morphExtent: win morphExtent.
 	morph addAtoms: 30.
-	win owner doOneCycleNow.
-	morph startSteppingStepTime: 20.
 	^ win! !
 
 !GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 20:12'!
