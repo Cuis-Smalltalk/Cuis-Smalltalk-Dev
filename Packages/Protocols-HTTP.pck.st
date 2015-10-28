@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 2:57:47.753551 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 28 October 2015 at 10:31:14.680583 am'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 18!
-!requires: 'Identities-UUID' 1 1 nil!
+!provides: 'Protocols-HTTP' 1 19!
 !requires: 'Network-Kernel' 1 2 nil!
+!requires: 'Identities-UUID' 1 1 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 1 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
@@ -4094,7 +4094,7 @@ browseFile: file request: request
 	resp headerAt: 'Content-Type' put: mimeTypes first.
 	request sendResponse: resp contentStream: file size: fileSize.! !
 
-!HTTPServer class methodsFor: 'examples' stamp: 'jmv 10/21/2015 12:25'!
+!HTTPServer class methodsFor: 'examples' stamp: 'jmv 10/27/2015 18:12'!
 browseRequest: request
 	"Handle an HTTP request for browsing some resource"
 
@@ -4102,10 +4102,10 @@ browseRequest: request
 
 	"Extract the file path from the request"
 	path := request url findTokens: '/'.
-	path ifEmpty: [ ^self browseDir: FileDirectory currentDirectory request: request ].
+	path ifEmpty: [ ^self browseDir: FmDirectoryEntry currentDirectory request: request ].
 
 	"Find the directory entry for the resource"
-	fd := path allButLast inject: FileDirectory currentDirectory into: [ :dir :part | dir / part ].
+	fd := path allButLast inject: FmDirectoryEntry currentDirectory into: [ :dir :part | dir / part ].
 	entry := fd entryAt: path last ifAbsent: [ ^request send404Response ].
 
 	"Reply with the proper resource"
@@ -4120,7 +4120,7 @@ browseRequest: request
 			- handling errors when sending it
 		This makes the code below a bit ugly"
 		[[
-			file := fd readOnlyFileNamed: entry name.
+			file := (fd // entry name) privateReadStream.
 			[ self browseFile: file request: request ]
 				ensure: [ file close ] 	"close file even in case of error"
 		] on: Error do: []				"ignore errors altogether"

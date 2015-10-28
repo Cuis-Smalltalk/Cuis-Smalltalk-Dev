@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 2:59:25.185285 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 28 October 2015 at 10:31:16.808583 am'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 8!
+!provides: 'Sound' 1 9!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
@@ -6876,7 +6876,7 @@ playSampleCount: n into: aSoundBuffer startingAt: startIndex
 		mixer playSampleCount: n into: aSoundBuffer startingAt: startIndex].
 ! !
 
-!StreamingMonoSound methodsFor: 'private' stamp: 'jmv 5/20/2011 11:18'!
+!StreamingMonoSound methodsFor: 'private' stamp: 'jmv 10/27/2015 18:07'!
 positionCodecTo: desiredSampleIndex
 	"Position to the closest frame before the given sample index when using a codec. If using the ADPCM codec, try to ensure that it is in sync with the compressed sample stream."
 
@@ -6894,7 +6894,7 @@ positionCodecTo: desiredSampleIndex
 
 	"copy stream and codec"
 	(stream isKindOf: FileStream)
-		ifTrue: [tmpStream _ (FileStream readOnlyFileNamed: stream name) binary]
+		ifTrue: [tmpStream _ (stream name asFileEntry privateReadStream ) binary]
 		ifFalse: [tmpStream _ "stream deepCopy" stream contents readStream].	"To kill #deepCopy. Not sure if right, though (jmv)"
 	tmpCodec _ codec copy reset.
 
@@ -8751,11 +8751,11 @@ playURLNamed: urlString
 	ScorePlayerMorph openOn: (self scoreFromURL: urlString)
 		title: titleString"! !
 
-!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jm 1/3/98 09:58'!
+!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 10/27/2015 18:05'!
 scoreFromFileNamed: fileName
 
 	| f score |
-	f _ (FileStream readOnlyFileNamed: fileName) binary.
+	f _ (fileName asFileEntry privateReadStream) binary.
 	score _ (self new readMIDIFrom: f) asScore.
 	f close.
 	^ score
@@ -12742,12 +12742,12 @@ playSoundNamed: soundName
 	Preferences soundsEnabled ifTrue: [
 		SampledSound playSoundNamed: soundName asString]! !
 
-!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/17/2015 11:26'!
+!SoundSystem methodsFor: 'playing' stamp: 'jmv 10/27/2015 18:13'!
 playSoundNamed: soundName ifAbsentReadFrom: aifFileName
 
 	Preferences soundsEnabled ifTrue: [
 		(SampledSound soundNames includes: soundName) ifFalse: [
-			(FileDirectory smalltalkImageDirectory fileExists: aifFileName) ifTrue: [
+			(FmDirectoryEntry smalltalkImageDirectory // aifFileName) exists ifTrue: [
 				SampledSound
 					addLibrarySoundNamed: soundName
 					fromAIFFfileNamed: aifFileName]].

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 3:01:04.160781 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 28 October 2015 at 10:31:12.719583 am'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 10!
+!provides: 'Compression' 1 11!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -444,11 +444,11 @@ serviceMCZContents
 			argumentGetter: [ :fileList |
 				fileList selectedFileEntry ]! !
 
-!FileList methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:41'!
+!FileList methodsFor: '*Compression' stamp: 'jmv 10/27/2015 18:04'!
 compressFile
 	"Compress the currently selected file"
 
-	(directory readOnlyFileNamed: self fullName)
+	self fullName asFileEntry privateReadStream 
 		compressFile.
 	self updateFileList! !
 
@@ -613,13 +613,13 @@ viewGZipContents
 		contents: stringContents;
 		openLabel: 'Decompressed contents of: ', self localName! !
 
-!StandardFileStream methodsFor: '*Compression' stamp: 'jmv 10/16/2015 16:33'!
+!StandardFileStream methodsFor: '*Compression' stamp: 'jmv 10/27/2015 18:02'!
 compressFile
 	"Write a new file that has the data in me compressed in GZip format."
 	|  zipped buffer |
 
 	self readOnly; binary.
-	zipped _ self directory newFileNamed: (self name, '.gz').
+	zipped _ (self directory // (self name, '.gz')) privateWriteStream.
 	zipped binary.
 	zipped _ GZipWriteStream on: zipped.
 	buffer _ ByteArray new: 50000.
@@ -1026,12 +1026,12 @@ readEndOfCentralDirectoryFrom: aStream
 	zipFileComment _ aStream next: zipFileCommentLength.
 ! !
 
-!ZipArchive methodsFor: 'reading' stamp: 'jmv 2/17/2010 22:09'!
+!ZipArchive methodsFor: 'reading' stamp: 'jmv 10/27/2015 18:09'!
 readFrom: aStreamOrFileName
 	| stream name eocdPosition |
 	stream _ (aStreamOrFileName is: #Stream)
 		ifTrue: [name _ aStreamOrFileName name. aStreamOrFileName]
-		ifFalse: [StandardFileStream readOnlyFileNamed: (name _ aStreamOrFileName)].
+		ifFalse: [(name _ aStreamOrFileName) asFileEntry privateReadStream].
 	stream binary.
 	eocdPosition _ self class findEndOfCentralDirectoryFrom: stream.
 	eocdPosition <= 0 ifTrue: [self error: 'can''t find EOCD position'].
@@ -1117,11 +1117,11 @@ writeTo: stream prepending: aString
 	self writeCentralDirectoryTo: stream.
 	! !
 
-!ZipArchive methodsFor: 'writing' stamp: 'nk 3/27/2002 12:41'!
+!ZipArchive methodsFor: 'writing' stamp: 'jmv 10/27/2015 18:09'!
 writeTo: stream prependingFileNamed: aFileName
 	| prepended buffer |
 	stream binary.
-	prepended _ StandardFileStream readOnlyFileNamed: aFileName.
+	prepended _ aFileName asFileEntry privateReadStream.
 	prepended binary.
 	buffer _ ByteArray new: (prepended size min: 32768).
 	[ prepended atEnd ] whileFalse: [ | bytesRead |
@@ -1227,14 +1227,14 @@ initialize
 
 	FileList registerFileReader: self 		"For Monticello .mcz support"! !
 
-!ZipArchive class methodsFor: 'file format' stamp: 'jmv 1/12/2010 11:52'!
+!ZipArchive class methodsFor: 'file format' stamp: 'jmv 10/27/2015 17:31'!
 isZipArchive: aStreamOrFileName
 	"Answer whether the given filename represents a valid zip file."
 
 	| stream eocdPosition |
 	stream _ (aStreamOrFileName is: #Stream)
 		ifTrue: [aStreamOrFileName]
-		ifFalse: [StandardFileStream oldFileNamed: aStreamOrFileName].
+		ifFalse: [aStreamOrFileName asFileEntry privateReadStream ].
 	stream ifNil: [^ false].
 	"nil happens sometimes somehow"
 	stream size < 22 ifTrue: [^ false].
@@ -1299,13 +1299,13 @@ isCorrupt: aBoolean
 	"Mark this member as being corrupt."
 	isCorrupt := aBoolean! !
 
-!ArchiveMember methodsFor: 'accessing' stamp: 'nk 12/20/2002 15:02'!
+!ArchiveMember methodsFor: 'accessing' stamp: 'jmv 10/27/2015 18:12'!
 localFileName: aString
 	"Set my internal filename.
 	Returns the (possibly new) filename.
 	aString will be translated from local FS format into Unix format."
 
-	^fileName _ aString copyReplaceAll: FileDirectory slash with: '/'.! !
+	^fileName _ aString copyReplaceAll: '\' with: '/'.! !
 
 !ArchiveMember methodsFor: 'printing' stamp: 'nk 12/20/2002 15:11'!
 printOn: aStream
@@ -1687,14 +1687,10 @@ lastModTime
 
 	^self dosToSqueakTime: lastModFileDateTime! !
 
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'jmv 6/17/2015 10:50'!
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'jmv 10/27/2015 18:16'!
 localFileName
 	"Answer my fileName in terms of the local directory naming convention"
-	| localName |
-	localName _ fileName copyReplaceAll: '/' with: FileDirectory slash.
-	^(fileName first = $/)
-		ifTrue: [ FileDirectory activeDirectoryClass makeAbsolute: localName ]
-		ifFalse: [ FileDirectory activeDirectoryClass makeRelative: localName ]! !
+	^fileName! !
 
 !ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/21/2001 20:38'!
 looksLikeDirectory
@@ -2155,12 +2151,12 @@ newNamed: aFileName
 close
 	stream ifNotNil:[stream close].! !
 
-!ZipNewFileMember methodsFor: 'initialization' stamp: 'jmv 10/16/2015 16:30'!
+!ZipNewFileMember methodsFor: 'initialization' stamp: 'jmv 10/27/2015 18:10'!
 from: aFileName
 	| entry |
 	compressionMethod _ CompressionStored.
 	"Now get the size, attributes, and timestamps, and see if the file exists"
-	stream _ StandardFileStream readOnlyFileNamed: aFileName.
+	stream _ aFileName asFileEntry privateReadStream.
 	self localFileName: (externalFileName _ stream name).
 	entry _ aFileName asFileEntry.
 	compressedSize _ uncompressedSize _ entry fileSize.
@@ -3269,11 +3265,11 @@ unload
 
 	FileList unregisterFileReader: self ! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 8/27/2009 13:20'!
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 10/27/2015 18:04'!
 viewContents: fullFileName
 	"Open the decompressed contents of the .gz file with the given name.  This method is only required for the registering-file-list of Squeak 3.3a and beyond, but does no harm in an earlier system"
 
-	(FileStream readOnlyFileNamed: fullFileName) ifNotNil: [ :aStream | 
+	(fullFileName asFileEntry privateReadStream ) ifNotNil: [ :aStream | 
 		aStream viewGZipContents]! !
 
 !ZLibReadStream methodsFor: 'initialization' stamp: 'ar 2/29/2004 03:31'!
@@ -4088,7 +4084,7 @@ baseDistance
 baseLength
 	^BaseLength! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 6/17/2015 11:35'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/27/2015 18:15'!
 compressAndDecompress: aFile using: tempName stats: stats
 	| fileSize tempFile result |
 	aFile
@@ -4106,7 +4102,7 @@ compressAndDecompress: aFile using: tempName stats: stats
 				result _ self regressionDecompress: aFile from: tempFile notifying: bar stats: stats]].
 	aFile close.
 	tempFile close.
-	FileDirectory smalltalkImageDirectory deleteFileNamed: tempName ifAbsent: nil.
+	(FmDirectoryEntry smalltalkImageDirectory // tempName) delete.
 	result ~~ false ifTrue:[
 		Transcript show:' ok (', (result * 100 truncateTo: 0.01) printString,')'].
 	^result! !
@@ -4276,26 +4272,26 @@ regressionDecompress: aFile from: tempFile notifying: progressBar stats: stats
 		(stats at: #compressedSize ifAbsent:[0]) + compressedSize.
 	^compressedSize asFloat / rawSize asFloat.! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 6/17/2015 11:35'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/27/2015 18:15'!
 regressionTest 
 	"
 	ZipWriteStream regressionTest
 	"
 	"Compress and decompress everything we can 
 	find to validate that compression works as expected."
-	self regressionTestFrom: FileDirectory smalltalkImageDirectory! !
+	self regressionTestFrom: FmDirectoryEntry smalltalkImageDirectory! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 6/27/2015 09:39'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/27/2015 18:16'!
 regressionTestFrom: fd
 	"ZipWriteStream regressionTestFrom: FileDirectory currentDirectory"
 	"ZipWriteStream regressionTestFrom: (FileDirectory on:'')"
 	"ZipWriteStream regressionTestFrom: (FileDirectory on:'C:')"
-	| tempName stats |
+	| stats entry |
 	Transcript clear.
 	stats _ Dictionary new.
-	tempName _ FileDirectory smalltalkImageDirectory fullNameFor: '$$sqcompress$$'.
-	FileDirectory smalltalkImageDirectory deleteFileNamed: tempName.
-	self regressionTestFrom: fd using: tempName stats: stats.! !
+	entry _ (FmDirectoryEntry smalltalkImageDirectory // '$$sqcompress$$').
+	entry exists ifTrue: [ entry delete ].
+	self regressionTestFrom: fd using: entry pathName stats: stats.! !
 
 !ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/21/2015 12:25'!
 regressionTestFrom: fd using: tempName stats: stats
@@ -4357,11 +4353,11 @@ writeHeader
 	encoder nextBits: 8 put: 0. "No OS type"
 ! !
 
-!GZipWriteStream class methodsFor: 'file list services' stamp: 'sw 11/30/2002 00:11'!
+!GZipWriteStream class methodsFor: 'file list services' stamp: 'jmv 10/27/2015 18:04'!
 compressFile: fileName
 	"Create a compressed file from the file of the given name"
 
-	(FileStream readOnlyFileNamed: fileName) compressFile! !
+	(fileName asFileEntry privateReadStream) compressFile! !
 
 !GZipWriteStream class methodsFor: 'file list services' stamp: 'jmv 1/11/2013 12:52'!
 fileReaderServicesForFile: fullName suffix: suffix

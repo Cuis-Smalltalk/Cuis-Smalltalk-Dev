@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 2:56:56.895179 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 28 October 2015 at 10:34:07.170583 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 36!
+!provides: 'Tests' 1 37!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -4583,7 +4583,7 @@ directoryEntryForTest
 randomFileName
 	^100000 atRandom asString, '.fmtst'! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 6/6/2015 23:23'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/28/2015 10:33'!
 testAbsolutePath
 	"FmFileManTest debug: #testAbsolutePath"
 	| dirEntry dirEntry1 dirEntry2 dirEntry3 dirEntry4 |
@@ -4604,7 +4604,7 @@ testAbsolutePath
 	self should: [dirEntry3 = 'C::temp:b' asDirectoryEntry].
 
 	"Platform specific path tests"
-	FmFileIOAccessor default onMac ifTrue: [
+	FmFileIOAccessor default onMacClassic ifTrue: [
 	dirEntry4 := 'Macintosh HD:tmp' asDirectoryEntry.
 	self should: [dirEntry4 = 'Macintosh HD/tmp' asDirectoryEntry].
 	self should: [dirEntry4 = 'Macintosh HD\tmp' asDirectoryEntry].

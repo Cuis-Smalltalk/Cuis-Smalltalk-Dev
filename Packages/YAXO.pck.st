@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:09:14.501236 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 28 October 2015 at 10:31:18.867583 am'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 7!
+!provides: 'YAXO' 1 8!
 !requires: 'Network-Kernel' 1 nil nil!
 !classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
@@ -576,10 +576,10 @@ parseDocumentFromFileNamed: fileName readIntoMemory: readIntoMemory
 parserOnFileNamed: fileName
 	^self parserOnFileNamed: fileName readIntoMemory: false! !
 
-!SAXHandler class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:44'!
+!SAXHandler class methodsFor: 'instance creation' stamp: 'jmv 10/27/2015 18:06'!
 parserOnFileNamed: fileName readIntoMemory: readIntoMemory
 	| stream  |
-	stream _ FileDirectory currentDirectory readOnlyFileNamed: fileName.
+	stream _ (FmDirectoryEntry currentDirectory // fileName) privateReadStream.
 	readIntoMemory
 		ifTrue: [stream _ stream contentsOfEntireFile readStream].
 	^self on: stream! !
@@ -1743,9 +1743,9 @@ nextEntityValue
 			nextChar ifNotNil: [entityValueStream nextPut: nextChar]].
 	^entityValueStream contents! !
 
-!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'rkris 7/28/2004 12:35'!
+!XMLTokenizer methodsFor: 'tokenizing dtd' stamp: 'jmv 10/27/2015 18:09'!
 nextExternalId
-	| extDefType systemId dir |
+	| extDefType systemId entry |
 	extDefType _ self nextLiteral.
 	extDefType = 'PUBLIC'
 		ifTrue: [
@@ -1767,9 +1767,9 @@ nextExternalId
 	"The rest of this method only applies if we're reading aFileStream"
 	(self topStream isKindOf: FileStream)
 		ifFalse: [^''].
-	dir _ self topStream directory.
-	^(dir fileExists: systemId)
-		ifTrue: [(dir readOnlyFileNamed: systemId) contentsOfEntireFile]
+	entry _ self topStream directory // systemId.
+	^entry exists
+		ifTrue: [entry fileContents]
 		ifFalse: ['']! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 6/28/2001 16:38'!
