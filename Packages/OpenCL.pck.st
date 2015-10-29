@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 29 October 2015 at 10:47:25.398427 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 29 October 2015 at 4:51:23.032174 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 3!
-!requires: 'SignalProcessing' 1 37 nil!
+!provides: 'OpenCL' 1 4!
 !requires: 'FFI' 1 nil nil!
+!requires: 'SignalProcessing' 1 37 nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -21,6 +21,16 @@ Error subclass: #OpenCLError
 	category: 'OpenCL'!
 !classDefinition: 'OpenCLError class' category: #OpenCL!
 OpenCLError class
+	instanceVariableNames: ''!
+
+!classDefinition: #CLBufferRegionStruct category: #'OpenCL-FFI'!
+ExternalStructure subclass: #CLBufferRegionStruct
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-FFI'!
+!classDefinition: 'CLBufferRegionStruct class' category: #'OpenCL-FFI'!
+CLBufferRegionStruct class
 	instanceVariableNames: ''!
 
 !classDefinition: #CLImageDescStruct category: #'OpenCL-FFI'!
@@ -191,6 +201,16 @@ OpenCLExample subclass: #OpenCLBlur
 	category: 'OpenCL-Examples'!
 !classDefinition: 'OpenCLBlur class' category: #'OpenCL-Examples'!
 OpenCLBlur class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLBlur12 category: #'OpenCL-Examples'!
+OpenCLExample subclass: #OpenCLBlur12
+	instanceVariableNames: 'horizontalKernel verticalKernel filterWeights filterWeightsBuffer imageExtent inputOutputImage tempImage lastEvent'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Examples'!
+!classDefinition: 'OpenCLBlur12 class' category: #'OpenCL-Examples'!
+OpenCLBlur12 class
 	instanceVariableNames: ''!
 
 !classDefinition: #OpenCLJuliaSet category: #'OpenCL-Examples'!
@@ -447,12 +467,58 @@ OpenCLTest class
 !OpenCLError commentStamp: 'jcg 1/11/2010 23:22' prior: 0!
 Error that knows how to look up a human-readable string corresponding to the OpenCL error code.!
 
-!CLImageDescStruct commentStamp: '<historical>' prior: 0!
-Similar to CLImageFormatStruct. For OpenCL's struct _cl_image_desc
-Needs to be completed, with accessors, etc.!
+!CLBufferRegionStruct commentStamp: '<historical>' prior: 0!
+Similar to CLImageFormatStruct and CLImageDescStruct. For OpenCL's cl_buffer_region
 
-!CLImageFormatStruct commentStamp: 'jcg 1/7/2010 01:01' prior: 0!
+Declared in cl.h (unchanged in OpenCL 1.1, 1.2 and 2.0) as:
+
+typedef struct _cl_buffer_region {
+    size_t                  origin;
+    size_t                  size;
+} cl_buffer_region;!
+
+!CLImageDescStruct commentStamp: '<historical>' prior: 0!
+Similar to CLImageFormatStruct. For OpenCL's cl_image_desc
+
+Declared in cl.h (OpenCL 1.2) as:
+
+typedef struct _cl_image_desc {
+    cl_mem_object_type      image_type;
+    size_t                  image_width;
+    size_t                  image_height;
+    size_t                  image_depth;
+    size_t                  image_array_size;
+    size_t                  image_row_pitch;
+    size_t                  image_slice_pitch;
+    cl_uint                 num_mip_levels;
+    cl_uint                 num_samples;
+    cl_mem                  buffer;
+} cl_image_desc;
+
+Declared in cl.h (OpenCL 2.0) as:
+typedef struct _cl_image_desc {
+    cl_mem_object_type      image_type;
+    size_t                  image_width;
+    size_t                  image_height;
+    size_t                  image_depth;
+    size_t                  image_array_size;
+    size_t                  image_row_pitch;
+    size_t                  image_slice_pitch;
+    cl_uint                 num_mip_levels;
+    cl_uint                 num_samples;
+#ifdef __GNUC__
+    __extension__   /* Prevents warnings about anonymous union in -pedantic builds */
+#endif
+    union {
+      cl_mem                  buffer;
+      cl_mem                  mem_object;
+    };
+} cl_image_desc;!
+
+!CLImageFormatStruct commentStamp: '<historical>' prior: 0!
 For uniformity with the other OpenCL FFI types, this would be called CLImageFormat.  However, there is already an OpenCL constant with that name.  The exception is made less objectionable by the other FFI types being opaque handle types, whereas this is the only structure type with accessible fields.
+
+Declared in cl.h (unchanged in OpenCL 1.0, 1.1, 1.2 and 2.0) as:
 
 typedef struct _cl_image_format {
     cl_channel_order        image_channel_order;
@@ -494,6 +560,16 @@ typedef struct _cl_sampler *        cl_sampler;!
 !OpenCLJuliaSetMorph commentStamp: '<historical>' prior: 0!
 OpenCLJuliaSetMorph new openInHand!
 
+!OpenCLExample commentStamp: 'jmv 10/29/2015 11:57' prior: 0!
+This class includes ivars that any (all?) OpenCL examples should have.
+Limitations:
+- Handle just one device (it is possible to have a single program use several devices)
+
+	device 	-> 		GPU or CPU
+	context 	-> 		Instance of OpenCLContext. Built for our device.
+	queue 	-> 		Instance of OpenCLCommandQueue. There is a queue for each device. Just one here.
+	program 	-> 		Instance of OpenCLProgram. Holds source code, creates kernels.!
+
 !AppleCopyBenchmark commentStamp: 'jmv 9/9/2015 14:50' prior: 0!
 "
 ---EXPERIMENTAL!!---
@@ -511,16 +587,25 @@ AndreasSystemProfiler spyOn: [
 	result _ bench result.
 result display!
 
-!DeformationGridExample commentStamp: 'jmv 9/9/2015 14:50' prior: 0!
+!DeformationGridExample commentStamp: '<historical>' prior: 0!
 ---EXPERIMENTAL!!---
 
-Parece que no tenemos OpenCL 1.2. Bueno usemos la api de 1.0 o 1.1... (O sea clCreateImage2D() y no clCreateImage() )!
+Parece que no tenemos OpenCL 1.2. Bueno usemos la api de 1.0 o 1.1... (O sea clCreateImage2D() y no clCreateImage() )
+
+En este punto, esto fue abandonado. Eliminarlo, o completarlo... Ahora si tenemos OpenCL 1.2 y 2.0.!
 
 !OpenCLBlur commentStamp: '<historical>' prior: 0!
 Pretty much the simplest thing you can do with OpenCL: a separable Gaussian blur.
 
 Try evaluating:
 	OpenCLBlur blurDisplay!
+
+!OpenCLBlur12 commentStamp: '<historical>' prior: 0!
+Pretty much the simplest thing you can do with OpenCL: a separable Gaussian blur.
+Adapted to OpenCL 1.2
+
+Try evaluating:
+	OpenCLBlur12 blurDisplay!
 
 !OpenCLJuliaSet commentStamp: '<historical>' prior: 0!
 OpenCLJuliaSet example1!
@@ -1518,33 +1603,233 @@ signal: signalerText code: errCode
 signalCode: errCode
 	^self new code: errCode; signal: (self errorStringForCode: errCode)! !
 
-!CLImageFormatStruct methodsFor: 'accessing' stamp: 'jcg 1/5/2010 12:03'!
-imageChannelDataType
-	"This method was automatically generated"
-	^handle unsignedLongAt: 5! !
-
-!CLImageFormatStruct methodsFor: 'accessing' stamp: 'jcg 1/5/2010 12:03'!
-imageChannelDataType: anObject
-	"This method was automatically generated"
-	handle unsignedLongAt: 5 put: anObject! !
-
-!CLImageFormatStruct methodsFor: 'accessing' stamp: 'jcg 1/5/2010 12:03'!
-imageChannelOrder
+!CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+origin
 	"This method was automatically generated"
 	^handle unsignedLongAt: 1! !
 
-!CLImageFormatStruct methodsFor: 'accessing' stamp: 'jcg 1/5/2010 12:03'!
-imageChannelOrder: anObject
+!CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+origin: anObject
 	"This method was automatically generated"
 	handle unsignedLongAt: 1 put: anObject! !
 
-!CLImageFormatStruct methodsFor: 'printing' stamp: 'jcg 3/14/2010 11:58'!
+!CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+size
+	"This method was automatically generated"
+	^handle unsignedLongAt: 5! !
+
+!CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+size: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 5 put: anObject! !
+
+!CLBufferRegionStruct class methodsFor: 'accessing' stamp: 'jmv 10/29/2015 15:00'!
+fields
+	"CLBufferRegionStruct defineFields"
+	^#(
+		(origin 'ulong')
+		(size 'ulong')
+	)! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+buffer
+	"This method was automatically generated"
+	^handle unsignedLongAt: 37! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+buffer: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 37 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_array_size
+	"This method was automatically generated"
+	^handle unsignedLongAt: 17! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_array_size: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 17 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_depth
+	"This method was automatically generated"
+	^handle unsignedLongAt: 13! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_depth: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 13 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_height
+	"This method was automatically generated"
+	^handle unsignedLongAt: 9! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_height: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 9 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_row_pitch
+	"This method was automatically generated"
+	^handle unsignedLongAt: 21! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_row_pitch: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 21 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_slice_pitch
+	"This method was automatically generated"
+	^handle unsignedLongAt: 25! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_slice_pitch: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 25 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_type
+	"This method was automatically generated"
+	^handle unsignedLongAt: 1! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_type: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 1 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_width
+	"This method was automatically generated"
+	^handle unsignedLongAt: 5! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+image_width: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 5 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 14:57'!
+mem_object
+	"In OpenCL 1.2, this field does not exist. At this position there is field 'buffer'
+	In OpenCL 2.0, a union of 'buffer' and 'mem_object', both of type cl_mem"
+	^handle unsignedLongAt: 37! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 14:57'!
+mem_object: aMemObjectId
+	"In OpenCL 1.2, this field does not exist. At this position there is field 'buffer'
+	In OpenCL 2.0, a union of 'buffer' and 'mem_object', both of type cl_mem"
+	handle unsignedLongAt: 37 put: aMemObjectId! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+num_mip_levels
+	"This method was automatically generated"
+	^handle unsignedLongAt: 29! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+num_mip_levels: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 29 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+num_samples
+	"This method was automatically generated"
+	^handle unsignedLongAt: 33! !
+
+!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
+num_samples: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 33 put: anObject! !
+
+!CLImageDescStruct methodsFor: 'printing' stamp: 'jmv 10/29/2015 15:18'!
 printOn: aStream
 	super printOn: aStream.
 	aStream nextPut: $(.
-	aStream nextPutAll: (self class channelOrderString: self imageChannelOrder).
+	aStream nextPutAll: (self class image_type_String: self image_type).
 	aStream space.
-	aStream nextPutAll: (self class channelDataTypeString: self imageChannelDataType).
+	aStream nextPutAll: (self image_width).
+	aStream space.
+	aStream nextPutAll: (self image_height).
+	aStream space.
+	aStream nextPutAll: (self image_depth).
+	aStream space.
+	aStream nextPutAll: (self image_array_size).
+	aStream space.
+	aStream nextPutAll: (self image_row_pitch).
+	aStream space.
+	aStream nextPutAll: (self image_slice_pitch).
+	aStream space.
+	aStream nextPutAll: (self num_mip_levels).
+	aStream space.
+	aStream nextPutAll: (self num_samples).
+	aStream space.
+	aStream nextPutAll: (self buffer).
+	aStream nextPut: $).! !
+
+!CLImageDescStruct class methodsFor: 'accessing' stamp: 'jmv 10/29/2015 14:54'!
+fields
+	"CLImageDescStruct defineFields"
+	^#(
+		(image_type 'ulong')
+		(image_width 'ulong')
+		(image_height 'ulong')
+		(image_depth 'ulong')
+		(image_array_size 'ulong')
+		(image_row_pitch 'ulong')
+		(image_slice_pitch 'ulong')
+		(num_mip_levels 'ulong')
+		(num_samples 'ulong')
+		(buffer 'ulong')
+	)! !
+
+!CLImageDescStruct class methodsFor: 'utility' stamp: 'jmv 10/29/2015 15:15'!
+image_type_String: image_type "a image_type constant"
+	"Answer a descriptive string for the given constant."
+	^image_type caseOf: {
+		[CL_MEM_OBJECT_BUFFER]				->	['CL_MEM_OBJECT_BUFFER'].
+		[CL_MEM_OBJECT_IMAGE2D]				-> 	['CL_MEM_OBJECT_IMAGE2D'].
+		[CL_MEM_OBJECT_IMAGE3D]				->	['CL_MEM_OBJECT_IMAGE3D'].
+		[CL_MEM_OBJECT_IMAGE2D_ARRAY]		->	['CL_MEM_OBJECT_IMAGE2D_ARRAY'].
+		[CL_MEM_OBJECT_IMAGE1D]				->	['CL_MEM_OBJECT_IMAGE1D'].
+		[CL_MEM_OBJECT_IMAGE1D_ARRAY]		->	['CL_MEM_OBJECT_IMAGE1D_ARRAY'].
+		[CL_MEM_OBJECT_IMAGE1D_BUFFER]	->	['CL_MEM_OBJECT_IMAGE1D_BUFFER'].
+		[CL_MEM_OBJECT_PIPE]					->	['CL_MEM_OBJECT_PIPE'].
+	} otherwise: [
+		String streamContents: [:s |
+			s nextPutAll: '<unknown image_type '.
+			image_type printOn: s base: 16.
+			s nextPut: $>
+		]]! !
+
+!CLImageFormatStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:44'!
+image_channel_data_type
+	"This method was automatically generated"
+	^handle unsignedLongAt: 5! !
+
+!CLImageFormatStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:44'!
+image_channel_data_type: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 5 put: anObject! !
+
+!CLImageFormatStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:44'!
+image_channel_order
+	"This method was automatically generated"
+	^handle unsignedLongAt: 1! !
+
+!CLImageFormatStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:44'!
+image_channel_order: anObject
+	"This method was automatically generated"
+	handle unsignedLongAt: 1 put: anObject! !
+
+!CLImageFormatStruct methodsFor: 'printing' stamp: 'jmv 10/29/2015 15:11'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(.
+	aStream nextPutAll: (self class image_channel_order_String: self image_channel_order).
+	aStream space.
+	aStream nextPutAll: (self class image_channel_data_type_String: self image_channel_data_type).
 	aStream nextPut: $).! !
 
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 11:53'!
@@ -1567,25 +1852,34 @@ bgra8888norm
 	^self order: CL_BGRA type: CL_UNORM_INT8
 ! !
 
-!CLImageFormatStruct class methodsFor: 'utility' stamp: 'jmv 9/9/2015 11:52'!
-channelDataTypeString: channelDataType "a cl_channel_type"
+!CLImageFormatStruct class methodsFor: 'field definition' stamp: 'jmv 10/29/2015 14:52'!
+fields
+	"CLImageFormatStruct defineFields"
+	^#(
+		(image_channel_order 'ulong')
+		(image_channel_data_type 'ulong')
+	)! !
+
+!CLImageFormatStruct class methodsFor: 'utility' stamp: 'jmv 10/29/2015 15:11'!
+image_channel_data_type_String: channelDataType "a cl_channel_type"
 	"Answer a descriptive string for the given constant."
 	^channelDataType caseOf: {
-		[CL_SNORM_INT8]			->	['snorm-int8'].
-		[CL_SNORM_INT16]			-> 	['snorm-int16'].
-		[CL_UNORM_INT8]			->	['unorm-int8'].
-		[CL_UNORM_INT16]			->	['unorm-int16'].
-		[CL_UNORM_SHORT_565]	->	['unorm-short565'].
-		[CL_UNORM_SHORT_555]	->	['unorm-short555'].
-		[CL_UNORM_INT_101010]	->	['unorm-int101010'].
-		[CL_SIGNED_INT8]			->	['int8'].
-		[CL_SIGNED_INT16]			->	['int16'].
-		[CL_SIGNED_INT32]		->	['int32'].
-		[CL_UNSIGNED_INT8]		->	['uint8'].
-		[CL_UNSIGNED_INT16]		->	['uint16'].
-		[CL_UNSIGNED_INT32]		->	['uint32'].
-		[CL_HALF_FLOAT]			->	['half-float'].
-		[CL_FLOAT]					->	['float'].
+		[CL_SNORM_INT8]			->	['CL_SNORM_INT8'].
+		[CL_SNORM_INT16]			-> 	['CL_SNORM_INT16'].
+		[CL_UNORM_INT8]			->	['CL_UNORM_INT8'].
+		[CL_UNORM_INT16]			->	['CL_UNORM_INT16'].
+		[CL_UNORM_SHORT_565]	->	['CL_UNORM_SHORT_565'].
+		[CL_UNORM_SHORT_555]	->	['CL_UNORM_SHORT_555'].
+		[CL_UNORM_INT_101010]	->	['CL_UNORM_INT_101010'].
+		[CL_SIGNED_INT8]			->	['CL_SIGNED_INT8'].
+		[CL_SIGNED_INT16]			->	['CL_SIGNED_INT16'].
+		[CL_SIGNED_INT32]		->	['CL_SIGNED_INT32'].
+		[CL_UNSIGNED_INT8]		->	['CL_UNSIGNED_INT8'].
+		[CL_UNSIGNED_INT16]		->	['CL_UNSIGNED_INT16'].
+		[CL_UNSIGNED_INT32]		->	['CL_UNSIGNED_INT32'].
+		[CL_HALF_FLOAT]			->	['CL_HALF_FLOAT'].
+		[CL_FLOAT]					->	['CL_FLOAT'].
+		[CL_UNORM_INT24]			->	['CL_UNORM_INT24'].
 	} otherwise: [
 		String streamContents: [:s |
 			s nextPutAll: '<unknown channel data-type '.
@@ -1593,31 +1887,36 @@ channelDataTypeString: channelDataType "a cl_channel_type"
 			s nextPut: $>
 		]]! !
 
-!CLImageFormatStruct class methodsFor: 'utility' stamp: 'jmv 9/9/2015 11:52'!
-channelOrderString: channelOrderConstant "a cl_channel_order_constant"
+!CLImageFormatStruct class methodsFor: 'utility' stamp: 'jmv 10/29/2015 15:10'!
+image_channel_order_String: channelOrderConstant "a cl_channel_order_constant"
 	"Answer a descriptive string for the given constant."
 	^channelOrderConstant caseOf: {
-		[CL_R]				->	['R'].
-		[CL_A]				-> 	['A'].
-		[CL_RG]			->	['RG'].
-		[CL_RA]			->	['RA'].
-		[CL_RGB]			->	['RGB'].
-		[CL_RGBA]		->	['RGBA'].
-		[CL_BGRA]		->	['BGRA'].
-		[CL_ARGB]		->	['ARGB'].
-		[CL_INTENSITY]	->	['Intensity'].
-		[CL_LUMINANCE]	->	['Luminance'].
+		[CL_R]						->	['CL_R'].
+		[CL_A]						-> 	['CL_A'].
+		[CL_RG]					->	['CL_RG'].
+		[CL_RA]					->	['CL_RA'].
+		[CL_RGB]					->	['CL_RGB'].
+		[CL_RGBA]				->	['CL_RGBA'].
+		[CL_BGRA]				->	['CL_BGRA'].
+		[CL_ARGB]				->	['CL_ARGB'].
+		[CL_INTENSITY]			->	['CL_INTENSITY'].
+		[CL_LUMINANCE]			->	['CL_LUMINANCE'].
+		[CL_Rx]					->	['CL_Rx'].
+		[CL_RGx]					-> 	['CL_RGx'].
+		[CL_RGBx]				->	['CL_RGBx'].
+		[CL_DEPTH]				->	['CL_DEPTH'].
+		[CL_DEPTH_STENCIL]	->	['CL_DEPTH_STENCIL'].
+		[CL_sRGB]				->	['CL_sRGB'].
+		[CL_sRGBx]				->	['CL_sRGBx'].
+		[CL_sRGBA]				->	['CL_sRGBA'].
+		[CL_sBGRA]				->	['CL_sBGRA'].
+		[CL_ABGR]				->	['CL_ABGR'].
 	} otherwise: [
 		String streamContents: [:s |
 			s nextPutAll: '<unknown channel order '.
 			channelOrderConstant printOn: s base: 16.
 			s nextPut: $>
 		]]! !
-
-!CLImageFormatStruct class methodsFor: 'field definition' stamp: 'jcg 1/7/2010 01:02'!
-fields
-	"CLImageFormatStruct defineFields"
-	^#( (imageChannelOrder 'ulong') (imageChannelDataType 'ulong') )! !
 
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 14:33'!
 intensity8
@@ -1643,11 +1942,11 @@ luminance8Float
 luminance8Norm
 	^self order: CL_LUMINANCE type: CL_UNORM_INT8! !
 
-!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jcg 1/30/2010 17:56'!
+!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 10/29/2015 14:50'!
 order: imageChannelOrder type: imageChannelDataType
 	^self new
-		imageChannelOrder: imageChannelOrder;
-		imageChannelDataType: imageChannelDataType.! !
+		image_channel_order: imageChannelOrder;
+		image_channel_data_type: imageChannelDataType.! !
 
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 14:35'!
 r8
@@ -2516,6 +2815,266 @@ uploadDataToGPU: inputForm
 					waitOn: lastEvent.! !
 
 !OpenCLBlur class methodsFor: 'example' stamp: 'jmv 8/10/2015 12:09'!
+blurDisplay
+	"OpenCLBlur blurDisplay"
+	| blur src dest |
+	blur := self new.
+	
+	dest := ExternalForm extent: Display extent depth: 32.
+	dest allocateSpace.
+	src := ExternalForm extent: Display extent depth: 32.
+	src allocateSpace.
+	Display displayOn: src.
+		
+	((1 to: 20), (19 to: 1 by: -1)) do: [:radius |
+		| evt startTime queuedTime finishTime |
+		startTime := Time millisecondClockValue.
+		evt := blur blur: src into: dest radius: radius.
+		queuedTime := Time millisecondClockValue - startTime.
+		OpenCLEvent waitForEvents: evt.
+		finishTime := Time millisecondClockValue - startTime.
+		('   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ') print.
+		('   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ') print.
+		'   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ' displayOn: dest at: 20@20.
+		'   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ' displayOn: dest at: 20@40.
+		dest displayAt: 0@0.
+
+		(Delay forMilliseconds: 20) wait.
+	].
+	src displayAt: 0@0.
+! !
+
+!OpenCLBlur12 methodsFor: 'actions' stamp: 'jmv 10/29/2015 12:47'!
+blur: inputForm into: outputForm radius: filterRadius
+	| localWorkSize globalWorkSize |
+	
+	"Sanity check."
+	inputForm extent = outputForm extent ifFalse: [self error: 'image sizes do not match'].
+	inputForm depth = 32 ifFalse: [self error: 'input form depth must be 32'].
+	outputForm depth = 32 ifFalse: [self error: 'output form depth must be 32'].
+
+	inputForm extent = imageExtent ifFalse: [
+		"Need to allocate new images."
+		self setupImages: (imageExtent := inputForm extent).
+	].
+
+	(filterWeights size - 1) = filterRadius ifFalse: [
+		"Need to compute and set-up new filter weights."
+		self setupWeightsForRadius: filterRadius.
+	].
+	
+	"Upload image to the GPU so we can blur it." 
+	self uploadDataToGPU: inputForm.
+					
+	"Compute work sizes."
+	localWorkSize := #(16 16).  "should fit on most devices... see #maxWorkGroupSize"
+	globalWorkSize := {imageExtent x. imageExtent y}.
+	globalWorkSize := globalWorkSize 
+							with: localWorkSize 
+							collect: [:global :local | global roundUpTo: local].		
+					
+	"Run the two kernels to blur the image first horizontally, then vertically."
+	lastEvent := queue
+					runKernel: horizontalKernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: globalWorkSize
+					localSize: localWorkSize 
+					waitOn: lastEvent.
+	lastEvent := queue
+					runKernel: verticalKernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: globalWorkSize
+					localSize: localWorkSize 
+					waitOn: lastEvent.
+					
+	"Retrieve blurred image from the GPU."				
+	self downloadDataFromGPU: outputForm.
+	
+	"When this event is finished, 'outputForm' will have its new contents.  Yay!!"				
+	^lastEvent ! !
+
+!OpenCLBlur12 methodsFor: 'actions' stamp: 'jmv 10/29/2015 12:47'!
+blur: inputAndOutputForm radius: filterRadius
+	"Input and output image are the same."
+	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
+	! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
+downloadDataFromGPU: outputForm
+	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
+	lastEvent := queue
+					readImage: inputOutputImage
+					block: false
+					origin: #(0 0 0)
+					region: {imageExtent x. imageExtent y. 1}
+					rowPitch: 0
+					slicePitch: 0
+					pointer: outputForm asOpenCLArg
+					waitOn: lastEvent.! !
+
+!OpenCLBlur12 methodsFor: 'initialize' stamp: 'jmv 10/29/2015 12:47'!
+initialize
+
+	"Set up context, queue, program, kernels, etc."
+	super initialize.
+
+	"Set up Kernels"
+	horizontalKernel := program createKernel: 'image_filter_horizontal'.
+	verticalKernel := program createKernel: 'image_filter_vertical'.
+	
+	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
+	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
+	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
+	horizontalKernel argAt: 1 put: filterWeightsBuffer size: 4.
+	verticalKernel argAt: 1 put: filterWeightsBuffer size: 4.
+	
+	! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 16:18'!
+setupImages: extent
+	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels."
+	| format description |
+	format _ CLImageFormatStruct bgra8888norm.
+	description _ CLImageDescStruct new.
+	description  		"https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/imageDescriptor.html"
+		image_type: CL_MEM_OBJECT_IMAGE2D;
+		image_width: extent x;
+		image_height: extent y;
+		image_depth: 0;				"Only used for 3d images"
+		image_array_size: 0; 		"This is only used if the image is a 1D or 2D image array"
+		image_row_pitch: 0;
+		image_slice_pitch: 0;
+		num_mip_levels: 0;
+		num_samples: 0;
+		buffer: 0.
+	"Image creation the OpenCL 1.2 way"
+	inputOutputImage := context 
+							newImage: CL_MEM_READ_WRITE
+							format: format
+							description: description
+							hostPointer: nil.
+	tempImage := context 
+							newImage: CL_MEM_READ_WRITE
+							format: format
+							description: description
+							hostPointer: nil.
+	
+	"Horizontal kernel runs first, storing the horizontally-blurred image into 'tempImage'."						
+	horizontalKernel argAt: 2 put: inputOutputImage size: 4.
+	horizontalKernel argAt: 3 put: tempImage size: 4.
+	
+	"Vertical kernel runs next, using the partly-blurred image in 'tempImage' as the source."
+	verticalKernel argAt: 2 put: tempImage size: 4.
+	verticalKernel argAt: 3 put: inputOutputImage size: 4.! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
+setupWeightsForRadius: filterRadius
+	| sigma sum radiusArg |
+	
+	filterRadius isInteger ifFalse: [self error: 'filter radius must be an integer'].
+	filterRadius > 100 ifTrue: [
+		"In #initialize, we only allocated enough space for 101 filter weights."
+		self error: 'filter radius must be <= 100 pixels'.
+	].
+
+	"If the radius is zero, there is no blurring."
+	filterRadius = 0 ifTrue: [
+		filterWeights := FloatArray with: 1.0.
+		^self.
+	].
+	
+	filterWeights := FloatArray new: filterRadius + 1.
+	sigma := filterRadius / 3.0.  "past 3 std-deviations, Gaussian is near-zero."
+	
+	"Compute unnormalized gaussian weights."
+	0 to: filterRadius do: [:i |
+		| t1 t2 |
+		t1 := 1 / (sigma * (Float pi * 2) sqrt).
+		t2 := (i / sigma) squared * -0.5.
+		filterWeights at: i+1 put: (t1 * (Float e raisedTo: t2))
+	].
+
+	"Normalize.  We've computed half a bell curve, so count some weights twice so that the full curve sums to 1."
+	sum := filterWeights sum * 2.
+	sum := sum - (filterWeights first).  "only count the center of the curve once."
+	filterWeights /= sum.
+	
+	"Upload filter weights to buffer."
+	lastEvent := queue 
+					writeBuffer: filterWeightsBuffer
+					from: filterWeights
+					waitOn: lastEvent.
+	
+	"Set up kernel arguments."
+	radiusArg := IntegerArray with: filterRadius.
+	horizontalKernel argAt: 0 put: radiusArg size: radiusArg byteSize.
+	verticalKernel argAt: 0 put: radiusArg size: radiusArg byteSize.
+
+	! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
+sourceCode
+	"Answer the OpenCL source code for the guassian-blur program."
+^'
+
+	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
+
+	__kernel void
+	image_filter_horizontal (int filterHalfWidth,
+							__constant float* filterWeights,  // of size filterHalfWidth + 1
+							__read_only image2d_t src_image,
+							__write_only image2d_t dst_image)
+	{
+		if (get_global_id(0) >= get_image_width(dst_image)) return;
+		if (get_global_id(1) >= get_image_height(dst_image)) return;
+		int i;
+		int2 coord = (int2)(get_global_id(0), get_global_id(1));
+		float4 weight = (float4)filterWeights[0];
+		float4 out = read_imagef(src_image, sampler, coord) * weight;
+		for (i=1; i <= filterHalfWidth; i++) {
+			weight = (float4)filterWeights[i];
+			out += (read_imagef(src_image, sampler, (coord + (int2)(i,0))) * weight);
+			out += (read_imagef(src_image, sampler, (coord - (int2)(i,0))) * weight);
+		}
+		write_imagef(dst_image, coord, out);
+	}
+	
+	__kernel void
+	image_filter_vertical (int filterHalfHeight,
+						__constant float* filterWeights, // of size filterHalfHeight + 1
+						__read_only image2d_t src_image,
+						__write_only image2d_t dst_image)
+	{
+		if (get_global_id(0) >= get_image_width(dst_image)) return;
+		if (get_global_id(1) >= get_image_height(dst_image)) return;
+		int i;
+		int2 coord = (int2)(get_global_id(0), get_global_id(1));
+		float4 weight = (float4)filterWeights[0];
+		float4 out = read_imagef(src_image, sampler, coord) * weight;
+		for (i=1; i <= filterHalfHeight; i++) {
+			weight = (float4)filterWeights[i];
+			out += (read_imagef(src_image, sampler, (coord + (int2)(0,i))) * weight);
+			out += (read_imagef(src_image, sampler, (coord - (int2)(0,i))) * weight);
+		}
+		write_imagef(dst_image, coord, out);
+	}'! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
+uploadDataToGPU: inputForm
+	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
+	lastEvent := queue
+					writeImage: inputOutputImage
+					block: false
+					origin: #(0 0 0)
+					region: {imageExtent x. imageExtent y. 1}
+					rowPitch: 0
+					slicePitch: 0
+					pointer: inputForm asOpenCLArg
+					waitOn: lastEvent.! !
+
+!OpenCLBlur12 class methodsFor: 'example' stamp: 'jmv 10/29/2015 12:47'!
 blurDisplay
 	"OpenCLBlur blurDisplay"
 	| blur src dest |
@@ -3463,7 +4022,7 @@ constantDeclarationsInC
 #define CL_PROFILING_COMMAND_COMPLETE               0x1284
 '! !
 
-!OpenCLMethodGenerator class methodsFor: 'C source code' stamp: 'jmv 10/28/2015 16:36'!
+!OpenCLMethodGenerator class methodsFor: 'C source code' stamp: 'jmv 10/29/2015 12:25'!
 functionDeclarationsInC
 	"Cut'n'paste directly from cl.h header file.
 	Updated to OpenCL 2.0
@@ -3631,7 +4190,7 @@ clSetMemObjectDestructorCallback(cl_mem /* memobj */,
                                  void * /* no_callbacks_jmv */,
                                  void * /* user_data */)             CL_API_SUFFIX__VERSION_1_1;
 
-/* SVM Allocation APIs */
+// SVM Allocation APIs
 extern CL_API_ENTRY void * CL_API_CALL
 clSVMAlloc(cl_context       /* context */,
            cl_svm_mem_flags /* flags */,
@@ -4141,7 +4700,7 @@ extern CL_API_ENTRY void * CL_API_CALL
 clGetExtensionFunctionAddressForPlatform(cl_platform_id /* platform */,
                                          const char *   /* func_name */) CL_API_SUFFIX__VERSION_1_2;
 
-/* Deprecated OpenCL 1.1 APIs */
+// Deprecated OpenCL 1.1 APIs
 extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
 clCreateImage2D(cl_context              /* context */,
                 cl_mem_flags            /* flags */,
@@ -4182,7 +4741,7 @@ clUnloadCompiler(void) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
 extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED void * CL_API_CALL
 clGetExtensionFunctionAddress(const char * /* func_name */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
     
-/* Deprecated OpenCL 2.0 APIs */
+// Deprecated OpenCL 2.0 APIs
 extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_command_queue CL_API_CALL
 clCreateCommandQueue(cl_context                     /* context */,
                      cl_device_id                   /* device */,
@@ -5237,7 +5796,7 @@ readFunctionSpecsFrom: aString
 
 	^funcs! !
 
-!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 10/28/2015 16:35'!
+!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 10/29/2015 13:22'!
 typeMap
 	"Answer a Dictionary that maps from OpenCL types to the corresponding Squeak FFI type.  The content of the map was manually derived from the files:
 	-http://www.khronos.org/registry/cl/api/1.0/cl.h and 	-http://www.khronos.org/registry/cl/api/1.0/cl_platform.h"
@@ -5269,6 +5828,8 @@ typeMap
 			('cl_image_format'))
 		('CLImageDescStruct'
 			('cl_image_desc'))
+		('CLBufferRegionStruct'
+			('cl_buffer_region'))
 		"Mappings to built-in C types."
 		('void' 
 			('void'))
@@ -6072,9 +6633,17 @@ bufferOfSize: byteSize
 	"By default, buffers are read-write."
 	^self readWriteBufferOfSize: byteSize! !
 
-!OpenCLContext methodsFor: 'queue creation' stamp: 'jmv 9/9/2015 12:27'!
+!OpenCLContext methodsFor: 'deprecated in OpenCL 2.0' stamp: 'jmv 10/29/2015 15:40'!
 commandQueueOn: anOpenCLDevice
 	"Instantate a new OpenCLCommandQueue."
+	"Deprecated in OpenCL 2.0:
+	The clCreateCommandQueue function was deprecated as of OpenCL 2.0, and replaced with clCreateCommandQueueWithProperties. If you are only targeting devices that support OpenCL 2.0 (some recent Intel and AMD processors at the time of writing), you can safely use this new function.
+
+If you need your code to run on devices that don't yet support OpenCL 2.0, you can continue using the deprecated clCreateCommandQueue function by using the preprocessor macros that the OpenCL headers provide, e.g:
+
+#define CL_USE_DEPRECATED_OPENCL_2_0_APIS
+#include <CL/cl.h>
+"
 	| queue result |
 	result := IntegerArray new: 1.
 	queue := OpenCLPrimitiveInterface current
@@ -6158,9 +6727,11 @@ newBuffer: flags ofSize: byteSize
 	
 	! !
 
-!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 9/9/2015 12:28'!
+!OpenCLContext methodsFor: 'deprecated in OpenCL 1.2' stamp: 'jmv 10/29/2015 16:39'!
 newImage2D: flags format: imageFormat width: width height: height rowPitch: rowPitch hostPointer: hostPtr
 	"Most general 2D image-creation method.  Basis for more specific, convenient methods."
+	"Deprecated in OpenCL1.2:
+	clCreateImage2D and clCreateImage3D have been merged into clCreateImage"
 	| mem result |
 	result := IntegerArray new: 1.
 	mem := OpenCLPrimitiveInterface current
@@ -6178,9 +6749,11 @@ newImage2D: flags format: imageFormat width: width height: height rowPitch: rowP
 	mem context: self format: imageFormat width: width height: height rowPitch: rowPitch.
 	^mem! !
 
-!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 9/9/2015 12:27'!
+!OpenCLContext methodsFor: 'deprecated in OpenCL 1.2' stamp: 'jmv 10/29/2015 16:39'!
 newImage3D: flags format: imageFormat width: width height: height depth: depth rowPitch: rowPitch slicePitch: slicePitch hostPointer: hostPtr
 	"Most general 3D image-creation method.  Basis for more specific, convenient methods."
+	"Deprecated in OpenCL1.2:
+	clCreateImage2D and clCreateImage3D have been merged into clCreateImage"
 	| mem result |
 	result := IntegerArray new: 1.
 	mem := OpenCLPrimitiveInterface current
@@ -6206,6 +6779,28 @@ newImage3D: flags format: imageFormat width: width height: height depth: depth r
 		rowPitch: rowPitch 
 		slicePitch: slicePitch.
 	^mem! !
+
+!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 10/29/2015 16:10'!
+newImage: flags format: imageFormat description: imageDescription hostPointer: hostPtr
+	"Most general image-creation method.  Basis for more specific, convenient methods."
+	| mem result |
+	result := IntegerArray new: 1.
+	mem := OpenCLPrimitiveInterface current
+				clCreateImage__cl_context: id
+							cl_mem_flags: flags
+							const__cl_image_format__ptr: imageFormat
+							const__cl_image_desc__ptr: imageDescription
+							void__ptr: hostPtr
+							cl_int__ptr: result.
+	result := result first.
+	OpenCLError check: result text: 'failed to instantiate image'.
+
+	imageFormat image_type = CL_MEM_OBJECT_IMAGE2D ifTrue: [
+		mem := OpenCLImage2D wrappingHandle: mem.
+		mem context: self format: imageFormat width: imageFormat image_width height: imageFormat image_height rowPitch: imageFormat image_row_pitch.
+		^mem ].
+
+	self error: 'Support this case here!!'! !
 
 !OpenCLContext methodsFor: 'sampler creation' stamp: 'jmv 9/9/2015 11:49'!
 normalizedLinearSampler: addressingMode
@@ -6280,9 +6875,12 @@ reportImageFormatsOn: aStream
 	(self supportedImageFormats: 4 "CL_MEM_READ_ONLY" type: 16r10F1"CL_MEM_OBJECT_IMAGE2D") do: [ :each |
 		aStream nextPutAll: each printString; newLine ]! !
 
-!OpenCLContext methodsFor: 'sampler creation' stamp: 'jmv 9/9/2015 12:27'!
+!OpenCLContext methodsFor: 'deprecated in OpenCL 2.0' stamp: 'jmv 10/29/2015 15:42'!
 sampler: useNormalizedCoords addressing: addressingMode filter: filterMode
 	"Most general sampler-creation method."
+	"Deprecated in OpenCL 2.0
+	Replaced with clCreateSamplerWithProperties
+	"
 	| sampler result |
 	result := IntegerArray new: 1.
 	sampler := OpenCLPrimitiveInterface current
@@ -6297,7 +6895,7 @@ sampler: useNormalizedCoords addressing: addressingMode filter: filterMode
 	sampler context: self normalized: useNormalizedCoords addressing: addressingMode filter: filterMode.
 	^sampler! !
 
-!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 9/9/2015 12:27'!
+!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 10/29/2015 14:50'!
 supportedImageFormats: flags type: imageType "CL_MEM_OBJECT_IMAGE2D or 3D"
 	| result maxResults numResults bytes |
 	maxResults := 200.  "The maximum number of results... bump this up if necessary."
@@ -6317,8 +6915,8 @@ supportedImageFormats: flags type: imageType "CL_MEM_OBJECT_IMAGE2D or 3D"
 	^(1 to: numResults) collect: [:i |
 		| struct |
 		struct := CLImageFormatStruct new.
-		struct imageChannelOrder: (bytes unsignedLongAt: (i*8-7)).
-		struct imageChannelDataType: (bytes unsignedLongAt: (i*8-3)).
+		struct image_channel_order: (bytes unsignedLongAt: (i*8-7)).
+		struct image_channel_data_type: (bytes unsignedLongAt: (i*8-3)).
 	]
 	
 
@@ -6379,13 +6977,15 @@ context: anOpenCLContext byteSize: sz
 	byteSize := sz.
 ! !
 
-!OpenCLCommandQueue methodsFor: 'commands - synchronization' stamp: 'jmv 9/9/2015 12:32'!
+!OpenCLCommandQueue methodsFor: 'deprecated in OpenCL 1.2' stamp: 'jmv 10/29/2015 16:39'!
 barrier
 	"Ensures that all currently-queued commands will finish before any subsequently-queued commands are executed..  This should be equivalent to 'queue waitForEvents: queue marker' (of course, doing it with the C API would be somewhat less convenient)."
+	"Deprecated in OpenCL1.2:
+	clEnqueueMarker, clEnqueueBarrier and clEnqueueWaitForEvents have been merged into clEnqueueMarkerWithWaitList and clEnqueueBarrierWithWaitList. The barrier and marker functionality are still the same, but if a non-NULL waiting-list is given it will also continue if all the events have occurred. This was tricky to program before. A new option is that you can fire an event when all previous events have occurred.
+	"
 	| result |
 	result := OpenCLPrimitiveInterface current clEnqueueBarrier__cl_command_queue: id.
-	OpenCLError check: result text: 'failed to enqueue barrier'.
-! !
+	OpenCLError check: result text: 'failed to enqueue barrier'.! !
 
 !OpenCLCommandQueue methodsFor: 'properties' stamp: 'jmv 10/29/2015 10:41'!
 beInOrder
@@ -6618,9 +7218,12 @@ mapImage: image block: shouldBlock flags: flags origin: origin region: region wa
 	^evt
 	! !
 
-!OpenCLCommandQueue methodsFor: 'commands - synchronization' stamp: 'jmv 9/9/2015 12:45'!
+!OpenCLCommandQueue methodsFor: 'deprecated in OpenCL 1.2' stamp: 'jmv 10/29/2015 16:39'!
 marker
 	"Obtain a marker event (an OpenCLEvent) that won't complete until all previously-queued events have completed."
+	"Deprecated in OpenCL1.2:
+	clEnqueueMarker, clEnqueueBarrier and clEnqueueWaitForEvents have been merged into clEnqueueMarkerWithWaitList and clEnqueueBarrierWithWaitList. The barrier and marker functionality are still the same, but if a non-NULL waiting-list is given it will also continue if all the events have occurred. This was tricky to program before. A new option is that you can fire an event when all previous events have occurred.
+	"
 	| result evt |
 	result := OpenCLPrimitiveInterface current
 		clEnqueueMarker__cl_command_queue: id 
@@ -6750,17 +7353,19 @@ unmap: memObject "image or buffer" pointer: ptr waitOn: events "nil, single Open
 	
 	! !
 
-!OpenCLCommandQueue methodsFor: 'commands - synchronization' stamp: 'jmv 9/9/2015 12:49'!
+!OpenCLCommandQueue methodsFor: 'deprecated in OpenCL 1.2' stamp: 'jmv 10/29/2015 16:39'!
 waitForEvents: events "single OpenCLEvent, or list of them"
 	"Enqueue a wait for the specified events, so that any future commands will wait until all the events have completed."
+	"Deprecated in OpenCL1.2:
+	clEnqueueMarker, clEnqueueBarrier and clEnqueueWaitForEvents have been merged into clEnqueueMarkerWithWaitList and clEnqueueBarrierWithWaitList. The barrier and marker functionality are still the same, but if a non-NULL waiting-list is given it will also continue if all the events have occurred. This was tricky to program before. A new option is that you can fire an event when all previous events have occurred.
+	"
 	| waitList result |
 	waitList := OpenCLEvent generateWaitList: events.
 	result := OpenCLPrimitiveInterface current 
 				clEnqueueWaitForEvents__cl_command_queue: id 
 							cl_uint: waitList first 
 							const__cl_event__ptr: waitList second.
-	OpenCLError check: result text: 'failed to enqueue wait for events'.
-! !
+	OpenCLError check: result text: 'failed to enqueue wait for events'! !
 
 !OpenCLCommandQueue methodsFor: 'private' stamp: 'jcg 1/15/2010 00:30'!
 wrapEventHandle: aCLEvent
