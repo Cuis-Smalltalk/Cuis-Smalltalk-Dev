@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2424] on 18 July 2015 at 7:09:22.007834 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 6 November 2015 at 12:15:09.784898 pm'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (instead of 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 10!
+!provides: 'Math 3D' 1 11!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -1855,14 +1855,20 @@ u: uValue v: vValue
 x: uValue y: vValue
 	^self new x: uValue y: vValue! !
 
-!Float64Vector3 methodsFor: 'vector functions' stamp: 'das 12/18/2002 00:03'!
+!Float64Vector3 methodsFor: 'vector functions' stamp: 'jmv 11/6/2015 10:07'!
 angleTo: aVector 
-	"calculate the rotation angle that rotates this vector into aVector. I return the value in terms of radians. In fact, I intend to switch everything to radians at some point. Sign is ignored - if you have a fast way to do this which retains the sign of the angle, please update this."
-| s t |
-	s := self normalized.
-	t := aVector normalized.
-	^ (s dot: t) arcCos.
-! !
+	"calculate the rotation angle that rotates this vector into aVector. I return the value in terms of radians."
+	| s t cosine |
+	s _ self normalized.
+	t _ aVector normalized.
+
+	"In many cases doing v dot: v with v normalized gives an answer sligtly above 1.0, because of rounding.
+	Actually asking for cosine > 1.0 is enough."
+	cosine _ s dot: t.
+	cosine > 1.0 ifTrue: [
+		^ 0.0 ].
+
+	^ cosine arcCos! !
 
 !Float64Vector3 methodsFor: 'converting' stamp: 'ar 2/6/1999 00:06'!
 asFloat64Vector3
