@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2505] on 7 October 2015 at 1:40:51.203402 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 5 November 2015 at 4:23:00.031262 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 17!
+!provides: 'ClassCommentBrowser' 1 22!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
-	instanceVariableNames: 'window selection rootNames root browser'
+	instanceVariableNames: 'window rootNames root browser subList index key'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ClassCommentBrowser'!
@@ -19,6 +19,16 @@ ObjectExplorerWrapper subclass: #CommentGuideWrapper
 	category: 'ClassCommentBrowser'!
 !classDefinition: 'CommentGuideWrapper class' category: #ClassCommentBrowser!
 CommentGuideWrapper class
+	instanceVariableNames: ''!
+
+!classDefinition: #CommentGuideListMorph category: #ClassCommentBrowser!
+HierarchicalListMorph subclass: #CommentGuideListMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ClassCommentBrowser'!
+!classDefinition: 'CommentGuideListMorph class' category: #ClassCommentBrowser!
+CommentGuideListMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #CommentGuideWindow category: #ClassCommentBrowser!
@@ -57,6 +67,9 @@ Provide the wrapper for a list item in CommentGuideWindow.
 
 Removes the undesired cruft after the item name.!
 
+!CommentGuideListMorph commentStamp: 'dhn 11/5/2015 12:19' prior: 0!
+A list of terms and acronyms which occur in class names. Selection can be made by typed key, arrows, or clicks.!
+
 !CommentGuideWindow commentStamp: '<historical>' prior: 0!
 Show a window for browsing class comments based on class names which contain certain strings, such as:
 
@@ -90,20 +103,21 @@ editorClassFor: textGetter
 	^ SmalltalkEditor
 ! !
 
-!CommentGuide methodsFor: 'accessing' stamp: 'dhn 10/6/2015 20:48'!
+!CommentGuide methodsFor: 'accessing' stamp: 'dhn 11/5/2015 14:58'!
 getCurrentSelection
 	"Send the class comment to the text pane"
 	| str |
-	selection _ super getCurrentSelection.
-	selection ifNotNil: [
-		selection withoutListWrapper class == String
-			ifTrue: [str _ self commentOf: selection item]
+
+	super getCurrentSelection.
+	currentSelection ifNotNil: [
+		currentSelection withoutListWrapper class == String
+			ifTrue: [str _ self commentOf: currentSelection item]
 			ifFalse: [
-				str _ String new.
+				str _ ''.
 				window setLabel: 'Class Comment Browser'.
-				root _ selection].
+				root _ currentSelection].
 		window textMorph model actualContents: str].
-	^ selection
+	^ currentSelection
 ! !
 
 !CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/24/2015 09:08'!
@@ -120,6 +134,30 @@ getList
 				name: ea
 				model: self)].
 	^ arr
+! !
+
+!CommentGuide methodsFor: 'accessing' stamp: 'dhn 11/5/2015 15:22'!
+indexOf: aChar
+	"Set the current selection to the root which starts with aChar"
+	| sel ch |
+
+	key = aChar
+		ifTrue: [
+			index _ index + 1.
+			index > subList size
+				ifTrue: [index _ 1]]
+		ifFalse: [
+			index _ 1.
+			key _ aChar.
+			ch _ key asString capitalized.
+			subList _ self getList select: [:ea | ch  = ea itemName first asString].
+			window setLabel: 'Class Comment Browser'.
+			window textMorph model actualContents: ''].
+	subList ifEmpty: [window listMorph flash.	^ 0].
+	sel _ subList at: index.
+	currentSelection _ sel.
+	currentSelection ifNil: [^self].
+	currentSelection sendSettingMessageTo: self
 ! !
 
 !CommentGuide methodsFor: 'initialization' stamp: 'dhn 10/6/2015 20:40'!
@@ -178,24 +216,18 @@ selectedRoot
 	"Answer the class names containing root as a substring"
 	^ rootNames at: root itemName! !
 
-!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/9/2015 20:42'!
-selection
-	"Answer the value of selection"
-
-	^ selection! !
-
-!CommentGuide methodsFor: 'initialization' stamp: 'dhn 9/22/2015 17:09'!
+!CommentGuide methodsFor: 'initialization' stamp: 'dhn 11/5/2015 12:15'!
 setList
-	"Answer the list of roots and their children for the hierarchical list"
+	"Answer the dictionary of roots and their children for the hierarchical list"
 	| dx |
 	dx _ Dictionary new.
 	self parseClassNames do: [:n | dx at: n put: OrderedCollection new].
 	
-	Smalltalk classNames do: [:c |
+	Smalltalk classNames do: [:ea |
 		| in |
-		in _ c asString.
-		dx keysAndValuesDo: [:key :val |	"try to find a root for 'in' "
-			(in findString: key asString) > 0 ifTrue: [val add: in]]].
+		in _ ea asString.
+		dx keysAndValuesDo: [:rootTerm :val |	"try to find a root for 'in' "
+			(in findString: rootTerm asString) > 0 ifTrue: [val add: in]]].
 	^ dx! !
 
 !CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/9/2015 18:24'!
@@ -230,57 +262,70 @@ asString
 	"Answer the string for the hierarchical list category"
 	^ itemName! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 9/9/2015 21:20'!
+!CommentGuideListMorph methodsFor: 'events-processing' stamp: 'dhn 11/5/2015 14:52'!
+update: aSymbol
+	"React to list selection via typed key"
+	| i |
+	
+	super update: aSymbol.
+	aSymbol == #keySelection
+		ifTrue: [
+			model getCurrentSelection ifNil: [^self selectionIndex: 0].
+			i _ scroller submorphs findFirst: [:m | m contents == model getCurrentSelection itemName].
+			^ self selectionIndex: i]
+! !
+
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 11/5/2015 14:53'!
 browseClass
 	"Open a browser on the selected class"
-	model selection item class == String
+	model getCurrentSelection item class == String
 		ifTrue: [
 			BrowserWindow 
-				fullOnClass: (Smalltalk at: model selection item asSymbol) 
+				fullOnClass: (Smalltalk at: model getCurrentSelection item asSymbol) 
 				selector: nil]! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 9/9/2015 21:23'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 11/5/2015 14:54'!
 browseFullProtocol
 	"Create and schedule a new protocol browser on the currently selected class"
 
 	| aPBrowser class label |
-	model selection item class == String
+	model getCurrentSelection item class == String
 		ifTrue: [
-			class _ Smalltalk at: model selection item asSymbol.
+			class _ Smalltalk at: model getCurrentSelection item asSymbol.
 			aPBrowser _ ProtocolBrowser new on: class.
 			label _ 'Entire protocol of: ', class name.
 			MessageSetWindow open: aPBrowser label: label] ! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 9/9/2015 21:22'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 11/5/2015 14:54'!
 browseHierarchy
 	"Create and schedule a class list browser on the selected class' hierarchy."
 
-	model selection item class == String
+	model getCurrentSelection item class == String
 		ifTrue: [
 			HierarchyBrowserWindow
-				onClass: (Smalltalk at: model selection item asSymbol)
+				onClass: (Smalltalk at: model getCurrentSelection item asSymbol)
 				selector: nil]! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 10/2/2015 15:29'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 11/5/2015 14:54'!
 browseVersions
 	"Open a browser on the versions of the selected class' comment"
-	model selection item class == String
+	model getCurrentSelection item class == String
 		ifTrue: [
 			VersionsBrowserWindow 
-				browseCommentOf: (Smalltalk at: model selection item asSymbol)]! !
+				browseCommentOf: (Smalltalk at: model getCurrentSelection item asSymbol)]! !
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 9/21/2015 15:42'!
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 11/5/2015 11:12'!
 buildMorphicWindow
 	"Answer a window for the class comment browser"
 	| row |
-	listMorph _ HierarchicalListMorph
+	listMorph _ CommentGuideListMorph
 		model: model
 		listGetter: #getList
 		indexGetter: #getCurrentSelection
 		indexSetter: #noteNewSelection:
 		mainView: self
 		menuGetter: #commentGuideMenu
-		keystrokeAction: nil.
+		keystrokeAction: #respondToKey:.
 	listMorph name: #Hierarchy.
 	textMorph _ TextModelMorph textProvider: model.
 	textMorph 
@@ -333,6 +378,12 @@ initialize
 		when: #classRenamed send: #refreshListAfterDelay to: self
 ! !
 
+!CommentGuideWindow methodsFor: 'accessing' stamp: 'dhn 10/27/2015 20:49'!
+listMorph
+	"Answer the value of listMorph"
+
+	^ listMorph! !
+
 !CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 09:35'!
 refreshList
 	"Re-build the hierarchical list"
@@ -346,6 +397,13 @@ refreshListAfterDelay
 	"The pause that refreshes"
 
 	self addAlarm: #refreshList after: 20 "milliseconds" ! !
+
+!CommentGuideWindow methodsFor: 'events' stamp: 'dhn 11/5/2015 11:33'!
+respondToKey: aChar
+	"Take action when a key is struck. The key value is aChar"
+
+	model indexOf: aChar.
+	listMorph update: #keySelection! !
 
 !CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 9/21/2015 19:31'!
 searchAllComments
@@ -392,23 +450,23 @@ searchClassNames
 					openInWorld;
 					morphPosition: self morphPosition + (-70@50)]]! !
 
-!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 9/21/2015 19:27'!
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 11/5/2015 16:21'!
 searchComment
 	"Search for a string in class comments of root siblings"
 	| arg hits col nam menu |
 	arg _ ''.
-	(model selection item isKindOf: String)
+	(model getCurrentSelection item isKindOf: String)
 		ifTrue: [	"searching from the leaf"
 			col _ model selectedRoot.
 			nam _ model root itemName]
 		ifFalse: [	"searching from the root"
-			col _ model selection item.
-			nam _ model selection itemName].
+			col _ model getCurrentSelection item.	"gather every leaf"
+			nam _ model getCurrentSelection itemName].
 		arg _ FillInTheBlankMorph request: 'Search Root Named "', nam, '"'.
 		(menu _ MenuMorph entitled: 'Comments in Root with "', arg, '"')
 			defaultTarget: self;
 			addStayUpIcons.
-			
+
 		hits _ self searchIn: col for: arg.
 		hits 
 			ifEmpty: [listMorph flash]
@@ -419,15 +477,14 @@ searchComment
 					morphPosition: self morphPosition + (-70@50)].
 	^ nil! !
 
-!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 9/21/2015 19:15'!
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 11/5/2015 16:13'!
 searchIn: aCollection for: aString
 	"Answer the names of classes in aCollection whose comments include aString"
-	| str ix hits |
+	| str hits |
 	hits _ OrderedCollection new.
 	aCollection do: [:ea |
 		str _ model commentOf: ea.
-		ix _ str indexOf: Character newLineCharacter ifAbsent: [1].
-		(str findString: aString startingAt: ix caseSensitive: false) > 0
+		(str findString: aString startingAt: 1 caseSensitive: false) > 0
 			ifTrue: [hits addLast: ea]].
 	^ hits! !
 

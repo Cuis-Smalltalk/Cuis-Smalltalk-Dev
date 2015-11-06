@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2528] on 18 October 2015 at 9:19:17.399793 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 3 November 2015 at 12:47:29.577916 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 63!
+!provides: 'TerseGuide' 1 64!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -57,7 +57,7 @@ selectedTopic: aTopic
 	textPane model actualContents: self updateTopicText.
 	self changed: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 9/1/2015 15:18'!
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 11/3/2015 11:13'!
 terseTopics
 	"Translate a list item to a class method selector"
 	^ Dictionary new
@@ -89,7 +89,7 @@ terseTopics
 	at: 'Trie' put: #trie;
 	at: 'Heap' put: #heap;
 	at: 'Internal Streams' put: #internalStream;
-	at: 'File Streams' put: #fileStream;
+	at: 'File Operations' put: #fileMan;
 	at: 'Date' put: #date;
 	at: 'Time' put: #time;
 	at: 'Point' put: #point;
@@ -883,48 +883,36 @@ result _ (Message
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/13/2015 12:25'!
-fileStream
-	"File Streams"
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/3/2015 12:39'!
+fileMan
+	"File Operations"
 	^
-'| b x ios |
-ios _ FileStream newFileNamed: ''ios.txt''.	"Open a file for output"
-ios nextPut: $H; newLine.			"Put data in the file buffer"
-ios close.								"Flush the buffer, write and close the file"
-ios _ FileStream forceNewFileNamed: ''ios.txt''.	"Suppress warning dialog"
-ios nextPutAll: ''Hello File''; newLine.
-''Hello File'' printOn: ios.
-''Hello File'' storeOn: ios.
-ios close.								"Flush the buffer, write and close the file"
+'| b x ios |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 
-ios _ FileStream oldFileNamed: ''ios.txt''.	"Open the file for input"
-[(x _ ios nextLine) notNil]
-   whileTrue: [Transcript show: x; newLine].
-ios position: 3.						"Position a pointer to a byte in the file"
-x _ ios position.						"Answer where the pointer is"
-x _ ios next.							"Answer the byte pointed to by the pointer"
-x _ ios peek.							"Answer the next byte beyond the pointer"
-b _ ios atEnd.						"Answer whether the position is at the end of the file"
-ios close.								"Close the file"
-
-''testFile.txt'' asFileEntry fileContents: ''Test me now''.
-''testFile.txt'' asFileEntry fileContents.			"print it"
+FmDirectoryEntry roots.						"answer the drive or drives"
+FmDirectoryEntry currentDirectory.		"answer the current directory"
+''testFile.txt'' asFileEntry fileContents: ''Test me now''.	"answer the directory and name of a new file; set its contents"
+''testFile.txt'' asFileEntry fileContents.			"print contents of a file"
 
 ''testFile.txt'' asFileEntry
-	forceWriteStream: [ :ios |					"overwrite old"
+	forceWriteStream: [ :ios |					"overwrite old file contents"
 		ios nextPut: $M.
 		ios nextPutAll: ''y text ''.
 		ios nextPutAll: ''data''.
 		].
-''testFile.txt'' asFileEntry fileContents.			"print it"
+''testFile.txt'' asFileEntry fileContents.			"print contents of a file"
 
 ''testFile.txt'' asFileEntry appendStream: [ :fileStream |
 	fileStream newLine.
-	fileStream nextPutAll: ''Second text line''.
+	fileStream nextPutAll: ''Second text line''; newLine.
 	].
 ''testFile.txt'' asFileEntry fileContents. 			"print it"
 
-''testFile.txt'' asFileEntry forceWriteStream: [ :fileStream |
+''testFile.txt'' asFileEntry appendContents: ''The quick red fox''.
+
+''testFile.txt'' asFileEntry fileContents. 			"print it"
+
+''testFile.txt'' asFileEntry forceWriteStream: [ :fileStream |	"overwrite the file"
 	| refStyream sharedPoint input |
 	"Construct the test data."
 	refStyream _ ReferenceStream on: fileStream.
@@ -944,6 +932,12 @@ ios close.								"Close the file"
 (''testFile.txt'' asFileEntry readStream: [ :fileStream |
 	(ReferenceStream on: fileStream) next.
 	]) explore.
+
+''testFile.txt'' asFileEntry delete.				"remove the test file"
+
+''testFile.txt'' asFileEntry assureExistence.		"put it back empty"
+
+''testFile.txt'' asFileEntry fileContents. 			"print it"
 
 ''testFile.txt'' asFileEntry delete.				"remove the test file"
 
@@ -1124,24 +1118,30 @@ The Terse Guide does not attempt to provide the entire protocol of a topic. You 
 "
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/10/2015 18:27'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/3/2015 11:07'!
 iterationStatement
 	"Iterations"
 	^
-'| x y |
+'| x y |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 x _ 4. y _ 1.
+
+#(5 4 3) do: [:a | x _ x + a].				"iterate over a sequenceable collection"
+x.
+
 [x > 0] whileTrue: [x _ x - 1. y _ y * 2].	"while true loop"
-Transcript newLine; show: y.
+y.
+
 [x >= 4] whileFalse: [x _ x + 1. y _ y * 2].	"while false loop"
-Transcript newLine; show: y.
+y.
+
 x timesRepeat: [y _ y * 2].					"times repeat loop (i _ 1 to x)"
-Transcript newLine; show: y.
+y.
+
 1 to: x do: [:a | y _ y * 2].					"for loop"
-Transcript newLine; show: y.
+y.
+
 1 to: x by: 2 do: [:a | y _ y / 2].			"for loop with specified increment"
-Transcript newLine; show: y.
-#(5 4 3) do: [:a | x _ x + a].				"iterate over array elements"
-Transcript newLine; show: x.
+y.
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/10/2015 12:22'!
@@ -1511,7 +1511,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 9/1/2015 15:17'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 11/3/2015 11:14'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^  OrderedCollection new
@@ -1543,7 +1543,7 @@ pages
 		add: 'Trie'; 
 		add: 'Heap'; 
 		add: 'Internal Streams'; 
-		add: 'File Streams'; 
+		add: 'File Operations'; 
 		add: 'Date'; 
 		add: 'Time'; 
 		add: 'Point'; 
@@ -1981,7 +1981,7 @@ x _ Time millisecondsToRun: [		"timing facility"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:24'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/3/2015 12:44'!
 transcript
 	"Transcript"
 	^
@@ -1997,6 +1997,7 @@ Transcript newLine.					"linefeed"
 ''Hello'' storeOn: Transcript.			"append store string into the window"
 Transcript endEntry.					"flush the output buffer"
 
+"NOTE: from the pop-up menu, you can open a snapshot of the transcript in a workspace window."
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/22/2015 12:56'!
