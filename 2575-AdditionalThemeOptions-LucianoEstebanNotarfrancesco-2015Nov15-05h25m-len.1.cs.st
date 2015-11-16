@@ -232,7 +232,7 @@ currentTheme: aTheme
 	BitBltCanvas releaseClassCachedState.
 	self runningWorld ifNotNil: [ :w |
 		w hideTaskbar.
-		CurrentTheme showTaskbar ifTrue: [w showTaskbar].
+		CurrentTheme useTaskbar ifTrue: [w showTaskbar].
 		w restoreMorphicDisplay ].
 	
 	^ CurrentTheme! !
