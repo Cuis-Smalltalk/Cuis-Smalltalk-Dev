@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 28 October 2015 at 10:34:07.170583 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2582] on 17 November 2015 at 9:59:33.298859 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 37!
+!provides: 'Tests' 1 38!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -3757,6 +3757,28 @@ testNonResumablePass
 			do: [:ex | ex pass. ex return: 5]
 		] raise: Error
 ! !
+
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'SqR 10/10/2015 16:22'!
+testResignalAs
+
+	| answer |
+	answer := [
+		[3 zork]
+			on: ZeroDivide
+			do: [:ex | ex return: 5]
+	] on: Error do: [:ex | ex resignalAs: ZeroDivide].
+	self assert: answer == 5! !
+
+!ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'SqR 11/15/2015 11:42'!
+testResignalAsUnwinds
+
+	| unwound answer |
+	unwound := false.
+	answer := [
+		[3 zork]
+			on: ZeroDivide do: [:ex | self assert: unwound.  ex return: 5]
+	] on: Error do: [:ex | [ex resignalAs: ZeroDivide] ifCurtailed: [unwound := true]].
+	self assert: answer == 5! !
 
 !ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:44'!
 testResumableFallOffTheEndHandler

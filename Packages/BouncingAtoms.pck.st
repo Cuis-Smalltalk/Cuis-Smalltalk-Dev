@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2555] on 27 October 2015 at 4:01:58.32102 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2571] on 7 November 2015 at 8:49:27.749639 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 18!
+!provides: 'BouncingAtoms' 1 20!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
 	instanceVariableNames: 'velocity'
@@ -210,21 +210,21 @@ bounceIn: aRect
 	^ super bounceIn: aRect
 ! !
 
-!HeaterCoolerAtom methodsFor: 'initialization' stamp: 'dhn 7/5/2015 11:43'!
+!HeaterCoolerAtom methodsFor: 'initialization' stamp: 'dhn 10/7/2015 19:14'!
 defaultColor
 	"Set the color of the receiver based on property #velocityDelta"
 	
 	self valueOfProperty: #velocityDelta ifPresentDo: [:x |
 	x < 0
-		ifTrue: [^ (Color white darkShades: x negated) at: x negated]
-		ifFalse: [^ (Color lightPink darkShades: x) at: x]]! !
+		ifTrue: [^ Color white ]
+		ifFalse: [^ Color lightRed]]! !
 
 !HeaterCoolerAtom methodsFor: 'drawing' stamp: 'dhn 6/17/2015 18:02'!
 drawOn: aCanvas
 
 	super drawOn: aCanvas! !
 
-!HeaterCoolerAtom methodsFor: 'initialization' stamp: 'dhn 7/5/2015 11:39'!
+!HeaterCoolerAtom methodsFor: 'initialization' stamp: 'dhn 10/7/2015 18:49'!
 initialize
 	| f x |
 	f _ FillInTheBlankMorph
@@ -236,6 +236,7 @@ initialize
 		ifFalse: [self setProperty: #velocityDelta toValue: 0].
 	color _ self defaultColor.
 	super initialize.
+	self borderWidth: 1
 ! !
 
 !BouncingAtomsMorph methodsFor: 'other' stamp: 'jmv 6/16/2015 10:02'!
@@ -261,7 +262,7 @@ addMorphFront: aMorph
 		ifTrue: [super addMorphFront: aMorph]
 		ifFalse: [super addMorphBack: aMorph].! !
 
-!BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 6/4/2015 11:58'!
+!BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 10/7/2015 18:29'!
 collisionPairs
 	"Return a list of pairs of colliding atoms, which are assumed to be
 circles of known radius. This version uses the morph's positions--i.e.
@@ -281,21 +282,23 @@ the top-left of their bounds rectangles--rather than their centers."
 			m1 := sortedAtoms at: i.
 			p1 := m1 morphPosition.
 			continue := (j := i + 1) <= count.
-			[continue] whileTrue: 
-					[m2 := sortedAtoms at: j.
-					p2 := m2 morphPosition.
-					continue := p2 x - p1 x <= twoRadii  
-								ifTrue: 
-									[distSquared := (p1 x - p2 x) squared + (p1 y - p2 y) squared.
-									distSquared < radiiSquared 
-										ifTrue: [
-											collisions add: (Array with: m1 with: m2).
-											m1 valueOfProperty: #velocityDelta ifPresentDo: [:x |
-												m2 velocity:  m2 velocity * (100 + x) / 100.0].
-											m2 valueOfProperty: #velocityDelta ifPresentDo: [:x |
-												m1 velocity:  m1 velocity * (100 + x) / 100.0]].
-									(j := j + 1) <= count]
-								ifFalse: [false]]].
+			[continue] whileTrue: [
+				m2 := sortedAtoms at: j.
+				p2 := m2 morphPosition.
+				continue := p2 x - p1 x <= twoRadii  
+					ifTrue: [
+						distSquared := (p1 x - p2 x) squared + (p1 y - p2 y) squared.
+						distSquared < radiiSquared 
+							ifTrue: [
+								((m1 class == HeaterCoolerAtom) and: m2 class == HeaterCoolerAtom)
+									ifFalse: [
+										collisions add: (Array with: m1 with: m2).
+										m1 valueOfProperty: #velocityDelta ifPresentDo: [:x |
+											m2 velocity:  m2 velocity * (100 + x) / 100.0].
+										m2 valueOfProperty: #velocityDelta ifPresentDo: [:x |
+											m1 velocity:  m1 velocity * (100 + x) / 100.0]]].
+								(j := j + 1) <= count]
+							ifFalse: [false]]].
 	^collisions! !
 
 !BouncingAtomsMorph methodsFor: 'initialization' stamp: 'dgd 3/7/2003 14:14'!
@@ -472,30 +475,6 @@ submorphsDrawingOutsideReverseDo: aBlock
 toggleFPS
 	fpsEnabled _ fpsEnabled not! !
 
-!BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 5/26/2015 19:40'!
-transmitInfection
-
-	| count |
-	self collisionPairs do: [:pair | | infected |
-		infected := false.
-		pair do: [:atom | atom infected ifTrue: [infected := true]].
-		infected
-			ifTrue: [pair do: [:atom | atom infected: true]]].
-
-	count := 0.
-	self submorphsDo: [:m | m infected ifTrue: [count := count + 1]].
-	{count. infectionHistory size.} print.
-	count > 0 ifTrue: [infectionHistory addLast: count].
-	historyWindow ifNotNil: [
-		historyWindow 
-			data: infectionHistory;
-			yScaleFactor: nAtoms;
-			update: #redraw].
-	count = submorphs size ifTrue: [
-		transmitInfection := false.
-		self stopStepping].
-! !
-
 !BouncingAtomsMorph methodsFor: 'other' stamp: 'dgd 2/22/2003 13:36'!
 updateTemperature: currentTemperature 
 	"Record the current temperature, which is taken to be the number of atoms that have bounced in the last cycle. To avoid too much jitter in the reading, the last several readings are averaged."
@@ -512,23 +491,38 @@ updateTemperature: currentTemperature
 wantsSteps
 	^ true! !
 
-!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'pb 7/2/2015 00:51'!
+!BouncingAtomsMorph class methodsFor: 'class initialization' stamp: 'dhn 11/7/2015 20:34'!
 how
 "
-	Start from World->New Morph... menu or:
-	BouncingAtomsMorph initializedInstance.
+	Start from World->New morph... menu or:
+	BouncingAtomsMorph open.
 "! !
 
-!BouncingAtomsMorph class methodsFor: 'as yet unclassified' stamp: 'jmv 10/25/2015 19:17'!
+!BouncingAtomsMorph class methodsFor: 'class initialization' stamp: 'dhn 11/7/2015 20:39'!
 initializedInstance
+	"Establish the window with some bouncing atoms"
 	| win morph |
+	
 	morph _ self new.
 	win _ morph embeddedInMorphicWindowLabeled: 'Bouncing Atoms'.
 	win setProperty: #minimumExtent toValue: 88@85.
 	morph setProperty: #drawAsRect toValue: false.
 	win model: morph.
+	
+	"ensure good initial atom distribution and movement"
+	morph morphExtent: win morphExtent.
 	morph addAtoms: 30.
+	
 	^ win! !
+
+!BouncingAtomsMorph class methodsFor: 'class initialization' stamp: 'dhn 11/7/2015 20:34'!
+open
+"
+	Start from World->New morph... menu or:
+	BouncingAtomsMorph open.
+"
+
+	self initializedInstance openInHand! !
 
 !GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 20:12'!
 asNormalizedPoints: aCollection
