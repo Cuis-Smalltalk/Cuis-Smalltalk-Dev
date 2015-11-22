@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 29 October 2015 at 4:51:23.032174 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 30 October 2015 at 12:59:14.53255 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 4!
-!requires: 'FFI' 1 nil nil!
+!provides: 'OpenCL' 1 5!
 !requires: 'SignalProcessing' 1 37 nil!
+!requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -602,7 +602,7 @@ Try evaluating:
 
 !OpenCLBlur12 commentStamp: '<historical>' prior: 0!
 Pretty much the simplest thing you can do with OpenCL: a separable Gaussian blur.
-Adapted to OpenCL 1.2
+Adapted to OpenCL 1.2. The only change is in #setupImages:, use clCreateImage() and not the (now deprecated) clCreateImage2D()
 
 Try evaluating:
 	OpenCLBlur12 blurDisplay!
@@ -1743,30 +1743,22 @@ num_samples: anObject
 	"This method was automatically generated"
 	handle unsignedLongAt: 33 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'printing' stamp: 'jmv 10/29/2015 15:18'!
+!CLImageDescStruct methodsFor: 'printing' stamp: 'jmv 10/30/2015 12:53'!
 printOn: aStream
 	super printOn: aStream.
-	aStream nextPut: $(.
-	aStream nextPutAll: (self class image_type_String: self image_type).
-	aStream space.
-	aStream nextPutAll: (self image_width).
-	aStream space.
-	aStream nextPutAll: (self image_height).
-	aStream space.
-	aStream nextPutAll: (self image_depth).
-	aStream space.
-	aStream nextPutAll: (self image_array_size).
-	aStream space.
-	aStream nextPutAll: (self image_row_pitch).
-	aStream space.
-	aStream nextPutAll: (self image_slice_pitch).
-	aStream space.
-	aStream nextPutAll: (self num_mip_levels).
-	aStream space.
-	aStream nextPutAll: (self num_samples).
-	aStream space.
-	aStream nextPutAll: (self buffer).
-	aStream nextPut: $).! !
+	aStream
+		nextPut: $(;
+		nextPutAll: (self class image_type_String: self image_type);
+		nextPutAll: ' width:'; print: self image_width;
+		nextPutAll: ' height:'; print: self image_height;
+		nextPutAll: ' depth'; print: self image_depth;
+		nextPutAll: ' arraySize:'; print: self image_array_size;
+		nextPutAll: ' rowPitch:'; print: self image_row_pitch;
+		nextPutAll: ' slicePitch:'; print: self image_slice_pitch;
+		nextPutAll: ' mipLevels:'; print: self num_mip_levels;
+		nextPutAll: ' numSamples:'; print: self num_samples;
+		nextPutAll: ' buffer:'; print: self buffer;
+		nextPut: $)! !
 
 !CLImageDescStruct class methodsFor: 'accessing' stamp: 'jmv 10/29/2015 14:54'!
 fields
@@ -2932,9 +2924,10 @@ initialize
 	
 	! !
 
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 16:18'!
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/30/2015 12:55'!
 setupImages: extent
-	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels."
+	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels.
+	Use the OpenCL 1.2 api for this."
 	| format description |
 	format _ CLImageFormatStruct bgra8888norm.
 	description _ CLImageDescStruct new.
@@ -6780,7 +6773,7 @@ newImage3D: flags format: imageFormat width: width height: height depth: depth r
 		slicePitch: slicePitch.
 	^mem! !
 
-!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 10/29/2015 16:10'!
+!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 10/30/2015 12:54'!
 newImage: flags format: imageFormat description: imageDescription hostPointer: hostPtr
 	"Most general image-creation method.  Basis for more specific, convenient methods."
 	| mem result |
@@ -6795,9 +6788,9 @@ newImage: flags format: imageFormat description: imageDescription hostPointer: h
 	result := result first.
 	OpenCLError check: result text: 'failed to instantiate image'.
 
-	imageFormat image_type = CL_MEM_OBJECT_IMAGE2D ifTrue: [
+	imageDescription image_type = CL_MEM_OBJECT_IMAGE2D ifTrue: [
 		mem := OpenCLImage2D wrappingHandle: mem.
-		mem context: self format: imageFormat width: imageFormat image_width height: imageFormat image_height rowPitch: imageFormat image_row_pitch.
+		mem context: self format: imageFormat width: imageDescription image_width height: imageDescription image_height rowPitch: imageDescription image_row_pitch.
 		^mem ].
 
 	self error: 'Support this case here!!'! !
