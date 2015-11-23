@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2554] on 23 October 2015 at 2:58:23.672744 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 20 November 2015 at 9:38:04.962117 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 40!
+!provides: 'SignalProcessing' 1 41!
 !requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
@@ -1030,6 +1030,32 @@ asForm
 	self fill32BitForm: answer.
 	^answer! !
 
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 11/20/2015 09:37'!
+asFormFullRangeG: greenImage b: blueImage
+	"Assume all three images are exactly the same size.
+	See comment at #fullRangeDisplayAt:"
+
+	| answer bits rElements rMin rScale gElements gMin gScale bElements bMin bScale b g r word |
+	answer _ Form extent: width@height depth: 32.
+	bits _ answer bits.
+	rElements _ self elements.
+	rMin _ rElements min.
+	rScale _ rElements max - rMin. rScale _ rScale > 0.0 ifTrue: [ 1.0 / rScale ] ifFalse: [ 0.0 ].
+	gElements _ greenImage elements.
+	gMin _ gElements min.
+	gScale _ gElements max - gMin. gScale _ gScale > 0.0 ifTrue: [ 1.0 / gScale ] ifFalse: [ 0.0 ].
+	gScale print.
+	bElements _ blueImage elements.
+	bMin _ bElements min.
+	bScale _ bElements max - bMin. bScale _ bScale > 0.0 ifTrue: [ 1.0 / bScale ] ifFalse: [ 0.0 ].
+	1 to: elements size do: [ :i |
+		r _ ((Color linearTosRGBGamma: (rElements at: i)-rMin * rScale) * 255 + 0.5) truncated.
+		g _ ((Color linearTosRGBGamma: (gElements at: i)-gMin * gScale) * 255 + 0.5) truncated.
+		b _ ((Color linearTosRGBGamma: (bElements at: i)-bMin * bScale) * 255 + 0.5) truncated.
+		word _ (r bitShift: 16) + (g bitShift: 8) + b.
+		bits integerAt: i put: word ].
+	^answer! !
+
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:58'!
 asFormG: greenImage b: blueImage
 	"Answer a 32bit Form with color values.
@@ -1889,6 +1915,11 @@ fullRangeDisplayAt: aPoint
 		(value * 255 + 0.5) truncated ].
 	f displayAt: aPoint! !
 
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 11/19/2015 13:03'!
+fullRangeG: greenImage b: blueImage displayAt: aPoint
+
+	(self asFormFullRangeG: greenImage b: blueImage) displayAt: aPoint! !
+
 !FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
 gammaEncodedToLinearSpace
 	"Assume the receiver is in gamma encoded space (values are proportional luminance, framebuffer contents).
@@ -2502,6 +2533,51 @@ scaledBy: scale
 				ifTrue: [self areaTransformedBy: t resultExtent: nil]
 				ifFalse: [self lanczosTransformedBy: t resultExtent: nil]]
 		ifFalse: [self bSplineTransformedBy: t resultExtent: nil ]! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 11/20/2015 09:37'!
+scharr
+	"A Sobel like operator for edge detection.
+	See https://en.wikipedia.org/wiki/Sobel_operator
+	The coding style can be improved (but do it without degrading performance!!)"
+	
+	| aux e xFiltered yFiltered |
+	aux _ FloatImage extent: self extent.
+	yFiltered _ FloatImage extent: self extent.
+	xFiltered _ FloatImage extent: self extent.
+	
+	aux fillWith: self displaced: -1 @ -1.
+	yFiltered elements += (aux elements * 3).
+	aux fillWith: self displaced: 0 @ -1.
+	yFiltered elements += (aux elements * 10).
+	aux fillWith: self displaced: 1 @ -1.
+	yFiltered elements += (aux elements * 3).
+	aux fillWith: self displaced: -1 @ 1.
+	yFiltered elements += (aux elements * -3).
+	aux fillWith: self displaced: 0 @ 1.
+	yFiltered elements += (aux elements * -10).
+	aux fillWith: self displaced: 1 @ 1.
+	yFiltered elements += (aux elements * -3).
+
+	aux fillWith: self displaced: -1 @ -1.
+	xFiltered elements += (aux elements * 3).
+	aux fillWith: self displaced: -1 @ 0.
+	xFiltered elements += (aux elements * 10).
+	aux fillWith: self displaced: -1 @ 1.
+	xFiltered elements += (aux elements * 3).
+	aux fillWith: self displaced: 1 @ -1.
+	xFiltered elements += (aux elements * -3).
+	aux fillWith: self displaced: 1 @ 0.
+	xFiltered elements += (aux elements * -10).
+	aux fillWith: self displaced: 1 @ 1.
+	xFiltered elements += (aux elements * -3).
+	xFiltered elements *= xFiltered elements.
+	yFiltered elements *= yFiltered elements.
+
+	xFiltered elements += yFiltered elements.
+	
+	e _ xFiltered elements.
+	1 to: e size do: [ :i | e at: i put: (e at: i) sqrt ].
+	^xFiltered! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
