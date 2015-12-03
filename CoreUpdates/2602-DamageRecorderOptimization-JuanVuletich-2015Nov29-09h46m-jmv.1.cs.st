@@ -1,0 +1,64 @@
+'From Cuis 4.2 of 25 July 2013 [latest update: #2596] on 29 November 2015 at 10:07:39.4477 am'!
+
+!DamageRecorder methodsFor: 'recording' stamp: 'jmv 11/29/2015 10:07'!
+recordInvalidRect: requestedRect
+	"Record the given rectangle in my damage list, a list of rectangular areas of the display that should be redraw on the next display cycle.
+	Rectangles are specified in world coordinates (might be not the same as Display coordinates if there is some origin set on some canvas. Usually there will be none, but we can't be sure)
+	"
+	"Details: Damaged rectangles are often identical or overlap significantly. In these cases, we merge them to reduce the number of damage rectangles that must be processed when the display is updated. Moreover, above a certain threshold, we ignore the individual rectangles completely, and simply do a complete repaint on the next cycle.
+	jmv: Important. There should be no overlapping rectangles in the list. If there are, translucent morphs might be drawn several times, with visible defects.
+	WRT performance, the different paths for various intersections seem a bit complicated. I could not find strong evidence of the best way.
+	Leave it as it is right now."
+
+	| newRect mergeRect indexToReuse |
+	totalRepaint ifTrue: [^ self].  "planning full repaint; don't bother collecting damage"
+
+	indexToReuse _ nil.
+	newRect _ requestedRect truncated.
+	invalidRects doWithIndex: [ :oldRect :index |
+		oldRect ifNil: [
+			indexToReuse ifNil: [ indexToReuse _ index ]]
+		ifNotNil: [
+			"No two rectangles should intersect"
+			(oldRect intersects: newRect) ifTrue: [
+
+				"newRect already in. Nothing to do then."
+				(oldRect containsRect: newRect) ifTrue: [ 
+					^self ].
+
+				"Some oldRect included in newRect. Remove it and continue, as newRect could still intersect others."
+				(newRect containsRect: oldRect) ifTrue: [
+					invalidRects at: index put: nil.	"Effectively like 'invalidRects remove: rect', but without performance penalty."
+					indexToReuse ifNil: [ indexToReuse _ index ]].
+
+				"Merge rectangles if they overlap significantly, i.e. if the merge is not much larger than separated rectangles."
+				mergeRect _ (oldRect origin min: newRect origin) corner: (oldRect corner max: newRect corner).
+				mergeRect area > (newRect area + oldRect area * 2)
+					ifTrue: [
+						"Avoid intersections!!"
+						newRect areasOutside: oldRect do: [ :nonIntersection |
+							"We have brand new newRects. Start all over with each of them."
+							self recordInvalidRect: nonIntersection ].
+						"newRect no longer needed, then."
+						^self ]
+					ifFalse: [
+						"Merge into newRect, as any overlap with forecoming rectangles in the iteration is detected and treated."
+						newRect _ mergeRect.
+						invalidRects at: index put: nil.	"Effectively like 'invalidRects remove: rect', but without performance penalty."
+						indexToReuse ifNil: [ indexToReuse _ index ]]]]].
+
+	invalidRects size >= 10 ifTrue: [
+		"if there are too many separate areas, merge them all"
+		mergeRect _ Rectangle merging: invalidRects.
+		self reset.
+		mergeRect ifNotNil: [
+			invalidRects addLast: mergeRect ].
+		indexToReuse _ nil ].
+
+	"Add the given rectangle to the damage list"
+	indexToReuse
+		ifNil: [
+			invalidRects addLast: newRect ]
+		ifNotNil: [
+			invalidRects at: indexToReuse put: newRect ]! !
+

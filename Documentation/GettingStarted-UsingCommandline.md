@@ -4,6 +4,8 @@ What follows are instructions for setting up Cuis on Linux or Mac OS X using the
 
 If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org , and email your code there.
 
+The Cuis image specified is the most current one. The VM specified is the latest one known to work.
+
 ### On Linux ###
 ```
 $ mkdir MyProject
@@ -31,7 +33,7 @@ sudo apt-get install libgl1-mesa-dev:i386
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
 ```
 ```
-$ coglinuxht/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2595.image
+$ coglinuxht/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2621.image
 ```
 
 ### On Mac OS X ###
@@ -42,5 +44,5 @@ $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/ar
 $ unzip master.zip
 $ curl -o Cog.app.tgz www.mirandabanda.org/files/Cog/VM/VM.r3370/Cog.app-15.22.3370.tgz
 $ tar -zxvf Cog.app.tgz
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2595.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2621.image
 ```

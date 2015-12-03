@@ -2,6 +2,8 @@
 
 Instructions for setting up Cuis, for Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests.
 
+The Cuis image specified is the most current one. The VM specified is the latest one known to work.
+
 ### Create project folder and add Cuis Smalltalk ###
 ```
 mkdir MyProject
@@ -47,15 +49,15 @@ https://www.archlinux.org/packages/?q=squeak-vm
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2595.image
+$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2621.image
 ```
 MacOSX:
 ```
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2595.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2621.image
 ```
 Linux:
 ```
-$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2595.image
+$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2621.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.

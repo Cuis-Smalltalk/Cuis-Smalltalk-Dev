@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2582] on 17 November 2015 at 9:59:33.298859 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2621] on 3 December 2015 at 10:04:26.613786 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 38!
+!provides: 'Tests' 1 39!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -3883,6 +3883,47 @@ test32bitConversion
 	)
 		do: [ :originalWord | self assert: (Float fromIEEE32Bit: originalWord) asIEEE32BitWord = originalWord ]! !
 
+!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 12/1/2015 12:31'!
+test32bitConversion2
+	"This tests the rounding done when going from 64bit Float to 32bit Float
+	self new test32bitConversion2
+	"
+
+	| pi32 pi32Predecessor roundingTo32Border roundingBorderPrev roundingBorderSuc aux roundedByConversion |
+	"Pick two neighbors in the 32-bit Float world"
+	pi32 _ Float fromIEEE32Bit: Float pi asIEEE32BitWord.
+	pi32Predecessor _ Float fromIEEE32Bit: Float pi asIEEE32BitWord-1.
+	"Find the middle value in the 64-bit Float world, and both its neighbors"
+	roundingTo32Border _ pi32 + pi32Predecessor / 2.0.
+	roundingBorderPrev _ roundingTo32Border predecessor.
+	roundingBorderSuc _ roundingTo32Border successor.
+
+	"64 bit middle value is not like any of the 32 bit values. Same for neighbors."
+	self deny: roundingTo32Border mantissaPart hex = pi32 mantissaPart hex.
+	self deny: roundingTo32Border mantissaPart hex = pi32Predecessor mantissaPart hex.
+	self deny: roundingBorderPrev mantissaPart hex = pi32Predecessor mantissaPart hex.
+	self deny: roundingBorderPrev mantissaPart hex = pi32 mantissaPart hex.
+	self deny: roundingBorderSuc mantissaPart hex = pi32Predecessor mantissaPart hex.
+	self deny: roundingBorderSuc mantissaPart hex = pi32 mantissaPart hex.
+
+	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
+	roundedByConversion _ Float fromIEEE32Bit: roundingTo32Border asIEEE32BitWord.
+	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
+	aux _ FloatArray new: 1. aux at: 1 put: roundingTo32Border. roundedByConversion _ aux at: 1.
+	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
+
+	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
+	roundedByConversion _ Float fromIEEE32Bit: roundingBorderPrev asIEEE32BitWord.
+	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
+	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderPrev. roundedByConversion _ aux at: 1.
+	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
+
+	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
+	roundedByConversion _ Float fromIEEE32Bit: roundingBorderSuc asIEEE32BitWord.
+	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex.
+	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderSuc. roundedByConversion _ aux at: 1.
+	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex! !
+
 !FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 5/27/2015 13:38'!
 test32bitGradualUnderflow
 	"method asIEEE32BitWord did not respect IEEE gradual underflow"
@@ -4733,7 +4774,7 @@ testFileContents
 	file2 delete.
 	self should: [file2 exists not]! !
 
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 9/28/2015 14:01'!
+!FmFileManTest methodsFor: 'testing' stamp: 'jmv 11/30/2015 09:43'!
 testIsAbsolutePathName
 	"
 	FmFileManTest debug: #testIsAbsolutePathName
@@ -4743,7 +4784,7 @@ testIsAbsolutePathName
 	self assert: '/temp/a' isAbsolutePathName.
 	Smalltalk platformName = 'Win32' ifTrue: [
 		self assert: 'C:/temp/b' isAbsolutePathName ].
-	Smalltalk platformName = 'Mac OS' ifTrue: [
+	FmFileIOAccessor default onMacClassic ifTrue: [
 		self assert: 'Macintosh HD/tmp' isAbsolutePathName ].
 	
 	self deny: './' isAbsolutePathName.
