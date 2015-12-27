@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 3 November 2015 at 12:47:29.577916 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2621] on 7 December 2015 at 9:21:02.887032 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 64!
+!provides: 'TerseGuide' 1 69!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -57,7 +57,7 @@ selectedTopic: aTopic
 	textPane model actualContents: self updateTopicText.
 	self changed: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 11/3/2015 11:13'!
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 12/7/2015 18:44'!
 terseTopics
 	"Translate a list item to a class method selector"
 	^ Dictionary new
@@ -71,6 +71,7 @@ terseTopics
 	at: 'Bit-Wise' put: #bitwise;
 	at: 'Conversion' put: #conversion;
 	at: 'Blocks' put: #block;
+	at: 'Exceptions' put: #exceptions;
 	at: 'Method Calls' put: #methodCall;
 	at: 'Conditional Statements' put: #conditionalStatement;
 	at: 'Iterations' put: #iterationStatement;
@@ -96,6 +97,7 @@ terseTopics
 	at: 'Rectangle' put: #rectangle;
 	at: 'Pen' put: #pen;
 	at: 'Forms' put: #form;
+	at: 'Colors' put: #colors;
 	at: 'Morphs' put: #morph;
 	at: 'Layout Morph' put: #layoutMorph;
 	at: 'Layout Spec' put: #layoutSpec;
@@ -584,6 +586,20 @@ y _ $A max: $B.
 
 '! !
 
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 12/7/2015 20:52'!
+colors
+	"Colors"
+	^
+'
+| x t arr |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+
+x _ (Color r: 0 g: 0 b: 0) name.		"answer the name of the color, if possible"
+x _ (Color r: 1.0 g: 1.0 b: 1.0) name.
+
+arr _ #((0.0 0.0 0.0) (0.0 0.0 1.0) (0.0 1.0 0.0) (0.0 1.0 1.0) (1.0 0.0 0.0) (1.0 0.0 1.0) (1.0 1.0 0.0) (1.0 1.0 1.0)).
+(arr collect: [:a | Color colorFrom: a]) explore.
+'! !
+
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:37'!
 conditionalStatement
 	"Conditional Statements"
@@ -843,6 +859,15 @@ Smalltalk removeKey: #CMRGlobal ifAbsent: [].	"remove entry from Smalltalk dicti
 
 '! !
 
+!TerseGuideHelp class methodsFor: 'displaying' stamp: 'dhn 11/14/2015 13:08'!
+display: aSelector    
+	"Open a Workspace on the text in aSelector"    
+	| window |
+	  
+	window _ TerseGuideHelp new.    
+	window 	actualContents: (self perform: aSelector).    
+	window	openLabel: ('Terse Guide to ', (self class firstPrecodeCommentFor: aSelector))! !
+
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:38'!
 dynamic
 	"Dynamic Message Calling/Compiling"
@@ -883,34 +908,52 @@ result _ (Message
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/3/2015 12:39'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 12/7/2015 15:50'!
+exceptions
+	"Exceptions"
+	^
+'"
+To see the variety of exceptions that can be useful in Cuis, open a hierarchy browser on Error.
+"
+| x y |
+
+x _  1. y _ 0.
+[x / y] on: ZeroDivide do: [^ ''that is big''].
+
+[''testFile.txt'' asFileEntry fileContents] on: MessageNotUnderstood do: [^ nil].	"avoid the exception for Cancel during the dialog"	
+
+[''testFile.txt'' asFileEntry fileContents] on: FileDoesNotExistException do: [nil confirm: ''Rather do it yourself?''].	"avoid the file-does-not-exist dialog"	
+
+'! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 12/7/2015 14:46'!
 fileMan
 	"File Operations"
 	^
-'| b x ios |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| b |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 
-FmDirectoryEntry roots.						"answer the drive or drives"
-FmDirectoryEntry currentDirectory.		"answer the current directory"
+FmDirectoryEntry roots.					"answer the drive or drives"
+FmDirectoryEntry currentDirectory.	"answer the current directory"
 ''testFile.txt'' asFileEntry fileContents: ''Test me now''.	"answer the directory and name of a new file; set its contents"
-''testFile.txt'' asFileEntry fileContents.			"print contents of a file"
+''testFile.txt'' asFileEntry fileContents.		"print contents of a file"
 
 ''testFile.txt'' asFileEntry
-	forceWriteStream: [ :ios |					"overwrite old file contents"
+	forceWriteStream: [ :ios |				"overwrite old file contents"
 		ios nextPut: $M.
 		ios nextPutAll: ''y text ''.
 		ios nextPutAll: ''data''.
 		].
-''testFile.txt'' asFileEntry fileContents.			"print contents of a file"
+''testFile.txt'' asFileEntry fileContents.		"print contents of a file"
 
 ''testFile.txt'' asFileEntry appendStream: [ :fileStream |
 	fileStream newLine.
 	fileStream nextPutAll: ''Second text line''; newLine.
 	].
-''testFile.txt'' asFileEntry fileContents. 			"print it"
+''testFile.txt'' asFileEntry fileContents. 		"print it"
 
 ''testFile.txt'' asFileEntry appendContents: ''The quick red fox''.
 
-''testFile.txt'' asFileEntry fileContents. 			"print it"
+''testFile.txt'' asFileEntry fileContents. 		"print it"
 
 ''testFile.txt'' asFileEntry forceWriteStream: [ :fileStream |	"overwrite the file"
 	| refStyream sharedPoint input |
@@ -935,13 +978,19 @@ FmDirectoryEntry currentDirectory.		"answer the current directory"
 
 ''testFile.txt'' asFileEntry delete.				"remove the test file"
 
-''testFile.txt'' asFileEntry assureExistence.		"put it back empty"
+b _ ''testFile.txt'' asFileEntry exists.		"test for existence of the file"
 
-''testFile.txt'' asFileEntry fileContents. 			"print it"
+''testFile.txt'' asFileEntry fileContents.		"get the file-not-found dialog; note what Cancel does"
+
+[''testFile.txt'' asFileEntry fileContents] on: MessageNotUnderstood do: [^ nil].	"avoid the exception for Cancel during the dialog"	
+
+''testFile.txt'' asFileEntry assureExistence.	"put it back empty"
+
+''testFile.txt'' asFileEntry fileContents. 		"print it"
 
 ''testFile.txt'' asFileEntry delete.				"remove the test file"
 
-"Note FmFileEntry class examples"
+"Note the examples in FmFileEntry class"
 
 '! !
 
@@ -1511,7 +1560,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 11/3/2015 11:14'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 12/7/2015 18:42'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^  OrderedCollection new
@@ -1525,6 +1574,7 @@ pages
 		add: 'Bit-Wise'; 
 		add: 'Conversion'; 
 		add: 'Blocks'; 
+		add: 'Exceptions'; 
 		add: 'Method Calls'; 
 		add: 'Conditional Statements'; 
 		add: 'Iterations'; 
@@ -1550,6 +1600,7 @@ pages
 		add: 'Rectangle'; 
 		add: 'Pen'; 
 		add: 'Forms'; 
+		add: 'Colors'; 
 		add: 'Morphs'; 
 		add: 'Layout Morph'; 
 		add: 'Layout Spec'; 
