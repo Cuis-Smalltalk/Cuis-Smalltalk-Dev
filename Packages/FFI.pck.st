@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2475] on 8 September 2015 at 5:12:48.309487 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 10!
+!provides: 'FFI' 1 11!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -686,7 +686,8 @@ setHandle: anObject
 !ExternalObject class methodsFor: 'class initialization' stamp: 'ar 11/19/1999 22:37'!
 initialize
 	"ExternalObject initialize"
-	Smalltalk addToStartUpList: self after: ShortRunArray.! !
+"	Smalltalk addToStartUpList: self after: ShortRunArray."
+	Smalltalk addToStartUpList: self.! !
 
 !ExternalObject class methodsFor: 'system startup' stamp: 'ar 11/28/1999 23:37'!
 install

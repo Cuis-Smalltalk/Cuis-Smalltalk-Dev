@@ -1,6 +1,7 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2475] on 8 September 2015 at 5:23:12.756487 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2646] on 21 December 2015 at 9:58:47.855511 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 18!
+!provides: 'LinearAlgebra' 1 19!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
