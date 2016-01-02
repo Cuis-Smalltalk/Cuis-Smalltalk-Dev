@@ -21,7 +21,7 @@ For MacOSX:
 $ curl -o Cog.app.tgz www.mirandabanda.org/files/Cog/VM/VM.r3370/Cog.app-15.22.3370.tgz
 $ tar -zxvf Cog.app.tgz
 ```
-For Linux (except ArchLinux, see below):
+For Linux (except ArchLinux, Chromebooks see below):
 ```
 $ wget -O coglinuxht.tgz www.mirandabanda.org/files/Cog/VM/VM.r3370/coglinuxht-15.22.3370.tgz
 $ tar -zxvf coglinuxht.tgz
@@ -61,3 +61,34 @@ $  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2652.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
+
+### For Chromebooks ###
+
+You can use Linux as a chroot in ChromeOS using Crouton to run a Cuis image.
+
+First you need to follow the directions for installing Crouton at
+	https://github.com/dnschneid/crouton
+
+Then follow the Linux directions above -- except for choosing the VM to use.
+
+The reason for this is that JIT (Just In Time) compiling is disabled by ChromeOS.  This means that Cog VMs will not work.
+
+Note that there is no Cuise image in Spur format yet, so avoid Spur VMs for now.
+
+For Intel CPUs:
+```
+$ wget -O linuxVMx86.sh http://squeakvm.org/unix/release/Squeak-4.10.2.2614-linux_i386.sh
+$ ./linuxVMx86.sh
+```
+
+For ARM CPUs:
+```
+$ wget -O stklinuxARM.tgz www.mirandabanda.org/files/Cog/VM/VM.r3386/stklinuxARM-15.24.3386.tgz
+$ tar -zxvf stklinuxARM.tgz
+```
+
+### For Rasberry Pi Linux ###
+```
+$ wget -O linuxVM_ARM.sh http://squeakvm.org/unix/release/Squeak-4.10.2.2765-linux_armv6l.sh
+$ ./linuxVM_ARM.sh
+```
