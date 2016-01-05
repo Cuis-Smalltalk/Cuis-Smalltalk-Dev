@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 30 October 2015 at 12:59:14.53255 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2656] on 5 January 2016 at 3:00:15.749132 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 5!
+!provides: 'OpenCL' 1 6!
 !requires: 'SignalProcessing' 1 37 nil!
 !requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -728,6 +728,16 @@ asOpenCLArg
 asOpenCLArg
 	"Pass pointer to our pixels."
 	^pointer ifNil: [self error: 'pointer is nil'].! !
+
+!Float methodsFor: '*OpenCL' stamp: 'jmv 1/5/2016 11:12'!
+asOpenCLArg
+	"To be used with OpenCL arguments declared as 'double'"
+	^Float64Array with: self! !
+
+!SmallInteger methodsFor: '*OpenCL' stamp: 'jmv 1/5/2016 11:08'!
+asOpenCLArg
+	"Assume we fit in 32 bits"
+	^IntegerArray with: self! !
 
 !SmallInteger methodsFor: '*OpenCL' stamp: 'jcg 2/16/2010 01:23'!
 asOpenCLBoolean
@@ -1522,7 +1532,7 @@ check: errCode text: failureString
 	self signal: failureString code: errCode
 	! !
 
-!OpenCLError class methodsFor: 'signalling' stamp: 'jcg 2/15/2010 13:04'!
+!OpenCLError class methodsFor: 'signalling' stamp: 'jmv 12/29/2015 11:15'!
 errorStringForCode: errCode
 	| errorNames |
 	errorNames := #(
@@ -1538,14 +1548,14 @@ errorStringForCode: errCode
 		'CLImageFormatNotSupported'
 		'CLBuildProgramFailure'
 		'CLMapFailure'
-		nil  "enough nils to fill indices 14-29"
-		nil
-		nil 
-		nil
-		nil
-		nil
-		nil 
-		nil
+		'CL_MISALIGNED_SUB_BUFFER_OFFSET'
+		'CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST'
+		'CL_COMPILE_PROGRAM_FAILURE'
+		'CL_LINKER_NOT_AVAILABLE'
+		'CL_LINK_PROGRAM_FAILURE'
+		'CL_DEVICE_PARTITION_FAILED'
+		'CL_KERNEL_ARG_INFO_NOT_AVAILABLE'
+		nil  "enough nils to fill indices 21-29"
 		nil
 		nil
 		nil 
@@ -1824,6 +1834,14 @@ printOn: aStream
 	aStream nextPutAll: (self class image_channel_data_type_String: self image_channel_data_type).
 	aStream nextPut: $).! !
 
+!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 12/2/2015 12:39'!
+alpha8
+	^self order: CL_A type: CL_UNSIGNED_INT8! !
+
+!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 12/2/2015 12:39'!
+alpha8Norm
+	^self order: CL_A type: CL_UNORM_INT8! !
+
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 11:53'!
 argb8888
 	^self order: CL_ARGB type: CL_UNSIGNED_INT8
@@ -1944,9 +1962,9 @@ order: imageChannelOrder type: imageChannelDataType
 r8
 	^self order: CL_R type: CL_UNSIGNED_INT8! !
 
-!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 14:35'!
+!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 12/2/2015 12:37'!
 r8Norm
-	^self order: CL_UNSIGNED_INT8 type: CL_UNORM_INT8! !
+	^self order: CL_R type: CL_UNORM_INT8! !
 
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 11:52'!
 rgba8888
@@ -2157,7 +2175,7 @@ initialize
 	program := context programWithSource: self sourceCode.
 	program build! !
 
-!AppleCopyBenchmark methodsFor: 'accessing' stamp: 'jmv 9/1/2015 16:48'!
+!AppleCopyBenchmark methodsFor: 'accessing' stamp: 'jmv 1/5/2016 12:05'!
 input: aFloatMatrix
 
 	outputMatrix _ aFloatMatrix appropriateResultClass extent: aFloatMatrix extent.
@@ -2172,10 +2190,10 @@ input: aFloatMatrix
 					from: aFloatMatrix elements
 					waitOn: lastEvent.
 
-	kernel argAt: 0 put: inputBuffer size: 4.
-	kernel argAt: 1 put: outputBuffer size: 4.
-	kernel argAt: 2 put: (IntegerArray with: outputMatrix width) size: 4.
-	kernel argAt: 3 put: (IntegerArray with: outputMatrix height) size: 4.! !
+	kernel argAt: 0 putPointer: inputBuffer.
+	kernel argAt: 1 putPointer: outputBuffer.
+	kernel argAt: 2 putInt: outputMatrix width.
+	kernel argAt: 3 putInt: outputMatrix height! !
 
 !AppleCopyBenchmark methodsFor: 'accessing' stamp: 'jmv 9/1/2015 16:46'!
 result
@@ -2210,7 +2228,7 @@ __kernel void copy(global const float * in, global float * out, int w, int h) {
 }
 '! !
 
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/3/2015 16:56'!
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 1/5/2016 12:19'!
 downloadDataFromGPU: outputForm
 	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	
@@ -2223,8 +2241,8 @@ downloadDataFromGPU: outputForm
 					region: {resultExtent x. resultExtent y. 1}
 					rowPitch: 0
 					slicePitch: 0
-					pointer: outputForm asOpenCLArg
-					waitOn: lastEvent.! !
+					pointer: outputForm
+					waitOn: lastEvent! !
 
 !DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 15:23'!
 initialize
@@ -2642,7 +2660,7 @@ blur: inputAndOutputForm radius: filterRadius
 	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
 	! !
 
-!OpenCLBlur methodsFor: 'private' stamp: 'jcg 6/4/2010 02:53'!
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 12:18'!
 downloadDataFromGPU: outputForm
 	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -2652,10 +2670,10 @@ downloadDataFromGPU: outputForm
 					region: {imageExtent x. imageExtent y. 1}
 					rowPitch: 0
 					slicePitch: 0
-					pointer: outputForm asOpenCLArg
-					waitOn: lastEvent.! !
+					pointer: outputForm
+					waitOn: lastEvent! !
 
-!OpenCLBlur methodsFor: 'initialize' stamp: 'jmv 9/1/2015 15:09'!
+!OpenCLBlur methodsFor: 'initialize' stamp: 'jmv 1/5/2016 11:53'!
 initialize
 
 	"Set up context, queue, program, kernels, etc."
@@ -2668,12 +2686,10 @@ initialize
 	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
 	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
 	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
-	horizontalKernel argAt: 1 put: filterWeightsBuffer size: 4.
-	verticalKernel argAt: 1 put: filterWeightsBuffer size: 4.
-	
-	! !
+	horizontalKernel argAt: 1 putPointer: filterWeightsBuffer.
+	verticalKernel argAt: 1 putPointer: filterWeightsBuffer! !
 
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 9/9/2015 11:54'!
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 11:54'!
 setupImages: extent
 	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels."
 	| fmt |
@@ -2694,16 +2710,16 @@ setupImages: extent
 							hostPointer: nil.
 	
 	"Horizontal kernel runs first, storing the horizontally-blurred image into 'tempImage'."						
-	horizontalKernel argAt: 2 put: inputOutputImage size: 4.
-	horizontalKernel argAt: 3 put: tempImage size: 4.
+	horizontalKernel argAt: 2 putPointer: inputOutputImage.
+	horizontalKernel argAt: 3 putPointer: tempImage.
 	
 	"Vertical kernel runs next, using the partly-blurred image in 'tempImage' as the source."
-	verticalKernel argAt: 2 put: tempImage size: 4.
-	verticalKernel argAt: 3 put: inputOutputImage size: 4.! !
+	verticalKernel argAt: 2 putPointer: tempImage.
+	verticalKernel argAt: 3 putPointer: inputOutputImage! !
 
-!OpenCLBlur methodsFor: 'private' stamp: 'jcg 4/28/2010 01:11'!
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 11:55'!
 setupWeightsForRadius: filterRadius
-	| sigma sum radiusArg |
+	| sigma sum |
 	
 	filterRadius isInteger ifFalse: [self error: 'filter radius must be an integer'].
 	filterRadius > 100 ifTrue: [
@@ -2740,9 +2756,8 @@ setupWeightsForRadius: filterRadius
 					waitOn: lastEvent.
 	
 	"Set up kernel arguments."
-	radiusArg := IntegerArray with: filterRadius.
-	horizontalKernel argAt: 0 put: radiusArg size: radiusArg byteSize.
-	verticalKernel argAt: 0 put: radiusArg size: radiusArg byteSize.
+	horizontalKernel argAt: 0 putInt: filterRadius.
+	verticalKernel argAt: 0 putInt: filterRadius
 
 	! !
 
@@ -2793,7 +2808,7 @@ sourceCode
 		write_imagef(dst_image, coord, out);
 	}'! !
 
-!OpenCLBlur methodsFor: 'private' stamp: 'jcg 6/4/2010 02:53'!
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 12:22'!
 uploadDataToGPU: inputForm
 	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -2803,8 +2818,8 @@ uploadDataToGPU: inputForm
 					region: {imageExtent x. imageExtent y. 1}
 					rowPitch: 0
 					slicePitch: 0
-					pointer: inputForm asOpenCLArg
-					waitOn: lastEvent.! !
+					pointer: inputForm
+					waitOn: lastEvent! !
 
 !OpenCLBlur class methodsFor: 'example' stamp: 'jmv 8/10/2015 12:09'!
 blurDisplay
@@ -2893,7 +2908,7 @@ blur: inputAndOutputForm radius: filterRadius
 	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
 	! !
 
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 12:18'!
 downloadDataFromGPU: outputForm
 	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -2903,10 +2918,10 @@ downloadDataFromGPU: outputForm
 					region: {imageExtent x. imageExtent y. 1}
 					rowPitch: 0
 					slicePitch: 0
-					pointer: outputForm asOpenCLArg
-					waitOn: lastEvent.! !
+					pointer: outputForm
+					waitOn: lastEvent! !
 
-!OpenCLBlur12 methodsFor: 'initialize' stamp: 'jmv 10/29/2015 12:47'!
+!OpenCLBlur12 methodsFor: 'initialize' stamp: 'jmv 1/5/2016 11:57'!
 initialize
 
 	"Set up context, queue, program, kernels, etc."
@@ -2919,12 +2934,10 @@ initialize
 	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
 	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
 	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
-	horizontalKernel argAt: 1 put: filterWeightsBuffer size: 4.
-	verticalKernel argAt: 1 put: filterWeightsBuffer size: 4.
-	
-	! !
+	horizontalKernel argAt: 1 putPointer: filterWeightsBuffer.
+	verticalKernel argAt: 1 putPointer: filterWeightsBuffer! !
 
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/30/2015 12:55'!
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 11:58'!
 setupImages: extent
 	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels.
 	Use the OpenCL 1.2 api for this."
@@ -2955,16 +2968,16 @@ setupImages: extent
 							hostPointer: nil.
 	
 	"Horizontal kernel runs first, storing the horizontally-blurred image into 'tempImage'."						
-	horizontalKernel argAt: 2 put: inputOutputImage size: 4.
-	horizontalKernel argAt: 3 put: tempImage size: 4.
+	horizontalKernel argAt: 2 putPointer: inputOutputImage.
+	horizontalKernel argAt: 3 putPointer: tempImage.
 	
 	"Vertical kernel runs next, using the partly-blurred image in 'tempImage' as the source."
-	verticalKernel argAt: 2 put: tempImage size: 4.
-	verticalKernel argAt: 3 put: inputOutputImage size: 4.! !
+	verticalKernel argAt: 2 putPointer: tempImage.
+	verticalKernel argAt: 3 putPointer: inputOutputImage! !
 
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 11:59'!
 setupWeightsForRadius: filterRadius
-	| sigma sum radiusArg |
+	| sigma sum |
 	
 	filterRadius isInteger ifFalse: [self error: 'filter radius must be an integer'].
 	filterRadius > 100 ifTrue: [
@@ -3001,9 +3014,8 @@ setupWeightsForRadius: filterRadius
 					waitOn: lastEvent.
 	
 	"Set up kernel arguments."
-	radiusArg := IntegerArray with: filterRadius.
-	horizontalKernel argAt: 0 put: radiusArg size: radiusArg byteSize.
-	verticalKernel argAt: 0 put: radiusArg size: radiusArg byteSize.
+	horizontalKernel argAt: 0 putInt: filterRadius.
+	verticalKernel argAt: 0 putInt: filterRadius.
 
 	! !
 
@@ -3054,7 +3066,7 @@ sourceCode
 		write_imagef(dst_image, coord, out);
 	}'! !
 
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 12:22'!
 uploadDataToGPU: inputForm
 	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -3064,8 +3076,8 @@ uploadDataToGPU: inputForm
 					region: {imageExtent x. imageExtent y. 1}
 					rowPitch: 0
 					slicePitch: 0
-					pointer: inputForm asOpenCLArg
-					waitOn: lastEvent.! !
+					pointer: inputForm
+					waitOn: lastEvent! !
 
 !OpenCLBlur12 class methodsFor: 'example' stamp: 'jmv 10/29/2015 12:47'!
 blurDisplay
@@ -3108,7 +3120,7 @@ adjustOriginAndStepSize
 
 	paramsDirty := true.! !
 
-!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 9/9/2015 11:54'!
+!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:00'!
 extent: newExtent
 	newExtent = extent ifTrue: [^self "no change"].
 	paramsDirty := true.
@@ -3124,9 +3136,9 @@ extent: newExtent
 					height: extent y
 					rowPitch: nil
 					hostPointer: nil.
-	kernel argAt: 3 put: workImage size: 4.
+	kernel argAt: 3 putPointer: workImage.
 	
-	self adjustOriginAndStepSize.! !
+	self adjustOriginAndStepSize! !
 
 !OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 01:51'!
 imaginary
@@ -3142,7 +3154,7 @@ imaginary: newImaginary
 	old = (params at: 6) ifTrue: [^self "no change"].
 	paramsDirty := true! !
 
-!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 9/1/2015 15:10'!
+!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:01'!
 initialize
 	"We take care so that you can call #initialize again and none of the existing settings will be lost."
 	| rememberedExtent |
@@ -3170,7 +3182,7 @@ initialize
 	].
 
 	paramsBuffer := context readWriteBufferOfSize: 7*4. "7 32-bit floats"
-	kernel argAt: 1 put: paramsBuffer asOpenCLArg size: 4.
+	kernel argAt: 1 putPointer: paramsBuffer.
 
 	toneMapForm ifNotNil: [self toneMap: toneMapForm].
 	
@@ -3212,7 +3224,7 @@ real: newReal
 	old = (params at: 5) ifTrue: [^self "no change"].
 	paramsDirty := true! !
 
-!OpenCLJuliaSet methodsFor: 'private' stamp: 'jcg 5/1/2010 01:54'!
+!OpenCLJuliaSet methodsFor: 'private' stamp: 'jmv 1/5/2016 12:18'!
 runKernel
 	paramsDirty ifTrue: [
 		"Would be nice if this were non-blocking..."
@@ -3237,10 +3249,9 @@ runKernel
 			region: {extent x. extent y. 1}
 			rowPitch: 0
 			slicePitch: 0
-			pointer: outputForm asOpenCLArg
+			pointer: outputForm
 			waitOn: lastEvent.
-	lastEvent := nil.
-! !
+	lastEvent := nil! !
 
 !OpenCLJuliaSet methodsFor: 'private' stamp: 'jcg 5/1/2010 01:11'!
 runKernelAndDisplay
@@ -3303,9 +3314,9 @@ julia (int iterations,
 					read_imagef(tone_map, sampler, tex_coord));
 }'! !
 
-!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 9/9/2015 11:54'!
+!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:22'!
 toneMap: newToneMapForm
-	| arg |
+	| |
 	
 	toneMapForm := newToneMapForm.
 	toneMapImage ifNotNil: [
@@ -3318,8 +3329,7 @@ toneMap: newToneMapForm
 	 diverging to pick a color to shade the pixel.  Therefore, it makes sense to make
 	 the number of iterations equal to the width of the tone-map."
 	iterations := toneMapForm width.
-	arg := IntegerArray with: iterations.
-	kernel argAt: 0 put: arg size: arg byteSize.
+	kernel argAt: 0 putInt: iterations.
 
 	toneMapImage := context
 						newImage2D: CL_MEM_READ_ONLY
@@ -3328,7 +3338,7 @@ toneMap: newToneMapForm
 						height: toneMapForm height
 						rowPitch: nil
 						hostPointer: nil.
-	kernel argAt: 2 put: toneMapImage size: 4.
+	kernel argAt: 2 putPointer: toneMapImage.
 	lastEvent := queue
 					writeImage: toneMapImage
 					block: true
@@ -3336,10 +3346,9 @@ toneMap: newToneMapForm
 					region: {toneMapImage width. toneMapImage height. 1}
 					rowPitch: 0
 					slicePitch: 0
-					pointer: toneMapForm asOpenCLArg
+					pointer: toneMapForm
 					waitOn: lastEvent.
-	paramsDirty := true.
-	! !
+	paramsDirty := true! !
 
 !OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 01:02'!
 toneMapV: texVCoord
@@ -3401,7 +3410,7 @@ example1
 	
 ! !
 
-!OpenCLFill256 methodsFor: 'initialize' stamp: 'jmv 9/16/2015 17:31'!
+!OpenCLFill256 methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:00'!
 initialize
 "	device := OpenCLPlatform allPlatforms first allGPUs first."
 "	device := (OpenCLPlatform allPlatforms collect: [:platform |
@@ -3413,10 +3422,9 @@ initialize
 	program build.
 	buffer := context readWriteBufferOfSize: 256*4.  "256 integers"
 	kernel1d := program createKernel: 'fill256_1d'.
-	kernel1d argAt: 0 put: buffer size: 4.
+	kernel1d argAt: 0 putPointer: buffer.
 	kernel2d := program createKernel: 'fill256_2d'.
-	kernel2d argAt: 0 put: buffer size: 4.
-	! !
+	kernel2d argAt: 0 putPointer: buffer! !
 
 !OpenCLFill256 methodsFor: 'actions' stamp: 'jcg 2/16/2010 10:57'!
 run1d
@@ -6773,7 +6781,7 @@ newImage3D: flags format: imageFormat width: width height: height depth: depth r
 		slicePitch: slicePitch.
 	^mem! !
 
-!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 10/30/2015 12:54'!
+!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 1/5/2016 12:24'!
 newImage: flags format: imageFormat description: imageDescription hostPointer: hostPtr
 	"Most general image-creation method.  Basis for more specific, convenient methods."
 	| mem result |
@@ -6783,7 +6791,7 @@ newImage: flags format: imageFormat description: imageDescription hostPointer: h
 							cl_mem_flags: flags
 							const__cl_image_format__ptr: imageFormat
 							const__cl_image_desc__ptr: imageDescription
-							void__ptr: hostPtr
+							void__ptr: hostPtr asOpenCLArg
 							cl_int__ptr: result.
 	result := result first.
 	OpenCLError check: result text: 'failed to instantiate image'.
@@ -7246,7 +7254,7 @@ readBuffer: buf into: bytes "a ByteArray" waitOn: events
 	"Convenient blocking read into a ByteArray (or similar type, like IntegerArray or FloatArray)."
 	^self readBuffer: buf block: true offset: 0 size: bytes byteSize pointer: bytes waitOn: events! !
 
-!OpenCLCommandQueue methodsFor: 'mem read/write/copy' stamp: 'jmv 9/9/2015 12:43'!
+!OpenCLCommandQueue methodsFor: 'mem read/write/copy' stamp: 'jmv 1/5/2016 12:18'!
 readImage: image block: shouldBlock origin: origin region: region rowPitch: rowPitch slicePitch: slicePitch pointer: ptr waitOn: events
 	"Arguments:
 		image		-		An OpenCLImage2D/3D
@@ -7267,31 +7275,30 @@ readImage: image block: shouldBlock origin: origin region: region rowPitch: rowP
 							const__size_t__ptr: region asIntegerArray
 							size_t: rowPitch
 							size_t: slicePitch
-							void__ptr: ptr
+							void__ptr: ptr asOpenCLArg
 							cl_uint: waitList first "number of events to wait on"
 							const__cl_event__ptr: waitList second "concatenated event handles"
 							cl_event__ptr: (evt := CLEvent new).
 	OpenCLError check: result text: 'failed to enqueue read-image'.
 	^self wrapEventHandle: evt! !
 
-!OpenCLCommandQueue methodsFor: 'kernels and tasks' stamp: 'jmv 9/9/2015 12:46'!
+!OpenCLCommandQueue methodsFor: 'kernels and tasks' stamp: 'jmv 12/2/2015 16:31'!
 runKernel: kernel workDim: workDim globalOffset: globalWorkOffset globalSize: globalWorkSize localSize: localWorkSize waitOn: events
 	"Arguments
-		kernel		-	An OpenCLKernel
-		workDim	-	# of dimensions used to specify local/global work sizes/offsets
-						(the sizes of the other arguments must match)
-		globalWorkOffset	-	array of integers
+		kernel					-	An OpenCLKernel
+		workDim				-	# of dimensions used to specify local/global work sizes/offsets
+										(the sizes of the other arguments must match)
+		globalWorkOffset		-	array of integers
 		globalWorkSize		-	array of integers
-		localWorkSize		-	array of integers
-		events		-		nil, single OpenCLEvent, or list of them"
+		localWorkSize			-	array of integers
+		events					-	nil, single OpenCLEvent, or list of them"
 	| result evt waitList |
 	waitList := OpenCLEvent generateWaitList: events.
 	result := OpenCLPrimitiveInterface current
 				clEnqueueNDRangeKernel__cl_command_queue: id
 							cl_kernel: kernel id
 							cl_uint: workDim
-							"Must be NULL in OpenCL 1.0, but maybe not in later versions."
-							const__size_t__ptr: nil "globalWorkOffset asIntegerArray"
+							const__size_t__ptr: globalWorkOffset asIntegerArray
 							const__size_t__ptr: globalWorkSize asIntegerArray
 							const__size_t__ptr: localWorkSize asIntegerArray
 							cl_uint: waitList first "number of events to wait on"
@@ -7388,7 +7395,7 @@ writeBuffer: buf from: bytes "a ByteArray" waitOn: events
 	"Convenient blocking write from a ByteArray (or similar type, like IntegerArray or FloatArray)."
 	^self writeBuffer: buf block: true offset: 0 size: bytes byteSize pointer: bytes waitOn: events! !
 
-!OpenCLCommandQueue methodsFor: 'mem read/write/copy' stamp: 'jmv 9/9/2015 12:34'!
+!OpenCLCommandQueue methodsFor: 'mem read/write/copy' stamp: 'jmv 1/5/2016 12:23'!
 writeImage: image block: shouldBlock origin: origin region: region rowPitch: rowPitch slicePitch: slicePitch pointer: ptr waitOn: events
 	"Arguments:
 		image		-		An OpenCLImage2D/3D
@@ -7409,7 +7416,7 @@ writeImage: image block: shouldBlock origin: origin region: region rowPitch: row
 							const__size_t__ptr: region asIntegerArray
 							size_t: rowPitch
 							size_t: slicePitch
-							const__void__ptr: ptr
+							const__void__ptr: ptr asOpenCLArg
 							cl_uint: waitList first "number of events to wait on"
 							const__cl_event__ptr: waitList second "concatenated event handles"
 							cl_event__ptr: (evt := CLEvent new).
@@ -7725,8 +7732,10 @@ slicePitch
 slicePitch: pitch
 	slicePitch := pitch! !
 
-!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 9/9/2015 12:55'!
+!OpenCLKernel methodsFor: 'private' stamp: 'jmv 1/5/2016 12:17'!
 argAt: index put: arg size: byteSize
+	"Please don't use. Prefer the type specific methods in category 'arguments'"
+
 	| result | 
 	result := OpenCLPrimitiveInterface current
 				clSetKernelArg__cl_kernel: id
@@ -7734,6 +7743,98 @@ argAt: index put: arg size: byteSize
 							size_t: byteSize
 							const__void__ptr: arg asOpenCLArg.
 	OpenCLError check: result text: 'failed to set kernel argument ', index printString.! !
+
+!OpenCLKernel methodsFor: 'private' stamp: 'jmv 1/5/2016 11:49'!
+argAt: index putBytesOf: anObject
+	"To be used with arguments other than OpenCL images and buffers.
+	That is, to be used, for example with arguments declared in the OpenCL kernel as:
+		int, float, double, float4, double4, etc.
+	Usually prefer one of the type specific methods, such as argAt:putDouble:
+	
+	Takes bytes right away. No problem if openCLArg is moved or collected."
+
+	| openCLArg result |
+	openCLArg _ anObject asOpenCLArg.
+	result _ OpenCLPrimitiveInterface current
+				clSetKernelArg__cl_kernel: id
+							cl_uint: index
+							size_t: openCLArg byteSize 	"Size of the object. Number of bytes to be passed on the stack."
+							const__void__ptr: openCLArg.
+	OpenCLError check: result text: 'failed to set kernel argument ', index printString! !
+
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:45'!
+argAt: index putDouble4: aCollectionOfNumbers
+	"To be used with arguments declared in OpenCL as double4.
+	They are 4 64 bit floating point numbers together.
+
+	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
+	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
+
+	^ self argAt: index putBytesOf: (Float64Array new: 4 from: aCollectionOfNumbers)! !
+
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:46'!
+argAt: index putDouble: aNumber
+	"To be used with arguments declared in OpenCL as double.
+	They are 64 bit floating point.
+
+	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
+	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
+
+	^ self argAt: index putBytesOf: aNumber asFloat! !
+
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:45'!
+argAt: index putFloat4: aCollectionOfNumbers
+	"To be used with arguments declared in OpenCL as float4.
+	They are 4 32 bit floating point numbers together.
+
+	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
+	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
+
+	^ self argAt: index putBytesOf: (FloatArray new: 4 from: aCollectionOfNumbers)! !
+
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:45'!
+argAt: index putFloat: aNumber
+	"To be used with arguments declared in OpenCL as float.
+	They are 32 bit floating point.
+
+	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
+	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
+
+	^ self argAt: index putBytesOf: (FloatArray with: aNumber asFloat)! !
+
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:46'!
+argAt: index putInt: aNumber
+	"To be used with arguments declared in OpenCL as int.
+	They are 32 bit signed integer.
+
+	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
+	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
+
+	^ self argAt: index putBytesOf: (IntegerArray with: aNumber)! !
+
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:48'!
+argAt: index putPointer: anOpenCLContextObject
+	"To be used with arguments that are OpenCL images and buffers: OpenCLImage2D, OpenCLImage3D, OpenCLBuffer.
+	That is, to be used, for example with arguments declared in the OpenCL kernel as:
+		image2d_t
+		float*
+		etc.
+	For things like float*, remember to create an OpenCLBuffer of approriate size, copy values back and forth as needed, etc.
+	anOpenCLContextObject must be an OpenCLContextObject and not a regular Smalltalk object, as a Smalltalk object could
+	be moved or collected, and the pointer become invalid.
+	
+	It could be possible to use ExternalObject. No experiments done yet, though.
+	
+	With a VM that supports pinned objects (Spur, someday?), thouse would be suitable too."
+
+	| openCLArg result |
+	openCLArg _ anOpenCLContextObject asOpenCLArg.
+	result _ OpenCLPrimitiveInterface current
+				clSetKernelArg__cl_kernel: id
+							cl_uint: index
+							size_t: 4 						"The size of the pointer. Number of bytes to be passed on the stack."
+							const__void__ptr: openCLArg.
+	OpenCLError check: result text: 'failed to set kernel argument ', index printString! !
 
 !OpenCLKernel methodsFor: 'accessing' stamp: 'jcg 2/15/2010 13:35'!
 context
