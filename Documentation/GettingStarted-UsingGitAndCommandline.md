@@ -49,15 +49,15 @@ https://www.archlinux.org/packages/?q=squeak-vm
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2656.image
+$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2658.image
 ```
 MacOSX:
 ```
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2656.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2658.image
 ```
 Linux:
 ```
-$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2656.image
+$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2658.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
