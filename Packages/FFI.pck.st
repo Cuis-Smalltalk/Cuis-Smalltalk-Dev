@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2475] on 8 September 2015 at 5:12:48.309487 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 11 January 2016 at 12:27:44.856893 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 11!
+!provides: 'FFI' 1 12!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -1853,10 +1853,11 @@ primManualSurface: surfaceID setPointer: pointer
 	self primitiveFailed
 ! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/26/2010 02:00'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 1/6/2016 12:38'!
 setExtent: extent depth: bitsPerPixel
 	bits ifNotNil: [self error: 'bits are already set'].
-	bitsPerPixel == 32 ifFalse: [self error: 'only 32 bits for now'.  "see 'rowPitch' below"].
+	(#(8 16 32) includes: bitsPerPixel)
+		ifFalse: [self error: 'only 32 bits for now'.  "see 'rowPitch' below"].
 	width := extent x asInteger.
 	width < 0 ifTrue: [width := 0].
 	height := extent y asInteger.
@@ -1865,7 +1866,7 @@ setExtent: extent depth: bitsPerPixel
 	bits := self 
 		primCreateManualSurfaceWidth: width 
 		height: height 
-		rowPitch: width * 4
+		rowPitch: width * (bitsPerPixel/8)
 		depth: bitsPerPixel
 		isMSB: true.! !
 
@@ -1894,9 +1895,9 @@ setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 				bigEndian: Smalltalk isBigEndian.
 	self primManualSurface: bits setPointer: integer.! !
 FFIConstants initialize!
-ExternalObject initialize!
 ExternalAddress initialize!
+ExternalObject initialize!
 ExternalFunction initialize!
-ExternalType initialize!
 ExternalStructure initialize!
 ExternalData initialize!
+ExternalType initialize!

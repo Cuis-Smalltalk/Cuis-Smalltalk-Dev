@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2656] on 5 January 2016 at 3:00:15.749132 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 11 January 2016 at 12:29:08.804436 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 6!
+!provides: 'OpenCL' 1 7!
 !requires: 'SignalProcessing' 1 37 nil!
 !requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -7181,13 +7181,13 @@ mapBuffer: buf block: shouldBlock flags: flags offset: offset size: sz waitOn: e
 	^evt
 	! !
 
-!OpenCLCommandQueue methodsFor: 'mem mapping' stamp: 'jmv 9/9/2015 12:32'!
+!OpenCLCommandQueue methodsFor: 'mem mapping' stamp: 'jmv 1/8/2016 11:38'!
 mapImage: image block: shouldBlock flags: flags origin: origin region: region waitOn: events
 	"This is the most general image-mapping method; it corresponds directly to the OpenCL API call.  In practice, more convenient methods will allow omitting many arguments."
 	"Arguments:
 		image			-	An OpenCLBuffer
 		shouldBlock	-	boolean
-		flags			-	CL_MAP_READ and/or CL_MAP_WRITE
+		flags			-	CL_MAP_READ and/or CL_MAP_WRITE, CL_MAP_WRITE_INVALIDATE_REGION
 		origin			-		3-element Array or IntegerArray
 		region			-		ditto
 		events		-	nil, single OpenCLEvent, or list of them"
