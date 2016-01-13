@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 11 January 2016 at 12:27:44.856893 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2659] on 13 January 2016 at 10:29:59.966772 am'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 12!
+!provides: 'FFI' 1 13!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -1221,8 +1221,9 @@ fileOutOn: aFileStream moveSource: moveSource toFile: fileIndex initializing: aB
 fromHandle: aHandle
 	^self basicNew setHandle: aHandle! !
 
-!ExternalStructure class methodsFor: 'class initialization' stamp: 'jmv 8/21/2013 17:38'!
+!ExternalStructure class methodsFor: 'class initialization' stamp: 'jmv 1/13/2016 10:22'!
 initialize
+	ExternalType initialize.
 	self compileFields! !
 
 !ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 12/1/1999 15:58'!
@@ -1894,10 +1895,10 @@ setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 				unsignedLongAt: 1 
 				bigEndian: Smalltalk isBigEndian.
 	self primManualSurface: bits setPointer: integer.! !
-FFIConstants initialize!
 ExternalAddress initialize!
 ExternalObject initialize!
 ExternalFunction initialize!
 ExternalStructure initialize!
 ExternalData initialize!
 ExternalType initialize!
+FFIConstants initialize!
