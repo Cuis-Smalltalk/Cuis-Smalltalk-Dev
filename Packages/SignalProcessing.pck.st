@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2646] on 21 December 2015 at 9:58:07.908932 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 22 January 2016 at 4:51:37.149086 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 42!
+!provides: 'SignalProcessing' 1 43!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -1196,6 +1196,13 @@ bicubicTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 			scaled x: x y: y put: v
 		]].
 	^scaled! !
+
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 1/21/2016 12:21'!
+bilinearInterpolatedClampToEdgeValueAtX: x y: y
+	"Bilinear interpolation. If acessed outside bounds, clamp to the edge. (Like OpenCL's  CLK_ADDRESS_CLAMP_TO_EDGE)"
+
+	^ self bilinearInterpolatedValueAtX: (x min: width max: 1) y: (y min: height max: 1)
+! !
 
 !FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 15:02'!
 bilinearInterpolatedValueAtX: x y: y
