@@ -1,10 +1,11 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 22 January 2016 at 4:51:37.149086 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 43!
+!provides: 'SignalProcessing' 1 44!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Goodies' 1 0!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'

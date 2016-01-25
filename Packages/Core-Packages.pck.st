@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 12 June 2015 at 12:09:03.493729 am'!
 'Description '!
-!provides: 'Core-Packages' 1 7!
+!provides: 'Core-Packages' 1 8!
 !requires: 'Probabilities-and-Statistics' 1 0 nil!
 !requires: 'Network-Kernel' 1 1 nil!
 !requires: 'Cuis-Base' 42 2327 nil!
@@ -20,3 +20,7 @@
 !requires: 'BouncingAtoms' 1 8 nil!
 !requires: 'OpenCL' 1 0 nil!
 !requires: 'ClassCommentBrowser' 1 0 nil!
+!requires: 'Assessments' 1 0 nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'Morphic-Widgets-Extras' 1 0 nil!
+!requires: 'Taskbar' 1 0 nil!

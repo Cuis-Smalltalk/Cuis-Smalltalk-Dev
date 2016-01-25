@@ -1,6 +1,7 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2355] on 9 June 2015 at 10:08:11.439162 am'!
 'Description Please enter a description for this package'!
-!provides: 'Probabilities-and-Statistics' 1 6!
+!provides: 'Probabilities-and-Statistics' 1 7!
+!requires: 'Goodies' 1 0!
 !classDefinition: #UnitaryMonotonicMap category: #'Probabilities-and-Statistics'!
 FloatArray variableWordSubclass: #UnitaryMonotonicMap
 	instanceVariableNames: ''
