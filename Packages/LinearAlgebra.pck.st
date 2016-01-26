@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2646] on 21 December 2015 at 9:58:47.855511 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2676] on 26 January 2016 at 11:15:18.41464 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 19!
+!provides: 'LinearAlgebra' 1 20!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
@@ -216,11 +216,16 @@ as8bitFormEvaluating: aBlock
 			bits byteAt: bitsIndex put: (aBlock value: elementsIndex) ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:14'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 1/15/2016 14:40'!
 asForm
 	"Answer a Form with gray values."
 
-	^self asFormMin: self min max: self max! !
+	| max min |
+	min _ self min.
+	max _ self max.
+	max > min ifFalse: [
+		max _ min + 1 ].
+	^self asFormMin: min max: max! !
 
 !Matrix methodsFor: 'conversion' stamp: 'jmv 9/2/2014 12:07'!
 asFormG: greenMatrix b: blueMatrix
