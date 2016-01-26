@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 4:11:30.845799 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 19 January 2016 at 3:59:17.223134 am'!
 'Description Assessments is a replacement / reimplementation of the SUnit evaluation machinery, published under the MIT license (see below), with the following characteristics.
 
 * It provides all the functionality and features of SUnit and SUnit VM (including SUnit Based Validation and SUnit Benchmarks) natively.
@@ -143,7 +143,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '!
-!provides: 'Assessments' 2 24!
+!provides: 'Assessments' 2 25!
 !classDefinition: #AbstractCustomChecklist category: #'Assessments-Framework-CustomChecklists'!
 Object subclass: #AbstractCustomChecklist
 	instanceVariableNames: ''
@@ -674,6 +674,16 @@ AssessmentsPortabilityService subclass: #AssessmentsClassResolver
 AssessmentsClassResolver class
 	instanceVariableNames: ''!
 
+!classDefinition: #AssessmentsDateAndTime category: #'Assessments-Framework-Portability'!
+AssessmentsPortabilityService subclass: #AssessmentsDateAndTime
+	instanceVariableNames: 'dateAndTimeClass'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Assessments-Framework-Portability'!
+!classDefinition: 'AssessmentsDateAndTime class' category: #'Assessments-Framework-Portability'!
+AssessmentsDateAndTime class
+	instanceVariableNames: ''!
+
 !classDefinition: #AssessmentsFileDirectory category: #'Assessments-Framework-Portability'!
 AssessmentsPortabilityService subclass: #AssessmentsFileDirectory
 	instanceVariableNames: ''
@@ -684,6 +694,36 @@ AssessmentsPortabilityService subclass: #AssessmentsFileDirectory
 AssessmentsFileDirectory class
 	instanceVariableNames: ''!
 
+!classDefinition: #AssessmentsGC category: #'Assessments-Framework-Portability'!
+AssessmentsPortabilityService subclass: #AssessmentsGC
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Assessments-Framework-Portability'!
+!classDefinition: 'AssessmentsGC class' category: #'Assessments-Framework-Portability'!
+AssessmentsGC class
+	instanceVariableNames: ''!
+
+!classDefinition: #AssessmentsNumberPrinter category: #'Assessments-Framework-Portability'!
+AssessmentsPortabilityService subclass: #AssessmentsNumberPrinter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Assessments-Framework-Portability'!
+!classDefinition: 'AssessmentsNumberPrinter class' category: #'Assessments-Framework-Portability'!
+AssessmentsNumberPrinter class
+	instanceVariableNames: ''!
+
+!classDefinition: #AssessmentsProcessScheduler category: #'Assessments-Framework-Portability'!
+AssessmentsPortabilityService subclass: #AssessmentsProcessScheduler
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Assessments-Framework-Portability'!
+!classDefinition: 'AssessmentsProcessScheduler class' category: #'Assessments-Framework-Portability'!
+AssessmentsProcessScheduler class
+	instanceVariableNames: ''!
+
 !classDefinition: #AssessmentsProfiler category: #'Assessments-Framework-Portability'!
 AssessmentsPortabilityService subclass: #AssessmentsProfiler
 	instanceVariableNames: 'profiler'
@@ -692,6 +732,16 @@ AssessmentsPortabilityService subclass: #AssessmentsProfiler
 	category: 'Assessments-Framework-Portability'!
 !classDefinition: 'AssessmentsProfiler class' category: #'Assessments-Framework-Portability'!
 AssessmentsProfiler class
+	instanceVariableNames: ''!
+
+!classDefinition: #AssessmentsSystemOrganization category: #'Assessments-Framework-Portability'!
+AssessmentsPortabilityService subclass: #AssessmentsSystemOrganization
+	instanceVariableNames: 'profiler'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Assessments-Framework-Portability'!
+!classDefinition: 'AssessmentsSystemOrganization class' category: #'Assessments-Framework-Portability'!
+AssessmentsSystemOrganization class
 	instanceVariableNames: ''!
 
 !classDefinition: #CheckExecutionPolicy category: #'Assessments-Framework-ProtectedMessageSends'!
@@ -2347,7 +2397,7 @@ classForBrowsing
 
 	^self! !
 
-!String methodsFor: '*Assessments' stamp: 'SqR 2/21/2015 21:18'!
+!String methodsFor: '*Assessments' stamp: 'sqr 1/16/2016 22:27'!
 assessmentsPrettyPrint
 
 	| input output useCaps next addSpace |
@@ -2468,19 +2518,22 @@ handlerActionForPrerequisiteEvaluation
 
 	self handlerActionForEvaluation! !
 
-!UnhandledError methodsFor: '*Assessments' stamp: 'SqR 2/21/2015 20:56'!
+!UnhandledError methodsFor: '*Assessments' stamp: 'sqr 1/16/2016 22:30'!
 handlerActionForEvaluation
+	"In some dialects, UnhandledError is not a subclass of Error"
 
 	self return! !
 
-!UnhandledError methodsFor: '*Assessments' stamp: 'SqR 2/21/2015 20:56'!
+!UnhandledError methodsFor: '*Assessments' stamp: 'sqr 1/16/2016 22:30'!
 handlerActionForPrerequisiteEvaluation
+	"In some dialects, UnhandledError is not a subclass of Error"
 
 	self return: false! !
 
-!UnhandledError methodsFor: '*Assessments' stamp: 'SqR 2/21/2015 20:56'!
+!UnhandledError methodsFor: '*Assessments' stamp: 'sqr 1/16/2016 22:30'!
 occurredWhileEvaluating: aCheck
 inTheContextOf: anEvaluationContext
+	"In some dialects, UnhandledError is not a subclass of Error"
 
 	| error |
 	error := aCheck newCheckError.
@@ -2490,8 +2543,9 @@ inTheContextOf: anEvaluationContext
 		occurredWhileEvaluating: aCheck
 		inTheContextOf: anEvaluationContext! !
 
-!UnhandledError methodsFor: '*Assessments' stamp: 'SqR 3/24/2015 19:01'!
+!UnhandledError methodsFor: '*Assessments' stamp: 'sqr 1/16/2016 22:30'!
 preventsCheckSuccess
+	"In some dialects, UnhandledError is not a subclass of Error"
 
 	^true! !
 
@@ -2702,20 +2756,12 @@ print: aCheckResult on: aWriteStream
 
 	self log: aCheckResult printString on: aWriteStream! !
 
-!AbstractFileLogAssessmentResultPolicy methodsFor: 'private - time' stamp: 'SqR 3/6/2015 19:50'!
+!AbstractFileLogAssessmentResultPolicy methodsFor: 'private - time' stamp: 'sqr 1/12/2016 19:39'!
 timestampLogString
 
-	| answer |
-	answer := WriteStream on: (String new: 32).
-	self timestampNow printWithMsOn: answer.
-	^answer contents! !
-
-!AbstractFileLogAssessmentResultPolicy methodsFor: 'private - time' stamp: 'SqR 2/22/2015 20:38'!
-timestampNow
-
 	^self useUTCTimestamps
-		ifTrue: [DateAndTime now]
-		ifFalse: [DateAndTime now asLocal].! !
+		ifTrue: [AssessmentsDateAndTime current nowUTCPrintString]
+		ifFalse: [AssessmentsDateAndTime current nowLocalPrintString]! !
 
 !AbstractFileLogAssessmentResultPolicy methodsFor: 'private - time' stamp: 'SqR 3/8/2015 18:10'!
 useUTCTimestamps
@@ -3020,8 +3066,9 @@ changedCurrentPrerequisitesTo: currentPrerequisites
 	self startedPrerequisites removeAll.
 	^self attemptToStartPrerequisites: currentPrerequisites! !
 
-!LazyPrerequisitePolicy methodsFor: 'private - prerequisites' stamp: 'SqR 3/8/2015 18:10'!
+!LazyPrerequisitePolicy methodsFor: 'private - prerequisites' stamp: 'sqr 1/13/2016 21:53'!
 checksSortedByPrerequisites: aCollection
+	"Use sorted collections for the dialects in which sets are compared by identity"
 
 	| checksByPrerequisites |
 	checksByPrerequisites := Dictionary new.
@@ -3029,7 +3076,7 @@ checksSortedByPrerequisites: aCollection
 		[:eachCheck |
 			| checks |
 			checks := checksByPrerequisites
-				at: eachCheck prerequisites asSet
+				at: eachCheck prerequisites asSet asSortedCollection
 				ifAbsentPut: [OrderedCollection new].
 			checks add: eachCheck.
 		].
@@ -3096,6 +3143,12 @@ startedPrerequisitesMatch: currentPrerequisitesSet
 	^self startedPrerequisites size = currentPrerequisitesSet size and:
 		[self startedPrerequisites allSatisfy: [:each | currentPrerequisitesSet includes: each]]! !
 
+!AbstractPrerequisite methodsFor: 'comparing' stamp: 'sqr 1/13/2016 21:51'!
+<= aPrerequisite
+	"For the dialects in which Set new = Set new evaluates to false"
+
+	^self class name <= aPrerequisite class name! !
+
 !AbstractPrerequisite methodsFor: 'comparing' stamp: 'SqR 3/8/2015 18:10'!
 = aPrerequisite
 	"Assume these are singletons, refine as needed"
@@ -3132,10 +3185,10 @@ failureNotification
 
 	^PrerequisiteFailureNotification! !
 
-!AbstractPrerequisite methodsFor: 'comparing' stamp: 'SqR 3/8/2015 18:10'!
+!AbstractPrerequisite methodsFor: 'comparing' stamp: 'sqr 1/14/2016 01:10'!
 hash
 
-	^self class hash bitShift: 14! !
+	^self class hash! !
 
 !AbstractPrerequisite methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
 prettyPrint
@@ -3454,11 +3507,6 @@ iterationsPerSecondPrintString
 
 	^self printStringForDouble: self iterationsPerSecond! !
 
-!CheckBenchmarkResult methodsFor: 'printing - doubles' stamp: 'SqR 3/8/2015 18:10'!
-normalPrintPolicy
-
-	^'#,#.000'! !
-
 !CheckBenchmarkResult methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
 prettyPrintForScenario
 
@@ -3468,14 +3516,6 @@ prettyPrintForScenario
 prettyPrintForScenario: anObject
 
 	prettyPrintForScenario := anObject! !
-
-!CheckBenchmarkResult methodsFor: 'printing - doubles' stamp: 'SqR 3/6/2015 20:30'!
-printPolicyFor: aNumber
-	"Currently unused, potentially useful"
-
-	aNumber < 0.1 ifTrue: [^self scientificPrintPolicy].
-	aNumber >= 10000 ifTrue: [^self scientificPrintPolicy].
-	^self normalPrintPolicy! !
 
 !CheckBenchmarkResult methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
 printPrettyPrintDetailsOn: aStream
@@ -3494,24 +3534,15 @@ printPrettyPrintDetailsOn: aStream
 		nextPutAll: self iterationsPerSecondPrintString;
 		nextPutAll: ' iterations / second'! !
 
-!CheckBenchmarkResult methodsFor: 'printing - doubles' stamp: 'SqR 3/6/2015 20:31'!
+!CheckBenchmarkResult methodsFor: 'printing - doubles' stamp: 'sqr 1/14/2016 01:23'!
 printStringForDouble: aNumber
 
-	^aNumber asFloat printString
+	^AssessmentsNumberPrinter current printStringForDouble: aNumber! !
 
-"	| writeBuffer printPolicy |
-	writeBuffer := String new writeStream.
-	printPolicy := self printPolicyFor: aNumber.
-	NumberPrintPolicy
-		print: aNumber asDouble
-		on: writeBuffer
-		using: printPolicy.
-	^writeBuffer contents"! !
+!CheckBenchmarkResult methodsFor: 'printing - doubles' stamp: 'sqr 1/14/2016 01:27'!
+usesNormalPrintPolicyFor: aNumber
 
-!CheckBenchmarkResult methodsFor: 'printing - doubles' stamp: 'SqR 3/8/2015 18:10'!
-scientificPrintPolicy
-
-	^'#.000E0'! !
+	^AssessmentsNumberPrinter current usesNormalPrintPolicyFor: aNumber! !
 
 !CheckBenchmarkAbstractExpectationNotice methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
 actualSpeed
@@ -3536,11 +3567,6 @@ expectedIterationsPerSecond
 expectedIterationsPerSecond: anObject
 
 	expectedIterationsPerSecond := anObject! !
-
-!CheckBenchmarkAbstractExpectationNotice methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
-passed
-
-	^self class preventsAssessmentSuccess not! !
 
 !CheckBenchmarkAbstractExpectationNotice methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
 printPrettyPrintDetailsOn: aStream
@@ -3569,13 +3595,13 @@ shortSuffixForSlowerBy: aDouble
 
 	^self suffixFor: 'slower' by: aDouble suffixedBy: String new! !
 
-!CheckBenchmarkAbstractExpectationNotice methodsFor: 'printing - suffixes' stamp: 'SqR 3/8/2015 18:10'!
+!CheckBenchmarkAbstractExpectationNotice methodsFor: 'printing - suffixes' stamp: 'sqr 1/14/2016 01:27'!
 suffixFor: description by: aDouble suffixedBy: aSuffix
 
-	| doublePrintString doublePrintPolicy multiplierString |
+	| doublePrintString usesNormalPolicy multiplierString |
 	doublePrintString := self printStringForDouble: aDouble.
-	doublePrintPolicy := self printPolicyFor: aDouble.
-	multiplierString := doublePrintPolicy = self normalPrintPolicy ifTrue: ['x'] ifFalse: [' times'].
+	usesNormalPolicy := self usesNormalPrintPolicyFor: aDouble.
+	multiplierString := usesNormalPolicy ifTrue: ['x'] ifFalse: [' times'].
 	^doublePrintString, multiplierString, ' ', description, aSuffix! !
 
 !CheckBenchmarkAbstractExpectationNotice methodsFor: 'printing - suffixes' stamp: 'SqR 3/8/2015 18:10'!
@@ -3693,14 +3719,14 @@ addChecklist: aChecklistClass
 	aChecklistClass isAbstract ifTrue: [^self].
 	self addChecklist: aChecklistClass inTheContextOf: aChecklistClass! !
 
-!Assessment methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
+!Assessment methodsFor: 'private - accessing' stamp: 'sqr 1/14/2016 01:43'!
 addChecklist: aChecklistClass
 inTheContextOf: originalChecklistClass
 	"The unique check closure is necessary for checklists that inherit check selectors"
 
 	| uniqueChecks uniqueSet |
-	uniqueChecks := OrderedCollection new: 80.
-	uniqueSet := Set new: 80.
+	uniqueChecks := OrderedCollection new: self checksPerChecklistGuesstimate.
+	uniqueSet := Set new: self checksPerChecklistGuesstimate.
 	self
 		addChecklist: aChecklistClass
 		inTheContextOf: originalChecklistClass
@@ -3781,15 +3807,15 @@ startingAtChecklist: aChecklistClass
 		startingAtChecklist: aChecklistClass
 		inTheContextOf: aChecklistClass! !
 
-!Assessment methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
+!Assessment methodsFor: 'private - accessing' stamp: 'sqr 1/14/2016 01:44'!
 addChecksWithSelectors: checkSelectorInclusionSet
 startingAtChecklist: aChecklistClass
 inTheContextOf: originalChecklistClass
 	"The unique check closure is necessary for checklists that inherit check selectors"
 
 	| uniqueChecks uniqueSet |
-	uniqueChecks := OrderedCollection new: 80.
-	uniqueSet := Set new: 80.
+	uniqueChecks := OrderedCollection new: self checksPerChecklistGuesstimate.
+	uniqueSet := Set new: self checksPerChecklistGuesstimate.
 	self
 		addChecksWithSelectors: checkSelectorInclusionSet
 		startingAtChecklist: aChecklistClass
@@ -3853,6 +3879,11 @@ checksDo: aBlock
 
 	self checks do: aBlock! !
 
+!Assessment methodsFor: 'private' stamp: 'sqr 1/14/2016 01:42'!
+checksPerChecklistGuesstimate
+
+	^80! !
+
 !Assessment methodsFor: 'private - constants' stamp: 'SqR 3/8/2015 18:10'!
 defaultEvaluationContext
 
@@ -3899,8 +3930,9 @@ privateAddChecks: aCollection
 
 	self checks addAll: aCollection! !
 
-!Assessment methodsFor: 'converting' stamp: 'SqR 3/8/2015 18:10'!
+!Assessment methodsFor: 'converting' stamp: 'sqr 1/14/2016 01:47'!
 runToFailureAssessment
+	"Currently unused"
 
 	| runToFailureChecklist |
 	runToFailureChecklist := CustomRunToFailureChecklist new.
@@ -4148,14 +4180,13 @@ new
 
 	^self basicNew! !
 
-!AssessmentResult methodsFor: 'private - results' stamp: 'SqR 3/8/2015 18:10'!
+!AssessmentResult methodsFor: 'private - results' stamp: 'sqr 1/14/2016 01:52'!
 addResult: aCheckResult
 
 	| taggedResults |
 	taggedResults := self results
 		at: aCheckResult classificationTag
 		ifAbsentPut: [self emptyTaggedResults].
-"	(taggedResults anySatisfy: [:x | x check selector = aCheckResult check selector and: [x checkSelector = #checkAcceptChecklist]]) ifTrue: [self halt]."
 	taggedResults add: aCheckResult! !
 
 !AssessmentResult methodsFor: 'testing' stamp: 'SqR 3/8/2015 18:10'!
@@ -4653,11 +4684,12 @@ assessment: anAssessment result: aResult
 		result: aResult;
 		yourself! !
 
-!AssessmentsPortabilityService methodsFor: 'private - compiling' stamp: 'SqR 8/1/2015 18:41'!
+!AssessmentsPortabilityService methodsFor: 'private - compiling' stamp: 'sqr 1/14/2016 21:54'!
 compile: aString in: aClass
-	"Generally, these blocks should not reference their context"
+	"Generally, these blocks should not reference their context.
+	Currently only used for VisualWorks"
 
-	self isCuis ifTrue: [^self cuisCompile: aString in: aClass].
+	"self isCuis ifTrue: [^self cuisCompile: aString in: aClass]."
 	self isVisualWorks ifTrue: [^self visualWorksCompile: aString in: aClass].
 	self unknownDialect! !
 
@@ -4683,6 +4715,12 @@ isCuis
 		on: Error
 		do: [:ex | ex return: false] ! !
 
+!AssessmentsPortabilityService methodsFor: 'private - dialect testing' stamp: 'sqr 1/12/2016 18:48'!
+isVSE
+
+	^[Smalltalk respondsTo: #recursiveMessage]
+		on: Error do: [:ex | ex return: false]! !
+
 !AssessmentsPortabilityService methodsFor: 'private - dialect testing' stamp: 'SqR 3/24/2015 19:46'!
 isVisualWorks
 
@@ -4695,12 +4733,17 @@ resolveCuisClassNamed: aSymbol
 
 	^Smalltalk at: aSymbol ifAbsent: [nil]! !
 
-!AssessmentsPortabilityService methodsFor: 'private - class resolution' stamp: 'SqR 8/1/2015 19:23'!
+!AssessmentsPortabilityService methodsFor: 'private - class resolution' stamp: 'sqr 1/12/2016 18:48'!
+resolveVSEClassNamed: aSymbol
+
+	^Smalltalk at: aSymbol ifAbsent: [nil]! !
+
+!AssessmentsPortabilityService methodsFor: 'private - class resolution' stamp: 'sqr 1/16/2016 21:37'!
 resolveVisualWorksClassNamed: aString
 	"aString may be a symbol, or a qualified reference path"
 
 	| resolver block |
-	aString isSymbol ifTrue: [^Smalltalk at: aString asSymbol].
+	aString isSymbol ifTrue: [^Smalltalk at: aString].
 	resolver := '
 	[
 		[{', aString, '} value]
@@ -4757,102 +4800,116 @@ releaseAll
 
 	self withAllSubclasses do: [:each | each release]! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - self tests' stamp: 'SqR 8/1/2015 19:17'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - self tests' stamp: 'sqr 1/12/2016 18:50'!
 newSelfTestsTestObject
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #TestObject].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'TestObject'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #TestObject].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnit' stamp: 'SqR 8/1/2015 18:51'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnit' stamp: 'sqr 1/12/2016 18:51'!
 newSunitFailureNotification
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #TestFailure].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'XProgramming.SUnit.TestFailure'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #TestFailure].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnit' stamp: 'SqR 8/1/2015 18:53'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnit' stamp: 'sqr 1/12/2016 18:51'!
 newSunitResumableFailureNotification
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #ResumableTestFailure].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'XProgramming.SUnit.ResumableTestFailure'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #ResumableTestFailure].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnit' stamp: 'SqR 8/1/2015 18:41'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnit' stamp: 'sqr 1/12/2016 18:51'!
 newSunitTestCaseRoot
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #TestCase].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'XProgramming.SUnit.TestCase'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #TestCase].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnit' stamp: 'SqR 8/1/2015 18:57'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnit' stamp: 'sqr 1/12/2016 18:51'!
 newSunitTestSkipNotification
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #TestSkip].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'XProgramming.SUnit.TestSkip'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #TestSkip].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitToo' stamp: 'SqR 8/1/2015 19:00'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitToo' stamp: 'sqr 1/12/2016 18:52'!
 newSunitTooFailureNotification
 
 	self isCuis ifTrue: [^nil].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'SUnit.FailedAssertion'].
+	self isVSE ifTrue: [^nil].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitToo' stamp: 'SqR 8/1/2015 19:01'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitToo' stamp: 'sqr 1/12/2016 18:52'!
 newSunitTooTestCaseRoot
 
 	self isCuis ifTrue: [^nil].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'SUnit.TestCase'].
+	self isVSE ifTrue: [^nil].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'SqR 8/1/2015 19:07'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'sqr 1/12/2016 18:52'!
 newSunitVMBenchmarkExpectationNotification
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #BenchmarkExpectationNotification].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'BenchmarkExpectationNotification'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #BenchmarkExpectationNotification].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'SqR 8/1/2015 19:08'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'sqr 1/12/2016 18:53'!
 newSunitVMBenchmarkMeasurementNotification
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #BenchmarkMeasurementNotification].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'BenchmarkMeasurementNotification'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #BenchmarkMeasurementNotification].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'SqR 8/1/2015 19:10'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'sqr 1/12/2016 18:53'!
 newSunitVMBenchmarkTestCaseRoot
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #AbstractBenchmarkTestCase].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'XProgramming.SUnit.AbstractBenchmarkTestCase'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #AbstractBenchmarkTestCase].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'SqR 8/1/2015 19:11'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'sqr 1/12/2016 18:53'!
 newSunitVMNoticeNotification
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #TestNoticeNotification].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'TestNoticeNotification'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #TestNoticeNotification].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'SqR 8/1/2015 19:05'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'sqr 1/12/2016 18:53'!
 newSunitVMTestCaseRootForVisibility
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #AbstractTestCase].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'XProgramming.SUnit.AbstractTestCase'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #AbstractTestCase].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'SqR 8/1/2015 19:13'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'sqr 1/12/2016 18:54'!
 newSunitVMValidationFailureNotification
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #ValidationFailureException].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'ValidationFailureException'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #ValidationFailureException].
 	self unknownDialect! !
 
-!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'SqR 8/1/2015 19:14'!
+!AssessmentsClassResolver methodsFor: 'private - accessing - SUnitVM' stamp: 'sqr 1/12/2016 18:54'!
 newSunitVMValidationTestCaseRoot
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #AbstractValidator].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'XProgramming.SUnit.AbstractValidator'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #AbstractValidator].
 	self unknownDialect! !
 
 !AssessmentsClassResolver methodsFor: 'accessing - self tests' stamp: 'SqR 8/1/2015 19:17'!
@@ -5028,7 +5085,61 @@ sunitVMValidationTestCaseRoot: aClass
 
 	sunitVMValidationTestCaseRoot := aClass! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'SqR 11/18/2015 16:00'!
+!AssessmentsDateAndTime methodsFor: 'accessing' stamp: 'sqr 1/12/2016 19:19'!
+dateAndTimeClass
+
+	dateAndTimeClass isNil ifFalse: [^dateAndTimeClass].
+	self dateAndTimeClass: self newDateAndTimeClass.
+	^dateAndTimeClass! !
+
+!AssessmentsDateAndTime methodsFor: 'private - accessing' stamp: 'sqr 1/12/2016 19:19'!
+dateAndTimeClass: anObject
+
+	dateAndTimeClass := anObject! !
+
+!AssessmentsDateAndTime methodsFor: 'private - accessing' stamp: 'sqr 1/14/2016 21:59'!
+newDateAndTimeClass
+
+	self isCuis ifTrue: [^self resolveCuisClassNamed: #DateAndTime].
+	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'DateAndTime'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #DateTime].
+	self unknownDialect! !
+
+!AssessmentsDateAndTime methodsFor: 'accessing' stamp: 'sqr 1/13/2016 21:37'!
+nowLocal
+	"VSE has no notion of timestamp time zones"
+
+	self isVSE ifTrue: [^self nowUTC].
+	^self nowUTC asLocal! !
+
+!AssessmentsDateAndTime methodsFor: 'accessing' stamp: 'sqr 1/12/2016 19:34'!
+nowLocalPrintString
+
+	^self printStringFor: self nowLocal! !
+
+!AssessmentsDateAndTime methodsFor: 'accessing' stamp: 'sqr 1/12/2016 19:21'!
+nowUTC
+
+	^self dateAndTimeClass now! !
+
+!AssessmentsDateAndTime methodsFor: 'accessing' stamp: 'sqr 1/12/2016 19:34'!
+nowUTCPrintString
+
+	^self printStringFor: self nowUTC! !
+
+!AssessmentsDateAndTime methodsFor: 'private - printing' stamp: 'sqr 1/12/2016 19:36'!
+printStringFor: aDateAndTime
+
+	| stream answer |
+	stream := WriteStream on: (String new: 32).
+	self isCuis ifTrue: [aDateAndTime printWithMsOn: stream].
+	self isVisualWorks ifTrue: [aDateAndTime printOn: stream].
+	self isVSE ifTrue: [aDateAndTime printOn: stream].
+	answer := stream contents.
+	answer isEmpty ifTrue: [self unknownDialect].
+	^answer! !
+
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'sqr 1/18/2016 23:25'!
 appendFileStreamFor: aFilenameString
 
 	self isCuis ifTrue:
@@ -5038,6 +5149,12 @@ appendFileStreamFor: aFilenameString
 			^fmFileEntry privateAppendStream  "unfortunate"
 		].
 	self isVisualWorks ifTrue: [^aFilenameString asFilename appendStream].
+	self isVSE ifTrue:
+		[
+			| writeFileStream |
+			writeFileStream := self writeFileStreamFor: aFilenameString.
+			^[writeFileStream setToEnd; yourself] ifCurtailed: [writeFileStream close]
+		].
 	self unknownDialect! !
 
 !AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 15:58'!
@@ -5066,46 +5183,51 @@ cuisSizeForFileName: aString
 	fmFileEntry := self cuisCurrentDirectory // aString.
 	^fmFileEntry fileSize! !
 
-!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 14:52'!
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:16'!
 currentDirectoryReceiver
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #FmDirectoryEntry].
-	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: #FileDirectory].
+	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'FileDirectory'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #Directory].
 	self unknownDialect! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'SqR 11/18/2015 15:25'!
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'sqr 1/14/2016 22:21'!
 defaultDirectory
 
-	self isCuis ifTrue: [^self currentDirectoryReceiver currentDirectory].
-	self isVisualWorks ifTrue: [^self currentDirectoryReceiver default].
+	self isCuis ifTrue: [^self cuisCurrentDirectory].
+	self isVisualWorks ifTrue: [^self visualWorksCurrentDirectory].
+	self isVSE ifTrue: [^self vseCurrentDirectory].
 	self unknownDialect! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'SqR 11/18/2015 15:25'!
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'sqr 1/14/2016 22:12'!
 deleteFileNamed: aString
 
 	self isCuis ifTrue: [^self cuisDeleteFileNamed: aString].
 	self isVisualWorks ifTrue: [^self visualWorksDeleteFileNamed: aString].
+	self isVSE ifTrue: [^self vseDeleteFileNamed: aString].
 	self unknownDialect! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'SqR 11/18/2015 15:15'!
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'sqr 1/14/2016 22:12'!
 fileNameExists: aString
 
 	self isCuis ifTrue: [^self cuisFileNameExists: aString].
 	self isVisualWorks ifTrue: [^self visualWorksFileNameExists: aString].
+	self isVSE ifTrue: [^self vseFileNameExists: aString].
 	self unknownDialect! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'SqR 11/18/2015 15:22'!
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'sqr 1/14/2016 22:13'!
 sizeForFileName: aString
 
 	self isCuis ifTrue: [^self cuisSizeForFileName: aString].
 	self isVisualWorks ifTrue: [^self visualWorksSizeForFileName: aString].
+	self isVSE ifTrue: [^self vseSizeForFileName: aString].
 	self unknownDialect! !
 
-!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 15:58'!
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:00'!
 visualWorksCurrentDirectory
 	
 	| fileDirectory |
-	fileDirectory := self resolveVisualWorksClassNamed: #FileDirectory.
+	fileDirectory := self resolveVisualWorksClassNamed: 'FileDirectory'.
 	^fileDirectory default! !
 
 !AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 15:27'!
@@ -5113,21 +5235,49 @@ visualWorksDeleteFileNamed: aString
 
 	self visualWorksCurrentDirectory deleteFileNamed: aString! !
 
-!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 15:23'!
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:18'!
 visualWorksFileNameExists: aString
+
+	| entry |
+	entry := self visualWorksCurrentDirectory directoryEntryFor: aString.
+	^entry exists! !
+
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:18'!
+visualWorksSizeForFileName: aString
 
 	| entry |
 	entry := self visualWorksCurrentDirectory directoryEntryFor: aString.
 	^entry fileSize! !
 
-!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 15:23'!
-visualWorksSizeForFileName: aString
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:21'!
+vseCurrentDirectory
 
-	| fmFileEntry |
-	fmFileEntry := self cuisCurrentDirectory / aString.
-	^fmFileEntry fileSize! !
+	| fileDirectory |
+	fileDirectory := self resolveVSEClassNamed: #Directory.
+	^fileDirectory current! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'SqR 11/18/2015 16:00'!
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:28'!
+vseDeleteFileNamed: aString 
+
+	| entry |
+	entry := self vseCurrentDirectory existingFileNamed: aString.
+	entry remove
+! !
+
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:24'!
+vseFileNameExists: aString
+
+	| entry |
+	entry := self vseCurrentDirectory existingFileNamed: aString.
+	^entry notNil! !
+
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:26'!
+vseSizeForFileName: aString
+
+	^self vseCurrentDirectory fileSizeForFileNamed: aString
+! !
+
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'sqr 1/14/2016 22:13'!
 writeFileStreamFor: aFilenameString
 
 	self isCuis ifTrue:
@@ -5137,6 +5287,163 @@ writeFileStreamFor: aFilenameString
 			^fmFileEntry privateWriteStream  "unfortunate"
 		].
 	self isVisualWorks ifTrue: [^aFilenameString asFilename writeStream].
+	self isVSE ifTrue: [^aFilenameString asFileSystemPath asFile writeStream].	
+	self unknownDialect! !
+
+!AssessmentsGC methodsFor: 'gc' stamp: 'sqr 1/16/2016 21:16'!
+flushNativeCodeCache
+
+	self garbageCollect! !
+
+!AssessmentsGC methodsFor: 'gc' stamp: 'sqr 1/16/2016 21:16'!
+flushNewSpace
+
+	self isCuis ifTrue: [^self].
+	self isVisualWorks ifTrue: [^self visualWorksFlushNewSpace].
+	self isVSE ifTrue: [^self].
+	self unknownDialect! !
+
+!AssessmentsGC methodsFor: 'gc' stamp: 'sqr 1/16/2016 21:17'!
+garbageCollect
+
+	self isCuis ifTrue: [^Smalltalk garbageCollect].
+	self isVisualWorks ifTrue:
+		[
+			| objectMemory |
+			objectMemory := self resolveVisualWorksClassNamed: 'ObjectMemory'.
+			^objectMemory garbageCollect
+		].
+	self isVSE ifTrue: [^Smalltalk unusedMemory].
+	self unknownDialect! !
+
+!AssessmentsGC methodsFor: 'private - gc' stamp: 'sqr 1/16/2016 21:18'!
+visualWorksFlushNewSpace
+
+	<primitive: 322>
+	self error: 'New space flush failed'! !
+
+!AssessmentsNumberPrinter methodsFor: 'printing' stamp: 'sqr 1/14/2016 01:19'!
+printStringForDouble: aDoublePrecisionFloat
+
+	self isCuis ifTrue: [^aDoublePrecisionFloat asFloat printString].
+	self isVisualWorks ifTrue: [self visualWorksPrintStringForDouble: aDoublePrecisionFloat].
+	self isVSE ifTrue: [^aDoublePrecisionFloat asFloat printString].
+	self unknownDialect! !
+
+!AssessmentsNumberPrinter methodsFor: 'printing' stamp: 'sqr 1/14/2016 22:06'!
+usesNormalPrintPolicyFor: aNumber
+
+	self isCuis ifTrue: [^true].
+	self isVisualWorks ifTrue:
+		[
+			| printPolicy |
+			printPolicy := self visualWorksPrintPolicyFor: aNumber.
+			^printPolicy = self visualWorksNormalPrintPolicy
+		].
+	self isVSE ifTrue: [^true].
+	self unknownDialect! !
+
+!AssessmentsNumberPrinter methodsFor: 'private - printing' stamp: 'sqr 1/14/2016 22:06'!
+visualWorksNormalPrintPolicy
+
+	^'#,#.000'! !
+
+!AssessmentsNumberPrinter methodsFor: 'private - printing' stamp: 'sqr 1/14/2016 22:06'!
+visualWorksPrintPolicyFor: aNumber
+
+	aNumber < 0.1 ifTrue: [^self visualWorksScientificPrintPolicy].
+	aNumber >= 10000 ifTrue: [^self visualWorksScientificPrintPolicy].
+	^self visualWorksNormalPrintPolicy! !
+
+!AssessmentsNumberPrinter methodsFor: 'private - printing' stamp: 'sqr 1/14/2016 01:23'!
+visualWorksPrintStringForDouble: aDouble
+
+	| printPolicyClass writeBuffer printPolicy |
+	printPolicyClass := self resolveVisualWorksClassNamed: 'NumberPrintPolicy'.
+	writeBuffer := String new writeStream.
+	printPolicy := self printPolicyFor: aDouble.
+	printPolicyClass
+		print: aDouble asDouble
+		on: writeBuffer
+		using: printPolicy.
+	^writeBuffer contents! !
+
+!AssessmentsNumberPrinter methodsFor: 'private - printing' stamp: 'sqr 1/14/2016 22:06'!
+visualWorksScientificPrintPolicy
+
+	^'#.000E0'! !
+
+!AssessmentsProcessScheduler methodsFor: 'private - scheduling' stamp: 'sqr 1/19/2016 03:38'!
+basicStep: aProcess lookingFor: targetCompiledMethod	
+
+	| suspendedContext |
+	suspendedContext := aProcess suspendedContext.
+	suspendedContext := self basicStepContext: suspendedContext lookingFor: targetCompiledMethod.
+	suspendedContext isNil ifTrue: [^nil].
+	aProcess suspendedContext: suspendedContext.
+	^suspendedContext! !
+
+!AssessmentsProcessScheduler methodsFor: 'private - scheduling' stamp: 'sqr 1/19/2016 03:36'!
+basicStepContext: aSuspendedContext lookingFor: targetCompiledMethod
+	"Do not do this forever, otherwise the image may hang"
+
+	^self
+		basicStepContext: aSuspendedContext
+		noMoreThan: self maximumStepsWhenDebugging
+		timesLookingFor: targetCompiledMethod! !
+
+!AssessmentsProcessScheduler methodsFor: 'private - scheduling' stamp: 'sqr 1/19/2016 03:39'!
+basicStepContext: aSuspendedContext
+noMoreThan: anInteger
+timesLookingFor: targetCompiledMethod
+
+	| newSuspendedContext count |
+	count := 0.
+	newSuspendedContext := aSuspendedContext.
+	[count > anInteger] whileFalse:
+		[
+			newSuspendedContext method == targetCompiledMethod ifTrue: [^newSuspendedContext].
+			count := count + 1.
+			newSuspendedContext := newSuspendedContext step
+		].
+	^nil! !
+
+!AssessmentsProcessScheduler methodsFor: 'private - scheduling' stamp: 'sqr 1/19/2016 03:46'!
+maximumStepsWhenDebugging
+	"Try looking for the compiled method for the check selector
+	by stepping a limited number of times.  Too much stepping
+	can cause the image to hang if for some reason (like a bug)
+	the compiled method cannot be found.  When this constant
+	was initially chosen, the actual number of steps was 28"
+
+	^100! !
+
+!AssessmentsProcessScheduler methodsFor: 'scheduling' stamp: 'sqr 1/19/2016 03:14'!
+newProcessFor: aBlock
+	"VSE seems to have no notion of creating a process in suspended state"
+
+	self isCuis ifTrue: [^aBlock newProcess].
+	self isVisualWorks ifTrue: [^aBlock newProcess].
+	self isVSE ifTrue: [^aBlock fork].
+	self unknownDialect! !
+
+!AssessmentsProcessScheduler methodsFor: 'scheduling' stamp: 'sqr 1/19/2016 03:20'!
+openDebuggerOn: aProcess
+	"This is setup so in VSE the process merely resumes --- opening the debugger
+	on a process that is not the active process is also cumbersome"
+
+	self isCuis ifTrue: [^Debugger openInterrupt: 'Debug It' onProcess: aProcess].
+	self isVisualWorks ifTrue: [^Debugger openInterrupt: 'Debug It' onProcess: aProcess].
+	self isVSE ifTrue: [^self].
+	self unknownDialect! !
+
+!AssessmentsProcessScheduler methodsFor: 'scheduling' stamp: 'sqr 1/19/2016 03:18'!
+step: aProcess lookingFor: targetCompiledMethod
+	"VSE has no straightforward way to step a process forward"
+
+	self isCuis ifTrue: [^self basicStep: aProcess lookingFor: targetCompiledMethod].
+	self isVisualWorks ifTrue: [^self basicStep: aProcess lookingFor: targetCompiledMethod].
+	self isVSE ifTrue: [^self].
 	self unknownDialect! !
 
 !AssessmentsProfiler methodsFor: 'private - profiling' stamp: 'SqR 8/1/2015 19:21'!
@@ -5183,6 +5490,46 @@ shouldProfileEvaluation
 		].
 	self unknownDialect! !
 
+!AssessmentsSystemOrganization methodsFor: 'organization' stamp: 'sqr 1/16/2016 21:48'!
+classes
+
+	self isCuis ifTrue: [^self cuisClasses].
+	self isVisualWorks ifTrue: [^Array new].
+	self isVSE ifTrue: [^Array new].
+	self unknownDialect! !
+
+!AssessmentsSystemOrganization methodsFor: 'private - organization' stamp: 'sqr 1/16/2016 21:45'!
+cuisCategories
+
+	^self cuisSystemOrganization categoriesMatching: 'Assessments-*'! !
+
+!AssessmentsSystemOrganization methodsFor: 'organization - cuis' stamp: 'sqr 1/16/2016 21:45'!
+cuisClassNames
+
+	^self cuisCategories
+		inject: OrderedCollection new
+		into:
+			[:answer :each |
+				answer
+					addAll: (self cuisSystemOrganization listAtCategoryNamed: each);
+					yourself
+			]! !
+
+!AssessmentsSystemOrganization methodsFor: 'organization - cuis' stamp: 'sqr 1/16/2016 21:46'!
+cuisClasses
+
+	^self cuisClassNames collect: [:each | self resolveCuisClassNamed: each]! !
+
+!AssessmentsSystemOrganization methodsFor: 'private - organization' stamp: 'sqr 1/16/2016 21:44'!
+cuisSystemOrganization
+
+	^self resolveCuisClassNamed: #SystemOrganization! !
+
+!AssessmentsSystemOrganization methodsFor: 'testing' stamp: 'sqr 1/16/2016 21:46'!
+isSupported
+
+	^self isCuis! !
+
 !CheckExecutionPolicy methodsFor: 'execution - checks' stamp: 'SqR 3/8/2015 18:10'!
 aboutToEvaluateCheck: aCheck inTheContextOf: anEvaluationContext
 
@@ -5198,7 +5545,7 @@ aboutToExecuteOn: anActualReceiver
 
 	^self! !
 
-!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'SqR 3/8/2015 19:41'!
+!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'sqr 1/19/2016 03:44'!
 basicDebug: aCheck
 
 	| newProcess ratchet |
@@ -5212,7 +5559,7 @@ basicDebug: aCheck
 			on: self exceptionsToTrap
 			do: [:ex | ex resignalAsAssessmentMalfunctionNotification].
 	newProcess isNil ifTrue: [^self].
-	Debugger openInterrupt: 'Debug It' onProcess: newProcess.
+	AssessmentsProcessScheduler current openDebuggerOn: newProcess.
 	ratchet wait! !
 
 !CheckExecutionPolicy methodsFor: 'private - perform' stamp: 'SqR 2/22/2015 19:15'!
@@ -5289,7 +5636,7 @@ compiledMethodForEvaluationOf: aCheck
 	self notifyMalfunction: 'Could not find check selector to debug'.
 	^nil! !
 
-!CheckExecutionPolicy methodsFor: 'perform - checks' stamp: 'SqR 3/8/2015 18:10'!
+!CheckExecutionPolicy methodsFor: 'perform - checks' stamp: 'sqr 1/19/2016 03:44'!
 debugPerformCheck: aCheck inTheContextOf: anEvaluationContext
 
 	| checkPassed |
@@ -5315,7 +5662,7 @@ doneExecutingOn: anActualReceiver
 
 	^self! !
 
-!CheckExecutionPolicy methodsFor: 'execution - checks' stamp: 'SqR 3/8/2015 18:10'!
+!CheckExecutionPolicy methodsFor: 'execution - checks' stamp: 'sqr 1/19/2016 03:46'!
 evaluate: aCheck inTheContextOf: anEvaluationContext
 
 	^[
@@ -5400,16 +5747,6 @@ malfunctionNotification
 
 	^AssessmentMalfunctionNotification! !
 
-!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'SqR 3/8/2015 18:10'!
-maximumStepsWhenDebugging
-	"Try looking for the compiled method for the check selector
-	by stepping a limited number of times.  Too much stepping
-	can cause the image to hang if for some reason (like a bug)
-	the compiled method cannot be found.  When this constant
-	was initially chosen, the actual number of steps was 28"
-
-	^100! !
-
 !CheckExecutionPolicy methodsFor: 'private - execution - checks' stamp: 'SqR 3/8/2015 18:10'!
 newActualReceiverForCheck: aCheck inTheContextOf: anEvaluationContext
 
@@ -5434,15 +5771,16 @@ newExceptionsToTrap
 	2 to: exceptions size do: [:each | answer := answer, (exceptions at: each)].
 	^answer! !
 
-!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'SqR 3/8/2015 18:10'!
+!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'sqr 1/19/2016 03:14'!
 newProcessToDebugEvaluationOf: aCheck signalling: aSemaphore
 
-	^[
-		[self unprotectedBasicPerform: aCheck]
-			ensure: [aSemaphore signal]
-	] newProcess! !
+	^AssessmentsProcessScheduler current newProcessFor:
+		[
+			[self unprotectedBasicPerform: aCheck]
+				ensure: [aSemaphore signal]
+		]! !
 
-!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'SqR 3/24/2015 18:48'!
+!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'sqr 1/19/2016 03:39'!
 newSuspendedProcessToDebugEvaluationOf: aCheck
 signalling: aSemaphore
 
@@ -5450,10 +5788,10 @@ signalling: aSemaphore
 	targetCompiledMethod := self compiledMethodForEvaluationOf: aCheck.
 	targetCompiledMethod isNil ifTrue: [^nil].
 	newProcess := self newProcessToDebugEvaluationOf: aCheck signalling: aSemaphore.
-	suspendedContext := newProcess suspendedContext.
-	suspendedContext := self step: suspendedContext lookingFor: targetCompiledMethod.
-	suspendedContext isNil ifTrue: [^nil].
-	newProcess suspendedContext: suspendedContext.
+	suspendedContext := AssessmentsProcessScheduler current
+		step: newProcess lookingFor: targetCompiledMethod.
+	suspendedContext isNil
+		ifTrue: [self notifyMalfunction: 'Could not find target compiled method while trying to debug'].
 	^newProcess! !
 
 !CheckExecutionPolicy methodsFor: 'private - errors' stamp: 'SqR 2/22/2015 18:01'!
@@ -5521,32 +5859,6 @@ runToFailurePerformCheck: aCheck inTheContextOf: anEvaluationContext
 	checkPassed := self basicRunToFailure: aCheck.
 	checkPassed ifTrue: [self raisePassNotificationFor: aCheck]! !
 
-!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'SqR 3/24/2015 18:48'!
-step: aSuspendedContext lookingFor: targetCompiledMethod
-	"Do not do this forever, otherwise the image may hang"
-
-	^self
-		step: aSuspendedContext
-		noMoreThan: self maximumStepsWhenDebugging
-		timesLookingFor: targetCompiledMethod! !
-
-!CheckExecutionPolicy methodsFor: 'private - perform debug' stamp: 'SqR 3/24/2015 18:54'!
-step: aSuspendedContext
-noMoreThan: anInteger
-timesLookingFor: targetCompiledMethod
-
-	| newSuspendedContext count |
-	count := 0.
-	newSuspendedContext := aSuspendedContext.
-	[count > anInteger] whileFalse:
-		[
-			newSuspendedContext method == targetCompiledMethod ifTrue: [^newSuspendedContext].
-			count := count + 1.
-			newSuspendedContext := newSuspendedContext step
-		].
-	self notifyMalfunction: 'Could not find target compiled method while trying to debug'.
-	^nil! !
-
 !CheckExecutionPolicy methodsFor: 'private - perform' stamp: 'SqR 3/8/2015 18:10'!
 unprotectedBasicPerform: aCheck
 
@@ -5577,11 +5889,10 @@ new
 	self current: self basicNew initialize.
 	^self current! !
 
-!CheckExecutionPolicy class methodsFor: 'initialize-release' stamp: 'SqR 10/6/2015 14:07'!
+!CheckExecutionPolicy class methodsFor: 'initialize-release' stamp: 'sqr 1/14/2016 23:05'!
 releaseAll
 
-	self withAllSubclasses do:
-		[:each | each current: nil]! !
+	self withAllSubclasses do: [:each | each current: nil]! !
 
 !AbstractSUnitCheckExecutionPolicy methodsFor: 'private - execution - checks' stamp: 'SqR 3/8/2015 18:10'!
 aboutToExecuteOn: anActualReceiver
@@ -6745,16 +7056,15 @@ defaultPrettyPrintForScenario: aString
 	self prettyPrintForScenario notNil ifTrue: [^self].
 	self prettyPrintForScenario: aString! !
 
-!Benchmark methodsFor: 'private - memory spaces' stamp: 'SqR 2/22/2015 19:24'!
+!Benchmark methodsFor: 'private - memory spaces' stamp: 'sqr 1/16/2016 21:18'!
 flushNativeCodeCache
 
-	Smalltalk garbageCollect! !
+	AssessmentsGC current flushNativeCodeCache! !
 
-!Benchmark methodsFor: 'private - memory spaces' stamp: 'SqR 3/8/2015 18:10'!
+!Benchmark methodsFor: 'private - memory spaces' stamp: 'sqr 1/16/2016 21:18'!
 flushNewSpace
 
-	<primitive: 322>
-	self error: 'New space flush failed'! !
+	AssessmentsGC current flushNewSpace! !
 
 !Benchmark methodsFor: 'evaluation - measurements' stamp: 'SqR 3/8/2015 18:10'!
 itTakesLessThan: anInteger
@@ -6839,13 +7149,13 @@ prettyPrintForScenario: anObject
 
 	prettyPrintForScenario := anObject! !
 
-!Benchmark methodsFor: 'private - stop watch' stamp: 'SqR 2/22/2015 19:38'!
+!Benchmark methodsFor: 'private - stop watch' stamp: 'sqr 1/16/2016 21:26'!
 privateStopWatch: aBlock
 	"Answer amount of iterations per second.
 	Flush compiled code cache by performing a garbage collect,
-	then run the block one time to get the native code generated,
-	then flush the new space using primitive 322, and then and
-	only then start measuring"
+	run the block one time to get the native code generated,
+	flush the new space if possible, and then and only then
+	start measuring"
 
 	| theseRepetitions nextRepetitions netMicroseconds |
 	self flushNativeCodeCache.
@@ -6996,20 +7306,20 @@ shouldBeDisplayedInChecklistEvaluator
 
 	^false! !
 
-!BenchmarkChecklist methodsFor: 'measurements' stamp: 'SqR 3/8/2015 18:10'!
+!BenchmarkChecklist methodsFor: 'measurements' stamp: 'sqr 1/13/2016 22:24'!
 measureSomeExpectationToFail
 
 	self prettyPrint: 'Slow code'.
 	self
-		itTakesLessThan: 5
+		itTakesLessThan: 1
 		messageSendsToEvaluate: [10 factorial]! !
 
-!BenchmarkChecklist methodsFor: 'measurements' stamp: 'SqR 3/8/2015 18:10'!
+!BenchmarkChecklist methodsFor: 'measurements' stamp: 'sqr 1/13/2016 22:25'!
 measureSomeExpectationToMeet
 
 	self prettyPrint: 'Fast code'.
 	self
-		itTakesLessThan: 30
+		itTakesLessThan: 1000
 		messageSendsToEvaluate: [10 factorial]! !
 
 !BenchmarkChecklist methodsFor: 'measurements' stamp: 'SqR 3/8/2015 18:10'!
@@ -7109,15 +7419,12 @@ logFileName
 
 	^'assessmentSelfTest.txt'! !
 
-!AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'SqR 3/6/2015 20:16'!
-categories
-
-	^SystemOrganization categoriesMatching: 'Assessments-*'! !
-
-!AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'SqR 3/8/2015 18:10'!
+!AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'sqr 1/16/2016 21:49'!
 checkSimpleCodeMetrics
 
 	| numberOfClassesAndExtensions numberOfMethods methodsPerClassAverage |
+	AssessmentsSystemOrganization current isSupported
+		ifFalse: [self note: 'Code self measurement unsupported in this dialect.'].
 	numberOfClassesAndExtensions := self numberOfClassesAndExtensions.
 	numberOfMethods := self numberOfMethods.
 	methodsPerClassAverage := numberOfMethods asFloat / numberOfClassesAndExtensions.
@@ -7134,22 +7441,10 @@ checkSimpleCodeMetrics
 		methodsPerClassAverage printString,
 		' methods per class on average.'! !
 
-!AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'SqR 3/6/2015 20:18'!
-classNames
-
-	^self categories
-		inject: OrderedCollection new
-		into:
-			[:answer :each |
-				answer
-					addAll: (SystemOrganization listAtCategoryNamed: each);
-					yourself
-			]! !
-
-!AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'SqR 3/6/2015 20:16'!
+!AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'sqr 1/16/2016 21:48'!
 classes
 
-	^self classNames collect: [:each | Smalltalk at: each]! !
+	^AssessmentsSystemOrganization current classes! !
 
 !AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'SqR 3/6/2015 20:16'!
 numberOfClasses
@@ -8193,11 +8488,11 @@ adaptorValuesAreDefined
 
 	self areDefined: self adaptorValue! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 3/8/2015 18:10'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:27'!
 areDefined: aValue
 
-	aValue isNil ifTrue:
-		[self failValidationBecause: self areRequired]! !
+	aValue isNil
+		ifTrue: [self failValidationBecause: self areRequired]! !
 
 !Validator methodsFor: 'message patterns' stamp: 'SqR 3/8/2015 18:10'!
 areRequired
@@ -8228,6 +8523,11 @@ cannotBeInTheFuture
 cannotBeOldDate
 
 	^self prettyPrint, ' cannot be prior to ', self minimumDate printString! !
+
+!Validator methodsFor: 'private - constants' stamp: 'sqr 1/12/2016 19:23'!
+dateAndTimeClass
+
+	^AssessmentsDateAndTime current dateAndTimeClass! !
 
 !Validator methodsFor: 'message patterns' stamp: 'SqR 3/8/2015 18:10'!
 dateIsRequired
@@ -8267,17 +8567,17 @@ includeValueValidationResults
 
 	^self includeValidationResultsFor: self value! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 3/8/2015 18:10'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:27'!
 isDate: aValue
 
-	(aValue isKindOf: Date) ifFalse:
-		[self failValidationBecause: self dateIsRequired]! !
+	(aValue isKindOf: Date)
+		ifFalse: [self failValidationBecause: self dateIsRequired]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 3/8/2015 18:10'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:27'!
 isDefined: aValue
 
-	aValue isNil ifTrue:
-		[self failValidationBecause: self isRequired]! !
+	aValue isNil
+		ifTrue: [self failValidationBecause: self isRequired]! !
 
 !Validator methodsFor: 'message patterns' stamp: 'SqR 3/8/2015 18:10'!
 isInvalid
@@ -8291,76 +8591,70 @@ isMissing
 		ifTrue: ['No selection has been made']
 		ifFalse: ['No ', self prettyPrint, ' selection has been made']! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 2/22/2015 20:05'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:25'!
 isNonEmptyString: aValue
 
-	aValue isString
-		:: and: [aValue notEmpty]
-		:: ifFalse: [self failValidationBecause: self isRequired]! !
+	(aValue isString and: [aValue notEmpty])
+		ifFalse: [self failValidationBecause: self isRequired]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 2/22/2015 17:56'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:25'!
 isNonFutureDate: aValue
 
-	aValue isKindOf: Date
-		:: and: [aValue <= Date today]
-		:: ifFalse: [self failValidationBecause: self cannotBeInTheFuture]! !
+	((aValue isKindOf: Date) and: [aValue <= Date today])
+		ifFalse: [self failValidationBecause: self cannotBeInTheFuture]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 2/22/2015 17:55'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:25'!
 isNonFutureTimestamp: aValue
 
-	aValue isKindOf: DateAndTime
-		:: and: [aValue <= DateAndTime now]
-		:: ifFalse: [self failValidationBecause: self cannotBeInTheFuture]! !
+	((aValue isKindOf: self dateAndTimeClass) and: [aValue <= DateAndTime now])
+		ifFalse: [self failValidationBecause: self cannotBeInTheFuture]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 2/22/2015 17:55'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:26'!
 isNonOldDate: aValue
 
-	aValue isKindOf: Date
-		:: and: [aValue >= self minimumDate]
-		:: ifFalse: [self failValidationBecause: self cannotBeOldDate]! !
+	((aValue isKindOf: Date) and: [aValue >= self minimumDate])
+		ifFalse: [self failValidationBecause: self cannotBeOldDate]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 2/22/2015 17:55'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:26'!
 isNonOldTimestamp: aValue
 
-	aValue isKindOf: DateAndTime
-		:: and: [aValue asDate >= self minimumDate]
-		:: ifFalse: [self failValidationBecause: self cannotBeOldDate]! !
+	((aValue isKindOf: self dateAndTimeClass) and: [aValue asDate >= self minimumDate])
+		ifFalse: [self failValidationBecause: self cannotBeOldDate]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 2/22/2015 17:54'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:26'!
 isNotEmpty: aValue
 
-	aValue isKindOf: Collection
-		:: and: [aValue notEmpty]
-		:: ifFalse: [self failValidationBecause: self isMissing]! !
+	((aValue isKindOf: Collection) and: [aValue notEmpty])
+		ifFalse: [self failValidationBecause: self isMissing]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 3/8/2015 18:10'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:27'!
 isNotZero: aValue
 
-	aValue == 0 ifTrue: [self failValidationBecause: self isZero]! !
+	aValue == 0
+		ifTrue: [self failValidationBecause: self isZero]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 2/22/2015 17:54'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:26'!
 isPositiveInteger: aValue
 
-	aValue isInteger
-		:: and: [aValue > 0]
-		:: ifFalse: [self failValidationBecause: self mustBePositiveInteger]! !
+	(aValue isInteger and: [aValue > 0])
+		ifFalse: [self failValidationBecause: self mustBePositiveInteger]! !
 
 !Validator methodsFor: 'message patterns' stamp: 'SqR 3/8/2015 18:10'!
 isRequired
 
 	^self prettyPrint, ' is required'! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 2/22/2015 17:52'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:26'!
 isTimestamp: aValue
 
-	(aValue isKindOf: DateAndTime) ifFalse:
-		[self failValidationBecause: self isRequired]! !
+	(aValue isKindOf: self dateAndTimeClass)
+		ifFalse: [self failValidationBecause: self isRequired]! !
 
-!Validator methodsFor: 'validation helpers' stamp: 'SqR 3/8/2015 18:10'!
+!Validator methodsFor: 'validation helpers' stamp: 'sqr 1/12/2016 19:27'!
 isUndefined: aValue
 
-	aValue notNil ifTrue:
-		[self failValidationBecause: self shouldNotBeSpecified]! !
+	aValue notNil
+		ifTrue: [self failValidationBecause: self shouldNotBeSpecified]! !
 
 !Validator methodsFor: 'validation helpers' stamp: 'SqR 3/8/2015 18:10'!
 isValid: aValue
@@ -9570,10 +9864,10 @@ checkResult: anObject
 
 	checkResult := anObject! !
 
-!AssessmentResultUICheckResult methodsFor: 'evaluation' stamp: 'SqR 9/12/2015 11:59'!
+!AssessmentResultUICheckResult methodsFor: 'evaluation' stamp: 'sqr 1/13/2016 22:23'!
 classAndSelectorForBrowsingDo: aBlock
 
-	aBlock value: self checkResult classForBrowsing value: nil! !
+	self checkResult classAndSelectorForBrowsingDo: aBlock! !
 
 !AssessmentResultUICheckResult methodsFor: 'printing' stamp: 'SqR 9/12/2015 11:57'!
 newDisplayString
@@ -9916,10 +10210,10 @@ expectedIterationsPerSecond
 
 	^self result shortActualSpeedPrintString! !
 
-!CheckBenchmarkExpectationUIListItem methodsFor: 'display' stamp: 'SqR 9/7/2015 18:16'!
+!CheckBenchmarkExpectationUIListItem methodsFor: 'display' stamp: 'sqr 1/14/2016 01:33'!
 passed
 
-	^self result passed! !
+	^self result preventsAssessmentSuccess not! !
 
 !AssessmentsChecklistWrapper methodsFor: 'private' stamp: 'SqR 9/5/2015 16:07'!
 basicContents
@@ -10000,7 +10294,7 @@ refresh
 
 	self model refresh! !
 
-!AssessmentsWindow methodsFor: 'GUI building' stamp: 'SqR 9/7/2015 16:56'!
+!AssessmentsWindow methodsFor: 'GUI building' stamp: 'sqr 1/13/2016 21:56'!
 separatorHeight
 
 	^1! !
@@ -10062,10 +10356,10 @@ browseHierarchy
 				[:class :selector | HierarchyBrowserWindow onClass: class selector: selector].
 		]! !
 
-!AssessmentsChecklistEvaluatorWindow methodsFor: 'GUI building' stamp: 'SqR 9/7/2015 16:58'!
+!AssessmentsChecklistEvaluatorWindow methodsFor: 'GUI building' stamp: 'sqr 1/13/2016 22:02'!
 buildLayoutMorph
 
-	^LayoutMorph newColumn
+	^super buildLayoutMorph
 		addMorph: self buildMorphicChecklistTree;
 		addMorph: self buildMorphicSeparator fixedHeight: self separatorHeight;
 		addMorph: self buildMorphicStatusBar fixedHeight: self defaultStripeHeight;
@@ -10170,13 +10464,22 @@ windowLabel
 
 	^'Checklist Evaluator'! !
 
-!AssessmentsResultsEvaluatorWindow methodsFor: 'GUI building' stamp: 'SqR 9/17/2015 03:11'!
+!AssessmentsResultsEvaluatorWindow methodsFor: 'actions' stamp: 'sqr 1/13/2016 22:21'!
+browse
+
+	self model selectedResultDo:
+		[:result |
+			result classAndSelectorForBrowsingDo:
+				[:class :selector | BrowserWindow fullOnClass: class selector: selector].
+		]! !
+
+!AssessmentsResultsEvaluatorWindow methodsFor: 'GUI building' stamp: 'sqr 1/13/2016 21:59'!
 buildLayoutMorph
 
 	| newResultTree |
 	newResultTree := self buildMorphicResultTree.
 	self resultTree: newResultTree.
-	^LayoutMorph newColumn
+	^super buildLayoutMorph
 		addMorph: newResultTree;
 		addMorph: self buildMorphicSeparator fixedHeight: self separatorHeight;
 		addMorph: self buildMorphicStatusBar fixedHeight: self defaultStripeHeight;
@@ -10394,11 +10697,10 @@ handle: anException inTheContextOf: anEvaluationContext
 		occurredWhileEvaluating: self
 		inTheContextOf: anEvaluationContext! !
 
-!ProtectedMessageSend methodsFor: 'comparison' stamp: 'SqR 3/8/2015 18:10'!
+!ProtectedMessageSend methodsFor: 'comparison' stamp: 'sqr 1/16/2016 22:56'!
 hash
 
-	^(self selector identityHash bitShift: 14)
-		bitXor: self receiver hash! !
+	^self selector identityHash bitXor: self receiver hash! !
 
 !ProtectedMessageSend methodsFor: 'private' stamp: 'SqR 3/8/2015 18:10'!
 initialize
