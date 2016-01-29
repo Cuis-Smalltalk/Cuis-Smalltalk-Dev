@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 19 January 2016 at 3:59:17.223134 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 26 January 2016 at 11:11:07.407467 am'!
 'Description Assessments is a replacement / reimplementation of the SUnit evaluation machinery, published under the MIT license (see below), with the following characteristics.
 
 * It provides all the functionality and features of SUnit and SUnit VM (including SUnit Based Validation and SUnit Benchmarks) natively.
@@ -143,7 +143,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '!
-!provides: 'Assessments' 2 25!
+!provides: 'Assessments' 2 27!
 !classDefinition: #AbstractCustomChecklist category: #'Assessments-Framework-CustomChecklists'!
 Object subclass: #AbstractCustomChecklist
 	instanceVariableNames: ''
@@ -5322,11 +5322,11 @@ visualWorksFlushNewSpace
 	<primitive: 322>
 	self error: 'New space flush failed'! !
 
-!AssessmentsNumberPrinter methodsFor: 'printing' stamp: 'sqr 1/14/2016 01:19'!
+!AssessmentsNumberPrinter methodsFor: 'printing' stamp: 'sqr 1/25/2016 16:11'!
 printStringForDouble: aDoublePrecisionFloat
 
 	self isCuis ifTrue: [^aDoublePrecisionFloat asFloat printString].
-	self isVisualWorks ifTrue: [self visualWorksPrintStringForDouble: aDoublePrecisionFloat].
+	self isVisualWorks ifTrue: [^self visualWorksPrintStringForDouble: aDoublePrecisionFloat].
 	self isVSE ifTrue: [^aDoublePrecisionFloat asFloat printString].
 	self unknownDialect! !
 
@@ -5418,13 +5418,13 @@ maximumStepsWhenDebugging
 
 	^100! !
 
-!AssessmentsProcessScheduler methodsFor: 'scheduling' stamp: 'sqr 1/19/2016 03:14'!
+!AssessmentsProcessScheduler methodsFor: 'scheduling' stamp: 'sqr 1/26/2016 09:32'!
 newProcessFor: aBlock
 	"VSE seems to have no notion of creating a process in suspended state"
 
 	self isCuis ifTrue: [^aBlock newProcess].
 	self isVisualWorks ifTrue: [^aBlock newProcess].
-	self isVSE ifTrue: [^aBlock fork].
+	self isVSE ifTrue: [^[aBlock halt; value] fork].
 	self unknownDialect! !
 
 !AssessmentsProcessScheduler methodsFor: 'scheduling' stamp: 'sqr 1/19/2016 03:20'!
@@ -5446,20 +5446,22 @@ step: aProcess lookingFor: targetCompiledMethod
 	self isVSE ifTrue: [^self].
 	self unknownDialect! !
 
-!AssessmentsProfiler methodsFor: 'private - profiling' stamp: 'SqR 8/1/2015 19:21'!
+!AssessmentsProfiler methodsFor: 'private - profiling' stamp: 'sqr 1/25/2016 15:39'!
 newProfiler
 
 	self isCuis ifTrue: [^self resolveCuisClassNamed: #MessageTally].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'TimeProfiler'].
+	self isVSE ifTrue: [^self resolveVSEClassNamed: #Profiler].
 	self unknownDialect! !
 
-!AssessmentsProfiler methodsFor: 'profiling' stamp: 'SqR 8/1/2015 19:20'!
+!AssessmentsProfiler methodsFor: 'profiling' stamp: 'sqr 1/25/2016 15:40'!
 profile: aBlock
 
 	self profiler isNil ifTrue: [self profiler: self newProfiler].
 	self profiler isNil ifTrue: [self error: 'Profiler not found'].
 	self isCuis ifTrue: [^self profiler spyOn: aBlock].
 	self isVisualWorks ifTrue: [^self profiler profile: aBlock].
+	self isVSE ifTrue: [^aBlock profile].
 	self unknownDialect! !
 
 !AssessmentsProfiler methodsFor: 'private - profiling' stamp: 'SqR 8/1/2015 19:22'!
@@ -5472,7 +5474,7 @@ profiler: aClass
 
 	profiler := aClass! !
 
-!AssessmentsProfiler methodsFor: 'testing' stamp: 'SqR 9/7/2015 14:46'!
+!AssessmentsProfiler methodsFor: 'testing' stamp: 'sqr 1/22/2016 20:55'!
 shouldProfileEvaluation
 
 	self isCuis ifTrue:
@@ -5487,6 +5489,12 @@ shouldProfileEvaluation
 			| inputState |
 			inputState := self resolveVisualWorksClassNamed: 'InputState'.
 			^inputState default shiftDown
+		].
+	self isVSE ifTrue:
+		[
+			| notifier |
+			notifier := self resolveVSEClassNamed: #Notifier.  "a global, actually"
+			^notifier isShiftDown
 		].
 	self unknownDialect! !
 
@@ -7419,12 +7427,12 @@ logFileName
 
 	^'assessmentSelfTest.txt'! !
 
-!AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'sqr 1/16/2016 21:49'!
+!AssessmentsCodeMetricsChecklist methodsFor: 'metrics' stamp: 'sqr 1/26/2016 09:07'!
 checkSimpleCodeMetrics
 
 	| numberOfClassesAndExtensions numberOfMethods methodsPerClassAverage |
 	AssessmentsSystemOrganization current isSupported
-		ifFalse: [self note: 'Code self measurement unsupported in this dialect.'].
+		ifFalse: [self note: 'Code self measurement unsupported in this dialect.'.  ^self].
 	numberOfClassesAndExtensions := self numberOfClassesAndExtensions.
 	numberOfMethods := self numberOfMethods.
 	methodsPerClassAverage := numberOfMethods asFloat / numberOfClassesAndExtensions.
@@ -10464,13 +10472,13 @@ windowLabel
 
 	^'Checklist Evaluator'! !
 
-!AssessmentsResultsEvaluatorWindow methodsFor: 'actions' stamp: 'sqr 1/13/2016 22:21'!
+!AssessmentsResultsEvaluatorWindow methodsFor: 'actions' stamp: 'sqr 1/25/2016 15:43'!
 browse
 
 	self model selectedResultDo:
 		[:result |
 			result classAndSelectorForBrowsingDo:
-				[:class :selector | BrowserWindow fullOnClass: class selector: selector].
+				[:class :selector | BrowserWindow fullOnClass: class selector: selector]
 		]! !
 
 !AssessmentsResultsEvaluatorWindow methodsFor: 'GUI building' stamp: 'sqr 1/13/2016 21:59'!
@@ -10697,10 +10705,10 @@ handle: anException inTheContextOf: anEvaluationContext
 		occurredWhileEvaluating: self
 		inTheContextOf: anEvaluationContext! !
 
-!ProtectedMessageSend methodsFor: 'comparison' stamp: 'sqr 1/16/2016 22:56'!
+!ProtectedMessageSend methodsFor: 'comparison' stamp: 'sqr 1/25/2016 16:00'!
 hash
 
-	^self selector identityHash bitXor: self receiver hash! !
+	^self selector hash bitXor: self receiver hash! !
 
 !ProtectedMessageSend methodsFor: 'private' stamp: 'SqR 3/8/2015 18:10'!
 initialize

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 5 November 2015 at 4:23:00.031262 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2676] on 28 January 2016 at 5:37:09.450398 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 22!
+!provides: 'ClassCommentBrowser' 1 25!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -42,25 +42,24 @@ CommentGuideWindow class
 	instanceVariableNames: ''!
 
 
-!CommentGuide commentStamp: 'jmv 9/19/2015 21:02' prior: 0!
+!CommentGuide commentStamp: 'dhn 1/28/2016 16:33' prior: 0!
 Class comments browser for Cuis
 
 To open, evaluate:
 	CommentGuide open.
 
-Class names are organized into "categories" according to whether a certain string can be found in the class name.
+Class names are organized into "categories" according to whether a certain string can be found in the class name. The categories consist of all terms and acronyms which appear in Cuis class names. Terms are strings with initial caps. Acronyms are strings of all-caps.
 
-The categories appear in a hierarchical list whose elements can be expanded into class names. When a class name is selected, its class comment appears in an adjacent pane.
-
-A pop-up menu enables browsing the class, the class' hierarchy, or its protocol. Searches of the comments of classes in a category can be done. Searches over the names of all classes can be done.
-
-This class provides the model for browsing class comments based on class names which contain certain strings, such as:
+This class provides the model for browsing class comments based on class names which contain categories such as:
 
 	Pluggable
 	Morphic
 	Debug
 	Text
-	Morph!
+	Morph
+	CPU
+	
+The view for this model is CommentGuideWindow.!
 
 !CommentGuideWrapper commentStamp: 'dhn 9/12/2015 12:35' prior: 0!
 Provide the wrapper for a list item in CommentGuideWindow.
@@ -70,7 +69,7 @@ Removes the undesired cruft after the item name.!
 !CommentGuideListMorph commentStamp: 'dhn 11/5/2015 12:19' prior: 0!
 A list of terms and acronyms which occur in class names. Selection can be made by typed key, arrows, or clicks.!
 
-!CommentGuideWindow commentStamp: '<historical>' prior: 0!
+!CommentGuideWindow commentStamp: 'dhn 1/28/2016 16:23' prior: 0!
 Show a window for browsing class comments based on class names which contain certain strings, such as:
 
 	Pluggable
@@ -78,10 +77,29 @@ Show a window for browsing class comments based on class names which contain cer
 	Debug
 	Text
 	Morph
+
+Use the menu 'World > Help... > Class Comment Browser' or: 
+
+CommentGuide open.	
 	
 The window has a text pane with a list pane beside it. 
 
-CommentGuide open.	
+The categories appear in a hierarchical list whose elements can be expanded into class names. When a class name is selected, its class comment appears in an adjacent pane.
+
+Class additions and deletions are automatically reflected in the list.
+
+Within the class names of a category, a pop-up menu enables:
+
+- browsing the class
+- browsing the hierarchy of the class
+- browsing the protocol of the class
+- browsing versions of the class comment
+- searching the comments of all classes in a category
+ 
+In the outer list of categories, a pop-up menu enables:
+
+- searches over the names of all classes
+- searches over all class comments
 !
 
 !CommentGuide methodsFor: 'accessing' stamp: 'dhn 10/6/2015 20:43'!
@@ -180,15 +198,18 @@ parseClassNames
 		terms do: [:ea | set add: ea]].
 	^ set asSortedCollection! !
 
-!CommentGuide methodsFor: 'parsing' stamp: 'dhn 9/21/2015 18:55'!
+!CommentGuide methodsFor: 'parsing' stamp: 'dhn 1/28/2016 17:24'!
 parseName: aString
 	"Answer the initial-caps components and acronyms of aString"
 	| tokens acronym str |
-	tokens _ aString findTokens: self class caps keep: self class caps.
+	
+	tokens _ aString 
+		findTokens: self class tokenChars 
+		keep: self class tokenChars.
 	str _ OrderedCollection new.
 	acronym _ ''.
 	tokens do: [:ea |
-		ea first isUppercase 
+		(ea first isUppercase or: ea first isDigit)
 			ifTrue: [acronym _ acronym, ea first asString]
 			ifFalse: [
 				(acronym size > 1) 
@@ -197,6 +218,7 @@ parseName: aString
 						acronym _ acronym last asString].
 				str add: acronym, ea.
 				acronym _ '']].
+	acronym isEmpty ifFalse: [str add: acronym].
 	^ str! !
 
 !CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/15/2015 18:51'!
@@ -216,7 +238,7 @@ selectedRoot
 	"Answer the class names containing root as a substring"
 	^ rootNames at: root itemName! !
 
-!CommentGuide methodsFor: 'initialization' stamp: 'dhn 11/5/2015 12:15'!
+!CommentGuide methodsFor: 'initialization' stamp: 'dhn 11/25/2015 10:23'!
 setList
 	"Answer the dictionary of roots and their children for the hierarchical list"
 	| dx |
@@ -226,8 +248,7 @@ setList
 	Smalltalk classNames do: [:ea |
 		| in |
 		in _ ea asString.
-		dx keysAndValuesDo: [:rootTerm :val |	"try to find a root for 'in' "
-			(in findString: rootTerm asString) > 0 ifTrue: [val add: in]]].
+		(self parseName: in) do: [:term | (dx at: term) add: in]].
 	^ dx! !
 
 !CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/9/2015 18:24'!
@@ -235,11 +256,6 @@ window: anObject
 	"Set the value of window"
 
 	window _ anObject! !
-
-!CommentGuide class methodsFor: 'parsing' stamp: 'dhn 9/18/2015 18:26'!
-caps
-	"Answer the alphabet, capitalized"
-	^ $A to: $Z! !
 
 !CommentGuide class methodsFor: 'instance creation' stamp: 'dhn 9/11/2015 21:05'!
 how
@@ -256,6 +272,11 @@ open
 		open: self new
 		label: 'Class Comment Browser')
 		setWindowColor:  Theme current browser! !
+
+!CommentGuide class methodsFor: 'parsing' stamp: 'dhn 1/28/2016 17:12'!
+tokenChars
+	"Answer the alphabet, capitalized, plus the digits"
+	^ ($A to: $Z), ($0 to: $9)! !
 
 !CommentGuideWrapper methodsFor: 'access' stamp: 'dhn 9/12/2015 11:31'!
 asString

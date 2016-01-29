@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2621] on 7 December 2015 at 9:21:02.887032 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2676] on 25 January 2016 at 9:47:15.200726 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 69!
+!provides: 'TerseGuide' 1 90!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -57,57 +57,59 @@ selectedTopic: aTopic
 	textPane model actualContents: self updateTopicText.
 	self changed: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 12/7/2015 18:44'!
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 1/11/2016 16:49'!
 terseTopics
 	"Translate a list item to a class method selector"
 	^ Dictionary new
-	at: 'Introduction' put: #introduction;
-	at: 'Transcript' put: #transcript;
-	at: 'Assignment' put: #assignment;
-	at: 'Literals' put: #literals;
-	at: 'Syntax' put: #syntax;
-	at: 'Booleans' put: #boolean;
 	at: 'Arithmetic' put: #arithmetic;
-	at: 'Bit-Wise' put: #bitwise;
-	at: 'Conversion' put: #conversion;
-	at: 'Blocks' put: #block;
-	at: 'Exceptions' put: #exceptions;
-	at: 'Method Calls' put: #methodCall;
-	at: 'Conditional Statements' put: #conditionalStatement;
-	at: 'Iterations' put: #iterationStatement;
-	at: 'Character' put: #character;
-	at: 'Symbols' put: #symbol;
-	at: 'Strings' put: #string;
-	at: 'Fonts' put: #font;
 	at: 'Arrays' put: #array;
-	at: 'Ordered Collections' put: #orderedCollection;
-	at: 'Sorted Collections' put: #sortedCollection;
-	at: 'Bags' put: #bag;
-	at: 'Sets' put: #set;
-	at: 'Intervals' put: #interval;
+	at: 'Assignment' put: #assignment;
 	at: 'Associations' put: #association;
+	at: 'Bags' put: #bag;
+	at: 'Bit-Wise' put: #bitwise;
+	at: 'Blocks' put: #block;
+	at: 'Booleans' put: #boolean;
+	at: 'Character' put: #character;
+	at: 'Coding' put: #coding;
+	at: 'Colors' put: #colors;
+	at: 'Conditional Statements' put: #conditionalStatement;
+	at: 'Conversion' put: #conversion;
+	at: 'Date' put: #date;
+	at: 'Debugging' put: #debugging;
 	at: 'Dictionary' put: #dictionary;
-	at: 'Trie' put: #trie;
+	at: 'Dynamic Messages' put: #dynamic;
+	at: 'Exceptions' put: #exceptions;
+	at: 'Features' put: #feature;
+	at: 'File Operations' put: #fileMan;
+	at: 'Fonts' put: #font;
+	at: 'Forms' put: #form;
 	at: 'Heap' put: #heap;
 	at: 'Internal Streams' put: #internalStream;
-	at: 'File Operations' put: #fileMan;
-	at: 'Date' put: #date;
-	at: 'Time' put: #time;
-	at: 'Point' put: #point;
-	at: 'Rectangle' put: #rectangle;
-	at: 'Pen' put: #pen;
-	at: 'Forms' put: #form;
-	at: 'Colors' put: #colors;
-	at: 'Morphs' put: #morph;
+	at: 'Intervals' put: #interval;
+	at: 'Introduction' put: #introduction;
+	at: 'Iterations' put: #iterationStatement;
 	at: 'Layout Morph' put: #layoutMorph;
 	at: 'Layout Spec' put: #layoutSpec;
-	at: 'Dynamic Messages' put: #dynamic;
-	at: 'PopUpMenu' put: #popUpMenu;
-	at: 'Object' put: #anObject;
+	at: 'Literals' put: #literals;
 	at: 'Metaclass' put: #metaclass;
-	at: 'Debugging' put: #debugging;
+	at: 'Method Calls' put: #methodCall;
 	at: 'Miscellaneous' put: #misc;
+	at: 'Morphs' put: #morph;
+	at: 'Object' put: #anObject;
+	at: 'Ordered Collections' put: #orderedCollection;
+	at: 'Pen' put: #pen;
+	at: 'Point' put: #point;
+	at: 'PopUpMenu' put: #popUpMenu;
 	at: 'Primitives' put: #primitive;
+	at: 'Rectangle' put: #rectangle;
+	at: 'Sets' put: #set;
+	at: 'Sorted Collections' put: #sortedCollection;
+	at: 'Strings' put: #string;
+	at: 'Symbols' put: #symbol;
+	at: 'Syntax' put: #syntax;
+	at: 'Time' put: #time;
+	at: 'Transcript' put: #transcript;	
+	at: 'Trie' put: #trie;
 	yourself! !
 
 !TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 10/18/2015 20:01'!
@@ -586,7 +588,39 @@ y _ $A max: $B.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 12/7/2015 20:52'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/25/2016 17:24'!
+coding
+	"Code Patterns"
+	^
+'"
+Useful Cuis code patterns, intended to help the programmer exploit some of the features of Cuis classes. These examples separate model from view and feature two styles: coupled and decoupled.
+
+The coupled style employs the ''dependency mechanism'' and exposes the model to changes in the view and to views which were unanticipated. The primary methods of the dependency mechanism are #changed: and #update: .
+
+The decoupled style employs the ''observer pattern'' which ensures that the model can remain unaffected by changes to the view or by additional views. The primary methods of the observer pattern are #triggerEvent: and #when:send:to: . This is the preferred style for Cuis, although both styles can be found in the base.
+"
+| b n |
+
+"In the parent directory which contains Cuis-Smalltalk-Dev*:
+	''git clone https://github.com/dhnorton/Cuis-Smalltalk-patterns''
+"
+
+Feature require: #''Code-Patterns''.				"load the package"
+
+"To browse the examples, do (cmd-d) these statements..."
+
+b _ BrowserWindow openBrowser.					"open a browser"
+n _ b model systemCategoryList findFirst: [:a | a = #''Code-Patterns''].	"index to the above package"
+b model systemCategoryListIndex: n.					"go to the system category"
+
+"The following statements execute the examples..."
+
+DependencyExamples relatedViews. 				"a decoupled example"
+DependencyExamples unrelatedViews. 			"a decoupled example"
+DependencyExamples coupledView. 				"a coupled example"
+'! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/25/2016 17:30'!
 colors
 	"Colors"
 	^
@@ -598,6 +632,15 @@ x _ (Color r: 1.0 g: 1.0 b: 1.0) name.
 
 arr _ #((0.0 0.0 0.0) (0.0 0.0 1.0) (0.0 1.0 0.0) (0.0 1.0 1.0) (1.0 0.0 0.0) (1.0 0.0 1.0) (1.0 1.0 0.0) (1.0 1.0 1.0)).
 (arr collect: [:a | Color colorFrom: a]) explore.
+
+"In the parent directory which contains Cuis-Smalltalk-Dev*:
+	''git clone https://github.com/KenDickey/Cuis-Smalltalk-ColorEditor''
+	''git clone https://github.com/KenDickey/Cuis-Smalltalk-NamedColors''
+	''git clone https://github.com/KenDickey/Cuis-Smalltalk-Morphic-Misc1''
+"
+Feature require: #''Morphic-ColorEditor''.		"load the ColorEditor feature and its dependencies"
+
+"From the menu ''World>New morph...>ColorEditor'' select ColorEditorPanel or ColorPallet"
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:37'!
@@ -926,14 +969,68 @@ x _  1. y _ 0.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 12/7/2015 14:46'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/22/2016 16:32'!
+feature
+	"Features"
+	^
+'"Part of the Cuis strategy to keep a clean, small kernel is the separation of system features into smaller, more easily understood Packages.
+
+The basic idea is that a Feature is implemented by the Package(s) it contains.
+
+You can load Features in your code or by..."
+
+Feature require: #''Feature-Name''.
+
+"You can also use the File List window to install a feature which can be in any directory (World Menu -> Open-> File List). After selecting a feature, click on ''installPackage''.
+
+A feature may depend on other features and particular versions of those features.  Cuis checks for dependencies and if all dependencies are satisfied will load packages in the proper order.
+
+You can create your own packages and add/remove feature requirements using the Package Browser.  World Menu -> Open -> Installed Packages
+
+
+There are many features for Cuis available at GitHub.
+
+In a web browser, 
+1. view https://github.com
+2. type ''Cuis-Smalltalk'' in the search box
+3. see the number of features available.
+
+When you invoke:"
+
+Feature require: #''Feature-Name''.
+
+"Cuis will search for packages (*.pck.st) which supply the feature in...
+
+1. the image directory and its subdirectories ''Packages'' and ''CompatibilityPackages'' 
+2. siblings of the image directory whose names start with ''Cuis-Smalltalk*'' and their subdirectories named ''Packages'' and ''CompatibilityPackages''.
+"
+
+Smalltalk imagePath.		"Cuis image directory"
+
+
+"Additional information is available on the web page:
+
+''https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/blob/master/Documentation/CuisAndGitHub.md''
+
+
+For an example of specifying feature requirements, consider the package file ''Cuis-Smalltalk-Dev/Packages/Graphics-Files-Additional.pck.st'' which can be viewed with the File List browser. It provides feature ''Graphics-Files-Additional'' and requires Feature ''Compression''. If in code or in a Workspace you invoke (cmd-d):"
+
+Feature require: #''Graphics-Files-Additional''.
+
+"...then the Compression package will be loaded, followed by Graphics-Files-Additional."
+
+
+Feature require: #''Core-Packages''. 		"load all core Cuis Packages"
+'! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/25/2016 21:43'!
 fileMan
 	"File Operations"
 	^
-'| b |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| b c file dirEntry fullPath |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
 
 FmDirectoryEntry roots.					"answer the drive or drives"
-FmDirectoryEntry currentDirectory.	"answer the current directory"
+c _ FmDirectoryEntry currentDirectory.	"answer the current directory"
 ''testFile.txt'' asFileEntry fileContents: ''Test me now''.	"answer the directory and name of a new file; set its contents"
 ''testFile.txt'' asFileEntry fileContents.		"print contents of a file"
 
@@ -976,7 +1073,7 @@ FmDirectoryEntry currentDirectory.	"answer the current directory"
 	(ReferenceStream on: fileStream) next.
 	]) explore.
 
-''testFile.txt'' asFileEntry delete.				"remove the test file"
+''testFile.txt'' asFileEntry delete.			"remove the test file"
 
 b _ ''testFile.txt'' asFileEntry exists.		"test for existence of the file"
 
@@ -988,7 +1085,20 @@ b _ ''testFile.txt'' asFileEntry exists.		"test for existence of the file"
 
 ''testFile.txt'' asFileEntry fileContents. 		"print it"
 
-''testFile.txt'' asFileEntry delete.				"remove the test file"
+''testFile.txt'' asFileEntry delete.			"remove the test file"
+
+fullPath _ c pathName, ''\TestDir''.								"identify a directory"
+FmFileIOAccessor new createDirectory: fullPath.			"create a directory"
+FmFileIOAccessor new createDirectory: ''./\TestDir''.		"another way, using regex"
+FmFileIOAccessor new deleteDirectory: fullPath.			"delete directory; must be empty"
+
+"The following statements show one way to either create an empty file, or use the file as-is if it already exists"
+c _ FmDirectoryEntry currentDirectory.				"answer the current directory"
+dirEntry _ c pathName asDirectoryEntry / ''testFile.txt''.	"create a system-independent path expression"
+fullPath _ dirEntry asString.									"convert path expression to string"
+fullPath asFileEntry assureExistence.						"create testFile.txt if it does not exist"
+fullPath asFileEntry assureExistence.						"do nothing if testFile.txt already exists"
+''testFile.txt'' asFileEntry delete.							"remove the test file"
 
 "Note the examples in FmFileEntry class"
 
@@ -1152,16 +1262,16 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/18/2015 15:16'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/25/2016 17:18'!
 introduction
 	"Using Terse Guide"
 	^
 '"
-You are reading this in the text pane of the Terse Guide window. This pane is a kind of Workspace and is managed by the SmalltalkEditor of Cuis. This means that you can do (cmd-d) or print (cmd-p) on statements in order to see the result. If you have a Transcript open, the result will appear in it.
+You are reading this in the text pane of the Terse Guide window. This pane is a kind of Workspace and is managed by the SmalltalkEditor of Cuis. This means that you can do (cmd-d) or print (cmd-p) statements in order to see the result. If you have a Transcript open, the result will appear in it.
 
 The SmalltalkEditor enables you to do or print a statement when the cursor is in the statement. It is not necessary to first highlight the entire statement, unless it continues on more than one line.
 
-The text pane is refreshed each time it is accessed. You can change the examples and run them without hurting anything.
+This text pane is refreshed each time it is accessed. You can change the examples and run them without hurting anything. Go ahead and experiment!!
 
 The Terse Guide does not attempt to provide the entire protocol of a topic. You are encouraged to explore further.
 "
@@ -1560,7 +1670,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 12/7/2015 18:42'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 1/8/2016 20:06'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^  OrderedCollection new
@@ -1593,7 +1703,9 @@ pages
 		add: 'Trie'; 
 		add: 'Heap'; 
 		add: 'Internal Streams'; 
+		add: 'Coding'; 
 		add: 'File Operations'; 
+		add: 'Features'; 
 		add: 'Date'; 
 		add: 'Time'; 
 		add: 'Point'; 
