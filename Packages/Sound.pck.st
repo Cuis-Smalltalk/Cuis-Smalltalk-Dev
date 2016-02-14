@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2646] on 21 December 2015 at 9:57:13.762971 am'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 10!
+!provides: 'Sound' 1 11!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
@@ -12842,3 +12842,4 @@ MuLawCodec initialize!
 SoundPlayer initialize!
 SoundRecorder initialize!
 SoundSystem initialize!
+Smalltalk addToShutDownList: SoundSystem!
