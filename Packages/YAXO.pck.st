@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 28 October 2015 at 10:31:18.867583 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2679] on 30 January 2016 at 7:39:08.476986 pm'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 8!
+!provides: 'YAXO' 1 9!
 !requires: 'Network-Kernel' 1 nil nil!
 !classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
@@ -1204,22 +1204,29 @@ valueFor: aSymbol
 valueFor: aSymbol ifAbsent: aBlock 
 	^self attributes at: aSymbol ifAbsent: aBlock! !
 
-!XMLElement class methodsFor: 'instance creation' stamp: 'mir 3/7/2000 16:33'!
+!XMLElement class methodsFor: 'instance creation' stamp: 'pb 1/30/2016 18:36'!
 named: aString
-	^self new name: aString! !
+	^ self basicNew name: aString.! !
 
-!XMLElement class methodsFor: 'instance creation' stamp: 'mir 8/14/2000 18:01'!
+!XMLElement class methodsFor: 'instance creation' stamp: 'pb 1/30/2016 18:37'!
 named: aString attributes: attributeList
-	^self new
+	^ self basicNew
 		name: aString;
-		setAttributes: attributeList! !
+		setAttributes: attributeList.! !
 
-!XMLElement class methodsFor: 'instance creation' stamp: 'mir 6/5/2003 15:21'!
+!XMLElement class methodsFor: 'instance creation' stamp: 'pb 1/30/2016 18:37'!
 named: aString namespace: ns uri: uri attributes: attributeList
-	^self new
+	^ self basicNew
 		name: aString;
-		namespace: ns uri: uri;
-		setAttributes: attributeList! !
+		
+			namespace: ns
+			uri: uri;
+		setAttributes: attributeList.! !
+
+!XMLElement class methodsFor: 'instance creation' stamp: 'pb 1/30/2016 19:38'!
+new
+	"Call instance creation helper methods (such as #named:) instead"
+	self shouldNotImplement.! !
 
 !XMLPI methodsFor: 'accessing' stamp: 'mir 1/17/2002 13:02'!
 data
@@ -1245,11 +1252,16 @@ target
 target: aString
 	target _ aString! !
 
-!XMLPI class methodsFor: 'instance creation' stamp: 'mir 1/17/2002 13:03'!
+!XMLPI class methodsFor: 'instance creation' stamp: 'pb 1/30/2016 19:38'!
+new
+	"Call #target:data: instead"
+	self shouldNotImplement.! !
+
+!XMLPI class methodsFor: 'instance creation' stamp: 'pb 1/30/2016 18:36'!
 target: targetName data: aString
-	^self new
+	^ self basicNew
 		target: targetName;
-		data: aString! !
+		data: aString.! !
 
 !XMLStringNode methodsFor: 'accessing'!
 characterData
@@ -1271,9 +1283,14 @@ string
 string: aString
 	string _ aString! !
 
-!XMLStringNode class methodsFor: 'instance creation' stamp: 'mir 10/25/2000 11:30'!
+!XMLStringNode class methodsFor: 'instance creation' stamp: 'pb 1/30/2016 19:38'!
+new
+	"Call #string: instead"
+	self shouldNotImplement.! !
+
+!XMLStringNode class methodsFor: 'instance creation' stamp: 'pb 1/30/2016 18:36'!
 string: aString
-	^self new string: aString! !
+	^ self basicNew string: aString.! !
 
 !XMLTokenizer methodsFor: 'streaming' stamp: 'mir 3/14/2003 22:58'!
 atEnd
