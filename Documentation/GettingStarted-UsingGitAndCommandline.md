@@ -13,17 +13,17 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ### Get an appropriate VM ###
 For Windows Git Bash:
 ```
-$ curl -o cogwin.zip www.mirandabanda.org/files/Cog/VM/VM.r3370/cogwin-15.22.3370.zip
+$ curl -o cogwin.zip www.mirandabanda.org/files/Cog/VM/2015/VM.r3370/cogwin-15.22.3370.zip
 $ unzip cogwin.zip
 ```
 For MacOSX:
 ```
-$ curl -o Cog.app.tgz www.mirandabanda.org/files/Cog/VM/VM.r3370/Cog.app-15.22.3370.tgz
+$ curl -o Cog.app.tgz www.mirandabanda.org/files/Cog/VM/2015/VM.r3370/Cog.app-15.22.3370.tgz
 $ tar -zxvf Cog.app.tgz
 ```
 For Linux (except ArchLinux, Chromebooks see below):
 ```
-$ wget -O coglinuxht.tgz www.mirandabanda.org/files/Cog/VM/VM.r3370/coglinuxht-15.22.3370.tgz
+$ wget -O coglinuxht.tgz www.mirandabanda.org/files/Cog/VM/2015/VM.r3370/coglinuxht-15.22.3370.tgz
 $ tar -zxvf coglinuxht.tgz
 ```
 On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
@@ -49,15 +49,15 @@ https://www.archlinux.org/packages/?q=squeak-vm
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2679.image
+$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2684.image
 ```
 MacOSX:
 ```
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2679.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2684.image
 ```
 Linux:
 ```
-$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2679.image
+$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2684.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
@@ -83,7 +83,7 @@ $ ./linuxVMx86.sh
 
 For ARM CPUs:
 ```
-$ wget -O stklinuxARM.tgz www.mirandabanda.org/files/Cog/VM/VM.r3386/stklinuxARM-15.24.3386.tgz
+$ wget -O stklinuxARM.tgz www.mirandabanda.org/files/Cog/VM/2015/VM.r3386/stklinuxARM-15.24.3386.tgz
 $ tar -zxvf stklinuxARM.tgz
 ```
 
