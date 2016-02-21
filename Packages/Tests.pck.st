@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2670] on 25 January 2016 at 9:57:33.032556 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2689] on 21 February 2016 at 7:00:44.98487 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 41!
+!provides: 'Tests' 1 42!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
@@ -8514,12 +8514,46 @@ testValueUnpreemptively
 wasteTime: iterations
 	iterations timesRepeat: [1.23 asString asNumber]! !
 
+!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/20/2016 22:22'!
+testParkMillerCorrectness
+	| random samples differences |
+	random _ ParkMillerRandom new seed: 98712341.
+	samples _ (1 to: 10) collect: [:each| random nextInteger: 10].
+	self assert: samples = #(9 4 4 4 4 7 8 1 10 3).
+
+	random _ ParkMillerRandom new seed: 98712341.
+	samples _ (1 to: 10) collect: [:each| random next].
+	differences _ samples -  #(0.559231128338366 0.997573982923093 0.2259309884281508 0.2221225119298894 0.2130580056519518 0.865900992353401 0.1979784836051885 0.4243739524038387 0.4530180513174357 0.874388492142031).
+	self assert: differences max < 0.000000000001! !
+
+!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/20/2016 22:39'!
+testParkMillerInitialValues
+	| samples |
+	samples _ (1 to: 1000) collect: [:each| ParkMillerRandom new next].
+	self assert: (samples average - 0.5) abs < 0.1! !
+
+!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/19/2016 07:49'!
+testRandomLargeInteger
+	| odds |
+	odds _ (1 to: 1000) count: [:x| (1 << 64) atRandom odd].
+	self assert: (odds - 500) abs < 100! !
+
+!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/19/2016 07:56'!
+testRandomLargeInteger2
+	self assert: ((((1 << 1000) atRandom printStringBase: 2) count: [:x| x = $1]) - 500) abs < 100! !
+
 !RandomTest methodsFor: 'tests' stamp: 'jmv 1/19/2011 10:46'!
 testSeed0
 	| random |
 	random := Random new.
 	self should: [ random seed: 0 ] raise: Error.
 	self assert: (10 atRandom: random) <= 10! !
+
+!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/19/2016 07:46'!
+testSetAtRandom
+	| set |
+	set _ {0. 1} asSet.
+	self assert: (((1 to: 1000) collect: [:x| set atRandom]) average - 0.5) abs < 0.1! !
 
 !ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
 testDiskProxy
