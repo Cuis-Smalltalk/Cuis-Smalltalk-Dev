@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2676] on 25 January 2016 at 9:47:15.200726 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2690] on 23 February 2016 at 12:27:03.402329 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 90!
+!provides: 'TerseGuide' 1 103!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -57,7 +57,7 @@ selectedTopic: aTopic
 	textPane model actualContents: self updateTopicText.
 	self changed: #topicListIndex! !
 
-!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 1/11/2016 16:49'!
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 2/19/2016 20:35'!
 terseTopics
 	"Translate a list item to a class method selector"
 	^ Dictionary new
@@ -69,6 +69,7 @@ terseTopics
 	at: 'Bit-Wise' put: #bitwise;
 	at: 'Blocks' put: #block;
 	at: 'Booleans' put: #boolean;
+	at: 'Canvas' put: #canvas;
 	at: 'Character' put: #character;
 	at: 'Coding' put: #coding;
 	at: 'Colors' put: #colors;
@@ -97,7 +98,6 @@ terseTopics
 	at: 'Morphs' put: #morph;
 	at: 'Object' put: #anObject;
 	at: 'Ordered Collections' put: #orderedCollection;
-	at: 'Pen' put: #pen;
 	at: 'Point' put: #point;
 	at: 'PopUpMenu' put: #popUpMenu;
 	at: 'Primitives' put: #primitive;
@@ -299,7 +299,7 @@ y ~~ #foo.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:33'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/3/2016 15:32'!
 arithmetic
 	"Arithmetic Expressions"
 	^
@@ -336,6 +336,7 @@ x _ -5 quo: 3.						"integer divide rounded toward zero"
 x _ -5 rem: 3.						"integer remainder rounded toward zero"
 x _ 28 gcd: 12.						"greatest common divisor"
 x _ 28 lcm: 12.						"least common multiple"
+x _ 28 mod: 12.						"modulo"
 x _ 100 ln.							"natural logarithm"
 x _ 100 log.							"base 10 logarithm"
 x _ 100 log: 10	.					"logarithm with specified base"
@@ -354,12 +355,12 @@ x _ Float pi.							"pi"
 x _ Float e.							"exp constant"
 x _ Float infinity.					"infinity"
 x _ Float nan.						"not-a-number"
-x _ Random new next; yourself. x next.	"random number stream (0.0 to 1.0)"
-x _ 100 atRandom.					"quick random number"
+x _ Random new next; yourself. x next.	"random number on the interval (0.0,1.0)"
+x _ 100 atRandom.					"random number on the interval (1,receiver)"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:43'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:12'!
 array
 	"Arrays"
 	^
@@ -368,7 +369,7 @@ array
 	ByteArray:     Array limited to byte elements (0-255)
 	WordArray:     Array limited to word elements (0-2^32)
 "
-| b x y sum max |	"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+| b x y sum max |	"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ #(4 3 2 1).									"constant array"
 x _ Array with: 5 with: 4 with: 3 with: 2.		"create array with 4 elements"
 x _ Array new: 4.								"allocate an array with specified size"
@@ -565,7 +566,24 @@ b _ $A isLowercase.				"test if lower case character"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:39'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/19/2016 20:44'!
+canvas
+	"Canvas"
+	^
+'| x y |
+
+"
+	There is no Canvas class.
+	
+	A canvas is produced by sending #getCanvas to a Form.
+"
+
+x _ Form extent: 200@100 depth: 32.	"Answer a form with color depth 32"
+
+y _ x getCanvas.							"convert form to canvas (a BitBltCanvas)"
+'! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/22/2016 17:09'!
 character
 	"Character"
 	^
@@ -584,11 +602,10 @@ y _ x asUppercase.						"convert to upper case"
 y _ x asciiValue.							"convert to numeric ascii value"
 y _ x asString.							"convert to string"
 b _ $A <= $B.							"comparison"
-y _ $A max: $B.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/25/2016 17:24'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:13'!
 coding
 	"Code Patterns"
 	^
@@ -607,7 +624,7 @@ The decoupled style employs the ''observer pattern'' which ensures that the mode
 
 Feature require: #''Code-Patterns''.				"load the package"
 
-"To browse the examples, do (cmd-d) these statements..."
+"To browse the examples, do (Cmd-d) these statements..."
 
 b _ BrowserWindow openBrowser.					"open a browser"
 n _ b model systemCategoryList findFirst: [:a | a = #''Code-Patterns''].	"index to the above package"
@@ -620,12 +637,12 @@ DependencyExamples unrelatedViews. 			"a decoupled example"
 DependencyExamples coupledView. 				"a coupled example"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/25/2016 17:30'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:13'!
 colors
 	"Colors"
 	^
 '
-| x t arr |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+| x t arr |			"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 
 x _ (Color r: 0 g: 0 b: 0) name.		"answer the name of the color, if possible"
 x _ (Color r: 1.0 g: 1.0 b: 1.0) name.
@@ -719,24 +736,24 @@ x _ 15 storeStringBase: 16.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:05'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:14'!
 date
 	"Date"
 	^
-'| x y b block str fmt |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| w x y b block str fmt |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ Date today.								"create date for today"
-x _ Date dateAndTimeNow.					"create date from current time/date"
+w _ Date dateAndTimeNow.					"create array with current date and time"
 x _ Date newDay: 12 month: #July year: 1999.	"create date from parts"
 x _ Date fromDays: 36002.					"create date from elapsed days since 1/1/1901"
 y _ Date dayOfWeek: #Monday.			"day of week as int (1-7)"
 y _ Date indexOfMonth: #August.			"month of year as int (1-12)"
-y _ Date daysInMonth: 2 forYear: 1996.		"day of month as int (1-31)"
+y _ Date daysInMonth: 2 forYear: 1996.	"day of month as int (1-31)"
 y _ Date daysInYear: 1996.					"days in year (365|366)"
 y _ Date nameOfDay: 1.						"weekday name (#Monday,...)"
 y _ Date nameOfMonth: 3.					"month name (#January,...)"
 y _ Date leapYear: 1997.						"1 if leap year; 0 if not leap year"
 y _ x weekday.									"day of week (#Monday,...)"
-y _ x previous: #Monday.					"date for previous day of week"
+y _ x previous: #Monday.					"date for previous day of week (one week ago)"
 y _ x dayOfMonth.								"day of month (1-31)"
 y _ x firstDayOfMonth.							"day of year for first day of month"
 y _ x monthName.								"month of year (#January,...)"
@@ -784,12 +801,11 @@ y _ x dayOfMonth. 			"Answer the day of the month represented by the receiver."
 y _ x dayOfWeek. 			"Answer the day of the week represented by the receiver."
 y _ x dayOfWeekName. 	"Answer the day of the week represented by the receiver."
 y _ x dayOfYear.			"Answer the day of the year represented by the receiver."
-y _ x daysInMonth.
-y _ x daysInYear.			"Answer the number of days in the month represented by the receiver."
+y _ x daysInMonth.			"Answer the number of days in the month represented by the receiver."
+y _ x daysInYear.			"Answer the number of days in the year represented by the receiver."
 y _ x daysLeftInYear.
 y _ x firstDayOfMonth.
 y _ x isLeapYear.
-y _ x julianDayNumber.
 
 '! !
 
@@ -827,7 +843,7 @@ x doesNotUnderstand: (Message selector: #foo).	"flag message is not handled"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:56'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:14'!
 dictionary
 	"Dictionary"
 	^
@@ -835,7 +851,7 @@ dictionary
 	Dictionary:
 	IdentityDictionary:   uses identity test (== rather than =)
 "
-| b x y sum max aDx |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+| b x y sum max aDx |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ Dictionary new.							"allocate collection"
 x add: #a->4; add: #b->3; add: #c->1; add: #d->2; yourself.	"add element to collection"
 x at: #e put: 3.									"set element at index; see NOTE"
@@ -969,7 +985,7 @@ x _  1. y _ 0.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/22/2016 16:32'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:15'!
 feature
 	"Features"
 	^
@@ -1013,7 +1029,7 @@ Smalltalk imagePath.		"Cuis image directory"
 ''https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/blob/master/Documentation/CuisAndGitHub.md''
 
 
-For an example of specifying feature requirements, consider the package file ''Cuis-Smalltalk-Dev/Packages/Graphics-Files-Additional.pck.st'' which can be viewed with the File List browser. It provides feature ''Graphics-Files-Additional'' and requires Feature ''Compression''. If in code or in a Workspace you invoke (cmd-d):"
+For an example of specifying feature requirements, consider the package file ''Cuis-Smalltalk-Dev/Packages/Graphics-Files-Additional.pck.st'' which can be viewed with the File List browser. It provides feature ''Graphics-Files-Additional'' and requires Feature ''Compression''. If in code or in a Workspace you invoke (Cmd-d):"
 
 Feature require: #''Graphics-Files-Additional''.
 
@@ -1023,11 +1039,11 @@ Feature require: #''Graphics-Files-Additional''.
 Feature require: #''Core-Packages''. 		"load all core Cuis Packages"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/25/2016 21:43'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:15'!
 fileMan
 	"File Operations"
 	^
-'| b c file dirEntry fullPath |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| b c file dirEntry fullPath |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 
 FmDirectoryEntry roots.					"answer the drive or drives"
 c _ FmDirectoryEntry currentDirectory.	"answer the current directory"
@@ -1104,17 +1120,19 @@ fullPath asFileEntry assureExistence.						"do nothing if testFile.txt already e
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:41'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/9/2016 12:05'!
 font
 	"Fonts"
 	^
 '"
-Cuis fonts are strike fonts. In order to add a font, 
+Cuis fonts are strike fonts. 
+
+Add a font, Method 1.
 	- create the directory ''AdditionalFontData''  within the directory containing the image
 	- place the .bmp and .txt files for the strike font in the ''AdditionalFontData'' directory
 	- use StrikeFont install: ''<familyname>''
 "
-| x y str |
+| w x y z str |
 
 x _ AbstractFont default.				"answer the default font"
 
@@ -1122,7 +1140,7 @@ StrikeFont install: ''DejaVu Sans Mono''.	"install the font with the specified f
 
 AbstractFont familyNames     
 	detect: [:f | f = ''DejaVu Sans Mono''] ifNone: [^ AbstractFont default].
-^ AbstractFont familyName: ''DejaVu Sans Mono'' aroundPointSize: 10.
+w _ AbstractFont familyName: ''DejaVu Sans Mono'' aroundPointSize: 10.
 	"answer DejaVu Sans Mono font if available; otherwise, answer the default font"
 
 str _ String new writeStream 			"prepare a string"
@@ -1130,9 +1148,32 @@ str _ String new writeStream 			"prepare a string"
 	nextPutAll: ''bar''.
 
 y _ Text initialFont: x stringOrText: str contents. 	"specify text with font and string"
+
+(StringMorph contents: ''Some text in a particular font!!'' font: w) openInHand. "look at an example"
+
+"
+Add a font, Method 2.
+
+Place .sf2 files in the ''AdditionalFontData'' directory, then...
+"
+
+Feature require: #''SF2-Import''.		"install the installer for fonts in .sf2 files"
+
+SF2Installer readSF2FontsFromDir: ''AdditionalFontData''.	"install the fonts from .sf2 files"
+
+z _ AbstractFont familyName: ''Accujen'' aroundPointSize: 30.	"answer an Accujen font"
+
+(StringMorph contents: ''Text in the Accujen font!!'' font: z) openInHand. "look at an example"
+"
+The selection of currently installed fonts may be viewed from the text editor:
+
+World > Open... > Text Editor
+
+Use (Cmd-k) to see a list of installed fonts.
+"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/18/2015 18:19'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/19/2016 20:57'!
 form
 	"Forms"
 	^
@@ -1146,6 +1187,11 @@ x _ Form extent: 22@18.
 
 x _ Form extent: 22@18 depth: 8.
 	"Answer a Form with blank bitmap 22 pixels wide and 18 pixels deep having color depth 8."
+	
+y _ x getCanvas.				"convert form to canvas (a BitBltCanvas)"
+
+EllipseMorph new drawOn: y; morphExtent: 300@300; openInWorld.
+	"Display a morph on a canvas"
 
 x _ Form fromUser.
 	"Answer a Form with bitmap initialized from the area of the display screen designated by the user."
@@ -1187,11 +1233,11 @@ x sortBlock: sort.						"Specify how to sort the heap"
 x _ Heap withAll: #(11 32 19 21) sortBlock: sort.	"Create a new heap sorted according to a sortBlock"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:58'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:16'!
 internalStream
 	"Internal  Streams"
 	^
-'| b x ios str |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| b x ios str |			"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 ios _ ReadStream on: ''Hello read stream''.
 ios _ ReadStream on: ''Hello read stream'' from: 1 to: 5.
 [(x _ ios nextLine) notNil]
@@ -1262,14 +1308,14 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 1/25/2016 17:18'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/4/2016 21:23'!
 introduction
 	"Using Terse Guide"
 	^
 '"
-You are reading this in the text pane of the Terse Guide window. This pane is a kind of Workspace and is managed by the SmalltalkEditor of Cuis. This means that you can do (cmd-d) or print (cmd-p) statements in order to see the result. If you have a Transcript open, the result will appear in it.
+You are reading this in the text pane of the Terse Guide window. This pane is a kind of Workspace and is managed by the SmalltalkEditor of Cuis. This means that you can Do (Cmd-d) or Print (Cmd-p) statements in order to see the result. If you have a Transcript open, the result will appear in it.
 
-The SmalltalkEditor enables you to do or print a statement when the cursor is in the statement. It is not necessary to first highlight the entire statement, unless it continues on more than one line.
+The SmalltalkEditor enables you to Do or Print a statement when the cursor is in the statement. It is not necessary to first highlight the entire statement, unless it continues on more than one line.
 
 This text pane is refreshed each time it is accessed. You can change the examples and run them without hurting anything. Go ahead and experiment!!
 
@@ -1277,11 +1323,11 @@ The Terse Guide does not attempt to provide the entire protocol of a topic. You 
 "
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/3/2015 11:07'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:17'!
 iterationStatement
 	"Iterations"
 	^
-'| x y |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| x y |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ 4. y _ 1.
 
 #(5 4 3) do: [:a | x _ x + a].				"iterate over a sequenceable collection"
@@ -1595,11 +1641,11 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:09'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:18'!
 morph
 	"Morphs"
 	^
-'| x y |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| x y |			"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ Morph new.			"a new but invisible morph"
 x openInWorld.				"make visible in upper left of screen"
 x openInHand.				"make visible at cursor location"
@@ -1623,11 +1669,11 @@ y _ Morph initializedInstance.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:48'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:18'!
 orderedCollection
 	"Ordered Collections"
 	^
-'| b x y sum max |			"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| b x y sum max |			"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ OrderedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with 4 elements"
 x _ OrderedCollection new.				"allocate collection"
 x add: 3; add: 2; add: 1; add: 4; yourself.	"add element to collection"
@@ -1670,7 +1716,7 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 1/8/2016 20:06'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 2/19/2016 20:30'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^  OrderedCollection new
@@ -1710,8 +1756,8 @@ pages
 		add: 'Time'; 
 		add: 'Point'; 
 		add: 'Rectangle'; 
-		add: 'Pen'; 
 		add: 'Forms'; 
+		add: 'Canvas'; 
 		add: 'Colors'; 
 		add: 'Morphs'; 
 		add: 'Layout Morph'; 
@@ -1724,47 +1770,6 @@ pages
 		add: 'Miscellaneous'; 
 		add: 'Primitives'; 
 		yourself! !
-
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:08'!
-pen
-	"Pen"
-	^
-'| myPen block |
-block _ [:p | | center |					"set a program for drawing with a pen, p"
-	p squareNib: 6.						"set shape and size of the nib"
-	p color: (Color blue).				"set pen color"
-	p home.								"position pen at center of display"
-	center _ p location.					"remember the center location"	
-	p up.									"makes nib unable to draw"
-	p down.								"enable the nib to draw"
-	p north.								"point direction toward the top"
-	p turn: -180.							"change direction 180 degrees"
-	p direction.							"get the current angle of pen"
-	p go: 50.								"move the pen 50 pixels"
-	p location.							"get the pen position"
-	p goto: 200@200.					"move to the specified point"
-	p north.								"set the direction"
-	p go: 180.							"move the pen"
-	p goto: center].						"close the polygon figure"
-
-Display restoreAfter: [					"a click will restore Display"
-	Display fillWhite.					"a blank Display"
-	myPen _ Pen new.					"get graphic pen"
-	myPen fill: block color: nil].			"follow the program named ''block'' defined above"
-
-Display extent.							"get display width@height"
-Display width.							"get display width"
-Display height.							"get display height"
-
-myPen := Pen new defaultNib: 2.		"a small drawing program"
-myPen up; goto: Sensor mousePoint; down.
-[Sensor waitButton; 
-	isMouseButton3Pressed] whileFalse: "button 3 terminates"
-		[Sensor isMouseButton1Pressed 
-			ifTrue: [myPen goto: Sensor mousePoint]].
-Display restore.
-
-'! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:07'!
 point
@@ -1968,11 +1973,11 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:50'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:20'!
 sortedCollection
 	"Sorted Collections"
 	^
-'| b x y sum max |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| b x y sum max |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ SortedCollection with: 4 with: 3 with: 2 with: 1.	"create collection with 4 elements"
 x _ SortedCollection new.						"allocate collection"
 x _ SortedCollection sortBlock: [:a :c | a > c]."set sort criteria"
@@ -2015,7 +2020,7 @@ y _ x asSet.											"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:40'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/22/2016 17:16'!
 string
 	"Strings"
 	^
@@ -2045,7 +2050,7 @@ y _ x asOrderedCollection.				"convert string to ordered collection"
 y _ x asSortedCollection.					"convert string to sorted collection"
 y _ x asBag.									"convert string to bag collection"
 y _ x asSet.									"convert string to set collection"
-y _ ''world'' shuffled.							"randomly shuffle string"
+y _ ''world'' shuffled.						"randomly shuffle string"
 
 '! !
 
@@ -2113,11 +2118,11 @@ syntax
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:06'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:21'!
 time
 	"Time"
 	^
-'| x y b d1 d2 |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| x y b d1 d2 |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ Time dateAndTimeNow.			"answer the current date and time"
 x _ Time now.							"answer the current time"
 b _ (555 factorial) > 1.					"expend some time"
@@ -2163,11 +2168,11 @@ Transcript endEntry.					"flush the output buffer"
 "NOTE: from the pop-up menu, you can open a snapshot of the transcript in a workspace window."
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 6/22/2015 12:56'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:21'!
 trie
 	"Trie"
 	^
-'| t |		"For efficient viewing, have a Transcript open and use cmd-d on these statements"
+'| t |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 t _ Trie new.
 t add: ''car''.
 t at: ''car'' put: Float pi.
@@ -2186,7 +2191,7 @@ t explore.
 '
 ! !
 
-!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 10/18/2015 20:31'!
+!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 2/22/2016 16:06'!
 buildMorphicWindow
 	"Define the window layout for Terse Guide"
 	| list1 row |
@@ -2210,7 +2215,7 @@ buildMorphicWindow
 		addMorph: list1 proportionalWidth: 0.2;
 		addAdjusterAndMorph: textMorph proportionalWidth: 0.8.
 	self layoutMorph
-		addMorph: row.
+		addMorph: row layoutSpec: LayoutSpec useAll.
 	self setLabel: 'Terse Guide'! !
 
 !TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:16'!
