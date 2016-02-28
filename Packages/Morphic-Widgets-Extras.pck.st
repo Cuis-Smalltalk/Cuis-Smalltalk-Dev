@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2671] on 25 January 2016 at 12:17:47.181209 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2696] on 28 February 2016 at 9:49:12.799072 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 3!
+!provides: 'Morphic-Widgets-Extras' 1 4!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -53,7 +53,7 @@ PartsBinMorph class
 
 !classDefinition: #FrameRateMorph category: #'Morphic-Widgets-Extras'!
 RectangleLikeMorph subclass: #FrameRateMorph
-	instanceVariableNames: 'lastStepStamp lastStepDelta meanStepDelta'
+	instanceVariableNames: 'lastStepDelta meanStepDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Widgets-Extras'!
@@ -612,8 +612,8 @@ sourceRectFrom: aPoint
 	^ (aPoint extent: srcExtent) translatedBy: (srcExtent // -2) + 1.
 ! !
 
-!MagnifierMorph methodsFor: 'stepping' stamp: 'jmv 2/3/2014 22:53'!
-stepAt: millisecondClockValue
+!MagnifierMorph methodsFor: 'stepping' stamp: 'jmv 2/27/2016 19:53'!
+stepAt: millisecondSinceLast
 
 	self redrawNeeded! !
 
@@ -755,13 +755,11 @@ drawOn: aCanvas
 		"aCanvas drawString: lastStepStamp printString at: bounds topLeft + (0@28) font: AbstractFont default color: Color black "
 		]! !
 
-!FrameRateMorph methodsFor: 'stepping' stamp: 'jmv 6/11/2012 23:30'!
-stepAt: millisecondClockValue
+!FrameRateMorph methodsFor: 'stepping' stamp: 'jmv 2/27/2016 19:52'!
+stepAt: millisecondSinceLast
 
 	| n |
-	lastStepStamp ifNil: [ lastStepStamp _ millisecondClockValue ].
-	lastStepDelta _ millisecondClockValue - lastStepStamp.
-	lastStepStamp _ millisecondClockValue.
+	lastStepDelta _ millisecondSinceLast.
 	"This factor is a damper, to show a sort of mean of the n latest step deltas"
 	meanStepDelta
 		ifNil: [ meanStepDelta _ 0. n _ 0 ]
@@ -1367,8 +1365,8 @@ initialize
 	getSelector _ #contents.
 	stepTime _ 50! !
 
-!UpdatingStringMorph methodsFor: 'stepping' stamp: 'jmv 2/3/2014 22:53'!
-stepAt: millisecondClockValue
+!UpdatingStringMorph methodsFor: 'stepping' stamp: 'jmv 2/27/2016 20:07'!
+stepAt: millisecondSinceLast
 
 	self contents: (target perform: getSelector)! !
 

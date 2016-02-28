@@ -1,6 +1,7 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2571] on 7 November 2015 at 8:49:27.749639 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2696] on 28 February 2016 at 9:47:06.322674 am'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 20!
+!provides: 'BouncingAtoms' 1 22!
+!requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
 	instanceVariableNames: 'velocity'
@@ -23,7 +24,7 @@ HeaterCoolerAtom class
 
 !classDefinition: #BouncingAtomsMorph category: #BouncingAtoms!
 RectangleLikeMorph subclass: #BouncingAtomsMorph
-	instanceVariableNames: 'infectionHistory transmitInfection recentTemperatures temperature historyWindow nAtoms fpsEnabled fps fpsCurrentFrameCount fpsFrameCountSince'
+	instanceVariableNames: 'infectionHistory transmitInfection recentTemperatures temperature historyWindow nAtoms fpsEnabled fps fpsCurrentFrameCount fpsCurrentFrameCountTime'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BouncingAtoms'!
@@ -332,14 +333,14 @@ drawOn: aCanvas
 handlesMouseDown: aMouseButtonEvent
 	^ true! !
 
-!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'pb 7/16/2015 20:27'!
+!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'jmv 2/27/2016 19:47'!
 initialize
 	"initialize the state of the receiver"
 	super initialize.
 	fpsEnabled _ false.
 	fps _ 0.
-	fpsFrameCountSince _ 0.
 	fpsCurrentFrameCount _ 0.
+	fpsCurrentFrameCountTime _ 0.
 	self reset.! !
 
 !BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 7/4/2015 13:46'!
@@ -437,8 +438,8 @@ startInfection
 	self startStepping.
 ! !
 
-!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'jmv 8/16/2015 11:41'!
-stepAt: millisecondClockValue
+!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'jmv 2/27/2016 19:51'!
+stepAt: millisecondSinceLast
 	"Bounce those atoms!!"
 	| r bounces |
 	bounces := 0.
@@ -450,16 +451,16 @@ stepAt: millisecondClockValue
 	 divided by the circumference of the enclosing rectangle"
 	self updateTemperature: 10000.0 * bounces / (r width + r height).
 	transmitInfection ifTrue: [ self reportInfection ].
-	fpsEnabled ifTrue: [ | delta |
-		delta := millisecondClockValue- fpsFrameCountSince.
-		delta < 1000
+	fpsEnabled ifTrue: [
+		fpsCurrentFrameCountTime < 1000
 			ifTrue: [
 				fpsCurrentFrameCount := fpsCurrentFrameCount + 1.
+				fpsCurrentFrameCountTime _ fpsCurrentFrameCountTime + millisecondSinceLast.
 				]
 			ifFalse: [
 				fps := fpsCurrentFrameCount.
 				fpsCurrentFrameCount := 1.
-				fpsFrameCountSince := millisecondClockValue ]].
+				fpsCurrentFrameCountTime _ 0 ]].
 	self redrawNeeded! !
 
 !BouncingAtomsMorph methodsFor: 'testing' stamp: 'pb 7/16/2015 21:07'!
