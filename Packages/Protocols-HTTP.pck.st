@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2563] on 28 October 2015 at 10:31:14.680583 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:26:53.494645 am'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 19!
+!provides: 'Protocols-HTTP' 1 20!
 !requires: 'Network-Kernel' 1 2 nil!
-!requires: 'Identities-UUID' 1 1 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!requires: 'Identities-UUID' 1 1 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
 	instanceVariableNames: 'client request response authParams message'
@@ -287,6 +287,19 @@ A wrapper object for the WebSocket API.!
 !WebSocket07 commentStamp: '<historical>' prior: 0!
 A wrapper object for the WebSocket API.!
 
+!Character methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:39'!
+charCode
+
+	^ (value bitAnd: 16r3FFFFF).! !
+
+!Character methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:39'!
+isSafeForHTTP
+	"whether a character is 'safe', or needs to be escaped when used, eg, in a URL"
+	"[GG]  See http://www.faqs.org/rfcs/rfc1738.html. ~ is unsafe and has been removed"
+	^ self charCode < 128
+		and: [self isAlphaNumeric
+				or: ['.-_' includes: (Character value: self charCode)]]! !
+
 !String methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:43'!
 encodeForHTTP
 	"change dangerous characters to their %XX form, for use in HTTP transactions"
@@ -328,19 +341,6 @@ unescapePercents
 		oldPos _ pos+1].
 	ans nextPutAll: (self copyFrom: oldPos to: self size).
 	^ ans contents! !
-
-!Character methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:39'!
-charCode
-
-	^ (value bitAnd: 16r3FFFFF).! !
-
-!Character methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:39'!
-isSafeForHTTP
-	"whether a character is 'safe', or needs to be escaped when used, eg, in a URL"
-	"[GG]  See http://www.faqs.org/rfcs/rfc1738.html. ~ is unsafe and has been removed"
-	^ self charCode < 128
-		and: [self isAlphaNumeric
-				or: ['.-_' includes: (Character value: self charCode)]]! !
 
 !HTTPAuthRequired methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:14'!
 client
@@ -6859,7 +6859,7 @@ send: data code: opcode final: isFinal
 
 	^self send: data code: opcode final: isFinal mask: self masking! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'ar 11/17/2011 11:19'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 2/26/2016 17:11'!
 send: data code: opcode final: isFinal mask: doMask
 	"Sends unfragmented data using the given opcode"
 
@@ -6874,7 +6874,7 @@ send: data code: opcode final: isFinal mask: doMask
 		] ifFalse:[
 			byte2 := 126.
 			xLength := ByteArray new: 2.
-			(WriteStream on: xLength) nextNumber: 2 put: data size.
+			(WriteStream on: xLength) nextUnsignedInt16Put: data size bigEndian: true.
 		].
 	] ifFalse:[
 		byte2 := data size.

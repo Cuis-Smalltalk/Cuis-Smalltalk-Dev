@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2638] on 18 December 2015 at 3:29:44.03622 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:26:17.006144 am'!
 'Description Please enter a description for this package'!
-!provides: 'Collections-CompactArrays' 1 2!
+!provides: 'Collections-CompactArrays' 1 4!
 !classDefinition: #PointArray category: #'Collections-CompactArrays'!
 IntegerArray variableWordSubclass: #PointArray
 	instanceVariableNames: ''
@@ -166,28 +166,6 @@ bytesPerElement
 defaultElement
 	^0! !
 
-!ShortIntegerArray methodsFor: 'private' stamp: 'ar 1/15/1999 17:35'!
-pvtAt: index
-	"Private -- for swapping only"
-	<primitive: 143>
-	index isInteger ifTrue: [self errorSubscriptBounds: index].
-	index isNumber ifTrue: [^ self at: index truncated].
-	self errorNonIntegerIndex.
-! !
-
-!ShortIntegerArray methodsFor: 'private' stamp: 'ar 1/15/1999 17:35'!
-pvtAt: index put: value
-	"Private -- for swapping only"
-	<primitive: 144>
-	index isInteger
-		ifTrue: [
-			(index >= 1 and: [index <= self size])
-				ifTrue: [self errorImproperStore]
-				ifFalse: [self errorSubscriptBounds: index]].
-	index isNumber ifTrue: [^ self at: index truncated put: value].
-	self errorNonIntegerIndex.
-! !
-
 !ShortIntegerArray methodsFor: 'objects from disk' stamp: 'jmv 2/15/2008 00:48'!
 restoreEndianness
 	"This word object was just read in from a stream.  It was stored in Big Endian (Mac) format.  Swap each pair of bytes (16-bit word), if the current machine is Little Endian.
@@ -223,16 +201,6 @@ signedAt: index
 size
 	^super size * 2! !
 
-!ShortIntegerArray methodsFor: 'private' stamp: 'ar 1/15/1999 17:37'!
-swapShortObjects
-	"Private -- swap all the short quantities in the receiver"
-	| tmp |
-	1 to: self basicSize do:[:i|
-		tmp _ (self pvtAt: i * 2).
-		self pvtAt: i * 2 put: (self pvtAt: i * 2 - 1).
-		self pvtAt: i * 2 - 1 put: tmp.
-	]! !
-
 !ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/28/2013 16:52'!
 unsignedAt: index
 	"Return the 16-bit unsigned integer value at the given index of the receiver."
@@ -245,16 +213,16 @@ unsignedAt: index
 			"(primValue + 1) negated bitInvert16" ]
 		ifFalse: [ primValue ]! !
 
-!ShortIntegerArray methodsFor: 'objects from disk' stamp: 'jmv 5/27/2015 14:06'!
+!ShortIntegerArray methodsFor: 'objects from disk' stamp: 'jmv 2/26/2016 17:08'!
 writeOn: aStream 
 
 	| w |
-	aStream nextInt32Put: self basicSize.
+	aStream nextSignedInt32Put: self basicSize bigEndian: true.
 
 	1 to: self basicSize do: [ :i |
 		w _ self basicAt: i.
 		Smalltalk isLittleEndian
-			ifFalse: [ aStream nextNumber: 4 put:  w ]
+			ifFalse: [ aStream nextUnsignedInt32Put: w bigEndian: true ]
 			ifTrue: [ aStream
 				nextPut: (w digitAt: 2);
 				nextPut: (w digitAt: 1);
@@ -288,9 +256,10 @@ new: n
 		self error: 'ShortIntegerArray>>#new: must be called with an even argument' ].
 	^ super new: n // 2! !
 
-!ShortIntegerArray class methodsFor: 'class initialization' stamp: 'ar 1/15/1999 17:40'!
+!ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:51'!
 swapShortObjects
-	self allSubInstancesDo:[:inst| inst swapShortObjects]! !
+	self allSubInstancesDo: [ :inst |
+		BitBlt swapHalvesIn32BitWords: inst ]! !
 
 !ShortPointArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 15:43'!
 at: index
@@ -410,28 +379,6 @@ printOn: aStream
 	].
 	aStream nextPutAll:' )'.! !
 
-!ShortRunArray methodsFor: 'private' stamp: 'ar 1/15/1999 17:47'!
-pvtAt: index
-	"Private -- for swapping only"
-	<primitive: 143>
-	index isInteger ifTrue: [self errorSubscriptBounds: index].
-	index isNumber ifTrue: [^ self at: index truncated].
-	self errorNonIntegerIndex.
-! !
-
-!ShortRunArray methodsFor: 'private' stamp: 'ar 1/15/1999 17:47'!
-pvtAt: index put: value
-	"Private -- for swapping only"
-	<primitive: 144>
-	index isInteger
-		ifTrue: [
-			(index >= 1 and: [index <= self size])
-				ifTrue: [self errorImproperStore]
-				ifFalse: [self errorSubscriptBounds: index]].
-	index isNumber ifTrue: [^ self at: index truncated put: value].
-	self errorNonIntegerIndex.
-! !
-
 !ShortRunArray methodsFor: 'objects from disk' stamp: 'jmv 2/15/2008 00:49'!
 restoreEndianness
 	"This word object was just read in from a stream.  It was stored in Big Endian (Mac) format.  Swap each pair of bytes (16-bit word), if the current machine is Little Endian.
@@ -500,16 +447,6 @@ size
 species
 	"Answer the preferred class for reconstructing the receiver."
 	^ShortIntegerArray! !
-
-!ShortRunArray methodsFor: 'private' stamp: 'ar 1/15/1999 17:48'!
-swapRuns
-	"Private -- swap length/value pairs in the receiver"
-	| tmp |
-	1 to: self basicSize do:[:i|
-		tmp _ (self pvtAt: i * 2).
-		self pvtAt: i * 2 put: (self pvtAt: i * 2 - 1).
-		self pvtAt: i * 2 - 1 put: tmp.
-	]! !
 
 !ShortRunArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 17:22'!
 valueAtRun: index
@@ -594,8 +531,9 @@ newFrom: aCollection
 runs: runCollection values: valueCollection
 	^(self basicNew: runCollection size) setRuns: runCollection values: valueCollection! !
 
-!ShortRunArray class methodsFor: 'class initialization' stamp: 'ar 1/15/1999 17:47'!
+!ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:52'!
 swapRuns
-	self allSubInstancesDo:[:inst| inst swapRuns]! !
+	self allSubInstancesDo: [ :inst |
+		BitBlt swapHalvesIn32BitWords: inst ]! !
 ShortIntegerArray initialize!
 ShortRunArray initialize!

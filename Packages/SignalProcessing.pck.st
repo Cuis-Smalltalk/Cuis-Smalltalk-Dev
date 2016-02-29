@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 22 January 2016 at 4:51:37.149086 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:27:17.168183 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 44!
+!provides: 'SignalProcessing' 1 46!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Goodies' 1 0 nil!
 !requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Goodies' 1 0!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -1205,11 +1205,11 @@ bilinearInterpolatedClampToEdgeValueAtX: x y: y
 	^ self bilinearInterpolatedValueAtX: (x min: width max: 1) y: (y min: height max: 1)
 ! !
 
-!FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 15:02'!
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 2/22/2016 16:00'!
 bilinearInterpolatedValueAtX: x y: y
 	"Evaluate a bilinear (i.e. cheap) interpolation
 	Like OpenCV's CV_INTER_LINEAR
-	Answer 0.0 if outside image bounds."
+	Answer 0.0 if outside image bounds: [1 .. width] x [1 .. height]"
 
 	| w interpolated xWeight1 xWeight0 yWeight1 yWeight0 xIndex0 xIndex1 yIndex0 yIndex1 |
 	xIndex0 _ x truncated. 		"Could be #floor. But as we only care for values >=1, it is the same. But faster."
@@ -2320,6 +2320,130 @@ normalizeValuesFloor: min ceiling: max
 
 	self replaceValues: [ :i :j :v | v - min / max min: 1.0 max: 0.0 ]! !
 
+!FloatImage methodsFor: 'normalized coordinates' stamp: 'jmv 2/25/2016 16:51'!
+normalizedCoordinatesForOneBased: oneBasedCoordinates
+	"
+	oneBasedCoordinates in [1..width] x [1..height] (might be float or integer)
+	answer in [0.0 .. 1.0] x [0.0 .. 1.0]
+
+	In normalized coordinates:
+		0.0 means first sample (x=1)
+		1.0 means last sample (x=width)
+
+	(FloatImage extent: 11@11) normalizedCoordinatesForOneBased: 1@11
+	(FloatImage extent: 11@11) normalizedCoordinatesForOneBased: 2@10
+	"
+
+	^((oneBasedCoordinates x-1.0)/(width-1)) @ ((oneBasedCoordinates y-1.0)/(height-1))! !
+
+!FloatImage methodsFor: 'normalized coordinates' stamp: 'jmv 2/25/2016 16:52'!
+oneBasedCoordinatesForNormalized: normalizedCoordinates
+	"
+	normalizedCoordinates in [0.0 .. 1.0] x [0.0 .. 1.0]
+	answer in [1..width] x [1..height]
+	Answer is Float!!
+
+	In normalized coordinates:
+		0.0 means first sample (x=1)
+		1.0 means last sample (x=width)
+
+	(FloatImage extent: 11@11) oneBasedCoordinatesForNormalized: 0.0@1.0
+	(FloatImage extent: 11@11) oneBasedCoordinatesForNormalized: 0.1@0.9
+	"
+"
+	| i oneBased |
+	i _ FloatImage extent: 4@4.
+	1 to: i width do: [ :x |
+		1 to: i height do: [ :y |
+			i x: x y: y put: (x-1 * 255.0 / (i width-1)) ]].
+	i print.
+	'' print.
+	0.0 to: 1.0 count: 300 do: [ :x | 
+		oneBased _ i oneBasedCoordinatesForNormalized: x@0.5.
+		(i bilinearInterpolatedClampToEdgeValueAtX: oneBased x y: oneBased y) print ]. nil
+"
+
+	^ (normalizedCoordinates x*(width-1)+1) @ (normalizedCoordinates y*(height-1)+1)! !
+
+!FloatImage methodsFor: 'normalized coordinates' stamp: 'jmv 2/26/2016 11:32'!
+oneBasedCoordinatesForOpenCLNormalized: normalizedCoordinates
+	"
+	normalizedCoordinates in [0.0 .. 1.0] x [0.0 .. 1.0], with OpenCL semantics (See below)
+	answer in [1..width] x [1..height]
+	Answer is Float!!
+
+	In OpenCL style normalized coordinates:
+		0.0 means half pixel to the left of the first sample (x=0.5)
+		1.0 means half pixel to the right of the last sample (x=width+0.5)
+
+	(FloatImage extent: 10@10) oneBasedCoordinatesForOpenCLNormalized: 0.05@0.95
+	(FloatImage extent: 10@10) oneBasedCoordinatesForOpenCLNormalized: 0.0@1.0
+	(FloatImage extent: 10@10) oneBasedCoordinatesForOpenCLNormalized: 0.15@0.85
+
+	This is what OpenCL does when doing linear interpolation with normalized coordinates
+	See NormalizedCoordinatesExperiment in the OpenCL package"
+"
+	| i oneBased |
+	i _ FloatImage extent: 4@4.
+	1 to: i width do: [ :x |
+		1 to: i height do: [ :y |
+		i x: x y: y put: (x-1+0.5 * 255.0 / i width) ]].
+	i print.
+	'' print.
+	0.0 to: 1.0 count: 300 do: [ :x | 
+		oneBased _ i oneBasedCoordinatesForOpenCLNormalized: x@0.5.
+		(i bilinearInterpolatedClampToEdgeValueAtX: oneBased x y: oneBased y) print ]. nil
+"
+
+	| x y |
+	x _ normalizedCoordinates x*width+0.5.
+	y _ normalizedCoordinates y*height+0.5.
+	^ (x min: width max: 1) @ (y min: height max: 1)
+
+	"
+	| orig small rebuilt p v oneBased |
+	orig _ FloatImage gradient: 256@256.
+	orig display.
+
+	small _ orig subsampleForOpenCLNormalizedCoordinates: 4@4.
+	small _ FloatImage extent: 4@4.
+	1 to: small height do: [ :y |
+		1 to: small width do: [ :x |
+			p _ orig oneBasedCoordinatesForOpenCLNormalized: (small openCLNormalizedCoordinatesForOneBased: x@y).
+			v _ orig bilinearInterpolatedValueAtX: p x y: p y.
+			small x: x y: y put: v ]].
+	small display.
+
+	rebuilt _ FloatImage extent: orig extent.
+	1 to: rebuilt height do: [ :y |
+		1 to: rebuilt width do: [ :x |
+			oneBased _ small oneBasedCoordinatesForOpenCLNormalized: (x-1/(rebuilt width-1)) @ (y-1/(rebuilt height-1)).
+			v _ small bilinearInterpolatedClampToEdgeValueAtX: oneBased x y: oneBased y.
+			rebuilt x: x y: y put: v ]].
+	rebuilt display.
+
+	(rebuilt - orig + 0.5) histogram plot.
+	(rebuilt - orig * 40 + 0.5) display
+	"! !
+
+!FloatImage methodsFor: 'normalized coordinates' stamp: 'jmv 2/26/2016 11:34'!
+openCLNormalizedCoordinatesForOneBased: oneBasedCoordinates
+	"
+	oneBasedCoordinates in [1..width] x [1..height] (might be float or integer)
+	answer in [0.0 .. 1.0] x [0.0 .. 1.0], with OpenCL semantics (See below)
+
+	In OpenCL style normalized coordinates:
+		0.0 means half pixel to the left of the first sample (x=0.5)
+		1.0 means half pixel to the right of the last sample (x=width+0.5)
+
+	(FloatImage extent: 10@10) openCLNormalizedCoordinatesForOneBased: 1@10
+	(FloatImage extent: 10@10) openCLNormalizedCoordinatesForOneBased: 2@9
+
+	This is what OpenCL does when doing linear interpolation with normalized coordinates
+	See NormalizedCoordinatesExperiment in the OpenCL package"
+
+	^ ((oneBasedCoordinates x-0.5)/width) @ ((oneBasedCoordinates y-0.5)/height)! !
+
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 6/15/2015 16:30'!
 perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft bottomRight: bottomRight
 	"Resample the receiver to a new Float image.
@@ -2948,6 +3072,18 @@ fromForm: aForm
 		^self from8BitColorForm: aForm ].
 
 	self error: 'unsupported depth'! !
+
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 2/22/2016 15:15'!
+gradient: extent
+	"Build and answer a gradient pattern
+	(FloatImage gradient: 20@20) display
+	"
+	| answer |
+	answer _ self extent: extent.
+	1 to: extent y do: [ :y |
+		1 to: extent x do: [ :x |
+			answer x: x y: y put: x+y-2 / (extent x + extent y - 2) ]].
+	^answer! !
 
 !FloatImage class methodsFor: 'sample images' stamp: 'jmv 9/3/2015 15:18'!
 grid: cellExtent extent: totalExtent
@@ -6823,18 +6959,18 @@ bytesPerEncodedFrame
 	^ 0
 ! !
 
-!WaveletCodec methodsFor: 'subclass responsibilities' stamp: 'di 3/8/1999 08:20'!
+!WaveletCodec methodsFor: 'subclass responsibilities' stamp: 'jmv 2/26/2016 17:02'!
 decodeFrames: frameCount from: srcByteArray at: srcIndex into: dstSoundBuffer at: dstIndex
 	"Decode the given number of monophonic frames starting at the given index in the given ByteArray of compressed sound data and storing the decoded samples into the given SoundBuffer starting at the given destination index. Answer a pair containing the number of bytes of compressed data consumed and the number of decompressed samples produced."
 	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
 
 	| frameBase coeffArray scale i c nullCount samples sourceFrameEnd frameSize inStream val |
 	inStream _ ReadStream on: srcByteArray from: srcIndex to: srcByteArray size.
-	"frameCount _ " inStream nextNumber: 4.
-	samplesPerFrame _ inStream nextNumber: 4.
-	nLevels _ inStream nextNumber: 4.
-	alpha _ Float fromIEEE32Bit: (inStream nextNumber: 4).
-	beta _ Float fromIEEE32Bit: (inStream nextNumber: 4).
+	"frameCount _ " inStream nextUnsignedInt32BigEndian: true.
+	samplesPerFrame _ inStream nextUnsignedInt32BigEndian: true.
+	nLevels _ inStream nextUnsignedInt32BigEndian: true.
+	alpha _ inStream nextFloat32BigEndian: true.
+	beta _ inStream nextFloat32BigEndian: true.
 	fwt ifNil:
 		["NOTE: This should read parameters from the encoded data"
 		fwt _ FWT new.
@@ -6847,9 +6983,9 @@ decodeFrames: frameCount from: srcByteArray at: srcIndex into: dstSoundBuffer at
 		[:frame | 
 
 		"Decode the scale for this frame"
-		frameSize _ inStream nextNumber: 2.
+		frameSize _ inStream nextUnsignedInt16BigEndian: true.
 		sourceFrameEnd _ frameSize + inStream position.
-		scale _ Float fromIEEE32Bit: (inStream nextNumber: 4).
+		scale _ inStream nextFloat32BigEndian: true.
 
 		"Expand run-coded samples to scaled float values."
 		i _ 5.
@@ -6884,7 +7020,7 @@ decodeFrames: frameCount from: srcByteArray at: srcIndex into: dstSoundBuffer at
 	^ Array with: inStream position + 1 - srcIndex
 			with: frameBase - dstIndex! !
 
-!WaveletCodec methodsFor: 'subclass responsibilities' stamp: 'jmv 4/18/2011 14:42'!
+!WaveletCodec methodsFor: 'subclass responsibilities' stamp: 'jmv 2/26/2016 17:13'!
 encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at: dstIndex
 	"Encode the given number of frames starting at the given index in the given monophonic SoundBuffer and storing the encoded sound data into the given ByteArray starting at the given destination index. Encode only as many complete frames as will fit into the destination. Answer a pair containing the number of samples consumed and the number of bytes of compressed data produced."
 	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
@@ -6907,11 +7043,11 @@ encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at
 		fwt setAlpha: alpha beta: beta].
 
 	(outStream _ WriteStream on: dstByteArray from: dstIndex to: dstByteArray size)
-		nextNumber: 4 put: frameCount;
-		nextNumber: 4 put: samplesPerFrame;
-		nextNumber: 4 put: nLevels;
-		nextNumber: 4 put: alpha asIEEE32BitWord;
-		nextNumber: 4 put: beta asIEEE32BitWord.
+		nextUnsignedInt32Put: frameCount bigEndian: true;
+		nextUnsignedInt32Put: samplesPerFrame bigEndian: true;
+		nextUnsignedInt32Put: nLevels bigEndian: true;
+		nextFloat32Put: alpha bigEndian: true;
+		nextFloat32Put: beta bigEndian: true.
 	frameBase _ srcIndex.
 	1 to: frameCount do:
 		[:frame | 
@@ -6924,7 +7060,7 @@ encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at
 		fwt transformForward: true.
 
 		frameI _ outStream position+1.  "Reserve space for frame size"
-		outStream nextNumber: 2 put: 0.
+		outStream nextUnsignedInt16Put: 0 bigEndian: true.
 
 		"Determine and output the scale for this frame"
 		coeffs _ fwt coeffs.
@@ -6934,7 +7070,7 @@ encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at
 			c > maxVal ifTrue: [maxVal _ c].
 			c < minVal ifTrue: [minVal _ c]].
 		scale _ (maxVal max: minVal negated) / 16000.0.  "Will scale all to -16k..16k: 15 bits"
-		outStream nextNumber: 4 put: scale asIEEE32BitWord.
+		outStream nextFloat32Put: scale bigEndian: true.
 
 		"Copy scaled values, with run-coded sequences of 0's, to destByteArray"
 		nullCount _ 0.
@@ -6947,19 +7083,19 @@ encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at
 			ifFalse: ["Above threshold -- emit prior null count and this sample."
 					nullCount > 0 ifTrue:
 						[nullCount <= 112
-						ifTrue: [outStream nextNumber: 1 put: nullCount-1]
-						ifFalse: [outStream nextNumber: 2 put: (112*256) + nullCount-1].
+						ifTrue: [outStream nextPut: nullCount-1]
+						ifFalse: [outStream nextUnsignedInt16Put: (112*256) + nullCount-1 bigEndian: true ].
 						nullCount _ 0].
 						val _ c asInteger + 16384 + 32768.  "Map -16k..16k into 32k..64k"
-						outStream nextNumber: 2 put: val]].
+						outStream nextUnsignedInt16Put: val bigEndian: true ]].
 
 					nullCount > 0 ifTrue:
 						[nullCount <= 112
-						ifTrue: [outStream nextNumber: 1 put: nullCount-1]
-						ifFalse: [outStream nextNumber: 2 put: (112*256) + nullCount-1]].
+						ifTrue: [outStream nextPut: nullCount-1]
+						ifFalse: [outStream nextUnsignedInt16Put: (112*256) + nullCount-1 bigEndian: true ]].
 		outFrameSize _ outStream position+1 - frameI - 2.  "Write frame size back at the beginning"
 		(WriteStream on: dstByteArray from: frameI to: dstByteArray size)
-			nextNumber: 2 put: outFrameSize.
+			nextUnsignedInt16Put: outFrameSize bigEndian: true .
 		frameBase _ frameBase + samplesPerFrame].
 
 "This displays a temporary indication of compression achieved"
@@ -6972,12 +7108,11 @@ encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at
 	^ Array with: frameBase - srcIndex
 			with: outStream position+1 - dstIndex! !
 
-!WaveletCodec methodsFor: 'subclass responsibilities' stamp: 'di 2/8/1999 16:49'!
+!WaveletCodec methodsFor: 'subclass responsibilities' stamp: 'jmv 2/26/2016 17:02'!
 frameCount: aByteArray
 	"Compute the frame count for this byteArray.  This default computation will have to be overridden by codecs with variable frame sizes."
 
-	^ (ReadStream on: aByteArray) nextNumber: 4.
-! !
+	^ (ReadStream on: aByteArray) nextUnsignedInt32BigEndian: true! !
 
 !WaveletCodec methodsFor: 'subclass responsibilities' stamp: 'di 2/8/1999 14:17'!
 samplesPerFrame

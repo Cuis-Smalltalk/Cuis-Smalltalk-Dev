@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2676] on 26 January 2016 at 11:15:18.41464 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2690] on 26 February 2016 at 1:31:02.783111 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 20!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'LinearAlgebra' 1 21!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -84,7 +84,7 @@ My instances are m x n matrices of Float values, where m is the height and n the
 My instances can have non-zero values only in the diagonal, and a band of certain width around it. Save space.!
 
 !IntegerMatrix commentStamp: '<historical>' prior: 0!
-Elements are integers between -16r80000000 and 16r7FFFFFFF, i.e. signed 16-bit words.
+Elements are integers between -16r80000000 and 16r7FFFFFFF, i.e. signed 32-bit words.
 
 IntegerMatrix fromArrayOfArrays: {
 	{ 0. 									1. 						-1 }.
