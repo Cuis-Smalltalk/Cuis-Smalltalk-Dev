@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2690] on 22 February 2016 at 8:15:37.758073 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 3 March 2016 at 9:50:30.723778 am'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 26!
+!provides: 'ClassCommentBrowser' 1 27!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -335,11 +335,10 @@ browseVersions
 			VersionsBrowserWindow 
 				browseCommentOf: (Smalltalk at: model getCurrentSelection item asSymbol)]! !
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 2/22/2016 20:14'!
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 11/5/2015 11:12'!
 buildMorphicWindow
 	"Answer a window for the class comment browser"
 	| row |
-	
 	listMorph _ CommentGuideListMorph
 		model: model
 		listGetter: #getList
@@ -349,19 +348,16 @@ buildMorphicWindow
 		menuGetter: #commentGuideMenu
 		keystrokeAction: #respondToKey:.
 	listMorph name: #Hierarchy.
-	
 	textMorph _ TextModelMorph textProvider: model.
 	textMorph 
 		name: 'Class Comment';
 		askBeforeDiscardingEdits: false.
-		
 	row _ LayoutMorph newRow.
 	row
 		addMorph: listMorph fixedWidth: 250;
 		addAdjusterAndMorph: textMorph proportionalWidth: 1.0.
-		
 	self layoutMorph
-		addMorph: row layoutSpec: LayoutSpec useAll.
+		addMorph: row.
 	updatablePanes _ #(listMorph).
 	model window: self! !
 

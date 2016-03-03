@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2690] on 23 February 2016 at 12:27:03.402329 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 3 March 2016 at 9:50:40.783778 am'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 103!
+!provides: 'TerseGuide' 1 104!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -2191,7 +2191,7 @@ t explore.
 '
 ! !
 
-!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 2/22/2016 16:06'!
+!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 10/18/2015 20:31'!
 buildMorphicWindow
 	"Define the window layout for Terse Guide"
 	| list1 row |
@@ -2215,7 +2215,7 @@ buildMorphicWindow
 		addMorph: list1 proportionalWidth: 0.2;
 		addAdjusterAndMorph: textMorph proportionalWidth: 0.8.
 	self layoutMorph
-		addMorph: row layoutSpec: LayoutSpec useAll.
+		addMorph: row.
 	self setLabel: 'Terse Guide'! !
 
 !TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:16'!
