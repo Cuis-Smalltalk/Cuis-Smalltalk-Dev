@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 3 March 2016 at 9:50:40.783778 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 5 March 2016 at 9:51:26.280308 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 104!
+!provides: 'TerseGuide' 1 106!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -36,8 +36,8 @@ TerseGuideHelp also serves as the model for TerseGuideWindow, which can be opene
 TerseGuideWindow openTerseGuide
 !
 
-!TerseGuideWindow commentStamp: 'dhn 3/7/2015 15:27' prior: 0!
-Show a terse guide to Cuis in a system window. The window has a text pane with a list pane beside it. The text pane is a kind of Workspace which has the behavior that statements in it can be done (cmd-d) or printed (cmd-p) in order to observe their effect.
+!TerseGuideWindow commentStamp: 'dhn 3/5/2016 21:50' prior: 0!
+Show a terse guide to Cuis in a system window. The window has a text pane with a list pane beside it. The text pane is a kind of Workspace which has the behavior that statements in it can be Done (Cmd-d) or Printed (Cmd-p) in order to observe their effect.
 
 TerseGuideWindow openTerseGuide
 !
@@ -2079,7 +2079,7 @@ y _ x asSet.									"convert symbol to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/16/2015 20:28'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/5/2016 13:42'!
 syntax
 	"Syntax Notes"
 	^
@@ -2114,8 +2114,15 @@ syntax
 		- Instance Variables: unique to each instance
 
 	Comments are enclosed in quotes
-	Period (.) is the statement separator"
-
+	Period (.) is the statement separator
+	
+	Expressions are evaluated left-to-right.
+	Message precedence: unary, binary, then keyword.
+	
+	A message within parentheses is sent before any messages outside the parentheses.
+	Expressions with parentheses can alternatively be written with ''::'' as in the following examples..."
+	
+BrowserWindow fullOnClass: Parser class selector: #chainExamplesDoubleColon.
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:21'!
