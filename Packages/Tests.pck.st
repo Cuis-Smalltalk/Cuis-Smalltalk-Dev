@@ -1,9 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2689] on 21 February 2016 at 7:00:44.98487 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2703] on 9 March 2016 at 10:08:48.069987 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 42!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Tests' 1 44!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Taskbar' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -422,6 +424,36 @@ TestCase subclass: #RandomTest
 	category: 'Tests-Kernel-Numbers'!
 !classDefinition: 'RandomTest class' category: #'Tests-Kernel-Numbers'!
 RandomTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #LaggedFibonacciRandomTest category: #'Tests-Kernel-Numbers'!
+RandomTest subclass: #LaggedFibonacciRandomTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Numbers'!
+!classDefinition: 'LaggedFibonacciRandomTest class' category: #'Tests-Kernel-Numbers'!
+LaggedFibonacciRandomTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ParkMiller88RandomTest category: #'Tests-Kernel-Numbers'!
+RandomTest subclass: #ParkMiller88RandomTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Numbers'!
+!classDefinition: 'ParkMiller88RandomTest class' category: #'Tests-Kernel-Numbers'!
+ParkMiller88RandomTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ParkMiller93RandomTest category: #'Tests-Kernel-Numbers'!
+RandomTest subclass: #ParkMiller93RandomTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Numbers'!
+!classDefinition: 'ParkMiller93RandomTest class' category: #'Tests-Kernel-Numbers'!
+ParkMiller93RandomTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ReferenceStreamTest category: #'Tests-System-Object Storage'!
@@ -8514,46 +8546,156 @@ testValueUnpreemptively
 wasteTime: iterations
 	iterations timesRepeat: [1.23 asString asNumber]! !
 
-!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/20/2016 22:22'!
-testParkMillerCorrectness
-	| random samples differences |
-	random _ ParkMillerRandom new seed: 98712341.
-	samples _ (1 to: 10) collect: [:each| random nextInteger: 10].
-	self assert: samples = #(9 4 4 4 4 7 8 1 10 3).
+!RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:33'!
+byteBitCounts
 
-	random _ ParkMillerRandom new seed: 98712341.
-	samples _ (1 to: 10) collect: [:each| random next].
-	differences _ samples -  #(0.559231128338366 0.997573982923093 0.2259309884281508 0.2221225119298894 0.2130580056519518 0.865900992353401 0.1979784836051885 0.4243739524038387 0.4530180513174357 0.874388492142031).
-	self assert: differences max < 0.000000000001! !
+	| tablePower answer |
+	tablePower _ 8.
+	answer _ ByteArray new: (1 bitShift: tablePower).
+	0 to: tablePower - 1 do:
+		[:eachPowerIndex |
+			| powerOfTwo |
+			powerOfTwo _ 1 bitShift: eachPowerIndex.
+			1 + powerOfTwo to: answer size by: powerOfTwo * 2 do:
+				[:eachPivot |
+					0 to: powerOfTwo - 1 do:
+						[:eachIndex |
+							answer
+								at: eachPivot + eachIndex
+								put: (answer at: eachPivot + eachIndex) + 1
+						]
+				]
+		].
+	^answer! !
 
-!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/20/2016 22:39'!
-testParkMillerInitialValues
-	| samples |
-	samples _ (1 to: 1000) collect: [:each| ParkMillerRandom new next].
-	self assert: (samples average - 0.5) abs < 0.1! !
+!RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:16'!
+nSamplesByDefault
 
-!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/19/2016 07:49'!
-testRandomLargeInteger
-	| odds |
-	odds _ (1 to: 1000) count: [:x| (1 << 64) atRandom odd].
-	self assert: (odds - 500) abs < 100! !
+	^1000! !
 
-!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/19/2016 07:56'!
+!RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 17:59'!
+rng
+
+	^self rngClass new! !
+
+!RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:01'!
+rngClass
+
+	self subclassResponsibility! !
+
+!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:38'!
+testRandomLargeInteger1
+
+	| random nSamples highBound odds |
+	random _ self rng.
+	nSamples _ self nSamplesByDefault.
+	highBound _ 1 << 64.
+	odds _ 0.
+	nSamples timesRepeat: [odds _ highBound atRandom: random :: bitAnd: 1 :: + odds].
+	self assert: (odds * 2 - nSamples * 5) abs < nSamples  "10% max deviation"! !
+
+!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:47'!
 testRandomLargeInteger2
-	self assert: ((((1 << 1000) atRandom printStringBase: 2) count: [:x| x = $1]) - 500) abs < 100! !
 
-!RandomTest methodsFor: 'tests' stamp: 'jmv 1/19/2011 10:46'!
+	| random nSamples bitCounts bitsPerRandom highBound ones |
+	random _ self rng.
+	nSamples _ self nSamplesByDefault.
+	bitCounts _ self byteBitCounts.
+	bitsPerRandom _ 1000.
+	highBound _ 1 << bitsPerRandom.
+	ones _ 0.
+	nSamples timesRepeat:
+		[
+			| next |
+			next _ highBound atRandom: random.
+			1 to: next basicSize do:
+				[:eachIndex | ones _ bitCounts at: (next basicAt: eachIndex) + 1 :: + ones].
+		].
+	self assert: ones - (nSamples * bitsPerRandom / 2) abs / 10 < nSamples "1% max deviation"! !
+
+!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:05'!
 testSeed0
+
 	| random |
-	random := Random new.
-	self should: [ random seed: 0 ] raise: Error.
+	random := self rng.
+	self should: [random seed: 0] raise: Error.
 	self assert: (10 atRandom: random) <= 10! !
 
-!RandomTest methodsFor: 'as yet unclassified' stamp: 'len 2/19/2016 07:46'!
+!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:17'!
 testSetAtRandom
-	| set |
-	set _ {0. 1} asSet.
-	self assert: (((1 to: 1000) collect: [:x| set atRandom]) average - 0.5) abs < 0.1! !
+
+	| random set nSamples sum |
+	random _ self rng.
+	set _ Set with: 0 with: 1.
+	nSamples _ self nSamplesByDefault.
+	sum _ 0.
+	nSamples timesRepeat: [sum _ set atRandom: random :: + sum].
+	self assert: (sum / nSamples - 0.5) abs < 0.1! !
+
+!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 20:51'!
+testSimpleBuckets
+	"This is a poor test, see Knuth's TAOCP"
+
+	| nbuckets buckets nSamples random slot |
+	nbuckets _ 1000.
+	buckets _ Array new: nbuckets.
+	buckets atAllPut: 0.
+	nSamples _ 1000.
+	random _ self rng.
+	nSamples * nbuckets timesRepeat:
+		[
+			slot := (random next * nbuckets) floor + 1.
+			buckets at: slot put: (buckets at: slot) + 1
+		].
+	buckets do:
+		[:each |
+			"max ~17% deviation"
+			self assert: (each - nSamples * 6) abs < nSamples
+		]! !
+
+!RandomTest class methodsFor: 'testing' stamp: 'sqr 3/5/2016 17:54'!
+isAbstract
+
+	^self subclasses notEmpty! !
+
+!LaggedFibonacciRandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:50'!
+nSamplesByDefault
+
+	^self rng majorLag * 100! !
+
+!LaggedFibonacciRandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:00'!
+rngClass
+
+	^LaggedFibonacciRandom! !
+
+!ParkMiller88RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 19:58'!
+rngClass
+
+	^ParkMiller88Random! !
+
+!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 20:06'!
+testParkMillerCorrectness
+	"The correctness test suggested by the authors"
+
+	| random next |
+	random _ self rng seed: 1.
+	10000 timesRepeat: [next _ random next].
+	self assert: next * 16r7FFFFFFF = 1043618065.0! !
+
+!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:48'!
+testParkMillerInitialValues
+
+	| nSamples random samples |
+	nSamples _ self nSamplesByDefault.
+	random _ self rng.
+	samples _ 1 to: nSamples :: collect: [:each | random next].
+	self assert: (samples average - 0.5) abs < 0.1.
+	self assert: samples size * 10 > nSamples! !
+
+!ParkMiller93RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 19:58'!
+rngClass
+
+	^ParkMiller93Random! !
 
 !ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
 testDiskProxy
