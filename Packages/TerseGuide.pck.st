@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 5 March 2016 at 9:51:26.280308 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 15 March 2016 at 2:40:18.928819 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 106!
+!provides: 'TerseGuide' 1 107!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -1641,11 +1641,11 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:18'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/15/2016 14:05'!
 morph
 	"Morphs"
 	^
-'| x y |			"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
+'| x y z w v |			"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ Morph new.			"a new but invisible morph"
 x openInWorld.				"make visible in upper left of screen"
 x openInHand.				"make visible at cursor location"
@@ -1659,6 +1659,14 @@ x _ SystemWindow new openInWorld.	"open a window"
 x setLabel: ''Label for It''.
 y _ LayoutMorph example10.	"organizing several morphs"
 x addMorph: y.				"place morphs in a SystemWindow"
+
+z _ x submorphs at: 1 :: submorphs at: 1 :: submorphs at: 2 :: submorphs at: 3.	"select a deep submorph"
+	"The ''::'' syntax avoids nested parentheses"
+z name.						"name of the deep submorph"
+w _ z owningWindow.		"answer the first enclosing morph that is a kind of Window"
+w class.
+v _ x findDeepSubmorphThat: [:m | m name = #F] ifAbsent: [nil].	"find the submorph named #F"
+v == z.						"verify that v and z are identical"
 
 LayoutMorph includeInNewMorphMenu.
 	"Return true for all classes that can be instantiated from the menu"
