@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:27:17.168183 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2703] on 15 March 2016 at 9:50:47.273829 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 46!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 47!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -2870,6 +2870,12 @@ withImaginary: aFloatImage displayPhaseAt: aPoint
 		phase _ complex phase.
 		(phase / twoPi + 0.5 * 255) rounded ].
 	f displayAt: aPoint! !
+
+!FloatImage methodsFor: 'file operations' stamp: 'jmv 3/11/2016 15:57'!
+writeBMPfileNamed: fName
+
+	self replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	self asForm writeBMPfileNamed: fName! !
 
 !FloatImage methodsFor: 'file operations' stamp: 'jmv 10/3/2015 19:07'!
 writeFileNamed: filename
