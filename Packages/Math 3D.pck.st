@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2621] on 3 December 2015 at 10:02:21.317786 am'!
-'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition of 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 13!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2706] on 17 March 2016 at 10:56:36.311403 am'!
+'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition to 32-bit FloatArray).'!
+!provides: 'Math 3D' 1 14!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -2225,6 +2225,16 @@ normalize
 normalized
 	^self / self length! !
 
+!Float64Vector3 methodsFor: 'private' stamp: 'jmv 3/16/2016 14:18'!
+printOn: aStream 
+	"The receiver prints on aStream in terms of infix notation."
+
+	self x printOn: aStream.
+	aStream nextPut: $@.
+	self y printOn: aStream.
+	aStream nextPut: $@.
+	self z printOn: aStream! !
+
 !Float64Vector3 methodsFor: 'private'!
 privateLoadFrom: srcObject
 	self x: srcObject x y: srcObject y z: srcObject z.! !
@@ -2606,6 +2616,16 @@ normalize
 !Float32Vector3 methodsFor: 'vector functions' stamp: 'jmv 11/24/2015 16:32'!
 normalized
 	^self / self length! !
+
+!Float32Vector3 methodsFor: 'printing' stamp: 'jmv 3/16/2016 14:18'!
+printOn: aStream 
+	"The receiver prints on aStream in terms of infix notation."
+
+	self x printOn: aStream.
+	aStream nextPut: $@.
+	self y printOn: aStream.
+	aStream nextPut: $@.
+	self z printOn: aStream! !
 
 !Float32Vector3 methodsFor: 'private' stamp: 'jmv 11/24/2015 16:32'!
 privateLoadFrom: srcObject
