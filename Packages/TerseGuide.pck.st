@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 15 March 2016 at 2:40:18.928819 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 17 March 2016 at 9:09:45.239894 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 107!
+!provides: 'TerseGuide' 1 108!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -2133,11 +2133,11 @@ syntax
 BrowserWindow fullOnClass: Parser class selector: #chainExamplesDoubleColon.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:21'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/17/2016 21:08'!
 time
 	"Time"
 	^
-'| x y b d1 d2 |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
+'| x y b d1 d2 w |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ Time dateAndTimeNow.			"answer the current date and time"
 x _ Time now.							"answer the current time"
 b _ (555 factorial) > 1.					"expend some time"
@@ -2162,6 +2162,8 @@ String streamContents: [:s | Time now storeOn: s].
 x _ Time millisecondsToRun: [		"timing facility"
    1 to: 1000 do: [:index | y _ 400 factorial * index]].
 
+w _ Time localMillisecondClock.		"milliseconds since the Smalltalk epoch"
+"The Smalltalk epoch began at 00:00 on the morning of January 1, 1901, in the local host time zone."
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/3/2015 12:44'!
