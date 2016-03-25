@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 3 March 2016 at 9:50:40.783778 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 17 March 2016 at 9:09:45.239894 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 104!
+!provides: 'TerseGuide' 1 108!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -36,8 +36,8 @@ TerseGuideHelp also serves as the model for TerseGuideWindow, which can be opene
 TerseGuideWindow openTerseGuide
 !
 
-!TerseGuideWindow commentStamp: 'dhn 3/7/2015 15:27' prior: 0!
-Show a terse guide to Cuis in a system window. The window has a text pane with a list pane beside it. The text pane is a kind of Workspace which has the behavior that statements in it can be done (cmd-d) or printed (cmd-p) in order to observe their effect.
+!TerseGuideWindow commentStamp: 'dhn 3/5/2016 21:50' prior: 0!
+Show a terse guide to Cuis in a system window. The window has a text pane with a list pane beside it. The text pane is a kind of Workspace which has the behavior that statements in it can be Done (Cmd-d) or Printed (Cmd-p) in order to observe their effect.
 
 TerseGuideWindow openTerseGuide
 !
@@ -1641,11 +1641,11 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:18'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/15/2016 14:05'!
 morph
 	"Morphs"
 	^
-'| x y |			"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
+'| x y z w v |			"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ Morph new.			"a new but invisible morph"
 x openInWorld.				"make visible in upper left of screen"
 x openInHand.				"make visible at cursor location"
@@ -1659,6 +1659,14 @@ x _ SystemWindow new openInWorld.	"open a window"
 x setLabel: ''Label for It''.
 y _ LayoutMorph example10.	"organizing several morphs"
 x addMorph: y.				"place morphs in a SystemWindow"
+
+z _ x submorphs at: 1 :: submorphs at: 1 :: submorphs at: 2 :: submorphs at: 3.	"select a deep submorph"
+	"The ''::'' syntax avoids nested parentheses"
+z name.						"name of the deep submorph"
+w _ z owningWindow.		"answer the first enclosing morph that is a kind of Window"
+w class.
+v _ x findDeepSubmorphThat: [:m | m name = #F] ifAbsent: [nil].	"find the submorph named #F"
+v == z.						"verify that v and z are identical"
 
 LayoutMorph includeInNewMorphMenu.
 	"Return true for all classes that can be instantiated from the menu"
@@ -2079,7 +2087,7 @@ y _ x asSet.									"convert symbol to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/16/2015 20:28'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/5/2016 13:42'!
 syntax
 	"Syntax Notes"
 	^
@@ -2114,15 +2122,22 @@ syntax
 		- Instance Variables: unique to each instance
 
 	Comments are enclosed in quotes
-	Period (.) is the statement separator"
-
+	Period (.) is the statement separator
+	
+	Expressions are evaluated left-to-right.
+	Message precedence: unary, binary, then keyword.
+	
+	A message within parentheses is sent before any messages outside the parentheses.
+	Expressions with parentheses can alternatively be written with ''::'' as in the following examples..."
+	
+BrowserWindow fullOnClass: Parser class selector: #chainExamplesDoubleColon.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:21'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/17/2016 21:08'!
 time
 	"Time"
 	^
-'| x y b d1 d2 |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
+'| x y b d1 d2 w |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 x _ Time dateAndTimeNow.			"answer the current date and time"
 x _ Time now.							"answer the current time"
 b _ (555 factorial) > 1.					"expend some time"
@@ -2147,6 +2162,8 @@ String streamContents: [:s | Time now storeOn: s].
 x _ Time millisecondsToRun: [		"timing facility"
    1 to: 1000 do: [:index | y _ 400 factorial * index]].
 
+w _ Time localMillisecondClock.		"milliseconds since the Smalltalk epoch"
+"The Smalltalk epoch began at 00:00 on the morning of January 1, 1901, in the local host time zone."
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 11/3/2015 12:44'!
