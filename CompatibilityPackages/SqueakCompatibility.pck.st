@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2676] on 26 January 2016 at 10:17:04.287198 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2717] on 2 April 2016 at 11:42:04.233086 pm'!
 'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 18!
+!provides: 'SqueakCompatibility' 1 20!
 !requires: 'Cuis-Base' 42 2658 nil!
 !classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
@@ -451,6 +451,11 @@ asUnicode
 isCharacter
 	^true! !
 
+!SequenceableCollection methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:18'!
+doWithIndex: elementAndIndexBlock
+	"Old style. Prefer #withIndexDo:"
+	self withIndexDo: elementAndIndexBlock! !
+
 !CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
 isAbstract
 	| marker |
@@ -568,6 +573,14 @@ crtab: anInteger
 
 	self cr.
 	anInteger timesRepeat: [self tab]! !
+
+!StandardFileStream methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:38'!
+lineEndConvention: aSymbol
+	"ignore it"! !
+
+!StandardFileStream class methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:33'!
+forceNewFileNamed: aFilename
+	^ aFilename asFileEntry privateForceWriteStream! !
 
 !Transcript class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:41'!
 cr

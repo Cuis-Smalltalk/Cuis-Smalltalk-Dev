@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2676] on 25 January 2016 at 12:43:29.094209 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2716] on 2 April 2016 at 11:10:24.520427 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Goodies' 1 3!
+!provides: 'Goodies' 1 4!
 !classDefinition: #AsyncFile category: #'Goodies-AsyncFile'!
 Object subclass: #AsyncFile
 	instanceVariableNames: 'name writeable semaphore fileHandle'
@@ -1272,7 +1272,7 @@ menuLinesArray: aDirectory
 		s nextPut: dirDepth + typeCount + 1.
 		s nextPut: dirDepth + nameCnt + typeCount + 1]! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 10/28/2015 09:53'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 4/2/2016 23:07'!
 menuSelectionsArray: aDirectory
 "Answer a menu selections object corresponding to aDirectory.  The object is an array corresponding to each item, each element itself constituting a two-element array, the first element of which contains a selector to operate on and the second element of which contains the parameters for that selector."
 
@@ -1286,7 +1286,7 @@ menuSelectionsArray: aDirectory
 		s nextPut: (StandardFileMenuResult
 			directory: (FmDirectoryEntry roots first)
 			name: '').
-		aDirectory pathComponents doWithIndex: 
+		aDirectory pathComponents withIndexDo: 
 			[:d :i | s nextPut: (StandardFileMenuResult
 					directory: (self 
 						advance: dirSize - i
@@ -1322,14 +1322,14 @@ oldFileFrom: aDirectory withPattern: aPattern
 	self pattern: aPattern.
 	^self makeFileMenuFor: aDirectory! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 10/19/2015 16:36'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 4/2/2016 23:07'!
 pathPartsString: aDirectory
 "Answer a string concatenating the path parts strings in aDirectory, each string followed by a newLine."
 
 	^String streamContents:
 		[:s | 
 			s nextPutAll: '[]'; newLine.
-			aDirectory pathComponents asArray doWithIndex: 
+			aDirectory pathComponents asArray withIndexDo: 
 				[:part :i |
 					s next: i put: $ .
 					s nextPutAll: part withBlanksTrimmed; newLine]]! !

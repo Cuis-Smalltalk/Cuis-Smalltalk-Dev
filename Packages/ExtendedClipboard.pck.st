@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2435] on 27 July 2015 at 3:58:22.588097 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2713] on 2 April 2016 at 10:51:26.959666 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'ExtendedClipboard' 1 8!
-!requires: 'FFI' 1 nil nil!
+!provides: 'ExtendedClipboard' 1 9!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'FFI' 1 nil nil!
 !classDefinition: #ExtendedClipboardInterface category: #ExtendedClipboard!
 Object subclass: #ExtendedClipboardInterface
 	instanceVariableNames: 'clipboard'
@@ -927,17 +927,20 @@ testStar16BitToAndFromImageClipboard
 	form1 addDeltasFrom: form2.
 	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 4/2/2016 14:40'!
 testStar8BitToAndFromImageClipboard
 	"
 	ExtendedClipboardTest new testStar8BitToAndFromImageClipboard
 	"
 	| form form1 form2 |
+	self assert: Clipboard default extendedClipboardInterface canStore description: 'Extended Clipboard cant store'.
+
 	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 8.
 
 	"This will use a refStreamed object"
 	Clipboard default storeObject: form.
 	form2 _ Clipboard default retrieveObject.
+	self assert: (form2 is: #Form).
 	form1 _ form copy.
 	form1 addDeltasFrom: form2.
 	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.

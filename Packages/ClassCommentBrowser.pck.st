@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 3 March 2016 at 9:50:30.723778 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2713] on 2 April 2016 at 10:51:13.699672 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 27!
+!provides: 'ClassCommentBrowser' 1 28!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -335,7 +335,7 @@ browseVersions
 			VersionsBrowserWindow 
 				browseCommentOf: (Smalltalk at: model getCurrentSelection item asSymbol)]! !
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 11/5/2015 11:12'!
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'jmv 3/28/2016 09:44'!
 buildMorphicWindow
 	"Answer a window for the class comment browser"
 	| row |
@@ -358,7 +358,6 @@ buildMorphicWindow
 		addAdjusterAndMorph: textMorph proportionalWidth: 1.0.
 	self layoutMorph
 		addMorph: row.
-	updatablePanes _ #(listMorph).
 	model window: self! !
 
 !CommentGuideWindow methodsFor: 'menu' stamp: 'dhn 10/2/2015 15:31'!

@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2703] on 9 March 2016 at 10:08:48.069987 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2713] on 2 April 2016 at 10:52:25.222278 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 44!
+!provides: 'Tests' 1 45!
+!requires: 'Taskbar' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Taskbar' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -4285,7 +4285,7 @@ testFloatTruncated
 		x := r next * 1.9999e16 + 1.0e12 .
 		self assert: x truncated = x asTrueFraction truncated]! !
 
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 5/7/2006 16:22'!
+!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 3/28/2016 09:48'!
 testFractionAsFloat
 	"use a random test"
 	
@@ -4293,7 +4293,7 @@ testFractionAsFloat
 	r := Random new seed: 1234567.
 	m := (2 raisedTo: 54) - 1.
 	200 timesRepeat: [
-		frac := ((r nextInt: m) * (r nextInt: m) + 1) / ((r nextInt: m) * (r nextInt: m) + 1).
+		frac := ((r nextInteger: m) * (r nextInteger: m) + 1) / ((r nextInteger: m) * (r nextInteger: m) + 1).
 		err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
 		self assert: err < (1/2)].
 	

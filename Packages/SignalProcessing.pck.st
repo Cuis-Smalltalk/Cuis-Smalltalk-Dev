@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2703] on 15 March 2016 at 9:50:47.273829 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2716] on 2 April 2016 at 11:11:06.244684 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 47!
+!provides: 'SignalProcessing' 1 49!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
 !requires: 'Sound' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -2900,7 +2900,7 @@ xyForMax
 	^x@y
 ! !
 
-!FloatImage class methodsFor: 'experiments' stamp: 'jmv 4/16/2015 12:13'!
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 4/2/2016 23:05'!
 blurEstimationExperiment
 
 | answer aux bits blur blurred electronsPerDN estimation exposure f fullWell gap maxD maxDN original plotter r readNoiseElectrons sharpnessessX sharpnessessY xDer xDerDer xDerDerDer xDerDerDerDer zeros |
@@ -2923,13 +2923,13 @@ maxD _ 20.
 sharpnessessX _ FloatArray new: maxD.
 sharpnessessY _ FloatArray new: maxD.
 zeros _ FloatArray new: maxD.
-"#(0.5 0.7 1 1.2 1.5 2 3 4 5 6 7 8 9 10 15 20 22 25 28 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100) doWithIndex: [ :b :blurIndex |"
-"#(10 15 20 25 30 35 40) doWithIndex: [ :b :blurIndex |"
-"#(1.5 2 3 4 5 6 ) doWithIndex: [ :b :blurIndex |"
-"#(0.5 1 1.2 1.3 1.4 1.5) doWithIndex: [ :b :blurIndex |"
-"#(0.5 1 1.2 1.3 1.4 1.5 2 4 6 8 10 20 30 40) doWithIndex: [ :b :blurIndex |"
-"#(44 45 46 47 48 49 50 51 ) doWithIndex: [ :b :blurIndex |"
-#(1 1.2 2 4 6 8 10) doWithIndex: [ :b :blurIndex |
+"#(0.5 0.7 1 1.2 1.5 2 3 4 5 6 7 8 9 10 15 20 22 25 28 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100) withIndexDo: [ :b :blurIndex |"
+"#(10 15 20 25 30 35 40) withIndexDo: [ :b :blurIndex |"
+"#(1.5 2 3 4 5 6 ) withIndexDo: [ :b :blurIndex |"
+"#(0.5 1 1.2 1.3 1.4 1.5) withIndexDo: [ :b :blurIndex |"
+"#(0.5 1 1.2 1.3 1.4 1.5 2 4 6 8 10 20 30 40) withIndexDo: [ :b :blurIndex |"
+"#(44 45 46 47 48 49 50 51 ) withIndexDo: [ :b :blurIndex |"
+#(1 1.2 2 4 6 8 10) withIndexDo: [ :b :blurIndex |
 	blur _ FloatMatrix newSize: original extent.
 	blur fillWithGaussianKernelSigmaY: b sigmaX: 3*b/2; normalizeSum.
 	blurred _ original copy convolveWith: blur copy.
@@ -5359,7 +5359,7 @@ x: x y: y put: aNumber
 	"Update Voronoi diagram."
 	self addVoronoiCellX: x y: y! !
 
-!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 2/25/2014 12:52'!
+!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 3/28/2016 09:49'!
 test1
 	"
 	[ IrregularSampledImage test1 ] forkAt: 30
@@ -5374,8 +5374,8 @@ test1
 	r _ Random new.
 	r seed: 0.5.
 	0 to: w*h// 4 do: [ :i |
-		x _ r nextInt: w.
-		y _ r nextInt: h.
+		x _ r nextInteger: w.
+		y _ r nextInteger: h.
 		rebuilt x: x y: y put: (original x: x y: y).
 		i \\ 100 = 0 ifTrue: [
 			i print.
@@ -5386,7 +5386,7 @@ test1
 				clean; interpolateBarycentricInLinearGammaSpace; displayAt: w*3 @ 0.
 			Processor yield ]]! !
 
-!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 2/25/2014 11:56'!
+!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 3/28/2016 09:49'!
 test2
 	"
 	[ IrregularSampledImage test2 ] forkAt: 30
@@ -5401,8 +5401,8 @@ test2
 	r _ Random new.
 	r seed: 0.5.
 	0 to: 100 do: [ :i |
-		x _ r nextInt: w-24.
-		y _ r nextInt: h-16.
+		x _ r nextInteger: w-24.
+		y _ r nextInteger: h-16.
 		0 to: 24 by:4 do: [ :xx |
 			0 to: 16 by: 4 do: [ :yy |
 				rebuilt x: x+xx y:y+ yy put: (original x: x+xx y: y+yy) ]].
