@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2690] on 26 February 2016 at 1:31:14.566826 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2717] on 4 April 2016 at 1:19:29.109547 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 8!
-!requires: 'SignalProcessing' 1 37 nil!
+!provides: 'OpenCL' 1 9!
 !requires: 'FFI' 1 nil nil!
+!requires: 'SignalProcessing' 1 37 nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -717,6 +717,11 @@ Additionally, try:
 asOpenCLArg
 	"Default is to pass self as arg to FFI call."
 	^self! !
+
+!FloatMatrix methodsFor: '*OpenCL' stamp: 'jmv 3/30/2016 11:12'!
+asOpenCLArg
+	"Pass pointer to our FloatArray."
+	^elements! !
 
 !False methodsFor: '*OpenCL' stamp: 'jcg 2/16/2010 01:24'!
 asOpenCLBoolean
@@ -1942,6 +1947,10 @@ image_channel_order_String: channelOrderConstant "a cl_channel_order_constant"
 			s nextPut: $>
 		]]! !
 
+!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 3/31/2016 11:30'!
+intensity16SignedNorm
+	^self order: CL_INTENSITY type: CL_SNORM_INT16! !
+
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 14:33'!
 intensity8
 	^self order: CL_INTENSITY type: CL_UNSIGNED_INT8! !
@@ -1972,6 +1981,14 @@ order: imageChannelOrder type: imageChannelDataType
 		image_channel_order: imageChannelOrder;
 		image_channel_data_type: imageChannelDataType.! !
 
+!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 3/31/2016 10:57'!
+r16Signed
+	^self order: CL_R type: CL_SIGNED_INT16! !
+
+!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 3/31/2016 10:57'!
+r16SignedNorm
+	^self order: CL_R type: CL_SNORM_INT16! !
+
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 14:35'!
 r8
 	^self order: CL_R type: CL_UNSIGNED_INT8! !
@@ -1979,6 +1996,10 @@ r8
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 12/2/2015 12:37'!
 r8Norm
 	^self order: CL_R type: CL_UNORM_INT8! !
+
+!CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 3/31/2016 10:56'!
+rFloat
+	^self order: CL_R type: CL_FLOAT! !
 
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 9/9/2015 11:52'!
 rgba8888
