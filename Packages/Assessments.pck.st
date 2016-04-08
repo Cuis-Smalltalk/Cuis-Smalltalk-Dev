@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 26 January 2016 at 11:11:07.407467 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 6 April 2016 at 8:05:10.958758 pm'!
 'Description Assessments is a replacement / reimplementation of the SUnit evaluation machinery, published under the MIT license (see below), with the following characteristics.
 
 * It provides all the functionality and features of SUnit and SUnit VM (including SUnit Based Validation and SUnit Benchmarks) natively.
@@ -143,7 +143,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '!
-!provides: 'Assessments' 2 27!
+!provides: 'Assessments' 2 28!
 !classDefinition: #AbstractCustomChecklist category: #'Assessments-Framework-CustomChecklists'!
 Object subclass: #AbstractCustomChecklist
 	instanceVariableNames: ''
@@ -7157,7 +7157,7 @@ prettyPrintForScenario: anObject
 
 	prettyPrintForScenario := anObject! !
 
-!Benchmark methodsFor: 'private - stop watch' stamp: 'sqr 1/16/2016 21:26'!
+!Benchmark methodsFor: 'private - stop watch' stamp: 'sqr 4/6/2016 20:04'!
 privateStopWatch: aBlock
 	"Answer amount of iterations per second.
 	Flush compiled code cache by performing a garbage collect,
@@ -7180,6 +7180,7 @@ privateStopWatch: aBlock
 			netMicroseconds := self netMusToRun: theseRepetitions times: aBlock.
 			repetitionMultiplier := self repetitionMultiplierBasedOn: netMicroseconds.
 			nextRepetitions := (theseRepetitions * repetitionMultiplier) truncated
+				max: theseRepetitions + 1
 		].
 	^(theseRepetitions * self microsecondsPerSecond) asFloat / (netMicroseconds max: 1)! !
 
