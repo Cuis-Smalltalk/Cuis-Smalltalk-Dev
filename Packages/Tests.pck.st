@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2713] on 2 April 2016 at 10:52:25.222278 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2733] on 9 April 2016 at 8:30:55.650098 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 45!
+!provides: 'Tests' 1 47!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Taskbar' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -284,6 +284,16 @@ TestCase subclass: #IntegerTest
 	category: 'Tests-Kernel-Numbers'!
 !classDefinition: 'IntegerTest class' category: #'Tests-Kernel-Numbers'!
 IntegerTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #IntervalTest category: #'Tests-Collections'!
+TestCase subclass: #IntervalTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections'!
+!classDefinition: 'IntervalTest class' category: #'Tests-Collections'!
+IntervalTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #LargeNegativeIntegerTest category: #'Tests-Kernel-Numbers'!
@@ -7329,6 +7339,56 @@ testTwoComplementRightShift
 		
      self assert: ((small bitShift: -1) ~= (small + 1 bitShift: -1)
 		== ((large bitShift: -1) ~= (large + 1 bitShift: -1))).! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/9/2016 16:21'!
+testAt
+	"
+	IntervalTest new testAt
+	"
+	self assert: (2 to: 5 by: 2) first = 2.
+	self assert: ((2 to: 5 by: 2) at: 1) = 2.
+	self assert: ((2 to: 5 by: 2) at: 2) = 4.
+	self assert: (2 to: 5 by: 2) last = 4.
+
+	self assert: (0 to: 2.4 by: 0.1) first = 0.
+	self assert: ((0 to: 2.4 by: 0.1) at: 1) = 0.
+	self assert: (((0 to: 2.4 by: 0.1) at: 2) closeTo: 0.1).
+	self assert: (((0 to: 2.4 by: 0.1) at: 3) closeTo: 0.2).
+	self assert: (((0 to: 2.4 by: 0.1) at: 23) closeTo: 2.2).
+	self assert: ((0 to: 2.4 by: 0.1) at: 24) = 2.3.
+	self assert: ((0 to: 2.4 by: 0.1) at: 25) = 2.4.
+	self assert: (0 to: 2.4 by: 0.1) last = 2.4.! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/9/2016 15:16'!
+testFloatInterval
+	"
+	IntervalTest new testFloatInterval
+	"
+	
+	self assert: (0 to: 2.4 by: 0.1) size = 25.
+	self assert: (0 to: 2.4 by: 0.1) first = 0.
+	self assert: (0 to: 2.4 by: 0.1) last = 2.4.
+
+	2 to: 200 do: [ :n |
+		self assert: (0.0 to: 1.0 count: n) size = n.
+		self assert: (0.0 to: 1.0 count: n) first = 0.0.
+		self assert: ((0.0 to: 1.0 count: n) last closeTo: 1.0) ].
+	2 to: 200 do: [ :n |
+		self assert: (1.0 to: 0.0 count: n) size = n.
+		self assert: (1.0 to: 0.0 count: n) first = 1.0.
+		self assert: ((1.0 to: 0.0 count: n) last closeTo: 0.0) ].! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
+testIntegerInterval
+	"
+	IntervalTest new testIntegerInterval
+	"
+	| z |
+	self assert: (2 to: 5 by: 2) size = 2.
+	self assert: (2 to: 5 by: 2) last = 4.
+	z _ 0.
+	(2 to: 5 by: 2) do: [ :i | z _ i ].
+	self assert: z = 4! !
 
 !LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ar 11/30/2009 22:06'!
 testCompactClassIndex
