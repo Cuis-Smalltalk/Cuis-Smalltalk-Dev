@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2733] on 9 April 2016 at 8:30:55.650098 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2737] on 19 April 2016 at 11:46:20.992301 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 47!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 48!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Taskbar' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -7484,7 +7484,7 @@ testNormalize
 	self should: ((SmallInteger minVal - 1 + 1) = SmallInteger minVal).
 	self assert: (SmallInteger minVal - 3 + 6) = (SmallInteger minVal+3).! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 2/14/2013 12:28'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 4/19/2016 10:39'!
 testLayout1
 	"
 	self new testLayout1
@@ -7528,33 +7528,33 @@ testLayout1
 
 	self assert: row1 morphWidth = (pane morphWidth - 10).
 	self assert: r1c1 morphWidth class == SmallInteger.
-	self assert: r1c1 morphHeight class == SmallInteger.
 	self assert: r1c1 morphWidth = 10.
-	self assert: r1c1 morphHeight = (row1 morphHeight - 10).
 	self assert: r1c2 morphWidth = 200.
-	self assert: r1c2 morphHeight = (row1 morphHeight - 10).
 	self assert: r1c3 morphWidth = (r1c2 morphWidth / 0.8 * 0.4) rounded.
-	self assert: r1c3 morphHeight = (row1 morphHeight - 10).
 	self assert: r1c4 morphWidth = (r1c2 morphWidth / 0.8 * 0.15) rounded.
-	self assert: r1c4 morphHeight = (row1 morphHeight - 10).
 	self assert: r1c5 morphWidth = 20.
+	self assert: r1c1 morphHeight class == SmallInteger.
+	self assert: r1c1 morphHeight = (row1 morphHeight - 10).
+	self assert: r1c2 morphHeight = (row1 morphHeight - 10).
+	self assert: r1c3 morphHeight = (row1 morphHeight - 10).
+	self assert: r1c4 morphHeight = (row1 morphHeight - 10).
 	self assert: r1c5 morphHeight = 20.
 
 	self assert: row2 morphWidth = (pane morphWidth - 10).
 	self assert: r2c1 morphWidth = 216.
-	self assert: r2c1 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c2 morphWidth = (r2c1 morphWidth / 0.8 * 0.4) rounded.
-	self assert: r2c2 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c3 morphWidth = (r2c1 morphWidth / 0.8 * 0.2) rounded.
+	self assert: r2c1 morphHeight = (row2 morphHeight - 10).
+	self assert: r2c2 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c3 morphHeight = (row2 morphHeight - 10).
 
 	self assert: row3 morphWidth = (pane morphWidth - 10).
-	self assert: row3 morphHeight = 60.
 	self assert: r3c1 morphWidth = 20.
-	self assert: r3c1 morphHeight = (row3 morphHeight - 10 * 0.8) rounded.
 	self assert: r3c2 morphWidth = (row3 morphWidth - 10 - 20 - 10 - 30 * 0.5) rounded.
-	self assert: r3c2 morphHeight = 40.
 	self assert: r3c3 morphWidth = 30.
+	self assert: row3 morphHeight = 60.
+	self assert: r3c1 morphHeight = (row3 morphHeight - 10 * 0.8) rounded.
+	self assert: r3c2 morphHeight = 40.
 	self assert: r3c3 morphHeight = (row3 morphHeight - 10).
 
 	pane delete! !
@@ -9541,7 +9541,7 @@ testSimpleEditor
 				stamp: 0)
 	] raise: Exception! !
 
-!TextEditorTest methodsFor: 'testing' stamp: 'jmv 10/16/2013 20:05'!
+!TextEditorTest methodsFor: 'testing' stamp: 'jmv 4/19/2016 10:22'!
 testUndoRedo
 	"
 	TextEditorTest new testUndoRedo
@@ -9552,6 +9552,7 @@ testUndoRedo
 	editor _ TextEditor new.
 	m _ InnerTextMorph new.
 	m privateOwner: TextModelMorph new.
+	m model: model.
 	editor morph: m.
 	editor instVarNamed: 'emphasisHere' put: Array new.
 	editor model: model.
@@ -9627,9 +9628,9 @@ setUp
 	}
 '! !
 
-!ThemesTest methodsFor: 'as yet unclassified' stamp: 'jmv 9/11/2014 09:29'!
+!ThemesTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/19/2016 10:26'!
 shoutArray
-	^  #(#(#invalid #green) #(#excessCode #green) #(#'$' #green) #(#undefinedKeyword #green) #(#undefinedBinary #green) #(#undefinedUnary #green) #(#character #(#red #muchDarker)) #(#integer #(#red #muchDarker)) #(#number #(#red #muchDarker)) #(#- #(#red #muchDarker)) #(#blockStart3 #(#red #muchDarker)) #(#blockEnd3 #(#red #muchDarker)) #(#leftParenthesis3 #(#red #muchDarker)) #(#rightParenthesis3 #(#red #muchDarker)) #(#default #black) #(#arrayStart #black) #(#arrayEnd #black) #(#arrayStart1 #black) #(#arrayEnd1 #black) #(#leftBrace #black) #(#rightBrace #black) #(#cascadeSeparator #black) #(#chainSeparator #black) #(#statementSeparator #black) #(#externalCallType #black) #(#externalCallTypePointerIndicator #black) #(#rightParenthesis1 #black) #(#blockArgColon #black) #(#leftParenthesis #black) #(#rightParenthesis #black) #(#blockStart #black) #(#blockEnd #black) #(#self #(#red #muchDarker)) #(#super #(#red #muchDarker)) #(#true #(#red #muchDarker)) #(#false #(#red #muchDarker)) #(#nil #(#red #muchDarker)) #(#thisContext #(#red #muchDarker)) #(#return #(#red #muchDarker)) #(#blockStart4 #(#green #darker)) #(#blockEnd4 #(#green #darker)) #(#leftParenthesis4 #(#green #darker)) #(#rightParenthesis4 #(#green #darker)) #(#instVar #(#magenta #muchDarker)) #(#blockStart2 #(#magenta #muchDarker)) #(#blockEnd2 #(#magenta #muchDarker)) #(#leftParenthesis2 #(#magenta #muchDarker)) #(#rightParenthesis2 #(#magenta #muchDarker)) #(#keyword #(#blue #muchDarker)) #(#binary #(#blue #muchDarker)) #(#unary #(#blue #muchDarker)) #(#leftParenthesis5 #(#orange #darker)) #(#rightParenthesis5 #(#orange #darker)) #(#blockStart5 #(#orange #darker)) #(#blockEnd5 #(#orange #darker)) #(#leftParenthesis6 #(#magenta #darker)) #(#rightParenthesis6 #(#magenta #darker)) #(#blockStart6 #(#magenta #darker)) #(#blockEnd6 #(#magenta #darker)) #(#leftParenthesis7 #blue) #(#rightParenthesis7 #blue) #(#blockStart7 #blue) #(#blockEnd7 #blue) #(#methodTempBar #gray) #(#blockTempBar #gray) #(#blockArgsBar #gray) #(#primitive #(#green #muchDarker) #bold) #(#pragmaKeyword #(#green #muchDarker) #bold) #(#pragmaUnary #(#green #muchDarker) #bold) #(#pragmaBinary #(#green #muchDarker) #bold) #(#externalFunctionCallingConvention #(#green #muchDarker) #bold) #(#module #(#green #muchDarker) #bold) #(#primitiveOrExternalCallStart #black #bold) #(#primitiveOrExternalCallEnd #black #bold) #(#globalVar #black #bold) #(#workspaceVar #black #bold) #(#incompleteKeyword #(#gray #veryMuchDarker) #underlined) #(#incompleteBinary #(#gray #veryMuchDarker) #underlined) #(#incompleteUnary #(#gray #veryMuchDarker) #underlined) #(#patternArg #(#cyan #muchDarker) #italic) #(#methodArg #(#cyan #muchDarker) #italic) #(#blockPatternArg #(#cyan #muchDarker) #italic) #(#blockArg #(#cyan #muchDarker) #italic) #(#argument #(#cyan #muchDarker) #italic) #(#symbol #(#blue #muchDarker) #bold) #(#stringSymbol #(#blue #muchDarker) #bold) #(#literalArray #(#blue #muchDarker) #bold) #(#assignment nil #bold) #(#ansiAssignment nil #bold) #(#patternKeyword nil #bold) #(#patternBinary nil #bold) #(#patternUnary nil #bold) #(#tempVar #(#gray #muchDarker) #italic) #(#patternTempVar #(#gray #muchDarker) #italic) #(#poolConstant #(#gray #muchDarker) #italic) #(#blockTempVar #gray #italic) #(#blockPatternTempVar #gray #italic) #(#unfinishedString #green #normal) #(#undefinedIdentifier #green #bold) #(#unfinishedComment #(#red #muchDarker) #italic) #(#comment #(#green #muchDarker) #italic) #(#string #(#magenta #muchDarker) #normal) #(#literal nil #italic) #(#incompleteIdentifier #(#gray #muchDarker) #(#italic #underlined)) #(#classVar #(#gray #muchDarker) #bold))! !
+	^  #(#(#invalid #green) #(#excessCode #green) #(#'$' #green) #(#undefinedKeyword #green) #(#undefinedBinary #green) #(#undefinedUnary #green) #(#character #(#red #muchDarker)) #(#integer #(#red #muchDarker)) #(#number #(#red #muchDarker)) #(#- #(#red #muchDarker)) #(#blockStart3 #(#red #muchDarker)) #(#blockEnd3 #(#red #muchDarker)) #(#leftParenthesis3 #(#red #muchDarker)) #(#rightParenthesis3 #(#red #muchDarker)) #(#default #black) #(#arrayStart #black) #(#arrayEnd #black) #(#arrayStart1 #black) #(#arrayEnd1 #black) #(#leftBrace #black) #(#rightBrace #black) #(#cascadeSeparator #black) #(#chainSeparator #black) #(#statementSeparator #black) #(#externalCallType #black) #(#externalCallTypePointerIndicator #black) #(#rightParenthesis1 #black) #(#blockArgColon #black) #(#leftParenthesis #black) #(#rightParenthesis #black) #(#blockStart #black) #(#blockEnd #black) #(#self #(#red #muchDarker)) #(#super #(#red #muchDarker)) #(#true #(#red #muchDarker)) #(#false #(#red #muchDarker)) #(#nil #(#red #muchDarker)) #(#thisContext #(#red #muchDarker)) #(#blockStart4 #(#green #darker)) #(#blockEnd4 #(#green #darker)) #(#leftParenthesis4 #(#green #darker)) #(#rightParenthesis4 #(#green #darker)) #(#instVar #(#magenta #muchDarker)) #(#blockStart2 #(#magenta #muchDarker)) #(#blockEnd2 #(#magenta #muchDarker)) #(#leftParenthesis2 #(#magenta #muchDarker)) #(#rightParenthesis2 #(#magenta #muchDarker)) #(#keyword #(#blue #muchDarker)) #(#binary #(#blue #muchDarker)) #(#unary #(#blue #muchDarker)) #(#leftParenthesis5 #(#orange #darker)) #(#rightParenthesis5 #(#orange #darker)) #(#blockStart5 #(#orange #darker)) #(#blockEnd5 #(#orange #darker)) #(#leftParenthesis6 #(#magenta #darker)) #(#rightParenthesis6 #(#magenta #darker)) #(#blockStart6 #(#magenta #darker)) #(#blockEnd6 #(#magenta #darker)) #(#leftParenthesis7 #blue) #(#rightParenthesis7 #blue) #(#blockStart7 #blue) #(#blockEnd7 #blue) #(#methodTempBar #gray) #(#blockTempBar #gray) #(#blockArgsBar #gray) #(#primitive #(#green #muchDarker) #bold) #(#pragmaKeyword #(#green #muchDarker) #bold) #(#pragmaUnary #(#green #muchDarker) #bold) #(#pragmaBinary #(#green #muchDarker) #bold) #(#externalFunctionCallingConvention #(#green #muchDarker) #bold) #(#module #(#green #muchDarker) #bold) #(#primitiveOrExternalCallStart #black #bold) #(#primitiveOrExternalCallEnd #black #bold) #(#globalVar #black #bold) #(#workspaceVar #black #bold) #(#incompleteKeyword #(#gray #veryMuchDarker) #underlined) #(#incompleteBinary #(#gray #veryMuchDarker) #underlined) #(#incompleteUnary #(#gray #veryMuchDarker) #underlined) #(#patternArg #(#cyan #muchDarker) #italic) #(#methodArg #(#cyan #muchDarker) #italic) #(#blockPatternArg #(#cyan #muchDarker) #italic) #(#blockArg #(#cyan #muchDarker) #italic) #(#argument #(#cyan #muchDarker) #italic) #(#symbol #(#blue #muchDarker) #bold) #(#stringSymbol #(#blue #muchDarker) #bold) #(#literalArray #(#blue #muchDarker) #bold) #(#patternKeyword nil #bold) #(#patternBinary nil #bold) #(#patternUnary nil #bold) #(#ansiAssignment nil #bold) #(#assignment nil #(#bold #withST80Glyphs)) #(#return nil #(#bold #withST80Glyphs)) #(#tempVar #(#gray #muchDarker) #italic) #(#patternTempVar #(#gray #muchDarker) #italic) #(#poolConstant #(#gray #muchDarker) #italic) #(#blockTempVar #gray #italic) #(#blockPatternTempVar #gray #italic) #(#unfinishedString #green #normal) #(#undefinedIdentifier #green #bold) #(#unfinishedComment #(#red #muchDarker) #italic) #(#comment #(#green #muchDarker) #italic) #(#string #(#magenta #muchDarker) #normal) #(#literal nil #italic) #(#incompleteIdentifier #(#gray #muchDarker) #(#italic #underlined)) #(#classVar #(#gray #muchDarker) #bold))! !
 
 !ThemesTest methodsFor: 'as yet unclassified' stamp: 'cbr 12/17/2010 21:01'!
 testGenerateShoutConfig
