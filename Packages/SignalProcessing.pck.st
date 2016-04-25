@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2716] on 2 April 2016 at 11:11:06.244684 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2740] on 25 April 2016 at 1:11:42.236103 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 49!
+!provides: 'SignalProcessing' 1 50!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Goodies' 1 0 nil!
@@ -3062,12 +3062,17 @@ from8BitColorForm: aForm
 	instance fillFrom8BitColorForm: aForm.
 	^instance! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 10/3/2015 19:53'!
-fromFileNamed: filename
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 4/22/2016 10:44'!
+fromFileEntry: aFileEntry
 
-	^filename asFileEntry readStream: [ :stream |
+	^aFileEntry readStream: [ :stream |
 		(ReferenceStream on: stream)
 			next ]! !
+
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 4/22/2016 10:45'!
+fromFileNamed: filename
+
+	^ self fromFileEntry: filename asFileEntry! !
 
 !FloatImage class methodsFor: 'instance creation' stamp: 'jmv 9/7/2015 13:03'!
 fromForm: aForm

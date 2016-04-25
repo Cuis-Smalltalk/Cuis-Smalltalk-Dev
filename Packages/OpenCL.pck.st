@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2717] on 4 April 2016 at 1:19:29.109547 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2743] on 25 April 2016 at 3:54:05.524916 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 9!
+!provides: 'OpenCL' 1 11!
 !requires: 'FFI' 1 nil nil!
 !requires: 'SignalProcessing' 1 37 nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -6742,10 +6742,11 @@ name
 profile
 	^profile! !
 
-!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 9/16/2015 17:25'!
+!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 4/25/2016 14:54'!
 reportOn: aStream
 	"
 	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
+	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: StdIOFileStream stdout ]. StdIOFileStream stdout lf.
 	"
 	| context |
 	aStream nextPutAll: '=================== '; newLine.
@@ -6776,6 +6777,32 @@ reportOn: aStream
 	context _ OpenCLContext newForDevices: self allDevices.
 	context reportImageFormatsOn: aStream.
 	aStream nextPutAll: '=================== '; newLine.! !
+
+!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 4/25/2016 14:56'!
+shortReportOn: aStream
+	"
+	OpenCLPlatform allPlatforms do: [ :platform | platform shortReportOn: Transcript ].
+	OpenCLPlatform allPlatforms do: [ :platform | platform shortReportOn: StdIOFileStream stdout ]. StdIOFileStream stdout lf.
+	"
+	aStream nextPutAll: '=================== '; newLine.
+	aStream nextPutAll: 'Platform: '; nextPutAll: name; newLine.
+	aStream nextPutAll: '=================== '; newLine.
+	aStream nextPutAll: '-----GPUs---------------------------- '; newLine.
+	aStream nextPutAll: '--------------------------------------- '; newLine.
+	self allGPUs do: [ :gpu |
+			gpu reportGeneralOn: aStream.
+			aStream nextPutAll: '--------------------------------------- '; newLine.
+			gpu reportExtensionsOn: aStream ]
+		separatedBy: [aStream nextPutAll: '--------------------------------------- '; newLine].
+	aStream nextPutAll: '--------------------------------------- '; newLine.
+	aStream nextPutAll: '-----CPUs---------------------------- '; newLine.
+	aStream nextPutAll: '--------------------------------------- '; newLine.
+	self allCPUs do: [ :cpu |
+			cpu reportGeneralOn: aStream.
+			aStream nextPutAll: '--------------------------------------- '; newLine.
+			cpu reportExtensionsOn: aStream ]
+		separatedBy: [aStream nextPutAll: '--------------------------------------- '; newLine].
+	aStream nextPutAll: '=================== '; newLine! !
 
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
 vendor
@@ -6811,6 +6838,35 @@ allPlatformIDs
 allPlatforms
 	"OpenCLPlatform allPlatforms"
 	^self allPlatformIDs collect: [:id | self wrappingHandle: id]! !
+
+!OpenCLPlatform class methodsFor: 'report application' stamp: 'jmv 4/25/2016 15:32'!
+buildOpenCLReportApp
+	"
+	OpenCLPlatform buildOpenCLReportApp
+	"
+	AppLauncher appGlobalName: self name appSelector: #shortReportAndQuit.
+	Smalltalk reduceCuis.
+	Smalltalk saveAs: 'OpenCLReport' andQuit: true clearAllClassState: false! !
+
+!OpenCLPlatform class methodsFor: 'report application' stamp: 'jmv 4/25/2016 14:58'!
+shortReport
+	"On StdIO
+	OpenCLPlatform shortReport
+	"
+	OpenCLPlatform allPlatforms do: [ :platform |
+		platform shortReportOn: StdIOFileStream stdout ].
+	StdIOFileStream stdout lf! !
+
+!OpenCLPlatform class methodsFor: 'report application' stamp: 'jmv 4/25/2016 14:59'!
+shortReportAndQuit
+	"On StdIO
+	OpenCLPlatform shortReport
+	"
+	OpenCLPlatform allPlatforms do: [ :platform |
+		platform shortReportOn: StdIOFileStream stdout ].
+	StdIOFileStream stdout lf.
+
+	Smalltalk snapshot: false andQuit: true embedded: false clearAllClassState: false! !
 
 !OpenCLRefCountedObject methodsFor: 'retain/release' stamp: 'jcg 1/15/2010 01:40'!
 destroy
@@ -8143,14 +8199,17 @@ startUp: resuming
 			OpenCLRefCountedObject allSubInstancesDo: [:obj | obj registerForFinalization]
 		].! !
 
-!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 8/20/2015 13:21'!
+!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 4/25/2016 15:46'!
 subclassForCurrentPlatform
 	"
 	OpenCLPrimitiveInterface subclassForCurrentPlatform
 	"
 	| platformName |
-	platformName := Smalltalk platformName.
-	self subclassesDo: [ :cls |
+	platformName _ Smalltalk platformName.
+	
+	"Explicit, so they are not accidentally erased, for example, by doing #reduceCuis. Add any new subclass to this list!!"
+	"self subclassesDo: [ :cls |"
+	{ OpenCLMacOSInterface. OpenCLUnixInterface. OpenCLWindowsInterface } do: [ :cls |
 		cls supportedPlatform = platformName
 			 ifTrue: [ ^cls ]]! !
 
