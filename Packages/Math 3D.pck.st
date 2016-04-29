@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2706] on 17 March 2016 at 10:56:36.311403 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2746] on 29 April 2016 at 4:30:50.70726 pm'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition to 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 14!
+!provides: 'Math 3D' 1 16!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -109,12 +109,15 @@ A copy of B3DMatrix4x4 (from Balloon3D-Math), but with 64 bit Float elements (in
 I represent general 3d rotations by using Unit-Quaternions. Unit-Quaternions are one of the best available representation for rotations in computer graphics because they provide an easy way of doing arithmetic with them and also because they allow us to use spherical linear interpolation (so-called "slerps") of rotations.
 
 Indexed Variables:
-	a	<Float>	the real part of the quaternion
-	b	<Float>	the first imaginary part of the quaternion
-	c	<Float>	the second imaginary part of the quaternion
-	d	<Float>	the third imaginary part of the quaternion
+	a	<Float>	the real part of the quaternion. Scalar component, related to angle of rotation. Also called q0 or q4.
+	b	<Float>	the first imaginary part of the quaternion. Related to X coordinate of the rotation axis. Also called q1.
+	c	<Float>	the second imaginary part of the quaternion. Related to Y coordinate of the rotation axis. Also called q2.
+	d	<Float>	the third imaginary part of the quaternion. Related to Z coordinate of the rotation axis. Also called q3.
 
-A copy of B3DRotation (from Balloon3D-Math), but with 64 bit Float elements (instead of 32 bit Float).!
+A copy of B3DRotation (from Balloon3D-Math), but with 64 bit Float elements (instead of 32 bit Float).
+
+See #a:b:c:d: , #q1:q2:q3:q4: and #x:y:z:a:
+See http://bicycle.tudelft.nl/schwab/Publications/quaternion.pdf!
 
 !Float64Vector2 commentStamp: '<historical>' prior: 0!
 I represent simple (x, y) 2D Cartesian coordinates with 64-bit Float (a.k.a. double) precision.
@@ -1723,42 +1726,9 @@ zero
 a
 	^self at: 1! !
 
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 21:59'!
-a: aFloat
-	self at: 1 put: aFloat! !
-
-!Float64Rotation methodsFor: 'initialize' stamp: 'jmv 7/15/2015 10:13'!
-a: aValue b: bValue c: cValue d: dValue
-
-	self a: aValue.
-	self b: bValue.
-	self c: cValue.
-	self d: dValue.
-	"
-	(Float64Rotation axis: 0@0@1 angle: 0.01) rotate: 0@0@ -1.
-	should answer 0@0@-1,
-	but was answering 0@0@1
-	because of this.
-	It is subtle, but a conjugate must be a conjugate, etc. In this particular case, it was the product #*
-	(jmv)
-	"
-	"(aValue < 0.0) ifTrue:[self *= -1.0]."
-	
-	self normalize.! !
-
 !Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 22:04'!
 angle
 	^(self a arcCos * 2.0 radiansToDegrees)! !
-
-!Float64Rotation methodsFor: 'accessing'!
-angle: newAngle
-	self angle: newAngle axis: self axis! !
-
-!Float64Rotation methodsFor: 'initialize' stamp: 'ar 2/1/1999 22:02'!
-angle: anAngle axis: aVector3
-
-	self radiansAngle: anAngle degreesToRadians axis: aVector3
-! !
 
 !Float64Rotation methodsFor: 'converting' stamp: 'jmv 11/24/2015 10:02'!
 asMatrix3x3
@@ -1805,25 +1775,13 @@ axis
 		y: (self c / sinAngle)
 		z: (self d / sinAngle)! !
 
-!Float64Rotation methodsFor: 'accessing'!
-axis: newAxis
-	self angle: self angle axis: newAxis! !
-
 !Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 21:59'!
 b
 	^self at: 2! !
 
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 22:00'!
-b: aFloat
-	self at: 2 put: aFloat! !
-
 !Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 21:59'!
 c
 	^self at: 3! !
-
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 22:00'!
-c: aFloat
-	self at: 3 put: aFloat! !
 
 !Float64Rotation methodsFor: 'arithmetic' stamp: 'jmv 7/7/2015 15:09'!
 conjugate
@@ -1836,32 +1794,6 @@ conjugate
 !Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 21:59'!
 d
 	^self at: 4! !
-
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 22:00'!
-d: aFloat
-	self at: 4 put: aFloat! !
-
-!Float64Rotation methodsFor: 'initialize' stamp: 'jmv 7/6/2015 15:09'!
-from: startVector to: endVector
-	"Create a rotation from startVector to endVector. 
-	Vectors should be normalized first."
-	| axis cos sin someNonColinearVector somePerpendicularVector |
-	startVector = endVector ifTrue: [^ self setIdentity].
-
-	axis := startVector cross: endVector.
-	cos := ((1 + (startVector dot: endVector)) / 2) sqrt.	"half-angle relation"
-	sin := cos isZero 
-				ifTrue: [
-					"180 degree rotation"
-					someNonColinearVector _ 1@0@0.
-					somePerpendicularVector _ someNonColinearVector cross: startVector normalized.
-					somePerpendicularVector length < 0.2 ifTrue: [
-						someNonColinearVector _ 0@1@0.
-						somePerpendicularVector _ someNonColinearVector cross: startVector ].
-					^ self angle: 180 axis: somePerpendicularVector]
-				ifFalse: [axis length / 2 / cos].			"double angle relation"
-	axis safelyNormalize.
-	self a: cos b: axis x * sin c: axis y * sin d: axis z * sin. ! !
 
 !Float64Rotation methodsFor: 'interpolating' stamp: 'jsp 2/25/1999 15:57'!
 interpolateTo: aRotation at: t
@@ -1877,7 +1809,7 @@ negated
 		c: self c
 		d: self d! !
 
-!Float64Rotation methodsFor: 'arithmetic' stamp: 'jmv 7/16/2015 12:04'!
+!Float64Rotation methodsFor: 'arithmetic' stamp: 'jmv 4/29/2016 16:25'!
 normalize
 	"Normalize the receiver. Note that the actual angle (a) determining the amount of 
 	rotation is fixed, since we do not want to modify angles. This leads to:
@@ -1900,9 +1832,9 @@ normalize
 
 	length := ((self b squared + self c squared + self d squared) / oneMinusASquared) sqrt.
 	length = 0.0 ifTrue: [ ^self setIdentity ].
-	self b: self b / length.
-	self c: self c / length.
-	self d: self d / length! !
+	self at: 2 put: self b / length.
+	self at: 3 put: self c / length.
+	self at: 4 put: self d / length! !
 
 !Float64Rotation methodsFor: 'converting' stamp: 'jmv 7/16/2015 12:16'!
 normalized
@@ -1921,14 +1853,18 @@ printOn: aStream
 		print: self axis;
 		nextPut:$).! !
 
-!Float64Rotation methodsFor: 'initialize' stamp: 'ar 2/1/1999 22:03'!
-radiansAngle: anAngle axis: aVector3
-
-	| angle sin cos |
-	angle := anAngle / 2.0.
-	cos := angle cos.
-	sin := angle sin.
-	self a: cos b: aVector3 x * sin c: aVector3 y * sin d: aVector3 z * sin.! !
+!Float64Rotation methodsFor: 'printing' stamp: 'jmv 4/28/2016 16:25'!
+printq1q2q3q4
+	^String streamContents: [ :strm |
+		strm nextPut: $(.
+		self b printOn: strm fractionDigits: 6.
+		strm nextPutAll: ', '.
+		self c printOn: strm fractionDigits: 6.
+		strm nextPutAll: ', '.
+		self d printOn: strm fractionDigits: 6.
+		strm nextPutAll: ', '.
+		self a printOn: strm fractionDigits: 6.
+		strm nextPut: $) ]! !
 
 !Float64Rotation methodsFor: 'transforming' stamp: 'jmv 7/16/2015 12:13'!
 rotate: aFloat64Vector3
@@ -1949,6 +1885,25 @@ rotate: aFloat64Vector3
 	"
 
 	^(self conjugate * aFloat64Vector3 asPureQuaternion * self) vectorPart * aFloat64Vector3 length! !
+
+!Float64Rotation methodsFor: 'private' stamp: 'jmv 4/29/2016 16:24'!
+setA: aValue b: bValue c: cValue d: dValue
+
+	self at: 1 put: aValue.
+	self at: 2 put: bValue.
+	self at: 3 put: cValue.
+	self at: 4 put: dValue.
+	"
+	(Float64Rotation axis: 0@0@1 angle: 0.01) rotate: 0@0@ -1.
+	should answer 0@0@-1,
+	but was answering 0@0@1
+	because of this.
+	It is subtle, but a conjugate must be a conjugate, etc. In this particular case, it was the product #*
+	(jmv)
+	"
+	"(aValue < 0.0) ifTrue:[self *= -1.0]."
+	
+	self normalize! !
 
 !Float64Rotation methodsFor: 'initialize'!
 setIdentity
@@ -2003,30 +1958,40 @@ turns
 vectorPart
 	^Float64Vector3 x: self b y: self c z: self d! !
 
-!Float64Rotation methodsFor: 'initialize' stamp: 'ar 2/1/1999 22:03'!
-x: xValue y: yValue z: zValue a: anAngle
-
-	| angle sin cos |
-	angle := (anAngle degreesToRadians) / 2.0.
-	cos := angle cos.
-	sin := angle sin.
-	self a: cos b: xValue * sin c: yValue * sin d: zValue * sin! !
-
-!Float64Rotation class methodsFor: 'instance creation'!
+!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/27/2016 11:52'!
 a: aValue b: bValue c: cValue d: dValue
-	^self new a: aValue b: bValue c: cValue d: dValue! !
+	^self new setA: aValue b: bValue c: cValue d: dValue! !
 
-!Float64Rotation class methodsFor: 'instance creation'!
+!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/28/2016 15:45'!
 angle: anAngle axis: aVector3
-	^self new angle: anAngle axis: aVector3! !
+
+	^self radiansAngle: anAngle degreesToRadians axis: aVector3! !
 
 !Float64Rotation class methodsFor: 'instance creation'!
 axis: aVector3 angle: anAngle
 	^self angle: anAngle axis: aVector3! !
 
-!Float64Rotation class methodsFor: 'instance creation'!
+!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/28/2016 15:45'!
 from: startVector to: endVector
-	^self new from: startVector to: endVector! !
+	"Create a rotation from startVector to endVector. 
+	Vectors should be normalized first."
+	| axis cos sin someNonColinearVector somePerpendicularVector |
+	startVector = endVector ifTrue: [^ self identity].
+
+	axis := startVector cross: endVector.
+	cos := ((1 + (startVector dot: endVector)) / 2) sqrt.	"half-angle relation"
+	sin := cos isZero 
+				ifTrue: [
+					"180 degree rotation"
+					someNonColinearVector _ 1@0@0.
+					somePerpendicularVector _ someNonColinearVector cross: startVector normalized.
+					somePerpendicularVector length < 0.2 ifTrue: [
+						someNonColinearVector _ 0@1@0.
+						somePerpendicularVector _ someNonColinearVector cross: startVector ].
+					^ self angle: 180 axis: somePerpendicularVector]
+				ifFalse: [axis length / 2 / cos].			"double angle relation"
+	axis safelyNormalize.
+	^self a: cos b: axis x * sin c: axis y * sin d: axis z * sin. ! !
 
 !Float64Rotation class methodsFor: 'instance creation'!
 identity
@@ -2052,16 +2017,25 @@ q1: q1 q2: q2 q3: q3 q4: q4
 	"
 	^self a: q4 b: q1 c: q2 d: q3! !
 
-!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 2/26/2015 15:47'!
+!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/28/2016 15:45'!
 radiansAngle: anAngle axis: aVector3
 	"http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
 	The rotation is clockwise if our line of sight points in the same direction as aVector3."
 
-	^self new radiansAngle: anAngle axis: aVector3! !
+	| angle sin cos |
+	angle := anAngle / 2.0.
+	cos := angle cos.
+	sin := angle sin.
+	^self a: cos b: aVector3 x * sin c: aVector3 y * sin d: aVector3 z * sin! !
 
-!Float64Rotation class methodsFor: 'instance creation'!
+!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/28/2016 15:45'!
 x: xValue y: yValue z: zValue a: anAngle
-	^self new x: xValue y: yValue z: zValue a: anAngle! !
+
+	| angle sin cos |
+	angle := (anAngle degreesToRadians) / 2.0.
+	cos := angle cos.
+	sin := angle sin.
+	^self a: cos b: xValue * sin c: yValue * sin d: zValue * sin! !
 
 !Float64Vector2 methodsFor: 'converting' stamp: 'ar 2/13/1999 20:03'!
 asPoint

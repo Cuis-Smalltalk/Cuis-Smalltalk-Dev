@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2737] on 19 April 2016 at 11:46:20.992301 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2746] on 29 April 2016 at 3:59:00.251522 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 48!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Taskbar' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 49!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Taskbar' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -3252,6 +3252,18 @@ testOperations
 	self assert: dt < (dt - d).
 	self assert: dt + d < dt.
 	self assert: dt + d - d = dt.! !
+
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 4/27/2016 15:04'!
+testToByDo
+	"
+	DateAndTimeTest new testToByDo
+	"
+	| end last start step |
+	start _ DateAndTime midnight.
+	end _ DateAndTime midnight + 2 hours.
+	step _ 15 minutes.
+	start to: end by: step do: [ :time | last _ time ].
+	self assert: last = end! !
 
 !DecompilerTests methodsFor: 'utilities' stamp: 'sd 9/25/2004 15:30'!
 blockingClasses
@@ -7378,6 +7390,24 @@ testFloatInterval
 		self assert: (1.0 to: 0.0 count: n) first = 1.0.
 		self assert: ((1.0 to: 0.0 count: n) last closeTo: 0.0) ].! !
 
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:49'!
+testFloatToByDo
+	"
+	IntervalTest new testFloatToByDo
+	"
+	| interval toByDo |
+
+	"See comment at #to:by:do:"
+	self flag: #expectedFailure.
+
+	interval _ 0 to: 2.4 by: 0.1.
+	toByDo _ Array streamContents: [ :strm |
+		0 to: 2.4 by: 0.1 do: [ :each |
+			strm nextPut: each ]].
+	self assert: toByDo size = interval size.
+	1 to: toByDo size do: [ :i |
+		self assert: (toByDo at: i) = (interval at: i) ]! !
+
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
 testIntegerInterval
 	"
@@ -7389,6 +7419,20 @@ testIntegerInterval
 	z _ 0.
 	(2 to: 5 by: 2) do: [ :i | z _ i ].
 	self assert: z = 4! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:29'!
+testIntegerToByDo
+	"
+	IntervalTest new testIntegerToByDo
+	"
+	| interval toByDo |
+	interval _ 2 to: 5 by: 2.
+	toByDo _ Array streamContents: [ :strm |
+		2 to: 5 by: 2 do: [ :each |
+			strm nextPut: each ]].
+	self assert: toByDo size = interval size.
+	1 to: toByDo size do: [ :i |
+		self assert: (toByDo at: i) = (interval at: i) ]! !
 
 !LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ar 11/30/2009 22:06'!
 testCompactClassIndex
