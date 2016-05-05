@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2743] on 25 April 2016 at 3:54:05.524916 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2758] on 5 May 2016 at 10:34:36.837424 am'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 11!
-!requires: 'FFI' 1 nil nil!
+!provides: 'OpenCL' 1 12!
 !requires: 'SignalProcessing' 1 37 nil!
+!requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -2808,7 +2808,7 @@ uploadDataToGPU: inputForm
 					pointer: inputForm
 					waitOn: lastEvent! !
 
-!NormalizedCoordinatesExperiment class methodsFor: 'example' stamp: 'jmv 2/25/2016 10:32'!
+!NormalizedCoordinatesExperiment class methodsFor: 'example' stamp: 'jmv 5/4/2016 16:56'!
 go
 	"
 	NormalizedCoordinatesExperiment go
@@ -2828,15 +2828,8 @@ go
 		0 to: src height-1 do: [ :y |
 			src pixelValueAt: x@y put: value.
 			]].
-
-	BitBlt swapBytesIn32BitWords: src bits.
-	
 	dest _ ColorForm grayScaleExtent: 300@1.
-		
-
 	algoritm process: src into: dest.
-	BitBlt swapBytesIn32BitWords: src bits.
-	BitBlt swapBytesIn32BitWords: dest bits.
 	dest displayAt: 0@0.
 
 	{src. dest} explore.
@@ -3060,15 +3053,17 @@ uploadDataToGPU: inputForm
 					pointer: inputForm
 					waitOn: lastEvent! !
 
-!OpenCLBlur class methodsFor: 'example' stamp: 'jmv 8/10/2015 12:09'!
+!OpenCLBlur class methodsFor: 'example' stamp: 'jmv 5/4/2016 12:58'!
 blurDisplay
-	"OpenCLBlur blurDisplay"
+	"
+	OpenCLBlur blurDisplay
+	"
 	| blur src dest |
 	blur := self new.
 	
-	dest := ExternalForm extent: Display extent depth: 32.
+	dest := ExternalForm extent: Display extent nativeDepthFrom: 32.
 	dest allocateSpace.
-	src := ExternalForm extent: Display extent depth: 32.
+	src := ExternalForm extent: Display extent nativeDepthFrom: 32.
 	src allocateSpace.
 	Display displayOn: src.
 		
@@ -3318,15 +3313,17 @@ uploadDataToGPU: inputForm
 					pointer: inputForm
 					waitOn: lastEvent! !
 
-!OpenCLBlur12 class methodsFor: 'example' stamp: 'jmv 10/29/2015 12:47'!
+!OpenCLBlur12 class methodsFor: 'example' stamp: 'jmv 5/4/2016 16:22'!
 blurDisplay
-	"OpenCLBlur blurDisplay"
+	"
+	OpenCLBlur12 blurDisplay
+	"
 	| blur src dest |
 	blur := self new.
 	
-	dest := ExternalForm extent: Display extent depth: 32.
+	dest := ExternalForm extent: Display extent nativeDepthFrom: 32.
 	dest allocateSpace.
-	src := ExternalForm extent: Display extent depth: 32.
+	src := ExternalForm extent: Display extent nativeDepthFrom: 32.
 	src allocateSpace.
 	Display displayOn: src.
 		
@@ -7747,16 +7744,16 @@ rowPitch
 width
 	^width! !
 
-!OpenCLImage3D methodsFor: 'initialize' stamp: 'jcg 1/29/2010 02:17'!
+!OpenCLImage3D methodsFor: 'initialize' stamp: 'jmv 5/4/2016 12:41'!
 context: anOpenCLContext format: fmt "a CLImageFormatStruct" width: w height: h depth: d rowPitch: rp slicePitch: sp
 	"Set the context that this buffer was created for, as well as its dimensions and format." 
 	context := anOpenCLContext.
 	format := fmt.
 	width := w.
-	height := h
-	depth: d..
+	height := h.
+	depth := d.
 	rowPitch := rp.
-	slicePitch := slicePitch.! !
+	slicePitch := sp! !
 
 !OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
 depth
@@ -14427,14 +14424,14 @@ testFinalization
 	self should: [refCounter count = 0].
 ! !
 
-!OpenCLTest methodsFor: 'running' stamp: 'jmv 9/16/2015 17:33'!
+!OpenCLTest methodsFor: 'running' stamp: 'jmv 5/4/2016 16:54'!
 testMapAndCopyImage
 	
 	| inputForm outputForm mapForm imageFormat image1 image2 ptr map1evt map2evt unmap1evt unmap2evt copyEvt |
 	
-	inputForm := (Form fromDisplay: (0@0 corner: 200@200)) asFormOfDepth: 32..
-	outputForm := Form extent: 200@200 depth: 32.
-	mapForm := ExternalForm extent: 200@200 depth: 32.
+	inputForm := (Form fromDisplay: (0@0 corner: 200@200)) asFormOfDepth: (Smalltalk isLittleEndian ifTrue: [ -32 ] ifFalse: [ 32 ]).
+	outputForm := Form extent: 200@200 nativeDepthFrom: 32.
+	mapForm := ExternalForm extent: 200@200 nativeDepthFrom: 32.
 	
 	imageFormat := CLImageFormatStruct argb8888.
 	image1 := context 

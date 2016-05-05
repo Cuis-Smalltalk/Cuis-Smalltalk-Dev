@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:26:38.499885 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2758] on 5 May 2016 at 10:34:14.102921 am'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 10!
+!provides: 'Graphics-Files-Additional' 1 11!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -2010,7 +2010,7 @@ readGray16PixelsInto: aFloatMatrix
 		pixel _ stream nextUnsignedInt16 / 65535.0.
 		floats at: pixNum put: pixel ]! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 4/7/2015 16:34'!
+!TIFFReader methodsFor: 'private' stamp: 'jmv 5/4/2016 17:29'!
 readGray8PixelsInto: aColorForm horizontalPredictor: useHorizontalPredictor
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Only handles 8-bit gray pixels on both source and destination."
@@ -2043,7 +2043,7 @@ readGray8PixelsInto: aColorForm horizontalPredictor: useHorizontalPredictor
 			ifFalse: [
 				g _ gg ].
 		pixel _ g.
-		bits byteAt: (row *  bytesPerRow) + column put: pixel ]! !
+		bits byteAt: (row *  bytesPerRow) + column put: pixel bigEndian: aColorForm isBigEndian ]! !
 
 !TIFFReader methodsFor: 'private' stamp: 'jmv 4/8/2015 11:54'!
 readPlanarRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalPredictor

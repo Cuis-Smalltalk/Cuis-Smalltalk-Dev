@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2659] on 13 January 2016 at 10:29:59.966772 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2758] on 5 May 2016 at 10:33:57.623359 am'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 13!
+!provides: 'FFI' 1 14!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -1809,12 +1809,12 @@ ushort
 void
 	^AtomicTypes at: 'void'! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jcg 6/6/2010 14:32'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/4/2016 12:43'!
 allocateSpace
 	"Convenient way to allocate space for the pixels.  This isn't done by default, because it is common to use a pointer obtained from elsewhere."
 	| addr |
 	pointer ifNotNil: [self error: 'space is already allocated'].
-	addr := ExternalAddress gcallocate: width*height * depth/8. "area times bytes/pixel"
+	addr := ExternalAddress gcallocate: width*height * depth abs // 8. "area times bytes/pixel"
 	self setManualSurfacePointer: addr.! !
 
 !ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:29'!
@@ -1854,11 +1854,11 @@ primManualSurface: surfaceID setPointer: pointer
 	self primitiveFailed
 ! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 1/6/2016 12:38'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 5/4/2016 12:47'!
 setExtent: extent depth: bitsPerPixel
 	bits ifNotNil: [self error: 'bits are already set'].
-	(#(8 16 32) includes: bitsPerPixel)
-		ifFalse: [self error: 'only 32 bits for now'.  "see 'rowPitch' below"].
+	(#(8 16 32) includes: bitsPerPixel abs)
+		ifFalse: [self error: 'only +/- 8, 16 or 32 bits for now'.  "see 'rowPitch' below"].
 	width := extent x asInteger.
 	width < 0 ifTrue: [width := 0].
 	height := extent y asInteger.
@@ -1867,9 +1867,9 @@ setExtent: extent depth: bitsPerPixel
 	bits := self 
 		primCreateManualSurfaceWidth: width 
 		height: height 
-		rowPitch: width * (bitsPerPixel/8)
-		depth: bitsPerPixel
-		isMSB: true.! !
+		rowPitch: width * (bitsPerPixel abs/8)
+		depth: bitsPerPixel abs
+		isMSB: bitsPerPixel > 0.! !
 
 !ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:31'!
 setExtent: extent depth: bitsPerPixel bits: pointer

@@ -12,7 +12,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file to your folder
 * download http://www.mirandabanda.org/files/Cog/VM/2015/VM.r3370/cogwin-15.22.3370.zip
 * extract the contents of the zip file to your folder
-* drop the Cuis4.2-2744.image over the Squeak.exe file
+* drop the Cuis4.2-2760.image over the Squeak.exe file
 
 ### On Mac OS X ###
 * Crea a new folder in your machine using Mac Finder
@@ -20,6 +20,6 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file to your folder
 * download http://www.mirandabanda.org/files/Cog/VM/2015/VM.r3370/Cog.app-15.22.3370.tgz
 * extract the contents of the zip file to your folder
-* drop the Cuis4.2-2744.image over the Squeak.app file
-* [ctrl] click on Cog application. Open. "Cog is from an unidentified developer"; dialog. Click on [Open] Supply required credentials. (This is required only on the first run). Select Cuis4.2-2744.image. (If this step is a problem, you might try the command line variant, described in another document.)
-* On subsequent runs, drop the Cuis4.2-2744.image over the Squeak.app file
+* drop the Cuis4.2-2760.image over the Squeak.app file
+* [ctrl] click on Cog application. Open. "Cog is from an unidentified developer"; dialog. Click on [Open] Supply required credentials. (This is required only on the first run). Select Cuis4.2-2760.image. (If this step is a problem, you might try the command line variant, described in another document.)
+* On subsequent runs, drop the Cuis4.2-2760.image over the Squeak.app file

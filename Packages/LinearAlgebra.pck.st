@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2690] on 26 February 2016 at 1:31:02.783111 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2760] on 5 May 2016 at 4:43:49.055566 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 21!
-!requires: 'Probabilities-and-Statistics' 1 nil nil!
+!provides: 'LinearAlgebra' 1 26!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -199,7 +199,7 @@ as32bitFormEvaluating: aBlock
 			index _ index + 1 ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 1/14/2015 13:04'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 17:19'!
 as8bitFormEvaluating: aBlock
 	"Fill an 8-bit ColorForm with gray values."
 
@@ -213,12 +213,18 @@ as8bitFormEvaluating: aBlock
 		1 to: width do: [ :x |
 			elementsIndex _ elementsIndex + 1.
 			bitsIndex _ bitsIndex + 1.
-			bits byteAt: bitsIndex put: (aBlock value: elementsIndex) ]].
+			bits byteAt: bitsIndex put: (aBlock value: elementsIndex) bigEndian: answer isBigEndian ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 1/15/2016 14:40'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:18'!
 asForm
-	"Answer a Form with gray values."
+	"Answer a Form with gray values.
+	Map used range of pixel values to available gray values.
+	Do not apply any gamma.
+	
+	Each subclass might do it differently:
+	- mapping the used range of values or some arbitrary range
+	- applying or not gamma correction (to make a linear range look linear to our eyes, using nonlinear mapping)"
 
 	| max min |
 	min _ self min.
@@ -247,9 +253,10 @@ asFormG: greenMatrix b: blueMatrix min: min max: max
 		b _ (((blueElements at: index) - min) * k + 0.5) truncated min: 255 max: 0.
 		word at: 1 put: b; at: 2 put: g; at: 3 put: r ]! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:04'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 10:49'!
 asFormMin: min max: max
-	"Answer a 32bit Form with gray values."
+	"Answer a 8bit Form with gray values.
+	Map used range of pixel values to available gray values."
 
 	| k |
 	k _ 255.0 / (max-min).
@@ -294,6 +301,19 @@ diagonal
 	1 to: height do: [ :i |
 		x i: i j: 1 put: (self i: i j: i ) ].
 	^x! !
+
+!Matrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 10:55'!
+display
+	self displayAt: 0@0! !
+
+!Matrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:16'!
+displayAt: aPoint
+	"Display receiver, using default conversion to Form.
+	Each subclass might do it differently:
+	- mapping the used range of values or some arbitrary range
+	- applying or not gamma correction (to make a linear range look linear to our eyes, using nonlinear mapping)"
+
+	self asForm displayAt: aPoint! !
 
 !Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 10:25'!
 elements
@@ -766,6 +786,69 @@ triangleWithPartialPivoting
 	].
 	^ permutationCount! !
 
+!Matrix methodsFor: 'conversion' stamp: 'jmv 5/5/2016 15:41'!
+with8BitColorForm: aForm do: aBlock
+	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
+	This is what we get, for instance, when reading a gray 8 bit bmp file.
+	Don't assume anything about the color palette
+	(i.e. don't assume all 256 gray levels will be present, and don't assume a prticular order of the entries)."
+
+	|  word aFormHeight aFormWidth i2 aFormBits aFormColorsReds c wholeLineWords aFormTotalLineWords loseElementsAtRight ii1 lineBase shift0 shift1 shift2 shift3 |
+	aFormHeight _ aForm extent y.
+	aFormWidth _ aForm extent x.
+	
+	wholeLineWords _ (width min: aFormWidth) // 4.
+	loseElementsAtRight _ (width min: aFormWidth) \\ 4.
+	
+	aFormTotalLineWords _ aFormWidth-1 // 4+1.
+	aFormBits _ aForm bits.
+	aFormColorsReds _ aForm colors collect: [ :each | each red ].
+	
+	aForm nativeDepth = -8 ifTrue: [
+		shift0 _ 0.
+		shift1 _ -8.
+		shift2 _ -16.
+		shift3 _ -24 ]
+	ifFalse: [
+		shift0 _ -24.
+		shift1 _ -16.
+		shift2 _ -8.
+		shift3 _ 0].
+
+	1 to: (height min: aFormHeight) do: [ :y |
+		i2 _ y-1 * width.
+		lineBase _ y-1 * aFormTotalLineWords.
+		lineBase+1 to: lineBase+wholeLineWords do: [ :i1 |
+			word _ aFormBits at: i1.
+			i2 _ i2 + 1.
+			c _ (word bitShift: shift0) bitAnd: 16rFF.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+			i2 _ i2 + 1.
+			c _ (word bitShift: shift1) bitAnd: 16rFF.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+			i2 _ i2 + 1.
+			c _ (word bitShift: shift2) bitAnd: 16rFF.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+			i2 _ i2 + 1.
+			c _ (word bitShift: shift3) bitAnd: 16rFF.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+		].
+		loseElementsAtRight > 0 ifTrue: [
+			ii1 _ lineBase+wholeLineWords + 1.
+			word _ aFormBits at: ii1.
+			i2 _ i2 + 1.
+			c _ (word bitShift: shift0) bitAnd: 16rFF.
+			aBlock value: i2 value: (aFormColorsReds at: c+1).
+			loseElementsAtRight > 1 ifTrue: [
+				i2 _ i2 + 1.
+				c _ (word bitShift: shift1) bitAnd: 16rFF.
+				aBlock value: i2 value: (aFormColorsReds at: c+1).
+				loseElementsAtRight = 3 ifTrue: [
+					i2 _ i2 + 1.
+					c _ (word bitShift: shift2) bitAnd: 16rFF.
+					aBlock value: i2 value: (aFormColorsReds at: c+1) ]]].
+	]! !
+
 !Matrix methodsFor: 'private' stamp: 'jmv 7/19/2012 12:35'!
 zeroElement
 	"We don't really restrict the kind of objects we might hold... Our best guess for a kind of null additive value is to just ask some element..."
@@ -782,6 +865,25 @@ columnFrom: anArray
 	1 to: result height do: [ :i |
 		result i: i j: 1 put: (anArray at: i) ].
 	^result! !
+
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 5/3/2016 17:55'!
+from32BitColorForm: aForm component: aSymbol
+	"aSymbol must be in #(red green blue alpha)"
+
+	| instance |
+	instance _ self width: aForm width height: aForm height.
+	instance fillFrom32BitForm: aForm component: aSymbol.
+	^instance! !
+
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 5/3/2016 16:46'!
+from8BitColorForm: aForm
+	"Assume that aForm has a colormap with 256 gray levels, going from black to white.
+	This is what we get, for instance, when reading a gray 8 bit bmp file"
+
+	| instance |
+	instance _ self width: aForm width height: aForm height.
+	instance fillFrom8BitColorForm: aForm.
+	^instance! !
 
 !Matrix class methodsFor: 'instance creation' stamp: 'jmv 11/16/2014 19:56'!
 hilbert: n
@@ -804,6 +906,18 @@ identity: size
 	result fillWithIdentity.
 	^result
 ! !
+
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 5/4/2016 11:52'!
+lena
+	"
+	(Base64MimeConverter mimeEncode: ((FileStream readOnlyFileNamed: 'Lena.png') binary)) upToEnd
+Form lena display.
+FloatImage lena display.
+ByteMatrix lena display.
+	"
+	| form |
+	form _ Form lena.
+	^self from32BitColorForm: form component: nil! !
 
 !Matrix class methodsFor: 'instance creation' stamp: 'jmv 9/2/2014 10:10'!
 m: height n: width
@@ -848,6 +962,51 @@ rowFrom: anArray
 		result i: 1 j: j put: (anArray at: j) ].
 	^result! !
 
+!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 10:47'!
+asForm
+	"Our pixel values are already constrained to 0..255.
+	Converting to an 8bit gray Form is straightforward."
+
+	^ self as8bitFormEvaluating: [ :index | elements at: index ]! !
+
+!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 12:57'!
+fillFrom32BitForm: aForm component: aSymbol
+	"aSymbol must be in #(red green blue alpha) or nil"
+
+	| hack map componentIndex mask shift |
+	hack _ ColorForm extent: width@height nativeDepthFrom: 8 bits: elements.
+	map _ aSymbol ifNotNil: [
+		componentIndex _ #(alpha red green blue) indexOf: aSymbol.
+		shift _ #(-24 -16 -8 0) at: componentIndex.
+		mask _ #(16rFF000000 16rFF0000 16rFF00 16rFF) at: componentIndex.
+		ColorMap masks: { mask. 0. 0. 0 } shifts: { shift. 0. 0. 0 } ].
+	(BitBlt toForm: hack)
+		sourceForm: aForm;
+		combinationRule: Form over;
+		colorMap: map;
+		sourceRect: (0@0 extent: width@height);
+		destOrigin: 0@0;
+		copyBits! !
+
+!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/5/2016 16:35'!
+fillFrom8BitColorForm: aForm
+	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
+	This is what we get, for instance, when reading a gray 8 bit bmp file"
+"
+	self with8BitColorForm: aForm do: [ :i2 :v |
+		elements at: i2 put: (v * 255)  rounded]
+"
+	| hack |
+	hack _ ColorForm extent: width@height nativeDepthFrom: 8 bits: elements.
+	(BitBlt toForm: hack)
+		sourceForm: aForm;
+		combinationRule: Form over;
+		colorMap: nil;
+		sourceRect: (0@0 extent: width@height);
+		destOrigin: 0@0;
+		copyBits
+		! !
+
 !ByteMatrix methodsFor: 'initialization' stamp: 'jmv 5/18/2015 14:27'!
 initializeElements
 
@@ -858,6 +1017,46 @@ addNormalNoise: standardDeviation
 	| random |
 	random _ NormalProbabilityDistribution mean: 0.0 standardDeviation: standardDeviation.
 	self replaceValues: [ :i :j :v | random nextRandomNumber + v ]! !
+
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:07'!
+asGammaFormFullRange
+	"See comment at #fullRangeDisplayAt:"
+
+	| min scale |
+	min _ elements min.
+	scale _ elements max-min.
+	scale _ scale > 0.0
+		ifTrue: [ 1.0 / scale ]
+		ifFalse: [ 1.0 ].
+	^self as8bitFormEvaluating: [ :index | | value |
+		value _ Color linearTosRGBGamma: (elements at: index)-min * scale.
+		(value * 255 + 0.5) truncated ]! !
+
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:09'!
+asGammaFormFullRangeG: greenImage b: blueImage
+	"Assume all three images are exactly the same size.
+	See comment at #fullRangeDisplayAt:"
+
+	| answer bits rElements rMin rScale gElements gMin gScale bElements bMin bScale b g r word |
+	answer _ Form extent: width@height depth: 32.
+	bits _ answer bits.
+	rElements _ self elements.
+	rMin _ rElements min.
+	rScale _ rElements max - rMin. rScale _ rScale > 0.0 ifTrue: [ 1.0 / rScale ] ifFalse: [ 0.0 ].
+	gElements _ greenImage elements.
+	gMin _ gElements min.
+	gScale _ gElements max - gMin. gScale _ gScale > 0.0 ifTrue: [ 1.0 / gScale ] ifFalse: [ 0.0 ].
+	gScale print.
+	bElements _ blueImage elements.
+	bMin _ bElements min.
+	bScale _ bElements max - bMin. bScale _ bScale > 0.0 ifTrue: [ 1.0 / bScale ] ifFalse: [ 0.0 ].
+	1 to: elements size do: [ :i |
+		r _ ((Color linearTosRGBGamma: (rElements at: i)-rMin * rScale) * 255 + 0.5) truncated.
+		g _ ((Color linearTosRGBGamma: (gElements at: i)-gMin * gScale) * 255 + 0.5) truncated.
+		b _ ((Color linearTosRGBGamma: (bElements at: i)-bMin * bScale) * 255 + 0.5) truncated.
+		word _ (r bitShift: 16) + (g bitShift: 8) + b.
+		bits integerAt: i put: word ].
+	^answer! !
 
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
 conditionNumber
@@ -1036,6 +1235,49 @@ expandTo: newExtent
 	self copyToTile: answer position: 1@1.
 	^answer! !
 
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 12:11'!
+fillFrom32BitForm: aForm component: aSymbol
+	"aSymbol must be in #(red green blue alpha) or nil"
+
+	| componentIndex shift mask magic bb |
+	magic _ 128.0.
+	"If aSymbol is not supplied, just take blue.
+	This is for consistency with ByteMatrix, where no map takes blue, and is actually faster."
+	componentIndex _ aSymbol ifNil: [4] ifNotNil: [#(alpha red green blue) indexOf: aSymbol].
+	shift _ #(-16 -8 0 8 ) at: componentIndex.
+	mask _ #(16rFF000000 16rFF0000 16rFF00 16rFF) at: componentIndex.
+	bb _ BitBlt toForm: (Form new hackBitsForFloatMatrix: self).
+	bb sourceForm: aForm.
+	bb combinationRule: 7. "or"
+	bb sourceX: 0; sourceY: 0.
+	bb destX: 0 destY: 0 width: width height: height.
+	bb colorMap: (ColorMap masks: { mask. 0. 0. 0 } shifts: { shift. 0. 0. 0 }).
+
+	elements += magic.
+	bb copyBits.
+	elements -= magic! !
+
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/5/2016 16:42'!
+fillFrom8BitColorForm: aForm
+	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
+	This is what we get, for instance, when reading a gray 8 bit bmp file"
+"
+	self with8BitColorForm: aForm do: [ :i2 :v |
+		elements at: i2 put: v ]
+"
+	| magic bb |
+	magic _ 32768.0.
+	bb _ BitBlt toForm: (Form new hackBitsForFloatMatrix: self).
+	bb sourceForm: aForm.
+	bb combinationRule: 7. "or"
+	bb sourceX: 0; sourceY: 0.
+	bb destX: 0 destY: 0 width: width height: height.
+	bb colorMap: nil.
+
+	elements += magic.
+	bb copyBits.
+	elements -= magic! !
+
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 8/28/2015 11:29'!
 fillLowFFTFrequenciesWith: aFloatMatrix
 	"
@@ -1185,6 +1427,26 @@ fillWithValue: value
 !FloatMatrix methodsFor: 'accessing' stamp: 'jmv 9/17/2007 12:43'!
 fillWithZeroes
 	elements *= 0.0! !
+
+!FloatMatrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:05'!
+fullRangeDisplayAt: aPoint
+	"Assume the values are not normalized in the scale 0.0 to 1.0.
+	Apply appropriate scaling to use viewable dynamic range to show receiver actual range of values.
+	Assume receiver is in linear scale.
+	Apply appropriate gamma encoding to make good use of pixel dynamic range.
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+
+	self asGammaFormFullRange displayAt: aPoint! !
+
+!FloatMatrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:09'!
+fullRangeG: greenImage b: blueImage displayAt: aPoint
+	"Assume the values are not normalized in the scale 0.0 to 1.0.
+	Apply appropriate scaling to use viewable dynamic range to show receiver actual range of values.
+	Assume receiver is in linear scale.
+	Apply appropriate gamma encoding to make good use of pixel dynamic range.
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+
+	(self asGammaFormFullRangeG: greenImage b: blueImage) displayAt: aPoint! !
 
 !FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 8/23/2014 23:26'!
 hessembergSuperior
