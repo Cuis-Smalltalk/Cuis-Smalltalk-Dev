@@ -13,17 +13,17 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ### Get an appropriate VM ###
 For Windows Git Bash:
 ```
-$ curl -o cogwin.zip www.mirandabanda.org/files/Cog/VM/2015/VM.r3370/cogwin-15.22.3370.zip
+$ curl -o cogwin.zip http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-xx.yy.zzzz.zip
 $ unzip cogwin.zip
 ```
 For MacOSX:
 ```
-$ curl -o Cog.app.tgz www.mirandabanda.org/files/Cog/VM/2015/VM.r3370/Cog.app-15.22.3370.tgz
+$ curl -o Cog.app.tgz http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-xx.yy.zzzz.tgz
 $ tar -zxvf Cog.app.tgz
 ```
 For Linux (except ArchLinux, Chromebooks see below):
 ```
-$ wget -O coglinuxht.tgz www.mirandabanda.org/files/Cog/VM/2015/VM.r3370/coglinuxht-15.22.3370.tgz
+$ wget -O coglinuxht.tgz http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-xx.yy.zzzz.tgz
 $ tar -zxvf coglinuxht.tgz
 ```
 On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
