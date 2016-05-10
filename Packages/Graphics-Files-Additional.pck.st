@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2758] on 5 May 2016 at 10:34:14.102921 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2761] on 10 May 2016 at 9:39:43.595995 am'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 11!
+!provides: 'Graphics-Files-Additional' 1 12!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -195,11 +195,12 @@ copyPixels: y at: startX by: incX
 	self perform: s asSymbol with: y with: startX with: incX
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 5/27/2015 14:07'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 5/9/2016 14:01'!
 copyPixelsGray: y
 	"Handle non-interlaced grayscale color mode (colorType = 0)"
 
 	| blitter high low value |
+
 	bitsPerChannel = 16 ifTrue: [
 		"Warning: This is extremely slow. Besides we are downsampling to 8 bits!!"
 		blitter := BitBlt bitPokerToForm: form.
@@ -217,7 +218,7 @@ copyPixelsGray: y
 	bitsPerChannel = 1 ifTrue: [ ^self copyPixelsGrayWeirdBitBltHack: y ].
 
 	"This interesting technique  (By Yoshiki Ohshima) is also instructive"
-	true ifTrue: [ ^form bits copyFromByteArray2: thisScanline to: y * (form width* bitsPerChannel // 32) ].
+	true ifTrue: [ ^form copyFromByteArray2: thisScanline to: y * (form width* bitsPerChannel // 32) ].
 
 	"This Smalltalk version might be easier to understand and is quite fast too."
 	"This somewhat weird mixture of (#* and #+) with (#bitShift: and #bitOr:) 
@@ -831,7 +832,7 @@ grayColorsFor: d
 		].
 ! !
 
-!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 12/21/2013 09:43'!
+!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 5/9/2016 17:13'!
 nextImage
 	bigEndian := Smalltalk isBigEndian.
 	filtersSeen _ Bag new.
@@ -848,7 +849,7 @@ nextImage
 			ifTrue:[palette := nil]].
 
 	(depth <= 8 and:[palette notNil]) ifTrue:[
-		form := ColorForm extent: width@height depth: depth.
+		form := ColorForm extent: width@height nativeDepthFrom: depth.
 		form colors: palette.
 	] ifFalse:[
 		form := Form extent: width@height depth: depth.
@@ -2419,7 +2420,7 @@ parseIFDsFrom: aTIFFStream
 			ifdPosition _ aTIFFStream nextUnsignedInt32].
 ! !
 
-!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 2/29/2016 11:22'!
+!TIFFStructure methodsFor: 'parsing' stamp: 'jmv 5/9/2016 17:00'!
 validateHeaderOf: aTIFFStream
 	"Report an error if the header of the given stream is not valid, 
 	or does not match the endian-ness of the TIFFStream."
@@ -2433,10 +2434,7 @@ validateHeaderOf: aTIFFStream
 	(aTIFFStream nextUnsignedInt16 = expectedWord) 
 		ifFalse: [self error: 'TIFF Header not valid. First word not correct for expected endian-ness'].
 	(aTIFFStream nextUnsignedInt16 = douglasAdams) 
-		ifFalse: [self error: 'TIFF Header not valid. Answer not 42.'].
-
-	
-! !
+		ifFalse: [self error: 'TIFF Header not valid. Answer not 42.']! !
 
 !TIFFStructure class methodsFor: 'instance creation' stamp: 'mrm 7/25/2001 21:52'!
 parseFrom: aTIFFStream
