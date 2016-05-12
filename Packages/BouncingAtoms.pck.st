@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 12 May 2016 at 6:24:24.663592 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 12 May 2016 at 6:38:13.380592 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 24!
+!provides: 'BouncingAtoms' 1 25!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
@@ -30,16 +30,6 @@ RectangleLikeMorph subclass: #BouncingAtomsMorph
 	category: 'BouncingAtoms'!
 !classDefinition: 'BouncingAtomsMorph class' category: #BouncingAtoms!
 BouncingAtomsMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #GraphMorph category: #BouncingAtoms!
-FunctionGraphMorph subclass: #GraphMorph
-	instanceVariableNames: 'data points yScaleFactor'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BouncingAtoms'!
-!classDefinition: 'GraphMorph class' category: #BouncingAtoms!
-GraphMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #InfectionGraph category: #BouncingAtoms!
@@ -83,9 +73,6 @@ This morph shows how simulation of an ideal gas might work. When the morph gets 
      add a Heater/Cooler Atom(s), then
      start an infection and note the effect as atoms pass over the Heater/Cooler Atom(s).
   8. Repeatedly start an infection with the same atoms from step 7.!
-
-!GraphMorph commentStamp: '<historical>' prior: 0!
-Normalize points in a collection, plot them in a graph, with lines drawn between them.!
 
 !InfectionGraph commentStamp: 'dhn 5/11/2016 15:55' prior: 0!
 Normalize the number of infected atoms, treat them as a time series, and plot them in a graph.!
@@ -537,85 +524,6 @@ open
 "
 
 	self initializedInstance openInHand! !
-
-!GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 20:12'!
-asNormalizedPoints: aCollection
-	"Answer an array of points which are mapped on [0, T] in both dimensions, where T is a multiple of 10"
-	| yArray yFactor xArray xFactor result |
-	yFactor _ 10 raisedTo: yMax log asInteger.
-	yArray _ yFactor * (self normalize: aCollection asOrderedCollection with: yScaleFactor).
-	xFactor _ 10 raisedTo: xMax log asInteger.
-	xArray _ xFactor * (self normalize: (0 to: aCollection size) asArray).
-	result _ OrderedCollection new.
-	1
-		to: yArray size
-		do: [ :i |
-			result add: (xArray at: i) @ (yArray at: i) ].
-	^ result.! !
-
-!GraphMorph methodsFor: 'accessing' stamp: 'dhn 5/6/2015 09:33'!
-color: aColor
-
-	super color: aColor.
-! !
-
-!GraphMorph methodsFor: 'accessing' stamp: 'dhn 5/23/2015 16:09'!
-data: aCollection
-
-	data _ aCollection
-! !
-
-!GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/29/2015 18:21'!
-drawOn: aCanvas
-	| fully |
-	fully _ 10 raisedTo: yMax log asInteger.
-
-	aCanvas line: (self toMorphic:0@yMin) to: (self toMorphic: 0 @ yMax) width: 2 color: Color lightGray.
-	aCanvas line: (self toMorphic: xMin@0) to: (self toMorphic: xMax@0) width: 2 color: Color lightGray.
-	aCanvas line: (self toMorphic: 0@fully) to: (self toMorphic: xMax@fully) width: 2 color: Color lightRed.
-
-	points ifNotNil: [
-		1 to: points size - 1 do: [:n |
-			aCanvas line: (self toMorphic: (points at: n)) to: (self toMorphic: (points at: n + 1)) width: 2 color: Color black]]! !
-
-!GraphMorph methodsFor: 'initialization' stamp: 'dhn 5/23/2015 16:02'!
-initialize
-
-	super initialize
-! !
-
-!GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/23/2015 11:50'!
-normalize: aCollection
-	"Answer aCollection divided by its maximum"
-	| max |
-	max _ aCollection inject: 0 into: [:a :c | (a > c)
-		ifTrue: [a]
-		ifFalse: [c]].
-	^ OrderedCollection new
-		addAll: aCollection / (max * 1.0)! !
-
-!GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 20:09'!
-normalize: aCollection with: aFactor
-	"Answer aCollection divided by its maximum and scaled by maximum/aFactor"
-	| max |
-	max _ aCollection inject: 0 into: [:a :c | (a > c)
-		ifTrue: [a]
-		ifFalse: [c]].
-	^ OrderedCollection new
-		addAll: (aCollection / (max * 1.0)) * (max / aFactor)! !
-
-!GraphMorph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 12:18'!
-update: aSymbol
-	"Re-normalize data if parameter = #redraw"
-	super update: aSymbol.
-	(aSymbol == #redraw and: (data size > 1)) ifTrue: [points _ self asNormalizedPoints: data]
-! !
-
-!GraphMorph methodsFor: 'accessing' stamp: 'dhn 5/26/2015 12:25'!
-yScaleFactor: aNumber
-
-	yScaleFactor _ aNumber
-! !
 
 !InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/12/2016 10:50'!
 asNormalizedPoints: aCollection
