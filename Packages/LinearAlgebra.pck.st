@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2760] on 5 May 2016 at 4:43:49.055566 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 11:39:04.156863 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 26!
+!provides: 'LinearAlgebra' 1 27!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
@@ -199,13 +199,13 @@ as32bitFormEvaluating: aBlock
 			index _ index + 1 ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 17:19'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 5/12/2016 18:30'!
 as8bitFormEvaluating: aBlock
 	"Fill an 8-bit ColorForm with gray values."
 
 	| answer bits bitsIndex elementsIndex bytesPerRow |
 	bytesPerRow _ width + 3 // 4 * 4.
-	answer _ ColorForm grayScaleExtent: width@height.
+	answer _ GrayForm extent: width@height.
 	bits _ answer bits.
 	elementsIndex _ 0.
 	1 to: height do: [ :y |
@@ -969,12 +969,12 @@ asForm
 
 	^ self as8bitFormEvaluating: [ :index | elements at: index ]! !
 
-!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 12:57'!
+!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/12/2016 18:30'!
 fillFrom32BitForm: aForm component: aSymbol
 	"aSymbol must be in #(red green blue alpha) or nil"
 
 	| hack map componentIndex mask shift |
-	hack _ ColorForm extent: width@height nativeDepthFrom: 8 bits: elements.
+	hack _ GrayForm extent: width@height bits: elements.
 	map _ aSymbol ifNotNil: [
 		componentIndex _ #(alpha red green blue) indexOf: aSymbol.
 		shift _ #(-24 -16 -8 0) at: componentIndex.
@@ -988,7 +988,7 @@ fillFrom32BitForm: aForm component: aSymbol
 		destOrigin: 0@0;
 		copyBits! !
 
-!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/5/2016 16:35'!
+!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/12/2016 18:32'!
 fillFrom8BitColorForm: aForm
 	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file"
@@ -997,15 +997,14 @@ fillFrom8BitColorForm: aForm
 		elements at: i2 put: (v * 255)  rounded]
 "
 	| hack |
-	hack _ ColorForm extent: width@height nativeDepthFrom: 8 bits: elements.
+	hack _ GrayForm extent: width@height bits: elements.
 	(BitBlt toForm: hack)
 		sourceForm: aForm;
 		combinationRule: Form over;
 		colorMap: nil;
 		sourceRect: (0@0 extent: width@height);
 		destOrigin: 0@0;
-		copyBits
-		! !
+		copyBits! !
 
 !ByteMatrix methodsFor: 'initialization' stamp: 'jmv 5/18/2015 14:27'!
 initializeElements

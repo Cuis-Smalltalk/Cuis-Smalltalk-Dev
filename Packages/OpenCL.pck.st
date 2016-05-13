@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2758] on 5 May 2016 at 10:34:36.837424 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 11:40:21.169863 am'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 12!
+!provides: 'OpenCL' 1 13!
 !requires: 'SignalProcessing' 1 37 nil!
 !requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -2808,27 +2808,23 @@ uploadDataToGPU: inputForm
 					pointer: inputForm
 					waitOn: lastEvent! !
 
-!NormalizedCoordinatesExperiment class methodsFor: 'example' stamp: 'jmv 5/4/2016 16:56'!
+!NormalizedCoordinatesExperiment class methodsFor: 'example' stamp: 'jmv 5/12/2016 18:34'!
 go
 	"
 	NormalizedCoordinatesExperiment go
 	"
-	| algoritm src dest map value |
+	| algoritm src dest value |
 	algoritm _ self new.
 
-	src _ ColorForm grayScaleExtent: 4@4.
+	src _ GrayForm extent: 4@4.
 	
-	map _ Bitmap new: 256.
-	2 to: 256 do: [ :i | map at: i put: i - 1].
-	map at: 1 put: 1.  "map zero pixel values to near-black"
-
 	0 to: src width-1 do: [ :x |
 		value _ (x * 255.0 / (src width-1)) rounded.
 		value _ (x+0.5 * 255.0 / (src width)) rounded print.
 		0 to: src height-1 do: [ :y |
 			src pixelValueAt: x@y put: value.
 			]].
-	dest _ ColorForm grayScaleExtent: 300@1.
+	dest _ GrayForm extent: 300@1.
 	algoritm process: src into: dest.
 	dest displayAt: 0@0.
 

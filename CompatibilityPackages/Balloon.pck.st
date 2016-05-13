@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2327] on 16 May 2015 at 5:28:40.8284 pm'!
 'Description This package includes code required by VMMaker for building the Balloon VM plugin. In any case, Cuis does not use Balloon at all, so this code is only for use by VMMaker'!
-!provides: 'Balloon' 1 3!
+!provides: 'Balloon' 1 4!
 !classDefinition: #BalloonEngineConstants category: #'Balloon-Engine-Pools'!
 SharedPool subclass: #BalloonEngineConstants
 	instanceVariableNames: ''
@@ -431,7 +431,7 @@ initialize
 initializeInstVarNames: aClass prefixedBy: aString
 
 	| token |
-	aClass instVarNames doWithIndex:[:instVarName :index| | value |
+	aClass instVarNames withIndexDo: [ :instVarName :index| | value |
 		token := (aString, instVarName first asUppercase asString, (instVarName copyFrom: 2 to: instVarName size),'Index') asSymbol.
 		value := index - 1.
 		(self bindingOf: token) ifNil:[self addClassVarName: token].

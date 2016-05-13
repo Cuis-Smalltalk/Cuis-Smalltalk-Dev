@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2761] on 10 May 2016 at 9:39:43.595995 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 11:37:48.455863 am'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 12!
+!provides: 'Graphics-Files-Additional' 1 13!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1948,7 +1948,7 @@ positionStreamToStripNum: anInteger
 	stream position: ((structure at: #StripOffsets) at: anInteger).
 	stream newStrip! !
 
-!TIFFReader methodsFor: 'reading' stamp: 'jmv 4/8/2015 11:14'!
+!TIFFReader methodsFor: 'reading' stamp: 'jmv 5/12/2016 16:01'!
 readForm
 	"Answer a Form created from the data in my stream and structure."
 	| result bps |
@@ -1976,7 +1976,7 @@ readForm
 		bps caseOf: {
 			[ 8 ] -> [
 				"ColorForm set for 8bpp gray scale images"
-				result _ ColorForm grayScaleExtent: self extent.
+				result _ GrayForm extent: self extent.
 				self
 					readGray8PixelsInto: result
 					horizontalPredictor: ((structure at: #Predictor) = 2) ].
@@ -2011,21 +2011,21 @@ readGray16PixelsInto: aFloatMatrix
 		pixel _ stream nextUnsignedInt16 / 65535.0.
 		floats at: pixNum put: pixel ]! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 5/4/2016 17:29'!
-readGray8PixelsInto: aColorForm horizontalPredictor: useHorizontalPredictor
+!TIFFReader methodsFor: 'private' stamp: 'jmv 5/12/2016 18:27'!
+readGray8PixelsInto: aGrayForm horizontalPredictor: useHorizontalPredictor
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Only handles 8-bit gray pixels on both source and destination."
 
 	| bits totalPixels pixelsPerStrip currentStripNum g gg pixel bytesPerRow row column |
-	bits _ aColorForm bits.
-	totalPixels _ aColorForm width * aColorForm height.
-	pixelsPerStrip _ aColorForm width * (structure at: #RowsPerStrip).
+	bits _ aGrayForm bits.
+	totalPixels _ aGrayForm width * aGrayForm height.
+	pixelsPerStrip _ aGrayForm width * (structure at: #RowsPerStrip).
 	currentStripNum _ 0.
 	row _ -1.
 	column _ 0.
-	bytesPerRow _ aColorForm width + 3 // 4 * 4.
+	bytesPerRow _ aGrayForm width + 3 // 4 * 4.
 	1 to: totalPixels do: [ :pixNum |
-		(pixNum-1 \\ aColorForm width = 0) ifTrue: [
+		(pixNum-1 \\ aGrayForm width = 0) ifTrue: [
 			row _ row + 1.
 			column _ 0.
 			(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
@@ -2044,7 +2044,7 @@ readGray8PixelsInto: aColorForm horizontalPredictor: useHorizontalPredictor
 			ifFalse: [
 				g _ gg ].
 		pixel _ g.
-		bits byteAt: (row *  bytesPerRow) + column put: pixel bigEndian: aColorForm isBigEndian ]! !
+		bits byteAt: (row *  bytesPerRow) + column put: pixel bigEndian: aGrayForm isBigEndian ]! !
 
 !TIFFReader methodsFor: 'private' stamp: 'jmv 4/8/2015 11:54'!
 readPlanarRGB8PixelsInto: a32BitForm readAlpha: doReadAlpha horizontalPredictor: useHorizontalPredictor
