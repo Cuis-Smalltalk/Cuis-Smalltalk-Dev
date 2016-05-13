@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2667] on 24 January 2016 at 10:07:29.307531 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 4:28:04.27946 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Taskbar' 1 1!
+!provides: 'Taskbar' 1 2!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #TaskbarTask category: #'Taskbar-Core'!
 Switch subclass: #TaskbarTask
@@ -142,8 +142,9 @@ initialize
 	viewBox separation: 5
 ! !
 
-!Taskbar methodsFor: 'initialization' stamp: 'jmv 5/3/2015 11:33'!
+!Taskbar methodsFor: 'initialization' stamp: 'jmv 5/13/2016 16:27'!
 intoWorld: aWorld
+	super intoWorld: aWorld.
 	Display
 		when: #screenSizeChanged
 		send: #screenSizeChanged
@@ -224,14 +225,15 @@ scaleX4
 
 	self scale: 4! !
 
-!Taskbar methodsFor: 'stepping' stamp: 'jmv 5/3/2015 11:14'!
+!Taskbar methodsFor: 'stepping' stamp: 'jmv 5/13/2016 16:19'!
 screenSizeChanged
 	"Respond to change in screen size by repositioning self to bottom of screen"
 	
 "	Transcript newLine; print: 'Taskbar screenSizeChanged'.
 "
+	| y e |
 	WorldState addDeferredUIMessage: [
 		self world ifNotNil: [ :w |
-			self
-				morphPosition: 0@ (w morphExtent y - (self externalizeDistance: extent ) y)
-				extent: (self internalize: self world morphExtent) x @ self defaultHeight ]]! !
+			y _ w morphExtent y - self defaultHeight.
+			e _ self internalizeDistance: w morphExtent x @ self defaultHeight.
+			self morphPosition: 0@y extent: e ]]! !

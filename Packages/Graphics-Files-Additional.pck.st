@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 11:37:48.455863 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 4:25:25.39446 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 13!
+!provides: 'Graphics-Files-Additional' 1 14!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -832,7 +832,7 @@ grayColorsFor: d
 		].
 ! !
 
-!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 5/9/2016 17:13'!
+!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 5/13/2016 15:14'!
 nextImage
 	bigEndian := Smalltalk isBigEndian.
 	filtersSeen _ Bag new.
@@ -842,18 +842,22 @@ nextImage
 	stream reset.
 	stream skip: 8.
 	[stream atEnd] whileFalse: [self processNextChunk].
-	"Set up our form"
-	palette ifNotNil:[
-		"Dump the palette if it's the same as our standard palette"
-		palette = (StandardColors copyFrom: 1 to: palette size) 
-			ifTrue:[palette := nil]].
 
-	(depth <= 8 and:[palette notNil]) ifTrue:[
-		form := ColorForm extent: width@height nativeDepthFrom: depth.
-		form colors: palette.
-	] ifFalse:[
-		form := Form extent: width@height depth: depth.
+	"Set up our form"
+	(depth = 8 and: [ palette isNil ]) ifTrue: [
+		form _ GrayForm extent: width@height
+	] ifFalse: [
+		palette ifNotNil: [ 		"Dump the palette if it's the same as our standard palette"
+			palette = (StandardColors copyFrom: 1 to: palette size) 
+				ifTrue: [palette := nil]].
+		(depth <= 8 and: [ palette notNil ]) ifTrue: [
+			form := ColorForm extent: width@height nativeDepthFrom: depth.
+			form colors: palette.
+		] ifFalse:[
+			form := Form extent: width@height depth: depth.
+		]
 	].
+
 	backColor ifNotNil:[form fillColor: backColor].
 	chunk _ globalDataChunk ifNil:[self error: 'image data is missing'].
 	chunk ifNotNil: [self processIDATChunk].
@@ -874,7 +878,7 @@ nextPutImage: aForm
 	"Write out the given form. We're keeping it simple here, no interlacing, no filters."
 	^self nextPutImage: aForm interlace: 0 filter: 0. "no filtering"! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 1/12/2010 12:12'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/13/2016 14:48'!
 nextPutImage: aForm interlace: aMethod filter: aFilterType
 	"Note: For now we keep it simple - interlace and filtering are simply ignored"
 	| crcStream |
@@ -882,14 +886,20 @@ nextPutImage: aForm interlace: aMethod filter: aFilterType
 	form := aForm.
 	width := aForm width.
 	height := aForm height.
-	aForm depth <= 8 ifTrue:[
+	(aForm is: #GrayForm) ifTrue: [
 		bitsPerChannel := aForm depth.
-		colorType := 3.
+		colorType := 0.
 		bytesPerScanline _ width * aForm depth + 7 // 8.
-	] ifFalse:[
-		bitsPerChannel := 8.
-		colorType := 6.
-		bytesPerScanline _ width * 4.
+	] ifFalse: [
+		aForm depth <= 8 ifTrue: [
+			bitsPerChannel := aForm depth.
+			colorType := 3.
+			bytesPerScanline _ width * aForm depth + 7 // 8.
+		] ifFalse: [
+			bitsPerChannel := 8.
+			colorType := 6.
+			bytesPerScanline _ width * 4.
+		]
 	].
 
 	self writeFileSignature.
@@ -899,7 +909,7 @@ nextPutImage: aForm interlace: aMethod filter: aFilterType
 	self writeIHDRChunkOn: crcStream.
 	self writeChunk: crcStream.
 
-	(form depth <= 8) ifTrue:[
+	(form depth <= 8 and: [(aForm is: #GrayForm) not]) ifTrue:[
 		crcStream resetToStart.
 		self writePLTEChunkOn: crcStream.
 		self writeChunk: crcStream.
@@ -1003,7 +1013,7 @@ processIDATChunk
 		ifFalse: [ self processInterlaced ]
 ! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'ar 2/10/2004 23:55'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 5/13/2016 15:04'!
 processIHDRChunk
 	width _ chunk longAt: 1 bigEndian: true.
 	height _ chunk longAt: 5 bigEndian: true.
@@ -1014,12 +1024,14 @@ processIHDRChunk
 	interlaceMethod _ chunk at: 13. "TODO - validate interlace method"
 	(#(2 4 6) includes: colorType)
 		ifTrue: [depth _ 32].
-	(#(0 3) includes: colorType) ifTrue: [
-		depth _ bitsPerChannel min: 8.
-		colorType = 0 ifTrue: [ "grayscale"
-			palette := self grayColorsFor: depth.
-		].
-	].
+	(colorType = 0 and: [ bitsPerChannel = 8 ]) ifTrue: [
+		depth _ 8.
+		palette _ nil.		"Meaning: 'please use a GrayForm'"
+	] ifFalse: [
+		(#(0 3) includes: colorType) ifTrue: [
+			depth _ bitsPerChannel min: 8.
+			colorType = 0 ifTrue: [ "grayscale"
+				palette := self grayColorsFor: depth ]]].
 	bitsPerPixel _ (BPP at: colorType+1) at: bitsPerChannel highBit.
 	bytesPerScanline _ width * bitsPerPixel + 7 // 8.
 	rowSize _ width * depth + 31 >> 5.
@@ -1263,14 +1275,16 @@ writeChunk: crcStream
 writeFileSignature
 	stream nextPutAll: #[ 16r89 16r50 16r4E  16r47 16r0D 16r0A 16r1A 16r0A ]! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/7/2015 15:53'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/13/2016 14:59'!
 writeIDATChunkOn: aStream
 	"Write the IDAT chunk"
 	| z |
 	aStream nextPutAll: 'IDAT' asByteArray.
 	z _ ZLibWriteStream on: aStream.
 	form depth <= 8 
-		ifTrue: [ self writeType3DataOn: z ]
+		ifTrue: [ 
+			"Same format for type 3 (indexed color) and type 0 (grayscale, GrayForm)"
+			self writeType3DataOn: z ]
 		ifFalse: [ self writeType6DataOn: z ].
 	z close.
 	self debugging ifTrue: [
