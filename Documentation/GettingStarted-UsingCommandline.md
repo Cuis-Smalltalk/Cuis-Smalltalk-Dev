@@ -4,7 +4,7 @@ What follows are instructions for setting up Cuis on Linux or Mac OS X using the
 
 If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org , and email your code there.
 
-The Cuis image specified is the most current one. The VM specified is the latest one known to work.
+The Cuis image specified is the most current one. The VM specified is the latest one too.
 
 ### On Linux ###
 ```
@@ -12,7 +12,7 @@ $ mkdir MyProject
 $ cd MyProject
 $ wget https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ wget -O coglinuxht.tgz http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-xx.yy.zzzz.tgz
+$ wget -O coglinuxht.tgz http://www.mirandabanda.org/files/Cog/VM/latest/coglinuxht-16.18.3692.tgz
 $ tar -zxvf coglinuxht.tgz
 ```
 If this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
@@ -33,7 +33,7 @@ sudo apt-get install libgl1-mesa-dev:i386
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
 ```
 ```
-$ coglinuxht/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2760.image
+$ coglinuxht/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2763.image
 ```
 
 ### On Mac OS X ###
@@ -42,7 +42,7 @@ $ mkdir MyProject
 $ cd MyProject
 $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ curl -o Cog.app.tgz http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-xx.yy.zzzz.tgz
+$ curl -o Cog.app.tgz http://www.mirandabanda.org/files/Cog/VM/latest/Cog.app-16.18.3692.tgz
 $ tar -zxvf Cog.app.tgz
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2760.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2763.image
 ```

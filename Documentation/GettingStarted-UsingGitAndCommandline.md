@@ -2,7 +2,7 @@
 
 Instructions for setting up Cuis, for Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests.
 
-The Cuis image specified is the most current one. The VM specified is the latest one known to work.
+The Cuis image specified is the most current one. The VM specified is the latest one too.
 
 ### Create project folder and add Cuis Smalltalk ###
 ```
@@ -13,17 +13,17 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ### Get an appropriate VM ###
 For Windows Git Bash:
 ```
-$ curl -o cogwin.zip http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-xx.yy.zzzz.zip
+$ curl -o cogwin.zip http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-16.18.3692.zip
 $ unzip cogwin.zip
 ```
 For MacOSX:
 ```
-$ curl -o Cog.app.tgz http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-xx.yy.zzzz.tgz
+$ curl -o http://www.mirandabanda.org/files/Cog/VM/latest/Cog.app-16.18.3692.tgz
 $ tar -zxvf Cog.app.tgz
 ```
 For Linux (except ArchLinux, Chromebooks see below):
 ```
-$ wget -O coglinuxht.tgz http://www.mirandabanda.org/files/Cog/VM/latest/cogwin-xx.yy.zzzz.tgz
+$ wget -O coglinuxht.tgz http://www.mirandabanda.org/files/Cog/VM/latest/coglinuxht-16.18.3692.tgz
 $ tar -zxvf coglinuxht.tgz
 ```
 On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
@@ -49,15 +49,15 @@ https://www.archlinux.org/packages/?q=squeak-vm
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2760.image
+$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis4.2-2763.image
 ```
 MacOSX:
 ```
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2760.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis4.2-2763.image
 ```
 Linux:
 ```
-$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2760.image
+$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2763.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
