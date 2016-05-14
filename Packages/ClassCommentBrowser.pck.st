@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2713] on 2 April 2016 at 10:51:13.699672 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 14 May 2016 at 10:51:03.972057 am'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 28!
+!provides: 'ClassCommentBrowser' 1 29!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -425,24 +425,24 @@ respondToKey: aChar
 	model indexOf: aChar.
 	listMorph update: #keySelection! !
 
-!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 9/21/2015 19:31'!
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/14/2016 10:47'!
 searchAllComments
 	"Search for a string in class comments of all classes"
-	| arg hits menu |
+	| arg hits caption items n |
+	
 	arg _ ''.
-		arg _ FillInTheBlankMorph request: 'Search All Class Comments for:'.
-		(menu _ MenuMorph entitled: 'Comments of All Classes with "', arg, '"')
-			defaultTarget: self;
-			addStayUpIcons.
+	arg _ FillInTheBlankMorph request: 'Search All Class Comments for:'.
+	caption _ 'Classes with Comments containing "', arg, '"'.
 			
-		hits _ self searchIn: Smalltalk classNames for: arg.
-		hits 
-			ifEmpty: [listMorph flash]
-			ifNotEmpty: [
-				hits do: [:h | menu add: h selector: #showFind: argument: h].
-				menu 
-					openInWorld;
-					morphPosition: self morphPosition + (-70@50)].
+	hits _ self searchIn: Smalltalk classNames for: arg.
+	hits 
+		ifEmpty: [listMorph flash]
+		ifNotEmpty: [
+			items _ String streamContents: [:s | hits do: [:i | s nextPutAll: i asString; newLine]].
+			n _ (PopUpMenu labels: items lines: nil)
+				startUpWithCaption: caption.
+			self showFind: (hits at: n) "show the comment of the selected class" ].
+					
 	^ nil! !
 
 !CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 9/21/2015 16:50'!
