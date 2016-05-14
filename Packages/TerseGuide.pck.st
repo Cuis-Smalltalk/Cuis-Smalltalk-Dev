@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 17 March 2016 at 9:09:45.239894 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 14 May 2016 at 11:34:05.159057 am'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 108!
+!provides: 'TerseGuide' 1 109!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -1807,7 +1807,7 @@ x _ 20@5 dotProduct: 10@2.					"sum of product (x1*x2 + y1*y2)"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/8/2015 15:30'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/14/2016 11:29'!
 popUpMenu
 	"PopUpMenu"
 	^
@@ -1828,8 +1828,13 @@ x _ (PopUpMenu labelArray: arr lines: lin)
 	at: 450@200
 	allowKeyboard: false.
 y _ (PopUpMenu withCaption: ''Special'' chooseFrom: ''Alpha\Beta\Gamma\something else'').
+
 x _ FillInTheBlankMorph request: ''Enter the (whatever)'' initialAnswer: ''the default''.
 		"when it is not possible to pre-determine an answer"
+		
+"For potentially long menus, the following includes ''more...'' and ''start over...'' behavior"
+x _ (PopUpMenu labels: (String streamContents: [:s | 1 to: 100 do: [:i | s print: i; newLine]])
+		lines: (5 to: 100 by: 5)) startUpWithCaption: ''Long Menu Example''.		
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 12:58'!
