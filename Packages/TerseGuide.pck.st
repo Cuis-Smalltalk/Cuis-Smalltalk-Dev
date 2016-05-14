@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 14 May 2016 at 11:34:05.159057 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 14 May 2016 at 6:27:09.354057 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 109!
+!provides: 'TerseGuide' 1 110!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -1641,7 +1641,7 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/15/2016 14:05'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/14/2016 18:22'!
 morph
 	"Morphs"
 	^
@@ -1654,6 +1654,7 @@ x name: #MyName.		"used in the halos"
 x name: ''My Name''.			"alternative, allowing imbedded blanks"
 x morphPosition: 100@65.	"set the morph location"
 y _ FillInTheBlankMorph request: ''Please Enter Something''.	"prompt user for input"
+Feature require: #''Morphic-Widgets-Extras''.	"ensure a requirement is available for the following plot"
 x _ FunctionGraphMorph example2.	"plot two functions"
 x _ SystemWindow new openInWorld.	"open a window"
 x setLabel: ''Label for It''.
