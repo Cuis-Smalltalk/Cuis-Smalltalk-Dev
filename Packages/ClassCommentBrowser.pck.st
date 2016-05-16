@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 14 May 2016 at 10:51:03.972057 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 16 May 2016 at 6:02:36.088656 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 29!
+!provides: 'ClassCommentBrowser' 1 30!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -425,7 +425,24 @@ respondToKey: aChar
 	model indexOf: aChar.
 	listMorph update: #keySelection! !
 
-!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/14/2016 10:47'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/16/2016 17:54'!
+scrollToClass: aString
+	"Scroll to an entry for the class named aString"
+	| cat m1 m2 |
+	
+	cat _ (model parseName: aString) first.
+	m1 _ listMorph findDeepSubmorphThat: [:ea | 
+		(ea respondsTo: #contents) and: [ea contents includesSubString: cat]] ifAbsent: [nil].
+	m1 ifNotNil: [m1 isExpanded ifFalse: [listMorph toggleExpandedState: m1]].
+		
+	m2 _ listMorph findDeepSubmorphThat: [:ea | 
+		(ea respondsTo: #contents) and: [ea contents includesSubString: aString]] ifAbsent: [nil].
+	m2 ifNotNil: [
+		listMorph 
+			setSelectedMorph: m2;
+			scrollSelectionIntoView]! !
+
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/16/2016 16:30'!
 searchAllComments
 	"Search for a string in class comments of all classes"
 	| arg hits caption items n |
@@ -441,7 +458,9 @@ searchAllComments
 			items _ String streamContents: [:s | hits do: [:i | s nextPutAll: i asString; newLine]].
 			n _ (PopUpMenu labels: items lines: nil)
 				startUpWithCaption: caption.
-			self showFind: (hits at: n) "show the comment of the selected class" ].
+			self 
+				scrollToClass: (hits at: n);
+				showFind: (hits at: n) "show the comment of the selected class" ].
 					
 	^ nil! !
 
@@ -508,12 +527,11 @@ searchIn: aCollection for: aString
 			ifTrue: [hits addLast: ea]].
 	^ hits! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 9/10/2015 21:11'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/16/2016 17:57'!
 showFind: aName
 	"Cause the class comment for aName to display"
-	| str |
-	str _ model commentOf: aName.
-	textMorph model actualContents: str! !
+
+	textMorph model actualContents: (model commentOf: aName)! !
 
 !CommentGuideWindow methodsFor: 'accessing' stamp: 'dhn 8/19/2015 19:47'!
 textMorph
