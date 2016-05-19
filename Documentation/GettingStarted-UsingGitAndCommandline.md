@@ -18,7 +18,7 @@ $ unzip cogwin.zip
 ```
 For MacOSX:
 ```
-$ curl -o http://www.mirandabanda.org/files/Cog/VM/latest/Cog.app-16.18.3692.tgz
+$ curl -o Cog.app.tgz http://www.mirandabanda.org/files/Cog/VM/latest/Cog.app-16.18.3692.tgz
 $ tar -zxvf Cog.app.tgz
 ```
 For Linux (except ArchLinux, Chromebooks see below):
