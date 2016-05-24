@@ -8,7 +8,7 @@ Cuis is
 * Small
 * Clean
 
-Like Squeak, Pharo and other Squeak variants, Cuis is also:
+Like Squeak, Cuis is also:
 * Open Source
 * Multiplatform
 
@@ -16,11 +16,11 @@ Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis 
 * A complete development environment written in itself
 * A pure Object Oriented language
 
-Cuis is different from other Squeak variants in that it takes an active attitude towards system complexity.
+What sets Cuis appart from the rest of the Squeak family is that it takes an active attitude towards system complexity:
 
-As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity grows without control. At some point, the system can't evolve anymore and becomes "legacy code".
+Unbound complexity growth together with develpment strategies focused only in the short term are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity grows without control. Evolution slows down. Understanding the system becomes harder every day. At some point, the system can't evolve anymore and becomes "legacy code".
 
-The only way to avoid this is by understanding the complete system, and reengineering the whole system all the time. Keeping it simple and consistent.
+The only way to avoid this is by understanding the complete system, and reengineering the whole system, all the time. Keeping it simple and consistent.
 
 This is important. Complexity puts a limit to the level of understanding of the system a person might reach, and therefore limits the things that can be done with it. Dan Ingalls says all this in ["Design Principles Behind Smalltalk"](http://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html). Even if you have already done so, please go and read it again!
 
