@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2701] on 17 March 2016 at 9:09:45.239894 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2767] on 18 May 2016 at 12:10:05.763596 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 108!
+!provides: 'TerseGuide' 1 114!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -13,7 +13,7 @@ TerseGuideHelp class
 
 !classDefinition: #TerseGuideWindow category: #TerseGuide!
 WorkspaceWindow subclass: #TerseGuideWindow
-	instanceVariableNames: 'textMorph'
+	instanceVariableNames: 'textModelM'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
@@ -42,7 +42,7 @@ Show a terse guide to Cuis in a system window. The window has a text pane with a
 TerseGuideWindow openTerseGuide
 !
 
-!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 3/10/2015 19:20'!
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 5/17/2016 16:50'!
 initialize
 	super initialize.
 	topics _ self terseTopics.
@@ -1641,7 +1641,7 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/15/2016 14:05'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/14/2016 18:22'!
 morph
 	"Morphs"
 	^
@@ -1654,6 +1654,7 @@ x name: #MyName.		"used in the halos"
 x name: ''My Name''.			"alternative, allowing imbedded blanks"
 x morphPosition: 100@65.	"set the morph location"
 y _ FillInTheBlankMorph request: ''Please Enter Something''.	"prompt user for input"
+Feature require: #''Morphic-Widgets-Extras''.	"ensure a requirement is available for the following plot"
 x _ FunctionGraphMorph example2.	"plot two functions"
 x _ SystemWindow new openInWorld.	"open a window"
 x setLabel: ''Label for It''.
@@ -1807,7 +1808,7 @@ x _ 20@5 dotProduct: 10@2.					"sum of product (x1*x2 + y1*y2)"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/8/2015 15:30'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/14/2016 11:29'!
 popUpMenu
 	"PopUpMenu"
 	^
@@ -1828,8 +1829,13 @@ x _ (PopUpMenu labelArray: arr lines: lin)
 	at: 450@200
 	allowKeyboard: false.
 y _ (PopUpMenu withCaption: ''Special'' chooseFrom: ''Alpha\Beta\Gamma\something else'').
+
 x _ FillInTheBlankMorph request: ''Enter the (whatever)'' initialAnswer: ''the default''.
 		"when it is not possible to pre-determine an answer"
+		
+"For potentially long menus, the following includes ''more...'' and ''start over...'' behavior"
+x _ (PopUpMenu labels: (String streamContents: [:s | 1 to: 100 do: [:i | s print: i; newLine]])
+		lines: (5 to: 100 by: 5)) startUpWithCaption: ''Long Menu Example''.		
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/1/2015 12:58'!
@@ -2208,7 +2214,7 @@ t explore.
 '
 ! !
 
-!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 10/18/2015 20:31'!
+!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 5/18/2016 12:08'!
 buildMorphicWindow
 	"Define the window layout for Terse Guide"
 	| list1 row |
@@ -2222,26 +2228,26 @@ buildMorphicWindow
 				menuGetter: nil
 				keystrokeAction: nil)
 					name: 'Topic List'.
-	textMorph _ TextModelMorph withModel: model.
-	textMorph 
+	textModelM _ TextModelMorph withModel: model.
+	textModelM
 		askBeforeDiscardingEdits: false;
 		name: 'Work Space'.
 	row _ LayoutMorph newRow.
 	row
 		name: #Row;
 		addMorph: list1 proportionalWidth: 0.2;
-		addAdjusterAndMorph: textMorph proportionalWidth: 0.8.
+		addAdjusterAndMorph: textModelM proportionalWidth: 0.8.
 	self layoutMorph
 		addMorph: row.
 	self setLabel: 'Terse Guide'! !
 
-!TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:16'!
-textMorph
-	"Answer the value of textMorph"
+!TerseGuideWindow methodsFor: 'accessing' stamp: 'dhn 5/17/2016 21:21'!
+textModelM
+	"Answer the value of textModelM"
 
-	^ textMorph! !
+	^ textModelM! !
 
-!TerseGuideWindow class methodsFor: 'instance creation' stamp: 'dhn 10/18/2015 21:12'!
+!TerseGuideWindow class methodsFor: 'instance creation' stamp: 'dhn 5/17/2016 21:21'!
 openTerseGuide
 "
 	TerseGuideWindow openTerseGuide.
@@ -2250,5 +2256,7 @@ openTerseGuide
 
 	(window _ TerseGuideWindow open: (help _ TerseGuideHelp new) label: 'Terse Guide')
 		setWindowColor:  Theme current workspace.
-	help textPane: window textMorph.
-	help window: window! !
+	help textPane: window textModelM.
+	help 
+		contents: '';
+		window: window! !

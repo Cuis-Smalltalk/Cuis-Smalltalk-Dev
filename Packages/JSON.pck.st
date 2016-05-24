@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1815] on 3 September 2013 at 5:01:28.212224 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2774] on 24 May 2016 at 9:52:38.344678 am'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 3!
+!provides: 'JSON' 1 4!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -75,6 +75,24 @@ jsonWriteOn: aStream
 jsonWriteOn: aStream
 	aStream nextPutAll: 'true'! !
 
+!Collection methodsFor: '*JSON' stamp: 'jmv 5/17/2016 13:11'!
+jsonObjectWriteOn: aStream
+	"Write as 'JSON Object' format
+	This is a list of (name:value) pairs, and is analogous to Smalltalk Dictionaries where names (keys) are strings.
+	Assume the receiver is either:
+	- a Dictionary
+	- a collection of Association objects (or some sort of object that on #jsonWriteOn: print like an Association)"
+
+	| needComma |
+	needComma := false.
+	aStream nextPut: ${.
+	self associationsDo: [ :assoc |
+		needComma
+			ifTrue: [ aStream nextPut: $, ; space]
+			ifFalse: [ needComma := true ].
+		assoc jsonWriteOn: aStream ].
+	aStream nextPut: $}! !
+
 !Collection methodsFor: '*JSON' stamp: 'Igor.Stasenko 12/27/2009 08:03'!
 jsonWriteOn: aStream
 	"By default, use array braces "
@@ -102,24 +120,24 @@ jsonWriteOn: aStream
 jsonWriteOn: aStream
 	self string jsonWriteOn: aStream! !
 
-!Dictionary methodsFor: '*JSON-writing' stamp: 'Igor.Stasenko 12/27/2009 08:10'!
+!Dictionary methodsFor: '*JSON-writing' stamp: 'jmv 5/17/2016 12:47'!
 jsonWriteOn: aStream
+	"Dictionaries are written as 'JSON Objects'
+	Use the general implementation for that."
 
-	| needComma |
-	needComma := false.
-	aStream nextPut: ${.
-	self associationsDo: [ :assoc |
-		needComma
-			ifTrue: [ aStream nextPut: $, ]
-			ifFalse: [ needComma := true ].
-		assoc key jsonWriteOn: aStream.
-		aStream nextPut: $:.
-		assoc value jsonWriteOn: aStream ].
-	aStream nextPut: $}.! !
+	self jsonObjectWriteOn: aStream! !
 
-!Association methodsFor: '*JSON-writing' stamp: 'matthias.berth 11/19/2009 10:21'!
+!FmFileEntry methodsFor: '*json' stamp: 'jmv 5/16/2016 14:43'!
+jsonContents
+	"
+	'noesta.json' asFileEntry jsonContents
+	"
+	^self readStream: [ :stream |
+		Json readFrom: stream ]! !
+
+!Association methodsFor: '*JSON-writing' stamp: 'jmv 5/16/2016 15:32'!
 jsonWriteOn: aStream
-	self key asString jsonWriteOn: aStream.
+	self key jsonWriteOn: aStream.
 	aStream nextPut: $:; space.
 	self value jsonWriteOn: aStream.! !
 
