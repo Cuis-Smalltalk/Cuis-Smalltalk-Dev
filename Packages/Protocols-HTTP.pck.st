@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:26:53.494645 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:01.214453 am'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 20!
-!requires: 'Network-Kernel' 1 2 nil!
-!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!provides: 'Protocols-HTTP' 1 21!
 !requires: 'Identities-UUID' 1 1 nil!
+!requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!requires: 'Network-Kernel' 1 2 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
 	instanceVariableNames: 'client request response authParams message'
@@ -4094,7 +4094,7 @@ browseFile: file request: request
 	resp headerAt: 'Content-Type' put: mimeTypes first.
 	request sendResponse: resp contentStream: file size: fileSize.! !
 
-!HTTPServer class methodsFor: 'examples' stamp: 'jmv 10/27/2015 18:12'!
+!HTTPServer class methodsFor: 'examples' stamp: 'pb 5/25/2016 01:51'!
 browseRequest: request
 	"Handle an HTTP request for browsing some resource"
 
@@ -4102,10 +4102,10 @@ browseRequest: request
 
 	"Extract the file path from the request"
 	path := request url findTokens: '/'.
-	path ifEmpty: [ ^self browseDir: FmDirectoryEntry currentDirectory request: request ].
+	path ifEmpty: [ ^self browseDir: DirectoryEntry currentDirectory request: request ].
 
 	"Find the directory entry for the resource"
-	fd := path allButLast inject: FmDirectoryEntry currentDirectory into: [ :dir :part | dir / part ].
+	fd := path allButLast inject: DirectoryEntry currentDirectory into: [ :dir :part | dir / part ].
 	entry := fd entryAt: path last ifAbsent: [ ^request send404Response ].
 
 	"Reply with the proper resource"
@@ -4120,7 +4120,7 @@ browseRequest: request
 			- handling errors when sending it
 		This makes the code below a bit ugly"
 		[[
-			file := (fd // entry name) privateReadStream.
+			file := (fd // entry name) readStream.
 			[ self browseFile: file request: request ]
 				ensure: [ file close ] 	"close file even in case of error"
 		] on: Error do: []				"ignore errors altogether"
@@ -4517,7 +4517,7 @@ logEntryFor: request response: response
 	^entry
 ! !
 
-!HTTPUtils class methodsFor: 'misc' stamp: 'jmv 10/3/2015 19:26'!
+!HTTPUtils class methodsFor: 'misc' stamp: 'pb 5/25/2016 01:29'!
 logRequest: request response: response on: streamOrFilename
 	"Log a request in common log format on the given stream / file."
 
@@ -4529,7 +4529,7 @@ logRequest: request response: response on: streamOrFilename
 	"If the argument is a string, it represents the file name to log to"
 	streamOrFilename isString
 		ifTrue: [
-			streamOrFilename asFileEntry appendStream: [ :stream |
+			streamOrFilename asFileEntry appendStreamDo: [ :stream |
 				stream nextPutAll: entry; newLine ]]
 		ifFalse: [
 			streamOrFilename nextPutAll: entry; newLine.

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2758] on 4 May 2016 at 11:25:12.772663 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:20.032767 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 52!
+!provides: 'SignalProcessing' 1 53!
 !requires: 'Sound' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
@@ -4264,10 +4264,10 @@ example4
 	bigger display.
 	original display! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 4/22/2016 10:44'!
+!FloatImage class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:33'!
 fromFileEntry: aFileEntry
 
-	^aFileEntry readStream: [ :stream |
+	^aFileEntry readStreamDo: [ :stream |
 		(ReferenceStream on: stream)
 			next ]! !
 

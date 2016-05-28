@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 6 April 2016 at 8:05:10.958758 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:57:33.574433 am'!
 'Description Assessments is a replacement / reimplementation of the SUnit evaluation machinery, published under the MIT license (see below), with the following characteristics.
 
 * It provides all the functionality and features of SUnit and SUnit VM (including SUnit Based Validation and SUnit Benchmarks) natively.
@@ -143,7 +143,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '!
-!provides: 'Assessments' 2 28!
+!provides: 'Assessments' 2 29!
 !classDefinition: #AbstractCustomChecklist category: #'Assessments-Framework-CustomChecklists'!
 Object subclass: #AbstractCustomChecklist
 	instanceVariableNames: ''
@@ -2852,10 +2852,10 @@ writeStream: anObject
 
 	writeStream := anObject! !
 
-!BufferedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
+!BufferedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'pb 5/25/2016 01:36'!
 aboutToEvaluateAssessment
 
-	self writeStream: String new writeStream.
+	self writeStreamDo: String new writeStream.
 	super aboutToEvaluateAssessment! !
 
 !BufferedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
@@ -2867,10 +2867,10 @@ doneEvaluatingAssessment
 	[fileStream nextPutAll: self writeStream contents]
 		ensure: [fileStream close]! !
 
-!FileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
+!FileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'pb 5/25/2016 01:37'!
 aboutToEvaluateAssessment
 
-	self writeStream: self writeFileStream.
+	self writeStreamDo: self writeFileStream.
 	super aboutToEvaluateAssessment! !
 
 !FileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
@@ -5139,14 +5139,14 @@ printStringFor: aDateAndTime
 	answer isEmpty ifTrue: [self unknownDialect].
 	^answer! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'sqr 1/18/2016 23:25'!
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'pb 5/25/2016 01:46'!
 appendFileStreamFor: aFilenameString
 
 	self isCuis ifTrue:
 		[
-			| fmFileEntry |
-			fmFileEntry := self cuisCurrentDirectory // aFilenameString.
-			^fmFileEntry privateAppendStream  "unfortunate"
+			| fileEntry |
+			fileEntry := self cuisCurrentDirectory // aFilenameString.
+			^fileEntry appendStream  "unfortunate"
 		].
 	self isVisualWorks ifTrue: [^aFilenameString asFilename appendStream].
 	self isVSE ifTrue:
@@ -5157,36 +5157,36 @@ appendFileStreamFor: aFilenameString
 		].
 	self unknownDialect! !
 
-!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 15:58'!
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'pb 5/25/2016 01:07'!
 cuisCurrentDirectory
 
-	| fmDirectoryEntry |
-	fmDirectoryEntry := self resolveCuisClassNamed: #FmDirectoryEntry.
-	^fmDirectoryEntry currentDirectory! !
+	| directoryEntry |
+	directoryEntry := self resolveCuisClassNamed: #DirectoryEntry.
+	^directoryEntry currentDirectory! !
 
-!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 16:01'!
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'pb 5/25/2016 01:17'!
 cuisDeleteFileNamed: aString
 
-	| fmFileEntry |
-	fmFileEntry := self cuisCurrentDirectory // aString.
-	fmFileEntry delete! !
+	| fileEntry |
+	fileEntry := self cuisCurrentDirectory // aString.
+	fileEntry delete! !
 
 !AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 15:18'!
 cuisFileNameExists: aString
 
 	^self cuisCurrentDirectory includesKey: aString! !
 
-!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'SqR 11/18/2015 16:01'!
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'pb 5/25/2016 01:18'!
 cuisSizeForFileName: aString
 
-	| fmFileEntry |
-	fmFileEntry := self cuisCurrentDirectory // aString.
-	^fmFileEntry fileSize! !
+	| fileEntry |
+	fileEntry := self cuisCurrentDirectory // aString.
+	^fileEntry fileSize! !
 
-!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'sqr 1/14/2016 22:16'!
+!AssessmentsFileDirectory methodsFor: 'private - file system' stamp: 'pb 5/25/2016 01:07'!
 currentDirectoryReceiver
 
-	self isCuis ifTrue: [^self resolveCuisClassNamed: #FmDirectoryEntry].
+	self isCuis ifTrue: [^self resolveCuisClassNamed: #DirectoryEntry].
 	self isVisualWorks ifTrue: [^self resolveVisualWorksClassNamed: 'FileDirectory'].
 	self isVSE ifTrue: [^self resolveVSEClassNamed: #Directory].
 	self unknownDialect! !
@@ -5277,14 +5277,14 @@ vseSizeForFileName: aString
 	^self vseCurrentDirectory fileSizeForFileNamed: aString
 ! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'sqr 1/14/2016 22:13'!
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'pb 5/25/2016 01:53'!
 writeFileStreamFor: aFilenameString
 
 	self isCuis ifTrue:
 		[
-			| fmFileEntry |
-			fmFileEntry := self cuisCurrentDirectory // aFilenameString.
-			^fmFileEntry privateWriteStream  "unfortunate"
+			| fileEntry |
+			fileEntry := self cuisCurrentDirectory // aFilenameString.
+			^fileEntry writeStream  "unfortunate"
 		].
 	self isVisualWorks ifTrue: [^aFilenameString asFilename writeStream].
 	self isVSE ifTrue: [^aFilenameString asFileSystemPath asFile writeStream].	

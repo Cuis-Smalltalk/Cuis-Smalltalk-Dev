@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2520] on 5 October 2015 at 12:06:55.297113 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:57:41.029726 am'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Cryptography-DigitalSignatures' 1 4!
+!provides: 'Cryptography-DigitalSignatures' 1 5!
 !requires: 'Sound' 1 3 nil!
 !classDefinition: #DigitalSignatureAlgorithm category: #'Cryptography-DigitalSignatures'!
 Object subclass: #DigitalSignatureAlgorithm
@@ -480,13 +480,13 @@ sign: aStringOrStream privateKey: privateKey dsa: dsa
 	^ dsa signatureToString: sig
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 10/3/2015 14:30'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'pb 5/25/2016 01:32'!
 testExamplesFromDisk
 	"verify messages from file on disk"
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
 	"DigitalSignatureAlgorithm testExamplesFromDisk"
 
-	'dsa.test.out' asFileEntry readStream: [ :stream |
+	'dsa.test.out' asFileEntry readStreamDo: [ :stream |
 		| msg  sig publicKey |
 		[stream atEnd] whileFalse: [
 			sig := stream nextChunk.
@@ -565,7 +565,7 @@ verify: signatureString isSignatureOf: aStringOrStream publicKey: publicKey
 	^ dsa verifySignature: sig ofMessageHash: h publicKey: publicKey
 ! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 10/3/2015 14:27'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'pb 5/25/2016 01:36'!
 writeExamplesToDisk
 	"Example of signing a message and verifying its signature. Used to create samples from one implementation that could later be tested with a different implementation"
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -577,7 +577,7 @@ writeExamplesToDisk
 	self inform: 'About to generate 5 key sets. Will take a while'.
 	keyList := {self testKeySet},((1 to: 5) collect: [ :ignore | self generateKeySet]).
 	msgList := {'This is a test...'. 'This is the second test period.'. 'And finally, a third message'}.
-	'dsa.test.out' asFileEntry writeStream: [ :stream |
+	'dsa.test.out' asFileEntry writeStreamDo: [ :stream |
 		msgList do: [ :msg |
 			keyList do: [ :keys |
 				| sig |

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2716] on 2 April 2016 at 11:10:24.520427 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:57:44.943837 am'!
 'Description Please enter a description for this package'!
-!provides: 'Goodies' 1 4!
+!provides: 'Goodies' 1 5!
 !classDefinition: #AsyncFile category: #'Goodies-AsyncFile'!
 Object subclass: #AsyncFile
 	instanceVariableNames: 'name writeable semaphore fileHandle'
@@ -140,13 +140,13 @@ Like a SkipList, except that elements are compared with #== instead of #= .
 See the comment of IdentitySet for more information.
 !
 
-!StandardFileMenu commentStamp: '<historical>' prior: 0!
+!StandardFileMenu commentStamp: 'pb 5/25/2016 01:12' prior: 0!
 I represent a SelectionMenu which operates like a modal dialog for selecting files, somewhat similar to the StandardFile dialogs in MacOS and Java Swing.
 
 Try for example, the following:
 
-	(StandardFileMenu oldFileFrom: FmDirectoryEntry smalltalkImageDirectory) inspect
-	((StandardFileMenu new newFileFrom: FmDirectoryEntry smalltalkImageDirectory withPattern: '*.st') startUpWithCaption: 'dale') inspect!
+	(StandardFileMenu oldFileFrom: DirectoryEntry smalltalkImageDirectory) inspect
+	((StandardFileMenu new newFileFrom: DirectoryEntry smalltalkImageDirectory withPattern: '*.st') startUpWithCaption: 'dale') inspect!
 
 !ProtocolCatcher2 commentStamp: 'jmv 11/3/2008 14:49' prior: 0!
 See class comment in ProtocolCatcher.
@@ -1272,7 +1272,7 @@ menuLinesArray: aDirectory
 		s nextPut: dirDepth + typeCount + 1.
 		s nextPut: dirDepth + nameCnt + typeCount + 1]! !
 
-!StandardFileMenu methodsFor: 'menu building' stamp: 'jmv 4/2/2016 23:07'!
+!StandardFileMenu methodsFor: 'menu building' stamp: 'pb 5/25/2016 01:13'!
 menuSelectionsArray: aDirectory
 "Answer a menu selections object corresponding to aDirectory.  The object is an array corresponding to each item, each element itself constituting a two-element array, the first element of which contains a selector to operate on and the second element of which contains the parameters for that selector."
 
@@ -1284,7 +1284,7 @@ menuSelectionsArray: aDirectory
 				directory: aDirectory
 				name: nil)].
 		s nextPut: (StandardFileMenuResult
-			directory: (FmDirectoryEntry roots first)
+			directory: (DirectoryEntry roots first)
 			name: '').
 		aDirectory pathComponents withIndexDo: 
 			[:d :i | s nextPut: (StandardFileMenuResult
@@ -1369,11 +1369,11 @@ oldFileFrom: aDirectory
 	^(self oldFileMenu: aDirectory)
 		startUpWithCaption: 'Select a File:'! !
 
-!StandardFileMenu class methodsFor: 'instance creation' stamp: 'KenD 10/27/2015 18:52'!
+!StandardFileMenu class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:13'!
 oldFileMenu: aDirectory
 
-	(aDirectory isKindOf: FmDirectoryEntry)
-		ifFalse: [ self error: 'I require a FmDirectoryEntry'].
+	(aDirectory isKindOf: DirectoryEntry)
+		ifFalse: [ self error: 'I require a DirectoryEntry'].
 
 	^self new oldFileFrom: aDirectory! !
 

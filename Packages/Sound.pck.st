@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:27:31.210566 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:17.772923 am'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 13!
+!provides: 'Sound' 1 14!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
@@ -830,12 +830,12 @@ readFromFile: fileName
 		skipDataChunk: false.
 ! !
 
-!AIFFFileReader methodsFor: 'reading' stamp: 'jmv 10/2/2015 16:41'!
+!AIFFFileReader methodsFor: 'reading' stamp: 'pb 5/25/2016 01:30'!
 readFromFile: fileName mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag
 	"Read the AIFF file of the given name. See comment in readFromStream:mergeIfStereo:skipDataChunk:."
 	"AIFFFileReader new readFromFile: 'test.aiff' mergeIfStereo: false skipDataChunk: true"
 
-	fileName asFileEntry readStream: [ :strm |
+	fileName asFileEntry readStreamDo: [ :strm |
 		strm binary.
 		self readFromStream: strm mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag ]! !
 
@@ -1846,11 +1846,11 @@ stopGracefully
 	self stopAfterMSecs: decayInMs.
 ! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 10/3/2015 11:40'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'pb 5/25/2016 01:35'!
 storeAIFFOnFileNamed: fileName
 	"Store this sound as a AIFF file of the given name."
 
-	fileName asFileEntry writeStream: [ :strm |
+	fileName asFileEntry writeStreamDo: [ :strm |
 		strm binary.
 		self storeAIFFSamplesOn: strm ]! !
 
@@ -1946,11 +1946,11 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 						1 to: out monoSampleCount do: [:i | aBinaryStream nextSignedInt16Put: (out at: i) bigEndian: bigEndianFlag ]].
 				remaining _ remaining - bufSize]]! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 10/3/2015 11:42'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'pb 5/25/2016 01:35'!
 storeWAVOnFileNamed: fileName
 	"Store this sound as a 16-bit Windows WAV file of the given name."
 
-	fileName asFileEntry writeStream: [ :strm |
+	fileName asFileEntry writeStreamDo: [ :strm |
 		strm binary.
 		self storeWAVSamplesOn: strm ]! !
 
@@ -3006,7 +3006,7 @@ fileOutSoundLibrary
 	self fileOutSoundLibrary: Sounds.
 ! !
 
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 10/3/2015 16:29'!
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'pb 5/25/2016 01:35'!
 fileOutSoundLibrary: aDictionary
 	"File out the given dictionary, which is assumed to contain sound and instrument objects keyed by their names."
 	"Note: This method is separated out so that one can file out edited sound libraries, as well as the system sound library. To make such a collection, you can inspect AbstractSound sounds and remove the items you don't want. Then do: 'AbstractSound fileOutSoundLibrary: self' from the Dictionary inspector."
@@ -3016,7 +3016,7 @@ fileOutSoundLibrary: aDictionary
 		ifFalse: [self error: 'arg should be a dictionary of sounds'].
 	fileName _ FillInTheBlankMorph request: 'Sound library file name?'.
 	fileName isEmptyOrNil ifTrue: [^ self].
-	(fileName, '.sounds') asFileEntry writeStream: [ :file |
+	(fileName, '.sounds') asFileEntry writeStreamDo: [ :file |
 		refStream _ SmartRefStream on: file.
 		[ refStream nextPut: aDictionary ]]! !
 
@@ -5587,7 +5587,7 @@ fromAIFFfileNamed: fileName
 		samplingRate: aiffFileReader samplingRate
 ! !
 
-!SampledSound class methodsFor: 'instance creation' stamp: 'jmv 10/3/2015 19:54'!
+!SampledSound class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:33'!
 fromWaveFileNamed: fileName
 	"(SampledSound fromWaveFileNamed: 'c:\windows\media\chimes.wav') play"
 	"| snd fd |
@@ -5599,7 +5599,7 @@ fromWaveFileNamed: fileName
 				snd play.
 				SoundPlayer waitUntilDonePlaying: snd]]."
 
-	^ fileName asFileEntry readStream: [ :strm |
+	^ fileName asFileEntry readStreamDo: [ :strm |
 		self fromWaveStream: strm ]
 ! !
 
@@ -6863,7 +6863,7 @@ playSampleCount: n into: aSoundBuffer startingAt: startIndex
 		mixer playSampleCount: n into: aSoundBuffer startingAt: startIndex].
 ! !
 
-!StreamingMonoSound methodsFor: 'private' stamp: 'jmv 10/27/2015 18:07'!
+!StreamingMonoSound methodsFor: 'private' stamp: 'pb 5/25/2016 01:51'!
 positionCodecTo: desiredSampleIndex
 	"Position to the closest frame before the given sample index when using a codec. If using the ADPCM codec, try to ensure that it is in sync with the compressed sample stream."
 
@@ -6881,7 +6881,7 @@ positionCodecTo: desiredSampleIndex
 
 	"copy stream and codec"
 	(stream isKindOf: FileStream)
-		ifTrue: [tmpStream _ (stream name asFileEntry privateReadStream ) binary]
+		ifTrue: [tmpStream _ (stream name asFileEntry readStream ) binary]
 		ifFalse: [tmpStream _ "stream deepCopy" stream contents readStream].	"To kill #deepCopy. Not sure if right, though (jmv)"
 	tmpCodec _ codec copy reset.
 
@@ -7029,12 +7029,12 @@ onFileNamed: fileName
 
 	^self onFileNamed: fileName headerStart: 0! !
 
-!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jmv 10/14/2015 17:26'!
+!StreamingMonoSound class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:34'!
 onFileNamed: fileName headerStart: anInteger
 	"Answer an instance of me for playing audio data starting at the given position in the file with the given name."
 
 	| answer |
-	fileName asFileEntry readStream: [ :f |
+	fileName asFileEntry readStreamDo: [ :f |
 		answer _ self new initStream: f headerStart: anInteger ].
 	^answer
 ! !
@@ -8739,11 +8739,11 @@ playURLNamed: urlString
 	ScorePlayerMorph openOn: (self scoreFromURL: urlString)
 		title: titleString"! !
 
-!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 10/27/2015 18:05'!
+!MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'pb 5/25/2016 01:51'!
 scoreFromFileNamed: fileName
 
 	| f score |
-	f _ (fileName asFileEntry privateReadStream) binary.
+	f _ (fileName asFileEntry readStream) binary.
 	score _ (self new readMIDIFrom: f) asScore.
 	f close.
 	^ score
@@ -12730,12 +12730,12 @@ playSoundNamed: soundName
 	Preferences soundsEnabled ifTrue: [
 		SampledSound playSoundNamed: soundName asString]! !
 
-!SoundSystem methodsFor: 'playing' stamp: 'jmv 10/27/2015 18:13'!
+!SoundSystem methodsFor: 'playing' stamp: 'pb 5/25/2016 01:12'!
 playSoundNamed: soundName ifAbsentReadFrom: aifFileName
 
 	Preferences soundsEnabled ifTrue: [
 		(SampledSound soundNames includes: soundName) ifFalse: [
-			(FmDirectoryEntry smalltalkImageDirectory // aifFileName) exists ifTrue: [
+			(DirectoryEntry smalltalkImageDirectory // aifFileName) exists ifTrue: [
 				SampledSound
 					addLibrarySoundNamed: soundName
 					fromAIFFfileNamed: aifFileName]].
