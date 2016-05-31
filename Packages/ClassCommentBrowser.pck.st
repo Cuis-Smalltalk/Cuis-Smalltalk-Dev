@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 16 May 2016 at 6:02:36.088656 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 30 May 2016 at 2:54:35.830404 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 30!
+!provides: 'ClassCommentBrowser' 1 31!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -425,24 +425,27 @@ respondToKey: aChar
 	model indexOf: aChar.
 	listMorph update: #keySelection! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/16/2016 17:54'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:19'!
 scrollToClass: aString
 	"Scroll to an entry for the class named aString"
-	| cat m1 m2 |
+	| cat m1 m2 str |
 	
+	"ensure that the first category which contains aString is expanded"
 	cat _ (model parseName: aString) first.
 	m1 _ listMorph findDeepSubmorphThat: [:ea | 
 		(ea respondsTo: #contents) and: [ea contents includesSubString: cat]] ifAbsent: [nil].
 	m1 ifNotNil: [m1 isExpanded ifFalse: [listMorph toggleExpandedState: m1]].
-		
+	
+	"select the class entry and scroll it into view"
+	str _  aString asString printString.
 	m2 _ listMorph findDeepSubmorphThat: [:ea | 
-		(ea respondsTo: #contents) and: [ea contents includesSubString: aString]] ifAbsent: [nil].
+		(ea respondsTo: #contents) and: [ea contents includesSubString: str]] ifAbsent: [nil].
 	m2 ifNotNil: [
 		listMorph 
 			setSelectedMorph: m2;
 			scrollSelectionIntoView]! !
 
-!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/16/2016 16:30'!
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/19/2016 11:26'!
 searchAllComments
 	"Search for a string in class comments of all classes"
 	| arg hits caption items n |
@@ -458,9 +461,10 @@ searchAllComments
 			items _ String streamContents: [:s | hits do: [:i | s nextPutAll: i asString; newLine]].
 			n _ (PopUpMenu labels: items lines: nil)
 				startUpWithCaption: caption.
-			self 
-				scrollToClass: (hits at: n);
-				showFind: (hits at: n) "show the comment of the selected class" ].
+			n > 0 ifTrue:[
+				self 
+					scrollToClass: (hits at: n);
+					showFind: (hits at: n) "show the comment of the selected class" ]].
 					
 	^ nil! !
 
@@ -527,11 +531,14 @@ searchIn: aCollection for: aString
 			ifTrue: [hits addLast: ea]].
 	^ hits! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/16/2016 17:57'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:37'!
 showFind: aName
-	"Cause the class comment for aName to display"
+	"Cause the class comment for aName to display; answer the comment"
+	| cmt |
 
-	textMorph model actualContents: (model commentOf: aName)! !
+	cmt _ model commentOf: aName.
+	textMorph model actualContents: cmt.
+	^ cmt! !
 
 !CommentGuideWindow methodsFor: 'accessing' stamp: 'dhn 8/19/2015 19:47'!
 textMorph
