@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2746] on 29 April 2016 at 3:59:00.251522 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 2:01:55.674009 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 49!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
+!provides: 'Tests' 1 50!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Taskbar' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -216,6 +216,26 @@ TestCase subclass: #ExceptionTests
 ExceptionTests class
 	instanceVariableNames: ''!
 
+!classDefinition: #FileIOAccessorTest category: #'Tests-FileMan'!
+TestCase subclass: #FileIOAccessorTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-FileMan'!
+!classDefinition: 'FileIOAccessorTest class' category: #'Tests-FileMan'!
+FileIOAccessorTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #FileManTest category: #'Tests-FileMan'!
+TestCase subclass: #FileManTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-FileMan'!
+!classDefinition: 'FileManTest class' category: #'Tests-FileMan'!
+FileManTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #FloatTest category: #'Tests-Kernel-Numbers'!
 TestCase subclass: #FloatTest
 	instanceVariableNames: ''
@@ -224,26 +244,6 @@ TestCase subclass: #FloatTest
 	category: 'Tests-Kernel-Numbers'!
 !classDefinition: 'FloatTest class' category: #'Tests-Kernel-Numbers'!
 FloatTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #FmFileIOAccessorTest category: #'Tests-FileMan'!
-TestCase subclass: #FmFileIOAccessorTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-FileMan'!
-!classDefinition: 'FmFileIOAccessorTest class' category: #'Tests-FileMan'!
-FmFileIOAccessorTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #FmFileManTest category: #'Tests-FileMan'!
-TestCase subclass: #FmFileManTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-FileMan'!
-!classDefinition: 'FmFileManTest class' category: #'Tests-FileMan'!
-FmFileManTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #FractionTest category: #'Tests-Kernel-Numbers'!
@@ -876,11 +876,11 @@ WeakSet. #scanFor:.
 WeakSet. #scanForLoadedSymbol:.
 }!
 
+!FileManTest commentStamp: 'mu 5/16/2007 21:01' prior: 0!
+FmFileManTest suite run!
+
 !FloatTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
 I provide a test suite for Float values. Examine my tests to see how Floats should behave, and see how to use them.!
-
-!FmFileManTest commentStamp: 'mu 5/16/2007 21:01' prior: 0!
-FmFileManTest suite run!
 
 !MorphicLocationTest commentStamp: 'jmv 1/14/2015 14:32' prior: 0!
 Tests for composition of AffineTransformation and MorphicTranslation!
@@ -3899,6 +3899,331 @@ testSimpleReturn
 testTimeoutWithZeroDuration
 	self assertSuccess: (ExceptionTester new runTest: #simpleTimeoutWithZeroDurationTest ) ! !
 
+!FileIOAccessorTest methodsFor: 'private' stamp: 'pb 5/25/2016 01:58'!
+defaultDirectoryPath
+	^DirectoryEntry currentDirectory pathName! !
+
+!FileIOAccessorTest methodsFor: 'testing' stamp: 'pb 5/25/2016 01:59'!
+testDirectoryExists
+	"FmFileIOAccessorTest debug: #testDirectoryExists"
+	| subDirString dirString |
+	subDirString := 99999 atRandom asString.
+	dirString := self defaultDirectoryPath, FileIOAccessor default slash, subDirString.
+
+	FileIOAccessor default createDirectory: dirString.
+
+	self should: [ dirString asDirectoryEntry exists ].
+
+	FileIOAccessor default deleteDirectory: dirString.
+
+	self shouldnt: [ dirString asDirectoryEntry exists ].! !
+
+!FileManTest methodsFor: 'private' stamp: 'mu 11/6/2006 20:35'!
+directoryEntryForTest
+	^'./fmTestDir' asDirectoryEntry! !
+
+!FileManTest methodsFor: 'private' stamp: 'mu 11/6/2006 20:29'!
+randomFileName
+	^100000 atRandom asString, '.fmtst'! !
+
+!FileManTest methodsFor: 'testing' stamp: 'pb 5/25/2016 01:59'!
+testAbsolutePath
+	"FmFileManTest debug: #testAbsolutePath"
+	| dirEntry dirEntry1 dirEntry2 dirEntry3 dirEntry4 |
+	dirEntry := '/' asDirectoryEntry.
+	self should: [dirEntry = ':' asDirectoryEntry].
+	self should: [dirEntry = '\' asDirectoryEntry].
+	
+	dirEntry1 := '/temp/' asDirectoryEntry.
+	self should: [dirEntry1 = ':temp' asDirectoryEntry].
+	self should: [dirEntry1 = '\temp' asDirectoryEntry].
+
+	dirEntry2 := '/temp/a' asDirectoryEntry.
+	self should: [dirEntry2 = ':temp:a' asDirectoryEntry].
+	self should: [dirEntry2 = '\temp\a' asDirectoryEntry].
+
+	dirEntry3 := 'C:/temp/b' asDirectoryEntry.
+	self should: [dirEntry3 = 'C:\temp\b' asDirectoryEntry].
+	self should: [dirEntry3 = 'C::temp:b' asDirectoryEntry].
+
+	"Platform specific path tests"
+	FileIOAccessor default onMacClassic ifTrue: [
+	dirEntry4 := 'Macintosh HD:tmp' asDirectoryEntry.
+	self should: [dirEntry4 = 'Macintosh HD/tmp' asDirectoryEntry].
+	self should: [dirEntry4 = 'Macintosh HD\tmp' asDirectoryEntry].
+	].
+	
+	
+	
+	! !
+
+!FileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 23:08'!
+testAtPut
+	"FmFileManTest debug: #testAtPut" 
+	| dir bytes |
+	dir := self directoryEntryForTest.
+	dir at: 'test1' put: 'Hello'.
+	self should: [(dir at: 'test1') = 'Hello'].
+	self should: [dir includesKey: 'test1'].
+
+	bytes := #(1 2 3 4 5 6) asByteArray.
+	dir binaryAt: 'test2' put: bytes.
+	self should: [(dir binaryAt: 'test2') = bytes].
+	self should: [dir includesKey: 'test2'].
+
+	dir removeKey: 'test1'.
+
+	self shouldnt: [dir includesKey: 'test1'].
+
+	dir recursiveDelete.
+	self should: [dir exists not]! !
+
+!FileManTest methodsFor: 'testing' stamp: 'jmv 6/6/2015 19:49'!
+testConcatenation
+	"
+	FmFileManTest debug: #testConcatenation
+	"
+	| dir |
+	dir := ('./subDir' asDirectoryEntry / 'aaa/bbb' / 'ccc' / 'ddd\eee' / 'fff:ggg').
+	dir at: 'test1' put: 'RecursiveDeleted!!'.
+
+	self assert: dir name = 'ggg'.
+	self assert: dir parent name = 'fff'.
+	self assert: dir parent parent name = 'eee'.
+	self assert: dir parent parent parent name = 'ddd'.
+	self assert: dir parent parent parent parent name = 'ccc'.
+	self assert: dir parent parent parent parent parent name = 'bbb'.
+	self assert: dir parent parent parent parent parent parent name = 'aaa'.
+
+	'./subDir' asDirectoryEntry recursiveDelete.
+	self shouldnt: [dir exists].
+	self shouldnt: ['./subDir' asDirectoryEntry exists].! !
+
+!FileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 12:08'!
+testCopy
+	"FmFileManTest debug: #testCopy" 
+	| file1 file2 |
+	file1 := self randomFileName asFileEntry.
+	file2 := file1 parent // self randomFileName.
+
+	file1 fileContents: 'This is a test'.
+
+"	self should: [file2 fileContents isEmpty]."
+	self should: [file2 exists not].
+
+	file1 copyTo: file2 pathName.
+
+	self should: [file2 fileContents = 'This is a test'].
+
+	file1 delete.
+	file2 delete.
+	self should: [file1 exists not].
+	self should: [file2 exists not]
+	
+	
+	! !
+
+!FileManTest methodsFor: 'testing' stamp: 'pb 5/25/2016 02:00'!
+testDefaultDirectory
+	"
+	FmFileManTest debug: #testDefaultDirectory
+	"
+	
+	| pathComponents |
+
+	self assert: '' asDirectoryEntry =  DirectoryEntry currentDirectory.
+
+	pathComponents := '' asDirectoryEntry pathComponents.
+	self assert: pathComponents = DirectoryEntry currentDirectory pathComponents! !
+
+!FileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 20:33'!
+testFileContents
+	"FmFileManTest debug: #testFileContents" 
+	| file1 file2 bytes |
+	file1 := self randomFileName asFileEntry.
+	file1 fileContents: 'This is a test'.
+	self should: [file1 fileContents = 'This is a test'].
+	file1 delete.
+	self should: [file1 exists not].
+
+	file2 := self randomFileName asFileEntry.
+	bytes := #(1 2 3 4 5 6) asByteArray.
+	file2 fileContents: bytes.
+	self should: [file2 fileContents = bytes asString].
+	self should: [file2 binaryContents = bytes].
+	file2 delete.
+	self should: [file2 exists not]! !
+
+!FileManTest methodsFor: 'testing' stamp: 'pb 5/25/2016 02:00'!
+testIsAbsolutePathName
+	"
+	FmFileManTest debug: #testIsAbsolutePathName
+	"
+	self assert: '/' isAbsolutePathName.
+	self assert: '/temp/' isAbsolutePathName.
+	self assert: '/temp/a' isAbsolutePathName.
+	Smalltalk platformName = 'Win32' ifTrue: [
+		self assert: 'C:/temp/b' isAbsolutePathName ].
+	FileIOAccessor default onMacClassic ifTrue: [
+		self assert: 'Macintosh HD/tmp' isAbsolutePathName ].
+	
+	self deny: './' isAbsolutePathName.
+	self deny: '../' isAbsolutePathName.
+	self deny: 'afile' isAbsolutePathName.! !
+
+!FileManTest methodsFor: 'testing' stamp: 'jmv 6/6/2015 23:20'!
+testIsRelativePathName
+	"
+	FmFileManTest debug: #testIsRelativePathName
+	"
+	self assert: './' isRelativePathName.
+	self assert: '../' isRelativePathName.
+"	self assert: 'afile' isRelativePathName."
+	self deny: '/' isRelativePathName.
+	self deny: '/temp/' isRelativePathName.
+	self deny: '/temp/a' isRelativePathName.
+	self deny: 'C:/temp/b' isRelativePathName.
+	self deny: 'Macintosh HD/tmp' isRelativePathName.! !
+
+!FileManTest methodsFor: 'testing' stamp: 'jmv 6/6/2015 22:03'!
+testPathComponents
+	"
+	FmFileManTest debug: #testPathComponents
+	"
+	| pathComponents |
+
+	pathComponents := './aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := pathComponents last: 4.
+	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd').
+
+	pathComponents := '/aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := pathComponents last: 4.
+	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd').
+
+	pathComponents := 'aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
+	pathComponents := pathComponents last: 4.
+	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd')! !
+
+!FileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 11:28'!
+testPipe
+	"FmFileManTest debug: #testPipe" 
+	| reverseFilter file1 file2 file3 |
+
+	reverseFilter := [:in :out | out nextPutAll: (in upToEnd reverse)].
+
+	file1 := self randomFileName asFileEntry.
+	file2 := self randomFileName asFileEntry.
+	file3 := self randomFileName asFileEntry.
+
+	file1 fileContents: 'This is a pipe test'.
+
+	file1 pipe: reverseFilter to: file2 pathName.
+
+	self should: [('.' asDirectoryEntry at: file1 name) = 'This is a pipe test'].	
+	self should: [(file2 fileContents) = 'tset epip a si sihT'].	
+"	self should: [(file3 fileContents) isEmpty]."
+	self should: [file3 exists not].
+
+	file2 pipe: reverseFilter to: file3 pathName.
+	self should: [(file3 fileContents) = 'This is a pipe test'].	
+
+	file1 delete.
+	file2 delete.
+	file3 delete.
+	self should: [file1 exists not].
+	self should: [file2 exists not].
+	self should: [file3 exists not]
+	
+	
+	! !
+
+!FileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 12:09'!
+testRecursiveDelete
+	"FmFileManTest debug: #testRecursiveDelete" 
+	| dir |
+	dir := ('./subDir' asDirectoryEntry / 'aaa\bbb' / 'ccc' / 'ddd\eee' / 'fff:ggg').
+	dir at: 'test1' put: 'RecursiveDelete!!'.
+	self should: [(dir at: 'test1') = 'RecursiveDelete!!'].
+
+	dir removeKey: 'test1'.
+
+	self shouldnt: [(dir // 'test1') exists].
+
+	'./subDir' asDirectoryEntry recursiveDelete.
+	self shouldnt: [dir exists].
+	self shouldnt: ['./subDir' asDirectoryEntry exists].
+
+	! !
+
+!FileManTest methodsFor: 'testing' stamp: 'mu 11/15/2006 20:22'!
+testRefresh
+	"FmFileManTest debug: #testRefresh" 
+	| file1 |
+	file1 := self randomFileName asFileEntry.
+
+	file1 fileContents: '1234567890'.
+	self should: [file1 fileSize = 10].
+
+	file1 fileContents: '123'.
+	self should: [file1 fileSize = 3].
+	
+
+	file1 delete.
+	self should: [file1 exists not].
+	! !
+
+!FileManTest methodsFor: 'testing' stamp: 'mu 11/15/2006 20:19'!
+testRename
+	"FmFileManTest debug: #testRename" 
+	| file1 |
+	file1 := self randomFileName asFileEntry.
+	file1 fileContents: 'ToBeRenamed'.
+
+	self shouldnt: [file1 name = 'newName1'].
+
+	file1 rename: 'newName1'.
+
+	self should: [file1 name = 'newName1'].
+	self should: [file1 exists].
+
+	self should: [file1 fileContents = 'ToBeRenamed'].
+
+	file1 delete.
+	self should: [file1 exists not].
+	! !
+
+!FileManTest methodsFor: 'testing' stamp: 'pb 5/25/2016 02:00'!
+testRoot
+	"FmFileManTest debug: #testRoot"
+	| root |
+	root := DirectoryEntry roots first.
+	self should: [root pathComponents isEmpty].
+	FileIOAccessor default onUnix ifTrue: [
+		self should: [root = '\' asDirectoryEntry]. 
+		self should: [root = ':' asDirectoryEntry]. 
+		self should: [root = '/' asDirectoryEntry]]! !
+
+!FileManTest methodsFor: 'testing' stamp: 'pb 5/25/2016 01:41'!
+testStream
+	"FmFileManTest debug: #testStream" 
+	| file1 contents formerContents allContents |
+	file1 := self randomFileName asFileEntry.
+	file1 writeStreamDo: [:str | str nextPutAll: 'HELLO!!'].
+	contents := file1 readStreamDo: [:str | str upToEnd].
+	self should: [contents = 'HELLO!!'].
+
+	file1 appendStreamDo: [:str | str nextPutAll: 'AGAIN!!'].
+
+	formerContents := file1 readStreamDo: [:str | str upTo:$!!].
+	self should: [formerContents = 'HELLO'].
+
+	allContents := file1 readStreamDo: [:str | str upToEnd].
+	self should: [allContents = 'HELLO!!AGAIN!!'].
+
+	file1 delete.
+	self should: [file1 exists not].
+	! !
+
 !FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/2/2015 09:29'!
 test32bitConversion
 	"Except for NaN, we can convert a 32bits float to a 64bits float exactly.
@@ -4657,331 +4982,6 @@ testZeroSignificandAsInteger
 	"This is about http://bugs.squeak.org/view.php?id=6990"
 	
 	self assert: 0.0 significandAsInteger = 0! !
-
-!FmFileIOAccessorTest methodsFor: 'private' stamp: 'jmv 9/28/2015 14:02'!
-defaultDirectoryPath
-	^FmDirectoryEntry currentDirectory pathName! !
-
-!FmFileIOAccessorTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 11:22'!
-testDirectoryExists
-	"FmFileIOAccessorTest debug: #testDirectoryExists"
-	| subDirString dirString |
-	subDirString := 99999 atRandom asString.
-	dirString := self defaultDirectoryPath, FmFileIOAccessor default slash, subDirString.
-
-	FmFileIOAccessor default createDirectory: dirString.
-
-	self should: [ dirString asDirectoryEntry exists ].
-
-	FmFileIOAccessor default deleteDirectory: dirString.
-
-	self shouldnt: [ dirString asDirectoryEntry exists ].! !
-
-!FmFileManTest methodsFor: 'private' stamp: 'mu 11/6/2006 20:35'!
-directoryEntryForTest
-	^'./fmTestDir' asDirectoryEntry! !
-
-!FmFileManTest methodsFor: 'private' stamp: 'mu 11/6/2006 20:29'!
-randomFileName
-	^100000 atRandom asString, '.fmtst'! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/28/2015 10:33'!
-testAbsolutePath
-	"FmFileManTest debug: #testAbsolutePath"
-	| dirEntry dirEntry1 dirEntry2 dirEntry3 dirEntry4 |
-	dirEntry := '/' asDirectoryEntry.
-	self should: [dirEntry = ':' asDirectoryEntry].
-	self should: [dirEntry = '\' asDirectoryEntry].
-	
-	dirEntry1 := '/temp/' asDirectoryEntry.
-	self should: [dirEntry1 = ':temp' asDirectoryEntry].
-	self should: [dirEntry1 = '\temp' asDirectoryEntry].
-
-	dirEntry2 := '/temp/a' asDirectoryEntry.
-	self should: [dirEntry2 = ':temp:a' asDirectoryEntry].
-	self should: [dirEntry2 = '\temp\a' asDirectoryEntry].
-
-	dirEntry3 := 'C:/temp/b' asDirectoryEntry.
-	self should: [dirEntry3 = 'C:\temp\b' asDirectoryEntry].
-	self should: [dirEntry3 = 'C::temp:b' asDirectoryEntry].
-
-	"Platform specific path tests"
-	FmFileIOAccessor default onMacClassic ifTrue: [
-	dirEntry4 := 'Macintosh HD:tmp' asDirectoryEntry.
-	self should: [dirEntry4 = 'Macintosh HD/tmp' asDirectoryEntry].
-	self should: [dirEntry4 = 'Macintosh HD\tmp' asDirectoryEntry].
-	].
-	
-	
-	
-	! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 23:08'!
-testAtPut
-	"FmFileManTest debug: #testAtPut" 
-	| dir bytes |
-	dir := self directoryEntryForTest.
-	dir at: 'test1' put: 'Hello'.
-	self should: [(dir at: 'test1') = 'Hello'].
-	self should: [dir includesKey: 'test1'].
-
-	bytes := #(1 2 3 4 5 6) asByteArray.
-	dir binaryAt: 'test2' put: bytes.
-	self should: [(dir binaryAt: 'test2') = bytes].
-	self should: [dir includesKey: 'test2'].
-
-	dir removeKey: 'test1'.
-
-	self shouldnt: [dir includesKey: 'test1'].
-
-	dir recursiveDelete.
-	self should: [dir exists not]! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 6/6/2015 19:49'!
-testConcatenation
-	"
-	FmFileManTest debug: #testConcatenation
-	"
-	| dir |
-	dir := ('./subDir' asDirectoryEntry / 'aaa/bbb' / 'ccc' / 'ddd\eee' / 'fff:ggg').
-	dir at: 'test1' put: 'RecursiveDeleted!!'.
-
-	self assert: dir name = 'ggg'.
-	self assert: dir parent name = 'fff'.
-	self assert: dir parent parent name = 'eee'.
-	self assert: dir parent parent parent name = 'ddd'.
-	self assert: dir parent parent parent parent name = 'ccc'.
-	self assert: dir parent parent parent parent parent name = 'bbb'.
-	self assert: dir parent parent parent parent parent parent name = 'aaa'.
-
-	'./subDir' asDirectoryEntry recursiveDelete.
-	self shouldnt: [dir exists].
-	self shouldnt: ['./subDir' asDirectoryEntry exists].! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 12:08'!
-testCopy
-	"FmFileManTest debug: #testCopy" 
-	| file1 file2 |
-	file1 := self randomFileName asFileEntry.
-	file2 := file1 parent // self randomFileName.
-
-	file1 fileContents: 'This is a test'.
-
-"	self should: [file2 fileContents isEmpty]."
-	self should: [file2 exists not].
-
-	file1 copyTo: file2 pathName.
-
-	self should: [file2 fileContents = 'This is a test'].
-
-	file1 delete.
-	file2 delete.
-	self should: [file1 exists not].
-	self should: [file2 exists not]
-	
-	
-	! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/5/2015 08:43'!
-testDefaultDirectory
-	"
-	FmFileManTest debug: #testDefaultDirectory
-	"
-	
-	| pathComponents |
-
-	self assert: '' asDirectoryEntry =  FmDirectoryEntry currentDirectory.
-
-	pathComponents := '' asDirectoryEntry pathComponents.
-	self assert: pathComponents = FmDirectoryEntry currentDirectory pathComponents! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/6/2006 20:33'!
-testFileContents
-	"FmFileManTest debug: #testFileContents" 
-	| file1 file2 bytes |
-	file1 := self randomFileName asFileEntry.
-	file1 fileContents: 'This is a test'.
-	self should: [file1 fileContents = 'This is a test'].
-	file1 delete.
-	self should: [file1 exists not].
-
-	file2 := self randomFileName asFileEntry.
-	bytes := #(1 2 3 4 5 6) asByteArray.
-	file2 fileContents: bytes.
-	self should: [file2 fileContents = bytes asString].
-	self should: [file2 binaryContents = bytes].
-	file2 delete.
-	self should: [file2 exists not]! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 11/30/2015 09:43'!
-testIsAbsolutePathName
-	"
-	FmFileManTest debug: #testIsAbsolutePathName
-	"
-	self assert: '/' isAbsolutePathName.
-	self assert: '/temp/' isAbsolutePathName.
-	self assert: '/temp/a' isAbsolutePathName.
-	Smalltalk platformName = 'Win32' ifTrue: [
-		self assert: 'C:/temp/b' isAbsolutePathName ].
-	FmFileIOAccessor default onMacClassic ifTrue: [
-		self assert: 'Macintosh HD/tmp' isAbsolutePathName ].
-	
-	self deny: './' isAbsolutePathName.
-	self deny: '../' isAbsolutePathName.
-	self deny: 'afile' isAbsolutePathName.! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 6/6/2015 23:20'!
-testIsRelativePathName
-	"
-	FmFileManTest debug: #testIsRelativePathName
-	"
-	self assert: './' isRelativePathName.
-	self assert: '../' isRelativePathName.
-"	self assert: 'afile' isRelativePathName."
-	self deny: '/' isRelativePathName.
-	self deny: '/temp/' isRelativePathName.
-	self deny: '/temp/a' isRelativePathName.
-	self deny: 'C:/temp/b' isRelativePathName.
-	self deny: 'Macintosh HD/tmp' isRelativePathName.! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 6/6/2015 22:03'!
-testPathComponents
-	"
-	FmFileManTest debug: #testPathComponents
-	"
-	| pathComponents |
-
-	pathComponents := './aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
-	pathComponents := pathComponents last: 4.
-	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd').
-
-	pathComponents := '/aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
-	pathComponents := pathComponents last: 4.
-	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd').
-
-	pathComponents := 'aaa/bbb\ccc:ddd' asDirectoryEntry pathComponents.
-	pathComponents := pathComponents last: 4.
-	self assert: pathComponents asArray = #('aaa' 'bbb' 'ccc' 'ddd')! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 11:28'!
-testPipe
-	"FmFileManTest debug: #testPipe" 
-	| reverseFilter file1 file2 file3 |
-
-	reverseFilter := [:in :out | out nextPutAll: (in upToEnd reverse)].
-
-	file1 := self randomFileName asFileEntry.
-	file2 := self randomFileName asFileEntry.
-	file3 := self randomFileName asFileEntry.
-
-	file1 fileContents: 'This is a pipe test'.
-
-	file1 pipe: reverseFilter to: file2 pathName.
-
-	self should: [('.' asDirectoryEntry at: file1 name) = 'This is a pipe test'].	
-	self should: [(file2 fileContents) = 'tset epip a si sihT'].	
-"	self should: [(file3 fileContents) isEmpty]."
-	self should: [file3 exists not].
-
-	file2 pipe: reverseFilter to: file3 pathName.
-	self should: [(file3 fileContents) = 'This is a pipe test'].	
-
-	file1 delete.
-	file2 delete.
-	file3 delete.
-	self should: [file1 exists not].
-	self should: [file2 exists not].
-	self should: [file3 exists not]
-	
-	
-	! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 12:09'!
-testRecursiveDelete
-	"FmFileManTest debug: #testRecursiveDelete" 
-	| dir |
-	dir := ('./subDir' asDirectoryEntry / 'aaa\bbb' / 'ccc' / 'ddd\eee' / 'fff:ggg').
-	dir at: 'test1' put: 'RecursiveDelete!!'.
-	self should: [(dir at: 'test1') = 'RecursiveDelete!!'].
-
-	dir removeKey: 'test1'.
-
-	self shouldnt: [(dir // 'test1') exists].
-
-	'./subDir' asDirectoryEntry recursiveDelete.
-	self shouldnt: [dir exists].
-	self shouldnt: ['./subDir' asDirectoryEntry exists].
-
-	! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/15/2006 20:22'!
-testRefresh
-	"FmFileManTest debug: #testRefresh" 
-	| file1 |
-	file1 := self randomFileName asFileEntry.
-
-	file1 fileContents: '1234567890'.
-	self should: [file1 fileSize = 10].
-
-	file1 fileContents: '123'.
-	self should: [file1 fileSize = 3].
-	
-
-	file1 delete.
-	self should: [file1 exists not].
-	! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'mu 11/15/2006 20:19'!
-testRename
-	"FmFileManTest debug: #testRename" 
-	| file1 |
-	file1 := self randomFileName asFileEntry.
-	file1 fileContents: 'ToBeRenamed'.
-
-	self shouldnt: [file1 name = 'newName1'].
-
-	file1 rename: 'newName1'.
-
-	self should: [file1 name = 'newName1'].
-	self should: [file1 exists].
-
-	self should: [file1 fileContents = 'ToBeRenamed'].
-
-	file1 delete.
-	self should: [file1 exists not].
-	! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/21/2015 11:31'!
-testRoot
-	"FmFileManTest debug: #testRoot"
-	| root |
-	root := FmDirectoryEntry roots first.
-	self should: [root pathComponents isEmpty].
-	FmFileIOAccessor default onUnix ifTrue: [
-		self should: [root = '\' asDirectoryEntry]. 
-		self should: [root = ':' asDirectoryEntry]. 
-		self should: [root = '/' asDirectoryEntry]]! !
-
-!FmFileManTest methodsFor: 'testing' stamp: 'jmv 10/2/2015 16:42'!
-testStream
-	"FmFileManTest debug: #testStream" 
-	| file1 contents formerContents allContents |
-	file1 := self randomFileName asFileEntry.
-	file1 writeStream: [:str | str nextPutAll: 'HELLO!!'].
-	contents := file1 readStream: [:str | str upToEnd].
-	self should: [contents = 'HELLO!!'].
-
-	file1 appendStream: [:str | str nextPutAll: 'AGAIN!!'].
-
-	formerContents := file1 readStream: [:str | str upTo:$!!].
-	self should: [formerContents = 'HELLO'].
-
-	allContents := file1 readStream: [:str | str upToEnd].
-	self should: [allContents = 'HELLO!!AGAIN!!'].
-
-	file1 delete.
-	self should: [file1 exists not].
-	! !
 
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!
 assert: a classAndValueEquals: b

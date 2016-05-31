@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2679] on 30 January 2016 at 7:39:08.476986 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:05.589485 am'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 9!
+!provides: 'YAXO' 1 10!
 !requires: 'Network-Kernel' 1 nil nil!
 !classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
@@ -563,10 +563,10 @@ parseDocumentFrom: aStream
 parseDocumentFromFileNamed: fileName
 	^self parseDocumentFromFileNamed: fileName readIntoMemory: false! !
 
-!SAXHandler class methodsFor: 'instance creation' stamp: 'jmv 10/3/2015 12:30'!
+!SAXHandler class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:33'!
 parseDocumentFromFileNamed: fileName readIntoMemory: readIntoMemory
 
-	^fileName asFileEntry readStream: [ :stream |
+	^fileName asFileEntry readStreamDo: [ :stream |
 		self parseDocumentFrom: 
 			(readIntoMemory
 				ifTrue: [ stream contentsOfEntireFile readStream ]
@@ -576,10 +576,10 @@ parseDocumentFromFileNamed: fileName readIntoMemory: readIntoMemory
 parserOnFileNamed: fileName
 	^self parserOnFileNamed: fileName readIntoMemory: false! !
 
-!SAXHandler class methodsFor: 'instance creation' stamp: 'jmv 10/27/2015 18:06'!
+!SAXHandler class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:51'!
 parserOnFileNamed: fileName readIntoMemory: readIntoMemory
 	| stream  |
-	stream _ (FmDirectoryEntry currentDirectory // fileName) privateReadStream.
+	stream _ (DirectoryEntry currentDirectory // fileName) readStream.
 	readIntoMemory
 		ifTrue: [stream _ stream contentsOfEntireFile readStream].
 	^self on: stream! !

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:26:28.394214 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:57:36.41699 am'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 12!
+!provides: 'Compression' 1 13!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -395,7 +395,7 @@ serviceBrowseMCZCode
 			argumentGetter: [ :fileList |
 				fileList selectedFileEntry ]! !
 
-!ChangeList class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:50'!
+!ChangeList class methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:31'!
 browseMCZContents: aFileEntry
 	"Browse the selected file."
 	|  unzipped changeList fullName packageFile pkName |
@@ -408,7 +408,7 @@ browseMCZContents: aFileEntry
 
 	fullName _ aFileEntry pathName.
 	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
-	aFileEntry readStream: [ :stream |
+	aFileEntry readStreamDo: [ :stream |
 		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
 		unzipped ascii.
 		changeList _ self new scanFile: unzipped from: 0 to: unzipped size.
@@ -444,11 +444,11 @@ serviceMCZContents
 			argumentGetter: [ :fileList |
 				fileList selectedFileEntry ]! !
 
-!FileList methodsFor: '*Compression' stamp: 'jmv 10/27/2015 18:04'!
+!FileList methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:50'!
 compressFile
 	"Compress the currently selected file"
 
-	self fullName asFileEntry privateReadStream 
+	self fullName asFileEntry readStream 
 		compressFile.
 	self updateFileList! !
 
@@ -469,13 +469,13 @@ browseMCZCode: aFileEntry
 
 	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 17:00'!
-installMonticelloPackage: anFmFileEntry
+!CodePackageFile class methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:31'!
+installMonticelloPackage: anFileEntry
 	
 	| fullName pkName unzip |
-	fullName _ anFmFileEntry pathName.
+	fullName _ anFileEntry pathName.
 	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
-	anFmFileEntry readStream: [ :stream |
+	anFileEntry readStreamDo: [ :stream |
 		unzip _ stream asUnZippedStream: 'snapshot/source.st'.
 		unzip ascii.
 		CodePackageFile
@@ -532,12 +532,12 @@ unzipped
 	(magic1 = 16r1F and:[magic2 = 16r8B]) ifFalse: [ ^self ].
 	^ (GZipReadStream on: self) upToEnd! !
 
-!CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 17:05'!
+!CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:31'!
 browseMCZFile: aFileEntry
 
 	| codeFile organizer browser unzipped |
 	organizer _ SystemOrganizer defaultList: Array new.
-	aFileEntry readStream: [ :stream |
+	aFileEntry readStreamDo: [ :stream |
 		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
 		unzipped ascii.
 		codeFile _ (CodeFile new fullName: aFileEntry pathName; buildFrom: unzipped) ].
@@ -613,13 +613,13 @@ viewGZipContents
 		contents: stringContents;
 		openLabel: 'Decompressed contents of: ', self localName! !
 
-!StandardFileStream methodsFor: '*Compression' stamp: 'jmv 10/27/2015 18:02'!
+!StandardFileStream methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:53'!
 compressFile
 	"Write a new file that has the data in me compressed in GZip format."
 	|  zipped buffer |
 
 	self readOnly; binary.
-	zipped _ (self directory // (self name, '.gz')) privateWriteStream.
+	zipped _ (self directory // (self name, '.gz')) writeStream.
 	zipped binary.
 	zipped _ GZipWriteStream on: zipped.
 	buffer _ ByteArray new: 50000.
@@ -852,12 +852,12 @@ contentsOf: aMemberOrName
 	member ifNil: [ ^nil ].
 	^member contents! !
 
-!Archive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 17:23'!
+!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:06'!
 extractMember: aMemberOrName
 	| member |
 	member _ self member: aMemberOrName.
 	member ifNil: [ ^nil ].
-	member extractToFileNamed: member localFileName inDirectory: FmDirectoryEntry currentDirectory! !
+	member extractToFileNamed: member localFileName inDirectory: DirectoryEntry currentDirectory! !
 
 !Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
 extractMember: aMemberOrName toFileNamed: aFileName
@@ -866,16 +866,16 @@ extractMember: aMemberOrName toFileNamed: aFileName
 	member ifNil: [ ^nil ].
 	member extractToFileNamed: aFileName! !
 
-!Archive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 17:18'!
+!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:06'!
 extractMemberWithoutPath: aMemberOrName
-	self extractMemberWithoutPath: aMemberOrName inDirectory: FmDirectoryEntry currentDirectory! !
+	self extractMemberWithoutPath: aMemberOrName inDirectory: DirectoryEntry currentDirectory! !
 
-!Archive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 17:24'!
-extractMemberWithoutPath: aMemberOrName inDirectory: anFmDirectoryEntry
+!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:07'!
+extractMemberWithoutPath: aMemberOrName inDirectory: anDirectoryEntry
 	| member |
 	member _ self member: aMemberOrName.
 	member ifNil: [ ^nil ].
-	member extractToFileNamed: member localFileName asFileEntry name inDirectory: anFmDirectoryEntry! !
+	member extractToFileNamed: member localFileName asFileEntry name inDirectory: anDirectoryEntry! !
 
 !Archive methodsFor: 'initialization' stamp: 'nk 2/21/2001 17:58'!
 initialize
@@ -938,28 +938,28 @@ setContentsOf: aMemberOrName to: aString
 writeTo: aStream
 	self subclassResponsibility! !
 
-!Archive methodsFor: 'archive operations' stamp: 'jmv 10/2/2015 16:41'!
+!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:35'!
 writeToFileNamed: aFileName
 
 	"Catch attempts to overwrite existing zip file"
 	(self canWriteToFileNamed: aFileName)
 		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	aFileName asFileEntry writeStream: [ :stream |
+	aFileName asFileEntry writeStreamDo: [ :stream |
 		self writeTo: stream ]! !
 
 !ZipArchive methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:47'!
 close
 	self members do:[:m| m close].! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 18:06'!
-extractAllTo: anFmDirectoryEntry
+!ZipArchive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:15'!
+extractAllTo: anDirectoryEntry
 	"Extract all elements to the given directory"
-	Utilities informUserDuring: [ :bar | self extractAllTo: anFmDirectoryEntry informing: bar]! !
+	Utilities informUserDuring: [ :bar | self extractAllTo: anDirectoryEntry informing: bar]! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/14/2015 18:06'!
-extractAllTo: anFmDirectoryEntry informing: bar
+!ZipArchive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:15'!
+extractAllTo: anDirectoryEntry informing: bar
 	"Extract all elements to the given directory"
-	^self extractAllTo: anFmDirectoryEntry informing: bar overwrite: false! !
+	^self extractAllTo: anDirectoryEntry informing: bar overwrite: false! !
 
 !ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/21/2015 12:25'!
 extractAllTo: aDirectory informing: bar overwrite: allOverwrite
@@ -1026,12 +1026,12 @@ readEndOfCentralDirectoryFrom: aStream
 	zipFileComment _ aStream next: zipFileCommentLength.
 ! !
 
-!ZipArchive methodsFor: 'reading' stamp: 'jmv 10/27/2015 18:09'!
+!ZipArchive methodsFor: 'reading' stamp: 'pb 5/25/2016 01:51'!
 readFrom: aStreamOrFileName
 	| stream name eocdPosition |
 	stream _ (aStreamOrFileName is: #Stream)
 		ifTrue: [name _ aStreamOrFileName name. aStreamOrFileName]
-		ifFalse: [(name _ aStreamOrFileName) asFileEntry privateReadStream].
+		ifFalse: [(name _ aStreamOrFileName) asFileEntry readStream].
 	stream binary.
 	eocdPosition _ self class findEndOfCentralDirectoryFrom: stream.
 	eocdPosition <= 0 ifTrue: [self error: 'can''t find EOCD position'].
@@ -1117,11 +1117,11 @@ writeTo: stream prepending: aString
 	self writeCentralDirectoryTo: stream.
 	! !
 
-!ZipArchive methodsFor: 'writing' stamp: 'jmv 10/27/2015 18:09'!
+!ZipArchive methodsFor: 'writing' stamp: 'pb 5/25/2016 01:51'!
 writeTo: stream prependingFileNamed: aFileName
 	| prepended buffer |
 	stream binary.
-	prepended _ aFileName asFileEntry privateReadStream.
+	prepended _ aFileName asFileEntry readStream.
 	prepended binary.
 	buffer _ ByteArray new: (prepended size min: 32768).
 	[ prepended atEnd ] whileFalse: [ | bytesRead |
@@ -1227,14 +1227,14 @@ initialize
 
 	FileList registerFileReader: self 		"For Monticello .mcz support"! !
 
-!ZipArchive class methodsFor: 'file format' stamp: 'jmv 10/27/2015 17:31'!
+!ZipArchive class methodsFor: 'file format' stamp: 'pb 5/25/2016 01:51'!
 isZipArchive: aStreamOrFileName
 	"Answer whether the given filename represents a valid zip file."
 
 	| stream eocdPosition |
 	stream _ (aStreamOrFileName is: #Stream)
 		ifTrue: [aStreamOrFileName]
-		ifFalse: [aStreamOrFileName asFileEntry privateReadStream ].
+		ifFalse: [aStreamOrFileName asFileEntry readStream ].
 	stream ifNil: [^ false].
 	"nil happens sometimes somehow"
 	stream size < 22 ifTrue: [^ false].
@@ -1542,10 +1542,10 @@ dosToSqueakTime: dt
 endRead
 	readDataRemaining _ 0.! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/14/2015 17:24'!
-extractInDirectory: anFmDirectoryEntry
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'pb 5/25/2016 01:15'!
+extractInDirectory: anDirectoryEntry
 
-	self extractToFileNamed: self localFileName inDirectory: anFmDirectoryEntry
+	self extractToFileNamed: self localFileName inDirectory: anDirectoryEntry
 ! !
 
 !ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/21/2015 12:25'!
@@ -1599,21 +1599,21 @@ extractTo: aStream from: start to: finish
 	self desiredCompressionMethod: oldCompression.
 	self endRead.! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/14/2015 17:23'!
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'pb 5/25/2016 01:16'!
 extractToFileNamed: aFileName
 
-	self extractToFileNamed: aFileName inDirectory: FmDirectoryEntry currentDirectory! !
+	self extractToFileNamed: aFileName inDirectory: DirectoryEntry currentDirectory! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/14/2015 17:24'!
-extractToFileNamed: aLocalFileName inDirectory: anFmDirectoryEntry
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'pb 5/25/2016 01:16'!
+extractToFileNamed: aLocalFileName inDirectory: anDirectoryEntry
 
 	self isEncrypted ifTrue: [ ^self error: 'encryption unsupported' ].
 	self isDirectory
 		ifFalse: [
-			anFmDirectoryEntry / aLocalFileName forceWriteStream: [ :stream |
+			anDirectoryEntry / aLocalFileName forceWriteStream: [ :stream |
 				self extractTo: stream ] ]
 		ifTrue: [
-			(anFmDirectoryEntry / aLocalFileName) asDirectoryEntry assureExistence ]! !
+			(anDirectoryEntry / aLocalFileName) asDirectoryEntry assureExistence ]! !
 
 !ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:25'!
 fileComment
@@ -2148,12 +2148,12 @@ newNamed: aFileName
 close
 	stream ifNotNil:[stream close].! !
 
-!ZipNewFileMember methodsFor: 'initialization' stamp: 'jmv 10/27/2015 18:10'!
+!ZipNewFileMember methodsFor: 'initialization' stamp: 'pb 5/25/2016 01:51'!
 from: aFileName
 	| entry |
 	compressionMethod _ CompressionStored.
 	"Now get the size, attributes, and timestamps, and see if the file exists"
-	stream _ aFileName asFileEntry privateReadStream.
+	stream _ aFileName asFileEntry readStream.
 	self localFileName: (externalFileName _ stream name).
 	entry _ aFileName asFileEntry.
 	compressedSize _ uncompressedSize _ entry fileSize.
@@ -3210,14 +3210,14 @@ initialize
 
 	FileList registerFileReader: self! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 10/16/2015 14:36'!
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 5/25/2016 01:37'!
 saveContents: fullFileName
 	"Save the contents of a gzipped file"
 	| zipped buffer newName |
-	newName _ FmFileIOAccessor default baseNameFor: fullFileName.
-	newName asFileEntry writeStream: [ :unzipped |
+	newName _ FileIOAccessor default baseNameFor: fullFileName.
+	newName asFileEntry writeStreamDo: [ :unzipped |
 		unzipped binary.
-		fullFileName asFileEntry readStream: [ :zipContents |
+		fullFileName asFileEntry readStreamDo: [ :zipContents |
 			zipped _ GZipReadStream on: zipContents.
 			buffer _ ByteArray new: 50000.
 			'Extracting ' , fullFileName
@@ -3255,11 +3255,11 @@ unload
 
 	FileList unregisterFileReader: self ! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 10/27/2015 18:04'!
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 5/25/2016 01:50'!
 viewContents: fullFileName
 	"Open the decompressed contents of the .gz file with the given name.  This method is only required for the registering-file-list of Squeak 3.3a and beyond, but does no harm in an earlier system"
 
-	(fullFileName asFileEntry privateReadStream ) ifNotNil: [ :aStream | 
+	(fullFileName asFileEntry readStream ) ifNotNil: [ :aStream | 
 		aStream viewGZipContents]! !
 
 !ZLibReadStream methodsFor: 'initialization' stamp: 'ar 2/29/2004 03:31'!
@@ -4074,7 +4074,7 @@ baseDistance
 baseLength
 	^BaseLength! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/27/2015 18:15'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'pb 5/25/2016 01:16'!
 compressAndDecompress: aFile using: tempName stats: stats
 	| fileSize tempFile result |
 	aFile
@@ -4092,7 +4092,7 @@ compressAndDecompress: aFile using: tempName stats: stats
 				result _ self regressionDecompress: aFile from: tempFile notifying: bar stats: stats]].
 	aFile close.
 	tempFile close.
-	(FmDirectoryEntry smalltalkImageDirectory // tempName) delete.
+	(DirectoryEntry smalltalkImageDirectory // tempName) delete.
 	result ~~ false ifTrue:[
 		Transcript show:' ok (', (result * 100 truncateTo: 0.01) printString,')'].
 	^result! !
@@ -4176,10 +4176,10 @@ initializeCrcTable
   16r2D02EF8D
 ).! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/3/2015 16:50'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'pb 5/25/2016 01:30'!
 logProblem: reason for: aFile
 
-	'problems.log' asFileEntry appendStream: [ :errFile |
+	'problems.log' asFileEntry appendStreamDo: [ :errFile |
 		errFile
 			newLine;
 			nextPutAll: aFile name;
@@ -4262,16 +4262,16 @@ regressionDecompress: aFile from: tempFile notifying: progressBar stats: stats
 		(stats at: #compressedSize ifAbsent:[0]) + compressedSize.
 	^compressedSize asFloat / rawSize asFloat.! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/27/2015 18:15'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'pb 5/25/2016 01:16'!
 regressionTest 
 	"
 	ZipWriteStream regressionTest
 	"
 	"Compress and decompress everything we can 
 	find to validate that compression works as expected."
-	self regressionTestFrom: FmDirectoryEntry smalltalkImageDirectory! !
+	self regressionTestFrom: DirectoryEntry smalltalkImageDirectory! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/27/2015 18:16'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'pb 5/25/2016 01:16'!
 regressionTestFrom: fd
 	"ZipWriteStream regressionTestFrom: FileDirectory currentDirectory"
 	"ZipWriteStream regressionTestFrom: (FileDirectory on:'')"
@@ -4279,7 +4279,7 @@ regressionTestFrom: fd
 	| stats entry |
 	Transcript clear.
 	stats _ Dictionary new.
-	entry _ (FmDirectoryEntry smalltalkImageDirectory // '$$sqcompress$$').
+	entry _ (DirectoryEntry smalltalkImageDirectory // '$$sqcompress$$').
 	entry exists ifTrue: [ entry delete ].
 	self regressionTestFrom: fd using: entry pathName stats: stats.! !
 
@@ -4343,11 +4343,11 @@ writeHeader
 	encoder nextBits: 8 put: 0. "No OS type"
 ! !
 
-!GZipWriteStream class methodsFor: 'file list services' stamp: 'jmv 10/27/2015 18:04'!
+!GZipWriteStream class methodsFor: 'file list services' stamp: 'pb 5/25/2016 01:50'!
 compressFile: fileName
 	"Create a compressed file from the file of the given name"
 
-	(fileName asFileEntry privateReadStream) compressFile! !
+	(fileName asFileEntry readStream) compressFile! !
 
 !GZipWriteStream class methodsFor: 'file list services' stamp: 'jmv 1/11/2013 12:52'!
 fileReaderServicesForFile: fullName suffix: suffix

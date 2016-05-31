@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2767] on 18 May 2016 at 12:10:05.763596 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:15.719266 am'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 114!
+!provides: 'TerseGuide' 1 115!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -1039,14 +1039,14 @@ Feature require: #''Graphics-Files-Additional''.
 Feature require: #''Core-Packages''. 		"load all core Cuis Packages"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:15'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'pb 5/25/2016 01:41'!
 fileMan
 	"File Operations"
 	^
 '| b c file dirEntry fullPath |		"For efficient viewing, have a Transcript open and use Cmd-d on these statements"
 
-FmDirectoryEntry roots.					"answer the drive or drives"
-c _ FmDirectoryEntry currentDirectory.	"answer the current directory"
+DirectoryEntry roots.					"answer the drive or drives"
+c _ DirectoryEntry currentDirectory.	"answer the current directory"
 ''testFile.txt'' asFileEntry fileContents: ''Test me now''.	"answer the directory and name of a new file; set its contents"
 ''testFile.txt'' asFileEntry fileContents.		"print contents of a file"
 
@@ -1058,7 +1058,7 @@ c _ FmDirectoryEntry currentDirectory.	"answer the current directory"
 		].
 ''testFile.txt'' asFileEntry fileContents.		"print contents of a file"
 
-''testFile.txt'' asFileEntry appendStream: [ :fileStream |
+''testFile.txt'' asFileEntry appendStreamDo: [ :fileStream |
 	fileStream newLine.
 	fileStream nextPutAll: ''Second text line''; newLine.
 	].
@@ -1085,7 +1085,7 @@ c _ FmDirectoryEntry currentDirectory.	"answer the current directory"
 	input at: 9 put: sharedPoint.
 	refStyream nextPut: input
 	].
-(''testFile.txt'' asFileEntry readStream: [ :fileStream |
+(''testFile.txt'' asFileEntry readStreamDo: [ :fileStream |
 	(ReferenceStream on: fileStream) next.
 	]) explore.
 
@@ -1104,19 +1104,19 @@ b _ ''testFile.txt'' asFileEntry exists.		"test for existence of the file"
 ''testFile.txt'' asFileEntry delete.			"remove the test file"
 
 fullPath _ c pathName, ''\TestDir''.								"identify a directory"
-FmFileIOAccessor new createDirectory: fullPath.			"create a directory"
-FmFileIOAccessor new createDirectory: ''./\TestDir''.		"another way, using regex"
-FmFileIOAccessor new deleteDirectory: fullPath.			"delete directory; must be empty"
+FileIOAccessor new createDirectory: fullPath.			"create a directory"
+FileIOAccessor new createDirectory: ''./\TestDir''.		"another way, using regex"
+FileIOAccessor new deleteDirectory: fullPath.			"delete directory; must be empty"
 
 "The following statements show one way to either create an empty file, or use the file as-is if it already exists"
-c _ FmDirectoryEntry currentDirectory.				"answer the current directory"
+c _ DirectoryEntry currentDirectory.				"answer the current directory"
 dirEntry _ c pathName asDirectoryEntry / ''testFile.txt''.	"create a system-independent path expression"
 fullPath _ dirEntry asString.									"convert path expression to string"
 fullPath asFileEntry assureExistence.						"create testFile.txt if it does not exist"
 fullPath asFileEntry assureExistence.						"do nothing if testFile.txt already exists"
 ''testFile.txt'' asFileEntry delete.							"remove the test file"
 
-"Note the examples in FmFileEntry class"
+"Note the examples in FileEntry class"
 
 '! !
 
