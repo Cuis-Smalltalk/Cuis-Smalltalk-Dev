@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:01.214453 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:49.52549 pm'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 21!
+!provides: 'Protocols-HTTP' 1 22!
+!requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 1 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 1 nil!
-!requires: 'Network-Kernel' 1 2 nil!
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
 	instanceVariableNames: 'client request response authParams message'

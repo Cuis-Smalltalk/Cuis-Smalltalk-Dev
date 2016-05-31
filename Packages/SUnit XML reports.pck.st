@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2713] on 2 April 2016 at 10:51:46.26153 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:51.48049 pm'!
 'Description Please enter a description for this package'!
-!provides: 'SUnit XML reports' 1 6!
+!provides: 'SUnit XML reports' 1 7!
 !requires: 'YAXO' 1 nil nil!
 
 !TestRunner methodsFor: '*SUnit XML reports' stamp: 'jmv 6/5/2015 10:48'!
@@ -138,10 +138,10 @@ buildTestRunnerApp
 	AppLauncher appGlobalName: self name appSelector: #runTestsAndSaveReportTo:.
 	Smalltalk saveAs: 'TestRunner.image' andQuit: true clearAllClassState: false! !
 
-!TestRunner class methodsFor: '*SUnit XML reports' stamp: 'jmv 3/28/2016 10:02'!
+!TestRunner class methodsFor: '*SUnit XML reports' stamp: 'jmv 5/31/2016 11:24'!
 runTestsAndSaveReportTo: outputFileName
 	| xmlDoc |
 	xmlDoc _ self new runTestsAndBuildReportXMLDoc.
-	outputFileName asFileEntry forceWriteStream: [ :stream |
+	outputFileName asFileEntry forceWriteStreamDo: [ :stream |
 		xmlDoc printXMLOn: (XMLWriter on: stream) ].
 	Smalltalk snapshot: false andQuit: true clearAllClassState: false! !

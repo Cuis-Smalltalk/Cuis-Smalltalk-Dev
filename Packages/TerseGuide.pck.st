@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:15.719266 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:07:06.44249 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 115!
+!provides: 'TerseGuide' 1 116!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -1039,7 +1039,7 @@ Feature require: #''Graphics-Files-Additional''.
 Feature require: #''Core-Packages''. 		"load all core Cuis Packages"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'pb 5/25/2016 01:41'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 5/31/2016 11:25'!
 fileMan
 	"File Operations"
 	^
@@ -1051,7 +1051,7 @@ c _ DirectoryEntry currentDirectory.	"answer the current directory"
 ''testFile.txt'' asFileEntry fileContents.		"print contents of a file"
 
 ''testFile.txt'' asFileEntry
-	forceWriteStream: [ :ios |				"overwrite old file contents"
+	forceWriteStreamDo: [ :ios |				"overwrite old file contents"
 		ios nextPut: $M.
 		ios nextPutAll: ''y text ''.
 		ios nextPutAll: ''data''.
@@ -1068,7 +1068,7 @@ c _ DirectoryEntry currentDirectory.	"answer the current directory"
 
 ''testFile.txt'' asFileEntry fileContents. 		"print it"
 
-''testFile.txt'' asFileEntry forceWriteStream: [ :fileStream |	"overwrite the file"
+''testFile.txt'' asFileEntry forceWriteStreamDo: [ :fileStream |	"overwrite the file"
 	| refStyream sharedPoint input |
 	"Construct the test data."
 	refStyream _ ReferenceStream on: fileStream.
@@ -1116,7 +1116,7 @@ fullPath asFileEntry assureExistence.						"create testFile.txt if it does not e
 fullPath asFileEntry assureExistence.						"do nothing if testFile.txt already exists"
 ''testFile.txt'' asFileEntry delete.							"remove the test file"
 
-"Note the examples in FileEntry class"
+"Note the examples in DirectoryEntry class"
 
 '! !
 

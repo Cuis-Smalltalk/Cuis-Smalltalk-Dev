@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:20.032767 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:57.48449 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 53!
-!requires: 'Sound' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'SignalProcessing' 1 54!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Goodies' 1 0 nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -4098,10 +4098,10 @@ writeBMPfileNamed: fName
 	self replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
 	self asForm writeBMPfileNamed: fName! !
 
-!FloatImage methodsFor: 'file operations' stamp: 'jmv 10/3/2015 19:07'!
+!FloatImage methodsFor: 'file operations' stamp: 'jmv 5/31/2016 11:24'!
 writeFileNamed: filename
 
-	filename asFileEntry forceWriteStream: [ :stream |
+	filename asFileEntry forceWriteStreamDo: [ :stream |
 		(ReferenceStream on: stream)
 			nextPut: self ]! !
 

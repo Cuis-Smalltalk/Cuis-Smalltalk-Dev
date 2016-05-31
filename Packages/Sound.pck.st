@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:58:17.772923 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:59.70949 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 14!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Sound' 1 15!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #AIFFFileReader category: #'Sound-Synthesis'!
 Object subclass: #AIFFFileReader
 	instanceVariableNames: 'in fileType channelCount frameCount bitsPerSample samplingRate channelData channelDataOffset markers pitch gain isLooped skipDataChunk mergeIfStereo'

@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:57:33.574433 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2782] on 31 May 2016 at 12:46:25.955606 pm'!
 'Description Assessments is a replacement / reimplementation of the SUnit evaluation machinery, published under the MIT license (see below), with the following characteristics.
 
 * It provides all the functionality and features of SUnit and SUnit VM (including SUnit Based Validation and SUnit Benchmarks) natively.
@@ -143,7 +143,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '!
-!provides: 'Assessments' 2 29!
+!provides: 'Assessments' 2 30!
 !classDefinition: #AbstractCustomChecklist category: #'Assessments-Framework-CustomChecklists'!
 Object subclass: #AbstractCustomChecklist
 	instanceVariableNames: ''
@@ -2852,10 +2852,10 @@ writeStream: anObject
 
 	writeStream := anObject! !
 
-!BufferedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'pb 5/25/2016 01:36'!
+!BufferedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
 aboutToEvaluateAssessment
 
-	self writeStreamDo: String new writeStream.
+	self writeStream: String new writeStream.
 	super aboutToEvaluateAssessment! !
 
 !BufferedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
@@ -2867,10 +2867,10 @@ doneEvaluatingAssessment
 	[fileStream nextPutAll: self writeStream contents]
 		ensure: [fileStream close]! !
 
-!FileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'pb 5/25/2016 01:37'!
+!FileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
 aboutToEvaluateAssessment
 
-	self writeStreamDo: self writeFileStream.
+	self writeStream: self writeFileStream.
 	super aboutToEvaluateAssessment! !
 
 !FileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
@@ -5139,15 +5139,10 @@ printStringFor: aDateAndTime
 	answer isEmpty ifTrue: [self unknownDialect].
 	^answer! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'pb 5/25/2016 01:46'!
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'jmv 5/31/2016 11:09'!
 appendFileStreamFor: aFilenameString
 
-	self isCuis ifTrue:
-		[
-			| fileEntry |
-			fileEntry := self cuisCurrentDirectory // aFilenameString.
-			^fileEntry appendStream  "unfortunate"
-		].
+	self isCuis ifTrue: [^(self cuisCurrentDirectory // aFilenameString) appendStream].
 	self isVisualWorks ifTrue: [^aFilenameString asFilename appendStream].
 	self isVSE ifTrue:
 		[
@@ -5277,15 +5272,10 @@ vseSizeForFileName: aString
 	^self vseCurrentDirectory fileSizeForFileNamed: aString
 ! !
 
-!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'pb 5/25/2016 01:53'!
+!AssessmentsFileDirectory methodsFor: 'file system' stamp: 'jmv 5/31/2016 11:02'!
 writeFileStreamFor: aFilenameString
 
-	self isCuis ifTrue:
-		[
-			| fileEntry |
-			fileEntry := self cuisCurrentDirectory // aFilenameString.
-			^fileEntry writeStream  "unfortunate"
-		].
+	self isCuis ifTrue: [^(self cuisCurrentDirectory // aFilenameString) writeStream].
 	self isVisualWorks ifTrue: [^aFilenameString asFilename writeStream].
 	self isVSE ifTrue: [^aFilenameString asFileSystemPath asFile writeStream].	
 	self unknownDialect! !
@@ -7157,13 +7147,11 @@ prettyPrintForScenario: anObject
 
 	prettyPrintForScenario := anObject! !
 
-!Benchmark methodsFor: 'private - stop watch' stamp: 'sqr 4/6/2016 20:04'!
+!Benchmark methodsFor: 'private - stop watch' stamp: 'sqr 5/25/2016 14:21'!
 privateStopWatch: aBlock
-	"Answer amount of iterations per second.
-	Flush compiled code cache by performing a garbage collect,
-	run the block one time to get the native code generated,
-	flush the new space if possible, and then and only then
-	start measuring"
+	"Answer iterations per second.  Flush compiled code cache by performing a garbage collect,
+	run the block one time to get the native code generated, flush the new space if possible,
+	and then and only then start measuring"
 
 	| theseRepetitions nextRepetitions netMicroseconds |
 	self flushNativeCodeCache.
@@ -10275,28 +10263,27 @@ buildMorphicStatusBar
 	answer disableEdition.
 	^answer! !
 
-!AssessmentsWindow methodsFor: 'GUI building' stamp: 'SqR 9/7/2015 17:00'!
+!AssessmentsWindow methodsFor: 'GUI building' stamp: 'sqr 5/25/2016 14:19'!
 buildMorphicWindow
 
 	| layout |
 	layout := self buildLayoutMorph.
-	self layoutMorph addMorph: layout.
-	self morphExtent: self defaultMorphExtent! !
+	self layoutMorph addMorph: layout! !
 
 !AssessmentsWindow methodsFor: 'actions' stamp: 'SqR 9/7/2015 16:59'!
 cursorWaitWhile: aBlock
 
 	Cursor wait showWhile: [aBlock value]! !
 
-!AssessmentsWindow methodsFor: 'GUI building' stamp: 'SqR 9/7/2015 16:56'!
-defaultMorphExtent
-
-	^500 @ 800! !
-
 !AssessmentsWindow methodsFor: 'GUI building' stamp: 'SqR 9/7/2015 16:57'!
 defaultStripeHeight
 
 	^40! !
+
+!AssessmentsWindow methodsFor: 'GUI building' stamp: 'sqr 5/25/2016 14:12'!
+minimumExtent
+
+	^400 @ 400! !
 
 !AssessmentsWindow methodsFor: 'actions' stamp: 'SqR 9/7/2015 16:59'!
 refresh
@@ -10365,11 +10352,11 @@ browseHierarchy
 				[:class :selector | HierarchyBrowserWindow onClass: class selector: selector].
 		]! !
 
-!AssessmentsChecklistEvaluatorWindow methodsFor: 'GUI building' stamp: 'sqr 1/13/2016 22:02'!
+!AssessmentsChecklistEvaluatorWindow methodsFor: 'GUI building' stamp: 'sqr 5/25/2016 14:08'!
 buildLayoutMorph
 
 	^super buildLayoutMorph
-		addMorph: self buildMorphicChecklistTree;
+		addMorph: self buildMorphicChecklistTree proportionalWidth: 1.0;
 		addMorph: self buildMorphicSeparator fixedHeight: self separatorHeight;
 		addMorph: self buildMorphicStatusBar fixedHeight: self defaultStripeHeight;
 		addMorph: self buildMorphicSeparator fixedHeight: self separatorHeight;
@@ -10482,14 +10469,14 @@ browse
 				[:class :selector | BrowserWindow fullOnClass: class selector: selector]
 		]! !
 
-!AssessmentsResultsEvaluatorWindow methodsFor: 'GUI building' stamp: 'sqr 1/13/2016 21:59'!
+!AssessmentsResultsEvaluatorWindow methodsFor: 'GUI building' stamp: 'sqr 5/25/2016 14:09'!
 buildLayoutMorph
 
 	| newResultTree |
 	newResultTree := self buildMorphicResultTree.
 	self resultTree: newResultTree.
 	^super buildLayoutMorph
-		addMorph: newResultTree;
+		addMorph: newResultTree proportionalWidth: 1.0;
 		addMorph: self buildMorphicSeparator fixedHeight: self separatorHeight;
 		addMorph: self buildMorphicStatusBar fixedHeight: self defaultStripeHeight;
 		addMorph: self buildMorphicSeparator fixedHeight: self separatorHeight;

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:57:36.41699 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:37.24349 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 13!
+!provides: 'Compression' 1 14!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -469,13 +469,13 @@ browseMCZCode: aFileEntry
 
 	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:31'!
-installMonticelloPackage: anFileEntry
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 5/31/2016 11:15'!
+installMonticelloPackage: aFileEntry
 	
 	| fullName pkName unzip |
-	fullName _ anFileEntry pathName.
+	fullName _ aFileEntry pathName.
 	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
-	anFileEntry readStreamDo: [ :stream |
+	aFileEntry readStreamDo: [ :stream |
 		unzip _ stream asUnZippedStream: 'snapshot/source.st'.
 		unzip ascii.
 		CodePackageFile
@@ -870,12 +870,12 @@ extractMember: aMemberOrName toFileNamed: aFileName
 extractMemberWithoutPath: aMemberOrName
 	self extractMemberWithoutPath: aMemberOrName inDirectory: DirectoryEntry currentDirectory! !
 
-!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:07'!
-extractMemberWithoutPath: aMemberOrName inDirectory: anDirectoryEntry
+!Archive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:35'!
+extractMemberWithoutPath: aMemberOrName inDirectory: aDirectoryEntry
 	| member |
 	member _ self member: aMemberOrName.
 	member ifNil: [ ^nil ].
-	member extractToFileNamed: member localFileName asFileEntry name inDirectory: anDirectoryEntry! !
+	member extractToFileNamed: member localFileName asFileEntry name inDirectory: aDirectoryEntry! !
 
 !Archive methodsFor: 'initialization' stamp: 'nk 2/21/2001 17:58'!
 initialize
@@ -951,15 +951,15 @@ writeToFileNamed: aFileName
 close
 	self members do:[:m| m close].! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:15'!
-extractAllTo: anDirectoryEntry
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:38'!
+extractAllTo: aDirectoryEntry
 	"Extract all elements to the given directory"
-	Utilities informUserDuring: [ :bar | self extractAllTo: anDirectoryEntry informing: bar]! !
+	Utilities informUserDuring: [ :bar | self extractAllTo: aDirectoryEntry informing: bar]! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:15'!
-extractAllTo: anDirectoryEntry informing: bar
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:38'!
+extractAllTo: aDirectoryEntry informing: bar
 	"Extract all elements to the given directory"
-	^self extractAllTo: anDirectoryEntry informing: bar overwrite: false! !
+	^self extractAllTo: aDirectoryEntry informing: bar overwrite: false! !
 
 !ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/21/2015 12:25'!
 extractAllTo: aDirectory informing: bar overwrite: allOverwrite
@@ -1136,22 +1136,22 @@ writeTo: stream prependingFileNamed: aFileName
 	self writeCentralDirectoryTo: stream.
 	! !
 
-!ZipArchive methodsFor: 'writing' stamp: 'jmv 10/14/2015 18:03'!
+!ZipArchive methodsFor: 'writing' stamp: 'jmv 5/31/2016 11:24'!
 writeToFileNamed: aFileName prepending: aString
 
 	"Catch attempts to overwrite existing zip file"
 	(self canWriteToFileNamed: aFileName)
 		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	aFileName asFileEntry forceWriteStream: [ :stream |
+	aFileName asFileEntry forceWriteStreamDo: [ :stream |
 		self writeTo: stream prepending: aString ]! !
 
-!ZipArchive methodsFor: 'writing' stamp: 'jmv 10/14/2015 18:04'!
+!ZipArchive methodsFor: 'writing' stamp: 'jmv 5/31/2016 11:24'!
 writeToFileNamed: aFileName prependingFileNamed: anotherFileName
 
 	"Catch attempts to overwrite existing zip file"
 	(self canWriteToFileNamed: aFileName)
 		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	aFileName asFileEntry forceWriteStream: [ :stream |
+	aFileName asFileEntry forceWriteStreamDo: [ :stream |
 		self writeTo: stream prependingFileNamed: anotherFileName ]! !
 
 !ZipArchive methodsFor: 'accessing' stamp: 'nk 2/24/2001 13:44'!
@@ -1542,10 +1542,10 @@ dosToSqueakTime: dt
 endRead
 	readDataRemaining _ 0.! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'pb 5/25/2016 01:15'!
-extractInDirectory: anDirectoryEntry
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 5/31/2016 10:38'!
+extractInDirectory: aDirectoryEntry
 
-	self extractToFileNamed: self localFileName inDirectory: anDirectoryEntry
+	self extractToFileNamed: self localFileName inDirectory: aDirectoryEntry
 ! !
 
 !ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/21/2015 12:25'!
@@ -1604,16 +1604,16 @@ extractToFileNamed: aFileName
 
 	self extractToFileNamed: aFileName inDirectory: DirectoryEntry currentDirectory! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'pb 5/25/2016 01:16'!
-extractToFileNamed: aLocalFileName inDirectory: anDirectoryEntry
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 5/31/2016 11:24'!
+extractToFileNamed: aLocalFileName inDirectory: aDirectoryEntry
 
 	self isEncrypted ifTrue: [ ^self error: 'encryption unsupported' ].
 	self isDirectory
 		ifFalse: [
-			anDirectoryEntry / aLocalFileName forceWriteStream: [ :stream |
+			aDirectoryEntry / aLocalFileName forceWriteStreamDo: [ :stream |
 				self extractTo: stream ] ]
 		ifTrue: [
-			(anDirectoryEntry / aLocalFileName) asDirectoryEntry assureExistence ]! !
+			(aDirectoryEntry / aLocalFileName) asDirectoryEntry assureExistence ]! !
 
 !ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:25'!
 fileComment

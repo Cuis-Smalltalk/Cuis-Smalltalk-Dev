@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 25 May 2016 at 1:57:44.943837 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:42.21449 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Goodies' 1 5!
+!provides: 'Goodies' 1 6!
 !classDefinition: #AsyncFile category: #'Goodies-AsyncFile'!
 Object subclass: #AsyncFile
 	instanceVariableNames: 'name writeable semaphore fileHandle'
@@ -140,7 +140,7 @@ Like a SkipList, except that elements are compared with #== instead of #= .
 See the comment of IdentitySet for more information.
 !
 
-!StandardFileMenu commentStamp: 'pb 5/25/2016 01:12' prior: 0!
+!StandardFileMenu commentStamp: 'jmv 5/31/2016 10:37' prior: 0!
 I represent a SelectionMenu which operates like a modal dialog for selecting files, somewhat similar to the StandardFile dialogs in MacOS and Java Swing.
 
 Try for example, the following:

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2717] on 2 April 2016 at 11:42:04.233086 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2782] on 31 May 2016 at 12:38:35.712606 pm'!
 'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 20!
+!provides: 'SqueakCompatibility' 1 21!
 !requires: 'Cuis-Base' 42 2658 nil!
 !classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
@@ -40,36 +40,6 @@ String variableByteSubclass: #ByteString
 	category: 'SqueakCompatibility'!
 !classDefinition: 'ByteString class' category: #SqueakCompatibility!
 ByteString class
-	instanceVariableNames: ''!
-
-!classDefinition: #DirectoryEntry category: #SqueakCompatibility!
-Object subclass: #DirectoryEntry
-	instanceVariableNames: 'directory name creationTime modificationTime fileSize'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'DirectoryEntry class' category: #SqueakCompatibility!
-DirectoryEntry class
-	instanceVariableNames: ''!
-
-!classDefinition: #DirectoryEntryDirectory category: #SqueakCompatibility!
-DirectoryEntry subclass: #DirectoryEntryDirectory
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'DirectoryEntryDirectory class' category: #SqueakCompatibility!
-DirectoryEntryDirectory class
-	instanceVariableNames: ''!
-
-!classDefinition: #DirectoryEntryFile category: #SqueakCompatibility!
-DirectoryEntry subclass: #DirectoryEntryFile
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'DirectoryEntryFile class' category: #SqueakCompatibility!
-DirectoryEntryFile class
 	instanceVariableNames: ''!
 
 !classDefinition: #InvalidDirectoryError category: #SqueakCompatibility!
@@ -150,6 +120,36 @@ Object subclass: #SmalltalkImage
 	category: 'SqueakCompatibility'!
 !classDefinition: 'SmalltalkImage class' category: #SqueakCompatibility!
 SmalltalkImage class
+	instanceVariableNames: ''!
+
+!classDefinition: #SqDirectoryEntry category: #SqueakCompatibility!
+Object subclass: #SqDirectoryEntry
+	instanceVariableNames: 'directory name creationTime modificationTime fileSize'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'SqDirectoryEntry class' category: #SqueakCompatibility!
+SqDirectoryEntry class
+	instanceVariableNames: ''!
+
+!classDefinition: #DirectoryEntryDirectory category: #SqueakCompatibility!
+SqDirectoryEntry subclass: #DirectoryEntryDirectory
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'DirectoryEntryDirectory class' category: #SqueakCompatibility!
+DirectoryEntryDirectory class
+	instanceVariableNames: ''!
+
+!classDefinition: #DirectoryEntryFile category: #SqueakCompatibility!
+SqDirectoryEntry subclass: #DirectoryEntryFile
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'DirectoryEntryFile class' category: #SqueakCompatibility!
+DirectoryEntryFile class
 	instanceVariableNames: ''!
 
 !classDefinition: #MultiByteFileStream category: #SqueakCompatibility!
@@ -356,15 +356,6 @@ UIManager class
 !Model commentStamp: '<historical>' prior: 0!
 Compatibility. Prefer ActiveModel.!
 
-!DirectoryEntry commentStamp: '<historical>' prior: 0!
-an entry in a directory; a reference to either a file or a directory.!
-
-!DirectoryEntryDirectory commentStamp: '<historical>' prior: 0!
-an entry in a directory; a reference to a directory.!
-
-!DirectoryEntryFile commentStamp: '<historical>' prior: 0!
-an entry in a directory; a reference to a file.!
-
 !FileDirectory commentStamp: '<historical>' prior: 0!
 A FileDirectory represents a folder or directory in the underlying platform's file system. It carries a fully-qualified path name for the directory it represents, and can enumerate the files and directories within that directory.
 
@@ -382,6 +373,15 @@ I represent a DOS or Windows FileDirectory.
 !UnixFileDirectory commentStamp: '<historical>' prior: 0!
 I represent a Unix FileDirectory.
 !
+
+!SqDirectoryEntry commentStamp: '<historical>' prior: 0!
+an entry in a directory; a reference to either a file or a directory.!
+
+!DirectoryEntryDirectory commentStamp: '<historical>' prior: 0!
+an entry in a directory; a reference to a directory.!
+
+!DirectoryEntryFile commentStamp: '<historical>' prior: 0!
+an entry in a directory; a reference to a file.!
 
 !MultiByteFileStream commentStamp: 'jmv 5/8/2015 15:03' prior: 0!
 Not really a MultiByteXXX. Accept #lineEndConvention and honor it, on Write. On Read, do no conversions.!
@@ -578,9 +578,9 @@ crtab: anInteger
 lineEndConvention: aSymbol
 	"ignore it"! !
 
-!StandardFileStream class methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:33'!
+!StandardFileStream class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/31/2016 12:38'!
 forceNewFileNamed: aFilename
-	^ aFilename asFileEntry privateForceWriteStream! !
+	^ aFilename asFileEntry forceWriteStream! !
 
 !Transcript class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:41'!
 cr
@@ -689,160 +689,6 @@ parameterData
 !KlattResonatorIndices class methodsFor: 'frame parameter data' stamp: 'dtl 11/15/2009 10:31'!
 parameterNames
 	^ self parameterData collect: [ :each | each first]! !
-
-!DirectoryEntry methodsFor: 'testing' stamp: 'jmv 5/27/2014 11:22'!
-= aDirectoryEntry 
-
-	"Any object is equal to itself"
-	self == aDirectoryEntry ifTrue: [ ^ true ].
-
-	"Answer whether I am equivalent in all of my file-system attributes."
-	self species == aDirectoryEntry species ifFalse: [ ^ false ].
-
-	^ self containingDirectory = aDirectoryEntry containingDirectory
-		and: [ self name = aDirectoryEntry name
-				and: [ self modificationTime = aDirectoryEntry modificationTime
-						and: [ self fileSize = aDirectoryEntry fileSize ]]]! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 10/30/2009 15:50'!
-baseName
-	^ FileDirectory baseNameFor: self name! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 9/12/2007 17:36'!
-containingDirectory
-	"Answer the FileDirectory in which I reside."
-	^ directory! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 8/10/2007 12:25'!
-creationDateAndTime
-	"The DateAndTime my entry in the file system was created."
-	^DateAndTime fromSeconds: creationTime! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 2/15/2010 13:16'!
-creationTime
-	"The time the entry was created, as an Integer number of seconds offset from the DateAndTime epoch."
-	^creationTime! !
-
-!DirectoryEntry methodsFor: 'testing' stamp: 'cmm 2/21/2011 21:50'!
-exists
-	^ (self containingDirectory
-		entryAt: self name
-		ifAbsent: [ nil ]) notNil! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 9/21/2009 18:24'!
-extension
-	^ FileDirectory extensionFor: self name! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:38'!
-fileSize
-	"size of the entry, if it's a file"
-	^fileSize! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'jmv 1/7/2014 00:46'!
-fileSizeString
-	"Answer my file size as an easy-to-read String."
-	^ self fileSize printStringAsBytes! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'bgf 9/9/2010 07:36'!
-fullName
-	"The fully-qualified name.
-	 Since this method falls into the equality test, make it safe when directory is nil."
-	^ directory 
-		ifNotNil: [ directory fullNameFor: self name ] 
-		ifNil: [ self name ]! !
-
-!DirectoryEntry methodsFor: 'testing' stamp: 'cmm 2/18/2011 16:04'!
-hash
-	"Hashing on directory + name should be sufficient."
-	^ (self containingDirectory hash hashMultiply + self name hash) hashMultiply! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 9/12/2007 17:25'!
-isDirectory
-	"whether this entry represents a directory"
-	self subclassResponsibility! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 8/10/2007 12:25'!
-modificationDateAndTime
-	"The DateAndTime my entry in the file system was last modified."
-	^ DateAndTime fromSeconds: modificationTime! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:37'!
-modificationTime
-	"time the entry was last modified"
-	^modificationTime! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:37'!
-name
-	"name of the entry"
-	^name! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 8/29/2007 17:44'!
-printOn: aStream 
-	super printOn: aStream.
-	aStream
-		space ;
-		nextPutAll: self name! !
-
-!DirectoryEntry methodsFor: 'private-initialization' stamp: 'cmm 9/12/2007 17:20'!
-setDirectory: aFileDirectoryOrServerDirectory name: name0  creationTime: creationTime0  modificationTime: modificationTime0 fileSize: fileSize0
-	directory := aFileDirectoryOrServerDirectory.
-	name := name0.
-	creationTime := creationTime0.
-	modificationTime := modificationTime0.
-	fileSize := fileSize0! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'cmm 1/25/2011 13:16'!
-size
-	"For API compatibility with byte objects (for streaming api)."
-	^ self fileSize! !
-
-!DirectoryEntry methodsFor: 'access' stamp: 'bp 6/2/2014 10:49'!
-splitNameVersionExtension
-	" answer an array with the root name, version # and extension."
-	^directory splitNameVersionExtensionFor: self name! !
-
-!DirectoryEntry class methodsFor: 'instance creation' stamp: 'jmv 6/6/2012 13:47'!
-directory: aFileDirectoryOrServerDirectory name: name0 creationTime: creationTime modificationTime: modificationTime fileSize: fileSize 
-	^ self new 
-		setDirectory: aFileDirectoryOrServerDirectory
-		name: name0
-		creationTime: creationTime
-		modificationTime: modificationTime
-		fileSize: fileSize! !
-
-!DirectoryEntry class methodsFor: 'instance creation' stamp: 'jmv 6/6/2012 13:47'!
-fromArray: array directory: aFileDirectoryOrServerDirectory 
-	| entryType |
-	entryType := (array at: 4) 
-		ifTrue: [ DirectoryEntryDirectory ]
-		ifFalse: [ DirectoryEntryFile ].
-	^ entryType 
-		directory: aFileDirectoryOrServerDirectory
-		name: (array at: 1)
-		creationTime: (array at: 2)
-		modificationTime: (array at: 3)
-		fileSize: (array at: 5)! !
-
-!DirectoryEntryDirectory methodsFor: 'convert' stamp: 'jmv 6/6/2012 14:23'!
-asFileDirectory
-	"Answer a FileDirectory representing the same directory I represent."
-	^directory on: (directory fullNameFor: self name)! !
-
-!DirectoryEntryDirectory methodsFor: 'testing' stamp: 'cmm 9/13/2007 12:24'!
-isDirectory
-	"whether this entry represents a directory, it does."
-	^ true! !
-
-!DirectoryEntryFile methodsFor: 'testing' stamp: 'cmm 9/13/2007 12:24'!
-isDirectory
-	"whether this entry represents a directory, it does not."
-	^ false! !
-
-!DirectoryEntryFile methodsFor: 'stream access' stamp: 'jmv 6/6/2012 14:21'!
-readStreamDo: aBlock
-	"Obtain a FileStream on my contents that can be read, but not written,
-	and send it to aBlock."
-	^ directory readOnlyFileNamed: self name do: aBlock! !
 
 !InvalidDirectoryError methodsFor: 'exceptionDescription' stamp: 'ar 5/30/2001 20:49'!
 defaultAction
@@ -2191,6 +2037,138 @@ pathNameDelimiter
 !SmalltalkImage class methodsFor: 'as yet unclassified' stamp: 'jmv 5/8/2015 09:46'!
 current
 	^Smalltalk! !
+
+!SqDirectoryEntry methodsFor: 'testing' stamp: 'jmv 5/27/2014 11:22'!
+= aDirectoryEntry 
+
+	"Any object is equal to itself"
+	self == aDirectoryEntry ifTrue: [ ^ true ].
+
+	"Answer whether I am equivalent in all of my file-system attributes."
+	self species == aDirectoryEntry species ifFalse: [ ^ false ].
+
+	^ self containingDirectory = aDirectoryEntry containingDirectory
+		and: [ self name = aDirectoryEntry name
+				and: [ self modificationTime = aDirectoryEntry modificationTime
+						and: [ self fileSize = aDirectoryEntry fileSize ]]]! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 10/30/2009 15:50'!
+baseName
+	^ FileDirectory baseNameFor: self name! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 9/12/2007 17:36'!
+containingDirectory
+	"Answer the FileDirectory in which I reside."
+	^ directory! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 8/10/2007 12:25'!
+creationDateAndTime
+	"The DateAndTime my entry in the file system was created."
+	^DateAndTime fromSeconds: creationTime! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 2/15/2010 13:16'!
+creationTime
+	"The time the entry was created, as an Integer number of seconds offset from the DateAndTime epoch."
+	^creationTime! !
+
+!SqDirectoryEntry methodsFor: 'testing' stamp: 'cmm 2/21/2011 21:50'!
+exists
+	^ (self containingDirectory
+		entryAt: self name
+		ifAbsent: [ nil ]) notNil! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 9/21/2009 18:24'!
+extension
+	^ FileDirectory extensionFor: self name! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:38'!
+fileSize
+	"size of the entry, if it's a file"
+	^fileSize! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'jmv 1/7/2014 00:46'!
+fileSizeString
+	"Answer my file size as an easy-to-read String."
+	^ self fileSize printStringAsBytes! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'bgf 9/9/2010 07:36'!
+fullName
+	"The fully-qualified name.
+	 Since this method falls into the equality test, make it safe when directory is nil."
+	^ directory 
+		ifNotNil: [ directory fullNameFor: self name ] 
+		ifNil: [ self name ]! !
+
+!SqDirectoryEntry methodsFor: 'testing' stamp: 'cmm 2/18/2011 16:04'!
+hash
+	"Hashing on directory + name should be sufficient."
+	^ (self containingDirectory hash hashMultiply + self name hash) hashMultiply! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 9/12/2007 17:25'!
+isDirectory
+	"whether this entry represents a directory"
+	self subclassResponsibility! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 8/10/2007 12:25'!
+modificationDateAndTime
+	"The DateAndTime my entry in the file system was last modified."
+	^ DateAndTime fromSeconds: modificationTime! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:37'!
+modificationTime
+	"time the entry was last modified"
+	^modificationTime! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:37'!
+name
+	"name of the entry"
+	^name! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 8/29/2007 17:44'!
+printOn: aStream 
+	super printOn: aStream.
+	aStream
+		space ;
+		nextPutAll: self name! !
+
+!SqDirectoryEntry methodsFor: 'private-initialization' stamp: 'cmm 9/12/2007 17:20'!
+setDirectory: aFileDirectoryOrServerDirectory name: name0  creationTime: creationTime0  modificationTime: modificationTime0 fileSize: fileSize0
+	directory := aFileDirectoryOrServerDirectory.
+	name := name0.
+	creationTime := creationTime0.
+	modificationTime := modificationTime0.
+	fileSize := fileSize0! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 1/25/2011 13:16'!
+size
+	"For API compatibility with byte objects (for streaming api)."
+	^ self fileSize! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'bp 6/2/2014 10:49'!
+splitNameVersionExtension
+	" answer an array with the root name, version # and extension."
+	^directory splitNameVersionExtensionFor: self name! !
+
+!DirectoryEntryDirectory methodsFor: 'convert' stamp: 'jmv 6/6/2012 14:23'!
+asFileDirectory
+	"Answer a FileDirectory representing the same directory I represent."
+	^directory on: (directory fullNameFor: self name)! !
+
+!DirectoryEntryDirectory methodsFor: 'testing' stamp: 'cmm 9/13/2007 12:24'!
+isDirectory
+	"whether this entry represents a directory, it does."
+	^ true! !
+
+!DirectoryEntryFile methodsFor: 'testing' stamp: 'cmm 9/13/2007 12:24'!
+isDirectory
+	"whether this entry represents a directory, it does not."
+	^ false! !
+
+!DirectoryEntryFile methodsFor: 'stream access' stamp: 'jmv 6/6/2012 14:21'!
+readStreamDo: aBlock
+	"Obtain a FileStream on my contents that can be read, but not written,
+	and send it to aBlock."
+	^ directory readOnlyFileNamed: self name do: aBlock! !
 
 !MultiByteFileStream methodsFor: 'access' stamp: 'jmv 5/8/2015 15:12'!
 lineEndConvention: aSymbol
