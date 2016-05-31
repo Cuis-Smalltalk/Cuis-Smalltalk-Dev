@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:07:06.44249 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2783] on 31 May 2016 at 4:20:45.807956 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 116!
+!provides: 'TerseGuide' 1 117!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -1233,7 +1233,7 @@ x sortBlock: sort.						"Specify how to sort the heap"
 x _ Heap withAll: #(11 32 19 21) sortBlock: sort.	"Create a new heap sorted according to a sortBlock"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:16'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/31/2016 16:00'!
 internalStream
 	"Internal  Streams"
 	^
@@ -1272,6 +1272,14 @@ str nextPut: $,; space.						"newLine and tab are also possible"
 str nextPutAll: (Complex real: 4.7 imaginary: -2.2) printString.
 str nextPutAll: '' is the location of the pole.''.	"complete the formation"
 x _ str contents.								"to get the results"
+
+x _ String streamContents: [:str |		"a more compact way"
+	str 
+		nextPutAll: ''As of '';
+		nextPutAll: Date today asString;
+		nextPut: $,; space;
+		nextPutAll: (Complex real: 4.7 imaginary: -2.2) printString;
+		nextPutAll: '' is the location of the pole.''].
 
 '! !
 
@@ -2034,7 +2042,7 @@ y _ x asSet.											"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/22/2016 17:16'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/31/2016 16:16'!
 string
 	"Strings"
 	^
@@ -2057,6 +2065,14 @@ x _ String with: $a with: $b with: $c with: $d.	"set up 4 elements at a time"
 x do: [:a | Transcript show: a printString; newLine].	"iterate over the string"
 b _ x allSatisfy: [:a | (a >= $a) & (a <= $z)].	"test if all elements meet condition"
 y _ x select: [:a | a > $a].					"return all elements that meet condition"
+
+x _ String streamContents: [:str |		"using a stream to form a string"
+	str 											"more efficient than concatenation"
+		nextPutAll: ''This string'';
+		nextPutAll: '' is formed today, '';
+		nextPutAll: Date today asString;
+		nextPutAll: '', without using concatenation.''].
+
 y _ x asSymbol.								"convert string to symbol"
 y _ x asArray.								"convert string to array"
 x _ ''ABCD'' asByteArray.					"convert string to byte array"
