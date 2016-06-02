@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:46.87949 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2785] on 2 June 2016 at 9:35:55.188019 am'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 6!
+!provides: 'JSON' 1 7!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -143,9 +143,9 @@ jsonContents
 	^self readStream: [ :stream |
 		Json readFrom: stream ]! !
 
-!Association methodsFor: '*JSON-writing' stamp: 'jmv 5/16/2016 15:32'!
+!Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
 jsonWriteOn: aStream
-	self key jsonWriteOn: aStream.
+	self key asString jsonWriteOn: aStream.
 	aStream nextPut: $:; space.
 	self value jsonWriteOn: aStream.! !
 

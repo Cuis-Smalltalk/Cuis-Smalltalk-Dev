@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2783] on 31 May 2016 at 1:01:57.982606 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2785] on 2 June 2016 at 10:19:38.895311 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 52!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 54!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Taskbar' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'Taskbar' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -154,6 +154,16 @@ TestCase subclass: #ArrayLiteralTest
 	category: 'Tests-Compiler'!
 !classDefinition: 'ArrayLiteralTest class' category: #'Tests-Compiler'!
 ArrayLiteralTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #BinarySearchTest category: #'Tests-Kernel-Collections'!
+TestCase subclass: #BinarySearchTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Collections'!
+!classDefinition: 'BinarySearchTest class' category: #'Tests-Kernel-Collections'!
+BinarySearchTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BitBltTest category: #'Tests-Graphics Primitives'!
@@ -5072,6 +5082,52 @@ testSymbols
 	self class compile: 'array ^ #(#nil #true #false #''nil'' #''true'' #''false'')'.
 	self assert: self array = {#nil. #true. #false. #nil. #true. #false}.! !
 
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+testquickFindFirst
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickFindFirst: [:one | one >= eachElement]) = eachIndex.
+			self assert: (collection quickFindFirst: [:one | one >= (eachElement - 0.5)]) = eachIndex
+		].
+	self assert: (collection quickFindFirst: [:one | one > 2101]) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+testquickFindLast
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickFindLast: [:one | one <= eachElement]) = eachIndex.
+			self assert: (collection quickFindLast: [:one | one <= (eachElement + 0.5)]) = eachIndex
+		].
+	self assert: (collection quickFindLast: [:one | one < 0]) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:46'!
+testquickIndexOf
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickIndexOf: eachElement) = eachIndex
+		].
+	self assert: (collection quickIndexOf: 999) = 0.
+	self assert: (collection quickIndexOf: 2101) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 15:01'!
+testquickIndexOfWithSemistableOrder
+
+	| collection |
+	collection := SortedCollection
+		sortBlock: [:x :y | x key <= y key].
+	1 to: 1000 do: [:each | collection add: each -> each].
+	1 to: 50 do: [:each | collection add: 42 -> each].
+	self assert: (collection quickIndexOf: 42 -> 6) = 48! !
+
 !BitBltTest methodsFor: 'bugs' stamp: 'jmv 3/11/2010 08:40'!
 testAllAlphasRgbAdd
 	"self run: #testAllAlphasRgbAdd"
@@ -7444,7 +7500,7 @@ testCopy
 	
 	! !
 
-!FileManTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 10:49'!
+!FileManTest methodsFor: 'testing' stamp: 'jmv 6/1/2016 17:17'!
 testDefaultDirectory
 	"
 	FileManTest debug: #testDefaultDirectory
@@ -7452,7 +7508,10 @@ testDefaultDirectory
 	
 	| pathComponents |
 
+	"
+	See #asAbsolutePathName. See #isAbsolutePathName
 	self assert: '' asDirectoryEntry =  DirectoryEntry currentDirectory.
+	"
 
 	pathComponents := '' asDirectoryEntry pathComponents.
 	self assert: pathComponents = DirectoryEntry currentDirectory pathComponents! !
