@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2786] on 2 June 2016 at 7:58:30.394539 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2792] on 3 June 2016 at 6:17:00.619046 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 55!
+!provides: 'Tests' 1 57!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Taskbar' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Taskbar' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -357,6 +357,16 @@ TestCase subclass: #IntervalTest
 IntervalTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #JpegTest category: #'Tests-Graphics'!
+TestCase subclass: #JpegTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Graphics'!
+!classDefinition: 'JpegTest class' category: #'Tests-Graphics'!
+JpegTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #LayoutMorphTest category: #'Tests-Morphic-Kernel'!
 TestCase subclass: #LayoutMorphTest
 	instanceVariableNames: ''
@@ -625,16 +635,6 @@ TestCase subclass: #TaskbarTest
 	category: 'Tests-Taskbar'!
 !classDefinition: 'TaskbarTest class' category: #'Tests-Taskbar'!
 TaskbarTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TestJpeg category: #'Tests-Graphics'!
-TestCase subclass: #TestJpeg
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Graphics'!
-!classDefinition: 'TestJpeg class' category: #'Tests-Graphics'!
-TestJpeg class
 	instanceVariableNames: ''!
 
 !classDefinition: #TestValueWithinFix category: #'Tests-Bugs'!
@@ -7890,6 +7890,456 @@ testIntegerToByDo
 	1 to: toByDo size do: [ :i |
 		self assert: (toByDo at: i) = (interval at: i) ]! !
 
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:43'!
+test16bpp
+	"
+	TestJpeg new test16bpp
+	"
+	| form n read |
+	form _ Form lenaColor64 asFormOfDepth: 16.
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+test16bpp61
+	"
+	TestJpeg new test16bpp61
+	"
+	| form n read |
+	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+test16bpp62
+	"
+	TestJpeg new test16bpp62
+	"
+	| form n read |
+	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+test16bpp63
+	"
+	TestJpeg new test16bpp63
+	"
+	| form n read |
+	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = 16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+test16bppLE
+	"
+	TestJpeg new test16bppLE
+	"
+	| form n read |
+	form _ Form lenaColor64 asFormOfDepth: -16.
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+test16bppLE61
+	"
+	TestJpeg new test16bppLE61
+	"
+	| form n read |
+	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+test16bppLE62
+	"
+	TestJpeg new test16bppLE62
+	"
+	| form n read |
+	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+test16bppLE63
+	"
+	TestJpeg new test16bppLE63
+	"
+	| form n read |
+	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -16.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 10:55'!
+test32bpp
+	"
+	TestJpeg new test32bpp
+	"
+	| form n read |
+	form _ Form lenaColor64.
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 10:55'!
+test32bpp63
+	"
+	TestJpeg new test32bpp63
+	"
+	| form n read |
+	form _ Form lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 10:55'!
+test32bppLE63
+	"
+	TestJpeg new test32bppLE63
+	"
+	| form n read |
+	form _ Form lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+testBA16bpp
+	"
+	TestJpeg new testBA16bpp
+	"
+	| form n read bytes |
+	form _ Form lenaColor64 asFormOfDepth: 16.
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+testBA16bpp61
+	"
+	TestJpeg new testBA16bpp61
+	"
+	| form n read bytes |
+	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+testBA16bpp62
+	"
+	TestJpeg new testBA16bpp62
+	"
+	| form n read bytes |
+	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+testBA16bpp63
+	"
+	TestJpeg new test16BAbpp63
+	"
+	| form n read bytes |
+	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = 16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+testBA16bppLE
+	"
+	TestJpeg new test16BAbppLE
+	"
+	| form n read bytes |
+	form _ Form lenaColor64 asFormOfDepth: -16.
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+testBA16bppLE61
+	"
+	TestJpeg new test16BAbppLE61
+	"
+	| form n read bytes |
+	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+testBA16bppLE62
+	"
+	TestJpeg new test16BAbppLE62
+	"
+	| form n read bytes |
+	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:44'!
+testBA16bppLE63
+	"
+	TestJpeg new testBA16bppLE63
+	"
+	| form n read bytes |
+	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -16.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ Form extent: form extent depth: 16.
+	JPEGReadWriter2 new uncompress: bytes into: read.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 10:55'!
+testBA32bpp
+	"
+	TestJpeg new testBA32bpp
+	"
+	| form n read bytes |
+	form _ Form lenaColor64.
+	self assert: form depth = 32.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read depth = 32.
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 10:55'!
+testBA32bpp63
+	"
+	TestJpeg new testBA32bpp63
+	"
+	| form n read bytes |
+	form _ Form lenaColor64 copy: (0@0 extent: 63@63).
+	self assert: form depth = 32.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read depth = 32.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height * 3.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:45'!
+testGray
+	"
+	TestJpeg new testGray
+	"
+	| form n read |
+	form _ Form lenaColor64 asGrayForm.
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:45'!
+testGray61
+	"
+	TestJpeg new testGray61
+	"
+	| form n read |
+	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:45'!
+testGray62
+	"
+	TestJpeg new testGray62
+	"
+	| form n read |
+	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:45'!
+testGray63
+	"
+	TestJpeg new testGray63
+	"
+	| form n read |
+	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -8.
+	form writeJPEGfileNamed: 'test.jpg'.
+	read _ 'test.jpg' asFileEntry formContents.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:45'!
+testGrayBA
+	"
+	TestJpeg new testGrayBA
+	"
+	| form n read bytes |
+	form _ Form lenaColor64 asGrayForm.
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:45'!
+testGrayBA61
+	"
+	TestJpeg new testGray61BA
+	"
+	| form n read bytes |
+	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (61@61).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:45'!
+testGrayBA62
+	"
+	TestJpeg new testGray62BA
+	"
+	| form n read bytes |
+	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (62@62).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
+!JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:45'!
+testGrayBA63
+	"
+	TestJpeg new testGray63BA
+	"
+	| form n read bytes |
+	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
+	self assert: form nativeDepth = -8.
+	bytes _ JPEGReadWriter2 new compress: form quality: -1 progressiveJPEG: false.
+	read _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	self assert: read nativeDepth = -8.
+	self assert: read extent = (63@63).
+
+	n _ form boundingBox width * form boundingBox height.
+	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
+
 !LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 4/19/2016 10:39'!
 testLayout1
 	"
@@ -9616,242 +10066,6 @@ testVerticalAlignment
 testWidth
 	
 	self should: [ taskbar morphWidth = ProjectX ui morphWidth ]! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:39'!
-test16bpp
-	"
-	TestJpeg new test16bpp
-	"
-	| form n read |
-	form _ Form lenaColor64 asFormOfDepth: 16.
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:39'!
-test16bpp61
-	"
-	TestJpeg new test16bpp61
-	"
-	| form n read |
-	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 51! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:39'!
-test16bpp62
-	"
-	TestJpeg new test16bpp62
-	"
-	| form n read |
-	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:39'!
-test16bpp63
-	"
-	TestJpeg new test16bpp63
-	"
-	| form n read |
-	form _ (Form lenaColor64 asFormOfDepth: 16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = 16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:39'!
-test16bppLE
-	"
-	TestJpeg new test16bppLE
-	"
-	| form n read |
-	form _ Form lenaColor64 asFormOfDepth: -16.
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:39'!
-test16bppLE61
-	"
-	TestJpeg new test16bppLE61
-	"
-	| form n read |
-	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:39'!
-test16bppLE62
-	"
-	TestJpeg new test16bppLE62
-	"
-	| form n read |
-	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:39'!
-test16bppLE63
-	"
-	TestJpeg new test16bppLE63
-	"
-	| form n read |
-	form _ (Form lenaColor64 asFormOfDepth: -16) copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -16.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:25'!
-test32bpp
-	"
-	TestJpeg new test32bpp
-	"
-	| form n read |
-	form _ Form lenaColor64.
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:28'!
-test32bpp63
-	"
-	TestJpeg new test32bpp63
-	"
-	| form n read |
-	form _ Form lenaColor64 copy: (0@0 extent: 63@63).
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:28'!
-test32bppLE63
-	"
-	TestJpeg new test32bppLE63
-	"
-	| form n read |
-	form _ Form lenaColor64 copy: (0@0 extent: 63@63).
-	self assert: form depth = 32.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read depth = 32.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height * 3.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 8! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:26'!
-testGray
-	"
-	TestJpeg new testGray
-	"
-	| form n read |
-	form _ Form lenaColor64 asGrayForm.
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:28'!
-testGray61
-	"
-	TestJpeg new testGray61
-	"
-	| form n read |
-	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 61@61).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (61@61).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:28'!
-testGray62
-	"
-	TestJpeg new testGray62
-	"
-	| form n read |
-	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 62@62).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (62@62).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
-
-!TestJpeg methodsFor: 'testing' stamp: 'jmv 6/2/2016 19:29'!
-testGray63
-	"
-	TestJpeg new testGray63
-	"
-	| form n read |
-	form _ Form lenaColor64 asGrayForm copy: (0@0 extent: 63@63).
-	self assert: form nativeDepth = -8.
-	form writeJPEGfileNamed: 'test.jpg'.
-	read _ 'test.jpg' asFileEntry formContents.
-	self assert: read nativeDepth = -8.
-	self assert: read extent = (63@63).
-
-	n _ form boundingBox width * form boundingBox height.
-	self assert: (form pixelCompare: form boundingBox with: read at: 0@0) / n asFloat < 1! !
 
 !TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 4/17/2013 12:11'!
 testValueWithinNonLocalReturnFixReal

@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2789] on 2 June 2016 at 10:07:45.249302 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2792] on 3 June 2016 at 6:16:32.516356 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 56!
-!requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Goodies' 1 0 nil!
+!provides: 'SignalProcessing' 1 57!
 !requires: 'Sound' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
@@ -2383,6 +2383,19 @@ forImageZoom: scale
 	| dummyExtent |
 	dummyExtent _ 100@100.
 	^self transformFrom: (0.5@0.5 extent: dummyExtent) to: (0.5@0.5 extent: scale*dummyExtent)! !
+
+!JPEGReadWriter2 class methodsFor: '*SignalProcessing-examples' stamp: 'jmv 6/3/2016 17:38'!
+printCompressionVersusQuality
+	"
+	JPEGReadWriter2 printCompressionVersusQuality
+	"
+	| bytes lena n rebuilt |
+	lena _ GrayForm lena.
+	n _ lena boundingBox width * lena boundingBox height.
+	-1 to: 100 do: [ :i |
+		bytes _ JPEGReadWriter2 new compress: lena quality: i progressiveJPEG: false.
+		rebuilt _ JPEGReadWriter2 new uncompress: bytes into: nil.
+		{i. bytes size. (lena pixelCompare: rebuilt boundingBox with: rebuilt at: 0@0) / n asFloat} print ].! !
 
 !AccumulatedImageHistogram methodsFor: 'accessing' stamp: 'jmv 4/24/2013 15:22'!
 countAt: value
