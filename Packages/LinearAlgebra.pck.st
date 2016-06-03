@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 11:39:04.156863 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2789] on 2 June 2016 at 10:07:30.572065 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 27!
+!provides: 'LinearAlgebra' 1 28!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
@@ -786,12 +786,15 @@ triangleWithPartialPivoting
 	].
 	^ permutationCount! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 5/5/2016 15:41'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 6/2/2016 20:42'!
 with8BitColorForm: aForm do: aBlock
 	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file.
 	Don't assume anything about the color palette
 	(i.e. don't assume all 256 gray levels will be present, and don't assume a prticular order of the entries)."
+	"
+	Should convert to GrayForm
+	"
 
 	|  word aFormHeight aFormWidth i2 aFormBits aFormColorsReds c wholeLineWords aFormTotalLineWords loseElementsAtRight ii1 lineBase shift0 shift1 shift2 shift3 |
 	aFormHeight _ aForm extent y.
@@ -875,14 +878,14 @@ from32BitColorForm: aForm component: aSymbol
 	instance fillFrom32BitForm: aForm component: aSymbol.
 	^instance! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 5/3/2016 16:46'!
-from8BitColorForm: aForm
-	"Assume that aForm has a colormap with 256 gray levels, going from black to white.
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 6/2/2016 20:18'!
+fromGrayForm: aGrayForm
+	"aGrayForm can be an instance of GrayForm or a ColorForm with a colormap with 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file"
 
 	| instance |
-	instance _ self width: aForm width height: aForm height.
-	instance fillFrom8BitColorForm: aForm.
+	instance _ self width: aGrayForm width height: aGrayForm height.
+	instance fillFromGrayForm: aGrayForm.
 	^instance! !
 
 !Matrix class methodsFor: 'instance creation' stamp: 'jmv 11/16/2014 19:56'!
@@ -907,7 +910,7 @@ identity: size
 	^result
 ! !
 
-!Matrix class methodsFor: 'instance creation' stamp: 'jmv 5/4/2016 11:52'!
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 6/2/2016 20:34'!
 lena
 	"
 	(Base64MimeConverter mimeEncode: ((FileStream readOnlyFileNamed: 'Lena.png') binary)) upToEnd
@@ -917,7 +920,7 @@ ByteMatrix lena display.
 	"
 	| form |
 	form _ Form lena.
-	^self from32BitColorForm: form component: nil! !
+	^self fromGrayForm: form! !
 
 !Matrix class methodsFor: 'instance creation' stamp: 'jmv 9/2/2014 10:10'!
 m: height n: width
@@ -988,18 +991,15 @@ fillFrom32BitForm: aForm component: aSymbol
 		destOrigin: 0@0;
 		copyBits! !
 
-!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/12/2016 18:32'!
-fillFrom8BitColorForm: aForm
-	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
+!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 6/2/2016 20:17'!
+fillFromGrayForm: aGrayForm
+	"aGrayForm can be an instance of GrayForm or a ColorForm with a colormap with 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file"
-"
-	self with8BitColorForm: aForm do: [ :i2 :v |
-		elements at: i2 put: (v * 255)  rounded]
-"
+
 	| hack |
 	hack _ GrayForm extent: width@height bits: elements.
 	(BitBlt toForm: hack)
-		sourceForm: aForm;
+		sourceForm: aGrayForm;
 		combinationRule: Form over;
 		colorMap: nil;
 		sourceRect: (0@0 extent: width@height);
@@ -1256,18 +1256,15 @@ fillFrom32BitForm: aForm component: aSymbol
 	bb copyBits.
 	elements -= magic! !
 
-!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/5/2016 16:42'!
-fillFrom8BitColorForm: aForm
-	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 6/2/2016 20:18'!
+fillFromGrayForm: aGrayForm
+	"aGrayForm can be an instance of GrayForm or a ColorForm with a colormap with 256 gray levels, going from black to white.
 	This is what we get, for instance, when reading a gray 8 bit bmp file"
-"
-	self with8BitColorForm: aForm do: [ :i2 :v |
-		elements at: i2 put: v ]
-"
+
 	| magic bb |
 	magic _ 32768.0.
 	bb _ BitBlt toForm: (Form new hackBitsForFloatMatrix: self).
-	bb sourceForm: aForm.
+	bb sourceForm: aGrayForm.
 	bb combinationRule: 7. "or"
 	bb sourceX: 0; sourceY: 0.
 	bb destX: 0 destY: 0 width: width height: height.
