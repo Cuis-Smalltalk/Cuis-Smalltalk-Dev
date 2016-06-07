@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 4:25:25.39446 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2794] on 7 June 2016 at 11:00:58.928986 am'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 14!
+!provides: 'Graphics-Files-Additional' 1 15!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -195,11 +195,11 @@ copyPixels: y at: startX by: incX
 	self perform: s asSymbol with: y with: startX with: incX
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 5/9/2016 14:01'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 6/7/2016 10:36'!
 copyPixelsGray: y
 	"Handle non-interlaced grayscale color mode (colorType = 0)"
 
-	| blitter high low value |
+	| blitter high low value base bits bytesLeft word |
 
 	bitsPerChannel = 16 ifTrue: [
 		"Warning: This is extremely slow. Besides we are downsampling to 8 bits!!"
@@ -214,34 +214,52 @@ copyPixelsGray: y
   			^self ].
 
 	"Just copy the bits"
-	"This interesting technique (By Andreas Raab) is a bit obscure, but it is so fast that we leave it active"
-	bitsPerChannel = 1 ifTrue: [ ^self copyPixelsGrayWeirdBitBltHack: y ].
+	"This interesting technique (By Andreas Raab) is a bit obscure, but it is so fast that we leave it active
+	Note that currently it only works on 1bpp PNG, building a BigEndian form."
+	(bitsPerChannel = 1 and: [ form isBigEndian ]) ifTrue: [ ^self copyPixelsGrayWeirdBitBltHack: y ].
 
-	"This interesting technique  (By Yoshiki Ohshima) is also instructive"
-	true ifTrue: [ ^form copyFromByteArray2: thisScanline to: y * (form width* bitsPerChannel // 32) ].
+	"This interesting technique  (By Yoshiki Ohshima) is very fast, although only works with whole word image width"
+	(thisScanline size bitAnd: 3) = 0 ifTrue: [
+		^form copyFromByteArray2: thisScanline to: y * (form width* bitsPerChannel // 32) ].
 
 	"This Smalltalk version might be easier to understand and is quite fast too."
 	"This somewhat weird mixture of (#* and #+) with (#bitShift: and #bitOr:) 
 	is to make use of faster arithmetic bytecodes, but not of slow largeintegers."
-	"
+	"This works for GrayForms of any endianness and width"
 	base _ y * (form width * bitsPerChannel + 31 // 32) + 1.
 	bits _ form bits.
-	0 to: thisScanline size // 4 - 1 do: [ :i |
-		| ii |
-		ii _ i * 4.
-		word _
-	           ((thisScanline at: ii+1) *256 + 
-	           (thisScanline at: ii+2) *256 + 
-	           ((thisScanline at: ii+3)) bitShift: 8) bitOr: 
-	           (thisScanline at: ii+4).
-		bits at: base + i put: word.].
-	(bytesLeft := thisScanline size bitAnd: 3) = 0 ifFalse: [
-		word := 0.
-		thisScanline size - bytesLeft + 1 to: thisScanline size do: [ :ii |
-			word := word * 256 + (thisScanline at: ii) ].
-		word := word bitShift: 8 * (4 - bytesLeft).
-		bits at: base + (thisScanline size // 4) put: word ].
-	"! !
+	form isBigEndian ifTrue: [
+		0 to: thisScanline size // 4 - 1 do: [ :i |
+			| ii |
+			ii _ i * 4.
+			word _
+		           ((thisScanline at: ii+1) *256 + 
+		           (thisScanline at: ii+2) *256 + 
+		           ((thisScanline at: ii+3)) bitShift: 8) bitOr: 
+		           (thisScanline at: ii+4).
+			bits at: base + i put: word.].
+		(bytesLeft := thisScanline size bitAnd: 3) = 0 ifFalse: [
+			word := 0.
+			thisScanline size - bytesLeft + 1 to: thisScanline size do: [ :ii |
+				word := word * 256 + (thisScanline at: ii) ].
+			word := word bitShift: 8 * (4 - bytesLeft).
+			bits at: base + (thisScanline size // 4) put: word ].
+	] ifFalse: [
+		0 to: thisScanline size // 4 - 1 do: [ :i |
+			| ii |
+			ii _ i * 4.
+			word _
+		           ((thisScanline at: ii+4) *256 + 
+		           (thisScanline at: ii+3) *256 + 
+		           ((thisScanline at: ii+2)) bitShift: 8) bitOr: 
+		           (thisScanline at: ii+1).
+			bits at: base + i put: word ].
+		(bytesLeft := thisScanline size bitAnd: 3) = 0 ifFalse: [
+			word := 0.
+			thisScanline size to: thisScanline size - bytesLeft + 1 by: -1 do: [ :ii |
+				word := word * 256 + (thisScanline at: ii) ].
+			bits at: base + (thisScanline size // 4) put: word ].
+	]! !
 
 !PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:14'!
 copyPixelsGray: y at: startX by: incX
