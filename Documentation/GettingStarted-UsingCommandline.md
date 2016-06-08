@@ -33,7 +33,7 @@ sudo apt-get install libgl1-mesa-dev:i386
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
 ```
 ```
-$ coglinuxht/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2794.image
+$ coglinuxht/squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2806.image
 ```
 
 ### On Mac OS X ###
@@ -44,5 +44,5 @@ $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/ar
 $ unzip master.zip
 $ curl -o Cog.app.tgz http://www.mirandabanda.org/files/Cog/VM/VM.r3732/Cog.app-16.21.3732.tgz
 $ tar -zxvf Cog.app.tgz
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2794.image
+$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis4.2-2806.image
 ```
