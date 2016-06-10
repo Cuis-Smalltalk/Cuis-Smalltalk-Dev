@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2792] on 3 June 2016 at 6:16:32.516356 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 10 June 2016 at 12:55:38.013455 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 57!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'SignalProcessing' 1 58!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
 	instanceVariableNames: 'tallies'
@@ -5491,20 +5491,19 @@ x: x y: y put: aNumber
 	"Update Voronoi diagram."
 	self addVoronoiCellX: x y: y! !
 
-!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 3/28/2016 09:49'!
+!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 6/10/2016 12:52'!
 test1
 	"
 	[ IrregularSampledImage test1 ] forkAt: 30
 	"
 	| h original r rebuilt w x y |
-	original _ Form fromFileNamed: '2013-06-15 19.44.04gray.jpg'.
-	original _ FloatImage from32BitColorForm: original component: #green.
+	original _ FloatImage lena.
 	original _ original scaledBy: 0.5.
 	w _ original width.
 	h _ original height.
 	rebuilt _ IrregularSampledImage width: w height: h.
 	r _ Random new.
-	r seed: 0.5.
+	r seed: 1.
 	0 to: w*h// 4 do: [ :i |
 		x _ r nextInteger: w.
 		y _ r nextInteger: h.
@@ -5518,20 +5517,19 @@ test1
 				clean; interpolateBarycentricInLinearGammaSpace; displayAt: w*3 @ 0.
 			Processor yield ]]! !
 
-!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 3/28/2016 09:49'!
+!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 6/10/2016 12:52'!
 test2
 	"
 	[ IrregularSampledImage test2 ] forkAt: 30
 	"
 	| h original r rebuilt w x y |
-	original _ Form fromFileNamed: '2013-06-15 19.44.04gray.jpg'.
-	original _ FloatImage from32BitColorForm: original component: #green.
+	original _ FloatImage lena.
 	original _ original scaledBy: 0.5.
 	w _ original width.
 	h _ original height.
 	rebuilt _ IrregularSampledImage width: w height: h.
 	r _ Random new.
-	r seed: 0.5.
+	r seed: 1.
 	0 to: 100 do: [ :i |
 		x _ r nextInteger: w-24.
 		y _ r nextInteger: h-16.
@@ -5546,15 +5544,14 @@ test2
 				clean; interpolateBarycentric; displayAt: w*2 @ 0;
 				clean; interpolateBarycentricInLinearGammaSpace; displayAt: w*3 @ 0 ]]! !
 
-!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 2/25/2014 12:53'!
+!IrregularSampledImage class methodsFor: 'testing' stamp: 'jmv 6/10/2016 12:53'!
 test3
 	"
 	[ IrregularSampledImage test3 ] forkAt: 30
 	"
 	| h original rebuilt w ss |
 	ss _ 2.
-	original _ Form fromFileNamed: '2013-06-15 19.44.04gray.jpg'.
-	original _ FloatImage from32BitColorForm: original component: #green.
+	original _ FloatImage lena.
 	original _ original scaledBy: 0.5.
 	w _ original width.
 	h _ original height.
