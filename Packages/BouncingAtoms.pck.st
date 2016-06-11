@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 12 May 2016 at 6:38:13.380592 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 11 June 2016 at 10:12:54.68286 am'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 25!
+!provides: 'BouncingAtoms' 1 26!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
@@ -343,18 +343,20 @@ initialize
 	fpsCurrentFrameCountTime _ 0.
 	self reset.! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 7/4/2015 13:46'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/3/2016 19:45'!
 installHeaterCooler
-	"Replace an atom with a heater/cooler atom"
-	| a x |
+	"Replace a regular atom with a heater/cooler atom"
+	| non x |
 
-	x _ self submorphs at: self submorphs size atRandom.
-	x delete.	"Take away an atom"
-	nAtoms _ nAtoms - 1.
+	non _ self submorphs select: [:a | (a hasProperty: #velocityDelta) not].
+	non ifNotEmpty: [	
+		
+		non shuffled first delete.	"Take away an atom"
+		nAtoms _ nAtoms - 1.
 
-	a _ HeaterCoolerAtom new.
-	a randomPositionIn: self morphLocalBounds maxVelocity: 10.
-	self addMorph: a.	"Add an atom"
+		x _ HeaterCoolerAtom new.
+		x randomPositionIn: self morphLocalBounds maxVelocity: 10.
+		self addMorph: x]	"Add an atom"
 ! !
 
 !BouncingAtomsMorph methodsFor: 'testing' stamp: 'jmv 8/16/2015 11:41'!
@@ -428,11 +430,16 @@ showInfectionHistory
 	(historyWindow embeddedInMorphicWindowLabeled: 'Infection History') openInWorld
 ! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/2/2015 19:49'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/3/2016 19:45'!
 startInfection
-
-	self submorphsDo: [:m | m infected: false].
-	(self submorphs at: self submorphs size atRandom) infected: true.
+	"Introduce one infected atom in the collection"
+	| non |
+	
+	non _ self submorphs select: [:a | (a hasProperty: #velocityDelta) not].
+	non ifNotEmpty: [	
+		non do: [:ea | ea infected: false].	"disinfect"
+		non shuffled first infected: true].	"randomly infect one"
+	
 	infectionHistory := OrderedCollection new: 500.
 	infectionHistory add: 0.
 	transmitInfection := true.
