@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 11 June 2016 at 10:12:54.68286 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 11 June 2016 at 1:55:34.47286 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 26!
+!provides: 'BouncingAtoms' 1 27!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
@@ -24,7 +24,7 @@ HeaterCoolerAtom class
 
 !classDefinition: #BouncingAtomsMorph category: #BouncingAtoms!
 RectangleLikeMorph subclass: #BouncingAtomsMorph
-	instanceVariableNames: 'infectionHistory transmitInfection recentTemperatures temperature historyWindow nAtoms fpsEnabled fps fpsCurrentFrameCount fpsCurrentFrameCountTime'
+	instanceVariableNames: 'infectionHistory transmitInfection recentTemperatures temperature historyWindow nAtoms fpsEnabled fps fpsCurrentFrameCount fpsCurrentFrameCountTime resume'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BouncingAtoms'!
@@ -34,7 +34,7 @@ BouncingAtomsMorph class
 
 !classDefinition: #InfectionGraph category: #BouncingAtoms!
 FunctionGraphMorph subclass: #InfectionGraph
-	instanceVariableNames: 'data points yScaleFactor startTime deltaT ticN tics yFactor xFactor'
+	instanceVariableNames: 'data points yScaleFactor startTime deltaT ticN tics yFactor xFactor resumed'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BouncingAtoms'!
@@ -333,7 +333,7 @@ drawOn: aCanvas
 handlesMouseDown: aMouseButtonEvent
 	^ true! !
 
-!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'jmv 2/27/2016 19:47'!
+!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'dhn 6/11/2016 11:26'!
 initialize
 	"initialize the state of the receiver"
 	super initialize.
@@ -341,6 +341,7 @@ initialize
 	fps _ 0.
 	fpsCurrentFrameCount _ 0.
 	fpsCurrentFrameCountTime _ 0.
+	resume _ true.
 	self reset.! !
 
 !BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/3/2016 19:45'!
@@ -363,15 +364,29 @@ installHeaterCooler
 is: aSymbol
 	^aSymbol == #BouncingAtomsMorph or: [ super is: aSymbol ]! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'pb 7/16/2015 19:59'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/11/2016 11:41'!
 mouseButton2Activity
 	"Show a pop-up menu"
 	| tuples list index |
-	tuples _ #(#('Set Atom Count...' #setAtomCount) #('Start Infection' #startInfection) #('Show Infection History' #showInfectionHistory) #('Toggle Atom as Rectangle' #drawAsRect) #('Heater/Cooler Atom' #installHeaterCooler) #('Toggle FPS' #toggleFPS) ).
-	list _ tuples collect: [ :ea |
-		ea first ].
+	
+	tuples _ #(
+		#('Set Atom Count...' 			#setAtomCount) 
+		#('Start Infection' 				#startInfection) 
+		#('Show Infection History' 		#showInfectionHistory) 
+		#('Toggle Atom as Rectangle' 	#drawAsRect) 
+		#('Heater/Cooler Atom' 		#installHeaterCooler) 
+		#('Toggle FPS' 					#toggleFPS) 
+		#('Pause/Resume' 				#pauseResume)).
+		
+	list _ tuples collect: [ :ea | ea first ].
 	index _ (PopUpMenu labelArray: list) startUpWithCaption: 'Bouncing Atoms'.
 	index > 0 ifTrue: [ self perform: ((tuples at: index) at: 2) ].! !
+
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/11/2016 11:37'!
+pauseResume
+	"Toggle the action"
+	
+	resume _ resume not! !
 
 !BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 7/4/2015 13:50'!
 reportInfection
@@ -446,30 +461,36 @@ startInfection
 	self startStepping.
 ! !
 
-!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'jmv 2/27/2016 19:51'!
+!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'dhn 6/11/2016 12:13'!
 stepAt: millisecondSinceLast
 	"Bounce those atoms!!"
 	| r bounces |
-	bounces := 0.
-	r := 0 @ 0 corner: self morphExtent - (8 @ 8).
-	self submorphsDo: [ :m |
-		(m is: #AtomMorph) ifTrue: [
-			(m bounceIn: r) ifTrue: [ bounces := bounces + 1 ]]].
-	"compute a 'temperature' that is proportional to the number of bounces
-	 divided by the circumference of the enclosing rectangle"
-	self updateTemperature: 10000.0 * bounces / (r width + r height).
-	transmitInfection ifTrue: [ self reportInfection ].
-	fpsEnabled ifTrue: [
-		fpsCurrentFrameCountTime < 1000
-			ifTrue: [
-				fpsCurrentFrameCount := fpsCurrentFrameCount + 1.
-				fpsCurrentFrameCountTime _ fpsCurrentFrameCountTime + millisecondSinceLast.
-				]
-			ifFalse: [
-				fps := fpsCurrentFrameCount.
-				fpsCurrentFrameCount := 1.
-				fpsCurrentFrameCountTime _ 0 ]].
-	self redrawNeeded! !
+	
+	historyWindow ifNotNil: [historyWindow resumed: resume].
+	
+	resume ifTrue: [
+		bounces := 0.
+		r := 0 @ 0 corner: self morphExtent - (8 @ 8).
+		self submorphsDo: [ :m |
+			(m is: #AtomMorph) ifTrue: [
+				(m bounceIn: r) ifTrue: [ bounces := bounces + 1 ]]].
+		"compute a 'temperature' that is proportional to the number of bounces
+		 divided by the circumference of the enclosing rectangle"
+		self updateTemperature: 10000.0 * bounces / (r width + r height).
+		transmitInfection ifTrue: [ self reportInfection ].
+		fpsEnabled ifTrue: [
+			fpsCurrentFrameCountTime < 1000
+				ifTrue: [
+					fpsCurrentFrameCount := fpsCurrentFrameCount + 1.
+					fpsCurrentFrameCountTime _ fpsCurrentFrameCountTime + millisecondSinceLast.
+					]
+				ifFalse: [
+					fps := fpsCurrentFrameCount.
+					fpsCurrentFrameCount := 1.
+					fpsCurrentFrameCountTime _ 0 ]].
+		self redrawNeeded]
+	
+! !
 
 !BouncingAtomsMorph methodsFor: 'testing' stamp: 'pb 7/16/2015 21:07'!
 stepTime
@@ -570,6 +591,18 @@ data: aCollection
 	data _ aCollection
 ! !
 
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
+deltaT
+	"Answer the value of deltaT"
+
+	^ deltaT! !
+
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
+deltaT: anObject
+	"Set the value of deltaT"
+
+	deltaT _ anObject! !
+
 !InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/12/2016 12:28'!
 drawOn: aCanvas
 	| fully |
@@ -628,6 +661,19 @@ points: anObject
 
 	points _ anObject! !
 
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:16'!
+resumed
+	"Answer the value of resumed"
+
+	resumed ifNil: [resumed _ true].
+	^ resumed! !
+
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:13'!
+resumed: anObject
+	"Set the value of resumed"
+
+	resumed _ anObject! !
+
 !InfectionGraph methodsFor: 'initialization' stamp: 'dhn 5/11/2016 21:17'!
 setXYFactors
 	"Set the values of xFactor and yFactor"
@@ -669,12 +715,42 @@ tics
 	tics ifNil: [tics _ OrderedCollection new].
 	^ tics! !
 
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
+tics: anObject
+	"Set the value of tics"
+
+	tics _ anObject! !
+
 !InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 12:18'!
 update: aSymbol
 	"Re-normalize data if parameter = #redraw"
 	super update: aSymbol.
 	(aSymbol == #redraw and: (data size > 1)) ifTrue: [points _ self asNormalizedPoints: data]
 ! !
+
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
+xFactor
+	"Answer the value of xFactor"
+
+	^ xFactor! !
+
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
+xFactor: anObject
+	"Set the value of xFactor"
+
+	xFactor _ anObject! !
+
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
+yFactor
+	"Answer the value of yFactor"
+
+	^ yFactor! !
+
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
+yFactor: anObject
+	"Set the value of yFactor"
+
+	yFactor _ anObject! !
 
 !InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/11/2016 02:06'!
 yScaleFactor
