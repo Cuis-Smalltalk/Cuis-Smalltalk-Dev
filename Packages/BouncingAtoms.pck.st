@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2763] on 12 May 2016 at 6:38:13.380592 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 12 June 2016 at 2:36:11.610809 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 25!
+!provides: 'BouncingAtoms' 1 28!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
@@ -24,7 +24,7 @@ HeaterCoolerAtom class
 
 !classDefinition: #BouncingAtomsMorph category: #BouncingAtoms!
 RectangleLikeMorph subclass: #BouncingAtomsMorph
-	instanceVariableNames: 'infectionHistory transmitInfection recentTemperatures temperature historyWindow nAtoms fpsEnabled fps fpsCurrentFrameCount fpsCurrentFrameCountTime'
+	instanceVariableNames: 'infectionHistory transmitInfection recentTemperatures temperature historyWindow nAtoms fpsEnabled fps fpsCurrentFrameCount fpsCurrentFrameCountTime resume'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BouncingAtoms'!
@@ -34,7 +34,7 @@ BouncingAtomsMorph class
 
 !classDefinition: #InfectionGraph category: #BouncingAtoms!
 FunctionGraphMorph subclass: #InfectionGraph
-	instanceVariableNames: 'data points yScaleFactor startTime deltaT ticN tics yFactor xFactor'
+	instanceVariableNames: 'data points yScaleFactor startTime deltaT ticN tics yFactor xFactor resumed'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BouncingAtoms'!
@@ -333,7 +333,7 @@ drawOn: aCanvas
 handlesMouseDown: aMouseButtonEvent
 	^ true! !
 
-!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'jmv 2/27/2016 19:47'!
+!BouncingAtomsMorph methodsFor: 'initialization' stamp: 'dhn 6/11/2016 11:26'!
 initialize
 	"initialize the state of the receiver"
 	super initialize.
@@ -341,35 +341,52 @@ initialize
 	fps _ 0.
 	fpsCurrentFrameCount _ 0.
 	fpsCurrentFrameCountTime _ 0.
+	resume _ true.
 	self reset.! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 7/4/2015 13:46'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/3/2016 19:45'!
 installHeaterCooler
-	"Replace an atom with a heater/cooler atom"
-	| a x |
+	"Replace a regular atom with a heater/cooler atom"
+	| non x |
 
-	x _ self submorphs at: self submorphs size atRandom.
-	x delete.	"Take away an atom"
-	nAtoms _ nAtoms - 1.
+	non _ self submorphs select: [:a | (a hasProperty: #velocityDelta) not].
+	non ifNotEmpty: [	
+		
+		non shuffled first delete.	"Take away an atom"
+		nAtoms _ nAtoms - 1.
 
-	a _ HeaterCoolerAtom new.
-	a randomPositionIn: self morphLocalBounds maxVelocity: 10.
-	self addMorph: a.	"Add an atom"
+		x _ HeaterCoolerAtom new.
+		x randomPositionIn: self morphLocalBounds maxVelocity: 10.
+		self addMorph: x]	"Add an atom"
 ! !
 
 !BouncingAtomsMorph methodsFor: 'testing' stamp: 'jmv 8/16/2015 11:41'!
 is: aSymbol
 	^aSymbol == #BouncingAtomsMorph or: [ super is: aSymbol ]! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'pb 7/16/2015 19:59'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/11/2016 11:41'!
 mouseButton2Activity
 	"Show a pop-up menu"
 	| tuples list index |
-	tuples _ #(#('Set Atom Count...' #setAtomCount) #('Start Infection' #startInfection) #('Show Infection History' #showInfectionHistory) #('Toggle Atom as Rectangle' #drawAsRect) #('Heater/Cooler Atom' #installHeaterCooler) #('Toggle FPS' #toggleFPS) ).
-	list _ tuples collect: [ :ea |
-		ea first ].
+	
+	tuples _ #(
+		#('Set Atom Count...' 			#setAtomCount) 
+		#('Start Infection' 				#startInfection) 
+		#('Show Infection History' 		#showInfectionHistory) 
+		#('Toggle Atom as Rectangle' 	#drawAsRect) 
+		#('Heater/Cooler Atom' 		#installHeaterCooler) 
+		#('Toggle FPS' 					#toggleFPS) 
+		#('Pause/Resume' 				#pauseResume)).
+		
+	list _ tuples collect: [ :ea | ea first ].
 	index _ (PopUpMenu labelArray: list) startUpWithCaption: 'Bouncing Atoms'.
 	index > 0 ifTrue: [ self perform: ((tuples at: index) at: 2) ].! !
+
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/11/2016 11:37'!
+pauseResume
+	"Toggle the action"
+	
+	resume _ resume not! !
 
 !BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 7/4/2015 13:50'!
 reportInfection
@@ -428,41 +445,52 @@ showInfectionHistory
 	(historyWindow embeddedInMorphicWindowLabeled: 'Infection History') openInWorld
 ! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/2/2015 19:49'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/3/2016 19:45'!
 startInfection
-
-	self submorphsDo: [:m | m infected: false].
-	(self submorphs at: self submorphs size atRandom) infected: true.
+	"Introduce one infected atom in the collection"
+	| non |
+	
+	non _ self submorphs select: [:a | (a hasProperty: #velocityDelta) not].
+	non ifNotEmpty: [	
+		non do: [:ea | ea infected: false].	"disinfect"
+		non shuffled first infected: true].	"randomly infect one"
+	
 	infectionHistory := OrderedCollection new: 500.
 	infectionHistory add: 0.
 	transmitInfection := true.
 	self startStepping.
 ! !
 
-!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'jmv 2/27/2016 19:51'!
+!BouncingAtomsMorph methodsFor: 'stepping and presenter' stamp: 'dhn 6/11/2016 12:13'!
 stepAt: millisecondSinceLast
 	"Bounce those atoms!!"
 	| r bounces |
-	bounces := 0.
-	r := 0 @ 0 corner: self morphExtent - (8 @ 8).
-	self submorphsDo: [ :m |
-		(m is: #AtomMorph) ifTrue: [
-			(m bounceIn: r) ifTrue: [ bounces := bounces + 1 ]]].
-	"compute a 'temperature' that is proportional to the number of bounces
-	 divided by the circumference of the enclosing rectangle"
-	self updateTemperature: 10000.0 * bounces / (r width + r height).
-	transmitInfection ifTrue: [ self reportInfection ].
-	fpsEnabled ifTrue: [
-		fpsCurrentFrameCountTime < 1000
-			ifTrue: [
-				fpsCurrentFrameCount := fpsCurrentFrameCount + 1.
-				fpsCurrentFrameCountTime _ fpsCurrentFrameCountTime + millisecondSinceLast.
-				]
-			ifFalse: [
-				fps := fpsCurrentFrameCount.
-				fpsCurrentFrameCount := 1.
-				fpsCurrentFrameCountTime _ 0 ]].
-	self redrawNeeded! !
+	
+	historyWindow ifNotNil: [historyWindow resumed: resume].
+	
+	resume ifTrue: [
+		bounces := 0.
+		r := 0 @ 0 corner: self morphExtent - (8 @ 8).
+		self submorphsDo: [ :m |
+			(m is: #AtomMorph) ifTrue: [
+				(m bounceIn: r) ifTrue: [ bounces := bounces + 1 ]]].
+		"compute a 'temperature' that is proportional to the number of bounces
+		 divided by the circumference of the enclosing rectangle"
+		self updateTemperature: 10000.0 * bounces / (r width + r height).
+		transmitInfection ifTrue: [ self reportInfection ].
+		fpsEnabled ifTrue: [
+			fpsCurrentFrameCountTime < 1000
+				ifTrue: [
+					fpsCurrentFrameCount := fpsCurrentFrameCount + 1.
+					fpsCurrentFrameCountTime _ fpsCurrentFrameCountTime + millisecondSinceLast.
+					]
+				ifFalse: [
+					fps := fpsCurrentFrameCount.
+					fpsCurrentFrameCount := 1.
+					fpsCurrentFrameCountTime _ 0 ]].
+		self redrawNeeded]
+	
+! !
 
 !BouncingAtomsMorph methodsFor: 'testing' stamp: 'pb 7/16/2015 21:07'!
 stepTime
@@ -551,12 +579,6 @@ color: aColor
 	super color: aColor.
 ! !
 
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/11/2016 02:06'!
-data
-	"Answer the value of data"
-
-	^ data! !
-
 !InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/23/2015 16:09'!
 data: aCollection
 
@@ -621,6 +643,12 @@ points: anObject
 
 	points _ anObject! !
 
+!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:13'!
+resumed: anObject
+	"Set the value of resumed"
+
+	resumed _ anObject! !
+
 !InfectionGraph methodsFor: 'initialization' stamp: 'dhn 5/11/2016 21:17'!
 setXYFactors
 	"Set the values of xFactor and yFactor"
@@ -668,12 +696,6 @@ update: aSymbol
 	super update: aSymbol.
 	(aSymbol == #redraw and: (data size > 1)) ifTrue: [points _ self asNormalizedPoints: data]
 ! !
-
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/11/2016 02:06'!
-yScaleFactor
-	"Answer the value of yScaleFactor"
-
-	^ yScaleFactor! !
 
 !InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/26/2015 12:25'!
 yScaleFactor: aNumber
