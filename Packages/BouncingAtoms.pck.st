@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 11 June 2016 at 1:55:34.47286 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 12 June 2016 at 2:36:11.610809 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 27!
+!provides: 'BouncingAtoms' 1 28!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
@@ -579,29 +579,11 @@ color: aColor
 	super color: aColor.
 ! !
 
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/11/2016 02:06'!
-data
-	"Answer the value of data"
-
-	^ data! !
-
 !InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/23/2015 16:09'!
 data: aCollection
 
 	data _ aCollection
 ! !
-
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
-deltaT
-	"Answer the value of deltaT"
-
-	^ deltaT! !
-
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
-deltaT: anObject
-	"Set the value of deltaT"
-
-	deltaT _ anObject! !
 
 !InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/12/2016 12:28'!
 drawOn: aCanvas
@@ -661,13 +643,6 @@ points: anObject
 
 	points _ anObject! !
 
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:16'!
-resumed
-	"Answer the value of resumed"
-
-	resumed ifNil: [resumed _ true].
-	^ resumed! !
-
 !InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:13'!
 resumed: anObject
 	"Set the value of resumed"
@@ -715,48 +690,12 @@ tics
 	tics ifNil: [tics _ OrderedCollection new].
 	^ tics! !
 
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
-tics: anObject
-	"Set the value of tics"
-
-	tics _ anObject! !
-
 !InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 12:18'!
 update: aSymbol
 	"Re-normalize data if parameter = #redraw"
 	super update: aSymbol.
 	(aSymbol == #redraw and: (data size > 1)) ifTrue: [points _ self asNormalizedPoints: data]
 ! !
-
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
-xFactor
-	"Answer the value of xFactor"
-
-	^ xFactor! !
-
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
-xFactor: anObject
-	"Set the value of xFactor"
-
-	xFactor _ anObject! !
-
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
-yFactor
-	"Answer the value of yFactor"
-
-	^ yFactor! !
-
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 6/11/2016 12:05'!
-yFactor: anObject
-	"Set the value of yFactor"
-
-	yFactor _ anObject! !
-
-!InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/11/2016 02:06'!
-yScaleFactor
-	"Answer the value of yScaleFactor"
-
-	^ yScaleFactor! !
 
 !InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/26/2015 12:25'!
 yScaleFactor: aNumber
