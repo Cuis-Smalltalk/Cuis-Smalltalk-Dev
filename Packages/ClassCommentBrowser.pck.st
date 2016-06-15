@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 15 June 2016 at 5:03:00.918822 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 15 June 2016 at 5:31:22.332822 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 32!
+!provides: 'ClassCommentBrowser' 1 33!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -66,8 +66,10 @@ Provide the wrapper for a list item in CommentGuideWindow.
 
 Removes the undesired cruft after the item name.!
 
-!CommentGuideListMorph commentStamp: 'dhn 11/5/2015 12:19' prior: 0!
-A list of terms and acronyms which occur in class names. Selection can be made by typed key, arrows, or clicks.!
+!CommentGuideListMorph commentStamp: 'dhn 6/15/2016 17:30' prior: 0!
+A list of terms and acronyms which occur in class names. Selection can be made by typed key, arrows, or clicks.
+
+This class enables access to the scroller, which is needed for selection by typed key.!
 
 !CommentGuideWindow commentStamp: 'dhn 1/28/2016 16:23' prior: 0!
 Show a window for browsing class comments based on class names which contain certain strings, such as:
