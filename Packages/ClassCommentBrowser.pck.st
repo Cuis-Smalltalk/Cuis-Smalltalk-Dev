@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 30 May 2016 at 2:54:35.830404 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 15 June 2016 at 5:03:00.918822 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 31!
+!provides: 'ClassCommentBrowser' 1 32!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -283,18 +283,14 @@ asString
 	"Answer the string for the hierarchical list category"
 	^ itemName! !
 
-!CommentGuideListMorph methodsFor: 'events-processing' stamp: 'dhn 11/5/2015 14:52'!
-update: aSymbol
-	"React to list selection via typed key"
+!CommentGuideListMorph methodsFor: 'events-processing' stamp: 'dhn 6/15/2016 16:56'!
+keySelection
+	"Scroll the hiearchical list based on a keystroke"
 	| i |
 	
-	super update: aSymbol.
-	aSymbol == #keySelection
-		ifTrue: [
-			model getCurrentSelection ifNil: [^self selectionIndex: 0].
-			i _ scroller submorphs findFirst: [:m | m contents == model getCurrentSelection itemName].
-			^ self selectionIndex: i]
-! !
+	model getCurrentSelection ifNil: [^self selectionIndex: 0].
+	i _ scroller submorphs findFirst: [:m | m contents == model getCurrentSelection itemName].
+	^ self selectionIndex: i! !
 
 !CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 11/5/2015 14:53'!
 browseClass
@@ -418,12 +414,12 @@ refreshListAfterDelay
 
 	self addAlarm: #refreshList after: 20 "milliseconds" ! !
 
-!CommentGuideWindow methodsFor: 'events' stamp: 'dhn 11/5/2015 11:33'!
+!CommentGuideWindow methodsFor: 'events' stamp: 'dhn 6/15/2016 16:56'!
 respondToKey: aChar
 	"Take action when a key is struck. The key value is aChar"
 
 	model indexOf: aChar.
-	listMorph update: #keySelection! !
+	listMorph keySelection! !
 
 !CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:19'!
 scrollToClass: aString
