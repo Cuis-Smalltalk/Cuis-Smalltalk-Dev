@@ -1,7 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:07:10.36349 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 15 June 2016 at 2:36:27.772054 pm'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 11!
-!requires: 'Network-Kernel' 1 nil nil!
+!provides: 'YAXO' 1 12!
 !classDefinition: #DTDEntityDeclaration category: #YAXO!
 Object subclass: #DTDEntityDeclaration
 	instanceVariableNames: 'name value ndata'
@@ -250,23 +249,6 @@ bolot@cc.gatech.edu
 
 breaks the stream of characters into a stream of XMLnodes (aka token stream)
 token stream is used by XMLparser to generate XMLdocument tree!
-
-!SocketStream methodsFor: '*YAXO' stamp: 'jmv 7/30/2012 17:18'!
-pushBack: aString
-	"jmv-Nasty. Horrible. Needed by XMLTokenizer"
-
-	| goBack |
-	goBack _ aString size.
-	lastRead < goBack ifTrue: [
-		self error: 'can not #pushBack: that much'.
-		^self ].
-	lastRead _ lastRead - goBack! !
-
-!PositionableStream methodsFor: '*YAXO' stamp: 'jmv 7/30/2012 17:18'!
-pushBack: aString
-	"jmv-Nasty. Horrible. Needed by XMLTokenizer"
-
-	self skip: aString size negated! !
 
 !DTDEntityDeclaration methodsFor: 'behaviors' stamp: 'mir 1/15/2002 11:29'!
 bypass
@@ -2060,15 +2042,6 @@ popNestingLevel
 			self nestedStreams size > 0
 				ifFalse: [nestedStreams _ nil]]! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'mir 1/16/2002 10:50'!
-pushBack: aString
-	| pushBackString |
-	pushBackString _ peekChar
-		ifNil: [aString]
-		ifNotNil: [peekChar asString , aString].
-	peekChar _ nil.
-	self pushStream: (ReadStream on: pushBackString)! !
-
 !XMLTokenizer methodsFor: 'streaming' stamp: 'mir 1/16/2002 10:54'!
 pushStream: newStream
 	"Continue parsing from the new nested stream."
@@ -2147,11 +2120,11 @@ topStream
 		ifTrue: [self nestedStreams first]
 		ifFalse: [self stream]! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'mir 5/14/2003 18:45'!
+!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 6/15/2016 14:35'!
 unpeek
 	peekChar
 		ifNotNil: [
-			self stream pushBack: (String with: peekChar).
+			self stream skip: -1.
 			peekChar _ nil]! !
 
 !XMLTokenizer methodsFor: 'testing' stamp: 'mir 6/5/2003 16:33'!
