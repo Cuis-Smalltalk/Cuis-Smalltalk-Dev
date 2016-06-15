@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2783] on 31 May 2016 at 4:20:45.807956 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 15 June 2016 at 7:06:16.030822 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 117!
+!provides: 'TerseGuide' 1 118!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -13,7 +13,7 @@ TerseGuideHelp class
 
 !classDefinition: #TerseGuideWindow category: #TerseGuide!
 WorkspaceWindow subclass: #TerseGuideWindow
-	instanceVariableNames: 'textModelM'
+	instanceVariableNames: 'textModelM list1'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
@@ -49,13 +49,13 @@ initialize
 	topicList _ self class pages.
 ! !
 
-!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 10/18/2015 19:54'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 6/15/2016 18:29'!
 selectedTopic: aTopic
 	"Set the value of selectedTopic and set the contents of the text pane"
 	
 	selectedTopic _ aTopic.
 	textPane model actualContents: self updateTopicText.
-	self changed: #topicListIndex! !
+	self triggerEvent: #topicListIndex! !
 
 !TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 2/19/2016 20:35'!
 terseTopics
@@ -2230,10 +2230,10 @@ t explore.
 '
 ! !
 
-!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 5/18/2016 12:08'!
+!TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 6/15/2016 19:03'!
 buildMorphicWindow
 	"Define the window layout for Terse Guide"
-	| list1 row |
+	| row |
 	
 	list1 _ (PluggableListMorph
 				model: model
@@ -2248,6 +2248,7 @@ buildMorphicWindow
 	textModelM
 		askBeforeDiscardingEdits: false;
 		name: 'Work Space'.
+	model when: #topicListIndex send: #update: to: list1 withArguments: #(#topicListIndex).
 	row _ LayoutMorph newRow.
 	row
 		name: #Row;
