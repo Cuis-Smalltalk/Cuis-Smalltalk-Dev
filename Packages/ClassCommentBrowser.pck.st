@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 15 June 2016 at 5:31:22.332822 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 16 June 2016 at 1:19:29.860322 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 33!
+!provides: 'ClassCommentBrowser' 1 34!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -333,7 +333,7 @@ browseVersions
 			VersionsBrowserWindow 
 				browseCommentOf: (Smalltalk at: model getCurrentSelection item asSymbol)]! !
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'jmv 3/28/2016 09:44'!
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 6/16/2016 13:08'!
 buildMorphicWindow
 	"Answer a window for the class comment browser"
 	| row |
@@ -346,6 +346,7 @@ buildMorphicWindow
 		menuGetter: #commentGuideMenu
 		keystrokeAction: #respondToKey:.
 	listMorph name: #Hierarchy.
+	self when: #getList send: #update: to: listMorph withArguments: #(#getList).
 	textMorph _ TextModelMorph textProvider: model.
 	textMorph 
 		name: 'Class Comment';
@@ -402,13 +403,13 @@ listMorph
 
 	^ listMorph! !
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 09:35'!
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 6/16/2016 13:17'!
 refreshList
 	"Re-build the hierarchical list"
 	model 
 		noteNewSelection: nil;
 		rootNames: model setList.
-	listMorph update: #getList! !
+	self triggerEvent: #getList 	"needed when a class is added or deleted"! !
 
 !CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 08:45'!
 refreshListAfterDelay
