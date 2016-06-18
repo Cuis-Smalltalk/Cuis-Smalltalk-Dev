@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2692] on 29 February 2016 at 11:26:17.006144 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2827] on 18 June 2016 at 11:31:11.450722 am'!
 'Description Please enter a description for this package'!
-!provides: 'Collections-CompactArrays' 1 4!
+!provides: 'Collections-CompactArrays' 1 5!
 !classDefinition: #PointArray category: #'Collections-CompactArrays'!
 IntegerArray variableWordSubclass: #PointArray
 	instanceVariableNames: ''
@@ -76,10 +76,6 @@ asPointArray
 	"Answer a PointArray whose elements are the elements of the receiver"
 
 	^self as: PointArray! !
-
-!PointArray methodsFor: 'converting' stamp: 'NS 5/30/2001 20:54'!
-asPointArray
-	^ self! !
 
 !PointArray methodsFor: 'accessing' stamp: 'ar 11/2/1998 12:21'!
 at: index

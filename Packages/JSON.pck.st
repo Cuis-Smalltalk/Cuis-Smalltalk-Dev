@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2785] on 2 June 2016 at 9:35:55.188019 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2827] on 18 June 2016 at 11:10:53.589844 am'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 7!
+!provides: 'JSON' 1 8!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -133,14 +133,6 @@ jsonContents
 	'noesta.json' asFileEntry jsonContents
 	"
 	^self readStreamDo: [ :stream |
-		Json readFrom: stream ]! !
-
-!FmFileEntry methodsFor: '*json' stamp: 'jmv 5/16/2016 14:43'!
-jsonContents
-	"
-	'noesta.json' asFileEntry jsonContents
-	"
-	^self readStream: [ :stream |
 		Json readFrom: stream ]! !
 
 !Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
