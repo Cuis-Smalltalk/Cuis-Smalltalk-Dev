@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2778] on 30 May 2016 at 2:54:35.830404 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 16 June 2016 at 1:19:29.860322 pm'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 31!
+!provides: 'ClassCommentBrowser' 1 34!
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -66,8 +66,10 @@ Provide the wrapper for a list item in CommentGuideWindow.
 
 Removes the undesired cruft after the item name.!
 
-!CommentGuideListMorph commentStamp: 'dhn 11/5/2015 12:19' prior: 0!
-A list of terms and acronyms which occur in class names. Selection can be made by typed key, arrows, or clicks.!
+!CommentGuideListMorph commentStamp: 'dhn 6/15/2016 17:30' prior: 0!
+A list of terms and acronyms which occur in class names. Selection can be made by typed key, arrows, or clicks.
+
+This class enables access to the scroller, which is needed for selection by typed key.!
 
 !CommentGuideWindow commentStamp: 'dhn 1/28/2016 16:23' prior: 0!
 Show a window for browsing class comments based on class names which contain certain strings, such as:
@@ -283,18 +285,14 @@ asString
 	"Answer the string for the hierarchical list category"
 	^ itemName! !
 
-!CommentGuideListMorph methodsFor: 'events-processing' stamp: 'dhn 11/5/2015 14:52'!
-update: aSymbol
-	"React to list selection via typed key"
+!CommentGuideListMorph methodsFor: 'events-processing' stamp: 'dhn 6/15/2016 16:56'!
+keySelection
+	"Scroll the hiearchical list based on a keystroke"
 	| i |
 	
-	super update: aSymbol.
-	aSymbol == #keySelection
-		ifTrue: [
-			model getCurrentSelection ifNil: [^self selectionIndex: 0].
-			i _ scroller submorphs findFirst: [:m | m contents == model getCurrentSelection itemName].
-			^ self selectionIndex: i]
-! !
+	model getCurrentSelection ifNil: [^self selectionIndex: 0].
+	i _ scroller submorphs findFirst: [:m | m contents == model getCurrentSelection itemName].
+	^ self selectionIndex: i! !
 
 !CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 11/5/2015 14:53'!
 browseClass
@@ -335,7 +333,7 @@ browseVersions
 			VersionsBrowserWindow 
 				browseCommentOf: (Smalltalk at: model getCurrentSelection item asSymbol)]! !
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'jmv 3/28/2016 09:44'!
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 6/16/2016 13:08'!
 buildMorphicWindow
 	"Answer a window for the class comment browser"
 	| row |
@@ -348,6 +346,7 @@ buildMorphicWindow
 		menuGetter: #commentGuideMenu
 		keystrokeAction: #respondToKey:.
 	listMorph name: #Hierarchy.
+	self when: #getList send: #update: to: listMorph withArguments: #(#getList).
 	textMorph _ TextModelMorph textProvider: model.
 	textMorph 
 		name: 'Class Comment';
@@ -404,13 +403,13 @@ listMorph
 
 	^ listMorph! !
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 09:35'!
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 6/16/2016 13:17'!
 refreshList
 	"Re-build the hierarchical list"
 	model 
 		noteNewSelection: nil;
 		rootNames: model setList.
-	listMorph update: #getList! !
+	self triggerEvent: #getList 	"needed when a class is added or deleted"! !
 
 !CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 08:45'!
 refreshListAfterDelay
@@ -418,12 +417,12 @@ refreshListAfterDelay
 
 	self addAlarm: #refreshList after: 20 "milliseconds" ! !
 
-!CommentGuideWindow methodsFor: 'events' stamp: 'dhn 11/5/2015 11:33'!
+!CommentGuideWindow methodsFor: 'events' stamp: 'dhn 6/15/2016 16:56'!
 respondToKey: aChar
 	"Take action when a key is struck. The key value is aChar"
 
 	model indexOf: aChar.
-	listMorph update: #keySelection! !
+	listMorph keySelection! !
 
 !CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:19'!
 scrollToClass: aString
