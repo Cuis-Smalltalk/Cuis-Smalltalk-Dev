@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2829] on 18 June 2016 at 9:35:32.404368 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2829] on 19 June 2016 at 12:17:25.844977 pm'!
 
 !SmalltalkEditor methodsFor: 'explain' stamp: 'dhn 6/16/2016 17:47'!
 explainTemp: string 
@@ -17,3 +17,4 @@ explainTemp: string
 	   (tempNode isDeclaredAtMethodLevel
 		ifTrue: ['method ']
 		ifFalse: ['block '])! !
+
