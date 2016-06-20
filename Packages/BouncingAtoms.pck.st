@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 12 June 2016 at 2:36:11.610809 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2829] on 19 June 2016 at 8:49:43.796516 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 28!
+!provides: 'BouncingAtoms' 1 29!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
@@ -388,7 +388,7 @@ pauseResume
 	
 	resume _ resume not! !
 
-!BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 7/4/2015 13:50'!
+!BouncingAtomsMorph methodsFor: 'other' stamp: 'dhn 6/19/2016 18:50'!
 reportInfection
 	"Produce a graph of infection history"
 	| count |
@@ -405,7 +405,7 @@ reportInfection
 		historyWindow 
 			data: infectionHistory;
 			yScaleFactor: nAtoms;
-			update: #redraw].
+			plotData].
 	count = nAtoms ifTrue: [
 		transmitInfection := false.
 		self stopStepping].
@@ -432,7 +432,7 @@ setAtomCount
 	self reset.
 	self startStepping.! !
 
-!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 5/11/2016 21:17'!
+!BouncingAtomsMorph methodsFor: 'menu' stamp: 'dhn 6/19/2016 18:50'!
 showInfectionHistory
 	"Show a graph of the infection history"
 	historyWindow _ InfectionGraph new.
@@ -441,7 +441,7 @@ showInfectionHistory
 		yScaleFactor: nAtoms;
 		domain: (-0.8 to: 11);
 		setXYFactors;
-		update: #redraw.
+		plotData.
 	(historyWindow embeddedInMorphicWindowLabeled: 'Infection History') openInWorld
 ! !
 
@@ -631,6 +631,14 @@ normalize: aCollection with: aFactor
 	^ OrderedCollection new
 		addAll: (aCollection / (max * 1.0)) * (max / aFactor)! !
 
+!InfectionGraph methodsFor: 'drawing' stamp: 'dhn 6/19/2016 20:46'!
+plotData
+	"Re-normalize data"
+
+	data size > 1 ifTrue: [
+		points _ self asNormalizedPoints: data.
+		self redrawNeeded]! !
+
 !InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/11/2016 02:06'!
 points
 	"Answer the value of points"
@@ -689,13 +697,6 @@ tics
 	
 	tics ifNil: [tics _ OrderedCollection new].
 	^ tics! !
-
-!InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/26/2015 12:18'!
-update: aSymbol
-	"Re-normalize data if parameter = #redraw"
-	super update: aSymbol.
-	(aSymbol == #redraw and: (data size > 1)) ifTrue: [points _ self asNormalizedPoints: data]
-! !
 
 !InfectionGraph methodsFor: 'accessing' stamp: 'dhn 5/26/2015 12:25'!
 yScaleFactor: aNumber
