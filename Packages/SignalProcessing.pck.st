@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2811] on 10 June 2016 at 12:55:38.013455 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2842] on 5 July 2016 at 3:31:51.293987 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 58!
-!requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'SignalProcessing' 1 59!
 !requires: 'Sound' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Goodies' 1 0 nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
@@ -2750,6 +2750,27 @@ beMagnitudeOfComplexesWith: imaginary
 	elements += iv.
 	self replaceValues: [ :i :j :v | v sqrt ]! !
 
+!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/5/2016 14:53'!
+bicubicCentroidAround: centroidHint
+	| d delta dir dx dy f max xFilter |
+	xFilter _ FloatArray new: 4.
+	d _ 0.1.	"Distance from hint where we look for max. Should work even if real centroid is much closer to hint."
+	"find angle of max growth of interpolator"
+	max _ 0.
+	0.0 to: Float pi * 2 count: 1000 do: [ :theta |
+		dx _ theta cos * d. dy _ theta sin * d.
+		f _ self bicubicInterpolatedValueAtX: centroidHint x+dx y: centroidHint y+dy xFilterStore: xFilter.
+		f > max ifTrue: [
+			max _ f. dir _ dx@dy ]].
+	"look for max value of interpolator"
+	max _ 0.
+	0.0 to: 1.0/d count: 1000 do: [ :step |
+		dx _ dir x * step. dy _ dir y * step.
+		f _ self bicubicInterpolatedValueAtX: centroidHint x+dx y: centroidHint y+dy xFilterStore: xFilter.
+		f > max ifTrue: [
+			max _ f. delta _ dx@dy ]].
+	^centroidHint + delta! !
+
 !FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 13:44'!
 bicubicInterpolatedValueAtX: x y: y xFilterStore: xFilter
 	"Evaluate a bicubic (i.e. good quality) interpolation
@@ -2904,9 +2925,73 @@ FloatImage blurEstimationExperiment
 		delta _ delta + direction. ].
 	^stepCount! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 12/3/2012 17:12'!
+!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/5/2016 14:44'!
+boxAbove: threshold atX: x y: y
+	"Find the smallest box (a rectangular area) that includes x@y and is above threshold.
+	More precisely, start with x@y and add additional rows and columns around it as long as they include some value above threshold.
+	The result has a one-sample border without values above threshold, and all inner rows and columns have at least one sample above it.
+	The idea is to build the smallest possible box that includes a 'black' border.
+	Note: in any case, stop at image edges."
+	| continue x0 x1 y0 y1 |
+	x0 _ x. x1 _ x.
+	y0 _ y. y1 _ y.
+	continue _ true.
+	[ continue ] whileTrue: [
+		continue _ false.
+		[y0 > 1 and: [(x0 to: x1) anySatisfy: [ :xx | (self x: xx y: y0) > threshold ]]] whileTrue: [
+			y0 _ y0-1.
+			continue _ true ].
+		[y1 < self height and: [(x0 to: x1) anySatisfy: [ :xx | (self x: xx y: y1) > threshold ]]] whileTrue: [
+			y1 _ y1+1.
+			continue _ true ].
+		[x0 > 1 and: [(y0 to: y1) anySatisfy: [ :yy | (self x: x0 y: yy) > threshold ]]] whileTrue: [
+			x0 _ x0-1.
+			continue _ true ].
+		[x1 < self width and: [(y0 to: y1) anySatisfy: [ :yy | (self x: x1 y: yy) > threshold ]]] whileTrue: [
+			x1 _ x1+1.
+			continue _ true ].
+	].
+	^x0@y0 corner: x1@y1+1! !
+
+!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/5/2016 14:53'!
+bsplineCentroidAround: centroidHint
+	| d delta dir dx dy f max interpolator |
+	interpolator _ BSplineInterpolatingImage from: self.
+	d _ 0.1.	"Distance from hint where we look for max. Should work even if real centroid is much closer to hint."
+	"find angle of max growth of interpolator"
+	max _ 0.
+	0.0 to: Float pi * 2 count: 1000 do: [ :theta |
+		dx _ theta cos * d. dy _ theta sin * d.
+		f _ interpolator interpolatedValueAtX: centroidHint x+dx y: centroidHint y+dy.
+		f > max ifTrue: [
+			max _ f. dir _ dx@dy ]].
+	"look for max value of interpolator"
+	max _ 0.
+	0.0 to: 1.0/d count: 1000 do: [ :step |
+		dx _ dir x * step. dy _ dir y * step.
+		f _ interpolator interpolatedValueAtX: centroidHint x+dx y: centroidHint y+dy.
+		f > max ifTrue: [
+			max _ f. delta _ dx@dy ]].
+	^centroidHint + delta.! !
+
+!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/5/2016 14:45'!
+centerOfMass
+	""
+	| star2 starCenterOfMassX starCenterOfMassY |
+	star2 _ self copy normalizeSum.
+	star2 replaceValues:  [ :i :j :v | v * i ].
+	starCenterOfMassY _ star2 sum.
+	star2 _ self copy normalizeSum.
+	star2 replaceValues:  [ :i :j :v | v * j ].
+	starCenterOfMassX _ star2 sum.
+	^starCenterOfMassX@starCenterOfMassY.! !
+
+!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/5/2016 14:44'!
 centroidAround4: aPoint
 	"Find the centroid of the spot that covers aPoint. aPoint must contain the local maximum.
+	Use given point, and 4 neighbors.
+	See #testCentroids
+
 	| i |
 	i _ FloatImage width: 5 height: 5.
 	i x: 3 y: 3 put: 1.
@@ -2957,9 +3042,10 @@ centroidAround4: aPoint
 
 	^centroidX @ centroidY! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 12/11/2012 13:05'!
+!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/5/2016 14:44'!
 centroidAround: aPoint
 	"Find the centroid of the spot that covers aPoint. aPoint must contain the local maximum.
+	See #testCentroids
 	| i |
 	i _ FloatImage width: 5 height: 5.
 	i x: 3 y: 3 put: 1.
