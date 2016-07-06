@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2766] on 13 May 2016 at 11:40:21.169863 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2836] on 1 July 2016 at 5:15:23.229643 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 13!
+!provides: 'OpenCL' 1 14!
 !requires: 'SignalProcessing' 1 37 nil!
 !requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -2263,7 +2263,7 @@ __kernel void copy(global const float * in, global float * out, int w, int h) {
 }
 '! !
 
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 1/5/2016 12:19'!
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 7/1/2016 16:49'!
 downloadDataFromGPU: outputForm
 	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	
@@ -2274,7 +2274,7 @@ downloadDataFromGPU: outputForm
 					block: false
 					origin: #(0 0 0)
 					region: {resultExtent x. resultExtent y. 1}
-					rowPitch: 0
+					rowPitch: outputForm wordsPerLine * 4
 					slicePitch: 0
 					pointer: outputForm
 					waitOn: lastEvent! !
@@ -2638,7 +2638,7 @@ result replaceValues: [ :y :x :v |
 result display
 "! !
 
-!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 2/22/2016 11:00'!
+!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 7/1/2016 16:44'!
 downloadDataFromGPU: outputForm
 	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -2646,7 +2646,7 @@ downloadDataFromGPU: outputForm
 					block: false
 					origin: #(0 0 0)
 					region: {outputForm width. outputForm height. 1}
-					rowPitch: 0
+					rowPitch: outputForm wordsPerLine * 4
 					slicePitch: 0
 					pointer: outputForm
 					waitOn: lastEvent! !
@@ -2795,7 +2795,7 @@ sourceCode
 
 	}'! !
 
-!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 2/22/2016 10:46'!
+!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 7/1/2016 16:44'!
 uploadDataToGPU: inputForm
 	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -2803,7 +2803,7 @@ uploadDataToGPU: inputForm
 					block: false
 					origin: #(0 0 0)
 					region: {inputForm width. inputForm height. 1}
-					rowPitch: 0
+					rowPitch: inputForm wordsPerLine * 4
 					slicePitch: 0
 					pointer: inputForm
 					waitOn: lastEvent! !
@@ -2888,7 +2888,7 @@ blur: inputAndOutputForm radius: filterRadius
 	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
 	! !
 
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 12:18'!
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 7/1/2016 16:49'!
 downloadDataFromGPU: outputForm
 	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -2896,7 +2896,7 @@ downloadDataFromGPU: outputForm
 					block: false
 					origin: #(0 0 0)
 					region: {imageExtent x. imageExtent y. 1}
-					rowPitch: 0
+					rowPitch: outputForm wordsPerLine * 4
 					slicePitch: 0
 					pointer: outputForm
 					waitOn: lastEvent! !
@@ -3036,7 +3036,7 @@ sourceCode
 		write_imagef(dst_image, coord, out);
 	}'! !
 
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 12:22'!
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 7/1/2016 16:52'!
 uploadDataToGPU: inputForm
 	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -3044,7 +3044,7 @@ uploadDataToGPU: inputForm
 					block: false
 					origin: #(0 0 0)
 					region: {imageExtent x. imageExtent y. 1}
-					rowPitch: 0
+					rowPitch: inputForm wordsPerLine * 4
 					slicePitch: 0
 					pointer: inputForm
 					waitOn: lastEvent! !
@@ -3138,7 +3138,7 @@ blur: inputAndOutputForm radius: filterRadius
 	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
 	! !
 
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 12:18'!
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 7/1/2016 16:49'!
 downloadDataFromGPU: outputForm
 	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -3146,7 +3146,7 @@ downloadDataFromGPU: outputForm
 					block: false
 					origin: #(0 0 0)
 					region: {imageExtent x. imageExtent y. 1}
-					rowPitch: 0
+					rowPitch: outputForm wordsPerLine * 4
 					slicePitch: 0
 					pointer: outputForm
 					waitOn: lastEvent! !
@@ -3296,7 +3296,7 @@ sourceCode
 		write_imagef(dst_image, coord, out);
 	}'! !
 
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 12:22'!
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 7/1/2016 16:52'!
 uploadDataToGPU: inputForm
 	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	lastEvent := queue
@@ -3304,7 +3304,7 @@ uploadDataToGPU: inputForm
 					block: false
 					origin: #(0 0 0)
 					region: {imageExtent x. imageExtent y. 1}
-					rowPitch: 0
+					rowPitch: inputForm wordsPerLine * 4
 					slicePitch: 0
 					pointer: inputForm
 					waitOn: lastEvent! !
@@ -3456,7 +3456,7 @@ real: newReal
 	old = (params at: 5) ifTrue: [^self "no change"].
 	paramsDirty := true! !
 
-!OpenCLJuliaSet methodsFor: 'private' stamp: 'jmv 1/5/2016 12:18'!
+!OpenCLJuliaSet methodsFor: 'private' stamp: 'jmv 7/1/2016 16:54'!
 runKernel
 	paramsDirty ifTrue: [
 		"Would be nice if this were non-blocking..."
@@ -3479,7 +3479,7 @@ runKernel
 			block: true
 			origin: #(0 0 0)
 			region: {extent x. extent y. 1}
-			rowPitch: 0
+			rowPitch: outputForm wordsPerLine * 4
 			slicePitch: 0
 			pointer: outputForm
 			waitOn: lastEvent.
@@ -3546,7 +3546,7 @@ julia (int iterations,
 					read_imagef(tone_map, sampler, tex_coord));
 }'! !
 
-!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:22'!
+!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 7/1/2016 16:56'!
 toneMap: newToneMapForm
 	| |
 	
@@ -3576,7 +3576,7 @@ toneMap: newToneMapForm
 					block: true
 					origin: #(0 0 0)
 					region: {toneMapImage width. toneMapImage height. 1}
-					rowPitch: 0
+					rowPitch: toneMapForm wordsPerLine * 4
 					slicePitch: 0
 					pointer: toneMapForm
 					waitOn: lastEvent.
