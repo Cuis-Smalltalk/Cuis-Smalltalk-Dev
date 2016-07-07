@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:37.24349 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2843] on 5 July 2016 at 1:03:49.007015 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 14!
+!provides: 'Compression' 1 15!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -382,13 +382,13 @@ browseMCZCode: aFileEntry
 
 	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
 
-!CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:52'!
+!CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 7/5/2016 12:29'!
 serviceBrowseMCZCode
 	"Answer a service for opening a changelist browser on a file"
 
 	^ (SimpleServiceEntry 
 		provider: self 
-		label: 'code-file browser'
+		label: 'code file browser'
 		selector: #browseMCZCode:
 		description: 'open a "file-contents browser" on this file, allowing you to view and selectively load its code'
 		buttonLabel: 'code')
@@ -491,13 +491,13 @@ monticelloPackageNameFrom: fullName
 		ifNotNil: [ :ary | ary first ]
 		ifNil: [ localName sansPeriodSuffix ]! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:52'!
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 7/5/2016 12:29'!
 serviceBrowseMCZCode
 	"Answer a service for opening a changelist browser on a file"
 
 	^ (SimpleServiceEntry 
 		provider: self 
-		label: 'code-file browser'
+		label: 'code file browser'
 		selector: #browseMCZCode:
 		description: 'open a "file-contents browser" on this file, allowing you to view and selectively load its code'
 		buttonLabel: 'code')

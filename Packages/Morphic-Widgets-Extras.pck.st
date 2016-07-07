@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2696] on 28 February 2016 at 9:49:12.799072 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2836] on 5 July 2016 at 9:14:13.155736 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 4!
+!provides: 'Morphic-Widgets-Extras' 1 5!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -797,7 +797,7 @@ domain: anInterval
 	yMin _ anInterval first.
 	yMax _ anInterval last.! !
 
-!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/18/2015 09:59'!
+!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 6/25/2016 17:28'!
 drawOn: aCanvas
 	"
 	| g |
@@ -822,7 +822,7 @@ drawOn: aCanvas
 		functions with: colors do: [ :f :c |
 			y _ f value: x.
 			(y between: yMin and: yMax) ifTrue: [
-				r2 _ (self xToMorphic: x)@(self yToMorphic: y) extent: 5.
+				r2 _ (self xToMorphic: x)@(self yToMorphic: y) extent: 2.5.
 				(r containsRect: r2) ifTrue: [
 					aCanvas
 						fillRectangle: r2
@@ -842,6 +842,12 @@ toMorphic: aPoint
 !FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 5/17/2015 09:17'!
 xToMorphic: x
 	^x - xMin / (xMax - xMin ) * extent x! !
+
+!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 6/25/2016 17:16'!
+yRange: anInterval
+
+	yMin _ anInterval first.
+	yMax _ anInterval last.! !
 
 !FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 5/17/2015 09:16'!
 yToMorphic: y

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2789] on 2 June 2016 at 10:07:30.572065 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2842] on 5 July 2016 at 3:31:33.554987 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 28!
+!provides: 'LinearAlgebra' 1 29!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
@@ -267,6 +267,17 @@ asFormMin: min max: max
 average
 	^self mean! !
 
+!Matrix methodsFor: 'filling' stamp: 'jmv 7/5/2016 15:26'!
+border: box with: value
+	"box includes topLeft but doesn't include bottom right (as it is usual with Rectangles)"
+
+	box top to: box bottom-1 do: [ :yy |
+		self x: box left-1 y: yy put: value.
+		self x: box right-1+1 y: yy put: value ].
+	box left to: box right-1 do: [ :xx |
+		self x: xx y: box top-1 put: value.
+		self x: xx y: box bottom-1+1 put: value ]! !
+
 !Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
 columnsWithoutPivot: count
 	"Return a collection with the indexes of the columns that are closer to not having a pivot"
@@ -325,6 +336,14 @@ epsilon
 	Check inheritance too"
 
 	^self zeroElement! !
+
+!Matrix methodsFor: 'filling' stamp: 'jmv 7/5/2016 15:26'!
+fill: box with: value
+	"box includes topLeft but doesn't include bottom right (as it is usual with Rectangles)"
+
+	box top to: box bottom-1 do: [ :yy |
+		box left to: box right-1 do: [ :xx |
+			self x: xx y: yy put: value ]]! !
 
 !Matrix methodsFor: 'filling' stamp: 'jmv 7/19/2012 11:21'!
 fillDiagonalWith: aVectorOrArray
