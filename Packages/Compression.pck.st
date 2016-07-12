@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2843] on 5 July 2016 at 1:03:49.007015 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2846] on 12 July 2016 at 10:13:53 am'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 15!
+!provides: 'Compression' 1 16!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -2464,10 +2464,11 @@ computeHuffmanValues: aCollection counts: counts from: minBits to: maxBits
 			offsets at: codeLength put: baseOffset + 1]].
 	^values! !
 
-!InflateStream methodsFor: 'accessing' stamp: 'tk 2/4/2000 10:26'!
+!InflateStream methodsFor: 'accessing' stamp: 'jmv 7/12/2016 10:11:19'!
 contents
-
-	^ self upToEnd! !
+	"Use a copy to avoid modifying receiver.
+	The copy is shallow, i.e. cheap."
+	^ self copy upToEnd! !
 
 !InflateStream methodsFor: 'crc' stamp: 'ar 2/29/2004 04:04'!
 crcError: aString
