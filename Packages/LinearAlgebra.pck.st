@@ -1,8 +1,7 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2847] on 18 July 2016 at 11:48:28 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2846] on 19 July 2016 at 11:39:59 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 30!
+!provides: 'LinearAlgebra' 1 31!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -715,17 +714,6 @@ solveLinearSystem
 		x i: i j: 1 put: sum / (self i: i j: i) ].
 	^x! !
 
-!Matrix methodsFor: 'statistics' stamp: 'jmv 5/14/2015 13:04'!
-standardDeviation
-	"
-	See
-		http://en.wikipedia.org/wiki/Variance
-		http://www.mathsisfun.com/data/standard-deviation.html
-	{600. 470. 170. 430. 300} standardDeviation
-	"
-
-	^elements standardDeviation! !
-
 !Matrix methodsFor: 'accessing' stamp: 'jmv 9/30/2007 09:30'!
 subMatrixTopLeft: aPoint bottomRight: bPoint
 
@@ -963,12 +951,6 @@ fillFromGrayForm: aGrayForm
 initializeElements
 
 	elements _ ByteArray new: height * width! !
-
-!FloatMatrix methodsFor: 'noise generation' stamp: 'jmv 4/6/2015 12:30'!
-addNormalNoise: standardDeviation
-	| random |
-	random _ NormalProbabilityDistribution mean: 0.0 standardDeviation: standardDeviation.
-	self replaceValues: [ :i :j :v | random nextRandomNumber + v ]! !
 
 !FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:07'!
 asGammaFormFullRange
