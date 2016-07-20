@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2836] on 5 July 2016 at 9:14:13.155736 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2847] on 20 July 2016 at 10:01:13 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 5!
+!provides: 'Morphic-Widgets-Extras' 1 6!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -9,6 +9,16 @@ Editor subclass: #SimpleEditor
 	category: 'Morphic-Widgets-Extras'!
 !classDefinition: 'SimpleEditor class' category: #'Morphic-Widgets-Extras'!
 SimpleEditor class
+	instanceVariableNames: ''!
+
+!classDefinition: #LimitedHeightTextMorph category: #'Morphic-Widgets-Extras'!
+TextModelMorph subclass: #LimitedHeightTextMorph
+	instanceVariableNames: 'maxHeight'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic-Widgets-Extras'!
+!classDefinition: 'LimitedHeightTextMorph class' category: #'Morphic-Widgets-Extras'!
+LimitedHeightTextMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #MagnifierMorph category: #'Morphic-Widgets-Extras'!
@@ -21,14 +31,14 @@ BorderedRectMorph subclass: #MagnifierMorph
 MagnifierMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #LimitedHeightTextMorph category: #'Morphic-Widgets-Extras'!
-TextModelMorph subclass: #LimitedHeightTextMorph
-	instanceVariableNames: 'maxHeight'
+!classDefinition: #UpdatingStringMorph category: #'Morphic-Widgets-Extras'!
+StringMorph subclass: #UpdatingStringMorph
+	instanceVariableNames: 'target getSelector stepTime'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-Widgets-Extras'!
-!classDefinition: 'LimitedHeightTextMorph class' category: #'Morphic-Widgets-Extras'!
-LimitedHeightTextMorph class
+!classDefinition: 'UpdatingStringMorph class' category: #'Morphic-Widgets-Extras'!
+UpdatingStringMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #DragAndDropAreaMorph category: #'Morphic-Widgets-Extras'!
@@ -91,22 +101,9 @@ RectangleLikeMorph subclass: #OneLineEditorMorph
 OneLineEditorMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #UpdatingStringMorph category: #'Morphic-Widgets-Extras'!
-StringMorph subclass: #UpdatingStringMorph
-	instanceVariableNames: 'target getSelector stepTime'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic-Widgets-Extras'!
-!classDefinition: 'UpdatingStringMorph class' category: #'Morphic-Widgets-Extras'!
-UpdatingStringMorph class
-	instanceVariableNames: ''!
-
 
 !SimpleEditor commentStamp: '<historical>' prior: 0!
 See comment in Editor!
-
-!MagnifierMorph commentStamp: '<historical>' prior: 0!
-Provides a magnifying glass. Magnifies the morphs below (if grabbed) or the area around the mouse pointer.!
 
 !LimitedHeightTextMorph commentStamp: '<historical>' prior: 0!
 A TextMorph that will expand and contract vertically to adjust for the contents, but limited to a specific max height. If contents are larger, a scrollbar will be used.
@@ -115,6 +112,16 @@ LimitedHeightTextMorph new
 	maxHeight: 48;
 	model: (TextModel new contents: 'This is some text to test the morph.');
 	openInWorld!
+
+!MagnifierMorph commentStamp: '<historical>' prior: 0!
+Provides a magnifying glass. Magnifies the morphs below (if grabbed) or the area around the mouse pointer.!
+
+!UpdatingStringMorph commentStamp: 'jmv 1/5/2013 23:49' prior: 0!
+UpdatingStringMorph new
+     target: [self runningWorld activeHand morphPosition asString];
+     getSelector: #value;
+     stepTime: 10;
+     openInWorld!
 
 !DragAndDropAreaMorph commentStamp: '<historical>' prior: 0!
 A simple morph that allows dragging submorphs, and dropping other morphs on it. It is provided as an example, and also as a reference of the methods you might need to implement in your morphs to handle drag and drop.
@@ -172,13 +179,6 @@ A greatly reduced StringMorph. May be of some use.!
 A plain text editor for Morphic. Handles only one line. Does not handle fonts/styles, alignment, Smalltalk utilities and any other advanced stuff in TextModelMorph. Just a simple text editor.
 
 Can optionally include a crAction: a zero argument closure, to be evaluated on Cr keystroke.!
-
-!UpdatingStringMorph commentStamp: 'jmv 1/5/2013 23:49' prior: 0!
-UpdatingStringMorph new
-     target: [self runningWorld activeHand morphPosition asString];
-     getSelector: #value;
-     stepTime: 10;
-     openInWorld!
 
 !SimpleEditor methodsFor: 'typing support' stamp: 'jmv 12/19/2011 12:24'!
 addString: aString
@@ -464,6 +464,33 @@ cmdShortcutsSpec
 		#(		$ 	#selectWord:			'Select the current word as with double clicking')
 	)! !
 
+!LimitedHeightTextMorph methodsFor: 'initialization' stamp: 'jmv 8/21/2012 21:59'!
+initialize
+	super initialize.
+	extent _  200 @ 120! !
+
+!LimitedHeightTextMorph methodsFor: 'geometry' stamp: 'jmv 12/12/2011 14:20'!
+innerHeight: aNumber
+	"Adjust height and scrollbar to the new contents height."
+	self morphHeight: (aNumber + 10 min: maxHeight)! !
+
+!LimitedHeightTextMorph methodsFor: 'accessing' stamp: 'jmv 11/14/2011 16:32'!
+maxHeight: aNumber
+	maxHeight _ aNumber! !
+
+!LimitedHeightTextMorph methodsFor: 'geometry' stamp: 'jmv 7/20/2014 10:12'!
+privateExtent: aPoint
+
+	^ (super privateExtent: aPoint)
+		ifTrue: [
+			maxHeight _ extent y ]; yourself! !
+
+!LimitedHeightTextMorph class methodsFor: 'instance creation' stamp: 'jmv 11/14/2011 16:32'!
+initializedInstance
+	^self new
+		maxHeight: 48;
+		model: (TextModel new contents: 'This is some text to test the morph.')! !
+
 !MagnifierMorph methodsFor: 'menu' stamp: 'di 9/28/1999 23:06'!
 addCustomMenuItems: aCustomMenu hand: aHandMorph
 	super addCustomMenuItems: aCustomMenu hand: aHandMorph.
@@ -658,32 +685,56 @@ wantsSteps
 
 	^true! !
 
-!LimitedHeightTextMorph methodsFor: 'initialization' stamp: 'jmv 8/21/2012 21:59'!
+!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
+getSelector: aSymbol
+	getSelector _ aSymbol! !
+
+!UpdatingStringMorph methodsFor: 'initialization' stamp: 'jmv 9/13/2013 09:23'!
 initialize
 	super initialize.
-	extent _  200 @ 120! !
+	target _ self.
+	getSelector _ #contents.
+	stepTime _ 50! !
 
-!LimitedHeightTextMorph methodsFor: 'geometry' stamp: 'jmv 12/12/2011 14:20'!
-innerHeight: aNumber
-	"Adjust height and scrollbar to the new contents height."
-	self morphHeight: (aNumber + 10 min: maxHeight)! !
+!UpdatingStringMorph methodsFor: 'stepping' stamp: 'jmv 2/27/2016 20:07'!
+stepAt: millisecondSinceLast
 
-!LimitedHeightTextMorph methodsFor: 'accessing' stamp: 'jmv 11/14/2011 16:32'!
-maxHeight: aNumber
-	maxHeight _ aNumber! !
+	self contents: (target perform: getSelector)! !
 
-!LimitedHeightTextMorph methodsFor: 'geometry' stamp: 'jmv 7/20/2014 10:12'!
-privateExtent: aPoint
+!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:18'!
+stepTime
 
-	^ (super privateExtent: aPoint)
-		ifTrue: [
-			maxHeight _ extent y ]; yourself! !
+	^stepTime! !
 
-!LimitedHeightTextMorph class methodsFor: 'instance creation' stamp: 'jmv 11/14/2011 16:32'!
+!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
+stepTime: aNumber
+	stepTime _ aNumber! !
+
+!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
+target: anObject
+	target _ anObject! !
+
+!UpdatingStringMorph methodsFor: 'stepping' stamp: 'jmv 1/4/2013 13:18'!
+wantsSteps
+	"Return true if the receiver wants to its #step or #stepAt: methods be run"
+
+	^true! !
+
+!UpdatingStringMorph class methodsFor: 'new-morph participation' stamp: 'jmv 4/15/2014 09:26'!
 initializedInstance
-	^self new
-		maxHeight: 48;
-		model: (TextModel new contents: 'This is some text to test the morph.')! !
+	"Answer a digital clock"
+
+	| newInst |
+	newInst := self 
+		contents: '' 
+		font: (AbstractFont familyName: 'DejaVu' pointSize: 22) 
+		emphasis: AbstractFont  boldCode.
+	newInst 
+		stepTime: 500; "half a second"
+		target: [String streamContents: [ :strm | DateAndTime now printHMSOn: strm]] ;
+		getSelector: #value.
+		
+	^ newInst! !
 
 !DragAndDropAreaMorph methodsFor: 'drag and drop us' stamp: 'jmv 1/24/2013 22:53'!
 aboutToBeGrabbedBy: aHand
@@ -853,18 +904,17 @@ yRange: anInterval
 yToMorphic: y
 	^yMax - y / (yMax - yMin ) * extent y! !
 
-!FunctionGraphMorph class methodsFor: 'as yet unclassified' stamp: 'dhn 4/12/2015 15:31'!
-example2
-"
-	self  example2
-"
-| g |
-g _ FunctionGraphMorph new.
-g domain: (-4 to: 4).
-g addFunction: [ :x | x cos ] color: Color green.
-g addFunction: [ :x | (x + 1) squared - 3 ] color: Color red. "parabola with vertex at (-1,-3)"
-g openInWorld
-! !
+!FunctionGraphMorph class methodsFor: 'instance creation' stamp: 'jmv 7/20/2016 10:00:31'!
+initializedInstance
+	"
+	self  initializedInstance openInWorld
+	"
+	| g |
+	g _ FunctionGraphMorph new.
+	g domain: (-4 to: 4).
+	g addFunction: [ :x | x cos ] color: Color green.
+	g addFunction: [ :x | (x + 1) squared - 3 ] color: Color red. "parabola with vertex at (-1,-3)"
+	^ g! !
 
 !MinimalStringMorph methodsFor: 'accessing' stamp: 'jmv 6/6/2014 10:58'!
 contents: newContents 
@@ -1359,54 +1409,3 @@ contents: aString font: aFont emphasis: emphasisCode
 !OneLineEditorMorph class methodsFor: 'instance creation' stamp: 'jmv 4/3/2011 22:35'!
 new
 	^self contents: 'some string'! !
-
-!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
-getSelector: aSymbol
-	getSelector _ aSymbol! !
-
-!UpdatingStringMorph methodsFor: 'initialization' stamp: 'jmv 9/13/2013 09:23'!
-initialize
-	super initialize.
-	target _ self.
-	getSelector _ #contents.
-	stepTime _ 50! !
-
-!UpdatingStringMorph methodsFor: 'stepping' stamp: 'jmv 2/27/2016 20:07'!
-stepAt: millisecondSinceLast
-
-	self contents: (target perform: getSelector)! !
-
-!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:18'!
-stepTime
-
-	^stepTime! !
-
-!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
-stepTime: aNumber
-	stepTime _ aNumber! !
-
-!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
-target: anObject
-	target _ anObject! !
-
-!UpdatingStringMorph methodsFor: 'stepping' stamp: 'jmv 1/4/2013 13:18'!
-wantsSteps
-	"Return true if the receiver wants to its #step or #stepAt: methods be run"
-
-	^true! !
-
-!UpdatingStringMorph class methodsFor: 'new-morph participation' stamp: 'jmv 4/15/2014 09:26'!
-initializedInstance
-	"Answer a digital clock"
-
-	| newInst |
-	newInst := self 
-		contents: '' 
-		font: (AbstractFont familyName: 'DejaVu' pointSize: 22) 
-		emphasis: AbstractFont  boldCode.
-	newInst 
-		stepTime: 500; "half a second"
-		target: [String streamContents: [ :strm | DateAndTime now printHMSOn: strm]] ;
-		getSelector: #value.
-		
-	^ newInst! !
