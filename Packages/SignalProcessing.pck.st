@@ -1,10 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2842] on 5 July 2016 at 3:31:51.293987 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2846] on 19 July 2016 at 5:24:20 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 59!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 64!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
 !classDefinition: #AccumulatedImageHistogram category: #'SignalProcessing-Images'!
 Object subclass: #AccumulatedImageHistogram
@@ -2543,29 +2545,11 @@ acutanceAt: delta aux: auxImage
 				ifFalse: [0]].
 	^auxImage mean! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 6/2/2016 20:41'!
-addFrom8BitColorForm: aForm
-	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
-	This is what we get, for instance, when reading a gray 8 bit bmp file"
-	"
-	Should convert to GrayForm
-	"
-
-	self with8BitColorForm: aForm do: [ :i2 :v |
-		elements at: i2 put: v + (elements at: i2) ]! !
-
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 6/2/2016 20:42'!
-addToStDevFrom8BitColorForm: aForm meanImage: meanImage
-	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
-	This is what we get, for instance, when reading a gray 8 bit bmp file"
-	"
-	Should convert to GrayForm
-	"
-
-	|  meanValues |
-	meanValues _ meanImage elements.
-	self with8BitColorForm: aForm do: [ :i2 :v |
-		elements at: i2 put: (v - (meanValues at: i2)) squared + (elements at: i2) ]! !
+!FloatImage methodsFor: 'noise generation' stamp: 'jmv 7/19/2016 12:08:32'!
+addNormalNoise: standardDeviation
+	| random |
+	random _ NormalProbabilityDistribution mean: 0.0 standardDeviation: standardDeviation.
+	self replaceValues: [ :i :j :v | random nextRandomNumber + v ]! !
 
 !FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 6/3/2015 21:49'!
 applyMap: map
@@ -2657,20 +2641,23 @@ areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 		]].
 	^scaled! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:57'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:46:01'!
 asForm
-	"Answer a 32bit Form with gray values.
-	Assume the receiver is normalized in [0.0 .. 0.996].
-	Values are simply multiplied by 256.0 and truncated, to produce 8bit pixel values.
+	"Assume the receiver is normalized in [0.0 .. 255/256.0]. Clip values out of range.
+	For this reason, don't move this implementation to FloatMatrix, they will most likely use
+	other value ranges. See #fullRangeDisplayAt: and #linearDisplayAt:
+	
+	Consider calling the much faster #asFormQuick
+	
 	Assume receiver is in gamma space (as a Form, and as jpg or png files)
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
-	"Warning: No clamping of values out of range. 
-	If needed, callers might do something like
-		image replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ]"
 
 	| answer |
-	answer _ Form extent: width@height depth: 32.
-	self fill32BitForm: answer.
+	answer _ self as8bitFormEvaluating: [ :index | | value |
+		value _ elements at: index.
+		"Assume the receiver is normalized in [0.0 .. 255/256.0]
+		Multiply by 256, to get values in [0.0 .. 255.0] and then round."
+		(value * 256 + 0.5) truncated min: 255 max: 0 ].
 	^answer! !
 
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:58'!
@@ -2689,6 +2676,21 @@ asFormG: greenImage b: blueImage
 	self fill32BitForm: answer withG: greenImage b: blueImage.
 	^answer! !
 
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:44:11'!
+asFormQuick
+	"Answer a 32bit Form with gray values.
+	Assume the receiver is normalized in [0.0 .. 0.996].
+	Values are simply multiplied by 256.0 and truncated, to produce 8bit pixel values.
+	Assume receiver is in gamma space (as a Form, and as jpg or png files)
+	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
+	"Warning: No clamping of values out of range. 
+	If needed, callers might call #asForm"
+
+	| answer |
+	answer _ GrayForm extent: width@height.
+	self fillGrayForm: answer.
+	^answer! !
+
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:05'!
 asGammaFormUnitRange
 	"See comment at #fullRangeDisplayAt:"
@@ -2696,21 +2698,6 @@ asGammaFormUnitRange
 	^ self as8bitFormEvaluating: [ :index | | value |
 		value _ Color linearTosRGBGamma: ((elements at: index) min: 1.0 max: 0.0).
 		(value * 255 + 0.5) truncated ]! !
-
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 5/4/2016 10:59'!
-asGray8Form
-	"Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
-	For this reason, don't move this implementation to FloatMatrix, they will most likely use
-	other value ranges. See #fullRangeDisplayAt: and #linearDisplayAt:
-	
-	Assume receiver is in gamma space (as a Form, and as jpg or png files)
-	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
-
-	| answer |
-	answer _ self as8bitFormEvaluating: [ :index | | value |
-		value _ elements at: index.
-		(value * 255 + 0.5) truncated min: 255 max: 0 ].
-	^answer! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
 bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
@@ -3274,7 +3261,7 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw
 	dy > (height//2) ifTrue: [ dy _ dy - height ].
 	^dx @dy! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:17'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/18/2016 10:16:43'!
 displayAt: aPoint
 	"Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
 	For this reason, don't move this implementation to FloatMatrix, they will most likely use
@@ -3283,7 +3270,7 @@ displayAt: aPoint
 	Assume receiver is in gamma space (as a Form, and as jpg or png files) and there's no need to apply gamma.
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
 
-	self asGray8Form displayAt: aPoint! !
+	self asForm displayAt: aPoint! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:11'!
 displayWithGammaAt: aPoint
@@ -3368,6 +3355,25 @@ fillElementsWith: aFloatArray displacedBy: anInteger
 		] ifFalse: [
 			elements replaceFrom: 1+anInteger to: elements size with: aFloatArray startingAt: 1.
 			elements replaceFrom: 1 to: 1 + anInteger - 1 with: aFloatArray startingAt: elements size - anInteger+1 ]! !
+
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:41:39'!
+fillGrayForm: aGrayForm
+"Se podria pensar en meter min y max, y clamping, multiplicando por una cte, y usando un Bitmap de 2^24 entradas (16Mb!!) como colorMap, para mappear todas las combinaciones posibles que overfloween, a 255 en el form destino.
+Esto serviria para, por ejemplo, ajustes de brillo, etc en una gui"
+
+	| bb magic |
+	aGrayForm bits atAllPut: 0.
+	magic _ 128.0.
+	bb _ BitBlt toForm: aGrayForm.
+	bb combinationRule: 7. "or"
+	bb sourceX: 0; sourceY: 0.
+	bb destX: 0 destY: 0 width: width height: height.
+
+	self += magic.
+	bb sourceForm: (Form new hackBitsForFloatMatrix: self).
+	bb colorMap: (ColorMap masks: { 0. 16rFF00. 16rFF00. 16rFF00 } shifts: { 0. 8. 0. -8 }).
+	bb copyBits.
+	self -= magic! !
 
 !FloatImage methodsFor: 'operations' stamp: 'jmv 9/1/2014 14:27'!
 fillRect: aRectangle with: aFloat
@@ -3662,11 +3668,18 @@ guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValu
 histogram
 	^self histogram: 256! !
 
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 4/13/2015 12:33'!
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/18/2016 23:13:49'!
 histogram: slotCount
-	| answer |
+	| answer lowValue highValue halfSlot |
 "	answer _ ImageHistogram3 new: slotCount."
-	answer _ Histogram binCount: slotCount minValue: 0.0 maxValue: 1.0.
+	
+	"Follow convention when converting Forms to FloatImage: we don't reach 1.0
+	Alternatively, these could be min and max values in receiver..."
+	lowValue _ 0.0.
+	highValue _ 255/256.0.
+	
+	halfSlot _ highValue-lowValue / (slotCount-1) / 2.
+	answer _ Histogram binCount: slotCount minValue: lowValue-halfSlot maxValue: highValue+halfSlot.
 	elements do: [ :pixelValue |
 		answer addValue: pixelValue ].
 	^answer! !
@@ -3897,6 +3910,20 @@ mean: aRect
 			mean _ mean + (self x: x y: y) ]].
 	^mean / count! !
 
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:04:46'!
+median
+	"Very expensive on large collections. Consider using a Histogram:
+		aMatrix histogram median
+	"
+	^elements median! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:21:17'!
+mode
+	"Very expensive on large collections. Consider using a Histogram:
+		aMatrix histogram mode
+	"
+	^elements mode! !
+
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
@@ -4064,6 +4091,13 @@ openCLNormalizedCoordinatesForOneBased: oneBasedCoordinates
 	See NormalizedCoordinatesExperiment in the OpenCL package"
 
 	^ ((oneBasedCoordinates x-0.5)/width) @ ((oneBasedCoordinates y-0.5)/height)! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:04:51'!
+percentile: percentile
+	"Very expensive on large collections. Consider using a Histogram:
+		aMatrix histogram percentile: percentile
+	"
+	^elements percentile: percentile! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 6/15/2015 16:30'!
 perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft bottomRight: bottomRight
@@ -4387,6 +4421,17 @@ squared
 	"Answer the receiver multipled by itself."
 
 	^self * self! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:04:54'!
+standardDeviation
+	"
+	See
+		http://en.wikipedia.org/wiki/Variance
+		http://www.mathsisfun.com/data/standard-deviation.html
+	{600. 470. 170. 430. 300} standardDeviation
+	"
+
+	^elements standardDeviation! !
 
 !FloatImage methodsFor: 'private' stamp: 'jmv 8/13/2012 16:52'!
 validateSameSize: aFloatImage
@@ -4781,12 +4826,12 @@ lanczosFilter2: x
 	stretchedSinc _ xStretched sin / xStretched.
 	^scaledSinc * stretchedSinc! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 10/16/2015 17:13'!
-meanAndStDevOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 7/19/2016 15:06:20'!
+meanAndStDevOfFolder: folderName baseName: base n: n extentOrNil: extentOrNil
 	"
 	| pair |
 [
-	pair _ FloatImage meanAndStDevOfFolder: 'DarkFrames' baseName: 'darkframe-scm-0-344-350-' n: 19 extentOrNil: nil.
+	pair _ FloatImage meanAndStDevOfFolder: 'C:\Users\Juan-Tuerca\ImagenesDeCalibracion\OriginalsRenamed\FM0001Micro' baseName: 'Gray' n: 19 extentOrNil: nil.
 	pair first writePNGfileNamed: 'darkframe-scm-0-344-350-mean.png'.
 	pair first writeFileNamed: 'darkframe-scm-0-344-350-mean.floatImage'.
 	pair second writePNGfileNamed: 'darkframe-scm-0-344-350-stdev.png'.
@@ -4795,34 +4840,54 @@ meanAndStDevOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
 
 	FloatImage fromFileNamed: 'darkframe-scm-0-344-350-mean.floatImage'
 	"
-	| fn form stdev mean |
-	mean _ FloatImage meanOfFolder: folder baseName: base n: n extentOrNil: extentOrNil.
+	| folder form stdev mean each fileEntry count |
+	mean _ FloatImage meanOfFolder: folderName baseName: base n: n extentOrNil: extentOrNil.
+	folder _ folderName asDirectoryEntry.
 	stdev _ FloatImage width: mean width height: mean height.
-	0 to: n-1 do: [ :i |
-		fn _ folder, '/', base, (i printStringBase: 10 length: 5 padded: true), '.bmp'.
-		form _ Form fromFileNamed: fn.
-		fn print.
-		stdev addToStDevFrom8BitColorForm: form meanImage: mean ].
-	stdev replaceValues: [ :i :j :v | (v / (n-1)) sqrt ].
+	each _ FloatImage width: mean width height: mean height.
+	count _ 0.
+	1 to: n do: [ :i |
+		fileEntry _ folder // (base, (i printStringBase: 10 length: 2 padded: true), '.png').
+		fileEntry exists ifTrue: [
+			fileEntry print.
+			form _ fileEntry formContents asGrayForm.
+			each fillFromGrayForm: form.
+			each -= mean.
+			each *= each.
+			stdev += each.
+			count _ count + 1 ]].
+	stdev replaceValues: [ :i :j :v | (v / count) sqrt ].
 	^{ mean . stdev }! !
 
-!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 6/2/2016 20:41'!
-meanOfFolder: folder baseName: base n: n extentOrNil: extentOrNil
+!FloatImage class methodsFor: 'instance creation' stamp: 'jmv 7/19/2016 15:07:50'!
+meanOfFolder: folderName baseName: base n: n extentOrNil: extentOrNil
 	"
 	extentOrNil can be a Point to take the topLeft part of the images, or nil, to take the whole images.
 	FloatImage meanOfFolder: 'DarkFrames' baseName: 'darkframe-scm-0-1-344-' n: 19
 	FloatImage meanOfFolder: 'DarkFrames' baseName: 'darkframe-scm-0-1-344-' n: 3 extentOrNil:512@512
 	"
-	| fn form mean |
+	| folder form mean each count fileEntry |
+	folder _ folderName asDirectoryEntry.
+	"Build them now only if we know the extent"
 	mean _ extentOrNil ifNotNil: [ FloatImage width: extentOrNil x height: extentOrNil y ].
-	0 to: n-1 do: [ :i |
-		fn _ folder, '/', base, (i printStringBase: 10 length: 5 padded: true), '.bmp'.
-		form _ Form fromFileNamed: fn.
-		fn print.
-		mean
-			ifNil: [ mean _ FloatImage fromGrayForm: form ]
-			ifNotNil: [ mean addFrom8BitColorForm: form ]].
-	mean *= (1.0/n).
+	each _ extentOrNil ifNotNil: [ FloatImage width: extentOrNil x height: extentOrNil y ].
+	count _ 0.
+	1 to: n do: [ :i |
+		fileEntry _ folder // (base, (i printStringBase: 10 length: 2 padded: true), '.png').
+		fileEntry exists ifTrue: [
+			fileEntry print.
+			form _ fileEntry formContents asGrayForm.
+			mean
+				ifNil: [
+					"First iteration, and they were not build before starting. Build them. Load first form into mean."
+					mean _ FloatImage fromGrayForm: form.
+					each _ FloatImage width: mean width height: mean height ]
+				ifNotNil: [
+					"Already built. Just add."
+					each fillFromGrayForm: form.
+					mean += each ].
+			count _ count + 1 ]].
+	mean *= (1.0/count).
 	^mean! !
 
 !FloatImage class methodsFor: 'testing' stamp: 'jmv 8/31/2015 11:52'!

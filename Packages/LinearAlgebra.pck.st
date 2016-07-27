@@ -1,8 +1,7 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2842] on 5 July 2016 at 3:31:33.554987 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2846] on 19 July 2016 at 11:39:59 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 29!
+!provides: 'LinearAlgebra' 1 31!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Probabilities-and-Statistics' 1 nil nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -715,17 +714,6 @@ solveLinearSystem
 		x i: i j: 1 put: sum / (self i: i j: i) ].
 	^x! !
 
-!Matrix methodsFor: 'statistics' stamp: 'jmv 5/14/2015 13:04'!
-standardDeviation
-	"
-	See
-		http://en.wikipedia.org/wiki/Variance
-		http://www.mathsisfun.com/data/standard-deviation.html
-	{600. 470. 170. 430. 300} standardDeviation
-	"
-
-	^elements standardDeviation! !
-
 !Matrix methodsFor: 'accessing' stamp: 'jmv 9/30/2007 09:30'!
 subMatrixTopLeft: aPoint bottomRight: bPoint
 
@@ -804,72 +792,6 @@ triangleWithPartialPivoting
 				self substractRow: i multipliedBy: factor to: ii startingAtColumn: j ] ]
 	].
 	^ permutationCount! !
-
-!Matrix methodsFor: 'conversion' stamp: 'jmv 6/2/2016 20:42'!
-with8BitColorForm: aForm do: aBlock
-	"Assume that aForm has a colormap with at most 256 gray levels, going from black to white.
-	This is what we get, for instance, when reading a gray 8 bit bmp file.
-	Don't assume anything about the color palette
-	(i.e. don't assume all 256 gray levels will be present, and don't assume a prticular order of the entries)."
-	"
-	Should convert to GrayForm
-	"
-
-	|  word aFormHeight aFormWidth i2 aFormBits aFormColorsReds c wholeLineWords aFormTotalLineWords loseElementsAtRight ii1 lineBase shift0 shift1 shift2 shift3 |
-	aFormHeight _ aForm extent y.
-	aFormWidth _ aForm extent x.
-	
-	wholeLineWords _ (width min: aFormWidth) // 4.
-	loseElementsAtRight _ (width min: aFormWidth) \\ 4.
-	
-	aFormTotalLineWords _ aFormWidth-1 // 4+1.
-	aFormBits _ aForm bits.
-	aFormColorsReds _ aForm colors collect: [ :each | each red ].
-	
-	aForm nativeDepth = -8 ifTrue: [
-		shift0 _ 0.
-		shift1 _ -8.
-		shift2 _ -16.
-		shift3 _ -24 ]
-	ifFalse: [
-		shift0 _ -24.
-		shift1 _ -16.
-		shift2 _ -8.
-		shift3 _ 0].
-
-	1 to: (height min: aFormHeight) do: [ :y |
-		i2 _ y-1 * width.
-		lineBase _ y-1 * aFormTotalLineWords.
-		lineBase+1 to: lineBase+wholeLineWords do: [ :i1 |
-			word _ aFormBits at: i1.
-			i2 _ i2 + 1.
-			c _ (word bitShift: shift0) bitAnd: 16rFF.
-			aBlock value: i2 value: (aFormColorsReds at: c+1).
-			i2 _ i2 + 1.
-			c _ (word bitShift: shift1) bitAnd: 16rFF.
-			aBlock value: i2 value: (aFormColorsReds at: c+1).
-			i2 _ i2 + 1.
-			c _ (word bitShift: shift2) bitAnd: 16rFF.
-			aBlock value: i2 value: (aFormColorsReds at: c+1).
-			i2 _ i2 + 1.
-			c _ (word bitShift: shift3) bitAnd: 16rFF.
-			aBlock value: i2 value: (aFormColorsReds at: c+1).
-		].
-		loseElementsAtRight > 0 ifTrue: [
-			ii1 _ lineBase+wholeLineWords + 1.
-			word _ aFormBits at: ii1.
-			i2 _ i2 + 1.
-			c _ (word bitShift: shift0) bitAnd: 16rFF.
-			aBlock value: i2 value: (aFormColorsReds at: c+1).
-			loseElementsAtRight > 1 ifTrue: [
-				i2 _ i2 + 1.
-				c _ (word bitShift: shift1) bitAnd: 16rFF.
-				aBlock value: i2 value: (aFormColorsReds at: c+1).
-				loseElementsAtRight = 3 ifTrue: [
-					i2 _ i2 + 1.
-					c _ (word bitShift: shift2) bitAnd: 16rFF.
-					aBlock value: i2 value: (aFormColorsReds at: c+1) ]]].
-	]! !
 
 !Matrix methodsFor: 'private' stamp: 'jmv 7/19/2012 12:35'!
 zeroElement
@@ -1029,12 +951,6 @@ fillFromGrayForm: aGrayForm
 initializeElements
 
 	elements _ ByteArray new: height * width! !
-
-!FloatMatrix methodsFor: 'noise generation' stamp: 'jmv 4/6/2015 12:30'!
-addNormalNoise: standardDeviation
-	| random |
-	random _ NormalProbabilityDistribution mean: 0.0 standardDeviation: standardDeviation.
-	self replaceValues: [ :i :j :v | random nextRandomNumber + v ]! !
 
 !FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:07'!
 asGammaFormFullRange
@@ -1253,9 +1169,12 @@ expandTo: newExtent
 	self copyToTile: answer position: 1@1.
 	^answer! !
 
-!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 12:11'!
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:12:10'!
 fillFrom32BitForm: aForm component: aSymbol
-	"aSymbol must be in #(red green blue alpha) or nil"
+	"aSymbol must be in #(red green blue alpha) or nil
+	Result values v
+		0.0 <= v <= (255/256.0)
+	This means that #asForm must multiply by 256, to have byte values [0..255]"
 
 	| componentIndex shift mask magic bb |
 	magic _ 128.0.
@@ -1271,14 +1190,21 @@ fillFrom32BitForm: aForm component: aSymbol
 	bb destX: 0 destY: 0 width: width height: height.
 	bb colorMap: (ColorMap masks: { mask. 0. 0. 0 } shifts: { shift. 0. 0. 0 }).
 
+	elements *= 0.
 	elements += magic.
 	bb copyBits.
 	elements -= magic! !
 
-!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 6/2/2016 20:18'!
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:13:03'!
 fillFromGrayForm: aGrayForm
-	"aGrayForm can be an instance of GrayForm or a ColorForm with a colormap with 256 gray levels, going from black to white.
-	This is what we get, for instance, when reading a gray 8 bit bmp file"
+	"aGrayForm can be 
+		- an instance of GrayForm 
+					(for example, from a grayscale png or jpg file)
+		- a ColorForm with a colormap with 256 gray levels, going from black to white.
+					(This is what we get, for instance, when reading a gray 8 bit bmp file)
+	Result values v
+		0.0 <= v <= (255/256.0)
+	This means that #asForm must multiply by 256, to have byte values [0..255]"
 
 	| magic bb |
 	magic _ 32768.0.
@@ -1289,6 +1215,7 @@ fillFromGrayForm: aGrayForm
 	bb destX: 0 destY: 0 width: width height: height.
 	bb colorMap: nil.
 
+	elements *= 0.
 	elements += magic.
 	bb copyBits.
 	elements -= magic! !
