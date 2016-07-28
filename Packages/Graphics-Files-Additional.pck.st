@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2794] on 7 June 2016 at 11:00:58.928986 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 28 July 2016 at 3:29:10 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 15!
+!provides: 'Graphics-Files-Additional' 1 16!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1980,7 +1980,7 @@ positionStreamToStripNum: anInteger
 	stream position: ((structure at: #StripOffsets) at: anInteger).
 	stream newStrip! !
 
-!TIFFReader methodsFor: 'reading' stamp: 'jmv 5/12/2016 16:01'!
+!TIFFReader methodsFor: 'reading' stamp: 'jmv 7/26/2016 15:22:43'!
 readForm
 	"Answer a Form created from the data in my stream and structure."
 	| result bps |
@@ -2015,33 +2015,31 @@ readForm
 
 			[ 16 ] -> [
 				"float image"
-				result _ (Smalltalk at: #FloatImage ifAbsent: [
-						self error: '16bpp TIFF requires FloatImage (SignalProcessing package)' ])
-					extent: self extent. 
+				result _ ShortWordMatrix extent: self extent.
 				self readGray16PixelsInto: result ] }].
 
 	^ result! !
 
-!TIFFReader methodsFor: 'private' stamp: 'jmv 2/29/2016 11:22'!
-readGray16PixelsInto: aFloatMatrix
+!TIFFReader methodsFor: 'private' stamp: 'jmv 7/26/2016 15:55:59'!
+readGray16PixelsInto: aShortWordMatrix
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
 	Handles 16 bit pixels on source, float as destination."
 
-	| floats totalPixels pixelsPerStrip currentStripNum pixel | 
-	floats _ aFloatMatrix elements.
-	totalPixels _ floats size.
-	pixelsPerStrip _ aFloatMatrix extent x * (structure at: #RowsPerStrip).
+	| elements totalPixels pixelsPerStrip currentStripNum pixel | 
+	elements _ aShortWordMatrix elements.
+	totalPixels _ elements size.
+	pixelsPerStrip _ aShortWordMatrix extent x * (structure at: #RowsPerStrip).
 	currentStripNum _ 0.
 
 	1 to: totalPixels do: [ :pixNum |
-		(pixNum-1 \\ aFloatMatrix width = 0) ifTrue: [
+		(pixNum-1 \\ aShortWordMatrix width = 0) ifTrue: [
 			(pixNum - 1 \\ pixelsPerStrip = 0) ifTrue: [
 				"Time to go to next strip"
 				currentStripNum _ currentStripNum + 1.
 				self positionStreamToStripNum: currentStripNum ]].
 
-		pixel _ stream nextUnsignedInt16 / 65535.0.
-		floats at: pixNum put: pixel ]! !
+		pixel _ stream nextUnsignedInt16.
+		elements at: pixNum put: pixel ]! !
 
 !TIFFReader methodsFor: 'private' stamp: 'jmv 5/12/2016 18:27'!
 readGray8PixelsInto: aGrayForm horizontalPredictor: useHorizontalPredictor

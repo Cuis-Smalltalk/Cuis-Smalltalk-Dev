@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2846] on 19 July 2016 at 11:39:59 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 28 July 2016 at 3:25:22 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 31!
+!provides: 'LinearAlgebra' 1 32!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -62,19 +62,29 @@ Matrix subclass: #ShortIntegerMatrix
 ShortIntegerMatrix class
 	instanceVariableNames: ''!
 
+!classDefinition: #ShortWordMatrix category: #LinearAlgebra!
+Matrix subclass: #ShortWordMatrix
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'LinearAlgebra'!
+!classDefinition: 'ShortWordMatrix class' category: #LinearAlgebra!
+ShortWordMatrix class
+	instanceVariableNames: ''!
+
 
 !Matrix commentStamp: 'jmv 7/19/2012 11:52' prior: 0!
 My instances are m x n matrices, where m is the height and n the width. A matrix is a kind of 2-d array. A Matrix whose width is 1 is called a "Column Vector". A Matrix whose height is 1 is called a "Row Vector".
 
 My instances can hold elements of any kind, but include some methods that assume that the elements understand arithmetic operations. These are useful for Matrices whose elements are Fractions, LargeIntegers, Matrices and Vectors (column or row Matrices). They are also suitable for Complex numbers, but in such cases, an alternative is to use different FloatMatrices for Real and Imaginary parts.!
 
-!ByteMatrix commentStamp: 'jmv 9/4/2015 10:44' prior: 0!
+!ByteMatrix commentStamp: '<historical>' prior: 0!
 Elements are integers between 0 and 255, i.e. bytes.
 
 ByteMatrix fromArrayOfArrays: #(
-	#[ 0 		255 	94  ]
-	#[4 		127 	128]
-	#[ 1 		254	3 ])!
+	#[ 0 	255 	94   	]
+	#[ 4 	127 	128 	]
+	#[ 1 	254	3 		])!
 
 !FloatMatrix commentStamp: '<historical>' prior: 0!
 My instances are m x n matrices of Float values, where m is the height and n the width. Suitable for LinearAlgebra and SignalProcessing suff, among many other possible applications. It is possible to build VM plugins for fast processing.!
@@ -90,13 +100,21 @@ IntegerMatrix fromArrayOfArrays: {
 	{ (2 raisedTo: 31) negated.	-10000.   				-16r80000000}.
 	{ (2 raisedTo: 31) -1. 			12 factorial.			16r7FFFFFFF }}!
 
-!ShortIntegerMatrix commentStamp: 'jmv 9/4/2015 12:58' prior: 0!
+!ShortIntegerMatrix commentStamp: '<historical>' prior: 0!
 Elements are integers between -32768 and 32767, i.e. signed 16-bit words.
 
 ShortIntegerMatrix fromArrayOfArrays: #(
-	#( 0 			255 	94)
-	#(-4 			127 	128)
-	#( -32768 	254	32767 ))!
+	#( 0 			255 		94)
+	#(-4 			127 		128)
+	#( -32768 	254		32767 ))!
+
+!ShortWordMatrix commentStamp: '<historical>' prior: 0!
+Elements are integers between 0 and 65535, i.e. unsigned 16-bit words.
+
+ShortWordMatrix fromArrayOfArrays: #(
+	#( 0 			255 		65500)
+	#( 40000 		127 		128)
+	#( 32768 		254		32767 ))!
 
 !Form methodsFor: '*LinearAlgebra' stamp: 'jmv 5/21/2015 11:34'!
 hackBitsForFloatMatrix: aFloatMatrix
@@ -182,7 +200,7 @@ appropriateResultClass
 
 	^self class! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 1/14/2015 12:55'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 7/26/2016 11:29:44'!
 as32bitFormEvaluating: aBlock
 	"Fill 32bit Form with gray values."
 
@@ -191,14 +209,14 @@ as32bitFormEvaluating: aBlock
 	bits _ answer bits.
 	word _ 16rFF000000 copy.
 	index _ 1.
-	1 to: height do: [ :y |
-		1 to: width do: [ :x |
+	1 to: height do: [ :i |
+		1 to: width do: [ :j |
 			aBlock value: index value: word.
 			bits at: index put: word.
 			index _ index + 1 ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 5/12/2016 18:30'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 7/26/2016 11:30:05'!
 as8bitFormEvaluating: aBlock
 	"Fill an 8-bit ColorForm with gray values."
 
@@ -207,9 +225,9 @@ as8bitFormEvaluating: aBlock
 	answer _ GrayForm extent: width@height.
 	bits _ answer bits.
 	elementsIndex _ 0.
-	1 to: height do: [ :y |
-		bitsIndex _ y-1 * bytesPerRow.
-		1 to: width do: [ :x |
+	1 to: height do: [ :i |
+		bitsIndex _ i-1 * bytesPerRow.
+		1 to: width do: [ :j |
 			elementsIndex _ elementsIndex + 1.
 			bitsIndex _ bitsIndex + 1.
 			bits byteAt: bitsIndex put: (aBlock value: elementsIndex) bigEndian: answer isBigEndian ]].
@@ -266,16 +284,17 @@ asFormMin: min max: max
 average
 	^self mean! !
 
-!Matrix methodsFor: 'filling' stamp: 'jmv 7/5/2016 15:26'!
+!Matrix methodsFor: 'filling' stamp: 'jmv 7/26/2016 11:32:09'!
 border: box with: value
-	"box includes topLeft but doesn't include bottom right (as it is usual with Rectangles)"
+	"box includes topLeft but doesn't include bottom right (as it is usual with Rectangles)
+	Coordinates are 1-based"
 
-	box top to: box bottom-1 do: [ :yy |
-		self x: box left-1 y: yy put: value.
-		self x: box right-1+1 y: yy put: value ].
-	box left to: box right-1 do: [ :xx |
-		self x: xx y: box top-1 put: value.
-		self x: xx y: box bottom-1+1 put: value ]! !
+	box top to: box bottom-1 do: [ :i |
+		self i: i j: box left-1 put: value.
+		self i: i j: box right-1+1 put: value ].
+	box left to: box right-1 do: [ :j |
+		self i: box top-1 j: j put: value.
+		self i: box bottom-1+1 j: j put: value ]! !
 
 !Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
 columnsWithoutPivot: count
@@ -336,13 +355,14 @@ epsilon
 
 	^self zeroElement! !
 
-!Matrix methodsFor: 'filling' stamp: 'jmv 7/5/2016 15:26'!
+!Matrix methodsFor: 'filling' stamp: 'jmv 7/26/2016 11:32:38'!
 fill: box with: value
-	"box includes topLeft but doesn't include bottom right (as it is usual with Rectangles)"
+	"box includes topLeft but doesn't include bottom right (as it is usual with Rectangles)
+	Coordinates are 1-based"
 
-	box top to: box bottom-1 do: [ :yy |
-		box left to: box right-1 do: [ :xx |
-			self x: xx y: yy put: value ]]! !
+	box top to: box bottom-1 do: [ :i |
+		box left to: box right-1 do: [ :j |
+			self i: i j: j put: value ]]! !
 
 !Matrix methodsFor: 'filling' stamp: 'jmv 7/19/2012 11:21'!
 fillDiagonalWith: aVectorOrArray
@@ -1912,3 +1932,12 @@ initializeElements
 	n even ifFalse: [
 		n _ n + 1 ].
 	elements _ ShortIntegerArray new: n! !
+
+!ShortWordMatrix methodsFor: 'initialization' stamp: 'jmv 7/26/2016 12:37:58'!
+initializeElements
+
+	| n |
+	n _ height * width.
+	n even ifFalse: [
+		n _ n + 1 ].
+	elements _ ShortWordArray new: n! !

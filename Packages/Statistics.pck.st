@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2847] on 19 July 2016 at 2:13:21 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 28 July 2016 at 3:23:05 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Statistics' 1 3!
+!provides: 'Statistics' 1 4!
 !requires: 'Goodies' 1 0 nil!
 !classDefinition: #UnitaryMonotonicMap category: #Statistics!
 FloatArray variableWordSubclass: #UnitaryMonotonicMap
@@ -366,12 +366,12 @@ percentile: percentile
 	"
 	^ self accumulated basicPercentile: percentile! !
 
-!Histogram methodsFor: 'aux' stamp: 'jmv 4/10/2015 15:45'!
+!Histogram methodsFor: 'aux' stamp: 'jmv 7/20/2016 15:39:36'!
 plot
 	| rect |
 	rect _ 10@10 extent: 768@400.
 	Display fillWhite: rect; border: (rect expandBy: 2) width: 2.
-	self plotIn: rect color: Color black min: 0.0 max: tallies max! !
+	self plotIn: rect color: Color red min: 0.0 max: tallies max! !
 
 !Histogram methodsFor: 'aux' stamp: 'jmv 4/14/2015 13:01'!
 plotIn: rect color: aColor
