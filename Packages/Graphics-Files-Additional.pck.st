@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 28 July 2016 at 3:29:10 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 1 August 2016 at 10:37:44 am'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 16!
+!provides: 'Graphics-Files-Additional' 1 17!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1980,7 +1980,7 @@ positionStreamToStripNum: anInteger
 	stream position: ((structure at: #StripOffsets) at: anInteger).
 	stream newStrip! !
 
-!TIFFReader methodsFor: 'reading' stamp: 'jmv 7/26/2016 15:22:43'!
+!TIFFReader methodsFor: 'reading' stamp: 'jmv 8/1/2016 10:37:24'!
 readForm
 	"Answer a Form created from the data in my stream and structure."
 	| result bps |
@@ -2015,7 +2015,9 @@ readForm
 
 			[ 16 ] -> [
 				"float image"
-				result _ ShortWordMatrix extent: self extent.
+				result _ (Smalltalk at: #ShortWordMatrix ifAbsent: [
+						self error: '16bpp TIFF requires ShortWordMatrix (LinearAlgebra package)' ])
+					extent: self extent.
 				self readGray16PixelsInto: result ] }].
 
 	^ result! !
