@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2859] on 3 August 2016 at 12:40:49 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2860] on 9 August 2016 at 10:45:52 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 65!
-!requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 66!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
 !requires: 'Statistics' 1 nil nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -2671,7 +2671,7 @@ bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 			scaled x: x y: y put: v ]].
 	^scaled! !
 
-!FloatImage methodsFor: 'repair' stamp: 'jmv 8/2/2016 12:22:07'!
+!FloatImage methodsFor: 'repair' stamp: 'jmv 8/3/2016 14:31:33'!
 badPixelCorrectionMapFor: badPixels
 	"Answer a ShortWordMatrix with a correction map for badPixels"
 
@@ -2696,7 +2696,39 @@ badPixelCorrectionMapFor: badPixels
 		correctionMap at: 5@i put: y0.
 		correctionMap at: 6@i put: y1.
 	].
-	^correctionMap! !
+	^correctionMap
+"
+image _ FloatImage lena.
+
+badPixelMask _ FloatImage fromArrayOfArrays: {
+	#( 0 0 0 1 0 0 0).
+	#( 0 0 1 1 1 0 0).
+	#( 0 0 1 1 1 0 0).
+	#( 0 1 1 1 1 1 0).
+	#( 0 1 1 1 1 1 0).
+	#( 1 1 1 1 1 1 0).
+	#( 0 1 1 1 1 0 0).
+	#( 0 0 1 1 0 0 0) }.
+
+broken _ image copy.	
+badPixels _ OrderedCollection new.
+{100@93. 90@73. 20@20. 150@40. 30@110. 200@192. 220@120. 220@100. 220@80. 220@60. 220@40. 220@20. 60@160. 120@120. 132@123} do: [ :badPixelsOrigin |
+	badPixelMask withIndexesDo: [ :i :j :v |
+		v = 1 ifTrue: [
+			badPixelPos _ badPixelsOrigin + (j@i) - 1.
+			badPixels add: badPixelPos.
+			broken at: badPixelPos put: 1.
+			]]].
+
+image display.
+broken display.
+
+correctionMap _ image badPixelCorrectionMapFor: badPixels.
+repaired _ broken copy.
+repaired repair: correctionMap.
+
+repaired display
+"! !
 
 !FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 8/23/2014 23:40'!
 beMagnitudeOfComplexesWith: imaginary
@@ -3382,7 +3414,7 @@ fillWithDeconvolutionOf: blurredImages deconvolve: kernels
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'repair' stamp: 'jmv 8/3/2016 12:14:11'!
+!FloatImage methodsFor: 'repair' stamp: 'jmv 8/3/2016 14:05:28'!
 findUnusuallyDarkPixels
 	"Answer a list of dead pixels, or pixels that are significantly darker than most in the same row."
 	"These thresholds were found experimenting with sample images (So far, with just one image!!)
@@ -3396,7 +3428,7 @@ findUnusuallyDarkPixels
 			1 to: width do: [ :j |
 				v _ self i: i j: j.
 				"See method comment"
-				(median - v > 10 and: [v / median < 0.85]) ifTrue: [
+				(median - v > (10/256.0) and: [v / median < 0.85]) ifTrue: [
 					"debug aid"
 					"{j@i-1. v. median rounded asFloat. (v / median) asFloat printStringFractionDigits: 2. (v - median) printStringFractionDigits: 2} print."
 					stream nextPut: j@i ]]]].
@@ -3414,109 +3446,12 @@ findUnusuallyDarkPixels
 					median _ row median.
 					v _ self i: i j: j.
 					"See method comment"
-					(median - v > 20 and: [v / median < 0.9]) ifTrue: [
+					(median - v > (20/256.0) and: [v / median < 0.9]) ifTrue: [
 					"debug aid"
 						"{j@i-1. v. median rounded asFloat. (v / median) asFloat printStringFractionDigits: 2. (median - v) printStringFractionDigits: 2} print."
 						dark2 add: j@i ]]]]].
 
 	^(dark, dark2 asArray sort: [ :p1 :p2 | p1 y < p2 y or: [p1 y = p2 y and: [p1 x < p2 x]]]) print! !
-
-!FloatImage methodsFor: 'repair' stamp: 'jmv 8/2/2016 15:05:41'!
-findUnusuallyDarkPixels01
-	"Answer a list of dead pixels, or pixels that are significantly darker than most in the same row."
-
-	| row median v dark |
-	dark _ Array streamContents: [ :stream |
-		1 to: height do: [ :i |
-			row _ self i: i.
-			median _ row median.
-			1 to: width do: [ :j |
-				v _ self i: i j: j.
-				(median - v > 10 and: [v / median < 0.85]) ifTrue: [
-					"debug aid"
-					"
-					{j@i-1. v. median rounded asFloat. (v / median) asFloat printStringFractionDigits: 2. (v - median) printStringFractionDigits: 2} print.
-					"
-					stream nextPut: j@i ]]]].
-	^ dark! !
-
-!FloatImage methodsFor: 'repair' stamp: 'jmv 8/2/2016 15:07:26'!
-findUnusuallyDarkPixels02
-	"Answer a list of dead pixels, or pixels that are significantly darker than most in the same row."
-
-	| row median v dark dark2 darkAsSet |
-	dark _ Array streamContents: [ :stream |
-		1 to: height do: [ :i |
-			row _ self i: i.
-			median _ row median.
-			1 to: width do: [ :j |
-				v _ self i: i j: j.
-				(median - v > 10 and: [v / median < 0.85]) ifTrue: [
-					"debug aid"
-					"
-					{j@i-1. v. median rounded asFloat. (v / median) asFloat printStringFractionDigits: 2. (v - median) printStringFractionDigits: 2} print.
-					"
-					stream nextPut: j@i ]]]].
-true not ifTrue: [ ^ dark ].
-	darkAsSet _ dark asSet.
-	dark2 _ Array streamContents: [ :stream |
-		1 to: height do: [ :i |
-			row _ self i: i.
-			median _ row median.
-			1 to: width do: [ :j |
-				v _ self i: i j: j.
-				((median - v > 10 and: [v / median < 0.85]) or: 
-					[ median - v > 17 and: [v / median < 0.89 and: [
-						(darkAsSet includes: j-1@i) |
-						(darkAsSet includes: j+1@i) |
-						(darkAsSet includes: j@(i-1)) |
-						(darkAsSet includes: j@(i+1))
-							]]]) ifTrue: [
-					"debug aid"
-					"
-					{j@i-1. v. median rounded asFloat. (v / median) asFloat printStringFractionDigits: 2. (v - median) printStringFractionDigits: 2} print.
-					"
-					stream nextPut: j@i ]]]].
-	^ dark2! !
-
-!FloatImage methodsFor: 'repair' stamp: 'jmv 8/2/2016 15:28:29'!
-findUnusuallyDarkPixels03
-	"Answer a list of dead pixels, or pixels that are significantly darker than most in the same row."
-
-	| row median v dark dark2 darkAsSet |
-	dark _ Array streamContents: [ :stream |
-		1 to: height do: [ :i |
-			row _ self i: i.
-			median _ row median.
-			1 to: width do: [ :j |
-				v _ self i: i j: j.
-				(median - v > 10 and: [v / median < 0.85]) ifTrue: [
-					"debug aid"
-					"
-					{j@i-1. v. median rounded asFloat. (v / median) asFloat printStringFractionDigits: 2. (v - median) printStringFractionDigits: 2} print.
-					"
-					stream nextPut: j@i ]]]].
-
-	darkAsSet _ dark asSet.
-
-	dark2 _ Array streamContents: [ :stream | |i j|
-		dark do: [ :each |
-			j _ each x. i _ each y.
-			{ j-1@i. j+1@i. j@(i-1). j@(i+1) } do: [ :each2 |
-				(each2 between: 1@1 and: width@height) ifTrue: [
-					row _ self i: each2 y.
-					median _ row median.
-					v _ self i: each2 y j: each2 x.
-					{each2. v. median - v. v / median asFloat  } print.
-					(median - v > 10 and: [v / median < 0.9]) ifTrue: [
-						(darkAsSet includes: each2) ifFalse: [
-							"debug aid"
-							"
-							{j@i-1. v. median rounded asFloat. (v / median) asFloat printStringFractionDigits: 2. (v - median) printStringFractionDigits: 2} print.
-							"
-							stream nextPut: each2 ]]]]]].
-dark2 print.
-	^(dark, dark2 sort: [ :p1 :p2 | p1 y < p2 y or: [p1 y = p2 y and: [p1 x < p2 x]]]) print! !
 
 !FloatImage methodsFor: 'filtering' stamp: 'jmv 6/17/2015 17:59'!
 fourierDeconvolutionOf: blurredImages deconvolve: kernels maxNoiseAmplification: maxNoiseFactor
@@ -3772,7 +3707,7 @@ guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValu
 					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
 	self x: x y: y put: nullValue! !
 
-!FloatImage methodsFor: 'repair' stamp: 'jmv 8/3/2016 11:00:41'!
+!FloatImage methodsFor: 'repair' stamp: 'jmv 8/3/2016 14:09:01'!
 highlight: correctionMap
 	"Diagnostic, debugging, etc."
 
@@ -3787,10 +3722,10 @@ highlight: correctionMap
 		
 		"Debug aid"
 		self x: x y: y put: 0.
-		self x: x0 y: y put: 130.
-		self x: x1 y: y put: 130.
-		self x: x y: y0 put: 130.
-		self x: x y: y1 put: 130.
+		self x: x0 y: y put: 130/256.0.
+		self x: x1 y: y put: 130/256.0.
+		self x: x y: y0 put: 130/256.0.
+		self x: x y: y1 put: 130/256.0.
 	].! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 8/9/2012 15:42'!
@@ -4409,7 +4344,7 @@ quantizeTo: bits
 	q _ 1.0/ n.
 	self replaceValues: [ :i :j :v | (v truncateTo: q) min: k max: 0.0 ]! !
 
-!FloatImage methodsFor: 'repair' stamp: 'jmv 8/3/2016 12:39:55'!
+!FloatImage methodsFor: 'repair' stamp: 'jmv 8/3/2016 14:12:02'!
 repair: correctionMap
 
 	| x x0 x1 y y0 y1 v1 v2 |
@@ -4432,7 +4367,7 @@ repair: correctionMap
 
 "
 roi _ 'C:\Users\Juan-Tuerca\BajadasFrescoYBatata\FM1-Fresco\image.160315010222._2240_0___640_5120_.png' asFileEntry formContents.
-roi _ (FloatImage fromGrayForm: roi) * 256.
+roi _ FloatImage fromGrayForm: roi.
 
 w _ roi width.
 h _ roi height.
@@ -4442,11 +4377,11 @@ map _ roi badPixelCorrectionMapFor: darkPixels.
 
 showDarkPixels _ roi copy.
 showDarkPixels highlight: map.
-(showDarkPixels/256) writePNGfileNamed: 'showDarkPixels.png'.nil.
+showDarkPixels writePNGfileNamed: 'showDarkPixels.png'.nil.
 
 fixed _ roi copy.
 fixed repair: map.
-(fixed/256) writePNGfileNamed: 'fixed.png'.nil.
+fixed writePNGfileNamed: 'fixed.png'.nil.
 "! !
 
 !FloatImage methodsFor: 'resampling-aux' stamp: 'jmv 1/27/2015 14:26'!
