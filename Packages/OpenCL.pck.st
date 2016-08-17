@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2836] on 1 July 2016 at 5:15:23.229643 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2860] on 17 August 2016 at 10:41:27 am'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 14!
+!provides: 'OpenCL' 1 15!
 !requires: 'SignalProcessing' 1 37 nil!
 !requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -21,6 +21,26 @@ Error subclass: #OpenCLError
 	category: 'OpenCL'!
 !classDefinition: 'OpenCLError class' category: #OpenCL!
 OpenCLError class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLJuliaSetMorph category: #'OpenCL-Examples'!
+ImageMorph subclass: #OpenCLJuliaSetMorph
+	instanceVariableNames: 'julia'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'OpenCL-Examples'!
+!classDefinition: 'OpenCLJuliaSetMorph class' category: #'OpenCL-Examples'!
+OpenCLJuliaSetMorph class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLTest category: #'OpenCL-Tests'!
+TestCase subclass: #OpenCLTest
+	instanceVariableNames: 'context q1 q2'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Tests'!
+!classDefinition: 'OpenCLTest class' category: #'OpenCL-Tests'!
+OpenCLTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #CLBufferRegionStruct category: #'OpenCL-FFI'!
@@ -151,106 +171,6 @@ OpenCLOpaqueHandle subclass: #CLSampler
 	category: 'OpenCL-FFI'!
 !classDefinition: 'CLSampler class' category: #'OpenCL-FFI'!
 CLSampler class
-	instanceVariableNames: ''!
-
-!classDefinition: #OpenCLJuliaSetMorph category: #'OpenCL-Examples'!
-ImageMorph subclass: #OpenCLJuliaSetMorph
-	instanceVariableNames: 'julia'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLJuliaSetMorph class' category: #'OpenCL-Examples'!
-OpenCLJuliaSetMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #OpenCLExample category: #'OpenCL-Examples'!
-Object subclass: #OpenCLExample
-	instanceVariableNames: 'device context queue program'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLExample class' category: #'OpenCL-Examples'!
-OpenCLExample class
-	instanceVariableNames: ''!
-
-!classDefinition: #AppleCopyBenchmark category: #'OpenCL-Examples'!
-OpenCLExample subclass: #AppleCopyBenchmark
-	instanceVariableNames: 'kernel inputBuffer outputBuffer lastEvent outputMatrix'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Examples'!
-!classDefinition: 'AppleCopyBenchmark class' category: #'OpenCL-Examples'!
-AppleCopyBenchmark class
-	instanceVariableNames: ''!
-
-!classDefinition: #DeformationGridExample category: #'OpenCL-Examples'!
-OpenCLExample subclass: #DeformationGridExample
-	instanceVariableNames: 'kernel input gridX gridY result resultExtent lastEvent outputImage'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Examples'!
-!classDefinition: 'DeformationGridExample class' category: #'OpenCL-Examples'!
-DeformationGridExample class
-	instanceVariableNames: ''!
-
-!classDefinition: #NormalizedCoordinatesExperiment category: #'OpenCL-Examples'!
-OpenCLExample subclass: #NormalizedCoordinatesExperiment
-	instanceVariableNames: 'kernel originalFrame processedFrame lastEvent'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Examples'!
-!classDefinition: 'NormalizedCoordinatesExperiment class' category: #'OpenCL-Examples'!
-NormalizedCoordinatesExperiment class
-	instanceVariableNames: ''!
-
-!classDefinition: #OpenCLBlur category: #'OpenCL-Examples'!
-OpenCLExample subclass: #OpenCLBlur
-	instanceVariableNames: 'horizontalKernel verticalKernel filterWeights filterWeightsBuffer imageExtent inputOutputImage tempImage lastEvent'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLBlur class' category: #'OpenCL-Examples'!
-OpenCLBlur class
-	instanceVariableNames: ''!
-
-!classDefinition: #OpenCLBlur12 category: #'OpenCL-Examples'!
-OpenCLExample subclass: #OpenCLBlur12
-	instanceVariableNames: 'horizontalKernel verticalKernel filterWeights filterWeightsBuffer imageExtent inputOutputImage tempImage lastEvent'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLBlur12 class' category: #'OpenCL-Examples'!
-OpenCLBlur12 class
-	instanceVariableNames: ''!
-
-!classDefinition: #OpenCLJuliaSet category: #'OpenCL-Examples'!
-OpenCLExample subclass: #OpenCLJuliaSet
-	instanceVariableNames: 'extent iterations outputForm workImage toneMapForm toneMapImage kernel lastEvent params paramsDirty paramsBuffer scale origin'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLJuliaSet class' category: #'OpenCL-Examples'!
-OpenCLJuliaSet class
-	instanceVariableNames: ''!
-
-!classDefinition: #OpenCLFill256 category: #'OpenCL-Examples'!
-Object subclass: #OpenCLFill256
-	instanceVariableNames: 'device context queue program kernel1d kernel2d lastEvent buffer'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLFill256 class' category: #'OpenCL-Examples'!
-OpenCLFill256 class
-	instanceVariableNames: ''!
-
-!classDefinition: #OpenCLMethodGenerator category: #'OpenCL-CodeGen'!
-Object subclass: #OpenCLMethodGenerator
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'OpenCL-CodeGen'!
-!classDefinition: 'OpenCLMethodGenerator class' category: #'OpenCL-CodeGen'!
-OpenCLMethodGenerator class
 	instanceVariableNames: ''!
 
 !classDefinition: #OpenCLObject category: #OpenCL!
@@ -403,16 +323,6 @@ OpenCLRefCountedObject subclass: #OpenCLKernel
 OpenCLKernel class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLPlugin category: #'OpenCL-Plugin'!
-Object subclass: #OpenCLPlugin
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'OpenCL-Plugin'!
-!classDefinition: 'OpenCLPlugin class' category: #'OpenCL-Plugin'!
-OpenCLPlugin class
-	instanceVariableNames: ''!
-
 !classDefinition: #OpenCLPrimitiveInterface category: #OpenCL!
 Object subclass: #OpenCLPrimitiveInterface
 	instanceVariableNames: ''
@@ -463,19 +373,127 @@ Object subclass: #OpenCLRefCounter
 OpenCLRefCounter class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLTest category: #'OpenCL-Tests'!
-TestCase subclass: #OpenCLTest
-	instanceVariableNames: 'context q1 q2'
+!classDefinition: #OpenCLExample category: #'OpenCL-Examples'!
+Object subclass: #OpenCLExample
+	instanceVariableNames: 'device context queue program'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Tests'!
-!classDefinition: 'OpenCLTest class' category: #'OpenCL-Tests'!
-OpenCLTest class
+	category: 'OpenCL-Examples'!
+!classDefinition: 'OpenCLExample class' category: #'OpenCL-Examples'!
+OpenCLExample class
+	instanceVariableNames: ''!
+
+!classDefinition: #AppleCopyBenchmark category: #'OpenCL-Examples'!
+OpenCLExample subclass: #AppleCopyBenchmark
+	instanceVariableNames: 'kernel inputBuffer outputBuffer lastEvent outputMatrix'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Examples'!
+!classDefinition: 'AppleCopyBenchmark class' category: #'OpenCL-Examples'!
+AppleCopyBenchmark class
+	instanceVariableNames: ''!
+
+!classDefinition: #DeformationGridExample category: #'OpenCL-Examples'!
+OpenCLExample subclass: #DeformationGridExample
+	instanceVariableNames: 'kernel input gridX gridY result resultExtent lastEvent outputImage'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Examples'!
+!classDefinition: 'DeformationGridExample class' category: #'OpenCL-Examples'!
+DeformationGridExample class
+	instanceVariableNames: ''!
+
+!classDefinition: #NormalizedCoordinatesExperiment category: #'OpenCL-Examples'!
+OpenCLExample subclass: #NormalizedCoordinatesExperiment
+	instanceVariableNames: 'kernel originalFrame processedFrame lastEvent'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Examples'!
+!classDefinition: 'NormalizedCoordinatesExperiment class' category: #'OpenCL-Examples'!
+NormalizedCoordinatesExperiment class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLBlur category: #'OpenCL-Examples'!
+OpenCLExample subclass: #OpenCLBlur
+	instanceVariableNames: 'horizontalKernel verticalKernel filterWeights filterWeightsBuffer imageExtent inputOutputImage tempImage lastEvent'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Examples'!
+!classDefinition: 'OpenCLBlur class' category: #'OpenCL-Examples'!
+OpenCLBlur class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLBlur12 category: #'OpenCL-Examples'!
+OpenCLExample subclass: #OpenCLBlur12
+	instanceVariableNames: 'horizontalKernel verticalKernel filterWeights filterWeightsBuffer imageExtent inputOutputImage tempImage lastEvent'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Examples'!
+!classDefinition: 'OpenCLBlur12 class' category: #'OpenCL-Examples'!
+OpenCLBlur12 class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLJuliaSet category: #'OpenCL-Examples'!
+OpenCLExample subclass: #OpenCLJuliaSet
+	instanceVariableNames: 'extent iterations outputForm workImage toneMapForm toneMapImage kernel lastEvent params paramsDirty paramsBuffer scale origin'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Examples'!
+!classDefinition: 'OpenCLJuliaSet class' category: #'OpenCL-Examples'!
+OpenCLJuliaSet class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLFill256 category: #'OpenCL-Examples'!
+Object subclass: #OpenCLFill256
+	instanceVariableNames: 'device context queue program kernel1d kernel2d lastEvent buffer'
+	classVariableNames: ''
+	poolDictionaries: 'OpenCLConstants'
+	category: 'OpenCL-Examples'!
+!classDefinition: 'OpenCLFill256 class' category: #'OpenCL-Examples'!
+OpenCLFill256 class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLMethodGenerator category: #'OpenCL-CodeGen'!
+Object subclass: #OpenCLMethodGenerator
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'OpenCL-CodeGen'!
+!classDefinition: 'OpenCLMethodGenerator class' category: #'OpenCL-CodeGen'!
+OpenCLMethodGenerator class
+	instanceVariableNames: ''!
+
+!classDefinition: #OpenCLPlugin category: #'OpenCL-Plugin'!
+Object subclass: #OpenCLPlugin
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'OpenCL-Plugin'!
+!classDefinition: 'OpenCLPlugin class' category: #'OpenCL-Plugin'!
+OpenCLPlugin class
 	instanceVariableNames: ''!
 
 
 !OpenCLError commentStamp: 'jcg 1/11/2010 23:22' prior: 0!
 Error that knows how to look up a human-readable string corresponding to the OpenCL error code.!
+
+!OpenCLJuliaSetMorph commentStamp: '<historical>' prior: 0!
+OpenCLJuliaSetMorph new openInHand!
+
+!OpenCLTest commentStamp: '<historical>' prior: 0!
+Test and document usage of OpenCL framework.
+
+Things we still need to test:
+
+- test whether event is actually returned when attempt to enqueue a command fails (i.e. do we have to release the event).  This is about verifying the behavior that we expect from OpenCL implementations, to verify that the assumptions that we are making are safe.
+For example: 
+evt := [commandQueue someCommandThatWillFailToEnqueue] 
+		on: OpenCLError 
+		do: [:err | err resume].
+self should: [evt getHandle = #[0 0 0 0] ].
+
+Additionally, try:
+	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].!
 
 !CLBufferRegionStruct commentStamp: '<historical>' prior: 0!
 Similar to CLImageFormatStruct and CLImageDescStruct. For OpenCL's cl_buffer_region
@@ -567,8 +585,49 @@ typedef struct _cl_program *        cl_program;!
 !CLSampler commentStamp: '<historical>' prior: 0!
 typedef struct _cl_sampler *        cl_sampler;!
 
-!OpenCLJuliaSetMorph commentStamp: '<historical>' prior: 0!
-OpenCLJuliaSetMorph new openInHand!
+!OpenCLObject commentStamp: 'jcg 1/13/2010 22:27' prior: 0!
+Subclasses wrap an instance of the corresponding OpenCLOpaqueHandle type.  Provides convenience methods for calling FFI functions on the handle.!
+
+!OpenCLDevice commentStamp: 'jcg 1/14/2010 01:58' prior: 0!
+Encapsulates a CLDeviceID, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLDeviceID, and this class deleted (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI)..!
+
+!OpenCLPlatform commentStamp: 'jmv 9/16/2015 17:28' prior: 0!
+Encapsulates a CLPlatformID, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLPlatformID, and this class deleted  (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI).
+
+OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].!
+
+!OpenCLRefCountedObject commentStamp: 'jcg 1/15/2010 02:01' prior: 0!
+Objects in the OpenCL Runtime layer are ref-counted (as opposed to platforms and devices in the Platform layer).  This class, along with OpenCLRefCounter, provides a framework for managing the ref-counts, as well as a finalization mechanism so that OpenCL resources are not leaked when these objects are garbage-collected while their ref-count is > 0.
+!
+
+!OpenCLContext commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
+Encapsulates a CLContext, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLContext, and this class deleted  (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI).!
+
+!OpenCLContextObject commentStamp: 'jcg 2/12/2010 09:20' prior: 0!
+Represents an object that is associated with a particular OpenCL context.  When destroyed, the reference to the context is released.!
+
+!OpenCLBuffer commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
+Encapsulates a CLMem that has been allocated as a buffer (as opposed to an image), and provides convenience methods for accessing its properties.  See the "buffer creation" methods in OpenCLContext.  
+
+NOTE: we don't expose all of OpenCL's functionality for instantiating new buffers, in particular buffers allocated in host memory.!
+
+!OpenCLCommandQueue commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
+Encapsulates a CLCommandQueue and provides convenience methods for accessing its properties.!
+
+!OpenCLEvent commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
+Encapsulates a CLEvent and provides convenience methods for accessing its properties.!
+
+!OpenCLMapEvent commentStamp: 'jcg 1/30/2010 17:30' prior: 0!
+The commands to map images and buffers return a pointer.  However, this pointer is not valid until the mapping is complete.  Therefore, we encapsulate the pointer within a special event-type; the pointer is not made available until the event's enqueued command has completed.!
+
+!OpenCLPrimitiveInterface commentStamp: '<historical>' prior: 0!
+Subclasses hold mainly autogenerated methods.!
+
+!OpenCLRefCounter commentStamp: 'jcg 1/15/2010 01:18' prior: 0!
+Private to the OpenCL framework; users of the framework will never directly touch one.
+
+Keeps track of the reference-count of an OpenCLRefCountedObject.  The reason that this is a separate class is that it also acts as the executor for finalizing the object.
+!
 
 !OpenCLExample commentStamp: 'jmv 10/29/2015 11:57' prior: 0!
 This class includes ivars that any (all?) OpenCL examples should have.
@@ -645,41 +704,6 @@ To generate constant initializers:
 To clear them:
 	OpenCLMethodGenerator clearConstantInitializers!
 
-!OpenCLObject commentStamp: 'jcg 1/13/2010 22:27' prior: 0!
-Subclasses wrap an instance of the corresponding OpenCLOpaqueHandle type.  Provides convenience methods for calling FFI functions on the handle.!
-
-!OpenCLDevice commentStamp: 'jcg 1/14/2010 01:58' prior: 0!
-Encapsulates a CLDeviceID, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLDeviceID, and this class deleted (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI)..!
-
-!OpenCLPlatform commentStamp: 'jmv 9/16/2015 17:28' prior: 0!
-Encapsulates a CLPlatformID, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLPlatformID, and this class deleted  (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI).
-
-OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].!
-
-!OpenCLRefCountedObject commentStamp: 'jcg 1/15/2010 02:01' prior: 0!
-Objects in the OpenCL Runtime layer are ref-counted (as opposed to platforms and devices in the Platform layer).  This class, along with OpenCLRefCounter, provides a framework for managing the ref-counts, as well as a finalization mechanism so that OpenCL resources are not leaked when these objects are garbage-collected while their ref-count is > 0.
-!
-
-!OpenCLContext commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
-Encapsulates a CLContext, and provides convenience methods for accessing its properties.  Perhaps these methods should simply be added to CLContext, and this class deleted  (except that we apparently can't add instance variables to subclasses of ExternalStructure, and still marshal them through the FFI).!
-
-!OpenCLContextObject commentStamp: 'jcg 2/12/2010 09:20' prior: 0!
-Represents an object that is associated with a particular OpenCL context.  When destroyed, the reference to the context is released.!
-
-!OpenCLBuffer commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
-Encapsulates a CLMem that has been allocated as a buffer (as opposed to an image), and provides convenience methods for accessing its properties.  See the "buffer creation" methods in OpenCLContext.  
-
-NOTE: we don't expose all of OpenCL's functionality for instantiating new buffers, in particular buffers allocated in host memory.!
-
-!OpenCLCommandQueue commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
-Encapsulates a CLCommandQueue and provides convenience methods for accessing its properties.!
-
-!OpenCLEvent commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
-Encapsulates a CLEvent and provides convenience methods for accessing its properties.!
-
-!OpenCLMapEvent commentStamp: 'jcg 1/30/2010 17:30' prior: 0!
-The commands to map images and buffers return a pointer.  However, this pointer is not valid until the mapping is complete.  Therefore, we encapsulate the pointer within a special event-type; the pointer is not made available until the event's enqueued command has completed.!
-
 !OpenCLPlugin commentStamp: 'jcg 1/21/2010 02:48' prior: 0!
 Placeholder for a subclass of InterpreterPlugin.
 
@@ -689,39 +713,10 @@ Responsibilities:
 	
 	for blocking-waits on a command-queue that occur in a different native thread.  Probably make a subclass of command-queue whose instances register themselves with the plugin, and!
 
-!OpenCLPrimitiveInterface commentStamp: '<historical>' prior: 0!
-Subclasses hold mainly autogenerated methods.!
-
-!OpenCLRefCounter commentStamp: 'jcg 1/15/2010 01:18' prior: 0!
-Private to the OpenCL framework; users of the framework will never directly touch one.
-
-Keeps track of the reference-count of an OpenCLRefCountedObject.  The reason that this is a separate class is that it also acts as the executor for finalizing the object.
-!
-
-!OpenCLTest commentStamp: '<historical>' prior: 0!
-Test and document usage of OpenCL framework.
-
-Things we still need to test:
-
-- test whether event is actually returned when attempt to enqueue a command fails (i.e. do we have to release the event).  This is about verifying the behavior that we expect from OpenCL implementations, to verify that the assumptions that we are making are safe.
-For example: 
-evt := [commandQueue someCommandThatWillFailToEnqueue] 
-		on: OpenCLError 
-		do: [:err | err resume].
-self should: [evt getHandle = #[0 0 0 0] ].
-
-Additionally, try:
-	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].!
-
 !Object methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:08'!
 asOpenCLArg
 	"Default is to pass self as arg to FFI call."
 	^self! !
-
-!FloatMatrix methodsFor: '*OpenCL' stamp: 'jmv 3/30/2016 11:12'!
-asOpenCLArg
-	"Pass pointer to our FloatArray."
-	^elements! !
 
 !False methodsFor: '*OpenCL' stamp: 'jcg 2/16/2010 01:24'!
 asOpenCLBoolean
@@ -732,21 +727,6 @@ asOpenCLBoolean
 asOpenCLBoolean
 	^1 "CLTrue"
 	! !
-
-!ExternalObject methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:02'!
-asOpenCLArg
-	"Pass pointer to external memory (or potentially, a ByteArray) as an argument to a kernel or other function."
-	^self getHandle! !
-
-!Form methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:05'!
-asOpenCLArg
-	"Pass pointer to our bitmap."
-	^bits! !
-
-!ExternalForm methodsFor: '*OpenCL' stamp: 'jcg 6/4/2010 02:20'!
-asOpenCLArg
-	"Pass pointer to our pixels."
-	^pointer ifNil: [self error: 'pointer is nil'].! !
 
 !Float methodsFor: '*OpenCL' stamp: 'jmv 1/5/2016 11:12'!
 asOpenCLArg
@@ -762,6 +742,30 @@ asOpenCLArg
 asOpenCLBoolean
 	"Assume that we're already CLTrue or CLFalse (if not, there will be an error anyway)."
 	^self! !
+
+!FloatMatrix methodsFor: '*OpenCL' stamp: 'jmv 3/30/2016 11:12'!
+asOpenCLArg
+	"Pass pointer to our FloatArray."
+	^elements! !
+
+!ShortWordMatrix methodsFor: '*OpenCL' stamp: 'lpc 8/5/2016 15:42:11'!
+asOpenCLArg 
+	^ elements! !
+
+!Form methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:05'!
+asOpenCLArg
+	"Pass pointer to our bitmap."
+	^bits! !
+
+!ExternalForm methodsFor: '*OpenCL' stamp: 'jcg 6/4/2010 02:20'!
+asOpenCLArg
+	"Pass pointer to our pixels."
+	^pointer ifNil: [self error: 'pointer is nil'].! !
+
+!ExternalObject methodsFor: '*OpenCL' stamp: 'jcg 2/18/2010 03:02'!
+asOpenCLArg
+	"Pass pointer to external memory (or potentially, a ByteArray) as an argument to a kernel or other function."
+	^self getHandle! !
 
 !OpenCLConstants class methodsFor: 'class initialization'!
 initialize
@@ -1632,6 +1636,205 @@ signal: signalerText code: errCode
 signalCode: errCode
 	^self new code: errCode; signal: (self errorStringForCode: errCode)! !
 
+!OpenCLJuliaSetMorph methodsFor: 'private' stamp: 'jcg 5/1/2010 01:57'!
+changeIfDirty
+	"If the Julia set needs to be redrawn, then so does this morph."
+	julia isDirty ifTrue: [self changed].! !
+
+!OpenCLJuliaSetMorph methodsFor: 'drawing' stamp: 'jcg 5/1/2010 10:52'!
+drawOn: aCanvas
+	self initializeJuliaIfNecessary.
+	julia isDirty ifTrue: [julia runKernel].
+	super drawOn: aCanvas! !
+
+!OpenCLJuliaSetMorph methodsFor: 'geometry' stamp: 'jcg 5/1/2010 01:28'!
+extent: aPoint
+	julia extent: aPoint.
+	self image: julia outputForm.
+	julia runKernel.
+	self changed.
+	! !
+
+!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:51'!
+imaginary
+	"Answer the 'imaginary' parameter of the Julia set."
+	^julia imaginary! !
+
+!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:55'!
+imaginary: newImaginary
+	"Set the 'imaginary' parameter of the Julia set."
+	julia imaginary: newImaginary.
+	self changeIfDirty.! !
+
+!OpenCLJuliaSetMorph methodsFor: 'initialize' stamp: 'jcg 5/1/2010 01:26'!
+initialize
+	super initialize.
+	julia := OpenCLJuliaSet new.
+	self useRainbowToneMap.
+	self extent: 512@512.
+	julia runKernel.
+	self changed.
+	
+! !
+
+!OpenCLJuliaSetMorph methodsFor: 'private' stamp: 'jcg 5/1/2010 11:32'!
+initializeJuliaIfNecessary
+	"If the OpenCL context is absent or destroyed, we need to re-initialize 'julia'."
+	(julia context isNil or: [julia context isDestroyed]) 
+		ifTrue: [julia initialize.
+				self image: julia outputForm]! !
+
+!OpenCLJuliaSetMorph methodsFor: 'geometry testing' stamp: 'jmv 8/5/2015 17:26'!
+isOrthoRectangularMorph
+	^false! !
+
+!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:51'!
+real
+	"Answer the 'real' parameter of the Julia set."
+	^julia real! !
+
+!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 13:45'!
+real: newReal
+	"Set the 'real' parameter of the Julia set."
+	julia real: newReal.
+	self changeIfDirty.! !
+
+!OpenCLJuliaSetMorph methodsFor: 'tone-maps' stamp: 'jmv 8/5/2015 17:27'!
+useRainbowToneMap
+	"Generate a tone-map that cycles through the color-wheel.."
+	self initializeJuliaIfNecessary.
+	julia useRainbowToneMap! !
+
+!OpenCLJuliaSetMorph class methodsFor: '*OpenCL-eToys' stamp: 'jcg 5/1/2010 01:45'!
+additionsToViewerCategories
+	"Answer a list of (<categoryName> <list of category specs>) pairs that characterize the phrases this kind of morph wishes to add to various Viewer categories."
+
+	^ #((fractal (
+(slot real 'The "real" parameter of the Julia set' Number readWrite Player getJuliaReal Player setJuliaReal:)
+(slot imaginary 'The "imaginary" parameter of the Julia set' Number readWrite Player getJuliaImaginary Player setJuliaImaginary:)
+)))
+
+
+! !
+
+!OpenCLTest methodsFor: 'running' stamp: 'jmv 9/16/2015 17:32'!
+setUp
+	| gpus |
+	"gpus := OpenCLPlatform allPlatforms collect: [ :platform |
+		platform allGPUs, platform allCPUs ]."
+	gpus := OpenCLPlatform allPlatforms collect: [ :platform | platform allGPUs ].
+	gpus := gpus concatenation.
+	context := OpenCLContext newForDevices: gpus.
+	q1 := context commandQueueOn: gpus first.
+	q2 := context commandQueueOn: gpus first.! !
+
+!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/14/2010 23:10'!
+tearDown
+	q1 destroy.
+	q2 destroy.
+	context destroy.
+	! !
+
+!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/15/2010 00:07'!
+testCopyToAndFromBuffer
+	| bytes1 bytes2 buf |
+	
+	bytes1 := ByteArray new: 255.
+	bytes2 := ByteArray new: 255.
+	1 to: 255 do: [:i | bytes1 at: i put: i].
+	self shouldnt: [bytes1 = bytes2 "obviously"].
+	
+	"Create memory buffer to write to and read from."
+	buf := context bufferOfSize: 255.
+	
+	"We must block, since we're copying to/from ByteArrays that might move during GC.  Note that if we didn't block, the read-buffer would have to wait on the event from the write-buffer command."
+	q1 writeBuffer: buf block: true offset: 0 size: 255 pointer: bytes1 waitOn: nil.
+	q2 readBuffer: buf block: true offset: 0 size: 255 pointer: bytes2 waitOn: nil.
+	
+	"Now that we copied to the buffer and back, the two ByteArrays should be equivalent."
+	self should: [bytes1 = bytes2].
+	
+	"Free the OpenCL memory."
+	buf destroy.! !
+
+!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/15/2010 01:56'!
+testFinalization
+	| buf refCounter |
+	buf := context bufferOfSize: 1000.
+	
+	"There's no accessor, because users never need to touch it."
+	refCounter := buf instVarNamed: 'refCounter'.
+	
+	self should: [refCounter count = 1].
+	buf := nil.
+	Smalltalk garbageCollectMost.
+	self should: [refCounter count = 0].
+! !
+
+!OpenCLTest methodsFor: 'running' stamp: 'jmv 5/4/2016 16:54'!
+testMapAndCopyImage
+	
+	| inputForm outputForm mapForm imageFormat image1 image2 ptr map1evt map2evt unmap1evt unmap2evt copyEvt |
+	
+	inputForm := (Form fromDisplay: (0@0 corner: 200@200)) asFormOfDepth: (Smalltalk isLittleEndian ifTrue: [ -32 ] ifFalse: [ 32 ]).
+	outputForm := Form extent: 200@200 nativeDepthFrom: 32.
+	mapForm := ExternalForm extent: 200@200 nativeDepthFrom: 32.
+	
+	imageFormat := CLImageFormatStruct argb8888.
+	image1 := context 
+					newImage2D: CL_MEM_WRITE_ONLY
+					format: imageFormat
+					width: 200
+					height: 200
+					rowPitch: nil
+					hostPointer: nil.
+	image2 := context
+					newImage2D: CL_MEM_READ_ONLY
+					format: imageFormat
+					width: 200
+					height: 200
+					rowPitch: nil
+					hostPointer: nil.
+		
+	map1evt := q1 
+					mapImage: image1 
+					block: true 
+					flags: CL_MAP_WRITE 
+					origin: #(0 0 0) 
+					region: #(200 200 1) 
+					waitOn: nil.
+	ptr := map1evt pointer.
+	mapForm setManualSurfacePointer: ptr.
+	inputForm displayOn: mapForm.
+	mapForm setManualSurfacePointer: nil.
+	unmap1evt := q1 unmap: image1 pointer: ptr waitOn: map1evt.
+	
+	copyEvt := q2 
+					copyImage: image1 
+					origin: #(0 0 0) 
+					into: image2 
+					origin: #(0 0 0) 
+					region: #(200 200 1) 
+					waitOn: unmap1evt.
+
+	map2evt := q1 
+					mapImage: image2
+					block: true 
+					flags: CL_MAP_READ 
+					origin: #(0 0 0) 
+					region: #(200 200 1) 
+					waitOn: copyEvt.
+	ptr := map1evt pointer.
+	mapForm setManualSurfacePointer: ptr.
+	mapForm displayOn: outputForm.
+	mapForm setManualSurfacePointer: nil.
+	unmap2evt := q1 unmap: image2 pointer: ptr waitOn: map2evt.
+	
+	self should: [inputForm bits = outputForm bits].
+	
+	mapForm destroySurface.
+! !
+
 !CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 16:43'!
 origin
 	"This method was automatically generated"
@@ -2093,4052 +2296,6 @@ release
 retain
 	"Called only by OpenCLRefCount."
 	OpenCLError check: (OpenCLPrimitiveInterface current clRetainSampler__cl_sampler: self)! !
-
-!OpenCLJuliaSetMorph methodsFor: 'private' stamp: 'jcg 5/1/2010 01:57'!
-changeIfDirty
-	"If the Julia set needs to be redrawn, then so does this morph."
-	julia isDirty ifTrue: [self changed].! !
-
-!OpenCLJuliaSetMorph methodsFor: 'drawing' stamp: 'jcg 5/1/2010 10:52'!
-drawOn: aCanvas
-	self initializeJuliaIfNecessary.
-	julia isDirty ifTrue: [julia runKernel].
-	super drawOn: aCanvas! !
-
-!OpenCLJuliaSetMorph methodsFor: 'geometry' stamp: 'jcg 5/1/2010 01:28'!
-extent: aPoint
-	julia extent: aPoint.
-	self image: julia outputForm.
-	julia runKernel.
-	self changed.
-	! !
-
-!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:51'!
-imaginary
-	"Answer the 'imaginary' parameter of the Julia set."
-	^julia imaginary! !
-
-!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:55'!
-imaginary: newImaginary
-	"Set the 'imaginary' parameter of the Julia set."
-	julia imaginary: newImaginary.
-	self changeIfDirty.! !
-
-!OpenCLJuliaSetMorph methodsFor: 'initialize' stamp: 'jcg 5/1/2010 01:26'!
-initialize
-	super initialize.
-	julia := OpenCLJuliaSet new.
-	self useRainbowToneMap.
-	self extent: 512@512.
-	julia runKernel.
-	self changed.
-	
-! !
-
-!OpenCLJuliaSetMorph methodsFor: 'private' stamp: 'jcg 5/1/2010 11:32'!
-initializeJuliaIfNecessary
-	"If the OpenCL context is absent or destroyed, we need to re-initialize 'julia'."
-	(julia context isNil or: [julia context isDestroyed]) 
-		ifTrue: [julia initialize.
-				self image: julia outputForm]! !
-
-!OpenCLJuliaSetMorph methodsFor: 'geometry testing' stamp: 'jmv 8/5/2015 17:26'!
-isOrthoRectangularMorph
-	^false! !
-
-!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:51'!
-real
-	"Answer the 'real' parameter of the Julia set."
-	^julia real! !
-
-!OpenCLJuliaSetMorph methodsFor: 'accessing' stamp: 'jcg 5/1/2010 13:45'!
-real: newReal
-	"Set the 'real' parameter of the Julia set."
-	julia real: newReal.
-	self changeIfDirty.! !
-
-!OpenCLJuliaSetMorph methodsFor: 'tone-maps' stamp: 'jmv 8/5/2015 17:27'!
-useRainbowToneMap
-	"Generate a tone-map that cycles through the color-wheel.."
-	self initializeJuliaIfNecessary.
-	julia useRainbowToneMap! !
-
-!OpenCLJuliaSetMorph class methodsFor: '*OpenCL-eToys' stamp: 'jcg 5/1/2010 01:45'!
-additionsToViewerCategories
-	"Answer a list of (<categoryName> <list of category specs>) pairs that characterize the phrases this kind of morph wishes to add to various Viewer categories."
-
-	^ #((fractal (
-(slot real 'The "real" parameter of the Julia set' Number readWrite Player getJuliaReal Player setJuliaReal:)
-(slot imaginary 'The "imaginary" parameter of the Julia set' Number readWrite Player getJuliaImaginary Player setJuliaImaginary:)
-)))
-
-
-! !
-
-!OpenCLExample methodsFor: 'accessing' stamp: 'jcg 5/1/2010 10:50'!
-context
-	"Answer the OpenCL context."
-	^context! !
-
-!OpenCLExample methodsFor: 'initialize' stamp: 'jcg 5/1/2010 11:30'!
-destroy
-	"Release any resources used by this example."
-	device ifNotNil: [device := nil].
-	context ifNotNil: [:obj |
-		context := nil.
-		obj destroy
-	].
-	queue ifNotNil: [:obj |
-		queue := nil.
-		obj destroy
-	].
-	program ifNotNil: [:obj |
-		program := nil.
-		obj destroy
-	].
-	! !
-
-!OpenCLExample methodsFor: 'initialize' stamp: 'jmv 9/16/2015 17:30'!
-initialize
-	self destroy. "reset to initial state"
-"	device := OpenCLPlatform allPlatforms first allGPUs first."
-"	device := (OpenCLPlatform allPlatforms collect: [:platform |
-		platform allGPUs, platform allCPUs]) concatenation first."
-	device := OpenCLPlatform allPlatforms first allDevices first.
-	context := OpenCLContext newForDevices: {device}.
-	queue := context commandQueueOn: device.
-	program := context programWithSource: self sourceCode.
-	program build! !
-
-!AppleCopyBenchmark methodsFor: 'accessing' stamp: 'jmv 1/5/2016 12:05'!
-input: aFloatMatrix
-
-	outputMatrix _ aFloatMatrix appropriateResultClass extent: aFloatMatrix extent.
-
-	"Set up Kernels"
-	kernel := program createKernel: 'copy'.
-	inputBuffer := context readOnlyBufferOfSize: aFloatMatrix elements byteSize.
-	outputBuffer := context writeOnlyBufferOfSize: outputMatrix elements byteSize.
-
-	lastEvent := queue 
-					writeBuffer: inputBuffer
-					from: aFloatMatrix elements
-					waitOn: lastEvent.
-
-	kernel argAt: 0 putPointer: inputBuffer.
-	kernel argAt: 1 putPointer: outputBuffer.
-	kernel argAt: 2 putInt: outputMatrix width.
-	kernel argAt: 3 putInt: outputMatrix height! !
-
-!AppleCopyBenchmark methodsFor: 'accessing' stamp: 'jmv 9/1/2015 16:46'!
-result
-
-	queue readBuffer: outputBuffer into: outputMatrix elements waitOn: lastEvent.
-	^outputMatrix! !
-
-!AppleCopyBenchmark methodsFor: 'actions' stamp: 'jmv 9/1/2015 16:48'!
-run
-
-	lastEvent := queue 
-			runKernel: kernel
-			workDim: 2
-			globalOffset: #(0 0)
-			globalSize: {outputMatrix width. outputMatrix height}
-			localSize: #(32 8)
-			waitOn: lastEvent.! !
-
-!AppleCopyBenchmark methodsFor: 'private' stamp: 'jmv 9/1/2015 16:14'!
-sourceCode
-	"Answer the OpenCL source code for this example."
-	"Copy from / to global memory"
-	^'
-__kernel void copy(global const float * in, global float * out, int w, int h) {
-
-	int x = get_global_id(0); 		// (x,y) = pixel to process
-	int y = get_global_id(1); 		// in this work item
-
-	out[x+y*w] = in[x+y*w]; 		// Load and Store
-
-//	out[x+y*w] = 100*y+x;	
-}
-'! !
-
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 7/1/2016 16:49'!
-downloadDataFromGPU: outputForm
-	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
-	
-	"Öjo que origin y region tienen tamanio 3, no 2. Entender"
-	
-	lastEvent := queue
-					readImage: result
-					block: false
-					origin: #(0 0 0)
-					region: {resultExtent x. resultExtent y. 1}
-					rowPitch: outputForm wordsPerLine * 4
-					slicePitch: 0
-					pointer: outputForm
-					waitOn: lastEvent! !
-
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 15:23'!
-initialize
-
-	"Set up context, queue, program, kernels, etc."
-	super initialize.
-
-	"Set up Kernels"
-	kernel := program createKernel: 'resample'.
-	
-	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
-	" 
-	stuff
-	filterWeights := FloatArray new: 0.
-	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
-	kernel argAt: 1 put: filterWeightsBuffer size: 4.
-	" ! !
-
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 15:20'!
-input: inputImage gridX: gridXPositions gridY: gridYPositions resultExtent: aResultExtent
-"
-Alternativas.
-- Que aloque la memoria. despues le copio onda #uploadDataToGPU:
-- Le digo ahora CL_MEM_COPY_HOST_PTR y le paso una imagen Smalltalk
-- Le digo CL_MEM_COPY_HOST_PTR, pero uso un ExternalForm (quizas eso se pareceria mas a lo que voy a querer despues...)
-"
-"De que tipo son? Para hacer algo realista, la entrada y la salida deben ser de 8 bits. Lo de norm... no se.
-Los grid deben ser Float, o al menos de 16 bits!!"
-	| fmt |
-"
-Y esto que puse aca supone que en memoria son de 8 bits... Y al pasar hostPointer, como le digo que convierta?????? mhhhhhh
-"
-	"CL_UNORM_INT8   intensity8Norm
-	Desde afuera, en la memoria hay un unsigned char, 0..255.
-	Pero en el kernel uso read_imagef() y write_imagef(), son floats.
-	http://stackoverflow.com/questions/31718492/meaning-of-cl-unorm-int8-for-cl-image-format-image-channel-data-type-and-its-di
-	"
-	
-	"uhhhhhhh image format not supported....
-	CLImageFormatNotSupported
-	
-	clGetSupportedImageFormats
-	supportedImageFormats: flags type: imageType ' or 3D'
-	https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clGetSupportedImageFormats.html
-	"
-	" 
-Ejecutar
-OpenCLPlatform allPlatforms do: [ :platform | platform reportImageFormatsOn: Transcript ].
-
-(	context supportedImageFormats: CL_MEM_READ_WRITE type: CL_MEM_OBJECT_IMAGE2D) do: [ :a | a print].
-(	context supportedImageFormats: CL_MEM_WRITE_ONLY type: CL_MEM_OBJECT_IMAGE2D) do: [ :a | a print].
-(	context supportedImageFormats: CL_MEM_READ_ONLY type: CL_MEM_OBJECT_IMAGE2D) do: [ :a | a print].
-" 
-"
-CL_MEM_READ_WRITE
-CL_MEM_WRITE_ONLY
-CL_MEM_READ_ONLY
-"
-
-"
-=================== 
-I3 de la oficina (GPU vieja, sin OpenCL):
-NO TIENE ningun formato de 8 bit por pixel!!
-=================== 
-#(an OpenCLPlatform)
-a CLImageFormatStruct(RGBA unorm-int8)
-a CLImageFormatStruct(RGBA unorm-int16)
-a CLImageFormatStruct(RGBA int8)
-a CLImageFormatStruct(RGBA int16)
-a CLImageFormatStruct(RGBA int32)
-a CLImageFormatStruct(RGBA uint8)
-a CLImageFormatStruct(RGBA uint16)
-a CLImageFormatStruct(RGBA uint32)
-a CLImageFormatStruct(RGBA half-float)
-a CLImageFormatStruct(RGBA float)
-a CLImageFormatStruct(BGRA unorm-int8)
-a CLImageFormatStruct(Intensity float)
-a CLImageFormatStruct(Luminance float)
-===============================
-Celeron de casa (GPU mas nueva, con OpenCL)
-No tiene Intensity o Luminance, pero al menos tiene 'R uint8'
-=================== 
-a CLImageFormatStruct(RGBA unorm-int8)
-a CLImageFormatStruct(RGBA unorm-int16)
-a CLImageFormatStruct(RGBA int8)
-a CLImageFormatStruct(RGBA int16)
-a CLImageFormatStruct(RGBA int32)
-a CLImageFormatStruct(RGBA uint8)
-a CLImageFormatStruct(RGBA uint16)
-a CLImageFormatStruct(RGBA uint32)
-a CLImageFormatStruct(RGBA half-float)
-a CLImageFormatStruct(RGBA float)
-a CLImageFormatStruct(BGRA unorm-int8)
-a CLImageFormatStruct(R float)
-a CLImageFormatStruct(R unorm-int8)
-a CLImageFormatStruct(R unorm-int16)
-a CLImageFormatStruct(R int8)
-a CLImageFormatStruct(R int16)
-a CLImageFormatStruct(R int32)
-a CLImageFormatStruct(R uint8)
-a CLImageFormatStruct(R uint16)
-a CLImageFormatStruct(R uint32)
-a CLImageFormatStruct(R half-float)
-a CLImageFormatStruct(A unorm-int8)
-a CLImageFormatStruct(RG unorm-int8)
-a CLImageFormatStruct(RG unorm-int16)
-a CLImageFormatStruct(RG int8)
-a CLImageFormatStruct(RG int16)
-a CLImageFormatStruct(RG int32)
-a CLImageFormatStruct(RG uint8)
-a CLImageFormatStruct(RG uint16)
-a CLImageFormatStruct(RG uint32)
-a CLImageFormatStruct(RG half-float)
-a CLImageFormatStruct(RG float)
-================================
-En la AMD A4-5000,
-OpenCLPlatform allPlatforms do: [ :platform |
-    '-----' print.
-    platform name print.
-    ((OpenCLContext newForDevices: platform allGPUs, platform allCPUs) supportedImageFormats: CL_MEM_READ_ONLY type: 16r10F1) do: [ :each |
-        each print ]].
-==================
-AMD Accelerated Parallel Processing
-a CLImageFormatStruct(R snorm-int8)
-a CLImageFormatStruct(R snorm-int16)
-a CLImageFormatStruct(R unorm-int8)
-a CLImageFormatStruct(R unorm-int16)
-a CLImageFormatStruct(R int8)
-a CLImageFormatStruct(R int16)
-a CLImageFormatStruct(R int32)
-a CLImageFormatStruct(R uint8)
-a CLImageFormatStruct(R uint16)
-a CLImageFormatStruct(R uint32)
-a CLImageFormatStruct(R half-float)
-a CLImageFormatStruct(R float)
-a CLImageFormatStruct(A snorm-int8)
-a CLImageFormatStruct(A snorm-int16)
-a CLImageFormatStruct(A unorm-int8)
-a CLImageFormatStruct(A unorm-int16)
-a CLImageFormatStruct(A int8)
-a CLImageFormatStruct(A int16)
-a CLImageFormatStruct(A int32)
-a CLImageFormatStruct(A uint8)
-a CLImageFormatStruct(A uint16)
-a CLImageFormatStruct(A uint32)
-a CLImageFormatStruct(A half-float)
-a CLImageFormatStruct(A float)
-a CLImageFormatStruct(RG snorm-int8)
-a CLImageFormatStruct(RG snorm-int16)
-a CLImageFormatStruct(RG unorm-int8)
-a CLImageFormatStruct(RG unorm-int16)
-a CLImageFormatStruct(RG int8)
-a CLImageFormatStruct(RG int16)
-a CLImageFormatStruct(RG int32)
-a CLImageFormatStruct(RG uint8)
-a CLImageFormatStruct(RG uint16)
-a CLImageFormatStruct(RG uint32)
-a CLImageFormatStruct(RG half-float)
-a CLImageFormatStruct(RG float)
-a CLImageFormatStruct(RGBA snorm-int8)
-a CLImageFormatStruct(RGBA snorm-int16)
-a CLImageFormatStruct(RGBA unorm-int8)
-a CLImageFormatStruct(RGBA unorm-int16)
-a CLImageFormatStruct(RGBA int8)
-a CLImageFormatStruct(RGBA int16)
-a CLImageFormatStruct(RGBA int32)
-a CLImageFormatStruct(RGBA uint8)
-a CLImageFormatStruct(RGBA uint16)
-a CLImageFormatStruct(RGBA uint32)
-a CLImageFormatStruct(RGBA half-float)
-a CLImageFormatStruct(RGBA float)
-a CLImageFormatStruct(ARGB snorm-int8)
-a CLImageFormatStruct(ARGB unorm-int8)
-a CLImageFormatStruct(ARGB int8)
-a CLImageFormatStruct(ARGB uint8)
-a CLImageFormatStruct(BGRA snorm-int8)
-a CLImageFormatStruct(BGRA unorm-int8)
-a CLImageFormatStruct(BGRA int8)
-a CLImageFormatStruct(BGRA uint8)
-a CLImageFormatStruct(Luminance snorm-int8)
-a CLImageFormatStruct(Luminance snorm-int16)
-a CLImageFormatStruct(Luminance unorm-int8)
-a CLImageFormatStruct(Luminance unorm-int16)
-a CLImageFormatStruct(Luminance half-float)
-a CLImageFormatStruct(Luminance float)
-a CLImageFormatStruct(Intensity snorm-int8)
-a CLImageFormatStruct(Intensity snorm-int16)
-a CLImageFormatStruct(Intensity unorm-int8)
-a CLImageFormatStruct(Intensity unorm-int16)
-a CLImageFormatStruct(Intensity half-float)
-a CLImageFormatStruct(Intensity float)
-a CLImageFormatStruct(RA snorm-int8)
-a CLImageFormatStruct(RA snorm-int16)
-a CLImageFormatStruct(RA unorm-int8)
-a CLImageFormatStruct(RA unorm-int16)
-a CLImageFormatStruct(RA int8)
-a CLImageFormatStruct(RA int16)
-a CLImageFormatStruct(RA int32)
-a CLImageFormatStruct(RA uint8)
-a CLImageFormatStruct(RA uint16)
-a CLImageFormatStruct(RA uint32)
-a CLImageFormatStruct(RA half-float)
-a CLImageFormatStruct(RA float)
-#(an OpenCLPlatform)
-"
-	
-	
-	fmt := CLImageFormatStruct bgra8888norm.
-	fmt := CLImageFormatStruct luminance8.
-"	fmt := CLImageFormatStruct r8Norm.
-	fmt := CLImageFormatStruct intensityFloat."
-	fmt := CLImageFormatStruct r8.
-	input := context 
-							newImage2D: CL_MEM_READ_ONLY
-							format: fmt
-							width: inputImage width
-							height: inputImage height
-							rowPitch: nil
-							hostPointer: nil.
-							
-
-
-							
-	resultExtent _ aResultExtent.
-	outputImage _ FloatImage extent: aResultExtent.
-	fmt := CLImageFormatStruct intensity8Norm.
-	input := context 
-					newImage2D: CL_MEM_READ_ONLY "+ CL_MEM_COPY_HOST_PTR"
-					format: fmt
-					width: inputImage width
-					height: inputImage height
-					rowPitch: nil
-					hostPointer: "(inputImage elements collect: [ :v | (v * 256) floor min: 255 max: 0 ] into: ByteArray)" nil.
-"
-	gridX := context 
-					newImage2D: CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR
-					format: fmt
-					width: gridXPositions width
-					height: gridXPositions height
-					rowPitch: nil
-					hostPointer: gridXPositions asOpenCLArg.
-	gridY := context 
-					newImage2D: CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR
-					format: fmt
-					width: gridYPositions width
-					height: gridYPositions height
-					rowPitch: nil
-					hostPointer: gridYPositions asOpenCLArg.
-"
-	fmt := CLImageFormatStruct r8.
-	result := context 
-					newImage2D: CL_MEM_WRITE_ONLY
-					format: fmt
-					width: resultExtent x
-					height: resultExtent y
-					rowPitch: nil
-					hostPointer: nil.! !
-
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/3/2015 16:59'!
-outputImage
-^outputImage! !
-
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/3/2015 16:58'!
-run
-	"Compute work sizes."
-	| globalWorkSize localWorkSize |
-	localWorkSize := #(16 16).  "should fit on most devices... see #maxWorkGroupSize"
-	globalWorkSize := {resultExtent x. resultExtent y}.
-	globalWorkSize := globalWorkSize 
-							with: localWorkSize 
-							collect: [:global :local | global roundUpTo: local].		
-					
-	"Run the two kernels to blur the image first horizontally, then vertically."
-	lastEvent := queue
-					runKernel: kernel
-					workDim: 2
-					globalOffset: #(0 0)
-					globalSize: globalWorkSize
-					localSize: localWorkSize 
-					waitOn: lastEvent.
-					
-	self downloadDataFromGPU: outputImage! !
-
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/3/2015 17:13'!
-sourceCode
-	"Answer the OpenCL source code for the guassian-blur program."
-	"Sampleamos el resultado de manera discreta"
-^'
-
-	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
-
-	__kernel void resample (
-			__read_only image2d_t src_image,
-			__read_only image2d_t gridX_image,
-			__read_only image2d_t gridY_image,
-			__write_only image2d_t dst_image) {
-
-		if (get_global_id(0) >= get_image_width(dst_image)) return;
-		if (get_global_id(1) >= get_image_height(dst_image)) return;
-
-		int2 coord = (int2)(get_global_id(0), get_global_id(1));
-		float4 out = read_imagef(src_image, sampler, coord);
-		write_imagef(dst_image, coord, out);
-	}'! !
-
-!DeformationGridExample class methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 14:49'!
-dale
-	"
-	DeformationGridExample dale
-	En casa aun no puedo instanciar la de resultado...
-	"
-	| experiment gridXPositions gridYPositions inputImage resultExtent |
-	experiment _ self new.
-inputImage _ FloatImage lena.
-inputImage _ FloatImage grid: 12@12 extent: 256@256.
-resultExtent _ 512@512.
-gridXPositions _ FloatImage fromArrayOfArrays: #(
-	(0.0 0.3 1.0)
-	(0.0 0.6 1.0)
-	(0.0 0.8 1.0)).
-gridYPositions _ FloatImage fromArrayOfArrays: #(
-	(0.0 0.3 0.0)
-	(0.7 0.6 0.5)
-	(1.0 1.0 1.0)).
-
-experiment input: inputImage gridX: gridXPositions gridY: gridYPositions resultExtent: resultExtent.
-"
-result replaceValues: [ :y :x :v |
-	yy _ y-1.0/(result height-1) * (gridXPositions height-1) + 1.
-	xx _ x-1.0/(result width-1) * (gridXPositions width-1) + 1.
-	xp _ (gridXPositions bilinearInterpolatedValueAtX: xx y: yy) * 255+1.
-	yp _ (gridYPositions bilinearInterpolatedValueAtX: xx y: yy) * 255+1.
-	inputImage bilinearInterpolatedValueAtX: xp y: yp ].
-"
-experiment run.
-experiment outputImage display.
-	
-	
-	"
-input _ FloatImage lena.
-input _ FloatImage grid: 12@12 extent: 256@256.
-result _ FloatImage extent: 500@500.
-gridX _ FloatImage fromArrayOfArrays: #(
-	(0.0 0.3 1.0)
-	(0.0 0.6 1.0)
-	(0.0 0.8 1.0)).
-gridY _ FloatImage fromArrayOfArrays: #(
-	(0.0 0.3 0.0)
-	(0.7 0.6 0.5)
-	(1.0 1.0 1.0)).
-
-result replaceValues: [ :y :x :v |
-	yy _ y-1.0/(result height-1) * (gridX height-1) + 1.
-	xx _ x-1.0/(result width-1) * (gridX width-1) + 1.
-	xp _ (gridX bilinearInterpolatedValueAtX: xx y: yy) * 255+1.
-	yp _ (gridY bilinearInterpolatedValueAtX: xx y: yy) * 255+1.
-	input bilinearInterpolatedValueAtX: xp y: yp ].
-result display
-"! !
-
-!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 7/1/2016 16:44'!
-downloadDataFromGPU: outputForm
-	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
-	lastEvent := queue
-					readImage: processedFrame
-					block: false
-					origin: #(0 0 0)
-					region: {outputForm width. outputForm height. 1}
-					rowPitch: outputForm wordsPerLine * 4
-					slicePitch: 0
-					pointer: outputForm
-					waitOn: lastEvent! !
-
-!NormalizedCoordinatesExperiment methodsFor: 'initialize' stamp: 'jmv 2/22/2016 10:46'!
-initialize
-
-	"Set up context, queue, program, kernels, etc."
-	super initialize.
-
-	"Set up Kernels"
-	kernel := program createKernel: 'the_kernel'! !
-
-!NormalizedCoordinatesExperiment methodsFor: 'actions' stamp: 'jmv 2/22/2016 11:00'!
-process: inputForm into: outputForm
-	| localWorkSize globalWorkSize startTime |
-	
-	"Sanity check."
-	inputForm depth = 8 ifFalse: [self error: 'input form depth must be 8'].
-	outputForm depth = 8 ifFalse: [self error: 'output form depth must be 8'].
-
-	self setupInputImage: inputForm.
-	kernel argAt: 0 putPointer: originalFrame.
-	self setupOutputImage: outputForm.
-	kernel argAt: 1 putPointer: processedFrame.
-	'---------------------' print.
-
-	startTime := Time millisecondClockValue.
-	"Upload image to the GPU so we can process it." 
-	self uploadDataToGPU: inputForm.
-	OpenCLEvent waitForEvents: lastEvent.
-	((Time millisecondClockValue - startTime) printString, ' ms to Upload to GPU') print.
-					
-	"Compute work sizes."
-	localWorkSize := #(256 1).  "should fit on most devices... see #maxWorkGroupSize. Minimum number that already gives max performance"
-	globalWorkSize := {outputForm width. outputForm height}.
-
-	startTime := Time millisecondClockValue.
-	lastEvent := queue
-					runKernel: kernel
-					workDim: 2
-					globalOffset: #(0 0)
-					globalSize: globalWorkSize
-					localSize: localWorkSize 
-					waitOn: lastEvent.
-	OpenCLEvent waitForEvents: lastEvent.
-	((Time millisecondClockValue - startTime) printString, ' ms to Run Kernel') print.
-					
-	"Retrieve result image from the GPU."
-	startTime := Time millisecondClockValue.
-	self downloadDataFromGPU: outputForm.
-	OpenCLEvent waitForEvents: lastEvent.
-	((Time millisecondClockValue - startTime) printString, ' ms to Download from GPU') print.! !
-
-!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 2/22/2016 10:46'!
-setupInputImage: inputForm
-	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels.
-	Use the OpenCL 1.2 api for this."
-	| format description |
-
-	"r8Norm para que en el kernel se pueda usar read_imagef() y write_imagef().
-	Ver OpenCL reference '6.11.8.2 Built-in Image Functions'  p.192
-	#r8Norm, #luminance8Norm, #intensity8Norm parecen dar lo mismo"
-	format _ CLImageFormatStruct r8Norm.
-"	format _ CLImageFormatStruct luminance8Norm."
-"	format _ CLImageFormatStruct intensity8Norm."
-
-	description _ CLImageDescStruct new.
-	description  		"https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/imageDescriptor.html"
-		image_type: CL_MEM_OBJECT_IMAGE2D;
-		image_width: inputForm width;
-		image_height: inputForm height;
-		image_depth: 0;				"Only used for 3d images"
-		image_array_size: 0; 		"This is only used if the image is a 1D or 2D image array"
-		image_row_pitch: 0;
-		image_slice_pitch: 0;
-		num_mip_levels: 0;
-		num_samples: 0;
-		buffer: 0.
-	"Image creation the OpenCL 1.2 way"
-	originalFrame _ context 
-		newImage: CL_MEM_READ_ONLY
-		format: format
-		description: description
-		hostPointer: nil! !
-
-!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 2/22/2016 10:59'!
-setupOutputImage: outputForm
-	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels.
-	Use the OpenCL 1.2 api for this."
-	| format description |
-
-	"r8Norm para que en el kernel se pueda usar read_imagef() y write_imagef().
-	Ver OpenCL reference '6.11.8.2 Built-in Image Functions'  p.192
-	#r8Norm, #luminance8Norm, #intensity8Norm parecen dar lo mismo"
-	format _ CLImageFormatStruct r8Norm.
-"	format _ CLImageFormatStruct luminance8Norm."
-"	format _ CLImageFormatStruct intensity8Norm."
-
-	description _ CLImageDescStruct new.
-	description  		"https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/imageDescriptor.html"
-		image_type: CL_MEM_OBJECT_IMAGE2D;
-		image_width: outputForm width;
-		image_height: outputForm height;
-		image_depth: 0;				"Only used for 3d images"
-		image_array_size: 0; 		"This is only used if the image is a 1D or 2D image array"
-		image_row_pitch: 0;
-		image_slice_pitch: 0;
-		num_mip_levels: 0;
-		num_samples: 0;
-		buffer: 0.
-	"Image creation the OpenCL 1.2 way"
-	processedFrame _ context 
-		newImage: CL_MEM_WRITE_ONLY 
-		format: format
-		description: description
-		hostPointer: nil! !
-
-!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 2/22/2016 12:29'!
-sourceCode
-	"Answer the OpenCL source code for the program."
-"	Todos los kernels juntos en cada linea.
-	Si de casualidad le pego a la rerrida de OpenCL, entonces me queda en orden la recorrida de RAM"
-^'
-
-	//__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_NONE | CLK_FILTER_LINEAR;
-	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_LINEAR;
-	//__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_CLAMP | CLK_FILTER_LINEAR;
-	//__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_REPEAT | CLK_FILTER_LINEAR;
-	//__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_MIRRORED_REPEAT | CLK_FILTER_LINEAR;
-
-	__kernel void the_kernel (
-							__read_only image2d_t src_image,
-							__write_only image2d_t dst_image)
-	{
-
-		float scaleH = 1.0 / get_image_width(dst_image);
-		float scaleV = 1.0 / get_image_height(dst_image);
-
-		float2 inputCoord = (float2)(get_global_id(0) * scaleH , get_global_id(1) * scaleV);
-		int2 outputCoord = (int2)(get_global_id(0), get_global_id(1));
-
-		float value = read_imagef(src_image, sampler, inputCoord).x;
-
-		write_imagef(dst_image, outputCoord, (float4)(value,0,0,0));
-
-	}'! !
-
-!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 7/1/2016 16:44'!
-uploadDataToGPU: inputForm
-	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
-	lastEvent := queue
-					writeImage: originalFrame
-					block: false
-					origin: #(0 0 0)
-					region: {inputForm width. inputForm height. 1}
-					rowPitch: inputForm wordsPerLine * 4
-					slicePitch: 0
-					pointer: inputForm
-					waitOn: lastEvent! !
-
-!NormalizedCoordinatesExperiment class methodsFor: 'example' stamp: 'jmv 5/12/2016 18:34'!
-go
-	"
-	NormalizedCoordinatesExperiment go
-	"
-	| algoritm src dest value |
-	algoritm _ self new.
-
-	src _ GrayForm extent: 4@4.
-	
-	0 to: src width-1 do: [ :x |
-		value _ (x * 255.0 / (src width-1)) rounded.
-		value _ (x+0.5 * 255.0 / (src width)) rounded print.
-		0 to: src height-1 do: [ :y |
-			src pixelValueAt: x@y put: value.
-			]].
-	dest _ GrayForm extent: 300@1.
-	algoritm process: src into: dest.
-	dest displayAt: 0@0.
-
-	{src. dest} explore.
-	dest bits asByteArray print! !
-
-!OpenCLBlur methodsFor: 'actions' stamp: 'jcg 6/4/2010 02:54'!
-blur: inputForm into: outputForm radius: filterRadius
-	| localWorkSize globalWorkSize |
-	
-	"Sanity check."
-	inputForm extent = outputForm extent ifFalse: [self error: 'image sizes do not match'].
-	inputForm depth = 32 ifFalse: [self error: 'input form depth must be 32'].
-	outputForm depth = 32 ifFalse: [self error: 'output form depth must be 32'].
-
-	inputForm extent = imageExtent ifFalse: [
-		"Need to allocate new images."
-		self setupImages: (imageExtent := inputForm extent).
-	].
-
-	(filterWeights size - 1) = filterRadius ifFalse: [
-		"Need to compute and set-up new filter weights."
-		self setupWeightsForRadius: filterRadius.
-	].
-	
-	"Upload image to the GPU so we can blur it." 
-	self uploadDataToGPU: inputForm.
-					
-	"Compute work sizes."
-	localWorkSize := #(16 16).  "should fit on most devices... see #maxWorkGroupSize"
-	globalWorkSize := {imageExtent x. imageExtent y}.
-	globalWorkSize := globalWorkSize 
-							with: localWorkSize 
-							collect: [:global :local | global roundUpTo: local].		
-					
-	"Run the two kernels to blur the image first horizontally, then vertically."
-	lastEvent := queue
-					runKernel: horizontalKernel
-					workDim: 2
-					globalOffset: #(0 0)
-					globalSize: globalWorkSize
-					localSize: localWorkSize 
-					waitOn: lastEvent.
-	lastEvent := queue
-					runKernel: verticalKernel
-					workDim: 2
-					globalOffset: #(0 0)
-					globalSize: globalWorkSize
-					localSize: localWorkSize 
-					waitOn: lastEvent.
-					
-	"Retrieve blurred image from the GPU."				
-	self downloadDataFromGPU: outputForm.
-	
-	"When this event is finished, 'outputForm' will have its new contents.  Yay!!"				
-	^lastEvent ! !
-
-!OpenCLBlur methodsFor: 'actions' stamp: 'jcg 2/16/2010 02:00'!
-blur: inputAndOutputForm radius: filterRadius
-	"Input and output image are the same."
-	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
-	! !
-
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 7/1/2016 16:49'!
-downloadDataFromGPU: outputForm
-	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
-	lastEvent := queue
-					readImage: inputOutputImage
-					block: false
-					origin: #(0 0 0)
-					region: {imageExtent x. imageExtent y. 1}
-					rowPitch: outputForm wordsPerLine * 4
-					slicePitch: 0
-					pointer: outputForm
-					waitOn: lastEvent! !
-
-!OpenCLBlur methodsFor: 'initialize' stamp: 'jmv 1/5/2016 11:53'!
-initialize
-
-	"Set up context, queue, program, kernels, etc."
-	super initialize.
-
-	"Set up Kernels"
-	horizontalKernel := program createKernel: 'image_filter_horizontal'.
-	verticalKernel := program createKernel: 'image_filter_vertical'.
-	
-	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
-	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
-	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
-	horizontalKernel argAt: 1 putPointer: filterWeightsBuffer.
-	verticalKernel argAt: 1 putPointer: filterWeightsBuffer! !
-
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 11:54'!
-setupImages: extent
-	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels."
-	| fmt |
-	fmt := CLImageFormatStruct bgra8888norm.
-	inputOutputImage := context 
-							newImage2D: CL_MEM_READ_WRITE
-							format: fmt
-							width: extent x
-							height: extent y
-							rowPitch: nil
-							hostPointer: nil.
-	tempImage := context 
-							newImage2D: CL_MEM_READ_WRITE
-							format: fmt
-							width: extent x
-							height: extent y
-							rowPitch: nil
-							hostPointer: nil.
-	
-	"Horizontal kernel runs first, storing the horizontally-blurred image into 'tempImage'."						
-	horizontalKernel argAt: 2 putPointer: inputOutputImage.
-	horizontalKernel argAt: 3 putPointer: tempImage.
-	
-	"Vertical kernel runs next, using the partly-blurred image in 'tempImage' as the source."
-	verticalKernel argAt: 2 putPointer: tempImage.
-	verticalKernel argAt: 3 putPointer: inputOutputImage! !
-
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 11:55'!
-setupWeightsForRadius: filterRadius
-	| sigma sum |
-	
-	filterRadius isInteger ifFalse: [self error: 'filter radius must be an integer'].
-	filterRadius > 100 ifTrue: [
-		"In #initialize, we only allocated enough space for 101 filter weights."
-		self error: 'filter radius must be <= 100 pixels'.
-	].
-
-	"If the radius is zero, there is no blurring."
-	filterRadius = 0 ifTrue: [
-		filterWeights := FloatArray with: 1.0.
-		^self.
-	].
-	
-	filterWeights := FloatArray new: filterRadius + 1.
-	sigma := filterRadius / 3.0.  "past 3 std-deviations, Gaussian is near-zero."
-	
-	"Compute unnormalized gaussian weights."
-	0 to: filterRadius do: [:i |
-		| t1 t2 |
-		t1 := 1 / (sigma * (Float pi * 2) sqrt).
-		t2 := (i / sigma) squared * -0.5.
-		filterWeights at: i+1 put: (t1 * (Float e raisedTo: t2))
-	].
-
-	"Normalize.  We've computed half a bell curve, so count some weights twice so that the full curve sums to 1."
-	sum := filterWeights sum * 2.
-	sum := sum - (filterWeights first).  "only count the center of the curve once."
-	filterWeights /= sum.
-	
-	"Upload filter weights to buffer."
-	lastEvent := queue 
-					writeBuffer: filterWeightsBuffer
-					from: filterWeights
-					waitOn: lastEvent.
-	
-	"Set up kernel arguments."
-	horizontalKernel argAt: 0 putInt: filterRadius.
-	verticalKernel argAt: 0 putInt: filterRadius
-
-	! !
-
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 8/10/2015 12:11'!
-sourceCode
-	"Answer the OpenCL source code for the guassian-blur program."
-^'
-
-	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
-
-	__kernel void
-	image_filter_horizontal (int filterHalfWidth,
-							__constant float* filterWeights,  // of size filterHalfWidth + 1
-							__read_only image2d_t src_image,
-							__write_only image2d_t dst_image)
-	{
-		if (get_global_id(0) >= get_image_width(dst_image)) return;
-		if (get_global_id(1) >= get_image_height(dst_image)) return;
-		int i;
-		int2 coord = (int2)(get_global_id(0), get_global_id(1));
-		float4 weight = (float4)filterWeights[0];
-		float4 out = read_imagef(src_image, sampler, coord) * weight;
-		for (i=1; i <= filterHalfWidth; i++) {
-			weight = (float4)filterWeights[i];
-			out += (read_imagef(src_image, sampler, (coord + (int2)(i,0))) * weight);
-			out += (read_imagef(src_image, sampler, (coord - (int2)(i,0))) * weight);
-		}
-		write_imagef(dst_image, coord, out);
-	}
-	
-	__kernel void
-	image_filter_vertical (int filterHalfHeight,
-						__constant float* filterWeights, // of size filterHalfHeight + 1
-						__read_only image2d_t src_image,
-						__write_only image2d_t dst_image)
-	{
-		if (get_global_id(0) >= get_image_width(dst_image)) return;
-		if (get_global_id(1) >= get_image_height(dst_image)) return;
-		int i;
-		int2 coord = (int2)(get_global_id(0), get_global_id(1));
-		float4 weight = (float4)filterWeights[0];
-		float4 out = read_imagef(src_image, sampler, coord) * weight;
-		for (i=1; i <= filterHalfHeight; i++) {
-			weight = (float4)filterWeights[i];
-			out += (read_imagef(src_image, sampler, (coord + (int2)(0,i))) * weight);
-			out += (read_imagef(src_image, sampler, (coord - (int2)(0,i))) * weight);
-		}
-		write_imagef(dst_image, coord, out);
-	}'! !
-
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 7/1/2016 16:52'!
-uploadDataToGPU: inputForm
-	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
-	lastEvent := queue
-					writeImage: inputOutputImage
-					block: false
-					origin: #(0 0 0)
-					region: {imageExtent x. imageExtent y. 1}
-					rowPitch: inputForm wordsPerLine * 4
-					slicePitch: 0
-					pointer: inputForm
-					waitOn: lastEvent! !
-
-!OpenCLBlur class methodsFor: 'example' stamp: 'jmv 5/4/2016 12:58'!
-blurDisplay
-	"
-	OpenCLBlur blurDisplay
-	"
-	| blur src dest |
-	blur := self new.
-	
-	dest := ExternalForm extent: Display extent nativeDepthFrom: 32.
-	dest allocateSpace.
-	src := ExternalForm extent: Display extent nativeDepthFrom: 32.
-	src allocateSpace.
-	Display displayOn: src.
-		
-	((1 to: 20), (19 to: 1 by: -1)) do: [:radius |
-		| evt startTime queuedTime finishTime |
-		startTime := Time millisecondClockValue.
-		evt := blur blur: src into: dest radius: radius.
-		queuedTime := Time millisecondClockValue - startTime.
-		OpenCLEvent waitForEvents: evt.
-		finishTime := Time millisecondClockValue - startTime.
-		('   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ') print.
-		('   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ') print.
-		'   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ' displayOn: dest at: 20@20.
-		'   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ' displayOn: dest at: 20@40.
-		dest displayAt: 0@0.
-
-		(Delay forMilliseconds: 20) wait.
-	].
-	src displayAt: 0@0.
-! !
-
-!OpenCLBlur12 methodsFor: 'actions' stamp: 'jmv 10/29/2015 12:47'!
-blur: inputForm into: outputForm radius: filterRadius
-	| localWorkSize globalWorkSize |
-	
-	"Sanity check."
-	inputForm extent = outputForm extent ifFalse: [self error: 'image sizes do not match'].
-	inputForm depth = 32 ifFalse: [self error: 'input form depth must be 32'].
-	outputForm depth = 32 ifFalse: [self error: 'output form depth must be 32'].
-
-	inputForm extent = imageExtent ifFalse: [
-		"Need to allocate new images."
-		self setupImages: (imageExtent := inputForm extent).
-	].
-
-	(filterWeights size - 1) = filterRadius ifFalse: [
-		"Need to compute and set-up new filter weights."
-		self setupWeightsForRadius: filterRadius.
-	].
-	
-	"Upload image to the GPU so we can blur it." 
-	self uploadDataToGPU: inputForm.
-					
-	"Compute work sizes."
-	localWorkSize := #(16 16).  "should fit on most devices... see #maxWorkGroupSize"
-	globalWorkSize := {imageExtent x. imageExtent y}.
-	globalWorkSize := globalWorkSize 
-							with: localWorkSize 
-							collect: [:global :local | global roundUpTo: local].		
-					
-	"Run the two kernels to blur the image first horizontally, then vertically."
-	lastEvent := queue
-					runKernel: horizontalKernel
-					workDim: 2
-					globalOffset: #(0 0)
-					globalSize: globalWorkSize
-					localSize: localWorkSize 
-					waitOn: lastEvent.
-	lastEvent := queue
-					runKernel: verticalKernel
-					workDim: 2
-					globalOffset: #(0 0)
-					globalSize: globalWorkSize
-					localSize: localWorkSize 
-					waitOn: lastEvent.
-					
-	"Retrieve blurred image from the GPU."				
-	self downloadDataFromGPU: outputForm.
-	
-	"When this event is finished, 'outputForm' will have its new contents.  Yay!!"				
-	^lastEvent ! !
-
-!OpenCLBlur12 methodsFor: 'actions' stamp: 'jmv 10/29/2015 12:47'!
-blur: inputAndOutputForm radius: filterRadius
-	"Input and output image are the same."
-	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
-	! !
-
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 7/1/2016 16:49'!
-downloadDataFromGPU: outputForm
-	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
-	lastEvent := queue
-					readImage: inputOutputImage
-					block: false
-					origin: #(0 0 0)
-					region: {imageExtent x. imageExtent y. 1}
-					rowPitch: outputForm wordsPerLine * 4
-					slicePitch: 0
-					pointer: outputForm
-					waitOn: lastEvent! !
-
-!OpenCLBlur12 methodsFor: 'initialize' stamp: 'jmv 1/5/2016 11:57'!
-initialize
-
-	"Set up context, queue, program, kernels, etc."
-	super initialize.
-
-	"Set up Kernels"
-	horizontalKernel := program createKernel: 'image_filter_horizontal'.
-	verticalKernel := program createKernel: 'image_filter_vertical'.
-	
-	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
-	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
-	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
-	horizontalKernel argAt: 1 putPointer: filterWeightsBuffer.
-	verticalKernel argAt: 1 putPointer: filterWeightsBuffer! !
-
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 11:58'!
-setupImages: extent
-	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels.
-	Use the OpenCL 1.2 api for this."
-	| format description |
-	format _ CLImageFormatStruct bgra8888norm.
-	description _ CLImageDescStruct new.
-	description  		"https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/imageDescriptor.html"
-		image_type: CL_MEM_OBJECT_IMAGE2D;
-		image_width: extent x;
-		image_height: extent y;
-		image_depth: 0;				"Only used for 3d images"
-		image_array_size: 0; 		"This is only used if the image is a 1D or 2D image array"
-		image_row_pitch: 0;
-		image_slice_pitch: 0;
-		num_mip_levels: 0;
-		num_samples: 0;
-		buffer: 0.
-	"Image creation the OpenCL 1.2 way"
-	inputOutputImage := context 
-							newImage: CL_MEM_READ_WRITE
-							format: format
-							description: description
-							hostPointer: nil.
-	tempImage := context 
-							newImage: CL_MEM_READ_WRITE
-							format: format
-							description: description
-							hostPointer: nil.
-	
-	"Horizontal kernel runs first, storing the horizontally-blurred image into 'tempImage'."						
-	horizontalKernel argAt: 2 putPointer: inputOutputImage.
-	horizontalKernel argAt: 3 putPointer: tempImage.
-	
-	"Vertical kernel runs next, using the partly-blurred image in 'tempImage' as the source."
-	verticalKernel argAt: 2 putPointer: tempImage.
-	verticalKernel argAt: 3 putPointer: inputOutputImage! !
-
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 11:59'!
-setupWeightsForRadius: filterRadius
-	| sigma sum |
-	
-	filterRadius isInteger ifFalse: [self error: 'filter radius must be an integer'].
-	filterRadius > 100 ifTrue: [
-		"In #initialize, we only allocated enough space for 101 filter weights."
-		self error: 'filter radius must be <= 100 pixels'.
-	].
-
-	"If the radius is zero, there is no blurring."
-	filterRadius = 0 ifTrue: [
-		filterWeights := FloatArray with: 1.0.
-		^self.
-	].
-	
-	filterWeights := FloatArray new: filterRadius + 1.
-	sigma := filterRadius / 3.0.  "past 3 std-deviations, Gaussian is near-zero."
-	
-	"Compute unnormalized gaussian weights."
-	0 to: filterRadius do: [:i |
-		| t1 t2 |
-		t1 := 1 / (sigma * (Float pi * 2) sqrt).
-		t2 := (i / sigma) squared * -0.5.
-		filterWeights at: i+1 put: (t1 * (Float e raisedTo: t2))
-	].
-
-	"Normalize.  We've computed half a bell curve, so count some weights twice so that the full curve sums to 1."
-	sum := filterWeights sum * 2.
-	sum := sum - (filterWeights first).  "only count the center of the curve once."
-	filterWeights /= sum.
-	
-	"Upload filter weights to buffer."
-	lastEvent := queue 
-					writeBuffer: filterWeightsBuffer
-					from: filterWeights
-					waitOn: lastEvent.
-	
-	"Set up kernel arguments."
-	horizontalKernel argAt: 0 putInt: filterRadius.
-	verticalKernel argAt: 0 putInt: filterRadius.
-
-	! !
-
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
-sourceCode
-	"Answer the OpenCL source code for the guassian-blur program."
-^'
-
-	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
-
-	__kernel void
-	image_filter_horizontal (int filterHalfWidth,
-							__constant float* filterWeights,  // of size filterHalfWidth + 1
-							__read_only image2d_t src_image,
-							__write_only image2d_t dst_image)
-	{
-		if (get_global_id(0) >= get_image_width(dst_image)) return;
-		if (get_global_id(1) >= get_image_height(dst_image)) return;
-		int i;
-		int2 coord = (int2)(get_global_id(0), get_global_id(1));
-		float4 weight = (float4)filterWeights[0];
-		float4 out = read_imagef(src_image, sampler, coord) * weight;
-		for (i=1; i <= filterHalfWidth; i++) {
-			weight = (float4)filterWeights[i];
-			out += (read_imagef(src_image, sampler, (coord + (int2)(i,0))) * weight);
-			out += (read_imagef(src_image, sampler, (coord - (int2)(i,0))) * weight);
-		}
-		write_imagef(dst_image, coord, out);
-	}
-	
-	__kernel void
-	image_filter_vertical (int filterHalfHeight,
-						__constant float* filterWeights, // of size filterHalfHeight + 1
-						__read_only image2d_t src_image,
-						__write_only image2d_t dst_image)
-	{
-		if (get_global_id(0) >= get_image_width(dst_image)) return;
-		if (get_global_id(1) >= get_image_height(dst_image)) return;
-		int i;
-		int2 coord = (int2)(get_global_id(0), get_global_id(1));
-		float4 weight = (float4)filterWeights[0];
-		float4 out = read_imagef(src_image, sampler, coord) * weight;
-		for (i=1; i <= filterHalfHeight; i++) {
-			weight = (float4)filterWeights[i];
-			out += (read_imagef(src_image, sampler, (coord + (int2)(0,i))) * weight);
-			out += (read_imagef(src_image, sampler, (coord - (int2)(0,i))) * weight);
-		}
-		write_imagef(dst_image, coord, out);
-	}'! !
-
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 7/1/2016 16:52'!
-uploadDataToGPU: inputForm
-	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
-	lastEvent := queue
-					writeImage: inputOutputImage
-					block: false
-					origin: #(0 0 0)
-					region: {imageExtent x. imageExtent y. 1}
-					rowPitch: inputForm wordsPerLine * 4
-					slicePitch: 0
-					pointer: inputForm
-					waitOn: lastEvent! !
-
-!OpenCLBlur12 class methodsFor: 'example' stamp: 'jmv 5/4/2016 16:22'!
-blurDisplay
-	"
-	OpenCLBlur12 blurDisplay
-	"
-	| blur src dest |
-	blur := self new.
-	
-	dest := ExternalForm extent: Display extent nativeDepthFrom: 32.
-	dest allocateSpace.
-	src := ExternalForm extent: Display extent nativeDepthFrom: 32.
-	src allocateSpace.
-	Display displayOn: src.
-		
-	((1 to: 20), (19 to: 1 by: -1)) do: [:radius |
-		| evt startTime queuedTime finishTime |
-		startTime := Time millisecondClockValue.
-		evt := blur blur: src into: dest radius: radius.
-		queuedTime := Time millisecondClockValue - startTime.
-		OpenCLEvent waitForEvents: evt.
-		finishTime := Time millisecondClockValue - startTime.
-		('   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ') print.
-		('   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ') print.
-		'   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ' displayOn: dest at: 20@20.
-		'   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ' displayOn: dest at: 20@40.
-		dest displayAt: 0@0.
-
-		(Delay forMilliseconds: 20) wait.
-	].
-	src displayAt: 0@0.
-! !
-
-!OpenCLJuliaSet methodsFor: 'private' stamp: 'jcg 4/28/2010 09:31'!
-adjustOriginAndStepSize
-	"For now we just hardcode to use the whole domain from (-2,-2) to (2,2)... no zoom/pan."
-	params at: 1 put: -2.0.
-	params at: 2 put: -2.0.
-	params at: 3 put: (4.0 / extent x).
-	params at: 4 put: (4.0 / extent y).
-
-
-	paramsDirty := true.! !
-
-!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:00'!
-extent: newExtent
-	newExtent = extent ifTrue: [^self "no change"].
-	paramsDirty := true.
-	extent := newExtent.
-	outputForm := Form extent: extent depth: 32.
-	
-	self waitForEvent.
-	workImage ifNotNil: [workImage destroy].
-	workImage := context
-					newImage2D: CL_MEM_WRITE_ONLY
-					format: CLImageFormatStruct bgra8888norm
-					width: extent x
-					height: extent y
-					rowPitch: nil
-					hostPointer: nil.
-	kernel argAt: 3 putPointer: workImage.
-	
-	self adjustOriginAndStepSize! !
-
-!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 01:51'!
-imaginary
-	"Answer the 'imaginary' parameter of the Julia set."
-	^params at: 6! !
-
-!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 12:47'!
-imaginary: newImaginary
-	"Set the 'imaginary' parameter of the Julia set."
-	| old |
-	old := params at: 6.
-	params at: 6 put: newImaginary.
-	old = (params at: 6) ifTrue: [^self "no change"].
-	paramsDirty := true! !
-
-!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:01'!
-initialize
-	"We take care so that you can call #initialize again and none of the existing settings will be lost."
-	| rememberedExtent |
-
-	lastEvent := nil.	
-	super initialize.
-
-	"Set up kernels"
-	kernel := program createKernel: 'julia'.
-
-	scale ifNil: [
-		"This is the first time #initialize is being run, so we need to initialize all variables.
-		 Otherwise, we reuse the existing values, only resetting the OpenCL state."
-		scale := 1.0.
-		origin := 0.0.
-	
-		"Would be better to use ExternalData so that we don't have to block when uploading
-		 the parameters to the GPU, but I don't know how write 32-bit floats via the FFI."
-		params := FloatArray new: 7.
-		params at: 5 put: 0.1.
-		params at: 6 put: 0.5.
-		params at: 7 put: 0.0.
-		
-		extent := 512@512.
-	].
-
-	paramsBuffer := context readWriteBufferOfSize: 7*4. "7 32-bit floats"
-	kernel argAt: 1 putPointer: paramsBuffer.
-
-	toneMapForm ifNotNil: [self toneMap: toneMapForm].
-	
-	rememberedExtent := extent.
-	extent := nil. "force recreation of work-image."
-	self extent: rememberedExtent.
-	
-	paramsDirty := true.
-	! !
-
-!OpenCLJuliaSet methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:53'!
-isDirty
-	"Answer true if parameters have changed and we need to re-render."
-	^paramsDirty! !
-
-!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 4/28/2010 01:01'!
-origin: newOrigin
-	self error: 'unimplemented'. "see #adjustOriginAndStepSize"
-	origin = newOrigin ifTrue: [^self "no change"].
-	origin := newOrigin.
-	self adjustOriginAndStepSize.
-	! !
-
-!OpenCLJuliaSet methodsFor: 'accessing' stamp: 'jcg 4/28/2010 09:29'!
-outputForm
-	^outputForm! !
-
-!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 01:46'!
-real
-	"Answer the 'real' parameter of the Julia set."
-	^params at: 5! !
-
-!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 12:48'!
-real: newReal
-	"Set the 'real' parameter of the Julia set."
-	| old |
-	old := params at: 5.
-	params at: 5 put: newReal.
-	old = (params at: 5) ifTrue: [^self "no change"].
-	paramsDirty := true! !
-
-!OpenCLJuliaSet methodsFor: 'private' stamp: 'jmv 7/1/2016 16:54'!
-runKernel
-	paramsDirty ifTrue: [
-		"Would be nice if this were non-blocking..."
-		lastEvent := queue
-						writeBuffer: paramsBuffer
-						from: params
-						waitOn: lastEvent.
-		paramsDirty := false.
-	].
-
-	lastEvent := queue
-					runKernel: kernel
-					workDim: 2
-					globalOffset: #(0 0)
-					globalSize: {extent x roundUpTo: 32. extent y roundUpTo: 4}
-					localSize: #(32 4)
-					waitOn: lastEvent.
-	queue
-			readImage: workImage
-			block: true
-			origin: #(0 0 0)
-			region: {extent x. extent y. 1}
-			rowPitch: outputForm wordsPerLine * 4
-			slicePitch: 0
-			pointer: outputForm
-			waitOn: lastEvent.
-	lastEvent := nil! !
-
-!OpenCLJuliaSet methodsFor: 'private' stamp: 'jcg 5/1/2010 01:11'!
-runKernelAndDisplay
-	self runKernel.
-	outputForm displayAt: 0@0.! !
-
-!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 4/28/2010 01:02'!
-scale: newScale
-	self error: 'unimplemented'. "see #adjustOriginAndStepSize"
-	scale = newScale ifTrue: [^self "no change"].
-	scale := newScale.
-	self adjustOriginAndStepSize.! !
-
-!OpenCLJuliaSet methodsFor: 'private' stamp: 'jmv 8/7/2015 15:16'!
-sourceCode
-	"Answer the OpenCL source code for the Julia set program."
-^'
-__constant sampler_t sampler = 	CLK_NORMALIZED_COORDS_TRUE | 
-									CLK_FILTER_LINEAR |
-									CLK_ADDRESS_CLAMP_TO_EDGE ;
-
-/* 	params[0]	x-origin
-	params[1]	y-origin
-	params[2]	x-step
-	params[3]	y-step
-	params[4]	real coefficient
-	params[5]	imaginary coefficient
-	params[6]	tone-map v-coord (u is computed based on # of iterations)
-*/
-			
-__kernel void
-julia (int iterations,
-	__constant float* params,
-	__read_only image2d_t tone_map,
-	__write_only image2d_t dst_image)
-{
-
-	if (get_global_id(0) >= get_image_width(dst_image)) return;
-	if (get_global_id(1) >= get_image_height(dst_image)) return;
-	
-	float x = params[0] + (params[2]*(float)get_global_id(0));
-	float y = params[1] + (params[3]*(float)get_global_id(1));
-	float real = params[4];
-	float imaginary = params[5];
-
-	int count = 0;	
-	while (count < iterations) {
-		if (x*x + y*y > 4.0) break;
-		count++;
-		
-		float new_x = x*x - y*y + real;
-		float new_y = 2*x*y + imaginary;
-		x = new_x;
-		y = new_y;	
-	}
-
-	float2 tex_coord = (float2)((float)count / (float)iterations, params[6]);
-	write_imagef(	dst_image, 
-					(int2)(get_global_id(0), get_global_id(1)), 
-					read_imagef(tone_map, sampler, tex_coord));
-}'! !
-
-!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 7/1/2016 16:56'!
-toneMap: newToneMapForm
-	| |
-	
-	toneMapForm := newToneMapForm.
-	toneMapImage ifNotNil: [
-		self waitForEvent.
-		toneMapImage destroy.
-	].
-
-	"We clamp at a set number of iterations... if we haven't diverged after that long, 
-	 we consider the point to be in the set.  We use the number of iterations before
-	 diverging to pick a color to shade the pixel.  Therefore, it makes sense to make
-	 the number of iterations equal to the width of the tone-map."
-	iterations := toneMapForm width.
-	kernel argAt: 0 putInt: iterations.
-
-	toneMapImage := context
-						newImage2D: CL_MEM_READ_ONLY
-						format: CLImageFormatStruct bgra8888norm
-						width: toneMapForm width
-						height: toneMapForm height
-						rowPitch: nil
-						hostPointer: nil.
-	kernel argAt: 2 putPointer: toneMapImage.
-	lastEvent := queue
-					writeImage: toneMapImage
-					block: true
-					origin: #(0 0 0)
-					region: {toneMapImage width. toneMapImage height. 1}
-					rowPitch: toneMapForm wordsPerLine * 4
-					slicePitch: 0
-					pointer: toneMapForm
-					waitOn: lastEvent.
-	paramsDirty := true! !
-
-!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 01:02'!
-toneMapV: texVCoord
-	params at: 7 put: texVCoord.
-	paramsDirty := true! !
-
-!OpenCLJuliaSet methodsFor: 'tone-maps' stamp: 'jmv 8/10/2015 12:13'!
-useRainbowToneMap
-	"Generate a tone-map that cycles through the color-wheel.."
-	| rainbow s |
-s _ 32. "original"
-s _ 80.
-	rainbow := Form extent: s@s depth: 32.
-	1 to: s-2 do: [:i |
-		0 to: s-1 do: [:j |
-			| hue bright |
-			hue := ((j*11.25*32/s) + (i *11.25*32/s)) \\ 360.0.
-			bright := (s-2 - i) / (s-2*2.0) + 0.35.
-			rainbow colorAt: i@j put: (Color h: hue s: 1.0 v: bright).
-		].
-	].
-	0 to: s-1 do: [:j |
-		rainbow colorAt: 0@j put: (Color transparent).
-		rainbow colorAt: s-1@j put: (Color transparent).
-	].
-
-	self toneMap: rainbow.! !
-
-!OpenCLJuliaSet methodsFor: 'private' stamp: 'jcg 4/27/2010 02:06'!
-waitForEvent
-	"If there's an event pending, wait for it to complete."
-	lastEvent ifNotNil: [lastEvent wait].
-	lastEvent := nil.! !
-
-!OpenCLJuliaSet class methodsFor: 'examples' stamp: 'jmv 8/7/2015 15:03'!
-example1
-	"
-	OpenCLJuliaSet example1
-	"
-	| clExample |
-
-	clExample := OpenCLJuliaSet new.
-	clExample extent: 1024@1024.
-	clExample useRainbowToneMap.
-	
-	(ImageMorph new image:  clExample outputForm) openInHand.	
-			
-	0 to: 360 by: 2 do: [:i |
-		| rads |
-		rads := i degreesToRadians.
-		clExample real: rads sin / 2.0*1.3.
-		clExample imaginary: rads cos / 2.0*1.1.	
-		clExample runKernel.
-		clExample outputForm display.
-	"	Display forceToScreen: (0@0 corner: 1024@1024)."
-	].
-
-
-	
-! !
-
-!OpenCLFill256 methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:00'!
-initialize
-"	device := OpenCLPlatform allPlatforms first allGPUs first."
-"	device := (OpenCLPlatform allPlatforms collect: [:platform |
-		platform allGPUs, platform allCPUs]) concatenation first."
-	device := OpenCLPlatform allPlatforms first allDevices first.
-	context := OpenCLContext newForDevices: {device}.
-	queue := context commandQueueOn: device.
-	program := context programWithSource: self sourceCode.
-	program build.
-	buffer := context readWriteBufferOfSize: 256*4.  "256 integers"
-	kernel1d := program createKernel: 'fill256_1d'.
-	kernel1d argAt: 0 putPointer: buffer.
-	kernel2d := program createKernel: 'fill256_2d'.
-	kernel2d argAt: 0 putPointer: buffer! !
-
-!OpenCLFill256 methodsFor: 'actions' stamp: 'jcg 2/16/2010 10:57'!
-run1d
-	| evt output |
-	evt := queue 
-			runKernel: kernel1d
-			workDim: 1
-			globalOffset: #(0)
-			globalSize: #(256)
-			localSize: #(16)
-			waitOn: nil.
-	output := IntegerArray new: 256.
-	queue readBuffer: buffer into: output waitOn: evt.
-	^output! !
-
-!OpenCLFill256 methodsFor: 'actions' stamp: 'jcg 2/16/2010 11:00'!
-run2d
-	| evt output |
-	evt := queue 
-			runKernel: kernel2d
-			workDim: 2
-			globalOffset: #(0 0)
-			globalSize: #(16 16)
-			localSize: #(4 4)
-			waitOn: nil.
-	output := IntegerArray new: 256.
-	queue readBuffer: buffer into: output waitOn: evt.
-	^output! !
-
-!OpenCLFill256 methodsFor: 'private' stamp: 'jmv 8/7/2015 15:12'!
-sourceCode
-	"Answer the OpenCL source code for this example."
-^'
-	__kernel void
-	fill256_1d(__global int* target)
-	{
-		int index = get_global_id(0);
-		target[index] = index;
-	}
-	
-	__kernel void
-	fill256_2d(__global int* target)
-	{
-		int x = get_global_id(0);
-		int y = get_global_id(1);
-		int index = x*16 + y;
-		target[index] = index;
-	}'! !
-
-!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 9/9/2015 11:19'!
-adaptType: cTypeString
-	| answer |
-	answer := cTypeString.
-	answer := answer copyReplaceAll: 'const'  with: 'const__' .
-	answer := answer copyReplaceAll: '*'  with: ' __ptr' .
-	answer := answer asLegalSelector.
-	^ answer! !
-
-!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 9/9/2015 10:07'!
-clearConstantInitializers
-	"
-	OpenCLMethodGenerator clearConstantInitializers
-	"
-	| cls |
-	cls _ OpenCLConstants class.
-	cls selectors copy do: [ :sel |
-		((cls whichCategoryIncludesSelector: sel) = 'class initialization')
-			ifTrue: [cls removeSelector: sel ]].
-	cls organization removeEmptyCategories! !
-
-!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 9/9/2015 10:04'!
-clearFFICalls
-	"
-	OpenCLMethodGenerator clearFFICalls
-	"
-	OpenCLPrimitiveInterface class subclassesDo: [ :cls |
-		cls selectors copy do: [ :sel |
-			((cls whichCategoryIncludesSelector: sel) beginsWith: 'FFI-generated-')
-				ifTrue: [cls removeSelector: sel ]].
-		cls organization removeEmptyCategories ]! !
-
-!OpenCLMethodGenerator class methodsFor: 'C source code' stamp: 'jmv 10/28/2015 15:40'!
-constantDeclarationsInC
-	"Cut'n'paste directly from cl.h header file.
-	Updated to OpenCL 2.0
-	From https://www.khronos.org/registry/cl/api/2.0/"
-^'
-// Error Codes
-#define CL_SUCCESS                                  0
-#define CL_DEVICE_NOT_FOUND                         -1
-#define CL_DEVICE_NOT_AVAILABLE                     -2
-#define CL_COMPILER_NOT_AVAILABLE                   -3
-#define CL_MEM_OBJECT_ALLOCATION_FAILURE            -4
-#define CL_OUT_OF_RESOURCES                         -5
-#define CL_OUT_OF_HOST_MEMORY                       -6
-#define CL_PROFILING_INFO_NOT_AVAILABLE             -7
-#define CL_MEM_COPY_OVERLAP                         -8
-#define CL_IMAGE_FORMAT_MISMATCH                    -9
-#define CL_IMAGE_FORMAT_NOT_SUPPORTED               -10
-#define CL_BUILD_PROGRAM_FAILURE                    -11
-#define CL_MAP_FAILURE                              -12
-#define CL_MISALIGNED_SUB_BUFFER_OFFSET             -13
-#define CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST -14
-#define CL_COMPILE_PROGRAM_FAILURE                  -15
-#define CL_LINKER_NOT_AVAILABLE                     -16
-#define CL_LINK_PROGRAM_FAILURE                     -17
-#define CL_DEVICE_PARTITION_FAILED                  -18
-#define CL_KERNEL_ARG_INFO_NOT_AVAILABLE            -19
-
-#define CL_INVALID_VALUE                            -30
-#define CL_INVALID_DEVICE_TYPE                      -31
-#define CL_INVALID_PLATFORM                         -32
-#define CL_INVALID_DEVICE                           -33
-#define CL_INVALID_CONTEXT                          -34
-#define CL_INVALID_QUEUE_PROPERTIES                 -35
-#define CL_INVALID_COMMAND_QUEUE                    -36
-#define CL_INVALID_HOST_PTR                         -37
-#define CL_INVALID_MEM_OBJECT                       -38
-#define CL_INVALID_IMAGE_FORMAT_DESCRIPTOR          -39
-#define CL_INVALID_IMAGE_SIZE                       -40
-#define CL_INVALID_SAMPLER                          -41
-#define CL_INVALID_BINARY                           -42
-#define CL_INVALID_BUILD_OPTIONS                    -43
-#define CL_INVALID_PROGRAM                          -44
-#define CL_INVALID_PROGRAM_EXECUTABLE               -45
-#define CL_INVALID_KERNEL_NAME                      -46
-#define CL_INVALID_KERNEL_DEFINITION                -47
-#define CL_INVALID_KERNEL                           -48
-#define CL_INVALID_ARG_INDEX                        -49
-#define CL_INVALID_ARG_VALUE                        -50
-#define CL_INVALID_ARG_SIZE                         -51
-#define CL_INVALID_KERNEL_ARGS                      -52
-#define CL_INVALID_WORK_DIMENSION                   -53
-#define CL_INVALID_WORK_GROUP_SIZE                  -54
-#define CL_INVALID_WORK_ITEM_SIZE                   -55
-#define CL_INVALID_GLOBAL_OFFSET                    -56
-#define CL_INVALID_EVENT_WAIT_LIST                  -57
-#define CL_INVALID_EVENT                            -58
-#define CL_INVALID_OPERATION                        -59
-#define CL_INVALID_GL_OBJECT                        -60
-#define CL_INVALID_BUFFER_SIZE                      -61
-#define CL_INVALID_MIP_LEVEL                        -62
-#define CL_INVALID_GLOBAL_WORK_SIZE                 -63
-#define CL_INVALID_PROPERTY                         -64
-#define CL_INVALID_IMAGE_DESCRIPTOR                 -65
-#define CL_INVALID_COMPILER_OPTIONS                 -66
-#define CL_INVALID_LINKER_OPTIONS                   -67
-#define CL_INVALID_DEVICE_PARTITION_COUNT           -68
-#define CL_INVALID_PIPE_SIZE                        -69
-#define CL_INVALID_DEVICE_QUEUE                     -70
-
-// OpenCL Version
-#define CL_VERSION_1_0                              1
-#define CL_VERSION_1_1                              1
-#define CL_VERSION_1_2                              1
-#define CL_VERSION_2_0                              1
-
-// cl_bool
-#define CL_FALSE                                    0
-#define CL_TRUE                                     1
-#define CL_BLOCKING                                 CL_TRUE
-#define CL_NON_BLOCKING                             CL_FALSE
-
-// cl_platform_info
-#define CL_PLATFORM_PROFILE                         0x0900
-#define CL_PLATFORM_VERSION                         0x0901
-#define CL_PLATFORM_NAME                            0x0902
-#define CL_PLATFORM_VENDOR                          0x0903
-#define CL_PLATFORM_EXTENSIONS                      0x0904
-
-// cl_device_type - bitfield
-#define CL_DEVICE_TYPE_DEFAULT                      (1 << 0)
-#define CL_DEVICE_TYPE_CPU                          (1 << 1)
-#define CL_DEVICE_TYPE_GPU                          (1 << 2)
-#define CL_DEVICE_TYPE_ACCELERATOR                  (1 << 3)
-#define CL_DEVICE_TYPE_CUSTOM                       (1 << 4)
-#define CL_DEVICE_TYPE_ALL                          0xFFFFFFFF
-
-// cl_device_info
-#define CL_DEVICE_TYPE                              0x1000
-#define CL_DEVICE_VENDOR_ID                         0x1001
-#define CL_DEVICE_MAX_COMPUTE_UNITS                 0x1002
-#define CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS          0x1003
-#define CL_DEVICE_MAX_WORK_GROUP_SIZE               0x1004
-#define CL_DEVICE_MAX_WORK_ITEM_SIZES               0x1005
-#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR       0x1006
-#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT      0x1007
-#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT        0x1008
-#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG       0x1009
-#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT      0x100A
-#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE     0x100B
-#define CL_DEVICE_MAX_CLOCK_FREQUENCY               0x100C
-#define CL_DEVICE_ADDRESS_BITS                      0x100D
-#define CL_DEVICE_MAX_READ_IMAGE_ARGS               0x100E
-#define CL_DEVICE_MAX_WRITE_IMAGE_ARGS              0x100F
-#define CL_DEVICE_MAX_MEM_ALLOC_SIZE                0x1010
-#define CL_DEVICE_IMAGE2D_MAX_WIDTH                 0x1011
-#define CL_DEVICE_IMAGE2D_MAX_HEIGHT                0x1012
-#define CL_DEVICE_IMAGE3D_MAX_WIDTH                 0x1013
-#define CL_DEVICE_IMAGE3D_MAX_HEIGHT                0x1014
-#define CL_DEVICE_IMAGE3D_MAX_DEPTH                 0x1015
-#define CL_DEVICE_IMAGE_SUPPORT                     0x1016
-#define CL_DEVICE_MAX_PARAMETER_SIZE                0x1017
-#define CL_DEVICE_MAX_SAMPLERS                      0x1018
-#define CL_DEVICE_MEM_BASE_ADDR_ALIGN               0x1019
-#define CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE          0x101A
-#define CL_DEVICE_SINGLE_FP_CONFIG                  0x101B
-#define CL_DEVICE_GLOBAL_MEM_CACHE_TYPE             0x101C
-#define CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE         0x101D
-#define CL_DEVICE_GLOBAL_MEM_CACHE_SIZE             0x101E
-#define CL_DEVICE_GLOBAL_MEM_SIZE                   0x101F
-#define CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE          0x1020
-#define CL_DEVICE_MAX_CONSTANT_ARGS                 0x1021
-#define CL_DEVICE_LOCAL_MEM_TYPE                    0x1022
-#define CL_DEVICE_LOCAL_MEM_SIZE                    0x1023
-#define CL_DEVICE_ERROR_CORRECTION_SUPPORT          0x1024
-#define CL_DEVICE_PROFILING_TIMER_RESOLUTION        0x1025
-#define CL_DEVICE_ENDIAN_LITTLE                     0x1026
-#define CL_DEVICE_AVAILABLE                         0x1027
-#define CL_DEVICE_COMPILER_AVAILABLE                0x1028
-#define CL_DEVICE_EXECUTION_CAPABILITIES            0x1029
-// CL_DEVICE_QUEUE_PROPERTIES is deprecated!!
-#define CL_DEVICE_QUEUE_PROPERTIES                      0x102A    
-#define CL_DEVICE_QUEUE_ON_HOST_PROPERTIES              0x102A
-#define CL_DEVICE_NAME                              0x102B
-#define CL_DEVICE_VENDOR                            0x102C
-#define CL_DRIVER_VERSION                           0x102D
-#define CL_DEVICE_PROFILE                           0x102E
-#define CL_DEVICE_VERSION                           0x102F
-#define CL_DEVICE_EXTENSIONS                        0x1030
-#define CL_DEVICE_PLATFORM                          0x1031
-#define CL_DEVICE_DOUBLE_FP_CONFIG                      0x1032
-// 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG
-#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF           0x1034
-// CL_DEVICE_HOST_UNIFIED_MEMORY is deprecated!!
-#define CL_DEVICE_HOST_UNIFIED_MEMORY                   0x1035
-#define CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR              0x1036
-#define CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT             0x1037
-#define CL_DEVICE_NATIVE_VECTOR_WIDTH_INT               0x1038
-#define CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG              0x1039
-#define CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT             0x103A
-#define CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE            0x103B
-#define CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF              0x103C
-#define CL_DEVICE_OPENCL_C_VERSION                      0x103D
-#define CL_DEVICE_LINKER_AVAILABLE                      0x103E
-#define CL_DEVICE_BUILT_IN_KERNELS                      0x103F
-#define CL_DEVICE_IMAGE_MAX_BUFFER_SIZE                 0x1040
-#define CL_DEVICE_IMAGE_MAX_ARRAY_SIZE                  0x1041
-#define CL_DEVICE_PARENT_DEVICE                         0x1042
-#define CL_DEVICE_PARTITION_MAX_SUB_DEVICES             0x1043
-#define CL_DEVICE_PARTITION_PROPERTIES                  0x1044
-#define CL_DEVICE_PARTITION_AFFINITY_DOMAIN             0x1045
-#define CL_DEVICE_PARTITION_TYPE                        0x1046
-#define CL_DEVICE_REFERENCE_COUNT                       0x1047
-#define CL_DEVICE_PREFERRED_INTEROP_USER_SYNC           0x1048
-#define CL_DEVICE_PRINTF_BUFFER_SIZE                    0x1049
-#define CL_DEVICE_IMAGE_PITCH_ALIGNMENT                 0x104A
-#define CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT          0x104B
-#define CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS             0x104C
-#define CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE              0x104D
-#define CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES            0x104E
-#define CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE        0x104F
-#define CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE              0x1050
-#define CL_DEVICE_MAX_ON_DEVICE_QUEUES                  0x1051
-#define CL_DEVICE_MAX_ON_DEVICE_EVENTS                  0x1052
-#define CL_DEVICE_SVM_CAPABILITIES                      0x1053
-#define CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE  0x1054
-#define CL_DEVICE_MAX_PIPE_ARGS                         0x1055
-#define CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS          0x1056
-#define CL_DEVICE_PIPE_MAX_PACKET_SIZE                  0x1057
-#define CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT   0x1058
-#define CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT     0x1059
-#define CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT      0x105A
-	
-// cl_device_fp_config - bitfield
-#define CL_FP_DENORM                                (1 << 0)
-#define CL_FP_INF_NAN                               (1 << 1)
-#define CL_FP_ROUND_TO_NEAREST                      (1 << 2)
-#define CL_FP_ROUND_TO_ZERO                         (1 << 3)
-#define CL_FP_ROUND_TO_INF                          (1 << 4)
-#define CL_FP_FMA                                   (1 << 5)
-#define CL_FP_SOFT_FLOAT                            (1 << 6)
-#define CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT         (1 << 7)
-
-// cl_device_mem_cache_type
-#define CL_NONE                                     0x0
-#define CL_READ_ONLY_CACHE                          0x1
-#define CL_READ_WRITE_CACHE                         0x2
-
-// cl_device_local_mem_type
-#define CL_LOCAL                                    0x1
-#define CL_GLOBAL                                   0x2
-
-// cl_device_exec_capabilities - bitfield
-#define CL_EXEC_KERNEL                              (1 << 0)
-#define CL_EXEC_NATIVE_KERNEL                       (1 << 1)
-
-// cl_command_queue_properties - bitfield
-#define CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE      (1 << 0)
-#define CL_QUEUE_PROFILING_ENABLE                   (1 << 1)
-#define CL_QUEUE_ON_DEVICE                          (1 << 2)
-#define CL_QUEUE_ON_DEVICE_DEFAULT                  (1 << 3)
-
-// cl_context_info
-#define CL_CONTEXT_REFERENCE_COUNT                  0x1080
-#define CL_CONTEXT_DEVICES                          0x1081
-#define CL_CONTEXT_PROPERTIES                       0x1082
-#define CL_CONTEXT_NUM_DEVICES                      0x1083
-
-// cl_context_properties
-#define CL_CONTEXT_PLATFORM                         0x1084
-#define CL_CONTEXT_INTEROP_USER_SYNC                0x1085
-    
-// cl_device_partition_property 
-#define CL_DEVICE_PARTITION_EQUALLY                 0x1086
-#define CL_DEVICE_PARTITION_BY_COUNTS               0x1087
-#define CL_DEVICE_PARTITION_BY_COUNTS_LIST_END      0x0
-#define CL_DEVICE_PARTITION_BY_AFFINITY_DOMAIN      0x1088
-    
-// cl_device_affinity_domain 
-#define CL_DEVICE_AFFINITY_DOMAIN_NUMA               (1 << 0)
-#define CL_DEVICE_AFFINITY_DOMAIN_L4_CACHE           (1 << 1)
-#define CL_DEVICE_AFFINITY_DOMAIN_L3_CACHE           (1 << 2)
-#define CL_DEVICE_AFFINITY_DOMAIN_L2_CACHE           (1 << 3)
-#define CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE           (1 << 4)
-#define CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE (1 << 5)
-    
-// cl_device_svm_capabilities 
-#define CL_DEVICE_SVM_COARSE_GRAIN_BUFFER           (1 << 0)
-#define CL_DEVICE_SVM_FINE_GRAIN_BUFFER             (1 << 1)
-#define CL_DEVICE_SVM_FINE_GRAIN_SYSTEM             (1 << 2)
-#define CL_DEVICE_SVM_ATOMICS                       (1 << 3)
-
-// cl_command_queue_info
-#define CL_QUEUE_CONTEXT                            0x1090
-#define CL_QUEUE_DEVICE                             0x1091
-#define CL_QUEUE_REFERENCE_COUNT                    0x1092
-#define CL_QUEUE_PROPERTIES                         0x1093
-#define CL_QUEUE_SIZE                               0x1094
-
-// cl_mem_flags and cl_svm_mem_flags - bitfield 
-#define CL_MEM_READ_WRITE                           (1 << 0)
-#define CL_MEM_WRITE_ONLY                           (1 << 1)
-#define CL_MEM_READ_ONLY                            (1 << 2)
-#define CL_MEM_USE_HOST_PTR                         (1 << 3)
-#define CL_MEM_ALLOC_HOST_PTR                       (1 << 4)
-#define CL_MEM_COPY_HOST_PTR                        (1 << 5)
-// reserved                                         (1 << 6)    
-#define CL_MEM_HOST_WRITE_ONLY                      (1 << 7)
-#define CL_MEM_HOST_READ_ONLY                       (1 << 8)
-#define CL_MEM_HOST_NO_ACCESS                       (1 << 9)
-// used by cl_svm_mem_flags only
-#define CL_MEM_SVM_FINE_GRAIN_BUFFER                (1 << 10)   
-// used by cl_svm_mem_flags only
-#define CL_MEM_SVM_ATOMICS                          (1 << 11)   
-#define CL_MEM_KERNEL_READ_AND_WRITE                (1 << 12)
-
-// cl_mem_migration_flags - bitfield
-#define CL_MIGRATE_MEM_OBJECT_HOST                  (1 << 0)
-#define CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED     (1 << 1)
-
-// cl_channel_order
-#define CL_R                                        0x10B0
-#define CL_A                                        0x10B1
-#define CL_RG                                       0x10B2
-#define CL_RA                                       0x10B3
-#define CL_RGB                                      0x10B4
-#define CL_RGBA                                     0x10B5
-#define CL_BGRA                                     0x10B6
-#define CL_ARGB                                     0x10B7
-#define CL_INTENSITY                                0x10B8
-#define CL_LUMINANCE                                0x10B9
-#define CL_Rx                                       0x10BA
-#define CL_RGx                                      0x10BB
-#define CL_RGBx                                     0x10BC
-#define CL_DEPTH                                    0x10BD
-#define CL_DEPTH_STENCIL                            0x10BE
-#define CL_sRGB                                     0x10BF
-#define CL_sRGBx                                    0x10C0
-#define CL_sRGBA                                    0x10C1
-#define CL_sBGRA                                    0x10C2
-#define CL_ABGR                                     0x10C3
-
-// cl_channel_type
-#define CL_SNORM_INT8                               0x10D0
-#define CL_SNORM_INT16                              0x10D1
-#define CL_UNORM_INT8                               0x10D2
-#define CL_UNORM_INT16                              0x10D3
-#define CL_UNORM_SHORT_565                          0x10D4
-#define CL_UNORM_SHORT_555                          0x10D5
-#define CL_UNORM_INT_101010                         0x10D6
-#define CL_SIGNED_INT8                              0x10D7
-#define CL_SIGNED_INT16                             0x10D8
-#define CL_SIGNED_INT32                             0x10D9
-#define CL_UNSIGNED_INT8                            0x10DA
-#define CL_UNSIGNED_INT16                           0x10DB
-#define CL_UNSIGNED_INT32                           0x10DC
-#define CL_HALF_FLOAT                               0x10DD
-#define CL_FLOAT                                    0x10DE
-#define CL_UNORM_INT24                              0x10DF
-
-// cl_mem_object_type
-#define CL_MEM_OBJECT_BUFFER                        0x10F0
-#define CL_MEM_OBJECT_IMAGE2D                       0x10F1
-#define CL_MEM_OBJECT_IMAGE3D                       0x10F2
-#define CL_MEM_OBJECT_IMAGE2D_ARRAY                 0x10F3
-#define CL_MEM_OBJECT_IMAGE1D                       0x10F4
-#define CL_MEM_OBJECT_IMAGE1D_ARRAY                 0x10F5
-#define CL_MEM_OBJECT_IMAGE1D_BUFFER                0x10F6
-#define CL_MEM_OBJECT_PIPE                          0x10F7
-
-// cl_mem_info
-#define CL_MEM_TYPE                                 0x1100
-#define CL_MEM_FLAGS                                0x1101
-#define CL_MEM_SIZE                                 0x1102
-#define CL_MEM_HOST_PTR                             0x1103
-#define CL_MEM_MAP_COUNT                            0x1104
-#define CL_MEM_REFERENCE_COUNT                      0x1105
-#define CL_MEM_CONTEXT                              0x1106
-#define CL_MEM_ASSOCIATED_MEMOBJECT                 0x1107
-#define CL_MEM_OFFSET                               0x1108
-#define CL_MEM_USES_SVM_POINTER                     0x1109
-
-// cl_image_info
-#define CL_IMAGE_FORMAT                             0x1110
-#define CL_IMAGE_ELEMENT_SIZE                       0x1111
-#define CL_IMAGE_ROW_PITCH                          0x1112
-#define CL_IMAGE_SLICE_PITCH                        0x1113
-#define CL_IMAGE_WIDTH                              0x1114
-#define CL_IMAGE_HEIGHT                             0x1115
-#define CL_IMAGE_DEPTH                              0x1116
-#define CL_IMAGE_ARRAY_SIZE                         0x1117
-#define CL_IMAGE_BUFFER                             0x1118
-#define CL_IMAGE_NUM_MIP_LEVELS                     0x1119
-#define CL_IMAGE_NUM_SAMPLES                        0x111A
-    
-// cl_pipe_info 
-#define CL_PIPE_PACKET_SIZE                         0x1120
-#define CL_PIPE_MAX_PACKETS                         0x1121
-
-// cl_addressing_mode
-#define CL_ADDRESS_NONE                             0x1130
-#define CL_ADDRESS_CLAMP_TO_EDGE                    0x1131
-#define CL_ADDRESS_CLAMP                            0x1132
-#define CL_ADDRESS_REPEAT                           0x1133
-#define CL_ADDRESS_MIRRORED_REPEAT                  0x1134
-
-// cl_filter_mode
-#define CL_FILTER_NEAREST                           0x1140
-#define CL_FILTER_LINEAR                            0x1141
-
-// cl_sampler_info
-#define CL_SAMPLER_REFERENCE_COUNT                  0x1150
-#define CL_SAMPLER_CONTEXT                          0x1151
-#define CL_SAMPLER_NORMALIZED_COORDS                0x1152
-#define CL_SAMPLER_ADDRESSING_MODE                  0x1153
-#define CL_SAMPLER_FILTER_MODE                      0x1154
-#define CL_SAMPLER_MIP_FILTER_MODE                  0x1155
-#define CL_SAMPLER_LOD_MIN                          0x1156
-#define CL_SAMPLER_LOD_MAX                          0x1157
-
-// cl_map_flags - bitfield
-#define CL_MAP_READ                                 (1 << 0)
-#define CL_MAP_WRITE                                (1 << 1)
-#define CL_MAP_WRITE_INVALIDATE_REGION              (1 << 2)
-
-// cl_program_info
-#define CL_PROGRAM_REFERENCE_COUNT                  0x1160
-#define CL_PROGRAM_CONTEXT                          0x1161
-#define CL_PROGRAM_NUM_DEVICES                      0x1162
-#define CL_PROGRAM_DEVICES                          0x1163
-#define CL_PROGRAM_SOURCE                           0x1164
-#define CL_PROGRAM_BINARY_SIZES                     0x1165
-#define CL_PROGRAM_BINARIES                         0x1166
-#define CL_PROGRAM_NUM_KERNELS                      0x1167
-#define CL_PROGRAM_KERNEL_NAMES                     0x1168
-
-// cl_program_build_info
-#define CL_PROGRAM_BUILD_STATUS                     0x1181
-#define CL_PROGRAM_BUILD_OPTIONS                    0x1182
-#define CL_PROGRAM_BUILD_LOG                        0x1183
-#define CL_PROGRAM_BINARY_TYPE                      0x1184
-#define CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE 0x1185
-    
-// cl_program_binary_type 
-#define CL_PROGRAM_BINARY_TYPE_NONE                 0x0
-#define CL_PROGRAM_BINARY_TYPE_COMPILED_OBJECT      0x1
-#define CL_PROGRAM_BINARY_TYPE_LIBRARY              0x2
-#define CL_PROGRAM_BINARY_TYPE_EXECUTABLE           0x4
-
-// cl_build_status
-#define CL_BUILD_SUCCESS                            0
-#define CL_BUILD_NONE                               -1
-#define CL_BUILD_ERROR                              -2
-#define CL_BUILD_IN_PROGRESS                        -3
-
-// cl_kernel_info
-#define CL_KERNEL_FUNCTION_NAME                     0x1190
-#define CL_KERNEL_NUM_ARGS                          0x1191
-#define CL_KERNEL_REFERENCE_COUNT                   0x1192
-#define CL_KERNEL_CONTEXT                           0x1193
-#define CL_KERNEL_PROGRAM                           0x1194
-#define CL_KERNEL_ATTRIBUTES                        0x1195
-
-// cl_kernel_arg_info 
-#define CL_KERNEL_ARG_ADDRESS_QUALIFIER             0x1196
-#define CL_KERNEL_ARG_ACCESS_QUALIFIER              0x1197
-#define CL_KERNEL_ARG_TYPE_NAME                     0x1198
-#define CL_KERNEL_ARG_TYPE_QUALIFIER                0x1199
-#define CL_KERNEL_ARG_NAME                          0x119A
-
-// cl_kernel_arg_address_qualifier 
-#define CL_KERNEL_ARG_ADDRESS_GLOBAL                0x119B
-#define CL_KERNEL_ARG_ADDRESS_LOCAL                 0x119C
-#define CL_KERNEL_ARG_ADDRESS_CONSTANT              0x119D
-#define CL_KERNEL_ARG_ADDRESS_PRIVATE               0x119E
-
-// cl_kernel_arg_access_qualifier 
-#define CL_KERNEL_ARG_ACCESS_READ_ONLY              0x11A0
-#define CL_KERNEL_ARG_ACCESS_WRITE_ONLY             0x11A1
-#define CL_KERNEL_ARG_ACCESS_READ_WRITE             0x11A2
-#define CL_KERNEL_ARG_ACCESS_NONE                   0x11A3
-    
-// cl_kernel_arg_type_qualifer 
-#define CL_KERNEL_ARG_TYPE_NONE                     0
-#define CL_KERNEL_ARG_TYPE_CONST                    (1 << 0)
-#define CL_KERNEL_ARG_TYPE_RESTRICT                 (1 << 1)
-#define CL_KERNEL_ARG_TYPE_VOLATILE                 (1 << 2)
-#define CL_KERNEL_ARG_TYPE_PIPE                     (1 << 3)
-
-// cl_kernel_work_group_info
-#define CL_KERNEL_WORK_GROUP_SIZE                   0x11B0
-#define CL_KERNEL_COMPILE_WORK_GROUP_SIZE           0x11B1
-#define CL_KERNEL_LOCAL_MEM_SIZE                    0x11B2
-#define CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE 0x11B3
-#define CL_KERNEL_PRIVATE_MEM_SIZE                  0x11B4
-#define CL_KERNEL_GLOBAL_WORK_SIZE                  0x11B5
-    
-// cl_kernel_exec_info 
-#define CL_KERNEL_EXEC_INFO_SVM_PTRS                0x11B6
-#define CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM   0x11B7
-
-// cl_event_info
-#define CL_EVENT_COMMAND_QUEUE                      0x11D0
-#define CL_EVENT_COMMAND_TYPE                       0x11D1
-#define CL_EVENT_REFERENCE_COUNT                    0x11D2
-#define CL_EVENT_COMMAND_EXECUTION_STATUS           0x11D3
-#define CL_EVENT_CONTEXT                            0x11D4
-
-// cl_command_type
-#define CL_COMMAND_NDRANGE_KERNEL                   0x11F0
-#define CL_COMMAND_TASK                             0x11F1
-#define CL_COMMAND_NATIVE_KERNEL                    0x11F2
-#define CL_COMMAND_READ_BUFFER                      0x11F3
-#define CL_COMMAND_WRITE_BUFFER                     0x11F4
-#define CL_COMMAND_COPY_BUFFER                      0x11F5
-#define CL_COMMAND_READ_IMAGE                       0x11F6
-#define CL_COMMAND_WRITE_IMAGE                      0x11F7
-#define CL_COMMAND_COPY_IMAGE                       0x11F8
-#define CL_COMMAND_COPY_IMAGE_TO_BUFFER             0x11F9
-#define CL_COMMAND_COPY_BUFFER_TO_IMAGE             0x11FA
-#define CL_COMMAND_MAP_BUFFER                       0x11FB
-#define CL_COMMAND_MAP_IMAGE                        0x11FC
-#define CL_COMMAND_UNMAP_MEM_OBJECT                 0x11FD
-#define CL_COMMAND_MARKER                           0x11FE
-#define CL_COMMAND_ACQUIRE_GL_OBJECTS               0x11FF
-#define CL_COMMAND_RELEASE_GL_OBJECTS               0x1200
-#define CL_COMMAND_READ_BUFFER_RECT                 0x1201
-#define CL_COMMAND_WRITE_BUFFER_RECT                0x1202
-#define CL_COMMAND_COPY_BUFFER_RECT                 0x1203
-#define CL_COMMAND_USER                             0x1204
-#define CL_COMMAND_BARRIER                          0x1205
-#define CL_COMMAND_MIGRATE_MEM_OBJECTS              0x1206
-#define CL_COMMAND_FILL_BUFFER                      0x1207
-#define CL_COMMAND_FILL_IMAGE                       0x1208
-#define CL_COMMAND_SVM_FREE                         0x1209
-#define CL_COMMAND_SVM_MEMCPY                       0x120A
-#define CL_COMMAND_SVM_MEMFILL                      0x120B
-#define CL_COMMAND_SVM_MAP                          0x120C
-#define CL_COMMAND_SVM_UNMAP                        0x120D
-
-// command execution status
-#define CL_COMPLETE                                 0x0
-#define CL_RUNNING                                  0x1
-#define CL_SUBMITTED                                0x2
-#define CL_QUEUED                                   0x3
-
-// cl_buffer_create_type  
-#define CL_BUFFER_CREATE_TYPE_REGION                0x1220
-  
-// cl_profiling_info
-#define CL_PROFILING_COMMAND_QUEUED                 0x1280
-#define CL_PROFILING_COMMAND_SUBMIT                 0x1281
-#define CL_PROFILING_COMMAND_START                  0x1282
-#define CL_PROFILING_COMMAND_END                    0x1283
-#define CL_PROFILING_COMMAND_COMPLETE               0x1284
-'! !
-
-!OpenCLMethodGenerator class methodsFor: 'C source code' stamp: 'jmv 10/29/2015 12:25'!
-functionDeclarationsInC
-	"Cut'n'paste directly from cl.h header file.
-	Updated to OpenCL 2.0
-	From https://www.khronos.org/registry/cl/api/2.0/"
-^ '
-// Platform API
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetPlatformIDs(cl_uint          /* num_entries */,
-                 cl_platform_id * /* platforms */,
-                 cl_uint *        /* num_platforms */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL 
-clGetPlatformInfo(cl_platform_id   /* platform */, 
-                  cl_platform_info /* param_name */,
-                  size_t           /* param_value_size */, 
-                  void *           /* param_value */,
-                  size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-// Device APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetDeviceIDs(cl_platform_id   /* platform */,
-               cl_device_type   /* device_type */, 
-               cl_uint          /* num_entries */, 
-               cl_device_id *   /* devices */, 
-               cl_uint *        /* num_devices */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetDeviceInfo(cl_device_id    /* device */,
-                cl_device_info  /* param_name */, 
-                size_t          /* param_value_size */, 
-                void *          /* param_value */,
-                size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clCreateSubDevices(cl_device_id                         /* in_device */,
-                   const cl_device_partition_property * /* properties */,
-                   cl_uint                              /* num_devices */,
-                   cl_device_id *                       /* out_devices */,
-                   cl_uint *                            /* num_devices_ret */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainDevice(cl_device_id /* device */) CL_API_SUFFIX__VERSION_1_2;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseDevice(cl_device_id /* device */) CL_API_SUFFIX__VERSION_1_2;
-
-// Context APIs  
-extern CL_API_ENTRY cl_context CL_API_CALL
-clCreateContext(const cl_context_properties * /* properties */,
-                cl_uint                       /* num_devices */,
-                const cl_device_id *          /* devices */,
-                void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
-                void *                        /* user_data */,
-                cl_int *                      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_context CL_API_CALL
-clCreateContextFromType(const cl_context_properties * /* properties */,
-                        cl_device_type                /* device_type */,
-                        void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
-                        void *                        /* user_data */,
-                        cl_int *                      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainContext(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseContext(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetContextInfo(cl_context         /* context */, 
-                 cl_context_info    /* param_name */, 
-                 size_t             /* param_value_size */, 
-                 void *             /* param_value */, 
-                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-// Command Queue APIs
-extern CL_API_ENTRY cl_command_queue CL_API_CALL
-clCreateCommandQueueWithProperties(cl_context               /* context */,
-                                   cl_device_id             /* device */,
-                                   const cl_queue_properties *    /* properties */,
-                                   cl_int *                 /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainCommandQueue(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseCommandQueue(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetCommandQueueInfo(cl_command_queue      /* command_queue */,
-                      cl_command_queue_info /* param_name */,
-                      size_t                /* param_value_size */,
-                      void *                /* param_value */,
-                      size_t *              /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-// Memory Object APIs
-extern CL_API_ENTRY cl_mem CL_API_CALL
-clCreateBuffer(cl_context   /* context */,
-               cl_mem_flags /* flags */,
-               size_t       /* size */,
-               void *       /* host_ptr */,
-               cl_int *     /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_mem CL_API_CALL
-clCreateSubBuffer(cl_mem                   /* buffer */,
-                  cl_mem_flags             /* flags */,
-                  cl_buffer_create_type    /* buffer_create_type */,
-                  const void *             /* buffer_create_info */,
-                  cl_int *                 /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;
-
-extern CL_API_ENTRY cl_mem CL_API_CALL
-clCreateImage(cl_context              /* context */,
-              cl_mem_flags            /* flags */,
-              const cl_image_format * /* image_format */,
-              const cl_image_desc *   /* image_desc */, 
-              void *                  /* host_ptr */,
-              cl_int *                /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
-                        
-extern CL_API_ENTRY cl_mem CL_API_CALL
-clCreatePipe(cl_context                 /* context */,
-             cl_mem_flags               /* flags */,
-             cl_uint                    /* pipe_packet_size */,
-             cl_uint                    /* pipe_max_packets */,
-             const cl_pipe_properties * /* properties */,
-             cl_int *                   /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
-                        
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainMemObject(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseMemObject(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetSupportedImageFormats(cl_context           /* context */,
-                           cl_mem_flags         /* flags */,
-                           cl_mem_object_type   /* image_type */,
-                           cl_uint              /* num_entries */,
-                           cl_image_format *    /* image_formats */,
-                           cl_uint *            /* num_image_formats */) CL_API_SUFFIX__VERSION_1_0;
-                                    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetMemObjectInfo(cl_mem           /* memobj */,
-                   cl_mem_info      /* param_name */, 
-                   size_t           /* param_value_size */,
-                   void *           /* param_value */,
-                   size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetImageInfo(cl_mem           /* image */,
-               cl_image_info    /* param_name */, 
-               size_t           /* param_value_size */,
-               void *           /* param_value */,
-               size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetPipeInfo(cl_mem           /* pipe */,
-              cl_pipe_info     /* param_name */,
-              size_t           /* param_value_size */,
-              void *           /* param_value */,
-              size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_2_0;
-    
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetMemObjectDestructorCallback(cl_mem /* memobj */,
-                                 void * /* no_callbacks_jmv */,
-                                 void * /* user_data */)             CL_API_SUFFIX__VERSION_1_1;
-
-// SVM Allocation APIs
-extern CL_API_ENTRY void * CL_API_CALL
-clSVMAlloc(cl_context       /* context */,
-           cl_svm_mem_flags /* flags */,
-           size_t           /* size */,
-           cl_uint          /* alignment */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY void CL_API_CALL
-clSVMFree(cl_context        /* context */,
-          void *            /* svm_pointer */) CL_API_SUFFIX__VERSION_2_0;
-
-// Sampler APIs
-extern CL_API_ENTRY cl_sampler CL_API_CALL
-clCreateSamplerWithProperties(cl_context                     /* context */,
-                              const cl_sampler_properties *  /* normalized_coords */,
-                              cl_int *                       /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainSampler(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseSampler(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetSamplerInfo(cl_sampler         /* sampler */,
-                 cl_sampler_info    /* param_name */,
-                 size_t             /* param_value_size */,
-                 void *             /* param_value */,
-                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-                            
-// Program Object APIs
-extern CL_API_ENTRY cl_program CL_API_CALL
-clCreateProgramWithSource(cl_context        /* context */,
-                          cl_uint           /* count */,
-                          const char **     /* strings */,
-                          const size_t *    /* lengths */,
-                          cl_int *          /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_program CL_API_CALL
-clCreateProgramWithBinary(cl_context                     /* context */,
-                          cl_uint                        /* num_devices */,
-                          const cl_device_id *           /* device_list */,
-                          const size_t *                 /* lengths */,
-                          const unsigned char **         /* binaries */,
-                          cl_int *                       /* binary_status */,
-                          cl_int *                       /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_program CL_API_CALL
-clCreateProgramWithBuiltInKernels(cl_context            /* context */,
-                                  cl_uint               /* num_devices */,
-                                  const cl_device_id *  /* device_list */,
-                                  const char *          /* kernel_names */,
-                                  cl_int *              /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainProgram(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseProgram(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clBuildProgram(cl_program           /* program */,
-               cl_uint              /* num_devices */,
-               const cl_device_id * /* device_list */,
-               const char *         /* options */, 
-               void (*pfn_notify)(cl_program /* program */, void * /* user_data */),
-               void *               /* user_data */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clCompileProgram(cl_program           /* program */,
-                 cl_uint              /* num_devices */,
-                 const cl_device_id * /* device_list */,
-                 const char *         /* options */, 
-                 cl_uint              /* num_input_headers */,
-                 const cl_program *   /* input_headers */,
-                 const char **        /* header_include_names */,
-                 void * /* no_callbacks_jmv */,
-                 void *               /* user_data */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_program CL_API_CALL
-clLinkProgram(cl_context           /* context */,
-              cl_uint              /* num_devices */,
-              const cl_device_id * /* device_list */,
-              const char *         /* options */, 
-              cl_uint              /* num_input_programs */,
-              const cl_program *   /* input_programs */,
-              void *               /* no_callbacks_jmv */,
-              void *               /* user_data */,
-              cl_int *             /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clUnloadPlatformCompiler(cl_platform_id /* platform */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetProgramInfo(cl_program         /* program */,
-                 cl_program_info    /* param_name */,
-                 size_t             /* param_value_size */,
-                 void *             /* param_value */,
-                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetProgramBuildInfo(cl_program            /* program */,
-                      cl_device_id          /* device */,
-                      cl_program_build_info /* param_name */,
-                      size_t                /* param_value_size */,
-                      void *                /* param_value */,
-                      size_t *              /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-                            
-// Kernel Object APIs
-extern CL_API_ENTRY cl_kernel CL_API_CALL
-clCreateKernel(cl_program      /* program */,
-               const char *    /* kernel_name */,
-               cl_int *        /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clCreateKernelsInProgram(cl_program     /* program */,
-                         cl_uint        /* num_kernels */,
-                         cl_kernel *    /* kernels */,
-                         cl_uint *      /* num_kernels_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainKernel(cl_kernel    /* kernel */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseKernel(cl_kernel   /* kernel */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetKernelArg(cl_kernel    /* kernel */,
-               cl_uint      /* arg_index */,
-               size_t       /* arg_size */,
-               const void * /* arg_value */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetKernelArgSVMPointer(cl_kernel    /* kernel */,
-                         cl_uint      /* arg_index */,
-                         const void * /* arg_value */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetKernelExecInfo(cl_kernel            /* kernel */,
-                    cl_kernel_exec_info  /* param_name */,
-                    size_t               /* param_value_size */,
-                    const void *         /* param_value */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetKernelInfo(cl_kernel       /* kernel */,
-                cl_kernel_info  /* param_name */,
-                size_t          /* param_value_size */,
-                void *          /* param_value */,
-                size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetKernelArgInfo(cl_kernel       /* kernel */,
-                   cl_uint         /* arg_indx */,
-                   cl_kernel_arg_info  /* param_name */,
-                   size_t          /* param_value_size */,
-                   void *          /* param_value */,
-                   size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetKernelWorkGroupInfo(cl_kernel                  /* kernel */,
-                         cl_device_id               /* device */,
-                         cl_kernel_work_group_info  /* param_name */,
-                         size_t                     /* param_value_size */,
-                         void *                     /* param_value */,
-                         size_t *                   /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-// Event Object APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clWaitForEvents(cl_uint             /* num_events */,
-                const cl_event *    /* event_list */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetEventInfo(cl_event         /* event */,
-               cl_event_info    /* param_name */,
-               size_t           /* param_value_size */,
-               void *           /* param_value */,
-               size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-                            
-extern CL_API_ENTRY cl_event CL_API_CALL
-clCreateUserEvent(cl_context    /* context */,
-                  cl_int *      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;               
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainEvent(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseEvent(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetUserEventStatus(cl_event   /* event */,
-                     cl_int     /* execution_status */) CL_API_SUFFIX__VERSION_1_1;
-                     
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetEventCallback( cl_event    /* event */,
-                    cl_int      /* command_exec_callback_type */,
-                    void *      /* no_callbacks_jmv */,
-                    void *      /* user_data */) CL_API_SUFFIX__VERSION_1_1;
-
-// Profiling APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetEventProfilingInfo(cl_event            /* event */,
-                        cl_profiling_info   /* param_name */,
-                        size_t              /* param_value_size */,
-                        void *              /* param_value */,
-                        size_t *            /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-                                
-// Flush and Finish APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clFlush(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clFinish(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
-
-// Enqueued Commands APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueReadBuffer(cl_command_queue    /* command_queue */,
-                    cl_mem              /* buffer */,
-                    cl_bool             /* blocking_read */,
-                    size_t              /* offset */,
-                    size_t              /* size */, 
-                    void *              /* ptr */,
-                    cl_uint             /* num_events_in_wait_list */,
-                    const cl_event *    /* event_wait_list */,
-                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueReadBufferRect(cl_command_queue    /* command_queue */,
-                        cl_mem              /* buffer */,
-                        cl_bool             /* blocking_read */,
-                        const size_t *      /* buffer_offset */,
-                        const size_t *      /* host_offset */, 
-                        const size_t *      /* region */,
-                        size_t              /* buffer_row_pitch */,
-                        size_t              /* buffer_slice_pitch */,
-                        size_t              /* host_row_pitch */,
-                        size_t              /* host_slice_pitch */,                        
-                        void *              /* ptr */,
-                        cl_uint             /* num_events_in_wait_list */,
-                        const cl_event *    /* event_wait_list */,
-                        cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueWriteBuffer(cl_command_queue   /* command_queue */, 
-                     cl_mem             /* buffer */, 
-                     cl_bool            /* blocking_write */, 
-                     size_t             /* offset */, 
-                     size_t             /* size */, 
-                     const void *       /* ptr */, 
-                     cl_uint            /* num_events_in_wait_list */, 
-                     const cl_event *   /* event_wait_list */, 
-                     cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_0;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueWriteBufferRect(cl_command_queue    /* command_queue */,
-                         cl_mem              /* buffer */,
-                         cl_bool             /* blocking_write */,
-                         const size_t *      /* buffer_offset */,
-                         const size_t *      /* host_offset */, 
-                         const size_t *      /* region */,
-                         size_t              /* buffer_row_pitch */,
-                         size_t              /* buffer_slice_pitch */,
-                         size_t              /* host_row_pitch */,
-                         size_t              /* host_slice_pitch */,                        
-                         const void *        /* ptr */,
-                         cl_uint             /* num_events_in_wait_list */,
-                         const cl_event *    /* event_wait_list */,
-                         cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueFillBuffer(cl_command_queue   /* command_queue */,
-                    cl_mem             /* buffer */, 
-                    const void *       /* pattern */, 
-                    size_t             /* pattern_size */, 
-                    size_t             /* offset */, 
-                    size_t             /* size */, 
-                    cl_uint            /* num_events_in_wait_list */, 
-                    const cl_event *   /* event_wait_list */, 
-                    cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_2;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyBuffer(cl_command_queue    /* command_queue */, 
-                    cl_mem              /* src_buffer */,
-                    cl_mem              /* dst_buffer */, 
-                    size_t              /* src_offset */,
-                    size_t              /* dst_offset */,
-                    size_t              /* size */, 
-                    cl_uint             /* num_events_in_wait_list */,
-                    const cl_event *    /* event_wait_list */,
-                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyBufferRect(cl_command_queue    /* command_queue */, 
-                        cl_mem              /* src_buffer */,
-                        cl_mem              /* dst_buffer */, 
-                        const size_t *      /* src_origin */,
-                        const size_t *      /* dst_origin */,
-                        const size_t *      /* region */, 
-                        size_t              /* src_row_pitch */,
-                        size_t              /* src_slice_pitch */,
-                        size_t              /* dst_row_pitch */,
-                        size_t              /* dst_slice_pitch */,
-                        cl_uint             /* num_events_in_wait_list */,
-                        const cl_event *    /* event_wait_list */,
-                        cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueReadImage(cl_command_queue     /* command_queue */,
-                   cl_mem               /* image */,
-                   cl_bool              /* blocking_read */, 
-                   const size_t *       /* origin[3] */,
-                   const size_t *       /* region[3] */,
-                   size_t               /* row_pitch */,
-                   size_t               /* slice_pitch */, 
-                   void *               /* ptr */,
-                   cl_uint              /* num_events_in_wait_list */,
-                   const cl_event *     /* event_wait_list */,
-                   cl_event *           /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueWriteImage(cl_command_queue    /* command_queue */,
-                    cl_mem              /* image */,
-                    cl_bool             /* blocking_write */, 
-                    const size_t *      /* origin[3] */,
-                    const size_t *      /* region[3] */,
-                    size_t              /* input_row_pitch */,
-                    size_t              /* input_slice_pitch */, 
-                    const void *        /* ptr */,
-                    cl_uint             /* num_events_in_wait_list */,
-                    const cl_event *    /* event_wait_list */,
-                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueFillImage(cl_command_queue   /* command_queue */,
-                   cl_mem             /* image */, 
-                   const void *       /* fill_color */, 
-                   const size_t *     /* origin[3] */, 
-                   const size_t *     /* region[3] */, 
-                   cl_uint            /* num_events_in_wait_list */, 
-                   const cl_event *   /* event_wait_list */, 
-                   cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyImage(cl_command_queue     /* command_queue */,
-                   cl_mem               /* src_image */,
-                   cl_mem               /* dst_image */, 
-                   const size_t *       /* src_origin[3] */,
-                   const size_t *       /* dst_origin[3] */,
-                   const size_t *       /* region[3] */, 
-                   cl_uint              /* num_events_in_wait_list */,
-                   const cl_event *     /* event_wait_list */,
-                   cl_event *           /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyImageToBuffer(cl_command_queue /* command_queue */,
-                           cl_mem           /* src_image */,
-                           cl_mem           /* dst_buffer */, 
-                           const size_t *   /* src_origin[3] */,
-                           const size_t *   /* region[3] */, 
-                           size_t           /* dst_offset */,
-                           cl_uint          /* num_events_in_wait_list */,
-                           const cl_event * /* event_wait_list */,
-                           cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyBufferToImage(cl_command_queue /* command_queue */,
-                           cl_mem           /* src_buffer */,
-                           cl_mem           /* dst_image */, 
-                           size_t           /* src_offset */,
-                           const size_t *   /* dst_origin[3] */,
-                           const size_t *   /* region[3] */, 
-                           cl_uint          /* num_events_in_wait_list */,
-                           const cl_event * /* event_wait_list */,
-                           cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY void * CL_API_CALL
-clEnqueueMapBuffer(cl_command_queue /* command_queue */,
-                   cl_mem           /* buffer */,
-                   cl_bool          /* blocking_map */, 
-                   cl_map_flags     /* map_flags */,
-                   size_t           /* offset */,
-                   size_t           /* size */,
-                   cl_uint          /* num_events_in_wait_list */,
-                   const cl_event * /* event_wait_list */,
-                   cl_event *       /* event */,
-                   cl_int *         /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY void * CL_API_CALL
-clEnqueueMapImage(cl_command_queue  /* command_queue */,
-                  cl_mem            /* image */, 
-                  cl_bool           /* blocking_map */, 
-                  cl_map_flags      /* map_flags */, 
-                  const size_t *    /* origin[3] */,
-                  const size_t *    /* region[3] */,
-                  size_t *          /* image_row_pitch */,
-                  size_t *          /* image_slice_pitch */,
-                  cl_uint           /* num_events_in_wait_list */,
-                  const cl_event *  /* event_wait_list */,
-                  cl_event *        /* event */,
-                  cl_int *          /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueUnmapMemObject(cl_command_queue /* command_queue */,
-                        cl_mem           /* memobj */,
-                        void *           /* mapped_ptr */,
-                        cl_uint          /* num_events_in_wait_list */,
-                        const cl_event *  /* event_wait_list */,
-                        cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueMigrateMemObjects(cl_command_queue       /* command_queue */,
-                           cl_uint                /* num_mem_objects */,
-                           const cl_mem *         /* mem_objects */,
-                           cl_mem_migration_flags /* flags */,
-                           cl_uint                /* num_events_in_wait_list */,
-                           const cl_event *       /* event_wait_list */,
-                           cl_event *             /* event */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueNDRangeKernel(cl_command_queue /* command_queue */,
-                       cl_kernel        /* kernel */,
-                       cl_uint          /* work_dim */,
-                       const size_t *   /* global_work_offset */,
-                       const size_t *   /* global_work_size */,
-                       const size_t *   /* local_work_size */,
-                       cl_uint          /* num_events_in_wait_list */,
-                       const cl_event * /* event_wait_list */,
-                       cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueNativeKernel(cl_command_queue  /* command_queue */,
-					  void (*user_func)(void *), 
-                      void *            /* args */,
-                      size_t            /* cb_args */, 
-                      cl_uint           /* num_mem_objects */,
-                      const cl_mem *    /* mem_list */,
-                      const void **     /* args_mem_loc */,
-                      cl_uint           /* num_events_in_wait_list */,
-                      const cl_event *  /* event_wait_list */,
-                      cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueMarkerWithWaitList(cl_command_queue  /* command_queue */,
-                            cl_uint           /* num_events_in_wait_list */,
-                            const cl_event *  /* event_wait_list */,
-                            cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueBarrierWithWaitList(cl_command_queue  /* command_queue */,
-                             cl_uint           /* num_events_in_wait_list */,
-                             const cl_event *  /* event_wait_list */,
-                             cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMFree(cl_command_queue  /* command_queue */,
-                 cl_uint           /* num_svm_pointers */,
-                 void *          /* svm_pointers[] */,
-                 void *           /* no_callbacks_jmv */,
-                 void *            /* user_data */,
-                 cl_uint           /* num_events_in_wait_list */,
-                 const cl_event *  /* event_wait_list */,
-                 cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMMemcpy(cl_command_queue  /* command_queue */,
-                   cl_bool           /* blocking_copy */,
-                   void *            /* dst_ptr */,
-                   const void *      /* src_ptr */,
-                   size_t            /* size */,
-                   cl_uint           /* num_events_in_wait_list */,
-                   const cl_event *  /* event_wait_list */,
-                   cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMMemFill(cl_command_queue  /* command_queue */,
-                    void *            /* svm_ptr */,
-                    const void *      /* pattern */,
-                    size_t            /* pattern_size */,
-                    size_t            /* size */,
-                    cl_uint           /* num_events_in_wait_list */,
-                    const cl_event *  /* event_wait_list */,
-                    cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMMap(cl_command_queue  /* command_queue */,
-                cl_bool           /* blocking_map */,
-                cl_map_flags      /* flags */,
-                void *            /* svm_ptr */,
-                size_t            /* size */,
-                cl_uint           /* num_events_in_wait_list */,
-                const cl_event *  /* event_wait_list */,
-                cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMUnmap(cl_command_queue  /* command_queue */,
-                  void *            /* svm_ptr */,
-                  cl_uint           /* num_events_in_wait_list */,
-                  const cl_event *  /* event_wait_list */,
-                  cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-
-// Extension function access
-//
-// Returns the extension function address for the given function name,
-// or NULL if a valid function can not be found.  The client must
-// check to make sure the address is not NULL, before using or 
-// calling the returned function address.
-//
-extern CL_API_ENTRY void * CL_API_CALL 
-clGetExtensionFunctionAddressForPlatform(cl_platform_id /* platform */,
-                                         const char *   /* func_name */) CL_API_SUFFIX__VERSION_1_2;
-
-// Deprecated OpenCL 1.1 APIs
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
-clCreateImage2D(cl_context              /* context */,
-                cl_mem_flags            /* flags */,
-                const cl_image_format * /* image_format */,
-                size_t                  /* image_width */,
-                size_t                  /* image_height */,
-                size_t                  /* image_row_pitch */, 
-                void *                  /* host_ptr */,
-                cl_int *                /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
-clCreateImage3D(cl_context              /* context */,
-                cl_mem_flags            /* flags */,
-                const cl_image_format * /* image_format */,
-                size_t                  /* image_width */, 
-                size_t                  /* image_height */,
-                size_t                  /* image_depth */, 
-                size_t                  /* image_row_pitch */, 
-                size_t                  /* image_slice_pitch */, 
-                void *                  /* host_ptr */,
-                cl_int *                /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
-clEnqueueMarker(cl_command_queue    /* command_queue */,
-                cl_event *          /* event */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
-clEnqueueWaitForEvents(cl_command_queue /* command_queue */,
-                        cl_uint          /* num_events */,
-                        const cl_event * /* event_list */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
-clEnqueueBarrier(cl_command_queue /* command_queue */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
-clUnloadCompiler(void) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED void * CL_API_CALL
-clGetExtensionFunctionAddress(const char * /* func_name */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-// Deprecated OpenCL 2.0 APIs
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_command_queue CL_API_CALL
-clCreateCommandQueue(cl_context                     /* context */,
-                     cl_device_id                   /* device */,
-                     cl_command_queue_properties    /* properties */,
-                     cl_int *                       /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
-    
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_sampler CL_API_CALL
-clCreateSampler(cl_context          /* context */,
-                cl_bool             /* normalized_coords */,
-                cl_addressing_mode  /* addressing_mode */,
-                cl_filter_mode      /* filter_mode */,
-                cl_int *            /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_int CL_API_CALL
-clEnqueueTask(cl_command_queue  /* command_queue */,
-              cl_kernel         /* kernel */,
-              cl_uint           /* num_events_in_wait_list */,
-              const cl_event *  /* event_wait_list */,
-              cl_event *        /* event */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
-'
-! !
-
-!OpenCLMethodGenerator class methodsFor: 'C source code' stamp: 'jmv 10/29/2015 10:47'!
-functionDeclarationsInC_withUnsupportedCallbacks
-	"Cut'n'paste directly from cl.h header file.
-	Updated to OpenCL 2.0
-	From https://www.khronos.org/registry/cl/api/2.0/"
-^ '
-// Platform API
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetPlatformIDs(cl_uint          /* num_entries */,
-                 cl_platform_id * /* platforms */,
-                 cl_uint *        /* num_platforms */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL 
-clGetPlatformInfo(cl_platform_id   /* platform */, 
-                  cl_platform_info /* param_name */,
-                  size_t           /* param_value_size */, 
-                  void *           /* param_value */,
-                  size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-// Device APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetDeviceIDs(cl_platform_id   /* platform */,
-               cl_device_type   /* device_type */, 
-               cl_uint          /* num_entries */, 
-               cl_device_id *   /* devices */, 
-               cl_uint *        /* num_devices */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetDeviceInfo(cl_device_id    /* device */,
-                cl_device_info  /* param_name */, 
-                size_t          /* param_value_size */, 
-                void *          /* param_value */,
-                size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clCreateSubDevices(cl_device_id                         /* in_device */,
-                   const cl_device_partition_property * /* properties */,
-                   cl_uint                              /* num_devices */,
-                   cl_device_id *                       /* out_devices */,
-                   cl_uint *                            /* num_devices_ret */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainDevice(cl_device_id /* device */) CL_API_SUFFIX__VERSION_1_2;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseDevice(cl_device_id /* device */) CL_API_SUFFIX__VERSION_1_2;
-
-// Context APIs  
-extern CL_API_ENTRY cl_context CL_API_CALL
-clCreateContext(const cl_context_properties * /* properties */,
-                cl_uint                       /* num_devices */,
-                const cl_device_id *          /* devices */,
-                void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
-                void *                        /* user_data */,
-                cl_int *                      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_context CL_API_CALL
-clCreateContextFromType(const cl_context_properties * /* properties */,
-                        cl_device_type                /* device_type */,
-                        void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
-                        void *                        /* user_data */,
-                        cl_int *                      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainContext(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseContext(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetContextInfo(cl_context         /* context */, 
-                 cl_context_info    /* param_name */, 
-                 size_t             /* param_value_size */, 
-                 void *             /* param_value */, 
-                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-// Command Queue APIs
-extern CL_API_ENTRY cl_command_queue CL_API_CALL
-clCreateCommandQueueWithProperties(cl_context               /* context */,
-                                   cl_device_id             /* device */,
-                                   const cl_queue_properties *    /* properties */,
-                                   cl_int *                 /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainCommandQueue(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseCommandQueue(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetCommandQueueInfo(cl_command_queue      /* command_queue */,
-                      cl_command_queue_info /* param_name */,
-                      size_t                /* param_value_size */,
-                      void *                /* param_value */,
-                      size_t *              /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-// Memory Object APIs
-extern CL_API_ENTRY cl_mem CL_API_CALL
-clCreateBuffer(cl_context   /* context */,
-               cl_mem_flags /* flags */,
-               size_t       /* size */,
-               void *       /* host_ptr */,
-               cl_int *     /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_mem CL_API_CALL
-clCreateSubBuffer(cl_mem                   /* buffer */,
-                  cl_mem_flags             /* flags */,
-                  cl_buffer_create_type    /* buffer_create_type */,
-                  const void *             /* buffer_create_info */,
-                  cl_int *                 /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;
-
-extern CL_API_ENTRY cl_mem CL_API_CALL
-clCreateImage(cl_context              /* context */,
-              cl_mem_flags            /* flags */,
-              const cl_image_format * /* image_format */,
-              const cl_image_desc *   /* image_desc */, 
-              void *                  /* host_ptr */,
-              cl_int *                /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
-                        
-extern CL_API_ENTRY cl_mem CL_API_CALL
-clCreatePipe(cl_context                 /* context */,
-             cl_mem_flags               /* flags */,
-             cl_uint                    /* pipe_packet_size */,
-             cl_uint                    /* pipe_max_packets */,
-             const cl_pipe_properties * /* properties */,
-             cl_int *                   /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
-                        
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainMemObject(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseMemObject(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetSupportedImageFormats(cl_context           /* context */,
-                           cl_mem_flags         /* flags */,
-                           cl_mem_object_type   /* image_type */,
-                           cl_uint              /* num_entries */,
-                           cl_image_format *    /* image_formats */,
-                           cl_uint *            /* num_image_formats */) CL_API_SUFFIX__VERSION_1_0;
-                                    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetMemObjectInfo(cl_mem           /* memobj */,
-                   cl_mem_info      /* param_name */, 
-                   size_t           /* param_value_size */,
-                   void *           /* param_value */,
-                   size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetImageInfo(cl_mem           /* image */,
-               cl_image_info    /* param_name */, 
-               size_t           /* param_value_size */,
-               void *           /* param_value */,
-               size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetPipeInfo(cl_mem           /* pipe */,
-              cl_pipe_info     /* param_name */,
-              size_t           /* param_value_size */,
-              void *           /* param_value */,
-              size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_2_0;
-    
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetMemObjectDestructorCallback(cl_mem /* memobj */,
-                                 void (CL_CALLBACK * /*pfn_notify*/)( cl_mem /* memobj */, void* /*user_data*/),
-                                 void * /*user_data */ )             CL_API_SUFFIX__VERSION_1_1;
-
-/* SVM Allocation APIs */
-extern CL_API_ENTRY void * CL_API_CALL
-clSVMAlloc(cl_context       /* context */,
-           cl_svm_mem_flags /* flags */,
-           size_t           /* size */,
-           cl_uint          /* alignment */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY void CL_API_CALL
-clSVMFree(cl_context        /* context */,
-          void *            /* svm_pointer */) CL_API_SUFFIX__VERSION_2_0;
-
-// Sampler APIs
-extern CL_API_ENTRY cl_sampler CL_API_CALL
-clCreateSamplerWithProperties(cl_context                     /* context */,
-                              const cl_sampler_properties *  /* normalized_coords */,
-                              cl_int *                       /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainSampler(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseSampler(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetSamplerInfo(cl_sampler         /* sampler */,
-                 cl_sampler_info    /* param_name */,
-                 size_t             /* param_value_size */,
-                 void *             /* param_value */,
-                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-                            
-// Program Object APIs
-extern CL_API_ENTRY cl_program CL_API_CALL
-clCreateProgramWithSource(cl_context        /* context */,
-                          cl_uint           /* count */,
-                          const char **     /* strings */,
-                          const size_t *    /* lengths */,
-                          cl_int *          /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_program CL_API_CALL
-clCreateProgramWithBinary(cl_context                     /* context */,
-                          cl_uint                        /* num_devices */,
-                          const cl_device_id *           /* device_list */,
-                          const size_t *                 /* lengths */,
-                          const unsigned char **         /* binaries */,
-                          cl_int *                       /* binary_status */,
-                          cl_int *                       /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_program CL_API_CALL
-clCreateProgramWithBuiltInKernels(cl_context            /* context */,
-                                  cl_uint               /* num_devices */,
-                                  const cl_device_id *  /* device_list */,
-                                  const char *          /* kernel_names */,
-                                  cl_int *              /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainProgram(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseProgram(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clBuildProgram(cl_program           /* program */,
-               cl_uint              /* num_devices */,
-               const cl_device_id * /* device_list */,
-               const char *         /* options */, 
-               void (*pfn_notify)(cl_program /* program */, void * /* user_data */),
-               void *               /* user_data */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clCompileProgram(cl_program           /* program */,
-                 cl_uint              /* num_devices */,
-                 const cl_device_id * /* device_list */,
-                 const char *         /* options */, 
-                 cl_uint              /* num_input_headers */,
-                 const cl_program *   /* input_headers */,
-                 const char **        /* header_include_names */,
-                 void (CL_CALLBACK *  /* pfn_notify */)(cl_program /* program */, void * /* user_data */),
-                 void *               /* user_data */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_program CL_API_CALL
-clLinkProgram(cl_context           /* context */,
-              cl_uint              /* num_devices */,
-              const cl_device_id * /* device_list */,
-              const char *         /* options */, 
-              cl_uint              /* num_input_programs */,
-              const cl_program *   /* input_programs */,
-              void (CL_CALLBACK *  /* pfn_notify */)(cl_program /* program */, void * /* user_data */),
-              void *               /* user_data */,
-              cl_int *             /* errcode_ret */ ) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clUnloadPlatformCompiler(cl_platform_id /* platform */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetProgramInfo(cl_program         /* program */,
-                 cl_program_info    /* param_name */,
-                 size_t             /* param_value_size */,
-                 void *             /* param_value */,
-                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetProgramBuildInfo(cl_program            /* program */,
-                      cl_device_id          /* device */,
-                      cl_program_build_info /* param_name */,
-                      size_t                /* param_value_size */,
-                      void *                /* param_value */,
-                      size_t *              /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-                            
-// Kernel Object APIs
-extern CL_API_ENTRY cl_kernel CL_API_CALL
-clCreateKernel(cl_program      /* program */,
-               const char *    /* kernel_name */,
-               cl_int *        /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clCreateKernelsInProgram(cl_program     /* program */,
-                         cl_uint        /* num_kernels */,
-                         cl_kernel *    /* kernels */,
-                         cl_uint *      /* num_kernels_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainKernel(cl_kernel    /* kernel */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseKernel(cl_kernel   /* kernel */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetKernelArg(cl_kernel    /* kernel */,
-               cl_uint      /* arg_index */,
-               size_t       /* arg_size */,
-               const void * /* arg_value */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetKernelArgSVMPointer(cl_kernel    /* kernel */,
-                         cl_uint      /* arg_index */,
-                         const void * /* arg_value */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetKernelExecInfo(cl_kernel            /* kernel */,
-                    cl_kernel_exec_info  /* param_name */,
-                    size_t               /* param_value_size */,
-                    const void *         /* param_value */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetKernelInfo(cl_kernel       /* kernel */,
-                cl_kernel_info  /* param_name */,
-                size_t          /* param_value_size */,
-                void *          /* param_value */,
-                size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetKernelArgInfo(cl_kernel       /* kernel */,
-                   cl_uint         /* arg_indx */,
-                   cl_kernel_arg_info  /* param_name */,
-                   size_t          /* param_value_size */,
-                   void *          /* param_value */,
-                   size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetKernelWorkGroupInfo(cl_kernel                  /* kernel */,
-                         cl_device_id               /* device */,
-                         cl_kernel_work_group_info  /* param_name */,
-                         size_t                     /* param_value_size */,
-                         void *                     /* param_value */,
-                         size_t *                   /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-// Event Object APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clWaitForEvents(cl_uint             /* num_events */,
-                const cl_event *    /* event_list */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetEventInfo(cl_event         /* event */,
-               cl_event_info    /* param_name */,
-               size_t           /* param_value_size */,
-               void *           /* param_value */,
-               size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-                            
-extern CL_API_ENTRY cl_event CL_API_CALL
-clCreateUserEvent(cl_context    /* context */,
-                  cl_int *      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;               
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clRetainEvent(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clReleaseEvent(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetUserEventStatus(cl_event   /* event */,
-                     cl_int     /* execution_status */) CL_API_SUFFIX__VERSION_1_1;
-                     
-extern CL_API_ENTRY cl_int CL_API_CALL
-clSetEventCallback( cl_event    /* event */,
-                    cl_int      /* command_exec_callback_type */,
-                    void (CL_CALLBACK * /* pfn_notify */)(cl_event, cl_int, void *),
-                    void *      /* user_data */) CL_API_SUFFIX__VERSION_1_1;
-
-// Profiling APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clGetEventProfilingInfo(cl_event            /* event */,
-                        cl_profiling_info   /* param_name */,
-                        size_t              /* param_value_size */,
-                        void *              /* param_value */,
-                        size_t *            /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
-                                
-// Flush and Finish APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clFlush(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clFinish(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
-
-// Enqueued Commands APIs
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueReadBuffer(cl_command_queue    /* command_queue */,
-                    cl_mem              /* buffer */,
-                    cl_bool             /* blocking_read */,
-                    size_t              /* offset */,
-                    size_t              /* size */, 
-                    void *              /* ptr */,
-                    cl_uint             /* num_events_in_wait_list */,
-                    const cl_event *    /* event_wait_list */,
-                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueReadBufferRect(cl_command_queue    /* command_queue */,
-                        cl_mem              /* buffer */,
-                        cl_bool             /* blocking_read */,
-                        const size_t *      /* buffer_offset */,
-                        const size_t *      /* host_offset */, 
-                        const size_t *      /* region */,
-                        size_t              /* buffer_row_pitch */,
-                        size_t              /* buffer_slice_pitch */,
-                        size_t              /* host_row_pitch */,
-                        size_t              /* host_slice_pitch */,                        
-                        void *              /* ptr */,
-                        cl_uint             /* num_events_in_wait_list */,
-                        const cl_event *    /* event_wait_list */,
-                        cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueWriteBuffer(cl_command_queue   /* command_queue */, 
-                     cl_mem             /* buffer */, 
-                     cl_bool            /* blocking_write */, 
-                     size_t             /* offset */, 
-                     size_t             /* size */, 
-                     const void *       /* ptr */, 
-                     cl_uint            /* num_events_in_wait_list */, 
-                     const cl_event *   /* event_wait_list */, 
-                     cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_0;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueWriteBufferRect(cl_command_queue    /* command_queue */,
-                         cl_mem              /* buffer */,
-                         cl_bool             /* blocking_write */,
-                         const size_t *      /* buffer_offset */,
-                         const size_t *      /* host_offset */, 
-                         const size_t *      /* region */,
-                         size_t              /* buffer_row_pitch */,
-                         size_t              /* buffer_slice_pitch */,
-                         size_t              /* host_row_pitch */,
-                         size_t              /* host_slice_pitch */,                        
-                         const void *        /* ptr */,
-                         cl_uint             /* num_events_in_wait_list */,
-                         const cl_event *    /* event_wait_list */,
-                         cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueFillBuffer(cl_command_queue   /* command_queue */,
-                    cl_mem             /* buffer */, 
-                    const void *       /* pattern */, 
-                    size_t             /* pattern_size */, 
-                    size_t             /* offset */, 
-                    size_t             /* size */, 
-                    cl_uint            /* num_events_in_wait_list */, 
-                    const cl_event *   /* event_wait_list */, 
-                    cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_2;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyBuffer(cl_command_queue    /* command_queue */, 
-                    cl_mem              /* src_buffer */,
-                    cl_mem              /* dst_buffer */, 
-                    size_t              /* src_offset */,
-                    size_t              /* dst_offset */,
-                    size_t              /* size */, 
-                    cl_uint             /* num_events_in_wait_list */,
-                    const cl_event *    /* event_wait_list */,
-                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyBufferRect(cl_command_queue    /* command_queue */, 
-                        cl_mem              /* src_buffer */,
-                        cl_mem              /* dst_buffer */, 
-                        const size_t *      /* src_origin */,
-                        const size_t *      /* dst_origin */,
-                        const size_t *      /* region */, 
-                        size_t              /* src_row_pitch */,
-                        size_t              /* src_slice_pitch */,
-                        size_t              /* dst_row_pitch */,
-                        size_t              /* dst_slice_pitch */,
-                        cl_uint             /* num_events_in_wait_list */,
-                        const cl_event *    /* event_wait_list */,
-                        cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
-                            
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueReadImage(cl_command_queue     /* command_queue */,
-                   cl_mem               /* image */,
-                   cl_bool              /* blocking_read */, 
-                   const size_t *       /* origin[3] */,
-                   const size_t *       /* region[3] */,
-                   size_t               /* row_pitch */,
-                   size_t               /* slice_pitch */, 
-                   void *               /* ptr */,
-                   cl_uint              /* num_events_in_wait_list */,
-                   const cl_event *     /* event_wait_list */,
-                   cl_event *           /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueWriteImage(cl_command_queue    /* command_queue */,
-                    cl_mem              /* image */,
-                    cl_bool             /* blocking_write */, 
-                    const size_t *      /* origin[3] */,
-                    const size_t *      /* region[3] */,
-                    size_t              /* input_row_pitch */,
-                    size_t              /* input_slice_pitch */, 
-                    const void *        /* ptr */,
-                    cl_uint             /* num_events_in_wait_list */,
-                    const cl_event *    /* event_wait_list */,
-                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueFillImage(cl_command_queue   /* command_queue */,
-                   cl_mem             /* image */, 
-                   const void *       /* fill_color */, 
-                   const size_t *     /* origin[3] */, 
-                   const size_t *     /* region[3] */, 
-                   cl_uint            /* num_events_in_wait_list */, 
-                   const cl_event *   /* event_wait_list */, 
-                   cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyImage(cl_command_queue     /* command_queue */,
-                   cl_mem               /* src_image */,
-                   cl_mem               /* dst_image */, 
-                   const size_t *       /* src_origin[3] */,
-                   const size_t *       /* dst_origin[3] */,
-                   const size_t *       /* region[3] */, 
-                   cl_uint              /* num_events_in_wait_list */,
-                   const cl_event *     /* event_wait_list */,
-                   cl_event *           /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyImageToBuffer(cl_command_queue /* command_queue */,
-                           cl_mem           /* src_image */,
-                           cl_mem           /* dst_buffer */, 
-                           const size_t *   /* src_origin[3] */,
-                           const size_t *   /* region[3] */, 
-                           size_t           /* dst_offset */,
-                           cl_uint          /* num_events_in_wait_list */,
-                           const cl_event * /* event_wait_list */,
-                           cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueCopyBufferToImage(cl_command_queue /* command_queue */,
-                           cl_mem           /* src_buffer */,
-                           cl_mem           /* dst_image */, 
-                           size_t           /* src_offset */,
-                           const size_t *   /* dst_origin[3] */,
-                           const size_t *   /* region[3] */, 
-                           cl_uint          /* num_events_in_wait_list */,
-                           const cl_event * /* event_wait_list */,
-                           cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY void * CL_API_CALL
-clEnqueueMapBuffer(cl_command_queue /* command_queue */,
-                   cl_mem           /* buffer */,
-                   cl_bool          /* blocking_map */, 
-                   cl_map_flags     /* map_flags */,
-                   size_t           /* offset */,
-                   size_t           /* size */,
-                   cl_uint          /* num_events_in_wait_list */,
-                   const cl_event * /* event_wait_list */,
-                   cl_event *       /* event */,
-                   cl_int *         /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY void * CL_API_CALL
-clEnqueueMapImage(cl_command_queue  /* command_queue */,
-                  cl_mem            /* image */, 
-                  cl_bool           /* blocking_map */, 
-                  cl_map_flags      /* map_flags */, 
-                  const size_t *    /* origin[3] */,
-                  const size_t *    /* region[3] */,
-                  size_t *          /* image_row_pitch */,
-                  size_t *          /* image_slice_pitch */,
-                  cl_uint           /* num_events_in_wait_list */,
-                  const cl_event *  /* event_wait_list */,
-                  cl_event *        /* event */,
-                  cl_int *          /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueUnmapMemObject(cl_command_queue /* command_queue */,
-                        cl_mem           /* memobj */,
-                        void *           /* mapped_ptr */,
-                        cl_uint          /* num_events_in_wait_list */,
-                        const cl_event *  /* event_wait_list */,
-                        cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueMigrateMemObjects(cl_command_queue       /* command_queue */,
-                           cl_uint                /* num_mem_objects */,
-                           const cl_mem *         /* mem_objects */,
-                           cl_mem_migration_flags /* flags */,
-                           cl_uint                /* num_events_in_wait_list */,
-                           const cl_event *       /* event_wait_list */,
-                           cl_event *             /* event */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueNDRangeKernel(cl_command_queue /* command_queue */,
-                       cl_kernel        /* kernel */,
-                       cl_uint          /* work_dim */,
-                       const size_t *   /* global_work_offset */,
-                       const size_t *   /* global_work_size */,
-                       const size_t *   /* local_work_size */,
-                       cl_uint          /* num_events_in_wait_list */,
-                       const cl_event * /* event_wait_list */,
-                       cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueNativeKernel(cl_command_queue  /* command_queue */,
-					  void (*user_func)(void *), 
-                      void *            /* args */,
-                      size_t            /* cb_args */, 
-                      cl_uint           /* num_mem_objects */,
-                      const cl_mem *    /* mem_list */,
-                      const void **     /* args_mem_loc */,
-                      cl_uint           /* num_events_in_wait_list */,
-                      const cl_event *  /* event_wait_list */,
-                      cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueMarkerWithWaitList(cl_command_queue  /* command_queue */,
-                            cl_uint           /* num_events_in_wait_list */,
-                            const cl_event *  /* event_wait_list */,
-                            cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueBarrierWithWaitList(cl_command_queue  /* command_queue */,
-                             cl_uint           /* num_events_in_wait_list */,
-                             const cl_event *  /* event_wait_list */,
-                             cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_2;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMFree(cl_command_queue  /* command_queue */,
-                 cl_uint           /* num_svm_pointers */,
-                 void *[]          /* svm_pointers[] */,
-                 void (CL_CALLBACK * /*pfn_free_func*/)(cl_command_queue /* queue */,
-                                                        cl_uint          /* num_svm_pointers */,
-                                                        void *[]         /* svm_pointers[] */,
-                                                        void *           /* user_data */),
-                 void *            /* user_data */,
-                 cl_uint           /* num_events_in_wait_list */,
-                 const cl_event *  /* event_wait_list */,
-                 cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMMemcpy(cl_command_queue  /* command_queue */,
-                   cl_bool           /* blocking_copy */,
-                   void *            /* dst_ptr */,
-                   const void *      /* src_ptr */,
-                   size_t            /* size */,
-                   cl_uint           /* num_events_in_wait_list */,
-                   const cl_event *  /* event_wait_list */,
-                   cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMMemFill(cl_command_queue  /* command_queue */,
-                    void *            /* svm_ptr */,
-                    const void *      /* pattern */,
-                    size_t            /* pattern_size */,
-                    size_t            /* size */,
-                    cl_uint           /* num_events_in_wait_list */,
-                    const cl_event *  /* event_wait_list */,
-                    cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMMap(cl_command_queue  /* command_queue */,
-                cl_bool           /* blocking_map */,
-                cl_map_flags      /* flags */,
-                void *            /* svm_ptr */,
-                size_t            /* size */,
-                cl_uint           /* num_events_in_wait_list */,
-                const cl_event *  /* event_wait_list */,
-                cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-    
-extern CL_API_ENTRY cl_int CL_API_CALL
-clEnqueueSVMUnmap(cl_command_queue  /* command_queue */,
-                  void *            /* svm_ptr */,
-                  cl_uint           /* num_events_in_wait_list */,
-                  const cl_event *  /* event_wait_list */,
-                  cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
-
-// Extension function access
-//
-// Returns the extension function address for the given function name,
-// or NULL if a valid function can not be found.  The client must
-// check to make sure the address is not NULL, before using or 
-// calling the returned function address.
-//
-extern CL_API_ENTRY void * CL_API_CALL 
-clGetExtensionFunctionAddressForPlatform(cl_platform_id /* platform */,
-                                         const char *   /* func_name */) CL_API_SUFFIX__VERSION_1_2;
-
-/* Deprecated OpenCL 1.1 APIs */
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
-clCreateImage2D(cl_context              /* context */,
-                cl_mem_flags            /* flags */,
-                const cl_image_format * /* image_format */,
-                size_t                  /* image_width */,
-                size_t                  /* image_height */,
-                size_t                  /* image_row_pitch */, 
-                void *                  /* host_ptr */,
-                cl_int *                /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
-clCreateImage3D(cl_context              /* context */,
-                cl_mem_flags            /* flags */,
-                const cl_image_format * /* image_format */,
-                size_t                  /* image_width */, 
-                size_t                  /* image_height */,
-                size_t                  /* image_depth */, 
-                size_t                  /* image_row_pitch */, 
-                size_t                  /* image_slice_pitch */, 
-                void *                  /* host_ptr */,
-                cl_int *                /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
-clEnqueueMarker(cl_command_queue    /* command_queue */,
-                cl_event *          /* event */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
-clEnqueueWaitForEvents(cl_command_queue /* command_queue */,
-                        cl_uint          /* num_events */,
-                        const cl_event * /* event_list */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
-clEnqueueBarrier(cl_command_queue /* command_queue */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
-clUnloadCompiler(void) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED void * CL_API_CALL
-clGetExtensionFunctionAddress(const char * /* func_name */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
-    
-/* Deprecated OpenCL 2.0 APIs */
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_command_queue CL_API_CALL
-clCreateCommandQueue(cl_context                     /* context */,
-                     cl_device_id                   /* device */,
-                     cl_command_queue_properties    /* properties */,
-                     cl_int *                       /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
-    
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_sampler CL_API_CALL
-clCreateSampler(cl_context          /* context */,
-                cl_bool             /* normalized_coords */,
-                cl_addressing_mode  /* addressing_mode */,
-                cl_filter_mode      /* filter_mode */,
-                cl_int *            /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
-    
-extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_int CL_API_CALL
-clEnqueueTask(cl_command_queue  /* command_queue */,
-              cl_kernel         /* kernel */,
-              cl_uint           /* num_events_in_wait_list */,
-              const cl_event *  /* event_wait_list */,
-              cl_event *        /* event */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
-'
-! !
-
-!OpenCLMethodGenerator class methodsFor: 'OpenCL constants' stamp: 'jmv 9/9/2015 10:55'!
-generateConstantInitializersFrom: aString
-"
-	self generateConstantInitializersFrom: self constantDeclarationsInC
-"
-	"The input should be a String containing the portion of cl.h with the constant definitions (no typedefs, function declarations, etc.)"
-	| declarations existingClassVars generatedMethods methodString  |
-	self readConstantsFrom: aString into: [ :categories :sortedCategories |
-
-		"We'll only add class variables that don't already exist."
-		existingClassVars := OpenCLConstants classVarNames.
-
-		"Generate the source code for each class-var initialization method."
-		generatedMethods := OrderedCollection new.
-		sortedCategories do: [ :categoryName |
-			declarations := categories at: categoryName.
-			methodString := String streamContents: [:stream |
-				"Write the method name and comment.."
-				stream nextPutAll: 'initializeClassVariables'.
-				(generatedMethods size + 1) printOn: stream base: 10 length: 2 padded: true.
-				stream
-					newLine; tab; 
-					nextPutAll: 
-						'"Auto-generated initialization of OpenCL constants for ', 
-						categoryName surroundedBySingleQuotes, '"';
-					newLine.
-				"Write initializer for each declaration.  Create vars if necessary."
-				declarations do: [:decl "an Association" |
-					(existingClassVars includes: decl key) ifFalse: [
-						OpenCLConstants addClassVarName: decl key
-					].
-					stream newLine; tab; nextPutAll: decl key, ' _ ', decl value, '.'.
-				].
-				stream newLine.
-			].
-			generatedMethods add: methodString.
-		].
-	].
-
-	"Generate the #initialize method that will call the other generate methods."
-	methodString := String streamContents: [:stream |
-		stream 
-			nextPutAll: 'initialize';
-			newLine; tab; nextPutAll: '"Call auto-generated class-var initializers."'.
-		1 to: generatedMethods size do: [:i |
-			stream newLine; tab; nextPutAll: 'self initializeClassVariables'.
-			i printOn: stream base: 10 length: 2 padded: true.
-			stream nextPutAll: '.'.
-		]
-	].
-	generatedMethods add: methodString.
-	
-	"Compile all methods and and run the initializer."
-	generatedMethods do: [:src |
-		OpenCLConstants class 
-			compile: src 
-			classified: #'class initialization'
-			withStamp: nil
-			notifying: nil
-			logSource: true.
-	].
-	OpenCLConstants initialize.
-	^generatedMethods! !
-
-!OpenCLMethodGenerator class methodsFor: 'OpenCL FFI calls' stamp: 'jmv 8/20/2015 20:23'!
-generateFFICallsFrom: aString
-	"
-	self generateFFICallsFrom: self functionDeclarationsInC
-	"
-
-	OpenCLPrimitiveInterface subclassesDo: [ :cls |
-		self generateFFICallsFrom: aString in: cls ]! !
-
-!OpenCLMethodGenerator class methodsFor: 'OpenCL FFI calls' stamp: 'jmv 9/9/2015 11:30'!
-generateFFICallsFrom: aString in: anOpenCLPrimitiveInterfaceSubclass
-
-	| specs generatedMethods typeMap |
-	specs := self readFunctionSpecsFrom: aString.
-	generatedMethods := specs collect: [ :spec |
-		| returnType funcName args |
-		returnType := spec first.
-		funcName := spec second.
-		args := spec third.
-		
-		String streamContents: [ :stream |
-			"Write the method signature.  Each argument after the first gets a keyword that tells about the C type."
-			"Return type in the name. currently disabled."
-			" stream nextPutAll: (self adaptType: returnType); nextPutAll: '__'." 
-			stream nextPutAll: funcName.
-			(args size > 0) ifTrue: [stream nextPutAll: '__' ].
-			args do: [ :arg |
-				| argType argName |
-				argType := self adaptType: arg key.
-				stream nextPutAll: argType; nextPut: $:.
-				argName := arg value.
-				argName at: 1 put: argName first asLowercase.
-				"Some are array-types (i.e 'origin[3]'), so strip off the end."
-				argName := argName upTo: $[.
-				"Write the name."
-				stream space; nextPutAll: argName; space
-			] separatedBy: [
-				stream newLineTab: 6.
-			].
-
-			"Method comment."
-			stream newLine; newLine; tab; nextPutAll: '"This method was automatically generated."'; newLine.
-			"C function declaration"
-			stream newLine; tab; nextPut: $"; nextPutAll: returnType.
-			stream space; nextPutAll: funcName; nextPut: $(.
-			args do: [:arg |
-				stream newLineTab: 3; nextPutAll: arg key; space; nextPutAll: arg value.
-			] separatedBy: [
-				stream nextPutAll: ', '.
-			].
-			stream newLine; tab; nextPutAll: ');"'.
-
-			"The actual FFI declaration. About time!!"
-			typeMap := self typeMap.
-			stream newLine; tab; nextPutAll: '<apicall: '.
-			stream nextPutAll: (self typeOf: returnType in: typeMap).
-			stream nextPutAll: ' '''; nextPutAll: funcName; nextPutAll: ''' ('.
-			args do: [:arg |
-				stream nextPutAll: (self typeOf: arg key in: typeMap)
-			] separatedBy: [
-				stream space
-			].
-			stream nextPutAll: ') module: '''; nextPutAll: anOpenCLPrimitiveInterfaceSubclass libraryForCurrentPlatform; nextPutAll: '''>'.
-			"Finally, the error fall-through."
-			stream newLine; newLine; tab; nextPutAll: '^self externalCallFailed'.
-		].
-	].
-	"Compile these bad boys."
-	generatedMethods with: specs do: [ :src :spec |
-		anOpenCLPrimitiveInterfaceSubclass class
-			compile: src
-			classified: ('FFI-generated-', spec last) 
-			withStamp: nil
-			notifying: nil
-			logSource: true.
-	].
-
-	^generatedMethods! !
-
-!OpenCLMethodGenerator class methodsFor: 'OpenCL constants' stamp: 'jmv 9/9/2015 10:23'!
-readConstantsFrom: aString into: aBlock
-	"The input should be a String containing the portion of cl.h with the constant definitions (no typedefs, function declarations, etc.)"
-	| category allCategories sortedCategories  |
-	category := 'unknown category'.
-	allCategories := Dictionary new.
-	sortedCategories := OrderedCollection new.
-	aString linesDo: [:line |
-		(line beginsWith: '//') ifTrue: [
-			category := (line copyFrom: 3 to: line size) withBlanksTrimmed.
-		].
-		(line beginsWith: '#define') ifTrue: [
-			| tokens constName constValue categoryDeclarations |
-			tokens := line findTokens: Character separators, '()'.
-			"Both the name and value will need to be processed further."
-			constName := tokens second.
-			constValue := tokens copyFrom: 3 to: tokens size.
-			constName := constName asSymbol.
-			"Create initializer code for variables.  Some are decimal, some hex-literals, 
-			 and some are bit-shifts; we need to deal with all three."
-			constValue size = 1
-				ifTrue: ["decimal or hex literal"
-					constValue := constValue first copyReplaceAll: '0x' with: '16r'.
-				]
-				ifFalse: ["bit-shift"
-					constValue := '1 bitShift: ', constValue last
-				].
-			"Get the collection of method-source for this category (create one
-			 if necessary), the add to it an association between the name and value."
-			categoryDeclarations := allCategories 
-										at: category 
-										ifAbsentPut: [
-											sortedCategories add: category.
-											OrderedCollection new].
-			categoryDeclarations add: constName -> constValue.
-		]
-	].
-	aBlock value: allCategories value: sortedCategories! !
-
-!OpenCLMethodGenerator class methodsFor: 'OpenCL FFI calls' stamp: 'jmv 10/28/2015 15:58'!
-readFunctionSpecsFrom: aString
-	"self readFunctionSpecsFrom: self functionDeclarationsInC"
-	| ind starts finishes funcs categories characterCount lastLineWasComment |
-	
-	"Find category names, and the start index for each category (so that we can
-	 determine which category a function belongs."
-	characterCount := 0.
-	categories := OrderedCollection new.
-	lastLineWasComment := false.
-	aString linesDo: [:line |
-		(line beginsWith: '//') 
-			ifFalse: [lastLineWasComment := false]
-			ifTrue: [
-				lastLineWasComment ifFalse: [
-					categories add: {
-						(line copyFrom: 3 to: line size) withBlanksTrimmed.
-						characterCount + 1.
-					}.
-				]..
-				lastLineWasComment := true.
-			].
-		characterCount := characterCount + line size + 1 "for carriage-return".
-	].
-	categories := categories reversed.  "allows us to use #detect: below"
-	
-	"Find the start and end index of each function declaration."
-	ind := 0.
-	starts := OrderedCollection new.
-	[(ind := aString indexOfSubCollection: 'extern CL_API_ENTRY ' startingAt: ind+1) isZero]
-		whileFalse: [starts add: ind].
-	finishes := OrderedCollection new.
-	{
-		' CL_API_SUFFIX__VERSION_1_0;'.
-		' CL_API_SUFFIX__VERSION_1_1;'.
-		' CL_API_SUFFIX__VERSION_1_2;'.
-		' CL_API_SUFFIX__VERSION_2_0;'.
-		' CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;'.
-		' CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;' } do: [ :suffix |
-			ind := 0.
-			[(ind := aString indexOfSubCollection: suffix startingAt: ind+1).
-			 ind isZero] 
-				whileFalse: [finishes add: ind]].
-	finishes sort.
-
-	funcs := starts with: finishes collect: [:start :finish | aString copyFrom: start to: finish].
-	funcs := funcs collect: [:f | f copyReplaceAll: 'extern CL_API_ENTRY' with: ''].
-	funcs := funcs collect: [:f | f copyReplaceAll: 'CL_API_CALL' with: ''].
-	funcs := funcs collect: [:f | f copyReplaceAll: 'CL_EXT_PREFIX__VERSION_1_1_DEPRECATED' with: ''].
-	funcs := funcs collect: [:f | f copyReplaceAll: 'CL_EXT_PREFIX__VERSION_1_2_DEPRECATED' with: ''].
-	
-	funcs := funcs collect: [:f |
-		| returnType funcName args stream |
-		stream := f readStream.
-		stream skipSeparators.
-		"Get the return type.  We're lucky that all function names begin with 'cl'.
-		 (we read the first two characters separately, because they're often 'cl')"
-		returnType := ((stream next: 2), (stream upToAll: 'cl')) withBlanksTrimmed.
-		"Before reading the function name, we first need to replace the 
-		 initial two characters that we gobbled."
-		stream position: stream position - 2.
-		funcName := stream upTo: $(.
-		"Get a string with all of the args.  We'll still need to parse it."
-		args := stream upToAll: '*/)'.
-		"Get a string for each arg.  We'll still need to parse each one."
-		stream := args readStream.
-		args := OrderedCollection new.
-		[stream atEnd] whileFalse: [args add: (stream upToAll: '*/')].
-		"Parse each arg."
-		args := args collect: [:a |
-			| argName argType |
-			stream := a readStream.
-			argType := stream upToAll: '/*'.
-			argName := stream upToEnd withBlanksTrimmed.
-			"Clean up arg-type."
-			(argType first = $,) ifTrue: [argType := argType copyFrom: 2 to: argType size].
-			argType := argType withBlanksTrimmed.
-			(argType beginsWith: 'void (*') ifTrue: [
-				"It's a function-pointer... we need to grab the name in a special way."
-				argName := ((argType copyUpTo: $) ) allButFirst: 7) withBlanksTrimmed.
-			].
-			argType -> argName
-		].
-		"Handle no-arg functions declared as clFuncName(void)."
-		args size = 1 ifTrue: [
-			| argName argType |
-			argName := args first value.
-			argType := args first key.
-			(argName = '' and: [argType = 'void)']) ifTrue: [args := OrderedCollection new].
-		].
-		{ returnType. funcName. args}
-	].
-
-	"Associate each func with it's category."
-	funcs := funcs with: starts collect: [:func :start |
-		| category |
-		category := categories detect: [:c | c second <= start] ifNone: #('misc API').
-		category := category first. "the name"
-		func copyWith: category.
-	].
-
-	^funcs! !
-
-!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 10/29/2015 13:22'!
-typeMap
-	"Answer a Dictionary that maps from OpenCL types to the corresponding Squeak FFI type.  The content of the map was manually derived from the files:
-	-http://www.khronos.org/registry/cl/api/1.0/cl.h and 	-http://www.khronos.org/registry/cl/api/1.0/cl_platform.h"
-	"OpenCLMethodGenerator typeMap"
-	| input map |
-	input := 
-	#(
-		"FFI types of kind 'handle to opaque structure'."
-		('CLPlatformID' 
-			('cl_platform_id'))
-		('CLDeviceID' 
-			('cl_device_id'))
-		('CLContext' 
-			('cl_context'))
-		('CLCommandQueue' 
-			('cl_command_queue'))
-		('CLMem' 
-			('cl_mem'))
-		('CLProgram' 
-			('cl_program'))
-		('CLKernel' 
-			('cl_kernel'))
-		('CLEvent' 
-			('cl_event'))
-		('CLSampler' 
-			('cl_sampler'))
-		"FFI structure type."
-		('CLImageFormatStruct'
-			('cl_image_format'))
-		('CLImageDescStruct'
-			('cl_image_desc'))
-		('CLBufferRegionStruct'
-			('cl_buffer_region'))
-		"Mappings to built-in C types."
-		('void' 
-			('void'))
-		('void*' 
-			('cl_device_partition_property' 'cl_context_properties' 'cl_pipe_properties'))
-		('schar'
-			('cl_char' 'char'))
-		('char'
-			('cl_uchar'))
-		('short'
-			('cl_short'))
-		('ushort'
-			('cl_ushort' 'cl_half'))
-		('long'
-			('cl_int' 'cl_build_status'))
-		('ulong'
-			('cl_uint' 'cl_bool' 'cl_platform_info' 'cl_device_info' 'cl_device_mem_cache_type'
-			 'cl_device_local_mem_type' 'cl_context_info' 'cl_command_queue_info'
-			 'cl_channel_order' 'cl_channel_type' 'cl_mem_object_type' 'cl_mem_info'
-			 'cl_image_info' 'cl_addressing_mode' 'cl_filter_mode' 'cl_sampler_info'
-			 'cl_program_info' 'cl_program_build_info' 'cl_kernel_info' 
-			 'cl_kernel_work_group_info' 'cl_event_info' 'cl_command_type'
-			 'cl_profiling_info' 'size_t'
-			'cl_buffer_create_type' 'cl_pipe_info' 'cl_kernel_exec_info' 'cl_kernel_arg_info'))
-		('longlong'
-			('cl_long'))
-		('ulonglong'
-			('cl_ulong' 'cl_bitfield' 'cl_device_type' 'cl_device_address_info' 
-			 'cl_device_fp_config' 'cl_device_exec_capabilities' 
-			 'cl_command_queue_properties' 'cl_mem_flags' 'cl_map_flags'
-			'cl_queue_properties' 'cl_svm_mem_flags' 'cl_sampler_properties'
-			'cl_mem_migration_flags'))
-		('float'
-			('cl_float'))
-		('double'
-			('cl_double'))
-	).
-	map := Dictionary new.
-	input do: [:spec |
-		spec second do: [:clType | map at: clType put: spec first]
-	].
-	^map
-	! !
-
-!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 8/5/2015 16:34'!
-typeOf: inputTypeName in: typeMap
-	| typeName isPointer |
-	"We'll be munging this, so assign it to a temp var."
-	typeName := inputTypeName.
-	"Const means nothing to us... strip it off."
-	(typeName beginsWith: 'const') ifTrue: [
-		typeName := (typeName allButFirst: 5) withBlanksTrimmed.
-	].
-	"Handle function pointers in really dumb way.... we don't support callbacks anyway,
-	 so just treat them as 'void*'."
-	(typeName beginsWith: 'void (*') ifTrue: [^'void*'].
-	"Callers will need to know what to pass for these on a case-by-case basis."
-	(typeName endsWith: 'char **') ifTrue: [^'void*'].
-	(typeName endsWith: 'void **') ifTrue: [^'void*'].
-	"Handle pointer types."
-	(typeName last = $*) 
-		ifFalse: [isPointer := false]
-		ifTrue: [
-			typeName := typeName allButLast withBlanksTrimmed.
-			isPointer := true
-		].
-	"We ignore const-ness."
-	(typeName beginsWith: 'const ') ifTrue: [
-		typeName := typeName allButFirst: 6.
-	].
-	"Finally, look up the type (and make it a pointer-type if necessary)."
-	typeName := typeMap at: typeName.
-	isPointer ifTrue: [typeName := typeName, '*'].
-	"Oops, one last hack...FFI doesn't know what to do with void**"
-	(typeName beginsWith: 'void*') ifTrue: [typeName := 'void*'].
-	^typeName! !
 
 !OpenCLObject methodsFor: 'converting' stamp: 'jcg 2/18/2010 03:03'!
 asOpenCLArg
@@ -14366,124 +10523,3971 @@ initialize
 	"OpenCLRefCounter initialize"
 	Smalltalk removeFromStartUpList: self.! !
 
-!OpenCLTest methodsFor: 'running' stamp: 'jmv 9/16/2015 17:32'!
-setUp
-	| gpus |
-	"gpus := OpenCLPlatform allPlatforms collect: [ :platform |
-		platform allGPUs, platform allCPUs ]."
-	gpus := OpenCLPlatform allPlatforms collect: [ :platform | platform allGPUs ].
-	gpus := gpus concatenation.
-	context := OpenCLContext newForDevices: gpus.
-	q1 := context commandQueueOn: gpus first.
-	q2 := context commandQueueOn: gpus first.! !
+!OpenCLExample methodsFor: 'accessing' stamp: 'jcg 5/1/2010 10:50'!
+context
+	"Answer the OpenCL context."
+	^context! !
 
-!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/14/2010 23:10'!
-tearDown
-	q1 destroy.
-	q2 destroy.
-	context destroy.
+!OpenCLExample methodsFor: 'initialize' stamp: 'jcg 5/1/2010 11:30'!
+destroy
+	"Release any resources used by this example."
+	device ifNotNil: [device := nil].
+	context ifNotNil: [:obj |
+		context := nil.
+		obj destroy
+	].
+	queue ifNotNil: [:obj |
+		queue := nil.
+		obj destroy
+	].
+	program ifNotNil: [:obj |
+		program := nil.
+		obj destroy
+	].
 	! !
 
-!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/15/2010 00:07'!
-testCopyToAndFromBuffer
-	| bytes1 bytes2 buf |
-	
-	bytes1 := ByteArray new: 255.
-	bytes2 := ByteArray new: 255.
-	1 to: 255 do: [:i | bytes1 at: i put: i].
-	self shouldnt: [bytes1 = bytes2 "obviously"].
-	
-	"Create memory buffer to write to and read from."
-	buf := context bufferOfSize: 255.
-	
-	"We must block, since we're copying to/from ByteArrays that might move during GC.  Note that if we didn't block, the read-buffer would have to wait on the event from the write-buffer command."
-	q1 writeBuffer: buf block: true offset: 0 size: 255 pointer: bytes1 waitOn: nil.
-	q2 readBuffer: buf block: true offset: 0 size: 255 pointer: bytes2 waitOn: nil.
-	
-	"Now that we copied to the buffer and back, the two ByteArrays should be equivalent."
-	self should: [bytes1 = bytes2].
-	
-	"Free the OpenCL memory."
-	buf destroy.! !
+!OpenCLExample methodsFor: 'initialize' stamp: 'jmv 9/16/2015 17:30'!
+initialize
+	self destroy. "reset to initial state"
+"	device := OpenCLPlatform allPlatforms first allGPUs first."
+"	device := (OpenCLPlatform allPlatforms collect: [:platform |
+		platform allGPUs, platform allCPUs]) concatenation first."
+	device := OpenCLPlatform allPlatforms first allDevices first.
+	context := OpenCLContext newForDevices: {device}.
+	queue := context commandQueueOn: device.
+	program := context programWithSource: self sourceCode.
+	program build! !
 
-!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/15/2010 01:56'!
-testFinalization
-	| buf refCounter |
-	buf := context bufferOfSize: 1000.
-	
-	"There's no accessor, because users never need to touch it."
-	refCounter := buf instVarNamed: 'refCounter'.
-	
-	self should: [refCounter count = 1].
-	buf := nil.
-	Smalltalk garbageCollectMost.
-	self should: [refCounter count = 0].
-! !
+!AppleCopyBenchmark methodsFor: 'accessing' stamp: 'jmv 1/5/2016 12:05'!
+input: aFloatMatrix
 
-!OpenCLTest methodsFor: 'running' stamp: 'jmv 5/4/2016 16:54'!
-testMapAndCopyImage
+	outputMatrix _ aFloatMatrix appropriateResultClass extent: aFloatMatrix extent.
+
+	"Set up Kernels"
+	kernel := program createKernel: 'copy'.
+	inputBuffer := context readOnlyBufferOfSize: aFloatMatrix elements byteSize.
+	outputBuffer := context writeOnlyBufferOfSize: outputMatrix elements byteSize.
+
+	lastEvent := queue 
+					writeBuffer: inputBuffer
+					from: aFloatMatrix elements
+					waitOn: lastEvent.
+
+	kernel argAt: 0 putPointer: inputBuffer.
+	kernel argAt: 1 putPointer: outputBuffer.
+	kernel argAt: 2 putInt: outputMatrix width.
+	kernel argAt: 3 putInt: outputMatrix height! !
+
+!AppleCopyBenchmark methodsFor: 'accessing' stamp: 'jmv 9/1/2015 16:46'!
+result
+
+	queue readBuffer: outputBuffer into: outputMatrix elements waitOn: lastEvent.
+	^outputMatrix! !
+
+!AppleCopyBenchmark methodsFor: 'actions' stamp: 'jmv 9/1/2015 16:48'!
+run
+
+	lastEvent := queue 
+			runKernel: kernel
+			workDim: 2
+			globalOffset: #(0 0)
+			globalSize: {outputMatrix width. outputMatrix height}
+			localSize: #(32 8)
+			waitOn: lastEvent.! !
+
+!AppleCopyBenchmark methodsFor: 'private' stamp: 'jmv 9/1/2015 16:14'!
+sourceCode
+	"Answer the OpenCL source code for this example."
+	"Copy from / to global memory"
+	^'
+__kernel void copy(global const float * in, global float * out, int w, int h) {
+
+	int x = get_global_id(0); 		// (x,y) = pixel to process
+	int y = get_global_id(1); 		// in this work item
+
+	out[x+y*w] = in[x+y*w]; 		// Load and Store
+
+//	out[x+y*w] = 100*y+x;	
+}
+'! !
+
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 7/1/2016 16:49'!
+downloadDataFromGPU: outputForm
+	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
 	
-	| inputForm outputForm mapForm imageFormat image1 image2 ptr map1evt map2evt unmap1evt unmap2evt copyEvt |
+	"Öjo que origin y region tienen tamanio 3, no 2. Entender"
 	
-	inputForm := (Form fromDisplay: (0@0 corner: 200@200)) asFormOfDepth: (Smalltalk isLittleEndian ifTrue: [ -32 ] ifFalse: [ 32 ]).
-	outputForm := Form extent: 200@200 nativeDepthFrom: 32.
-	mapForm := ExternalForm extent: 200@200 nativeDepthFrom: 32.
+	lastEvent := queue
+					readImage: result
+					block: false
+					origin: #(0 0 0)
+					region: {resultExtent x. resultExtent y. 1}
+					rowPitch: outputForm wordsPerLine * 4
+					slicePitch: 0
+					pointer: outputForm
+					waitOn: lastEvent! !
+
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 15:23'!
+initialize
+
+	"Set up context, queue, program, kernels, etc."
+	super initialize.
+
+	"Set up Kernels"
+	kernel := program createKernel: 'resample'.
 	
-	imageFormat := CLImageFormatStruct argb8888.
-	image1 := context 
+	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
+	" 
+	stuff
+	filterWeights := FloatArray new: 0.
+	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
+	kernel argAt: 1 put: filterWeightsBuffer size: 4.
+	" ! !
+
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 15:20'!
+input: inputImage gridX: gridXPositions gridY: gridYPositions resultExtent: aResultExtent
+"
+Alternativas.
+- Que aloque la memoria. despues le copio onda #uploadDataToGPU:
+- Le digo ahora CL_MEM_COPY_HOST_PTR y le paso una imagen Smalltalk
+- Le digo CL_MEM_COPY_HOST_PTR, pero uso un ExternalForm (quizas eso se pareceria mas a lo que voy a querer despues...)
+"
+"De que tipo son? Para hacer algo realista, la entrada y la salida deben ser de 8 bits. Lo de norm... no se.
+Los grid deben ser Float, o al menos de 16 bits!!"
+	| fmt |
+"
+Y esto que puse aca supone que en memoria son de 8 bits... Y al pasar hostPointer, como le digo que convierta?????? mhhhhhh
+"
+	"CL_UNORM_INT8   intensity8Norm
+	Desde afuera, en la memoria hay un unsigned char, 0..255.
+	Pero en el kernel uso read_imagef() y write_imagef(), son floats.
+	http://stackoverflow.com/questions/31718492/meaning-of-cl-unorm-int8-for-cl-image-format-image-channel-data-type-and-its-di
+	"
+	
+	"uhhhhhhh image format not supported....
+	CLImageFormatNotSupported
+	
+	clGetSupportedImageFormats
+	supportedImageFormats: flags type: imageType ' or 3D'
+	https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clGetSupportedImageFormats.html
+	"
+	" 
+Ejecutar
+OpenCLPlatform allPlatforms do: [ :platform | platform reportImageFormatsOn: Transcript ].
+
+(	context supportedImageFormats: CL_MEM_READ_WRITE type: CL_MEM_OBJECT_IMAGE2D) do: [ :a | a print].
+(	context supportedImageFormats: CL_MEM_WRITE_ONLY type: CL_MEM_OBJECT_IMAGE2D) do: [ :a | a print].
+(	context supportedImageFormats: CL_MEM_READ_ONLY type: CL_MEM_OBJECT_IMAGE2D) do: [ :a | a print].
+" 
+"
+CL_MEM_READ_WRITE
+CL_MEM_WRITE_ONLY
+CL_MEM_READ_ONLY
+"
+
+"
+=================== 
+I3 de la oficina (GPU vieja, sin OpenCL):
+NO TIENE ningun formato de 8 bit por pixel!!
+=================== 
+#(an OpenCLPlatform)
+a CLImageFormatStruct(RGBA unorm-int8)
+a CLImageFormatStruct(RGBA unorm-int16)
+a CLImageFormatStruct(RGBA int8)
+a CLImageFormatStruct(RGBA int16)
+a CLImageFormatStruct(RGBA int32)
+a CLImageFormatStruct(RGBA uint8)
+a CLImageFormatStruct(RGBA uint16)
+a CLImageFormatStruct(RGBA uint32)
+a CLImageFormatStruct(RGBA half-float)
+a CLImageFormatStruct(RGBA float)
+a CLImageFormatStruct(BGRA unorm-int8)
+a CLImageFormatStruct(Intensity float)
+a CLImageFormatStruct(Luminance float)
+===============================
+Celeron de casa (GPU mas nueva, con OpenCL)
+No tiene Intensity o Luminance, pero al menos tiene 'R uint8'
+=================== 
+a CLImageFormatStruct(RGBA unorm-int8)
+a CLImageFormatStruct(RGBA unorm-int16)
+a CLImageFormatStruct(RGBA int8)
+a CLImageFormatStruct(RGBA int16)
+a CLImageFormatStruct(RGBA int32)
+a CLImageFormatStruct(RGBA uint8)
+a CLImageFormatStruct(RGBA uint16)
+a CLImageFormatStruct(RGBA uint32)
+a CLImageFormatStruct(RGBA half-float)
+a CLImageFormatStruct(RGBA float)
+a CLImageFormatStruct(BGRA unorm-int8)
+a CLImageFormatStruct(R float)
+a CLImageFormatStruct(R unorm-int8)
+a CLImageFormatStruct(R unorm-int16)
+a CLImageFormatStruct(R int8)
+a CLImageFormatStruct(R int16)
+a CLImageFormatStruct(R int32)
+a CLImageFormatStruct(R uint8)
+a CLImageFormatStruct(R uint16)
+a CLImageFormatStruct(R uint32)
+a CLImageFormatStruct(R half-float)
+a CLImageFormatStruct(A unorm-int8)
+a CLImageFormatStruct(RG unorm-int8)
+a CLImageFormatStruct(RG unorm-int16)
+a CLImageFormatStruct(RG int8)
+a CLImageFormatStruct(RG int16)
+a CLImageFormatStruct(RG int32)
+a CLImageFormatStruct(RG uint8)
+a CLImageFormatStruct(RG uint16)
+a CLImageFormatStruct(RG uint32)
+a CLImageFormatStruct(RG half-float)
+a CLImageFormatStruct(RG float)
+================================
+En la AMD A4-5000,
+OpenCLPlatform allPlatforms do: [ :platform |
+    '-----' print.
+    platform name print.
+    ((OpenCLContext newForDevices: platform allGPUs, platform allCPUs) supportedImageFormats: CL_MEM_READ_ONLY type: 16r10F1) do: [ :each |
+        each print ]].
+==================
+AMD Accelerated Parallel Processing
+a CLImageFormatStruct(R snorm-int8)
+a CLImageFormatStruct(R snorm-int16)
+a CLImageFormatStruct(R unorm-int8)
+a CLImageFormatStruct(R unorm-int16)
+a CLImageFormatStruct(R int8)
+a CLImageFormatStruct(R int16)
+a CLImageFormatStruct(R int32)
+a CLImageFormatStruct(R uint8)
+a CLImageFormatStruct(R uint16)
+a CLImageFormatStruct(R uint32)
+a CLImageFormatStruct(R half-float)
+a CLImageFormatStruct(R float)
+a CLImageFormatStruct(A snorm-int8)
+a CLImageFormatStruct(A snorm-int16)
+a CLImageFormatStruct(A unorm-int8)
+a CLImageFormatStruct(A unorm-int16)
+a CLImageFormatStruct(A int8)
+a CLImageFormatStruct(A int16)
+a CLImageFormatStruct(A int32)
+a CLImageFormatStruct(A uint8)
+a CLImageFormatStruct(A uint16)
+a CLImageFormatStruct(A uint32)
+a CLImageFormatStruct(A half-float)
+a CLImageFormatStruct(A float)
+a CLImageFormatStruct(RG snorm-int8)
+a CLImageFormatStruct(RG snorm-int16)
+a CLImageFormatStruct(RG unorm-int8)
+a CLImageFormatStruct(RG unorm-int16)
+a CLImageFormatStruct(RG int8)
+a CLImageFormatStruct(RG int16)
+a CLImageFormatStruct(RG int32)
+a CLImageFormatStruct(RG uint8)
+a CLImageFormatStruct(RG uint16)
+a CLImageFormatStruct(RG uint32)
+a CLImageFormatStruct(RG half-float)
+a CLImageFormatStruct(RG float)
+a CLImageFormatStruct(RGBA snorm-int8)
+a CLImageFormatStruct(RGBA snorm-int16)
+a CLImageFormatStruct(RGBA unorm-int8)
+a CLImageFormatStruct(RGBA unorm-int16)
+a CLImageFormatStruct(RGBA int8)
+a CLImageFormatStruct(RGBA int16)
+a CLImageFormatStruct(RGBA int32)
+a CLImageFormatStruct(RGBA uint8)
+a CLImageFormatStruct(RGBA uint16)
+a CLImageFormatStruct(RGBA uint32)
+a CLImageFormatStruct(RGBA half-float)
+a CLImageFormatStruct(RGBA float)
+a CLImageFormatStruct(ARGB snorm-int8)
+a CLImageFormatStruct(ARGB unorm-int8)
+a CLImageFormatStruct(ARGB int8)
+a CLImageFormatStruct(ARGB uint8)
+a CLImageFormatStruct(BGRA snorm-int8)
+a CLImageFormatStruct(BGRA unorm-int8)
+a CLImageFormatStruct(BGRA int8)
+a CLImageFormatStruct(BGRA uint8)
+a CLImageFormatStruct(Luminance snorm-int8)
+a CLImageFormatStruct(Luminance snorm-int16)
+a CLImageFormatStruct(Luminance unorm-int8)
+a CLImageFormatStruct(Luminance unorm-int16)
+a CLImageFormatStruct(Luminance half-float)
+a CLImageFormatStruct(Luminance float)
+a CLImageFormatStruct(Intensity snorm-int8)
+a CLImageFormatStruct(Intensity snorm-int16)
+a CLImageFormatStruct(Intensity unorm-int8)
+a CLImageFormatStruct(Intensity unorm-int16)
+a CLImageFormatStruct(Intensity half-float)
+a CLImageFormatStruct(Intensity float)
+a CLImageFormatStruct(RA snorm-int8)
+a CLImageFormatStruct(RA snorm-int16)
+a CLImageFormatStruct(RA unorm-int8)
+a CLImageFormatStruct(RA unorm-int16)
+a CLImageFormatStruct(RA int8)
+a CLImageFormatStruct(RA int16)
+a CLImageFormatStruct(RA int32)
+a CLImageFormatStruct(RA uint8)
+a CLImageFormatStruct(RA uint16)
+a CLImageFormatStruct(RA uint32)
+a CLImageFormatStruct(RA half-float)
+a CLImageFormatStruct(RA float)
+#(an OpenCLPlatform)
+"
+	
+	
+	fmt := CLImageFormatStruct bgra8888norm.
+	fmt := CLImageFormatStruct luminance8.
+"	fmt := CLImageFormatStruct r8Norm.
+	fmt := CLImageFormatStruct intensityFloat."
+	fmt := CLImageFormatStruct r8.
+	input := context 
+							newImage2D: CL_MEM_READ_ONLY
+							format: fmt
+							width: inputImage width
+							height: inputImage height
+							rowPitch: nil
+							hostPointer: nil.
+							
+
+
+							
+	resultExtent _ aResultExtent.
+	outputImage _ FloatImage extent: aResultExtent.
+	fmt := CLImageFormatStruct intensity8Norm.
+	input := context 
+					newImage2D: CL_MEM_READ_ONLY "+ CL_MEM_COPY_HOST_PTR"
+					format: fmt
+					width: inputImage width
+					height: inputImage height
+					rowPitch: nil
+					hostPointer: "(inputImage elements collect: [ :v | (v * 256) floor min: 255 max: 0 ] into: ByteArray)" nil.
+"
+	gridX := context 
+					newImage2D: CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR
+					format: fmt
+					width: gridXPositions width
+					height: gridXPositions height
+					rowPitch: nil
+					hostPointer: gridXPositions asOpenCLArg.
+	gridY := context 
+					newImage2D: CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR
+					format: fmt
+					width: gridYPositions width
+					height: gridYPositions height
+					rowPitch: nil
+					hostPointer: gridYPositions asOpenCLArg.
+"
+	fmt := CLImageFormatStruct r8.
+	result := context 
 					newImage2D: CL_MEM_WRITE_ONLY
-					format: imageFormat
-					width: 200
-					height: 200
+					format: fmt
+					width: resultExtent x
+					height: resultExtent y
 					rowPitch: nil
-					hostPointer: nil.
-	image2 := context
-					newImage2D: CL_MEM_READ_ONLY
-					format: imageFormat
-					width: 200
-					height: 200
-					rowPitch: nil
-					hostPointer: nil.
-		
-	map1evt := q1 
-					mapImage: image1 
-					block: true 
-					flags: CL_MAP_WRITE 
-					origin: #(0 0 0) 
-					region: #(200 200 1) 
-					waitOn: nil.
-	ptr := map1evt pointer.
-	mapForm setManualSurfacePointer: ptr.
-	inputForm displayOn: mapForm.
-	mapForm setManualSurfacePointer: nil.
-	unmap1evt := q1 unmap: image1 pointer: ptr waitOn: map1evt.
-	
-	copyEvt := q2 
-					copyImage: image1 
-					origin: #(0 0 0) 
-					into: image2 
-					origin: #(0 0 0) 
-					region: #(200 200 1) 
-					waitOn: unmap1evt.
+					hostPointer: nil.! !
 
-	map2evt := q1 
-					mapImage: image2
-					block: true 
-					flags: CL_MAP_READ 
-					origin: #(0 0 0) 
-					region: #(200 200 1) 
-					waitOn: copyEvt.
-	ptr := map1evt pointer.
-	mapForm setManualSurfacePointer: ptr.
-	mapForm displayOn: outputForm.
-	mapForm setManualSurfacePointer: nil.
-	unmap2evt := q1 unmap: image2 pointer: ptr waitOn: map2evt.
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/3/2015 16:59'!
+outputImage
+^outputImage! !
+
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/3/2015 16:58'!
+run
+	"Compute work sizes."
+	| globalWorkSize localWorkSize |
+	localWorkSize := #(16 16).  "should fit on most devices... see #maxWorkGroupSize"
+	globalWorkSize := {resultExtent x. resultExtent y}.
+	globalWorkSize := globalWorkSize 
+							with: localWorkSize 
+							collect: [:global :local | global roundUpTo: local].		
+					
+	"Run the two kernels to blur the image first horizontally, then vertically."
+	lastEvent := queue
+					runKernel: kernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: globalWorkSize
+					localSize: localWorkSize 
+					waitOn: lastEvent.
+					
+	self downloadDataFromGPU: outputImage! !
+
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/3/2015 17:13'!
+sourceCode
+	"Answer the OpenCL source code for the guassian-blur program."
+	"Sampleamos el resultado de manera discreta"
+^'
+
+	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
+
+	__kernel void resample (
+			__read_only image2d_t src_image,
+			__read_only image2d_t gridX_image,
+			__read_only image2d_t gridY_image,
+			__write_only image2d_t dst_image) {
+
+		if (get_global_id(0) >= get_image_width(dst_image)) return;
+		if (get_global_id(1) >= get_image_height(dst_image)) return;
+
+		int2 coord = (int2)(get_global_id(0), get_global_id(1));
+		float4 out = read_imagef(src_image, sampler, coord);
+		write_imagef(dst_image, coord, out);
+	}'! !
+
+!DeformationGridExample class methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 14:49'!
+dale
+	"
+	DeformationGridExample dale
+	En casa aun no puedo instanciar la de resultado...
+	"
+	| experiment gridXPositions gridYPositions inputImage resultExtent |
+	experiment _ self new.
+inputImage _ FloatImage lena.
+inputImage _ FloatImage grid: 12@12 extent: 256@256.
+resultExtent _ 512@512.
+gridXPositions _ FloatImage fromArrayOfArrays: #(
+	(0.0 0.3 1.0)
+	(0.0 0.6 1.0)
+	(0.0 0.8 1.0)).
+gridYPositions _ FloatImage fromArrayOfArrays: #(
+	(0.0 0.3 0.0)
+	(0.7 0.6 0.5)
+	(1.0 1.0 1.0)).
+
+experiment input: inputImage gridX: gridXPositions gridY: gridYPositions resultExtent: resultExtent.
+"
+result replaceValues: [ :y :x :v |
+	yy _ y-1.0/(result height-1) * (gridXPositions height-1) + 1.
+	xx _ x-1.0/(result width-1) * (gridXPositions width-1) + 1.
+	xp _ (gridXPositions bilinearInterpolatedValueAtX: xx y: yy) * 255+1.
+	yp _ (gridYPositions bilinearInterpolatedValueAtX: xx y: yy) * 255+1.
+	inputImage bilinearInterpolatedValueAtX: xp y: yp ].
+"
+experiment run.
+experiment outputImage display.
 	
-	self should: [inputForm bits = outputForm bits].
 	
-	mapForm destroySurface.
+	"
+input _ FloatImage lena.
+input _ FloatImage grid: 12@12 extent: 256@256.
+result _ FloatImage extent: 500@500.
+gridX _ FloatImage fromArrayOfArrays: #(
+	(0.0 0.3 1.0)
+	(0.0 0.6 1.0)
+	(0.0 0.8 1.0)).
+gridY _ FloatImage fromArrayOfArrays: #(
+	(0.0 0.3 0.0)
+	(0.7 0.6 0.5)
+	(1.0 1.0 1.0)).
+
+result replaceValues: [ :y :x :v |
+	yy _ y-1.0/(result height-1) * (gridX height-1) + 1.
+	xx _ x-1.0/(result width-1) * (gridX width-1) + 1.
+	xp _ (gridX bilinearInterpolatedValueAtX: xx y: yy) * 255+1.
+	yp _ (gridY bilinearInterpolatedValueAtX: xx y: yy) * 255+1.
+	input bilinearInterpolatedValueAtX: xp y: yp ].
+result display
+"! !
+
+!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 7/1/2016 16:44'!
+downloadDataFromGPU: outputForm
+	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
+	lastEvent := queue
+					readImage: processedFrame
+					block: false
+					origin: #(0 0 0)
+					region: {outputForm width. outputForm height. 1}
+					rowPitch: outputForm wordsPerLine * 4
+					slicePitch: 0
+					pointer: outputForm
+					waitOn: lastEvent! !
+
+!NormalizedCoordinatesExperiment methodsFor: 'initialize' stamp: 'jmv 2/22/2016 10:46'!
+initialize
+
+	"Set up context, queue, program, kernels, etc."
+	super initialize.
+
+	"Set up Kernels"
+	kernel := program createKernel: 'the_kernel'! !
+
+!NormalizedCoordinatesExperiment methodsFor: 'actions' stamp: 'jmv 2/22/2016 11:00'!
+process: inputForm into: outputForm
+	| localWorkSize globalWorkSize startTime |
+	
+	"Sanity check."
+	inputForm depth = 8 ifFalse: [self error: 'input form depth must be 8'].
+	outputForm depth = 8 ifFalse: [self error: 'output form depth must be 8'].
+
+	self setupInputImage: inputForm.
+	kernel argAt: 0 putPointer: originalFrame.
+	self setupOutputImage: outputForm.
+	kernel argAt: 1 putPointer: processedFrame.
+	'---------------------' print.
+
+	startTime := Time millisecondClockValue.
+	"Upload image to the GPU so we can process it." 
+	self uploadDataToGPU: inputForm.
+	OpenCLEvent waitForEvents: lastEvent.
+	((Time millisecondClockValue - startTime) printString, ' ms to Upload to GPU') print.
+					
+	"Compute work sizes."
+	localWorkSize := #(256 1).  "should fit on most devices... see #maxWorkGroupSize. Minimum number that already gives max performance"
+	globalWorkSize := {outputForm width. outputForm height}.
+
+	startTime := Time millisecondClockValue.
+	lastEvent := queue
+					runKernel: kernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: globalWorkSize
+					localSize: localWorkSize 
+					waitOn: lastEvent.
+	OpenCLEvent waitForEvents: lastEvent.
+	((Time millisecondClockValue - startTime) printString, ' ms to Run Kernel') print.
+					
+	"Retrieve result image from the GPU."
+	startTime := Time millisecondClockValue.
+	self downloadDataFromGPU: outputForm.
+	OpenCLEvent waitForEvents: lastEvent.
+	((Time millisecondClockValue - startTime) printString, ' ms to Download from GPU') print.! !
+
+!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 2/22/2016 10:46'!
+setupInputImage: inputForm
+	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels.
+	Use the OpenCL 1.2 api for this."
+	| format description |
+
+	"r8Norm para que en el kernel se pueda usar read_imagef() y write_imagef().
+	Ver OpenCL reference '6.11.8.2 Built-in Image Functions'  p.192
+	#r8Norm, #luminance8Norm, #intensity8Norm parecen dar lo mismo"
+	format _ CLImageFormatStruct r8Norm.
+"	format _ CLImageFormatStruct luminance8Norm."
+"	format _ CLImageFormatStruct intensity8Norm."
+
+	description _ CLImageDescStruct new.
+	description  		"https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/imageDescriptor.html"
+		image_type: CL_MEM_OBJECT_IMAGE2D;
+		image_width: inputForm width;
+		image_height: inputForm height;
+		image_depth: 0;				"Only used for 3d images"
+		image_array_size: 0; 		"This is only used if the image is a 1D or 2D image array"
+		image_row_pitch: 0;
+		image_slice_pitch: 0;
+		num_mip_levels: 0;
+		num_samples: 0;
+		buffer: 0.
+	"Image creation the OpenCL 1.2 way"
+	originalFrame _ context 
+		newImage: CL_MEM_READ_ONLY
+		format: format
+		description: description
+		hostPointer: nil! !
+
+!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 2/22/2016 10:59'!
+setupOutputImage: outputForm
+	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels.
+	Use the OpenCL 1.2 api for this."
+	| format description |
+
+	"r8Norm para que en el kernel se pueda usar read_imagef() y write_imagef().
+	Ver OpenCL reference '6.11.8.2 Built-in Image Functions'  p.192
+	#r8Norm, #luminance8Norm, #intensity8Norm parecen dar lo mismo"
+	format _ CLImageFormatStruct r8Norm.
+"	format _ CLImageFormatStruct luminance8Norm."
+"	format _ CLImageFormatStruct intensity8Norm."
+
+	description _ CLImageDescStruct new.
+	description  		"https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/imageDescriptor.html"
+		image_type: CL_MEM_OBJECT_IMAGE2D;
+		image_width: outputForm width;
+		image_height: outputForm height;
+		image_depth: 0;				"Only used for 3d images"
+		image_array_size: 0; 		"This is only used if the image is a 1D or 2D image array"
+		image_row_pitch: 0;
+		image_slice_pitch: 0;
+		num_mip_levels: 0;
+		num_samples: 0;
+		buffer: 0.
+	"Image creation the OpenCL 1.2 way"
+	processedFrame _ context 
+		newImage: CL_MEM_WRITE_ONLY 
+		format: format
+		description: description
+		hostPointer: nil! !
+
+!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 2/22/2016 12:29'!
+sourceCode
+	"Answer the OpenCL source code for the program."
+"	Todos los kernels juntos en cada linea.
+	Si de casualidad le pego a la rerrida de OpenCL, entonces me queda en orden la recorrida de RAM"
+^'
+
+	//__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_NONE | CLK_FILTER_LINEAR;
+	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_LINEAR;
+	//__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_CLAMP | CLK_FILTER_LINEAR;
+	//__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_REPEAT | CLK_FILTER_LINEAR;
+	//__constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE | CLK_ADDRESS_MIRRORED_REPEAT | CLK_FILTER_LINEAR;
+
+	__kernel void the_kernel (
+							__read_only image2d_t src_image,
+							__write_only image2d_t dst_image)
+	{
+
+		float scaleH = 1.0 / get_image_width(dst_image);
+		float scaleV = 1.0 / get_image_height(dst_image);
+
+		float2 inputCoord = (float2)(get_global_id(0) * scaleH , get_global_id(1) * scaleV);
+		int2 outputCoord = (int2)(get_global_id(0), get_global_id(1));
+
+		float value = read_imagef(src_image, sampler, inputCoord).x;
+
+		write_imagef(dst_image, outputCoord, (float4)(value,0,0,0));
+
+	}'! !
+
+!NormalizedCoordinatesExperiment methodsFor: 'private' stamp: 'jmv 7/1/2016 16:44'!
+uploadDataToGPU: inputForm
+	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
+	lastEvent := queue
+					writeImage: originalFrame
+					block: false
+					origin: #(0 0 0)
+					region: {inputForm width. inputForm height. 1}
+					rowPitch: inputForm wordsPerLine * 4
+					slicePitch: 0
+					pointer: inputForm
+					waitOn: lastEvent! !
+
+!NormalizedCoordinatesExperiment class methodsFor: 'example' stamp: 'jmv 5/12/2016 18:34'!
+go
+	"
+	NormalizedCoordinatesExperiment go
+	"
+	| algoritm src dest value |
+	algoritm _ self new.
+
+	src _ GrayForm extent: 4@4.
+	
+	0 to: src width-1 do: [ :x |
+		value _ (x * 255.0 / (src width-1)) rounded.
+		value _ (x+0.5 * 255.0 / (src width)) rounded print.
+		0 to: src height-1 do: [ :y |
+			src pixelValueAt: x@y put: value.
+			]].
+	dest _ GrayForm extent: 300@1.
+	algoritm process: src into: dest.
+	dest displayAt: 0@0.
+
+	{src. dest} explore.
+	dest bits asByteArray print! !
+
+!OpenCLBlur methodsFor: 'actions' stamp: 'jcg 6/4/2010 02:54'!
+blur: inputForm into: outputForm radius: filterRadius
+	| localWorkSize globalWorkSize |
+	
+	"Sanity check."
+	inputForm extent = outputForm extent ifFalse: [self error: 'image sizes do not match'].
+	inputForm depth = 32 ifFalse: [self error: 'input form depth must be 32'].
+	outputForm depth = 32 ifFalse: [self error: 'output form depth must be 32'].
+
+	inputForm extent = imageExtent ifFalse: [
+		"Need to allocate new images."
+		self setupImages: (imageExtent := inputForm extent).
+	].
+
+	(filterWeights size - 1) = filterRadius ifFalse: [
+		"Need to compute and set-up new filter weights."
+		self setupWeightsForRadius: filterRadius.
+	].
+	
+	"Upload image to the GPU so we can blur it." 
+	self uploadDataToGPU: inputForm.
+					
+	"Compute work sizes."
+	localWorkSize := #(16 16).  "should fit on most devices... see #maxWorkGroupSize"
+	globalWorkSize := {imageExtent x. imageExtent y}.
+	globalWorkSize := globalWorkSize 
+							with: localWorkSize 
+							collect: [:global :local | global roundUpTo: local].		
+					
+	"Run the two kernels to blur the image first horizontally, then vertically."
+	lastEvent := queue
+					runKernel: horizontalKernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: globalWorkSize
+					localSize: localWorkSize 
+					waitOn: lastEvent.
+	lastEvent := queue
+					runKernel: verticalKernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: globalWorkSize
+					localSize: localWorkSize 
+					waitOn: lastEvent.
+					
+	"Retrieve blurred image from the GPU."				
+	self downloadDataFromGPU: outputForm.
+	
+	"When this event is finished, 'outputForm' will have its new contents.  Yay!!"				
+	^lastEvent ! !
+
+!OpenCLBlur methodsFor: 'actions' stamp: 'jcg 2/16/2010 02:00'!
+blur: inputAndOutputForm radius: filterRadius
+	"Input and output image are the same."
+	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
+	! !
+
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 7/1/2016 16:49'!
+downloadDataFromGPU: outputForm
+	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
+	lastEvent := queue
+					readImage: inputOutputImage
+					block: false
+					origin: #(0 0 0)
+					region: {imageExtent x. imageExtent y. 1}
+					rowPitch: outputForm wordsPerLine * 4
+					slicePitch: 0
+					pointer: outputForm
+					waitOn: lastEvent! !
+
+!OpenCLBlur methodsFor: 'initialize' stamp: 'jmv 1/5/2016 11:53'!
+initialize
+
+	"Set up context, queue, program, kernels, etc."
+	super initialize.
+
+	"Set up Kernels"
+	horizontalKernel := program createKernel: 'image_filter_horizontal'.
+	verticalKernel := program createKernel: 'image_filter_vertical'.
+	
+	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
+	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
+	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
+	horizontalKernel argAt: 1 putPointer: filterWeightsBuffer.
+	verticalKernel argAt: 1 putPointer: filterWeightsBuffer! !
+
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 11:54'!
+setupImages: extent
+	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels."
+	| fmt |
+	fmt := CLImageFormatStruct bgra8888norm.
+	inputOutputImage := context 
+							newImage2D: CL_MEM_READ_WRITE
+							format: fmt
+							width: extent x
+							height: extent y
+							rowPitch: nil
+							hostPointer: nil.
+	tempImage := context 
+							newImage2D: CL_MEM_READ_WRITE
+							format: fmt
+							width: extent x
+							height: extent y
+							rowPitch: nil
+							hostPointer: nil.
+	
+	"Horizontal kernel runs first, storing the horizontally-blurred image into 'tempImage'."						
+	horizontalKernel argAt: 2 putPointer: inputOutputImage.
+	horizontalKernel argAt: 3 putPointer: tempImage.
+	
+	"Vertical kernel runs next, using the partly-blurred image in 'tempImage' as the source."
+	verticalKernel argAt: 2 putPointer: tempImage.
+	verticalKernel argAt: 3 putPointer: inputOutputImage! !
+
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 11:55'!
+setupWeightsForRadius: filterRadius
+	| sigma sum |
+	
+	filterRadius isInteger ifFalse: [self error: 'filter radius must be an integer'].
+	filterRadius > 100 ifTrue: [
+		"In #initialize, we only allocated enough space for 101 filter weights."
+		self error: 'filter radius must be <= 100 pixels'.
+	].
+
+	"If the radius is zero, there is no blurring."
+	filterRadius = 0 ifTrue: [
+		filterWeights := FloatArray with: 1.0.
+		^self.
+	].
+	
+	filterWeights := FloatArray new: filterRadius + 1.
+	sigma := filterRadius / 3.0.  "past 3 std-deviations, Gaussian is near-zero."
+	
+	"Compute unnormalized gaussian weights."
+	0 to: filterRadius do: [:i |
+		| t1 t2 |
+		t1 := 1 / (sigma * (Float pi * 2) sqrt).
+		t2 := (i / sigma) squared * -0.5.
+		filterWeights at: i+1 put: (t1 * (Float e raisedTo: t2))
+	].
+
+	"Normalize.  We've computed half a bell curve, so count some weights twice so that the full curve sums to 1."
+	sum := filterWeights sum * 2.
+	sum := sum - (filterWeights first).  "only count the center of the curve once."
+	filterWeights /= sum.
+	
+	"Upload filter weights to buffer."
+	lastEvent := queue 
+					writeBuffer: filterWeightsBuffer
+					from: filterWeights
+					waitOn: lastEvent.
+	
+	"Set up kernel arguments."
+	horizontalKernel argAt: 0 putInt: filterRadius.
+	verticalKernel argAt: 0 putInt: filterRadius
+
+	! !
+
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 8/10/2015 12:11'!
+sourceCode
+	"Answer the OpenCL source code for the guassian-blur program."
+^'
+
+	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
+
+	__kernel void
+	image_filter_horizontal (int filterHalfWidth,
+							__constant float* filterWeights,  // of size filterHalfWidth + 1
+							__read_only image2d_t src_image,
+							__write_only image2d_t dst_image)
+	{
+		if (get_global_id(0) >= get_image_width(dst_image)) return;
+		if (get_global_id(1) >= get_image_height(dst_image)) return;
+		int i;
+		int2 coord = (int2)(get_global_id(0), get_global_id(1));
+		float4 weight = (float4)filterWeights[0];
+		float4 out = read_imagef(src_image, sampler, coord) * weight;
+		for (i=1; i <= filterHalfWidth; i++) {
+			weight = (float4)filterWeights[i];
+			out += (read_imagef(src_image, sampler, (coord + (int2)(i,0))) * weight);
+			out += (read_imagef(src_image, sampler, (coord - (int2)(i,0))) * weight);
+		}
+		write_imagef(dst_image, coord, out);
+	}
+	
+	__kernel void
+	image_filter_vertical (int filterHalfHeight,
+						__constant float* filterWeights, // of size filterHalfHeight + 1
+						__read_only image2d_t src_image,
+						__write_only image2d_t dst_image)
+	{
+		if (get_global_id(0) >= get_image_width(dst_image)) return;
+		if (get_global_id(1) >= get_image_height(dst_image)) return;
+		int i;
+		int2 coord = (int2)(get_global_id(0), get_global_id(1));
+		float4 weight = (float4)filterWeights[0];
+		float4 out = read_imagef(src_image, sampler, coord) * weight;
+		for (i=1; i <= filterHalfHeight; i++) {
+			weight = (float4)filterWeights[i];
+			out += (read_imagef(src_image, sampler, (coord + (int2)(0,i))) * weight);
+			out += (read_imagef(src_image, sampler, (coord - (int2)(0,i))) * weight);
+		}
+		write_imagef(dst_image, coord, out);
+	}'! !
+
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 7/1/2016 16:52'!
+uploadDataToGPU: inputForm
+	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
+	lastEvent := queue
+					writeImage: inputOutputImage
+					block: false
+					origin: #(0 0 0)
+					region: {imageExtent x. imageExtent y. 1}
+					rowPitch: inputForm wordsPerLine * 4
+					slicePitch: 0
+					pointer: inputForm
+					waitOn: lastEvent! !
+
+!OpenCLBlur class methodsFor: 'example' stamp: 'jmv 5/4/2016 12:58'!
+blurDisplay
+	"
+	OpenCLBlur blurDisplay
+	"
+	| blur src dest |
+	blur := self new.
+	
+	dest := ExternalForm extent: Display extent nativeDepthFrom: 32.
+	dest allocateSpace.
+	src := ExternalForm extent: Display extent nativeDepthFrom: 32.
+	src allocateSpace.
+	Display displayOn: src.
+		
+	((1 to: 20), (19 to: 1 by: -1)) do: [:radius |
+		| evt startTime queuedTime finishTime |
+		startTime := Time millisecondClockValue.
+		evt := blur blur: src into: dest radius: radius.
+		queuedTime := Time millisecondClockValue - startTime.
+		OpenCLEvent waitForEvents: evt.
+		finishTime := Time millisecondClockValue - startTime.
+		('   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ') print.
+		('   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ') print.
+		'   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ' displayOn: dest at: 20@20.
+		'   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ' displayOn: dest at: 20@40.
+		dest displayAt: 0@0.
+
+		(Delay forMilliseconds: 20) wait.
+	].
+	src displayAt: 0@0.
 ! !
+
+!OpenCLBlur12 methodsFor: 'actions' stamp: 'jmv 10/29/2015 12:47'!
+blur: inputForm into: outputForm radius: filterRadius
+	| localWorkSize globalWorkSize |
+	
+	"Sanity check."
+	inputForm extent = outputForm extent ifFalse: [self error: 'image sizes do not match'].
+	inputForm depth = 32 ifFalse: [self error: 'input form depth must be 32'].
+	outputForm depth = 32 ifFalse: [self error: 'output form depth must be 32'].
+
+	inputForm extent = imageExtent ifFalse: [
+		"Need to allocate new images."
+		self setupImages: (imageExtent := inputForm extent).
+	].
+
+	(filterWeights size - 1) = filterRadius ifFalse: [
+		"Need to compute and set-up new filter weights."
+		self setupWeightsForRadius: filterRadius.
+	].
+	
+	"Upload image to the GPU so we can blur it." 
+	self uploadDataToGPU: inputForm.
+					
+	"Compute work sizes."
+	localWorkSize := #(16 16).  "should fit on most devices... see #maxWorkGroupSize"
+	globalWorkSize := {imageExtent x. imageExtent y}.
+	globalWorkSize := globalWorkSize 
+							with: localWorkSize 
+							collect: [:global :local | global roundUpTo: local].		
+					
+	"Run the two kernels to blur the image first horizontally, then vertically."
+	lastEvent := queue
+					runKernel: horizontalKernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: globalWorkSize
+					localSize: localWorkSize 
+					waitOn: lastEvent.
+	lastEvent := queue
+					runKernel: verticalKernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: globalWorkSize
+					localSize: localWorkSize 
+					waitOn: lastEvent.
+					
+	"Retrieve blurred image from the GPU."				
+	self downloadDataFromGPU: outputForm.
+	
+	"When this event is finished, 'outputForm' will have its new contents.  Yay!!"				
+	^lastEvent ! !
+
+!OpenCLBlur12 methodsFor: 'actions' stamp: 'jmv 10/29/2015 12:47'!
+blur: inputAndOutputForm radius: filterRadius
+	"Input and output image are the same."
+	^self blur: inputAndOutputForm into: inputAndOutputForm radius: filterRadius
+	! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 7/1/2016 16:49'!
+downloadDataFromGPU: outputForm
+	"Block, because outputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
+	lastEvent := queue
+					readImage: inputOutputImage
+					block: false
+					origin: #(0 0 0)
+					region: {imageExtent x. imageExtent y. 1}
+					rowPitch: outputForm wordsPerLine * 4
+					slicePitch: 0
+					pointer: outputForm
+					waitOn: lastEvent! !
+
+!OpenCLBlur12 methodsFor: 'initialize' stamp: 'jmv 1/5/2016 11:57'!
+initialize
+
+	"Set up context, queue, program, kernels, etc."
+	super initialize.
+
+	"Set up Kernels"
+	horizontalKernel := program createKernel: 'image_filter_horizontal'.
+	verticalKernel := program createKernel: 'image_filter_vertical'.
+	
+	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
+	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
+	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
+	horizontalKernel argAt: 1 putPointer: filterWeightsBuffer.
+	verticalKernel argAt: 1 putPointer: filterWeightsBuffer! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 11:58'!
+setupImages: extent
+	"Create new OpenCL images to perform the blur, and assign them as arguments to both kernels.
+	Use the OpenCL 1.2 api for this."
+	| format description |
+	format _ CLImageFormatStruct bgra8888norm.
+	description _ CLImageDescStruct new.
+	description  		"https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/imageDescriptor.html"
+		image_type: CL_MEM_OBJECT_IMAGE2D;
+		image_width: extent x;
+		image_height: extent y;
+		image_depth: 0;				"Only used for 3d images"
+		image_array_size: 0; 		"This is only used if the image is a 1D or 2D image array"
+		image_row_pitch: 0;
+		image_slice_pitch: 0;
+		num_mip_levels: 0;
+		num_samples: 0;
+		buffer: 0.
+	"Image creation the OpenCL 1.2 way"
+	inputOutputImage := context 
+							newImage: CL_MEM_READ_WRITE
+							format: format
+							description: description
+							hostPointer: nil.
+	tempImage := context 
+							newImage: CL_MEM_READ_WRITE
+							format: format
+							description: description
+							hostPointer: nil.
+	
+	"Horizontal kernel runs first, storing the horizontally-blurred image into 'tempImage'."						
+	horizontalKernel argAt: 2 putPointer: inputOutputImage.
+	horizontalKernel argAt: 3 putPointer: tempImage.
+	
+	"Vertical kernel runs next, using the partly-blurred image in 'tempImage' as the source."
+	verticalKernel argAt: 2 putPointer: tempImage.
+	verticalKernel argAt: 3 putPointer: inputOutputImage! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 11:59'!
+setupWeightsForRadius: filterRadius
+	| sigma sum |
+	
+	filterRadius isInteger ifFalse: [self error: 'filter radius must be an integer'].
+	filterRadius > 100 ifTrue: [
+		"In #initialize, we only allocated enough space for 101 filter weights."
+		self error: 'filter radius must be <= 100 pixels'.
+	].
+
+	"If the radius is zero, there is no blurring."
+	filterRadius = 0 ifTrue: [
+		filterWeights := FloatArray with: 1.0.
+		^self.
+	].
+	
+	filterWeights := FloatArray new: filterRadius + 1.
+	sigma := filterRadius / 3.0.  "past 3 std-deviations, Gaussian is near-zero."
+	
+	"Compute unnormalized gaussian weights."
+	0 to: filterRadius do: [:i |
+		| t1 t2 |
+		t1 := 1 / (sigma * (Float pi * 2) sqrt).
+		t2 := (i / sigma) squared * -0.5.
+		filterWeights at: i+1 put: (t1 * (Float e raisedTo: t2))
+	].
+
+	"Normalize.  We've computed half a bell curve, so count some weights twice so that the full curve sums to 1."
+	sum := filterWeights sum * 2.
+	sum := sum - (filterWeights first).  "only count the center of the curve once."
+	filterWeights /= sum.
+	
+	"Upload filter weights to buffer."
+	lastEvent := queue 
+					writeBuffer: filterWeightsBuffer
+					from: filterWeights
+					waitOn: lastEvent.
+	
+	"Set up kernel arguments."
+	horizontalKernel argAt: 0 putInt: filterRadius.
+	verticalKernel argAt: 0 putInt: filterRadius.
+
+	! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 10/29/2015 12:47'!
+sourceCode
+	"Answer the OpenCL source code for the guassian-blur program."
+^'
+
+	__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
+
+	__kernel void
+	image_filter_horizontal (int filterHalfWidth,
+							__constant float* filterWeights,  // of size filterHalfWidth + 1
+							__read_only image2d_t src_image,
+							__write_only image2d_t dst_image)
+	{
+		if (get_global_id(0) >= get_image_width(dst_image)) return;
+		if (get_global_id(1) >= get_image_height(dst_image)) return;
+		int i;
+		int2 coord = (int2)(get_global_id(0), get_global_id(1));
+		float4 weight = (float4)filterWeights[0];
+		float4 out = read_imagef(src_image, sampler, coord) * weight;
+		for (i=1; i <= filterHalfWidth; i++) {
+			weight = (float4)filterWeights[i];
+			out += (read_imagef(src_image, sampler, (coord + (int2)(i,0))) * weight);
+			out += (read_imagef(src_image, sampler, (coord - (int2)(i,0))) * weight);
+		}
+		write_imagef(dst_image, coord, out);
+	}
+	
+	__kernel void
+	image_filter_vertical (int filterHalfHeight,
+						__constant float* filterWeights, // of size filterHalfHeight + 1
+						__read_only image2d_t src_image,
+						__write_only image2d_t dst_image)
+	{
+		if (get_global_id(0) >= get_image_width(dst_image)) return;
+		if (get_global_id(1) >= get_image_height(dst_image)) return;
+		int i;
+		int2 coord = (int2)(get_global_id(0), get_global_id(1));
+		float4 weight = (float4)filterWeights[0];
+		float4 out = read_imagef(src_image, sampler, coord) * weight;
+		for (i=1; i <= filterHalfHeight; i++) {
+			weight = (float4)filterWeights[i];
+			out += (read_imagef(src_image, sampler, (coord + (int2)(0,i))) * weight);
+			out += (read_imagef(src_image, sampler, (coord - (int2)(0,i))) * weight);
+		}
+		write_imagef(dst_image, coord, out);
+	}'! !
+
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 7/1/2016 16:52'!
+uploadDataToGPU: inputForm
+	"Block, because inputForm may be moved by GC before the data transfer occurs.  We could test to see if we're using an ExternalForm, and if so use a non-blocking command."
+	lastEvent := queue
+					writeImage: inputOutputImage
+					block: false
+					origin: #(0 0 0)
+					region: {imageExtent x. imageExtent y. 1}
+					rowPitch: inputForm wordsPerLine * 4
+					slicePitch: 0
+					pointer: inputForm
+					waitOn: lastEvent! !
+
+!OpenCLBlur12 class methodsFor: 'example' stamp: 'jmv 5/4/2016 16:22'!
+blurDisplay
+	"
+	OpenCLBlur12 blurDisplay
+	"
+	| blur src dest |
+	blur := self new.
+	
+	dest := ExternalForm extent: Display extent nativeDepthFrom: 32.
+	dest allocateSpace.
+	src := ExternalForm extent: Display extent nativeDepthFrom: 32.
+	src allocateSpace.
+	Display displayOn: src.
+		
+	((1 to: 20), (19 to: 1 by: -1)) do: [:radius |
+		| evt startTime queuedTime finishTime |
+		startTime := Time millisecondClockValue.
+		evt := blur blur: src into: dest radius: radius.
+		queuedTime := Time millisecondClockValue - startTime.
+		OpenCLEvent waitForEvents: evt.
+		finishTime := Time millisecondClockValue - startTime.
+		('   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ') print.
+		('   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ') print.
+		'   QUEUED COMMANDS IN: ', queuedTime printString, 'msecs     ' displayOn: dest at: 20@20.
+		'   FINISHED COMMANDS IN: ', finishTime printString, 'msecs     ' displayOn: dest at: 20@40.
+		dest displayAt: 0@0.
+
+		(Delay forMilliseconds: 20) wait.
+	].
+	src displayAt: 0@0.
+! !
+
+!OpenCLJuliaSet methodsFor: 'private' stamp: 'jcg 4/28/2010 09:31'!
+adjustOriginAndStepSize
+	"For now we just hardcode to use the whole domain from (-2,-2) to (2,2)... no zoom/pan."
+	params at: 1 put: -2.0.
+	params at: 2 put: -2.0.
+	params at: 3 put: (4.0 / extent x).
+	params at: 4 put: (4.0 / extent y).
+
+
+	paramsDirty := true.! !
+
+!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:00'!
+extent: newExtent
+	newExtent = extent ifTrue: [^self "no change"].
+	paramsDirty := true.
+	extent := newExtent.
+	outputForm := Form extent: extent depth: 32.
+	
+	self waitForEvent.
+	workImage ifNotNil: [workImage destroy].
+	workImage := context
+					newImage2D: CL_MEM_WRITE_ONLY
+					format: CLImageFormatStruct bgra8888norm
+					width: extent x
+					height: extent y
+					rowPitch: nil
+					hostPointer: nil.
+	kernel argAt: 3 putPointer: workImage.
+	
+	self adjustOriginAndStepSize! !
+
+!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 01:51'!
+imaginary
+	"Answer the 'imaginary' parameter of the Julia set."
+	^params at: 6! !
+
+!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 12:47'!
+imaginary: newImaginary
+	"Set the 'imaginary' parameter of the Julia set."
+	| old |
+	old := params at: 6.
+	params at: 6 put: newImaginary.
+	old = (params at: 6) ifTrue: [^self "no change"].
+	paramsDirty := true! !
+
+!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:01'!
+initialize
+	"We take care so that you can call #initialize again and none of the existing settings will be lost."
+	| rememberedExtent |
+
+	lastEvent := nil.	
+	super initialize.
+
+	"Set up kernels"
+	kernel := program createKernel: 'julia'.
+
+	scale ifNil: [
+		"This is the first time #initialize is being run, so we need to initialize all variables.
+		 Otherwise, we reuse the existing values, only resetting the OpenCL state."
+		scale := 1.0.
+		origin := 0.0.
+	
+		"Would be better to use ExternalData so that we don't have to block when uploading
+		 the parameters to the GPU, but I don't know how write 32-bit floats via the FFI."
+		params := FloatArray new: 7.
+		params at: 5 put: 0.1.
+		params at: 6 put: 0.5.
+		params at: 7 put: 0.0.
+		
+		extent := 512@512.
+	].
+
+	paramsBuffer := context readWriteBufferOfSize: 7*4. "7 32-bit floats"
+	kernel argAt: 1 putPointer: paramsBuffer.
+
+	toneMapForm ifNotNil: [self toneMap: toneMapForm].
+	
+	rememberedExtent := extent.
+	extent := nil. "force recreation of work-image."
+	self extent: rememberedExtent.
+	
+	paramsDirty := true.
+	! !
+
+!OpenCLJuliaSet methodsFor: 'accessing' stamp: 'jcg 5/1/2010 01:53'!
+isDirty
+	"Answer true if parameters have changed and we need to re-render."
+	^paramsDirty! !
+
+!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 4/28/2010 01:01'!
+origin: newOrigin
+	self error: 'unimplemented'. "see #adjustOriginAndStepSize"
+	origin = newOrigin ifTrue: [^self "no change"].
+	origin := newOrigin.
+	self adjustOriginAndStepSize.
+	! !
+
+!OpenCLJuliaSet methodsFor: 'accessing' stamp: 'jcg 4/28/2010 09:29'!
+outputForm
+	^outputForm! !
+
+!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 01:46'!
+real
+	"Answer the 'real' parameter of the Julia set."
+	^params at: 5! !
+
+!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 12:48'!
+real: newReal
+	"Set the 'real' parameter of the Julia set."
+	| old |
+	old := params at: 5.
+	params at: 5 put: newReal.
+	old = (params at: 5) ifTrue: [^self "no change"].
+	paramsDirty := true! !
+
+!OpenCLJuliaSet methodsFor: 'private' stamp: 'jmv 7/1/2016 16:54'!
+runKernel
+	paramsDirty ifTrue: [
+		"Would be nice if this were non-blocking..."
+		lastEvent := queue
+						writeBuffer: paramsBuffer
+						from: params
+						waitOn: lastEvent.
+		paramsDirty := false.
+	].
+
+	lastEvent := queue
+					runKernel: kernel
+					workDim: 2
+					globalOffset: #(0 0)
+					globalSize: {extent x roundUpTo: 32. extent y roundUpTo: 4}
+					localSize: #(32 4)
+					waitOn: lastEvent.
+	queue
+			readImage: workImage
+			block: true
+			origin: #(0 0 0)
+			region: {extent x. extent y. 1}
+			rowPitch: outputForm wordsPerLine * 4
+			slicePitch: 0
+			pointer: outputForm
+			waitOn: lastEvent.
+	lastEvent := nil! !
+
+!OpenCLJuliaSet methodsFor: 'private' stamp: 'jcg 5/1/2010 01:11'!
+runKernelAndDisplay
+	self runKernel.
+	outputForm displayAt: 0@0.! !
+
+!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 4/28/2010 01:02'!
+scale: newScale
+	self error: 'unimplemented'. "see #adjustOriginAndStepSize"
+	scale = newScale ifTrue: [^self "no change"].
+	scale := newScale.
+	self adjustOriginAndStepSize.! !
+
+!OpenCLJuliaSet methodsFor: 'private' stamp: 'jmv 8/7/2015 15:16'!
+sourceCode
+	"Answer the OpenCL source code for the Julia set program."
+^'
+__constant sampler_t sampler = 	CLK_NORMALIZED_COORDS_TRUE | 
+									CLK_FILTER_LINEAR |
+									CLK_ADDRESS_CLAMP_TO_EDGE ;
+
+/* 	params[0]	x-origin
+	params[1]	y-origin
+	params[2]	x-step
+	params[3]	y-step
+	params[4]	real coefficient
+	params[5]	imaginary coefficient
+	params[6]	tone-map v-coord (u is computed based on # of iterations)
+*/
+			
+__kernel void
+julia (int iterations,
+	__constant float* params,
+	__read_only image2d_t tone_map,
+	__write_only image2d_t dst_image)
+{
+
+	if (get_global_id(0) >= get_image_width(dst_image)) return;
+	if (get_global_id(1) >= get_image_height(dst_image)) return;
+	
+	float x = params[0] + (params[2]*(float)get_global_id(0));
+	float y = params[1] + (params[3]*(float)get_global_id(1));
+	float real = params[4];
+	float imaginary = params[5];
+
+	int count = 0;	
+	while (count < iterations) {
+		if (x*x + y*y > 4.0) break;
+		count++;
+		
+		float new_x = x*x - y*y + real;
+		float new_y = 2*x*y + imaginary;
+		x = new_x;
+		y = new_y;	
+	}
+
+	float2 tex_coord = (float2)((float)count / (float)iterations, params[6]);
+	write_imagef(	dst_image, 
+					(int2)(get_global_id(0), get_global_id(1)), 
+					read_imagef(tone_map, sampler, tex_coord));
+}'! !
+
+!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 7/1/2016 16:56'!
+toneMap: newToneMapForm
+	| |
+	
+	toneMapForm := newToneMapForm.
+	toneMapImage ifNotNil: [
+		self waitForEvent.
+		toneMapImage destroy.
+	].
+
+	"We clamp at a set number of iterations... if we haven't diverged after that long, 
+	 we consider the point to be in the set.  We use the number of iterations before
+	 diverging to pick a color to shade the pixel.  Therefore, it makes sense to make
+	 the number of iterations equal to the width of the tone-map."
+	iterations := toneMapForm width.
+	kernel argAt: 0 putInt: iterations.
+
+	toneMapImage := context
+						newImage2D: CL_MEM_READ_ONLY
+						format: CLImageFormatStruct bgra8888norm
+						width: toneMapForm width
+						height: toneMapForm height
+						rowPitch: nil
+						hostPointer: nil.
+	kernel argAt: 2 putPointer: toneMapImage.
+	lastEvent := queue
+					writeImage: toneMapImage
+					block: true
+					origin: #(0 0 0)
+					region: {toneMapImage width. toneMapImage height. 1}
+					rowPitch: toneMapForm wordsPerLine * 4
+					slicePitch: 0
+					pointer: toneMapForm
+					waitOn: lastEvent.
+	paramsDirty := true! !
+
+!OpenCLJuliaSet methodsFor: 'parameters' stamp: 'jcg 5/1/2010 01:02'!
+toneMapV: texVCoord
+	params at: 7 put: texVCoord.
+	paramsDirty := true! !
+
+!OpenCLJuliaSet methodsFor: 'tone-maps' stamp: 'jmv 8/10/2015 12:13'!
+useRainbowToneMap
+	"Generate a tone-map that cycles through the color-wheel.."
+	| rainbow s |
+s _ 32. "original"
+s _ 80.
+	rainbow := Form extent: s@s depth: 32.
+	1 to: s-2 do: [:i |
+		0 to: s-1 do: [:j |
+			| hue bright |
+			hue := ((j*11.25*32/s) + (i *11.25*32/s)) \\ 360.0.
+			bright := (s-2 - i) / (s-2*2.0) + 0.35.
+			rainbow colorAt: i@j put: (Color h: hue s: 1.0 v: bright).
+		].
+	].
+	0 to: s-1 do: [:j |
+		rainbow colorAt: 0@j put: (Color transparent).
+		rainbow colorAt: s-1@j put: (Color transparent).
+	].
+
+	self toneMap: rainbow.! !
+
+!OpenCLJuliaSet methodsFor: 'private' stamp: 'jcg 4/27/2010 02:06'!
+waitForEvent
+	"If there's an event pending, wait for it to complete."
+	lastEvent ifNotNil: [lastEvent wait].
+	lastEvent := nil.! !
+
+!OpenCLJuliaSet class methodsFor: 'examples' stamp: 'jmv 8/7/2015 15:03'!
+example1
+	"
+	OpenCLJuliaSet example1
+	"
+	| clExample |
+
+	clExample := OpenCLJuliaSet new.
+	clExample extent: 1024@1024.
+	clExample useRainbowToneMap.
+	
+	(ImageMorph new image:  clExample outputForm) openInHand.	
+			
+	0 to: 360 by: 2 do: [:i |
+		| rads |
+		rads := i degreesToRadians.
+		clExample real: rads sin / 2.0*1.3.
+		clExample imaginary: rads cos / 2.0*1.1.	
+		clExample runKernel.
+		clExample outputForm display.
+	"	Display forceToScreen: (0@0 corner: 1024@1024)."
+	].
+
+
+	
+! !
+
+!OpenCLFill256 methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:00'!
+initialize
+"	device := OpenCLPlatform allPlatforms first allGPUs first."
+"	device := (OpenCLPlatform allPlatforms collect: [:platform |
+		platform allGPUs, platform allCPUs]) concatenation first."
+	device := OpenCLPlatform allPlatforms first allDevices first.
+	context := OpenCLContext newForDevices: {device}.
+	queue := context commandQueueOn: device.
+	program := context programWithSource: self sourceCode.
+	program build.
+	buffer := context readWriteBufferOfSize: 256*4.  "256 integers"
+	kernel1d := program createKernel: 'fill256_1d'.
+	kernel1d argAt: 0 putPointer: buffer.
+	kernel2d := program createKernel: 'fill256_2d'.
+	kernel2d argAt: 0 putPointer: buffer! !
+
+!OpenCLFill256 methodsFor: 'actions' stamp: 'jcg 2/16/2010 10:57'!
+run1d
+	| evt output |
+	evt := queue 
+			runKernel: kernel1d
+			workDim: 1
+			globalOffset: #(0)
+			globalSize: #(256)
+			localSize: #(16)
+			waitOn: nil.
+	output := IntegerArray new: 256.
+	queue readBuffer: buffer into: output waitOn: evt.
+	^output! !
+
+!OpenCLFill256 methodsFor: 'actions' stamp: 'jcg 2/16/2010 11:00'!
+run2d
+	| evt output |
+	evt := queue 
+			runKernel: kernel2d
+			workDim: 2
+			globalOffset: #(0 0)
+			globalSize: #(16 16)
+			localSize: #(4 4)
+			waitOn: nil.
+	output := IntegerArray new: 256.
+	queue readBuffer: buffer into: output waitOn: evt.
+	^output! !
+
+!OpenCLFill256 methodsFor: 'private' stamp: 'jmv 8/7/2015 15:12'!
+sourceCode
+	"Answer the OpenCL source code for this example."
+^'
+	__kernel void
+	fill256_1d(__global int* target)
+	{
+		int index = get_global_id(0);
+		target[index] = index;
+	}
+	
+	__kernel void
+	fill256_2d(__global int* target)
+	{
+		int x = get_global_id(0);
+		int y = get_global_id(1);
+		int index = x*16 + y;
+		target[index] = index;
+	}'! !
+
+!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 9/9/2015 11:19'!
+adaptType: cTypeString
+	| answer |
+	answer := cTypeString.
+	answer := answer copyReplaceAll: 'const'  with: 'const__' .
+	answer := answer copyReplaceAll: '*'  with: ' __ptr' .
+	answer := answer asLegalSelector.
+	^ answer! !
+
+!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 9/9/2015 10:07'!
+clearConstantInitializers
+	"
+	OpenCLMethodGenerator clearConstantInitializers
+	"
+	| cls |
+	cls _ OpenCLConstants class.
+	cls selectors copy do: [ :sel |
+		((cls whichCategoryIncludesSelector: sel) = 'class initialization')
+			ifTrue: [cls removeSelector: sel ]].
+	cls organization removeEmptyCategories! !
+
+!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 9/9/2015 10:04'!
+clearFFICalls
+	"
+	OpenCLMethodGenerator clearFFICalls
+	"
+	OpenCLPrimitiveInterface class subclassesDo: [ :cls |
+		cls selectors copy do: [ :sel |
+			((cls whichCategoryIncludesSelector: sel) beginsWith: 'FFI-generated-')
+				ifTrue: [cls removeSelector: sel ]].
+		cls organization removeEmptyCategories ]! !
+
+!OpenCLMethodGenerator class methodsFor: 'C source code' stamp: 'jmv 10/28/2015 15:40'!
+constantDeclarationsInC
+	"Cut'n'paste directly from cl.h header file.
+	Updated to OpenCL 2.0
+	From https://www.khronos.org/registry/cl/api/2.0/"
+^'
+// Error Codes
+#define CL_SUCCESS                                  0
+#define CL_DEVICE_NOT_FOUND                         -1
+#define CL_DEVICE_NOT_AVAILABLE                     -2
+#define CL_COMPILER_NOT_AVAILABLE                   -3
+#define CL_MEM_OBJECT_ALLOCATION_FAILURE            -4
+#define CL_OUT_OF_RESOURCES                         -5
+#define CL_OUT_OF_HOST_MEMORY                       -6
+#define CL_PROFILING_INFO_NOT_AVAILABLE             -7
+#define CL_MEM_COPY_OVERLAP                         -8
+#define CL_IMAGE_FORMAT_MISMATCH                    -9
+#define CL_IMAGE_FORMAT_NOT_SUPPORTED               -10
+#define CL_BUILD_PROGRAM_FAILURE                    -11
+#define CL_MAP_FAILURE                              -12
+#define CL_MISALIGNED_SUB_BUFFER_OFFSET             -13
+#define CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST -14
+#define CL_COMPILE_PROGRAM_FAILURE                  -15
+#define CL_LINKER_NOT_AVAILABLE                     -16
+#define CL_LINK_PROGRAM_FAILURE                     -17
+#define CL_DEVICE_PARTITION_FAILED                  -18
+#define CL_KERNEL_ARG_INFO_NOT_AVAILABLE            -19
+
+#define CL_INVALID_VALUE                            -30
+#define CL_INVALID_DEVICE_TYPE                      -31
+#define CL_INVALID_PLATFORM                         -32
+#define CL_INVALID_DEVICE                           -33
+#define CL_INVALID_CONTEXT                          -34
+#define CL_INVALID_QUEUE_PROPERTIES                 -35
+#define CL_INVALID_COMMAND_QUEUE                    -36
+#define CL_INVALID_HOST_PTR                         -37
+#define CL_INVALID_MEM_OBJECT                       -38
+#define CL_INVALID_IMAGE_FORMAT_DESCRIPTOR          -39
+#define CL_INVALID_IMAGE_SIZE                       -40
+#define CL_INVALID_SAMPLER                          -41
+#define CL_INVALID_BINARY                           -42
+#define CL_INVALID_BUILD_OPTIONS                    -43
+#define CL_INVALID_PROGRAM                          -44
+#define CL_INVALID_PROGRAM_EXECUTABLE               -45
+#define CL_INVALID_KERNEL_NAME                      -46
+#define CL_INVALID_KERNEL_DEFINITION                -47
+#define CL_INVALID_KERNEL                           -48
+#define CL_INVALID_ARG_INDEX                        -49
+#define CL_INVALID_ARG_VALUE                        -50
+#define CL_INVALID_ARG_SIZE                         -51
+#define CL_INVALID_KERNEL_ARGS                      -52
+#define CL_INVALID_WORK_DIMENSION                   -53
+#define CL_INVALID_WORK_GROUP_SIZE                  -54
+#define CL_INVALID_WORK_ITEM_SIZE                   -55
+#define CL_INVALID_GLOBAL_OFFSET                    -56
+#define CL_INVALID_EVENT_WAIT_LIST                  -57
+#define CL_INVALID_EVENT                            -58
+#define CL_INVALID_OPERATION                        -59
+#define CL_INVALID_GL_OBJECT                        -60
+#define CL_INVALID_BUFFER_SIZE                      -61
+#define CL_INVALID_MIP_LEVEL                        -62
+#define CL_INVALID_GLOBAL_WORK_SIZE                 -63
+#define CL_INVALID_PROPERTY                         -64
+#define CL_INVALID_IMAGE_DESCRIPTOR                 -65
+#define CL_INVALID_COMPILER_OPTIONS                 -66
+#define CL_INVALID_LINKER_OPTIONS                   -67
+#define CL_INVALID_DEVICE_PARTITION_COUNT           -68
+#define CL_INVALID_PIPE_SIZE                        -69
+#define CL_INVALID_DEVICE_QUEUE                     -70
+
+// OpenCL Version
+#define CL_VERSION_1_0                              1
+#define CL_VERSION_1_1                              1
+#define CL_VERSION_1_2                              1
+#define CL_VERSION_2_0                              1
+
+// cl_bool
+#define CL_FALSE                                    0
+#define CL_TRUE                                     1
+#define CL_BLOCKING                                 CL_TRUE
+#define CL_NON_BLOCKING                             CL_FALSE
+
+// cl_platform_info
+#define CL_PLATFORM_PROFILE                         0x0900
+#define CL_PLATFORM_VERSION                         0x0901
+#define CL_PLATFORM_NAME                            0x0902
+#define CL_PLATFORM_VENDOR                          0x0903
+#define CL_PLATFORM_EXTENSIONS                      0x0904
+
+// cl_device_type - bitfield
+#define CL_DEVICE_TYPE_DEFAULT                      (1 << 0)
+#define CL_DEVICE_TYPE_CPU                          (1 << 1)
+#define CL_DEVICE_TYPE_GPU                          (1 << 2)
+#define CL_DEVICE_TYPE_ACCELERATOR                  (1 << 3)
+#define CL_DEVICE_TYPE_CUSTOM                       (1 << 4)
+#define CL_DEVICE_TYPE_ALL                          0xFFFFFFFF
+
+// cl_device_info
+#define CL_DEVICE_TYPE                              0x1000
+#define CL_DEVICE_VENDOR_ID                         0x1001
+#define CL_DEVICE_MAX_COMPUTE_UNITS                 0x1002
+#define CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS          0x1003
+#define CL_DEVICE_MAX_WORK_GROUP_SIZE               0x1004
+#define CL_DEVICE_MAX_WORK_ITEM_SIZES               0x1005
+#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR       0x1006
+#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT      0x1007
+#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT        0x1008
+#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG       0x1009
+#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT      0x100A
+#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE     0x100B
+#define CL_DEVICE_MAX_CLOCK_FREQUENCY               0x100C
+#define CL_DEVICE_ADDRESS_BITS                      0x100D
+#define CL_DEVICE_MAX_READ_IMAGE_ARGS               0x100E
+#define CL_DEVICE_MAX_WRITE_IMAGE_ARGS              0x100F
+#define CL_DEVICE_MAX_MEM_ALLOC_SIZE                0x1010
+#define CL_DEVICE_IMAGE2D_MAX_WIDTH                 0x1011
+#define CL_DEVICE_IMAGE2D_MAX_HEIGHT                0x1012
+#define CL_DEVICE_IMAGE3D_MAX_WIDTH                 0x1013
+#define CL_DEVICE_IMAGE3D_MAX_HEIGHT                0x1014
+#define CL_DEVICE_IMAGE3D_MAX_DEPTH                 0x1015
+#define CL_DEVICE_IMAGE_SUPPORT                     0x1016
+#define CL_DEVICE_MAX_PARAMETER_SIZE                0x1017
+#define CL_DEVICE_MAX_SAMPLERS                      0x1018
+#define CL_DEVICE_MEM_BASE_ADDR_ALIGN               0x1019
+#define CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE          0x101A
+#define CL_DEVICE_SINGLE_FP_CONFIG                  0x101B
+#define CL_DEVICE_GLOBAL_MEM_CACHE_TYPE             0x101C
+#define CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE         0x101D
+#define CL_DEVICE_GLOBAL_MEM_CACHE_SIZE             0x101E
+#define CL_DEVICE_GLOBAL_MEM_SIZE                   0x101F
+#define CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE          0x1020
+#define CL_DEVICE_MAX_CONSTANT_ARGS                 0x1021
+#define CL_DEVICE_LOCAL_MEM_TYPE                    0x1022
+#define CL_DEVICE_LOCAL_MEM_SIZE                    0x1023
+#define CL_DEVICE_ERROR_CORRECTION_SUPPORT          0x1024
+#define CL_DEVICE_PROFILING_TIMER_RESOLUTION        0x1025
+#define CL_DEVICE_ENDIAN_LITTLE                     0x1026
+#define CL_DEVICE_AVAILABLE                         0x1027
+#define CL_DEVICE_COMPILER_AVAILABLE                0x1028
+#define CL_DEVICE_EXECUTION_CAPABILITIES            0x1029
+// CL_DEVICE_QUEUE_PROPERTIES is deprecated!!
+#define CL_DEVICE_QUEUE_PROPERTIES                      0x102A    
+#define CL_DEVICE_QUEUE_ON_HOST_PROPERTIES              0x102A
+#define CL_DEVICE_NAME                              0x102B
+#define CL_DEVICE_VENDOR                            0x102C
+#define CL_DRIVER_VERSION                           0x102D
+#define CL_DEVICE_PROFILE                           0x102E
+#define CL_DEVICE_VERSION                           0x102F
+#define CL_DEVICE_EXTENSIONS                        0x1030
+#define CL_DEVICE_PLATFORM                          0x1031
+#define CL_DEVICE_DOUBLE_FP_CONFIG                      0x1032
+// 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG
+#define CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF           0x1034
+// CL_DEVICE_HOST_UNIFIED_MEMORY is deprecated!!
+#define CL_DEVICE_HOST_UNIFIED_MEMORY                   0x1035
+#define CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR              0x1036
+#define CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT             0x1037
+#define CL_DEVICE_NATIVE_VECTOR_WIDTH_INT               0x1038
+#define CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG              0x1039
+#define CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT             0x103A
+#define CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE            0x103B
+#define CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF              0x103C
+#define CL_DEVICE_OPENCL_C_VERSION                      0x103D
+#define CL_DEVICE_LINKER_AVAILABLE                      0x103E
+#define CL_DEVICE_BUILT_IN_KERNELS                      0x103F
+#define CL_DEVICE_IMAGE_MAX_BUFFER_SIZE                 0x1040
+#define CL_DEVICE_IMAGE_MAX_ARRAY_SIZE                  0x1041
+#define CL_DEVICE_PARENT_DEVICE                         0x1042
+#define CL_DEVICE_PARTITION_MAX_SUB_DEVICES             0x1043
+#define CL_DEVICE_PARTITION_PROPERTIES                  0x1044
+#define CL_DEVICE_PARTITION_AFFINITY_DOMAIN             0x1045
+#define CL_DEVICE_PARTITION_TYPE                        0x1046
+#define CL_DEVICE_REFERENCE_COUNT                       0x1047
+#define CL_DEVICE_PREFERRED_INTEROP_USER_SYNC           0x1048
+#define CL_DEVICE_PRINTF_BUFFER_SIZE                    0x1049
+#define CL_DEVICE_IMAGE_PITCH_ALIGNMENT                 0x104A
+#define CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT          0x104B
+#define CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS             0x104C
+#define CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE              0x104D
+#define CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES            0x104E
+#define CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE        0x104F
+#define CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE              0x1050
+#define CL_DEVICE_MAX_ON_DEVICE_QUEUES                  0x1051
+#define CL_DEVICE_MAX_ON_DEVICE_EVENTS                  0x1052
+#define CL_DEVICE_SVM_CAPABILITIES                      0x1053
+#define CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE  0x1054
+#define CL_DEVICE_MAX_PIPE_ARGS                         0x1055
+#define CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS          0x1056
+#define CL_DEVICE_PIPE_MAX_PACKET_SIZE                  0x1057
+#define CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT   0x1058
+#define CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT     0x1059
+#define CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT      0x105A
+	
+// cl_device_fp_config - bitfield
+#define CL_FP_DENORM                                (1 << 0)
+#define CL_FP_INF_NAN                               (1 << 1)
+#define CL_FP_ROUND_TO_NEAREST                      (1 << 2)
+#define CL_FP_ROUND_TO_ZERO                         (1 << 3)
+#define CL_FP_ROUND_TO_INF                          (1 << 4)
+#define CL_FP_FMA                                   (1 << 5)
+#define CL_FP_SOFT_FLOAT                            (1 << 6)
+#define CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT         (1 << 7)
+
+// cl_device_mem_cache_type
+#define CL_NONE                                     0x0
+#define CL_READ_ONLY_CACHE                          0x1
+#define CL_READ_WRITE_CACHE                         0x2
+
+// cl_device_local_mem_type
+#define CL_LOCAL                                    0x1
+#define CL_GLOBAL                                   0x2
+
+// cl_device_exec_capabilities - bitfield
+#define CL_EXEC_KERNEL                              (1 << 0)
+#define CL_EXEC_NATIVE_KERNEL                       (1 << 1)
+
+// cl_command_queue_properties - bitfield
+#define CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE      (1 << 0)
+#define CL_QUEUE_PROFILING_ENABLE                   (1 << 1)
+#define CL_QUEUE_ON_DEVICE                          (1 << 2)
+#define CL_QUEUE_ON_DEVICE_DEFAULT                  (1 << 3)
+
+// cl_context_info
+#define CL_CONTEXT_REFERENCE_COUNT                  0x1080
+#define CL_CONTEXT_DEVICES                          0x1081
+#define CL_CONTEXT_PROPERTIES                       0x1082
+#define CL_CONTEXT_NUM_DEVICES                      0x1083
+
+// cl_context_properties
+#define CL_CONTEXT_PLATFORM                         0x1084
+#define CL_CONTEXT_INTEROP_USER_SYNC                0x1085
+    
+// cl_device_partition_property 
+#define CL_DEVICE_PARTITION_EQUALLY                 0x1086
+#define CL_DEVICE_PARTITION_BY_COUNTS               0x1087
+#define CL_DEVICE_PARTITION_BY_COUNTS_LIST_END      0x0
+#define CL_DEVICE_PARTITION_BY_AFFINITY_DOMAIN      0x1088
+    
+// cl_device_affinity_domain 
+#define CL_DEVICE_AFFINITY_DOMAIN_NUMA               (1 << 0)
+#define CL_DEVICE_AFFINITY_DOMAIN_L4_CACHE           (1 << 1)
+#define CL_DEVICE_AFFINITY_DOMAIN_L3_CACHE           (1 << 2)
+#define CL_DEVICE_AFFINITY_DOMAIN_L2_CACHE           (1 << 3)
+#define CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE           (1 << 4)
+#define CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE (1 << 5)
+    
+// cl_device_svm_capabilities 
+#define CL_DEVICE_SVM_COARSE_GRAIN_BUFFER           (1 << 0)
+#define CL_DEVICE_SVM_FINE_GRAIN_BUFFER             (1 << 1)
+#define CL_DEVICE_SVM_FINE_GRAIN_SYSTEM             (1 << 2)
+#define CL_DEVICE_SVM_ATOMICS                       (1 << 3)
+
+// cl_command_queue_info
+#define CL_QUEUE_CONTEXT                            0x1090
+#define CL_QUEUE_DEVICE                             0x1091
+#define CL_QUEUE_REFERENCE_COUNT                    0x1092
+#define CL_QUEUE_PROPERTIES                         0x1093
+#define CL_QUEUE_SIZE                               0x1094
+
+// cl_mem_flags and cl_svm_mem_flags - bitfield 
+#define CL_MEM_READ_WRITE                           (1 << 0)
+#define CL_MEM_WRITE_ONLY                           (1 << 1)
+#define CL_MEM_READ_ONLY                            (1 << 2)
+#define CL_MEM_USE_HOST_PTR                         (1 << 3)
+#define CL_MEM_ALLOC_HOST_PTR                       (1 << 4)
+#define CL_MEM_COPY_HOST_PTR                        (1 << 5)
+// reserved                                         (1 << 6)    
+#define CL_MEM_HOST_WRITE_ONLY                      (1 << 7)
+#define CL_MEM_HOST_READ_ONLY                       (1 << 8)
+#define CL_MEM_HOST_NO_ACCESS                       (1 << 9)
+// used by cl_svm_mem_flags only
+#define CL_MEM_SVM_FINE_GRAIN_BUFFER                (1 << 10)   
+// used by cl_svm_mem_flags only
+#define CL_MEM_SVM_ATOMICS                          (1 << 11)   
+#define CL_MEM_KERNEL_READ_AND_WRITE                (1 << 12)
+
+// cl_mem_migration_flags - bitfield
+#define CL_MIGRATE_MEM_OBJECT_HOST                  (1 << 0)
+#define CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED     (1 << 1)
+
+// cl_channel_order
+#define CL_R                                        0x10B0
+#define CL_A                                        0x10B1
+#define CL_RG                                       0x10B2
+#define CL_RA                                       0x10B3
+#define CL_RGB                                      0x10B4
+#define CL_RGBA                                     0x10B5
+#define CL_BGRA                                     0x10B6
+#define CL_ARGB                                     0x10B7
+#define CL_INTENSITY                                0x10B8
+#define CL_LUMINANCE                                0x10B9
+#define CL_Rx                                       0x10BA
+#define CL_RGx                                      0x10BB
+#define CL_RGBx                                     0x10BC
+#define CL_DEPTH                                    0x10BD
+#define CL_DEPTH_STENCIL                            0x10BE
+#define CL_sRGB                                     0x10BF
+#define CL_sRGBx                                    0x10C0
+#define CL_sRGBA                                    0x10C1
+#define CL_sBGRA                                    0x10C2
+#define CL_ABGR                                     0x10C3
+
+// cl_channel_type
+#define CL_SNORM_INT8                               0x10D0
+#define CL_SNORM_INT16                              0x10D1
+#define CL_UNORM_INT8                               0x10D2
+#define CL_UNORM_INT16                              0x10D3
+#define CL_UNORM_SHORT_565                          0x10D4
+#define CL_UNORM_SHORT_555                          0x10D5
+#define CL_UNORM_INT_101010                         0x10D6
+#define CL_SIGNED_INT8                              0x10D7
+#define CL_SIGNED_INT16                             0x10D8
+#define CL_SIGNED_INT32                             0x10D9
+#define CL_UNSIGNED_INT8                            0x10DA
+#define CL_UNSIGNED_INT16                           0x10DB
+#define CL_UNSIGNED_INT32                           0x10DC
+#define CL_HALF_FLOAT                               0x10DD
+#define CL_FLOAT                                    0x10DE
+#define CL_UNORM_INT24                              0x10DF
+
+// cl_mem_object_type
+#define CL_MEM_OBJECT_BUFFER                        0x10F0
+#define CL_MEM_OBJECT_IMAGE2D                       0x10F1
+#define CL_MEM_OBJECT_IMAGE3D                       0x10F2
+#define CL_MEM_OBJECT_IMAGE2D_ARRAY                 0x10F3
+#define CL_MEM_OBJECT_IMAGE1D                       0x10F4
+#define CL_MEM_OBJECT_IMAGE1D_ARRAY                 0x10F5
+#define CL_MEM_OBJECT_IMAGE1D_BUFFER                0x10F6
+#define CL_MEM_OBJECT_PIPE                          0x10F7
+
+// cl_mem_info
+#define CL_MEM_TYPE                                 0x1100
+#define CL_MEM_FLAGS                                0x1101
+#define CL_MEM_SIZE                                 0x1102
+#define CL_MEM_HOST_PTR                             0x1103
+#define CL_MEM_MAP_COUNT                            0x1104
+#define CL_MEM_REFERENCE_COUNT                      0x1105
+#define CL_MEM_CONTEXT                              0x1106
+#define CL_MEM_ASSOCIATED_MEMOBJECT                 0x1107
+#define CL_MEM_OFFSET                               0x1108
+#define CL_MEM_USES_SVM_POINTER                     0x1109
+
+// cl_image_info
+#define CL_IMAGE_FORMAT                             0x1110
+#define CL_IMAGE_ELEMENT_SIZE                       0x1111
+#define CL_IMAGE_ROW_PITCH                          0x1112
+#define CL_IMAGE_SLICE_PITCH                        0x1113
+#define CL_IMAGE_WIDTH                              0x1114
+#define CL_IMAGE_HEIGHT                             0x1115
+#define CL_IMAGE_DEPTH                              0x1116
+#define CL_IMAGE_ARRAY_SIZE                         0x1117
+#define CL_IMAGE_BUFFER                             0x1118
+#define CL_IMAGE_NUM_MIP_LEVELS                     0x1119
+#define CL_IMAGE_NUM_SAMPLES                        0x111A
+    
+// cl_pipe_info 
+#define CL_PIPE_PACKET_SIZE                         0x1120
+#define CL_PIPE_MAX_PACKETS                         0x1121
+
+// cl_addressing_mode
+#define CL_ADDRESS_NONE                             0x1130
+#define CL_ADDRESS_CLAMP_TO_EDGE                    0x1131
+#define CL_ADDRESS_CLAMP                            0x1132
+#define CL_ADDRESS_REPEAT                           0x1133
+#define CL_ADDRESS_MIRRORED_REPEAT                  0x1134
+
+// cl_filter_mode
+#define CL_FILTER_NEAREST                           0x1140
+#define CL_FILTER_LINEAR                            0x1141
+
+// cl_sampler_info
+#define CL_SAMPLER_REFERENCE_COUNT                  0x1150
+#define CL_SAMPLER_CONTEXT                          0x1151
+#define CL_SAMPLER_NORMALIZED_COORDS                0x1152
+#define CL_SAMPLER_ADDRESSING_MODE                  0x1153
+#define CL_SAMPLER_FILTER_MODE                      0x1154
+#define CL_SAMPLER_MIP_FILTER_MODE                  0x1155
+#define CL_SAMPLER_LOD_MIN                          0x1156
+#define CL_SAMPLER_LOD_MAX                          0x1157
+
+// cl_map_flags - bitfield
+#define CL_MAP_READ                                 (1 << 0)
+#define CL_MAP_WRITE                                (1 << 1)
+#define CL_MAP_WRITE_INVALIDATE_REGION              (1 << 2)
+
+// cl_program_info
+#define CL_PROGRAM_REFERENCE_COUNT                  0x1160
+#define CL_PROGRAM_CONTEXT                          0x1161
+#define CL_PROGRAM_NUM_DEVICES                      0x1162
+#define CL_PROGRAM_DEVICES                          0x1163
+#define CL_PROGRAM_SOURCE                           0x1164
+#define CL_PROGRAM_BINARY_SIZES                     0x1165
+#define CL_PROGRAM_BINARIES                         0x1166
+#define CL_PROGRAM_NUM_KERNELS                      0x1167
+#define CL_PROGRAM_KERNEL_NAMES                     0x1168
+
+// cl_program_build_info
+#define CL_PROGRAM_BUILD_STATUS                     0x1181
+#define CL_PROGRAM_BUILD_OPTIONS                    0x1182
+#define CL_PROGRAM_BUILD_LOG                        0x1183
+#define CL_PROGRAM_BINARY_TYPE                      0x1184
+#define CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE 0x1185
+    
+// cl_program_binary_type 
+#define CL_PROGRAM_BINARY_TYPE_NONE                 0x0
+#define CL_PROGRAM_BINARY_TYPE_COMPILED_OBJECT      0x1
+#define CL_PROGRAM_BINARY_TYPE_LIBRARY              0x2
+#define CL_PROGRAM_BINARY_TYPE_EXECUTABLE           0x4
+
+// cl_build_status
+#define CL_BUILD_SUCCESS                            0
+#define CL_BUILD_NONE                               -1
+#define CL_BUILD_ERROR                              -2
+#define CL_BUILD_IN_PROGRESS                        -3
+
+// cl_kernel_info
+#define CL_KERNEL_FUNCTION_NAME                     0x1190
+#define CL_KERNEL_NUM_ARGS                          0x1191
+#define CL_KERNEL_REFERENCE_COUNT                   0x1192
+#define CL_KERNEL_CONTEXT                           0x1193
+#define CL_KERNEL_PROGRAM                           0x1194
+#define CL_KERNEL_ATTRIBUTES                        0x1195
+
+// cl_kernel_arg_info 
+#define CL_KERNEL_ARG_ADDRESS_QUALIFIER             0x1196
+#define CL_KERNEL_ARG_ACCESS_QUALIFIER              0x1197
+#define CL_KERNEL_ARG_TYPE_NAME                     0x1198
+#define CL_KERNEL_ARG_TYPE_QUALIFIER                0x1199
+#define CL_KERNEL_ARG_NAME                          0x119A
+
+// cl_kernel_arg_address_qualifier 
+#define CL_KERNEL_ARG_ADDRESS_GLOBAL                0x119B
+#define CL_KERNEL_ARG_ADDRESS_LOCAL                 0x119C
+#define CL_KERNEL_ARG_ADDRESS_CONSTANT              0x119D
+#define CL_KERNEL_ARG_ADDRESS_PRIVATE               0x119E
+
+// cl_kernel_arg_access_qualifier 
+#define CL_KERNEL_ARG_ACCESS_READ_ONLY              0x11A0
+#define CL_KERNEL_ARG_ACCESS_WRITE_ONLY             0x11A1
+#define CL_KERNEL_ARG_ACCESS_READ_WRITE             0x11A2
+#define CL_KERNEL_ARG_ACCESS_NONE                   0x11A3
+    
+// cl_kernel_arg_type_qualifer 
+#define CL_KERNEL_ARG_TYPE_NONE                     0
+#define CL_KERNEL_ARG_TYPE_CONST                    (1 << 0)
+#define CL_KERNEL_ARG_TYPE_RESTRICT                 (1 << 1)
+#define CL_KERNEL_ARG_TYPE_VOLATILE                 (1 << 2)
+#define CL_KERNEL_ARG_TYPE_PIPE                     (1 << 3)
+
+// cl_kernel_work_group_info
+#define CL_KERNEL_WORK_GROUP_SIZE                   0x11B0
+#define CL_KERNEL_COMPILE_WORK_GROUP_SIZE           0x11B1
+#define CL_KERNEL_LOCAL_MEM_SIZE                    0x11B2
+#define CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE 0x11B3
+#define CL_KERNEL_PRIVATE_MEM_SIZE                  0x11B4
+#define CL_KERNEL_GLOBAL_WORK_SIZE                  0x11B5
+    
+// cl_kernel_exec_info 
+#define CL_KERNEL_EXEC_INFO_SVM_PTRS                0x11B6
+#define CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM   0x11B7
+
+// cl_event_info
+#define CL_EVENT_COMMAND_QUEUE                      0x11D0
+#define CL_EVENT_COMMAND_TYPE                       0x11D1
+#define CL_EVENT_REFERENCE_COUNT                    0x11D2
+#define CL_EVENT_COMMAND_EXECUTION_STATUS           0x11D3
+#define CL_EVENT_CONTEXT                            0x11D4
+
+// cl_command_type
+#define CL_COMMAND_NDRANGE_KERNEL                   0x11F0
+#define CL_COMMAND_TASK                             0x11F1
+#define CL_COMMAND_NATIVE_KERNEL                    0x11F2
+#define CL_COMMAND_READ_BUFFER                      0x11F3
+#define CL_COMMAND_WRITE_BUFFER                     0x11F4
+#define CL_COMMAND_COPY_BUFFER                      0x11F5
+#define CL_COMMAND_READ_IMAGE                       0x11F6
+#define CL_COMMAND_WRITE_IMAGE                      0x11F7
+#define CL_COMMAND_COPY_IMAGE                       0x11F8
+#define CL_COMMAND_COPY_IMAGE_TO_BUFFER             0x11F9
+#define CL_COMMAND_COPY_BUFFER_TO_IMAGE             0x11FA
+#define CL_COMMAND_MAP_BUFFER                       0x11FB
+#define CL_COMMAND_MAP_IMAGE                        0x11FC
+#define CL_COMMAND_UNMAP_MEM_OBJECT                 0x11FD
+#define CL_COMMAND_MARKER                           0x11FE
+#define CL_COMMAND_ACQUIRE_GL_OBJECTS               0x11FF
+#define CL_COMMAND_RELEASE_GL_OBJECTS               0x1200
+#define CL_COMMAND_READ_BUFFER_RECT                 0x1201
+#define CL_COMMAND_WRITE_BUFFER_RECT                0x1202
+#define CL_COMMAND_COPY_BUFFER_RECT                 0x1203
+#define CL_COMMAND_USER                             0x1204
+#define CL_COMMAND_BARRIER                          0x1205
+#define CL_COMMAND_MIGRATE_MEM_OBJECTS              0x1206
+#define CL_COMMAND_FILL_BUFFER                      0x1207
+#define CL_COMMAND_FILL_IMAGE                       0x1208
+#define CL_COMMAND_SVM_FREE                         0x1209
+#define CL_COMMAND_SVM_MEMCPY                       0x120A
+#define CL_COMMAND_SVM_MEMFILL                      0x120B
+#define CL_COMMAND_SVM_MAP                          0x120C
+#define CL_COMMAND_SVM_UNMAP                        0x120D
+
+// command execution status
+#define CL_COMPLETE                                 0x0
+#define CL_RUNNING                                  0x1
+#define CL_SUBMITTED                                0x2
+#define CL_QUEUED                                   0x3
+
+// cl_buffer_create_type  
+#define CL_BUFFER_CREATE_TYPE_REGION                0x1220
+  
+// cl_profiling_info
+#define CL_PROFILING_COMMAND_QUEUED                 0x1280
+#define CL_PROFILING_COMMAND_SUBMIT                 0x1281
+#define CL_PROFILING_COMMAND_START                  0x1282
+#define CL_PROFILING_COMMAND_END                    0x1283
+#define CL_PROFILING_COMMAND_COMPLETE               0x1284
+'! !
+
+!OpenCLMethodGenerator class methodsFor: 'C source code' stamp: 'jmv 10/29/2015 12:25'!
+functionDeclarationsInC
+	"Cut'n'paste directly from cl.h header file.
+	Updated to OpenCL 2.0
+	From https://www.khronos.org/registry/cl/api/2.0/"
+^ '
+// Platform API
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetPlatformIDs(cl_uint          /* num_entries */,
+                 cl_platform_id * /* platforms */,
+                 cl_uint *        /* num_platforms */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL 
+clGetPlatformInfo(cl_platform_id   /* platform */, 
+                  cl_platform_info /* param_name */,
+                  size_t           /* param_value_size */, 
+                  void *           /* param_value */,
+                  size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+// Device APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetDeviceIDs(cl_platform_id   /* platform */,
+               cl_device_type   /* device_type */, 
+               cl_uint          /* num_entries */, 
+               cl_device_id *   /* devices */, 
+               cl_uint *        /* num_devices */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetDeviceInfo(cl_device_id    /* device */,
+                cl_device_info  /* param_name */, 
+                size_t          /* param_value_size */, 
+                void *          /* param_value */,
+                size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clCreateSubDevices(cl_device_id                         /* in_device */,
+                   const cl_device_partition_property * /* properties */,
+                   cl_uint                              /* num_devices */,
+                   cl_device_id *                       /* out_devices */,
+                   cl_uint *                            /* num_devices_ret */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainDevice(cl_device_id /* device */) CL_API_SUFFIX__VERSION_1_2;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseDevice(cl_device_id /* device */) CL_API_SUFFIX__VERSION_1_2;
+
+// Context APIs  
+extern CL_API_ENTRY cl_context CL_API_CALL
+clCreateContext(const cl_context_properties * /* properties */,
+                cl_uint                       /* num_devices */,
+                const cl_device_id *          /* devices */,
+                void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
+                void *                        /* user_data */,
+                cl_int *                      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_context CL_API_CALL
+clCreateContextFromType(const cl_context_properties * /* properties */,
+                        cl_device_type                /* device_type */,
+                        void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
+                        void *                        /* user_data */,
+                        cl_int *                      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainContext(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseContext(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetContextInfo(cl_context         /* context */, 
+                 cl_context_info    /* param_name */, 
+                 size_t             /* param_value_size */, 
+                 void *             /* param_value */, 
+                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+// Command Queue APIs
+extern CL_API_ENTRY cl_command_queue CL_API_CALL
+clCreateCommandQueueWithProperties(cl_context               /* context */,
+                                   cl_device_id             /* device */,
+                                   const cl_queue_properties *    /* properties */,
+                                   cl_int *                 /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainCommandQueue(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseCommandQueue(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetCommandQueueInfo(cl_command_queue      /* command_queue */,
+                      cl_command_queue_info /* param_name */,
+                      size_t                /* param_value_size */,
+                      void *                /* param_value */,
+                      size_t *              /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+// Memory Object APIs
+extern CL_API_ENTRY cl_mem CL_API_CALL
+clCreateBuffer(cl_context   /* context */,
+               cl_mem_flags /* flags */,
+               size_t       /* size */,
+               void *       /* host_ptr */,
+               cl_int *     /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_mem CL_API_CALL
+clCreateSubBuffer(cl_mem                   /* buffer */,
+                  cl_mem_flags             /* flags */,
+                  cl_buffer_create_type    /* buffer_create_type */,
+                  const void *             /* buffer_create_info */,
+                  cl_int *                 /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;
+
+extern CL_API_ENTRY cl_mem CL_API_CALL
+clCreateImage(cl_context              /* context */,
+              cl_mem_flags            /* flags */,
+              const cl_image_format * /* image_format */,
+              const cl_image_desc *   /* image_desc */, 
+              void *                  /* host_ptr */,
+              cl_int *                /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
+                        
+extern CL_API_ENTRY cl_mem CL_API_CALL
+clCreatePipe(cl_context                 /* context */,
+             cl_mem_flags               /* flags */,
+             cl_uint                    /* pipe_packet_size */,
+             cl_uint                    /* pipe_max_packets */,
+             const cl_pipe_properties * /* properties */,
+             cl_int *                   /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
+                        
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainMemObject(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseMemObject(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetSupportedImageFormats(cl_context           /* context */,
+                           cl_mem_flags         /* flags */,
+                           cl_mem_object_type   /* image_type */,
+                           cl_uint              /* num_entries */,
+                           cl_image_format *    /* image_formats */,
+                           cl_uint *            /* num_image_formats */) CL_API_SUFFIX__VERSION_1_0;
+                                    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetMemObjectInfo(cl_mem           /* memobj */,
+                   cl_mem_info      /* param_name */, 
+                   size_t           /* param_value_size */,
+                   void *           /* param_value */,
+                   size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetImageInfo(cl_mem           /* image */,
+               cl_image_info    /* param_name */, 
+               size_t           /* param_value_size */,
+               void *           /* param_value */,
+               size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetPipeInfo(cl_mem           /* pipe */,
+              cl_pipe_info     /* param_name */,
+              size_t           /* param_value_size */,
+              void *           /* param_value */,
+              size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_2_0;
+    
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetMemObjectDestructorCallback(cl_mem /* memobj */,
+                                 void * /* no_callbacks_jmv */,
+                                 void * /* user_data */)             CL_API_SUFFIX__VERSION_1_1;
+
+// SVM Allocation APIs
+extern CL_API_ENTRY void * CL_API_CALL
+clSVMAlloc(cl_context       /* context */,
+           cl_svm_mem_flags /* flags */,
+           size_t           /* size */,
+           cl_uint          /* alignment */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY void CL_API_CALL
+clSVMFree(cl_context        /* context */,
+          void *            /* svm_pointer */) CL_API_SUFFIX__VERSION_2_0;
+
+// Sampler APIs
+extern CL_API_ENTRY cl_sampler CL_API_CALL
+clCreateSamplerWithProperties(cl_context                     /* context */,
+                              const cl_sampler_properties *  /* normalized_coords */,
+                              cl_int *                       /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainSampler(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseSampler(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetSamplerInfo(cl_sampler         /* sampler */,
+                 cl_sampler_info    /* param_name */,
+                 size_t             /* param_value_size */,
+                 void *             /* param_value */,
+                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+                            
+// Program Object APIs
+extern CL_API_ENTRY cl_program CL_API_CALL
+clCreateProgramWithSource(cl_context        /* context */,
+                          cl_uint           /* count */,
+                          const char **     /* strings */,
+                          const size_t *    /* lengths */,
+                          cl_int *          /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_program CL_API_CALL
+clCreateProgramWithBinary(cl_context                     /* context */,
+                          cl_uint                        /* num_devices */,
+                          const cl_device_id *           /* device_list */,
+                          const size_t *                 /* lengths */,
+                          const unsigned char **         /* binaries */,
+                          cl_int *                       /* binary_status */,
+                          cl_int *                       /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_program CL_API_CALL
+clCreateProgramWithBuiltInKernels(cl_context            /* context */,
+                                  cl_uint               /* num_devices */,
+                                  const cl_device_id *  /* device_list */,
+                                  const char *          /* kernel_names */,
+                                  cl_int *              /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainProgram(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseProgram(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clBuildProgram(cl_program           /* program */,
+               cl_uint              /* num_devices */,
+               const cl_device_id * /* device_list */,
+               const char *         /* options */, 
+               void (*pfn_notify)(cl_program /* program */, void * /* user_data */),
+               void *               /* user_data */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clCompileProgram(cl_program           /* program */,
+                 cl_uint              /* num_devices */,
+                 const cl_device_id * /* device_list */,
+                 const char *         /* options */, 
+                 cl_uint              /* num_input_headers */,
+                 const cl_program *   /* input_headers */,
+                 const char **        /* header_include_names */,
+                 void * /* no_callbacks_jmv */,
+                 void *               /* user_data */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_program CL_API_CALL
+clLinkProgram(cl_context           /* context */,
+              cl_uint              /* num_devices */,
+              const cl_device_id * /* device_list */,
+              const char *         /* options */, 
+              cl_uint              /* num_input_programs */,
+              const cl_program *   /* input_programs */,
+              void *               /* no_callbacks_jmv */,
+              void *               /* user_data */,
+              cl_int *             /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clUnloadPlatformCompiler(cl_platform_id /* platform */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetProgramInfo(cl_program         /* program */,
+                 cl_program_info    /* param_name */,
+                 size_t             /* param_value_size */,
+                 void *             /* param_value */,
+                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetProgramBuildInfo(cl_program            /* program */,
+                      cl_device_id          /* device */,
+                      cl_program_build_info /* param_name */,
+                      size_t                /* param_value_size */,
+                      void *                /* param_value */,
+                      size_t *              /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+                            
+// Kernel Object APIs
+extern CL_API_ENTRY cl_kernel CL_API_CALL
+clCreateKernel(cl_program      /* program */,
+               const char *    /* kernel_name */,
+               cl_int *        /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clCreateKernelsInProgram(cl_program     /* program */,
+                         cl_uint        /* num_kernels */,
+                         cl_kernel *    /* kernels */,
+                         cl_uint *      /* num_kernels_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainKernel(cl_kernel    /* kernel */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseKernel(cl_kernel   /* kernel */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetKernelArg(cl_kernel    /* kernel */,
+               cl_uint      /* arg_index */,
+               size_t       /* arg_size */,
+               const void * /* arg_value */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetKernelArgSVMPointer(cl_kernel    /* kernel */,
+                         cl_uint      /* arg_index */,
+                         const void * /* arg_value */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetKernelExecInfo(cl_kernel            /* kernel */,
+                    cl_kernel_exec_info  /* param_name */,
+                    size_t               /* param_value_size */,
+                    const void *         /* param_value */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetKernelInfo(cl_kernel       /* kernel */,
+                cl_kernel_info  /* param_name */,
+                size_t          /* param_value_size */,
+                void *          /* param_value */,
+                size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetKernelArgInfo(cl_kernel       /* kernel */,
+                   cl_uint         /* arg_indx */,
+                   cl_kernel_arg_info  /* param_name */,
+                   size_t          /* param_value_size */,
+                   void *          /* param_value */,
+                   size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetKernelWorkGroupInfo(cl_kernel                  /* kernel */,
+                         cl_device_id               /* device */,
+                         cl_kernel_work_group_info  /* param_name */,
+                         size_t                     /* param_value_size */,
+                         void *                     /* param_value */,
+                         size_t *                   /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+// Event Object APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clWaitForEvents(cl_uint             /* num_events */,
+                const cl_event *    /* event_list */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetEventInfo(cl_event         /* event */,
+               cl_event_info    /* param_name */,
+               size_t           /* param_value_size */,
+               void *           /* param_value */,
+               size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+                            
+extern CL_API_ENTRY cl_event CL_API_CALL
+clCreateUserEvent(cl_context    /* context */,
+                  cl_int *      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;               
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainEvent(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseEvent(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetUserEventStatus(cl_event   /* event */,
+                     cl_int     /* execution_status */) CL_API_SUFFIX__VERSION_1_1;
+                     
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetEventCallback( cl_event    /* event */,
+                    cl_int      /* command_exec_callback_type */,
+                    void *      /* no_callbacks_jmv */,
+                    void *      /* user_data */) CL_API_SUFFIX__VERSION_1_1;
+
+// Profiling APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetEventProfilingInfo(cl_event            /* event */,
+                        cl_profiling_info   /* param_name */,
+                        size_t              /* param_value_size */,
+                        void *              /* param_value */,
+                        size_t *            /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+                                
+// Flush and Finish APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clFlush(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clFinish(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+
+// Enqueued Commands APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueReadBuffer(cl_command_queue    /* command_queue */,
+                    cl_mem              /* buffer */,
+                    cl_bool             /* blocking_read */,
+                    size_t              /* offset */,
+                    size_t              /* size */, 
+                    void *              /* ptr */,
+                    cl_uint             /* num_events_in_wait_list */,
+                    const cl_event *    /* event_wait_list */,
+                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueReadBufferRect(cl_command_queue    /* command_queue */,
+                        cl_mem              /* buffer */,
+                        cl_bool             /* blocking_read */,
+                        const size_t *      /* buffer_offset */,
+                        const size_t *      /* host_offset */, 
+                        const size_t *      /* region */,
+                        size_t              /* buffer_row_pitch */,
+                        size_t              /* buffer_slice_pitch */,
+                        size_t              /* host_row_pitch */,
+                        size_t              /* host_slice_pitch */,                        
+                        void *              /* ptr */,
+                        cl_uint             /* num_events_in_wait_list */,
+                        const cl_event *    /* event_wait_list */,
+                        cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueWriteBuffer(cl_command_queue   /* command_queue */, 
+                     cl_mem             /* buffer */, 
+                     cl_bool            /* blocking_write */, 
+                     size_t             /* offset */, 
+                     size_t             /* size */, 
+                     const void *       /* ptr */, 
+                     cl_uint            /* num_events_in_wait_list */, 
+                     const cl_event *   /* event_wait_list */, 
+                     cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_0;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueWriteBufferRect(cl_command_queue    /* command_queue */,
+                         cl_mem              /* buffer */,
+                         cl_bool             /* blocking_write */,
+                         const size_t *      /* buffer_offset */,
+                         const size_t *      /* host_offset */, 
+                         const size_t *      /* region */,
+                         size_t              /* buffer_row_pitch */,
+                         size_t              /* buffer_slice_pitch */,
+                         size_t              /* host_row_pitch */,
+                         size_t              /* host_slice_pitch */,                        
+                         const void *        /* ptr */,
+                         cl_uint             /* num_events_in_wait_list */,
+                         const cl_event *    /* event_wait_list */,
+                         cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueFillBuffer(cl_command_queue   /* command_queue */,
+                    cl_mem             /* buffer */, 
+                    const void *       /* pattern */, 
+                    size_t             /* pattern_size */, 
+                    size_t             /* offset */, 
+                    size_t             /* size */, 
+                    cl_uint            /* num_events_in_wait_list */, 
+                    const cl_event *   /* event_wait_list */, 
+                    cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_2;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyBuffer(cl_command_queue    /* command_queue */, 
+                    cl_mem              /* src_buffer */,
+                    cl_mem              /* dst_buffer */, 
+                    size_t              /* src_offset */,
+                    size_t              /* dst_offset */,
+                    size_t              /* size */, 
+                    cl_uint             /* num_events_in_wait_list */,
+                    const cl_event *    /* event_wait_list */,
+                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyBufferRect(cl_command_queue    /* command_queue */, 
+                        cl_mem              /* src_buffer */,
+                        cl_mem              /* dst_buffer */, 
+                        const size_t *      /* src_origin */,
+                        const size_t *      /* dst_origin */,
+                        const size_t *      /* region */, 
+                        size_t              /* src_row_pitch */,
+                        size_t              /* src_slice_pitch */,
+                        size_t              /* dst_row_pitch */,
+                        size_t              /* dst_slice_pitch */,
+                        cl_uint             /* num_events_in_wait_list */,
+                        const cl_event *    /* event_wait_list */,
+                        cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueReadImage(cl_command_queue     /* command_queue */,
+                   cl_mem               /* image */,
+                   cl_bool              /* blocking_read */, 
+                   const size_t *       /* origin[3] */,
+                   const size_t *       /* region[3] */,
+                   size_t               /* row_pitch */,
+                   size_t               /* slice_pitch */, 
+                   void *               /* ptr */,
+                   cl_uint              /* num_events_in_wait_list */,
+                   const cl_event *     /* event_wait_list */,
+                   cl_event *           /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueWriteImage(cl_command_queue    /* command_queue */,
+                    cl_mem              /* image */,
+                    cl_bool             /* blocking_write */, 
+                    const size_t *      /* origin[3] */,
+                    const size_t *      /* region[3] */,
+                    size_t              /* input_row_pitch */,
+                    size_t              /* input_slice_pitch */, 
+                    const void *        /* ptr */,
+                    cl_uint             /* num_events_in_wait_list */,
+                    const cl_event *    /* event_wait_list */,
+                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueFillImage(cl_command_queue   /* command_queue */,
+                   cl_mem             /* image */, 
+                   const void *       /* fill_color */, 
+                   const size_t *     /* origin[3] */, 
+                   const size_t *     /* region[3] */, 
+                   cl_uint            /* num_events_in_wait_list */, 
+                   const cl_event *   /* event_wait_list */, 
+                   cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyImage(cl_command_queue     /* command_queue */,
+                   cl_mem               /* src_image */,
+                   cl_mem               /* dst_image */, 
+                   const size_t *       /* src_origin[3] */,
+                   const size_t *       /* dst_origin[3] */,
+                   const size_t *       /* region[3] */, 
+                   cl_uint              /* num_events_in_wait_list */,
+                   const cl_event *     /* event_wait_list */,
+                   cl_event *           /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyImageToBuffer(cl_command_queue /* command_queue */,
+                           cl_mem           /* src_image */,
+                           cl_mem           /* dst_buffer */, 
+                           const size_t *   /* src_origin[3] */,
+                           const size_t *   /* region[3] */, 
+                           size_t           /* dst_offset */,
+                           cl_uint          /* num_events_in_wait_list */,
+                           const cl_event * /* event_wait_list */,
+                           cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyBufferToImage(cl_command_queue /* command_queue */,
+                           cl_mem           /* src_buffer */,
+                           cl_mem           /* dst_image */, 
+                           size_t           /* src_offset */,
+                           const size_t *   /* dst_origin[3] */,
+                           const size_t *   /* region[3] */, 
+                           cl_uint          /* num_events_in_wait_list */,
+                           const cl_event * /* event_wait_list */,
+                           cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY void * CL_API_CALL
+clEnqueueMapBuffer(cl_command_queue /* command_queue */,
+                   cl_mem           /* buffer */,
+                   cl_bool          /* blocking_map */, 
+                   cl_map_flags     /* map_flags */,
+                   size_t           /* offset */,
+                   size_t           /* size */,
+                   cl_uint          /* num_events_in_wait_list */,
+                   const cl_event * /* event_wait_list */,
+                   cl_event *       /* event */,
+                   cl_int *         /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY void * CL_API_CALL
+clEnqueueMapImage(cl_command_queue  /* command_queue */,
+                  cl_mem            /* image */, 
+                  cl_bool           /* blocking_map */, 
+                  cl_map_flags      /* map_flags */, 
+                  const size_t *    /* origin[3] */,
+                  const size_t *    /* region[3] */,
+                  size_t *          /* image_row_pitch */,
+                  size_t *          /* image_slice_pitch */,
+                  cl_uint           /* num_events_in_wait_list */,
+                  const cl_event *  /* event_wait_list */,
+                  cl_event *        /* event */,
+                  cl_int *          /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueUnmapMemObject(cl_command_queue /* command_queue */,
+                        cl_mem           /* memobj */,
+                        void *           /* mapped_ptr */,
+                        cl_uint          /* num_events_in_wait_list */,
+                        const cl_event *  /* event_wait_list */,
+                        cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueMigrateMemObjects(cl_command_queue       /* command_queue */,
+                           cl_uint                /* num_mem_objects */,
+                           const cl_mem *         /* mem_objects */,
+                           cl_mem_migration_flags /* flags */,
+                           cl_uint                /* num_events_in_wait_list */,
+                           const cl_event *       /* event_wait_list */,
+                           cl_event *             /* event */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueNDRangeKernel(cl_command_queue /* command_queue */,
+                       cl_kernel        /* kernel */,
+                       cl_uint          /* work_dim */,
+                       const size_t *   /* global_work_offset */,
+                       const size_t *   /* global_work_size */,
+                       const size_t *   /* local_work_size */,
+                       cl_uint          /* num_events_in_wait_list */,
+                       const cl_event * /* event_wait_list */,
+                       cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueNativeKernel(cl_command_queue  /* command_queue */,
+					  void (*user_func)(void *), 
+                      void *            /* args */,
+                      size_t            /* cb_args */, 
+                      cl_uint           /* num_mem_objects */,
+                      const cl_mem *    /* mem_list */,
+                      const void **     /* args_mem_loc */,
+                      cl_uint           /* num_events_in_wait_list */,
+                      const cl_event *  /* event_wait_list */,
+                      cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueMarkerWithWaitList(cl_command_queue  /* command_queue */,
+                            cl_uint           /* num_events_in_wait_list */,
+                            const cl_event *  /* event_wait_list */,
+                            cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueBarrierWithWaitList(cl_command_queue  /* command_queue */,
+                             cl_uint           /* num_events_in_wait_list */,
+                             const cl_event *  /* event_wait_list */,
+                             cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMFree(cl_command_queue  /* command_queue */,
+                 cl_uint           /* num_svm_pointers */,
+                 void *          /* svm_pointers[] */,
+                 void *           /* no_callbacks_jmv */,
+                 void *            /* user_data */,
+                 cl_uint           /* num_events_in_wait_list */,
+                 const cl_event *  /* event_wait_list */,
+                 cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMMemcpy(cl_command_queue  /* command_queue */,
+                   cl_bool           /* blocking_copy */,
+                   void *            /* dst_ptr */,
+                   const void *      /* src_ptr */,
+                   size_t            /* size */,
+                   cl_uint           /* num_events_in_wait_list */,
+                   const cl_event *  /* event_wait_list */,
+                   cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMMemFill(cl_command_queue  /* command_queue */,
+                    void *            /* svm_ptr */,
+                    const void *      /* pattern */,
+                    size_t            /* pattern_size */,
+                    size_t            /* size */,
+                    cl_uint           /* num_events_in_wait_list */,
+                    const cl_event *  /* event_wait_list */,
+                    cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMMap(cl_command_queue  /* command_queue */,
+                cl_bool           /* blocking_map */,
+                cl_map_flags      /* flags */,
+                void *            /* svm_ptr */,
+                size_t            /* size */,
+                cl_uint           /* num_events_in_wait_list */,
+                const cl_event *  /* event_wait_list */,
+                cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMUnmap(cl_command_queue  /* command_queue */,
+                  void *            /* svm_ptr */,
+                  cl_uint           /* num_events_in_wait_list */,
+                  const cl_event *  /* event_wait_list */,
+                  cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+
+// Extension function access
+//
+// Returns the extension function address for the given function name,
+// or NULL if a valid function can not be found.  The client must
+// check to make sure the address is not NULL, before using or 
+// calling the returned function address.
+//
+extern CL_API_ENTRY void * CL_API_CALL 
+clGetExtensionFunctionAddressForPlatform(cl_platform_id /* platform */,
+                                         const char *   /* func_name */) CL_API_SUFFIX__VERSION_1_2;
+
+// Deprecated OpenCL 1.1 APIs
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
+clCreateImage2D(cl_context              /* context */,
+                cl_mem_flags            /* flags */,
+                const cl_image_format * /* image_format */,
+                size_t                  /* image_width */,
+                size_t                  /* image_height */,
+                size_t                  /* image_row_pitch */, 
+                void *                  /* host_ptr */,
+                cl_int *                /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
+clCreateImage3D(cl_context              /* context */,
+                cl_mem_flags            /* flags */,
+                const cl_image_format * /* image_format */,
+                size_t                  /* image_width */, 
+                size_t                  /* image_height */,
+                size_t                  /* image_depth */, 
+                size_t                  /* image_row_pitch */, 
+                size_t                  /* image_slice_pitch */, 
+                void *                  /* host_ptr */,
+                cl_int *                /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
+clEnqueueMarker(cl_command_queue    /* command_queue */,
+                cl_event *          /* event */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
+clEnqueueWaitForEvents(cl_command_queue /* command_queue */,
+                        cl_uint          /* num_events */,
+                        const cl_event * /* event_list */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
+clEnqueueBarrier(cl_command_queue /* command_queue */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
+clUnloadCompiler(void) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED void * CL_API_CALL
+clGetExtensionFunctionAddress(const char * /* func_name */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+// Deprecated OpenCL 2.0 APIs
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_command_queue CL_API_CALL
+clCreateCommandQueue(cl_context                     /* context */,
+                     cl_device_id                   /* device */,
+                     cl_command_queue_properties    /* properties */,
+                     cl_int *                       /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
+    
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_sampler CL_API_CALL
+clCreateSampler(cl_context          /* context */,
+                cl_bool             /* normalized_coords */,
+                cl_addressing_mode  /* addressing_mode */,
+                cl_filter_mode      /* filter_mode */,
+                cl_int *            /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_int CL_API_CALL
+clEnqueueTask(cl_command_queue  /* command_queue */,
+              cl_kernel         /* kernel */,
+              cl_uint           /* num_events_in_wait_list */,
+              const cl_event *  /* event_wait_list */,
+              cl_event *        /* event */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
+'
+! !
+
+!OpenCLMethodGenerator class methodsFor: 'C source code' stamp: 'jmv 10/29/2015 10:47'!
+functionDeclarationsInC_withUnsupportedCallbacks
+	"Cut'n'paste directly from cl.h header file.
+	Updated to OpenCL 2.0
+	From https://www.khronos.org/registry/cl/api/2.0/"
+^ '
+// Platform API
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetPlatformIDs(cl_uint          /* num_entries */,
+                 cl_platform_id * /* platforms */,
+                 cl_uint *        /* num_platforms */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL 
+clGetPlatformInfo(cl_platform_id   /* platform */, 
+                  cl_platform_info /* param_name */,
+                  size_t           /* param_value_size */, 
+                  void *           /* param_value */,
+                  size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+// Device APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetDeviceIDs(cl_platform_id   /* platform */,
+               cl_device_type   /* device_type */, 
+               cl_uint          /* num_entries */, 
+               cl_device_id *   /* devices */, 
+               cl_uint *        /* num_devices */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetDeviceInfo(cl_device_id    /* device */,
+                cl_device_info  /* param_name */, 
+                size_t          /* param_value_size */, 
+                void *          /* param_value */,
+                size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clCreateSubDevices(cl_device_id                         /* in_device */,
+                   const cl_device_partition_property * /* properties */,
+                   cl_uint                              /* num_devices */,
+                   cl_device_id *                       /* out_devices */,
+                   cl_uint *                            /* num_devices_ret */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainDevice(cl_device_id /* device */) CL_API_SUFFIX__VERSION_1_2;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseDevice(cl_device_id /* device */) CL_API_SUFFIX__VERSION_1_2;
+
+// Context APIs  
+extern CL_API_ENTRY cl_context CL_API_CALL
+clCreateContext(const cl_context_properties * /* properties */,
+                cl_uint                       /* num_devices */,
+                const cl_device_id *          /* devices */,
+                void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
+                void *                        /* user_data */,
+                cl_int *                      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_context CL_API_CALL
+clCreateContextFromType(const cl_context_properties * /* properties */,
+                        cl_device_type                /* device_type */,
+                        void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
+                        void *                        /* user_data */,
+                        cl_int *                      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainContext(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseContext(cl_context /* context */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetContextInfo(cl_context         /* context */, 
+                 cl_context_info    /* param_name */, 
+                 size_t             /* param_value_size */, 
+                 void *             /* param_value */, 
+                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+// Command Queue APIs
+extern CL_API_ENTRY cl_command_queue CL_API_CALL
+clCreateCommandQueueWithProperties(cl_context               /* context */,
+                                   cl_device_id             /* device */,
+                                   const cl_queue_properties *    /* properties */,
+                                   cl_int *                 /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainCommandQueue(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseCommandQueue(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetCommandQueueInfo(cl_command_queue      /* command_queue */,
+                      cl_command_queue_info /* param_name */,
+                      size_t                /* param_value_size */,
+                      void *                /* param_value */,
+                      size_t *              /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+// Memory Object APIs
+extern CL_API_ENTRY cl_mem CL_API_CALL
+clCreateBuffer(cl_context   /* context */,
+               cl_mem_flags /* flags */,
+               size_t       /* size */,
+               void *       /* host_ptr */,
+               cl_int *     /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_mem CL_API_CALL
+clCreateSubBuffer(cl_mem                   /* buffer */,
+                  cl_mem_flags             /* flags */,
+                  cl_buffer_create_type    /* buffer_create_type */,
+                  const void *             /* buffer_create_info */,
+                  cl_int *                 /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;
+
+extern CL_API_ENTRY cl_mem CL_API_CALL
+clCreateImage(cl_context              /* context */,
+              cl_mem_flags            /* flags */,
+              const cl_image_format * /* image_format */,
+              const cl_image_desc *   /* image_desc */, 
+              void *                  /* host_ptr */,
+              cl_int *                /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
+                        
+extern CL_API_ENTRY cl_mem CL_API_CALL
+clCreatePipe(cl_context                 /* context */,
+             cl_mem_flags               /* flags */,
+             cl_uint                    /* pipe_packet_size */,
+             cl_uint                    /* pipe_max_packets */,
+             const cl_pipe_properties * /* properties */,
+             cl_int *                   /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
+                        
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainMemObject(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseMemObject(cl_mem /* memobj */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetSupportedImageFormats(cl_context           /* context */,
+                           cl_mem_flags         /* flags */,
+                           cl_mem_object_type   /* image_type */,
+                           cl_uint              /* num_entries */,
+                           cl_image_format *    /* image_formats */,
+                           cl_uint *            /* num_image_formats */) CL_API_SUFFIX__VERSION_1_0;
+                                    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetMemObjectInfo(cl_mem           /* memobj */,
+                   cl_mem_info      /* param_name */, 
+                   size_t           /* param_value_size */,
+                   void *           /* param_value */,
+                   size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetImageInfo(cl_mem           /* image */,
+               cl_image_info    /* param_name */, 
+               size_t           /* param_value_size */,
+               void *           /* param_value */,
+               size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetPipeInfo(cl_mem           /* pipe */,
+              cl_pipe_info     /* param_name */,
+              size_t           /* param_value_size */,
+              void *           /* param_value */,
+              size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_2_0;
+    
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetMemObjectDestructorCallback(cl_mem /* memobj */,
+                                 void (CL_CALLBACK * /*pfn_notify*/)( cl_mem /* memobj */, void* /*user_data*/),
+                                 void * /*user_data */ )             CL_API_SUFFIX__VERSION_1_1;
+
+/* SVM Allocation APIs */
+extern CL_API_ENTRY void * CL_API_CALL
+clSVMAlloc(cl_context       /* context */,
+           cl_svm_mem_flags /* flags */,
+           size_t           /* size */,
+           cl_uint          /* alignment */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY void CL_API_CALL
+clSVMFree(cl_context        /* context */,
+          void *            /* svm_pointer */) CL_API_SUFFIX__VERSION_2_0;
+
+// Sampler APIs
+extern CL_API_ENTRY cl_sampler CL_API_CALL
+clCreateSamplerWithProperties(cl_context                     /* context */,
+                              const cl_sampler_properties *  /* normalized_coords */,
+                              cl_int *                       /* errcode_ret */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainSampler(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseSampler(cl_sampler /* sampler */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetSamplerInfo(cl_sampler         /* sampler */,
+                 cl_sampler_info    /* param_name */,
+                 size_t             /* param_value_size */,
+                 void *             /* param_value */,
+                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+                            
+// Program Object APIs
+extern CL_API_ENTRY cl_program CL_API_CALL
+clCreateProgramWithSource(cl_context        /* context */,
+                          cl_uint           /* count */,
+                          const char **     /* strings */,
+                          const size_t *    /* lengths */,
+                          cl_int *          /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_program CL_API_CALL
+clCreateProgramWithBinary(cl_context                     /* context */,
+                          cl_uint                        /* num_devices */,
+                          const cl_device_id *           /* device_list */,
+                          const size_t *                 /* lengths */,
+                          const unsigned char **         /* binaries */,
+                          cl_int *                       /* binary_status */,
+                          cl_int *                       /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_program CL_API_CALL
+clCreateProgramWithBuiltInKernels(cl_context            /* context */,
+                                  cl_uint               /* num_devices */,
+                                  const cl_device_id *  /* device_list */,
+                                  const char *          /* kernel_names */,
+                                  cl_int *              /* errcode_ret */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainProgram(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseProgram(cl_program /* program */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clBuildProgram(cl_program           /* program */,
+               cl_uint              /* num_devices */,
+               const cl_device_id * /* device_list */,
+               const char *         /* options */, 
+               void (*pfn_notify)(cl_program /* program */, void * /* user_data */),
+               void *               /* user_data */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clCompileProgram(cl_program           /* program */,
+                 cl_uint              /* num_devices */,
+                 const cl_device_id * /* device_list */,
+                 const char *         /* options */, 
+                 cl_uint              /* num_input_headers */,
+                 const cl_program *   /* input_headers */,
+                 const char **        /* header_include_names */,
+                 void (CL_CALLBACK *  /* pfn_notify */)(cl_program /* program */, void * /* user_data */),
+                 void *               /* user_data */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_program CL_API_CALL
+clLinkProgram(cl_context           /* context */,
+              cl_uint              /* num_devices */,
+              const cl_device_id * /* device_list */,
+              const char *         /* options */, 
+              cl_uint              /* num_input_programs */,
+              const cl_program *   /* input_programs */,
+              void (CL_CALLBACK *  /* pfn_notify */)(cl_program /* program */, void * /* user_data */),
+              void *               /* user_data */,
+              cl_int *             /* errcode_ret */ ) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clUnloadPlatformCompiler(cl_platform_id /* platform */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetProgramInfo(cl_program         /* program */,
+                 cl_program_info    /* param_name */,
+                 size_t             /* param_value_size */,
+                 void *             /* param_value */,
+                 size_t *           /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetProgramBuildInfo(cl_program            /* program */,
+                      cl_device_id          /* device */,
+                      cl_program_build_info /* param_name */,
+                      size_t                /* param_value_size */,
+                      void *                /* param_value */,
+                      size_t *              /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+                            
+// Kernel Object APIs
+extern CL_API_ENTRY cl_kernel CL_API_CALL
+clCreateKernel(cl_program      /* program */,
+               const char *    /* kernel_name */,
+               cl_int *        /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clCreateKernelsInProgram(cl_program     /* program */,
+                         cl_uint        /* num_kernels */,
+                         cl_kernel *    /* kernels */,
+                         cl_uint *      /* num_kernels_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainKernel(cl_kernel    /* kernel */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseKernel(cl_kernel   /* kernel */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetKernelArg(cl_kernel    /* kernel */,
+               cl_uint      /* arg_index */,
+               size_t       /* arg_size */,
+               const void * /* arg_value */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetKernelArgSVMPointer(cl_kernel    /* kernel */,
+                         cl_uint      /* arg_index */,
+                         const void * /* arg_value */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetKernelExecInfo(cl_kernel            /* kernel */,
+                    cl_kernel_exec_info  /* param_name */,
+                    size_t               /* param_value_size */,
+                    const void *         /* param_value */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetKernelInfo(cl_kernel       /* kernel */,
+                cl_kernel_info  /* param_name */,
+                size_t          /* param_value_size */,
+                void *          /* param_value */,
+                size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetKernelArgInfo(cl_kernel       /* kernel */,
+                   cl_uint         /* arg_indx */,
+                   cl_kernel_arg_info  /* param_name */,
+                   size_t          /* param_value_size */,
+                   void *          /* param_value */,
+                   size_t *        /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetKernelWorkGroupInfo(cl_kernel                  /* kernel */,
+                         cl_device_id               /* device */,
+                         cl_kernel_work_group_info  /* param_name */,
+                         size_t                     /* param_value_size */,
+                         void *                     /* param_value */,
+                         size_t *                   /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+// Event Object APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clWaitForEvents(cl_uint             /* num_events */,
+                const cl_event *    /* event_list */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetEventInfo(cl_event         /* event */,
+               cl_event_info    /* param_name */,
+               size_t           /* param_value_size */,
+               void *           /* param_value */,
+               size_t *         /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+                            
+extern CL_API_ENTRY cl_event CL_API_CALL
+clCreateUserEvent(cl_context    /* context */,
+                  cl_int *      /* errcode_ret */) CL_API_SUFFIX__VERSION_1_1;               
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clRetainEvent(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clReleaseEvent(cl_event /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetUserEventStatus(cl_event   /* event */,
+                     cl_int     /* execution_status */) CL_API_SUFFIX__VERSION_1_1;
+                     
+extern CL_API_ENTRY cl_int CL_API_CALL
+clSetEventCallback( cl_event    /* event */,
+                    cl_int      /* command_exec_callback_type */,
+                    void (CL_CALLBACK * /* pfn_notify */)(cl_event, cl_int, void *),
+                    void *      /* user_data */) CL_API_SUFFIX__VERSION_1_1;
+
+// Profiling APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetEventProfilingInfo(cl_event            /* event */,
+                        cl_profiling_info   /* param_name */,
+                        size_t              /* param_value_size */,
+                        void *              /* param_value */,
+                        size_t *            /* param_value_size_ret */) CL_API_SUFFIX__VERSION_1_0;
+                                
+// Flush and Finish APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clFlush(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clFinish(cl_command_queue /* command_queue */) CL_API_SUFFIX__VERSION_1_0;
+
+// Enqueued Commands APIs
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueReadBuffer(cl_command_queue    /* command_queue */,
+                    cl_mem              /* buffer */,
+                    cl_bool             /* blocking_read */,
+                    size_t              /* offset */,
+                    size_t              /* size */, 
+                    void *              /* ptr */,
+                    cl_uint             /* num_events_in_wait_list */,
+                    const cl_event *    /* event_wait_list */,
+                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueReadBufferRect(cl_command_queue    /* command_queue */,
+                        cl_mem              /* buffer */,
+                        cl_bool             /* blocking_read */,
+                        const size_t *      /* buffer_offset */,
+                        const size_t *      /* host_offset */, 
+                        const size_t *      /* region */,
+                        size_t              /* buffer_row_pitch */,
+                        size_t              /* buffer_slice_pitch */,
+                        size_t              /* host_row_pitch */,
+                        size_t              /* host_slice_pitch */,                        
+                        void *              /* ptr */,
+                        cl_uint             /* num_events_in_wait_list */,
+                        const cl_event *    /* event_wait_list */,
+                        cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueWriteBuffer(cl_command_queue   /* command_queue */, 
+                     cl_mem             /* buffer */, 
+                     cl_bool            /* blocking_write */, 
+                     size_t             /* offset */, 
+                     size_t             /* size */, 
+                     const void *       /* ptr */, 
+                     cl_uint            /* num_events_in_wait_list */, 
+                     const cl_event *   /* event_wait_list */, 
+                     cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_0;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueWriteBufferRect(cl_command_queue    /* command_queue */,
+                         cl_mem              /* buffer */,
+                         cl_bool             /* blocking_write */,
+                         const size_t *      /* buffer_offset */,
+                         const size_t *      /* host_offset */, 
+                         const size_t *      /* region */,
+                         size_t              /* buffer_row_pitch */,
+                         size_t              /* buffer_slice_pitch */,
+                         size_t              /* host_row_pitch */,
+                         size_t              /* host_slice_pitch */,                        
+                         const void *        /* ptr */,
+                         cl_uint             /* num_events_in_wait_list */,
+                         const cl_event *    /* event_wait_list */,
+                         cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueFillBuffer(cl_command_queue   /* command_queue */,
+                    cl_mem             /* buffer */, 
+                    const void *       /* pattern */, 
+                    size_t             /* pattern_size */, 
+                    size_t             /* offset */, 
+                    size_t             /* size */, 
+                    cl_uint            /* num_events_in_wait_list */, 
+                    const cl_event *   /* event_wait_list */, 
+                    cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_2;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyBuffer(cl_command_queue    /* command_queue */, 
+                    cl_mem              /* src_buffer */,
+                    cl_mem              /* dst_buffer */, 
+                    size_t              /* src_offset */,
+                    size_t              /* dst_offset */,
+                    size_t              /* size */, 
+                    cl_uint             /* num_events_in_wait_list */,
+                    const cl_event *    /* event_wait_list */,
+                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyBufferRect(cl_command_queue    /* command_queue */, 
+                        cl_mem              /* src_buffer */,
+                        cl_mem              /* dst_buffer */, 
+                        const size_t *      /* src_origin */,
+                        const size_t *      /* dst_origin */,
+                        const size_t *      /* region */, 
+                        size_t              /* src_row_pitch */,
+                        size_t              /* src_slice_pitch */,
+                        size_t              /* dst_row_pitch */,
+                        size_t              /* dst_slice_pitch */,
+                        cl_uint             /* num_events_in_wait_list */,
+                        const cl_event *    /* event_wait_list */,
+                        cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_1;
+                            
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueReadImage(cl_command_queue     /* command_queue */,
+                   cl_mem               /* image */,
+                   cl_bool              /* blocking_read */, 
+                   const size_t *       /* origin[3] */,
+                   const size_t *       /* region[3] */,
+                   size_t               /* row_pitch */,
+                   size_t               /* slice_pitch */, 
+                   void *               /* ptr */,
+                   cl_uint              /* num_events_in_wait_list */,
+                   const cl_event *     /* event_wait_list */,
+                   cl_event *           /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueWriteImage(cl_command_queue    /* command_queue */,
+                    cl_mem              /* image */,
+                    cl_bool             /* blocking_write */, 
+                    const size_t *      /* origin[3] */,
+                    const size_t *      /* region[3] */,
+                    size_t              /* input_row_pitch */,
+                    size_t              /* input_slice_pitch */, 
+                    const void *        /* ptr */,
+                    cl_uint             /* num_events_in_wait_list */,
+                    const cl_event *    /* event_wait_list */,
+                    cl_event *          /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueFillImage(cl_command_queue   /* command_queue */,
+                   cl_mem             /* image */, 
+                   const void *       /* fill_color */, 
+                   const size_t *     /* origin[3] */, 
+                   const size_t *     /* region[3] */, 
+                   cl_uint            /* num_events_in_wait_list */, 
+                   const cl_event *   /* event_wait_list */, 
+                   cl_event *         /* event */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyImage(cl_command_queue     /* command_queue */,
+                   cl_mem               /* src_image */,
+                   cl_mem               /* dst_image */, 
+                   const size_t *       /* src_origin[3] */,
+                   const size_t *       /* dst_origin[3] */,
+                   const size_t *       /* region[3] */, 
+                   cl_uint              /* num_events_in_wait_list */,
+                   const cl_event *     /* event_wait_list */,
+                   cl_event *           /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyImageToBuffer(cl_command_queue /* command_queue */,
+                           cl_mem           /* src_image */,
+                           cl_mem           /* dst_buffer */, 
+                           const size_t *   /* src_origin[3] */,
+                           const size_t *   /* region[3] */, 
+                           size_t           /* dst_offset */,
+                           cl_uint          /* num_events_in_wait_list */,
+                           const cl_event * /* event_wait_list */,
+                           cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueCopyBufferToImage(cl_command_queue /* command_queue */,
+                           cl_mem           /* src_buffer */,
+                           cl_mem           /* dst_image */, 
+                           size_t           /* src_offset */,
+                           const size_t *   /* dst_origin[3] */,
+                           const size_t *   /* region[3] */, 
+                           cl_uint          /* num_events_in_wait_list */,
+                           const cl_event * /* event_wait_list */,
+                           cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY void * CL_API_CALL
+clEnqueueMapBuffer(cl_command_queue /* command_queue */,
+                   cl_mem           /* buffer */,
+                   cl_bool          /* blocking_map */, 
+                   cl_map_flags     /* map_flags */,
+                   size_t           /* offset */,
+                   size_t           /* size */,
+                   cl_uint          /* num_events_in_wait_list */,
+                   const cl_event * /* event_wait_list */,
+                   cl_event *       /* event */,
+                   cl_int *         /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY void * CL_API_CALL
+clEnqueueMapImage(cl_command_queue  /* command_queue */,
+                  cl_mem            /* image */, 
+                  cl_bool           /* blocking_map */, 
+                  cl_map_flags      /* map_flags */, 
+                  const size_t *    /* origin[3] */,
+                  const size_t *    /* region[3] */,
+                  size_t *          /* image_row_pitch */,
+                  size_t *          /* image_slice_pitch */,
+                  cl_uint           /* num_events_in_wait_list */,
+                  const cl_event *  /* event_wait_list */,
+                  cl_event *        /* event */,
+                  cl_int *          /* errcode_ret */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueUnmapMemObject(cl_command_queue /* command_queue */,
+                        cl_mem           /* memobj */,
+                        void *           /* mapped_ptr */,
+                        cl_uint          /* num_events_in_wait_list */,
+                        const cl_event *  /* event_wait_list */,
+                        cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueMigrateMemObjects(cl_command_queue       /* command_queue */,
+                           cl_uint                /* num_mem_objects */,
+                           const cl_mem *         /* mem_objects */,
+                           cl_mem_migration_flags /* flags */,
+                           cl_uint                /* num_events_in_wait_list */,
+                           const cl_event *       /* event_wait_list */,
+                           cl_event *             /* event */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueNDRangeKernel(cl_command_queue /* command_queue */,
+                       cl_kernel        /* kernel */,
+                       cl_uint          /* work_dim */,
+                       const size_t *   /* global_work_offset */,
+                       const size_t *   /* global_work_size */,
+                       const size_t *   /* local_work_size */,
+                       cl_uint          /* num_events_in_wait_list */,
+                       const cl_event * /* event_wait_list */,
+                       cl_event *       /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueNativeKernel(cl_command_queue  /* command_queue */,
+					  void (*user_func)(void *), 
+                      void *            /* args */,
+                      size_t            /* cb_args */, 
+                      cl_uint           /* num_mem_objects */,
+                      const cl_mem *    /* mem_list */,
+                      const void **     /* args_mem_loc */,
+                      cl_uint           /* num_events_in_wait_list */,
+                      const cl_event *  /* event_wait_list */,
+                      cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueMarkerWithWaitList(cl_command_queue  /* command_queue */,
+                            cl_uint           /* num_events_in_wait_list */,
+                            const cl_event *  /* event_wait_list */,
+                            cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueBarrierWithWaitList(cl_command_queue  /* command_queue */,
+                             cl_uint           /* num_events_in_wait_list */,
+                             const cl_event *  /* event_wait_list */,
+                             cl_event *        /* event */) CL_API_SUFFIX__VERSION_1_2;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMFree(cl_command_queue  /* command_queue */,
+                 cl_uint           /* num_svm_pointers */,
+                 void *[]          /* svm_pointers[] */,
+                 void (CL_CALLBACK * /*pfn_free_func*/)(cl_command_queue /* queue */,
+                                                        cl_uint          /* num_svm_pointers */,
+                                                        void *[]         /* svm_pointers[] */,
+                                                        void *           /* user_data */),
+                 void *            /* user_data */,
+                 cl_uint           /* num_events_in_wait_list */,
+                 const cl_event *  /* event_wait_list */,
+                 cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMMemcpy(cl_command_queue  /* command_queue */,
+                   cl_bool           /* blocking_copy */,
+                   void *            /* dst_ptr */,
+                   const void *      /* src_ptr */,
+                   size_t            /* size */,
+                   cl_uint           /* num_events_in_wait_list */,
+                   const cl_event *  /* event_wait_list */,
+                   cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMMemFill(cl_command_queue  /* command_queue */,
+                    void *            /* svm_ptr */,
+                    const void *      /* pattern */,
+                    size_t            /* pattern_size */,
+                    size_t            /* size */,
+                    cl_uint           /* num_events_in_wait_list */,
+                    const cl_event *  /* event_wait_list */,
+                    cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMMap(cl_command_queue  /* command_queue */,
+                cl_bool           /* blocking_map */,
+                cl_map_flags      /* flags */,
+                void *            /* svm_ptr */,
+                size_t            /* size */,
+                cl_uint           /* num_events_in_wait_list */,
+                const cl_event *  /* event_wait_list */,
+                cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+    
+extern CL_API_ENTRY cl_int CL_API_CALL
+clEnqueueSVMUnmap(cl_command_queue  /* command_queue */,
+                  void *            /* svm_ptr */,
+                  cl_uint           /* num_events_in_wait_list */,
+                  const cl_event *  /* event_wait_list */,
+                  cl_event *        /* event */) CL_API_SUFFIX__VERSION_2_0;
+
+// Extension function access
+//
+// Returns the extension function address for the given function name,
+// or NULL if a valid function can not be found.  The client must
+// check to make sure the address is not NULL, before using or 
+// calling the returned function address.
+//
+extern CL_API_ENTRY void * CL_API_CALL 
+clGetExtensionFunctionAddressForPlatform(cl_platform_id /* platform */,
+                                         const char *   /* func_name */) CL_API_SUFFIX__VERSION_1_2;
+
+/* Deprecated OpenCL 1.1 APIs */
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
+clCreateImage2D(cl_context              /* context */,
+                cl_mem_flags            /* flags */,
+                const cl_image_format * /* image_format */,
+                size_t                  /* image_width */,
+                size_t                  /* image_height */,
+                size_t                  /* image_row_pitch */, 
+                void *                  /* host_ptr */,
+                cl_int *                /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_mem CL_API_CALL
+clCreateImage3D(cl_context              /* context */,
+                cl_mem_flags            /* flags */,
+                const cl_image_format * /* image_format */,
+                size_t                  /* image_width */, 
+                size_t                  /* image_height */,
+                size_t                  /* image_depth */, 
+                size_t                  /* image_row_pitch */, 
+                size_t                  /* image_slice_pitch */, 
+                void *                  /* host_ptr */,
+                cl_int *                /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
+clEnqueueMarker(cl_command_queue    /* command_queue */,
+                cl_event *          /* event */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
+clEnqueueWaitForEvents(cl_command_queue /* command_queue */,
+                        cl_uint          /* num_events */,
+                        const cl_event * /* event_list */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
+clEnqueueBarrier(cl_command_queue /* command_queue */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED cl_int CL_API_CALL
+clUnloadCompiler(void) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_1_DEPRECATED void * CL_API_CALL
+clGetExtensionFunctionAddress(const char * /* func_name */) CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+    
+/* Deprecated OpenCL 2.0 APIs */
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_command_queue CL_API_CALL
+clCreateCommandQueue(cl_context                     /* context */,
+                     cl_device_id                   /* device */,
+                     cl_command_queue_properties    /* properties */,
+                     cl_int *                       /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
+    
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_sampler CL_API_CALL
+clCreateSampler(cl_context          /* context */,
+                cl_bool             /* normalized_coords */,
+                cl_addressing_mode  /* addressing_mode */,
+                cl_filter_mode      /* filter_mode */,
+                cl_int *            /* errcode_ret */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
+    
+extern CL_API_ENTRY CL_EXT_PREFIX__VERSION_1_2_DEPRECATED cl_int CL_API_CALL
+clEnqueueTask(cl_command_queue  /* command_queue */,
+              cl_kernel         /* kernel */,
+              cl_uint           /* num_events_in_wait_list */,
+              const cl_event *  /* event_wait_list */,
+              cl_event *        /* event */) CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;
+'
+! !
+
+!OpenCLMethodGenerator class methodsFor: 'OpenCL constants' stamp: 'jmv 9/9/2015 10:55'!
+generateConstantInitializersFrom: aString
+"
+	self generateConstantInitializersFrom: self constantDeclarationsInC
+"
+	"The input should be a String containing the portion of cl.h with the constant definitions (no typedefs, function declarations, etc.)"
+	| declarations existingClassVars generatedMethods methodString  |
+	self readConstantsFrom: aString into: [ :categories :sortedCategories |
+
+		"We'll only add class variables that don't already exist."
+		existingClassVars := OpenCLConstants classVarNames.
+
+		"Generate the source code for each class-var initialization method."
+		generatedMethods := OrderedCollection new.
+		sortedCategories do: [ :categoryName |
+			declarations := categories at: categoryName.
+			methodString := String streamContents: [:stream |
+				"Write the method name and comment.."
+				stream nextPutAll: 'initializeClassVariables'.
+				(generatedMethods size + 1) printOn: stream base: 10 length: 2 padded: true.
+				stream
+					newLine; tab; 
+					nextPutAll: 
+						'"Auto-generated initialization of OpenCL constants for ', 
+						categoryName surroundedBySingleQuotes, '"';
+					newLine.
+				"Write initializer for each declaration.  Create vars if necessary."
+				declarations do: [:decl "an Association" |
+					(existingClassVars includes: decl key) ifFalse: [
+						OpenCLConstants addClassVarName: decl key
+					].
+					stream newLine; tab; nextPutAll: decl key, ' _ ', decl value, '.'.
+				].
+				stream newLine.
+			].
+			generatedMethods add: methodString.
+		].
+	].
+
+	"Generate the #initialize method that will call the other generate methods."
+	methodString := String streamContents: [:stream |
+		stream 
+			nextPutAll: 'initialize';
+			newLine; tab; nextPutAll: '"Call auto-generated class-var initializers."'.
+		1 to: generatedMethods size do: [:i |
+			stream newLine; tab; nextPutAll: 'self initializeClassVariables'.
+			i printOn: stream base: 10 length: 2 padded: true.
+			stream nextPutAll: '.'.
+		]
+	].
+	generatedMethods add: methodString.
+	
+	"Compile all methods and and run the initializer."
+	generatedMethods do: [:src |
+		OpenCLConstants class 
+			compile: src 
+			classified: #'class initialization'
+			withStamp: nil
+			notifying: nil
+			logSource: true.
+	].
+	OpenCLConstants initialize.
+	^generatedMethods! !
+
+!OpenCLMethodGenerator class methodsFor: 'OpenCL FFI calls' stamp: 'jmv 8/20/2015 20:23'!
+generateFFICallsFrom: aString
+	"
+	self generateFFICallsFrom: self functionDeclarationsInC
+	"
+
+	OpenCLPrimitiveInterface subclassesDo: [ :cls |
+		self generateFFICallsFrom: aString in: cls ]! !
+
+!OpenCLMethodGenerator class methodsFor: 'OpenCL FFI calls' stamp: 'jmv 9/9/2015 11:30'!
+generateFFICallsFrom: aString in: anOpenCLPrimitiveInterfaceSubclass
+
+	| specs generatedMethods typeMap |
+	specs := self readFunctionSpecsFrom: aString.
+	generatedMethods := specs collect: [ :spec |
+		| returnType funcName args |
+		returnType := spec first.
+		funcName := spec second.
+		args := spec third.
+		
+		String streamContents: [ :stream |
+			"Write the method signature.  Each argument after the first gets a keyword that tells about the C type."
+			"Return type in the name. currently disabled."
+			" stream nextPutAll: (self adaptType: returnType); nextPutAll: '__'." 
+			stream nextPutAll: funcName.
+			(args size > 0) ifTrue: [stream nextPutAll: '__' ].
+			args do: [ :arg |
+				| argType argName |
+				argType := self adaptType: arg key.
+				stream nextPutAll: argType; nextPut: $:.
+				argName := arg value.
+				argName at: 1 put: argName first asLowercase.
+				"Some are array-types (i.e 'origin[3]'), so strip off the end."
+				argName := argName upTo: $[.
+				"Write the name."
+				stream space; nextPutAll: argName; space
+			] separatedBy: [
+				stream newLineTab: 6.
+			].
+
+			"Method comment."
+			stream newLine; newLine; tab; nextPutAll: '"This method was automatically generated."'; newLine.
+			"C function declaration"
+			stream newLine; tab; nextPut: $"; nextPutAll: returnType.
+			stream space; nextPutAll: funcName; nextPut: $(.
+			args do: [:arg |
+				stream newLineTab: 3; nextPutAll: arg key; space; nextPutAll: arg value.
+			] separatedBy: [
+				stream nextPutAll: ', '.
+			].
+			stream newLine; tab; nextPutAll: ');"'.
+
+			"The actual FFI declaration. About time!!"
+			typeMap := self typeMap.
+			stream newLine; tab; nextPutAll: '<apicall: '.
+			stream nextPutAll: (self typeOf: returnType in: typeMap).
+			stream nextPutAll: ' '''; nextPutAll: funcName; nextPutAll: ''' ('.
+			args do: [:arg |
+				stream nextPutAll: (self typeOf: arg key in: typeMap)
+			] separatedBy: [
+				stream space
+			].
+			stream nextPutAll: ') module: '''; nextPutAll: anOpenCLPrimitiveInterfaceSubclass libraryForCurrentPlatform; nextPutAll: '''>'.
+			"Finally, the error fall-through."
+			stream newLine; newLine; tab; nextPutAll: '^self externalCallFailed'.
+		].
+	].
+	"Compile these bad boys."
+	generatedMethods with: specs do: [ :src :spec |
+		anOpenCLPrimitiveInterfaceSubclass class
+			compile: src
+			classified: ('FFI-generated-', spec last) 
+			withStamp: nil
+			notifying: nil
+			logSource: true.
+	].
+
+	^generatedMethods! !
+
+!OpenCLMethodGenerator class methodsFor: 'OpenCL constants' stamp: 'jmv 9/9/2015 10:23'!
+readConstantsFrom: aString into: aBlock
+	"The input should be a String containing the portion of cl.h with the constant definitions (no typedefs, function declarations, etc.)"
+	| category allCategories sortedCategories  |
+	category := 'unknown category'.
+	allCategories := Dictionary new.
+	sortedCategories := OrderedCollection new.
+	aString linesDo: [:line |
+		(line beginsWith: '//') ifTrue: [
+			category := (line copyFrom: 3 to: line size) withBlanksTrimmed.
+		].
+		(line beginsWith: '#define') ifTrue: [
+			| tokens constName constValue categoryDeclarations |
+			tokens := line findTokens: Character separators, '()'.
+			"Both the name and value will need to be processed further."
+			constName := tokens second.
+			constValue := tokens copyFrom: 3 to: tokens size.
+			constName := constName asSymbol.
+			"Create initializer code for variables.  Some are decimal, some hex-literals, 
+			 and some are bit-shifts; we need to deal with all three."
+			constValue size = 1
+				ifTrue: ["decimal or hex literal"
+					constValue := constValue first copyReplaceAll: '0x' with: '16r'.
+				]
+				ifFalse: ["bit-shift"
+					constValue := '1 bitShift: ', constValue last
+				].
+			"Get the collection of method-source for this category (create one
+			 if necessary), the add to it an association between the name and value."
+			categoryDeclarations := allCategories 
+										at: category 
+										ifAbsentPut: [
+											sortedCategories add: category.
+											OrderedCollection new].
+			categoryDeclarations add: constName -> constValue.
+		]
+	].
+	aBlock value: allCategories value: sortedCategories! !
+
+!OpenCLMethodGenerator class methodsFor: 'OpenCL FFI calls' stamp: 'jmv 10/28/2015 15:58'!
+readFunctionSpecsFrom: aString
+	"self readFunctionSpecsFrom: self functionDeclarationsInC"
+	| ind starts finishes funcs categories characterCount lastLineWasComment |
+	
+	"Find category names, and the start index for each category (so that we can
+	 determine which category a function belongs."
+	characterCount := 0.
+	categories := OrderedCollection new.
+	lastLineWasComment := false.
+	aString linesDo: [:line |
+		(line beginsWith: '//') 
+			ifFalse: [lastLineWasComment := false]
+			ifTrue: [
+				lastLineWasComment ifFalse: [
+					categories add: {
+						(line copyFrom: 3 to: line size) withBlanksTrimmed.
+						characterCount + 1.
+					}.
+				]..
+				lastLineWasComment := true.
+			].
+		characterCount := characterCount + line size + 1 "for carriage-return".
+	].
+	categories := categories reversed.  "allows us to use #detect: below"
+	
+	"Find the start and end index of each function declaration."
+	ind := 0.
+	starts := OrderedCollection new.
+	[(ind := aString indexOfSubCollection: 'extern CL_API_ENTRY ' startingAt: ind+1) isZero]
+		whileFalse: [starts add: ind].
+	finishes := OrderedCollection new.
+	{
+		' CL_API_SUFFIX__VERSION_1_0;'.
+		' CL_API_SUFFIX__VERSION_1_1;'.
+		' CL_API_SUFFIX__VERSION_1_2;'.
+		' CL_API_SUFFIX__VERSION_2_0;'.
+		' CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;'.
+		' CL_EXT_SUFFIX__VERSION_1_2_DEPRECATED;' } do: [ :suffix |
+			ind := 0.
+			[(ind := aString indexOfSubCollection: suffix startingAt: ind+1).
+			 ind isZero] 
+				whileFalse: [finishes add: ind]].
+	finishes sort.
+
+	funcs := starts with: finishes collect: [:start :finish | aString copyFrom: start to: finish].
+	funcs := funcs collect: [:f | f copyReplaceAll: 'extern CL_API_ENTRY' with: ''].
+	funcs := funcs collect: [:f | f copyReplaceAll: 'CL_API_CALL' with: ''].
+	funcs := funcs collect: [:f | f copyReplaceAll: 'CL_EXT_PREFIX__VERSION_1_1_DEPRECATED' with: ''].
+	funcs := funcs collect: [:f | f copyReplaceAll: 'CL_EXT_PREFIX__VERSION_1_2_DEPRECATED' with: ''].
+	
+	funcs := funcs collect: [:f |
+		| returnType funcName args stream |
+		stream := f readStream.
+		stream skipSeparators.
+		"Get the return type.  We're lucky that all function names begin with 'cl'.
+		 (we read the first two characters separately, because they're often 'cl')"
+		returnType := ((stream next: 2), (stream upToAll: 'cl')) withBlanksTrimmed.
+		"Before reading the function name, we first need to replace the 
+		 initial two characters that we gobbled."
+		stream position: stream position - 2.
+		funcName := stream upTo: $(.
+		"Get a string with all of the args.  We'll still need to parse it."
+		args := stream upToAll: '*/)'.
+		"Get a string for each arg.  We'll still need to parse each one."
+		stream := args readStream.
+		args := OrderedCollection new.
+		[stream atEnd] whileFalse: [args add: (stream upToAll: '*/')].
+		"Parse each arg."
+		args := args collect: [:a |
+			| argName argType |
+			stream := a readStream.
+			argType := stream upToAll: '/*'.
+			argName := stream upToEnd withBlanksTrimmed.
+			"Clean up arg-type."
+			(argType first = $,) ifTrue: [argType := argType copyFrom: 2 to: argType size].
+			argType := argType withBlanksTrimmed.
+			(argType beginsWith: 'void (*') ifTrue: [
+				"It's a function-pointer... we need to grab the name in a special way."
+				argName := ((argType copyUpTo: $) ) allButFirst: 7) withBlanksTrimmed.
+			].
+			argType -> argName
+		].
+		"Handle no-arg functions declared as clFuncName(void)."
+		args size = 1 ifTrue: [
+			| argName argType |
+			argName := args first value.
+			argType := args first key.
+			(argName = '' and: [argType = 'void)']) ifTrue: [args := OrderedCollection new].
+		].
+		{ returnType. funcName. args}
+	].
+
+	"Associate each func with it's category."
+	funcs := funcs with: starts collect: [:func :start |
+		| category |
+		category := categories detect: [:c | c second <= start] ifNone: #('misc API').
+		category := category first. "the name"
+		func copyWith: category.
+	].
+
+	^funcs! !
+
+!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 10/29/2015 13:22'!
+typeMap
+	"Answer a Dictionary that maps from OpenCL types to the corresponding Squeak FFI type.  The content of the map was manually derived from the files:
+	-http://www.khronos.org/registry/cl/api/1.0/cl.h and 	-http://www.khronos.org/registry/cl/api/1.0/cl_platform.h"
+	"OpenCLMethodGenerator typeMap"
+	| input map |
+	input := 
+	#(
+		"FFI types of kind 'handle to opaque structure'."
+		('CLPlatformID' 
+			('cl_platform_id'))
+		('CLDeviceID' 
+			('cl_device_id'))
+		('CLContext' 
+			('cl_context'))
+		('CLCommandQueue' 
+			('cl_command_queue'))
+		('CLMem' 
+			('cl_mem'))
+		('CLProgram' 
+			('cl_program'))
+		('CLKernel' 
+			('cl_kernel'))
+		('CLEvent' 
+			('cl_event'))
+		('CLSampler' 
+			('cl_sampler'))
+		"FFI structure type."
+		('CLImageFormatStruct'
+			('cl_image_format'))
+		('CLImageDescStruct'
+			('cl_image_desc'))
+		('CLBufferRegionStruct'
+			('cl_buffer_region'))
+		"Mappings to built-in C types."
+		('void' 
+			('void'))
+		('void*' 
+			('cl_device_partition_property' 'cl_context_properties' 'cl_pipe_properties'))
+		('schar'
+			('cl_char' 'char'))
+		('char'
+			('cl_uchar'))
+		('short'
+			('cl_short'))
+		('ushort'
+			('cl_ushort' 'cl_half'))
+		('long'
+			('cl_int' 'cl_build_status'))
+		('ulong'
+			('cl_uint' 'cl_bool' 'cl_platform_info' 'cl_device_info' 'cl_device_mem_cache_type'
+			 'cl_device_local_mem_type' 'cl_context_info' 'cl_command_queue_info'
+			 'cl_channel_order' 'cl_channel_type' 'cl_mem_object_type' 'cl_mem_info'
+			 'cl_image_info' 'cl_addressing_mode' 'cl_filter_mode' 'cl_sampler_info'
+			 'cl_program_info' 'cl_program_build_info' 'cl_kernel_info' 
+			 'cl_kernel_work_group_info' 'cl_event_info' 'cl_command_type'
+			 'cl_profiling_info' 'size_t'
+			'cl_buffer_create_type' 'cl_pipe_info' 'cl_kernel_exec_info' 'cl_kernel_arg_info'))
+		('longlong'
+			('cl_long'))
+		('ulonglong'
+			('cl_ulong' 'cl_bitfield' 'cl_device_type' 'cl_device_address_info' 
+			 'cl_device_fp_config' 'cl_device_exec_capabilities' 
+			 'cl_command_queue_properties' 'cl_mem_flags' 'cl_map_flags'
+			'cl_queue_properties' 'cl_svm_mem_flags' 'cl_sampler_properties'
+			'cl_mem_migration_flags'))
+		('float'
+			('cl_float'))
+		('double'
+			('cl_double'))
+	).
+	map := Dictionary new.
+	input do: [:spec |
+		spec second do: [:clType | map at: clType put: spec first]
+	].
+	^map
+	! !
+
+!OpenCLMethodGenerator class methodsFor: 'utility' stamp: 'jmv 8/5/2015 16:34'!
+typeOf: inputTypeName in: typeMap
+	| typeName isPointer |
+	"We'll be munging this, so assign it to a temp var."
+	typeName := inputTypeName.
+	"Const means nothing to us... strip it off."
+	(typeName beginsWith: 'const') ifTrue: [
+		typeName := (typeName allButFirst: 5) withBlanksTrimmed.
+	].
+	"Handle function pointers in really dumb way.... we don't support callbacks anyway,
+	 so just treat them as 'void*'."
+	(typeName beginsWith: 'void (*') ifTrue: [^'void*'].
+	"Callers will need to know what to pass for these on a case-by-case basis."
+	(typeName endsWith: 'char **') ifTrue: [^'void*'].
+	(typeName endsWith: 'void **') ifTrue: [^'void*'].
+	"Handle pointer types."
+	(typeName last = $*) 
+		ifFalse: [isPointer := false]
+		ifTrue: [
+			typeName := typeName allButLast withBlanksTrimmed.
+			isPointer := true
+		].
+	"We ignore const-ness."
+	(typeName beginsWith: 'const ') ifTrue: [
+		typeName := typeName allButFirst: 6.
+	].
+	"Finally, look up the type (and make it a pointer-type if necessary)."
+	typeName := typeMap at: typeName.
+	isPointer ifTrue: [typeName := typeName, '*'].
+	"Oops, one last hack...FFI doesn't know what to do with void**"
+	(typeName beginsWith: 'void*') ifTrue: [typeName := 'void*'].
+	^typeName! !
+OpenCLConstants initialize!
 OpenCLObject initialize!
 OpenCLPrimitiveInterface initialize!
 OpenCLRefCounter initialize!
-OpenCLConstants initialize!
