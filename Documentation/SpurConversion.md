@@ -9,7 +9,7 @@ The procedure for doing the conversion is described here, and is easy enough for
 
 One special feature of the Cuis update process and resulting images is that both the Spur and non-Spur variants share 100% of the source code in the image, and updates. This means that there is no forking! Cuis will keep having a single update stream, and both Spur and non-Spur images will be kept in perfect sync. It also means that you can develop on any of them, and your code will run on both, without any changes. It also means that the choice of image format and VM is done later, at deployment, and doesn't affect development.
 
-Now, the update procedure.
+### Now, the update procedure ###
 
 - Pull updates from the Cuis GitHub repo
 - Start Cuis as usual
@@ -32,7 +32,7 @@ SpurBootstrap32 bootstrapCuisImage: '../Cuis4.2-2882-SpurReady.image'.
 
 - Wait. It might take around one hour, maybe a bit more. Result will be *Cuis4.2-2882-SpurReady-spur.image*. Quit the VMMaker Squeak image.
 
-- start Cuis4.2-2882-SpurReady.image with a non-Spur VM.
+- start *Cuis4.2-2882-SpurReady.image* with a non-Spur VM.
 ```
 coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2882-SpurReady.image
 ```
