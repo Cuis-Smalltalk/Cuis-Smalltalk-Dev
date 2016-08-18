@@ -49,7 +49,7 @@ Please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), ab
 
 In any case, we also accept contributions as ChangeSet files in email. Any contribution must be under the MIT license.
 
-To contribute code, please use an image with all included packages already loaded, and include new versions of affected packages. This will ensure we don't break them while we evolve Cuis.
+To contribute code, please use an image with all included packages already loaded, using updated versions, especially, of any affected packages. This will ensure we don't break them while we evolve Cuis.
 Here is a Smalltalk script to load all packages currently included:
 ```
 Feature require: 'Core-Packages'
