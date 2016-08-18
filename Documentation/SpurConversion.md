@@ -9,7 +9,7 @@ The procedure for doing the conversion is described here, and is easy enough for
 
 One special feature of the Cuis update process and resulting images is that both the Spur and non-Spur variants share 100% of the source code in the image, and updates. This means that there is no forking! Cuis will keep having a single update stream, and both Spur and non-Spur images will be kept in perfect sync. It also means that you can develop on any of them, and your code will run on both, without any changes. It also means that the choice of image format and VM is done later, at deployment, and doesn't affect development.
 
-### Now, the update procedure ###
+### Step 1 - Prepare Cuis for Spur bootstrap ###
 
 - Pull updates from the Cuis GitHub repo
 - Start Cuis as usual
@@ -20,7 +20,11 @@ The image will now be saved and quitted.
 You can start the new image and update again, to have an updated non-Spur image.
 Or you can run the Spur bootstrap on it, and then start it with a Spur 32bit VM to have an updated Spur image."
 - Accept it
-- In addition to your original image, now you have Cuis4.2-2882-SpurReady.image . This image is ready to be converted to Spur by the Spur bootstrap process developed by OpenSmalltalk to migrate to Spur images of the Cuis, NewSpeak, Squeak and Pharo dialects. To make the conversion reproducible, in the SqueakSpurVMMakerImage directory we included the very Squeak VMMaker development image we used to convert Cuis. It was built following http://www.mirandabanda.org/cogblog/build-image/ . If you want to contribute to OpenSmalltalk VM development, you'd use the latest from https://github.com/OpenSmalltalk . Start the VMMaker image (using a spur 32 bit VM):
+- In addition to your original image, now you have Cuis4.2-2882-SpurReady.image . This image is ready to be converted to Spur by the Spur bootstrap process developed by OpenSmalltalk to migrate to Spur images of the Cuis, NewSpeak, Squeak and Pharo dialects. 
+
+### Step 2 - Run Spur bootstrap on Cuis ###
+
+To make the conversion reproducible, in the SqueakSpurVMMakerImage directory we included the very Squeak VMMaker development image we used to convert Cuis. It was built following http://www.mirandabanda.org/cogblog/build-image/ . If you want to contribute to OpenSmalltalk VM development, you'd use the latest from https://github.com/OpenSmalltalk . Start the VMMaker image (using a spur 32 bit VM):
 ```
 cogspurlinuxht/squeak Cuis-Smalltalk-Dev/SqueakSpurVMMakerImage/SpurVMMaker.image
 ```
@@ -32,6 +36,8 @@ SpurBootstrap32 bootstrapCuisImage: '../Cuis4.2-2882-SpurReady.image'.
 
 - Wait. It might take around one hour, maybe a bit more. Result will be *Cuis4.2-2882-SpurReady-spur.image*. Quit the VMMaker Squeak image.
 
+### Step 3 - Update non-Spur image ###
+
 - start *Cuis4.2-2882-SpurReady.image* with a non-Spur VM.
 ```
 coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2882-SpurReady.image
@@ -41,7 +47,9 @@ coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2882-SpurReady.image
 
 - WorldMenu / Save options... / Save as New Version
 
-- start Cuis4.2-2882-SpurReady-spur.image with a Spur VM.
+### Step 4 - Update Spur image ###
+
+- start *Cuis4.2-2882-SpurReady-spur.image* with a Spur VM.
 ```
 cogspurlinuxht/squeak Cuis-Smalltalk-Dev/Cuis4.2-2882-SpurReady-spur.image
 ```
