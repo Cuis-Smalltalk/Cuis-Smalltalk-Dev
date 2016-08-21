@@ -1,0 +1,36 @@
+'From Cuis 4.2 of 25 July 2013 [latest update: #2907] on 20 August 2016 at 10:26:34 pm'!
+
+!methodRemoval: SystemDictionary #clsBlockStartLocator!
+SystemDictionary removeSelector: #clsBlockStartLocator!
+!methodRemoval: SystemDictionary #clsClosureExtractor!
+SystemDictionary removeSelector: #clsClosureExtractor!
+!methodRemoval: SystemDictionary #clsCompiledMethodWithNode!
+SystemDictionary removeSelector: #clsCompiledMethodWithNode!
+!methodRemoval: SystemDictionary #clsCompiler!
+SystemDictionary removeSelector: #clsCompiler!
+!methodRemoval: SystemDictionary #clsDecompiler!
+SystemDictionary removeSelector: #clsDecompiler!
+!methodRemoval: SystemDictionary #clsEncoderForV3!
+SystemDictionary removeSelector: #clsEncoderForV3!
+!methodRemoval: SystemDictionary #clsEncoderForV3PlusClosures!
+SystemDictionary removeSelector: #clsEncoderForV3PlusClosures!
+!methodRemoval: SystemDictionary #clsInstVarRefLocator!
+SystemDictionary removeSelector: #clsInstVarRefLocator!
+!methodRemoval: SystemDictionary #clsInstructionClient!
+SystemDictionary removeSelector: #clsInstructionClient!
+!methodRemoval: SystemDictionary #clsInstructionPrinter!
+SystemDictionary removeSelector: #clsInstructionPrinter!
+!methodRemoval: SystemDictionary #clsParseNode!
+SystemDictionary removeSelector: #clsParseNode!
+!methodRemoval: SystemDictionary #clsParseNodeEnumerator!
+SystemDictionary removeSelector: #clsParseNodeEnumerator!
+!methodRemoval: SystemDictionary #clsParser!
+SystemDictionary removeSelector: #clsParser!
+!methodRemoval: SystemDictionary #clsRelativeInstructionPrinter!
+SystemDictionary removeSelector: #clsRelativeInstructionPrinter!
+!methodRemoval: SystemDictionary #clsScanner!
+SystemDictionary removeSelector: #clsScanner!
+!methodRemoval: SystemDictionary #clsSyntaxErrorNotification!
+SystemDictionary removeSelector: #clsSyntaxErrorNotification!
+!methodRemoval: SystemDictionary #clsUndeclaredVariableWarning!
+SystemDictionary removeSelector: #clsUndeclaredVariableWarning!
