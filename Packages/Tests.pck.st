@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2922] on 28 August 2016 at 8:11:34 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2927] on 4 September 2016 at 10:32:31 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 60!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Tests' 1 61!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Taskbar' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -7221,7 +7221,7 @@ testSomeLatinCharsFromUtf8
 			strm nextPut: (Character value: (Character nextUnicodeCodePointFromUtf8: bytes )) ]].
 	self assert: string = 'áåæñÆ¥ü'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 3/5/2013 22:07'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
 testSomeLatinCharsToUtf8
 	"
 	CharacterTest new testSomeLatinCharsToUtf8
@@ -7232,7 +7232,7 @@ testSomeLatinCharsToUtf8
 		[ characters atEnd ] whileFalse: [
 			Character
 				evaluate: [ :byte | strm nextPut: byte ]
-				withUtf8BytesOfUnicodeCodePoint: characters next unicodeCodePoint ]].
+				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
 	self assert: bytes hex = 'C3A1C3A5C3A6C3B1C386C2A5C3BC'! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
