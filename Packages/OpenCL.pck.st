@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2860] on 17 August 2016 at 10:41:27 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:16:21 am'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 15!
+!provides: 'OpenCL' 1 16!
 !requires: 'SignalProcessing' 1 37 nil!
 !requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -2390,13 +2390,13 @@ driverVersion
 	"OpenCL software driver version string in the form major_number.minor_number."
 	^self stringProperty: CL_DRIVER_VERSION! !
 
-!OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:47'!
+!OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/5/2016 17:12:09'!
 extensions
 	^extensions ifNil: [
 		| buf size |
 		buf := String new: 10000.
 		size := self getDeviceInfoParameter: CL_DEVICE_EXTENSIONS into: buf.
-		(buf at: size) asciiValue = 0 ifTrue: [size := size - 1 "strip off terminal NULL"].
+		(buf at: size) numericValue = 0 ifTrue: [size := size - 1 "strip off terminal NULL"].
 		extensions := (buf first: size) findTokens: Character space.
 	].
 ! !
@@ -2741,7 +2741,7 @@ sizetProperty: property
 	"Get the specified size_t property."
 	^self uintProperty: property! !
 
-!OpenCLDevice methodsFor: 'private' stamp: 'jmv 8/5/2015 17:28'!
+!OpenCLDevice methodsFor: 'private' stamp: 'jmv 9/5/2016 17:12:12'!
 stringProperty: property
 	"Get the char[] device property."
 	| string size |
@@ -2752,7 +2752,7 @@ stringProperty: property
 			string := String new: 100000.
 			size := self getDeviceInfoParameter: property into: string
 		].
-	(string at: size) asciiValue = 0 ifTrue: [size := size - 1 "strip off terminal NULL character"].
+	(string at: size) numericValue = 0 ifTrue: [size := size - 1 "strip off terminal NULL character"].
 	^string first: size! !
 
 !OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:46'!
@@ -2847,7 +2847,7 @@ allGPUs
 extensions
 	^extensions! !
 
-!OpenCLPlatform methodsFor: 'private' stamp: 'jmv 9/9/2015 12:14'!
+!OpenCLPlatform methodsFor: 'private' stamp: 'jmv 9/5/2016 17:12:15'!
 getPlatformInfoParameter: param "cl_platform_info"
 	| buf result size |
 	buf := String new: 1000.
@@ -2871,7 +2871,7 @@ getPlatformInfoParameter: param "cl_platform_info"
 	].
 	result == CL_SUCCESS ifFalse: [OpenCLError signalCode: result].
 	size := size first. "don't need the IntegerArray any more."
-	(buf at: size) asciiValue = 0 ifTrue: [size := size - 1 "strip off terminal NULL character"].
+	(buf at: size) numericValue = 0 ifTrue: [size := size - 1 "strip off terminal NULL character"].
 	^buf first: size! !
 
 !OpenCLPlatform methodsFor: 'initialize' stamp: 'jmv 9/9/2015 11:45'!

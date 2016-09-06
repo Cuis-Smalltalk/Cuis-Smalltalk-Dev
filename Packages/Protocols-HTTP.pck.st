@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2925] on 3 September 2016 at 5:29:21 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:16:41 am'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 23!
-!requires: 'Network-Kernel' 1 2 nil!
+!provides: 'Protocols-HTTP' 1 24!
 !requires: 'Identities-UUID' 1 1 nil!
+!requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 1 nil!
 !classDefinition: #HTTPChunkedStream category: #'Protocols-HTTP'!
 ReadStream subclass: #HTTPChunkedStream
@@ -287,38 +287,32 @@ A wrapper object for the WebSocket API.!
 !WebSocket07 commentStamp: '<historical>' prior: 0!
 A wrapper object for the WebSocket API.!
 
-!Character methodsFor: '*Protocols-HTTP' stamp: 'jmv 8/20/2016 18:25:39'!
-charCode
-
-	^ (self numericValue bitAnd: 16r3FFFFF).! !
-
-!Character methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:39'!
+!Character methodsFor: '*Protocols-HTTP' stamp: 'jmv 9/5/2016 21:01:57'!
 isSafeForHTTP
 	"whether a character is 'safe', or needs to be escaped when used, eg, in a URL"
 	"[GG]  See http://www.faqs.org/rfcs/rfc1738.html. ~ is unsafe and has been removed"
-	^ self charCode < 128
+	^ self codePoint < 128
 		and: [self isAlphaNumeric
-				or: ['.-_' includes: (Character value: self charCode)]]! !
+				or: ['.-_' includes: self]]! !
 
-!String methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:43'!
+!String methodsFor: '*Protocols-HTTP' stamp: 'jmv 9/5/2016 22:10:02'!
 encodeForHTTP
 	"change dangerous characters to their %XX form, for use in HTTP transactions"
 
 	| httpSafeStream |
 	httpSafeStream := WriteStream on: (String new).
-	self do: [:c |
-		( c isSafeForHTTP )
-			ifTrue: [httpSafeStream nextPut: (Character value: c charCode)]
+	self do: [ :c |
+		c isSafeForHTTP
+			ifTrue: [httpSafeStream nextPut: c]
 			ifFalse: [
 					httpSafeStream nextPut: $%.
-					httpSafeStream nextPut: (c asInteger // 16) asHexDigit.
-					httpSafeStream nextPut: (c asInteger \\ 16) asHexDigit.
+					httpSafeStream nextPut: (c numericValue // 16) asHexDigit.
+					httpSafeStream nextPut: (c numericValue \\ 16) asHexDigit.
 			].
 	].
-	^ httpSafeStream contents.
-! !
+	^ httpSafeStream contents! !
 
-!String methodsFor: '*Protocols-HTTP' stamp: 'DSG 4/22/2015 17:04'!
+!String methodsFor: '*Protocols-HTTP' stamp: 'jmv 9/5/2016 20:49:10'!
 unescapePercents
 	"change each %XY substring to the character with ASCII value XY in hex.  This is the opposite of #encodeForHTTP"
 	| ans c asciiVal pos oldPos specialChars |
@@ -336,7 +330,7 @@ unescapePercents
 					(self at: pos+2) asUppercase digitValue.
 				pos _ pos + 2.
 				asciiVal > 255 ifTrue: [^self].	"not really an escaped string"
-				ans nextPut: (Character value: asciiVal)]
+				ans nextPut: (Character numericValue: asciiVal)]
 			ifFalse: [ans nextPut: c]].
 		oldPos _ pos+1].
 	ans nextPutAll: (self copyFrom: oldPos to: self size).
@@ -769,7 +763,7 @@ testCookieExpiryParsing
 	self assert: b expiry = exp asUTC.
 ! !
 
-!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'jmv 5/19/2015 22:35'!
+!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'jmv 9/5/2016 22:17:44'!
 testCookieParsing
 	"Test client and server handling of cookies"
 
@@ -777,7 +771,7 @@ testCookieParsing
 	"Sends the testcookie back if it's set"
 	server addService: '/' action:[:req |
 		req send200Response:(String streamContents:[:s|
-			req cookiesDo:[:key :val| s nextPutAll: key, '=', val; cr].
+			req cookiesDo:[:key :val| s nextPutAll: key, '=', val, String crString].
 		]).
 	].
 
@@ -917,20 +911,20 @@ testDuplicateCookies
 	self assert: resp content = '1'.
 ! !
 
-!HTTPClientServerTest methodsFor: 'tests - fields' stamp: 'DSG 3/28/2015 22:27'!
+!HTTPClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 9/5/2016 22:34:15'!
 testGetFields
 	"Test client and server handling simple fields"
 
 	| resp |
 	server addService: '/fields' action:[:req | 
 		req send200Response: (String streamContents:[:s|
-			req fields keys asArray sort do:[:key | s cr; lf; nextPutAll: key,'=', (req fields at: key)].
+			req fields keys asArray sort do:[:key | s nextPutAll: String crlfString; nextPutAll: key,'=', (req fields at: key)].
 		]).
 	].
 
 	resp := HTTPClient httpGet: self localHostUrl, '/fields?foo=123&bar=yoho'.
 	self assert: resp code = 200.
-	self assert: resp content = (String streamContents: [ :s | s cr; lf; nextPutAll: 'bar=yoho'; cr; lf; nextPutAll: 'foo=123'])
+	self assert: resp content = (String streamContents: [ :s | s nextPutAll: String crlfString; nextPutAll: 'bar=yoho'; nextPutAll: String crlfString; nextPutAll: 'foo=123'])
 ! !
 
 !HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/11/2010 21:20'!
@@ -1273,14 +1267,14 @@ testPersistentAuthRedirectSession
 	self assert: (finalFields at: 'number') = '42'.
 ! !
 
-!HTTPClientServerTest methodsFor: 'tests - fields' stamp: 'DSG 3/28/2015 22:27'!
+!HTTPClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 9/5/2016 22:34:19'!
 testPostFields
 	"Test client and server handling fields in url-encoded encoded post requests"
 
 	| resp |
 	server addService: '/fields' action:[:req | 
 		req send200Response: (String streamContents:[:s|
-			req fields keys asArray sort do:[:key | s cr; lf; nextPutAll: key,'=', (req fields at: key)].
+			req fields keys asArray sort do:[:key | s nextPutAll: String crlfString; nextPutAll: key,'=', (req fields at: key)].
 		]).
 	].
 
@@ -1288,7 +1282,7 @@ testPostFields
 				content: 'foo=123&bar=yoho'
 				type: 'application/x-www-form-urlencoded'.
 	self assert: resp code = 200.
-	self assert: resp content = (String streamContents: [ :s | s cr; lf; nextPutAll: 'bar=yoho'; cr; lf; nextPutAll: 'foo=123'])
+	self assert: resp content = (String streamContents: [ :s | s nextPutAll: String crlfString; nextPutAll: 'bar=yoho'; nextPutAll: String crlfString; nextPutAll: 'foo=123'])
 ! !
 
 !HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
@@ -6559,18 +6553,18 @@ on: aStream
 
 	^self new on: aStream! !
 
-!WebSocket00 methodsFor: 'running' stamp: 'ar 9/26/2011 13:05'!
+!WebSocket00 methodsFor: 'running' stamp: 'jmv 9/5/2016 20:49:42'!
 close
 	"Request graceful close"
 
 	stream isConnected ifTrue:[
-		stream nextPut: (Character value: 255).
-		stream nextPutAll: (Character value: 0).
+		stream nextPut: (Character numericValue: 255).
+		stream nextPutAll: (Character numericValue: 0).
 		stream flush.
 	].
 ! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 5/20/2015 09:14'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 22:30:06'!
 readMessage
 	"Reads one frame worth of data"
 
@@ -6578,14 +6572,14 @@ readMessage
 	byte := stream next ifNil:[
 		frameType := 255.
 		^nil].
-	frameType := byte asInteger.
+	frameType := byte numericValue.
 	frameType < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
-		frameData := String fromUtf8: (stream upTo: 255 asCharacter).
+		frameData := String fromUtf8: (stream upTo: 255 asCharacter) asByteArray.
 	] ifFalse:[
 		"Frame type >= 128: Binary data with length prefix"
 		length := 0.
-		[byte := stream next asInteger.
+		[byte := stream next numericValue.
 		length := (length * 128) + (byte bitClear: 128).
 		byte >= 128] whileTrue.
 		frameData := ByteArray new: length.
@@ -6614,16 +6608,16 @@ send: aString
 
 	^self send: aString type: 0! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'DSG 3/28/2015 23:31'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 20:49:48'!
 send: data type: type
 	"Writes one frame worth of data using the given frame type"
 
 	"Frame type"
-	stream nextPut: (Character value: type).
+	stream nextPut: (Character numericValue: type).
 	type < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
 		stream nextPutAll: data asString asUtf8.
-		stream nextPutAll: (Character value: 255).
+		stream nextPutAll: (Character numericValue: 255).
 	] ifFalse:[ | prefix length |
 		"Frame type >= 128: Binary data with length prefix"
 		prefix := ByteArray new.
@@ -6732,13 +6726,13 @@ nextFragment: aStringOrBytes
 		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: false]
 		ifFalse:[^self send: aStringOrBytes code: 0 final: false].! !
 
-!WebSocket07 methodsFor: 'private' stamp: 'ar 10/5/2011 19:43'!
+!WebSocket07 methodsFor: 'private' stamp: 'jmv 9/5/2016 21:35:24'!
 nextNumber: n from: aStream
 	"Answer the next n bytes as a positive Integer or LargePositiveInteger."
 	| s |
 	s := 0.
 	1 to: n do: 
-		[:i | s := (s bitShift: 8) bitOr: aStream next asInteger].
+		[:i | s := (s bitShift: 8) bitOr: aStream next numericValue].
 	^ s normalize! !
 
 !WebSocket07 methodsFor: 'control requests' stamp: 'ar 9/26/2011 12:49'!
@@ -6771,17 +6765,17 @@ readFrame
 
 	^self readFrameFrom: stream! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/20/2015 09:15'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 22:30:33'!
 readFrameFrom: aStream
 	"Reads one frame worth of data"
 
 	| byte length final mask opcode payload |
-	byte := (aStream next ifNil:[^nil]) asInteger.
+	byte := (aStream next ifNil:[^nil]) numericValue.
 
 	final := byte anyMask: 128.
 	opcode := byte bitAnd: 15.
 
-	byte := (aStream next ifNil:[^nil]) asInteger.
+	byte := (aStream next ifNil:[^nil]) numericValue.
 	mask := byte anyMask: 128.
 	length := byte bitAnd: 127.
 
@@ -6821,7 +6815,7 @@ readFrameFrom: aStream
 							inject: frameData first 
 							into:[:each :next| each, next].
 		].
-		frameType = 1 ifTrue:[payload := String fromUtf8: payload ].
+		frameType = 1 ifTrue:[payload := String fromUtf8: payload asByteArray].
 		self handleMessage: payload type: frameType.
 		frameType := frameData := nil.
 	].

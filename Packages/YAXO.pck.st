@@ -1,36 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 15 June 2016 at 2:36:27.772054 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:17:09 am'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 12!
-!classDefinition: #DTDEntityDeclaration category: #YAXO!
-Object subclass: #DTDEntityDeclaration
-	instanceVariableNames: 'name value ndata'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'YAXO'!
-!classDefinition: 'DTDEntityDeclaration class' category: #YAXO!
-DTDEntityDeclaration class
-	instanceVariableNames: 'contextBehavior'!
-
-!classDefinition: #DTDExternalEntityDeclaration category: #YAXO!
-DTDEntityDeclaration subclass: #DTDExternalEntityDeclaration
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'YAXO'!
-!classDefinition: 'DTDExternalEntityDeclaration class' category: #YAXO!
-DTDExternalEntityDeclaration class
-	instanceVariableNames: ''!
-
-!classDefinition: #DTDParameterEntityDeclaration category: #YAXO!
-DTDEntityDeclaration subclass: #DTDParameterEntityDeclaration
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'YAXO'!
-!classDefinition: 'DTDParameterEntityDeclaration class' category: #YAXO!
-DTDParameterEntityDeclaration class
-	instanceVariableNames: ''!
-
+!provides: 'YAXO' 1 13!
 !classDefinition: #SAXException category: #YAXO!
 Error subclass: #SAXException
 	instanceVariableNames: ''
@@ -109,6 +79,36 @@ Warning subclass: #SAXWarning
 	category: 'YAXO'!
 !classDefinition: 'SAXWarning class' category: #YAXO!
 SAXWarning class
+	instanceVariableNames: ''!
+
+!classDefinition: #DTDEntityDeclaration category: #YAXO!
+Object subclass: #DTDEntityDeclaration
+	instanceVariableNames: 'name value ndata'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'YAXO'!
+!classDefinition: 'DTDEntityDeclaration class' category: #YAXO!
+DTDEntityDeclaration class
+	instanceVariableNames: 'contextBehavior'!
+
+!classDefinition: #DTDExternalEntityDeclaration category: #YAXO!
+DTDEntityDeclaration subclass: #DTDExternalEntityDeclaration
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'YAXO'!
+!classDefinition: 'DTDExternalEntityDeclaration class' category: #YAXO!
+DTDExternalEntityDeclaration class
+	instanceVariableNames: ''!
+
+!classDefinition: #DTDParameterEntityDeclaration category: #YAXO!
+DTDEntityDeclaration subclass: #DTDParameterEntityDeclaration
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'YAXO'!
+!classDefinition: 'DTDParameterEntityDeclaration class' category: #YAXO!
+DTDParameterEntityDeclaration class
 	instanceVariableNames: ''!
 
 !classDefinition: #SAXHandler category: #YAXO!
@@ -1599,7 +1599,7 @@ nextCDataOrConditional
 	self errorExpected: 'CData or declaration'
 ! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 12/1/2009 14:47'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/5/2016 21:06:18'!
 nextCharReference
 	| base asciiCodeOrCodePoint |
 	self next == $#
@@ -1614,7 +1614,7 @@ nextCharReference
 	(self next) == $;
 		ifFalse: [self errorExpected: '";"'].
 
-	^Character safeValue: asciiCodeOrCodePoint! !
+	^Character safeCodePoint: asciiCodeOrCodePoint! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 11/28/2000 17:54'!
 nextComment

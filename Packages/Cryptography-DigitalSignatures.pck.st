@@ -1,7 +1,17 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:39.83649 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:15:38 am'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Cryptography-DigitalSignatures' 1 6!
+!provides: 'Cryptography-DigitalSignatures' 1 7!
 !requires: 'Sound' 1 3 nil!
+!classDefinition: #SecureHashAlgorithmTest category: #'Cryptography-DigitalSignatures-Tests'!
+TestCase subclass: #SecureHashAlgorithmTest
+	instanceVariableNames: 'hash'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Cryptography-DigitalSignatures-Tests'!
+!classDefinition: 'SecureHashAlgorithmTest class' category: #'Cryptography-DigitalSignatures-Tests'!
+SecureHashAlgorithmTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #DigitalSignatureAlgorithm category: #'Cryptography-DigitalSignatures'!
 Object subclass: #DigitalSignatureAlgorithm
 	instanceVariableNames: 'randKey randSeed'
@@ -22,16 +32,6 @@ Object subclass: #SecureHashAlgorithm
 SecureHashAlgorithm class
 	instanceVariableNames: ''!
 
-!classDefinition: #SecureHashAlgorithmTest category: #'Cryptography-DigitalSignatures-Tests'!
-TestCase subclass: #SecureHashAlgorithmTest
-	instanceVariableNames: 'hash'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Cryptography-DigitalSignatures-Tests'!
-!classDefinition: 'SecureHashAlgorithmTest class' category: #'Cryptography-DigitalSignatures-Tests'!
-SecureHashAlgorithmTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #ThirtyTwoBitRegister category: #'Cryptography-DigitalSignatures'!
 Object subclass: #ThirtyTwoBitRegister
 	instanceVariableNames: 'hi low'
@@ -42,6 +42,12 @@ Object subclass: #ThirtyTwoBitRegister
 ThirtyTwoBitRegister class
 	instanceVariableNames: ''!
 
+
+!SecureHashAlgorithmTest commentStamp: '<historical>' prior: 0!
+This is the unit test for the class SecureHashAlgorithm. Unit tests are a good way to exercise the functionality of your system in a repeatable and automatic manner. They are therefore recommended if you plan to release anything. For more information, see: 
+	- http://www.c2.com/cgi/wiki?UnitTest
+	- http://minnow.cc.gatech.edu/squeak/1547
+	- the sunit class category!
 
 !DigitalSignatureAlgorithm commentStamp: '<historical>' prior: 0!
 This class implements the Digital Signature Algorithm (DSA) of the U.S. government's "Digital Signature Standard" (DSS). The DSA algorithm was proposed in 1991 and became a standard in May 1994. The official description is available as a Federal Information Processing Standards Publication (FIPS PUB 186, May 19, 1994). A companion standard, the Secure Hash Standard, or SHS (FIPS PUB 180-1, April 17, 1995), describes a 160-bit message digest algorithm known as the Secure Hash Algorithm (SHA). This message digest is used to compute the document signature.
@@ -81,17 +87,43 @@ Implementation notes:
 The secure hash standard was created with 32-bit hardware in mind. All arithmetic in the hash computation must be done modulo 2^32. This implementation uses ThirtyTwoBitRegister objects to simulate hardware registers; this implementation is about six times faster than using LargePositiveIntegers (measured on a Macintosh G3 Powerbook). Implementing a primitive to process each 64-byte buffer would probably speed up the computation by a factor of 20 or more.
 !
 
-!SecureHashAlgorithmTest commentStamp: '<historical>' prior: 0!
-This is the unit test for the class SecureHashAlgorithm. Unit tests are a good way to exercise the functionality of your system in a repeatable and automatic manner. They are therefore recommended if you plan to release anything. For more information, see: 
-	- http://www.c2.com/cgi/wiki?UnitTest
-	- http://minnow.cc.gatech.edu/squeak/1547
-	- the sunit class category!
-
 !ThirtyTwoBitRegister commentStamp: '<historical>' prior: 0!
 I represent a 32-bit register. An instance of me can hold any non-negative integer in the range [0..(2^32 - 1)]. Operations are performed on my contents in place, like a hardware register, and results are always modulo 2^32.
 
 This class is primarily meant for use by the SecureHashAlgorithm class.
 !
+
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'DSG 3/28/2015 15:02'!
+testEmptyInput
+	self assert: ((SecureHashAlgorithm new hashMessage: '') printStringBase: 16)
+			= 'DA39A3EE5E6B4B0D3255BFEF95601890AFD80709'! !
+
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:23'!
+testExample1
+
+	"This is the first example from the specification document (FIPS PUB 180-1)"
+
+	hash := SecureHashAlgorithm new hashMessage: 'abc'.
+	self assert: (hash = 16rA9993E364706816ABA3E25717850C26C9CD0D89D).
+		! !
+
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:23'!
+testExample2
+
+	"This is the second example from the specification document (FIPS PUB 180-1)"
+
+	hash := SecureHashAlgorithm new hashMessage:
+		'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'.
+	self assert: (hash = 16r84983E441C3BD26EBAAE4AA1F95129E5E54670F1).! !
+
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:25'!
+testExample3
+
+	"This is the third example from the specification document (FIPS PUB 180-1). 
+	This example may take several minutes."
+
+	hash := SecureHashAlgorithm new hashMessage: (String new: 1000000 withAll: $a).
+	self assert: (hash = 16r34AA973CD4C4DAA4F61EEB2BDBAD27316534016F).! !
 
 !DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'nice 9/2/2010 21:48'!
 computeSignatureForMessageHash: hash privateKey: privateKey
@@ -208,7 +240,7 @@ initRandom: randomInteger
 	Transcript show: 'Random seed: ', randomInteger printString; newLine.
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'nice 12/14/2010 15:10'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/5/2016 21:13:01'!
 initRandomFromString: aString
 	"Ask the user to type a long random string and use the result to seed the secure random number generator."
 
@@ -217,13 +249,13 @@ initRandomFromString: aString
 	k := LargePositiveInteger new: (s size min: 64).
 	srcIndex := 0.
 	k digitLength to: 1 by: -1 do: [:i |
-		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) asciiValue].
+		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) numericValue].
 	k := k normalize + (Random new next * 16r7FFFFFFF) asInteger.  "a few additional bits randomness"
 	k highBit > 512 ifTrue: [k := k bitShift: k highBit - 512].
 	self initRandom: k.
 ! !
 
-!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'DSG 5/28/2013 10:31'!
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/5/2016 21:13:06'!
 initRandomFromUser
 	"Ask the user to type a long random string and use the result to seed the secure random number generator."
 
@@ -232,7 +264,7 @@ initRandomFromUser
 	k := LargePositiveInteger new: (s size min: 64).
 	srcIndex := 0.
 	k digitLength to: 1 by: -1 do: [:i |
-		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) asciiValue].
+		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) numericValue].
 	k := k normalize + (Random new next * 16r7FFFFFFF) asInteger.  "a few additional bits randomness"
 	k highBit > 512 ifTrue: [k := k bitShift: k highBit - 512].
 	self initRandom: k.
@@ -515,7 +547,7 @@ time: aBlock as: aString count: anInteger
 
 	^{anInteger. aString. (Time millisecondsToRun: aBlock)}! !
 
-!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'nice 12/26/2009 01:35'!
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 9/5/2016 20:48:35'!
 timeDecode: count
 	"Example of signing a message and verifying its signature."
 	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
@@ -528,7 +560,7 @@ timeDecode: count
 	#(1 10 100 1000 10000 100000) do: [ :extraLen |
 		| msg keys sig s |
 		s := String new: extraLen.
-		1 to: s size do: [ :i | s at: i put: (Character value: 200 atRandom)].
+		1 to: s size do: [ :i | s at: i put: (Character numericValue: 200 atRandom)].
 		msg := 'This is a test...',s.
 		keys := self testKeySet.
 		sig := self sign: msg privateKey: keys first dsa: dsa.
@@ -886,38 +918,6 @@ initialize
 	K3 := ThirtyTwoBitRegister fromInteger: 16r8F1BBCDC.
 	K4 := ThirtyTwoBitRegister fromInteger: 16rCA62C1D6.
 ! !
-
-!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'DSG 3/28/2015 15:02'!
-testEmptyInput
-	self assert: ((SecureHashAlgorithm new hashMessage: '') printStringBase: 16)
-			= 'DA39A3EE5E6B4B0D3255BFEF95601890AFD80709'! !
-
-!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:23'!
-testExample1
-
-	"This is the first example from the specification document (FIPS PUB 180-1)"
-
-	hash := SecureHashAlgorithm new hashMessage: 'abc'.
-	self assert: (hash = 16rA9993E364706816ABA3E25717850C26C9CD0D89D).
-		! !
-
-!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:23'!
-testExample2
-
-	"This is the second example from the specification document (FIPS PUB 180-1)"
-
-	hash := SecureHashAlgorithm new hashMessage:
-		'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'.
-	self assert: (hash = 16r84983E441C3BD26EBAAE4AA1F95129E5E54670F1).! !
-
-!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:25'!
-testExample3
-
-	"This is the third example from the specification document (FIPS PUB 180-1). 
-	This example may take several minutes."
-
-	hash := SecureHashAlgorithm new hashMessage: (String new: 1000000 withAll: $a).
-	self assert: (hash = 16r34AA973CD4C4DAA4F61EEB2BDBAD27316534016F).! !
 
 !ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:36'!
 += aThirtTwoBitRegister

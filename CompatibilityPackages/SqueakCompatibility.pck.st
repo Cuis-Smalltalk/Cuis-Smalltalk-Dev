@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2919] on 26 August 2016 at 3:24:52 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2923] on 6 September 2016 at 10:27:49 am'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 25!
+!provides: 'SqueakCompatibility' 1 26!
 !requires: 'Cuis-Base' 42 2658 nil!
 !classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
@@ -10,6 +10,36 @@ SharedPool subclass: #KlattResonatorIndices
 	category: 'SqueakCompatibility'!
 !classDefinition: 'KlattResonatorIndices class' category: #SqueakCompatibility!
 KlattResonatorIndices class
+	instanceVariableNames: ''!
+
+!classDefinition: #StringHolder category: #SqueakCompatibility!
+TextModel subclass: #StringHolder
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'StringHolder class' category: #SqueakCompatibility!
+StringHolder class
+	instanceVariableNames: ''!
+
+!classDefinition: #Model category: #SqueakCompatibility!
+ActiveModel subclass: #Model
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'Model class' category: #SqueakCompatibility!
+Model class
+	instanceVariableNames: ''!
+
+!classDefinition: #TimeStamp category: #SqueakCompatibility!
+DateAndTime subclass: #TimeStamp
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TimeStamp class' category: #SqueakCompatibility!
+TimeStamp class
 	instanceVariableNames: ''!
 
 !classDefinition: #ByteString category: #SqueakCompatibility!
@@ -62,34 +92,24 @@ Notification subclass: #ProvideAnswerNotification
 ProvideAnswerNotification class
 	instanceVariableNames: ''!
 
-!classDefinition: #TimeStamp category: #SqueakCompatibility!
-DateAndTime subclass: #TimeStamp
+!classDefinition: #ClassTestCase category: #SqueakCompatibility!
+TestCase subclass: #ClassTestCase
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TimeStamp class' category: #SqueakCompatibility!
-TimeStamp class
+!classDefinition: 'ClassTestCase class' category: #SqueakCompatibility!
+ClassTestCase class
 	instanceVariableNames: ''!
 
-!classDefinition: #Model category: #SqueakCompatibility!
-ActiveModel subclass: #Model
+!classDefinition: #TestObjectsAsMethods category: #SqueakCompatibility!
+TestCase subclass: #TestObjectsAsMethods
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'Model class' category: #SqueakCompatibility!
-Model class
-	instanceVariableNames: ''!
-
-!classDefinition: #StringHolder category: #SqueakCompatibility!
-TextModel subclass: #StringHolder
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'StringHolder class' category: #SqueakCompatibility!
-StringHolder class
+!classDefinition: 'TestObjectsAsMethods class' category: #SqueakCompatibility!
+TestObjectsAsMethods class
 	instanceVariableNames: ''!
 
 !classDefinition: #FileDirectory category: #SqueakCompatibility!
@@ -332,35 +352,15 @@ UnsupportedInCuis subclass: #UIManager
 UIManager class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClassTestCase category: #SqueakCompatibility!
-TestCase subclass: #ClassTestCase
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'ClassTestCase class' category: #SqueakCompatibility!
-ClassTestCase class
-	instanceVariableNames: ''!
 
-!classDefinition: #TestObjectsAsMethods category: #SqueakCompatibility!
-TestCase subclass: #TestObjectsAsMethods
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TestObjectsAsMethods class' category: #SqueakCompatibility!
-TestObjectsAsMethods class
-	instanceVariableNames: ''!
-
+!Model commentStamp: '<historical>' prior: 0!
+Compatibility. Prefer ActiveModel.!
 
 !MultiByteFileStream commentStamp: 'jmv 5/8/2015 15:03' prior: 0!
 Not really a MultiByteXXX. Accept #lineEndConvention and honor it, on Write. On Read, do no conversions.!
 
 !CrLfFileStream commentStamp: '<historical>' prior: 0!
 Do line ending conversion on write. By default, write files with host platform convention.!
-
-!Model commentStamp: '<historical>' prior: 0!
-Compatibility. Prefer ActiveModel.!
 
 !FileDirectory commentStamp: '<historical>' prior: 0!
 A FileDirectory represents a folder or directory in the underlying platform's file system. It carries a fully-qualified path name for the directory it represents, and can enumerate the files and directories within that directory.
@@ -398,53 +398,111 @@ ifNotNilDo: ifNotNilBlock
 isCharacter
 	^false! !
 
+!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
+environment
+	"Necessary to support disjoint class hierarchies."
+
+	^Smalltalk		"No environments in Cuis..."! !
+
+!Behavior methodsFor: '*squeakCompatibility' stamp: 'jmv 11/1/2011 23:15'!
+environment
+	"Return the environment in which the receiver is visible"
+	^Smalltalk! !
+
+!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:08:16'!
+printOn: aStream base: base digitCount: numDigits
+
+	self isNaN ifTrue: [aStream nextPutAll: 'NaN'. ^ self]. "check for NaN before sign"
+	self > 0.0
+		ifTrue: [self absPrintOn: aStream base: base digitCount: numDigits]
+		ifFalse:
+			[self sign = -1
+				ifTrue: [aStream nextPutAll: '-'].
+			self = 0.0
+				ifTrue: [aStream nextPutAll: '0.0'. ^ self]
+				ifFalse: [self negated absPrintOn: aStream base: base digitCount: numDigits]]! !
+
+!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:24:25'!
+printOn: aStream base: base nDigits: numDigits
+
+	self printOn: aStream base: base digitCount: numDigits! !
+
+!Time class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 10:52'!
+totalSeconds
+	^self primLocalSecondsClock ! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:29'!
+asInteger
+	"Answer the value of the receiver."
+
+	^self numericValue! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:26'!
+asUnicode
+	"Answer the unicode encoding of the receiver"
+	"self leadingChar = 0 ifTrue: [^ self asInteger].
+	^self encodedCharSet charsetClass convertToUnicode: self charCode"
+	^self asInteger! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:12'!
+isCharacter
+	^true! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:11'!
+value
+	^self numericValue! !
+
+!Character class methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:26:47'!
+value: anInteger
+	"Answer the Character whose value is anInteger."
+
+	^ self numericValue: anInteger! !
+
+!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
+cull: firstArg
+	"Activate the receiver, with one or zero arguments."
+	
+	numArgs >= 1 ifTrue: [ ^self value: firstArg ].
+	^self value! !
+
+!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
+cull: firstArg cull: secondArg
+	"Activate the receiver, with two or less arguments."
+	
+	numArgs >= 2 ifTrue: [ ^self value: firstArg value: secondArg ].	
+	numArgs = 1 ifTrue: [ ^self value: firstArg ].
+	^self value! !
+
+!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
+cull: firstArg cull: secondArg cull: thirdArg
+	"Activate the receiver, with three or less arguments."
+	
+	numArgs >= 2 ifTrue: [ 
+		numArgs >= 3 ifTrue: [ ^self value: firstArg value: secondArg value: thirdArg ].
+		^self value: firstArg value: secondArg ].
+	numArgs = 1 ifTrue: [ ^self value: firstArg ].
+	^self value! !
+
+!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
+cull: firstArg cull: secondArg cull: thirdArg cull: fourthArg
+	"Activate the receiver, with four or less arguments."
+	
+	numArgs >= 3 ifTrue: [
+		numArgs >= 4 ifTrue: [
+			^self value: firstArg value: secondArg value: thirdArg value: fourthArg ].
+		^self value: firstArg value: secondArg value: thirdArg ].
+	numArgs = 2 ifTrue: [ ^self value: firstArg value: secondArg ].	
+	numArgs = 1 ifTrue: [ ^self value: firstArg ].
+	^self value! !
+
+!InputSensor methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:47'!
+cursorPoint
+	^self mousePoint! !
+
 !SequenceableCollection methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:18'!
 doWithIndex: elementAndIndexBlock
 	"Old style. Prefer #withIndexDo:"
 	self withIndexDo: elementAndIndexBlock! !
-
-!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
-isAbstract
-	| marker |
-	marker := self markerOrNil.
-	^ marker notNil and: [self class abstractMarkers includes: marker].! !
-
-!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'al 2/13/2006 17:44'!
-markerOrNil
-	"If I am a marker method, answer the symbol used to mark me.  Otherwise
-	answer nil.
-
-	What is a marker method?  It is method with body like 
-		'self subclassResponsibility' or '^ self subclassResponsibility' 
-	used to indicate ('mark') a special property.
-
-	Marker methods compile to bytecode like:
-
-		9 <70> self
-		10 <D0> send: <literal 1>
-		11 <87> pop
-		12 <78> returnSelf
-
-	for the first form, or 
-
-		9 <70> self
-		10 <D0> send: <literal 1>
-		11 <7C> returnTop
-
-	for the second form."
-
-	| e |
-	((e := self endPC) = 19 or: [e = 20]) ifFalse: [^ nil].
-	(self numLiterals = 3) ifFalse:[^ nil].
-	(self at: 17) =  16r70 ifFalse:[^ nil].		"push self"
-	(self at: 18) = 16rD0 ifFalse:[^ nil].		"send <literal 1>"
-	"If we reach this point, we have a marker method that sends self <literal 1>"
-	^ self literalAt: 1
-! !
-
-!CompiledMethod class methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:17'!
-abstractMarkers
-	^ #(subclassResponsibility shouldNotImplement)! !
 
 !String methodsFor: '*squeakCompatibility' stamp: 'eem 2/3/2015 12:04'!
 subStrings: separators 
@@ -491,6 +549,49 @@ lf
 !Symbol methodsFor: '*squeakCompatibility' stamp: 'hjh 5/9/2015 17:37'!
 value: anObject 
 	^anObject perform: self.! !
+
+!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
+isAbstract
+	| marker |
+	marker := self markerOrNil.
+	^ marker notNil and: [self class abstractMarkers includes: marker].! !
+
+!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'al 2/13/2006 17:44'!
+markerOrNil
+	"If I am a marker method, answer the symbol used to mark me.  Otherwise
+	answer nil.
+
+	What is a marker method?  It is method with body like 
+		'self subclassResponsibility' or '^ self subclassResponsibility' 
+	used to indicate ('mark') a special property.
+
+	Marker methods compile to bytecode like:
+
+		9 <70> self
+		10 <D0> send: <literal 1>
+		11 <87> pop
+		12 <78> returnSelf
+
+	for the first form, or 
+
+		9 <70> self
+		10 <D0> send: <literal 1>
+		11 <7C> returnTop
+
+	for the second form."
+
+	| e |
+	((e := self endPC) = 19 or: [e = 20]) ifFalse: [^ nil].
+	(self numLiterals = 3) ifFalse:[^ nil].
+	(self at: 17) =  16r70 ifFalse:[^ nil].		"push self"
+	(self at: 18) = 16rD0 ifFalse:[^ nil].		"send <literal 1>"
+	"If we reach this point, we have a marker method that sends self <literal 1>"
+	^ self literalAt: 1
+! !
+
+!CompiledMethod class methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:17'!
+abstractMarkers
+	^ #(subclassResponsibility shouldNotImplement)! !
 
 !Stream methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:02:52'!
 print: aNumber digits: numDigits
@@ -545,91 +646,6 @@ environment
 	"Answer the environment of the current compilation context,
 	 be it in a class or global (e.g. a workspace)"
 	^Smalltalk "No environments in Cuis..."! !
-
-!Behavior methodsFor: '*squeakCompatibility' stamp: 'jmv 11/1/2011 23:15'!
-environment
-	"Return the environment in which the receiver is visible"
-	^Smalltalk! !
-
-!Time class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 10:52'!
-totalSeconds
-	^self primLocalSecondsClock ! !
-
-!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:08:16'!
-printOn: aStream base: base digitCount: numDigits
-
-	self isNaN ifTrue: [aStream nextPutAll: 'NaN'. ^ self]. "check for NaN before sign"
-	self > 0.0
-		ifTrue: [self absPrintOn: aStream base: base digitCount: numDigits]
-		ifFalse:
-			[self sign = -1
-				ifTrue: [aStream nextPutAll: '-'].
-			self = 0.0
-				ifTrue: [aStream nextPutAll: '0.0'. ^ self]
-				ifFalse: [self negated absPrintOn: aStream base: base digitCount: numDigits]]! !
-
-!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:24:25'!
-printOn: aStream base: base nDigits: numDigits
-
-	self printOn: aStream base: base digitCount: numDigits! !
-
-!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
-cull: firstArg
-	"Activate the receiver, with one or zero arguments."
-	
-	numArgs >= 1 ifTrue: [ ^self value: firstArg ].
-	^self value! !
-
-!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
-cull: firstArg cull: secondArg
-	"Activate the receiver, with two or less arguments."
-	
-	numArgs >= 2 ifTrue: [ ^self value: firstArg value: secondArg ].	
-	numArgs = 1 ifTrue: [ ^self value: firstArg ].
-	^self value! !
-
-!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
-cull: firstArg cull: secondArg cull: thirdArg
-	"Activate the receiver, with three or less arguments."
-	
-	numArgs >= 2 ifTrue: [ 
-		numArgs >= 3 ifTrue: [ ^self value: firstArg value: secondArg value: thirdArg ].
-		^self value: firstArg value: secondArg ].
-	numArgs = 1 ifTrue: [ ^self value: firstArg ].
-	^self value! !
-
-!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
-cull: firstArg cull: secondArg cull: thirdArg cull: fourthArg
-	"Activate the receiver, with four or less arguments."
-	
-	numArgs >= 3 ifTrue: [
-		numArgs >= 4 ifTrue: [
-			^self value: firstArg value: secondArg value: thirdArg value: fourthArg ].
-		^self value: firstArg value: secondArg value: thirdArg ].
-	numArgs = 2 ifTrue: [ ^self value: firstArg value: secondArg ].	
-	numArgs = 1 ifTrue: [ ^self value: firstArg ].
-	^self value! !
-
-!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
-environment
-	"Necessary to support disjoint class hierarchies."
-
-	^Smalltalk		"No environments in Cuis..."! !
-
-!InputSensor methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:47'!
-cursorPoint
-	^self mousePoint! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:26'!
-asUnicode
-	"Answer the unicode encoding of the receiver"
-	"self leadingChar = 0 ifTrue: [^ self asInteger].
-	^self encodedCharSet charsetClass convertToUnicode: self charCode"
-	^self asInteger! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:12'!
-isCharacter
-	^true! !
 
 !Transcript class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:41'!
 cr

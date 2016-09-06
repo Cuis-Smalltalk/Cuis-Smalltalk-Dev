@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2927] on 4 September 2016 at 10:32:31 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:17:00 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 61!
+!provides: 'Tests' 1 62!
+!requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Taskbar' 1 nil nil!
-!requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -6793,7 +6793,7 @@ test6
 
 	self assert: source equals: prettyPrinted! !
 
-!ScannerTest methodsFor: 'testing' stamp: 'jmv 10/23/2012 23:20'!
+!ScannerTest methodsFor: 'testing' stamp: 'jmv 9/5/2016 20:48:53'!
 testLiteralSymbols
 
 	self assert: ('*+-/\~=<>&@%,|' allSatisfy: [:char | Scanner isLiteralSymbol: (String with: char) asSymbol])
@@ -6802,7 +6802,7 @@ testLiteralSymbols
 	self assert: (#('x' 'x:' 'x:y:' 'from:to:by:' 'yourself') allSatisfy: [:str | Scanner isLiteralSymbol: str asSymbol])
 		description: 'valid ascii selector symbols can be printed without string quotes'.
 		
-	((32 to: 94), (96 to: 126) collect: [:ascii | Character value: ascii]) ,
+	((32 to: 94), (96 to: 126) collect: [:ascii | Character numericValue: ascii]) ,
 	#(':x:yourself' '::' 'x:yourself' '123' 'x0:x1:x2:' 'x.y.z' '1abc' 'a1b0c2' ' x' 'x ' '+x-y' '||' '-' '++' '+' '+/-' '-/+' '<|>' '#x' '()' '[]' '{}' '')
 		do: [:str |
 			self assert: (Compiler evaluate: str asSymbol printString) = str asSymbol
@@ -7209,7 +7209,7 @@ testFromUtf8
 	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'E282AC')) hex = '16r20AC'.
 	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'F0A4ADA2')) hex = '16r24B62'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:07'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/5/2016 20:48:25'!
 testSomeLatinCharsFromUtf8
 	"
 	CharacterTest new testSomeLatinCharsFromUtf8
@@ -7218,7 +7218,7 @@ testSomeLatinCharsFromUtf8
 	bytes _ (ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC') readStream.
 	string _ String streamContents: [ :strm |
 		[bytes atEnd ] whileFalse: [
-			strm nextPut: (Character value: (Character nextUnicodeCodePointFromUtf8: bytes )) ]].
+			strm nextPut: (Character codePoint: (Character nextUnicodeCodePointFromUtf8: bytes )) ]].
 	self assert: string = 'áåæñÆ¥ü'! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
