@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 15 June 2016 at 7:06:16.030822 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2934] on 6 September 2016 at 10:24:14 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 118!
+!provides: 'TerseGuide' 1 128!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -736,7 +736,7 @@ x _ 15 storeStringBase: 16.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:14'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 18:20:01'!
 date
 	"Date"
 	^
@@ -763,7 +763,7 @@ y _ x year.										"year (19xx)"
 y _ x daysInYear.								"days in year (365|366)"
 y _ x daysLeftInYear.							"days left in year (364|365)"
 y _ x printFormat: #(2 1 3 $/ 1 1).			"print formatted date"
-b _ (x <= Date today).						"comparison"
+b _ (x < Date today).							"comparison"
 y _ x julianDayNumber.
 y _ x mmddyyyy.	"Answer the receiver rendered in standard fmt mm/dd/yyyy. Note that the name #mmddyyyy is slightly misleading -- the month and day numbers don''t show leading zeros, so that for example feb 1 1996 is 2/1/96"
 y _ x month.
@@ -809,7 +809,7 @@ y _ x isLeapYear.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:14'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 22:20:30'!
 debugging
 	"Debugging"
 	^
@@ -817,7 +817,6 @@ debugging
 	"Some statements in this topic are designed to cause an error."
 x _ Object new.
 x yourself.								"returns receiver"
-String browse.							"browse specified class"
 x inspect.									"open object inspector window"
 x confirm: ''Is this correct?''.
 x halt.										"breakpoint to open debugger window"
@@ -843,7 +842,7 @@ x doesNotUnderstand: (Message selector: #foo).	"flag message is not handled"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/23/2016 12:14'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2016 20:07:07'!
 dictionary
 	"Dictionary"
 	^
@@ -887,10 +886,10 @@ y _ x asSortedCollection.						"collect values in a sorted collection"
 y _ x asBag.										"collect values in a bag"
 y _ x asSet.										"collect values in a set"
 
-Smalltalk at: #CMRGlobal put: ''CMR entry''.	"put global in Smalltalk Dictionary"
-x _ Smalltalk at: #CMRGlobal.				"read global from Smalltalk Dictionary"
-Transcript show: (CMRGlobal printString).	"entries are directly accessible by name"
-Smalltalk keys do: [ :k |						"print out all classes"
+Smalltalk at: #CuisGlobal put: ''Cuis entry''.	"put global in Smalltalk Dictionary"
+x _ Smalltalk at: #CuisGlobal.				"read global from Smalltalk Dictionary"
+Transcript show: (CuisGlobal printString).	"entries are directly accessible by name"
+Smalltalk keys do: [ :k |						"print out all non-class globals"
    ((Smalltalk at: k) isKindOf: Class)
       ifFalse: [Transcript show: k printString; newLine]].
 aDx _ Dictionary new.						"set up user defined dictionary"
@@ -909,7 +908,7 @@ aDx keysAndValuesDo: [:aKey :aValue |		"print out keys and values"
       newLine].
 aDx associationsDo: [:aKeyValue |				"another iterator for printing key values"
    Transcript show: aKeyValue printString; newLine].
-Smalltalk removeKey: #CMRGlobal ifAbsent: [].	"remove entry from Smalltalk dictionary"
+Smalltalk removeKey: #CuisGlobal ifAbsent: [].	"remove entry from Smalltalk dictionary"
 
 "NOTE: methods in subclasses of Collection, of which Dictionary is one, answer
  the ARGUMENT instead of the resulting collection. Examples of such 
@@ -1039,7 +1038,7 @@ Feature require: #''Graphics-Files-Additional''.
 Feature require: #''Core-Packages''. 		"load all core Cuis Packages"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 5/31/2016 11:25'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 17:45:37'!
 fileMan
 	"File Operations"
 	^
@@ -1103,24 +1102,26 @@ b _ ''testFile.txt'' asFileEntry exists.		"test for existence of the file"
 
 ''testFile.txt'' asFileEntry delete.			"remove the test file"
 
-fullPath _ c pathName, ''\TestDir''.								"identify a directory"
+fullPath _ c pathName, ''\TestDir''.							"identify a directory"
 FileIOAccessor new createDirectory: fullPath.			"create a directory"
-FileIOAccessor new createDirectory: ''./\TestDir''.		"another way, using regex"
+FileIOAccessor new deleteDirectory: fullPath.			"delete directory; must be empty"
+FileIOAccessor new createDirectory: ''./\TestDir''.	"another way, using regex"
 FileIOAccessor new deleteDirectory: fullPath.			"delete directory; must be empty"
 
 "The following statements show one way to either create an empty file, or use the file as-is if it already exists"
-c _ DirectoryEntry currentDirectory.				"answer the current directory"
+c _ DirectoryEntry currentDirectory.					"answer the current directory"
 dirEntry _ c pathName asDirectoryEntry / ''testFile.txt''.	"create a system-independent path expression"
 fullPath _ dirEntry asString.									"convert path expression to string"
 fullPath asFileEntry assureExistence.						"create testFile.txt if it does not exist"
 fullPath asFileEntry assureExistence.						"do nothing if testFile.txt already exists"
 ''testFile.txt'' asFileEntry delete.							"remove the test file"
 
-"Note the examples in DirectoryEntry class"
+DirectoryEntry smalltalkImageDirectory.				"answer the Smalltalk image directory"
+DirectoryEntry vmDirectory.								"answer the VM directory"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/9/2016 12:05'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 15:09:55'!
 font
 	"Fonts"
 	^
@@ -1132,7 +1133,7 @@ Add a font, Method 1.
 	- place the .bmp and .txt files for the strike font in the ''AdditionalFontData'' directory
 	- use StrikeFont install: ''<familyname>''
 "
-| w x y z str |
+| w x y z str nam |
 
 x _ AbstractFont default.				"answer the default font"
 
@@ -1140,20 +1141,14 @@ StrikeFont install: ''DejaVu Sans Mono''.	"install the font with the specified f
 
 AbstractFont familyNames     
 	detect: [:f | f = ''DejaVu Sans Mono''] ifNone: [^ AbstractFont default].
+	
 w _ AbstractFont familyName: ''DejaVu Sans Mono'' aroundPointSize: 10.
 	"answer DejaVu Sans Mono font if available; otherwise, answer the default font"
-
-str _ String new writeStream 			"prepare a string"
-	nextPutAll: ''foo''; newLine;
-	nextPutAll: ''bar''.
-
-y _ Text initialFont: x stringOrText: str contents. 	"specify text with font and string"
-
-(StringMorph contents: ''Some text in a particular font!!'' font: w) openInHand. "look at an example"
+nam _ ''DejaVu Sans Mono''.
+(StringMorph contents: ''Some text in "'', nam, ''" font.'' font: w) openInHand. "look at an example"
 
 "
 Add a font, Method 2.
-
 Place .sf2 files in the ''AdditionalFontData'' directory, then...
 "
 
@@ -1161,19 +1156,18 @@ Feature require: #''SF2-Import''.		"install the installer for fonts in .sf2 file
 
 SF2Installer readSF2FontsFromDir: ''AdditionalFontData''.	"install the fonts from .sf2 files"
 
-z _ AbstractFont familyName: ''Accujen'' aroundPointSize: 30.	"answer an Accujen font"
+AbstractFont familyNames.				"list the installed fonts"
 
-(StringMorph contents: ''Text in the Accujen font!!'' font: z) openInHand. "look at an example"
+((StringMorph contents: ''Text in the selected font.'') changeFont) openInHand. "look at an example"
 "
 The selection of currently installed fonts may be viewed from the text editor:
 
 World > Open... > Text Editor
-
-Use (Cmd-k) to see a list of installed fonts.
+...then use (Cmd-k) to see a list of installed fonts.
 "
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/19/2016 20:57'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 20:55:07'!
 form
 	"Forms"
 	^
@@ -1190,14 +1184,11 @@ x _ Form extent: 22@18 depth: 8.
 	
 y _ x getCanvas.				"convert form to canvas (a BitBltCanvas)"
 
-EllipseMorph new drawOn: y; morphExtent: 300@300; openInWorld.
+EllipseMorph new drawOn: y; morphExtent: 300@200; openInWorld.
 	"Display a morph on a canvas"
 
 x _ Form fromUser.
 	"Answer a Form with bitmap initialized from the area of the display screen designated by the user."
-
-x _ Form makeStar.
-	"Draw a five-pointed star."
 
 x _ Form toothpaste: 15.
 	"Draw with mouse button down; terminate by option-click."
@@ -1219,13 +1210,13 @@ y _ x magnifyBy: 1.5.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 20:57'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 15:54:45'!
 heap
 	"Heap"
 	^
-'| x sort |
+'| x n sort |
 x _ Heap new.						"Answer a heap of default size"
-x _ Heap new: n.					"Answer a heap of size n"
+x _ Heap new: (n _ 7).			"Answer a heap of size n"
 x _ Heap with: #purple with: #green. 	"Answer a Heap with the two arguments as elements."
 sort _ [:a :c | a > c].					"Define a sorting order"
 x _ Heap withAll: #(11 32 19 21).	"Create a new heap with all the elements from a collection"
@@ -1233,7 +1224,7 @@ x sortBlock: sort.						"Specify how to sort the heap"
 x _ Heap withAll: #(11 32 19 21) sortBlock: sort.	"Create a new heap sorted according to a sortBlock"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/31/2016 16:00'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 16:31:22'!
 internalStream
 	"Internal  Streams"
 	^
@@ -1273,8 +1264,8 @@ str nextPutAll: (Complex real: 4.7 imaginary: -2.2) printString.
 str nextPutAll: '' is the location of the pole.''.	"complete the formation"
 x _ str contents.								"to get the results"
 
-x _ String streamContents: [:str |		"a more compact way"
-	str 
+x _ String streamContents: [:string |		"a more compact way"
+	string 
 		nextPutAll: ''As of '';
 		nextPutAll: Date today asString;
 		nextPut: $,; space;
@@ -1357,7 +1348,7 @@ y.
 y.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/10/2015 12:22'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 21:32:29'!
 layoutMorph
 	"Layout Morph"
 	^
@@ -1397,7 +1388,7 @@ row layoutBounds.		"Return the bounds for laying out children of the receiver"
 row layoutSubmorphs.	"Compute a new layout based on the given layout bounds."
 
 row padding: #right..
-	"This sets how extra space is used when doing layout. For example, a column might have extra , unneded vertical space. #top means widgets are set close to the top, and extra space is at bottom. Conversely, #bottom means widgets are set close to the bottom, and extra space is at top. Valid values include #left and #right (for rows) and #center. Alternatively, any number between 0.0 and 1.0 might be used.
+	"This sets how extra space is used when doing layout. For example, a column might have extra , unneeded vertical space. #top means widgets are set close to the top, and extra space is at bottom. Conversely, #bottom means widgets are set close to the bottom, and extra space is at top. Valid values include #left and #right (for rows) and #center. Alternatively, any number between 0.0 and 1.0 might be used.
 	self new padding: #center
 	self new padding: 0.9
 	"
@@ -1649,7 +1640,7 @@ Smalltalk condenseChanges.					"compress the change file"
 x _ FillInTheBlankMorph request: ''Prompt Me''.		"prompt user for input"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/14/2016 18:22'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 21:21:58'!
 morph
 	"Morphs"
 	^
@@ -1663,24 +1654,24 @@ x name: ''My Name''.			"alternative, allowing imbedded blanks"
 x morphPosition: 100@65.	"set the morph location"
 y _ FillInTheBlankMorph request: ''Please Enter Something''.	"prompt user for input"
 Feature require: #''Morphic-Widgets-Extras''.	"ensure a requirement is available for the following plot"
-x _ FunctionGraphMorph example2.	"plot two functions"
+x _ FunctionGraphMorph initializedInstance openInHand.	"example, plotting two functions"
 x _ SystemWindow new openInWorld.	"open a window"
 x setLabel: ''Label for It''.
 y _ LayoutMorph example10.	"organizing several morphs"
 x addMorph: y.				"place morphs in a SystemWindow"
 
-z _ x submorphs at: 1 :: submorphs at: 1 :: submorphs at: 2 :: submorphs at: 3.	"select a deep submorph"
+z _ x submorphs at: 1 :: submorphs at: 1 :: submorphs at: 2 :: submorphs at: 2.	"select a deep submorph"
 	"The ''::'' syntax avoids nested parentheses"
 z name.						"name of the deep submorph"
 w _ z owningWindow.		"answer the first enclosing morph that is a kind of Window"
 w class.
-v _ x findDeepSubmorphThat: [:m | m name = #F] ifAbsent: [nil].	"find the submorph named #F"
+v _ x findDeepSubmorphThat: [:m | m name = #G] ifAbsent: [nil].	"find the submorph named #F"
 v == z.						"verify that v and z are identical"
 
 LayoutMorph includeInNewMorphMenu.
 	"Return true for all classes that can be instantiated from the menu"
 
-y _ Morph initializedInstance.
+y _ Morph initializedInstance openInHand.
 	"Answer an instance of the receiver which in some sense is initialized.  In the case of Morphs, this will yield an instance that can be attached to the Hand after having received the same kind of basic initialization that would be obtained from an instance chosen from the ''new morph'' menu.
 	Return nil if the receiver is reluctant for some reason to return such a thing"
 
@@ -1788,7 +1779,7 @@ pages
 		add: 'Primitives'; 
 		yourself! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2015 21:07'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 20:21:59'!
 point
 	"Point"
 	^
@@ -1796,7 +1787,8 @@ point
 x _ 200@100.									"obtain a new point"
 y _ x x.											"x coordinate"
 y _ x y.											"y coordinate"
-x _ 200@100 negated.							"negates x and y"
+x _ 200@100 negated.							"negates y"
+x _ (200@100) negated.						"negates x and y"
 x _ (-200@ -100) abs.							"absolute value of x and y"
 x _ (200.5@100.5) rounded.					"round x and y"
 x _ (200.5@100.5) truncated.					"truncate x and y"
@@ -2042,7 +2034,7 @@ y _ x asSet.											"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/31/2016 16:16'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2016 16:37:30'!
 string
 	"Strings"
 	^
@@ -2075,7 +2067,7 @@ x _ String streamContents: [:str |		"using a stream to form a string"
 
 y _ x asSymbol.								"convert string to symbol"
 y _ x asArray.								"convert string to array"
-x _ ''ABCD'' asByteArray.					"convert string to byte array"
+x _ ''KAAPED'' asByteArray.					"convert string to byte array"
 y _ x asOrderedCollection.				"convert string to ordered collection"
 y _ x asSortedCollection.					"convert string to sorted collection"
 y _ x asBag.									"convert string to bag collection"
@@ -2109,7 +2101,7 @@ y _ x asSet.									"convert symbol to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/5/2016 13:42'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2016 14:39:20'!
 syntax
 	"Syntax Notes"
 	^
@@ -2152,7 +2144,7 @@ syntax
 	A message within parentheses is sent before any messages outside the parentheses.
 	Expressions with parentheses can alternatively be written with ''::'' as in the following examples..."
 	
-BrowserWindow fullOnClass: Parser class selector: #chainExamplesDoubleColon.
+BrowserWindow fullOnClass: ZParser class selector: #chainExamplesDoubleColon.
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/17/2016 21:08'!
