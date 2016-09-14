@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2934] on 6 September 2016 at 10:24:14 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2935] on 11 September 2016 at 8:39:43 pm'!
 'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 128!
+!provides: 'TerseGuide' 1 129!
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -2101,7 +2101,7 @@ y _ x asSet.									"convert symbol to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/5/2016 14:39:20'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/10/2016 17:20:30'!
 syntax
 	"Syntax Notes"
 	^
@@ -2144,7 +2144,7 @@ syntax
 	A message within parentheses is sent before any messages outside the parentheses.
 	Expressions with parentheses can alternatively be written with ''::'' as in the following examples..."
 	
-BrowserWindow fullOnClass: ZParser class selector: #chainExamplesDoubleColon.
+BrowserWindow fullOnClass: Parser class selector: #chainExamplesDoubleColon.
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/17/2016 21:08'!
