@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2847] on 19 July 2016 at 12:36:13 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:17:00 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 59!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Taskbar' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 62!
 !requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Taskbar' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -2460,7 +2460,7 @@ testBenchFib
 	self assert: (2 benchFib = 3).
 	! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/19/2011 22:59'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 8/21/2016 20:02:52'!
 testBigReceiverInexactNthRoot
 	"
 	IntegerTest new testBigReceiverInexactNthRoot
@@ -2472,12 +2472,12 @@ testBigReceiverInexactNthRoot
 	bigNum _ (100 factorial raisedTo: 3) + 1.		"Add 1 so it is not a whole cube"
 	self assert: bigNum asFloat isInfinite.			"Otherwise, we chose a bad sample"
 	result _ bigNum nthRoot: 3.
-	self assert: result class == Float.
+	self assert: result isFloat.
 	self deny: result isInfinite.
 	self assert: result = 100 factorial asFloat.		"No other float is closer. See following line"
 	self assert: 100 factorial asFloat = (100 factorial+1) asFloat! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/29/2011 14:15'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 8/21/2016 20:03:04'!
 testBigReceiverInexactSqrt
 	"
 	IntegerTest new testBigReceiverInexactSqrt
@@ -2489,7 +2489,7 @@ testBigReceiverInexactSqrt
 	bigNum _ 100 factorial squared + 1.		"Add 1 so it is not a whole square"
 	self assert: bigNum asFloat isInfinite.			"Otherwise, we chose a bad sample"
 	result _ bigNum sqrt.
-	self assert: result class == Float.
+	self assert: result isFloat.
 	self deny: result isInfinite.
 	self assert: result = 100 factorial asFloat.		"No other float is closer. See following lines"
 	self assert: (result successor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.
@@ -4281,10 +4281,10 @@ testTwoComplementRightShift
      self assert: ((small bitShift: -1) ~= (small + 1 bitShift: -1)
 		== ((large bitShift: -1) ~= (large + 1 bitShift: -1))).! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ar 11/30/2009 22:06'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 8/21/2016 20:04:13'!
 testCompactClassIndex
-	self assert: LargeNegativeInteger indexIfCompact = 4.
-! !
+	Smalltalk isSpur ifFalse: [
+		self assert: LargeNegativeInteger indexIfCompact = 4 ]! !
 
 !LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:46'!
 testDenormalizedPrintString
@@ -4319,9 +4319,10 @@ testBitShift
 	
 	1 to: 257 do: [:i | self should: [((i bitShift: i) bitShift: 0-i) = i]].! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ar 11/30/2009 22:06'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 8/21/2016 20:04:20'!
 testCompactClassIndex
-	self assert: LargePositiveInteger indexIfCompact = 5.! !
+	Smalltalk isSpur ifFalse: [
+		self assert: LargePositiveInteger indexIfCompact = 5 ]! !
 
 !LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:47'!
 testDenormalizedPrintString
@@ -6792,7 +6793,7 @@ test6
 
 	self assert: source equals: prettyPrinted! !
 
-!ScannerTest methodsFor: 'testing' stamp: 'jmv 10/23/2012 23:20'!
+!ScannerTest methodsFor: 'testing' stamp: 'jmv 9/5/2016 20:48:53'!
 testLiteralSymbols
 
 	self assert: ('*+-/\~=<>&@%,|' allSatisfy: [:char | Scanner isLiteralSymbol: (String with: char) asSymbol])
@@ -6801,7 +6802,7 @@ testLiteralSymbols
 	self assert: (#('x' 'x:' 'x:y:' 'from:to:by:' 'yourself') allSatisfy: [:str | Scanner isLiteralSymbol: str asSymbol])
 		description: 'valid ascii selector symbols can be printed without string quotes'.
 		
-	((32 to: 94), (96 to: 126) collect: [:ascii | Character value: ascii]) ,
+	((32 to: 94), (96 to: 126) collect: [:ascii | Character numericValue: ascii]) ,
 	#(':x:yourself' '::' 'x:yourself' '123' 'x0:x1:x2:' 'x.y.z' '1abc' 'a1b0c2' ' x' 'x ' '+x-y' '||' '-' '++' '+' '+/-' '-/+' '<|>' '#x' '()' '[]' '{}' '')
 		do: [:str |
 			self assert: (Compiler evaluate: str asSymbol printString) = str asSymbol
@@ -7208,7 +7209,7 @@ testFromUtf8
 	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'E282AC')) hex = '16r20AC'.
 	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'F0A4ADA2')) hex = '16r24B62'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:07'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/5/2016 20:48:25'!
 testSomeLatinCharsFromUtf8
 	"
 	CharacterTest new testSomeLatinCharsFromUtf8
@@ -7217,10 +7218,10 @@ testSomeLatinCharsFromUtf8
 	bytes _ (ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC') readStream.
 	string _ String streamContents: [ :strm |
 		[bytes atEnd ] whileFalse: [
-			strm nextPut: (Character value: (Character nextUnicodeCodePointFromUtf8: bytes )) ]].
+			strm nextPut: (Character codePoint: (Character nextUnicodeCodePointFromUtf8: bytes )) ]].
 	self assert: string = 'áåæñÆ¥ü'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 3/5/2013 22:07'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
 testSomeLatinCharsToUtf8
 	"
 	CharacterTest new testSomeLatinCharsToUtf8
@@ -7231,7 +7232,7 @@ testSomeLatinCharsToUtf8
 		[ characters atEnd ] whileFalse: [
 			Character
 				evaluate: [ :byte | strm nextPut: byte ]
-				withUtf8BytesOfUnicodeCodePoint: characters next unicodeCodePoint ]].
+				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
 	self assert: bytes hex = 'C3A1C3A5C3A6C3B1C386C2A5C3BC'! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!

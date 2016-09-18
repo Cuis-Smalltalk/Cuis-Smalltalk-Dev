@@ -1,13 +1,23 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:49.52549 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:16:41 am'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 22!
-!requires: 'Network-Kernel' 1 2 nil!
+!provides: 'Protocols-HTTP' 1 24!
 !requires: 'Identities-UUID' 1 1 nil!
+!requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!classDefinition: #HTTPChunkedStream category: #'Protocols-HTTP'!
+ReadStream subclass: #HTTPChunkedStream
+	instanceVariableNames: 'sourceStream chunkSize'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Protocols-HTTP'!
+!classDefinition: 'HTTPChunkedStream class' category: #'Protocols-HTTP'!
+HTTPChunkedStream class
+	instanceVariableNames: ''!
+
 !classDefinition: #HTTPAuthRequired category: #'Protocols-HTTP'!
 Exception subclass: #HTTPAuthRequired
 	instanceVariableNames: 'client request response authParams message'
@@ -16,6 +26,16 @@ Exception subclass: #HTTPAuthRequired
 	category: 'Protocols-HTTP'!
 !classDefinition: 'HTTPAuthRequired class' category: #'Protocols-HTTP'!
 HTTPAuthRequired class
+	instanceVariableNames: ''!
+
+!classDefinition: #HTTPClientServerTest category: #'Protocols-HTTP-Tests'!
+TestCase subclass: #HTTPClientServerTest
+	instanceVariableNames: 'server user password oldAuthHandler oldProxyHandler port'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Protocols-HTTP-Tests'!
+!classDefinition: 'HTTPClientServerTest class' category: #'Protocols-HTTP-Tests'!
+HTTPClientServerTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #HTTPClient category: #'Protocols-HTTP'!
@@ -88,26 +108,6 @@ Object subclass: #HTTPUtils
 HTTPUtils class
 	instanceVariableNames: ''!
 
-!classDefinition: #HTTPChunkedStream category: #'Protocols-HTTP'!
-ReadStream subclass: #HTTPChunkedStream
-	instanceVariableNames: 'sourceStream chunkSize'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Protocols-HTTP'!
-!classDefinition: 'HTTPChunkedStream class' category: #'Protocols-HTTP'!
-HTTPChunkedStream class
-	instanceVariableNames: ''!
-
-!classDefinition: #HTTPClientServerTest category: #'Protocols-HTTP-Tests'!
-TestCase subclass: #HTTPClientServerTest
-	instanceVariableNames: 'server user password oldAuthHandler oldProxyHandler port'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Protocols-HTTP-Tests'!
-!classDefinition: 'HTTPClientServerTest class' category: #'Protocols-HTTP-Tests'!
-HTTPClientServerTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #WebSocket category: #'Protocols-HTTP'!
 Object subclass: #WebSocket
 	instanceVariableNames: 'name process stream handlers'
@@ -138,6 +138,9 @@ WebSocket subclass: #WebSocket07
 WebSocket07 class
 	instanceVariableNames: ''!
 
+
+!HTTPChunkedStream commentStamp: 'ar 1/31/2012 14:00' prior: 0!
+Can process chunked data.!
 
 !HTTPAuthRequired commentStamp: 'ar 2/10/2012 12:39' prior: 0!
 Exception signaled when authentication is required.!
@@ -275,9 +278,6 @@ Example:
 !HTTPUtils commentStamp: 'ar 2/23/2010 10:39' prior: 0!
 HTTPUtils contains a number of utility methods used by HTTPClient/HTTPServer.!
 
-!HTTPChunkedStream commentStamp: 'ar 1/31/2012 14:00' prior: 0!
-Can process chunked data.!
-
 !WebSocket commentStamp: '<historical>' prior: 0!
 A wrapper object for the WebSocket API.!
 
@@ -287,38 +287,32 @@ A wrapper object for the WebSocket API.!
 !WebSocket07 commentStamp: '<historical>' prior: 0!
 A wrapper object for the WebSocket API.!
 
-!Character methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:39'!
-charCode
-
-	^ (value bitAnd: 16r3FFFFF).! !
-
-!Character methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:39'!
+!Character methodsFor: '*Protocols-HTTP' stamp: 'jmv 9/5/2016 21:01:57'!
 isSafeForHTTP
 	"whether a character is 'safe', or needs to be escaped when used, eg, in a URL"
 	"[GG]  See http://www.faqs.org/rfcs/rfc1738.html. ~ is unsafe and has been removed"
-	^ self charCode < 128
+	^ self codePoint < 128
 		and: [self isAlphaNumeric
-				or: ['.-_' includes: (Character value: self charCode)]]! !
+				or: ['.-_' includes: self]]! !
 
-!String methodsFor: '*Protocols-HTTP' stamp: 'DSG 3/29/2015 16:43'!
+!String methodsFor: '*Protocols-HTTP' stamp: 'jmv 9/5/2016 22:10:02'!
 encodeForHTTP
 	"change dangerous characters to their %XX form, for use in HTTP transactions"
 
 	| httpSafeStream |
 	httpSafeStream := WriteStream on: (String new).
-	self do: [:c |
-		( c isSafeForHTTP )
-			ifTrue: [httpSafeStream nextPut: (Character value: c charCode)]
+	self do: [ :c |
+		c isSafeForHTTP
+			ifTrue: [httpSafeStream nextPut: c]
 			ifFalse: [
 					httpSafeStream nextPut: $%.
-					httpSafeStream nextPut: (c asInteger // 16) asHexDigit.
-					httpSafeStream nextPut: (c asInteger \\ 16) asHexDigit.
+					httpSafeStream nextPut: (c numericValue // 16) asHexDigit.
+					httpSafeStream nextPut: (c numericValue \\ 16) asHexDigit.
 			].
 	].
-	^ httpSafeStream contents.
-! !
+	^ httpSafeStream contents! !
 
-!String methodsFor: '*Protocols-HTTP' stamp: 'DSG 4/22/2015 17:04'!
+!String methodsFor: '*Protocols-HTTP' stamp: 'jmv 9/5/2016 20:49:10'!
 unescapePercents
 	"change each %XY substring to the character with ASCII value XY in hex.  This is the opposite of #encodeForHTTP"
 	| ans c asciiVal pos oldPos specialChars |
@@ -336,11 +330,71 @@ unescapePercents
 					(self at: pos+2) asUppercase digitValue.
 				pos _ pos + 2.
 				asciiVal > 255 ifTrue: [^self].	"not really an escaped string"
-				ans nextPut: (Character value: asciiVal)]
+				ans nextPut: (Character numericValue: asciiVal)]
 			ifFalse: [ans nextPut: c]].
 		oldPos _ pos+1].
 	ans nextPutAll: (self copyFrom: oldPos to: self size).
 	^ ans contents! !
+
+!HTTPChunkedStream methodsFor: 'testing' stamp: 'ar 1/31/2012 14:26'!
+atEnd
+	^chunkSize = 0 and:[super atEnd]! !
+
+!HTTPChunkedStream methodsFor: 'accessing' stamp: 'ar 1/31/2012 14:09'!
+next
+	"Answer the next decompressed object in the Stream represented by the
+	receiver."
+
+	<primitive: 65>
+	position >= readLimit
+		ifTrue: [^self pastEndRead]
+		ifFalse: [^collection at: (position := position + 1)]! !
+
+!HTTPChunkedStream methodsFor: 'accessing' stamp: 'ar 1/31/2012 14:25'!
+next: anInteger 
+	"Answer the next anInteger elements of my collection.  overriden for simplicity"
+
+	[(position + anInteger >= readLimit) and:[chunkSize ~= 0]] 
+		whileTrue:[self nextChunk].
+
+	^super next: anInteger
+! !
+
+!HTTPChunkedStream methodsFor: 'accessing' stamp: 'DSG 5/29/2012 13:40'!
+nextChunk
+	"Answer the next chunk from a message using chunked transfer encoding."
+
+	| chunk |
+	chunkSize = 0 ifTrue:[^'']. "read last chunk"
+	chunkSize := Integer readFrom: (sourceStream upToAll: String crlfString) asString base: 16.
+	chunkSize = 0 ifFalse:[chunk := sourceStream next: chunkSize].
+	sourceStream skip: 2. "CrLf"
+	(chunkSize + readLimit - position) <= collection size ifTrue:[
+		collection replaceFrom: 1 to: (readLimit-position) with: collection startingAt: position+1.
+		readLimit := readLimit - position.
+		position := 0.
+		collection replaceFrom: readLimit+1 to: readLimit + chunkSize with: chunk startingAt: 1.
+		readLimit := readLimit + chunkSize.
+	] ifFalse:[
+		collection := collection, chunk.
+		readLimit := readLimit + chunkSize.
+	].
+	^chunk
+! !
+
+!HTTPChunkedStream methodsFor: 'initialize' stamp: 'ar 1/31/2012 14:24'!
+on: aStream
+
+	sourceStream := aStream.
+	collection := (aStream isBinary ifTrue:[ByteArray] ifFalse:[String]) new.
+	position := readLimit := 0.! !
+
+!HTTPChunkedStream methodsFor: 'accessing' stamp: 'ar 1/31/2012 14:11'!
+pastEndRead
+	"Need more data"
+
+	self nextChunk.
+	^self next! !
 
 !HTTPAuthRequired methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:14'!
 client
@@ -428,6 +482,1357 @@ client: aHTTPClient request: aHTTPRequest response: aHTTPResponse
 		client: aHTTPClient 
 		request: aHTTPRequest 
 		response: aHTTPResponse! !
+
+!HTTPClientServerTest methodsFor: 'setup' stamp: 'SvenVanCaekenberghe 6/14/2010 15:49'!
+localHostUrl
+	^'http://localhost:', self port asString! !
+
+!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 21:56'!
+oAuthParams
+	"The base parameter set for oauth related tests.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	^Dictionary newFromPairs: {
+		"Consumer key and secret"
+		'oauth_consumer_key'. 		'abcd'.
+		'oauth_consumer_secret'.	'efgh'.
+
+		"Token key and secret"
+		'oauth_token'.	'ijkl'.
+		'oauth_token_secret'. 'mnop'.
+		
+		'oauth_timestamp'. '1281668113'.
+		'oauth_nonce'.	'FWNkVaRJVzE'.
+		
+		"Twitter uses oauth 1.0 with HMAC-SHA1"
+		'oauth_version'.				'1.0'.
+		'oauth_signature_method'.	'HMAC-SHA1'.
+	}.! !
+
+!HTTPClientServerTest methodsFor: 'setup' stamp: 'dsg 3/12/2015 10:43'!
+port
+
+	"Use a random port to minimise chances of concurrently running test
+	suites clashing."
+	^ port
+		ifNil: [port := (10000 to: 50000) atRandom]! !
+
+!HTTPClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
+setUp
+	server := HTTPServer new listenOn: self port.
+	server passwordAt: 'user' realm: 'test' put: 'pass'.
+! !
+
+!HTTPClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
+tearDown
+	server ifNotNil:[server destroy].
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:26'!
+testAuthException
+	"Test client and server handling of digest auth"
+
+	| resp client |
+	server addService: '/test/auth' action:[:req | 
+		server authenticate: req realm: 'test' methods: #(digest) do:[
+			req send200Response: 'ok'
+		].
+	].
+
+	client := HTTPClient new.
+	self should:[client httpGet: self localHostUrl, '/test/auth'] 
+		raise: HTTPAuthRequired.
+
+	client allowAuth: false.
+	self shouldnt:[resp := client httpGet: self localHostUrl, '/test/auth'] 
+		raise: HTTPAuthRequired.
+	self assert: resp code = 401.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:29'!
+testAuthRedirectSession
+	"Run a test for a full auth-redirect-cookie loop"
+
+	| loginOK finalUrl finalFields firstRedirect client resp |
+	server addService: '/login' action:[:req | 
+		server authenticate: req realm: 'test' methods: #(digest) do:[ | id |
+			loginOK := true.
+			server sessionAt: (id := UUID new hex) put: ''.
+			req send302Response: (req fields at: 'url' ifAbsent:['/']) 
+				do:[:reply| reply setCookie: 'session' value: id path: '/']]].
+	server addService: '/action' action:[:req | 
+		(server sessionAt: (req cookieAt: 'session')) ifNil:[
+			firstRedirect := true.
+			req send302Response: '/login?url=', req rawUrl encodeForHTTP.
+		] ifNotNil:[
+			finalUrl := req url.
+			finalFields := req fields.
+			req send200Response: 'ok'.
+		].
+	].
+	firstRedirect := loginOK := false.
+	server passwordAt: 'squeak' realm: 'test' put: 'foo'.
+	client := HTTPClient new.
+	client username: 'squeak'; password: 'foo'.
+	resp := client httpGet: self localHostUrl, '/action/foo/bar?string=hello&number=42'.
+
+	self assert: resp code = 200.
+	self assert: firstRedirect.
+	self assert: loginOK.
+	self assert: finalUrl = '/action/foo/bar'.
+	self assert: finalFields size = 2.
+	self assert: (finalFields at: 'string') = 'hello'.
+	self assert: (finalFields at: 'number') = '42'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
+testBasicAuth
+	"Test client and server basic auth"
+
+	| resp reqHeader |
+	server addService: '/test/auth' action:[:req | 
+		server authenticate: req realm: 'test' methods: #(basic) do:[
+			reqHeader := req headerAt: 'Authorization'.
+			req send200Response: 'ok'
+		].
+	].
+	resp := HTTPClient new httpGet: self localHostUrl, '/test/auth'.
+	self assert: resp code = 401.
+
+	[resp := HTTPClient httpGet: self localHostUrl, '/test/auth'] 
+		on: HTTPAuthRequired do:[:ex| ex username: 'squeak' password: 'squeak'].
+	self assert: resp code = 401.
+
+	[resp := HTTPClient httpGet: self localHostUrl, '/test/auth']
+		on: HTTPAuthRequired do:[:ex| ex username: 'user' password: 'pass'].
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (reqHeader beginsWith: 'Basic ').
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 23:17'!
+testChunkedLoopback
+	"Test HTTP loopback streaming using chunked transfer-encoding"
+
+	| queue response |
+	queue := SharedQueue new.
+	server addService: '/recv' action:[:req |
+
+		"The /recv service establishes the write-end for the server.
+		In a real environment we would access protect the request
+		and also pass a token to be used to link the incoming /send
+		request from the client."
+
+		req sendResponse: 200 chunked:[:writeEnd|
+			| chunk |
+			"There is no reason to wait for the client to send a request,
+			the protocol is entirely freestyle. Send something just because
+			we can"
+			writeEnd nextChunkPut: 'Initial response'.
+			"And from here on echo any incoming data"
+			[chunk := queue next.
+			chunk == nil] whileFalse:[writeEnd nextChunkPut: chunk].
+			"And some final data"
+			writeEnd nextChunkPut: 'Final response'.
+		].
+	] methods: #('GET'). "only allow GET requests"
+
+	server addService: '/send' action:[:req |
+
+		"The /send service establishes the read-end for the server.
+		Simply read the chunks as they come in and stick them in
+		our loopback queue to send them back to the client."
+
+		| chunk |
+		[chunk := req nextChunk.
+		chunk == nil] whileFalse:[queue nextPut: chunk].
+		queue nextPut: nil. "end conversation"
+		req send200Response: 'ok'.
+	] methods: #('POST'). "only allow POST requests"
+
+	"Establish the server response stream"
+	response := HTTPClient new httpGet: self localHostUrl, '/recv'.
+	self assert: response code = 200.
+	self assert: (response headerAt: 'Transfer-Encoding') = 'chunked'.
+	self assert: response nextChunk equals: 'Initial response'.
+
+	"Establish the client request stream"
+	HTTPClient 
+		httpPostChunked: self localHostUrl, '/send'
+		content:[:request|
+			"We've set up both ends, try our loopback server"
+			request nextChunkPut: 'Hello World'.
+			self assert: response nextChunk equals: 'Hello World'.
+			request nextChunkPut: 'The answer is 42'.
+			self assert: response nextChunk equals: 'The answer is 42'.
+		] type: nil.
+
+	self assert: response nextChunk equals: 'Final response'.
+	self assert: response nextChunk equals: nil.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 22:07'!
+testChunkedRequest
+	"Test HTTP post using chunked transfer-encoding"
+
+	| resp request |
+	server addService: '/test' action:[:req | 
+		request := req.
+		req send200Response: req content].
+
+	resp := HTTPClient 
+				httpPostChunked: self localHostUrl, '/test' 
+				content:[:req|
+					req nextChunkPut: 'Hello'.
+					req nextChunkPut: 'World'.
+					req nextChunkPut: 'Dude'.
+				] type: nil.
+
+	self assert: resp code = 200.
+	self assert: resp content = 'HelloWorldDude'.
+	self assert: (request headerAt: 'Transfer-Encoding') = 'chunked'! !
+
+!HTTPClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 22:17'!
+testChunkedResponse
+	"Test HTTP response using chunked transfer-encoding"
+
+	| resp |
+	server addService: '/test' action:[:req | 
+		req sendResponse: 200 chunked:[:response|
+			response nextChunkPut: 'Hello'.
+			response nextChunkPut: 'World'.
+			response nextChunkPut: 'Dude'.
+		].
+	].
+
+	resp := HTTPClient httpGet: self localHostUrl, '/test'.
+	self assert: resp code = 200.
+	self assert: resp content = 'HelloWorldDude'.
+	self assert: (resp headerAt: 'Transfer-Encoding') = 'chunked'.! !
+
+!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:28'!
+testCookieDomainRules
+	"Test cookie domain rules"
+
+	"Request host matches domain"
+	self assert: (HTTPClient new 
+			acceptCookie: (HTTPCookie new domain: 'www.domain.com') 
+			host: 'www.domain.com' 
+			path: '/').
+
+	"Request host matches subdomain"
+	self assert: (HTTPClient new 
+			acceptCookie: (HTTPCookie new domain: '.domain.com') 
+			host: 'www.domain.com' 
+			path: '/').
+
+	"Request host does not match domain"
+	self deny: (HTTPClient new 
+			acceptCookie: (HTTPCookie new domain: 'www.domain.com') 
+			host: 'ftp.domain.com' 
+			path: '/').
+
+	"Request host does not match subdomain"
+	self deny: (HTTPClient new 
+			acceptCookie: (HTTPCookie new domain: '.domain.com') 
+			host: 'www.someother.org' 
+			path: '/').
+
+	"Request host has an extra subdomain"
+	self deny: (HTTPClient new 
+			acceptCookie: (HTTPCookie new domain: '.domain.com') 
+			host: 'foo.bar.domain.com' 
+			path: '/').
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/21/2011 11:36'!
+testCookieExpiryParsing
+	"Test parsing of cookie expiry dates"
+
+	| exp a b |
+	exp := DateAndTime date: Date today time: Time now.
+	a := HTTPCookie new.
+	a name: 'test'.
+	a expiry: exp.
+	b := HTTPCookie new readFrom: a asString readStream.
+	self assert: b expiry = exp asUTC.
+
+	b := HTTPCookie new readFrom: (a asString copyReplaceAll: '-' with: ' ') readStream.
+	self assert: b expiry = exp asUTC.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'jmv 9/5/2016 22:17:44'!
+testCookieParsing
+	"Test client and server handling of cookies"
+
+	| resp client |
+	"Sends the testcookie back if it's set"
+	server addService: '/' action:[:req |
+		req send200Response:(String streamContents:[:s|
+			req cookiesDo:[:key :val| s nextPutAll: key, '=', val, String crString].
+		]).
+	].
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl,'/cookieA' do:[:req|
+		req headerAt: 'Cookie' put: 'foo=bar; key=value, x=32, y=55'.
+	].
+	resp content; close.
+	self assert: resp code = 200.
+	self assert: resp content 
+		equals: 	'foo=bar', String crString,
+				'key=value', String crString,
+				'x=32', String crString,
+				'y=55', String crString.
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl,'/cookieA' do:[:req|
+		req addHeader: 'Cookie' value: 'foo=bar'.
+		req addHeader: 'Cookie' value: 'key=value'.
+		req addHeader: 'Cookie' value: 'x=32'.
+		req addHeader: 'Cookie' value: 'y=55'.
+	].
+	resp content; close.
+	self assert: resp code = 200.
+	self assert: resp content 
+		equals: 	'foo=bar', String crString,
+				'key=value', String crString,
+				'x=32', String crString,
+				'y=55', String crString.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:36'!
+testCookies
+	"Test client and server handling of cookies"
+
+	| resp client |
+	"Sends the testcookie back if it's set"
+	server addService: '/' action:[:req | 
+		req send200Response: (req cookieAt: 'testcookie').
+	].
+
+	"Sets the cookie"
+	server addService: '/cookie/set' action:[:req | 
+		req send200Response: 'ok' contentType: 'text/plain' 
+			do:[:reply| reply setCookie: 'testcookie' value: '123' path: '/cookie']].
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/cookie/set'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (resp setCookieAt: 'testcookie') value = '123'.
+
+	resp := client httpGet: self localHostUrl, '/cookie/test'.
+	self assert: resp code = 200.
+	self assert: resp content = '123'.
+
+	resp := client httpGet: self localHostUrl, '/nocookie/test'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 7/20/2010 20:38'!
+testDecodeWebSocketKey
+	"Ensure that decoding the Sec-WebSocket-Key fields works properly."
+
+	| key1 key2 data |
+	key1 := 155712099.
+	key2 := 173347027.
+	data := 'Tm[K T2u'.
+
+	self assert: (HTTPUtils extractWebSocketKey: '18x 6]8vM;54 *(5:  {   U1]8  z [  8') = key1.
+	self assert: (HTTPUtils extractWebSocketKey: '1_ tx7X d  <  nw  334J702) 7]o}` 0') = key2.
+
+	self assert: (HTTPUtils webSocketHandshake: key1 with: key2 with: data) asString = 'fQJ,fN/4F4!!~K~MH'.! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:30'!
+testDefault404
+	"Test that a new server responds with 404 to anything"
+
+	| resp |
+	resp := HTTPClient httpGet: self localHostUrl.
+	self assert: resp code = 404.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
+testDigestAuth
+	"Test client and server handling of digest auth"
+
+	| resp reqHeader |
+	server addService: '/test/auth' action:[:req | 
+		server authenticate: req realm: 'test' methods: #(digest) do:[
+			reqHeader := req headerAt: 'Authorization'.
+			req send200Response: 'ok'
+		].
+	].
+
+	resp := HTTPClient new httpGet: self localHostUrl, '/test/auth'.
+	self assert: resp code = 401.
+
+	[resp := HTTPClient httpGet: self localHostUrl, '/test/auth']
+		on: HTTPAuthRequired do:[:ex| ex username: 'squeak' password: 'squeak'].
+	self assert: resp code = 401.
+
+	[resp := HTTPClient httpGet: self localHostUrl, '/test/auth']
+		on: HTTPAuthRequired do:[:ex| ex username: 'user' password: 'pass'].
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (reqHeader beginsWith: 'Digest ').
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:36'!
+testDuplicateCookies
+	"Tests deleting cookies in HTTPClient"
+
+	| resp client |
+	"Sends the testcookie back if it's set"
+	server addService: '/' action:[:req | 
+		req send200Response: (req headersAt: 'cookie') size asString.
+	].
+
+	"Sets the cookie"
+	server addService: '/cookie/set' action:[:req | 
+		req send200Response: 'ok' contentType: 'text/plain' 
+			do:[:reply| reply setCookie: 'testcookie' value: '123' path: '/cookie']].
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/cookie/set'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (resp setCookieAt: 'testcookie') value = '123'.
+
+	resp := client httpGet: self localHostUrl, '/cookie/set'.
+	resp := client httpGet: self localHostUrl, '/cookie/set'.
+
+	resp := client httpGet: self localHostUrl, '/cookie/test'.
+	self assert: resp code = 200.
+	self assert: resp content = '1'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 9/5/2016 22:34:15'!
+testGetFields
+	"Test client and server handling simple fields"
+
+	| resp |
+	server addService: '/fields' action:[:req | 
+		req send200Response: (String streamContents:[:s|
+			req fields keys asArray sort do:[:key | s nextPutAll: String crlfString; nextPutAll: key,'=', (req fields at: key)].
+		]).
+	].
+
+	resp := HTTPClient httpGet: self localHostUrl, '/fields?foo=123&bar=yoho'.
+	self assert: resp code = 200.
+	self assert: resp content = (String streamContents: [ :s | s nextPutAll: String crlfString; nextPutAll: 'bar=yoho'; nextPutAll: String crlfString; nextPutAll: 'foo=123'])
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/11/2010 21:20'!
+testHmacSha1
+	"Test the SHA1 HMAC algorithm"
+
+	| key message |
+	key := 'MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&'.
+	message := 'POST&https%3A%2F%2Fapi.twitter.com%2Foauth%2Frequest_token&oauth_callback%3Dhttp%253A%252F%252Flocalhost%253A3005%252Fthe_dance%252Fprocess_callback%253Fservice_provider_id%253D11%26oauth_consumer_key%3DGDdmIQH6jhtmLUypg82g%26oauth_nonce%3DQP70eNmVz8jvdPevU3oJD2AfF7R7odC2XJcn4XlZJqk%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1272323042%26oauth_version%3D1.0'.
+
+	self assert: (HTTPUtils hmacSha1: message key: key) base64Encoded = '8wUi7m5HFQy76nowoCThusfgB+Q='! !
+
+!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
+testHttpDelete
+	"Test for handling a DELETE request"
+
+	| resp |
+	server addService: '/nodelete' action:[:req | 
+		req send200Response: 'ok'.
+	].
+	server addService: '/delete' action:[:req | 
+		req send200Response: req method.
+	] methods: {'GET'. 'PUT'. 'DELETE'}.
+
+	resp := HTTPClient httpGet: self localHostUrl, '/nodelete'.
+	self assert: resp code = 200.
+	resp := HTTPClient httpDelete: self localHostUrl, '/nodelete'.
+	self assert: resp code = 405.
+
+	resp := HTTPClient httpGet: self localHostUrl, '/delete'.
+	self assert: resp code = 200.
+	resp := HTTPClient httpDelete: self localHostUrl, '/delete'.
+	self assert: resp code = 200.
+
+	resp := HTTPClient httpPost: self localHostUrl, '/delete' content:'' type: nil.
+	self assert: resp code = 405.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'ar 8/5/2010 22:32'!
+testHttpHead
+	"Test for handling a HEAD request"
+
+	| resp |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/bar'
+	].
+	server addService: '/bar' action:[:req | 
+		req send200Response: 'ok'
+	].
+
+	resp := HTTPClient httpHead: self localHostUrl, '/bar'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+	self deny: resp contentStream isDataAvailable..
+
+	resp := HTTPClient httpHead: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
+testHttpOptions
+	"Test for handling the OPTIONS request"
+
+	| resp |
+	server addService: '/delete' action:[:req | 
+		req send200Response: req method.
+	] methods: {'GET'. 'PUT'. 'DELETE'}.
+
+	resp := HTTPClient httpOptions: self localHostUrl, '/*'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,POST'.
+
+	resp := HTTPClient httpOptions: self localHostUrl, '/delete'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,PUT,DELETE'.! !
+
+!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'jmv 5/19/2015 22:36'!
+testHttpTrace
+	"Test for handling the TRACE request"
+
+	| resp |
+	resp := HTTPClient httpTrace: self localHostUrl, '/bar'.
+	self assert: resp code = 200.
+	self assert: resp contentType = 'message/http'.
+	self assert: resp content = ('TRACE /bar HTTP/1.1' , String crlfString , 'user-agent: ' , HTTPClient new userAgent , String crlfString , 'host: localhost:' , self port printString , String crlfString , String crlfString)
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 5/11/2010 20:42'!
+testInvalidCookies
+	"Test client and server handling of cookies"
+
+	| resp client |
+	"Sends the testcookie back if it's set"
+	server addService: '/' action:[:req | 
+		req send200Response: (req cookieAt: 'testcookie').
+	].
+
+	"Sets the cookie"
+	server addService: '/setcookie' action:[:req | | domain path expires secure |
+		domain := req fields at: 'domain' ifAbsent:[nil].
+		path := req fields at: 'path' ifAbsent:[nil].
+		expires := req fields at: 'expires' ifAbsent:[nil].
+		secure := req fields at: 'secure' ifAbsent:['false'].
+		req send200Response: 'ok' contentType: 'text/plain'  do:[:reply| 
+			reply setCookie: 'testcookie' value: '123' path: path 
+				expires: expires domain: domain secure: secure = 'true'.
+		]
+	].
+
+	server addService: '/clearcookie' action:[:req |
+		req send200Response: 'ok' contentType: 'text/plain'  do:[:reply| 
+			reply setCookie: 'testcookie' value: '123' path: '/' 
+				expires: DateAndTime new domain: nil secure: false.
+		]
+	].
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/setcookie?path=/'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (resp setCookieAt: 'testcookie') value = '123'.
+	resp := client httpGet: self localHostUrl, '/'.
+	self assert: resp code = 200.
+	self assert: resp content = '123'.
+
+	resp := client httpGet: self localHostUrl, '/clearcookie'.
+	self assert: resp code = 200.
+	resp := client httpGet: self localHostUrl, '/'.
+	self assert: resp code = 200.
+	self deny: resp content = '123'.
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/setcookie?domain=.foo.com'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (resp setCookieAt: 'testcookie') value = '123'.
+
+	resp := client httpGet: self localHostUrl, '/'.
+	self assert: resp code = 200.
+	self deny: resp content = '123'.
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/setcookie?domain=.com'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (resp setCookieAt: 'testcookie') value = '123'.
+	resp := client httpGet: self localHostUrl, '/'.
+	self assert: resp code = 200.
+	self deny: resp content = '123'.
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/setcookie?secure=true'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (resp setCookieAt: 'testcookie') value = '123'.
+	resp := client httpGet: self localHostUrl, '/'.
+	self assert: resp code = 200.
+	self deny: resp content = '123'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'SvenVanCaekenberghe 6/14/2010 15:55'!
+testListenOnInterface
+	"Test that listening on a particular interface listens only on that interface"
+
+	| localHostAddr resp localHostName client |
+	server destroy.		"kill old server"
+
+	localHostAddr := NetNameResolver localHostAddress.
+	localHostAddr = #(127 0 0 1) asByteArray ifTrue:[^self]. "skip test"
+
+	localHostName := String streamContents:[:s|
+		localHostAddr do:[:b| s print: b] separatedBy:[s nextPut: $.].
+	].
+
+	server := HTTPServer new listenOn: self port interface: localHostAddr.
+	server addService: '/' action:[:req| req send200Response: 'ok'].
+
+	client := HTTPClient new.
+	client timeout: 1.
+	self should:[resp := client httpGet: self localHostUrl, '/test'] raise: Error.
+
+	resp := client httpGet: 'http://', localHostName, ':', self port asString, '/test'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 5/19/2015 22:38'!
+testLogging200
+	"Test logging a regular 200 a-ok response"
+
+	| resp client log |
+	server addService: '/test' action:[:req | req send200Response: 'ok'].
+	server accessLog: String new writeStream.
+
+	client := HTTPClient new.
+	client accessLog: String new writeStream.
+	[resp := client httpGet: self localHostUrl, '/test'] ensure:[client close].
+
+	self assert: resp code = 200.
+
+	log := server accessLog contents.
+	self assert: ('127.0.0.1 - - [*] "GET /test HTTP/1.1" 200 2', String lfString match: log).
+
+	log := client accessLog contents.
+	self assert: ('localhost - - [*] "GET /test HTTP/1.1" 200 2', String lfString match: log).
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 5/19/2015 22:39'!
+testLogging404
+	"Test logging a 404 response"
+
+	| resp client log |
+	server accessLog: String new writeStream.
+	client := HTTPClient new.
+	client accessLog: String new writeStream.
+	[resp := client httpGet: self localHostUrl] ensure:[client close].
+
+	self assert: resp code = 404.
+
+	log := server accessLog contents.
+	self assert: ('127.0.0.1 - - [*] "GET / HTTP/1.1" 404 145', String lfString match: log).
+
+	log := client accessLog contents.
+	self assert: ('localhost - - [*] "GET / HTTP/1.1" 404 145', String lfString match: log).
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:32'!
+testNestedAction
+	"Test handling of nested actions"
+
+	| resp |
+	server addService: '/test' action:[:req | req send200Response: 'ok'].
+	server addService: '/test/42' action:[:req | req send200Response: '42'].
+
+	resp := HTTPClient httpGet: self localHostUrl, '/test'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+
+	resp := HTTPClient httpGet: self localHostUrl, '/test/42'.
+	self assert: resp code = 200.
+	self assert: resp content = '42'.
+
+	resp := HTTPClient httpGet: self localHostUrl, '/test/43'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 8/10/2010 09:23'!
+testNo302Redirect
+	"Ensure compliance with RFC 2616 rules prohibiting auto redirect 
+	for 302/307 responses."
+
+	| resp |
+	server addService: '/302' action:[:req | 
+		req send3xxResponse: '/bar' code: 302
+	] methods: #('GET' 'PUT' 'POST' 'DELETE').
+	server addService: '/307' action:[:req | 
+		req send3xxResponse: '/bar' code: 307
+	] methods: #('GET' 'PUT' 'POST' 'DELETE').
+	server addService: '/bar' action:[:req | 
+		req send200Response: 'redirect ok'
+	] methods: #('GET' 'PUT' 'POST' 'DELETE').
+
+	resp := HTTPClient httpGet: self localHostUrl, '/302'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+
+	resp := HTTPClient httpGet: self localHostUrl, '/307'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+
+	resp := HTTPClient httpPost: self localHostUrl, '/302' content: '' type: 'text/plain'.
+	self assert: resp code = 302.
+	resp := HTTPClient httpPost: self localHostUrl, '/307' content: '' type: 'text/plain'.
+	self assert: resp code = 307.
+
+	resp := HTTPClient httpPost: self localHostUrl, '/302' content: '' type: 'text/plain'.
+	self assert: resp code = 302.
+	resp := HTTPClient httpPost: self localHostUrl, '/307' content: '' type: 'text/plain'.
+	self assert: resp code = 307.
+
+	resp := HTTPClient httpPut: self localHostUrl, '/302' content: '' type: 'text/plain'.
+	self assert: resp code = 302.
+	resp := HTTPClient httpPut: self localHostUrl, '/307' content: '' type: 'text/plain'.
+	self assert: resp code = 307.
+
+	resp := HTTPClient httpDelete: self localHostUrl, '/302'.
+	self assert: resp code = 302.
+	resp := HTTPClient httpDelete: self localHostUrl, '/307'.
+	self assert: resp code = 307.
+
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 2/10/2012 13:21'!
+testPersistentAuthRedirectSession
+	"Run a test for a full auth-redirect-cookie loop.
+	Ensure that the connection is persistent for the entire loop."
+
+	| loginOK finalUrl finalFields firstRedirect client resp url |
+	server addService: '/login' action:[:req | 
+		server authenticate: req realm: 'test' methods: #(digest) do:[ | id |
+			loginOK := true.
+			server sessionAt: (id := UUID new hex) put: ''.
+			req send302Response: (req fields at: 'url' ifAbsent:['/']) unescapePercents
+				do:[:reply| reply setCookie: 'session' value: id path: '/']]].
+	server addService: '/action' action:[:req | 
+		(server sessionAt: (req cookieAt: 'session')) ifNil:[
+			firstRedirect := true.
+			req send302Response: '/login?url=', req rawUrl encodeForHTTP.
+		] ifNotNil:[
+			finalUrl := req url.
+			finalFields := req fields.
+			req send200Response: 'ok'.
+		].
+	].
+	firstRedirect := loginOK := false.
+	server passwordAt: 'squeak' realm: 'test' put: 'foo'.
+
+	client := HTTPClient new.
+	client allowRedirect: false.
+	url :=  self localHostUrl, '/action/foo/bar?string=hello&number=42'.
+	[[resp := client httpGet: url] on: HTTPAuthRequired 
+		do:[:ex| 	self assert: client == ex client.
+				self assert: client isConnected.
+				ex username: 'squeak' password: 'foo'.].
+	resp code = 302] whileTrue:[
+		self assert: client isConnected.
+		url := resp headerAt: 'Location'.
+	].
+	self assert: client isConnected.
+	self assert: resp code = 200.
+	self assert: firstRedirect.
+	self assert: loginOK.
+	self assert: finalUrl = '/action/foo/bar'.
+	self assert: finalFields size = 2.
+	self assert: (finalFields at: 'string') = 'hello'.
+	self assert: (finalFields at: 'number') = '42'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - fields' stamp: 'jmv 9/5/2016 22:34:19'!
+testPostFields
+	"Test client and server handling fields in url-encoded encoded post requests"
+
+	| resp |
+	server addService: '/fields' action:[:req | 
+		req send200Response: (String streamContents:[:s|
+			req fields keys asArray sort do:[:key | s nextPutAll: String crlfString; nextPutAll: key,'=', (req fields at: key)].
+		]).
+	].
+
+	resp := HTTPClient httpPost: self localHostUrl, '/fields' 
+				content: 'foo=123&bar=yoho'
+				type: 'application/x-www-form-urlencoded'.
+	self assert: resp code = 200.
+	self assert: resp content = (String streamContents: [ :s | s nextPutAll: String crlfString; nextPutAll: 'bar=yoho'; nextPutAll: String crlfString; nextPutAll: 'foo=123'])
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
+testRedirect
+	"Test client and server handling of redirects"
+
+	| resp client |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/bar'
+	].
+	server addService: '/bar' action:[:req | 
+		req send200Response: 'redirect ok'
+	].
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+
+	client allowRedirect: false.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 302.
+
+	client allowRedirect: true.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
+testRedirectLoop
+	"Test client handling of redirect loops"
+
+	| resp |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/bar'
+	].
+	server addService: '/bar' action:[:req | 
+		req send302Response: '/foo'
+	].
+
+	resp := HTTPClient httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 302.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:33'!
+testRedirectTrailingSlash
+	"Special test to ensure that a redirect from /foo to /foo/ works"
+
+	| resp client |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/foo/'
+	].
+	server addService: '/foo/' action:[:req | 
+		req send200Response: 'redirect ok'
+	].
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 8/24/2010 21:42'!
+testResponseUrl
+	"Tests that the response url is pointing to the final location"
+
+	| resp client |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/bar'
+	].
+	server addService: '/bar' action:[:req | 
+		req send200Response: 'redirect ok'
+	].
+
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp url = (self localHostUrl, '/bar').
+
+	client := HTTPClient new.
+	client allowRedirect: false.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 302.
+	self assert: resp url = (self localHostUrl, '/foo').
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - https' stamp: 'ar 7/21/2010 20:59'!
+testSchemeHandling
+	"Ensure that we handle only http and https schemes"
+
+	self shouldnt:[HTTPClient httpGet: 'http://localhost:', self port asString] raise: Error.
+	self should:[HTTPClient httpGet: 'ftp://localhost:', self port asString] raise: Error.
+
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/19/2011 18:20'!
+testServerDestroy
+	"Tests that connections get nuked when server gets killed"
+	
+	| client resp |
+	server addService: '/test' action:[:req | req send200Response: 'ok'].
+	client := HTTPClient new.
+	resp := client httpGet: self localHostUrl, '/test'.
+
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: client isConnected.
+	self assert: server connections size = 1.
+
+	server destroy.
+
+	"Depending on OS the signal may not be delivered synchronously
+	and raise ConnectionClosed in the (signaling) peek. Give it a bit of 
+	time to deal with the close."
+	(Delay forMilliseconds: 100) wait.
+
+	"Make stream non-blocking otherwise peek can blow up in our face"
+	resp contentStream shouldSignal: false.
+	self assert: resp contentStream peek == nil.
+	self deny: client isConnected
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
+testServerError
+	"Test server handling of errors"
+
+	| resp |
+	server addService: '/test' action:[:req | self error: 'boom'].
+
+	resp := HTTPClient httpGet: self localHostUrl, '/test'.
+	self assert: resp code = 500.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/1/2010 21:09'!
+testServerRegistry
+	"Ensure that the HTTPServer registry functions as intended"
+
+	| serverA serverB |
+	["Create a new server"
+	serverA := HTTPServer forUrl: 'http://foo.bar.com'.
+	serverA listenOn: self port+1.
+	self assert: serverA notNil.
+	self assert: serverA isRunning.
+
+	"Look it up again"
+	serverB := HTTPServer forUrl: 'http://foo.bar.com'.
+	self assert: serverA == serverB.
+
+	"Override with a new one (should shutdown serverA)"
+	serverB := HTTPServer newForUrl: 'http://foo.bar.com'.
+	self deny: serverA == serverB.
+	self deny: serverA isRunning.
+
+	"Destroy (should de-register serverB)"
+	serverB destroy.
+	self assert: (HTTPServer forUrl: 'http://foo.bar.com' ifAbsent:[nil]) == nil
+	] ensure:[
+		serverA ifNotNil:[serverA destroy].
+		serverB ifNotNil:[serverB destroy].
+	].! !
+
+!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:03'!
+testSignOAuthGet
+	"Ensure that we can sign a request correctly using OAuth.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| request |
+	request := HTTPRequest new.
+	request method: 'GET'.
+	HTTPUtils oAuthSign: request 
+				url: 'http://host.net/resource'
+				using: self oAuthParams.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="dSI3zjYnriSnaB787UH2NDcS8Ss%3D"'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+testSignOAuthGetDupFields
+	"Ensure that we can sign a request with duplicate fields correctly using OAuth.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| request |
+	request := HTTPRequest new.
+	request method: 'GET'.
+	HTTPUtils oAuthSign: request 
+				url: 'http://host.net/resource?name=value&name=value'
+				using: self oAuthParams.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="30p67coAX8YbxCKAGfaimydYK6g%3D"'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:07'!
+testSignOAuthGetFields
+	"Ensure that we can sign a GET request with fields correctly using OAuth.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| request |
+	request := HTTPRequest new.
+	request method: 'GET'.
+	HTTPUtils oAuthSign: request 
+				url: 'http://host.net/resource?name=value'
+				using: self oAuthParams.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="N6TOtNK6h3u9zqjqaF2kgpIVb%2F8%3D"'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+testSignOAuthPostFields
+	"Ensure that we can sign a POST request with fields correctly using OAuth.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| request |
+	request := HTTPRequest new.
+	request method: 'POST'.
+	HTTPUtils oAuthSign: request 
+				url: 'http://host.net/resource'
+				extra:{'name' -> 'value'}
+				using: self oAuthParams.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="E7yVjmf%2F8UTF9ij15CtbBBhulMw%3D"'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+testSignOAuthUrlEncoding
+	"Ensure that we can sign a request requiring url-encoded oauth params.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| params request |
+	"Consumer Key with url-encoded characters"
+	params := self oAuthParams.
+	params at: 'oauth_consumer_key' put: 'key with spaces'.
+
+	request := HTTPRequest new.
+	request method: 'GET'.
+	HTTPUtils oAuthSign: request 
+				url: 'http://host.net/resource'
+				using: params.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="key%20with%20spaces",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="%2FxrAsx0Utt3V6ZbX00jWWpkqrvg%3D"'.! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/14/2010 21:06'!
+testSimpleServerAction
+	"Test client and server handling simple defaults"
+
+	| resp srvr |
+	server addService: '/test' action:[:req |
+		srvr := req server.
+		req send200Response: 'ok'].
+
+	resp := HTTPClient httpGet: self localHostUrl, '/test'.
+	self assert: srvr notNil.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
+testStreaming
+	"Run a test for a full auth-redirect-cookie loop"
+
+	| resp amount stream |
+	amount := 128*1024.
+	server addService: '/streaming' action:[:req|
+		req stream200Response: (String new: amount) readStream size: amount.
+	].
+	resp := HTTPClient httpGet: self localHostUrl, '/streaming'.
+	self assert: resp isSuccess.
+	stream := WriteStream on: String new.
+	resp streamTo: stream size: resp contentLength progress: nil.
+	self assert: stream position = amount.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/19/2010 00:05'!
+testTransientPostContent
+	"Ensure that HTTPRequest>>content doesn't close the socket 
+	when used in a transient post request"
+
+	| resp client |
+	server addService: '/test' action:[:req |
+		req send200Response: req content].
+
+	client := HTTPClient new.
+	resp := client httpPost: self localHostUrl, '/test' content:'hello' type: nil do:[:req|
+		req protocol: 'HTTP/1.0'
+	].
+	self assert: resp code = 200.
+	self assert: resp content = 'hello'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 9/4/2010 11:35'!
+testUrlEncoding
+	"Test the default URL encoding behavior"
+	| resp |
+	server addService: '/hello world' action:[:req|
+		req send200Response: 'ok'.
+	].
+	resp := HTTPClient httpGet: self localHostUrl, '/hello%20world'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+
+	resp := HTTPClient httpGet: (HTTPUtils urlEncode: self localHostUrl, '/hello world').
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 10:29'!
+testWebSocketHash07
+	"self run: #testWebSocketHash07"
+	"From http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-07"
+
+	| hash key |
+	key := 'dGhlIHNhbXBsZSBub25jZQ=='.
+	hash := HTTPUtils webSocketHash07: key.
+	self assert: hash = 's3pPLMBiTxaQ9kYGzzhZRbK+xOo='.! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
+testWebSockets
+	"Test the WebSocket interface"
+
+	self testWebSockets:[
+		HTTPClient webSocketTo: self localHostUrl,'/websockets'.
+	].
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
+testWebSockets00
+	"Test the WebSocket interface"
+
+	self testWebSockets:[
+		HTTPClient webSocket00: self localHostUrl,'/websockets' protocol: 'sample'
+	].
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
+testWebSockets07
+	"Test the WebSocket interface"
+
+	self testWebSockets:[
+		HTTPClient webSocket07: self localHostUrl,'/websockets' protocol: 'sample'
+	].
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 11/17/2011 17:28'!
+testWebSockets07ControlDecode
+	"Tests from section 4.7 of the WebSockets spec"
+
+	| ws ping pong |
+	ws := WebSocket07 new.
+	ws onPing:[:msg| ping := msg asString].
+	ws onPong:[:msg| pong := msg asString].
+
+	ping := pong := nil.
+	ws readFrameFrom:
+		#[16r89 16r05 16r48 16r65 16r6C 16r6C 16r6F] readStream.
+		"contains a body of 'Hello', but the contents of the body are arbitrary)"
+	self assert: ping = 'Hello'.
+	self assert: pong = nil.
+
+	ping := pong := nil.
+	ws readFrameFrom:
+		#[16r8A 16r05 16r48 16r65 16r6C 16r6C 16r6F] readStream.
+		"contains a body of 'Hello', matching the body of the ping)"
+	self assert: ping = nil.
+	self assert: pong = 'Hello'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'DSG 3/28/2015 21:45'!
+testWebSockets07ControlInterleave
+	"Test the WebSocket 07 control interleave"
+
+	| sema cws resp ping pong |
+	ping := 'Hello Ping'.
+	server addService: '/websockets' action:[:req | | sws |
+		sws := req asWebSocket.
+		sws onMessage:[:sdata| sws send: sdata].
+		sws onPing:[:sdata| sws pong: sdata].
+		sws onError:[:ex| 
+			Transcript log: ex description.
+			Transcript log: ex signalerContext longStack.
+		].
+		sws run.
+	].
+
+	sema := Semaphore new.
+	cws := HTTPClient webSocket07: self localHostUrl,'/websockets' protocol: nil.
+	cws onMessage:[:cdata| resp := cdata. sema signal].
+	cws onPong:[:cdata| pong := cdata asString. sema signal.].
+	cws fork.
+
+	cws send: 'Ãœber-cool'.
+	sema wait.
+	self assert: (resp = 'Ãœber-cool').
+
+	cws firstFragment: 'First,'.
+	cws nextFragment: 'Next,'.
+	cws lastFragment: 'Last.'.
+	sema wait.
+	self assert: (resp = 'First,Next,Last.').
+	self deny: sema isSignaled.
+
+	resp := nil.
+	cws firstFragment: 'First,'.
+	cws ping: ping.
+	sema wait.
+
+	self assert: ping = pong. "i.e., roundtrip finished"
+	self assert: resp == nil. "i.e., fragment not delivered yet"
+	self deny: sema isSignaled.
+
+	cws nextFragment: 'Next,'.
+	cws lastFragment: 'Last.'.
+	sema wait.
+	self assert: (resp = 'First,Next,Last.').
+
+
+	cws close.! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 11/17/2011 17:23'!
+testWebSockets07DataDecode
+	"Tests from section 4.7 of the WebSockets spec"
+
+	| data ws |
+	ws := WebSocket07 new.
+	ws onMessage:[:msg| data := msg].
+	"A single-frame unmasked text message"
+	data := nil.
+	ws readFrameFrom: 
+		#[16r81 16r05 16r48 16r65 16r6C 16r6C 16r6F] readStream.
+	self assert: data = 'Hello'.
+
+	"A single-frame masked text message"
+	data := nil.
+	ws readFrameFrom:
+		#[16r81 16r85 16r37 16rFA 16r21 16r3D 16r7F 16r9F 16r4D 16r51 16r58] readStream.
+	self assert: data = 'Hello'.
+
+	"A fragmented unmasked text message"
+	data := nil.	
+	ws readFrameFrom: 
+		#[16r01 16r03 16r48 16r65 16r6C] readStream. "contains 'Hel'"
+	self assert: data = nil.
+	ws readFrameFrom:
+		#[16r80 16r02 16r6C 16r6F] readStream. "contains 'lo'"
+	self assert: data = 'Hello'.
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/27/2011 13:48'!
+testWebSockets07NoMask
+	"Test the WebSocket interface"
+
+	self testWebSockets:[
+		(HTTPClient webSocket07: self localHostUrl,'/websockets' protocol: 'sample')
+			masking: false;
+			yourself].
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
+testWebSockets68
+	"Test the WebSocket interface"
+
+	self testWebSockets:[
+		HTTPClient webSocket68: self localHostUrl,'/websockets' protocol: 'sample'.
+	].
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'DSG 3/28/2015 21:36'!
+testWebSockets: aBlock
+	"Test the WebSocket interface"
+
+	| sema cws resp sws |
+	server addService: '/websockets' action:[:req |
+		sws := req asWebSocket.
+		sws onError:[:ex| 
+			Transcript log: ex description.
+			Transcript log: ex signalerContext longStack.
+		].
+		sws onMessage:[:sdata| sws send: 'Response: ', sdata].
+		sws run.
+	].
+
+	sema := Semaphore new.
+	cws := aBlock value.
+	cws onMessage:[:cdata| resp := cdata. sema signal].
+	cws onClose:[resp := nil. sema signal].
+	cws fork.
+
+	cws send: 'Testing, one, two'.
+	sema wait.
+	self assert: (resp = 'Response: Testing, one, two').
+
+	cws close.
+	sema wait.
+	self assert: (resp = nil).
+! !
+
+!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'jmv 5/19/2015 22:31'!
+testWebSocketsFraming
+	"Test the WebSocket 00 framing"
+
+	| sema cws resp frameType |
+	server addService: '/websockets' action:[:req | | sws |
+		sws := req asWebSocket.
+		sws onMessage:[:sdata :type| sws send: sdata type: type].
+		sws onError:[:ex| 
+			Transcript log: ex description.
+			Transcript log: ex signalerContext longStack.
+		].
+		sws run.
+	].
+
+	sema := Semaphore new.
+	cws := HTTPClient webSocket00: self localHostUrl,'/websockets' protocol: nil.
+	cws onMessage:[:cdata :type| resp := cdata. frameType := type. sema signal].
+	cws onClose:[resp := nil. frameType := 255. sema signal].
+	cws fork.
+
+	cws send: 'Über-cool'.
+	sema wait.
+	self assert: (resp = 'Über-cool').
+	self assert: (frameType = 0).
+
+	cws send: 'Über-funny' type: 15.
+	sema wait.
+	self assert: (resp = 'Über-funny').
+	self assert: (frameType = 15).
+
+	cws send: (String new: 100) type: 0.
+	sema wait.
+	self assert: (resp = (String new: 100)).
+	self assert: (frameType = 0).
+
+	cws send: (ByteArray new: 100) type: 130.
+	sema wait.
+	self assert: (resp = (ByteArray new: 100)).
+	self assert: (frameType = 130).
+
+	cws close.
+	sema wait.
+	self assert: (resp = nil).
+	self assert: (frameType = 255).! !
 
 !HTTPClient methodsFor: 'cookies' stamp: 'ar 8/12/2010 21:40'!
 acceptCookie: aCookie host: reqHost path: path
@@ -4938,1417 +6343,6 @@ webSocketHash07: key
 	uid := '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'.
 	^(ByteArray newFrom: (SecureHashAlgorithm new hashMessage: key, uid)) reversed base64Encoded! !
 
-!HTTPChunkedStream methodsFor: 'testing' stamp: 'ar 1/31/2012 14:26'!
-atEnd
-	^chunkSize = 0 and:[super atEnd]! !
-
-!HTTPChunkedStream methodsFor: 'accessing' stamp: 'ar 1/31/2012 14:09'!
-next
-	"Answer the next decompressed object in the Stream represented by the
-	receiver."
-
-	<primitive: 65>
-	position >= readLimit
-		ifTrue: [^self pastEndRead]
-		ifFalse: [^collection at: (position := position + 1)]! !
-
-!HTTPChunkedStream methodsFor: 'accessing' stamp: 'ar 1/31/2012 14:25'!
-next: anInteger 
-	"Answer the next anInteger elements of my collection.  overriden for simplicity"
-
-	[(position + anInteger >= readLimit) and:[chunkSize ~= 0]] 
-		whileTrue:[self nextChunk].
-
-	^super next: anInteger
-! !
-
-!HTTPChunkedStream methodsFor: 'accessing' stamp: 'DSG 5/29/2012 13:40'!
-nextChunk
-	"Answer the next chunk from a message using chunked transfer encoding."
-
-	| chunk |
-	chunkSize = 0 ifTrue:[^'']. "read last chunk"
-	chunkSize := Integer readFrom: (sourceStream upToAll: String crlfString) asString base: 16.
-	chunkSize = 0 ifFalse:[chunk := sourceStream next: chunkSize].
-	sourceStream skip: 2. "CrLf"
-	(chunkSize + readLimit - position) <= collection size ifTrue:[
-		collection replaceFrom: 1 to: (readLimit-position) with: collection startingAt: position+1.
-		readLimit := readLimit - position.
-		position := 0.
-		collection replaceFrom: readLimit+1 to: readLimit + chunkSize with: chunk startingAt: 1.
-		readLimit := readLimit + chunkSize.
-	] ifFalse:[
-		collection := collection, chunk.
-		readLimit := readLimit + chunkSize.
-	].
-	^chunk
-! !
-
-!HTTPChunkedStream methodsFor: 'initialize' stamp: 'ar 1/31/2012 14:24'!
-on: aStream
-
-	sourceStream := aStream.
-	collection := (aStream isBinary ifTrue:[ByteArray] ifFalse:[String]) new.
-	position := readLimit := 0.! !
-
-!HTTPChunkedStream methodsFor: 'accessing' stamp: 'ar 1/31/2012 14:11'!
-pastEndRead
-	"Need more data"
-
-	self nextChunk.
-	^self next! !
-
-!HTTPClientServerTest methodsFor: 'setup' stamp: 'SvenVanCaekenberghe 6/14/2010 15:49'!
-localHostUrl
-	^'http://localhost:', self port asString! !
-
-!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 21:56'!
-oAuthParams
-	"The base parameter set for oauth related tests.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	^Dictionary newFromPairs: {
-		"Consumer key and secret"
-		'oauth_consumer_key'. 		'abcd'.
-		'oauth_consumer_secret'.	'efgh'.
-
-		"Token key and secret"
-		'oauth_token'.	'ijkl'.
-		'oauth_token_secret'. 'mnop'.
-		
-		'oauth_timestamp'. '1281668113'.
-		'oauth_nonce'.	'FWNkVaRJVzE'.
-		
-		"Twitter uses oauth 1.0 with HMAC-SHA1"
-		'oauth_version'.				'1.0'.
-		'oauth_signature_method'.	'HMAC-SHA1'.
-	}.! !
-
-!HTTPClientServerTest methodsFor: 'setup' stamp: 'dsg 3/12/2015 10:43'!
-port
-
-	"Use a random port to minimise chances of concurrently running test
-	suites clashing."
-	^ port
-		ifNil: [port := (10000 to: 50000) atRandom]! !
-
-!HTTPClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
-setUp
-	server := HTTPServer new listenOn: self port.
-	server passwordAt: 'user' realm: 'test' put: 'pass'.
-! !
-
-!HTTPClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
-tearDown
-	server ifNotNil:[server destroy].
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:26'!
-testAuthException
-	"Test client and server handling of digest auth"
-
-	| resp client |
-	server addService: '/test/auth' action:[:req | 
-		server authenticate: req realm: 'test' methods: #(digest) do:[
-			req send200Response: 'ok'
-		].
-	].
-
-	client := HTTPClient new.
-	self should:[client httpGet: self localHostUrl, '/test/auth'] 
-		raise: HTTPAuthRequired.
-
-	client allowAuth: false.
-	self shouldnt:[resp := client httpGet: self localHostUrl, '/test/auth'] 
-		raise: HTTPAuthRequired.
-	self assert: resp code = 401.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:29'!
-testAuthRedirectSession
-	"Run a test for a full auth-redirect-cookie loop"
-
-	| loginOK finalUrl finalFields firstRedirect client resp |
-	server addService: '/login' action:[:req | 
-		server authenticate: req realm: 'test' methods: #(digest) do:[ | id |
-			loginOK := true.
-			server sessionAt: (id := UUID new hex) put: ''.
-			req send302Response: (req fields at: 'url' ifAbsent:['/']) 
-				do:[:reply| reply setCookie: 'session' value: id path: '/']]].
-	server addService: '/action' action:[:req | 
-		(server sessionAt: (req cookieAt: 'session')) ifNil:[
-			firstRedirect := true.
-			req send302Response: '/login?url=', req rawUrl encodeForHTTP.
-		] ifNotNil:[
-			finalUrl := req url.
-			finalFields := req fields.
-			req send200Response: 'ok'.
-		].
-	].
-	firstRedirect := loginOK := false.
-	server passwordAt: 'squeak' realm: 'test' put: 'foo'.
-	client := HTTPClient new.
-	client username: 'squeak'; password: 'foo'.
-	resp := client httpGet: self localHostUrl, '/action/foo/bar?string=hello&number=42'.
-
-	self assert: resp code = 200.
-	self assert: firstRedirect.
-	self assert: loginOK.
-	self assert: finalUrl = '/action/foo/bar'.
-	self assert: finalFields size = 2.
-	self assert: (finalFields at: 'string') = 'hello'.
-	self assert: (finalFields at: 'number') = '42'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
-testBasicAuth
-	"Test client and server basic auth"
-
-	| resp reqHeader |
-	server addService: '/test/auth' action:[:req | 
-		server authenticate: req realm: 'test' methods: #(basic) do:[
-			reqHeader := req headerAt: 'Authorization'.
-			req send200Response: 'ok'
-		].
-	].
-	resp := HTTPClient new httpGet: self localHostUrl, '/test/auth'.
-	self assert: resp code = 401.
-
-	[resp := HTTPClient httpGet: self localHostUrl, '/test/auth'] 
-		on: HTTPAuthRequired do:[:ex| ex username: 'squeak' password: 'squeak'].
-	self assert: resp code = 401.
-
-	[resp := HTTPClient httpGet: self localHostUrl, '/test/auth']
-		on: HTTPAuthRequired do:[:ex| ex username: 'user' password: 'pass'].
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (reqHeader beginsWith: 'Basic ').
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 23:17'!
-testChunkedLoopback
-	"Test HTTP loopback streaming using chunked transfer-encoding"
-
-	| queue response |
-	queue := SharedQueue new.
-	server addService: '/recv' action:[:req |
-
-		"The /recv service establishes the write-end for the server.
-		In a real environment we would access protect the request
-		and also pass a token to be used to link the incoming /send
-		request from the client."
-
-		req sendResponse: 200 chunked:[:writeEnd|
-			| chunk |
-			"There is no reason to wait for the client to send a request,
-			the protocol is entirely freestyle. Send something just because
-			we can"
-			writeEnd nextChunkPut: 'Initial response'.
-			"And from here on echo any incoming data"
-			[chunk := queue next.
-			chunk == nil] whileFalse:[writeEnd nextChunkPut: chunk].
-			"And some final data"
-			writeEnd nextChunkPut: 'Final response'.
-		].
-	] methods: #('GET'). "only allow GET requests"
-
-	server addService: '/send' action:[:req |
-
-		"The /send service establishes the read-end for the server.
-		Simply read the chunks as they come in and stick them in
-		our loopback queue to send them back to the client."
-
-		| chunk |
-		[chunk := req nextChunk.
-		chunk == nil] whileFalse:[queue nextPut: chunk].
-		queue nextPut: nil. "end conversation"
-		req send200Response: 'ok'.
-	] methods: #('POST'). "only allow POST requests"
-
-	"Establish the server response stream"
-	response := HTTPClient new httpGet: self localHostUrl, '/recv'.
-	self assert: response code = 200.
-	self assert: (response headerAt: 'Transfer-Encoding') = 'chunked'.
-	self assert: response nextChunk equals: 'Initial response'.
-
-	"Establish the client request stream"
-	HTTPClient 
-		httpPostChunked: self localHostUrl, '/send'
-		content:[:request|
-			"We've set up both ends, try our loopback server"
-			request nextChunkPut: 'Hello World'.
-			self assert: response nextChunk equals: 'Hello World'.
-			request nextChunkPut: 'The answer is 42'.
-			self assert: response nextChunk equals: 'The answer is 42'.
-		] type: nil.
-
-	self assert: response nextChunk equals: 'Final response'.
-	self assert: response nextChunk equals: nil.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 22:07'!
-testChunkedRequest
-	"Test HTTP post using chunked transfer-encoding"
-
-	| resp request |
-	server addService: '/test' action:[:req | 
-		request := req.
-		req send200Response: req content].
-
-	resp := HTTPClient 
-				httpPostChunked: self localHostUrl, '/test' 
-				content:[:req|
-					req nextChunkPut: 'Hello'.
-					req nextChunkPut: 'World'.
-					req nextChunkPut: 'Dude'.
-				] type: nil.
-
-	self assert: resp code = 200.
-	self assert: resp content = 'HelloWorldDude'.
-	self assert: (request headerAt: 'Transfer-Encoding') = 'chunked'! !
-
-!HTTPClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 22:17'!
-testChunkedResponse
-	"Test HTTP response using chunked transfer-encoding"
-
-	| resp |
-	server addService: '/test' action:[:req | 
-		req sendResponse: 200 chunked:[:response|
-			response nextChunkPut: 'Hello'.
-			response nextChunkPut: 'World'.
-			response nextChunkPut: 'Dude'.
-		].
-	].
-
-	resp := HTTPClient httpGet: self localHostUrl, '/test'.
-	self assert: resp code = 200.
-	self assert: resp content = 'HelloWorldDude'.
-	self assert: (resp headerAt: 'Transfer-Encoding') = 'chunked'.! !
-
-!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:28'!
-testCookieDomainRules
-	"Test cookie domain rules"
-
-	"Request host matches domain"
-	self assert: (HTTPClient new 
-			acceptCookie: (HTTPCookie new domain: 'www.domain.com') 
-			host: 'www.domain.com' 
-			path: '/').
-
-	"Request host matches subdomain"
-	self assert: (HTTPClient new 
-			acceptCookie: (HTTPCookie new domain: '.domain.com') 
-			host: 'www.domain.com' 
-			path: '/').
-
-	"Request host does not match domain"
-	self deny: (HTTPClient new 
-			acceptCookie: (HTTPCookie new domain: 'www.domain.com') 
-			host: 'ftp.domain.com' 
-			path: '/').
-
-	"Request host does not match subdomain"
-	self deny: (HTTPClient new 
-			acceptCookie: (HTTPCookie new domain: '.domain.com') 
-			host: 'www.someother.org' 
-			path: '/').
-
-	"Request host has an extra subdomain"
-	self deny: (HTTPClient new 
-			acceptCookie: (HTTPCookie new domain: '.domain.com') 
-			host: 'foo.bar.domain.com' 
-			path: '/').
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/21/2011 11:36'!
-testCookieExpiryParsing
-	"Test parsing of cookie expiry dates"
-
-	| exp a b |
-	exp := DateAndTime date: Date today time: Time now.
-	a := HTTPCookie new.
-	a name: 'test'.
-	a expiry: exp.
-	b := HTTPCookie new readFrom: a asString readStream.
-	self assert: b expiry = exp asUTC.
-
-	b := HTTPCookie new readFrom: (a asString copyReplaceAll: '-' with: ' ') readStream.
-	self assert: b expiry = exp asUTC.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'jmv 5/19/2015 22:35'!
-testCookieParsing
-	"Test client and server handling of cookies"
-
-	| resp client |
-	"Sends the testcookie back if it's set"
-	server addService: '/' action:[:req |
-		req send200Response:(String streamContents:[:s|
-			req cookiesDo:[:key :val| s nextPutAll: key, '=', val; cr].
-		]).
-	].
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl,'/cookieA' do:[:req|
-		req headerAt: 'Cookie' put: 'foo=bar; key=value, x=32, y=55'.
-	].
-	resp content; close.
-	self assert: resp code = 200.
-	self assert: resp content 
-		equals: 	'foo=bar', String crString,
-				'key=value', String crString,
-				'x=32', String crString,
-				'y=55', String crString.
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl,'/cookieA' do:[:req|
-		req addHeader: 'Cookie' value: 'foo=bar'.
-		req addHeader: 'Cookie' value: 'key=value'.
-		req addHeader: 'Cookie' value: 'x=32'.
-		req addHeader: 'Cookie' value: 'y=55'.
-	].
-	resp content; close.
-	self assert: resp code = 200.
-	self assert: resp content 
-		equals: 	'foo=bar', String crString,
-				'key=value', String crString,
-				'x=32', String crString,
-				'y=55', String crString.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:36'!
-testCookies
-	"Test client and server handling of cookies"
-
-	| resp client |
-	"Sends the testcookie back if it's set"
-	server addService: '/' action:[:req | 
-		req send200Response: (req cookieAt: 'testcookie').
-	].
-
-	"Sets the cookie"
-	server addService: '/cookie/set' action:[:req | 
-		req send200Response: 'ok' contentType: 'text/plain' 
-			do:[:reply| reply setCookie: 'testcookie' value: '123' path: '/cookie']].
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/cookie/set'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (resp setCookieAt: 'testcookie') value = '123'.
-
-	resp := client httpGet: self localHostUrl, '/cookie/test'.
-	self assert: resp code = 200.
-	self assert: resp content = '123'.
-
-	resp := client httpGet: self localHostUrl, '/nocookie/test'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 7/20/2010 20:38'!
-testDecodeWebSocketKey
-	"Ensure that decoding the Sec-WebSocket-Key fields works properly."
-
-	| key1 key2 data |
-	key1 := 155712099.
-	key2 := 173347027.
-	data := 'Tm[K T2u'.
-
-	self assert: (HTTPUtils extractWebSocketKey: '18x 6]8vM;54 *(5:  {   U1]8  z [  8') = key1.
-	self assert: (HTTPUtils extractWebSocketKey: '1_ tx7X d  <  nw  334J702) 7]o}` 0') = key2.
-
-	self assert: (HTTPUtils webSocketHandshake: key1 with: key2 with: data) asString = 'fQJ,fN/4F4!!~K~MH'.! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:30'!
-testDefault404
-	"Test that a new server responds with 404 to anything"
-
-	| resp |
-	resp := HTTPClient httpGet: self localHostUrl.
-	self assert: resp code = 404.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
-testDigestAuth
-	"Test client and server handling of digest auth"
-
-	| resp reqHeader |
-	server addService: '/test/auth' action:[:req | 
-		server authenticate: req realm: 'test' methods: #(digest) do:[
-			reqHeader := req headerAt: 'Authorization'.
-			req send200Response: 'ok'
-		].
-	].
-
-	resp := HTTPClient new httpGet: self localHostUrl, '/test/auth'.
-	self assert: resp code = 401.
-
-	[resp := HTTPClient httpGet: self localHostUrl, '/test/auth']
-		on: HTTPAuthRequired do:[:ex| ex username: 'squeak' password: 'squeak'].
-	self assert: resp code = 401.
-
-	[resp := HTTPClient httpGet: self localHostUrl, '/test/auth']
-		on: HTTPAuthRequired do:[:ex| ex username: 'user' password: 'pass'].
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (reqHeader beginsWith: 'Digest ').
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:36'!
-testDuplicateCookies
-	"Tests deleting cookies in HTTPClient"
-
-	| resp client |
-	"Sends the testcookie back if it's set"
-	server addService: '/' action:[:req | 
-		req send200Response: (req headersAt: 'cookie') size asString.
-	].
-
-	"Sets the cookie"
-	server addService: '/cookie/set' action:[:req | 
-		req send200Response: 'ok' contentType: 'text/plain' 
-			do:[:reply| reply setCookie: 'testcookie' value: '123' path: '/cookie']].
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/cookie/set'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (resp setCookieAt: 'testcookie') value = '123'.
-
-	resp := client httpGet: self localHostUrl, '/cookie/set'.
-	resp := client httpGet: self localHostUrl, '/cookie/set'.
-
-	resp := client httpGet: self localHostUrl, '/cookie/test'.
-	self assert: resp code = 200.
-	self assert: resp content = '1'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - fields' stamp: 'DSG 3/28/2015 22:27'!
-testGetFields
-	"Test client and server handling simple fields"
-
-	| resp |
-	server addService: '/fields' action:[:req | 
-		req send200Response: (String streamContents:[:s|
-			req fields keys asArray sort do:[:key | s cr; lf; nextPutAll: key,'=', (req fields at: key)].
-		]).
-	].
-
-	resp := HTTPClient httpGet: self localHostUrl, '/fields?foo=123&bar=yoho'.
-	self assert: resp code = 200.
-	self assert: resp content = (String streamContents: [ :s | s cr; lf; nextPutAll: 'bar=yoho'; cr; lf; nextPutAll: 'foo=123'])
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/11/2010 21:20'!
-testHmacSha1
-	"Test the SHA1 HMAC algorithm"
-
-	| key message |
-	key := 'MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&'.
-	message := 'POST&https%3A%2F%2Fapi.twitter.com%2Foauth%2Frequest_token&oauth_callback%3Dhttp%253A%252F%252Flocalhost%253A3005%252Fthe_dance%252Fprocess_callback%253Fservice_provider_id%253D11%26oauth_consumer_key%3DGDdmIQH6jhtmLUypg82g%26oauth_nonce%3DQP70eNmVz8jvdPevU3oJD2AfF7R7odC2XJcn4XlZJqk%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1272323042%26oauth_version%3D1.0'.
-
-	self assert: (HTTPUtils hmacSha1: message key: key) base64Encoded = '8wUi7m5HFQy76nowoCThusfgB+Q='! !
-
-!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
-testHttpDelete
-	"Test for handling a DELETE request"
-
-	| resp |
-	server addService: '/nodelete' action:[:req | 
-		req send200Response: 'ok'.
-	].
-	server addService: '/delete' action:[:req | 
-		req send200Response: req method.
-	] methods: {'GET'. 'PUT'. 'DELETE'}.
-
-	resp := HTTPClient httpGet: self localHostUrl, '/nodelete'.
-	self assert: resp code = 200.
-	resp := HTTPClient httpDelete: self localHostUrl, '/nodelete'.
-	self assert: resp code = 405.
-
-	resp := HTTPClient httpGet: self localHostUrl, '/delete'.
-	self assert: resp code = 200.
-	resp := HTTPClient httpDelete: self localHostUrl, '/delete'.
-	self assert: resp code = 200.
-
-	resp := HTTPClient httpPost: self localHostUrl, '/delete' content:'' type: nil.
-	self assert: resp code = 405.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'ar 8/5/2010 22:32'!
-testHttpHead
-	"Test for handling a HEAD request"
-
-	| resp |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/bar'
-	].
-	server addService: '/bar' action:[:req | 
-		req send200Response: 'ok'
-	].
-
-	resp := HTTPClient httpHead: self localHostUrl, '/bar'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-	self deny: resp contentStream isDataAvailable..
-
-	resp := HTTPClient httpHead: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
-testHttpOptions
-	"Test for handling the OPTIONS request"
-
-	| resp |
-	server addService: '/delete' action:[:req | 
-		req send200Response: req method.
-	] methods: {'GET'. 'PUT'. 'DELETE'}.
-
-	resp := HTTPClient httpOptions: self localHostUrl, '/*'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,POST'.
-
-	resp := HTTPClient httpOptions: self localHostUrl, '/delete'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,PUT,DELETE'.! !
-
-!HTTPClientServerTest methodsFor: 'tests - methods' stamp: 'jmv 5/19/2015 22:36'!
-testHttpTrace
-	"Test for handling the TRACE request"
-
-	| resp |
-	resp := HTTPClient httpTrace: self localHostUrl, '/bar'.
-	self assert: resp code = 200.
-	self assert: resp contentType = 'message/http'.
-	self assert: resp content = ('TRACE /bar HTTP/1.1' , String crlfString , 'user-agent: ' , HTTPClient new userAgent , String crlfString , 'host: localhost:' , self port printString , String crlfString , String crlfString)
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 5/11/2010 20:42'!
-testInvalidCookies
-	"Test client and server handling of cookies"
-
-	| resp client |
-	"Sends the testcookie back if it's set"
-	server addService: '/' action:[:req | 
-		req send200Response: (req cookieAt: 'testcookie').
-	].
-
-	"Sets the cookie"
-	server addService: '/setcookie' action:[:req | | domain path expires secure |
-		domain := req fields at: 'domain' ifAbsent:[nil].
-		path := req fields at: 'path' ifAbsent:[nil].
-		expires := req fields at: 'expires' ifAbsent:[nil].
-		secure := req fields at: 'secure' ifAbsent:['false'].
-		req send200Response: 'ok' contentType: 'text/plain'  do:[:reply| 
-			reply setCookie: 'testcookie' value: '123' path: path 
-				expires: expires domain: domain secure: secure = 'true'.
-		]
-	].
-
-	server addService: '/clearcookie' action:[:req |
-		req send200Response: 'ok' contentType: 'text/plain'  do:[:reply| 
-			reply setCookie: 'testcookie' value: '123' path: '/' 
-				expires: DateAndTime new domain: nil secure: false.
-		]
-	].
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/setcookie?path=/'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (resp setCookieAt: 'testcookie') value = '123'.
-	resp := client httpGet: self localHostUrl, '/'.
-	self assert: resp code = 200.
-	self assert: resp content = '123'.
-
-	resp := client httpGet: self localHostUrl, '/clearcookie'.
-	self assert: resp code = 200.
-	resp := client httpGet: self localHostUrl, '/'.
-	self assert: resp code = 200.
-	self deny: resp content = '123'.
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/setcookie?domain=.foo.com'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (resp setCookieAt: 'testcookie') value = '123'.
-
-	resp := client httpGet: self localHostUrl, '/'.
-	self assert: resp code = 200.
-	self deny: resp content = '123'.
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/setcookie?domain=.com'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (resp setCookieAt: 'testcookie') value = '123'.
-	resp := client httpGet: self localHostUrl, '/'.
-	self assert: resp code = 200.
-	self deny: resp content = '123'.
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/setcookie?secure=true'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (resp setCookieAt: 'testcookie') value = '123'.
-	resp := client httpGet: self localHostUrl, '/'.
-	self assert: resp code = 200.
-	self deny: resp content = '123'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'SvenVanCaekenberghe 6/14/2010 15:55'!
-testListenOnInterface
-	"Test that listening on a particular interface listens only on that interface"
-
-	| localHostAddr resp localHostName client |
-	server destroy.		"kill old server"
-
-	localHostAddr := NetNameResolver localHostAddress.
-	localHostAddr = #(127 0 0 1) asByteArray ifTrue:[^self]. "skip test"
-
-	localHostName := String streamContents:[:s|
-		localHostAddr do:[:b| s print: b] separatedBy:[s nextPut: $.].
-	].
-
-	server := HTTPServer new listenOn: self port interface: localHostAddr.
-	server addService: '/' action:[:req| req send200Response: 'ok'].
-
-	client := HTTPClient new.
-	client timeout: 1.
-	self should:[resp := client httpGet: self localHostUrl, '/test'] raise: Error.
-
-	resp := client httpGet: 'http://', localHostName, ':', self port asString, '/test'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 5/19/2015 22:38'!
-testLogging200
-	"Test logging a regular 200 a-ok response"
-
-	| resp client log |
-	server addService: '/test' action:[:req | req send200Response: 'ok'].
-	server accessLog: String new writeStream.
-
-	client := HTTPClient new.
-	client accessLog: String new writeStream.
-	[resp := client httpGet: self localHostUrl, '/test'] ensure:[client close].
-
-	self assert: resp code = 200.
-
-	log := server accessLog contents.
-	self assert: ('127.0.0.1 - - [*] "GET /test HTTP/1.1" 200 2', String lfString match: log).
-
-	log := client accessLog contents.
-	self assert: ('localhost - - [*] "GET /test HTTP/1.1" 200 2', String lfString match: log).
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 5/19/2015 22:39'!
-testLogging404
-	"Test logging a 404 response"
-
-	| resp client log |
-	server accessLog: String new writeStream.
-	client := HTTPClient new.
-	client accessLog: String new writeStream.
-	[resp := client httpGet: self localHostUrl] ensure:[client close].
-
-	self assert: resp code = 404.
-
-	log := server accessLog contents.
-	self assert: ('127.0.0.1 - - [*] "GET / HTTP/1.1" 404 145', String lfString match: log).
-
-	log := client accessLog contents.
-	self assert: ('localhost - - [*] "GET / HTTP/1.1" 404 145', String lfString match: log).
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:32'!
-testNestedAction
-	"Test handling of nested actions"
-
-	| resp |
-	server addService: '/test' action:[:req | req send200Response: 'ok'].
-	server addService: '/test/42' action:[:req | req send200Response: '42'].
-
-	resp := HTTPClient httpGet: self localHostUrl, '/test'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-
-	resp := HTTPClient httpGet: self localHostUrl, '/test/42'.
-	self assert: resp code = 200.
-	self assert: resp content = '42'.
-
-	resp := HTTPClient httpGet: self localHostUrl, '/test/43'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 8/10/2010 09:23'!
-testNo302Redirect
-	"Ensure compliance with RFC 2616 rules prohibiting auto redirect 
-	for 302/307 responses."
-
-	| resp |
-	server addService: '/302' action:[:req | 
-		req send3xxResponse: '/bar' code: 302
-	] methods: #('GET' 'PUT' 'POST' 'DELETE').
-	server addService: '/307' action:[:req | 
-		req send3xxResponse: '/bar' code: 307
-	] methods: #('GET' 'PUT' 'POST' 'DELETE').
-	server addService: '/bar' action:[:req | 
-		req send200Response: 'redirect ok'
-	] methods: #('GET' 'PUT' 'POST' 'DELETE').
-
-	resp := HTTPClient httpGet: self localHostUrl, '/302'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-
-	resp := HTTPClient httpGet: self localHostUrl, '/307'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-
-	resp := HTTPClient httpPost: self localHostUrl, '/302' content: '' type: 'text/plain'.
-	self assert: resp code = 302.
-	resp := HTTPClient httpPost: self localHostUrl, '/307' content: '' type: 'text/plain'.
-	self assert: resp code = 307.
-
-	resp := HTTPClient httpPost: self localHostUrl, '/302' content: '' type: 'text/plain'.
-	self assert: resp code = 302.
-	resp := HTTPClient httpPost: self localHostUrl, '/307' content: '' type: 'text/plain'.
-	self assert: resp code = 307.
-
-	resp := HTTPClient httpPut: self localHostUrl, '/302' content: '' type: 'text/plain'.
-	self assert: resp code = 302.
-	resp := HTTPClient httpPut: self localHostUrl, '/307' content: '' type: 'text/plain'.
-	self assert: resp code = 307.
-
-	resp := HTTPClient httpDelete: self localHostUrl, '/302'.
-	self assert: resp code = 302.
-	resp := HTTPClient httpDelete: self localHostUrl, '/307'.
-	self assert: resp code = 307.
-
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 2/10/2012 13:21'!
-testPersistentAuthRedirectSession
-	"Run a test for a full auth-redirect-cookie loop.
-	Ensure that the connection is persistent for the entire loop."
-
-	| loginOK finalUrl finalFields firstRedirect client resp url |
-	server addService: '/login' action:[:req | 
-		server authenticate: req realm: 'test' methods: #(digest) do:[ | id |
-			loginOK := true.
-			server sessionAt: (id := UUID new hex) put: ''.
-			req send302Response: (req fields at: 'url' ifAbsent:['/']) unescapePercents
-				do:[:reply| reply setCookie: 'session' value: id path: '/']]].
-	server addService: '/action' action:[:req | 
-		(server sessionAt: (req cookieAt: 'session')) ifNil:[
-			firstRedirect := true.
-			req send302Response: '/login?url=', req rawUrl encodeForHTTP.
-		] ifNotNil:[
-			finalUrl := req url.
-			finalFields := req fields.
-			req send200Response: 'ok'.
-		].
-	].
-	firstRedirect := loginOK := false.
-	server passwordAt: 'squeak' realm: 'test' put: 'foo'.
-
-	client := HTTPClient new.
-	client allowRedirect: false.
-	url :=  self localHostUrl, '/action/foo/bar?string=hello&number=42'.
-	[[resp := client httpGet: url] on: HTTPAuthRequired 
-		do:[:ex| 	self assert: client == ex client.
-				self assert: client isConnected.
-				ex username: 'squeak' password: 'foo'.].
-	resp code = 302] whileTrue:[
-		self assert: client isConnected.
-		url := resp headerAt: 'Location'.
-	].
-	self assert: client isConnected.
-	self assert: resp code = 200.
-	self assert: firstRedirect.
-	self assert: loginOK.
-	self assert: finalUrl = '/action/foo/bar'.
-	self assert: finalFields size = 2.
-	self assert: (finalFields at: 'string') = 'hello'.
-	self assert: (finalFields at: 'number') = '42'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - fields' stamp: 'DSG 3/28/2015 22:27'!
-testPostFields
-	"Test client and server handling fields in url-encoded encoded post requests"
-
-	| resp |
-	server addService: '/fields' action:[:req | 
-		req send200Response: (String streamContents:[:s|
-			req fields keys asArray sort do:[:key | s cr; lf; nextPutAll: key,'=', (req fields at: key)].
-		]).
-	].
-
-	resp := HTTPClient httpPost: self localHostUrl, '/fields' 
-				content: 'foo=123&bar=yoho'
-				type: 'application/x-www-form-urlencoded'.
-	self assert: resp code = 200.
-	self assert: resp content = (String streamContents: [ :s | s cr; lf; nextPutAll: 'bar=yoho'; cr; lf; nextPutAll: 'foo=123'])
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
-testRedirect
-	"Test client and server handling of redirects"
-
-	| resp client |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/bar'
-	].
-	server addService: '/bar' action:[:req | 
-		req send200Response: 'redirect ok'
-	].
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-
-	client allowRedirect: false.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 302.
-
-	client allowRedirect: true.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
-testRedirectLoop
-	"Test client handling of redirect loops"
-
-	| resp |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/bar'
-	].
-	server addService: '/bar' action:[:req | 
-		req send302Response: '/foo'
-	].
-
-	resp := HTTPClient httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 302.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:33'!
-testRedirectTrailingSlash
-	"Special test to ensure that a redirect from /foo to /foo/ works"
-
-	| resp client |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/foo/'
-	].
-	server addService: '/foo/' action:[:req | 
-		req send200Response: 'redirect ok'
-	].
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 8/24/2010 21:42'!
-testResponseUrl
-	"Tests that the response url is pointing to the final location"
-
-	| resp client |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/bar'
-	].
-	server addService: '/bar' action:[:req | 
-		req send200Response: 'redirect ok'
-	].
-
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp url = (self localHostUrl, '/bar').
-
-	client := HTTPClient new.
-	client allowRedirect: false.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 302.
-	self assert: resp url = (self localHostUrl, '/foo').
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - https' stamp: 'ar 7/21/2010 20:59'!
-testSchemeHandling
-	"Ensure that we handle only http and https schemes"
-
-	self shouldnt:[HTTPClient httpGet: 'http://localhost:', self port asString] raise: Error.
-	self should:[HTTPClient httpGet: 'ftp://localhost:', self port asString] raise: Error.
-
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/19/2011 18:20'!
-testServerDestroy
-	"Tests that connections get nuked when server gets killed"
-	
-	| client resp |
-	server addService: '/test' action:[:req | req send200Response: 'ok'].
-	client := HTTPClient new.
-	resp := client httpGet: self localHostUrl, '/test'.
-
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: client isConnected.
-	self assert: server connections size = 1.
-
-	server destroy.
-
-	"Depending on OS the signal may not be delivered synchronously
-	and raise ConnectionClosed in the (signaling) peek. Give it a bit of 
-	time to deal with the close."
-	(Delay forMilliseconds: 100) wait.
-
-	"Make stream non-blocking otherwise peek can blow up in our face"
-	resp contentStream shouldSignal: false.
-	self assert: resp contentStream peek == nil.
-	self deny: client isConnected
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
-testServerError
-	"Test server handling of errors"
-
-	| resp |
-	server addService: '/test' action:[:req | self error: 'boom'].
-
-	resp := HTTPClient httpGet: self localHostUrl, '/test'.
-	self assert: resp code = 500.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/1/2010 21:09'!
-testServerRegistry
-	"Ensure that the HTTPServer registry functions as intended"
-
-	| serverA serverB |
-	["Create a new server"
-	serverA := HTTPServer forUrl: 'http://foo.bar.com'.
-	serverA listenOn: self port+1.
-	self assert: serverA notNil.
-	self assert: serverA isRunning.
-
-	"Look it up again"
-	serverB := HTTPServer forUrl: 'http://foo.bar.com'.
-	self assert: serverA == serverB.
-
-	"Override with a new one (should shutdown serverA)"
-	serverB := HTTPServer newForUrl: 'http://foo.bar.com'.
-	self deny: serverA == serverB.
-	self deny: serverA isRunning.
-
-	"Destroy (should de-register serverB)"
-	serverB destroy.
-	self assert: (HTTPServer forUrl: 'http://foo.bar.com' ifAbsent:[nil]) == nil
-	] ensure:[
-		serverA ifNotNil:[serverA destroy].
-		serverB ifNotNil:[serverB destroy].
-	].! !
-
-!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:03'!
-testSignOAuthGet
-	"Ensure that we can sign a request correctly using OAuth.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| request |
-	request := HTTPRequest new.
-	request method: 'GET'.
-	HTTPUtils oAuthSign: request 
-				url: 'http://host.net/resource'
-				using: self oAuthParams.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="dSI3zjYnriSnaB787UH2NDcS8Ss%3D"'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
-testSignOAuthGetDupFields
-	"Ensure that we can sign a request with duplicate fields correctly using OAuth.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| request |
-	request := HTTPRequest new.
-	request method: 'GET'.
-	HTTPUtils oAuthSign: request 
-				url: 'http://host.net/resource?name=value&name=value'
-				using: self oAuthParams.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="30p67coAX8YbxCKAGfaimydYK6g%3D"'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:07'!
-testSignOAuthGetFields
-	"Ensure that we can sign a GET request with fields correctly using OAuth.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| request |
-	request := HTTPRequest new.
-	request method: 'GET'.
-	HTTPUtils oAuthSign: request 
-				url: 'http://host.net/resource?name=value'
-				using: self oAuthParams.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="N6TOtNK6h3u9zqjqaF2kgpIVb%2F8%3D"'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
-testSignOAuthPostFields
-	"Ensure that we can sign a POST request with fields correctly using OAuth.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| request |
-	request := HTTPRequest new.
-	request method: 'POST'.
-	HTTPUtils oAuthSign: request 
-				url: 'http://host.net/resource'
-				extra:{'name' -> 'value'}
-				using: self oAuthParams.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="E7yVjmf%2F8UTF9ij15CtbBBhulMw%3D"'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
-testSignOAuthUrlEncoding
-	"Ensure that we can sign a request requiring url-encoded oauth params.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| params request |
-	"Consumer Key with url-encoded characters"
-	params := self oAuthParams.
-	params at: 'oauth_consumer_key' put: 'key with spaces'.
-
-	request := HTTPRequest new.
-	request method: 'GET'.
-	HTTPUtils oAuthSign: request 
-				url: 'http://host.net/resource'
-				using: params.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="key%20with%20spaces",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="%2FxrAsx0Utt3V6ZbX00jWWpkqrvg%3D"'.! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/14/2010 21:06'!
-testSimpleServerAction
-	"Test client and server handling simple defaults"
-
-	| resp srvr |
-	server addService: '/test' action:[:req |
-		srvr := req server.
-		req send200Response: 'ok'].
-
-	resp := HTTPClient httpGet: self localHostUrl, '/test'.
-	self assert: srvr notNil.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
-testStreaming
-	"Run a test for a full auth-redirect-cookie loop"
-
-	| resp amount stream |
-	amount := 128*1024.
-	server addService: '/streaming' action:[:req|
-		req stream200Response: (String new: amount) readStream size: amount.
-	].
-	resp := HTTPClient httpGet: self localHostUrl, '/streaming'.
-	self assert: resp isSuccess.
-	stream := WriteStream on: String new.
-	resp streamTo: stream size: resp contentLength progress: nil.
-	self assert: stream position = amount.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/19/2010 00:05'!
-testTransientPostContent
-	"Ensure that HTTPRequest>>content doesn't close the socket 
-	when used in a transient post request"
-
-	| resp client |
-	server addService: '/test' action:[:req |
-		req send200Response: req content].
-
-	client := HTTPClient new.
-	resp := client httpPost: self localHostUrl, '/test' content:'hello' type: nil do:[:req|
-		req protocol: 'HTTP/1.0'
-	].
-	self assert: resp code = 200.
-	self assert: resp content = 'hello'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - misc' stamp: 'ar 9/4/2010 11:35'!
-testUrlEncoding
-	"Test the default URL encoding behavior"
-	| resp |
-	server addService: '/hello world' action:[:req|
-		req send200Response: 'ok'.
-	].
-	resp := HTTPClient httpGet: self localHostUrl, '/hello%20world'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-
-	resp := HTTPClient httpGet: (HTTPUtils urlEncode: self localHostUrl, '/hello world').
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 10:29'!
-testWebSocketHash07
-	"self run: #testWebSocketHash07"
-	"From http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-07"
-
-	| hash key |
-	key := 'dGhlIHNhbXBsZSBub25jZQ=='.
-	hash := HTTPUtils webSocketHash07: key.
-	self assert: hash = 's3pPLMBiTxaQ9kYGzzhZRbK+xOo='.! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
-testWebSockets
-	"Test the WebSocket interface"
-
-	self testWebSockets:[
-		HTTPClient webSocketTo: self localHostUrl,'/websockets'.
-	].
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
-testWebSockets00
-	"Test the WebSocket interface"
-
-	self testWebSockets:[
-		HTTPClient webSocket00: self localHostUrl,'/websockets' protocol: 'sample'
-	].
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
-testWebSockets07
-	"Test the WebSocket interface"
-
-	self testWebSockets:[
-		HTTPClient webSocket07: self localHostUrl,'/websockets' protocol: 'sample'
-	].
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 11/17/2011 17:28'!
-testWebSockets07ControlDecode
-	"Tests from section 4.7 of the WebSockets spec"
-
-	| ws ping pong |
-	ws := WebSocket07 new.
-	ws onPing:[:msg| ping := msg asString].
-	ws onPong:[:msg| pong := msg asString].
-
-	ping := pong := nil.
-	ws readFrameFrom:
-		#[16r89 16r05 16r48 16r65 16r6C 16r6C 16r6F] readStream.
-		"contains a body of 'Hello', but the contents of the body are arbitrary)"
-	self assert: ping = 'Hello'.
-	self assert: pong = nil.
-
-	ping := pong := nil.
-	ws readFrameFrom:
-		#[16r8A 16r05 16r48 16r65 16r6C 16r6C 16r6F] readStream.
-		"contains a body of 'Hello', matching the body of the ping)"
-	self assert: ping = nil.
-	self assert: pong = 'Hello'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'DSG 3/28/2015 21:45'!
-testWebSockets07ControlInterleave
-	"Test the WebSocket 07 control interleave"
-
-	| sema cws resp ping pong |
-	ping := 'Hello Ping'.
-	server addService: '/websockets' action:[:req | | sws |
-		sws := req asWebSocket.
-		sws onMessage:[:sdata| sws send: sdata].
-		sws onPing:[:sdata| sws pong: sdata].
-		sws onError:[:ex| 
-			Transcript log: ex description.
-			Transcript log: ex signalerContext longStack.
-		].
-		sws run.
-	].
-
-	sema := Semaphore new.
-	cws := HTTPClient webSocket07: self localHostUrl,'/websockets' protocol: nil.
-	cws onMessage:[:cdata| resp := cdata. sema signal].
-	cws onPong:[:cdata| pong := cdata asString. sema signal.].
-	cws fork.
-
-	cws send: 'Ãœber-cool'.
-	sema wait.
-	self assert: (resp = 'Ãœber-cool').
-
-	cws firstFragment: 'First,'.
-	cws nextFragment: 'Next,'.
-	cws lastFragment: 'Last.'.
-	sema wait.
-	self assert: (resp = 'First,Next,Last.').
-	self deny: sema isSignaled.
-
-	resp := nil.
-	cws firstFragment: 'First,'.
-	cws ping: ping.
-	sema wait.
-
-	self assert: ping = pong. "i.e., roundtrip finished"
-	self assert: resp == nil. "i.e., fragment not delivered yet"
-	self deny: sema isSignaled.
-
-	cws nextFragment: 'Next,'.
-	cws lastFragment: 'Last.'.
-	sema wait.
-	self assert: (resp = 'First,Next,Last.').
-
-
-	cws close.! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 11/17/2011 17:23'!
-testWebSockets07DataDecode
-	"Tests from section 4.7 of the WebSockets spec"
-
-	| data ws |
-	ws := WebSocket07 new.
-	ws onMessage:[:msg| data := msg].
-	"A single-frame unmasked text message"
-	data := nil.
-	ws readFrameFrom: 
-		#[16r81 16r05 16r48 16r65 16r6C 16r6C 16r6F] readStream.
-	self assert: data = 'Hello'.
-
-	"A single-frame masked text message"
-	data := nil.
-	ws readFrameFrom:
-		#[16r81 16r85 16r37 16rFA 16r21 16r3D 16r7F 16r9F 16r4D 16r51 16r58] readStream.
-	self assert: data = 'Hello'.
-
-	"A fragmented unmasked text message"
-	data := nil.	
-	ws readFrameFrom: 
-		#[16r01 16r03 16r48 16r65 16r6C] readStream. "contains 'Hel'"
-	self assert: data = nil.
-	ws readFrameFrom:
-		#[16r80 16r02 16r6C 16r6F] readStream. "contains 'lo'"
-	self assert: data = 'Hello'.
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/27/2011 13:48'!
-testWebSockets07NoMask
-	"Test the WebSocket interface"
-
-	self testWebSockets:[
-		(HTTPClient webSocket07: self localHostUrl,'/websockets' protocol: 'sample')
-			masking: false;
-			yourself].
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 12:07'!
-testWebSockets68
-	"Test the WebSocket interface"
-
-	self testWebSockets:[
-		HTTPClient webSocket68: self localHostUrl,'/websockets' protocol: 'sample'.
-	].
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'DSG 3/28/2015 21:36'!
-testWebSockets: aBlock
-	"Test the WebSocket interface"
-
-	| sema cws resp sws |
-	server addService: '/websockets' action:[:req |
-		sws := req asWebSocket.
-		sws onError:[:ex| 
-			Transcript log: ex description.
-			Transcript log: ex signalerContext longStack.
-		].
-		sws onMessage:[:sdata| sws send: 'Response: ', sdata].
-		sws run.
-	].
-
-	sema := Semaphore new.
-	cws := aBlock value.
-	cws onMessage:[:cdata| resp := cdata. sema signal].
-	cws onClose:[resp := nil. sema signal].
-	cws fork.
-
-	cws send: 'Testing, one, two'.
-	sema wait.
-	self assert: (resp = 'Response: Testing, one, two').
-
-	cws close.
-	sema wait.
-	self assert: (resp = nil).
-! !
-
-!HTTPClientServerTest methodsFor: 'tests - websockets' stamp: 'jmv 5/19/2015 22:31'!
-testWebSocketsFraming
-	"Test the WebSocket 00 framing"
-
-	| sema cws resp frameType |
-	server addService: '/websockets' action:[:req | | sws |
-		sws := req asWebSocket.
-		sws onMessage:[:sdata :type| sws send: sdata type: type].
-		sws onError:[:ex| 
-			Transcript log: ex description.
-			Transcript log: ex signalerContext longStack.
-		].
-		sws run.
-	].
-
-	sema := Semaphore new.
-	cws := HTTPClient webSocket00: self localHostUrl,'/websockets' protocol: nil.
-	cws onMessage:[:cdata :type| resp := cdata. frameType := type. sema signal].
-	cws onClose:[resp := nil. frameType := 255. sema signal].
-	cws fork.
-
-	cws send: 'Über-cool'.
-	sema wait.
-	self assert: (resp = 'Über-cool').
-	self assert: (frameType = 0).
-
-	cws send: 'Über-funny' type: 15.
-	sema wait.
-	self assert: (resp = 'Über-funny').
-	self assert: (frameType = 15).
-
-	cws send: (String new: 100) type: 0.
-	sema wait.
-	self assert: (resp = (String new: 100)).
-	self assert: (frameType = 0).
-
-	cws send: (ByteArray new: 100) type: 130.
-	sema wait.
-	self assert: (resp = (ByteArray new: 100)).
-	self assert: (frameType = 130).
-
-	cws close.
-	sema wait.
-	self assert: (resp = nil).
-	self assert: (frameType = 255).! !
-
 !WebSocket methodsFor: 'initialize' stamp: 'ar 9/26/2011 13:06'!
 close
 	"Request graceful close"
@@ -6559,18 +6553,18 @@ on: aStream
 
 	^self new on: aStream! !
 
-!WebSocket00 methodsFor: 'running' stamp: 'ar 9/26/2011 13:05'!
+!WebSocket00 methodsFor: 'running' stamp: 'jmv 9/5/2016 20:49:42'!
 close
 	"Request graceful close"
 
 	stream isConnected ifTrue:[
-		stream nextPut: (Character value: 255).
-		stream nextPutAll: (Character value: 0).
+		stream nextPut: (Character numericValue: 255).
+		stream nextPutAll: (Character numericValue: 0).
 		stream flush.
 	].
 ! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 5/20/2015 09:14'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 22:30:06'!
 readMessage
 	"Reads one frame worth of data"
 
@@ -6578,14 +6572,14 @@ readMessage
 	byte := stream next ifNil:[
 		frameType := 255.
 		^nil].
-	frameType := byte asInteger.
+	frameType := byte numericValue.
 	frameType < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
-		frameData := String fromUtf8: (stream upTo: 255 asCharacter).
+		frameData := String fromUtf8: (stream upTo: 255 asCharacter) asByteArray.
 	] ifFalse:[
 		"Frame type >= 128: Binary data with length prefix"
 		length := 0.
-		[byte := stream next asInteger.
+		[byte := stream next numericValue.
 		length := (length * 128) + (byte bitClear: 128).
 		byte >= 128] whileTrue.
 		frameData := ByteArray new: length.
@@ -6614,16 +6608,16 @@ send: aString
 
 	^self send: aString type: 0! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'DSG 3/28/2015 23:31'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 20:49:48'!
 send: data type: type
 	"Writes one frame worth of data using the given frame type"
 
 	"Frame type"
-	stream nextPut: (Character value: type).
+	stream nextPut: (Character numericValue: type).
 	type < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
 		stream nextPutAll: data asString asUtf8.
-		stream nextPutAll: (Character value: 255).
+		stream nextPutAll: (Character numericValue: 255).
 	] ifFalse:[ | prefix length |
 		"Frame type >= 128: Binary data with length prefix"
 		prefix := ByteArray new.
@@ -6732,13 +6726,13 @@ nextFragment: aStringOrBytes
 		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: false]
 		ifFalse:[^self send: aStringOrBytes code: 0 final: false].! !
 
-!WebSocket07 methodsFor: 'private' stamp: 'ar 10/5/2011 19:43'!
+!WebSocket07 methodsFor: 'private' stamp: 'jmv 9/5/2016 21:35:24'!
 nextNumber: n from: aStream
 	"Answer the next n bytes as a positive Integer or LargePositiveInteger."
 	| s |
 	s := 0.
 	1 to: n do: 
-		[:i | s := (s bitShift: 8) bitOr: aStream next asInteger].
+		[:i | s := (s bitShift: 8) bitOr: aStream next numericValue].
 	^ s normalize! !
 
 !WebSocket07 methodsFor: 'control requests' stamp: 'ar 9/26/2011 12:49'!
@@ -6771,17 +6765,17 @@ readFrame
 
 	^self readFrameFrom: stream! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/20/2015 09:15'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 22:30:33'!
 readFrameFrom: aStream
 	"Reads one frame worth of data"
 
 	| byte length final mask opcode payload |
-	byte := (aStream next ifNil:[^nil]) asInteger.
+	byte := (aStream next ifNil:[^nil]) numericValue.
 
 	final := byte anyMask: 128.
 	opcode := byte bitAnd: 15.
 
-	byte := (aStream next ifNil:[^nil]) asInteger.
+	byte := (aStream next ifNil:[^nil]) numericValue.
 	mask := byte anyMask: 128.
 	length := byte bitAnd: 127.
 
@@ -6821,7 +6815,7 @@ readFrameFrom: aStream
 							inject: frameData first 
 							into:[:each :next| each, next].
 		].
-		frameType = 1 ifTrue:[payload := String fromUtf8: payload ].
+		frameType = 1 ifTrue:[payload := String fromUtf8: payload asByteArray].
 		self handleMessage: payload type: frameType.
 		frameType := frameData := nil.
 	].

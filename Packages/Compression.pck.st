@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2846] on 12 July 2016 at 10:13:53 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:15:31 am'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 16!
+!provides: 'Compression' 1 17!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -29,106 +29,6 @@ SharedPool subclass: #ZipFileConstants
 	category: 'Compression-Archives'!
 !classDefinition: 'ZipFileConstants class' category: #'Compression-Archives'!
 ZipFileConstants class
-	instanceVariableNames: ''!
-
-!classDefinition: #Archive category: #'Compression-Archives'!
-Object subclass: #Archive
-	instanceVariableNames: 'members'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Compression-Archives'!
-!classDefinition: 'Archive class' category: #'Compression-Archives'!
-Archive class
-	instanceVariableNames: ''!
-
-!classDefinition: #ZipArchive category: #'Compression-Archives'!
-Archive subclass: #ZipArchive
-	instanceVariableNames: 'centralDirectorySize centralDirectoryOffsetWRTStartingDiskNumber zipFileComment writeCentralDirectoryOffset writeEOCDOffset'
-	classVariableNames: ''
-	poolDictionaries: 'ZipFileConstants'
-	category: 'Compression-Archives'!
-!classDefinition: 'ZipArchive class' category: #'Compression-Archives'!
-ZipArchive class
-	instanceVariableNames: ''!
-
-!classDefinition: #ArchiveMember category: #'Compression-Archives'!
-Object subclass: #ArchiveMember
-	instanceVariableNames: 'fileName isCorrupt'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Compression-Archives'!
-!classDefinition: 'ArchiveMember class' category: #'Compression-Archives'!
-ArchiveMember class
-	instanceVariableNames: ''!
-
-!classDefinition: #ZipArchiveMember category: #'Compression-Archives'!
-ArchiveMember subclass: #ZipArchiveMember
-	instanceVariableNames: 'lastModFileDateTime fileAttributeFormat versionMadeBy versionNeededToExtract bitFlag compressionMethod desiredCompressionMethod desiredCompressionLevel internalFileAttributes externalFileAttributes cdExtraField localExtraField fileComment crc32 compressedSize uncompressedSize writeLocalHeaderRelativeOffset readDataRemaining'
-	classVariableNames: ''
-	poolDictionaries: 'ZipFileConstants'
-	category: 'Compression-Archives'!
-!classDefinition: 'ZipArchiveMember class' category: #'Compression-Archives'!
-ZipArchiveMember class
-	instanceVariableNames: ''!
-
-!classDefinition: #ZipFileMember category: #'Compression-Archives'!
-ZipArchiveMember subclass: #ZipFileMember
-	instanceVariableNames: 'externalFileName stream localHeaderRelativeOffset dataOffset'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Compression-Archives'!
-!classDefinition: 'ZipFileMember class' category: #'Compression-Archives'!
-ZipFileMember class
-	instanceVariableNames: ''!
-
-!classDefinition: #ZipDirectoryMember category: #'Compression-Archives'!
-ZipFileMember subclass: #ZipDirectoryMember
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Compression-Archives'!
-!classDefinition: 'ZipDirectoryMember class' category: #'Compression-Archives'!
-ZipDirectoryMember class
-	instanceVariableNames: ''!
-
-!classDefinition: #ZipNewFileMember category: #'Compression-Archives'!
-ZipArchiveMember subclass: #ZipNewFileMember
-	instanceVariableNames: 'externalFileName stream'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Compression-Archives'!
-!classDefinition: 'ZipNewFileMember class' category: #'Compression-Archives'!
-ZipNewFileMember class
-	instanceVariableNames: ''!
-
-!classDefinition: #ZipStringMember category: #'Compression-Archives'!
-ZipArchiveMember subclass: #ZipStringMember
-	instanceVariableNames: 'contents stream'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Compression-Archives'!
-!classDefinition: 'ZipStringMember class' category: #'Compression-Archives'!
-ZipStringMember class
-	instanceVariableNames: ''!
-
-!classDefinition: #CRCError category: #'Compression-System'!
-Error subclass: #CRCError
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Compression-System'!
-!classDefinition: 'CRCError class' category: #'Compression-System'!
-CRCError class
-	instanceVariableNames: ''!
-
-!classDefinition: #GZipSurrogateStream category: #'Compression-System'!
-Object subclass: #GZipSurrogateStream
-	instanceVariableNames: 'gZipStream zippedFileStream bufferStream positionThusFar'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Compression-System'!
-!classDefinition: 'GZipSurrogateStream class' category: #'Compression-System'!
-GZipSurrogateStream class
 	instanceVariableNames: ''!
 
 !classDefinition: #InflateStream category: #'Compression-System'!
@@ -231,6 +131,26 @@ WriteStream subclass: #ZipEncoder
 ZipEncoder class
 	instanceVariableNames: ''!
 
+!classDefinition: #CRCError category: #'Compression-System'!
+Error subclass: #CRCError
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Compression-System'!
+!classDefinition: 'CRCError class' category: #'Compression-System'!
+CRCError class
+	instanceVariableNames: ''!
+
+!classDefinition: #GZipSurrogateStream category: #'Compression-System'!
+Object subclass: #GZipSurrogateStream
+	instanceVariableNames: 'gZipStream zippedFileStream bufferStream positionThusFar'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Compression-System'!
+!classDefinition: 'GZipSurrogateStream class' category: #'Compression-System'!
+GZipSurrogateStream class
+	instanceVariableNames: ''!
+
 !classDefinition: #ZipEncoderNode category: #'Compression-System'!
 Object subclass: #ZipEncoderNode
 	instanceVariableNames: 'value frequency height bitLength code parent left right'
@@ -251,63 +171,86 @@ Object subclass: #ZipEncoderTree
 ZipEncoderTree class
 	instanceVariableNames: ''!
 
+!classDefinition: #Archive category: #'Compression-Archives'!
+Object subclass: #Archive
+	instanceVariableNames: 'members'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Compression-Archives'!
+!classDefinition: 'Archive class' category: #'Compression-Archives'!
+Archive class
+	instanceVariableNames: ''!
 
-!Archive commentStamp: '<historical>' prior: 0!
-This is the abstract superclass for file archives. Archives can be read from or written to files, and contain members that represent files and directories.!
+!classDefinition: #ZipArchive category: #'Compression-Archives'!
+Archive subclass: #ZipArchive
+	instanceVariableNames: 'centralDirectorySize centralDirectoryOffsetWRTStartingDiskNumber zipFileComment writeCentralDirectoryOffset writeEOCDOffset'
+	classVariableNames: ''
+	poolDictionaries: 'ZipFileConstants'
+	category: 'Compression-Archives'!
+!classDefinition: 'ZipArchive class' category: #'Compression-Archives'!
+ZipArchive class
+	instanceVariableNames: ''!
 
-!ZipArchive commentStamp: '<historical>' prior: 0!
-A ZipArchive represents an archive that is read and/or written using the PKZIP file format.
+!classDefinition: #ArchiveMember category: #'Compression-Archives'!
+Object subclass: #ArchiveMember
+	instanceVariableNames: 'fileName isCorrupt'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Compression-Archives'!
+!classDefinition: 'ArchiveMember class' category: #'Compression-Archives'!
+ArchiveMember class
+	instanceVariableNames: ''!
 
-ZipArchive instances know how to read and write such archives; their members are subinstances of ZipArchiveMember.!
+!classDefinition: #ZipArchiveMember category: #'Compression-Archives'!
+ArchiveMember subclass: #ZipArchiveMember
+	instanceVariableNames: 'lastModFileDateTime fileAttributeFormat versionMadeBy versionNeededToExtract bitFlag compressionMethod desiredCompressionMethod desiredCompressionLevel internalFileAttributes externalFileAttributes cdExtraField localExtraField fileComment crc32 compressedSize uncompressedSize writeLocalHeaderRelativeOffset readDataRemaining'
+	classVariableNames: ''
+	poolDictionaries: 'ZipFileConstants'
+	category: 'Compression-Archives'!
+!classDefinition: 'ZipArchiveMember class' category: #'Compression-Archives'!
+ZipArchiveMember class
+	instanceVariableNames: ''!
 
-!ArchiveMember commentStamp: '<historical>' prior: 0!
-This is the abstract superclass for archive members, which are files or directories stored in archives.!
+!classDefinition: #ZipFileMember category: #'Compression-Archives'!
+ZipArchiveMember subclass: #ZipFileMember
+	instanceVariableNames: 'externalFileName stream localHeaderRelativeOffset dataOffset'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Compression-Archives'!
+!classDefinition: 'ZipFileMember class' category: #'Compression-Archives'!
+ZipFileMember class
+	instanceVariableNames: ''!
 
-!ZipArchiveMember commentStamp: '<historical>' prior: 0!
-Subinstances of me are members in a ZipArchive.
-They represent different data sources:
-	* ZipDirectoryMember -- a directory to be added to a zip file
-	* ZipFileMember -- a file or directory that is already in a zip file
-	* ZipNewFilemember -- a file that is to be added to a zip file
-	* ZipStringMember -- a string that is to be added to a zip file
+!classDefinition: #ZipDirectoryMember category: #'Compression-Archives'!
+ZipFileMember subclass: #ZipDirectoryMember
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Compression-Archives'!
+!classDefinition: 'ZipDirectoryMember class' category: #'Compression-Archives'!
+ZipDirectoryMember class
+	instanceVariableNames: ''!
 
-They can write their data to another stream either copying, compressing,
-or decompressing as desired.!
+!classDefinition: #ZipNewFileMember category: #'Compression-Archives'!
+ZipArchiveMember subclass: #ZipNewFileMember
+	instanceVariableNames: 'externalFileName stream'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Compression-Archives'!
+!classDefinition: 'ZipNewFileMember class' category: #'Compression-Archives'!
+ZipNewFileMember class
+	instanceVariableNames: ''!
 
-!ZipFileMember commentStamp: '<historical>' prior: 0!
-ZipNewFileMember instances are used to represent files that have been read from a ZipArchive.
-Their data stays in the file on disk, so the original Zip file cannot be directly overwritten.!
+!classDefinition: #ZipStringMember category: #'Compression-Archives'!
+ZipArchiveMember subclass: #ZipStringMember
+	instanceVariableNames: 'contents stream'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Compression-Archives'!
+!classDefinition: 'ZipStringMember class' category: #'Compression-Archives'!
+ZipStringMember class
+	instanceVariableNames: ''!
 
-!ZipDirectoryMember commentStamp: '<historical>' prior: 0!
-ZipFileMember instances represent directories inside ZipArchives.
-They don't do much other than hold names and permissions (and extra fields).
-
-You can add files in subdirectories to a ZipArchive without using any ZipDirectoryMembers.!
-
-!ZipNewFileMember commentStamp: '<historical>' prior: 0!
-ZipNewFileMember instances are used to represent files that are going to be written to a ZipArchive.
-Their data comes from external file streams.!
-
-!ZipStringMember commentStamp: '<historical>' prior: 0!
-ZipStringMember instances are used to represent files that are going to be written to a ZipArchive.
-Their data comes from in-image strings, though.!
-
-!GZipSurrogateStream commentStamp: 'jmv 6/17/2015 11:47' prior: 0!
-A pseudo stream that allows SmartRefStream to write directly to a gzipped file. There are some peculiarities of the project exporting process that require:
-
-1. We ignore #close since the file is closed and may be reopened to continue writing. We implement #reallyClose for when we know that all writing is over.
-
-2. We use a BitBlt to write WordArrayForSegment objects. Bit of a hack, but there it is.
-
-| fileStream wa |
-
-wa _ WordArrayForSegment new: 30000.
-1 to: wa size do: [ :i | wa at: i put: i].
-fileStream _ GZipSurrogateStream newFileNamed: 'xxx3.gz' inDirectory: FileDirectory smalltalkImageDirectory.
-fileStream nextPutAll: 'this is a test'.
-fileStream nextPutAll: wa.
-fileStream reallyClose.
-!
 
 !InflateStream commentStamp: '<historical>' prior: 0!
 This class implements the Inflate decompression algorithm as defined by RFC1951 and used in PKZip, GZip and ZLib (and many, many more). It is a variant of the LZ77 compression algorithm described in
@@ -354,6 +297,23 @@ Since Zip archive members keep their expected CRC value separately in Zip header
 
 Instead, if you want the CRC verification to work you have to call #expectedCrc: with the expected CRC-32 value from the Zip member header.!
 
+!GZipSurrogateStream commentStamp: 'jmv 6/17/2015 11:47' prior: 0!
+A pseudo stream that allows SmartRefStream to write directly to a gzipped file. There are some peculiarities of the project exporting process that require:
+
+1. We ignore #close since the file is closed and may be reopened to continue writing. We implement #reallyClose for when we know that all writing is over.
+
+2. We use a BitBlt to write WordArrayForSegment objects. Bit of a hack, but there it is.
+
+| fileStream wa |
+
+wa _ WordArrayForSegment new: 30000.
+1 to: wa size do: [ :i | wa at: i put: i].
+fileStream _ GZipSurrogateStream newFileNamed: 'xxx3.gz' inDirectory: FileDirectory smalltalkImageDirectory.
+fileStream nextPutAll: 'this is a test'.
+fileStream nextPutAll: wa.
+fileStream reallyClose.
+!
+
 !ZipEncoderNode commentStamp: '<historical>' prior: 0!
 ZipEncoderNode represents a node in a huffman tree for encoding ZipStreams.
 
@@ -375,6 +335,46 @@ Instance variables:
 	bitLengths	<WordArray>	 - Bit lengths of each generated code
 	codes		<WordArray>	 - Codes for each value
 	maxCode		<Integer>	- Maximum value with non-zero frequency!
+
+!Archive commentStamp: '<historical>' prior: 0!
+This is the abstract superclass for file archives. Archives can be read from or written to files, and contain members that represent files and directories.!
+
+!ZipArchive commentStamp: '<historical>' prior: 0!
+A ZipArchive represents an archive that is read and/or written using the PKZIP file format.
+
+ZipArchive instances know how to read and write such archives; their members are subinstances of ZipArchiveMember.!
+
+!ArchiveMember commentStamp: '<historical>' prior: 0!
+This is the abstract superclass for archive members, which are files or directories stored in archives.!
+
+!ZipArchiveMember commentStamp: '<historical>' prior: 0!
+Subinstances of me are members in a ZipArchive.
+They represent different data sources:
+	* ZipDirectoryMember -- a directory to be added to a zip file
+	* ZipFileMember -- a file or directory that is already in a zip file
+	* ZipNewFilemember -- a file that is to be added to a zip file
+	* ZipStringMember -- a string that is to be added to a zip file
+
+They can write their data to another stream either copying, compressing,
+or decompressing as desired.!
+
+!ZipFileMember commentStamp: '<historical>' prior: 0!
+ZipNewFileMember instances are used to represent files that have been read from a ZipArchive.
+Their data stays in the file on disk, so the original Zip file cannot be directly overwritten.!
+
+!ZipDirectoryMember commentStamp: '<historical>' prior: 0!
+ZipFileMember instances represent directories inside ZipArchives.
+They don't do much other than hold names and permissions (and extra fields).
+
+You can add files in subdirectories to a ZipArchive without using any ZipDirectoryMembers.!
+
+!ZipNewFileMember commentStamp: '<historical>' prior: 0!
+ZipNewFileMember instances are used to represent files that are going to be written to a ZipArchive.
+Their data comes from external file streams.!
+
+!ZipStringMember commentStamp: '<historical>' prior: 0!
+ZipStringMember instances are used to represent files that are going to be written to a ZipArchive.
+Their data comes from in-image strings, though.!
 
 !CodeFileBrowser class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:55'!
 browseMCZCode: aFileEntry
@@ -463,58 +463,6 @@ serviceCompressFile
 		description: 'compress file'
 		buttonLabel: 'compress'! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:55'!
-browseMCZCode: aFileEntry
-	"Browse the selected file."
-
-	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
-
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 5/31/2016 11:15'!
-installMonticelloPackage: aFileEntry
-	
-	| fullName pkName unzip |
-	fullName _ aFileEntry pathName.
-	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
-	aFileEntry readStreamDo: [ :stream |
-		unzip _ stream asUnZippedStream: 'snapshot/source.st'.
-		unzip ascii.
-		CodePackageFile
-			installFileStream: unzip
-			packageName: pkName
-			fullName: fullName ]! !
-
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/14/2015 17:36'!
-monticelloPackageNameFrom: fullName
-	| localName |
-	localName _ fullName asFileEntry name.
-	^(localName prefixAndSuffix: $-)
-		ifNotNil: [ :ary | ary first ]
-		ifNil: [ localName sansPeriodSuffix ]! !
-
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 7/5/2016 12:29'!
-serviceBrowseMCZCode
-	"Answer a service for opening a changelist browser on a file"
-
-	^ (SimpleServiceEntry 
-		provider: self 
-		label: 'code file browser'
-		selector: #browseMCZCode:
-		description: 'open a "file-contents browser" on this file, allowing you to view and selectively load its code'
-		buttonLabel: 'code')
-			argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
-
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 17:00'!
-serviceInstallMonticelloPackage
-	"Answer the service of installing a Monticello package file (Squeak's compressed chunk format file for a package)"
-
-	^ (SimpleServiceEntry
-		provider: self 
-		label: 'install Monticello package'
-		selector: #installMonticelloPackage:
-		description: 'install the Monticello package, replacing all existing code in the package (if any); create a new change set just for the installation'
-		buttonLabel: 'install package')
-		argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
-
 !ArrayedCollection methodsFor: '*Compression' stamp: 'tk 3/7/2001 18:07'!
 writeOnGZIPByteStream: aStream 
 	"We only intend this for non-pointer arrays.  Do nothing if I contain pointers."
@@ -524,30 +472,13 @@ writeOnGZIPByteStream: aStream
 	
 	aStream nextPutAllWordArray: self! !
 
-!String methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:37'!
+!String methodsFor: '*Compression' stamp: 'jmv 9/5/2016 22:13:54'!
 unzipped
 	|  magic1 magic2 |
-	magic1 _ (self at: 1) asInteger.
-	magic2 _ (self at: 2) asInteger.
+	magic1 _ (self at: 1) numericValue.
+	magic2 _ (self at: 2) numericValue.
 	(magic1 = 16r1F and:[magic2 = 16r8B]) ifFalse: [ ^self ].
 	^ (GZipReadStream on: self) upToEnd! !
-
-!CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:31'!
-browseMCZFile: aFileEntry
-
-	| codeFile organizer browser unzipped |
-	organizer _ SystemOrganizer defaultList: Array new.
-	aFileEntry readStreamDo: [ :stream |
-		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
-		unzipped ascii.
-		codeFile _ (CodeFile new fullName: aFileEntry pathName; buildFrom: unzipped) ].
-	organizer 
-		classifyAll: codeFile classes keys 
-		under: codeFile name.
-	(browser _ CodeFileBrowser new)
-		systemOrganizer: organizer;
-		codeFile: codeFile.
-	CodeFileBrowserWindow open: browser label: nil! !
 
 !PositionableStream methodsFor: '*Compression' stamp: 'jmv 6/10/2013 20:40'!
 asZLibReadStream
@@ -632,6 +563,75 @@ compressFile
 			zipped close.
 			self close ].
 	 ^zipped! !
+
+!CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:31'!
+browseMCZFile: aFileEntry
+
+	| codeFile organizer browser unzipped |
+	organizer _ SystemOrganizer defaultList: Array new.
+	aFileEntry readStreamDo: [ :stream |
+		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
+		unzipped ascii.
+		codeFile _ (CodeFile new fullName: aFileEntry pathName; buildFrom: unzipped) ].
+	organizer 
+		classifyAll: codeFile classes keys 
+		under: codeFile name.
+	(browser _ CodeFileBrowser new)
+		systemOrganizer: organizer;
+		codeFile: codeFile.
+	CodeFileBrowserWindow open: browser label: nil! !
+
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:55'!
+browseMCZCode: aFileEntry
+	"Browse the selected file."
+
+	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
+
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 5/31/2016 11:15'!
+installMonticelloPackage: aFileEntry
+	
+	| fullName pkName unzip |
+	fullName _ aFileEntry pathName.
+	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
+	aFileEntry readStreamDo: [ :stream |
+		unzip _ stream asUnZippedStream: 'snapshot/source.st'.
+		unzip ascii.
+		CodePackageFile
+			installFileStream: unzip
+			packageName: pkName
+			fullName: fullName ]! !
+
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/14/2015 17:36'!
+monticelloPackageNameFrom: fullName
+	| localName |
+	localName _ fullName asFileEntry name.
+	^(localName prefixAndSuffix: $-)
+		ifNotNil: [ :ary | ary first ]
+		ifNil: [ localName sansPeriodSuffix ]! !
+
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 7/5/2016 12:29'!
+serviceBrowseMCZCode
+	"Answer a service for opening a changelist browser on a file"
+
+	^ (SimpleServiceEntry 
+		provider: self 
+		label: 'code file browser'
+		selector: #browseMCZCode:
+		description: 'open a "file-contents browser" on this file, allowing you to view and selectively load its code'
+		buttonLabel: 'code')
+			argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
+
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 17:00'!
+serviceInstallMonticelloPackage
+	"Answer the service of installing a Monticello package file (Squeak's compressed chunk format file for a package)"
+
+	^ (SimpleServiceEntry
+		provider: self 
+		label: 'install Monticello package'
+		selector: #installMonticelloPackage:
+		description: 'install the Monticello package, replacing all existing code in the package (if any); create a new change set just for the installation'
+		buttonLabel: 'install package')
+		argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
 
 !GZipConstants class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 19:00'!
 gzipMagic
@@ -801,1621 +801,6 @@ initialize
 		(ByteArray with: 16r50 with: 16r4B with: 16r03 with: 16r04) asString.
 	EndOfCentralDirectorySignature _
 		(ByteArray with: 16r50 with: 16r4B with: 16r05 with: 16r06) asString.! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 19:09'!
-addDirectory: aFileName
-	^self addDirectory: aFileName as: aFileName
-! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 14:57'!
-addDirectory: aFileName as: anotherFileName
-	| newMember |
-	newMember _ self memberClass newFromDirectory: aFileName.
-	self addMember: newMember.
-	newMember localFileName: anotherFileName.
-	^newMember! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 18:29'!
-addFile: aFileName
-	^self addFile: aFileName as: aFileName! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 15:03'!
-addFile: aFileName as: anotherFileName
-	| newMember |
-	newMember _ self memberClass newFromFile: aFileName.
-	self addMember: newMember.
-	newMember localFileName: anotherFileName.
-	^newMember! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 19:09'!
-addMember: aMember
-	^members addLast: aMember! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 15:03'!
-addString: aString as: aFileName
-	| newMember |
-	newMember _ self memberClass newFromString: aString named: aFileName.
-	self addMember: newMember.
-	newMember localFileName: aFileName.
-	^newMember! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/24/2001 14:12'!
-canWriteToFileNamed: aFileName
-	"Catch attempts to overwrite existing zip file"
-	^(members anySatisfy: [ :ea | ea usesFileNamed: aFileName ]) not.
-! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
-contentsOf: aMemberOrName
-	| member |
-	member _ self member: aMemberOrName.
-	member ifNil: [ ^nil ].
-	^member contents! !
-
-!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:06'!
-extractMember: aMemberOrName
-	| member |
-	member _ self member: aMemberOrName.
-	member ifNil: [ ^nil ].
-	member extractToFileNamed: member localFileName inDirectory: DirectoryEntry currentDirectory! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
-extractMember: aMemberOrName toFileNamed: aFileName
-	| member |
-	member _ self member: aMemberOrName.
-	member ifNil: [ ^nil ].
-	member extractToFileNamed: aFileName! !
-
-!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:06'!
-extractMemberWithoutPath: aMemberOrName
-	self extractMemberWithoutPath: aMemberOrName inDirectory: DirectoryEntry currentDirectory! !
-
-!Archive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:35'!
-extractMemberWithoutPath: aMemberOrName inDirectory: aDirectoryEntry
-	| member |
-	member _ self member: aMemberOrName.
-	member ifNil: [ ^nil ].
-	member extractToFileNamed: member localFileName asFileEntry name inDirectory: aDirectoryEntry! !
-
-!Archive methodsFor: 'initialization' stamp: 'nk 2/21/2001 17:58'!
-initialize
-	members _ OrderedCollection new.! !
-
-!Archive methodsFor: 'private' stamp: 'nk 2/22/2001 07:56'!
-member: aMemberOrName
-	^(members includes: aMemberOrName)
-		ifTrue: [ aMemberOrName ]
-		ifFalse: [ self memberNamed: aMemberOrName ].! !
-
-!Archive methodsFor: 'private' stamp: 'nk 2/21/2001 18:14'!
-memberClass
-	self subclassResponsibility! !
-
-!Archive methodsFor: 'archive operations' stamp: 'jmv 3/2/2010 08:56'!
-memberNamed: aString
-	"Return the first member whose zip name or local file name matches aString, or nil"
-	^members detect: [ :ea | ea fileName = aString or: [ ea localFileName = aString ]] ifNone: nil! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 18:00'!
-memberNames
-	^members collect: [ :ea | ea fileName ]! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 17:58'!
-members
-	^members! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 14:50'!
-membersMatching: aString
-	^members select: [ :ea | (aString match: ea fileName) or: [ aString match: ea localFileName ] ]! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 17:59'!
-numberOfMembers
-	^members size! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
-removeMember: aMemberOrName
-	| member |
-	member _ self member: aMemberOrName.
-	member ifNotNil: [ members remove: member ].
-	^member! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
-replaceMember: aMemberOrName with: newMember
-	| member |
-	member _ self member: aMemberOrName.
-	member ifNotNil: [ members replaceAll: member with: newMember ].
-	^member! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 17:24'!
-setContentsOf: aMemberOrName to: aString
-	| newMember oldMember |
-	oldMember _ self member: aMemberOrName.
-	newMember _ (self memberClass newFromString: aString named: oldMember fileName)
-		copyFrom: oldMember.
-	self replaceMember: oldMember with: newMember.! !
-
-!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 20:58'!
-writeTo: aStream
-	self subclassResponsibility! !
-
-!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:35'!
-writeToFileNamed: aFileName
-
-	"Catch attempts to overwrite existing zip file"
-	(self canWriteToFileNamed: aFileName)
-		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	aFileName asFileEntry writeStreamDo: [ :stream |
-		self writeTo: stream ]! !
-
-!ZipArchive methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:47'!
-close
-	self members do:[:m| m close].! !
-
-!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:38'!
-extractAllTo: aDirectoryEntry
-	"Extract all elements to the given directory"
-	Utilities informUserDuring: [ :bar | self extractAllTo: aDirectoryEntry informing: bar]! !
-
-!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:38'!
-extractAllTo: aDirectoryEntry informing: bar
-	"Extract all elements to the given directory"
-	^self extractAllTo: aDirectoryEntry informing: bar overwrite: false! !
-
-!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/21/2015 12:25'!
-extractAllTo: aDirectory informing: bar overwrite: allOverwrite
-	"Extract all elements to the given directory"
-	| dir overwriteAll response |
-	overwriteAll := allOverwrite.
-	self members do:[:entry|
-		entry isDirectory ifTrue:[
-			bar ifNotNil:[bar value: 'Creating ', entry fileName].
-			dir := (entry fileName findTokens:'/') 
-					inject: aDirectory into:[:base :part| base / part].
-			dir assureExistence.
-		].
-	].
-	self members do:[:entry|
-		entry isDirectory ifFalse:[
-			bar ifNotNil:[bar value: 'Extracting ', entry fileName].
-			response := entry extractInDirectory: aDirectory overwrite: overwriteAll.
-			response == #retryWithOverwrite ifTrue:[
-				overwriteAll := true.
-				response := entry extractInDirectory: aDirectory overwrite: overwriteAll.
-			].
-			response == #abort ifTrue:[^self].
-			response == #failed ifTrue:[
-				(self confirm: 'Failed to extract ', entry fileName, '. Proceed?') ifFalse:[^self].
-			].
-		].
-	].
-! !
-
-!ZipArchive methodsFor: 'initialization' stamp: 'nk 2/22/2001 17:20'!
-initialize
-	super initialize.
-	writeEOCDOffset _ writeCentralDirectoryOffset _ 0.
-	zipFileComment _ ''.
-! !
-
-!ZipArchive methodsFor: 'private' stamp: 'nk 2/21/2001 18:26'!
-memberClass
-	^ZipArchiveMember! !
-
-!ZipArchive methodsFor: 'accessing' stamp: 'nk 3/27/2002 11:23'!
-prependedDataSize
-	"Answer the size of whatever data exists before my first member.
-	Assumes that I was read from a file or stream (i.e. the first member is a ZipFileMember)"
-	^members isEmpty
-		ifFalse: [ members first localHeaderRelativeOffset ]
-		ifTrue: [ centralDirectoryOffsetWRTStartingDiskNumber ]! !
-
-!ZipArchive methodsFor: 'private' stamp: 'jmv 2/26/2016 16:28'!
-readEndOfCentralDirectoryFrom: aStream
-	"Read EOCD, starting from position before signature."
-	| signature zipFileCommentLength |
-	signature _ self readSignatureFrom: aStream.
-	signature = EndOfCentralDirectorySignature ifFalse: [ ^self error: 'bad signature at ', aStream position printString ].
-
-	aStream nextUnsignedInt16BigEndian: false. "# of this disk"
-	aStream nextUnsignedInt16BigEndian: false. "# of disk with central dir start"
-	aStream nextUnsignedInt16BigEndian: false. "# of entries in central dir on this disk"
-	aStream nextUnsignedInt16BigEndian: false. "total # of entries in central dir"
-	centralDirectorySize _ aStream nextUnsignedInt32BigEndian: false. "size of central directory"
-	centralDirectoryOffsetWRTStartingDiskNumber _ aStream nextUnsignedInt32BigEndian: false. "offset of start of central directory"
-	zipFileCommentLength _ aStream nextUnsignedInt16BigEndian: false. "zip file comment"
-	zipFileComment _ aStream next: zipFileCommentLength.
-! !
-
-!ZipArchive methodsFor: 'reading' stamp: 'pb 5/25/2016 01:51'!
-readFrom: aStreamOrFileName
-	| stream name eocdPosition |
-	stream _ (aStreamOrFileName is: #Stream)
-		ifTrue: [name _ aStreamOrFileName name. aStreamOrFileName]
-		ifFalse: [(name _ aStreamOrFileName) asFileEntry readStream].
-	stream binary.
-	eocdPosition _ self class findEndOfCentralDirectoryFrom: stream.
-	eocdPosition <= 0 ifTrue: [self error: 'can''t find EOCD position'].
-	self readEndOfCentralDirectoryFrom: stream.
-	stream position: eocdPosition - centralDirectorySize.
-	self readMembersFrom: stream named: name! !
-
-!ZipArchive methodsFor: 'private' stamp: 'nk 2/23/2001 09:19'!
-readMembersFrom: stream named: fileName
-	| newMember signature |
-	[
-		newMember _ self memberClass newFromZipFile: stream named: fileName.
-		signature _ self readSignatureFrom: stream.
-		signature = EndOfCentralDirectorySignature ifTrue: [ ^self ].
-		signature = CentralDirectoryFileHeaderSignature
-			ifFalse: [ self error: 'bad CD signature at ', (stream position - 4) hex ].
-		newMember readFrom: stream.
-		newMember looksLikeDirectory ifTrue: [ newMember _ newMember asDirectory ].
-		self addMember: newMember.
-	] repeat.! !
-
-!ZipArchive methodsFor: 'private' stamp: 'nk 2/21/2001 20:09'!
-readSignatureFrom: stream
-	"Returns next signature from given stream, leaves stream positioned afterwards."
-
-	| signatureData | 
-	signatureData _ String new: 4.
-	stream next: 4 into: signatureData.
-	({ CentralDirectoryFileHeaderSignature . LocalFileHeaderSignature . EndOfCentralDirectorySignature }
-		includes: signatureData)
-			ifFalse: [ ^self error: 'bad signature ', signatureData asHex, ' at position ', (stream position - 4) asString ].
-	^signatureData
-! !
-
-!ZipArchive methodsFor: 'private' stamp: 'nk 2/21/2001 20:19'!
-writeCentralDirectoryTo: aStream
-	| offset |
-	offset _ writeCentralDirectoryOffset.
-	members do: [ :member |
-		member writeCentralDirectoryFileHeaderTo: aStream.
-		offset _ offset + member centralDirectoryHeaderSize.
-	].
-	writeEOCDOffset _ offset.
-	self writeEndOfCentralDirectoryTo: aStream.
-
-! !
-
-!ZipArchive methodsFor: 'private' stamp: 'jmv 2/26/2016 16:37'!
-writeEndOfCentralDirectoryTo: aStream
-
-	aStream nextPutAll: EndOfCentralDirectorySignature.
-	aStream nextUnsignedInt16Put: 0 bigEndian: false. "diskNumber"
-	aStream nextUnsignedInt16Put: 0 bigEndian: false. "diskNumberWithStartOfCentralDirectory"
-	aStream nextUnsignedInt16Put: members size bigEndian: false. "numberOfCentralDirectoriesOnThisDisk"
-	aStream nextUnsignedInt16Put: members size bigEndian: false. "numberOfCentralDirectories"
-	aStream nextUnsignedInt32Put: writeEOCDOffset - writeCentralDirectoryOffset bigEndian: false. "size of central dir"
-	aStream nextUnsignedInt32Put: writeCentralDirectoryOffset bigEndian: false. "offset of central dir"
-	aStream nextUnsignedInt16Put: zipFileComment size bigEndian: false. "zip file comment"
-	zipFileComment isEmpty ifFalse: [ aStream nextPutAll: zipFileComment ].
-
-! !
-
-!ZipArchive methodsFor: 'writing' stamp: 'nk 2/23/2001 10:29'!
-writeTo: stream
-	stream binary.
-	members do: [ :member |
-		member writeTo: stream.
-		member endRead.
-	].
-	writeCentralDirectoryOffset _ stream position.
-	self writeCentralDirectoryTo: stream.
-	! !
-
-!ZipArchive methodsFor: 'writing' stamp: 'nk 3/27/2002 10:42'!
-writeTo: stream prepending: aString
-	stream binary.
-	stream nextPutAll: aString.
-	members do: [ :member |
-		member writeTo: stream.
-		member endRead.
-	].
-	writeCentralDirectoryOffset _ stream position.
-	self writeCentralDirectoryTo: stream.
-	! !
-
-!ZipArchive methodsFor: 'writing' stamp: 'pb 5/25/2016 01:51'!
-writeTo: stream prependingFileNamed: aFileName
-	| prepended buffer |
-	stream binary.
-	prepended _ aFileName asFileEntry readStream.
-	prepended binary.
-	buffer _ ByteArray new: (prepended size min: 32768).
-	[ prepended atEnd ] whileFalse: [ | bytesRead |
-		bytesRead _ prepended readInto: buffer startingAt: 1 count: buffer size.
-		stream next: bytesRead putAll: buffer startingAt: 1
-	].
-	members do: [ :member |
-		member writeTo: stream.
-		member endRead.
-	].
-	writeCentralDirectoryOffset _ stream position.
-	self writeCentralDirectoryTo: stream.
-	! !
-
-!ZipArchive methodsFor: 'writing' stamp: 'jmv 5/31/2016 11:24'!
-writeToFileNamed: aFileName prepending: aString
-
-	"Catch attempts to overwrite existing zip file"
-	(self canWriteToFileNamed: aFileName)
-		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	aFileName asFileEntry forceWriteStreamDo: [ :stream |
-		self writeTo: stream prepending: aString ]! !
-
-!ZipArchive methodsFor: 'writing' stamp: 'jmv 5/31/2016 11:24'!
-writeToFileNamed: aFileName prependingFileNamed: anotherFileName
-
-	"Catch attempts to overwrite existing zip file"
-	(self canWriteToFileNamed: aFileName)
-		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
-	aFileName asFileEntry forceWriteStreamDo: [ :stream |
-		self writeTo: stream prependingFileNamed: anotherFileName ]! !
-
-!ZipArchive methodsFor: 'accessing' stamp: 'nk 2/24/2001 13:44'!
-zipFileComment
-	^zipFileComment asString! !
-
-!ZipArchive methodsFor: 'accessing' stamp: 'nk 2/24/2001 13:43'!
-zipFileComment: aString
-	zipFileComment _ aString! !
-
-!ZipArchive class methodsFor: 'constants' stamp: 'nk 2/22/2001 14:13'!
-compressionDeflated
-	^CompressionDeflated! !
-
-!ZipArchive class methodsFor: 'constants' stamp: 'nk 2/22/2001 14:12'!
-compressionLevelDefault
-	^CompressionLevelDefault! !
-
-!ZipArchive class methodsFor: 'constants' stamp: 'nk 2/22/2001 14:12'!
-compressionLevelNone
-	^CompressionLevelNone ! !
-
-!ZipArchive class methodsFor: 'constants' stamp: 'nk 2/22/2001 14:13'!
-compressionStored
-	^CompressionStored! !
-
-!ZipArchive class methodsFor: 'file list services' stamp: 'jmv 6/16/2013 19:46'!
-fileReaderServicesForFile: fullName suffix: suffix
-	"FileList buttons that are swe know about."
-
-	suffix = 'mcz'
-		ifTrue: [ ^ {
-			CodePackageFile serviceInstallMonticelloPackage .
-			CodeFileBrowser serviceBrowseMCZCode
-		} ].
-	^#()! !
-
-!ZipArchive class methodsFor: 'constants' stamp: 'jmv 11/2/2010 12:40'!
-findEndOfCentralDirectoryFrom: stream
-	"Seek in the given stream to the end, then read backwards until we find the
-	signature of the central directory record. Leave the file positioned right
-	before the signature.
-
-	Answers the file position of the EOCD, or 0 if not found."
-
-	| data fileLength seekOffset pos maxOffset |
-	stream setToEnd.
-	fileLength _ stream position.
-	"If the file length is less than 18 for the EOCD length plus 4 for the signature, we have a problem"
-	fileLength < 22 ifTrue: [^ self error: 'file is too short'].
-	
-	seekOffset _ 0.
-	pos _ 0.
-	data _ String new: 4100.
-	maxOffset _ 40960 min: fileLength.	"limit search range to 40K"
-
-	[
-		seekOffset _ (seekOffset + 4096) min: fileLength.
-		stream position: fileLength - seekOffset.
-		data _ stream next: (4100 min: seekOffset) into: data startingAt: 1.
-		pos _ self
-			lastIndexOfPKSignature: EndOfCentralDirectorySignature
-			in: data.
-		pos = 0 and: [seekOffset < maxOffset]
-	] whileTrue.
-
-	^ pos > 0
-		ifTrue: [ | newPos | stream position: (newPos _ (stream position + pos - seekOffset - 1)). newPos]
-		ifFalse: [0]! !
-
-!ZipArchive class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 19:44'!
-initialize
-
-	FileList registerFileReader: self 		"For Monticello .mcz support"! !
-
-!ZipArchive class methodsFor: 'file format' stamp: 'pb 5/25/2016 01:51'!
-isZipArchive: aStreamOrFileName
-	"Answer whether the given filename represents a valid zip file."
-
-	| stream eocdPosition |
-	stream _ (aStreamOrFileName is: #Stream)
-		ifTrue: [aStreamOrFileName]
-		ifFalse: [aStreamOrFileName asFileEntry readStream ].
-	stream ifNil: [^ false].
-	"nil happens sometimes somehow"
-	stream size < 22 ifTrue: [^ false].
-	stream binary.
-	eocdPosition _ self findEndOfCentralDirectoryFrom: stream.
-	stream ~= aStreamOrFileName ifTrue: [stream close].
-	^ eocdPosition > 0! !
-
-!ZipArchive class methodsFor: 'constants' stamp: 'ar 9/6/2010 15:28'!
-lastIndexOfPKSignature: aSignature in: data
-	"Answer the last index in data where aSignature (4 bytes long) occurs, or 0 if not found"
-	| a b c d |
-	a := aSignature first.
-	b := aSignature second.
-	c := aSignature third.
-	d := aSignature fourth.
-	(data size - 3) to: 1 by: -1 do: [ :i |
-		(((data at: i) = a)
-			and: [ ((data at: i + 1) = b)
-				and: [ ((data at: i + 2) = c)
-					and: [ ((data at: i + 3) = d) ]]])
-						ifTrue: [ ^i ]
-	].
-	^0! !
-
-!ZipArchive class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 19:44'!
-unload
-
-	FileList unregisterFileReader: self ! !
-
-!ZipArchive class methodsFor: 'constants' stamp: 'ar 2/27/2001 13:38'!
-validSignatures
-	"Return the valid signatures for a zip file"
-	^Array 
-		with: LocalFileHeaderSignature
-		with: CentralDirectoryFileHeaderSignature
-		with: EndOfCentralDirectorySignature! !
-
-!ArchiveMember methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:46'!
-close
-! !
-
-!ArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 16:00'!
-fileName
-	^fileName! !
-
-!ArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 16:00'!
-fileName: aName
-	fileName _ aName! !
-
-!ArchiveMember methodsFor: 'initialization' stamp: 'nk 3/7/2004 16:05'!
-initialize
-	fileName _ ''.
-	isCorrupt _ false.! !
-
-!ArchiveMember methodsFor: 'accessing' stamp: 'nk 3/7/2004 16:16'!
-isCorrupt
-	^isCorrupt ifNil: [ isCorrupt _ false ]! !
-
-!ArchiveMember methodsFor: 'accessing' stamp: 'nk 3/7/2004 16:06'!
-isCorrupt: aBoolean
-	"Mark this member as being corrupt."
-	isCorrupt := aBoolean! !
-
-!ArchiveMember methodsFor: 'accessing' stamp: 'jmv 10/27/2015 18:12'!
-localFileName: aString
-	"Set my internal filename.
-	Returns the (possibly new) filename.
-	aString will be translated from local FS format into Unix format."
-
-	^fileName _ aString copyReplaceAll: '\' with: '/'.! !
-
-!ArchiveMember methodsFor: 'printing' stamp: 'nk 12/20/2002 15:11'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut: $(;
-		nextPutAll: self fileName;
-		nextPut: $)! !
-
-!ArchiveMember methodsFor: 'testing' stamp: 'nk 2/21/2001 19:43'!
-usesFileNamed: aFileName
-	"Do I require aFileName? That is, do I care if it's clobbered?"
-	^false! !
-
-!ArchiveMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/21/2001 18:33'!
-newDirectoryNamed: aString
-	self subclassResponsibility! !
-
-!ArchiveMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/21/2001 18:32'!
-newFromFile: aFileName
-	self subclassResponsibility! !
-
-!ArchiveMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/21/2001 18:32'!
-newFromString: aString
-	self subclassResponsibility! !
-
-!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/21/2001 21:55'!
-asDirectory
-	^ZipDirectoryMember new copyFrom: self! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 09:44'!
-centralDirectoryHeaderSize
-	^ 46 + fileName size + cdExtraField size + fileComment size! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/23/2001 08:00'!
-clearExtraFields
-	cdExtraField _ ''.
-	localExtraField _ ''.! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'ar 2/28/2001 14:01'!
-compressDataTo: aStream
-	"Copy my deflated data to the given stream."
-	| encoder startPos endPos |
-
-	encoder _ ZipWriteStream on: aStream.
-	startPos _ aStream position.
-
-	[ readDataRemaining > 0 ] whileTrue: [ | data |
-		data _ self readRawChunk: (4096 min: readDataRemaining).
-		encoder nextPutAll: data asByteArray.
-		readDataRemaining _ readDataRemaining - data size.
-	].
-	encoder finish. "not close!!"
-	endPos _ aStream position.
-	compressedSize _ endPos - startPos.
-	crc32 _ encoder crc.
-! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:38'!
-compressedSize
-	"Return the compressed size for this member.
-	This will not be set for members that were constructed from strings
-	or external files until after the member has been written."
-	^compressedSize! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/21/2001 22:02'!
-compressionMethod
-	"Returns my compression method. This is the method that is
-	currently being used to compress my data.
-
-	This will be CompressionStored for added string or file members,
-	or CompressionStored or CompressionDeflated (others are possible but not handled)"
-
-	^compressionMethod! !
-
-!ZipArchiveMember methodsFor: 'reading' stamp: 'ar 2/27/2001 14:30'!
-contentStream
-	"Answer my contents as a string."
-	| s |
-	s _ RWBinaryOrTextStream on: (String new: self uncompressedSize).
-	self extractTo: s.
-	^s reset! !
-
-!ZipArchiveMember methodsFor: 'reading' stamp: 'nk 2/24/2001 22:28'!
-contents
-	"Answer my contents as a string."
-	| s |
-	s _ RWBinaryOrTextStream on: (String new: self uncompressedSize).
-	self extractTo: s.
-	s text.
-	^s contents! !
-
-!ZipArchiveMember methodsFor: 'reading' stamp: 'nk 2/24/2001 23:53'!
-contentsFrom: start to: finish
-	"Answer my contents as a string."
-	| s |
-	s _ RWBinaryOrTextStream on: (String new: finish - start + 1).
-	self extractTo: s from: start to: finish.
-	s text.
-	^s contents! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 11:04'!
-copyDataTo: aStream
-
-	compressionMethod = CompressionStored ifTrue: [ ^self copyDataWithCRCTo: aStream ].
-
-	self copyRawDataTo: aStream.! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 3/7/2004 15:42'!
-copyDataWithCRCTo: aStream
-	"Copy my data to aStream. Also set the CRC-32.
-	Only used when compressionMethod = desiredCompressionMethod = CompressionStored"
-
-	uncompressedSize _ compressedSize _ readDataRemaining.
-
-	crc32 _ 16rFFFFFFFF.
-
-	[ readDataRemaining > 0 ] whileTrue: [ | data |
-		data _ self readRawChunk: (4096 min: readDataRemaining).
-		aStream nextPutAll: data.
-		crc32 _ ZipWriteStream updateCrc: crc32 from: 1 to: data size in: data.
-		readDataRemaining _ readDataRemaining - data size.
-	].
-
-	crc32 _ crc32 bitXor: 16rFFFFFFFF.
-! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 11:04'!
-copyRawDataTo: aStream
-
-	[ readDataRemaining > 0 ] whileTrue: [ | data |
-		data _ self readRawChunk: (4096 min: readDataRemaining).
-		aStream nextPutAll: data.
-		readDataRemaining _ readDataRemaining - data size.
-	].
-! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/24/2001 17:57'!
-copyRawDataTo: aStream from: start to: finish
-
-	readDataRemaining _ readDataRemaining min: finish - start + 1.
-
-	self readRawChunk: start - 1.
-
-	[ readDataRemaining > 0 ] whileTrue: [ | data |
-		data _ self readRawChunk: (32768 min: readDataRemaining).
-		aStream nextPutAll: data.
-		readDataRemaining _ readDataRemaining - data size.
-	].
-! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:28'!
-crc32
-	^crc32! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:35'!
-crc32String
-	| hexString |
-	hexString _ crc32 hex.
-	^('00000000' copyFrom: 1 to: 11 - (hexString size)) , (hexString copyFrom: 4 to: hexString size)! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/21/2001 22:10'!
-desiredCompressionLevel
-	^desiredCompressionLevel! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/21/2001 22:14'!
-desiredCompressionLevel: aNumber
-	"Set my desiredCompressionLevel
-	This is the method that will be used to write.
-	Returns prior desiredCompressionLevel.
-
-	Valid arguments are 0 (CompressionLevelNone) through 9,
-	including 6 (CompressionLevelDefault).
-
-	0 (CompressionLevelNone) will change the desiredCompressionMethod
-	to CompressionStored. All other arguments will change the
-	desiredCompressionMethod to CompressionDeflated."
-
-	| old |
-	old _ desiredCompressionLevel.
-	desiredCompressionLevel _ aNumber.
-	desiredCompressionMethod _ (aNumber > 0)
-		ifTrue: [ CompressionDeflated ]
-		ifFalse: [ CompressionStored ].
-	^old! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/21/2001 22:03'!
-desiredCompressionMethod
-	"Get my desiredCompressionMethod.
-	This is the method that will be used to write"
-
-	^desiredCompressionMethod! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/23/2001 11:25'!
-desiredCompressionMethod: aNumber
-	"Set my desiredCompressionMethod
-	This is the method that will be used to write.
-	Answers prior desiredCompressionMethod.
-
-	Only CompressionDeflated or CompressionStored are valid arguments.
-
-	Changing to CompressionStored will change my desiredCompressionLevel
-	to CompressionLevelNone; changing to CompressionDeflated will change my
-	desiredCompressionLevel to CompressionLevelDefault."
-
-	| old |
-	old _ desiredCompressionMethod.
-	desiredCompressionMethod _ aNumber.
-	desiredCompressionLevel _ (aNumber = CompressionDeflated)
-			ifTrue: [ CompressionLevelDefault ]
-			ifFalse: [ CompressionLevelNone ].
-	compressionMethod = CompressionStored ifTrue: [ compressedSize _ uncompressedSize ].
-	^old.! !
-
-!ZipArchiveMember methodsFor: 'private' stamp: 'jmv 2/16/2011 18:29'!
-dosToSqueakTime: dt
-	"DOS years start at 1980, so add 1980."
-	| year mon mday hour min sec date time |
-
-	year := (( dt bitShift: -25 ) bitAnd: 16r7F ).
-	mon := (( dt bitShift: -21 ) bitAnd: 16r0F ).
-	mday := (( dt bitShift: -16 ) bitAnd: 16r1F ).
-	date := Date newDay: mday month: mon year: year+1980.
-
-	hour := (( dt bitShift: -11 ) bitAnd: 16r1F ).
-	min := (( dt bitShift: -5 ) bitAnd: 16r3F ).
-	sec := (( dt bitShift: 1 ) bitAnd: 16r3E ).
-	time := ((( hour * 60 ) + min ) * 60 ) + sec.
-
-	^date secondsSinceSqueakEpoch + time
-
-	! !
-
-!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/23/2001 08:24'!
-endRead
-	readDataRemaining _ 0.! !
-
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 5/31/2016 10:38'!
-extractInDirectory: aDirectoryEntry
-
-	self extractToFileNamed: self localFileName inDirectory: aDirectoryEntry
-! !
-
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/21/2015 12:25'!
-extractInDirectory: aDirectory overwrite: overwriteAll
-	"Extract this entry into the given directory. Answer #okay, #failed, #abort, or #retryWithOverwrite."
-	| path fileDir file index localName |
-	path := fileName findTokens:'/'.
-	localName := path last.
-	fileDir := path allButLast inject: aDirectory into:[:base :part| base / part].
-	fileDir assureExistence.
-	file := [fileDir newFileNamed: localName] on: FileExistsException do:[:ex| ex return: nil].
-	file ifNil:[
-		overwriteAll ifFalse:[
-			[index := (PopUpMenu labelArray:{
-						'Yes, overwrite'. 
-						'No, don''t overwrite'. 
-						'Overwrite ALL files'.
-						'Cancel operation'
-					} lines: #(2)) startUpWithCaption: fileName, ' already exists. Overwrite?'.
-			index == nil] whileTrue.
-			index = 4 ifTrue:[^#abort].
-			index = 3 ifTrue:[^#retryWithOverwrite].
-			index = 2 ifTrue:[^#okay].
-		].
-		file := [fileDir forceNewFileNamed: localName] on: Error do:[:ex| ex return].
-		file ifNil:[^#failed].
-	].
-	self extractTo: file.
-	file close.
-	^#okay! !
-
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'nk 2/22/2001 18:03'!
-extractTo: aStream
-	| oldCompression |
-	self isEncrypted ifTrue: [ self error: 'encryption is unsupported' ].
-	aStream binary.
-	oldCompression _ self desiredCompressionMethod: CompressionStored.
-	self rewindData.
-	self writeDataTo: aStream.
-	self desiredCompressionMethod: oldCompression.
-	self endRead.! !
-
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'nk 2/24/2001 18:03'!
-extractTo: aStream from: start to: finish
-	| oldCompression |
-	self isEncrypted ifTrue: [ self error: 'encryption is unsupported' ].
-	aStream binary.
-	oldCompression _ self desiredCompressionMethod: CompressionStored.
-	self rewindData.
-	self writeDataTo: aStream from: start to: finish.
-	self desiredCompressionMethod: oldCompression.
-	self endRead.! !
-
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'pb 5/25/2016 01:16'!
-extractToFileNamed: aFileName
-
-	self extractToFileNamed: aFileName inDirectory: DirectoryEntry currentDirectory! !
-
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 5/31/2016 11:24'!
-extractToFileNamed: aLocalFileName inDirectory: aDirectoryEntry
-
-	self isEncrypted ifTrue: [ ^self error: 'encryption unsupported' ].
-	self isDirectory
-		ifFalse: [
-			aDirectoryEntry / aLocalFileName forceWriteStreamDo: [ :stream |
-				self extractTo: stream ] ]
-		ifTrue: [
-			(aDirectoryEntry / aLocalFileName) asDirectoryEntry assureExistence ]! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:25'!
-fileComment
-	^fileComment! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:25'!
-fileComment: aString
-	fileComment _ aString! !
-
-!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:40'!
-hasDataDescriptor
-	^ (bitFlag bitAnd: 8)	~= 0 "GPBF_HAS_DATA_DESCRIPTOR_MASK"! !
-
-!ZipArchiveMember methodsFor: 'initialization' stamp: 'nk 2/24/2001 16:16'!
-initialize
-	super initialize.
-	lastModFileDateTime _ 0.
-	fileAttributeFormat _ FaUnix.
-	versionMadeBy _ 20.
-	versionNeededToExtract _ 20.
-	bitFlag _ 0.
-	compressionMethod _ CompressionStored.
-	desiredCompressionMethod _ CompressionDeflated.
-	desiredCompressionLevel _ CompressionLevelDefault.
-	internalFileAttributes _ 0.
-	externalFileAttributes _ 0.
-	fileName _ ''.
-	cdExtraField _ ''.
-	localExtraField _ ''.
-	fileComment _ ''.
-	crc32 _ 0.
-	compressedSize _ 0.
-	uncompressedSize _ 0.
-	self unixFileAttributes: DefaultFilePermissions.! !
-
-!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:00'!
-isDirectory
-	^false! !
-
-!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:39'!
-isEncrypted
-	"Return true if this member is encrypted (this is unsupported)"
-	^ (bitFlag bitAnd: 1) ~= 0! !
-
-!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:41'!
-isTextFile
-	"Returns true if I am a text file.
-	Note that this module does not currently do anything with this flag
-	upon extraction or storage.
-	That is, bytes are stored in native format whether or not they came
-	from a text file."
-	^ (internalFileAttributes bitAnd: 1) ~= 0
-! !
-
-!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:43'!
-isTextFile: aBoolean
-	"Set whether I am a text file.
-	Note that this module does not currently do anything with this flag
-	upon extraction or storage.
-	That is, bytes are stored in native format whether or not they came
-	from a text file."
-	internalFileAttributes _ aBoolean
-		ifTrue: [ internalFileAttributes bitOr: 1 ]
-		ifFalse: [ internalFileAttributes bitAnd: 1 bitInvert ]
-! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'jdr 8/11/2010 10:38'!
-lastModTime
-	"Return my last modification date/time stamp,
-	converted to Squeak seconds"
-
-	^self dosToSqueakTime: lastModFileDateTime! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'jmv 10/27/2015 18:16'!
-localFileName
-	"Answer my fileName in terms of the local directory naming convention"
-	^fileName! !
-
-!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/21/2001 20:38'!
-looksLikeDirectory
-	^false! !
-
-!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/21/2001 23:57'!
-mapPermissionsFromUnix: unixPerms
-	^ unixPerms bitShift: 16.! !
-
-!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/21/2001 23:58'!
-mapPermissionsToUnix: dosPerms
-	^ dosPerms bitShift: -16.! !
-
-!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/22/2001 20:42'!
-readRawChunk: n
-	self subclassResponsibility! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:51'!
-refreshLocalFileHeaderTo: aStream
-	"Re-writes my local header to the given stream.
-	To be called after writing the data stream.
-	Assumes that fileName and localExtraField sizes didn't change since last written."
-
-	| here |
-	here _ aStream position.
-	aStream position: writeLocalHeaderRelativeOffset.
-
-	aStream nextPutAll: LocalFileHeaderSignature.
-	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
-	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
-	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
-	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
-	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
-	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
-												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
-	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
-	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
-	aStream nextUnsignedInt16Put: localExtraField size bigEndian: false.
-
-	aStream position: here! !
-
-!ZipArchiveMember methodsFor: 'private' stamp: 'nk 4/28/2002 21:53'!
-rewindData
-	readDataRemaining _  (desiredCompressionMethod = CompressionDeflated
-		and: [ compressionMethod = CompressionDeflated ])
-			ifTrue: [ compressedSize ]
-			ifFalse: [ uncompressedSize ].
-! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'jdr 8/11/2010 11:08'!
-setLastModFileDateTimeFrom: aSmalltalkTime
-
-	lastModFileDateTime := self squeakToDosTime: aSmalltalkTime! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 11/11/2002 21:03'!
-splitFileName
-	"Answer my name split on slash boundaries. A directory will have a trailing empty string."
-	^ fileName findTokens: '/'.! !
-
-!ZipArchiveMember methodsFor: 'private' stamp: 'jdr 8/11/2010 11:00'!
-squeakToDosTime: secs
-	| dosTime dateTime |
-
-	dateTime := Time dateAndTimeFromSeconds: secs.
-	dosTime := (dateTime second seconds) bitShift: -1.
-	dosTime := dosTime + ((dateTime second minutes) bitShift: 5).
-	dosTime := dosTime + ((dateTime second hours) bitShift: 11).
-	dosTime := dosTime + ((dateTime first dayOfMonth) bitShift: 16).
-	dosTime := dosTime + ((dateTime first monthIndex) bitShift: 21).
-	dosTime := dosTime + (((dateTime first year) - 1980) bitShift: 25).
-	^dosTime
-! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:38'!
-uncompressedSize
-	"Return the uncompressed size for this member."
-	^uncompressedSize! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:18'!
-unixFileAttributes
-	^self mapPermissionsToUnix: externalFileAttributes.! !
-
-!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:24'!
-unixFileAttributes: perms
-	| oldPerms newPerms |
-	oldPerms _ self mapPermissionsToUnix: externalFileAttributes.
-	newPerms _  self isDirectory
-			ifTrue: [ (perms bitAnd: FileAttrib bitInvert) bitOr: DirectoryAttrib ]
-			ifFalse: [ (perms bitAnd: DirectoryAttrib bitInvert) bitOr: FileAttrib ].
-	externalFileAttributes _ self mapPermissionsFromUnix: newPerms.
-	^oldPerms.! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:53'!
-writeCentralDirectoryFileHeaderTo: aStream
-	"C2 v3 V4 v5 V2"
-
-	aStream nextPutAll: CentralDirectoryFileHeaderSignature.
-	aStream nextPut: versionMadeBy.
-	aStream nextPut: fileAttributeFormat.
-
-	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
-	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
-	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
-
-	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
-
-	"These next 3 should have been updated during the write of the data"
-	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
-	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
-												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
-	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
-
-	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
-	aStream nextUnsignedInt16Put: cdExtraField size bigEndian: false.
-	aStream nextUnsignedInt16Put: fileComment size bigEndian: false.
-	aStream nextUnsignedInt16Put: 0 bigEndian: false.		"diskNumberStart"
-	aStream nextUnsignedInt16Put: internalFileAttributes bigEndian: false.
-
-	aStream nextUnsignedInt32Put: externalFileAttributes bigEndian: false.
-	aStream nextUnsignedInt32Put: writeLocalHeaderRelativeOffset bigEndian: false.
-
-	aStream nextPutAll: fileName asByteArray.
-	aStream nextPutAll: cdExtraField asByteArray.
-	aStream nextPutAll: fileComment asByteArray.! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:54'!
-writeDataDescriptorTo: aStream
-	"This writes a data descriptor to the given stream.
-	Assumes that crc32, writeOffset, and uncompressedSize are
-	set correctly (they should be after a write).
-	Further, the local file header should have the
-	GPBF_HAS_DATA_DESCRIPTOR_MASK (8) bit set."
-
-	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
-	aStream nextUnsignedInt32Put: compressedSize bigEndian: false.
-	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'ar 8/10/2010 13:15'!
-writeDataTo: aStream
-	"Copy my (possibly inflated or deflated) data to the given stream.
-	This might do compression, decompression, or straight copying, depending
-	on the values of compressionMethod and desiredCompressionMethod"
-
-	"Note: Do not shortcut this method if uncompressedSize = 0. Even in this case
-	data may be produced by the compressor (i.e., '' zipped size > 0) and must
-	be stored in the file or else other utilities will treat the zip file as corrupt."
-
-	(compressionMethod = CompressionStored and: [ desiredCompressionMethod = CompressionDeflated ])
-		ifTrue: [ ^self compressDataTo: aStream ].
-
-	(compressionMethod = CompressionDeflated and: [ desiredCompressionMethod = CompressionStored ])
-		ifTrue: [ ^self uncompressDataTo: aStream ].
-
-	self copyDataTo: aStream.! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/24/2001 18:01'!
-writeDataTo: aStream from: start to: finish
-	"Copy my (possibly inflated or deflated) data to the given stream.
-	But only the specified byte range.
-	This might do decompression, or straight copying, depending
-	on the values of compressionMethod and desiredCompressionMethod"
-
-	uncompressedSize = 0 ifTrue: [ ^self ].	"nothing to do because no data"
-	start > finish ifTrue: [ ^self ].
-	start > uncompressedSize ifTrue: [ ^self ].
-
-	(compressionMethod = CompressionStored and: [ desiredCompressionMethod = CompressionDeflated ])
-		ifTrue: [ ^self error: 'only supports uncompression or copying right now' ].
-
-	(compressionMethod = CompressionDeflated and: [ desiredCompressionMethod = CompressionStored ])
-		ifTrue: [ ^self uncompressDataTo: aStream from: start to: finish ].
-
-	self copyRawDataTo: aStream from: start to: finish.! !
-
-!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:55'!
-writeLocalFileHeaderTo: aStream
-	"Write my local header to a file handle.
-	Stores the offset to the start of the header in my
-	writeLocalHeaderRelativeOffset member."
-
-	aStream nextPutAll: LocalFileHeaderSignature.
-	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
-	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
-	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
-
-	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
-	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
-	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
-												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
-	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
-
-	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
-	aStream nextUnsignedInt16Put: localExtraField size bigEndian: false.
-
-	aStream nextPutAll: fileName asByteArray.
-	aStream nextPutAll: localExtraField asByteArray! !
-
-!ZipArchiveMember methodsFor: 'writing' stamp: 'nk 2/23/2001 11:28'!
-writeTo: aStream
-	self rewindData.
-	writeLocalHeaderRelativeOffset _ aStream position.
-	self writeLocalFileHeaderTo: aStream.
-	self writeDataTo: aStream.
-	self refreshLocalFileHeaderTo: aStream.! !
-
-!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:27'!
-newFromDirectory: aFileName
-	^ZipDirectoryMember newNamed: aFileName! !
-
-!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:27'!
-newFromFile: aFileName
-	^ZipNewFileMember newNamed: aFileName! !
-
-!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:25'!
-newFromString: aString named: aFileName
-	^ZipStringMember newFrom: aString named: aFileName! !
-
-!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/21/2001 20:40'!
-newFromZipFile: stream named: fileName
-	^ZipFileMember newFrom: stream named: fileName! !
-
-!ZipFileMember methodsFor: 'private-reading' stamp: 'nk 11/11/2002 21:46'!
-canonicalizeFileName
-	"For security reasons, make all paths relative and remove any ../ portions"
-
-	[fileName beginsWith: '/'] whileTrue: [fileName := fileName allButFirst].
-	fileName := fileName copyReplaceAll: '../' with: ''! !
-
-!ZipFileMember methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:46'!
-close
-	stream ifNotNil:[stream close].! !
-
-!ZipFileMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 11:04'!
-copyDataTo: aStream
-
-	self copyRawDataTo: aStream.! !
-
-!ZipFileMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 16:52'!
-initialize
-	super initialize.
-	crc32 _ 0.
-	localHeaderRelativeOffset _ 0.
-	dataOffset _ 0.! !
-
-!ZipFileMember methodsFor: 'private-writing' stamp: 'nk 3/27/2002 11:20'!
-localHeaderRelativeOffset
-	^localHeaderRelativeOffset! !
-
-!ZipFileMember methodsFor: 'testing' stamp: 'nk 2/21/2001 21:52'!
-looksLikeDirectory
-	^fileName last = $/
-		and: [ uncompressedSize = 0 ]! !
-
-!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:30'!
-readCentralDirectoryFileHeaderFrom: aStream
-	"Assumes aStream positioned after signature"
-
-	| fileNameLength extraFieldLength fileCommentLength |
-
-	versionMadeBy _ aStream next.
-	fileAttributeFormat _ aStream next.
-
-	versionNeededToExtract _ aStream nextUnsignedInt16BigEndian: false.
-	bitFlag _ aStream nextUnsignedInt16BigEndian: false.
-	compressionMethod _ aStream nextUnsignedInt16BigEndian: false.
-
-	lastModFileDateTime _ aStream nextUnsignedInt32BigEndian: false.
-	crc32 _ aStream nextUnsignedInt32BigEndian: false.
-	compressedSize _ aStream nextUnsignedInt32BigEndian: false.
-	uncompressedSize _ aStream nextUnsignedInt32BigEndian: false.
-
-	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
-	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
-	fileCommentLength _ aStream nextUnsignedInt16BigEndian: false.
-	aStream nextUnsignedInt16BigEndian: false. 	"disk number start"
-	internalFileAttributes _ aStream nextUnsignedInt16BigEndian: false.
-
-	externalFileAttributes _ aStream nextUnsignedInt32BigEndian: false.
-	localHeaderRelativeOffset _ aStream nextUnsignedInt32BigEndian: false.
-
-	fileName _ (aStream next: fileNameLength) asString.
-	cdExtraField _ (aStream next: extraFieldLength) asByteArray.
-	fileComment _ (aStream next: fileCommentLength) asString.
-
-	self desiredCompressionMethod: compressionMethod! !
-
-!ZipFileMember methodsFor: 'private-reading' stamp: 'nk 11/11/2002 21:48'!
-readFrom: aStream 
-	"assumes aStream positioned after CD header; leaves stream positioned after my CD entry"
-
-	self readCentralDirectoryFileHeaderFrom: aStream.
-	self readLocalDirectoryFileHeaderFrom: aStream.
-	self endRead.
-	self canonicalizeFileName.
-! !
-
-!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:31'!
-readLocalDirectoryFileHeaderFrom: aStream 
-	"Positions stream as necessary. Will return stream to its original position"
-
-	| fileNameLength extraFieldLength xcrc32 xcompressedSize xuncompressedSize sig oldPos |
-
-	oldPos _ aStream position.
-
-	aStream position: localHeaderRelativeOffset.
-
-	sig _ aStream next: 4.
-	sig = LocalFileHeaderSignature asByteArray
-		ifFalse: [ aStream position: oldPos.
-				^self error: 'bad LH signature at ', localHeaderRelativeOffset hex ].
-
-	versionNeededToExtract _ aStream nextUnsignedInt16BigEndian: false.
-	bitFlag _ aStream nextUnsignedInt16BigEndian: false.
-	compressionMethod _ aStream nextUnsignedInt16BigEndian: false.
-
-	lastModFileDateTime _ aStream nextUnsignedInt32BigEndian: false.
-	xcrc32 _ aStream nextUnsignedInt32BigEndian: false.
-	xcompressedSize _ aStream nextUnsignedInt32BigEndian: false.
-	xuncompressedSize _ aStream nextUnsignedInt32BigEndian: false.
-
-	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
-	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
-
-	fileName _ (aStream next: fileNameLength) asString.
-	localExtraField _ (aStream next: extraFieldLength) asByteArray.
-
-	dataOffset _ aStream position.
-
-	"Don't trash these fields if we already got them from the central directory"
-	self hasDataDescriptor ifFalse: [
-		crc32 _ xcrc32.
-		compressedSize _ xcompressedSize.
-		uncompressedSize _ xuncompressedSize.
-	].
-
-	aStream position: oldPos.! !
-
-!ZipFileMember methodsFor: 'private-reading' stamp: 'nk 2/22/2001 20:46'!
-readRawChunk: n
-	^stream next: n! !
-
-!ZipFileMember methodsFor: 'private-reading' stamp: 'nk 2/23/2001 09:56'!
-rewindData
-	super rewindData.
-	(stream isNil or: [ stream closed ])
-		ifTrue: [ self error: 'stream missing or closed' ].
-	stream position: (localHeaderRelativeOffset + 4).
-	self skipLocalDirectoryFileHeaderFrom: stream.! !
-
-!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:31'!
-skipLocalDirectoryFileHeaderFrom: aStream 
-	"Assumes that stream is positioned after signature."
-
-	|  extraFieldLength fileNameLength |
-	aStream next: 22.
-	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
-	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
-	aStream next: fileNameLength.
-	aStream next: extraFieldLength.
-	dataOffset _ aStream position! !
-
-!ZipFileMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 16:51'!
-stream: aStream externalFileName: aFileName
-	stream _ aStream.
-	externalFileName _ aFileName.! !
-
-!ZipFileMember methodsFor: 'private-writing' stamp: 'nk 3/7/2004 16:08'!
-uncompressDataTo: aStream
-
-	| decoder buffer chunkSize crcErrorMessage |
-	decoder _ ZipReadStream on: stream.
-	decoder expectedCrc: self crc32.
-	buffer _ ByteArray new: (32768 min: readDataRemaining).
-	crcErrorMessage _ nil.
-
-	[[ readDataRemaining > 0 ] whileTrue: [
-		chunkSize _ 32768 min: readDataRemaining.
-		buffer _ decoder next: chunkSize into: buffer startingAt: 1.
-		aStream next: chunkSize putAll: buffer startingAt: 1.
-		readDataRemaining _ readDataRemaining - chunkSize.
-	]] on: CRCError do: [ :ex | crcErrorMessage _ ex messageText. ex proceed ].
-
-	crcErrorMessage ifNotNil: [ self isCorrupt: true. CRCError signal: crcErrorMessage ]
-
-! !
-
-!ZipFileMember methodsFor: 'private-writing' stamp: 'nk 2/24/2001 17:52'!
-uncompressDataTo: aStream from: start to: finish
-
-	| decoder buffer chunkSize |
-	decoder _ FastInflateStream on: stream.
-	readDataRemaining _ readDataRemaining min: finish - start + 1.
-	buffer _ ByteArray new: (32768 min: readDataRemaining).
-	decoder next: start - 1.
-
-	[ readDataRemaining > 0 ] whileTrue: [
-		chunkSize _ 32768 min: readDataRemaining.
-		buffer _ decoder next: chunkSize into: buffer startingAt: 1.
-		aStream next: chunkSize putAll: buffer startingAt: 1.
-		readDataRemaining _ readDataRemaining - chunkSize.
-	].
-! !
-
-!ZipFileMember methodsFor: 'testing' stamp: 'jmv 10/14/2015 17:28'!
-usesFileNamed: aFileName
-	"Do I require aFileName? That is, do I care if it's clobbered?"
-
-	^externalFileName asFileEntry = aFileName asFileEntry! !
-
-!ZipFileMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/22/2001 17:31'!
-newFrom: stream named: fileName
-	^(self new) stream: stream externalFileName: fileName! !
-
-!ZipDirectoryMember methodsFor: 'private' stamp: 'nk 2/21/2001 21:55'!
-asDirectory
-	^self! !
-
-!ZipDirectoryMember methodsFor: 'accessing' stamp: 'nk 2/23/2001 10:00'!
-desiredCompressionMethod: aNumber! !
-
-!ZipDirectoryMember methodsFor: 'initialization' stamp: 'nk 2/23/2001 10:01'!
-initialize
-	super initialize.
-	super desiredCompressionMethod: CompressionStored.! !
-
-!ZipDirectoryMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:00'!
-isDirectory
-	^true! !
-
-!ZipDirectoryMember methodsFor: 'accessing' stamp: 'jmv 10/14/2015 17:34'!
-localFileName: aString
-	| fe |
-	super localFileName: aString.
-	fileName last = $/ ifFalse: [ fileName _ fileName, '/' ].
-	fe _ fileName asDirectoryEntry.
-	fe exists ifTrue: [
-		self setLastModFileDateTimeFrom: fe modificationTime ]! !
-
-!ZipDirectoryMember methodsFor: 'private' stamp: 'nk 3/27/2002 11:30'!
-rewindData! !
-
-!ZipDirectoryMember methodsFor: 'testing' stamp: 'nk 3/27/2002 11:29'!
-usesFileNamed: aName
-	^false! !
-
-!ZipDirectoryMember methodsFor: 'private' stamp: 'cmm 9/16/2010 18:59'!
-writeDataTo: aStream
-       "Write nothing. Directories have no contents to write."! !
-
-!ZipDirectoryMember class methodsFor: 'as yet unclassified' stamp: 'nk 12/20/2002 14:57'!
-newNamed: aFileName
-	^(self new) localFileName: aFileName; yourself! !
-
-!ZipNewFileMember methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:50'!
-close
-	stream ifNotNil:[stream close].! !
-
-!ZipNewFileMember methodsFor: 'initialization' stamp: 'pb 5/25/2016 01:51'!
-from: aFileName
-	| entry |
-	compressionMethod _ CompressionStored.
-	"Now get the size, attributes, and timestamps, and see if the file exists"
-	stream _ aFileName asFileEntry readStream.
-	self localFileName: (externalFileName _ stream name).
-	entry _ aFileName asFileEntry.
-	compressedSize _ uncompressedSize _ entry fileSize.
-	desiredCompressionMethod _ compressedSize > 0 ifTrue: [ CompressionDeflated ] ifFalse: [ CompressionStored ].
-	self setLastModFileDateTimeFrom: entry modificationTime
-! !
-
-!ZipNewFileMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 16:56'!
-initialize
-	super initialize.
-	externalFileName _ ''.! !
-
-!ZipNewFileMember methodsFor: 'private' stamp: 'nk 2/22/2001 20:48'!
-readRawChunk: n
-	^stream next: n! !
-
-!ZipNewFileMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 09:58'!
-rewindData
-	super rewindData.
-	readDataRemaining _ stream size.
-	stream position: 0.! !
-
-!ZipNewFileMember methodsFor: 'testing' stamp: 'jmv 10/14/2015 17:28'!
-usesFileNamed: aFileName
-	"Do I require aFileName? That is, do I care if it's clobbered?"
-
-	^externalFileName asFileEntry = aFileName asFileEntry! !
-
-!ZipNewFileMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:27'!
-newNamed: aFileName
-	^(self new) from: aFileName! !
-
-!ZipStringMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 16:47'!
-contents
-	^contents! !
-
-!ZipStringMember methodsFor: 'initialization' stamp: 'jmv 4/17/2013 11:57'!
-contents: aString
-	contents _ aString.
-	compressedSize _ uncompressedSize _ aString size.
-	"set the file date to now"
-	self setLastModFileDateTimeFrom: Time localSecondClock! !
-
-!ZipStringMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 20:50'!
-initialize
-	super initialize.
-	self contents: ''.
-	compressionMethod _ desiredCompressionMethod _ CompressionStored.
-! !
-
-!ZipStringMember methodsFor: 'private' stamp: 'nk 2/22/2001 20:51'!
-readRawChunk: n
-	^stream next: n! !
-
-!ZipStringMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 10:28'!
-rewindData
-	super rewindData.
-	stream _ ReadStream on: contents.
-	readDataRemaining _ contents size.! !
-
-!ZipStringMember class methodsFor: 'as yet unclassified' stamp: 'nk 12/20/2002 15:06'!
-newFrom: aString named: aFileName
-	^(self new) contents: aString; localFileName: aFileName; yourself! !
-
-!CRCError methodsFor: 'as yet unclassified' stamp: 'nk 3/7/2004 15:56'!
-isResumable
-	^true! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:41'!
-ascii
-
-	self bufferStream ascii! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:42'!
-binary
-
-	self bufferStream binary! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:43'!
-bufferStream
-
-	^bufferStream ifNil: [bufferStream _ RWBinaryOrTextStream on: (ByteArray new: 5000)].
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 09:26'!
-close
-	
-	"we don't want to until user is really done"
-	
-
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:26'!
-closed
-
-	^false! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:18'!
-fileOutClass: extraClass andObject: theObject
-	"Write a file that has both the source code for the named class and an object as bits.  Any instance-specific object will get its class written automatically."
-
-	| class srefStream |
-
-	self timeStamp.
-
-	extraClass ifNotNil: [
-		class _ extraClass.	"A specific class the user wants written"
-		class sharedPools size > 0 ifTrue: [
-			class shouldFileOutPools ifTrue: [class fileOutSharedPoolsOn: self]
-		].
-		class fileOutOn: self moveSource: false toFile: 0
-	].
-
-	"Append the object's raw data"
-	srefStream _ SmartRefStream on: self.
-	srefStream nextPut: theObject.  "and all subobjects"
-	srefStream close.		"also closes me - well it thinks it does, anyway"
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:16'!
-flushBuffer
-
-	| data |
-	bufferStream ifNil: [^self].
-	data _ bufferStream contents asByteArray.
-	gZipStream nextPutAll: data.
-	positionThusFar _ positionThusFar + data size.
-	bufferStream _ nil.
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 3/13/2012 12:12'!
-newLine
-	"Append a newLine character to the receiver.
-	The Cuis convention is to use lf on output."
-
-	self bufferStream newLine! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 09:23'!
-next
-
-	^self bufferStream next! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:42'!
-nextChunkPut: aString
-
-	self bufferStream nextChunkPut: aString! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:41'!
-nextPut: aByte
-
-	^self bufferStream nextPut: aByte
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:24'!
-nextPutAll: aString
-
-	^aString writeOnGZIPByteStream: self
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:41'!
-nextPutAllBytes: aString
-
-	^self bufferStream nextPutAll: aString
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 7/11/2000 11:36'!
-nextPutAllWordArray: aWordArray
-
-	| ba hackwa hackba blt rowsAtATime sourceOrigin rowsRemaining |
-
-	self flag: #bob.		"do we need to be concerned by bytesPerElement??"
-	ba _ nil.
-	rowsAtATime _ 2000.		"or 8000 bytes"
-	hackwa _ Form new hackBits: aWordArray.
-	sourceOrigin _ 0@0.
-	[(rowsRemaining _ hackwa height - sourceOrigin y) > 0] whileTrue: [
-		rowsAtATime _ rowsAtATime min: rowsRemaining.
-		(ba isNil or: [ba size ~= (rowsAtATime * 4)]) ifTrue: [
-			ba _ ByteArray new: rowsAtATime * 4.
-			hackba _ Form new hackBits: ba.
-			blt _ (BitBlt toForm: hackba) sourceForm: hackwa.
-		].
-		blt 
-			combinationRule: Form over;
-			sourceOrigin: sourceOrigin;
-			destX: 0 destY: 0 width: 4 height: rowsAtATime;
-			copyBits.
-		self bufferStream nextPutAll: ba.
-		self flushBuffer.
-		sourceOrigin _ sourceOrigin x @ (sourceOrigin y + rowsAtATime).
-	].
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 2/26/2016 16:19'!
-nextSignedInt32Put: int32 bigEndian: bigEndian
-
-	^self bufferStream nextSignedInt32Put: int32 bigEndian: bigEndian! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/22/2000 18:42'!
-nextStringPut: s 
-	"Append the string, s, to the receiver.  Only used by DataStream.  Max size of 64*256*256*256."
-
-	| length |
-	(length _ s size) < 192
-		ifTrue: [self nextPut: length]
-		ifFalse: 
-			[self nextPut: (length digitAt: 4)+192.
-			self nextPut: (length digitAt: 3).
-			self nextPut: (length digitAt: 2).
-			self nextPut: (length digitAt: 1)].
-	self nextPutAll: s.
-	^s! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'ar 5/17/2001 19:08'!
-nextWordsPutAll: aCollection
-	"Write the argument a word-like object in big endian format on the receiver.
-	May be used to write other than plain word-like objects (such as ColorArray)."
-	^self nextPutAllWordArray: aCollection! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 7/11/2000 11:22'!
-originalContents
-
-	^''		"used only to determine if we are byte-structured"! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:26'!
-padToEndWith: aChar
-	"We don't have pages, so we are at the end, and don't need to pad."! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:12'!
-position
-
-	^self bufferStream position + positionThusFar! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:13'!
-reallyClose
-
-	self flushBuffer.
-	gZipStream close.
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:30'!
-reopen
-
-	"ignore"! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:30'!
-setToEnd
-
-	"ignore"! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 09:21'!
-skip: aNumber
-
-	^self bufferStream skip: aNumber
-! !
-
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 3/13/2012 12:35'!
-timeStamp
-	"Append the current time to the receiver as a String."
-	self bufferStream nextChunkPut:	"double string quotes and !!s"
-		(String streamContents: [:s | Smalltalk timeStamp: s]) printString.
-	self bufferStream newLine! !
 
 !InflateStream methodsFor: 'testing' stamp: 'jmv 3/1/2010 11:28'!
 atEnd
@@ -4551,6 +2936,205 @@ sendBlock: literalStream with: distanceStream with: litTree with: distTree
 	self nextBits: (litTree bitLengthAt: EndBlock) put: (litTree codeAt: EndBlock).
 	^result! !
 
+!CRCError methodsFor: 'as yet unclassified' stamp: 'nk 3/7/2004 15:56'!
+isResumable
+	^true! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:41'!
+ascii
+
+	self bufferStream ascii! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:42'!
+binary
+
+	self bufferStream binary! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:43'!
+bufferStream
+
+	^bufferStream ifNil: [bufferStream _ RWBinaryOrTextStream on: (ByteArray new: 5000)].
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 09:26'!
+close
+	
+	"we don't want to until user is really done"
+	
+
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:26'!
+closed
+
+	^false! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:18'!
+fileOutClass: extraClass andObject: theObject
+	"Write a file that has both the source code for the named class and an object as bits.  Any instance-specific object will get its class written automatically."
+
+	| class srefStream |
+
+	self timeStamp.
+
+	extraClass ifNotNil: [
+		class _ extraClass.	"A specific class the user wants written"
+		class sharedPools size > 0 ifTrue: [
+			class shouldFileOutPools ifTrue: [class fileOutSharedPoolsOn: self]
+		].
+		class fileOutOn: self moveSource: false toFile: 0
+	].
+
+	"Append the object's raw data"
+	srefStream _ SmartRefStream on: self.
+	srefStream nextPut: theObject.  "and all subobjects"
+	srefStream close.		"also closes me - well it thinks it does, anyway"
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:16'!
+flushBuffer
+
+	| data |
+	bufferStream ifNil: [^self].
+	data _ bufferStream contents asByteArray.
+	gZipStream nextPutAll: data.
+	positionThusFar _ positionThusFar + data size.
+	bufferStream _ nil.
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 3/13/2012 12:12'!
+newLine
+	"Append a newLine character to the receiver.
+	The Cuis convention is to use lf on output."
+
+	self bufferStream newLine! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 09:23'!
+next
+
+	^self bufferStream next! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:42'!
+nextChunkPut: aString
+
+	self bufferStream nextChunkPut: aString! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:41'!
+nextPut: aByte
+
+	^self bufferStream nextPut: aByte
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:24'!
+nextPutAll: aString
+
+	^aString writeOnGZIPByteStream: self
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:41'!
+nextPutAllBytes: aString
+
+	^self bufferStream nextPutAll: aString
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 7/11/2000 11:36'!
+nextPutAllWordArray: aWordArray
+
+	| ba hackwa hackba blt rowsAtATime sourceOrigin rowsRemaining |
+
+	self flag: #bob.		"do we need to be concerned by bytesPerElement??"
+	ba _ nil.
+	rowsAtATime _ 2000.		"or 8000 bytes"
+	hackwa _ Form new hackBits: aWordArray.
+	sourceOrigin _ 0@0.
+	[(rowsRemaining _ hackwa height - sourceOrigin y) > 0] whileTrue: [
+		rowsAtATime _ rowsAtATime min: rowsRemaining.
+		(ba isNil or: [ba size ~= (rowsAtATime * 4)]) ifTrue: [
+			ba _ ByteArray new: rowsAtATime * 4.
+			hackba _ Form new hackBits: ba.
+			blt _ (BitBlt toForm: hackba) sourceForm: hackwa.
+		].
+		blt 
+			combinationRule: Form over;
+			sourceOrigin: sourceOrigin;
+			destX: 0 destY: 0 width: 4 height: rowsAtATime;
+			copyBits.
+		self bufferStream nextPutAll: ba.
+		self flushBuffer.
+		sourceOrigin _ sourceOrigin x @ (sourceOrigin y + rowsAtATime).
+	].
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 2/26/2016 16:19'!
+nextSignedInt32Put: int32 bigEndian: bigEndian
+
+	^self bufferStream nextSignedInt32Put: int32 bigEndian: bigEndian! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/22/2000 18:42'!
+nextStringPut: s 
+	"Append the string, s, to the receiver.  Only used by DataStream.  Max size of 64*256*256*256."
+
+	| length |
+	(length _ s size) < 192
+		ifTrue: [self nextPut: length]
+		ifFalse: 
+			[self nextPut: (length digitAt: 4)+192.
+			self nextPut: (length digitAt: 3).
+			self nextPut: (length digitAt: 2).
+			self nextPut: (length digitAt: 1)].
+	self nextPutAll: s.
+	^s! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'ar 5/17/2001 19:08'!
+nextWordsPutAll: aCollection
+	"Write the argument a word-like object in big endian format on the receiver.
+	May be used to write other than plain word-like objects (such as ColorArray)."
+	^self nextPutAllWordArray: aCollection! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 7/11/2000 11:22'!
+originalContents
+
+	^''		"used only to determine if we are byte-structured"! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:26'!
+padToEndWith: aChar
+	"We don't have pages, so we are at the end, and don't need to pad."! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:12'!
+position
+
+	^self bufferStream position + positionThusFar! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:13'!
+reallyClose
+
+	self flushBuffer.
+	gZipStream close.
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:30'!
+reopen
+
+	"ignore"! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:30'!
+setToEnd
+
+	"ignore"! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 09:21'!
+skip: aNumber
+
+	^self bufferStream skip: aNumber
+! !
+
+!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'jmv 3/13/2012 12:35'!
+timeStamp
+	"Append the current time to the receiver as a String."
+	self bufferStream nextChunkPut:	"double string quotes and !!s"
+		(String streamContents: [:s | Smalltalk timeStamp: s]) printString.
+	self bufferStream newLine! !
+
 !ZipEncoderNode methodsFor: 'accessing' stamp: 'ar 12/25/1999 19:41'!
 bitLength
 	^bitLength ifNil:[0]! !
@@ -4843,12 +3427,1428 @@ setValuesFrom: nodeList
 !ZipEncoderTree class methodsFor: 'instance creation' stamp: 'ar 12/30/1999 01:25'!
 buildTreeFrom: frequencies maxDepth: depth
 	^self new buildTreeFrom: frequencies maxDepth: depth! !
-ZipArchive initialize!
-GZipConstants initialize!
-ZipConstants initialize!
-ZipFileConstants initialize!
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 19:09'!
+addDirectory: aFileName
+	^self addDirectory: aFileName as: aFileName
+! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 14:57'!
+addDirectory: aFileName as: anotherFileName
+	| newMember |
+	newMember _ self memberClass newFromDirectory: aFileName.
+	self addMember: newMember.
+	newMember localFileName: anotherFileName.
+	^newMember! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 18:29'!
+addFile: aFileName
+	^self addFile: aFileName as: aFileName! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 15:03'!
+addFile: aFileName as: anotherFileName
+	| newMember |
+	newMember _ self memberClass newFromFile: aFileName.
+	self addMember: newMember.
+	newMember localFileName: anotherFileName.
+	^newMember! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 19:09'!
+addMember: aMember
+	^members addLast: aMember! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 15:03'!
+addString: aString as: aFileName
+	| newMember |
+	newMember _ self memberClass newFromString: aString named: aFileName.
+	self addMember: newMember.
+	newMember localFileName: aFileName.
+	^newMember! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/24/2001 14:12'!
+canWriteToFileNamed: aFileName
+	"Catch attempts to overwrite existing zip file"
+	^(members anySatisfy: [ :ea | ea usesFileNamed: aFileName ]) not.
+! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
+contentsOf: aMemberOrName
+	| member |
+	member _ self member: aMemberOrName.
+	member ifNil: [ ^nil ].
+	^member contents! !
+
+!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:06'!
+extractMember: aMemberOrName
+	| member |
+	member _ self member: aMemberOrName.
+	member ifNil: [ ^nil ].
+	member extractToFileNamed: member localFileName inDirectory: DirectoryEntry currentDirectory! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
+extractMember: aMemberOrName toFileNamed: aFileName
+	| member |
+	member _ self member: aMemberOrName.
+	member ifNil: [ ^nil ].
+	member extractToFileNamed: aFileName! !
+
+!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:06'!
+extractMemberWithoutPath: aMemberOrName
+	self extractMemberWithoutPath: aMemberOrName inDirectory: DirectoryEntry currentDirectory! !
+
+!Archive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:35'!
+extractMemberWithoutPath: aMemberOrName inDirectory: aDirectoryEntry
+	| member |
+	member _ self member: aMemberOrName.
+	member ifNil: [ ^nil ].
+	member extractToFileNamed: member localFileName asFileEntry name inDirectory: aDirectoryEntry! !
+
+!Archive methodsFor: 'initialization' stamp: 'nk 2/21/2001 17:58'!
+initialize
+	members _ OrderedCollection new.! !
+
+!Archive methodsFor: 'private' stamp: 'nk 2/22/2001 07:56'!
+member: aMemberOrName
+	^(members includes: aMemberOrName)
+		ifTrue: [ aMemberOrName ]
+		ifFalse: [ self memberNamed: aMemberOrName ].! !
+
+!Archive methodsFor: 'private' stamp: 'nk 2/21/2001 18:14'!
+memberClass
+	self subclassResponsibility! !
+
+!Archive methodsFor: 'archive operations' stamp: 'jmv 3/2/2010 08:56'!
+memberNamed: aString
+	"Return the first member whose zip name or local file name matches aString, or nil"
+	^members detect: [ :ea | ea fileName = aString or: [ ea localFileName = aString ]] ifNone: nil! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 18:00'!
+memberNames
+	^members collect: [ :ea | ea fileName ]! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 17:58'!
+members
+	^members! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 12/20/2002 14:50'!
+membersMatching: aString
+	^members select: [ :ea | (aString match: ea fileName) or: [ aString match: ea localFileName ] ]! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 17:59'!
+numberOfMembers
+	^members size! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
+removeMember: aMemberOrName
+	| member |
+	member _ self member: aMemberOrName.
+	member ifNotNil: [ members remove: member ].
+	^member! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 07:57'!
+replaceMember: aMemberOrName with: newMember
+	| member |
+	member _ self member: aMemberOrName.
+	member ifNotNil: [ members replaceAll: member with: newMember ].
+	^member! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/22/2001 17:24'!
+setContentsOf: aMemberOrName to: aString
+	| newMember oldMember |
+	oldMember _ self member: aMemberOrName.
+	newMember _ (self memberClass newFromString: aString named: oldMember fileName)
+		copyFrom: oldMember.
+	self replaceMember: oldMember with: newMember.! !
+
+!Archive methodsFor: 'archive operations' stamp: 'nk 2/21/2001 20:58'!
+writeTo: aStream
+	self subclassResponsibility! !
+
+!Archive methodsFor: 'archive operations' stamp: 'pb 5/25/2016 01:35'!
+writeToFileNamed: aFileName
+
+	"Catch attempts to overwrite existing zip file"
+	(self canWriteToFileNamed: aFileName)
+		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
+	aFileName asFileEntry writeStreamDo: [ :stream |
+		self writeTo: stream ]! !
+
+!ZipArchive methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:47'!
+close
+	self members do:[:m| m close].! !
+
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:38'!
+extractAllTo: aDirectoryEntry
+	"Extract all elements to the given directory"
+	Utilities informUserDuring: [ :bar | self extractAllTo: aDirectoryEntry informing: bar]! !
+
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:38'!
+extractAllTo: aDirectoryEntry informing: bar
+	"Extract all elements to the given directory"
+	^self extractAllTo: aDirectoryEntry informing: bar overwrite: false! !
+
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/21/2015 12:25'!
+extractAllTo: aDirectory informing: bar overwrite: allOverwrite
+	"Extract all elements to the given directory"
+	| dir overwriteAll response |
+	overwriteAll := allOverwrite.
+	self members do:[:entry|
+		entry isDirectory ifTrue:[
+			bar ifNotNil:[bar value: 'Creating ', entry fileName].
+			dir := (entry fileName findTokens:'/') 
+					inject: aDirectory into:[:base :part| base / part].
+			dir assureExistence.
+		].
+	].
+	self members do:[:entry|
+		entry isDirectory ifFalse:[
+			bar ifNotNil:[bar value: 'Extracting ', entry fileName].
+			response := entry extractInDirectory: aDirectory overwrite: overwriteAll.
+			response == #retryWithOverwrite ifTrue:[
+				overwriteAll := true.
+				response := entry extractInDirectory: aDirectory overwrite: overwriteAll.
+			].
+			response == #abort ifTrue:[^self].
+			response == #failed ifTrue:[
+				(self confirm: 'Failed to extract ', entry fileName, '. Proceed?') ifFalse:[^self].
+			].
+		].
+	].
+! !
+
+!ZipArchive methodsFor: 'initialization' stamp: 'nk 2/22/2001 17:20'!
+initialize
+	super initialize.
+	writeEOCDOffset _ writeCentralDirectoryOffset _ 0.
+	zipFileComment _ ''.
+! !
+
+!ZipArchive methodsFor: 'private' stamp: 'nk 2/21/2001 18:26'!
+memberClass
+	^ZipArchiveMember! !
+
+!ZipArchive methodsFor: 'accessing' stamp: 'nk 3/27/2002 11:23'!
+prependedDataSize
+	"Answer the size of whatever data exists before my first member.
+	Assumes that I was read from a file or stream (i.e. the first member is a ZipFileMember)"
+	^members isEmpty
+		ifFalse: [ members first localHeaderRelativeOffset ]
+		ifTrue: [ centralDirectoryOffsetWRTStartingDiskNumber ]! !
+
+!ZipArchive methodsFor: 'private' stamp: 'jmv 2/26/2016 16:28'!
+readEndOfCentralDirectoryFrom: aStream
+	"Read EOCD, starting from position before signature."
+	| signature zipFileCommentLength |
+	signature _ self readSignatureFrom: aStream.
+	signature = EndOfCentralDirectorySignature ifFalse: [ ^self error: 'bad signature at ', aStream position printString ].
+
+	aStream nextUnsignedInt16BigEndian: false. "# of this disk"
+	aStream nextUnsignedInt16BigEndian: false. "# of disk with central dir start"
+	aStream nextUnsignedInt16BigEndian: false. "# of entries in central dir on this disk"
+	aStream nextUnsignedInt16BigEndian: false. "total # of entries in central dir"
+	centralDirectorySize _ aStream nextUnsignedInt32BigEndian: false. "size of central directory"
+	centralDirectoryOffsetWRTStartingDiskNumber _ aStream nextUnsignedInt32BigEndian: false. "offset of start of central directory"
+	zipFileCommentLength _ aStream nextUnsignedInt16BigEndian: false. "zip file comment"
+	zipFileComment _ aStream next: zipFileCommentLength.
+! !
+
+!ZipArchive methodsFor: 'reading' stamp: 'pb 5/25/2016 01:51'!
+readFrom: aStreamOrFileName
+	| stream name eocdPosition |
+	stream _ (aStreamOrFileName is: #Stream)
+		ifTrue: [name _ aStreamOrFileName name. aStreamOrFileName]
+		ifFalse: [(name _ aStreamOrFileName) asFileEntry readStream].
+	stream binary.
+	eocdPosition _ self class findEndOfCentralDirectoryFrom: stream.
+	eocdPosition <= 0 ifTrue: [self error: 'can''t find EOCD position'].
+	self readEndOfCentralDirectoryFrom: stream.
+	stream position: eocdPosition - centralDirectorySize.
+	self readMembersFrom: stream named: name! !
+
+!ZipArchive methodsFor: 'private' stamp: 'nk 2/23/2001 09:19'!
+readMembersFrom: stream named: fileName
+	| newMember signature |
+	[
+		newMember _ self memberClass newFromZipFile: stream named: fileName.
+		signature _ self readSignatureFrom: stream.
+		signature = EndOfCentralDirectorySignature ifTrue: [ ^self ].
+		signature = CentralDirectoryFileHeaderSignature
+			ifFalse: [ self error: 'bad CD signature at ', (stream position - 4) hex ].
+		newMember readFrom: stream.
+		newMember looksLikeDirectory ifTrue: [ newMember _ newMember asDirectory ].
+		self addMember: newMember.
+	] repeat.! !
+
+!ZipArchive methodsFor: 'private' stamp: 'nk 2/21/2001 20:09'!
+readSignatureFrom: stream
+	"Returns next signature from given stream, leaves stream positioned afterwards."
+
+	| signatureData | 
+	signatureData _ String new: 4.
+	stream next: 4 into: signatureData.
+	({ CentralDirectoryFileHeaderSignature . LocalFileHeaderSignature . EndOfCentralDirectorySignature }
+		includes: signatureData)
+			ifFalse: [ ^self error: 'bad signature ', signatureData asHex, ' at position ', (stream position - 4) asString ].
+	^signatureData
+! !
+
+!ZipArchive methodsFor: 'private' stamp: 'nk 2/21/2001 20:19'!
+writeCentralDirectoryTo: aStream
+	| offset |
+	offset _ writeCentralDirectoryOffset.
+	members do: [ :member |
+		member writeCentralDirectoryFileHeaderTo: aStream.
+		offset _ offset + member centralDirectoryHeaderSize.
+	].
+	writeEOCDOffset _ offset.
+	self writeEndOfCentralDirectoryTo: aStream.
+
+! !
+
+!ZipArchive methodsFor: 'private' stamp: 'jmv 2/26/2016 16:37'!
+writeEndOfCentralDirectoryTo: aStream
+
+	aStream nextPutAll: EndOfCentralDirectorySignature.
+	aStream nextUnsignedInt16Put: 0 bigEndian: false. "diskNumber"
+	aStream nextUnsignedInt16Put: 0 bigEndian: false. "diskNumberWithStartOfCentralDirectory"
+	aStream nextUnsignedInt16Put: members size bigEndian: false. "numberOfCentralDirectoriesOnThisDisk"
+	aStream nextUnsignedInt16Put: members size bigEndian: false. "numberOfCentralDirectories"
+	aStream nextUnsignedInt32Put: writeEOCDOffset - writeCentralDirectoryOffset bigEndian: false. "size of central dir"
+	aStream nextUnsignedInt32Put: writeCentralDirectoryOffset bigEndian: false. "offset of central dir"
+	aStream nextUnsignedInt16Put: zipFileComment size bigEndian: false. "zip file comment"
+	zipFileComment isEmpty ifFalse: [ aStream nextPutAll: zipFileComment ].
+
+! !
+
+!ZipArchive methodsFor: 'writing' stamp: 'nk 2/23/2001 10:29'!
+writeTo: stream
+	stream binary.
+	members do: [ :member |
+		member writeTo: stream.
+		member endRead.
+	].
+	writeCentralDirectoryOffset _ stream position.
+	self writeCentralDirectoryTo: stream.
+	! !
+
+!ZipArchive methodsFor: 'writing' stamp: 'nk 3/27/2002 10:42'!
+writeTo: stream prepending: aString
+	stream binary.
+	stream nextPutAll: aString.
+	members do: [ :member |
+		member writeTo: stream.
+		member endRead.
+	].
+	writeCentralDirectoryOffset _ stream position.
+	self writeCentralDirectoryTo: stream.
+	! !
+
+!ZipArchive methodsFor: 'writing' stamp: 'pb 5/25/2016 01:51'!
+writeTo: stream prependingFileNamed: aFileName
+	| prepended buffer |
+	stream binary.
+	prepended _ aFileName asFileEntry readStream.
+	prepended binary.
+	buffer _ ByteArray new: (prepended size min: 32768).
+	[ prepended atEnd ] whileFalse: [ | bytesRead |
+		bytesRead _ prepended readInto: buffer startingAt: 1 count: buffer size.
+		stream next: bytesRead putAll: buffer startingAt: 1
+	].
+	members do: [ :member |
+		member writeTo: stream.
+		member endRead.
+	].
+	writeCentralDirectoryOffset _ stream position.
+	self writeCentralDirectoryTo: stream.
+	! !
+
+!ZipArchive methodsFor: 'writing' stamp: 'jmv 5/31/2016 11:24'!
+writeToFileNamed: aFileName prepending: aString
+
+	"Catch attempts to overwrite existing zip file"
+	(self canWriteToFileNamed: aFileName)
+		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
+	aFileName asFileEntry forceWriteStreamDo: [ :stream |
+		self writeTo: stream prepending: aString ]! !
+
+!ZipArchive methodsFor: 'writing' stamp: 'jmv 5/31/2016 11:24'!
+writeToFileNamed: aFileName prependingFileNamed: anotherFileName
+
+	"Catch attempts to overwrite existing zip file"
+	(self canWriteToFileNamed: aFileName)
+		ifFalse: [ ^self error: (aFileName, ' is needed by one or more members in this archive') ].
+	aFileName asFileEntry forceWriteStreamDo: [ :stream |
+		self writeTo: stream prependingFileNamed: anotherFileName ]! !
+
+!ZipArchive methodsFor: 'accessing' stamp: 'nk 2/24/2001 13:44'!
+zipFileComment
+	^zipFileComment asString! !
+
+!ZipArchive methodsFor: 'accessing' stamp: 'nk 2/24/2001 13:43'!
+zipFileComment: aString
+	zipFileComment _ aString! !
+
+!ZipArchive class methodsFor: 'constants' stamp: 'nk 2/22/2001 14:13'!
+compressionDeflated
+	^CompressionDeflated! !
+
+!ZipArchive class methodsFor: 'constants' stamp: 'nk 2/22/2001 14:12'!
+compressionLevelDefault
+	^CompressionLevelDefault! !
+
+!ZipArchive class methodsFor: 'constants' stamp: 'nk 2/22/2001 14:12'!
+compressionLevelNone
+	^CompressionLevelNone ! !
+
+!ZipArchive class methodsFor: 'constants' stamp: 'nk 2/22/2001 14:13'!
+compressionStored
+	^CompressionStored! !
+
+!ZipArchive class methodsFor: 'file list services' stamp: 'jmv 6/16/2013 19:46'!
+fileReaderServicesForFile: fullName suffix: suffix
+	"FileList buttons that are swe know about."
+
+	suffix = 'mcz'
+		ifTrue: [ ^ {
+			CodePackageFile serviceInstallMonticelloPackage .
+			CodeFileBrowser serviceBrowseMCZCode
+		} ].
+	^#()! !
+
+!ZipArchive class methodsFor: 'constants' stamp: 'jmv 11/2/2010 12:40'!
+findEndOfCentralDirectoryFrom: stream
+	"Seek in the given stream to the end, then read backwards until we find the
+	signature of the central directory record. Leave the file positioned right
+	before the signature.
+
+	Answers the file position of the EOCD, or 0 if not found."
+
+	| data fileLength seekOffset pos maxOffset |
+	stream setToEnd.
+	fileLength _ stream position.
+	"If the file length is less than 18 for the EOCD length plus 4 for the signature, we have a problem"
+	fileLength < 22 ifTrue: [^ self error: 'file is too short'].
+	
+	seekOffset _ 0.
+	pos _ 0.
+	data _ String new: 4100.
+	maxOffset _ 40960 min: fileLength.	"limit search range to 40K"
+
+	[
+		seekOffset _ (seekOffset + 4096) min: fileLength.
+		stream position: fileLength - seekOffset.
+		data _ stream next: (4100 min: seekOffset) into: data startingAt: 1.
+		pos _ self
+			lastIndexOfPKSignature: EndOfCentralDirectorySignature
+			in: data.
+		pos = 0 and: [seekOffset < maxOffset]
+	] whileTrue.
+
+	^ pos > 0
+		ifTrue: [ | newPos | stream position: (newPos _ (stream position + pos - seekOffset - 1)). newPos]
+		ifFalse: [0]! !
+
+!ZipArchive class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 19:44'!
+initialize
+
+	FileList registerFileReader: self 		"For Monticello .mcz support"! !
+
+!ZipArchive class methodsFor: 'file format' stamp: 'pb 5/25/2016 01:51'!
+isZipArchive: aStreamOrFileName
+	"Answer whether the given filename represents a valid zip file."
+
+	| stream eocdPosition |
+	stream _ (aStreamOrFileName is: #Stream)
+		ifTrue: [aStreamOrFileName]
+		ifFalse: [aStreamOrFileName asFileEntry readStream ].
+	stream ifNil: [^ false].
+	"nil happens sometimes somehow"
+	stream size < 22 ifTrue: [^ false].
+	stream binary.
+	eocdPosition _ self findEndOfCentralDirectoryFrom: stream.
+	stream ~= aStreamOrFileName ifTrue: [stream close].
+	^ eocdPosition > 0! !
+
+!ZipArchive class methodsFor: 'constants' stamp: 'ar 9/6/2010 15:28'!
+lastIndexOfPKSignature: aSignature in: data
+	"Answer the last index in data where aSignature (4 bytes long) occurs, or 0 if not found"
+	| a b c d |
+	a := aSignature first.
+	b := aSignature second.
+	c := aSignature third.
+	d := aSignature fourth.
+	(data size - 3) to: 1 by: -1 do: [ :i |
+		(((data at: i) = a)
+			and: [ ((data at: i + 1) = b)
+				and: [ ((data at: i + 2) = c)
+					and: [ ((data at: i + 3) = d) ]]])
+						ifTrue: [ ^i ]
+	].
+	^0! !
+
+!ZipArchive class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 19:44'!
+unload
+
+	FileList unregisterFileReader: self ! !
+
+!ZipArchive class methodsFor: 'constants' stamp: 'ar 2/27/2001 13:38'!
+validSignatures
+	"Return the valid signatures for a zip file"
+	^Array 
+		with: LocalFileHeaderSignature
+		with: CentralDirectoryFileHeaderSignature
+		with: EndOfCentralDirectorySignature! !
+
+!ArchiveMember methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:46'!
+close
+! !
+
+!ArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 16:00'!
+fileName
+	^fileName! !
+
+!ArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 16:00'!
+fileName: aName
+	fileName _ aName! !
+
+!ArchiveMember methodsFor: 'initialization' stamp: 'nk 3/7/2004 16:05'!
+initialize
+	fileName _ ''.
+	isCorrupt _ false.! !
+
+!ArchiveMember methodsFor: 'accessing' stamp: 'nk 3/7/2004 16:16'!
+isCorrupt
+	^isCorrupt ifNil: [ isCorrupt _ false ]! !
+
+!ArchiveMember methodsFor: 'accessing' stamp: 'nk 3/7/2004 16:06'!
+isCorrupt: aBoolean
+	"Mark this member as being corrupt."
+	isCorrupt := aBoolean! !
+
+!ArchiveMember methodsFor: 'accessing' stamp: 'jmv 10/27/2015 18:12'!
+localFileName: aString
+	"Set my internal filename.
+	Returns the (possibly new) filename.
+	aString will be translated from local FS format into Unix format."
+
+	^fileName _ aString copyReplaceAll: '\' with: '/'.! !
+
+!ArchiveMember methodsFor: 'printing' stamp: 'nk 12/20/2002 15:11'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(;
+		nextPutAll: self fileName;
+		nextPut: $)! !
+
+!ArchiveMember methodsFor: 'testing' stamp: 'nk 2/21/2001 19:43'!
+usesFileNamed: aFileName
+	"Do I require aFileName? That is, do I care if it's clobbered?"
+	^false! !
+
+!ArchiveMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/21/2001 18:33'!
+newDirectoryNamed: aString
+	self subclassResponsibility! !
+
+!ArchiveMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/21/2001 18:32'!
+newFromFile: aFileName
+	self subclassResponsibility! !
+
+!ArchiveMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/21/2001 18:32'!
+newFromString: aString
+	self subclassResponsibility! !
+
+!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/21/2001 21:55'!
+asDirectory
+	^ZipDirectoryMember new copyFrom: self! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 09:44'!
+centralDirectoryHeaderSize
+	^ 46 + fileName size + cdExtraField size + fileComment size! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/23/2001 08:00'!
+clearExtraFields
+	cdExtraField _ ''.
+	localExtraField _ ''.! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'ar 2/28/2001 14:01'!
+compressDataTo: aStream
+	"Copy my deflated data to the given stream."
+	| encoder startPos endPos |
+
+	encoder _ ZipWriteStream on: aStream.
+	startPos _ aStream position.
+
+	[ readDataRemaining > 0 ] whileTrue: [ | data |
+		data _ self readRawChunk: (4096 min: readDataRemaining).
+		encoder nextPutAll: data asByteArray.
+		readDataRemaining _ readDataRemaining - data size.
+	].
+	encoder finish. "not close!!"
+	endPos _ aStream position.
+	compressedSize _ endPos - startPos.
+	crc32 _ encoder crc.
+! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:38'!
+compressedSize
+	"Return the compressed size for this member.
+	This will not be set for members that were constructed from strings
+	or external files until after the member has been written."
+	^compressedSize! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/21/2001 22:02'!
+compressionMethod
+	"Returns my compression method. This is the method that is
+	currently being used to compress my data.
+
+	This will be CompressionStored for added string or file members,
+	or CompressionStored or CompressionDeflated (others are possible but not handled)"
+
+	^compressionMethod! !
+
+!ZipArchiveMember methodsFor: 'reading' stamp: 'ar 2/27/2001 14:30'!
+contentStream
+	"Answer my contents as a string."
+	| s |
+	s _ RWBinaryOrTextStream on: (String new: self uncompressedSize).
+	self extractTo: s.
+	^s reset! !
+
+!ZipArchiveMember methodsFor: 'reading' stamp: 'nk 2/24/2001 22:28'!
+contents
+	"Answer my contents as a string."
+	| s |
+	s _ RWBinaryOrTextStream on: (String new: self uncompressedSize).
+	self extractTo: s.
+	s text.
+	^s contents! !
+
+!ZipArchiveMember methodsFor: 'reading' stamp: 'nk 2/24/2001 23:53'!
+contentsFrom: start to: finish
+	"Answer my contents as a string."
+	| s |
+	s _ RWBinaryOrTextStream on: (String new: finish - start + 1).
+	self extractTo: s from: start to: finish.
+	s text.
+	^s contents! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 11:04'!
+copyDataTo: aStream
+
+	compressionMethod = CompressionStored ifTrue: [ ^self copyDataWithCRCTo: aStream ].
+
+	self copyRawDataTo: aStream.! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 3/7/2004 15:42'!
+copyDataWithCRCTo: aStream
+	"Copy my data to aStream. Also set the CRC-32.
+	Only used when compressionMethod = desiredCompressionMethod = CompressionStored"
+
+	uncompressedSize _ compressedSize _ readDataRemaining.
+
+	crc32 _ 16rFFFFFFFF.
+
+	[ readDataRemaining > 0 ] whileTrue: [ | data |
+		data _ self readRawChunk: (4096 min: readDataRemaining).
+		aStream nextPutAll: data.
+		crc32 _ ZipWriteStream updateCrc: crc32 from: 1 to: data size in: data.
+		readDataRemaining _ readDataRemaining - data size.
+	].
+
+	crc32 _ crc32 bitXor: 16rFFFFFFFF.
+! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 11:04'!
+copyRawDataTo: aStream
+
+	[ readDataRemaining > 0 ] whileTrue: [ | data |
+		data _ self readRawChunk: (4096 min: readDataRemaining).
+		aStream nextPutAll: data.
+		readDataRemaining _ readDataRemaining - data size.
+	].
+! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/24/2001 17:57'!
+copyRawDataTo: aStream from: start to: finish
+
+	readDataRemaining _ readDataRemaining min: finish - start + 1.
+
+	self readRawChunk: start - 1.
+
+	[ readDataRemaining > 0 ] whileTrue: [ | data |
+		data _ self readRawChunk: (32768 min: readDataRemaining).
+		aStream nextPutAll: data.
+		readDataRemaining _ readDataRemaining - data size.
+	].
+! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:28'!
+crc32
+	^crc32! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:35'!
+crc32String
+	| hexString |
+	hexString _ crc32 hex.
+	^('00000000' copyFrom: 1 to: 11 - (hexString size)) , (hexString copyFrom: 4 to: hexString size)! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/21/2001 22:10'!
+desiredCompressionLevel
+	^desiredCompressionLevel! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/21/2001 22:14'!
+desiredCompressionLevel: aNumber
+	"Set my desiredCompressionLevel
+	This is the method that will be used to write.
+	Returns prior desiredCompressionLevel.
+
+	Valid arguments are 0 (CompressionLevelNone) through 9,
+	including 6 (CompressionLevelDefault).
+
+	0 (CompressionLevelNone) will change the desiredCompressionMethod
+	to CompressionStored. All other arguments will change the
+	desiredCompressionMethod to CompressionDeflated."
+
+	| old |
+	old _ desiredCompressionLevel.
+	desiredCompressionLevel _ aNumber.
+	desiredCompressionMethod _ (aNumber > 0)
+		ifTrue: [ CompressionDeflated ]
+		ifFalse: [ CompressionStored ].
+	^old! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/21/2001 22:03'!
+desiredCompressionMethod
+	"Get my desiredCompressionMethod.
+	This is the method that will be used to write"
+
+	^desiredCompressionMethod! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/23/2001 11:25'!
+desiredCompressionMethod: aNumber
+	"Set my desiredCompressionMethod
+	This is the method that will be used to write.
+	Answers prior desiredCompressionMethod.
+
+	Only CompressionDeflated or CompressionStored are valid arguments.
+
+	Changing to CompressionStored will change my desiredCompressionLevel
+	to CompressionLevelNone; changing to CompressionDeflated will change my
+	desiredCompressionLevel to CompressionLevelDefault."
+
+	| old |
+	old _ desiredCompressionMethod.
+	desiredCompressionMethod _ aNumber.
+	desiredCompressionLevel _ (aNumber = CompressionDeflated)
+			ifTrue: [ CompressionLevelDefault ]
+			ifFalse: [ CompressionLevelNone ].
+	compressionMethod = CompressionStored ifTrue: [ compressedSize _ uncompressedSize ].
+	^old.! !
+
+!ZipArchiveMember methodsFor: 'private' stamp: 'jmv 2/16/2011 18:29'!
+dosToSqueakTime: dt
+	"DOS years start at 1980, so add 1980."
+	| year mon mday hour min sec date time |
+
+	year := (( dt bitShift: -25 ) bitAnd: 16r7F ).
+	mon := (( dt bitShift: -21 ) bitAnd: 16r0F ).
+	mday := (( dt bitShift: -16 ) bitAnd: 16r1F ).
+	date := Date newDay: mday month: mon year: year+1980.
+
+	hour := (( dt bitShift: -11 ) bitAnd: 16r1F ).
+	min := (( dt bitShift: -5 ) bitAnd: 16r3F ).
+	sec := (( dt bitShift: 1 ) bitAnd: 16r3E ).
+	time := ((( hour * 60 ) + min ) * 60 ) + sec.
+
+	^date secondsSinceSqueakEpoch + time
+
+	! !
+
+!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/23/2001 08:24'!
+endRead
+	readDataRemaining _ 0.! !
+
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 5/31/2016 10:38'!
+extractInDirectory: aDirectoryEntry
+
+	self extractToFileNamed: self localFileName inDirectory: aDirectoryEntry
+! !
+
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/21/2015 12:25'!
+extractInDirectory: aDirectory overwrite: overwriteAll
+	"Extract this entry into the given directory. Answer #okay, #failed, #abort, or #retryWithOverwrite."
+	| path fileDir file index localName |
+	path := fileName findTokens:'/'.
+	localName := path last.
+	fileDir := path allButLast inject: aDirectory into:[:base :part| base / part].
+	fileDir assureExistence.
+	file := [fileDir newFileNamed: localName] on: FileExistsException do:[:ex| ex return: nil].
+	file ifNil:[
+		overwriteAll ifFalse:[
+			[index := (PopUpMenu labelArray:{
+						'Yes, overwrite'. 
+						'No, don''t overwrite'. 
+						'Overwrite ALL files'.
+						'Cancel operation'
+					} lines: #(2)) startUpWithCaption: fileName, ' already exists. Overwrite?'.
+			index == nil] whileTrue.
+			index = 4 ifTrue:[^#abort].
+			index = 3 ifTrue:[^#retryWithOverwrite].
+			index = 2 ifTrue:[^#okay].
+		].
+		file := [fileDir forceNewFileNamed: localName] on: Error do:[:ex| ex return].
+		file ifNil:[^#failed].
+	].
+	self extractTo: file.
+	file close.
+	^#okay! !
+
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'nk 2/22/2001 18:03'!
+extractTo: aStream
+	| oldCompression |
+	self isEncrypted ifTrue: [ self error: 'encryption is unsupported' ].
+	aStream binary.
+	oldCompression _ self desiredCompressionMethod: CompressionStored.
+	self rewindData.
+	self writeDataTo: aStream.
+	self desiredCompressionMethod: oldCompression.
+	self endRead.! !
+
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'nk 2/24/2001 18:03'!
+extractTo: aStream from: start to: finish
+	| oldCompression |
+	self isEncrypted ifTrue: [ self error: 'encryption is unsupported' ].
+	aStream binary.
+	oldCompression _ self desiredCompressionMethod: CompressionStored.
+	self rewindData.
+	self writeDataTo: aStream from: start to: finish.
+	self desiredCompressionMethod: oldCompression.
+	self endRead.! !
+
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'pb 5/25/2016 01:16'!
+extractToFileNamed: aFileName
+
+	self extractToFileNamed: aFileName inDirectory: DirectoryEntry currentDirectory! !
+
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 5/31/2016 11:24'!
+extractToFileNamed: aLocalFileName inDirectory: aDirectoryEntry
+
+	self isEncrypted ifTrue: [ ^self error: 'encryption unsupported' ].
+	self isDirectory
+		ifFalse: [
+			aDirectoryEntry / aLocalFileName forceWriteStreamDo: [ :stream |
+				self extractTo: stream ] ]
+		ifTrue: [
+			(aDirectoryEntry / aLocalFileName) asDirectoryEntry assureExistence ]! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:25'!
+fileComment
+	^fileComment! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:25'!
+fileComment: aString
+	fileComment _ aString! !
+
+!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:40'!
+hasDataDescriptor
+	^ (bitFlag bitAnd: 8)	~= 0 "GPBF_HAS_DATA_DESCRIPTOR_MASK"! !
+
+!ZipArchiveMember methodsFor: 'initialization' stamp: 'nk 2/24/2001 16:16'!
+initialize
+	super initialize.
+	lastModFileDateTime _ 0.
+	fileAttributeFormat _ FaUnix.
+	versionMadeBy _ 20.
+	versionNeededToExtract _ 20.
+	bitFlag _ 0.
+	compressionMethod _ CompressionStored.
+	desiredCompressionMethod _ CompressionDeflated.
+	desiredCompressionLevel _ CompressionLevelDefault.
+	internalFileAttributes _ 0.
+	externalFileAttributes _ 0.
+	fileName _ ''.
+	cdExtraField _ ''.
+	localExtraField _ ''.
+	fileComment _ ''.
+	crc32 _ 0.
+	compressedSize _ 0.
+	uncompressedSize _ 0.
+	self unixFileAttributes: DefaultFilePermissions.! !
+
+!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:00'!
+isDirectory
+	^false! !
+
+!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:39'!
+isEncrypted
+	"Return true if this member is encrypted (this is unsupported)"
+	^ (bitFlag bitAnd: 1) ~= 0! !
+
+!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:41'!
+isTextFile
+	"Returns true if I am a text file.
+	Note that this module does not currently do anything with this flag
+	upon extraction or storage.
+	That is, bytes are stored in native format whether or not they came
+	from a text file."
+	^ (internalFileAttributes bitAnd: 1) ~= 0
+! !
+
+!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:43'!
+isTextFile: aBoolean
+	"Set whether I am a text file.
+	Note that this module does not currently do anything with this flag
+	upon extraction or storage.
+	That is, bytes are stored in native format whether or not they came
+	from a text file."
+	internalFileAttributes _ aBoolean
+		ifTrue: [ internalFileAttributes bitOr: 1 ]
+		ifFalse: [ internalFileAttributes bitAnd: 1 bitInvert ]
+! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'jdr 8/11/2010 10:38'!
+lastModTime
+	"Return my last modification date/time stamp,
+	converted to Squeak seconds"
+
+	^self dosToSqueakTime: lastModFileDateTime! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'jmv 10/27/2015 18:16'!
+localFileName
+	"Answer my fileName in terms of the local directory naming convention"
+	^fileName! !
+
+!ZipArchiveMember methodsFor: 'testing' stamp: 'nk 2/21/2001 20:38'!
+looksLikeDirectory
+	^false! !
+
+!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/21/2001 23:57'!
+mapPermissionsFromUnix: unixPerms
+	^ unixPerms bitShift: 16.! !
+
+!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/21/2001 23:58'!
+mapPermissionsToUnix: dosPerms
+	^ dosPerms bitShift: -16.! !
+
+!ZipArchiveMember methodsFor: 'private' stamp: 'nk 2/22/2001 20:42'!
+readRawChunk: n
+	self subclassResponsibility! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:51'!
+refreshLocalFileHeaderTo: aStream
+	"Re-writes my local header to the given stream.
+	To be called after writing the data stream.
+	Assumes that fileName and localExtraField sizes didn't change since last written."
+
+	| here |
+	here _ aStream position.
+	aStream position: writeLocalHeaderRelativeOffset.
+
+	aStream nextPutAll: LocalFileHeaderSignature.
+	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
+	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
+	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
+	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
+	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
+	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
+												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
+	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
+	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
+	aStream nextUnsignedInt16Put: localExtraField size bigEndian: false.
+
+	aStream position: here! !
+
+!ZipArchiveMember methodsFor: 'private' stamp: 'nk 4/28/2002 21:53'!
+rewindData
+	readDataRemaining _  (desiredCompressionMethod = CompressionDeflated
+		and: [ compressionMethod = CompressionDeflated ])
+			ifTrue: [ compressedSize ]
+			ifFalse: [ uncompressedSize ].
+! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'jdr 8/11/2010 11:08'!
+setLastModFileDateTimeFrom: aSmalltalkTime
+
+	lastModFileDateTime := self squeakToDosTime: aSmalltalkTime! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 11/11/2002 21:03'!
+splitFileName
+	"Answer my name split on slash boundaries. A directory will have a trailing empty string."
+	^ fileName findTokens: '/'.! !
+
+!ZipArchiveMember methodsFor: 'private' stamp: 'jdr 8/11/2010 11:00'!
+squeakToDosTime: secs
+	| dosTime dateTime |
+
+	dateTime := Time dateAndTimeFromSeconds: secs.
+	dosTime := (dateTime second seconds) bitShift: -1.
+	dosTime := dosTime + ((dateTime second minutes) bitShift: 5).
+	dosTime := dosTime + ((dateTime second hours) bitShift: 11).
+	dosTime := dosTime + ((dateTime first dayOfMonth) bitShift: 16).
+	dosTime := dosTime + ((dateTime first monthIndex) bitShift: 21).
+	dosTime := dosTime + (((dateTime first year) - 1980) bitShift: 25).
+	^dosTime
+! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:38'!
+uncompressedSize
+	"Return the uncompressed size for this member."
+	^uncompressedSize! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:18'!
+unixFileAttributes
+	^self mapPermissionsToUnix: externalFileAttributes.! !
+
+!ZipArchiveMember methodsFor: 'accessing' stamp: 'nk 2/22/2001 00:24'!
+unixFileAttributes: perms
+	| oldPerms newPerms |
+	oldPerms _ self mapPermissionsToUnix: externalFileAttributes.
+	newPerms _  self isDirectory
+			ifTrue: [ (perms bitAnd: FileAttrib bitInvert) bitOr: DirectoryAttrib ]
+			ifFalse: [ (perms bitAnd: DirectoryAttrib bitInvert) bitOr: FileAttrib ].
+	externalFileAttributes _ self mapPermissionsFromUnix: newPerms.
+	^oldPerms.! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:53'!
+writeCentralDirectoryFileHeaderTo: aStream
+	"C2 v3 V4 v5 V2"
+
+	aStream nextPutAll: CentralDirectoryFileHeaderSignature.
+	aStream nextPut: versionMadeBy.
+	aStream nextPut: fileAttributeFormat.
+
+	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
+	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
+	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
+
+	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
+
+	"These next 3 should have been updated during the write of the data"
+	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
+	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
+												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
+	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
+
+	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
+	aStream nextUnsignedInt16Put: cdExtraField size bigEndian: false.
+	aStream nextUnsignedInt16Put: fileComment size bigEndian: false.
+	aStream nextUnsignedInt16Put: 0 bigEndian: false.		"diskNumberStart"
+	aStream nextUnsignedInt16Put: internalFileAttributes bigEndian: false.
+
+	aStream nextUnsignedInt32Put: externalFileAttributes bigEndian: false.
+	aStream nextUnsignedInt32Put: writeLocalHeaderRelativeOffset bigEndian: false.
+
+	aStream nextPutAll: fileName asByteArray.
+	aStream nextPutAll: cdExtraField asByteArray.
+	aStream nextPutAll: fileComment asByteArray.! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:54'!
+writeDataDescriptorTo: aStream
+	"This writes a data descriptor to the given stream.
+	Assumes that crc32, writeOffset, and uncompressedSize are
+	set correctly (they should be after a write).
+	Further, the local file header should have the
+	GPBF_HAS_DATA_DESCRIPTOR_MASK (8) bit set."
+
+	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
+	aStream nextUnsignedInt32Put: compressedSize bigEndian: false.
+	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'ar 8/10/2010 13:15'!
+writeDataTo: aStream
+	"Copy my (possibly inflated or deflated) data to the given stream.
+	This might do compression, decompression, or straight copying, depending
+	on the values of compressionMethod and desiredCompressionMethod"
+
+	"Note: Do not shortcut this method if uncompressedSize = 0. Even in this case
+	data may be produced by the compressor (i.e., '' zipped size > 0) and must
+	be stored in the file or else other utilities will treat the zip file as corrupt."
+
+	(compressionMethod = CompressionStored and: [ desiredCompressionMethod = CompressionDeflated ])
+		ifTrue: [ ^self compressDataTo: aStream ].
+
+	(compressionMethod = CompressionDeflated and: [ desiredCompressionMethod = CompressionStored ])
+		ifTrue: [ ^self uncompressDataTo: aStream ].
+
+	self copyDataTo: aStream.! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/24/2001 18:01'!
+writeDataTo: aStream from: start to: finish
+	"Copy my (possibly inflated or deflated) data to the given stream.
+	But only the specified byte range.
+	This might do decompression, or straight copying, depending
+	on the values of compressionMethod and desiredCompressionMethod"
+
+	uncompressedSize = 0 ifTrue: [ ^self ].	"nothing to do because no data"
+	start > finish ifTrue: [ ^self ].
+	start > uncompressedSize ifTrue: [ ^self ].
+
+	(compressionMethod = CompressionStored and: [ desiredCompressionMethod = CompressionDeflated ])
+		ifTrue: [ ^self error: 'only supports uncompression or copying right now' ].
+
+	(compressionMethod = CompressionDeflated and: [ desiredCompressionMethod = CompressionStored ])
+		ifTrue: [ ^self uncompressDataTo: aStream from: start to: finish ].
+
+	self copyRawDataTo: aStream from: start to: finish.! !
+
+!ZipArchiveMember methodsFor: 'private-writing' stamp: 'jmv 2/26/2016 16:55'!
+writeLocalFileHeaderTo: aStream
+	"Write my local header to a file handle.
+	Stores the offset to the start of the header in my
+	writeLocalHeaderRelativeOffset member."
+
+	aStream nextPutAll: LocalFileHeaderSignature.
+	aStream nextUnsignedInt16Put: versionNeededToExtract bigEndian: false.
+	aStream nextUnsignedInt16Put: bitFlag bigEndian: false.
+	aStream nextUnsignedInt16Put: desiredCompressionMethod bigEndian: false.
+
+	aStream nextUnsignedInt32Put: lastModFileDateTime bigEndian: false.
+	aStream nextUnsignedInt32Put: crc32 bigEndian: false.
+	aStream nextUnsignedInt32Put: (desiredCompressionMethod = CompressionStored
+												ifTrue: [ uncompressedSize ] ifFalse: [ compressedSize ]) bigEndian: false.
+	aStream nextUnsignedInt32Put: uncompressedSize bigEndian: false.
+
+	aStream nextUnsignedInt16Put: fileName size bigEndian: false.
+	aStream nextUnsignedInt16Put: localExtraField size bigEndian: false.
+
+	aStream nextPutAll: fileName asByteArray.
+	aStream nextPutAll: localExtraField asByteArray! !
+
+!ZipArchiveMember methodsFor: 'writing' stamp: 'nk 2/23/2001 11:28'!
+writeTo: aStream
+	self rewindData.
+	writeLocalHeaderRelativeOffset _ aStream position.
+	self writeLocalFileHeaderTo: aStream.
+	self writeDataTo: aStream.
+	self refreshLocalFileHeaderTo: aStream.! !
+
+!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:27'!
+newFromDirectory: aFileName
+	^ZipDirectoryMember newNamed: aFileName! !
+
+!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:27'!
+newFromFile: aFileName
+	^ZipNewFileMember newNamed: aFileName! !
+
+!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:25'!
+newFromString: aString named: aFileName
+	^ZipStringMember newFrom: aString named: aFileName! !
+
+!ZipArchiveMember class methodsFor: 'instance creation' stamp: 'nk 2/21/2001 20:40'!
+newFromZipFile: stream named: fileName
+	^ZipFileMember newFrom: stream named: fileName! !
+
+!ZipFileMember methodsFor: 'private-reading' stamp: 'nk 11/11/2002 21:46'!
+canonicalizeFileName
+	"For security reasons, make all paths relative and remove any ../ portions"
+
+	[fileName beginsWith: '/'] whileTrue: [fileName := fileName allButFirst].
+	fileName := fileName copyReplaceAll: '../' with: ''! !
+
+!ZipFileMember methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:46'!
+close
+	stream ifNotNil:[stream close].! !
+
+!ZipFileMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 11:04'!
+copyDataTo: aStream
+
+	self copyRawDataTo: aStream.! !
+
+!ZipFileMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 16:52'!
+initialize
+	super initialize.
+	crc32 _ 0.
+	localHeaderRelativeOffset _ 0.
+	dataOffset _ 0.! !
+
+!ZipFileMember methodsFor: 'private-writing' stamp: 'nk 3/27/2002 11:20'!
+localHeaderRelativeOffset
+	^localHeaderRelativeOffset! !
+
+!ZipFileMember methodsFor: 'testing' stamp: 'nk 2/21/2001 21:52'!
+looksLikeDirectory
+	^fileName last = $/
+		and: [ uncompressedSize = 0 ]! !
+
+!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:30'!
+readCentralDirectoryFileHeaderFrom: aStream
+	"Assumes aStream positioned after signature"
+
+	| fileNameLength extraFieldLength fileCommentLength |
+
+	versionMadeBy _ aStream next.
+	fileAttributeFormat _ aStream next.
+
+	versionNeededToExtract _ aStream nextUnsignedInt16BigEndian: false.
+	bitFlag _ aStream nextUnsignedInt16BigEndian: false.
+	compressionMethod _ aStream nextUnsignedInt16BigEndian: false.
+
+	lastModFileDateTime _ aStream nextUnsignedInt32BigEndian: false.
+	crc32 _ aStream nextUnsignedInt32BigEndian: false.
+	compressedSize _ aStream nextUnsignedInt32BigEndian: false.
+	uncompressedSize _ aStream nextUnsignedInt32BigEndian: false.
+
+	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
+	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
+	fileCommentLength _ aStream nextUnsignedInt16BigEndian: false.
+	aStream nextUnsignedInt16BigEndian: false. 	"disk number start"
+	internalFileAttributes _ aStream nextUnsignedInt16BigEndian: false.
+
+	externalFileAttributes _ aStream nextUnsignedInt32BigEndian: false.
+	localHeaderRelativeOffset _ aStream nextUnsignedInt32BigEndian: false.
+
+	fileName _ (aStream next: fileNameLength) asString.
+	cdExtraField _ (aStream next: extraFieldLength) asByteArray.
+	fileComment _ (aStream next: fileCommentLength) asString.
+
+	self desiredCompressionMethod: compressionMethod! !
+
+!ZipFileMember methodsFor: 'private-reading' stamp: 'nk 11/11/2002 21:48'!
+readFrom: aStream 
+	"assumes aStream positioned after CD header; leaves stream positioned after my CD entry"
+
+	self readCentralDirectoryFileHeaderFrom: aStream.
+	self readLocalDirectoryFileHeaderFrom: aStream.
+	self endRead.
+	self canonicalizeFileName.
+! !
+
+!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:31'!
+readLocalDirectoryFileHeaderFrom: aStream 
+	"Positions stream as necessary. Will return stream to its original position"
+
+	| fileNameLength extraFieldLength xcrc32 xcompressedSize xuncompressedSize sig oldPos |
+
+	oldPos _ aStream position.
+
+	aStream position: localHeaderRelativeOffset.
+
+	sig _ aStream next: 4.
+	sig = LocalFileHeaderSignature asByteArray
+		ifFalse: [ aStream position: oldPos.
+				^self error: 'bad LH signature at ', localHeaderRelativeOffset hex ].
+
+	versionNeededToExtract _ aStream nextUnsignedInt16BigEndian: false.
+	bitFlag _ aStream nextUnsignedInt16BigEndian: false.
+	compressionMethod _ aStream nextUnsignedInt16BigEndian: false.
+
+	lastModFileDateTime _ aStream nextUnsignedInt32BigEndian: false.
+	xcrc32 _ aStream nextUnsignedInt32BigEndian: false.
+	xcompressedSize _ aStream nextUnsignedInt32BigEndian: false.
+	xuncompressedSize _ aStream nextUnsignedInt32BigEndian: false.
+
+	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
+	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
+
+	fileName _ (aStream next: fileNameLength) asString.
+	localExtraField _ (aStream next: extraFieldLength) asByteArray.
+
+	dataOffset _ aStream position.
+
+	"Don't trash these fields if we already got them from the central directory"
+	self hasDataDescriptor ifFalse: [
+		crc32 _ xcrc32.
+		compressedSize _ xcompressedSize.
+		uncompressedSize _ xuncompressedSize.
+	].
+
+	aStream position: oldPos.! !
+
+!ZipFileMember methodsFor: 'private-reading' stamp: 'nk 2/22/2001 20:46'!
+readRawChunk: n
+	^stream next: n! !
+
+!ZipFileMember methodsFor: 'private-reading' stamp: 'nk 2/23/2001 09:56'!
+rewindData
+	super rewindData.
+	(stream isNil or: [ stream closed ])
+		ifTrue: [ self error: 'stream missing or closed' ].
+	stream position: (localHeaderRelativeOffset + 4).
+	self skipLocalDirectoryFileHeaderFrom: stream.! !
+
+!ZipFileMember methodsFor: 'private-reading' stamp: 'jmv 2/26/2016 16:31'!
+skipLocalDirectoryFileHeaderFrom: aStream 
+	"Assumes that stream is positioned after signature."
+
+	|  extraFieldLength fileNameLength |
+	aStream next: 22.
+	fileNameLength _ aStream nextUnsignedInt16BigEndian: false.
+	extraFieldLength _ aStream nextUnsignedInt16BigEndian: false.
+	aStream next: fileNameLength.
+	aStream next: extraFieldLength.
+	dataOffset _ aStream position! !
+
+!ZipFileMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 16:51'!
+stream: aStream externalFileName: aFileName
+	stream _ aStream.
+	externalFileName _ aFileName.! !
+
+!ZipFileMember methodsFor: 'private-writing' stamp: 'nk 3/7/2004 16:08'!
+uncompressDataTo: aStream
+
+	| decoder buffer chunkSize crcErrorMessage |
+	decoder _ ZipReadStream on: stream.
+	decoder expectedCrc: self crc32.
+	buffer _ ByteArray new: (32768 min: readDataRemaining).
+	crcErrorMessage _ nil.
+
+	[[ readDataRemaining > 0 ] whileTrue: [
+		chunkSize _ 32768 min: readDataRemaining.
+		buffer _ decoder next: chunkSize into: buffer startingAt: 1.
+		aStream next: chunkSize putAll: buffer startingAt: 1.
+		readDataRemaining _ readDataRemaining - chunkSize.
+	]] on: CRCError do: [ :ex | crcErrorMessage _ ex messageText. ex proceed ].
+
+	crcErrorMessage ifNotNil: [ self isCorrupt: true. CRCError signal: crcErrorMessage ]
+
+! !
+
+!ZipFileMember methodsFor: 'private-writing' stamp: 'nk 2/24/2001 17:52'!
+uncompressDataTo: aStream from: start to: finish
+
+	| decoder buffer chunkSize |
+	decoder _ FastInflateStream on: stream.
+	readDataRemaining _ readDataRemaining min: finish - start + 1.
+	buffer _ ByteArray new: (32768 min: readDataRemaining).
+	decoder next: start - 1.
+
+	[ readDataRemaining > 0 ] whileTrue: [
+		chunkSize _ 32768 min: readDataRemaining.
+		buffer _ decoder next: chunkSize into: buffer startingAt: 1.
+		aStream next: chunkSize putAll: buffer startingAt: 1.
+		readDataRemaining _ readDataRemaining - chunkSize.
+	].
+! !
+
+!ZipFileMember methodsFor: 'testing' stamp: 'jmv 10/14/2015 17:28'!
+usesFileNamed: aFileName
+	"Do I require aFileName? That is, do I care if it's clobbered?"
+
+	^externalFileName asFileEntry = aFileName asFileEntry! !
+
+!ZipFileMember class methodsFor: 'as yet unclassified' stamp: 'nk 2/22/2001 17:31'!
+newFrom: stream named: fileName
+	^(self new) stream: stream externalFileName: fileName! !
+
+!ZipDirectoryMember methodsFor: 'private' stamp: 'nk 2/21/2001 21:55'!
+asDirectory
+	^self! !
+
+!ZipDirectoryMember methodsFor: 'accessing' stamp: 'nk 2/23/2001 10:00'!
+desiredCompressionMethod: aNumber! !
+
+!ZipDirectoryMember methodsFor: 'initialization' stamp: 'nk 2/23/2001 10:01'!
+initialize
+	super initialize.
+	super desiredCompressionMethod: CompressionStored.! !
+
+!ZipDirectoryMember methodsFor: 'testing' stamp: 'nk 2/22/2001 00:00'!
+isDirectory
+	^true! !
+
+!ZipDirectoryMember methodsFor: 'accessing' stamp: 'jmv 10/14/2015 17:34'!
+localFileName: aString
+	| fe |
+	super localFileName: aString.
+	fileName last = $/ ifFalse: [ fileName _ fileName, '/' ].
+	fe _ fileName asDirectoryEntry.
+	fe exists ifTrue: [
+		self setLastModFileDateTimeFrom: fe modificationTime ]! !
+
+!ZipDirectoryMember methodsFor: 'private' stamp: 'nk 3/27/2002 11:30'!
+rewindData! !
+
+!ZipDirectoryMember methodsFor: 'testing' stamp: 'nk 3/27/2002 11:29'!
+usesFileNamed: aName
+	^false! !
+
+!ZipDirectoryMember methodsFor: 'private' stamp: 'cmm 9/16/2010 18:59'!
+writeDataTo: aStream
+       "Write nothing. Directories have no contents to write."! !
+
+!ZipDirectoryMember class methodsFor: 'as yet unclassified' stamp: 'nk 12/20/2002 14:57'!
+newNamed: aFileName
+	^(self new) localFileName: aFileName; yourself! !
+
+!ZipNewFileMember methodsFor: 'initialization' stamp: 'ar 3/2/2001 18:50'!
+close
+	stream ifNotNil:[stream close].! !
+
+!ZipNewFileMember methodsFor: 'initialization' stamp: 'pb 5/25/2016 01:51'!
+from: aFileName
+	| entry |
+	compressionMethod _ CompressionStored.
+	"Now get the size, attributes, and timestamps, and see if the file exists"
+	stream _ aFileName asFileEntry readStream.
+	self localFileName: (externalFileName _ stream name).
+	entry _ aFileName asFileEntry.
+	compressedSize _ uncompressedSize _ entry fileSize.
+	desiredCompressionMethod _ compressedSize > 0 ifTrue: [ CompressionDeflated ] ifFalse: [ CompressionStored ].
+	self setLastModFileDateTimeFrom: entry modificationTime
+! !
+
+!ZipNewFileMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 16:56'!
+initialize
+	super initialize.
+	externalFileName _ ''.! !
+
+!ZipNewFileMember methodsFor: 'private' stamp: 'nk 2/22/2001 20:48'!
+readRawChunk: n
+	^stream next: n! !
+
+!ZipNewFileMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 09:58'!
+rewindData
+	super rewindData.
+	readDataRemaining _ stream size.
+	stream position: 0.! !
+
+!ZipNewFileMember methodsFor: 'testing' stamp: 'jmv 10/14/2015 17:28'!
+usesFileNamed: aFileName
+	"Do I require aFileName? That is, do I care if it's clobbered?"
+
+	^externalFileName asFileEntry = aFileName asFileEntry! !
+
+!ZipNewFileMember class methodsFor: 'instance creation' stamp: 'nk 2/22/2001 17:27'!
+newNamed: aFileName
+	^(self new) from: aFileName! !
+
+!ZipStringMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 16:47'!
+contents
+	^contents! !
+
+!ZipStringMember methodsFor: 'initialization' stamp: 'jmv 4/17/2013 11:57'!
+contents: aString
+	contents _ aString.
+	compressedSize _ uncompressedSize _ aString size.
+	"set the file date to now"
+	self setLastModFileDateTimeFrom: Time localSecondClock! !
+
+!ZipStringMember methodsFor: 'initialization' stamp: 'nk 2/22/2001 20:50'!
+initialize
+	super initialize.
+	self contents: ''.
+	compressionMethod _ desiredCompressionMethod _ CompressionStored.
+! !
+
+!ZipStringMember methodsFor: 'private' stamp: 'nk 2/22/2001 20:51'!
+readRawChunk: n
+	^stream next: n! !
+
+!ZipStringMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 10:28'!
+rewindData
+	super rewindData.
+	stream _ ReadStream on: contents.
+	readDataRemaining _ contents size.! !
+
+!ZipStringMember class methodsFor: 'as yet unclassified' stamp: 'nk 12/20/2002 15:06'!
+newFrom: aString named: aFileName
+	^(self new) contents: aString; localFileName: aFileName; yourself! !
 InflateStream initialize!
 FastInflateStream initialize!
 GZipReadStream initialize!
 ZipWriteStream initialize!
 GZipWriteStream initialize!
+GZipConstants initialize!
+ZipConstants initialize!
+ZipFileConstants initialize!
+ZipArchive initialize!

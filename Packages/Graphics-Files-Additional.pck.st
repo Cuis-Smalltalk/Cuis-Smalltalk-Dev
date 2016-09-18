@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 1 August 2016 at 10:37:44 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:16:02 am'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 17!
+!provides: 'Graphics-Files-Additional' 1 18!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1590,7 +1590,7 @@ printOn: aStream
 	super printOn: aStream.
 	values printOn: aStream.! !
 
-!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 1/8/2015 18:50'!
+!TIFFField methodsFor: 'private-value reading' stamp: 'jmv 9/5/2016 16:57:57'!
 read: count charsFrom: aTIFFStream
 	"Read count bytes from the current position of aTIFFStream and return them as an Array of Strings, using NUL as the separating character between strings. Don't worry about the ending position of aTIFFStream."
 	| strings oneString size |
@@ -1599,7 +1599,7 @@ read: count charsFrom: aTIFFStream
 	1 to: count do: [ :i |
 		aTIFFStream peek = 0
 			ifFalse: [
-				oneString add: (Character value: aTIFFStream nextByte) ]
+				oneString add: (Character numericValue: aTIFFStream nextByte) ]
 			ifTrue: [ "Null, so that's the end of this string. "
 				size _ oneString size.
 				strings add: ((String new: size) replaceFrom: 1 to: size with: oneString) ]].

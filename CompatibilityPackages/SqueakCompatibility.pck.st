@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2782] on 31 May 2016 at 12:38:35.712606 pm'!
-'Description Please enter a description for this package'!
-!provides: 'SqueakCompatibility' 1 21!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2923] on 6 September 2016 at 10:27:49 am'!
+'Description Various code used in Squeak which is not in Cuis.'!
+!provides: 'SqueakCompatibility' 1 26!
 !requires: 'Cuis-Base' 42 2658 nil!
 !classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
@@ -10,16 +10,6 @@ SharedPool subclass: #KlattResonatorIndices
 	category: 'SqueakCompatibility'!
 !classDefinition: 'KlattResonatorIndices class' category: #SqueakCompatibility!
 KlattResonatorIndices class
-	instanceVariableNames: ''!
-
-!classDefinition: #Model category: #SqueakCompatibility!
-ActiveModel subclass: #Model
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'Model class' category: #SqueakCompatibility!
-Model class
 	instanceVariableNames: ''!
 
 !classDefinition: #StringHolder category: #SqueakCompatibility!
@@ -32,6 +22,26 @@ TextModel subclass: #StringHolder
 StringHolder class
 	instanceVariableNames: ''!
 
+!classDefinition: #Model category: #SqueakCompatibility!
+ActiveModel subclass: #Model
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'Model class' category: #SqueakCompatibility!
+Model class
+	instanceVariableNames: ''!
+
+!classDefinition: #TimeStamp category: #SqueakCompatibility!
+DateAndTime subclass: #TimeStamp
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TimeStamp class' category: #SqueakCompatibility!
+TimeStamp class
+	instanceVariableNames: ''!
+
 !classDefinition: #ByteString category: #SqueakCompatibility!
 String variableByteSubclass: #ByteString
 	instanceVariableNames: ''
@@ -40,6 +50,26 @@ String variableByteSubclass: #ByteString
 	category: 'SqueakCompatibility'!
 !classDefinition: 'ByteString class' category: #SqueakCompatibility!
 ByteString class
+	instanceVariableNames: ''!
+
+!classDefinition: #MultiByteFileStream category: #SqueakCompatibility!
+StandardFileStream subclass: #MultiByteFileStream
+	instanceVariableNames: 'lineEndConvention'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'MultiByteFileStream class' category: #SqueakCompatibility!
+MultiByteFileStream class
+	instanceVariableNames: ''!
+
+!classDefinition: #CrLfFileStream category: #SqueakCompatibility!
+MultiByteFileStream subclass: #CrLfFileStream
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'CrLfFileStream class' category: #SqueakCompatibility!
+CrLfFileStream class
 	instanceVariableNames: ''!
 
 !classDefinition: #InvalidDirectoryError category: #SqueakCompatibility!
@@ -60,6 +90,26 @@ Notification subclass: #ProvideAnswerNotification
 	category: 'SqueakCompatibility'!
 !classDefinition: 'ProvideAnswerNotification class' category: #SqueakCompatibility!
 ProvideAnswerNotification class
+	instanceVariableNames: ''!
+
+!classDefinition: #ClassTestCase category: #SqueakCompatibility!
+TestCase subclass: #ClassTestCase
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'ClassTestCase class' category: #SqueakCompatibility!
+ClassTestCase class
+	instanceVariableNames: ''!
+
+!classDefinition: #TestObjectsAsMethods category: #SqueakCompatibility!
+TestCase subclass: #TestObjectsAsMethods
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TestObjectsAsMethods class' category: #SqueakCompatibility!
+TestObjectsAsMethods class
 	instanceVariableNames: ''!
 
 !classDefinition: #FileDirectory category: #SqueakCompatibility!
@@ -102,16 +152,6 @@ FileDirectory subclass: #UnixFileDirectory
 UnixFileDirectory class
 	instanceVariableNames: ''!
 
-!classDefinition: #TimeStamp category: #SqueakCompatibility!
-DateAndTime subclass: #TimeStamp
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TimeStamp class' category: #SqueakCompatibility!
-TimeStamp class
-	instanceVariableNames: ''!
-
 !classDefinition: #SmalltalkImage category: #SqueakCompatibility!
 Object subclass: #SmalltalkImage
 	instanceVariableNames: ''
@@ -150,46 +190,6 @@ SqDirectoryEntry subclass: #DirectoryEntryFile
 	category: 'SqueakCompatibility'!
 !classDefinition: 'DirectoryEntryFile class' category: #SqueakCompatibility!
 DirectoryEntryFile class
-	instanceVariableNames: ''!
-
-!classDefinition: #MultiByteFileStream category: #SqueakCompatibility!
-StandardFileStream subclass: #MultiByteFileStream
-	instanceVariableNames: 'lineEndConvention'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'MultiByteFileStream class' category: #SqueakCompatibility!
-MultiByteFileStream class
-	instanceVariableNames: ''!
-
-!classDefinition: #CrLfFileStream category: #SqueakCompatibility!
-MultiByteFileStream subclass: #CrLfFileStream
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'CrLfFileStream class' category: #SqueakCompatibility!
-CrLfFileStream class
-	instanceVariableNames: ''!
-
-!classDefinition: #ClassTestCase category: #SqueakCompatibility!
-TestCase subclass: #ClassTestCase
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'ClassTestCase class' category: #SqueakCompatibility!
-ClassTestCase class
-	instanceVariableNames: ''!
-
-!classDefinition: #TestObjectsAsMethods category: #SqueakCompatibility!
-TestCase subclass: #TestObjectsAsMethods
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TestObjectsAsMethods class' category: #SqueakCompatibility!
-TestObjectsAsMethods class
 	instanceVariableNames: ''!
 
 !classDefinition: #UnsupportedInCuis category: #SqueakCompatibility!
@@ -356,6 +356,12 @@ UIManager class
 !Model commentStamp: '<historical>' prior: 0!
 Compatibility. Prefer ActiveModel.!
 
+!MultiByteFileStream commentStamp: 'jmv 5/8/2015 15:03' prior: 0!
+Not really a MultiByteXXX. Accept #lineEndConvention and honor it, on Write. On Read, do no conversions.!
+
+!CrLfFileStream commentStamp: '<historical>' prior: 0!
+Do line ending conversion on write. By default, write files with host platform convention.!
+
 !FileDirectory commentStamp: '<historical>' prior: 0!
 A FileDirectory represents a folder or directory in the underlying platform's file system. It carries a fully-qualified path name for the directory it represents, and can enumerate the files and directories within that directory.
 
@@ -383,12 +389,6 @@ an entry in a directory; a reference to a directory.!
 !DirectoryEntryFile commentStamp: '<historical>' prior: 0!
 an entry in a directory; a reference to a file.!
 
-!MultiByteFileStream commentStamp: 'jmv 5/8/2015 15:03' prior: 0!
-Not really a MultiByteXXX. Accept #lineEndConvention and honor it, on Write. On Read, do no conversions.!
-
-!CrLfFileStream commentStamp: '<historical>' prior: 0!
-Do line ending conversion on write. By default, write files with host platform convention.!
-
 !ProtoObject methodsFor: '*squeakCompatibility' stamp: 'jmv 12/18/2013 00:02'!
 ifNotNilDo: ifNotNilBlock
 	"Compatibility. Prefer #ifNotNil:"
@@ -398,10 +398,65 @@ ifNotNilDo: ifNotNilBlock
 isCharacter
 	^false! !
 
+!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
+environment
+	"Necessary to support disjoint class hierarchies."
+
+	^Smalltalk		"No environments in Cuis..."! !
+
 !Behavior methodsFor: '*squeakCompatibility' stamp: 'jmv 11/1/2011 23:15'!
 environment
 	"Return the environment in which the receiver is visible"
 	^Smalltalk! !
+
+!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:08:16'!
+printOn: aStream base: base digitCount: numDigits
+
+	self isNaN ifTrue: [aStream nextPutAll: 'NaN'. ^ self]. "check for NaN before sign"
+	self > 0.0
+		ifTrue: [self absPrintOn: aStream base: base digitCount: numDigits]
+		ifFalse:
+			[self sign = -1
+				ifTrue: [aStream nextPutAll: '-'].
+			self = 0.0
+				ifTrue: [aStream nextPutAll: '0.0'. ^ self]
+				ifFalse: [self negated absPrintOn: aStream base: base digitCount: numDigits]]! !
+
+!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:24:25'!
+printOn: aStream base: base nDigits: numDigits
+
+	self printOn: aStream base: base digitCount: numDigits! !
+
+!Time class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 10:52'!
+totalSeconds
+	^self primLocalSecondsClock ! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:29'!
+asInteger
+	"Answer the value of the receiver."
+
+	^self numericValue! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:26'!
+asUnicode
+	"Answer the unicode encoding of the receiver"
+	"self leadingChar = 0 ifTrue: [^ self asInteger].
+	^self encodedCharSet charsetClass convertToUnicode: self charCode"
+	^self asInteger! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:12'!
+isCharacter
+	^true! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:11'!
+value
+	^self numericValue! !
+
+!Character class methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:26:47'!
+value: anInteger
+	"Answer the Character whose value is anInteger."
+
+	^ self numericValue: anInteger! !
 
 !BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
 cull: firstArg
@@ -440,64 +495,14 @@ cull: firstArg cull: secondArg cull: thirdArg cull: fourthArg
 	numArgs = 1 ifTrue: [ ^self value: firstArg ].
 	^self value! !
 
-!Character methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:26'!
-asUnicode
-	"Answer the unicode encoding of the receiver"
-	"self leadingChar = 0 ifTrue: [^ self asInteger].
-	^self encodedCharSet charsetClass convertToUnicode: self charCode"
-	^self asInteger! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:12'!
-isCharacter
-	^true! !
+!InputSensor methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:47'!
+cursorPoint
+	^self mousePoint! !
 
 !SequenceableCollection methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:18'!
 doWithIndex: elementAndIndexBlock
 	"Old style. Prefer #withIndexDo:"
 	self withIndexDo: elementAndIndexBlock! !
-
-!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
-isAbstract
-	| marker |
-	marker := self markerOrNil.
-	^ marker notNil and: [self class abstractMarkers includes: marker].! !
-
-!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'al 2/13/2006 17:44'!
-markerOrNil
-	"If I am a marker method, answer the symbol used to mark me.  Otherwise
-	answer nil.
-
-	What is a marker method?  It is method with body like 
-		'self subclassResponsibility' or '^ self subclassResponsibility' 
-	used to indicate ('mark') a special property.
-
-	Marker methods compile to bytecode like:
-
-		9 <70> self
-		10 <D0> send: <literal 1>
-		11 <87> pop
-		12 <78> returnSelf
-
-	for the first form, or 
-
-		9 <70> self
-		10 <D0> send: <literal 1>
-		11 <7C> returnTop
-
-	for the second form."
-
-	| e |
-	((e := self endPC) = 19 or: [e = 20]) ifFalse: [^ nil].
-	(self numLiterals = 3) ifFalse:[^ nil].
-	(self at: 17) =  16r70 ifFalse:[^ nil].		"push self"
-	(self at: 18) = 16rD0 ifFalse:[^ nil].		"send <literal 1>"
-	"If we reach this point, we have a marker method that sends self <literal 1>"
-	^ self literalAt: 1
-! !
-
-!CompiledMethod class methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:17'!
-abstractMarkers
-	^ #(subclassResponsibility shouldNotImplement)! !
 
 !String methodsFor: '*squeakCompatibility' stamp: 'eem 2/3/2015 12:04'!
 subStrings: separators 
@@ -545,19 +550,61 @@ lf
 value: anObject 
 	^anObject perform: self.! !
 
-!InputSensor methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:47'!
-cursorPoint
-	^self mousePoint! !
+!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
+isAbstract
+	| marker |
+	marker := self markerOrNil.
+	^ marker notNil and: [self class abstractMarkers includes: marker].! !
 
-!Time class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 10:52'!
-totalSeconds
-	^self primLocalSecondsClock ! !
+!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'al 2/13/2006 17:44'!
+markerOrNil
+	"If I am a marker method, answer the symbol used to mark me.  Otherwise
+	answer nil.
 
-!Encoder methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 11:18'!
-environment
-	"Answer the environment of the current compilation context,
-	 be it in a class or global (e.g. a workspace)"
-	^Smalltalk "No environments in Cuis..."! !
+	What is a marker method?  It is method with body like 
+		'self subclassResponsibility' or '^ self subclassResponsibility' 
+	used to indicate ('mark') a special property.
+
+	Marker methods compile to bytecode like:
+
+		9 <70> self
+		10 <D0> send: <literal 1>
+		11 <87> pop
+		12 <78> returnSelf
+
+	for the first form, or 
+
+		9 <70> self
+		10 <D0> send: <literal 1>
+		11 <7C> returnTop
+
+	for the second form."
+
+	| e |
+	((e := self endPC) = 19 or: [e = 20]) ifFalse: [^ nil].
+	(self numLiterals = 3) ifFalse:[^ nil].
+	(self at: 17) =  16r70 ifFalse:[^ nil].		"push self"
+	(self at: 18) = 16rD0 ifFalse:[^ nil].		"send <literal 1>"
+	"If we reach this point, we have a marker method that sends self <literal 1>"
+	^ self literalAt: 1
+! !
+
+!CompiledMethod class methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:17'!
+abstractMarkers
+	^ #(subclassResponsibility shouldNotImplement)! !
+
+!Stream methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:02:52'!
+print: aNumber digits: numDigits
+
+	aNumber printOn: self base: 10 nDigits: numDigits ! !
+
+!WriteStream methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 14:59:03'!
+cr
+	"Append a lf character to the receiver.
+	Use this method when you specifically need a cr character.
+	In many cases, it is advisable to call #newLine"
+
+	self nextPut: Character cr! !
 
 !WriteStream methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 14:58'!
 crtab
@@ -574,6 +621,18 @@ crtab: anInteger
 	self cr.
 	anInteger timesRepeat: [self tab]! !
 
+!WriteStream methodsFor: '*squeakCompatibility' stamp: 'jmv 12/23/2013 09:34'!
+lf
+	"Append a lf character to the receiver.
+	Use this method when you specifically need a lf character.
+	In many cases, it is advisable to call #newLine"
+
+	self nextPut: Character lf! !
+
+!WriteStream methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 14:59:34'!
+nl
+	self newLine ! !
+
 !StandardFileStream methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:38'!
 lineEndConvention: aSymbol
 	"ignore it"! !
@@ -582,15 +641,24 @@ lineEndConvention: aSymbol
 forceNewFileNamed: aFilename
 	^ aFilename asFileEntry forceWriteStream! !
 
+!Encoder methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 11:18'!
+environment
+	"Answer the environment of the current compilation context,
+	 be it in a class or global (e.g. a workspace)"
+	^Smalltalk "No environments in Cuis..."! !
+
 !Transcript class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:41'!
 cr
 	self newLine! !
 
-!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
-environment
-	"Necessary to support disjoint class hierarchies."
+!Transcript class methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:04:14'!
+nl
+	self newLine! !
 
-	^Smalltalk		"No environments in Cuis..."! !
+!Transcript class methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:04:19'!
+print: aNumber digits: numDigits
+
+	aNumber printOn: self base: 10 nDigits: numDigits ! !
 
 !KlattResonatorIndices class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 20:17'!
 initialize
@@ -689,6 +757,36 @@ parameterData
 !KlattResonatorIndices class methodsFor: 'frame parameter data' stamp: 'dtl 11/15/2009 10:31'!
 parameterNames
 	^ self parameterData collect: [ :each | each first]! !
+
+!MultiByteFileStream methodsFor: 'access' stamp: 'jmv 5/8/2015 15:12'!
+lineEndConvention: aSymbol
+
+	lineEndConvention _ aSymbol caseOf: {
+		[ #lf ] -> [ String lfString ].
+		[ #cr ] -> [ String crString ] }.! !
+
+!MultiByteFileStream methodsFor: 'line end conversion' stamp: 'jmv 5/8/2015 15:17'!
+nextPut: char
+	(char isLineSeparator and: [ lineEndConvention notNil ])
+		ifTrue: [self nextPutAll: lineEndConvention ]
+		ifFalse: [super nextPut: char ].
+	^char! !
+
+!MultiByteFileStream methodsFor: 'line end conversion' stamp: 'jmv 5/8/2015 15:17'!
+nextPutAll: aString
+	| converted |
+	converted _ lineEndConvention
+		ifNil: [ aString ]
+		ifNotNil: [ aString withLineEndings: lineEndConvention ].
+	.super nextPutAll: converted.
+	^aString! !
+
+!CrLfFileStream methodsFor: 'initialization' stamp: 'jmv 5/8/2015 15:28'!
+initialize
+	"By default, use host platform convention"
+	lineEndConvention _ FileDirectory pathNameDelimiter = $\
+		ifFalse: [ String lfString ]
+		ifTrue: [ String crlfString ]! !
 
 !InvalidDirectoryError methodsFor: 'exceptionDescription' stamp: 'ar 5/30/2001 20:49'!
 defaultAction
@@ -2169,34 +2267,4 @@ readStreamDo: aBlock
 	"Obtain a FileStream on my contents that can be read, but not written,
 	and send it to aBlock."
 	^ directory readOnlyFileNamed: self name do: aBlock! !
-
-!MultiByteFileStream methodsFor: 'access' stamp: 'jmv 5/8/2015 15:12'!
-lineEndConvention: aSymbol
-
-	lineEndConvention _ aSymbol caseOf: {
-		[ #lf ] -> [ String lfString ].
-		[ #cr ] -> [ String crString ] }.! !
-
-!MultiByteFileStream methodsFor: 'line end conversion' stamp: 'jmv 5/8/2015 15:17'!
-nextPut: char
-	(char isLineSeparator and: [ lineEndConvention notNil ])
-		ifTrue: [self nextPutAll: lineEndConvention ]
-		ifFalse: [super nextPut: char ].
-	^char! !
-
-!MultiByteFileStream methodsFor: 'line end conversion' stamp: 'jmv 5/8/2015 15:17'!
-nextPutAll: aString
-	| converted |
-	converted _ lineEndConvention
-		ifNil: [ aString ]
-		ifNotNil: [ aString withLineEndings: lineEndConvention ].
-	.super nextPutAll: converted.
-	^aString! !
-
-!CrLfFileStream methodsFor: 'initialization' stamp: 'jmv 5/8/2015 15:28'!
-initialize
-	"By default, use host platform convention"
-	lineEndConvention _ FileDirectory pathNameDelimiter = $\
-		ifFalse: [ String lfString ]
-		ifTrue: [ String crlfString ]! !
 KlattResonatorIndices initialize!
