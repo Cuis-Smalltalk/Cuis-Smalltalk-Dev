@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:16:41 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2944] on 19 September 2016 at 10:07:02 pm'!
 'Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham.
 	- WebClient-Core-topa.99
 	- WebClient-Help-ar.10
 	- WebClient-Tests-fbs.47
 '!
-!provides: 'Protocols-HTTP' 1 24!
-!requires: 'Identities-UUID' 1 1 nil!
-!requires: 'Network-Kernel' 1 2 nil!
+!provides: 'Protocols-HTTP' 1 25!
 !requires: 'Cryptography-DigitalSignatures' 1 1 nil!
+!requires: 'Network-Kernel' 1 2 nil!
+!requires: 'Identities-UUID' 1 1 nil!
 !classDefinition: #HTTPChunkedStream category: #'Protocols-HTTP'!
 ReadStream subclass: #HTTPChunkedStream
 	instanceVariableNames: 'sourceStream chunkSize'
@@ -286,6 +286,10 @@ A wrapper object for the WebSocket API.!
 
 !WebSocket07 commentStamp: '<historical>' prior: 0!
 A wrapper object for the WebSocket API.!
+
+!SmallInteger methodsFor: '*Protocols-HTTP' stamp: 'jmv 9/19/2016 22:04:27'!
+numericValue
+	"Shouldn't be needed!!"! !
 
 !Character methodsFor: '*Protocols-HTTP' stamp: 'jmv 9/5/2016 21:01:57'!
 isSafeForHTTP
@@ -2013,7 +2017,7 @@ authenticate: request from: response
 	"And retry with the new credentials"
 	^self authenticate: request from: response! !
 
-!HTTPClient methodsFor: 'authentication' stamp: 'ar 3/27/2010 01:49'!
+!HTTPClient methodsFor: 'authentication' stamp: 'jmv 9/19/2016 21:02:13'!
 basicAuth: request from: response header: header params: params
 	"Provide basic authentication for the request"
 
@@ -2026,7 +2030,7 @@ basicAuth: request from: response header: header params: params
 	
 	user := (params at: #username ifAbsent:[nil]) ifNil:[^self].
 	pass := (params at: #password ifAbsent:[nil]) ifNil:[^self].
-	authParams at: #authResponse put:  (user, ':', pass value) base64Encoded.
+	authParams at: #authResponse put: (user, ':', pass value) asByteArray base64Encoded.
 ! !
 
 !HTTPClient methodsFor: 'initialize' stamp: 'ar 2/20/2010 11:06'!
@@ -4786,12 +4790,12 @@ authenticate: request realm: realm methods: accepted do: aBlock
 	request sendResponse: resp content: '<html><head><title>401 Unauthorized</title></head><body><h1>401 Unauthorized</h1><p>You are not authorized to access the requested URL</p></body></html>'.
 ! !
 
-!HTTPServer methodsFor: 'authentication' stamp: 'ar 3/30/2010 20:38'!
+!HTTPServer methodsFor: 'authentication' stamp: 'jmv 9/19/2016 21:33:53'!
 basicAuth: request realm: realm header: authHeader
 	"Perform Basic auth for the given request"
 
 	| data user pass hash |
-	data := (authHeader copyAfter: $ ) base64Decoded.
+	data := (authHeader copyAfter: $ ) base64Decoded asString.
 	user := data copyUpTo: $:.
 	pass := data copyAfter: $:.
 	data atAllPut: $*. data := nil.
@@ -5843,7 +5847,7 @@ extractWebSocketKey: field
 	^digits // spaces.
 ! !
 
-!HTTPUtils class methodsFor: 'auth' stamp: 'DSG 12/5/2013 12:21'!
+!HTTPUtils class methodsFor: 'auth' stamp: 'jmv 9/19/2016 21:34:22'!
 handleAuth: aBlock
 	"Utility method to handle web authentication requests interactively.
 
@@ -5862,8 +5866,8 @@ handleAuth: aBlock
 			user ifNotEmpty:[
 				"Just a little obfuscation to avoid completely plain passwords"
 				pass := (FillInTheBlankMorph request:
-					'Please enter the password for "', user,'":') base64Encoded.
-				 ex username: user password: [pass base64Decoded]]].
+					'Please enter the password for "', user,'":') asByteArray base64Encoded.
+				 ex username: user password: [pass base64Decoded asString]]].
 		ex pass].! !
 
 !HTTPUtils class methodsFor: 'oauth' stamp: 'DSG 3/28/2015 23:22'!
@@ -6608,7 +6612,7 @@ send: aString
 
 	^self send: aString type: 0! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 20:49:48'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/19/2016 21:54:06'!
 send: data type: type
 	"Writes one frame worth of data using the given frame type"
 
@@ -6617,7 +6621,7 @@ send: data type: type
 	type < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
 		stream nextPutAll: data asString asUtf8.
-		stream nextPutAll: (Character numericValue: 255).
+		stream nextPut: (Character numericValue: 255).
 	] ifFalse:[ | prefix length |
 		"Frame type >= 128: Binary data with length prefix"
 		prefix := ByteArray new.
