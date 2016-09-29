@@ -1,11 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:17:00 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2942] on 19 September 2016 at 10:18:11 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 62!
-!requires: 'SignalProcessing' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
+!provides: 'Tests' 1 63!
 !requires: 'Taskbar' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
@@ -7651,13 +7651,15 @@ abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
 
 	self assert: (stringWithHexNCRs asUtf8: true) = utf8! !
 
-!StringTest methodsFor: 'tests - converting' stamp: 'ul 10/30/2012 02:14'!
+!StringTest methodsFor: 'tests - converting' stamp: 'jmv 9/19/2016 09:55:39'!
 testBase64
 
 	self 
-		assert: 'SGVsbG8gV29ybGQ=' base64Decoded = 'Hello World';
-		assert: 'Hello World' base64Encoded = 'SGVsbG8gV29ybGQ=';
-		assert: (String new: 100 withAll: $x) base64Encoded  = 'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA=='! !
+		assert: 'SGVsbG8gV29ybGQ=' base64Decoded = 'Hello World' asByteArray;
+		assert: 'Hello World' asByteArray base64Encoded = 'SGVsbG8gV29ybGQ=';
+		assert: (String new: 100 withAll: $x) asByteArray base64Encoded  =
+'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
+eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA==' ! !
 
 !StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
 testCaseConversion

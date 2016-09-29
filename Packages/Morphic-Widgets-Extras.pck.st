@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2847] on 20 July 2016 at 10:01:13 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2948] on 27 September 2016 at 9:10:53 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 6!
+!provides: 'Morphic-Widgets-Extras' 1 7!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -1106,7 +1106,7 @@ drawOn: aCanvas
 		font: self fontToUse
 		color: color! !
 
-!OneLineEditorMorph methodsFor: 'drawing' stamp: 'jmv 4/12/2013 20:35'!
+!OneLineEditorMorph methodsFor: 'drawing' stamp: 'KenD 9/27/2016 09:10:25'!
 drawSelectionOn: aCanvas
 	| rightX leftX bottom |
 
@@ -1117,7 +1117,7 @@ drawSelectionOn: aCanvas
 	rightX _ rightX min: extent x.
 
 	aCanvas
-		fillRectangle: (leftX @ 0 corner: rightX @ bottom)
+		fillRectangle: (leftX+1 @ 1 corner: (rightX + 2) @ (bottom + 2))
 		color: (Theme current textHighlightFocused: self hasKeyboardFocus)! !
 
 !OneLineEditorMorph methodsFor: 'drawing' stamp: 'jmv 10/16/2013 22:19'!
