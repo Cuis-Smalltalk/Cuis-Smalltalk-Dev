@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 28 July 2016 at 3:25:22 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2950] on 11 October 2016 at 10:54:07 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 32!
+!provides: 'LinearAlgebra' 1 33!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -30,6 +30,16 @@ Matrix subclass: #FloatMatrix
 	category: 'LinearAlgebra'!
 !classDefinition: 'FloatMatrix class' category: #LinearAlgebra!
 FloatMatrix class
+	instanceVariableNames: ''!
+
+!classDefinition: #Float64Matrix category: #LinearAlgebra!
+FloatMatrix subclass: #Float64Matrix
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'LinearAlgebra'!
+!classDefinition: 'Float64Matrix class' category: #LinearAlgebra!
+Float64Matrix class
 	instanceVariableNames: ''!
 
 !classDefinition: #FloatBandMatrix category: #LinearAlgebra!
@@ -650,6 +660,18 @@ normalizeColumns
 		1 to: height do: [ :i |
 			self i: i j: j put: (self i: i j: j) / normSquared sqrt ] ]! !
 
+!Matrix methodsFor: 'operations' stamp: 'jmv 10/7/2016 15:35:55'!
+normalizeRows
+
+	| zeroElement normSquared |
+	zeroElement _ self zeroElement.
+	1 to: height do: [ :i |
+		normSquared _ zeroElement.
+		1 to: width do: [ :j |
+			normSquared _(self i: i j: j) squared + normSquared ].
+		1 to: width do: [ :j |
+			self i: i j: j put: (self i: i j: j) / normSquared sqrt ] ]! !
+
 !Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:17'!
 permuteRow: i and: k
 
@@ -760,6 +782,15 @@ substractRow: i multipliedBy: factor to: k startingAtColumn: jStart
 !Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:56'!
 sum
 	^elements sum! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 10/6/2016 15:35:41'!
+trace
+
+	| trace |
+	trace _ self zeroElement.
+	1 to: height do: [ :i |
+		trace _ trace + (self i: i j: i ) ].
+	^trace! !
 
 !Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:17'!
 transpose
@@ -926,6 +957,44 @@ rowFrom: anArray
 		result i: 1 j: j put: (anArray at: j) ].
 	^result! !
 
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 10/7/2016 15:00:01'!
+withColumns: aCollectionOfColumns
+	"Example:
+	FloatMatrix withColumns: #(
+		#(1
+			2
+			3)
+		#( 4
+			5
+			6)
+		#( 7
+			8
+			9)
+	).
+	"
+	| width height result |
+	width _ aCollectionOfColumns size.
+	height _ aCollectionOfColumns first size.
+	result _ self width: width height: height.
+	1 to: width do: [ :j |
+		1 to: height do: [ :i |
+			result i: i j: j put: ((aCollectionOfColumns at: j) at: i) ] ].
+	^result! !
+
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 10/7/2016 14:59:14'!
+withRows: aCollectionOfRows
+	"Example:
+	FloatMatrix withRows: #(
+		#(1 2 0 0 0 0 3) 
+		#(2 4 1 0 0 -4 3) 
+		#(0 1 1 1 0 0 3)
+		#(0 0 1 1 1 0 3)
+		#(0 0 0 1 1 1 3)
+		#(0 1 0 0 1 1 3)
+	).
+	"
+	^self fromArrayOfArrays: aCollectionOfRows! !
+
 !ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 10:47'!
 asForm
 	"Our pixel values are already constrained to 0..255.
@@ -1089,26 +1158,46 @@ copyToTile: aFloatMatrix position: aPoint
 		destOrigin: 0@0 sourceOrigin: aPoint-1.
 	blitter copyBits! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 7/19/2012 10:56'!
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/7/2016 14:46:36'!
+eigenvalues
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(6 4 4 1) 
+		#(4 6 1 4) 
+		#(4 1 6 4)
+		#(1 4 4 6)
+	)) eigenvalues
+	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(1 2 3 4) 
+		#(5 6 7 8) 
+		#(9 10 11 12)
+		#(13 14 15 16)
+	)) eigenvalues
+	"
+
+	^self eigenvaluesByQR! !
+
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/7/2016 15:31:23'!
 eigenvaluesAndEigenvectors
-	"Answers a transposed vector (a row matrix) of eigenvalues and a matrix of eigenvectors.
-	Each eigenvector is a column of the eigenvector matrix. Column k is the eigenvector for the
-	eigenvalue at column k in the eigenvalue vector.
-	The returned object is a Dictionary, with keys #eigenvalues and #eigenvectors."
-
-	^ self eigenvaluesAndEigenvectorsByQR! !
-
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 8/23/2014 23:25'!
-eigenvaluesAndEigenvectorsByQR
 	"Answers a transposed vector (a row matrix) of eigenvalues and a matrix of eigenvectors.
 	Each eigenvector is a column of the eigenvector matrix. Column k is the eigenvector for the
 	eigenvalue at column k in the eigenvalue vector.
 	The returned object is a Dictionary, with keys #eigenvalues and #eigenvectors.
 	This seems to be a bad way. Numerical Recipes in C has a couple of algorithms that should be studied!!"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(6 4 4 1) 
+		#(4 6 1 4) 
+		#(4 1 6 4)
+		#(1 4 4 6)
+	)) eigenvaluesAndEigenvectors
+	"
 
 	| result eigenvalues eigenvectorSystem eigenvaluesVector resultIndex resultEigenvalues resultEigenvectors rows columns |
 	result _ Dictionary new.
-	eigenvaluesVector _ self eigenvaluesByQR.
+	eigenvaluesVector _ self eigenvalues.
 	eigenvaluesVector round.	"This is necesary to consider repeated eigenvalues this way, and not as different ones (that would lead to repeated eigenvectors)"
 	eigenvalues _ Bag new.
 	1 to: eigenvaluesVector height do: [ :j |
@@ -1130,7 +1219,7 @@ eigenvaluesAndEigenvectorsByQR
 					(eigenvectorSystem i: j j: j) - eigenvalue.
 				eigenvectorSystem i: j j: width+1 put: 0 ].
 			eigenvectorSystem triangleWithPartialPivoting.
-
+"This is WRONG. the iteration doesn't make sense"
 			"This second phase completes the linear system so it will have just one solution.
 			The added equations are changed for each occurrence of the eigenvalue, to get
 			a different eigenvector."
@@ -1148,15 +1237,98 @@ eigenvaluesAndEigenvectorsByQR
 	result at: #eigenvectors put: resultEigenvectors.
 	^result! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 8/23/2014 23:26'!
-eigenvaluesByQR
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/7/2016 15:17:18'!
+eigenvaluesByJacobi
+"Needs rework. Optimization. Cleanup"
+"la traza, suma de la diagonal es tambien la suma de los autovalores...
+puedo tirar bocha de vectores random para estimar radio espectral (mayor autovalor...). incluso ir girando para ver adonde aumenta la norma del resultado, etc"
 	"This implementation only works if all the eigenvalues are real."
-	"(FloatMatrix fromArrayOfArrays: #(
+"SOLO para matrices SIMETRICAS"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
 		#(6 4 4 1) 
 		#(4 6 1 4) 
 		#(4 1 6 4)
 		#(1 4 4 6)
-	)) eigenvaluesByQR"
+	)) eigenvaluesByJacobi
+	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(-1.510 -1.312 0.000 0.000) 
+		#(-1.312 1.510 -0.000 -0.000) 
+		#(-0.000 -0.000 -1.800 -0.872)
+		#(0.000 0.000 -0.872 1.800)
+	)) eigenvaluesByJacobi
+	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(-1.510 -1.312 ) 
+		#(-1.312 1.510 ) 
+	)) eigenvaluesByJacobi
+	"
+
+	| h loopCount j aux c a_jj a_kk k p_i a_jk b aux2 maxE |
+	h _ self copy.
+	loopCount _ 0.
+	[ h isZeroBelowDiagonal ] whileFalse: [
+		maxE _ nil.
+		1 to: height-1 do: [ :ii |
+			ii+1 to: width do: [ :jj |
+				(maxE isNil or: [ (h i: ii j: jj) abs > maxE ]) ifTrue: [
+					maxE _ (h i: ii j: jj) abs.
+					j _ ii.
+					k _ jj.
+					]]].
+		p_i _ self class identity: width.
+		a_jj _ h i: j j: j.
+		a_kk _ h i: k j: k.
+		a_jj = a_kk ifTrue: [
+			p_i i: j j: j put: 2.0 sqrt / 2.
+			p_i i: k j: k put: 2.0 sqrt / 2.
+			p_i i: k j: j put: 2.0 sqrt / 2.
+			p_i i: j j: k put: 0-(2.0 sqrt / 2).
+"			p_i print."
+			]
+		ifFalse: [
+			a_jk _ h i: j j: k.
+			c _ 2 * a_jk * (a_jj - a_kk) sign.		"ok?"
+			b _ (a_jj - a_kk) abs.
+			aux _ ((b / ((b*b)+(c*c)) sqrt) + 1 / 2) sqrt.
+			p_i i: j j: j put: aux.
+			p_i i: k j: k put: aux.
+			aux2 _ c / (2 * aux * ((b*b)+(c*c))sqrt).
+			aux2 _ aux arcCos sin.
+			p_i i: k j: j put: aux2.
+			p_i i: j j: k put: 0 - aux2.
+"			p_i print.
+			{aux arcCos. aux2 arcSin} print."
+			].
+		h _ p_i * h * p_i transposed.
+"probablemente valga la pena optimizar y no crear todo asi... O simplemente reusar la instancia. No se."
+		loopCount _ loopCount + 1.
+		loopCount > 200 ifTrue: [^self error: 'Could not find real eigenvalues'] ].
+"	h print."
+	^h diagonal! !
+
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/7/2016 15:17:29'!
+eigenvaluesByQR
+	"This implementation only works if all the eigenvalues are real, and if there is a single one with absolute value greater than all the rest."
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(6 4 4 1) 
+		#(4 6 1 4) 
+		#(4 1 6 4)
+		#(1 4 4 6)
+	)) eigenvaluesByQR
+	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(1 2 3 4) 
+		#(5 6 7 8) 
+		#(9 10 11 12)
+		#(13 14 15 16)
+	)) eigenvaluesByQR
+	"
 
 	| h q r loopCount |
 	h _ self hessembergSuperior.
@@ -1164,17 +1336,77 @@ eigenvaluesByQR
 	r _ self appropriateResultClass height: height width: width.
 	loopCount _ 0.
 	[ h isFirstSubdiagonalZero ] whileFalse: [
-		h storeQRDecompositionOfHessemberSuperiorOnQ: q r: r.
+		h storeQRDecompositionOfHessembergSuperiorOnQ: q r: r.
 		h fillWith: r multipliedBy: q.
 		loopCount _ loopCount + 1.
 		loopCount > 200 ifTrue: [^self error: 'Could not find real eigenvalues'] ].
 	^h diagonal! !
 
-!FloatMatrix methodsFor: 'private' stamp: 'jmv 11/16/2014 19:52'!
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/7/2016 15:46:59'!
+eigenvectorForLargestEigenvalue
+	"Answers a transposed vector (a row matrix) of eigenvalues and a matrix of eigenvectors.
+	Each eigenvector is a column of the eigenvector matrix. Column k is the eigenvector for the
+	eigenvalue at column k in the eigenvalue vector.
+	The returned object is a Dictionary, with keys #eigenvalues and #eigenvectors.
+	This seems to be a bad way. Numerical Recipes in C has a couple of algorithms that should be studied!!"
+
+"SOLO para matrices SIMETRICAS"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(6 4 4 1) 
+		#(4 6 1 4) 
+		#(4 1 6 4)
+		#(1 4 4 6)
+	)) eigenvectorForLargestEigenvalue
+	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(-1.510 -1.312 0.000 0.000) 
+		#(-1.312 1.510 -0.000 -0.000) 
+		#(-0.000 -0.000 -1.800 -0.872)
+		#(0.000 0.000 -0.872 1.800)
+	)) eigenvectorForLargestEigenvalue
+	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(-1.510 -1.312 ) 
+		#(-1.312 1.510 ) 
+	)) eigenvectorForLargestEigenvalue
+	"
+	"
+	(Float64Matrix withRows: #(
+		( -1.509566546224207 1.311895552824272 0.01142904475547099 -6.28247456846262e-5)
+		( 1.311895552824272 1.509567264852017 -5.931237097779896e-5 0.01129103744090236)
+		( 0.01142904475547099 -5.931237097779896e-5 1.509205244817257 -1.312314005942332)
+		( -6.28247456846262e-5 0.01129103744090236 -1.312314005942332 -1.509205963445068)))
+	eigenvectorForLargestEigenvalue elements normalize
+	"
+
+	| eigenvectorSystem largestEigenvalue |
+	largestEigenvalue _ self eigenvaluesByJacobi elements max.
+
+	eigenvectorSystem _ self appropriateResultClass height: height width: width+1.
+
+	eigenvectorSystem fillWith: self.
+	1 to: height do: [ :i |
+		eigenvectorSystem i: i j: i put:
+			(eigenvectorSystem i: i j: i) - largestEigenvalue.
+		eigenvectorSystem i: i j: width+1 put: 0 ].
+	eigenvectorSystem triangleWithPartialPivoting.
+
+	"This second phase completes the linear system so it will have just one solution."
+	1 to: height do: [ :i |
+		(eigenvectorSystem i: i j: i) abs < self epsilon ifTrue: [
+			eigenvectorSystem i: i j: i put: 1.
+			eigenvectorSystem i: i j: width+1  put: 1 ]].
+
+	^eigenvectorSystem solveLinearSystem! !
+
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 10/7/2016 15:10:39'!
 epsilon
 	"Something better is needed. For example, taking into accoung the largest elements, or the norm, or something like that... In any case it is better to check senders, and use a different strategy for ending iterative methods or such..."
 
-	^1e-9 asFloat! !
+	^1e-7 asFloat! !
 
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:23'!
 expandTo: newExtent
@@ -1410,10 +1642,10 @@ fullRangeG: greenImage b: blueImage displayAt: aPoint
 
 	(self asGammaFormFullRangeG: greenImage b: blueImage) displayAt: aPoint! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 8/23/2014 23:26'!
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/6/2016 22:28:26'!
 hessembergSuperior
-	"Answers a new matrix that is the Hessember Superior transform of the receiver.
-	A Hessember Superior matrix has zero entries below the first subdiagonal.
+	"Answers a new matrix that is the Hessemberg Superior transform of the receiver.
+	A Hessemberg Superior matrix has zero entries below the first subdiagonal.
 	The new matrix has the same eigenvalues as the receiver."
 
 	| result u |
@@ -1629,6 +1861,14 @@ isFirstSubdiagonalZero
 	^(1 to: width-1) inject: true into: [ :previousValue :each |
 		previousValue and: [ (self i: each + 1 j: each) abs <= self epsilon ] ]! !
 
+!FloatMatrix methodsFor: 'testing' stamp: 'jmv 10/6/2016 23:32:51'!
+isZeroBelowDiagonal
+
+	2 to: height do: [ :i |
+		1 to: i-1 do: [ :j |
+			(self i: i j: j) abs > self epsilon ifTrue: [ ^false ]]].
+	^true! !
+
 !FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:11'!
 j: j
 	"Answers a column vector with the values at column x.
@@ -1686,12 +1926,12 @@ magnitudeWithImaginary: imaginaryPart
 			result i: i j: j put: magnitude ]].
 	^result! !
 
-!FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
+!FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 10/7/2016 14:44:28'!
 norm
 	"
 	(FloatMatrix identity: 5) norm
 	"
-	^(self transposed * self) eigenvaluesByQR elements max sqrt! !
+	^(self transposed * self) eigenvalues elements max sqrt! !
 
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 11:06'!
 norm2
@@ -1791,8 +2031,8 @@ storeHouseholderTransformOn: aMatrix column: j forQR: forQR
 				(2.0 / vNorm2Squared * (v i: ii j: 1) * (v i: jj j: 1) ) ] ].
 	^true! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 7/19/2012 12:00'!
-storeQRDecompositionOfHessemberSuperiorOnQ: q r: r
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/6/2016 22:27:34'!
+storeQRDecompositionOfHessembergSuperiorOnQ: q r: r
 	"Works only if the receiver is a Hessemberg superior matrix."
 
 	| elementAtJ elementBelowJ aux c s |
@@ -1820,6 +2060,70 @@ form: aForm color: aSymbol
 			color _ aForm colorAt: (j-1@(i-1)).
 			answer i: i j: j put: (color perform: aSymbol)]].
 	^answer! !
+
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:14'!
+copyFromTile: aFloatMatrix position: aPoint
+	self halt! !
+
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:17'!
+copyFromTile: aFloatMatrix position: aPoint guardZone: borderWidth
+	self halt! !
+
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:20'!
+copyToTile: aFloatMatrix position: aPoint
+	self halt! !
+
+!Float64Matrix methodsFor: 'private' stamp: 'jmv 10/11/2016 10:51:49'!
+epsilon
+	"Something better is needed. For example, taking into accoung the largest elements, or the norm, or something like that... In any case it is better to check senders, and use a different strategy for ending iterative methods or such..."
+
+	^1e-8 asFloat! !
+
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:24'!
+fillFrom32BitForm: aForm component: aSymbol
+	self halt! !
+
+!Float64Matrix methodsFor: 'copying' stamp: 'jmv 10/11/2016 10:52:42'!
+fillWith: aFloatMatrix
+	1 to: (height min: aFloatMatrix height) do: [ :i |
+		1 to: (width min: aFloatMatrix width) do: [ :j |
+			self i: i j: j put: (aFloatMatrix i: i j: j) ] ]! !
+
+!Float64Matrix methodsFor: 'copying' stamp: 'jmv 10/11/2016 10:52:55'!
+fillWith: aFloatMatrix displaced: deltaPoint
+	1 to: aFloatMatrix height do: [ :i |
+		1 to: aFloatMatrix width do: [ :j |
+			self i: i+deltaPoint y j: j+deltaPoint x put: (aFloatMatrix i: i j: j) ]]! !
+
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:53:08'!
+fillWith: aFloatMatrix displacedCircular: deltaPoint
+	self halt! !
+
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:53:11'!
+imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandImaginaryPart
+	self halt! !
+
+!Float64Matrix methodsFor: 'initialization' stamp: 'jmv 10/6/2016 22:02:07'!
+initializeElements
+
+	elements _ Float64Array new: height * width! !
+
+!Float64Matrix methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:53:24'!
+j: j
+	"Answers a column vector with the values at column x"
+
+	| result |
+	result _ self appropriateResultClass newColumnVectorSize: height.
+	1 to: height do: [ :i |
+		result i: i j: 1 put: (self i: i j: j) ].
+	^result! !
+
+!Float64Matrix methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:53:26'!
+j: j put: column
+	"column can be a column vector (m x 1 matrix), or a kind of Array"
+
+	1 to: height do: [ :i |
+		self i: i j: j put: (column at: i) ]! !
 
 !FloatBandMatrix methodsFor: 'misc' stamp: 'jmv 9/27/2007 23:38'!
 appropriateResultClass
