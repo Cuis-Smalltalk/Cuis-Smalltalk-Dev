@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 28 July 2016 at 3:23:05 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2953] on 17 October 2016 at 11:01:15 am'!
 'Description Please enter a description for this package'!
-!provides: 'Statistics' 1 4!
+!provides: 'Statistics' 1 5!
 !requires: 'Goodies' 1 0 nil!
 !classDefinition: #UnitaryMonotonicMap category: #Statistics!
 FloatArray variableWordSubclass: #UnitaryMonotonicMap
@@ -485,6 +485,13 @@ tallies: anArray lowBinCenter: aNumber highBinCenter: anotherNumber extraBinsFor
 	lowBinCenter _ aNumber.
 	highBinCenter _ anotherNumber.
 	extraBinsForClampedValues _ aBoolean! !
+
+!Histogram methodsFor: 'building' stamp: 'jmv 10/14/2016 16:44:01'!
+zeroCountAt: aNumber
+
+	| i |
+	i _ self indexFor: aNumber.
+	tallies at: i put: 0! !
 
 !Histogram class methodsFor: 'instance creation' stamp: 'jmv 4/6/2015 11:57'!
 binCount: binCount lowBinCenter: lowBinCenter highBinCenter: highBinCenter

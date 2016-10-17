@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2860] on 9 August 2016 at 10:45:52 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2953] on 17 October 2016 at 10:52:30 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 66!
+!provides: 'SignalProcessing' 1 67!
 !requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
 !requires: 'Statistics' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Sound' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3166,7 +3166,7 @@ convolutionLinearWithSmallKernel: kernel
 			answer x: x y: y put: v ]].
 	^answer! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 12/10/2012 18:00'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 10/17/2016 10:39:31'!
 crossCorrelationWith: aFloatImage phase: aBoolean
 	"Compute cross correlation with argument, usig 2D FFT. Store the result on self.
 	if aBoolean, compute phase correlation.
@@ -3179,7 +3179,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	Note: Input is assumed to be real, and answer is real too.
 	Note: modifies both self and aFloatImage. Call with copies if appropriate.
 	"
-	| imaginary argumentImaginary fft a b c d e f k |
+	| imaginary argumentImaginary fft a b c d e f magnitude |
 	imaginary _ FloatImage width: width height: height.
 	argumentImaginary _ FloatImage width: width height: height.
 
@@ -3195,7 +3195,6 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 "imaginary *= -1."
 
 	"Multiply"
-	k _ 1.
 	1 to: height do: [ :y |
 		1 to: width do: [ :x |
 			a _ self x: x y: y.
@@ -3205,15 +3204,18 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 			e _ a * c - (b * d).
 			f _ b * c + (a * d).
 			aBoolean ifTrue: [
-				k _ 1.0 / (e squared + f squared) sqrt ].
-			self x: x y: y put: e*k.
-			imaginary x: x y: y put: f*k ]].
+				magnitude _ (e squared + f squared) sqrt.
+				magnitude = 0.0 ifFalse: [
+					e _ e / magnitude.
+					f _ f / magnitude ]].
+			self x: x y: y put: e.
+			imaginary x: x y: y put: f ]].
 
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 12/11/2012 15:48'!
-deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 10/17/2016 10:49:44'!
+deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNil
 	"Compute the image registration between self and anImage. Answer the delta aFloatImage should be moved to align perfectly with self.
 	Assume there is no scale change and no rotation.
 	It is required that both images are of the same size, and that width and height are an integer power of two (to ease FFT).
@@ -3228,34 +3230,31 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw
 	
 	Note: modifies both images. Call this method with copies, if needed."
 	
-	| x y dx dy c xy doPhaseCorrelation |
+	| x y dx dy c xy doPhaseCorrelation rawPatternPosition |
 	"Do Phase Correlation. This normalizes the cross correlation result, meaning it makes sense to ask the max value to be above some minimum to be meaningful."
 	doPhaseCorrelation _ true.
-
 	self crossCorrelationWith: aFloatImage phase: doPhaseCorrelation.
 
-	"If images are Raw there will be a spurious local maximum at 1@1"
-	imagesAreRaw ifTrue: [ self x: 1 y: 1 put: 0 ].
+	"If images are Raw there will be a spurious local maximum at 1@1, or at whatever distance the two images where taken from the original raws.
+	This is due to usual sensor pixel gain non uniformity, hot & dead pixels, etc."
+	imagesAreRaw ifTrue: [
+		rawPatternPosition _ (rawDeltaPointOrNil ifNotNil: [rawDeltaPointOrNil rounded] ifNil: [0@0])+1.
+		self wrapI: rawPatternPosition y j: rawPatternPosition x put: 0.
+		self wrapI: rawPatternPosition y+1 j: rawPatternPosition x put: 0.
+		self wrapI: rawPatternPosition y-1 j: rawPatternPosition x put: 0.
+		self wrapI: rawPatternPosition y j: rawPatternPosition x+1 put: 0.
+		self wrapI: rawPatternPosition y j: rawPatternPosition x-1 put: 0 ].
+
 	
 	"Find max"
 	xy _ self xyForMax.
 	x _ xy x.
 	y _ xy y.
 
-	"If only maximum was at 1@1, it means that preconditions were not met.
-	As we have already set the value at 1@1 as zero, this would be the case if the max value is in one of 4 neighbors of 1@1"
-	imagesAreRaw ifTrue: [
-		((x= width and: [ y = 1 ]) or: [
-		(x= 2 and: [ y = 1 ]) or: [
-		(x= 1 and: [ y = height ]) or: [
-		(x= 1 and: [ y = 2 ]) ]]]) ifTrue: [
-			self error: 'Raw images with no content displacement are not supported.' ]].
-
-
 	"Solo considerar valido el maximo si es mayor que 0.03. Suponemos phase = true. ver 
 	An FFT-Based Technique for Translation, Rotation, and Scale-Invariant Image Registration"
-"	(doPhaseCorrelation and: [ (self x: x y: y) < 0.03 ]) ifTrue: [
-		self error: 'The displacement between images could not be found' ]."
+	(doPhaseCorrelation and: [ (self x: x y: y) < 0.03 ]) ifTrue: [
+		self error: 'The displacement between images could not be found' ].
 
 	"Find centroid around x@y"
 	c _ self centroidAround: x@y.
@@ -3263,6 +3262,7 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw
 	dy _ c y-1.
 	dx > (width//2) ifTrue: [ dx _ dx - width ].
 	dy > (height//2) ifTrue: [ dy _ dy - height ].
+
 	^dx @dy! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 7/18/2016 10:16:43'!
