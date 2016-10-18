@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2746] on 29 April 2016 at 4:30:50.70726 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2950] on 11 October 2016 at 10:45:05 am'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition to 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 16!
+!provides: 'Math 3D' 1 17!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -31,14 +31,14 @@ Float64Array variableWordSubclass: #Float64Matrix4x4
 Float64Matrix4x4 class
 	instanceVariableNames: ''!
 
-!classDefinition: #Float64Rotation category: #'Math 3D'!
-Float64Array variableWordSubclass: #Float64Rotation
+!classDefinition: #Float64Quaternion category: #'Math 3D'!
+Float64Array variableWordSubclass: #Float64Quaternion
 	instanceVariableNames: ''
-	classVariableNames: 'Float64IdentityRotation'
+	classVariableNames: 'Float64IdentityRotation Identity'
 	poolDictionaries: ''
 	category: 'Math 3D'!
-!classDefinition: 'Float64Rotation class' category: #'Math 3D'!
-Float64Rotation class
+!classDefinition: 'Float64Quaternion class' category: #'Math 3D'!
+Float64Quaternion class
 	instanceVariableNames: ''!
 
 !classDefinition: #Float64Vector2 category: #'Math 3D'!
@@ -105,7 +105,7 @@ Currently pretty bare bones. If more stuff from FloatMatrix4x4 is needed, consid
 I represent a general 4x4 transformation matrix commonly used in computer graphics.
 A copy of B3DMatrix4x4 (from Balloon3D-Math), but with 64 bit Float elements (instead of 32 bit Float).!
 
-!Float64Rotation commentStamp: '<historical>' prior: 0!
+!Float64Quaternion commentStamp: 'jmv 10/11/2016 10:41:38' prior: 0!
 I represent general 3d rotations by using Unit-Quaternions. Unit-Quaternions are one of the best available representation for rotations in computer graphics because they provide an easy way of doing arithmetic with them and also because they allow us to use spherical linear interpolation (so-called "slerps") of rotations.
 
 Indexed Variables:
@@ -114,10 +114,21 @@ Indexed Variables:
 	c	<Float>	the second imaginary part of the quaternion. Related to Y coordinate of the rotation axis. Also called q2.
 	d	<Float>	the third imaginary part of the quaternion. Related to Z coordinate of the rotation axis. Also called q3.
 
-A copy of B3DRotation (from Balloon3D-Math), but with 64 bit Float elements (instead of 32 bit Float).
+Started as a copy of B3DRotation (from Balloon3D-Math), but with 64 bit Float elements (instead of 32 bit Float).
 
 See #a:b:c:d: , #q1:q2:q3:q4: and #x:y:z:a:
-See http://bicycle.tudelft.nl/schwab/Publications/quaternion.pdf!
+See http://bicycle.tudelft.nl/schwab/Publications/quaternion.pdf
+See http://tutis.ca/Rotate/7quaternions.htm
+
+Quaternions are used to state the attitude of an aircraft or spaceship with respect to a reference frame.
+
+The reference frame might be ECEF cartesian coordinates (origin at Earth center, +x towards 0° lat, 0° lon, +y towards 0° lat, 90° lon east, +z towards North pole.
+The "Body" coordinates have origin at center of mass of aircraft, +x points forward (nose of the plane), +y points to the right, +z points downwards.
+
+The attitude is usually specified as "Inertial to Body" or "ECEF to Body" meaning a quaterion that if applied to the ECEF cartesian axes the result is the Body axes expressed in ECEF coordinates.
+
+If what we want is to convert a direction or point in ECEF coordinates to Body coordinates, then the rotation is the reverse of the required to convert the axes.
+See #rotate:, #bodyToInertial: and #inertialToBody:!
 
 !Float64Vector2 commentStamp: '<historical>' prior: 0!
 I represent simple (x, y) 2D Cartesian coordinates with 64-bit Float (a.k.a. double) precision.
@@ -680,7 +691,7 @@ alternateRotation
 asMatrix4x4
 	^self! !
 
-!Float64Matrix4x4 methodsFor: 'converting' stamp: 'jsp 3/5/1999 15:31'!
+!Float64Matrix4x4 methodsFor: 'converting' stamp: 'jmv 10/11/2016 10:14:47'!
 asQuaternion
 	"Convert the matrix to a quaternion"
 
@@ -719,7 +730,7 @@ asQuaternion
 										]
 					].
 
-	^ (Float64Rotation a: a b: x c: y d: z).
+	^ (Float64Quaternion a: a b: x c: y d: z).
 ! !
 
 !Float64Matrix4x4 methodsFor: 'accessing' stamp: 'jsp 2/11/1999 14:09'!
@@ -1287,11 +1298,11 @@ rotation: aVector
 	^ self.
 ! !
 
-!Float64Matrix4x4 methodsFor: 'accessing'!
+!Float64Matrix4x4 methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:50'!
 rotation: anAngle around: aVector3
 	"set up a rotation matrix around the direction aVector3"
 
-	self loadFrom: (Float64Rotation angle: anAngle axis: aVector3) asMatrix4x4! !
+	self loadFrom: (Float64Quaternion angle: anAngle axis: aVector3) asMatrix4x4! !
 
 !Float64Matrix4x4 methodsFor: 'accessing'!
 rotation: anAngle aroundX: xValue y: yValue z: zValue
@@ -1678,12 +1689,12 @@ initialize
 numElements
 	^16! !
 
-!Float64Matrix4x4 class methodsFor: 'instance creation' stamp: 'ar 2/15/1999 23:58'!
+!Float64Matrix4x4 class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:52'!
 rotatedBy: angle around: axis centeredAt: origin
 	"Create a matrix rotating points around the given origin using the angle/axis pair"
 	| xform |
 	xform := self withOffset: origin negated.
-	xform := xform composedWithGlobal:(Float64Rotation angle: angle axis: axis) asMatrix4x4.
+	xform := xform composedWithGlobal:(Float64Quaternion angle: angle axis: axis) asMatrix4x4.
 	xform := xform composedWithGlobal: (self withOffset: origin).
 	^xform! !
 
@@ -1708,7 +1719,7 @@ withScale: amount
 zero
 	^self new! !
 
-!Float64Rotation methodsFor: 'arithmetic' stamp: 'jmv 7/14/2015 10:28'!
+!Float64Quaternion methodsFor: 'arithmetic' stamp: 'jmv 10/11/2016 10:14:55'!
 * aRotation
 	"Multiplying two rotations is the same as concatenating the two rotations."
 	| v1 v2 v3 vv |
@@ -1716,21 +1727,21 @@ zero
 	v2 := aRotation vectorPart * self a.
 	v3 := aRotation vectorPart cross: self vectorPart.
 	vv := v1 + v2 + v3.
-	^Float64Rotation
+	^Float64Quaternion
 		a: (self a * aRotation a) - (self vectorPart dot: aRotation vectorPart)
 		b: vv x
 		c: vv y
 		d: vv z! !
 
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 21:59'!
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:25'!
 a
 	^self at: 1! !
 
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 22:04'!
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:25'!
 angle
 	^(self a arcCos * 2.0 radiansToDegrees)! !
 
-!Float64Rotation methodsFor: 'converting' stamp: 'jmv 11/24/2015 10:02'!
+!Float64Quaternion methodsFor: 'converting' stamp: 'jmv 10/11/2016 10:14:26'!
 asMatrix3x3
 	"Answer a Float64Matrix3x3 that does the same rotation as us"
 	| m |
@@ -1739,7 +1750,7 @@ asMatrix3x3
 	^m
 ! !
 
-!Float64Rotation methodsFor: 'converting' stamp: 'jmv 11/24/2015 10:01'!
+!Float64Quaternion methodsFor: 'converting' stamp: 'jmv 10/11/2016 10:14:26'!
 asMatrix4x4
 	"Answer a Float64Matrix4x4 that does the same rotation as us"
 	| m |
@@ -1748,7 +1759,7 @@ asMatrix4x4
 	^m
 ! !
 
-!Float64Rotation methodsFor: 'converting' stamp: 'jmv 11/23/2015 16:37'!
+!Float64Quaternion methodsFor: 'converting' stamp: 'jmv 10/11/2016 10:14:26'!
 asMatrixOn: m
 	"Given a quaternion q = (a, [ b , c , d]) the rotation matrix can be calculated as
 				|	1 -	2(cc+dd),			2(bc-da),				2(db+ca)	|
@@ -1765,7 +1776,7 @@ asMatrixOn: m
 		a21: (bc + da * 2.0);		a22: 1.0 - (bb + dd * 2.0);	a23: (cd - ba * 2.0);
 		a31: (db - ca * 2.0);			a32: (cd + ba * 2.0);		a33: 1.0 - (bb + cc * 2.0)! !
 
-!Float64Rotation methodsFor: 'accessing'!
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:26'!
 axis
 	| sinAngle |
 	sinAngle := self a arcCos sin.
@@ -1775,41 +1786,93 @@ axis
 		y: (self c / sinAngle)
 		z: (self d / sinAngle)! !
 
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 21:59'!
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:26'!
 b
 	^self at: 2! !
 
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 21:59'!
+!Float64Quaternion methodsFor: 'rotating' stamp: 'jmv 10/11/2016 10:40:10'!
+bodyToInertial: vectorInSpacecraftFrame
+	"See class comment
+
+	http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/geometric/quaternionTraining001.pdf
+
+	Vector Rotation:
+		We know a Vector in the Spacecraft Frame,
+		Where is it pointing in Inertial Frame?
+		(eg: Given Spacecraft Attitude and Spacecraft Frame Star Tracker Vector,
+		Where is the Star Tracker Pointed in Inertial Frame?)
+
+		Vs: Vector in Spacecraft Frame (argument)
+		Vi: Vector in Inertial Frame (answer)
+		Q: Spacecraft Attitude Quaternion (receiver)
+		Q*: Quaternion conjugate (receiver conjugate)
+
+	Vi = Q* . Vs .  Q
+	"
+	"If we were able to represent any quaternion, and not just unit quaternions, this would be correct:
+	^(self conjugate * vectorInSpacecraftFrame asPureQuaternion * self) vectorPart
+	"
+
+	"This should be inlined!!!!!!!!!!!!"
+	^(self conjugate * vectorInSpacecraftFrame asPureQuaternion * self) vectorPart * vectorInSpacecraftFrame length! !
+
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:26'!
 c
 	^self at: 3! !
 
-!Float64Rotation methodsFor: 'arithmetic' stamp: 'jmv 7/7/2015 15:09'!
+!Float64Quaternion methodsFor: 'arithmetic' stamp: 'jmv 10/11/2016 10:14:56'!
 conjugate
-	^Float64Rotation
+	^Float64Quaternion
 		a: self a
 		b: self b negated
 		c: self c negated
 		d: self d negated! !
 
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 2/1/1999 21:59'!
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:26'!
 d
 	^self at: 4! !
 
-!Float64Rotation methodsFor: 'interpolating' stamp: 'jsp 2/25/1999 15:57'!
+!Float64Quaternion methodsFor: 'rotating' stamp: 'jmv 10/11/2016 10:40:01'!
+inertialToBody: vectorInInertialFrame
+	"See class comment
+
+	http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/geometric/quaternionTraining001.pdf
+
+	Coordinate Transformation:
+		We know a Vector in the Inertial Frame,
+		What is it in the Spacecraft Frame?
+		(eg: Given Spacecraft Attitude, Earth and Spacecraft Ephemeris,
+		Where do we point de Payload relative to the Spacecraft?)
+
+		Vs: Vector in Spacecraft Frame (answer)
+		Vi: Vector in Inertial Frame (argument)
+		Q: Spacecraft Attitude Quaternion (receiver)
+		Q*: Quaternion conjugate (receiver conjugate)
+
+	Vs = Q . Vi . Q*
+	"
+	"If we were able to represent any quaternion, and not just unit quaternions, this would be correct:
+	^(self * vectorInInertialFrame asPureQuaternion * self conjugate) vectorPart
+	"
+
+	"This should be inlined!!!!!!!!!!!!"
+	^(self * vectorInInertialFrame asPureQuaternion * self conjugate) vectorPart * vectorInInertialFrame length! !
+
+!Float64Quaternion methodsFor: 'interpolating' stamp: 'jmv 10/11/2016 10:14:26'!
 interpolateTo: aRotation at: t
 	"Spherical linear interpolation (slerp) from the receiver to aQuaternion"
 	^self slerpTo: aRotation at: t extraSpins: 0! !
 
-!Float64Rotation methodsFor: 'arithmetic' stamp: 'ar 2/1/1999 22:06'!
+!Float64Quaternion methodsFor: 'arithmetic' stamp: 'jmv 10/11/2016 10:14:58'!
 negated
 	"Negating a quaternion is the same as reversing the angle of rotation"
-	^Float64Rotation
+	^Float64Quaternion
 		a: self a negated
 		b: self b
 		c: self c
 		d: self d! !
 
-!Float64Rotation methodsFor: 'arithmetic' stamp: 'jmv 4/29/2016 16:25'!
+!Float64Quaternion methodsFor: 'arithmetic' stamp: 'jmv 10/11/2016 10:14:25'!
 normalize
 	"Normalize the receiver. Note that the actual angle (a) determining the amount of 
 	rotation is fixed, since we do not want to modify angles. This leads to:
@@ -1836,13 +1899,30 @@ normalize
 	self at: 3 put: self c / length.
 	self at: 4 put: self d / length! !
 
-!Float64Rotation methodsFor: 'converting' stamp: 'jmv 7/16/2015 12:16'!
+!Float64Quaternion methodsFor: 'converting' stamp: 'jmv 10/11/2016 10:14:26'!
 normalized
 	"Our instances are always normalized... This is not really needed...
 	(well, except someone calls: #a:, #b:, #c:, #d: or #loadFrom:)"
 	^self copy normalize! !
 
-!Float64Rotation methodsFor: 'printing' stamp: 'ar 2/1/1999 22:09'!
+!Float64Quaternion methodsFor: 'printing' stamp: 'jmv 10/11/2016 10:16:06'!
+printAbcd
+	"Alternative way of printing a quaternion
+		(Float64Quaternion q1: -0.120340 q2: 0.399205 q3: 0.906501 q4: -0.066405) printAbcd 
+			'(-0.066405, -0.120340, 0.399205, 0.906501)' 
+	"
+	^String streamContents: [ :strm |
+		strm nextPut: $(.
+		self a printOn: strm fractionDigits: 6.
+		strm nextPutAll: ', '.
+		self b printOn: strm fractionDigits: 6.
+		strm nextPutAll: ', '.
+		self c printOn: strm fractionDigits: 6.
+		strm nextPutAll: ', '.
+		self d printOn: strm fractionDigits: 6.
+		strm nextPut: $) ]! !
+
+!Float64Quaternion methodsFor: 'printing' stamp: 'jmv 10/11/2016 10:14:26'!
 printOn: aStream
 
 	aStream 
@@ -1853,7 +1933,7 @@ printOn: aStream
 		print: self axis;
 		nextPut:$).! !
 
-!Float64Rotation methodsFor: 'printing' stamp: 'jmv 4/28/2016 16:25'!
+!Float64Quaternion methodsFor: 'printing' stamp: 'jmv 10/11/2016 10:14:27'!
 printq1q2q3q4
 	^String streamContents: [ :strm |
 		strm nextPut: $(.
@@ -1866,13 +1946,14 @@ printq1q2q3q4
 		self a printOn: strm fractionDigits: 6.
 		strm nextPut: $) ]! !
 
-!Float64Rotation methodsFor: 'transforming' stamp: 'jmv 7/16/2015 12:13'!
+!Float64Quaternion methodsFor: 'rotating' stamp: 'jmv 10/11/2016 10:43:28'!
 rotate: aFloat64Vector3
 	"
 	Apply a rotation to some vector. For instance rotating around the z axis is
 	a standard (counterclockwise) rotation on the XY plane
-		(Float64Rotation axis: 0@0@1 angle: 30) rotate:1@0@0
+		(Float64Quaternion axis: 0@0@1 angle: 30) rotate:1@0@0
 			-> a Float64Vector3(0.866 0.5 0.0)
+
 	"
 	
 	"Two equivalent (?) definitions"
@@ -1880,13 +1961,14 @@ rotate: aFloat64Vector3
 	^self asMatrix4x4 localDirToGlobal: aFloat64Vector3
 	"
 
-	"If we represented any quaternion, and not just unit quaternions, this would be correct:
+	"If we were able to represent any quaternion, and not just unit quaternions, this would be correct:
 	^(self conjugate * aFloat64Vector3 asPureQuaternion * self) vectorPart
 	"
 
-	^(self conjugate * aFloat64Vector3 asPureQuaternion * self) vectorPart * aFloat64Vector3 length! !
+	^(self conjugate * aFloat64Vector3 asPureQuaternion * self) vectorPart * aFloat64Vector3 length
+	"See class comment"! !
 
-!Float64Rotation methodsFor: 'private' stamp: 'jmv 4/29/2016 16:24'!
+!Float64Quaternion methodsFor: 'private' stamp: 'jmv 10/11/2016 10:16:20'!
 setA: aValue b: bValue c: cValue d: dValue
 
 	self at: 1 put: aValue.
@@ -1894,7 +1976,7 @@ setA: aValue b: bValue c: cValue d: dValue
 	self at: 3 put: cValue.
 	self at: 4 put: dValue.
 	"
-	(Float64Rotation axis: 0@0@1 angle: 0.01) rotate: 0@0@ -1.
+	(Float64Quaternion axis: 0@0@1 angle: 0.01) rotate: 0@0@ -1.
 	should answer 0@0@-1,
 	but was answering 0@0@1
 	because of this.
@@ -1905,16 +1987,16 @@ setA: aValue b: bValue c: cValue d: dValue
 	
 	self normalize! !
 
-!Float64Rotation methodsFor: 'initialize'!
+!Float64Quaternion methodsFor: 'initialize' stamp: 'jmv 10/11/2016 10:18:03'!
 setIdentity
-	^self loadFrom: Float64IdentityRotation! !
+	^self loadFrom: Identity! !
 
-!Float64Rotation methodsFor: 'interpolating' stamp: 'ar 2/1/1999 22:08'!
+!Float64Quaternion methodsFor: 'interpolating' stamp: 'jmv 10/11/2016 10:14:26'!
 slerpTo: aRotation at: t
 	"Spherical linear interpolation (slerp) from the receiver to aQuaternion"
 	^self slerpTo: aRotation at: t extraSpins: 0! !
 
-!Float64Rotation methodsFor: 'interpolating' stamp: 'ar 3/24/1999 14:58'!
+!Float64Quaternion methodsFor: 'interpolating' stamp: 'jmv 10/11/2016 10:15:01'!
 slerpTo: aRotation at: t extraSpins: spin
 	"Sperical Linear Interpolation (slerp).
 	Calculate the new quaternion when applying slerp from the receiver (t = 0.0)
@@ -1943,35 +2025,35 @@ slerpTo: aRotation at: t extraSpins: spin
 		alpha := (alpha * phi) sin / sinT].
 
 	flip ifTrue:[alpha := alpha negated].
-	^Float64Rotation 
+	^Float64Quaternion 
 		a: (alpha * aRotation a) + (beta * self a)
 		b: (alpha * aRotation b) + (beta * self b)
 		c: (alpha * aRotation c) + (beta * self c)
 		d: (alpha * aRotation d) + (beta * self d)! !
 
-!Float64Rotation methodsFor: 'accessing' stamp: 'ar 9/8/2002 16:42'!
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:26'!
 turns
 	"Answer the number of turns"
 	^self angle / 360.0! !
 
-!Float64Rotation methodsFor: 'private' stamp: 'jmv 7/14/2015 10:27'!
+!Float64Quaternion methodsFor: 'private' stamp: 'jmv 10/11/2016 10:14:27'!
 vectorPart
 	^Float64Vector3 x: self b y: self c z: self d! !
 
-!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/27/2016 11:52'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:27'!
 a: aValue b: bValue c: cValue d: dValue
 	^self new setA: aValue b: bValue c: cValue d: dValue! !
 
-!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/28/2016 15:45'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:27'!
 angle: anAngle axis: aVector3
 
 	^self radiansAngle: anAngle degreesToRadians axis: aVector3! !
 
-!Float64Rotation class methodsFor: 'instance creation'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:27'!
 axis: aVector3 angle: anAngle
 	^self angle: anAngle axis: aVector3! !
 
-!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/28/2016 15:45'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:27'!
 from: startVector to: endVector
 	"Create a rotation from startVector to endVector. 
 	Vectors should be normalized first."
@@ -1993,31 +2075,34 @@ from: startVector to: endVector
 	axis safelyNormalize.
 	^self a: cos b: axis x * sin c: axis y * sin d: axis z * sin. ! !
 
-!Float64Rotation class methodsFor: 'instance creation'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:27'!
 identity
 	^self new setIdentity! !
 
-!Float64Rotation class methodsFor: 'class initialization'!
+!Float64Quaternion class methodsFor: 'class initialization' stamp: 'jmv 10/11/2016 10:18:12'!
 initialize
-	"Float64Rotation initialize"
-	Float64IdentityRotation := self new.
-	Float64IdentityRotation floatAt: 1 put: 1.0.! !
+	"
+	Float64Quaternion initialize
+	"
+	Identity := self new.
+	Identity floatAt: 1 put: 1.0.! !
 
-!Float64Rotation class methodsFor: 'instance creation' stamp: 'ar 2/1/1999 21:32'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:27'!
 numElements
 	^4! !
 
-!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 7/13/2015 12:31'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:16:47'!
 q1: q1 q2: q2 q3: q3 q4: q4
 	"As in STK and some tutorials
 		http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/geometric/quaternionTraining001.pdf
 	
 	The quaternions represent the rotation from the reference coordinate frame to the vehicle's body coordinate frame.
 	http://www.agi.com/resources/help/online/stk/10.1/index.html?page=source%2Fstk%2Fimportfiles-01.htm
+	Float64Quaternion q1: -0.120340 q2: 0.399205 q3: 0.906501 q4: -0.066405
 	"
 	^self a: q4 b: q1 c: q2 d: q3! !
 
-!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/28/2016 15:45'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:27'!
 radiansAngle: anAngle axis: aVector3
 	"http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
 	The rotation is clockwise if our line of sight points in the same direction as aVector3."
@@ -2028,7 +2113,7 @@ radiansAngle: anAngle axis: aVector3
 	sin := angle sin.
 	^self a: cos b: aVector3 x * sin c: aVector3 y * sin d: aVector3 z * sin! !
 
-!Float64Rotation class methodsFor: 'instance creation' stamp: 'jmv 4/28/2016 15:45'!
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 10/11/2016 10:14:27'!
 x: xValue y: yValue z: zValue a: anAngle
 
 	| angle sin cos |
@@ -2133,11 +2218,11 @@ asMoveDirection
 asPoint
 	^self x @ self y! !
 
-!Float64Vector3 methodsFor: 'converting' stamp: 'jmv 7/14/2015 10:25'!
+!Float64Vector3 methodsFor: 'converting' stamp: 'jmv 10/11/2016 10:15:16'!
 asPureQuaternion
-	"Answer a Quaternion (an instance of Float64Rotation) with real part zero."
+	"Answer a Quaternion (an instance of Float64Quaternion) with real part zero."
 
-	^Float64Rotation q1: self x q2: self y q3: self z q4: 0.0! !
+	^Float64Quaternion q1: self x q2: self y q3: self z q4: 0.0! !
 
 !Float64Vector3 methodsFor: 'converting' stamp: 'ar 10/18/2002 16:30'!
 asTurnDirection
@@ -2669,5 +2754,5 @@ zero
 	^self new! !
 Float64Matrix3x3 initialize!
 Float64Matrix4x4 initialize!
-Float64Rotation initialize!
+Float64Quaternion initialize!
 Float32Matrix3x3 initialize!
