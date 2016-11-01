@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2950] on 11 October 2016 at 10:54:07 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2963] on 1 November 2016 at 4:12:01 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 33!
+!provides: 'LinearAlgebra' 1 34!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -771,10 +771,10 @@ subMatrixTopLeft: aPoint bottomRight: bPoint
 subMatrixTopLeft: aPoint size: sizePoint
 	^ self subMatrixTopLeft: aPoint bottomRight: aPoint + sizePoint - 1! !
 
-!Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:37'!
+!Matrix methodsFor: 'aux operations' stamp: 'jmv 10/28/2016 18:03:15'!
 substractRow: i multipliedBy: factor to: k startingAtColumn: jStart
 
-	self i: k j: jStart put: self zeroElement..
+	self i: k j: jStart put: self zeroElement.
 	jStart+1 to: width do: [ :j |
 		self i: k j: j put:
 			(self i: k j: j) - ((self i: i j: j) * factor) ]! !
@@ -1158,7 +1158,7 @@ copyToTile: aFloatMatrix position: aPoint
 		destOrigin: 0@0 sourceOrigin: aPoint-1.
 	blitter copyBits! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/7/2016 14:46:36'!
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/21/2016 15:56:49'!
 eigenvalues
 	"
 	(FloatMatrix fromArrayOfArrays: #(
@@ -1176,8 +1176,16 @@ eigenvalues
 		#(13 14 15 16)
 	)) eigenvalues
 	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(6 4 4 1) 
+		#(4 6 1 4) 
+		#(4 1 6 4)
+		#(1 4 4 6)
+	)) eigenvalues 
+	"
 
-	^self eigenvaluesByQR! !
+	^[ self eigenvaluesByQR ] on: Error do: [ self eigenvaluesByJacobi ]! !
 
 !FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/7/2016 15:31:23'!
 eigenvaluesAndEigenvectors
@@ -1342,7 +1350,68 @@ eigenvaluesByQR
 		loopCount > 200 ifTrue: [^self error: 'Could not find real eigenvalues'] ].
 	^h diagonal! !
 
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/7/2016 15:46:59'!
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 11/1/2016 16:10:22'!
+eigenvectorForEigenvalue: eigenvalue
+	"Answers a transposed vector (a row matrix) of eigenvalues and a matrix of eigenvectors.
+	Each eigenvector is a column of the eigenvector matrix. Column k is the eigenvector for the
+	eigenvalue at column k in the eigenvalue vector.
+	The returned object is a Dictionary, with keys #eigenvalues and #eigenvectors.
+	This seems to be a bad way. Numerical Recipes in C has a couple of algorithms that should be studied!!"
+
+"SOLO para matrices SIMETRICAS"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(6 4 4 1) 
+		#(4 6 1 4) 
+		#(4 1 6 4)
+		#(1 4 4 6)
+	)) eigenvectorForLargestEigenvalue
+	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(-1.510 -1.312 0.000 0.000) 
+		#(-1.312 1.510 -0.000 -0.000) 
+		#(-0.000 -0.000 -1.800 -0.872)
+		#(0.000 0.000 -0.872 1.800)
+	)) eigenvectorForLargestEigenvalue
+	"
+	"
+	(FloatMatrix fromArrayOfArrays: #(
+		#(-1.510 -1.312 ) 
+		#(-1.312 1.510 ) 
+	)) eigenvectorForLargestEigenvalue
+	"
+	"
+	(Float64Matrix withRows: #(
+		( -1.509566546224207 1.311895552824272 0.01142904475547099 -6.28247456846262e-5)
+		( 1.311895552824272 1.509567264852017 -5.931237097779896e-5 0.01129103744090236)
+		( 0.01142904475547099 -5.931237097779896e-5 1.509205244817257 -1.312314005942332)
+		( -6.28247456846262e-5 0.01129103744090236 -1.312314005942332 -1.509205963445068)))
+	eigenvectorForLargestEigenvalue elements normalize
+	"
+
+	| eigenvectorSystem |
+	eigenvectorSystem _ self appropriateResultClass height: height width: width+1.
+
+	eigenvectorSystem fillWith: self.
+	1 to: height do: [ :i |
+		eigenvectorSystem i: i j: i put:
+			(eigenvectorSystem i: i j: i) - eigenvalue.
+		eigenvectorSystem i: i j: width+1 put: 0 ].
+	eigenvectorSystem triangleWithPartialPivoting.
+
+	"This second phase completes the linear system so it will have just one solution."
+	"The danger here is that epsilon is too small and the 'zero' is not replaced. 
+	Then, the only solution found is the vector zero, as if argument wasn't an eigenvalue.
+	If such is the case, we'd retry with a slightly larger epsilon..."
+	1 to: height do: [ :i |
+		(eigenvectorSystem i: i j: i) abs < self epsilon"1e-4" ifTrue: [
+			eigenvectorSystem i: i j: i put: 1.
+			eigenvectorSystem i: i j: width+1  put: 1 ]].
+
+	^eigenvectorSystem solveLinearSystem! !
+
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/26/2016 09:54:03'!
 eigenvectorForLargestEigenvalue
 	"Answers a transposed vector (a row matrix) of eigenvalues and a matrix of eigenvectors.
 	Each eigenvector is a column of the eigenvector matrix. Column k is the eigenvector for the
@@ -1382,25 +1451,9 @@ eigenvectorForLargestEigenvalue
 	eigenvectorForLargestEigenvalue elements normalize
 	"
 
-	| eigenvectorSystem largestEigenvalue |
+	| largestEigenvalue |
 	largestEigenvalue _ self eigenvaluesByJacobi elements max.
-
-	eigenvectorSystem _ self appropriateResultClass height: height width: width+1.
-
-	eigenvectorSystem fillWith: self.
-	1 to: height do: [ :i |
-		eigenvectorSystem i: i j: i put:
-			(eigenvectorSystem i: i j: i) - largestEigenvalue.
-		eigenvectorSystem i: i j: width+1 put: 0 ].
-	eigenvectorSystem triangleWithPartialPivoting.
-
-	"This second phase completes the linear system so it will have just one solution."
-	1 to: height do: [ :i |
-		(eigenvectorSystem i: i j: i) abs < self epsilon ifTrue: [
-			eigenvectorSystem i: i j: i put: 1.
-			eigenvectorSystem i: i j: width+1  put: 1 ]].
-
-	^eigenvectorSystem solveLinearSystem! !
+	^ self eigenvectorForEigenvalue: largestEigenvalue! !
 
 !FloatMatrix methodsFor: 'private' stamp: 'jmv 10/7/2016 15:10:39'!
 epsilon

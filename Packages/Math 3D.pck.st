@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2950] on 11 October 2016 at 10:45:05 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2963] on 1 November 2016 at 4:12:51 pm'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition to 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 17!
+!provides: 'Math 3D' 1 18!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -2180,16 +2180,14 @@ u: uValue v: vValue
 x: uValue y: vValue
 	^self new x: uValue y: vValue! !
 
-!Float64Vector3 methodsFor: 'vector functions' stamp: 'jmv 11/6/2015 10:07'!
+!Float64Vector3 methodsFor: 'vector functions' stamp: 'jmv 10/26/2016 18:04:01'!
 angleTo: aVector 
 	"calculate the rotation angle that rotates this vector into aVector. I return the value in terms of radians."
-	| s t cosine |
-	s _ self normalized.
-	t _ aVector normalized.
+	| cosine |
 
 	"In many cases doing v dot: v with v normalized gives an answer sligtly above 1.0, because of rounding.
 	Actually asking for cosine > 1.0 is enough."
-	cosine _ s dot: t.
+	cosine _ (self dot: aVector) / self length / aVector length.
 	cosine > 1.0 ifTrue: [
 		^ 0.0 ].
 
@@ -2335,9 +2333,48 @@ safelyNormalized
 	"Safely normalize the receiver, e.g. check if the length is non-zero"
 	^self copy safelyNormalize! !
 
+!Float64Vector3 methodsFor: 'vector functions' stamp: 'jmv 10/26/2016 18:19:06'!
+scalarProjectionOnto: aVector 
+	"https://en.wikipedia.org/wiki/Vector_projection
+	1@2@3 scalarProjectionOnto: 10@0@0. 
+		1.0
+	1@2@3 scalarProjectionOnto: 0@1.23@0.
+		2.0 
+	1@2@3 scalarProjectionOnto: 0@0@Float pi.
+		3.0.
+	"
+
+	^(self dot: aVector) / aVector length! !
+
 !Float64Vector3 methodsFor: 'vector functions'!
 squaredLength: newLength
 	self length: newLength sqrt! !
+
+!Float64Vector3 methodsFor: 'vector functions' stamp: 'jmv 10/26/2016 18:19:53'!
+vectorProjectionOnto: aVector 
+	"https://en.wikipedia.org/wiki/Vector_projection
+	1@2@3 vectorProjectionOnto: 10@0@0.
+		1.0@0.0@0.0 
+	1@2@3 vectorProjectionOnto: 0@1.23@0.
+		0.0@2.0@0.0 
+	1@2@3 vectorProjectionOnto: 0@0@Float pi.
+		0.0@0.0@3.0 
+	"
+
+	^(self dot: aVector) / aVector length squared * aVector! !
+
+!Float64Vector3 methodsFor: 'vector functions' stamp: 'jmv 10/26/2016 18:20:37'!
+vectorRejectionOnto: aVector
+	"https://en.wikipedia.org/wiki/Vector_projection
+	1@2@3 vectorRejectionOnto: 10@0@0.
+		0.0@2.0@3.0 
+	1@2@3 vectorRejectionOnto: 0@1.23@0.
+		1.0@0.0@3.0 
+	1@2@3 vectorRejectionOnto: 0@0@Float pi.
+		1.0@2.0@0.0 
+	"
+
+	^ self - (self vectorProjectionOnto: aVector )! !
 
 !Float64Vector3 methodsFor: 'enumerating' stamp: 'ar 5/20/2001 00:05'!
 vertexPositionsDo: aBlock

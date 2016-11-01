@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2953] on 17 October 2016 at 10:52:30 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2963] on 1 November 2016 at 4:13:17 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 67!
-!requires: 'ProbabilityDistributions' 1 nil nil!
+!provides: 'SignalProcessing' 1 68!
 !requires: 'Sound' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
@@ -3214,7 +3214,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 10/17/2016 10:49:44'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 10/19/2016 11:19:17'!
 deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNil
 	"Compute the image registration between self and anImage. Answer the delta aFloatImage should be moved to align perfectly with self.
 	Assume there is no scale change and no rotation.
@@ -3253,7 +3253,7 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNi
 
 	"Solo considerar valido el maximo si es mayor que 0.03. Suponemos phase = true. ver 
 	An FFT-Based Technique for Translation, Rotation, and Scale-Invariant Image Registration"
-	(doPhaseCorrelation and: [ (self x: x y: y) < 0.03 ]) ifTrue: [
+	(doPhaseCorrelation and: [ (self x: x y: y) < 0.02 ]) ifTrue: [
 		self error: 'The displacement between images could not be found' ].
 
 	"Find centroid around x@y"
