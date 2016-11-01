@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2942] on 19 September 2016 at 10:18:11 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2960] on 1 November 2016 at 10:07:20 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 63!
+!provides: 'Tests' 1 65!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Taskbar' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -1973,6 +1973,31 @@ testStringAsNumber
 	self assert: 1234.56 = aFloat.
 ! !
 
+!FloatTest methodsFor: 'testing - arithmetic' stamp: 'jmv 10/30/2016 17:12:55'!
+testTimesTwoPowerGradualUnderflow
+	"Here is a vicious case where timesTwoPower is inexact because it underflows.
+	And two consecutive inexact operations lead to a different result than a single one.
+	Typically expressed as multiple of Float fmin in base 2,
+	2r1011*Float fmin shifted by -3 with round to nearest, tie to even mode:
+	-> round(1.011) -> 1.0 = fmin
+	But if first shifted by -2 then by -1:
+	-> round(10.11) -> 11.0 = 3*fmin
+	-> round(1.1) -> 10.0 = 2*fmin
+	Or first shifted by -1 then by -2:
+	-> round(101.1) -> 110.0 = 6*fmin
+	-> round(1.1) -> 10.0 = 2*fmin
+	A naive implementation that split the shift uncarefully might fail to handle such case correctly."
+
+	| f |
+	f := 2r1011 asFloat.
+	"scan the whole range of possible exponents for this significand"
+	Float fmin exponent + f exponent to: Float fmax exponent - f exponent
+		do:
+			[:exp |
+				| g |
+				g := f timesTwoPower: exp.
+				self assert: (g timesTwoPower: Float fmin exponent - g exponent) = Float fmin]! !
+
 !FloatTest methodsFor: 'zero behavior' stamp: 'sd 6/5/2005 08:33'!
 testZero1
 	"FloatTest new testZero1"
@@ -3437,6 +3462,39 @@ testNthRootErrorConditions
 
 	self should: [ -2 nthRoot: 1/4 ] raise: ArithmeticError.
 	self should: [ -2 nthRoot: 1.24 ] raise: ArithmeticError.! !
+
+!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 10/15/2016 10:58:02'!
+testNthRootExactnessForHugeValue
+	"
+	self new testNthRootExactnessForHugeValue
+	"
+        self assert: ((10 raisedTo: 600) nthRoot: 300) = 100.
+        self assert: ((10 raisedTo: 600) nthRoot: 300) class == SmallInteger.
+        self assert: ((10 raisedTo: 600) + 1 nthRoot: 300) = 100.0.
+        self assert: (((10 raisedTo: 600) + 1 nthRoot: 300) isKindOf: Float)! !
+
+!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 10/15/2016 10:57:28'!
+testNthRootImmuneToDoubleRounding
+"
+self new testNthRootImmuneToDoubleRounding
+"
+          "Use a specially crafted number for causing double rounding.
+         Solution is 10...01.1 - verySmallQuantity.
+         Where verySmallQuantity is approximately 1/53/(1<<53).
+         If the verySmallQuantity is not taken into account, then solution is rounded to 10....010"
+         | exponent crafted root highPrecisionRoot |
+         exponent := 4.
+         crafted := (1 << Float precision + 3 raisedTo: exponent) - 1.
+         root := crafted nthRoot: exponent.
+         highPrecisionRoot := (crafted << (exponent squared * Float precision * 4) nthRootRounded: exponent) / (1 << (exponent * Float precision * 4)).
+         self assert: (root asFraction - highPrecisionRoot) abs < (root predecessor asFraction - highPrecisionRoot) abs.
+         
+         "Same with the other sign.
+         Solution is 10...00.1 + verySmallQuantity."
+         crafted := (1 << Float precision + 1 raisedTo: exponent) + 1.
+         root := crafted nthRoot: exponent.
+         highPrecisionRoot := (crafted << (exponent squared * Float precision * 4) nthRootRounded: exponent) / (1 << (exponent * Float precision * 4)).
+         self assert: (root asFraction - highPrecisionRoot) abs < (root successor asFraction - highPrecisionRoot) abs.! !
 
 !IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/27/2015 13:43'!
 testNthRootTruncated
