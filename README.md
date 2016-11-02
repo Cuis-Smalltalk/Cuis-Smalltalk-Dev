@@ -1,26 +1,26 @@
 # Cuis
 
-[Cuis](http://www.cuis-smalltalk.org) is a free Smalltalk-80 environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from supercomputers to tablets and smart phones, and everything in between, including regular PCs.
+[Cuis](http://www.cuis-smalltalk.org) is a free Smalltalk-80 environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from server racks to phones and RasPis, and everything in between, including regular laptops and PCs.
 
 Cuis is
-
-* Easy to understand and extend
 * Small
 * Clean
+* Appropriable
 
 Like Squeak, Cuis is also:
 * Open Source
+* Self contained
 * Multiplatform
 
 Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis is also:
 * A complete development environment written in itself
-* A pure Object Oriented language
+* A pure, dynamic Object Oriented language
 
 What sets Cuis appart from the rest of the Squeak family is that it takes an active attitude towards system complexity:
 
-Unbound complexity growth together with develpment strategies focused only in the short term are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity grows without control. Evolution slows down. Understanding the system becomes harder every day. At some point, the system can't evolve anymore and becomes "legacy code".
+Unbound complexity growth together with develpment strategies focused only in the short term are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity and size grow without control. Evolution slows down. Understanding the system becomes harder every day. Bugs are harder to fix. Huge codebase size becomes harder to justify at all. At some point, the system can't evolve anymore and becomes "legacy code".
 
-The only way to avoid this is by understanding the complete system, and reengineering the whole system, all the time. Keeping it simple and consistent.
+The only way to avoid this is by understanding the complete system, and reengineering the whole system, all the time. Keeping it simple and consistent. In "Mindstorms", Seymour Papert introduces the concept of appropriability of a subject as an enabler for learning. Cuis intends to be appropriable in this sense.
 
 This is important. Complexity puts a limit to the level of understanding of the system a person might reach, and therefore limits the things that can be done with it. Dan Ingalls says all this in ["Design Principles Behind Smalltalk"](http://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html). Even if you have already done so, please go and read it again!
 
@@ -28,12 +28,10 @@ This presentation by Rich Hickey, ["Simple made Easy"](http://www.infoq.com/pres
 
 Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. Cuis includes recent enhancements from Squeak, but only those that meet Cuis objectives: stuff whose complexity outweighs its value is not included.
 
-If you want to know how Cuis has evolved in the past, check the [Release Notes](http://www.cuis-smalltalk.org/CuisReleaseNotes.html).
-
 ### Getting Started ###
-If you are learning Smalltalk, there are many tutorials and references in the web. They apply quite well to Cuis, especially those written originally for Smalltalk-80 or Squeak. These books ["Smalltalk-80 the language and its implementation"](http://stephane.ducasse.free.fr/FreeBooks/BlueBook/Bluebook.pdf) and ["Inside Smalltalk volume I"](http://stephane.ducasse.free.fr/FreeBooks/InsideST/InsideSmalltalk.pdf) are great introductory texts, and they are also the reference for the language and basic class library. Both are freely available.
+If you are learning Smalltalk, the Cuis community can help you. Check the ["Learning Cuis Smalltalk"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis "Learning Cuis Smalltalk") repository. It includes several great tutorials. Additionally, there are many tutorials and references for Smalltalk in the web. They apply quite well to Cuis, especially those written originally for Smalltalk-80 or Squeak. These books ["Smalltalk-80 the language and its implementation"](http://stephane.ducasse.free.fr/FreeBooks/BlueBook/Bluebook.pdf) and ["Inside Smalltalk volume I"](http://stephane.ducasse.free.fr/FreeBooks/InsideST/InsideSmalltalk.pdf) are great introductory texts, and they are also the reference for the language and basic class library. Both are freely available.
 
-The user interface enables you to access most of the code and conduct Smalltalk experiments on your own. You can review its features at ["Quick Tour of the UI"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis/blob/master/Quick-UI-Tour.md). Other programmers have made contributions to help you. They are in ["Learning Cuis Smalltalk"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis "Learning Cuis Smalltalk").
+The user interface enables you to access most of the code and conduct Smalltalk experiments on your own. You can review its features at ["Quick Tour of the UI"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis/blob/master/Quick-UI-Tour.md). 
 
 If you are not familiar with Git, follow the instructions in [Getting started using GUI](Documentation/GettingStarted-UsingGUI.md) or [Getting started using commandline](Documentation/GettingStarted-UsingCommandline.md) .
 
