@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:15:31 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2965] on 3 November 2016 at 11:56:14 am'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 17!
+!provides: 'Compression' 1 18!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -601,13 +601,13 @@ installMonticelloPackage: aFileEntry
 			packageName: pkName
 			fullName: fullName ]! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/14/2015 17:36'!
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 11/3/2016 11:38:49'!
 monticelloPackageNameFrom: fullName
 	| localName |
 	localName _ fullName asFileEntry name.
 	^(localName prefixAndSuffix: $-)
 		ifNotNil: [ :ary | ary first ]
-		ifNil: [ localName sansPeriodSuffix ]! !
+		ifNil: [ localName withoutSuffix: '.mcz' ]! !
 
 !CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 7/5/2016 12:29'!
 serviceBrowseMCZCode
@@ -2621,7 +2621,7 @@ regressionCompress: aFile into: tempFile notifiying: progressBar stats: stats
 	tempFile nextPutAll: encoded contents.
 	^true! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 3/2/2010 11:31'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 11/3/2016 10:31:38'!
 regressionDecompress: aFile from: tempFile notifying: progressBar stats: stats
 	"Validate aFile as decompressed from tempFile"
 	| unzip rawSize compressedSize buffer1 buffer2 |
@@ -2631,7 +2631,7 @@ regressionDecompress: aFile from: tempFile notifying: progressBar stats: stats
 	aFile position: 0.
 	tempFile ascii.
 	tempFile position: 0.
-	buffer1 _ String new: 4096.
+	buffer1 _ ByteArray new: 4096.
 	buffer2 _ buffer1 copy.
 	unzip _ FastInflateStream on: tempFile.
 	[aFile atEnd] whileFalse:[
@@ -2669,13 +2669,13 @@ regressionTestFrom: fd
 	entry exists ifTrue: [ entry delete ].
 	self regressionTestFrom: fd using: entry pathName stats: stats.! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 10/21/2015 12:25'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 11/3/2016 10:22:29'!
 regressionTestFrom: fd using: tempName stats: stats
 	| files file fullName |
 	files _ fd fileNames asArray sort.
 	files do: [ :fName |
 		file _ nil.
-		fullName _ fd fullNameFor: fName.
+		fullName _ (fd // fName) pathName.
 		fullName = tempName ifFalse: [
 			file _ StandardFileStream new
 				open: fullName
@@ -4174,7 +4174,7 @@ extractInDirectory: aDirectoryEntry
 	self extractToFileNamed: self localFileName inDirectory: aDirectoryEntry
 ! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 10/21/2015 12:25'!
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 11/3/2016 11:52:24'!
 extractInDirectory: aDirectory overwrite: overwriteAll
 	"Extract this entry into the given directory. Answer #okay, #failed, #abort, or #retryWithOverwrite."
 	| path fileDir file index localName |
@@ -4182,7 +4182,7 @@ extractInDirectory: aDirectory overwrite: overwriteAll
 	localName := path last.
 	fileDir := path allButLast inject: aDirectory into:[:base :part| base / part].
 	fileDir assureExistence.
-	file := [fileDir newFileNamed: localName] on: FileExistsException do:[:ex| ex return: nil].
+	file := [fileDir privateNewFile: localName] on: FileExistsException do:[:ex| ex return: nil].
 	file ifNil:[
 		overwriteAll ifFalse:[
 			[index := (PopUpMenu labelArray:{
@@ -4196,7 +4196,7 @@ extractInDirectory: aDirectory overwrite: overwriteAll
 			index = 3 ifTrue:[^#retryWithOverwrite].
 			index = 2 ifTrue:[^#okay].
 		].
-		file := [fileDir forceNewFileNamed: localName] on: Error do:[:ex| ex return].
+		file := [fileDir privateForceNewFile: localName] on: Error do:[:ex| ex return].
 		file ifNil:[^#failed].
 	].
 	self extractTo: file.

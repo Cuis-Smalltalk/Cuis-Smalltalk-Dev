@@ -1,10 +1,10 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2960] on 1 November 2016 at 10:07:20 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2965] on 3 November 2016 at 11:55:42 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 65!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Taskbar' 1 nil nil!
+!provides: 'Tests' 1 66!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Taskbar' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -5605,26 +5605,25 @@ supportTestSourceRangeAccessForInjectInto: method source: source selectionSequen
 				 self assert: (Scanner new scanTokens: (source copyFrom: range first to: range last)) = debugTokens]].
 	self assert: evaluationCount = 2! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/26/2013 15:37'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 11/3/2016 11:45:16'!
 testBlockDoitDecompilation
 	"Tests that decompile of a doit block with remote vars executes correcly"
 	"Tests that decompilation of a Block, when 'method' of block is equivalent to that compiled by a DoIt, preserves the temp names "
 	
-	| blockSourceStream methodNode compiledMethod block decompiledBlock method |
+	| blockSourceStream methodNode block decompiledBlock method |
 	blockSourceStream := '|x y| [:a :b | x _ a. y _ b. x + y]' readStream.
 	methodNode := Compiler new 
 						from: blockSourceStream class: nil class context: nil notifying: nil;
 						translate: blockSourceStream noPattern: true ifFail: [nil].
-	method _ methodNode generate: #(0 0 0 0).
-	compiledMethod _ method copyWithTempsFromMethodNode: methodNode.
-	block := nil withArgs: #() executeMethod: compiledMethod.
+	method _ methodNode generate.
+	block := nil withArgs: #() executeMethod: method.
 	
 	self shouldnt: [decompiledBlock := block decompile] raise: Error.
 	self assert: 
-'{[ :a :b |
-	x _ a.
-	y _ b.
-	x + y. ]}' equals: decompiledBlock printString
+ '{[ :arg4 :arg5 |
+	temp1 _ arg4.
+	temp3 _ arg5.
+	temp1 + temp3. ]}' equals: decompiledBlock printString
 ! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 1/17/2011 00:13'!
@@ -5696,59 +5695,6 @@ testDebuggerTempAccess
 	self flag: #expectedFailure.
 
 	self doTestDebuggerTempAccessWith: 1 with: 2! !
-
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 6/29/2014 19:57'!
-testDecompiledDoitMethodTempNames
-	"self new testDecompiledDoitMethodTempNames"
-	"Test that a decompiled doit that has been copied with temps decompiles to the input"
-	| removeComments |
-	removeComments := [:n| n comment: nil].
-	self closureCases do:
-		[:source| | mns m mps mnps |
-		"Need to compare an ungenerated tree with the generated method's methodNode
-		 because generating code alters the tree when it introduces remote temp vectors."
-		mns := #(first last) collect: [ :ignored |
-					source first isLetter
-						ifTrue: [
-							Compiler new
-								compile: source
-								in: self class
-								notifying: nil
-								ifFail: [self error: 'compilation error']]
-						ifFalse: [
-							Compiler new
-								compileNoPattern: source
-								in: self class
-								context: nil
-								notifying: nil
-								ifFail: [self error: 'compilation error']]].
-		m := (mns last generateWithTempNames).
-		removeComments value: mns first.
-		mns first nodesDo: removeComments.
-		self assert: (mnps := mns first printString) = (mps := m methodNode printString)]! !
-
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/27/2015 13:52'!
-testInjectIntoDecompilationsEncoderForV3
-	"Test various compilations decompile to the same code for a method sufficiently
-	 simple that this is possible and sufficiently complex that the code generated
-	 varies between the compilations."
-	"self new testInjectIntoDecompilationsEncoderForV3"
-	| source |
-
-	source := (Collection sourceCodeAt: #inject:into:) asString.
-	{ EncoderForV3 } do:
-		[:encoderClass| | method |
-		method := (Parser new
-							encoderClass: encoderClass;
-							parse: source
-							class: Collection)
-						generate: #(0 0 0 0).
-		self assert: (Scanner new scanTokens: method decompileString)
-					= #(inject: arg1 into: arg2
-							| temp3 |
-							temp3 _ arg1 .
-							self do: [ ':temp4' | temp3 _ arg2 value: temp3 value: temp4 ] .
-							^ temp3 . )]! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/27/2015 13:52'!
 testInjectIntoDecompilationsEncoderForV3PlusClosures
@@ -5846,51 +5792,6 @@ testInlineBlockCollectionSD1
 		b2 add: [a2]] yourself. "defeat optimization"
 	b2 := b2 asArray collect: [:b | b value].
 	self assert: b1 = b2! !
-
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 6/29/2014 19:58'!
-testMethodAndNodeTempNames
-	"self new testMethodAndNodeTempNames"
-	"Test that BytecodeAgnosticMethodNode>>blockExtentsToTempRefs answers the same
-	 structure as CompiledMethod>>blockExtentsToTempRefs when the method has been
-	 copied with the appropriate temps.  This tests whether doit methods are debuggable
-	 since they carry their own temps."
-	self closureCases do: [ :source | | mn om m mbe obe |
-		mn := source first isLetter
-					ifTrue: [
-						Compiler new
-							compile: source
-							in: self class
-							notifying: nil
-							ifFail: [self error: 'compilation error']]
-					ifFalse: [
-						Compiler new
-							compileNoPattern: source
-							in: self class
-							context: nil
-							notifying: nil
-							ifFail: [self error: 'compilation error']].
-		m := (om := mn generate: #(0 0 0 0)) copyWithTempsFromMethodNode: mn.
-		self assert: m holdsTempNames.
-		self assert: m endPC = om endPC.
-		mbe := m blockExtentsToTempsMap.
-		obe := mn blockExtentsToTempsMap.
-		self assert: mbe keys asSet = obe keys asSet.
-		(mbe keys intersection: obe keys) do:
-			[:interval|
-			self assert: (mbe at: interval) = (obe at: interval)]]! !
-
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 15:20'!
-testSourceRangeAccessForBlueBookInjectInto
-	"Test debugger source range selection for inject:into: for a version compiled with closures"
-	"self new testSourceRangeAccessForBlueBookInjectInto"
-	| source method |
-	source := (Collection sourceCodeAt: #inject:into:) asString.
-	method := (Parser new
-						encoderClass: EncoderForV3;
-						parse: source
-						class: Collection)
-					generate: (Collection compiledMethodAt: #inject:into:) trailer.
-	self supportTestSourceRangeAccessForInjectInto: method source: source! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'eem 6/4/2008 15:20'!
 testSourceRangeAccessForClosureBytecodeInjectInto
