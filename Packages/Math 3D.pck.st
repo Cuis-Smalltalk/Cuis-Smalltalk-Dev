@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2963] on 1 November 2016 at 4:12:51 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2968] on 4 November 2016 at 10:07:46 am'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition to 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 18!
+!provides: 'Math 3D' 1 19!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -2179,6 +2179,10 @@ u: uValue v: vValue
 !Float64Vector2 class methodsFor: 'instance creation' stamp: 'ar 5/4/2000 15:49'!
 x: uValue y: vValue
 	^self new x: uValue y: vValue! !
+
+!Float64Vector3 methodsFor: 'converting' stamp: 'jmv 11/3/2016 16:01:12'!
+@ aNumber
+	^Float64Vector4 x: self x y: self y z: self z w: aNumber! !
 
 !Float64Vector3 methodsFor: 'vector functions' stamp: 'jmv 10/26/2016 18:04:01'!
 angleTo: aVector 

@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:16:12 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2968] on 4 November 2016 at 10:07:31 am'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 9!
+!provides: 'JSON' 1 10!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -249,6 +249,16 @@ testAtomNumber
 	self json: '-0' equals: 0.
 	self json: '[-1.2]' equals: #(-1.2).! !
 
+!JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 11/4/2016 10:04:05'!
+testAtomSpecialFloats
+	| read |
+	read _ self readFrom: 'NaN'.
+	self assert: read isNaN.
+	read _ self readFrom: 'Infinity'.
+	self assert: read  = Float infinity.
+	read _ self readFrom: '-Infinity'.
+	self assert: read  = Float negativeInfinity.! !
+
 !JsonTests methodsFor: 'as yet unclassified' stamp: 'jmv 9/5/2016 16:53:32'!
 testAtomString
 	self json: '"hi"' equals: 'hi'.
@@ -358,12 +368,12 @@ interpretStringEscapeTo: aStream
 		^ self ].
 	aStream nextPut: c! !
 
-!Json methodsFor: 'parsing' stamp: 'Igor.Stasenko 4/7/2010 01:45'!
+!Json methodsFor: 'parsing' stamp: 'jmv 11/4/2016 10:04:22'!
 readAny
 	"This is the main entry point for the JSON parser. See also readFrom: on the class side."
 	| c |
 	self skipWhitespace.
-	c := stream peek asLowercase.
+	c := stream peek.
 	c == ${ ifTrue: [stream next. ^ self readDictionary].
 	c == $[ ifTrue: [stream next. ^ self readArray].
 	c == $" ifTrue: [stream next. ^ self readString].
@@ -372,6 +382,9 @@ readAny
 	c == $n ifTrue: [^ self consume: 'null' returning: nil].
 	c == $@ ifTrue: [stream next. ^ self readConstructor].
 	(Json numbersMayContain: c) ifTrue: [^ self readNumber].
+"c == $N ifTrue: [^ self consume: 'NaN' returning: Float nan]."
+	c == $N ifTrue: [^ self readNumber].
+	c == $I ifTrue: [^ self readNumber].
 	JsonSyntaxError signal: 'Unknown Json input'! !
 
 !Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:39'!
@@ -438,8 +451,9 @@ readFrom: aStream
 	self stream: aStream.
 	^ self readAny! !
 
-!Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:21'!
+!Json methodsFor: 'private' stamp: 'jmv 11/4/2016 10:04:44'!
 readNumber
+"
 	| acc c |
 	acc := WriteStream on: ''.
 	[
@@ -448,7 +462,10 @@ readNumber
 			[^ acc contents asNumber] on: Error do: [JsonSyntaxError signal: 'Invalid number']].
 		acc nextPut: c.
 		stream next.
-	] repeat.! !
+	] repeat.
+"
+	"Allow Nan, Infinity and -Infinity"
+	^Number readFrom: stream! !
 
 !Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:18'!
 readString
