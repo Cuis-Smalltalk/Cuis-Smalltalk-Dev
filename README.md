@@ -18,7 +18,7 @@ Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis 
 
 What sets Cuis appart from the rest of the Squeak family is that it takes an active attitude towards system complexity:
 
-Unbound complexity growth together with develpment strategies focused only in the short term are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity and size grow without control. Evolution slows down. Understanding the system becomes harder every day. Bugs are harder to fix. Huge codebase size becomes harder to justify at all. At some point, the system can't evolve anymore and becomes "legacy code".
+Unbound complexity growth, together with develpment strategies focused only in the short term, are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity and size grow without control. Evolution slows down. Understanding the system becomes harder every day. Bugs are harder to fix. Codebases become huge for no clear reason. At some point, the system can't evolve anymore and becomes "legacy code".
 
 The only way to avoid this is by understanding the complete system, and reengineering the whole system, all the time. Keeping it simple and consistent. In "Mindstorms", Seymour Papert introduces the concept of appropriability of a subject as an enabler for learning. Cuis intends to be appropriable in this sense.
 

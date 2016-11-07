@@ -1,4 +1,4 @@
-# Code Management in Cuis 4.0
+# Code Management in Cuis 4.0 and 5.0
 
 Cuis 4 includes new tools and new suggested procedures for managing Smalltalk code. Code that is not part of the Cuis Core image itself, like applications, frameworks and libraries, should be stored in *Packages*. New code that is meant as patches, fixes or additions; that could eventually become part of Cuis itself, is not part of any *Package*, and is therefore automatically stored in *ChangeSets*.
 

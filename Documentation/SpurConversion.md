@@ -1,5 +1,7 @@
-Converting Cuis to the Spur image format. Updating Cuis after update #2883.
+Converting Cuis to the Spur image format. Updating Cuis after update #2883
 ================================================
+
+Note: This is of interes only if you are using a Cuis 4 image older than #2883, and you want to upgrade it. If you are using a Cuis 5.0 or later image, you can use a Spur image on a Spur VM (faster), or a NonSpur image on a NonSpur VM (runs on SqueakJS).
 
 Prior to update #2883, Cuis runs on the *cog_HostPlatformName_squeak.stack.v3_timeStamp* and (jitted, faster) *cog_HostPlatformName_squeak.cog.v3_timeStamp* VMs from http://opensmalltalk.org/ (repo at https://github.com/OpenSmalltalk VM development led by Eliot Miranda). Immediately after #2883, Cuis can be converted to the new Spur ObjectMemory and image format, in the 32 bit variant. (Conversion Spur32 <-> Spur64 is easy, and can be done in both directions anytime).
 
