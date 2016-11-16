@@ -27,6 +27,8 @@ For Linux (except ArchLinux, Chromebooks see below):
 ```
 ~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201611161032.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
+~/MyProject# mv ./products/sqcogspurlinuxht ./cogspur
+~/MyProject# rmdir ./products
 ```
 On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
 (This was tested on Debian 8)

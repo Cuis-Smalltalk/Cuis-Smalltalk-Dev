@@ -14,6 +14,8 @@ $ wget https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
 $ wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201611161032.tar.gz
 $ tar -zxvf cogspur.tgz
+$ mv ./products/sqcogspurlinuxht ./cogspur
+$ rmdir ./products
 ```
 If this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
 (This was tested on Debian 8)
