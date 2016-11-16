@@ -25,8 +25,8 @@ $ tar -zxvf CogSpur.tgz
 ```
 For Linux (except ArchLinux, Chromebooks see below):
 ```
-~/MyProject# wget -O coglinuxspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201611161032.tar.gz
-~/MyProject# tar -zxvf coglinuxspur.tgz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201611161032.tar.gz
+~/MyProject# tar -zxvf cogspur.tgz
 ```
 On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
 (This was tested on Debian 8)
@@ -35,7 +35,7 @@ sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install libc6-i386
 # This (libc6-i386) was needed to make ldd work on 32 bit programs and dynamic libraries
-# So, we can do stuff like       $ ldd coglinuxht/lib/squeak/4.5-3370/squeak       to find about missing libraries
+# So, we can do stuff like       $ ldd cogspur/lib/squeak/4.5-3370/squeak       to find about missing libraries
 sudo apt-get install libuuid1:i386
 sudo apt-get install libX11-6:i386
 sudo apt-get install libXext6:i386
@@ -60,7 +60,7 @@ $ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-2974-spur.image
 ```
 Linux:
 ```
-$  coglinuxspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-2974-spur.image
+$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-2974-spur.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
@@ -97,5 +97,5 @@ $ ./linuxVM_ARM.sh
 ```
 
 ### Notes ###
-* If you can't find Cuis5.0-2974-spur.image, then this file is outdated. Use the Cuis spur image with the latest update number available.
-* If you can't find the Squeak Cog Spur VM specified, then this file is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
+* If you can't find Cuis5.0-2974-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.

@@ -22,7 +22,7 @@ sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install libc6-i386
 # This (libc6-i386) was needed to make ldd work on 32 bit programs and dynamic libraries
-# So, we can do stuff like       $ ldd coglinuxht/lib/squeak/4.5-3370/squeak       to find about missing libraries
+# So, we can do stuff like       $ ldd cogspur/lib/squeak/4.5-3370/squeak       to find about missing libraries
 sudo apt-get install libuuid1:i386
 sudo apt-get install libX11-6:i386
 sudo apt-get install libXext6:i386
@@ -48,5 +48,5 @@ $ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-2974-spur.imag
 ```
 
 ### Notes ###
-* If you can't find Cuis5.0-2974-spur.image, then this file is outdated. Use the Cuis spur image with the latest update number available.
-* If you can't find the Squeak Cog Spur VM specified, then this file is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
+* If you can't find Cuis5.0-2974-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.

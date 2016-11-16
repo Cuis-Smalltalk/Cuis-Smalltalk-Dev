@@ -25,5 +25,5 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * On subsequent runs, drop the Cuis5.0-2974-spur.image over the Squeak.app file
 
 ### Notes ###
-* If you can't find Cuis5.0-2974-spur.image, then this file is outdated. Use the Cuis spur image with the latest update number available.
-* If you can't find the Squeak Cog Spur VM specified, then this file is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
+* If you can't find Cuis5.0-2974-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
