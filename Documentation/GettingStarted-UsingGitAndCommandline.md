@@ -1,6 +1,8 @@
 ## Setting up and starting Cuis using Git and the command line
 
-Instructions for setting up Cuis, for Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests.
+Instructions for setting up Cuis, for Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-UsingGUI.md).
+
+If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
 The Cuis image specified is the most current one. The VM specified is the latest one too.
 
@@ -13,18 +15,18 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ### Get an appropriate VM ###
 For Windows Git Bash:
 ```
-$ curl -o cogwin.zip http://www.mirandabanda.org/files/Cog/VM/VM.r3732/cogwin-16.21.3732.zip
-$ unzip cogwin.zip
+$ curl -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201611161032.zip
+$ unzip cogspur.zip
 ```
 For MacOSX:
 ```
-$ curl -o Cog.app.tgz http://www.mirandabanda.org/files/Cog/VM/VM.r3732/Cog.app-16.21.3732.tgz
-$ tar -zxvf Cog.app.tgz
+$ curl -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos32x86_squeak.cog.spur_201611161032.tar.gz
+$ tar -zxvf CogSpur.tgz
 ```
 For Linux (except ArchLinux, Chromebooks see below):
 ```
-$ wget -O coglinuxht.tgz http://www.mirandabanda.org/files/Cog/VM/VM.r3732/coglinuxht-16.21.3732.tgz
-$ tar -zxvf coglinuxht.tgz
+~/MyProject# wget -O coglinuxspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201611161032.tar.gz
+~/MyProject# tar -zxvf coglinuxspur.tgz
 ```
 On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
 (This was tested on Debian 8)
@@ -41,23 +43,24 @@ sudo apt-get install libsm6:i386
 # Next 3 are only needed for experimenting with OpenCL
 sudo apt-get install mesa-common-dev:i386
 sudo apt-get install libgl1-mesa-dev:i386
-cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
+~/MyProject# cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
 ```
 For ArchLinux: Get a VM from:
 https://www.archlinux.org/packages/?q=squeak-vm
+These VMs are not compatible with Spur images. Use the supplied non-Spur image.
 
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogwin/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-2974.image
+$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-2974-spur.image
 ```
 MacOSX:
 ```
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-2974.image
+$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-2974-spur.image
 ```
 Linux:
 ```
-$  coglinuxht/squeak Cuis-Smalltalk-Dev/Cuis5.0-2974.image
+$  coglinuxspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-2974-spur.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
@@ -73,7 +76,7 @@ Then follow the Linux directions above -- except for choosing the VM to use.
 
 The reason for this is that JIT (Just In Time) compiling is disabled by ChromeOS.  This means that Cog VMs will not work.
 
-Note that there is no Cuise image in Spur format yet, so avoid Spur VMs for now.
+Remember to use the Spur Cuis image when using Spur VMs and the non-Spur image when using non-Spur VMs.
 
 For Intel CPUs:
 ```
@@ -92,3 +95,7 @@ $ tar -zxvf stklinuxARM.tgz
 $ wget -O linuxVM_ARM.sh http://squeakvm.org/unix/release/Squeak-4.10.2.2765-linux_armv6l.sh
 $ ./linuxVM_ARM.sh
 ```
+
+### Notes ###
+* If you can't find Cuis5.0-2974-spur.image, then this file is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find the Squeak Cog Spur VM specified, then this file is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.

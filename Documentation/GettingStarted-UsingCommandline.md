@@ -1,8 +1,8 @@
 ## Setting up and starting Cuis using a command line
 
-What follows are instructions for setting up Cuis on Linux or Mac OS X using the command line. If you are familiar with Git, please see [Getting started using Git Bash](GettingStarted-UsingGitAndCommandline.md) . If you are on Windows, there are instructions for using the Windows file explorer in another document. This document is intended for beginners, and tries to require as little previous knowledge as possible.
+What follows are instructions for setting up Cuis on Linux or Mac OS X using the command line. If you are familiar with Git, please see [Getting started using Git Bash](GettingStarted-UsingGitAndCommandline.md) . If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-UsingGUI.md).
 
-If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://jvuletich.org/mailman/listinfo/cuis_jvuletich.org , and email your code there.
+If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
 The Cuis image specified is the most current one. The VM specified is the latest one too.
 
@@ -12,8 +12,8 @@ $ mkdir MyProject
 $ cd MyProject
 $ wget https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ wget -O coglinuxht.tgz http://www.mirandabanda.org/files/Cog/VM/VM.r3732/coglinuxht-16.21.3732.tgz
-$ tar -zxvf coglinuxht.tgz
+$ wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201611161032.tar.gz
+$ tar -zxvf cogspur.tgz
 ```
 If this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
 (This was tested on Debian 8)
@@ -33,7 +33,7 @@ sudo apt-get install libgl1-mesa-dev:i386
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
 ```
 ```
-$ coglinuxht/squeak Cuis-Smalltalk-Dev-master/Cuis5.0-2974.image
+$ cogspur/squeak Cuis-Smalltalk-Dev-master/Cuis5.0-2974-spur.image
 ```
 
 ### On Mac OS X ###
@@ -42,7 +42,11 @@ $ mkdir MyProject
 $ cd MyProject
 $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ curl -o Cog.app.tgz http://www.mirandabanda.org/files/Cog/VM/VM.r3732/Cog.app-16.21.3732.tgz
-$ tar -zxvf Cog.app.tgz
-$ Cog.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-2974.image
+$ curl -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos32x86_squeak.cog.spur_201611161032.tar.gz
+$ tar -zxvf CogSpur.tgz
+$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-2974-spur.image
 ```
+
+### Notes ###
+* If you can't find Cuis5.0-2974-spur.image, then this file is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find the Squeak Cog Spur VM specified, then this file is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
