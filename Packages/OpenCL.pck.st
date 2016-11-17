@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:16:21 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #2980] on 17 November 2016 at 11:51:37 am'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 16!
+!provides: 'OpenCL' 1 18!
 !requires: 'SignalProcessing' 1 37 nil!
 !requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -2892,11 +2892,11 @@ name
 profile
 	^profile! !
 
-!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 4/25/2016 14:54'!
+!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 11/17/2016 11:07:16'!
 reportOn: aStream
 	"
 	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
-	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: StdIOFileStream stdout ]. StdIOFileStream stdout lf.
+	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: StdIOWriteStream stdout ].
 	"
 	| context |
 	aStream nextPutAll: '=================== '; newLine.
@@ -2928,11 +2928,11 @@ reportOn: aStream
 	context reportImageFormatsOn: aStream.
 	aStream nextPutAll: '=================== '; newLine.! !
 
-!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 4/25/2016 14:56'!
+!OpenCLPlatform methodsFor: 'report' stamp: 'jmv 11/17/2016 11:06:58'!
 shortReportOn: aStream
 	"
 	OpenCLPlatform allPlatforms do: [ :platform | platform shortReportOn: Transcript ].
-	OpenCLPlatform allPlatforms do: [ :platform | platform shortReportOn: StdIOFileStream stdout ]. StdIOFileStream stdout lf.
+	OpenCLPlatform allPlatforms do: [ :platform | platform shortReportOn: StdIOWriteStream stdout ].
 	"
 	aStream nextPutAll: '=================== '; newLine.
 	aStream nextPutAll: 'Platform: '; nextPutAll: name; newLine.
@@ -2952,7 +2952,8 @@ shortReportOn: aStream
 			aStream nextPutAll: '--------------------------------------- '; newLine.
 			cpu reportExtensionsOn: aStream ]
 		separatedBy: [aStream nextPutAll: '--------------------------------------- '; newLine].
-	aStream nextPutAll: '=================== '; newLine! !
+	aStream nextPutAll: '=================== '; newLine.
+	aStream flush! !
 
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
 vendor
@@ -2998,23 +2999,21 @@ buildOpenCLReportApp
 	Smalltalk reduceCuis.
 	Smalltalk saveAs: 'OpenCLReport' andQuit: true clearAllClassState: false! !
 
-!OpenCLPlatform class methodsFor: 'report application' stamp: 'jmv 4/25/2016 14:58'!
+!OpenCLPlatform class methodsFor: 'report application' stamp: 'jmv 11/17/2016 10:50:11'!
 shortReport
 	"On StdIO
 	OpenCLPlatform shortReport
 	"
 	OpenCLPlatform allPlatforms do: [ :platform |
-		platform shortReportOn: StdIOFileStream stdout ].
-	StdIOFileStream stdout lf! !
+		platform shortReportOn: StdIOWriteStream stdout ]! !
 
-!OpenCLPlatform class methodsFor: 'report application' stamp: 'jmv 4/25/2016 14:59'!
+!OpenCLPlatform class methodsFor: 'report application' stamp: 'jmv 11/17/2016 10:50:19'!
 shortReportAndQuit
 	"On StdIO
 	OpenCLPlatform shortReport
 	"
 	OpenCLPlatform allPlatforms do: [ :platform |
-		platform shortReportOn: StdIOFileStream stdout ].
-	StdIOFileStream stdout lf.
+		platform shortReportOn: StdIOWriteStream stdout ].
 
 	Smalltalk snapshot: false andQuit: true embedded: false clearAllClassState: false! !
 

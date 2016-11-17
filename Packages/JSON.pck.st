@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2968] on 4 November 2016 at 10:07:31 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #2980] on 17 November 2016 at 11:51:21 am'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 10!
+!provides: 'JSON' 1 11!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -368,7 +368,7 @@ interpretStringEscapeTo: aStream
 		^ self ].
 	aStream nextPut: c! !
 
-!Json methodsFor: 'parsing' stamp: 'jmv 11/4/2016 10:04:22'!
+!Json methodsFor: 'parsing' stamp: 'jmv 11/16/2016 15:54:38'!
 readAny
 	"This is the main entry point for the JSON parser. See also readFrom: on the class side."
 	| c |
@@ -382,9 +382,9 @@ readAny
 	c == $n ifTrue: [^ self consume: 'null' returning: nil].
 	c == $@ ifTrue: [stream next. ^ self readConstructor].
 	(Json numbersMayContain: c) ifTrue: [^ self readNumber].
-"c == $N ifTrue: [^ self consume: 'NaN' returning: Float nan]."
-	c == $N ifTrue: [^ self readNumber].
-	c == $I ifTrue: [^ self readNumber].
+	c == $N ifTrue: [^ self consume: 'NaN' returning: Float nan].
+	"c == $N ifTrue: [^ self readNumber].
+	c == $I ifTrue: [^ self readNumber]."
 	JsonSyntaxError signal: 'Unknown Json input'! !
 
 !Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:39'!
@@ -451,9 +451,8 @@ readFrom: aStream
 	self stream: aStream.
 	^ self readAny! !
 
-!Json methodsFor: 'private' stamp: 'jmv 11/4/2016 10:04:44'!
+!Json methodsFor: 'private' stamp: 'jmv 11/17/2016 11:35:09'!
 readNumber
-"
 	| acc c |
 	acc := WriteStream on: ''.
 	[
@@ -463,9 +462,12 @@ readNumber
 		acc nextPut: c.
 		stream next.
 	] repeat.
-"
-	"Allow Nan, Infinity and -Infinity"
-	^Number readFrom: stream! !
+
+	"Allow Nan, Infinity and -Infinity.
+	Breaks on non-PositionableStreams, like StdIOReadStream stdin"
+	"
+	^Number readFrom: stream
+	"! !
 
 !Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:18'!
 readString
@@ -517,12 +519,12 @@ stream
 
 	^ stream! !
 
-!Json methodsFor: 'accessing' stamp: 'jmv 9/3/2013 12:59'!
+!Json methodsFor: 'accessing' stamp: 'jmv 11/17/2016 11:09:38'!
 stream: aStream
 	"Set the value of stream"
 	"aStream must be on a String.
 	This means that it should contain only Characters (i.e. ISO 8859-15)"
-	aStream isCharacters.
+
 	stream := aStream.
 	
 	"Do not reset the stream"
