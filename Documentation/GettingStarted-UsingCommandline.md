@@ -24,7 +24,7 @@ sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install libc6-i386
 # This (libc6-i386) was needed to make ldd work on 32 bit programs and dynamic libraries
-# So, we can do stuff like       $ ldd cogspur/lib/squeak/4.5-3370/squeak       to find about missing libraries
+# So, we can do stuff like       $ ldd cogspur/lib/squeak/*/squeak       to find about missing libraries
 sudo apt-get install libuuid1:i386
 sudo apt-get install libX11-6:i386
 sudo apt-get install libXext6:i386
