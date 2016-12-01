@@ -8,17 +8,17 @@ The Cuis image specified is the most current one. The VM specified is the latest
 
 ### On Windows ###
 * Crea a new folder in your machine using Windows Explorer
-* donwload https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
+* download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip)
 * extract the contents of the zip file to your folder
-* download https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201611161032.zip
+* download [`cog_win32x86_squeak.cog.spur_201608171728.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_win32x86_squeak.cog.spur_201608171728.zip)
 * extract the contents of the zip file to your folder
 * drop the Cuis5.0-2974-spur.image over the Squeak.exe file
 
 ### On Mac OS X ###
 * Crea a new folder in your machine using Mac Finder
-* donwload https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
+* download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip)
 * extract the contents of the zip file to your folder
-* download https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos32x86_squeak.cog.spur_201611161032.tar.gz
+* download [`cog_macos32x86_squeak.cog.spur_201608171728.tar.gz`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_macos32x86_squeak.cog.spur_201608171728.tar.gz)
 * extract the contents of the .tar.gz file to your folder
 * drop the Cuis5.0-2974-spur.image over the Squeak.app file
 * [ctrl] click on Cog application. Open. "Cog is from an unidentified developer"; dialog. Click on [Open] Supply required credentials. (This is required only on the first run). Select Cuis5.0-2974-spur.image. (If this step is a problem, you might try the command line variant, described in another document.)
