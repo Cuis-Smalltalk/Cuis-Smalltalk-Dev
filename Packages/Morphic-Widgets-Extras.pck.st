@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2948] on 27 September 2016 at 9:10:53 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #2984] on 30 November 2016 at 11:08:56 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 7!
+!provides: 'Morphic-Widgets-Extras' 1 8!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -839,16 +839,16 @@ addFunction: aOneArgBlock color: aColor
 	functions add: aOneArgBlock.
 	colors add: aColor! !
 
-!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 12/23/2014 20:34'!
+!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 11/25/2016 09:24:52'!
 domain: anInterval
 
 	xMin _ anInterval first.
 	xMax _ anInterval last.
 
-	yMin _ anInterval first.
-	yMax _ anInterval last.! !
+	yMin _ nil.
+	yMax _ nil.! !
 
-!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 6/25/2016 17:28'!
+!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/25/2016 11:04:13'!
 drawOn: aCanvas
 	"
 	| g |
@@ -858,26 +858,35 @@ drawOn: aCanvas
 	g addFunction: [ :x | x div: 1 ] color: Color red.
 	g openInWorld
 	"
-	| r y r2 |
-	r _ self morphLocalBounds.
-	aCanvas
-		fillRectangle: r
-		color: (Color gray: 0.9).
+	| r r2 fontToUse |
+	yMin ifNil: [
+		yMin _ Float infinity.
+		yMax _ Float negativeInfinity.
+		self iterate: [ :x :y :c |
+			yMin _ yMin min: y.
+			yMax _ yMax max: y ]].
+			
+	r _ 40@0 corner: extent - (0@20).
 	aCanvas
 		frameAndFillRectangle: r fillColor: (Color gray: 0.9)
 		borderWidth: 0.05 borderColor: Color white.
-	aCanvas line: (self toMorphic:0@yMin)-(0@2) to: (self toMorphic: 0 @ yMax)+(0@2) width: 2 color: Color lightGray.
-	aCanvas line: (self toMorphic: xMin@0)+(2@0) to: (self toMorphic: xMax@0)-(2@0) width: 2 color: Color lightGray.
+	(0 between: xMin and: xMax) ifTrue: [
+		aCanvas line: (self toMorphic:0@yMin)-(0@2) to: (self toMorphic: 0 @ yMax)+(0@2) width: 2 color: Color darkGray ].
+	(0 between: yMin and: yMax) ifTrue: [
+		aCanvas line: (self toMorphic: xMin@0)+(2@0) to: (self toMorphic: xMax@0)-(2@0) width: 2 color: Color darkGray ].
 
-	xMin*1.0 to: xMax count: 600 do: [ :x |
-		functions with: colors do: [ :f :c |
-			y _ f value: x.
-			(y between: yMin and: yMax) ifTrue: [
-				r2 _ (self xToMorphic: x)@(self yToMorphic: y) extent: 2.5.
-				(r containsRect: r2) ifTrue: [
-					aCanvas
-						fillRectangle: r2
-						color: c ]]]]! !
+	self iterate: [ :x :y :c |
+		(y between: yMin and: yMax) ifTrue: [
+			r2 _ (self xToMorphic: x)@(self yToMorphic: y) extent: 2.5.
+			(r containsRect: r2) ifTrue: [
+				aCanvas
+					fillRectangle: r2
+					color: c ]]].
+	fontToUse _ AbstractFont default.
+	aCanvas drawString: xMin printString at: 40@(extent y - 16) font: fontToUse color: Color black.
+	aCanvas drawString: xMax printString at: extent -(32@16) font: fontToUse color: Color black.
+	aCanvas drawString: yMin printString at: 4@(extent y - 32) font: fontToUse color: Color black.
+	aCanvas drawString: yMax printString at: 4@4 font: fontToUse color: Color black.! !
 
 !FunctionGraphMorph methodsFor: 'initialization' stamp: 'jmv 7/1/2015 11:16'!
 initialize
@@ -886,13 +895,22 @@ initialize
 	functions _ OrderedCollection new.
 	colors _ OrderedCollection new! !
 
+!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/25/2016 11:32:06'!
+iterate: aBlock
+
+	| y |
+	xMin*1.0 to: xMax count: extent x do: [ :x |
+		functions with: colors do: [ :f :c |
+			y _ f value: x.
+			aBlock value: x value: y value: c ]]! !
+
 !FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 5/17/2015 09:20'!
 toMorphic: aPoint
 	^(self xToMorphic: aPoint x) @ (self yToMorphic: aPoint y)! !
 
-!FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 5/17/2015 09:17'!
+!FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 11/25/2016 11:03:22'!
 xToMorphic: x
-	^x - xMin / (xMax - xMin ) * extent x! !
+	^x - xMin / (xMax - xMin ) * (extent x-40)+40! !
 
 !FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 6/25/2016 17:16'!
 yRange: anInterval
@@ -900,9 +918,9 @@ yRange: anInterval
 	yMin _ anInterval first.
 	yMax _ anInterval last.! !
 
-!FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 5/17/2015 09:16'!
+!FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 11/25/2016 11:03:27'!
 yToMorphic: y
-	^yMax - y / (yMax - yMin ) * extent y! !
+	^yMax - y / (yMax - yMin ) * (extent y-20)! !
 
 !FunctionGraphMorph class methodsFor: 'instance creation' stamp: 'jmv 7/20/2016 10:00:31'!
 initializedInstance

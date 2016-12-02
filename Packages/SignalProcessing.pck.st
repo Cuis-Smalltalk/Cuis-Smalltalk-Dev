@@ -1,13 +1,13 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2963] on 1 November 2016 at 4:13:17 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #2984] on 30 November 2016 at 11:09:20 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 68!
+!provides: 'SignalProcessing' 1 69!
 !requires: 'Sound' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3214,7 +3214,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 10/19/2016 11:19:17'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 11/30/2016 10:51:36'!
 deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNil
 	"Compute the image registration between self and anImage. Answer the delta aFloatImage should be moved to align perfectly with self.
 	Assume there is no scale change and no rotation.
@@ -3228,36 +3228,47 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNi
 
 	doPhaseCorrelation ifTrue: [ do phase correlation ] ifFalse: [ do cross correlation ].
 	
-	Note: modifies both images. Call this method with copies, if needed."
+	Makes copies of both image. Receiver and argument are not modified."
 	
-	| x y dx dy c xy doPhaseCorrelation rawPatternPosition |
+	| correlation target x y dx dy c xy doPhaseCorrelation rawPatternPosition h w |
+
+	(width isPowerOfTwo and: [ height isPowerOfTwo ]) 
+		ifTrue: [
+			correlation _ self copy.
+			target _ aFloatImage copy ]
+		ifFalse: [ | r |
+			w _ 2 raisedToInteger: width log2 floor.
+			h _ 2 raisedToInteger: height log2 floor.
+			r _ Rectangle center: width@height//2 extent: w@h.
+			correlation _ self copy: r.
+			target _ aFloatImage copy: r ].
+
 	"Do Phase Correlation. This normalizes the cross correlation result, meaning it makes sense to ask the max value to be above some minimum to be meaningful."
 	doPhaseCorrelation _ true.
-	self crossCorrelationWith: aFloatImage phase: doPhaseCorrelation.
+	correlation crossCorrelationWith: target phase: doPhaseCorrelation.
 
 	"If images are Raw there will be a spurious local maximum at 1@1, or at whatever distance the two images where taken from the original raws.
 	This is due to usual sensor pixel gain non uniformity, hot & dead pixels, etc."
 	imagesAreRaw ifTrue: [
 		rawPatternPosition _ (rawDeltaPointOrNil ifNotNil: [rawDeltaPointOrNil rounded] ifNil: [0@0])+1.
-		self wrapI: rawPatternPosition y j: rawPatternPosition x put: 0.
-		self wrapI: rawPatternPosition y+1 j: rawPatternPosition x put: 0.
-		self wrapI: rawPatternPosition y-1 j: rawPatternPosition x put: 0.
-		self wrapI: rawPatternPosition y j: rawPatternPosition x+1 put: 0.
-		self wrapI: rawPatternPosition y j: rawPatternPosition x-1 put: 0 ].
+		correlation wrapI: rawPatternPosition y j: rawPatternPosition x put: 0.
+		correlation wrapI: rawPatternPosition y+1 j: rawPatternPosition x put: 0.
+		correlation wrapI: rawPatternPosition y-1 j: rawPatternPosition x put: 0.
+		correlation wrapI: rawPatternPosition y j: rawPatternPosition x+1 put: 0.
+		correlation wrapI: rawPatternPosition y j: rawPatternPosition x-1 put: 0 ].
 
-	
 	"Find max"
-	xy _ self xyForMax.
+	xy _ correlation xyForMax.
 	x _ xy x.
 	y _ xy y.
 
 	"Solo considerar valido el maximo si es mayor que 0.03. Suponemos phase = true. ver 
 	An FFT-Based Technique for Translation, Rotation, and Scale-Invariant Image Registration"
-	(doPhaseCorrelation and: [ (self x: x y: y) < 0.02 ]) ifTrue: [
+	(doPhaseCorrelation and: [ (correlation x: x y: y) < 0.02 ]) ifTrue: [
 		self error: 'The displacement between images could not be found' ].
 
 	"Find centroid around x@y"
-	c _ self centroidAround: x@y.
+	c _ correlation centroidAround: x@y.
 	dx _ c x-1.
 	dy _ c y-1.
 	dx > (width//2) ifTrue: [ dx _ dx - width ].
