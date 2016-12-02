@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #2984] on 30 November 2016 at 11:08:56 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #2986] on 2 December 2016 at 9:06:01 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 8!
+!provides: 'Morphic-Widgets-Extras' 1 9!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -848,7 +848,7 @@ domain: anInterval
 	yMin _ nil.
 	yMax _ nil.! !
 
-!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/25/2016 11:04:13'!
+!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/30/2016 16:04:28'!
 drawOn: aCanvas
 	"
 	| g |
@@ -858,13 +858,17 @@ drawOn: aCanvas
 	g addFunction: [ :x | x div: 1 ] color: Color red.
 	g openInWorld
 	"
-	| r r2 fontToUse |
+	| r r2 fontToUse xtra |
 	yMin ifNil: [
 		yMin _ Float infinity.
 		yMax _ Float negativeInfinity.
 		self iterate: [ :x :y :c |
 			yMin _ yMin min: y.
-			yMax _ yMax max: y ]].
+			yMax _ yMax max: y ].
+		xtra _ yMax-yMin/50.
+		yMin _ yMin - xtra.
+		yMax _ yMax + xtra
+		].
 			
 	r _ 40@0 corner: extent - (0@20).
 	aCanvas
