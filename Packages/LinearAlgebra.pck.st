@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2963] on 1 November 2016 at 4:12:01 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 10:40:18 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 34!
+!provides: 'LinearAlgebra' 1 35!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -1113,17 +1113,19 @@ copyFromTile: aFloatMatrix position: aPoint
 		destOrigin: aPoint-1 sourceOrigin: 0@0.
 	blitter copyBits! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:25'!
-copyFromTile: aFloatMatrix position: aPoint guardZone: borderWidth
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 14:02:39'!
+copyFromTile: aFloatMatrix position: aPoint guardZoneX: borderWidth guardZoneY: borderHeight
 	"
 	aPoint is the position in self where the contents of aFloatMatrix are to be stored
 	As in all Matrix protocol, aPoint is 1-based
-	Exclude a border of width borderWidth from the copy
+	Exclude a border of width borderWidth@borderHeight from the copy
 
 	| i t |
-	t _ FloatImage from32BitColorForm: (Display copy: (100@100 extent: 100@100)) component: #red.
-	i _ FloatImage extent: 256@256.
-	i copyFromTile: t position: 10@10 guardZone: 10.
+	t _ FloatImage lena.
+	i _ FloatImage extent: 400@400.
+	i copyFromTile: t position: 0@10 guardZoneX: 0 guardZoneY: 0.
+	 i *= 0.5.
+	i copyFromTile: t position: 0@10 guardZoneX: 10 guardZoneY: 20.
 	i display.
 	"
 
@@ -1133,8 +1135,8 @@ copyFromTile: aFloatMatrix position: aPoint guardZone: borderWidth
 	blitter _ BitBlt new.
 	blitter
 		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: aPoint-1 + borderWidth sourceOrigin: borderWidth@borderWidth
-		extent: (formArgument width - (2*borderWidth))@(formArgument height - (2*borderWidth)).
+		destOrigin: aPoint-1 + (borderWidth@borderHeight) sourceOrigin: borderWidth@borderHeight
+		extent: (formArgument width - (2*borderWidth))@(formArgument height - (2*borderHeight)).
 	blitter copyBits! !
 
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:24'!
@@ -1750,7 +1752,7 @@ i: i put: row
 	ss _ i-1 * width + 1.
 	elements replaceFrom: ss to: ss+width-1 with: row elements startingAt: 1! !
 
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 7/19/2012 11:15'!
+!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 12/12/2016 10:09:46'!
 imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart
 	"The receiver and imaginaryPart conform a complex matrix.
 	operandRealPart and operandImaginaryPart conform another complex matrix.
@@ -1782,67 +1784,66 @@ imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImag
 	r1 print. i1 print
 	"
 
-	| a b c d e f operandSquaredNorm |
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			a _ self i: i j: j.
-			b _ imaginaryPart i: i j: j.
-			c _ operandRealPart i: i j: j.
-			d _ operandImaginaryPart i: i j: j.
-			operandSquaredNorm _ c * c + (d * d).
-			operandSquaredNorm = 0.0
-				ifFalse: [
-					e _ a * c + (b * d) / operandSquaredNorm.
-					f _ b * c - (a * d) / operandSquaredNorm ]
-				ifTrue: [ e _ f _ 0.0 ].
-			self i: i j: j put: e.
-			imaginaryPart i: i j: j put: f ]]! !
+	^ self imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart maxGain: nil! !
 
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 7/19/2012 11:15'!
-imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart threshold: threshold
+!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 12/12/2016 12:15:08'!
+imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart maxGain: allowedMagnitudeGrowthOrNil
 	"The receiver and imaginaryPart conform a complex matrix.
 	operandRealPart and operandImaginaryPart conform another complex matrix.
 	fill the receiver (and imaginaryPart) with the result of complex division with operand, element by element.
 	I.e., at each position of the matrix, compute (e+if) = (a+ib) / (c+id)
 
-	| r1 i1 r2 i2 |
-	r1 _ FloatMatrix fromArrayOfArrays: #(
-		#( 1 2 3)
-		#( 4 5 6)
-		#( 1 2 3)).
-	i1 _ FloatMatrix fromArrayOfArrays: #(
-		#( 1 1 0)
-		#( 0 0 1)
-		#( 0 0 0)).
-	r2 _ FloatMatrix fromArrayOfArrays: #(
-		#( 2 4 6)
-		#( 4 5 6)
-		#( 1 2 3)).
-	i2 _ FloatMatrix fromArrayOfArrays: #(
-		#( 5 5 5)
-		#( 5 5 5)
-		#( 7 8 9)).
+	| r1 i1 r1a i1a r2 i2 |
+	r1 := FloatMatrix fromArrayOfArrays: #(
+		#( 1 1 1)
+		#( 2 2 2)
+		#( 1 1 1)).
+	i1 := FloatMatrix fromArrayOfArrays: #(
+		#( 2 2 2)
+		#( 1 1 1)
+		#( 2 2 2)).
+	r2 := FloatMatrix fromArrayOfArrays: #(
+		#( 0.1 0.5 1.0)
+		#( 0.1 0.5 1.0)
+		#( 0.1 0.5 1.0)).
+	i2 := FloatMatrix fromArrayOfArrays: #(
+		#( 0.1 0.5 1.0)
+		#( 0.1 0.5 1.0)
+		#( 0.1 0.5 1.0)).
+	r1a := r1 copy.
+	i1a := i1 copy.
 	Transcript clear.
 	r1 print. i1 print.
-	r1 imaginary: i1 elementMultiplyBy: r2 imaginary: i2.
-	r1 print. i1 print.
 	r1 imaginary: i1 elementDivideBy: r2 imaginary: i2.
-	r1 print. i1 print
+	r1 print. i1 print.
+	r1a imaginary: i1a elementDivideBy: r2 imaginary: i2 maxGain: 2.
+	r1a print. i1a print
 	"
 
-	| a b c d e f operandSquaredNorm |
+	| a b c d e f operandNormSquared alreadyAppliedGain gainLimiter |
 	1 to: height do: [ :i |
 		1 to: width do: [ :j |
-			a _ self i: i j: j.
-			b _ imaginaryPart i: i j: j.
 			c _ operandRealPart i: i j: j.
 			d _ operandImaginaryPart i: i j: j.
-			operandSquaredNorm _ c * c + (d * d).
-			operandSquaredNorm >= threshold
-				ifTrue: [
-					e _ a * c + (b * d) / operandSquaredNorm.
-					f _ b * c - (a * d) / operandSquaredNorm ]
-				ifFalse: [ e _ f _ 0.0 ].
+			e _ 0.0.
+			f _ 0.0.
+			operandNormSquared _ c * c + (d * d).
+			operandNormSquared isZero ifFalse: [
+				a _ self i: i j: j.
+				b _ imaginaryPart i: i j: j.
+				e _ a * c + (b * d) / operandNormSquared.
+				f _ b * c - (a * d) / operandNormSquared.
+				"Only if a limit to applied gain is specified..."
+				allowedMagnitudeGrowthOrNil ifNotNil: [
+					alreadyAppliedGain _ 1.0 / operandNormSquared sqrt.
+					allowedMagnitudeGrowthOrNil < alreadyAppliedGain ifTrue: [
+						"Less than one if gain limiting needed"
+						gainLimiter _ allowedMagnitudeGrowthOrNil / alreadyAppliedGain.
+						e _ e * gainLimiter.
+						f _ f * gainLimiter.
+					].
+				].
+			].
 			self i: i j: j put: e.
 			imaginaryPart i: i j: j put: f ]]! !
 
@@ -2102,6 +2103,44 @@ storeQRDecompositionOfHessembergSuperiorOnQ: q r: r
 			q preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s ] ].
 	q transpose.! !
 
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 11:02:29'!
+trim: threshold
+	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
+	Answer nil if all the elements are below (or equal) threshold.
+
+	(FloatMatrix fromArrayOfArrays: #(
+		#( 1 2 1)
+		#( 4 5 2)
+		#( 1 2 1))) trim: 3
+	"
+	| top bottom left right |
+	top _ (1 to: height) detect: [ :i | (self i: i) max > threshold ] ifNone: [ ^ nil ].
+	bottom _ (height to: 1 by: -1) detect: [ :i | (self i: i) max > threshold ].
+	left _ (1 to: width) detect: [ :j | (self j: j) max > threshold ].
+	right _ (width to: 1 by: -1) detect: [ :j | (self j: j) max > threshold ].
+	^ self copy: (left@top corner: right@bottom+1)! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 19:03:29'!
+trimCentered: threshold
+	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
+	Similar to #trim, but remove an equal number of rows at each end, and an equal number of columns at each end, even if leaving extra rows or columns.
+	Answer nil if all the elements are below (or equal) threshold.
+
+	(FloatMatrix fromArrayOfArrays: #(
+		#( 1 2 1)
+		#( 4 5 2)
+		#( 1 2 1))) trimCentered: 3
+	"
+	| top left |
+	top _ (1 to: (height/2) ceiling) detect: [ :i | 
+		((self i: i) elements abs max > threshold) |
+		((self i: height+1-i) max > threshold) ] ifNone: [ ^ nil ].
+	left _ (1 to: (width/2) ceiling) detect: [ :j |
+		((self j: j) elements abs max > threshold) |
+		((self j: width+1-j) max > threshold) ].
+
+	^ self copy: (left@top extent: (width@height) - (left@top -1 * 2))! !
+
 !FloatMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:26'!
 form: aForm color: aSymbol
 	| h w answer color |
@@ -2118,8 +2157,8 @@ form: aForm color: aSymbol
 copyFromTile: aFloatMatrix position: aPoint
 	self halt! !
 
-!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:17'!
-copyFromTile: aFloatMatrix position: aPoint guardZone: borderWidth
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 12/12/2016 13:24:38'!
+copyFromTile: aFloatMatrix position: aPoint guardZoneX: borderWidth guardZoneY: borderHeight
 	self halt! !
 
 !Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:20'!
