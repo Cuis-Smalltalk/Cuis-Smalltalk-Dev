@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 11:05:08 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 11:23:55 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 71!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'SignalProcessing' 1 72!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3129,7 +3129,7 @@ convolutionLinearWithSmallKernel: kernel
 			answer x: x y: y put: v ]].
 	^answer! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/12/2016 18:46:07'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/13/2016 11:21:20'!
 convolutionWith: trimmedPsf
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
@@ -3140,13 +3140,13 @@ convolutionWith: trimmedPsf
 	
 	"
 
-	| tileSize mtfRealPart mtfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth |
+	| tileSize otfRealPart otfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth |
 	tileSize _ 1024 min: (2 raisedToInteger: (width max: height) log2 ceiling).
 
 	"Prepare convolution kernel for the actual extent of the tile."
-	fft _ self mtfForPsf: trimmedPsf heightAndWidth: tileSize.
-	mtfRealPart _ fft realData.
-	mtfImaginaryPart _ fft imagData.
+	fft _ self otfForPsf: trimmedPsf heightAndWidth: tileSize.
+	otfRealPart _ fft realData.
+	otfImaginaryPart _ fft imagData.
 
 	"Do convolution in each tile and get results."
 	guardZoneWidth _ trimmedPsf width / 2.		"Number of pixels we are willing to lose on each side, to avoid border effects."
@@ -3159,7 +3159,7 @@ convolutionWith: trimmedPsf
 			fft realData: tileReal imagData: tileImaginary.
 			fft transformForward: true.
 			"Multiply."
-			tileReal imaginary: tileImaginary elementMultiplyBy: mtfRealPart imaginary: mtfImaginaryPart.
+			tileReal imaginary: tileImaginary elementMultiplyBy: otfRealPart imaginary: otfImaginaryPart.
 			"And transform back"
 			fft transformForward: false ] 
 		tileSize: tileSize
@@ -3214,7 +3214,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/13/2016 11:04:43'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/13/2016 11:22:50'!
 deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
@@ -3224,24 +3224,24 @@ deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	- Implemented with tiles. Tile border effects are taken care of.
 	"
 
-	| tileSize mtfRealPart mtfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth mtfInverseImaginaryPart mtfInverseRealPart psfInverseImaginaryPart psfInverseRealPart trimmed |
+	| tileSize otfRealPart otfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth otfInverseImaginaryPart otfInverseRealPart psfInverseImaginaryPart psfInverseRealPart trimmed |
 
 	tileSize _ 1024 min: (2 raisedToInteger: (width max: height) log2 ceiling).
 
 	"Prepare convolution kernel for the actual extent of the tile."
-	fft _ self mtfForPsf: trimmedPsf heightAndWidth: tileSize.
-	mtfRealPart _ fft realData.
-	mtfImaginaryPart _ fft imagData.
+	fft _ self otfForPsf: trimmedPsf heightAndWidth: tileSize.
+	otfRealPart _ fft realData.
+	otfImaginaryPart _ fft imagData.
 
-	"Compute the 'inverse' mtf, limiting noise amplification"
-	mtfInverseRealPart _ FloatImage width: tileSize height: tileSize.
-	mtfInverseImaginaryPart _ FloatImage width: tileSize height: tileSize.
-	mtfInverseRealPart += 1.
-	mtfInverseRealPart imaginary: mtfInverseImaginaryPart elementDivideBy: mtfRealPart imaginary: mtfImaginaryPart maxGain: maxNoiseFactor.
+	"Compute the 'inverse' otf, limiting noise amplification"
+	otfInverseRealPart _ FloatImage width: tileSize height: tileSize.
+	otfInverseImaginaryPart _ FloatImage width: tileSize height: tileSize.
+	otfInverseRealPart += 1.
+	otfInverseRealPart imaginary: otfInverseImaginaryPart elementDivideBy: otfRealPart imaginary: otfImaginaryPart maxGain: maxNoiseFactor.
 
 	"Compute the 'inverse' psf, to check its support, and find proper guard zones"
-	psfInverseRealPart _ mtfInverseRealPart copy.
-	psfInverseImaginaryPart _ mtfInverseImaginaryPart copy.
+	psfInverseRealPart _ otfInverseRealPart copy.
+	psfInverseImaginaryPart _ otfInverseImaginaryPart copy.
 	fft realData: psfInverseRealPart imagData: psfInverseImaginaryPart.
 	fft transformForward: false.
 	trimmed _ psfInverseRealPart moveOriginToCenter: false.
@@ -3261,8 +3261,8 @@ deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 			fft realData: tileReal imagData: tileImaginary.
 			fft transformForward: true.
 			"Multiply."
-"			tileReal imaginary: tileImaginary elementDivideBy: mtfRealPart imaginary: mtfImaginaryPart maxGain: maxNoiseFactor."
-			tileReal imaginary: tileImaginary elementMultiplyBy: mtfInverseRealPart imaginary: mtfInverseImaginaryPart.
+"			tileReal imaginary: tileImaginary elementDivideBy: otfRealPart imaginary: otfImaginaryPart maxGain: maxNoiseFactor."
+			tileReal imaginary: tileImaginary elementMultiplyBy: otfInverseRealPart imaginary: otfInverseImaginaryPart.
 			"And transform back"
 			fft transformForward: false ] 
 		tileSize: tileSize
@@ -3989,22 +3989,6 @@ mode
 	"
 	^elements mode! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/12/2016 18:23:22'!
-mtfForPsf: trimmedPsf heightAndWidth: aNumber
-	"Compute the MTF"
-	| movedToOriginPsf mtfRealPart mtfImaginaryPart fft |
-	movedToOriginPsf _ trimmedPsf moveOriginToCenter: false.
-	movedToOriginPsf normalizeSum.
-
-	"Prepare convolution kernel for the actual extent of the tile."
-	mtfRealPart _ FloatImage width: aNumber height: aNumber.
-	mtfImaginaryPart _ FloatImage width: aNumber height: aNumber.
-	mtfRealPart fillLowFFTFrequenciesWith: movedToOriginPsf.
-	fft _ FFT2D new.
-	fft realData: mtfRealPart imagData: mtfImaginaryPart.
-	fft transformForward: true.
-	^ fft! !
-
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 	"Answer a new image.
@@ -4172,6 +4156,24 @@ openCLNormalizedCoordinatesForOneBased: oneBasedCoordinates
 	See NormalizedCoordinatesExperiment in the OpenCL package"
 
 	^ ((oneBasedCoordinates x-0.5)/width) @ ((oneBasedCoordinates y-0.5)/height)! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/13/2016 11:20:47'!
+otfForPsf: trimmedPsf heightAndWidth: aNumber
+	"Compute the OTF
+	https://en.wikipedia.org/wiki/Optical_transfer_function
+	"
+	| movedToOriginPsf otfRealPart otfImaginaryPart fft |
+	movedToOriginPsf _ trimmedPsf moveOriginToCenter: false.
+	movedToOriginPsf normalizeSum.
+
+	"Prepare convolution kernel for the actual extent of the tile."
+	otfRealPart _ FloatImage width: aNumber height: aNumber.
+	otfImaginaryPart _ FloatImage width: aNumber height: aNumber.
+	otfRealPart fillLowFFTFrequenciesWith: movedToOriginPsf.
+	fft _ FFT2D new.
+	fft realData: otfRealPart imagData: otfImaginaryPart.
+	fft transformForward: true.
+	^ fft! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:04:51'!
 percentile: percentile
