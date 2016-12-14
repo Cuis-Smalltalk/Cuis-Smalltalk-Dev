@@ -15,20 +15,19 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ### Get an appropriate VM ###
 For Windows Git Bash:
 ```
-$ curl -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201611161032.zip
+$ curl -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_win32x86_squeak.cog.spur_201608171728.zip
 $ unzip cogspur.zip
 ```
 For MacOSX:
 ```
-$ curl -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos32x86_squeak.cog.spur_201611161032.tar.gz
+$ curl -o CogSpur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_macos32x86_squeak.cog.spur_201608171728.tar.gz
 $ tar -zxvf CogSpur.tgz
 ```
 For Linux (except ArchLinux, Chromebooks see below):
 ```
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201611161032.tar.gz
+~/MyProject# wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_linux32x86_squeak.cog.spur_201608171728.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
-~/MyProject# mv ./products/sqcogspurlinuxht ./cogspur
-~/MyProject# rmdir ./products
+~/MyProject# mv ./sqcogspurlinuxht ./cogspur
 ```
 On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
 (This was tested on Debian 8)

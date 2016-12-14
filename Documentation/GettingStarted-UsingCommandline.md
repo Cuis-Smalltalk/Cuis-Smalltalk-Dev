@@ -12,10 +12,9 @@ $ mkdir MyProject
 $ cd MyProject
 $ wget https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201611161032.tar.gz
+$ wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_linux32x86_squeak.cog.spur_201608171728.tar.gz
 $ tar -zxvf cogspur.tgz
-$ mv ./products/sqcogspurlinuxht ./cogspur
-$ rmdir ./products
+$ mv ./sqcogspurlinuxht ./cogspur
 ```
 If this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
 (This was tested on Debian 8)
@@ -44,7 +43,7 @@ $ mkdir MyProject
 $ cd MyProject
 $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ curl -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos32x86_squeak.cog.spur_201611161032.tar.gz
+$ curl -o CogSpur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_macos32x86_squeak.cog.spur_201608171728.tar.gz
 $ tar -zxvf CogSpur.tgz
 $ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3000-spur.image
 ```
