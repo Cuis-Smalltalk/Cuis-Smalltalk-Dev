@@ -1,0 +1,1387 @@
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 7 November 2016 at 2:53:38 pm'!
+
+
+----SNAPSHOT----#(7 November 2016 2:53:55.973029 pm) Cuis5.0-2974-spur.image priorSource: 0!
+
+----QUIT----#(7 November 2016 2:54:03.110029 pm) Cuis5.0-2974-spur.image priorSource: 92!
+
+----STARTUP----#(17 November 2016 12:32:23.600889 pm) as /root/PayloadSoftware/Cuis-Smalltalk-Dev/Cuis5.0-2974-spur.image!
+
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 16 November 2016 at 3:55:25 pm'!
+!Integer class methodsFor: 'instance creation' stamp: 'jmv 11/16/2016 15:37:15' prior: 16860879!
+              readFrom: aStream base: base
+	"Answer an instance of one of my concrete subclasses. Initial minus sign
+	accepted, and bases > 10 use letters A-Z. Embedded radix specifiers not
+	allowed--use Number readFrom: for that. Answer zero (not an error) if
+	there are no digits."
+
+	| digit value neg cc atLeastOneDigitRead |
+	neg _ aStream peekFor: $-.
+	neg ifFalse: [aStream peekFor: $+].
+	value _ 0.
+	atLeastOneDigitRead _ false.
+	[ aStream atEnd ]
+		whileFalse: [
+			cc _ aStream next.
+			digit _ cc digitValue.
+			(digit < 0 or: [digit >= base])
+				ifTrue: [
+					aStream skip: -1.
+					atLeastOneDigitRead ifFalse: [self error: 'At least one digit expected here'].
+					^neg
+						ifTrue: [value negated]
+						ifFalse: [value]].
+			value _ value * base + digit.
+			atLeastOneDigitRead _ true ].
+	neg ifTrue: [^ value negated].
+	^ value! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2975-Integer-readFrom-cleanup-JuanVuletich-2016Nov16-15h20m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2975] on 17 November 2016 at 9:08:34 am'!
+!PositionableStream methodsFor: 'accessing' stamp: 'jmv 11/17/2016 09:06:59' prior: 16891425!
+           peek
+	"Answer what would be returned if the message next were sent to the 
+	receiver. If the receiver is at the end, answer nil."
+
+	| nextObject |
+	position < readLimit ifTrue: [
+		^collection at: position+1 ].
+	self atEnd ifTrue: [^nil].
+	nextObject _ self next.
+	position _ position - 1.
+	^nextObject! !
+!StandardFileStream methodsFor: 'read, write, position' stamp: 'jmv 11/17/2016 09:07:20' prior: 16913380!
+    peek
+	"Answer what would be returned if the message next were sent to the receiver. If the receiver is at the end, answer nil.  "
+	| next |
+	position < readLimit ifTrue: [
+		^collection at: position+1 ].
+	self atEnd ifTrue: [^ nil].
+	next _ self basicNext.
+	self position: self position - 1.
+	^ next! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2976-peek-Optimization-JuanVuletich-2016Nov17-09h06m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2975] on 17 November 2016 at 9:18:37 am'!
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:42'!
+                               nextDouble64BigEndian: bigEndian
+	"Store the given number as a 32 bit Float on this (binary) stream.
+
+	Float pi hex '400921FB54442D18'
+	Float pi negated hex 'C00921FB54442D18'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextDouble64Put: Float pi bigEndian: false ])
+			readStream nextDouble64BigEndian: false
+
+	(ByteArray streamContents: [ :strm |
+		strm nextDouble64Put: Float pi bigEndian: true ])
+			readStream nextDouble64BigEndian: true
+	"
+	| bytes |
+	bytes _ self next: 8.
+	^ bytes doubleAt: 1 bigEndian: bigEndian! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:40'!
+            nextDouble64Put: aFloat bigEndian: bigEndian
+	"Store the given number as a 32 bit Float on this (binary) stream.
+
+	Float pi hex '400921FB54442D18'
+	Float pi negated hex 'C00921FB54442D18'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextDouble64Put: Float pi bigEndian: false ]) hex
+
+	(ByteArray streamContents: [ :strm |
+		strm nextDouble64Put: Float pi bigEndian: true ]) hex
+	"
+	| bytes |
+	bytes _ ByteArray new: 8.
+	bytes doubleAt: 1 put: aFloat bigEndian: bigEndian.
+	self nextPutAll: bytes! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:38'!
+      nextFloat32BigEndian: bigEndian
+	"Store the given number as a 32 bit Float on this (binary) stream.
+
+	Float pi hex '400921FB54442D18'
+	Float pi negated hex 'C00921FB54442D18'
+	Float pi asIEEE32BitWord hex '16r40490FDB'
+	Float pi negated asIEEE32BitWord hex '16rC0490FDB'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextFloat32Put: Float pi bigEndian: false ])
+			readStream nextFloat32BigEndian: false
+
+	(ByteArray streamContents: [ :strm |
+		strm nextFloat32Put: Float pi bigEndian: true ])
+			readStream nextFloat32BigEndian: true
+	"
+	| bytes |
+	bytes _ self next: 4.
+	^ bytes floatAt: 1 bigEndian: bigEndian! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:34'!
+                  nextFloat32Put: aFloat bigEndian: bigEndian
+	"Store the given number as a 32 bit Float on this (binary) stream.
+
+	Float pi hex '400921FB54442D18'
+	Float pi negated hex 'C00921FB54442D18'
+	Float pi asIEEE32BitWord hex '16r40490FDB'
+	Float pi negated asIEEE32BitWord hex '16rC0490FDB'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextFloat32Put: Float pi bigEndian: false ]) hex 'DB0F4940'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextFloat32Put: Float pi bigEndian: true ]) hex '40490FDB'
+	"
+	| bytes |
+	bytes _ ByteArray new: 4.
+	bytes floatAt: 1 put: aFloat bigEndian: bigEndian.
+	self nextPutAll: bytes! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:26'!
+                    nextSignedInt16BigEndian: bigEndian
+	"Answer the next  signed, 16-bit integer from this (binary) stream.
+
+	(ByteArray streamContents: [ :strm |
+		strm nextSignedInt16Put: -12345 bigEndian: false ]) 
+			readStream nextSignedInt16BigEndian: false
+
+	(ByteArray streamContents: [ :strm |
+		strm nextSignedInt16Put: -12345 bigEndian: true ]) 
+			readStream nextSignedInt16BigEndian: true
+	"
+	| bytes |
+	bytes _ self next: 2.
+	^ bytes shortAt: 1 bigEndian: bigEndian! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:26'!
+          nextSignedInt16Put: aNumber bigEndian: bigEndian
+	"Store the given number as a signed, 16-bit integer on this (binary) stream.
+
+	(16r10000-12345) hex '16rCFC7'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextSignedInt16Put: -12345 bigEndian: false ]) hex
+
+	(ByteArray streamContents: [ :strm |
+		strm nextSignedInt16Put: -12345 bigEndian: true ]) hex
+	"
+	| bytes |
+	bytes _ ByteArray new: 2.
+	bytes shortAt: 1 put: aNumber bigEndian: bigEndian.
+	self nextPutAll: bytes! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:26'!
+nextSignedInt32BigEndian: bigEndian
+	"Answer the next signed, 32-bit integer from this (binary) stream.
+
+	(ByteArray streamContents: [ :strm |
+		strm nextSignedInt32Put: -123456 bigEndian: false ]) 
+			readStream nextSignedInt32BigEndian: false
+
+	(ByteArray streamContents: [ :strm |
+		strm nextSignedInt32Put: -123456 bigEndian: true ]) 
+			readStream nextSignedInt32BigEndian: true
+	"
+	| bytes |
+	bytes _ self next: 4.
+	^ bytes longAt: 1 bigEndian: bigEndian! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:27'!
+          nextSignedInt32Put: aNumber bigEndian: bigEndian
+	"Store the given number as a signed, 32-bit integer on this (binary) stream.
+
+	(16r100000000-123456) hex '16rFFFE1DC0'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextSignedInt32Put: -123456 bigEndian: false ]) hex
+
+	(ByteArray streamContents: [ :strm |
+		strm nextSignedInt32Put: -123456 bigEndian: true ]) hex
+	"
+	| bytes |
+	bytes _ ByteArray new: 4.
+	bytes longAt: 1 put: aNumber bigEndian: bigEndian.
+	self nextPutAll: bytes! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:18'!
+                      nextUnsignedInt16BigEndian: bigEndian
+	"Answer the next unsigned, 16-bit integer from this (binary) stream.
+
+	(ByteArray streamContents: [ :strm |
+		strm nextUnsignedInt16Put: 12345 bigEndian: false ]) 
+			readStream nextUnsignedInt16BigEndian: false
+
+	(ByteArray streamContents: [ :strm |
+		strm nextUnsignedInt16Put: 12345 bigEndian: true ]) 
+			readStream nextUnsignedInt16BigEndian: true
+	"
+	| bytes |
+	bytes _ self next: 2.
+	^ bytes unsignedShortAt: 1 bigEndian: bigEndian! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:27'!
+                         nextUnsignedInt16Put: aNumber bigEndian: bigEndian
+	"Store the given number as a unsigned, 16-bit integer on this (binary) stream.
+
+	12345 hex  '16r3039'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextUnsignedInt16Put: 12345 bigEndian: false ]) hex
+
+	(ByteArray streamContents: [ :strm |
+		strm nextUnsignedInt16Put: 12345 bigEndian: true ]) hex
+	"
+	| bytes |
+	bytes _ ByteArray new: 2.
+	bytes unsignedShortAt: 1 put: aNumber bigEndian: bigEndian.
+	self nextPutAll: bytes! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:19'!
+                            nextUnsignedInt32BigEndian: bigEndian
+	"Answer the next unsigned, 32-bit integer from this (binary) stream.
+
+	(ByteArray streamContents: [ :strm |
+		strm nextUnsignedInt32Put: 123456 bigEndian: false ]) 
+			readStream nextUnsignedInt32BigEndian: false
+
+	(ByteArray streamContents: [ :strm |
+		strm nextUnsignedInt32Put: 123456 bigEndian: true ]) 
+			readStream nextUnsignedInt32BigEndian: true
+	"
+	| bytes |
+	bytes _ self next: 4.
+	^ bytes unsignedLongAt: 1 bigEndian: bigEndian! !
+!Stream methodsFor: 'normalized access' stamp: 'jmv 2/25/2016 11:27'!
+                        nextUnsignedInt32Put: aNumber bigEndian: bigEndian
+	"Store the given number as a unsigned, 32-bit integer on this (binary) stream.
+
+	123456 hex '16r1E240'
+
+	(ByteArray streamContents: [ :strm |
+		strm nextUnsignedInt32Put: 123456 bigEndian: false ]) hex
+
+	(ByteArray streamContents: [ :strm |
+		strm nextUnsignedInt32Put: 123456 bigEndian: true ]) hex
+	"
+	| bytes |
+	bytes _ ByteArray new: 4.
+	bytes unsignedLongAt: 1 put: aNumber bigEndian: bigEndian.
+	self nextPutAll: bytes! !
+!Stream methodsFor: 'nonhomogeneous accessing' stamp: 'jmv 6/14/2013 20:02'!
+                   nextNumber
+	"Answer a number from the stream."
+
+	|element|
+	[(element := self next) isNil or: [element isDigit or: [element = $- or: [element = $)]]]] whileFalse.
+	element ifNil: [^nil].
+	self skip: -1.
+	element = $) ifTrue: [^nil].
+	^Number readFrom: self! !
+!Stream methodsFor: 'nonhomogeneous accessing' stamp: 'jmv 2/29/2016 11:04'!
+               nextNumber: n 
+	"Answer the next n bytes as a positive Integer or LargePositiveInteger.
+	Currently only for bigEndian. Consider following the convention in category 'normalized access'"
+	| s |
+	s _ 0.
+	1 to: n do: 
+		[:i | s _ (s bitShift: 8) bitOr: self next asInteger].
+	^ s normalize! !
+!Stream methodsFor: 'nonhomogeneous accessing' stamp: 'jmv 2/29/2016 11:04'!
+                 nextNumber: n put: v 
+	"Append to the receiver the argument, v, which is a positive 
+	SmallInteger or a LargePositiveInteger, as the next n bytes.
+	Possibly pad with leading zeros.
+	Currently only for bigEndian. Consider following the convention in category 'normalized access'"
+
+	1 to: n do: [:i | self nextPut: (v digitAt: n+1-i)].
+	^ v
+! !
+!Stream methodsFor: 'nonhomogeneous accessing' stamp: 'ls 9/14/1998 22:46'!
+                             nextString
+	"Read a string from the receiver. The first byte is the length of the string, unless it is greater than 192, in which case the first four bytes encode the length.  I expect to be in ascii mode when called (caller puts back to binary)."
+
+	| aString length |
+
+	"read the length in binary mode"
+	self binary.
+	length _ self next.		"first byte."
+	length >= 192 ifTrue: [length _ length - 192.
+		1 to: 3 do: [:ii | length _ length * 256 + self next]].
+	aString _ String new: length.
+
+	"read the characters in ASCII mode"
+	self ascii.
+	self nextInto: aString.
+	^aString! !
+!Stream methodsFor: 'nonhomogeneous accessing' stamp: 'yo 4/16/2001 17:56'!
+                 nextStringPut: s 
+	"Append the string, s, to the receiver.  Only used by DataStream.  Max size of 64*256*256*256."
+
+	| length |
+	(length _ s size) < 192
+		ifTrue: [self nextPut: length]
+		ifFalse: 
+			[self nextPut: (length digitAt: 4)+192.
+			self nextPut: (length digitAt: 3).
+			self nextPut: (length digitAt: 2).
+			self nextPut: (length digitAt: 1)].
+	self nextPutAll: s asByteArray.
+	^s! !
+
+DummyStream removeSelector: #nextDouble64BigEndian:!
+
+DummyStream removeSelector: #nextDouble64BigEndian:!
+
+DummyStream removeSelector: #nextDouble64Put:bigEndian:!
+
+DummyStream removeSelector: #nextDouble64Put:bigEndian:!
+
+DummyStream removeSelector: #nextNumber:put:!
+
+DummyStream removeSelector: #nextNumber:put:!
+
+DummyStream removeSelector: #nextSignedInt16BigEndian:!
+
+DummyStream removeSelector: #nextSignedInt16BigEndian:!
+
+DummyStream removeSelector: #nextSignedInt16Put:bigEndian:!
+
+DummyStream removeSelector: #nextSignedInt16Put:bigEndian:!
+
+DummyStream removeSelector: #nextSignedInt32BigEndian:!
+
+DummyStream removeSelector: #nextSignedInt32BigEndian:!
+
+DummyStream removeSelector: #nextSignedInt32Put:bigEndian:!
+
+DummyStream removeSelector: #nextSignedInt32Put:bigEndian:!
+
+DummyStream removeSelector: #nextStringPut:!
+
+DummyStream removeSelector: #nextStringPut:!
+
+DummyStream removeSelector: #nextUnsignedInt16BigEndian:!
+
+DummyStream removeSelector: #nextUnsignedInt16BigEndian:!
+
+DummyStream removeSelector: #nextUnsignedInt16Put:bigEndian:!
+
+DummyStream removeSelector: #nextUnsignedInt16Put:bigEndian:!
+
+DummyStream removeSelector: #nextUnsignedInt32BigEndian:!
+
+DummyStream removeSelector: #nextUnsignedInt32BigEndian:!
+
+DummyStream removeSelector: #nextUnsignedInt32Put:bigEndian:!
+
+DummyStream removeSelector: #nextUnsignedInt32Put:bigEndian:!
+
+DataStream removeSelector: #readStringOld!
+
+DataStream removeSelector: #readStringOld!
+
+PositionableStream removeSelector: #nextDouble64BigEndian:!
+
+PositionableStream removeSelector: #nextDouble64BigEndian:!
+
+PositionableStream removeSelector: #nextDouble64Put:bigEndian:!
+
+PositionableStream removeSelector: #nextDouble64Put:bigEndian:!
+
+PositionableStream removeSelector: #nextFloat32BigEndian:!
+
+PositionableStream removeSelector: #nextFloat32BigEndian:!
+
+PositionableStream removeSelector: #nextFloat32Put:bigEndian:!
+
+PositionableStream removeSelector: #nextFloat32Put:bigEndian:!
+
+PositionableStream removeSelector: #nextNumber!
+
+PositionableStream removeSelector: #nextNumber!
+
+PositionableStream removeSelector: #nextNumber:!
+
+PositionableStream removeSelector: #nextNumber:!
+
+PositionableStream removeSelector: #nextNumber:put:!
+
+PositionableStream removeSelector: #nextNumber:put:!
+
+PositionableStream removeSelector: #nextSignedInt16BigEndian:!
+
+PositionableStream removeSelector: #nextSignedInt16BigEndian:!
+
+PositionableStream removeSelector: #nextSignedInt16Put:bigEndian:!
+
+PositionableStream removeSelector: #nextSignedInt16Put:bigEndian:!
+
+PositionableStream removeSelector: #nextSignedInt32BigEndian:!
+
+PositionableStream removeSelector: #nextSignedInt32BigEndian:!
+
+PositionableStream removeSelector: #nextSignedInt32Put:bigEndian:!
+
+PositionableStream removeSelector: #nextSignedInt32Put:bigEndian:!
+
+PositionableStream removeSelector: #nextString!
+
+PositionableStream removeSelector: #nextString!
+
+PositionableStream removeSelector: #nextStringOld!
+
+PositionableStream removeSelector: #nextStringOld!
+
+PositionableStream removeSelector: #nextStringPut:!
+
+PositionableStream removeSelector: #nextStringPut:!
+
+PositionableStream removeSelector: #nextUnsignedInt16BigEndian:!
+
+PositionableStream removeSelector: #nextUnsignedInt16BigEndian:!
+
+PositionableStream removeSelector: #nextUnsignedInt16Put:bigEndian:!
+
+PositionableStream removeSelector: #nextUnsignedInt16Put:bigEndian:!
+
+PositionableStream removeSelector: #nextUnsignedInt32BigEndian:!
+
+PositionableStream removeSelector: #nextUnsignedInt32BigEndian:!
+
+PositionableStream removeSelector: #nextUnsignedInt32Put:bigEndian:!
+
+PositionableStream removeSelector: #nextUnsignedInt32Put:bigEndian:!
+
+Stream removeSelector: #nextStringOld!
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2977-Stream-refactor-JuanVuletich-2016Nov17-09h08m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2977] on 17 November 2016 at 10:29:07 am'!
+!PositionableStream methodsFor: 'testing' stamp: 'jmv 11/17/2016 10:28:06' prior: 16891536!
+         atEnd
+	"Answer whether the receiver can access any more objects."
+
+	^position >= readLimit! !
+!ReadStream methodsFor: 'accessing' stamp: 'jmv 11/17/2016 09:59:57' prior: 16897965!
+            next
+	"Answer the next object in the Stream represented by the receiver."
+
+	^position >= readLimit
+		ifFalse: [collection at: (position _ position + 1)]! !
+!WriteStream methodsFor: 'accessing' stamp: 'jmv 11/17/2016 10:28:35' prior: 16946385!
+             nextPut: anObject 
+	"Insert the argument at the next position in the Stream represented by the receiver."
+
+	position >= writeLimit
+		ifTrue: [^ self pastEndPut: anObject]
+		ifFalse: [
+			position _ position + 1.
+			^collection at: position put: anObject]! !
+!ReadWriteStream methodsFor: 'accessing' stamp: 'jmv 11/17/2016 10:28:45' prior: 16898094!
+   next
+	"Return the next object in the Stream represented by the receiver."
+
+	"treat me as a FIFO"
+	^ position >= readLimit
+		ifFalse: [collection at: (position _ position + 1)]! !
+!StandardFileStream methodsFor: 'read, write, position' stamp: 'jmv 11/17/2016 10:00:56' prior: 16913098!
+   basicNext
+	"Answer the next byte from this file, or nil if at the end of the file."
+	
+	| count |
+	collection ifNotNil: [
+		position < readLimit 
+			ifFalse: [ 
+				readLimit := self primRead: fileID into: collection startingAt: 1 count: collection size.
+				position := 0.
+				readLimit = 0 ifTrue: [ ^nil ] ].
+		^collection at: (position := position + 1) ].	
+	count _ self primRead: fileID into: buffer1 startingAt: 1 count: 1.
+	^count = 1
+		ifTrue: [ buffer1 at: 1 ]! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2978-RemoveObsoletePrimCalls-JuanVuletich-2016Nov17-10h26m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2977] on 17 November 2016 at 10:31:18 am'!
+
+Stream subclass: #StdIOReadStream
+	instanceVariableNames: 'fileID name buffer1'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+!classDefinition: #StdIOReadStream category: #'System-Support'!
+Stream subclass: #StdIOReadStream
+	instanceVariableNames: 'fileID name buffer1'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'System-Support'!
+!StdIOReadStream commentStamp: '<historical>' prior: 0!
+     Standard Input Stream.
+
+A basic problem/restriction with this code is that currently the VM runs multiple VM threads within a single OS thread.
+
+This means that waiting on StdIn blocks the VM, suspending all Smalltalk code.!
+
+Stream subclass: #StdIOWriteStream
+	instanceVariableNames: 'fileID name buffer1 collection readLimit position'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+!classDefinition: #StdIOWriteStream category: #'System-Support'!
+Stream subclass: #StdIOWriteStream
+	instanceVariableNames: 'fileID name buffer1 collection readLimit position'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'System-Support'!
+!StdIOWriteStream commentStamp: '<historical>' prior: 0!
+               Standard Output/Error Streams.!
+!StdIOReadStream methodsFor: 'open / close' stamp: 'jmv 11/17/2016 10:12:24'!
+                  openOnHandle: aFileID name: streamName
+	"Initialize the instance with the given file handle.
+	 N.B. Do _not_ register the stream.  We do not want it to be
+	 closed implicitly (e.g. on GC).  There may be multiple instances
+	 accessing the same stream.  The stream is not a file."
+
+	fileID _ aFileID.
+	name _ streamName.
+	buffer1 _ String new: 1! !
+!StdIOReadStream methodsFor: 'streaming' stamp: 'jmv 11/17/2016 10:01:57'!
+                          next
+	"Answer the next byte from this stream, or wait until one becomes available.
+	Warning: all Smalltalk processes are essentially suspended until that happens!!"
+
+	| count |
+	count _ self primRead: fileID into: buffer1 startingAt: 1 count: 1.
+	^count = 1
+		ifTrue: [ buffer1 at: 1 ]! !
+!StdIOReadStream methodsFor: 'printing' stamp: 'jmv 11/17/2016 09:47:10'!
+                     printOn: aStream
+	"Put a printed version of the receiver onto aStream."
+
+	aStream nextPutAll: self class name; nextPutAll: ': '; print: name! !
+!StdIOReadStream methodsFor: 'primitives' stamp: 'jmv 11/17/2016 09:45:28'!
+    primRead: id into: byteArray startingAt: startIndex count: count
+	"Read up to count bytes of data from this file into the given string or byte array starting at the given index. Answer the number of bytes actually read."
+
+	<primitive: 'primitiveFileRead' module: 'FilePlugin'>
+	self error: 'File read failed'! !
+!StdIOReadStream class methodsFor: 'instance creation' stamp: 'jmv 11/17/2016 09:46:36'!
+               stdin
+	| newSelf |
+	newSelf _ self basicNew.
+	newSelf 
+		openOnHandle: self stdinHandle 
+		name: 'stdin'.
+	^newSelf! !
+!StdIOReadStream class methodsFor: 'accessing' stamp: 'jmv 11/17/2016 09:26:47'!
+                        stdinHandle
+
+	^ StdIOWriteStream stdioHandles at: 1! !
+!StdIOWriteStream methodsFor: 'open / close' stamp: 'jmv 11/17/2016 10:14:32'!
+                          openOnHandle: aFileID name: streamName
+	"Initialize the instance with the given file handle.
+	 N.B. Do _not_ register the stream.  We do not want it to be
+	 closed implicitly (e.g. on GC).  There may be multiple instances
+	 accessing the same stream.  The stream is not a file."
+
+	fileID _ aFileID.
+	name _ streamName.
+	buffer1 _ String new: 1! !
+!StdIOWriteStream methodsFor: 'streaming' stamp: 'jmv 11/17/2016 10:19:51'!
+                         flush
+	"Flush pending changes"
+	^self primFlush: fileID! !
+!StdIOWriteStream methodsFor: 'streaming' stamp: 'jmv 11/17/2016 10:18:42'!
+                         nextPut: char
+	"Write the given character to this file."
+
+	buffer1 at: 1 put: char.
+	self primWrite: fileID from: buffer1 startingAt: 1 count: 1.
+	^ char
+! !
+!StdIOWriteStream methodsFor: 'printing' stamp: 'jmv 11/17/2016 09:35:56'!
+                       printOn: aStream
+	"Put a printed version of the receiver onto aStream.  1/31/96 sw"
+
+	aStream nextPutAll: self class name; nextPutAll: ': '; print: name! !
+!StdIOWriteStream methodsFor: 'primitives' stamp: 'jmv 11/17/2016 10:20:17'!
+                       primFlush: id
+	"Flush pending changes to the disk"
+
+	<primitive: 'primitiveFileFlush' module: 'FilePlugin'>! !
+!StdIOWriteStream methodsFor: 'primitives' stamp: 'jmv 11/17/2016 10:19:14'!
+    primWrite: id from: stringOrByteArray startingAt: startIndex count: count
+	"Write count bytes onto this file from the given string or byte array starting at the given index. Answer the number of bytes written."
+
+	<primitive: 'primitiveFileWrite' module: 'FilePlugin'>
+	(FileWriteError fileName: name)
+		signal: (self closed
+			ifTrue: [ 'File [', name, '] is closed' ]
+			ifFalse: [ 'File [', name, '] write failed' ])! !
+!StdIOWriteStream class methodsFor: 'instance creation' stamp: 'jmv 11/17/2016 10:15:08'!
+stderr
+	| newSelf |
+	newSelf _ self basicNew.
+	newSelf 
+		openOnHandle: self stderrHandle 
+		name: 'stderr'.
+	^newSelf! !
+!StdIOWriteStream class methodsFor: 'instance creation' stamp: 'jmv 11/17/2016 10:15:11'!
+            stdout
+	| newSelf |
+	newSelf _ self basicNew.
+	newSelf 
+		openOnHandle: self stdoutHandle 
+		name: 'stdout'.
+	^newSelf! !
+!StdIOWriteStream class methodsFor: 'accessing' stamp: 'jmv 11/17/2016 09:26:20'!
+                    stderrHandle
+
+	^ self stdioHandles at: 3! !
+!StdIOWriteStream class methodsFor: 'accessing' stamp: 'jmv 11/17/2016 09:26:09'!
+  stdioHandles
+" answer handles: #(stdin stdout stderr) "
+	<primitive: 'primitiveFileStdioHandles' module: 'FilePlugin' error: ec>
+	self primitiveFailed! !
+!StdIOWriteStream class methodsFor: 'accessing' stamp: 'jmv 11/17/2016 09:26:12'!
+                    stdoutHandle
+
+	^ self stdioHandles at: 2! !
+
+Smalltalk removeClassNamed: #StdIOFileStream!
+
+Smalltalk removeClassNamed: #StdIOFileStream!
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2979-NewStdIO-JuanVuletich-2016Nov17-10h29m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2979] on 17 November 2016 at 10:51:20 am'!
+!StdIOWriteStream methodsFor: 'character writing' stamp: 'jmv 11/17/2016 10:48:18'!
+                              newLine
+	"Append a newLine character to the receiver.
+	The Cuis convention is to use lf on output."
+
+	self nextPut: Character newLineCharacter! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2980-stdout-newLine-JuanVuletich-2016Nov17-10h48m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2980] on 17 November 2016 at 11:51:03 am'!
+
+Stream subclass: #StdIOReadStream
+	instanceVariableNames: 'fileID name buffer1 peeked '
+	classVariableNames: 'StdIn '
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+!classDefinition: #StdIOReadStream category: #'System-Support'!
+Stream subclass: #StdIOReadStream
+	instanceVariableNames: 'fileID name buffer1 peeked'
+	classVariableNames: 'StdIn'
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+Stream subclass: #StdIOWriteStream
+	instanceVariableNames: 'fileID name buffer1 collection readLimit position '
+	classVariableNames: 'StdOut StdErr '
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+!classDefinition: #StdIOWriteStream category: #'System-Support'!
+Stream subclass: #StdIOWriteStream
+	instanceVariableNames: 'fileID name buffer1 collection readLimit position'
+	classVariableNames: 'StdErr StdOut'
+	poolDictionaries: ''
+	category: 'System-Support'!
+!StdIOReadStream methodsFor: 'streaming' stamp: 'jmv 11/17/2016 11:28:43'!
+                    peek
+	"Answer the next byte from this stream, or wait until one becomes available.
+	Warning: all Smalltalk processes are essentially suspended until that happens!!
+	
+	Do not advance the stream!!"
+
+	"Multiple calls to #peek don't make new reads"
+	peeked ifFalse: [
+		self privateRead.
+		peeked _ true ].
+
+	"peeked is always true on exit"
+	^buffer1 at: 1! !
+!StdIOReadStream methodsFor: 'streaming' stamp: 'jmv 11/17/2016 11:33:22'!
+                 peekFor: aCharacter 
+	"Answer false and do not move over the next element if it is not equal to the argument, aCharacter 
+	Answer true and increment the position for accessing elements, if the next element is equal to anObject."
+
+	| nextChar |
+	nextChar _ self peek.
+	aCharacter = nextChar ifTrue: [
+		self next.
+		^ true].
+	^ false! !
+!StdIOReadStream methodsFor: 'streaming' stamp: 'jmv 11/17/2016 11:24:52'!
+     privateRead
+	"Read one Character.
+	Private."
+	| count |
+	count _ self primRead: fileID into: buffer1 startingAt: 1 count: 1.
+	count = 1 ifFalse: [ buffer1 at: 1 put: nil ]! !
+!StdIOReadStream class methodsFor: 'cached state access' stamp: 'jmv 11/17/2016 11:45:00'!
+                      releaseClassCachedState
+
+	StdIn _ nil! !
+!StdIOWriteStream methodsFor: 'character writing' stamp: 'jmv 11/17/2016 11:08:02'!
+   space
+	"Append a space character to the receiver."
+
+	self nextPut: Character space! !
+!StdIOWriteStream class methodsFor: 'cached state access' stamp: 'jmv 11/17/2016 11:44:50'!
+              releaseClassCachedState
+
+	StdOut _ nil.
+	StdErr _ nil! !
+!StdIOReadStream methodsFor: 'open / close' stamp: 'jmv 11/17/2016 11:13:30' prior: 50332252!
+         openOnHandle: aFileID name: streamName
+	"Initialize the instance with the given file handle.
+	 N.B. Do _not_ register the stream.  We do not want it to be
+	 closed implicitly (e.g. on GC).  There may be multiple instances
+	 accessing the same stream.  The stream is not a file."
+
+	fileID _ aFileID.
+	name _ streamName.
+	buffer1 _ String new: 1.
+	peeked _ false! !
+!StdIOReadStream methodsFor: 'streaming' stamp: 'jmv 11/17/2016 11:28:44' prior: 50332266!
+                         next
+	"Answer the next byte from this stream, or wait until one becomes available.
+	Warning: all Smalltalk processes are essentially suspended until that happens!!"
+
+	"If last call was #peek, not #next, then just answer cached value."
+	peeked
+		ifFalse: [ self privateRead ]
+		ifTrue: [ peeked _ false ].
+
+	"peeked is always false on exit"
+	^buffer1 at: 1! !
+!StdIOReadStream class methodsFor: 'instance creation' stamp: 'jmv 11/17/2016 11:45:39' prior: 50332298!
+                stdin
+	StdIn ifNil: [
+		StdIn _ self basicNew.
+		StdIn 
+			openOnHandle: self stdinHandle 
+			name: 'stdin' ].
+	^StdIn! !
+!StdIOWriteStream class methodsFor: 'instance creation' stamp: 'jmv 11/17/2016 11:46:13' prior: 50332367!
+                            stderr
+	StdErr ifNil: [
+		StdErr _ self basicNew.
+		StdErr 
+			openOnHandle: self stderrHandle 
+			name: 'stderr' ].
+	^StdErr! !
+!StdIOWriteStream class methodsFor: 'instance creation' stamp: 'jmv 11/17/2016 11:46:37' prior: 50332374!
+                     stdout
+	StdOut ifNil: [
+		StdOut _ self basicNew.
+		StdOut 
+			openOnHandle: self stdoutHandle 
+			name: 'stdout' ].
+	^StdOut! !
+
+Stream subclass: #StdIOReadStream
+	instanceVariableNames: 'fileID name buffer1 peeked'
+	classVariableNames: 'StdIn'
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+!classDefinition: #StdIOReadStream category: #'System-Support'!
+Stream subclass: #StdIOReadStream
+	instanceVariableNames: 'fileID name buffer1 peeked'
+	classVariableNames: 'StdIn'
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+Stream subclass: #StdIOWriteStream
+	instanceVariableNames: 'fileID name buffer1'
+	classVariableNames: 'StdErr StdOut'
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+!classDefinition: #StdIOWriteStream category: #'System-Support'!
+Stream subclass: #StdIOWriteStream
+	instanceVariableNames: 'fileID name buffer1'
+	classVariableNames: 'StdErr StdOut'
+	poolDictionaries: ''
+	category: 'System-Support'!
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2981-StdIn-peek-peekFor-JuanVuletich-2016Nov17-11h08m-jmv.1.cs.st----!
+
+----SNAPSHOT----#(17 November 2016 12:32:56.842092 pm) Cuis5.0-2981-spur.image priorSource: 186!
+
+----QUIT----#(17 November 2016 12:33:29.990717 pm) Cuis5.0-2981-spur.image priorSource: 29844!
+
+----STARTUP----#(14 December 2016 2:31:49.510252 pm) as /root/PayloadSoftware/Cuis-Smalltalk-Dev/Cuis5.0-2981-spur.image!
+
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2981] on 17 November 2016 at 5:11:35 pm'!
+!SequenceableCollection methodsFor: 'copying' stamp: 'jmv 11/17/2016 17:08:04' prior: 16906186!
+               copyReplaceFrom: start to: stop with: replacementCollection 
+	"Answer a copy of the receiver satisfying the following conditions: 
+	+ stop is less than start, then this is an insertion; stop should be exactly start-1, 
+	+ start = 1 means insert before the first character,
+	+ start = size+1 means append after last character. 
+	+ Otherwise, this is a replacement; start and stop have to be within the receiver's bounds."
+
+	| newSequenceableCollection newSize endReplacement |
+	newSize _ self size - (stop - start + 1) + replacementCollection size.
+	endReplacement _ start - 1 + replacementCollection size.
+	newSequenceableCollection _ self species new: newSize.
+	start > 1 ifTrue:[
+		newSequenceableCollection
+			replaceFrom: 1
+			to: start - 1
+			with: self
+			startingAt: 1].
+	start <= endReplacement ifTrue:[
+		newSequenceableCollection
+			replaceFrom: start
+			to: endReplacement
+			with: replacementCollection
+			startingAt: 1].
+	endReplacement < newSize ifTrue:[
+		newSequenceableCollection
+			replaceFrom: endReplacement + 1
+			to: newSize
+			with: self
+			startingAt: stop + 1].
+	^newSequenceableCollection! !
+!SHTextStylerST80 methodsFor: 'private' stamp: 'jmv 11/17/2016 16:54:39' prior: 16903350!
+        setAttributesFromRanges: ranges
+
+	formattedText removeAttributesThat: [ :attribute | attribute isForShout ].
+
+	"Optimize for mutation speed unless method is really large but with very few distict elements:
+	Source code that includes just big literals is better served by conventional Text+RunArray"
+	"Do it only if we are not breaking textModel!! (for instance, StyledTextEditor asks for formatting just sections, not whole #actualContents)."
+	formattedText == textModel actualContents ifTrue: [
+		(formattedText size > 2000 and: [ ranges size < 50 ]) ifFalse: [
+			formattedText _ formattedText optimizedForMutationSpeed.
+			textModel basicActualContents: formattedText ]].
+
+	ranges do: [ :range |
+
+		"Smalltalk text styling"
+		(self attributesFor: range rangeType) ifNotNil: [ :attributes |
+			attributes do: [ :each |
+				formattedText addAttribute: each from: range start to: range end ]].
+
+		"Show as subscripts if appropriate."
+		(classOrMetaClass isNil or: [
+			classOrMetaClass theNonMetaClass lastUnderscoreMeansSubscript]) ifTrue: [
+				(#( instVar classVar globalVar workspaceVar poolConstant
+					patternArg methodArg patternTempVar tempVar		
+					blockPatternArg blockArg blockPatternTempVar blockTempVar 
+					incompleteIdentifier undefinedIdentifier) pointsTo: range rangeType )
+						ifTrue: [
+							formattedText lastIndexOf: $_ startingAt: range end endingAt: range start do: [ :i |
+								formattedText addAttribute: ShoutTextEmphasis subscript from: i to: range end ] ]]]! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2982-CodeColorizerFix-JuanVuletich-2016Nov17-17h08m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2981] on 17 November 2016 at 5:18:27 pm'!
+!DummyStream methodsFor: 'as yet unclassified' stamp: 'KenD 11/5/2016 16:17:09'!
+           space! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2983-DummyStream-space-KenDickey-2016Nov17-17h18m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2981] on 18 November 2016 at 10:49:39 am'!
+!TheWorldMenu methodsFor: 'construction' stamp: 'jmv 5/3/2015 10:19' prior: 16935004!
+                       newMorph
+	"The user requested 'new morph' from the world menu.  Put up a menu that allows many ways of obtaining new morphs.  If the preference #classicNewMorphMenu is true, the full form of yore is used; otherwise, a much shortened form is used."
+	| menu subMenu catDict shortCat class |
+	menu _ self menu: 'Add a new morph'.
+	menu
+
+		add: 'From Clipboard'
+		target: myHand
+		action: #pasteMorph;
+		
+		add: 'From Alphabetical List'
+		subMenu: self alphabeticalMorphMenu.
+	menu addLine.
+		
+	"Add 'Classic' New Morph menu"
+	catDict _ Dictionary new.
+	SystemOrganization categories do: [ :cat |
+		((cat beginsWith: 'Morphic-') and: [ (#('Morphic-Menus' 'Morphic-Support' ) includes: cat) not ]) ifTrue: [
+			shortCat _ (cat
+				copyFrom: 'Morphic-' size + 1
+				to: cat size).
+			(SystemOrganization listAtCategoryNamed: cat) do: [ :cName |
+				class _ Smalltalk at: cName.
+				((class inheritsFrom: Morph) and: [ class includeInNewMorphMenu ]) ifTrue: [
+					(catDict includesKey: shortCat)
+						ifTrue: [ (catDict at: shortCat) addLast: class ]
+						ifFalse: [
+							catDict
+								at: shortCat
+								put: (OrderedCollection with: class) ]]]]].
+	catDict keys sort do: [ :categ |
+		subMenu _ MenuMorph new.
+		((catDict at: categ) asArray sort: [ :c1 :c2 |
+			c1 name < c2 name ]) do: [ :cl |
+			subMenu
+				add: cl name
+				target: self
+				selector: #newMorphOfClass:event:
+				argument: cl ].
+		menu
+			add: categ
+			subMenu: subMenu ].
+
+	self doPopUp: menu.! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2984-NewMorphMenuFix-JuanVuletich-2016Nov18-10h34m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2984] on 30 November 2016 at 2:56:21 pm'!
+!SequenceableCollection methodsFor: 'enumerating' stamp: 'jmv 11/30/2016 14:52:08'!
+     with: otherCollection with: thirdCollection collect: threeArgBlock
+	"Collect and return the result of evaluating twoArgBlock with corresponding elements from this collection and otherCollection."
+	| n result |
+	n _ self size.
+	otherCollection size = n ifFalse: [ self error: 'otherCollection must be the same size' ].
+	thirdCollection size = n ifFalse: [ self error: 'thirdCollection must be the same size' ].
+	result _ self species new: n.
+	1 to: n do: [ :index | 
+		result at: index put:
+			(threeArgBlock
+				value: (self at: index)
+				value: (otherCollection at: index)
+				value: (thirdCollection at: index) )].
+	^ result! !
+!SequenceableCollection methodsFor: 'enumerating' stamp: 'jmv 11/25/2016 12:15:27'!
+                     with: otherCollection with: thirdCollection do: threeArgBlock 
+	"Evaluate twoArgBlock with corresponding elements from this collection and otherCollection."
+	| n |
+	n _ self size.
+	otherCollection size = n ifFalse: [self error: 'otherCollection must be the same size'].
+	thirdCollection size = n ifFalse: [self error: 'thirdCollection must be the same size'].
+	1 to: n do: [ :index |
+		threeArgBlock
+			value: (self at: index)
+			value: (otherCollection at: index)
+			value: (thirdCollection at: index)]! !
+!OrderedCollection methodsFor: 'enumerating' stamp: 'jmv 11/30/2016 14:51:19'!
+                      with: otherCollection with: thirdCollection collect: threeArgBlock
+	"Collect and return the result of evaluating twoArgBlock with 
+	corresponding elements from this collection and otherCollection."
+	| result |
+	otherCollection size = self size ifFalse: [self error: 'otherCollection must be the same size'].
+	result _ self species new: self size.
+	1 to: self size do: [ :index |
+		result addLast:
+			(threeArgBlock
+				value: (self at: index)
+				value: (otherCollection at: index)
+				value: (thirdCollection at: index) )].
+	^ result! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2985-withwithdo-withwithdcollect-JuanVuletich-2016Nov30-14h47m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2984] on 30 November 2016 at 3:22:11 pm'!
+!SequenceableCollection methodsFor: 'math functions' stamp: 'jmv 11/30/2016 15:04:11'!
+                         += anObject
+	^anObject isNumber
+		ifTrue: [ self replace: [ :v | v + anObject ]]
+		ifFalse: [
+			self withIndexDo: [ :v :i |
+				self at: i put: ((self at: i) + (anObject at: i)) ]]! !
+!SequenceableCollection methodsFor: 'math functions' stamp: 'jmv 11/25/2016 11:41:25'!
+                -= anObject
+	^anObject isNumber
+		ifTrue: [ self replace: [ :v | v - anObject ]]
+		ifFalse: [
+			self withIndexDo: [ :v :i |
+				self at: i put: ((self at: i) - (anObject at: i)) ]]! !
+!SequenceableCollection methodsFor: 'math functions' stamp: 'jmv 11/30/2016 15:21:00'!
+                derivative
+	| displaced answer |
+	displaced _ self class new: self size.
+	displaced replaceFrom: 2 to: self size with: self startingAt: 1.
+	displaced at: 1 put: self first - self first.	"Some reasonable zero"
+	answer _ self copy.
+	answer -= displaced.
+	^answer! !
+!SequenceableCollection methodsFor: 'math functions' stamp: 'jmv 11/29/2016 14:23:32'!
+ integral
+	| answer |
+	answer _ self copy.
+	2 to: answer size do: [ :i |
+		answer at: i put: (answer at: i) + (answer at: i-1) ].
+	^answer! !
+
+FloatArray removeSelector: #derivative!
+
+FloatArray removeSelector: #derivative!
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2986-Collection-derivative-integral-JuanVuletich-2016Nov30-14h56m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 26 November 2016 at 8:42:22 am'!
+!HaloMorph methodsFor: 'stepping' stamp: 'len 7/25/2016 21:39'!
+        step
+	(target isNil or: [target isInWorld not]) ifTrue: [self delete]! !
+!HaloMorph methodsFor: 'stepping' stamp: 'len 7/25/2016 21:41'!
+                       stepTime
+	^ 100! !
+!HaloMorph methodsFor: 'stepping' stamp: 'len 7/25/2016 21:38'!
+             wantsSteps
+	^ true! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2987-DeleteHaloWhenMorphIsDeleted-LucianoEstebanNotarfrancesco-2016Nov26-08h41m-len.2.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 26 November 2016 at 8:46:53 am'!
+!MenuMorph methodsFor: 'keyboard control' stamp: 'len 6/11/2016 20:40' prior: 16867064!
+           keyboardFocusChange: aBoolean
+	"Notify change due to green border for keyboard focus"
+
+	aBoolean ifFalse: [self deleteIfPopUp: nil].
+	self redrawNeeded! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2988-AvoidManuesHangingAround-LucianoEstebanNotarfrancesco-2016Nov26-08h42m-len.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 26 November 2016 at 8:52:37 am'!
+!SequenceableCollection methodsFor: 'copying' stamp: 'len 4/18/2016 22:08'!
+                      shuffledBy: aGenerator
+	"To answer a mutable collection when receiver is, for example, an Interval."
+	^ (self collect: [ :each | each ]) shuffleBy: aGenerator! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2989-ShuffledBy-LucianoEstebanNotarfrancesco-2016Nov26-08h46m-len.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 26 November 2016 at 9:02:48 am'!
+!SystemDictionary methodsFor: 'browsing' stamp: 'len 6/9/2016 23:23'!
+   browseAllPrimitives
+	self browseAllSelect: [:each| each primitive ~= 0 and: [(each primitive between: 256 and: 291) not]]
+! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2990-SmalltalkBrowseAllPrimitives-LucianoEstebanNotarfrancesco-2016Nov26-08h52m-len.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 26 November 2016 at 9:03:51 am'!
+!SystemDictionary methodsFor: 'retrieving' stamp: 'len 11/26/2016 09:03:25' prior: 16921461!
+                              allCallsOn: aLiteral   "Smalltalk browseAllCallsOn: #open:label:."
+	"Answer a Collection of all the methods that call on aLiteral."
+	| aCollection special aList byte |
+
+	#(23 48 'fred' (new open:label:)) size.
+"Example above should find #open:label:, though it is deeply embedded here."
+
+	aCollection _ OrderedCollection new.
+	special _ self hasSpecialSelector: aLiteral ifTrueSetByte: [:b | byte _ b ].
+	self allBehaviorsDo: [:class |
+		aList _ class whichSelectorsReferTo: aLiteral special: special byte: byte.
+		aList do: [ :sel |
+			"For special selectors, look for the literal in the source code.
+			Otherwise, for example, searching for senders of #== will include senders of #ifNil.
+			Except for #at:put:, because it has two arguments and won't find it in the source code like that."
+			(byte isNil or: [aLiteral = #at:put: or: [
+				((class sourceCodeAt: sel)
+					findString: aLiteral) > 0]]) ifTrue: [
+
+				aCollection add: (
+					MethodReference new
+						setStandardClass: class 
+						methodSymbol: sel
+				)
+			]
+		]
+	].
+	^ aCollection! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2991-SendersOfatput-LucianoEstebanNotarfrancesco-2016Nov26-09h02m-len.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 26 November 2016 at 9:06:05 am'!
+!String methodsFor: 'testing' stamp: 'len 11/26/2016 09:05:35'!
+         isAlphaNumeric
+	"Answer true if the receiver contains only letters or digits."
+	^ self allSatisfy: [:each| each isAlphaNumeric]! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2992-StringisAlphaNumeric-LucianoEstebanNotarfrancesco-2016Nov26-09h03m-len.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 26 November 2016 at 9:08:39 am'!
+!Form methodsFor: 'fileIn/Out' stamp: 'len 8/1/2016 08:13' prior: 16847779!
+                  printOn: aStream
+	aStream isText
+		ifTrue:
+			[aStream withAttribute: (TextAnchor new anchoredFormOrMorph: self) do: [aStream nextPut: $*].
+			^ self].
+	aStream
+		nextPutAll: self class name;
+		nextPut: $(; print: width;
+		nextPut: $x; print: height;
+		nextPut: $x; print: depth;
+		nextPut: $)! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2993-FormPrintOnTextForWorkspaces-LucianoEstebanNotarfrancesco-2016Nov26-09h06m-len.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2993] on 5 December 2016 at 8:17:22 am'!
+!Morph methodsFor: 'printing' stamp: 'jmv 12/5/2016 08:16:19' prior: 16876467!
+  printOn: aStream 
+	"Add the identity of the receiver to a stream"
+	aStream isText
+		ifTrue: [
+			aStream
+				withAttribute: (TextAnchor new anchoredFormOrMorph: (owner ifNil: [self] ifNotNil: [self imageForm:32]))
+				do: [ aStream nextPut: $* ].
+			^ self].
+	super printOn: aStream. "a(n) className"
+	aStream 
+		nextPut: $(;
+		print: self identityHash;
+		nextPut: $).
+	self valueOfProperty: #morphName ifPresentDo: [ :x | aStream nextPutAll: x asString]! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2994-MorphPrintOnTextEnh-JuanVuletich-2016Dec05-08h16m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2994] on 5 December 2016 at 9:46:02 am'!
+!Integer methodsFor: 'comparing' stamp: 'len 12/5/2016 09:46:00' prior: 16859447!
+                       hash
+	"Hash is reimplemented because = is implemented.
+	| s |
+	s _ (1 to: 10000) asSet.
+	[s includes: 123456] bench
+	"
+
+	^self hashMultiply! !
+
+"Postscript:
+Leave the line above, and replace the rest of this comment by a useful one.
+Executable statements should follow this comment, and should
+be separated by periods, with no exclamation points (!!).
+Be sure to put any further comments in double-quotes, like this one."
+
+Set rehashAllSets!
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2995-Integer-hash-LucianoEstebanNotarfrancesco-2016Dec05-09h39m-len.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2986] on 2 December 2016 at 4:40:51 pm'!
+!Form methodsFor: 'scaling, rotation' stamp: 'jmv 12/2/2016 15:47:08' prior: 16848280!
+                         flippedBy: direction
+	"Return a copy of the receiver flipped either #vertical, #horizontal or #both. (#both is a 180 degrees rotation)
+	Form lena display.
+	(Form lena flippedBy: #vertical) display.
+	(Form lena flippedBy: #horizontal) display.
+	(Form lena flippedBy: #both) display.
+	"
+	| newForm quad |
+	newForm _ self class extent: self extent depth: depth.
+	quad _ self boundingBox innerCorners.
+	quad _ (
+		direction caseOf: {
+			[ #vertical ] 		-> [#(2 1 4 3)].
+			[ #horizontal ] 	-> [#(4 3 2 1)].
+			[ #both ] 			-> [#(3 4 1 2)]})
+		collect: [:i | quad at: i].
+	(WarpBlt toForm: newForm)
+		sourceForm: self;
+		colorMap: (self colormapIfNeededFor: newForm);
+		combinationRule: 3;
+		copyQuad: quad toRect: newForm boundingBox.
+"	newForm offset: (self offset flippedBy: direction centerAt: aPoint)."
+	^ newForm
+"
+[Sensor isAnyButtonPressed] whileFalse:
+	[((Form fromDisplay: (Sensor mousePoint extent: 130@66))
+			flippedBy: #vertical centerAt: 0@0) display]
+"
+"Consistency test...
+ | f f2 p |
+[ Sensor isAnyButtonPressed ] whileFalse: [
+	f _ Form fromDisplay: ((p _ Sensor mousePoint) extent: 31@41).
+	Display fillBlack: (p extent: 31@41).
+	f2 _ f flippedBy: #vertical centerAt: 0@0.
+	(f2 flippedBy: #vertical centerAt: 0@0) displayAt: p ]
+"! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2996-Form-FlippedBy-both-JuanVuletich-2016Dec02-15h42m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2996] on 9 December 2016 at 9:12:18 am'!
+!StringMorph methodsFor: 'initialization' stamp: 'jmv 12/9/2016 09:09:45' prior: 16918230!
+                       initialize
+	super initialize.
+	font _ nil.
+	emphasis _ 0.
+	self contents: 'String Morph'
+! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2997-StringMorph-fix-JuanVuletich-2016Dec09-09h07m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 29 November 2016 at 9:10:32 pm'!
+!OrderedCollection methodsFor: 'converting' stamp: 'len 11/29/2016 08:54:14'!
+           asNewArray
+	^ array copyFrom: firstIndex to: lastIndex! !
+!OrderedCollection class methodsFor: 'instance creation' stamp: 'len 11/28/2016 19:18:39'!
+           newFrom: aCollection
+	"Create a new collection containing all the elements from aCollection"
+
+	^(self new: aCollection size)
+		resetTo: 1;
+		addAll: aCollection;
+		yourself! !
+!OrderedCollection methodsFor: 'enumerating' stamp: 'len 11/28/2016 10:50:21' prior: 16883972!
+                 collect: aBlock 
+	"Evaluate aBlock with each of my elements as the argument. Collect the 
+	resulting values into a collection that is like me. Answer the new 
+	collection. Override superclass in order to use addLast:, not at:put:."
+
+	| newCollection |
+	newCollection _ self species new: self size.
+	newCollection resetTo: 1.
+	firstIndex to: lastIndex do: [ :index |
+		newCollection addLast: (aBlock value: (array at: index))].
+	^ newCollection! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2998-OrderedCollectionTweaks-LucianoEstebanNotarfrancesco-2016Nov26-09h08m-len.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2995] on 6 December 2016 at 8:16:54 pm'!
+
+RectangleLikeMorph subclass: #ResizeMorph
+	instanceVariableNames: 'gridLineWidth gridColor selectionColor outlineMorph grid from to action'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic-Views'!
+
+!classDefinition: #ResizeMorph category: #'Morphic-Views'!
+RectangleLikeMorph subclass: #ResizeMorph
+	instanceVariableNames: 'gridLineWidth gridColor selectionColor outlineMorph grid from to action'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic-Views'!
+!SystemWindow methodsFor: 'resize/collapse' stamp: 'bp 10/18/2015 12:18'!
+             resize
+	| resizeMorph |
+	resizeMorph _ ResizeMorph new morphExtent: 200@150.
+	resizeMorph action: [self resize: (resizeMorph selectionRectangle: Display extent)].
+	resizeMorph morphPosition: self world activeHand morphPosition.
+	resizeMorph openInWorld
+	! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 22:22'!
+                 action: aBlock
+	action _ aBlock! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/18/2015 18:00'!
+                drawGridOn: aCanvas
+	0 to: grid x do: [:i |
+		| x |
+		x _ i * (extent x - gridLineWidth) / grid x.
+		aCanvas line: x @ 0 to: x @ (extent y - 2) width: gridLineWidth color: gridColor].
+	0 to: grid y do: [:i |
+		| y |
+		y _ i * (extent y - gridLineWidth) / grid y.
+		aCanvas line: 0 @ y to: (extent x - 2) @ y width: gridLineWidth color: gridColor]! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 23:02'!
+                     drawOn: aCanvas
+	super drawOn: aCanvas.
+	from ifNotNil: [aCanvas fillRectangle: (self selectionRectangle: extent) color: selectionColor].
+	self drawGridOn: aCanvas! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 19:00'!
+            grid: aPoint
+	grid _ aPoint! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 19:00'!
+                    handlesMouseDown: aMouseButtonEvent
+	^true! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/17/2015 15:51'!
+     initialize
+	super initialize.
+	extent _ 400@300.
+	color _ Color white.
+	grid _ 8@6.
+	gridLineWidth _ 2.
+	gridColor _ Color black.
+	selectionColor _ Color red! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 23:18'!
+                  mouseButton1Down: aMouseButtonEvent localPosition: localEventPosition
+	from _ self toGridPoint: localEventPosition.
+	outlineMorph _ BorderedRectMorph new
+		borderColor: Color black;
+		color: Color transparent;
+		openInWorld;
+		hide.
+	self selectTo: localEventPosition! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 23:17'!
+    mouseButton1Up: aMouseButtonEvent localPosition: localEventPosition
+	self selectTo: localEventPosition.
+	outlineMorph delete.
+	action ifNotNil: [
+		action value.
+		self delete]! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 21:32'!
+                               mouseMove: aMouseButtonEvent localPosition: localEventPosition
+	self selectTo: localEventPosition! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 21:25'!
+              printOn: aStream
+	super printOn: aStream.
+	aStream space; print: from; space; print: to! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 23:14'!
+                        selectTo: localEventPosition
+	| newTo |
+	newTo _ self toGridPoint: localEventPosition.
+	newTo ~= to ifTrue: [
+		to _ newTo.
+		self redrawNeeded.
+		self updateOutlineMorph]! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/17/2015 15:35'!
+    selectionRectangle: aRectangle
+	^(from corner: to + 1) scaledBy: aRectangle // grid! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/17/2015 15:34'!
+                            toGridPoint: aPoint
+	^(aPoint min: extent - 1) // (extent // grid)! !
+!ResizeMorph methodsFor: 'as yet unclassified' stamp: 'bp 10/11/2015 23:15'!
+             updateOutlineMorph
+	| rectangle |
+	rectangle _ self selectionRectangle: Display extent.
+	outlineMorph
+		morphPosition: rectangle origin extent: rectangle extent;
+		show! !
+!SystemWindow methodsFor: 'menu' stamp: 'bp 10/11/2015 21:42' prior: 16926424!
+     buildWindowMenu
+
+	| aMenu |
+
+	aMenu _ MenuMorph new defaultTarget: self.
+
+	aMenu 
+		add: 'change title...' action: #relabel;
+		add: 'window color...' action: #setWindowColor;
+		addLine;
+		add: 'send to back' action: #sendToBack;
+		add: 'make next-to-topmost' action: #makeSecondTopmost;
+		addLine;
+		add: (self isSticky ifTrue: [ 'make draggable' ] ifFalse: [ 'make undraggable' ]) action: #toggleStickiness;
+		addLine;
+		add: 'close' action: #delete;
+		add: 'collapse' action: #collapse;
+		add: 'expand / contract' action: #expandBoxHit;
+		addLine;
+		add: 'resize...' action: #resize;
+		add: 'resize full' action: #resizeFull;
+		add: 'resize top' action: #resizeTop;
+		add: 'resize left' action: #resizeLeft;
+		add: 'resize bottom' action: #resizeBottom;
+		add: 'resize right' action: #resizeRight;
+		add: 'resize top left' action: #resizeTopLeft;
+		add: 'resize top right' action: #resizeTopRight;
+		add: 'resize bottom left' action: #resizeBottomLeft;
+		add: 'resize bottom right' action: #resizeBottomRight.
+
+	^ aMenu! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/2999-ResizeMorph-BernhardPieber-2016Dec06-20h13m-bp.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #2981] on 9 December 2016 at 10:27:21 am'!
+!PasteUpMorph methodsFor: 'printing' stamp: 'jmv 12/9/2016 10:25:13' prior: 16887389!
+  printOn: aStream
+	"Reimplemented to add a tag showing that the receiver is currently functioning as a 'world', if it is"
+
+	self isWorldMorph
+		ifTrue: [aStream nextPutAll: ' [world]']
+		ifFalse: [super printOn: aStream]! !
+
+----End fileIn of /root/PayloadSoftware/Cuis-Smalltalk-Dev/CoreUpdates/3000-PasteUpMorph-print-fix-JuanVuletich-2016Dec09-10h25m-jmv.1.cs.st----!
+
+----SNAPSHOT----#(14 December 2016 2:32:05.602236 pm) Cuis5.0-3000-spur.image priorSource: 29942!
+
+----QUIT----#(14 December 2016 2:32:40.672866 pm) Cuis5.0-3000-spur.image priorSource: 54545!

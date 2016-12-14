@@ -35,7 +35,7 @@ sudo apt-get install libgl1-mesa-dev:i386
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
 ```
 ```
-$ cogspur/squeak Cuis-Smalltalk-Dev-master/Cuis5.0-2974-spur.image
+$ cogspur/squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3000-spur.image
 ```
 
 ### On Mac OS X ###
@@ -46,9 +46,9 @@ $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/ar
 $ unzip master.zip
 $ curl -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos32x86_squeak.cog.spur_201611161032.tar.gz
 $ tar -zxvf CogSpur.tgz
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-2974-spur.image
+$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3000-spur.image
 ```
 
 ### Notes ###
-* If you can't find Cuis5.0-2974-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3000-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
