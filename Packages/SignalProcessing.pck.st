@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 11:23:55 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3001] on 16 December 2016 at 10:21:41 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 72!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'SignalProcessing' 1 73!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'Sound' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3214,7 +3214,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/13/2016 11:22:50'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/16/2016 10:16:43'!
 deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
@@ -3222,6 +3222,7 @@ deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
 	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
 	- Implemented with tiles. Tile border effects are taken care of.
+	- maxNoiseFactor is required in many case to avoid division by zero. Typical values are between 4 and 8. Use values larger than 20 if you know what you are doing.
 	"
 
 	| tileSize otfRealPart otfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth otfInverseImaginaryPart otfInverseRealPart psfInverseImaginaryPart psfInverseRealPart trimmed |
@@ -3242,12 +3243,45 @@ deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	"Compute the 'inverse' psf, to check its support, and find proper guard zones"
 	psfInverseRealPart _ otfInverseRealPart copy.
 	psfInverseImaginaryPart _ otfInverseImaginaryPart copy.
+
+"Plot in the Fourier domain. Enable to understand better how these animals behave."
+"
+trimmed _ psfInverseRealPart moveOriginToCenter: false.
+rrf _ trimmed i: trimmed height / 2*0 + 1.
+trimmedI _ psfInverseImaginaryPart moveOriginToCenter: false.
+iif _ trimmedI i: trimmed height / 2*0 + 1.
+g _ FunctionGraphMorph new.
+g domain: (1 to: 256).
+g addFunction: [ :i | rrf at: i ] color: Color green.
+g addFunction: [ :i | iif at: i ] color: Color red.
+g addFunction: [ :i | ((rrf at: i) squared + (iif at: i) squared)sqrt ] color: Color blue.
+(g embeddedInMorphicWindowLabeled: 'graph') openInWorld.
+"
+
 	fft realData: psfInverseRealPart imagData: psfInverseImaginaryPart.
 	fft transformForward: false.
+
+"Plot in the spatial domain. Enable to understand better how these animals behave."
+"
+trimmed _ psfInverseRealPart moveOriginToCenter: false.
+rr _ trimmed i: trimmed height / 2*0 + 1.
+trimmedI _ psfInverseImaginaryPart moveOriginToCenter: false.
+ii _ trimmedI i: trimmed height / 2*0 + 1.
+g _ FunctionGraphMorph new.
+g domain: (1 to: 256).
+g addFunction: [ :i | rr at: i ] color: Color green.
+g addFunction: [ :i | ii at: i ] color: Color red.
+g addFunction: [ :i | ((rr at: i) squared + (ii at: i) squared)sqrt ] color: Color blue.
+(g embeddedInMorphicWindowLabeled: 'graph') openInWorld.
+"
+
 	trimmed _ psfInverseRealPart moveOriginToCenter: false.
+
 "Difficult balance between artifacts and lost pixels!!"
 "	trimmed _ trimmed trimCentered: trimmed sum / 512."
-	trimmed _ trimmed trimCentered: trimmed sum / 128.
+	"For convolution, we chose sum/512. Support is usually very small and all values are positive (their effect accumulates).
+	But deconvolution (inverse) kernels tend to have larger support, and both positive and negative coefficients (whose effects sorts of cancels when coefficients gets smaller to the sides)"
+	trimmed _ trimmed trimCentered: trimmed sum / 64.
 	"Number of pixels we are willing to lose on each side, to avoid border effects."
 	guardZoneWidth _ trimmed width / 2.
 	guardZoneHeight _ trimmed height / 2.
