@@ -1,15 +1,15 @@
 Converting Cuis to the Spur image format. Updating Cuis after update #2883
 ================================================
 
-Note: This is of interes only if you are using a Cuis 4 image older than #2883, and you want to upgrade it. If you are using a Cuis 5.0 or later image, you can use a Spur image on a Spur VM (faster), or a NonSpur image on a NonSpur VM (runs on SqueakJS).
+Note: This is of interest only if you are using a Cuis 4 image older than #2883, and you want to upgrade it. If you are using a Cuis 5.0 or later image, you can use a Spur image on a Spur VM (faster), or a NonSpur image on a NonSpur VM.
 
 Prior to update #2883, Cuis runs on the *cog_HostPlatformName_squeak.stack.v3_timeStamp* and (jitted, faster) *cog_HostPlatformName_squeak.cog.v3_timeStamp* VMs from http://opensmalltalk.org/ (repo at https://github.com/OpenSmalltalk VM development led by Eliot Miranda). Immediately after #2883, Cuis can be converted to the new Spur ObjectMemory and image format, in the 32 bit variant. (Conversion Spur32 <-> Spur64 is easy, and can be done in both directions anytime).
 
 This image format is compatible with the *cog_HostPlatformName_squeak.stack.spur_timeStamp* and (jitted, faster) *cog_HostPlatformName_squeak.cog.spur_timeStamp* VMs, also from OpenSmalltalk.
 
-The procedure for doing the conversion is described here, and is easy enough for any Smalltalk developer to do it. This ensures that the Cuis update process is reproducible (as it has always been) and that (if you prefer) you can migrate your own images, instead of starting from a fresh one.
+The procedure for doing the conversion is described here, and is easy enough for any Smalltalk developer to run it. This ensures that the Cuis update process is reproducible (as it has always been) and that (if you prefer) you can migrate your own images, instead of loading your code on a fresh one.
 
-One special feature of the Cuis update process and resulting images is that both the Spur and non-Spur variants share 100% of the source code in the image, and updates. This means that there is no forking! Cuis will keep having a single update stream, and both Spur and non-Spur images will be kept in perfect sync. It also means that you can develop on any of them, and your code will run on both, without any changes. It also means that the choice of image format and VM is done later, at deployment, and doesn't affect development.
+One special feature of the Cuis update process and resulting images is that both the Spur and non-Spur variants share 100% of the source code in the image, and updates. This means that there is no forking! Cuis will keep having a single update stream, and both Spur and non-Spur images will be kept in perfect sync. It also means that you can develop on any of them, and your code will run on both, without any changes. It also means that the choice of image format and VM is done later, at deployment, and doesn't affect development at all.
 
 ### Step 1 - Prepare Cuis for Spur bootstrap ###
 
