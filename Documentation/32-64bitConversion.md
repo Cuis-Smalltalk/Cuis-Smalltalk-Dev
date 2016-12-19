@@ -11,6 +11,6 @@ cogspurlinuxht/squeak Cuis-Smalltalk-Dev/SqueakSpurVMMakerImage/SpurVMMaker.imag
 Spur32to64BitBootstrap new bootstrapImage: '../Cuis5.0-xxxx-spur.image'
 ```
 
-- You will get an assertion failure message. Just [continue] in the debugger. Result will be * Cuis5.0-xxxx-spur-64.image*. Quit the VMMaker Squeak image.
+- You will get an assertion failure message. Just [continue] in the debugger. Result will be *Cuis5.0-xxxx-spur-64.image*. Quit the VMMaker Squeak image.
 
 Done. Now you have Cuis in Spur 64 bits!
