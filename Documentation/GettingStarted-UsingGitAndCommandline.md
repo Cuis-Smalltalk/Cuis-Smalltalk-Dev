@@ -53,15 +53,15 @@ These VMs are not compatible with Spur images. Use the supplied non-Spur image.
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3000-spur.image
+$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3006-spur.image
 ```
 MacOSX:
 ```
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3000-spur.image
+$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3006-spur.image
 ```
 Linux:
 ```
-$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3000-spur.image
+$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3006-spur.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
@@ -98,5 +98,5 @@ $ ./linuxVM_ARM.sh
 ```
 
 ### Notes ###
-* If you can't find Cuis5.0-3000-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3006-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
