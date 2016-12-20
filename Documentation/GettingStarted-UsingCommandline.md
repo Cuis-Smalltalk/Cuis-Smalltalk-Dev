@@ -25,12 +25,14 @@ sudo apt-get install libc6-i386
 # This (libc6-i386) was needed to make ldd work on 32 bit programs and dynamic libraries
 # So, we can do stuff like       $ ldd cogspur/lib/squeak/*/squeak       to find about missing libraries
 sudo apt-get install libuuid1:i386
-sudo apt-get install libX11-6:i386
-sudo apt-get install libXext6:i386
+sudo apt-get install libx11-6:i386
+sudo apt-get install libxext6:i386
 sudo apt-get install libsm6:i386
-# Next 3 are only needed if you want to play with OpenCL (you also need Catalyst driver for AMD GPU, or similar for Intel/Nvidia)
+# Next are only needed if you want to play with OpenCL (you also need Catalyst driver for AMD GPU, or similar for Intel/Nvidia)
 sudo apt-get install mesa-common-dev:i386
 sudo apt-get install libgl1-mesa-dev:i386
+# If you are not using AMD Catalyst driver, you might also need:
+sudo apt-get install ocl-icd-libopencl1:i386
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
 ```
 ```
