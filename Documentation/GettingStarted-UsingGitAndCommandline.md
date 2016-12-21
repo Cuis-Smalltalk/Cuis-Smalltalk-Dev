@@ -48,9 +48,6 @@ sudo apt-get install libgl1-mesa-dev:i386
 sudo apt-get install ocl-icd-libopencl1:i386
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL.so
 ```
-For ArchLinux: Get a VM from:
-https://www.archlinux.org/packages/?q=squeak-vm
-These VMs are not compatible with Spur images. Use the supplied non-Spur image.
 
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
@@ -66,7 +63,17 @@ Linux:
 $  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3007-spur.image
 ```
 
-If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
+If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
+
+If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", (1007290890 or some other absurd number) it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
+
+### For ArchLinux and other not based on Debian or Ubuntu ###
+
+The instructions above are known to work on Debian and Ubuntu. They might work on other distributions, but you might need to find the correct incatation for your distro. If you do, please email the details to the mail list.
+
+For ArchLinux, as an alternative you can get a VM from:
+https://www.archlinux.org/packages/?q=squeak-vm
+These VMs are not compatible with Spur images. Use the supplied non-Spur image.
 
 ### For Chromebooks ###
 
