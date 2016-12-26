@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3007] on 19 December 2016 at 3:58:18 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3009] on 26 December 2016 at 5:09:55 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 18!
+!provides: 'FFI' 1 25!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -215,55 +215,84 @@ externalCallFailed
 	errCode := ExternalFunction getLastError. "this allows us to look at the actual error code"
 	^self error: (ExternalFunction errorMessageFor: errCode).! !
 
+!SequenceableCollection methodsFor: '*FFI-Kernel' stamp: 'jmv 12/26/2016 10:45:56'!
+asMachineWordArray
+	"Answer an IntegerArray or Bytearray with the elements are the elements of the receiver stored as machine words,
+	suitable for FFI."
+
+	| answer |
+	Smalltalk wordSize = 4 ifTrue: [
+		^self as: IntegerArray ].
+	answer _ ByteArray new: self size * Smalltalk wordSize.
+	1 to: self size do: [ :i |
+		answer unsignedLong64At: i-1*Smalltalk wordSize+1 put: (self at: i) bigEndian: Smalltalk isBigEndian ].
+	^answer! !
+
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'EstebanLorenzano 11/4/2016 14:53'!
 asExternalPointer
 	"Convert the receiver assuming that it describes a pointer to an object."
 	^ self pointerAt: 1! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'EstebanLorenzano 3/9/2016 12:17'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:09:48'!
 booleanAt: byteOffset
 	"Booleans are just integers in C word"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^(self integerAt: byteOffset size: 1 signed: false) == true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'EstebanLorenzano 3/9/2016 12:30'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:06'!
 booleanAt: byteOffset put: value
 	"Booleans are just integers in C word"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset put: (value ifTrue:[1] ifFalse:[0]) size: 1 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/29/1999 00:44'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:09'!
 doubleAt: byteOffset
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	<primitive:'primitiveFFIDoubleAt' module:'SqueakFFIPrims'>
 	^self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/29/1999 00:13'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:13'!
 doubleAt: byteOffset put: value
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	<primitive:'primitiveFFIDoubleAtPut' module:'SqueakFFIPrims'>
 	^self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/29/1999 00:13'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:16'!
 floatAt: byteOffset
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	<primitive:'primitiveFFIFloatAt' module:'SqueakFFIPrims'>
 	^self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/29/1999 00:13'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:20'!
 floatAt: byteOffset put: value
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	<primitive:'primitiveFFIFloatAtPut' module:'SqueakFFIPrims'>
 	^self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/28/1999 23:56'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:24'!
 integerAt: byteOffset put: value size: nBytes signed: aBoolean
 	"Primitive. Store the given value as integer of nBytes size
 	in the receiver. Fail if the value is out of range.
 	Note: This primitive will access memory in the outer space if
 	invoked from ExternalAddress."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	<primitive: 'primitiveFFIIntegerAtPut' module:'SqueakFFIPrims'>
 	^self primitiveFailed! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/28/1999 23:55'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:27'!
 integerAt: byteOffset size: nBytes signed: aBoolean
 	"Primitive. Return an integer of nBytes size from the receiver.
 	Note: This primitive will access memory in the outer space if
 	invoked from ExternalAddress."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	<primitive: 'primitiveFFIIntegerAt' module:'SqueakFFIPrims'>
 	^self primitiveFailed! !
 
@@ -277,9 +306,11 @@ isNull
 	"Answer false since only external addresses can be null"
 	^false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/16/2016 12:37'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:30'!
 longPointerAt: byteOffset
 	"Answer an 8-byte pointer object stored at the given byte address"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	| addr |
 	addr := ExternalAddress basicNew: 8.
 	1 to: 8 do:
@@ -287,9 +318,11 @@ longPointerAt: byteOffset
 		addr basicAt: i put: (self unsignedByteAt: byteOffset+i-1)].
 	^addr! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/16/2016 12:36'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:32'!
 longPointerAt: byteOffset put: value
 	"Store an 8-byte pointer object at the given byte address"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	value isExternalAddress ifFalse:
 		[^self error:'Only external addresses can be stored'].
 	1 to: 8 do:
@@ -297,9 +330,11 @@ longPointerAt: byteOffset put: value
 		self unsignedByteAt: byteOffset+i-1 put: (value basicAt: i)].
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/16/2016 12:37'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:35'!
 pointerAt: byteOffset
 	"Answer a pointer object stored at the given byte address"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	| addr |
 	addr := ExternalAddress new.
 	1 to: ExternalAddress wordSize do:
@@ -307,9 +342,11 @@ pointerAt: byteOffset
 		addr basicAt: i put: (self unsignedByteAt: byteOffset+i-1)].
 	^addr! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/16/2016 12:35'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:38'!
 pointerAt: byteOffset put: value
 	"Store a pointer object at the given byte address"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	value isExternalAddress ifFalse:
 		[^self error:'Only external addresses can be stored'].
 	1 to: ExternalAddress wordSize do:
@@ -317,9 +354,11 @@ pointerAt: byteOffset put: value
 		self unsignedByteAt: byteOffset+i-1 put: (value basicAt: i)].
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/16/2016 12:37'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:41'!
 shortPointerAt: byteOffset
 	"Answer a 4-byte pointer object stored at the given byte address"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	| addr |
 	addr := ExternalAddress basicNew: 4.
 	1 to: 4 do:
@@ -327,9 +366,11 @@ shortPointerAt: byteOffset
 		addr basicAt: i put: (self unsignedByteAt: byteOffset+i-1)].
 	^addr! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 2/16/2016 12:37'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:44'!
 shortPointerAt: byteOffset put: value
 	"Store a 4-byte pointer object at the given byte address"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	value isExternalAddress ifFalse:
 		[^self error:'Only external addresses can be stored'].
 	1 to: 4 do:
@@ -337,119 +378,163 @@ shortPointerAt: byteOffset put: value
 		self unsignedByteAt: byteOffset+i-1 put: (value basicAt: i)].
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 01:39'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:48'!
 signedByteAt: byteOffset
 	"Return a 8bit signed integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset size: 1 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 01:39'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:56'!
 signedByteAt: byteOffset put: value
 	"Store a 8bit signed integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset put: value size: 1 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/28/1999 23:53'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:59'!
 signedCharAt: byteOffset
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^(self unsignedByteAt: byteOffset) asCharacter! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/5/2016 17:10:37'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:03'!
 signedCharAt: byteOffset put: aCharacter
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self unsignedByteAt: byteOffset put: aCharacter numericValue! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 15:54'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:06'!
 signedLongAt: byteOffset
 	"Return a 32bit signed integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset size: 4 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 15:54'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:12'!
 signedLongAt: byteOffset put: value
 	"Store a 32bit signed integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset put: value size: 4 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'JanVanDeSandt 4/11/2016 18:49'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:17'!
 signedLongLongAt: byteOffset
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	| int |
 	int := self unsignedLongLongAt: byteOffset.
 	int > 16r7FFFFFFFFFFFFFFF ifTrue: [^int - 16r10000000000000000].
 	^int! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'JanVanDeSandt 4/11/2016 18:51'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:20'!
 signedLongLongAt: byteOffset put: value
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	self unsignedLongLongAt: byteOffset put: (value < 0
 		ifTrue: [ value + 16r10000000000000000 ]
 		ifFalse: [ value ])! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 15:54'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:23'!
 signedShortAt: byteOffset
 	"Return a 16bit signed integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset size: 2 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 15:54'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:27'!
 signedShortAt: byteOffset put: value
 	"Store a 16bit signed integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset put: value size: 2 signed: true! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'hg 2/28/2000 13:56'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:31'!
 structAt: byteOffset length: length
 	"Return a structure of the given length starting at the indicated byte offset."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	| value |
 	value := ByteArray new: length.
 	1 to: length do:[:i|
 		value unsignedByteAt: i put: (self unsignedByteAt: byteOffset+i-1)].
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/28/1999 21:11'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:33'!
 structAt: byteOffset put: value length: length
 	"Store a structure of the given length starting at the indicated byte offset."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	1 to: length do:[:i|
 		self unsignedByteAt: byteOffset+i-1 put: (value unsignedByteAt: i)].
 	^value! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 01:40'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:36'!
 unsignedByteAt: byteOffset
 	"Return a 8bit unsigned integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset size: 1 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 01:40'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:39'!
 unsignedByteAt: byteOffset put: value
 	"Store a 8bit unsigned integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset put: value size: 1 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/28/1999 23:53'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:42'!
 unsignedCharAt: byteOffset
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^(self unsignedByteAt: byteOffset) asCharacter! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 9/5/2016 17:10:44'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:45'!
 unsignedCharAt: byteOffset put: aCharacter
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self unsignedByteAt: byteOffset put: aCharacter numericValue! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 01:23'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:47'!
 unsignedLongAt: byteOffset
 	"Return a 32bit unsigned integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset size: 4 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 01:23'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:50'!
 unsignedLongAt: byteOffset put: value
 	"Store a 32bit signed integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset put: value size: 4 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 11/4/2016 11:07'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:53'!
 unsignedLongLongAt: byteOffset
 	"Answer a 64-bit integer in Smalltalk order (little-endian)."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset size: 8 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'eem 11/4/2016 11:32'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:55'!
 unsignedLongLongAt: byteOffset put: value
 	"I store 64-bit integers in Smalltalk (little-endian) order."
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset put: value size: 8 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 00:55'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:11:59'!
 unsignedShortAt: byteOffset
 	"Return a 16bit unsigned integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset size: 2 signed: false! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/21/1999 00:56'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:12:01'!
 unsignedShortAt: byteOffset put: value
 	"Store a 16bit unsigned integer starting at the given byte offset"
+	"If a regular ByteArray, byteOffset is the start position in self.
+	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
 	^self integerAt: byteOffset put: value size: 2 signed: false! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'ar 11/29/1999 00:16'!
@@ -800,7 +885,7 @@ setExtent: extent depth: bitsPerPixel bits: pointer
 	self setExtent: extent depth: bitsPerPixel.
 	self setManualSurfacePointer: pointer.! !
 
-!ExternalForm methodsFor: 'initialization' stamp: 'jmv 1/13/2011 10:57'!
+!ExternalForm methodsFor: 'initialization' stamp: 'jmv 12/22/2016 16:04:33'!
 setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 	"Set the memory-location of the image data.  It is OK to set a NULL pointer; in this case, any attempt to BitBlt to or from the form will result in a primitive-failure."
 	| integer |
@@ -815,10 +900,12 @@ setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
 	"NOTE: it used to be acceptable for 'newPointer' to be an Integer... 
 	 if you get a MNU for #getHandle here, you should update your code 
 	 to pass in either an ExternalStructure or an ExternalAddress."
-	integer := pointer getHandle 
-				unsignedLongAt: 1 
-				bigEndian: Smalltalk isBigEndian.
-	self primManualSurface: bits setPointer: integer.! !
+	integer := Smalltalk wordSize caseOf: {
+			[ 4 ] -> [ pointer getHandle unsignedLongAt: 1 bigEndian: Smalltalk isBigEndian ].
+			[ 8 ] -> [ pointer getHandle unsignedLong64At: 1 bigEndian: Smalltalk isBigEndian ]
+		}
+		otherwise: [ self error ].
+	self primManualSurface: bits setPointer: integer! !
 
 !ExternalObject methodsFor: 'private' stamp: 'ar 11/16/1999 20:25'!
 getHandle
@@ -1790,9 +1877,13 @@ writeFieldAt: byteOffset with: valueName
 			nextPutAll:' put: ';
 			nextPutAll: valueName].! !
 
-!ExternalType class methodsFor: 'private' stamp: 'ar 12/2/1999 16:59'!
+!ExternalType class methodsFor: 'private' stamp: 'jmv 12/26/2016 17:09:18'!
 atomicTypeNamed: aString
-	^AtomicTypes at: aString ifAbsent:[nil]! !
+	| n |
+	n _ aString.
+	n = 'size_t' ifTrue: [
+		n _ Smalltalk wordSize = 8 ifTrue: [ 'ulonglong' ] ifFalse: [ 'ulong' ]].
+	^AtomicTypes at: n ifAbsent:[nil]! !
 
 !ExternalType class methodsFor: 'type constants' stamp: 'ar 12/2/1999 16:56'!
 bool
@@ -1834,26 +1925,26 @@ initialize
 	self initializeFFIConstants.
 	self initializeDefaultTypes.! !
 
-!ExternalType class methodsFor: 'class initialization' stamp: 'ar 4/7/2009 23:42'!
+!ExternalType class methodsFor: 'class initialization' stamp: 'jmv 12/26/2016 15:02:13'!
 initializeAtomicTypes
 	"ExternalType initialize"
 	| atomicType byteSize type typeName |
 	#(
 		"name		atomic id		byte size"
-		('void' 		0 				0)
-		('bool' 		1 				1)
+		('void' 			0 				0)
+		('bool' 			1 				1)
 		('byte' 		2 				1)
-		('sbyte' 	3 				1)
-		('ushort' 	4 				2)
+		('sbyte' 		3 				1)
+		('ushort' 		4 				2)
 		('short' 		5 				2)
-		('ulong' 	6 				4)
-		('long' 		7 				4)
-		('ulonglong' 8 				8)
+		('ulong' 		6 				4)
+		('long' 			7 				4)
+		('ulonglong' 	8 				8)
 		('longlong' 	9 				8)
-		('char' 		10 				1)
-		('schar' 	11 				1)
+		('char' 			10 				1)
+		('schar' 		11 				1)
 		('float' 		12 				4)
-		('double' 	13 				8)
+		('double' 		13 				8)
 	) do:[:typeSpec| | compiled |
 		typeName := typeSpec first.
 		atomicType := typeSpec second.
@@ -2010,9 +2101,9 @@ noticeRenamingOf: aClass from: oldName to: newName
 	type == nil ifFalse:[StructTypes at: newName put: type].
 	StructTypes removeKey: oldName ifAbsent:[].! !
 
-!ExternalType class methodsFor: 'private' stamp: 'ar 12/2/1999 20:33'!
+!ExternalType class methodsFor: 'private' stamp: 'jmv 12/20/2016 11:41:12'!
 pointerSpec
-	^(4 bitOr: FFIFlagPointer)! !
+	^(Smalltalk wordSize bitOr: FFIFlagPointer)! !
 
 !ExternalType class methodsFor: 'type constants' stamp: 'ar 11/28/1999 23:43'!
 sbyte
