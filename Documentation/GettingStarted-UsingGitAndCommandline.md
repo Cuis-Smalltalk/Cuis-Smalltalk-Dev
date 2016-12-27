@@ -55,15 +55,15 @@ cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL-32bit.so
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3007-spur.image
+$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3010-spur.image
 ```
 MacOSX:
 ```
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3007-spur.image
+$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3010-spur.image
 ```
 Linux:
 ```
-$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3007-spur.image
+$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3010-spur.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
@@ -110,5 +110,5 @@ $ ./linuxVM_ARM.sh
 ```
 
 ### Notes ###
-* If you can't find Cuis5.0-3007-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3010-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
