@@ -1,6 +1,6 @@
 ## Setting up and starting Cuis using Git and the command line
 
-Instructions for setting up Cuis using Git, for Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-UsingGUI.md).
+These are instructions for setting up Cuis in the 64 bits flavor, on Linux using Git Bash. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-UsingGUI.md).
 
 If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
@@ -10,54 +10,19 @@ The Cuis image specified is the most current one. The VM specified is the latest
 ```
 mkdir MyProject
 cd MyProject
-git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
+~/MyProject# git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ```
 ### Get an appropriate VM ###
-For Windows Git Bash:
-```
-$ curl -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_win32x86_squeak.cog.spur_201608171728.zip
-$ unzip cogspur.zip
-```
-For MacOSX:
-```
-$ curl -L -o CogSpur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_macos32x86_squeak.cog.spur_201608171728.tar.gz
-$ tar -zxvf CogSpur.tgz
-```
-For Linux (except ArchLinux, Chromebooks see below):
+For Linux 
 ```
 ~/MyProject# wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_linux32x86_squeak.cog.spur_201608171728.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./products/cogspurlinuxht ./cogspur
-```
-On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
-(This was tested on Debian 8)
-```
-sudo dpkg --add-architecture i386
-sudo apt-get update
-sudo apt-get install libc6-i386
-# This (libc6-i386) was needed to make ldd work on 32 bit programs and dynamic libraries
-# So, we can do stuff like       $ ldd cogspur/lib/squeak/*/squeak       to find about missing libraries
-sudo apt-get install libuuid1:i386
-sudo apt-get install libx11-6:i386
-sudo apt-get install libxext6:i386
-sudo apt-get install libsm6:i386
-# Next are only needed if you want to play with OpenCL (you also need Catalyst driver for AMD GPU, or similar for Intel/Nvidia)
-sudo apt-get install mesa-common-dev:i386
-sudo apt-get install libgl1-mesa-dev:i386
-# If you are not using AMD Catalyst driver, you might also need:
-sudo apt-get install ocl-icd-libopencl1:i386
-cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL-32bit.so
+# Next is only needed if you want to play with OpenCL (you also need Catalyst driver for AMD GPU, or similar for Intel/Nvidia)
+~/MyProject# cp /usr/lib/libOpenCL.so.1 libOpenCL.so
 ```
 
 ### Starting Cuis Smalltalk ###
-Windows Git Bash:
-```
-$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3007-spur.image
-```
-MacOSX:
-```
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3007-spur.image
-```
 Linux:
 ```
 $  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3007-spur.image
