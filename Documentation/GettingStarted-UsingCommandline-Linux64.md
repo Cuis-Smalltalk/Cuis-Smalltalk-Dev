@@ -1,6 +1,6 @@
 ## Setting up and starting Cuis 64 bits using a command line
 
-These are instructions for setting up Cuis in the 64 bits Spur flavor, on Linux on x86-64 computers using the command line. If you are familiar with Git, please see [Getting started using Git Bash](GettingStarted-UsingGitAndCommandline-Linux64.md).
+These are instructions for setting up Cuis in the 64 bits Spur flavor, on Linux on x86-64 computers using the command line. If you are familiar with Git, please see [Getting started using Git Bash](GettingStarted-UsingGitAndCommandline-Linux64.md). If you are not on x86-64, see [Setting up and starting Cuis using a command line](GettingStarted-UsingCommandline.md).
 
 If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
@@ -16,9 +16,9 @@ cd MyProject
 
 ### Get an appropriate VM ###
 ```
-~/MyProject# wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_linux32x86_squeak.cog.spur_201608171728.tar.gz
-~/MyProject# tar -zxvf cogspur.tgz
-~/MyProject# mv ./products/cogspurlinuxht ./cogspur
+~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201612221637.tar.gz
+~/MyProject# tar -zxvf cogspur64.tgz
+~/MyProject# mv ./sqcogspur64linuxht ./cogspur64
 ```
 Next is only needed if you want to play with OpenCL (you also need Catalyst driver for AMD GPU, or similar for Intel/Nvidia)
 ```
@@ -27,7 +27,7 @@ Next is only needed if you want to play with OpenCL (you also need Catalyst driv
 
 ### Starting Cuis Smalltalk ###
 ```
-~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3007-spur.image
+~/MyProject# cogspur64/squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3007-spur-64.image
 ```
 
 ### Notes ###

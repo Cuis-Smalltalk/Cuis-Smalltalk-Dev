@@ -23,7 +23,10 @@ For MacOSX:
 $ curl -L -o CogSpur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_macos32x86_squeak.cog.spur_201608171728.tar.gz
 $ tar -zxvf CogSpur.tgz
 ```
-For Linux (except ArchLinux, Chromebooks see below):
+For Linux on x86 hardware
+- For x86-64 hardware systems, we recommend [Setting up and starting Cuis 64 bits using a command line](GettingStarted-UsingCommandline-Linux64.md)
+- Alternative instructions for ArchLinux below
+- Specific instructions for Chromebooks and Raspberry Pi below
 ```
 ~/MyProject# wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_linux32x86_squeak.cog.spur_201608171728.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz

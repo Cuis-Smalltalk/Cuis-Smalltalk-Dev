@@ -16,9 +16,9 @@ cd MyProject
 
 ### Get an appropriate VM ###
 ```
-~/MyProject# wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_linux32x86_squeak.cog.spur_201608171728.tar.gz
-~/MyProject# tar -zxvf cogspur.tgz
-~/MyProject# mv ./products/cogspurlinuxht ./cogspur
+~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201612221637.tar.gz
+~/MyProject# tar -zxvf cogspur64.tgz
+~/MyProject# mv ./sqcogspur64linuxht ./cogspur64
 ```
 Next is only needed if you want to play with OpenCL (you also need Catalyst driver for AMD GPU, or similar for Intel/Nvidia)
 ```
@@ -27,7 +27,7 @@ Next is only needed if you want to play with OpenCL (you also need Catalyst driv
 
 ### Starting Cuis Smalltalk ###
 ```
-~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3007-spur.image
+~/MyProject# cogspur64/squeak Cuis-Smalltalk-Dev/Cuis5.0-3007-spur-64.image
 ```
 
 ### Notes ###
