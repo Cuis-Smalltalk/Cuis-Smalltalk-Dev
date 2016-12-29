@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #2986] on 2 December 2016 at 9:06:01 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3013] on 29 December 2016 at 12:37:19 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 9!
+!provides: 'Morphic-Widgets-Extras' 1 10!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -1018,7 +1018,7 @@ baseFont
 	font ifNil: [ font _ AbstractFont default ].
 	^font! !
 
-!OneLineEditorMorph methodsFor: 'drawing' stamp: 'jmv 8/21/2012 21:54'!
+!OneLineEditorMorph methodsFor: 'drawing' stamp: 'KenD 12/12/2016 19:53:05'!
 characterIndexAtPoint: aPoint
 
 	| line block f |
@@ -1034,7 +1034,7 @@ characterIndexAtPoint: aPoint
 		lineHeight: f height baseline: f ascent.
 		
 	block _ (CharacterBlockScanner new text: 
-			(contents asText font: font))
+			(contents asText font: f))
 		characterBlockAtPoint: aPoint index: nil
 		in: line.
 
