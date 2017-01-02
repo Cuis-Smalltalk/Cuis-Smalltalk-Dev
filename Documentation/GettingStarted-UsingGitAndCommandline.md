@@ -51,6 +51,16 @@ sudo apt-get install libgl1-mesa-dev:i386
 sudo apt-get install ocl-icd-libopencl1:i386
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL-32bit.so
 ```
+If you get this error message (you won't get it if you run Cuis as admin or sudo):
+```
+pthread_setschedparam failed: Operation not permitted
+Read e.g. https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
+```
+Then you need to:
+```
+~/MyProject# sudo cp Cuis-Smalltalk-Dev/squeak.conf /etc/security/limits.d/squeak.conf
+```
+Log out and log back in, or reboot the machine.
 
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:

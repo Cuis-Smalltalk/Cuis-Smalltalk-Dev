@@ -21,7 +21,7 @@ cd MyProject
 ~/MyProject# mv ./sqcogspur64linuxht ./cogspur64
 ```
 
-If you get this error message:
+If you get this error message (you won't get it if you run Cuis as admin or sudo):
 ```
 pthread_setschedparam failed: Operation not permitted
 Read e.g. https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
