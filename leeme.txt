@@ -1,0 +1,12 @@
+Aca voy tirando log instalacion como NO-ADMIN (juan)
+Hago lo que dice el doc (git/64)
+
+
+pthread_setschedparam failed: Operation not permitted
+Read e.g. https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
+
+Agrego squeak.conf al repo.
+sudo cp Cuis-Smalltalk-Dev/squeak.conf /etc/security/limits.d/squeak.conf
+log out and log back in, or reboot the machine.
+
+ver si algo mas
