@@ -20,6 +20,18 @@ cd MyProject
 ~/MyProject# tar -zxvf cogspur64.tgz
 ~/MyProject# mv ./sqcogspur64linuxht ./cogspur64
 ```
+
+If you get this error message:
+```
+pthread_setschedparam failed: Operation not permitted
+Read e.g. https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
+```
+Then you need to:
+```
+~/MyProject# sudo cp Cuis-Smalltalk-Dev/squeak.conf /etc/security/limits.d/squeak.conf
+```
+Log out and log back in, or reboot the machine.
+
 Next is only needed if you want to play with OpenCL (you also need Catalyst driver for AMD GPU, or similar for Intel/Nvidia)
 ```
 ~/MyProject# cp /usr/lib/libOpenCL.so.1 libOpenCL.so
