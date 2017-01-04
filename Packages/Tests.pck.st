@@ -1,12 +1,12 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2965] on 3 November 2016 at 11:55:42 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3022] on 4 January 2017 at 10:47:23 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 66!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Taskbar' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'SignalProcessing' 1 nil nil!
+!provides: 'Tests' 1 67!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Taskbar' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -2597,65 +2597,6 @@ testBitLogic
 
 	self assert: (-2 bitAnd: 16rFFFFFFFF) = 16rFFFFFFFE.! !
 
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:53'!
-testCreationFromBytes1
-	"self run: #testCreationFromBytes1"
-	"it is illegal for a LargeInteger to be less than SmallInteger maxVal." 
-	"here we test that Integer>>byte!!byte2:byte3:byte4: resconstructs SmallInteger maxVal as an instance of SmallInteger. "
-  
-	| maxSmallInt hexString byte1 byte2 byte3 byte4 
-	builtInteger |
-	maxSmallInt := SmallInteger maxVal.
-	hexString := maxSmallInt printStringHex.
-	self assert: hexString size = 8.
-	byte4 := Number readFrom: '16r', (hexString copyFrom: 1 to: 2).
-	byte3 := Number readFrom: '16r', (hexString copyFrom: 3 to: 4).
-	byte2 := Number readFrom: '16r', (hexString copyFrom: 5 to: 6).
-	byte1 := Number readFrom: '16r', (hexString copyFrom: 7 to: 8).
-	builtInteger := Integer byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4.
-	self assert: builtInteger = maxSmallInt.
-	self assert: builtInteger class = SmallInteger
-! !
-
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:53'!
-testCreationFromBytes2
- 	"self run: #testCreationFromBytes2"
-
-	"it is illegal for a LargeInteger to be less than SmallInteger maxVal." 
-	"here we test that Integer>>byte!!byte2:byte3:byte4: resconstructs (SmallInteger maxVal + 1) as an instance of LargePositiveInteger. "
-	| maxSmallInt hexString byte1 byte2 byte3 byte4 builtInteger |
-	maxSmallInt := SmallInteger maxVal.
-	hexString := (maxSmallInt + 1) printStringHex.
-	self assert: hexString size = 8.
-	byte4 := Number readFrom: '16r', (hexString copyFrom: 1 to: 2).
-	byte3 := Number readFrom: '16r', (hexString copyFrom: 3 to: 4).
-	byte2 := Number readFrom: '16r', (hexString copyFrom: 5 to: 6).
-	byte1 := Number readFrom: '16r', (hexString copyFrom: 7 to: 8).
-	builtInteger := Integer byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4.
-	self assert: builtInteger = (maxSmallInt + 1).
-	self deny: builtInteger class = SmallInteger
-! !
-
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:55'!
-testCreationFromBytes3
-	"self run: #testCreationFromBytes3"
-
-	"it is illegal for a LargeInteger to be less than SmallInteger maxVal." 
-	"here we test that Integer>>byte!!byte2:byte3:byte4: resconstructs (SmallInteger maxVal - 1) as an instance of SmallInteger. "
-	| maxSmallInt hexString byte1 byte2 byte3 byte4 
-    builtInteger |
-	maxSmallInt := SmallInteger maxVal.
-	hexString := (maxSmallInt - 1) printStringHex.
-	self assert: hexString size = 8.
-	byte4 := Number readFrom: '16r', (hexString copyFrom: 1 to: 2).
-	byte3 := Number readFrom: '16r', (hexString copyFrom: 3 to: 4).
-	byte2 := Number readFrom: '16r', (hexString copyFrom: 5 to: 6).
-	byte1 := Number readFrom: '16r', (hexString copyFrom: 7 to: 8).
-	builtInteger := Integer byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4.
-	self assert: builtInteger = (maxSmallInt - 1).
-	self assert: builtInteger class = SmallInteger
-! !
-
 !IntegerTest methodsFor: 'testing - arithmetic' stamp: 'mga 5/11/2006 15:41'!
 testCrossSumBase
 	"self run: #testCrossSumBase"
@@ -4605,15 +4546,23 @@ testEven
 	
 	self assert: (0 even)! !
 
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'sd 6/5/2005 08:59'!
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:16:27'!
 testMaxVal
 
-	self assert: (SmallInteger maxVal = 16r3FFFFFFF).! !
+	Smalltalk wordSize = 4
+		ifTrue: [
+			self assert: (SmallInteger maxVal = 16r3FFFFFFF) ]
+		ifFalse: [
+			self assert: (SmallInteger maxVal = 16rFFFFFFFFFFFFFFF) ]! !
 
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'sd 6/5/2005 08:59'!
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:17:27'!
 testMinVal
 
-	self assert: (SmallInteger minVal = -16r40000000).! !
+	Smalltalk wordSize = 4
+		ifTrue: [
+			self assert: (SmallInteger minVal = -16r40000000) ]
+		ifFalse: [
+			self assert: (SmallInteger minVal = -16r1000000000000000) ]! !
 
 !SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'sd 6/5/2005 08:59'!
 testNew
@@ -4645,12 +4594,17 @@ testPrintPaddedWith
 	self assert: (123 printStringBase: 10 length: 10 padded: true) = '0000000123'.
 	self assert: (123 printStringBase: 16 length: 10 padded: true) = '000000007B'! !
 
-!SmallIntegerTest methodsFor: 'testing - printing' stamp: 'al 7/21/2008 21:48'!
+!SmallIntegerTest methodsFor: 'testing - printing' stamp: 'jmv 1/4/2017 08:22:13'!
 testPrintString
 	self assert: 1 printString  = '1'.
 	self assert: -1 printString  = '-1'.
-	self assert: SmallInteger minVal printString  = '-1073741824'.
-	self assert: SmallInteger maxVal printString  = '1073741823'.
+	Smalltalk wordSize = 4
+		ifTrue: [
+			self assert: SmallInteger minVal printString  = '-1073741824'.
+			self assert: SmallInteger maxVal printString  = '1073741823' ]
+		ifFalse: [
+			self assert: SmallInteger minVal printString  =  '-1152921504606846976' .
+			self assert: SmallInteger maxVal printString  =  '1152921504606846975'  ].
 	self assert: 12345 printString  = '12345'.
 	self assert: -54321 printString  = '-54321'.
 
@@ -4665,7 +4619,11 @@ testPrintString
 	self assert: 65174383 decimalDigitLength = 8.
 	self assert: 625744831 decimalDigitLength = 9.
 	self assert: 1000001111 decimalDigitLength = 10.
-	self assert: SmallInteger maxVal decimalDigitLength = 10.! !
+	Smalltalk wordSize = 4
+		ifTrue: [
+			self assert: SmallInteger maxVal decimalDigitLength = 10 ]
+		ifFalse: [
+			self assert: SmallInteger maxVal decimalDigitLength = 19 ]! !
 
 !RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 18:33'!
 byteBitCounts
