@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3009] on 26 December 2016 at 5:09:55 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3025] on 10 January 2017 at 4:04:24 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 25!
+!provides: 'FFI' 1 26!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -233,12 +233,12 @@ asExternalPointer
 	"Convert the receiver assuming that it describes a pointer to an object."
 	^ self pointerAt: 1! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:09:48'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 1/10/2017 16:03:53'!
 booleanAt: byteOffset
 	"Booleans are just integers in C word"
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	^(self integerAt: byteOffset size: 1 signed: false) == true! !
+	^((self integerAt: byteOffset size: 1 signed: false) == 0) not! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:06'!
 booleanAt: byteOffset put: value
