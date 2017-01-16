@@ -1,12 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3022] on 4 January 2017 at 10:47:23 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3022] on 16 January 2017 at 10:47:23 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 67!
+!provides: 'Tests' 1 68!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Taskbar' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''

@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3013] on 29 December 2016 at 12:37:19 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3013] on 16 January 2017 at 12:37:19 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 10!
+!provides: 'Morphic-Widgets-Extras' 1 11!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -29,16 +29,6 @@ BorderedRectMorph subclass: #MagnifierMorph
 	category: 'Morphic-Widgets-Extras'!
 !classDefinition: 'MagnifierMorph class' category: #'Morphic-Widgets-Extras'!
 MagnifierMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #UpdatingStringMorph category: #'Morphic-Widgets-Extras'!
-StringMorph subclass: #UpdatingStringMorph
-	instanceVariableNames: 'target getSelector stepTime'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic-Widgets-Extras'!
-!classDefinition: 'UpdatingStringMorph class' category: #'Morphic-Widgets-Extras'!
-UpdatingStringMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #DragAndDropAreaMorph category: #'Morphic-Widgets-Extras'!
@@ -115,13 +105,6 @@ LimitedHeightTextMorph new
 
 !MagnifierMorph commentStamp: '<historical>' prior: 0!
 Provides a magnifying glass. Magnifies the morphs below (if grabbed) or the area around the mouse pointer.!
-
-!UpdatingStringMorph commentStamp: 'jmv 1/5/2013 23:49' prior: 0!
-UpdatingStringMorph new
-     target: [self runningWorld activeHand morphPosition asString];
-     getSelector: #value;
-     stepTime: 10;
-     openInWorld!
 
 !DragAndDropAreaMorph commentStamp: '<historical>' prior: 0!
 A simple morph that allows dragging submorphs, and dropping other morphs on it. It is provided as an example, and also as a reference of the methods you might need to implement in your morphs to handle drag and drop.
@@ -684,57 +667,6 @@ wantsSteps
 	Morphs that send #startStepping and #stopStepping at appropriate times (i.e. when they are already in the world!!) don't need to answer true to this message"
 
 	^true! !
-
-!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
-getSelector: aSymbol
-	getSelector _ aSymbol! !
-
-!UpdatingStringMorph methodsFor: 'initialization' stamp: 'jmv 9/13/2013 09:23'!
-initialize
-	super initialize.
-	target _ self.
-	getSelector _ #contents.
-	stepTime _ 50! !
-
-!UpdatingStringMorph methodsFor: 'stepping' stamp: 'jmv 2/27/2016 20:07'!
-stepAt: millisecondSinceLast
-
-	self contents: (target perform: getSelector)! !
-
-!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:18'!
-stepTime
-
-	^stepTime! !
-
-!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
-stepTime: aNumber
-	stepTime _ aNumber! !
-
-!UpdatingStringMorph methodsFor: 'accessing' stamp: 'jmv 1/4/2013 13:15'!
-target: anObject
-	target _ anObject! !
-
-!UpdatingStringMorph methodsFor: 'stepping' stamp: 'jmv 1/4/2013 13:18'!
-wantsSteps
-	"Return true if the receiver wants to its #step or #stepAt: methods be run"
-
-	^true! !
-
-!UpdatingStringMorph class methodsFor: 'new-morph participation' stamp: 'jmv 4/15/2014 09:26'!
-initializedInstance
-	"Answer a digital clock"
-
-	| newInst |
-	newInst := self 
-		contents: '' 
-		font: (AbstractFont familyName: 'DejaVu' pointSize: 22) 
-		emphasis: AbstractFont  boldCode.
-	newInst 
-		stepTime: 500; "half a second"
-		target: [String streamContents: [ :strm | DateAndTime now printHMSOn: strm]] ;
-		getSelector: #value.
-		
-	^ newInst! !
 
 !DragAndDropAreaMorph methodsFor: 'drag and drop us' stamp: 'jmv 1/24/2013 22:53'!
 aboutToBeGrabbedBy: aHand

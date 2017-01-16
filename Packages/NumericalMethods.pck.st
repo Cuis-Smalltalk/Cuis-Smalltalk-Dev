@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #2981] on 1 December 2016 at 4:52:56 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3036] on 16 January 2017 at 5:04:25 pm'!
 'Description A collection of general numerical algorithms for continuous problems.'!
-!provides: 'NumericalMethods' 1 2!
+!provides: 'NumericalMethods' 1 3!
 !classDefinition: #NelderMeadMethod category: #NumericalMethods!
 Object subclass: #NelderMeadMethod
 	instanceVariableNames: 'f testPoints epsilon'
@@ -59,16 +59,17 @@ objectiveFunction: aBlock
 
 	f _ aBlock! !
 
-!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 12/1/2016 16:48:22'!
+!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 1/16/2017 17:01:50'!
 solve
 	"Closely follows implementation at
 		https://en.wikipedia.org/wiki/Nelder-Mead_method
 	"
-	| alpha centroidX0 worstPointXnp1 worstValueXnp1 bestPointX1 bestValueX1 reflectedPointXr reflectedValueXr sortedIndexes values expandedPointXe gamma secondWorstValueXn contractedPointXc rho sigma |
+	| alpha centroidX0 worstPointXnPlus1 worstValueXnPlus1 bestPointX1 bestValueX1 reflectedPointXr reflectedValueXr sortedIndexes values expandedPointXe gamma secondWorstValueXn contractedPointXc rho sigma iteration errorEstimation lastErrorEstimation |
 	alpha _ 1.
 	gamma _ 2.
 	rho _ 0.5.
 	sigma _ 0.5.
+	iteration _ 1.
 
 	[
 		"Order"
@@ -77,17 +78,18 @@ solve
 		bestPointX1 _ testPoints at: sortedIndexes first.
 		bestValueX1 _ values at: sortedIndexes first.
 		secondWorstValueXn _ values at: sortedIndexes penultimate.
-		worstPointXnp1 _ testPoints at: sortedIndexes last.
-		worstValueXnp1 _ values at: sortedIndexes last.
+		worstPointXnPlus1 _ testPoints at: sortedIndexes last.
+		worstValueXnPlus1 _ values at: sortedIndexes last.
 
 		"Stopping condition"
-		worstValueXnp1 - bestValueX1 < epsilon
+		errorEstimation _ worstValueXnPlus1 - bestValueX1.
+		(errorEstimation < epsilon or: [ errorEstimation = lastErrorEstimation ])
 	] whileFalse: [
 	
 		"Centroid"
-		centroidX0 _ testPoints sum - worstPointXnp1 / (testPoints size - 1).
+		centroidX0 _ testPoints sum - worstPointXnPlus1 / (testPoints size - 1).
 
-		reflectedPointXr _ centroidX0 + (alpha * (centroidX0 - worstPointXnp1)).
+		reflectedPointXr _ centroidX0 + (alpha * (centroidX0 - worstPointXnPlus1)).
 		"self assert: (reflectedPointXr+worstPointXnp1/2 - centroidX0) length < 0.0001."
 		reflectedValueXr _ f value: reflectedPointXr.
 		(bestValueX1 <= reflectedValueXr and: [ reflectedValueXr < secondWorstValueXn ])
@@ -106,8 +108,8 @@ solve
 								testPoints at: sortedIndexes last put: reflectedPointXr ]]
 					ifFalse: [ "reflectedValueXr >= secondWorstValueXn"
 						"self assert: reflectedValueXr >= secondWorstValueXn."
-						contractedPointXc _ centroidX0 + (rho * (worstPointXnp1 -centroidX0)).
-						(f value: contractedPointXc) < worstValueXnp1
+						contractedPointXc _ centroidX0 + (rho * (worstPointXnPlus1 -centroidX0)).
+						(f value: contractedPointXc) < worstValueXnPlus1
 							ifTrue: [
 								"Contraction"
 								testPoints at: sortedIndexes last put: contractedPointXc ]
@@ -118,6 +120,8 @@ solve
 									xi _ bestPointX1 + (sigma * (xi - bestPointX1)).
 									testPoints at: i put: xi ]]]
 			].
+		iteration _ iteration + 1.
+		lastErrorEstimation _ errorEstimation.
 	].
 	^bestPointX1! !
 
