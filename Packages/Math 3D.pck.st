@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2968] on 4 November 2016 at 10:07:46 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3035] on 17 January 2017 at 7:40:29 pm'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition to 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 19!
+!provides: 'Math 3D' 1 21!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -69,6 +69,16 @@ Float64Array variableWordSubclass: #Float64Vector4
 	category: 'Math 3D'!
 !classDefinition: 'Float64Vector4 class' category: #'Math 3D'!
 Float64Vector4 class
+	instanceVariableNames: ''!
+
+!classDefinition: #Float32Color3 category: #'Math 3D'!
+FloatArray variableWordSubclass: #Float32Color3
+	instanceVariableNames: ''
+	classVariableNames: 'Black White'
+	poolDictionaries: ''
+	category: 'Math 3D'!
+!classDefinition: 'Float32Color3 class' category: #'Math 3D'!
+Float32Color3 class
 	instanceVariableNames: ''!
 
 !classDefinition: #Float32Matrix3x3 category: #'Math 3D'!
@@ -149,10 +159,6 @@ Based on Float64Matrix3x3, but 32 bits.!
 !Float32Vector3 commentStamp: '<historical>' prior: 0!
 I represent simple (x, y, z) 3D Cartesian coordinates with 32-bit Float precision.
 Based on Float64Vector3!
-
-!Point methodsFor: '*Math 3D' stamp: 'jmv 2/26/2015 15:05'!
-@ aNumber
-	^Float64Vector3 x: x y: y z: aNumber! !
 
 !Float64Color4 methodsFor: 'accessing'!
 alpha
@@ -2500,6 +2506,85 @@ x: x y: y z: z w: w
 zero
 	^self new! !
 
+!Float32Color3 methodsFor: 'accessing' stamp: 'len 1/17/2017 18:18:39'!
+alpha
+	^ 0.0! !
+
+!Float32Color3 methodsFor: 'converting' stamp: 'len 1/17/2017 19:00:15'!
+asColor
+	^Color r: ((0.0 max: self red) min: 1.0) g: ((0.0 max: self green) min: 1.0) b: ((0.0 max: self blue) min: 1.0)! !
+
+!Float32Color3 methodsFor: 'accessing' stamp: 'len 1/17/2017 18:18:07'!
+blue
+	^ self at: 3! !
+
+!Float32Color3 methodsFor: 'accessing' stamp: 'len 1/17/2017 18:18:21'!
+blue: aFloat
+	self at: 3 put: aFloat! !
+
+!Float32Color3 methodsFor: 'accessing' stamp: 'len 1/17/2017 18:18:04'!
+green
+	^ self at: 2! !
+
+!Float32Color3 methodsFor: 'accessing' stamp: 'len 1/17/2017 18:18:27'!
+green: aFloat
+	self at: 2 put: aFloat! !
+
+!Float32Color3 methodsFor: 'converting' stamp: 'len 1/17/2017 18:58:58'!
+pixelValueForDepth: d
+	| val |
+	d == 32 ifFalse: [^ self asColor pixelValueForDepth: d].
+	"eight bits per component; top 8 bits set to all ones (opaque alpha)"
+	val _ LargePositiveInteger new: 4.
+	val at: 3 put: (((0.0 max: self red) min: 1.0) * 255) rounded.
+	val at: 2 put: (((0.0 max: self green) min: 1.0) * 255) rounded.
+	val at: 1 put: (((0.0 max: self blue) min: 1.0) * 255) rounded.
+	val at: 4 put: 16rFF.  "opaque alpha"
+	^ val normalize! !
+
+!Float32Color3 methodsFor: 'initialization' stamp: 'len 1/17/2017 18:19:54'!
+r: rValue g: gValue b: bValue
+	self red: rValue.
+	self green: gValue.
+	self blue: bValue! !
+
+!Float32Color3 methodsFor: 'accessing' stamp: 'len 1/17/2017 18:18:00'!
+red
+	^ self at: 1! !
+
+!Float32Color3 methodsFor: 'accessing' stamp: 'len 1/17/2017 18:18:33'!
+red: aFloat
+	self at: 1 put: aFloat! !
+
+!Float32Color3 class methodsFor: 'colors' stamp: 'len 1/17/2017 18:25:21'!
+black
+	^Black! !
+
+!Float32Color3 class methodsFor: 'class initialization' stamp: 'len 1/17/2017 18:24:49'!
+initialize
+	Black _ self r: 0 g: 0 b: 0.
+	White _ self r: 1 g: 1 b: 1.! !
+
+!Float32Color3 class methodsFor: 'instance creation' stamp: 'len 1/17/2017 18:23:35'!
+new
+	^self new: self numElements! !
+
+!Float32Color3 class methodsFor: 'instance creation' stamp: 'len 1/17/2017 18:26:46'!
+newFrom: aColor
+	^ self r: aColor red g: aColor green b: aColor blue! !
+
+!Float32Color3 class methodsFor: 'instance creation' stamp: 'len 1/17/2017 18:22:39'!
+numElements
+	^3! !
+
+!Float32Color3 class methodsFor: 'instance creation' stamp: 'len 1/17/2017 18:22:12'!
+r: rValue g: gValue b: bValue
+	^self new r: rValue g: gValue b: bValue! !
+
+!Float32Color3 class methodsFor: 'colors' stamp: 'len 1/17/2017 18:25:27'!
+white
+	^White! !
+
 !Float32Matrix3x3 methodsFor: 'arithmetic' stamp: 'jmv 11/24/2015 16:33'!
 * aFloatVector3
 	"Answer the result of multiplying self by an argument vector"
@@ -2796,4 +2881,5 @@ zero
 Float64Matrix3x3 initialize!
 Float64Matrix4x4 initialize!
 Float64Quaternion initialize!
+Float32Color3 initialize!
 Float32Matrix3x3 initialize!
