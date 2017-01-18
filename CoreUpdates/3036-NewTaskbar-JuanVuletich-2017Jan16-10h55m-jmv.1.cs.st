@@ -1,4 +1,7 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3035] on 16 January 2017 at 11:04:32 am'!
+(Smalltalk classNamed: 'Taskbar') ifNotNil: [ :tbClass |
+	PasteUpMorph allInstancesDo: [ :w | w hideTaskbar ].
+	tbClass allInstancesDo: [ :each | each delete ]]!
 !classDefinition: #UpdatingStringMorph category: #'Morphic-Widgets'!
 StringMorph subclass: #UpdatingStringMorph
 	instanceVariableNames: 'target getSelector stepTime'
