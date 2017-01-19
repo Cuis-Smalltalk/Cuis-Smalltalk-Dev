@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:16:02 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3038] on 18 January 2017 at 7:37:21 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 18!
+!provides: 'Graphics-Files-Additional' 1 19!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1205,7 +1205,7 @@ processSBITChunk
 		depth := 16.
 	].! !
 
-!PNGReadWriter methodsFor: 'chunks' stamp: 'nice 5/10/2014 20:25'!
+!PNGReadWriter methodsFor: 'chunks' stamp: 'jmv 1/18/2017 11:52:19'!
 processTransparencyChunk
 
 	"Transcript show: '  TRANSPARENCY ',chunk printString."
@@ -1213,7 +1213,9 @@ processTransparencyChunk
 		transparentPixelValue _ chunk unsignedShortAt: 1 bigEndian: true.
 		bitsPerChannel <= 8
 			ifTrue: [
-				palette at: transparentPixelValue + 1 put: Color transparent ]
+				"If palette is nil, we are building a GrayForm from a grayscale 8bpp file. Ignore any transparency chunk!!"
+				palette ifNotNil: [
+					palette at: transparentPixelValue + 1 put: Color transparent ]]
 			ifFalse: [
 				palette at: 1 put: Color transparent ].
 		^ self ].

@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #2980] on 17 November 2016 at 11:51:21 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3038] on 18 January 2017 at 7:37:04 pm'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 11!
+!provides: 'JSON' 1 12!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -443,11 +443,12 @@ readDictionary
 	] repeat.
 ! !
 
-!Json methodsFor: 'parsing' stamp: 'jmv 8/28/2013 11:49'!
+!Json methodsFor: 'parsing' stamp: 'jmv 1/18/2017 16:52:22'!
 readFrom: aStream
 	"aStream must be on a String.
 	This means that it should contain only Characters (i.e. ISO 8859-15).
 	To handle a ByteArray with utf-8, please do 'String fromUtf8: aByteArray' or similar"
+	aStream atEnd ifTrue: [ ^ JsonObject new ].
 	self stream: aStream.
 	^ self readAny! !
 
