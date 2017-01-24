@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3038] on 18 January 2017 at 7:37:21 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3040] on 24 January 2017 at 11:30:38 am'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 19!
+!provides: 'Graphics-Files-Additional' 1 20!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -573,7 +573,7 @@ copyPixelsIndexed: y at: startX by: incX
 	].
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:20'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/24/2017 11:22:33'!
 copyPixelsRGB: y
 	"Handle non-interlaced RGB color mode (colorType = 2)"
 
@@ -590,7 +590,7 @@ copyPixelsRGB: y
 					at: 3 put: (thisScanline at: i);
 					at: 2 put: (thisScanline at: i + 1);
 					at: 1 put: (thisScanline at: i + 2).
-				tempBits at: x put: pixel.
+				tempBits at: x put: pixel normalize.
 				i _ i + 3 ].
 			transparentPixelValue ifNotNil: [
 				1 to: width do: [ :x |
@@ -607,13 +607,13 @@ copyPixelsRGB: y
 							at: 3 put: (thisScanline at: i);
 							at: 2 put: (thisScanline at: i + 2);
 							at: 1 put: (thisScanline at: i + 4).
-						tempBits at: x put: pixel ]
+						tempBits at: x put: pixel normalize ]
 					ifFalse: [
 						tempBits at: x put: 0 ].
 					i _ i + 6 ]].
 	tempForm displayOn: form at: 0 @ y rule: Form over! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nice 5/10/2014 20:23'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/24/2017 11:22:49'!
 copyPixelsRGB: y at: startX by: incX
 	"Handle interlaced RGB color mode (colorType = 2)"
 	| i pixel tempForm tempBits xx loopsToDo |
@@ -635,7 +635,7 @@ copyPixelsRGB: y at: startX by: incX
 					at: 3 put: (thisScanline at: i);
 					at: 2 put: (thisScanline at: i + 1);
 					at: 1 put: (thisScanline at: i + 2).
-				tempBits at: xx put: pixel.
+				tempBits at: xx put: pixel normalize.
 				i _ i + 3.
 				xx _ xx + incX ].
 			transparentPixelValue ifNotNil: [
@@ -654,14 +654,14 @@ copyPixelsRGB: y at: startX by: incX
 							at: 3 put: (thisScanline at: i);
 							at: 2 put: (thisScanline at: i + 2);
 							at: 1 put: (thisScanline at: i + 4).
-						tempBits at: xx put: pixel ]
+						tempBits at: xx put: pixel normalize ]
 					ifFalse: [
 						tempBits at: xx put: 0 ].
 					i _ i + 6.
 					xx _ xx + incX ]].
 	tempForm displayOn: form at: 0 @ y rule: Form over! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'ar 2/18/2004 23:58'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/24/2017 11:23:10'!
 copyPixelsRGBA: y
 	"Handle non-interlaced RGBA color modes (colorType = 6)"
 
@@ -688,12 +688,12 @@ copyPixelsRGBA: y
 				at: 3 put: (thisScanline at: i);
 				at: 2 put: (thisScanline at: i+2);
 				at: 1 put: (thisScanline at: i+4).
-			tempBits at: x+1 put: pixel.
+			tempBits at: x+1 put: pixel normalize.
 	].
 	tempForm displayOn: form at: 0@y rule: Form over.
 ! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'nk 7/27/2004 17:57'!
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'jmv 1/24/2017 11:23:39'!
 copyPixelsRGBA: y at: startX by: incX
 	"Handle interlaced RGBA color modes (colorType = 6)"
 
@@ -709,7 +709,7 @@ copyPixelsRGBA: y at: startX by: incX
 				at: 3 put: (thisScanline at: i);
 				at: 2 put: (thisScanline at: i+1);
 				at: 1 put: (thisScanline at: i+2).
-			tempBits at: x+1 put: pixel.
+			tempBits at: x+1 put: pixel normalize.
 			i := i + 4.
 		]
 	] ifFalse: [
@@ -719,7 +719,7 @@ copyPixelsRGBA: y at: startX by: incX
 				at: 3 put: (thisScanline at: i);
 				at: 2 put: (thisScanline at: i+2);
 				at: 1 put: (thisScanline at: i+4).
-			tempBits at: x+1 put: pixel.
+			tempBits at: x+1 put: pixel normalize.
 			i := i + 8.
 		].
 	].
