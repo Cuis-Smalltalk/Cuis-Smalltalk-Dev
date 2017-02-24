@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3022] on 16 January 2017 at 10:47:23 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3042] on 10 February 2017 at 5:39:54 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 68!
+!provides: 'Tests' 1 70!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -724,6 +724,36 @@ TestCase subclass: #StatisticsTest
 	category: 'Tests-Statistics'!
 !classDefinition: 'StatisticsTest class' category: #'Tests-Statistics'!
 StatisticsTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #BehaviorTest category: #'Tests-Kernel-Classes'!
+TestCase subclass: #BehaviorTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Classes'!
+!classDefinition: 'BehaviorTest class' category: #'Tests-Kernel-Classes'!
+BehaviorTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TestCaseTest category: #'Tests-Tools-Testing'!
+TestCase subclass: #TestCaseTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Tools-Testing'!
+!classDefinition: 'TestCaseTest class' category: #'Tests-Tools-Testing'!
+TestCaseTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TestSuiteTest category: #'Tests-Tools-Testing'!
+TestCase subclass: #TestSuiteTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Tools-Testing'!
+!classDefinition: 'TestSuiteTest class' category: #'Tests-Tools-Testing'!
+TestSuiteTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTester category: #'Tests-Exceptions'!
@@ -10455,6 +10485,227 @@ testSum
 	self assert: i elements sum = correct.
 	self assert: i sum = correct.
 	self assert: i histogram sum = correct! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HernanWilkinson 1/19/2017 20:32:36'!
+testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass
+
+	| invalidSuperclass |
+	
+	invalidSuperclass := Collection.
+	self
+		should: [ SmallInteger allSuperclassesUpTo: invalidSuperclass ]
+		raise: Error
+		withExceptionDo: [:anError | 
+			self assert: anError messageText equals: (nil superclassNotValidErrorDescriptionFor: invalidSuperclass) ]
+		
+	! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 2/10/2017 10:51:40'!
+testAllSuperclassesUpToPutsFirstSuperclassesFirst
+
+	| superclasses |
+	
+	superclasses := SmallInteger allSuperclassesUpTo: Number.
+	
+	self assert: 2 equals: superclasses size.
+	self assert: Integer equals: superclasses first.
+	self assert: Number equals: superclasses second! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 2/10/2017 10:52:55'!
+testAllSuperclassesUpToStopsOnRightClass
+
+	| superclasses |
+	
+	superclasses := SmallInteger allSuperclassesUpTo: Integer.
+	
+	self assert: 1 equals: superclasses size.
+	self assert: (superclasses includes: Integer)
+	
+	! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 2/10/2017 10:52:30'!
+testWithAllSuperclassesUpToIncludesReceiverClass
+
+	| superclasses |
+	
+	superclasses := SmallInteger withAllSuperclassesUpTo: Number.
+	
+	self assert: 3 equals: superclasses size.
+	self assert: SmallInteger equals: superclasses first.
+	self assert: Integer equals: superclasses second.
+	self assert: Number equals: superclasses third ! !
+
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:52:39'!
+testShouldRaiseWithExceptionDoFailsWhenNoExceptionIsSignaled
+	
+	| failureSignaled |
+	
+	failureSignaled := false.
+	
+	[self 
+		should: []
+		raise: ZeroDivide 
+		withExceptionDo: [:signaledException | self error: 'should not evaluate this block' ]]
+		on: TestResult failure
+		do: [:failure | failureSignaled := true ].
+		
+	self assert: failureSignaled ! !
+
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:52:31'!
+testShouldRaiseWithExceptionDoFailsWhenOtherExceptionTypeIsSignaled
+
+	| exceptionToRaise |
+	
+	exceptionToRaise := Error new.
+	
+	[self 
+		should: [ exceptionToRaise signal ]
+		raise: ZeroDivide 
+		withExceptionDo: [:signaledException | self error: 'should not evalaute this block' ]]
+		on: Error
+		do: [:anError | self assert: exceptionToRaise equals: anError ]
+		
+! !
+
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:51:53'!
+testShouldRaiseWithExceptionDoPassSignaledExceptionToAssertionsBlock
+
+	| exceptionToRaise |
+	
+	exceptionToRaise := Error new.
+	
+	self 
+		should: [ exceptionToRaise signal ]
+		raise: exceptionToRaise class
+		withExceptionDo: [:signaledException |
+			self assert: exceptionToRaise equals: signaledException ].
+		
+! !
+
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:51:45'!
+testShouldRaiseWithExceptionDoValuesAssertionsBlockWhenExceptionIsRaised
+
+	| exceptionToRaise assertionsBlockEvaluated |
+	
+	exceptionToRaise := Error new.
+	assertionsBlockEvaluated := false.
+	
+	self 
+		should: [ exceptionToRaise signal ]
+		raise: exceptionToRaise class
+		withExceptionDo: [:signaledException |
+			assertionsBlockEvaluated := true ].
+		
+	self assert: assertionsBlockEvaluated ! !
+
+!TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:11:43'!
+assert: expectedTestSuite hasSameTestsAs: resultTestSuite
+
+	| expectedTests resultTests |
+	
+	expectedTests _ expectedTestSuite tests.
+	resultTests _ resultTestSuite tests.
+	
+	self assert: expectedTests size equals: resultTests size.
+	self assert: (expectedTests allSatisfy: [:expectedTest | resultTests anySatisfy: [:resultTest | self is: expectedTest equalTo: resultTest ]])
+	! !
+
+!TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 16:40:32'!
+assertIncludesThisTest: aTestSuite 
+	
+	| testSelector |
+	
+	testSelector _ thisContext sender selector.
+	^aTestSuite tests anySatisfy: [ :aTestCase | aTestCase class = self class and: [aTestCase selector = testSelector ]]! !
+
+!TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:20:29'!
+is: expectedTest equalTo: resultTest
+
+	^expectedTest class = resultTest class and: [ expectedTest selector =  resultTest selector ]! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:22:49'!
+test01SuiteForTestCaseClassHasTheSameTestAsCreatingTheSuiteFromTheTestCaseClass
+
+	self assert: self class buildSuite hasSameTestsAs: (TestSuite forClass: self class)! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:24:17'!
+test02SuiteForNoTestCaseClassUsesTestClassWithSameNameEndingWithTest
+
+	self assert: self class buildSuite hasSameTestsAs: (TestSuite forClass: TestSuite)! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:37:01'!
+test03SuiteForNoTestCaseClassAndNoTestClassLooksForReferencesInTests
+
+	| objectTestSuite referencesToObject testCaseClasses |
+	
+	"I need to be sure that Object has no test class for the test to make sense - Hernan"
+	self assert: Object testCaseClass isNil.
+	
+	objectTestSuite _ TestSuite forClass: Object.
+	referencesToObject _ Object allCallsOn collect: [:aMethodReference | aMethodReference actualClass ]. 
+	testCaseClasses _ (objectTestSuite tests collect: [:aTestCase | aTestCase class ]) asSet.
+
+	self assert: objectTestSuite tests notEmpty.
+	self assert: (testCaseClasses allSatisfy: [:aTestCaseClass | (aTestCaseClass is: #TestCaseClass) and: [ referencesToObject includes: aTestCaseClass ]])
+	! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:41:52'!
+test04SuiteForTestMethodIncludesOnlyTheMethod
+
+	self assert: (TestSuite new addTest: (self class selector: thisContext selector)) hasSameTestsAs: (TestSuite forCompiledMethod: thisContext method)! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:56:00'!
+test05SuiteForNoTestMethodIncludesTestCaseSendingTheCompiledMethodSelector
+
+	| compiledMethodSuite compiledMethodSelector senders |
+	
+	compiledMethodSelector _ #addTest:.
+	compiledMethodSuite _ TestSuite forCompiledMethod: (TestSuite compiledMethodAt: compiledMethodSelector).
+	senders _ (Smalltalk allCallsOn: compiledMethodSelector) collect: [:aMethodReference | aMethodReference selector ].
+	
+	self assert: compiledMethodSuite tests notEmpty.
+	self assert: (compiledMethodSuite tests allSatisfy: [:aTestCase | (aTestCase class is: #TestCaseClass) and: [ senders includes: aTestCase selector]])! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 16:39:30'!
+test06ForSystemCategoryWithTestCasesIncludesOnlyTestCasesClasses
+
+	| suite |
+	
+	suite _ TestSuite forSystemCategoryNamed: self class category using: SystemOrganization.
+	
+	"I just make a simple assertion that verifies this test is included - Hernan"
+	self assertIncludesThisTest: suite ! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 16:41:00'!
+test07ForSystemCategoryWithNoTestCasesIncludesTestClassesTests
+
+	| suite |
+	
+	suite _ TestSuite forSystemCategoryNamed: TestSuite category using: SystemOrganization.
+	
+	"I just make a simple assertion that verifies this test is included - Hernan"
+	self assertIncludesThisTest: suite ! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 16:41:08'!
+test08ForMessageCategoryContainingTestCasesIncludesThoseTestCases
+
+	| suite classOrganizer |
+	
+	classOrganizer _ self class organization.
+	suite _ TestSuite forMessageCategoryNamed: (classOrganizer categoryOfElement: thisContext selector) of: self class categorizedWith: classOrganizer.
+
+	"I just make a simple assertion that verifies this test is included - Hernan"
+	self assertIncludesThisTest: suite ! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 16:38:46'!
+test09ForMessageCategoryWihoutTestIsEmpty
+
+	| suite classOrganizer |
+	
+	classOrganizer _ self class organization.
+	suite _ TestSuite forMessageCategoryNamed: (classOrganizer categoryOfElement: #assert:hasSameTestsAs:) of: self class categorizedWith: classOrganizer.
+
+	self assert: suite tests isEmpty! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
