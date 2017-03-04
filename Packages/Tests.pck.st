@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3042] on 10 February 2017 at 5:39:54 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3049] on 3 March 2017 at 7:16:21 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 70!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 71!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -10623,6 +10623,11 @@ is: expectedTest equalTo: resultTest
 
 	^expectedTest class = resultTest class and: [ expectedTest selector =  resultTest selector ]! !
 
+!TestSuiteTest methodsFor: 'test support' stamp: 'HAW 3/3/2017 16:37:00'!
+quickMethodTest
+
+	"stub for a quick method - Hernan"! !
+
 !TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 2/10/2017 15:22:49'!
 test01SuiteForTestCaseClassHasTheSameTestAsCreatingTheSuiteFromTheTestCaseClass
 
@@ -10706,6 +10711,12 @@ test09ForMessageCategoryWihoutTestIsEmpty
 	suite _ TestSuite forMessageCategoryNamed: (classOrganizer categoryOfElement: #assert:hasSameTestsAs:) of: self class categorizedWith: classOrganizer.
 
 	self assert: suite tests isEmpty! !
+
+!TestSuiteTest methodsFor: 'tests - instance creation' stamp: 'HAW 3/3/2017 18:53:02'!
+test10CanNotDebugAsFailureQuickMethods
+
+	self class debugAsFailure: #quickMethodTest ifCanNot: [ ^self ].
+	self fail! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
