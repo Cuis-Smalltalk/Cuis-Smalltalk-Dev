@@ -39,13 +39,13 @@ Next is only needed if you want to play with OpenCL (you also need Catalyst driv
 
 ### Starting Cuis Smalltalk ###
 ```
-~/MyProject# cogspur64/squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3045-spur-64.image
+~/MyProject# cogspur64/squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3059-spur-64.image
 ```
 
 ### Notes ###
 
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
 
-* If you can't find Cuis5.0-3045-spur-64.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3059-spur-64.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
