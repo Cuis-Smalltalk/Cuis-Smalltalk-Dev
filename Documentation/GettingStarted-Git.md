@@ -28,6 +28,7 @@ For Linux on x86 hardware
 - Alternative instructions for ArchLinux below
 - Specific instructions for Chromebooks and Raspberry Pi below
 ```
+~/MyProject# rm -r cogspur
 ~/MyProject# wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_linux32x86_squeak.cog.spur_201608171728.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./products/cogspurlinuxht ./cogspur
@@ -65,15 +66,15 @@ Log out and log back in, or reboot the machine.
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3059-spur.image
+$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3063-spur.image
 ```
 MacOSX:
 ```
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3059-spur.image
+$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3063-spur.image
 ```
 Linux:
 ```
-$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3059-spur.image
+$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3063-spur.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
@@ -120,6 +121,6 @@ $ ./linuxVM_ARM.sh
 ```
 
 ### Notes ###
-* If you can't find Cuis5.0-3059-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3063-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
 * If you want to use a Spur64 VM, use the latest from www.opensmalltalk.org (it is still under heavy development and might be less stable than 32 bit VMs)
