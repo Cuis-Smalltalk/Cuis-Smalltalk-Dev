@@ -1,6 +1,6 @@
 ## Setting up and starting Cuis using Git and the command line
 
-Instructions for setting up Cuis using Git, for Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-UsingGUI.md).
+Instructions for setting up Cuis using Git, for Linux Bash, MacOSX command line, or Git Bash on Windows. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandline.md).
 
 If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
@@ -24,7 +24,7 @@ $ curl -L -o CogSpur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/relea
 $ tar -zxvf CogSpur.tgz
 ```
 For Linux on x86 hardware
-- For x86-64 hardware systems, we recommend [Setting up and starting Cuis 64 bits using a command line](GettingStarted-UsingCommandline-Linux64.md)
+- For x86-64 hardware systems, we recommend [Setting up and starting Cuis 64 bits using a command line](GettingStarted-Linux64-Commandline.md)
 - Alternative instructions for ArchLinux below
 - Specific instructions for Chromebooks and Raspberry Pi below
 ```

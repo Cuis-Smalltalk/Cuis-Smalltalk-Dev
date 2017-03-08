@@ -1,6 +1,6 @@
 ## Setting up and starting Cuis 64 bits using Git and the command line
 
-These are instructions for setting up Cuis in the 64 bits Spur flavor, on Linux on x86-64 computers using Git Bash. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you are not on x86-64 or still prefer a 32 bit VM, see [Setting up and starting Cuis using a command line](GettingStarted-UsingCommandline.md).
+These are instructions for setting up Cuis in the 64 bits Spur flavor, on Linux on x86-64 computers using Git Bash. This method has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you are not on x86-64 or still prefer a 32 bit VM, see [Setting up and starting Cuis using a command line](GettingStarted-Commandline.md).
 
 If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 

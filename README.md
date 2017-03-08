@@ -31,9 +31,9 @@ Cuis Smalltalk is our attempt at this. Furthermore, we believe we are doing some
 Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. We also adopt recent enhancements from Squeak.
 
 ### Setting up Cuis in your machine ###
-If you are not familiar with Git, follow the instructions in [Getting started using GUI](Documentation/GettingStarted-UsingGUI.md) or [Getting started using commandline](Documentation/GettingStarted-UsingCommandline.md) .
+If you are not familiar with Git, follow the instructions in [Getting started using GUI](Documentation/GettingStarted-NoCommandLine.md) or [Getting started using commandline](Documentation/GettingStarted-Commandline.md) .
 
-If you are familiar with Git, it might be best to follow [Getting started using Git Bash](Documentation/GettingStarted-UsingGitAndCommandline.md) .
+If you are familiar with Git, it might be best to follow [Getting started using Git Bash](Documentation/GettingStarted-Git.md) .
 
 ### Getting Started ###
 If you are learning Smalltalk, the Cuis community can help you. Check the ["Learning Cuis Smalltalk"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis "Learning Cuis Smalltalk") repository. It includes several great tutorials. Also, the TerseGuide.pck.st package (in the /Packages folder in this repo) is useful both as a guide and a reference.

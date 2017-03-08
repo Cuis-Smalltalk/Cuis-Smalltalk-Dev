@@ -1,6 +1,6 @@
 ## Setting up and starting Cuis using a command line
 
-What follows are instructions for setting up Cuis (32 bits Spur flavor) on Linux or Mac OS X using the command line. If you are familiar with Git, please see [Getting started using Git Bash](GettingStarted-UsingGitAndCommandline.md). If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-UsingGUI.md).
+What follows are instructions for setting up Cuis (32 bits Spur flavor) on Linux or Mac OS X using the command line. If you are familiar with Git, please see [Getting started using Git Bash](GettingStarted-Git.md). If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandLine.md).
 
 If you want to contribute back to the community, you might subscribe to the Cuis mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
@@ -18,7 +18,7 @@ $ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3063-spur.imag
 ```
 
 ### On Linux ###
-On Linux we recommend using 64 bits Cuis if possible (i.e. if on x86-64 hardware). See [Setting up and starting Cuis 64 bits using a command line](GettingStarted-UsingCommandline-Linux64.md). For Linux on other platforms, see [Getting started using Git Bash](GettingStarted-UsingGitAndCommandline.md).
+On Linux we recommend using 64 bits Cuis if possible (i.e. if on x86-64 hardware). See [Setting up and starting Cuis 64 bits using a command line](GettingStarted-Linux64-Commandline.md). For Linux on other platforms, see [Getting started using Git Bash](GettingStarted-Git.md).
 
 ### Notes ###
 * If you can't find Cuis5.0-3063-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
