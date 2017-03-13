@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3001] on 16 December 2016 at 10:21:41 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3063] on 13 March 2017 at 4:15:13 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 73!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'SignalProcessing' 1 74!
 !requires: 'Statistics' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -2467,7 +2467,7 @@ applyMap: map
 applyMapInverse: map
 	self replaceValues: [ :i :j :v | map inverseValueAt: (self i: i j: j)]! !
 
-!FloatImage methodsFor: 'interpolation' stamp: 'jmv 5/4/2015 13:45'!
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 3/12/2017 19:28:39'!
 areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	"Answer an interpolated value at (most likely) non-integer x@y.
 	x and y can be any Float values in in [1.0 .. width] and [1.0 .. height].
@@ -2507,10 +2507,10 @@ areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	yIndex0 > height ifTrue: [ ^0.0 ].
 	(yIndex0 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
 
-	xStart _ (x - hw) rounded max: 1.
-	xStop _ (x + hw) rounded min: width.
-	yStart _ (y - hh) rounded max: 1.
-	yStop _ (y + hh) rounded min: height.
+	xStart _ (x - hw) ceiling max: 1.
+	xStop _ (x + hw) floor min: width.
+	yStart _ (y - hh) ceiling max: 1.
+	yStop _ (y + hh) floor min: height.
 
 	"Apply filter."
 	sum _ 0.0.
@@ -6021,6 +6021,35 @@ new
 new: s
 	self error: 'Please call PerspectiveTransformation>>#new (without arguments).'.
 	^self new! !
+
+!FloatImageTest methodsFor: 'testing' stamp: 'jmv 3/12/2017 19:33:09'!
+testAreaInterpolation
+	"
+	FloatImageTest new testAreaInterpolation
+	"
+	| desiredResult large t subsampled |
+
+	desiredResult _ FloatImage checkerboard: 8@8 n: 8.
+
+	t _ AffineTransformation forImageZoom: 0.25.
+	large _ FloatImage checkerboard: 32@32 n: 8.
+	subsampled _ large areaTransformedBy: t resultExtent: nil.
+	self assert: subsampled = desiredResult.
+
+	t _ AffineTransformation forImageZoom: 1.0/3.0.
+	large _ FloatImage checkerboard: 24@24 n: 8.
+	subsampled _ large areaTransformedBy: t resultExtent: nil.
+	self assert: subsampled = desiredResult.
+
+	t _ AffineTransformation forImageZoom: 0.5.
+	large _ FloatImage checkerboard: 16@16 n: 8.
+	subsampled _ large areaTransformedBy: t resultExtent: nil.
+	self assert: subsampled = desiredResult.
+
+	t _ AffineTransformation forImageZoom: 1.0.
+	large _ FloatImage checkerboard: 8@8 n: 8.
+	subsampled _ large areaTransformedBy: t resultExtent: nil.
+	self assert: subsampled = desiredResult.! !
 
 !FloatImageTest methodsFor: 'testing' stamp: 'jmv 12/10/2012 17:09'!
 testCentroids

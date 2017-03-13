@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3040] on 24 January 2017 at 11:30:38 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3063] on 13 March 2017 at 4:14:44 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 20!
+!provides: 'Graphics-Files-Additional' 1 21!
 !requires: 'Compression' 1 nil nil!
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
@@ -1295,11 +1295,15 @@ writeChunk: crcStream
 writeFileSignature
 	stream nextPutAll: #[ 16r89 16r50 16r4E  16r47 16r0D 16r0A 16r1A 16r0A ]! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 5/13/2016 14:59'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 3/12/2017 19:19:47'!
 writeIDATChunkOn: aStream
 	"Write the IDAT chunk"
 	| z |
 	aStream nextPutAll: 'IDAT' asByteArray.
+
+	"Avoid growing multiple times. do a rough estimation of space needed"
+	aStream growTo: bytesPerScanline * height *11//20.
+
 	z _ ZLibWriteStream on: aStream.
 	form depth <= 8 
 		ifTrue: [ 
