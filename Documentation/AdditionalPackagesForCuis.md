@@ -5,7 +5,7 @@ The Cuis base image includes only kernel functionailty, very basic libraries, an
 
 Some of them are included in the main Cuis GitHub repository, at https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev in the 'Packages' folder. Loading 'Core-Packages.pck.st' loads them all.
 
-Many additional packages are being developed by members of the Cuis community, and stored in other repos. Most of them are of very high quality, well maintained and really useful.
+Many additional packages are being developed by members of the Cuis community, and stored in their own repo. Most of them are of very high quality, well maintained and really useful.
 
 Some of the repos owner by community members, and including packages for Cuis are:
 (Note: Repos whose name starts with 'Cuis' are intended for Cuis Smalltalk)
