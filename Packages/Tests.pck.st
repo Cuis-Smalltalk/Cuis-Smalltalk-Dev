@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3049] on 3 March 2017 at 7:16:21 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3075] on 30 March 2017 at 9:29:20 am'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 71!
+!provides: 'Tests' 1 72!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -34,6 +34,16 @@ Notification subclass: #MyTestNotification
 	category: 'Tests-Exceptions'!
 !classDefinition: 'MyTestNotification class' category: #'Tests-Exceptions'!
 MyTestNotification class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExceptionHandlingConditionTest category: #'Tests-Exceptions'!
+TestCase subclass: #ExceptionHandlingConditionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Exceptions'!
+!classDefinition: 'ExceptionHandlingConditionTest class' category: #'Tests-Exceptions'!
+ExceptionHandlingConditionTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTests category: #'Tests-Exceptions'!
@@ -986,6 +996,283 @@ Test statistics in Collection, Matrix and Histogram hierarchies. (This includes 
 isResumable
 
 	^true! !
+
+!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:50:30'!
+testBlockClosuresCanBeUsedAsHandlingCondition
+
+	self 
+		shouldnt: [ [ Error signal ] on: [:anException | true ] do: [ :anError | ] ]
+		raise: Error.
+		
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:06'!
+testCanCreateFilterConditionWithExceptionTypeAndExceptionType
+
+	| condition |
+	
+	condition := Error - ZeroDivide .
+	
+	self assert: (condition handles: Error new).
+	self deny: (condition handles: ZeroDivide new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:15'!
+testCanCreateFilterConditionWithExceptionTypeAndFilterCondition
+
+	| condition |
+	
+	condition := Error - (ZeroDivide - Halt).
+	
+	self assert: (condition handles: Error new).
+	self deny: (condition handles: ZeroDivide new).
+	self assert: (condition handles: Halt new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:10'!
+testCanCreateFilterConditionWithExceptionTypeAndOrCondition
+
+	| condition |
+	
+	condition := Error - (ZeroDivide, Halt).
+	
+	self assert: (condition handles: Error new).
+	self deny: (condition handles: ZeroDivide new).
+	self deny: (condition handles: Halt new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:35'!
+testCanCreateFilterConditionWithFilterConditionAndExceptionType
+
+	| condition |
+	
+	condition := (Error - Halt) - ZeroDivide.
+		
+	self assert: (condition handles: Error new).
+	self deny: (condition handles: Halt new).
+	self deny: (condition handles: ZeroDivide new).
+! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:43'!
+testCanCreateFilterConditionWithFilterConditionAndFilterCondition
+
+	| condition |
+	
+	condition := (Error - Halt) - (ZeroDivide - Notification).
+		
+	self assert: (condition handles: Error new).
+	self deny: (condition handles: Halt new).
+	self deny: (condition handles: ZeroDivide new).
+	self assert: (condition handles: Notification new).
+! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:39'!
+testCanCreateFilterConditionWithFilterConditionAndOrCondition
+
+	| condition |
+	
+	condition := (Error - Halt) - (Notification, ZeroDivide).
+		
+	self assert: (condition handles: Error new).
+	self deny: (condition handles: Halt new).
+	self deny: (condition handles: Notification new).
+	self deny: (condition handles: ZeroDivide new).
+! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:20'!
+testCanCreateFilterConditionWithOrConditionAndExceptionType
+
+	| condition |
+	
+	condition := (Error, Halt) - ZeroDivide.
+		
+	self assert: (condition handles: Error new).
+	self assert: (condition handles: Halt new).
+	self deny: (condition handles: ZeroDivide new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:29'!
+testCanCreateFilterConditionWithOrConditionAndFilterCondition
+
+	| condition |
+	
+	condition := (Error, Halt) - (ZeroDivide - ArithmeticError).
+		
+	self assert: (condition handles: Error new).
+	self assert: (condition handles: Halt new).
+	self deny: (condition handles: ZeroDivide new).
+	self assert: (condition handles: ArithmeticError new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:25'!
+testCanCreateFilterConditionWithOrConditionAndOrCondition
+
+	| condition |
+	
+	condition := (Error, Halt) - (ArithmeticError, ZeroDivide).
+		
+	self assert: (condition handles: Error new).
+	self assert: (condition handles: Halt new).
+	self deny: (condition handles: ArithmeticError new).
+	self deny: (condition handles: ZeroDivide new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 15:21:29'!
+testCanCreateOrConditionWithExceptionTypeAndExceptionType
+
+	| handlingCondition |
+	
+	handlingCondition := Error, Notification.
+	
+	self assert: (handlingCondition handles: Error new).
+	self assert: (handlingCondition handles: Notification new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:59:39'!
+testCanCreateOrConditionWithExceptionTypeAndFilterCondition
+	
+	| handlingCondition |
+	
+	handlingCondition := Error, (ArithmeticError - ZeroDivide).
+	
+	self assert: (handlingCondition handles: Error new).
+	self assert: (handlingCondition handles: ArithmeticError new).
+	self deny: (handlingCondition handles: ZeroDivide new).
+	
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 15:21:37'!
+testCanCreateOrConditionWithExceptionTypeAndOrCondition
+
+	| handlingCondition |
+	
+	handlingCondition := Error, (Notification, UnhandledError).
+	
+	self assert: (handlingCondition handles: Error new).
+	self assert: (handlingCondition handles: Notification new).
+	self assert: (handlingCondition handles: UnhandledError new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:56:49'!
+testCanCreateOrConditionWithFilterConditionAndExceptionType
+
+	| condition |
+	
+	condition := (Error - ZeroDivide), ArithmeticError .
+	
+	self assert: (condition handles: Error new).
+	self deny: (condition handles: ZeroDivide new).
+	self assert: (condition handles: ArithmeticError new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:56:57'!
+testCanCreateOrConditionWithFilterConditionAndFilterCondition
+
+	| condition |
+	
+	condition := (Error - ZeroDivide), (ArithmeticError - DomainError).
+	
+	self assert: (condition handles: Error new).
+	self deny: (condition handles: ZeroDivide new).
+	self assert: (condition handles: ArithmeticError new).
+	self deny: (condition handles: DomainError new).
+
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:57:02'!
+testCanCreateOrConditionWithFilterConditionAndOrCondition
+
+	| condition |
+	
+	condition := (ArithmeticError - ZeroDivide), (Error, Halt).
+	
+	self assert: (condition handles: ArithmeticError new).
+	self deny: (condition handles: ZeroDivide new).
+	self assert: (condition handles: Error new).
+	self assert: (condition handles: Halt new).
+
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 15:22:01'!
+testCanCreateOrConditionWithOrConditionAndExceptionType
+	
+	| handlingCondition |
+	
+	handlingCondition := (Error, Halt), Notification.
+	
+	self assert: (handlingCondition handles: Error new).
+	self assert: (handlingCondition handles: Halt new).
+	self assert: (handlingCondition handles: Notification new).
+	
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 17:57:09'!
+testCanCreateOrConditionWithOrConditionAndFilterCondition
+
+	| exceptionSet |
+	
+	exceptionSet := (Error, Notification), (ArithmeticError - ZeroDivide).
+	
+	self assert: (exceptionSet handles: Error new).
+	self assert: (exceptionSet handles: Notification new).
+	self assert: (exceptionSet handles: ArithmeticError new).
+	self deny: (exceptionSet handles: ZeroDivide new).
+
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'or condition tests' stamp: 'HAW 3/29/2017 15:22:06'!
+testCanCreateOrConditionWithOrConditionAndOrCondition
+
+	| handlingCondition |
+	
+	handlingCondition := (Error, Halt), (Notification, UnhandledError).
+	
+	self assert: (handlingCondition handles: Error new).
+	self assert: (handlingCondition handles: Halt new).
+	self assert: (handlingCondition handles: Notification new).
+	self assert: (handlingCondition handles: UnhandledError new).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'environment preconditions' stamp: 'HAW 3/29/2017 15:30:05'!
+testExcpetionsFollowTheExpectedHierarchy
+
+	"This test exits because all the others use existing exceptions and assume a subclass relationship
+	If the relationship is not the assumed one, false positives or negatives could happen"
+	
+	self assert: (Error inheritsFrom: Exception).
+	self assert: (Notification inheritsFrom: Exception).
+	self assert: (UnhandledError inheritsFrom: Exception).
+	self assert: (Halt inheritsFrom: Exception).
+	self assert: (ArithmeticError inheritsFrom: Error).
+	self assert: (ZeroDivide inheritsFrom: ArithmeticError).
+	self assert: (DomainError inheritsFrom: ArithmeticError).
+	! !
+
+!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:48:37'!
+testFilterConditionWorksAsExcpetedWhenHandlingException
+
+	self
+		shouldnt: [ [ Error signal ] on: Error - ZeroDivide do: [ :anError |  ] ]
+		raise: Error.
+		
+	self
+		should: [ [ ZeroDivide signal ] on: Error - ZeroDivide do: [ :anError | self fail ]]
+		raise: Error.
+
+! !
+
+!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:49:45'!
+testOrConditionWorksAsExcpetedWhenHandlingException
+
+	self 
+		shouldnt: [ [ Error signal ] on: Error, Notification do: [ :anError | ] ]
+		raise: Error.
+		
+	self 
+		shouldnt: [ [ Notification signal ] on: Error, Notification do: [ :anError |  ] ]
+		raise: Notification 
+
+	! !
 
 !ExceptionTests methodsFor: 'private' stamp: 'md 3/25/2003 23:40'!
 assertSuccess: anExceptionTester
