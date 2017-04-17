@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3036] on 16 January 2017 at 5:17:43 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3068] on 16 April 2017 at 8:22:10 am'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 28!
-!requires: 'FFI' 1 nil nil!
+!provides: 'OpenCL' 1 29!
 !requires: 'SignalProcessing' 1 37 nil!
+!requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -8900,7 +8900,7 @@ clBuildProgram__cl_program: program
 			void (*pfn_notify)(cl_program pfn_notify, 
 			void * user_data
 	);"
-	<apicall: long 'clBuildProgram' (CLProgram ulong CLDeviceID* schar* void* void*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clBuildProgram' (CLProgram ulong CLDeviceID* schar* void* void*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -8928,7 +8928,7 @@ clCompileProgram__cl_program: program
 			void * no_callbacks_jmv, 
 			void * user_data
 	);"
-	<apicall: long 'clCompileProgram' (CLProgram ulong CLDeviceID* schar* ulong CLProgram* void* void* void*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clCompileProgram' (CLProgram ulong CLDeviceID* schar* ulong CLProgram* void* void* void*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -8948,7 +8948,7 @@ clCreateBuffer__cl_context: context
 			void * host_ptr, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLMem 'clCreateBuffer' (CLContext ulonglong ulong void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLMem 'clCreateBuffer' (CLContext ulonglong ulong void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -8966,7 +8966,7 @@ clCreateCommandQueueWithProperties__cl_context: context
 			const cl_queue_properties * properties, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLCommandQueue 'clCreateCommandQueueWithProperties' (CLContext CLDeviceID ulonglong* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLCommandQueue 'clCreateCommandQueueWithProperties' (CLContext CLDeviceID ulonglong* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -8984,7 +8984,7 @@ clCreateCommandQueue__cl_context: context
 			cl_command_queue_properties properties, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLCommandQueue 'clCreateCommandQueue' (CLContext CLDeviceID ulonglong long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLCommandQueue 'clCreateCommandQueue' (CLContext CLDeviceID ulonglong long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9004,7 +9004,7 @@ clCreateContextFromType__const__cl_context_properties__ptr: properties
 			void * user_data, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLContext 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLContext 'clCreateContextFromType' (void* ulonglong void* void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9026,7 +9026,7 @@ clCreateContext__const__cl_context_properties__ptr: properties
 			void * user_data, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLContext 'clCreateContext' (void* ulong CLDeviceID* void* void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLContext 'clCreateContext' (void* ulong CLDeviceID* void* void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9052,7 +9052,7 @@ clCreateImage2D__cl_context: context
 			void * host_ptr, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLMem 'clCreateImage2D' (CLContext ulonglong CLImageFormatStruct* ulong ulong ulong void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLMem 'clCreateImage2D' (CLContext ulonglong CLImageFormatStruct* ulong ulong ulong void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9082,7 +9082,7 @@ clCreateImage3D__cl_context: context
 			void * host_ptr, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLMem 'clCreateImage3D' (CLContext ulonglong CLImageFormatStruct* ulong ulong ulong ulong ulong void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLMem 'clCreateImage3D' (CLContext ulonglong CLImageFormatStruct* ulong ulong ulong ulong ulong void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9104,7 +9104,7 @@ clCreateImage__cl_context: context
 			void * host_ptr, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLMem 'clCreateImage' (CLContext ulonglong CLImageFormatStruct* CLImageDescStruct* void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLMem 'clCreateImage' (CLContext ulonglong CLImageFormatStruct* CLImageDescStruct* void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9122,7 +9122,7 @@ clCreateKernelsInProgram__cl_program: program
 			cl_kernel * kernels, 
 			cl_uint * num_kernels_ret
 	);"
-	<apicall: long 'clCreateKernelsInProgram' (CLProgram ulong CLKernel* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clCreateKernelsInProgram' (CLProgram ulong CLKernel* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9138,7 +9138,7 @@ clCreateKernel__cl_program: program
 			const char * kernel_name, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLKernel 'clCreateKernel' (CLProgram schar* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLKernel 'clCreateKernel' (CLProgram schar* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9160,7 +9160,7 @@ clCreatePipe__cl_context: context
 			const cl_pipe_properties * properties, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLMem 'clCreatePipe' (CLContext ulonglong ulong ulong void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLMem 'clCreatePipe' (CLContext ulonglong ulong ulong void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9184,7 +9184,7 @@ clCreateProgramWithBinary__cl_context: context
 			cl_int * binary_status, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLProgram 'clCreateProgramWithBinary' (CLContext ulong CLDeviceID* ulong* void* long* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLProgram 'clCreateProgramWithBinary' (CLContext ulong CLDeviceID* ulong* void* long* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9204,7 +9204,7 @@ clCreateProgramWithBuiltInKernels__cl_context: context
 			const char * kernel_names, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLProgram 'clCreateProgramWithBuiltInKernels' (CLContext ulong CLDeviceID* schar* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLProgram 'clCreateProgramWithBuiltInKernels' (CLContext ulong CLDeviceID* schar* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9224,7 +9224,7 @@ clCreateProgramWithSource__cl_context: context
 			const size_t * lengths, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLProgram 'clCreateProgramWithSource' (CLContext ulong void* ulong* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLProgram 'clCreateProgramWithSource' (CLContext ulong void* ulong* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9240,7 +9240,7 @@ clCreateSamplerWithProperties__cl_context: context
 			const cl_sampler_properties * normalized_coords, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLSampler 'clCreateSamplerWithProperties' (CLContext ulonglong* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLSampler 'clCreateSamplerWithProperties' (CLContext ulonglong* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9260,7 +9260,7 @@ clCreateSampler__cl_context: context
 			cl_filter_mode filter_mode, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLSampler 'clCreateSampler' (CLContext ulong ulong ulong long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLSampler 'clCreateSampler' (CLContext ulong ulong ulong long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9280,7 +9280,7 @@ clCreateSubBuffer__cl_mem: buffer
 			const void * buffer_create_info, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLMem 'clCreateSubBuffer' (CLMem ulonglong ulong void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLMem 'clCreateSubBuffer' (CLMem ulonglong ulong void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9300,7 +9300,7 @@ clCreateSubDevices__cl_device_id: in_device
 			cl_device_id * out_devices, 
 			cl_uint * num_devices_ret
 	);"
-	<apicall: long 'clCreateSubDevices' (CLDeviceID void* ulong CLDeviceID* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clCreateSubDevices' (CLDeviceID void* ulong CLDeviceID* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9314,7 +9314,7 @@ clCreateUserEvent__cl_context: context
 			cl_context context, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLEvent 'clCreateUserEvent' (CLContext long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLEvent 'clCreateUserEvent' (CLContext long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9332,7 +9332,7 @@ clEnqueueBarrierWithWaitList__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueBarrierWithWaitList' (CLCommandQueue ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueBarrierWithWaitList' (CLCommandQueue ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9344,7 +9344,7 @@ clEnqueueBarrier__cl_command_queue: command_queue
 	"cl_int clEnqueueBarrier(
 			cl_command_queue command_queue
 	);"
-	<apicall: long 'clEnqueueBarrier' (CLCommandQueue) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueBarrier' (CLCommandQueue) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9380,7 +9380,7 @@ clEnqueueCopyBufferRect__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBufferRect' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueCopyBufferRect' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9408,7 +9408,7 @@ clEnqueueCopyBufferToImage__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBufferToImage' (CLCommandQueue CLMem CLMem ulong ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueCopyBufferToImage' (CLCommandQueue CLMem CLMem ulong ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9436,7 +9436,7 @@ clEnqueueCopyBuffer__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyBuffer' (CLCommandQueue CLMem CLMem ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueCopyBuffer' (CLCommandQueue CLMem CLMem ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9464,7 +9464,7 @@ clEnqueueCopyImageToBuffer__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyImageToBuffer' (CLCommandQueue CLMem CLMem ulong* ulong* ulong ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueCopyImageToBuffer' (CLCommandQueue CLMem CLMem ulong* ulong* ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9492,7 +9492,7 @@ clEnqueueCopyImage__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueCopyImage' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueCopyImage' (CLCommandQueue CLMem CLMem ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9520,7 +9520,7 @@ clEnqueueFillBuffer__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueFillBuffer' (CLCommandQueue CLMem void* ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueFillBuffer' (CLCommandQueue CLMem void* ulong ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9546,7 +9546,7 @@ clEnqueueFillImage__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueFillImage' (CLCommandQueue CLMem void* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueFillImage' (CLCommandQueue CLMem void* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9576,7 +9576,7 @@ clEnqueueMapBuffer__cl_command_queue: command_queue
 			cl_event * event, 
 			cl_int * errcode_ret
 	);"
-	<apicall: void* 'clEnqueueMapBuffer' (CLCommandQueue CLMem ulong ulonglong ulong ulong ulong CLEvent* CLEvent* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: void* 'clEnqueueMapBuffer' (CLCommandQueue CLMem ulong ulonglong ulong ulong ulong CLEvent* CLEvent* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9610,7 +9610,7 @@ clEnqueueMapImage__cl_command_queue: command_queue
 			cl_event * event, 
 			cl_int * errcode_ret
 	);"
-	<apicall: void* 'clEnqueueMapImage' (CLCommandQueue CLMem ulong ulonglong ulong* ulong* ulong* ulong* ulong CLEvent* CLEvent* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: void* 'clEnqueueMapImage' (CLCommandQueue CLMem ulong ulonglong ulong* ulong* ulong* ulong* ulong CLEvent* CLEvent* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9628,7 +9628,7 @@ clEnqueueMarkerWithWaitList__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueMarkerWithWaitList' (CLCommandQueue ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueMarkerWithWaitList' (CLCommandQueue ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9642,7 +9642,7 @@ clEnqueueMarker__cl_command_queue: command_queue
 			cl_command_queue command_queue, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueMarker' (CLCommandQueue CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueMarker' (CLCommandQueue CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9666,7 +9666,7 @@ clEnqueueMigrateMemObjects__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueMigrateMemObjects' (CLCommandQueue ulong CLMem* ulonglong ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueMigrateMemObjects' (CLCommandQueue ulong CLMem* ulonglong ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9694,7 +9694,7 @@ clEnqueueNDRangeKernel__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueNDRangeKernel' (CLCommandQueue CLKernel ulong ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueNDRangeKernel' (CLCommandQueue CLKernel ulong ulong* ulong* ulong* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9723,7 +9723,7 @@ clEnqueueNativeKernel__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueNativeKernel' (CLCommandQueue void* ulong ulong CLMem* void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueNativeKernel' (CLCommandQueue void* ulong ulong CLMem* void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9761,7 +9761,7 @@ clEnqueueReadBufferRect__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueReadBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueReadBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9789,7 +9789,7 @@ clEnqueueReadBuffer__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueReadBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueReadBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9821,7 +9821,7 @@ clEnqueueReadImage__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueReadImage' (CLCommandQueue CLMem ulong ulong* ulong* ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueReadImage' (CLCommandQueue CLMem ulong ulong* ulong* ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9847,7 +9847,7 @@ clEnqueueSVMFree__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueSVMFree' (CLCommandQueue ulong void* void* void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueSVMFree' (CLCommandQueue ulong void* void* void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9873,7 +9873,7 @@ clEnqueueSVMMap__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueSVMMap' (CLCommandQueue ulong ulonglong void* ulong ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueSVMMap' (CLCommandQueue ulong ulonglong void* ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9899,7 +9899,7 @@ clEnqueueSVMMemFill__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueSVMMemFill' (CLCommandQueue void* void* ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueSVMMemFill' (CLCommandQueue void* void* ulong ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9925,7 +9925,7 @@ clEnqueueSVMMemcpy__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueSVMMemcpy' (CLCommandQueue ulong void* void* ulong ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueSVMMemcpy' (CLCommandQueue ulong void* void* ulong ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9945,7 +9945,7 @@ clEnqueueSVMUnmap__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueSVMUnmap' (CLCommandQueue void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueSVMUnmap' (CLCommandQueue void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9965,7 +9965,7 @@ clEnqueueTask__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueTask' (CLCommandQueue CLKernel ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueTask' (CLCommandQueue CLKernel ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -9987,7 +9987,7 @@ clEnqueueUnmapMemObject__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueUnmapMemObject' (CLCommandQueue CLMem void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueUnmapMemObject' (CLCommandQueue CLMem void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10003,7 +10003,7 @@ clEnqueueWaitForEvents__cl_command_queue: command_queue
 			cl_uint num_events, 
 			const cl_event * event_list
 	);"
-	<apicall: long 'clEnqueueWaitForEvents' (CLCommandQueue ulong CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueWaitForEvents' (CLCommandQueue ulong CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10041,7 +10041,7 @@ clEnqueueWriteBufferRect__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueWriteBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueWriteBufferRect' (CLCommandQueue CLMem ulong ulong* ulong* ulong* ulong ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10069,7 +10069,7 @@ clEnqueueWriteBuffer__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueWriteBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueWriteBuffer' (CLCommandQueue CLMem ulong ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10101,7 +10101,7 @@ clEnqueueWriteImage__cl_command_queue: command_queue
 			const cl_event * event_wait_list, 
 			cl_event * event
 	);"
-	<apicall: long 'clEnqueueWriteImage' (CLCommandQueue CLMem ulong ulong* ulong* ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clEnqueueWriteImage' (CLCommandQueue CLMem ulong ulong* ulong* ulong ulong void* ulong CLEvent* CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10113,7 +10113,7 @@ clFinish__cl_command_queue: command_queue
 	"cl_int clFinish(
 			cl_command_queue command_queue
 	);"
-	<apicall: long 'clFinish' (CLCommandQueue) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clFinish' (CLCommandQueue) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10125,7 +10125,7 @@ clFlush__cl_command_queue: command_queue
 	"cl_int clFlush(
 			cl_command_queue command_queue
 	);"
-	<apicall: long 'clFlush' (CLCommandQueue) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clFlush' (CLCommandQueue) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10145,7 +10145,7 @@ clGetCommandQueueInfo__cl_command_queue: command_queue
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetCommandQueueInfo' (CLCommandQueue ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetCommandQueueInfo' (CLCommandQueue ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10165,7 +10165,7 @@ clGetContextInfo__cl_context: context
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetContextInfo' (CLContext ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetContextInfo' (CLContext ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10185,7 +10185,7 @@ clGetDeviceIDs__cl_platform_id: platform
 			cl_device_id * devices, 
 			cl_uint * num_devices
 	);"
-	<apicall: long 'clGetDeviceIDs' (CLPlatformID ulonglong ulong CLDeviceID* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetDeviceIDs' (CLPlatformID ulonglong ulong CLDeviceID* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10205,7 +10205,7 @@ clGetDeviceInfo__cl_device_id: device
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetDeviceInfo' (CLDeviceID ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetDeviceInfo' (CLDeviceID ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10225,7 +10225,7 @@ clGetEventInfo__cl_event: event
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetEventInfo' (CLEvent ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetEventInfo' (CLEvent ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10245,7 +10245,7 @@ clGetEventProfilingInfo__cl_event: event
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetEventProfilingInfo' (CLEvent ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetEventProfilingInfo' (CLEvent ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10259,7 +10259,7 @@ clGetExtensionFunctionAddressForPlatform__cl_platform_id: platform
 			cl_platform_id platform, 
 			const char * func_name
 	);"
-	<apicall: void* 'clGetExtensionFunctionAddressForPlatform' (CLPlatformID schar*) module: 'libOpenCL-32bit.so'>
+	<apicall: void* 'clGetExtensionFunctionAddressForPlatform' (CLPlatformID schar*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10271,7 +10271,7 @@ clGetExtensionFunctionAddress__const__char__ptr: func_name
 	"void * clGetExtensionFunctionAddress(
 			const char * func_name
 	);"
-	<apicall: void* 'clGetExtensionFunctionAddress' (schar*) module: 'libOpenCL-32bit.so'>
+	<apicall: void* 'clGetExtensionFunctionAddress' (schar*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10291,7 +10291,7 @@ clGetImageInfo__cl_mem: image
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetImageInfo' (CLMem ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetImageInfo' (CLMem ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10313,7 +10313,7 @@ clGetKernelArgInfo__cl_kernel: kernel
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetKernelArgInfo' (CLKernel ulong ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetKernelArgInfo' (CLKernel ulong ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10333,7 +10333,7 @@ clGetKernelInfo__cl_kernel: kernel
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetKernelInfo' (CLKernel ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetKernelInfo' (CLKernel ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10355,7 +10355,7 @@ clGetKernelWorkGroupInfo__cl_kernel: kernel
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetKernelWorkGroupInfo' (CLKernel CLDeviceID ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetKernelWorkGroupInfo' (CLKernel CLDeviceID ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10375,7 +10375,7 @@ clGetMemObjectInfo__cl_mem: memobj
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetMemObjectInfo' (CLMem ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetMemObjectInfo' (CLMem ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10395,7 +10395,7 @@ clGetPipeInfo__cl_mem: pipe
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetPipeInfo' (CLMem ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetPipeInfo' (CLMem ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10411,7 +10411,7 @@ clGetPlatformIDs__cl_uint: num_entries
 			cl_platform_id * platforms, 
 			cl_uint * num_platforms
 	);"
-	<apicall: long 'clGetPlatformIDs' (ulong CLPlatformID* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetPlatformIDs' (ulong CLPlatformID* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10431,7 +10431,7 @@ clGetPlatformInfo__cl_platform_id: platform
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetPlatformInfo' (CLPlatformID ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetPlatformInfo' (CLPlatformID ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10453,7 +10453,7 @@ clGetProgramBuildInfo__cl_program: program
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetProgramBuildInfo' (CLProgram CLDeviceID ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetProgramBuildInfo' (CLProgram CLDeviceID ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10473,7 +10473,7 @@ clGetProgramInfo__cl_program: program
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetProgramInfo' (CLProgram ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetProgramInfo' (CLProgram ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10493,7 +10493,7 @@ clGetSamplerInfo__cl_sampler: sampler
 			void * param_value, 
 			size_t * param_value_size_ret
 	);"
-	<apicall: long 'clGetSamplerInfo' (CLSampler ulong ulong void* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetSamplerInfo' (CLSampler ulong ulong void* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10515,7 +10515,7 @@ clGetSupportedImageFormats__cl_context: context
 			cl_image_format * image_formats, 
 			cl_uint * num_image_formats
 	);"
-	<apicall: long 'clGetSupportedImageFormats' (CLContext ulonglong ulong ulong CLImageFormatStruct* ulong*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clGetSupportedImageFormats' (CLContext ulonglong ulong ulong CLImageFormatStruct* ulong*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10543,7 +10543,7 @@ clLinkProgram__cl_context: context
 			void * user_data, 
 			cl_int * errcode_ret
 	);"
-	<apicall: CLProgram 'clLinkProgram' (CLContext ulong CLDeviceID* schar* ulong CLProgram* void* void* long*) module: 'libOpenCL-32bit.so'>
+	<apicall: CLProgram 'clLinkProgram' (CLContext ulong CLDeviceID* schar* ulong CLProgram* void* void* long*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10555,7 +10555,7 @@ clReleaseCommandQueue__cl_command_queue: command_queue
 	"cl_int clReleaseCommandQueue(
 			cl_command_queue command_queue
 	);"
-	<apicall: long 'clReleaseCommandQueue' (CLCommandQueue) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clReleaseCommandQueue' (CLCommandQueue) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10567,7 +10567,7 @@ clReleaseContext__cl_context: context
 	"cl_int clReleaseContext(
 			cl_context context
 	);"
-	<apicall: long 'clReleaseContext' (CLContext) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clReleaseContext' (CLContext) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10579,7 +10579,7 @@ clReleaseDevice__cl_device_id: device
 	"cl_int clReleaseDevice(
 			cl_device_id device
 	);"
-	<apicall: long 'clReleaseDevice' (CLDeviceID) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clReleaseDevice' (CLDeviceID) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10591,7 +10591,7 @@ clReleaseEvent__cl_event: event
 	"cl_int clReleaseEvent(
 			cl_event event
 	);"
-	<apicall: long 'clReleaseEvent' (CLEvent) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clReleaseEvent' (CLEvent) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10603,7 +10603,7 @@ clReleaseKernel__cl_kernel: kernel
 	"cl_int clReleaseKernel(
 			cl_kernel kernel
 	);"
-	<apicall: long 'clReleaseKernel' (CLKernel) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clReleaseKernel' (CLKernel) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10615,7 +10615,7 @@ clReleaseMemObject__cl_mem: memobj
 	"cl_int clReleaseMemObject(
 			cl_mem memobj
 	);"
-	<apicall: long 'clReleaseMemObject' (CLMem) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clReleaseMemObject' (CLMem) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10627,7 +10627,7 @@ clReleaseProgram__cl_program: program
 	"cl_int clReleaseProgram(
 			cl_program program
 	);"
-	<apicall: long 'clReleaseProgram' (CLProgram) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clReleaseProgram' (CLProgram) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10639,7 +10639,7 @@ clReleaseSampler__cl_sampler: sampler
 	"cl_int clReleaseSampler(
 			cl_sampler sampler
 	);"
-	<apicall: long 'clReleaseSampler' (CLSampler) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clReleaseSampler' (CLSampler) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10651,7 +10651,7 @@ clRetainCommandQueue__cl_command_queue: command_queue
 	"cl_int clRetainCommandQueue(
 			cl_command_queue command_queue
 	);"
-	<apicall: long 'clRetainCommandQueue' (CLCommandQueue) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clRetainCommandQueue' (CLCommandQueue) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10663,7 +10663,7 @@ clRetainContext__cl_context: context
 	"cl_int clRetainContext(
 			cl_context context
 	);"
-	<apicall: long 'clRetainContext' (CLContext) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clRetainContext' (CLContext) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10675,7 +10675,7 @@ clRetainDevice__cl_device_id: device
 	"cl_int clRetainDevice(
 			cl_device_id device
 	);"
-	<apicall: long 'clRetainDevice' (CLDeviceID) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clRetainDevice' (CLDeviceID) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10687,7 +10687,7 @@ clRetainEvent__cl_event: event
 	"cl_int clRetainEvent(
 			cl_event event
 	);"
-	<apicall: long 'clRetainEvent' (CLEvent) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clRetainEvent' (CLEvent) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10699,7 +10699,7 @@ clRetainKernel__cl_kernel: kernel
 	"cl_int clRetainKernel(
 			cl_kernel kernel
 	);"
-	<apicall: long 'clRetainKernel' (CLKernel) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clRetainKernel' (CLKernel) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10711,7 +10711,7 @@ clRetainMemObject__cl_mem: memobj
 	"cl_int clRetainMemObject(
 			cl_mem memobj
 	);"
-	<apicall: long 'clRetainMemObject' (CLMem) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clRetainMemObject' (CLMem) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10723,7 +10723,7 @@ clRetainProgram__cl_program: program
 	"cl_int clRetainProgram(
 			cl_program program
 	);"
-	<apicall: long 'clRetainProgram' (CLProgram) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clRetainProgram' (CLProgram) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10735,7 +10735,7 @@ clRetainSampler__cl_sampler: sampler
 	"cl_int clRetainSampler(
 			cl_sampler sampler
 	);"
-	<apicall: long 'clRetainSampler' (CLSampler) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clRetainSampler' (CLSampler) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10753,7 +10753,7 @@ clSVMAlloc__cl_context: context
 			size_t size, 
 			cl_uint alignment
 	);"
-	<apicall: void* 'clSVMAlloc' (CLContext ulonglong ulong ulong) module: 'libOpenCL-32bit.so'>
+	<apicall: void* 'clSVMAlloc' (CLContext ulonglong ulong ulong) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10767,7 +10767,7 @@ clSVMFree__cl_context: context
 			cl_context context, 
 			void * svm_pointer
 	);"
-	<apicall: void 'clSVMFree' (CLContext void*) module: 'libOpenCL-32bit.so'>
+	<apicall: void 'clSVMFree' (CLContext void*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10785,7 +10785,7 @@ clSetEventCallback__cl_event: event
 			void * no_callbacks_jmv, 
 			void * user_data
 	);"
-	<apicall: long 'clSetEventCallback' (CLEvent long void* void*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clSetEventCallback' (CLEvent long void* void*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10801,7 +10801,7 @@ clSetKernelArgSVMPointer__cl_kernel: kernel
 			cl_uint arg_index, 
 			const void * arg_value
 	);"
-	<apicall: long 'clSetKernelArgSVMPointer' (CLKernel ulong void*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clSetKernelArgSVMPointer' (CLKernel ulong void*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10819,7 +10819,7 @@ clSetKernelArg__cl_kernel: kernel
 			size_t arg_size, 
 			const void * arg_value
 	);"
-	<apicall: long 'clSetKernelArg' (CLKernel ulong ulong void*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clSetKernelArg' (CLKernel ulong ulong void*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10837,7 +10837,7 @@ clSetKernelExecInfo__cl_kernel: kernel
 			size_t param_value_size, 
 			const void * param_value
 	);"
-	<apicall: long 'clSetKernelExecInfo' (CLKernel ulong ulong void*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clSetKernelExecInfo' (CLKernel ulong ulong void*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10853,7 +10853,7 @@ clSetMemObjectDestructorCallback__cl_mem: memobj
 			void * no_callbacks_jmv, 
 			void * user_data
 	);"
-	<apicall: long 'clSetMemObjectDestructorCallback' (CLMem void* void*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clSetMemObjectDestructorCallback' (CLMem void* void*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10867,7 +10867,7 @@ clSetUserEventStatus__cl_event: event
 			cl_event event, 
 			cl_int execution_status
 	);"
-	<apicall: long 'clSetUserEventStatus' (CLEvent long) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clSetUserEventStatus' (CLEvent long) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10878,7 +10878,7 @@ clUnloadCompiler
 
 	"cl_int clUnloadCompiler(
 	);"
-	<apicall: long 'clUnloadCompiler' () module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clUnloadCompiler' () module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10890,7 +10890,7 @@ clUnloadPlatformCompiler__cl_platform_id: platform
 	"cl_int clUnloadPlatformCompiler(
 			cl_platform_id platform
 	);"
-	<apicall: long 'clUnloadPlatformCompiler' (CLPlatformID) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clUnloadPlatformCompiler' (CLPlatformID) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
@@ -10904,14 +10904,14 @@ clWaitForEvents__cl_uint: num_events
 			cl_uint num_events, 
 			const cl_event * event_list
 	);"
-	<apicall: long 'clWaitForEvents' (ulong CLEvent*) module: 'libOpenCL-32bit.so'>
+	<apicall: long 'clWaitForEvents' (ulong CLEvent*) module: 'libOpenCL.so'>
 
 	^self externalCallFailed! !
 
-!OpenCLUnix32Interface class methodsFor: 'class initialization' stamp: 'jmv 12/23/2016 11:36:31'!
+!OpenCLUnix32Interface class methodsFor: 'class initialization' stamp: 'jmv 4/16/2017 08:20:43'!
 libraryForCurrentPlatform
 	"Answer the name of the OpenCL library on the current platform."
-	^'libOpenCL-32bit.so'! !
+	^'libOpenCL.so'! !
 
 !OpenCLUnix32Interface class methodsFor: 'class initialization' stamp: 'jmv 12/23/2016 11:36:10'!
 supportedPlatform

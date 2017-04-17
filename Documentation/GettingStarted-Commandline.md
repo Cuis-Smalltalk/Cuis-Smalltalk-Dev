@@ -14,13 +14,13 @@ $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/ar
 $ unzip master.zip
 $ curl -L -o CogSpur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_macos32x86_squeak.cog.spur_201608171728.tar.gz
 $ tar -zxvf CogSpur.tgz
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3068-spur.image
+$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3076-spur.image
 ```
 
 ### On Linux ###
 On Linux we recommend using 64 bits Cuis if possible (i.e. if on x86-64 hardware). See [Setting up and starting Cuis 64 bits using a command line](GettingStarted-Linux64-Commandline.md). For Linux on other platforms, see [Getting started using Git Bash](GettingStarted-Git.md).
 
 ### Notes ###
-* If you can't find Cuis5.0-3068-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3076-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
 * If you want to use a Spur64 VM, use the latest from www.opensmalltalk.org (it is still under heavy development and might be less stable than 32 bit VMs)

@@ -17,7 +17,7 @@ cd MyProject
 ### Get an appropriate VM ###
 ```
 ~/MyProject# rm -r cogspur64
-~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201703272314.tar.gz
+~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201704120850.tar.gz
 ~/MyProject# tar -zxvf cogspur64.tgz
 ~/MyProject# mv ./sqcogspur64linuxht ./cogspur64
 ```
@@ -33,14 +33,9 @@ Then you need to do this (just one time):
 ```
 Log out and log back in, or reboot the machine.
 
-Next is only needed if you want to play with OpenCL (you also need Catalyst driver for AMD GPU, or similar for Intel/Nvidia)
-```
-~/MyProject# cp /usr/lib/libOpenCL.so.1 libOpenCL.so
-```
-
 ### Starting Cuis Smalltalk ###
 ```
-~/MyProject# cogspur64/squeak Cuis-Smalltalk-Dev/Cuis5.0-3068-spur-64.image
+~/MyProject# cogspur64/squeak Cuis-Smalltalk-Dev/Cuis5.0-3076-spur-64.image
 ```
 
 ### Notes ###
@@ -49,6 +44,6 @@ Next is only needed if you want to play with OpenCL (you also need Catalyst driv
 
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", (1007290890 or some other absurd number) it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
 
-* If you can't find Cuis5.0-3068-spur-64.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3076-spur-64.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.

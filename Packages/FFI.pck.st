@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3025] on 10 January 2017 at 4:04:24 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3068] on 16 April 2017 at 8:57:50 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 26!
+!provides: 'FFI' 1 27!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -1361,7 +1361,7 @@ compiledSpec
 	"Return the compiled spec of the receiver"
 	^compiledSpec ifNil:[self compileFields].! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 3/13/2012 15:33'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 4/16/2017 20:57:12'!
 defineAliasAccessorsFor: fieldName type: type
 	"Define read/write accessors for the given field"
 	| code refClass argName |
@@ -1380,7 +1380,7 @@ defineAliasAccessorsFor: fieldName type: type
 						nextPutAll: type externalTypeName]]
 			ifFalse:[s nextPutAll:'^', refClass name,' fromHandle: handle'.
 					type isPointerType ifTrue:[s nextPutAll:' asExternalPointer']]].
-	self compile: code classified: 'accessing'.
+	self compile: code classified: 'accessing' withStamp: nil notifying: nil.
 
 	code := String streamContents:[:s|
 		argName := refClass == nil 
@@ -1395,7 +1395,7 @@ defineAliasAccessorsFor: fieldName type: type
 			ifTrue:[s nextPutAll:'handle := ', argName]
 			ifFalse:[s nextPutAll:'handle := ', argName,' getHandle'.
 					type isPointerType ifTrue:[s nextPutAll:' asByteArrayPointer']]].
-	self compile: code classified: 'accessing'.! !
+	self compile: code classified: 'accessing' withStamp: nil notifying: nil.! !
 
 !ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 12/19/2016 15:52:42'!
 defineFieldAccessorsFor: fieldName startingAt: byteOffset type: type
@@ -1469,13 +1469,13 @@ initialize
 	ExternalType initialize.
 	self compileFields! !
 
-!ExternalStructure class methodsFor: 'compiling' stamp: 'eem 2/16/2016 12:30'!
+!ExternalStructure class methodsFor: 'compiling' stamp: 'jmv 4/16/2017 20:53:30'!
 maybeCompileAccessor: aString withSelector: selector
-	(self compiledMethodAt: selector ifAbsent: []) ifNotNil:
-		[:existingMethod|
-		existingMethod getSourceFromFile asString = aString ifTrue:
-			[^self]].
-	self compile: aString classified: #accessing! !
+
+	(self compiledMethodAt: selector ifAbsent: []) ifNotNil: [ :existingMethod |
+		existingMethod getSourceFromFile asString = aString ifTrue: [
+			^self]].
+	self compile: aString classified: #accessing withStamp: nil notifying: nil! !
 
 !ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 12/1/1999 15:58'!
 new

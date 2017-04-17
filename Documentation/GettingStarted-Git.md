@@ -29,9 +29,9 @@ For Linux on x86 hardware
 - Specific instructions for Chromebooks and Raspberry Pi below
 ```
 ~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_linux32x86_squeak.cog.spur_201608171728.tar.gz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201704120850.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
-~/MyProject# mv ./products/cogspurlinuxht ./cogspur
+~/MyProject# mv ./sqcogspurlinuxht ./cogspur
 ```
 On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
 (This was tested on Debian 8)
@@ -50,14 +50,15 @@ sudo apt-get install mesa-common-dev:i386
 sudo apt-get install libgl1-mesa-dev:i386
 # If you are not using AMD Catalyst driver, you might also need:
 sudo apt-get install ocl-icd-libopencl1:i386
-cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 libOpenCL-32bit.so
+# To enable OpenCL support, you need to add the OpenCL driver (the "ICD loader") to the VM plugins folder. For example, For AMD Catalyst driver (AMD GPUs)
+cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur/lib/squeak/5.0-201704120850/libOpenCL.so
 ```
 If you get this error message (you won't get it if you run Cuis as admin or sudo):
 ```
 pthread_setschedparam failed: Operation not permitted
 Read e.g. https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
 ```
-Then you need to:
+Then you need to do this (just one time):
 ```
 ~/MyProject# sudo cp Cuis-Smalltalk-Dev/squeak.conf /etc/security/limits.d/squeak.conf
 ```
@@ -66,15 +67,15 @@ Log out and log back in, or reboot the machine.
 ### Starting Cuis Smalltalk ###
 Windows Git Bash:
 ```
-$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3068-spur.image
+$  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3076-spur.image
 ```
 MacOSX:
 ```
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3068-spur.image
+$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3076-spur.image
 ```
 Linux:
 ```
-$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3068-spur.image
+$  cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3076-spur.image
 ```
 
 If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
@@ -121,6 +122,6 @@ $ ./linuxVM_ARM.sh
 ```
 
 ### Notes ###
-* If you can't find Cuis5.0-3068-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3076-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
 * If you want to use a Spur64 VM, use the latest from www.opensmalltalk.org (it is still under heavy development and might be less stable than 32 bit VMs)
