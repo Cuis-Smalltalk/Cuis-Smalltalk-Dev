@@ -33,7 +33,7 @@ For Linux on x86 hardware
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./sqcogspurlinuxht ./cogspur
 ```
-On Linux, if this is the first time you run Cuis Smalltalk on this system, add 32 bit libraries.
+On Linux 64 bit, if this is the first time you run Cuis Smalltalk 32 bit on this system, add 32 bit libraries.
 (This was tested on Debian 8)
 ```
 sudo dpkg --add-architecture i386
@@ -51,7 +51,7 @@ sudo apt-get install libgl1-mesa-dev:i386
 # If you are not using AMD Catalyst driver, you might also need:
 sudo apt-get install ocl-icd-libopencl1:i386
 # To enable OpenCL support, you need to add the OpenCL driver (the "ICD loader") to the VM plugins folder. For example, For AMD Catalyst driver (AMD GPUs)
-cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur/lib/squeak/5.0-201704120850/libOpenCL.so
+cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur/lib/squeak/5.0-201704120850/libOpenCL.so.1
 ```
 If you get this error message (you won't get it if you run Cuis as admin or sudo):
 ```
