@@ -17,7 +17,7 @@ cd MyProject
 ### Get an appropriate VM ###
 ```
 ~/MyProject# rm -r cogspur64
-~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201703272314.tar.gz
+~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201705051953.tar.gz
 ~/MyProject# tar -zxvf cogspur64.tgz
 ~/MyProject# mv ./sqcogspur64linuxht ./cogspur64
 ```

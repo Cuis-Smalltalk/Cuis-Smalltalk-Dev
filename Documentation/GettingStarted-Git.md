@@ -29,7 +29,7 @@ For Linux on x86 hardware
 - Specific instructions for Chromebooks and Raspberry Pi below
 ```
 ~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201704120850.tar.gz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705051953.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./sqcogspurlinuxht ./cogspur
 ```
