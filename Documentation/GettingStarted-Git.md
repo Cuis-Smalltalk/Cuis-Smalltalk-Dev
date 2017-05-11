@@ -15,8 +15,10 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ### Get an appropriate VM ###
 For Windows Git Bash:
 ```
-$ curl -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_win32x86_squeak.cog.spur_201608171728.zip
-$ unzip cogspur.zip
+$ rm -r cogspur
+$ curl -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201705091027.zip
+$ unzip cogspur.zip -d cogspur
+$ mv ./cogspur/build/vm/*.* ./cogspur
 ```
 For MacOSX:
 ```
