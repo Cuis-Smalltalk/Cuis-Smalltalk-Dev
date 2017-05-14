@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3068] on 16 April 2017 at 8:57:50 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 14 May 2017 at 7:08:16 pm'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 27!
+!provides: 'FFI' 1 28!
 !classDefinition: #FFIConstants category: #'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
@@ -652,19 +652,25 @@ initializeTypeConstants
 	FFIAtomicTypeShift := 24. "shift for atomic type"
 ! !
 
-!ExternalAddress methodsFor: 'arithmetic' stamp: 'ar 9/16/2010 21:05'!
+!ExternalAddress methodsFor: 'arithmetic' stamp: 'pb 5/12/2017 23:44:52'!
 + offset
 	"Create an address that is offset by the given number of bytes.
 	More tricky than one would think due to the FFI's handling of ExternalAddress
 	as pointer to an object so that 'self unsignedLongAt: ' would dereference."
-
-	| bytes |
 	"Convert xaddr -> bytes"
+	| bytes |
 	bytes := self asByteArrayPointer.
 	"Update bytes using platform dependent accessors"
-	bytes unsignedLongAt: 1 put: (bytes unsignedLongAt: 1) + offset.
-	"Convert bytes -> xaddr"
-	^bytes asExternalPointer! !
+	Smalltalk wordSize = 4
+		ifTrue: [
+			bytes
+				unsignedLongAt: 1
+				put: (bytes unsignedLongAt: 1) + offset ]
+		ifFalse: [
+			bytes
+				unsignedLongLongAt: 1
+				put: (bytes unsignedLongLongAt: 1) + offset ].
+	^ bytes asExternalPointer.! !
 
 !ExternalAddress methodsFor: 'private' stamp: 'eem 2/22/2016 10:03'!
 asByteArrayPointer

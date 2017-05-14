@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3075] on 30 March 2017 at 9:29:20 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 13 May 2017 at 8:22:51 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 72!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 73!
 !requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -486,6 +486,36 @@ TestCase subclass: #DateAndTimeTest
 DateAndTimeTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #DateTest category: #'Tests-Kernel-Chronology'!
+TestCase subclass: #DateTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Chronology'!
+!classDefinition: 'DateTest class' category: #'Tests-Kernel-Chronology'!
+DateTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DurationTest category: #'Tests-Kernel-Chronology'!
+TestCase subclass: #DurationTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Chronology'!
+!classDefinition: 'DurationTest class' category: #'Tests-Kernel-Chronology'!
+DurationTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MonthTest category: #'Tests-Kernel-Chronology'!
+TestCase subclass: #MonthTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Chronology'!
+!classDefinition: 'MonthTest class' category: #'Tests-Kernel-Chronology'!
+MonthTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #TimeTest category: #'Tests-Kernel-Chronology'!
 TestCase subclass: #TimeTest
 	instanceVariableNames: ''
@@ -494,6 +524,26 @@ TestCase subclass: #TimeTest
 	category: 'Tests-Kernel-Chronology'!
 !classDefinition: 'TimeTest class' category: #'Tests-Kernel-Chronology'!
 TimeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #WeekTest category: #'Tests-Kernel-Chronology'!
+TestCase subclass: #WeekTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Chronology'!
+!classDefinition: 'WeekTest class' category: #'Tests-Kernel-Chronology'!
+WeekTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #YearTest category: #'Tests-Kernel-Chronology'!
+TestCase subclass: #YearTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Chronology'!
+!classDefinition: 'YearTest class' category: #'Tests-Kernel-Chronology'!
+YearTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #DelayTest category: #'Tests-Kernel-Processes'!
@@ -664,16 +714,6 @@ TestCase subclass: #TrieTest
 	category: 'Tests-System'!
 !classDefinition: 'TrieTest class' category: #'Tests-System'!
 TrieTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TaskbarTaskTest category: #'Tests-Taskbar'!
-TestCase subclass: #TaskbarTaskTest
-	instanceVariableNames: 'task morph needsDelete taskbar'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Taskbar'!
-!classDefinition: 'TaskbarTaskTest class' category: #'Tests-Taskbar'!
-TaskbarTaskTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #TaskbarTest category: #'Tests-Taskbar'!
@@ -8195,6 +8235,25 @@ testCreation
 	self assert: d second = 4.
 	self assert: d nanoSecond = 0! !
 
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:53:59'!
+testDayOfWeek
+
+	self assert: '13 May 2017 ' asDate dayOfWeek = 6.
+	self assert: '13 May 2017 ' asDate dayOfWeekName = #Saturday! !
+
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 19:22:53'!
+testInvalidOperations
+
+	self should: [ DateAndTime tomorrow - Week current ] raise: Error.
+	self should: [ DateAndTime tomorrow - Date today ] raise: Error! !
+
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 19:19:21'!
+testLessDateAndTime
+
+	self assert: DateAndTime today - DateAndTime yesterday = 1 days.
+	self assert: DateAndTime today - DateAndTime tomorrow = -1 days.
+	self assert: DateAndTime tomorrow - DateAndTime yesterday = 2 days.! !
+
 !DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:22'!
 testOperations
 	"
@@ -8245,6 +8304,82 @@ testToByDo
 	start to: end by: step do: [ :time | last _ time ].
 	self assert: last = end! !
 
+!DateTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:03:35'!
+testCreation
+
+	| date |
+	date _ '2014/6/30' asDate.
+	self assert: date yearNumber = 2014.
+	self assert: date monthIndex = 6.
+	self assert: date dayOfMonth = 30.
+
+	date _ '70/12/30' asDate.
+	self assert: date yearNumber = 1970.
+	self assert: date monthIndex = 12.
+	self assert: date dayOfMonth = 30.
+
+	date _ '12/30/70' asDate.
+	self assert: date yearNumber = 1970.
+	self assert: date monthIndex = 12.
+	self assert: date dayOfMonth = 30.
+
+	date _ '30/12/70' asDate.
+	self assert: date yearNumber = 1970.
+	self assert: date monthIndex = 12.
+	self assert: date dayOfMonth = 30.
+
+	"Quite ambiguous, actually"
+	date _ '4/5/6' asDate.
+	self assert: date yearNumber = 2006.
+	self assert: date monthIndex = 4.
+	self assert: date dayOfMonth = 5.
+
+	date _ '15 April 1982' asDate.
+	self assert: date yearNumber = 1982.
+	self assert: date monthIndex = 4.
+	self assert: date dayOfMonth = 15.! !
+
+!DateTest methodsFor: 'test operations' stamp: 'jmv 5/13/2017 19:23:12'!
+testInvalidOperations
+
+	self should: [ Date today - DateAndTime tomorrow ] raise: Error.
+	self should: [ Date today - Week current ] raise: Error.! !
+
+!DateTest methodsFor: 'test operations' stamp: 'jmv 5/13/2017 19:16:42'!
+testLessDate
+
+	self assert: Date today - Date yesterday = 1 days.
+	self assert: Date today - Date tomorrow = -1 days.
+	self assert: Date tomorrow start - Date yesterday start = 2 days.! !
+
+!DateTest methodsFor: 'test operations' stamp: 'jmv 5/13/2017 14:25:42'!
+testLessDuration
+
+	self assert: '13 May 2017' asDate - 3 days = '10 May 2017' asDate! !
+
+!DurationTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:56:00'!
+testPrintString
+
+	self assert: (Duration days: 2 hours: 3 minutes: 16 seconds: 43) printString =  '2:03:16:43' ! !
+
+!MonthTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:33:22'!
+testCreation
+
+	self assert: 'July 1998' asMonth yearNumber = 1998.
+	self assert: 'July 1998' asMonth monthIndex = 7.
+	self assert: 'July 1998' asMonth monthName = #July.
+
+	self assert: '1998/7' asMonth yearNumber = 1998.
+	self assert: '1998/7' asMonth monthIndex = 7.
+	self assert: '1998/7' asMonth monthName = #July.! !
+
+!MonthTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:55:20'!
+testPrintString
+
+	self assert: 'July 1998' asMonth printString = 'July 1998'.
+	self assert: '1998/7' asMonth printString = 'July 1998'.
+! !
+
 !TimeTest methodsFor: 'tests' stamp: 'jmv 6/5/2014 14:32'!
 testCreation
 	"
@@ -8293,6 +8428,109 @@ testTimePartsArePositive
 	self assert: (Time afterMidnight: -10 minutes) minute > 0.
 	self assert: (Time afterMidnight: -10 minutes) hour = 23.
 	self assert: (Time afterMidnight: -10 minutes) minute = 50.! !
+
+!WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:29:29'!
+testCreation
+
+	| week |
+	week _ '2008-W52' asWeek.
+	self assert: week yearNumber = 2008.
+	self assert: week weekNumber = 52.
+	self assert: week start = '2008-12-22' asDate start.
+
+	self should: [ '2008-W53' asWeek ] raise: Error.
+	self should: [ '2009-W54' asWeek ] raise: Error.
+
+	week _ '2009-W01' asWeek.
+	self assert: week yearNumber = 2009.
+	self assert: week weekNumber = 1.
+	self assert: week start = '2008-12-29' asDate start.
+
+	week _ '2009-W02' asWeek.
+	self assert: week yearNumber = 2009.
+	self assert: week weekNumber = 2.
+	self assert: week start = '2009-1-5' asDate start.
+
+	week _ '2009-W52' asWeek.
+	self assert: week yearNumber = 2009.
+	self assert: week weekNumber = 52.
+	self assert: week start = '2009-12-21' asDate start.
+
+	week _ '2009-W53' asWeek.
+	self assert: week yearNumber = 2009.
+	self assert: week weekNumber = 53.
+	self assert: week start = '2009-12-28' asDate start.
+
+	week _ '2010-W01' asWeek.
+	self assert: week yearNumber = 2010.
+	self assert: week weekNumber = 1.
+	self assert: week start = '2010-1-4' asDate start.
+
+	week _ '2010-W02' asWeek.
+	self assert: week yearNumber = 2010.
+	self assert: week weekNumber = 2.
+	self assert: week start = '2010-1-11' asDate start.! !
+
+!WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:28:58'!
+testIncluding
+
+	| week |
+	week _ Week including: '12 May 2017 ' asDate start.
+	self assert: week = '2017-W19' asWeek.
+	self assert: week start dayOfWeekName = #Monday.
+
+	week _ Week including: '12 May 2017 ' asDate.
+	self assert: week = '2017-W19' asWeek.
+	self assert: week start dayOfWeekName = #Monday.
+
+	week _ Week including: '2010/1/3' asDate start.
+	self assert: week = '2009W53' asWeek.
+	self assert: week start dayOfWeekName = #Monday.
+
+	week _ Week including: '2010/1/3' asDate.
+	self assert: week = '2009W53' asWeek.
+	self assert: week start dayOfWeekName = #Monday.
+
+	self should: [ Week including: (Year including: Date today) ] raise: Error! !
+
+!WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 19:22:16'!
+testInvalidOperations
+
+	self should: [ Week current - Date tomorrow ] raise: Error.
+	self should: [ Week current - DateAndTime tomorrow ] raise: Error.! !
+
+!WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 14:55:27'!
+testPrintString
+
+	{
+		'2008-W52'.
+		'2009-W01'.
+		'2009-W02'.
+		'2009-W52'.
+		'2009-W53'.
+		'2010-W01'.
+		'2010-W02'.
+	} do: [ :string |
+		self assert: string asWeek printString = string ]! !
+
+!WeekTest methodsFor: 'test class methods' stamp: 'jmv 5/13/2017 14:58:57'!
+testWeekDayNames
+
+	self assert: (Week indexOfDay: #Sunday) = 7.
+	self assert: (Week nameOfDay: 7) = #Sunday! !
+
+!YearTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:19:06'!
+testCreation
+
+	self assert: (Year yearNumber: 1998) yearNumber = 1998.
+	self assert: '2008' asYear yearNumber = 2008.
+	self assert: '2008' asYear start = '2008/01/01' asDate start! !
+
+!YearTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:17:42'!
+testIncluding
+
+	self assert: (Year including: '12 May 2017 ' asDate start) yearNumber = 2017.
+	self assert: (Year including: (Week including: '12 May 2017 ' asDate start)) yearNumber = 2017! !
 
 !DelayTest methodsFor: 'testing-limits' stamp: 'laza 9/5/2009 08:49'!
 testBounds
@@ -10109,38 +10347,6 @@ testSetProtocol
 	subject add: 'ÑANDÚ'.
 	controlGroup add: 'ÑANDÚ'.
 	self assert: subject isEquivalentToSet: controlGroup.! !
-
-!TaskbarTaskTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:30'!
-setUp
-
-	needsDelete _ ProjectX ui taskbar isNil.
-	taskbar _ ProjectX ui hideTaskbar; showTaskbar; taskbar.
-	morph _ Morph new.
-	task _ TaskbarTask forTaskbar: taskbar.
-	task minimize: morph! !
-
-!TaskbarTaskTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:47'!
-tearDown
-
-	needsDelete ifTrue: [
-		ProjectX ui hideTaskbar ]! !
-
-!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/28/2013 17:28'!
-testMinimize
-
-	task restore.
-	task minimize: morph.
-	self shouldnt: [ morph visible ]! !
-
-!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'cbr 4/19/2011 18:23'!
-testMorph
-	self should: [ task respondsTo: #morph ]! !
-
-!TaskbarTaskTest methodsFor: 'as yet unclassified' stamp: 'jmv 8/28/2013 17:28'!
-testRestore
-
-	task restore.
-	self should: [ morph visible ]! !
 
 !TaskbarTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:48'!
 setUp
