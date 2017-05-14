@@ -12,9 +12,9 @@ $ mkdir MyProject
 $ cd MyProject
 $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
 $ unzip master.zip
-$ curl -L -o CogSpur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_macos32x86_squeak.cog.spur_201608171728.tar.gz
-$ tar -zxvf CogSpur.tgz
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3081-spur.image
+$ curl -L -o CogSpur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705131804.tar.gz
+$ tar -zxvf CogSpur64.tgz
+$ CogSpur64/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3081-spur-64.image
 ```
 
 ### On Linux ###

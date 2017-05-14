@@ -16,14 +16,14 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 For Windows Git Bash:
 ```
 $ rm -r cogspur
-$ curl -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201705091027.zip
+$ curl -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201705131804.zip
 $ unzip cogspur.zip -d cogspur
 $ mv ./cogspur/build/vm/*.* ./cogspur
 ```
 For MacOSX:
 ```
-$ curl -L -o CogSpur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201608171728/cog_macos32x86_squeak.cog.spur_201608171728.tar.gz
-$ tar -zxvf CogSpur.tgz
+$ curl -L -o CogSpur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705131804.tar.gz
+$ tar -zxvf CogSpur64.tgz
 ```
 For Linux on x86 hardware
 - For x86-64 hardware systems, we recommend [Setting up and starting Cuis 64 bits using a command line](GettingStarted-Linux64-Commandline.md)
@@ -31,7 +31,7 @@ For Linux on x86 hardware
 - Specific instructions for Chromebooks and Raspberry Pi below
 ```
 ~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705051953.tar.gz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705131804.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./sqcogspurlinuxht ./cogspur
 ```
@@ -73,7 +73,7 @@ $  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3081-spur.image
 ```
 MacOSX:
 ```
-$ CogSpur/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3081-spur.image
+$ CogSpur64/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3081-spur-64.image
 ```
 Linux:
 ```
