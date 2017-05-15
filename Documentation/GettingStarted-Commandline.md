@@ -14,7 +14,7 @@ $ curl -L -o master.zip  https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/ar
 $ unzip master.zip
 $ curl -L -o CogSpur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705131804.tar.gz
 $ tar -zxvf CogSpur64.tgz
-$ CogSpur64/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3081-spur-64.image
+$ ./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3081-spur-64.image
 ```
 
 ### On Linux ###

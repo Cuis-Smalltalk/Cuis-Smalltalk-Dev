@@ -73,7 +73,7 @@ $  cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3081-spur.image
 ```
 MacOSX:
 ```
-$ CogSpur64/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis5.0-3081-spur-64.image
+$ ./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3081-spur-64.image
 ```
 Linux:
 ```
