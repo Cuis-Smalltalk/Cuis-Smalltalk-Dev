@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3036] on 16 January 2017 at 5:04:25 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 17 May 2017 at 5:07:29 pm'!
 'Description A collection of general numerical algorithms for continuous problems.'!
-!provides: 'NumericalMethods' 1 3!
+!provides: 'NumericalMethods' 1 4!
 !classDefinition: #NelderMeadMethod category: #NumericalMethods!
 Object subclass: #NelderMeadMethod
 	instanceVariableNames: 'f testPoints epsilon'
@@ -59,17 +59,18 @@ objectiveFunction: aBlock
 
 	f _ aBlock! !
 
-!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 1/16/2017 17:01:50'!
+!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 5/17/2017 17:07:00'!
 solve
 	"Closely follows implementation at
 		https://en.wikipedia.org/wiki/Nelder-Mead_method
 	"
-	| alpha centroidX0 worstPointXnPlus1 worstValueXnPlus1 bestPointX1 bestValueX1 reflectedPointXr reflectedValueXr sortedIndexes values expandedPointXe gamma secondWorstValueXn contractedPointXc rho sigma iteration errorEstimation lastErrorEstimation |
+	| alpha centroidX0 worstPointXnPlus1 worstValueXnPlus1 bestPointX1 bestValueX1 reflectedPointXr reflectedValueXr sortedIndexes values expandedPointXe gamma secondWorstValueXn contractedPointXc rho sigma iteration errorEstimation bestErrorEstimation lastImprovement |
 	alpha _ 1.
 	gamma _ 2.
 	rho _ 0.5.
 	sigma _ 0.5.
 	iteration _ 1.
+	bestErrorEstimation _ nil.
 
 	[
 		"Order"
@@ -83,7 +84,10 @@ solve
 
 		"Stopping condition"
 		errorEstimation _ worstValueXnPlus1 - bestValueX1.
-		(errorEstimation < epsilon or: [ errorEstimation = lastErrorEstimation ])
+		(bestErrorEstimation isNil or: [errorEstimation < bestErrorEstimation]) ifTrue: [
+			bestErrorEstimation _ errorEstimation.
+			lastImprovement _ iteration ].
+		(errorEstimation < epsilon or: [ iteration - lastImprovement > testPoints size ])
 	] whileFalse: [
 	
 		"Centroid"
@@ -121,7 +125,6 @@ solve
 									testPoints at: i put: xi ]]]
 			].
 		iteration _ iteration + 1.
-		lastErrorEstimation _ errorEstimation.
 	].
 	^bestPointX1! !
 
