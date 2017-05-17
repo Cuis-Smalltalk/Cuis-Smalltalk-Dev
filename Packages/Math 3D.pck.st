@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2968] on 4 November 2016 at 10:07:46 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 15 May 2017 at 2:59:06 pm'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition to 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 19!
+!provides: 'Math 3D' 1 20!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -2121,6 +2121,34 @@ x: xValue y: yValue z: zValue a: anAngle
 	cos := angle cos.
 	sin := angle sin.
 	^self a: cos b: xValue * sin c: yValue * sin d: zValue * sin! !
+
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 5/5/2017 10:54:26'!
+xRotation: radiansAroundXaxis yRotation: radiansAroundYaxis zRotation: radiansAroundZaxis
+	"Build a quaternion that first rotates around the X axis, then around the Y axis and then around the Z axis.
+
+	(Float64Quaternion xRotation: 0.4 yRotation: 0.0 zRotation: 0.5) rotate: 1@0@0 
+			0.877582561890373@0.4794255386042027@4.163336342344337e-17
+
+	(Float64Quaternion radiansAngle: 0.5 axis: 0@0@1) rotate: 
+		((Float64Quaternion radiansAngle: 0.4 axis: 1@0@0) rotate: 1@0@0)
+			0.877582561890373@0.4794255386042025@0.0 
+
+	(Float64Quaternion radiansAngle: 0.4 axis: 1@0@0) rotate:
+		((Float64Quaternion radiansAngle: 0.5 axis: 0@0@1) rotate: 1@0@0)
+			0.877582561890373@0.4415801631371553@0.1866970985036805 
+	"
+
+	^ (self radiansAngle: radiansAroundXaxis axis: 1@0@0) *
+		(self radiansAngle: radiansAroundYaxis axis: 0@1@0) *
+		(self radiansAngle: radiansAroundZaxis axis: 0@0@1)! !
+
+!Float64Quaternion class methodsFor: 'instance creation' stamp: 'jmv 5/5/2017 10:57:32'!
+xyzRotations: xyzRotationsFloatArray
+
+	^ self
+		xRotation: xyzRotationsFloatArray first
+		yRotation: xyzRotationsFloatArray second
+		zRotation: xyzRotationsFloatArray third! !
 
 !Float64Vector2 methodsFor: 'converting' stamp: 'ar 2/13/1999 20:03'!
 asPoint

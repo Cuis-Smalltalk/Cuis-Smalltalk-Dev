@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3063] on 13 March 2017 at 4:15:13 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 15 May 2017 at 3:03:42 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 74!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'SignalProcessing' 1 75!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Statistics' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Goodies' 1 0 nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3165,6 +3165,33 @@ convolutionWith: trimmedPsf
 		tileSize: tileSize
 		horizontalGuardZone: guardZoneWidth
 		verticalGuardZone: guardZoneHeight! !
+
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 5/15/2017 15:03:25'!
+correlationWith: another deltai: di deltaj: dj
+	"Do not include pixels where with a zero value. Make them not to affect the 'average'
+	Note: there is room for optimization"
+
+	| sum sum1 sum2 mine others product iEnd iStart jEnd jStart |
+	iStart _ 1 max: 1+di.
+	iEnd _ height min: another height+di.
+	jStart _ 1 max: 1+dj.
+	jEnd _ width min: another width+dj.
+	sum _ 0.0.
+	sum1 _ 0.0.
+	sum2 _ 0.0.
+	iStart to: iEnd do: [ :i |
+		jStart to: jEnd do: [ :j |
+			mine _ self i: i j: j.
+			others _ another i: i-di j: j-dj.
+			product _ mine * others.
+			product = 0.0 ifFalse: [
+				sum _ product + sum.
+				sum1 _ mine squared + sum1.
+				sum2 _ others squared + sum2.
+			].
+		]
+	].
+	^ (sum / (sum1 max: sum2))! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 10/17/2016 10:39:31'!
 crossCorrelationWith: aFloatImage phase: aBoolean
