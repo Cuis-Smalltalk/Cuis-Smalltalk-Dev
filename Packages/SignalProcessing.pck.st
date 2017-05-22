@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 15 May 2017 at 3:03:42 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 22 May 2017 at 3:33:51 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 75!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'SignalProcessing' 1 76!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Statistics' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3166,10 +3166,20 @@ convolutionWith: trimmedPsf
 		horizontalGuardZone: guardZoneWidth
 		verticalGuardZone: guardZoneHeight! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 5/15/2017 15:03:25'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 5/22/2017 15:25:28'!
 correlationWith: another deltai: di deltaj: dj
 	"Do not include pixels where with a zero value. Make them not to affect the 'average'
-	Note: there is room for optimization"
+	Note: there is room for optimization
+
+	| i i2 |
+	i _ FloatImage lena.
+	i2 _ i copy: (31@21 corner: i extent).
+	i2 _ i2 * 0.7.
+	i addNormalNoise: 0.02.
+	i2 addNormalNoise: 0.05.
+	{ i correlationWith: i2 deltai: 20 deltaj: 30.
+	i correlationWith: i2 deltai: 20 deltaj: 31 }
+	"
 
 	| sum sum1 sum2 mine others product iEnd iStart jEnd jStart |
 	iStart _ 1 max: 1+di.
@@ -3191,7 +3201,7 @@ correlationWith: another deltai: di deltaj: dj
 			].
 		]
 	].
-	^ (sum / (sum1 max: sum2))! !
+	^ sum / (sum1 * sum2) sqrt! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 10/17/2016 10:39:31'!
 crossCorrelationWith: aFloatImage phase: aBoolean
