@@ -18,5 +18,5 @@ sudo apt-get install libgl1-mesa-dev:i386
 # If you are not using AMD Catalyst driver, you might also need:
 sudo apt-get install ocl-icd-libopencl1:i386
 # To enable OpenCL support, you need to add the OpenCL driver (the "ICD loader") to the VM plugins folder. For example, For AMD Catalyst driver (AMD GPUs)
-cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur/lib/squeak/5.0-201704120850/libOpenCL.so.1
+cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur/lib/squeak/5.0-201705232044/libOpenCL.so.1
 ```

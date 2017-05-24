@@ -18,7 +18,7 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ### Get and set up an appropriate VM ###
 ```
 ~/MyProject# rm -r cogspur64
-~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201705131804.tar.gz
+~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201705232044.tar.gz
 ~/MyProject# tar -zxvf cogspur64.tgz
 ~/MyProject# mv ./sqcogspur64linuxht ./cogspur64
 ```
@@ -42,7 +42,7 @@ Log out and log back in, or reboot the machine.
 
 ### Get and set up an appropriate VM ###
 ```
-$ curl -L -o CogSpur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705131804.tar.gz
+$ curl -L -o CogSpur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705232044.tar.gz
 $ tar -zxvf CogSpur64.tgz
 ```
 
