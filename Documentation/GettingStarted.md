@@ -2,7 +2,7 @@
 
 Cuis is available in 64 bits and 32 bits formats. It also available in 32 bits V3 (pre Spur) format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code betweem them. These instructions are for the recommended format for each system, although most systems support all of them.
 
-These instructions assume you have the Git code versioning system installed. This has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you prefer not to use Git, see details at the end of this document. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandline.md).
+These instructions assume you have the Git code versioning system installed. This has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you prefer not to use Git, see details at the end of this document. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandLine.md).
 
 If you want to contribute back to the community, you can do pull requests to this repo and/or alternatively subscribe to the Cuis development mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
