@@ -59,7 +59,7 @@ Currently we recommend using 32 bits Cuis, both on 64 bits and 32 bits Windows s
 ### Get and set up an appropriate VM ###
 ```
 $ rm -r cogspur
-$ curl -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201705131804.zip
+$ curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201705232044.zip
 $ unzip cogspur.zip -d cogspur
 $ mv ./cogspur/build/vm/*.* ./cogspur
 ```
