@@ -6,7 +6,7 @@ These instructions assume you have the Git code versioning system installed. Thi
 
 If you want to contribute back to the community, you can do pull requests to this repo and/or alternatively subscribe to the Cuis development mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
-## Create project folder and add Cuis Smalltalk ##
+## For all systems: Create project folder and add Cuis Smalltalk ##
 ```
 mkdir MyProject
 cd MyProject
