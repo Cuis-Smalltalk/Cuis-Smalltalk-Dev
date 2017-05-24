@@ -1,6 +1,6 @@
 # Cuis
 
-[Cuis](http://www.cuis-smalltalk.org) is a free [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from RasPis and the like and phones, up to server racks, and everything in between, including regular laptops and PCs.
+[Cuis](http://www.cuis-smalltalk.org) is a free [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from RasPis and the like and phones, up to cloud servers, and everything in between, including regular laptops and PCs.
 
 Cuis is
 * Small
@@ -16,7 +16,7 @@ Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis 
 * A complete development environment written in itself
 * A pure, dynamic Object Oriented language
 
-What sets Cuis appart from the rest of the Squeak family is that it takes an active attitude towards system complexity:
+Cuis shares the [OpenSmalltalk Virtual Machine](http://www.opensmalltalk.org) with Squeak, Pharo and Newspeak. What sets Cuis apart from the rest of the Squeak family is the focus on Smalltalk-80 and an active attitude towards system complexity:
 
 Unbound complexity growth, together with develpment strategies focused only in the short term, are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity and size grow without control. Evolution slows down. Understanding the system becomes harder every day. Bugs are harder to fix. Codebases become huge for no clear reason. At some point, the system can't evolve anymore and becomes "legacy code".
 
