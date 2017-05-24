@@ -1,4 +1,4 @@
-## Setting up and starting Cuis using a Windows or MacOS (no command line required)
+# Setting up and starting Cuis using a Windows or MacOS (no command line required) #
 
 What follows are instructions for setting up Cuis on Windows or Mac OS X without using the command line. If you are familiar with Git, please see [Getting started using Git Bash](GettingStarted.md). This document is intended for beginners, and tries to require as little previous knowledge as possible.
 
@@ -6,7 +6,7 @@ If you want to contribute back to the community, you might subscribe to the Cuis
 
 The Cuis image specified is the most current one. The VM specified is the latest one too.
 
-### On Windows ###
+## On Windows ##
 * Crea a new folder in your machine using Windows Explorer
 * download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip)
 * extract the contents of the zip file to your folder
@@ -14,7 +14,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file to your folder
 * drop the Cuis5.0-3081-spur.image over the Squeak.exe file
 
-### On Mac OS X ###
+## On Mac OS X ##
 * Crea a new folder in your machine using Mac Finder
 * download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip)
 * extract the contents of the zip file to your folder
@@ -24,6 +24,6 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * [ctrl] click on Cog application. Open. "Cog is from an unidentified developer"; dialog. Click on [Open] Supply required credentials. (This is required only on the first run). Select Cuis5.0-3081-spur-64.image. (If this step is a problem, you might try the command line variant, described in another document.)
 * On subsequent runs, drop the Cuis5.0-3081-spur-64.image over the Squeak.app file
 
-### Notes ###
+## Notes ##
 * If you can't find Cuis5.0-3081-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
