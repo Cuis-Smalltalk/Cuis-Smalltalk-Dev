@@ -7,7 +7,7 @@ sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install libc6-i386
 # This (libc6-i386) was needed to make ldd work on 32 bit programs and dynamic libraries
-# So, we can do stuff like       $ ldd cogspur/lib/squeak/*/squeak       to find about missing libraries
+# So, we can do stuff like       $ ldd cogspur32/lib/squeak/*/squeak       to find about missing libraries
 sudo apt-get install libuuid1:i386
 sudo apt-get install libx11-6:i386
 sudo apt-get install libxext6:i386
@@ -18,5 +18,5 @@ sudo apt-get install libgl1-mesa-dev:i386
 # If you are not using AMD Catalyst driver, you might also need:
 sudo apt-get install ocl-icd-libopencl1:i386
 # To enable OpenCL support, you need to add the OpenCL driver (the "ICD loader") to the VM plugins folder. For example, For AMD Catalyst driver (AMD GPUs)
-cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur/lib/squeak/5.0-201705232044/libOpenCL.so.1
+cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur32/lib/squeak/5.0-201705232044/libOpenCL.so.1
 ```

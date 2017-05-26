@@ -17,12 +17,12 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 
 ### Get and set up an appropriate VM ###
 ```
-~/MyProject# rm -r cogspur64
-~/MyProject# wget -O cogspur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201705232044.tar.gz
-~/MyProject# tar -zxvf cogspur64.tgz
-~/MyProject# mv ./sqcogspur64linuxht ./cogspur64
+~/MyProject# rm -r cogspur
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201705232044.tar.gz
+~/MyProject# tar -zxvf cogspur.tgz
+~/MyProject# mv ./sqcogspur64linuxht ./cogspur
 ```
-If you get this error message (you won't get it if you run Cuis as admin or sudo):
+If you get this error message (you won't get it if you run Cuis as root or sudo):
 ```
 pthread_setschedparam failed: Operation not permitted
 Read e.g. https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
@@ -35,21 +35,21 @@ Log out and log back in, or reboot the machine.
 
 ### Starting Cuis Smalltalk ###
 ```
-~/MyProject# cogspur64/squeak Cuis-Smalltalk-Dev/Cuis5.0-3081-spur-64.image
+~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3086.image
 ```
 
 ## For MacOSX ##
 
 ### Get and set up an appropriate VM ###
 ```
-$ curl -L -o CogSpur64.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705232044.tar.gz
-$ tar -zxvf CogSpur64.tgz
+$ curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705232044.tar.gz
+$ tar -zxvf CogSpur.tgz
 ```
 
 ### Starting Cuis Smalltalk ###
 
 ```
-$ ./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3081-spur-64.image
+$ ./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3086.image
 ```
 
 ## For Windows Git Bash ##
@@ -58,15 +58,15 @@ Currently we recommend using 32 bits Cuis, both on 64 bits and 32 bits Windows s
 
 ### Get and set up an appropriate VM ###
 ```
-$ rm -r cogspur
-$ curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201705232044.zip
-$ unzip cogspur.zip -d cogspur
-$ mv ./cogspur/build/vm/*.* ./cogspur
+$ rm -r cogspur32
+$ curl -k -L -o cogspur32.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201705232044.zip
+$ unzip cogspur32.zip -d cogspur32
+$ mv ./cogspur32/build/vm/*.* ./cogspur32
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-$ cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3081-spur.image
+$ cogspur32/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3086-32.image
 ```
 
 ## For Chromebooks ##
@@ -103,7 +103,7 @@ $ ./linuxVM_ARM.sh
 ## Notes ##
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", (1007290890 or some other absurd number) it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
-* If you can't find Cuis5.0-3081-spur.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3086-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
 * To get the contents of this repository without using Git, you can do
 ```
