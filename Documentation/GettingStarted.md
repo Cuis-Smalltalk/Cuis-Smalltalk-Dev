@@ -91,22 +91,28 @@ You can use Linux as a chroot in ChromeOS using Crouton to run a Cuis image.
 First you need to follow the directions for installing Crouton at
 	https://github.com/dnschneid/crouton
 
-Then follow the Linux directions above -- except for choosing the VM to use.
+Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that Cog VMs will not work.
 
-The reason for this is that JIT (Just In Time) compiling is disabled by ChromeOS.  This means that Cog VMs will not work.
+Remember to use the Spur Cuis image when using Spur VMs and the v3 (non-Spur) image when using v3 (non-Spur) VMs.
 
-Remember to use the Spur Cuis image when using Spur VMs and the non-Spur image when using non-Spur VMs.
-
-### For Intel CPUs ###
+### For Intel CPUs: Get and set up an appropriate VM ###
 ```
-$ wget -O linuxVMx86.sh http://squeakvm.org/unix/release/Squeak-4.10.2.2614-linux_i386.sh
-$ ./linuxVMx86.sh
+~/MyProject# rm -r cogspur
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705301155.tar.gz
+~/MyProject# tar -zxvf cogspur.tgz
+~/MyProject# mv ./sqcogspurlinuxht ./cogspur
+```
+### For ARM CPUs: Get and set up an appropriate VM ###
+```
+~/MyProject# rm -r stkspur
+~/MyProject# wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201705301155.tar.gz
+~/MyProject# tar -zxvf stkspur.tgz
+~/MyProject# mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
 
-### For ARM CPUs ###
+### Starting Cuis Smalltalk ###
 ```
-$ wget -O stklinuxARM.tgz www.mirandabanda.org/files/Cog/VM/2015/VM.r3386/stklinuxARM-15.24.3386.tgz
-$ tar -zxvf stklinuxARM.tgz
+~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3086-32.image
 ```
 
 ## Notes ##
