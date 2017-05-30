@@ -69,6 +69,21 @@ $ mv ./cogspur32/build/vm/*.* ./cogspur32
 $ cogspur32/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3086-32.image
 ```
 
+## For Raspberry Pi Raspian ##
+
+### Get and set up an appropriate VM ###
+```
+~/MyProject# rm -r cogspur
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201705292229.tar.gz
+~/MyProject# tar -zxvf cogspur.tgz
+~/MyProject# mv ./sqcogspurlinuxhtRPi ./cogspur
+```
+
+### Starting Cuis Smalltalk ###
+```
+~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3086-32.image
+```
+
 ## For Chromebooks ##
 
 You can use Linux as a chroot in ChromeOS using Crouton to run a Cuis image.
@@ -92,12 +107,6 @@ $ ./linuxVMx86.sh
 ```
 $ wget -O stklinuxARM.tgz www.mirandabanda.org/files/Cog/VM/2015/VM.r3386/stklinuxARM-15.24.3386.tgz
 $ tar -zxvf stklinuxARM.tgz
-```
-
-## For Rasberry Pi Linux ##
-```
-$ wget -O linuxVM_ARM.sh http://squeakvm.org/unix/release/Squeak-4.10.2.2765-linux_armv6l.sh
-$ ./linuxVM_ARM.sh
 ```
 
 ## Notes ##
