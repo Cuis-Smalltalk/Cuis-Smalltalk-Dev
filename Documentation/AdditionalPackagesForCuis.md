@@ -27,6 +27,7 @@ Some of the repos owner by community members, and including packages for Cuis ar
 - https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-StyledTextEditor
 - https://github.com/hernanwilkinson/Cuis-Smalltalk-Aconcagua
 - https://github.com/hernanwilkinson/Cuis-Smalltalk-Chalten
+- https://github.com/hernanwilkinson/Cuis-Smalltalk-Refactoring
 
 (if your repo with Cuis stuff is missing, please email the Cuis mail list)
 
