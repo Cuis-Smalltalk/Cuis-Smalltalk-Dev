@@ -1,6 +1,5 @@
 ## Specific instructions for running a 32Bit Cuis and VM in a 64Bit X64 Linux system
 On Linux 64 bit, if this is the first time you run Cuis Smalltalk 32 bit on this system, add 32 bit libraries. This was tested on Debian 8.
-Note: MacOS and Windows can run 32Bit Cuis without any additional setup.
 
 ```
 sudo dpkg --add-architecture i386
@@ -20,3 +19,5 @@ sudo apt-get install ocl-icd-libopencl1:i386
 # To enable OpenCL support, you need to add the OpenCL driver (the "ICD loader") to the VM plugins folder. For example, For AMD Catalyst driver (AMD GPUs)
 cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur32/lib/squeak/5.0-201705232044/libOpenCL.so.1
 ```
+
+Note: MacOS and Windows can run 32Bit Cuis without any additional setup.

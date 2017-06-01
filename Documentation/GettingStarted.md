@@ -15,10 +15,12 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 
 ## For 64 bits Linux running on AMD/Intel x64 hardware ##
 
+Note: For 32 bits Linux on Intel/AMD, use *_linux32x86_* vm and the *-32.image Cuis image.
+
 ### Get and set up an appropriate VM ###
 ```
 ~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201705232044.tar.gz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201705310241.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./sqcogspur64linuxht ./cogspur
 ```
@@ -42,7 +44,7 @@ Log out and log back in, or reboot the machine.
 
 ### Get and set up an appropriate VM ###
 ```
-$ curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705232044.tar.gz
+$ curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201705310241.tar.gz
 $ tar -zxvf CogSpur.tgz
 ```
 
@@ -52,21 +54,21 @@ $ tar -zxvf CogSpur.tgz
 $ ./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3086.image
 ```
 
-## For Windows Git Bash ##
+## For 64 bits Windows (Git Bash) ##
 
-Currently we recommend using 32 bits Cuis, both on 64 bits and 32 bits Windows systems, as the 64 bits Windows VM is still under development.
+Note: For 32 bits Windows, use *_win32x86_* vm and the *-32.image Cuis image.
 
 ### Get and set up an appropriate VM ###
 ```
-$ rm -r cogspur32
-$ curl -k -L -o cogspur32.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201705232044.zip
-$ unzip cogspur32.zip -d cogspur32
-$ mv ./cogspur32/build/vm/*.* ./cogspur32
+$ rm -r cogspur
+$ curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win64x64_squeak.cog.spur_201705310241.zip
+$ unzip cogspur.zip -d cogspur
+$ mv ./cogspur/build/vm/*.* ./cogspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-$ cogspur32/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3086-32.image
+$ cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3086.image
 ```
 
 ## For Raspberry Pi Raspian ##
@@ -74,7 +76,7 @@ $ cogspur32/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3086-32.image
 ### Get and set up an appropriate VM ###
 ```
 ~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201705292229.tar.gz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201705310241.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
@@ -91,21 +93,19 @@ You can use Linux as a chroot in ChromeOS using Crouton to run a Cuis image.
 First you need to follow the directions for installing Crouton at
 	https://github.com/dnschneid/crouton
 
-Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that Cog VMs will not work.
-
-Remember to use the Spur Cuis image when using Spur VMs and the v3 (non-Spur) image when using v3 (non-Spur) VMs.
+Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_squeak.cog.* VMs will not work.
 
 ### For Intel CPUs: Get and set up an appropriate VM ###
 ```
 ~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705301155.tar.gz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705310241.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./sqcogspurlinuxht ./cogspur
 ```
 ### For ARM CPUs: Get and set up an appropriate VM ###
 ```
 ~/MyProject# rm -r stkspur
-~/MyProject# wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201705301155.tar.gz
+~/MyProject# wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201705310241.tar.gz
 ~/MyProject# tar -zxvf stkspur.tgz
 ~/MyProject# mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
@@ -113,13 +113,14 @@ Remember to use the Spur Cuis image when using Spur VMs and the v3 (non-Spur) im
 ### Starting Cuis Smalltalk ###
 ```
 ~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3086-32.image
+~/MyProject# stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3086-32.image
 ```
 
 ## Notes ##
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", (1007290890 or some other absurd number) it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
 * If you can't find Cuis5.0-3086-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
-* If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available.
+* If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available from http://opensmalltalk.org/
 * To get the contents of this repository without using Git, you can do
 ```
 wget https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip
