@@ -15,7 +15,7 @@ git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 
 ## For 64 bits Linux running on AMD/Intel x64 hardware ##
 
-Note: For 32 bits Linux on Intel/AMD, use *_linux32x86_* vm and the *-32.image Cuis image.
+Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the *-32.image Cuis image.
 
 ### Get and set up an appropriate VM ###
 ```
@@ -56,7 +56,7 @@ $ ./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3086.imag
 
 ## For 64 bits Windows (Git Bash) ##
 
-Note: For 32 bits Windows, use *_win32x86_* vm and the *-32.image Cuis image.
+Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the *-32.image Cuis image.
 
 ### Get and set up an appropriate VM ###
 ```
