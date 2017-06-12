@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 22 May 2017 at 3:33:51 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3099] on 12 June 2017 at 4:17:31 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 76!
-!requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'SignalProcessing' 1 77!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
 !requires: 'Sound' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Statistics' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3166,7 +3166,7 @@ convolutionWith: trimmedPsf
 		horizontalGuardZone: guardZoneWidth
 		verticalGuardZone: guardZoneHeight! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 5/22/2017 15:25:28'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 6/12/2017 12:16:52'!
 correlationWith: another deltai: di deltaj: dj
 	"Do not include pixels where with a zero value. Make them not to affect the 'average'
 	Note: there is room for optimization
@@ -3201,6 +3201,7 @@ correlationWith: another deltai: di deltaj: dj
 			].
 		]
 	].
+	sum = 0.0 ifTrue: [ ^ 0.0 ].
 	^ sum / (sum1 * sum2) sqrt! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 10/17/2016 10:39:31'!

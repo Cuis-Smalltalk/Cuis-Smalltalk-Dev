@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3000] on 13 December 2016 at 10:40:18 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3099] on 12 June 2017 at 4:17:10 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 35!
+!provides: 'LinearAlgebra' 1 36!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -2102,6 +2102,78 @@ storeQRDecompositionOfHessembergSuperiorOnQ: q r: r
 			r preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s.
 			q preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s ] ].
 	q transpose.! !
+
+!FloatMatrix methodsFor: 'operations' stamp: 'jmv 6/8/2017 12:18:26'!
+thresholdAroundMax: threshold borderValue: borderValue fillValue: fillValue
+"growAreaAboveThreshold o algo asi,"
+	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
+	Answer nil if all the elements are below (or equal) threshold.
+
+	(FloatImage fromArrayOfArrays: #(
+		#( 1 2 1)
+		#( 2 5 2)
+		#( 1 2 1))) zz_thresholdBordersBelow: 3 borderValue: 0.2 fillValue:7
+	"
+
+	| answer bottom left p right top lastTimeItGrew |
+	p _ self xyForMax.
+	top _ p y.
+	bottom _ p y.
+	left _ p x.
+	right _ p x.
+
+	lastTimeItGrew _ true.
+	[lastTimeItGrew] whileTrue: [
+		lastTimeItGrew _ false.
+		
+		(top > 1 and: [ (left to: right) anySatisfy: [ :j | (self i: top-1 j: j) > threshold ]])
+				ifTrue: [ top _ top - 1. lastTimeItGrew _ true ].
+		(bottom < height and: [ (left to: right) anySatisfy: [ :j | (self i: bottom+1 j: j) > threshold ]])
+				ifTrue: [ bottom _ bottom + 1. lastTimeItGrew _ true ].
+		(left > 1 and: [ (top to: bottom) anySatisfy: [ :i | (self i: i j: left-1) > threshold ]])
+				ifTrue: [ left _ left - 1. lastTimeItGrew _ true ].
+		(right < width and: [ (top to: bottom) anySatisfy: [ :i | (self i: i j: right+1) > threshold ]])
+				ifTrue: [ right _ right + 1. lastTimeItGrew _ true ].
+	].
+
+	answer _ self class height: height width: width.
+	answer elements += borderValue.
+	top to: bottom do: [ :i |
+		left to: right do: [ :j |
+			answer i: i j: j put: fillValue ]].
+	^answer! !
+
+!FloatMatrix methodsFor: 'operations' stamp: 'jmv 6/8/2017 12:17:36'!
+thresholdBordersBelow: threshold borderValue: borderValue fillValue: fillValue
+	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
+	Answer nil if all the elements are below (or equal) threshold.
+
+	(FloatMatrix fromArrayOfArrays: #(
+		#( 1 2 1)
+		#( 2 5 2)
+		#( 1 2 1))) thresholdBorders: 3 fillValue: 0.2
+	"
+	| column row i j answer |
+	answer _ self class height: height width: width.
+	answer elements += fillValue.
+	row _ self class newRowVectorSize: width.
+	row elements += borderValue.
+	column _ self class newColumnVectorSize: height.
+	column elements += borderValue.
+
+	i _ 1.
+	[i <= height and: [(self i: i) max < threshold]] whileTrue: [ answer i: i put: row. i _ i + 1].
+
+	i _ height.
+	[i >= 1 and: [(self i: i) max < threshold]] whileTrue: [ answer i: i put: row. i _ i - 1].
+
+	j _ 1.
+	[j <= width and: [(self j: j) max < threshold]] whileTrue: [ answer j: j put: column. j _ j + 1].
+
+	j _ width.
+	[j >= 1 and: [(self j: j) max < threshold]] whileTrue: [ answer j: j put: column. j _ j - 1].
+
+	^ answer! !
 
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 11:02:29'!
 trim: threshold
