@@ -17,7 +17,7 @@ sudo apt-get install libgl1-mesa-dev:i386
 # If you are not using AMD Catalyst driver, you might also need:
 sudo apt-get install ocl-icd-libopencl1:i386
 # To enable OpenCL support, you need to add the OpenCL driver (the "ICD loader") to the VM plugins folder. For example, For AMD Catalyst driver (AMD GPUs)
-cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur32/lib/squeak/5.0-201705232044/libOpenCL.so.1
+cp /usr/lib/i386-linux-gnu/libOpenCL.so.1 cogspur32/lib/squeak/5.0-201706141439/libOpenCL.so.1
 ```
 
 Note: MacOS and Windows can run 32Bit Cuis without any additional setup.
