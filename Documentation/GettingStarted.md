@@ -76,7 +76,7 @@ $ cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3099.image
 ### Get and set up an appropriate VM ###
 ```
 ~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201705310241.tar.gz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201706141439.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
@@ -98,14 +98,14 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 ### For Intel CPUs: Get and set up an appropriate VM ###
 ```
 ~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705310241.tar.gz
+~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201706141439.tar.gz
 ~/MyProject# tar -zxvf cogspur.tgz
 ~/MyProject# mv ./sqcogspurlinuxht ./cogspur
 ```
 ### For ARM CPUs: Get and set up an appropriate VM ###
 ```
 ~/MyProject# rm -r stkspur
-~/MyProject# wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201705310241.tar.gz
+~/MyProject# wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201706141439.tar.gz
 ~/MyProject# tar -zxvf stkspur.tgz
 ~/MyProject# mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
