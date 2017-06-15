@@ -21,9 +21,7 @@ iconicHaloSpecifications
 	(addGrabHandle:				center			top				(black)							haloGrabIcon 				'Pick up')
 	(addDragHandle:				rightCenter		top				(brown)						haloDragIcon 				'Move')
 	(addDupHandle:				right				top				(green)						haloDuplicateIcon 			'Duplicate')	
-	"FIXME - Currently non-functional...
 	(addHelpHandle:				center			bottom			(lightBlue)					haloHelpIcon 				'Help')
-	"
 	(addGrowHandle:			right				bottom			(yellow)						haloScaleIcon 				'Change size')
 	(addFontSizeHandle:		leftCenter		bottom			(lightGreen)					haloFontSizeIcon 			'Change font')
 	(addFontEmphHandle:		rightCenter		bottom			(lightBrown darker)			haloFontEmphasisIcon 		'Emphasis & alignment')
