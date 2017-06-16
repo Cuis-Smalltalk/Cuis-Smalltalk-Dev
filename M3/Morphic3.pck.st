@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3088] on 31 May 2017 at 10:22:13 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3103] on 16 June 2017 at 6:51:07 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 24!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'Morphic3' 1 26!
 !requires: 'YAXO' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #SVGError category: #'Morphic3-SVG'!
 Error subclass: #SVGError
 	instanceVariableNames: ''
@@ -295,7 +295,7 @@ SimplifiedVectorEngine class
 
 !classDefinition: #VectorEngine category: #'Morphic3-Kernel'!
 Object subclass: #VectorEngine
-	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth subPixelDelta targetSubpixelAlphas targetSubpixelAlphasIfStrokesAndFillsWereOpaque strokeWidth strokeAlpha strokeRed strokeGreen strokeBlue strokeGradient fillAlpha fillRed fillGreen fillBlue fillGradient doStroke doFill strokeDashArray strokeDashArrayOffset clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips boundsLeft boundsTop boundsRight boundsBottom trajectoryLength morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom penAlpha edgeCountPerPixel hopsPerPixel auxBitBlt firstX firstY currentX currentY previousX previousY previousYTruncated lastControl2Point'
+	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth subPixelDelta targetSubpixelAlphas targetSubpixelAlphasIfStrokesAndFillsWereOpaque strokeWidth strokeAlpha strokeRed strokeGreen strokeBlue strokeGradient fillAlpha fillRed fillGreen fillBlue fillGradient doStroke doFill strokeDashArray strokeDashArrayOffset clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips boundsLeft boundsTop boundsRight boundsBottom trajectoryLength morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom penAlpha edgeCountPerPixel hopsPerPixel auxBitBlt firstX firstY currentX currentY previousYTruncated lastControl2Point trajectoryPoints'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic3-Kernel'!
@@ -516,22 +516,13 @@ Display forceToScreen.!
 !VectorCanvas commentStamp: '<historical>' prior: 0!
 A canvas specially built for Morphic 3.
 
-Preferences m3Fonts.
 (VectorCanvas onForm: Display) fullDraw: self runningWorld.
-"
-Preferences standardFonts
-And reopen windows..."
 
-
-
-En un morph cualquiera
+On any Morph:
 | c |
-[
-	Preferences m3Fonts.
-	c _ VectorCanvas onForm: Display.
-	self allOwnersReverseDo: [ :m | c into: m ].
-	c fullDraw: self ] ensure:
-[ Preferences standardFonts ]!
+c _ VectorCanvas onForm: Display.
+self allOwnersReverseDo: [ :m | c into: m ].
+c fullDraw: self!
 
 !Morphic3LinearGradient commentStamp: '<historical>' prior: 0!
 To be used by VectorCanvas. Vector specified in Display (or target) coordinates. stopFractions are float, [0.0 .. 1.0], stopColorComponents are [0 .. 255]!
@@ -556,6 +547,14 @@ Gives exceptional quality.
 (VectorEngine onForm: Display)
 	resetMorphBounds;
 	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil;
+	initializeTrajectory;
+	displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2;
+	finishTrajectory.
+Display forceToScreen.
+
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: #(10 30 40 100) strokeDashArrayOffset: 0;
 	initializeTrajectory;
 	displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2;
 	finishTrajectory.
@@ -4611,36 +4610,29 @@ onForm: aForm
 
 	^ self new setForm: aForm! !
 
-!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 5/31/2017 09:58:26'!
-addCurrentToTrajectory
-
+!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 6/16/2017 11:03:02'!
+addToTrajectoryX: x y: y
 	"slight optimization possible when we know width = 0... perhaps implement:
 		-we know palpha is never 127
 		- we know distanceToEdge is always > erodedHalfWidth.
 	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
 	Mas importante:
 		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
-	| dilatedHalfWidth erodedHalfWidth distanceToAxis alpha t b l r constant1 alphaWord doUpdate dySquared dx dxSquared dy pixelIndex rest dxp |
+	| dilatedHalfWidth t b l r rest currentPoint newTrajectoryLength |
 	dilatedHalfWidth _ strokeWidth + antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
-	erodedHalfWidth _ strokeWidth - antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
-	constant1 _ 127.0 / antiAliasingWidth.
-
-	"compute trajectory length"
-	previousX ifNotNil: [
-		trajectoryLength _ trajectoryLength + ((currentX-previousX)@(currentY-previousY)) r ].
 
 	"Compute line crossing for fills."
 	doFill ifTrue: [
-		self computeCrossCountsForX: currentX y: currentY ].
+		self computeCrossCountsForX: x y: y].
 
 	"Compute affected rect. Honor clipRect"
-	t _ (currentY -dilatedHalfWidth) truncated +1.
+	t _ (y -dilatedHalfWidth) truncated +1.
 	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (currentY +dilatedHalfWidth) truncated.
+	b _ (y +dilatedHalfWidth) truncated.
 	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (currentX -dilatedHalfWidth -subPixelDelta) truncated +1.
+	l _ (x -dilatedHalfWidth -subPixelDelta) truncated +1.
 	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (currentX +dilatedHalfWidth +subPixelDelta) truncated.
+	r _ (x +dilatedHalfWidth +subPixelDelta) truncated.
 	r > clipRight ifTrue: [ r _ clipRight ].
 
 	"Record the bounds of the area that was modified by this drawing operation"
@@ -4649,59 +4641,20 @@ addCurrentToTrajectory
 	t < boundsTop ifTrue: [ boundsTop _ t ].
 	b > boundsBottom ifTrue: [ boundsBottom _ b ].
 
-	t to: b do: [ :displayY |
-		pixelIndex _ displayY * targetWidth +  l.
-		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			alphaWord _ penAlpha bytesAt: pixelIndex.
-			alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
-				doUpdate _ false.
-				dy _ displayY - currentY.
-				dySquared _ dy * dy.
-				dx _ displayX - currentX.
-				"Red"
-				dxp _ dx - subPixelDelta.
-				dxSquared _ dxp * dxp.
-				distanceToAxis _ (dxSquared + dySquared) sqrt.
-				distanceToAxis < dilatedHalfWidth
-					ifTrue: [
-						alpha _ distanceToAxis <= erodedHalfWidth
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
-						alpha > (alphaWord at: 3) ifTrue: [
-							alphaWord at: 3 put: alpha.
-							doUpdate _ true ]].
-				"Green"
-				dxSquared _ dx * dx.
-				distanceToAxis _ (dxSquared + dySquared) sqrt.
-				distanceToAxis < dilatedHalfWidth
-					ifTrue: [
-						alpha _ distanceToAxis <= erodedHalfWidth
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
-						alpha > (alphaWord at: 2) ifTrue: [
-							alphaWord at: 2 put: alpha.
-							doUpdate _ true ]].
-				"Blue"
-				dxp _ dx + subPixelDelta.
-				dxSquared _ dxp * dxp.
-				distanceToAxis _ (dxSquared + dySquared) sqrt.
-				distanceToAxis < dilatedHalfWidth
-					ifTrue: [
-						alpha _ distanceToAxis <= erodedHalfWidth
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
-						alpha > (alphaWord at: 1) ifTrue: [
-							alphaWord at: 1 put: alpha.
-							doUpdate _ true ]].
-				doUpdate ifTrue: [
-					(strokeDashArray isNil  or: [
-						rest _ trajectoryLength + strokeDashArrayOffset \\ strokeDashArray last.
-						(strokeDashArray findLast: [ :each | rest - each > 0 ]) even ]) ifTrue: [
-							penAlpha bytesAt: pixelIndex put: alphaWord ]]
-				]]].
-	previousX _ currentX.
-	previousY _ currentY! !
+
+	currentPoint _ x@y.
+	(strokeDashArray isNil  or: [	
+		"compute trajectory length"
+
+		newTrajectoryLength _ 0.0.
+		trajectoryPoints ifNotEmpty: [
+			newTrajectoryLength _ (currentPoint - trajectoryPoints last) r + trajectoryLength ].
+
+		rest _ newTrajectoryLength + strokeDashArrayOffset \\ strokeDashArray last.
+		(strokeDashArray findLast: [ :each | rest - each > 0 ]) even ]) ifTrue: [
+			trajectoryPoints add: currentPoint.
+			trajectoryLength _ newTrajectoryLength
+	]! !
 
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 10/14/2014 10:48'!
 antiAliasingWidth: aNumber
@@ -5157,8 +5110,8 @@ currentPoint
 	currentX ifNil: [ ^nil ].
 	^currentX@currentY! !
 
-!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 11/14/2014 11:20'!
-displayCoordarcCenterX: mcx centerY: mcy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
+!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 6/16/2017 11:23:34'!
+displayCoordarcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngine onForm: Display)
 	resetMorphBounds;
@@ -5168,10 +5121,7 @@ displayCoordarcCenterX: mcx centerY: mcy radiusX: rx radiusY: ry rotationAngle: 
 	finishTrajectory.
 Display forceToScreen
 "
-	| center cx cy d hops angle thetaCos thetaSin xp yp x0 y0 |
-	center _ mcx@mcy.
-	cx _ center x.
-	cy _ center y.
+	| d hops angle thetaCos thetaSin xp yp x0 y0 x y |
 	
 	"Por supuesto probar tambien rx no igual a ry, y uno (o ambos) menor que el ancho de trazo..."
 	thetaCos _ theta cos.
@@ -5184,25 +5134,25 @@ Display forceToScreen
 	firstX
 		ifNotNil: [ self displayCoordlineToX: x0 y: y0 ]
 		ifNil: [
+			"trajectory starts here. #closeTrajectory should draw a line to here"
 			firstX _ x0.
 			firstY _ y0.
-			currentX _ x0.
-			currentY _ y0.	
-			trajectoryLength _ 0.0.
-			self addCurrentToTrajectory ].
+			self addToTrajectoryX: x0 y: y0 ].
 	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
 	d _ sweepAngle / hops.
 	hops timesRepeat: [
 		angle _ angle + d.
 		xp _ angle cos * rx.
 		yp _ angle sin * ry.
-		currentX _ thetaCos * xp - (thetaSin * yp) + cx.
-		currentY _ thetaSin * xp + (thetaCos * yp) + cy.
-		self addCurrentToTrajectory ].
+		x _ thetaCos * xp - (thetaSin * yp) + cx.
+		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		self addToTrajectoryX: x y: y ].
 
+	currentX _ x.
+	currentY _ y.
 	lastControl2Point _ nil! !
 
-!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 10/13/2014 16:55'!
+!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 6/16/2017 11:15:59'!
 displayCoordarcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngine onForm: Display)
@@ -5290,7 +5240,7 @@ Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entr
 	"Finalmente, estudiar la correccion de valores fuera de rango"
 	
 
-	self displayCoordarcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep:  deltaTheta! !
+	self displayCoordarcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
 !VectorEngine methodsFor: 'paths' stamp: 'jmv 10/22/2014 23:00'!
 displayCoordcubicBezier: points borderWidth: aStrokeWidth borderColor: bc fillColor: fc strokeDashArray: sda strokeDashArrayOffset: sdao
@@ -5318,7 +5268,7 @@ Display forceToScreen
 
 	self finishTrajectory! !
 
-!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 10/22/2014 22:30'!
+!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 6/16/2017 11:24:10'!
 displayCoordcurveToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"
 (VectorEngine onForm: Display)
@@ -5331,7 +5281,7 @@ displayCoordcurveToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 Display forceToScreen
 	"
 
-	| dx dy hops increment t x0 y0 oneLessT f2 f3 f1 f23 f4 |
+	| dx dy hops increment t x0 y0 oneLessT f2 f3 f1 f23 f4 x y |
 
 	dx _ (x1-currentX) abs + (x2-x1) abs + (x3-x2) abs.
 	dy _ (y1-currentY) abs + (y2-y1) abs + (y3-y2) abs.
@@ -5341,7 +5291,7 @@ Display forceToScreen
 	"en muchos casos, secuencias de estos,  repetimos puntos, el ultimo de la curva anterior... pensar, etc"
 	x0 _ currentX.
 	y0 _ currentY.
-	self addCurrentToTrajectory.
+	self addToTrajectoryX: x0 y: y0.
 	hops-1 timesRepeat: [
 		t _ t + increment.
 		oneLessT _ 1.0 - t.
@@ -5350,15 +5300,16 @@ Display forceToScreen
 		f2 _ f23 * oneLessT.
 		f3 _ f23 * t.
 		f4 _ t * t * t.
-		currentX _ (f1 * x0) + (f2 * x1) + (f3 * x2) + (f4 * x3).
-		currentY _ (f1 * y0) + (f2 * y1) + (f3 * y2) + (f4 * y3).
-		self addCurrentToTrajectory ].
+		x _ (f1 * x0) + (f2 * x1) + (f3 * x2) + (f4 * x3).
+		y _ (f1 * y0) + (f2 * y1) + (f3 * y2) + (f4 * y3).
+		self addToTrajectoryX: x y: y ].
+	self addToTrajectoryX: x3 y: y3.
+
 	currentX _ x3.
 	currentY _ y3.
-	self addCurrentToTrajectory.
 	lastControl2Point _ x2@y2! !
 
-!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 10/22/2014 22:30'!
+!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 6/16/2017 11:24:37'!
 displayCoordlineToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -5370,23 +5321,25 @@ displayCoordlineToX: x2 y: y2
 	finishTrajectory.
 Display forceToScreen
 "
-	| dx dy hops incrementX incrementY |
-	dx _ x2 - currentX.
-	dy _ y2 - currentY.
+	| dx dy hops incrementX incrementY x y |
+	x _ currentX.
+	y _ currentY.
+	dx _ x2 - x.
+	dy _ y2 - y.
 	hops _ ((dx abs max: dy abs) * hopsPerPixel)truncated + 1.
 	incrementX _ dx *1.0 / hops.
 	incrementY _ dy *1.0 / hops.
 	hops timesRepeat: [
-		self addCurrentToTrajectory.
-		currentX _ currentX + incrementX.
-		currentY _ currentY + incrementY ].
+		self addToTrajectoryX: x y: y.
+		x _ x + incrementX.
+		y _ y + incrementY ].
+	self addToTrajectoryX: x2 y: y2.
+
 	currentX _ x2.
 	currentY _ y2.
-	self addCurrentToTrajectory.
-
 	lastControl2Point _ nil! !
 
-!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 10/22/2014 22:35'!
+!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 6/16/2017 10:26:05'!
 displayCoordmoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -5404,13 +5357,11 @@ Display forceToScreen
 	"A discontinuity in the trajectory"
 
 	previousYTruncated _ nil.
+	"We are starting a new trajectory, or at a discontinuity in trajectory. #closeTrajectory should draw a line to here"
 	firstX _ x.
 	firstY _ y.
-	previousX _ nil.
-	previousY _ nil.
 	currentX _ x.
 	currentY _ y.
-	trajectoryLength _ 0.0.
 
 	lastControl2Point _ nil! !
 
@@ -5439,7 +5390,7 @@ Display forceToScreen
 
 	self finishTrajectory! !
 
-!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 10/22/2014 22:30'!
+!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 6/16/2017 11:25:04'!
 displayCoordquadraticBezierCurveToX: x2 y: y2 controlX: x1 y: y1
 	"
 (VectorEngine onForm: Display)
@@ -5451,7 +5402,7 @@ displayCoordquadraticBezierCurveToX: x2 y: y2 controlX: x1 y: y1
 	finishTrajectory.
 Display forceToScreen
 	"
-	| dx dy hops increment t x0 y0 oneLessT f1 f3 f2 |
+	| dx dy hops increment t x0 y0 oneLessT f1 f3 f2 x y |
 	dx _ (x1-currentX) abs + (x2-x1) abs.
 	dy _ (y1-currentY) abs + (y2-y1) abs.
 	hops _ ((dx max: dy) * hopsPerPixel)truncated + 1.
@@ -5459,20 +5410,20 @@ Display forceToScreen
 	t _ 0.0.
 	x0 _ currentX.
 	y0 _ currentY.
-	self addCurrentToTrajectory.
+	self addToTrajectoryX: x0 y: y0.
 	hops-1 timesRepeat: [
 		t _ t + increment.
 		oneLessT _ 1.0 - t.
 		f1 _ oneLessT * oneLessT.
 		f2 _ 2* oneLessT * t.
 		f3 _ t * t.
-		currentX _ (f1 * x0) + (f2 * x1) + (f3 * x2).
-		currentY _ (f1 * y0) + (f2 * y1) + (f3 * y2).
-		self addCurrentToTrajectory ].
+		x _ (f1 * x0) + (f2 * x1) + (f3 * x2).
+		y _ (f1 * y0) + (f2 * y1) + (f3 * y2).
+		self addToTrajectoryX: x y: y ].
+	self addToTrajectoryX: x2 y: y2.
+
 	currentX _ x2.
 	currentY _ y2.
-	self addCurrentToTrajectory.
-	
 	lastControl2Point _ x1@y1! !
 
 !VectorEngine methodsFor: 'paths' stamp: 'jmv 10/22/2014 23:00'!
@@ -5497,7 +5448,7 @@ Display forceToScreen
 
 	self finishTrajectory! !
 
-!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 11/2/2014 15:30'!
+!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 6/16/2017 10:58:19'!
 finishTrajectory
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 
@@ -5508,14 +5459,14 @@ finishTrajectory
 			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
 			self closeTrajectory ]].
 
-	"A discontinuity in the trajectory"
+	"Current trajectory finished"
+	trajectoryPoints do: [ :p | self plotNibAplhaX: p x y: p y ].
 	previousYTruncated _ nil.
 	firstX _ nil.
 	firstY _ nil.
-	previousX _ nil.
-	previousY _ nil.
 	currentX _ nil.
 	currentY _ nil.
+	trajectoryPoints _ OrderedCollection new.
 	trajectoryLength _ 0.0.
 	lastControl2Point _ nil.
 
@@ -5532,16 +5483,15 @@ finishTrajectory
 	self blendStrokeOnly.
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 10/22/2014 22:35'!
+!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 6/2/2017 10:48:03'!
 initializeTrajectory
 	
 	previousYTruncated _ nil.
 	firstX _ nil.
 	firstY _ nil.
-	previousX _ nil.
-	previousY _ nil.
 	currentX _ nil.
 	currentY _ nil.
+	trajectoryPoints _ OrderedCollection new.
 	trajectoryLength _ 0.0.
 	lastControl2Point _ nil! !
 
@@ -5549,6 +5499,79 @@ initializeTrajectory
 lastControl2Point
 
 	^lastControl2Point! !
+
+!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 6/16/2017 10:57:49'!
+plotNibAplhaX: x y: y
+
+	"slight optimization possible when we know width = 0... perhaps implement:
+		-we know palpha is never 127
+		- we know distanceToEdge is always > erodedHalfWidth.
+	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
+	Mas importante:
+		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
+	| dilatedHalfWidth erodedHalfWidth distanceToAxis alpha t b l r constant1 alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
+
+	dilatedHalfWidth _ strokeWidth + antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
+	erodedHalfWidth _ strokeWidth - antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
+	constant1 _ 127.0 / antiAliasingWidth.
+
+	"Compute affected rect. Honor clipRect"
+	t _ (y -dilatedHalfWidth) truncated +1.
+	t < clipTop ifTrue: [ t _ clipTop ].
+	b _ (y +dilatedHalfWidth) truncated.
+	b > clipBottom ifTrue: [ b _ clipBottom ].
+	l _ (x -dilatedHalfWidth -subPixelDelta) truncated +1.
+	l < clipLeft ifTrue: [ l _ clipLeft ].
+	r _ (x +dilatedHalfWidth +subPixelDelta) truncated.
+	r > clipRight ifTrue: [ r _ clipRight ].
+
+	t to: b do: [ :displayY |
+		pixelIndex _ displayY * targetWidth +  l.
+		l to: r do: [ :displayX |
+			pixelIndex _ pixelIndex + 1.
+			alphaWord _ penAlpha bytesAt: pixelIndex.
+			alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
+				doUpdate _ false.
+				dy _ displayY - y.
+				dySquared _ dy * dy.
+				dx _ displayX - x.
+				"Red"
+				dxp _ dx - subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 3) ifTrue: [
+							alphaWord at: 3 put: alpha.
+							doUpdate _ true ]].
+				"Green"
+				dxSquared _ dx * dx.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 2) ifTrue: [
+							alphaWord at: 2 put: alpha.
+							doUpdate _ true ]].
+				"Blue"
+				dxp _ dx + subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 1) ifTrue: [
+							alphaWord at: 1 put: alpha.
+							doUpdate _ true ]].
+				doUpdate ifTrue: [
+					penAlpha bytesAt: pixelIndex put: alphaWord ]]]]! !
 
 !VectorEngine methodsFor: 'private' stamp: 'jmv 10/22/2014 17:29'!
 resetMorphBounds

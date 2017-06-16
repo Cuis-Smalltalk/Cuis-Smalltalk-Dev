@@ -35,7 +35,7 @@ iconicHaloSpecifications
 wantsHaloHandleWithSelector: aSelector inHalo: aHaloMorph
 	"Answer whether the receiver would like to offer the halo handle with the given selector (e.g. #addCollapseHandle:)"
 
-	(#(addHelpHandle: addRotateHandle: addRecolorHandle:) statePointsTo: aSelector)
+	(#(addRotateHandle: addRecolorHandle:) statePointsTo: aSelector)
 		ifTrue: ["FIXME - hack to disable for non-functional halo items"
 			^ false].
 
