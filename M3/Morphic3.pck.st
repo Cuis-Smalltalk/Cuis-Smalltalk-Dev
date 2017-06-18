@@ -3,6 +3,7 @@
 !provides: 'Morphic3' 1 26!
 !requires: 'YAXO' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'OpenCL' 1 nil nil!
 !classDefinition: #SVGError category: #'Morphic3-SVG'!
 Error subclass: #SVGError
 	instanceVariableNames: ''
