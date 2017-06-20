@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3082] on 17 May 2017 at 12:37:35 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3099] on 17 June 2017 at 12:04:29 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 32!
-!requires: 'SignalProcessing' 1 37 nil!
+!provides: 'OpenCL' 1 33!
 !requires: 'FFI' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -24735,7 +24735,7 @@ initialize
 	kernel argAt: 1 put: filterWeightsBuffer size: 4.
 	" ! !
 
-!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 15:20'!
+!DeformationGridExample methodsFor: 'as yet unclassified' stamp: 'jmv 6/17/2017 12:04:13'!
 input: inputImage gridX: gridXPositions gridY: gridYPositions resultExtent: aResultExtent
 "
 Alternativas.
@@ -24941,7 +24941,7 @@ a CLImageFormatStruct(RA float)
 
 							
 	resultExtent _ aResultExtent.
-	outputImage _ FloatImage extent: aResultExtent.
+	outputImage _ (Smalltalk at: #FloatImage) extent: aResultExtent.
 	fmt := CLImageFormatStruct intensity8Norm.
 	input := context 
 					newImage2D: CL_MEM_READ_ONLY "+ CL_MEM_COPY_HOST_PTR"
@@ -25022,22 +25022,24 @@ sourceCode
 		write_imagef(dst_image, coord, out);
 	}'! !
 
-!DeformationGridExample class methodsFor: 'as yet unclassified' stamp: 'jmv 9/9/2015 14:49'!
+!DeformationGridExample class methodsFor: 'as yet unclassified' stamp: 'jmv 6/17/2017 12:03:39'!
 dale
 	"
 	DeformationGridExample dale
+	Experimental. Unfinished. Requires SignalProcessing.pck.st
 	En casa aun no puedo instanciar la de resultado...
 	"
-	| experiment gridXPositions gridYPositions inputImage resultExtent |
+	| experiment gridXPositions gridYPositions inputImage resultExtent floatImageClass |
 	experiment _ self new.
-inputImage _ FloatImage lena.
-inputImage _ FloatImage grid: 12@12 extent: 256@256.
+floatImageClass _ Smalltalk at: #FloatImage.
+inputImage _ floatImageClass lena.
+inputImage _ floatImageClass grid: 12@12 extent: 256@256.
 resultExtent _ 512@512.
-gridXPositions _ FloatImage fromArrayOfArrays: #(
+gridXPositions _ floatImageClass fromArrayOfArrays: #(
 	(0.0 0.3 1.0)
 	(0.0 0.6 1.0)
 	(0.0 0.8 1.0)).
-gridYPositions _ FloatImage fromArrayOfArrays: #(
+gridYPositions _ floatImageClass fromArrayOfArrays: #(
 	(0.0 0.3 0.0)
 	(0.7 0.6 0.5)
 	(1.0 1.0 1.0)).
