@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3120] on 23 June 2017 at 3:29:20 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3121] on 27 June 2017 at 3:27:28 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 78!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'SignalProcessing' 1 79!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -4588,6 +4588,26 @@ scharr
 	e _ xFiltered elements.
 	1 to: e size do: [ :i | e at: i put: (e at: i) sqrt ].
 	^xFiltered! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 6/27/2017 10:48:38'!
+scharrNoDataValue: noDataValue dilatedBy: extraPixels avoidSaturatedPixels: aBoolean
+	"See comment at #scharr
+	Additionally, consider that pixels in us that are noDataValue should not contribute to a border.
+	As Scharr uses 3x3 filters, this is 8 neighbors to each noDataValuePixels.
+	If extraPixels is not zero, it is an extra border of that width to not consider pixels. Useful, for example if images are interpolated and there are pixels that are neighbors of a noDataValue pixel, that as they are interpolated with noDataValue, they are invalid themselves. Usually just self extraPixels to zero
+	if aBoolean is true, also consider saturated pixels as noData"
+
+	| borders nighborhood v |
+	nighborhood _ 1 + extraPixels.
+	borders _ self scharr.
+	1 to: height do: [ :i |
+		1 to: width do: [ :j |
+			v _ self i: i j: j.
+			(v = 0.0 or: [aBoolean and: [v > 0.85]]) ifTrue: [
+				(i-nighborhood max: 1) to: (i+nighborhood min: height )  do: [ :ii |
+					(j-nighborhood max: 1) to: (j+nighborhood min: width ) do: [ :jj |
+						borders  i: ii j: jj put: 0.0 ]]]]].
+	^ borders! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
