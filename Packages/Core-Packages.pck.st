@@ -1,13 +1,13 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 16 January 2017 at 12:09:03.493729 am'!
 'Description '!
-!provides: 'Core-Packages' 1 10!
+!provides: 'Core-Packages' 1 11!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Network-Kernel' 1 1 nil!
 !requires: 'Cuis-Base' 42 2327 nil!
 !requires: 'JSON' 1 3 nil!
 !requires: 'Graphics-Files-Additional' 1 1 nil!
-!requires: 'Protocols-HTTP' 1 14 nil!
+!requires: 'WebClient' 1 9 nil!
 !requires: 'Theme-Themes' 1 1 nil!
 !requires: 'SUnit XML reports' 1 0 nil!
 !requires: 'FFITests' 1 2 nil!

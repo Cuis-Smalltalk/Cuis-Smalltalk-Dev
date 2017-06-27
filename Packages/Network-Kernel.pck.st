@@ -1,16 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2021] on 12 June 2014 at 9:26:12.205663 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3120] on 26 June 2017 at 6:41:20 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Network-Kernel' 1 2!
-!classDefinition: #ConnectionQueue category: #'Network-Kernel'!
-Object subclass: #ConnectionQueue
-	instanceVariableNames: 'portNumber maxQueueLength connections accessSema socket process'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Network-Kernel'!
-!classDefinition: 'ConnectionQueue class' category: #'Network-Kernel'!
-ConnectionQueue class
-	instanceVariableNames: ''!
-
+!provides: 'Network-Kernel' 1 3!
 !classDefinition: #InvalidSocketStatusException category: #'Network-Kernel'!
 Error subclass: #InvalidSocketStatusException
 	instanceVariableNames: ''
@@ -91,6 +81,16 @@ NetworkError subclass: #SocketPrimitiveFailed
 SocketPrimitiveFailed class
 	instanceVariableNames: ''!
 
+!classDefinition: #ConnectionQueue category: #'Network-Kernel'!
+Object subclass: #ConnectionQueue
+	instanceVariableNames: 'portNumber maxQueueLength connections accessSema socket process'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Network-Kernel'!
+!classDefinition: 'ConnectionQueue class' category: #'Network-Kernel'!
+ConnectionQueue class
+	instanceVariableNames: ''!
+
 !classDefinition: #NetNameResolver category: #'Network-Kernel'!
 Object subclass: #NetNameResolver
 	instanceVariableNames: ''
@@ -122,10 +122,6 @@ SocketStream class
 	instanceVariableNames: ''!
 
 
-!ConnectionQueue commentStamp: '<historical>' prior: 0!
-A ConnectionQueue listens on a given port number and collects a queue of client connections. In order to handle state changes quickly, a ConnectionQueue has its own process that: (a) tries to keep a socket listening on the port whenever the queue isn't already full of connections and (b) prunes stale connections out of the queue to make room for fresh ones.
-!
-
 !InvalidSocketStatusException commentStamp: '<historical>' prior: 0!
 Signals if an operation on a Socket found it in a state invalid for that operation.!
 
@@ -153,6 +149,10 @@ Signals that a name lookup operation failed.
 
 !NoNetworkError commentStamp: '<historical>' prior: 0!
 Signals that no network was found. This could happen, e.g., on dial-up connection when no connection was established when Squeak tried to access it.!
+
+!ConnectionQueue commentStamp: '<historical>' prior: 0!
+A ConnectionQueue listens on a given port number and collects a queue of client connections. In order to handle state changes quickly, a ConnectionQueue has its own process that: (a) tries to keep a socket listening on the port whenever the queue isn't already full of connections and (b) prunes stale connections out of the queue to make room for fresh ones.
+!
 
 !NetNameResolver commentStamp: '<historical>' prior: 0!
 This class implements TCP/IP style network name lookup and translation facilities.
@@ -223,6 +223,44 @@ The primary reason for the SS implementation is optimal performance. The main di
 SS can not be run unbuffered, since that seems unneeded. The option to autoFlush is still available, with it set to true SocketStream (just like OSS) will flush on its own on each nextPut:/nextPutAll:, otherwise flushing it will have to be done manually but is done on close.
 
 The first performance tests shows that, as noted above, receiving large amounts of data using #upToAll: is greatly improved - factor of 10. Serving HTTP with small payloads seemed at first not be faster at all - but this is due to the high overhead of Socket connect/close and other things. Increasing payloads show a difference and especially with keep alive on - where the new SS roughly doubles the throughput!!!
+
+!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:58'!
+host
+	^ host! !
+
+!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:39'!
+host: addressOrHostName port: portNumber
+	host _ addressOrHostName.
+	port _ portNumber! !
+
+!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:58'!
+port
+	^ port! !
+
+!ConnectionRefused class methodsFor: 'instance creation' stamp: 'len 12/14/2002 11:39'!
+host: addressOrHostName port: portNumber
+	^ self new host: addressOrHostName port: portNumber! !
+
+!NameLookupFailure methodsFor: 'accessing' stamp: 'jmv 3/13/2012 23:13'!
+defaultAction
+	"Backward compatibility"
+	| response |
+	response _ (PopUpMenu labels: 'Retry\Give Up' withNewLines)
+			startUpWithCaption: self messageText.
+	^ response = 2
+		ifFalse: [self retry]! !
+
+!NameLookupFailure methodsFor: 'accessing' stamp: 'len 12/14/2002 11:57'!
+hostName
+	^ hostName! !
+
+!NameLookupFailure methodsFor: 'accessing' stamp: 'len 12/14/2002 11:57'!
+hostName: aString
+	hostName _ aString! !
+
+!NameLookupFailure class methodsFor: 'instance creation' stamp: 'len 12/14/2002 11:57'!
+hostName: aString
+	^ self new hostName: aString! !
 
 !ConnectionQueue methodsFor: 'public' stamp: 'nice 12/26/2009 01:23'!
 connectionCount
@@ -376,44 +414,6 @@ portNumber: anInteger queueLength: queueLength
 
 	^ self new initPortNumber: anInteger queueLength: queueLength
 ! !
-
-!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:58'!
-host
-	^ host! !
-
-!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:39'!
-host: addressOrHostName port: portNumber
-	host _ addressOrHostName.
-	port _ portNumber! !
-
-!ConnectionRefused methodsFor: 'accessing' stamp: 'len 12/14/2002 11:58'!
-port
-	^ port! !
-
-!ConnectionRefused class methodsFor: 'instance creation' stamp: 'len 12/14/2002 11:39'!
-host: addressOrHostName port: portNumber
-	^ self new host: addressOrHostName port: portNumber! !
-
-!NameLookupFailure methodsFor: 'accessing' stamp: 'jmv 3/13/2012 23:13'!
-defaultAction
-	"Backward compatibility"
-	| response |
-	response _ (PopUpMenu labels: 'Retry\Give Up' withNewLines)
-			startUpWithCaption: self messageText.
-	^ response = 2
-		ifFalse: [self retry]! !
-
-!NameLookupFailure methodsFor: 'accessing' stamp: 'len 12/14/2002 11:57'!
-hostName
-	^ hostName! !
-
-!NameLookupFailure methodsFor: 'accessing' stamp: 'len 12/14/2002 11:57'!
-hostName: aString
-	hostName _ aString! !
-
-!NameLookupFailure class methodsFor: 'instance creation' stamp: 'len 12/14/2002 11:57'!
-hostName: aString
-	^ self new hostName: aString! !
 
 !NetNameResolver class methodsFor: 'lookups' stamp: 'ls 9/5/1998 01:14'!
 addressForName: aString
@@ -735,11 +735,11 @@ waitForResolverReadyUntil: deadline
 	^ status ~= ResolverBusy
 ! !
 
-!Socket methodsFor: 'connection open/close' stamp: 'bolot 7/16/1999 14:36'!
+!Socket methodsFor: 'connection open/close' stamp: 'jmv 6/25/2017 21:35:04'!
 accept
 	"Accept a connection from the receiver socket.
 	Return a new socket that is connected to the client"
-	^Socket acceptFrom: self.! !
+	^self class acceptFrom: self! !
 
 !Socket methodsFor: 'initialize-destroy' stamp: 'ul 4/20/2011 01:56'!
 acceptFrom: aSocket
