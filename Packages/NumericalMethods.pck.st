@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 17 May 2017 at 5:07:29 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3120] on 23 June 2017 at 3:29:09 pm'!
 'Description A collection of general numerical algorithms for continuous problems.'!
-!provides: 'NumericalMethods' 1 4!
+!provides: 'NumericalMethods' 1 5!
 !classDefinition: #NelderMeadMethod category: #NumericalMethods!
 Object subclass: #NelderMeadMethod
 	instanceVariableNames: 'f testPoints epsilon'
@@ -59,7 +59,7 @@ objectiveFunction: aBlock
 
 	f _ aBlock! !
 
-!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 5/17/2017 17:07:00'!
+!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 6/23/2017 15:02:54'!
 solve
 	"Closely follows implementation at
 		https://en.wikipedia.org/wiki/Nelder-Mead_method
@@ -87,7 +87,11 @@ solve
 		(bestErrorEstimation isNil or: [errorEstimation < bestErrorEstimation]) ifTrue: [
 			bestErrorEstimation _ errorEstimation.
 			lastImprovement _ iteration ].
-		(errorEstimation < epsilon or: [ iteration - lastImprovement > testPoints size ])
+		(errorEstimation < epsilon or: [
+			"This is just an heuristic and there is risk of stopping too early.
+			But if we don't do something like this there is risk that setting a very small epsilon,
+			we never reach it due to rounding..."
+			iteration - lastImprovement > (testPoints size*4) ])
 	] whileFalse: [
 	
 		"Centroid"

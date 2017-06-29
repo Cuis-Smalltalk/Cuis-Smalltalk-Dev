@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3099] on 12 June 2017 at 4:17:31 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3121] on 27 June 2017 at 3:27:28 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 77!
+!provides: 'SignalProcessing' 1 79!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3166,10 +3166,13 @@ convolutionWith: trimmedPsf
 		horizontalGuardZone: guardZoneWidth
 		verticalGuardZone: guardZoneHeight! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 6/12/2017 12:16:52'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 6/22/2017 16:30:02'!
 correlationWith: another deltai: di deltaj: dj
-	"Do not include pixels where with a zero value. Make them not to affect the 'average'
-	Note: there is room for optimization
+	"https://en.wikipedia.org/wiki/Digital_image_correlation
+
+	Ignore any pixels with zero value at one of the image: consider them as 'no data'.
+	This is to avoid the risk of partially overlapping images (with value zero outside actual image data)
+	to give maximum correlation at distances with maximum overlap, and not with matching features.
 
 	| i i2 |
 	i _ FloatImage lena.
@@ -3179,30 +3182,54 @@ correlationWith: another deltai: di deltaj: dj
 	i2 addNormalNoise: 0.05.
 	{ i correlationWith: i2 deltai: 20 deltaj: 30.
 	i correlationWith: i2 deltai: 20 deltaj: 31 }
+
+	| i i2 |
+	i _ FloatImage lena.
+	i2 _ i copy: (31@21 corner: i extent).
+	i2 _ i2 * -0.7.
+	i addNormalNoise: 0.02.
+	i2 addNormalNoise: 0.05.
+	{ i correlationWith: i2 deltai: 20 deltaj: 30.
+	i correlationWith: i2 deltai: 20 deltaj: 31 }
 	"
 
-	| sum sum1 sum2 mine others product iEnd iStart jEnd jStart |
+	| sum mySquaredSum othersSquaredSum mine others iEnd iStart jEnd jStart othersMean myMean count |
 	iStart _ 1 max: 1+di.
 	iEnd _ height min: another height+di.
 	jStart _ 1 max: 1+dj.
 	jEnd _ width min: another width+dj.
-	sum _ 0.0.
-	sum1 _ 0.0.
-	sum2 _ 0.0.
+
+	"Compute average for both images, but include only those pixels that will be used later for computing correlation"
+	myMean _ 0.0.
+	othersMean _ 0.0.
+	count _ 0.
 	iStart to: iEnd do: [ :i |
 		jStart to: jEnd do: [ :j |
 			mine _ self i: i j: j.
 			others _ another i: i-di j: j-dj.
-			product _ mine * others.
-			product = 0.0 ifFalse: [
-				sum _ product + sum.
-				sum1 _ mine squared + sum1.
-				sum2 _ others squared + sum2.
-			].
-		]
-	].
+			mine * others = 0.0 ifFalse: [
+				myMean _ mine + myMean.
+				othersMean _ others + othersMean.
+				count _ count + 1 ]]].
+	myMean _ myMean / count.
+	othersMean _ othersMean / count.
+
+	"Compute image correlation. Use the same pixels as before."
+	sum _ 0.0.
+	mySquaredSum _ 0.0.
+	othersSquaredSum _ 0.0.
+	iStart to: iEnd do: [ :i |
+		jStart to: jEnd do: [ :j |
+			mine _ self i: i j: j.
+			others _ another i: i-di j: j-dj.
+			mine * others = 0.0 ifFalse: [
+				mine _ mine - myMean.
+				others _ others - othersMean.
+				sum _ mine * others + sum.
+				mySquaredSum _ mine squared + mySquaredSum.
+				othersSquaredSum _ others squared + othersSquaredSum ]]].
 	sum = 0.0 ifTrue: [ ^ 0.0 ].
-	^ sum / (sum1 * sum2) sqrt! !
+	^ sum / (mySquaredSum * othersSquaredSum) sqrt! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 10/17/2016 10:39:31'!
 crossCorrelationWith: aFloatImage phase: aBoolean
@@ -4561,6 +4588,26 @@ scharr
 	e _ xFiltered elements.
 	1 to: e size do: [ :i | e at: i put: (e at: i) sqrt ].
 	^xFiltered! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 6/27/2017 10:48:38'!
+scharrNoDataValue: noDataValue dilatedBy: extraPixels avoidSaturatedPixels: aBoolean
+	"See comment at #scharr
+	Additionally, consider that pixels in us that are noDataValue should not contribute to a border.
+	As Scharr uses 3x3 filters, this is 8 neighbors to each noDataValuePixels.
+	If extraPixels is not zero, it is an extra border of that width to not consider pixels. Useful, for example if images are interpolated and there are pixels that are neighbors of a noDataValue pixel, that as they are interpolated with noDataValue, they are invalid themselves. Usually just self extraPixels to zero
+	if aBoolean is true, also consider saturated pixels as noData"
+
+	| borders nighborhood v |
+	nighborhood _ 1 + extraPixels.
+	borders _ self scharr.
+	1 to: height do: [ :i |
+		1 to: width do: [ :j |
+			v _ self i: i j: j.
+			(v = 0.0 or: [aBoolean and: [v > 0.85]]) ifTrue: [
+				(i-nighborhood max: 1) to: (i+nighborhood min: height )  do: [ :ii |
+					(j-nighborhood max: 1) to: (j+nighborhood min: width ) do: [ :jj |
+						borders  i: ii j: jj put: 0.0 ]]]]].
+	^ borders! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
 shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
