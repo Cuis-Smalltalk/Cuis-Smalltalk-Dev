@@ -19,10 +19,11 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 
 ### Get and set up an appropriate VM ###
 ```
-~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201706141439.tar.gz
-~/MyProject# tar -zxvf cogspur.tgz
-~/MyProject# mv ./sqcogspur64linuxht ./cogspur
+cd MyProject
+rm -r cogspur
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201707012338.tar.gz
+tar -zxvf cogspur.tgz
+mv ./sqcogspur64linuxht ./cogspur
 ```
 If you get this error message (you won't get it if you run Cuis as root or sudo):
 ```
@@ -31,27 +32,28 @@ Read e.g. https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#l
 ```
 Then you need to do this (just one time):
 ```
-~/MyProject# sudo cp Cuis-Smalltalk-Dev/squeak.conf /etc/security/limits.d/squeak.conf
+sudo cp Cuis-Smalltalk-Dev/squeak.conf /etc/security/limits.d/squeak.conf
 ```
 Log out and log back in, or reboot the machine.
 
 ### Starting Cuis Smalltalk ###
 ```
-~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3121.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3121.image
 ```
 
 ## For MacOSX ##
 
 ### Get and set up an appropriate VM ###
 ```
-$ curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201706141439.tar.gz
-$ tar -zxvf CogSpur.tgz
+cd MyProject
+curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201707012338.tar.gz
+tar -zxvf CogSpur.tgz
 ```
 
 ### Starting Cuis Smalltalk ###
 
 ```
-$ ./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3121.image
+./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3121.image
 ```
 
 ## For 64 bits Windows (Git Bash) ##
@@ -60,30 +62,32 @@ Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cu
 
 ### Get and set up an appropriate VM ###
 ```
-$ rm -r cogspur
-$ curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win64x64_squeak.cog.spur_201706141439.zip
-$ unzip cogspur.zip -d cogspur
-$ mv ./cogspur/build/vm/*.* ./cogspur
+cd MyProject
+rm -r cogspur
+curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win64x64_squeak.cog.spur_201707012338.zip
+unzip cogspur.zip -d cogspur
+mv ./cogspur/build/vm/*.* ./cogspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-$ cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3121.image
+cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3121.image
 ```
 
 ## For Raspberry Pi Raspian ##
 
 ### Get and set up an appropriate VM ###
 ```
-~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201706141439.tar.gz
-~/MyProject# tar -zxvf cogspur.tgz
-~/MyProject# mv ./sqcogspurlinuxhtRPi ./cogspur
+cd MyProject
+rm -r cogspur
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201707012338.tar.gz
+tar -zxvf cogspur.tgz
+mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3121-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3121-32.image
 ```
 
 ## For Chromebooks ##
@@ -97,23 +101,25 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 
 ### For Intel CPUs: Get and set up an appropriate VM ###
 ```
-~/MyProject# rm -r cogspur
-~/MyProject# wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201706141439.tar.gz
-~/MyProject# tar -zxvf cogspur.tgz
-~/MyProject# mv ./sqcogspurlinuxht ./cogspur
+cd MyProject
+rm -r cogspur
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201706151116.tar.gz
+tar -zxvf cogspur.tgz
+mv ./sqcogspurlinuxht ./cogspur
 ```
 ### For ARM CPUs: Get and set up an appropriate VM ###
 ```
-~/MyProject# rm -r stkspur
-~/MyProject# wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201706141439.tar.gz
-~/MyProject# tar -zxvf stkspur.tgz
-~/MyProject# mv ./sqstkspurlinuxhtRPi ./stkspur
+cd MyProject
+rm -r stkspur
+wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201707012338.tar.gz
+tar -zxvf stkspur.tgz
+mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-~/MyProject# cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3121-32.image
-~/MyProject# stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3121-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3121-32.image
+stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3121-32.image
 ```
 
 ## Notes ##
