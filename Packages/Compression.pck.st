@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2965] on 3 November 2016 at 11:56:14 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3123] on 17 July 2017 at 4:12:18 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 18!
+!provides: 'Compression' 1 19!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -544,7 +544,7 @@ viewGZipContents
 		contents: stringContents;
 		openLabel: 'Decompressed contents of: ', self localName! !
 
-!StandardFileStream methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:53'!
+!StandardFileStream methodsFor: '*Compression' stamp: 'jmv 7/17/2017 15:45:40'!
 compressFile
 	"Write a new file that has the data in me compressed in GZip format."
 	|  zipped buffer |
@@ -556,9 +556,9 @@ compressFile
 	buffer _ ByteArray new: 50000.
 	'Compressing ', self fullName displayProgressAt: Sensor mousePoint
 		from: 0 to: self size
-		during: [ :bar |
+		during: [ :barBlock |
 			[self atEnd] whileFalse: [
-				bar value: self position.
+				barBlock value: self position.
 				zipped nextPutAll: (self nextInto: buffer)].
 			zipped close.
 			self close ].
@@ -1596,7 +1596,7 @@ initialize
 
 	FileList registerFileReader: self! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 5/25/2016 01:37'!
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 7/17/2017 15:44:39'!
 saveContents: fullFileName
 	"Save the contents of a gzipped file"
 	| zipped buffer newName |
@@ -1610,10 +1610,10 @@ saveContents: fullFileName
 				displayProgressAt: Sensor mousePoint
 				from: 0
 				to: zipped sourceStream size
-				during: [ :bar | 
+				during: [ :barBlock | 
 					[ zipped atEnd ]
 						whileFalse: [
-							bar value: zipped sourceStream position.
+							barBlock value: zipped sourceStream position.
 							unzipped nextPutAll: (zipped nextInto: buffer) ]]]].
 	^ newName! !
 
@@ -2460,7 +2460,7 @@ baseDistance
 baseLength
 	^BaseLength! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'pb 5/25/2016 01:16'!
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 7/17/2017 15:51:45'!
 compressAndDecompress: aFile using: tempName stats: stats
 	| fileSize tempFile result |
 	aFile
@@ -2470,12 +2470,12 @@ compressAndDecompress: aFile using: tempName stats: stats
 	Transcript newLine; show:'Testing ', aFile name,' ... '.
 	tempFile _ StandardFileStream new open: tempName forWrite: true.
 	'Compressing ', aFile name,'...' displayProgressAt: Sensor mousePoint
-		from: 1 to: aFile size during:[:bar|
-			result _ self regressionCompress: aFile into: tempFile notifiying: bar stats: stats].
+		from: 1 to: aFile size during:[:barBlock|
+			result _ self regressionCompress: aFile into: tempFile notifiying: barBlock stats: stats].
 	result ifTrue:[
 		'Validating ', aFile name,'...' displayProgressAt: Sensor mousePoint
-			from: 0 to: aFile size during:[:bar|
-				result _ self regressionDecompress: aFile from: tempFile notifying: bar stats: stats]].
+			from: 0 to: aFile size during:[:barBlock|
+				result _ self regressionDecompress: aFile from: tempFile notifying: barBlock stats: stats]].
 	aFile close.
 	tempFile close.
 	(DirectoryEntry smalltalkImageDirectory // tempName) delete.
@@ -2601,8 +2601,8 @@ printRegressionStats: stats from: fd
 		print: ((compressed / raw asFloat * 100.0) truncateTo: 0.01).
 	Transcript endEntry.! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'ar 12/29/1999 23:44'!
-regressionCompress: aFile into: tempFile notifiying: progressBar stats: stats
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 7/17/2017 15:52:09'!
+regressionCompress: aFile into: tempFile notifiying: progressBarBlock stats: stats
 	"Compress aFile into tempFile"
 	| zip encoded buffer |
 	aFile binary.
@@ -2612,7 +2612,7 @@ regressionCompress: aFile into: tempFile notifiying: progressBar stats: stats
 	zip _ self on: (ByteArray new: 10000).
 	encoded _ zip encodedStream.
 	[aFile atEnd] whileFalse:[
-		progressBar value: aFile position.
+		progressBarBlock value: aFile position.
 		zip nextPutAll: (aFile nextInto: buffer).
 		encoded position > 0 ifTrue:[
 			tempFile nextPutAll: encoded contents.
@@ -2621,8 +2621,8 @@ regressionCompress: aFile into: tempFile notifiying: progressBar stats: stats
 	tempFile nextPutAll: encoded contents.
 	^true! !
 
-!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 11/3/2016 10:31:38'!
-regressionDecompress: aFile from: tempFile notifying: progressBar stats: stats
+!ZipWriteStream class methodsFor: 'regression test' stamp: 'jmv 7/17/2017 15:52:23'!
+regressionDecompress: aFile from: tempFile notifying: progressBarBlock stats: stats
 	"Validate aFile as decompressed from tempFile"
 	| unzip rawSize compressedSize buffer1 buffer2 |
 	rawSize _ aFile size.
@@ -2635,7 +2635,7 @@ regressionDecompress: aFile from: tempFile notifying: progressBar stats: stats
 	buffer2 _ buffer1 copy.
 	unzip _ FastInflateStream on: tempFile.
 	[aFile atEnd] whileFalse:[
-		progressBar value: aFile position.
+		progressBarBlock value: aFile position.
 		buffer1 _ aFile nextInto: buffer1.
 		buffer2 _ unzip nextInto: buffer2.
 		buffer1 = buffer2
@@ -3577,24 +3577,24 @@ writeToFileNamed: aFileName
 close
 	self members do:[:m| m close].! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:38'!
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 7/17/2017 15:47:50'!
 extractAllTo: aDirectoryEntry
 	"Extract all elements to the given directory"
-	Utilities informUserDuring: [ :bar | self extractAllTo: aDirectoryEntry informing: bar]! !
+	Utilities informUserDuring: [ :barBlock | self extractAllTo: aDirectoryEntry informing: barBlock]! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 5/31/2016 10:38'!
-extractAllTo: aDirectoryEntry informing: bar
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 7/17/2017 15:47:41'!
+extractAllTo: aDirectoryEntry informing: barBlock
 	"Extract all elements to the given directory"
-	^self extractAllTo: aDirectoryEntry informing: bar overwrite: false! !
+	^self extractAllTo: aDirectoryEntry informing: barBlock overwrite: false! !
 
-!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 10/21/2015 12:25'!
-extractAllTo: aDirectory informing: bar overwrite: allOverwrite
+!ZipArchive methodsFor: 'archive operations' stamp: 'jmv 7/17/2017 15:50:56'!
+extractAllTo: aDirectory informing: barBlock overwrite: allOverwrite
 	"Extract all elements to the given directory"
 	| dir overwriteAll response |
 	overwriteAll := allOverwrite.
 	self members do:[:entry|
 		entry isDirectory ifTrue:[
-			bar ifNotNil:[bar value: 'Creating ', entry fileName].
+			barBlock ifNotNil:[barBlock value: 'Creating ', entry fileName].
 			dir := (entry fileName findTokens:'/') 
 					inject: aDirectory into:[:base :part| base / part].
 			dir assureExistence.
@@ -3602,7 +3602,7 @@ extractAllTo: aDirectory informing: bar overwrite: allOverwrite
 	].
 	self members do:[:entry|
 		entry isDirectory ifFalse:[
-			bar ifNotNil:[bar value: 'Extracting ', entry fileName].
+			barBlock ifNotNil:[barBlock value: 'Extracting ', entry fileName].
 			response := entry extractInDirectory: aDirectory overwrite: overwriteAll.
 			response == #retryWithOverwrite ifTrue:[
 				overwriteAll := true.
