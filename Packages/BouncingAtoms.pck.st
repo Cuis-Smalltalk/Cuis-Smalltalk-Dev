@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3020] on 2 January 2017 at 9:11:04 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3125] on 16 July 2017 at 4:18:03 pm'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 30!
+!provides: 'BouncingAtoms' 1 31!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
@@ -24,7 +24,7 @@ HeaterCoolerAtom class
 
 !classDefinition: #InfectionGraph category: #BouncingAtoms!
 FunctionGraphMorph subclass: #InfectionGraph
-	instanceVariableNames: 'data points yScaleFactor startTime deltaT ticN tics yFactor xFactor resumed'
+	instanceVariableNames: 'data points yScaleFactor startTime deltaT ticN tics yFactor xFactor resumed hoverPoint'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BouncingAtoms'!
@@ -266,7 +266,7 @@ data: aCollection
 	data _ aCollection
 ! !
 
-!InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/12/2016 12:28'!
+!InfectionGraph methodsFor: 'drawing' stamp: 'pb 7/16/2017 16:08:49'!
 drawOn: aCanvas
 	| fully |
 	fully _ 10 raisedTo: yMax log asInteger.
@@ -276,16 +276,41 @@ drawOn: aCanvas
 	aCanvas line: (self toMorphic: 0@fully) to: (self toMorphic: xMax@fully) width: 2 color: Color lightRed.
 
 	points ifNotNil: [
-		1 to: points size - 1 do: [:n | | p |
+		1 to: points size - 1 do: [:n | | p fromPoint toPoint |
+			fromPoint := (self toMorphic: (p _ points at: n)).
+			toPoint := (self toMorphic: (points at: n + 1)).
 			aCanvas 	"continue the graph"
-				line: (self toMorphic: (p _ points at: n)) 	"from point"
-				to: (self toMorphic: (points at: n + 1)) 	"to point"
+				line: fromPoint 	"from point"
+				to: toPoint 	"to point"
 				width: 2 color: Color black.
 			(self tics includes: n) ifTrue: [
 				aCanvas 	"plot the tic"
 					line: (self toMorphic: (p x) @ 0) 
 					to: (self toMorphic: (p x) @ (self class ticLength)) 
-					width: 2 color: Color lightGray]]]! !
+					width: 2 color: Color lightGray].
+			hoverPoint ifNotNil: [|font|
+				((hoverPoint x  >= fromPoint x) and: [hoverPoint x <= toPoint x])  ifTrue: [
+					font := StrikeFont default.
+					aCanvas
+						line:  hoverPoint x@(self yToMorphic: yMin)
+						to: hoverPoint x@fromPoint y
+						width: 2
+						color: Color green.
+					aCanvas
+						drawString: (p x truncateTo: 0.1) asString
+						at: hoverPoint x@(fromPoint y- font height )
+						font: font
+						color: Color green
+						embossed: true]]]]! !
+
+!InfectionGraph methodsFor: 'as yet unclassified' stamp: 'pb 7/16/2017 15:35:43'!
+handlesMouseHover
+	^ true! !
+
+!InfectionGraph methodsFor: 'as yet unclassified' stamp: 'pb 7/16/2017 15:44:18'!
+mouseHover: event localPosition: localPosition
+	hoverPoint := localPosition.
+	self redrawNeeded ! !
 
 !InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/23/2015 11:50'!
 normalize: aCollection
