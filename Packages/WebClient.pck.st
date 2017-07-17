@@ -4120,7 +4120,7 @@ sendRequest: request content: contentStream size: streamSize
 			request streamFrom: contentStream to: aStream size: streamSize 
 				progress:[:total :amount|
 					(ProgressBarMorph new) 
-						value: amount / total.
+						progressValue: amount / total.
 						]]].
 ! !
 
