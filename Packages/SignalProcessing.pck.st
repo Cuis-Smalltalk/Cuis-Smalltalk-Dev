@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3121] on 27 June 2017 at 3:27:28 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3122] on 12 July 2017 at 2:08:26 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 79!
-!requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'SignalProcessing' 1 80!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3166,7 +3166,90 @@ convolutionWith: trimmedPsf
 		horizontalGuardZone: guardZoneWidth
 		verticalGuardZone: guardZoneHeight! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 6/22/2017 16:30:02'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 6/30/2017 11:58:11'!
+correlationABSWith: another deltai: di deltaj: dj
+	"Quite like #correlationWith:deltai:deltaj: Please understand it before this.
+	
+	Usually we just want #correlationWith:deltai:deltaj: . Sometimes we have images with negative correlation, and that case is also handled well. The problem is with images that might have positive correlation in parts of it, and negative correlation in other parts of it. This method tries to adress that need. It will give values between 0.0 (no correlation) and 1.0 (maximum similarity), regardless of correlation being positive or negatice. 
+	
+	Play with the examples (and understand the nature of the results)!!
+
+	| i1 i2 |
+	i1 _ FloatImage lena.
+	i2 _ i1 copy: (31@21 corner: i1 extent).
+	i2 _ i2 * 0.7.
+	i1 addNormalNoise: 0.02.
+	i2 addNormalNoise: 0.05.
+	{ i1 correlationWith: i2 deltai: 20 deltaj: 30. i1 correlationWith: i2 deltai: 20 deltaj: 31 } print.
+	{ i1 correlationABSWith: i2 deltai: 20 deltaj: 30. i1 correlationABSWith: i2 deltai: 20 deltaj: 31 } print.
+	i1 displayAt: 0@0.
+	i2 displayAt: 256@0.
+	nil.
+
+	| i1 i2 |
+	i1 _ FloatImage lena.
+	i2 _ i1 copy: (31@21 corner: i1 extent).
+	i2 _ i2 * -0.7 + 1.
+	i1 addNormalNoise: 0.02.
+	i2 addNormalNoise: 0.05.
+	{ i1 correlationWith: i2 deltai: 20 deltaj: 30. i1 correlationWith: i2 deltai: 20 deltaj: 31 } print.
+	{ i1 correlationABSWith: i2 deltai: 20 deltaj: 30. i1 correlationABSWith: i2 deltai: 20 deltaj: 31 } print.
+	i1 displayAt: 0@0.
+	i2 displayAt: 256@0.
+	nil.
+
+	| i1 i2 |
+	i1 _ FloatImage lena.
+	i2 _ i1 copy: (31@21 corner: i1 extent).
+	i2 replaceValues: [:i :j :v | i > 100 ifTrue: [v* -0.9 + 0.7] ifFalse: [v* 0.7]].
+	i1 addNormalNoise: 0.02.
+	i2 addNormalNoise: 0.05.
+	{ i1 correlationWith: i2 deltai: 20 deltaj: 30. i1 correlationWith: i2 deltai: 20 deltaj: 31 } print.
+	{ i1 correlationABSWith: i2 deltai: 20 deltaj: 30. i1 correlationABSWith: i2 deltai: 20 deltaj: 31 } print.
+	i1 displayAt: 0@0.
+	i2 displayAt: 256@0.
+	nil.
+	"
+
+	| sum mySquaredSum othersSquaredSum mine others iEnd iStart jEnd jStart othersMean myMean count |
+	iStart _ 1 max: 1+di.
+	iEnd _ height min: another height+di.
+	jStart _ 1 max: 1+dj.
+	jEnd _ width min: another width+dj.
+
+	"Compute average for both images, but include only those pixels that will be used later for computing correlation"
+	myMean _ 0.0.
+	othersMean _ 0.0.
+	count _ 0.
+	iStart to: iEnd do: [ :i |
+		jStart to: jEnd do: [ :j |
+			mine _ self i: i j: j.
+			others _ another i: i-di j: j-dj.
+			mine * others = 0.0 ifFalse: [
+				myMean _ mine + myMean.
+				othersMean _ others + othersMean.
+				count _ count + 1 ]]].
+	myMean _ myMean / count.
+	othersMean _ othersMean / count.
+
+	"Compute image correlation. Use the same pixels as before."
+	sum _ 0.0.
+	mySquaredSum _ 0.0.
+	othersSquaredSum _ 0.0.
+	iStart to: iEnd do: [ :i |
+		jStart to: jEnd do: [ :j |
+			mine _ self i: i j: j.
+			others _ another i: i-di j: j-dj.
+			mine * others = 0.0 ifFalse: [
+				mine _ mine - myMean.
+				others _ others - othersMean.
+				sum _ (mine * others) abs + sum.										"This is the difference!!"
+				mySquaredSum _ mine squared + mySquaredSum.
+				othersSquaredSum _ others squared + othersSquaredSum ]]].
+	sum = 0.0 ifTrue: [ ^ 0.0 ].
+	^ sum / (mySquaredSum * othersSquaredSum) sqrt! !
+
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 7/10/2017 15:00:43'!
 correlationWith: another deltai: di deltaj: dj
 	"https://en.wikipedia.org/wiki/Digital_image_correlation
 
@@ -3211,6 +3294,7 @@ correlationWith: another deltai: di deltaj: dj
 				myMean _ mine + myMean.
 				othersMean _ others + othersMean.
 				count _ count + 1 ]]].
+	count = 0 ifTrue: [ ^ 0.0 ].
 	myMean _ myMean / count.
 	othersMean _ othersMean / count.
 

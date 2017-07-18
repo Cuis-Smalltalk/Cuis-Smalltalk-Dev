@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 15 May 2017 at 2:59:06 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3122] on 13 July 2017 at 9:27:12 am'!
 'Description Stuff from Balloon3D-Math by Andreas Raab. Adapted to use 64-bit Float arithmetic (in addition to 32-bit FloatArray).'!
-!provides: 'Math 3D' 1 20!
+!provides: 'Math 3D' 1 21!
 !classDefinition: #Float64Color4 category: #'Math 3D'!
 Float64Array variableWordSubclass: #Float64Color4
 	instanceVariableNames: ''
@@ -1737,9 +1737,13 @@ zero
 a
 	^self at: 1! !
 
-!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:25'!
-angle
-	^(self a arcCos * 2.0 radiansToDegrees)! !
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 7/13/2017 09:26:26'!
+angleDegrees
+	^self angleRadians radiansToDegrees! !
+
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 7/12/2017 16:02:40'!
+angleRadians
+	^self a arcCos * 2.0! !
 
 !Float64Quaternion methodsFor: 'converting' stamp: 'jmv 10/11/2016 10:14:26'!
 asMatrix3x3
@@ -1922,13 +1926,13 @@ printAbcd
 		self d printOn: strm fractionDigits: 6.
 		strm nextPut: $) ]! !
 
-!Float64Quaternion methodsFor: 'printing' stamp: 'jmv 10/11/2016 10:14:26'!
+!Float64Quaternion methodsFor: 'printing' stamp: 'jmv 7/13/2017 09:26:35'!
 printOn: aStream
 
 	aStream 
 		nextPutAll: self class name;
 		nextPut:$(;
-		print: self angle;
+		print: self angleDegrees;
 		nextPut: Character space;
 		print: self axis;
 		nextPut:$).! !
@@ -2031,10 +2035,10 @@ slerpTo: aRotation at: t extraSpins: spin
 		c: (alpha * aRotation c) + (beta * self c)
 		d: (alpha * aRotation d) + (beta * self d)! !
 
-!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:14:26'!
+!Float64Quaternion methodsFor: 'accessing' stamp: 'jmv 7/13/2017 09:26:49'!
 turns
 	"Answer the number of turns"
-	^self angle / 360.0! !
+	^self angleRadians / Float twoPi! !
 
 !Float64Quaternion methodsFor: 'private' stamp: 'jmv 10/11/2016 10:14:27'!
 vectorPart

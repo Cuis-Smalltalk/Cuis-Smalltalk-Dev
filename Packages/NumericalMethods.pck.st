@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3120] on 23 June 2017 at 3:29:09 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3122] on 12 July 2017 at 2:06:36 pm'!
 'Description A collection of general numerical algorithms for continuous problems.'!
-!provides: 'NumericalMethods' 1 5!
+!provides: 'NumericalMethods' 1 6!
 !classDefinition: #NelderMeadMethod category: #NumericalMethods!
 Object subclass: #NelderMeadMethod
 	instanceVariableNames: 'f testPoints epsilon'
@@ -23,11 +23,13 @@ See https://en.wikipedia.org/wiki/Nelder-Mead_method
 	
 At each step, the worst of the testPoints is detected, and replaced with an improvement (a reflection towards the centroid of the testPoints). Upon convergence, all testPoints are very close, essentially at the solution.!
 
-!NelderMeadMethod methodsFor: 'initialization' stamp: 'jmv 12/1/2016 16:12:36'!
-epsilon: aNumber
-	"Convergence criteria. Stop iterating when error is believed to be smaller than epsilon."
+!NelderMeadMethod methodsFor: 'initialization' stamp: 'jmv 7/11/2017 16:26:17'!
+epsilon: aNumberOrArray
+	"Convergence criteria.
+	Stop iterating when error in the answer (i.e. the test points) is believed to be smaller than epsilon.
+	epsilon might be a FloatArray if different values are desired for each element of the solution."
 
-	epsilon _ aNumber! !
+	epsilon _ aNumberOrArray! !
 
 !NelderMeadMethod methodsFor: 'initialization' stamp: 'jmv 12/1/2016 12:54:00'!
 initialPoint: aPoint distanceForOthers: aNumber
@@ -59,19 +61,17 @@ objectiveFunction: aBlock
 
 	f _ aBlock! !
 
-!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 6/23/2017 15:02:54'!
+!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 7/12/2017 14:05:58'!
 solve
 	"Closely follows implementation at
 		https://en.wikipedia.org/wiki/Nelder-Mead_method
 	"
-	| alpha centroidX0 worstPointXnPlus1 worstValueXnPlus1 bestPointX1 bestValueX1 reflectedPointXr reflectedValueXr sortedIndexes values expandedPointXe gamma secondWorstValueXn contractedPointXc rho sigma iteration errorEstimation bestErrorEstimation lastImprovement |
+	| alpha centroidX0 worstPointXnPlus1 worstValueXnPlus1 bestPointX1 bestValueX1 reflectedPointXr reflectedValueXr sortedIndexes values expandedPointXe gamma secondWorstValueXn contractedPointXc rho sigma iters |
+iters _ 0.
 	alpha _ 1.
 	gamma _ 2.
 	rho _ 0.5.
 	sigma _ 0.5.
-	iteration _ 1.
-	bestErrorEstimation _ nil.
-
 	[
 		"Order"
 		values _ testPoints collect: [ :p | f value: p ].
@@ -82,16 +82,12 @@ solve
 		worstPointXnPlus1 _ testPoints at: sortedIndexes last.
 		worstValueXnPlus1 _ values at: sortedIndexes last.
 
-		"Stopping condition"
-		errorEstimation _ worstValueXnPlus1 - bestValueX1.
-		(bestErrorEstimation isNil or: [errorEstimation < bestErrorEstimation]) ifTrue: [
-			bestErrorEstimation _ errorEstimation.
-			lastImprovement _ iteration ].
-		(errorEstimation < epsilon or: [
-			"This is just an heuristic and there is risk of stopping too early.
-			But if we don't do something like this there is risk that setting a very small epsilon,
-			we never reach it due to rounding..."
-			iteration - lastImprovement > (testPoints size*4) ])
+		"Stopping condition:
+			- Reached requested epsilon on answer (i.e. points). Epsilon can be number or array. Each component of answer is compared.
+			- or function values are almost the same. The amount of ulps to allow is rather arbitrary... Maybe it can safely be made a lot smaller.
+				(this depends on the numerical convergence of f)"
+		(((worstPointXnPlus1 - bestPointX1) abs - epsilon allSatisfy: [ :v | v < 0.0 ])
+			or: [ bestValueX1 isWithin: 1e3 ulpsFrom: worstValueXnPlus1 ])
 	] whileFalse: [
 	
 		"Centroid"
@@ -123,16 +119,17 @@ solve
 								testPoints at: sortedIndexes last put: contractedPointXc ]
 							ifFalse: [
 								"Shrink"
-								2 to: testPoints size do: [ :i | | xi |
-									xi _ testPoints at: i.
+								2 to: testPoints size do: [ :i | | xi ii |
+									ii _ sortedIndexes at: i.
+									xi _ testPoints at: ii.
 									xi _ bestPointX1 + (sigma * (xi - bestPointX1)).
-									testPoints at: i put: xi ]]]
+									testPoints at: ii put: xi ]]]
 			].
-		iteration _ iteration + 1.
+		iters _ iters + 1.
 	].
 	^bestPointX1! !
 
-!NelderMeadMethod class methodsFor: 'examples' stamp: 'jmv 12/1/2016 16:52:37'!
+!NelderMeadMethod class methodsFor: 'examples' stamp: 'jmv 7/12/2017 13:55:13'!
 example01
 	"
 	NelderMeadMethod example01
@@ -141,6 +138,6 @@ example01
 	algorithm _ NelderMeadMethod new.
 	f _ [ :aFloatArray | (aFloatArray first-1) squared + (aFloatArray second-3) squared + (aFloatArray third-2) abs ].
 	algorithm objectiveFunction: f.
-	algorithm initialPoint: #(10.0 10.0 10.0) distanceForOthers: 0.5.
+	algorithm initialPoint: #[10.0 10.0 10.0] distanceForOthers: 0.5.
 	algorithm epsilon: 0.00001.
 	^algorithm solve! !
