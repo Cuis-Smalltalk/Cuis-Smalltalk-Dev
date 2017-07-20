@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3125] on 16 July 2017 at 4:18:03 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3130] on 18 July 2017 at 6:20:17 am'!
 'Description A port of Bouncing Atoms with the atoms in a SystemWindow. A pop-up menu enables selection of options, including an active plot of infection history, also in a SystemWindow.'!
-!provides: 'BouncingAtoms' 1 31!
+!provides: 'BouncingAtoms' 1 32!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !classDefinition: #AtomMorph category: #BouncingAtoms!
 EllipseMorph subclass: #AtomMorph
@@ -266,7 +266,7 @@ data: aCollection
 	data _ aCollection
 ! !
 
-!InfectionGraph methodsFor: 'drawing' stamp: 'pb 7/16/2017 16:08:49'!
+!InfectionGraph methodsFor: 'drawing' stamp: 'pb 7/18/2017 06:19:35'!
 drawOn: aCanvas
 	| fully |
 	fully _ 10 raisedTo: yMax log asInteger.
@@ -288,7 +288,7 @@ drawOn: aCanvas
 					line: (self toMorphic: (p x) @ 0) 
 					to: (self toMorphic: (p x) @ (self class ticLength)) 
 					width: 2 color: Color lightGray].
-			hoverPoint ifNotNil: [|font|
+			hoverPoint ifNotNil: [|font hoverString|
 				((hoverPoint x  >= fromPoint x) and: [hoverPoint x <= toPoint x])  ifTrue: [
 					font := StrikeFont default.
 					aCanvas
@@ -296,20 +296,30 @@ drawOn: aCanvas
 						to: hoverPoint x@fromPoint y
 						width: 2
 						color: Color green.
+						hoverString := (p x truncateTo: 0.1) asString, ' @ ', (p y truncateTo: 0.1) asString.
 					aCanvas
-						drawString: (p x truncateTo: 0.1) asString
-						at: hoverPoint x@(fromPoint y- font height )
+						drawString: hoverString
+						at: (hoverPoint x - ((font widthOfString: hoverString)/2))@(fromPoint y- font height )
 						font: font
 						color: Color green
 						embossed: true]]]]! !
 
-!InfectionGraph methodsFor: 'as yet unclassified' stamp: 'pb 7/16/2017 15:35:43'!
+!InfectionGraph methodsFor: 'event handling testing' stamp: 'pb 7/16/2017 15:35:43'!
 handlesMouseHover
 	^ true! !
 
-!InfectionGraph methodsFor: 'as yet unclassified' stamp: 'pb 7/16/2017 15:44:18'!
+!InfectionGraph methodsFor: 'event handling testing' stamp: 'pb 7/18/2017 06:11:48'!
+handlesMouseOver: aMorphicEvent
+	^ true! !
+
+!InfectionGraph methodsFor: 'events' stamp: 'pb 7/16/2017 15:44:18'!
 mouseHover: event localPosition: localPosition
 	hoverPoint := localPosition.
+	self redrawNeeded ! !
+
+!InfectionGraph methodsFor: 'events' stamp: 'pb 7/18/2017 06:12:45'!
+mouseLeave: evt
+	hoverPoint := nil.
 	self redrawNeeded ! !
 
 !InfectionGraph methodsFor: 'drawing' stamp: 'dhn 5/23/2015 11:50'!
