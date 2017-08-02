@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3120] on 26 June 2017 at 8:03:15 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3131] on 2 August 2017 at 1:07:44 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 13!
+!provides: 'WebClient' 1 14!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Network-Kernel' 1 2 nil!
@@ -2368,7 +2368,7 @@ testSingleByteDecrypt
 	decrypted := sslServer decrypt: (encrypted last: 1).
 	self assert: decrypted = 'Hello World'.! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 6/17/2012 11:27'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 8/2/2017 13:05:46'!
 testSocketAccept
 	"Tests the SecureSocketStream server handshake. "
 
@@ -2391,7 +2391,8 @@ testSocketAccept
 		[sslClient connect]
 			on: Error 
 			do:[:ex| process signalException: ex].
-	] forkAt: Processor activePriority + 1.
+	] newProcess.
+	clientProcess resumeAt: Processor activePriority + 1.
 
 	"Set up the server"
 	serverSocket sslAccept: self certName.
@@ -2402,7 +2403,7 @@ testSocketAccept
 		serverSocket ifNotNil:[serverSocket destroy].
 	].! !
 
-!SqueakSSLTest methodsFor: 'tests' stamp: 'ar 6/17/2012 11:28'!
+!SqueakSSLTest methodsFor: 'tests' stamp: 'jmv 8/2/2017 13:06:08'!
 testSocketConnect
 	"Tests the SecureSocket client handshake. "
 
@@ -2425,7 +2426,8 @@ testSocketConnect
 		[sslServer accept]
 			on: Error 
 			do:[:ex| process signalException: ex]. "uncomment for debugging"
-	] forkAt: Processor activePriority + 1.
+	] newProcess.
+	serverProcess resumeAt: Processor activePriority + 1.
 
 	"Set up the client using SecureSocketStream"
 	clientSocket sslConnect.
