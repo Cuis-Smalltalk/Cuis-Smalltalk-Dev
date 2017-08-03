@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3038] on 18 January 2017 at 7:37:04 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3134] on 3 August 2017 at 2:18:05 pm'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 12!
+!provides: 'JSON' 1 13!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -146,6 +146,20 @@ jsonWriteOn: aStream
 	Use the general implementation for that."
 
 	self jsonObjectWriteOn: aStream! !
+
+!Matrix methodsFor: '*JSON' stamp: 'jmv 8/3/2017 12:07:00'!
+jsonWriteOn: aStream
+	"By default, use array braces "
+	aStream nextPut: $[.
+	1 to: height
+		do: [ :i |
+			aStream nextPut: $[.
+				1 to: width
+					do: [ :j | (self i: i j: j) jsonWriteOn: aStream ]
+					separatedBy: [aStream nextPut: $, ; space].
+			aStream nextPut: $] ]
+		separatedBy: [aStream nextPut: $, ; newLine ].
+	aStream nextPut: $]! !
 
 !WriteStream methodsFor: '*JSON-printing' stamp: 'cwp 10/25/2006 12:27'!
 jsonPrint: anObject
