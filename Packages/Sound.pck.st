@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3123] on 17 July 2017 at 4:12:40 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3129] on 24 July 2017 at 4:28:05 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 16!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'Sound' 1 17!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #SoundBuffer category: #'Sound-Synthesis'!
 ArrayedCollection variableWordSubclass: #SoundBuffer
 	instanceVariableNames: ''
@@ -661,6 +661,10 @@ SoundService default playSoundNamed: 'croak'
 The idea is that as much sound playing as possible should go through this facade. This way we decouple the sound system from the rest of Squeak and make it pluggable. It also is a perfect spot to check for the Preference class>>soundsEnabled.
 
 Two basic subclasses exist at the time of this writing, the BaseSoundSystem which represents the standard Squeak sound system, and the DummySoundSystem which is a dummy implementation that can be used when there is no sound card available, or when the base sound system isn't in the image, or when you simply don't want to use the available sound card.!
+
+!FileEntry methodsFor: '*Sound' stamp: 'jmv 7/24/2017 16:25:59'!
+wavContents
+	^SampledSound fromFileEntry: self! !
 
 !SoundBuffer methodsFor: 'utilities' stamp: 'jm 8/15/1998 13:03'!
 asByteArray
@@ -5616,6 +5620,22 @@ fromAIFFfileNamed: fileName
 	^ self
 		samples: (aiffFileReader channelData at: 1)
 		samplingRate: aiffFileReader samplingRate
+! !
+
+!SampledSound class methodsFor: 'instance creation' stamp: 'jmv 7/21/2017 16:19:57'!
+fromFileEntry: aFileEntry
+	"(SampledSound fromWaveFileNamed: 'c:\windows\media\chimes.wav') play"
+	"| snd fd |
+	fd := FileDirectory on:'c:\windows\media\'.
+	fd fileNames do: [:n |
+		(n asLowercase endsWith: '.wav')
+			ifTrue: [
+				snd _ SampledSound fromWaveFileNamed: (fd pathName,n).
+				snd play.
+				SoundPlayer waitUntilDonePlaying: snd]]."
+
+	^ aFileEntry readStreamDo: [ :strm |
+		self fromWaveStream: strm ]
 ! !
 
 !SampledSound class methodsFor: 'instance creation' stamp: 'pb 5/25/2016 01:33'!

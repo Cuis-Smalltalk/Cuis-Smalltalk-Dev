@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3099] on 12 June 2017 at 4:17:10 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3133] on 2 August 2017 at 3:24:03 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 36!
+!provides: 'LinearAlgebra' 1 37!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -1527,7 +1527,7 @@ fillFromGrayForm: aGrayForm
 	bb copyBits.
 	elements -= magic! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 8/28/2015 11:29'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 7/31/2017 22:48:49'!
 fillLowFFTFrequenciesWith: aFloatMatrix
 	"
 	Assume self extent > argument extent.
@@ -1552,10 +1552,13 @@ fillLowFFTFrequenciesWith: aFloatMatrix
 	i2 displayAt: 256@0.
 	"
 	
-	| blitter formArgument formSelf deltaI deltaJ quarterExtent |
+	| blitter formArgument formSelf deltaI deltaJ widthHalf1 widthHalf2 heightHalf1 heightHalf2 |
 	deltaI _ height // 2.
 	deltaJ _ width // 2.
-	quarterExtent _ aFloatMatrix extent // 2 min: deltaJ@deltaI.
+	widthHalf2 _ aFloatMatrix width // 2 min: deltaJ.
+	widthHalf1 _ aFloatMatrix width - widthHalf2.
+	heightHalf2 _ aFloatMatrix height // 2 min: deltaI.
+	heightHalf1 _ aFloatMatrix height - heightHalf2.
 	formSelf _ Form new hackBitsForFloatMatrix: self.
 	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
 	blitter _ BitBlt new.
@@ -1563,22 +1566,22 @@ fillLowFFTFrequenciesWith: aFloatMatrix
 	blitter
 		setDestForm: formSelf sourceForm: formArgument
 		destOrigin: 0@0 sourceOrigin: 0@0
-		extent: quarterExtent.
+		extent: widthHalf1 @ heightHalf1.
 	blitter copyBits.
 	blitter
 		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: width-quarterExtent x@0 sourceOrigin: aFloatMatrix width - quarterExtent x@0
-		extent: quarterExtent.
+		destOrigin: width-widthHalf2@0 sourceOrigin: aFloatMatrix width - widthHalf2@0
+		extent: widthHalf2 @ heightHalf1.
 	blitter copyBits.
 	blitter
 		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: 0@(height-quarterExtent) y sourceOrigin: 0@(aFloatMatrix height - quarterExtent y)
-		extent: quarterExtent.
+		destOrigin: 0@(height-heightHalf2) sourceOrigin: 0@(aFloatMatrix height - heightHalf2)
+		extent: widthHalf1 @ heightHalf2.
 	blitter copyBits.
 	blitter
 		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: width@height-quarterExtent sourceOrigin: aFloatMatrix extent -quarterExtent
-		extent: quarterExtent.
+		destOrigin: width-widthHalf2@(height-heightHalf2) sourceOrigin: aFloatMatrix extent -(widthHalf2 @ heightHalf2)
+		extent: widthHalf2 @ heightHalf2.
 	blitter copyBits.! !
 
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:17'!

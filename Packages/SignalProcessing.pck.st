@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3122] on 12 July 2017 at 2:08:26 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3133] on 2 August 2017 at 3:29:36 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 80!
+!provides: 'SignalProcessing' 1 81!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3129,7 +3129,7 @@ convolutionLinearWithSmallKernel: kernel
 			answer x: x y: y put: v ]].
 	^answer! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/13/2016 11:21:20'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 7/31/2017 16:06:46'!
 convolutionWith: trimmedPsf
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
@@ -3149,8 +3149,8 @@ convolutionWith: trimmedPsf
 	otfImaginaryPart _ fft imagData.
 
 	"Do convolution in each tile and get results."
-	guardZoneWidth _ trimmedPsf width / 2.		"Number of pixels we are willing to lose on each side, to avoid border effects."
-	guardZoneHeight _ trimmedPsf height / 2.	"Number of pixels we are willing to lose at top and bottom, to avoid border effects."
+	guardZoneWidth _ (trimmedPsf width / 2) ceiling.		"Number of pixels we are willing to lose on each side, to avoid border effects."
+	guardZoneHeight _ (trimmedPsf height / 2) ceiling.	"Number of pixels we are willing to lose at top and bottom, to avoid border effects."
 	tileImaginary _ FloatImage width: tileSize height: tileSize.
 	^ self
 		withTilesDo: [ :tileReal |
@@ -3363,7 +3363,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/16/2016 10:16:43'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 7/31/2017 22:53:54'!
 deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
@@ -3372,6 +3372,22 @@ deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
 	- Implemented with tiles. Tile border effects are taken care of.
 	- maxNoiseFactor is required in many case to avoid division by zero. Typical values are between 4 and 8. Use values larger than 20 if you know what you are doing.
+
+Play with this in a Workspace
+i _ FloatImage lena.
+psf _ FloatMatrix withRows: #(
+		#(0.8 0.0 0.2) 
+		#(0.0 0.1 0.2) 
+		#(0.20 0.0 0.0)
+	).
+psf normalizeSum.
+convolved _ i convolutionWith: psf.
+noisy _ convolved copy addNormalNoise: 0.05.
+i display.
+convolved display.
+deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13.
+deconvolved display.
+noisy display.
 	"
 
 	| tileSize otfRealPart otfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth otfInverseImaginaryPart otfInverseRealPart psfInverseImaginaryPart psfInverseRealPart trimmed |
@@ -4340,7 +4356,7 @@ openCLNormalizedCoordinatesForOneBased: oneBasedCoordinates
 
 	^ ((oneBasedCoordinates x-0.5)/width) @ ((oneBasedCoordinates y-0.5)/height)! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/13/2016 11:20:47'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 7/31/2017 22:50:43'!
 otfForPsf: trimmedPsf heightAndWidth: aNumber
 	"Compute the OTF
 	https://en.wikipedia.org/wiki/Optical_transfer_function
@@ -4353,6 +4369,7 @@ otfForPsf: trimmedPsf heightAndWidth: aNumber
 	otfRealPart _ FloatImage width: aNumber height: aNumber.
 	otfImaginaryPart _ FloatImage width: aNumber height: aNumber.
 	otfRealPart fillLowFFTFrequenciesWith: movedToOriginPsf.
+
 	fft _ FFT2D new.
 	fft realData: otfRealPart imagData: otfImaginaryPart.
 	fft transformForward: true.
@@ -4811,7 +4828,7 @@ withImaginary: aFloatImage displayPhaseAt: aPoint
 		(phase / twoPi + 0.5 * 255) rounded ].
 	f displayAt: aPoint! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/12/2016 20:57:20'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 7/31/2017 17:13:28'!
 withTilesDo: aBlock tileSize: aNumber horizontalGuardZone: guardZoneWidth verticalGuardZone: guardZoneHeight
 	"
 	Split receiver in tiles that are an integer power of 2 in height and width.
@@ -4826,7 +4843,6 @@ withTilesDo: aBlock tileSize: aNumber horizontalGuardZone: guardZoneWidth vertic
 	activeTileHeight _ aNumber - (2*guardZoneHeight).
 	result _ FloatImage extent: self extent - (guardZoneWidth@guardZoneHeight * 2).
 
-	"Do in several tiles if big"
 	tile _ FloatImage width: aNumber height: aNumber.
 	verticalTileCount _ (result height / activeTileHeight) ceiling.
 	horizontalTileCount _ (result  width / activeTileWidth) ceiling.
