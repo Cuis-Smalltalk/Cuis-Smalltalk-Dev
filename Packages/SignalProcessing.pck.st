@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3133] on 2 August 2017 at 3:29:36 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3136] on 11 August 2017 at 2:33:02 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 81!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'SignalProcessing' 1 82!
 !requires: 'Goodies' 1 0 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3541,6 +3541,16 @@ displayAt: aPoint
 
 	self asForm displayAt: aPoint! !
 
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/11/2017 14:30:50'!
+displayAt: aPoint zoom: anInteger
+	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
+	
+	FloatImage lena displayAt: 10@10 zoom: 4
+	(FloatImage lena copy: (120@120 extent: 30@30)) displayAt: 10@10 zoom: 15
+	"
+
+	(self asForm magnifyBy: anInteger) displayAt: aPoint! !
+
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:11'!
 displayWithGammaAt: aPoint
 	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
@@ -4795,23 +4805,34 @@ with: anotherImage replaceValues: aBlock
 				at: i
 				put: (aBlock value: (elements at: i) value: (otherValues at: i)) ]! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/7/2014 10:37'!
-withImaginary: aFloatImage displayMagnitudeAt: aPoint! !
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/11/2017 14:21:35'!
+withImaginary: aFloatImage displayMagnitudeAt: aPoint
+	"Show magnitude of receiver and argument considered as a Complex image
+	Usually prefer #withImaginary:displayMagnitudeLogAt:
+	"
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 4/28/2015 11:03'!
-withImaginary: aFloatImage displayMagnitudeLogAt: aPoint
-	"Show logarithm of magnitude of receiver and argument considered as a Complex image"
-
-	| f imaginaryValues complex magnitude first |
+	| f imaginaryValues complex magnitude max |
 	imaginaryValues _ aFloatImage elements.
 	complex _ 1 + 1i.
-	first _ nil.
+	max _ elements max.
 	f _ self as8bitFormEvaluating: [ :index |
 		complex real: (elements at: index) imaginary: (imaginaryValues at: index).
 		magnitude _ complex magnitude.
-		first ifNil: [ first _ magnitude/70 ].
-		magnitude _ magnitude / first.
-		(magnitude * 255 + 0.5) truncated min: 255 max: 0 ].
+		(magnitude / max * 255 + 0.5) truncated min: 255 max: 0 ].
+	f displayAt: aPoint! !
+
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/11/2017 14:22:03'!
+withImaginary: aFloatImage displayMagnitudeLogAt: aPoint
+	"Show logarithm of magnitude of receiver and argument considered as a Complex image"
+
+	| f imaginaryValues complex magnitude max |
+	imaginaryValues _ aFloatImage elements.
+	complex _ 1 + 1i.
+	max _ elements max log.
+	f _ self as8bitFormEvaluating: [ :index |
+		complex real: (elements at: index) imaginary: (imaginaryValues at: index).
+		magnitude _ complex magnitude log.
+		(magnitude / max * 255 + 0.5) truncated min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:25'!
