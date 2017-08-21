@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3133] on 2 August 2017 at 3:24:03 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3136] on 11 August 2017 at 2:32:47 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 37!
+!provides: 'LinearAlgebra' 1 38!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -226,9 +226,9 @@ as32bitFormEvaluating: aBlock
 			index _ index + 1 ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 7/26/2016 11:30:05'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 8/11/2017 14:26:09'!
 as8bitFormEvaluating: aBlock
-	"Fill an 8-bit ColorForm with gray values."
+	"Fill an 8-bit GrayForm with gray values."
 
 	| answer bits bitsIndex elementsIndex bytesPerRow |
 	bytesPerRow _ width + 3 // 4 * 4.
