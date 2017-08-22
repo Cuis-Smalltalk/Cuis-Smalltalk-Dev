@@ -21,7 +21,7 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201707012338.tar.gz
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201708162010.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
 ```
@@ -46,7 +46,7 @@ cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3145.image
 ### Get and set up an appropriate VM ###
 ```
 cd MyProject
-curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201707012338.tar.gz
+curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201708141825.tar.gz
 tar -zxvf CogSpur.tgz
 ```
 
@@ -64,7 +64,7 @@ Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cu
 ```
 cd MyProject
 rm -r cogspur
-curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win64x64_squeak.cog.spur_201707012338.zip
+curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win64x64_squeak.cog.spur_201708162010.zip
 unzip cogspur.zip -d cogspur
 mv ./cogspur/build/vm/*.* ./cogspur
 ```
@@ -80,7 +80,7 @@ cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3145.image
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201707012338.tar.gz
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201708162010.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
@@ -103,7 +103,7 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201706151116.tar.gz
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705281305.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxht ./cogspur
 ```
@@ -111,7 +111,7 @@ mv ./sqcogspurlinuxht ./cogspur
 ```
 cd MyProject
 rm -r stkspur
-wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201707012338.tar.gz
+wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201708162010.tar.gz
 tar -zxvf stkspur.tgz
 mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
