@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3136] on 11 August 2017 at 2:33:02 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3145] on 24 August 2017 at 11:39:37 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 82!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'SignalProcessing' 1 83!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3363,7 +3363,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 7/31/2017 22:53:54'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/24/2017 11:28:56'!
 deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
@@ -3446,7 +3446,9 @@ g addFunction: [ :i | ((rr at: i) squared + (ii at: i) squared)sqrt ] color: Col
 "	trimmed _ trimmed trimCentered: trimmed sum / 512."
 	"For convolution, we chose sum/512. Support is usually very small and all values are positive (their effect accumulates).
 	But deconvolution (inverse) kernels tend to have larger support, and both positive and negative coefficients (whose effects sorts of cancels when coefficients gets smaller to the sides)"
-	trimmed _ trimmed trimCentered: trimmed sum / 64.
+	"trimmed _ trimmed trimCentered: trimmed sum / 64."
+	"Maybe should be a parameter. For very large images, this seems appropriate."
+	trimmed _ trimmed trimCentered: trimmed sum / 1024.
 	"Number of pixels we are willing to lose on each side, to avoid border effects."
 	guardZoneWidth _ trimmed width / 2.
 	guardZoneHeight _ trimmed height / 2.
@@ -3541,15 +3543,33 @@ displayAt: aPoint
 
 	self asForm displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/11/2017 14:30:50'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/24/2017 11:38:28'!
 displayAt: aPoint zoom: anInteger
 	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
 	
 	FloatImage lena displayAt: 10@10 zoom: 4
 	(FloatImage lena copy: (120@120 extent: 30@30)) displayAt: 10@10 zoom: 15
+	(FloatImage lena -0.5 * 2 copy: (120@120 extent: 30@30)) displayAt: 10@10 zoom: 15
 	"
+"
+	(self asForm magnifyBy: anInteger) displayAt: aPoint.
+"
+	| max min k b g r |
+	min _ self min.
+	max _ self max.
+	max > min ifFalse: [
+		max _ min + 1 ].
 
-	(self asForm magnifyBy: anInteger) displayAt: aPoint! !
+	"Make positive values gray, and negative values green"
+	k _ 255.0 / (max max: min negated).
+	((self as32bitFormEvaluating: [ :index :word |
+		g _ (((elements at: index) abs) * k + 0.5) truncated min: 255 max: 0.
+		(elements at: index) > 0
+			ifTrue: [ r _ b _ g ]
+			ifFalse: [ r _ b _ 0 ].
+		word at: 1 put: b; at: 2 put: g; at: 3 put: r ]
+	)
+			magnifyBy: anInteger) displayAt: aPoint.! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:11'!
 displayWithGammaAt: aPoint
@@ -4159,6 +4179,26 @@ lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 			scaled x: x y: y put: v ]].
 	^scaled! !
 
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 6/28/2017 15:38:48'!
+laplacian
+	"A Sobel like operator for edge detection.
+	See https://en.wikipedia.org/wiki/Sobel_operator
+	The coding style can be improved (but do it without degrading performance!!)"
+	
+	| aux yFiltered |
+	yFiltered _ self * -4.
+	aux _ FloatImage extent: self extent.
+	
+	aux fillWith: self displaced: 0 @ -1.
+	yFiltered elements += aux elements.
+	aux fillWith: self displaced: 0 @ 1.
+	yFiltered elements += aux elements.
+	aux fillWith: self displaced: -1 @ 0.
+	yFiltered elements += aux elements.
+	aux fillWith: self displaced: 1 @ 0.
+	yFiltered elements += aux elements.
+	^yFiltered! !
+
 !FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
 linearSpaceToGammaEncoded
 	"Assume the receiver is in linear space (values are proportional to photon count).
@@ -4612,6 +4652,43 @@ fixed _ roi copy.
 fixed repair: map.
 fixed writePNGfileNamed: 'fixed.png'.nil.
 "! !
+
+!FloatImage methodsFor: 'analysis' stamp: 'jmv 8/24/2017 11:27:31'!
+repairLocalRelativeThreshold: fractionOfPixelValue
+	"
+	Evaluate aboveBlock for each pixel that is at least aNumber greater than 8 neighbours.
+	Evaluate belowBlock for each pixel that is at least aNumber negated lower than 8 neighbours.
+	"
+	"
+	| image |
+	image := FloatImage lena.
+	image i: 10 j: 10 put: 1.0.
+	image i: 20 j: 20 put: 0.0.
+	image displayAt: 0@0.
+	image repairLocalRelativeThreshold: 0.2.
+	image displayAt: 256@0
+	"
+	| diffElements displaced maxDiff maxDiffElements minDiff minDiffElements mean meanElements absoluteThreshold |
+	minDiff _ (FloatImage extent: self extent) + 1.
+	maxDiff _ (FloatImage extent: self extent) - 1.
+	mean _ FloatImage extent: self extent.
+	minDiffElements _ minDiff elements.
+	maxDiffElements _ maxDiff elements.
+	meanElements _ mean elements.
+
+	"8 neighbors might be overkill, but better be safe."
+	{ -1@0. -1@-1. 0@ -1. 1@ -1. 1@0. 1@1. 0@1. -1@1 } do: [ :delta |
+		displaced _ self cheapDisplacedBy: delta.
+		mean += displaced.
+		diffElements _ (self - displaced) elements.
+		1 to: minDiffElements size do: [ :idx |
+			minDiffElements at: idx put: ( (minDiffElements at: idx) min: (diffElements at: idx)).
+			maxDiffElements at: idx put: ( (maxDiffElements at: idx) max: (diffElements at: idx)) ]].
+
+	1 to: elements size do: [ :idx |
+		absoluteThreshold _ (elements at: idx) * fractionOfPixelValue.
+		(minDiffElements at: idx) > absoluteThreshold ifTrue: [ elements at: idx put: (meanElements at: idx)/8 ].
+		(maxDiffElements at: idx) < absoluteThreshold negated ifTrue: [ elements at: idx put: (meanElements at: idx)/8 ] ]! !
 
 !FloatImage methodsFor: 'resampling-aux' stamp: 'jmv 1/27/2015 14:26'!
 resultExtentFor: anAffineTransformation
