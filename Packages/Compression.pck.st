@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3123] on 17 July 2017 at 4:12:18 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3153] on 25 August 2017 at 12:08:17 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 19!
+!provides: 'Compression' 1 20!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -1591,11 +1591,6 @@ fileReaderServicesForFile: fullName suffix: suffix
 		ifTrue: [ {self serviceViewDecompress. self serviceDecompressToFile} ]
 		ifFalse: [ #() ]! !
 
-!GZipReadStream class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 19:44'!
-initialize
-
-	FileList registerFileReader: self! !
-
 !GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 7/17/2017 15:44:39'!
 saveContents: fullFileName
 	"Save the contents of a gzipped file"
@@ -1635,11 +1630,6 @@ serviceViewDecompress
 				selector: #viewContents:
 				description: 'view decompressed' 
 ! !
-
-!GZipReadStream class methodsFor: 'class initialization' stamp: 'SD 11/15/2001 22:21'!
-unload
-
-	FileList unregisterFileReader: self ! !
 
 !GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 5/25/2016 01:50'!
 viewContents: fullFileName
@@ -2746,11 +2736,6 @@ fileReaderServicesForFile: fullName suffix: suffix
 		ifFalse: [ { self serviceCompressFile } ]
 ! !
 
-!GZipWriteStream class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 19:44'!
-initialize
-
-	FileList registerFileReader: self! !
-
 !GZipWriteStream class methodsFor: 'file list services' stamp: 'jmv 4/19/2011 11:19'!
 serviceCompressFile
 
@@ -2759,10 +2744,6 @@ serviceCompressFile
 		label: 'compress file'
 		selector: #compressFile:
 		description: 'compress file using gzip compression, making a new file') triggerFileListChanged! !
-
-!GZipWriteStream class methodsFor: 'class initialization' stamp: 'nk 11/26/2002 13:09'!
-unload
-	FileList unregisterFileReader: self! !
 
 !ZLibWriteStream methodsFor: 'initialization' stamp: 'nk 2/17/2004 16:28'!
 on: aCollectionOrStream
@@ -3848,11 +3829,6 @@ findEndOfCentralDirectoryFrom: stream
 		ifTrue: [ | newPos | stream position: (newPos _ (stream position + pos - seekOffset - 1)). newPos]
 		ifFalse: [0]! !
 
-!ZipArchive class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 19:44'!
-initialize
-
-	FileList registerFileReader: self 		"For Monticello .mcz support"! !
-
 !ZipArchive class methodsFor: 'file format' stamp: 'pb 5/25/2016 01:51'!
 isZipArchive: aStreamOrFileName
 	"Answer whether the given filename represents a valid zip file."
@@ -3885,11 +3861,6 @@ lastIndexOfPKSignature: aSignature in: data
 						ifTrue: [ ^i ]
 	].
 	^0! !
-
-!ZipArchive class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 19:44'!
-unload
-
-	FileList unregisterFileReader: self ! !
 
 !ZipArchive class methodsFor: 'constants' stamp: 'ar 2/27/2001 13:38'!
 validSignatures
@@ -4845,10 +4816,7 @@ newFrom: aString named: aFileName
 	^(self new) contents: aString; localFileName: aFileName; yourself! !
 InflateStream initialize!
 FastInflateStream initialize!
-GZipReadStream initialize!
 ZipWriteStream initialize!
-GZipWriteStream initialize!
 GZipConstants initialize!
 ZipConstants initialize!
 ZipFileConstants initialize!
-ZipArchive initialize!
