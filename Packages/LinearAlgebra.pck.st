@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3136] on 11 August 2017 at 2:32:47 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3145] on 24 August 2017 at 11:39:26 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 38!
+!provides: 'LinearAlgebra' 1 39!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -210,19 +210,20 @@ appropriateResultClass
 
 	^self class! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 7/26/2016 11:29:44'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 8/24/2017 11:37:40'!
 as32bitFormEvaluating: aBlock
-	"Fill 32bit Form with gray values."
+	"Fill 32bit Form with rgb values as computed by aBlock. See senders."
 
 	| answer bits word index |
 	answer _ Form extent: width@height depth: 32.
 	bits _ answer bits.
-	word _ 16rFF000000 copy.
+	word _ LargePositiveInteger new: 4.
+	word at: 4 put: 255.
 	index _ 1.
 	1 to: height do: [ :i |
 		1 to: width do: [ :j |
 			aBlock value: index value: word.
-			bits at: index put: word.
+			bits at: index put: word normalize.
 			index _ index + 1 ]].
 	^answer! !
 

@@ -28,6 +28,7 @@ Some of the repos owner by community members, and including packages for Cuis ar
 - https://github.com/hernanwilkinson/Cuis-Smalltalk-Aconcagua
 - https://github.com/hernanwilkinson/Cuis-Smalltalk-Chalten
 - https://github.com/hernanwilkinson/Cuis-Smalltalk-Refactoring
+- https://github.com/hernanwilkinson/Cuis-Smalltalk-DenotativeObject
 
 (if your repo with Cuis stuff is missing, please email the Cuis mail list)
 

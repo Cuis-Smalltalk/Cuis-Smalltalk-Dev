@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3134] on 3 August 2017 at 2:18:05 pm'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 13!
+!provides: 'JSON' 1 14!
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -147,7 +147,7 @@ jsonWriteOn: aStream
 
 	self jsonObjectWriteOn: aStream! !
 
-!Matrix methodsFor: '*JSON' stamp: 'jmv 8/3/2017 12:07:00'!
+!Array2D methodsFor: '*JSON' stamp: 'jmv 8/3/2017 12:07:00'!
 jsonWriteOn: aStream
 	"By default, use array braces "
 	aStream nextPut: $[.

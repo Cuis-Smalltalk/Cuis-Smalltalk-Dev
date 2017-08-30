@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3103] on 16 June 2017 at 6:51:07 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3145] on 24 August 2017 at 10:43:03 am'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 26!
+!provides: 'Morphic3' 1 27!
+!requires: 'OpenCL' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'OpenCL' 1 nil nil!
 !classDefinition: #SVGError category: #'Morphic3-SVG'!
 Error subclass: #SVGError
 	instanceVariableNames: ''
@@ -11237,7 +11237,7 @@ drawVeraSans99
 		curveToX: 0.4489 y: 0.4049 control1X: 0.3955 y: 0.3961 control2X: 0.4225 y: 0.3991;
 		curveToX: 0.5256 y: 0.4303 control1X: 0.4753 y: 0.4104 control2X: 0.5008 y: 0.4189! !
 
-!BitstreamVeraRenderer class methodsFor: 'testing' stamp: 'jmv 10/24/2014 08:29'!
+!BitstreamVeraRenderer class methodsFor: 'testing' stamp: 'jmv 8/24/2017 10:18:11'!
 testCharacter: code
 	"
 	BitstreamVeraRenderer testCharacter: 100
@@ -11245,7 +11245,7 @@ testCharacter: code
 	| c r  |
 	c _ (VectorCanvas onForm: Display) into: self runningWorld.
 	r _ BitstreamVeraRenderer new vectorGraphicsCanvas: c.
-	c engine setupBorderWidth: 0 borderColor: Color green fillColor: Color green 	strokeDashArray: nil strokeDashArrayOffset: nil.
+	c engine setupBorderWidth: 0 borderColor: Color green fillColor: Color green strokeDashArray: nil strokeDashArrayOffset: nil.
 	r drawCharCode: code atX: 38 y: 22 pointSize: 160 italics: false.
 	Display forceToScreen! !
 
@@ -12604,7 +12604,7 @@ TechnicalFontRenderer testCharacter: 99.
 		cdr: 1.5;
 		r: 1.5! !
 
-!TechnicalFontRenderer class methodsFor: 'testing' stamp: 'jmv 10/24/2014 08:30'!
+!TechnicalFontRenderer class methodsFor: 'testing' stamp: 'jmv 8/24/2017 10:20:29'!
 testCharacter: code
 	"
 	TechnicalFontRenderer testCharacter: 100
@@ -12612,6 +12612,7 @@ testCharacter: code
 	| c r  |
 	c _ (VectorCanvas onForm: Display) into: self runningWorld.
 	r _ TechnicalFontRenderer new vectorGraphicsCanvas: c.
+	c engine initializeTrajectory.
 	r drawM3BoxAtX: 38 y: 22 pointSize: 160 italics: false.
 	c engine setupBorderWidth: 16 borderColor: Color green fillColor: nil
 		strokeDashArray: nil strokeDashArrayOffset: nil.
