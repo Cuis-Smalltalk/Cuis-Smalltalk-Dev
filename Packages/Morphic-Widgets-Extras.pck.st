@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3013] on 16 January 2017 at 12:37:19 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3165] on 6 September 2017 at 10:11:06 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 11!
+!provides: 'Morphic-Widgets-Extras' 1 12!
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -368,12 +368,12 @@ processKeyStroke: aKeyboardEvent
 		^self].
 	self markIndex: self pointIndex! !
 
-!SimpleEditor methodsFor: 'accessing' stamp: 'jmv 2/5/2015 00:46'!
+!SimpleEditor methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:02:17'!
 replaceSelectionWith: aString
 	"Deselect, and replace the selection text by aText."
 
 	| start stop |
-	morph disablesEdition ifTrue: [
+	morph disablesEditing ifTrue: [
 		^ self ].
 	start _ self startIndex.
 	stop _ self stopIndex.
@@ -1008,15 +1008,15 @@ defaultColor
 	"answer the default color/fill style for the receiver"
 	^ Theme current text! !
 
-!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 3/6/2015 08:54'!
-disableEdition
-	self setProperty: #disablesEdition toValue: true.
+!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:02:09'!
+disableEditing
+	self setProperty: #disablesEditing toValue: true.
 	self stopBlinking! !
 
-!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 3/6/2015 08:53'!
-disablesEdition
+!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 9/6/2017 10:02:10'!
+disablesEditing
 
-	^self hasProperty: #disablesEdition! !
+	^self hasProperty: #disablesEditing! !
 
 !OneLineEditorMorph methodsFor: 'drawing' stamp: 'jmv 10/16/2013 22:37'!
 displayTextCursorAtX: x top: top bottom: bottom emphasis: emphasis on: aCanvas
@@ -1316,10 +1316,10 @@ selectAll
 	self editor selectAll.
 	self redrawNeeded! !
 
-!OneLineEditorMorph methodsFor: 'blink cursor' stamp: 'jmv 3/6/2015 08:56'!
+!OneLineEditorMorph methodsFor: 'blink cursor' stamp: 'jmv 9/6/2017 10:02:15'!
 showsBlinkingCursor
 
-	^self handlesKeyboard and: [ self disablesEdition not ]! !
+	^self handlesKeyboard and: [ self disablesEditing not ]! !
 
 !OneLineEditorMorph methodsFor: 'blink cursor' stamp: 'jmv 2/2/2014 22:20'!
 startBlinking
