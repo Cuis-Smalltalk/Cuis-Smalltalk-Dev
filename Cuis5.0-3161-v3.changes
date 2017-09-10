@@ -29172,3 +29172,1239 @@ ActiveModel subclass: #SimpleServiceEntry
 ----SNAPSHOT----#(28 August 2017 9:45:04.328394 pm) Cuis5.0-3161-v3.image priorSource: 1166155!
 
 ----QUIT----#(28 August 2017 9:45:16.349516 pm) Cuis5.0-3161-v3.image priorSource: 1202187!
+
+----STARTUP----#(10 September 2017 6:05:31.684746 pm) as /home/juan/Cuis/Cuis-Smalltalk-Dev/Cuis5.0-3161-v3.image!
+
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3161] on 29 August 2017 at 3:54:37 pm'!
+!Theme methodsFor: 'keyboard shortcuts' stamp: 'jmv 8/29/2017 15:53:47' prior: 16936827!
+            keyStroke: aKeyboardEvent morph: aMorph
+	aKeyboardEvent controlKeyPressed ifTrue: [^false].
+	aKeyboardEvent commandAltKeyPressed ifFalse: [^false].
+
+	aKeyboardEvent keyValue = $w numericValue ifTrue: [
+		aMorph owningWindow ifNotNil: [ :w |
+			(w morphContainsPoint: (w internalizeFromWorld: aKeyboardEvent eventPosition)) ifTrue: [
+				w delete. 
+				^true ]	]].
+"	aKeyboardEvent keyValue = $f numericValue
+		ifTrue: [aMorph owningWindow ifNotNil: [ :w | w fullScreen. ^true ]].
+"
+	^ false! !
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3162-OnlyCloseWindowIfContainsMousePointer-JuanVuletich-2017Aug29-15h49m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3121] on 9 July 2017 at 7:49:17 pm'!
+!Interval class methodsFor: 'instance creation' stamp: 'jmv 7/9/2017 16:59:23' prior: 16861363!
+                             newFrom: aCollection 
+	"Answer an instance of me containing the same elements as aCollection."
+
+    | newInterval n |
+
+    (n := aCollection size) <= 1 ifTrue: [
+		n = 0 ifTrue: [^self from: 1 to: 0].
+		^self from: aCollection first to: aCollection last].
+    	newInterval := self from: aCollection first to: aCollection last by: (aCollection last - aCollection first) // (n - 1).
+	(newInterval hasEqualElements: aCollection)
+		ifFalse: [ self error: 'The argument is not an arithmetic progression' ].
+	^newInterval
+
+"
+	Interval newFrom: {1. 2. 3}
+	{33. 5. -23} as: Interval
+	{33. 5. -22} as: Interval.   ' (an error)'
+	(-4 to: -12 by: -1) as: Interval
+"! !
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3163-IntervalFix-JuanVuletich-2017Jul09-16h58m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3163] on 31 August 2017 at 10:20:55 am'!
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3164-CategorizePinningProtocol-JuanVuletich-2017Aug31-10h17m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3164] on 6 September 2017 at 9:59:44 am'!
+!SimpleServiceEntry methodsFor: 'initialization' stamp: 'jmv 9/6/2017 09:56:01' prior: 16908010!
+initialize
+	triggerFileListChanged _ false.
+	sortOrder _ 1! !
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3165-FileListFix-JuanVuletich-2017Sep06-09h43m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3165] on 6 September 2017 at 10:08:50 am'!
+!ReparseAfterSourceEditing commentStamp: 'jmv 9/6/2017 10:05:54' prior: 16900979!
+               A ReparseAfterSourceEditing is a Notification used to restart the syntax parsing phase of a compilation after a change in source code.!
+!TextModelMorph methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:01:18'!
+                disableEditing
+	self textMorph disableEditing! !
+!TextModelMorph methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:03:26'!
+       enableEditing
+
+	self textMorph enableEditing! !
+!BrowserWindow methodsFor: 'updating' stamp: 'jmv 9/6/2017 10:04:36'!
+          disableCodePaneEditing
+
+	codePane ifNotNil: [ codePane disableEditing ]! !
+!BrowserWindow methodsFor: 'updating' stamp: 'jmv 9/6/2017 10:04:48'!
+               enableCodePaneEditing
+
+	codePane ifNotNil: [ codePane enableEditing ]! !
+!InnerTextMorph methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:01:59'!
+               disableEditing
+	self setProperty: #disablesEditing toValue: true.
+	self stopBlinking! !
+!InnerTextMorph methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:03:03'!
+enableEditing
+	
+	self removeProperty: #disablesEditing! !
+!InnerTextMorph methodsFor: 'event handling testing' stamp: 'jmv 9/6/2017 10:02:01'!
+                 disablesEditing
+
+	^self hasProperty: #disablesEditing! !
+!Inspector methodsFor: 'contents' stamp: 'jmv 9/6/2017 10:05:31' prior: 50368947!
+                     acceptedStringOrText
+	"We need our cache not to be modified by user changes"
+	^acceptedContentsCache copy! !
+!TextEditor methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:02:22' prior: 16931330!
+                               replaceSelectionWith: aTextOrString
+	"Deselect, and replace the selection text by aText."
+	"This is a user command, and generates undo"
+
+	| start stop replacement |
+
+	morph disablesEditing ifTrue: [
+		^ self ].
+
+	start _ self startIndex.
+	stop _ self stopIndex.
+	(aTextOrString isEmpty and: [stop > start]) ifTrue: [
+		"If deleting, then set emphasisHere from 1st character of the deletion"
+		emphasisHere _ (model actualContents attributesAt: start) select: [:att |
+			att mayBeExtended]].
+
+	(start = stop and: [ aTextOrString isEmpty ]) ifFalse: [
+		replacement _ self addAttributesForPasting: aTextOrString.
+		model logUndoAndReplaceFrom: start to: stop - 1 with: replacement.
+		textComposition
+			recomposeFrom: start
+			to:  start + replacement size - 1
+			delta: replacement size - (stop-start).
+		self deselectAndPlaceCursorAt: start + replacement size.
+		selectionStartBlocks _ #().
+		selectionStopBlocks _ #().
+		self userHasEdited  " -- note text now dirty" ].
+
+	morph possiblyChanged! !
+!TextEditor methodsFor: 'private' stamp: 'jmv 9/6/2017 10:02:19' prior: 16932614!
+        applyAttribute: aTextAttribute
+	"The user selected aTextAttribute via shortcut, menu or other means.
+	If there is a selection, apply the attribute to the selection.
+	In any case use the attribute for the user input (emphasisHere)"
+	"This generates undo"
+	| anythingDone |
+
+	morph disablesEditing ifTrue: [
+		^ self ].
+
+	anythingDone _ false.
+	emphasisHere _ Text addAttribute: aTextAttribute toArray: emphasisHere.
+	self selectionIntervalsDo: [ :interval |
+		(interval notEmpty or: [ aTextAttribute isParagraphAttribute ])
+			ifTrue: [
+				anythingDone _ true.
+				model logUndoAndAddAttribute: aTextAttribute from: interval first to: interval last.
+				textComposition recomposeFrom: interval first to: interval last delta: 0 ]].
+	anythingDone ifTrue: [
+		self recomputeSelection.	"Needed so visible selection is updated to reflect new visual extent of selection"
+		self userHasEdited ].
+
+	"Even if nothing done, emphasisHere might have changed"
+	morph possiblyChanged! !
+!TextEditor methodsFor: 'undo & redo' stamp: 'jmv 9/6/2017 10:02:20' prior: 16933011!
+                             redo
+
+	morph disablesEditing ifTrue: [
+		^ self ].
+
+	model redoAndEvaluate: [ :modelUpdated :newCursorPos |
+		newCursorPos
+			ifNil: [ self recomputeSelection ]
+			ifNotNil: [ self markIndex: newCursorPos pointIndex: newCursorPos ].
+		modelUpdated ifTrue: [
+			self userHasEdited.
+			textComposition composeAll.			"this could be made more specific..."
+			morph possiblyChanged ]]! !
+!TextEditor methodsFor: 'undo & redo' stamp: 'jmv 9/6/2017 10:02:24' prior: 16933031!
+           undo
+
+	morph disablesEditing ifTrue: [
+		^ self ].
+
+	model undoAndEvaluate: [ :modelUpdated :newCursorPos |
+		newCursorPos
+			ifNil: [ self recomputeSelection ]
+			ifNotNil: [ self markIndex: newCursorPos pointIndex: newCursorPos ].
+		modelUpdated ifTrue: [
+			self userHasEdited.
+			textComposition composeAll.				"this could be made more specific..."
+			morph possiblyChanged ]]! !
+!BrowserWindow methodsFor: 'updating' stamp: 'jmv 9/6/2017 10:04:55' prior: 50368607!
+          editSelectionChanged
+	
+	self isEditSelectionNone
+		ifTrue: [ self disableCodePaneEditing ]
+		ifFalse: [ self enableCodePaneEditing]! !
+!InnerTextMorph methodsFor: 'blinking cursor' stamp: 'jmv 9/6/2017 10:02:07' prior: 16856157!
+                           showsBlinkingCursor
+
+	^self handlesKeyboard and: [ self disablesEditing not ]! !
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3166-ItIsEditingNotEdition-JuanVuletich-2017Sep06-10h08m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3165] on 6 September 2017 at 10:09:36 am'!
+
+InnerTextMorph removeSelector: #disableEdition!
+
+InnerTextMorph removeSelector: #disableEdition!
+
+InnerTextMorph removeSelector: #disablesEdition!
+
+InnerTextMorph removeSelector: #disablesEdition!
+
+InnerTextMorph removeSelector: #enableEdition!
+
+InnerTextMorph removeSelector: #enableEdition!
+
+BrowserWindow removeSelector: #disableCodePaneEdition!
+
+BrowserWindow removeSelector: #disableCodePaneEdition!
+
+BrowserWindow removeSelector: #enableCodePaneEdition!
+
+BrowserWindow removeSelector: #enableCodePaneEdition!
+
+TextModelMorph removeSelector: #disableEdition!
+
+TextModelMorph removeSelector: #disableEdition!
+
+TextModelMorph removeSelector: #enableEdition!
+
+TextModelMorph removeSelector: #enableEdition!
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3167-EditionMisnomerCleanup-JuanVuletich-2017Sep06-10h08m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3162] on 4 September 2017 at 5:01:33 pm'!
+
+ChangeList subclass: #ChangeListWithFileInErrors
+	instanceVariableNames: 'errors'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Changes'!
+
+!classDefinition: #ChangeListWithFileInErrors category: #'Tools-Changes'!
+ChangeList subclass: #ChangeListWithFileInErrors
+	instanceVariableNames: 'errors'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Changes'!
+!ChangeListWithFileInErrors commentStamp: 'HAW 9/4/2017 10:23:05' prior: 0!
+   This class is used to keep errors when filing in changes.
+I could have use ChangeList directly, selecting changes with errors, then removing them, etc., but it had some problems and that solution is more a hack.
+So, instances of this class will keep errors when filing in a change, and it allows the posibility to show the change with the error in a change list window.
+
+A doit change that signaled a MessageNotUnderstood is assume to not be an error becuase those kinds of things are evaluations in specific contexts that will obiously generate errors.
+All doits with errors could be assume not to be errors, but I limited to MNU type of errors to avoid filtering errors that should be shown.!
+!ChangeListWithFileInErrors methodsFor: 'filing in' stamp: 'HAW 9/4/2017 09:34:35'!
+                     fileInAllKeepingErrors
+
+	errors := Dictionary new.
+	changeList do: [ :change | self fileInKeepingError: change ].
+! !
+!ChangeListWithFileInErrors methodsFor: 'filing in' stamp: 'HAW 9/4/2017 16:36:13'!
+                      fileInKeepingError: change
+	
+	[ change fileIn ]
+		on: Error 
+		do: [ :anError | (self hasToKeep: anError for: change) ifTrue: [ errors at: change put: anError ]]! !
+!ChangeListWithFileInErrors methodsFor: 'initialization-release' stamp: 'HAW 9/4/2017 09:34:20'!
+                          initialize
+
+	super initialize.
+	errors := Dictionary new.! !
+!ChangeListWithFileInErrors methodsFor: 'testing' stamp: 'HAW 9/4/2017 09:37:00'!
+                 hasFileInErrors
+
+	^errors notEmpty! !
+!ChangeListWithFileInErrors methodsFor: 'testing' stamp: 'HAW 9/4/2017 16:37:07'!
+        hasToKeep: anError for: change
+
+	^(change isDoIt and: [ anError isKindOf: MessageNotUnderstood ]) not! !
+!ChangeListWithFileInErrors methodsFor: 'showing filein errors' stamp: 'HAW 9/4/2017 10:01:06'!
+                       failedFileInChangesLabel
+
+	^'Changes that failed to file in'! !
+!ChangeListWithFileInErrors methodsFor: 'showing filein errors' stamp: 'HAW 9/4/2017 10:45:43'!
+ifFiledInWithErrorAdd: aChange at: anIndex to: newChangeList and: newList 
+	
+	(self wasFiledInWithError: aChange) ifTrue: [ 
+		newChangeList add: aChange.
+		newList add: ((list at: anIndex) contractTo: 40), ' | ', (errors at: aChange) printString ]! !
+!ChangeListWithFileInErrors methodsFor: 'showing filein errors' stamp: 'HAW 9/4/2017 10:04:47'!
+    removeSucessfullyFiledInChanges
+
+	| newChangeList newList |
+
+	newChangeList := OrderedCollection new.
+	newList := OrderedCollection new.
+
+	changeList withIndexDo: [ :aChange :anIndex | self ifFiledInWithErrorAdd: aChange at: anIndex to: newChangeList and: newList ].
+			
+	changeList _ newChangeList.
+	list _ newList.
+	listIndex _ 0.
+	self clearSelections.
+	self changed: #list.! !
+!ChangeListWithFileInErrors methodsFor: 'showing filein errors' stamp: 'HAW 9/4/2017 10:02:20'!
+   showChangesWithFileInErrors
+
+	self removeSucessfullyFiledInChanges.
+	ChangeListWindow open: self label: self failedFileInChangesLabel
+
+! !
+!ChangeListWithFileInErrors methodsFor: 'showing filein errors' stamp: 'HAW 9/4/2017 10:46:01'!
+                     wasFiledInWithError: aChange
+	
+	^errors includesKey: aChange! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:48:40'!
+              logSnapshot: save andQuit: quit
+	"Log quitting to changes file"
+	| msg |
+	(SourceFiles at: 2) ifNotNil: [
+		msg _ self snapshotMessageFor: save andQuit: quit.
+		self assureStartupStampLogged.
+		save ifTrue: [
+			LastQuitLogPosition _ (SourceFiles at: 2)
+				 setToEnd;
+				 position ].
+		self logChange: msg.
+		Transcript
+			 newLine;
+			 show: msg;
+			 newLine ]! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:42:57'!
+                               nopTag
+
+	^ 'NOP'! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:42:27'!
+                          quitNoSaveTag
+
+	^ 'QUIT/NOSAVE' ! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:40:45'!
+          quitTag
+		
+	^'QUIT'! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:51:51'!
+                       snapshotMessageFor: save andQuit: quit
+		
+	^String streamContents: [ :stream |
+		stream 
+			nextPutAll: self tagHeader;
+			nextPutAll: (self snapshotTagFor: save andQuit: quit);
+			nextPutAll: self tagTail;
+			print: Date dateAndTimeNow;
+			space;
+			nextPutAll: self imageName asFileEntry name;
+			nextPutAll: ' priorSource: ';
+			print: LastQuitLogPosition ].! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:41:19'!
+ snapshotTag
+		
+	^'SNAPSHOT'! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:51:20'!
+               snapshotTagFor: save andQuit: quit
+		
+	^save
+		ifTrue: [ quit
+			ifTrue: [ self quitTag ]
+			ifFalse: [ self snapshotTag ]]
+		ifFalse: [ quit
+			ifTrue: [ self quitNoSaveTag ]
+			ifFalse: [ self nopTag ]]! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:45:54'!
+                              tagHeader
+
+	^ '----'! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:46:02'!
+                      tagTail
+
+	^ self tagHeader! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 06:11:51'!
+   hasToRestoreChanges
+
+	^self withChangesFileDo: [ :changesFile |
+		changesFile position: self lastQuitLogPosition.
+		self hasToRestoreChangesFrom: changesFile ].
+	! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 16:41:24'!
+                           hasToRestoreChangesFrom: changesFile
+
+	| chunk  |
+	
+	[ changesFile atEnd ] whileFalse: [ chunk := changesFile nextChunk ].
+	
+	^(self isSnapshotQuitOrQuitNoSaveRecord: chunk) not
+! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 08:56:02'!
+           isQuitNoSaveRecord: chunk
+
+	^chunk beginsWith: self tagHeader, self quitNoSaveTag
+	! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 08:55:51'!
+          isQuitRecord: chunk
+
+	^chunk beginsWith: self tagHeader, self quitTag ! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 16:34:34'!
+                       isSnapshotQuitOrQuitNoSaveRecord: chunk
+
+	^(self isSnapshotRecord: chunk) 
+		or: [ (self isQuitRecord: chunk) 
+		or: [ self isQuitNoSaveRecord: chunk ]]! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 08:57:09'!
+     isSnapshotRecord: chunk
+
+	^chunk beginsWith: self tagHeader, self snapshotTag 
+	! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 09:07:35'!
+             lostChangesDetectedCaption
+	
+	^
+'Last changes may have been lost
+(maybe the VM crashed or you had to kill it)
+What do you want to do?'! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 06:25:45'!
+                       restoreLostChanges
+
+ 	| decision |
+	
+	decision := PopUpMenu withCaption: self lostChangesDetectedCaption chooseFrom: self restoreLostChangesOptions.
+
+	decision = 1 ifTrue: [ ^self restoreLostChangesAutomatically ].
+	decision = 2 ifTrue: [ ^self restoreLostChangesManually ]! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 06:13:01'!
+            restoreLostChangesAutomatically
+	
+	self withChangesFileDo: [ :aChangesFile | self restoreLostChangesAutomaticallyFrom: aChangesFile ]! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 10:15:16'!
+                        restoreLostChangesAutomaticallyFrom: aChangesFile
+
+	| changeList |
+
+	changeList := ChangeListWithFileInErrors new.
+	changeList scanFile: aChangesFile from: LastQuitLogPosition to: aChangesFile size.
+	changeList fileInAllKeepingErrors.
+	(changeList hasFileInErrors and: [ self shouldShowFileInErrors ]) ifTrue: [ changeList showChangesWithFileInErrors ]
+! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 06:09:39'!
+                            restoreLostChangesIfNecessary
+
+	"
+	Smalltalk restoreLostChangesIfNecessary
+	"
+	
+	self hasToRestoreChanges ifTrue: [ WorldState addDeferredUIMessage: [self restoreLostChanges ]].
+! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/1/2017 17:28:22'!
+           restoreLostChangesManually
+
+	ChangeList browseRecentLog! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 06:25:55'!
+      restoreLostChangesOptions
+	
+	^{'Restore lost changes automatically'. 'Restore lost changes manually'. 'Nothing'}.! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 06:29:46'!
+            restoringChangesHasErrorsCaption
+	
+	^'There were errors filing in the lost changes. Do you want to see them?'! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 09:37:34'!
+                shouldShowFileInErrors
+	
+ 	^self confirm: self restoringChangesHasErrorsCaption
+	! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/4/2017 06:11:39'!
+            withChangesFileDo: aBlock
+
+	^self currentChangesName asFileEntry readStreamDo: aBlock! !
+!ChangeRecord methodsFor: 'testing' stamp: 'HAW 9/4/2017 06:32:29'!
+   isDoIt
+
+	^type = #doIt! !
+!ChangeList methodsFor: 'menu actions' stamp: 'HAW 9/4/2017 10:26:32' prior: 16796254!
+               removeDoIts
+	"Remove doits from the receiver, other than initializes. 1/26/96 sw"
+
+	| newChangeList newList |
+	newChangeList _ OrderedCollection new.
+	newList _ OrderedCollection new.
+
+	changeList with: list do: [ :chRec :str |
+		(chRec isDoIt not or: [str endsWith: 'initialize'])
+			ifTrue: [
+				newChangeList add: chRec.
+				newList add: str]].
+	newChangeList size < changeList size
+		ifTrue: [
+			changeList _ newChangeList.
+			list _ newList.
+			listIndex _ 0.
+			self clearSelections ].
+	self changed: #list.
+
+	! !
+!ChangeList methodsFor: 'menu actions' stamp: 'HAW 9/4/2017 10:26:50' prior: 16796515!
+                               selectRemovalsOfSent
+	"Selects all method removal for sent methods"
+
+	1 to: changeList size do: [ :i | | change |
+		change _ changeList at: i.
+		listSelections at: i put:
+			(change isDoIt and: [
+				change string includesSubString: 'removeSelector: #' ] and: [
+					Smalltalk isThereAReferenceTo: (change string copyAfterLast: $#) asSymbol ]) ].
+	self changed: #allSelections.
+	self changed: #annotation! !
+!ChangeList class methodsFor: 'public access' stamp: 'HAW 9/4/2017 10:32:00' prior: 16796892!
+          browseRecentLogOn: origChangesFileName 
+	"figure out where the last snapshot or quit was, then browse the recent entries."
+
+	| end done block positions prevBlock |
+	origChangesFileName asFileEntry readStreamDo: [ :changesFile |
+		positions _ SortedCollection new.
+		end _ changesFile size.
+		prevBlock _ end.
+		block _ end - 1024 max: 0.
+		done _ false.
+		[ done or: [ positions size > 0 ]]
+			whileFalse: [
+				changesFile position: block.
+				"ignore first fragment"
+				changesFile nextChunk.
+				[ changesFile position < prevBlock ]
+					whileTrue: [
+						| pos chunk |
+						pos _ changesFile position.
+						chunk _ changesFile nextChunk.
+						((Smalltalk isQuitRecord: chunk) or: [ Smalltalk isSnapshotRecord: chunk ])
+							ifTrue: [ positions add: pos ]].
+				block = 0
+					ifTrue: [done _ true]
+					ifFalse: [
+						prevBlock _ block.
+						block _ block - 1024 max: 0]].
+	].
+	positions isEmpty
+		ifTrue: [self inform: 'File ' , origChangesFileName , ' does not appear to be a changes file']
+		ifFalse: [self browseRecentLogOn: origChangesFileName startingFrom: positions last]! !
+!SystemDictionary methodsFor: 'snapshot and quit' stamp: 'HAW 9/4/2017 08:46:37' prior: 50361385!
+                      snapshot: save andQuit: quit embedded: embeddedFlag clearAllClassState: clearAllStateFlag
+"WARNING: Current process will be killed.
+UI Process will be restarted
+"
+	"Mark the changes file and close all files as part of #processShutdownList.
+	If save is true, save the current state of this Smalltalk in the image file.
+	If quit is true, then exit to the outer OS shell.
+	The latter part of this method runs when resuming a previously saved image. This resume logic checks for a document file to process when starting up."
+	"
+	To test the full cleanup and startup procedures, evaluate:
+		Smalltalk snapshot: false andQuit: false embedded: false clearAllClassState: true
+
+	To test the cleanup done when saving the image, evaluate:
+		Smalltalk snapshot: false andQuit: false embedded: false clearAllClassState: false
+	"
+| activeProc |
+activeProc _ Processor activeProcess.
+[ 
+	| isARealStartup world reopenTranscript |
+	self logSnapshot: save andQuit: quit.
+
+	reopenTranscript _ false.
+	clearAllStateFlag ifTrue: [
+		TranscriptWindow allInstancesDo: [ :each | each isInWorld ifTrue: [ each delete. reopenTranscript _ true ]].
+		Transcript logToFile: false ].
+	ActiveModel flushEventSystem.
+	self processShutDownList: quit.
+
+
+	"Lo que sigue aca podria ir al shutdown de alguien... (se levantan en startup!!)"
+	Smalltalk stopLowSpaceWatcher.
+	WeakArray stopFinalizationProcess.
+	ProcessorScheduler stopBackgroundProcess.
+	
+	"Cosas que levanto explicitamente abajo"
+	world _ ProjectX ui.
+	"Replace with this to create a new world at startup after 'saveAsNewVersion'"
+	"world _ clearAllStateFlag ifFalse: [ ProjectX ui ]."
+	ProjectX stopUIProcess.
+	activeProc isTerminated ifFalse: [
+		activeProc terminate ].
+
+	"Clean Globals"
+	Smalltalk at: #Sensor put: nil.
+	Smalltalk at: #Display put: nil.
+	Smalltalk closeSourceFiles. Smalltalk at: #SourceFiles put: nil.
+	Smalltalk allClassesDo: [ :cls | cls releaseClassCachedState ].
+	clearAllStateFlag ifTrue: [	
+		Smalltalk allClassesDo: [ :cls | cls releaseClassState ]].
+	"Ojo con los pool dicts. Creo que no hay ninguno..."
+	
+	"To keep cleaning stuff that shouldn't be saved..."
+	clearAllStateFlag ifTrue: [ Smalltalk printStuffToCleanOnImageSave ].
+
+
+	"Do image save & quit as apropriate"
+	Cursor write activateCursor.
+	save
+		ifTrue: [
+			isARealStartup _ embeddedFlag
+				ifTrue: [ self snapshotEmbeddedPrimitive ]
+				ifFalse: [ self snapshotPrimitive ]]
+		ifFalse: [ isARealStartup _ false ].
+	quit & (isARealStartup == false) ifTrue: [ self quitPrimitive ].
+
+
+	"If starting from absolute scratch, this would be a good time to recreate Global names"
+	Smalltalk at: #Sensor put: nil.
+	Smalltalk at: #Display put: (DisplayScreen extent: `1024@768` depth: 32).
+	Smalltalk at: #SourceFiles put: (Array new: 2).
+	Smalltalk openSourceFiles.
+
+	"Here, startup begins!! (isARealStartup might be nil)"
+	Smalltalk allClassesDo: [ :cls | cls initClassCachedState ].
+	self doStartUp: isARealStartup == true.
+	
+	
+	ProjectX spawnNewMorphicProcessFor: (world ifNil: [ PasteUpMorph newWorld ]).
+
+	reopenTranscript ifTrue: [
+		WorldState addDeferredUIMessage: [
+			TranscriptWindow openTranscript ]].
+	"
+	WorldState addDeferredUIMessage: [
+		world fullRepaintNeeded ].
+	"
+
+	"If system is coming up (VM and image just started)"
+	isARealStartup == true ifTrue: [	
+		WorldState addDeferredUIMessage: [
+			self processCommandLineArguments.
+			AppLauncher launchApp ]].
+
+	"Now it's time to raise an error"
+	isARealStartup ifNil: [ self error: 'Failed to write image file (disk full?)' ].
+
+] forkAt: Processor timingPriority-1 named: 'Startup process'.! !
+!SystemDictionary methodsFor: 'startup' stamp: 'HAW 9/4/2017 06:14:44' prior: 50335324!
+                doStartUp: isARealStartup
+	"
+	isARealStartup
+		true: system is coming up (VM and image just started)
+		false: we have just saved an image snapshot, but didn't quit.
+	"
+
+	"Here, startup begins!!"
+	Cursor normal activateCursor.
+	self setGCParameters.
+	isARealStartup ifTrue: [
+		self clearExternalObjects ].
+	self readCommandLineArguments.
+	self processStartUpList: isARealStartup.
+	isARealStartup ifTrue: [
+		self setPlatformPreferences.
+		self setStartupStamp.
+		self restoreLostChangesIfNecessary ]! !
+!ChangeRecord methodsFor: 'initialization' stamp: 'HAW 9/4/2017 10:27:15' prior: 16797438!
+              fileIn
+	"File the receiver in.  If I represent a method or a class-comment, file the method in and make a note of it in the recent-submissions list; if I represent a do-it, then, well, do it."
+	| s |
+	type == #method ifTrue: [
+		self changeClass ifNotNil: [ :methodClass |
+			methodClass
+				compile: self text
+				classified: category
+				withStamp: stamp
+				notifying: nil ]].
+	self isDoIt ifTrue: [
+		((s _ self string) beginsWith: '----') ifFalse: [ Compiler evaluate: s ]].
+	type == #classDefinition ifTrue: [ Compiler evaluate: self string ].
+	type == #classComment ifTrue: [
+		(Smalltalk at: class asSymbol)
+			comment: self text
+			stamp: stamp ]! !
+
+SystemDictionary removeSelector: #logSapshot:andQuit:!
+
+SystemDictionary removeSelector: #logSapshot:andQuit:!
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3168-AidInRecoveringChanges-HernanWilkinson-2017Sep01-13h49m-HAW.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3168] on 10 September 2017 at 4:47:52 pm'!
+!SequenceableCollection methodsFor: 'enumerating' stamp: 'jmv 9/10/2017 16:44:03'!
+                           withNextDo: twoArgBlock
+	"Evaluate the block with each element and the one following it.
+	For the last element, next is nil
+	(1 to: 10) asArray withNextDo: [ :each :next | {each. next} print ]
+	#() withNextDo: [ :a :b | {a. b} print ]
+	"
+	| first previous |
+	first _ true.
+	self do: [ :each |
+		first ifTrue: [
+			first _ false ]
+		ifFalse: [
+			twoArgBlock value: previous value: each ].
+		previous _ each ].
+	first ifFalse: [
+		twoArgBlock value: previous value: nil ]! !
+!SequenceableCollection methodsFor: 'enumerating' stamp: 'jmv 9/10/2017 16:44:25'!
+                   withPreviousDo: twoArgBlock
+	"Evaluate the block with each element and the one before it.
+	For the first element, previous is nil
+	(1 to: 10) asArray withPreviousDo: [ :each :previous | {previous. each} print ]
+	#() withPreviousDo: [ :a :b | {a. b} print ]
+	"
+	| previous |
+	previous _ nil.
+	self do: [ :each |
+		twoArgBlock value: each value: previous.
+		previous _ each ].! !
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3169-withNextDo-withPreviousDo-JuanVuletich-2017Sep10-16h47m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3168] on 10 September 2017 at 4:29:09 pm'!
+
+TextAttribute subclass: #TextBackgroundColor
+	instanceVariableNames: 'color'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'System-TextAttributes'!
+
+!classDefinition: #TextBackgroundColor category: #'System-TextAttributes'!
+TextAttribute subclass: #TextBackgroundColor
+	instanceVariableNames: 'color'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'System-TextAttributes'!
+!TextBackgroundColor commentStamp: '<historical>' prior: 0!
+                A TextBackgroundColor encodes a highlight (background) color change applicable over a given range of text.!
+
+TextBackgroundColor subclass: #ShoutTextBackgroundColor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'System-TextAttributes'!
+
+!classDefinition: #ShoutTextBackgroundColor category: #'System-TextAttributes'!
+TextBackgroundColor subclass: #ShoutTextBackgroundColor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'System-TextAttributes'!
+!ShoutTextBackgroundColor commentStamp: '<historical>' prior: 0!
+                       Just for code styler (Shout)!
+
+CharacterScanner subclass: #MorphicScanner
+	instanceVariableNames: 'canvas lineY foregroundColor defaultColor topLeft ignoreColorChanges backgroundColor '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Graphics-Text'!
+
+!classDefinition: #MorphicScanner category: #'Graphics-Text'!
+CharacterScanner subclass: #MorphicScanner
+	instanceVariableNames: 'canvas lineY foregroundColor defaultColor topLeft ignoreColorChanges backgroundColor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Graphics-Text'!
+!TextAttribute methodsFor: 'iterating' stamp: 'jmv 9/7/2017 16:45:20'!
+                  forTextBackgroundColorDo: aBlock
+	"No action is the default"! !
+!TextBackgroundColor methodsFor: 'accessing' stamp: 'jmv 9/7/2017 16:41:55'!
+                   color
+	^ color! !
+!TextBackgroundColor methodsFor: 'accessing' stamp: 'jmv 9/7/2017 16:41:55'!
+ color: aColor
+	color _ aColor! !
+!TextBackgroundColor methodsFor: 'comparing' stamp: 'jmv 9/7/2017 16:41:55'!
+                  = other
+ 	self == other ifTrue: [ ^ true ].
+	^ (other class == self class) 
+		and: [other color = color]! !
+!TextBackgroundColor methodsFor: 'comparing' stamp: 'jmv 9/7/2017 16:41:55'!
+       hash
+	^ color hash! !
+!TextBackgroundColor methodsFor: 'printing' stamp: 'jmv 9/7/2017 16:41:55'!
+                              printOn: strm
+	super printOn: strm.
+	strm nextPutAll: ' code: '; print: color! !
+!TextBackgroundColor methodsFor: 'scanning' stamp: 'jmv 9/7/2017 16:41:55'!
+   dominates: other
+	^ other class == self class! !
+!TextBackgroundColor methodsFor: 'iterating' stamp: 'jmv 9/7/2017 16:45:12'!
+  forTextBackgroundColorDo: aBlock
+	aBlock value: color! !
+!TextBackgroundColor methodsFor: 'testing' stamp: 'jmv 9/7/2017 16:44:40'!
+                            isSet
+	"Do not include Color black, as it is the default color."
+	^color isTransparent not! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+               black
+	^ self new color: Color black! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+     blue
+	^ self new color: Color blue! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+       cyan
+	^ self new color: Color cyan! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+       gray
+	^ self new color: Color gray! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+       green
+	^ self new color: Color green! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+     magenta
+	^ self new color: Color magenta! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+ red
+	^ self new color: Color red! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+         white 
+	^ self new color: Color white! !
+!TextBackgroundColor class methodsFor: 'constants' stamp: 'jmv 9/7/2017 16:41:55'!
+    yellow
+	^ self new color: Color yellow! !
+!TextBackgroundColor class methodsFor: 'instance creation' stamp: 'jmv 9/7/2017 16:41:55'!
+                           color: aColor
+	^ self new color: aColor! !
+!ShoutTextBackgroundColor methodsFor: 'testing' stamp: 'jmv 9/7/2017 16:42:03'!
+     isForShout
+	"True if to be removed from code before styling"
+	^true! !
+!CharacterScanner methodsFor: 'private' stamp: 'jmv 9/7/2017 17:00:23'!
+                 backgroundColor: ignored
+	"Overridden in MorphicScanner"! !
+!MorphicScanner methodsFor: 'private' stamp: 'jmv 9/7/2017 16:56:38'!
+                              backgroundColor: aColor
+	backgroundColor _ aColor! !
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:28:51' prior: 16929486!
+                             withAttributeValues: attributes do: aBlock
+	"Evaluate aBlock with the values of various attributes that affect text formatting, applied in the correct order
+	The order is (each overwriting the previous one)
+	1) basic defaults
+	2) ParagraphStyleReferene
+	3) CharacterStyleReference
+	4) TextFontReference
+	5) TextEmphasis"
+
+	| paragraphStyle characterStyle familyName pointSize emphasis alignment color backgroundColor |
+	paragraphStyle _ nil.
+	characterStyle _ nil.
+	familyName _ nil.
+	pointSize _ nil.
+	emphasis _ 0.
+	alignment _ 0.
+	color _ nil.
+	backgroundColor _ nil.
+	
+	"ParagraphStyle is the first to set several values"
+	attributes do: [ :attribute |
+		attribute forParagraphStyleReferenceDo: [ :s |
+			paragraphStyle _ s.
+			familyName _ s familyName.
+			pointSize _ s pointSize.
+			emphasis _ s emphasis.
+			alignment _ s alignment.
+			s color ifNotNil: [ :c | color _ c ]]].
+
+	"CharacterStyle, if present, can override font and color"
+	attributes do: [ :attribute |
+		attribute forCharacterStyleReferenceDo: [ :s |
+			characterStyle _ s.
+			familyName _ s familyName.
+			pointSize _ s pointSize.
+			emphasis _ s emphasis.
+			s color ifNotNil: [ :c | color _ c ]]].
+
+	"These will not interfere with each other, and all of them take precedence over previous values"
+	attributes do: [ :attribute |
+		attribute forFontFamilyAndSizeDo: [ :fn :ps | familyName _ fn. pointSize _ ps ].
+		attribute forTextEmphasisDo: [ :e | emphasis _ emphasis bitOr: e ].
+		attribute forTextColorDo: [ :c | color _ c ].
+		attribute forTextBackgroundColorDo: [ :c | backgroundColor _ c ].
+		attribute forTextAlignmentDo: [ :a | alignment _ a ].
+	].
+	
+	"Done. Now evaluate the block."
+"change all senders!!!!!!!!!!!!"
+	aBlock numArgs = 8 ifTrue: [
+		^aBlock valueWithArguments: { familyName. pointSize. emphasis. color. alignment. characterStyle. paragraphStyle. backgroundColor }
+		].
+	^aBlock valueWithArguments: { familyName. pointSize. emphasis. color. alignment. characterStyle. paragraphStyle }! !
+!BitBlt methodsFor: 'accessing' stamp: 'jmv 9/6/2017 20:40:02' prior: 16785548!
+             destX: x destY: y width: w height: h
+	destX _ x.
+	destY _ y.
+	width _ w.
+	height _ h.! !
+!CharacterScanner methodsFor: 'private' stamp: 'jmv 9/7/2017 17:19:12' prior: 16801954!
+               setFont
+	| attributes |
+	"Set the font and other emphasis.
+	In fact set actual ParagraphStyle (or nil), alignment, font and emphasis"
+
+	self setActualFont: (text fontAt: lastIndex default: defaultFont).
+	attributes _ text attributesAt: lastIndex.
+	text
+		withAttributeValues: attributes
+		do: [ :familyNameInText :pointSizeInText :emphasisInText :colorInText :alignmentInText :characterStyleInText :paragraphStyleInText :backgroundColorInText |
+			colorInText ifNotNil: [ self textColor: colorInText ].
+			self backgroundColor: backgroundColorInText.
+			alignment _ alignmentInText.
+			paragraphStyle _ paragraphStyleInText ].
+	
+	"Hardcoded color for TextAction"
+	attributes do: [ :attribute |
+		attribute forTextActionInfoDo: [ :info |
+			self textColor: TextAction textActionColor ]].
+
+	"Install various parameters from the font."
+	spaceWidth _ font widthOf: Character space.
+	tabWidth _ (font widthOf: $a) * 3.
+	xTable _ font xTable.
+	map _ font characterToGlyphMap! !
+!CharacterScanner methodsFor: 'private' stamp: 'jmv 9/6/2017 20:40:09' prior: 16801989!
+                            textColor: ignored
+	"Overridden in MorphicScanner"! !
+!MorphicScanner methodsFor: 'scanning' stamp: 'jmv 9/10/2017 16:28:26' prior: 16877966!
+                  displayLine: textLine textTopLeft: textTopLeft leftInRun: leftInRun
+	"The call on the primitive (scanCharactersFrom:to:in:rightX:) will be interrupted according to an array of stop conditions passed to the scanner at which time the code to handle the stop condition is run and the call on the primitive continued until a stop condition returns true (which means the line has terminated).  leftInRun is the # of characters left to scan in the current run; when 0, it is time to call setStopConditions."
+
+	"textTopLeft is relative to the morph currently being drawn"
+	| stopCondition nowLeftInRun startIndex string lastPos |
+
+	topLeft _ textTopLeft.
+	line _ textLine.
+	lineY _ line top + textTopLeft y.
+	rightMargin _ line rightMargin + textTopLeft x.
+	lastIndex _ line first.
+	leftInRun <= 0 ifTrue: [
+		self setFont.
+		self setStopConditions ].
+	leftMargin _ (line leftMarginForAlignment: alignment) + textTopLeft x.
+	destX _ leftMargin.
+	destY _ lineY + line baseline - font ascent.
+
+	textLine isEmptyLine ifTrue: [
+		textLine paragraphStyle ifNotNil: [ :ps |
+			ps = paragraphStyle ifFalse: [
+				foregroundColor _ defaultColor.
+				self setActualFont: ps font.
+				ps color ifNotNil: [ :color | self textColor: color ].
+				alignment _ ps alignment.
+				paragraphStyle _ ps.
+				spaceWidth _ font widthOf: Character space.
+				tabWidth _ (font widthOf: $a) * 3.
+				xTable _ font xTable.
+				map _ font characterToGlyphMap.
+				self setStopConditions.
+				text ifNotNil: [ destY _ lineY + line baseline - font ascent ]]].
+		self displayBulletIfAppropriateFor: textLine textLeft: textTopLeft x.
+		^leftInRun ].
+
+	self displayBulletIfAppropriateFor: textLine textLeft: textTopLeft x.
+
+	lastIndex _ line first.
+	leftInRun <= 0
+		ifTrue: [nowLeftInRun _ text runLengthFor: lastIndex]
+		ifFalse: [nowLeftInRun _ leftInRun].
+	runStopIndex _ lastIndex + (nowLeftInRun - 1) min: line last.
+	spaceCount _ 0.
+	string _ text string.
+
+	self placeEmbeddedObject.
+	[
+		startIndex _ lastIndex.
+		lastPos _ destX@destY.
+		stopCondition _ self
+			scanCharactersFrom: lastIndex to: runStopIndex
+			in: string rightX: rightMargin stopConditions: stopConditions
+			kern: font baseKern.
+		backgroundColor ifNotNil: [
+			canvas
+				fillRectangle: (lastPos corner: destX @ (line bottom +  textTopLeft y))
+				color: backgroundColor ].
+		lastIndex >= startIndex ifTrue: [
+			canvas  
+				drawString: string
+				from: startIndex
+				to: lastIndex
+				at: lastPos
+				font: font
+				color: foregroundColor ].
+		"see setStopConditions for stopping conditions for displaying."
+		(self perform: stopCondition) ifTrue: [
+			"Number of characters remaining in the current run"
+			^ runStopIndex - lastIndex ]
+	] repeat! !
+
+CharacterScanner subclass: #MorphicScanner
+	instanceVariableNames: 'canvas lineY foregroundColor defaultColor topLeft backgroundColor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Graphics-Text'!
+
+!classDefinition: #MorphicScanner category: #'Graphics-Text'!
+CharacterScanner subclass: #MorphicScanner
+	instanceVariableNames: 'canvas lineY foregroundColor defaultColor topLeft backgroundColor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Graphics-Text'!
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3170-TextBackgroundColor-JuanVuletich-2017Sep10-16h23m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3168] on 10 September 2017 at 4:36:05 pm'!
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:32:21' prior: 16929265!
+ alignmentAt: characterIndex
+
+	self
+		withAttributeValues: (self attributesAt: characterIndex)
+		do: [ :familyName :pointSize :emphasis :color :alignment :characterStyle :paragraphStyle :backgroundColor |
+			^ alignment ]! !
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:33:17' prior: 16929295!
+                  characterStyleOrNilAt: characterIndex
+
+	self
+		withAttributeValues: (self attributesAt: characterIndex)
+		do: [ :familyName :pointSize :emphasis :color :alignment :characterStyle :paragraphStyle :backgroundColor |
+			^ characterStyle ]! !
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:33:23' prior: 16929304!
+   characterStyleOrNilIfApplying: textAttributes
+	"Answer the ParagraphStyle for characters as specified by the argument."
+	
+	self withAttributeValues: textAttributes do: [ :familyName :pointSize :emphasis :color :alignment :characterStyle :paragraphStyle :backgroundColor |
+		^characterStyle ]! !
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:33:30' prior: 16929363!
+           emphasisAt: characterIndex
+	"Answer the emphasis for characters in the run beginning at characterIndex."
+
+	self
+		withAttributeValues: (self attributesAt: characterIndex)
+		do: [ :familyName :pointSize :emphasis :color :alignment :characterStyle :paragraphStyle :backgroundColor |
+			^ emphasis ]! !
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:33:36' prior: 16929398!
+      fontIfApplying: textAttributes default: defaultFont
+	"Answer the font for characters as specified by the argument."
+
+	self withAttributeValues: textAttributes do: [ :familyName :pointSize :emphasis :color :alignment :characterStyle :paragraphStyle :backgroundColor |
+		^((AbstractFont familyName: familyName pointSize: pointSize) ifNil: [ defaultFont baseFont ])
+			emphasized: emphasis ]! !
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:33:42' prior: 16929443!
+          paragraphStyleOrNilAt: characterIndex
+
+	self
+		withAttributeValues: (self attributesAt: characterIndex)
+		do: [ :familyName :pointSize :emphasis :color :alignment :characterStyle :paragraphStyle :backgroundColor |
+			^ paragraphStyle ]! !
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:33:48' prior: 16929452!
+   paragraphStyleOrNilIfApplying: textAttributes
+	"Answer the ParagraphStyle for characters as specified by the argument."
+	
+	self
+		withAttributeValues: textAttributes
+		do: [ :familyName :pointSize :emphasis :color :alignment :characterStyle :paragraphStyle :backgroundColor |
+			^paragraphStyle ]! !
+!Text methodsFor: 'emphasis' stamp: 'jmv 9/10/2017 16:34:25' prior: 50370242!
+      withAttributeValues: attributes do: aBlock
+	"Evaluate aBlock with the values of various attributes that affect text formatting, applied in the correct order
+	The order is (each overwriting the previous one)
+	1) basic defaults
+	2) ParagraphStyleReferene
+	3) CharacterStyleReference
+	4) TextFontReference
+	5) TextEmphasis"
+
+	| paragraphStyle characterStyle familyName pointSize emphasis alignment color backgroundColor |
+	paragraphStyle _ nil.
+	characterStyle _ nil.
+	familyName _ nil.
+	pointSize _ nil.
+	emphasis _ 0.
+	alignment _ 0.
+	color _ nil.
+	backgroundColor _ nil.
+	
+	"ParagraphStyle is the first to set several values"
+	attributes do: [ :attribute |
+		attribute forParagraphStyleReferenceDo: [ :s |
+			paragraphStyle _ s.
+			familyName _ s familyName.
+			pointSize _ s pointSize.
+			emphasis _ s emphasis.
+			alignment _ s alignment.
+			s color ifNotNil: [ :c | color _ c ]]].
+
+	"CharacterStyle, if present, can override font and color"
+	attributes do: [ :attribute |
+		attribute forCharacterStyleReferenceDo: [ :s |
+			characterStyle _ s.
+			familyName _ s familyName.
+			pointSize _ s pointSize.
+			emphasis _ s emphasis.
+			s color ifNotNil: [ :c | color _ c ]]].
+
+	"These will not interfere with each other, and all of them take precedence over previous values"
+	attributes do: [ :attribute |
+		attribute forFontFamilyAndSizeDo: [ :fn :ps | familyName _ fn. pointSize _ ps ].
+		attribute forTextEmphasisDo: [ :e | emphasis _ emphasis bitOr: e ].
+		attribute forTextColorDo: [ :c | color _ c ].
+		attribute forTextBackgroundColorDo: [ :c | backgroundColor _ c ].
+		attribute forTextAlignmentDo: [ :a | alignment _ a ].
+	].
+	
+	"Done. Now evaluate the block."
+	^aBlock valueWithArguments: { familyName. pointSize. emphasis. color. alignment. characterStyle. paragraphStyle. backgroundColor }! !
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3171-Cleanup-JuanVuletich-2017Sep10-16h32m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3168] on 10 September 2017 at 4:45:51 pm'!
+
+Object subclass: #SHRange
+	instanceVariableNames: 'start end type blockDepth '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Syntax Highlighting'!
+
+!classDefinition: #SHRange category: #'Tools-Syntax Highlighting'!
+Object subclass: #SHRange
+	instanceVariableNames: 'start end type blockDepth'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Syntax Highlighting'!
+!Preferences class methodsFor: 'shout' stamp: 'jmv 9/10/2017 16:40:28'!
+  highlightBlockNesting
+	^ self
+		valueOfFlag: #highlightBlockNesting
+		ifAbsent: [true]! !
+!SHRange methodsFor: 'accessing' stamp: 'jmv 9/6/2017 20:25:10'!
+     blockDepth
+	^blockDepth! !
+!SHRange methodsFor: 'accessing' stamp: 'jmv 9/6/2017 20:22:45'!
+    blockDepth: anInteger
+	blockDepth := anInteger! !
+!SHParserST80 methodsFor: 'recording ranges' stamp: 'jmv 9/9/2017 15:21:28' prior: 16902916!
+                 rangeType: aSymbol start: s end: e 
+	^ranges add: ((SHRange start: s end: e type: aSymbol) blockDepth: blockDepth)! !
+!SHTextStylerST80 methodsFor: 'private' stamp: 'jmv 9/10/2017 16:41:27' prior: 50335086!
+                 setAttributesFromRanges: ranges
+
+	| alpha start end |
+	formattedText removeAttributesThat: [ :attribute | attribute isForShout ].
+
+	"Optimize for mutation speed unless method is really large but with very few distict elements:
+	Source code that includes just big literals is better served by conventional Text+RunArray"
+	"Do it only if we are not breaking textModel!! (for instance, StyledTextEditor asks for formatting just sections, not whole #actualContents)."
+	formattedText == textModel actualContents ifTrue: [
+		(formattedText size > 2000 and: [ ranges size < 50 ]) ifFalse: [
+			formattedText _ formattedText optimizedForMutationSpeed.
+			textModel basicActualContents: formattedText ]].
+
+	ranges withNextDo: [ :range :nextRangeOrNil |
+
+		"Smalltalk text styling"
+		(self attributesFor: range rangeType) ifNotNil: [ :attributes |
+			attributes do: [ :each |
+				formattedText addAttribute: each from: range start to: range end ]].
+
+		Preferences highlightBlockNesting ifTrue: [
+			alpha _ range blockDepth / 16.0 min: 0.5.
+			start _ range start.
+			end _ nextRangeOrNil ifNotNil: [ nextRangeOrNil start - 1 ] ifNil: [ range end ].
+			formattedText 
+				addAttribute: (ShoutTextBackgroundColor 
+				color: (Theme current text alpha: alpha) ) from: start to: end ].
+
+		"Show as subscripts if appropriate."
+		classOrMetaClass ifNotNil: [
+			classOrMetaClass theNonMetaClass lastUnderscoreMeansSubscript ifTrue: [
+				(#( instVar classVar globalVar workspaceVar poolConstant
+					patternArg methodArg patternTempVar tempVar		
+					blockPatternArg blockArg blockPatternTempVar blockTempVar 
+					incompleteIdentifier undefinedIdentifier) pointsTo: range rangeType )
+						ifTrue: [
+							formattedText lastIndexOf: $_ startingAt: range end endingAt: range start do: [ :i |
+								formattedText addAttribute: ShoutTextEmphasis subscript from: i to: range end ] ]]].
+				]! !
+
+Object subclass: #SHRange
+	instanceVariableNames: 'start end type blockDepth'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Syntax Highlighting'!
+
+!classDefinition: #SHRange category: #'Tools-Syntax Highlighting'!
+Object subclass: #SHRange
+	instanceVariableNames: 'start end type blockDepth'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Syntax Highlighting'!
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3172-ShoutShowBlockDepth-JuanVuletich-2017Sep10-16h36m-jmv.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3168] on 9 September 2017 at 12:15:04 pm'!
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/9/2017 12:09:32' prior: 50369680!
+   hasToRestoreChanges
+
+	^Preferences checkLostChangesOnStartUp and: [ 
+		self withChangesFileDo: [ :changesFile | self hasToRestoreChangesFrom: changesFile ]].
+	! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/9/2017 12:09:46' prior: 50369689!
+              hasToRestoreChangesFrom: changesFile
+
+	| chunk  |
+	
+	changesFile position: self lastQuitLogPosition.
+	[ changesFile atEnd ] whileFalse: [ chunk := changesFile nextChunk ].
+	
+	^(self isSnapshotQuitOrQuitNoSaveRecord: chunk) not
+! !
+!Preferences class methodsFor: 'start up' stamp: 'HAW 9/9/2017 12:07:37'!
+               checkLostChangesOnStartUp
+	^ self
+		valueOfFlag: #checkLostChangesOnStartUp
+		ifAbsent: [ true ].! !
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3173-RestoreLostChangesPreference-HernanWilkinson-2017Sep09-12h03m-HAW.1.cs.st----!
+
+'From Cuis 5.0 of 7 November 2016 [latest update: #3161] on 6 September 2017 at 8:02:36 pm'!
+!ChangeList class methodsFor: 'public access' stamp: 'HAW 9/6/2017 19:58:01'!
+                         browseFrom: startPosition on: aChangesFileName labeled: aLabel
+	
+	"
+	ChangeList browseFrom: Smalltalk lastQuitLogPosition on: Smalltalk currentChangesName labeled: 'Lost changes'
+	"
+	
+	| changeList end |
+
+	aChangesFileName asFileEntry readStreamDo: [ :changesFile |
+		end _ changesFile size.
+		changeList _ self new
+			scanFile: changesFile
+			from: startPosition 
+			to: end.
+	].
+
+	ChangeListWindow open: changeList label: aLabel! !
+!SystemDictionary methodsFor: 'startup - restore lost changes' stamp: 'HAW 9/6/2017 19:59:40' prior: 50369776!
+                               restoreLostChangesManually
+
+	ChangeList browseFrom: LastQuitLogPosition on: self currentChangesName labeled: 'Lost changes'
+! !
+
+----End fileIn of /home/juan/Cuis/Cuis-Smalltalk-Dev/CoreUpdates/3174-RestoreChangesOnlySinceLastSnapshot-HernanWilkinson-2017Sep04-16h55m-HAW.1.cs.st----!
