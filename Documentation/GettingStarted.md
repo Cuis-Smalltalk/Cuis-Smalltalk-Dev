@@ -1,6 +1,6 @@
 # Setting up and starting Cuis Smalltalk #
 
-Cuis is available in 64 bits and 32 bits formats. It also available in 32 bits V3 (pre Spur) format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them.
+Cuis is available in 64 bits and 32 bits variants. It also available in the 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them.
 
 These instructions assume you have the Git code versioning system installed. This has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you prefer not to use Git, see details at the end of this document. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandLine.md).
 
@@ -21,7 +21,7 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201708162010.tar.gz
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201708312323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
 ```
@@ -46,7 +46,7 @@ cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3174.image
 ### Get and set up an appropriate VM ###
 ```
 cd MyProject
-curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201708141825.tar.gz
+curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201708312323.tar.gz
 tar -zxvf CogSpur.tgz
 ```
 
@@ -64,7 +64,7 @@ Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cu
 ```
 cd MyProject
 rm -r cogspur
-curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win64x64_squeak.cog.spur_201708162010.zip
+curl -k -L -o cogspur.zip https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win64x64_squeak.cog.spur_201709050420.zip
 unzip cogspur.zip -d cogspur
 mv ./cogspur/build/vm/*.* ./cogspur
 ```
@@ -80,7 +80,7 @@ cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3174.image
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201708162010.tar.gz
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.cog.spur_201708312323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
@@ -103,7 +103,7 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201705281305.tar.gz
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32x86_squeak.cog.spur_201708312323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxht ./cogspur
 ```
@@ -111,7 +111,7 @@ mv ./sqcogspurlinuxht ./cogspur
 ```
 cd MyProject
 rm -r stkspur
-wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201708162010.tar.gz
+wget -O stkspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux32ARMv6_squeak.stack.spur_201708312323.tar.gz
 tar -zxvf stkspur.tgz
 mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
