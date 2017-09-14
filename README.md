@@ -1,6 +1,6 @@
 # Cuis
 
-[Cuis](http://www.cuis-smalltalk.org) is a free [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from RasPis and the like and phones, up to cloud servers, and everything in between, including regular laptops and PCs.
+[Cuis](http://www.cuis-smalltalk.org) is a free [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from RasPis and the like, and phones, up to cloud servers, and everything in between, including regular laptops and PCs.
 
 Cuis is
 * Small
@@ -16,7 +16,7 @@ Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis 
 * A complete development environment written in itself
 * A pure, dynamic Object Oriented language
 
-Cuis shares the [OpenSmalltalk Virtual Machine](http://www.opensmalltalk.org) with Squeak, Pharo and Newspeak. What sets Cuis apart from the rest of the Squeak family is the focus on Smalltalk-80 and an active attitude towards system complexity:
+Cuis shares the [OpenSmalltalk Virtual Machine](http://www.opensmalltalk.org) with Squeak, Pharo and Newspeak. What sets Cuis apart from the other members of the Squeak family is the focus on Smalltalk-80 and an active attitude towards system complexity:
 
 Unbound complexity growth, together with development strategies focused only in the short term, are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity and size grow without control. Evolution slows down. Understanding the system becomes harder every day. Bugs are harder to fix. Codebases become huge for no clear reason. At some point, the system can't evolve anymore and becomes "legacy code".
 
@@ -24,11 +24,11 @@ Complexity puts a limit to the level of understanding of the system a person mig
 
 This presentation by Rich Hickey, ["Simple made Easy"](http://www.infoq.com/presentations/Simple-Made-Easy) is also an excellent reflection on these values.
 
-We follow a set of ideas that started with Jean Piaget's [Constructivism](https://en.wikipedia.org/wiki/Constructivism_(philosophy_of_education)), and later explored in Seymour Papert's [Mathland](https://en.wikipedia.org/wiki/Experiential_learning). These lead to Alan Kay's Learning Research Group's [Personal Computer for Children of All Ages](http://www.vpri.org/pdf/hc_pers_comp_for_children.pdf), [Personal Dynamic Media](http://www.vpri.org/pdf/m1977001_dynamedia.pdf), i.e. the [Dynabook](http://www.vpri.org/pdf/hc_what_Is_a_dynabook.pdf) and then to [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk). To us, a Smalltalk system is a Dynabook. A place to experiment and learn, and a medium to express the knlowledge we acquire. We understand software development as the activity of learning and documenting knowledge, for us and others to use, and also to be run on a computer. The fact that the computer run is useful, is a consequence of the knowldege being sound and relevant. (Just making it run is _not_ the important part!)
+We follow a set of ideas that started with Jean Piaget's [Constructivism](https://en.wikipedia.org/wiki/Constructivism_(philosophy_of_education)), and were further developed in Seymour Papert's [Mathland](https://en.wikipedia.org/wiki/Experiential_learning). These lead to Alan Kay's Learning Research Group's [Personal Computer for Children of All Ages](http://www.vpri.org/pdf/hc_pers_comp_for_children.pdf), [Personal Dynamic Media](http://www.vpri.org/pdf/m1977001_dynamedia.pdf), i.e. the [Dynabook](http://www.vpri.org/pdf/hc_what_Is_a_dynabook.pdf) and to [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk). To us, a Smalltalk system is a Dynabook. A place to experiment and learn, and a medium to express and register the knlowledge we acquire. We understand software development as the activity of learning and documenting knowledge, for us and others to use, and also to be run on a computer. The fact that the computer run is useful, is a consequence of the knowldege being sound and relevant. (Just making it work is _not_ the important part!)
 
-Cuis Smalltalk is our attempt at this. Furthermore, we believe we are doing something else that no other Smalltalk, commercial or open source, does. We attempt to give the true Smalltalk-80 experience, and keep Smalltalk-80 not as legacy software to be run in an emulator, but as a live, evolving system. We feel we are the real keepers of Smalltalk-80, and enablers of the Dynabook experience.
+Cuis Smalltalk is our attempt at this challenge. Furthermore, we believe we are doing something else that no other Smalltalk, commercial or open source, does. We attempt to give the true Smalltalk-80 experience, and keep Smalltalk-80 not as legacy software historic significance, but as a live, evolving system. We feel we are the keepers of the Smalltalk-80 heritage, and enablers of the Dynabook experience.
 
-Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. We also adopt recent enhancements from Squeak.
+Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. We also adopt recent enhancements from Squeak and share our work with the wider Squeak and Smalltalk community.
 
 ### Setting up Cuis in your machine ###
 Just follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
@@ -41,7 +41,7 @@ Additionally, there are many tutorials and references for Smalltalk in the web. 
 The user interface enables you to access most of the code and conduct Smalltalk experiments on your own. You can review its features at ["Quick Tour of the UI"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis/blob/master/Quick-UI-Tour.md). 
 
 ### Contributing to Cuis ###
-Cuis is maintained on https://github.com/Cuis-Smalltalk.
+Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.
 
 Please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
 
