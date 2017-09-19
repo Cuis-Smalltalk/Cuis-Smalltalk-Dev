@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3145] on 24 August 2017 at 11:39:26 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3183] on 18 September 2017 at 5:34:46 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 39!
+!provides: 'LinearAlgebra' 1 40!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -178,9 +178,9 @@ asMatrix
 	^result
 	! !
 
-!Matrix methodsFor: 'aritmethic' stamp: 'jmv 8/23/2014 23:27'!
+!Matrix methodsFor: 'aritmethic' stamp: 'jmv 9/18/2017 17:31:40'!
 - aMatrixOrNumber
-	"Substract element by element"
+	"Subtract element by element"
 	| result |
 	(aMatrixOrNumber is: #Matrix) ifTrue: [
 		(width = aMatrixOrNumber width) & (height = aMatrixOrNumber height)
@@ -772,8 +772,8 @@ subMatrixTopLeft: aPoint bottomRight: bPoint
 subMatrixTopLeft: aPoint size: sizePoint
 	^ self subMatrixTopLeft: aPoint bottomRight: aPoint + sizePoint - 1! !
 
-!Matrix methodsFor: 'aux operations' stamp: 'jmv 10/28/2016 18:03:15'!
-substractRow: i multipliedBy: factor to: k startingAtColumn: jStart
+!Matrix methodsFor: 'aux operations' stamp: 'jmv 9/18/2017 17:31:53'!
+subtractRow: i multipliedBy: factor to: k startingAtColumn: jStart
 
 	self i: k j: jStart put: self zeroElement.
 	jStart+1 to: width do: [ :j |
@@ -815,7 +815,7 @@ transposed
 			result i: i j: j put: (self i: j j: i) ] ].
 	^result! !
 
-!Matrix methodsFor: 'linear equation systems' stamp: 'jmv 7/19/2012 12:26'!
+!Matrix methodsFor: 'linear equation systems' stamp: 'jmv 9/18/2017 17:32:07'!
 triangleWithPartialPivoting
 	"Triangle self, and answer the row permutation count"
 
@@ -836,12 +836,12 @@ triangleWithPartialPivoting
 			self permuteRow: i and: k.
 			permutationCount _ permutationCount + 1 ].
 
-      	"Substract the row i to all the ones below it"
+      	"Subtract the row i to all the ones below it"
 		i+1 to: height do: [ :ii |
 			(self i: ii j: j) isZero ifFalse: [
 				factor _ (self i: ii j: j) / (self i: i j: j).
 				"Only after column j"
-				self substractRow: i multipliedBy: factor to: ii startingAtColumn: j ] ]
+				self subtractRow: i multipliedBy: factor to: ii startingAtColumn: j ] ]
 	].
 	^ permutationCount! !
 

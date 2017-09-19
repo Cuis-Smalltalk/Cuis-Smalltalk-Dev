@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3145] on 24 August 2017 at 11:39:37 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3183] on 18 September 2017 at 5:35:04 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 83!
+!provides: 'SignalProcessing' 1 84!
+!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Statistics' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -2400,9 +2400,9 @@ sonogramMorph: height from: start to: stop nPoints: nPoints
 
 	^self copy -= aFloatImageOrNumber! !
 
-!FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 8/23/2014 23:38'!
+!FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 9/18/2017 17:31:33'!
 -= aFloatImageOrNumber
-	"Substract an image (pixel by pixel) or number to receiver"
+	"Subtract an image (pixel by pixel) or number to receiver"
 
 	aFloatImageOrNumber isNumber
 		ifTrue: [ elements -= aFloatImageOrNumber ]
