@@ -548,7 +548,6 @@ initializedInstance
 		
 	^ newInst! !
 
-AbstractFont initialize!
 "Postscript:
 Leave the line above, and replace the rest of this comment by a useful one.
 Executable statements should follow this comment, and should
