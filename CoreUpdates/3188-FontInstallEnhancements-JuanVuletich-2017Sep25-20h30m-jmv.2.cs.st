@@ -4,7 +4,7 @@
 defaultFontFamily
 	"Answer the default font family name"
 
-	^self parameters at: #defaultFontFamily! !
+	^self parameters at: #defaultFontFamily ifAbsentPut: [ AbstractFont familyNames first ]! !
 
 !Preferences class methodsFor: 'fonts' stamp: 'jmv 9/25/2017 20:33:41'!
 setDefaultFont: fontFamilyName spec: defaultFontsSpec
@@ -547,13 +547,4 @@ initializedInstance
 		getSelector: #value.
 		
 	^ newInst! !
-
-"Postscript:
-Leave the line above, and replace the rest of this comment by a useful one.
-Executable statements should follow this comment, and should
-be separated by periods, with no exclamation points (!!).
-Be sure to put any further comments in double-quotes, like this one."
-
-Preferences setDefaultFontFamilyTo: 'DejaVu'.
-!
 
