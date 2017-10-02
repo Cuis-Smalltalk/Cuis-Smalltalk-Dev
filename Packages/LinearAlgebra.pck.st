@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3183] on 18 September 2017 at 5:34:46 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 29 September 2017 at 6:18:44 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 40!
+!provides: 'LinearAlgebra' 1 41!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -1114,8 +1114,8 @@ copyFromTile: aFloatMatrix position: aPoint
 		destOrigin: aPoint-1 sourceOrigin: 0@0.
 	blitter copyBits! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 14:02:39'!
-copyFromTile: aFloatMatrix position: aPoint guardZoneX: borderWidth guardZoneY: borderHeight
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 9/29/2017 16:26:19'!
+copyFromTile: aFloatMatrix position: aPoint leftGuardZone: borderWidth topGuardZone: borderHeight activewWidth: activeWidth activeHeight: activeHeight
 	"
 	aPoint is the position in self where the contents of aFloatMatrix are to be stored
 	As in all Matrix protocol, aPoint is 1-based
@@ -1137,7 +1137,7 @@ copyFromTile: aFloatMatrix position: aPoint guardZoneX: borderWidth guardZoneY: 
 	blitter
 		setDestForm: formSelf sourceForm: formArgument
 		destOrigin: aPoint-1 + (borderWidth@borderHeight) sourceOrigin: borderWidth@borderHeight
-		extent: (formArgument width - (2*borderWidth))@(formArgument height - (2*borderHeight)).
+		extent: activeWidth@activeHeight.
 	blitter copyBits! !
 
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:24'!
@@ -2233,8 +2233,8 @@ form: aForm color: aSymbol
 copyFromTile: aFloatMatrix position: aPoint
 	self halt! !
 
-!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 12/12/2016 13:24:38'!
-copyFromTile: aFloatMatrix position: aPoint guardZoneX: borderWidth guardZoneY: borderHeight
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 9/29/2017 16:26:29'!
+copyFromTile: aFloatMatrix position: aPoint leftGuardZone: borderWidth topGuardZone: borderHeight activewWidth: activeWidth activeHeight: activeHeight
 	self halt! !
 
 !Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:20'!

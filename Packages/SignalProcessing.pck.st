@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3183] on 18 September 2017 at 5:35:04 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 29 September 2017 at 6:19:06 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 84!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'SignalProcessing' 1 85!
 !requires: 'Sound' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3129,7 +3129,7 @@ convolutionLinearWithSmallKernel: kernel
 			answer x: x y: y put: v ]].
 	^answer! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 7/31/2017 16:06:46'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:40:32'!
 convolutionWith: trimmedPsf
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
@@ -3138,6 +3138,20 @@ convolutionWith: trimmedPsf
 	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
 	- Implemented with tiles. Tile border effects are taken care of.
 	
+	"
+
+	^ self convolutionWith: trimmedPsf trimResult: true guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:39:05'!
+convolutionWith: trimmedPsf trimResult: trimResult guardZoneInto: aBlock
+	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
+	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
+		(as image filters are usually specified)
+	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
+	- Implemented with tiles. Tile border effects are taken care of.
+
+	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image. If trimResult is false, then keep original size, but leave a black border at the edges, covering the result guard zone.
 	"
 
 	| tileSize otfRealPart otfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth |
@@ -3150,7 +3164,8 @@ convolutionWith: trimmedPsf
 
 	"Do convolution in each tile and get results."
 	guardZoneWidth _ (trimmedPsf width / 2) ceiling.		"Number of pixels we are willing to lose on each side, to avoid border effects."
-	guardZoneHeight _ (trimmedPsf height / 2) ceiling.	"Number of pixels we are willing to lose at top and bottom, to avoid border effects."
+	guardZoneHeight _ (trimmedPsf height / 2) ceiling.		"Number of pixels we are willing to lose at top and bottom, to avoid border effects."
+	aBlock value: guardZoneHeight value: guardZoneWidth.
 	tileImaginary _ FloatImage width: tileSize height: tileSize.
 	^ self
 		withTilesDo: [ :tileReal |
@@ -3164,7 +3179,8 @@ convolutionWith: trimmedPsf
 			fft transformForward: false ] 
 		tileSize: tileSize
 		horizontalGuardZone: guardZoneWidth
-		verticalGuardZone: guardZoneHeight! !
+		verticalGuardZone: guardZoneHeight
+		trimResult: trimResult! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 6/30/2017 11:58:11'!
 correlationABSWith: another deltai: di deltaj: dj
@@ -3249,12 +3265,12 @@ correlationABSWith: another deltai: di deltaj: dj
 	sum = 0.0 ifTrue: [ ^ 0.0 ].
 	^ sum / (mySquaredSum * othersSquaredSum) sqrt! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 7/10/2017 15:00:43'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 9/29/2017 15:38:20'!
 correlationWith: another deltai: di deltaj: dj
 	"https://en.wikipedia.org/wiki/Digital_image_correlation
 
-	Ignore any pixels with zero value at one of the image: consider them as 'no data'.
-	This is to avoid the risk of partially overlapping images (with value zero outside actual image data)
+	Ignore any pixels with zero value at any of the images: consider them as 'no data'.
+	This is to avoid the risk of partially overlapping images (maybe zero-padded, or with value zero outside actual image data)
 	to give maximum correlation at distances with maximum overlap, and not with matching features.
 
 	| i i2 |
@@ -3363,7 +3379,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	"And transform back self"
 	fft transformForward: false! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 8/24/2017 11:28:56'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:40:51'!
 deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
@@ -3383,11 +3399,59 @@ psf _ FloatMatrix withRows: #(
 psf normalizeSum.
 convolved _ i convolutionWith: psf.
 noisy _ convolved copy addNormalNoise: 0.05.
+deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13.
+
+i displayAt: 10@10.
+convolved displayAt: 10@10.
+noisy displayAt: 10@10.
+deconvolved displayAt: 10@10.
+	"
+
+	^ self deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor trimResult: true guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
+
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:39:38'!
+deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor trimResult: trimResult guardZoneInto: aBlock
+	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
+	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
+		(as image filters are usually specified)
+	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
+	- Implemented with tiles. Tile border effects are taken care of.
+	- maxNoiseFactor is required in many case to avoid division by zero. Typical values are between 4 and 8. Use values larger than 20 if you know what you are doing.
+
+	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image. If trimResult is false, then keep original size, but leave a black border at the edges, covering the result guard zone.
+
+Play with this in a Workspace
+i _ FloatImage lena.
+psf _ FloatMatrix withRows: #(
+		#(0.8 0.0 0.2) 
+		#(0.0 0.1 0.2) 
+		#(0.20 0.0 0.0)
+	).
+psf normalizeSum.
+convolved _ i convolutionWith: psf trimResult: true.
+noisy _ convolved copy addNormalNoise: 0.05.
+deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13 trimResult: true.
 i display.
 convolved display.
-deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13.
-deconvolved display.
 noisy display.
+deconvolved display.
+
+Play with this in a Workspace
+i _ FloatImage lena.
+psf _ FloatMatrix withRows: #(
+		#(0.8 0.0 0.2) 
+		#(0.0 0.1 0.2) 
+		#(0.20 0.0 0.0)
+	).
+psf normalizeSum.
+convolved _ i convolutionWith: psf trimResult: false.
+noisy _ convolved copy addNormalNoise: 0.05.
+deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13 trimResult: false.
+i display.
+convolved display.
+noisy display.
+deconvolved display.
 	"
 
 	| tileSize otfRealPart otfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth otfInverseImaginaryPart otfInverseRealPart psfInverseImaginaryPart psfInverseRealPart trimmed |
@@ -3452,6 +3516,7 @@ g addFunction: [ :i | ((rr at: i) squared + (ii at: i) squared)sqrt ] color: Col
 	"Number of pixels we are willing to lose on each side, to avoid border effects."
 	guardZoneWidth _ trimmed width / 2.
 	guardZoneHeight _ trimmed height / 2.
+	aBlock value: guardZoneHeight value: guardZoneWidth.
 
 	"Do convolution in each tile and get results."
 	tileImaginary _ FloatImage width: tileSize height: tileSize.
@@ -3468,7 +3533,8 @@ g addFunction: [ :i | ((rr at: i) squared + (ii at: i) squared)sqrt ] color: Col
 			fft transformForward: false ] 
 		tileSize: tileSize
 		horizontalGuardZone: guardZoneWidth
-		verticalGuardZone: guardZoneHeight! !
+		verticalGuardZone: guardZoneHeight
+		trimResult: trimResult! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 11/30/2016 10:51:36'!
 deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNil
@@ -4926,26 +4992,28 @@ withImaginary: aFloatImage displayPhaseAt: aPoint
 		(phase / twoPi + 0.5 * 255) rounded ].
 	f displayAt: aPoint! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 7/31/2017 17:13:28'!
-withTilesDo: aBlock tileSize: aNumber horizontalGuardZone: guardZoneWidth verticalGuardZone: guardZoneHeight
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:27:15'!
+withTilesDo: aBlock tileSize: aNumber horizontalGuardZone: guardZoneWidth verticalGuardZone: guardZoneHeight trimResult: trimResult
 	"
 	Split receiver in tiles that are an integer power of 2 in height and width.
 	Evaluate a block with each tile.
 	For many operation that produce defects on the borders of the image (such as FFT-based, i.e. circular, convolution and deconvolution):
 		guardZoneWidth: 		Number of pixels we are willing to lose on each side of a tile, to avoid border effects.
 		guardZoneHeight:	Number of pixels we are willing to lose at top and bottom of a tile, to avoid border effects.
-	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image
+	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image. If trimResult is false, then keep original size, but leave a black border at the edges, covering the result guard zone.
 	"
-	| activeTileWidth activeTileHeight result tile verticalTileCount horizontalTileCount tileOriginInSelf |
+	| activeTileWidth activeTileHeight result tile verticalTileCount horizontalTileCount tileOriginInSelf activeResultHeight activeResultWidth tilePositionInResult |
 	activeTileWidth _ aNumber - (2*guardZoneWidth).
 	activeTileHeight _ aNumber - (2*guardZoneHeight).
-	result _ FloatImage extent: self extent - (guardZoneWidth@guardZoneHeight * 2).
+	activeResultWidth _ self width - (guardZoneWidth * 2).
+	activeResultHeight _ self height - (guardZoneHeight * 2).
+	result _ FloatImage extent: (trimResult ifTrue: [activeResultWidth @ activeResultHeight ] ifFalse: [self extent]).
 
 	tile _ FloatImage width: aNumber height: aNumber.
-	verticalTileCount _ (result height / activeTileHeight) ceiling.
-	horizontalTileCount _ (result  width / activeTileWidth) ceiling.
-	activeTileHeight _ (result height / verticalTileCount) ceiling.
-	activeTileWidth _ (result width / horizontalTileCount) ceiling.
+	verticalTileCount _ (activeResultHeight / activeTileHeight) ceiling.
+	horizontalTileCount _ (activeResultWidth / activeTileWidth) ceiling.
+	activeTileHeight _ (activeResultHeight / verticalTileCount) ceiling.
+	activeTileWidth _ (activeResultWidth / horizontalTileCount) ceiling.
 	
 	1 to: verticalTileCount do: [ :iTile |
 		1 to: horizontalTileCount do: [ :jTile |
@@ -4961,11 +5029,14 @@ withTilesDo: aBlock tileSize: aNumber horizontalGuardZone: guardZoneWidth vertic
 			aBlock value: tile.
 
 			"Grab results"
+			tilePositionInResult _ trimResult ifTrue: [tileOriginInSelf - (guardZoneWidth@guardZoneHeight)] ifFalse: [tileOriginInSelf].
 			result
 				copyFromTile: tile
-				position: tileOriginInSelf - (guardZoneWidth@guardZoneHeight)
-				guardZoneX: guardZoneWidth
-				guardZoneY: guardZoneHeight ]].
+				position: tilePositionInResult
+				leftGuardZone: guardZoneWidth
+				topGuardZone: guardZoneHeight
+				activewWidth: activeTileWidth
+				activeHeight: activeTileHeight ]].
 	^ result! !
 
 !FloatImage methodsFor: 'file operations' stamp: 'jmv 3/11/2016 15:57'!
