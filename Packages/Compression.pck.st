@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3153] on 25 August 2017 at 12:08:17 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3193] on 8 October 2017 at 6:43:14 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Compression' 1 20!
+!provides: 'Compression' 1 21!
 !classDefinition: #GZipConstants category: #'Compression-System'!
 SharedPool subclass: #GZipConstants
 	instanceVariableNames: ''
@@ -3077,10 +3077,6 @@ originalContents
 
 	^''		"used only to determine if we are byte-structured"! !
 
-!GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 08:26'!
-padToEndWith: aChar
-	"We don't have pages, so we are at the end, and don't need to pad."! !
-
 !GZipSurrogateStream methodsFor: 'as yet unclassified' stamp: 'RAA 6/23/2000 19:12'!
 position
 
@@ -3985,22 +3981,22 @@ contentStream
 	self extractTo: s.
 	^s reset! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'nk 2/24/2001 22:28'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/8/2017 17:07:26'!
 contents
 	"Answer my contents as a string."
 	| s |
 	s _ RWBinaryOrTextStream on: (String new: self uncompressedSize).
 	self extractTo: s.
-	s text.
+	s useCharacters.
 	^s contents! !
 
-!ZipArchiveMember methodsFor: 'reading' stamp: 'nk 2/24/2001 23:53'!
+!ZipArchiveMember methodsFor: 'reading' stamp: 'jmv 10/8/2017 17:07:29'!
 contentsFrom: start to: finish
 	"Answer my contents as a string."
 	| s |
 	s _ RWBinaryOrTextStream on: (String new: finish - start + 1).
 	self extractTo: s from: start to: finish.
-	s text.
+	s useCharacters.
 	^s contents! !
 
 !ZipArchiveMember methodsFor: 'private-writing' stamp: 'nk 2/23/2001 11:04'!
