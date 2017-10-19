@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 17 October 2017 at 1:16:36 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 19 October 2017 at 4:19:49 pm'!
 'Description A collection of general numerical algorithms for continuous problems.'!
-!provides: 'NumericalMethods' 1 7!
+!provides: 'NumericalMethods' 1 8!
 !classDefinition: #NelderMeadMethod category: #NumericalMethods!
 Object subclass: #NelderMeadMethod
 	instanceVariableNames: 'objectiveFunction testPoints epsilon'
@@ -61,21 +61,22 @@ objectiveFunction: aBlock
 
 	objectiveFunction _ aBlock! !
 
-!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 10/13/2017 12:45:35'!
+!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 10/19/2017 16:18:28'!
 solve
 	"Closely follows implementation at
 		https://en.wikipedia.org/wiki/Nelder-Mead_method
 	"
-	| alpha centroidX0 worstPointXnPlus1 worstValueXnPlus1 bestPointX1 bestValueX1 reflectedPointXr reflectedValueXr sortedIndexes values expandedPointXe gamma secondWorstValueXn contractedPointXc rho sigma iters |
-iters _ 0.
+	| alpha centroidX0 worstPointXnPlus1 worstValueXnPlus1 bestPointX1 bestValueX1 reflectedPointXr reflectedValueXr sortedIndexes values expandedPointXe expandedValueXe gamma secondWorstValueXn contractedPointXc contractedValueXc rho sigma iters |
+	iters _ 0.
 	alpha _ 1.
 	gamma _ 2.
 	rho _ 0.5.
 	sigma _ 0.5.
+	sortedIndexes _ (1 to: testPoints size) asArray.
+	values _ testPoints collect: [ :p | objectiveFunction value: p ].
 	[
 		"Order"
-		values _ testPoints collect: [ :p | objectiveFunction value: p ].
-		sortedIndexes _ (1 to: testPoints size) asArray sort: [ :i1 :i2 | (values at: i1) < (values at: i2) ].
+		sortedIndexes sort: [ :i1 :i2 | (values at: i1) < (values at: i2) ].
 		bestPointX1 _ testPoints at: sortedIndexes first.
 		bestValueX1 _ values at: sortedIndexes first.
 		secondWorstValueXn _ values at: sortedIndexes penultimate.
@@ -99,31 +100,38 @@ iters _ 0.
 		(bestValueX1 <= reflectedValueXr and: [ reflectedValueXr < secondWorstValueXn ])
 			ifTrue: [
 				"Reflection"
-				testPoints at: sortedIndexes last put: reflectedPointXr ]
+				testPoints at: sortedIndexes last put: reflectedPointXr.
+				values at: sortedIndexes last put: reflectedValueXr ]
 			ifFalse: [
 				reflectedValueXr < bestValueX1
 					ifTrue: [
 						"Expansion"
 						expandedPointXe _ centroidX0 + (gamma * (reflectedPointXr - centroidX0)).
-						(objectiveFunction value: expandedPointXe) < reflectedValueXr
+						expandedValueXe _ objectiveFunction value: expandedPointXe.
+						expandedValueXe < reflectedValueXr
 							ifTrue: [
-								testPoints at: sortedIndexes last put: expandedPointXe ]
+								testPoints at: sortedIndexes last put: expandedPointXe.
+								values at: sortedIndexes last put: expandedValueXe ]
 							ifFalse: [
-								testPoints at: sortedIndexes last put: reflectedPointXr ]]
+								testPoints at: sortedIndexes last put: reflectedPointXr.
+								values at: sortedIndexes last put: reflectedValueXr ]]
 					ifFalse: [ "reflectedValueXr >= secondWorstValueXn"
 						"self assert: reflectedValueXr >= secondWorstValueXn."
 						contractedPointXc _ centroidX0 + (rho * (worstPointXnPlus1 -centroidX0)).
-						(objectiveFunction value: contractedPointXc) < worstValueXnPlus1
+						contractedValueXc _ objectiveFunction value: contractedPointXc.
+						contractedValueXc < worstValueXnPlus1
 							ifTrue: [
 								"Contraction"
-								testPoints at: sortedIndexes last put: contractedPointXc ]
+								testPoints at: sortedIndexes last put: contractedPointXc.
+								values at: sortedIndexes last put: contractedValueXc ]
 							ifFalse: [
 								"Shrink"
 								2 to: testPoints size do: [ :i | | xi ii |
 									ii _ sortedIndexes at: i.
 									xi _ testPoints at: ii.
 									xi _ bestPointX1 + (sigma * (xi - bestPointX1)).
-									testPoints at: ii put: xi ]]]
+									testPoints at: ii put: xi.
+									values at: ii put: (objectiveFunction value: xi) ]]]
 			].
 		iters _ iters + 1.
 	].
