@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 29 September 2017 at 6:19:06 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 19 October 2017 at 4:14:14 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 85!
-!requires: 'Sound' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'SignalProcessing' 1 86!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !classDefinition: #FloatImage category: #'SignalProcessing-Images'!
 FloatMatrix subclass: #FloatImage
 	instanceVariableNames: ''
@@ -3660,6 +3660,31 @@ ditherForHistogramEq
 	random _ Random new.
 	self replaceValues: [ :i :j :v | v + (random next - 0.5*k) min: 1 max: 0 ].! !
 
+!FloatImage methodsFor: 'private' stamp: 'jmv 10/19/2017 13:17:52'!
+erodedBy: erosionRadious
+	"
+	(FloatImage fromArrayOfArrays: #(
+		#( 1 1 1 1 1 0)
+		#( 1 0 1 1 1 1)
+		#( 1 1 1 1 1 1)
+		#( 1 1 1 1 1 1)
+		#( 1 1 1 1 1 1)
+		#( 1 1 1 1 1 1))) erodedBy: 1
+	"
+	| answer aux |
+	aux _ FloatImage extent: self extent.
+	answer _ nil.
+
+	erosionRadious negated to: erosionRadious do: [ :dy |
+		erosionRadious negated to: erosionRadious do: [ :dx |
+			aux *= 0. aux += 1.
+			aux fillWith: self displaced: dx@dy.
+			answer ifNil: [
+				answer _ aux copy ]
+			ifNotNil: [
+				answer *= aux ]]].
+	^ answer! !
+
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 4/28/2015 11:13'!
 fill32BitForm: a32BitForm
 "Se podria pensar en meter min y max, y clamping, multiplicando por una cte, y usando un Bitmap de 2^24 entradas (16Mb!!) como colorMap, para mappear todas las combinaciones posibles que overfloween, a 255 en el form destino.
@@ -4798,7 +4823,7 @@ scaledBy: scale
 				ifFalse: [self lanczosTransformedBy: t resultExtent: nil]]
 		ifFalse: [self bSplineTransformedBy: t resultExtent: nil ]! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 11/20/2015 09:37'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 10/19/2017 12:43:43'!
 scharr
 	"A Sobel like operator for edge detection.
 	See https://en.wikipedia.org/wiki/Sobel_operator
@@ -4810,57 +4835,82 @@ scharr
 	xFiltered _ FloatImage extent: self extent.
 	
 	aux fillWith: self displaced: -1 @ -1.
-	yFiltered elements += (aux elements * 3).
+	aux *= 3.
+	yFiltered += aux.
+
 	aux fillWith: self displaced: 0 @ -1.
-	yFiltered elements += (aux elements * 10).
+	aux *= 10.
+	yFiltered += aux.
+
 	aux fillWith: self displaced: 1 @ -1.
-	yFiltered elements += (aux elements * 3).
+	aux *= 3.
+	yFiltered += aux.
+
 	aux fillWith: self displaced: -1 @ 1.
-	yFiltered elements += (aux elements * -3).
+	aux *= -3.
+	yFiltered += aux.
+
 	aux fillWith: self displaced: 0 @ 1.
-	yFiltered elements += (aux elements * -10).
+	aux *= -10.
+	yFiltered += aux.
+
 	aux fillWith: self displaced: 1 @ 1.
-	yFiltered elements += (aux elements * -3).
+	aux *= -3.
+	yFiltered += aux.
+
 
 	aux fillWith: self displaced: -1 @ -1.
-	xFiltered elements += (aux elements * 3).
-	aux fillWith: self displaced: -1 @ 0.
-	xFiltered elements += (aux elements * 10).
-	aux fillWith: self displaced: -1 @ 1.
-	xFiltered elements += (aux elements * 3).
-	aux fillWith: self displaced: 1 @ -1.
-	xFiltered elements += (aux elements * -3).
-	aux fillWith: self displaced: 1 @ 0.
-	xFiltered elements += (aux elements * -10).
-	aux fillWith: self displaced: 1 @ 1.
-	xFiltered elements += (aux elements * -3).
-	xFiltered elements *= xFiltered elements.
-	yFiltered elements *= yFiltered elements.
+	aux *= 3.
+	xFiltered += aux.
 
-	xFiltered elements += yFiltered elements.
+	aux fillWith: self displaced: -1 @ 0.
+	aux *= 10.
+	xFiltered += aux.
+
+	aux fillWith: self displaced: -1 @ 1.
+	aux *= 3.
+	xFiltered += aux.
+
+	aux fillWith: self displaced: 1 @ -1.
+	aux *= -3.
+	xFiltered += aux.
+
+	aux fillWith: self displaced: 1 @ 0.
+	aux *= -10.
+	xFiltered += aux.
+
+	aux fillWith: self displaced: 1 @ 1.
+	aux *= -3.
+	xFiltered += aux.
+
+
+	xFiltered *= xFiltered.
+	yFiltered *= yFiltered.
+	xFiltered += yFiltered.
 	
 	e _ xFiltered elements.
 	1 to: e size do: [ :i | e at: i put: (e at: i) sqrt ].
+	xFiltered border: (1@1 extent: xFiltered extent) with: 0.
 	^xFiltered! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 6/27/2017 10:48:38'!
+!FloatImage methodsFor: 'filtering' stamp: 'jmv 10/19/2017 13:26:40'!
 scharrNoDataValue: noDataValue dilatedBy: extraPixels avoidSaturatedPixels: aBoolean
 	"See comment at #scharr
 	Additionally, consider that pixels in us that are noDataValue should not contribute to a border.
 	As Scharr uses 3x3 filters, this is 8 neighbors to each noDataValuePixels.
-	If extraPixels is not zero, it is an extra border of that width to not consider pixels. Useful, for example if images are interpolated and there are pixels that are neighbors of a noDataValue pixel, that as they are interpolated with noDataValue, they are invalid themselves. Usually just self extraPixels to zero
+	If extraPixels is not zero, it is an extra border of that width to not consider borders. Useful, for example if images are interpolated and there are pixels that are neighbors of a noDataValue pixel, that as they are interpolated with noDataValue, they are invalid themselves. Usually just self extraPixels to zero
 	if aBoolean is true, also consider saturated pixels as noData"
 
-	| borders nighborhood v |
-	nighborhood _ 1 + extraPixels.
+	| borders neighborhood mask |
+	neighborhood _ 1 + extraPixels.
 	borders _ self scharr.
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			v _ self i: i j: j.
-			(v = 0.0 or: [aBoolean and: [v > 0.85]]) ifTrue: [
-				(i-nighborhood max: 1) to: (i+nighborhood min: height )  do: [ :ii |
-					(j-nighborhood max: 1) to: (j+nighborhood min: width ) do: [ :jj |
-						borders  i: ii j: jj put: 0.0 ]]]]].
+	mask _ FloatImage extent: self extent.
+	mask with: self replaceValues: [ :dummy :v |
+		(v = noDataValue or: [aBoolean and: [v > 0.85]]) 
+			ifTrue: [ 0 ]
+			ifFalse: [ 1 ]].
+	mask _ mask erodedBy: neighborhood.
+	borders *= mask.
 	^ borders! !
 
 !FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!

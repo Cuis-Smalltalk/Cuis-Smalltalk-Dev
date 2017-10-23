@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 29 September 2017 at 6:18:44 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 19 October 2017 at 4:12:51 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 41!
+!provides: 'LinearAlgebra' 1 42!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -295,17 +295,17 @@ asFormMin: min max: max
 average
 	^self mean! !
 
-!Matrix methodsFor: 'filling' stamp: 'jmv 7/26/2016 11:32:09'!
+!Matrix methodsFor: 'filling' stamp: 'jmv 10/19/2017 12:40:15'!
 border: box with: value
 	"box includes topLeft but doesn't include bottom right (as it is usual with Rectangles)
 	Coordinates are 1-based"
 
 	box top to: box bottom-1 do: [ :i |
-		self i: i j: box left-1 put: value.
-		self i: i j: box right-1+1 put: value ].
+		self i: i j: box left put: value.
+		self i: i j: box right-1 put: value ].
 	box left to: box right-1 do: [ :j |
-		self i: box top-1 j: j put: value.
-		self i: box bottom-1+1 j: j put: value ]! !
+		self i: box top j: j put: value.
+		self i: box bottom-1 j: j put: value ]! !
 
 !Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
 columnsWithoutPivot: count
@@ -1086,11 +1086,11 @@ asGammaFormFullRangeG: greenImage b: blueImage
 conditionNumber
 	^self norm * self inverse norm! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:21'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 10/19/2017 13:39:46'!
 copy: aRectangle
 	"
 	| i |
-	i _ FloatMatrix width: 10 height: 10.
+	i _ FloatMatrix width: 20 height: 20.
 	i x: 10 y: 10 put: Float pi.
 	i copy: (1@1 extent: 10@10)
 	"
@@ -2032,6 +2032,42 @@ printOn: aStream
 			aStream space ].
 		aStream nextPut: $|; newLine ]! !
 
+!FloatMatrix methodsFor: 'operations' stamp: 'jmv 10/19/2017 11:15:23'!
+rectAroundMaxNotBelow: threshold
+	"Discriminate the area around the maximum value where all rows and columns have at least one value grater than threshold.
+	Answer follows usual Rectangle convention: corner is one position rightDown after last point included.
+	
+	Also see #thresholdAroundMax:borderValue:fillValue:
+	Also see #thresholdBordersBelow:borderValue:fillValue:
+
+	(FloatImage fromArrayOfArrays: #(
+		#( 1 2 1 1 2 1)
+		#( 2 5 2 2 4 2)
+		#( 1 2 1 1 2 1))) thresholdAroundMax: 3 borderValue: 0.1 fillValue:7
+	"
+
+	| bottom left p right top lastTimeItGrew |
+	p _ self xyForMax.
+	top _ p y.
+	bottom _ p y.
+	left _ p x.
+	right _ p x.
+
+	lastTimeItGrew _ true.
+	[lastTimeItGrew] whileTrue: [
+		lastTimeItGrew _ false.
+		
+		(top > 1 and: [ (left to: right) anySatisfy: [ :j | (self i: top-1 j: j) > threshold ]])
+				ifTrue: [ top _ top - 1. lastTimeItGrew _ true ].
+		(bottom < height and: [ (left to: right) anySatisfy: [ :j | (self i: bottom+1 j: j) > threshold ]])
+				ifTrue: [ bottom _ bottom + 1. lastTimeItGrew _ true ].
+		(left > 1 and: [ (top to: bottom) anySatisfy: [ :i | (self i: i j: left-1) > threshold ]])
+				ifTrue: [ left _ left - 1. lastTimeItGrew _ true ].
+		(right < width and: [ (top to: bottom) anySatisfy: [ :i | (self i: i j: right+1) > threshold ]])
+				ifTrue: [ right _ right + 1. lastTimeItGrew _ true ].
+	].
+	^ left@top corner: right@bottom+1! !
+
 !FloatMatrix methodsFor: 'operations' stamp: 'jmv 9/2/2014 11:28'!
 round
 
@@ -2107,55 +2143,36 @@ storeQRDecompositionOfHessembergSuperiorOnQ: q r: r
 			q preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s ] ].
 	q transpose.! !
 
-!FloatMatrix methodsFor: 'operations' stamp: 'jmv 6/8/2017 12:18:26'!
+!FloatMatrix methodsFor: 'operations' stamp: 'jmv 10/19/2017 11:18:42'!
 thresholdAroundMax: threshold borderValue: borderValue fillValue: fillValue
-"growAreaAboveThreshold o algo asi,"
-	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
-	Answer nil if all the elements are below (or equal) threshold.
+	"Discriminate the area around the maximum value where all rows and columns have at least one value grater than threshold.
+	
+	Also see #thresholdBordersBelow:borderValue:fillValue:
 
 	(FloatImage fromArrayOfArrays: #(
-		#( 1 2 1)
-		#( 2 5 2)
-		#( 1 2 1))) zz_thresholdBordersBelow: 3 borderValue: 0.2 fillValue:7
+		#( 1 2 1 1 2 1)
+		#( 2 5 2 2 4 2)
+		#( 1 2 1 1 2 1))) thresholdAroundMax: 3 borderValue: 0.1 fillValue:7
 	"
 
-	| answer bottom left p right top lastTimeItGrew |
-	p _ self xyForMax.
-	top _ p y.
-	bottom _ p y.
-	left _ p x.
-	right _ p x.
-
-	lastTimeItGrew _ true.
-	[lastTimeItGrew] whileTrue: [
-		lastTimeItGrew _ false.
-		
-		(top > 1 and: [ (left to: right) anySatisfy: [ :j | (self i: top-1 j: j) > threshold ]])
-				ifTrue: [ top _ top - 1. lastTimeItGrew _ true ].
-		(bottom < height and: [ (left to: right) anySatisfy: [ :j | (self i: bottom+1 j: j) > threshold ]])
-				ifTrue: [ bottom _ bottom + 1. lastTimeItGrew _ true ].
-		(left > 1 and: [ (top to: bottom) anySatisfy: [ :i | (self i: i j: left-1) > threshold ]])
-				ifTrue: [ left _ left - 1. lastTimeItGrew _ true ].
-		(right < width and: [ (top to: bottom) anySatisfy: [ :i | (self i: i j: right+1) > threshold ]])
-				ifTrue: [ right _ right + 1. lastTimeItGrew _ true ].
-	].
+	| answer rect |
+	rect _ self rectAroundMaxNotBelow: threshold.
 
 	answer _ self class height: height width: width.
 	answer elements += borderValue.
-	top to: bottom do: [ :i |
-		left to: right do: [ :j |
-			answer i: i j: j put: fillValue ]].
+	answer fill: rect with: fillValue.
 	^answer! !
 
-!FloatMatrix methodsFor: 'operations' stamp: 'jmv 6/8/2017 12:17:36'!
+!FloatMatrix methodsFor: 'operations' stamp: 'jmv 10/19/2017 11:07:00'!
 thresholdBordersBelow: threshold borderValue: borderValue fillValue: fillValue
-	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
-	Answer nil if all the elements are below (or equal) threshold.
+	"Discriminate rows and columns at the edges with no values greater than threshold.
+	
+	Also see #thresholdAroundMax:borderValue:fillValue:
 
 	(FloatMatrix fromArrayOfArrays: #(
-		#( 1 2 1)
-		#( 2 5 2)
-		#( 1 2 1))) thresholdBorders: 3 fillValue: 0.2
+		#( 1 2 1 1 2 1)
+		#( 2 5 2 2 4 2)
+		#( 1 2 1 1 2 1))) thresholdBordersBelow: 3 borderValue: 0.1 fillValue: 7
 	"
 	| column row i j answer |
 	answer _ self class height: height width: width.
