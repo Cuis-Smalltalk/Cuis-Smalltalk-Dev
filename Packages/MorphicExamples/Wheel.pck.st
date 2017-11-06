@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 5 November 2017 at 12:32:40 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 5 November 2017 at 4:46:23 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Wheel' 1 0!
+!provides: 'Wheel' 1 1!
 !classDefinition: #WheelMorph category: #Wheel!
 BorderedRectMorph subclass: #WheelMorph
 	instanceVariableNames: 'target actionSelector factor circular old angle maxAngle lastRedraw'
@@ -12,12 +12,12 @@ WheelMorph class
 	instanceVariableNames: ''!
 
 
-!WheelMorph commentStamp: 'HilaireFernandes 11/5/2017 12:24:55' prior: 0!
+!WheelMorph commentStamp: 'HilaireFernandes 11/5/2017 16:42:57' prior: 0!
 A thumb wheel widget control:
 
 | w |
 w := WheelMorph new.
-w color: Color red; borderColor: Color red muchDarker.
+w color: Color red.
 w target: Transcript; actionSelector: #print:.
 w openInWorld.
 !
@@ -71,6 +71,11 @@ beVertical
 	self isHorizontal
 		ifTrue: [extent  _ extent transposed] ! !
 
+!WheelMorph methodsFor: 'accessing' stamp: 'HilaireFernandes 11/5/2017 16:42:45'!
+color: aColor
+	super color: aColor.
+	self borderColor: aColor muchDarker! !
+
 !WheelMorph methodsFor: 'event handling' stamp: 'HilaireFernandes 11/5/2017 11:14:14'!
 doTargetAction: cursorPoint
 	| new delta |
@@ -86,13 +91,12 @@ doTargetAction: cursorPoint
 	old _ new.
 ! !
 
-!WheelMorph methodsFor: 'drawing' stamp: 'HilaireFernandes 11/5/2017 11:36:51'!
+!WheelMorph methodsFor: 'drawing' stamp: 'HilaireFernandes 11/5/2017 16:44:01'!
 drawOn: aCanvas
-	| interval delta frame x0 x1 y0 y1 deltaX deltaY  hilitColor shadowColor |
+	| interval delta frame x0 x1 y0 y1 deltaX deltaY  |
 	super drawOn: aCanvas.		"border & background"
-	hilitColor _ shadowColor _ borderColor.
 	frame := self morphLocalBounds insetBy: 2.
-	aCanvas frameRectangle: frame borderWidth: 1 topLeftColor: hilitColor bottomRightColor: shadowColor.
+	aCanvas frameRectangle: frame color: color borderWidth: 1 borderStyleSymbol: #raised.
 	frame := frame insetBy: 1.
 	x0 := frame origin x.
 	x1 := frame corner x.
@@ -106,10 +110,10 @@ drawOn: aCanvas
 		| x y |
 		self isHorizontal ifTrue: [
 			x := x0 + deltaX - (((i * interval + delta) * (2 * Float pi / 360.0)) cos * deltaX).
-			aCanvas fillRectangle: (Rectangle origin: (x-1)@y0 corner: x@y1) color: hilitColor]
+			aCanvas fillRectangle: (Rectangle origin: (x-1)@y0 corner: x@y1) color: borderColor]
 		ifFalse: [
 			y := y0 + deltaY - (((i * interval + delta) * (2 * Float pi / 360.0)) cos * deltaY).
-			aCanvas fillRectangle: (Rectangle origin: x0@(y-1) corner: x1@y) color: hilitColor]
+			aCanvas fillRectangle: (Rectangle origin: x0@(y-1) corner: x1@y) color: borderColor]
 	]! !
 
 !WheelMorph methodsFor: 'accessing'!
