@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3099] on 17 June 2017 at 12:04:29 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3207] on 6 November 2017 at 3:04:55 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 33!
-!requires: 'FFI' 1 nil nil!
+!provides: 'OpenCL' 1 34!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'FFI' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -3426,7 +3426,7 @@ newImage3D: flags format: imageFormat width: width height: height depth: depth r
 		slicePitch: slicePitch.
 	^mem! !
 
-!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 1/5/2016 12:24'!
+!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 11/6/2017 13:17:50'!
 newImage: flags format: imageFormat description: imageDescription hostPointer: hostPtr
 	"Most general image-creation method.  Basis for more specific, convenient methods."
 	| mem result |
@@ -3439,7 +3439,7 @@ newImage: flags format: imageFormat description: imageDescription hostPointer: h
 							void__ptr: hostPtr asOpenCLArg
 							cl_int__ptr: result.
 	result := result first.
-	OpenCLError check: result text: 'failed to instantiate image'.
+	OpenCLError check: result text: 'failed to instantiate image. image_desc: ', imageDescription printString.
 
 	imageDescription image_type = CL_MEM_OBJECT_IMAGE2D ifTrue: [
 		mem := OpenCLImage2D wrappingHandle: mem.
