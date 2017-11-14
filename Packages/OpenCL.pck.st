@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3207] on 6 November 2017 at 3:04:55 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3211] on 14 November 2017 at 2:12:59 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 34!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'OpenCL' 1 35!
 !requires: 'FFI' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
@@ -1718,7 +1718,7 @@ check: errCode text: failureString
 	self signal: failureString code: errCode
 	! !
 
-!OpenCLError class methodsFor: 'signalling' stamp: 'jmv 12/29/2015 11:15'!
+!OpenCLError class methodsFor: 'signalling' stamp: 'jmv 11/14/2017 14:12:36'!
 errorStringForCode: errCode
 	| errorNames |
 	errorNames := #(
@@ -1786,7 +1786,7 @@ errorStringForCode: errCode
 		'CLInvalidMipLevel'
 		'CLInvalidGlobalWorkSize'
 	).
-	^[errorNames at: errCode negated] on: Error do: ['INVALID ERROR CODE (', errCode, ')!!!!!!'].! !
+	^[errorNames at: errCode negated] on: Error do: ['INVALID ERROR CODE (', errCode printString, ')!!!!!!'].! !
 
 !OpenCLError class methodsFor: 'signalling' stamp: 'jmv 9/9/2015 11:35'!
 signal: signalerText code: errCode
