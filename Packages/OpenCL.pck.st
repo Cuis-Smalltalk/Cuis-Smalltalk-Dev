@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3099] on 17 June 2017 at 12:04:29 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3211] on 14 November 2017 at 2:12:59 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 33!
+!provides: 'OpenCL' 1 35!
 !requires: 'FFI' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
@@ -1718,7 +1718,7 @@ check: errCode text: failureString
 	self signal: failureString code: errCode
 	! !
 
-!OpenCLError class methodsFor: 'signalling' stamp: 'jmv 12/29/2015 11:15'!
+!OpenCLError class methodsFor: 'signalling' stamp: 'jmv 11/14/2017 14:12:36'!
 errorStringForCode: errCode
 	| errorNames |
 	errorNames := #(
@@ -1786,7 +1786,7 @@ errorStringForCode: errCode
 		'CLInvalidMipLevel'
 		'CLInvalidGlobalWorkSize'
 	).
-	^[errorNames at: errCode negated] on: Error do: ['INVALID ERROR CODE (', errCode, ')!!!!!!'].! !
+	^[errorNames at: errCode negated] on: Error do: ['INVALID ERROR CODE (', errCode printString, ')!!!!!!'].! !
 
 !OpenCLError class methodsFor: 'signalling' stamp: 'jmv 9/9/2015 11:35'!
 signal: signalerText code: errCode
@@ -3426,7 +3426,7 @@ newImage3D: flags format: imageFormat width: width height: height depth: depth r
 		slicePitch: slicePitch.
 	^mem! !
 
-!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 1/5/2016 12:24'!
+!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 11/6/2017 13:17:50'!
 newImage: flags format: imageFormat description: imageDescription hostPointer: hostPtr
 	"Most general image-creation method.  Basis for more specific, convenient methods."
 	| mem result |
@@ -3439,7 +3439,7 @@ newImage: flags format: imageFormat description: imageDescription hostPointer: h
 							void__ptr: hostPtr asOpenCLArg
 							cl_int__ptr: result.
 	result := result first.
-	OpenCLError check: result text: 'failed to instantiate image'.
+	OpenCLError check: result text: 'failed to instantiate image. image_desc: ', imageDescription printString.
 
 	imageDescription image_type = CL_MEM_OBJECT_IMAGE2D ifTrue: [
 		mem := OpenCLImage2D wrappingHandle: mem.
