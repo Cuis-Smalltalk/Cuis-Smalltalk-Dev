@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2923] on 6 September 2016 at 10:27:49 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3207] on 27 November 2017 at 11:05:25 am'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 26!
+!provides: 'SqueakCompatibility' 1 27!
 !requires: 'Cuis-Base' 42 2658 nil!
 !classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
 SharedPool subclass: #KlattResonatorIndices
@@ -443,6 +443,13 @@ asUnicode
 	"self leadingChar = 0 ifTrue: [^ self asInteger].
 	^self encodedCharSet charsetClass convertToUnicode: self charCode"
 	^self asInteger! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 11/27/2017 11:04:11'!
+between: min and: max 
+	"Answer whether the receiver is less than or equal to the argument, max, 
+	and greater than or equal to the argument, min."
+
+	^self numericValue >= min numericValue and: [self numericValue <= max numericValue]! !
 
 !Character methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:12'!
 isCharacter
