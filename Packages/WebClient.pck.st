@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3131] on 2 August 2017 at 1:07:44 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3222] on 27 November 2017 at 12:07:16 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 14!
+!provides: 'WebClient' 1 16!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
-!requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Network-Kernel' 1 2 nil!
+!requires: 'Identities-UUID' 1 7 nil!
 !classDefinition: #WebChunkedStream category: #'WebClient-Core'!
 ReadStream subclass: #WebChunkedStream
 	instanceVariableNames: 'sourceStream chunkSize'
@@ -175,7 +175,7 @@ Object subclass: #WebUtils
 	category: 'WebClient-Core'!
 !classDefinition: 'WebUtils class' category: #'WebClient-Core'!
 WebUtils class
-	instanceVariableNames: ''!
+	instanceVariableNames: 'currentProxyServer'!
 
 !classDefinition: #SqueakSSL category: #'WebClient-SqueakSSL-Core'!
 Object subclass: #SqueakSSL
@@ -3458,7 +3458,7 @@ close
 		stream := nil].
 ! !
 
-!WebClient methodsFor: 'initialize' stamp: 'topa 11/3/2014 23:46'!
+!WebClient methodsFor: 'initialize' stamp: 'CK 11/24/2017 14:24:01'!
 connect
 	"Connect the client to a web server. Returns nil if successful,
 	a WebResponse if a proxy CONNECT request fails."
@@ -3653,7 +3653,7 @@ httpGet: urlString
 	^self httpGet: urlString do:[:req]
 ! !
 
-!WebClient methodsFor: 'methods' stamp: 'jmv 6/25/2017 19:40:55'!
+!WebClient methodsFor: 'methods' stamp: 'CK 11/24/2017 14:46:24'!
 httpGet: urlString do: aBlock
 	"GET the response from the given url
 	(WebClient httpGet: 'http://www.cuis-smalltalk.org/') content
@@ -3920,12 +3920,12 @@ printOn: aStream
 	aStream nextPut:$).
 ! !
 
-!WebClient methodsFor: 'initialize' stamp: 'ar 8/12/2010 21:12'!
+!WebClient methodsFor: 'initialize' stamp: 'CK 11/24/2017 14:59:44'!
 proxyConnect
 	"Send a proxy CONNECT request to connect to a remote host via the chosen proxy server"
 
 	| uri request repeatAuth response |
-	uri := self serverName,':', self serverPort.
+	uri := self serverName,':', self serverPort asString.
 	request := self newRequest.
 	request method: 'CONNECT'.
 	request rawUrl: uri.
@@ -3946,6 +3946,7 @@ proxyConnect
 	"Don't use 'self writeRequestOn:' since this will insert both cookies
 	as well as modify the url target when a proxy is present"
 	request writeOn: stream.
+	
 	stream flush.
 
 	response := request newResponse readFrom: stream.
@@ -4003,13 +4004,14 @@ proxyServer
 
 	^proxyServer! !
 
-!WebClient methodsFor: 'proxy' stamp: 'ar 2/20/2010 19:17'!
+!WebClient methodsFor: 'proxy' stamp: 'CK 11/24/2017 14:01:01'!
 proxyServer: aString
 	"The proxy server to use for connections.
 	The server should be specified as server:port if the proxy
 	port to be used is different from the desitation port."
 
-	proxyServer := aString! !
+	proxyServer := aString.
+	ProxyHandler defaultProxyServer: aString.! !
 
 !WebClient methodsFor: 'proxy' stamp: 'ar 2/20/2010 19:22'!
 proxyServerName
@@ -4126,7 +4128,7 @@ sendRequest: request content: contentStream size: streamSize
 						]]].
 ! !
 
-!WebClient methodsFor: 'sending' stamp: 'ar 9/16/2010 21:52'!
+!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:32:10'!
 sendRequest: request contentBlock: contentBlock
 	"Send an http request"
 
@@ -4135,7 +4137,7 @@ sendRequest: request contentBlock: contentBlock
 	"XXXX: Fixme. Pre-authenticate the request if we have valid auth credentials"
 
 	redirections := Dictionary new.
-	
+
 	["The outer loop handles redirections"
 	repeatRedirect := false.
 
@@ -4228,7 +4230,7 @@ serverPort
 		ifNotEmpty:[:portString| portString asInteger].
 ! !
 
-!WebClient methodsFor: 'initialize' stamp: 'topa 4/9/2015 21:19'!
+!WebClient methodsFor: 'initialize' stamp: 'CK 11/24/2017 14:25:04'!
 sslConnect
 	"Do the SSL handshake"
 	"Connect the client to a web server"
@@ -4316,7 +4318,7 @@ writeHeadersFor: request on: aStream
 	request headersDo:[:key :value| aStream nextPutAll: key, ': ', value asString; nextPutAll: String crlfString].
 ! !
 
-!WebClient methodsFor: 'sending' stamp: 'topa 11/3/2014 23:45'!
+!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:43:55'!
 writeRequest: request on: aStream
 	"Write all the request headers on the given stream"
 
@@ -4327,7 +4329,7 @@ writeRequest: request on: aStream
 		aStream crlf.
 		aStream flush].! !
 
-!WebClient methodsFor: 'sending' stamp: 'DSG 5/24/2012 17:23'!
+!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:37:08'!
 writeRequestLine: request on: aStream
 	"Write the HTTP request line on the given stream"
 
@@ -5996,7 +5998,7 @@ url
 
 	^((rawUrl copyUpTo: $#) copyUpTo: $?) unescapePercents! !
 
-!WebRequest methodsFor: 'printing' stamp: 'ar 2/20/2010 16:33'!
+!WebRequest methodsFor: 'printing' stamp: 'CK 11/24/2017 14:53:04'!
 writeOn: aStream
 	"Write the request"
 
@@ -7920,10 +7922,15 @@ decodeUrlEncodedForm: aString multipleValues: aBool
 	].
 	^fields! !
 
-!WebUtils class methodsFor: 'proxy' stamp: 'DSG 12/4/2013 23:02'!
+!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/24/2017 13:59:29'!
 defaultProxyServer
 	"Answer the default proxy server to use."
-	^''! !
+	^ currentProxyServer ! !
+
+!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/24/2017 14:00:05'!
+defaultProxyServer: aString
+	"Set the default proxy server to use."
+	currentProxyServer _ aString ! !
 
 !WebUtils class methodsFor: 'decoding' stamp: 'jmv 6/26/2017 19:54:45'!
 encodeMultipartForm: fieldMap boundary: boundary
@@ -8643,7 +8650,7 @@ proxyExceptionsDo: aBlock
 
 	"HTTPSocket httpProxyExceptions do: aBlock."! !
 
-!WebUtils class methodsFor: 'proxy' stamp: 'ar 2/23/2010 06:20'!
+!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/27/2017 12:06:52'!
 proxyServerFor: serverName
 	"Answer the proxy server to use for the given server:port
 	Returns the proxy server:port to use or nil if no proxy is required."
@@ -8651,7 +8658,7 @@ proxyServerFor: serverName
 	| domain |
 	domain := serverName copyUpTo: $:.
 	self proxyExceptionsDo:[:pattern| (pattern match: domain) ifTrue:[^nil]].
-	^self defaultProxyServer ifEmpty:[nil]! !
+	^self defaultProxyServer! !
 
 !WebUtils class methodsFor: 'quoting' stamp: 'ar 3/31/2010 08:43'!
 quote: aString
