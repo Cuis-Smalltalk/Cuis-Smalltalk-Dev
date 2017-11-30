@@ -29,6 +29,9 @@ Some of the repos owner by community members, and including packages for Cuis ar
 - https://github.com/hernanwilkinson/Cuis-Smalltalk-Chalten
 - https://github.com/hernanwilkinson/Cuis-Smalltalk-Refactoring
 - https://github.com/hernanwilkinson/Cuis-Smalltalk-DenotativeObject
+- https://github.com/len/Mathematics
+- https://github.com/len/RayTracer
+- https://github.com/len/Cuis-Smalltalk-DWM
 
 (if your repo with Cuis stuff is missing, please email the Cuis mail list)
 
