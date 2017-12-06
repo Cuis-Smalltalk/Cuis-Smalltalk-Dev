@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 19 October 2017 at 4:12:51 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3228] on 4 December 2017 at 3:31:46 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 42!
+!provides: 'LinearAlgebra' 1 43!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -126,9 +126,12 @@ ShortWordMatrix fromArrayOfArrays: #(
 	#( 40000 		127 		128)
 	#( 32768 		254		32767 ))!
 
-!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 5/21/2015 11:34'!
+!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 12/4/2017 09:47:23'!
 hackBitsForFloatMatrix: aFloatMatrix
-	"Quite like #hackBits: but we know that FloatMatrixes use 32 bits per element"
+	"Set up parmeters to have similar shape to aFloatMatrix and share the elements.
+	This is: 32 bits per element, same width and height, and share the storage.
+	Useful for copying parts of matrixes around using BitBlt."
+
 	depth _ 32.
 	width _ aFloatMatrix width.
 	height _ aFloatMatrix height.
@@ -2032,6 +2035,16 @@ printOn: aStream
 			aStream space ].
 		aStream nextPut: $|; newLine ]! !
 
+!FloatMatrix methodsFor: 'files' stamp: 'jmv 12/4/2017 14:59:32'!
+readFromNpyStream: byteStream bigEndian: isByteStreamBigEndian
+	| bytesPerElement rowBytes |
+	bytesPerElement _ 4.
+	rowBytes _ ByteArray new: width*bytesPerElement.
+	1 to: height do: [ :i |
+		byteStream nextInto: rowBytes.
+		1 to: width do: [ :j |
+			self i: i j: j put: (rowBytes floatAt: j-1*bytesPerElement+1 bigEndian: isByteStreamBigEndian) ]].! !
+
 !FloatMatrix methodsFor: 'operations' stamp: 'jmv 10/19/2017 11:15:23'!
 rectAroundMaxNotBelow: threshold
 	"Discriminate the area around the maximum value where all rows and columns have at least one value grater than threshold.
@@ -2246,6 +2259,80 @@ form: aForm color: aSymbol
 			answer i: i j: j put: (color perform: aSymbol)]].
 	^answer! !
 
+!FloatMatrix class methodsFor: 'files' stamp: 'jmv 11/29/2017 17:05:24'!
+fromNpyFile: aFileEntry
+
+	^aFileEntry readStreamDo: [ :stream |
+		stream binary.
+		self fromNpyStream: stream ]! !
+
+!FloatMatrix class methodsFor: 'files' stamp: 'jmv 12/4/2017 14:59:00'!
+fromNpyStream: byteStream
+	"
+	FloatMatrix fromNpyFile: 'vigneteo' asDirectoryEntry // 'vign_x.npy'
+
+self asForm writeJPEGfileNamed: 'tt.jpg'.
+(self asFormMin: 0.0 max: 1.0) writeJPEGfileNamed: 'ttt.jpg'.
+	"
+	| magic hLength versionMajor versionMinor headerData i1 i2 key descrString fortranOrderString columnsString rowsString answer height instanceClass isBigEndian width bytesPerElement |
+	magic _ byteStream next: 6.
+	self assert: magic = (#[16r93], 'NUMPY' asByteArray).
+	versionMajor _ byteStream next.
+	versionMinor _ byteStream next.
+	versionMajor caseOf: {
+		[1] -> [hLength _ (byteStream next: 2) unsignedShortAt: 1 bigEndian: false].
+		[2] -> [hLength _ (byteStream next: 4) unsignedShortAt: 1 bigEndian: false].
+	} otherwise: [ self error: 'Unsupported format' ].
+	headerData _ String fromUtf8: (byteStream next: hLength).	"It is ASCII. utf-8 will do."
+
+	" Read 'an ASCII string which contains a Python literal expression of a dictionary'
+	https://docs.scipy.org/doc/numpy-dev/neps/npy-format.html
+	Like
+	{'descr': '<f8', 'fortran_order': False, 'shape': (5120, 5120), }
+	meaning
+		'little endian float 8'
+		'no fortran order, i.e. row-major, i.e. row after row'
+		'major size (i.e. rows)= 5120. minor size (i.e. columns) = 5120
+	"
+	i1 _ 1.
+	key _ '''descr'''.
+	i1 _ (headerData findString: key startingAt: i1) + key size. 
+	i1 _ headerData findString: $' asString startingAt: i1.
+	i1 _ i1 + 1.
+	i2 _ headerData findString: $' asString startingAt: i1.
+	descrString _ headerData copyFrom: i1 to: i2-1.
+
+	key _ '''fortran_order'''.
+	i1 _ (headerData findString: key startingAt: i1) + key size. 
+	i1 _ headerData findString: $: asString startingAt: i1.
+	i1 _ i1 + 1.
+	i2 _ headerData findString: $, asString startingAt: i1.
+	fortranOrderString _ (headerData copyFrom: i1 to: i2-1) withBlanksTrimmed.
+
+	key _ '''shape'''.
+	i1 _ (headerData findString: key startingAt: i1) + key size. 
+	i1 _ headerData findString: $( asString startingAt: i1.
+	i1 _ i1 + 1.
+	i2 _ headerData findString: $, asString startingAt: i1.
+	rowsString _ (headerData copyFrom: i1 to: i2-1) withBlanksTrimmed.
+	i1 _ i2 + 1.
+	i2 _ headerData findString: $) asString startingAt: i1.
+	columnsString _ (headerData copyFrom: i1 to: i2-1) withBlanksTrimmed.
+
+	isBigEndian _ descrString first = $>.
+	self assert: descrString second = $f.
+	bytesPerElement _ descrString third digitValue.
+	instanceClass _ bytesPerElement caseOf: { [4] -> [FloatMatrix]. [8] -> [Float64Matrix]} otherwise: [self assert: false ].
+	
+	self assert: fortranOrderString = 'False'.
+	height _ rowsString asInteger.
+	width _ columnsString asInteger.
+	
+	answer _ instanceClass height: height width: width.
+	answer readFromNpyStream: byteStream bigEndian: isBigEndian.
+
+	^ answer! !
+
 !Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:14'!
 copyFromTile: aFloatMatrix position: aPoint
 	self halt! !
@@ -2309,6 +2396,41 @@ j: j put: column
 
 	1 to: height do: [ :i |
 		self i: i j: j put: (column at: i) ]! !
+
+!Float64Matrix methodsFor: 'files' stamp: 'jmv 12/4/2017 15:09:52'!
+readFromNpyStream: byteStream bigEndian: isByteStreamBigEndian
+	"
+	FloatMatrix fromNpyFile: 'vigneteo' asDirectoryEntry // 'vign_x.npy'
+	[ FloatMatrix fromNpyFile: 'vigneteo' asDirectoryEntry // 'vign_x.npy' ] timeToRun
+	"
+	| bytesPerElement rowBytes |
+
+	"Quick way, so far tested only for Little Endian files on Little Endian systems, with native word ordering."
+	isByteStreamBigEndian | Smalltalk isBigEndian ifFalse: [
+		^ self readFromNpyStreamFastHack: byteStream ].
+
+	bytesPerElement _ 8.
+	rowBytes _ ByteArray new: width*bytesPerElement.
+	1 to: height do: [ :i |
+		byteStream nextInto: rowBytes.
+		1 to: width do: [ :j |
+			self i: i j: j put: (rowBytes doubleAt: j-1*bytesPerElement+1 bigEndian: isByteStreamBigEndian) ]]! !
+
+!Float64Matrix methodsFor: 'files' stamp: 'jmv 12/4/2017 15:07:09'!
+readFromNpyStreamFastHack: byteStream
+	"
+	FloatMatrix fromNpyFile: 'vigneteo' asDirectoryEntry // 'vign_x.npy'
+	[ FloatMatrix fromNpyFile: 'vigneteo' asDirectoryEntry // 'vign_x.npy' ] timeToRun
+	"
+	| bytesPerElement rowBytes byteHack myHack widthInWords |
+	bytesPerElement _ 8.
+	rowBytes _ ByteArray new: width*bytesPerElement.
+	myHack _ Form new hackBits: elements.
+	byteHack _ Form new hackBits: rowBytes.
+	widthInWords _ width * bytesPerElement // 4.
+	1 to: height do: [ :i |
+		byteStream nextInto: rowBytes.
+		byteHack displayOn: myHack at: 0@(i-1*widthInWords) rule: Form over ]! !
 
 !FloatBandMatrix methodsFor: 'misc' stamp: 'jmv 9/27/2007 23:38'!
 appropriateResultClass
