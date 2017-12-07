@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3145] on 24 August 2017 at 10:43:03 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3229] on 7 December 2017 at 10:20:21 am'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 27!
-!requires: 'OpenCL' 1 nil nil!
+!provides: 'Morphic3' 1 28!
 !requires: 'YAXO' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'OpenCL' 1 nil nil!
 !classDefinition: #SVGError category: #'Morphic3-SVG'!
 Error subclass: #SVGError
 	instanceVariableNames: ''
@@ -304,6 +304,16 @@ Object subclass: #VectorEngine
 VectorEngine class
 	instanceVariableNames: ''!
 
+!classDefinition: #VectorEngineNoDashes category: #'Morphic3-Kernel'!
+Object subclass: #VectorEngineNoDashes
+	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth subPixelDelta targetSubpixelAlphas targetSubpixelAlphasIfStrokesAndFillsWereOpaque strokeWidth strokeAlpha strokeRed strokeGreen strokeBlue strokeGradient fillAlpha fillRed fillGreen fillBlue fillGradient doStroke doFill strokeDashArray strokeDashArrayOffset clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips boundsLeft boundsTop boundsRight boundsBottom trajectoryLength morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom penAlpha edgeCountPerPixel hopsPerPixel auxBitBlt firstX firstY currentX currentY previousYTruncated lastControl2Point trajectoryPoints fragmentStartIndexes'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'VectorEngineNoDashes class' category: #'Morphic3-Kernel'!
+VectorEngineNoDashes class
+	instanceVariableNames: ''!
+
 !classDefinition: #VectorFontRenderer category: #'Morphic3-Kernel'!
 Object subclass: #VectorFontRenderer
 	instanceVariableNames: 'vectorGraphicsCanvas vectorGraphicsEngine'
@@ -514,10 +524,10 @@ setClipRect: (40@40 extent: 100@100);
 fullDraw: m.
 Display forceToScreen.!
 
-!VectorCanvas commentStamp: '<historical>' prior: 0!
+!VectorCanvas commentStamp: 'jmv 12/5/2017 18:17:28' prior: 0!
 A canvas specially built for Morphic 3.
 
-(VectorCanvas onForm: Display) fullDraw: self runningWorld.
+(VectorCanvas onForm: Display) fullDraw: self runningWorld. Display writePNGfileNamed: 'm3z.png'
 
 On any Morph:
 | c |
@@ -554,6 +564,34 @@ Gives exceptional quality.
 Display forceToScreen.
 
 (VectorEngine onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: #(10 30 40 100) strokeDashArrayOffset: 0;
+	initializeTrajectory;
+	displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2;
+	finishTrajectory.
+Display forceToScreen!
+
+!VectorEngineNoDashes commentStamp: 'jmv 12/5/2017 16:18:40' prior: 0!
+Like VectorEngine, but:
+- no strokeDashArray strokeDashArrayOffset
+- no trajectoryLength
+- no fillGradient
+- no strokeGradient
+(variables are still there, and set up, but not used. Honor them again later!!)
+
+A Vector Graphics rasterizer for Morphic 3.
+Supports most SVG primitives.
+Gives exceptional quality.
+
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil;
+	initializeTrajectory;
+	displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2;
+	finishTrajectory.
+Display forceToScreen.
+
+(VectorEngineNoDashes onForm: Display)
 	resetMorphBounds;
 	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: #(10 30 40 100) strokeDashArrayOffset: 0;
 	initializeTrajectory;
@@ -2932,7 +2970,7 @@ rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax borderWidth: morphStrokeWid
 reverseRectangleBorder: r borderWidth: borderWidth
 	self halt! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 10/22/2014 23:12'!
+!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/6/2017 15:44:28'!
 roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry borderWidth: morphStrokeWidth borderColor: strokeColorOrGradient fillColor: fillColorOrGradient strokeDashArray: msda strokeDashArrayOffset: msdao
 
 	| strokeWidth fc bc corner1 corner2 corner3 corner4 dx dy p5 p6 p7 p8 rx ry phi doLargerArc useIncreasingAngles sda sdao |
@@ -2967,6 +3005,7 @@ roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry 
 	doLargerArc _ false.
 	useIncreasingAngles _ true.
 	engine
+		initializeTrajectory;
 		displayCoordmoveToX: corner1 x y: corner1 y ;
 		displayCoordlineToX: corner2 x y: corner2 y;
 		displayCoordlineToX: p5 x y: p5 y;
@@ -3042,7 +3081,7 @@ roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry border
 		closeTrajectory;
 		finishTrajectory! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 10/22/2014 23:12'!
+!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/6/2017 15:44:13'!
 roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry borderWidth: morphStrokeWidth borderColor: strokeColorOrGradient fillColor: fillColorOrGradient strokeDashArray: msda strokeDashArrayOffset: msdao
 
 	| strokeWidth fc bc corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 rx ry phi doLargerArc useIncreasingAngles sda sdao |
@@ -3077,6 +3116,7 @@ roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry bor
 	doLargerArc _ false.
 	useIncreasingAngles _ true.
 	engine
+		initializeTrajectory;
 		displayCoordmoveToX: p1 x y: p1 y ;
 		displayCoordarcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
 		displayCoordlineToX: p3 x y: p3 y;
@@ -3093,13 +3133,13 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 10/14/2014 10:58'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 12/5/2017 17:26:12'!
 setForm: aForm
 	"
 	World extent: World extent
 	"
 	form _ aForm.
-	engine _ VectorEngine onForm: form.
+	engine _ VectorEngineNoDashes onForm: form.
 	self newClipRect: nil.
 	shadowColor _ nil! !
 
@@ -3125,24 +3165,29 @@ u: dy
 	engine displayCoordlineToX: p2 x y: displayY2.
 	currentClientY _ newY! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 10/22/2014 23:12'!
+!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/6/2017 15:55:05'!
 windowFrame: aRectangle color: aColor radius: r border: morphStrokeWidth labelHeight: lh gradientTop: topFactor gradientBottom: bottomFactor insideColor: insideColor
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
+	"
+	Display getCanvas windowFrame: (10@10 extent: 200@100) color: Color red radius: 10  border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
+	VectorCanvas onForm: Display :: into: self runningWorld; windowFrame: (210@10 extent: 200@100) color: Color red radius: 10  border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
+	Display forceToScreen
+	"
 "
 	| hbw |
 	self 
 		roundRectangleMinX: aRectangle left maxX: aRectangle right minY: aRectangle top maxY: aRectangle bottom 
-		rx: r ry: r borderWidth: bw borderColor: aColor fillColor: insideColor strokeDashArray: nil strokeDashArrayOffset: nil.
-	hbw _ bw *0.5.
+		rx: r ry: r borderWidth: morphStrokeWidth borderColor: aColor fillColor: insideColor strokeDashArray: nil strokeDashArrayOffset: nil.
+	hbw _ morphStrokeWidth *0.5.
 	self
 		rectangleMinX: aRectangle left+hbw maxX: aRectangle right-hbw minY: aRectangle top+hbw maxY: aRectangle top + lh-hbw
 		borderWidth: 0 borderColor: aColor 
 		fillColor: aColor
 		strokeDashArray: nil strokeDashArrayOffset: nil.
-	"	
-	
+	"
+
 	| d1 d2 |
 	d1 _ morphStrokeWidth*0.5-0.5.
 	d2 _ morphStrokeWidth*0.5+0.5.
@@ -3151,7 +3196,7 @@ windowFrame: aRectangle color: aColor radius: r border: morphStrokeWidth labelHe
 		rx: r ry: r borderWidth: morphStrokeWidth borderColor: aColor fillColor: aColor
 		strokeDashArray: nil strokeDashArrayOffset: nil.
 	self
-		roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh+d1 maxY: aRectangle bottom-d2
+		roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh-d2 maxY: aRectangle bottom-d2
 		rx: r ry: r borderWidth: morphStrokeWidth borderColor: aColor fillColor: ""insideColor" Color transparent" "Posible optimizacion..."
 		strokeDashArray: nil strokeDashArrayOffset: nil.! !
 
@@ -5111,7 +5156,7 @@ currentPoint
 	currentX ifNil: [ ^nil ].
 	^currentX@currentY! !
 
-!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 6/16/2017 11:23:34'!
+!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 12/6/2017 15:27:28'!
 displayCoordarcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngine onForm: Display)
@@ -5135,7 +5180,7 @@ Display forceToScreen
 	firstX
 		ifNotNil: [ self displayCoordlineToX: x0 y: y0 ]
 		ifNil: [
-			"trajectory starts here. #closeTrajectory should draw a line to here"
+			"trajectory starts here. Eventually #closeTrajectory should draw a line to here"
 			firstX _ x0.
 			firstY _ y0.
 			self addToTrajectoryX: x0 y: y0 ].
@@ -5340,7 +5385,7 @@ Display forceToScreen
 	currentY _ y2.
 	lastControl2Point _ nil! !
 
-!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 6/16/2017 10:26:05'!
+!VectorEngine methodsFor: 'path fragments' stamp: 'jmv 12/6/2017 15:27:42'!
 displayCoordmoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -5358,7 +5403,7 @@ Display forceToScreen
 	"A discontinuity in the trajectory"
 
 	previousYTruncated _ nil.
-	"We are starting a new trajectory, or at a discontinuity in trajectory. #closeTrajectory should draw a line to here"
+	"We are starting a new trajectory, or at a discontinuity in trajectory. Eventually #closeTrajectory should draw a line to here"
 	firstX _ x.
 	firstY _ y.
 	currentX _ x.
@@ -5687,7 +5732,7 @@ setupBorderWidth: aStrokeWidth borderColor: aStrokeColor fillColor: aFillColor s
 				 i odd ifTrue: [ each - antiAliasingWidth ] ifFalse: [ each ]] .
 			strokeDashArrayOffset _ sdao ]]! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 10/14/2014 22:51'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/3/2017 20:22:07'!
 experLinesAndShapes
 	"
 	self experLinesAndShapes
@@ -5697,6 +5742,7 @@ experLinesAndShapes
 	engine resetMorphBounds.
 	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
 	engine
+		initializeTrajectory;
 		displayCoordmoveToX: 20 y: 10;
 		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
 		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
@@ -5704,6 +5750,7 @@ experLinesAndShapes
 	Display forceToScreen.
 	engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
 	engine
+		initializeTrajectory;
 		displayCoordmoveToX: 220 y: 10;
 		displayCoordlineToX: 410 y: 15; displayCoordlineToX: 220 y: 20;
 		displayCoordlineToX: 215 y: 410; displayCoordlineToX: 210 y: 20;
@@ -5719,10 +5766,12 @@ experLinesAndShapes
 		engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth borderColor: Color black fillColor: Color black 
 			strokeDashArray: nil strokeDashArrayOffset: nil.
 		engine
+			initializeTrajectory;
 			displayCoordmoveToX: 431 y: y1+yy2; displayCoordlineToX: 530 y: y1+yy2+dy;
 			displayCoordlineToX: 530 y: y1+y2-yy2+dy; displayCoordlineToX: 431 y: y1+y2-yy2;
 			closeTrajectory; finishTrajectory.
 		engine
+			initializeTrajectory;
 			displayCoordmoveToX:  y1+yy2 y: 431; displayCoordlineToX: y1+yy2+dy y: 530;
 			displayCoordlineToX: y1+y2-yy2+dy y: 530; displayCoordlineToX: y1+y2-yy2 y: 431;
 			closeTrajectory; finishTrajectory.
@@ -5730,10 +5779,12 @@ experLinesAndShapes
 		engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black 
 			strokeDashArray: nil strokeDashArrayOffset: nil.
 		engine
+			initializeTrajectory;
 			displayCoordmoveToX: 531 y: y1+dy; displayCoordlineToX: 630 y: y1+dy+dy;
 			displayCoordlineToX: 630 y: y1+y2+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy;
 			closeTrajectory; finishTrajectory.
 		engine
+			initializeTrajectory;
 			displayCoordmoveToX: y1+dy y: 531; displayCoordlineToX: y1+dy+dy y: 630;
 			displayCoordlineToX: y1+y2+dy+dy y: 630; displayCoordlineToX: y1+y2+dy y: 531;
 			closeTrajectory; finishTrajectory.
@@ -5741,10 +5792,12 @@ experLinesAndShapes
 		engine setupBorderWidth: 0.0 borderColor: Color black fillColor: Color black 
 			strokeDashArray: nil strokeDashArrayOffset: nil.
 		engine
+			initializeTrajectory;
 			displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
 			displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
 			closeTrajectory; finishTrajectory.
 		engine
+			initializeTrajectory;
 			displayCoordmoveToX: y1+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy y: 730;
 			displayCoordlineToX: y1+y2+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy y: 631;
 			closeTrajectory; finishTrajectory.
@@ -5752,9 +5805,11 @@ experLinesAndShapes
 		engine setupBorderWidth: y2 borderColor: Color black fillColor: Color transparent 
 			strokeDashArray: nil strokeDashArrayOffset: nil.
 		engine
+			initializeTrajectory;
 			displayCoordmoveToX: y2*0.5+731 y: y2*0.5 + y1+dy+dy+dy; displayCoordlineToX: 830 y: y2 * 0.5 + y1  + dy + dy+dy+dy;
 			finishTrajectory.
 		engine
+			initializeTrajectory;
 			displayCoordmoveToX: y2*0.5 + y1+dy+dy+dy y: y2*0.5+731; displayCoordlineToX: y2 * 0.5 + y1  + dy + dy+dy+dy y: 830;
 			finishTrajectory.
 		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
@@ -6055,7 +6110,7 @@ experLinesAndShapesx2
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 10/14/2014 22:41'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/3/2017 20:23:29'!
 experiment1
 	"
 	No perfecto aun, pero se puede empezar a comparar con
@@ -6102,6 +6157,7 @@ delta _ nil.
 "			color _ color alpha: 0.5."
 			engine setupBorderWidth: 0.0 borderColor: color fillColor: color strokeDashArray: nil strokeDashArrayOffset: nil.
 			engine
+				initializeTrajectory;
 				displayCoordmoveToX: x1 y: y;
 				displayCoordlineToX: x2 y: y;
 				displayCoordlineToX: x2p y: prevY;
@@ -6118,7 +6174,7 @@ Display forceToScreen.
 	f writePNGfileNamed: 'pp17.png'
 "! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 10/14/2014 22:43'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/3/2017 20:24:58'!
 experiment2
 	"
 	self experiment2
@@ -6152,6 +6208,7 @@ delta _ nil.
 "			color _ color alpha: 0.5."
 			engine setupBorderWidth: 0.0 borderColor: color fillColor: color strokeDashArray: nil strokeDashArrayOffset: nil.
 			engine
+				initializeTrajectory;
 				displayCoordmoveToX: x1 y: y;
 				displayCoordlineToX: x2 y: y;
 				displayCoordlineToX: x2p y: prevY;
@@ -6165,7 +6222,7 @@ delta _ nil.
 Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 10/14/2014 22:46'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/3/2017 20:26:01'!
 experiment3
 	"
 	self experiment3
@@ -6179,6 +6236,7 @@ experiment3
 		engine setupBorderWidth: w borderColor: Color black fillColor: Color transparent strokeDashArray: nil strokeDashArrayOffset: nil.
 		engine initializeTrajectory.
 		engine
+			initializeTrajectory;
 			displayCoordarcCenterX: 300 centerY: 300 radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
 			closeTrajectory;
 			finishTrajectory.
@@ -6191,7 +6249,7 @@ experiment3
 Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 10/14/2014 22:48'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/3/2017 20:26:09'!
 experiment4
 	"
 	self experiment4
@@ -6208,6 +6266,7 @@ experiment4
 		engine setupBorderWidth: w borderColor: Color black fillColor: Color transparent strokeDashArray: nil strokeDashArrayOffset: nil.
 		engine initializeTrajectory.
 		engine
+			initializeTrajectory;
 			displayCoordarcCenterX: 300 centerY: 300 radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
 			closeTrajectory;
 			finishTrajectory.
@@ -6216,7 +6275,7 @@ experiment4
 Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 11/14/2014 09:45'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/6/2017 09:47:18'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -6232,6 +6291,7 @@ experimentHopsPerPixel1
 	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
 	engine instVarNamed: 'hopsPerPixel' put: hops1.
 	engine
+		initializeTrajectory;
 		displayCoordmoveToX: 20 y: 10;
 		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
 		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
@@ -6245,6 +6305,7 @@ experimentHopsPerPixel1
 	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
 	engine instVarNamed: 'hopsPerPixel' put: hops2.
 	engine
+		initializeTrajectory;
 		displayCoordmoveToX: 20 y: 10;
 		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
 		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
@@ -6255,7 +6316,7 @@ experimentHopsPerPixel1
 	(d asFormMin: 0 max: 1) displayAt: 440@0.
 	{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2}! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 11/14/2014 09:53'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/6/2017 10:09:28'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -6284,9 +6345,10 @@ experimentHopsPerPixel2
 	engine setupBorderWidth: strokeWidth borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil.
 	engine instVarNamed: 'hopsPerPixel' put: hops1.
 	engine
-		displayCoordmoveToX: 20 y: 10;
-		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		initializeTrajectory;
+		displayCoordmoveToX: 40 y: 30;
+		displayCoordlineToX: 190 y: 135; displayCoordlineToX: 40 y: 40;
+		displayCoordlineToX: 135 y: 390; displayCoordlineToX: 30 y: 40;
 		closeTrajectory; finishTrajectory.
 	f1 displayAt: 0@0.
 
@@ -6297,9 +6359,10 @@ experimentHopsPerPixel2
 	engine setupBorderWidth: strokeWidth borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil.
 	engine instVarNamed: 'hopsPerPixel' put: hops2.
 	engine
-		displayCoordmoveToX: 20 y: 10;
-		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		initializeTrajectory;
+		displayCoordmoveToX: 40 y: 30;
+		displayCoordlineToX: 190 y: 135; displayCoordlineToX: 40 y: 40;
+		displayCoordlineToX: 135 y: 390; displayCoordlineToX: 30 y: 40;
 		closeTrajectory; finishTrajectory.
 	f2 displayAt: 220@0.
 
@@ -6307,7 +6370,7 @@ experimentHopsPerPixel2
 	(d asFormMin: 0 max: 1) displayAt: 440@0.
 	{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2}! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 11/14/2014 09:44'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/6/2017 09:48:29'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -6323,6 +6386,7 @@ experimentHopsPerPixel3
 	engine setupBorderWidth: 0 borderColor: nil fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
 	engine instVarNamed: 'hopsPerPixel' put: hops1.
 	engine
+		initializeTrajectory;
 		displayCoordmoveToX: 20 y: 10;
 		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
 		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
@@ -6336,6 +6400,7 @@ experimentHopsPerPixel3
 	engine setupBorderWidth: 0 borderColor: nil fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
 	engine instVarNamed: 'hopsPerPixel' put: hops2.
 	engine
+		initializeTrajectory;
 		displayCoordmoveToX: 20 y: 10;
 		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
 		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
@@ -6347,6 +6412,1941 @@ experimentHopsPerPixel3
 	{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2}! !
 
 !VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 10/13/2014 16:20'!
+onForm: aForm
+
+	^ self new setForm: aForm! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - aux' stamp: 'jmv 12/3/2017 21:02:02'!
+addToTrajectoryX: x y: y
+	"slight optimization possible when we know width = 0... perhaps implement:
+		-we know palpha is never 127
+		- we know distanceToEdge is always > erodedHalfWidth.
+	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
+	Mas importante:
+		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
+
+	trajectoryPoints add: x@y! !
+
+!VectorEngineNoDashes methodsFor: 'accessing' stamp: 'jmv 12/5/2017 18:04:19'!
+antiAliasingWidth: aNumber
+
+	antiAliasingWidth _ aNumber! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/5/2017 16:28:57'!
+blendFillGradientOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
+"To be used if Fill Gradient
+optimize fillRed ifNil and the like. They ARE nil"
+	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
+	Blends fill over background. Despite method selector, there might be a very thin stroke of the same color as the fill. Handle this by adjusting antiAliasAlphas.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
+
+	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha fillAlphaToUse fillComponentToUse subpixX antiAliasAlphacorrection |
+
+	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
+		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
+			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
+
+	"In this method, antiAliasAlphas are not used to blend stroke, but fill. This means that in the inside of the shape, and away from the stroke, they must be 1.0 (not 0.0).
+	Adjust antiAliasAlphas for fill, considering that stroke might me inexistent (strokeWidth=0.0), or very thin (strokeWidth<antiAliasingWidth)."
+	antiAliasAlphacorrection _ strokeWidth + antiAliasingWidth / antiAliasingWidth.
+	antiAliasRedAlpha _ (antiAliasAlphasWord at: 3) / 127.0.
+	isRedInside ifTrue: [ antiAliasRedAlpha _ antiAliasAlphacorrection-antiAliasRedAlpha min: 1.0 ].
+	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
+	isGreenInside ifTrue: [ antiAliasGreenAlpha _ antiAliasAlphacorrection-antiAliasGreenAlpha min: 1.0 ].
+	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
+	isBlueInside ifTrue: [ antiAliasBlueAlpha _ antiAliasAlphacorrection-antiAliasBlueAlpha min: 1.0 ].
+	
+	targetForm depth = 1  "We only support depths 32 and 1, right now"
+		ifTrue: [
+			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
+				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
+				"bits _ targetForm bits.
+				backgroundWord _ bits at: pixelIndex >> 5.
+				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
+				bits at: pixelIndex >> 5 put: backgroundWord."
+				"Esto es super ineficiente pero parece andar bien. Mejorar..."
+				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
+			].
+			^ self].
+	
+	bits _ targetForm bits.
+	targetWord _ bits bytesAt: pixelIndex.
+
+	subpixX _ x-subPixelDelta.
+	fillAlphaToUse _ (fillAlpha ifNil: [ fillGradient alphaAtX: subpixX y: y ]) / 255.0.
+	fillComponentToUse _ fillRed ifNil: [fillGradient redAtX: subpixX y: y].
+	alpha _ antiAliasRedAlpha * fillAlphaToUse.
+	resultR _ alpha * fillComponentToUse + ((1.0 - alpha) * (targetWord at: 3)).
+	targetWord at: 3 put: resultR rounded.
+
+	fillAlphaToUse _ (fillAlpha ifNil: [ fillGradient alphaAtX: x y: y ]) / 255.0.
+	fillComponentToUse _ fillGreen ifNil: [fillGradient greenAtX: x y: y].
+	alpha _ antiAliasGreenAlpha * fillAlphaToUse.
+	resultG _ alpha * fillComponentToUse + ((1.0 - alpha) * (targetWord at: 2)).
+	targetWord at: 2 put: resultG rounded.
+
+	subpixX _ x+subPixelDelta.
+	fillAlphaToUse _ (fillAlpha ifNil: [ fillGradient alphaAtX: subpixX y: y ]) / 255.0.
+	fillComponentToUse _ fillBlue ifNil: [fillGradient blueAtX: subpixX y: y].
+	alpha _ antiAliasBlueAlpha * fillAlphaToUse.
+	resultB _ alpha * fillComponentToUse + ((1.0 - alpha) * (targetWord at: 1)).
+	targetWord at: 1 put: resultB rounded.
+
+	bits bytesAt: pixelIndex put: targetWord.! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/5/2017 18:04:19'!
+blendFillOnly
+
+	| redCrosses greenCrosses blueCrosses isRedInside isGreenInside isBlueInside edgeCountWord redEdgeCount greenEdgeCount blueEdgeCount pixelIndex m |
+
+	boundsTop to: boundsBottom do: [ :displayY |
+		redCrosses _ 0.
+		greenCrosses _ 0.
+		blueCrosses _ 0.
+		pixelIndex _ displayY * targetWidth +  boundsLeft.
+		boundsLeft to: boundsRight do: [ :displayX |
+			pixelIndex _ pixelIndex + 1.
+
+			edgeCountWord _ edgeCountPerPixel bytesAt: pixelIndex.
+			redEdgeCount _ edgeCountWord at: 3.
+			greenEdgeCount _ edgeCountWord at: 2.
+			blueEdgeCount _ edgeCountWord at: 1.
+
+			"Not needed in C or asm, use signed char, i.e. a type where 16rFF means -1 and not 255"
+			redEdgeCount > 127 ifTrue: [ redEdgeCount _ redEdgeCount - 256 ].
+			greenEdgeCount > 127 ifTrue: [ greenEdgeCount _ greenEdgeCount - 256 ].
+			blueEdgeCount > 127 ifTrue: [ blueEdgeCount _ blueEdgeCount - 256 ].
+
+			redCrosses _ redCrosses + redEdgeCount.
+			greenCrosses _ greenCrosses + greenEdgeCount.
+			blueCrosses _ blueCrosses + blueEdgeCount.
+			isRedInside _ redCrosses ~= 0.
+			isGreenInside _ greenCrosses ~= 0.
+			isBlueInside _ blueCrosses ~= 0.
+
+			(currentOwnerIfClips isNil or: [
+				m _ morphAtPixel at: pixelIndex.
+				m = currentOwnerIfClips or: [m = currentMorph]]) ifTrue: [
+				self
+					blendFillOnlyAtX: displayX y: displayY pixelIndex: pixelIndex 
+					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
+				"-----------------------"
+				"y registrar el morph actual a este pixel!!, si es que lo pintamos... Mejorar. ver alpha."
+				"en realidad, si el alpha usado para el verde es relevante, mayor a 0.2, p.ej...
+				Ojo. Esto exige!! que los que contesten clipsSubmorphs, sean opacotes, sino...
+				Uh, usar isGreenInside hace que se clippe a la mitad interna del borde... Además, no se podrá agarrar un morph de la mitad externa del borde...
+				Se podria hacer que el blend conteste si estabamos adentro o no... Y simplemente usar eso...
+				"
+				"-----------------------"
+				isGreenInside ifTrue: [
+				"(auxAlphas at: pixelIndex) = 0 ifFalse: ["
+					morphAtPixel at: pixelIndex put: currentMorph ]].
+			]].
+	auxBitBlt
+		destX: boundsLeft destY: boundsTop
+		width: boundsRight-boundsLeft+1 height: boundsBottom-boundsTop+1.
+	auxBitBlt destForm bits: penAlpha.
+	auxBitBlt copyBits.
+	auxBitBlt
+		destX: boundsLeft destY: boundsTop
+		width: boundsRight-boundsLeft+1+1 height: boundsBottom-boundsTop+1.
+	auxBitBlt destForm bits: edgeCountPerPixel.
+	auxBitBlt copyBits.
+	Display forceToScreen! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/3/2017 20:08:25'!
+blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
+
+	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
+	Blends fill over background. Despite method selector, there might be a very thin stroke of the same color as the fill. Handle this by adjusting antiAliasAlphas.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
+
+	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha fillAlphaToUse antiAliasAlphacorrection |
+
+	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
+		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
+			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
+
+	"In this method, antiAliasAlphas are not used to blend stroke, but fill. This means that in the inside of the shape, and away from the stroke, they must be 1.0 (not 0.0).
+	Adjust antiAliasAlphas for fill, considering that stroke might me inexistent (strokeWidth=0.0), or very thin (strokeWidth<antiAliasingWidth)."
+	antiAliasAlphacorrection _ strokeWidth + antiAliasingWidth / antiAliasingWidth.
+	antiAliasRedAlpha _ (antiAliasAlphasWord at: 3) / 127.0.
+	isRedInside ifTrue: [ antiAliasRedAlpha _ antiAliasAlphacorrection-antiAliasRedAlpha min: 1.0 ].
+	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
+	isGreenInside ifTrue: [ antiAliasGreenAlpha _ antiAliasAlphacorrection-antiAliasGreenAlpha min: 1.0 ].
+	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
+	isBlueInside ifTrue: [ antiAliasBlueAlpha _ antiAliasAlphacorrection-antiAliasBlueAlpha min: 1.0 ].
+	
+	targetForm depth = 1  "We only support depths 32 and 1, right now"
+		ifTrue: [
+			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
+				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
+				"bits _ targetForm bits.
+				backgroundWord _ bits at: pixelIndex >> 5.
+				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
+				bits at: pixelIndex >> 5 put: backgroundWord."
+				"Esto es super ineficiente pero parece andar bien. Mejorar..."
+				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
+			].
+			^ self].
+
+	fillAlphaToUse _ fillAlpha / 255.0.
+	bits _ targetForm bits.
+	targetWord _ bits bytesAt: pixelIndex.
+
+	alpha _ antiAliasRedAlpha * fillAlphaToUse.
+	resultR _ alpha * fillRed + ((1.0 - alpha) * (targetWord at: 3)).
+	targetWord at: 3 put: resultR rounded.
+
+	alpha _ antiAliasGreenAlpha * fillAlphaToUse.
+	resultG _ alpha * fillGreen + ((1.0 - alpha) * (targetWord at: 2)).
+	targetWord at: 2 put: resultG rounded.
+
+	alpha _ antiAliasBlueAlpha * fillAlphaToUse.
+	resultB _ alpha * fillBlue + ((1.0 - alpha) * (targetWord at: 1)).
+	targetWord at: 1 put: resultB rounded.
+
+	bits bytesAt: pixelIndex put: targetWord.! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/5/2017 18:04:19'!
+blendStrokeAndFill
+
+	| redCrosses greenCrosses blueCrosses isRedInside isGreenInside isBlueInside edgeCountWord redEdgeCount greenEdgeCount blueEdgeCount pixelIndex m |
+
+	boundsTop to: boundsBottom do: [ :displayY |
+		redCrosses _ 0.
+		greenCrosses _ 0.
+		blueCrosses _ 0.
+		pixelIndex _ displayY * targetWidth +  boundsLeft.
+		boundsLeft to: boundsRight do: [ :displayX |
+			pixelIndex _ pixelIndex + 1.
+
+			edgeCountWord _ edgeCountPerPixel bytesAt: pixelIndex.
+			redEdgeCount _ edgeCountWord at: 3.
+			greenEdgeCount _ edgeCountWord at: 2.
+			blueEdgeCount _ edgeCountWord at: 1.
+
+			"Not needed in C or asm, use signed char, i.e. a type where 16rFF means -1 and not 255"
+			redEdgeCount > 127 ifTrue: [ redEdgeCount _ redEdgeCount - 256 ].
+			greenEdgeCount > 127 ifTrue: [ greenEdgeCount _ greenEdgeCount - 256 ].
+			blueEdgeCount > 127 ifTrue: [ blueEdgeCount _ blueEdgeCount - 256 ].
+
+			redCrosses _ redCrosses + redEdgeCount.
+			greenCrosses _ greenCrosses + greenEdgeCount.
+			blueCrosses _ blueCrosses + blueEdgeCount.
+			isRedInside _ redCrosses ~= 0.
+			isGreenInside _ greenCrosses ~= 0.
+			isBlueInside _ blueCrosses ~= 0.
+			(currentOwnerIfClips isNil or: [
+				m _ morphAtPixel at: pixelIndex.
+				m = currentOwnerIfClips or: [m = currentMorph]]) ifTrue: [
+				self
+					blendStrokeAndFillAtX: displayX y: displayY pixelIndex: pixelIndex 
+					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
+				"-----------------------"
+				"y registrar el morph actual a este pixel!!, si es que lo pintamos... Mejorar. ver alpha."
+				"en realidad, si el alpha usado para el verde es relevante, mayor a 0.2, p.ej...
+				Ojo. Esto exige!! que los que contesten clipsSubmorphs, sean opacotes, sino...
+				Uh, usar isGreenInside hace que se clippe a la mitad interna del borde... Además, no se podrá agarrar un morph de la mitad externa del borde...
+				Se podria hacer que el blend conteste si estabamos adentro o no... Y simplemente usar eso...
+				"
+				"-----------------------"
+				isGreenInside ifTrue: [
+				"(auxAlphas at: pixelIndex) = 0 ifFalse: ["
+					morphAtPixel at: pixelIndex put: currentMorph ]].
+			]].
+	auxBitBlt
+		destX: boundsLeft destY: boundsTop
+		width: boundsRight-boundsLeft+1 height: boundsBottom-boundsTop+1.
+	auxBitBlt destForm bits: penAlpha.
+	auxBitBlt copyBits.
+	auxBitBlt
+		destX: boundsLeft destY: boundsTop
+		width: boundsRight-boundsLeft+1+1 height: boundsBottom-boundsTop+1.
+	auxBitBlt destForm bits: edgeCountPerPixel.
+	auxBitBlt copyBits.
+	Display forceToScreen! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/3/2017 20:09:58'!
+blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
+
+	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
+	Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
+
+	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent strokeAlphaToUse fillAlphaToUse |
+
+	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
+		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
+			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
+
+	antiAliasRedAlpha _ (antiAliasAlphasWord at: 3) / 127.0.
+	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
+	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
+	
+	targetForm depth = 1  "We only support depths 32 and 1, right now"
+		ifTrue: [
+			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
+				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
+				"bits _ targetForm bits.
+				backgroundWord _ bits at: pixelIndex >> 5.
+				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
+				bits at: pixelIndex >> 5 put: backgroundWord."
+				"Esto es super ineficiente pero parece andar bien. Mejorar..."
+				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
+			].
+			^ self].
+
+	strokeAlphaToUse _ strokeAlpha / 255.0.
+	fillAlphaToUse _ fillAlpha / 255.0.
+	bits _ targetForm bits.
+	targetWord _ bits bytesAt: pixelIndex.
+
+	isRedInside
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasRedAlpha * strokeAlphaToUse.
+			foreComponent _ strokeRed ]
+		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
+			alpha _ antiAliasRedAlpha * strokeAlphaToUse + ((1-antiAliasRedAlpha) * fillAlphaToUse).
+			foreComponent _ antiAliasRedAlpha * strokeRed + ((1-antiAliasRedAlpha) * fillRed) ].
+	resultR _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 3)).
+	targetWord at: 3 put: resultR rounded.
+
+	isGreenInside
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasGreenAlpha * strokeAlphaToUse.
+			foreComponent _ strokeGreen ]
+		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
+			alpha _ antiAliasGreenAlpha * strokeAlphaToUse + ((1-antiAliasGreenAlpha) * fillAlphaToUse).
+			foreComponent _ antiAliasGreenAlpha * strokeGreen + ((1-antiAliasGreenAlpha) * fillGreen) ].
+	resultG _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 2)).
+	targetWord at: 2 put: resultG rounded.
+
+	isBlueInside
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasBlueAlpha * strokeAlphaToUse.
+			foreComponent _ strokeBlue ]
+		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
+			alpha _ antiAliasBlueAlpha * strokeAlphaToUse + ((1-antiAliasBlueAlpha) * fillAlphaToUse).
+			foreComponent _ antiAliasBlueAlpha * strokeBlue + ((1-antiAliasBlueAlpha) * fillBlue) ].
+	resultB _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 1)).
+	targetWord at: 1 put: resultB rounded.
+
+	bits bytesAt: pixelIndex put: targetWord.! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/5/2017 16:51:11'!
+blendStrokeAndFillGradientsAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
+"To be used if Fill or Stroke Gradients
+(maybe do stroke and fill, with or without gradient, separatedly?)"
+	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
+	Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
+
+	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent strokeAlphaToUse strokeComponentToUse subpixX fillAlphaToUse fillComponentToUse |
+
+	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
+		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
+			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
+
+	antiAliasRedAlpha _ (antiAliasAlphasWord at: 3) / 127.0.
+	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
+	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
+	
+	targetForm depth = 1  "We only support depths 32 and 1, right now"
+		ifTrue: [
+			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
+				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
+				"bits _ targetForm bits.
+				backgroundWord _ bits at: pixelIndex >> 5.
+				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
+				bits at: pixelIndex >> 5 put: backgroundWord."
+				"Esto es super ineficiente pero parece andar bien. Mejorar..."
+				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
+			].
+			^ self].
+	
+	bits _ targetForm bits.
+	targetWord _ bits bytesAt: pixelIndex.
+
+	subpixX _ x-subPixelDelta.
+	strokeAlphaToUse _ (strokeAlpha ifNil: [strokeGradient alphaAtX: subpixX y: y]) / 255.0.
+	strokeComponentToUse _ strokeRed ifNil: [strokeGradient redAtX: subpixX y: y].
+	isRedInside
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasRedAlpha * strokeAlphaToUse.
+			foreComponent _ strokeComponentToUse ]
+		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
+			fillAlphaToUse _ (fillAlpha ifNil: [ fillGradient alphaAtX: subpixX y: y ]) / 255.0.
+			alpha _ antiAliasRedAlpha * strokeAlphaToUse + ((1-antiAliasRedAlpha) * fillAlphaToUse).
+			fillComponentToUse _ fillRed ifNil: [fillGradient redAtX: subpixX y: y].
+			foreComponent _ antiAliasRedAlpha * strokeComponentToUse + ((1-antiAliasRedAlpha) * fillComponentToUse) ].
+	resultR _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 3)).
+	targetWord at: 3 put: resultR rounded.
+
+	strokeAlphaToUse _ (strokeAlpha ifNil: [strokeGradient alphaAtX: x y: y]) / 255.0.
+	strokeComponentToUse _ strokeGreen ifNil: [strokeGradient greenAtX: x y: y].
+	isGreenInside
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasGreenAlpha * strokeAlphaToUse.
+			foreComponent _ strokeComponentToUse ]
+		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
+			fillAlphaToUse _ (fillAlpha ifNil: [ fillGradient alphaAtX: x y: y ]) / 255.0.
+			alpha _ antiAliasGreenAlpha * strokeAlphaToUse + ((1-antiAliasGreenAlpha) * fillAlphaToUse).
+			fillComponentToUse _ fillGreen ifNil: [fillGradient greenAtX: x y: y].
+			foreComponent _ antiAliasGreenAlpha * strokeComponentToUse + ((1-antiAliasGreenAlpha) * fillComponentToUse) ].
+	resultG _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 2)).
+	targetWord at: 2 put: resultG rounded.
+
+	subpixX _ x+subPixelDelta.
+	strokeAlphaToUse _ (strokeAlpha ifNil: [strokeGradient alphaAtX: subpixX y: y]) / 255.0.
+	strokeComponentToUse _ strokeBlue ifNil: [strokeGradient blueAtX: subpixX y: y].
+	isBlueInside
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasBlueAlpha * strokeAlphaToUse.
+			foreComponent _ strokeComponentToUse ]
+		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
+			fillAlphaToUse _ (fillAlpha ifNil: [ fillGradient alphaAtX: subpixX y: y ]) / 255.0.
+			alpha _ antiAliasBlueAlpha * strokeAlphaToUse + ((1-antiAliasBlueAlpha) * fillAlphaToUse).
+			fillComponentToUse _ fillBlue ifNil: [fillGradient blueAtX: subpixX y: y].
+			foreComponent _ antiAliasBlueAlpha * strokeComponentToUse + ((1-antiAliasBlueAlpha) * fillComponentToUse) ].
+	resultB _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 1)).
+	targetWord at: 1 put: resultB rounded.
+
+	bits bytesAt: pixelIndex put: targetWord.! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/5/2017 16:50:54'!
+blendStrokeGradientOnlyAtX: x y: y pixelIndex: pixelIndex
+"To be used if Stroke Gradient
+optimize strokeRed ifNil and the like. They ARE nil"
+	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
+	Blends stroke over background.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
+
+	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha strokeAlphaToUse strokeComponentToUse subpixX |
+
+	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
+		^self].	"Optimization: We are completely transparent at this point. Do nothing."
+
+	antiAliasRedAlpha _ (antiAliasAlphasWord at: 3) / 127.0.
+	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
+	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
+
+	targetForm depth = 1  "We only support depths 32 and 1, right now"
+		ifTrue: [
+			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
+				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
+				"bits _ targetForm bits.
+				backgroundWord _ bits at: pixelIndex >> 5.
+				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
+				bits at: pixelIndex >> 5 put: backgroundWord."
+				"Esto es super ineficiente pero parece andar bien. Mejorar..."
+				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
+			].
+			^ self].
+	
+	bits _ targetForm bits.
+	targetWord _ bits bytesAt: pixelIndex.
+
+	subpixX _ x-subPixelDelta.
+	strokeAlphaToUse _ (strokeAlpha ifNil: [ strokeGradient alphaAtX: subpixX y: y ]) / 255.0.
+	strokeComponentToUse _ strokeRed ifNil: [ strokeGradient redAtX: subpixX y: y ].
+	alpha _ antiAliasRedAlpha * strokeAlphaToUse.
+	resultR _ alpha * strokeComponentToUse + ((1.0 - alpha) * (targetWord at: 3)).
+	targetWord at: 3 put: resultR rounded.
+
+	strokeAlphaToUse _ (strokeAlpha ifNil: [ strokeGradient alphaAtX: x y: y ]) / 255.0.
+	strokeComponentToUse _ strokeGreen ifNil: [ strokeGradient greenAtX: x y: y ].
+	alpha _ antiAliasGreenAlpha * strokeAlphaToUse.
+	resultG _ alpha * strokeComponentToUse + ((1.0 - alpha) * (targetWord at: 2)).
+	targetWord at: 2 put: resultG rounded.
+
+	subpixX _ x+subPixelDelta.
+	strokeAlphaToUse _ (strokeAlpha ifNil: [ strokeGradient alphaAtX: subpixX y: y ]) / 255.0.
+	strokeComponentToUse _ strokeBlue ifNil: [ strokeGradient blueAtX: subpixX y: y ].
+	alpha _ antiAliasBlueAlpha * strokeAlphaToUse.
+	resultB _ alpha * strokeComponentToUse + ((1.0 - alpha) * (targetWord at: 1)).
+	targetWord at: 1 put: resultB rounded.
+
+	bits bytesAt: pixelIndex put: targetWord.! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/5/2017 18:04:19'!
+blendStrokeOnly
+
+	| pixelIndex m |
+	boundsTop to: boundsBottom do: [ :displayY |
+		pixelIndex _ displayY * targetWidth +  boundsLeft.
+		boundsLeft to: boundsRight do: [ :displayX |
+			pixelIndex _ pixelIndex + 1.
+				(currentOwnerIfClips isNil or: [
+				m _ morphAtPixel at: pixelIndex.
+				m = currentOwnerIfClips or: [m = currentMorph]]) ifTrue: [
+					self blendStrokeOnlyAtX: displayX y: displayY pixelIndex: pixelIndex ]]].
+
+	auxBitBlt
+		destX: boundsLeft destY: boundsTop
+		width: boundsRight-boundsLeft+1 height: boundsBottom-boundsTop+1.
+	auxBitBlt destForm bits: penAlpha.
+	auxBitBlt copyBits.
+	Display forceToScreen! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/3/2017 20:11:43'!
+blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
+
+	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
+	Blends stroke over background.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
+
+	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha strokeAlphaToUse |
+
+	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
+		^self].	"Optimization: We are completely transparent at this point. Do nothing."
+
+	antiAliasRedAlpha _ (antiAliasAlphasWord at: 3) / 127.0.
+	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
+	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
+
+	targetForm depth = 1  "We only support depths 32 and 1, right now"
+		ifTrue: [
+			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
+				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
+				"bits _ targetForm bits.
+				backgroundWord _ bits at: pixelIndex >> 5.
+				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
+				bits at: pixelIndex >> 5 put: backgroundWord."
+				"Esto es super ineficiente pero parece andar bien. Mejorar..."
+				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
+			].
+			^ self].
+
+	strokeAlphaToUse _ strokeAlpha / 255.0.
+	bits _ targetForm bits.
+	targetWord _ bits bytesAt: pixelIndex.
+
+	alpha _ antiAliasRedAlpha * strokeAlphaToUse.
+	resultR _ alpha * strokeRed + ((1.0 - alpha) * (targetWord at: 3)).
+	targetWord at: 3 put: resultR rounded.
+
+	alpha _ antiAliasGreenAlpha * strokeAlphaToUse.
+	resultG _ alpha * strokeGreen + ((1.0 - alpha) * (targetWord at: 2)).
+	targetWord at: 2 put: resultG rounded.
+
+	alpha _ antiAliasBlueAlpha * strokeAlphaToUse.
+	resultB _ alpha * strokeBlue + ((1.0 - alpha) * (targetWord at: 1)).
+	targetWord at: 1 put: resultB rounded.
+
+	bits bytesAt: pixelIndex put: targetWord.! !
+
+!VectorEngineNoDashes methodsFor: 'accessing' stamp: 'jmv 12/5/2017 18:04:19'!
+clipRect: aRectangle 
+	"by convention, aRectangle includes left and top but does not include right and bottom.
+	We do draw clipRight and clipBottom but not beyond.
+	"
+	"In form coordinates"
+	clipLeft _ aRectangle left.
+	clipTop _ aRectangle top.
+	clipRight _ aRectangle right - 1.
+	clipBottom _ aRectangle bottom - 1! !
+
+!VectorEngineNoDashes methodsFor: 'accessing' stamp: 'jmv 12/5/2017 18:04:19'!
+clippingRectForCurrentMorph
+	"In form coordinates"
+
+	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom! !
+
+!VectorEngineNoDashes methodsFor: 'path fragments' stamp: 'jmv 12/5/2017 18:04:19'!
+closeTrajectory
+
+	self displayCoordlineToX: firstX y: firstY! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - private' stamp: 'jmv 12/5/2017 18:13:21'!
+computeCrossCountsForX: x y: y
+	| thisDisplayY yCrossed piBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffest blueOffset |
+
+	"Atencion!! hacerlo SOLO si hay fill!! si no hay fill, ni perder tiempo en la inicializacion, etc"
+	thisDisplayY _ (y truncated max: clipTop-1) min: clipBottom-1.
+	previousYTruncated ifNil: [ 
+		previousYTruncated _ thisDisplayY.
+		^self ].
+	thisDisplayY = previousYTruncated ifTrue: [
+		^ self ].
+
+	thisDisplayY > previousYTruncated ifTrue: [
+			yCrossed _ thisDisplayY.
+			increment _ 1 ]
+		ifFalse: [
+			yCrossed _ previousYTruncated.
+			increment _ -1 ].
+
+	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
+	The effect is the same, and we need to clean up less stuff afterwards.
+	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
+	piBase _ yCrossed * targetWidth + 1.
+	redOffset _ (x+subPixelDelta) truncated + 1 max: clipLeft.
+	greenOffest _ x truncated + 1 max: clipLeft.
+	blueOffset _ (x-subPixelDelta) truncated + 1 max: clipLeft.
+	redPixelIndex _ piBase + redOffset.
+	greenPixelIndex _ piBase + greenOffest.
+	bluePixelIndex _ piBase + blueOffset.
+
+	"Three possible cases here: RGB in one word (pixel); RG in one, and G in another; R in one, GB in another"
+	redPixelIndex = bluePixelIndex
+		ifTrue: [						"First case: RGB in the same word"
+			redOffset <= clipRight ifTrue: [
+				countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+				redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+				countWord at: 3 put: redCount.
+				greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+				countWord at: 2 put: greenCount.
+				blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+				countWord at: 1 put: blueCount.
+				edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+		]
+		ifFalse: [
+			redPixelIndex = greenPixelIndex
+				ifTrue: [				"Second case: RG in one word, B in following"
+					redOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+						countWord at: 3 put: redCount.
+						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+						countWord at: 2 put: greenCount.
+						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+
+					blueOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+						countWord at: 1 put: blueCount.
+						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+				]
+				ifFalse: [			"Third case: R in one word, GB in the following"
+					redOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+						countWord at: 3 put: redCount.
+						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+
+					blueOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+						countWord at: 2 put: greenCount.
+						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+						countWord at: 1 put: blueCount.
+						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+				]
+		].
+	previousYTruncated _ thisDisplayY! !
+
+!VectorEngineNoDashes methodsFor: 'accessing' stamp: 'jmv 12/5/2017 18:04:19'!
+currentMorph: aMorph
+	currentMorph _ aMorph! !
+
+!VectorEngineNoDashes methodsFor: 'accessing' stamp: 'jmv 12/5/2017 18:04:19'!
+currentOwnerIfClips: currentMorphOwnerOrNil
+	currentOwnerIfClips _ currentMorphOwnerOrNil! !
+
+!VectorEngineNoDashes methodsFor: 'accessing' stamp: 'jmv 12/5/2017 18:04:19'!
+currentPoint
+
+	currentX ifNil: [ ^nil ].
+	^currentX@currentY! !
+
+!VectorEngineNoDashes methodsFor: 'path fragments' stamp: 'jmv 12/6/2017 15:27:08'!
+displayCoordarcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
+"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil;
+	initializeTrajectory;
+	displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2;
+	finishTrajectory.
+Display forceToScreen
+"
+	| d hops angle thetaCos thetaSin xp yp x0 y0 x y |
+	
+	"Por supuesto probar tambien rx no igual a ry, y uno (o ambos) menor que el ancho de trazo..."
+	thetaCos _ theta cos.
+	thetaSin _ theta sin.
+	angle _ startAngle.
+	xp _ angle cos * rx.
+	yp _ angle sin * ry.
+	x0 _ thetaCos * xp - (thetaSin * yp) + cx.
+	y0 _ thetaSin * xp + (thetaCos * yp) + cy.
+	firstX
+		ifNotNil: [ self displayCoordlineToX: x0 y: y0 ]	"Draw a line. There are cases where we want to join an arc. For example, window frames"
+		ifNil: [
+			"trajectory starts here. Eventually, #closeTrajectory should draw a line to here"
+			firstX _ x0.
+			firstY _ y0.
+			self addToTrajectoryX: x0 y: y0 ].
+	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
+	d _ sweepAngle / hops.
+	hops timesRepeat: [
+		angle _ angle + d.
+		xp _ angle cos * rx.
+		yp _ angle sin * ry.
+		x _ thetaCos * xp - (thetaSin * yp) + cx.
+		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		self addToTrajectoryX: x y: y ].
+
+	currentX _ x.
+	currentY _ y.
+	lastControl2Point _ nil! !
+
+!VectorEngineNoDashes methodsFor: 'path fragments' stamp: 'jmv 12/5/2017 16:19:03'!
+displayCoordarcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil;
+	initializeTrajectory;
+	displayCoordmoveToX: 100 y: 100;
+	displayCoordarcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
+	displayCoordmoveToX: 100 y: 100;
+	displayCoordarcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false;
+	finishTrajectory.
+Display forceToScreen
+"
+	"Calcular: cx, cy, rx, ry, phi, theta1, deltaTheta"
+	| x1 y1 cosPhi sinPhi x12hd y12hd x1p y1p rxSq rySq x1pSq y1pSq bigSqR bigSqRNumerator bigSqRDenominator sign cxp cyp cx cy theta1 theta2 deltaTheta scaleSq scale newRx newRy |
+	x1 _ currentX.
+	y1 _ currentY.
+	"Handle out of range parameters as requested by the w3 implementation notes"
+	(x2 = x1 and: [ y2 = y1 ]) ifTrue: [ ^self ].
+	(rx = 0.0 or: [ ry = 0.0 ]) ifTrue: [ ^self displayCoordlineToX: x2 y: y2 ].
+	rx < 0 ifTrue: [
+		^self displayCoordarcToX: x2 y: y2 radiusX: 0.0 -rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
+	ry < 0 ifTrue: [
+		^self displayCoordarcToX: x2 y: y2 radiusX: rx radiusY: 0.0-ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
+	
+	cosPhi _ phi cos.
+	sinPhi _ phi sin.
+	"step 1 in http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes"
+	x12hd _ (x1-x2) * 0.5.
+	y12hd _ (y1-y2) * 0.5.
+	x1p _ (cosPhi * x12hd) + (sinPhi * y12hd).
+	y1p _ (cosPhi * y12hd) - (sinPhi * x12hd).
+
+	"step 2"
+	rxSq _ rx * rx.
+	rySq _ ry * ry.
+	x1pSq _ x1p * x1p.
+	y1pSq _ y1p * y1p.
+	"ensure radii are large enough"
+	scaleSq _ (x1pSq / rxSq) + (y1pSq / rySq).
+	scaleSq > 1 ifTrue: [
+		scale _ scaleSq sqrt.
+		newRx _ scale * rx.
+		newRy _ scale * ry.
+		(newRx = rx or: [ newRy = ry ]) ifTrue: [		"This happens when scaleSq is so close to 1, that the multiplication rounds to the same numbers"
+			newRx _ scaleSq * rx.
+			newRy _ scaleSq * ry ].
+		^self displayCoordarcToX: x2 y: y2 radiusX: newRx radiusY: newRy angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+		].
+	bigSqRNumerator _ (rxSq * rySq) - (rxSq * y1pSq)-(rySq * x1pSq).
+	bigSqRDenominator _ (rxSq * y1pSq) + (rySq * x1pSq).
+	sign _ doLargerArc = useIncreasingAngles ifTrue: [ -1 ] ifFalse: [ 1 ].
+	bigSqR _ (bigSqRNumerator / bigSqRDenominator max: 0.0) sqrt * sign.		"This only can be < 0.0 because of rounding errors. Take 0.0 in such cases."
+	cxp _ bigSqR * rx * y1p / ry.
+	cyp _ 0.0 - (bigSqR * ry * x1p / rx).
+
+	"step 3"
+	cx _ (cosPhi * cxp) - (sinPhi * cyp) + ((x1+x2) * 0.5).
+	cy _ (sinPhi * cxp) + (cosPhi * cyp) + ((y1+y2) * 0.5).
+	
+"
+| u v a |
+Transcript clear.
+u _ 1@4. v _ 7@2.
+a _ ((u dotProduct: v) / (u r * v r) ) arcCos.
+a _ a * (((u x * v y) - (u y * v x)) sign).
+a print.
+(v theta - u theta) print.
+Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entre cero y 2pi...
+"
+
+	"step 4"
+	"Ojo signo del angulo y del eje y!!!!!!!!!!"
+	theta1 _ (((x1p - cxp) / rx) @ ((y1p - cyp) / ry)) theta.
+	theta2 _ (((0 - x1p - cxp) / rx) @ (( 0 -y1p - cyp) / ry)) theta.
+	deltaTheta _ theta2 - theta1.
+	useIncreasingAngles = (deltaTheta > 0) ifFalse: [
+		deltaTheta > 0
+			ifTrue: [ deltaTheta _ deltaTheta - Float pi - Float pi ]
+			ifFalse: [ deltaTheta _ deltaTheta + Float pi + Float pi ]
+		].
+	"Y aca calcular como dar vuelta deltaTheta, ver."
+
+
+	"Finalmente, estudiar la correccion de valores fuera de rango"
+	
+
+	self displayCoordarcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
+
+!VectorEngineNoDashes methodsFor: 'paths' stamp: 'jmv 12/5/2017 17:24:49'!
+displayCoordcubicBezier: points borderWidth: aStrokeWidth borderColor: bc fillColor: fc strokeDashArray: sda strokeDashArrayOffset: sdao
+	"points must be of size 4
+	http://en.wikipedia.org/wiki/Bezier_curve"
+	"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	displayCoordcubicBezier: {10@5. 15@30. 60@40. 60@10} * 10 borderWidth: 2 * 5
+	borderColor:  (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8)
+	strokeDashArray: nil strokeDashArrayOffset: nil.
+Display forceToScreen
+	"
+
+	bc ifNil: [ fc ifNil: [ ^self ]].
+
+	self setupBorderWidth: aStrokeWidth borderColor: bc fillColor: fc strokeDashArray: sda strokeDashArrayOffset: sdao.
+	self initializeTrajectory.
+	self displayCoordmoveToX: points first x y: points first y.
+	self
+		displayCoordcurveToX: points fourth x y: points fourth y
+		control1X: points second x y: points second y
+		control2X: points third x y: points third y.
+	self finishTrajectory! !
+
+!VectorEngineNoDashes methodsFor: 'path fragments' stamp: 'jmv 12/5/2017 16:19:10'!
+displayCoordcurveToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
+	"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil;
+	initializeTrajectory;
+	displayCoordmoveToX: 100 y: 100;
+	displayCoordcurveToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200;
+	finishTrajectory.
+Display forceToScreen
+	"
+
+	| dx dy hops increment t x0 y0 oneLessT f2 f3 f1 f23 f4 x y |
+
+	dx _ (x1-currentX) abs + (x2-x1) abs + (x3-x2) abs.
+	dy _ (y1-currentY) abs + (y2-y1) abs + (y3-y2) abs.
+	hops _ ((dx max: dy) * hopsPerPixel)truncated + 1.
+	increment _ 1.0 / hops.
+	t _ 0.0.
+	"en muchos casos, secuencias de estos,  repetimos puntos, el ultimo de la curva anterior... pensar, etc"
+	x0 _ currentX.
+	y0 _ currentY.
+	self addToTrajectoryX: x0 y: y0.
+	hops-1 timesRepeat: [
+		t _ t + increment.
+		oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT * oneLessT.
+		f23 _ 3 * oneLessT * t.
+		f2 _ f23 * oneLessT.
+		f3 _ f23 * t.
+		f4 _ t * t * t.
+		x _ (f1 * x0) + (f2 * x1) + (f3 * x2) + (f4 * x3).
+		y _ (f1 * y0) + (f2 * y1) + (f3 * y2) + (f4 * y3).
+		self addToTrajectoryX: x y: y ].
+	self addToTrajectoryX: x3 y: y3.
+
+	currentX _ x3.
+	currentY _ y3.
+	lastControl2Point _ x2@y2! !
+
+!VectorEngineNoDashes methodsFor: 'path fragments' stamp: 'jmv 12/5/2017 16:19:13'!
+displayCoordlineToX: x2 y: y2
+"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil;
+	initializeTrajectory;
+	displayCoordmoveToX: 100 y: 100;
+	displayCoordlineToX: 200 y: 150;
+	finishTrajectory.
+Display forceToScreen
+"
+	| dx dy hops incrementX incrementY x y |
+	x _ currentX.
+	y _ currentY.
+	dx _ x2 - x.
+	dy _ y2 - y.
+	hops _ ((dx abs max: dy abs) * hopsPerPixel)truncated + 1.
+	incrementX _ dx *1.0 / hops.
+	incrementY _ dy *1.0 / hops.
+	hops timesRepeat: [
+		self addToTrajectoryX: x y: y.
+		x _ x + incrementX.
+		y _ y + incrementY ].
+	self addToTrajectoryX: x2 y: y2.
+
+	currentX _ x2.
+	currentY _ y2.
+	lastControl2Point _ nil! !
+
+!VectorEngineNoDashes methodsFor: 'path fragments' stamp: 'jmv 12/6/2017 15:28:20'!
+displayCoordmoveToX: x y: y
+"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil;
+	initializeTrajectory;
+	displayCoordmoveToX: 100 y: 100;
+	displayCoordlineToX: 200 y: 150;
+	displayCoordmoveToX: 210 y: 150;
+	displayCoordlineToX: 300 y: 200;
+	finishTrajectory.
+Display forceToScreen
+"
+
+	"A discontinuity in the trajectory"
+
+	"We are starting a new trajectory, or at a discontinuity in trajectory. Eventually #closeTrajectory should draw a line to here"
+	fragmentStartIndexes add: trajectoryPoints size + 1.	"Next point will be first in a new trajectory fragment"
+	firstX _ x.
+	firstY _ y.
+	currentX _ x.
+	currentY _ y.
+
+	lastControl2Point _ nil! !
+
+!VectorEngineNoDashes methodsFor: 'paths' stamp: 'jmv 12/5/2017 16:19:20'!
+displayCoordquadraticBezier: points borderWidth: aStrokeWidth borderColor: bc fillColor: fc strokeDashArray: sda strokeDashArrayOffset: sdao
+	"points must be of size 3
+	http://en.wikipedia.org/wiki/Bezier_curve"
+	"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	displayCoordquadraticBezier: { 10@5 . 15@30 . 60@10 } borderWidth: 2
+	borderColor:  (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4)
+	strokeDashArray: nil strokeDashArrayOffset: nil.
+Display forceToScreen
+	"
+
+	bc ifNil: [ fc ifNil: [ ^self ]].
+
+	self setupBorderWidth: aStrokeWidth borderColor: bc fillColor: fc strokeDashArray: sda strokeDashArrayOffset: sdao.
+	self initializeTrajectory.
+
+	self displayCoordmoveToX: points first x y: points first y.
+	self
+		displayCoordquadraticBezierCurveToX: points third x y: points third y
+		controlX: points second x y: points second y.
+
+	self finishTrajectory! !
+
+!VectorEngineNoDashes methodsFor: 'path fragments' stamp: 'jmv 12/5/2017 16:19:23'!
+displayCoordquadraticBezierCurveToX: x2 y: y2 controlX: x1 y: y1
+	"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	setupBorderWidth: 1.0 borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil;
+	initializeTrajectory;
+	displayCoordmoveToX: 100 y: 100;
+	displayCoordquadraticBezierCurveToX: 300 y: 200 controlX: 100 y: 210;
+	finishTrajectory.
+Display forceToScreen
+	"
+	| dx dy hops increment t x0 y0 oneLessT f1 f3 f2 x y |
+	dx _ (x1-currentX) abs + (x2-x1) abs.
+	dy _ (y1-currentY) abs + (y2-y1) abs.
+	hops _ ((dx max: dy) * hopsPerPixel)truncated + 1.
+	increment _ 1.0 / hops.
+	t _ 0.0.
+	x0 _ currentX.
+	y0 _ currentY.
+	self addToTrajectoryX: x0 y: y0.
+	hops-1 timesRepeat: [
+		t _ t + increment.
+		oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT.
+		f2 _ 2* oneLessT * t.
+		f3 _ t * t.
+		x _ (f1 * x0) + (f2 * x1) + (f3 * x2).
+		y _ (f1 * y0) + (f2 * y1) + (f3 * y2).
+		self addToTrajectoryX: x y: y ].
+	self addToTrajectoryX: x2 y: y2.
+
+	currentX _ x2.
+	currentY _ y2.
+	lastControl2Point _ x1@y1! !
+
+!VectorEngineNoDashes methodsFor: 'paths' stamp: 'jmv 12/5/2017 16:19:26'!
+displayCoordspolyLine: points borderWidth: aStrokeWidth borderColor: bc fillColor: fc strokeDashArray: sda strokeDashArrayOffset: sdao
+"
+(VectorEngineNoDashes onForm: Display)
+	resetMorphBounds;
+	displayCoordspolyLine: { 10@5 . 15@30 . 60@10 } borderWidth: 2
+	borderColor:  (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4)
+	strokeDashArray: nil strokeDashArrayOffset: nil.
+Display forceToScreen
+"
+	| p |
+	bc ifNil: [ fc ifNil: [ ^self ]].
+	self setupBorderWidth: aStrokeWidth borderColor: bc fillColor: fc strokeDashArray: sda strokeDashArrayOffset: sdao.
+	self initializeTrajectory.
+
+	self displayCoordmoveToX: points first x y: points first y.
+	2 to: points size do: [ :i |
+		p _ points at: i.
+		self displayCoordlineToX: p x y: p y ].
+
+	self finishTrajectory! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - aux' stamp: 'jmv 12/6/2017 15:28:23'!
+finishTrajectory
+	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
+	| dilatedHalfWidth fragmentEndIndex pp |
+
+	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
+	doFill ifTrue: [
+		(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
+			"This is actually an error condition. If we are asked to fill, then the path should be closed.
+			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
+			self closeTrajectory ]].
+
+	"Current trajectory finished"
+
+	"Compute line crossing for fills."
+	doFill ifTrue: [
+		fragmentStartIndexes withNextDo: [ :fragmentStartIndex :nextFragmentStartOrNil |
+			fragmentEndIndex _ nextFragmentStartOrNil ifNotNil: [ :ns | ns-1 ] ifNil: [ trajectoryPoints size ].
+			previousYTruncated _ nil.
+			fragmentStartIndex to: fragmentEndIndex do: [ :index |
+					pp _ trajectoryPoints at: index.
+					self computeCrossCountsForX: pp x y: pp y.
+				].
+			].
+		].
+	previousYTruncated _ nil.
+
+	"calcular bounds"
+	boundsTop _ targetHeight.			"drawable bottom. Will later be refined."
+	boundsBottom _ 0.						"drawable top. Will later be refined."
+	boundsLeft _ targetWidth.				"drawable right. Will later be refined."
+	boundsRight _ 0.						"drawable left. Will later be refined."
+	trajectoryPoints do: [ :p |
+		boundsTop _ boundsTop min: p y.
+		boundsBottom _ boundsBottom max: p y.
+		boundsLeft _ boundsLeft min: p x.
+		boundsRight _ boundsRight max: p x.
+		].
+	"Compute affected rect. Honor clipRect"
+	dilatedHalfWidth _ strokeWidth + antiAliasingWidth * 0.5.
+	boundsTop _ (boundsTop -dilatedHalfWidth) truncated +1.
+	boundsTop < clipTop ifTrue: [ boundsTop _ clipTop ].
+	boundsBottom _ (boundsBottom +dilatedHalfWidth) truncated.
+	boundsBottom > clipBottom ifTrue: [ boundsBottom _ clipBottom ].
+	boundsLeft _ (boundsLeft -dilatedHalfWidth -subPixelDelta) truncated +1.
+	boundsLeft< clipLeft ifTrue: [ boundsLeft _ clipLeft ].
+	boundsRight _ (boundsRight +dilatedHalfWidth +subPixelDelta) truncated.
+	boundsRight > clipRight ifTrue: [ boundsRight _ clipRight ].
+
+	"Honor  strokeDashArray and strokeDashArrayOffset. use trajectoryLength if appropriate"
+	trajectoryPoints do: [ :p | self plotNibAplhaX: p x y: p y ].
+
+	firstX _ nil.
+	firstY _ nil.
+	currentX _ nil.
+	currentY _ nil.
+	trajectoryPoints _ OrderedCollection new.
+	lastControl2Point _ nil.
+	
+	morphBoundsTop _ morphBoundsTop min: boundsTop.
+	morphBoundsBottom _ morphBoundsBottom max: boundsBottom.
+	morphBoundsLeft _ morphBoundsLeft min: boundsLeft.
+	morphBoundsRight _ morphBoundsRight max: boundsRight.
+
+	doFill ifTrue: [
+		^doStroke
+			ifTrue: [ self blendStrokeAndFill. Display forceToScreen ]
+			ifFalse: [ self blendFillOnly. Display forceToScreen ]].
+
+	self blendStrokeOnly.
+	Display forceToScreen! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - aux' stamp: 'jmv 12/6/2017 15:28:30'!
+initializeTrajectory
+
+	firstX _ nil.
+	firstY _ nil.
+	currentX _ nil.
+	currentY _ nil.
+	trajectoryPoints _ OrderedCollection new.
+	fragmentStartIndexes _ OrderedCollection new.
+	lastControl2Point _ nil! !
+
+!VectorEngineNoDashes methodsFor: 'accessing' stamp: 'jmv 12/5/2017 18:04:19'!
+lastControl2Point
+
+	^lastControl2Point! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - aux' stamp: 'jmv 12/5/2017 18:04:19'!
+plotNibAplhaX: x y: y
+
+	"slight optimization possible when we know width = 0... perhaps implement:
+		-we know palpha is never 127
+		- we know distanceToEdge is always > erodedHalfWidth.
+	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
+	Mas importante:
+		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
+	| dilatedHalfWidth erodedHalfWidth distanceToAxis alpha t b l r constant1 alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
+
+	dilatedHalfWidth _ strokeWidth + antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
+	erodedHalfWidth _ strokeWidth - antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
+	constant1 _ 127.0 / antiAliasingWidth.
+
+	"Compute affected rect. Honor clipRect"
+	t _ (y -dilatedHalfWidth) truncated +1.
+	t < clipTop ifTrue: [ t _ clipTop ].
+	b _ (y +dilatedHalfWidth) truncated.
+	b > clipBottom ifTrue: [ b _ clipBottom ].
+	l _ (x -dilatedHalfWidth -subPixelDelta) truncated +1.
+	l < clipLeft ifTrue: [ l _ clipLeft ].
+	r _ (x +dilatedHalfWidth +subPixelDelta) truncated.
+	r > clipRight ifTrue: [ r _ clipRight ].
+
+	t to: b do: [ :displayY |
+		pixelIndex _ displayY * targetWidth +  l.
+		l to: r do: [ :displayX |
+			pixelIndex _ pixelIndex + 1.
+			alphaWord _ penAlpha bytesAt: pixelIndex.
+			alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
+				doUpdate _ false.
+				dy _ displayY - y.
+				dySquared _ dy * dy.
+				dx _ displayX - x.
+				"Red"
+				dxp _ dx - subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 3) ifTrue: [
+							alphaWord at: 3 put: alpha.
+							doUpdate _ true ]].
+				"Green"
+				dxSquared _ dx * dx.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 2) ifTrue: [
+							alphaWord at: 2 put: alpha.
+							doUpdate _ true ]].
+				"Blue"
+				dxp _ dx + subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 1) ifTrue: [
+							alphaWord at: 1 put: alpha.
+							doUpdate _ true ]].
+				doUpdate ifTrue: [
+					penAlpha bytesAt: pixelIndex put: alphaWord ]]]]! !
+
+!VectorEngineNoDashes methodsFor: 'private' stamp: 'jmv 12/5/2017 18:04:19'!
+resetMorphBounds
+
+	morphBoundsTop _ targetHeight - 1.
+	morphBoundsBottom _ 0.
+	morphBoundsLeft _ targetWidth - 1.
+	morphBoundsRight _ 0! !
+
+!VectorEngineNoDashes methodsFor: 'private' stamp: 'jmv 12/5/2017 18:04:19'!
+setForm: aForm
+	"
+	World extent: World extent
+	"
+	| hack s |
+	targetForm _ aForm.
+	targetWidth _ aForm width.
+	targetHeight _ aForm height.
+	 self clipRect: (0@0 corner: targetWidth@targetHeight).
+	antiAliasingWidth _ VectorCanvas defaultAntiAliasingWidth.
+	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"
+	s _ aForm bits size.
+	(penAlpha isNil or: [ penAlpha size ~= s ])
+		ifTrue: [
+			penAlpha _ WordArray new: s.
+			edgeCountPerPixel _ WordArray new: s.
+			morphAtPixel _ Array new: s.
+			targetSubpixelAlphas _ nil.
+			targetSubpixelAlphasIfStrokesAndFillsWereOpaque _ nil.
+			hack _ Form extent: targetWidth@targetHeight depth: 32 bits: penAlpha.
+			auxBitBlt _ BitBlt toForm: hack.
+			auxBitBlt fillBitmap: (Bitmap with: 16rFF000000).
+			auxBitBlt combinationRule: Form over ].
+
+	"Perhaps this should be done in an ifCurtailed: block in case of Morphic drawing failure..."
+	auxBitBlt destRect: targetForm boundingBox.
+	auxBitBlt destForm bits: penAlpha.
+	auxBitBlt copyBits.
+	auxBitBlt destForm bits: edgeCountPerPixel.
+	auxBitBlt copyBits.
+	morphAtPixel atAllPut: 0.
+	targetSubpixelAlphas ifNotNil: [
+		auxBitBlt destForm bits: targetSubpixelAlphas.
+		auxBitBlt copyBits.
+		auxBitBlt destForm bits: targetSubpixelAlphasIfStrokesAndFillsWereOpaque.
+		auxBitBlt copyBits ]! !
+
+!VectorEngineNoDashes methodsFor: 'trajectories - aux' stamp: 'jmv 12/5/2017 16:17:28'!
+setupBorderWidth: aStrokeWidth borderColor: aStrokeColor fillColor: aFillColor strokeDashArray: sda strokeDashArrayOffset: sdao
+	"Prepare parameters for drawing stroke, fill, or both."
+
+	| strokeAlphaFactor |
+
+	doFill _ aFillColor notNil.
+
+	"We might decide not to draw too thin strokes if there is a fill present. See (and understand the results!! #experLinesAndShapes2)
+	Without this, the last lines show green, not red...
+	In any case, allow very thin strokes if they are the same color as the fill. this is used for bold TrueType"
+	"doStroke _ aStrokeColor notNil and: [ aStrokeWidth > (antiAliasingWidth*0.33) or: [ aStrokeWidth > 0.0 and: [ doFill not or: [aStrokeColor = aFillColor]]]]."
+	doStroke _ aStrokeColor notNil and: [ aStrokeWidth > 0.0 ].
+	doStroke
+		ifTrue: [
+			(doFill and: [ aStrokeWidth < antiAliasingWidth and: [ aStrokeColor = aFillColor ]])
+				ifTrue: [
+					"Strokes we want to show. They may really thin, but strokeColor is same as fillColor, so there's no problem sampling them."
+					strokeWidth _ aStrokeWidth.
+					strokeAlphaFactor _ 1.0.
+					hopsPerPixel _ 8.								"See #experimentHopsPerPixel1"
+					doStroke _ false.					"Use the blending method to be used when there's no stroke, just fill"
+					]
+				ifFalse: [
+					"Strokes we want to show. They are not too thin, or maybe they are, but there's no fill. Make them wide enough to be properly sampled."
+					strokeWidth _ aStrokeWidth max: antiAliasingWidth.
+					strokeAlphaFactor _ aStrokeWidth / strokeWidth.
+					hopsPerPixel _ 10.0 / strokeWidth + 1.		"See #experimentHopsPerPixel2"
+			 		]]
+		ifFalse: [
+			"No stroke, or stroke so thin that it is best to just show the fill"
+			strokeWidth _ 0.0.
+			hopsPerPixel _ 8.										"See #experimentHopsPerPixel3"
+			].
+
+	"Done with stroke width. Now prepare colors."
+	fillAlpha _ nil. fillRed _ nil. fillGreen _ nil. fillBlue _ nil. fillGradient _ nil.
+	doFill ifTrue: [
+		(aFillColor isKindOf: Color)
+			ifTrue: [
+				fillAlpha _ (aFillColor alpha * 255.0) rounded.
+				fillRed _ (aFillColor red * 255.0) rounded.
+				fillGreen _ (aFillColor green * 255.0) rounded.
+				fillBlue _ (aFillColor blue * 255.0) rounded ]
+			ifFalse: [
+				fillGradient _ aFillColor ]].
+	strokeAlpha _ nil. strokeRed _ nil. strokeGreen _ nil. strokeBlue _ nil. strokeGradient _ nil.
+	strokeDashArray _ nil. strokeDashArrayOffset _ nil.
+	doStroke ifTrue: [
+		(aStrokeColor isKindOf: Color)
+			ifTrue: [
+				strokeAlpha _ (aStrokeColor alpha * 255.0 * strokeAlphaFactor) rounded.
+				strokeRed _ (aStrokeColor red * 255.0) rounded.
+				strokeGreen _ (aStrokeColor green * 255.0) rounded.
+				strokeBlue _ (aStrokeColor blue * 255.0) rounded ]
+			ifFalse: [
+				strokeGradient _ aStrokeColor ].
+		sda ifNotNil: [
+			strokeDashArray _ sda withIndexCollect: [ :each :i |
+				 i odd ifTrue: [ each - antiAliasingWidth ] ifFalse: [ each ]] .
+			strokeDashArrayOffset _ sdao ]]! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/5/2017 16:24:33'!
+experLinesAndShapes
+	"
+	self experLinesAndShapes
+	"
+	| engine y1 yy2 dy y2 |
+	engine _ self onForm: Display.
+	engine resetMorphBounds.
+	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine
+		initializeTrajectory;
+		displayCoordmoveToX: 20 y: 10;
+		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
+		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		closeTrajectory; finishTrajectory.
+	Display forceToScreen.
+	engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine
+		initializeTrajectory;
+		displayCoordmoveToX: 220 y: 10;
+		displayCoordlineToX: 410 y: 15; displayCoordlineToX: 220 y: 20;
+		displayCoordlineToX: 215 y: 410; displayCoordlineToX: 210 y: 20;
+		closeTrajectory; finishTrajectory.
+	Display forceToScreen.
+
+	y1 _ 10.
+	dy _ 3.
+	y2 _ VectorCanvas defaultAntiAliasingWidth * 2.
+	15 timesRepeat: [
+		"stroke con w > aaw"
+		yy2 _ y2 >= 1 ifTrue: [ VectorCanvas defaultAntiAliasingWidth * 0.5 ] ifFalse: [0].
+		engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			initializeTrajectory;
+			displayCoordmoveToX: 431 y: y1+yy2; displayCoordlineToX: 530 y: y1+yy2+dy;
+			displayCoordlineToX: 530 y: y1+y2-yy2+dy; displayCoordlineToX: 431 y: y1+y2-yy2;
+			closeTrajectory; finishTrajectory.
+		engine
+			initializeTrajectory;
+			displayCoordmoveToX:  y1+yy2 y: 431; displayCoordlineToX: y1+yy2+dy y: 530;
+			displayCoordlineToX: y1+y2-yy2+dy y: 530; displayCoordlineToX: y1+y2-yy2 y: 431;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w casi=0"
+		engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			initializeTrajectory;
+			displayCoordmoveToX: 531 y: y1+dy; displayCoordlineToX: 630 y: y1+dy+dy;
+			displayCoordlineToX: 630 y: y1+y2+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			initializeTrajectory;
+			displayCoordmoveToX: y1+dy y: 531; displayCoordlineToX: y1+dy+dy y: 630;
+			displayCoordlineToX: y1+y2+dy+dy y: 630; displayCoordlineToX: y1+y2+dy y: 531;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w =0"
+		engine setupBorderWidth: 0.0 borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			initializeTrajectory;
+			displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
+			displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			initializeTrajectory;
+			displayCoordmoveToX: y1+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy y: 730;
+			displayCoordlineToX: y1+y2+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy y: 631;
+			closeTrajectory; finishTrajectory.
+		"solo stroke, no fill"
+		engine setupBorderWidth: y2 borderColor: Color black fillColor: Color transparent 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			initializeTrajectory;
+			displayCoordmoveToX: y2*0.5+731 y: y2*0.5 + y1+dy+dy+dy; displayCoordlineToX: 830 y: y2 * 0.5 + y1  + dy + dy+dy+dy;
+			finishTrajectory.
+		engine
+			initializeTrajectory;
+			displayCoordmoveToX: y2*0.5 + y1+dy+dy+dy y: y2*0.5+731; displayCoordlineToX: y2 * 0.5 + y1  + dy + dy+dy+dy y: 830;
+			finishTrajectory.
+		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		Display forceToScreen.
+		y2 _ y2 * 0.8.
+	].
+	
+	Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/5/2017 18:04:19'!
+experLinesAndShapes2
+	"
+	self experLinesAndShapes2
+	"
+	| engine y1 dy y2 |
+	engine _ self onForm: Display.
+	engine resetMorphBounds.
+
+	y1 _ 10.
+	dy _ 3.
+	y2 _ VectorCanvas defaultAntiAliasingWidth*4*2.
+	15 timesRepeat: [
+		"Solo fill. w chico pero aun visible"
+		engine setupBorderWidth: 1.0 borderColor: Color green fillColor: Color red 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 131 y: y1; displayCoordlineToX: 230 y: y1+dy;
+			displayCoordlineToX: 230 y: y1+y2+dy; displayCoordlineToX: 131 y: y1+y2;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1 y: 131; displayCoordlineToX: y1+dy y: 230;
+			displayCoordlineToX: y1+y2+dy y: 230;displayCoordlineToX: y1+y2 y: 131;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w chico pero aun visible"
+		engine setupBorderWidth: 0.8 borderColor: Color green fillColor: Color red 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 231 y: y1+dy; displayCoordlineToX: 330 y: y1+dy+dy;
+			displayCoordlineToX: 330 y: y1+y2+dy+dy; displayCoordlineToX: 231 y: y1+y2+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy y: 231; displayCoordlineToX: y1+dy+dy y: 330;
+			displayCoordlineToX: y1+y2+dy+dy y: 330; displayCoordlineToX: y1+y2+dy y: 231;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w chico pero aun visible"
+		engine setupBorderWidth: 0.6 borderColor: Color green fillColor: Color red 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 331 y: y1+dy+dy; displayCoordlineToX: 430 y: y1+dy+dy+dy;
+			displayCoordlineToX: 430 y: y1+y2+dy+dy+dy; displayCoordlineToX: 331 y: y1+y2+dy+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy+dy y: 331; displayCoordlineToX: y1+dy+dy+dy y: 430;
+			displayCoordlineToX: y1+y2+dy+dy+dy y: 430; displayCoordlineToX: y1+y2+dy+dy y: 331;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w chico pero aun visible"
+		engine setupBorderWidth: 0.4 borderColor: Color green fillColor: Color red 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 431 y: y1+dy+dy+dy; displayCoordlineToX: 530 y: y1+dy+dy+dy+dy;
+			displayCoordlineToX: 530 y: y1+y2+dy+dy+dy+dy; displayCoordlineToX: 431 y: y1+y2+dy+dy+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy+dy+dy y: 431; displayCoordlineToX: y1+dy+dy+dy+dy y: 530;
+			displayCoordlineToX: y1+y2+dy+dy+dy+dy y: 530; displayCoordlineToX: y1+y2+dy+dy+dy y: 431;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w chico pero aun visible"
+		engine setupBorderWidth: 0.2 borderColor: Color green fillColor: Color red 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 531 y: y1+dy+dy+dy+dy; displayCoordlineToX: 630 y: y1+dy+dy+dy+dy+dy;
+			displayCoordlineToX: 630 y: y1+y2+dy+dy+dy+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy+dy+dy+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy+dy+dy+dy y: 531; displayCoordlineToX: y1+dy+dy+dy+dy+dy y: 630;
+			displayCoordlineToX: y1+y2+dy+dy+dy+dy+dy y: 630; displayCoordlineToX: y1+y2+dy+dy+dy+dy y: 531;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w chico. Preferimos ya usarlo para definir mejor el shape (se transparentaria demasiado)"
+		engine setupBorderWidth: 0.0 borderColor: Color green fillColor: Color red 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 631 y: y1+dy+dy+dy+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy+dy+dy+dy;
+			displayCoordlineToX: 730 y: y1+y2+dy+dy+dy+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy+dy+dy+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy+dy+dy+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy+dy+dy+dy y: 730;
+			displayCoordlineToX: y1+y2+dy+dy+dy+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy+dy+dy+dy y: 631;
+			closeTrajectory; finishTrajectory.
+		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		Display forceToScreen.
+		y2 print.
+		y2 _ y2 * 0.8.
+	].
+	
+	Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/5/2017 18:04:19'!
+experLinesAndShapes3
+	"
+	self experLinesAndShapes3
+	"
+	| engine y1 dy y2 |
+	engine _ self onForm: Display.
+	engine resetMorphBounds.
+	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine
+		displayCoordmoveToX: 20 y: 10;
+		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
+		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		closeTrajectory; finishTrajectory.
+	Display forceToScreen.
+	engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine
+		displayCoordmoveToX: 220 y: 10;
+		displayCoordlineToX: 410 y: 15; displayCoordlineToX: 220 y: 20;
+		displayCoordlineToX: 215 y: 410; displayCoordlineToX: 210 y: 20;
+		closeTrajectory; finishTrajectory.
+	Display forceToScreen.
+
+	y1 _ 10.
+	dy _ 3.
+	y2 _ VectorCanvas defaultAntiAliasingWidth * 2.
+	15 timesRepeat: [
+		"stroke con w > aaw"
+		engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth*0.4 borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 431 y: y1; displayCoordlineToX: 530 y: y1+dy;
+			displayCoordlineToX: 530 y: y1+y2+dy; displayCoordlineToX: 431 y: y1+y2;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX:  y1 y: 431; displayCoordlineToX: y1+dy y: 530;
+			displayCoordlineToX: y1+y2+dy y: 530; displayCoordlineToX: y1+y2 y: 431;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w casi=0"
+		engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth*0.2 borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 531 y: y1+dy; displayCoordlineToX: 630 y: y1+dy+dy;
+			displayCoordlineToX: 630 y: y1+y2+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy y: 531; displayCoordlineToX: y1+dy+dy y: 630;
+			displayCoordlineToX: y1+y2+dy+dy y: 630; displayCoordlineToX: y1+y2+dy y: 531;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w =0"
+		engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth*0.0 borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
+			displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy y: 730;
+			displayCoordlineToX: y1+y2+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy y: 631;
+			closeTrajectory; finishTrajectory.
+		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		Display forceToScreen.
+		y2 _ y2 * 0.8.
+	].
+	
+	Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/5/2017 18:04:19'!
+experLinesAndShapes4
+	"
+	self experLinesAndShapes4
+	"
+	| engine y1 dy y2 |
+	engine _ self onForm: Display.
+	engine resetMorphBounds.
+	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine
+		displayCoordmoveToX: 20 y: 10;
+		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
+		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		closeTrajectory; finishTrajectory.
+	Display forceToScreen.
+	engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine
+		displayCoordmoveToX: 220 y: 10;
+		displayCoordlineToX: 410 y: 15; displayCoordlineToX: 220 y: 20;
+		displayCoordlineToX: 215 y: 410; displayCoordlineToX: 210 y: 20;
+		closeTrajectory; finishTrajectory.
+	Display forceToScreen.
+
+	y1 _ 10.
+	dy _ 3.
+	y2 _ VectorCanvas defaultAntiAliasingWidth * 2.
+	15 timesRepeat: [
+		"stroke con w > aaw"
+		engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth*2 borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 431 y: y1; displayCoordlineToX: 530 y: y1+dy;
+			displayCoordlineToX: 530 y: y1+y2+dy; displayCoordlineToX: 431 y: y1+y2;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX:  y1 y: 431; displayCoordlineToX: y1+dy y: 530;
+			displayCoordlineToX: y1+y2+dy y: 530; displayCoordlineToX: y1+y2 y: 431;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w casi=0"
+		engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth*1.5 borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 531 y: y1+dy; displayCoordlineToX: 630 y: y1+dy+dy;
+			displayCoordlineToX: 630 y: y1+y2+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy y: 531; displayCoordlineToX: y1+dy+dy y: 630;
+			displayCoordlineToX: y1+y2+dy+dy y: 630; displayCoordlineToX: y1+y2+dy y: 531;
+			closeTrajectory; finishTrajectory.
+		"Solo fill. w =0"
+		engine setupBorderWidth: VectorCanvas defaultAntiAliasingWidth borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
+			displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy y: 730;
+			displayCoordlineToX: y1+y2+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy y: 631;
+			closeTrajectory; finishTrajectory.
+		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		Display forceToScreen.
+		y2 _ y2 * 0.8.
+	].
+	
+	Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/5/2017 18:04:19'!
+experLinesAndShapesx
+	"
+	self experLinesAndShapesx
+	"
+	| engine y1 dy y2 |
+	engine _ self onForm: Display.
+	engine resetMorphBounds.
+	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine
+		displayCoordmoveToX: 20 y: 10;
+		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
+		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		closeTrajectory; finishTrajectory.
+	Display forceToScreen.
+
+	y1 _ 10.
+	dy _ 3.
+	y2 _ VectorCanvas defaultAntiAliasingWidth * 2.
+	15 timesRepeat: [
+		y2 print.
+		"Solo fill. w =0"
+		engine setupBorderWidth: 0.0 borderColor: Color black fillColor: Color black 
+			strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine
+			displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
+			displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
+			closeTrajectory; finishTrajectory.
+		engine
+			displayCoordmoveToX: y1+dy+dy y: 431; displayCoordlineToX: y1+dy+dy+dy y: 530;
+			displayCoordlineToX: y1+y2+dy+dy+dy y: 530; displayCoordlineToX: y1+y2+dy+dy y: 431;
+			closeTrajectory; finishTrajectory.
+		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		Display forceToScreen.
+		y2 _ y2 * 0.8.
+	].
+	
+	Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/5/2017 18:04:19'!
+experLinesAndShapesx2
+	"
+	self experLinesAndShapesx2
+	"
+	| engine y1 dy y2 |
+	engine _ self onForm: Display.
+	engine resetMorphBounds.
+	y1 _ 10.
+	dy _ 3.
+	y2 _ 0.1.
+	y2 print.
+	"Solo fill. w =0"
+	engine setupBorderWidth: 0.5 borderColor: Color black fillColor: Color black 
+		strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine
+		displayCoordmoveToX: 10 y: y1+dy+dy; displayCoordlineToX: 200 y: y1+dy+dy+dy;
+		displayCoordlineToX: 200 y: y1+y2+dy+dy+dy; displayCoordlineToX: 10 y: y1+y2+dy+dy;
+		closeTrajectory; finishTrajectory.
+	engine
+		displayCoordmoveToX: y1+dy+dy y: 10; displayCoordlineToX: y1+dy+dy+dy y: 200;
+		displayCoordlineToX: y1+y2+dy+dy+dy y: 200; displayCoordlineToX: y1+y2+dy+dy y: 10;
+		closeTrajectory; finishTrajectory.
+	Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'samples' stamp: 'jmv 12/5/2017 16:22:29'!
+experiment1
+	"
+	No perfecto aun, pero se puede empezar a comparar con
+	http://www.hpl.hp.com/research/mmsl/projects/graphics/antialiasing/figure21.htm
+	Ni que hablar que es mucho mas rapido...
+	self experiment1
+	"
+| engine h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 e f |
+engine _ self onForm: Display.
+engine resetMorphBounds.
+h _ 300.
+h _ 490.
+h _ 280.
+bottom _ 200.
+bottom _ 0.
+centerX _ 400.
+centerX _ 250.
+w0 _ 120.0.
+hf _ 1.0.
+hf _ 1.73.
+hf _ 1.71.
+y _ nil.
+delta _ nil.
+	e _ 500@500.
+	f _ Form extent: e depth: 32.
+	f fillColor: Color transparent..
+"	canvas _  self on: f.
+	canvas useComponentAlphas."
+1 to: "400" 150 do: [ :i |
+	i print.
+	prevDelta _ delta.
+	delta _ h / (w0 * i + h).
+	prevY _ y.
+	y _ bottom + (delta * hf * h).
+	prevY ifNotNil: [
+"		-40 to: 40 do: [ :ii |"
+		-3 // delta to: 3 // delta do: [ :ii |
+			x1p _ centerX - (prevDelta * w0 * (ii-1)).
+			x2p _ centerX - (prevDelta * w0 * ii).
+			x1 _ centerX - (delta * w0 * (ii-1)).
+			x2 _ centerX - (delta * w0 * ii).
+			color _ i + ii \\ 2 = 0 ifTrue: [ Color black ] ifFalse: [ Color white ].
+"			color _ color alpha: (((prevY-y) min: (x1-x2)) min: 1)."
+"			color _ color alpha: 0.5."
+			engine setupBorderWidth: 0.0 borderColor: color fillColor: color strokeDashArray: nil strokeDashArrayOffset: nil.
+			engine
+				initializeTrajectory;
+				displayCoordmoveToX: x1 y: y;
+				displayCoordlineToX: x2 y: y;
+				displayCoordlineToX: x2p y: prevY;
+				displayCoordlineToX: x1p y: prevY;
+				closeTrajectory;
+				finishTrajectory
+			].
+		].
+	Display forceToScreen.
+	].
+Display forceToScreen.
+"
+	canvas removeSpuriousTranslucencyFloatAndBlendOver: Color red.
+	f writePNGfileNamed: 'pp17.png'
+"! !
+
+!VectorEngineNoDashes class methodsFor: 'samples' stamp: 'jmv 12/5/2017 16:22:36'!
+experiment2
+	"
+	self experiment2
+	"
+| engine h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 |
+engine _ self onForm: Display.
+engine resetMorphBounds.
+h _ 300.
+h _ 600.
+bottom _ 200.
+centerX _ 400.
+w0 _ 60.0.
+hf _ 1.0.
+y _ nil.
+delta _ nil.
+1 to: 400 do: [ :i |
+	i print.
+	prevDelta _ delta.
+	delta _ h / (w0 * i + h).
+	prevY _ y.
+	y _ bottom + (delta * hf * h).
+	prevY ifNotNil: [
+"		-40 to: 40 do: [ :ii |"
+		-6 // delta to: 6 // delta do: [ :ii |
+			x1p _ centerX - (prevDelta * w0 * (ii-1)).
+			x2p _ centerX - (prevDelta * w0 * ii).
+			x1 _ centerX - (delta * w0 * (ii-1)).
+			x2 _ centerX - (delta * w0 * ii).
+			color _ i + ii \\ 2 = 0 ifTrue: [ Color white ] ifFalse: [ Color black ].
+			color _ color alpha: (((prevY-y) min: (x1-x2)) "* 0.3" min: 1).
+"			color _ color alpha: 0.5."
+			engine setupBorderWidth: 0.0 borderColor: color fillColor: color strokeDashArray: nil strokeDashArrayOffset: nil.
+			engine
+				initializeTrajectory;
+				displayCoordmoveToX: x1 y: y;
+				displayCoordlineToX: x2 y: y;
+				displayCoordlineToX: x2p y: prevY;
+				displayCoordlineToX: x1p y: prevY;
+				closeTrajectory;
+				finishTrajectory
+			].
+		].
+	Display forceToScreen.
+	].
+Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'samples' stamp: 'jmv 12/5/2017 16:22:44'!
+experiment3
+	"
+	self experiment3
+	"
+	| engine w r |
+	engine _ self onForm: Display.
+	engine resetMorphBounds.
+	w _ 10.
+	r _ 15.
+	100 timesRepeat: [
+		engine setupBorderWidth: w borderColor: Color black fillColor: Color transparent strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine initializeTrajectory.
+		engine
+			initializeTrajectory;
+			displayCoordarcCenterX: 300 centerY: 300 radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
+			closeTrajectory;
+			finishTrajectory.
+		r _ r + w.
+		w _ w * 0.8.
+		r _ r + w.
+
+	Display forceToScreen.
+	].
+Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'samples' stamp: 'jmv 12/5/2017 16:22:53'!
+experiment4
+	"
+	self experiment4
+	"
+	| engine w r |
+	engine _ self onForm: Display.
+	engine resetMorphBounds.
+	w _ 10.
+	r _ 15.
+	1 to: 100 do: [ :i |
+		r _ r + w.
+		w _ 20.0 / i.
+		r _ r + w.
+		engine setupBorderWidth: w borderColor: Color black fillColor: Color transparent strokeDashArray: nil strokeDashArrayOffset: nil.
+		engine initializeTrajectory.
+		engine
+			initializeTrajectory;
+			displayCoordarcCenterX: 300 centerY: 300 radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
+			closeTrajectory;
+			finishTrajectory.
+	Display forceToScreen.
+	].
+Display forceToScreen.
+! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/6/2017 10:30:03'!
+experimentHopsPerPixel1
+	"Play with this to learn about the effect of hopsPerPixel
+	Experiment 1: Very thin stroke, the same color as fill
+	VectorEngineNoDashes experimentHopsPerPixel1
+	"
+	| d engine f1 f2 hops1 hops2 |
+	hops1 _ 200.
+	hops2 _ 8.
+	f1 _ Form extent: 220@420 depth: 32.
+	f1 fillColor: Color white.
+	engine _ VectorEngineNoDashes onForm: f1.
+	engine resetMorphBounds.
+	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine instVarNamed: 'hopsPerPixel' put: hops1.
+	engine
+		initializeTrajectory;
+		displayCoordmoveToX: 20 y: 10;
+		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
+		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		closeTrajectory; finishTrajectory.
+	f1 displayAt: 0@0.
+
+	f2 _ Form extent: 220@420 depth: 32.
+	f2 fillColor: Color white.
+	engine _ VectorEngineNoDashes onForm: f2.
+	engine resetMorphBounds.
+	engine setupBorderWidth: 0.001 borderColor: Color black fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine instVarNamed: 'hopsPerPixel' put: hops2.
+	engine
+		initializeTrajectory;
+		displayCoordmoveToX: 20 y: 10;
+		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
+		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		closeTrajectory; finishTrajectory.
+	f2 displayAt: 220@0.
+
+	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) + 0.5.
+	(d asFormMin: 0 max: 1) displayAt: 440@0.
+	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) *10 + 0.5.
+	(d asFormMin: 0 max: 1) displayAt: 660@0.
+	{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/6/2017 15:25:47'!
+experimentHopsPerPixel2
+	"Play with this to learn about the effect of hopsPerPixel
+	Experiment 2: Stroke of various widths, no fill
+	VectorEngineNoDashes experimentHopsPerPixel2
+	"
+	| d engine f1 f2 hops1 hops2 strokeWidth |
+	hops1 _ 200.
+	hops1 _ 20.
+	"
+	strokeWidth -> hops2
+	1.3 -> 8
+	1.5 -> 6
+	2 -> 4
+	4 -> 3
+	6 -> 2
+	16 -> 1
+	Maybe 10 / strokeWidth + 1 is ok?
+	"
+	strokeWidth _ 16*2.
+	hops2 _ 8*0+1.
+	hops2 _ 10.0 / strokeWidth + 1.
+	f1 _ Form extent: 220@420 depth: 32.
+	f1 fillColor: Color white.
+	engine _ VectorEngineNoDashes onForm: f1.
+	engine resetMorphBounds.
+	engine setupBorderWidth: strokeWidth borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine instVarNamed: 'hopsPerPixel' put: hops1.
+	engine
+		initializeTrajectory;
+		displayCoordmoveToX: 40 y: 30;
+		displayCoordlineToX: 190 y: 135; displayCoordlineToX: 40 y: 40;
+		displayCoordlineToX: 135 y: 390; displayCoordlineToX: 30 y: 40;
+		closeTrajectory; finishTrajectory.
+	f1 displayAt: 0@0.
+
+	f2 _ Form extent: 220@420 depth: 32.
+	f2 fillColor: Color white.
+	engine _ VectorEngineNoDashes onForm: f2.
+	engine resetMorphBounds.
+	engine setupBorderWidth: strokeWidth borderColor: Color black fillColor: nil strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine instVarNamed: 'hopsPerPixel' put: hops2.
+	engine
+		initializeTrajectory;
+		displayCoordmoveToX: 40 y: 30;
+		displayCoordlineToX: 190 y: 135; displayCoordlineToX: 40 y: 40;
+		displayCoordlineToX: 135 y: 390; displayCoordlineToX: 30 y: 40;
+		closeTrajectory; finishTrajectory.
+	f2 displayAt: 220@0.
+
+	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) + 0.5.
+	(d asFormMin: 0 max: 1) displayAt: 440@0.
+	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) * 10 + 0.5.
+	(d asFormMin: 0 max: 1) displayAt: 660@0.
+	{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print! !
+
+!VectorEngineNoDashes class methodsFor: 'experiments' stamp: 'jmv 12/6/2017 10:30:38'!
+experimentHopsPerPixel3
+	"Play with this to learn about the effect of hopsPerPixel
+	Experiment 3: No stroke, just fill
+	VectorEngineNoDashes experimentHopsPerPixel3
+	"
+	| d engine f1 f2 hops1 hops2 |
+	hops1 _ 200.
+	hops2 _ 8.
+	f1 _ Form extent: 220@420 depth: 32.
+	f1 fillColor: Color white.
+	engine _ VectorEngineNoDashes onForm: f1.
+	engine resetMorphBounds.
+	engine setupBorderWidth: 0 borderColor: nil fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine instVarNamed: 'hopsPerPixel' put: hops1.
+	engine
+		initializeTrajectory;
+		displayCoordmoveToX: 20 y: 10;
+		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
+		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		closeTrajectory; finishTrajectory.
+	f1 displayAt: 0@0.
+
+	f2 _ Form extent: 220@420 depth: 32.
+	f2 fillColor: Color white.
+	engine _ VectorEngineNoDashes onForm: f2.
+	engine resetMorphBounds.
+	engine setupBorderWidth: 0 borderColor: nil fillColor: Color black strokeDashArray: nil strokeDashArrayOffset: nil.
+	engine instVarNamed: 'hopsPerPixel' put: hops2.
+	engine
+		initializeTrajectory;
+		displayCoordmoveToX: 20 y: 10;
+		displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
+		displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
+		closeTrajectory; finishTrajectory.
+	f2 displayAt: 220@0.
+
+	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) + 0.5.
+	(d asFormMin: 0 max: 1) displayAt: 440@0.
+	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) * 10 + 0.5.
+	(d asFormMin: 0 max: 1) displayAt: 660@0.
+	{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print! !
+
+!VectorEngineNoDashes class methodsFor: 'instance creation' stamp: 'jmv 12/5/2017 18:04:19'!
 onForm: aForm
 
 	^ self new setForm: aForm! !
