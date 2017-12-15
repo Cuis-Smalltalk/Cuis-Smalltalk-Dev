@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3228] on 4 December 2017 at 3:31:46 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3225] on 15 December 2017 at 11:31:15 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 43!
+!provides: 'LinearAlgebra' 1 44!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
@@ -126,11 +126,24 @@ ShortWordMatrix fromArrayOfArrays: #(
 	#( 40000 		127 		128)
 	#( 32768 		254		32767 ))!
 
-!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 12/4/2017 09:47:23'!
+!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 12/14/2017 14:25:38'!
+hackBitsForFloat64Matrix: aFloa64tMatrix
+	"Set up parmeters to have similar shape to aFloat64Matrix and share the elements.
+	This is: 32 bits per element, twice the width and height, and share the storage.
+	Useful for copying parts of matrixes around using BitBlt."
+
+	depth _ 32.
+	width _ aFloa64tMatrix width * 2.
+	height _ aFloa64tMatrix height.
+	bits _ aFloa64tMatrix elements! !
+
+!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 12/15/2017 11:28:38'!
 hackBitsForFloatMatrix: aFloatMatrix
 	"Set up parmeters to have similar shape to aFloatMatrix and share the elements.
 	This is: 32 bits per element, same width and height, and share the storage.
 	Useful for copying parts of matrixes around using BitBlt."
+
+	"Senders should usually prefer #hackBitsForm to aid in compatibility with Float64Matrix, but should also be careful with x coordinates and widths. See comment at #hackBitsForm"
 
 	depth _ 32.
 	width _ aFloatMatrix width.
@@ -1085,39 +1098,61 @@ asGammaFormFullRangeG: greenImage b: blueImage
 		bits integerAt: i put: word ].
 	^answer! !
 
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:18:06'!
+blitOn: dest source: source destOrigin: destOrigin sourceOrigin: sourceOrigin extent: extent using: blitter
+
+	blitter
+		setDestForm: dest sourceForm: source
+		destOrigin: destOrigin sourceOrigin: sourceOrigin
+		extent: extent.
+	blitter copyBits! !
+
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:17:54'!
+blitOn: dest source: source destOrigin: destOrigin sourceOrigin: sourceOrigin using: blitter
+
+	blitter
+		setDestForm: dest sourceForm: source
+		destOrigin: destOrigin sourceOrigin: sourceOrigin.
+	blitter copyBits! !
+
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
 conditionNumber
 	^self norm * self inverse norm! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 10/19/2017 13:39:46'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/14/2017 14:28:54'!
 copy: aRectangle
 	"
-	| i |
-	i _ FloatMatrix width: 20 height: 20.
-	i x: 10 y: 10 put: Float pi.
-	i copy: (1@1 extent: 10@10)
+	|m|
+	m _ FloatMatrix m: 7 n: 7.
+	m fillWithGaussianKernelSigmaY: 1 sigmaX: 1.
+	m copy: (1@1 extent: 4@5).
+	"
+	"
+	|m|
+	m _ Float64Matrix m: 7 n: 7.
+	m fillWithGaussianKernelSigmaY: 1 sigmaX: 1.
+	m copy: (1@1 extent: 4@5).
 	"
 	| answer |
 	answer _ self appropriateResultClass width: aRectangle width height: aRectangle height.
 	self copyToTile: answer position: aRectangle origin.
 	^answer! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:24'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:20:02'!
 copyFromTile: aFloatMatrix position: aPoint
 	"
 	aPoint is the position in self where the contents of aFloatMatrix are to be stored
 	As in all Matrix protocol, aPoint is 1-based
 	"
-	| blitter formArgument formSelf |
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
-	blitter _ BitBlt new.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: aPoint-1 sourceOrigin: 0@0.
-	blitter copyBits! !
+	| formArgument formSelf |
+	formSelf _ self hackBitsForm.
+	formArgument _ aFloatMatrix hackBitsForm.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: aPoint-1 sourceOrigin: 0@0
+		using: BitBlt new! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 9/29/2017 16:26:19'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:20:37'!
 copyFromTile: aFloatMatrix position: aPoint leftGuardZone: borderWidth topGuardZone: borderHeight activewWidth: activeWidth activeHeight: activeHeight
 	"
 	aPoint is the position in self where the contents of aFloatMatrix are to be stored
@@ -1127,23 +1162,22 @@ copyFromTile: aFloatMatrix position: aPoint leftGuardZone: borderWidth topGuardZ
 	| i t |
 	t _ FloatImage lena.
 	i _ FloatImage extent: 400@400.
-	i copyFromTile: t position: 0@10 guardZoneX: 0 guardZoneY: 0.
+	i copyFromTile: t position: 0@10 leftGuardZone: 0 topGuardZone: 0 activewWidth: 400 activeHeight: 400.
 	 i *= 0.5.
-	i copyFromTile: t position: 0@10 guardZoneX: 10 guardZoneY: 20.
+	i copyFromTile: t position: 0@10 leftGuardZone: 10 topGuardZone: 20 activewWidth: 380 activeHeight: 360.
 	i display.
 	"
 
-	| blitter formArgument formSelf |
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
-	blitter _ BitBlt new.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
+	| formArgument formSelf |
+	formSelf _ self hackBitsForm.
+	formArgument _ aFloatMatrix hackBitsForm.
+	self
+		blitOn: formSelf source: formArgument
 		destOrigin: aPoint-1 + (borderWidth@borderHeight) sourceOrigin: borderWidth@borderHeight
-		extent: activeWidth@activeHeight.
-	blitter copyBits! !
+		extent: activeWidth@activeHeight
+		using: BitBlt new! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:24'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:22:05'!
 copyToTile: aFloatMatrix position: aPoint
 	"
 	aPoint is the position in self where the contents of aFloatMatrix are to be taken from
@@ -1155,14 +1189,13 @@ copyToTile: aFloatMatrix position: aPoint
 	i copyToTile: t position: -10@0.
 	t display.
 	"
-	| blitter formArgument formSelf |
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
-	blitter _ BitBlt new.
-	blitter
-		setDestForm: formArgument sourceForm: formSelf
-		destOrigin: 0@0 sourceOrigin: aPoint-1.
-	blitter copyBits! !
+	| formArgument formSelf |
+	formSelf _ self hackBitsForm.
+	formArgument _ aFloatMatrix hackBitsForm.
+	self
+		blitOn: formArgument source: formSelf
+		destOrigin: 0@0 sourceOrigin: aPoint-1
+		using: BitBlt new! !
 
 !FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/21/2016 15:56:49'!
 eigenvalues
@@ -1467,11 +1500,12 @@ epsilon
 
 	^1e-7 asFloat! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:23'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:26:44'!
 expandTo: newExtent
 	"
 	| i |
 	i _ FloatMatrix width: 5 height: 5.
+	i x: 1 y: 2 put: 2.34.
 	i x: 5 y: 5 put: Float pi.
 	i expandTo:10@10
 	"
@@ -1628,7 +1662,7 @@ fillWith: aFloatMatrix displaced: deltaPoint
 		destOrigin: deltaPoint sourceOrigin: 0@0.
 	blitter copyBits.! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:12'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:21:34'!
 fillWith: aFloatMatrix displacedCircular: deltaPoint
 	"
 	Assume self and argument are of the same extent
@@ -1644,24 +1678,28 @@ fillWith: aFloatMatrix displacedCircular: deltaPoint
 	| blitter formArgument formSelf deltaI deltaJ |
 	deltaI _ deltaPoint y \\ height.
 	deltaJ _ deltaPoint x \\ width.
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	formSelf _ self hackBitsForm.
+	formArgument _ aFloatMatrix hackBitsForm.
 	blitter _ BitBlt new.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: deltaJ@deltaI sourceOrigin: 0@0.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: deltaJ@deltaI sourceOrigin: 0@0
+		using: BitBlt new.
 	blitter copyBits.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: deltaJ-width@deltaI sourceOrigin: 0@0.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: deltaJ-width@deltaI sourceOrigin: 0@0
+		using: BitBlt new.
 	blitter copyBits.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: deltaJ@(deltaI-height) sourceOrigin: 0@0.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: deltaJ@(deltaI-height) sourceOrigin: 0@0
+		using: BitBlt new.
 	blitter copyBits.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: deltaJ-width@(deltaI-height) sourceOrigin: 0@0.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: deltaJ-width@(deltaI-height) sourceOrigin: 0@0
+		using: BitBlt new.
 	blitter copyBits.! !
 
 !FloatMatrix methodsFor: 'filling' stamp: 'jmv 7/19/2012 10:46'!
@@ -1703,6 +1741,12 @@ fullRangeG: greenImage b: blueImage displayAt: aPoint
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
 
 	(self asGammaFormFullRangeG: greenImage b: blueImage) displayAt: aPoint! !
+
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:18:59'!
+hackBitsForm
+	"Senders should not blit themselves but call one of our #blitOn:... methods!!"
+
+	^ Form new hackBitsForFloatMatrix: self! !
 
 !FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/6/2016 22:28:26'!
 hessembergSuperior
@@ -1930,14 +1974,18 @@ isZeroBelowDiagonal
 			(self i: i j: j) abs > self epsilon ifTrue: [ ^false ]]].
 	^true! !
 
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:11'!
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 12/15/2017 11:10:23'!
 j: j
 	"Answers a column vector with the values at column x.
-	Optimized for large Matrices
+	Optimized for large Matrices"
+	"
 	|m w h |
 	w _ 8. h _ 8.
 	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
-	m j: 3
+	m j: 3 :: inspect.
+	w _ 8. h _ 8.
+	m _ Float64Matrix extent: w@h. m elements += (1 to: w*h).
+	m j: 3 :: inspect.
 	"
 
 	| result |
@@ -1950,15 +1998,20 @@ j: j copyTo: column
 	"Assumes column is of of apropriate size"
 	self copyToTile: column position: j@1! !
 
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 5/21/2015 12:45'!
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 12/14/2017 14:31:03'!
 j: j put: column
 	"column can be a column vector (m x 1 matrix), or a kind of Array.
-	Optimized for large Matrices
+	Optimized for large Matrices"
+	"
 	| m w h |
 	w _ 8. h _ 8.
 	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
 	m j: 3 put: (m j: 1).
-	m print.
+	m inspect.
+	w _ 8. h _ 8.
+	m _ Float64Matrix extent: w@h. m elements += (1 to: w*h).
+	m j: 3 put: (m j: 1).
+	m inspect.
 	"
 
 	self copyFromTile: column position: j@1! !
@@ -2333,17 +2386,22 @@ self asForm writeJPEGfileNamed: 'tt.jpg'.
 
 	^ answer! !
 
-!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:14'!
-copyFromTile: aFloatMatrix position: aPoint
-	self halt! !
+!Float64Matrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:23:10'!
+blitOn: dest source: source destOrigin: destOrigin sourceOrigin: sourceOrigin extent: extent using: blitter
 
-!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 9/29/2017 16:26:29'!
-copyFromTile: aFloatMatrix position: aPoint leftGuardZone: borderWidth topGuardZone: borderHeight activewWidth: activeWidth activeHeight: activeHeight
-	self halt! !
+	blitter
+		setDestForm: dest sourceForm: source
+		destOrigin: destOrigin*(2@1) sourceOrigin: sourceOrigin*(2@1)
+		extent: extent*(2@1).
+	blitter copyBits! !
 
-!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:20'!
-copyToTile: aFloatMatrix position: aPoint
-	self halt! !
+!Float64Matrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:23:19'!
+blitOn: dest source: source destOrigin: destOrigin sourceOrigin: sourceOrigin using: blitter
+
+	blitter
+		setDestForm: dest sourceForm: source
+		destOrigin: destOrigin*(2@1) sourceOrigin: sourceOrigin*(2@1).
+	blitter copyBits! !
 
 !Float64Matrix methodsFor: 'private' stamp: 'jmv 10/11/2016 10:51:49'!
 epsilon
@@ -2367,9 +2425,11 @@ fillWith: aFloatMatrix displaced: deltaPoint
 		1 to: aFloatMatrix width do: [ :j |
 			self i: i+deltaPoint y j: j+deltaPoint x put: (aFloatMatrix i: i j: j) ]]! !
 
-!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:53:08'!
-fillWith: aFloatMatrix displacedCircular: deltaPoint
-	self halt! !
+!Float64Matrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:19:02'!
+hackBitsForm
+	"Senders should not blit themselves but call one of our #blitOn:... methods!!"
+
+	^ Form new hackBitsForFloat64Matrix: self! !
 
 !Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:53:11'!
 imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandImaginaryPart
@@ -2380,20 +2440,21 @@ initializeElements
 
 	elements _ Float64Array new: height * width! !
 
-!Float64Matrix methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:53:24'!
+!Float64Matrix methodsFor: 'accessing' stamp: 'jmv 12/15/2017 11:10:42'!
 j: j
 	"Answers a column vector with the values at column x"
 
 	| result |
+true ifTrue: [ ^ super j: j ].
 	result _ self appropriateResultClass newColumnVectorSize: height.
 	1 to: height do: [ :i |
 		result i: i j: 1 put: (self i: i j: j) ].
 	^result! !
 
-!Float64Matrix methodsFor: 'accessing' stamp: 'jmv 10/11/2016 10:53:26'!
+!Float64Matrix methodsFor: 'accessing' stamp: 'jmv 12/15/2017 11:11:13'!
 j: j put: column
 	"column can be a column vector (m x 1 matrix), or a kind of Array"
-
+true ifTrue: [ ^ super j: j put: column ].
 	1 to: height do: [ :i |
 		self i: i j: j put: (column at: i) ]! !
 
