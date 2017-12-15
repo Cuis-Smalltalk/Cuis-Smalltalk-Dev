@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:17:09 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3230] on 13 December 2017 at 4:27:19 pm'!
 'Description Please enter a description for this package '!
-!provides: 'YAXO' 1 13!
+!provides: 'YAXO' 1 14!
 !classDefinition: #SAXException category: #YAXO!
 Error subclass: #SAXException
 	instanceVariableNames: ''
@@ -1932,14 +1932,14 @@ nextTag
 			self next].
 	! !
 
-!XMLTokenizer methodsFor: 'streaming' stamp: 'bf 4/27/2006 17:55'!
+!XMLTokenizer methodsFor: 'streaming' stamp: 'jmv 12/12/2017 22:05:08'!
 nextTrimmedBlanksUpTo: delimiter
 	| resultStream nextChar |
 	resultStream := WriteStream on: (String new: 10).
 	nextChar := nil.
 	[(nextChar := self next) == delimiter]
 		whileFalse: [
-			nextChar == $  ifFalse: [
+			nextChar isSeparator ifFalse: [
 				resultStream nextPut: nextChar]].
 	nextChar == delimiter
 		ifFalse: [self parseError: 'XML no delimiting ' , delimiter printString , ' found'].
