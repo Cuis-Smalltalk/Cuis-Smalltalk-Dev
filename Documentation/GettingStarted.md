@@ -23,25 +23,26 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201708312323.tar.gz
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201712121955.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
+```
+
+### Starting Cuis Smalltalk ###
+```
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3225.image
 ```
 If you get this error message (you won't get it if you run Cuis as root or sudo):
 ```
 pthread_setschedparam failed: Operation not permitted
-Read e.g. https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
+...
+https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
 ```
 Then you need to do this (just one time):
 ```
 sudo cp Cuis-Smalltalk-Dev/squeak.conf /etc/security/limits.d/squeak.conf
 ```
 Log out and log back in, or reboot the machine.
-
-### Starting Cuis Smalltalk ###
-```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3225.image
-```
 
 ## For MacOSX ##
 
