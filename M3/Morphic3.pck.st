@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3231] on 22 December 2017 at 1:45:44 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3230] on 22 December 2017 at 5:30:43 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 32!
-!requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
+!provides: 'Morphic3' 1 33!
 !requires: 'OpenCL' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !classDefinition: #SVGError category: #'Morphic3-SVG'!
 Error subclass: #SVGError
 	instanceVariableNames: ''
@@ -32,36 +32,6 @@ AbstractFont subclass: #StrokeFont
 	category: 'Morphic3-Kernel'!
 !classDefinition: 'StrokeFont class' category: #'Morphic3-Kernel'!
 StrokeFont class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp01Morph category: #'Morphic3-Experiments'!
-Morph subclass: #M3Exp01Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Experiments'!
-!classDefinition: 'M3Exp01Morph class' category: #'Morphic3-Experiments'!
-M3Exp01Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp02Morph category: #'Morphic3-Experiments'!
-Morph subclass: #M3Exp02Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Experiments'!
-!classDefinition: 'M3Exp02Morph class' category: #'Morphic3-Experiments'!
-M3Exp02Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp03Morph category: #'Morphic3-Experiments'!
-Morph subclass: #M3Exp03Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Experiments'!
-!classDefinition: 'M3Exp03Morph class' category: #'Morphic3-Experiments'!
-M3Exp03Morph class
 	instanceVariableNames: ''!
 
 !classDefinition: #SVGElementMorph category: #'Morphic3-SVG'!
@@ -164,6 +134,36 @@ SVGElementMorph subclass: #SVGRect
 SVGRect class
 	instanceVariableNames: ''!
 
+!classDefinition: #M3Exp01Morph category: #'Morphic3-Experiments'!
+Morph subclass: #M3Exp01Morph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Experiments'!
+!classDefinition: 'M3Exp01Morph class' category: #'Morphic3-Experiments'!
+M3Exp01Morph class
+	instanceVariableNames: ''!
+
+!classDefinition: #M3Exp02Morph category: #'Morphic3-Experiments'!
+Morph subclass: #M3Exp02Morph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Experiments'!
+!classDefinition: 'M3Exp02Morph class' category: #'Morphic3-Experiments'!
+M3Exp02Morph class
+	instanceVariableNames: ''!
+
+!classDefinition: #M3Exp03Morph category: #'Morphic3-Experiments'!
+Morph subclass: #M3Exp03Morph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Experiments'!
+!classDefinition: 'M3Exp03Morph class' category: #'Morphic3-Experiments'!
+M3Exp03Morph class
+	instanceVariableNames: ''!
+
 !classDefinition: #VectorCanvas category: #'Morphic3-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
 	instanceVariableNames: 'fontForeColor currentClientX currentClientY autoHintText engine'
@@ -172,46 +172,6 @@ MorphicCanvas subclass: #VectorCanvas
 	category: 'Morphic3-Kernel'!
 !classDefinition: 'VectorCanvas class' category: #'Morphic3-Kernel'!
 VectorCanvas class
-	instanceVariableNames: ''!
-
-!classDefinition: #VectorEngine category: #'Morphic3-Kernel'!
-Object subclass: #VectorEngine
-	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth subPixelDelta strokeWidth strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips boundsLeft boundsTop boundsRight boundsBottom morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom mask edgeCountPerPixel hopsPerPixel auxBitBlt firstX firstY currentX currentY lastControl2Point trajectoryPoints fragmentStartIndexes'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Kernel'!
-!classDefinition: 'VectorEngine class' category: #'Morphic3-Kernel'!
-VectorEngine class
-	instanceVariableNames: ''!
-
-!classDefinition: #VectorFontRenderer category: #'Morphic3-Kernel'!
-Object subclass: #VectorFontRenderer
-	instanceVariableNames: 'vectorGraphicsCanvas vectorGraphicsEngine'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Kernel'!
-!classDefinition: 'VectorFontRenderer class' category: #'Morphic3-Kernel'!
-VectorFontRenderer class
-	instanceVariableNames: ''!
-
-!classDefinition: #BitstreamVeraRenderer category: #'Morphic3-Kernel'!
-VectorFontRenderer subclass: #BitstreamVeraRenderer
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Kernel'!
-!classDefinition: 'BitstreamVeraRenderer class' category: #'Morphic3-Kernel'!
-BitstreamVeraRenderer class
-	instanceVariableNames: ''!
-
-!classDefinition: #TechnicalFontRenderer category: #'Morphic3-Kernel'!
-VectorFontRenderer subclass: #TechnicalFontRenderer
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Kernel'!
-!classDefinition: 'TechnicalFontRenderer class' category: #'Morphic3-Kernel'!
-TechnicalFontRenderer class
 	instanceVariableNames: ''!
 
 !classDefinition: #SVGDefElement category: #'Morphic3-SVG'!
@@ -282,6 +242,46 @@ Object subclass: #SVGTransform
 	category: 'Morphic3-SVG'!
 !classDefinition: 'SVGTransform class' category: #'Morphic3-SVG'!
 SVGTransform class
+	instanceVariableNames: ''!
+
+!classDefinition: #VectorEngine category: #'Morphic3-Kernel'!
+Object subclass: #VectorEngine
+	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth subPixelDelta strokeWidth strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips boundsLeft boundsTop boundsRight boundsBottom morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom mask edgeCountPerPixel hopsPerPixel auxBitBlt firstX firstY currentX currentY lastControl2Point trajectoryPoints fragmentStartIndexes'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'VectorEngine class' category: #'Morphic3-Kernel'!
+VectorEngine class
+	instanceVariableNames: ''!
+
+!classDefinition: #VectorFontRenderer category: #'Morphic3-Kernel'!
+Object subclass: #VectorFontRenderer
+	instanceVariableNames: 'vectorGraphicsCanvas'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'VectorFontRenderer class' category: #'Morphic3-Kernel'!
+VectorFontRenderer class
+	instanceVariableNames: ''!
+
+!classDefinition: #BitstreamVeraRenderer category: #'Morphic3-Kernel'!
+VectorFontRenderer subclass: #BitstreamVeraRenderer
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'BitstreamVeraRenderer class' category: #'Morphic3-Kernel'!
+BitstreamVeraRenderer class
+	instanceVariableNames: ''!
+
+!classDefinition: #TechnicalFontRenderer category: #'Morphic3-Kernel'!
+VectorFontRenderer subclass: #TechnicalFontRenderer
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'TechnicalFontRenderer class' category: #'Morphic3-Kernel'!
+TechnicalFontRenderer class
 	instanceVariableNames: ''!
 
 !classDefinition: #SVGPathCommand category: #'Morphic3-SVG path commands'!
@@ -395,6 +395,18 @@ SVGPathQuadraticCurveToSmoothCommand class
 	instanceVariableNames: ''!
 
 
+!SVGElementMorph commentStamp: 'jmv 5/2/2011 09:46' prior: 0!
+See class methods in 'examples' category!
+
+!SVGMainMorph commentStamp: '<historical>' prior: 0!
+| m |
+m _ SVGMainMorph fromFileNamed: 'Ejemplos/Lionx.svg'.
+m privateOwner: World.
+m fullDrawOn: Display getCanvas.
+Display forceToScreen
+"m exportAs: 'pp.png'"
+!
+
 !M3Exp01Morph commentStamp: 'jmv 12/11/2017 21:33:29' prior: 0!
 | m |
 m _ M3Exp01Morph new.
@@ -443,18 +455,6 @@ m morphPosition: 53@20+40.
 setClipRect: (40@40 extent: 100@100);
 fullDraw: m.
 Display forceToScreen.!
-
-!SVGElementMorph commentStamp: 'jmv 5/2/2011 09:46' prior: 0!
-See class methods in 'examples' category!
-
-!SVGMainMorph commentStamp: '<historical>' prior: 0!
-| m |
-m _ SVGMainMorph fromFileNamed: 'Ejemplos/Lionx.svg'.
-m privateOwner: World.
-m fullDrawOn: Display getCanvas.
-Display forceToScreen
-"m exportAs: 'pp.png'"
-!
 
 !VectorCanvas commentStamp: '<historical>' prior: 0!
 A canvas specially built for Morphic 3.
@@ -670,94 +670,6 @@ m3Sans: pointSize
 !StrokeFont class methodsFor: 'instance creation' stamp: 'jmv 4/15/2014 11:57'!
 new
 	^self m3Sans: 10! !
-
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:34:45'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-
-aCanvas strokeWidth: 4 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
-	aCanvas
-		ellipseCenterX: 46 y: 46 rx: "24"16 ry: "12"16 ].
-
-aCanvas strokeWidth: 18 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
-	aCanvas
-		ellipseCenterX: 46 y: 46 rx: "24"36 ry: "12"36 ].
-
-aCanvas fillColor: Color black do: [
-	aCanvas
-		polyLine: {15@32. 30@50. 45@20. 15@32} * 2.
-	aCanvas
-		polyLine: {60@32. 30@50. 45@20. 60@32} * 2 ].
-
-aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
-
-aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
-
-aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
-
-aCanvas strokeWidth: 1 color: (Color green alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
-
-aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alpha: 0.3) do: [
-	aCanvas roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60 rx: 40 ry: 20 ]
-! !
-
-!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 7/14/2014 14:28'!
-clipsLastSubmorph
-	"Drawing specific. If this property is set, clip the receiver's  
-	last submorph to the receiver's shape"
-	^ true! !
-
-!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:08:39'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-	aCanvas strokeWidth: 15 color: (Color green alpha: 0.8) fillColor: (Color red alpha: 0.6) do: [
-		aCanvas
-			roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60  rx: 40 ry: 20 ]! !
-
-!M3Exp03Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:25:49'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-true ifTrue: [
-	aCanvas fillColor: (Color black alpha: 0.5) do: [
-	aCanvas
-		polyLine: {-10@32. 120@-30. 
-"		60@20. 120@20. 120@10. 150@50. 120@70. 120@30. 80@30."
-"		60@90. -50@32"
-		60@90. -60@80. -60@20. -50@70. -10@32
-		}
- ]].
-false ifTrue: [
-	aCanvas fillColor: Color black do: [
-	aCanvas
-		polyLine: {60@32. 30@50. 45@20. 60@32}
-]].
-
-false ifTrue: [
-	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 1 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
-]! !
 
 !SVGElementMorph methodsFor: 'building' stamp: 'jmv 1/21/2015 09:03'!
 buildFromXml: anXMLElement
@@ -1711,6 +1623,94 @@ svgName
 
 	^#rect! !
 
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:34:45'!
+drawOn: aCanvas
+	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
+
+
+aCanvas strokeWidth: 4 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
+	aCanvas
+		ellipseCenterX: 46 y: 46 rx: "24"16 ry: "12"16 ].
+
+aCanvas strokeWidth: 18 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
+	aCanvas
+		ellipseCenterX: 46 y: 46 rx: "24"36 ry: "12"36 ].
+
+aCanvas fillColor: Color black do: [
+	aCanvas
+		polyLine: {15@32. 30@50. 45@20. 15@32} * 2.
+	aCanvas
+		polyLine: {60@32. 30@50. 45@20. 60@32} * 2 ].
+
+aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
+	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
+
+aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
+	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
+
+aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
+	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
+
+aCanvas strokeWidth: 1 color: (Color green alpha: 0.7+0.3) do: [
+	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
+
+aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alpha: 0.3) do: [
+	aCanvas roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60 rx: 40 ry: 20 ]
+! !
+
+!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 7/14/2014 14:28'!
+clipsLastSubmorph
+	"Drawing specific. If this property is set, clip the receiver's  
+	last submorph to the receiver's shape"
+	^ true! !
+
+!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:08:39'!
+drawOn: aCanvas
+	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
+
+	aCanvas strokeWidth: 15 color: (Color green alpha: 0.8) fillColor: (Color red alpha: 0.6) do: [
+		aCanvas
+			roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60  rx: 40 ry: 20 ]! !
+
+!M3Exp03Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:25:49'!
+drawOn: aCanvas
+	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
+
+true ifTrue: [
+	aCanvas fillColor: (Color black alpha: 0.5) do: [
+	aCanvas
+		polyLine: {-10@32. 120@-30. 
+"		60@20. 120@20. 120@10. 150@50. 120@70. 120@30. 80@30."
+"		60@90. -50@32"
+		60@90. -60@80. -60@20. -50@70. -10@32
+		}
+ ]].
+false ifTrue: [
+	aCanvas fillColor: Color black do: [
+	aCanvas
+		polyLine: {60@32. 30@50. 45@20. 60@32}
+]].
+
+false ifTrue: [
+	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
+	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
+].
+
+false ifTrue: [
+	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
+	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
+].
+
+false ifTrue: [
+	aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
+	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
+].
+
+false ifTrue: [
+	aCanvas strokeWidth: 1 color: (Color red alpha: 0.7+0.3) do: [
+	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
+]! !
+
 !VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 9/30/2014 20:02'!
 cDx: dx dy: dy
 	"Curve comes from an horizontal segment, and is followed by a vertical segment"
@@ -2086,7 +2086,7 @@ d: dy
 	engine addLineToX: p2 x y: displayY2.
 	currentClientY _ newY! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/11/2017 22:15:07'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/22/2017 17:29:11'!
 displayString: aString from: startIndex to: stopIndex at: aPoint strokeFont: font
 	| ascii destX destY displayWidth ps isBold scaledPS wheight isItalic char renderer |
 
@@ -2108,7 +2108,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint strokeFont: fon
 	"Podriamos meter scaledPS en este 1.1... Pero es mejor que se haga con la location bien."
 	"Ah, tener que crear una location para cada char suena medio guarango... mejorar"
 	"NECESITAMOS pasar el strokeWidth en coordenadas nuestras!!!!!!!!!!!!"
-	renderer _ TechnicalFontRenderer new vectorGraphicsCanvas: self.
+	renderer _ TechnicalFontRenderer for: self.
 	engine strokeWidth: wheight color: fontForeColor do: [
 		startIndex to: stopIndex do: [ :charIndex |
 			char _ aString at: charIndex.
@@ -2121,7 +2121,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint strokeFont: fon
 	autoHintText _ false.
 	engine antiAliasingWidth: self class defaultAntiAliasingWidth! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/11/2017 22:15:38'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/22/2017 17:29:18'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: font
 	| ascii destX destY displayWidth ps isBold isItalic char renderer |
 
@@ -2133,7 +2133,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: f
 	isBold _ font isBold.
 	isItalic _ font isItalic.
 
-	renderer _ BitstreamVeraRenderer new vectorGraphicsCanvas: self.
+	renderer _ BitstreamVeraRenderer for: self.
 	engine strokeWidth: (isBold ifTrue: [0.7] ifFalse: [0]) color: fontForeColor fillColor: fontForeColor do: [
 		startIndex to: stopIndex do: [ :charIndex |
 			char _ aString at: charIndex.
@@ -3059,6 +3059,360 @@ self textex3
 		color: Color black
 		selectionColor: Color orange.
 	Display forceToScreen! !
+
+!SVGDefElement methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:40'!
+def: anSVGDef
+	def _ anSVGDef! !
+
+!SVGDefElement class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:50'!
+classFor: anSVGName
+
+	self allSubclassesDo: [ :cls |
+		cls svgName = anSVGName
+			ifTrue: [ ^cls ] ].
+	^nil! !
+
+!SVGDefElement class methodsFor: 'instance creation' stamp: 'jmv 6/16/2010 10:44'!
+fromXml: anXMLElement
+	| cls n |
+	n _ anXMLElement name.
+	cls _ self classFor: n.
+	cls ifNil: [
+		((SVGElementMorph ignoredElements includes: n) or: [
+			SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | n beginsWith: prefix ]]) ifFalse: [
+			SVGWarning signal: ('Unhandled def element: ', n printString) ].
+		^nil ].
+	^ cls new buildFromXml: anXMLElement! !
+
+!SVGGradient methodsFor: 'accessing' stamp: 'jmv 12/12/2017 21:40:16'!
+averageColor
+	| s |
+	averageColor ifNotNil: [ ^ averageColor ].
+	s _ self stops.
+	averageColor _ (s collect: [ :c | c color / s size ]) sum.
+	^ averageColor! !
+
+!SVGGradient methodsFor: 'building' stamp: 'jmv 7/30/2012 18:00'!
+buildFromXml: anXMLElement
+	| unsorted stop dataStream usedAttributeNames |
+	name _ anXMLElement attributeAt: 'id'.
+	unsorted _ OrderedCollection new.
+	anXMLElement elementsDo: [ :subElement |
+		stop _ SVGDefElement fromXml: subElement.
+		unsorted add: stop].
+	"Esto deberia ser un array de entrada, arreglar (codigo de levente) sortBy: para que ande en array sin crear sorted collection ni nada"
+	unsorted isEmpty
+		ifFalse: [
+			stops _ unsorted sorted: [ :a :b | a offset < b offset ]]
+		ifTrue: [ stops _ nil ].
+
+	inheritFrom _ nil.
+	(anXMLElement attributeAt: 'xlink:href') ifNotNil: [ :linkData |
+		dataStream _ linkData readStream.
+		dataStream upTo: $#.
+		inheritFrom _ (dataStream upTo: $) ) withBlanksTrimmed ].
+
+	usedAttributeNames _ self usedAttributeNames asSet.
+	anXMLElement attributes keysAndValuesDo: [ :attrName :value |
+		((usedAttributeNames includes: attrName) or: [
+			(SVGElementMorph ignoredAttributes includes: attrName) or: [
+				SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
+			SVGWarning signal: 'Unhandled attribute: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]]! !
+
+!SVGGradient methodsFor: 'accessing' stamp: 'jmv 5/13/2010 09:56'!
+name
+	^name! !
+
+!SVGGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+stops
+	^stops
+		ifNotNil: [ stops ]
+		ifNil: [ (def defAt: inheritFrom) stops ]! !
+
+!SVGGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:52'!
+usedAttributeNames
+	^#('xlink:href' 'id')! !
+
+!SVGGradient class methodsFor: 'instance creation' stamp: 'jmv 5/13/2010 10:02'!
+svgName
+	^nil! !
+
+!SVGLinearGradient methodsFor: 'building' stamp: 'jmv 6/14/2010 17:23'!
+buildFromXml: anXMLElement
+
+	super buildFromXml: anXMLElement.
+	vectorX1 _ (anXMLElement attributeAt: 'x1') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ].
+	vectorY1 _ (anXMLElement attributeAt: 'y1') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ].
+	vectorX2 _ (anXMLElement attributeAt: 'x2') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 1.0 ].
+	vectorY2 _ (anXMLElement attributeAt: 'y2') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ]! !
+
+!SVGLinearGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:53'!
+usedAttributeNames
+	^super usedAttributeNames,
+		#('x1' 'y1' 'x2' 'y2')! !
+
+!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+vectorX1
+	^vectorX1
+		ifNotNil: [ vectorX1 ]
+		ifNil: [ (def defAt: inheritFrom) vectorX1 ]! !
+
+!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+vectorX2
+	^vectorX2
+		ifNotNil: [ vectorX2 ]
+		ifNil: [ (def defAt: inheritFrom) vectorX2 ]! !
+
+!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+vectorY1
+	^vectorY1
+		ifNotNil: [ vectorY1 ]
+		ifNil: [ (def defAt: inheritFrom) vectorY1 ]! !
+
+!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+vectorY2
+	^vectorY2
+		ifNotNil: [ vectorY2 ]
+		ifNil: [ (def defAt: inheritFrom) vectorY2 ]! !
+
+!SVGLinearGradient class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:51'!
+svgName
+	^#linearGradient! !
+
+!SVGRadialGradient methodsFor: 'building' stamp: 'jmv 6/14/2010 17:23'!
+buildFromXml: anXMLElement
+
+	| data |
+	super buildFromXml: anXMLElement.
+	data _ anXMLElement attributeAt: 'cx'.
+	cx _ SVGElementMorph svgLengthFractionFor: (data ifNil: ['50%']).
+	data _ anXMLElement attributeAt: 'cy'.
+	cy _ SVGElementMorph svgLengthFractionFor: (data ifNil: ['50%']).
+	data _ anXMLElement attributeAt: 'r'.
+	r _ SVGElementMorph svgLengthFractionFor:(data ifNil: ['50%'])! !
+
+!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
+cx
+	^cx
+		ifNotNil: [ cx ]
+		ifNil: [ (def defAt: inheritFrom) cx ]! !
+
+!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
+cy
+	^cy
+		ifNotNil: [ cy ]
+		ifNil: [ (def defAt: inheritFrom) cy ]! !
+
+!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
+r
+	^r
+		ifNotNil: [ r ]
+		ifNil: [ (def defAt: inheritFrom) r ]! !
+
+!SVGRadialGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:53'!
+usedAttributeNames
+	^super usedAttributeNames,
+		#('cx' 'cy' 'r')! !
+
+!SVGRadialGradient class methodsFor: 'instance creation' stamp: 'jmv 5/13/2010 14:46'!
+svgName
+	^#radialGradient! !
+
+!SVGGradientStop methodsFor: 'building' stamp: 'jmv 2/15/2013 16:53'!
+buildFromXml: anXMLElement
+	| styleAttributes offsetData stopColorData stopOpacityData usedAttributeNames |
+	styleAttributes _ SVGElementMorph styleAttributesIn: anXMLElement.
+	offsetData _ SVGElementMorph attributeAt: 'offset' in: anXMLElement orIn: styleAttributes.
+	stopColorData _ SVGElementMorph attributeAt: 'stop-color' in: anXMLElement orIn: styleAttributes.
+	stopOpacityData _ SVGElementMorph attributeAt: 'stop-opacity' in: anXMLElement orIn: styleAttributes.
+	offset _ SVGElementMorph svgLengthFractionFor: offsetData.
+self revisar.
+	color _ Color "fromCSS2String: just hex? Or real CSS2?" fromString:  stopColorData.
+	stopOpacityData ifNotNil: [
+		color _ color alpha: stopOpacityData asNumber ].
+	
+
+	usedAttributeNames _ self usedAttributeNames asSet.
+	anXMLElement attributes keysAndValuesDo: [ :attrName :value |
+		((usedAttributeNames includes: attrName) or: [
+			(SVGElementMorph ignoredAttributes includes: attrName) or: [
+				SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
+			SVGWarning signal: 'Unhandled attribute: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]].
+
+	styleAttributes ifNotNil: [
+		styleAttributes  keysAndValuesDo: [ :attrName :value |
+			((usedAttributeNames includes: attrName) or: [
+				(SVGElementMorph ignoredAttributes includes: attrName) or: [
+					SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
+				SVGWarning signal: 'Unhandled style token: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]]].! !
+
+!SVGGradientStop methodsFor: 'accessing' stamp: 'jmv 5/10/2010 11:07'!
+color
+	^color! !
+
+!SVGGradientStop methodsFor: 'accessing' stamp: 'jmv 5/7/2010 17:27'!
+offset
+	^offset! !
+
+!SVGGradientStop methodsFor: 'building' stamp: 'jmv 6/16/2010 10:02'!
+usedAttributeNames
+	^#('style' 'offset' 'stop-color' 'stop-opacity')! !
+
+!SVGGradientStop class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 15:14'!
+svgName
+	^#stop! !
+
+!SVGDefs methodsFor: 'building' stamp: 'jmv 6/14/2010 09:00'!
+buildFromXml: anXMLElement
+	anXMLElement elementsDo: [ :subElement |
+		(SVGDefElement fromXml: subElement) ifNotNil: [ :defElement |
+			defElement def: self.
+			defs at: defElement name put: defElement]]! !
+
+!SVGDefs methodsFor: 'accessing' stamp: 'jmv 5/10/2010 10:16'!
+defAt: aString
+
+	^defs at: aString ifAbsent: nil! !
+
+!SVGDefs methodsFor: 'initialize-release' stamp: 'jmv 5/10/2010 09:42'!
+initialize
+	defs _ Dictionary new! !
+
+!SVGDefs class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:42'!
+svgName
+	"Answer the name of the svg elements we can represent"
+
+	^#defs! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+applyMatrixWith: dataStream
+
+	| b |
+	b _ FloatMatrix identity: 3.
+	b
+		i: 1 j: 1 put: dataStream nextNumber;
+		i: 2 j: 1 put: dataStream nextNumber;
+		i: 1 j: 2 put: dataStream nextNumber;
+		i: 2 j: 2 put: dataStream nextNumber;
+		i: 1 j: 3 put: dataStream nextNumber;
+		i: 2 j: 3 put: dataStream nextNumber.
+	a _ a
+		ifNil: [b]
+		ifNotNil: [a * b]! !
+
+!SVGTransform methodsFor: 'conversion' stamp: 'jmv 1/21/2015 09:03'!
+asAffineTransformation
+	| answer |
+	a ifNil: [ ^nil ].
+	answer _ AffineTransformation new.
+	answer a11: (a i: 1 j: 1).
+	answer a12: (a i: 1 j: 2).
+	answer a13: (a i: 1 j: 3).
+	answer a21: (a i: 2 j: 1).
+	answer a22: (a i: 2 j: 2).
+	answer a23: (a i: 2 j: 3).
+	^answer! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 7/30/2012 18:00'!
+buildFrom: transformData
+
+	| dataStream type |
+	dataStream _ transformData readStream.
+	[ dataStream atEnd ] whileFalse: [
+		dataStream upToAny: 'mtsr'. "find the next transform in the list"
+		type _ (dataStream upTo: $() withBlanksTrimmed.
+		(type = 'matrix') ifTrue: [
+			self applyMatrixWith: dataStream ].
+		(type = 'translate') ifTrue: [
+			self translateWith: dataStream ].
+		(type = 'scale') ifTrue: [
+			self scaleWith: dataStream ].
+		(type = 'rotate') ifTrue: [
+			self rotateWith: dataStream ].
+		(type = 'skewX') ifTrue: [
+			self skewXWith: dataStream ].
+		(type = 'skewY') ifTrue: [
+			self skewYWith: dataStream ]
+	].! !
+
+!SVGTransform methodsFor: 'initialize-release' stamp: 'jmv 4/29/2011 22:03'!
+initialize
+"	a _ FloatMatrix identity: 3."
+	"nil means identity, i.e. no transformation"
+	a _ nil.! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+rotateWith: dataStream
+
+	| b b1 b2 angle angleCos angleSin |
+	b _ FloatMatrix identity: 3.
+	b1 _ FloatMatrix identity: 3.
+	b2 _ FloatMatrix identity: 3.
+	angle _ dataStream nextNumber degreesToRadians.
+	angleCos _ angle cos.
+	angleSin _ angle sin.
+	b
+		i: 1 j: 1 put: angleCos;
+		i: 1 j: 2 put: 0.0 - angleSin;
+		i: 2 j: 1 put: angleSin;
+		i: 2 j: 2 put: angleCos.
+	dataStream nextNumber ifNotNil: [ :cx |
+		b1 i: 1 j: 3 put: cx.
+		b2 i: 1 j: 3 put: 0.0-cx.
+		dataStream nextNumber ifNotNil: [ :cy |
+			b1 i: 2 j: 3 put: cy.
+			b2 i: 2 j: 3 put: 0.0-cy ]].
+
+	a _ a
+		ifNil: [ b1 * b * b2 ]
+		ifNotNil: [ a * b1 * b * b2]! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+scaleWith: dataStream
+
+	| b sx sy |
+	b _ FloatMatrix identity: 3.
+	sx _ dataStream nextNumber.
+	sy _ dataStream nextNumber ifNil: [ sx ].
+	b i: 1 j: 1 put: sx.
+	b i: 2 j: 2 put: sy.
+	a _ a
+		ifNil: [b]
+		ifNotNil: [a * b]! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+skewXWith: dataStream
+
+	| b skewAngle |
+	b _ FloatMatrix identity: 3.
+	skewAngle _ dataStream nextNumber degreesToRadians.
+	b i: 1 j: 2 put: skewAngle tan.
+	a _ a
+		ifNil: [b]
+		ifNotNil:[a * b]! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+skewYWith: dataStream
+
+	| b skewAngle |
+	b _ FloatMatrix identity: 3.
+	skewAngle _ dataStream nextNumber degreesToRadians.
+	b i: 2 j: 1 put: skewAngle tan.
+	a _ a
+		ifNil: [b]
+		ifNotNil: [a * b]! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+translateWith: dataStream
+
+	| b |
+	b _ FloatMatrix identity: 3.
+	b i: 1 j: 3 put: dataStream nextNumber.
+	dataStream nextNumber ifNotNil: [ :dy |
+		b i: 2 j: 3 put: dy ].
+	a _ a
+		ifNil: [b]
+		ifNotNil: [a * b]! !
 
 !VectorEngine methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:39:42'!
 addArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
@@ -4717,11 +5071,14 @@ onForm: aForm
 
 	^ self new setForm: aForm! !
 
-!VectorFontRenderer methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:05'!
+!VectorFontRenderer methodsFor: 'accessing' stamp: 'jmv 12/22/2017 16:35:10'!
 vectorGraphicsCanvas: aVectorGraphicsCanvas
 
-	vectorGraphicsCanvas _ aVectorGraphicsCanvas.
-	vectorGraphicsEngine _ aVectorGraphicsCanvas engine! !
+	vectorGraphicsCanvas _ aVectorGraphicsCanvas! !
+
+!VectorFontRenderer class methodsFor: 'instance creation' stamp: 'jmv 12/22/2017 16:37:12'!
+for: aVectorCanvas
+	^ self new vectorGraphicsCanvas: aVectorCanvas! !
 
 !BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 12/10/2017 21:10:43'!
 drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics
@@ -9668,11 +10025,11 @@ Display forceToScreen
 	
 	vectorGraphicsCanvas outOfLocation! !
 
-!TechnicalFontRenderer methodsFor: 'other' stamp: 'jmv 12/10/2017 21:14:43'!
+!TechnicalFontRenderer methodsFor: 'other' stamp: 'jmv 12/22/2017 16:34:21'!
 drawM3BoxAtX: x0 y: y0 pointSize: ps italics: doItalics
 
 	vectorGraphicsCanvas intoLocation: (AffineTransformation withRadians: 0 scale: ps//10 position: x0@y0).
-	vectorGraphicsEngine strokeWidth: 2 color: Color red do: [
+	vectorGraphicsCanvas strokeWidth: 0.15 color: Color red do: [
 		-0.5 to: 9.5 do: [ :x |
 			vectorGraphicsCanvas
 				moveToX: x y: 0.5;
@@ -10975,360 +11332,6 @@ testCharacter: code
 	c engine strokeWidth: 16 color: Color green do: [
 		r drawCharCode: code atX: 38 y: 22 pointSize: 160 italics: false ].
 	Display forceToScreen! !
-
-!SVGDefElement methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:40'!
-def: anSVGDef
-	def _ anSVGDef! !
-
-!SVGDefElement class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:50'!
-classFor: anSVGName
-
-	self allSubclassesDo: [ :cls |
-		cls svgName = anSVGName
-			ifTrue: [ ^cls ] ].
-	^nil! !
-
-!SVGDefElement class methodsFor: 'instance creation' stamp: 'jmv 6/16/2010 10:44'!
-fromXml: anXMLElement
-	| cls n |
-	n _ anXMLElement name.
-	cls _ self classFor: n.
-	cls ifNil: [
-		((SVGElementMorph ignoredElements includes: n) or: [
-			SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | n beginsWith: prefix ]]) ifFalse: [
-			SVGWarning signal: ('Unhandled def element: ', n printString) ].
-		^nil ].
-	^ cls new buildFromXml: anXMLElement! !
-
-!SVGGradient methodsFor: 'accessing' stamp: 'jmv 12/12/2017 21:40:16'!
-averageColor
-	| s |
-	averageColor ifNotNil: [ ^ averageColor ].
-	s _ self stops.
-	averageColor _ (s collect: [ :c | c color / s size ]) sum.
-	^ averageColor! !
-
-!SVGGradient methodsFor: 'building' stamp: 'jmv 7/30/2012 18:00'!
-buildFromXml: anXMLElement
-	| unsorted stop dataStream usedAttributeNames |
-	name _ anXMLElement attributeAt: 'id'.
-	unsorted _ OrderedCollection new.
-	anXMLElement elementsDo: [ :subElement |
-		stop _ SVGDefElement fromXml: subElement.
-		unsorted add: stop].
-	"Esto deberia ser un array de entrada, arreglar (codigo de levente) sortBy: para que ande en array sin crear sorted collection ni nada"
-	unsorted isEmpty
-		ifFalse: [
-			stops _ unsorted sorted: [ :a :b | a offset < b offset ]]
-		ifTrue: [ stops _ nil ].
-
-	inheritFrom _ nil.
-	(anXMLElement attributeAt: 'xlink:href') ifNotNil: [ :linkData |
-		dataStream _ linkData readStream.
-		dataStream upTo: $#.
-		inheritFrom _ (dataStream upTo: $) ) withBlanksTrimmed ].
-
-	usedAttributeNames _ self usedAttributeNames asSet.
-	anXMLElement attributes keysAndValuesDo: [ :attrName :value |
-		((usedAttributeNames includes: attrName) or: [
-			(SVGElementMorph ignoredAttributes includes: attrName) or: [
-				SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
-			SVGWarning signal: 'Unhandled attribute: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]]! !
-
-!SVGGradient methodsFor: 'accessing' stamp: 'jmv 5/13/2010 09:56'!
-name
-	^name! !
-
-!SVGGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-stops
-	^stops
-		ifNotNil: [ stops ]
-		ifNil: [ (def defAt: inheritFrom) stops ]! !
-
-!SVGGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:52'!
-usedAttributeNames
-	^#('xlink:href' 'id')! !
-
-!SVGGradient class methodsFor: 'instance creation' stamp: 'jmv 5/13/2010 10:02'!
-svgName
-	^nil! !
-
-!SVGLinearGradient methodsFor: 'building' stamp: 'jmv 6/14/2010 17:23'!
-buildFromXml: anXMLElement
-
-	super buildFromXml: anXMLElement.
-	vectorX1 _ (anXMLElement attributeAt: 'x1') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ].
-	vectorY1 _ (anXMLElement attributeAt: 'y1') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ].
-	vectorX2 _ (anXMLElement attributeAt: 'x2') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 1.0 ].
-	vectorY2 _ (anXMLElement attributeAt: 'y2') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ]! !
-
-!SVGLinearGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:53'!
-usedAttributeNames
-	^super usedAttributeNames,
-		#('x1' 'y1' 'x2' 'y2')! !
-
-!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-vectorX1
-	^vectorX1
-		ifNotNil: [ vectorX1 ]
-		ifNil: [ (def defAt: inheritFrom) vectorX1 ]! !
-
-!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-vectorX2
-	^vectorX2
-		ifNotNil: [ vectorX2 ]
-		ifNil: [ (def defAt: inheritFrom) vectorX2 ]! !
-
-!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-vectorY1
-	^vectorY1
-		ifNotNil: [ vectorY1 ]
-		ifNil: [ (def defAt: inheritFrom) vectorY1 ]! !
-
-!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-vectorY2
-	^vectorY2
-		ifNotNil: [ vectorY2 ]
-		ifNil: [ (def defAt: inheritFrom) vectorY2 ]! !
-
-!SVGLinearGradient class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:51'!
-svgName
-	^#linearGradient! !
-
-!SVGRadialGradient methodsFor: 'building' stamp: 'jmv 6/14/2010 17:23'!
-buildFromXml: anXMLElement
-
-	| data |
-	super buildFromXml: anXMLElement.
-	data _ anXMLElement attributeAt: 'cx'.
-	cx _ SVGElementMorph svgLengthFractionFor: (data ifNil: ['50%']).
-	data _ anXMLElement attributeAt: 'cy'.
-	cy _ SVGElementMorph svgLengthFractionFor: (data ifNil: ['50%']).
-	data _ anXMLElement attributeAt: 'r'.
-	r _ SVGElementMorph svgLengthFractionFor:(data ifNil: ['50%'])! !
-
-!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
-cx
-	^cx
-		ifNotNil: [ cx ]
-		ifNil: [ (def defAt: inheritFrom) cx ]! !
-
-!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
-cy
-	^cy
-		ifNotNil: [ cy ]
-		ifNil: [ (def defAt: inheritFrom) cy ]! !
-
-!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
-r
-	^r
-		ifNotNil: [ r ]
-		ifNil: [ (def defAt: inheritFrom) r ]! !
-
-!SVGRadialGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:53'!
-usedAttributeNames
-	^super usedAttributeNames,
-		#('cx' 'cy' 'r')! !
-
-!SVGRadialGradient class methodsFor: 'instance creation' stamp: 'jmv 5/13/2010 14:46'!
-svgName
-	^#radialGradient! !
-
-!SVGGradientStop methodsFor: 'building' stamp: 'jmv 2/15/2013 16:53'!
-buildFromXml: anXMLElement
-	| styleAttributes offsetData stopColorData stopOpacityData usedAttributeNames |
-	styleAttributes _ SVGElementMorph styleAttributesIn: anXMLElement.
-	offsetData _ SVGElementMorph attributeAt: 'offset' in: anXMLElement orIn: styleAttributes.
-	stopColorData _ SVGElementMorph attributeAt: 'stop-color' in: anXMLElement orIn: styleAttributes.
-	stopOpacityData _ SVGElementMorph attributeAt: 'stop-opacity' in: anXMLElement orIn: styleAttributes.
-	offset _ SVGElementMorph svgLengthFractionFor: offsetData.
-self revisar.
-	color _ Color "fromCSS2String: just hex? Or real CSS2?" fromString:  stopColorData.
-	stopOpacityData ifNotNil: [
-		color _ color alpha: stopOpacityData asNumber ].
-	
-
-	usedAttributeNames _ self usedAttributeNames asSet.
-	anXMLElement attributes keysAndValuesDo: [ :attrName :value |
-		((usedAttributeNames includes: attrName) or: [
-			(SVGElementMorph ignoredAttributes includes: attrName) or: [
-				SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
-			SVGWarning signal: 'Unhandled attribute: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]].
-
-	styleAttributes ifNotNil: [
-		styleAttributes  keysAndValuesDo: [ :attrName :value |
-			((usedAttributeNames includes: attrName) or: [
-				(SVGElementMorph ignoredAttributes includes: attrName) or: [
-					SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
-				SVGWarning signal: 'Unhandled style token: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]]].! !
-
-!SVGGradientStop methodsFor: 'accessing' stamp: 'jmv 5/10/2010 11:07'!
-color
-	^color! !
-
-!SVGGradientStop methodsFor: 'accessing' stamp: 'jmv 5/7/2010 17:27'!
-offset
-	^offset! !
-
-!SVGGradientStop methodsFor: 'building' stamp: 'jmv 6/16/2010 10:02'!
-usedAttributeNames
-	^#('style' 'offset' 'stop-color' 'stop-opacity')! !
-
-!SVGGradientStop class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 15:14'!
-svgName
-	^#stop! !
-
-!SVGDefs methodsFor: 'building' stamp: 'jmv 6/14/2010 09:00'!
-buildFromXml: anXMLElement
-	anXMLElement elementsDo: [ :subElement |
-		(SVGDefElement fromXml: subElement) ifNotNil: [ :defElement |
-			defElement def: self.
-			defs at: defElement name put: defElement]]! !
-
-!SVGDefs methodsFor: 'accessing' stamp: 'jmv 5/10/2010 10:16'!
-defAt: aString
-
-	^defs at: aString ifAbsent: nil! !
-
-!SVGDefs methodsFor: 'initialize-release' stamp: 'jmv 5/10/2010 09:42'!
-initialize
-	defs _ Dictionary new! !
-
-!SVGDefs class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:42'!
-svgName
-	"Answer the name of the svg elements we can represent"
-
-	^#defs! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-applyMatrixWith: dataStream
-
-	| b |
-	b _ FloatMatrix identity: 3.
-	b
-		i: 1 j: 1 put: dataStream nextNumber;
-		i: 2 j: 1 put: dataStream nextNumber;
-		i: 1 j: 2 put: dataStream nextNumber;
-		i: 2 j: 2 put: dataStream nextNumber;
-		i: 1 j: 3 put: dataStream nextNumber;
-		i: 2 j: 3 put: dataStream nextNumber.
-	a _ a
-		ifNil: [b]
-		ifNotNil: [a * b]! !
-
-!SVGTransform methodsFor: 'conversion' stamp: 'jmv 1/21/2015 09:03'!
-asAffineTransformation
-	| answer |
-	a ifNil: [ ^nil ].
-	answer _ AffineTransformation new.
-	answer a11: (a i: 1 j: 1).
-	answer a12: (a i: 1 j: 2).
-	answer a13: (a i: 1 j: 3).
-	answer a21: (a i: 2 j: 1).
-	answer a22: (a i: 2 j: 2).
-	answer a23: (a i: 2 j: 3).
-	^answer! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 7/30/2012 18:00'!
-buildFrom: transformData
-
-	| dataStream type |
-	dataStream _ transformData readStream.
-	[ dataStream atEnd ] whileFalse: [
-		dataStream upToAny: 'mtsr'. "find the next transform in the list"
-		type _ (dataStream upTo: $() withBlanksTrimmed.
-		(type = 'matrix') ifTrue: [
-			self applyMatrixWith: dataStream ].
-		(type = 'translate') ifTrue: [
-			self translateWith: dataStream ].
-		(type = 'scale') ifTrue: [
-			self scaleWith: dataStream ].
-		(type = 'rotate') ifTrue: [
-			self rotateWith: dataStream ].
-		(type = 'skewX') ifTrue: [
-			self skewXWith: dataStream ].
-		(type = 'skewY') ifTrue: [
-			self skewYWith: dataStream ]
-	].! !
-
-!SVGTransform methodsFor: 'initialize-release' stamp: 'jmv 4/29/2011 22:03'!
-initialize
-"	a _ FloatMatrix identity: 3."
-	"nil means identity, i.e. no transformation"
-	a _ nil.! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-rotateWith: dataStream
-
-	| b b1 b2 angle angleCos angleSin |
-	b _ FloatMatrix identity: 3.
-	b1 _ FloatMatrix identity: 3.
-	b2 _ FloatMatrix identity: 3.
-	angle _ dataStream nextNumber degreesToRadians.
-	angleCos _ angle cos.
-	angleSin _ angle sin.
-	b
-		i: 1 j: 1 put: angleCos;
-		i: 1 j: 2 put: 0.0 - angleSin;
-		i: 2 j: 1 put: angleSin;
-		i: 2 j: 2 put: angleCos.
-	dataStream nextNumber ifNotNil: [ :cx |
-		b1 i: 1 j: 3 put: cx.
-		b2 i: 1 j: 3 put: 0.0-cx.
-		dataStream nextNumber ifNotNil: [ :cy |
-			b1 i: 2 j: 3 put: cy.
-			b2 i: 2 j: 3 put: 0.0-cy ]].
-
-	a _ a
-		ifNil: [ b1 * b * b2 ]
-		ifNotNil: [ a * b1 * b * b2]! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-scaleWith: dataStream
-
-	| b sx sy |
-	b _ FloatMatrix identity: 3.
-	sx _ dataStream nextNumber.
-	sy _ dataStream nextNumber ifNil: [ sx ].
-	b i: 1 j: 1 put: sx.
-	b i: 2 j: 2 put: sy.
-	a _ a
-		ifNil: [b]
-		ifNotNil: [a * b]! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-skewXWith: dataStream
-
-	| b skewAngle |
-	b _ FloatMatrix identity: 3.
-	skewAngle _ dataStream nextNumber degreesToRadians.
-	b i: 1 j: 2 put: skewAngle tan.
-	a _ a
-		ifNil: [b]
-		ifNotNil:[a * b]! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-skewYWith: dataStream
-
-	| b skewAngle |
-	b _ FloatMatrix identity: 3.
-	skewAngle _ dataStream nextNumber degreesToRadians.
-	b i: 2 j: 1 put: skewAngle tan.
-	a _ a
-		ifNil: [b]
-		ifNotNil: [a * b]! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-translateWith: dataStream
-
-	| b |
-	b _ FloatMatrix identity: 3.
-	b i: 1 j: 3 put: dataStream nextNumber.
-	dataStream nextNumber ifNotNil: [ :dy |
-		b i: 2 j: 3 put: dy ].
-	a _ a
-		ifNil: [b]
-		ifNotNil: [a * b]! !
 
 !SVGPathCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:15'!
 buildFrom: commandChar stream: aStream
