@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3230] on 17 December 2017 at 6:12:10 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3231] on 22 December 2017 at 1:45:44 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 31!
+!provides: 'Morphic3' 1 32!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'OpenCL' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
+!requires: 'OpenCL' 1 nil nil!
 !classDefinition: #SVGError category: #'Morphic3-SVG'!
 Error subclass: #SVGError
 	instanceVariableNames: ''
@@ -24,14 +24,44 @@ Warning subclass: #SVGWarning
 SVGWarning class
 	instanceVariableNames: ''!
 
-!classDefinition: #StrokeFont category: #'Morphic3-Text'!
+!classDefinition: #StrokeFont category: #'Morphic3-Kernel'!
 AbstractFont subclass: #StrokeFont
 	instanceVariableNames: 'name emphasis baseFont derivativeFonts pointSize characterToGlyphMap'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Morphic3-Text'!
-!classDefinition: 'StrokeFont class' category: #'Morphic3-Text'!
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'StrokeFont class' category: #'Morphic3-Kernel'!
 StrokeFont class
+	instanceVariableNames: ''!
+
+!classDefinition: #M3Exp01Morph category: #'Morphic3-Experiments'!
+Morph subclass: #M3Exp01Morph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Experiments'!
+!classDefinition: 'M3Exp01Morph class' category: #'Morphic3-Experiments'!
+M3Exp01Morph class
+	instanceVariableNames: ''!
+
+!classDefinition: #M3Exp02Morph category: #'Morphic3-Experiments'!
+Morph subclass: #M3Exp02Morph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Experiments'!
+!classDefinition: 'M3Exp02Morph class' category: #'Morphic3-Experiments'!
+M3Exp02Morph class
+	instanceVariableNames: ''!
+
+!classDefinition: #M3Exp03Morph category: #'Morphic3-Experiments'!
+Morph subclass: #M3Exp03Morph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Experiments'!
+!classDefinition: 'M3Exp03Morph class' category: #'Morphic3-Experiments'!
+M3Exp03Morph class
 	instanceVariableNames: ''!
 
 !classDefinition: #SVGElementMorph category: #'Morphic3-SVG'!
@@ -134,36 +164,6 @@ SVGElementMorph subclass: #SVGRect
 SVGRect class
 	instanceVariableNames: ''!
 
-!classDefinition: #M3Exp01Morph category: #'Morphic3-Experiments'!
-Morph subclass: #M3Exp01Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Experiments'!
-!classDefinition: 'M3Exp01Morph class' category: #'Morphic3-Experiments'!
-M3Exp01Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp02Morph category: #'Morphic3-Experiments'!
-Morph subclass: #M3Exp02Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Experiments'!
-!classDefinition: 'M3Exp02Morph class' category: #'Morphic3-Experiments'!
-M3Exp02Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp03Morph category: #'Morphic3-Experiments'!
-Morph subclass: #M3Exp03Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Experiments'!
-!classDefinition: 'M3Exp03Morph class' category: #'Morphic3-Experiments'!
-M3Exp03Morph class
-	instanceVariableNames: ''!
-
 !classDefinition: #VectorCanvas category: #'Morphic3-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
 	instanceVariableNames: 'fontForeColor currentClientX currentClientY autoHintText engine'
@@ -174,14 +174,44 @@ MorphicCanvas subclass: #VectorCanvas
 VectorCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #Morphic3GeometryTest category: #'Morphic3-Tests'!
-TestCase subclass: #Morphic3GeometryTest
+!classDefinition: #VectorEngine category: #'Morphic3-Kernel'!
+Object subclass: #VectorEngine
+	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth subPixelDelta strokeWidth strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips boundsLeft boundsTop boundsRight boundsBottom morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom mask edgeCountPerPixel hopsPerPixel auxBitBlt firstX firstY currentX currentY lastControl2Point trajectoryPoints fragmentStartIndexes'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'VectorEngine class' category: #'Morphic3-Kernel'!
+VectorEngine class
+	instanceVariableNames: ''!
+
+!classDefinition: #VectorFontRenderer category: #'Morphic3-Kernel'!
+Object subclass: #VectorFontRenderer
+	instanceVariableNames: 'vectorGraphicsCanvas vectorGraphicsEngine'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'VectorFontRenderer class' category: #'Morphic3-Kernel'!
+VectorFontRenderer class
+	instanceVariableNames: ''!
+
+!classDefinition: #BitstreamVeraRenderer category: #'Morphic3-Kernel'!
+VectorFontRenderer subclass: #BitstreamVeraRenderer
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Morphic3-Tests'!
-!classDefinition: 'Morphic3GeometryTest class' category: #'Morphic3-Tests'!
-Morphic3GeometryTest class
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'BitstreamVeraRenderer class' category: #'Morphic3-Kernel'!
+BitstreamVeraRenderer class
+	instanceVariableNames: ''!
+
+!classDefinition: #TechnicalFontRenderer category: #'Morphic3-Kernel'!
+VectorFontRenderer subclass: #TechnicalFontRenderer
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic3-Kernel'!
+!classDefinition: 'TechnicalFontRenderer class' category: #'Morphic3-Kernel'!
+TechnicalFontRenderer class
 	instanceVariableNames: ''!
 
 !classDefinition: #SVGDefElement category: #'Morphic3-SVG'!
@@ -252,46 +282,6 @@ Object subclass: #SVGTransform
 	category: 'Morphic3-SVG'!
 !classDefinition: 'SVGTransform class' category: #'Morphic3-SVG'!
 SVGTransform class
-	instanceVariableNames: ''!
-
-!classDefinition: #VectorEngine category: #'Morphic3-Kernel'!
-Object subclass: #VectorEngine
-	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth subPixelDelta targetSubpixelAlphas targetSubpixelAlphasIfStrokesAndFillsWereOpaque strokeWidth strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips boundsLeft boundsTop boundsRight boundsBottom morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom penAlpha edgeCountPerPixel hopsPerPixel auxBitBlt firstX firstY currentX currentY lastControl2Point trajectoryPoints fragmentStartIndexes'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Kernel'!
-!classDefinition: 'VectorEngine class' category: #'Morphic3-Kernel'!
-VectorEngine class
-	instanceVariableNames: ''!
-
-!classDefinition: #VectorFontRenderer category: #'Morphic3-Kernel'!
-Object subclass: #VectorFontRenderer
-	instanceVariableNames: 'vectorGraphicsCanvas vectorGraphicsEngine'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Kernel'!
-!classDefinition: 'VectorFontRenderer class' category: #'Morphic3-Kernel'!
-VectorFontRenderer class
-	instanceVariableNames: ''!
-
-!classDefinition: #BitstreamVeraRenderer category: #'Morphic3-Kernel'!
-VectorFontRenderer subclass: #BitstreamVeraRenderer
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Kernel'!
-!classDefinition: 'BitstreamVeraRenderer class' category: #'Morphic3-Kernel'!
-BitstreamVeraRenderer class
-	instanceVariableNames: ''!
-
-!classDefinition: #TechnicalFontRenderer category: #'Morphic3-Kernel'!
-VectorFontRenderer subclass: #TechnicalFontRenderer
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic3-Kernel'!
-!classDefinition: 'TechnicalFontRenderer class' category: #'Morphic3-Kernel'!
-TechnicalFontRenderer class
 	instanceVariableNames: ''!
 
 !classDefinition: #SVGPathCommand category: #'Morphic3-SVG path commands'!
@@ -405,18 +395,6 @@ SVGPathQuadraticCurveToSmoothCommand class
 	instanceVariableNames: ''!
 
 
-!SVGElementMorph commentStamp: 'jmv 5/2/2011 09:46' prior: 0!
-See class methods in 'examples' category!
-
-!SVGMainMorph commentStamp: '<historical>' prior: 0!
-| m |
-m _ SVGMainMorph fromFileNamed: 'Ejemplos/Lionx.svg'.
-m privateOwner: World.
-m fullDrawOn: Display getCanvas.
-Display forceToScreen
-"m exportAs: 'pp.png'"
-!
-
 !M3Exp01Morph commentStamp: 'jmv 12/11/2017 21:33:29' prior: 0!
 | m |
 m _ M3Exp01Morph new.
@@ -466,6 +444,18 @@ setClipRect: (40@40 extent: 100@100);
 fullDraw: m.
 Display forceToScreen.!
 
+!SVGElementMorph commentStamp: 'jmv 5/2/2011 09:46' prior: 0!
+See class methods in 'examples' category!
+
+!SVGMainMorph commentStamp: '<historical>' prior: 0!
+| m |
+m _ SVGMainMorph fromFileNamed: 'Ejemplos/Lionx.svg'.
+m privateOwner: World.
+m fullDrawOn: Display getCanvas.
+Display forceToScreen
+"m exportAs: 'pp.png'"
+!
+
 !VectorCanvas commentStamp: '<historical>' prior: 0!
 A canvas specially built for Morphic 3.
 
@@ -478,7 +468,7 @@ self allOwnersReverseDo: [ :m | c into: m ].
 c fullDraw: self.
 Display forceToScreen!
 
-!VectorEngine commentStamp: 'jmv 12/16/2017 18:27:28' prior: 0!
+!VectorEngine commentStamp: 'jmv 12/22/2017 13:40:04' prior: 0!
 A Vector Graphics rasterizer for Morphic 3.
 Supports most SVG primitives.
 Gives exceptional quality.
@@ -486,19 +476,19 @@ Gives exceptional quality.
 (VectorEngine onForm: Display)
 	resetMorphBounds;
 	strokeWidth: 1.0 color: Color black do: [ :engine |
-		engine displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
+		engine addArcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen.
 
 (VectorEngine onForm: Display)
 	resetMorphBounds;
 	strokeWidth: 1.0 color: Color black fillColor: Color red do: [ :engine |
-		engine displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
+		engine addArcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen.
 
 (VectorEngine onForm: Display)
 	resetMorphBounds;
 	fillColor: Color red do: [ :engine |
-		engine displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
+		engine addArcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen!
 
 !Color methodsFor: '*Morphic3' stamp: 'jmv 1/21/2015 12:48'!
@@ -680,6 +670,94 @@ m3Sans: pointSize
 !StrokeFont class methodsFor: 'instance creation' stamp: 'jmv 4/15/2014 11:57'!
 new
 	^self m3Sans: 10! !
+
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:34:45'!
+drawOn: aCanvas
+	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
+
+
+aCanvas strokeWidth: 4 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
+	aCanvas
+		ellipseCenterX: 46 y: 46 rx: "24"16 ry: "12"16 ].
+
+aCanvas strokeWidth: 18 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
+	aCanvas
+		ellipseCenterX: 46 y: 46 rx: "24"36 ry: "12"36 ].
+
+aCanvas fillColor: Color black do: [
+	aCanvas
+		polyLine: {15@32. 30@50. 45@20. 15@32} * 2.
+	aCanvas
+		polyLine: {60@32. 30@50. 45@20. 60@32} * 2 ].
+
+aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
+	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
+
+aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
+	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
+
+aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
+	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
+
+aCanvas strokeWidth: 1 color: (Color green alpha: 0.7+0.3) do: [
+	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
+
+aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alpha: 0.3) do: [
+	aCanvas roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60 rx: 40 ry: 20 ]
+! !
+
+!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 7/14/2014 14:28'!
+clipsLastSubmorph
+	"Drawing specific. If this property is set, clip the receiver's  
+	last submorph to the receiver's shape"
+	^ true! !
+
+!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:08:39'!
+drawOn: aCanvas
+	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
+
+	aCanvas strokeWidth: 15 color: (Color green alpha: 0.8) fillColor: (Color red alpha: 0.6) do: [
+		aCanvas
+			roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60  rx: 40 ry: 20 ]! !
+
+!M3Exp03Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:25:49'!
+drawOn: aCanvas
+	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
+
+true ifTrue: [
+	aCanvas fillColor: (Color black alpha: 0.5) do: [
+	aCanvas
+		polyLine: {-10@32. 120@-30. 
+"		60@20. 120@20. 120@10. 150@50. 120@70. 120@30. 80@30."
+"		60@90. -50@32"
+		60@90. -60@80. -60@20. -50@70. -10@32
+		}
+ ]].
+false ifTrue: [
+	aCanvas fillColor: Color black do: [
+	aCanvas
+		polyLine: {60@32. 30@50. 45@20. 60@32}
+]].
+
+false ifTrue: [
+	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
+	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
+].
+
+false ifTrue: [
+	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
+	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
+].
+
+false ifTrue: [
+	aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
+	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
+].
+
+false ifTrue: [
+	aCanvas strokeWidth: 1 color: (Color red alpha: 0.7+0.3) do: [
+	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
+]! !
 
 !SVGElementMorph methodsFor: 'building' stamp: 'jmv 1/21/2015 09:03'!
 buildFromXml: anXMLElement
@@ -1633,95 +1711,7 @@ svgName
 
 	^#rect! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:34:45'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-
-aCanvas strokeWidth: 4 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
-	aCanvas
-		ellipseCenterX: 46 y: 46 rx: "24"16 ry: "12"16 ].
-
-aCanvas strokeWidth: 18 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
-	aCanvas
-		ellipseCenterX: 46 y: 46 rx: "24"36 ry: "12"36 ].
-
-aCanvas fillColor: Color black do: [
-	aCanvas
-		polyLine: {15@32. 30@50. 45@20. 15@32} * 2.
-	aCanvas
-		polyLine: {60@32. 30@50. 45@20. 60@32} * 2 ].
-
-aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
-
-aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
-
-aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
-
-aCanvas strokeWidth: 1 color: (Color green alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
-
-aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alpha: 0.3) do: [
-	aCanvas roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60 rx: 40 ry: 20 ]
-! !
-
-!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 7/14/2014 14:28'!
-clipsLastSubmorph
-	"Drawing specific. If this property is set, clip the receiver's  
-	last submorph to the receiver's shape"
-	^ true! !
-
-!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:08:39'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-	aCanvas strokeWidth: 15 color: (Color green alpha: 0.8) fillColor: (Color red alpha: 0.6) do: [
-		aCanvas
-			roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60  rx: 40 ry: 20 ]! !
-
-!M3Exp03Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:25:49'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-true ifTrue: [
-	aCanvas fillColor: (Color black alpha: 0.5) do: [
-	aCanvas
-		polyLine: {-10@32. 120@-30. 
-"		60@20. 120@20. 120@10. 150@50. 120@70. 120@30. 80@30."
-"		60@90. -50@32"
-		60@90. -60@80. -60@20. -50@70. -10@32
-		}
- ]].
-false ifTrue: [
-	aCanvas fillColor: Color black do: [
-	aCanvas
-		polyLine: {60@32. 30@50. 45@20. 60@32}
-]].
-
-false ifTrue: [
-	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 1 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
-]! !
-
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 9/30/2014 20:02'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 9/30/2014 20:02'!
 cDx: dx dy: dy
 	"Curve comes from an horizontal segment, and is followed by a vertical segment"
 	"Does not autoHint y"
@@ -1733,7 +1723,7 @@ cDx: dx dy: dy
 	currentClientX _ currentClientX+dx.
 	currentClientY _ currentClientY+dy! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 9/30/2014 20:02'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 9/30/2014 20:02'!
 cDy: dy dx: dx
 	"Curve comes from a vertical segment, and is followed by an horizontal segment"
 	"Does not autoHint y"
@@ -1744,7 +1734,7 @@ cDy: dy dx: dx
 	currentClientX _ currentClientX+dx.
 	currentClientY _ currentClientY+dy! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:02'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:10'!
 cdl: r
 
 	| p3 p1 p2 x3 y3 x1 x2 y1 y2 displayY1 displayY2 displayY3 hr |
@@ -1765,11 +1755,11 @@ cdl: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientX _ x3.
 	currentClientY _ y3! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:03'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:12'!
 cdr: r
 
 	| p3 p1 p2 x3 y3 x1 x2 y1 y2 displayY1 displayY2 displayY3 hr |
@@ -1790,11 +1780,11 @@ cdr: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.	
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.	
 	currentClientX _ x3.
 	currentClientY _ y3! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:07'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:14'!
 cdru: r
 	"juntar las 2 curvas en una, y hintear los extremos. No se hintea en el medio"
 
@@ -1811,10 +1801,10 @@ cdru: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientX _ currentClientX + dr! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:08'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:16'!
 cld: r
 
 	| p3 p1 p2 x3 y3 x1 x2 y1 y2 displayY1 displayY2 displayY3 hr |
@@ -1835,11 +1825,11 @@ cld: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientX _ x3.
 	currentClientY _ y3! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:10'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:18'!
 cldr: r
 	"juntar las 2 curvas en una, y hintear los extremos. No se hintea en el medio, permit $a chiquitas bonitas"
 
@@ -1856,16 +1846,21 @@ cldr: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientY _ currentClientY - dr! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/14/2014 09:00'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 10/14/2014 09:00'!
 clippingRectForCurrentMorph
 	"In form coordinates"
 
 	^engine clippingRectForCurrentMorph! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:12'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:33:07'!
+closePath
+
+	engine addClosePath! !
+
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:19'!
 clu: r
 	| p3 p1 p2 x3 y3 x1 x2 y1 y2 displayY1 displayY2 displayY3 hr |
 
@@ -1886,11 +1881,11 @@ clu: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientX _ x3.
 	currentClientY _ y3! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:14'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:22'!
 clur: r
 	"juntar las 2 curvas en una, y hintear los extremos. No se hintea en el medio, permit $a chiquitas bonitas"
 
@@ -1907,10 +1902,10 @@ clur: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientY _ currentClientY + dr! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:16'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:24'!
 crd: r
 
 	| p3 p1 p2 x3 y3 x1 x2 y1 y2 displayY1 displayY2 displayY3 hr |
@@ -1931,11 +1926,11 @@ crd: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientX _ x3.
 	currentClientY _ y3! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:18'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:26'!
 crdl: r
 	"juntar las 2 curvas en una, y hintear los extremos. No se hintea en el medio, permit $a chiquitas bonitas"
 
@@ -1952,10 +1947,10 @@ crdl: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientY _ currentClientY - dr! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:19'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:27'!
 cru: r
 
 	| p3 p1 p2 x3 y3 x1 x2 y1 y2 displayY1 displayY2 displayY3 hr |
@@ -1976,11 +1971,11 @@ cru: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientX _ x3.
 	currentClientY _ y3! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 17:58:26'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:35:31'!
 cubicBezier: points
 	"points must be of size 4
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -1990,13 +1985,13 @@ cubicBezier: points
 	control1 _ currentTransformation externalizePosition: points second.
 	control2 _ currentTransformation externalizePosition: points third.
 	end _ currentTransformation externalizePosition: points fourth.
-	engine displayCoordmoveToX: start x y: start y.
+	engine addMoveToX: start x y: start y.
 	engine
-		displayCoordcubicBezierToX: end x y: end y
+		addCubicBezierToX: end x y: end y
 		control1X: control1 x y: control1 y
 		control2X: control2 x y: control2 y! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:43'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:31'!
 cul: r
 
 	| p3 p1 p2 x3 y3 x1 x2 y1 y2 displayY1 displayY2 displayY3 hr |
@@ -2017,11 +2012,11 @@ cul: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientX _ x3.
 	currentClientY _ y3! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:45'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:32'!
 cur: r
 
 	| p3 p1 p2 x3 y3 x1 x2 y1 y2 displayY1 displayY2 displayY3 hr |
@@ -2042,11 +2037,11 @@ cur: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.	
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.	
 	currentClientX _ x3.
 	currentClientY _ y3! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 12/17/2017 17:58:47'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:24:35'!
 curd: r
 	"obviamente solo hintear para tamanios chicos, y con angulo cero..."
 	"juntar las 2 curvas en una, y hintear los extremos. No se hintea en el medio"
@@ -2064,22 +2059,22 @@ curd: r
 		displayY3 _ displayY3 rounded.
 		displayY1 _ displayY1 rounded.
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordcubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
+	engine addCubicBezierToX: p3 x y: displayY3 control1X: p1 x y: displayY1 control2X: p2 x y: displayY2.
 	currentClientX _ currentClientX + dr! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/14/2014 16:17'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 10/14/2014 16:17'!
 currentOwnerIfClips: currentMorphOwnerOrNil
 	engine currentOwnerIfClips: currentMorphOwnerOrNil! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 17:58:54'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:24:37'!
 curveToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	| p3 p1 p2 |
 	p3 _ currentTransformation externalizePosition: x3@y3.
 	p1 _ currentTransformation externalizePosition: x1@y1.
 	p2 _ currentTransformation externalizePosition: x2@y2.
-	engine displayCoordcubicBezierToX: p3 x y: p3 y control1X: p1 x y: p1 y control2X: p2 x y: p2 y! !
+	engine addCubicBezierToX: p3 x y: p3 y control1X: p1 x y: p1 y control2X: p2 x y: p2 y! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 10/14/2014 09:25'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:25:23'!
 d: dy
 
 	| newY p2 displayY2 |
@@ -2088,10 +2083,10 @@ d: dy
 	displayY2 _ p2 y.
 	autoHintText ifTrue: [
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordlineToX: p2 x y: displayY2.
+	engine addLineToX: p2 x y: displayY2.
 	currentClientY _ newY! !
 
-!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 12/11/2017 22:15:07'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/11/2017 22:15:07'!
 displayString: aString from: startIndex to: stopIndex at: aPoint strokeFont: font
 	| ascii destX destY displayWidth ps isBold scaledPS wheight isItalic char renderer |
 
@@ -2126,7 +2121,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint strokeFont: fon
 	autoHintText _ false.
 	engine antiAliasingWidth: self class defaultAntiAliasingWidth! !
 
-!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 12/11/2017 22:15:38'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/11/2017 22:15:38'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: font
 	| ascii destX destY displayWidth ps isBold isItalic char renderer |
 
@@ -2150,7 +2145,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: f
 	].
 	engine antiAliasingWidth: self class defaultAntiAliasingWidth! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 9/30/2014 20:02'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/30/2014 20:02'!
 drawButtonIconFromCurrentMorph
 
 	currentMorph iconName ifNotNil: [ :selector |
@@ -2158,7 +2153,7 @@ drawButtonIconFromCurrentMorph
 		^true ].
 	^false! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 12/11/2017 22:07:12'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 12/11/2017 22:07:12'!
 drawCloseIcon
 
 self strokeWidth: 1.0 color: Color black do: [
@@ -2172,7 +2167,7 @@ self strokeWidth: 1.0 color: Color black do: [
 		u: 9.
 ]! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 12/11/2017 22:07:22'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 12/11/2017 22:07:22'!
 drawCollapseIcon
 
 self strokeWidth: 1.0 color: Color black do: [
@@ -2186,7 +2181,7 @@ self strokeWidth: 1.0 color: Color black do: [
 		u: 9.
 ]! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 12/11/2017 22:07:26'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 12/11/2017 22:07:26'!
 drawDownIcon
 
 self strokeWidth: 1.0 color: Color black do: [
@@ -2200,7 +2195,7 @@ self strokeWidth: 1.0 color: Color black do: [
 		u: 9.
 ]! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 12/11/2017 22:07:31'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 12/11/2017 22:07:31'!
 drawExpandIcon
 
 self strokeWidth: 1.0 color: Color black do: [
@@ -2214,7 +2209,7 @@ self strokeWidth: 1.0 color: Color black do: [
 		u: 9.
 ]! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 12/11/2017 22:07:35'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 12/11/2017 22:07:35'!
 drawLeftIcon
 
 self strokeWidth: 1.0 color: Color black do: [
@@ -2228,7 +2223,7 @@ self strokeWidth: 1.0 color: Color black do: [
 		u: 9.
 ]! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 12/11/2017 22:07:40'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 12/11/2017 22:07:40'!
 drawMenuIcon
 
 self strokeWidth: 1.0 color: Color black do: [
@@ -2242,7 +2237,7 @@ self strokeWidth: 1.0 color: Color black do: [
 		u: 9.
 ]! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 12/11/2017 22:07:45'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 12/11/2017 22:07:45'!
 drawRightIcon
 
 self strokeWidth: 1.0 color: Color black do: [
@@ -2256,7 +2251,7 @@ self strokeWidth: 1.0 color: Color black do: [
 		u: 9.
 ]! !
 
-!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 9/30/2014 20:02'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 9/30/2014 20:02'!
 drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: c
 
 	| font |
@@ -2285,7 +2280,7 @@ drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil co
 			at: aPoint
 			trueTypeFont: font ]! !
 
-!VectorCanvas methodsFor: 'drawing-icons' stamp: 'jmv 12/11/2017 22:07:49'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 12/11/2017 22:07:49'!
 drawUpIcon
 
 self strokeWidth: 1.0 color: Color black do: [
@@ -2299,7 +2294,7 @@ self strokeWidth: 1.0 color: Color black do: [
 		u: 9.
 ]! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 18:01:45'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:33:09'!
 ellipseCenterX: mcx y: mcy rx: mrx ry: mry
 	"
 	DEJAR FINALMENTE unicamente metodos que tomen la currentTransformation. NADA en coordenadas de pantalla. NADA con una M2x3 argumento!!
@@ -2314,10 +2309,10 @@ ellipseCenterX: mcx y: mcy rx: mrx ry: mry
 	ry _ dy r.
 	phi _ dx theta.
 	engine
-		displayCoordarcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float pi * 2;
-		closePath! !
+		addArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float pi * 2;
+		addClosePath! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/11/2017 21:15:33'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/11/2017 21:15:33'!
 ellipseCenterX: mcx y: mcy rx: mrx ry: mry borderWidth: morphStrokeWidth borderColor: strokeColorOrGradient fillColor: fillColorOrGradient
 
 	
@@ -2328,13 +2323,13 @@ ellipseCenterX: mcx y: mcy rx: mrx ry: mry borderWidth: morphStrokeWidth borderC
 engine
 	^engine! !
 
-!VectorCanvas methodsFor: 'trajectories - init' stamp: 'jmv 12/10/2017 22:53:52'!
+!VectorCanvas methodsFor: 'context and parameters for path' stamp: 'jmv 12/10/2017 22:53:52'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
 	engine fillColor: aFillColor do: pathCommandsBlock! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
 fillRectangle: aRectangle color: aColor
 	"For BitBltCanvas protocol, aRectangle:
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
@@ -2342,7 +2337,7 @@ fillRectangle: aRectangle color: aColor
 	self fillColor: aColor do: [
 		self rectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 ]! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/10/2017 23:17:50'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/22/2017 12:24:56'!
 fillRectangle: aRectangle color: aColor borderWidth: morphStrokeWidth borderStyleSymbol: aSymbol baseColorForBorder: baseColorForBorder
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
@@ -2365,19 +2360,16 @@ fillRectangle: aRectangle color: aColor borderWidth: morphStrokeWidth borderStyl
 
 	brColor ifNotNil: [
 		self strokeWidth: morphStrokeWidth color: brColor do: [
-			self line: aRectangle bottomLeft+(d1@(0-d2)) to: aRectangle bottomRight-d2.
-			self line: aRectangle bottomRight-d2 to: aRectangle topRight+(0-d2@d1) ]
+			self moveToX: aRectangle left + d1 y: aRectangle bottom - d2.
+			self lineToX: aRectangle right - d2 y: aRectangle bottom - d2.
+			self lineToX: aRectangle right - d2 y: aRectangle top + d1 ]
 	]! !
 
-!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 9/30/2014 20:02'!
-fontForeColor: aColor
-	fontForeColor _ aColor! !
-
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 frameAndFillRectangle: r fillColor: fillColor borderWidth: borderWidth borderColor: borderColor
 	self halt! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/11/2017 20:57:09'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/11/2017 20:57:09'!
 frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
@@ -2389,14 +2381,14 @@ frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
 	self strokeWidth: borderWidth color: borderColor do: [
 		self rectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle bottom-d2 ]! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 10/9/2014 09:51'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 10/9/2014 09:51'!
 image: aForm at: aPoint
 "NO quiero usar imagenes en M3... ver como hacer... quizas meter un servicio en el canvas que en m2 use imagenes y en m3 no..."
 self flag: #jmvVer4.
 " 	self halt"
 "super image: aForm at: aPoint"! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 image: aForm multipliedBy: aColor at: aPoint
 "NO quiero usar imagenes en M3... ver como hacer... quizas meter un servicio en el canvas que en m2 use imagenes y en m3 no..."
 "no!!!!!!!!"
@@ -2408,7 +2400,7 @@ initialize
 	super initialize.
 	autoHintText _ false! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/14/2014 16:14'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 10/14/2014 16:14'!
 into: aMorph
 	super into: aMorph.
 	engine currentMorph: currentMorph.
@@ -2420,7 +2412,7 @@ isCurrentMorphVisible
 self revisar. "por supuesto que no..."
 	^ true! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 10/14/2014 09:25'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:25:25'!
 l: dx
 
 	| x2 y2 p2 displayY2 |
@@ -2430,10 +2422,10 @@ l: dx
 	displayY2 _ p2 y.
 	autoHintText ifTrue: [
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordlineToX: p2 x y: displayY2.
+	engine addLineToX: p2 x y: displayY2.
 	currentClientX _ x2! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 10/14/2014 09:25'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:25:27'!
 li: x y: y
 	"no confundir con l: !!!!!!!!"
 	
@@ -2442,32 +2434,24 @@ li: x y: y
 	displayY2 _ p2 y.
 	autoHintText ifTrue: [
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordlineToX: p2 x y: displayY2.
+	engine addLineToX: p2 x y: displayY2.
 	currentClientX _ x.
 	currentClientY _ y! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/10/2017 23:16:18'!
-line: pt1 to: pt2
-
-	| p p2 |
-	p _ currentTransformation externalizePosition: pt1.
-	engine displayCoordmoveToX: p x y: p y.
-	p2 _ currentTransformation externalizePosition: pt2.
-	engine displayCoordlineToX: p2 x y: p2 y! !
-
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/11/2017 20:53:48'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/22/2017 12:20:56'!
 line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
 
 	self strokeWidth: morphStrokeWidth color: aStrokeColor do: [
-		self line: pt1 to: pt2 ]! !
+		self moveToX: pt1 x y: pt1 y.
+		self lineToX: pt2 x y: pt2 y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/11/2017 20:45:03'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:25:28'!
 lineToX: x2 y: y2
 	| p2 |
 	p2 _ currentTransformation externalizePosition: x2@y2.
-	engine displayCoordlineToX: p2 x y: p2 y! !
+	engine addLineToX: p2 x y: p2 y! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 10/14/2014 09:27'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:35:33'!
 m: x y: y
 
 	| p  displayY |
@@ -2475,23 +2459,18 @@ m: x y: y
 	displayY _ p y.
 	autoHintText ifTrue: [
 		displayY _ displayY rounded ].
-	engine displayCoordmoveToX: p x y: displayY.
+	engine addMoveToX: p x y: displayY.
 	currentClientX _ x.
 	currentClientY _ y! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/11/2017 20:45:07'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:35:34'!
 moveToX: x y: y
 	| p |
 	p _ currentTransformation externalizePosition: x@y.
-	engine displayCoordmoveToX: p x y: p y! !
+	engine addMoveToX: p x y: p y! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/14/2014 16:14'!
-outOfMorph
-	super outOfMorph.
-	engine currentMorph: currentMorph.! !
-
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 10/14/2014 10:57'!
-pathArcCommand: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:21:52'!
+multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless
 
 	| to rxp ryp xAxisRotationP p0 r |
 	p0 _ coordinatesAreRelative ifTrue: [ engine currentPoint ifNil: [  currentTransformation externalizePosition: 0.0@0.0 ]].
@@ -2517,19 +2496,14 @@ pathArcCommand: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toP
 		ryp _ (currentTransformation externalizeDelta: 0@r y) r.
 
 		engine
-			displayCoordarcToX: to x y: to y
+			addArcToX: to x y: to y
 			radiusX: rxp radiusY: ryp
 			angleOfXAxis: xAxisRotationP
 			largeFlag: (doLargerArcs at: i)
 			sweepFlag: (useIncreasingAngless at: i) ]! !
 
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 12/17/2017 18:01:49'!
-pathCloseCommand
-
-	engine closePath! !
-
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 12/17/2017 17:59:04'!
-pathCurveToCommand: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:24:38'!
+multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points
 
 	| p0 to c1 c2 |
 	p0 _ coordinatesAreRelative ifTrue: [ engine currentPoint ifNil: [ currentTransformation externalizePosition: 0.0@0.0 ]].
@@ -2546,10 +2520,10 @@ pathCurveToCommand: coordinatesAreRelative toPoints: toPoints control1Points: co
 				c1 _ currentTransformation externalizePosition: (control1Points at: i).
 				c2 _ currentTransformation externalizePosition: (control2Points at: i).
 			].
-		engine displayCoordcubicBezierToX: to x y: to y control1X: c1 x y: c1 y control2X: c2 x y: c2 y ]! !
+		engine addCubicBezierToX: to x y: to y control1X: c1 x y: c1 y control2X: c2 x y: c2 y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 12/17/2017 17:59:06'!
-pathCurveToSmoothCommand: coordinatesAreRelative toPoints: toPoints control2Points: control2Points
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:24:41'!
+multiCurveToSmooth: coordinatesAreRelative toPoints: toPoints control2Points: control2Points
 
 	| p0 to c1 c2 |
 	p0 _ engine currentPoint ifNil: [  currentTransformation externalizePosition: 0.0@0.0 ].
@@ -2566,20 +2540,20 @@ pathCurveToSmoothCommand: coordinatesAreRelative toPoints: toPoints control2Poin
 				to _ currentTransformation externalizePosition: (toPoints at: i).
 				c2 _ currentTransformation externalizePosition: (control2Points at: i).
 			].
-		engine displayCoordcubicBezierToX: to x y: to y control1X: c1 x y: c1 y control2X: c2 x y: c2 y ]! !
+		engine addCubicBezierToX: to x y: to y control1X: c1 x y: c1 y control2X: c2 x y: c2 y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 10/14/2014 10:57'!
-pathLineToCommand: coordinatesAreRelative points: points
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:25:30'!
+multiLineTo: coordinatesAreRelative points: points
 	| p |
 	p _ coordinatesAreRelative ifTrue: [ engine currentPoint ifNil: [ currentTransformation externalizePosition: 0.0@0.0 ]].
 	points do: [ :each |
 		p _ coordinatesAreRelative
 			ifTrue: [ p + (currentTransformation externalizeDelta: each) ]
 			ifFalse: [ currentTransformation externalizePosition: each ].
-		engine displayCoordlineToX: p x y: p y ]! !
+		engine addLineToX: p x y: p y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 10/14/2014 10:57'!
-pathLineToHCommand: coordinatesAreRelative xs: xs
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:25:38'!
+multiLineTo: coordinatesAreRelative xs: xs
 
 	| p internalP |
 	p _ engine currentPoint ifNil: [  currentTransformation externalizePosition: 0.0@0.0 ].
@@ -2591,10 +2565,10 @@ pathLineToHCommand: coordinatesAreRelative xs: xs
 			ifFalse: [
 				internalP _ each @internalP y.
 				p _  currentTransformation externalizePosition: internalP ].
-		engine displayCoordlineToX: p x y: p y ]! !
+		engine addLineToX: p x y: p y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 10/14/2014 10:57'!
-pathLineToVCommand: coordinatesAreRelative ys: ys
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:25:36'!
+multiLineTo: coordinatesAreRelative ys: ys
 
 	| p internalP |
 	p _ engine currentPoint ifNil: [ currentTransformation externalizePosition: 0.0@0.0 ].
@@ -2606,10 +2580,10 @@ pathLineToVCommand: coordinatesAreRelative ys: ys
 			ifFalse: [
 				internalP _ internalP x @ each.
 				p _  currentTransformation externalizePosition: internalP ].
-		engine displayCoordlineToX: p x y: p y ]! !
+		engine addLineToX: p x y: p y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 10/14/2014 10:57'!
-pathMoveToCommand: coordinatesAreRelative points: points
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:35:37'!
+multiMoveTo: coordinatesAreRelative points: points
 
 	| p isFirst |
 	isFirst _ true.
@@ -2619,12 +2593,12 @@ pathMoveToCommand: coordinatesAreRelative points: points
 			ifTrue: [ p + (currentTransformation externalizeDelta: each) ]
 			ifFalse: [ currentTransformation externalizePosition: each ].
 		isFirst
-			ifTrue: [ engine displayCoordmoveToX: p x y: p y ]
-			ifFalse: [ engine displayCoordlineToX: p x y: p y ].
+			ifTrue: [ engine addMoveToX: p x y: p y ]
+			ifFalse: [ engine addLineToX: p x y: p y ].
 		isFirst _ false ]! !
 
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 10/14/2014 10:57'!
-pathQuadraticCurveToCommand: coordinatesAreRelative toPoints: toPoints controlPoints: controlPoints
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:38:52'!
+multiQuadraticCurveTo: coordinatesAreRelative toPoints: toPoints controlPoints: controlPoints
 
 	| p0 to c |
 	p0 _ coordinatesAreRelative ifTrue: [ engine currentPoint ifNil: [ currentTransformation externalizePosition: 0.0@0.0 ]].
@@ -2639,10 +2613,10 @@ pathQuadraticCurveToCommand: coordinatesAreRelative toPoints: toPoints controlPo
 				to _ currentTransformation externalizePosition: (toPoints at: i).
 				c _ currentTransformation externalizePosition: (controlPoints at: i).
 			].
-		engine displayCoordquadraticBezierCurveToX: to x y: to y controlX: c x y: c y ]! !
+		engine addQuadraticBezierCurveToX: to x y: to y controlX: c x y: c y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - path commands - morph coordinates' stamp: 'jmv 10/14/2014 11:00'!
-pathQuadraticCurveToSmoothCommand: coordinatesAreRelative toPoints: toPoints
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 12/22/2017 13:38:54'!
+multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 
 	| p0 to c |
 	p0 _ engine currentPoint ifNil: [ currentTransformation externalizePosition: 0.0@0.0 ].
@@ -2657,20 +2631,25 @@ pathQuadraticCurveToSmoothCommand: coordinatesAreRelative toPoints: toPoints
 			ifFalse: [
 				to _ currentTransformation externalizePosition: (toPoints at: i).
 			].
-		engine displayCoordquadraticBezierCurveToX: to x y: to y controlX: c x y: c y ]! !
+		engine addQuadraticBezierCurveToX: to x y: to y controlX: c x y: c y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 17:26:25'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 10/14/2014 16:14'!
+outOfMorph
+	super outOfMorph.
+	engine currentMorph: currentMorph.! !
+
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:35:39'!
 polyLine: points
 
 	| p dp |
 	dp _ currentTransformation externalizePosition: points first.
-	engine displayCoordmoveToX: dp x y: dp y.
+	engine addMoveToX: dp x y: dp y.
 	2 to: points size do: [ :i |
 		p _ points at: i.	
 		dp _ currentTransformation externalizePosition: p.
-		engine displayCoordlineToX: dp x y: dp y ]! !
+		engine addLineToX: dp x y: dp y ]! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 17:34:24'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:38:56'!
 quadraticBezier: points
 	"points must be of size 3
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -2679,12 +2658,12 @@ quadraticBezier: points
 	start _ currentTransformation externalizePosition: points first.
 	control _ currentTransformation externalizePosition: points second.
 	end _ currentTransformation externalizePosition: points third.
-	engine displayCoordmoveToX: start x y: start y.
+	engine addMoveToX: start x y: start y.
 	engine
-		displayCoordquadraticBezierCurveToX: end x y: end y
+		addQuadraticBezierCurveToX: end x y: end y
 		controlX: control x y: control y! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 10/14/2014 09:25'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:25:44'!
 r: dx
 
 	| x2 y2 p2 displayY2 |
@@ -2694,10 +2673,10 @@ r: dx
 	displayY2 _ p2 y.
 	autoHintText ifTrue: [
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordlineToX: p2 x y: displayY2.
+	engine addLineToX: p2 x y: displayY2.
 	currentClientX _ x2! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 18:01:51'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:35:43'!
 rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax
 
 	| p1 p2 p3 p4 |
@@ -2708,17 +2687,17 @@ rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax
 	p4 _ currentTransformation externalizePosition: xMin@yMax.
 	
 	engine
-		displayCoordmoveToX: p1 x y: p1 y;
-		displayCoordlineToX: p2 x y: p2 y;
-		displayCoordlineToX: p3 x y: p3 y;
-		displayCoordlineToX: p4 x y: p4 y;
-		closePath! !
+		addMoveToX: p1 x y: p1 y;
+		addLineToX: p2 x y: p2 y;
+		addLineToX: p3 x y: p3 y;
+		addLineToX: p4 x y: p4 y;
+		addClosePath! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 reverseRectangleBorder: r borderWidth: borderWidth
 	self halt! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 18:01:53'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:35:45'!
 roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p5 p6 p7 p8 rx ry phi doLargerArc useIncreasingAngles |
@@ -2743,15 +2722,15 @@ roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	doLargerArc _ false.
 	useIncreasingAngles _ true.
 	engine
-		displayCoordmoveToX: corner1 x y: corner1 y ;
-		displayCoordlineToX: corner2 x y: corner2 y;
-		displayCoordlineToX: p5 x y: p5 y;
-		displayCoordarcToX: p6 x y: p6 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
-		displayCoordlineToX: p7 x y: p7 y;
-		displayCoordarcToX: p8 x y: p8 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
-		closePath! !
+		addMoveToX: corner1 x y: corner1 y ;
+		addLineToX: corner2 x y: corner2 y;
+		addLineToX: p5 x y: p5 y;
+		addArcToX: p6 x y: p6 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+		addLineToX: p7 x y: p7 y;
+		addArcToX: p8 x y: p8 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+		addClosePath! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/11/2017 21:10:33'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/11/2017 21:10:33'!
 roundRect: aRectangle color: aColor radius: r
 	"For BitBltCanvas protocol, aRectangle:
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
@@ -2759,15 +2738,15 @@ roundRect: aRectangle color: aColor radius: r
 		self
 			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 roundRect: displayRectangle color: aColor radius: r gradientTop: topFactor gradientBottom: bottomFactor gradientHeight: h
 	self halt! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 roundRect: aRectangle color: aColor radius: r gradientTop: topFactor gradientCenter: centerFactor gradientBottom: bottomFactor gradient1Height: h1
 	self halt! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 18:01:55'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:35:47'!
 roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 p5 p6 p7 p8 rx ry phi doLargerArc useIncreasingAngles |
@@ -2796,17 +2775,17 @@ roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	doLargerArc _ false.
 	useIncreasingAngles _ true.
 	engine
-		displayCoordmoveToX: p1 x y: p1 y ;
-		displayCoordarcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
-		displayCoordlineToX: p3 x y: p3 y;
-		displayCoordarcToX: p4 x y: p4 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
-		displayCoordlineToX: p5 x y: p5 y;
-		displayCoordarcToX: p6 x y: p6 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
-		displayCoordlineToX: p7 x y: p7 y;
-		displayCoordarcToX: p8 x y: p8 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
-		closePath! !
+		addMoveToX: p1 x y: p1 y ;
+		addArcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+		addLineToX: p3 x y: p3 y;
+		addArcToX: p4 x y: p4 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+		addLineToX: p5 x y: p5 y;
+		addArcToX: p6 x y: p6 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+		addLineToX: p7 x y: p7 y;
+		addArcToX: p8 x y: p8 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+		addClosePath! !
 
-!VectorCanvas methodsFor: 'trajectories - morph coordinates' stamp: 'jmv 12/17/2017 18:01:58'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:35:52'!
 roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 rx ry phi doLargerArc useIncreasingAngles |
@@ -2831,13 +2810,13 @@ roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	doLargerArc _ false.
 	useIncreasingAngles _ true.
 	engine
-		displayCoordmoveToX: p1 x y: p1 y ;
-		displayCoordarcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
-		displayCoordlineToX: p3 x y: p3 y;
-		displayCoordarcToX: p4 x y: p4 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
-		displayCoordlineToX: corner3 x y: corner3 y;
-		displayCoordlineToX: corner4 x y: corner4 y;
-		closePath! !
+		addMoveToX: p1 x y: p1 y ;
+		addArcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+		addLineToX: p3 x y: p3 y;
+		addArcToX: p4 x y: p4 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+		addLineToX: corner3 x y: corner3 y;
+		addLineToX: corner4 x y: corner4 y;
+		addClosePath! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 10/13/2014 16:17'!
 setClipRect: aRectangle
@@ -2856,11 +2835,11 @@ setForm: aForm
 	self newClipRect: nil.
 	shadowColor _ nil! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 stencil: stencilForm at: aPoint color: aColor
 	self halt! !
 
-!VectorCanvas methodsFor: 'trajectories - init' stamp: 'jmv 12/10/2017 23:10:14'!
+!VectorCanvas methodsFor: 'context and parameters for path' stamp: 'jmv 12/10/2017 23:10:14'!
 strokeWidth: morphStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 	"Gradients should be transformed with currentTransformation!!"
@@ -2869,7 +2848,7 @@ strokeWidth: morphStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	strokeWidth _ currentTransformation externalizeScalar: morphStrokeWidth.
 	engine strokeWidth: strokeWidth color: aStrokeColor do: pathCommandsBlock! !
 
-!VectorCanvas methodsFor: 'trajectories - init' stamp: 'jmv 12/10/2017 22:56:14'!
+!VectorCanvas methodsFor: 'context and parameters for path' stamp: 'jmv 12/10/2017 22:56:14'!
 strokeWidth: morphStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 	"Gradients should be transformed with currentTransformation!!"
@@ -2878,13 +2857,13 @@ strokeWidth: morphStrokeWidth color: aStrokeColor fillColor: aFillColor do: path
 	strokeWidth _ currentTransformation externalizeScalar: morphStrokeWidth.
 	engine strokeWidth: strokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 textComposition: aTextComposition bounds: boundddsRect color: c selectionColor: sc
 "ojo que es un quad, o sea un rect en coordenadas del morph..."
 "	self halt"
 super textComposition: aTextComposition bounds: boundddsRect color: c selectionColor: sc! !
 
-!VectorCanvas methodsFor: 'stroke font elements' stamp: 'jmv 10/14/2014 09:25'!
+!VectorCanvas methodsFor: 'paths - stroke font elements' stamp: 'jmv 12/22/2017 13:25:54'!
 u: dy
 
 	| newY p2 displayY2 |
@@ -2893,10 +2872,10 @@ u: dy
 	displayY2 _ p2 y.
 	autoHintText ifTrue: [
 		displayY2 _ displayY2 rounded ].
-	engine displayCoordlineToX: p2 x y: displayY2.
+	engine addLineToX: p2 x y: displayY2.
 	currentClientY _ newY! !
 
-!VectorCanvas methodsFor: 'FormCanvas protocol' stamp: 'jmv 12/16/2017 18:32:06'!
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/16/2017 18:32:06'!
 windowFrame: aRectangle color: aColor radius: r border: morphStrokeWidth labelHeight: lh gradientTop: topFactor gradientBottom: bottomFactor insideColor: insideColor
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
@@ -3081,361 +3060,267 @@ self textex3
 		selectionColor: Color orange.
 	Display forceToScreen! !
 
-!SVGDefElement methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:40'!
-def: anSVGDef
-	def _ anSVGDef! !
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:39:42'!
+addArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
+"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 2.0 color: Color black fillColor: Color red do: [ :engine |
+		engine addArcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
+Display forceToScreen.
+"
+	| d hops angle thetaCos thetaSin xp yp x0 y0 x y |
+	
+	"Por supuesto probar tambien rx no igual a ry, y uno (o ambos) menor que el ancho de trazo..."
+	thetaCos _ theta cos.
+	thetaSin _ theta sin.
+	angle _ startAngle.
+	xp _ angle cos * rx.
+	yp _ angle sin * ry.
+	x0 _ thetaCos * xp - (thetaSin * yp) + cx.
+	y0 _ thetaSin * xp + (thetaCos * yp) + cy.
+	firstX
+		ifNotNil: [ self addLineToX: x0 y: y0 ]	"Draw a line. There are cases where we want to join an arc. For example, window frames"
+		ifNil: [
+			"trajectory starts here. Eventually, #closePath should draw a line to here"
+			fragmentStartIndexes add: trajectoryPoints size + 1.	"Next point will be first in a new trajectory fragment"
+			firstX _ x0.
+			firstY _ y0.
+			self addPenPositionX: x0 y: y0 ].
+	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
+	d _ sweepAngle / hops.
+	hops timesRepeat: [
+		angle _ angle + d.
+		xp _ angle cos * rx.
+		yp _ angle sin * ry.
+		x _ thetaCos * xp - (thetaSin * yp) + cx.
+		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		self addPenPositionX: x y: y ].
 
-!SVGDefElement class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:50'!
-classFor: anSVGName
+	currentX _ x.
+	currentY _ y.
+	lastControl2Point _ nil! !
 
-	self allSubclassesDo: [ :cls |
-		cls svgName = anSVGName
-			ifTrue: [ ^cls ] ].
-	^nil! !
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:37:48'!
+addArcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 1.0 color: Color black do: [ :engine |
+		engine
+			addMoveToX: 100 y: 100;
+			addArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
+			addMoveToX: 100 y: 100;
+			addArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
+Display forceToScreen
+"
+	"Calcular: cx, cy, rx, ry, phi, theta1, deltaTheta"
+	| x1 y1 cosPhi sinPhi x12hd y12hd x1p y1p rxSq rySq x1pSq y1pSq bigSqR bigSqRNumerator bigSqRDenominator sign cxp cyp cx cy theta1 theta2 deltaTheta scaleSq scale newRx newRy |
+	x1 _ currentX.
+	y1 _ currentY.
+	"Handle out of range parameters as requested by the w3 implementation notes"
+	(x2 = x1 and: [ y2 = y1 ]) ifTrue: [ ^self ].
+	(rx = 0.0 or: [ ry = 0.0 ]) ifTrue: [ ^self addLineToX: x2 y: y2 ].
+	rx < 0 ifTrue: [
+		^self addArcToX: x2 y: y2 radiusX: 0.0 -rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
+	ry < 0 ifTrue: [
+		^self addArcToX: x2 y: y2 radiusX: rx radiusY: 0.0-ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
+	
+	cosPhi _ phi cos.
+	sinPhi _ phi sin.
+	"step 1 in http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes"
+	x12hd _ (x1-x2) * 0.5.
+	y12hd _ (y1-y2) * 0.5.
+	x1p _ (cosPhi * x12hd) + (sinPhi * y12hd).
+	y1p _ (cosPhi * y12hd) - (sinPhi * x12hd).
 
-!SVGDefElement class methodsFor: 'instance creation' stamp: 'jmv 6/16/2010 10:44'!
-fromXml: anXMLElement
-	| cls n |
-	n _ anXMLElement name.
-	cls _ self classFor: n.
-	cls ifNil: [
-		((SVGElementMorph ignoredElements includes: n) or: [
-			SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | n beginsWith: prefix ]]) ifFalse: [
-			SVGWarning signal: ('Unhandled def element: ', n printString) ].
-		^nil ].
-	^ cls new buildFromXml: anXMLElement! !
+	"step 2"
+	rxSq _ rx * rx.
+	rySq _ ry * ry.
+	x1pSq _ x1p * x1p.
+	y1pSq _ y1p * y1p.
+	"ensure radii are large enough"
+	scaleSq _ (x1pSq / rxSq) + (y1pSq / rySq).
+	scaleSq > 1 ifTrue: [
+		scale _ scaleSq sqrt.
+		newRx _ scale * rx.
+		newRy _ scale * ry.
+		(newRx = rx or: [ newRy = ry ]) ifTrue: [		"This happens when scaleSq is so close to 1, that the multiplication rounds to the same numbers"
+			newRx _ scaleSq * rx.
+			newRy _ scaleSq * ry ].
+		^self addArcToX: x2 y: y2 radiusX: newRx radiusY: newRy angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+		].
+	bigSqRNumerator _ (rxSq * rySq) - (rxSq * y1pSq)-(rySq * x1pSq).
+	bigSqRDenominator _ (rxSq * y1pSq) + (rySq * x1pSq).
+	sign _ doLargerArc = useIncreasingAngles ifTrue: [ -1 ] ifFalse: [ 1 ].
+	bigSqR _ (bigSqRNumerator / bigSqRDenominator max: 0.0) sqrt * sign.		"This only can be < 0.0 because of rounding errors. Take 0.0 in such cases."
+	cxp _ bigSqR * rx * y1p / ry.
+	cyp _ 0.0 - (bigSqR * ry * x1p / rx).
 
-!SVGGradient methodsFor: 'accessing' stamp: 'jmv 12/12/2017 21:40:16'!
-averageColor
-	| s |
-	averageColor ifNotNil: [ ^ averageColor ].
-	s _ self stops.
-	averageColor _ (s collect: [ :c | c color / s size ]) sum.
-	^ averageColor! !
+	"step 3"
+	cx _ (cosPhi * cxp) - (sinPhi * cyp) + ((x1+x2) * 0.5).
+	cy _ (sinPhi * cxp) + (cosPhi * cyp) + ((y1+y2) * 0.5).
+	
+"
+| u v a |
+Transcript clear.
+u _ 1@4. v _ 7@2.
+a _ ((u dotProduct: v) / (u r * v r) ) arcCos.
+a _ a * (((u x * v y) - (u y * v x)) sign).
+a print.
+(v theta - u theta) print.
+Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entre cero y 2pi...
+"
 
-!SVGGradient methodsFor: 'building' stamp: 'jmv 7/30/2012 18:00'!
-buildFromXml: anXMLElement
-	| unsorted stop dataStream usedAttributeNames |
-	name _ anXMLElement attributeAt: 'id'.
-	unsorted _ OrderedCollection new.
-	anXMLElement elementsDo: [ :subElement |
-		stop _ SVGDefElement fromXml: subElement.
-		unsorted add: stop].
-	"Esto deberia ser un array de entrada, arreglar (codigo de levente) sortBy: para que ande en array sin crear sorted collection ni nada"
-	unsorted isEmpty
-		ifFalse: [
-			stops _ unsorted sorted: [ :a :b | a offset < b offset ]]
-		ifTrue: [ stops _ nil ].
+	"step 4"
+	"Ojo signo del angulo y del eje y!!!!!!!!!!"
+	theta1 _ (((x1p - cxp) / rx) @ ((y1p - cyp) / ry)) theta.
+	theta2 _ (((0 - x1p - cxp) / rx) @ (( 0 -y1p - cyp) / ry)) theta.
+	deltaTheta _ theta2 - theta1.
+	useIncreasingAngles = (deltaTheta > 0) ifFalse: [
+		deltaTheta > 0
+			ifTrue: [ deltaTheta _ deltaTheta - Float pi - Float pi ]
+			ifFalse: [ deltaTheta _ deltaTheta + Float pi + Float pi ]
+		].
+	"Y aca calcular como dar vuelta deltaTheta, ver."
 
-	inheritFrom _ nil.
-	(anXMLElement attributeAt: 'xlink:href') ifNotNil: [ :linkData |
-		dataStream _ linkData readStream.
-		dataStream upTo: $#.
-		inheritFrom _ (dataStream upTo: $) ) withBlanksTrimmed ].
 
-	usedAttributeNames _ self usedAttributeNames asSet.
-	anXMLElement attributes keysAndValuesDo: [ :attrName :value |
-		((usedAttributeNames includes: attrName) or: [
-			(SVGElementMorph ignoredAttributes includes: attrName) or: [
-				SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
-			SVGWarning signal: 'Unhandled attribute: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]]! !
-
-!SVGGradient methodsFor: 'accessing' stamp: 'jmv 5/13/2010 09:56'!
-name
-	^name! !
-
-!SVGGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-stops
-	^stops
-		ifNotNil: [ stops ]
-		ifNil: [ (def defAt: inheritFrom) stops ]! !
-
-!SVGGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:52'!
-usedAttributeNames
-	^#('xlink:href' 'id')! !
-
-!SVGGradient class methodsFor: 'instance creation' stamp: 'jmv 5/13/2010 10:02'!
-svgName
-	^nil! !
-
-!SVGLinearGradient methodsFor: 'building' stamp: 'jmv 6/14/2010 17:23'!
-buildFromXml: anXMLElement
-
-	super buildFromXml: anXMLElement.
-	vectorX1 _ (anXMLElement attributeAt: 'x1') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ].
-	vectorY1 _ (anXMLElement attributeAt: 'y1') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ].
-	vectorX2 _ (anXMLElement attributeAt: 'x2') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 1.0 ].
-	vectorY2 _ (anXMLElement attributeAt: 'y2') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ]! !
-
-!SVGLinearGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:53'!
-usedAttributeNames
-	^super usedAttributeNames,
-		#('x1' 'y1' 'x2' 'y2')! !
-
-!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-vectorX1
-	^vectorX1
-		ifNotNil: [ vectorX1 ]
-		ifNil: [ (def defAt: inheritFrom) vectorX1 ]! !
-
-!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-vectorX2
-	^vectorX2
-		ifNotNil: [ vectorX2 ]
-		ifNil: [ (def defAt: inheritFrom) vectorX2 ]! !
-
-!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-vectorY1
-	^vectorY1
-		ifNotNil: [ vectorY1 ]
-		ifNil: [ (def defAt: inheritFrom) vectorY1 ]! !
-
-!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
-vectorY2
-	^vectorY2
-		ifNotNil: [ vectorY2 ]
-		ifNil: [ (def defAt: inheritFrom) vectorY2 ]! !
-
-!SVGLinearGradient class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:51'!
-svgName
-	^#linearGradient! !
-
-!SVGRadialGradient methodsFor: 'building' stamp: 'jmv 6/14/2010 17:23'!
-buildFromXml: anXMLElement
-
-	| data |
-	super buildFromXml: anXMLElement.
-	data _ anXMLElement attributeAt: 'cx'.
-	cx _ SVGElementMorph svgLengthFractionFor: (data ifNil: ['50%']).
-	data _ anXMLElement attributeAt: 'cy'.
-	cy _ SVGElementMorph svgLengthFractionFor: (data ifNil: ['50%']).
-	data _ anXMLElement attributeAt: 'r'.
-	r _ SVGElementMorph svgLengthFractionFor:(data ifNil: ['50%'])! !
-
-!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
-cx
-	^cx
-		ifNotNil: [ cx ]
-		ifNil: [ (def defAt: inheritFrom) cx ]! !
-
-!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
-cy
-	^cy
-		ifNotNil: [ cy ]
-		ifNil: [ (def defAt: inheritFrom) cy ]! !
-
-!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
-r
-	^r
-		ifNotNil: [ r ]
-		ifNil: [ (def defAt: inheritFrom) r ]! !
-
-!SVGRadialGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:53'!
-usedAttributeNames
-	^super usedAttributeNames,
-		#('cx' 'cy' 'r')! !
-
-!SVGRadialGradient class methodsFor: 'instance creation' stamp: 'jmv 5/13/2010 14:46'!
-svgName
-	^#radialGradient! !
-
-!SVGGradientStop methodsFor: 'building' stamp: 'jmv 2/15/2013 16:53'!
-buildFromXml: anXMLElement
-	| styleAttributes offsetData stopColorData stopOpacityData usedAttributeNames |
-	styleAttributes _ SVGElementMorph styleAttributesIn: anXMLElement.
-	offsetData _ SVGElementMorph attributeAt: 'offset' in: anXMLElement orIn: styleAttributes.
-	stopColorData _ SVGElementMorph attributeAt: 'stop-color' in: anXMLElement orIn: styleAttributes.
-	stopOpacityData _ SVGElementMorph attributeAt: 'stop-opacity' in: anXMLElement orIn: styleAttributes.
-	offset _ SVGElementMorph svgLengthFractionFor: offsetData.
-self revisar.
-	color _ Color "fromCSS2String: just hex? Or real CSS2?" fromString:  stopColorData.
-	stopOpacityData ifNotNil: [
-		color _ color alpha: stopOpacityData asNumber ].
+	"Finalmente, estudiar la correccion de valores fuera de rango"
 	
 
-	usedAttributeNames _ self usedAttributeNames asSet.
-	anXMLElement attributes keysAndValuesDo: [ :attrName :value |
-		((usedAttributeNames includes: attrName) or: [
-			(SVGElementMorph ignoredAttributes includes: attrName) or: [
-				SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
-			SVGWarning signal: 'Unhandled attribute: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]].
+	self addArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
-	styleAttributes ifNotNil: [
-		styleAttributes  keysAndValuesDo: [ :attrName :value |
-			((usedAttributeNames includes: attrName) or: [
-				(SVGElementMorph ignoredAttributes includes: attrName) or: [
-					SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
-				SVGWarning signal: 'Unhandled style token: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]]].! !
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:41:15'!
+addClosePath
+"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 1.0 color: Color black fillColor: Color red do: [ :engine |
+		engine
+			addMoveToX: 100 y: 100;
+			addArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
+			addClosePath ].
+Display forceToScreen
+"
+	self addLineToX: firstX y: firstY! !
 
-!SVGGradientStop methodsFor: 'accessing' stamp: 'jmv 5/10/2010 11:07'!
-color
-	^color! !
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:37:55'!
+addCubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
+	"Cubic Bezier
+	http://en.wikipedia.org/wiki/Bezier_curve"
+	"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 1.0 color: Color black do: [ :engine |
+		engine
+			addMoveToX: 100 y: 100;
+			addCubicBezierToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200 ].
+Display forceToScreen
+	"
+	"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
+		engine addMoveToX: 100 y: 50.
+		engine
+			addCubicBezierToX: 600 y: 100
+			control1X: 150 y: 300
+			control2X: 600 y: 400 ].
+Display forceToScreen
+	"
 
-!SVGGradientStop methodsFor: 'accessing' stamp: 'jmv 5/7/2010 17:27'!
-offset
-	^offset! !
+	| dx dy hops increment t x0 y0 oneLessT f2 f3 f1 f23 f4 x y |
 
-!SVGGradientStop methodsFor: 'building' stamp: 'jmv 6/16/2010 10:02'!
-usedAttributeNames
-	^#('style' 'offset' 'stop-color' 'stop-opacity')! !
+	dx _ (x1-currentX) abs + (x2-x1) abs + (x3-x2) abs.
+	dy _ (y1-currentY) abs + (y2-y1) abs + (y3-y2) abs.
+	hops _ ((dx max: dy) * hopsPerPixel)truncated + 1.
+	increment _ 1.0 / hops.
+	t _ 0.0.
+	"en muchos casos, secuencias de estos,  repetimos puntos, el ultimo de la curva anterior... pensar, etc"
+	x0 _ currentX.
+	y0 _ currentY.
+	self addPenPositionX: x0 y: y0.
+	hops-1 timesRepeat: [
+		t _ t + increment.
+		oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT * oneLessT.
+		f23 _ 3 * oneLessT * t.
+		f2 _ f23 * oneLessT.
+		f3 _ f23 * t.
+		f4 _ t * t * t.
+		x _ (f1 * x0) + (f2 * x1) + (f3 * x2) + (f4 * x3).
+		y _ (f1 * y0) + (f2 * y1) + (f3 * y2) + (f4 * y3).
+		self addPenPositionX: x y: y ].
+	self addPenPositionX: x3 y: y3.
 
-!SVGGradientStop class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 15:14'!
-svgName
-	^#stop! !
+	currentX _ x3.
+	currentY _ y3.
+	lastControl2Point _ x2@y2! !
 
-!SVGDefs methodsFor: 'building' stamp: 'jmv 6/14/2010 09:00'!
-buildFromXml: anXMLElement
-	anXMLElement elementsDo: [ :subElement |
-		(SVGDefElement fromXml: subElement) ifNotNil: [ :defElement |
-			defElement def: self.
-			defs at: defElement name put: defElement]]! !
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:38:00'!
+addLineToX: x2 y: y2
+"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 1.0 color: Color black do: [ :engine |
+		engine
+			addMoveToX: 100 y: 100;
+			addLineToX: 200 y: 150 ].
+Display forceToScreen
+"
+"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
+		engine addMoveToX: 10 y: 5.
+		engine addLineToX: 15 y: 30.
+		engine addLineToX: 60 y: 10 ].
+Display forceToScreen
+"
+	| dx dy hops incrementX incrementY x y |
+	x _ currentX.
+	y _ currentY.
+	dx _ x2 - x.
+	dy _ y2 - y.
+	hops _ ((dx abs max: dy abs) * hopsPerPixel)truncated + 1.
+	incrementX _ dx *1.0 / hops.
+	incrementY _ dy *1.0 / hops.
+	hops timesRepeat: [
+		self addPenPositionX: x y: y.
+		x _ x + incrementX.
+		y _ y + incrementY ].
+	self addPenPositionX: x2 y: y2.
 
-!SVGDefs methodsFor: 'accessing' stamp: 'jmv 5/10/2010 10:16'!
-defAt: aString
+	currentX _ x2.
+	currentY _ y2.
+	lastControl2Point _ nil! !
 
-	^defs at: aString ifAbsent: nil! !
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:38:03'!
+addMoveToX: x y: y
+"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 1.0 color: Color black do: [ :engine |
+		engine
+			addMoveToX: 100 y: 100;
+			addLineToX: 200 y: 150;
+			addMoveToX: 210 y: 150;
+			addLineToX: 300 y: 200 ].
+Display forceToScreen
+"
 
-!SVGDefs methodsFor: 'initialize-release' stamp: 'jmv 5/10/2010 09:42'!
-initialize
-	defs _ Dictionary new! !
+	"A discontinuity in the trajectory"
 
-!SVGDefs class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:42'!
-svgName
-	"Answer the name of the svg elements we can represent"
+	"We are starting a new trajectory, or at a discontinuity in trajectory. Eventually #closeTrajectory should draw a line to here"
+	fragmentStartIndexes add: trajectoryPoints size + 1.	"Next point will be first in a new trajectory fragment"
+	firstX _ x.
+	firstY _ y.
+	currentX _ x.
+	currentY _ y.
 
-	^#defs! !
+	lastControl2Point _ nil! !
 
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-applyMatrixWith: dataStream
-
-	| b |
-	b _ FloatMatrix identity: 3.
-	b
-		i: 1 j: 1 put: dataStream nextNumber;
-		i: 2 j: 1 put: dataStream nextNumber;
-		i: 1 j: 2 put: dataStream nextNumber;
-		i: 2 j: 2 put: dataStream nextNumber;
-		i: 1 j: 3 put: dataStream nextNumber;
-		i: 2 j: 3 put: dataStream nextNumber.
-	a _ a
-		ifNil: [b]
-		ifNotNil: [a * b]! !
-
-!SVGTransform methodsFor: 'conversion' stamp: 'jmv 1/21/2015 09:03'!
-asAffineTransformation
-	| answer |
-	a ifNil: [ ^nil ].
-	answer _ AffineTransformation new.
-	answer a11: (a i: 1 j: 1).
-	answer a12: (a i: 1 j: 2).
-	answer a13: (a i: 1 j: 3).
-	answer a21: (a i: 2 j: 1).
-	answer a22: (a i: 2 j: 2).
-	answer a23: (a i: 2 j: 3).
-	^answer! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 7/30/2012 18:00'!
-buildFrom: transformData
-
-	| dataStream type |
-	dataStream _ transformData readStream.
-	[ dataStream atEnd ] whileFalse: [
-		dataStream upToAny: 'mtsr'. "find the next transform in the list"
-		type _ (dataStream upTo: $() withBlanksTrimmed.
-		(type = 'matrix') ifTrue: [
-			self applyMatrixWith: dataStream ].
-		(type = 'translate') ifTrue: [
-			self translateWith: dataStream ].
-		(type = 'scale') ifTrue: [
-			self scaleWith: dataStream ].
-		(type = 'rotate') ifTrue: [
-			self rotateWith: dataStream ].
-		(type = 'skewX') ifTrue: [
-			self skewXWith: dataStream ].
-		(type = 'skewY') ifTrue: [
-			self skewYWith: dataStream ]
-	].! !
-
-!SVGTransform methodsFor: 'initialize-release' stamp: 'jmv 4/29/2011 22:03'!
-initialize
-"	a _ FloatMatrix identity: 3."
-	"nil means identity, i.e. no transformation"
-	a _ nil.! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-rotateWith: dataStream
-
-	| b b1 b2 angle angleCos angleSin |
-	b _ FloatMatrix identity: 3.
-	b1 _ FloatMatrix identity: 3.
-	b2 _ FloatMatrix identity: 3.
-	angle _ dataStream nextNumber degreesToRadians.
-	angleCos _ angle cos.
-	angleSin _ angle sin.
-	b
-		i: 1 j: 1 put: angleCos;
-		i: 1 j: 2 put: 0.0 - angleSin;
-		i: 2 j: 1 put: angleSin;
-		i: 2 j: 2 put: angleCos.
-	dataStream nextNumber ifNotNil: [ :cx |
-		b1 i: 1 j: 3 put: cx.
-		b2 i: 1 j: 3 put: 0.0-cx.
-		dataStream nextNumber ifNotNil: [ :cy |
-			b1 i: 2 j: 3 put: cy.
-			b2 i: 2 j: 3 put: 0.0-cy ]].
-
-	a _ a
-		ifNil: [ b1 * b * b2 ]
-		ifNotNil: [ a * b1 * b * b2]! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-scaleWith: dataStream
-
-	| b sx sy |
-	b _ FloatMatrix identity: 3.
-	sx _ dataStream nextNumber.
-	sy _ dataStream nextNumber ifNil: [ sx ].
-	b i: 1 j: 1 put: sx.
-	b i: 2 j: 2 put: sy.
-	a _ a
-		ifNil: [b]
-		ifNotNil: [a * b]! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-skewXWith: dataStream
-
-	| b skewAngle |
-	b _ FloatMatrix identity: 3.
-	skewAngle _ dataStream nextNumber degreesToRadians.
-	b i: 1 j: 2 put: skewAngle tan.
-	a _ a
-		ifNil: [b]
-		ifNotNil:[a * b]! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-skewYWith: dataStream
-
-	| b skewAngle |
-	b _ FloatMatrix identity: 3.
-	skewAngle _ dataStream nextNumber degreesToRadians.
-	b i: 2 j: 1 put: skewAngle tan.
-	a _ a
-		ifNil: [b]
-		ifNotNil: [a * b]! !
-
-!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
-translateWith: dataStream
-
-	| b |
-	b _ FloatMatrix identity: 3.
-	b i: 1 j: 3 put: dataStream nextNumber.
-	dataStream nextNumber ifNotNil: [ :dy |
-		b i: 2 j: 3 put: dy ].
-	a _ a
-		ifNil: [b]
-		ifNotNil: [a * b]! !
-
-!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 12/17/2017 18:08:09'!
+!VectorEngine methodsFor: 'paths - aux' stamp: 'jmv 12/22/2017 11:55:51'!
 addPenPositionX: x y: y
 	"slight optimization possible when we know width = 0... perhaps implement:
 		-we know palpha is never 127
@@ -3446,12 +3331,55 @@ addPenPositionX: x y: y
 
 	trajectoryPoints add: x@y! !
 
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/22/2017 13:39:08'!
+addQuadraticBezierCurveToX: x2 y: y2 controlX: x1 y: y1
+	"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 1.0 color: Color black do: [ :engine |
+		engine
+			addMoveToX: 100 y: 100;
+			addQuadraticBezierCurveToX: 300 y: 200 controlX: 100 y: 210 ].
+Display forceToScreen
+	"
+	"
+(VectorEngine onForm: Display)
+	resetMorphBounds;
+	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
+		engine addMoveToX: 10 y: 5.
+		engine addQuadraticBezierCurveToX: 60 y: 10 controlX: 15 y: 30 ].
+Display forceToScreen
+	"
+	| dx dy hops increment t x0 y0 oneLessT f1 f3 f2 x y |
+	dx _ (x1-currentX) abs + (x2-x1) abs.
+	dy _ (y1-currentY) abs + (y2-y1) abs.
+	hops _ ((dx max: dy) * hopsPerPixel)truncated + 1.
+	increment _ 1.0 / hops.
+	t _ 0.0.
+	x0 _ currentX.
+	y0 _ currentY.
+	self addPenPositionX: x0 y: y0.
+	hops-1 timesRepeat: [
+		t _ t + increment.
+		oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT.
+		f2 _ 2* oneLessT * t.
+		f3 _ t * t.
+		x _ (f1 * x0) + (f2 * x1) + (f3 * x2).
+		y _ (f1 * y0) + (f2 * y1) + (f3 * y2).
+		self addPenPositionX: x y: y ].
+	self addPenPositionX: x2 y: y2.
+
+	currentX _ x2.
+	currentY _ y2.
+	lastControl2Point _ x1@y1! !
+
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 12/16/2017 18:17:50'!
 antiAliasingWidth: aNumber
 
 	antiAliasingWidth _ aNumber! !
 
-!VectorEngine methodsFor: 'trajectories - private' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:28'!
 blendFillOnly
 
 	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex m |
@@ -3502,7 +3430,7 @@ blendFillOnly
 	auxBitBlt
 		destX: boundsLeft destY: boundsTop
 		width: boundsRight-boundsLeft+1 height: boundsBottom-boundsTop+1.
-	auxBitBlt destForm bits: penAlpha.
+	auxBitBlt destForm bits: mask.
 	auxBitBlt copyBits.
 	auxBitBlt
 		destX: boundsLeft destY: boundsTop
@@ -3511,7 +3439,7 @@ blendFillOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'trajectories - private' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:41'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3520,7 +3448,7 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 
 	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha fillAlphaToUse |
 
-	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
 		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
 			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
@@ -3564,7 +3492,7 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 
 	bits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngine methodsFor: 'trajectories - private' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:20'!
 blendStrokeAndFill
 
 	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex m |
@@ -3614,7 +3542,7 @@ blendStrokeAndFill
 	auxBitBlt
 		destX: boundsLeft destY: boundsTop
 		width: boundsRight-boundsLeft+1 height: boundsBottom-boundsTop+1.
-	auxBitBlt destForm bits: penAlpha.
+	auxBitBlt destForm bits: mask.
 	auxBitBlt copyBits.
 	auxBitBlt
 		destX: boundsLeft destY: boundsTop
@@ -3623,7 +3551,7 @@ blendStrokeAndFill
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'trajectories - private' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:31'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3632,7 +3560,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent strokeAlphaToUse fillAlphaToUse |
 
-	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
 		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
 			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
@@ -3691,7 +3619,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	bits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngine methodsFor: 'trajectories - private' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:33'!
 blendStrokeOnly
 
 	| pixelIndex m |
@@ -3707,11 +3635,11 @@ blendStrokeOnly
 	auxBitBlt
 		destX: boundsLeft destY: boundsTop
 		width: boundsRight-boundsLeft+1 height: boundsBottom-boundsTop+1.
-	auxBitBlt destForm bits: penAlpha.
+	auxBitBlt destForm bits: mask.
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'trajectories - private' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:36'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3720,7 +3648,7 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha strokeAlphaToUse |
 
-	antiAliasAlphasWord _ penAlpha bytesAt: pixelIndex.
+	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
 		^self].	"Optimization: We are completely transparent at this point. Do nothing."
 
@@ -3776,20 +3704,6 @@ clippingRectForCurrentMorph
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/17/2017 18:04:20'!
-closePath
-"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 1.0 color: Color black fillColor: Color red do: [ :engine |
-		engine
-			displayCoordmoveToX: 100 y: 100;
-			displayCoordarcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
-			closePath ].
-Display forceToScreen
-"
-	self displayCoordlineToX: firstX y: firstY! !
-
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 12/16/2017 18:17:50'!
 currentMorph: aMorph
 	currentMorph _ aMorph! !
@@ -3803,295 +3717,6 @@ currentPoint
 
 	currentX ifNil: [ ^nil ].
 	^currentX@currentY! !
-
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/17/2017 18:08:20'!
-displayCoordarcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
-"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 2.0 color: Color black fillColor: Color red do: [ :engine |
-		engine displayCoordarcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
-Display forceToScreen.
-"
-	| d hops angle thetaCos thetaSin xp yp x0 y0 x y |
-	
-	"Por supuesto probar tambien rx no igual a ry, y uno (o ambos) menor que el ancho de trazo..."
-	thetaCos _ theta cos.
-	thetaSin _ theta sin.
-	angle _ startAngle.
-	xp _ angle cos * rx.
-	yp _ angle sin * ry.
-	x0 _ thetaCos * xp - (thetaSin * yp) + cx.
-	y0 _ thetaSin * xp + (thetaCos * yp) + cy.
-	firstX
-		ifNotNil: [ self displayCoordlineToX: x0 y: y0 ]	"Draw a line. There are cases where we want to join an arc. For example, window frames"
-		ifNil: [
-			"trajectory starts here. Eventually, #closePath should draw a line to here"
-			fragmentStartIndexes add: trajectoryPoints size + 1.	"Next point will be first in a new trajectory fragment"
-			firstX _ x0.
-			firstY _ y0.
-			self addPenPositionX: x0 y: y0 ].
-	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
-	d _ sweepAngle / hops.
-	hops timesRepeat: [
-		angle _ angle + d.
-		xp _ angle cos * rx.
-		yp _ angle sin * ry.
-		x _ thetaCos * xp - (thetaSin * yp) + cx.
-		y _ thetaSin * xp + (thetaCos * yp) + cy.
-		self addPenPositionX: x y: y ].
-
-	currentX _ x.
-	currentY _ y.
-	lastControl2Point _ nil! !
-
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/17/2017 17:56:46'!
-displayCoordarcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
-"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 1.0 color: Color black do: [ :engine |
-		engine
-			displayCoordmoveToX: 100 y: 100;
-			displayCoordarcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
-			displayCoordmoveToX: 100 y: 100;
-			displayCoordarcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
-Display forceToScreen
-"
-	"Calcular: cx, cy, rx, ry, phi, theta1, deltaTheta"
-	| x1 y1 cosPhi sinPhi x12hd y12hd x1p y1p rxSq rySq x1pSq y1pSq bigSqR bigSqRNumerator bigSqRDenominator sign cxp cyp cx cy theta1 theta2 deltaTheta scaleSq scale newRx newRy |
-	x1 _ currentX.
-	y1 _ currentY.
-	"Handle out of range parameters as requested by the w3 implementation notes"
-	(x2 = x1 and: [ y2 = y1 ]) ifTrue: [ ^self ].
-	(rx = 0.0 or: [ ry = 0.0 ]) ifTrue: [ ^self displayCoordlineToX: x2 y: y2 ].
-	rx < 0 ifTrue: [
-		^self displayCoordarcToX: x2 y: y2 radiusX: 0.0 -rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
-	ry < 0 ifTrue: [
-		^self displayCoordarcToX: x2 y: y2 radiusX: rx radiusY: 0.0-ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
-	
-	cosPhi _ phi cos.
-	sinPhi _ phi sin.
-	"step 1 in http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes"
-	x12hd _ (x1-x2) * 0.5.
-	y12hd _ (y1-y2) * 0.5.
-	x1p _ (cosPhi * x12hd) + (sinPhi * y12hd).
-	y1p _ (cosPhi * y12hd) - (sinPhi * x12hd).
-
-	"step 2"
-	rxSq _ rx * rx.
-	rySq _ ry * ry.
-	x1pSq _ x1p * x1p.
-	y1pSq _ y1p * y1p.
-	"ensure radii are large enough"
-	scaleSq _ (x1pSq / rxSq) + (y1pSq / rySq).
-	scaleSq > 1 ifTrue: [
-		scale _ scaleSq sqrt.
-		newRx _ scale * rx.
-		newRy _ scale * ry.
-		(newRx = rx or: [ newRy = ry ]) ifTrue: [		"This happens when scaleSq is so close to 1, that the multiplication rounds to the same numbers"
-			newRx _ scaleSq * rx.
-			newRy _ scaleSq * ry ].
-		^self displayCoordarcToX: x2 y: y2 radiusX: newRx radiusY: newRy angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
-		].
-	bigSqRNumerator _ (rxSq * rySq) - (rxSq * y1pSq)-(rySq * x1pSq).
-	bigSqRDenominator _ (rxSq * y1pSq) + (rySq * x1pSq).
-	sign _ doLargerArc = useIncreasingAngles ifTrue: [ -1 ] ifFalse: [ 1 ].
-	bigSqR _ (bigSqRNumerator / bigSqRDenominator max: 0.0) sqrt * sign.		"This only can be < 0.0 because of rounding errors. Take 0.0 in such cases."
-	cxp _ bigSqR * rx * y1p / ry.
-	cyp _ 0.0 - (bigSqR * ry * x1p / rx).
-
-	"step 3"
-	cx _ (cosPhi * cxp) - (sinPhi * cyp) + ((x1+x2) * 0.5).
-	cy _ (sinPhi * cxp) + (cosPhi * cyp) + ((y1+y2) * 0.5).
-	
-"
-| u v a |
-Transcript clear.
-u _ 1@4. v _ 7@2.
-a _ ((u dotProduct: v) / (u r * v r) ) arcCos.
-a _ a * (((u x * v y) - (u y * v x)) sign).
-a print.
-(v theta - u theta) print.
-Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entre cero y 2pi...
-"
-
-	"step 4"
-	"Ojo signo del angulo y del eje y!!!!!!!!!!"
-	theta1 _ (((x1p - cxp) / rx) @ ((y1p - cyp) / ry)) theta.
-	theta2 _ (((0 - x1p - cxp) / rx) @ (( 0 -y1p - cyp) / ry)) theta.
-	deltaTheta _ theta2 - theta1.
-	useIncreasingAngles = (deltaTheta > 0) ifFalse: [
-		deltaTheta > 0
-			ifTrue: [ deltaTheta _ deltaTheta - Float pi - Float pi ]
-			ifFalse: [ deltaTheta _ deltaTheta + Float pi + Float pi ]
-		].
-	"Y aca calcular como dar vuelta deltaTheta, ver."
-
-
-	"Finalmente, estudiar la correccion de valores fuera de rango"
-	
-
-	self displayCoordarcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
-
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/17/2017 18:08:27'!
-displayCoordcubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
-	"Cubic Bezier
-	http://en.wikipedia.org/wiki/Bezier_curve"
-	"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 1.0 color: Color black do: [ :engine |
-		engine
-			displayCoordmoveToX: 100 y: 100;
-			displayCoordcubicBezierToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200 ].
-Display forceToScreen
-	"
-	"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
-		engine displayCoordmoveToX: 100 y: 50.
-		engine
-			displayCoordcubicBezierToX: 600 y: 100
-			control1X: 150 y: 300
-			control2X: 600 y: 400 ].
-Display forceToScreen
-	"
-
-	| dx dy hops increment t x0 y0 oneLessT f2 f3 f1 f23 f4 x y |
-
-	dx _ (x1-currentX) abs + (x2-x1) abs + (x3-x2) abs.
-	dy _ (y1-currentY) abs + (y2-y1) abs + (y3-y2) abs.
-	hops _ ((dx max: dy) * hopsPerPixel)truncated + 1.
-	increment _ 1.0 / hops.
-	t _ 0.0.
-	"en muchos casos, secuencias de estos,  repetimos puntos, el ultimo de la curva anterior... pensar, etc"
-	x0 _ currentX.
-	y0 _ currentY.
-	self addPenPositionX: x0 y: y0.
-	hops-1 timesRepeat: [
-		t _ t + increment.
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT * oneLessT.
-		f23 _ 3 * oneLessT * t.
-		f2 _ f23 * oneLessT.
-		f3 _ f23 * t.
-		f4 _ t * t * t.
-		x _ (f1 * x0) + (f2 * x1) + (f3 * x2) + (f4 * x3).
-		y _ (f1 * y0) + (f2 * y1) + (f3 * y2) + (f4 * y3).
-		self addPenPositionX: x y: y ].
-	self addPenPositionX: x3 y: y3.
-
-	currentX _ x3.
-	currentY _ y3.
-	lastControl2Point _ x2@y2! !
-
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/17/2017 18:08:24'!
-displayCoordlineToX: x2 y: y2
-"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 1.0 color: Color black do: [ :engine |
-		engine
-			displayCoordmoveToX: 100 y: 100;
-			displayCoordlineToX: 200 y: 150 ].
-Display forceToScreen
-"
-"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
-		engine displayCoordmoveToX: 10 y: 5.
-		engine displayCoordlineToX: 15 y: 30.
-		engine displayCoordlineToX: 60 y: 10 ].
-Display forceToScreen
-"
-	| dx dy hops incrementX incrementY x y |
-	x _ currentX.
-	y _ currentY.
-	dx _ x2 - x.
-	dy _ y2 - y.
-	hops _ ((dx abs max: dy abs) * hopsPerPixel)truncated + 1.
-	incrementX _ dx *1.0 / hops.
-	incrementY _ dy *1.0 / hops.
-	hops timesRepeat: [
-		self addPenPositionX: x y: y.
-		x _ x + incrementX.
-		y _ y + incrementY ].
-	self addPenPositionX: x2 y: y2.
-
-	currentX _ x2.
-	currentY _ y2.
-	lastControl2Point _ nil! !
-
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/17/2017 17:56:29'!
-displayCoordmoveToX: x y: y
-"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 1.0 color: Color black do: [ :engine |
-		engine
-			displayCoordmoveToX: 100 y: 100;
-			displayCoordlineToX: 200 y: 150;
-			displayCoordmoveToX: 210 y: 150;
-			displayCoordlineToX: 300 y: 200 ].
-Display forceToScreen
-"
-
-	"A discontinuity in the trajectory"
-
-	"We are starting a new trajectory, or at a discontinuity in trajectory. Eventually #closeTrajectory should draw a line to here"
-	fragmentStartIndexes add: trajectoryPoints size + 1.	"Next point will be first in a new trajectory fragment"
-	firstX _ x.
-	firstY _ y.
-	currentX _ x.
-	currentY _ y.
-
-	lastControl2Point _ nil! !
-
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 12/17/2017 18:08:29'!
-displayCoordquadraticBezierCurveToX: x2 y: y2 controlX: x1 y: y1
-	"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 1.0 color: Color black do: [ :engine |
-		engine
-			displayCoordmoveToX: 100 y: 100;
-			displayCoordquadraticBezierCurveToX: 300 y: 200 controlX: 100 y: 210 ].
-Display forceToScreen
-	"
-	"
-(VectorEngine onForm: Display)
-	resetMorphBounds;
-	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
-		engine displayCoordmoveToX: 10 y: 5.
-		engine displayCoordquadraticBezierCurveToX: 60 y: 10 controlX: 15 y: 30 ].
-Display forceToScreen
-	"
-	| dx dy hops increment t x0 y0 oneLessT f1 f3 f2 x y |
-	dx _ (x1-currentX) abs + (x2-x1) abs.
-	dy _ (y1-currentY) abs + (y2-y1) abs.
-	hops _ ((dx max: dy) * hopsPerPixel)truncated + 1.
-	increment _ 1.0 / hops.
-	t _ 0.0.
-	x0 _ currentX.
-	y0 _ currentY.
-	self addPenPositionX: x0 y: y0.
-	hops-1 timesRepeat: [
-		t _ t + increment.
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT.
-		f2 _ 2* oneLessT * t.
-		f3 _ t * t.
-		x _ (f1 * x0) + (f2 * x1) + (f3 * x2).
-		y _ (f1 * y0) + (f2 * y1) + (f3 * y2).
-		self addPenPositionX: x y: y ].
-	self addPenPositionX: x2 y: y2.
-
-	currentX _ x2.
-	currentY _ y2.
-	lastControl2Point _ x1@y1! !
 
 !VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 12/17/2017 18:06:35'!
 fillColor: aFillColor do: pathCommandsBlock
@@ -4113,7 +3738,7 @@ fillColor: aFillColor do: pathCommandsBlock
 	pathCommandsBlock valueWithPossibleArgument: self.
 	self finishPath! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 12/17/2017 18:11:09'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 12/22/2017 13:33:21'!
 finishPath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	| prevTruncatedY dilatedHalfWidth fragmentEndIndex pp |
@@ -4123,7 +3748,7 @@ finishPath
 		(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
 			"This is actually an error condition. If we are asked to fill, then the path should be closed.
 			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
-			self closePath ]].
+			self addClosePath ]].
 
 	"Current trajectory finished"
 
@@ -4158,7 +3783,7 @@ finishPath
 	boundsRight _ (boundsRight +dilatedHalfWidth +subPixelDelta) truncated.
 	boundsRight > clipRight ifTrue: [ boundsRight _ clipRight ].
 
-	trajectoryPoints do: [ :p | self updateAlphaX: p x y: p y ].
+	trajectoryPoints do: [ :p | self updateMaskForX: p x y: p y ].
 
 	firstX _ nil.
 	firstY _ nil.
@@ -4204,7 +3829,7 @@ resetMorphBounds
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 12/22/2017 13:18:51'!
 setForm: aForm
 	"
 	World extent: World extent
@@ -4217,30 +3842,23 @@ setForm: aForm
 	antiAliasingWidth _ VectorCanvas defaultAntiAliasingWidth.
 	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"
 	s _ aForm bits size.
-	(penAlpha isNil or: [ penAlpha size ~= s ])
+	(mask isNil or: [ mask size ~= s ])
 		ifTrue: [
-			penAlpha _ WordArray new: s.
+			mask _ WordArray new: s.
 			edgeCountPerPixel _ WordArray new: s.
 			morphAtPixel _ Array new: s.
-			targetSubpixelAlphas _ nil.
-			targetSubpixelAlphasIfStrokesAndFillsWereOpaque _ nil.
-			hack _ Form extent: targetWidth@targetHeight depth: 32 bits: penAlpha.
+			hack _ Form extent: targetWidth@targetHeight depth: 32 bits: mask.
 			auxBitBlt _ BitBlt toForm: hack.
 			auxBitBlt fillBitmap: (Bitmap with: 16rFF000000).
 			auxBitBlt combinationRule: Form over ].
 
 	"Perhaps this should be done in an ifCurtailed: block in case of Morphic drawing failure..."
 	auxBitBlt destRect: targetForm boundingBox.
-	auxBitBlt destForm bits: penAlpha.
+	auxBitBlt destForm bits: mask.
 	auxBitBlt copyBits.
 	auxBitBlt destForm bits: edgeCountPerPixel.
 	auxBitBlt copyBits.
-	morphAtPixel atAllPut: 0.
-	targetSubpixelAlphas ifNotNil: [
-		auxBitBlt destForm bits: targetSubpixelAlphas.
-		auxBitBlt copyBits.
-		auxBitBlt destForm bits: targetSubpixelAlphasIfStrokesAndFillsWereOpaque.
-		auxBitBlt copyBits ]! !
+	morphAtPixel atAllPut: 0! !
 
 !VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 12/17/2017 18:06:37'!
 strokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock
@@ -4307,80 +3925,7 @@ strokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathComm
 	pathCommandsBlock valueWithPossibleArgument: self.
 	self finishPath! !
 
-!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 12/17/2017 18:11:01'!
-updateAlphaX: x y: y
-
-	"slight optimization possible when we know width = 0... perhaps implement:
-		-we know palpha is never 127
-		- we know distanceToEdge is always > erodedHalfWidth.
-	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
-	Mas importante:
-		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
-	| dilatedHalfWidth erodedHalfWidth distanceToAxis alpha t b l r constant1 alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
-
-	dilatedHalfWidth _ strokeWidth + antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
-	erodedHalfWidth _ strokeWidth - antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
-	constant1 _ 127.0 / antiAliasingWidth.
-
-	"Compute affected rect. Honor clipRect"
-	t _ (y -dilatedHalfWidth) truncated +1.
-	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y +dilatedHalfWidth) truncated.
-	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x -dilatedHalfWidth -subPixelDelta) truncated +1.
-	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x +dilatedHalfWidth +subPixelDelta) truncated.
-	r > clipRight ifTrue: [ r _ clipRight ].
-
-	t to: b do: [ :displayY |
-		pixelIndex _ displayY * targetWidth +  l.
-		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			alphaWord _ penAlpha bytesAt: pixelIndex.
-			alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
-				doUpdate _ false.
-				dy _ displayY - y.
-				dySquared _ dy * dy.
-				dx _ displayX - x.
-				"Red"
-				dxp _ dx - subPixelDelta.
-				dxSquared _ dxp * dxp.
-				distanceToAxis _ (dxSquared + dySquared) sqrt.
-				distanceToAxis < dilatedHalfWidth
-					ifTrue: [
-						alpha _ distanceToAxis <= erodedHalfWidth
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
-						alpha > (alphaWord at: 3) ifTrue: [
-							alphaWord at: 3 put: alpha.
-							doUpdate _ true ]].
-				"Green"
-				dxSquared _ dx * dx.
-				distanceToAxis _ (dxSquared + dySquared) sqrt.
-				distanceToAxis < dilatedHalfWidth
-					ifTrue: [
-						alpha _ distanceToAxis <= erodedHalfWidth
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
-						alpha > (alphaWord at: 2) ifTrue: [
-							alphaWord at: 2 put: alpha.
-							doUpdate _ true ]].
-				"Blue"
-				dxp _ dx + subPixelDelta.
-				dxSquared _ dxp * dxp.
-				distanceToAxis _ (dxSquared + dySquared) sqrt.
-				distanceToAxis < dilatedHalfWidth
-					ifTrue: [
-						alpha _ distanceToAxis <= erodedHalfWidth
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
-						alpha > (alphaWord at: 1) ifTrue: [
-							alphaWord at: 1 put: alpha.
-							doUpdate _ true ]].
-				doUpdate ifTrue: [
-					penAlpha bytesAt: pixelIndex put: alphaWord ]]]]! !
-
-!VectorEngine methodsFor: 'trajectories - aux' stamp: 'jmv 12/17/2017 18:09:07'!
+!VectorEngine methodsFor: 'private - rasterization' stamp: 'jmv 12/22/2017 11:55:25'!
 updateEdgeCountAtX: x y: y prevTruncatedY: prevTruncatedY
 	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffest blueOffset |
 
@@ -4457,7 +4002,80 @@ updateEdgeCountAtX: x y: y prevTruncatedY: prevTruncatedY
 		].
 	^thisYTruncated! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:01'!
+!VectorEngine methodsFor: 'private - rasterization' stamp: 'jmv 12/22/2017 12:01:07'!
+updateMaskForX: x y: y
+
+	"slight optimization possible when we know width = 0... perhaps implement:
+		-we know palpha is never 127
+		- we know distanceToEdge is always > erodedHalfWidth.
+	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
+	Mas importante:
+		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
+	| dilatedHalfWidth erodedHalfWidth distanceToAxis alpha t b l r constant1 alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
+
+	dilatedHalfWidth _ strokeWidth + antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
+	erodedHalfWidth _ strokeWidth - antiAliasingWidth * 0.5.			"Podria ir como ivar... o al menos como arg"
+	constant1 _ 127.0 / antiAliasingWidth.
+
+	"Compute affected rect. Honor clipRect"
+	t _ (y -dilatedHalfWidth) truncated +1.
+	t < clipTop ifTrue: [ t _ clipTop ].
+	b _ (y +dilatedHalfWidth) truncated.
+	b > clipBottom ifTrue: [ b _ clipBottom ].
+	l _ (x -dilatedHalfWidth -subPixelDelta) truncated +1.
+	l < clipLeft ifTrue: [ l _ clipLeft ].
+	r _ (x +dilatedHalfWidth +subPixelDelta) truncated.
+	r > clipRight ifTrue: [ r _ clipRight ].
+
+	t to: b do: [ :displayY |
+		pixelIndex _ displayY * targetWidth +  l.
+		l to: r do: [ :displayX |
+			pixelIndex _ pixelIndex + 1.
+			alphaWord _ mask bytesAt: pixelIndex.
+			alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
+				doUpdate _ false.
+				dy _ displayY - y.
+				dySquared _ dy * dy.
+				dx _ displayX - x.
+				"Red"
+				dxp _ dx - subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 3) ifTrue: [
+							alphaWord at: 3 put: alpha.
+							doUpdate _ true ]].
+				"Green"
+				dxSquared _ dx * dx.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 2) ifTrue: [
+							alphaWord at: 2 put: alpha.
+							doUpdate _ true ]].
+				"Blue"
+				dxp _ dx + subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxis _ (dxSquared + dySquared) sqrt.
+				distanceToAxis < dilatedHalfWidth
+					ifTrue: [
+						alpha _ distanceToAxis <= erodedHalfWidth
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (dilatedHalfWidth - distanceToAxis * constant1) rounded ].
+						alpha > (alphaWord at: 1) ifTrue: [
+							alphaWord at: 1 put: alpha.
+							doUpdate _ true ]].
+				doUpdate ifTrue: [
+					mask bytesAt: pixelIndex put: alphaWord ]]]]! !
+
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:38:23'!
 experLinesAndShapes
 	"
 	self experLinesAndShapes
@@ -4467,17 +4085,17 @@ experLinesAndShapes
 	engine resetMorphBounds.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
-			displayCoordmoveToX: 20 y: 10;
-			displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-			displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
-			closePath ].
+			addMoveToX: 20 y: 10;
+			addLineToX: 210 y: 15; addLineToX: 20 y: 20;
+			addLineToX: 15 y: 410; addLineToX: 10 y: 20;
+			addClosePath ].
 	Display forceToScreen.
 	engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
-			displayCoordmoveToX: 220 y: 10;
-			displayCoordlineToX: 410 y: 15; displayCoordlineToX: 220 y: 20;
-			displayCoordlineToX: 215 y: 410; displayCoordlineToX: 210 y: 20;
-			closePath ].
+			addMoveToX: 220 y: 10;
+			addLineToX: 410 y: 15; addLineToX: 220 y: 20;
+			addLineToX: 215 y: 410; addLineToX: 210 y: 20;
+			addClosePath ].
 	Display forceToScreen.
 
 	y1 _ 10.
@@ -4488,39 +4106,39 @@ experLinesAndShapes
 		yy2 _ y2 >= 1 ifTrue: [ VectorCanvas defaultAntiAliasingWidth * 0.5 ] ifFalse: [0].
 		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 431 y: y1+yy2; displayCoordlineToX: 530 y: y1+yy2+dy;
-				displayCoordlineToX: 530 y: y1+y2-yy2+dy; displayCoordlineToX: 431 y: y1+y2-yy2;
-				closePath.
+				addMoveToX: 431 y: y1+yy2; addLineToX: 530 y: y1+yy2+dy;
+				addLineToX: 530 y: y1+y2-yy2+dy; addLineToX: 431 y: y1+y2-yy2;
+				addClosePath.
 			engine
-				displayCoordmoveToX:  y1+yy2 y: 431; displayCoordlineToX: y1+yy2+dy y: 530;
-				displayCoordlineToX: y1+y2-yy2+dy y: 530; displayCoordlineToX: y1+y2-yy2 y: 431;
-				closePath ].
+				addMoveToX:  y1+yy2 y: 431; addLineToX: y1+yy2+dy y: 530;
+				addLineToX: y1+y2-yy2+dy y: 530; addLineToX: y1+y2-yy2 y: 431;
+				addClosePath ].
 		"Solo fill. w casi=0"
 		engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 531 y: y1+dy; displayCoordlineToX: 630 y: y1+dy+dy;
-				displayCoordlineToX: 630 y: y1+y2+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy;
-				closePath.
+				addMoveToX: 531 y: y1+dy; addLineToX: 630 y: y1+dy+dy;
+				addLineToX: 630 y: y1+y2+dy+dy; addLineToX: 531 y: y1+y2+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy y: 531; displayCoordlineToX: y1+dy+dy y: 630;
-				displayCoordlineToX: y1+y2+dy+dy y: 630; displayCoordlineToX: y1+y2+dy y: 531;
-				closePath ].
+				addMoveToX: y1+dy y: 531; addLineToX: y1+dy+dy y: 630;
+				addLineToX: y1+y2+dy+dy y: 630; addLineToX: y1+y2+dy y: 531;
+				addClosePath ].
 		"Solo fill."
 		engine fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
-				displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
-				closePath.
+				addMoveToX: 631 y: y1+dy+dy; addLineToX: 730 y: y1+dy+dy+dy;
+				addLineToX: 730 y: y1+y2+dy+dy+dy; addLineToX: 631 y: y1+y2+dy+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy y: 730;
-				displayCoordlineToX: y1+y2+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy y: 631;
-				closePath ].
+				addMoveToX: y1+dy+dy y: 631; addLineToX: y1+dy+dy+dy y: 730;
+				addLineToX: y1+y2+dy+dy+dy y: 730; addLineToX: y1+y2+dy+dy y: 631;
+				addClosePath ].
 		"solo stroke, no fill"
 		engine strokeWidth: y2 color: Color black do: [
 			engine
-				displayCoordmoveToX: y2*0.5+731 y: y2*0.5 + y1+dy+dy+dy; displayCoordlineToX: 830 y: y2 * 0.5 + y1  + dy + dy+dy+dy.
+				addMoveToX: y2*0.5+731 y: y2*0.5 + y1+dy+dy+dy; addLineToX: 830 y: y2 * 0.5 + y1  + dy + dy+dy+dy.
 			engine
-				displayCoordmoveToX: y2*0.5 + y1+dy+dy+dy y: y2*0.5+731; displayCoordlineToX: y2 * 0.5 + y1  + dy + dy+dy+dy y: 830 ].
+				addMoveToX: y2*0.5 + y1+dy+dy+dy y: y2*0.5+731; addLineToX: y2 * 0.5 + y1  + dy + dy+dy+dy y: 830 ].
 		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
@@ -4529,7 +4147,7 @@ experLinesAndShapes
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:52'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:38:27'!
 experLinesAndShapes2
 	"
 	self experLinesAndShapes2
@@ -4545,63 +4163,63 @@ experLinesAndShapes2
 		"Solo fill. w chico pero aun visible"
 		engine strokeWidth: 1.0 color: Color green fillColor: Color red do: [
 			engine
-				displayCoordmoveToX: 131 y: y1; displayCoordlineToX: 230 y: y1+dy;
-				displayCoordlineToX: 230 y: y1+y2+dy; displayCoordlineToX: 131 y: y1+y2;
-				closePath.
+				addMoveToX: 131 y: y1; addLineToX: 230 y: y1+dy;
+				addLineToX: 230 y: y1+y2+dy; addLineToX: 131 y: y1+y2;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1 y: 131; displayCoordlineToX: y1+dy y: 230;
-				displayCoordlineToX: y1+y2+dy y: 230;displayCoordlineToX: y1+y2 y: 131;
-				closePath ].
+				addMoveToX: y1 y: 131; addLineToX: y1+dy y: 230;
+				addLineToX: y1+y2+dy y: 230;addLineToX: y1+y2 y: 131;
+				addClosePath ].
 		"Solo fill. w chico pero aun visible"
 		engine strokeWidth: 0.8 color: Color green fillColor: Color red do: [
 			engine
-				displayCoordmoveToX: 231 y: y1+dy; displayCoordlineToX: 330 y: y1+dy+dy;
-				displayCoordlineToX: 330 y: y1+y2+dy+dy; displayCoordlineToX: 231 y: y1+y2+dy;
-				closePath.
+				addMoveToX: 231 y: y1+dy; addLineToX: 330 y: y1+dy+dy;
+				addLineToX: 330 y: y1+y2+dy+dy; addLineToX: 231 y: y1+y2+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy y: 231; displayCoordlineToX: y1+dy+dy y: 330;
-				displayCoordlineToX: y1+y2+dy+dy y: 330; displayCoordlineToX: y1+y2+dy y: 231;
-				closePath ].
+				addMoveToX: y1+dy y: 231; addLineToX: y1+dy+dy y: 330;
+				addLineToX: y1+y2+dy+dy y: 330; addLineToX: y1+y2+dy y: 231;
+				addClosePath ].
 		"Solo fill. w chico pero aun visible"
 		engine strokeWidth: 0.6 color: Color green fillColor: Color red do: [.
 			engine
-				displayCoordmoveToX: 331 y: y1+dy+dy; displayCoordlineToX: 430 y: y1+dy+dy+dy;
-				displayCoordlineToX: 430 y: y1+y2+dy+dy+dy; displayCoordlineToX: 331 y: y1+y2+dy+dy;
-				closePath.
+				addMoveToX: 331 y: y1+dy+dy; addLineToX: 430 y: y1+dy+dy+dy;
+				addLineToX: 430 y: y1+y2+dy+dy+dy; addLineToX: 331 y: y1+y2+dy+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy+dy y: 331; displayCoordlineToX: y1+dy+dy+dy y: 430;
-				displayCoordlineToX: y1+y2+dy+dy+dy y: 430; displayCoordlineToX: y1+y2+dy+dy y: 331;
-				closePath ].
+				addMoveToX: y1+dy+dy y: 331; addLineToX: y1+dy+dy+dy y: 430;
+				addLineToX: y1+y2+dy+dy+dy y: 430; addLineToX: y1+y2+dy+dy y: 331;
+				addClosePath ].
 		"Solo fill. w chico pero aun visible"
 		engine strokeWidth: 0.4 color: Color green fillColor: Color red do: [
 			engine
-				displayCoordmoveToX: 431 y: y1+dy+dy+dy; displayCoordlineToX: 530 y: y1+dy+dy+dy+dy;
-				displayCoordlineToX: 530 y: y1+y2+dy+dy+dy+dy; displayCoordlineToX: 431 y: y1+y2+dy+dy+dy;
-				closePath.
+				addMoveToX: 431 y: y1+dy+dy+dy; addLineToX: 530 y: y1+dy+dy+dy+dy;
+				addLineToX: 530 y: y1+y2+dy+dy+dy+dy; addLineToX: 431 y: y1+y2+dy+dy+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy+dy+dy y: 431; displayCoordlineToX: y1+dy+dy+dy+dy y: 530;
-				displayCoordlineToX: y1+y2+dy+dy+dy+dy y: 530; displayCoordlineToX: y1+y2+dy+dy+dy y: 431;
-				closePath ].
+				addMoveToX: y1+dy+dy+dy y: 431; addLineToX: y1+dy+dy+dy+dy y: 530;
+				addLineToX: y1+y2+dy+dy+dy+dy y: 530; addLineToX: y1+y2+dy+dy+dy y: 431;
+				addClosePath ].
 		"Solo fill. w chico pero aun visible"
 		engine strokeWidth: 0.2 color: Color green fillColor: Color red do: [
 			engine
-				displayCoordmoveToX: 531 y: y1+dy+dy+dy+dy; displayCoordlineToX: 630 y: y1+dy+dy+dy+dy+dy;
-				displayCoordlineToX: 630 y: y1+y2+dy+dy+dy+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy+dy+dy+dy;
-				closePath.
+				addMoveToX: 531 y: y1+dy+dy+dy+dy; addLineToX: 630 y: y1+dy+dy+dy+dy+dy;
+				addLineToX: 630 y: y1+y2+dy+dy+dy+dy+dy; addLineToX: 531 y: y1+y2+dy+dy+dy+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy+dy+dy+dy y: 531; displayCoordlineToX: y1+dy+dy+dy+dy+dy y: 630;
-				displayCoordlineToX: y1+y2+dy+dy+dy+dy+dy y: 630; displayCoordlineToX: y1+y2+dy+dy+dy+dy y: 531;
-				closePath ].
+				addMoveToX: y1+dy+dy+dy+dy y: 531; addLineToX: y1+dy+dy+dy+dy+dy y: 630;
+				addLineToX: y1+y2+dy+dy+dy+dy+dy y: 630; addLineToX: y1+y2+dy+dy+dy+dy y: 531;
+				addClosePath ].
 		"Solo fill. w chico. Preferimos ya usarlo para definir mejor el shape (se transparentaria demasiado)"
 		engine strokeWidth: 0.0 color: Color green fillColor: Color red do: [
 			engine
-				displayCoordmoveToX: 631 y: y1+dy+dy+dy+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy+dy+dy+dy;
-				displayCoordlineToX: 730 y: y1+y2+dy+dy+dy+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy+dy+dy+dy;
-				closePath.
+				addMoveToX: 631 y: y1+dy+dy+dy+dy+dy; addLineToX: 730 y: y1+dy+dy+dy+dy+dy+dy;
+				addLineToX: 730 y: y1+y2+dy+dy+dy+dy+dy+dy; addLineToX: 631 y: y1+y2+dy+dy+dy+dy+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy+dy+dy+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy+dy+dy+dy y: 730;
-				displayCoordlineToX: y1+y2+dy+dy+dy+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy+dy+dy+dy y: 631;
-				closePath ].
+				addMoveToX: y1+dy+dy+dy+dy+dy y: 631; addLineToX: y1+dy+dy+dy+dy+dy+dy y: 730;
+				addLineToX: y1+y2+dy+dy+dy+dy+dy+dy y: 730; addLineToX: y1+y2+dy+dy+dy+dy+dy y: 631;
+				addClosePath ].
 		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 print.
@@ -4610,7 +4228,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:54'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:36:21'!
 experLinesAndShapes3
 	"
 	self experLinesAndShapes3
@@ -4620,17 +4238,17 @@ experLinesAndShapes3
 	engine resetMorphBounds.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
-			displayCoordmoveToX: 20 y: 10;
-			displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-			displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
-			closePath ].
+			addMoveToX: 20 y: 10;
+			addLineToX: 210 y: 15; addLineToX: 20 y: 20;
+			addLineToX: 15 y: 410; addLineToX: 10 y: 20;
+			addClosePath ].
 	Display forceToScreen.
 	engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
-			displayCoordmoveToX: 220 y: 10;
-			displayCoordlineToX: 410 y: 15; displayCoordlineToX: 220 y: 20;
-			displayCoordlineToX: 215 y: 410; displayCoordlineToX: 210 y: 20;
-			closePath ].
+			addMoveToX: 220 y: 10;
+			addLineToX: 410 y: 15; addLineToX: 220 y: 20;
+			addLineToX: 215 y: 410; addLineToX: 210 y: 20;
+			addClosePath ].
 	Display forceToScreen.
 
 	y1 _ 10.
@@ -4640,33 +4258,33 @@ experLinesAndShapes3
 		"stroke con w > aaw"
 		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*0.4 color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 431 y: y1; displayCoordlineToX: 530 y: y1+dy;
-				displayCoordlineToX: 530 y: y1+y2+dy; displayCoordlineToX: 431 y: y1+y2;
-				closePath.
+				addMoveToX: 431 y: y1; addLineToX: 530 y: y1+dy;
+				addLineToX: 530 y: y1+y2+dy; addLineToX: 431 y: y1+y2;
+				addClosePath.
 			engine
-				displayCoordmoveToX:  y1 y: 431; displayCoordlineToX: y1+dy y: 530;
-				displayCoordlineToX: y1+y2+dy y: 530; displayCoordlineToX: y1+y2 y: 431;
-				closePath ].
+				addMoveToX:  y1 y: 431; addLineToX: y1+dy y: 530;
+				addLineToX: y1+y2+dy y: 530; addLineToX: y1+y2 y: 431;
+				addClosePath ].
 		"Solo fill. w casi=0"
 		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*0.2 color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 531 y: y1+dy; displayCoordlineToX: 630 y: y1+dy+dy;
-				displayCoordlineToX: 630 y: y1+y2+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy;
-				closePath.
+				addMoveToX: 531 y: y1+dy; addLineToX: 630 y: y1+dy+dy;
+				addLineToX: 630 y: y1+y2+dy+dy; addLineToX: 531 y: y1+y2+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy y: 531; displayCoordlineToX: y1+dy+dy y: 630;
-				displayCoordlineToX: y1+y2+dy+dy y: 630; displayCoordlineToX: y1+y2+dy y: 531;
-				closePath ].
+				addMoveToX: y1+dy y: 531; addLineToX: y1+dy+dy y: 630;
+				addLineToX: y1+y2+dy+dy y: 630; addLineToX: y1+y2+dy y: 531;
+				addClosePath ].
 		"Solo fill. w =0"
 		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*0.0 color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
-				displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
-				closePath.
+				addMoveToX: 631 y: y1+dy+dy; addLineToX: 730 y: y1+dy+dy+dy;
+				addLineToX: 730 y: y1+y2+dy+dy+dy; addLineToX: 631 y: y1+y2+dy+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy y: 730;
-				displayCoordlineToX: y1+y2+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy y: 631;
-				closePath ].
+				addMoveToX: y1+dy+dy y: 631; addLineToX: y1+dy+dy+dy y: 730;
+				addLineToX: y1+y2+dy+dy+dy y: 730; addLineToX: y1+y2+dy+dy y: 631;
+				addClosePath ].
 		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
@@ -4675,7 +4293,7 @@ experLinesAndShapes3
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:56'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:36:30'!
 experLinesAndShapes4
 	"
 	self experLinesAndShapes4
@@ -4685,17 +4303,17 @@ experLinesAndShapes4
 	engine resetMorphBounds.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
-			displayCoordmoveToX: 20 y: 10;
-			displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-			displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
-			closePath ].
+			addMoveToX: 20 y: 10;
+			addLineToX: 210 y: 15; addLineToX: 20 y: 20;
+			addLineToX: 15 y: 410; addLineToX: 10 y: 20;
+			addClosePath ].
 	Display forceToScreen.
 	engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
-			displayCoordmoveToX: 220 y: 10;
-			displayCoordlineToX: 410 y: 15; displayCoordlineToX: 220 y: 20;
-			displayCoordlineToX: 215 y: 410; displayCoordlineToX: 210 y: 20;
-			closePath ].
+			addMoveToX: 220 y: 10;
+			addLineToX: 410 y: 15; addLineToX: 220 y: 20;
+			addLineToX: 215 y: 410; addLineToX: 210 y: 20;
+			addClosePath ].
 	Display forceToScreen.
 
 	y1 _ 10.
@@ -4705,33 +4323,33 @@ experLinesAndShapes4
 		"stroke con w > aaw"
 		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*2 color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 431 y: y1; displayCoordlineToX: 530 y: y1+dy;
-				displayCoordlineToX: 530 y: y1+y2+dy; displayCoordlineToX: 431 y: y1+y2;
-				closePath.
+				addMoveToX: 431 y: y1; addLineToX: 530 y: y1+dy;
+				addLineToX: 530 y: y1+y2+dy; addLineToX: 431 y: y1+y2;
+				addClosePath.
 			engine
-				displayCoordmoveToX:  y1 y: 431; displayCoordlineToX: y1+dy y: 530;
-				displayCoordlineToX: y1+y2+dy y: 530; displayCoordlineToX: y1+y2 y: 431;
-				closePath ].
+				addMoveToX:  y1 y: 431; addLineToX: y1+dy y: 530;
+				addLineToX: y1+y2+dy y: 530; addLineToX: y1+y2 y: 431;
+				addClosePath ].
 		"Solo fill. w casi=0"
 		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*1.5 color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 531 y: y1+dy; displayCoordlineToX: 630 y: y1+dy+dy;
-				displayCoordlineToX: 630 y: y1+y2+dy+dy; displayCoordlineToX: 531 y: y1+y2+dy;
-				closePath.
+				addMoveToX: 531 y: y1+dy; addLineToX: 630 y: y1+dy+dy;
+				addLineToX: 630 y: y1+y2+dy+dy; addLineToX: 531 y: y1+y2+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy y: 531; displayCoordlineToX: y1+dy+dy y: 630;
-				displayCoordlineToX: y1+y2+dy+dy y: 630; displayCoordlineToX: y1+y2+dy y: 531;
-				closePath ].
+				addMoveToX: y1+dy y: 531; addLineToX: y1+dy+dy y: 630;
+				addLineToX: y1+y2+dy+dy y: 630; addLineToX: y1+y2+dy y: 531;
+				addClosePath ].
 		"Solo fill. w =0"
 		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
-				displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
-				closePath.
+				addMoveToX: 631 y: y1+dy+dy; addLineToX: 730 y: y1+dy+dy+dy;
+				addLineToX: 730 y: y1+y2+dy+dy+dy; addLineToX: 631 y: y1+y2+dy+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy+dy y: 631; displayCoordlineToX: y1+dy+dy+dy y: 730;
-				displayCoordlineToX: y1+y2+dy+dy+dy y: 730; displayCoordlineToX: y1+y2+dy+dy y: 631;
-				closePath ].
+				addMoveToX: y1+dy+dy y: 631; addLineToX: y1+dy+dy+dy y: 730;
+				addLineToX: y1+y2+dy+dy+dy y: 730; addLineToX: y1+y2+dy+dy y: 631;
+				addClosePath ].
 		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
@@ -4740,7 +4358,7 @@ experLinesAndShapes4
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:35'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:36:36'!
 experLinesAndShapesx
 	"
 	self experLinesAndShapesx
@@ -4750,10 +4368,10 @@ experLinesAndShapesx
 	engine resetMorphBounds.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
-			displayCoordmoveToX: 20 y: 10;
-			displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-			displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
-			closePath ].
+			addMoveToX: 20 y: 10;
+			addLineToX: 210 y: 15; addLineToX: 20 y: 20;
+			addLineToX: 15 y: 410; addLineToX: 10 y: 20;
+			addClosePath ].
 	Display forceToScreen.
 
 	y1 _ 10.
@@ -4764,13 +4382,13 @@ experLinesAndShapesx
 		"Solo fill. w =0"
 		engine strokeWidth: 0.0 color: Color black fillColor: Color black do: [
 			engine
-				displayCoordmoveToX: 631 y: y1+dy+dy; displayCoordlineToX: 730 y: y1+dy+dy+dy;
-				displayCoordlineToX: 730 y: y1+y2+dy+dy+dy; displayCoordlineToX: 631 y: y1+y2+dy+dy;
-				closePath.
+				addMoveToX: 631 y: y1+dy+dy; addLineToX: 730 y: y1+dy+dy+dy;
+				addLineToX: 730 y: y1+y2+dy+dy+dy; addLineToX: 631 y: y1+y2+dy+dy;
+				addClosePath.
 			engine
-				displayCoordmoveToX: y1+dy+dy y: 431; displayCoordlineToX: y1+dy+dy+dy y: 530;
-				displayCoordlineToX: y1+y2+dy+dy+dy y: 530; displayCoordlineToX: y1+y2+dy+dy y: 431;
-				closePath ].
+				addMoveToX: y1+dy+dy y: 431; addLineToX: y1+dy+dy+dy y: 530;
+				addLineToX: y1+y2+dy+dy+dy y: 530; addLineToX: y1+y2+dy+dy y: 431;
+				addClosePath ].
 		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
@@ -4778,7 +4396,7 @@ experLinesAndShapesx
 	
 	Display forceToScreen.! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:37'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:36:46'!
 experLinesAndShapesx2
 	"
 	self experLinesAndShapesx2
@@ -4793,17 +4411,17 @@ experLinesAndShapesx2
 	"Solo fill. w =0"
 	engine strokeWidth: 0.5 color: Color black fillColor: Color black do: [
 		engine
-			displayCoordmoveToX: 10 y: y1+dy+dy; displayCoordlineToX: 200 y: y1+dy+dy+dy;
-			displayCoordlineToX: 200 y: y1+y2+dy+dy+dy; displayCoordlineToX: 10 y: y1+y2+dy+dy;
-			closePath.
+			addMoveToX: 10 y: y1+dy+dy; addLineToX: 200 y: y1+dy+dy+dy;
+			addLineToX: 200 y: y1+y2+dy+dy+dy; addLineToX: 10 y: y1+y2+dy+dy;
+			addClosePath.
 		engine
-			displayCoordmoveToX: y1+dy+dy y: 10; displayCoordlineToX: y1+dy+dy+dy y: 200;
-			displayCoordlineToX: y1+y2+dy+dy+dy y: 200; displayCoordlineToX: y1+y2+dy+dy y: 10;
-			closePath ].
+			addMoveToX: y1+dy+dy y: 10; addLineToX: y1+dy+dy+dy y: 200;
+			addLineToX: y1+y2+dy+dy+dy y: 200; addLineToX: y1+y2+dy+dy y: 10;
+			addClosePath ].
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/17/2017 18:02:20'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/22/2017 13:37:00'!
 experiment1
 	"
 	No perfecto aun, pero se puede empezar a comparar con
@@ -4850,11 +4468,11 @@ delta _ nil.
 "			color _ color alpha: 0.5."
 			engine fillColor: color do: [
 				engine
-					displayCoordmoveToX: x1 y: y;
-					displayCoordlineToX: x2 y: y;
-					displayCoordlineToX: x2p y: prevY;
-					displayCoordlineToX: x1p y: prevY;
-					closePath ]
+					addMoveToX: x1 y: y;
+					addLineToX: x2 y: y;
+					addLineToX: x2p y: prevY;
+					addLineToX: x1p y: prevY;
+					addClosePath ]
 			].
 		].
 	Display forceToScreen.
@@ -4865,7 +4483,7 @@ Display forceToScreen.
 	f writePNGfileNamed: 'pp17.png'
 "! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/17/2017 18:02:22'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/22/2017 13:37:05'!
 experiment2
 	"
 	self experiment2
@@ -4899,11 +4517,11 @@ delta _ nil.
 "			color _ color alpha: 0.5."
 			engine fillColor: color do: [
 				engine
-					displayCoordmoveToX: x1 y: y;
-					displayCoordlineToX: x2 y: y;
-					displayCoordlineToX: x2p y: prevY;
-					displayCoordlineToX: x1p y: prevY;
-					closePath ]
+					addMoveToX: x1 y: y;
+					addLineToX: x2 y: y;
+					addLineToX: x2p y: prevY;
+					addLineToX: x1p y: prevY;
+					addClosePath ]
 			].
 		].
 	Display forceToScreen.
@@ -4911,7 +4529,7 @@ delta _ nil.
 Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/17/2017 18:02:24'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/22/2017 13:34:29'!
 experiment3
 	"
 	self experiment3
@@ -4924,8 +4542,8 @@ experiment3
 	100 timesRepeat: [
 		engine strokeWidth: w color: Color black do: [
 			engine
-				displayCoordarcCenterX: 300 centerY: 300 radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
-				closePath ].
+				addArcCenterX: 300 centerY: 300 radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
+				addClosePath ].
 		r _ r + w.
 		w _ w * 0.8.
 		r _ r + w.
@@ -4935,7 +4553,7 @@ experiment3
 Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/17/2017 18:02:26'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/22/2017 13:34:31'!
 experiment4
 	"
 	self experiment4
@@ -4951,14 +4569,14 @@ experiment4
 		r _ r + w.
 		engine strokeWidth: w color: Color black do: [
 		engine
-			displayCoordarcCenterX: 300 centerY: 300 radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
-			closePath ].
+			addArcCenterX: 300 centerY: 300 radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
+			addClosePath ].
 	Display forceToScreen.
 	].
 Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:39'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:37:12'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -4974,10 +4592,10 @@ experimentHopsPerPixel1
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
-			displayCoordmoveToX: 20 y: 10;
-			displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-			displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
-			closePath ].
+			addMoveToX: 20 y: 10;
+			addLineToX: 210 y: 15; addLineToX: 20 y: 20;
+			addLineToX: 15 y: 410; addLineToX: 10 y: 20;
+			addClosePath ].
 	f1 displayAt: 0@0.
 
 	f2 _ Form extent: 220@420 depth: 32.
@@ -4987,10 +4605,10 @@ experimentHopsPerPixel1
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
-			displayCoordmoveToX: 20 y: 10;
-			displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-			displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
-			closePath ].
+			addMoveToX: 20 y: 10;
+			addLineToX: 210 y: 15; addLineToX: 20 y: 20;
+			addLineToX: 15 y: 410; addLineToX: 10 y: 20;
+			addClosePath ].
 	f2 displayAt: 220@0.
 
 	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) + 0.5.
@@ -4999,7 +4617,7 @@ experimentHopsPerPixel1
 	(d asFormMin: 0 max: 1) displayAt: 660@0.
 	{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:41'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:37:19'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -5028,10 +4646,10 @@ experimentHopsPerPixel2
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
-			displayCoordmoveToX: 40 y: 30;
-			displayCoordlineToX: 190 y: 135; displayCoordlineToX: 40 y: 40;
-			displayCoordlineToX: 135 y: 390; displayCoordlineToX: 30 y: 40;
-			closePath ].
+			addMoveToX: 40 y: 30;
+			addLineToX: 190 y: 135; addLineToX: 40 y: 40;
+			addLineToX: 135 y: 390; addLineToX: 30 y: 40;
+			addClosePath ].
 	f1 displayAt: 0@0.
 
 	f2 _ Form extent: 220@420 depth: 32.
@@ -5041,10 +4659,10 @@ experimentHopsPerPixel2
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
-			displayCoordmoveToX: 40 y: 30;
-			displayCoordlineToX: 190 y: 135; displayCoordlineToX: 40 y: 40;
-			displayCoordlineToX: 135 y: 390; displayCoordlineToX: 30 y: 40;
-			closePath ].
+			addMoveToX: 40 y: 30;
+			addLineToX: 190 y: 135; addLineToX: 40 y: 40;
+			addLineToX: 135 y: 390; addLineToX: 30 y: 40;
+			addClosePath ].
 	f2 displayAt: 220@0.
 
 	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) + 0.5.
@@ -5053,7 +4671,7 @@ experimentHopsPerPixel2
 	(d asFormMin: 0 max: 1) displayAt: 660@0.
 	{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/17/2017 18:03:42'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 12/22/2017 13:37:25'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -5069,10 +4687,10 @@ experimentHopsPerPixel3
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
-			displayCoordmoveToX: 20 y: 10;
-			displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-			displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
-			closePath ].
+			addMoveToX: 20 y: 10;
+			addLineToX: 210 y: 15; addLineToX: 20 y: 20;
+			addLineToX: 15 y: 410; addLineToX: 10 y: 20;
+			addClosePath ].
 	f1 displayAt: 0@0.
 
 	f2 _ Form extent: 220@420 depth: 32.
@@ -5082,10 +4700,10 @@ experimentHopsPerPixel3
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
-			displayCoordmoveToX: 20 y: 10;
-			displayCoordlineToX: 210 y: 15; displayCoordlineToX: 20 y: 20;
-			displayCoordlineToX: 15 y: 410; displayCoordlineToX: 10 y: 20;
-			closePath ].
+			addMoveToX: 20 y: 10;
+			addLineToX: 210 y: 15; addLineToX: 20 y: 20;
+			addLineToX: 15 y: 410; addLineToX: 10 y: 20;
+			addClosePath ].
 	f2 displayAt: 220@0.
 
 	d _ (FloatMatrix form: f1 color: #red) - (FloatMatrix form: f2 color: #red) + 0.5.
@@ -11358,6 +10976,360 @@ testCharacter: code
 		r drawCharCode: code atX: 38 y: 22 pointSize: 160 italics: false ].
 	Display forceToScreen! !
 
+!SVGDefElement methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:40'!
+def: anSVGDef
+	def _ anSVGDef! !
+
+!SVGDefElement class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:50'!
+classFor: anSVGName
+
+	self allSubclassesDo: [ :cls |
+		cls svgName = anSVGName
+			ifTrue: [ ^cls ] ].
+	^nil! !
+
+!SVGDefElement class methodsFor: 'instance creation' stamp: 'jmv 6/16/2010 10:44'!
+fromXml: anXMLElement
+	| cls n |
+	n _ anXMLElement name.
+	cls _ self classFor: n.
+	cls ifNil: [
+		((SVGElementMorph ignoredElements includes: n) or: [
+			SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | n beginsWith: prefix ]]) ifFalse: [
+			SVGWarning signal: ('Unhandled def element: ', n printString) ].
+		^nil ].
+	^ cls new buildFromXml: anXMLElement! !
+
+!SVGGradient methodsFor: 'accessing' stamp: 'jmv 12/12/2017 21:40:16'!
+averageColor
+	| s |
+	averageColor ifNotNil: [ ^ averageColor ].
+	s _ self stops.
+	averageColor _ (s collect: [ :c | c color / s size ]) sum.
+	^ averageColor! !
+
+!SVGGradient methodsFor: 'building' stamp: 'jmv 7/30/2012 18:00'!
+buildFromXml: anXMLElement
+	| unsorted stop dataStream usedAttributeNames |
+	name _ anXMLElement attributeAt: 'id'.
+	unsorted _ OrderedCollection new.
+	anXMLElement elementsDo: [ :subElement |
+		stop _ SVGDefElement fromXml: subElement.
+		unsorted add: stop].
+	"Esto deberia ser un array de entrada, arreglar (codigo de levente) sortBy: para que ande en array sin crear sorted collection ni nada"
+	unsorted isEmpty
+		ifFalse: [
+			stops _ unsorted sorted: [ :a :b | a offset < b offset ]]
+		ifTrue: [ stops _ nil ].
+
+	inheritFrom _ nil.
+	(anXMLElement attributeAt: 'xlink:href') ifNotNil: [ :linkData |
+		dataStream _ linkData readStream.
+		dataStream upTo: $#.
+		inheritFrom _ (dataStream upTo: $) ) withBlanksTrimmed ].
+
+	usedAttributeNames _ self usedAttributeNames asSet.
+	anXMLElement attributes keysAndValuesDo: [ :attrName :value |
+		((usedAttributeNames includes: attrName) or: [
+			(SVGElementMorph ignoredAttributes includes: attrName) or: [
+				SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
+			SVGWarning signal: 'Unhandled attribute: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]]! !
+
+!SVGGradient methodsFor: 'accessing' stamp: 'jmv 5/13/2010 09:56'!
+name
+	^name! !
+
+!SVGGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+stops
+	^stops
+		ifNotNil: [ stops ]
+		ifNil: [ (def defAt: inheritFrom) stops ]! !
+
+!SVGGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:52'!
+usedAttributeNames
+	^#('xlink:href' 'id')! !
+
+!SVGGradient class methodsFor: 'instance creation' stamp: 'jmv 5/13/2010 10:02'!
+svgName
+	^nil! !
+
+!SVGLinearGradient methodsFor: 'building' stamp: 'jmv 6/14/2010 17:23'!
+buildFromXml: anXMLElement
+
+	super buildFromXml: anXMLElement.
+	vectorX1 _ (anXMLElement attributeAt: 'x1') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ].
+	vectorY1 _ (anXMLElement attributeAt: 'y1') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ].
+	vectorX2 _ (anXMLElement attributeAt: 'x2') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 1.0 ].
+	vectorY2 _ (anXMLElement attributeAt: 'y2') ifNotNil: [ :data | SVGElementMorph svgLengthFractionFor: data ] ifNil: [ 0.0 ]! !
+
+!SVGLinearGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:53'!
+usedAttributeNames
+	^super usedAttributeNames,
+		#('x1' 'y1' 'x2' 'y2')! !
+
+!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+vectorX1
+	^vectorX1
+		ifNotNil: [ vectorX1 ]
+		ifNil: [ (def defAt: inheritFrom) vectorX1 ]! !
+
+!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+vectorX2
+	^vectorX2
+		ifNotNil: [ vectorX2 ]
+		ifNil: [ (def defAt: inheritFrom) vectorX2 ]! !
+
+!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+vectorY1
+	^vectorY1
+		ifNotNil: [ vectorY1 ]
+		ifNil: [ (def defAt: inheritFrom) vectorY1 ]! !
+
+!SVGLinearGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 08:54'!
+vectorY2
+	^vectorY2
+		ifNotNil: [ vectorY2 ]
+		ifNil: [ (def defAt: inheritFrom) vectorY2 ]! !
+
+!SVGLinearGradient class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:51'!
+svgName
+	^#linearGradient! !
+
+!SVGRadialGradient methodsFor: 'building' stamp: 'jmv 6/14/2010 17:23'!
+buildFromXml: anXMLElement
+
+	| data |
+	super buildFromXml: anXMLElement.
+	data _ anXMLElement attributeAt: 'cx'.
+	cx _ SVGElementMorph svgLengthFractionFor: (data ifNil: ['50%']).
+	data _ anXMLElement attributeAt: 'cy'.
+	cy _ SVGElementMorph svgLengthFractionFor: (data ifNil: ['50%']).
+	data _ anXMLElement attributeAt: 'r'.
+	r _ SVGElementMorph svgLengthFractionFor:(data ifNil: ['50%'])! !
+
+!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
+cx
+	^cx
+		ifNotNil: [ cx ]
+		ifNil: [ (def defAt: inheritFrom) cx ]! !
+
+!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
+cy
+	^cy
+		ifNotNil: [ cy ]
+		ifNil: [ (def defAt: inheritFrom) cy ]! !
+
+!SVGRadialGradient methodsFor: 'accessing' stamp: 'jmv 6/14/2010 09:04'!
+r
+	^r
+		ifNotNil: [ r ]
+		ifNil: [ (def defAt: inheritFrom) r ]! !
+
+!SVGRadialGradient methodsFor: 'building' stamp: 'jmv 6/16/2010 09:53'!
+usedAttributeNames
+	^super usedAttributeNames,
+		#('cx' 'cy' 'r')! !
+
+!SVGRadialGradient class methodsFor: 'instance creation' stamp: 'jmv 5/13/2010 14:46'!
+svgName
+	^#radialGradient! !
+
+!SVGGradientStop methodsFor: 'building' stamp: 'jmv 2/15/2013 16:53'!
+buildFromXml: anXMLElement
+	| styleAttributes offsetData stopColorData stopOpacityData usedAttributeNames |
+	styleAttributes _ SVGElementMorph styleAttributesIn: anXMLElement.
+	offsetData _ SVGElementMorph attributeAt: 'offset' in: anXMLElement orIn: styleAttributes.
+	stopColorData _ SVGElementMorph attributeAt: 'stop-color' in: anXMLElement orIn: styleAttributes.
+	stopOpacityData _ SVGElementMorph attributeAt: 'stop-opacity' in: anXMLElement orIn: styleAttributes.
+	offset _ SVGElementMorph svgLengthFractionFor: offsetData.
+self revisar.
+	color _ Color "fromCSS2String: just hex? Or real CSS2?" fromString:  stopColorData.
+	stopOpacityData ifNotNil: [
+		color _ color alpha: stopOpacityData asNumber ].
+	
+
+	usedAttributeNames _ self usedAttributeNames asSet.
+	anXMLElement attributes keysAndValuesDo: [ :attrName :value |
+		((usedAttributeNames includes: attrName) or: [
+			(SVGElementMorph ignoredAttributes includes: attrName) or: [
+				SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
+			SVGWarning signal: 'Unhandled attribute: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]].
+
+	styleAttributes ifNotNil: [
+		styleAttributes  keysAndValuesDo: [ :attrName :value |
+			((usedAttributeNames includes: attrName) or: [
+				(SVGElementMorph ignoredAttributes includes: attrName) or: [
+					SVGElementMorph ignoredPrefixes anySatisfy: [ :prefix | attrName beginsWith: prefix ]]])  ifFalse: [
+				SVGWarning signal: 'Unhandled style token: ', attrName printString, ' in: ', self class name, ' value: ', value printString ]]].! !
+
+!SVGGradientStop methodsFor: 'accessing' stamp: 'jmv 5/10/2010 11:07'!
+color
+	^color! !
+
+!SVGGradientStop methodsFor: 'accessing' stamp: 'jmv 5/7/2010 17:27'!
+offset
+	^offset! !
+
+!SVGGradientStop methodsFor: 'building' stamp: 'jmv 6/16/2010 10:02'!
+usedAttributeNames
+	^#('style' 'offset' 'stop-color' 'stop-opacity')! !
+
+!SVGGradientStop class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 15:14'!
+svgName
+	^#stop! !
+
+!SVGDefs methodsFor: 'building' stamp: 'jmv 6/14/2010 09:00'!
+buildFromXml: anXMLElement
+	anXMLElement elementsDo: [ :subElement |
+		(SVGDefElement fromXml: subElement) ifNotNil: [ :defElement |
+			defElement def: self.
+			defs at: defElement name put: defElement]]! !
+
+!SVGDefs methodsFor: 'accessing' stamp: 'jmv 5/10/2010 10:16'!
+defAt: aString
+
+	^defs at: aString ifAbsent: nil! !
+
+!SVGDefs methodsFor: 'initialize-release' stamp: 'jmv 5/10/2010 09:42'!
+initialize
+	defs _ Dictionary new! !
+
+!SVGDefs class methodsFor: 'instance creation' stamp: 'jmv 5/7/2010 14:42'!
+svgName
+	"Answer the name of the svg elements we can represent"
+
+	^#defs! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+applyMatrixWith: dataStream
+
+	| b |
+	b _ FloatMatrix identity: 3.
+	b
+		i: 1 j: 1 put: dataStream nextNumber;
+		i: 2 j: 1 put: dataStream nextNumber;
+		i: 1 j: 2 put: dataStream nextNumber;
+		i: 2 j: 2 put: dataStream nextNumber;
+		i: 1 j: 3 put: dataStream nextNumber;
+		i: 2 j: 3 put: dataStream nextNumber.
+	a _ a
+		ifNil: [b]
+		ifNotNil: [a * b]! !
+
+!SVGTransform methodsFor: 'conversion' stamp: 'jmv 1/21/2015 09:03'!
+asAffineTransformation
+	| answer |
+	a ifNil: [ ^nil ].
+	answer _ AffineTransformation new.
+	answer a11: (a i: 1 j: 1).
+	answer a12: (a i: 1 j: 2).
+	answer a13: (a i: 1 j: 3).
+	answer a21: (a i: 2 j: 1).
+	answer a22: (a i: 2 j: 2).
+	answer a23: (a i: 2 j: 3).
+	^answer! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 7/30/2012 18:00'!
+buildFrom: transformData
+
+	| dataStream type |
+	dataStream _ transformData readStream.
+	[ dataStream atEnd ] whileFalse: [
+		dataStream upToAny: 'mtsr'. "find the next transform in the list"
+		type _ (dataStream upTo: $() withBlanksTrimmed.
+		(type = 'matrix') ifTrue: [
+			self applyMatrixWith: dataStream ].
+		(type = 'translate') ifTrue: [
+			self translateWith: dataStream ].
+		(type = 'scale') ifTrue: [
+			self scaleWith: dataStream ].
+		(type = 'rotate') ifTrue: [
+			self rotateWith: dataStream ].
+		(type = 'skewX') ifTrue: [
+			self skewXWith: dataStream ].
+		(type = 'skewY') ifTrue: [
+			self skewYWith: dataStream ]
+	].! !
+
+!SVGTransform methodsFor: 'initialize-release' stamp: 'jmv 4/29/2011 22:03'!
+initialize
+"	a _ FloatMatrix identity: 3."
+	"nil means identity, i.e. no transformation"
+	a _ nil.! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+rotateWith: dataStream
+
+	| b b1 b2 angle angleCos angleSin |
+	b _ FloatMatrix identity: 3.
+	b1 _ FloatMatrix identity: 3.
+	b2 _ FloatMatrix identity: 3.
+	angle _ dataStream nextNumber degreesToRadians.
+	angleCos _ angle cos.
+	angleSin _ angle sin.
+	b
+		i: 1 j: 1 put: angleCos;
+		i: 1 j: 2 put: 0.0 - angleSin;
+		i: 2 j: 1 put: angleSin;
+		i: 2 j: 2 put: angleCos.
+	dataStream nextNumber ifNotNil: [ :cx |
+		b1 i: 1 j: 3 put: cx.
+		b2 i: 1 j: 3 put: 0.0-cx.
+		dataStream nextNumber ifNotNil: [ :cy |
+			b1 i: 2 j: 3 put: cy.
+			b2 i: 2 j: 3 put: 0.0-cy ]].
+
+	a _ a
+		ifNil: [ b1 * b * b2 ]
+		ifNotNil: [ a * b1 * b * b2]! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+scaleWith: dataStream
+
+	| b sx sy |
+	b _ FloatMatrix identity: 3.
+	sx _ dataStream nextNumber.
+	sy _ dataStream nextNumber ifNil: [ sx ].
+	b i: 1 j: 1 put: sx.
+	b i: 2 j: 2 put: sy.
+	a _ a
+		ifNil: [b]
+		ifNotNil: [a * b]! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+skewXWith: dataStream
+
+	| b skewAngle |
+	b _ FloatMatrix identity: 3.
+	skewAngle _ dataStream nextNumber degreesToRadians.
+	b i: 1 j: 2 put: skewAngle tan.
+	a _ a
+		ifNil: [b]
+		ifNotNil:[a * b]! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+skewYWith: dataStream
+
+	| b skewAngle |
+	b _ FloatMatrix identity: 3.
+	skewAngle _ dataStream nextNumber degreesToRadians.
+	b i: 2 j: 1 put: skewAngle tan.
+	a _ a
+		ifNil: [b]
+		ifNotNil: [a * b]! !
+
+!SVGTransform methodsFor: 'building' stamp: 'jmv 4/29/2011 22:03'!
+translateWith: dataStream
+
+	| b |
+	b _ FloatMatrix identity: 3.
+	b i: 1 j: 3 put: dataStream nextNumber.
+	dataStream nextNumber ifNotNil: [ :dy |
+		b i: 2 j: 3 put: dy ].
+	a _ a
+		ifNil: [b]
+		ifNotNil: [a * b]! !
+
 !SVGPathCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:15'!
 buildFrom: commandChar stream: aStream
 
@@ -11441,10 +11413,10 @@ Y completar los que falten!!"
 self flag: #revisarM3.
 	toPoints do: aBlock! !
 
-!SVGPathArcCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:09'!
+!SVGPathArcCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:07:26'!
 runOn: aCanvas
 
-	aCanvas pathArcCommand: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless! !
+	aCanvas multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless! !
 
 !SVGPathArcCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
 svgName
@@ -11460,10 +11432,10 @@ buildFrom: commandChar stream: aStream
 privatePointsDo: aBlock
 	"evaluate aBlock with the x and y coordinates for our defining points."! !
 
-!SVGPathCloseCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:09'!
+!SVGPathCloseCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:07:07'!
 runOn: aCanvas
 
-	aCanvas pathCloseCommand! !
+	aCanvas closePath! !
 
 !SVGPathCloseCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
 svgName
@@ -11496,10 +11468,10 @@ privatePointsDo: aBlock
 
 	toPoints do: aBlock! !
 
-!SVGPathCurveToCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:09'!
+!SVGPathCurveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:51'!
 runOn: aCanvas
 
-	aCanvas pathCurveToCommand: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points! !
+	aCanvas multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points! !
 
 !SVGPathCurveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
 svgName
@@ -11528,10 +11500,10 @@ privatePointsDo: aBlock
 
 	toPoints do: aBlock! !
 
-!SVGPathCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:09'!
+!SVGPathCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:33'!
 runOn: aCanvas
 
-	aCanvas pathCurveToSmoothCommand: coordinatesAreRelative toPoints: toPoints control2Points: control2Points! !
+	aCanvas multiCurveToSmooth: coordinatesAreRelative toPoints: toPoints control2Points: control2Points! !
 
 !SVGPathCurveToSmoothCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
 svgName
@@ -11556,10 +11528,10 @@ privatePointsDo: aBlock
 
 	points do: aBlock! !
 
-!SVGPathLineToCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:10'!
+!SVGPathLineToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:08'!
 runOn: aCanvas
 
-	aCanvas pathLineToCommand: coordinatesAreRelative points: points! !
+	aCanvas multiLineTo: coordinatesAreRelative points: points! !
 
 !SVGPathLineToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
 svgName
@@ -11576,10 +11548,10 @@ buildFrom: commandChar stream: aStream
 		px notNil ] whileTrue:
 			[ strm nextPut: px ]]! !
 
-!SVGPathLineToHCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:10'!
+!SVGPathLineToHCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:04:56'!
 runOn: aCanvas
 
-	aCanvas pathLineToHCommand: coordinatesAreRelative xs: xs! !
+	aCanvas multiLineTo: coordinatesAreRelative xs: xs! !
 
 !SVGPathLineToHCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
 svgName
@@ -11596,10 +11568,10 @@ buildFrom: commandChar stream: aStream
 		py notNil ] whileTrue:
 			[ strm nextPut: py ]]! !
 
-!SVGPathLineToVCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:10'!
+!SVGPathLineToVCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:04:32'!
 runOn: aCanvas
 
-	aCanvas pathLineToVCommand: coordinatesAreRelative ys: ys! !
+	aCanvas multiLineTo: coordinatesAreRelative ys: ys! !
 
 !SVGPathLineToVCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
 svgName
@@ -11623,10 +11595,10 @@ privatePointsDo: aBlock
 
 	points do: aBlock! !
 
-!SVGPathMoveToCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:10'!
+!SVGPathMoveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:47'!
 runOn: aCanvas
 
-	aCanvas pathMoveToCommand: coordinatesAreRelative points: points! !
+	aCanvas multiMoveTo: coordinatesAreRelative points: points! !
 
 !SVGPathMoveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
 svgName
@@ -11655,10 +11627,10 @@ privatePointsDo: aBlock
 
 	toPoints do: aBlock! !
 
-!SVGPathQuadraticCurveToCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:10'!
+!SVGPathQuadraticCurveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:23'!
 runOn: aCanvas
 
-	aCanvas pathQuadraticCurveToCommand: coordinatesAreRelative toPoints: toPoints controlPoints: controlPoints! !
+	aCanvas multiQuadraticCurveTo: coordinatesAreRelative toPoints: toPoints controlPoints: controlPoints! !
 
 !SVGPathQuadraticCurveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
 svgName
@@ -11683,10 +11655,10 @@ privatePointsDo: aBlock
 
 	toPoints do: aBlock! !
 
-!SVGPathQuadraticCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:10'!
+!SVGPathQuadraticCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:02:58'!
 runOn: aCanvas
 
-	aCanvas pathQuadraticCurveToSmoothCommand: coordinatesAreRelative toPoints: toPoints! !
+	aCanvas multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints! !
 
 !SVGPathQuadraticCurveToSmoothCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:09'!
 svgName
