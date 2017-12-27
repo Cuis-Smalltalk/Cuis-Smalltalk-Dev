@@ -1,6 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3165] on 6 September 2017 at 10:11:06 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3232] on 27 December 2017 at 12:04:14 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 12!
+!provides: 'Morphic-Widgets-Extras' 1 13!
+SystemOrganization addCategory: #'Morphic-Widgets-Extras'!
+
+
 !classDefinition: #SimpleEditor category: #'Morphic-Widgets-Extras'!
 Editor subclass: #SimpleEditor
 	instanceVariableNames: 'string pointIndex markIndex'
@@ -177,12 +180,56 @@ backTo: startIndex
 	self replaceSelectionWith: ''.
 	self markIndex: self pointIndex! !
 
+!SimpleEditor methodsFor: 'typing support' stamp: 'jmv 6/10/2012 11:14'!
+dispatchOn: aKeyboardEvent
+	"Carry out the action associated with this character, if any."
+	| asciiValue |
+	asciiValue _ aKeyboardEvent keyValue.
+	"Control keys are handled by #shortcuts even if they have any modifiers"
+	(asciiValue >= 32 and: [
+		aKeyboardEvent commandAltKeyPressed ]) ifTrue: [
+		^self perform: (self cmdShortcuts at: asciiValue + 1) with: aKeyboardEvent ].
+
+	"We don't support multiple lines. Therefore, we don't process return as a #normalCharacter:"
+	aKeyboardEvent isReturnKey ifTrue: [
+		^ true].
+
+	^ self perform: (self shortcuts at: asciiValue + 1) with: aKeyboardEvent! !
+
+!SimpleEditor methodsFor: 'typing support' stamp: 'jmv 9/19/2011 09:47'!
+processKeyStroke: aKeyboardEvent
+
+	"Key struck on the keyboard. Find out which one and, if special, carry 
+	out the associated special action. Otherwise, add the character to the 
+	stream of characters."
+
+	(self dispatchOn: aKeyboardEvent) ifTrue: [
+		^self].
+	self markIndex: self pointIndex! !
+
 !SimpleEditor methodsFor: 'initialization' stamp: 'jmv 11/4/2008 13:08'!
 changeString: aString
 	"Install aString as the one to be edited by the receiver."
 
 	string _ aString.
 	self resetState! !
+
+!SimpleEditor methodsFor: 'initialization' stamp: 'jmv 11/4/2008 13:42'!
+initialize
+	"Initialize the state of the receiver. Subclasses should include 'super 
+	initialize' when redefining this message to insure proper initialization."
+
+	super initialize.
+	self changeString: ''! !
+
+!SimpleEditor methodsFor: 'initialization' stamp: 'jmv 10/16/2013 22:37'!
+resetState 
+	"Establish the initial conditions for editing the paragraph: place text cursor 
+	before first character, set the emphasis to that of the first character,
+	and save the paragraph for purposes of canceling."
+
+	pointIndex _ 1.	"Like pointBlock in TextEditor"
+	markIndex _ 1.	"Like markBlock in TextEditor"! !
 
 !SimpleEditor methodsFor: 'events' stamp: 'jmv 8/21/2012 08:42'!
 clickAndHalf
@@ -195,12 +242,37 @@ clickAndHalf
 			"if at beginning or end, select entire string"
 			self selectAll ].! !
 
+!SimpleEditor methodsFor: 'events' stamp: 'jmv 12/29/2011 14:51'!
+mouseDown: evt index: index
+
+	evt shiftPressed
+		ifFalse: [
+			self markIndex: index pointIndex: index ]
+		ifTrue: [
+			self mouseMove: evt index: index ]! !
+
+!SimpleEditor methodsFor: 'events' stamp: 'jmv 5/27/2011 15:23'!
+mouseMove: evt index: index
+	"Change the selection in response to mouse-down drag"
+
+	self pointIndex: index! !
+
 !SimpleEditor methodsFor: 'menu messages' stamp: 'jmv 10/16/2013 22:37'!
 copySelection
 	"Copy the current selection and store it in the Clipboard, unless empty."
 
 	self lineSelectAndEmptyCheck: [^ self].
 	self clipboardTextPut: self selection! !
+
+!SimpleEditor methodsFor: 'menu messages' stamp: 'jmv 9/22/2011 17:09'!
+cut
+	"Cut out the current selection and redisplay the paragraph if necessary."
+
+	| selection |
+	self lineSelectAndEmptyCheck: [^ self].
+	selection _ self selection.
+	self replaceSelectionWith: ''. 
+	self clipboardTextPut: selection! !
 
 !SimpleEditor methodsFor: 'nonediting/nontyping keys' stamp: 'jmv 9/19/2011 09:12'!
 cursorEnd: aKeyboardEvent
@@ -223,32 +295,6 @@ cursorHome: aKeyboardEvent
 		forward: false
 		event: aKeyboardEvent.
 	^true! !
-
-!SimpleEditor methodsFor: 'menu messages' stamp: 'jmv 9/22/2011 17:09'!
-cut
-	"Cut out the current selection and redisplay the paragraph if necessary."
-
-	| selection |
-	self lineSelectAndEmptyCheck: [^ self].
-	selection _ self selection.
-	self replaceSelectionWith: ''. 
-	self clipboardTextPut: selection! !
-
-!SimpleEditor methodsFor: 'typing support' stamp: 'jmv 6/10/2012 11:14'!
-dispatchOn: aKeyboardEvent
-	"Carry out the action associated with this character, if any."
-	| asciiValue |
-	asciiValue _ aKeyboardEvent keyValue.
-	"Control keys are handled by #shortcuts even if they have any modifiers"
-	(asciiValue >= 32 and: [
-		aKeyboardEvent commandAltKeyPressed ]) ifTrue: [
-		^self perform: (self cmdShortcuts at: asciiValue + 1) with: aKeyboardEvent ].
-
-	"We don't support multiple lines. Therefore, we don't process return as a #normalCharacter:"
-	aKeyboardEvent isReturnKey ifTrue: [
-		^ true].
-
-	^ self perform: (self shortcuts at: asciiValue + 1) with: aKeyboardEvent! !
 
 !SimpleEditor methodsFor: 'typing/selecting keys' stamp: 'jmv 12/19/2011 12:24'!
 forwardDelete: aKeyboardEvent
@@ -275,13 +321,46 @@ forwardDelete: aKeyboardEvent
 hasSelection
 	^markIndex ~= pointIndex! !
 
-!SimpleEditor methodsFor: 'initialization' stamp: 'jmv 11/4/2008 13:42'!
-initialize
-	"Initialize the state of the receiver. Subclasses should include 'super 
-	initialize' when redefining this message to insure proper initialization."
+!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/4/2008 13:57'!
+markIndex
+	^markIndex! !
 
-	super initialize.
-	self changeString: ''! !
+!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/5/2008 11:41'!
+markIndex: anIndex
+	markIndex _ anIndex min: string size + 1 max: 1! !
+
+!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 5/27/2011 15:25'!
+markIndex: anIndex pointIndex: anotherIndex
+	markIndex _ anIndex min: string size + 1 max: 1.
+	pointIndex _ anotherIndex min: string size + 1 max: 1! !
+
+!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/4/2008 13:57'!
+pointIndex
+	^ pointIndex! !
+
+!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/5/2008 11:41'!
+pointIndex: anIndex
+	pointIndex _ anIndex min: string size + 1 max: 1! !
+
+!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 1/31/2013 21:09'!
+selection
+
+	| firstIndex lastIndex |
+	firstIndex _ self startIndex.
+	lastIndex _ self stopIndex - 1.
+
+	(firstIndex = 1 and: [ lastIndex = string size ])
+		ifTrue: [ ^string ].
+
+	^string copyFrom: firstIndex to: lastIndex! !
+
+!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/4/2008 13:55'!
+startIndex
+	^ pointIndex min: markIndex! !
+
+!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/4/2008 13:55'!
+stopIndex
+	^ pointIndex max: markIndex! !
 
 !SimpleEditor methodsFor: 'testing' stamp: 'jmv 11/17/2008 17:01'!
 isAtEnd
@@ -315,58 +394,16 @@ makeUppercase: aKeyboardEvent
 	self replaceSelectionWith: self selection asUppercase.
 	^ true! !
 
-!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/4/2008 13:57'!
-markIndex
-	^markIndex! !
-
-!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/5/2008 11:41'!
-markIndex: anIndex
-	markIndex _ anIndex min: string size + 1 max: 1! !
-
-!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 5/27/2011 15:25'!
-markIndex: anIndex pointIndex: anotherIndex
-	markIndex _ anIndex min: string size + 1 max: 1.
-	pointIndex _ anotherIndex min: string size + 1 max: 1! !
-
-!SimpleEditor methodsFor: 'events' stamp: 'jmv 12/29/2011 14:51'!
-mouseDown: evt index: index
-
-	evt shiftPressed
-		ifFalse: [
-			self markIndex: index pointIndex: index ]
-		ifTrue: [
-			self mouseMove: evt index: index ]! !
-
-!SimpleEditor methodsFor: 'events' stamp: 'jmv 5/27/2011 15:23'!
-mouseMove: evt index: index
-	"Change the selection in response to mouse-down drag"
-
-	self pointIndex: index! !
-
-!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/4/2008 13:57'!
-pointIndex
-	^ pointIndex! !
-
-!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/5/2008 11:41'!
-pointIndex: anIndex
-	pointIndex _ anIndex min: string size + 1 max: 1! !
-
 !SimpleEditor methodsFor: 'private' stamp: 'jmv 9/20/2011 08:46'!
 privateCurrentString
 	"Answer the string I'm editing. Private. Just for internal Editor use."
 
 	^string! !
 
-!SimpleEditor methodsFor: 'typing support' stamp: 'jmv 9/19/2011 09:47'!
-processKeyStroke: aKeyboardEvent
-
-	"Key struck on the keyboard. Find out which one and, if special, carry 
-	out the associated special action. Otherwise, add the character to the 
-	stream of characters."
-
-	(self dispatchOn: aKeyboardEvent) ifTrue: [
-		^self].
-	self markIndex: self pointIndex! !
+!SimpleEditor methodsFor: 'private' stamp: 'jmv 3/16/2011 10:44'!
+sameColumn: start newLine: lineBlock forward: isForward
+	"See comment in other implementors."
+	^start! !
 
 !SimpleEditor methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:02:17'!
 replaceSelectionWith: aString
@@ -382,19 +419,9 @@ replaceSelectionWith: aString
 		self deselectAndPlaceCursorAt:  start + aString size.
 		self userHasEdited  " -- note text now dirty" ]! !
 
-!SimpleEditor methodsFor: 'initialization' stamp: 'jmv 10/16/2013 22:37'!
-resetState 
-	"Establish the initial conditions for editing the paragraph: place text cursor 
-	before first character, set the emphasis to that of the first character,
-	and save the paragraph for purposes of canceling."
-
-	pointIndex _ 1.	"Like pointBlock in TextEditor"
-	markIndex _ 1.	"Like markBlock in TextEditor"! !
-
-!SimpleEditor methodsFor: 'private' stamp: 'jmv 3/16/2011 10:44'!
-sameColumn: start newLine: lineBlock forward: isForward
-	"See comment in other implementors."
-	^start! !
+!SimpleEditor methodsFor: 'accessing' stamp: 'jmv 9/22/2011 16:52'!
+string
+	^string! !
 
 !SimpleEditor methodsFor: 'new selection' stamp: 'jmv 9/19/2011 09:12'!
 selectFrom: start to: stop
@@ -407,30 +434,6 @@ selectLine
 	"Make the receiver's selection, if currently empty, encompass the current line."
 	self hasSelection ifTrue:[^self].
 	self selectAll! !
-
-!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 1/31/2013 21:09'!
-selection
-
-	| firstIndex lastIndex |
-	firstIndex _ self startIndex.
-	lastIndex _ self stopIndex - 1.
-
-	(firstIndex = 1 and: [ lastIndex = string size ])
-		ifTrue: [ ^string ].
-
-	^string copyFrom: firstIndex to: lastIndex! !
-
-!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/4/2008 13:55'!
-startIndex
-	^ pointIndex min: markIndex! !
-
-!SimpleEditor methodsFor: 'accessing-selection' stamp: 'jmv 11/4/2008 13:55'!
-stopIndex
-	^ pointIndex max: markIndex! !
-
-!SimpleEditor methodsFor: 'accessing' stamp: 'jmv 9/22/2011 16:52'!
-string
-	^string! !
 
 !SimpleEditor class methodsFor: 'keyboard shortcut tables' stamp: 'jmv 6/10/2012 11:07'!
 cmdShortcutsSpec
@@ -457,16 +460,16 @@ innerHeight: aNumber
 	"Adjust height and scrollbar to the new contents height."
 	self morphHeight: (aNumber + 10 min: maxHeight)! !
 
-!LimitedHeightTextMorph methodsFor: 'accessing' stamp: 'jmv 11/14/2011 16:32'!
-maxHeight: aNumber
-	maxHeight _ aNumber! !
-
 !LimitedHeightTextMorph methodsFor: 'geometry' stamp: 'jmv 7/20/2014 10:12'!
 privateExtent: aPoint
 
 	^ (super privateExtent: aPoint)
 		ifTrue: [
 			maxHeight _ extent y ]; yourself! !
+
+!LimitedHeightTextMorph methodsFor: 'accessing' stamp: 'jmv 11/14/2011 16:32'!
+maxHeight: aNumber
+	maxHeight _ aNumber! !
 
 !LimitedHeightTextMorph class methodsFor: 'instance creation' stamp: 'jmv 11/14/2011 16:32'!
 initializedInstance
@@ -482,15 +485,6 @@ addCustomMenuItems: aCustomMenu hand: aHandMorph
 		add: 'magnification...' action: #chooseMagnification;
 		addUpdating: #trackingPointerString action: #toggleTrackingPointer;
 		addUpdating: #toggleRoundString action: #toggleRoundness.! !
-
-!MagnifierMorph methodsFor: 'geometry' stamp: 'jmv 12/16/2011 10:28'!
-borderWidth: anInteger
-	"Grow outwards preserving innerBounds"
-	| c |  
-	c _ self referencePosition.
-	super borderWidth: anInteger.
-	super morphExtent: self defaultExtent.
-	self referencePosition: c.! !
 
 !MagnifierMorph methodsFor: 'menu' stamp: 'jmv 8/21/2012 21:53'!
 chooseMagnification
@@ -515,14 +509,47 @@ chooseMagnification: evt
 	handle startStepping.
 	self redrawNeeded. ! !
 
+!MagnifierMorph methodsFor: 'menu' stamp: 'bf 9/20/1999 15:48'!
+toggleTrackingPointer
+	trackPointer _ trackPointer not! !
+
+!MagnifierMorph methodsFor: 'menu' stamp: 'bf 9/20/1999 15:49'!
+trackingPointerString
+	^trackPointer
+		ifTrue: ['stop tracking pointer']
+		ifFalse: ['start tracking pointer']! !
+
+!MagnifierMorph methodsFor: 'geometry' stamp: 'jmv 12/16/2011 10:28'!
+borderWidth: anInteger
+	"Grow outwards preserving innerBounds"
+	| c |  
+	c _ self referencePosition.
+	super borderWidth: anInteger.
+	super morphExtent: self defaultExtent.
+	self referencePosition: c.! !
+
+!MagnifierMorph methodsFor: 'geometry' stamp: 'bf 9/21/1999 09:22'!
+defaultExtent
+	^(srcExtent * magnification) truncated + (2 * borderWidth)! !
+
+!MagnifierMorph methodsFor: 'geometry' stamp: 'jmv 6/6/2014 18:06'!
+privateExtent: aPoint
+	"Round to multiples of magnification"
+
+	srcExtent _ (aPoint - (2 * borderWidth)) // magnification.
+	^ super privateExtent: self defaultExtent! !
+
 !MagnifierMorph methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:20'!
 defaultBorderWidth
 	"answer the default border width for the receiver"
 	^ 1! !
 
-!MagnifierMorph methodsFor: 'geometry' stamp: 'bf 9/21/1999 09:22'!
-defaultExtent
-	^(srcExtent * magnification) truncated + (2 * borderWidth)! !
+!MagnifierMorph methodsFor: 'initialization' stamp: 'jmv 9/13/2013 10:02'!
+initialize
+	super initialize.
+	trackPointer _ true.
+	magnification _ 2.
+	self morphExtent: 128@128! !
 
 !MagnifierMorph methodsFor: 'drawing' stamp: 'jmv 4/9/2015 09:43'!
 drawOn: aCanvas
@@ -535,17 +562,29 @@ handlesMouseDown: aMouseButtonEvent
 
 	^aMouseButtonEvent mouseButton2Pressed! !
 
-!MagnifierMorph methodsFor: 'initialization' stamp: 'jmv 9/13/2013 10:02'!
-initialize
-	super initialize.
-	trackPointer _ true.
-	magnification _ 2.
-	self morphExtent: 128@128! !
-
 !MagnifierMorph methodsFor: 'round view' stamp: 'jmv 12/10/2010 09:25'!
 isRound
 
 	^ "owner isMemberOf: ScreeningMorph" false! !
+
+!MagnifierMorph methodsFor: 'round view' stamp: 'di 9/28/1999 23:17'!
+toggleRoundString
+	^ self isRound
+		ifTrue: ['be square']
+		ifFalse: ['be round']! !
+
+!MagnifierMorph methodsFor: 'round view' stamp: 'jmv 12/11/2011 23:35'!
+toggleRoundness
+	| |
+"	w _ self world.
+	self isRound
+		ifTrue: [owner delete.
+				w addMorph: self]
+		ifFalse: [sm _ ScreeningMorph new position: self zzposition.
+				sm addMorph: self.
+				sm addMorph: (EllipseMorph newBounds: self bounds).
+				w addMorph: sm]
+			"! !
 
 !MagnifierMorph methodsFor: 'magnifying' stamp: 'jmv 12/16/2011 10:28'!
 magnification: aNumber
@@ -592,18 +631,6 @@ magnifiedForm
 		copyQuad: form boundingBox innerCorners toRect: magnifiedForm boundingBox.
 	^magnifiedForm.! !
 
-!MagnifierMorph methodsFor: 'events' stamp: 'jmv 1/14/2013 22:45'!
-mouseButton2Down: aMouseButtonEvent localPosition: localEventPosition
-
-	self chooseMagnification: aMouseButtonEvent! !
-
-!MagnifierMorph methodsFor: 'geometry' stamp: 'jmv 6/6/2014 18:06'!
-privateExtent: aPoint
-	"Round to multiples of magnification"
-
-	srcExtent _ (aPoint - (2 * borderWidth)) // magnification.
-	^ super privateExtent: self defaultExtent! !
-
 !MagnifierMorph methodsFor: 'magnifying' stamp: 'jmv 9/25/2012 22:24'!
 sourcePoint
 	"If we are being dragged use our center, otherwise use pointer position"
@@ -622,6 +649,11 @@ sourceRectFrom: aPoint
 	^ (aPoint extent: srcExtent) translatedBy: (srcExtent // -2) + 1.
 ! !
 
+!MagnifierMorph methodsFor: 'events' stamp: 'jmv 1/14/2013 22:45'!
+mouseButton2Down: aMouseButtonEvent localPosition: localEventPosition
+
+	self chooseMagnification: aMouseButtonEvent! !
+
 !MagnifierMorph methodsFor: 'stepping' stamp: 'jmv 2/27/2016 19:53'!
 stepAt: millisecondSinceLast
 
@@ -631,35 +663,6 @@ stepAt: millisecondSinceLast
 stepTime
 	"Update very often. Very short steptimes should only be used for morphs that are not stepping all the time!!"
 	^ 20! !
-
-!MagnifierMorph methodsFor: 'round view' stamp: 'di 9/28/1999 23:17'!
-toggleRoundString
-	^ self isRound
-		ifTrue: ['be square']
-		ifFalse: ['be round']! !
-
-!MagnifierMorph methodsFor: 'round view' stamp: 'jmv 12/11/2011 23:35'!
-toggleRoundness
-	| |
-"	w _ self world.
-	self isRound
-		ifTrue: [owner delete.
-				w addMorph: self]
-		ifFalse: [sm _ ScreeningMorph new position: self zzposition.
-				sm addMorph: self.
-				sm addMorph: (EllipseMorph newBounds: self bounds).
-				w addMorph: sm]
-			"! !
-
-!MagnifierMorph methodsFor: 'menu' stamp: 'bf 9/20/1999 15:48'!
-toggleTrackingPointer
-	trackPointer _ trackPointer not! !
-
-!MagnifierMorph methodsFor: 'menu' stamp: 'bf 9/20/1999 15:49'!
-trackingPointerString
-	^trackPointer
-		ifTrue: ['stop tracking pointer']
-		ifFalse: ['start tracking pointer']! !
 
 !MagnifierMorph methodsFor: 'stepping' stamp: 'jmv 6/11/2012 09:58'!
 wantsSteps
@@ -679,18 +682,6 @@ aboutToBeGrabbedBy: aHand
 
 	^self "Grab me"! !
 
-!DragAndDropAreaMorph methodsFor: 'drag and drop other morphs' stamp: 'jmv 1/24/2013 22:52'!
-allowsMorphDrop
-	"Answer whether we accept dropping morphs. Redefined to answer true."
-
-	^ true! !
-
-!DragAndDropAreaMorph methodsFor: 'drag and drop other morphs' stamp: 'jmv 1/24/2013 22:52'!
-allowsSubmorphDrag
-	"Answer whether our morphs can just be grabbed with the hand, instead of requiring the use of the halo. Redefined to answer true."
-
-	^ true! !
-
 !DragAndDropAreaMorph methodsFor: 'drag and drop us' stamp: 'jmv 1/24/2013 22:53'!
 justDroppedInto: newOwnerMorph event: anEvent 
 	"This message is sent to a dropped morph after it has been dropped on -- and been accepted by -- a drop-sensitive morph"
@@ -705,13 +696,6 @@ justGrabbedFrom: formerOwner
 	"This message is sent to the dragged morph, not to the owner.
 	It is included here just for reference."! !
 
-!DragAndDropAreaMorph methodsFor: 'drag and drop other morphs' stamp: 'jmv 1/24/2013 22:52'!
-wantsDroppedMorph: aMorph event: evt
-	"Return true if the receiver wishes to accept the given morph, which is being dropped by a hand in response to the given event. Note that for a successful drop operation both parties need to agree. The symmetric check is done automatically via aMorph wantsToBeDroppedInto: self.
-	This method just answers super. It is included here to say it is relevant to D&D behavior."
-
-	^super wantsDroppedMorph: aMorph event: evt! !
-
 !DragAndDropAreaMorph methodsFor: 'drag and drop us' stamp: 'jmv 1/24/2013 22:53'!
 wantsToBeDroppedInto: aMorph
 	"Return true if it's okay to drop the receiver into aMorph. This check is symmetric to #wantsDroppedMorph:event: to give both parties a chance of figuring out whether they like each other."
@@ -719,6 +703,25 @@ wantsToBeDroppedInto: aMorph
 	It is included here just for reference."
 
 	^true! !
+
+!DragAndDropAreaMorph methodsFor: 'drag and drop other morphs' stamp: 'jmv 1/24/2013 22:52'!
+allowsMorphDrop
+	"Answer whether we accept dropping morphs. Redefined to answer true."
+
+	^ true! !
+
+!DragAndDropAreaMorph methodsFor: 'drag and drop other morphs' stamp: 'jmv 1/24/2013 22:52'!
+allowsSubmorphDrag
+	"Answer whether our morphs can just be grabbed with the hand, instead of requiring the use of the halo. Redefined to answer true."
+
+	^ true! !
+
+!DragAndDropAreaMorph methodsFor: 'drag and drop other morphs' stamp: 'jmv 1/24/2013 22:52'!
+wantsDroppedMorph: aMorph event: evt
+	"Return true if the receiver wishes to accept the given morph, which is being dropped by a hand in response to the given event. Note that for a successful drop operation both parties need to agree. The symmetric check is done automatically via aMorph wantsToBeDroppedInto: self.
+	This method just answers super. It is included here to say it is relevant to D&D behavior."
+
+	^super wantsDroppedMorph: aMorph event: evt! !
 
 !PartsBinMorph methodsFor: 'dropping/grabbing' stamp: 'jmv 2/22/2013 12:49'!
 aboutToGrab: aMorph
@@ -780,6 +783,12 @@ domain: anInterval
 	yMin _ nil.
 	yMax _ nil.! !
 
+!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 6/25/2016 17:16'!
+yRange: anInterval
+
+	yMin _ anInterval first.
+	yMax _ anInterval last.! !
+
 !FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/30/2016 16:04:28'!
 drawOn: aCanvas
 	"
@@ -824,13 +833,6 @@ drawOn: aCanvas
 	aCanvas drawString: yMin printString at: 4@(extent y - 32) font: fontToUse color: Color black.
 	aCanvas drawString: yMax printString at: 4@4 font: fontToUse color: Color black.! !
 
-!FunctionGraphMorph methodsFor: 'initialization' stamp: 'jmv 7/1/2015 11:16'!
-initialize
-	super initialize.
-	extent _ 320@240.
-	functions _ OrderedCollection new.
-	colors _ OrderedCollection new! !
-
 !FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/25/2016 11:32:06'!
 iterate: aBlock
 
@@ -840,6 +842,13 @@ iterate: aBlock
 			y _ f value: x.
 			aBlock value: x value: y value: c ]]! !
 
+!FunctionGraphMorph methodsFor: 'initialization' stamp: 'jmv 7/1/2015 11:16'!
+initialize
+	super initialize.
+	extent _ 320@240.
+	functions _ OrderedCollection new.
+	colors _ OrderedCollection new! !
+
 !FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 5/17/2015 09:20'!
 toMorphic: aPoint
 	^(self xToMorphic: aPoint x) @ (self yToMorphic: aPoint y)! !
@@ -847,12 +856,6 @@ toMorphic: aPoint
 !FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 11/25/2016 11:03:22'!
 xToMorphic: x
 	^x - xMin / (xMax - xMin ) * (extent x-40)+40! !
-
-!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 6/25/2016 17:16'!
-yRange: anInterval
-
-	yMin _ anInterval first.
-	yMax _ anInterval last.! !
 
 !FunctionGraphMorph methodsFor: 'geometry' stamp: 'jmv 11/25/2016 11:03:27'!
 yToMorphic: y
@@ -882,16 +885,6 @@ contents: newContents
 	self fitContents.
 	self redrawNeeded! !
 
-!MinimalStringMorph methodsFor: 'initialization' stamp: 'cbr 12/3/2010 23:29'!
-defaultColor
-	"answer the default color/fill style for the receiver"
-	^ Theme current text! !
-
-!MinimalStringMorph methodsFor: 'drawing' stamp: 'jmv 7/10/2014 22:41'!
-drawOn: aCanvas
-
-	aCanvas drawString: contents at: 0@0 font: self fontToUse color: color! !
-
 !MinimalStringMorph methodsFor: 'accessing' stamp: 'jmv 1/1/2015 21:16'!
 fitContents
 	"Measures contents later at #minimumExtent"
@@ -904,6 +897,17 @@ fontToUse
 	^(emphasis isNil or: [emphasis = 0]) 
 		ifTrue: [fontToUse]
 		ifFalse: [fontToUse emphasized: emphasis]! !
+
+!MinimalStringMorph methodsFor: 'accessing' stamp: 'jmv 12/20/2010 16:25'!
+measureContents
+	| f |
+	f _ self fontToUse.
+	^(((f widthOfString: contents) max: 3)  @ f height).! !
+
+!MinimalStringMorph methodsFor: 'initialization' stamp: 'cbr 12/3/2010 23:29'!
+defaultColor
+	"answer the default color/fill style for the receiver"
+	^ Theme current text! !
 
 !MinimalStringMorph methodsFor: 'initialization' stamp: 'jmv 9/10/2010 22:55'!
 initWithContents: aString font: aFont emphasis: emphasisCode 
@@ -919,11 +923,10 @@ initialize
 	font _ nil.
 	emphasis _ 0! !
 
-!MinimalStringMorph methodsFor: 'accessing' stamp: 'jmv 12/20/2010 16:25'!
-measureContents
-	| f |
-	f _ self fontToUse.
-	^(((f widthOfString: contents) max: 3)  @ f height).! !
+!MinimalStringMorph methodsFor: 'drawing' stamp: 'jmv 7/10/2014 22:41'!
+drawOn: aCanvas
+
+	aCanvas drawString: contents at: 0@0 font: self fontToUse color: color! !
 
 !MinimalStringMorph class methodsFor: 'instance creation' stamp: 'jmv 4/3/2011 22:34'!
 contents: aString
@@ -949,32 +952,6 @@ baseFont
 
 	font ifNil: [ font _ AbstractFont default ].
 	^font! !
-
-!OneLineEditorMorph methodsFor: 'drawing' stamp: 'KenD 12/12/2016 19:53:05'!
-characterIndexAtPoint: aPoint
-
-	| line block f |
-	f _ self fontToUse.
-	
-	line _ TextLine 
-		start: 1
-		stop: contents size
-		internalSpaces: 0
-		paddingWidth: 0.
-	line
-		rectangle: (0@0 extent: extent);
-		lineHeight: f height baseline: f ascent.
-		
-	block _ (CharacterBlockScanner new text: 
-			(contents asText font: f))
-		characterBlockAtPoint: aPoint index: nil
-		in: line.
-
-	^ block stringIndex! !
-
-!OneLineEditorMorph methodsFor: 'events' stamp: 'jmv 8/21/2012 08:43'!
-clickAndHalf: aMouseButtonEvent localPosition: localEventPosition
-	self handleInteraction: [ self editor clickAndHalf ]! !
 
 !OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 3/16/2011 10:34'!
 contents
@@ -1003,20 +980,66 @@ crAction: aBlock
 	
 	crAction := aBlock! !
 
-!OneLineEditorMorph methodsFor: 'initialization' stamp: 'cbr 12/3/2010 23:29'!
-defaultColor
-	"answer the default color/fill style for the receiver"
-	^ Theme current text! !
-
 !OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 9/6/2017 10:02:09'!
 disableEditing
 	self setProperty: #disablesEditing toValue: true.
 	self stopBlinking! !
 
-!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 9/6/2017 10:02:10'!
-disablesEditing
+!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 12/4/2011 22:25'!
+editor
+	"Return my current editor, or install a new one."
+	editor ifNil: [ self installEditor ].
+	^editor! !
 
-	^self hasProperty: #disablesEditing! !
+!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 1/1/2015 21:16'!
+fitContents
+	"Measures contents later at #minimumExtent"
+	self morphExtent: 0@0! !
+
+!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 11/5/2008 13:18'!
+fontToUse
+
+	^ (emphasis isNil or: [emphasis = 0]) 
+		ifTrue: [ self baseFont ]
+		ifFalse: [ self baseFont emphasized: emphasis ]! !
+
+!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 3/17/2011 07:58'!
+keyboardFocusWatcher: aMorph
+	"We are usually used as a part of a bigger morph.
+	Usually, that morph would be interested in us changing keyboard focus.
+	An alternative implementation would be to define a new type of event, but:
+		- I (jmv) prefer explicit message sends to registering in events.
+		- There are too many evens already defined. It would be good to reduce that."
+	keyboardFocusWatcher _ aMorph! !
+
+!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 12/20/2010 16:25'!
+measureContents
+	| f |
+
+	f _ self fontToUse.
+	^((f widthOfString: contents) max: 3)  @ f height.! !
+
+!OneLineEditorMorph methodsFor: 'drawing' stamp: 'jmv 12/27/2017 11:21:01'!
+characterIndexAtPoint: aPoint
+
+	| line block f |
+	f _ self fontToUse.
+	
+	line _ TextLine 
+		start: 1
+		stop: contents size
+		internalSpaces: 0
+		paddingWidth: 0.
+	line
+		rectangle: (0@0 extent: extent);
+		lineHeight: f height baseline: f ascent.
+		
+	block _ (CharacterBlockScanner new text: (contents asText font: f))
+		defaultFont: f;
+		characterBlockAtPoint: aPoint index: nil
+		in: line.
+
+	^ block stringIndex! !
 
 !OneLineEditorMorph methodsFor: 'drawing' stamp: 'jmv 10/16/2013 22:37'!
 displayTextCursorAtX: x top: top bottom: bottom emphasis: emphasis on: aCanvas
@@ -1083,116 +1106,9 @@ drawTextCursorOn: aCanvas
 		x _ self fontToUse widthOfString: contents from: 1 to: editor startIndex-1.
 		self displayTextCursorAtX: x top: 0 bottom: bottom emphasis: emphasis on: aCanvas ]! !
 
-!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 12/4/2011 22:25'!
-editor
-	"Return my current editor, or install a new one."
-	editor ifNil: [ self installEditor ].
-	^editor! !
-
-!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 1/1/2015 21:16'!
-fitContents
-	"Measures contents later at #minimumExtent"
-	self morphExtent: 0@0! !
-
-!OneLineEditorMorph methodsFor: 'events-processing' stamp: 'jmv 12/28/2011 22:45'!
-focusKeyboardFor: aKeyboardEvent
-	"If aKeyboardEvent tab or shift-tab use it to navigate keyboard focus.
-	ctrl key ignored."
-	aKeyboardEvent keyValue = 9
-		ifTrue: [
-			aKeyboardEvent shiftPressed
-				ifFalse: [ aKeyboardEvent hand keyboardFocusNext ]
-				ifTrue: [ aKeyboardEvent hand keyboardFocusPrevious ].
-			^ true ].
-	^super focusKeyboardFor: aKeyboardEvent! !
-
-!OneLineEditorMorph methodsFor: 'events-processing' stamp: 'KenD 10/29/2015 20:43'!
-fontPreferenceChanged
-
-	font := nil.
-	self baseFont.! !
-
-!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 11/5/2008 13:18'!
-fontToUse
-
-	^ (emphasis isNil or: [emphasis = 0]) 
-		ifTrue: [ self baseFont ]
-		ifFalse: [ self baseFont emphasized: emphasis ]! !
-
-!OneLineEditorMorph methodsFor: 'editing' stamp: 'jmv 10/16/2013 21:03'!
-handleInteraction: interactionBlock
-	"Perform the changes in interactionBlock, noting any change in selection
-	and possibly a change in the size of the composition"
-
-	"Also couple the editor to Morphic keyboard events"
-
-	| oldEditor oldContents |
-	oldEditor _ editor.
-	oldContents _ contents.
-	interactionBlock value.
-	oldContents == contents 
-		ifTrue: [ "this will not work if the composition changed"
-			editor _ oldEditor	"since it may have been changed while in block"].
-	self redrawNeeded! !
-
-!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 8/20/2012 18:52'!
-handlesKeyboard
-
-	^self visible! !
-
-!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 8/20/2012 18:52'!
-handlesMouseDown: aMouseButtonEvent
-	^ true! !
-
-!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 8/20/2012 18:52'!
-handlesMouseOver: evt
-	"implements #mouseEnter: and/or #mouseLeave:"
-	^true! !
-
-!OneLineEditorMorph methodsFor: 'testing' stamp: 'jmv 11/5/2008 12:41'!
-hasSelection
-
-	^editor notNil and: [editor hasSelection]! !
-
-!OneLineEditorMorph methodsFor: 'testing' stamp: 'jmv 10/16/2013 22:18'!
-hasTextCursor
-
-	^ self hasKeyboardFocus and: [editor notNil and: [editor hasSelection not]]! !
-
-!OneLineEditorMorph methodsFor: 'unaccepted edits' stamp: 'jmv 3/14/2011 09:21'!
-hasUnacceptedEdits: aBoolean
-	"Set the hasUnacceptedEdits flag to the given value. "
-	
-	self flag: #jmv.
-	"Not used in this morph, as it doesn't do accept / cancel"
-	self redrawNeeded! !
-
-!OneLineEditorMorph methodsFor: 'initialization' stamp: 'jmv 11/5/2008 12:15'!
-initWithContents: aString font: aFont emphasis: emphasisCode 
-	self initialize.
-	
-	font _ aFont.
-	emphasis _ emphasisCode.
-	self contents: aString! !
-
-!OneLineEditorMorph methodsFor: 'initialization' stamp: 'jmv 10/16/2013 22:19'!
-initialize
-	super initialize.
-	contents _ ''.
-	font _ nil.
-	emphasis _ 0.
-	showTextCursor _ false. "Should never be nil"! !
-
-!OneLineEditorMorph methodsFor: 'private' stamp: 'jmv 12/4/2011 22:25'!
-installEditor
-	"Install an editor for my contents.  This constitutes 'hasFocus'.
-	If priorEditor is not nil, then initialize the new editor from its state.
-	We may want to rework this so it actually uses the prior editor."
-
-	editor _ SimpleEditor new morph: self.
-	editor changeString: contents.
-	self redrawNeeded.
-	^editor! !
+!OneLineEditorMorph methodsFor: 'events' stamp: 'jmv 8/21/2012 08:43'!
+clickAndHalf: aMouseButtonEvent localPosition: localEventPosition
+	self handleInteraction: [ self editor clickAndHalf ]! !
 
 !OneLineEditorMorph methodsFor: 'events' stamp: 'len 11/15/2015 06:45'!
 keyStroke: aKeyboardEvent
@@ -1218,42 +1134,6 @@ keyStroke: aKeyboardEvent
 	self handleInteraction: [ self editor processKeyStroke: aKeyboardEvent ].
 	self updateFromContents.
 	super keyStroke: aKeyboardEvent  "sends to keyStroke event handler, if any"! !
-
-!OneLineEditorMorph methodsFor: 'events-processing' stamp: 'jmv 3/6/2015 08:59'!
-keyboardFocusChange: aBoolean 
-	aBoolean
-		ifTrue: [
-			"A hand is wanting to send us characters..."
-			editor ifNil: [ self editor ].	"Forces install"
-			self selectAll.
-			self showsBlinkingCursor ifTrue: [
-				self startBlinking ]]
-		ifFalse: [
-			self stopBlinking.
-			keyboardFocusWatcher ifNotNil: [
-				keyboardFocusWatcher lostFocus: self ]].
-	self redrawNeeded! !
-
-!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 3/17/2011 07:58'!
-keyboardFocusWatcher: aMorph
-	"We are usually used as a part of a bigger morph.
-	Usually, that morph would be interested in us changing keyboard focus.
-	An alternative implementation would be to define a new type of event, but:
-		- I (jmv) prefer explicit message sends to registering in events.
-		- There are too many evens already defined. It would be good to reduce that."
-	keyboardFocusWatcher _ aMorph! !
-
-!OneLineEditorMorph methodsFor: 'accessing' stamp: 'jmv 12/20/2010 16:25'!
-measureContents
-	| f |
-
-	f _ self fontToUse.
-	^((f widthOfString: contents) max: 3)  @ f height.! !
-
-!OneLineEditorMorph methodsFor: 'geometry' stamp: 'jmv 3/6/2015 08:52'!
-minimumExtent
-
-	^ self measureContents! !
 
 !OneLineEditorMorph methodsFor: 'events' stamp: 'jmv 1/14/2013 22:27'!
 mouseButton1Down: aMouseButtonEvent localPosition: localEventPosition
@@ -1294,6 +1174,136 @@ mouseMove: aMouseMoveEvent localPosition: localEventPosition
 	self handleInteraction: [
 		self editor mouseMove: aMouseMoveEvent index: (self characterIndexAtPoint: localEventPosition) ]! !
 
+!OneLineEditorMorph methodsFor: 'initialization' stamp: 'cbr 12/3/2010 23:29'!
+defaultColor
+	"answer the default color/fill style for the receiver"
+	^ Theme current text! !
+
+!OneLineEditorMorph methodsFor: 'initialization' stamp: 'jmv 11/5/2008 12:15'!
+initWithContents: aString font: aFont emphasis: emphasisCode 
+	self initialize.
+	
+	font _ aFont.
+	emphasis _ emphasisCode.
+	self contents: aString! !
+
+!OneLineEditorMorph methodsFor: 'initialization' stamp: 'jmv 10/16/2013 22:19'!
+initialize
+	super initialize.
+	contents _ ''.
+	font _ nil.
+	emphasis _ 0.
+	showTextCursor _ false. "Should never be nil"! !
+
+!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 9/6/2017 10:02:10'!
+disablesEditing
+
+	^self hasProperty: #disablesEditing! !
+
+!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 8/20/2012 18:52'!
+handlesKeyboard
+
+	^self visible! !
+
+!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 8/20/2012 18:52'!
+handlesMouseDown: aMouseButtonEvent
+	^ true! !
+
+!OneLineEditorMorph methodsFor: 'event handling testing' stamp: 'jmv 8/20/2012 18:52'!
+handlesMouseOver: evt
+	"implements #mouseEnter: and/or #mouseLeave:"
+	^true! !
+
+!OneLineEditorMorph methodsFor: 'events-processing' stamp: 'jmv 12/28/2011 22:45'!
+focusKeyboardFor: aKeyboardEvent
+	"If aKeyboardEvent tab or shift-tab use it to navigate keyboard focus.
+	ctrl key ignored."
+	aKeyboardEvent keyValue = 9
+		ifTrue: [
+			aKeyboardEvent shiftPressed
+				ifFalse: [ aKeyboardEvent hand keyboardFocusNext ]
+				ifTrue: [ aKeyboardEvent hand keyboardFocusPrevious ].
+			^ true ].
+	^super focusKeyboardFor: aKeyboardEvent! !
+
+!OneLineEditorMorph methodsFor: 'events-processing' stamp: 'KenD 10/29/2015 20:43'!
+fontPreferenceChanged
+
+	font := nil.
+	self baseFont.! !
+
+!OneLineEditorMorph methodsFor: 'events-processing' stamp: 'jmv 3/6/2015 08:59'!
+keyboardFocusChange: aBoolean 
+	aBoolean
+		ifTrue: [
+			"A hand is wanting to send us characters..."
+			editor ifNil: [ self editor ].	"Forces install"
+			self selectAll.
+			self showsBlinkingCursor ifTrue: [
+				self startBlinking ]]
+		ifFalse: [
+			self stopBlinking.
+			keyboardFocusWatcher ifNotNil: [
+				keyboardFocusWatcher lostFocus: self ]].
+	self redrawNeeded! !
+
+!OneLineEditorMorph methodsFor: 'editing' stamp: 'jmv 10/16/2013 21:03'!
+handleInteraction: interactionBlock
+	"Perform the changes in interactionBlock, noting any change in selection
+	and possibly a change in the size of the composition"
+
+	"Also couple the editor to Morphic keyboard events"
+
+	| oldEditor oldContents |
+	oldEditor _ editor.
+	oldContents _ contents.
+	interactionBlock value.
+	oldContents == contents 
+		ifTrue: [ "this will not work if the composition changed"
+			editor _ oldEditor	"since it may have been changed while in block"].
+	self redrawNeeded! !
+
+!OneLineEditorMorph methodsFor: 'testing' stamp: 'jmv 11/5/2008 12:41'!
+hasSelection
+
+	^editor notNil and: [editor hasSelection]! !
+
+!OneLineEditorMorph methodsFor: 'testing' stamp: 'jmv 10/16/2013 22:18'!
+hasTextCursor
+
+	^ self hasKeyboardFocus and: [editor notNil and: [editor hasSelection not]]! !
+
+!OneLineEditorMorph methodsFor: 'unaccepted edits' stamp: 'jmv 3/14/2011 09:21'!
+hasUnacceptedEdits: aBoolean
+	"Set the hasUnacceptedEdits flag to the given value. "
+	
+	self flag: #jmv.
+	"Not used in this morph, as it doesn't do accept / cancel"
+	self redrawNeeded! !
+
+!OneLineEditorMorph methodsFor: 'private' stamp: 'jmv 12/4/2011 22:25'!
+installEditor
+	"Install an editor for my contents.  This constitutes 'hasFocus'.
+	If priorEditor is not nil, then initialize the new editor from its state.
+	We may want to rework this so it actually uses the prior editor."
+
+	editor _ SimpleEditor new morph: self.
+	editor changeString: contents.
+	self redrawNeeded.
+	^editor! !
+
+!OneLineEditorMorph methodsFor: 'private' stamp: 'jmv 12/29/2011 15:05'!
+updateFromContents
+
+	"O contents deberia ser un StringHolder????"
+	contents _ self editor string.
+	self redrawNeeded! !
+
+!OneLineEditorMorph methodsFor: 'geometry' stamp: 'jmv 3/6/2015 08:52'!
+minimumExtent
+
+	^ self measureContents! !
+
 !OneLineEditorMorph methodsFor: 'blink cursor' stamp: 'jmv 7/18/2014 14:53'!
 onBlinkCursor
 	"Blink the cursor"
@@ -1310,11 +1320,6 @@ pauseBlinking
 		showTextCursor ifFalse: [
 			showTextCursor _ true.
 			textCursorRect ifNotNil: [ :r | self invalidateLocalRect: r ]]]! !
-
-!OneLineEditorMorph methodsFor: 'typing/selecting keys' stamp: 'jmv 3/16/2011 10:45'!
-selectAll
-	self editor selectAll.
-	self redrawNeeded! !
 
 !OneLineEditorMorph methodsFor: 'blink cursor' stamp: 'jmv 9/6/2017 10:02:15'!
 showsBlinkingCursor
@@ -1338,11 +1343,9 @@ stopBlinking
 		showTextCursor _ false.
 		textCursorRect ifNotNil: [ :r | self invalidateLocalRect: r ]]! !
 
-!OneLineEditorMorph methodsFor: 'private' stamp: 'jmv 12/29/2011 15:05'!
-updateFromContents
-
-	"O contents deberia ser un StringHolder????"
-	contents _ self editor string.
+!OneLineEditorMorph methodsFor: 'typing/selecting keys' stamp: 'jmv 3/16/2011 10:45'!
+selectAll
+	self editor selectAll.
 	self redrawNeeded! !
 
 !OneLineEditorMorph class methodsFor: 'instance creation' stamp: 'jmv 3/16/2011 10:25'!
