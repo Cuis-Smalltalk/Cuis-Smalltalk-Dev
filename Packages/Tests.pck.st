@@ -1,11 +1,38 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3081] on 13 May 2017 at 8:22:51 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3243] on 28 December 2017 at 4:18:48 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 73!
-!requires: 'SignalProcessing' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
+!provides: 'Tests' 1 74!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+SystemOrganization addCategory: #'Tests-Exceptions'!
+SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
+SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
+SystemOrganization addCategory: #'Tests-Compiler'!
+SystemOrganization addCategory: #'Tests-Kernel-Collections'!
+SystemOrganization addCategory: #'Tests-Graphics Primitives'!
+SystemOrganization addCategory: #'Tests-Kernel'!
+SystemOrganization addCategory: #'Tests-Files'!
+SystemOrganization addCategory: #'Tests-Kernel-Chronology'!
+SystemOrganization addCategory: #'Tests-Kernel-Processes'!
+SystemOrganization addCategory: #'Tests-Code Differ'!
+SystemOrganization addCategory: #'Tests-FileMan'!
+SystemOrganization addCategory: #'Tests-Collections'!
+SystemOrganization addCategory: #'Tests-Graphics'!
+SystemOrganization addCategory: #'Tests-System-Object Storage'!
+SystemOrganization addCategory: #'Tests-UCompletion'!
+SystemOrganization addCategory: #'Tests-System'!
+SystemOrganization addCategory: #'Tests-Taskbar'!
+SystemOrganization addCategory: #'Tests-Bugs'!
+SystemOrganization addCategory: #'Tests-Theme'!
+SystemOrganization addCategory: #'Tests-Unicode'!
+SystemOrganization addCategory: #'Tests-Compression'!
+SystemOrganization addCategory: #'Tests-Statistics'!
+SystemOrganization addCategory: #'Tests-Kernel-Classes'!
+SystemOrganization addCategory: #'Tests-Tools-Testing'!
+
+
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
@@ -1046,6 +1073,32 @@ testBlockClosuresCanBeUsedAsHandlingCondition
 		
 	! !
 
+!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:48:37'!
+testFilterConditionWorksAsExcpetedWhenHandlingException
+
+	self
+		shouldnt: [ [ Error signal ] on: Error - ZeroDivide do: [ :anError |  ] ]
+		raise: Error.
+		
+	self
+		should: [ [ ZeroDivide signal ] on: Error - ZeroDivide do: [ :anError | self fail ]]
+		raise: Error.
+
+! !
+
+!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:49:45'!
+testOrConditionWorksAsExcpetedWhenHandlingException
+
+	self 
+		shouldnt: [ [ Error signal ] on: Error, Notification do: [ :anError | ] ]
+		raise: Error.
+		
+	self 
+		shouldnt: [ [ Notification signal ] on: Error, Notification do: [ :anError |  ] ]
+		raise: Notification 
+
+	! !
+
 !ExceptionHandlingConditionTest methodsFor: 'filter condition tests' stamp: 'HAW 3/29/2017 15:24:06'!
 testCanCreateFilterConditionWithExceptionTypeAndExceptionType
 
@@ -1288,32 +1341,6 @@ testExcpetionsFollowTheExpectedHierarchy
 	self assert: (DomainError inheritsFrom: ArithmeticError).
 	! !
 
-!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:48:37'!
-testFilterConditionWorksAsExcpetedWhenHandlingException
-
-	self
-		shouldnt: [ [ Error signal ] on: Error - ZeroDivide do: [ :anError |  ] ]
-		raise: Error.
-		
-	self
-		should: [ [ ZeroDivide signal ] on: Error - ZeroDivide do: [ :anError | self fail ]]
-		raise: Error.
-
-! !
-
-!ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:49:45'!
-testOrConditionWorksAsExcpetedWhenHandlingException
-
-	self 
-		shouldnt: [ [ Error signal ] on: Error, Notification do: [ :anError | ] ]
-		raise: Error.
-		
-	self 
-		shouldnt: [ [ Notification signal ] on: Error, Notification do: [ :anError |  ] ]
-		raise: Notification 
-
-	! !
-
 !ExceptionTests methodsFor: 'private' stamp: 'md 3/25/2003 23:40'!
 assertSuccess: anExceptionTester
 	self should: [ ( anExceptionTester suiteLog first) endsWith:  'succeeded'].! !
@@ -1330,45 +1357,9 @@ testDoublePassOuter
 testDoubleResume
 	self assertSuccess: (ExceptionTester new runTest: #doubleResumeTest ) ! !
 
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'SqR 8/28/2014 22:45'!
-testHandlerFromAction
-	"A test ensuring that nested exceptions work as expected."
-
-	| result |
-	result := [
-		[
-			[self error: 'trigger error'] on: ZeroDivide do: [ :ex | 'inner' ]
-		] on: Error do: [ :ex | 3 / 0 ]
-	] on: ZeroDivide do: [ :ex | 'outer' ].
-	self assert: result = 'outer'! !
-
-!ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:42'!
-testNoTimeout
-	self assertSuccess: (ExceptionTester new runTest: #simpleNoTimeoutTest ) ! !
-
 !ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:44'!
 testNonResumableFallOffTheEndHandler
 	self assertSuccess: (ExceptionTester new runTest: #nonResumableFallOffTheEndHandler ) ! !
-
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'dtl 6/1/2004 21:59'!
-testNonResumableOuter
-
-	self should: [
-		[Error signal. 4] 
-			on: Error 
-			do: [:ex | ex outer. ex return: 5]
-		] raise: Error
-! !
-
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'dtl 6/1/2004 22:00'!
-testNonResumablePass
-
-	self should: [
-		[Error signal. 4] 
-			on: Error 
-			do: [:ex | ex pass. ex return: 5]
-		] raise: Error
-! !
 
 !ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'SqR 10/10/2015 16:22'!
 testResignalAs
@@ -1395,26 +1386,6 @@ testResignalAsUnwinds
 !ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:44'!
 testResumableFallOffTheEndHandler
 	self assertSuccess: (ExceptionTester new runTest: #resumableFallOffTheEndHandler ) ! !
-
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'ul 11/15/2010 11:39'!
-testResumableOuter
-
-	| result |
-	result := [Notification signal. 4] 
-		on: Notification 
-		do: [:ex | ex outer. ex return: 5].
-	self assert: result = 5
-! !
-
-!ExceptionTests methodsFor: 'testing-outer' stamp: 'ul 11/15/2010 11:39'!
-testResumablePass
-
-	| result |
-	result := [Notification signal. 4] 
-		on: Notification 
-		do: [:ex | ex pass. ex return: 5].
-	self assert: result = 4
-! !
 
 !ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:44'!
 testSignalFromHandlerActionTest
@@ -1467,6 +1438,62 @@ testSimpleRetryUsing
 !ExceptionTests methodsFor: 'testing-ExceptionTester' stamp: 'md 3/25/2003 23:48'!
 testSimpleReturn
 	self assertSuccess: (ExceptionTester new runTest: #simpleReturnTest ) ! !
+
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'SqR 8/28/2014 22:45'!
+testHandlerFromAction
+	"A test ensuring that nested exceptions work as expected."
+
+	| result |
+	result := [
+		[
+			[self error: 'trigger error'] on: ZeroDivide do: [ :ex | 'inner' ]
+		] on: Error do: [ :ex | 3 / 0 ]
+	] on: ZeroDivide do: [ :ex | 'outer' ].
+	self assert: result = 'outer'! !
+
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'dtl 6/1/2004 21:59'!
+testNonResumableOuter
+
+	self should: [
+		[Error signal. 4] 
+			on: Error 
+			do: [:ex | ex outer. ex return: 5]
+		] raise: Error
+! !
+
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'dtl 6/1/2004 22:00'!
+testNonResumablePass
+
+	self should: [
+		[Error signal. 4] 
+			on: Error 
+			do: [:ex | ex pass. ex return: 5]
+		] raise: Error
+! !
+
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'ul 11/15/2010 11:39'!
+testResumableOuter
+
+	| result |
+	result := [Notification signal. 4] 
+		on: Notification 
+		do: [:ex | ex outer. ex return: 5].
+	self assert: result = 5
+! !
+
+!ExceptionTests methodsFor: 'testing-outer' stamp: 'ul 11/15/2010 11:39'!
+testResumablePass
+
+	| result |
+	result := [Notification signal. 4] 
+		on: Notification 
+		do: [:ex | ex pass. ex return: 5].
+	self assert: result = 4
+! !
+
+!ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:42'!
+testNoTimeout
+	self assertSuccess: (ExceptionTester new runTest: #simpleNoTimeoutTest ) ! !
 
 !ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:41'!
 testTimeoutWithZeroDuration
@@ -1715,6 +1742,44 @@ test32bitRoundingMode
 	self assert: expected = conv.
 ! !
 
+!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:43'!
+testInfinity3
+	self assert:
+		(Float infinity negated asIEEE32BitWord
+			printStringBase: 2 length: 32 padded: true) = '11111111100000000000000000000000'.
+	self assert:
+		(Float fromIEEE32Bit:
+			(Integer
+				readFrom: '11111111100000000000000000000000' readStream
+				base: 2)) = Float infinity negated! !
+
+!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:43'!
+testNaN5
+	| nanstr |
+	
+	"check the NaN string representation conforms to IEEE 754"
+	nanstr := Float nan asIEEE32BitWord printStringBase: 2 length: 32 padded: true.
+	self
+		assert: (#($0 $1) includes: (nanstr at: 1));
+		assert: (nanstr copyFrom: 2 to: 9) = '11111111';
+		assert: (#($0 $1) includes: (nanstr at: 10)); "accept both quiet and signalled NaNs"
+		assert: ((nanstr copyFrom: 11 to: 32) reject: [ :c | #($0 $1) includes: c ]) isEmpty.
+	
+	"check a correct quiet NaN is created from a string"
+	self assert: (Float fromIEEE32Bit:
+		(Integer readFrom: '01111111110000000000000000000000' readStream base: 2)) isNaN! !
+
+!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:42'!
+testZero2
+	self assert:
+		(Float negativeZero asIEEE32BitWord
+			printStringBase: 2 length: 32 padded: true) = '10000000000000000000000000000000'.
+	self assert:
+		(Float fromIEEE32Bit:
+			(Integer
+				readFrom: '10000000000000000000000000000000' readStream
+				base: 2)) = Float negativeZero! !
+
 !FloatTest methodsFor: 'testing' stamp: 'sqr 5/26/2016 18:06'!
 testArcTan
 
@@ -1734,6 +1799,55 @@ testArcTan
 	self assert: (Float negativeZero arcTan: 0) = 0.
 	self assert: (0 arcTan: Float negativeZero) isAbout: Float pi.
 	self assert: (Float negativeZero arcTan: Float negativeZero) isAbout: Float pi negated! !
+
+!FloatTest methodsFor: 'testing' stamp: 'nice 10/4/2009 23:13'!
+testCopy
+	"Elementary tests"
+	self assert: 2.0 copy = 2.0.
+	self assert: -0.5 copy = -0.5.
+	
+	"Are exceptional Floats preserved by the copy ?"
+	self assert: Float nan copy isNaN.
+	self assert: Float infinity copy = Float infinity.
+	self assert: Float infinity negated copy = Float infinity negated.
+	
+	"Is the sign of zero preserved by the copy ?"
+	self assert: 0.0 copy hex = 0.0 hex.
+	self assert: Float negativeZero copy hex = Float negativeZero hex.! !
+
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/11/2011 08:55'!
+testMaxExactInteger
+	"
+	FloatTest new testMaxExactInteger
+	"
+
+	self assert: Float maxExactInteger asFloat truncated = Float maxExactInteger.
+	0 to: 10000 do: [ :j |
+		self assert: (Float maxExactInteger-j) asFloat truncated = (Float maxExactInteger-j) ].
+	self deny: (Float maxExactInteger+1) asFloat truncated = (Float maxExactInteger+1)
+	! !
+
+!FloatTest methodsFor: 'testing' stamp: 'nice 2/13/2010 04:15'!
+testSetOfFloat
+	"Classical disagreement between hash and = did lead to a bug.
+	This is a non regression test from http://bugs.squeak.org/view.php?id=3360"
+
+	| size3 size4 |
+	size3 := (Set new: 3) add: 3; add: 3.0; size.
+	size4 := (Set new: 4) add: 3; add: 3.0; size.
+	self assert: size3 = size4 description: 'The size of a Set should not depend on its capacity.'! !
+
+!FloatTest methodsFor: 'testing' stamp: 'nice 11/1/2009 18:58'!
+testStoreOn
+	"If storeOn: prints exactly and the parser avoid cumulating round off Errors,
+	then Float should be read back exactly.
+	Note: there is no guarantee to restore the bit pattern of NaN though"
+	
+	self assert: (Compiler evaluate: Float halfPi storeString) = Float halfPi.
+	self assert: (Compiler evaluate: Float halfPi negated storeString) = Float halfPi negated.
+	self assert: (Compiler evaluate: Float infinity storeString) = Float infinity.
+	self assert: (Compiler evaluate: Float infinity negated storeString) = Float infinity negated.
+	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
 
 !FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/7/2010 12:12'!
 testAsTrueFraction
@@ -1761,6 +1875,116 @@ testAsTrueFraction
 	self assert: x asTrueFraction asFloat = x.
 	x _ 1.0234e308.
 	self assert: x asTrueFraction asFloat = x.! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 7/24/2008 02:04'!
+testFloatRounded
+	"5000000000000001 asFloat has an exact representation (no round off error).
+	It should round to nearest integer without loosing bits.
+	This is a no regression test on http://bugs.squeak.org/view.php?id=7134"
+	
+	| x y int r |
+	
+	"This is a preamble asserting exactness of representation
+	and quality of various conversions"
+	int := 5000000000000001.
+	x := int asFloat.
+	y := (5 asFloat squared squared squared squared timesTwoPower: 15) + 1.
+	self assert: x = y.
+	self assert: x asTrueFraction = int.
+	
+	"this one should be true for any float
+	in order to conform to ISO/IEC 10967-2"
+	self assert: x rounded = x asTrueFraction rounded.
+	self assert: x negated rounded = x negated asTrueFraction rounded.
+
+	"a random test"
+	r := Random new.
+	10000 timesRepeat: [
+		x := r next * 1.9999e16 + 1.0e12 .
+		self assert: x rounded = x asTrueFraction rounded.
+		self assert: x negated rounded = x negated asTrueFraction rounded]! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 4/26/2006 05:21'!
+testFloatTruncated
+	"(10 raisedTo: 16) asFloat has an exact representation (no round off error).
+	It should convert back to integer without loosing bits.
+	This is a no regression test on http://bugs.impara.de/view.php?id=3504"
+	
+	| x y int r |
+	int := 10 raisedTo: 16.
+	x := int asFloat.
+	y := (5 raisedTo: 16) asFloat timesTwoPower: 16.
+	self assert: x = y.
+	
+	self assert: x asInteger = int.
+	
+	"this one should be true for any float"
+	self assert: x asInteger = x asTrueFraction asInteger.
+
+	"a random test"
+	r := Random new.
+	10000 timesRepeat: [
+		x := r next * 1.9999e16 + 1.0e12 .
+		self assert: x truncated = x asTrueFraction truncated]! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 3/28/2016 09:48'!
+testFractionAsFloat
+	"use a random test"
+	
+	| r m frac err collec |
+	r := Random new seed: 1234567.
+	m := (2 raisedTo: 54) - 1.
+	200 timesRepeat: [
+		frac := ((r nextInteger: m) * (r nextInteger: m) + 1) / ((r nextInteger: m) * (r nextInteger: m) + 1).
+		err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
+		self assert: err < (1/2)].
+	
+	collec := #(16r10000000000000 16r1FFFFFFFFFFFFF 1 2 16r20000000000000 16r20000000000001 16r3FFFFFFFFFFFFF 16r3FFFFFFFFFFFFE 16r3FFFFFFFFFFFFD).
+	collec do: [:num |
+		collec do: [:den |
+			frac := Fraction numerator: num denominator: den.
+			err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
+			self assert: err <= (1/2)]].! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 1/10/2007 02:29'!
+testFractionAsFloat2
+	"test rounding to nearest even"
+		
+	self assert: ((1<<52)+0+(1/4)) asFloat asTrueFraction = ((1<<52)+0).
+	self assert: ((1<<52)+0+(1/2)) asFloat asTrueFraction = ((1<<52)+0).
+	self assert: ((1<<52)+0+(3/4)) asFloat asTrueFraction = ((1<<52)+1).
+	self assert: ((1<<52)+1+(1/4)) asFloat asTrueFraction = ((1<<52)+1).
+	self assert: ((1<<52)+1+(1/2)) asFloat asTrueFraction = ((1<<52)+2).
+	self assert: ((1<<52)+1+(3/4)) asFloat asTrueFraction = ((1<<52)+2).! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 5/6/2006 22:13'!
+testIntegerAsFloat
+	"assert IEEE 754 round to nearest even mode is honoured"
+	
+	self deny: 16r1FFFFFFFFFFFF0801 asFloat = 16r1FFFFFFFFFFFF0800 asFloat. "this test is on 65 bits"
+	self deny: 16r1FFFFFFFFFFFF0802 asFloat = 16r1FFFFFFFFFFFF0800 asFloat. "this test is on 64 bits"
+	self assert: 16r1FFFFFFFFFFF1F800 asFloat = 16r1FFFFFFFFFFF20000 asFloat. "nearest even is upper"
+	self assert: 16r1FFFFFFFFFFFF0800 asFloat = 16r1FFFFFFFFFFFF0000 asFloat. "nearest even is lower"
+! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'dtl 9/18/2004 12:40'!
+testStringAsNumber
+	"This covers parsing in Number>>readFrom:"
+
+	| aFloat |
+	aFloat := '10r-12.3456' asNumber.
+	self assert: -12.3456 = aFloat.
+	aFloat := '10r-12.3456e2' asNumber.
+	self assert: -1234.56 = aFloat.
+	aFloat := '10r-12.3456d2' asNumber.
+	self assert: -1234.56 = aFloat.
+	aFloat := '10r-12.3456q2' asNumber.
+	self assert: -1234.56 = aFloat.
+	aFloat := '-12.3456q2' asNumber.
+	self assert: -1234.56 = aFloat.
+	aFloat := '12.3456q2' asNumber.
+	self assert: 1234.56 = aFloat.
+! !
 
 !FloatTest methodsFor: 'characterization' stamp: 'nice 6/11/2009 20:47'!
 testCharacterization
@@ -1902,20 +2126,29 @@ testComparisonWhenPrimitiveFails
 	self deny: 0.5 ~= (1/2).
 	self assert: 0.5 ~= (3/4).! !
 
-!FloatTest methodsFor: 'testing' stamp: 'nice 10/4/2009 23:13'!
-testCopy
-	"Elementary tests"
-	self assert: 2.0 copy = 2.0.
-	self assert: -0.5 copy = -0.5.
+!FloatTest methodsFor: 'testing compare' stamp: 'sqr 5/26/2016 18:11'!
+testIsWithinUlpsFrom
+
+	self deny: (Float nan isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
+	self deny: (Float nan isWithin: Float fmax ulpsFrom: 1.0) description: 'NaN isn''t close to anything'.
+	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
 	
-	"Are exceptional Floats preserved by the copy ?"
-	self assert: Float nan copy isNaN.
-	self assert: Float infinity copy = Float infinity.
-	self assert: Float infinity negated copy = Float infinity negated.
+	self deny: (-1.0 isWithin: 1000 ulpsFrom: 1.0).
+	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float infinity).
+	self deny: (Float infinity isWithin: Float fmax ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
+	self deny: (Float infinity isWithin: Float infinity ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
 	
-	"Is the sign of zero preserved by the copy ?"
-	self assert: 0.0 copy hex = 0.0 hex.
-	self assert: Float negativeZero copy hex = Float negativeZero hex.! !
+	self assert: (1.0/3.0 isWithin: 1 ulpsFrom: 1/3).
+	self assert: (1.0e-8 isWithin: 1.0e-8 / 0.0 ulp ulpsFrom: 0).
+	self assert: (0.0 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0e-8).
+	self assert: (1+1.0e-8 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0).
+	
+	self assert: (1000000001.0 isWithin: (1 bitShift: 23) ulpsFrom: 1000000000.0).
+	self assert: ((1 bitShift: 52) asFloat + 1.0 isWithin: 1 ulpsFrom: (1 bitShift: 52) asFloat).
+
+	self assert: (1.0 isWithin: 1 ulpsFrom: 1.0).
+	self assert: (1.0 successor isWithin: 1 ulpsFrom: 1.0).
+	self deny: (1.0 successor successor isWithin: 1 ulpsFrom: 1.0)! !
 
 !FloatTest methodsFor: 'testing - arithmetic' stamp: 'GabrielOmarCotelli 6/6/2009 17:14'!
 testDivide
@@ -1930,86 +2163,30 @@ testDivide
 	self should: [ 1.2 / (1.3 - 1.3) ] raise: ZeroDivide
 	! !
 
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 7/24/2008 02:04'!
-testFloatRounded
-	"5000000000000001 asFloat has an exact representation (no round off error).
-	It should round to nearest integer without loosing bits.
-	This is a no regression test on http://bugs.squeak.org/view.php?id=7134"
-	
-	| x y int r |
-	
-	"This is a preamble asserting exactness of representation
-	and quality of various conversions"
-	int := 5000000000000001.
-	x := int asFloat.
-	y := (5 asFloat squared squared squared squared timesTwoPower: 15) + 1.
-	self assert: x = y.
-	self assert: x asTrueFraction = int.
-	
-	"this one should be true for any float
-	in order to conform to ISO/IEC 10967-2"
-	self assert: x rounded = x asTrueFraction rounded.
-	self assert: x negated rounded = x negated asTrueFraction rounded.
+!FloatTest methodsFor: 'testing - arithmetic' stamp: 'jmv 10/30/2016 17:12:55'!
+testTimesTwoPowerGradualUnderflow
+	"Here is a vicious case where timesTwoPower is inexact because it underflows.
+	And two consecutive inexact operations lead to a different result than a single one.
+	Typically expressed as multiple of Float fmin in base 2,
+	2r1011*Float fmin shifted by -3 with round to nearest, tie to even mode:
+	-> round(1.011) -> 1.0 = fmin
+	But if first shifted by -2 then by -1:
+	-> round(10.11) -> 11.0 = 3*fmin
+	-> round(1.1) -> 10.0 = 2*fmin
+	Or first shifted by -1 then by -2:
+	-> round(101.1) -> 110.0 = 6*fmin
+	-> round(1.1) -> 10.0 = 2*fmin
+	A naive implementation that split the shift uncarefully might fail to handle such case correctly."
 
-	"a random test"
-	r := Random new.
-	10000 timesRepeat: [
-		x := r next * 1.9999e16 + 1.0e12 .
-		self assert: x rounded = x asTrueFraction rounded.
-		self assert: x negated rounded = x negated asTrueFraction rounded]! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 4/26/2006 05:21'!
-testFloatTruncated
-	"(10 raisedTo: 16) asFloat has an exact representation (no round off error).
-	It should convert back to integer without loosing bits.
-	This is a no regression test on http://bugs.impara.de/view.php?id=3504"
-	
-	| x y int r |
-	int := 10 raisedTo: 16.
-	x := int asFloat.
-	y := (5 raisedTo: 16) asFloat timesTwoPower: 16.
-	self assert: x = y.
-	
-	self assert: x asInteger = int.
-	
-	"this one should be true for any float"
-	self assert: x asInteger = x asTrueFraction asInteger.
-
-	"a random test"
-	r := Random new.
-	10000 timesRepeat: [
-		x := r next * 1.9999e16 + 1.0e12 .
-		self assert: x truncated = x asTrueFraction truncated]! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 3/28/2016 09:48'!
-testFractionAsFloat
-	"use a random test"
-	
-	| r m frac err collec |
-	r := Random new seed: 1234567.
-	m := (2 raisedTo: 54) - 1.
-	200 timesRepeat: [
-		frac := ((r nextInteger: m) * (r nextInteger: m) + 1) / ((r nextInteger: m) * (r nextInteger: m) + 1).
-		err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
-		self assert: err < (1/2)].
-	
-	collec := #(16r10000000000000 16r1FFFFFFFFFFFFF 1 2 16r20000000000000 16r20000000000001 16r3FFFFFFFFFFFFF 16r3FFFFFFFFFFFFE 16r3FFFFFFFFFFFFD).
-	collec do: [:num |
-		collec do: [:den |
-			frac := Fraction numerator: num denominator: den.
-			err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
-			self assert: err <= (1/2)]].! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 1/10/2007 02:29'!
-testFractionAsFloat2
-	"test rounding to nearest even"
-		
-	self assert: ((1<<52)+0+(1/4)) asFloat asTrueFraction = ((1<<52)+0).
-	self assert: ((1<<52)+0+(1/2)) asFloat asTrueFraction = ((1<<52)+0).
-	self assert: ((1<<52)+0+(3/4)) asFloat asTrueFraction = ((1<<52)+1).
-	self assert: ((1<<52)+1+(1/4)) asFloat asTrueFraction = ((1<<52)+1).
-	self assert: ((1<<52)+1+(1/2)) asFloat asTrueFraction = ((1<<52)+2).
-	self assert: ((1<<52)+1+(3/4)) asFloat asTrueFraction = ((1<<52)+2).! !
+	| f |
+	f := 2r1011 asFloat.
+	"scan the whole range of possible exponents for this significand"
+	Float fmin exponent + f exponent to: Float fmax exponent - f exponent
+		do:
+			[:exp |
+				| g |
+				g := f timesTwoPower: exp.
+				self assert: (g timesTwoPower: Float fmin exponent - g exponent) = Float fmin]! !
 
 !FloatTest methodsFor: 'infinity behavior' stamp: 'nice 7/14/2009 09:32'!
 testHugeIntegerCloseTo
@@ -2047,17 +2224,6 @@ testInfinity2
   	"All infinities are signed. Negative infinity is not equal to Infinity"
 ! !
 
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:43'!
-testInfinity3
-	self assert:
-		(Float infinity negated asIEEE32BitWord
-			printStringBase: 2 length: 32 padded: true) = '11111111100000000000000000000000'.
-	self assert:
-		(Float fromIEEE32Bit:
-			(Integer
-				readFrom: '11111111100000000000000000000000' readStream
-				base: 2)) = Float infinity negated! !
-
 !FloatTest methodsFor: 'infinity behavior' stamp: 'nice 10/17/2007 23:54'!
 testInfinityCloseTo
 	"This is a test for bug http://bugs.squeak.org/view.php?id=6729:"
@@ -2067,56 +2233,34 @@ testInfinityCloseTo
 	self deny: (Float infinity closeTo: Float infinity negated).
 	self deny: (Float infinity negated closeTo: Float infinity).! !
 
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 5/6/2006 22:13'!
-testIntegerAsFloat
-	"assert IEEE 754 round to nearest even mode is honoured"
-	
-	self deny: 16r1FFFFFFFFFFFF0801 asFloat = 16r1FFFFFFFFFFFF0800 asFloat. "this test is on 65 bits"
-	self deny: 16r1FFFFFFFFFFFF0802 asFloat = 16r1FFFFFFFFFFFF0800 asFloat. "this test is on 64 bits"
-	self assert: 16r1FFFFFFFFFFF1F800 asFloat = 16r1FFFFFFFFFFF20000 asFloat. "nearest even is upper"
-	self assert: 16r1FFFFFFFFFFFF0800 asFloat = 16r1FFFFFFFFFFFF0000 asFloat. "nearest even is lower"
-! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'sqr 5/26/2016 18:11'!
-testIsWithinUlpsFrom
-
-	self deny: (Float nan isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
-	self deny: (Float nan isWithin: Float fmax ulpsFrom: 1.0) description: 'NaN isn''t close to anything'.
-	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
-	
-	self deny: (-1.0 isWithin: 1000 ulpsFrom: 1.0).
-	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float infinity).
-	self deny: (Float infinity isWithin: Float fmax ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
-	self deny: (Float infinity isWithin: Float infinity ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
-	
-	self assert: (1.0/3.0 isWithin: 1 ulpsFrom: 1/3).
-	self assert: (1.0e-8 isWithin: 1.0e-8 / 0.0 ulp ulpsFrom: 0).
-	self assert: (0.0 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0e-8).
-	self assert: (1+1.0e-8 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0).
-	
-	self assert: (1000000001.0 isWithin: (1 bitShift: 23) ulpsFrom: 1000000000.0).
-	self assert: ((1 bitShift: 52) asFloat + 1.0 isWithin: 1 ulpsFrom: (1 bitShift: 52) asFloat).
-
-	self assert: (1.0 isWithin: 1 ulpsFrom: 1.0).
-	self assert: (1.0 successor isWithin: 1 ulpsFrom: 1.0).
-	self deny: (1.0 successor successor isWithin: 1 ulpsFrom: 1.0)! !
-
 !FloatTest methodsFor: 'zero behavior' stamp: 'md 4/16/2003 15:02'!
 testIsZero
 	self assert: 0.0 isZero.
 	self deny:  0.1 isZero.! !
 
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/11/2011 08:55'!
-testMaxExactInteger
-	"
-	FloatTest new testMaxExactInteger
-	"
+!FloatTest methodsFor: 'zero behavior' stamp: 'nice 8/21/2010 22:29'!
+testNegativeZeroAbs
+	self assert: Float negativeZero abs sign positive description: 'the absolute value of a negative zero is zero'! !
 
-	self assert: Float maxExactInteger asFloat truncated = Float maxExactInteger.
-	0 to: 10000 do: [ :j |
-		self assert: (Float maxExactInteger-j) asFloat truncated = (Float maxExactInteger-j) ].
-	self deny: (Float maxExactInteger+1) asFloat truncated = (Float maxExactInteger+1)
-	! !
+!FloatTest methodsFor: 'zero behavior' stamp: 'nice 8/21/2010 22:30'!
+testNegativeZeroSign
+	self assert: Float negativeZero sign = -1! !
+
+!FloatTest methodsFor: 'zero behavior' stamp: 'sd 6/5/2005 08:33'!
+testZero1
+	"FloatTest new testZero1"
+
+	self assert: Float negativeZero = 0 asFloat.
+	self assert: (Float negativeZero at: 1) ~= (0 asFloat at: 1).
+
+	"The negative zero has a bit representation that is different from the bit representation of the positive zero. Nevertheless, both values are defined to be equal."
+! !
+
+!FloatTest methodsFor: 'zero behavior' stamp: 'nice 3/23/2008 16:00'!
+testZeroSignificandAsInteger
+	"This is about http://bugs.squeak.org/view.php?id=6990"
+	
+	self assert: 0.0 significandAsInteger = 0! !
 
 !FloatTest methodsFor: 'NaN behavior' stamp: 'sd 6/5/2005 08:31'!
 testNaN1
@@ -2188,22 +2332,6 @@ testNaN4
 	"as a NaN is not equal to itself, it can not be retrieved when it is used as a dictionary key"
 ! !
 
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:43'!
-testNaN5
-	| nanstr |
-	
-	"check the NaN string representation conforms to IEEE 754"
-	nanstr := Float nan asIEEE32BitWord printStringBase: 2 length: 32 padded: true.
-	self
-		assert: (#($0 $1) includes: (nanstr at: 1));
-		assert: (nanstr copyFrom: 2 to: 9) = '11111111';
-		assert: (#($0 $1) includes: (nanstr at: 10)); "accept both quiet and signalled NaNs"
-		assert: ((nanstr copyFrom: 11 to: 32) reject: [ :c | #($0 $1) includes: c ]) isEmpty.
-	
-	"check a correct quiet NaN is created from a string"
-	self assert: (Float fromIEEE32Bit:
-		(Integer readFrom: '01111111110000000000000000000000' readStream base: 2)) isNaN! !
-
 !FloatTest methodsFor: 'NaN behavior' stamp: 'jmv 3/13/2012 12:34'!
 testNaNCompare
 	"IEEE 754 states that NaN cannot be ordered.
@@ -2247,13 +2375,16 @@ testNaNCompare
 testNaNisLiteral
 	self deny: Float nan isLiteral description: 'there is no literal representation of NaN'! !
 
-!FloatTest methodsFor: 'zero behavior' stamp: 'nice 8/21/2010 22:29'!
-testNegativeZeroAbs
-	self assert: Float negativeZero abs sign positive description: 'the absolute value of a negative zero is zero'! !
+!FloatTest methodsFor: 'NaN behavior' stamp: 'GabrielOmarCotelli 5/23/2009 20:38'!
+testReciprocal
 
-!FloatTest methodsFor: 'zero behavior' stamp: 'nice 8/21/2010 22:30'!
-testNegativeZeroSign
-	self assert: Float negativeZero sign = -1! !
+	self 
+		assert: 1.0 reciprocal = 1.0;
+		assert: 2.0 reciprocal = 0.5;
+		assert: -1.0 reciprocal = -1.0;
+		assert: -2.0 reciprocal = -0.5.
+		
+	self should: [ 0.0 reciprocal ] raise: ZeroDivide! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 09:06'!
 testNthRoot
@@ -2269,27 +2400,6 @@ testRaisedTo
 	"
 	self should: [ -1.23 raisedTo: 1/4 ] raise: ArithmeticError! !
 
-!FloatTest methodsFor: 'NaN behavior' stamp: 'GabrielOmarCotelli 5/23/2009 20:38'!
-testReciprocal
-
-	self 
-		assert: 1.0 reciprocal = 1.0;
-		assert: 2.0 reciprocal = 0.5;
-		assert: -1.0 reciprocal = -1.0;
-		assert: -2.0 reciprocal = -0.5.
-		
-	self should: [ 0.0 reciprocal ] raise: ZeroDivide! !
-
-!FloatTest methodsFor: 'testing' stamp: 'nice 2/13/2010 04:15'!
-testSetOfFloat
-	"Classical disagreement between hash and = did lead to a bug.
-	This is a non regression test from http://bugs.squeak.org/view.php?id=3360"
-
-	| size3 size4 |
-	size3 := (Set new: 3) add: 3; add: 3.0; size.
-	size4 := (Set new: 4) add: 3; add: 3.0; size.
-	self assert: size3 = size4 description: 'The size of a Set should not depend on its capacity.'! !
-
 !FloatTest methodsFor: 'printing' stamp: 'nice 10/11/2008 21:45'!
 testStoreBase16
 	"This bug was reported in mantis http://bugs.squeak.org/view.php?id=6695"
@@ -2297,89 +2407,6 @@ testStoreBase16
 	self
 		assert: (20.0 storeStringBase: 16) = '16r14.0'
 		description: 'the radix prefix should not be omitted, except in base 10'! !
-
-!FloatTest methodsFor: 'testing' stamp: 'nice 11/1/2009 18:58'!
-testStoreOn
-	"If storeOn: prints exactly and the parser avoid cumulating round off Errors,
-	then Float should be read back exactly.
-	Note: there is no guarantee to restore the bit pattern of NaN though"
-	
-	self assert: (Compiler evaluate: Float halfPi storeString) = Float halfPi.
-	self assert: (Compiler evaluate: Float halfPi negated storeString) = Float halfPi negated.
-	self assert: (Compiler evaluate: Float infinity storeString) = Float infinity.
-	self assert: (Compiler evaluate: Float infinity negated storeString) = Float infinity negated.
-	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'dtl 9/18/2004 12:40'!
-testStringAsNumber
-	"This covers parsing in Number>>readFrom:"
-
-	| aFloat |
-	aFloat := '10r-12.3456' asNumber.
-	self assert: -12.3456 = aFloat.
-	aFloat := '10r-12.3456e2' asNumber.
-	self assert: -1234.56 = aFloat.
-	aFloat := '10r-12.3456d2' asNumber.
-	self assert: -1234.56 = aFloat.
-	aFloat := '10r-12.3456q2' asNumber.
-	self assert: -1234.56 = aFloat.
-	aFloat := '-12.3456q2' asNumber.
-	self assert: -1234.56 = aFloat.
-	aFloat := '12.3456q2' asNumber.
-	self assert: 1234.56 = aFloat.
-! !
-
-!FloatTest methodsFor: 'testing - arithmetic' stamp: 'jmv 10/30/2016 17:12:55'!
-testTimesTwoPowerGradualUnderflow
-	"Here is a vicious case where timesTwoPower is inexact because it underflows.
-	And two consecutive inexact operations lead to a different result than a single one.
-	Typically expressed as multiple of Float fmin in base 2,
-	2r1011*Float fmin shifted by -3 with round to nearest, tie to even mode:
-	-> round(1.011) -> 1.0 = fmin
-	But if first shifted by -2 then by -1:
-	-> round(10.11) -> 11.0 = 3*fmin
-	-> round(1.1) -> 10.0 = 2*fmin
-	Or first shifted by -1 then by -2:
-	-> round(101.1) -> 110.0 = 6*fmin
-	-> round(1.1) -> 10.0 = 2*fmin
-	A naive implementation that split the shift uncarefully might fail to handle such case correctly."
-
-	| f |
-	f := 2r1011 asFloat.
-	"scan the whole range of possible exponents for this significand"
-	Float fmin exponent + f exponent to: Float fmax exponent - f exponent
-		do:
-			[:exp |
-				| g |
-				g := f timesTwoPower: exp.
-				self assert: (g timesTwoPower: Float fmin exponent - g exponent) = Float fmin]! !
-
-!FloatTest methodsFor: 'zero behavior' stamp: 'sd 6/5/2005 08:33'!
-testZero1
-	"FloatTest new testZero1"
-
-	self assert: Float negativeZero = 0 asFloat.
-	self assert: (Float negativeZero at: 1) ~= (0 asFloat at: 1).
-
-	"The negative zero has a bit representation that is different from the bit representation of the positive zero. Nevertheless, both values are defined to be equal."
-! !
-
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:42'!
-testZero2
-	self assert:
-		(Float negativeZero asIEEE32BitWord
-			printStringBase: 2 length: 32 padded: true) = '10000000000000000000000000000000'.
-	self assert:
-		(Float fromIEEE32Bit:
-			(Integer
-				readFrom: '10000000000000000000000000000000' readStream
-				base: 2)) = Float negativeZero! !
-
-!FloatTest methodsFor: 'zero behavior' stamp: 'nice 3/23/2008 16:00'!
-testZeroSignificandAsInteger
-	"This is about http://bugs.squeak.org/view.php?id=6990"
-	
-	self assert: 0.0 significandAsInteger = 0! !
 
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!
 assert: a classAndValueEquals: b
@@ -2399,6 +2426,15 @@ testDegreeSin
 	
 	self shouldnt: [ (4/3) degreeSin] raise: Error.
 	self assert: (1/3) degreeSin printString =  '0.005817731354993834'.! !
+
+!FractionTest methodsFor: 'tests - sinuses' stamp: 'GabrielOmarCotelli 5/23/2009 20:19'!
+testReciprocal
+
+	self 
+		assert: (1/2) reciprocal = 2;
+		assert: (3/4) reciprocal = (4/3);
+		assert: (-1/3) reciprocal = -3;
+		assert: (-3/5) reciprocal = (-5/3)! !
 
 !FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/11/2011 22:27'!
 testExactRaisedTo
@@ -2485,6 +2521,54 @@ testExactSqrt
 		f _ j / i.
 		self assert: f squared sqrt classAndValueEquals: f ]! !
 
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:38'!
+testInexactRaisedTo
+	"
+	FractionTest new testInexactRaisedTo
+	"
+	self assert: (((1 << 1024 + 1) / (1 << 1024 + 3)) raisedTo: 1/3) = 1.0.
+	self assert: (((1 << 1024 + 1) / (1 << 1024 + 3)) negated raisedTo: 1/3) = -1.0! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:27'!
+testInexactSqrt
+	"
+	FractionTest new testInexactSqrt
+	"
+	self assert: ((1 << 1024 + 1) / (1 << 1024 + 3)) sqrt = 1.0! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:07'!
+testLn
+	self assert: (1/100) ln isAbout: -2 * 10 ln.
+	self assert: ((2 raisedTo: Float emax + 11) / 3) ln isAbout: (Float emax + 11) * 2 ln - 3 ln description: 'Fraction>>ln should not overflow'.
+	self assert: (3 / (2 raisedTo: Float precision - Float emin)) ln isAbout: (Float emin - Float precision) * 2 ln + 3 ln description: 'Fraction>>ln should not underflow'! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:08'!
+testLog
+	self assert: (1/100) log isAbout: -2.
+	self assert: ((2 raisedTo: Float emax + 11) / 3) log isAbout: (Float emax + 11) * 2 log - 3 log description: 'Fraction>>log should not overflow'.
+	self assert: (3 / (2 raisedTo: Float precision - Float emin)) log isAbout: (Float emin - Float precision) * 2 log + 3 log description: 'Fraction>>log should not underflow'! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 10/19/2011 20:48'!
+testNthRoot
+	self assert: ((-2 raisedTo: 35) / (3 raisedTo: 20) raisedTo: 1/5) equals: (-2 raisedTo: 7) / (3 raisedTo: 4).
+	self assert: (1 / (1 << 2000) raisedTo: 1/100) equals: 1 / (1 << 20)! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:49'!
+testRaisedToErrorConditions
+	"
+	FractionTest new testRaisedToErrorConditions
+	"
+	self should: [ (-1/16) raisedTo: 1/4 ] raise: ArithmeticError.
+	self should: [ ((1 << 1024 + 1) / (1 << 1024 + 3)) negated raisedTo: 1/4 ] raise: ArithmeticError! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:48'!
+testSqrtErrorConditions
+	"
+	FractionTest new testSqrtErrorConditions
+	"
+	self should: [ (-1/4) sqrt ] raise: DomainError.
+	self should: [ ((1 << 1024 + 1) / (1 << 1024 + 3)) negated sqrt ] raise: DomainError! !
+
 !FractionTest methodsFor: 'tests - printing' stamp: 'nice 7/24/2010 18:43'!
 testFractionPrinting
 
@@ -2565,63 +2649,6 @@ testFractionPrinting
 	self assert: ((5 / -7) printStringBase: 3) = '(-12/21)'.
 	self assert: ((5 / -7) storeStringBase: 3) = '(-3r12/3r21)'.
 ! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:38'!
-testInexactRaisedTo
-	"
-	FractionTest new testInexactRaisedTo
-	"
-	self assert: (((1 << 1024 + 1) / (1 << 1024 + 3)) raisedTo: 1/3) = 1.0.
-	self assert: (((1 << 1024 + 1) / (1 << 1024 + 3)) negated raisedTo: 1/3) = -1.0! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:27'!
-testInexactSqrt
-	"
-	FractionTest new testInexactSqrt
-	"
-	self assert: ((1 << 1024 + 1) / (1 << 1024 + 3)) sqrt = 1.0! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:07'!
-testLn
-	self assert: (1/100) ln isAbout: -2 * 10 ln.
-	self assert: ((2 raisedTo: Float emax + 11) / 3) ln isAbout: (Float emax + 11) * 2 ln - 3 ln description: 'Fraction>>ln should not overflow'.
-	self assert: (3 / (2 raisedTo: Float precision - Float emin)) ln isAbout: (Float emin - Float precision) * 2 ln + 3 ln description: 'Fraction>>ln should not underflow'! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:08'!
-testLog
-	self assert: (1/100) log isAbout: -2.
-	self assert: ((2 raisedTo: Float emax + 11) / 3) log isAbout: (Float emax + 11) * 2 log - 3 log description: 'Fraction>>log should not overflow'.
-	self assert: (3 / (2 raisedTo: Float precision - Float emin)) log isAbout: (Float emin - Float precision) * 2 log + 3 log description: 'Fraction>>log should not underflow'! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 10/19/2011 20:48'!
-testNthRoot
-	self assert: ((-2 raisedTo: 35) / (3 raisedTo: 20) raisedTo: 1/5) equals: (-2 raisedTo: 7) / (3 raisedTo: 4).
-	self assert: (1 / (1 << 2000) raisedTo: 1/100) equals: 1 / (1 << 20)! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:49'!
-testRaisedToErrorConditions
-	"
-	FractionTest new testRaisedToErrorConditions
-	"
-	self should: [ (-1/16) raisedTo: 1/4 ] raise: ArithmeticError.
-	self should: [ ((1 << 1024 + 1) / (1 << 1024 + 3)) negated raisedTo: 1/4 ] raise: ArithmeticError! !
-
-!FractionTest methodsFor: 'tests - sinuses' stamp: 'GabrielOmarCotelli 5/23/2009 20:19'!
-testReciprocal
-
-	self 
-		assert: (1/2) reciprocal = 2;
-		assert: (3/4) reciprocal = (4/3);
-		assert: (-1/3) reciprocal = -3;
-		assert: (-3/5) reciprocal = (-5/3)! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:48'!
-testSqrtErrorConditions
-	"
-	FractionTest new testSqrtErrorConditions
-	"
-	self should: [ (-1/4) sqrt ] raise: DomainError.
-	self should: [ ((1 << 1024 + 1) / (1 << 1024 + 3)) negated sqrt ] raise: DomainError! !
 
 !IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:12'!
 testAndSingleBitWithMinusOne
@@ -2876,6 +2903,148 @@ testBigReceiverInexactSqrt
 	self assert: (result successor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.
 	self assert: (result predecessor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.! !
 
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
+testExactRaisedTo
+	"
+	IntegerTest new testExactRaisedTo
+	"
+	self assert: (4 raisedTo: 1/2) classAndValueEquals: 2.
+	self assert: (9 raisedTo: 1/2) classAndValueEquals: 3.
+	self assert: (9 raisedTo: -1/2) classAndValueEquals: 1/3.
+	self assert: (-1 raisedTo: 1/3) classAndValueEquals: -1.
+	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
+		self assert: (i squared raisedTo: 1/2) classAndValueEquals: i.
+		self assert: (i negated squared raisedTo: 1/2) classAndValueEquals: i ].
+
+	self assert: (8 raisedTo: 1/3) classAndValueEquals: 2.
+	self assert: (27 raisedTo: 1/3) classAndValueEquals: 3.
+	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
+		self assert: ((i raisedTo: 3) raisedTo: 1/3) classAndValueEquals: i.
+		self assert: ((i negated raisedTo: 3) raisedTo: 1/3) classAndValueEquals: i negated ].
+
+	self assert: (4 raisedTo: 3/2) classAndValueEquals: 8.
+	self assert: (8 raisedTo: 2/3) classAndValueEquals: 4.
+	self assert: (8 raisedTo: -2/3) classAndValueEquals: 1/4.
+	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
+		self assert: ((i raisedTo: 3) raisedTo: 2/3) classAndValueEquals: i*i.
+		self assert: ((i raisedTo: 2) raisedTo: 3/2) classAndValueEquals: i*i*i.
+		self assert: ((i negated raisedTo: 3) raisedTo: 2/3) classAndValueEquals: i*i.
+		self assert: ((i negated raisedTo: 2) raisedTo: 3/2) classAndValueEquals: i*i*i ].
+
+	self assert: (32 raisedTo: 3/5) classAndValueEquals: 8.
+	self assert: (8 raisedTo: 5/3) classAndValueEquals: 32.
+	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
+		self assert: ((i raisedTo: 5) raisedTo: 3/5) classAndValueEquals: i*i*i.
+		self assert: ((i raisedTo: 3) raisedTo: 5/3) classAndValueEquals: i*i*i*i*i.
+		self assert: ((i negated raisedTo: 5) raisedTo: 3/5) classAndValueEquals: (i*i*i) negated.
+		self assert: ((i negated raisedTo: 3) raisedTo: 5/3) classAndValueEquals: (i*i*i*i*i) negated.
+
+		self assert: ((i raisedTo: -5) raisedTo: 3/5) classAndValueEquals: 1/(i*i*i).
+		self assert: ((i raisedTo: -3) raisedTo: 5/3) classAndValueEquals: 1/(i*i*i*i*i).
+		self assert: ((i negated raisedTo: -5) raisedTo: 3/5) classAndValueEquals: -1/(i*i*i).
+		self assert: ((i negated raisedTo: -3) raisedTo: 5/3) classAndValueEquals: -1/(i*i*i*i*i).
+
+		self assert: ((i raisedTo: 5) raisedTo: -3/5) classAndValueEquals: 1/(i*i*i).
+		self assert: ((i raisedTo: 3) raisedTo: -5/3) classAndValueEquals: 1/(i*i*i*i*i).
+		self assert: ((i negated raisedTo: 5) raisedTo: -3/5) classAndValueEquals: -1/(i*i*i).
+		self assert: ((i negated raisedTo: 3) raisedTo: -5/3) classAndValueEquals: -1/(i*i*i*i*i).
+
+		"No exact result => Float result"
+		self assert: ((i raisedTo: 3) +1 raisedTo: 5/3) isFloat.
+		self assert: ((i negated raisedTo: 3) -1 raisedTo: 5/3) isFloat ].! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/11/2011 22:09'!
+testExactSqrt
+	"
+	IntegerTest new testExactSqrt
+	"
+	self assert: 4 sqrt classAndValueEquals: 2.
+	self assert: 9 sqrt classAndValueEquals: 3.
+	self assert: Float maxExactInteger squared sqrt classAndValueEquals: Float maxExactInteger.
+	self assert: (Float maxExactInteger+1) squared sqrt classAndValueEquals: Float maxExactInteger+1.
+	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
+		self assert: i squared sqrt classAndValueEquals: i ]! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:09'!
+testLn
+	self assert: 100 ln isAbout: 10 ln*2.
+	self assert: (2 raisedTo: Float emax + 3) ln isAbout: 2 ln * (Float emax + 3) description: 'Integer>>ln should not overflow'! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:09'!
+testLog
+	self assert: 100 log isAbout: 2.
+	self assert: (2 raisedTo: Float emax + 3) log isAbout: 2 log * (Float emax + 3) description: 'Integer>>log should not overflow'! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/19/2011 22:48'!
+testNthRoot
+	"
+	IntegerTest new testNthRoot
+	"
+	| i |
+	i _ 1234987687234509123.
+	#(3 5 7 9 11 13 15 17 19 21 23 25 27) do: [ :n |
+		self assert: ((i raisedTo: n) nthRoot: n) = i ].
+
+	self shouldnt: [ (1 << 2000 nthRoot: 100) ] raise: ArithmeticError.
+	self assert: (1 << 2000 nthRoot: 100) equals: 1 << 20! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 09:09'!
+testNthRootErrorConditions
+	"
+	IntegerTest new testExactRaisedToErrorConditions
+	"
+
+	self should: [ -2 nthRoot: 1/4 ] raise: ArithmeticError.
+	self should: [ -2 nthRoot: 1.24 ] raise: ArithmeticError.! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/27/2015 13:43'!
+testNthRootTruncated
+	<timeout:  5 "seconds">
+	| tooBigToBeAFloat large theTruncatedRoot |
+	tooBigToBeAFloat _ 1 << 2000.
+	self assert: (tooBigToBeAFloat nthRootTruncated: 100) equals: 1 << 20.
+	self assert: (tooBigToBeAFloat + 1 nthRootTruncated: 100) equals: 1 << 20.
+	self assert: (tooBigToBeAFloat - 1 nthRootTruncated: 100) equals: 1 << 20 - 1.
+	
+	large := -3 raisedTo: 255.
+	self assert: (large nthRootTruncated: 17) equals: (-3 raisedTo: 15).
+	self assert: (large + 11 nthRootTruncated: 17) equals: (-3 raisedTo: 15) + 1.
+	self assert: (large - 11 nthRootTruncated: 17) equals: (-3 raisedTo: 15).
+	
+	2 to: 10 do: [:thePower |
+		1 to: 10000 do: [:n |
+			theTruncatedRoot _ n nthRootTruncated: thePower.
+			self assert: (theTruncatedRoot raisedTo: thePower) <= n.
+			self assert: (theTruncatedRoot + 1 raisedTo: thePower) > n]]! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:45'!
+testRaisedToErrorConditions
+	"
+	IntegerTest new testRaisedToErrorConditions
+	"
+
+	self should: [ -2 raisedTo: 1/4 ] raise: ArithmeticError.
+	self should: [ -2 raisedTo: 1.24 ] raise: ArithmeticError.! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
+testSqrtErrorConditions
+	"
+	IntegerTest new testSqrtErrorConditions
+	"
+
+	self should: [ -1 sqrt ] raise: ArithmeticError! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'ul 11/25/2009 03:01'!
+testSqrtFloor
+
+	#(-1234567890123 -10 -5 -1) do: [ :each |
+		self should: [ each sqrtFloor ] raise: Error ].
+	#(
+		0 1 2 3 4 5 10 16 30 160479924 386234481 501619156 524723498 580855366 766098594 834165249 1020363860 1042083924 1049218924
+		1459774772895569 3050005981408238 4856589481837079 5650488387708463 7831037396100244) do: [ :each |
+			self assert: each asFloat sqrt floor = each sqrtFloor ]
+		! !
+
 !IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 12/27/2009 03:11'!
 testBitAt
 	| trials bitSequence2 |
@@ -2953,6 +3122,76 @@ testBitLogic
 
 	self assert: (-2 bitAnd: 16rFFFFFFFF) = 16rFFFFFFFE.! !
 
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:47'!
+testHighBit
+	| suite |
+
+	suite := (0 to: 1024) asArray , #(16rFDFD 16rFFFF 16r1000 16r1000000 16r1000001 16r70000000 16r7AFAFAFA ) , {SmallInteger maxVal . SmallInteger maxVal+1}.
+	suite := suite , (suite collect: [:e | e raisedTo: 20]).
+	
+	suite do: [:anInteger |
+		| highBit shifted |
+		highBit := 0.
+		shifted := 1.
+		[shifted > anInteger] whileFalse: [highBit := highBit+1. shifted := shifted bitShift: 1].
+		self assert: anInteger highBit = highBit].! !
+
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:44'!
+testHighBitOfMagnitude
+	| suite |
+
+	suite := (0 to: 1024) asArray , #(16rFDFD 16rFFFF 16r1000 16r1000000 16r1000001 16r70000000 16r7AFAFAFA ) , {SmallInteger maxVal . SmallInteger maxVal+1}.
+	suite := suite , (suite collect: [:e | e raisedTo: 20]).
+	
+	suite do: [:anInteger |
+		| highBit shifted |
+		highBit := 0.
+		shifted := 1.
+		[shifted > anInteger] whileFalse: [highBit := highBit+1. shifted := shifted bitShift: 1].
+		self assert: anInteger highBitOfMagnitude = highBit.
+		self assert: anInteger negated highBitOfMagnitude = highBit].! !
+
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:21'!
+testLowBit
+	| suite |
+
+	suite := (0 to: 1024) asArray , #(16rFDFD 16rFFFF 16r1000 16r1000000 16r1000001 16r70000000 16r7AFAFAFA ) , {SmallInteger maxVal . SmallInteger maxVal+1}.
+	suite := suite , (suite collect: [:e | e raisedTo: 20]).
+	
+	suite do: [:anInteger |
+		| lowBit |
+		lowBit := (anInteger respondsTo: #bitAt:)
+			ifTrue: [(1 to: anInteger highBit) detect: [:bitIndex | (anInteger bitAt: bitIndex) ~= 0] ifNone: [0]]
+			ifFalse: [(1 to: anInteger highBit) detect: [:bitIndex | (anInteger bitAnd: (1 bitShift: bitIndex-1)) ~= 0] ifNone: [0]].
+		self assert: anInteger lowBit = lowBit.
+		self assert: anInteger negated lowBit = lowBit].! !
+
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 1/26/2008 02:22'!
+testTwoComplementBitLogicWithCarry
+	"This is non regression test for http://bugs.squeak.org/view.php?id=6874"
+	
+	"By property of two complement, following operation is:
+	...111110000 this is -16
+	...111101111 this is -16-1
+	...111100000 this is -32, the result of bitAnd: on two complement
+	
+	This test used to fail with n=31 39 47.... because of bug 6874"
+	
+	self assert: ((2 to: 80) allSatisfy: [:n | ((2 raisedTo: n) negated bitAnd: (2 raisedTo: n) negated - 1) = (2 raisedTo: n + 1) negated]).! !
+
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'sd 6/5/2005 08:44'!
+testTwoComplementRightShift
+	"self run: #testTwoComplementRightShift"
+
+	| large small |
+	small := 2 << 16.
+	large := 2 << 32.	
+	self assert: ((small negated bitShift: -1) ~= ((small + 1) negated bitShift: -1)
+		== ((large negated bitShift: -1) ~= ((large + 1) negated bitShift: -1))).
+		
+     self assert: ((small bitShift: -1) ~= (small + 1 bitShift: -1)
+		== ((large bitShift: -1) ~= (large + 1 bitShift: -1))).! !
+
 !IntegerTest methodsFor: 'testing - arithmetic' stamp: 'mga 5/11/2006 15:41'!
 testCrossSumBase
 	"self run: #testCrossSumBase"
@@ -2965,6 +3204,14 @@ testCrossSumBase
 		#(2 3 2 2 1 4 3 3 2 3 2 2 1 3 2 2 1 2 1 1 0 1 1 2 1 2 2 3 1 2 2 3 2 3 3 4 1 2 2 3 2)).
 	self should: [10 crossSumBase: 1] raise: AssertionFailure! !
 
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 6/4/2011 20:46'!
+testRaisedToModulo
+	#(301 2047) do: [:m |
+		1 to: m - 1 by: (m // 30) do: [:x |
+			11 to: m - 1 by: (m // 40) do: [:y |
+				self assert: (x raisedTo: y) \\ m = (x raisedTo: y modulo: m)]]].
+	self assert: (8951195 raisedTo: 7742931 modulo: 15485863) = 15485862.! !
+
 !IntegerTest methodsFor: 'tests - basic' stamp: 'jmv 3/14/2012 09:05'!
 testDegreeCos
 	"
@@ -2974,6 +3221,93 @@ testDegreeCos
 		shouldnt: [ 45 degreeCos ]
 		raise: Error.
 	self assert: (45 degreeCos roundTo: 1e-14) = ((2 sqrt / 2) asFloat roundTo: 1e-14).! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'md 4/21/2003 16:17'!
+testEven
+	
+	self deny: (1073741825 even).
+	self assert: (1073741824  even).
+	! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'sd 6/5/2005 08:45'!
+testIsInteger
+
+	self assert: (0 isInteger).
+	! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'md 4/15/2003 20:40'!
+testIsPowerOfTwo
+
+	self assert: (0 isPowerOfTwo).
+	self assert: (1 isPowerOfTwo).
+	self assert: (2 isPowerOfTwo).
+	self deny:  (3 isPowerOfTwo).
+	self assert: (4 isPowerOfTwo).
+	! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'nice 1/25/2008 22:51'!
+testIsPowerOfTwoM6873
+	"This is a non regression test for http://bugs.squeak.org/view.php?id=6873"
+
+	self deny: ((1 to: 80) anySatisfy: [:n | (2 raisedTo: n) negated isPowerOfTwo])
+		description: 'A negative integer cannot be a power of two'.! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'ul 11/25/2009 02:51'!
+testIsPrime
+
+	"Not primes:"
+	#(-100 -5 -3 -2 -1 0 1) do: [ :each |
+		self deny: each isPrime ].
+
+	"The following tests should return 'true'"
+	#(17 78901 104729 15485863 2038074743) do: [ :each |
+		self assert: each isPrime ].
+	
+	"The following tests should return 'false' (first 5 are Carmichael integers)"
+	#(561 2821 6601 10585 15841 256 29996224275831) do: [ :each |
+		self deny: each isPrime ].! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'ul 11/25/2009 02:49'!
+testIsProbablyPrime
+
+	"Not primes:"
+	#(-100 -5 -3 -2 -1 0 1) do: [ :each |
+		self deny: each isProbablyPrime ].
+
+	"The following tests should return 'true'"
+	#(17 78901 104729 15485863 2038074743 29996224275833) do: [ :each |
+		self assert: each isProbablyPrime ].
+	
+	"The following tests should return 'false' (first 5 are Carmichael integers)"
+	#(561 2821 6601 10585 15841 256 29996224275831) do: [ :each |
+		self deny: each isProbablyPrime ].! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'md 2/12/2006 14:36'!
+testLargePrimesUpTo
+
+	| nn | 
+	nn := (2 raisedTo: 17) - 1. 
+	self deny: (Integer primesUpTo: nn) last = nn.
+	self assert: (Integer primesUpTo: nn + 1) last  = nn.
+	
+	
+! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'md 2/12/2006 14:36'!
+testPrimesUpTo
+
+	| primes nn|
+	primes := Integer primesUpTo: 100.
+	self assert: primes = #(2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97).
+	
+	"upTo: semantics means 'non-inclusive'"
+	primes := Integer primesUpTo: 5.
+	self assert: primes = #(2 3).
+	
+	"this test is green for nn>25000, see #testLargePrimesUpTo"
+	nn := 5. 
+	self deny: (Integer primesUpTo: nn) last = nn.
+	self assert: (Integer primesUpTo: nn + 1) last  = nn.! !
 
 !IntegerTest methodsFor: 'tests - instance creation' stamp: 'sd 6/5/2005 08:46'!
 testDifferentBases
@@ -3064,6 +3398,61 @@ testDifferentBases
 	self assert: -34rXWVUTSRQPONMLKJIHGFEDCBA9876543210 = -11745843093701610854378775891116314824081102660800418.
 	self assert: -35rYXWVUTSRQPONMLKJIHGFEDCBA9876543210 = -1101553773143634726491620528194292510495517905608180485.
 	self assert: -36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210 = -106300512100105327644605138221229898724869759421181854980.! !
+
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:56'!
+testIntegerReadFrom
+	self assert: (Integer readFrom: '123' readStream base: 10) = 123.
+	self assert: (Integer readFrom: '-123' readStream base: 10) = -123.
+	self should: [Integer readFrom: 'abc' readStream base: 10] raise: Error.
+	self should: [Integer readFrom: 'D12' readStream base: 10] raise: Error.
+	self assert: (Integer readFrom: '1two3' readStream base: 10) = 1.
+! !
+
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'md 3/25/2003 23:14'!
+testNew
+	self should: [Integer new] raise: TestResult error. ! !
+
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:26'!
+testReadFrom
+	"Ensure remaining characters in a stream are not lost when parsing an integer."
+
+	| rs i s |
+	rs := ReadStream on: '123s could be confused with a ScaledDecimal'.
+	i := Number readFrom: rs.
+	self assert: i isInteger.
+	self assert: i = 123.
+	s := rs upToEnd.
+	self assert: 's could be confused with a ScaledDecimal' = s.
+	
+	"Modified for Cuis. Classic number parsing considers this to be an integer."
+	rs := ReadStream on: '123.s could be confused with a ScaledDecimal'.
+	i := Number readFrom: rs.
+	self assert: i isInteger.
+	self assert: i = 123.
+	s := rs upToEnd.
+	self assert: '.s could be confused with a ScaledDecimal' = s
+! !
+
+!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:45'!
+testStringAsNumber
+	"This covers parsing in Number>>readFrom:
+	Trailing decimal points should be ignored."
+
+	self assert: ('123' asNumber isInteger).
+	self assert: ('123' asNumber = 123).
+	self assert: ('-123' asNumber isInteger).
+	self assert: ('-123' asNumber = -123).
+	self assert: ('123.' asNumber) isInteger.
+	self assert: ('123.' asNumber = 123).
+	self assert: ('-123.' asNumber) isInteger.
+	self assert: ('-123.' asNumber = -123).
+	self assert: ('123This is not to be read' asNumber isInteger).
+	self assert: ('123This is not to be read' asNumber = 123).
+	self assert: ('123s could be confused with a ScaledDecimal' asNumber isInteger).
+	self assert: ('123s could be confused with a ScaledDecimal' asNumber = 123).
+	self assert: ('123e could be confused with a Float' asNumber isInteger).
+	self assert: ('123e could be confused with a Float' asNumber = 123).
+! !
 
 !IntegerTest methodsFor: 'tests - division - div:' stamp: 'sqr 1/25/2014 14:53'!
 testDivLnLn
@@ -3209,104 +3598,6 @@ testDivSpSp
 	self assert: (12 div: 3) = 4.
 	self assert: (13 div: 3) = 4! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'md 4/21/2003 16:17'!
-testEven
-	
-	self deny: (1073741825 even).
-	self assert: (1073741824  even).
-	! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
-testExactRaisedTo
-	"
-	IntegerTest new testExactRaisedTo
-	"
-	self assert: (4 raisedTo: 1/2) classAndValueEquals: 2.
-	self assert: (9 raisedTo: 1/2) classAndValueEquals: 3.
-	self assert: (9 raisedTo: -1/2) classAndValueEquals: 1/3.
-	self assert: (-1 raisedTo: 1/3) classAndValueEquals: -1.
-	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
-		self assert: (i squared raisedTo: 1/2) classAndValueEquals: i.
-		self assert: (i negated squared raisedTo: 1/2) classAndValueEquals: i ].
-
-	self assert: (8 raisedTo: 1/3) classAndValueEquals: 2.
-	self assert: (27 raisedTo: 1/3) classAndValueEquals: 3.
-	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
-		self assert: ((i raisedTo: 3) raisedTo: 1/3) classAndValueEquals: i.
-		self assert: ((i negated raisedTo: 3) raisedTo: 1/3) classAndValueEquals: i negated ].
-
-	self assert: (4 raisedTo: 3/2) classAndValueEquals: 8.
-	self assert: (8 raisedTo: 2/3) classAndValueEquals: 4.
-	self assert: (8 raisedTo: -2/3) classAndValueEquals: 1/4.
-	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
-		self assert: ((i raisedTo: 3) raisedTo: 2/3) classAndValueEquals: i*i.
-		self assert: ((i raisedTo: 2) raisedTo: 3/2) classAndValueEquals: i*i*i.
-		self assert: ((i negated raisedTo: 3) raisedTo: 2/3) classAndValueEquals: i*i.
-		self assert: ((i negated raisedTo: 2) raisedTo: 3/2) classAndValueEquals: i*i*i ].
-
-	self assert: (32 raisedTo: 3/5) classAndValueEquals: 8.
-	self assert: (8 raisedTo: 5/3) classAndValueEquals: 32.
-	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
-		self assert: ((i raisedTo: 5) raisedTo: 3/5) classAndValueEquals: i*i*i.
-		self assert: ((i raisedTo: 3) raisedTo: 5/3) classAndValueEquals: i*i*i*i*i.
-		self assert: ((i negated raisedTo: 5) raisedTo: 3/5) classAndValueEquals: (i*i*i) negated.
-		self assert: ((i negated raisedTo: 3) raisedTo: 5/3) classAndValueEquals: (i*i*i*i*i) negated.
-
-		self assert: ((i raisedTo: -5) raisedTo: 3/5) classAndValueEquals: 1/(i*i*i).
-		self assert: ((i raisedTo: -3) raisedTo: 5/3) classAndValueEquals: 1/(i*i*i*i*i).
-		self assert: ((i negated raisedTo: -5) raisedTo: 3/5) classAndValueEquals: -1/(i*i*i).
-		self assert: ((i negated raisedTo: -3) raisedTo: 5/3) classAndValueEquals: -1/(i*i*i*i*i).
-
-		self assert: ((i raisedTo: 5) raisedTo: -3/5) classAndValueEquals: 1/(i*i*i).
-		self assert: ((i raisedTo: 3) raisedTo: -5/3) classAndValueEquals: 1/(i*i*i*i*i).
-		self assert: ((i negated raisedTo: 5) raisedTo: -3/5) classAndValueEquals: -1/(i*i*i).
-		self assert: ((i negated raisedTo: 3) raisedTo: -5/3) classAndValueEquals: -1/(i*i*i*i*i).
-
-		"No exact result => Float result"
-		self assert: ((i raisedTo: 3) +1 raisedTo: 5/3) isFloat.
-		self assert: ((i negated raisedTo: 3) -1 raisedTo: 5/3) isFloat ].! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/11/2011 22:09'!
-testExactSqrt
-	"
-	IntegerTest new testExactSqrt
-	"
-	self assert: 4 sqrt classAndValueEquals: 2.
-	self assert: 9 sqrt classAndValueEquals: 3.
-	self assert: Float maxExactInteger squared sqrt classAndValueEquals: Float maxExactInteger.
-	self assert: (Float maxExactInteger+1) squared sqrt classAndValueEquals: Float maxExactInteger+1.
-	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
-		self assert: i squared sqrt classAndValueEquals: i ]! !
-
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:47'!
-testHighBit
-	| suite |
-
-	suite := (0 to: 1024) asArray , #(16rFDFD 16rFFFF 16r1000 16r1000000 16r1000001 16r70000000 16r7AFAFAFA ) , {SmallInteger maxVal . SmallInteger maxVal+1}.
-	suite := suite , (suite collect: [:e | e raisedTo: 20]).
-	
-	suite do: [:anInteger |
-		| highBit shifted |
-		highBit := 0.
-		shifted := 1.
-		[shifted > anInteger] whileFalse: [highBit := highBit+1. shifted := shifted bitShift: 1].
-		self assert: anInteger highBit = highBit].! !
-
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:44'!
-testHighBitOfMagnitude
-	| suite |
-
-	suite := (0 to: 1024) asArray , #(16rFDFD 16rFFFF 16r1000 16r1000000 16r1000001 16r70000000 16r7AFAFAFA ) , {SmallInteger maxVal . SmallInteger maxVal+1}.
-	suite := suite , (suite collect: [:e | e raisedTo: 20]).
-	
-	suite do: [:anInteger |
-		| highBit shifted |
-		highBit := 0.
-		shifted := 1.
-		[shifted > anInteger] whileFalse: [highBit := highBit+1. shifted := shifted bitShift: 1].
-		self assert: anInteger highBitOfMagnitude = highBit.
-		self assert: anInteger negated highBitOfMagnitude = highBit].! !
-
 !IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 1/9/2014 23:39'!
 testIntegerPadding
 	"self run: #testIntegerPadding"
@@ -3346,248 +3637,6 @@ testIntegerPadding
 	self assert: (2047 printStringBase: 16 length: 4 padded: true) =  '07FF'.
 	self assert: (-2047 printStringBase: 16 length: 4 padded: true) = '-7FF'.
 	self assert: (-2047 printStringBase: 16 length: 19 padded: true) =  '-0000000000000007FF'! !
-
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:56'!
-testIntegerReadFrom
-	self assert: (Integer readFrom: '123' readStream base: 10) = 123.
-	self assert: (Integer readFrom: '-123' readStream base: 10) = -123.
-	self should: [Integer readFrom: 'abc' readStream base: 10] raise: Error.
-	self should: [Integer readFrom: 'D12' readStream base: 10] raise: Error.
-	self assert: (Integer readFrom: '1two3' readStream base: 10) = 1.
-! !
-
-!IntegerTest methodsFor: 'tests - basic' stamp: 'sd 6/5/2005 08:45'!
-testIsInteger
-
-	self assert: (0 isInteger).
-	! !
-
-!IntegerTest methodsFor: 'tests - basic' stamp: 'md 4/15/2003 20:40'!
-testIsPowerOfTwo
-
-	self assert: (0 isPowerOfTwo).
-	self assert: (1 isPowerOfTwo).
-	self assert: (2 isPowerOfTwo).
-	self deny:  (3 isPowerOfTwo).
-	self assert: (4 isPowerOfTwo).
-	! !
-
-!IntegerTest methodsFor: 'tests - basic' stamp: 'nice 1/25/2008 22:51'!
-testIsPowerOfTwoM6873
-	"This is a non regression test for http://bugs.squeak.org/view.php?id=6873"
-
-	self deny: ((1 to: 80) anySatisfy: [:n | (2 raisedTo: n) negated isPowerOfTwo])
-		description: 'A negative integer cannot be a power of two'.! !
-
-!IntegerTest methodsFor: 'tests - basic' stamp: 'ul 11/25/2009 02:51'!
-testIsPrime
-
-	"Not primes:"
-	#(-100 -5 -3 -2 -1 0 1) do: [ :each |
-		self deny: each isPrime ].
-
-	"The following tests should return 'true'"
-	#(17 78901 104729 15485863 2038074743) do: [ :each |
-		self assert: each isPrime ].
-	
-	"The following tests should return 'false' (first 5 are Carmichael integers)"
-	#(561 2821 6601 10585 15841 256 29996224275831) do: [ :each |
-		self deny: each isPrime ].! !
-
-!IntegerTest methodsFor: 'tests - basic' stamp: 'ul 11/25/2009 02:49'!
-testIsProbablyPrime
-
-	"Not primes:"
-	#(-100 -5 -3 -2 -1 0 1) do: [ :each |
-		self deny: each isProbablyPrime ].
-
-	"The following tests should return 'true'"
-	#(17 78901 104729 15485863 2038074743 29996224275833) do: [ :each |
-		self assert: each isProbablyPrime ].
-	
-	"The following tests should return 'false' (first 5 are Carmichael integers)"
-	#(561 2821 6601 10585 15841 256 29996224275831) do: [ :each |
-		self deny: each isProbablyPrime ].! !
-
-!IntegerTest methodsFor: 'tests - basic' stamp: 'md 2/12/2006 14:36'!
-testLargePrimesUpTo
-
-	| nn | 
-	nn := (2 raisedTo: 17) - 1. 
-	self deny: (Integer primesUpTo: nn) last = nn.
-	self assert: (Integer primesUpTo: nn + 1) last  = nn.
-	
-	
-! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:09'!
-testLn
-	self assert: 100 ln isAbout: 10 ln*2.
-	self assert: (2 raisedTo: Float emax + 3) ln isAbout: 2 ln * (Float emax + 3) description: 'Integer>>ln should not overflow'! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:09'!
-testLog
-	self assert: 100 log isAbout: 2.
-	self assert: (2 raisedTo: Float emax + 3) log isAbout: 2 log * (Float emax + 3) description: 'Integer>>log should not overflow'! !
-
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:21'!
-testLowBit
-	| suite |
-
-	suite := (0 to: 1024) asArray , #(16rFDFD 16rFFFF 16r1000 16r1000000 16r1000001 16r70000000 16r7AFAFAFA ) , {SmallInteger maxVal . SmallInteger maxVal+1}.
-	suite := suite , (suite collect: [:e | e raisedTo: 20]).
-	
-	suite do: [:anInteger |
-		| lowBit |
-		lowBit := (anInteger respondsTo: #bitAt:)
-			ifTrue: [(1 to: anInteger highBit) detect: [:bitIndex | (anInteger bitAt: bitIndex) ~= 0] ifNone: [0]]
-			ifFalse: [(1 to: anInteger highBit) detect: [:bitIndex | (anInteger bitAnd: (1 bitShift: bitIndex-1)) ~= 0] ifNone: [0]].
-		self assert: anInteger lowBit = lowBit.
-		self assert: anInteger negated lowBit = lowBit].! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:57'!
-testModLnLn
-
-	self assert: (-42391158275216203514294433200 mod: -14130386091738734504764811067) = 1.
-	self assert: (-42391158275216203514294433201 mod: -14130386091738734504764811067) = 0.
-	self assert: (-42391158275216203514294433202 mod: -14130386091738734504764811067) = 14130386091738734504764811066.
-	self assert: (-8727963568087712425891397479476727340041448 mod: -79766443076872509863361) = 1.
-	self assert: (-8727963568087712425891397479476727340041449 mod: -79766443076872509863361) = 0.
-	self assert: (-8727963568087712425891397479476727340041450 mod: -79766443076872509863361) = 79766443076872509863360! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
-testModLnLp
-
-	self assert: (-42391158275216203514294433200 mod: 14130386091738734504764811067) = 1.
-	self assert: (-42391158275216203514294433201 mod: 14130386091738734504764811067) = 0.
-	self assert: (-42391158275216203514294433202 mod: 14130386091738734504764811067) = 14130386091738734504764811066.
-	self assert: (-8727963568087712425891397479476727340041448 mod: 79766443076872509863361) = 1.
-	self assert: (-8727963568087712425891397479476727340041449 mod: 79766443076872509863361) = 0.
-	self assert: (-8727963568087712425891397479476727340041450 mod: 79766443076872509863361) = 79766443076872509863360! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
-testModLnSn
-
-	self assert: (-42391158275216203514294433201 mod: -3) = 0.
-	self assert: (-42391158275216203514294433202 mod: -3) = 2.
-	self assert: (-42391158275216203514294433203 mod: -3) = 1.
-	self assert: (-42391158275216203514294433204 mod: -3) = 0! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
-testModLnSp
-
-	self assert: (-42391158275216203514294433201 mod: 3) = 0.
-	self assert: (-42391158275216203514294433202 mod: 3) = 2.
-	self assert: (-42391158275216203514294433203 mod: 3) = 1.
-	self assert: (-42391158275216203514294433204 mod: 3) = 0! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
-testModLpLn
-
-	self assert: (42391158275216203514294433200 mod: -14130386091738734504764811067) = 14130386091738734504764811066.
-	self assert: (42391158275216203514294433201 mod: -14130386091738734504764811067) = 0.
-	self assert: (42391158275216203514294433202 mod: -14130386091738734504764811067) = 1.
-	self assert: (8727963568087712425891397479476727340041448 mod: -79766443076872509863361) = 79766443076872509863360.
-	self assert: (8727963568087712425891397479476727340041449 mod: -79766443076872509863361) = 0.
-	self assert: (8727963568087712425891397479476727340041450 mod: -79766443076872509863361) = 1! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
-testModLpLp
-
-	self assert: (42391158275216203514294433200 mod: 14130386091738734504764811067) = 14130386091738734504764811066.
-	self assert: (42391158275216203514294433201 mod: 14130386091738734504764811067) = 0.
-	self assert: (42391158275216203514294433202 mod: 14130386091738734504764811067) = 1.
-	self assert: (8727963568087712425891397479476727340041448 mod: 79766443076872509863361) = 79766443076872509863360.
-	self assert: (8727963568087712425891397479476727340041449 mod: 79766443076872509863361) = 0.
-	self assert: (8727963568087712425891397479476727340041450 mod: 79766443076872509863361) = 1! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:04'!
-testModLpSn
-
-	self assert: (42391158275216203514294433201 mod: -3) = 0.
-	self assert: (42391158275216203514294433202 mod: -3) = 1.
-	self assert: (42391158275216203514294433203 mod: -3) = 2.
-	self assert: (42391158275216203514294433204 mod: -3) = 0! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
-testModLpSp
-
-	self assert: (42391158275216203514294433201 mod: 3) = 0.
-	self assert: (42391158275216203514294433202 mod: 3) = 1.
-	self assert: (42391158275216203514294433203 mod: 3) = 2.
-	self assert: (42391158275216203514294433204 mod: 3) = 0! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:04'!
-testModSnLn
-
-	self assert: (0 mod: -42391158275216203514294433201) = 0.
-	self assert: (-1 mod: -42391158275216203514294433201) = 42391158275216203514294433200.
-	self assert: (-14348907 mod: -42391158275216203514294433201) = 42391158275216203514280084294! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
-testModSnLp
-
-	self assert: (0 mod: 42391158275216203514294433201) = 0.
-	self assert: (-1 mod: 42391158275216203514294433201) =  42391158275216203514294433200.
-	self assert: (-14348907 mod: 42391158275216203514294433201) = 42391158275216203514280084294! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:00'!
-testModSnSn
-
-	self assert: (0 mod: -3) = 0.
-	self assert: (-1 mod: -3) = 2.
-	self assert: (-9 mod: -3) = 0.
-	self assert: (-10 mod: -3) = 2.
-	self assert: (-11 mod: -3) = 1.
-	self assert: (-12 mod: -3) = 0.
-	self assert: (-13 mod: -3) = 2! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:59'!
-testModSnSp
-
-	self assert: (0 mod: 3) = 0.
-	self assert: (-1 mod: 3) = 2.
-	self assert: (-9 mod: 3) = 0.
-	self assert: (-10 mod: 3) = 2.
-	self assert: (-11 mod: 3) = 1.
-	self assert: (-12 mod: 3) = 0.
-	self assert: (-13 mod: 3) = 2! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
-testModSpLn
-
-	self assert: (0 mod: -42391158275216203514294433201) = 0.
-	self assert: (1 mod: -42391158275216203514294433201) = 1.
-	self assert: (14348907 mod: -42391158275216203514294433201) = 14348907! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
-testModSpLp
-
-	self assert: (0 mod: 42391158275216203514294433201) = 0.
-	self assert: (1 mod: 42391158275216203514294433201) = 1.
-	self assert: (14348907 mod: 42391158275216203514294433201) = 14348907! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:58'!
-testModSpSn
-
-	self assert: (0 mod: -3) = 0.
-	self assert: (1 mod: -3) = 1.
-	self assert: (9 mod: -3) = 0.
-	self assert: (10 mod: -3) = 1.
-	self assert: (11 mod: -3) = 2.
-	self assert: (12 mod: -3) = 0.
-	self assert: (13 mod: -3) = 1! !
-
-!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
-testModSpSp
-
-	self assert: (0 mod: 3) = 0.
-	self assert: (1 mod: 3) = 1.
-	self assert: (9 mod: 3) = 0.
-	self assert: (10 mod: 3) = 1.
-	self assert: (11 mod: 3) = 2.
-	self assert: (12 mod: 3) = 0.
-	self assert: (13 mod: 3) = 1! !
 
 !IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 1/9/2014 22:54'!
 testNegativeIntegerPrinting
@@ -3733,85 +3782,6 @@ testNegativeIntegerPrinting
 	self assert: -106300512100105327644605138221229898724869759421181854980 printStringHex = '-455D441E55A37239AB4C303189576071AF5578FFCA80504'.
 	self assert: (-106300512100105327644605138221229898724869759421181854980 storeStringBase: 36) = '-36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210'.
 	self assert: -106300512100105327644605138221229898724869759421181854980 storeStringHex = '-16r455D441E55A37239AB4C303189576071AF5578FFCA80504'.! !
-
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'md 3/25/2003 23:14'!
-testNew
-	self should: [Integer new] raise: TestResult error. ! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/19/2011 22:48'!
-testNthRoot
-	"
-	IntegerTest new testNthRoot
-	"
-	| i |
-	i _ 1234987687234509123.
-	#(3 5 7 9 11 13 15 17 19 21 23 25 27) do: [ :n |
-		self assert: ((i raisedTo: n) nthRoot: n) = i ].
-
-	self shouldnt: [ (1 << 2000 nthRoot: 100) ] raise: ArithmeticError.
-	self assert: (1 << 2000 nthRoot: 100) equals: 1 << 20! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 09:09'!
-testNthRootErrorConditions
-	"
-	IntegerTest new testExactRaisedToErrorConditions
-	"
-
-	self should: [ -2 nthRoot: 1/4 ] raise: ArithmeticError.
-	self should: [ -2 nthRoot: 1.24 ] raise: ArithmeticError.! !
-
-!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 10/15/2016 10:58:02'!
-testNthRootExactnessForHugeValue
-	"
-	self new testNthRootExactnessForHugeValue
-	"
-        self assert: ((10 raisedTo: 600) nthRoot: 300) = 100.
-        self assert: ((10 raisedTo: 600) nthRoot: 300) class == SmallInteger.
-        self assert: ((10 raisedTo: 600) + 1 nthRoot: 300) = 100.0.
-        self assert: (((10 raisedTo: 600) + 1 nthRoot: 300) isKindOf: Float)! !
-
-!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 10/15/2016 10:57:28'!
-testNthRootImmuneToDoubleRounding
-"
-self new testNthRootImmuneToDoubleRounding
-"
-          "Use a specially crafted number for causing double rounding.
-         Solution is 10...01.1 - verySmallQuantity.
-         Where verySmallQuantity is approximately 1/53/(1<<53).
-         If the verySmallQuantity is not taken into account, then solution is rounded to 10....010"
-         | exponent crafted root highPrecisionRoot |
-         exponent := 4.
-         crafted := (1 << Float precision + 3 raisedTo: exponent) - 1.
-         root := crafted nthRoot: exponent.
-         highPrecisionRoot := (crafted << (exponent squared * Float precision * 4) nthRootRounded: exponent) / (1 << (exponent * Float precision * 4)).
-         self assert: (root asFraction - highPrecisionRoot) abs < (root predecessor asFraction - highPrecisionRoot) abs.
-         
-         "Same with the other sign.
-         Solution is 10...00.1 + verySmallQuantity."
-         crafted := (1 << Float precision + 1 raisedTo: exponent) + 1.
-         root := crafted nthRoot: exponent.
-         highPrecisionRoot := (crafted << (exponent squared * Float precision * 4) nthRootRounded: exponent) / (1 << (exponent * Float precision * 4)).
-         self assert: (root asFraction - highPrecisionRoot) abs < (root successor asFraction - highPrecisionRoot) abs.! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/27/2015 13:43'!
-testNthRootTruncated
-	<timeout:  5 "seconds">
-	| tooBigToBeAFloat large theTruncatedRoot |
-	tooBigToBeAFloat _ 1 << 2000.
-	self assert: (tooBigToBeAFloat nthRootTruncated: 100) equals: 1 << 20.
-	self assert: (tooBigToBeAFloat + 1 nthRootTruncated: 100) equals: 1 << 20.
-	self assert: (tooBigToBeAFloat - 1 nthRootTruncated: 100) equals: 1 << 20 - 1.
-	
-	large := -3 raisedTo: 255.
-	self assert: (large nthRootTruncated: 17) equals: (-3 raisedTo: 15).
-	self assert: (large + 11 nthRootTruncated: 17) equals: (-3 raisedTo: 15) + 1.
-	self assert: (large - 11 nthRootTruncated: 17) equals: (-3 raisedTo: 15).
-	
-	2 to: 10 do: [:thePower |
-		1 to: 10000 do: [:n |
-			theTruncatedRoot _ n nthRootTruncated: thePower.
-			self assert: (theTruncatedRoot raisedTo: thePower) <= n.
-			self assert: (theTruncatedRoot + 1 raisedTo: thePower) > n]]! !
 
 !IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 5/27/2015 14:04'!
 testNumberOfDigits
@@ -3977,22 +3947,6 @@ testPositiveIntegerPrinting
 	self assert: (106300512100105327644605138221229898724869759421181854980 storeStringBase: 36) = '36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210'.
 	self assert: 106300512100105327644605138221229898724869759421181854980 storeStringHex = '16r455D441E55A37239AB4C303189576071AF5578FFCA80504'.! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'md 2/12/2006 14:36'!
-testPrimesUpTo
-
-	| primes nn|
-	primes := Integer primesUpTo: 100.
-	self assert: primes = #(2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97).
-	
-	"upTo: semantics means 'non-inclusive'"
-	primes := Integer primesUpTo: 5.
-	self assert: primes = #(2 3).
-	
-	"this test is green for nn>25000, see #testLargePrimesUpTo"
-	nn := 5. 
-	self deny: (Integer primesUpTo: nn) last = nn.
-	self assert: (Integer primesUpTo: nn + 1) last  = nn.! !
-
 !IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 5/27/2015 14:05'!
 testPrintStringBase
 	
@@ -4006,6 +3960,276 @@ testPrintStringBase
 			self assert: (bRaisedToN negated + 1 printStringBase: b) = ('-' , (String new: n withAll: (Character digitValue: b-1))).
 			self assert: (bRaisedToN negated printStringBase: b) = ('-1' , (String new: n withAll: $0))]].
 ! !
+
+!IntegerTest methodsFor: 'tests - printing' stamp: 'laza 3/30/2004 09:23'!
+testRomanPrinting
+	self assert: 0 printStringRoman = ''. "No symbol for zero"
+	self assert: 1 printStringRoman = 'I'.
+	self assert: 2 printStringRoman = 'II'.
+	self assert: 3 printStringRoman = 'III'.
+	self assert: 4 printStringRoman = 'IV'.
+	self assert: 5 printStringRoman = 'V'.
+	self assert: 6 printStringRoman = 'VI'.
+	self assert: 7 printStringRoman = 'VII'.
+	self assert: 8 printStringRoman = 'VIII'.
+	self assert: 9 printStringRoman = 'IX'.
+	self assert: 10 printStringRoman = 'X'.
+	self assert: 23 printStringRoman = 'XXIII'.
+	self assert: 36 printStringRoman = 'XXXVI'.
+	self assert: 49 printStringRoman = 'XLIX'.
+	self assert: 62 printStringRoman = 'LXII'.
+	self assert: 75 printStringRoman = 'LXXV'.
+	self assert: 88 printStringRoman = 'LXXXVIII'.
+	self assert: 99 printStringRoman = 'XCIX'.
+	self assert: 100 printStringRoman = 'C'.
+	self assert: 101 printStringRoman = 'CI'.
+	self assert: 196 printStringRoman = 'CXCVI'.
+	self assert: 197 printStringRoman = 'CXCVII'.
+	self assert: 198 printStringRoman = 'CXCVIII'.
+	self assert: 293 printStringRoman = 'CCXCIII'.
+	self assert: 294 printStringRoman = 'CCXCIV'.
+	self assert: 295 printStringRoman = 'CCXCV'.
+	self assert: 390 printStringRoman = 'CCCXC'.
+	self assert: 391 printStringRoman = 'CCCXCI'.
+	self assert: 392 printStringRoman = 'CCCXCII'.
+	self assert: 487 printStringRoman = 'CDLXXXVII'.
+	self assert: 488 printStringRoman = 'CDLXXXVIII'.
+	self assert: 489 printStringRoman = 'CDLXXXIX'.
+	self assert: 584 printStringRoman = 'DLXXXIV'.
+	self assert: 585 printStringRoman = 'DLXXXV'.
+	self assert: 586 printStringRoman = 'DLXXXVI'.
+	self assert: 681 printStringRoman = 'DCLXXXI'.
+	self assert: 682 printStringRoman = 'DCLXXXII'.
+	self assert: 683 printStringRoman = 'DCLXXXIII'.
+	self assert: 778 printStringRoman = 'DCCLXXVIII'.
+	self assert: 779 printStringRoman = 'DCCLXXIX'.
+	self assert: 780 printStringRoman = 'DCCLXXX'.
+	self assert: 875 printStringRoman = 'DCCCLXXV'.
+	self assert: 876 printStringRoman = 'DCCCLXXVI'.
+	self assert: 877 printStringRoman = 'DCCCLXXVII'.
+	self assert: 972 printStringRoman = 'CMLXXII'.
+	self assert: 973 printStringRoman = 'CMLXXIII'.
+	self assert: 974 printStringRoman = 'CMLXXIV'.
+	self assert: 1069 printStringRoman = 'MLXIX'.
+	self assert: 1070 printStringRoman = 'MLXX'.
+	self assert: 1071 printStringRoman = 'MLXXI'.
+	self assert: 1166 printStringRoman = 'MCLXVI'.
+	self assert: 1167 printStringRoman = 'MCLXVII'.
+	self assert: 1168 printStringRoman = 'MCLXVIII'.
+	self assert: 1263 printStringRoman = 'MCCLXIII'.
+	self assert: 1264 printStringRoman = 'MCCLXIV'.
+	self assert: 1265 printStringRoman = 'MCCLXV'.
+	self assert: 1360 printStringRoman = 'MCCCLX'.
+	self assert: 1361 printStringRoman = 'MCCCLXI'.
+	self assert: 1362 printStringRoman = 'MCCCLXII'.
+	self assert: 1457 printStringRoman = 'MCDLVII'.
+	self assert: 1458 printStringRoman = 'MCDLVIII'.
+	self assert: 1459 printStringRoman = 'MCDLIX'.
+	self assert: 1554 printStringRoman = 'MDLIV'.
+	self assert: 1555 printStringRoman = 'MDLV'.
+	self assert: 1556 printStringRoman = 'MDLVI'.
+	self assert: 1651 printStringRoman = 'MDCLI'.
+	self assert: 1652 printStringRoman = 'MDCLII'.
+	self assert: 1653 printStringRoman = 'MDCLIII'.
+	self assert: 1748 printStringRoman = 'MDCCXLVIII'.
+	self assert: 1749 printStringRoman = 'MDCCXLIX'.
+	self assert: 1750 printStringRoman = 'MDCCL'.
+	self assert: 1845 printStringRoman = 'MDCCCXLV'.
+	self assert: 1846 printStringRoman = 'MDCCCXLVI'.
+	self assert: 1847 printStringRoman = 'MDCCCXLVII'.
+	self assert: 1942 printStringRoman = 'MCMXLII'.
+	self assert: 1943 printStringRoman = 'MCMXLIII'.
+	self assert: 1944 printStringRoman = 'MCMXLIV'.
+	self assert: 2004 printStringRoman = 'MMIV'.
+
+	self assert: -1 printStringRoman = '-I'.
+	self assert: -2 printStringRoman = '-II'.
+	self assert: -3 printStringRoman = '-III'.
+	self assert: -4 printStringRoman = '-IV'.
+	self assert: -5 printStringRoman = '-V'.
+	self assert: -6 printStringRoman = '-VI'.
+	self assert: -7 printStringRoman = '-VII'.
+	self assert: -8 printStringRoman = '-VIII'.
+	self assert: -9 printStringRoman = '-IX'.
+	self assert: -10 printStringRoman = '-X'.
+! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:57'!
+testModLnLn
+
+	self assert: (-42391158275216203514294433200 mod: -14130386091738734504764811067) = 1.
+	self assert: (-42391158275216203514294433201 mod: -14130386091738734504764811067) = 0.
+	self assert: (-42391158275216203514294433202 mod: -14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (-8727963568087712425891397479476727340041448 mod: -79766443076872509863361) = 1.
+	self assert: (-8727963568087712425891397479476727340041449 mod: -79766443076872509863361) = 0.
+	self assert: (-8727963568087712425891397479476727340041450 mod: -79766443076872509863361) = 79766443076872509863360! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModLnLp
+
+	self assert: (-42391158275216203514294433200 mod: 14130386091738734504764811067) = 1.
+	self assert: (-42391158275216203514294433201 mod: 14130386091738734504764811067) = 0.
+	self assert: (-42391158275216203514294433202 mod: 14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (-8727963568087712425891397479476727340041448 mod: 79766443076872509863361) = 1.
+	self assert: (-8727963568087712425891397479476727340041449 mod: 79766443076872509863361) = 0.
+	self assert: (-8727963568087712425891397479476727340041450 mod: 79766443076872509863361) = 79766443076872509863360! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+testModLnSn
+
+	self assert: (-42391158275216203514294433201 mod: -3) = 0.
+	self assert: (-42391158275216203514294433202 mod: -3) = 2.
+	self assert: (-42391158275216203514294433203 mod: -3) = 1.
+	self assert: (-42391158275216203514294433204 mod: -3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModLnSp
+
+	self assert: (-42391158275216203514294433201 mod: 3) = 0.
+	self assert: (-42391158275216203514294433202 mod: 3) = 2.
+	self assert: (-42391158275216203514294433203 mod: 3) = 1.
+	self assert: (-42391158275216203514294433204 mod: 3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+testModLpLn
+
+	self assert: (42391158275216203514294433200 mod: -14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (42391158275216203514294433201 mod: -14130386091738734504764811067) = 0.
+	self assert: (42391158275216203514294433202 mod: -14130386091738734504764811067) = 1.
+	self assert: (8727963568087712425891397479476727340041448 mod: -79766443076872509863361) = 79766443076872509863360.
+	self assert: (8727963568087712425891397479476727340041449 mod: -79766443076872509863361) = 0.
+	self assert: (8727963568087712425891397479476727340041450 mod: -79766443076872509863361) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModLpLp
+
+	self assert: (42391158275216203514294433200 mod: 14130386091738734504764811067) = 14130386091738734504764811066.
+	self assert: (42391158275216203514294433201 mod: 14130386091738734504764811067) = 0.
+	self assert: (42391158275216203514294433202 mod: 14130386091738734504764811067) = 1.
+	self assert: (8727963568087712425891397479476727340041448 mod: 79766443076872509863361) = 79766443076872509863360.
+	self assert: (8727963568087712425891397479476727340041449 mod: 79766443076872509863361) = 0.
+	self assert: (8727963568087712425891397479476727340041450 mod: 79766443076872509863361) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:04'!
+testModLpSn
+
+	self assert: (42391158275216203514294433201 mod: -3) = 0.
+	self assert: (42391158275216203514294433202 mod: -3) = 1.
+	self assert: (42391158275216203514294433203 mod: -3) = 2.
+	self assert: (42391158275216203514294433204 mod: -3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModLpSp
+
+	self assert: (42391158275216203514294433201 mod: 3) = 0.
+	self assert: (42391158275216203514294433202 mod: 3) = 1.
+	self assert: (42391158275216203514294433203 mod: 3) = 2.
+	self assert: (42391158275216203514294433204 mod: 3) = 0! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:04'!
+testModSnLn
+
+	self assert: (0 mod: -42391158275216203514294433201) = 0.
+	self assert: (-1 mod: -42391158275216203514294433201) = 42391158275216203514294433200.
+	self assert: (-14348907 mod: -42391158275216203514294433201) = 42391158275216203514280084294! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModSnLp
+
+	self assert: (0 mod: 42391158275216203514294433201) = 0.
+	self assert: (-1 mod: 42391158275216203514294433201) =  42391158275216203514294433200.
+	self assert: (-14348907 mod: 42391158275216203514294433201) = 42391158275216203514280084294! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:00'!
+testModSnSn
+
+	self assert: (0 mod: -3) = 0.
+	self assert: (-1 mod: -3) = 2.
+	self assert: (-9 mod: -3) = 0.
+	self assert: (-10 mod: -3) = 2.
+	self assert: (-11 mod: -3) = 1.
+	self assert: (-12 mod: -3) = 0.
+	self assert: (-13 mod: -3) = 2! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:59'!
+testModSnSp
+
+	self assert: (0 mod: 3) = 0.
+	self assert: (-1 mod: 3) = 2.
+	self assert: (-9 mod: 3) = 0.
+	self assert: (-10 mod: 3) = 2.
+	self assert: (-11 mod: 3) = 1.
+	self assert: (-12 mod: 3) = 0.
+	self assert: (-13 mod: 3) = 2! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 15:05'!
+testModSpLn
+
+	self assert: (0 mod: -42391158275216203514294433201) = 0.
+	self assert: (1 mod: -42391158275216203514294433201) = 1.
+	self assert: (14348907 mod: -42391158275216203514294433201) = 14348907! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModSpLp
+
+	self assert: (0 mod: 42391158275216203514294433201) = 0.
+	self assert: (1 mod: 42391158275216203514294433201) = 1.
+	self assert: (14348907 mod: 42391158275216203514294433201) = 14348907! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:58'!
+testModSpSn
+
+	self assert: (0 mod: -3) = 0.
+	self assert: (1 mod: -3) = 1.
+	self assert: (9 mod: -3) = 0.
+	self assert: (10 mod: -3) = 1.
+	self assert: (11 mod: -3) = 2.
+	self assert: (12 mod: -3) = 0.
+	self assert: (13 mod: -3) = 1! !
+
+!IntegerTest methodsFor: 'tests - division - mod:' stamp: 'sqr 1/25/2014 14:35'!
+testModSpSp
+
+	self assert: (0 mod: 3) = 0.
+	self assert: (1 mod: 3) = 1.
+	self assert: (9 mod: 3) = 0.
+	self assert: (10 mod: 3) = 1.
+	self assert: (11 mod: 3) = 2.
+	self assert: (12 mod: 3) = 0.
+	self assert: (13 mod: 3) = 1! !
+
+!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 10/15/2016 10:58:02'!
+testNthRootExactnessForHugeValue
+	"
+	self new testNthRootExactnessForHugeValue
+	"
+        self assert: ((10 raisedTo: 600) nthRoot: 300) = 100.
+        self assert: ((10 raisedTo: 600) nthRoot: 300) class == SmallInteger.
+        self assert: ((10 raisedTo: 600) + 1 nthRoot: 300) = 100.0.
+        self assert: (((10 raisedTo: 600) + 1 nthRoot: 300) isKindOf: Float)! !
+
+!IntegerTest methodsFor: 'mathematical functions' stamp: 'jmv 10/15/2016 10:57:28'!
+testNthRootImmuneToDoubleRounding
+"
+self new testNthRootImmuneToDoubleRounding
+"
+          "Use a specially crafted number for causing double rounding.
+         Solution is 10...01.1 - verySmallQuantity.
+         Where verySmallQuantity is approximately 1/53/(1<<53).
+         If the verySmallQuantity is not taken into account, then solution is rounded to 10....010"
+         | exponent crafted root highPrecisionRoot |
+         exponent := 4.
+         crafted := (1 << Float precision + 3 raisedTo: exponent) - 1.
+         root := crafted nthRoot: exponent.
+         highPrecisionRoot := (crafted << (exponent squared * Float precision * 4) nthRootRounded: exponent) / (1 << (exponent * Float precision * 4)).
+         self assert: (root asFraction - highPrecisionRoot) abs < (root predecessor asFraction - highPrecisionRoot) abs.
+         
+         "Same with the other sign.
+         Solution is 10...00.1 + verySmallQuantity."
+         crafted := (1 << Float precision + 1 raisedTo: exponent) + 1.
+         root := crafted nthRoot: exponent.
+         highPrecisionRoot := (crafted << (exponent squared * Float precision * 4) nthRootRounded: exponent) / (1 << (exponent * Float precision * 4)).
+         self assert: (root asFraction - highPrecisionRoot) abs < (root successor asFraction - highPrecisionRoot) abs.! !
 
 !IntegerTest methodsFor: 'tests - division - quo:' stamp: 'sqr 1/25/2014 14:36'!
 testQuoLnLn
@@ -4151,44 +4375,6 @@ testQuoSpSp
 	self assert: (12 quo: 3) = 4.
 	self assert: (13 quo: 3) = 4! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:45'!
-testRaisedToErrorConditions
-	"
-	IntegerTest new testRaisedToErrorConditions
-	"
-
-	self should: [ -2 raisedTo: 1/4 ] raise: ArithmeticError.
-	self should: [ -2 raisedTo: 1.24 ] raise: ArithmeticError.! !
-
-!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 6/4/2011 20:46'!
-testRaisedToModulo
-	#(301 2047) do: [:m |
-		1 to: m - 1 by: (m // 30) do: [:x |
-			11 to: m - 1 by: (m // 40) do: [:y |
-				self assert: (x raisedTo: y) \\ m = (x raisedTo: y modulo: m)]]].
-	self assert: (8951195 raisedTo: 7742931 modulo: 15485863) = 15485862.! !
-
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:26'!
-testReadFrom
-	"Ensure remaining characters in a stream are not lost when parsing an integer."
-
-	| rs i s |
-	rs := ReadStream on: '123s could be confused with a ScaledDecimal'.
-	i := Number readFrom: rs.
-	self assert: i isInteger.
-	self assert: i = 123.
-	s := rs upToEnd.
-	self assert: 's could be confused with a ScaledDecimal' = s.
-	
-	"Modified for Cuis. Classic number parsing considers this to be an integer."
-	rs := ReadStream on: '123.s could be confused with a ScaledDecimal'.
-	i := Number readFrom: rs.
-	self assert: i isInteger.
-	self assert: i = 123.
-	s := rs upToEnd.
-	self assert: '.s could be confused with a ScaledDecimal' = s
-! !
-
 !IntegerTest methodsFor: 'tests - division - rem:' stamp: 'sqr 1/25/2014 14:35'!
 testRemLnLn
 
@@ -4333,99 +4519,6 @@ testRemSpSp
 	self assert: (12 rem: 3) = 0.
 	self assert: (13 rem: 3) = 1! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'laza 3/30/2004 09:23'!
-testRomanPrinting
-	self assert: 0 printStringRoman = ''. "No symbol for zero"
-	self assert: 1 printStringRoman = 'I'.
-	self assert: 2 printStringRoman = 'II'.
-	self assert: 3 printStringRoman = 'III'.
-	self assert: 4 printStringRoman = 'IV'.
-	self assert: 5 printStringRoman = 'V'.
-	self assert: 6 printStringRoman = 'VI'.
-	self assert: 7 printStringRoman = 'VII'.
-	self assert: 8 printStringRoman = 'VIII'.
-	self assert: 9 printStringRoman = 'IX'.
-	self assert: 10 printStringRoman = 'X'.
-	self assert: 23 printStringRoman = 'XXIII'.
-	self assert: 36 printStringRoman = 'XXXVI'.
-	self assert: 49 printStringRoman = 'XLIX'.
-	self assert: 62 printStringRoman = 'LXII'.
-	self assert: 75 printStringRoman = 'LXXV'.
-	self assert: 88 printStringRoman = 'LXXXVIII'.
-	self assert: 99 printStringRoman = 'XCIX'.
-	self assert: 100 printStringRoman = 'C'.
-	self assert: 101 printStringRoman = 'CI'.
-	self assert: 196 printStringRoman = 'CXCVI'.
-	self assert: 197 printStringRoman = 'CXCVII'.
-	self assert: 198 printStringRoman = 'CXCVIII'.
-	self assert: 293 printStringRoman = 'CCXCIII'.
-	self assert: 294 printStringRoman = 'CCXCIV'.
-	self assert: 295 printStringRoman = 'CCXCV'.
-	self assert: 390 printStringRoman = 'CCCXC'.
-	self assert: 391 printStringRoman = 'CCCXCI'.
-	self assert: 392 printStringRoman = 'CCCXCII'.
-	self assert: 487 printStringRoman = 'CDLXXXVII'.
-	self assert: 488 printStringRoman = 'CDLXXXVIII'.
-	self assert: 489 printStringRoman = 'CDLXXXIX'.
-	self assert: 584 printStringRoman = 'DLXXXIV'.
-	self assert: 585 printStringRoman = 'DLXXXV'.
-	self assert: 586 printStringRoman = 'DLXXXVI'.
-	self assert: 681 printStringRoman = 'DCLXXXI'.
-	self assert: 682 printStringRoman = 'DCLXXXII'.
-	self assert: 683 printStringRoman = 'DCLXXXIII'.
-	self assert: 778 printStringRoman = 'DCCLXXVIII'.
-	self assert: 779 printStringRoman = 'DCCLXXIX'.
-	self assert: 780 printStringRoman = 'DCCLXXX'.
-	self assert: 875 printStringRoman = 'DCCCLXXV'.
-	self assert: 876 printStringRoman = 'DCCCLXXVI'.
-	self assert: 877 printStringRoman = 'DCCCLXXVII'.
-	self assert: 972 printStringRoman = 'CMLXXII'.
-	self assert: 973 printStringRoman = 'CMLXXIII'.
-	self assert: 974 printStringRoman = 'CMLXXIV'.
-	self assert: 1069 printStringRoman = 'MLXIX'.
-	self assert: 1070 printStringRoman = 'MLXX'.
-	self assert: 1071 printStringRoman = 'MLXXI'.
-	self assert: 1166 printStringRoman = 'MCLXVI'.
-	self assert: 1167 printStringRoman = 'MCLXVII'.
-	self assert: 1168 printStringRoman = 'MCLXVIII'.
-	self assert: 1263 printStringRoman = 'MCCLXIII'.
-	self assert: 1264 printStringRoman = 'MCCLXIV'.
-	self assert: 1265 printStringRoman = 'MCCLXV'.
-	self assert: 1360 printStringRoman = 'MCCCLX'.
-	self assert: 1361 printStringRoman = 'MCCCLXI'.
-	self assert: 1362 printStringRoman = 'MCCCLXII'.
-	self assert: 1457 printStringRoman = 'MCDLVII'.
-	self assert: 1458 printStringRoman = 'MCDLVIII'.
-	self assert: 1459 printStringRoman = 'MCDLIX'.
-	self assert: 1554 printStringRoman = 'MDLIV'.
-	self assert: 1555 printStringRoman = 'MDLV'.
-	self assert: 1556 printStringRoman = 'MDLVI'.
-	self assert: 1651 printStringRoman = 'MDCLI'.
-	self assert: 1652 printStringRoman = 'MDCLII'.
-	self assert: 1653 printStringRoman = 'MDCLIII'.
-	self assert: 1748 printStringRoman = 'MDCCXLVIII'.
-	self assert: 1749 printStringRoman = 'MDCCXLIX'.
-	self assert: 1750 printStringRoman = 'MDCCL'.
-	self assert: 1845 printStringRoman = 'MDCCCXLV'.
-	self assert: 1846 printStringRoman = 'MDCCCXLVI'.
-	self assert: 1847 printStringRoman = 'MDCCCXLVII'.
-	self assert: 1942 printStringRoman = 'MCMXLII'.
-	self assert: 1943 printStringRoman = 'MCMXLIII'.
-	self assert: 1944 printStringRoman = 'MCMXLIV'.
-	self assert: 2004 printStringRoman = 'MMIV'.
-
-	self assert: -1 printStringRoman = '-I'.
-	self assert: -2 printStringRoman = '-II'.
-	self assert: -3 printStringRoman = '-III'.
-	self assert: -4 printStringRoman = '-IV'.
-	self assert: -5 printStringRoman = '-V'.
-	self assert: -6 printStringRoman = '-VI'.
-	self assert: -7 printStringRoman = '-VII'.
-	self assert: -8 printStringRoman = '-VIII'.
-	self assert: -9 printStringRoman = '-IX'.
-	self assert: -10 printStringRoman = '-X'.
-! !
-
 !IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:56'!
 testSlashSlashLnLn
 
@@ -4472,16 +4565,6 @@ testSlashSlashLpLn
 	self assert: 8727963568087712425891397479476727340041449 // -79766443076872509863361 = -109418989131512359209.
 	self assert: 8727963568087712425891397479476727340041450 // -79766443076872509863361 = -109418989131512359210! !
 
-!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 1/25/2014 13:38'!
-testSlashSlashLpLp
-
-	self assert: 42391158275216203514294433200 // 14130386091738734504764811067 = 2.
-	self assert: 42391158275216203514294433201 // 14130386091738734504764811067 = 3.
-	self assert: 42391158275216203514294433202 // 14130386091738734504764811067 = 3.
-	self assert: 8727963568087712425891397479476727340041448 // 79766443076872509863361 = 109418989131512359208.
-	self assert: 8727963568087712425891397479476727340041449 // 79766443076872509863361 = 109418989131512359209.
-	self assert: 8727963568087712425891397479476727340041450 // 79766443076872509863361 = 109418989131512359209! !
-
 !IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:52'!
 testSlashSlashLpSn
 
@@ -4489,14 +4572,6 @@ testSlashSlashLpSn
 	self assert: 42391158275216203514294433202 // -3 = -14130386091738734504764811068.
 	self assert: 42391158275216203514294433203 // -3 = -14130386091738734504764811068.
 	self assert: 42391158275216203514294433204 // -3 = -14130386091738734504764811068! !
-
-!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 1/25/2014 13:33'!
-testSlashSlashLpSp
-
-	self assert: 42391158275216203514294433201 // 3 = 14130386091738734504764811067.
-	self assert: 42391158275216203514294433202 // 3 = 14130386091738734504764811067.
-	self assert: 42391158275216203514294433203 // 3 = 14130386091738734504764811067.
-	self assert: 42391158275216203514294433204 // 3 = 14130386091738734504764811068! !
 
 !IntegerTest methodsFor: 'tests - division - //' stamp: 'sqr 1/25/2014 13:52'!
 testSlashSlashSnLn
@@ -4570,71 +4645,23 @@ testSlashSlashSpSp
 	self assert: 12 // 3 = 4.
 	self assert: 13 // 3 = 4! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
-testSqrtErrorConditions
-	"
-	IntegerTest new testSqrtErrorConditions
-	"
+!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 1/25/2014 13:38'!
+testSlashSlashLpLp
 
-	self should: [ -1 sqrt ] raise: ArithmeticError! !
+	self assert: 42391158275216203514294433200 // 14130386091738734504764811067 = 2.
+	self assert: 42391158275216203514294433201 // 14130386091738734504764811067 = 3.
+	self assert: 42391158275216203514294433202 // 14130386091738734504764811067 = 3.
+	self assert: 8727963568087712425891397479476727340041448 // 79766443076872509863361 = 109418989131512359208.
+	self assert: 8727963568087712425891397479476727340041449 // 79766443076872509863361 = 109418989131512359209.
+	self assert: 8727963568087712425891397479476727340041450 // 79766443076872509863361 = 109418989131512359209! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'ul 11/25/2009 03:01'!
-testSqrtFloor
+!IntegerTest methodsFor: 'tests - division' stamp: 'sqr 1/25/2014 13:33'!
+testSlashSlashLpSp
 
-	#(-1234567890123 -10 -5 -1) do: [ :each |
-		self should: [ each sqrtFloor ] raise: Error ].
-	#(
-		0 1 2 3 4 5 10 16 30 160479924 386234481 501619156 524723498 580855366 766098594 834165249 1020363860 1042083924 1049218924
-		1459774772895569 3050005981408238 4856589481837079 5650488387708463 7831037396100244) do: [ :each |
-			self assert: each asFloat sqrt floor = each sqrtFloor ]
-		! !
-
-!IntegerTest methodsFor: 'tests - instance creation' stamp: 'jmv 9/1/2010 13:45'!
-testStringAsNumber
-	"This covers parsing in Number>>readFrom:
-	Trailing decimal points should be ignored."
-
-	self assert: ('123' asNumber isInteger).
-	self assert: ('123' asNumber = 123).
-	self assert: ('-123' asNumber isInteger).
-	self assert: ('-123' asNumber = -123).
-	self assert: ('123.' asNumber) isInteger.
-	self assert: ('123.' asNumber = 123).
-	self assert: ('-123.' asNumber) isInteger.
-	self assert: ('-123.' asNumber = -123).
-	self assert: ('123This is not to be read' asNumber isInteger).
-	self assert: ('123This is not to be read' asNumber = 123).
-	self assert: ('123s could be confused with a ScaledDecimal' asNumber isInteger).
-	self assert: ('123s could be confused with a ScaledDecimal' asNumber = 123).
-	self assert: ('123e could be confused with a Float' asNumber isInteger).
-	self assert: ('123e could be confused with a Float' asNumber = 123).
-! !
-
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 1/26/2008 02:22'!
-testTwoComplementBitLogicWithCarry
-	"This is non regression test for http://bugs.squeak.org/view.php?id=6874"
-	
-	"By property of two complement, following operation is:
-	...111110000 this is -16
-	...111101111 this is -16-1
-	...111100000 this is -32, the result of bitAnd: on two complement
-	
-	This test used to fail with n=31 39 47.... because of bug 6874"
-	
-	self assert: ((2 to: 80) allSatisfy: [:n | ((2 raisedTo: n) negated bitAnd: (2 raisedTo: n) negated - 1) = (2 raisedTo: n + 1) negated]).! !
-
-!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'sd 6/5/2005 08:44'!
-testTwoComplementRightShift
-	"self run: #testTwoComplementRightShift"
-
-	| large small |
-	small := 2 << 16.
-	large := 2 << 32.	
-	self assert: ((small negated bitShift: -1) ~= ((small + 1) negated bitShift: -1)
-		== ((large negated bitShift: -1) ~= ((large + 1) negated bitShift: -1))).
-		
-     self assert: ((small bitShift: -1) ~= (small + 1 bitShift: -1)
-		== ((large bitShift: -1) ~= (large + 1 bitShift: -1))).! !
+	self assert: 42391158275216203514294433201 // 3 = 14130386091738734504764811067.
+	self assert: 42391158275216203514294433202 // 3 = 14130386091738734504764811067.
+	self assert: 42391158275216203514294433203 // 3 = 14130386091738734504764811067.
+	self assert: 42391158275216203514294433204 // 3 = 14130386091738734504764811068! !
 
 !LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 8/21/2016 20:04:13'!
 testCompactClassIndex
@@ -4877,6 +4904,29 @@ testBasicNew
 
 	self should: [SmallInteger basicNew] raise: TestResult error. ! !
 
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:16:27'!
+testMaxVal
+
+	Smalltalk wordSize = 4
+		ifTrue: [
+			self assert: (SmallInteger maxVal = 16r3FFFFFFF) ]
+		ifFalse: [
+			self assert: (SmallInteger maxVal = 16rFFFFFFFFFFFFFFF) ]! !
+
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:17:27'!
+testMinVal
+
+	Smalltalk wordSize = 4
+		ifTrue: [
+			self assert: (SmallInteger minVal = -16r40000000) ]
+		ifFalse: [
+			self assert: (SmallInteger minVal = -16r1000000000000000) ]! !
+
+!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'sd 6/5/2005 08:59'!
+testNew
+
+	self should: [SmallInteger new] raise: TestResult error. ! !
+
 !SmallIntegerTest methodsFor: 'testing - arithmetic' stamp: 'sd 6/5/2005 08:59'!
 testDivide
 
@@ -4901,29 +4951,6 @@ testEven
 	self assert: (-2 even).
 	
 	self assert: (0 even)! !
-
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:16:27'!
-testMaxVal
-
-	Smalltalk wordSize = 4
-		ifTrue: [
-			self assert: (SmallInteger maxVal = 16r3FFFFFFF) ]
-		ifFalse: [
-			self assert: (SmallInteger maxVal = 16rFFFFFFFFFFFFFFF) ]! !
-
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'jmv 1/4/2017 08:17:27'!
-testMinVal
-
-	Smalltalk wordSize = 4
-		ifTrue: [
-			self assert: (SmallInteger minVal = -16r40000000) ]
-		ifFalse: [
-			self assert: (SmallInteger minVal = -16r1000000000000000) ]! !
-
-!SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'sd 6/5/2005 08:59'!
-testNew
-
-	self should: [SmallInteger new] raise: TestResult error. ! !
 
 !SmallIntegerTest methodsFor: 'testing - basic' stamp: 'jmv 5/7/2012 21:35'!
 testOdd
@@ -5233,7 +5260,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 4/19/2016 10:39'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/28/2017 16:11:29'!
 testLayout1
 	"
 	self new testLayout1
@@ -5273,7 +5300,7 @@ testLayout1
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row3 layoutSpec: (LayoutSpec fixedHeight: 60).
 	pane openInWorld: PasteUpMorph someInstance; morphExtent: 408@300.
-	ProjectX ui doOneCycleNow.
+	UISupervisor ui doOneCycleNow.
 
 	self assert: row1 morphWidth = (pane morphWidth - 10).
 	self assert: r1c1 morphWidth class == SmallInteger.
@@ -5308,7 +5335,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 2/14/2013 12:29'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/28/2017 16:11:24'!
 testLayout2
 	"
 	self new testLayout2
@@ -5327,7 +5354,7 @@ testLayout2
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 0.7 minorDirectionPadding: #center).
 	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 0.9).
 	pane openInWorld: PasteUpMorph someInstance; morphExtent: 400@300.
-	ProjectX ui doOneCycleNow.
+	UISupervisor ui doOneCycleNow.
 
 	self assert: row morphWidth = (pane morphWidth - 10).
 	self assert: row morphHeight = (pane morphHeight - 10 * 0.9) rounded.
@@ -5343,7 +5370,7 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 2/14/2013 12:28'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/28/2017 16:11:18'!
 testLayout3
 	"
 	self new testLayout3
@@ -5370,7 +5397,7 @@ testLayout3
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 200).
 	pane openInWorld: PasteUpMorph someInstance; morphExtent: 400@300.
-	ProjectX ui doOneCycleNow.
+	UISupervisor ui doOneCycleNow.
 
 	self assert: row morphBoundsInWorld left = (pane morphBoundsInWorld left + 5).
 	self assert: row morphWidth = (pane morphWidth - 10).
@@ -5544,14 +5571,14 @@ testDamageRecorder
 	(dr invalidRectsFullBounds: (10@10 extent: 10@10)) do: [ :r |
 		self deny: r isNil ]! !
 
-!WorldTest methodsFor: 'as yet unclassified' stamp: 'jmv 10/23/2012 23:30'!
+!WorldTest methodsFor: 'as yet unclassified' stamp: 'jmv 12/28/2017 16:11:35'!
 testDoOneCycleWorksWithDeferredQueue
         "Ensure that nested doOneCycles don't break deferred UI messages"
         | finished |
         [
-                WorldState addDeferredUIMessage: [ ProjectX ui doOneCycleNow ].
+                WorldState addDeferredUIMessage: [ UISupervisor ui doOneCycleNow ].
                 WorldState addDeferredUIMessage: nil "whatever".
-                ProjectX ui doOneCycleNow.
+                UISupervisor ui doOneCycleNow.
                 finished _ true.
         ] valueWithin: 1 seconds onTimeout: [finished _ false ].
         self assert: finished! !
@@ -6273,20 +6300,15 @@ assertValues: anArray
 evaluateCopyOf: aBlock
 	aBlock copy value! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:35'!
-methodArgument: anObject
-	^ [ anObject ]
-	! !
-
 !ClosureTests methodsFor: 'utilities' stamp: 'cwp 11/16/2009 08:12'!
 methodWithNonLocalReturn
 	self evaluateCopyOf: [^ self].
 	self signalFailure: 'Should never reach here'! !
 
-!ClosureTests methodsFor: 'running' stamp: 'lr 3/9/2009 16:48'!
-setUp
-	super setUp.
-	collection := OrderedCollection new! !
+!ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:35'!
+methodArgument: anObject
+	^ [ anObject ]
+	! !
 
 !ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:33'!
 testBlockArgument
@@ -6367,6 +6389,11 @@ testMethodTemp
 	block2 := self methodArgument: 2.
 	self assert: block1 value = 1.
 	self assert: block2 value = 2! !
+
+!ClosureTests methodsFor: 'running' stamp: 'lr 3/9/2009 16:48'!
+setUp
+	super setUp.
+	collection := OrderedCollection new! !
 
 !ClosureTests methodsFor: 'testing-todo' stamp: 'lr 3/10/2009 14:51'!
 testToDoArgument
@@ -6487,6 +6514,10 @@ selectFrom: start to: end
 selectionInterval
 	^ 1 to: 0! !
 
+!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:26'!
+text
+	^ self unusedVariableSource! !
+
 !CompilerExceptionsTest methodsFor: 'tests' stamp: 'cwp 8/25/2009 20:22'!
 testUndeclaredVariable
 	self 
@@ -6522,10 +6553,6 @@ testUnusedVariable
 				compile: self unusedVariableSource
 				notifying: self]
 		raise: UnusedVariable! !
-
-!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:26'!
-text
-	^ self unusedVariableSource! !
 
 !CompilerExceptionsTest methodsFor: 'private' stamp: 'cwp 8/25/2009 20:28'!
 unusedVariableSource
@@ -7472,6 +7499,38 @@ testCaseConversion
 	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
 	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
 
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
+testSorting
+	"
+	self new testSorting
+	"
+	self assert: $a < $á.
+	self deny: $a < $Á.
+	self assert: $A < $á.
+	self assert: $A < $Á.
+	self assert: $á < $b.
+	self deny: $á < $B.
+	self assert: $Á < $b.
+	self assert: $Á < $B.! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
+testTestingMethods
+	"
+	self new testTestingMethods
+	"
+	self assert:
+		('año Comé tomá Camión' allSatisfy: [ :c |
+			c = $  or: [ c isLetter ]]).
+	self assert:
+		('año comé tomá camión' allSatisfy: [ :c |
+			c = $  or: [ c isLowercase ]]).
+	self assert:
+		('AÑO COMÉ TOMÁ CAMIÓN' allSatisfy: [ :c |
+			c = $  or: [ c isUppercase ]]).
+	self assert:
+		('AaÀàÁáÂâÃãÄäÅåEeÈèÉéÊêËëIiÌìÍíÎîÏïOoÒòÓóÔôÕõÖöUuÙùÚúÛûÜü' allSatisfy: [ :c |
+			c isVowel ]).! !
+
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
 testFromUtf8
 	"
@@ -7507,38 +7566,6 @@ testSomeLatinCharsToUtf8
 				evaluate: [ :byte | strm nextPut: byte ]
 				withUtf8BytesOfUnicodeCodePoint: characters next codePoint ]].
 	self assert: bytes hex = 'C3A1C3A5C3A6C3B1C386C2A5C3BC'! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
-testSorting
-	"
-	self new testSorting
-	"
-	self assert: $a < $á.
-	self deny: $a < $Á.
-	self assert: $A < $á.
-	self assert: $A < $Á.
-	self assert: $á < $b.
-	self deny: $á < $B.
-	self assert: $Á < $b.
-	self assert: $Á < $B.! !
-
-!CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
-testTestingMethods
-	"
-	self new testTestingMethods
-	"
-	self assert:
-		('año Comé tomá Camión' allSatisfy: [ :c |
-			c = $  or: [ c isLetter ]]).
-	self assert:
-		('año comé tomá camión' allSatisfy: [ :c |
-			c = $  or: [ c isLowercase ]]).
-	self assert:
-		('AÑO COMÉ TOMÁ CAMIÓN' allSatisfy: [ :c |
-			c = $  or: [ c isUppercase ]]).
-	self assert:
-		('AaÀàÁáÂâÃãÄäÅåEeÈèÉéÊêËëIiÌìÍíÎîÏïOoÒòÓóÔôÕõÖöUuÙùÚúÛûÜü' allSatisfy: [ :c |
-			c isVowel ]).! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
 testToUtf8
@@ -8413,6 +8440,12 @@ testEqual
 	t2 _ Time seconds: 52263 nanoSeconds: 0.
 	self deny: t1 = t2.! !
 
+!TimeTest methodsFor: 'tests' stamp: 'jmv 11/11/2014 09:26'!
+testTimePartsArePositive
+	self assert: (Time afterMidnight: -10 minutes) minute > 0.
+	self assert: (Time afterMidnight: -10 minutes) hour = 23.
+	self assert: (Time afterMidnight: -10 minutes) minute = 50.! !
+
 !TimeTest methodsFor: 'Tests' stamp: 'jmv 5/27/2014 22:46'!
 testSqueakInquiries
 	| timewords |
@@ -8422,12 +8455,6 @@ testSqueakInquiries
 	self assert: 
 		timewords = #('a second ago' '30 seconds ago' 'a minute ago' '2 minutes ago' 
 			'an hour ago' '2 hours ago' '16 hours ago' 'yesterday').! !
-
-!TimeTest methodsFor: 'tests' stamp: 'jmv 11/11/2014 09:26'!
-testTimePartsArePositive
-	self assert: (Time afterMidnight: -10 minutes) minute > 0.
-	self assert: (Time afterMidnight: -10 minutes) hour = 23.
-	self assert: (Time afterMidnight: -10 minutes) minute = 50.! !
 
 !WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:29:29'!
 testCreation
@@ -9957,7 +9984,7 @@ testMethodsWithUnboundGlobals
 	"
 	self assert: Smalltalk methodsWithUnboundGlobals isEmpty! !
 
-!TextEditorTest methodsFor: 'as yet unclassified' stamp: 'jmv 10/23/2012 23:29'!
+!TextEditorTest methodsFor: 'as yet unclassified' stamp: 'jmv 12/28/2017 16:11:57'!
 testSimpleEditor
 	"
 	TextEditorTest new testSimpleEditor
@@ -9971,7 +9998,7 @@ testSimpleEditor
 				buttons: 0
 				position: 0@0
 				keyValue: 65
-				hand: ProjectX ui activeHand
+				hand: UISupervisor ui activeHand
 				stamp: 0)
 	] raise: Exception! !
 
@@ -10348,48 +10375,24 @@ testSetProtocol
 	controlGroup add: 'ÑANDÚ'.
 	self assert: subject isEquivalentToSet: controlGroup.! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:48'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/28/2017 16:13:47'!
 setUp
 
-	needsDelete _ ProjectX ui taskbar isNil.
-	taskbar _ ProjectX ui hideTaskbar; showTaskbar; taskbar.
+	needsDelete _ UISupervisor ui taskbar isNil.
+	taskbar _ UISupervisor ui hideTaskbar; showTaskbar; taskbar.
 	taskbar screenSizeChanged.
-	taskbar world runStepMethods! !
+	taskbar world instVarNamed: 'worldState' :: runStepMethods! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 5/27/2015 10:31'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/28/2017 16:12:13'!
 tearDown
 
 	needsDelete ifTrue: [
-		ProjectX ui hideTaskbar ]! !
+		UISupervisor ui hideTaskbar ]! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 5/27/2015 10:10'!
-testClassMinimize
-	"
-	TaskbarTest new setUp testClassMinimize tearDown
-	"
-
-	| m | m _ Morph new.
-
-	taskbar minimize: m.
-	self shouldnt: [ m visible ]! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 5/26/2015 16:45'!
-testClassRestore
-
-	| m | m _ Morph new. 
-
-	taskbar minimize: m.
-	
-	self should: [ m visible not ].
-
-	taskbar restore: m.
-
-	self should: [ m visible ]! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 5/26/2015 16:46'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 12/28/2017 16:12:16'!
 testClassSingleton
 
-	self should: [ taskbar == ProjectX ui taskbar ].
+	self should: [ taskbar == UISupervisor ui taskbar ].
 ! !
 
 !TaskbarTest methodsFor: 'test cases' stamp: 'jmv 9/4/2012 17:30'!
@@ -10397,44 +10400,15 @@ testHorizontalAlignment
 
 	self should: [ taskbar morphPositionInWorld x = 0 ]! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 02:48'!
-testMinimize
-
-	|m| m _ Morph new. 
-	taskbar minimize: m.
-	self shouldnt: [ m visible ]! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 02:48'!
-testRestore
-
-	|m| m _ Morph new. 
-	taskbar minimize: m.
-	taskbar restore: m.
-	self should: [ m visible ]! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'cbr 4/19/2011 02:54'!
-testRestoreAll
-
-	| a b |
-	a _ Morph new.
-	b _ Morph new. 
-
-	taskbar
-		minimize: a;
-		minimize: b;
-		restoreAll.
-
-	self should: [ a visible & b visible ]! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 10/23/2012 23:28'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 12/28/2017 16:12:08'!
 testVerticalAlignment
 	
-	self should: [ taskbar morphBoundsInWorld bottom = ProjectX ui morphBoundsInWorld bottom ]! !
+	self should: [ taskbar morphBoundsInWorld bottom = UISupervisor ui morphBoundsInWorld bottom ]! !
 
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 10/23/2012 23:28'!
+!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 12/28/2017 16:12:01'!
 testWidth
 	
-	self should: [ taskbar morphWidth = ProjectX ui morphWidth ]! !
+	self should: [ taskbar morphWidth = UISupervisor ui morphWidth ]! !
 
 !TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 4/17/2013 12:11'!
 testValueWithinNonLocalReturnFixReal
@@ -11220,6 +11194,55 @@ basicANSISignaledExceptionTestSelectors
 basicTestSelectors
 	^ #(#simpleEnsureTest #simpleEnsureTestWithNotification #simpleEnsureTestWithUparrow #simpleEnsureTestWithError #signalFromHandlerActionTest #resumableFallOffTheEndHandler #nonResumableFallOffTheEndHandler #doubleResumeTest #simpleTimeoutWithZeroDurationTest #simpleTimeoutTest simpleNoTimeoutTest)! !
 
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:14'!
+doSomethingElseString
+
+	^'Do something else.'! !
+
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:14'!
+doSomethingExceptionalString
+
+	^'Do something exceptional.'! !
+
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:13'!
+doSomethingString
+
+	^'Do something.'! !
+
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:15'!
+doYetAnotherThingString
+
+	^'Do yet another thing.'! !
+
+!ExceptionTester methodsFor: 'accessing' stamp: 'brp 10/21/2004 17:15'!
+iterationsBeforeTimeout
+
+	^ iterationsBeforeTimeout! !
+
+!ExceptionTester methodsFor: 'accessing' stamp: 'brp 10/21/2004 17:16'!
+iterationsBeforeTimeout: anInteger
+
+	iterationsBeforeTimeout := anInteger! !
+
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/7/1999 15:03'!
+log
+
+	log == nil
+		ifTrue: [log := OrderedCollection new].
+	^log! !
+
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:30'!
+suiteLog
+
+	suiteLog == nil
+		ifTrue: [suiteLog := OrderedCollection new].
+	^suiteLog! !
+
+!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:15'!
+testString
+
+	^'This is only a test.'! !
+
 !ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/8/1999 09:17'!
 clearLog
 
@@ -11236,6 +11259,25 @@ contents
 				nextPutAll: item;
 				yourself] ) contents! !
 
+!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/7/1999 15:03'!
+log: aString
+
+	self log add: aString! !
+
+!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/12/1999 23:07'!
+logTest: aSelector
+
+	self suiteLog add: aSelector! !
+
+!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/8/1999 09:38'!
+logTestResult: aString
+
+	| index |
+	index := self suiteLog size.
+	self suiteLog 
+		at: index
+		put: ((self suiteLog at: index), ' ', aString)! !
+
 !ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:13'!
 doSomething
 
@@ -11246,35 +11288,25 @@ doSomethingElse
 
 	self log: self doSomethingElseString! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:14'!
-doSomethingElseString
-
-	^'Do something else.'! !
-
 !ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:14'!
 doSomethingExceptional
 
 	self log: self doSomethingExceptionalString! !
-
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:14'!
-doSomethingExceptionalString
-
-	^'Do something exceptional.'! !
-
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:13'!
-doSomethingString
-
-	^'Do something.'! !
 
 !ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:15'!
 doYetAnotherThing
 
 	self log: self doYetAnotherThingString! !
 
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:15'!
-doYetAnotherThingString
+!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:16'!
+methodWithError
 
-	^'Do yet another thing.'! !
+	MyTestError signal: self testString! !
+
+!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:16'!
+methodWithNotification
+
+	MyTestNotification signal: self testString! !
 
 !ExceptionTester methodsFor: 'signaledException tests' stamp: 'dtl 6/1/2004 21:51'!
 doubleOuterPassTest
@@ -11291,15 +11323,6 @@ doubleOuterPassTest
 				self doSomethingExceptional]]
 				on: MyTestNotification
 				do: [:ex | self doYetAnotherThing. ex resume]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'dtl 6/1/2004 21:56'!
-doubleOuterPassTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doYetAnotherThingString;
-		add: self doSomethingElseString;
-		yourself! !
 
 !ExceptionTester methodsFor: 'signaledException tests' stamp: 'dtl 6/1/2004 21:49'!
 doubleOuterTest
@@ -11333,6 +11356,121 @@ doublePassOuterTest
 				on: MyTestNotification
 				do: [:ex | self doYetAnotherThing. ex resume]! !
 
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:27'!
+simpleIsNestedTest
+	"uses resignalAs:"
+
+	[self doSomething.
+	MyTestError signal.
+	self doSomethingElse]
+		on: MyTestError
+		do:
+			[:ex |
+			ex isNested "expecting to detect handler in #runTest:"
+				ifTrue:
+					[self doYetAnotherThing.
+					ex resignalAs: MyTestNotification new]]! !
+
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tpr 5/27/2004 21:50'!
+simpleOuterTest
+	"uses #resume"
+
+	[[self doSomething.
+	MyTestNotification signal.
+	"self doSomethingElse"
+	self doSomethingExceptional]
+		on: MyTestNotification
+		do: [:ex | ex outer. self doSomethingElse]]
+				on: MyTestNotification
+				do: [:ex | self doYetAnotherThing. ex resume]! !
+
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 00:37'!
+simplePassTest
+
+	[self doSomething.
+	MyTestError signal.
+	self doSomethingElse]
+		on: MyTestError
+		do:
+			[:ex |
+			self doYetAnotherThing.
+			ex pass "expecting handler in #runTest:"]! !
+
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 02:12'!
+simpleResignalAsTest
+	"ExceptionTester new simpleResignalAsTest"
+
+	[self doSomething.
+	MyTestNotification signal.
+	self doSomethingElse]
+		on: MyTestNotification
+		do:
+			[:ex | ex resignalAs: MyTestError new]! !
+
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'nice 12/27/2009 21:06'!
+simpleResumeTest
+	"see if we can resume twice"
+	
+	[ | it |
+	self doSomething.
+	it := MyResumableTestError signal.
+	it = 3 ifTrue: [self doSomethingElse].
+	it := MyResumableTestError signal.
+	it = 3 ifTrue: [self doSomethingElse].
+	]
+		on: MyResumableTestError
+		do:
+			[:ex |
+			self doYetAnotherThing.
+			ex resume: 3]! !
+
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:02'!
+simpleRetryTest
+
+	| theMeaningOfLife |
+	theMeaningOfLife := nil.
+	[self doSomething.
+	theMeaningOfLife == nil
+		ifTrue: [MyTestError signal]
+		ifFalse: [self doSomethingElse]]
+			on: MyTestError
+			do:
+				[:ex |
+				theMeaningOfLife := 42.
+				self doYetAnotherThing.
+				ex retry]! !
+
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:03'!
+simpleRetryUsingTest
+
+	[self doSomething.
+	MyTestError signal.
+	self doSomethingElse]
+		on: MyTestError
+		do:
+			[:ex | ex retryUsing: [self doYetAnotherThing]]! !
+
+!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 00:59'!
+simpleReturnTest
+
+	| it |
+	it :=
+		[self doSomething.
+		MyTestError signal.
+		self doSomethingElse]
+			on: MyTestError
+			do: [:ex | ex return: 3].
+	it = 3 ifTrue: [self doYetAnotherThing]! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'dtl 6/1/2004 21:56'!
+doubleOuterPassTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doYetAnotherThingString;
+		add: self doSomethingElseString;
+		yourself! !
+
 !ExceptionTester methodsFor: 'signaledException results' stamp: 'dtl 6/1/2004 21:56'!
 doublePassOuterTestResults
 
@@ -11340,6 +11478,80 @@ doublePassOuterTestResults
 		add: self doSomethingString;
 		add: self doYetAnotherThingString;
 		add: self doSomethingElseString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:09'!
+simpleIsNestedTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doYetAnotherThingString;
+		add: self doSomethingElseString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:10'!
+simpleOuterTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doYetAnotherThingString;
+		add: self doSomethingElseString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:10'!
+simplePassTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doYetAnotherThingString;
+		add: 'Unhandled Exception';
+		yourself! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:11'!
+simpleResignalAsTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: 'Unhandled Exception';
+		yourself! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'RAA 12/8/2000 12:59'!
+simpleResumeTestResults
+
+	"see if we can resume twice"
+
+	^OrderedCollection new
+			add: self doSomethingString;
+			add: self doYetAnotherThingString;
+			add: self doSomethingElseString;
+			add: self doYetAnotherThingString;
+			add: self doSomethingElseString;
+			yourself! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:23'!
+simpleRetryTestResults
+
+	^OrderedCollection new
+			add: self doSomethingString;
+			add: self doYetAnotherThingString;
+			add: self doSomethingString;
+			add: self doSomethingElseString;
+			yourself! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:23'!
+simpleRetryUsingTestResults
+
+	^OrderedCollection new
+			add: self doSomethingString;
+			add: self doYetAnotherThingString;
+			yourself! !
+
+!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 02:22'!
+simpleReturnTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doYetAnotherThingString;
 		yourself! !
 
 !ExceptionTester methodsFor: 'tests' stamp: 'tfei 11/14/1999 17:26'!
@@ -11353,61 +11565,6 @@ doubleResumeTest
                on: MyResumableTestError
                do: [:ex | ex resume].! !
 
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 11/14/1999 17:29'!
-doubleResumeTestResults
-
-       ^OrderedCollection new
-               add: self doSomethingString;
-               add: self doSomethingElseString;
-               add: self doYetAnotherThingString;
-               yourself! !
-
-!ExceptionTester methodsFor: 'accessing' stamp: 'brp 10/21/2004 17:15'!
-iterationsBeforeTimeout
-
-	^ iterationsBeforeTimeout! !
-
-!ExceptionTester methodsFor: 'accessing' stamp: 'brp 10/21/2004 17:16'!
-iterationsBeforeTimeout: anInteger
-
-	iterationsBeforeTimeout := anInteger! !
-
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/7/1999 15:03'!
-log
-
-	log == nil
-		ifTrue: [log := OrderedCollection new].
-	^log! !
-
-!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/7/1999 15:03'!
-log: aString
-
-	self log add: aString! !
-
-!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/12/1999 23:07'!
-logTest: aSelector
-
-	self suiteLog add: aSelector! !
-
-!ExceptionTester methodsFor: 'logging' stamp: 'tfei 6/8/1999 09:38'!
-logTestResult: aString
-
-	| index |
-	index := self suiteLog size.
-	self suiteLog 
-		at: index
-		put: ((self suiteLog at: index), ' ', aString)! !
-
-!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:16'!
-methodWithError
-
-	MyTestError signal: self testString! !
-
-!ExceptionTester methodsFor: 'pseudo actions' stamp: 'tfei 6/8/1999 09:16'!
-methodWithNotification
-
-	MyTestNotification signal: self testString! !
-
 !ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/7/1999 13:43'!
 nonResumableFallOffTheEndHandler
 	
@@ -11417,15 +11574,6 @@ nonResumableFallOffTheEndHandler
 		on: MyTestError
 		do: [:ex | self doSomethingExceptional].
 	self doYetAnotherThing! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 09:21'!
-nonResumableFallOffTheEndHandlerResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doSomethingExceptionalString;
-		add: self doYetAnotherThingString;
-		yourself! !
 
 !ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/9/1999 16:07'!
 resumableFallOffTheEndHandler
@@ -11437,6 +11585,105 @@ resumableFallOffTheEndHandler
 		do: [:ex | self doSomethingExceptional].
 	self doYetAnotherThing! !
 
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 8/19/1999 01:39'!
+signalFromHandlerActionTest
+
+	[self doSomething.
+	MyTestError signal.
+	self doSomethingElse]
+		on: MyTestError
+		do:
+			[self doYetAnotherThing.
+			MyTestError signal]! !
+
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 09:44'!
+simpleEnsureTest
+
+	[self doSomething.
+	self doSomethingElse]
+		ensure:
+			[self doYetAnotherThing].
+	! !
+
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 12:50'!
+simpleEnsureTestWithError
+
+	[self doSomething.
+	MyTestError signal.
+	self doSomethingElse]
+		ensure:
+			[self doYetAnotherThing].
+	! !
+
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 10:15'!
+simpleEnsureTestWithNotification
+
+	[self doSomething.
+	self methodWithNotification.
+	self doSomethingElse]
+		ensure:
+			[self doYetAnotherThing].
+	! !
+
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/9/1999 16:04'!
+simpleEnsureTestWithUparrow
+
+	[self doSomething.
+	true ifTrue: [^nil].
+	self doSomethingElse]
+		ensure:
+			[self doYetAnotherThing].
+	! !
+
+!ExceptionTester methodsFor: 'tests' stamp: 'jmv 5/7/2012 21:38'!
+simpleNoTimeoutTest
+
+	[ self doSomething ]
+		valueWithin: 1 days onTimeout:
+			[ self doSomethingElse ]! !
+
+!ExceptionTester methodsFor: 'tests' stamp: 'brp 10/22/2004 12:00'!
+simpleTimeoutTest
+
+	| n |
+	[1 to: 1000000 do: [ :i | n := i. self doSomething ] ]
+		valueWithin: 50 milliSeconds onTimeout:
+			[ self iterationsBeforeTimeout: n.
+			self doSomethingElse ]! !
+
+!ExceptionTester methodsFor: 'tests' stamp: 'brp 10/22/2004 12:00'!
+simpleTimeoutWithZeroDurationTest
+
+	[ self doSomething ]
+		valueWithin: 0 seconds onTimeout:
+			[ self doSomethingElse ].
+	! !
+
+!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/7/1999 14:28'!
+warningTest
+
+	self log: 'About to signal warning.'.
+	Warning signal: 'Ouch'.
+	self log: 'Warning signal handled and resumed.'! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 11/14/1999 17:29'!
+doubleResumeTestResults
+
+       ^OrderedCollection new
+               add: self doSomethingString;
+               add: self doSomethingElseString;
+               add: self doYetAnotherThingString;
+               yourself! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 09:21'!
+nonResumableFallOffTheEndHandlerResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doSomethingExceptionalString;
+		add: self doYetAnotherThingString;
+		yourself! !
+
 !ExceptionTester methodsFor: 'results' stamp: 'tfei 8/19/1999 02:39'!
 resumableFallOffTheEndHandlerResults
 
@@ -11444,6 +11691,76 @@ resumableFallOffTheEndHandlerResults
 		add: self doSomethingString;
 		add: self doSomethingExceptionalString;
 		add: self doYetAnotherThingString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 8/19/1999 01:51'!
+signalFromHandlerActionTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doYetAnotherThingString;
+		add: 'Unhandled Exception';
+		yourself! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 09:47'!
+simpleEnsureTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doSomethingElseString;
+		add: self doYetAnotherThingString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/9/1999 17:44'!
+simpleEnsureTestWithErrorResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: 'Unhandled Exception';
+		add: self doYetAnotherThingString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 10:13'!
+simpleEnsureTestWithNotificationResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		add: self doSomethingElseString;
+		add: self doYetAnotherThingString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 18:55'!
+simpleEnsureTestWithUparrowResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+"		add: self doSomethingElseString;"
+		add: self doYetAnotherThingString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 16:54'!
+simpleNoTimeoutTestResults
+
+	^OrderedCollection new
+		add: self doSomethingString;
+		yourself! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 17:44'!
+simpleTimeoutTestResults
+
+	| things |
+	things := OrderedCollection new: self iterationsBeforeTimeout.
+
+	self iterationsBeforeTimeout timesRepeat: [ things add: self  doSomethingString ].
+	things add: self doSomethingElseString.
+
+	^ things! !
+
+!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 16:52'!
+simpleTimeoutWithZeroDurationTestResults
+
+	^OrderedCollection new
+		add: self doSomethingElseString;
 		yourself! !
 
 !ExceptionTester methodsFor: 'suites' stamp: 'tfei 6/13/1999 01:25'!
@@ -11489,346 +11806,3 @@ runTest: aSelector
 		ifTrue: [self logTestResult: 'succeeded']
 		ifFalse: [self logTestResult: 'failed' ].
 ! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 8/19/1999 01:39'!
-signalFromHandlerActionTest
-
-	[self doSomething.
-	MyTestError signal.
-	self doSomethingElse]
-		on: MyTestError
-		do:
-			[self doYetAnotherThing.
-			MyTestError signal]! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 8/19/1999 01:51'!
-signalFromHandlerActionTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doYetAnotherThingString;
-		add: 'Unhandled Exception';
-		yourself! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 09:44'!
-simpleEnsureTest
-
-	[self doSomething.
-	self doSomethingElse]
-		ensure:
-			[self doYetAnotherThing].
-	! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 09:47'!
-simpleEnsureTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doSomethingElseString;
-		add: self doYetAnotherThingString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 12:50'!
-simpleEnsureTestWithError
-
-	[self doSomething.
-	MyTestError signal.
-	self doSomethingElse]
-		ensure:
-			[self doYetAnotherThing].
-	! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/9/1999 17:44'!
-simpleEnsureTestWithErrorResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: 'Unhandled Exception';
-		add: self doYetAnotherThingString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/8/1999 10:15'!
-simpleEnsureTestWithNotification
-
-	[self doSomething.
-	self methodWithNotification.
-	self doSomethingElse]
-		ensure:
-			[self doYetAnotherThing].
-	! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 10:13'!
-simpleEnsureTestWithNotificationResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doSomethingElseString;
-		add: self doYetAnotherThingString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/9/1999 16:04'!
-simpleEnsureTestWithUparrow
-
-	[self doSomething.
-	true ifTrue: [^nil].
-	self doSomethingElse]
-		ensure:
-			[self doYetAnotherThing].
-	! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'tfei 6/8/1999 18:55'!
-simpleEnsureTestWithUparrowResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-"		add: self doSomethingElseString;"
-		add: self doYetAnotherThingString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:27'!
-simpleIsNestedTest
-	"uses resignalAs:"
-
-	[self doSomething.
-	MyTestError signal.
-	self doSomethingElse]
-		on: MyTestError
-		do:
-			[:ex |
-			ex isNested "expecting to detect handler in #runTest:"
-				ifTrue:
-					[self doYetAnotherThing.
-					ex resignalAs: MyTestNotification new]]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:09'!
-simpleIsNestedTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doYetAnotherThingString;
-		add: self doSomethingElseString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'jmv 5/7/2012 21:38'!
-simpleNoTimeoutTest
-
-	[ self doSomething ]
-		valueWithin: 1 days onTimeout:
-			[ self doSomethingElse ]! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 16:54'!
-simpleNoTimeoutTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tpr 5/27/2004 21:50'!
-simpleOuterTest
-	"uses #resume"
-
-	[[self doSomething.
-	MyTestNotification signal.
-	"self doSomethingElse"
-	self doSomethingExceptional]
-		on: MyTestNotification
-		do: [:ex | ex outer. self doSomethingElse]]
-				on: MyTestNotification
-				do: [:ex | self doYetAnotherThing. ex resume]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:10'!
-simpleOuterTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doYetAnotherThingString;
-		add: self doSomethingElseString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 00:37'!
-simplePassTest
-
-	[self doSomething.
-	MyTestError signal.
-	self doSomethingElse]
-		on: MyTestError
-		do:
-			[:ex |
-			self doYetAnotherThing.
-			ex pass "expecting handler in #runTest:"]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:10'!
-simplePassTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doYetAnotherThingString;
-		add: 'Unhandled Exception';
-		yourself! !
-
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 02:12'!
-simpleResignalAsTest
-	"ExceptionTester new simpleResignalAsTest"
-
-	[self doSomething.
-	MyTestNotification signal.
-	self doSomethingElse]
-		on: MyTestNotification
-		do:
-			[:ex | ex resignalAs: MyTestError new]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:11'!
-simpleResignalAsTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: 'Unhandled Exception';
-		yourself! !
-
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'nice 12/27/2009 21:06'!
-simpleResumeTest
-	"see if we can resume twice"
-	
-	[ | it |
-	self doSomething.
-	it := MyResumableTestError signal.
-	it = 3 ifTrue: [self doSomethingElse].
-	it := MyResumableTestError signal.
-	it = 3 ifTrue: [self doSomethingElse].
-	]
-		on: MyResumableTestError
-		do:
-			[:ex |
-			self doYetAnotherThing.
-			ex resume: 3]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'RAA 12/8/2000 12:59'!
-simpleResumeTestResults
-
-	"see if we can resume twice"
-
-	^OrderedCollection new
-			add: self doSomethingString;
-			add: self doYetAnotherThingString;
-			add: self doSomethingElseString;
-			add: self doYetAnotherThingString;
-			add: self doSomethingElseString;
-			yourself! !
-
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:02'!
-simpleRetryTest
-
-	| theMeaningOfLife |
-	theMeaningOfLife := nil.
-	[self doSomething.
-	theMeaningOfLife == nil
-		ifTrue: [MyTestError signal]
-		ifFalse: [self doSomethingElse]]
-			on: MyTestError
-			do:
-				[:ex |
-				theMeaningOfLife := 42.
-				self doYetAnotherThing.
-				ex retry]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:23'!
-simpleRetryTestResults
-
-	^OrderedCollection new
-			add: self doSomethingString;
-			add: self doYetAnotherThingString;
-			add: self doSomethingString;
-			add: self doSomethingElseString;
-			yourself! !
-
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 01:03'!
-simpleRetryUsingTest
-
-	[self doSomething.
-	MyTestError signal.
-	self doSomethingElse]
-		on: MyTestError
-		do:
-			[:ex | ex retryUsing: [self doYetAnotherThing]]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 01:23'!
-simpleRetryUsingTestResults
-
-	^OrderedCollection new
-			add: self doSomethingString;
-			add: self doYetAnotherThingString;
-			yourself! !
-
-!ExceptionTester methodsFor: 'signaledException tests' stamp: 'tfei 6/13/1999 00:59'!
-simpleReturnTest
-
-	| it |
-	it :=
-		[self doSomething.
-		MyTestError signal.
-		self doSomethingElse]
-			on: MyTestError
-			do: [:ex | ex return: 3].
-	it = 3 ifTrue: [self doYetAnotherThing]! !
-
-!ExceptionTester methodsFor: 'signaledException results' stamp: 'tfei 6/13/1999 02:22'!
-simpleReturnTestResults
-
-	^OrderedCollection new
-		add: self doSomethingString;
-		add: self doYetAnotherThingString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'brp 10/22/2004 12:00'!
-simpleTimeoutTest
-
-	| n |
-	[1 to: 1000000 do: [ :i | n := i. self doSomething ] ]
-		valueWithin: 50 milliSeconds onTimeout:
-			[ self iterationsBeforeTimeout: n.
-			self doSomethingElse ]! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 17:44'!
-simpleTimeoutTestResults
-
-	| things |
-	things := OrderedCollection new: self iterationsBeforeTimeout.
-
-	self iterationsBeforeTimeout timesRepeat: [ things add: self  doSomethingString ].
-	things add: self doSomethingElseString.
-
-	^ things! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'brp 10/22/2004 12:00'!
-simpleTimeoutWithZeroDurationTest
-
-	[ self doSomething ]
-		valueWithin: 0 seconds onTimeout:
-			[ self doSomethingElse ].
-	! !
-
-!ExceptionTester methodsFor: 'results' stamp: 'brp 10/21/2004 16:52'!
-simpleTimeoutWithZeroDurationTestResults
-
-	^OrderedCollection new
-		add: self doSomethingElseString;
-		yourself! !
-
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:30'!
-suiteLog
-
-	suiteLog == nil
-		ifTrue: [suiteLog := OrderedCollection new].
-	^suiteLog! !
-
-!ExceptionTester methodsFor: 'accessing' stamp: 'tfei 6/8/1999 09:15'!
-testString
-
-	^'This is only a test.'! !
-
-!ExceptionTester methodsFor: 'tests' stamp: 'tfei 6/7/1999 14:28'!
-warningTest
-
-	self log: 'About to signal warning.'.
-	Warning signal: 'Ouch'.
-	self log: 'Warning signal handled and resumed.'! !
