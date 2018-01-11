@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3245] on 4 January 2018 at 4:55:07 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3245] on 5 January 2018 at 11:16:53 am'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 46!
-!requires: 'YAXO' 1 nil nil!
+!provides: 'Morphic3' 1 47!
 !requires: 'OpenCL' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 SystemOrganization addCategory: #'Morphic3-Kernel'!
 SystemOrganization addCategory: #'Morphic3-SVG'!
 SystemOrganization addCategory: #'Morphic3-SVG shapes'!
@@ -1876,10 +1876,10 @@ rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax
 		abs_LineToX: xMin y: yMax;
 		do_ClosePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 1/1/2018 14:19:01'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 1/5/2018 11:01:29'!
 roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
-	| corner1 corner2 corner3 corner4 dx dy p5 p6 p7 p8 rx ry phi doLargerArc useIncreasingAngles |
+	| corner1 corner2 corner3 corner4 dx dy p5 p6 p7 p8 |
 	(mrx = 0.0 or: [ mry = 0.0 ]) ifTrue: [
 		^self
 			rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax ].
@@ -1894,25 +1894,28 @@ roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	p6 _ corner3 - dx.
 	p7 _ corner4 + dx.
 	p8 _ corner4 - dy.
+	"
 	rx _ dx r.
 	ry _ dy r.
 	phi _ dx theta.
-	
 	doLargerArc _ false.
 	useIncreasingAngles _ true.
+	"
 	engine
 		abs_MoveToX: corner1 x y: corner1 y ;
 		abs_LineToX: corner2 x y: corner2 y;
 		abs_LineToX: p5 x y: p5 y;
-		abs_ArcToX: p6 x y: p6 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+"		abs_ArcToX: p6 x y: p6 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
+		abs_QuadraticBezierToX: p6 x y: p6 y controlX: corner3 x y: corner3 y;
 		abs_LineToX: p7 x y: p7 y;
-		abs_ArcToX: p8 x y: p8 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+"		abs_ArcToX: p8 x y: p8 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
+		abs_QuadraticBezierToX: p8 x y: p8 y controlX: corner4 x y: corner4 y;
 		do_ClosePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 1/1/2018 14:19:03'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 1/5/2018 10:59:15'!
 roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
-	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 p5 p6 p7 p8 rx ry phi doLargerArc useIncreasingAngles |
+	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 p5 p6 p7 p8 |
 	(mrx = 0.0 or: [ mry = 0.0 ]) ifTrue: [
 		^self
 			rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax ].
@@ -1931,27 +1934,32 @@ roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	p6 _ corner3 - dx.
 	p7 _ corner4 + dx.
 	p8 _ corner4 - dy.
+	"
 	rx _ dx r.
 	ry _ dy r.
 	phi _ dx theta.
-	
 	doLargerArc _ false.
 	useIncreasingAngles _ true.
+	"
 	engine
 		abs_MoveToX: p1 x y: p1 y ;
-		abs_ArcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+"		abs_ArcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
+		abs_QuadraticBezierToX: p2 x y: p2 y controlX: corner1 x y: corner1 y;
 		abs_LineToX: p3 x y: p3 y;
-		abs_ArcToX: p4 x y: p4 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+"		abs_ArcToX: p4 x y: p4 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
+		abs_QuadraticBezierToX: p4 x y: p4 y controlX: corner2 x y: corner2 y;
 		abs_LineToX: p5 x y: p5 y;
-		abs_ArcToX: p6 x y: p6 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+"		abs_ArcToX: p6 x y: p6 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
+		abs_QuadraticBezierToX: p6 x y: p6 y controlX: corner3 x y: corner3 y;
 		abs_LineToX: p7 x y: p7 y;
-		abs_ArcToX: p8 x y: p8 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+"		abs_ArcToX: p8 x y: p8 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
+		abs_QuadraticBezierToX: p8 x y: p8 y controlX: corner4 x y: corner4 y;
 		do_ClosePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 1/1/2018 14:26:51'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 1/5/2018 11:02:30'!
 roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
-	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 rx ry phi doLargerArc useIncreasingAngles |
+	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 |
 	(mrx = 0.0 or: [ mry = 0.0 ]) ifTrue: [
 		^self
 			rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax ].
@@ -1966,17 +1974,20 @@ roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	p2 _ corner1 + dx.
 	p3 _ corner2 - dx.
 	p4 _ corner2 + dy.
+	"
 	rx _ dx r.
 	ry _ dy r.
 	phi _ dx theta.
-	
 	doLargerArc _ false.
 	useIncreasingAngles _ true.
+	"
 	engine
 		abs_MoveToX: p1 x y: p1 y ;
-		abs_ArcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+"		abs_ArcToX: p2 x y: p2 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
+		abs_QuadraticBezierToX: p2 x y: p2 y controlX: corner1 x y: corner1 y;
 		abs_LineToX: p3 x y: p3 y;
-		abs_ArcToX: p4 x y: p4 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;
+"		abs_ArcToX: p4 x y: p4 y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
+		abs_QuadraticBezierToX: p4 x y: p4 y controlX: corner2 x y: corner2 y;
 		abs_LineToX: corner3 x y: corner3 y;
 		abs_LineToX: corner4 x y: corner4 y;
 		do_ClosePath! !
