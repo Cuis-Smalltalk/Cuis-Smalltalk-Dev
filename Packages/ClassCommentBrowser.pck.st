@@ -1,6 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2820] on 16 June 2016 at 1:19:29.860322 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3247] on 12 January 2018 at 9:26:56 am'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 34!
+!provides: 'ClassCommentBrowser' 1 35!
+SystemOrganization addCategory: #ClassCommentBrowser!
+
+
 !classDefinition: #CommentGuide category: #ClassCommentBrowser!
 AbstractHierarchicalList subclass: #CommentGuide
 	instanceVariableNames: 'window rootNames root browser subList index key'
@@ -10,16 +13,6 @@ AbstractHierarchicalList subclass: #CommentGuide
 !classDefinition: 'CommentGuide class' category: #ClassCommentBrowser!
 CommentGuide class
 	instanceVariableNames: 'topics'!
-
-!classDefinition: #CommentGuideWrapper category: #ClassCommentBrowser!
-ObjectExplorerWrapper subclass: #CommentGuideWrapper
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ClassCommentBrowser'!
-!classDefinition: 'CommentGuideWrapper class' category: #ClassCommentBrowser!
-CommentGuideWrapper class
-	instanceVariableNames: ''!
 
 !classDefinition: #CommentGuideListMorph category: #ClassCommentBrowser!
 HierarchicalListMorph subclass: #CommentGuideListMorph
@@ -41,6 +34,16 @@ SystemWindow subclass: #CommentGuideWindow
 CommentGuideWindow class
 	instanceVariableNames: ''!
 
+!classDefinition: #CommentGuideWrapper category: #ClassCommentBrowser!
+ObjectExplorerWrapper subclass: #CommentGuideWrapper
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ClassCommentBrowser'!
+!classDefinition: 'CommentGuideWrapper class' category: #ClassCommentBrowser!
+CommentGuideWrapper class
+	instanceVariableNames: ''!
+
 
 !CommentGuide commentStamp: 'dhn 1/28/2016 16:33' prior: 0!
 Class comments browser for Cuis
@@ -60,11 +63,6 @@ This class provides the model for browsing class comments based on class names w
 	CPU
 	
 The view for this model is CommentGuideWindow.!
-
-!CommentGuideWrapper commentStamp: 'dhn 9/12/2015 12:35' prior: 0!
-Provide the wrapper for a list item in CommentGuideWindow.
-
-Removes the undesired cruft after the item name.!
 
 !CommentGuideListMorph commentStamp: 'dhn 6/15/2016 17:30' prior: 0!
 A list of terms and acronyms which occur in class names. Selection can be made by typed key, arrows, or clicks.
@@ -103,6 +101,11 @@ In the outer list of categories, a pop-up menu enables:
 - searches over the names of all classes
 - searches over all class comments
 !
+
+!CommentGuideWrapper commentStamp: 'dhn 9/12/2015 12:35' prior: 0!
+Provide the wrapper for a list item in CommentGuideWindow.
+
+Removes the undesired cruft after the item name.!
 
 !CommentGuide methodsFor: 'accessing' stamp: 'dhn 10/6/2015 20:43'!
 commentOf: aString
@@ -180,6 +183,29 @@ indexOf: aChar
 	currentSelection sendSettingMessageTo: self
 ! !
 
+!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/15/2015 18:51'!
+root
+	"Answer the value of root"
+
+	^ root! !
+
+!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/22/2015 17:04'!
+rootNames: anObject
+	"Set the value of rootNames"
+
+	rootNames _ anObject! !
+
+!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/17/2015 21:01'!
+selectedRoot
+	"Answer the class names containing root as a substring"
+	^ rootNames at: root itemName! !
+
+!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/9/2015 18:24'!
+window: anObject
+	"Set the value of window"
+
+	window _ anObject! !
+
 !CommentGuide methodsFor: 'initialization' stamp: 'dhn 10/6/2015 20:40'!
 initialize
 	"Establish the database for the class comment browser"
@@ -189,6 +215,19 @@ initialize
 	self rootNames: self setList.
 	browser _ Browser new
 ! !
+
+!CommentGuide methodsFor: 'initialization' stamp: 'dhn 11/25/2015 10:23'!
+setList
+	"Answer the dictionary of roots and their children for the hierarchical list"
+	| dx |
+	dx _ Dictionary new.
+	self parseClassNames do: [:n | dx at: n put: OrderedCollection new].
+	
+	Smalltalk classNames do: [:ea |
+		| in |
+		in _ ea asString.
+		(self parseName: in) do: [:term | (dx at: term) add: in]].
+	^ dx! !
 
 !CommentGuide methodsFor: 'parsing' stamp: 'dhn 9/21/2015 16:50'!
 parseClassNames
@@ -223,42 +262,6 @@ parseName: aString
 	acronym isEmpty ifFalse: [str add: acronym].
 	^ str! !
 
-!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/15/2015 18:51'!
-root
-	"Answer the value of root"
-
-	^ root! !
-
-!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/22/2015 17:04'!
-rootNames: anObject
-	"Set the value of rootNames"
-
-	rootNames _ anObject! !
-
-!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/17/2015 21:01'!
-selectedRoot
-	"Answer the class names containing root as a substring"
-	^ rootNames at: root itemName! !
-
-!CommentGuide methodsFor: 'initialization' stamp: 'dhn 11/25/2015 10:23'!
-setList
-	"Answer the dictionary of roots and their children for the hierarchical list"
-	| dx |
-	dx _ Dictionary new.
-	self parseClassNames do: [:n | dx at: n put: OrderedCollection new].
-	
-	Smalltalk classNames do: [:ea |
-		| in |
-		in _ ea asString.
-		(self parseName: in) do: [:term | (dx at: term) add: in]].
-	^ dx! !
-
-!CommentGuide methodsFor: 'accessing' stamp: 'dhn 9/9/2015 18:24'!
-window: anObject
-	"Set the value of window"
-
-	window _ anObject! !
-
 !CommentGuide class methodsFor: 'instance creation' stamp: 'dhn 9/11/2015 21:05'!
 how
 "
@@ -280,11 +283,6 @@ tokenChars
 	"Answer the alphabet, capitalized, plus the digits"
 	^ ($A to: $Z), ($0 to: $9)! !
 
-!CommentGuideWrapper methodsFor: 'access' stamp: 'dhn 9/12/2015 11:31'!
-asString
-	"Answer the string for the hierarchical list category"
-	^ itemName! !
-
 !CommentGuideListMorph methodsFor: 'events-processing' stamp: 'dhn 6/15/2016 16:56'!
 keySelection
 	"Scroll the hiearchical list based on a keystroke"
@@ -303,7 +301,7 @@ browseClass
 				fullOnClass: (Smalltalk at: model getCurrentSelection item asSymbol) 
 				selector: nil]! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 11/5/2015 14:54'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 1/11/2018 16:48:17'!
 browseFullProtocol
 	"Create and schedule a new protocol browser on the currently selected class"
 
@@ -313,7 +311,7 @@ browseFullProtocol
 			class _ Smalltalk at: model getCurrentSelection item asSymbol.
 			aPBrowser _ ProtocolBrowser new on: class.
 			label _ 'Entire protocol of: ', class name.
-			MessageSetWindow open: aPBrowser label: label] ! !
+			ProtocolBrowserWindow open: aPBrowser label: label] ! !
 
 !CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 11/5/2015 14:54'!
 browseHierarchy
@@ -332,6 +330,35 @@ browseVersions
 		ifTrue: [
 			VersionsBrowserWindow 
 				browseCommentOf: (Smalltalk at: model getCurrentSelection item asSymbol)]! !
+
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:19'!
+scrollToClass: aString
+	"Scroll to an entry for the class named aString"
+	| cat m1 m2 str |
+	
+	"ensure that the first category which contains aString is expanded"
+	cat _ (model parseName: aString) first.
+	m1 _ listMorph findDeepSubmorphThat: [:ea | 
+		(ea respondsTo: #contents) and: [ea contents includesSubString: cat]] ifAbsent: [nil].
+	m1 ifNotNil: [m1 isExpanded ifFalse: [listMorph toggleExpandedState: m1]].
+	
+	"select the class entry and scroll it into view"
+	str _  aString asString printString.
+	m2 _ listMorph findDeepSubmorphThat: [:ea | 
+		(ea respondsTo: #contents) and: [ea contents includesSubString: str]] ifAbsent: [nil].
+	m2 ifNotNil: [
+		listMorph 
+			setSelectedMorph: m2;
+			scrollSelectionIntoView]! !
+
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:37'!
+showFind: aName
+	"Cause the class comment for aName to display; answer the comment"
+	| cmt |
+
+	cmt _ model commentOf: aName.
+	textMorph model actualContents: cmt.
+	^ cmt! !
 
 !CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 6/16/2016 13:08'!
 buildMorphicWindow
@@ -358,6 +385,20 @@ buildMorphicWindow
 	self layoutMorph
 		addMorph: row.
 	model window: self! !
+
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 6/16/2016 13:17'!
+refreshList
+	"Re-build the hierarchical list"
+	model 
+		noteNewSelection: nil;
+		rootNames: model setList.
+	self triggerEvent: #getList 	"needed when a class is added or deleted"! !
+
+!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 08:45'!
+refreshListAfterDelay
+	"The pause that refreshes"
+
+	self addAlarm: #refreshList after: 20 "milliseconds" ! !
 
 !CommentGuideWindow methodsFor: 'menu' stamp: 'dhn 10/2/2015 15:31'!
 commentGuideMenu
@@ -403,19 +444,11 @@ listMorph
 
 	^ listMorph! !
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 6/16/2016 13:17'!
-refreshList
-	"Re-build the hierarchical list"
-	model 
-		noteNewSelection: nil;
-		rootNames: model setList.
-	self triggerEvent: #getList 	"needed when a class is added or deleted"! !
+!CommentGuideWindow methodsFor: 'accessing' stamp: 'dhn 8/19/2015 19:47'!
+textMorph
+	"Answer the value of textMorph"
 
-!CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 08:45'!
-refreshListAfterDelay
-	"The pause that refreshes"
-
-	self addAlarm: #refreshList after: 20 "milliseconds" ! !
+	^ textMorph! !
 
 !CommentGuideWindow methodsFor: 'events' stamp: 'dhn 6/15/2016 16:56'!
 respondToKey: aChar
@@ -423,26 +456,6 @@ respondToKey: aChar
 
 	model indexOf: aChar.
 	listMorph keySelection! !
-
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:19'!
-scrollToClass: aString
-	"Scroll to an entry for the class named aString"
-	| cat m1 m2 str |
-	
-	"ensure that the first category which contains aString is expanded"
-	cat _ (model parseName: aString) first.
-	m1 _ listMorph findDeepSubmorphThat: [:ea | 
-		(ea respondsTo: #contents) and: [ea contents includesSubString: cat]] ifAbsent: [nil].
-	m1 ifNotNil: [m1 isExpanded ifFalse: [listMorph toggleExpandedState: m1]].
-	
-	"select the class entry and scroll it into view"
-	str _  aString asString printString.
-	m2 _ listMorph findDeepSubmorphThat: [:ea | 
-		(ea respondsTo: #contents) and: [ea contents includesSubString: str]] ifAbsent: [nil].
-	m2 ifNotNil: [
-		listMorph 
-			setSelectedMorph: m2;
-			scrollSelectionIntoView]! !
 
 !CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/19/2016 11:26'!
 searchAllComments
@@ -530,23 +543,13 @@ searchIn: aCollection for: aString
 			ifTrue: [hits addLast: ea]].
 	^ hits! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:37'!
-showFind: aName
-	"Cause the class comment for aName to display; answer the comment"
-	| cmt |
-
-	cmt _ model commentOf: aName.
-	textMorph model actualContents: cmt.
-	^ cmt! !
-
-!CommentGuideWindow methodsFor: 'accessing' stamp: 'dhn 8/19/2015 19:47'!
-textMorph
-	"Answer the value of textMorph"
-
-	^ textMorph! !
-
 !CommentGuideWindow class methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 08:48'!
 how
 "
 	CommentGuide open.
 "! !
+
+!CommentGuideWrapper methodsFor: 'access' stamp: 'dhn 9/12/2015 11:31'!
+asString
+	"Answer the string for the hierarchical list category"
+	^ itemName! !
