@@ -4,9 +4,7 @@
 shouldControlEmulateAltFor: keyValue
 	"At least on Linux Windows, command key is usually ctrl, not alt."
 
-	(keyValue between: `$a asciiValue` and: `$z asciiValue`) ifTrue: [ ^ true ].
-	(keyValue between: `$A asciiValue` and: `$Z asciiValue`) ifTrue: [ ^ true ].
-	^ false! !
+	^ true! !
 
 
 !Theme methodsFor: 'keyboard shortcuts' stamp: 'jmv 2/23/2018 15:42:17'!
