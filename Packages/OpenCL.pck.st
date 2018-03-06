@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3257] on 31 January 2018 at 3:46:40 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3266] on 6 March 2018 at 5:42:43 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 36!
+!provides: 'OpenCL' 1 37!
 !requires: 'FFI' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
@@ -4454,13 +4454,13 @@ program: anOpenCLProgram
 	"Set the program that this kernel was created for."
 	program := anOpenCLProgram.! !
 
-!OpenCLPrimitiveInterface class methodsFor: 'code generation' stamp: 'jmv 12/23/2016 12:16:20'!
+!OpenCLPrimitiveInterface class methodsFor: 'code generation' stamp: 'jmv 3/6/2018 17:41:34'!
 adaptType: cTypeString
 	| answer |
 	answer := cTypeString.
 	answer := answer copyReplaceAll: 'const'  with: 'const__' .
 	answer := answer copyReplaceAll: '*'  with: ' __ptr' .
-	answer := answer asLegalSelector.
+	answer := answer asValidSelector.
 	^ answer! !
 
 !OpenCLPrimitiveInterface class methodsFor: 'code generation' stamp: 'jmv 12/23/2016 12:13:19'!
