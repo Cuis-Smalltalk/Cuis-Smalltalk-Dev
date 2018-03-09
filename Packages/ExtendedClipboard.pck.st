@@ -1,8 +1,33 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2713] on 2 April 2016 at 10:51:26.959666 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 8 March 2018 at 11:35:06 am'!
 'Description Please enter a description for this package.'!
-!provides: 'ExtendedClipboard' 1 9!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'ExtendedClipboard' 1 10!
 !requires: 'FFI' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+SystemOrganization addCategory: #ExtendedClipboard!
+SystemOrganization addCategory: #'ExtendedClipboard-Win32'!
+SystemOrganization addCategory: #'ExtendedClipboard-tests'!
+
+
+!classDefinition: #ExtendedClipboardTest category: #'ExtendedClipboard-tests'!
+TestCase subclass: #ExtendedClipboardTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ExtendedClipboard-tests'!
+!classDefinition: 'ExtendedClipboardTest class' category: #'ExtendedClipboard-tests'!
+ExtendedClipboardTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #Win32Bitmap category: #'ExtendedClipboard-Win32'!
+ExternalStructure subclass: #Win32Bitmap
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ExtendedClipboard-Win32'!
+!classDefinition: 'Win32Bitmap class' category: #'ExtendedClipboard-Win32'!
+Win32Bitmap class
+	instanceVariableNames: ''!
+
 !classDefinition: #ExtendedClipboardInterface category: #ExtendedClipboard!
 Object subclass: #ExtendedClipboardInterface
 	instanceVariableNames: 'clipboard'
@@ -43,41 +68,177 @@ ExtendedClipboardInterface subclass: #ExtendedClipboardWinInterface
 ExtendedClipboardWinInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #Win32Bitmap category: #'ExtendedClipboard-Win32'!
-ExternalStructure subclass: #Win32Bitmap
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ExtendedClipboard-Win32'!
-!classDefinition: 'Win32Bitmap class' category: #'ExtendedClipboard-Win32'!
-Win32Bitmap class
-	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardTest category: #'ExtendedClipboard-tests'!
-TestCase subclass: #ExtendedClipboardTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ExtendedClipboard-tests'!
-!classDefinition: 'ExtendedClipboardTest class' category: #'ExtendedClipboard-tests'!
-ExtendedClipboardTest class
-	instanceVariableNames: ''!
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
+testStar16BitToAndFromImageClipboard
+	"
+	ExtendedClipboardTest new testStar16BitToAndFromImageClipboard
+	"
+	| form form1 form2 |
+	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 16.
+
+	"This will use a refStreamed object"
+	Clipboard default storeObject: form.
+	form2 _ Clipboard default retrieveObject.
+	form1 _ form copy.
+	form1 addDeltasFrom: form2.
+	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
+
+	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
+	ExtendedClipboardInterface current
+		clearClipboard;
+		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
+	form2 _ Clipboard default retrieveObject.
+	form1 _ form copy.
+	form1 addDeltasFrom: form2.
+	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
+
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 4/2/2016 14:40'!
+testStar8BitToAndFromImageClipboard
+	"
+	ExtendedClipboardTest new testStar8BitToAndFromImageClipboard
+	"
+	| form form1 form2 |
+	self assert: Clipboard default extendedClipboardInterface canStore description: 'Extended Clipboard cant store'.
+
+	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 8.
+
+	"This will use a refStreamed object"
+	Clipboard default storeObject: form.
+	form2 _ Clipboard default retrieveObject.
+	self assert: (form2 is: #Form).
+	form1 _ form copy.
+	form1 addDeltasFrom: form2.
+	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
+
+	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
+	ExtendedClipboardInterface current
+		clearClipboard;
+		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
+	form2 _ Clipboard default retrieveObject.
+	form1 _ form copy.
+	form1 addDeltasFrom: form2.
+	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
+
+!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
+testStarToAndFromImageClipboard
+	"
+	ExtendedClipboardTest new testStarToAndFromImageClipboard
+	"
+	| form form1 form2 |
+	form _ Display copy: (10@10 extent: 60@40).
+
+	"This will use a refStreamed object"
+	Clipboard default storeObject: form.
+	form2 _ Clipboard default retrieveObject.
+	form1 _ form copy.
+	form1 addDeltasFrom: form2.
+	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
+
+	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
+	ExtendedClipboardInterface current
+		clearClipboard;
+		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
+	form2 _ Clipboard default retrieveObject.
+	form1 _ form copy.
+	form1 addDeltasFrom: form2.
+	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmBits
+	"This method was automatically generated"
+	^ExternalData fromHandle: (handle pointerAt: 21) type: ExternalType byte asPointerType! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmBits: anObject
+	"This method was automatically generated"
+	handle pointerAt: 21 put: anObject getHandle.! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmBitsPixel
+	"This method was automatically generated"
+	^handle signedShortAt: 19! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmBitsPixel: anObject
+	"This method was automatically generated"
+	handle signedShortAt: 19 put: anObject! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmHeight
+	"This method was automatically generated"
+	^handle signedLongAt: 9! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmHeight: anObject
+	"This method was automatically generated"
+	handle signedLongAt: 9 put: anObject! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmPlanes
+	"This method was automatically generated"
+	^handle signedShortAt: 17! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmPlanes: anObject
+	"This method was automatically generated"
+	handle signedShortAt: 17 put: anObject! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmType
+	"This method was automatically generated"
+	^handle signedLongAt: 1! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmType: anObject
+	"This method was automatically generated"
+	handle signedLongAt: 1 put: anObject! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmWidth
+	"This method was automatically generated"
+	^handle signedLongAt: 5! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmWidth: anObject
+	"This method was automatically generated"
+	handle signedLongAt: 5 put: anObject! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmWidthBytes
+	"This method was automatically generated"
+	^handle signedLongAt: 13! !
+
+!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
+bmWidthBytes: anObject
+	"This method was automatically generated"
+	handle signedLongAt: 13 put: anObject! !
+
+!Win32Bitmap class methodsFor: 'instance creation' stamp: 'mir 2/14/2008 22:47'!
+fields
+	"Win32TagBitmap defineFields"
 
 
-!Form methodsFor: '*extendedClipboard-Win32' stamp: 'mir 2/16/2008 19:52'!
-fromWin32BitMap: bitmapBits
-	0 to: self height-1 do: [:y |
-		1 to: self width do: [:x |
-			bits integerAt: (y*width) + x put: ((bitmapBits unsignedLongAt: 1 + (y*width*4) + ((x-1) *4)) bitOr: 16rFF000000)
-	]].
+	^ #(
+		#(#bmType 'long')
+		#(#bmWidth 'long')
+		#(#bmHeight 'long')
+		#(#bmWidthBytes 'long')
+		#(#bmPlanes 'short')
+		#(#bmBitsPixel 'short')
+		#(#bmBits 'byte*')
+	)
+
+"typedef struct tagBITMAP {
+  LONG   bmType; 
+  LONG   bmWidth; 
+  LONG   bmHeight; 
+  LONG   bmWidthBytes; 
+  WORD   bmPlanes; 
+  WORD   bmBitsPixel; 
+  LPVOID bmBits; 
+} BITMAP"
 ! !
-
-!Form class methodsFor: '*extendedClipboard-Win32' stamp: 'mir 2/15/2008 10:24'!
-fromWin32BitMap: bitmap bits: bits
-	| form |
-	form := self extent: bitmap bmWidth@bitmap bmHeight depth: bitmap bmBitsPixel.
-	form fromWin32BitMap: bits.
-	^form! !
 
 !ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 23:45'!
 addClipboardData: data dataFormat: aFormat
@@ -86,16 +247,6 @@ addClipboardData: data dataFormat: aFormat
 		self error: 'broken clipboard'.
 		^self].
 	self primAddClipboardData: clipboard data: data dataFormat: aFormat! !
-
-!ExtendedClipboardInterface methodsFor: 'testing' stamp: 'jmv 11/12/2013 08:50'!
-canImportRTF
-	^Smalltalk includesKey: #RTFTextBuilder! !
-
-!ExtendedClipboardInterface methodsFor: 'testing' stamp: 'jmv 1/18/2011 23:44'!
-canStore
-	"Store into clipboard implemented on most platforms.
-	Answer false in subclasses that can't store into clipboard."
-	^clipboard ~= 0! !
 
 !ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 14:47'!
 clearClipboard
@@ -107,9 +258,41 @@ createClipboard
 	clipboard = 0 ifTrue: [^self].
 	^ self primCreateClipboard! !
 
+!ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 14:47'!
+getClipboardFormat: formatNumber
+	clipboard = 0 ifTrue: [^nil].
+	^ self primGetClipboardFormat: clipboard formatNumber: formatNumber! !
+
+!ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 14:47'!
+readClipboardData: format
+	^clipboard = 0 ifFalse: [
+		self primReadClipboardData: clipboard format: format ]! !
+
+!ExtendedClipboardInterface methodsFor: 'testing' stamp: 'jmv 11/12/2013 08:50'!
+canImportRTF
+	^Smalltalk includesKey: #RTFTextBuilder! !
+
+!ExtendedClipboardInterface methodsFor: 'testing' stamp: 'jmv 1/18/2011 23:44'!
+canStore
+	"Store into clipboard implemented on most platforms.
+	Answer false in subclasses that can't store into clipboard."
+	^clipboard ~= 0! !
+
+!ExtendedClipboardInterface methodsFor: 'testing' stamp: 'jmv 11/10/2013 09:46'!
+isOperational
+	"Can be redefined if needed.
+	We should check that ClipboardExtendedPlugin is available and operational."
+	^clipboard ~= 0! !
+
 !ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 12/21/2013 09:30'!
 fromBMPBytes: bytes
 	^ (BMPReadWriter onBinaryStream: bytes readStream) nextImage! !
+
+!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 3/7/2018 18:50:49'!
+fromISO8859Bytes: bytes
+
+	^(String streamContents: [ :strm | bytes do: [ :byte | strm nextPut: (Character numericValue: byte) ]])
+		withCuisLineEndings! !
 
 !ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 12/21/2013 09:30'!
 fromJPEGBytes: bytes
@@ -136,20 +319,9 @@ fromUTF8Bytes: bytes
 
 	^(String fromUtf8: bytes hex: false trimLastNull: true) withCuisLineEndings! !
 
-!ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 14:47'!
-getClipboardFormat: formatNumber
-	clipboard = 0 ifTrue: [^nil].
-	^ self primGetClipboardFormat: clipboard formatNumber: formatNumber! !
-
 !ExtendedClipboardInterface methodsFor: 'initialization' stamp: 'tak 5/16/2007 12:03'!
 initialize
 	clipboard := [self createClipboard] on: Error do: [:ex | clipboard := 0]! !
-
-!ExtendedClipboardInterface methodsFor: 'testing' stamp: 'jmv 11/10/2013 09:46'!
-isOperational
-	"Can be redefined if needed.
-	We should check that ClipboardExtendedPlugin is available and operational."
-	^clipboard ~= 0! !
 
 !ExtendedClipboardInterface methodsFor: 'system primitives' stamp: 'JSM 5/6/2006 16:32'!
 primAddClipboardData: clipboard data: data dataFormat: aFormat
@@ -183,11 +355,6 @@ primReadClipboardData: clipboard format: format
 	<primitive:'ioReadClipboardData' module: 'ClipboardExtendedPlugin'>.
 	^ self primitiveFailed.
 ! !
-
-!ExtendedClipboardInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 14:47'!
-readClipboardData: format
-	^clipboard = 0 ifFalse: [
-		self primReadClipboardData: clipboard format: format ]! !
 
 !ExtendedClipboardInterface methodsFor: 'api - retrieve' stamp: 'jmv 1/19/2011 15:17'!
 retrieveId
@@ -432,6 +599,89 @@ addClipboardData: data dataFormat: aFormat
 	self canStore ifFalse: [
 		self error: 'Writing to Extended Clipboard not implemented in Windows' ]! !
 
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 7/27/2015 15:45'!
+clearClipboard
+	self canStore ifFalse: [
+		self error: 'Writing to Extended Clipboard not implemented in Windows' ]! !
+
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 7/27/2015 15:46'!
+createClipboard
+	"Not on Windows"
+	clipboard := 0! !
+
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'mir 1/23/2008 12:11'!
+lastSeenSequenceNr
+	^lastSeenSequenceNr ifNil: [lastSeenSequenceNr := -1].! !
+
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 3/7/2018 18:52:53'!
+readClipboardData: format
+	| answer |
+	self openClipboard.
+	[
+		answer _ (self getClipboardData: format) "fromCString" fromCStringAsByteArray
+	] ensure: [ self closeClipboard ].
+	^ answer! !
+
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 15:56'!
+readPrimAvailableFormats
+	| i availableFormats |
+	availableFormats _ OrderedCollection new: 10.
+	i _ 0.
+	self openClipboard.
+	[
+		i _ self format: i.
+		i ~= 0 ] whileTrue: [
+			availableFormats add: i ].
+	self closeClipboard.
+	^ availableFormats! !
+
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 16:05'!
+retrieveWindowsBMPForm
+	| handle bitmap result form bitBuffer byteCount |
+	self openClipboard.
+	[handle := self getClipboardDataHandle: 2 " 'image/*' CF_BITMAP"]
+		ensure: [self closeClipboard].
+
+	"Check handle"
+	"Allocate buffer for bitmap structure"
+	bitmap := Win32Bitmap new.
+	result := self getObject: handle bufferSize: Win32Bitmap byteSize buffer: bitmap.
+	byteCount := bitmap bmWidth * bitmap bmHeight * bitmap bmBitsPixel / 8.
+	bitBuffer := ByteArray new: byteCount.
+	result := self getBitmapBitsFrom: handle count: byteCount buffer: bitBuffer.
+
+	result = 0
+		ifTrue: [
+			^nil].
+	form := Form fromWin32BitMap: bitmap bits: bitBuffer.
+	^form! !
+
+!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 16:05'!
+retrieveWindowsDIBForm
+	| handle bitmap result form bitBuffer |
+	self openClipboard.
+	[handle := self getClipboardDataHandle: 8 "CF_DIB"]
+		ensure: [self closeClipboard].
+
+	"Check handle"
+	"Allocate buffer for bitmap structure"
+"	result := self getObject: handle bufferSize: Win32BitmapInfoHeader byteSize buffer: nil."
+self halt.
+	bitmap := Win32Bitmap new.
+	result := self getObject: handle bufferSize: Win32Bitmap byteSize buffer: bitmap.
+	bitBuffer := ExternalAddress allocate: bitmap bmWidth*bitmap bmHeight*bitmap bmBitsPixel.
+	bitmap bmBits: (ExternalData fromHandle: bitBuffer type: ExternalType byte asPointerType).
+	result := self getObject: handle bufferSize: Win32Bitmap byteSize buffer: bitmap.
+
+	result = 0
+		ifTrue: [
+			bitBuffer free.
+			self halt.
+			^nil].
+	form := Form fromWin32BitMap: bitmap.
+	bitBuffer free.
+	^form! !
+
 !ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'jmv 11/10/2013 09:55'!
 attemptCloseClipboard
 	"ExtendedClipboardWinInterface new closeClipboard"
@@ -442,16 +692,6 @@ BOOL CloseClipboard(
     VOID 
 );"
 	<apicall: long 'CloseClipboard' () module: 'user32.dll'>! !
-
-!ExtendedClipboardWinInterface methodsFor: 'testing' stamp: 'jmv 1/18/2011 22:27'!
-canStore
-	"Store into clipboard not yet implemented on Windows"
-	^false! !
-
-!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 7/27/2015 15:45'!
-clearClipboard
-	self canStore ifFalse: [
-		self error: 'Writing to Extended Clipboard not implemented in Windows' ]! !
 
 !ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'mir 2/14/2008 23:56'!
 clipboardAvailable: format
@@ -476,11 +716,6 @@ BOOL CloseClipboard(
 );"
 	<apicall: long 'CloseClipboard' () module: 'user32.dll'>
 	^self externalCallFailed! !
-
-!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 7/27/2015 15:46'!
-createClipboard
-	"Not on Windows"
-	clipboard := 0! !
 
 !ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'mir 5/10/2006 16:09'!
 format: format
@@ -575,27 +810,6 @@ int GetObject(
 	<apicall: long 'GetObjectW' (void* long Win32TagBitmap *) module: 'Gdi32.dll'>
 	^self externalCallFailed! !
 
-!ExtendedClipboardWinInterface methodsFor: 'testing' stamp: 'mir 1/23/2008 12:07'!
-hasExternalClipboardChanged
-	| prevSequenceNr |
-	prevSequenceNr :=  self lastSeenSequenceNr.
-	self
-		openClipboard;
-		closeClipboard.
-	^prevSequenceNr < self lastSeenSequenceNr! !
-
-!ExtendedClipboardWinInterface methodsFor: 'testing' stamp: 'jmv 11/10/2013 09:56'!
-isOperational
-	"Check that we can access the Wiindows clipboard."
-	| result |
-	result _ self openClipboard: 0.
-	self attemptCloseClipboard.
-	^result ~= 0! !
-
-!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'mir 1/23/2008 12:11'!
-lastSeenSequenceNr
-	^lastSeenSequenceNr ifNil: [lastSeenSequenceNr := -1].! !
-
 !ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'jmv 3/13/2012 12:33'!
 listFormats
 	"ExtendedClipboardWinInterface new listFormats"
@@ -650,112 +864,6 @@ BOOL OpenClipboard(
 	"^self externalCallFailed"
 	^0! !
 
-!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 14:47'!
-readClipboardData: format
-	| answer |
-	self openClipboard.
-	[
-		answer _ (self getClipboardData: format) fromCString
-	] ensure: [ self closeClipboard ].
-	^ answer! !
-
-!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 15:56'!
-readPrimAvailableFormats
-	| i availableFormats |
-	availableFormats _ OrderedCollection new: 10.
-	i _ 0.
-	self openClipboard.
-	[
-		i _ self format: i.
-		i ~= 0 ] whileTrue: [
-			availableFormats add: i ].
-	self closeClipboard.
-	^ availableFormats! !
-
-!ExtendedClipboardWinInterface methodsFor: 'api - retrieve' stamp: 'jmv 1/19/2011 15:18'!
-retrieveId
-	"Implement!!"
-	^nil! !
-
-!ExtendedClipboardWinInterface methodsFor: 'api - retrieve' stamp: 'jmv 11/12/2013 08:53'!
-retrieveObject
-	| conversion formatName bytes |
-	conversion _ nil.
-	self readPrimAvailableFormats do: [ :format |
-
-		"Bitmap images "		
-		format = 2 ifTrue: [
-			^ self retrieveWindowsBMPForm ].	"CF_BITMAP: read using FFI"
-
-		"Unformatted plain text"
-		format = 1 ifTrue: [
-			conversion _ #fromUTF8Bytes: ].	"'text/plain' CF_TEXT"
-			"Check for other formats such as 13 'text/unicode' CF_UNICODETEXT if needed"
-
-
-		format > 18 ifTrue: [
-			formatName := ByteArray new:128.
-			self getClipboardFormatName: format name: formatName size: formatName size.
-			(formatName asString beginsWith: 'Rich Text Format') ifTrue: [
-				self canImportRTF ifTrue: [conversion _ #fromRTFBytes:] ].		"text/rtf" "Only if package RTFImporting is loaded"
-		].
-
-		"Work on this when we do copy to clipboard"
-		"[ 'cuis-refStreamed' ] -> [ #fromRefStreamBytes: ]"
-
-		conversion ifNotNil: [
-			bytes _ self readClipboardData: format.
-			^self perform: conversion with: bytes ]
-	].
-	^ nil	"Could not read any of the available formats"! !
-
-!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 16:05'!
-retrieveWindowsBMPForm
-	| handle bitmap result form bitBuffer byteCount |
-	self openClipboard.
-	[handle := self getClipboardDataHandle: 2 " 'image/*' CF_BITMAP"]
-		ensure: [self closeClipboard].
-
-	"Check handle"
-	"Allocate buffer for bitmap structure"
-	bitmap := Win32Bitmap new.
-	result := self getObject: handle bufferSize: Win32Bitmap byteSize buffer: bitmap.
-	byteCount := bitmap bmWidth * bitmap bmHeight * bitmap bmBitsPixel / 8.
-	bitBuffer := ByteArray new: byteCount.
-	result := self getBitmapBitsFrom: handle count: byteCount buffer: bitBuffer.
-
-	result = 0
-		ifTrue: [
-			^nil].
-	form := Form fromWin32BitMap: bitmap bits: bitBuffer.
-	^form! !
-
-!ExtendedClipboardWinInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 16:05'!
-retrieveWindowsDIBForm
-	| handle bitmap result form bitBuffer |
-	self openClipboard.
-	[handle := self getClipboardDataHandle: 8 "CF_DIB"]
-		ensure: [self closeClipboard].
-
-	"Check handle"
-	"Allocate buffer for bitmap structure"
-"	result := self getObject: handle bufferSize: Win32BitmapInfoHeader byteSize buffer: nil."
-self halt.
-	bitmap := Win32Bitmap new.
-	result := self getObject: handle bufferSize: Win32Bitmap byteSize buffer: bitmap.
-	bitBuffer := ExternalAddress allocate: bitmap bmWidth*bitmap bmHeight*bitmap bmBitsPixel.
-	bitmap bmBits: (ExternalData fromHandle: bitBuffer type: ExternalType byte asPointerType).
-	result := self getObject: handle bufferSize: Win32Bitmap byteSize buffer: bitmap.
-
-	result = 0
-		ifTrue: [
-			bitBuffer free.
-			self halt.
-			^nil].
-	form := Form fromWin32BitMap: bitmap.
-	bitBuffer free.
-	^form! !
-
 !ExtendedClipboardWinInterface methodsFor: 'system calls' stamp: 'mir 6/18/2006 18:47'!
 setClipboardFormat: format data: data 
 	"ExtendedClipboardInterface current setClipboardFormat: 1 data: ('clipboard test' copyWith: 0 asCharacter) "
@@ -786,6 +894,65 @@ HANDLE SetClipboardData(
 "
 	^self externalCallFailed! !
 
+!ExtendedClipboardWinInterface methodsFor: 'testing' stamp: 'jmv 1/18/2011 22:27'!
+canStore
+	"Store into clipboard not yet implemented on Windows"
+	^false! !
+
+!ExtendedClipboardWinInterface methodsFor: 'testing' stamp: 'mir 1/23/2008 12:07'!
+hasExternalClipboardChanged
+	| prevSequenceNr |
+	prevSequenceNr :=  self lastSeenSequenceNr.
+	self
+		openClipboard;
+		closeClipboard.
+	^prevSequenceNr < self lastSeenSequenceNr! !
+
+!ExtendedClipboardWinInterface methodsFor: 'testing' stamp: 'jmv 11/10/2013 09:56'!
+isOperational
+	"Check that we can access the Wiindows clipboard."
+	| result |
+	result _ self openClipboard: 0.
+	self attemptCloseClipboard.
+	^result ~= 0! !
+
+!ExtendedClipboardWinInterface methodsFor: 'api - retrieve' stamp: 'jmv 1/19/2011 15:18'!
+retrieveId
+	"Implement!!"
+	^nil! !
+
+!ExtendedClipboardWinInterface methodsFor: 'api - retrieve' stamp: 'jmv 3/7/2018 18:49:23'!
+retrieveObject
+	| conversion formatName bytes |
+	conversion _ nil.
+	self readPrimAvailableFormats do: [ :format |
+
+		"Bitmap images "		
+		format = 2 ifTrue: [
+			^ self retrieveWindowsBMPForm ].	"CF_BITMAP: read using FFI"
+
+		"Unformatted plain text"
+		format = 1 ifTrue: [
+			conversion _ #fromISO8859Bytes: ].	"'text/plain' CF_TEXT"
+			"Check for other formats such as 13 'text/unicode' CF_UNICODETEXT if needed"
+
+
+		format > 18 ifTrue: [
+			formatName := ByteArray new:128.
+			self getClipboardFormatName: format name: formatName size: formatName size.
+			(formatName asString beginsWith: 'Rich Text Format') ifTrue: [
+				self canImportRTF ifTrue: [conversion _ #fromRTFBytes:] ].		"text/rtf" "Only if package RTFImporting is loaded"
+		].
+
+		"Work on this when we do copy to clipboard"
+		"[ 'cuis-refStreamed' ] -> [ #fromRefStreamBytes: ]"
+
+		conversion ifNotNil: [
+			bytes _ self readClipboardData: format.
+			^self perform: conversion with: bytes ]
+	].
+	^ nil	"Could not read any of the available formats"! !
+
 !ExtendedClipboardWinInterface methodsFor: 'api - store' stamp: 'jmv 1/26/2011 10:07'!
 storeForm: aForm id: otherString
 	"I presume the order is: most preferred format first, least desirable format last.
@@ -807,174 +974,18 @@ storeText: aText id: otherString
 	Cuis object id is usually at the end, but don't include it if we include a streamed representation."
 	self halt! !
 
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmBits
-	"This method was automatically generated"
-	^ExternalData fromHandle: (handle pointerAt: 21) type: ExternalType byte asPointerType! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmBits: anObject
-	"This method was automatically generated"
-	handle pointerAt: 21 put: anObject getHandle.! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmBitsPixel
-	"This method was automatically generated"
-	^handle signedShortAt: 19! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmBitsPixel: anObject
-	"This method was automatically generated"
-	handle signedShortAt: 19 put: anObject! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmHeight
-	"This method was automatically generated"
-	^handle signedLongAt: 9! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmHeight: anObject
-	"This method was automatically generated"
-	handle signedLongAt: 9 put: anObject! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmPlanes
-	"This method was automatically generated"
-	^handle signedShortAt: 17! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmPlanes: anObject
-	"This method was automatically generated"
-	handle signedShortAt: 17 put: anObject! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmType
-	"This method was automatically generated"
-	^handle signedLongAt: 1! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmType: anObject
-	"This method was automatically generated"
-	handle signedLongAt: 1 put: anObject! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmWidth
-	"This method was automatically generated"
-	^handle signedLongAt: 5! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmWidth: anObject
-	"This method was automatically generated"
-	handle signedLongAt: 5 put: anObject! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmWidthBytes
-	"This method was automatically generated"
-	^handle signedLongAt: 13! !
-
-!Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
-bmWidthBytes: anObject
-	"This method was automatically generated"
-	handle signedLongAt: 13 put: anObject! !
-
-!Win32Bitmap class methodsFor: 'instance creation' stamp: 'mir 2/14/2008 22:47'!
-fields
-	"Win32TagBitmap defineFields"
-
-
-	^ #(
-		#(#bmType 'long')
-		#(#bmWidth 'long')
-		#(#bmHeight 'long')
-		#(#bmWidthBytes 'long')
-		#(#bmPlanes 'short')
-		#(#bmBitsPixel 'short')
-		#(#bmBits 'byte*')
-	)
-
-"typedef struct tagBITMAP {
-  LONG   bmType; 
-  LONG   bmWidth; 
-  LONG   bmHeight; 
-  LONG   bmWidthBytes; 
-  WORD   bmPlanes; 
-  WORD   bmBitsPixel; 
-  LPVOID bmBits; 
-} BITMAP"
+!Form methodsFor: '*extendedClipboard-Win32' stamp: 'mir 2/16/2008 19:52'!
+fromWin32BitMap: bitmapBits
+	0 to: self height-1 do: [:y |
+		1 to: self width do: [:x |
+			bits integerAt: (y*width) + x put: ((bitmapBits unsignedLongAt: 1 + (y*width*4) + ((x-1) *4)) bitOr: 16rFF000000)
+	]].
 ! !
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
-testStar16BitToAndFromImageClipboard
-	"
-	ExtendedClipboardTest new testStar16BitToAndFromImageClipboard
-	"
-	| form form1 form2 |
-	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 16.
-
-	"This will use a refStreamed object"
-	Clipboard default storeObject: form.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
-
-	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
-	ExtendedClipboardInterface current
-		clearClipboard;
-		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
-
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 4/2/2016 14:40'!
-testStar8BitToAndFromImageClipboard
-	"
-	ExtendedClipboardTest new testStar8BitToAndFromImageClipboard
-	"
-	| form form1 form2 |
-	self assert: Clipboard default extendedClipboardInterface canStore description: 'Extended Clipboard cant store'.
-
-	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 8.
-
-	"This will use a refStreamed object"
-	Clipboard default storeObject: form.
-	form2 _ Clipboard default retrieveObject.
-	self assert: (form2 is: #Form).
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
-
-	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
-	ExtendedClipboardInterface current
-		clearClipboard;
-		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
-
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
-testStarToAndFromImageClipboard
-	"
-	ExtendedClipboardTest new testStarToAndFromImageClipboard
-	"
-	| form form1 form2 |
-	form _ Display copy: (10@10 extent: 60@40).
-
-	"This will use a refStreamed object"
-	Clipboard default storeObject: form.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
-
-	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
-	ExtendedClipboardInterface current
-		clearClipboard;
-		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
+!Form class methodsFor: '*extendedClipboard-Win32' stamp: 'mir 2/15/2008 10:24'!
+fromWin32BitMap: bitmap bits: bits
+	| form |
+	form := self extent: bitmap bmWidth@bitmap bmHeight depth: bitmap bmBitsPixel.
+	form fromWin32BitMap: bits.
+	^form! !
 ExtendedClipboardInterface initialize!

@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3232] on 27 December 2017 at 12:04:14 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 9 March 2018 at 4:24:38 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 13!
+!provides: 'Morphic-Widgets-Extras' 1 14!
 SystemOrganization addCategory: #'Morphic-Widgets-Extras'!
 
 
@@ -94,6 +94,16 @@ RectangleLikeMorph subclass: #OneLineEditorMorph
 OneLineEditorMorph class
 	instanceVariableNames: ''!
 
+!classDefinition: #SamplePlotterMorph category: #'Morphic-Widgets-Extras'!
+RectangleLikeMorph subclass: #SamplePlotterMorph
+	instanceVariableNames: 'domain sampleSequences colors yMax yMin'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Morphic-Widgets-Extras'!
+!classDefinition: 'SamplePlotterMorph class' category: #'Morphic-Widgets-Extras'!
+SamplePlotterMorph class
+	instanceVariableNames: ''!
+
 
 !SimpleEditor commentStamp: '<historical>' prior: 0!
 See comment in Editor!
@@ -132,7 +142,9 @@ A very simple morph to demo stepping, and for knowing about stepping (and world 
 
 FrameRateMorph new openInHand!
 
-!FunctionGraphMorph commentStamp: 'jmv 7/1/2015 11:28' prior: 0!
+!FunctionGraphMorph commentStamp: '<historical>' prior: 0!
+For continuous functions on a real domain.
+
 | g d |
 d _ -1.
 g _ FunctionGraphMorph new.
@@ -165,6 +177,26 @@ A greatly reduced StringMorph. May be of some use.!
 A plain text editor for Morphic. Handles only one line. Does not handle fonts/styles, alignment, Smalltalk utilities and any other advanced stuff in TextModelMorph. Just a simple text editor.
 
 Can optionally include a crAction: a zero argument closure, to be evaluated on Cr keystroke.!
+
+!SamplePlotterMorph commentStamp: '<historical>' prior: 0!
+| h r p |
+
+h _ Histogram binCount: 200 minValue: -10.0 maxValue: 10.0.
+r _ NormalProbabilityDistribution new.
+10000 timesRepeat: [ h addValue: r nextRandomNumber  ].
+h plot.
+
+
+h domain.
+p _ SamplePlotterMorph new.
+p domain: h domain.
+p addSamples: h counts color: Color green.
+(p embeddedInMorphicWindowLabeled: 'graph') openInWorld.
+
+Would be cool to add other interpolators. So far, we only have Nearest Neighbor.
+
+Check SignalProcessing.pck.st for other 1D interpolators: Linear, Cubic, Splines, Beziers, Lanczos...
+!
 
 !SimpleEditor methodsFor: 'typing support' stamp: 'jmv 12/19/2011 12:24'!
 addString: aString
@@ -774,22 +806,22 @@ addFunction: aOneArgBlock color: aColor
 	functions add: aOneArgBlock.
 	colors add: aColor! !
 
-!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 11/25/2016 09:24:52'!
+!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 3/9/2018 16:06:11'!
 domain: anInterval
 
-	xMin _ anInterval first.
-	xMax _ anInterval last.
+	xMin _ anInterval first asFloat.
+	xMax _ anInterval last asFloat.
 
 	yMin _ nil.
 	yMax _ nil.! !
 
-!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 6/25/2016 17:16'!
+!FunctionGraphMorph methodsFor: 'accessing' stamp: 'jmv 3/9/2018 16:06:24'!
 yRange: anInterval
 
-	yMin _ anInterval first.
-	yMax _ anInterval last.! !
+	yMin _ anInterval first asFloat.
+	yMax _ anInterval last asFloat.! !
 
-!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/30/2016 16:04:28'!
+!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 7/9/2017 11:58:48'!
 drawOn: aCanvas
 	"
 	| g |
@@ -806,6 +838,9 @@ drawOn: aCanvas
 		self iterate: [ :x :y :c |
 			yMin _ yMin min: y.
 			yMax _ yMax max: y ].
+		yMax = yMin ifTrue: [
+			yMin _ yMin min: 0.
+			yMax _ yMax max: 0 ].
 		xtra _ yMax-yMin/50.
 		yMin _ yMin - xtra.
 		yMax _ yMax + xtra
@@ -833,14 +868,14 @@ drawOn: aCanvas
 	aCanvas drawString: yMin printString at: 4@(extent y - 32) font: fontToUse color: Color black.
 	aCanvas drawString: yMax printString at: 4@4 font: fontToUse color: Color black.! !
 
-!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 11/25/2016 11:32:06'!
+!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 3/9/2018 16:07:41'!
 iterate: aBlock
 
 	| y |
-	xMin*1.0 to: xMax count: extent x do: [ :x |
-		functions with: colors do: [ :f :c |
+	functions with: colors do: [ :f :c |
+		xMin asFloat to: xMax count: extent x do: [ :x |
 			y _ f value: x.
-			aBlock value: x value: y value: c ]]! !
+			aBlock value: x value: y asFloat value: c ]]! !
 
 !FunctionGraphMorph methodsFor: 'initialization' stamp: 'jmv 7/1/2015 11:16'!
 initialize
@@ -1366,3 +1401,97 @@ contents: aString font: aFont emphasis: emphasisCode
 !OneLineEditorMorph class methodsFor: 'instance creation' stamp: 'jmv 4/3/2011 22:35'!
 new
 	^self contents: 'some string'! !
+
+!SamplePlotterMorph methodsFor: 'accessing' stamp: 'jmv 7/9/2017 20:14:25'!
+addSamples: aCollection color: aColor
+
+	sampleSequences add: aCollection asFloatArray.
+	colors add: aColor! !
+
+!SamplePlotterMorph methodsFor: 'accessing' stamp: 'jmv 7/9/2017 20:01:57'!
+domain: aCollection
+	"Usually an Interval"
+	domain _ aCollection! !
+
+!SamplePlotterMorph methodsFor: 'initialization' stamp: 'jmv 7/9/2017 20:04:21'!
+initialize
+	super initialize.
+	extent _ 320@240.
+	sampleSequences _ OrderedCollection new.
+	colors _ OrderedCollection new! !
+
+!SamplePlotterMorph methodsFor: 'geometry' stamp: 'jmv 7/9/2017 20:07:20'!
+toMorphic: aPoint
+	^(self xToMorphic: aPoint x) @ (self yToMorphic: aPoint y)! !
+
+!SamplePlotterMorph methodsFor: 'geometry' stamp: 'jmv 7/9/2017 20:06:50'!
+xToMorphic: x
+	^x - domain first / (domain last - domain first) * (extent x-40)+40! !
+
+!SamplePlotterMorph methodsFor: 'geometry' stamp: 'jmv 7/9/2017 20:07:01'!
+yToMorphic: y
+	^yMax - y / (yMax - yMin ) * (extent y-20)! !
+
+!SamplePlotterMorph methodsFor: 'drawing' stamp: 'jmv 7/9/2017 22:41:27'!
+drawOn: aCanvas
+
+	| r xtra fontToUse r2 xMax xMin |
+	yMin ifNil: [
+		yMin _ Float infinity.
+		yMax _ Float negativeInfinity.
+		self iterate: [ :x :y :c |
+			yMin _ yMin min: y.
+			yMax _ yMax max: y ].
+		yMax = yMin ifTrue: [
+			yMin _ yMin min: 0.
+			yMax _ yMax max: 0 ].
+		xtra _ yMax-yMin/50.
+		yMin _ yMin - xtra.
+		yMax _ yMax + xtra
+		].
+
+	xMin _ domain first.
+	xMax _ domain last.
+	r _ 40@0 corner: extent - (0@20).
+	aCanvas
+		frameAndFillRectangle: r fillColor: (Color gray: 0.9)
+		borderWidth: 0.05 borderColor: Color white.
+	(0 between: xMin and: xMax) ifTrue: [
+		aCanvas line: (self toMorphic:0@yMin)-(0@2) to: (self toMorphic: 0 @ yMax)+(0@2) width: 2 color: Color darkGray ].
+	(0 between: yMin and: yMax) ifTrue: [
+		aCanvas line: (self toMorphic: xMin@0)+(2@0) to: (self toMorphic: xMax@0)-(2@0) width: 2 color: Color darkGray ].
+
+	self iterate2: [ :x :y :c |
+		(y between: yMin and: yMax) ifTrue: [
+			r2 _ (self xToMorphic: x)@(self yToMorphic: y) extent: 2.5.
+			r2 _ (self xToMorphic: x)@(self yToMorphic: y) corner: (self xToMorphic: x)+1@(self yToMorphic: 0) .
+			(r containsRect: r2) ifTrue: [
+				aCanvas
+					fillRectangle: r2
+					color: c ]]].
+	fontToUse _ AbstractFont default.
+	aCanvas drawString: xMin printString at: 40@(extent y - 16) font: fontToUse color: Color black.
+	aCanvas drawString: xMax printString at: extent -(32@16) font: fontToUse color: Color black.
+	aCanvas drawString: yMin printString at: 4@(extent y - 32) font: fontToUse color: Color black.
+	aCanvas drawString: yMax printString at: 4@4 font: fontToUse color: Color black.! !
+
+!SamplePlotterMorph methodsFor: 'drawing' stamp: 'jmv 3/9/2018 16:07:07'!
+iterate2: aBlock
+"inline..."
+	| y |
+	sampleSequences with: colors do: [ :seq :c |
+		domain first asFloat to: domain last count: extent x do: [ :x |
+			y _ seq at: (
+				domain
+					findBinaryIndex: [ :arg | x - arg]
+					do: [ :i | i ]
+					ifNone: [ :a :b | a = 0 ifFalse: [ a] ifTrue: [b]]
+				).
+			aBlock value: x value: y value: c ]]! !
+
+!SamplePlotterMorph methodsFor: 'drawing' stamp: 'jmv 7/9/2017 20:22:21'!
+iterate: aBlock
+"inline..."
+	sampleSequences with: colors do: [ :seq :c |
+		domain with: seq do: [ :x :y |
+			aBlock value: x value: y value: c ]]! !

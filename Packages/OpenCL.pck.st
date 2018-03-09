@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3257] on 31 January 2018 at 3:46:40 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 9 March 2018 at 4:37:33 pm'!
 'Description Please enter a description for this package'!
-!provides: 'OpenCL' 1 36!
-!requires: 'FFI' 1 nil nil!
+!provides: 'OpenCL' 1 38!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
 SystemOrganization addCategory: #'OpenCL-Examples'!
@@ -3440,12 +3440,13 @@ newImage: flags format: imageFormat description: imageDescription hostPointer: h
 
 	self error: 'Support this case here!!'! !
 
-!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 10/29/2015 14:50'!
+!OpenCLContext methodsFor: 'image creation' stamp: 'jmv 12/20/2016 22:58:17'!
 supportedImageFormats: flags type: imageType "CL_MEM_OBJECT_IMAGE2D or 3D"
-	| result maxResults numResults bytes |
+	| result maxResults numResults bytes byteSize |
 	maxResults := 200.  "The maximum number of results... bump this up if necessary."
 	numResults := IntegerArray new: 1.
-	bytes := ByteArray new: (maxResults * CLImageFormatStruct byteSize "8").
+	byteSize := CLImageFormatStruct byteSize.
+	bytes := ByteArray new: (maxResults * byteSize).
 	result := OpenCLPrimitiveInterface current
 				clGetSupportedImageFormats__cl_context: id
 							cl_mem_flags: flags
@@ -3460,8 +3461,8 @@ supportedImageFormats: flags type: imageType "CL_MEM_OBJECT_IMAGE2D or 3D"
 	^(1 to: numResults) collect: [:i |
 		| struct |
 		struct := CLImageFormatStruct new.
-		struct image_channel_order: (bytes unsignedLongAt: (i*8-7)).
-		struct image_channel_data_type: (bytes unsignedLongAt: (i*8-3)).
+		struct image_channel_order: (bytes unsignedLongAt: (i-1*byteSize+1)).
+		struct image_channel_data_type: (bytes unsignedLongAt: (i-1*byteSize+1+(byteSize/2))).
 	]
 	
 
@@ -4454,13 +4455,13 @@ program: anOpenCLProgram
 	"Set the program that this kernel was created for."
 	program := anOpenCLProgram.! !
 
-!OpenCLPrimitiveInterface class methodsFor: 'code generation' stamp: 'jmv 12/23/2016 12:16:20'!
+!OpenCLPrimitiveInterface class methodsFor: 'code generation' stamp: 'jmv 3/6/2018 17:41:34'!
 adaptType: cTypeString
 	| answer |
 	answer := cTypeString.
 	answer := answer copyReplaceAll: 'const'  with: 'const__' .
 	answer := answer copyReplaceAll: '*'  with: ' __ptr' .
-	answer := answer asLegalSelector.
+	answer := answer asValidSelector.
 	^ answer! !
 
 !OpenCLPrimitiveInterface class methodsFor: 'code generation' stamp: 'jmv 12/23/2016 12:13:19'!
