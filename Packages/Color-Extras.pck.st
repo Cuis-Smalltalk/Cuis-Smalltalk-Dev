@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3275] on 12 March 2018 at 8:36:31 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3275] on 13 March 2018 at 3:09:38 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Color-Extras' 1 1!
+!provides: 'Color-Extras' 1 2!
 
 
 
@@ -357,6 +357,35 @@ exactColorNamed: aColorName
 forestGreen
 
 	^ self colorNamesDict at: #forestGreen! !
+
+!Color class methodsFor: '*color-extras-instance creation' stamp: 'jmv 3/13/2018 15:09:09'!
+fromString: aString
+	"For HTML color spec: #FFCCAA. Also support named colors.
+	See http://www.w3schools.com/cssref/css_colors_legal.asp"
+	"
+	Color fromString: '#FFCCAA'.
+	Color fromString: 'white'.
+	Color fromString: 'orange'
+	Color fromString: 'rgb(255,0,98)'
+	"
+	(self fromHexString: aString) ifNotNil: [ :color |
+		^ color ].
+
+	(aString beginsWith: 'rgb')
+		ifTrue: [|values r g b|
+				values := (aString allButFirst: 4) allButLast findTokens: ','.
+				r  := (values first includes: $%)
+						ifTrue: [(values first asNumber min: 100 max: 0) / 100.0]
+						ifFalse: [(values first asInteger min: 255 max: 0) / 255.0].
+				g := (values second includes: $%)
+						ifTrue: [(values second asNumber min: 100 max: 0) / 100.0]
+						ifFalse: [(values second asInteger min: 255 max: 0) / 255.0].
+				b := (values third includes: $%)
+						ifTrue: [(values third asNumber min: 100 max: 0) / 100.0]
+						ifFalse: [(values third asInteger min: 255 max: 0) / 255.0].
+				^self r: r g: g b: b].
+
+	^self exactColorNamed: aString! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:41'!
 grayColorDict: aColorDict

@@ -12,7 +12,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file to your folder
 * download [`cog_win32x86_squeak.cog.spur_201709050420.zip`](https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_win32x86_squeak.cog.spur_201709050420.zip)
 * extract the contents of the zip file to your folder
-* drop the Cuis5.0-3267-32.image over the Squeak.exe file
+* drop the Cuis5.0-3276-32.image over the Squeak.exe file
 
 ## On Mac OS X ##
 * Create a new folder in your machine using Mac Finder
@@ -20,10 +20,10 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file to your folder
 * download [`cog_macos64x64_squeak.cog.spur_201708312323.tar.gz`](https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201708312323.tar.gz)
 * extract the contents of the .tar.gz file to your folder
-* drop the Cuis5.0-3267.image over the Squeak.app file
-* [ctrl] click on Cog application. Open. "Cog is from an unidentified developer"; dialog. Click on [Open] Supply required credentials. (This is required only on the first run). Select Cuis5.0-3267.image. (If this step is a problem, you might try the command line variant, described in another document.)
-* On subsequent runs, drop the Cuis5.0-3267.image over the Squeak.app file
+* drop the Cuis5.0-3276.image over the Squeak.app file
+* [ctrl] click on Cog application. Open. "Cog is from an unidentified developer"; dialog. Click on [Open] Supply required credentials. (This is required only on the first run). Select Cuis5.0-3276.image. (If this step is a problem, you might try the command line variant, described in another document.)
+* On subsequent runs, drop the Cuis5.0-3276.image over the Squeak.app file
 
 ## Notes ##
-* If you can't find Cuis5.0-3267-32.image, then this document is outdated. Use the Cuis spur-32 image with the latest update number available.
+* If you can't find Cuis5.0-3276-32.image, then this document is outdated. Use the Cuis spur-32 image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available from http://opensmalltalk.org/

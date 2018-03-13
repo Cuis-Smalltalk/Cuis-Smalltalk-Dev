@@ -16,35 +16,6 @@ fromHexString: aString
 		^ self r: red g: green b: blue].
 	^ nil! !
 
-!Color class methodsFor: 'instance creation' stamp: 'jmv 3/12/2018 19:29:47'!
-fromString: aString
-	"For HTML color spec: #FFCCAA. Also support named colors.
-	See http://www.w3schools.com/cssref/css_colors_legal.asp"
-	"
-	Color fromString: '#FFCCAA'.
-	Color fromString: 'white'.
-	Color fromString: 'orange'
-	Color fromString: 'rgb(255,0,98)'
-	"
-	(self fromHexString: aString) ifNotNil: [ :color |
-		^ color ].
-
-	(aString beginsWith: 'rgb')
-		ifTrue: [|values r g b|
-				values := (aString allButFirst: 4) allButLast findTokens: ','.
-				r  := (values first includes: $%)
-						ifTrue: [(values first asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values first asInteger min: 255 max: 0) / 255.0].
-				g := (values second includes: $%)
-						ifTrue: [(values second asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values second asInteger min: 255 max: 0) / 255.0].
-				b := (values third includes: $%)
-						ifTrue: [(values third asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values third asInteger min: 255 max: 0) / 255.0].
-				^self r: r g: g b: b].
-
-	^self exactColorNamed: aString! !
-
 
 !Color class methodsFor: 'named colors' stamp: 'jmv 3/12/2018 20:28:53'!
 black
