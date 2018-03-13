@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3243] on 28 December 2017 at 4:18:48 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3276] on 12 March 2018 at 8:41:56 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Tests' 1 74!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 75!
 !requires: 'Compression' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -11077,13 +11077,13 @@ assert: expectedTestSuite hasSameTestsAs: resultTestSuite
 	self assert: (expectedTests allSatisfy: [:expectedTest | resultTests anySatisfy: [:resultTest | self is: expectedTest equalTo: resultTest ]])
 	! !
 
-!TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 16:40:32'!
+!TestSuiteTest methodsFor: 'assertions' stamp: 'jmv 3/12/2018 20:41:35'!
 assertIncludesThisTest: aTestSuite 
 	
-	| testSelector |
+	| thisTestSelector |
 	
-	testSelector _ thisContext sender selector.
-	^aTestSuite tests anySatisfy: [ :aTestCase | aTestCase class = self class and: [aTestCase selector = testSelector ]]! !
+	thisTestSelector _ thisContext sender selector.
+	^aTestSuite tests anySatisfy: [ :aTestCase | aTestCase class = self class and: [aTestCase selector = thisTestSelector ]]! !
 
 !TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:20:29'!
 is: expectedTest equalTo: resultTest
