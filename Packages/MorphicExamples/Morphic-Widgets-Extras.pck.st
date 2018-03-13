@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 9 March 2018 at 4:24:38 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3277] on 13 March 2018 at 4:34:40 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-Widgets-Extras' 1 14!
+!provides: 'Morphic-Widgets-Extras' 1 15!
 SystemOrganization addCategory: #'Morphic-Widgets-Extras'!
 
 
@@ -821,7 +821,7 @@ yRange: anInterval
 	yMin _ anInterval first asFloat.
 	yMax _ anInterval last asFloat.! !
 
-!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 7/9/2017 11:58:48'!
+!FunctionGraphMorph methodsFor: 'drawing' stamp: 'jmv 3/13/2018 16:32:31'!
 drawOn: aCanvas
 	"
 	| g |
@@ -831,7 +831,7 @@ drawOn: aCanvas
 	g addFunction: [ :x | x div: 1 ] color: Color red.
 	g openInWorld
 	"
-	| r r2 fontToUse xtra |
+	| r fontToUse xtra p prevP |
 	yMin ifNil: [
 		yMin _ Float infinity.
 		yMax _ Float negativeInfinity.
@@ -855,13 +855,33 @@ drawOn: aCanvas
 	(0 between: yMin and: yMax) ifTrue: [
 		aCanvas line: (self toMorphic: xMin@0)+(2@0) to: (self toMorphic: xMax@0)-(2@0) width: 2 color: Color darkGray ].
 
-	self iterate: [ :x :y :c |
+	"To plot lines"
+	functions with: colors do: [ :f :c |
+		prevP _ nil.
+		xMin asFloat to: xMax count: extent x do: [ :x | | y |
+			y _ f value: x.
+			(y between: yMin and: yMax) 
+				ifFalse: [ prevP _ nil ]
+				ifTrue: [
+					p _ (self xToMorphic: x)@(self yToMorphic: y).
+					(r containsPoint: p) 
+						ifFalse: [
+							prevP _ nil]
+						ifTrue: [
+							prevP ifNotNil: [
+								aCanvas
+									line: prevP to: p width: 2 color: c ].
+							prevP _ p ]]]].
+
+	"To plot just the points"
+	"self iterate: [ :x :y :c |
 		(y between: yMin and: yMax) ifTrue: [
 			r2 _ (self xToMorphic: x)@(self yToMorphic: y) extent: 2.5.
 			(r containsRect: r2) ifTrue: [
 				aCanvas
 					fillRectangle: r2
-					color: c ]]].
+					color: c ]]]."
+
 	fontToUse _ AbstractFont default.
 	aCanvas drawString: xMin printString at: 40@(extent y - 16) font: fontToUse color: Color black.
 	aCanvas drawString: xMax printString at: extent -(32@16) font: fontToUse color: Color black.
