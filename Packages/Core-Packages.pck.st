@@ -1,6 +1,7 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 16 January 2017 at 12:09:03.493729 am'!
 'Description '!
-!provides: 'Core-Packages' 1 11!
+!provides: 'Core-Packages' 1 12!
+!requires: 'Color-Extras' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Network-Kernel' 1 1 nil!

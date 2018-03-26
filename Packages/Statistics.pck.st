@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 9 March 2018 at 4:26:31 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3272] on 12 March 2018 at 5:37:54 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Statistics' 1 6!
+!provides: 'Statistics' 1 7!
 !requires: 'Goodies' 1 0 nil!
 SystemOrganization addCategory: #Statistics!
 
@@ -345,6 +345,11 @@ tallies: anArray lowBinCenter: aNumber highBinCenter: anotherNumber extraBinsFor
 	highBinCenter _ anotherNumber.
 	extraBinsForClampedValues _ aBoolean! !
 
+!Histogram methodsFor: 'private' stamp: 'jmv 3/7/2018 10:26:33'!
+talliesCount
+
+	^ tallies size! !
+
 !Histogram methodsFor: 'accessing' stamp: 'jmv 4/10/2015 16:11'!
 countAt: value
 	^tallies at: (self indexFor: value)! !
@@ -356,6 +361,27 @@ counts
 !Histogram methodsFor: 'accessing' stamp: 'jmv 7/9/2017 19:58:20'!
 domain
 	^ (1 to: tallies size) collect: [ :i | self binCenter: i ]! !
+
+!Histogram methodsFor: 'aux' stamp: 'jmv 3/7/2018 10:59:07'!
+jetPlotOn: aForm y: y
+
+	| count w max |
+	w _ aForm width.
+	count _ tallies size.
+	max _ tallies max.
+	1 to: w do: [ :j |
+		aForm colorAt: j-1 @ y put: (Color jet: (tallies at: (j * count / w) ceiling) / max) ]! !
+
+!Histogram methodsFor: 'aux' stamp: 'jmv 3/7/2018 11:04:03'!
+percentile: percentile plotOn: aForm y: y
+	"
+	percentile in [0.0 .. 1.0]
+	"
+	
+	| x |
+	x _ (self percentile: percentile) * aForm width.
+	0 to: (aForm width / tallies size) ceiling do: [ :xx |
+		aForm colorAt: x+xx @ y put: Color black ]! !
 
 !Histogram methodsFor: 'aux' stamp: 'jmv 7/20/2016 15:39:36'!
 plot
