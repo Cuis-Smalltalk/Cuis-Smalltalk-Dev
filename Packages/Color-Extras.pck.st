@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3275] on 13 March 2018 at 3:09:38 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3281] on 27 March 2018 at 11:46:52 am'!
 'Description Please enter a description for this package'!
-!provides: 'Color-Extras' 1 2!
+!provides: 'Color-Extras' 1 4!
 
 
 
@@ -159,12 +159,12 @@ isSaturated
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:58'!
 aqua
 
-	^ self colorNamesDict at: #aqua! !
+	^ ColorNamesDict at: #aqua! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:58'!
 beige
 
-	^ self colorNamesDict at: #beige! !
+	^ ColorNamesDict at: #beige! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:26'!
 blueColorDict
@@ -172,7 +172,7 @@ blueColorDict
 "
 	Color blueColorDict explore.
 "
-	^self blueColorDict: (self colorNamesDict )! !
+	^self blueColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:24'!
 blueColorDict: aColorDict
@@ -194,7 +194,7 @@ blueGreenColorDict
 "
 	Color blueGreenColorDict explore.
 "
-	^self blueGreenColorDict: (self colorNamesDict )! !
+	^self blueGreenColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:29'!
 blueGreenColorDict: aColorDict
@@ -216,7 +216,7 @@ brightColorDict
 "
 	Color brightColorDict explore.
 "
-	^self brightColorDict: (self colorNamesDict )! !
+	^self brightColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:31'!
 brightColorDict: aColorDict
@@ -233,7 +233,7 @@ brightColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:58'!
 brightGreen
 
-	^ self colorNamesDict at: #brightGreen! !
+	^ ColorNamesDict at: #brightGreen! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:34'!
 brownColorDict
@@ -241,7 +241,7 @@ brownColorDict
 "
 	Color brownColorDict explore.
 "
-	^self brownColorDict: (self colorNamesDict )! !
+	^self brownColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:33'!
 brownColorDict: aColorDict
@@ -261,22 +261,20 @@ brownColorDict: aColorDict
 colorNames
 	"Answer the current dictionary of  name->color associations."
 
-	^self colorNamesDict keys! !
+	^ColorNamesDict keys! !
 
-!Color class methodsFor: '*color-extras-cached state access' stamp: 'jmv 4/17/2015 14:58'!
+!Color class methodsFor: '*color-extras-cached state access' stamp: 'jmv 3/27/2018 10:51:21'!
 colorNamesDict
 	"Answer the current dictionary of  name->color associations."
 "
 	Color colorNamesDict explore.
 "
-	ColorNamesDict ifNil: [
-		self setColorNamesDict: self defaultColorNamesDictionary ].
 	^ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 darkBlue
 
-	^ self colorNamesDict at: #darkBlue! !
+	^ ColorNamesDict at: #darkBlue! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:36'!
 darkColorDict
@@ -284,7 +282,7 @@ darkColorDict
 "
 	Color darkColorDict explore.
 "
-	^self darkColorDict: (self colorNamesDict )! !
+	^self darkColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:37'!
 darkColorDict: aColorDict
@@ -301,17 +299,17 @@ darkColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 darkGreen
 
-	^ self colorNamesDict at: #darkGreen! !
+	^ ColorNamesDict at: #darkGreen! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 darkPink
 
-	^ self colorNamesDict at: #darkPink! !
+	^ ColorNamesDict at: #darkPink! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 darkPurple
 
-	^ self colorNamesDict at: #darkPurple! !
+	^ ColorNamesDict at: #darkPurple! !
 
 !Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 1/28/2013 20:34'!
 defaultColorNamesDictionary
@@ -351,12 +349,12 @@ exactColorNamed: aColorName
 	"Answer color matching name or nil 
 	from my ColorName->Color Dictionary"
 	
-	^ self colorNamesDict at: (aColorName asSymbol) ifAbsent: [nil]! !
+	^ ColorNamesDict at: (aColorName asSymbol) ifAbsent: [nil]! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 forestGreen
 
-	^ self colorNamesDict at: #forestGreen! !
+	^ ColorNamesDict at: #forestGreen! !
 
 !Color class methodsFor: '*color-extras-instance creation' stamp: 'jmv 3/13/2018 15:09:09'!
 fromString: aString
@@ -407,7 +405,7 @@ greenColorDict
 "
 	Color greenColorDict explore.
 "
-	^self greenColorDict: (self colorNamesDict )! !
+	^self greenColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:38'!
 greenColorDict: aColorDict
@@ -426,7 +424,7 @@ greenColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 grey
 
-	^ self colorNamesDict at: #grey! !
+	^ ColorNamesDict at: #grey! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:41'!
 greyColorDict
@@ -434,7 +432,7 @@ greyColorDict
 "
 	Color greyColorDict explore.
 "
-	^self greyColorDict: (self colorNamesDict )! !
+	^self greyColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:40'!
 greyColorDict: aColorDict
@@ -453,17 +451,23 @@ greyColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 hotPink
 
-	^ self colorNamesDict at: #hotPink! !
+	^ ColorNamesDict at: #hotPink! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 indigo
 
-	^ self colorNamesDict at: #indigo! !
+	^ ColorNamesDict at: #indigo! !
+
+!Color class methodsFor: '*color-extras-initialization' stamp: 'jmv 3/27/2018 10:52:59'!
+initializeColorExtras
+
+	ColorNamesDict ifNil: [
+		self setColorNamesDict: self defaultColorNamesDictionary ]! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 14:59'!
 lavender
 
-	^ self colorNamesDict at: #lavender! !
+	^ ColorNamesDict at: #lavender! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:44'!
 lightColorDict
@@ -471,7 +475,7 @@ lightColorDict
 "
 	Color lightColorDict explore.
 "
-	^self lightColorDict: (self colorNamesDict )! !
+	^self lightColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:43'!
 lightColorDict: aColorDict
@@ -482,57 +486,57 @@ lightColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 lightPink
 
-	^ self colorNamesDict at: #lightPink! !
+	^ ColorNamesDict at: #lightPink! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 lightPurple
 
-	^ self colorNamesDict at: #lightPurple! !
+	^ ColorNamesDict at: #lightPurple! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 lilac
 
-	^ self colorNamesDict at: #lilac! !
+	^ ColorNamesDict at: #lilac! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 lime
 
-	^ self colorNamesDict at: #lime! !
+	^ ColorNamesDict at: #lime! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 limeGreen
 
-	^ self colorNamesDict at: #limeGreen! !
+	^ ColorNamesDict at: #limeGreen! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 maroon
 
-	^ self colorNamesDict at: #maroon! !
+	^ ColorNamesDict at: #maroon! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 mauve
 
-	^ self colorNamesDict at: #mauve! !
+	^ ColorNamesDict at: #mauve! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 mustard
 
-	^ self colorNamesDict at: #mustard! !
+	^ ColorNamesDict at: #mustard! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 navyBlue
 
-	^ self colorNamesDict at: #navyBlue! !
+	^ ColorNamesDict at: #navyBlue! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 olive
 
-	^ self colorNamesDict at: #olive! !
+	^ ColorNamesDict at: #olive! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 oliveGreen
 
-	^ self colorNamesDict at: #oliveGreen! !
+	^ ColorNamesDict at: #oliveGreen! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:46'!
 orangeColorDict
@@ -540,7 +544,7 @@ orangeColorDict
 "
 	Color orangeColorDict explore.
 "
-	^self orangeColorDict: (self colorNamesDict )! !
+	^self orangeColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:46'!
 orangeColorDict: aColorDict
@@ -559,7 +563,7 @@ orangeColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 paleGreen
 
-	^ self colorNamesDict at: #paleGreen! !
+	^ ColorNamesDict at: #paleGreen! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:48'!
 pastelColorDict
@@ -567,7 +571,7 @@ pastelColorDict
 "
 	Color pastelColorDict explore.
 "
-	^self pastelColorDict: (self colorNamesDict )! !
+	^self pastelColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:48'!
 pastelColorDict: aColorDict
@@ -584,12 +588,12 @@ pastelColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 peach
 
-	^ self colorNamesDict at: #peach! !
+	^ ColorNamesDict at: #peach! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:00'!
 periwinkle
 
-	^ self colorNamesDict at: #periwinkle! !
+	^ ColorNamesDict at: #periwinkle! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:50'!
 pinkColorDict
@@ -597,7 +601,7 @@ pinkColorDict
 "
 	Color pinkColorDict explore.
 "
-	^self pinkColorDict: (self colorNamesDict )! !
+	^self pinkColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:50'!
 pinkColorDict: aColorDict
@@ -619,7 +623,7 @@ purpleColorDict
 "
 	Color purpleColorDict explore.
 "
-	^self purpleColorDict: (self colorNamesDict )! !
+	^self purpleColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:52'!
 purpleColorDict: aColorDict
@@ -641,7 +645,7 @@ redColorDict
 "
 	Color redColorDict explore.
 "
-	^self redColorDict: (self colorNamesDict )! !
+	^self redColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:53'!
 redColorDict: aColorDict
@@ -660,12 +664,12 @@ redColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
 royalBlue
 
-	^ self colorNamesDict at: #royalBlue! !
+	^ ColorNamesDict at: #royalBlue! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
 salmon
 
-	^ self colorNamesDict at: #salmon! !
+	^ ColorNamesDict at: #salmon! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:56'!
 saturatedColorDict
@@ -673,7 +677,7 @@ saturatedColorDict
 "
 	Color saturatedColorDict explore.
 "
-	^self saturatedColorDict: (self colorNamesDict )! !
+	^self saturatedColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:55'!
 saturatedColorDict: aColorDict
@@ -690,7 +694,7 @@ saturatedColorDict: aColorDict
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
 seaGreen
 
-	^ self colorNamesDict at: #seaGreen! !
+	^ ColorNamesDict at: #seaGreen! !
 
 !Color class methodsFor: '*color-extras-color name lookup' stamp: 'KenD 7/25/2014 21:22'!
 setColorNamesDict: aNameColorDictionary
@@ -709,12 +713,12 @@ setColorNamesDict: aNameColorDictionary
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
 skyBlue
 
-	^ self colorNamesDict at: #skyBlue! !
+	^ ColorNamesDict at: #skyBlue! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
 teal
 
-	^ self colorNamesDict at: #teal! !
+	^ ColorNamesDict at: #teal! !
 
 !Color class methodsFor: '*color-extras-color name lookup' stamp: 'jmv 3/10/2018 20:42:11'!
 traditionalColorNamesDictionary
@@ -755,12 +759,12 @@ traditionalColorNamesDictionary
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
 turquoise
 
-	^ self colorNamesDict at: #turquoise! !
+	^ ColorNamesDict at: #turquoise! !
 
 !Color class methodsFor: '*color-extras-named colors' stamp: 'jmv 4/17/2015 15:01'!
 violet
 
-	^ self colorNamesDict at: #violet! !
+	^ ColorNamesDict at: #violet! !
 
 !Color class methodsFor: '*color-extras-color name lookup' stamp: 'jmv 6/30/2014 15:22'!
 xkcdFirst48ColorNamesDictionary
@@ -833,7 +837,7 @@ yellowColorDict
 "
 	Color yellowColorDict explore.
 "
-	^self yellowColorDict: (self colorNamesDict)! !
+	^self yellowColorDict: ColorNamesDict! !
 
 !Color class methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:19'!
 yellowColorDict: aColorDict
@@ -848,3 +852,4 @@ yellowColorDict: aColorDict
 			ifTrue: [dict add: assoc]
 		].
 	^dict! !
+Color initializeColorExtras!
