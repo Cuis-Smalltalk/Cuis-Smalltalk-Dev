@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3276] on 12 March 2018 at 8:41:56 pm'!
-'Description Please enter a description for this package '!
-!provides: 'Tests' 1 75!
-!requires: 'Compression' 1 nil nil!
-!requires: 'SignalProcessing' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3285] on 5 April 2018 at 2:35:30 pm'!
+'Description test that verifies that #should:raise: can expect Exception'!
+!provides: 'Tests' 1 76!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -11001,6 +11001,22 @@ testWithAllSuperclassesUpToIncludesReceiverClass
 	self assert: SmallInteger equals: superclasses first.
 	self assert: Integer equals: superclasses second.
 	self assert: Number equals: superclasses third ! !
+
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 4/5/2018 14:32:15'!
+testShouldRaiseWithExceptionDoCanExpectException
+
+	"This test is important becuase TestFailure is a subclass of Exception, therefore if we are expecting Exception to be raised it should not 
+	catch the TestFailure - Hernan"
+	
+	| failureRaised |
+	
+	failureRaised := false.
+	
+	[self should: [] raise: Exception ]
+		on: TestResult failure
+		do: [ :failure | failureRaised := true ].
+		
+	self assert: failureRaised ! !
 
 !TestCaseTest methodsFor: 'exception testing tests' stamp: 'HernanWilkinson 1/19/2017 20:52:39'!
 testShouldRaiseWithExceptionDoFailsWhenNoExceptionIsSignaled
