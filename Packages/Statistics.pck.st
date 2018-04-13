@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3272] on 12 March 2018 at 5:37:54 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3288] on 13 April 2018 at 5:02:26 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Statistics' 1 7!
+!provides: 'Statistics' 1 8!
 !requires: 'Goodies' 1 0 nil!
 SystemOrganization addCategory: #Statistics!
 
@@ -524,13 +524,24 @@ binCount: regularBinCount minValue: min maxValue: max extraBinsForClampedValues:
 		highBinCenter: highBinCenter
 		extraBinsForClampedValues: aBoolean! !
 
-!Collection methodsFor: '*Statistics' stamp: 'jmv 7/19/2016 11:15:18'!
+!Collection methodsFor: '*Statistics' stamp: 'jmv 3/20/2018 11:28:18'!
 median
 	"See comment in SortedCollection.
 	Very expensive on large collections. Consider using a Histogram."
-	| sorted |
+	| sorted  center e0 e1 i0 |
 	sorted _ self asArray sort.
-	^sorted at: sorted size + 1 // 2! !
+	center _ sorted size / 2.
+	^ center isInteger
+		ifTrue: [ self at: center ]
+		ifFalse: [
+			i0 _ center floor.
+			e0 _ sorted at: i0.
+			e1 _ sorted at: i0+1.
+			e0 = e1
+				ifTrue: [
+					"Useful for collection with well defined order, but no arithmetic"
+					e0 ]
+				ifFalse: [ e0 + e1 / 2 ]]! !
 
 !Collection methodsFor: '*Statistics' stamp: 'jmv 7/19/2016 12:26:25'!
 mode
@@ -600,11 +611,23 @@ variance
 	sum _ self collect: [ :each | (each - mean) squared ] andFold: [ :a :b | a + b ].
 	^sum / self size! !
 
-!SortedCollection methodsFor: '*Statistics' stamp: 'jmv 7/19/2016 11:15:09'!
+!SortedCollection methodsFor: '*Statistics' stamp: 'jmv 3/20/2018 11:28:02'!
 median
-	"Return the middle element, or as close as we can get."
+	"Return the center element, or the average of 2 center elements (if size is even, there's no center element)."
 
-	^ self at: self size + 1 // 2! !
+	| center e0 e1 i0 |
+	center _ self size / 2.
+	^ center isInteger
+		ifTrue: [ self at: center ]
+		ifFalse: [
+			i0 _ center floor.
+			e0 _ self at: i0.
+			e1 _ self at: i0+1.
+			e0 = e1
+				ifTrue: [
+					"Useful for collection with well defined order, but no arithmetic"
+					e0 ]
+				ifFalse: [ e0 + e1 / 2 ]]! !
 
 !Bag methodsFor: '*Statistics' stamp: 'jmv 7/19/2016 12:29:42'!
 mode
