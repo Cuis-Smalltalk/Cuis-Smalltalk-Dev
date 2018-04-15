@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3286] on 4 April 2018 at 4:32:45 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3287] on 4 April 2018 at 6:21:07 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 48!
+!provides: 'Morphic3' 1 49!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
 !requires: 'OpenCL' 1 nil nil!
@@ -506,14 +506,15 @@ Display forceToScreen.
 		engine abs_EllipseCenterX: 100 y: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen!
 
-!CodeGeneratingVectorEngine commentStamp: 'jmv 1/4/2018 15:55:58' prior: 0!
+!CodeGeneratingVectorEngine commentStamp: '<historical>' prior: 0!
+"
 An aid for generating, code. For example, for:
 - Italics versions of Vector Fonts in VectorFontRenderer
 - For TechnicalFontRenderer, convert the 'designer friendly' protocol and space into canonic
 - In the future, for generating FloatArrays for the glyph specs (instead of explicit method calls)
+"
 
-
-r _ BitstreamVeraRenderer.
+rcls _ BitstreamVeraRenderer.
 selectorPrefix _ 'drawVeraSansItalics'.
 methodCategory _ 'glyphs - italics'.
 italics _ true.
@@ -521,7 +522,7 @@ f _ Display.
 c _ VectorCanvas onForm: f.
 e _ CodeGeneratingVectorEngine onForm: f.
 c instVarNamed: 'engine' put: e.
-r _ r new vectorGraphicsCanvas: c.
+r _ rcls new vectorGraphicsEngine: e.
 c into: self runningWorld.
 "0 to: 255 do: [ :charCode |"
 "#(100) do: [ :charCode |"
@@ -536,18 +537,20 @@ Display forceToScreen.
 
 
 
-r _ TechnicalFontRenderer.
-selectorPrefix _ 'draw_Technical'.
-methodCategory _ 'glyphs - xx'.
+rcls _ TechnicalFontRenderer.
 italics _ false.
-selectorPrefix _ 'draw_TechnicalItalics'.
-methodCategory _ 'glyphs - italics'.
 italics _ true.
+italics ifFalse: [
+	selectorPrefix _ 'draw_Technical'.
+	methodCategory _ 'glyphs - xx' ]
+ifTrue: [
+	selectorPrefix _ 'draw_TechnicalItalics'.
+	methodCategory _ 'glyphs - italics' ].
 f _ Display.
 c _ VectorCanvas onForm: f.
 e _ CodeGeneratingVectorEngine onForm: f.
 c instVarNamed: 'engine' put: e.
-r _ r new vectorGraphicsCanvas: c.
+r _ rcls new vectorGraphicsEngine: e.
 c into: self runningWorld.
 "0 to: 255 do: [ :charCode |"
 "#(100) do: [ :charCode |"
@@ -4954,8 +4957,9 @@ vectorGraphicsEngine: aVectorGraphicsEngine
 for: aVectorGraphicsEngine
 	^ self new vectorGraphicsEngine: aVectorGraphicsEngine! !
 
-!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 1/4/2018 15:56:51'!
+!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:11:45'!
 drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics canvas: aVectorCanvas
+"No usado directamente por M3. Usado solo por CodeGeneratingVectorEngine para generar los que si se usan."
 "TrueType en M3. Bitstream Vera Sans, importado asi: TTF -> PDF -> SVG -> Codigo Smalltalk.
 "
 "
@@ -4964,7 +4968,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	strokeWidth: 1 color: Color black fillColor: Color blue do: [
-		(BitstreamVeraRenderer new vectorGraphicsCanvas: c)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 167 atX: 150 y: 200 pointSize: 200 italics: false canvas: c;
 			drawCharCode: 167 atX: 220 y: 200 pointSize: 200 italics: true canvas: c ].
 Display forceToScreen
@@ -4975,7 +4979,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	strokeWidth: 3.25 color: Color black fillColor: Color blue do: [
-		(BitstreamVeraRenderer new vectorGraphicsCanvas: c)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 atX: 150 y: 200 pointSize: 120 italics: false canvas: c ].
 Display forceToScreen
 "
@@ -4985,7 +4989,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	fillColor: Color black do: [
-		(BitstreamVeraRenderer new vectorGraphicsCanvas: c)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 atX: 150 y: 200 pointSize: 12 italics: false canvas: c;
 			drawCharCode: 97 atX: 158 y: 200.25 pointSize: 12 italics: false canvas: c;
 			drawCharCode: 97 atX: 166 y: 200.5 pointSize: 12 italics: false canvas: c;
@@ -5009,9 +5013,13 @@ Display forceToScreen
 
 	aVectorCanvas outOfLocation! !
 
-!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 1/4/2018 12:10:57'!
+!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:11:12'!
 drawCharCode: charCode italics: doItalics
-"TrueType en M3. Bitstream Vera Sans, importado asi: TTF -> PDF -> SVG -> Codigo Smalltalk.
+"Usado de verdad por M3.
+Creado por CodeGeneratingVectorEngine a partir de #drawCharCode:atX:y:pointSize:italics:canvas:
+Usado solo para crear las versiones italics
+
+Todos los glyphs usados de verdad son en comandos relativos.
 "
 "
 | c loc  r |
@@ -5019,7 +5027,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@22.
 c intoLocation: loc.
-r _ BitstreamVeraRenderer new vectorGraphicsCanvas: c.
+r _ BitstreamVeraRenderer new vectorGraphicsEngine: c engine.
 c engine
 	strokeWidth: 0.005 color: Color black fillColor: Color blue do: [ :e |
 		r drawCharCode: 167 italics: false.
@@ -5035,7 +5043,7 @@ loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@222.
 c intoLocation: loc.
 c engine
 	strokeWidth: 3.25/200 color: Color black fillColor: Color blue do: [
-		(BitstreamVeraRenderer new vectorGraphicsCanvas: c)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 italics: false ].
 Display forceToScreen
 "
@@ -5044,7 +5052,7 @@ Display forceToScreen
 c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 loc _ AffineTransformation withRadians: 0.0 scale: 12 position: 38@22.
-r _ BitstreamVeraRenderer new vectorGraphicsCanvas: c.
+r _ BitstreamVeraRenderer new vectorGraphicsEngine: c engine.
 c intoLocation: loc.
 c engine
 	fillColor: Color black do: [ :e |
@@ -14729,8 +14737,11 @@ testCharacter: code
 		r drawCharCode: code italics: false ].
 	Display forceToScreen! !
 
-!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 1/4/2018 15:57:16'!
+!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:12:09'!
 drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics canvas: aVectorCanvas
+"No usado directamente por M3.
+Usado solo por CodeGeneratingVectorEngine para generar los que si se usan.
+Definicion de glyphs comoda para el diseniador"
 	| symbol loc |
 "
 | c |
@@ -14738,7 +14749,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	strokeWidth: 20 color: Color black do: [
-		(TechnicalFontRenderer new vectorGraphicsCanvas: c)
+		(TechnicalFontRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 atX: 150 y: 200 pointSize: 200 italics: false canvas: c;
 			drawCharCode: 97 atX: 250 y: 200 pointSize: 200 italics: true canvas: c ].
 Display forceToScreen
@@ -14749,7 +14760,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	strokeWidth: 1.25 color: Color black do: [
-		(TechnicalFontRenderer new vectorGraphicsCanvas: c)
+		(TechnicalFontRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 atX: 150 y: 200 pointSize: 12 italics: false canvas: c;
 			drawCharCode: 97 atX: 158 y: 200.25 pointSize: 12 italics: false canvas: c;
 			drawCharCode: 97 atX: 166 y: 200.5 pointSize: 12 italics: false canvas: c;
@@ -14776,8 +14787,13 @@ Display forceToScreen
 	
 	aVectorCanvas outOfLocation! !
 
-!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 1/4/2018 12:20:24'!
+!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:10:33'!
 drawCharCode: charCode italics: doItalics
+"Usado de verdad por M3.
+Creado por CodeGeneratingVectorEngine a partir de #drawCharCode:atX:y:pointSize:italics:canvas:
+
+Todos los glyphs usados de verdad son en comandos relativos.
+"
 	| symbol |
 "
 | c loc  r |
@@ -14785,7 +14801,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@222.
 c intoLocation: loc.
-r _ TechnicalFontRenderer new vectorGraphicsCanvas: c.
+r _ TechnicalFontRenderer new vectorGraphicsEngine: c engine.
 c engine
 	strokeWidth: 0.1 color: Color black do: [ :e |
 		r drawCharCode: 97 italics: false.
@@ -14798,7 +14814,7 @@ Display forceToScreen
 c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 loc _ AffineTransformation withRadians: 0.0 scale: 12 position: 38@22.
-r _ TechnicalFontRenderer new vectorGraphicsCanvas: c.
+r _ TechnicalFontRenderer new vectorGraphicsEngine: c engine.
 c intoLocation: loc.
 c engine
 	strokeWidth: 0.1 color: Color black do: [ :e |
