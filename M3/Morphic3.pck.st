@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3245] on 5 January 2018 at 11:16:53 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3287] on 4 April 2018 at 6:21:07 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 47!
-!requires: 'OpenCL' 1 nil nil!
+!provides: 'Morphic3' 1 49!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
+!requires: 'OpenCL' 1 nil nil!
 SystemOrganization addCategory: #'Morphic3-Kernel'!
 SystemOrganization addCategory: #'Morphic3-SVG'!
 SystemOrganization addCategory: #'Morphic3-SVG shapes'!
@@ -173,7 +173,7 @@ M3Exp03Morph class
 
 !classDefinition: #VectorCanvas category: #'Morphic3-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
-	instanceVariableNames: 'fontForeColor engine'
+	instanceVariableNames: 'engine'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic3-Kernel'!
@@ -506,14 +506,15 @@ Display forceToScreen.
 		engine abs_EllipseCenterX: 100 y: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen!
 
-!CodeGeneratingVectorEngine commentStamp: 'jmv 1/4/2018 15:55:58' prior: 0!
+!CodeGeneratingVectorEngine commentStamp: '<historical>' prior: 0!
+"
 An aid for generating, code. For example, for:
 - Italics versions of Vector Fonts in VectorFontRenderer
 - For TechnicalFontRenderer, convert the 'designer friendly' protocol and space into canonic
 - In the future, for generating FloatArrays for the glyph specs (instead of explicit method calls)
+"
 
-
-r _ BitstreamVeraRenderer.
+rcls _ BitstreamVeraRenderer.
 selectorPrefix _ 'drawVeraSansItalics'.
 methodCategory _ 'glyphs - italics'.
 italics _ true.
@@ -521,7 +522,7 @@ f _ Display.
 c _ VectorCanvas onForm: f.
 e _ CodeGeneratingVectorEngine onForm: f.
 c instVarNamed: 'engine' put: e.
-r _ r new vectorGraphicsCanvas: c.
+r _ rcls new vectorGraphicsEngine: e.
 c into: self runningWorld.
 "0 to: 255 do: [ :charCode |"
 "#(100) do: [ :charCode |"
@@ -536,18 +537,20 @@ Display forceToScreen.
 
 
 
-r _ TechnicalFontRenderer.
-selectorPrefix _ 'draw_Technical'.
-methodCategory _ 'glyphs - xx'.
+rcls _ TechnicalFontRenderer.
 italics _ false.
-selectorPrefix _ 'draw_TechnicalItalics'.
-methodCategory _ 'glyphs - italics'.
 italics _ true.
+italics ifFalse: [
+	selectorPrefix _ 'draw_Technical'.
+	methodCategory _ 'glyphs - xx' ]
+ifTrue: [
+	selectorPrefix _ 'draw_TechnicalItalics'.
+	methodCategory _ 'glyphs - italics' ].
 f _ Display.
 c _ VectorCanvas onForm: f.
 e _ CodeGeneratingVectorEngine onForm: f.
 c instVarNamed: 'engine' put: e.
-r _ r new vectorGraphicsCanvas: c.
+r _ rcls new vectorGraphicsEngine: e.
 c into: self runningWorld.
 "0 to: 255 do: [ :charCode |"
 "#(100) do: [ :charCode |"
@@ -2127,69 +2130,10 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				engine rel_QuadraticBezierSmoothToX: to x y: to y ]]! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 1/4/2018 15:59:49'!
-displayString: aString from: startIndex to: stopIndex at: aPoint strokeFont: font
-	| ascii destX destY displayWidth ps isBold isItalic char renderer loc |
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 4/4/2018 15:15:44'!
+drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
 
-	engine antiAliasingWidth: self class antiAliasingWidthForStrokeFonts.
-
-	destY _ aPoint y.
-	destX _ aPoint x.
-	ps _ font pointSize.
-	isBold _ font isBold.
-	isItalic _ font isItalic.
-	
-	"Podriamos meter scaledPS en este 1.1... Pero es mejor que se haga con la location bien."
-	"Ah, tener que crear una location para cada char suena medio guarango... mejorar"
-	"NECESITAMOS pasar el strokeWidth en coordenadas nuestras!!!!!!!!!!!!"
-	renderer _ TechnicalFontRenderer for: engine.
-	loc _ AffineTransformation withScale: ps.
-	self intoLocation: loc.
-	engine strokeWidth: (isBold ifTrue: [ 0.15 ] ifFalse: [ 0.1 ]) color: fontForeColor do: [
-		startIndex to: stopIndex do: [ :charIndex |
-			char _ aString at: charIndex.
-			ascii _ char asciiValue.
-			displayWidth _ font widthOf: char.
-			engine abs_MoveToX: destX/ps y: destY/ps+1.
-			renderer drawCharCode: ascii italics: isItalic.
-			destX _ destX + displayWidth.
-		].
-	].
-	self outOfLocation
-	engine antiAliasingWidth: self class defaultAntiAliasingWidth! !
-
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 1/4/2018 15:59:58'!
-displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: font
-	| ascii destX destY displayWidth ps isBold isItalic char renderer loc |
-
-	engine antiAliasingWidth: self class antiAliasingWidthForOutlineFonts.
-
-	destY _ aPoint y.
-	destX _ aPoint x.
-	ps _ font pointSize.
-	isBold _ font isBold.
-	isItalic _ font isItalic.
-
-	renderer _ BitstreamVeraRenderer for: engine.
-	loc _ AffineTransformation withScale: ps*1.3.
-	self intoLocation: loc.
-	engine strokeWidth: (isBold ifTrue: [0.062] ifFalse: [0]) color: fontForeColor fillColor: fontForeColor do: [
-		startIndex to: stopIndex do: [ :charIndex |
-			char _ aString at: charIndex.
-			ascii _ char asciiValue.
-			displayWidth _ font widthOf: char.
-			engine abs_MoveToX: destX/ps/1.3 y: destY/ps/1.3.
-			renderer drawCharCode: ascii italics: isItalic.
-			destX _ destX + displayWidth.
-		]
-	].
-	self outOfLocation
-	engine antiAliasingWidth: self class defaultAntiAliasingWidth! !
-
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 1/4/2018 11:55:38'!
-drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: c
-
-	| font |
+	| font loc ps |
 "	port colorMap: nil."
 	"Slight optimization when there's nothing to do."
 	"
@@ -2198,22 +2142,31 @@ drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil co
 	"
 	"mhhhhhhhh. Creo que es mejor que venga un font siempre. Y uno de M3!!"
 	font _ fontOrNil ifNil: [ AbstractFont default ].
-	fontForeColor _ shadowColor ifNil: [ c ].
 	"do it better!!"
 	font class = StrokeFont ifTrue: [
-		self
+		ps _ font pointSize.
+		loc _ AffineTransformation withScale: ps.
+		self intoLocation: loc.
+		engine
 			displayString: aString
 			from: firstIndex
 			to: lastIndex
-			at: aPoint
-			strokeFont: font ]
+			at: aPoint / ps
+			strokeFont: font
+			color: aColor.
+		self outOfLocation ]
 	ifFalse: [
-		self
+		ps _ font pointSize.
+		loc _ AffineTransformation withScale: ps*1.3.
+		self intoLocation: loc.
+		engine
 			displayString: aString
 			from: firstIndex
 			to: lastIndex
-			at: aPoint
-			trueTypeFont: font ]! !
+			at: aPoint / ps
+			trueTypeFont: font
+			color: aColor.
+		self outOfLocation ]! !
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/30/2014 20:02'!
 drawButtonIconFromCurrentMorph
@@ -2453,27 +2406,14 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 12/16/2017 18:18:00'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 4/4/2018 14:04:17'!
 setForm: aForm
 	"
 	World extent: World extent
 	"
 	form _ aForm.
 	engine _ VectorEngine onForm: form.
-	self newClipRect: nil.
-	shadowColor _ nil! !
-
-!VectorCanvas class methodsFor: 'accessing' stamp: 'jmv 9/30/2014 20:03'!
-antiAliasingWidthForOutlineFonts
-	^1.4! !
-
-!VectorCanvas class methodsFor: 'accessing' stamp: 'jmv 9/30/2014 20:03'!
-antiAliasingWidthForStrokeFonts
-	^1.1! !
-
-!VectorCanvas class methodsFor: 'accessing' stamp: 'jmv 9/30/2014 20:03'!
-defaultAntiAliasingWidth
-	^1.3. "default for graphics"! !
+	self newClipRect: nil! !
 
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 arrowOfDirection: aSymbol size: finalSizeInteger
@@ -3345,6 +3285,56 @@ Display forceToScreen
 		abs_QuadraticBezierToX: lastClientX + x2 y: lastClientY + y2
 		controlX: lastClientX + x1 y: lastClientY + y1! !
 
+!VectorEngine methodsFor: 'text' stamp: 'jmv 4/4/2018 15:11:43'!
+displayString: aString from: startIndex to: stopIndex at: aPoint strokeFont: aFont color: aStrokeColor
+	"geometryTransformation is already set to honor font pointSize
+	Use as little of aFont as possible!!"
+	| charCode destX destY displayWidth isBold isItalic char renderer |
+
+	self antiAliasingWidth: VectorEngine antiAliasingWidthForStrokeFonts.
+	destY _ aPoint y.
+	destX _ aPoint x.
+	isBold _ aFont isBold.
+	isItalic _ aFont isItalic.
+
+	renderer _ TechnicalFontRenderer for: self.
+	self strokeWidth: (isBold ifTrue: [ 0.15 ] ifFalse: [ 0.1 ]) color: aStrokeColor do: [
+		startIndex to: stopIndex do: [ :charIndex |
+			char _ aString at: charIndex.
+			charCode _ char numericValue.
+			displayWidth _ aFont normalizedWidthOf: char.
+			self abs_MoveToX: destX y: destY+1.
+			renderer drawCharCode: charCode italics: isItalic.
+			destX _ destX + displayWidth.
+		]
+	].
+	self antiAliasingWidth: VectorEngine defaultAntiAliasingWidth! !
+
+!VectorEngine methodsFor: 'text' stamp: 'jmv 4/4/2018 15:11:30'!
+displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aFont color: aStrokeColor
+	"geometryTransformation is already set to honor font pointSize
+	Use as little of aFont as possible!!"
+	| charCode destX destY displayWidth isBold isItalic char renderer |
+
+	self antiAliasingWidth: VectorEngine antiAliasingWidthForOutlineFonts.
+	destY _ aPoint y.
+	destX _ aPoint x.
+	isBold _ aFont isBold.
+	isItalic _ aFont isItalic.
+
+	renderer _ BitstreamVeraRenderer for: self.
+	self strokeWidth: (isBold ifTrue: [0.062] ifFalse: [0]) color: aStrokeColor fillColor: aStrokeColor do: [
+		startIndex to: stopIndex do: [ :charIndex |
+			char _ aString at: charIndex.
+			charCode _ char numericValue.
+			displayWidth _ aFont normalizedWidthOf: char.
+			self abs_MoveToX: destX/1.3 y: destY/1.3.
+			renderer drawCharCode: charCode italics: isItalic.
+			destX _ destX + displayWidth.
+		]
+	].
+	self antiAliasingWidth: VectorEngine defaultAntiAliasingWidth! !
+
 !VectorEngine methodsFor: 'private' stamp: 'jmv 12/26/2017 09:27:29'!
 addPenPositionX: x y: y
 	"slight optimization possible when we know width = 0... perhaps implement:
@@ -3453,7 +3443,7 @@ resetMorphBounds
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 12/30/2017 15:39:05'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 4/4/2018 15:12:09'!
 setForm: aForm
 	"
 	World extent: World extent
@@ -3464,7 +3454,7 @@ setForm: aForm
 	targetHeight _ aForm height.
 	self resetMorphBounds.
 	self clipRect: (0@0 corner: targetWidth@targetHeight).
-	antiAliasingWidth _ VectorCanvas defaultAntiAliasingWidth.
+	antiAliasingWidth _ VectorEngine defaultAntiAliasingWidth.
 	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"
 	s _ aForm bits size.
 	(mask isNil or: [ mask size ~= s ])
@@ -4230,7 +4220,7 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	bits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 1/1/2018 16:12:43'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:12:52'!
 experLinesAndShapes
 	"
 	self experLinesAndShapes
@@ -4244,7 +4234,7 @@ experLinesAndShapes
 			abs_LineToX: 15 y: 410; abs_LineToX: 10 y: 20;
 			do_ClosePath ].
 	Display forceToScreen.
-	engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+	engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
 			abs_MoveToX: 220 y: 10;
 			abs_LineToX: 410 y: 15; abs_LineToX: 220 y: 20;
@@ -4254,11 +4244,11 @@ experLinesAndShapes
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorCanvas defaultAntiAliasingWidth * 2.
+	y2 _ VectorEngine defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		"stroke con w > aaw"
-		yy2 _ y2 >= 1 ifTrue: [ VectorCanvas defaultAntiAliasingWidth * 0.5 ] ifFalse: [0].
-		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+		yy2 _ y2 >= 1 ifTrue: [ VectorEngine defaultAntiAliasingWidth * 0.5 ] ifFalse: [0].
+		engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 431 y: y1+yy2; abs_LineToX: 530 y: y1+yy2+dy;
 				abs_LineToX: 530 y: y1+y2-yy2+dy; abs_LineToX: 431 y: y1+y2-yy2;
@@ -4293,14 +4283,14 @@ experLinesAndShapes
 				abs_MoveToX: y2*0.5+731 y: y2*0.5 + y1+dy+dy+dy; abs_LineToX: 830 y: y2 * 0.5 + y1  + dy + dy+dy+dy.
 			engine
 				abs_MoveToX: y2*0.5 + y1+dy+dy+dy y: y2*0.5+731; abs_LineToX: y2 * 0.5 + y1  + dy + dy+dy+dy y: 830 ].
-		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
 	].
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 1/1/2018 16:28:23'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:12:56'!
 experLinesAndShapes2
 	"
 	self experLinesAndShapes2
@@ -4310,7 +4300,7 @@ experLinesAndShapes2
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorCanvas defaultAntiAliasingWidth*4*2.
+	y2 _ VectorEngine defaultAntiAliasingWidth*4*2.
 	15 timesRepeat: [
 		"Solo fill. w chico pero aun visible"
 		engine strokeWidth: 1.0 color: Color green fillColor: Color red do: [
@@ -4372,7 +4362,7 @@ experLinesAndShapes2
 				abs_MoveToX: y1+dy+dy+dy+dy+dy y: 631; abs_LineToX: y1+dy+dy+dy+dy+dy+dy y: 730;
 				abs_LineToX: y1+y2+dy+dy+dy+dy+dy+dy y: 730; abs_LineToX: y1+y2+dy+dy+dy+dy+dy y: 631;
 				do_ClosePath ].
-		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 print.
 		y2 _ y2 * 0.8.
@@ -4380,7 +4370,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 1/1/2018 16:23:10'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:13:02'!
 experLinesAndShapes3
 	"
 	self experLinesAndShapes3
@@ -4394,7 +4384,7 @@ experLinesAndShapes3
 			abs_LineToX: 15 y: 410; abs_LineToX: 10 y: 20;
 			do_ClosePath ].
 	Display forceToScreen.
-	engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+	engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
 			abs_MoveToX: 220 y: 10;
 			abs_LineToX: 410 y: 15; abs_LineToX: 220 y: 20;
@@ -4404,10 +4394,10 @@ experLinesAndShapes3
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorCanvas defaultAntiAliasingWidth * 2.
+	y2 _ VectorEngine defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		"stroke con w > aaw"
-		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*0.4 color: Color black fillColor: Color black do: [
+		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*0.4 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 431 y: y1; abs_LineToX: 530 y: y1+dy;
 				abs_LineToX: 530 y: y1+y2+dy; abs_LineToX: 431 y: y1+y2;
@@ -4417,7 +4407,7 @@ experLinesAndShapes3
 				abs_LineToX: y1+y2+dy y: 530; abs_LineToX: y1+y2 y: 431;
 				do_ClosePath ].
 		"Solo fill. w casi=0"
-		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*0.2 color: Color black fillColor: Color black do: [
+		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*0.2 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 531 y: y1+dy; abs_LineToX: 630 y: y1+dy+dy;
 				abs_LineToX: 630 y: y1+y2+dy+dy; abs_LineToX: 531 y: y1+y2+dy;
@@ -4427,7 +4417,7 @@ experLinesAndShapes3
 				abs_LineToX: y1+y2+dy+dy y: 630; abs_LineToX: y1+y2+dy y: 531;
 				do_ClosePath ].
 		"Solo fill. w =0"
-		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*0.0 color: Color black fillColor: Color black do: [
+		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*0.0 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 631 y: y1+dy+dy; abs_LineToX: 730 y: y1+dy+dy+dy;
 				abs_LineToX: 730 y: y1+y2+dy+dy+dy; abs_LineToX: 631 y: y1+y2+dy+dy;
@@ -4436,7 +4426,7 @@ experLinesAndShapes3
 				abs_MoveToX: y1+dy+dy y: 631; abs_LineToX: y1+dy+dy+dy y: 730;
 				abs_LineToX: y1+y2+dy+dy+dy y: 730; abs_LineToX: y1+y2+dy+dy y: 631;
 				do_ClosePath ].
-		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
 	].
@@ -4444,7 +4434,7 @@ experLinesAndShapes3
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 1/1/2018 16:23:18'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:13:08'!
 experLinesAndShapes4
 	"
 	self experLinesAndShapes4
@@ -4458,7 +4448,7 @@ experLinesAndShapes4
 			abs_LineToX: 15 y: 410; abs_LineToX: 10 y: 20;
 			do_ClosePath ].
 	Display forceToScreen.
-	engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+	engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
 			abs_MoveToX: 220 y: 10;
 			abs_LineToX: 410 y: 15; abs_LineToX: 220 y: 20;
@@ -4468,10 +4458,10 @@ experLinesAndShapes4
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorCanvas defaultAntiAliasingWidth * 2.
+	y2 _ VectorEngine defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		"stroke con w > aaw"
-		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*2 color: Color black fillColor: Color black do: [
+		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*2 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 431 y: y1; abs_LineToX: 530 y: y1+dy;
 				abs_LineToX: 530 y: y1+y2+dy; abs_LineToX: 431 y: y1+y2;
@@ -4481,7 +4471,7 @@ experLinesAndShapes4
 				abs_LineToX: y1+y2+dy y: 530; abs_LineToX: y1+y2 y: 431;
 				do_ClosePath ].
 		"Solo fill. w casi=0"
-		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth*1.5 color: Color black fillColor: Color black do: [
+		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*1.5 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 531 y: y1+dy; abs_LineToX: 630 y: y1+dy+dy;
 				abs_LineToX: 630 y: y1+y2+dy+dy; abs_LineToX: 531 y: y1+y2+dy;
@@ -4491,7 +4481,7 @@ experLinesAndShapes4
 				abs_LineToX: y1+y2+dy+dy y: 630; abs_LineToX: y1+y2+dy y: 531;
 				do_ClosePath ].
 		"Solo fill. w =0"
-		engine strokeWidth: VectorCanvas defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+		engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 631 y: y1+dy+dy; abs_LineToX: 730 y: y1+dy+dy+dy;
 				abs_LineToX: 730 y: y1+y2+dy+dy+dy; abs_LineToX: 631 y: y1+y2+dy+dy;
@@ -4500,7 +4490,7 @@ experLinesAndShapes4
 				abs_MoveToX: y1+dy+dy y: 631; abs_LineToX: y1+dy+dy+dy y: 730;
 				abs_LineToX: y1+y2+dy+dy+dy y: 730; abs_LineToX: y1+y2+dy+dy y: 631;
 				do_ClosePath ].
-		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
 	].
@@ -4508,7 +4498,7 @@ experLinesAndShapes4
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 1/1/2018 16:23:23'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:12:44'!
 experLinesAndShapesx
 	"
 	self experLinesAndShapesx
@@ -4525,7 +4515,7 @@ experLinesAndShapesx
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorCanvas defaultAntiAliasingWidth * 2.
+	y2 _ VectorEngine defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		y2 print.
 		"Solo fill. w =0"
@@ -4538,7 +4528,7 @@ experLinesAndShapesx
 				abs_MoveToX: y1+dy+dy y: 431; abs_LineToX: y1+dy+dy+dy y: 530;
 				abs_LineToX: y1+y2+dy+dy+dy y: 530; abs_LineToX: y1+y2+dy+dy y: 431;
 				do_ClosePath ].
-		y1 _ y1 + y2 + VectorCanvas defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
 	].
@@ -4849,6 +4839,18 @@ onForm: aForm
 
 	^ self new setForm: aForm! !
 
+!VectorEngine class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:07'!
+antiAliasingWidthForOutlineFonts
+	^1.4! !
+
+!VectorEngine class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:10'!
+antiAliasingWidthForStrokeFonts
+	^1.1! !
+
+!VectorEngine class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:13'!
+defaultAntiAliasingWidth
+	^1.3. "default for graphics"! !
+
 !CodeGeneratingVectorEngine methodsFor: 'accessing' stamp: 'jmv 1/4/2018 08:21:52'!
 charCode: aCharCode selectorPrefix: selectorPrefix
 	charCode _ aCharCode.
@@ -4955,8 +4957,9 @@ vectorGraphicsEngine: aVectorGraphicsEngine
 for: aVectorGraphicsEngine
 	^ self new vectorGraphicsEngine: aVectorGraphicsEngine! !
 
-!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 1/4/2018 15:56:51'!
+!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:11:45'!
 drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics canvas: aVectorCanvas
+"No usado directamente por M3. Usado solo por CodeGeneratingVectorEngine para generar los que si se usan."
 "TrueType en M3. Bitstream Vera Sans, importado asi: TTF -> PDF -> SVG -> Codigo Smalltalk.
 "
 "
@@ -4965,7 +4968,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	strokeWidth: 1 color: Color black fillColor: Color blue do: [
-		(BitstreamVeraRenderer new vectorGraphicsCanvas: c)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 167 atX: 150 y: 200 pointSize: 200 italics: false canvas: c;
 			drawCharCode: 167 atX: 220 y: 200 pointSize: 200 italics: true canvas: c ].
 Display forceToScreen
@@ -4976,7 +4979,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	strokeWidth: 3.25 color: Color black fillColor: Color blue do: [
-		(BitstreamVeraRenderer new vectorGraphicsCanvas: c)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 atX: 150 y: 200 pointSize: 120 italics: false canvas: c ].
 Display forceToScreen
 "
@@ -4986,7 +4989,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	fillColor: Color black do: [
-		(BitstreamVeraRenderer new vectorGraphicsCanvas: c)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 atX: 150 y: 200 pointSize: 12 italics: false canvas: c;
 			drawCharCode: 97 atX: 158 y: 200.25 pointSize: 12 italics: false canvas: c;
 			drawCharCode: 97 atX: 166 y: 200.5 pointSize: 12 italics: false canvas: c;
@@ -5010,9 +5013,13 @@ Display forceToScreen
 
 	aVectorCanvas outOfLocation! !
 
-!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 1/4/2018 12:10:57'!
+!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:11:12'!
 drawCharCode: charCode italics: doItalics
-"TrueType en M3. Bitstream Vera Sans, importado asi: TTF -> PDF -> SVG -> Codigo Smalltalk.
+"Usado de verdad por M3.
+Creado por CodeGeneratingVectorEngine a partir de #drawCharCode:atX:y:pointSize:italics:canvas:
+Usado solo para crear las versiones italics
+
+Todos los glyphs usados de verdad son en comandos relativos.
 "
 "
 | c loc  r |
@@ -5020,7 +5027,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@22.
 c intoLocation: loc.
-r _ BitstreamVeraRenderer new vectorGraphicsCanvas: c.
+r _ BitstreamVeraRenderer new vectorGraphicsEngine: c engine.
 c engine
 	strokeWidth: 0.005 color: Color black fillColor: Color blue do: [ :e |
 		r drawCharCode: 167 italics: false.
@@ -5036,7 +5043,7 @@ loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@222.
 c intoLocation: loc.
 c engine
 	strokeWidth: 3.25/200 color: Color black fillColor: Color blue do: [
-		(BitstreamVeraRenderer new vectorGraphicsCanvas: c)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 italics: false ].
 Display forceToScreen
 "
@@ -5045,7 +5052,7 @@ Display forceToScreen
 c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 loc _ AffineTransformation withRadians: 0.0 scale: 12 position: 38@22.
-r _ BitstreamVeraRenderer new vectorGraphicsCanvas: c.
+r _ BitstreamVeraRenderer new vectorGraphicsEngine: c engine.
 c intoLocation: loc.
 c engine
 	fillColor: Color black do: [ :e |
@@ -14730,8 +14737,11 @@ testCharacter: code
 		r drawCharCode: code italics: false ].
 	Display forceToScreen! !
 
-!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 1/4/2018 15:57:16'!
+!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:12:09'!
 drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics canvas: aVectorCanvas
+"No usado directamente por M3.
+Usado solo por CodeGeneratingVectorEngine para generar los que si se usan.
+Definicion de glyphs comoda para el diseniador"
 	| symbol loc |
 "
 | c |
@@ -14739,7 +14749,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	strokeWidth: 20 color: Color black do: [
-		(TechnicalFontRenderer new vectorGraphicsCanvas: c)
+		(TechnicalFontRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 atX: 150 y: 200 pointSize: 200 italics: false canvas: c;
 			drawCharCode: 97 atX: 250 y: 200 pointSize: 200 italics: true canvas: c ].
 Display forceToScreen
@@ -14750,7 +14760,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 c engine
 	strokeWidth: 1.25 color: Color black do: [
-		(TechnicalFontRenderer new vectorGraphicsCanvas: c)
+		(TechnicalFontRenderer new vectorGraphicsEngine: c engine)
 			drawCharCode: 97 atX: 150 y: 200 pointSize: 12 italics: false canvas: c;
 			drawCharCode: 97 atX: 158 y: 200.25 pointSize: 12 italics: false canvas: c;
 			drawCharCode: 97 atX: 166 y: 200.5 pointSize: 12 italics: false canvas: c;
@@ -14777,8 +14787,13 @@ Display forceToScreen
 	
 	aVectorCanvas outOfLocation! !
 
-!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 1/4/2018 12:20:24'!
+!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:10:33'!
 drawCharCode: charCode italics: doItalics
+"Usado de verdad por M3.
+Creado por CodeGeneratingVectorEngine a partir de #drawCharCode:atX:y:pointSize:italics:canvas:
+
+Todos los glyphs usados de verdad son en comandos relativos.
+"
 	| symbol |
 "
 | c loc  r |
@@ -14786,7 +14801,7 @@ c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@222.
 c intoLocation: loc.
-r _ TechnicalFontRenderer new vectorGraphicsCanvas: c.
+r _ TechnicalFontRenderer new vectorGraphicsEngine: c engine.
 c engine
 	strokeWidth: 0.1 color: Color black do: [ :e |
 		r drawCharCode: 97 italics: false.
@@ -14799,7 +14814,7 @@ Display forceToScreen
 c _ (VectorCanvas onForm: Display)
 	into: self runningWorld.
 loc _ AffineTransformation withRadians: 0.0 scale: 12 position: 38@22.
-r _ TechnicalFontRenderer new vectorGraphicsCanvas: c.
+r _ TechnicalFontRenderer new vectorGraphicsEngine: c engine.
 c intoLocation: loc.
 c engine
 	strokeWidth: 0.1 color: Color black do: [ :e |
