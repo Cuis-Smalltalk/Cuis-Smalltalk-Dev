@@ -1,7 +1,10 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3225] on 15 December 2017 at 11:31:15 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3293] on 27 April 2018 at 1:49:10 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 44!
+!provides: 'LinearAlgebra' 1 45!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+SystemOrganization addCategory: #LinearAlgebra!
+
+
 !classDefinition: #Matrix category: #LinearAlgebra!
 Array2D subclass: #Matrix
 	instanceVariableNames: ''
@@ -126,45 +129,6 @@ ShortWordMatrix fromArrayOfArrays: #(
 	#( 40000 		127 		128)
 	#( 32768 		254		32767 ))!
 
-!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 12/14/2017 14:25:38'!
-hackBitsForFloat64Matrix: aFloa64tMatrix
-	"Set up parmeters to have similar shape to aFloat64Matrix and share the elements.
-	This is: 32 bits per element, twice the width and height, and share the storage.
-	Useful for copying parts of matrixes around using BitBlt."
-
-	depth _ 32.
-	width _ aFloa64tMatrix width * 2.
-	height _ aFloa64tMatrix height.
-	bits _ aFloa64tMatrix elements! !
-
-!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 12/15/2017 11:28:38'!
-hackBitsForFloatMatrix: aFloatMatrix
-	"Set up parmeters to have similar shape to aFloatMatrix and share the elements.
-	This is: 32 bits per element, same width and height, and share the storage.
-	Useful for copying parts of matrixes around using BitBlt."
-
-	"Senders should usually prefer #hackBitsForm to aid in compatibility with Float64Matrix, but should also be careful with x coordinates and widths. See comment at #hackBitsForm"
-
-	depth _ 32.
-	width _ aFloatMatrix width.
-	height _ aFloatMatrix height.
-	bits _ aFloatMatrix elements! !
-
-!AffineTransformation methodsFor: '*LinearAlgebra' stamp: 'jmv 8/23/2014 23:29'!
-asMatrix
-	"Answer a FloatMatrix."
-
-	| answer |
-	answer _ FloatMatrix height: 3 width: 3.
-	answer i: 1 j: 1 put: self a11.
-	answer i: 1 j: 2 put: self a12.
-	answer i: 1 j: 3 put: self a13.
-	answer i: 2 j: 1 put: self a21.
-	answer i: 2 j: 2 put: self a22.
-	answer i: 2 j: 3 put: self a23.
-	answer i: 3 j: 3 put: 1.
-	^answer! !
-
 !Matrix methodsFor: 'aritmethic' stamp: 'jmv 8/23/2014 23:27'!
 * aMatrixOrNumber
 	"Standard matrix multiplication"
@@ -218,6 +182,36 @@ asMatrix
 	result replaceValues: [ :i :j :value | value * reciprocal ].
 	^result
 	! !
+
+!Matrix methodsFor: 'aritmethic' stamp: 'jmv 7/19/2012 11:18'!
+fillWith: aMatrix minus: bMatrix
+
+	| elem |
+	1 to: height do: [ :i |
+		1 to: width do: [ :j |
+			elem _ ((aMatrix i: i j: j) - (bMatrix i: i j: j)).
+			self i: i j: j put: elem ] ]! !
+
+!Matrix methodsFor: 'aritmethic' stamp: 'jmv 7/19/2012 12:36'!
+fillWith: aMatrix multipliedBy: bMatrix
+
+	| zeroElement elem |
+	zeroElement _ self zeroElement.
+	1 to: height do: [ :i |
+		1 to: width do: [ :j |
+			elem _ zeroElement.
+			1 to: aMatrix width do: [ :k |
+				elem _ ((aMatrix i: i j: k) * (bMatrix i: k j: j)) + elem ].
+			self i: i j: j put: elem ] ]! !
+
+!Matrix methodsFor: 'aritmethic' stamp: 'jmv 7/19/2012 11:18'!
+fillWith: aMatrix plus: bMatrix
+
+	| elem |
+	1 to: height do: [ :i |
+		1 to: width do: [ :j |
+			elem _ ((aMatrix i: i j: j) + (bMatrix i: i j: j)).
+			self i: i j: j put: elem ] ]! !
 
 !Matrix methodsFor: 'misc' stamp: 'jmv 9/27/2007 23:35'!
 appropriateResultClass
@@ -311,6 +305,22 @@ asFormMin: min max: max
 average
 	^self mean! !
 
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:52'!
+max
+	^ elements max! !
+
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:55'!
+mean
+	^elements mean! !
+
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:52'!
+min
+	^ elements min! !
+
+!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:56'!
+sum
+	^elements sum! !
+
 !Matrix methodsFor: 'filling' stamp: 'jmv 10/19/2017 12:40:15'!
 border: box with: value
 	"box includes topLeft but doesn't include bottom right (as it is usual with Rectangles)
@@ -322,65 +332,6 @@ border: box with: value
 	box left to: box right-1 do: [ :j |
 		self i: box top j: j put: value.
 		self i: box bottom-1 j: j put: value ]! !
-
-!Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
-columnsWithoutPivot: count
-	"Return a collection with the indexes of the columns that are closer to not having a pivot"
-
-	| col col2 |
-	col _ SortedCollection sortBlock: [ :a :b | a y < b y ].
-	1 to: height do: [ :j |
-		col2 _ OrderedCollection new.
-		1 to: height do: [ :i |
-			(j = 1 or: [(self i: i j: j-1) isZero]) ifTrue: [
-				col2 add: (self i: i j: j) abs ] ].
-		col add: (j @ col2 max) ].
-	^((col copyFrom: 1 to: count) collect: [ :each | each x ] ) asSortedCollection! !
-
-!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 11:20'!
-determinant
-
-	| aux rowPermutationCount result |
-	self isSquare ifFalse: [ ^self error: 'Only for Square Matrices' ].
-	aux _ self copy.
-	rowPermutationCount _ aux triangleWithPartialPivoting.
-	result _ -1 raisedToInteger: rowPermutationCount.
-	1 to: width do: [ :i |
-		result _ result * (aux i: i j: i) ].
-	^result! !
-
-!Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 11:18'!
-diagonal
-
-	| x |
-	x _ self appropriateResultClass newVectorSize: height.
-	1 to: height do: [ :i |
-		x i: i j: 1 put: (self i: i j: i ) ].
-	^x! !
-
-!Matrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 10:55'!
-display
-	self displayAt: 0@0! !
-
-!Matrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:16'!
-displayAt: aPoint
-	"Display receiver, using default conversion to Form.
-	Each subclass might do it differently:
-	- mapping the used range of values or some arbitrary range
-	- applying or not gamma correction (to make a linear range look linear to our eyes, using nonlinear mapping)"
-
-	self asForm displayAt: aPoint! !
-
-!Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 10:25'!
-elements
-	^ elements! !
-
-!Matrix methodsFor: 'private' stamp: 'jmv 7/19/2012 12:35'!
-epsilon
-	"Something better is needed. For example, taking into accoung the largest elements, or the norm, or something like that... In any case it is better to check senders, and use a different strategy for ending iterative methods or such...
-	Check inheritance too"
-
-	^self zeroElement! !
 
 !Matrix methodsFor: 'filling' stamp: 'jmv 7/26/2016 11:32:38'!
 fill: box with: value
@@ -396,6 +347,206 @@ fillDiagonalWith: aVectorOrArray
 
 	1 to: (width min: height) do: [ :j |
 		self i: j j: j put: (aVectorOrArray at: j) ].! !
+
+!Matrix methodsFor: 'filling' stamp: 'jmv 9/28/2007 19:30'!
+fillWithIdentity
+
+	1 to: self width do: [ :i |
+		self i: i j: i put: 1.
+		i+1 to: self width do: [ :j |
+			self i: i j: j put: 0.
+			self i: j j: i put: 0 ] ].! !
+
+!Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:25'!
+columnsWithoutPivot: count
+	"Return a collection with the indexes of the columns that are closer to not having a pivot"
+
+	| col col2 |
+	col _ SortedCollection sortBlock: [ :a :b | a y < b y ].
+	1 to: height do: [ :j |
+		col2 _ OrderedCollection new.
+		1 to: height do: [ :i |
+			(j = 1 or: [(self i: i j: j-1) isZero]) ifTrue: [
+				col2 add: (self i: i j: j) abs ] ].
+		col add: (j @ col2 max) ].
+	^((col copyFrom: 1 to: count) collect: [ :each | each x ] ) asSortedCollection! !
+
+!Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:04'!
+rowWithMaxInColumn: j startingAtRow: jStart
+
+	| rowWithMax |
+	rowWithMax _ jStart.
+	jStart+1 to: height do: [ :i |
+		(self i: i j: j) abs > (self i: rowWithMax j: j) abs ifTrue: [
+			rowWithMax _ i ] ].
+	^rowWithMax! !
+
+!Matrix methodsFor: 'aux operations' stamp: 'jmv 9/18/2017 17:31:53'!
+subtractRow: i multipliedBy: factor to: k startingAtColumn: jStart
+
+	self i: k j: jStart put: self zeroElement.
+	jStart+1 to: width do: [ :j |
+		self i: k j: j put:
+			(self i: k j: j) - ((self i: i j: j) * factor) ]! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 11:20'!
+determinant
+
+	| aux rowPermutationCount result |
+	self isSquare ifFalse: [ ^self error: 'Only for Square Matrices' ].
+	aux _ self copy.
+	rowPermutationCount _ aux triangleWithPartialPivoting.
+	result _ -1 raisedToInteger: rowPermutationCount.
+	1 to: width do: [ :i |
+		result _ result * (aux i: i j: i) ].
+	^result! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 8/23/2014 23:27'!
+inverse
+	"Answers the inverse matrix"
+
+	| zeroElement bigMatrix result |
+	zeroElement _ self zeroElement.
+	self isSquare ifFalse: [ ^self error: 'Only for Square Matrices' ].
+	result _ self appropriateResultClass height: height width: width.
+	bigMatrix _ self appropriateResultClass height: height width: width + 1.
+	1 to: width do: [ :i |
+		bigMatrix fillWith: self.
+		1 to: width do: [ :j | bigMatrix i: j j: width+1 put: zeroElement ].
+		bigMatrix i: i j: width + 1 put: 1.
+		result j: i put: bigMatrix solveLinearSystem ].
+	^result! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:21'!
+moveOriginToCenter: aBoolean
+	"This method performs a circular shift of the both in horizontal and vertical direction. The magnitude of the shift is half our extent.
+	This is useful, for example, to make a better visualization of convolution kernels:
+	
+	To be properly applied, the kernel is centered at 1@1 . For instance a simple low pass filter could be
+	| 0.6   0.1   0.0   0.1 |
+	| 0.1   0.0   0.0   0.0 |
+	| 0.0   0.0   0.0   0.0 |
+	| 0.1   0.0   0.0   0.0 |
+	
+	But it is much easier to 'see' it if the center of the filter is moved to the center of the matrix like this:
+	| 0.0   0.0   0.0   0.0 |
+	| 0.0   0.0   0.1   0.0 |
+	| 0.0   0.1   0.6   0.1 |
+	| 0.0   0.0   0.1   0.0 |
+	
+	This method takes the receiver and answers a new instance, transforming it from 1@1 to center if aBoolean is true, or backwards if false.
+	(if the extent is even, then aBoolean makes no difference).
+	
+	((FloatMatrix fromArrayOfArrays: #(
+		(0.6   0.1   0.0   0.1)
+		(0.1   0.0   0.0   0.0)
+		(0.0   0.0   0.0   0.0)
+		(0.1   0.0   0.0   0.0)))
+			moveOriginToCenter: true)
+			print
+
+	((Matrix fromArrayOfArrays: #(
+		(0.6   0.1   0.0   0.0   0.1)
+		(0.1   0.0   0.0   0.0   0.0)
+		(0.0   0.0   0.0   0.0   0.0)
+		(0.0   0.0   0.0   0.0   0.0)
+		(0.1   0.0   0.0   0.0   0.0)))
+			moveOriginToCenter: true)
+			print
+	"
+	| answer deltaI deltaJ e ex ey |
+	e _ self size.
+	ey _ e y.
+	ex _ e x.
+	deltaI _ ey //2.
+	deltaJ _ ex // 2.
+	aBoolean ifFalse: [
+		deltaI _ deltaI negated.
+		deltaJ _ deltaJ negated ].
+	answer _ self class newSize: e.
+	0 to: ey-1 do: [ :i |
+		0 to: ex-1 do: [ :j |
+			answer i: i+deltaI\\ey+1 j: j+deltaJ\\ex+1 put: (self i: i+1 j: j+1) ]].
+	^answer! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:37'!
+normalizeColumns
+
+	| zeroElement normSquared |
+	zeroElement _ self zeroElement.
+	1 to: width do: [ :j |
+		normSquared _ zeroElement.
+		1 to: height do: [ :i |
+			normSquared _(self i: i j: j) squared + normSquared ].
+		1 to: height do: [ :i |
+			self i: i j: j put: (self i: i j: j) / normSquared sqrt ] ]! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 10/7/2016 15:35:55'!
+normalizeRows
+
+	| zeroElement normSquared |
+	zeroElement _ self zeroElement.
+	1 to: height do: [ :i |
+		normSquared _ zeroElement.
+		1 to: width do: [ :j |
+			normSquared _(self i: i j: j) squared + normSquared ].
+		1 to: width do: [ :j |
+			self i: i j: j put: (self i: i j: j) / normSquared sqrt ] ]! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:17'!
+permuteRow: i and: k
+
+	| a b |
+	i = k ifFalse: [
+		1 to: width do: [ :j |
+			a _ self i: k j: j.
+			b _ self i: i j: j.
+			self i: k j: j put: b.
+			self i: i j: j put: a ] ]! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 10/6/2016 15:35:41'!
+trace
+
+	| trace |
+	trace _ self zeroElement.
+	1 to: height do: [ :i |
+		trace _ trace + (self i: i j: i ) ].
+	^trace! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:17'!
+transpose
+	"Traspose the receiver. Modify it."
+
+	| aux |
+	1 to: width do: [ :ii |
+		ii+1 to: width do: [ :jj |
+			aux _ self i: ii j: jj.
+			self i: ii j: jj put: (self i: jj j: ii).
+			self i: jj j: ii put: (aux) ] ].! !
+
+!Matrix methodsFor: 'operations' stamp: 'jmv 8/23/2014 23:27'!
+transposed
+	"Answer a new matrix, transposed."
+
+	| result |
+	result _ self appropriateResultClass height: width width: height.
+	1 to: result height do: [ :i |
+		1 to: result width do: [ :j |
+			result i: i j: j put: (self i: j j: i) ] ].
+	^result! !
+
+!Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 11:18'!
+diagonal
+
+	| x |
+	x _ self appropriateResultClass newVectorSize: height.
+	1 to: height do: [ :i |
+		x i: i j: 1 put: (self i: i j: i ) ].
+	^x! !
+
+!Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 10:25'!
+elements
+	^ elements! !
 
 !Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 17:41'!
 fillEndsWith1Derivative
@@ -461,45 +612,6 @@ fillEndsWith2Derivative2
 			self i: m-1 j: j put: penultimate.
 			self i: m j: j put: last ]]! !
 
-!Matrix methodsFor: 'aritmethic' stamp: 'jmv 7/19/2012 11:18'!
-fillWith: aMatrix minus: bMatrix
-
-	| elem |
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			elem _ ((aMatrix i: i j: j) - (bMatrix i: i j: j)).
-			self i: i j: j put: elem ] ]! !
-
-!Matrix methodsFor: 'aritmethic' stamp: 'jmv 7/19/2012 12:36'!
-fillWith: aMatrix multipliedBy: bMatrix
-
-	| zeroElement elem |
-	zeroElement _ self zeroElement.
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			elem _ zeroElement.
-			1 to: aMatrix width do: [ :k |
-				elem _ ((aMatrix i: i j: k) * (bMatrix i: k j: j)) + elem ].
-			self i: i j: j put: elem ] ]! !
-
-!Matrix methodsFor: 'aritmethic' stamp: 'jmv 7/19/2012 11:18'!
-fillWith: aMatrix plus: bMatrix
-
-	| elem |
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			elem _ ((aMatrix i: i j: j) + (bMatrix i: i j: j)).
-			self i: i j: j put: elem ] ]! !
-
-!Matrix methodsFor: 'filling' stamp: 'jmv 9/28/2007 19:30'!
-fillWithIdentity
-
-	1 to: self width do: [ :i |
-		self i: i j: i put: 1.
-		i+1 to: self width do: [ :j |
-			self i: i j: j put: 0.
-			self i: j j: i put: 0 ] ].! !
-
 !Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 11:22'!
 i: i
 	"Answers a row vector with the values at row y"
@@ -547,26 +659,6 @@ Tomar esto para lo que realmente hace falta. Ver el otro browser
 	"
 	^result! !
 
-!Matrix methodsFor: 'operations' stamp: 'jmv 8/23/2014 23:27'!
-inverse
-	"Answers the inverse matrix"
-
-	| zeroElement bigMatrix result |
-	zeroElement _ self zeroElement.
-	self isSquare ifFalse: [ ^self error: 'Only for Square Matrices' ].
-	result _ self appropriateResultClass height: height width: width.
-	bigMatrix _ self appropriateResultClass height: height width: width + 1.
-	1 to: width do: [ :i |
-		bigMatrix fillWith: self.
-		1 to: width do: [ :j | bigMatrix i: j j: width+1 put: zeroElement ].
-		bigMatrix i: i j: width + 1 put: 1.
-		result j: i put: bigMatrix solveLinearSystem ].
-	^result! !
-
-!Matrix methodsFor: 'testing' stamp: 'jmv 12/2/2010 08:38'!
-is: aSymbol
-	^ aSymbol == #Matrix or: [ super is: aSymbol ]! !
-
 !Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 11:19'!
 j: j
 	"Answers a column vector with the values at column x"
@@ -595,126 +687,62 @@ m
 
 	^height! !
 
-!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:52'!
-max
-	^ elements max! !
-
-!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:55'!
-mean
-	^elements mean! !
-
-!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:52'!
-min
-	^ elements min! !
-
-!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:21'!
-moveOriginToCenter: aBoolean
-	"This method performs a circular shift of the both in horizontal and vertical direction. The magnitude of the shift is half our extent.
-	This is useful, for example, to make a better visualization of convolution kernels:
-	
-	To be properly applied, the kernel is centered at 1@1 . For instance a simple low pass filter could be
-	| 0.6   0.1   0.0   0.1 |
-	| 0.1   0.0   0.0   0.0 |
-	| 0.0   0.0   0.0   0.0 |
-	| 0.1   0.0   0.0   0.0 |
-	
-	But it is much easier to 'see' it if the center of the filter is moved to the center of the matrix like this:
-	| 0.0   0.0   0.0   0.0 |
-	| 0.0   0.0   0.1   0.0 |
-	| 0.0   0.1   0.6   0.1 |
-	| 0.0   0.0   0.1   0.0 |
-	
-	This method takes the receiver and answers a new instance, transforming it from 1@1 to center if aBoolean is true, or backwards if false.
-	(if the extent is even, then aBoolean makes no difference).
-	
-	((FloatMatrix fromArrayOfArrays: #(
-		(0.6   0.1   0.0   0.1)
-		(0.1   0.0   0.0   0.0)
-		(0.0   0.0   0.0   0.0)
-		(0.1   0.0   0.0   0.0)))
-			moveOriginToCenter: true)
-			print
-
-	((Matrix fromArrayOfArrays: #(
-		(0.6   0.1   0.0   0.0   0.1)
-		(0.1   0.0   0.0   0.0   0.0)
-		(0.0   0.0   0.0   0.0   0.0)
-		(0.0   0.0   0.0   0.0   0.0)
-		(0.1   0.0   0.0   0.0   0.0)))
-			moveOriginToCenter: true)
-			print
-	"
-	| answer deltaI deltaJ e ex ey |
-	e _ self size.
-	ey _ e y.
-	ex _ e x.
-	deltaI _ ey //2.
-	deltaJ _ ex // 2.
-	aBoolean ifFalse: [
-		deltaI _ deltaI negated.
-		deltaJ _ deltaJ negated ].
-	answer _ self class newSize: e.
-	0 to: ey-1 do: [ :i |
-		0 to: ex-1 do: [ :j |
-			answer i: i+deltaI\\ey+1 j: j+deltaJ\\ex+1 put: (self i: i+1 j: j+1) ]].
-	^answer! !
-
 !Matrix methodsFor: 'accessing' stamp: 'jmv 7/19/2012 11:27'!
 n
 	"Usual name in Linear Algebra"
 
 	^width! !
 
-!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:37'!
-normalizeColumns
-
-	| zeroElement normSquared |
-	zeroElement _ self zeroElement.
-	1 to: width do: [ :j |
-		normSquared _ zeroElement.
-		1 to: height do: [ :i |
-			normSquared _(self i: i j: j) squared + normSquared ].
-		1 to: height do: [ :i |
-			self i: i j: j put: (self i: i j: j) / normSquared sqrt ] ]! !
-
-!Matrix methodsFor: 'operations' stamp: 'jmv 10/7/2016 15:35:55'!
-normalizeRows
-
-	| zeroElement normSquared |
-	zeroElement _ self zeroElement.
-	1 to: height do: [ :i |
-		normSquared _ zeroElement.
-		1 to: width do: [ :j |
-			normSquared _(self i: i j: j) squared + normSquared ].
-		1 to: width do: [ :j |
-			self i: i j: j put: (self i: i j: j) / normSquared sqrt ] ]! !
-
-!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:17'!
-permuteRow: i and: k
-
-	| a b |
-	i = k ifFalse: [
-		1 to: width do: [ :j |
-			a _ self i: k j: j.
-			b _ self i: i j: j.
-			self i: k j: j put: b.
-			self i: i j: j put: a ] ]! !
-
-!Matrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:04'!
-rowWithMaxInColumn: j startingAtRow: jStart
-
-	| rowWithMax |
-	rowWithMax _ jStart.
-	jStart+1 to: height do: [ :i |
-		(self i: i j: j) abs > (self i: rowWithMax j: j) abs ifTrue: [
-			rowWithMax _ i ] ].
-	^rowWithMax! !
-
 !Matrix methodsFor: 'accessing' stamp: 'jmv 7/4/2001 11:38'!
 scalarSize
 	"Specially useful for Vectors, but defined for matrices too."
 
 	^height * width! !
+
+!Matrix methodsFor: 'accessing' stamp: 'jmv 9/30/2007 09:30'!
+subMatrixTopLeft: aPoint bottomRight: bPoint
+
+	| result |
+	result _ self appropriateResultClass newSize: bPoint - aPoint + (1@1).
+	1 to: result height do: [ :i |
+		1 to: result width do: [ :j |
+			result i: i j: j put:
+				(self at: (j@i)+aPoint-(1@1)) ] ].
+	^result! !
+
+!Matrix methodsFor: 'accessing' stamp: 'jmv 7/12/2011 17:49'!
+subMatrixTopLeft: aPoint size: sizePoint
+	^ self subMatrixTopLeft: aPoint bottomRight: aPoint + sizePoint - 1! !
+
+!Matrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 10:55'!
+display
+	self displayAt: 0@0! !
+
+!Matrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:16'!
+displayAt: aPoint
+	"Display receiver, using default conversion to Form.
+	Each subclass might do it differently:
+	- mapping the used range of values or some arbitrary range
+	- applying or not gamma correction (to make a linear range look linear to our eyes, using nonlinear mapping)"
+
+	self asForm displayAt: aPoint! !
+
+!Matrix methodsFor: 'private' stamp: 'jmv 7/19/2012 12:35'!
+epsilon
+	"Something better is needed. For example, taking into accoung the largest elements, or the norm, or something like that... In any case it is better to check senders, and use a different strategy for ending iterative methods or such...
+	Check inheritance too"
+
+	^self zeroElement! !
+
+!Matrix methodsFor: 'private' stamp: 'jmv 7/19/2012 12:35'!
+zeroElement
+	"We don't really restrict the kind of objects we might hold... Our best guess for a kind of null additive value is to just ask some element..."
+
+	^elements first class zero! !
+
+!Matrix methodsFor: 'testing' stamp: 'jmv 12/2/2010 08:38'!
+is: aSymbol
+	^ aSymbol == #Matrix or: [ super is: aSymbol ]! !
 
 !Matrix methodsFor: 'linear equation systems' stamp: 'jmv 7/19/2012 13:07'!
 solveLinearSystem
@@ -773,64 +801,6 @@ solveLinearSystem
 		x i: i j: 1 put: sum / (self i: i j: i) ].
 	^x! !
 
-!Matrix methodsFor: 'accessing' stamp: 'jmv 9/30/2007 09:30'!
-subMatrixTopLeft: aPoint bottomRight: bPoint
-
-	| result |
-	result _ self appropriateResultClass newSize: bPoint - aPoint + (1@1).
-	1 to: result height do: [ :i |
-		1 to: result width do: [ :j |
-			result i: i j: j put:
-				(self at: (j@i)+aPoint-(1@1)) ] ].
-	^result! !
-
-!Matrix methodsFor: 'accessing' stamp: 'jmv 7/12/2011 17:49'!
-subMatrixTopLeft: aPoint size: sizePoint
-	^ self subMatrixTopLeft: aPoint bottomRight: aPoint + sizePoint - 1! !
-
-!Matrix methodsFor: 'aux operations' stamp: 'jmv 9/18/2017 17:31:53'!
-subtractRow: i multipliedBy: factor to: k startingAtColumn: jStart
-
-	self i: k j: jStart put: self zeroElement.
-	jStart+1 to: width do: [ :j |
-		self i: k j: j put:
-			(self i: k j: j) - ((self i: i j: j) * factor) ]! !
-
-!Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:56'!
-sum
-	^elements sum! !
-
-!Matrix methodsFor: 'operations' stamp: 'jmv 10/6/2016 15:35:41'!
-trace
-
-	| trace |
-	trace _ self zeroElement.
-	1 to: height do: [ :i |
-		trace _ trace + (self i: i j: i ) ].
-	^trace! !
-
-!Matrix methodsFor: 'operations' stamp: 'jmv 7/19/2012 12:17'!
-transpose
-	"Traspose the receiver. Modify it."
-
-	| aux |
-	1 to: width do: [ :ii |
-		ii+1 to: width do: [ :jj |
-			aux _ self i: ii j: jj.
-			self i: ii j: jj put: (self i: jj j: ii).
-			self i: jj j: ii put: (aux) ] ].! !
-
-!Matrix methodsFor: 'operations' stamp: 'jmv 8/23/2014 23:27'!
-transposed
-	"Answer a new matrix, transposed."
-
-	| result |
-	result _ self appropriateResultClass height: width width: height.
-	1 to: result height do: [ :i |
-		1 to: result width do: [ :j |
-			result i: i j: j put: (self i: j j: i) ] ].
-	^result! !
-
 !Matrix methodsFor: 'linear equation systems' stamp: 'jmv 9/18/2017 17:32:07'!
 triangleWithPartialPivoting
 	"Triangle self, and answer the row permutation count"
@@ -860,12 +830,6 @@ triangleWithPartialPivoting
 				self subtractRow: i multipliedBy: factor to: ii startingAtColumn: j ] ]
 	].
 	^ permutationCount! !
-
-!Matrix methodsFor: 'private' stamp: 'jmv 7/19/2012 12:35'!
-zeroElement
-	"We don't really restrict the kind of objects we might hold... Our best guess for a kind of null additive value is to just ask some element..."
-
-	^elements first class zero! !
 
 !Matrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:27'!
 columnFrom: anArray	
@@ -1098,6 +1062,57 @@ asGammaFormFullRangeG: greenImage b: blueImage
 		bits integerAt: i put: word ].
 	^answer! !
 
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:12:10'!
+fillFrom32BitForm: aForm component: aSymbol
+	"aSymbol must be in #(red green blue alpha) or nil
+	Result values v
+		0.0 <= v <= (255/256.0)
+	This means that #asForm must multiply by 256, to have byte values [0..255]"
+
+	| componentIndex shift mask magic bb |
+	magic _ 128.0.
+	"If aSymbol is not supplied, just take blue.
+	This is for consistency with ByteMatrix, where no map takes blue, and is actually faster."
+	componentIndex _ aSymbol ifNil: [4] ifNotNil: [#(alpha red green blue) indexOf: aSymbol].
+	shift _ #(-16 -8 0 8 ) at: componentIndex.
+	mask _ #(16rFF000000 16rFF0000 16rFF00 16rFF) at: componentIndex.
+	bb _ BitBlt toForm: (Form new hackBitsForFloatMatrix: self).
+	bb sourceForm: aForm.
+	bb combinationRule: 7. "or"
+	bb sourceX: 0; sourceY: 0.
+	bb destX: 0 destY: 0 width: width height: height.
+	bb colorMap: (ColorMap masks: { mask. 0. 0. 0 } shifts: { shift. 0. 0. 0 }).
+
+	elements *= 0.
+	elements += magic.
+	bb copyBits.
+	elements -= magic! !
+
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:13:03'!
+fillFromGrayForm: aGrayForm
+	"aGrayForm can be 
+		- an instance of GrayForm 
+					(for example, from a grayscale png or jpg file)
+		- a ColorForm with a colormap with 256 gray levels, going from black to white.
+					(This is what we get, for instance, when reading a gray 8 bit bmp file)
+	Result values v
+		0.0 <= v <= (255/256.0)
+	This means that #asForm must multiply by 256, to have byte values [0..255]"
+
+	| magic bb |
+	magic _ 32768.0.
+	bb _ BitBlt toForm: (Form new hackBitsForFloatMatrix: self).
+	bb sourceForm: aGrayForm.
+	bb combinationRule: 7. "or"
+	bb sourceX: 0; sourceY: 0.
+	bb destX: 0 destY: 0 width: width height: height.
+	bb colorMap: nil.
+
+	elements *= 0.
+	elements += magic.
+	bb copyBits.
+	elements -= magic! !
+
 !FloatMatrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:18:06'!
 blitOn: dest source: source destOrigin: destOrigin sourceOrigin: sourceOrigin extent: extent using: blitter
 
@@ -1115,9 +1130,59 @@ blitOn: dest source: source destOrigin: destOrigin sourceOrigin: sourceOrigin us
 		destOrigin: destOrigin sourceOrigin: sourceOrigin.
 	blitter copyBits! !
 
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 10/7/2016 15:10:39'!
+epsilon
+	"Something better is needed. For example, taking into accoung the largest elements, or the norm, or something like that... In any case it is better to check senders, and use a different strategy for ending iterative methods or such..."
+
+	^1e-7 asFloat! !
+
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:18:59'!
+hackBitsForm
+	"Senders should not blit themselves but call one of our #blitOn:... methods!!"
+
+	^ Form new hackBitsForFloatMatrix: self! !
+
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 4/27/2015 10:21'!
+i: i copyTo: row
+	"Assumes row is of of apropriate size"
+	| ss |
+	ss _ i-1 * width + 1.
+	row elements replaceFrom: 1 to: width with: elements startingAt: ss! !
+
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 5/21/2015 12:44'!
+j: j copyTo: column
+	"Assumes column is of of apropriate size"
+	self copyToTile: column position: j@1! !
+
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
 conditionNumber
 	^self norm * self inverse norm! !
+
+!FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 10/7/2016 14:44:28'!
+norm
+	"
+	(FloatMatrix identity: 5) norm
+	"
+	^(self transposed * self) eigenvalues elements max sqrt! !
+
+!FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 11:06'!
+norm2
+
+	^self norm2Squared sqrt! !
+
+!FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 11:16'!
+norm2Squared
+
+	| result |
+	width > 1 & (height > 1) ifTrue: [ ^self error: 'right now, only for vectors' ].
+	result _ 0.0.
+	width = 1 ifTrue: [
+		1 to: height do: [ :i |
+			result _ result + (self i: i j: 1) squared ] ]
+	ifFalse: [
+		1 to: width do: [ :i |
+			result _ result + (self i: 1 j: i) squared ] ].
+	^result! !
 
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/14/2017 14:28:54'!
 copy: aRectangle
@@ -1196,6 +1261,195 @@ copyToTile: aFloatMatrix position: aPoint
 		blitOn: formArgument source: formSelf
 		destOrigin: 0@0 sourceOrigin: aPoint-1
 		using: BitBlt new! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:26:44'!
+expandTo: newExtent
+	"
+	| i |
+	i _ FloatMatrix width: 5 height: 5.
+	i x: 1 y: 2 put: 2.34.
+	i x: 5 y: 5 put: Float pi.
+	i expandTo:10@10
+	"
+	| answer |
+	answer _ self appropriateResultClass width: newExtent x height: newExtent y.
+	self copyToTile: answer position: 1@1.
+	^answer! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 7/31/2017 22:48:49'!
+fillLowFFTFrequenciesWith: aFloatMatrix
+	"
+	Assume self extent > argument extent.
+	Assume frequency zero is at i=1;j=1 (topLeft) as #fftImaginary:forward: leaves them
+	fill low frequencies (i.e. areas closer to the 4 corners) with argument.
+	The effect is to zero-pad higher frequecies.
+
+	| i1 i2 |
+	i1 := FloatImage lena.
+	i2 := FloatImage extent: i1 extent * 2.
+	i2 += 0.5.
+	i1 displayAt: 0@0.
+	i2 fillLowFFTFrequenciesWith: i1.
+	i2 displayAt: 256@0.
+
+	| i1 i2 |
+	i1 := FloatImage lena.
+	i2 := FloatImage extent: i1 extent * 3//4.
+	i2 += 0.5.
+	i1 displayAt: 0@0.
+	i2 fillLowFFTFrequenciesWith: i1.
+	i2 displayAt: 256@0.
+	"
+	
+	| blitter formArgument formSelf deltaI deltaJ widthHalf1 widthHalf2 heightHalf1 heightHalf2 |
+	deltaI _ height // 2.
+	deltaJ _ width // 2.
+	widthHalf2 _ aFloatMatrix width // 2 min: deltaJ.
+	widthHalf1 _ aFloatMatrix width - widthHalf2.
+	heightHalf2 _ aFloatMatrix height // 2 min: deltaI.
+	heightHalf1 _ aFloatMatrix height - heightHalf2.
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: 0@0 sourceOrigin: 0@0
+		extent: widthHalf1 @ heightHalf1.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: width-widthHalf2@0 sourceOrigin: aFloatMatrix width - widthHalf2@0
+		extent: widthHalf2 @ heightHalf1.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: 0@(height-heightHalf2) sourceOrigin: 0@(aFloatMatrix height - heightHalf2)
+		extent: widthHalf1 @ heightHalf2.
+	blitter copyBits.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: width-widthHalf2@(height-heightHalf2) sourceOrigin: aFloatMatrix extent -(widthHalf2 @ heightHalf2)
+		extent: widthHalf2 @ heightHalf2.
+	blitter copyBits.! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:17'!
+fillWith: aFloatMatrix
+	| blitter formArgument formSelf |
+
+	"Use inherited, more general and slower code if needed."
+	(aFloatMatrix is: #FloatMatrix) ifFalse: [
+		^super fillWith: aFloatMatrix ].
+
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: 0@0 sourceOrigin: 0@0.
+	blitter copyBits! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:14'!
+fillWith: aFloatMatrix displaced: deltaPoint
+	"
+	Assume self and argument are of the same extent
+	Do a  simple displacement. Leave unaffected areas unchanged.
+	deltaPoint is integer. Can be negative. (no resampling or interpolation)
+
+	| i1 i2 |
+	i1 _ FloatImage lena.
+	i2 _ FloatImage extent: i1 extent.
+	i1 displayAt: 0@0.
+	i2 fillWith: i1 displaced: 40@-30.
+	i2 displayAt: 256@0.
+	"
+	
+	| blitter formArgument formSelf |
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: formSelf sourceForm: formArgument
+		destOrigin: deltaPoint sourceOrigin: 0@0.
+	blitter copyBits.! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:21:34'!
+fillWith: aFloatMatrix displacedCircular: deltaPoint
+	"
+	Assume self and argument are of the same extent
+	Do a 'circular' displacement. deltaPoint is integer. Can be negative. (no resampling or interpolation)
+	| i1 i2 |
+	i1 _ FloatImage lena.
+	i2 _ FloatImage extent: i1 extent.
+	i1 displayAt: 0@0.
+	i2 fillWith: i1 displacedCircular: 120@140.
+	i2 displayAt: 256@0.
+	"
+	
+	| blitter formArgument formSelf deltaI deltaJ |
+	deltaI _ deltaPoint y \\ height.
+	deltaJ _ deltaPoint x \\ width.
+	formSelf _ self hackBitsForm.
+	formArgument _ aFloatMatrix hackBitsForm.
+	blitter _ BitBlt new.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: deltaJ@deltaI sourceOrigin: 0@0
+		using: BitBlt new.
+	blitter copyBits.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: deltaJ-width@deltaI sourceOrigin: 0@0
+		using: BitBlt new.
+	blitter copyBits.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: deltaJ@(deltaI-height) sourceOrigin: 0@0
+		using: BitBlt new.
+	blitter copyBits.
+	self
+		blitOn: formSelf source: formArgument
+		destOrigin: deltaJ-width@(deltaI-height) sourceOrigin: 0@0
+		using: BitBlt new.
+	blitter copyBits.! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 11:02:29'!
+trim: threshold
+	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
+	Answer nil if all the elements are below (or equal) threshold.
+
+	(FloatMatrix fromArrayOfArrays: #(
+		#( 1 2 1)
+		#( 4 5 2)
+		#( 1 2 1))) trim: 3
+	"
+	| top bottom left right |
+	top _ (1 to: height) detect: [ :i | (self i: i) max > threshold ] ifNone: [ ^ nil ].
+	bottom _ (height to: 1 by: -1) detect: [ :i | (self i: i) max > threshold ].
+	left _ (1 to: width) detect: [ :j | (self j: j) max > threshold ].
+	right _ (width to: 1 by: -1) detect: [ :j | (self j: j) max > threshold ].
+	^ self copy: (left@top corner: right@bottom+1)! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 19:03:29'!
+trimCentered: threshold
+	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
+	Similar to #trim, but remove an equal number of rows at each end, and an equal number of columns at each end, even if leaving extra rows or columns.
+	Answer nil if all the elements are below (or equal) threshold.
+
+	(FloatMatrix fromArrayOfArrays: #(
+		#( 1 2 1)
+		#( 4 5 2)
+		#( 1 2 1))) trimCentered: 3
+	"
+	| top left |
+	top _ (1 to: (height/2) ceiling) detect: [ :i | 
+		((self i: i) elements abs max > threshold) |
+		((self i: height+1-i) max > threshold) ] ifNone: [ ^ nil ].
+	left _ (1 to: (width/2) ceiling) detect: [ :j |
+		((self j: j) elements abs max > threshold) |
+		((self j: width+1-j) max > threshold) ].
+
+	^ self copy: (left@top extent: (width@height) - (left@top -1 * 2))! !
 
 !FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/21/2016 15:56:49'!
 eigenvalues
@@ -1494,213 +1748,78 @@ eigenvectorForLargestEigenvalue
 	largestEigenvalue _ self eigenvaluesByJacobi elements max.
 	^ self eigenvectorForEigenvalue: largestEigenvalue! !
 
-!FloatMatrix methodsFor: 'private' stamp: 'jmv 10/7/2016 15:10:39'!
-epsilon
-	"Something better is needed. For example, taking into accoung the largest elements, or the norm, or something like that... In any case it is better to check senders, and use a different strategy for ending iterative methods or such..."
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/6/2016 22:28:26'!
+hessembergSuperior
+	"Answers a new matrix that is the Hessemberg Superior transform of the receiver.
+	A Hessemberg Superior matrix has zero entries below the first subdiagonal.
+	The new matrix has the same eigenvalues as the receiver."
 
-	^1e-7 asFloat! !
+	| result u |
+	self isSquare ifFalse: [ ^self error: 'Only for Square Matrices' ].
+	result _ self copy.
+	u _ self appropriateResultClass height: height width: width.
+	1 to: width-2 do: [ :j |
+		(result storeHouseholderTransformOn: u column: j forQR: false) ifTrue: [
+			result _ u * result * u.
+		].
+	].
+	^ result
+! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:26:44'!
-expandTo: newExtent
-	"
-	| i |
-	i _ FloatMatrix width: 5 height: 5.
-	i x: 1 y: 2 put: 2.34.
-	i x: 5 y: 5 put: Float pi.
-	i expandTo:10@10
-	"
-	| answer |
-	answer _ self appropriateResultClass width: newExtent x height: newExtent y.
-	self copyToTile: answer position: 1@1.
-	^answer! !
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 7/19/2012 11:17'!
+storeHouseholderTransformOn: aMatrix column: j forQR: forQR
+	"Modifies entries on aMatrix to make it the Householder transforms
+	that puts zeroes at column i of the receiver. If forQR is false, the
+	product of aMatrix * self is Hessemberg superior, otherways its a
+	triangular matrix. "
 
-!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:12:10'!
-fillFrom32BitForm: aForm component: aSymbol
-	"aSymbol must be in #(red green blue alpha) or nil
-	Result values v
-		0.0 <= v <= (255/256.0)
-	This means that #asForm must multiply by 256, to have byte values [0..255]"
+	| x xNorm2Squared v vNorm2Squared element i |
+	i _ j - (forQR ifTrue: [ 1 ] ifFalse: [ 0 ]).
+	x _ self appropriateResultClass newVectorSize: height-i.
+	xNorm2Squared _ 0.
+	1 to: x height do: [ :ii |
+		element _ self i: ii+i j: j.
+		xNorm2Squared _ xNorm2Squared + element squared.
+		x i: ii j: 1 put: element ].
+	v _ x.
+	"If column already has zeros, do nothing"
+	xNorm2Squared = 0.0 ifTrue: [ ^false ].
+	"If column already has zeros, do nothing. If forQR = false, then the first element in x
+	could not be zero, and anyway there's nothing to do"
+	(forQR not and: [ xNorm2Squared = (x i: 1 j: 1) squared ]) ifTrue: [ ^false ].
 
-	| componentIndex shift mask magic bb |
-	magic _ 128.0.
-	"If aSymbol is not supplied, just take blue.
-	This is for consistency with ByteMatrix, where no map takes blue, and is actually faster."
-	componentIndex _ aSymbol ifNil: [4] ifNotNil: [#(alpha red green blue) indexOf: aSymbol].
-	shift _ #(-16 -8 0 8 ) at: componentIndex.
-	mask _ #(16rFF000000 16rFF0000 16rFF00 16rFF) at: componentIndex.
-	bb _ BitBlt toForm: (Form new hackBitsForFloatMatrix: self).
-	bb sourceForm: aForm.
-	bb combinationRule: 7. "or"
-	bb sourceX: 0; sourceY: 0.
-	bb destX: 0 destY: 0 width: width height: height.
-	bb colorMap: (ColorMap masks: { mask. 0. 0. 0 } shifts: { shift. 0. 0. 0 }).
+	v i: 1 j: 1 put: (v i: 1 j: 1) + xNorm2Squared sqrt.
+	vNorm2Squared _ v norm2Squared.
 
-	elements *= 0.
-	elements += magic.
-	bb copyBits.
-	elements -= magic! !
+	1 to: i do: [ :ii |
+		aMatrix i: ii j: ii put: 1.
+		ii+1 to: aMatrix width do: [ :jj |
+			aMatrix i: ii j: jj put: 0.
+			aMatrix i: jj j: ii put: 0 ] ].
+	1 to: x height do: [ :ii |
+		1 to: x height do: [ :jj |
+			aMatrix i: ii+i j: jj+i put: 
+				(ii=jj ifTrue:[1] ifFalse:[0]) - 
+				(2.0 / vNorm2Squared * (v i: ii j: 1) * (v i: jj j: 1) ) ] ].
+	^true! !
 
-!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:13:03'!
-fillFromGrayForm: aGrayForm
-	"aGrayForm can be 
-		- an instance of GrayForm 
-					(for example, from a grayscale png or jpg file)
-		- a ColorForm with a colormap with 256 gray levels, going from black to white.
-					(This is what we get, for instance, when reading a gray 8 bit bmp file)
-	Result values v
-		0.0 <= v <= (255/256.0)
-	This means that #asForm must multiply by 256, to have byte values [0..255]"
+!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/6/2016 22:27:34'!
+storeQRDecompositionOfHessembergSuperiorOnQ: q r: r
+	"Works only if the receiver is a Hessemberg superior matrix."
 
-	| magic bb |
-	magic _ 32768.0.
-	bb _ BitBlt toForm: (Form new hackBitsForFloatMatrix: self).
-	bb sourceForm: aGrayForm.
-	bb combinationRule: 7. "or"
-	bb sourceX: 0; sourceY: 0.
-	bb destX: 0 destY: 0 width: width height: height.
-	bb colorMap: nil.
-
-	elements *= 0.
-	elements += magic.
-	bb copyBits.
-	elements -= magic! !
-
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 7/31/2017 22:48:49'!
-fillLowFFTFrequenciesWith: aFloatMatrix
-	"
-	Assume self extent > argument extent.
-	Assume frequency zero is at i=1;j=1 (topLeft) as #fftImaginary:forward: leaves them
-	fill low frequencies (i.e. areas closer to the 4 corners) with argument.
-	The effect is to zero-pad higher frequecies.
-
-	| i1 i2 |
-	i1 := FloatImage lena.
-	i2 := FloatImage extent: i1 extent * 2.
-	i2 += 0.5.
-	i1 displayAt: 0@0.
-	i2 fillLowFFTFrequenciesWith: i1.
-	i2 displayAt: 256@0.
-
-	| i1 i2 |
-	i1 := FloatImage lena.
-	i2 := FloatImage extent: i1 extent * 3//4.
-	i2 += 0.5.
-	i1 displayAt: 0@0.
-	i2 fillLowFFTFrequenciesWith: i1.
-	i2 displayAt: 256@0.
-	"
-	
-	| blitter formArgument formSelf deltaI deltaJ widthHalf1 widthHalf2 heightHalf1 heightHalf2 |
-	deltaI _ height // 2.
-	deltaJ _ width // 2.
-	widthHalf2 _ aFloatMatrix width // 2 min: deltaJ.
-	widthHalf1 _ aFloatMatrix width - widthHalf2.
-	heightHalf2 _ aFloatMatrix height // 2 min: deltaI.
-	heightHalf1 _ aFloatMatrix height - heightHalf2.
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
-	blitter _ BitBlt new.
-
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: 0@0 sourceOrigin: 0@0
-		extent: widthHalf1 @ heightHalf1.
-	blitter copyBits.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: width-widthHalf2@0 sourceOrigin: aFloatMatrix width - widthHalf2@0
-		extent: widthHalf2 @ heightHalf1.
-	blitter copyBits.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: 0@(height-heightHalf2) sourceOrigin: 0@(aFloatMatrix height - heightHalf2)
-		extent: widthHalf1 @ heightHalf2.
-	blitter copyBits.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: width-widthHalf2@(height-heightHalf2) sourceOrigin: aFloatMatrix extent -(widthHalf2 @ heightHalf2)
-		extent: widthHalf2 @ heightHalf2.
-	blitter copyBits.! !
-
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:17'!
-fillWith: aFloatMatrix
-	| blitter formArgument formSelf |
-
-	"Use inherited, more general and slower code if needed."
-	(aFloatMatrix is: #FloatMatrix) ifFalse: [
-		^super fillWith: aFloatMatrix ].
-
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
-	blitter _ BitBlt new.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: 0@0 sourceOrigin: 0@0.
-	blitter copyBits! !
-
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 5/22/2015 13:14'!
-fillWith: aFloatMatrix displaced: deltaPoint
-	"
-	Assume self and argument are of the same extent
-	Do a  simple displacement. Leave unaffected areas unchanged.
-	deltaPoint is integer. Can be negative. (no resampling or interpolation)
-
-	| i1 i2 |
-	i1 _ FloatImage lena.
-	i2 _ FloatImage extent: i1 extent.
-	i1 displayAt: 0@0.
-	i2 fillWith: i1 displaced: 40@-30.
-	i2 displayAt: 256@0.
-	"
-	
-	| blitter formArgument formSelf |
-	formSelf _ Form new hackBitsForFloatMatrix: self.
-	formArgument _ Form new hackBitsForFloatMatrix: aFloatMatrix.
-	blitter _ BitBlt new.
-	blitter
-		setDestForm: formSelf sourceForm: formArgument
-		destOrigin: deltaPoint sourceOrigin: 0@0.
-	blitter copyBits.! !
-
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:21:34'!
-fillWith: aFloatMatrix displacedCircular: deltaPoint
-	"
-	Assume self and argument are of the same extent
-	Do a 'circular' displacement. deltaPoint is integer. Can be negative. (no resampling or interpolation)
-	| i1 i2 |
-	i1 _ FloatImage lena.
-	i2 _ FloatImage extent: i1 extent.
-	i1 displayAt: 0@0.
-	i2 fillWith: i1 displacedCircular: 120@140.
-	i2 displayAt: 256@0.
-	"
-	
-	| blitter formArgument formSelf deltaI deltaJ |
-	deltaI _ deltaPoint y \\ height.
-	deltaJ _ deltaPoint x \\ width.
-	formSelf _ self hackBitsForm.
-	formArgument _ aFloatMatrix hackBitsForm.
-	blitter _ BitBlt new.
-	self
-		blitOn: formSelf source: formArgument
-		destOrigin: deltaJ@deltaI sourceOrigin: 0@0
-		using: BitBlt new.
-	blitter copyBits.
-	self
-		blitOn: formSelf source: formArgument
-		destOrigin: deltaJ-width@deltaI sourceOrigin: 0@0
-		using: BitBlt new.
-	blitter copyBits.
-	self
-		blitOn: formSelf source: formArgument
-		destOrigin: deltaJ@(deltaI-height) sourceOrigin: 0@0
-		using: BitBlt new.
-	blitter copyBits.
-	self
-		blitOn: formSelf source: formArgument
-		destOrigin: deltaJ-width@(deltaI-height) sourceOrigin: 0@0
-		using: BitBlt new.
-	blitter copyBits.! !
+	| elementAtJ elementBelowJ aux c s |
+	q fillWithIdentity.
+	r fillWith: self.
+	1 to: width-1 do: [ :j |
+		elementAtJ _ r i: j j: j.
+		elementBelowJ _ r i: j+1 j: j.
+		elementBelowJ = 0 ifFalse: [
+			aux _ ((elementAtJ*elementAtJ) + (elementBelowJ*elementBelowJ)) sqrt.
+			c _ elementAtJ / aux.
+			s _ 0 - elementBelowJ / aux.
+			r preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s.
+			q preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s ] ].
+	q transpose.! !
 
 !FloatMatrix methodsFor: 'filling' stamp: 'jmv 7/19/2012 10:46'!
 fillWithIdentity
@@ -1722,6 +1841,73 @@ fillWithValue: value
 fillWithZeroes
 	elements *= 0.0! !
 
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:09'!
+i: i
+	"Answers a row vector with the values at row y
+	Optimized for large Matrices
+	|m w h |
+	w _ 8. h _ 8.
+	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
+	m i: 3
+	"
+
+	| result |
+	result _ self appropriateResultClass newRowVectorSize: width.
+	self i: i copyTo: result.
+	^result! !
+
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:01'!
+i: i put: row
+	"aVector must be a row vector, i.e. a matrix with height 1.
+	Optimized for large Matrices
+	|m w h |
+	w _ 8. h _ 8.
+	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
+	m i: 7 put: (m i: 2).
+	m print.
+	"
+
+	| ss |
+	ss _ i-1 * width + 1.
+	elements replaceFrom: ss to: ss+width-1 with: row elements startingAt: 1! !
+
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 12/15/2017 11:10:23'!
+j: j
+	"Answers a column vector with the values at column x.
+	Optimized for large Matrices"
+	"
+	|m w h |
+	w _ 8. h _ 8.
+	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
+	m j: 3 :: inspect.
+	w _ 8. h _ 8.
+	m _ Float64Matrix extent: w@h. m elements += (1 to: w*h).
+	m j: 3 :: inspect.
+	"
+
+	| result |
+	result _ self appropriateResultClass newColumnVectorSize: height.
+	self j: j copyTo: result.
+	^result! !
+
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 12/14/2017 14:31:03'!
+j: j put: column
+	"column can be a column vector (m x 1 matrix), or a kind of Array.
+	Optimized for large Matrices"
+	"
+	| m w h |
+	w _ 8. h _ 8.
+	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
+	m j: 3 put: (m j: 1).
+	m inspect.
+	w _ 8. h _ 8.
+	m _ Float64Matrix extent: w@h. m elements += (1 to: w*h).
+	m j: 3 put: (m j: 1).
+	m inspect.
+	"
+
+	self copyFromTile: column position: j@1! !
+
 !FloatMatrix methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:05'!
 fullRangeDisplayAt: aPoint
 	"Assume the values are not normalized in the scale 0.0 to 1.0.
@@ -1741,67 +1927,6 @@ fullRangeG: greenImage b: blueImage displayAt: aPoint
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
 
 	(self asGammaFormFullRangeG: greenImage b: blueImage) displayAt: aPoint! !
-
-!FloatMatrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:18:59'!
-hackBitsForm
-	"Senders should not blit themselves but call one of our #blitOn:... methods!!"
-
-	^ Form new hackBitsForFloatMatrix: self! !
-
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/6/2016 22:28:26'!
-hessembergSuperior
-	"Answers a new matrix that is the Hessemberg Superior transform of the receiver.
-	A Hessemberg Superior matrix has zero entries below the first subdiagonal.
-	The new matrix has the same eigenvalues as the receiver."
-
-	| result u |
-	self isSquare ifFalse: [ ^self error: 'Only for Square Matrices' ].
-	result _ self copy.
-	u _ self appropriateResultClass height: height width: width.
-	1 to: width-2 do: [ :j |
-		(result storeHouseholderTransformOn: u column: j forQR: false) ifTrue: [
-			result _ u * result * u.
-		].
-	].
-	^ result
-! !
-
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:09'!
-i: i
-	"Answers a row vector with the values at row y
-	Optimized for large Matrices
-	|m w h |
-	w _ 8. h _ 8.
-	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
-	m i: 3
-	"
-
-	| result |
-	result _ self appropriateResultClass newRowVectorSize: width.
-	self i: i copyTo: result.
-	^result! !
-
-!FloatMatrix methodsFor: 'private' stamp: 'jmv 4/27/2015 10:21'!
-i: i copyTo: row
-	"Assumes row is of of apropriate size"
-	| ss |
-	ss _ i-1 * width + 1.
-	row elements replaceFrom: 1 to: width with: elements startingAt: ss! !
-
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 4/27/2015 10:01'!
-i: i put: row
-	"aVector must be a row vector, i.e. a matrix with height 1.
-	Optimized for large Matrices
-	|m w h |
-	w _ 8. h _ 8.
-	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
-	m i: 7 put: (m i: 2).
-	m print.
-	"
-
-	| ss |
-	ss _ i-1 * width + 1.
-	elements replaceFrom: ss to: ss+width-1 with: row elements startingAt: 1! !
 
 !FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 12/12/2016 10:09:46'!
 imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart
@@ -1951,6 +2076,19 @@ imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandIm
 		self i: i put: e.
 		imaginaryPart i: i put: f ]! !
 
+!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 4/24/2015 10:27'!
+magnitudeWithImaginary: imaginaryPart
+	"answer a new matrix"
+	| result a b magnitude |
+	result _ self appropriateResultClass newSize: self size.
+	1 to: height do: [ :i |
+		1 to: width do: [ :j |
+			a _ self i: i j: j.
+			b _ imaginaryPart i: i j: j.
+			magnitude _ (a * a + (b * b)) sqrt.
+			result i: i j: j put: magnitude ]].
+	^result! !
+
 !FloatMatrix methodsFor: 'initialization' stamp: 'jmv 6/18/2001 19:10'!
 initializeElements
 
@@ -1974,48 +2112,6 @@ isZeroBelowDiagonal
 			(self i: i j: j) abs > self epsilon ifTrue: [ ^false ]]].
 	^true! !
 
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 12/15/2017 11:10:23'!
-j: j
-	"Answers a column vector with the values at column x.
-	Optimized for large Matrices"
-	"
-	|m w h |
-	w _ 8. h _ 8.
-	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
-	m j: 3 :: inspect.
-	w _ 8. h _ 8.
-	m _ Float64Matrix extent: w@h. m elements += (1 to: w*h).
-	m j: 3 :: inspect.
-	"
-
-	| result |
-	result _ self appropriateResultClass newColumnVectorSize: height.
-	self j: j copyTo: result.
-	^result! !
-
-!FloatMatrix methodsFor: 'private' stamp: 'jmv 5/21/2015 12:44'!
-j: j copyTo: column
-	"Assumes column is of of apropriate size"
-	self copyToTile: column position: j@1! !
-
-!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 12/14/2017 14:31:03'!
-j: j put: column
-	"column can be a column vector (m x 1 matrix), or a kind of Array.
-	Optimized for large Matrices"
-	"
-	| m w h |
-	w _ 8. h _ 8.
-	m _ FloatMatrix extent: w@h. m elements += (1 to: w*h).
-	m j: 3 put: (m j: 1).
-	m inspect.
-	w _ 8. h _ 8.
-	m _ Float64Matrix extent: w@h. m elements += (1 to: w*h).
-	m j: 3 put: (m j: 1).
-	m inspect.
-	"
-
-	self copyFromTile: column position: j@1! !
-
 !FloatMatrix methodsFor: 'linear equation systems' stamp: 'jmv 7/19/2012 11:16'!
 linesLost
 
@@ -2025,45 +2121,6 @@ linesLost
 		(1 to: width) inject: true into: [ :prev :each |
 			prev & ((self i: height-result j: each ) = 0.0) ]
 	] whileTrue: [ result _ result + 1 ].
-	^result! !
-
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 4/24/2015 10:27'!
-magnitudeWithImaginary: imaginaryPart
-	"answer a new matrix"
-	| result a b magnitude |
-	result _ self appropriateResultClass newSize: self size.
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			a _ self i: i j: j.
-			b _ imaginaryPart i: i j: j.
-			magnitude _ (a * a + (b * b)) sqrt.
-			result i: i j: j put: magnitude ]].
-	^result! !
-
-!FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 10/7/2016 14:44:28'!
-norm
-	"
-	(FloatMatrix identity: 5) norm
-	"
-	^(self transposed * self) eigenvalues elements max sqrt! !
-
-!FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 11:06'!
-norm2
-
-	^self norm2Squared sqrt! !
-
-!FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 11:16'!
-norm2Squared
-
-	| result |
-	width > 1 & (height > 1) ifTrue: [ ^self error: 'right now, only for vectors' ].
-	result _ 0.0.
-	width = 1 ifTrue: [
-		1 to: height do: [ :i |
-			result _ result + (self i: i j: 1) squared ] ]
-	ifFalse: [
-		1 to: width do: [ :i |
-			result _ result + (self i: 1 j: i) squared ] ].
 	^result! !
 
 !FloatMatrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:02'!
@@ -2077,6 +2134,15 @@ preMultiplyByGivensRotationRowI: i rowK: k titaCosine: c titaSine: s
 		elemK _ self i: k j: j.
 		self i: i j: j put: c*elemI - (s*elemK).
 		self i: k j: j put: s*elemI + (c*elemK) ].! !
+
+!FloatMatrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:01'!
+rowsCloserToZero: count
+	"Return a collection with the indexes of the rows that are closer to being all zeroes"
+
+	^(((((1 to: height) collect: [ :i |
+		i @ (self i: i) norm2Squared ])
+			asSortedCollection: [ :a :b | a y < b y ])
+				copyFrom: 1 to: count) collect: [ :each | each x ] ) asSortedCollection! !
 
 !FloatMatrix methodsFor: 'printing' stamp: 'jmv 1/9/2014 21:28'!
 printOn: aStream
@@ -2098,42 +2164,6 @@ readFromNpyStream: byteStream bigEndian: isByteStreamBigEndian
 		1 to: width do: [ :j |
 			self i: i j: j put: (rowBytes floatAt: j-1*bytesPerElement+1 bigEndian: isByteStreamBigEndian) ]].! !
 
-!FloatMatrix methodsFor: 'operations' stamp: 'jmv 10/19/2017 11:15:23'!
-rectAroundMaxNotBelow: threshold
-	"Discriminate the area around the maximum value where all rows and columns have at least one value grater than threshold.
-	Answer follows usual Rectangle convention: corner is one position rightDown after last point included.
-	
-	Also see #thresholdAroundMax:borderValue:fillValue:
-	Also see #thresholdBordersBelow:borderValue:fillValue:
-
-	(FloatImage fromArrayOfArrays: #(
-		#( 1 2 1 1 2 1)
-		#( 2 5 2 2 4 2)
-		#( 1 2 1 1 2 1))) thresholdAroundMax: 3 borderValue: 0.1 fillValue:7
-	"
-
-	| bottom left p right top lastTimeItGrew |
-	p _ self xyForMax.
-	top _ p y.
-	bottom _ p y.
-	left _ p x.
-	right _ p x.
-
-	lastTimeItGrew _ true.
-	[lastTimeItGrew] whileTrue: [
-		lastTimeItGrew _ false.
-		
-		(top > 1 and: [ (left to: right) anySatisfy: [ :j | (self i: top-1 j: j) > threshold ]])
-				ifTrue: [ top _ top - 1. lastTimeItGrew _ true ].
-		(bottom < height and: [ (left to: right) anySatisfy: [ :j | (self i: bottom+1 j: j) > threshold ]])
-				ifTrue: [ bottom _ bottom + 1. lastTimeItGrew _ true ].
-		(left > 1 and: [ (top to: bottom) anySatisfy: [ :i | (self i: i j: left-1) > threshold ]])
-				ifTrue: [ left _ left - 1. lastTimeItGrew _ true ].
-		(right < width and: [ (top to: bottom) anySatisfy: [ :i | (self i: i j: right+1) > threshold ]])
-				ifTrue: [ right _ right + 1. lastTimeItGrew _ true ].
-	].
-	^ left@top corner: right@bottom+1! !
-
 !FloatMatrix methodsFor: 'operations' stamp: 'jmv 9/2/2014 11:28'!
 round
 
@@ -2144,161 +2174,6 @@ round
 				a _ self i: i j: j.
 				b _ (10.0 raisedTo: a abs log truncated - 5).
 				self i: i j: j put: (a roundTo: b) ] ] ]! !
-
-!FloatMatrix methodsFor: 'aux operations' stamp: 'jmv 7/19/2012 12:01'!
-rowsCloserToZero: count
-	"Return a collection with the indexes of the rows that are closer to being all zeroes"
-
-	^(((((1 to: height) collect: [ :i |
-		i @ (self i: i) norm2Squared ])
-			asSortedCollection: [ :a :b | a y < b y ])
-				copyFrom: 1 to: count) collect: [ :each | each x ] ) asSortedCollection! !
-
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 7/19/2012 11:17'!
-storeHouseholderTransformOn: aMatrix column: j forQR: forQR
-	"Modifies entries on aMatrix to make it the Householder transforms
-	that puts zeroes at column i of the receiver. If forQR is false, the
-	product of aMatrix * self is Hessemberg superior, otherways its a
-	triangular matrix. "
-
-	| x xNorm2Squared v vNorm2Squared element i |
-	i _ j - (forQR ifTrue: [ 1 ] ifFalse: [ 0 ]).
-	x _ self appropriateResultClass newVectorSize: height-i.
-	xNorm2Squared _ 0.
-	1 to: x height do: [ :ii |
-		element _ self i: ii+i j: j.
-		xNorm2Squared _ xNorm2Squared + element squared.
-		x i: ii j: 1 put: element ].
-	v _ x.
-	"If column already has zeros, do nothing"
-	xNorm2Squared = 0.0 ifTrue: [ ^false ].
-	"If column already has zeros, do nothing. If forQR = false, then the first element in x
-	could not be zero, and anyway there's nothing to do"
-	(forQR not and: [ xNorm2Squared = (x i: 1 j: 1) squared ]) ifTrue: [ ^false ].
-
-	v i: 1 j: 1 put: (v i: 1 j: 1) + xNorm2Squared sqrt.
-	vNorm2Squared _ v norm2Squared.
-
-	1 to: i do: [ :ii |
-		aMatrix i: ii j: ii put: 1.
-		ii+1 to: aMatrix width do: [ :jj |
-			aMatrix i: ii j: jj put: 0.
-			aMatrix i: jj j: ii put: 0 ] ].
-	1 to: x height do: [ :ii |
-		1 to: x height do: [ :jj |
-			aMatrix i: ii+i j: jj+i put: 
-				(ii=jj ifTrue:[1] ifFalse:[0]) - 
-				(2.0 / vNorm2Squared * (v i: ii j: 1) * (v i: jj j: 1) ) ] ].
-	^true! !
-
-!FloatMatrix methodsFor: 'eigenvalues and eigenvectors' stamp: 'jmv 10/6/2016 22:27:34'!
-storeQRDecompositionOfHessembergSuperiorOnQ: q r: r
-	"Works only if the receiver is a Hessemberg superior matrix."
-
-	| elementAtJ elementBelowJ aux c s |
-	q fillWithIdentity.
-	r fillWith: self.
-	1 to: width-1 do: [ :j |
-		elementAtJ _ r i: j j: j.
-		elementBelowJ _ r i: j+1 j: j.
-		elementBelowJ = 0 ifFalse: [
-			aux _ ((elementAtJ*elementAtJ) + (elementBelowJ*elementBelowJ)) sqrt.
-			c _ elementAtJ / aux.
-			s _ 0 - elementBelowJ / aux.
-			r preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s.
-			q preMultiplyByGivensRotationRowI: j rowK: j+1 titaCosine: c titaSine: s ] ].
-	q transpose.! !
-
-!FloatMatrix methodsFor: 'operations' stamp: 'jmv 10/19/2017 11:18:42'!
-thresholdAroundMax: threshold borderValue: borderValue fillValue: fillValue
-	"Discriminate the area around the maximum value where all rows and columns have at least one value grater than threshold.
-	
-	Also see #thresholdBordersBelow:borderValue:fillValue:
-
-	(FloatImage fromArrayOfArrays: #(
-		#( 1 2 1 1 2 1)
-		#( 2 5 2 2 4 2)
-		#( 1 2 1 1 2 1))) thresholdAroundMax: 3 borderValue: 0.1 fillValue:7
-	"
-
-	| answer rect |
-	rect _ self rectAroundMaxNotBelow: threshold.
-
-	answer _ self class height: height width: width.
-	answer elements += borderValue.
-	answer fill: rect with: fillValue.
-	^answer! !
-
-!FloatMatrix methodsFor: 'operations' stamp: 'jmv 10/19/2017 11:07:00'!
-thresholdBordersBelow: threshold borderValue: borderValue fillValue: fillValue
-	"Discriminate rows and columns at the edges with no values greater than threshold.
-	
-	Also see #thresholdAroundMax:borderValue:fillValue:
-
-	(FloatMatrix fromArrayOfArrays: #(
-		#( 1 2 1 1 2 1)
-		#( 2 5 2 2 4 2)
-		#( 1 2 1 1 2 1))) thresholdBordersBelow: 3 borderValue: 0.1 fillValue: 7
-	"
-	| column row i j answer |
-	answer _ self class height: height width: width.
-	answer elements += fillValue.
-	row _ self class newRowVectorSize: width.
-	row elements += borderValue.
-	column _ self class newColumnVectorSize: height.
-	column elements += borderValue.
-
-	i _ 1.
-	[i <= height and: [(self i: i) max < threshold]] whileTrue: [ answer i: i put: row. i _ i + 1].
-
-	i _ height.
-	[i >= 1 and: [(self i: i) max < threshold]] whileTrue: [ answer i: i put: row. i _ i - 1].
-
-	j _ 1.
-	[j <= width and: [(self j: j) max < threshold]] whileTrue: [ answer j: j put: column. j _ j + 1].
-
-	j _ width.
-	[j >= 1 and: [(self j: j) max < threshold]] whileTrue: [ answer j: j put: column. j _ j - 1].
-
-	^ answer! !
-
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 11:02:29'!
-trim: threshold
-	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
-	Answer nil if all the elements are below (or equal) threshold.
-
-	(FloatMatrix fromArrayOfArrays: #(
-		#( 1 2 1)
-		#( 4 5 2)
-		#( 1 2 1))) trim: 3
-	"
-	| top bottom left right |
-	top _ (1 to: height) detect: [ :i | (self i: i) max > threshold ] ifNone: [ ^ nil ].
-	bottom _ (height to: 1 by: -1) detect: [ :i | (self i: i) max > threshold ].
-	left _ (1 to: width) detect: [ :j | (self j: j) max > threshold ].
-	right _ (width to: 1 by: -1) detect: [ :j | (self j: j) max > threshold ].
-	^ self copy: (left@top corner: right@bottom+1)! !
-
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 19:03:29'!
-trimCentered: threshold
-	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
-	Similar to #trim, but remove an equal number of rows at each end, and an equal number of columns at each end, even if leaving extra rows or columns.
-	Answer nil if all the elements are below (or equal) threshold.
-
-	(FloatMatrix fromArrayOfArrays: #(
-		#( 1 2 1)
-		#( 4 5 2)
-		#( 1 2 1))) trimCentered: 3
-	"
-	| top left |
-	top _ (1 to: (height/2) ceiling) detect: [ :i | 
-		((self i: i) elements abs max > threshold) |
-		((self i: height+1-i) max > threshold) ] ifNone: [ ^ nil ].
-	left _ (1 to: (width/2) ceiling) detect: [ :j |
-		((self j: j) elements abs max > threshold) |
-		((self j: width+1-j) max > threshold) ].
-
-	^ self copy: (left@top extent: (width@height) - (left@top -1 * 2))! !
 
 !FloatMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:26'!
 form: aForm color: aSymbol
@@ -2409,8 +2284,18 @@ epsilon
 
 	^1e-8 asFloat! !
 
+!Float64Matrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:19:02'!
+hackBitsForm
+	"Senders should not blit themselves but call one of our #blitOn:... methods!!"
+
+	^ Form new hackBitsForFloat64Matrix: self! !
+
 !Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:24'!
 fillFrom32BitForm: aForm component: aSymbol
+	self halt! !
+
+!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:53:11'!
+imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandImaginaryPart
 	self halt! !
 
 !Float64Matrix methodsFor: 'copying' stamp: 'jmv 10/11/2016 10:52:42'!
@@ -2424,16 +2309,6 @@ fillWith: aFloatMatrix displaced: deltaPoint
 	1 to: aFloatMatrix height do: [ :i |
 		1 to: aFloatMatrix width do: [ :j |
 			self i: i+deltaPoint y j: j+deltaPoint x put: (aFloatMatrix i: i j: j) ]]! !
-
-!Float64Matrix methodsFor: 'private' stamp: 'jmv 12/15/2017 11:19:02'!
-hackBitsForm
-	"Senders should not blit themselves but call one of our #blitOn:... methods!!"
-
-	^ Form new hackBitsForFloat64Matrix: self! !
-
-!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:53:11'!
-imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandImaginaryPart
-	self halt! !
 
 !Float64Matrix methodsFor: 'initialization' stamp: 'jmv 10/6/2016 22:02:07'!
 initializeElements
@@ -2613,3 +2488,42 @@ initializeElements
 	n even ifFalse: [
 		n _ n + 1 ].
 	elements _ ShortWordArray new: n! !
+
+!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 12/14/2017 14:25:38'!
+hackBitsForFloat64Matrix: aFloa64tMatrix
+	"Set up parmeters to have similar shape to aFloat64Matrix and share the elements.
+	This is: 32 bits per element, twice the width and height, and share the storage.
+	Useful for copying parts of matrixes around using BitBlt."
+
+	depth _ 32.
+	width _ aFloa64tMatrix width * 2.
+	height _ aFloa64tMatrix height.
+	bits _ aFloa64tMatrix elements! !
+
+!Form methodsFor: '*LinearAlgebra' stamp: 'jmv 12/15/2017 11:28:38'!
+hackBitsForFloatMatrix: aFloatMatrix
+	"Set up parmeters to have similar shape to aFloatMatrix and share the elements.
+	This is: 32 bits per element, same width and height, and share the storage.
+	Useful for copying parts of matrixes around using BitBlt."
+
+	"Senders should usually prefer #hackBitsForm to aid in compatibility with Float64Matrix, but should also be careful with x coordinates and widths. See comment at #hackBitsForm"
+
+	depth _ 32.
+	width _ aFloatMatrix width.
+	height _ aFloatMatrix height.
+	bits _ aFloatMatrix elements! !
+
+!AffineTransformation methodsFor: '*LinearAlgebra' stamp: 'jmv 8/23/2014 23:29'!
+asMatrix
+	"Answer a FloatMatrix."
+
+	| answer |
+	answer _ FloatMatrix height: 3 width: 3.
+	answer i: 1 j: 1 put: self a11.
+	answer i: 1 j: 2 put: self a12.
+	answer i: 1 j: 3 put: self a13.
+	answer i: 2 j: 1 put: self a21.
+	answer i: 2 j: 2 put: self a22.
+	answer i: 2 j: 3 put: self a23.
+	answer i: 3 j: 3 put: 1.
+	^answer! !
