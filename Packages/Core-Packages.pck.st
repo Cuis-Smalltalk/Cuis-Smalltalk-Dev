@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 16 January 2017 at 12:09:03.493729 am'!
 'Description '!
-!provides: 'Core-Packages' 1 12!
+!provides: 'Core-Packages' 1 13!
 !requires: 'Color-Extras' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
@@ -25,3 +25,9 @@
 !requires: 'Assessments' 1 0 nil!
 !requires: 'Goodies' 1 0 nil!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
+!requires: 'Cartography' 1 0 nil!
+!requires: 'NumericalMethods' 1 0 nil!
+!requires: 'Dice' 1 0 nil!
+!requires: 'Avatar' 1 0 nil!
+!requires: 'Pen' 1 0 nil!
+!requires: 'Wheel' 1 0 nil!

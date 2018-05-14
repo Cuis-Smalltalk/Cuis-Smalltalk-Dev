@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3247] on 12 January 2018 at 9:26:56 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3327] on 14 May 2018 at 10:11:45 am'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 35!
+!provides: 'ClassCommentBrowser' 1 36!
 SystemOrganization addCategory: #ClassCommentBrowser!
 
 
@@ -400,7 +400,7 @@ refreshListAfterDelay
 
 	self addAlarm: #refreshList after: 20 "milliseconds" ! !
 
-!CommentGuideWindow methodsFor: 'menu' stamp: 'dhn 10/2/2015 15:31'!
+!CommentGuideWindow methodsFor: 'menu' stamp: 'jmv 5/13/2018 19:08:51'!
 commentGuideMenu
 	"Show the popup menu"
 	
@@ -408,16 +408,16 @@ commentGuideMenu
 	aMenu _ MenuMorph new defaultTarget: self.
 	model getCurrentSelection
 		ifNil: [
-			aMenu addList: #(
-				('search all class names'		searchClassNames)
-				('search all class comments'	searchAllComments))]
+			aMenu
+				add: 'search all class names'		action: #searchClassNames;
+				add: 'search all class comments'	action: #searchAllComments ]
 		ifNotNil: [
-			aMenu addList: #(
-				('search comments'		searchComment)	"comments, if selection"
-				('comment versions'		browseVersions)
-				('browse full'				browseClass)
-				('browse hierarchy'		browseHierarchy)
-				('browse protocol'		browseFullProtocol)).
+			aMenu
+				add: 'search comments'		action: #searchComment;
+				add: 'comment versions'	action: #browseVersions;
+				add: 'browse full'			action: #browseClass;
+				add: 'browse hierarchy'		action: #browseHierarchy;
+				add: 'browse protocol'		action: #browseFullProtocol.
 
 				].
 	^ aMenu! !

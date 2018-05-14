@@ -1,8 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3129] on 24 July 2017 at 4:28:05 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3327] on 14 May 2018 at 10:11:05 am'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 17!
+!provides: 'Sound' 1 18!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+SystemOrganization addCategory: #'Sound-Synthesis'!
+SystemOrganization addCategory: #'Sound-Scores'!
+SystemOrganization addCategory: #'Sound-System-Support'!
+
+
 !classDefinition: #SoundBuffer category: #'Sound-Synthesis'!
 ArrayedCollection variableWordSubclass: #SoundBuffer
 	instanceVariableNames: ''
@@ -662,10 +667,6 @@ The idea is that as much sound playing as possible should go through this facade
 
 Two basic subclasses exist at the time of this writing, the BaseSoundSystem which represents the standard Squeak sound system, and the DummySoundSystem which is a dummy implementation that can be used when there is no sound card available, or when the base sound system isn't in the image, or when you simply don't want to use the available sound card.!
 
-!FileEntry methodsFor: '*Sound' stamp: 'jmv 7/24/2017 16:25:59'!
-wavContents
-	^SampledSound fromFileEntry: self! !
-
 !SoundBuffer methodsFor: 'utilities' stamp: 'jm 8/15/1998 13:03'!
 asByteArray
 	"Answer a ByteArray containing my sample data serialized in most-significant byte first order."
@@ -682,30 +683,6 @@ asByteArray
 
 	! !
 
-!SoundBuffer methodsFor: 'primitives' stamp: 'jm 9/17/97 13:03'!
-at: index
-	"Return the 16-bit integer value at the given index of the receiver."
-
-	<primitive: 143>
-	index isInteger ifTrue: [self errorSubscriptBounds: index].
-	index isNumber ifTrue: [^ self at: index truncated].
-	self errorNonIntegerIndex.
-! !
-
-!SoundBuffer methodsFor: 'primitives' stamp: 'jm 9/17/97 13:03'!
-at: index put: value
-	"Store the given 16-bit integer at the given index in the receiver."
-
-	<primitive: 144>
-	index isInteger
-		ifTrue: [
-			(index >= 1 and: [index <= self size])
-				ifTrue: [self errorImproperStore]
-				ifFalse: [self errorSubscriptBounds: index]].
-	index isNumber ifTrue: [^ self at: index truncated put: value].
-	self errorNonIntegerIndex.
-! !
-
 !SoundBuffer methodsFor: 'utilities' stamp: 'RAA 12/30/2000 18:26'!
 averageEvery: nSamples from: anotherBuffer upTo: inCount
 
@@ -721,11 +698,6 @@ averageEvery: nSamples from: anotherBuffer upTo: inCount
 		self at: i put: sum // nSamples.
 	].
 ! !
-
-!SoundBuffer methodsFor: 'accessing' stamp: 'tk 3/13/2000 14:46'!
-bytesPerElement
-	"Number of bytes in each item.  This multiplied by (self size)*8 gives the number of bits stored."
-	^ 2! !
 
 !SoundBuffer methodsFor: 'utilities' stamp: 'jm 8/18/1998 06:49'!
 downSampledLowPassFiltering: doFiltering
@@ -813,13 +785,6 @@ mergeStereo
 	^ resultBuf
 ! !
 
-!SoundBuffer methodsFor: 'accessing' stamp: 'jm 9/17/97 13:00'!
-monoSampleCount
-	"Return the number of monaural 16-bit samples that fit into this SoundBuffer."
-
-	^ super size * 2
-! !
-
 !SoundBuffer methodsFor: 'utilities' stamp: 'jhm 10/15/97 15:13'!
 normalized: percentOfFullVolume
 	"Increase my amplitudes so that the highest peak is the given percent of full volume. For example 's normalized: 50' would normalize to half of full volume."
@@ -833,6 +798,91 @@ normalized: percentOfFullVolume
 	1 to: self size do: [:i | self at: i put: (mult * (self at: i)) asInteger].
 ! !
 
+!SoundBuffer methodsFor: 'utilities' stamp: 'jmv 2/26/2016 17:09'!
+saveAsAIFFFileSamplingRate: rate on: aBinaryStream
+	"Store this mono sound buffer in AIFF file format with the given sampling rate on the given stream."
+
+	| sampleCount s swapBytes |
+	sampleCount _ self monoSampleCount.
+	aBinaryStream nextPutAll: 'FORM' asByteArray.
+	aBinaryStream nextSignedInt32Put: (2 * sampleCount) + ((7 * 4) + 18) bigEndian: true.
+	aBinaryStream nextPutAll: 'AIFF' asByteArray.
+	aBinaryStream nextPutAll: 'COMM' asByteArray.
+	aBinaryStream nextSignedInt32Put: 18 bigEndian: true.
+	aBinaryStream nextUnsignedInt16Put: 1 bigEndian: true.  "channels"
+	aBinaryStream nextSignedInt32Put: sampleCount bigEndian: true.
+	aBinaryStream nextUnsignedInt16Put: 16 bigEndian: true.  "bits/sample"
+	self storeExtendedFloat: rate on: aBinaryStream.
+	aBinaryStream nextPutAll: 'SSND' asByteArray.
+	aBinaryStream nextSignedInt32Put: (2 * sampleCount) + 8 bigEndian: true.
+	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
+	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
+
+	(aBinaryStream isKindOf: StandardFileStream) ifTrue: [
+		"optimization: write sound buffer directly to file"
+		swapBytes _ Smalltalk isLittleEndian.
+		swapBytes ifTrue: [self reverseEndianness].  "make big endian"
+		aBinaryStream next: (self size // 2) putAll: self startingAt: 1.  "size in words"
+		swapBytes ifTrue: [self reverseEndianness].  "revert to little endian"
+		^ self].
+
+	1 to: sampleCount do: [:i |
+		s _ self at: i.
+		aBinaryStream nextPut: ((s bitShift: -8) bitAnd: 16rFF).
+		aBinaryStream nextPut: (s bitAnd: 16rFF)].
+! !
+
+!SoundBuffer methodsFor: 'utilities' stamp: 'jm 3/28/1999 07:23'!
+splitStereo
+	"Answer an array of two SoundBuffers half the size of the receiver consisting of the left and right channels of the receiver (which is assumed to contain stereo sound data)."
+
+	| n leftBuf rightBuf leftIndex rightIndex |
+	n _ self monoSampleCount.
+	leftBuf _ SoundBuffer newMonoSampleCount: n // 2.
+	rightBuf _ SoundBuffer newMonoSampleCount: n // 2.
+	leftIndex _ rightIndex _ 0.
+	1 to: n by: 2 do: [:i |
+		leftBuf at: (leftIndex _ leftIndex + 1) put: (self at: i).
+		rightBuf at: (rightIndex _ rightIndex + 1) put: (self at: i + 1)].
+	^ Array with: leftBuf with: rightBuf
+! !
+
+!SoundBuffer methodsFor: 'utilities' stamp: 'jhm 10/15/97 15:13'!
+trimmedThreshold: threshold
+
+	| start end |
+	start _ self indexOfFirstSampleOver: threshold.
+	end _  self indexOfLastSampleOver: threshold.
+	start > end ifTrue: [^ SoundBuffer new].
+	start _ (start - 200) max: 1.
+	end _ (end + 200) min: self size.
+	^ self copyFrom: start to: end
+! !
+
+!SoundBuffer methodsFor: 'primitives' stamp: 'jm 9/17/97 13:03'!
+at: index
+	"Return the 16-bit integer value at the given index of the receiver."
+
+	<primitive: 143>
+	index isInteger ifTrue: [self errorSubscriptBounds: index].
+	index isNumber ifTrue: [^ self at: index truncated].
+	self errorNonIntegerIndex.
+! !
+
+!SoundBuffer methodsFor: 'primitives' stamp: 'jm 9/17/97 13:03'!
+at: index put: value
+	"Store the given 16-bit integer at the given index in the receiver."
+
+	<primitive: 144>
+	index isInteger
+		ifTrue: [
+			(index >= 1 and: [index <= self size])
+				ifTrue: [self errorImproperStore]
+				ifFalse: [self errorSubscriptBounds: index]].
+	index isNumber ifTrue: [^ self at: index truncated put: value].
+	self errorNonIntegerIndex.
+! !
+
 !SoundBuffer methodsFor: 'primitives' stamp: 'jm 9/2/97 16:07'!
 primFill: aPositiveInteger
 	"Fill the receiver, an indexable bytes or words object, with the given positive integer. The range of possible fill values is [0..255] for byte arrays and [0..(2^32 - 1)] for word arrays."
@@ -840,6 +890,32 @@ primFill: aPositiveInteger
 
 	<primitive: 145>
 	self errorImproperStore.
+! !
+
+!SoundBuffer methodsFor: 'accessing' stamp: 'tk 3/13/2000 14:46'!
+bytesPerElement
+	"Number of bytes in each item.  This multiplied by (self size)*8 gives the number of bits stored."
+	^ 2! !
+
+!SoundBuffer methodsFor: 'accessing' stamp: 'jm 9/17/97 13:00'!
+monoSampleCount
+	"Return the number of monaural 16-bit samples that fit into this SoundBuffer."
+
+	^ super size * 2
+! !
+
+!SoundBuffer methodsFor: 'accessing' stamp: 'jm 9/17/97 13:28'!
+size
+	"Return the number of 16-bit sound samples that fit in this sound buffer. To avoid confusion, it is better to get the size of SoundBuffer using monoSampleCount or stereoSampleCount."
+
+	^ self monoSampleCount
+! !
+
+!SoundBuffer methodsFor: 'accessing' stamp: 'jm 9/17/97 13:01'!
+stereoSampleCount
+	"Return the number of stereo slices that fit into this SoundBuffer. A stereo 'slice' consists of two 16-bit samples, one for each channel."
+
+	^ super size
 ! !
 
 !SoundBuffer methodsFor: 'objects from disk' stamp: 'jmv 2/15/2008 00:49'!
@@ -878,81 +954,6 @@ reverseEndianness
 	blt sourceX: 2; destX: 3; copyBits.  "Exchange bytes 2 and 3"
 	blt sourceX: 3; destX: 2; copyBits.
 	blt sourceX: 2; destX: 3; copyBits.
-! !
-
-!SoundBuffer methodsFor: 'utilities' stamp: 'jmv 2/26/2016 17:09'!
-saveAsAIFFFileSamplingRate: rate on: aBinaryStream
-	"Store this mono sound buffer in AIFF file format with the given sampling rate on the given stream."
-
-	| sampleCount s swapBytes |
-	sampleCount _ self monoSampleCount.
-	aBinaryStream nextPutAll: 'FORM' asByteArray.
-	aBinaryStream nextSignedInt32Put: (2 * sampleCount) + ((7 * 4) + 18) bigEndian: true.
-	aBinaryStream nextPutAll: 'AIFF' asByteArray.
-	aBinaryStream nextPutAll: 'COMM' asByteArray.
-	aBinaryStream nextSignedInt32Put: 18 bigEndian: true.
-	aBinaryStream nextUnsignedInt16Put: 1 bigEndian: true.  "channels"
-	aBinaryStream nextSignedInt32Put: sampleCount bigEndian: true.
-	aBinaryStream nextUnsignedInt16Put: 16 bigEndian: true.  "bits/sample"
-	self storeExtendedFloat: rate on: aBinaryStream.
-	aBinaryStream nextPutAll: 'SSND' asByteArray.
-	aBinaryStream nextSignedInt32Put: (2 * sampleCount) + 8 bigEndian: true.
-	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
-	aBinaryStream nextSignedInt32Put: 0 bigEndian: true.
-
-	(aBinaryStream isKindOf: StandardFileStream) ifTrue: [
-		"optimization: write sound buffer directly to file"
-		swapBytes _ Smalltalk isLittleEndian.
-		swapBytes ifTrue: [self reverseEndianness].  "make big endian"
-		aBinaryStream next: (self size // 2) putAll: self startingAt: 1.  "size in words"
-		swapBytes ifTrue: [self reverseEndianness].  "revert to little endian"
-		^ self].
-
-	1 to: sampleCount do: [:i |
-		s _ self at: i.
-		aBinaryStream nextPut: ((s bitShift: -8) bitAnd: 16rFF).
-		aBinaryStream nextPut: (s bitAnd: 16rFF)].
-! !
-
-!SoundBuffer methodsFor: 'accessing' stamp: 'jm 9/17/97 13:28'!
-size
-	"Return the number of 16-bit sound samples that fit in this sound buffer. To avoid confusion, it is better to get the size of SoundBuffer using monoSampleCount or stereoSampleCount."
-
-	^ self monoSampleCount
-! !
-
-!SoundBuffer methodsFor: 'utilities' stamp: 'jm 3/28/1999 07:23'!
-splitStereo
-	"Answer an array of two SoundBuffers half the size of the receiver consisting of the left and right channels of the receiver (which is assumed to contain stereo sound data)."
-
-	| n leftBuf rightBuf leftIndex rightIndex |
-	n _ self monoSampleCount.
-	leftBuf _ SoundBuffer newMonoSampleCount: n // 2.
-	rightBuf _ SoundBuffer newMonoSampleCount: n // 2.
-	leftIndex _ rightIndex _ 0.
-	1 to: n by: 2 do: [:i |
-		leftBuf at: (leftIndex _ leftIndex + 1) put: (self at: i).
-		rightBuf at: (rightIndex _ rightIndex + 1) put: (self at: i + 1)].
-	^ Array with: leftBuf with: rightBuf
-! !
-
-!SoundBuffer methodsFor: 'accessing' stamp: 'jm 9/17/97 13:01'!
-stereoSampleCount
-	"Return the number of stereo slices that fit into this SoundBuffer. A stereo 'slice' consists of two 16-bit samples, one for each channel."
-
-	^ super size
-! !
-
-!SoundBuffer methodsFor: 'utilities' stamp: 'jhm 10/15/97 15:13'!
-trimmedThreshold: threshold
-
-	| start end |
-	start _ self indexOfFirstSampleOver: threshold.
-	end _  self indexOfLastSampleOver: threshold.
-	start > end ifTrue: [^ SoundBuffer new].
-	start _ (start - 200) max: 1.
-	end _ (end + 200) min: self size.
-	^ self copyFrom: start to: end
 ! !
 
 !SoundBuffer methodsFor: 'as yet unclassified' stamp: 'RAA 7/11/2000 11:31'!
@@ -994,11 +995,6 @@ fromByteArray: aByteArray
 	^ buf
 ! !
 
-!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 12/15/2014 21:51'!
-initialize
-	"SoundBuffer initialize"
-	Smalltalk addToStartUpList: self! !
-
 !SoundBuffer class methodsFor: 'instance creation' stamp: 'jm 9/17/97 13:25'!
 new: anInteger
 	"See the comment in newMonoSampleCount:. To avoid confusion, it is best to create new instances using newMonoSampleCount: or newStereoSampleCount:."
@@ -1020,6 +1016,11 @@ newStereoSampleCount: anInteger
 
 	^ self basicNew: anInteger
 ! !
+
+!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 12/15/2014 21:51'!
+initialize
+	"SoundBuffer initialize"
+	Smalltalk addToStartUpList: self! !
 
 !SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:33'!
 startUp
@@ -1055,16 +1056,6 @@ extent: extent minVal: min maxVal: max scrollDelta: d
 	s delete	
 "! !
 
-!Sonogram methodsFor: 'geometry' stamp: 'jmv 12/16/2011 10:22'!
-morphExtent: newExtent
-	super image: (Form extent: newExtent depth: Display depth).
-	lastX _ -1.
-	columnForm _ Form extent: (32//image depth)@(image height) depth: image depth.
-	pixValMap _ ((1 to: 256) collect:
-			[:i | columnForm pixelValueFor: (Color gray: (256-i)/255.0)])
-		as: Bitmap.
-! !
-
 !Sonogram methodsFor: 'all' stamp: 'jmv 1/21/2015 23:56'!
 plotColumn: dataArray
 
@@ -1090,6 +1081,16 @@ scroll
 			from: image to: 0@0 rule: Form over.
 	lastX _ lastX - scrollDelta.
 	self redrawNeeded! !
+
+!Sonogram methodsFor: 'geometry' stamp: 'jmv 12/16/2011 10:22'!
+morphExtent: newExtent
+	super image: (Form extent: newExtent depth: Display depth).
+	lastX _ -1.
+	columnForm _ Form extent: (32//image depth)@(image height) depth: image depth.
+	pixValMap _ ((1 to: 256) collect:
+			[:i | columnForm pixelValueFor: (Color gray: (256-i)/255.0)])
+		as: Bitmap.
+! !
 
 !AIFFFileReader methodsFor: 'accessing' stamp: 'jm 8/2/1998 21:25'!
 bitsPerSample
@@ -1169,6 +1170,18 @@ pitch
 	^ pitch
 ! !
 
+!AIFFFileReader methodsFor: 'accessing' stamp: 'jm 8/2/1998 19:34'!
+rightSamples
+
+	^ channelData at: 2
+! !
+
+!AIFFFileReader methodsFor: 'accessing' stamp: 'jm 7/12/1998 18:25'!
+samplingRate
+
+	^ samplingRate
+! !
+
 !AIFFFileReader methodsFor: 'other' stamp: 'jm 7/12/1998 01:44'!
 pitchForKey: midiKey
 	"Convert my MIDI key number to a pitch and return it."
@@ -1180,6 +1193,24 @@ pitchForKey: midiKey
 	p _ #(16.3516 17.32391 18.35405 19.44544 20.60173 21.82677
 		  23.12466 24.49972 25.95655 27.50000 29.13524 30.86771) at: indexInOctave.
 	^ p * (#(0.5 1.0 2.0 4.0 8.0 16.0 32.0 64.0 128.0 256.0 512.0) at: octave)
+! !
+
+!AIFFFileReader methodsFor: 'other' stamp: 'jm 1/14/1999 10:11'!
+sound
+	"Answer the sound represented by this AIFFFileReader. This method should be called only after readFrom: has been done."
+
+	| snd rightSnd |
+	snd _ SampledSound
+		samples: (channelData at: 1)
+		samplingRate: samplingRate.
+	self isStereo ifTrue: [
+		rightSnd _ SampledSound
+			samples: (channelData at: 2)
+			samplingRate: samplingRate.
+		snd _ MixedSound new
+			add: snd pan: 0;
+			add: rightSnd pan: 1.0].
+	^ snd
 ! !
 
 !AIFFFileReader methodsFor: 'private' stamp: 'jm 6/29/1998 07:33'!
@@ -1247,36 +1278,6 @@ readFrom: aBinaryStream
 		(in position = (p + chunkSize))
 			ifFalse: [self error: 'chunk size mismatch; bad AIFF file?'].
 		chunkSize odd ifTrue: [in skip: 1]].  "skip padding byte"
-! !
-
-!AIFFFileReader methodsFor: 'reading' stamp: 'jm 8/2/1998 16:27'!
-readFromFile: fileName
-	"Read the AIFF file of the given name."
-	"AIFFFileReader new readFromFile: 'test.aiff'"
-
-	self readFromFile: fileName
-		mergeIfStereo: false
-		skipDataChunk: false.
-! !
-
-!AIFFFileReader methodsFor: 'reading' stamp: 'pb 5/25/2016 01:30'!
-readFromFile: fileName mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag
-	"Read the AIFF file of the given name. See comment in readFromStream:mergeIfStereo:skipDataChunk:."
-	"AIFFFileReader new readFromFile: 'test.aiff' mergeIfStereo: false skipDataChunk: true"
-
-	fileName asFileEntry readStreamDo: [ :strm |
-		strm binary.
-		self readFromStream: strm mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag ]! !
-
-!AIFFFileReader methodsFor: 'reading'!
-readFromStream: aBinaryStream mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag
-	"Read an AIFF file from the given binary stream. If mergeFlag is true and the file contains stereo data, then the left and right channels will be mixed together as the samples are read in. If skipDataFlag is true, then the data chunk to be skipped; this allows the other chunks of a file to be processed in order to extract format information quickly without reading the data."
-
-	mergeIfStereo _ mergeFlag.
-	skipDataChunk _ skipDataFlag.
-	isLooped _ false.
-	gain _ 1.0.
-	self readFrom: aBinaryStream.
 ! !
 
 !AIFFFileReader methodsFor: 'private' stamp: 'jmv 2/26/2016 16:57'!
@@ -1448,34 +1449,34 @@ readStereoChannelDataFrom: s
 				right at: i put: w]].
 ! !
 
-!AIFFFileReader methodsFor: 'accessing' stamp: 'jm 8/2/1998 19:34'!
-rightSamples
+!AIFFFileReader methodsFor: 'reading' stamp: 'jm 8/2/1998 16:27'!
+readFromFile: fileName
+	"Read the AIFF file of the given name."
+	"AIFFFileReader new readFromFile: 'test.aiff'"
 
-	^ channelData at: 2
+	self readFromFile: fileName
+		mergeIfStereo: false
+		skipDataChunk: false.
 ! !
 
-!AIFFFileReader methodsFor: 'accessing' stamp: 'jm 7/12/1998 18:25'!
-samplingRate
+!AIFFFileReader methodsFor: 'reading' stamp: 'pb 5/25/2016 01:30'!
+readFromFile: fileName mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag
+	"Read the AIFF file of the given name. See comment in readFromStream:mergeIfStereo:skipDataChunk:."
+	"AIFFFileReader new readFromFile: 'test.aiff' mergeIfStereo: false skipDataChunk: true"
 
-	^ samplingRate
-! !
+	fileName asFileEntry readStreamDo: [ :strm |
+		strm binary.
+		self readFromStream: strm mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag ]! !
 
-!AIFFFileReader methodsFor: 'other' stamp: 'jm 1/14/1999 10:11'!
-sound
-	"Answer the sound represented by this AIFFFileReader. This method should be called only after readFrom: has been done."
+!AIFFFileReader methodsFor: 'reading'!
+readFromStream: aBinaryStream mergeIfStereo: mergeFlag skipDataChunk: skipDataFlag
+	"Read an AIFF file from the given binary stream. If mergeFlag is true and the file contains stereo data, then the left and right channels will be mixed together as the samples are read in. If skipDataFlag is true, then the data chunk to be skipped; this allows the other chunks of a file to be processed in order to extract format information quickly without reading the data."
 
-	| snd rightSnd |
-	snd _ SampledSound
-		samples: (channelData at: 1)
-		samplingRate: samplingRate.
-	self isStereo ifTrue: [
-		rightSnd _ SampledSound
-			samples: (channelData at: 2)
-			samplingRate: samplingRate.
-		snd _ MixedSound new
-			add: snd pan: 0;
-			add: rightSnd pan: 1.0].
-	^ snd
+	mergeIfStereo _ mergeFlag.
+	skipDataChunk _ skipDataFlag.
+	isLooped _ false.
+	gain _ 1.0.
+	self readFrom: aBinaryStream.
 ! !
 
 !AbstractSound methodsFor: 'composition'!
@@ -1496,12 +1497,46 @@ sound
 		add: aSound
 ! !
 
+!AbstractSound methodsFor: 'composition' stamp: 'jm 2/2/1999 15:53'!
+asSound
+
+	^ self
+! !
+
+!AbstractSound methodsFor: 'composition' stamp: 'jm 12/17/97 18:00'!
+delayedBy: seconds
+	"Return a composite sound consisting of a rest for the given amount of time followed by the receiver."
+
+	^ (RestSound dur: seconds), self
+! !
+
 !AbstractSound methodsFor: 'envelopes' stamp: 'jm 12/17/97 22:23'!
 addEnvelope: anEnvelope
 	"Add the given envelope to my envelopes list."
 
 	anEnvelope target: self.
 	envelopes _ envelopes copyWith: anEnvelope.
+! !
+
+!AbstractSound methodsFor: 'envelopes' stamp: 'jm 12/15/97 17:02'!
+envelopes
+	"Return my collection of envelopes."
+
+	^ envelopes
+! !
+
+!AbstractSound methodsFor: 'envelopes' stamp: 'jm 8/18/1998 09:57'!
+removeAllEnvelopes
+	"Remove all envelopes from my envelopes list."
+
+	envelopes _ #().
+! !
+
+!AbstractSound methodsFor: 'envelopes' stamp: 'jm 12/15/97 17:02'!
+removeEnvelope: anEnvelope
+	"Remove the given envelope from my envelopes list."
+
+	envelopes _ envelopes copyWithout: anEnvelope.
 ! !
 
 !AbstractSound methodsFor: 'volume' stamp: 'RAA 8/11/2000 11:51'!
@@ -1526,17 +1561,33 @@ adjustVolumeTo: vol overMSecs: mSecs
 				((scaledVolLimit - scaledVol) * 1000) // (self samplingRate * mSecs)].
 ! !
 
+!AbstractSound methodsFor: 'volume' stamp: 'jm 12/17/97 17:39'!
+initialVolume: vol
+	"Set the initial volume of this sound to the given volume, a number in the range [0.0..1.0]."
+
+	scaledVol _ (((vol asFloat min: 1.0) max: 0.0) * ScaleFactor) rounded.
+	scaledVolLimit _ scaledVol.
+	scaledVolIncr _ 0.
+! !
+
+!AbstractSound methodsFor: 'volume' stamp: 'jm 8/13/1998 16:37'!
+loudness
+	"Answer the current volume setting for this sound."
+
+	^ scaledVol asFloat / ScaleFactor asFloat! !
+
+!AbstractSound methodsFor: 'volume' stamp: 'jm 8/13/1998 16:28'!
+volumeEnvelopeScaledTo: scalePoint
+	"Return a collection of values representing my volume envelope scaled by the given point. The scale point's x component is pixels/second and its y component is the number of pixels for full volume."
+
+	self error: 'not yet implemented'.
+! !
+
 !AbstractSound methodsFor: 'conversion' stamp: 'jm 12/16/2001 13:26'!
 asSampledSound
 	"Answer a SampledSound containing my samples. If the receiver is some kind of sampled sound, the resulting SampledSound will have the same original sampling rate as the receiver."
 
 	^ SampledSound samples: self samples samplingRate: self originalSamplingRate
-! !
-
-!AbstractSound methodsFor: 'composition' stamp: 'jm 2/2/1999 15:53'!
-asSound
-
-	^ self
 ! !
 
 !AbstractSound methodsFor: 'playing' stamp: 'jm 1/26/98 22:05'!
@@ -1550,137 +1601,15 @@ computeSamplesForSeconds: seconds
 	^ buf
 ! !
 
-!AbstractSound methodsFor: 'sampling rates' stamp: 'jm 12/15/97 14:15'!
-controlRate
-	"Answer the number of control changes per second."
-
-	^ 100
-! !
-
-!AbstractSound methodsFor: 'copying' stamp: 'jm 12/17/97 22:22'!
-copyEnvelopes
-	"Private!! Support for copying. Copy my envelopes."
-
-	envelopes _ envelopes collect: [:e | e copy target: self].
-! !
-
-!AbstractSound methodsFor: 'composition' stamp: 'jm 12/17/97 18:00'!
-delayedBy: seconds
-	"Return a composite sound consisting of a rest for the given amount of time followed by the receiver."
-
-	^ (RestSound dur: seconds), self
-! !
-
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 8/17/1998 13:34'!
-doControl
-	"Update the control parameters of this sound using its envelopes, if any."
-	"Note: This is only called at a small fraction of the sampling rate."
-
-	| pitchModOrRatioChange |
-	envelopes size > 0 ifTrue: [
-		pitchModOrRatioChange _ false.
-		1 to: envelopes size do: [:i |
-			((envelopes at: i) updateTargetAt: mSecsSinceStart)
-				ifTrue: [pitchModOrRatioChange _ true]].
-		pitchModOrRatioChange ifTrue: [self internalizeModulationAndRatio]].
-	mSecsSinceStart _ mSecsSinceStart + (1000 // self controlRate).
-! !
-
-!AbstractSound methodsFor: 'initialization' stamp: 'jm 12/9/97 11:31'!
-duration: seconds
-	"Scale my envelopes to the given duration. Subclasses overriding this method should include a resend to super."
-
-	envelopes do: [:e | e duration: seconds].
-! !
-
-!AbstractSound methodsFor: 'envelopes' stamp: 'jm 12/15/97 17:02'!
-envelopes
-	"Return my collection of envelopes."
-
-	^ envelopes
-! !
-
-!AbstractSound methodsFor: 'volume' stamp: 'jm 12/17/97 17:39'!
-initialVolume: vol
-	"Set the initial volume of this sound to the given volume, a number in the range [0.0..1.0]."
-
-	scaledVol _ (((vol asFloat min: 1.0) max: 0.0) * ScaleFactor) rounded.
-	scaledVolLimit _ scaledVol.
-	scaledVolIncr _ 0.
-! !
-
-!AbstractSound methodsFor: 'initialization' stamp: 'jm 2/4/98 09:54'!
-initialize
-
-	envelopes _ #().
-	mSecsSinceStart _ 0.
-	samplesUntilNextControl _ 0.
-	scaledVol _ (1.0 * ScaleFactor) rounded.
-	scaledVolIncr _ 0.
-	scaledVolLimit _ scaledVol.
-! !
-
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 2/4/98 08:56'!
-internalizeModulationAndRatio
-	"Overridden by FMSound. This default implementation does nothing."
-! !
-
 !AbstractSound methodsFor: 'playing' stamp: 'ar 12/5/1998 22:20'!
 isPlaying
 	"Return true if the receiver is currently playing"
 	^ SoundPlayer isPlaying: self! !
 
-!AbstractSound methodsFor: 'accessing' stamp: 'jm 12/16/2001 22:34'!
-isStereo
-	"Answer true if this sound has distinct left and right channels. (Every sound plays into a stereo sample buffer, but most sounds, which produce exactly the same samples on both channels, are not stereo.)"
-
-	^ false
-! !
-
-!AbstractSound methodsFor: 'volume' stamp: 'jm 8/13/1998 16:37'!
-loudness
-	"Answer the current volume setting for this sound."
-
-	^ scaledVol asFloat / ScaleFactor asFloat! !
-
-!AbstractSound methodsFor: 'initialization' stamp: 'jm 3/24/1999 12:03'!
-loudness: aNumber
-	"Initialize my volume envelopes and initial volume. Subclasses overriding this method should include a resend to super."
-
-	| vol |
-	vol _ (aNumber asFloat max: 0.0) min: 1.0.
-	envelopes do: [:e |
-		(e isKindOf: VolumeEnvelope) ifTrue: [e scale: vol]].
-	self initialVolume: vol.
-! !
-
 !AbstractSound methodsFor: 'playing' stamp: 'di 5/30/1999 12:46'!
 millisecondsSinceStart
 
 	^ mSecsSinceStart! !
-
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 7/6/1998 06:40'!
-mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
-	"Mix the given number of samples with the samples already in the given buffer starting at the given index. Assume that the buffer size is at least (index + count) - 1. The leftVol and rightVol parameters determine the volume of the sound in each channel, where 0 is silence and ScaleFactor is full volume."
-
-	self subclassResponsibility.
-! !
-
-!AbstractSound methodsFor: 'initialization' stamp: 'jm 7/6/1998 17:04'!
-nameOrNumberToPitch: aStringOrNumber
-	"Answer the pitch in cycles/second for the given pitch specification. The specification can be either a numeric pitch or pitch name such as 'c4'."
-
-	aStringOrNumber isNumber
-		ifTrue: [^ aStringOrNumber asFloat]
-		ifFalse: [^ AbstractSound pitchForName: aStringOrNumber]
-! !
-
-!AbstractSound methodsFor: 'sampling rates' stamp: 'jm 12/16/2001 13:14'!
-originalSamplingRate
-	"For sampled sounds, answer the sampling rate used to record the stored samples. For other sounds, this is the same as the playback sampling rate."
-
-	^ SoundPlayer samplingRate
-! !
 
 !AbstractSound methodsFor: 'playing' stamp: 'jm 8/24/97 20:48'!
 pause
@@ -1765,36 +1694,6 @@ playSilentlyUntil: startTime
 		nextSample _ nextSample + n].
 ! !
 
-!AbstractSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:55'!
-postCopy
-	"A sound should copy all of the state needed to play itself, allowing two copies of a sound to play at the same time. These semantics require a recursive copy but only down to the level of immutable data. For example, a SampledSound need not copy its sample buffer. Subclasses overriding this method should include a resend to super."
-
-	self copyEnvelopes! !
-
-!AbstractSound methodsFor: 'envelopes' stamp: 'jm 8/18/1998 09:57'!
-removeAllEnvelopes
-	"Remove all envelopes from my envelopes list."
-
-	envelopes _ #().
-! !
-
-!AbstractSound methodsFor: 'envelopes' stamp: 'jm 12/15/97 17:02'!
-removeEnvelope: anEnvelope
-	"Remove the given envelope from my envelopes list."
-
-	envelopes _ envelopes copyWithout: anEnvelope.
-! !
-
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 8/17/1998 13:45'!
-reset
-	"Reset my internal state for a replay. Methods that override this method should do super reset."
-
-	mSecsSinceStart _ 0.
-	samplesUntilNextControl _ 0.
-	envelopes size > 0 ifTrue: [
-		1 to: envelopes size do: [:i | (envelopes at: i) reset]].
-! !
-
 !AbstractSound methodsFor: 'playing' stamp: 'jm 3/4/98 13:16'!
 resumePlaying
 	"Resume playing this sound from where it last stopped."
@@ -1810,11 +1709,24 @@ samples
 	^ (self computeSamplesForSeconds: self duration) mergeStereo
 ! !
 
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 12/17/97 17:57'!
-samplesRemaining
-	"Answer the number of samples remaining until the end of this sound. A sound with an indefinite ending time should answer some large integer such as 1000000."
+!AbstractSound methodsFor: 'playing' stamp: 'jmv 4/1/2009 21:36'!
+viewSamples
+	"Open a WaveEditor on my samples."
 
-	^ 1000000
+"	WaveEditor openOn: self samples"! !
+
+!AbstractSound methodsFor: 'sampling rates' stamp: 'jm 12/15/97 14:15'!
+controlRate
+	"Answer the number of control changes per second."
+
+	^ 100
+! !
+
+!AbstractSound methodsFor: 'sampling rates' stamp: 'jm 12/16/2001 13:14'!
+originalSamplingRate
+	"For sampled sounds, answer the sampling rate used to record the stored samples. For other sounds, this is the same as the playback sampling rate."
+
+	^ SoundPlayer samplingRate
 ! !
 
 !AbstractSound methodsFor: 'sampling rates' stamp: 'jm 12/17/97 18:00'!
@@ -1822,6 +1734,161 @@ samplingRate
 	"Answer the sampling rate in samples per second."
 
 	^ SoundPlayer samplingRate
+! !
+
+!AbstractSound methodsFor: 'copying' stamp: 'jm 12/17/97 22:22'!
+copyEnvelopes
+	"Private!! Support for copying. Copy my envelopes."
+
+	envelopes _ envelopes collect: [:e | e copy target: self].
+! !
+
+!AbstractSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:55'!
+postCopy
+	"A sound should copy all of the state needed to play itself, allowing two copies of a sound to play at the same time. These semantics require a recursive copy but only down to the level of immutable data. For example, a SampledSound need not copy its sample buffer. Subclasses overriding this method should include a resend to super."
+
+	self copyEnvelopes! !
+
+!AbstractSound methodsFor: 'copying' stamp: 'di 3/4/1999 21:29'!
+sounds
+	"Allows simple sounds to behave as, eg, sequential sounds"
+
+	^ Array with: self! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 8/17/1998 13:34'!
+doControl
+	"Update the control parameters of this sound using its envelopes, if any."
+	"Note: This is only called at a small fraction of the sampling rate."
+
+	| pitchModOrRatioChange |
+	envelopes size > 0 ifTrue: [
+		pitchModOrRatioChange _ false.
+		1 to: envelopes size do: [:i |
+			((envelopes at: i) updateTargetAt: mSecsSinceStart)
+				ifTrue: [pitchModOrRatioChange _ true]].
+		pitchModOrRatioChange ifTrue: [self internalizeModulationAndRatio]].
+	mSecsSinceStart _ mSecsSinceStart + (1000 // self controlRate).
+! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 2/4/98 08:56'!
+internalizeModulationAndRatio
+	"Overridden by FMSound. This default implementation does nothing."
+! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 7/6/1998 06:40'!
+mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
+	"Mix the given number of samples with the samples already in the given buffer starting at the given index. Assume that the buffer size is at least (index + count) - 1. The leftVol and rightVol parameters determine the volume of the sound in each channel, where 0 is silence and ScaleFactor is full volume."
+
+	self subclassResponsibility.
+! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 8/17/1998 13:45'!
+reset
+	"Reset my internal state for a replay. Methods that override this method should do super reset."
+
+	mSecsSinceStart _ 0.
+	samplesUntilNextControl _ 0.
+	envelopes size > 0 ifTrue: [
+		1 to: envelopes size do: [:i | (envelopes at: i) reset]].
+! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 12/17/97 17:57'!
+samplesRemaining
+	"Answer the number of samples remaining until the end of this sound. A sound with an indefinite ending time should answer some large integer such as 1000000."
+
+	^ 1000000
+! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 9/9/1998 21:56'!
+stopAfterMSecs: mSecs
+	"Terminate this sound this note after the given number of milliseconds. This default implementation does nothing."
+! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 9/9/1998 21:54'!
+stopGracefully
+	"End this note with a graceful decay. If the note has envelopes, determine the decay time from its envelopes."
+
+	| decayInMs env |
+	envelopes isEmpty
+		ifTrue: [
+			self adjustVolumeTo: 0 overMSecs: 10.
+			decayInMs _ 10]
+		ifFalse: [
+			env _ envelopes first.
+			decayInMs _ env attackTime + env decayTime].
+	self duration: (mSecsSinceStart + decayInMs) / 1000.0.
+	self stopAfterMSecs: decayInMs.
+! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 1/5/98 14:21'!
+storeSample: sample in: aSoundBuffer at: sliceIndex leftVol: leftVol rightVol: rightVol
+	"This method is provided for documentation. To gain 10% more speed when running sound generation in Smalltalk, this method is hand-inlined into all sound generation methods that use it."
+
+	| i s |
+		leftVol > 0 ifTrue: [
+			i _ (2 * sliceIndex) - 1.
+			s _ (aSoundBuffer at: i) + ((sample * leftVol) // ScaleFactor).
+			s >  32767 ifTrue: [s _  32767].  "clipping!!"
+			s < -32767 ifTrue: [s _ -32767].  "clipping!!"
+			aSoundBuffer at: i put: s].
+		rightVol > 0 ifTrue: [
+			i _ 2 * sliceIndex.
+			s _ (aSoundBuffer at: i) + ((sample * rightVol) // ScaleFactor).
+			s >  32767 ifTrue: [s _  32767].  "clipping!!"
+			s < -32767 ifTrue: [s _ -32767].  "clipping!!"
+			aSoundBuffer at: i put: s].
+! !
+
+!AbstractSound methodsFor: 'sound generation' stamp: 'jm 12/17/97 17:57'!
+updateVolume
+	"Increment the volume envelope of this sound. To avoid clicks, the volume envelope must be interpolated at the sampling rate, rather than just at the control rate like other envelopes. At the control rate, the volume envelope computes the slope and next target volume volume for the current segment of the envelope (i.e., it sets the rate of change for the volume parameter). When that target volume is reached, incrementing is stopped until a new increment is set."
+	"This method is provided for documentation. To gain 10% more speed when running sound generation in Smalltalk, it is hand-inlined into all sound generation methods that use it."
+
+		scaledVolIncr ~= 0 ifTrue: [
+			scaledVol _ scaledVol + scaledVolIncr.
+			((scaledVolIncr > 0 and: [scaledVol >= scaledVolLimit]) or:
+			 [scaledVolIncr < 0 and: [scaledVol <= scaledVolLimit]])
+				ifTrue: [  "reached the limit; stop incrementing"
+					scaledVol _ scaledVolLimit.
+					scaledVolIncr _ 0]].
+! !
+
+!AbstractSound methodsFor: 'initialization' stamp: 'jm 12/9/97 11:31'!
+duration: seconds
+	"Scale my envelopes to the given duration. Subclasses overriding this method should include a resend to super."
+
+	envelopes do: [:e | e duration: seconds].
+! !
+
+!AbstractSound methodsFor: 'initialization' stamp: 'jm 2/4/98 09:54'!
+initialize
+
+	envelopes _ #().
+	mSecsSinceStart _ 0.
+	samplesUntilNextControl _ 0.
+	scaledVol _ (1.0 * ScaleFactor) rounded.
+	scaledVolIncr _ 0.
+	scaledVolLimit _ scaledVol.
+! !
+
+!AbstractSound methodsFor: 'initialization' stamp: 'jm 3/24/1999 12:03'!
+loudness: aNumber
+	"Initialize my volume envelopes and initial volume. Subclasses overriding this method should include a resend to super."
+
+	| vol |
+	vol _ (aNumber asFloat max: 0.0) min: 1.0.
+	envelopes do: [:e |
+		(e isKindOf: VolumeEnvelope) ifTrue: [e scale: vol]].
+	self initialVolume: vol.
+! !
+
+!AbstractSound methodsFor: 'initialization' stamp: 'jm 7/6/1998 17:04'!
+nameOrNumberToPitch: aStringOrNumber
+	"Answer the pitch in cycles/second for the given pitch specification. The specification can be either a numeric pitch or pitch name such as 'c4'."
+
+	aStringOrNumber isNumber
+		ifTrue: [^ aStringOrNumber asFloat]
+		ifFalse: [^ AbstractSound pitchForName: aStringOrNumber]
 ! !
 
 !AbstractSound methodsFor: 'initialization' stamp: 'jm 8/19/1998 08:45'!
@@ -1854,31 +1921,11 @@ soundForPitch: pitchNameOrNumber dur: d loudness: l
 	^ self copy setPitch: pitchNameOrNumber dur: d loudness: l
 ! !
 
-!AbstractSound methodsFor: 'copying' stamp: 'di 3/4/1999 21:29'!
-sounds
-	"Allows simple sounds to behave as, eg, sequential sounds"
+!AbstractSound methodsFor: 'accessing' stamp: 'jm 12/16/2001 22:34'!
+isStereo
+	"Answer true if this sound has distinct left and right channels. (Every sound plays into a stereo sample buffer, but most sounds, which produce exactly the same samples on both channels, are not stereo.)"
 
-	^ Array with: self! !
-
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 9/9/1998 21:56'!
-stopAfterMSecs: mSecs
-	"Terminate this sound this note after the given number of milliseconds. This default implementation does nothing."
-! !
-
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 9/9/1998 21:54'!
-stopGracefully
-	"End this note with a graceful decay. If the note has envelopes, determine the decay time from its envelopes."
-
-	| decayInMs env |
-	envelopes isEmpty
-		ifTrue: [
-			self adjustVolumeTo: 0 overMSecs: 10.
-			decayInMs _ 10]
-		ifFalse: [
-			env _ envelopes first.
-			decayInMs _ env attackTime + env decayTime].
-	self duration: (mSecsSinceStart + decayInMs) / 1000.0.
-	self stopAfterMSecs: decayInMs.
+	^ false
 ! !
 
 !AbstractSound methodsFor: 'file i/o' stamp: 'pb 5/25/2016 01:35'!
@@ -1935,25 +1982,6 @@ storeExtendedFloat: aNumber on: aBinaryStream
 	aBinaryStream nextPut: ((exp bitShift: -8) bitAnd: 16rFF).
 	aBinaryStream nextPut: (exp bitAnd: 16rFF).
 	aBinaryStream nextNumber: 8 put: mantissa! !
-
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 1/5/98 14:21'!
-storeSample: sample in: aSoundBuffer at: sliceIndex leftVol: leftVol rightVol: rightVol
-	"This method is provided for documentation. To gain 10% more speed when running sound generation in Smalltalk, this method is hand-inlined into all sound generation methods that use it."
-
-	| i s |
-		leftVol > 0 ifTrue: [
-			i _ (2 * sliceIndex) - 1.
-			s _ (aSoundBuffer at: i) + ((sample * leftVol) // ScaleFactor).
-			s >  32767 ifTrue: [s _  32767].  "clipping!!"
-			s < -32767 ifTrue: [s _ -32767].  "clipping!!"
-			aSoundBuffer at: i put: s].
-		rightVol > 0 ifTrue: [
-			i _ 2 * sliceIndex.
-			s _ (aSoundBuffer at: i) + ((sample * rightVol) // ScaleFactor).
-			s >  32767 ifTrue: [s _  32767].  "clipping!!"
-			s < -32767 ifTrue: [s _ -32767].  "clipping!!"
-			aSoundBuffer at: i put: s].
-! !
 
 !AbstractSound methodsFor: 'file i/o' stamp: 'jmv 7/17/2017 15:39:47'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
@@ -2023,33 +2051,6 @@ storeWAVSamplesOn: aBinaryStream
 		nextUnsignedInt32Put: dataByteCount bigEndian: false.  "length of this chunk"
 
 	self storeSampleCount: samplesToStore bigEndian: false on: aBinaryStream.
-! !
-
-!AbstractSound methodsFor: 'sound generation' stamp: 'jm 12/17/97 17:57'!
-updateVolume
-	"Increment the volume envelope of this sound. To avoid clicks, the volume envelope must be interpolated at the sampling rate, rather than just at the control rate like other envelopes. At the control rate, the volume envelope computes the slope and next target volume volume for the current segment of the envelope (i.e., it sets the rate of change for the volume parameter). When that target volume is reached, incrementing is stopped until a new increment is set."
-	"This method is provided for documentation. To gain 10% more speed when running sound generation in Smalltalk, it is hand-inlined into all sound generation methods that use it."
-
-		scaledVolIncr ~= 0 ifTrue: [
-			scaledVol _ scaledVol + scaledVolIncr.
-			((scaledVolIncr > 0 and: [scaledVol >= scaledVolLimit]) or:
-			 [scaledVolIncr < 0 and: [scaledVol <= scaledVolLimit]])
-				ifTrue: [  "reached the limit; stop incrementing"
-					scaledVol _ scaledVolLimit.
-					scaledVolIncr _ 0]].
-! !
-
-!AbstractSound methodsFor: 'playing' stamp: 'jmv 4/1/2009 21:36'!
-viewSamples
-	"Open a WaveEditor on my samples."
-
-"	WaveEditor openOn: self samples"! !
-
-!AbstractSound methodsFor: 'volume' stamp: 'jm 8/13/1998 16:28'!
-volumeEnvelopeScaledTo: scalePoint
-	"Return a collection of values representing my volume envelope scaled by the given point. The scale point's x component is pixels/second and its y component is the number of pixels for full volume."
-
-	self error: 'not yet implemented'.
 ! !
 
 !AbstractSound class methodsFor: 'examples-bach fugue' stamp: 'jm 1/5/98 17:38'!
@@ -2924,6 +2925,21 @@ bachFugueVoice4On: aSound
 		(131  3.20 205)).
 ! !
 
+!AbstractSound class methodsFor: 'examples-bach fugue' stamp: 'jm 1/5/98 17:45'!
+stereoBachFugue
+	"Play fugue by J. S. Bach in stereo using different timbres."
+	"AbstractSound stereoBachFugue play"
+
+	"(AbstractSound bachFugueVoice1On: FMSound flute1) play"
+	"(AbstractSound bachFugueVoice1On: PluckedSound default) play"
+
+	^ MixedSound new
+		add: (self bachFugueVoice1On: FMSound oboe1) pan: 0.2;
+		add: (self bachFugueVoice2On: FMSound organ1) pan: 0.8;
+		add: (self bachFugueVoice3On: PluckedSound default) pan: 0.4;
+		add: (self bachFugueVoice4On: FMSound brass1) pan: 0.6.
+! !
+
 !AbstractSound class methodsFor: 'utilities' stamp: 'DSM 9/5/2000 13:50'!
 busySignal: count
 	"AbstractSound busySignal: 3"
@@ -2936,6 +2952,139 @@ busySignal: count
 	s add: (FMSound new setPitch: 1 dur: 0.5 loudness: 0).
 	^ (RepeatingSound repeat: s count: count) play.
 
+! !
+
+!AbstractSound class methodsFor: 'utilities' stamp: 'eem 6/11/2008 12:40'!
+dial: aString
+	| s |
+	"AbstractSound dial: '867-5309'" "ask for Jenny"
+
+	s := SequentialSound new.
+	aString do: [ :c | | index lo hi m |
+		c = $,
+			ifTrue: [ s add: (FMSound new setPitch: 1 dur: 1 loudness: 0) ]
+			ifFalse: [
+				(index := ('123A456B789C*0#D' indexOf: c)) > 0
+					ifTrue: [
+						lo := #(697 770 852 941) at: (index - 1 // 4 + 1).
+						hi := #(1209 1336 1477 1633) at: (index - 1 \\ 4 + 1).
+						m := MixedSound new.
+						m add: (FMSound new setPitch: lo dur: 0.15 loudness: 0.5).
+						m add: (FMSound new setPitch: hi dur: 0.15 loudness: 0.5).
+						s add: m.
+						s add: (FMSound new setPitch: 1 dur: 0.05 loudness: 0)]]].
+	^ s play.
+
+! !
+
+!AbstractSound class methodsFor: 'utilities' stamp: 'DSM 9/5/2000 13:49'!
+dialTone: duration
+	"AbstractSound dialTone: 2"
+	| m |
+	m _ MixedSound new.
+	m add: (FMSound new setPitch: 350 dur: duration loudness: 0.5).
+	m add: (FMSound new setPitch: 440 dur: duration loudness: 0.5).
+	m play.
+	^ m! !
+
+!AbstractSound class methodsFor: 'utilities' stamp: 'DSM 9/5/2000 13:50'!
+hangUpWarning: count
+	"AbstractSound hangUpWarning: 20"
+	| m s |
+	s _ SequentialSound new.
+	m _ MixedSound new.
+	m	add: (FMSound new setPitch: 1400 dur: 0.1 loudness: 0.5);
+		add: (FMSound new setPitch: 2060 dur: 0.1 loudness: 0.5).
+	s add: m; add: (FMSound new setPitch: 1 dur: 0.1 loudness: 0).
+	^ (RepeatingSound repeat: s count: count) play
+
+! !
+
+!AbstractSound class methodsFor: 'utilities' stamp: 'jm 8/3/1998 16:16'!
+indexOfBottomOctavePitch: p
+	"Answer the index of the first pitch in the bottom octave equal to or higher than the given pitch. Assume that the given pitch is below the top pitch of the bottom octave."
+
+	1 to: PitchesForBottomOctave size do: [:i |
+		(PitchesForBottomOctave at: i) >= p ifTrue: [^ i]].
+	self error: 'implementation error: argument pitch should be below or within the bottom octave'.
+! !
+
+!AbstractSound class methodsFor: 'utilities' stamp: 'jm 8/3/1998 16:16'!
+midiKeyForPitch: pitchNameOrNumber
+	"Answer the midiKey closest to the given pitch. Pitch may be a numeric pitch or a pitch name string such as 'c4'."
+	"AbstractSound midiKeyForPitch: 440.0"
+
+	| p octave i midiKey |
+	pitchNameOrNumber isNumber
+		ifTrue: [p _ pitchNameOrNumber asFloat]
+		ifFalse: [p _ AbstractSound pitchForName: pitchNameOrNumber].
+	octave _ -1.
+	[p >= TopOfBottomOctave] whileTrue: [
+		octave _ octave + 1.
+		p _ p / 2.0].
+
+	i _ self indexOfBottomOctavePitch: p.
+	(i > 1) ifTrue: [
+		(p - (PitchesForBottomOctave at: i - 1)) < ((PitchesForBottomOctave at: i) - p)
+			ifTrue: [i _ i - 1]].
+
+	midiKey _ ((octave * 12) + 11 + i).
+	midiKey > 127 ifTrue: [midiKey _ 127].
+	^ midiKey
+! !
+
+!AbstractSound class methodsFor: 'utilities' stamp: 'jm 8/3/1998 16:43'!
+pitchForMIDIKey: midiKey
+	"Answer the pitch for the given MIDI key."
+	"(1 to: 127) collect: [:i | AbstractSound pitchForMIDIKey: i]"
+
+	| indexInOctave octave |
+	indexInOctave _ (midiKey \\ 12) + 1.
+	octave _ (midiKey // 12) + 1.
+	^ (PitchesForBottomOctave at: indexInOctave) *
+		(#(1.0 2.0 4.0 8.0 16.0 32.0 64.0 128.0 256.0 512.0 1024.0) at: octave)
+! !
+
+!AbstractSound class methodsFor: 'utilities' stamp: 'jmv 2/6/2010 20:32'!
+pitchForName: aString
+	"AbstractSound pitchForName: 'c2'"
+	"#(c 'c#' d eb e f fs g 'g#' a bf b) collect: [ :s | AbstractSound pitchForName: s, '4']"
+
+	| s modifier octave i j noteName p |
+	s _ ReadStream on: aString.
+	modifier _ $n.
+	noteName _ s next.
+	(s atEnd not and: [ s peek isDigit ]) ifFalse: [ modifier _ s next ].
+	octave _ s atEnd
+		ifTrue: [ 4 ]
+		ifFalse: [ Integer readFrom: s ].
+	octave < 0 ifTrue: [ self error: 'cannot use negative octave number' ].
+	i _ 'cdefgab' indexOf: noteName.
+	i = 0 ifTrue: [ self error: 'bad note name: ', noteName asString ].
+	i _ #(2 4 6 7 9 11 13) at: i.
+	j _ 's#fb' indexOf: modifier.
+	j = 0 ifFalse: [ i _ i + (#(1 1 -1 -1) at: j) ].  "i is now in range: [1..14]"
+	"Table generator: (1 to: 14) collect: [ :i | 16.3516 * (2.0 raisedTo: (i - 2) asFloat / 12.0)]"
+	p _ #(15.4339 16.3516 17.3239 18.354 19.4454 20.6017 21.8268 23.1247 24.4997 25.9565 27.5 29.1352 30.8677 32.7032) at: i.
+	p _ p * (2.0 raisedToInteger: octave).
+	^ p
+! !
+
+!AbstractSound class methodsFor: 'utilities' stamp: 'jmv 3/13/2012 12:13'!
+pitchTable
+	"AbstractSound pitchTable"
+
+	| out i |
+	out := WriteStream on: (String new: 1000).
+	i := 12.
+	0 to: 8 do: [:octave |
+		#(c 'c#' d eb e f fs g 'g#' a bf b) do: [:noteName | | note |
+			note := noteName, octave printString.
+			out nextPutAll: note; tab.
+			out nextPutAll: i printString; tab.
+			out nextPutAll: (AbstractSound pitchForName: note) printString; newLine.
+			i := i + 1]].
+	^ out contents
 ! !
 
 !AbstractSound class methodsFor: 'examples' stamp: 'jm 6/30/1998 18:40'!
@@ -2986,88 +3135,6 @@ chromaticScaleOn: aSound
 			 collect: [:pitch | Array with: pitch with: 0.5 with: 300])
 ! !
 
-!AbstractSound class methodsFor: 'instance creation' stamp: 'jm 1/5/98 17:40'!
-default
-	"Return a default sound prototype for this class, with envelopes if appropriate. (This is in contrast to new, which returns a raw instance without envelopes.)"
-
-	^ self new
-! !
-
-!AbstractSound class methodsFor: 'utilities' stamp: 'eem 6/11/2008 12:40'!
-dial: aString
-	| s |
-	"AbstractSound dial: '867-5309'" "ask for Jenny"
-
-	s := SequentialSound new.
-	aString do: [ :c | | index lo hi m |
-		c = $,
-			ifTrue: [ s add: (FMSound new setPitch: 1 dur: 1 loudness: 0) ]
-			ifFalse: [
-				(index := ('123A456B789C*0#D' indexOf: c)) > 0
-					ifTrue: [
-						lo := #(697 770 852 941) at: (index - 1 // 4 + 1).
-						hi := #(1209 1336 1477 1633) at: (index - 1 \\ 4 + 1).
-						m := MixedSound new.
-						m add: (FMSound new setPitch: lo dur: 0.15 loudness: 0.5).
-						m add: (FMSound new setPitch: hi dur: 0.15 loudness: 0.5).
-						s add: m.
-						s add: (FMSound new setPitch: 1 dur: 0.05 loudness: 0)]]].
-	^ s play.
-
-! !
-
-!AbstractSound class methodsFor: 'utilities' stamp: 'DSM 9/5/2000 13:49'!
-dialTone: duration
-	"AbstractSound dialTone: 2"
-	| m |
-	m _ MixedSound new.
-	m add: (FMSound new setPitch: 350 dur: duration loudness: 0.5).
-	m add: (FMSound new setPitch: 440 dur: duration loudness: 0.5).
-	m play.
-	^ m! !
-
-!AbstractSound class methodsFor: 'instance creation' stamp: 'jm 12/17/97 17:26'!
-dur: d
-	"Return a rest of the given duration."
-
-	^ self basicNew setDur: d
-! !
-
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 8/19/1998 12:42'!
-fileOutSoundLibrary
-	"File out the current sound library."
-	"AbstractSound fileOutSoundLibrary"
-
-	self fileOutSoundLibrary: Sounds.
-! !
-
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'pb 5/25/2016 01:35'!
-fileOutSoundLibrary: aDictionary
-	"File out the given dictionary, which is assumed to contain sound and instrument objects keyed by their names."
-	"Note: This method is separated out so that one can file out edited sound libraries, as well as the system sound library. To make such a collection, you can inspect AbstractSound sounds and remove the items you don't want. Then do: 'AbstractSound fileOutSoundLibrary: self' from the Dictionary inspector."
-
-	| fileName refStream |
-	(aDictionary isKindOf: Dictionary)
-		ifFalse: [self error: 'arg should be a dictionary of sounds'].
-	fileName _ FillInTheBlankMorph request: 'Sound library file name?'.
-	fileName isEmptyOrNil ifTrue: [^ self].
-	(fileName, '.sounds') asFileEntry writeStreamDo: [ :file |
-		refStream _ SmartRefStream on: file.
-		[ refStream nextPut: aDictionary ]]! !
-
-!AbstractSound class methodsFor: 'utilities' stamp: 'DSM 9/5/2000 13:50'!
-hangUpWarning: count
-	"AbstractSound hangUpWarning: 20"
-	| m s |
-	s _ SequentialSound new.
-	m _ MixedSound new.
-	m	add: (FMSound new setPitch: 1400 dur: 0.1 loudness: 0.5);
-		add: (FMSound new setPitch: 2060 dur: 0.1 loudness: 0.5).
-	s add: m; add: (FMSound new setPitch: 1 dur: 0.1 loudness: 0).
-	^ (RepeatingSound repeat: s count: count) play
-
-! !
-
 !AbstractSound class methodsFor: 'examples' stamp: 'jm 1/5/98 17:36'!
 hiMajorScale
 	"FMSound hiMajorScale play"
@@ -3080,39 +3147,6 @@ hiMajorScaleOn: aSound
 	"FMSound hiMajorScale play"
 
 	^ self majorScaleOn: aSound from: #c6! !
-
-!AbstractSound class methodsFor: 'utilities' stamp: 'jm 8/3/1998 16:16'!
-indexOfBottomOctavePitch: p
-	"Answer the index of the first pitch in the bottom octave equal to or higher than the given pitch. Assume that the given pitch is below the top pitch of the bottom octave."
-
-	1 to: PitchesForBottomOctave size do: [:i |
-		(PitchesForBottomOctave at: i) >= p ifTrue: [^ i]].
-	self error: 'implementation error: argument pitch should be below or within the bottom octave'.
-! !
-
-!AbstractSound class methodsFor: 'sound library' stamp: 'jm 8/14/1998 13:27'!
-initSounds
-	"AbstractSound initSounds"
-
-	Sounds _ Dictionary new.
-	(FMSound class organization listAtCategoryNamed: #instruments)
-		do: [:sel | Sounds at: sel asString put: (FMSound perform: sel)].
-! !
-
-!AbstractSound class methodsFor: 'class initialization' stamp: 'jm 8/3/1998 16:13'!
-initialize
-	"AbstractSound initialize"
- 
-	| bottomC |
-	ScaleFactor _ 2 raisedTo: 15.
-	FloatScaleFactor _ ScaleFactor asFloat.
-	MaxScaledValue _ ((2 raisedTo: 31) // ScaleFactor) - 1.  "magnitude of largest scaled value in 32-bits"
-
-	"generate pitches for c-1 through c0"
-	bottomC _ (440.0 / 32) * (2.0 raisedTo: -9.0 / 12.0).
-	PitchesForBottomOctave _ (0 to: 12) collect: [:i | bottomC * (2.0 raisedTo: i asFloat / 12.0)].
-	TopOfBottomOctave _ PitchesForBottomOctave last.
-! !
 
 !AbstractSound class methodsFor: 'examples' stamp: 'jm 1/5/98 17:36'!
 lowMajorScale
@@ -3197,28 +3231,53 @@ majorScaleOn: aSound from: aPitch octaves: octaveCount
 		from: (pitches collect: [ :pitch | Array with: pitch with: 0.5 with: 300])
 ! !
 
-!AbstractSound class methodsFor: 'utilities' stamp: 'jm 8/3/1998 16:16'!
-midiKeyForPitch: pitchNameOrNumber
-	"Answer the midiKey closest to the given pitch. Pitch may be a numeric pitch or a pitch name string such as 'c4'."
-	"AbstractSound midiKeyForPitch: 440.0"
+!AbstractSound class methodsFor: 'examples' stamp: 'jm 1/5/98 17:32'!
+scaleTest
+	"AbstractSound scaleTest play"
 
-	| p octave i midiKey |
-	pitchNameOrNumber isNumber
-		ifTrue: [p _ pitchNameOrNumber asFloat]
-		ifFalse: [p _ AbstractSound pitchForName: pitchNameOrNumber].
-	octave _ -1.
-	[p >= TopOfBottomOctave] whileTrue: [
-		octave _ octave + 1.
-		p _ p / 2.0].
+	^ MixedSound new
+		add: FMSound majorScale pan: 0;
+		add: (PluckedSound lowMajorScale delayedBy: 0.5) pan: 1.0.
+! !
 
-	i _ self indexOfBottomOctavePitch: p.
-	(i > 1) ifTrue: [
-		(p - (PitchesForBottomOctave at: i - 1)) < ((PitchesForBottomOctave at: i) - p)
-			ifTrue: [i _ i - 1]].
+!AbstractSound class methodsFor: 'examples' stamp: 'jmv 1/14/2013 21:11'!
+testFMInteractively
+	"Experiment with different settings of the FM modulation and multiplier settings interactively by moving the mouse. The top-left corner of the screen is 0 for both parameters. Stop when the mouse is pressed."
+	"AbstractSound testFMInteractively"
 
-	midiKey _ ((octave * 12) + 11 + i).
-	midiKey > 127 ifTrue: [midiKey _ 127].
-	^ midiKey
+	| s mousePt lastVal status mod ratio |
+	SoundPlayer startPlayerProcessBufferSize: 1100 rate: 11025 stereo: false.
+	s _ FMSound pitch: 440.0 dur: 200.0 loudness: 0.2.
+
+	SoundPlayer playSound: s.
+	lastVal _ nil.
+	[Sensor isAnyButtonPressed] whileFalse: [
+		mousePt _ Sensor mousePoint.
+		mousePt ~= lastVal ifTrue: [
+			mod _ mousePt x asFloat / 20.0.
+			ratio _ mousePt y asFloat / 20.0.
+			s modulation: mod ratio: ratio.
+			lastVal _ mousePt.
+			status _
+'mod: ', mod printString, '
+ratio: ', ratio printString.
+			status displayOn: Display at: 10@10]].
+
+	SoundPlayer shutDown.
+! !
+
+!AbstractSound class methodsFor: 'instance creation' stamp: 'jm 1/5/98 17:40'!
+default
+	"Return a default sound prototype for this class, with envelopes if appropriate. (This is in contrast to new, which returns a raw instance without envelopes.)"
+
+	^ self new
+! !
+
+!AbstractSound class methodsFor: 'instance creation' stamp: 'jm 12/17/97 17:26'!
+dur: d
+	"Return a rest of the given duration."
+
+	^ self basicNew setDur: d
 ! !
 
 !AbstractSound class methodsFor: 'instance creation' stamp: 'eem 6/11/2008 12:41'!
@@ -3248,73 +3307,103 @@ pitch: p dur: d loudness: l
 	^ self new setPitch: p dur: d loudness: l
 ! !
 
-!AbstractSound class methodsFor: 'utilities' stamp: 'jm 8/3/1998 16:43'!
-pitchForMIDIKey: midiKey
-	"Answer the pitch for the given MIDI key."
-	"(1 to: 127) collect: [:i | AbstractSound pitchForMIDIKey: i]"
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 8/19/1998 12:42'!
+fileOutSoundLibrary
+	"File out the current sound library."
+	"AbstractSound fileOutSoundLibrary"
 
-	| indexInOctave octave |
-	indexInOctave _ (midiKey \\ 12) + 1.
-	octave _ (midiKey // 12) + 1.
-	^ (PitchesForBottomOctave at: indexInOctave) *
-		(#(1.0 2.0 4.0 8.0 16.0 32.0 64.0 128.0 256.0 512.0 1024.0) at: octave)
+	self fileOutSoundLibrary: Sounds.
 ! !
 
-!AbstractSound class methodsFor: 'utilities' stamp: 'jmv 2/6/2010 20:32'!
-pitchForName: aString
-	"AbstractSound pitchForName: 'c2'"
-	"#(c 'c#' d eb e f fs g 'g#' a bf b) collect: [ :s | AbstractSound pitchForName: s, '4']"
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'pb 5/25/2016 01:35'!
+fileOutSoundLibrary: aDictionary
+	"File out the given dictionary, which is assumed to contain sound and instrument objects keyed by their names."
+	"Note: This method is separated out so that one can file out edited sound libraries, as well as the system sound library. To make such a collection, you can inspect AbstractSound sounds and remove the items you don't want. Then do: 'AbstractSound fileOutSoundLibrary: self' from the Dictionary inspector."
 
-	| s modifier octave i j noteName p |
-	s _ ReadStream on: aString.
-	modifier _ $n.
-	noteName _ s next.
-	(s atEnd not and: [ s peek isDigit ]) ifFalse: [ modifier _ s next ].
-	octave _ s atEnd
-		ifTrue: [ 4 ]
-		ifFalse: [ Integer readFrom: s ].
-	octave < 0 ifTrue: [ self error: 'cannot use negative octave number' ].
-	i _ 'cdefgab' indexOf: noteName.
-	i = 0 ifTrue: [ self error: 'bad note name: ', noteName asString ].
-	i _ #(2 4 6 7 9 11 13) at: i.
-	j _ 's#fb' indexOf: modifier.
-	j = 0 ifFalse: [ i _ i + (#(1 1 -1 -1) at: j) ].  "i is now in range: [1..14]"
-	"Table generator: (1 to: 14) collect: [ :i | 16.3516 * (2.0 raisedTo: (i - 2) asFloat / 12.0)]"
-	p _ #(15.4339 16.3516 17.3239 18.354 19.4454 20.6017 21.8268 23.1247 24.4997 25.9565 27.5 29.1352 30.8677 32.7032) at: i.
-	p _ p * (2.0 raisedToInteger: octave).
-	^ p
+	| fileName refStream |
+	(aDictionary isKindOf: Dictionary)
+		ifFalse: [self error: 'arg should be a dictionary of sounds'].
+	fileName _ FillInTheBlankMorph request: 'Sound library file name?'.
+	fileName isEmptyOrNil ifTrue: [^ self].
+	(fileName, '.sounds') asFileEntry writeStreamDo: [ :file |
+		refStream _ SmartRefStream on: file.
+		[ refStream nextPut: aDictionary ]]! !
+
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 9/12/1998 21:35'!
+storeFiledInSound: snd named: sndName
+	"Store the given sound in the sound library. Use the given name if it isn't in use, otherwise ask the user what to do."
+
+	| menu choice i |
+	(Sounds includesKey: sndName) ifFalse: [  "no name clash"
+		Sounds at: sndName put: snd.
+		^ self].
+
+	(Sounds at: sndName) == UnloadedSnd ifTrue: [
+		"re-loading a sound that was unloaded to save space"
+		Sounds at: sndName put: snd.
+		^ self].
+
+	"the given sound name is already used"
+	menu _ SelectionMenu selections:
+		#('replace the existing sound' 'rename the new sound' 'skip it').
+	choice _ menu startUpWithCaption:
+		'"', sndName, '" has the same name as an existing sound'.
+	(choice beginsWith: 'replace') ifTrue: [
+		Sounds at: sndName put: snd.
+		^ self].
+	(choice beginsWith: 'rename') ifTrue: [
+		i _ 2.
+		[Sounds includesKey: (sndName, ' v', i printString)] whileTrue: [i _ i + 1].
+		Sounds at: (sndName, ' v', i printString) put: snd].
 ! !
 
-!AbstractSound class methodsFor: 'utilities' stamp: 'jmv 3/13/2012 12:13'!
-pitchTable
-	"AbstractSound pitchTable"
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 1/16/2011 23:57'!
+unloadSampledTimbres
+	"This can be done to unload those bulky sampled timbres to shrink the image. The unloaded sounds are replaced by a well-known 'unloaded sound' object to enable the unloaded sounds to be detected when the process is reversed."
+	"AbstractSound unloadSampledTimbres"
 
-	| out i |
-	out := WriteStream on: (String new: 1000).
-	i := 12.
-	0 to: 8 do: [:octave |
-		#(c 'c#' d eb e f fs g 'g#' a bf b) do: [:noteName | | note |
-			note := noteName, octave printString.
-			out nextPutAll: note; tab.
-			out nextPutAll: i printString; tab.
-			out nextPutAll: (AbstractSound pitchForName: note) printString; newLine.
-			i := i + 1]].
-	^ out contents
+	Sounds keys do: [:soundName |
+		(((Sounds at: soundName) isKindOf: SampledInstrument) or:
+		 [(Sounds at: soundName) isKindOf: LoopedSampledSound]) ifTrue: [
+			Sounds at: soundName put: self unloadedSound]].
+	self updateScorePlayers.
+	Smalltalk garbageCollect! !
+
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 9/11/1998 16:47'!
+unloadSoundNamed: soundName
+
+	(Sounds includesKey: soundName) ifTrue: [
+		Sounds at: soundName put: self unloadedSound].
+	self updateScorePlayers.
 ! !
 
-!AbstractSound class methodsFor: 'class initialization' stamp: 'jm 1/5/98 13:51'!
-scaleFactor
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 9/12/1998 21:48'!
+unloadedSound
+	"Answer a sound to be used as the place-holder for sounds that have been unloaded."
 
-	^ ScaleFactor
+	UnloadedSnd ifNil: [UnloadedSnd _ UnloadedSound default copy].
+	^ UnloadedSnd
 ! !
 
-!AbstractSound class methodsFor: 'examples' stamp: 'jm 1/5/98 17:32'!
-scaleTest
-	"AbstractSound scaleTest play"
+!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 4/1/2009 21:39'!
+updateScorePlayers
+	"Force all ScorePlayers to update their instrument list from the sound library. This may done after loading, unloading, or replacing a sound to make all ScorePlayers feel the change."
 
-	^ MixedSound new
-		add: FMSound majorScale pan: 0;
-		add: (PluckedSound lowMajorScale delayedBy: 0.5) pan: 1.0.
+	| soundsBeingEdited |
+	ScorePlayer allSubInstancesDo: [:p | p pause].
+	SoundPlayer shutDown.
+"	soundsBeingEdited := EnvelopeEditorMorph allSubInstances 
+				collect: [:ed | ed soundBeingEdited].
+	ScorePlayerMorph 
+		allSubInstancesDo: [:p | p updateInstrumentsFromLibraryExcept: soundsBeingEdited]"! !
+
+!AbstractSound class methodsFor: 'sound library' stamp: 'jm 8/14/1998 13:27'!
+initSounds
+	"AbstractSound initSounds"
+
+	Sounds _ Dictionary new.
+	(FMSound class organization listAtCategoryNamed: #instruments)
+		do: [:sel | Sounds at: sel asString put: (FMSound perform: sel)].
 ! !
 
 !AbstractSound class methodsFor: 'sound library' stamp: 'jm 8/14/1998 13:25'!
@@ -3347,73 +3436,37 @@ sounds
 	^ Sounds
 ! !
 
-!AbstractSound class methodsFor: 'examples-bach fugue' stamp: 'jm 1/5/98 17:45'!
-stereoBachFugue
-	"Play fugue by J. S. Bach in stereo using different timbres."
-	"AbstractSound stereoBachFugue play"
+!AbstractSound class methodsFor: 'sound library' stamp: 'jmv 3/2/2010 09:00'!
+updateFMSounds
+	"AbstractSound updateFMSounds"
 
-	"(AbstractSound bachFugueVoice1On: FMSound flute1) play"
-	"(AbstractSound bachFugueVoice1On: PluckedSound default) play"
+	Sounds keys do: [:k |
+		((Sounds at: k) isKindOf: FMSound) ifTrue: [
+			Sounds removeKey: k ifAbsent: nil]].
 
-	^ MixedSound new
-		add: (self bachFugueVoice1On: FMSound oboe1) pan: 0.2;
-		add: (self bachFugueVoice2On: FMSound organ1) pan: 0.8;
-		add: (self bachFugueVoice3On: PluckedSound default) pan: 0.4;
-		add: (self bachFugueVoice4On: FMSound brass1) pan: 0.6.
+	(FMSound class organization listAtCategoryNamed: #instruments) do:
+		[:sel | Sounds at: sel asString put: (FMSound perform: sel)].
 ! !
 
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 9/12/1998 21:35'!
-storeFiledInSound: snd named: sndName
-	"Store the given sound in the sound library. Use the given name if it isn't in use, otherwise ask the user what to do."
+!AbstractSound class methodsFor: 'class initialization' stamp: 'jm 8/3/1998 16:13'!
+initialize
+	"AbstractSound initialize"
+ 
+	| bottomC |
+	ScaleFactor _ 2 raisedTo: 15.
+	FloatScaleFactor _ ScaleFactor asFloat.
+	MaxScaledValue _ ((2 raisedTo: 31) // ScaleFactor) - 1.  "magnitude of largest scaled value in 32-bits"
 
-	| menu choice i |
-	(Sounds includesKey: sndName) ifFalse: [  "no name clash"
-		Sounds at: sndName put: snd.
-		^ self].
-
-	(Sounds at: sndName) == UnloadedSnd ifTrue: [
-		"re-loading a sound that was unloaded to save space"
-		Sounds at: sndName put: snd.
-		^ self].
-
-	"the given sound name is already used"
-	menu _ SelectionMenu selections:
-		#('replace the existing sound' 'rename the new sound' 'skip it').
-	choice _ menu startUpWithCaption:
-		'"', sndName, '" has the same name as an existing sound'.
-	(choice beginsWith: 'replace') ifTrue: [
-		Sounds at: sndName put: snd.
-		^ self].
-	(choice beginsWith: 'rename') ifTrue: [
-		i _ 2.
-		[Sounds includesKey: (sndName, ' v', i printString)] whileTrue: [i _ i + 1].
-		Sounds at: (sndName, ' v', i printString) put: snd].
+	"generate pitches for c-1 through c0"
+	bottomC _ (440.0 / 32) * (2.0 raisedTo: -9.0 / 12.0).
+	PitchesForBottomOctave _ (0 to: 12) collect: [:i | bottomC * (2.0 raisedTo: i asFloat / 12.0)].
+	TopOfBottomOctave _ PitchesForBottomOctave last.
 ! !
 
-!AbstractSound class methodsFor: 'examples' stamp: 'jmv 1/14/2013 21:11'!
-testFMInteractively
-	"Experiment with different settings of the FM modulation and multiplier settings interactively by moving the mouse. The top-left corner of the screen is 0 for both parameters. Stop when the mouse is pressed."
-	"AbstractSound testFMInteractively"
+!AbstractSound class methodsFor: 'class initialization' stamp: 'jm 1/5/98 13:51'!
+scaleFactor
 
-	| s mousePt lastVal status mod ratio |
-	SoundPlayer startPlayerProcessBufferSize: 1100 rate: 11025 stereo: false.
-	s _ FMSound pitch: 440.0 dur: 200.0 loudness: 0.2.
-
-	SoundPlayer playSound: s.
-	lastVal _ nil.
-	[Sensor isAnyButtonPressed] whileFalse: [
-		mousePt _ Sensor mousePoint.
-		mousePt ~= lastVal ifTrue: [
-			mod _ mousePt x asFloat / 20.0.
-			ratio _ mousePt y asFloat / 20.0.
-			s modulation: mod ratio: ratio.
-			lastVal _ mousePt.
-			status _
-'mod: ', mod printString, '
-ratio: ', ratio printString.
-			status displayOn: Display at: 10@10]].
-
-	SoundPlayer shutDown.
+	^ ScaleFactor
 ! !
 
 !AbstractSound class methodsFor: 'primitive generation' stamp: 'ar 2/3/2001 15:30'!
@@ -3427,58 +3480,6 @@ translatedPrimitives
 	).
 ! !
 
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 1/16/2011 23:57'!
-unloadSampledTimbres
-	"This can be done to unload those bulky sampled timbres to shrink the image. The unloaded sounds are replaced by a well-known 'unloaded sound' object to enable the unloaded sounds to be detected when the process is reversed."
-	"AbstractSound unloadSampledTimbres"
-
-	Sounds keys do: [:soundName |
-		(((Sounds at: soundName) isKindOf: SampledInstrument) or:
-		 [(Sounds at: soundName) isKindOf: LoopedSampledSound]) ifTrue: [
-			Sounds at: soundName put: self unloadedSound]].
-	self updateScorePlayers.
-	Smalltalk garbageCollect! !
-
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 9/11/1998 16:47'!
-unloadSoundNamed: soundName
-
-	(Sounds includesKey: soundName) ifTrue: [
-		Sounds at: soundName put: self unloadedSound].
-	self updateScorePlayers.
-! !
-
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jm 9/12/1998 21:48'!
-unloadedSound
-	"Answer a sound to be used as the place-holder for sounds that have been unloaded."
-
-	UnloadedSnd ifNil: [UnloadedSnd _ UnloadedSound default copy].
-	^ UnloadedSnd
-! !
-
-!AbstractSound class methodsFor: 'sound library' stamp: 'jmv 3/2/2010 09:00'!
-updateFMSounds
-	"AbstractSound updateFMSounds"
-
-	Sounds keys do: [:k |
-		((Sounds at: k) isKindOf: FMSound) ifTrue: [
-			Sounds removeKey: k ifAbsent: nil]].
-
-	(FMSound class organization listAtCategoryNamed: #instruments) do:
-		[:sel | Sounds at: sel asString put: (FMSound perform: sel)].
-! !
-
-!AbstractSound class methodsFor: 'sound library-file in/out' stamp: 'jmv 4/1/2009 21:39'!
-updateScorePlayers
-	"Force all ScorePlayers to update their instrument list from the sound library. This may done after loading, unloading, or replacing a sound to make all ScorePlayers feel the change."
-
-	| soundsBeingEdited |
-	ScorePlayer allSubInstancesDo: [:p | p pause].
-	SoundPlayer shutDown.
-"	soundsBeingEdited := EnvelopeEditorMorph allSubInstances 
-				collect: [:ed | ed soundBeingEdited].
-	ScorePlayerMorph 
-		allSubInstancesDo: [:p | p updateInstrumentsFromLibraryExcept: soundsBeingEdited]"! !
-
 !FMSound methodsFor: 'accessing' stamp: 'jm 3/26/98 10:45'!
 duration
 
@@ -3490,15 +3491,6 @@ duration: seconds
 
 	super duration: seconds.
 	count _ initialCount _ (seconds * self samplingRate) rounded.
-! !
-
-!FMSound methodsFor: 'initialization' stamp: 'jm 7/5/1998 11:44'!
-initialize
-
-	super initialize.
-	waveTable _ SineTable.
-	scaledWaveTableSize _ waveTable size * ScaleFactor.
-	self setPitch: 440.0 dur: 1.0 loudness: 0.2.
 ! !
 
 !FMSound methodsFor: 'accessing' stamp: 'jm 2/4/98 07:44'!
@@ -3518,56 +3510,6 @@ internalizeModulationAndRatio
 	scaledOffsetIndexIncr > (scaledWaveTableSize // 2) ifTrue: [
 		scaledOffsetIndexIncr _ scaledWaveTableSize // 2.
 		multiplier _ scaledOffsetIndexIncr asFloat / scaledIndexIncr].
-! !
-
-!FMSound methodsFor: 'sound generation' stamp: 'ar 2/3/2001 15:22'!
-mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
-	"Play samples from a wave table by stepping a fixed amount through the table on every sample. The table index and increment are scaled to allow fractional increments for greater pitch accuracy."
-	"(FMSound pitch: 440.0 dur: 1.0 loudness: 0.5) play"
-
-	| doingFM lastIndex sample offset i s |
-	<primitive:'primitiveMixFMSound' module:'SoundGenerationPlugin'>
-	self var: #aSoundBuffer declareC: 'short int *aSoundBuffer'.
-	self var: #waveTable declareC: 'short int *waveTable'.
-
-	doingFM _ (normalizedModulation ~= 0) and: [scaledOffsetIndexIncr ~= 0].
-	lastIndex _ (startIndex + n) - 1.
-	startIndex to: lastIndex do: [:sliceIndex |
-		sample _ (scaledVol * (waveTable at: (scaledIndex // ScaleFactor) + 1)) // ScaleFactor.
-		doingFM
-			ifTrue: [
-				offset _ normalizedModulation * (waveTable at: (scaledOffsetIndex // ScaleFactor) + 1).
-				scaledOffsetIndex _ (scaledOffsetIndex + scaledOffsetIndexIncr) \\ scaledWaveTableSize.
-				scaledOffsetIndex < 0
-					ifTrue: [scaledOffsetIndex _ scaledOffsetIndex + scaledWaveTableSize].
-				scaledIndex _ (scaledIndex + scaledIndexIncr + offset) \\ scaledWaveTableSize.
-				scaledIndex < 0
-					ifTrue: [scaledIndex _ scaledIndex + scaledWaveTableSize]]
-			ifFalse: [
-				scaledIndex _ (scaledIndex + scaledIndexIncr) \\ scaledWaveTableSize].
-
-		leftVol > 0 ifTrue: [
-			i _ (2 * sliceIndex) - 1.
-			s _ (aSoundBuffer at: i) + ((sample * leftVol) // ScaleFactor).
-			s >  32767 ifTrue: [s _  32767].  "clipping!!"
-			s < -32767 ifTrue: [s _ -32767].  "clipping!!"
-			aSoundBuffer at: i put: s].
-		rightVol > 0 ifTrue: [
-			i _ 2 * sliceIndex.
-			s _ (aSoundBuffer at: i) + ((sample * rightVol) // ScaleFactor).
-			s >  32767 ifTrue: [s _  32767].  "clipping!!"
-			s < -32767 ifTrue: [s _ -32767].  "clipping!!"
-			aSoundBuffer at: i put: s].
-
-		scaledVolIncr ~= 0 ifTrue: [
-			scaledVol _ scaledVol + scaledVolIncr.
-			((scaledVolIncr > 0 and: [scaledVol >= scaledVolLimit]) or:
-			 [scaledVolIncr < 0 and: [scaledVol <= scaledVolLimit]])
-				ifTrue: [  "reached the limit; stop incrementing"
-					scaledVol _ scaledVolLimit.
-					scaledVolIncr _ 0]]].
-
-	count _ count - n.
 ! !
 
 !FMSound methodsFor: 'accessing' stamp: 'jm 2/4/98 07:15'!
@@ -3637,20 +3579,13 @@ ratio: freqRatio
 	multiplier _ freqRatio asFloat.
 ! !
 
-!FMSound methodsFor: 'sound generation' stamp: 'jm 2/4/98 20:12'!
-reset
+!FMSound methodsFor: 'initialization' stamp: 'jm 7/5/1998 11:44'!
+initialize
 
-	self internalizeModulationAndRatio.
-	super reset.
-	count _ initialCount.
-	scaledIndex _ 0.
-	scaledOffsetIndex _ 0.
-! !
-
-!FMSound methodsFor: 'sound generation' stamp: 'jm 12/8/97 19:34'!
-samplesRemaining
-
-	^ count
+	super initialize.
+	waveTable _ SineTable.
+	scaledWaveTableSize _ waveTable size * ScaleFactor.
+	self setPitch: 440.0 dur: 1.0 loudness: 0.2.
 ! !
 
 !FMSound methodsFor: 'initialization' stamp: 'jm 7/6/1998 17:08'!
@@ -3680,6 +3615,72 @@ setWavetable: anArray
 	waveTable _ samples.
 	scaledWaveTableSize _ waveTable size * ScaleFactor.
 	self setPitch: p dur: dur loudness: vol.
+! !
+
+!FMSound methodsFor: 'sound generation' stamp: 'ar 2/3/2001 15:22'!
+mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
+	"Play samples from a wave table by stepping a fixed amount through the table on every sample. The table index and increment are scaled to allow fractional increments for greater pitch accuracy."
+	"(FMSound pitch: 440.0 dur: 1.0 loudness: 0.5) play"
+
+	| doingFM lastIndex sample offset i s |
+	<primitive:'primitiveMixFMSound' module:'SoundGenerationPlugin'>
+	self var: #aSoundBuffer declareC: 'short int *aSoundBuffer'.
+	self var: #waveTable declareC: 'short int *waveTable'.
+
+	doingFM _ (normalizedModulation ~= 0) and: [scaledOffsetIndexIncr ~= 0].
+	lastIndex _ (startIndex + n) - 1.
+	startIndex to: lastIndex do: [:sliceIndex |
+		sample _ (scaledVol * (waveTable at: (scaledIndex // ScaleFactor) + 1)) // ScaleFactor.
+		doingFM
+			ifTrue: [
+				offset _ normalizedModulation * (waveTable at: (scaledOffsetIndex // ScaleFactor) + 1).
+				scaledOffsetIndex _ (scaledOffsetIndex + scaledOffsetIndexIncr) \\ scaledWaveTableSize.
+				scaledOffsetIndex < 0
+					ifTrue: [scaledOffsetIndex _ scaledOffsetIndex + scaledWaveTableSize].
+				scaledIndex _ (scaledIndex + scaledIndexIncr + offset) \\ scaledWaveTableSize.
+				scaledIndex < 0
+					ifTrue: [scaledIndex _ scaledIndex + scaledWaveTableSize]]
+			ifFalse: [
+				scaledIndex _ (scaledIndex + scaledIndexIncr) \\ scaledWaveTableSize].
+
+		leftVol > 0 ifTrue: [
+			i _ (2 * sliceIndex) - 1.
+			s _ (aSoundBuffer at: i) + ((sample * leftVol) // ScaleFactor).
+			s >  32767 ifTrue: [s _  32767].  "clipping!!"
+			s < -32767 ifTrue: [s _ -32767].  "clipping!!"
+			aSoundBuffer at: i put: s].
+		rightVol > 0 ifTrue: [
+			i _ 2 * sliceIndex.
+			s _ (aSoundBuffer at: i) + ((sample * rightVol) // ScaleFactor).
+			s >  32767 ifTrue: [s _  32767].  "clipping!!"
+			s < -32767 ifTrue: [s _ -32767].  "clipping!!"
+			aSoundBuffer at: i put: s].
+
+		scaledVolIncr ~= 0 ifTrue: [
+			scaledVol _ scaledVol + scaledVolIncr.
+			((scaledVolIncr > 0 and: [scaledVol >= scaledVolLimit]) or:
+			 [scaledVolIncr < 0 and: [scaledVol <= scaledVolLimit]])
+				ifTrue: [  "reached the limit; stop incrementing"
+					scaledVol _ scaledVolLimit.
+					scaledVolIncr _ 0]]].
+
+	count _ count - n.
+! !
+
+!FMSound methodsFor: 'sound generation' stamp: 'jm 2/4/98 20:12'!
+reset
+
+	self internalizeModulationAndRatio.
+	super reset.
+	count _ initialCount.
+	scaledIndex _ 0.
+	scaledOffsetIndex _ 0.
+! !
+
+!FMSound methodsFor: 'sound generation' stamp: 'jm 12/8/97 19:34'!
+samplesRemaining
+
+	^ count
 ! !
 
 !FMSound methodsFor: 'sound generation' stamp: 'jm 9/9/1998 21:55'!
@@ -3854,20 +3855,6 @@ flute2
 	^ snd setPitch: 440.0 dur: 1.0 loudness: 0.5
 ! !
 
-!FMSound class methodsFor: 'class initialization' stamp: 'jm 7/6/1998 10:26'!
-initialize
-	"Build a sine wave table."
-	"FMSound initialize"
-
-	| tableSize radiansPerStep peak |
-	tableSize _ 4000.
-	SineTable _ SoundBuffer newMonoSampleCount: tableSize.
-	radiansPerStep _ (2.0 * Float pi) / tableSize asFloat.
-	peak _ ((1 bitShift: 15) - 1) asFloat.  "range is +/- (2^15 - 1)"
-	1 to: tableSize do: [:i |
-		SineTable at: i put: (peak * (radiansPerStep * (i - 1)) sin) rounded].
-! !
-
 !FMSound class methodsFor: 'instruments' stamp: 'jm 9/2/1999 13:32'!
 marimba
 	"FMSound marimba play"
@@ -4000,6 +3987,20 @@ randomWeird2
 	^ snd setPitch: (150 + 2000 atRandom) dur: 2.0 loudness: 0.5
 ! !
 
+!FMSound class methodsFor: 'class initialization' stamp: 'jm 7/6/1998 10:26'!
+initialize
+	"Build a sine wave table."
+	"FMSound initialize"
+
+	| tableSize radiansPerStep peak |
+	tableSize _ 4000.
+	SineTable _ SoundBuffer newMonoSampleCount: tableSize.
+	radiansPerStep _ (2.0 * Float pi) / tableSize asFloat.
+	peak _ ((1 bitShift: 15) - 1) asFloat.  "range is +/- (2^15 - 1)"
+	1 to: tableSize do: [:i |
+		SineTable at: i put: (peak * (radiansPerStep * (i - 1)) sin) rounded].
+! !
+
 !FMSound class methodsFor: 'class initialization' stamp: 'jm 7/5/1998 14:22'!
 sineTable
 	"Answer a SoundBuffer containing one complete cycle of a sine wave."
@@ -4074,26 +4075,6 @@ addReleaseEnvelope
 	self addEnvelope: env.
 ! !
 
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 5/31/1999 14:09'!
-beUnlooped
-
-	scaledLoopLength _ 0.
-! !
-
-!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 4/8/1999 12:45'!
-comeFullyUpOnReload: smartRefStream
-	"Convert my sample buffers from ByteArrays into SampleBuffers after raw loading from a DataStream. Answer myself."
-
-	leftSamples == rightSamples
-		ifTrue: [
-			leftSamples _ SoundBuffer fromByteArray: self leftSamples.
-			rightSamples _ leftSamples]
-		ifFalse: [
-			leftSamples _ SoundBuffer fromByteArray: self leftSamples.
-			rightSamples _ SoundBuffer fromByteArray: self rightSamples].
-
-! !
-
 !LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 8/18/1998 11:48'!
 computeSampleCountForRelease
 	"Calculate the number of samples before the end of the note after which looping back will be be disabled. The units of this value, sampleCountForRelease, are samples at the original sampling rate. When playing a specific note, this value is converted to releaseCount, which is number of samples to be computed at the current pitch and sampling rate."
@@ -4106,65 +4087,6 @@ computeSampleCountForRelease
 		ifFalse: [sampleCountForRelease _ 0].
 
 	releaseCount _ sampleCountForRelease.
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 07:26'!
-duration
-	"Answer the duration of this sound in seconds."
-
-	^ initialCount asFloat / self samplingRate asFloat
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 9/11/1998 15:36'!
-duration: seconds
-
-	super duration: seconds.
-	count _ initialCount _ (seconds * self samplingRate) rounded.
-! !
-
-!LoopedSampledSound methodsFor: 'other' stamp: 'jm 5/29/1999 18:56'!
-findStartPointAfter: index
-	"Answer the index of the last zero crossing sample before the given index."
-
-	| i |
-	i _ index min: lastSample.
-
-	"scan backwards to the last zero-crossing"
-	(leftSamples at: i) > 0
-		ifTrue: [
-			[i > 1 and: [(leftSamples at: i) > 0]] whileTrue: [i _ i - 1]]
-		ifFalse: [
-			[i > 1 and: [(leftSamples at: i) < 0]] whileTrue: [i _ i - 1]].
-	^ i
-! !
-
-!LoopedSampledSound methodsFor: 'other' stamp: 'jm 8/18/1998 09:29'!
-findStartPointForThreshold: threshold
-	"Answer the index of the last zero crossing sample before the first sample whose absolute value (in either the right or left channel) exceeds the given threshold."
-
-	| i |
-	i _ self indexOfFirstPointOverThreshold: threshold.
-	i >= lastSample ifTrue: [^ self error: 'no sample exceeds the given threshold'].
-
-	"scan backwards to the last zero-crossing"
-	(leftSamples at: i) > 0
-		ifTrue: [
-			[i > 1 and: [(leftSamples at: i) > 0]] whileTrue: [i _ i - 1]]
-		ifFalse: [
-			[i > 1 and: [(leftSamples at: i) < 0]] whileTrue: [i _ i - 1]].
-	^ i
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 07:25'!
-firstSample
-
-	^ firstSample
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 07:25'!
-firstSample: aNumber
-
-	firstSample _ (aNumber asInteger max: 1) min: lastSample.
 ! !
 
 !LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 5/5/1999 20:59'!
@@ -4226,40 +4148,6 @@ fromAIFFFileReader: aiffFileReader mergeIfStereo: mergeFlag
 	self addReleaseEnvelope.
 ! !
 
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/3/1998 18:52'!
-gain
-
-	^ gain
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/3/1998 18:52'!
-gain: aNumber
-
-	gain _ aNumber asFloat.
-! !
-
-!LoopedSampledSound methodsFor: 'other' stamp: 'jm 8/17/1998 09:22'!
-indexOfFirstPointOverThreshold: threshold
-	"Answer the index of the first sample whose absolute value exceeds the given threshold."
-
-	| s |
-	leftSamples == rightSamples
-		ifTrue: [
-			1 to: lastSample do: [:i |
-				s _ leftSamples at: i.
-				s < 0 ifTrue: [s _ 0 - s].
-				s > threshold ifTrue: [^ i]]]
-		ifFalse: [
-			1 to: lastSample do: [:i |
-				s _ leftSamples at: i.
-				s < 0 ifTrue: [s _ 0 - s].
-				s > threshold ifTrue: [^ i].
-				s _ rightSamples at: i.
-				s < 0 ifTrue: [s _ 0 - s].
-				s > threshold ifTrue: [^ i]]].
-	^ lastSample + 1
-! !
-
 !LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 8/18/1998 07:43'!
 initialize
 	"This default initialization creates a loop consisting of a single cycle of a sine wave."
@@ -4275,6 +4163,108 @@ initialize
 		samplingRate: samples size.
 	self addReleaseEnvelope.
 	self setPitch: 440.0 dur: 1.0 loudness: 0.5.
+! !
+
+!LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 7/9/1999 22:28'!
+samples: aSoundBuffer loopEnd: loopEndIndex loopLength: loopSampleCount pitch: perceivedPitchInHz samplingRate: samplingRateInHz
+	"Make this sound use the given samples array with a loop of the given length starting at the given index. The loop length may have a fractional part; this is necessary to achieve pitch accuracy for short loops."
+
+	| loopStartIndex |
+	super initialize.
+	loopStartIndex _ (loopEndIndex - loopSampleCount) truncated + 1.
+	((1 <= loopStartIndex) and:
+	 [loopStartIndex < loopEndIndex and:
+	 [loopEndIndex <= aSoundBuffer size]])
+		ifFalse: [self error: 'bad loop parameters'].
+
+	leftSamples _ rightSamples _ aSoundBuffer.
+	originalSamplingRate _ samplingRateInHz asFloat.
+	perceivedPitch _ perceivedPitchInHz asFloat.
+	gain _ 1.0.
+	firstSample _ 1.
+	lastSample _ leftSamples size.
+	lastSample >= (SmallInteger maxVal // LoopIndexScaleFactor) ifTrue: [
+		self error: 'cannot handle more than ',
+			(SmallInteger maxVal // LoopIndexScaleFactor) printString, ' samples'].
+	loopEnd _ loopEndIndex.
+	scaledLoopLength _ (loopSampleCount * LoopIndexScaleFactor) asInteger.
+	scaledIndexIncr _ (samplingRateInHz * LoopIndexScaleFactor) // self samplingRate.
+	self computeSampleCountForRelease.
+! !
+
+!LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 7/6/1998 17:09'!
+setPitch: pitchNameOrNumber dur: d loudness: vol
+	"(LoopedSampledSound pitch: 440.0 dur: 2.5 loudness: 0.4) play"
+
+	super setPitch: pitchNameOrNumber dur: d loudness: vol.
+	self pitch: (self nameOrNumberToPitch: pitchNameOrNumber).
+	self reset.
+! !
+
+!LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 7/9/1999 22:28'!
+unloopedSamples: aSoundBuffer pitch: perceivedPitchInHz samplingRate: samplingRateInHz
+	"Make this sound play the given samples unlooped. The samples have the given perceived pitch when played at the given sampling rate. By convention, unpitched sounds such as percussion sounds should specify a pitch of nil or 100 Hz."
+
+	super initialize.
+	leftSamples _ rightSamples _ aSoundBuffer.
+	originalSamplingRate _ samplingRateInHz asFloat.
+	perceivedPitchInHz
+		ifNil: [perceivedPitch _ 100.0]
+		ifNotNil: [perceivedPitch _ perceivedPitchInHz asFloat].
+	gain _ 1.0.
+	firstSample _ 1.
+	lastSample _ leftSamples size.
+	lastSample >= (SmallInteger maxVal // LoopIndexScaleFactor) ifTrue: [
+		self error: 'cannot handle more than ',
+			(SmallInteger maxVal // LoopIndexScaleFactor) printString, ' samples'].
+	loopEnd _ leftSamples size.
+	scaledLoopLength _ 0.  "zero length means unlooped"
+	scaledIndexIncr _ (samplingRateInHz * LoopIndexScaleFactor) // self samplingRate.
+	self computeSampleCountForRelease.
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 5/31/1999 14:09'!
+beUnlooped
+
+	scaledLoopLength _ 0.
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 07:26'!
+duration
+	"Answer the duration of this sound in seconds."
+
+	^ initialCount asFloat / self samplingRate asFloat
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 9/11/1998 15:36'!
+duration: seconds
+
+	super duration: seconds.
+	count _ initialCount _ (seconds * self samplingRate) rounded.
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 07:25'!
+firstSample
+
+	^ firstSample
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 07:25'!
+firstSample: aNumber
+
+	firstSample _ (aNumber asInteger max: 1) min: lastSample.
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/3/1998 18:52'!
+gain
+
+	^ gain
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/3/1998 18:52'!
+gain: aNumber
+
+	gain _ aNumber asFloat.
 ! !
 
 !LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 07:26'!
@@ -4311,6 +4301,135 @@ loopEnd
 loopLength
 
 	^ scaledLoopLength / FloatLoopIndexScaleFactor
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 10/14/1998 16:26'!
+originalSamplingRate
+
+	^ originalSamplingRate
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 2/2/1999 09:54'!
+perceivedPitch
+
+	^ perceivedPitch
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/17/1998 09:08'!
+pitch
+
+	^ (scaledIndexIncr asFloat * perceivedPitch * self samplingRate asFloat) /
+	  (originalSamplingRate * FloatLoopIndexScaleFactor)
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 11:38'!
+pitch: p
+
+	scaledIndexIncr _
+		((p asFloat * originalSamplingRate * FloatLoopIndexScaleFactor) /
+		 (perceivedPitch * self samplingRate asFloat)) asInteger.
+
+	sampleCountForRelease > 0
+		ifTrue: [releaseCount _ (sampleCountForRelease * LoopIndexScaleFactor) // scaledIndexIncr]
+		ifFalse: [releaseCount _ 0].
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 7/13/1998 11:46'!
+rightSamples
+
+	^ rightSamples
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 7/13/1998 11:46'!
+rightSamples: aSampleBuffer
+
+	rightSamples _ aSampleBuffer.
+! !
+
+!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 3/15/1999 08:01'!
+samples
+	"For compatability with SampledSound. Just return my left channel (which is the only channel if I am mono)."
+
+	^ leftSamples
+! !
+
+!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 4/8/1999 12:45'!
+comeFullyUpOnReload: smartRefStream
+	"Convert my sample buffers from ByteArrays into SampleBuffers after raw loading from a DataStream. Answer myself."
+
+	leftSamples == rightSamples
+		ifTrue: [
+			leftSamples _ SoundBuffer fromByteArray: self leftSamples.
+			rightSamples _ leftSamples]
+		ifFalse: [
+			leftSamples _ SoundBuffer fromByteArray: self leftSamples.
+			rightSamples _ SoundBuffer fromByteArray: self rightSamples].
+
+! !
+
+!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 9/25/2000 12:06'!
+objectForDataStream: refStrm
+    "Answer an object to store on a data stream, a copy of myself whose SampleBuffers have been converted into ByteArrays."
+
+	refStrm replace: leftSamples with: leftSamples asByteArray.
+	refStrm replace: rightSamples with: rightSamples asByteArray.
+	"substitution will be made in DataStream nextPut:"
+	^ self
+! !
+
+!LoopedSampledSound methodsFor: 'other' stamp: 'jm 5/29/1999 18:56'!
+findStartPointAfter: index
+	"Answer the index of the last zero crossing sample before the given index."
+
+	| i |
+	i _ index min: lastSample.
+
+	"scan backwards to the last zero-crossing"
+	(leftSamples at: i) > 0
+		ifTrue: [
+			[i > 1 and: [(leftSamples at: i) > 0]] whileTrue: [i _ i - 1]]
+		ifFalse: [
+			[i > 1 and: [(leftSamples at: i) < 0]] whileTrue: [i _ i - 1]].
+	^ i
+! !
+
+!LoopedSampledSound methodsFor: 'other' stamp: 'jm 8/18/1998 09:29'!
+findStartPointForThreshold: threshold
+	"Answer the index of the last zero crossing sample before the first sample whose absolute value (in either the right or left channel) exceeds the given threshold."
+
+	| i |
+	i _ self indexOfFirstPointOverThreshold: threshold.
+	i >= lastSample ifTrue: [^ self error: 'no sample exceeds the given threshold'].
+
+	"scan backwards to the last zero-crossing"
+	(leftSamples at: i) > 0
+		ifTrue: [
+			[i > 1 and: [(leftSamples at: i) > 0]] whileTrue: [i _ i - 1]]
+		ifFalse: [
+			[i > 1 and: [(leftSamples at: i) < 0]] whileTrue: [i _ i - 1]].
+	^ i
+! !
+
+!LoopedSampledSound methodsFor: 'other' stamp: 'jm 8/17/1998 09:22'!
+indexOfFirstPointOverThreshold: threshold
+	"Answer the index of the first sample whose absolute value exceeds the given threshold."
+
+	| s |
+	leftSamples == rightSamples
+		ifTrue: [
+			1 to: lastSample do: [:i |
+				s _ leftSamples at: i.
+				s < 0 ifTrue: [s _ 0 - s].
+				s > threshold ifTrue: [^ i]]]
+		ifFalse: [
+			1 to: lastSample do: [:i |
+				s _ leftSamples at: i.
+				s < 0 ifTrue: [s _ 0 - s].
+				s > threshold ifTrue: [^ i].
+				s _ rightSamples at: i.
+				s < 0 ifTrue: [s _ 0 - s].
+				s > threshold ifTrue: [^ i]]].
+	^ lastSample + 1
 ! !
 
 !LoopedSampledSound methodsFor: 'sound generation' stamp: 'ar 2/3/2001 15:23'!
@@ -4377,47 +4496,6 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 	count _ count - n.
 ! !
 
-!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 9/25/2000 12:06'!
-objectForDataStream: refStrm
-    "Answer an object to store on a data stream, a copy of myself whose SampleBuffers have been converted into ByteArrays."
-
-	refStrm replace: leftSamples with: leftSamples asByteArray.
-	refStrm replace: rightSamples with: rightSamples asByteArray.
-	"substitution will be made in DataStream nextPut:"
-	^ self
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 10/14/1998 16:26'!
-originalSamplingRate
-
-	^ originalSamplingRate
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 2/2/1999 09:54'!
-perceivedPitch
-
-	^ perceivedPitch
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/17/1998 09:08'!
-pitch
-
-	^ (scaledIndexIncr asFloat * perceivedPitch * self samplingRate asFloat) /
-	  (originalSamplingRate * FloatLoopIndexScaleFactor)
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 8/18/1998 11:38'!
-pitch: p
-
-	scaledIndexIncr _
-		((p asFloat * originalSamplingRate * FloatLoopIndexScaleFactor) /
-		 (perceivedPitch * self samplingRate asFloat)) asInteger.
-
-	sampleCountForRelease > 0
-		ifTrue: [releaseCount _ (sampleCountForRelease * LoopIndexScaleFactor) // scaledIndexIncr]
-		ifFalse: [releaseCount _ 0].
-! !
-
 !LoopedSampledSound methodsFor: 'sound generation' stamp: 'jm 8/17/1998 09:38'!
 reset
 
@@ -4426,66 +4504,11 @@ reset
 	scaledIndex _ firstSample * LoopIndexScaleFactor.
 ! !
 
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 7/13/1998 11:46'!
-rightSamples
-
-	^ rightSamples
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 7/13/1998 11:46'!
-rightSamples: aSampleBuffer
-
-	rightSamples _ aSampleBuffer.
-! !
-
-!LoopedSampledSound methodsFor: 'accessing' stamp: 'jm 3/15/1999 08:01'!
-samples
-	"For compatability with SampledSound. Just return my left channel (which is the only channel if I am mono)."
-
-	^ leftSamples
-! !
-
-!LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 7/9/1999 22:28'!
-samples: aSoundBuffer loopEnd: loopEndIndex loopLength: loopSampleCount pitch: perceivedPitchInHz samplingRate: samplingRateInHz
-	"Make this sound use the given samples array with a loop of the given length starting at the given index. The loop length may have a fractional part; this is necessary to achieve pitch accuracy for short loops."
-
-	| loopStartIndex |
-	super initialize.
-	loopStartIndex _ (loopEndIndex - loopSampleCount) truncated + 1.
-	((1 <= loopStartIndex) and:
-	 [loopStartIndex < loopEndIndex and:
-	 [loopEndIndex <= aSoundBuffer size]])
-		ifFalse: [self error: 'bad loop parameters'].
-
-	leftSamples _ rightSamples _ aSoundBuffer.
-	originalSamplingRate _ samplingRateInHz asFloat.
-	perceivedPitch _ perceivedPitchInHz asFloat.
-	gain _ 1.0.
-	firstSample _ 1.
-	lastSample _ leftSamples size.
-	lastSample >= (SmallInteger maxVal // LoopIndexScaleFactor) ifTrue: [
-		self error: 'cannot handle more than ',
-			(SmallInteger maxVal // LoopIndexScaleFactor) printString, ' samples'].
-	loopEnd _ loopEndIndex.
-	scaledLoopLength _ (loopSampleCount * LoopIndexScaleFactor) asInteger.
-	scaledIndexIncr _ (samplingRateInHz * LoopIndexScaleFactor) // self samplingRate.
-	self computeSampleCountForRelease.
-! !
-
 !LoopedSampledSound methodsFor: 'sound generation' stamp: 'jm 8/18/1998 09:31'!
 samplesRemaining
 	"Answer the number of samples remaining until the end of this sound."
 
 	^ count
-! !
-
-!LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 7/6/1998 17:09'!
-setPitch: pitchNameOrNumber dur: d loudness: vol
-	"(LoopedSampledSound pitch: 440.0 dur: 2.5 loudness: 0.4) play"
-
-	super setPitch: pitchNameOrNumber dur: d loudness: vol.
-	self pitch: (self nameOrNumberToPitch: pitchNameOrNumber).
-	self reset.
 ! !
 
 !LoopedSampledSound methodsFor: 'sound generation' stamp: 'jm 9/9/1998 21:57'!
@@ -4509,28 +4532,6 @@ storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
 		ifFalse: [  "for non-file streams:"
 			1 to: leftSamples monoSampleCount do: [:i | aBinaryStream nextSignedInt16Put: (leftSamples at: i) bigEndian: bigEndianFlag ]]! !
 
-!LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 7/9/1999 22:28'!
-unloopedSamples: aSoundBuffer pitch: perceivedPitchInHz samplingRate: samplingRateInHz
-	"Make this sound play the given samples unlooped. The samples have the given perceived pitch when played at the given sampling rate. By convention, unpitched sounds such as percussion sounds should specify a pitch of nil or 100 Hz."
-
-	super initialize.
-	leftSamples _ rightSamples _ aSoundBuffer.
-	originalSamplingRate _ samplingRateInHz asFloat.
-	perceivedPitchInHz
-		ifNil: [perceivedPitch _ 100.0]
-		ifNotNil: [perceivedPitch _ perceivedPitchInHz asFloat].
-	gain _ 1.0.
-	firstSample _ 1.
-	lastSample _ leftSamples size.
-	lastSample >= (SmallInteger maxVal // LoopIndexScaleFactor) ifTrue: [
-		self error: 'cannot handle more than ',
-			(SmallInteger maxVal // LoopIndexScaleFactor) printString, ' samples'].
-	loopEnd _ leftSamples size.
-	scaledLoopLength _ 0.  "zero length means unlooped"
-	scaledIndexIncr _ (samplingRateInHz * LoopIndexScaleFactor) // self samplingRate.
-	self computeSampleCountForRelease.
-! !
-
 !LoopedSampledSound class methodsFor: 'instance creation'!
 fromAIFFFileNamed: fileName mergeIfStereo: mergeFlag
 	"Initialize this sound from the data in the given AIFF file. If mergeFlag is true and the file is stereo, its left and right channels are mixed together to produce a mono sampled sound."
@@ -4541,15 +4542,6 @@ fromAIFFFileNamed: fileName mergeIfStereo: mergeFlag
 		mergeIfStereo: mergeFlag
 		skipDataChunk: false.
 	self new fromAIFFFileReader: aiffFileReader mergeIfStereo: mergeFlag! !
-
-!LoopedSampledSound class methodsFor: 'class initialization' stamp: 'jm 8/13/1998 12:54'!
-initialize
-	"LoopedSampledSound initialize"
-
-	LoopIndexScaleFactor _ 512.
-	FloatLoopIndexScaleFactor _ LoopIndexScaleFactor asFloat.
-	LoopIndexFractionMask _ LoopIndexScaleFactor - 1.
-! !
 
 !LoopedSampledSound class methodsFor: 'instance creation' stamp: 'jm 8/18/1998 07:40'!
 samples: aSoundBuffer loopEnd: loopEndIndex loopLength: loopSampleCount pitch: perceivedPitchInHz samplingRate: samplingRateInHz
@@ -4571,6 +4563,15 @@ unloopedSamples: aSoundBuffer pitch: perceivedPitchInHz samplingRate: samplingRa
 		unloopedSamples: aSoundBuffer
 		pitch: perceivedPitchInHz
 		samplingRate: samplingRateInHz
+! !
+
+!LoopedSampledSound class methodsFor: 'class initialization' stamp: 'jm 8/13/1998 12:54'!
+initialize
+	"LoopedSampledSound initialize"
+
+	LoopIndexScaleFactor _ 512.
+	FloatLoopIndexScaleFactor _ LoopIndexScaleFactor asFloat.
+	LoopIndexFractionMask _ LoopIndexScaleFactor - 1.
 ! !
 
 !MixedSound methodsFor: 'composition'!
@@ -4615,35 +4616,18 @@ copySounds
 	rightVols _ rightVols copy.
 ! !
 
+!MixedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:57'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds! !
+
 !MixedSound methodsFor: 'sound generation' stamp: 'jm 11/25/97 13:40'!
 doControl
 
 	super doControl.
 	1 to: sounds size do: [:i | (sounds at: i) doControl].
-! !
-
-!MixedSound methodsFor: 'accessing' stamp: 'jm 8/17/1998 14:05'!
-duration
-	"Answer the duration of this sound in seconds."
-
-	| dur |
-	dur _ 0.
-	sounds do: [:snd | dur _ dur max: snd duration].
-	^ dur
-! !
-
-!MixedSound methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:48'!
-initialize
-
-	super initialize.
-	sounds _ #().
-	leftVols _ #().
-	rightVols _ #()! !
-
-!MixedSound methodsFor: 'accessing' stamp: 'jm 12/16/2001 20:23'!
-isStereo
-
-	^ true
 ! !
 
 !MixedSound methodsFor: 'sound generation' stamp: 'jm 1/5/98 13:42'!
@@ -4661,13 +4645,6 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 					snd mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: left rightVol: right]
 				ifFalse: [soundDone at: i put: true]]].
 ! !
-
-!MixedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:57'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds! !
 
 !MixedSound methodsFor: 'sound generation' stamp: 'jm 12/8/97 17:07'!
 reset
@@ -4689,12 +4666,6 @@ samplesRemaining
 	^ remaining
 ! !
 
-!MixedSound methodsFor: 'accessing' stamp: 'jm 2/4/98 13:37'!
-sounds
-
-	^ sounds
-! !
-
 !MixedSound methodsFor: 'sound generation' stamp: 'jm 1/10/1999 08:45'!
 stopGracefully
 	"End this note with a graceful decay. If the note has envelopes, determine the decay time from its envelopes."
@@ -4703,11 +4674,48 @@ stopGracefully
 	sounds do: [:s | s stopGracefully].
 ! !
 
+!MixedSound methodsFor: 'accessing' stamp: 'jm 8/17/1998 14:05'!
+duration
+	"Answer the duration of this sound in seconds."
+
+	| dur |
+	dur _ 0.
+	sounds do: [:snd | dur _ dur max: snd duration].
+	^ dur
+! !
+
+!MixedSound methodsFor: 'accessing' stamp: 'jm 12/16/2001 20:23'!
+isStereo
+
+	^ true
+! !
+
+!MixedSound methodsFor: 'accessing' stamp: 'jm 2/4/98 13:37'!
+sounds
+
+	^ sounds
+! !
+
+!MixedSound methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:48'!
+initialize
+
+	super initialize.
+	sounds _ #().
+	leftVols _ #().
+	rightVols _ #()! !
+
 !PluckedSound methodsFor: 'copying' stamp: 'jm 11/4/97 08:25'!
 copyRing
 	"Private!! Support for copying"
 
 	ring _ ring copy.
+! !
+
+!PluckedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:56'!
+postCopy
+
+	super postCopy.
+	self copyRing
 ! !
 
 !PluckedSound methodsFor: 'accessing' stamp: 'jm 8/17/1998 14:07'!
@@ -4772,13 +4780,6 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 	count _ count - n.
 ! !
 
-!PluckedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:56'!
-postCopy
-
-	super postCopy.
-	self copyRing
-! !
-
 !PluckedSound methodsFor: 'sound generation' stamp: 'jm 12/17/97 21:35'!
 reset
 	"Fill the ring with random noise."
@@ -4800,6 +4801,13 @@ samplesRemaining
 	^ count
 ! !
 
+!PluckedSound methodsFor: 'sound generation' stamp: 'jm 9/9/1998 21:58'!
+stopAfterMSecs: mSecs
+	"Terminate this sound this note after the given number of milliseconds."
+
+	count _ (mSecs * self samplingRate) // 1000.
+! !
+
 !PluckedSound methodsFor: 'initialization' stamp: 'jm 7/6/1998 17:09'!
 setPitch: pitchNameOrNumber dur: d loudness: vol
 
@@ -4813,13 +4821,6 @@ setPitch: pitchNameOrNumber dur: d loudness: vol
 	scaledIndexLimit _ (sz + 1) * ScaleFactor.
 	scaledIndexIncr _ (p * sz * ScaleFactor) // (2.0 * self samplingRate).
 	self reset.
-! !
-
-!PluckedSound methodsFor: 'sound generation' stamp: 'jm 9/9/1998 21:58'!
-stopAfterMSecs: mSecs
-	"Terminate this sound this note after the given number of milliseconds."
-
-	count _ (mSecs * self samplingRate) // 1000.
 ! !
 
 !PluckedSound class methodsFor: 'instruments' stamp: 'jm 1/31/98 16:32'!
@@ -4852,21 +4853,26 @@ currentSound
 currentSound: aSound
 	currentSound _ aSound! !
 
-!QueueSound methodsFor: 'sound generation' stamp: 'jmv 3/2/2010 17:13'!
-doControl
-	super doControl.
-	self currentSound ifNotNil: [self currentSound doControl]! !
-
 !QueueSound methodsFor: 'accessing' stamp: 'len 8/29/1999 22:07'!
 done: aBoolean
 	done _ aBoolean! !
 
-!QueueSound methodsFor: 'initialization' stamp: 'jmv 4/17/2013 12:08'!
-initialize
-	super initialize.
-	sounds _ SharedQueue new.
-	done _ false.
-	startTime _ Time localMillisecondClock! !
+!QueueSound methodsFor: 'accessing' stamp: 'len 8/29/1999 21:46'!
+sounds
+	^ sounds! !
+
+!QueueSound methodsFor: 'accessing' stamp: 'len 9/26/1999 17:19'!
+startTime
+	^ startTime! !
+
+!QueueSound methodsFor: 'accessing' stamp: 'len 9/26/1999 17:19'!
+startTime: anInteger
+	startTime _ anInteger! !
+
+!QueueSound methodsFor: 'sound generation' stamp: 'jmv 3/2/2010 17:13'!
+doControl
+	super doControl.
+	self currentSound ifNotNil: [self currentSound doControl]! !
 
 !QueueSound methodsFor: 'sound generation' stamp: 'jmv 4/17/2013 12:08'!
 mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
@@ -4910,17 +4916,12 @@ samplesRemaining
 		ifFalse: [^ 1000000].
 ! !
 
-!QueueSound methodsFor: 'accessing' stamp: 'len 8/29/1999 21:46'!
-sounds
-	^ sounds! !
-
-!QueueSound methodsFor: 'accessing' stamp: 'len 9/26/1999 17:19'!
-startTime
-	^ startTime! !
-
-!QueueSound methodsFor: 'accessing' stamp: 'len 9/26/1999 17:19'!
-startTime: anInteger
-	startTime _ anInteger! !
+!QueueSound methodsFor: 'initialization' stamp: 'jmv 4/17/2013 12:08'!
+initialize
+	super initialize.
+	sounds _ SharedQueue new.
+	done _ false.
+	startTime _ Time localMillisecondClock! !
 
 !RepeatingSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:34'!
 copySound
@@ -4929,23 +4930,19 @@ copySound
 	sound _ sound copy.
 ! !
 
+!RepeatingSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sound."
+
+	super postCopy.
+	self copySound
+! !
+
 !RepeatingSound methodsFor: 'sound generation' stamp: 'jm 11/25/97 13:40'!
 doControl
 
 	super doControl.
 	sound doControl.
-! !
-
-!RepeatingSound methodsFor: 'accessing' stamp: 'jm 11/17/97 18:48'!
-iterationCount
-
-	^ iterationCount
-! !
-
-!RepeatingSound methodsFor: 'accessing' stamp: 'jm 11/17/97 18:48'!
-iterationCount: aNumber
-
-	iterationCount _ aNumber.
 ! !
 
 !RepeatingSound methodsFor: 'sound generation' stamp: 'jm 11/24/97 16:05'!
@@ -4978,14 +4975,6 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 		samplesNeeded _ samplesNeeded - count].
 ! !
 
-!RepeatingSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sound."
-
-	super postCopy.
-	self copySound
-! !
-
 !RepeatingSound methodsFor: 'sound generation' stamp: 'jm 6/30/1998 18:28'!
 reset
 
@@ -5006,6 +4995,30 @@ samplesRemaining
 		ifFalse: [^ 0].
 ! !
 
+!RepeatingSound methodsFor: 'accessing' stamp: 'jm 11/17/97 18:48'!
+iterationCount
+
+	^ iterationCount
+! !
+
+!RepeatingSound methodsFor: 'accessing' stamp: 'jm 11/17/97 18:48'!
+iterationCount: aNumber
+
+	iterationCount _ aNumber.
+! !
+
+!RepeatingSound methodsFor: 'accessing' stamp: 'jm 11/17/97 18:48'!
+sound
+
+	^ sound
+! !
+
+!RepeatingSound methodsFor: 'accessing' stamp: 'jm 12/15/97 22:39'!
+sound: aSound
+
+	sound _ aSound.
+! !
+
 !RepeatingSound methodsFor: 'initialization' stamp: 'jm 9/12/97 15:54'!
 setPitch: p dur: d loudness: l
 
@@ -5022,18 +5035,6 @@ setSound: aSound iterations: anIntegerOrSymbol
 	sound _ aSound.
 	iterationCount _ anIntegerOrSymbol.
 	self reset.
-! !
-
-!RepeatingSound methodsFor: 'accessing' stamp: 'jm 11/17/97 18:48'!
-sound
-
-	^ sound
-! !
-
-!RepeatingSound methodsFor: 'accessing' stamp: 'jm 12/15/97 22:39'!
-sound: aSound
-
-	sound _ aSound.
 ! !
 
 !RepeatingSound class methodsFor: 'instance creation' stamp: 'jm 9/12/97 16:14'!
@@ -5064,6 +5065,10 @@ duration: seconds
 	count _ initialCount _ (seconds * self samplingRate) rounded.
 ! !
 
+!RestSound methodsFor: 'accessing' stamp: 'di 2/17/1999 21:09'!
+samples
+	^ SoundBuffer newMonoSampleCount: initialCount! !
+
 !RestSound methodsFor: 'sound generation' stamp: 'jm 11/24/97 16:04'!
 mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
 	"Play silence for a given duration."
@@ -5078,10 +5083,6 @@ reset
 	super reset.
 	count _ initialCount.
 ! !
-
-!RestSound methodsFor: 'accessing' stamp: 'di 2/17/1999 21:09'!
-samples
-	^ SoundBuffer newMonoSampleCount: initialCount! !
 
 !RestSound methodsFor: 'sound generation' stamp: 'jm 12/15/97 22:37'!
 samplesRemaining
@@ -5161,6 +5162,14 @@ copySound
 	rightBuffer _ rightBuffer copy.
 ! !
 
+!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sound."
+
+	super postCopy.
+	self copySound
+! !
+
 !ReverbSound methodsFor: 'sound generation' stamp: 'jm 1/21/98 14:32'!
 doControl
 
@@ -5178,14 +5187,6 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 		leftVol: leftVol
 		rightVol: rightVol.
 	self applyReverbTo: aSoundBuffer startingAt: startIndex count: n.
-! !
-
-!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sound."
-
-	super postCopy.
-	self copySound
 ! !
 
 !ReverbSound methodsFor: 'sound generation' stamp: 'jm 1/21/98 16:47'!
@@ -5263,6 +5264,18 @@ duration: seconds
 	count _ initialCount _ (seconds * self samplingRate) rounded.
 ! !
 
+!SampledSound methodsFor: 'accessing' stamp: 'jm 12/15/97 22:51'!
+originalSamplingRate
+
+	^ originalSamplingRate
+! !
+
+!SampledSound methodsFor: 'accessing' stamp: 'jm 9/12/97 16:46'!
+samples
+
+	^ samples
+! !
+
 !SampledSound methodsFor: 'playing' stamp: 'di 10/28/2000 17:08'!
 endGracefully
 	"See stopGracefully, which affects initialCOunt, and I don't think it should (di)."
@@ -5324,22 +5337,6 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 	count _ count - n.
 ! !
 
-!SampledSound methodsFor: 'accessing' stamp: 'jm 12/15/97 22:51'!
-originalSamplingRate
-
-	^ originalSamplingRate
-! !
-
-!SampledSound methodsFor: 'initialization' stamp: 'jm 1/18/1999 06:42'!
-pitch: pitchNameOrNumber
-
-	| p |
-	p _ self nameOrNumberToPitch: pitchNameOrNumber.
-	originalSamplingRate _
-		((self samplingRate asFloat * p asFloat) / NominalSamplePitch asFloat) asInteger.
-	self reset.
-! !
-
 !SampledSound methodsFor: 'playing' stamp: 'di 10/28/2000 22:31'!
 playSilentlyUntil: startTime
 	"Used to fast foward to a particular starting time.
@@ -5365,16 +5362,34 @@ reset
 	indexHighBits _ 0.
 ! !
 
-!SampledSound methodsFor: 'accessing' stamp: 'jm 9/12/97 16:46'!
-samples
-
-	^ samples
-! !
-
 !SampledSound methodsFor: 'playing' stamp: 'jm 9/13/97 19:07'!
 samplesRemaining
 
 	^ count
+! !
+
+!SampledSound methodsFor: 'playing' stamp: 'RAA 8/12/2000 15:11'!
+setScaledIncrement: aNumber
+
+	scaledIncrement _ (aNumber * IncrementScaleFactor) rounded.
+
+! !
+
+!SampledSound methodsFor: 'playing' stamp: 'jm 9/9/1998 21:58'!
+stopAfterMSecs: mSecs
+	"Terminate this sound this note after the given number of milliseconds."
+
+	count _ (mSecs * self samplingRate) // 1000.
+! !
+
+!SampledSound methodsFor: 'initialization' stamp: 'jm 1/18/1999 06:42'!
+pitch: pitchNameOrNumber
+
+	| p |
+	p _ self nameOrNumberToPitch: pitchNameOrNumber.
+	originalSamplingRate _
+		((self samplingRate asFloat * p asFloat) / NominalSamplePitch asFloat) asInteger.
+	self reset.
 ! !
 
 !SampledSound methodsFor: 'initialization' stamp: 'jm 3/24/1999 12:01'!
@@ -5415,20 +5430,6 @@ setSamples: anArray samplingRate: rate
 	initialCount _ (samplesSize * self samplingRate) // originalSamplingRate.
 	self loudness: 1.0.
 	self reset.
-! !
-
-!SampledSound methodsFor: 'playing' stamp: 'RAA 8/12/2000 15:11'!
-setScaledIncrement: aNumber
-
-	scaledIncrement _ (aNumber * IncrementScaleFactor) rounded.
-
-! !
-
-!SampledSound methodsFor: 'playing' stamp: 'jm 9/9/1998 21:58'!
-stopAfterMSecs: mSecs
-	"Terminate this sound this note after the given number of milliseconds."
-
-	count _ (mSecs * self samplingRate) // 1000.
 ! !
 
 !SampledSound methodsFor: 'file i/o' stamp: 'jmv 2/26/2016 16:05'!
@@ -5505,6 +5506,82 @@ assimilateSoundsFrom: aDictionary
 		[:assoc | (SoundLibrary includesKey: assoc key) ifFalse:
 			[SoundLibrary add: assoc]]! !
 
+!SampledSound class methodsFor: 'sound library' stamp: 'jm 1/14/1999 11:04'!
+playSoundNamed: aString
+	"Play the sound with given name. Do nothing if there is no sound of that name in the library."
+	"SampledSound playSoundNamed: 'croak'"
+
+	| snd |
+	snd _ self soundNamed: aString.
+	snd ifNotNil: [snd play].
+	^ snd
+! !
+
+!SampledSound class methodsFor: 'sound library' stamp: 'jm 1/14/1999 10:40'!
+putCoffeeCupClinkInSoundLibrary
+	"SampledSound putCoffeeCupClinkInSoundLibrary"
+
+	self addLibrarySoundNamed: 'clink'
+		samples: self coffeeCupClink
+		samplingRate: 11025! !
+
+!SampledSound class methodsFor: 'sound library' stamp: 'jmv 3/2/2010 10:06'!
+removeSoundNamed: aString
+	"Remove the sound with the given name from the sound library."
+
+	SoundLibrary removeKey: aString ifAbsent: nil! !
+
+!SampledSound class methodsFor: 'sound library' stamp: 'sw 9/27/2001 14:46'!
+soundNamed: aString
+	"Answer the sound of the given name, or, if there is no sound of that name, put up an informer so stating, and answer nil"
+
+	"(SampledSound soundNamed: 'shutterClick') play"
+
+	^ self soundNamed: aString ifAbsent:
+		[self inform: aString, ' not found in the Sound Library'.
+		nil]! !
+
+!SampledSound class methodsFor: 'sound library' stamp: 'sw 9/27/2001 14:45'!
+soundNamed: aString ifAbsent: aBlock
+	"Answer the sound of the given name, or if there is no sound of that name, answer the result of evaluating aBlock"
+	"(SampledSound soundNamed: 'shutterClick') play"
+
+	| entry samples |
+	entry _ SoundLibrary
+		at: aString
+		ifAbsent:
+			[^ aBlock value].
+	entry ifNil: [^ aBlock value].
+	samples _ entry at: 1.
+	samples class isBytes ifTrue: [samples _ self convert8bitSignedTo16Bit: samples].
+	^ self samples: samples samplingRate: (entry at: 2)
+! !
+
+!SampledSound class methodsFor: 'sound library' stamp: 'jmv 1/16/2011 23:55'!
+soundNames
+	"Answer a list of sound names for the sounds stored in the sound library."
+	"| s |
+	 SampledSound soundNames asSortedCollection do: [:n |
+		n asParagraph display.
+		s _ SampledSound soundNamed: n.
+		s ifNotNil: [s playAndWaitUntilDone]]"
+
+	^ SoundLibrary keys! !
+
+!SampledSound class methodsFor: 'sound library' stamp: 'jhm 10/15/97 14:57'!
+unusedSoundNameLike: desiredName
+	"Pick an unused sound name based on the given string. If necessary, append digits to avoid name conflicts with existing sounds."
+	"SampledSound unusedSoundNameLike: 'chirp'"
+
+	| newName i |
+	newName _ desiredName.
+	i _ 2.
+	[SoundLibrary includesKey: newName] whileTrue: [
+		newName _ desiredName, i printString.
+		i _ i + 1].
+	^ newName
+! !
+
 !SampledSound class methodsFor: 'instance creation' stamp: 'gk 2/24/2004 08:50'!
 beep
 	"Beep in the presence of the sound system.
@@ -5515,90 +5592,6 @@ beep
 			setSamples: self coffeeCupClink
 			samplingRate: 12000) play
 			! !
-
-!SampledSound class methodsFor: 'coffee cup clink' stamp: 'jm 8/23/97 22:25'!
-coffeeCupClink
-	"Return the samples array for the sound of a spoon being tapped against a coffee cup."
-
-	CoffeeCupClink ifNil: [self initializeCoffeeCupClink].
-	^ CoffeeCupClink
-! !
-
-!SampledSound class methodsFor: 'utilities' stamp: 'ar 2/3/2001 16:14'!
-convert8bitSignedFrom: aByteArray to16Bit: aSoundBuffer
-	"Copy the contents of the given array of signed 8-bit samples into the given array of 16-bit signed samples."
-
-	| n s |
-	<primitive: 'primitiveConvert8BitSigned' module: 'MiscPrimitivePlugin'>
-	self var: #aByteArray declareC: 'unsigned char *aByteArray'.
-	self var: #aSoundBuffer declareC: 'unsigned short *aSoundBuffer'.
-	n _ aByteArray size.
-	1 to: n do: [:i |
-		s _ aByteArray at: i.
-		s > 127
-			ifTrue: [aSoundBuffer at: i put: ((s - 256) bitShift: 8)]
-			ifFalse: [aSoundBuffer at: i put: (s bitShift: 8)]].
-! !
-
-!SampledSound class methodsFor: 'utilities' stamp: 'jm 2/15/98 18:13'!
-convert8bitSignedTo16Bit: aByteArray
-	"Convert the given array of samples--assumed to be 8-bit signed, linear data--into 16-bit signed samples. Return an array containing the resulting samples. Typically used to read uncompressed AIFF sound data."
-
-	| result |
-	result _ SoundBuffer newMonoSampleCount: aByteArray size.
-	self convert8bitSignedFrom: aByteArray to16Bit: result.
-	^ result
-! !
-
-!SampledSound class methodsFor: 'utilities' stamp: 'ar 1/27/98 23:11'!
-convert8bitUnsignedTo16Bit: anArray
-	"Convert the given array of samples--assumed to be 8-bit unsigned, linear data--into 16-bit signed samples. Return an array containing the resulting samples. Typically used to read uncompressed WAVE sound data."
-
-	| n samples s |
-	n _ anArray size.
-	samples _ SoundBuffer newMonoSampleCount: n.
-	1 to: n do: [:i |
-		s _ anArray at: i.
-		samples at: i put: (s - 128 * 256)].
-	^ samples
-! !
-
-!SampledSound class methodsFor: 'utilities' stamp: 'jm 3/17/98 21:07'!
-convertBytesTo16BitSamples: aByteArray mostSignificantByteFirst: msbFirst
-	"Convert the given ByteArray (with the given byte ordering) into 16-bit sample buffer."
-
-	| n data src b1 b2 w |
-	n _ aByteArray size // 2.
-	data _ SoundBuffer newMonoSampleCount: n.
-	src _ 1.
-	1 to: n do: [:i |
-		b1 _ aByteArray at: src.
-		b2 _ aByteArray at: src + 1.
-		msbFirst
-			ifTrue: [w _ (b1 bitShift: 8) + b2]
-			ifFalse: [w _ (b2 bitShift: 8) + b1].
-		w > 32767 ifTrue: [w _ w - 65536].
-		data at: i put: w.
-		src _ src + 2].
-	^ data
-! !
-
-!SampledSound class methodsFor: 'default sound' stamp: 'jm 9/17/97 12:49'!
-defaultSampleTable: anArray
-	"Set the sample table to be used as the default waveform for playing a score such as the Bach fugue. Array is assumed to contain monaural signed 16-bit sample values."
-
-	DefaultSampleTable _ SoundBuffer fromArray: anArray.
-! !
-
-!SampledSound class methodsFor: 'default sound' stamp: 'jm 9/17/97 13:10'!
-defaultSamples: anArray repeated: n
-
-	| data |
-	data _ WriteStream on: (SoundBuffer newMonoSampleCount: anArray size * n).
-	n timesRepeat: [
-		anArray do: [:sample | data nextPut: sample truncated]].
-	DefaultSampleTable _ data contents.
-! !
 
 !SampledSound class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:26'!
 fromAIFFfileNamed: fileName
@@ -5689,19 +5682,19 @@ fromWaveStream: fileStream
 	^ self samples: data samplingRate: samplingRate
 ! !
 
-!SampledSound class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 12:36'!
-initialize
-	"SampledSound initialize"
+!SampledSound class methodsFor: 'instance creation' stamp: 'jm 9/12/97 19:20'!
+samples: anArrayOf16BitSamples samplingRate: samplesPerSecond
+	"Return a SampledSound with the given samples array and sampling rate."
 
-	SoundPlayer initialize.
-	IncrementFractionBits _ 16.
-	IncrementScaleFactor _ 2 raisedTo: IncrementFractionBits.
-	ScaledIndexOverflow _ 2 raisedTo: 29.  "handle overflow before needing LargePositiveIntegers"
-	self useCoffeeCupClink.
-	SoundLibrary ifNil: [SoundLibrary _ Dictionary new].
-	Beeper setDefault: (self new
-						setSamples: self coffeeCupClink
-						samplingRate: 12000).
+	^ self new setSamples: anArrayOf16BitSamples samplingRate: samplesPerSecond
+! !
+
+!SampledSound class methodsFor: 'coffee cup clink' stamp: 'jm 8/23/97 22:25'!
+coffeeCupClink
+	"Return the samples array for the sound of a spoon being tapped against a coffee cup."
+
+	CoffeeCupClink ifNil: [self initializeCoffeeCupClink].
+	^ CoffeeCupClink
 ! !
 
 !SampledSound class methodsFor: 'coffee cup clink' stamp: 'jm 9/17/97 12:50'!
@@ -5715,126 +5708,64 @@ initializeCoffeeCupClink
 	CoffeeCupClink _ SoundBuffer fromArray: samples.
 ! !
 
-!SampledSound class methodsFor: 'WAV reading' stamp: 'ar 1/27/98 23:06'!
-next16BitWord: msbFirst from: stream
-	"Read a 16-bit positive integer from the input stream."
-	"Assume: Stream has at least two bytes left."
+!SampledSound class methodsFor: 'utilities' stamp: 'ar 2/3/2001 16:14'!
+convert8bitSignedFrom: aByteArray to16Bit: aSoundBuffer
+	"Copy the contents of the given array of signed 8-bit samples into the given array of 16-bit signed samples."
 
-	| n |
-	n _ stream next: 2.
-	^msbFirst
-		ifTrue:[(n at: 1) * 256 + (n at: 2)]
-		ifFalse:[(n at: 2) * 256 + (n at: 1)]
+	| n s |
+	<primitive: 'primitiveConvert8BitSigned' module: 'MiscPrimitivePlugin'>
+	self var: #aByteArray declareC: 'unsigned char *aByteArray'.
+	self var: #aSoundBuffer declareC: 'unsigned short *aSoundBuffer'.
+	n _ aByteArray size.
+	1 to: n do: [:i |
+		s _ aByteArray at: i.
+		s > 127
+			ifTrue: [aSoundBuffer at: i put: ((s - 256) bitShift: 8)]
+			ifFalse: [aSoundBuffer at: i put: (s bitShift: 8)]].
 ! !
 
-!SampledSound class methodsFor: 'WAV reading' stamp: 'ar 1/27/98 23:06'!
-next32BitWord: msbFirst from: stream
-	"Read a 32-bit positive integer from the input stream."
-	"Assume: Stream has at least four bytes left."
+!SampledSound class methodsFor: 'utilities' stamp: 'jm 2/15/98 18:13'!
+convert8bitSignedTo16Bit: aByteArray
+	"Convert the given array of samples--assumed to be 8-bit signed, linear data--into 16-bit signed samples. Return an array containing the resulting samples. Typically used to read uncompressed AIFF sound data."
 
-	| n |
-	n _ stream next: 4.
-	^msbFirst
-		ifTrue:[(n at: 1) * 256 + (n at: 2) * 256 + (n at: 3) * 256 + (n at: 4)]
-		ifFalse:[(n at: 4) * 256 + (n at: 3) * 256 + (n at: 2) * 256 + (n at: 1)]
+	| result |
+	result _ SoundBuffer newMonoSampleCount: aByteArray size.
+	self convert8bitSignedFrom: aByteArray to16Bit: result.
+	^ result
 ! !
 
-!SampledSound class methodsFor: 'default sound'!
-nominalSamplePitch: aNumber
-	"Record an estimate of the normal pitch of the sampled sound."
+!SampledSound class methodsFor: 'utilities' stamp: 'ar 1/27/98 23:11'!
+convert8bitUnsignedTo16Bit: anArray
+	"Convert the given array of samples--assumed to be 8-bit unsigned, linear data--into 16-bit signed samples. Return an array containing the resulting samples. Typically used to read uncompressed WAVE sound data."
 
-	NominalSamplePitch _ aNumber.
+	| n samples s |
+	n _ anArray size.
+	samples _ SoundBuffer newMonoSampleCount: n.
+	1 to: n do: [:i |
+		s _ anArray at: i.
+		samples at: i put: (s - 128 * 256)].
+	^ samples
 ! !
 
-!SampledSound class methodsFor: 'sound library' stamp: 'jm 1/14/1999 11:04'!
-playSoundNamed: aString
-	"Play the sound with given name. Do nothing if there is no sound of that name in the library."
-	"SampledSound playSoundNamed: 'croak'"
+!SampledSound class methodsFor: 'utilities' stamp: 'jm 3/17/98 21:07'!
+convertBytesTo16BitSamples: aByteArray mostSignificantByteFirst: msbFirst
+	"Convert the given ByteArray (with the given byte ordering) into 16-bit sample buffer."
 
-	| snd |
-	snd _ self soundNamed: aString.
-	snd ifNotNil: [snd play].
-	^ snd
+	| n data src b1 b2 w |
+	n _ aByteArray size // 2.
+	data _ SoundBuffer newMonoSampleCount: n.
+	src _ 1.
+	1 to: n do: [:i |
+		b1 _ aByteArray at: src.
+		b2 _ aByteArray at: src + 1.
+		msbFirst
+			ifTrue: [w _ (b1 bitShift: 8) + b2]
+			ifFalse: [w _ (b2 bitShift: 8) + b1].
+		w > 32767 ifTrue: [w _ w - 65536].
+		data at: i put: w.
+		src _ src + 2].
+	^ data
 ! !
-
-!SampledSound class methodsFor: 'sound library' stamp: 'jm 1/14/1999 10:40'!
-putCoffeeCupClinkInSoundLibrary
-	"SampledSound putCoffeeCupClinkInSoundLibrary"
-
-	self addLibrarySoundNamed: 'clink'
-		samples: self coffeeCupClink
-		samplingRate: 11025! !
-
-!SampledSound class methodsFor: 'WAV reading' stamp: 'jm 3/17/98 21:03'!
-readWaveChunk: chunkType inRIFF: stream
-	"Search the stream for a format chunk of the given type and return its contents."
-
-	| id count |
-	stream reset; binary.
-	stream skip: 8.  "skip 'RIFF' and total length"
-	id _ (stream next: 4) asString.  "contents type"
-	id = 'WAVE' ifFalse: [^ ''].     "content type must be WAVE"
-
-	"search for a chunk of the given type"
-	[id _ (stream next: 4) asString.
-	 count _ self next32BitWord: false from: stream.
-	 id = chunkType] whileFalse: [
-		"skip this chunk, rounding length up to a word boundary"
-		stream skip: (count + 1 bitAnd: 16rFFFFFFFE).
-		stream atEnd ifTrue: [^ '']].
-
-	^ stream next: count  "return raw chunk data"
-! !
-
-!SampledSound class methodsFor: 'sound library' stamp: 'jmv 3/2/2010 10:06'!
-removeSoundNamed: aString
-	"Remove the sound with the given name from the sound library."
-
-	SoundLibrary removeKey: aString ifAbsent: nil! !
-
-!SampledSound class methodsFor: 'instance creation' stamp: 'jm 9/12/97 19:20'!
-samples: anArrayOf16BitSamples samplingRate: samplesPerSecond
-	"Return a SampledSound with the given samples array and sampling rate."
-
-	^ self new setSamples: anArrayOf16BitSamples samplingRate: samplesPerSecond
-! !
-
-!SampledSound class methodsFor: 'sound library' stamp: 'sw 9/27/2001 14:46'!
-soundNamed: aString
-	"Answer the sound of the given name, or, if there is no sound of that name, put up an informer so stating, and answer nil"
-
-	"(SampledSound soundNamed: 'shutterClick') play"
-
-	^ self soundNamed: aString ifAbsent:
-		[self inform: aString, ' not found in the Sound Library'.
-		nil]! !
-
-!SampledSound class methodsFor: 'sound library' stamp: 'sw 9/27/2001 14:45'!
-soundNamed: aString ifAbsent: aBlock
-	"Answer the sound of the given name, or if there is no sound of that name, answer the result of evaluating aBlock"
-	"(SampledSound soundNamed: 'shutterClick') play"
-
-	| entry samples |
-	entry _ SoundLibrary
-		at: aString
-		ifAbsent:
-			[^ aBlock value].
-	entry ifNil: [^ aBlock value].
-	samples _ entry at: 1.
-	samples class isBytes ifTrue: [samples _ self convert8bitSignedTo16Bit: samples].
-	^ self samples: samples samplingRate: (entry at: 2)
-! !
-
-!SampledSound class methodsFor: 'sound library' stamp: 'jmv 1/16/2011 23:55'!
-soundNames
-	"Answer a list of sound names for the sounds stored in the sound library."
-	"| s |
-	 SampledSound soundNames asSortedCollection do: [:n |
-		n asParagraph display.
-		s _ SampledSound soundNamed: n.
-		s ifNotNil: [s playAndWaitUntilDone]]"
-
-	^ SoundLibrary keys! !
 
 !SampledSound class methodsFor: 'utilities' stamp: 'jm 9/17/97 13:11'!
 uLawDecode: aByteArray
@@ -5914,18 +5845,28 @@ uLawEncodeSample: s
 		ifFalse: [^ 0].
 ! !
 
-!SampledSound class methodsFor: 'sound library' stamp: 'jhm 10/15/97 14:57'!
-unusedSoundNameLike: desiredName
-	"Pick an unused sound name based on the given string. If necessary, append digits to avoid name conflicts with existing sounds."
-	"SampledSound unusedSoundNameLike: 'chirp'"
+!SampledSound class methodsFor: 'default sound' stamp: 'jm 9/17/97 12:49'!
+defaultSampleTable: anArray
+	"Set the sample table to be used as the default waveform for playing a score such as the Bach fugue. Array is assumed to contain monaural signed 16-bit sample values."
 
-	| newName i |
-	newName _ desiredName.
-	i _ 2.
-	[SoundLibrary includesKey: newName] whileTrue: [
-		newName _ desiredName, i printString.
-		i _ i + 1].
-	^ newName
+	DefaultSampleTable _ SoundBuffer fromArray: anArray.
+! !
+
+!SampledSound class methodsFor: 'default sound' stamp: 'jm 9/17/97 13:10'!
+defaultSamples: anArray repeated: n
+
+	| data |
+	data _ WriteStream on: (SoundBuffer newMonoSampleCount: anArray size * n).
+	n timesRepeat: [
+		anArray do: [:sample | data nextPut: sample truncated]].
+	DefaultSampleTable _ data contents.
+! !
+
+!SampledSound class methodsFor: 'default sound'!
+nominalSamplePitch: aNumber
+	"Record an estimate of the normal pitch of the sampled sound."
+
+	NominalSamplePitch _ aNumber.
 ! !
 
 !SampledSound class methodsFor: 'default sound' stamp: 'jm 5/8/1998 18:53'!
@@ -5935,6 +5876,66 @@ useCoffeeCupClink
 
 	DefaultSampleTable _ self coffeeCupClink.
 	NominalSamplePitch _ 400.
+! !
+
+!SampledSound class methodsFor: 'class initialization' stamp: 'jmv 6/16/2013 12:36'!
+initialize
+	"SampledSound initialize"
+
+	SoundPlayer initialize.
+	IncrementFractionBits _ 16.
+	IncrementScaleFactor _ 2 raisedTo: IncrementFractionBits.
+	ScaledIndexOverflow _ 2 raisedTo: 29.  "handle overflow before needing LargePositiveIntegers"
+	self useCoffeeCupClink.
+	SoundLibrary ifNil: [SoundLibrary _ Dictionary new].
+	Beeper setDefault: (self new
+						setSamples: self coffeeCupClink
+						samplingRate: 12000).
+! !
+
+!SampledSound class methodsFor: 'WAV reading' stamp: 'ar 1/27/98 23:06'!
+next16BitWord: msbFirst from: stream
+	"Read a 16-bit positive integer from the input stream."
+	"Assume: Stream has at least two bytes left."
+
+	| n |
+	n _ stream next: 2.
+	^msbFirst
+		ifTrue:[(n at: 1) * 256 + (n at: 2)]
+		ifFalse:[(n at: 2) * 256 + (n at: 1)]
+! !
+
+!SampledSound class methodsFor: 'WAV reading' stamp: 'ar 1/27/98 23:06'!
+next32BitWord: msbFirst from: stream
+	"Read a 32-bit positive integer from the input stream."
+	"Assume: Stream has at least four bytes left."
+
+	| n |
+	n _ stream next: 4.
+	^msbFirst
+		ifTrue:[(n at: 1) * 256 + (n at: 2) * 256 + (n at: 3) * 256 + (n at: 4)]
+		ifFalse:[(n at: 4) * 256 + (n at: 3) * 256 + (n at: 2) * 256 + (n at: 1)]
+! !
+
+!SampledSound class methodsFor: 'WAV reading' stamp: 'jm 3/17/98 21:03'!
+readWaveChunk: chunkType inRIFF: stream
+	"Search the stream for a format chunk of the given type and return its contents."
+
+	| id count |
+	stream reset; binary.
+	stream skip: 8.  "skip 'RIFF' and total length"
+	id _ (stream next: 4) asString.  "contents type"
+	id = 'WAVE' ifFalse: [^ ''].     "content type must be WAVE"
+
+	"search for a chunk of the given type"
+	[id _ (stream next: 4) asString.
+	 count _ self next32BitWord: false from: stream.
+	 id = chunkType] whileFalse: [
+		"skip this chunk, rounding length up to a word boundary"
+		stream skip: (count + 1 bitAnd: 16rFFFFFFFE).
+		stream atEnd ifTrue: [^ '']].
+
+	^ stream next: count  "return raw chunk data"
 ! !
 
 !SequentialSound methodsFor: 'composition'!
@@ -5958,6 +5959,29 @@ compressWith: codecClass
 compressWith: codecClass atRate: aSamplingRate
 	^ self copy transformSounds: [:s | s compressWith: codecClass atRate: aSamplingRate]! !
 
+!SequentialSound methodsFor: 'composition' stamp: 'jm 4/14/1999 10:05'!
+pruneFinishedSounds
+	"Remove any sounds that have been completely played."
+
+	| newSnds |
+	(currentIndex > 1 and: [currentIndex < sounds size]) ifFalse: [^ self].
+	newSnds _ sounds copyFrom: currentIndex to: sounds size.
+	currentIndex _ 1.
+	sounds _ newSnds.
+! !
+
+!SequentialSound methodsFor: 'composition' stamp: 'RAA 8/9/2000 16:27'!
+removeFirstCompleteSoundOrNil
+	"Remove the first sound if it has been completely recorded."
+
+	| firstSound |
+
+	sounds size > 0 ifFalse: [^ nil].
+	firstSound _ sounds first.
+	sounds _ sounds copyFrom: 2 to: sounds size.
+	^firstSound
+! !
+
 !SequentialSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:48'!
 copySounds
 	"Private!! Support for copying. Copy my component sounds."
@@ -5965,32 +5989,26 @@ copySounds
 	sounds _ sounds collect: [:s | s copy].
 ! !
 
+!SequentialSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
+! !
+
+!SequentialSound methodsFor: 'copying' stamp: 'jmv 8/5/2011 16:00'!
+transformSounds: tfmBlock
+	"Private!! Support for copying. Copy my component sounds."
+
+	sounds _ sounds collect: tfmBlock! !
+
 !SequentialSound methodsFor: 'sound generation' stamp: 'jm 11/25/97 13:41'!
 doControl
 
 	super doControl.
 	currentIndex > 0
 		ifTrue: [(sounds at: currentIndex) doControl].
-! !
-
-!SequentialSound methodsFor: 'accessing' stamp: 'RAA 12/7/2000 17:24'!
-duration
-	"Answer the duration of this sound in seconds."
-
-	"7 dec 2000 - handle compressed sounds. better way??"
-
-	| dur |
-	dur _ 0.
-	sounds do: [:snd | dur _ dur + snd asSound duration].
-	^ dur
-! !
-
-!SequentialSound methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:49'!
-initialize
-
-	super initialize.
-	sounds _ #().
-	currentIndex _ 0.
 ! !
 
 !SequentialSound methodsFor: 'sound generation' stamp: 'jm 11/24/97 16:16'!
@@ -6019,37 +6037,6 @@ mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rig
 		i _ i + count].
 ! !
 
-!SequentialSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds
-! !
-
-!SequentialSound methodsFor: 'composition' stamp: 'jm 4/14/1999 10:05'!
-pruneFinishedSounds
-	"Remove any sounds that have been completely played."
-
-	| newSnds |
-	(currentIndex > 1 and: [currentIndex < sounds size]) ifFalse: [^ self].
-	newSnds _ sounds copyFrom: currentIndex to: sounds size.
-	currentIndex _ 1.
-	sounds _ newSnds.
-! !
-
-!SequentialSound methodsFor: 'composition' stamp: 'RAA 8/9/2000 16:27'!
-removeFirstCompleteSoundOrNil
-	"Remove the first sound if it has been completely recorded."
-
-	| firstSound |
-
-	sounds size > 0 ifFalse: [^ nil].
-	firstSound _ sounds first.
-	sounds _ sounds copyFrom: 2 to: sounds size.
-	^firstSound
-! !
-
 !SequentialSound methodsFor: 'sound generation' stamp: 'jm 12/15/97 22:47'!
 reset
 
@@ -6066,17 +6053,31 @@ samplesRemaining
 		ifFalse: [^ 1000000].
 ! !
 
+!SequentialSound methodsFor: 'accessing' stamp: 'RAA 12/7/2000 17:24'!
+duration
+	"Answer the duration of this sound in seconds."
+
+	"7 dec 2000 - handle compressed sounds. better way??"
+
+	| dur |
+	dur _ 0.
+	sounds do: [:snd | dur _ dur + snd asSound duration].
+	^ dur
+! !
+
 !SequentialSound methodsFor: 'accessing' stamp: 'jm 2/4/98 13:36'!
 sounds
 
 	^ sounds
 ! !
 
-!SequentialSound methodsFor: 'copying' stamp: 'jmv 8/5/2011 16:00'!
-transformSounds: tfmBlock
-	"Private!! Support for copying. Copy my component sounds."
+!SequentialSound methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:49'!
+initialize
 
-	sounds _ sounds collect: tfmBlock! !
+	super initialize.
+	sounds _ #().
+	currentIndex _ 0.
+! !
 
 !StreamingMonoSound methodsFor: 'private' stamp: 'jm 10/18/2001 15:51'!
 createMixer
@@ -6101,43 +6102,6 @@ currentSampleIndex
 		ifNotNil: [
 			frameIndex _ bytePosition // codec bytesPerEncodedFrame.
 			^ (frameIndex * codec samplesPerFrame) - leftoverSamples monoSampleCount].
-! !
-
-!StreamingMonoSound methodsFor: 'accessing' stamp: 'jm 11/16/2001 17:12'!
-duration
-	"Answer the duration of this sound in seconds."
-
-	^ totalSamples asFloat / streamSamplingRate
-! !
-
-!StreamingMonoSound methodsFor: 'other' stamp: 'jmv 2/26/2016 16:02'!
-extractFrom: startSecs to: endSecs
-	"Extract a portion of this sound between the given start and end times. The current implementation only works if the sound is uncompressed."
-
-	| emptySound first last sampleCount byteStream sndBuf |
-	codec ifNotNil: [^ self error: 'only works on uncompressed sounds'].
-	emptySound _ SampledSound samples: SoundBuffer new samplingRate: streamSamplingRate.
-	first _ (startSecs * streamSamplingRate) truncated max: 0.
-	last _ ((endSecs * streamSamplingRate) truncated min: totalSamples) - 1.
-	first >= last ifTrue: [^ emptySound].
-	codec ifNotNil: [self error: 'extracting from compressed sounds is not supported'].
-	sampleCount _ last + 1 - first.
-	stream position: audioDataStart + (2 * first).
-	byteStream _ ReadStream on: (stream next: 2 * sampleCount).
-	sndBuf _ SoundBuffer newMonoSampleCount: sampleCount.
-	1 to: sampleCount do: [:i | sndBuf at: i put: (byteStream nextSignedInt16BigEndian: true)].
-	^ SampledSound samples: sndBuf samplingRate: streamSamplingRate
-! !
-
-!StreamingMonoSound methodsFor: 'initialization' stamp: 'jm 11/16/2001 10:23'!
-initStream: aStream headerStart: anInteger
-	"Initialize for streaming from the given stream. The audio file header starts at the given stream position."
-
-	stream _ aStream.
-	volume _ 1.0.
-	repeat _ false.
-	headerStart _ anInteger.
-	self reset.
 ! !
 
 !StreamingMonoSound methodsFor: 'private' stamp: 'jm 11/21/2001 11:37'!
@@ -6218,34 +6182,6 @@ loadFromLeftovers: aSoundBuffer sampleCount: sampleCount
 	^ n
 ! !
 
-!StreamingMonoSound methodsFor: 'playing' stamp: 'jmv 4/17/2013 12:11'!
-millisecondsSinceStart
-	"Answer the number of milliseconds of this sound started playing."
-
-	| mSecs |
-	(stream isNil or: [stream closed]) ifTrue: [^ 0].
-	mSecs _ self currentSampleIndex * 1000 // streamSamplingRate.
-	(self isPlaying and: [lastBufferMSecs > 0]) ifTrue: [
-		"adjust mSecs by the milliseconds since the last buffer"
-		mutex critical: [
-			mSecs _ self currentSampleIndex * 1000 // streamSamplingRate.
-			mSecs _ mSecs + (Time localMillisecondClock - lastBufferMSecs)]].
-	^ mSecs + 350 - (2 * SoundPlayer bufferMSecs)
-! !
-
-!StreamingMonoSound methodsFor: 'playing' stamp: 'jmv 4/17/2013 12:11'!
-playSampleCount: n into: aSoundBuffer startingAt: startIndex
-	"Mix the next n samples of this sound into the given buffer starting at the given index"
-
-	self repeat ifTrue: [  "loop if necessary"
-		(totalSamples - self currentSampleIndex) < n ifTrue: [self startOver]].
-
-	mutex critical: [
-		lastBufferMSecs _ Time localMillisecondClock.
-		self loadBuffersForSampleCount: (n * streamSamplingRate) // SoundPlayer samplingRate.
-		mixer playSampleCount: n into: aSoundBuffer startingAt: startIndex].
-! !
-
 !StreamingMonoSound methodsFor: 'private' stamp: 'pb 5/25/2016 01:51'!
 positionCodecTo: desiredSampleIndex
 	"Position to the closest frame before the given sample index when using a codec. If using the ADPCM codec, try to ensure that it is in sync with the compressed sample stream."
@@ -6315,6 +6251,25 @@ readHeader
 	self error: 'unrecognized sound file format'.
 ! !
 
+!StreamingMonoSound methodsFor: 'private' stamp: 'jm 11/27/2001 07:36'!
+startOver
+	"Jump back to the first sample."
+
+	stream reopen; binary.
+	self readHeader.
+	stream position: audioDataStart.
+	leftoverSamples _ SoundBuffer new.
+	lastBufferMSecs _ 0.
+	mutex _ Semaphore forMutualExclusion.
+! !
+
+!StreamingMonoSound methodsFor: 'accessing' stamp: 'jm 11/16/2001 17:12'!
+duration
+	"Answer the duration of this sound in seconds."
+
+	^ totalSamples asFloat / streamSamplingRate
+! !
+
 !StreamingMonoSound methodsFor: 'accessing' stamp: 'jm 10/18/2001 15:46'!
 repeat
 	"Answer the repeat flag."
@@ -6328,28 +6283,6 @@ repeat: aBoolean
 
 	repeat _ aBoolean.
 ! !
-
-!StreamingMonoSound methodsFor: 'playing' stamp: 'jm 10/21/2001 09:45'!
-reset
-
-	super reset.
-	self startOver.
-	self createMixer.
-! !
-
-!StreamingMonoSound methodsFor: 'playing' stamp: 'jmv 5/15/2013 08:09'!
-samplesRemaining
-	"Answer the number of samples remaining to be played."
-
-	| result |
-	(stream isNil or: [stream closed]) ifTrue: [^ 0].
-	self repeat ifTrue: [^ 1000000].
-	result _ (totalSamples - self currentSampleIndex) max: 0.
-	result <= 0 ifTrue: [
-		stream close.
-		mixer _ nil.
-		codec _ nil ].
-	^ result! !
 
 !StreamingMonoSound methodsFor: 'accessing' stamp: 'jm 11/16/2001 17:05'!
 soundPosition
@@ -6370,18 +6303,6 @@ soundPosition: fraction
 		ifNil: [stream position: audioDataStart + (desiredSampleIndex * 2)]
 		ifNotNil: [self positionCodecTo: desiredSampleIndex].
 	leftoverSamples _ SoundBuffer new.
-! !
-
-!StreamingMonoSound methodsFor: 'private' stamp: 'jm 11/27/2001 07:36'!
-startOver
-	"Jump back to the first sample."
-
-	stream reopen; binary.
-	self readHeader.
-	stream position: audioDataStart.
-	leftoverSamples _ SoundBuffer new.
-	lastBufferMSecs _ 0.
-	mutex _ Semaphore forMutualExclusion.
 ! !
 
 !StreamingMonoSound methodsFor: 'accessing' stamp: 'jm 11/20/2001 16:59'!
@@ -6405,6 +6326,86 @@ volume: aNumber
 	volume _ aNumber.
 	self createMixer.
 ! !
+
+!StreamingMonoSound methodsFor: 'other' stamp: 'jmv 2/26/2016 16:02'!
+extractFrom: startSecs to: endSecs
+	"Extract a portion of this sound between the given start and end times. The current implementation only works if the sound is uncompressed."
+
+	| emptySound first last sampleCount byteStream sndBuf |
+	codec ifNotNil: [^ self error: 'only works on uncompressed sounds'].
+	emptySound _ SampledSound samples: SoundBuffer new samplingRate: streamSamplingRate.
+	first _ (startSecs * streamSamplingRate) truncated max: 0.
+	last _ ((endSecs * streamSamplingRate) truncated min: totalSamples) - 1.
+	first >= last ifTrue: [^ emptySound].
+	codec ifNotNil: [self error: 'extracting from compressed sounds is not supported'].
+	sampleCount _ last + 1 - first.
+	stream position: audioDataStart + (2 * first).
+	byteStream _ ReadStream on: (stream next: 2 * sampleCount).
+	sndBuf _ SoundBuffer newMonoSampleCount: sampleCount.
+	1 to: sampleCount do: [:i | sndBuf at: i put: (byteStream nextSignedInt16BigEndian: true)].
+	^ SampledSound samples: sndBuf samplingRate: streamSamplingRate
+! !
+
+!StreamingMonoSound methodsFor: 'initialization' stamp: 'jm 11/16/2001 10:23'!
+initStream: aStream headerStart: anInteger
+	"Initialize for streaming from the given stream. The audio file header starts at the given stream position."
+
+	stream _ aStream.
+	volume _ 1.0.
+	repeat _ false.
+	headerStart _ anInteger.
+	self reset.
+! !
+
+!StreamingMonoSound methodsFor: 'playing' stamp: 'jmv 4/17/2013 12:11'!
+millisecondsSinceStart
+	"Answer the number of milliseconds of this sound started playing."
+
+	| mSecs |
+	(stream isNil or: [stream closed]) ifTrue: [^ 0].
+	mSecs _ self currentSampleIndex * 1000 // streamSamplingRate.
+	(self isPlaying and: [lastBufferMSecs > 0]) ifTrue: [
+		"adjust mSecs by the milliseconds since the last buffer"
+		mutex critical: [
+			mSecs _ self currentSampleIndex * 1000 // streamSamplingRate.
+			mSecs _ mSecs + (Time localMillisecondClock - lastBufferMSecs)]].
+	^ mSecs + 350 - (2 * SoundPlayer bufferMSecs)
+! !
+
+!StreamingMonoSound methodsFor: 'playing' stamp: 'jmv 4/17/2013 12:11'!
+playSampleCount: n into: aSoundBuffer startingAt: startIndex
+	"Mix the next n samples of this sound into the given buffer starting at the given index"
+
+	self repeat ifTrue: [  "loop if necessary"
+		(totalSamples - self currentSampleIndex) < n ifTrue: [self startOver]].
+
+	mutex critical: [
+		lastBufferMSecs _ Time localMillisecondClock.
+		self loadBuffersForSampleCount: (n * streamSamplingRate) // SoundPlayer samplingRate.
+		mixer playSampleCount: n into: aSoundBuffer startingAt: startIndex].
+! !
+
+!StreamingMonoSound methodsFor: 'playing' stamp: 'jm 10/21/2001 09:45'!
+reset
+
+	super reset.
+	self startOver.
+	self createMixer.
+! !
+
+!StreamingMonoSound methodsFor: 'playing' stamp: 'jmv 5/15/2013 08:09'!
+samplesRemaining
+	"Answer the number of samples remaining to be played."
+
+	| result |
+	(stream isNil or: [stream closed]) ifTrue: [^ 0].
+	self repeat ifTrue: [^ 1000000].
+	result _ (totalSamples - self currentSampleIndex) max: 0.
+	result <= 0 ifTrue: [
+		stream close.
+		mixer _ nil.
+		codec _ nil ].
+	^ result! !
 
 !StreamingMonoSound class methodsFor: 'instance creation' stamp: 'jmv 10/14/2015 17:26'!
 onFileNamed: fileName
@@ -6443,6 +6444,87 @@ closeMIDIPort
 	midiPort _ nil.
 ! !
 
+!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 4/17/2013 12:09'!
+midiPlayLoop
+
+	| mSecsPerStep tStart mSecs |
+	mSecsPerStep _ 5.
+	[done] whileFalse: [
+		tStart _ Time localMillisecondClock.
+		self processAllAtTick: ticksSinceStart asInteger.
+		(Delay forMilliseconds: mSecsPerStep) wait.
+		mSecs _ Time localMillisecondClock - tStart.
+		ticksSinceStart _ ticksSinceStart + (mSecs asFloat / (1000.0 * secsPerTick))]! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jm 10/12/1998 15:56'!
+openMIDIPort: portNum
+	"Open the given MIDI port. Music will be played as MIDI commands to the given MIDI port."
+
+	midiPort _ SimpleMIDIPort openOnPortNumber: portNum.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 3/1/2010 14:06'!
+processMIDIEventsAtTick: scoreTick
+	"Process note events through the given score tick using MIDI."
+
+	| j evt |
+	1 to: score tracks size do: [:i |
+		j _ trackEventIndex at: i.
+		[
+			evt _ score eventForTrack: i after: j ticks: scoreTick.
+			 evt notNil
+		] whileTrue: [
+			evt isNoteEvent
+				ifTrue: [
+					(muted at: i) ifFalse: [
+						evt startNoteOnMidiPort: midiPort.
+						activeMIDINotes add: (Array with: evt with: i)]]
+				ifFalse: [evt outputOnMidiPort: midiPort].
+			j _ j + 1.
+			trackEventIndex at: i put: j]].
+	self turnOffActiveMIDINotesAt: scoreTick.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 10/8/2012 22:14'!
+startMIDIPlaying
+	"Start up a process to play this score via MIDI."
+
+	midiPort ensureOpen.
+	midiPlayerProcess ifNotNil: [midiPlayerProcess terminate].
+	midiPlayerProcess _ [self midiPlayLoop] newProcess.
+	midiPlayerProcess
+		priority: Processor userInterruptPriority;
+		name: 'ScorePlayer';
+		resume.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jm 9/10/1998 20:44'!
+stopMIDIPlaying
+	"Terminate the MIDI player process and turn off any active notes."
+
+	midiPlayerProcess ifNotNil: [midiPlayerProcess terminate].
+	midiPlayerProcess _ nil.
+	activeMIDINotes do: [:pair | pair first endNoteOnMidiPort: midiPort].
+	activeMIDINotes _ activeMIDINotes species new.
+! !
+
+!ScorePlayer methodsFor: 'midi output' stamp: 'jm 9/10/1998 17:48'!
+turnOffActiveMIDINotesAt: scoreTick
+	"Turn off any active MIDI notes that should be turned off at the given score tick."
+
+	| evt someNoteEnded |
+	midiPort ifNil: [^ self].
+	someNoteEnded _ false. 
+	activeMIDINotes do: [:pair |
+		evt _ pair first.
+		evt endTime <= scoreTick ifTrue: [
+			evt endNoteOnMidiPort: midiPort.
+			someNoteEnded _ true]].
+
+	someNoteEnded ifTrue: [
+		activeMIDINotes _ activeMIDINotes select: [:p | p first endTime > scoreTick]].
+! !
+
 !ScorePlayer methodsFor: 'copying' stamp: 'jm 1/29/98 18:32'!
 copySounds
 	"Private!! Support for copying."
@@ -6454,12 +6536,48 @@ copySounds
 	self reset.
 ! !
 
+!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
+! !
+
 !ScorePlayer methodsFor: 'operating' stamp: 'jm 1/30/98 14:03'!
 disableReverb: aBoolean
 
 	aBoolean
 		ifTrue: [SoundPlayer stopReverb]
 		ifFalse: [SoundPlayer startReverb].
+! !
+
+!ScorePlayer methodsFor: 'operating' stamp: 'jmv 4/6/2009 17:16'!
+pause
+	"Pause this sound. It can be resumed from this point, or reset and resumed to start from the beginning."
+
+	super pause.
+	activeSounds _ activeSounds species new.
+	midiPort ifNotNil: [self stopMIDIPlaying].
+! !
+
+!ScorePlayer methodsFor: 'operating' stamp: 'jmv 4/6/2009 17:16'!
+resumePlaying
+	"Resume playing. Start over if done."
+
+	done ifTrue: [self reset].
+	self jumpToTick: ticksSinceStart.  "Play up to here in case we got scrolled to new position."
+	midiPort
+		ifNil: [super resumePlaying]  "let the sound player drive sound generation" 
+		ifNotNil: [self startMIDIPlaying].  "start a process to drive MIDI output"
+! !
+
+!ScorePlayer methodsFor: 'operating' stamp: 'jm 9/10/1998 20:56'!
+tempoOrRateChanged
+	"This method should be called after changing the tempo or rate."
+
+	secsPerTick _ 60.0 / (tempo * rate * score ticksPerQuarterNote).
+	ticksClockIncr _ (1.0 / self controlRate) / secsPerTick.
 ! !
 
 !ScorePlayer methodsFor: 'sound generation' stamp: 'jm 9/10/1998 19:07'!
@@ -6469,6 +6587,165 @@ doControl
 	1 to: activeSounds size do: [:i | (activeSounds at: i) first doControl].
 	ticksSinceStart _ ticksSinceStart + ticksClockIncr.
 	self processAllAtTick: ticksSinceStart asInteger.
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:14'!
+isDone
+
+	| track |
+	activeSounds size > 0 ifTrue: [^ false].
+	activeMIDINotes size > 0 ifTrue: [^ false].
+	1 to: score tracks size do: [:i |
+		track _ score tracks at: i.
+		(trackEventIndex at: i) <= track size ifTrue: [^ false]].
+	^ true
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:14'!
+jumpToTick: startTick
+
+	| |
+	self reset.
+	self processTempoMapAtTick: startTick.
+	self skipNoteEventsThruTick: startTick.
+	ticksSinceStart _ startTick.
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 7/4/1998 08:21'!
+mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
+	"Play a number of sounds concurrently. The level of each sound can be set independently for the left and right channels."
+
+	| myLeftVol myRightVol someSoundIsDone pair snd trk left right |
+	myLeftVol _ (leftVol * overallVolume) asInteger.
+	myRightVol _ (rightVol * overallVolume) asInteger.
+	someSoundIsDone _ false.
+	1 to: activeSounds size do: [:i |
+		pair _ activeSounds at: i.
+		snd _ pair at: 1.
+		trk _ pair at: 2.
+		left _ (myLeftVol * (leftVols at: trk)) // ScaleFactor.
+		right _ (myRightVol * (rightVols at: trk)) // ScaleFactor.
+		snd samplesRemaining > 0
+			ifTrue: [
+				snd mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: left rightVol: right]
+			ifFalse: [someSoundIsDone _ true]].
+
+	someSoundIsDone ifTrue: [
+		activeSounds _ activeSounds select: [:p | p first samplesRemaining > 0]].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:10'!
+processAllAtTick: scoreTick
+
+	self processTempoMapAtTick: scoreTick.
+	midiPort
+		ifNil: [self processNoteEventsAtTick: scoreTick]
+		ifNotNil: [self processMIDIEventsAtTick: scoreTick].
+	self isDone ifTrue: [
+		repeat
+			ifTrue: [self reset]
+			ifFalse: [done _ true]].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 3/1/2010 14:06'!
+processNoteEventsAtTick: scoreTick
+	"Process note events through the given score tick using internal Squeak sound synthesis."
+
+	| instr j evt snd |
+	1 to: score tracks size do: [:i |
+		instr _ instruments at: i.
+		j _ trackEventIndex at: i.
+		[
+			evt _ score eventForTrack: i after: j ticks: scoreTick.
+			evt notNil
+		] whileTrue: [
+			(evt isNoteEvent and: [(muted at: i) not]) ifTrue: [
+				snd _ instr
+					soundForMidiKey: evt midiKey
+					dur: secsPerTick * evt duration
+					loudness: evt velocity asFloat / 127.0.
+				activeSounds add: (Array with: snd with: i)].
+			j _ j + 1.
+			trackEventIndex at: i put: j]].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 6/16/1999 21:04'!
+processTempoMapAtTick: scoreTick
+	"Process tempo changes through the given score tick."
+
+	| map tempoChanged |
+	map _ score tempoMap.
+	map ifNil: [^ self].
+	tempoChanged _ false.
+	[(tempoMapIndex <= map size) and:
+	 [(map at: tempoMapIndex) time <= scoreTick]] whileTrue: [
+		tempoChanged _ true.
+		tempoMapIndex _ tempoMapIndex + 1].
+
+	tempoChanged ifTrue: [
+		tempo _ (120.0 * (500000.0 / (map at: tempoMapIndex - 1) tempo)) roundTo: 0.01.
+		self tempoOrRateChanged].
+
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:16'!
+reset
+
+	super reset.
+	tempo _ 120.0.
+	self tempoOrRateChanged.
+	done _ false.
+	ticksSinceStart _ 0.
+	"one index for each sound track, plus one for the ambient track..."
+	trackEventIndex _ Array new: score tracks size+1 withAll: 1.
+	tempoMapIndex _ 1.
+	activeSounds _ OrderedCollection new.
+	activeMIDINotes _ OrderedCollection new.
+	overallVolume ifNil: [overallVolume _ 0.5].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 12/30/97 17:38'!
+samplesRemaining
+
+	done
+		ifTrue: [^ 0]
+		ifFalse: [^ 1000000].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 3/1/2010 13:18'!
+skipNoteEventsThruTick: startTick
+	"Skip note events through the given score tick using internal Squeak sound synthesis."
+
+	| j evt |
+	1 to: score tracks size do: [:i |
+		j _ trackEventIndex at: i.
+		[evt _ score eventForTrack: i after: j ticks: startTick.
+		 evt == nil] whileFalse: [
+			evt isNoteEvent
+				ifTrue: [
+					(((evt time + evt duration) > startTick) and: [(muted at: i) not]) ifTrue: [
+						self startNote: evt forStartTick: startTick trackIndex: i]]
+				ifFalse: [
+					midiPort ifNotNil: [evt outputOnMidiPort: midiPort]].
+			j _ j + 1].
+		trackEventIndex at: i put: j].
+! !
+
+!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 6/16/1999 20:30'!
+startNote: noteEvent forStartTick: startTick trackIndex: trackIndex
+	"Prepare a note to begin playing at the given tick. Used to start playing at an arbitrary point in the score. Handle both MIDI and built-in synthesis cases."
+
+	| snd |
+	midiPort
+		ifNil: [
+			snd _ (instruments at: trackIndex)
+				soundForMidiKey: noteEvent midiKey
+				dur: secsPerTick * (noteEvent endTime - startTick)
+				loudness: noteEvent velocity asFloat / 127.0.
+			activeSounds add: (Array with: snd with: trackIndex)]
+		ifNotNil: [
+			noteEvent startNoteOnMidiPort: midiPort.
+			activeMIDINotes add: (Array with: noteEvent with: trackIndex)].
 ! !
 
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 12/16/2001 11:59'!
@@ -6509,20 +6786,6 @@ infoForTrack: i
 	^ score trackInfo at: i
 ! !
 
-!ScorePlayer methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:49'!
-initialize
-
-	super initialize.
-	score _ MIDIScore new.
-	instruments _ #().
-	overallVolume _ 0.5.
-	leftVols _ #().
-	rightVols _ #().
-	muted _ #().
-	rate _ 1.0.
-	repeat _ false.
-	durationInTicks _ 100! !
-
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:37'!
 instrumentForTrack: trackIndex
 
@@ -6536,45 +6799,11 @@ instrumentForTrack: trackIndex put: aSoundProto
 	instruments at: trackIndex put: aSoundProto.
 ! !
 
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:14'!
-isDone
-
-	| track |
-	activeSounds size > 0 ifTrue: [^ false].
-	activeMIDINotes size > 0 ifTrue: [^ false].
-	1 to: score tracks size do: [:i |
-		track _ score tracks at: i.
-		(trackEventIndex at: i) <= track size ifTrue: [^ false]].
-	^ true
-! !
-
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 12/16/2001 20:20'!
 isStereo
 
 	^ true
 ! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:14'!
-jumpToTick: startTick
-
-	| |
-	self reset.
-	self processTempoMapAtTick: startTick.
-	self skipNoteEventsThruTick: startTick.
-	ticksSinceStart _ startTick.
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 4/17/2013 12:09'!
-midiPlayLoop
-
-	| mSecsPerStep tStart mSecs |
-	mSecsPerStep _ 5.
-	[done] whileFalse: [
-		tStart _ Time localMillisecondClock.
-		self processAllAtTick: ticksSinceStart asInteger.
-		(Delay forMilliseconds: mSecsPerStep) wait.
-		mSecs _ Time localMillisecondClock - tStart.
-		ticksSinceStart _ ticksSinceStart + (mSecs asFloat / (1000.0 * secsPerTick))]! !
 
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/28/1998 22:58'!
 midiPort
@@ -6587,29 +6816,6 @@ millisecondsSinceStart
 	"Answer the approximate number of milliseconds of real time since the beginning of the score. Since this calculation uses the current tempo, which can change throughout the piece, it is safer to use ticksSinceStart for synchronization."
 
 	^ (secsPerTick * ticksSinceStart * 1000) asInteger
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 7/4/1998 08:21'!
-mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
-	"Play a number of sounds concurrently. The level of each sound can be set independently for the left and right channels."
-
-	| myLeftVol myRightVol someSoundIsDone pair snd trk left right |
-	myLeftVol _ (leftVol * overallVolume) asInteger.
-	myRightVol _ (rightVol * overallVolume) asInteger.
-	someSoundIsDone _ false.
-	1 to: activeSounds size do: [:i |
-		pair _ activeSounds at: i.
-		snd _ pair at: 1.
-		trk _ pair at: 2.
-		left _ (myLeftVol * (leftVols at: trk)) // ScaleFactor.
-		right _ (myRightVol * (rightVols at: trk)) // ScaleFactor.
-		snd samplesRemaining > 0
-			ifTrue: [
-				snd mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: left rightVol: right]
-			ifFalse: [someSoundIsDone _ true]].
-
-	someSoundIsDone ifTrue: [
-		activeSounds _ activeSounds select: [:p | p first samplesRemaining > 0]].
 ! !
 
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/29/98 18:33'!
@@ -6639,47 +6845,6 @@ mutedForTrack: trackIndex put: aBoolean
 mutedState
 
 	^ muted
-! !
-
-!ScorePlayer methodsFor: 'initialization' stamp: 'di 6/15/1999 11:18'!
-onScore: aMIDIScore
-
-	| trackCount totalVol incr curr pan |
-	score _ aMIDIScore.
-	trackCount _ score tracks size.
-	durationInTicks _ score durationInTicks.
-	instruments _ (1 to: trackCount) collect: [:i | FMSound oboe1].
-	leftVols _ Array new: trackCount.
-	rightVols _ Array new: trackCount.
-	muted  _ Array new: trackCount withAll: false.
-	rate _ 1.0.
-	repeat _ false.
-	tempo _ 120.0.
-
-	trackCount = 0 ifTrue: [^ self].
-	1 to: trackCount do: [:i |
-		leftVols at: i put: ScaleFactor // 4.
-		rightVols at: i put: ScaleFactor // 4].
-
-	"distribute inital panning of tracks left-to-right"
-	totalVol _ 1.0.
-	incr _ totalVol / (((trackCount // 2) + 1) * 2).
-	curr _ 0.
-	1 to: trackCount do: [:t |
-		t even
-			ifTrue: [pan _ curr]
-			ifFalse: [
-				curr _ curr + incr.
-				pan _ totalVol - curr].
-		self panForTrack: t put: pan].
-
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jm 10/12/1998 15:56'!
-openMIDIPort: portNum
-	"Open the given MIDI port. Music will be played as MIDI commands to the given MIDI port."
-
-	midiPort _ SimpleMIDIPort openOnPortNumber: portNum.
 ! !
 
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 08:17'!
@@ -6730,15 +6895,6 @@ panForTrack: trackIndex put: aNumber
 	leftVols at: trackIndex put: left asInteger.
 ! !
 
-!ScorePlayer methodsFor: 'operating' stamp: 'jmv 4/6/2009 17:16'!
-pause
-	"Pause this sound. It can be resumed from this point, or reset and resumed to start from the beginning."
-
-	super pause.
-	activeSounds _ activeSounds species new.
-	midiPort ifNotNil: [self stopMIDIPlaying].
-! !
-
 !ScorePlayer methodsFor: 'accessing' stamp: 'di 6/20/1999 00:42'!
 positionInScore
 
@@ -6750,90 +6906,6 @@ positionInScore: pos
 	self isPlaying ifTrue: [^ self "ignore rude intrusion"].
 	ticksSinceStart _ pos * durationInTicks.
 	done _ false.
-
-! !
-
-!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:10'!
-processAllAtTick: scoreTick
-
-	self processTempoMapAtTick: scoreTick.
-	midiPort
-		ifNil: [self processNoteEventsAtTick: scoreTick]
-		ifNotNil: [self processMIDIEventsAtTick: scoreTick].
-	self isDone ifTrue: [
-		repeat
-			ifTrue: [self reset]
-			ifFalse: [done _ true]].
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 3/1/2010 14:06'!
-processMIDIEventsAtTick: scoreTick
-	"Process note events through the given score tick using MIDI."
-
-	| j evt |
-	1 to: score tracks size do: [:i |
-		j _ trackEventIndex at: i.
-		[
-			evt _ score eventForTrack: i after: j ticks: scoreTick.
-			 evt notNil
-		] whileTrue: [
-			evt isNoteEvent
-				ifTrue: [
-					(muted at: i) ifFalse: [
-						evt startNoteOnMidiPort: midiPort.
-						activeMIDINotes add: (Array with: evt with: i)]]
-				ifFalse: [evt outputOnMidiPort: midiPort].
-			j _ j + 1.
-			trackEventIndex at: i put: j]].
-	self turnOffActiveMIDINotesAt: scoreTick.
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 3/1/2010 14:06'!
-processNoteEventsAtTick: scoreTick
-	"Process note events through the given score tick using internal Squeak sound synthesis."
-
-	| instr j evt snd |
-	1 to: score tracks size do: [:i |
-		instr _ instruments at: i.
-		j _ trackEventIndex at: i.
-		[
-			evt _ score eventForTrack: i after: j ticks: scoreTick.
-			evt notNil
-		] whileTrue: [
-			(evt isNoteEvent and: [(muted at: i) not]) ifTrue: [
-				snd _ instr
-					soundForMidiKey: evt midiKey
-					dur: secsPerTick * evt duration
-					loudness: evt velocity asFloat / 127.0.
-				activeSounds add: (Array with: snd with: i)].
-			j _ j + 1.
-			trackEventIndex at: i put: j]].
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 6/16/1999 21:04'!
-processTempoMapAtTick: scoreTick
-	"Process tempo changes through the given score tick."
-
-	| map tempoChanged |
-	map _ score tempoMap.
-	map ifNil: [^ self].
-	tempoChanged _ false.
-	[(tempoMapIndex <= map size) and:
-	 [(map at: tempoMapIndex) time <= scoreTick]] whileTrue: [
-		tempoChanged _ true.
-		tempoMapIndex _ tempoMapIndex + 1].
-
-	tempoChanged ifTrue: [
-		tempo _ (120.0 * (500000.0 / (map at: tempoMapIndex - 1) tempo)) roundTo: 0.01.
-		self tempoOrRateChanged].
 
 ! !
 
@@ -6863,41 +6935,6 @@ repeat: aBoolean
 	"Turn repeat mode on or off."
 
 	repeat _ aBoolean.
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 4/6/2009 17:16'!
-reset
-
-	super reset.
-	tempo _ 120.0.
-	self tempoOrRateChanged.
-	done _ false.
-	ticksSinceStart _ 0.
-	"one index for each sound track, plus one for the ambient track..."
-	trackEventIndex _ Array new: score tracks size+1 withAll: 1.
-	tempoMapIndex _ 1.
-	activeSounds _ OrderedCollection new.
-	activeMIDINotes _ OrderedCollection new.
-	overallVolume ifNil: [overallVolume _ 0.5].
-! !
-
-!ScorePlayer methodsFor: 'operating' stamp: 'jmv 4/6/2009 17:16'!
-resumePlaying
-	"Resume playing. Start over if done."
-
-	done ifTrue: [self reset].
-	self jumpToTick: ticksSinceStart.  "Play up to here in case we got scrolled to new position."
-	midiPort
-		ifNil: [super resumePlaying]  "let the sound player drive sound generation" 
-		ifNotNil: [self startMIDIPlaying].  "start a process to drive MIDI output"
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 12/30/97 17:38'!
-samplesRemaining
-
-	done
-		ifTrue: [^ 0]
-		ifFalse: [^ 1000000].
 ! !
 
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/3/98 09:33'!
@@ -6932,78 +6969,11 @@ settingsString
 	^ s contents
 ! !
 
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jmv 3/1/2010 13:18'!
-skipNoteEventsThruTick: startTick
-	"Skip note events through the given score tick using internal Squeak sound synthesis."
-
-	| j evt |
-	1 to: score tracks size do: [:i |
-		j _ trackEventIndex at: i.
-		[evt _ score eventForTrack: i after: j ticks: startTick.
-		 evt == nil] whileFalse: [
-			evt isNoteEvent
-				ifTrue: [
-					(((evt time + evt duration) > startTick) and: [(muted at: i) not]) ifTrue: [
-						self startNote: evt forStartTick: startTick trackIndex: i]]
-				ifFalse: [
-					midiPort ifNotNil: [evt outputOnMidiPort: midiPort]].
-			j _ j + 1].
-		trackEventIndex at: i put: j].
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jmv 10/8/2012 22:14'!
-startMIDIPlaying
-	"Start up a process to play this score via MIDI."
-
-	midiPort ensureOpen.
-	midiPlayerProcess ifNotNil: [midiPlayerProcess terminate].
-	midiPlayerProcess _ [self midiPlayLoop] newProcess.
-	midiPlayerProcess
-		priority: Processor userInterruptPriority;
-		name: 'ScorePlayer';
-		resume.
-! !
-
-!ScorePlayer methodsFor: 'sound generation' stamp: 'jm 6/16/1999 20:30'!
-startNote: noteEvent forStartTick: startTick trackIndex: trackIndex
-	"Prepare a note to begin playing at the given tick. Used to start playing at an arbitrary point in the score. Handle both MIDI and built-in synthesis cases."
-
-	| snd |
-	midiPort
-		ifNil: [
-			snd _ (instruments at: trackIndex)
-				soundForMidiKey: noteEvent midiKey
-				dur: secsPerTick * (noteEvent endTime - startTick)
-				loudness: noteEvent velocity asFloat / 127.0.
-			activeSounds add: (Array with: snd with: trackIndex)]
-		ifNotNil: [
-			noteEvent startNoteOnMidiPort: midiPort.
-			activeMIDINotes add: (Array with: noteEvent with: trackIndex)].
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jm 9/10/1998 20:44'!
-stopMIDIPlaying
-	"Terminate the MIDI player process and turn off any active notes."
-
-	midiPlayerProcess ifNotNil: [midiPlayerProcess terminate].
-	midiPlayerProcess _ nil.
-	activeMIDINotes do: [:pair | pair first endNoteOnMidiPort: midiPort].
-	activeMIDINotes _ activeMIDINotes species new.
-! !
-
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 1/4/98 10:10'!
 tempo
 	"Return the current tempo in beats (quarter notes) per minute. The tempo at any given moment is defined by the score and cannot be changed by the client. To change the playback speed, the client may change the rate parameter."
 
 	^ tempo
-! !
-
-!ScorePlayer methodsFor: 'operating' stamp: 'jm 9/10/1998 20:56'!
-tempoOrRateChanged
-	"This method should be called after changing the tempo or rate."
-
-	secsPerTick _ 60.0 / (tempo * rate * score ticksPerQuarterNote).
-	ticksClockIncr _ (1.0 / self controlRate) / secsPerTick.
 ! !
 
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 9/22/1998 09:32'!
@@ -7030,29 +7000,6 @@ ticksSinceStart: newTicks
 trackCount
 
 	^ score tracks size
-! !
-
-!ScorePlayer methodsFor: 'midi output' stamp: 'jm 9/10/1998 17:48'!
-turnOffActiveMIDINotesAt: scoreTick
-	"Turn off any active MIDI notes that should be turned off at the given score tick."
-
-	| evt someNoteEnded |
-	midiPort ifNil: [^ self].
-	someNoteEnded _ false. 
-	activeMIDINotes do: [:pair |
-		evt _ pair first.
-		evt endTime <= scoreTick ifTrue: [
-			evt endNoteOnMidiPort: midiPort.
-			someNoteEnded _ true]].
-
-	someNoteEnded ifTrue: [
-		activeMIDINotes _ activeMIDINotes select: [:p | p first endTime > scoreTick]].
-! !
-
-!ScorePlayer methodsFor: 'initialization' stamp: 'di 6/20/1999 00:46'!
-updateDuration
-
-	durationInTicks _ score durationInTicks.
 ! !
 
 !ScorePlayer methodsFor: 'accessing' stamp: 'jm 7/4/1998 09:16'!
@@ -7084,6 +7031,60 @@ volumeForTrack: trackIndex put: aNumber
 	rightVols at: trackIndex put: right asInteger.
 ! !
 
+!ScorePlayer methodsFor: 'initialization' stamp: 'jmv 12/2/2011 10:49'!
+initialize
+
+	super initialize.
+	score _ MIDIScore new.
+	instruments _ #().
+	overallVolume _ 0.5.
+	leftVols _ #().
+	rightVols _ #().
+	muted _ #().
+	rate _ 1.0.
+	repeat _ false.
+	durationInTicks _ 100! !
+
+!ScorePlayer methodsFor: 'initialization' stamp: 'di 6/15/1999 11:18'!
+onScore: aMIDIScore
+
+	| trackCount totalVol incr curr pan |
+	score _ aMIDIScore.
+	trackCount _ score tracks size.
+	durationInTicks _ score durationInTicks.
+	instruments _ (1 to: trackCount) collect: [:i | FMSound oboe1].
+	leftVols _ Array new: trackCount.
+	rightVols _ Array new: trackCount.
+	muted  _ Array new: trackCount withAll: false.
+	rate _ 1.0.
+	repeat _ false.
+	tempo _ 120.0.
+
+	trackCount = 0 ifTrue: [^ self].
+	1 to: trackCount do: [:i |
+		leftVols at: i put: ScaleFactor // 4.
+		rightVols at: i put: ScaleFactor // 4].
+
+	"distribute inital panning of tracks left-to-right"
+	totalVol _ 1.0.
+	incr _ totalVol / (((trackCount // 2) + 1) * 2).
+	curr _ 0.
+	1 to: trackCount do: [:t |
+		t even
+			ifTrue: [pan _ curr]
+			ifFalse: [
+				curr _ curr + incr.
+				pan _ totalVol - curr].
+		self panForTrack: t put: pan].
+
+! !
+
+!ScorePlayer methodsFor: 'initialization' stamp: 'di 6/20/1999 00:46'!
+updateDuration
+
+	durationInTicks _ score durationInTicks.
+! !
+
 !ScorePlayer class methodsFor: 'instance creation' stamp: 'jm 1/29/98 18:18'!
 onScore: aMIDIScore
 
@@ -7099,6 +7100,44 @@ asSound
 		ifAbsent: [^ self error: 'The codec for decompressing this sound is not available'].
 	^ (codecClass new decompressSound: self) reset
 ! !
+
+!CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 08:49'!
+doControl
+
+	cachedSound doControl
+! !
+
+!CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 08:49'!
+mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
+
+	cachedSound mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
+! !
+
+!CompressedSoundData methodsFor: 'asSound' stamp: 'jmv 3/1/2010 09:47'!
+reset
+	"This message is the cue to start behaving like a real sound in order to be played.
+	We do this by caching a decompressed version of this sound.
+	See also samplesRemaining."
+
+	cachedSound
+		ifNil: [cachedSound _ self asSound].
+	cachedSound reset
+! !
+
+!CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 20:44'!
+samples
+
+	^ self asSound samples! !
+
+!CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 20:49'!
+samplesRemaining
+	"This message is the cue that the cached sound may no longer be needed.
+	We know it is done playing when samplesRemaining=0."
+
+	| samplesRemaining |
+	samplesRemaining _ cachedSound samplesRemaining.
+	samplesRemaining <= 0 ifTrue: [cachedSound _ nil].
+	^ samplesRemaining! !
 
 !CompressedSoundData methodsFor: 'accessing' stamp: 'jm 2/2/1999 08:10'!
 channels
@@ -7124,24 +7163,6 @@ codecName
 codecName: aStringOrSymbol
 
 	codecName _ aStringOrSymbol asSymbol.
-! !
-
-!CompressedSoundData methodsFor: 'as yet unclassified' stamp: 'RAA 12/8/2000 09:50'!
-compressWith: codecClass
-
-	codecName == codecClass name asSymbol ifTrue: [^self].
-	^self asSound compressWith: codecClass! !
-
-!CompressedSoundData methodsFor: 'as yet unclassified' stamp: 'RAA 12/24/2000 08:53'!
-compressWith: codecClass atRate: aSamplingRate
-
-	(codecName == codecClass name asSymbol and: [samplingRate = aSamplingRate]) ifTrue: [^self].
-	^self asSound compressWith: codecClass atRate: aSamplingRate! !
-
-!CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 08:49'!
-doControl
-
-	cachedSound doControl
 ! !
 
 !CompressedSoundData methodsFor: 'accessing' stamp: 'jm 2/2/1999 09:56'!
@@ -7196,12 +7217,6 @@ loopLength: anInteger
 	loopLength _ anInteger.
 ! !
 
-!CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 08:49'!
-mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
-
-	cachedSound mixSampleCount: n into: aSoundBuffer startingAt: startIndex leftVol: leftVol rightVol: rightVol
-! !
-
 !CompressedSoundData methodsFor: 'accessing' stamp: 'jm 2/2/1999 09:39'!
 perceivedPitch
 	"Answer the perceived pitch of the original sound. By convention, unpitched sounds (like drum hits) are given an arbitrary pitch of 100.0."
@@ -7214,32 +7229,6 @@ perceivedPitch: aNumber
 
 	perceivedPitch _ aNumber.
 ! !
-
-!CompressedSoundData methodsFor: 'asSound' stamp: 'jmv 3/1/2010 09:47'!
-reset
-	"This message is the cue to start behaving like a real sound in order to be played.
-	We do this by caching a decompressed version of this sound.
-	See also samplesRemaining."
-
-	cachedSound
-		ifNil: [cachedSound _ self asSound].
-	cachedSound reset
-! !
-
-!CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 20:44'!
-samples
-
-	^ self asSound samples! !
-
-!CompressedSoundData methodsFor: 'asSound' stamp: 'di 2/17/1999 20:49'!
-samplesRemaining
-	"This message is the cue that the cached sound may no longer be needed.
-	We know it is done playing when samplesRemaining=0."
-
-	| samplesRemaining |
-	samplesRemaining _ cachedSound samplesRemaining.
-	samplesRemaining <= 0 ifTrue: [cachedSound _ nil].
-	^ samplesRemaining! !
 
 !CompressedSoundData methodsFor: 'accessing' stamp: 'jm 2/2/1999 08:13'!
 samplingRate
@@ -7267,6 +7256,18 @@ soundClassName: aStringOrSymbol
 	soundClassName _ aStringOrSymbol asSymbol.
 ! !
 
+!CompressedSoundData methodsFor: 'as yet unclassified' stamp: 'RAA 12/8/2000 09:50'!
+compressWith: codecClass
+
+	codecName == codecClass name asSymbol ifTrue: [^self].
+	^self asSound compressWith: codecClass! !
+
+!CompressedSoundData methodsFor: 'as yet unclassified' stamp: 'RAA 12/24/2000 08:53'!
+compressWith: codecClass atRate: aSamplingRate
+
+	(codecName == codecClass name asSymbol and: [samplingRate = aSamplingRate]) ifTrue: [^self].
+	^self asSound compressWith: codecClass atRate: aSamplingRate! !
+
 !Envelope methodsFor: 'accessing' stamp: 'jm 8/17/1998 15:20'!
 attackTime
 	"Return the time taken by the attack phase."
@@ -7277,71 +7278,6 @@ attackTime
 !Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 18:10'!
 centerPitch: aNumber
 	"Set the center pitch of a pitch-controlling envelope. This default implementation does nothing."
-! !
-
-!Envelope methodsFor: 'private' stamp: 'jm 11/26/97 09:03'!
-checkParameters
-	"Verify that the point array, loopStartIndex, and loopStopIndex obey the rules."
-
-	| lastT t |
-	points size > 1
-		ifFalse: [^ self error: 'the point list must contain at least two points'].
-	points first x = 0
-		ifFalse: [^ self error: 'the time of the first point must be zero'].
-	lastT _ points first x.
-	2 to: points size do: [:i |
-		t _ (points at: i) x.
-		t >= lastT
-			ifFalse: [^ self error: 'the points must be in ascending time order']].
-
-	(loopStartIndex isInteger and:
-	 [(loopStartIndex > 0) and: [loopStartIndex <= points size]])
-		ifFalse: [^ self error: 'loopStartIndex is not a valid point index'].
-	(loopEndIndex isInteger and:
-	 [(loopEndIndex > 0) and: [loopEndIndex <= points size]])
-		ifFalse: [^ self error: 'loopEndIndex is not a valid point index'].
-	 loopStartIndex <= loopEndIndex
-		ifFalse: [^ self error: 'loopEndIndex must not precede loopStartIndex'].
-! !
-
-!Envelope methodsFor: 'private' stamp: 'jm 2/4/98 20:20'!
-computeIncrementAt: mSecs between: p1 and: p2 scale: combinedScale
-	"Compute the current and increment values for the given time between the given inflection points."
-	"Assume: p1 x <= mSecs <= p2 x"
-
-	| valueRange timeRange |
-	valueRange _ (p2 y - p1 y) asFloat.
-	timeRange _ (p2 x - p1 x) asFloat.
-	currValue _ (p1 y + (((mSecs - p1 x) asFloat / timeRange) * valueRange)) * combinedScale.
-	valueIncr _ (((p2 y * combinedScale) - currValue) / (p2 x - mSecs)) * 10.0.
-	^ currValue
-! !
-
-!Envelope methodsFor: 'applying' stamp: 'jmv 3/1/2010 14:04'!
-computeValueAtMSecs: mSecs
-	"Return the value of this envelope at the given number of milliseconds from its onset. Return zero for times outside the time range of this envelope."
-	"Note: Unlike the private method incrementalComputeValueAtMSecs:, this method does is not increment. Thus it is slower, but it doesn't depend on being called sequentially at fixed time intervals."
-
-	| t i |
-	mSecs < 0 ifTrue: [^ 0.0].
-
-	(loopEndMSecs notNil and: [mSecs >= loopEndMSecs]) ifTrue: [  "decay phase"
-		t _ (points at: loopEndIndex) x + (mSecs - loopEndMSecs).
-		i _ self indexOfPointAfterMSecs: t startingAt: loopEndIndex.
-		i ifNil: [^ 0.0].  "past end"
-		^ (self interpolate: t between: (points at: i - 1) and: (points at: i)) * decayScale].
-
-	mSecs < loopStartMSecs ifTrue: [  "attack phase"
-		i _ self indexOfPointAfterMSecs: mSecs startingAt: 1.
-		i = 1 ifTrue: [^ (points at: 1) y * scale].
-		^ self interpolate: mSecs between: (points at: i - 1) and: (points at: i)].
-
-	"sustain phase"
-	loopMSecs = 0 ifTrue: [^ (points at: loopEndIndex) y * scale].  "looping on a single point"
-	t _ loopStartMSecs + ((mSecs - loopStartMSecs) \\ loopMSecs).
-	i _ self indexOfPointAfterMSecs: t startingAt: loopStartIndex.
-
-	^ self interpolate: t between: (points at: i - 1) and: (points at: i)
 ! !
 
 !Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 10:21'!
@@ -7384,6 +7320,103 @@ duration: seconds
 				ifFalse: [endTime _ endMSecs]].
 
 	self sustainEnd: (endTime max: 0).
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 17:24'!
+loopEndIndex
+
+	^ loopEndIndex
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 17:24'!
+loopStartIndex
+
+	^ loopStartIndex
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 17:03'!
+name
+
+	^ self updateSelector allButLast
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 17:24'!
+points
+
+	^ points
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 11/24/97 14:36'!
+scale: aNumber
+
+	scale _ aNumber asFloat.
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 11/26/97 09:25'!
+target
+
+	^ target
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 11/26/97 09:25'!
+target: anObject
+
+	target _ anObject.
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 11/24/97 14:34'!
+updateSelector
+
+	^ updateSelector
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 11/26/97 08:52'!
+updateSelector: aSymbol
+
+	updateSelector _ aSymbol.
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 18:13'!
+volume: aNumber
+	"Set the maximum volume of a volume-controlling envelope. This default implementation does nothing."
+! !
+
+!Envelope methodsFor: 'private' stamp: 'jm 11/26/97 09:03'!
+checkParameters
+	"Verify that the point array, loopStartIndex, and loopStopIndex obey the rules."
+
+	| lastT t |
+	points size > 1
+		ifFalse: [^ self error: 'the point list must contain at least two points'].
+	points first x = 0
+		ifFalse: [^ self error: 'the time of the first point must be zero'].
+	lastT _ points first x.
+	2 to: points size do: [:i |
+		t _ (points at: i) x.
+		t >= lastT
+			ifFalse: [^ self error: 'the points must be in ascending time order']].
+
+	(loopStartIndex isInteger and:
+	 [(loopStartIndex > 0) and: [loopStartIndex <= points size]])
+		ifFalse: [^ self error: 'loopStartIndex is not a valid point index'].
+	(loopEndIndex isInteger and:
+	 [(loopEndIndex > 0) and: [loopEndIndex <= points size]])
+		ifFalse: [^ self error: 'loopEndIndex is not a valid point index'].
+	 loopStartIndex <= loopEndIndex
+		ifFalse: [^ self error: 'loopEndIndex must not precede loopStartIndex'].
+! !
+
+!Envelope methodsFor: 'private' stamp: 'jm 2/4/98 20:20'!
+computeIncrementAt: mSecs between: p1 and: p2 scale: combinedScale
+	"Compute the current and increment values for the given time between the given inflection points."
+	"Assume: p1 x <= mSecs <= p2 x"
+
+	| valueRange timeRange |
+	valueRange _ (p2 y - p1 y) asFloat.
+	timeRange _ (p2 x - p1 x) asFloat.
+	currValue _ (p1 y + (((mSecs - p1 x) asFloat / timeRange) * valueRange)) * combinedScale.
+	valueIncr _ (((p2 y * combinedScale) - currValue) / (p2 x - mSecs)) * 10.0.
+	^ currValue
 ! !
 
 !Envelope methodsFor: 'private' stamp: 'jmv 3/1/2010 14:05'!
@@ -7450,45 +7483,6 @@ interpolate: mSecs between: p1 and: p2
 	^ (p1 y + (((mSecs - p1 x) asFloat / timeRange) * valueRange)) * scale.
 ! !
 
-!Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 17:24'!
-loopEndIndex
-
-	^ loopEndIndex
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 17:24'!
-loopStartIndex
-
-	^ loopStartIndex
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 17:03'!
-name
-
-	^ self updateSelector allButLast
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 17:24'!
-points
-
-	^ points
-! !
-
-!Envelope methodsFor: 'applying' stamp: 'jm 2/4/98 21:15'!
-reset
-	"Reset the state for this envelope."
-
-	lastValue _ -100000.0.  "impossible value"
-	nextRecomputeTime _ 0.
-	self updateTargetAt: 0.
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 11/24/97 14:36'!
-scale: aNumber
-
-	scale _ aNumber asFloat.
-! !
-
 !Envelope methodsFor: 'private' stamp: 'jm 2/4/98 17:52'!
 setPoints: pointList loopStart: startIndex loopEnd: endIndex
 
@@ -7510,6 +7504,42 @@ setPoints: pointList loopStart: startIndex loopEnd: endIndex
 		(points at: i) y ~= lastVal ifTrue: [
 			noChangesDuringLoop _ false.
 			^ self]].
+! !
+
+!Envelope methodsFor: 'applying' stamp: 'jmv 3/1/2010 14:04'!
+computeValueAtMSecs: mSecs
+	"Return the value of this envelope at the given number of milliseconds from its onset. Return zero for times outside the time range of this envelope."
+	"Note: Unlike the private method incrementalComputeValueAtMSecs:, this method does is not increment. Thus it is slower, but it doesn't depend on being called sequentially at fixed time intervals."
+
+	| t i |
+	mSecs < 0 ifTrue: [^ 0.0].
+
+	(loopEndMSecs notNil and: [mSecs >= loopEndMSecs]) ifTrue: [  "decay phase"
+		t _ (points at: loopEndIndex) x + (mSecs - loopEndMSecs).
+		i _ self indexOfPointAfterMSecs: t startingAt: loopEndIndex.
+		i ifNil: [^ 0.0].  "past end"
+		^ (self interpolate: t between: (points at: i - 1) and: (points at: i)) * decayScale].
+
+	mSecs < loopStartMSecs ifTrue: [  "attack phase"
+		i _ self indexOfPointAfterMSecs: mSecs startingAt: 1.
+		i = 1 ifTrue: [^ (points at: 1) y * scale].
+		^ self interpolate: mSecs between: (points at: i - 1) and: (points at: i)].
+
+	"sustain phase"
+	loopMSecs = 0 ifTrue: [^ (points at: loopEndIndex) y * scale].  "looping on a single point"
+	t _ loopStartMSecs + ((mSecs - loopStartMSecs) \\ loopMSecs).
+	i _ self indexOfPointAfterMSecs: t startingAt: loopStartIndex.
+
+	^ self interpolate: t between: (points at: i - 1) and: (points at: i)
+! !
+
+!Envelope methodsFor: 'applying' stamp: 'jm 2/4/98 21:15'!
+reset
+	"Reset the state for this envelope."
+
+	lastValue _ -100000.0.  "impossible value"
+	nextRecomputeTime _ 0.
+	self updateTargetAt: 0.
 ! !
 
 !Envelope methodsFor: 'applying' stamp: 'jm 2/4/98 17:39'!
@@ -7540,16 +7570,6 @@ showOnDisplay
 		x _ x + 1].
 ! !
 
-!Envelope methodsFor: 'storing' stamp: 'di 2/1/98 15:45'!
-storeOn: strm
-	strm nextPutAll: '((' , self class name;
-		nextPutAll: ' points: '; store: (points collect: [:p | p x @ (p y roundTo: 0.00001)]);
-		nextPutAll: ' loopStart: '; print: loopStartIndex;
-		nextPutAll: ' loopEnd: '; print: loopEndIndex; nextPutAll: ')';
-		nextPutAll: ' updateSelector: '; store: self updateSelector; nextPutAll: ';';
-		nextPutAll: ' scale: '; print: scale; nextPutAll: ')'.
-! !
-
 !Envelope methodsFor: 'applying' stamp: 'jm 2/4/98 18:27'!
 sustainEnd: mSecs
 	"Set the ending time of the sustain phase of this envelope; the decay phase will start this point. Typically derived from a note's duration."
@@ -7565,30 +7585,6 @@ sustainEnd: mSecs
 	firstVOfDecay = 0.0
 		ifTrue: [decayScale _ 1.0]
 		ifFalse: [decayScale _ vIfSustaining / firstVOfDecay].
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 11/26/97 09:25'!
-target
-
-	^ target
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 11/26/97 09:25'!
-target: anObject
-
-	target _ anObject.
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 11/24/97 14:34'!
-updateSelector
-
-	^ updateSelector
-! !
-
-!Envelope methodsFor: 'accessing' stamp: 'jm 11/26/97 08:52'!
-updateSelector: aSymbol
-
-	updateSelector _ aSymbol.
 ! !
 
 !Envelope methodsFor: 'applying' stamp: 'jm 2/4/98 19:46'!
@@ -7616,9 +7612,14 @@ valueAtMSecs: mSecs
 	^ currValue
 ! !
 
-!Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 18:13'!
-volume: aNumber
-	"Set the maximum volume of a volume-controlling envelope. This default implementation does nothing."
+!Envelope methodsFor: 'storing' stamp: 'di 2/1/98 15:45'!
+storeOn: strm
+	strm nextPutAll: '((' , self class name;
+		nextPutAll: ' points: '; store: (points collect: [:p | p x @ (p y roundTo: 0.00001)]);
+		nextPutAll: ' loopStart: '; print: loopStartIndex;
+		nextPutAll: ' loopEnd: '; print: loopEndIndex; nextPutAll: ')';
+		nextPutAll: ' updateSelector: '; store: self updateSelector; nextPutAll: ';';
+		nextPutAll: ' scale: '; print: scale; nextPutAll: ')'.
 ! !
 
 !Envelope class methodsFor: 'instance creation' stamp: 'jm 11/26/97 09:14'!
@@ -7718,17 +7719,6 @@ delta: aNumber
 	delta _ aNumber.
 ! !
 
-!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:29'!
-duration
-
-	^ 1.0
-! !
-
-!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:25'!
-duration: seconds
-	"Do nothing."
-! !
-
 !RandomEnvelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 17:06'!
 highLimit
 
@@ -7739,17 +7729,6 @@ highLimit
 highLimit: aNumber
 
 	highLimit _ aNumber.
-! !
-
-!RandomEnvelope methodsFor: 'initialization' stamp: 'jm 1/14/1999 13:15'!
-initialize
-
-	rand _ Random new.
-	lowLimit _ 0.994.
-	highLimit _ 1.006.
-	delta _ 0.0002.
-	currValue _ 1.0.
-	scale _ 1.0.
 ! !
 
 !RandomEnvelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 17:05'!
@@ -7764,10 +7743,44 @@ lowLimit: aNumber
 	lowLimit _ aNumber.
 ! !
 
+!RandomEnvelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 18:17'!
+volume: aNumber
+	"If this envelope controls volume, set its scale to the given number. Otherwise, do nothing."
+
+	updateSelector = #volume: ifTrue: [self scale: aNumber].
+! !
+
+!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:29'!
+duration
+
+	^ 1.0
+! !
+
+!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:25'!
+duration: seconds
+	"Do nothing."
+! !
+
 !RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 1/14/1999 13:17'!
 name
 
 	^ 'random ', updateSelector
+! !
+
+!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:30'!
+sustainEnd: seconds
+	"Do nothing."
+! !
+
+!RandomEnvelope methodsFor: 'initialization' stamp: 'jm 1/14/1999 13:15'!
+initialize
+
+	rand _ Random new.
+	lowLimit _ 0.994.
+	highLimit _ 1.006.
+	delta _ 0.0002.
+	currValue _ 1.0.
+	scale _ 1.0.
 ! !
 
 !RandomEnvelope methodsFor: 'envelopeEditor compatibility' stamp: 'jmv 3/2/2010 16:25'!
@@ -7795,11 +7808,6 @@ setPoints: pointList loopStart: startIndex loopEnd: endIndex
 	self lowLimit: pointList last y - 0.5 / 5 + 1.
 	^super setPoints: pointList loopStart: startIndex loopEnd: endIndex! !
 
-!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:30'!
-sustainEnd: seconds
-	"Do nothing."
-! !
-
 !RandomEnvelope methodsFor: 'applying' stamp: 'jm 8/13/1998 18:25'!
 updateTargetAt: mSecs
 	"Send my updateSelector to the given target object with the value of this envelope at the given number of milliseconds from its onset. Answer true if the value changed."
@@ -7820,13 +7828,6 @@ updateTargetAt: mSecs
 		with: scale * currValue.
 	lastValue _ currValue.
 	^ true
-! !
-
-!RandomEnvelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 18:17'!
-volume: aNumber
-	"If this envelope controls volume, set its scale to the given number. Otherwise, do nothing."
-
-	updateSelector = #volume: ifTrue: [self scale: aNumber].
 ! !
 
 !RandomEnvelope class methodsFor: 'instance creation' stamp: 'jm 8/13/1998 18:21'!
@@ -7926,17 +7927,6 @@ allNotes
 	staccatoSoft ~~ staccatoLoud ifTrue: [r addAll: staccatoSoft].
 	^ r asArray sort: [:n1 :n2 | n1 pitch < n2 pitch]! !
 
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/3/1998 17:30'!
-allSampleSets: sortedNotes
-
-	| keyMap |
-	keyMap _ self midiKeyMapFor: sortedNotes.
-	sustainedSoft _ keyMap.
-	sustainedLoud _ keyMap.
-	staccatoSoft _ keyMap.
-	staccatoLoud _ keyMap.
-! !
-
 !SampledInstrument methodsFor: 'other' stamp: 'jm 8/2/1998 12:55'!
 chooseSamplesForPitch: pitchInHz from: sortedNotes
 	"From the given collection of LoopedSampledSounds, choose the best one to be pitch-shifted to produce the given pitch."
@@ -7953,25 +7943,6 @@ chooseSamplesForPitch: pitchInHz from: sortedNotes
 	(pitchInHz / lower pitch) < ((0.95 * higher pitch) / pitchInHz)
 		ifTrue: [^ lower]
 		ifFalse: [^ higher].
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/3/1998 19:04'!
-initialize
-
-	sustainedThreshold _ 0.15.
-	loudThreshold _ 0.5.
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/4/1998 23:21'!
-loudThreshold
-
-	^ loudThreshold
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/4/1998 23:22'!
-loudThreshold: aNumber
-
-	loudThreshold _ aNumber asFloat.
 ! !
 
 !SampledInstrument methodsFor: 'other' stamp: 'jm 9/8/1998 16:24'!
@@ -8077,81 +8048,6 @@ readSampleSetInfoFrom: dirName
 	^ all
 ! !
 
-!SampledInstrument methodsFor: 'playing' stamp: 'jm 8/3/1998 18:53'!
-soundForMidiKey: midiKey dur: d loudness: l
-	"Answer an initialized sound object that generates a note for the given MIDI key (in the range 0..127), duration (in seconds), and loudness (in the range 0.0 to 1.0)."
-
-	| keymap note |
-	l >= loudThreshold
-		ifTrue: [
-			d >= sustainedThreshold
-				ifTrue: [keymap _ sustainedLoud]
-				ifFalse: [keymap _ staccatoLoud]]
-		ifFalse: [
-			d >= sustainedThreshold
-				ifTrue: [keymap _ sustainedSoft]
-				ifFalse: [keymap _ staccatoSoft]].
-	keymap ifNil: [keymap _ sustainedLoud].
-	note _ (keymap at: midiKey) copy.
-	^ note
-		setPitch: (AbstractSound pitchForMIDIKey: midiKey)
-		dur: d
-		loudness: (l * note gain)
-! !
-
-!SampledInstrument methodsFor: 'playing' stamp: 'jm 8/3/1998 16:53'!
-soundForPitch: pitchNameOrNumber dur: d loudness: l
-	"Answer an initialized sound object that generates a note of the given pitch, duration, and loudness. Pitch may be a numeric pitch or a string pitch name such as 'c4'. Duration is in seconds and loudness is in the range 0.0 to 1.0."
-	"Note:  Generally, SampledInstruments are expected to be played via MIDI key numbers rather than by pitches, since finding the MIDI key for a given pitch is expensive."
-
-	^ self soundForMidiKey: (AbstractSound midiKeyForPitch: pitchNameOrNumber)
-		dur: d
-		loudness: l
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 10:02'!
-staccatoLoudAndSoftSampleSet: sortedNotes
-
-	staccatoLoud _ self midiKeyMapFor: sortedNotes.
-	staccatoSoft _ staccatoLoud.
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 09:54'!
-staccatoLoudSampleSet: sortedNotes
-
-	staccatoLoud _ self midiKeyMapFor: sortedNotes.
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 09:54'!
-staccatoSoftSampleSet: sortedNotes
-
-	staccatoSoft _ self midiKeyMapFor: sortedNotes.
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 09:54'!
-sustainedLoudSampleSet: sortedNotes
-
-	sustainedLoud _ self midiKeyMapFor: sortedNotes.
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 09:54'!
-sustainedSoftSampleSet: sortedNotes
-
-	sustainedSoft _ self midiKeyMapFor: sortedNotes.
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/4/1998 23:21'!
-sustainedThreshold
-
-	^ sustainedThreshold
-! !
-
-!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/4/1998 23:22'!
-sustainedThreshold: aNumber
-
-	sustainedThreshold _ aNumber asFloat.
-! !
-
 !SampledInstrument methodsFor: 'other' stamp: 'jm 8/4/1998 23:13'!
 testAtPitch: aPitch
 	"SampledInstrument testAtPitch: 'c4'"
@@ -8204,6 +8100,111 @@ trimAttacks: threshold
 		snd isStereo ifTrue: [
 			snd rightSamples:
 				(self trimAttackOf: snd rightSamples threshold: threshold)]].
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/3/1998 17:30'!
+allSampleSets: sortedNotes
+
+	| keyMap |
+	keyMap _ self midiKeyMapFor: sortedNotes.
+	sustainedSoft _ keyMap.
+	sustainedLoud _ keyMap.
+	staccatoSoft _ keyMap.
+	staccatoLoud _ keyMap.
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/3/1998 19:04'!
+initialize
+
+	sustainedThreshold _ 0.15.
+	loudThreshold _ 0.5.
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/4/1998 23:21'!
+loudThreshold
+
+	^ loudThreshold
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/4/1998 23:22'!
+loudThreshold: aNumber
+
+	loudThreshold _ aNumber asFloat.
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 10:02'!
+staccatoLoudAndSoftSampleSet: sortedNotes
+
+	staccatoLoud _ self midiKeyMapFor: sortedNotes.
+	staccatoSoft _ staccatoLoud.
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 09:54'!
+staccatoLoudSampleSet: sortedNotes
+
+	staccatoLoud _ self midiKeyMapFor: sortedNotes.
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 09:54'!
+staccatoSoftSampleSet: sortedNotes
+
+	staccatoSoft _ self midiKeyMapFor: sortedNotes.
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 09:54'!
+sustainedLoudSampleSet: sortedNotes
+
+	sustainedLoud _ self midiKeyMapFor: sortedNotes.
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/2/1998 09:54'!
+sustainedSoftSampleSet: sortedNotes
+
+	sustainedSoft _ self midiKeyMapFor: sortedNotes.
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/4/1998 23:21'!
+sustainedThreshold
+
+	^ sustainedThreshold
+! !
+
+!SampledInstrument methodsFor: 'accessing' stamp: 'jm 8/4/1998 23:22'!
+sustainedThreshold: aNumber
+
+	sustainedThreshold _ aNumber asFloat.
+! !
+
+!SampledInstrument methodsFor: 'playing' stamp: 'jm 8/3/1998 18:53'!
+soundForMidiKey: midiKey dur: d loudness: l
+	"Answer an initialized sound object that generates a note for the given MIDI key (in the range 0..127), duration (in seconds), and loudness (in the range 0.0 to 1.0)."
+
+	| keymap note |
+	l >= loudThreshold
+		ifTrue: [
+			d >= sustainedThreshold
+				ifTrue: [keymap _ sustainedLoud]
+				ifFalse: [keymap _ staccatoLoud]]
+		ifFalse: [
+			d >= sustainedThreshold
+				ifTrue: [keymap _ sustainedSoft]
+				ifFalse: [keymap _ staccatoSoft]].
+	keymap ifNil: [keymap _ sustainedLoud].
+	note _ (keymap at: midiKey) copy.
+	^ note
+		setPitch: (AbstractSound pitchForMIDIKey: midiKey)
+		dur: d
+		loudness: (l * note gain)
+! !
+
+!SampledInstrument methodsFor: 'playing' stamp: 'jm 8/3/1998 16:53'!
+soundForPitch: pitchNameOrNumber dur: d loudness: l
+	"Answer an initialized sound object that generates a note of the given pitch, duration, and loudness. Pitch may be a numeric pitch or a string pitch name such as 'c4'. Duration is in seconds and loudness is in the range 0.0 to 1.0."
+	"Note:  Generally, SampledInstruments are expected to be played via MIDI key numbers rather than by pitches, since finding the MIDI key for a given pitch is expensive."
+
+	^ self soundForMidiKey: (AbstractSound midiKeyForPitch: pitchNameOrNumber)
+		dur: d
+		loudness: l
 ! !
 
 !SampledInstrument class methodsFor: 'instance creation' stamp: 'jm 6/7/1999 11:26'!
@@ -8329,6 +8330,34 @@ bytesPerEncodedFrame
 	self subclassResponsibility.
 ! !
 
+!SoundCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/2/1999 15:38'!
+decodeFrames: frameCount from: srcByteArray at: srcIndex into: dstSoundBuffer at: dstIndex
+	"Decode the given number of monophonic frames starting at the given index in the given ByteArray of compressed sound data and storing the decoded samples into the given SoundBuffer starting at the given destination index. Answer a pair containing the number of bytes of compressed data consumed and the number of decompressed samples produced."
+	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
+
+	self subclassResponsibility.
+! !
+
+!SoundCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/2/1999 15:39'!
+encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at: dstIndex
+	"Encode the given number of frames starting at the given index in the given monophonic SoundBuffer and storing the encoded sound data into the given ByteArray starting at the given destination index. Encode only as many complete frames as will fit into the destination. Answer a pair containing the number of samples consumed and the number of bytes of compressed data produced."
+	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
+
+	self subclassResponsibility.
+! !
+
+!SoundCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/4/1999 11:30'!
+reset
+	"Reset my encoding and decoding state. Optional. This default implementation does nothing."
+! !
+
+!SoundCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/2/1999 15:45'!
+samplesPerFrame
+	"Answer the number of sound samples per compression frame."
+
+	self subclassResponsibility.
+! !
+
 !SoundCodec methodsFor: 'compress/decompress' stamp: 'jm 2/2/1999 16:01'!
 compressAndDecompress: aSound
 	"Compress and decompress the given sound. Useful for testing."
@@ -8433,28 +8462,6 @@ compressSound: aSound atRate: desiredSampleRate
 	self error: 'you can only compress sampled sounds'.
 ! !
 
-!SoundCodec methodsFor: 'private' stamp: 'di 2/8/1999 19:53'!
-decodeCompressedData: aByteArray
-	"Decode the entirety of the given encoded data buffer with this codec. Answer a monophonic SoundBuffer containing the uncompressed samples."
-
-	| frameCount result increments |
-	frameCount _ self frameCount: aByteArray.
-	result _ SoundBuffer newMonoSampleCount: frameCount * self samplesPerFrame.
-	self reset.
-	increments _ self decodeFrames: frameCount from: aByteArray at: 1 into: result at: 1.
-	((increments first = aByteArray size) and: [increments last = result size]) ifFalse: [
-		self error: 'implementation problem; increment sizes should match buffer sizes'].
-	^ result
-! !
-
-!SoundCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/2/1999 15:38'!
-decodeFrames: frameCount from: srcByteArray at: srcIndex into: dstSoundBuffer at: dstIndex
-	"Decode the given number of monophonic frames starting at the given index in the given ByteArray of compressed sound data and storing the decoded samples into the given SoundBuffer starting at the given destination index. Answer a pair containing the number of bytes of compressed data consumed and the number of decompressed samples produced."
-	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
-
-	self subclassResponsibility.
-! !
-
 !SoundCodec methodsFor: 'compress/decompress' stamp: 'jm 3/30/1999 08:03'!
 decompressSound: aCompressedSound
 	"Decompress the entirety of the given compressed sound with this codec and answer the resulting sound."
@@ -8494,12 +8501,18 @@ decompressSound: aCompressedSound
 	self error: 'unknown sound class'.
 ! !
 
-!SoundCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/2/1999 15:39'!
-encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at: dstIndex
-	"Encode the given number of frames starting at the given index in the given monophonic SoundBuffer and storing the encoded sound data into the given ByteArray starting at the given destination index. Encode only as many complete frames as will fit into the destination. Answer a pair containing the number of samples consumed and the number of bytes of compressed data produced."
-	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
+!SoundCodec methodsFor: 'private' stamp: 'di 2/8/1999 19:53'!
+decodeCompressedData: aByteArray
+	"Decode the entirety of the given encoded data buffer with this codec. Answer a monophonic SoundBuffer containing the uncompressed samples."
 
-	self subclassResponsibility.
+	| frameCount result increments |
+	frameCount _ self frameCount: aByteArray.
+	result _ SoundBuffer newMonoSampleCount: frameCount * self samplesPerFrame.
+	self reset.
+	increments _ self decodeFrames: frameCount from: aByteArray at: 1 into: result at: 1.
+	((increments first = aByteArray size) and: [increments last = result size]) ifFalse: [
+		self error: 'implementation problem; increment sizes should match buffer sizes'].
+	^ result
 ! !
 
 !SoundCodec methodsFor: 'private' stamp: 'di 2/8/1999 14:20'!
@@ -8542,18 +8555,6 @@ frameCount: aByteArray
 		[self error: 'encoded buffer is not an even multiple of the encoded frame size'].
 	^ aByteArray size // codeFrameSize! !
 
-!SoundCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/4/1999 11:30'!
-reset
-	"Reset my encoding and decoding state. Optional. This default implementation does nothing."
-! !
-
-!SoundCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/2/1999 15:45'!
-samplesPerFrame
-	"Answer the number of sound samples per compression frame."
-
-	self subclassResponsibility.
-! !
-
 !ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 12/12/2001 17:57'!
 bytesPerEncodedFrame
 	"Answer the number of bytes required to hold one frame of compressed sound data."
@@ -8577,6 +8578,67 @@ compressAndDecompress: aSound
 		samplesPerFrame: 0.
 	^ decoder decompressSound: compressed
 
+! !
+
+!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/28/1999 15:37'!
+decodeFrames: frameCount from: srcByteArray at: srcIndex into: dstSoundBuffer at: dstIndex
+	"Decode the given number of monophonic frames starting at the given index in the given ByteArray of compressed sound data and storing the decoded samples into the given SoundBuffer starting at the given destination index. Answer a pair containing the number of bytes of compressed data consumed and the number of decompressed samples produced."
+	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
+
+	encodedBytes _ srcByteArray.
+	byteIndex _ srcIndex - 1.
+	bitPosition _ 0.
+	currentByte _ 0.
+	samples _ dstSoundBuffer.
+	sampleIndex _ dstIndex - 1.
+	self privateDecodeMono: (frameCount * self samplesPerFrame).
+	^ Array with: (byteIndex - (srcIndex - 1)) with: (sampleIndex - (dstIndex - 1))
+! !
+
+!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/28/1999 15:28'!
+encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at: dstIndex
+	"Encode the given number of frames starting at the given index in the given monophonic SoundBuffer and storing the encoded sound data into the given ByteArray starting at the given destination index. Encode only as many complete frames as will fit into the destination. Answer a pair containing the number of samples consumed and the number of bytes of compressed data produced."
+	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
+
+	samples _ srcSoundBuffer.
+	sampleIndex _ srcIndex - 1.
+	encodedBytes _ dstByteArray.
+	byteIndex _ dstIndex - 1.
+	bitPosition _ 0.
+	currentByte _ 0.
+	self privateEncodeMono: (frameCount * self samplesPerFrame).
+	^ Array with: frameCount with: (byteIndex - (dstIndex - 1))
+! !
+
+!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 12/14/2001 11:21'!
+reset
+
+	self resetForMono.
+! !
+
+!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/28/1999 20:12'!
+resetForMono
+	"Reset my encoding and decoding state for mono."
+
+	predicted _ 0.
+	index _ 0.
+! !
+
+!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/28/1999 20:12'!
+resetForStereo
+	"Reset my encoding and decoding state for stereo."
+
+	"keep state as SoundBuffers to allow fast access from primitive"
+	predicted _ SoundBuffer new: 2.
+	index _ SoundBuffer new: 2.
+! !
+
+!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/27/1999 08:34'!
+samplesPerFrame
+	"Answer the number of sound samples per compression frame."
+
+	frameSizeMask > 0 ifTrue: [^ frameSizeMask + 1].
+	^ 8  "frame size when there are no running headers"
 ! !
 
 !ADPCMCodec methodsFor: 'private' stamp: 'jm 3/28/1999 06:26'!
@@ -8638,21 +8700,6 @@ decodeFlash: aByteArray sampleCount: sampleCount stereo: stereoFlag
 			^ Array with: samples].
 ! !
 
-!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/28/1999 15:37'!
-decodeFrames: frameCount from: srcByteArray at: srcIndex into: dstSoundBuffer at: dstIndex
-	"Decode the given number of monophonic frames starting at the given index in the given ByteArray of compressed sound data and storing the decoded samples into the given SoundBuffer starting at the given destination index. Answer a pair containing the number of bytes of compressed data consumed and the number of decompressed samples produced."
-	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
-
-	encodedBytes _ srcByteArray.
-	byteIndex _ srcIndex - 1.
-	bitPosition _ 0.
-	currentByte _ 0.
-	samples _ dstSoundBuffer.
-	sampleIndex _ dstIndex - 1.
-	self privateDecodeMono: (frameCount * self samplesPerFrame).
-	^ Array with: (byteIndex - (srcIndex - 1)) with: (sampleIndex - (dstIndex - 1))
-! !
-
 !ADPCMCodec methodsFor: 'private' stamp: 'jm 3/28/1999 08:59'!
 encode: aSoundBuffer bitsPerSample: bits
 
@@ -8673,21 +8720,6 @@ encodeFlashLeft: leftSoundBuffer right: rightSoundBuffer bitsPerSample: bits
 		bitsPerSample: bits
 		frameSize: 4096
 		forFlash: true
-! !
-
-!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/28/1999 15:28'!
-encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at: dstIndex
-	"Encode the given number of frames starting at the given index in the given monophonic SoundBuffer and storing the encoded sound data into the given ByteArray starting at the given destination index. Encode only as many complete frames as will fit into the destination. Answer a pair containing the number of samples consumed and the number of bytes of compressed data produced."
-	"Note: Assume that the sender has ensured that the given number of frames will not exhaust either the source or destination buffers."
-
-	samples _ srcSoundBuffer.
-	sampleIndex _ srcIndex - 1.
-	encodedBytes _ dstByteArray.
-	byteIndex _ dstIndex - 1.
-	bitPosition _ 0.
-	currentByte _ 0.
-	self privateEncodeMono: (frameCount * self samplesPerFrame).
-	^ Array with: frameCount with: (byteIndex - (dstIndex - 1))
 ! !
 
 !ADPCMCodec methodsFor: 'private' stamp: 'jm 11/21/2001 11:35'!
@@ -8783,57 +8815,6 @@ initializeForBitsPerSample: sampleBits samplesPerFrame: frameSize
 	"keep as SoundBuffer to allow fast access from primitive"
 	indexTable _ SoundBuffer fromArray: indexTable.
 	stepSizeTable _ SoundBuffer fromArray: stepSizeTable.
-! !
-
-!ADPCMCodec methodsFor: 'bit streaming' stamp: 'jm 3/28/1999 16:24'!
-nextBits: n
-	"Answer the next n bits of my bit stream as an unsigned integer."
-
-	| result remaining shift |
-	self inline: true.
-
-	result _ 0.
-	remaining _ n.
-	[true] whileTrue: [
-		shift _ remaining - bitPosition.
-		result _ result + (currentByte bitShift: shift).
-		shift > 0
-			ifTrue: [  "consumed currentByte buffer; fetch next byte"
-				remaining _ remaining - bitPosition.			
-				currentByte _ (encodedBytes at: (byteIndex _ byteIndex + 1)).
-				bitPosition _ 8]
-			ifFalse: [  "still some bits left in currentByte buffer"
-				bitPosition _ bitPosition - remaining.
-				"mask out the consumed bits:"
-				currentByte _ currentByte bitAnd: (255 bitShift: (bitPosition - 8)).
-				^ result]].
-! !
-
-!ADPCMCodec methodsFor: 'bit streaming' stamp: 'jm 3/28/1999 20:21'!
-nextBits: n put: anInteger
-	"Write the next n bits to my bit stream."
-
-	| buf bufBits bitsAvailable shift |
-	self inline: true.
-
-	buf _ anInteger.
-	bufBits _ n.
-	[true] whileTrue: [
-		bitsAvailable _ 8 - bitPosition.
-		shift _ bitsAvailable - bufBits.  "either left or right shift"
-		"append high bits of buf to end of currentByte:"
-		currentByte _ currentByte + (buf bitShift: shift).
-		shift < 0
-			ifTrue: [  "currentByte buffer filled; output it"
-				encodedBytes at: (byteIndex _ byteIndex + 1) put: currentByte.
-				bitPosition _ 0.
-				currentByte _ 0.
-				"clear saved high bits of buf:"
-				buf _ buf bitAnd: (1 bitShift: 0 - shift) - 1.
-				bufBits _ bufBits - bitsAvailable]
-			ifFalse: [  "still some bits available in currentByte buffer"
-				bitPosition _ bitPosition + bufBits.
-				^ self]].
 ! !
 
 !ADPCMCodec methodsFor: 'private' stamp: 'ar 4/23/2001 15:11'!
@@ -9034,35 +9015,55 @@ privateEncodeStereo: count
 	self inline: false.
 	self success: false.! !
 
-!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 12/14/2001 11:21'!
-reset
+!ADPCMCodec methodsFor: 'bit streaming' stamp: 'jm 3/28/1999 16:24'!
+nextBits: n
+	"Answer the next n bits of my bit stream as an unsigned integer."
 
-	self resetForMono.
+	| result remaining shift |
+	self inline: true.
+
+	result _ 0.
+	remaining _ n.
+	[true] whileTrue: [
+		shift _ remaining - bitPosition.
+		result _ result + (currentByte bitShift: shift).
+		shift > 0
+			ifTrue: [  "consumed currentByte buffer; fetch next byte"
+				remaining _ remaining - bitPosition.			
+				currentByte _ (encodedBytes at: (byteIndex _ byteIndex + 1)).
+				bitPosition _ 8]
+			ifFalse: [  "still some bits left in currentByte buffer"
+				bitPosition _ bitPosition - remaining.
+				"mask out the consumed bits:"
+				currentByte _ currentByte bitAnd: (255 bitShift: (bitPosition - 8)).
+				^ result]].
 ! !
 
-!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/28/1999 20:12'!
-resetForMono
-	"Reset my encoding and decoding state for mono."
+!ADPCMCodec methodsFor: 'bit streaming' stamp: 'jm 3/28/1999 20:21'!
+nextBits: n put: anInteger
+	"Write the next n bits to my bit stream."
 
-	predicted _ 0.
-	index _ 0.
-! !
+	| buf bufBits bitsAvailable shift |
+	self inline: true.
 
-!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/28/1999 20:12'!
-resetForStereo
-	"Reset my encoding and decoding state for stereo."
-
-	"keep state as SoundBuffers to allow fast access from primitive"
-	predicted _ SoundBuffer new: 2.
-	index _ SoundBuffer new: 2.
-! !
-
-!ADPCMCodec methodsFor: 'codec stuff' stamp: 'jm 3/27/1999 08:34'!
-samplesPerFrame
-	"Answer the number of sound samples per compression frame."
-
-	frameSizeMask > 0 ifTrue: [^ frameSizeMask + 1].
-	^ 8  "frame size when there are no running headers"
+	buf _ anInteger.
+	bufBits _ n.
+	[true] whileTrue: [
+		bitsAvailable _ 8 - bitPosition.
+		shift _ bitsAvailable - bufBits.  "either left or right shift"
+		"append high bits of buf to end of currentByte:"
+		currentByte _ currentByte + (buf bitShift: shift).
+		shift < 0
+			ifTrue: [  "currentByte buffer filled; output it"
+				encodedBytes at: (byteIndex _ byteIndex + 1) put: currentByte.
+				bitPosition _ 0.
+				currentByte _ 0.
+				"clear saved high bits of buf:"
+				buf _ buf bitAnd: (1 bitShift: 0 - shift) - 1.
+				bufBits _ bufBits - bitsAvailable]
+			ifFalse: [  "still some bits available in currentByte buffer"
+				bitPosition _ bitPosition + bufBits.
+				^ self]].
 ! !
 
 !ADPCMCodec class methodsFor: 'instance creation' stamp: 'jm 3/27/1999 11:15'!
@@ -9122,6 +9123,20 @@ encodeFrames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at
 	^ Array with: p x with: p y
 ! !
 
+!GSMCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/4/1999 11:32'!
+reset
+	"Reset my encoding/decoding state to prepare to encode or decode a new sound stream."
+
+	encodeState _ self primNewState.
+	decodeState _ self primNewState.
+! !
+
+!GSMCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/4/1999 11:36'!
+samplesPerFrame
+
+	^ 160
+! !
+
 !GSMCodec methodsFor: 'primitives' stamp: 'jm 2/4/1999 11:33'!
 primDecode: state frames: frameCount from: srcSoundBuffer at: srcIndex into: dstByteArray at: dstIndex
 
@@ -9141,20 +9156,6 @@ primNewState
 
 	<primitive: 'primitiveGSMNewState' module: 'SoundCodecPrims'>
 	self error: 'The SoundCodecPrims plugin is not available'.
-! !
-
-!GSMCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/4/1999 11:32'!
-reset
-	"Reset my encoding/decoding state to prepare to encode or decode a new sound stream."
-
-	encodeState _ self primNewState.
-	decodeState _ self primNewState.
-! !
-
-!GSMCodec methodsFor: 'subclass responsibilities' stamp: 'jm 2/4/1999 11:36'!
-samplesPerFrame
-
-	^ 160
 ! !
 
 !GSMCodec class methodsFor: 'instance creation' stamp: 'jm 10/21/2001 10:10'!
@@ -9206,6 +9207,16 @@ uLawDecodeSample: byte
 
 	^ DecodingTable at: byte + 1! !
 
+!MuLawCodec methodsFor: 'external access' stamp: 'di 2/8/1999 22:30'!
+uLawEncodeSample: sample
+	"Encode a 16-bit signed sample into 8 bits using uLaw encoding"
+
+	| s |
+	s _ sample // 8.  "drop 3 least significant bits"
+	s < 0 ifTrue: [^ (self uLawEncode12Bits: 0-s) + 16r80]
+		ifFalse: [^ (self uLawEncode12Bits: s)].
+! !
+
 !MuLawCodec methodsFor: 'private' stamp: 'di 2/9/1999 13:25'!
 uLawEncode12Bits: s
 	"Encode a 12-bit unsigned sample (0-4095) into 7 bits using uLaw encoding.
@@ -9232,16 +9243,6 @@ uLawEncode12Bits: s
 	s < 4080
 		ifTrue: [^ 15 - ((s - 2032) bitShift: -7)]
 		ifFalse: [^ 0].
-! !
-
-!MuLawCodec methodsFor: 'external access' stamp: 'di 2/8/1999 22:30'!
-uLawEncodeSample: sample
-	"Encode a 16-bit signed sample into 8 bits using uLaw encoding"
-
-	| s |
-	s _ sample // 8.  "drop 3 least significant bits"
-	s < 0 ifTrue: [^ (self uLawEncode12Bits: 0-s) + 16r80]
-		ifFalse: [^ (self uLawEncode12Bits: s)].
 ! !
 
 !MuLawCodec class methodsFor: 'class initialization' stamp: 'di 2/9/1999 14:57'!
@@ -9313,128 +9314,6 @@ boinkScale
 	SoundPlayer initialize.  "reset sampling rate, buffer size, and stereo flag"
 ! !
 
-!SoundPlayer class methodsFor: 'accessing' stamp: 'jm 8/13/1998 15:00'!
-bufferMSecs
-
-	^ BufferMSecs
-! !
-
-!SoundPlayer class methodsFor: 'playing' stamp: 'ar 2/1/2001 15:20'!
-canStartPlayer
-	"Some platforms do no support simultaneous record and play. If this is one of those platforms, return false if there is a running SoundRecorder."
-
-	Preferences canRecordWhilePlaying ifTrue: [^ true].
-	SoundRecorder anyActive ifTrue:[^false].
-	^ true
-! !
-
-!SoundPlayer class methodsFor: 'initialization' stamp: 'jm 1/14/1999 13:13'!
-initialize
-	"SoundPlayer initialize; shutDown; startUp"
-	"Details: BufferMSecs represents a tradeoff between latency and quality. If BufferMSecs is too low, the sound will not play smoothly, especially during long-running primitives such as large BitBlts. If BufferMSecs is too high, there will be a long time lag between when a sound buffer is submitted to be played and when that sound is actually heard. BufferMSecs is typically in the range 50-200."
-
-	SamplingRate _ 22050.
-	BufferMSecs _ 120.
-	Stereo _ true.
-	UseReverb ifNil: [UseReverb _ true].
-! !
-
-!SoundPlayer class methodsFor: 'private' stamp: 'ar 1/31/2001 01:32'!
-isAllSilence: buffer size: count
-	"return true if the buffer is all silence after reverb has ended"
-	| value |
-	value _ buffer at: 1.
-	2 to: count do:[:i| (buffer at: i) = value ifFalse:[^false]].
-	^true! !
-
-!SoundPlayer class methodsFor: 'playing' stamp: 'di 8/5/1998 23:08'!
-isPlaying: aSound
-	^ ActiveSounds includes: aSound! !
-
-!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 3/1/2010 14:07'!
-isReverbOn
-
-	^ ReverbState notNil
-! !
-
-!SoundPlayer class methodsFor: 'player process' stamp: 'ar 1/24/2002 18:41'!
-lastPlayBuffer
-	^LastBuffer! !
-
-!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 3/1/2010 13:33'!
-oldStylePlayLoop
-	"This version of the play loop is used if the VM does not yet support sound primitives that signal a semaphore when a sound buffer becomes available."
-
-	| bytesPerSlice count |
-	bytesPerSlice _ Stereo ifTrue: [4] ifFalse: [2].
-	[true] whileTrue: [
-		[(count _ self primSoundAvailableBytes // bytesPerSlice) > 100]
-			whileFalse: [(Delay forMilliseconds: 1) wait].
-
-		count _ count min: Buffer stereoSampleCount.
-		PlayerSemaphore critical: [
-			ActiveSounds _ ActiveSounds select: [:snd | snd samplesRemaining > 0].
-			ActiveSounds do: [:snd |
-				snd ~~ SoundJustStarted ifTrue: [
-					snd playSampleCount: count into: Buffer startingAt: 1]].
-			ReverbState ifNotNil: [
-				ReverbState applyReverbTo: Buffer startingAt: 1 count: count].
-			self primSoundPlaySamples: count from: Buffer startingAt: 1.
-			Buffer primFill: 0.
-			SoundJustStarted _ nil]].
-! !
-
-!SoundPlayer class methodsFor: 'playing' stamp: 'jmv 3/2/2010 10:09'!
-pauseSound: aSound
-	"Stop playing the given sound. Playing can be resumed from this point later."
-
-	PlayerSemaphore critical: [
-		ActiveSounds remove: aSound ifAbsent: nil].
-! !
-
-!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 3/1/2010 13:34'!
-playLoop
-	"The sound player process loop."
-
-	| bytesPerSlice count willStop mayStop |
-	mayStop _ Preferences soundStopWhenDone.
-	bytesPerSlice _ Stereo ifTrue: [4] ifFalse: [2].
-	[true] whileTrue: [
-		[(count _ self primSoundAvailableBytes // bytesPerSlice) > 100]
-			whileFalse: [ReadyForBuffer wait].
-
-		count _ count min: Buffer stereoSampleCount.
-		PlayerSemaphore critical: [
-			ActiveSounds _ ActiveSounds select: [:snd | snd samplesRemaining > 0].
-			ActiveSounds do: [:snd |
-				snd ~~ SoundJustStarted ifTrue: [
-					snd playSampleCount: count into: Buffer startingAt: 1]].
-			ReverbState ifNotNil: [
-				ReverbState applyReverbTo: Buffer startingAt: 1 count: count].
-			self primSoundPlaySamples: count from: Buffer startingAt: 1.
-			willStop _ mayStop and:[
-						(ActiveSounds size = 0) and:[
-							self isAllSilence: Buffer size: count]].
-			LastBuffer ifNotNil:[
-				LastBuffer replaceFrom: 1 to: LastBuffer size with: Buffer startingAt: 1.
-			].
-			willStop
-				ifTrue:[self shutDown. PlayerProcess _ nil]
-				ifFalse:[Buffer primFill: 0].
-			SoundJustStarted _ nil].
-		willStop ifTrue:[^self].
-	].
-! !
-
-!SoundPlayer class methodsFor: 'playing' stamp: 'ar 2/19/2001 01:28'!
-playSound: aSound
-	"Reset and start playing the given sound from its beginning."
-
-	aSound reset.
-	aSound samplesRemaining = 0 ifTrue:[^self].
-	self resumePlaying: aSound.
-! !
-
 !SoundPlayer class methodsFor: 'primitive test' stamp: 'jm 9/17/97 12:55'!
 playTestSample: s pan: pan
 	"Append the given sample in the range [-32767..32767] to the output buffer, playing the output buffer when it is full. Used for testing only."
@@ -9463,9 +9342,170 @@ playTestSample: s pan: pan
 	BufferIndex _ BufferIndex + 2.
 ! !
 
-!SoundPlayer class methodsFor: 'player process' stamp: 'nk 2/16/2001 13:26'!
-playerProcess
-	^PlayerProcess! !
+!SoundPlayer class methodsFor: 'primitive test' stamp: 'jm 9/17/97 20:06'!
+sineTable: size
+	"Compute a sine table of the given size. Used for testing only."
+
+	| radiansPerStep table |
+	table _ Array new: size.
+	radiansPerStep _ (2.0 * Float pi) / table size asFloat.
+	1 to: table size do: [:i |
+		table at: i put:
+			(32767.0 * (radiansPerStep * i) sin) asInteger].
+
+	^ table
+! !
+
+!SoundPlayer class methodsFor: 'accessing' stamp: 'jm 8/13/1998 15:00'!
+bufferMSecs
+
+	^ BufferMSecs
+! !
+
+!SoundPlayer class methodsFor: 'accessing' stamp: 'jm 1/27/98 09:28'!
+reverbState
+
+	^ ReverbState! !
+
+!SoundPlayer class methodsFor: 'accessing'!
+samplingRate
+
+	^ SamplingRate! !
+
+!SoundPlayer class methodsFor: 'accessing' stamp: 'JMM 11/6/2000 10:16'!
+setVolumeLeft: aLeftVolume volumeRight: aRightVolume
+	"Set sound pass in float 0.0-1.0 for left and right channel, with possible 2.0 or  higher to overdrive sound channel "
+	self primSoundSetVolumeLeft: aLeftVolume volumeRight: aRightVolume! !
+
+!SoundPlayer class methodsFor: 'accessing' stamp: 'JMM 11/6/2000 10:17'!
+soundVolume
+	"Return sound as array of doubles left then right channel, range is 0.0 to 1.0 but may be overdriven"
+	^self primSoundGetVolume! !
+
+!SoundPlayer class methodsFor: 'accessing'!
+stereo
+
+	^ Stereo
+! !
+
+!SoundPlayer class methodsFor: 'playing' stamp: 'ar 2/1/2001 15:20'!
+canStartPlayer
+	"Some platforms do no support simultaneous record and play. If this is one of those platforms, return false if there is a running SoundRecorder."
+
+	Preferences canRecordWhilePlaying ifTrue: [^ true].
+	SoundRecorder anyActive ifTrue:[^false].
+	^ true
+! !
+
+!SoundPlayer class methodsFor: 'playing' stamp: 'di 8/5/1998 23:08'!
+isPlaying: aSound
+	^ ActiveSounds includes: aSound! !
+
+!SoundPlayer class methodsFor: 'playing' stamp: 'jmv 3/2/2010 10:09'!
+pauseSound: aSound
+	"Stop playing the given sound. Playing can be resumed from this point later."
+
+	PlayerSemaphore critical: [
+		ActiveSounds remove: aSound ifAbsent: nil].
+! !
+
+!SoundPlayer class methodsFor: 'playing' stamp: 'ar 2/19/2001 01:28'!
+playSound: aSound
+	"Reset and start playing the given sound from its beginning."
+
+	aSound reset.
+	aSound samplesRemaining = 0 ifTrue:[^self].
+	self resumePlaying: aSound.
+! !
+
+!SoundPlayer class methodsFor: 'playing' stamp: 'jm 9/8/1998 17:54'!
+resumePlaying: aSound
+	"Start playing the given sound without resetting it; it will resume playing from where it last stopped."
+	"Implementation detail: On virtual machines that don't support the quickstart primitive, you may need to edit this method to pass false to resumePlaying:quickStart:."
+
+	self resumePlaying: aSound quickStart: true.
+! !
+
+!SoundPlayer class methodsFor: 'playing' stamp: 'jmv 3/1/2010 13:34'!
+resumePlaying: aSound quickStart: quickStart
+	"Start playing the given sound without resetting it; it will resume playing from where it last stopped. If quickStart is true, then try to start playing the given sound immediately."
+
+	| doQuickStart |
+	Preferences soundsEnabled ifFalse: [^ self].
+	doQuickStart _ quickStart.
+	Preferences soundQuickStart ifFalse: [doQuickStart _ false].
+	PlayerProcess ifNil: [
+		self canStartPlayer ifFalse: [^ self].
+		^self startUpWithSound: aSound].
+
+	PlayerSemaphore critical: [
+		(ActiveSounds includes: aSound)
+			ifTrue: [doQuickStart _ false]
+			ifFalse: [
+				doQuickStart ifFalse: [ActiveSounds add: aSound]]].
+
+	"quick-start the given sound, unless the sound player has just started"
+	doQuickStart ifTrue: [self startPlayingImmediately: aSound].
+! !
+
+!SoundPlayer class methodsFor: 'playing' stamp: 'jm 1/27/98 09:47'!
+stopPlayingAll
+	"Stop playing all sounds."
+
+	PlayerSemaphore critical: [
+		ActiveSounds _ ActiveSounds species new].
+! !
+
+!SoundPlayer class methodsFor: 'playing' stamp: 'jm 9/13/97 19:49'!
+waitUntilDonePlaying: aSound
+	"Wait until the given sound is no longer playing."
+
+	[PlayerSemaphore critical: [ActiveSounds includes: aSound]]
+		whileTrue: [(Delay forMilliseconds: 100) wait].
+! !
+
+!SoundPlayer class methodsFor: 'initialization' stamp: 'jm 1/14/1999 13:13'!
+initialize
+	"SoundPlayer initialize; shutDown; startUp"
+	"Details: BufferMSecs represents a tradeoff between latency and quality. If BufferMSecs is too low, the sound will not play smoothly, especially during long-running primitives such as large BitBlts. If BufferMSecs is too high, there will be a long time lag between when a sound buffer is submitted to be played and when that sound is actually heard. BufferMSecs is typically in the range 50-200."
+
+	SamplingRate _ 22050.
+	BufferMSecs _ 120.
+	Stereo _ true.
+	UseReverb ifNil: [UseReverb _ true].
+! !
+
+!SoundPlayer class methodsFor: 'initialization' stamp: 'ar 1/24/2002 18:40'!
+useLastBuffer
+	^LastBuffer notNil! !
+
+!SoundPlayer class methodsFor: 'initialization' stamp: 'ar 1/24/2002 18:47'!
+useLastBuffer: aBool
+	Buffer ifNil:[^self].
+	aBool 
+		ifTrue:[LastBuffer _ SoundBuffer basicNew: Buffer basicSize]
+		ifFalse:[LastBuffer _ nil]	! !
+
+!SoundPlayer class methodsFor: 'initialization' stamp: 'jm 1/14/1999 13:14'!
+useShortBuffer
+	"Experimental support for real-time MIDI input. This only works on platforms whose hardware allows very short buffer sizes. It has been tested on a Macintosh Powerbook G3."
+	"SoundPlayer useShortBuffer"
+
+	self shutDown.
+	BufferMSecs _ 15.
+	SoundPlayer
+		startPlayerProcessBufferSize: (BufferMSecs * SamplingRate) // 1000
+		rate: SamplingRate
+		stereo: Stereo.
+! !
+
+!SoundPlayer class methodsFor: 'private' stamp: 'ar 1/31/2001 01:32'!
+isAllSilence: buffer size: count
+	"return true if the buffer is all silence after reverb has ended"
+	| value |
+	value _ buffer at: 1.
+	2 to: count do:[:i| (buffer at: i) = value ifFalse:[^false]].
+	^true! !
 
 !SoundPlayer class methodsFor: 'private' stamp: 'ar 2/2/2001 15:09'!
 primSoundAvailableBytes
@@ -9527,120 +9567,6 @@ primSoundStop
 
 	<primitive: 'primitiveSoundStop' module: 'SoundPlugin'>! !
 
-!SoundPlayer class methodsFor: 'playing' stamp: 'jm 9/8/1998 17:54'!
-resumePlaying: aSound
-	"Start playing the given sound without resetting it; it will resume playing from where it last stopped."
-	"Implementation detail: On virtual machines that don't support the quickstart primitive, you may need to edit this method to pass false to resumePlaying:quickStart:."
-
-	self resumePlaying: aSound quickStart: true.
-! !
-
-!SoundPlayer class methodsFor: 'playing' stamp: 'jmv 3/1/2010 13:34'!
-resumePlaying: aSound quickStart: quickStart
-	"Start playing the given sound without resetting it; it will resume playing from where it last stopped. If quickStart is true, then try to start playing the given sound immediately."
-
-	| doQuickStart |
-	Preferences soundsEnabled ifFalse: [^ self].
-	doQuickStart _ quickStart.
-	Preferences soundQuickStart ifFalse: [doQuickStart _ false].
-	PlayerProcess ifNil: [
-		self canStartPlayer ifFalse: [^ self].
-		^self startUpWithSound: aSound].
-
-	PlayerSemaphore critical: [
-		(ActiveSounds includes: aSound)
-			ifTrue: [doQuickStart _ false]
-			ifFalse: [
-				doQuickStart ifFalse: [ActiveSounds add: aSound]]].
-
-	"quick-start the given sound, unless the sound player has just started"
-	doQuickStart ifTrue: [self startPlayingImmediately: aSound].
-! !
-
-!SoundPlayer class methodsFor: 'accessing' stamp: 'jm 1/27/98 09:28'!
-reverbState
-
-	^ ReverbState! !
-
-!SoundPlayer class methodsFor: 'accessing'!
-samplingRate
-
-	^ SamplingRate! !
-
-!SoundPlayer class methodsFor: 'accessing' stamp: 'JMM 11/6/2000 10:16'!
-setVolumeLeft: aLeftVolume volumeRight: aRightVolume
-	"Set sound pass in float 0.0-1.0 for left and right channel, with possible 2.0 or  higher to overdrive sound channel "
-	self primSoundSetVolumeLeft: aLeftVolume volumeRight: aRightVolume! !
-
-!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 5/8/1998 18:48'!
-shutDown
-	"Stop player process, for example before snapshotting."
-
-	self stopPlayerProcess.
-	ReverbState _ nil.
-! !
-
-!SoundPlayer class methodsFor: 'primitive test' stamp: 'jm 9/17/97 20:06'!
-sineTable: size
-	"Compute a sine table of the given size. Used for testing only."
-
-	| radiansPerStep table |
-	table _ Array new: size.
-	radiansPerStep _ (2.0 * Float pi) / table size asFloat.
-	1 to: table size do: [:i |
-		table at: i put:
-			(32767.0 * (radiansPerStep * i) sin) asInteger].
-
-	^ table
-! !
-
-!SoundPlayer class methodsFor: 'accessing' stamp: 'JMM 11/6/2000 10:17'!
-soundVolume
-	"Return sound as array of doubles left then right channel, range is 0.0 to 1.0 but may be overdriven"
-	^self primSoundGetVolume! !
-
-!SoundPlayer class methodsFor: 'player process' stamp: 'ar 2/4/2001 18:01'!
-startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFlag
-	"Start the sound player process. Terminate the old process, if any."
-	"SoundPlayer startPlayerProcessBufferSize: 1000 rate: 11025 stereo: false"
-	^self startPlayerProcessBufferSize: bufferSize 
-			rate: samplesPerSecond 
-			stereo: stereoFlag 
-			sound: nil! !
-
-!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 10/8/2012 22:14'!
-startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFlag sound: aSound
-	"Start the sound player process. Terminate the old process, if any."
-	"SoundPlayer startPlayerProcessBufferSize: 1000 rate: 11025 stereo: false"
-
-	self stopPlayerProcess.
-	aSound
-		ifNil:[ActiveSounds _ OrderedCollection new]
-		ifNotNil:[ActiveSounds _ OrderedCollection with: aSound].
-	Buffer _ SoundBuffer newStereoSampleCount: (bufferSize // 4) * 4.
-	LastBuffer ifNotNil:[LastBuffer _ SoundBuffer basicNew: Buffer basicSize].
-	PlayerSemaphore _ Semaphore forMutualExclusion.
-	SamplingRate _ samplesPerSecond.
-	Stereo _ stereoFlag.
-	ReadyForBuffer _ Semaphore new.
-	SoundSupported _ true. "Assume so"
-	UseReadySemaphore _ true.  "set to false if ready semaphore not supported by VM"
-	self primSoundStartBufferSize: Buffer stereoSampleCount
-		rate: samplesPerSecond
-		stereo: Stereo
-		semaIndex: (Smalltalk registerExternalObject: ReadyForBuffer).
-	"Check if sound start prim was successful"
-	SoundSupported ifFalse:[^self].
-	UseReadySemaphore
-		ifTrue: [PlayerProcess _ [SoundPlayer playLoop] newProcess]
-		ifFalse: [PlayerProcess _ [SoundPlayer oldStylePlayLoop] newProcess].
-	UseReverb ifTrue: [self startReverb].
-
-	PlayerProcess
-		priority: Processor userInterruptPriority;
-		name: 'Sound Player';
-		resume! !
-
 !SoundPlayer class methodsFor: 'private' stamp: 'jmv 3/1/2010 13:34'!
 startPlayingImmediately: aSound
 	"Private!! Start playing the given sound as soon as possible by mixing it into the sound output buffers of the underlying sound driver."
@@ -9688,6 +9614,119 @@ startPlayingImmediately: aSound
 		ActiveSounds add: aSound].
 ! !
 
+!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 3/1/2010 14:07'!
+isReverbOn
+
+	^ ReverbState notNil
+! !
+
+!SoundPlayer class methodsFor: 'player process' stamp: 'ar 1/24/2002 18:41'!
+lastPlayBuffer
+	^LastBuffer! !
+
+!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 3/1/2010 13:33'!
+oldStylePlayLoop
+	"This version of the play loop is used if the VM does not yet support sound primitives that signal a semaphore when a sound buffer becomes available."
+
+	| bytesPerSlice count |
+	bytesPerSlice _ Stereo ifTrue: [4] ifFalse: [2].
+	[true] whileTrue: [
+		[(count _ self primSoundAvailableBytes // bytesPerSlice) > 100]
+			whileFalse: [(Delay forMilliseconds: 1) wait].
+
+		count _ count min: Buffer stereoSampleCount.
+		PlayerSemaphore critical: [
+			ActiveSounds _ ActiveSounds select: [:snd | snd samplesRemaining > 0].
+			ActiveSounds do: [:snd |
+				snd ~~ SoundJustStarted ifTrue: [
+					snd playSampleCount: count into: Buffer startingAt: 1]].
+			ReverbState ifNotNil: [
+				ReverbState applyReverbTo: Buffer startingAt: 1 count: count].
+			self primSoundPlaySamples: count from: Buffer startingAt: 1.
+			Buffer primFill: 0.
+			SoundJustStarted _ nil]].
+! !
+
+!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 3/1/2010 13:34'!
+playLoop
+	"The sound player process loop."
+
+	| bytesPerSlice count willStop mayStop |
+	mayStop _ Preferences soundStopWhenDone.
+	bytesPerSlice _ Stereo ifTrue: [4] ifFalse: [2].
+	[true] whileTrue: [
+		[(count _ self primSoundAvailableBytes // bytesPerSlice) > 100]
+			whileFalse: [ReadyForBuffer wait].
+
+		count _ count min: Buffer stereoSampleCount.
+		PlayerSemaphore critical: [
+			ActiveSounds _ ActiveSounds select: [:snd | snd samplesRemaining > 0].
+			ActiveSounds do: [:snd |
+				snd ~~ SoundJustStarted ifTrue: [
+					snd playSampleCount: count into: Buffer startingAt: 1]].
+			ReverbState ifNotNil: [
+				ReverbState applyReverbTo: Buffer startingAt: 1 count: count].
+			self primSoundPlaySamples: count from: Buffer startingAt: 1.
+			willStop _ mayStop and:[
+						(ActiveSounds size = 0) and:[
+							self isAllSilence: Buffer size: count]].
+			LastBuffer ifNotNil:[
+				LastBuffer replaceFrom: 1 to: LastBuffer size with: Buffer startingAt: 1.
+			].
+			willStop
+				ifTrue:[self shutDown. PlayerProcess _ nil]
+				ifFalse:[Buffer primFill: 0].
+			SoundJustStarted _ nil].
+		willStop ifTrue:[^self].
+	].
+! !
+
+!SoundPlayer class methodsFor: 'player process' stamp: 'nk 2/16/2001 13:26'!
+playerProcess
+	^PlayerProcess! !
+
+!SoundPlayer class methodsFor: 'player process' stamp: 'ar 2/4/2001 18:01'!
+startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFlag
+	"Start the sound player process. Terminate the old process, if any."
+	"SoundPlayer startPlayerProcessBufferSize: 1000 rate: 11025 stereo: false"
+	^self startPlayerProcessBufferSize: bufferSize 
+			rate: samplesPerSecond 
+			stereo: stereoFlag 
+			sound: nil! !
+
+!SoundPlayer class methodsFor: 'player process' stamp: 'jmv 10/8/2012 22:14'!
+startPlayerProcessBufferSize: bufferSize rate: samplesPerSecond stereo: stereoFlag sound: aSound
+	"Start the sound player process. Terminate the old process, if any."
+	"SoundPlayer startPlayerProcessBufferSize: 1000 rate: 11025 stereo: false"
+
+	self stopPlayerProcess.
+	aSound
+		ifNil:[ActiveSounds _ OrderedCollection new]
+		ifNotNil:[ActiveSounds _ OrderedCollection with: aSound].
+	Buffer _ SoundBuffer newStereoSampleCount: (bufferSize // 4) * 4.
+	LastBuffer ifNotNil:[LastBuffer _ SoundBuffer basicNew: Buffer basicSize].
+	PlayerSemaphore _ Semaphore forMutualExclusion.
+	SamplingRate _ samplesPerSecond.
+	Stereo _ stereoFlag.
+	ReadyForBuffer _ Semaphore new.
+	SoundSupported _ true. "Assume so"
+	UseReadySemaphore _ true.  "set to false if ready semaphore not supported by VM"
+	self primSoundStartBufferSize: Buffer stereoSampleCount
+		rate: samplesPerSecond
+		stereo: Stereo
+		semaIndex: (Smalltalk registerExternalObject: ReadyForBuffer).
+	"Check if sound start prim was successful"
+	SoundSupported ifFalse:[^self].
+	UseReadySemaphore
+		ifTrue: [PlayerProcess _ [SoundPlayer playLoop] newProcess]
+		ifFalse: [PlayerProcess _ [SoundPlayer oldStylePlayLoop] newProcess].
+	UseReverb ifTrue: [self startReverb].
+
+	PlayerProcess
+		priority: Processor userInterruptPriority;
+		name: 'Sound Player';
+		resume! !
+
 !SoundPlayer class methodsFor: 'player process' stamp: 'jm 6/7/1999 10:40'!
 startReverb
 	"Start a delay-line style reverb with the given tap delays and gains. Tap delays are given in samples and should be prime integers; the following comment gives an expression that generates primes."
@@ -9696,6 +9735,38 @@ startReverb
 	UseReverb _ true.
 	ReverbState _ ReverbSound new
 		tapDelays: #(1601 7919) gains: #(0.12 0.07).
+! !
+
+!SoundPlayer class methodsFor: 'player process' stamp: 'ar 1/31/2001 01:13'!
+stopPlayerProcess
+	"Stop the sound player process."
+	"SoundPlayer stopPlayerProcess"
+
+	(PlayerProcess == nil or:[PlayerProcess == Processor activeProcess]) 
+		ifFalse:[PlayerProcess terminate].
+	PlayerProcess _ nil.
+	self primSoundStop.
+	ActiveSounds _ OrderedCollection new.
+	Buffer _ nil.
+	PlayerSemaphore _ Semaphore forMutualExclusion.
+	ReadyForBuffer ifNotNil:
+		[Smalltalk unregisterExternalObject: ReadyForBuffer].
+	ReadyForBuffer _ nil.
+! !
+
+!SoundPlayer class methodsFor: 'player process' stamp: 'jm 1/27/98 09:43'!
+stopReverb
+
+	UseReverb _ false.
+	ReverbState _ nil.
+! !
+
+!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 5/8/1998 18:48'!
+shutDown
+	"Stop player process, for example before snapshotting."
+
+	self stopPlayerProcess.
+	ReverbState _ nil.
 ! !
 
 !SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 7/11/97 12:17'!
@@ -9721,76 +9792,6 @@ startUpWithSound: aSound
 		sound: aSound.
 ! !
 
-!SoundPlayer class methodsFor: 'accessing'!
-stereo
-
-	^ Stereo
-! !
-
-!SoundPlayer class methodsFor: 'player process' stamp: 'ar 1/31/2001 01:13'!
-stopPlayerProcess
-	"Stop the sound player process."
-	"SoundPlayer stopPlayerProcess"
-
-	(PlayerProcess == nil or:[PlayerProcess == Processor activeProcess]) 
-		ifFalse:[PlayerProcess terminate].
-	PlayerProcess _ nil.
-	self primSoundStop.
-	ActiveSounds _ OrderedCollection new.
-	Buffer _ nil.
-	PlayerSemaphore _ Semaphore forMutualExclusion.
-	ReadyForBuffer ifNotNil:
-		[Smalltalk unregisterExternalObject: ReadyForBuffer].
-	ReadyForBuffer _ nil.
-! !
-
-!SoundPlayer class methodsFor: 'playing' stamp: 'jm 1/27/98 09:47'!
-stopPlayingAll
-	"Stop playing all sounds."
-
-	PlayerSemaphore critical: [
-		ActiveSounds _ ActiveSounds species new].
-! !
-
-!SoundPlayer class methodsFor: 'player process' stamp: 'jm 1/27/98 09:43'!
-stopReverb
-
-	UseReverb _ false.
-	ReverbState _ nil.
-! !
-
-!SoundPlayer class methodsFor: 'initialization' stamp: 'ar 1/24/2002 18:40'!
-useLastBuffer
-	^LastBuffer notNil! !
-
-!SoundPlayer class methodsFor: 'initialization' stamp: 'ar 1/24/2002 18:47'!
-useLastBuffer: aBool
-	Buffer ifNil:[^self].
-	aBool 
-		ifTrue:[LastBuffer _ SoundBuffer basicNew: Buffer basicSize]
-		ifFalse:[LastBuffer _ nil]	! !
-
-!SoundPlayer class methodsFor: 'initialization' stamp: 'jm 1/14/1999 13:14'!
-useShortBuffer
-	"Experimental support for real-time MIDI input. This only works on platforms whose hardware allows very short buffer sizes. It has been tested on a Macintosh Powerbook G3."
-	"SoundPlayer useShortBuffer"
-
-	self shutDown.
-	BufferMSecs _ 15.
-	SoundPlayer
-		startPlayerProcessBufferSize: (BufferMSecs * SamplingRate) // 1000
-		rate: SamplingRate
-		stereo: Stereo.
-! !
-
-!SoundPlayer class methodsFor: 'playing' stamp: 'jm 9/13/97 19:49'!
-waitUntilDonePlaying: aSound
-	"Wait until the given sound is no longer playing."
-
-	[PlayerSemaphore critical: [ActiveSounds includes: aSound]]
-		whileTrue: [(Delay forMilliseconds: 100) wait].
-! !
-
 !SoundRecorder methodsFor: 'private' stamp: 'di 2/17/1999 11:13'!
 allocateBuffer
 	"Allocate a new buffer and reset nextIndex."
@@ -9805,6 +9806,80 @@ allocateBuffer
 	nextIndex _ 1.
 ! !
 
+!SoundRecorder methodsFor: 'private' stamp: 'RAA 1/2/2001 10:17'!
+emitBuffer: buffer
+
+	| sound ratio resultBuf |
+
+	"since some sound recording devices cannot (or will not) record below a certain sample rate,
+	trim the samples down if the user really wanted fewer samples"
+
+	(desiredSampleRate isNil or: [(ratio _ samplingRate // desiredSampleRate) <= 1]) ifTrue: [
+		sound _ SampledSound new setSamples: buffer samplingRate: samplingRate.
+	] ifFalse: [
+		resultBuf _ SoundBuffer 
+			averageEvery: ratio 
+			from: buffer 
+			upTo: buffer monoSampleCount.
+		sound _ SampledSound new setSamples: resultBuf samplingRate: samplingRate / ratio.
+	].
+
+	recordedSound add: (codec ifNil: [sound] ifNotNil: [codec compressSound: sound])! !
+
+!SoundRecorder methodsFor: 'private' stamp: 'di 2/17/1999 11:13'!
+emitPartialBuffer
+	| s |
+	s _ self samplesPerFrame.
+	self emitBuffer: (currentBuffer copyFrom: 1 to: ((nextIndex-1) +( s-1) truncateTo: s))! !
+
+!SoundRecorder methodsFor: 'private' stamp: 'jm 9/2/97 16:16'!
+meterFrom: start count: count in: buffer
+	"Update the meter level with the maximum signal level in the given range of the given buffer."
+
+	| last max sample |
+	count = 0 ifTrue: [^ self].  "no new samples"
+	last _ start + count - 1.
+	max _ 0.
+	start to: last do: [:i |
+		sample _ buffer at: i.
+		sample < 0 ifTrue: [sample _ sample negated].
+		sample > max ifTrue: [max _ sample]].
+	meterLevel _ max.
+! !
+
+!SoundRecorder methodsFor: 'private' stamp: 'di 2/16/1999 08:55'!
+recordLoop
+	"Record process loop that records samples."
+
+	| n sampleCount |
+	n _ 0.
+	[true] whileTrue: [
+		n = 0 ifTrue: [bufferAvailableSema wait].
+		paused
+			ifTrue: [
+				n _ self primRecordSamplesInto: meteringBuffer startingAt: 1.
+				self meterFrom: 1 count: n in: meteringBuffer]
+			ifFalse: [
+				n _ self primRecordSamplesInto: currentBuffer startingAt: nextIndex.
+				self meterFrom: nextIndex count: n in: currentBuffer.
+				nextIndex _ nextIndex + n.
+				stereo
+					ifTrue: [sampleCount _ currentBuffer stereoSampleCount]
+					ifFalse: [sampleCount _ currentBuffer monoSampleCount].
+				nextIndex > sampleCount
+					ifTrue: [
+						self emitBuffer: currentBuffer.
+						self allocateBuffer]]].
+! !
+
+!SoundRecorder methodsFor: 'private' stamp: 'jmv 3/1/2010 13:35'!
+samplesPerFrame
+	"Can be overridden to quantize buffer size for, eg, fixed-frame codecs"
+
+	^codec
+		ifNil: [1]
+		ifNotNil: [codec samplesPerFrame]! !
+
 !SoundRecorder methodsFor: 'recording controls' stamp: 'di 2/17/1999 10:54'!
 clearRecordedSound
 	"Clear the sound recorded thus far. Go into pause mode if currently recording."
@@ -9814,10 +9889,157 @@ clearRecordedSound
 	self allocateBuffer.
 ! !
 
+!SoundRecorder methodsFor: 'recording controls' stamp: 'sw 6/10/2003 12:34'!
+hasRecordedSound
+	"Answer whether the receiver currently has any recorded sound"
+
+	^ self recordedSound notNil! !
+
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 3/1/2010 14:07'!
+pause
+	"Go into pause mode. The record level continues to be updated, but no sound is recorded."
+
+	paused _ true.
+	(currentBuffer notNil and: [nextIndex > 1])
+		ifTrue: [
+			self emitPartialBuffer.
+			self allocateBuffer].
+
+	soundPlaying ifNotNil: [
+		soundPlaying pause.
+		soundPlaying _ nil].
+	"Note: there can be problems if canRecordWhilePlaying is true. Recorders which only pause will inhibit other recorders from recording. I chose to make #stopPlaying unconditional in a subclass. The same might be appropriate here at the expense of making recorders resumable"
+
+	Preferences canRecordWhilePlaying ifFalse: [self stopRecording].
+! !
+
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jm 10/17/97 14:53'!
+playback
+	"Playback the sound that has been recorded."
+
+	self pause.
+	soundPlaying _ self recordedSound.
+	soundPlaying play.
+! !
+
+!SoundRecorder methodsFor: 'recording controls' stamp: 'RAA 8/13/2000 11:41'!
+resumeRecording
+	"Continue recording from the point at which it was last paused."
+
+	self flag: #bob.
+	"Note: If canRecordWhilePlaying is true, then recordings may never get started (at least by this method). One possibility, used in a subclass, is to make the #startPlaying unconditional. Another would be to use #startPlaying instead of #resumePlaying in appropriate cases"
+
+	Preferences canRecordWhilePlaying ifFalse: [self startRecording].
+	paused _ false.
+! !
+
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 10/8/2012 22:13'!
+startRecording
+	"Turn of the sound input driver and start the recording process. Initially, recording is paused."
+
+	| semaIndex |
+	recordLevel ifNil: [recordLevel _ 0.5].  "lazy initialization"
+	Preferences canRecordWhilePlaying ifFalse: [SoundPlayer shutDown].
+	recordProcess ifNotNil: [self stopRecording].
+	paused _ true.
+	meteringBuffer _ SoundBuffer newMonoSampleCount: 1024.
+	meterLevel _ 0.
+	self allocateBuffer.
+	bufferAvailableSema _ Semaphore new.
+	semaIndex _ Smalltalk registerExternalObject: bufferAvailableSema.
+	self primStartRecordingDesiredSampleRate: samplingRate asInteger
+		stereo: stereo
+		semaIndex: semaIndex.
+	RecorderActive _ true.
+	samplingRate _ self primGetActualRecordingSampleRate.
+	self primSetRecordLevel: (1000.0 * recordLevel) asInteger.
+	recordProcess _ [self recordLoop] newProcess.
+	recordProcess
+		priority: Processor userInterruptPriority;
+		name: 'Sound Recorder';
+		resume.
+! !
+
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 3/1/2010 14:08'!
+stopRecording
+	"Stop the recording process and turn of the sound input driver."
+
+	recordProcess ifNotNil: [recordProcess terminate].
+	recordProcess _ nil.
+	self primStopRecording.
+	RecorderActive _ false.
+	Smalltalk unregisterExternalObject: bufferAvailableSema.
+	(currentBuffer notNil and: [nextIndex > 1])
+		ifTrue: [self emitPartialBuffer].
+	self initializeRecordingState.
+! !
+
+!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 2/22/2011 22:51'!
+verifyExistenceOfRecordedSound
+	"If the receiver has a recorded sound, answer true; if not, put up an informer and answer false"
+
+	^ self recordedSound
+		ifNotNil:
+			[true]
+		ifNil: [
+			self inform: 'please record a sound first'.
+			false]! !
+
 !SoundRecorder methodsFor: 'accessing' stamp: 'di 2/17/1999 11:08'!
 codec: aSoundCodec
 
 	codec _ aSoundCodec! !
+
+!SoundRecorder methodsFor: 'accessing' stamp: 'RAA 12/30/2000 10:28'!
+desiredSampleRate: newRate
+
+	"use of this method indicates a strong desire for the specified rate, even if
+	the OS/hardware are not cooperative"
+
+	desiredSampleRate _ samplingRate _ newRate  "Best are 44100 22050 11025"
+! !
+
+!SoundRecorder methodsFor: 'accessing' stamp: 'jm 9/2/97 16:16'!
+isPaused
+	"Return true if recording is paused."
+
+	^ paused
+! !
+
+!SoundRecorder methodsFor: 'accessing' stamp: 'jm 9/18/97 19:19'!
+meterLevel
+	"Return the meter level, an integer in the range [0..100] where zero is silence and 100 represents the maximum signal level possible without clipping."
+
+	^ (100 * meterLevel) // 32768
+! !
+
+!SoundRecorder methodsFor: 'accessing' stamp: 'jm 7/4/1998 15:03'!
+recordLevel
+
+	^ recordLevel
+! !
+
+!SoundRecorder methodsFor: 'accessing' stamp: 'jm 7/4/1998 15:04'!
+recordLevel: level
+	"Set the desired recording level to the given value in the range 0.0 to 1.0, where 0.0 is the lowest recording level and 1.0 is the maximum. Do nothing if the sound input hardware does not support changing the recording level."
+	"Details: On the Macintosh, the lowest possible record level attenuates the input signal, but does not silence it entirely." 
+
+	recordLevel _ (level asFloat min: 1.0) max: 0.0.
+	recordProcess ifNotNil: [
+		self primSetRecordLevel: (1000.0 * recordLevel) asInteger].
+! !
+
+!SoundRecorder methodsFor: 'accessing' stamp: 'jm 12/15/97 14:28'!
+samplingRate
+
+	^ samplingRate
+! !
+
+!SoundRecorder methodsFor: 'accessing' stamp: 'di 2/16/1999 09:58'!
+samplingRate: newRate
+
+	samplingRate _ newRate  "Best are 44100 22050 11025"
+! !
 
 !SoundRecorder methodsFor: 'results' stamp: 'di 3/4/1999 21:40'!
 condensedSamples
@@ -9856,6 +10078,19 @@ condensedStereoSound
 	^ MixedSound new
 		add: (SampledSound new setSamples: leftBuf samplingRate: samplingRate) pan: 0.0;
 		add: (SampledSound new setSamples: rightBuf samplingRate: samplingRate) pan: 1.0
+! !
+
+!SoundRecorder methodsFor: 'results' stamp: 'di 2/17/1999 11:07'!
+recordedSound
+	"Return the sound that was recorded."
+
+	^ recordedSound
+! !
+
+!SoundRecorder methodsFor: 'results' stamp: 'di 2/17/1999 21:24'!
+soundSegments
+
+	^ self segmentsAbove: 1000 normalizedVolume: 80.0
 ! !
 
 !SoundRecorder methodsFor: 'trimming' stamp: 'jm 10/17/97 17:43'!
@@ -9907,41 +10142,6 @@ copyTo: resultBuf from: startIndex to: endIndex from: buf startingAt: firstInBuf
 		resultBuf at: i put: (((buf at: (i + indexOffset)) - dcOffset) * nFactor) // 1000].
 ! !
 
-!SoundRecorder methodsFor: 'accessing' stamp: 'RAA 12/30/2000 10:28'!
-desiredSampleRate: newRate
-
-	"use of this method indicates a strong desire for the specified rate, even if
-	the OS/hardware are not cooperative"
-
-	desiredSampleRate _ samplingRate _ newRate  "Best are 44100 22050 11025"
-! !
-
-!SoundRecorder methodsFor: 'private' stamp: 'RAA 1/2/2001 10:17'!
-emitBuffer: buffer
-
-	| sound ratio resultBuf |
-
-	"since some sound recording devices cannot (or will not) record below a certain sample rate,
-	trim the samples down if the user really wanted fewer samples"
-
-	(desiredSampleRate isNil or: [(ratio _ samplingRate // desiredSampleRate) <= 1]) ifTrue: [
-		sound _ SampledSound new setSamples: buffer samplingRate: samplingRate.
-	] ifFalse: [
-		resultBuf _ SoundBuffer 
-			averageEvery: ratio 
-			from: buffer 
-			upTo: buffer monoSampleCount.
-		sound _ SampledSound new setSamples: resultBuf samplingRate: samplingRate / ratio.
-	].
-
-	recordedSound add: (codec ifNil: [sound] ifNotNil: [codec compressSound: sound])! !
-
-!SoundRecorder methodsFor: 'private' stamp: 'di 2/17/1999 11:13'!
-emitPartialBuffer
-	| s |
-	s _ self samplesPerFrame.
-	self emitBuffer: (currentBuffer copyFrom: 1 to: ((nextIndex-1) +( s-1) truncateTo: s))! !
-
 !SoundRecorder methodsFor: 'trimming' stamp: 'di 2/16/1999 22:11'!
 endPlace
 
@@ -9965,64 +10165,6 @@ firstSampleOverThreshold: threshold dcOffset: dcOffset startingAt: startPlace
 		jStart _ 1].
 	^ self endPlace! !
 
-!SoundRecorder methodsFor: 'recording controls' stamp: 'sw 6/10/2003 12:34'!
-hasRecordedSound
-	"Answer whether the receiver currently has any recorded sound"
-
-	^ self recordedSound notNil! !
-
-!SoundRecorder methodsFor: 'initialization' stamp: 'jm 4/22/1999 14:30'!
-initialize
-	"SoundRecorder new"
-
-	stereo _ false.
-	samplingRate _ 11025.
-	recordLevel _ 0.5.
-	self initializeRecordingState.
-! !
-
-!SoundRecorder methodsFor: 'initialization' stamp: 'jhm 10/15/97 14:30'!
-initializeRecordingState
-
-	recordProcess _ nil.
-	bufferAvailableSema _ nil.
-	paused _ true.
-	meteringBuffer _ nil.
-	meterLevel _ 0.
-	soundPlaying _ nil.
-	currentBuffer _ nil.
-	nextIndex _ 1.
-! !
-
-!SoundRecorder methodsFor: 'accessing' stamp: 'jm 9/2/97 16:16'!
-isPaused
-	"Return true if recording is paused."
-
-	^ paused
-! !
-
-!SoundRecorder methodsFor: 'private' stamp: 'jm 9/2/97 16:16'!
-meterFrom: start count: count in: buffer
-	"Update the meter level with the maximum signal level in the given range of the given buffer."
-
-	| last max sample |
-	count = 0 ifTrue: [^ self].  "no new samples"
-	last _ start + count - 1.
-	max _ 0.
-	start to: last do: [:i |
-		sample _ buffer at: i.
-		sample < 0 ifTrue: [sample _ sample negated].
-		sample > max ifTrue: [max _ sample]].
-	meterLevel _ max.
-! !
-
-!SoundRecorder methodsFor: 'accessing' stamp: 'jm 9/18/97 19:19'!
-meterLevel
-	"Return the meter level, an integer in the range [0..100] where zero is silence and 100 represents the maximum signal level possible without clipping."
-
-	^ (100 * meterLevel) // 32768
-! !
-
 !SoundRecorder methodsFor: 'trimming' stamp: 'jm 10/18/97 11:22'!
 normalizeFactorFor: percentOfMaxVolume min: min max: max dcOffset: dcOffset
 	"Return a normalization factor for the range of sample values and DC offset. A normalization factor is a fixed-point number that will be divided by 1000 after multiplication with each sample value."
@@ -10032,24 +10174,6 @@ normalizeFactorFor: percentOfMaxVolume min: min max: max dcOffset: dcOffset
 	peak = 0 ifTrue: [^ 1000].
 	factor _ (32767.0 * percentOfMaxVolume) / (100.0 * peak).
 	^ (factor * 1000.0) asInteger
-! !
-
-!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 3/1/2010 14:07'!
-pause
-	"Go into pause mode. The record level continues to be updated, but no sound is recorded."
-
-	paused _ true.
-	(currentBuffer notNil and: [nextIndex > 1])
-		ifTrue: [
-			self emitPartialBuffer.
-			self allocateBuffer].
-
-	soundPlaying ifNotNil: [
-		soundPlaying pause.
-		soundPlaying _ nil].
-	"Note: there can be problems if canRecordWhilePlaying is true. Recorders which only pause will inhibit other recorders from recording. I chose to make #stopPlaying unconditional in a subclass. The same might be appropriate here at the expense of making recorders resumable"
-
-	Preferences canRecordWhilePlaying ifFalse: [self stopRecording].
 ! !
 
 !SoundRecorder methodsFor: 'trimming' stamp: 'di 2/16/1999 23:01'!
@@ -10074,132 +10198,6 @@ place: startPlace plus: nSamples
 				whileTrue: [remaining _ remaining - j.
 							i _ i-1.  j _ (recordedBuffers at: i) size].
 			^ #(1 1)]! !
-
-!SoundRecorder methodsFor: 'recording controls' stamp: 'jm 10/17/97 14:53'!
-playback
-	"Playback the sound that has been recorded."
-
-	self pause.
-	soundPlaying _ self recordedSound.
-	soundPlaying play.
-! !
-
-!SoundRecorder methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primGetActualRecordingSampleRate
-	"Return the actual sample rate being used for recording. This primitive fails unless sound recording is currently in progress."
-
-	<primitive: 'primitiveSoundGetRecordingSampleRate' module: 'SoundPlugin'>
-	self primitiveFailed
-! !
-
-!SoundRecorder methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primRecordSamplesInto: aWordArray startingAt: index
-	"Record a sequence of 16-bit sound samples into the given array starting at the given sample index. Return the number of samples recorded, which may be zero if no samples are currently available."
-
-	<primitive: 'primitiveSoundRecordSamples' module: 'SoundPlugin'>
-	self primitiveFailed
-! !
-
-!SoundRecorder methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primSetRecordLevel: anInteger
-	"Set the desired recording level to the given value in the range 0-1000, where 0 is the lowest recording level and 1000 is the maximum. Do nothing if the sound input hardware does not support changing the recording level."
-
-	<primitive: 'primitiveSoundSetRecordLevel' module: 'SoundPlugin'>
-	self primitiveFailed
-! !
-
-!SoundRecorder methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
-primStartRecordingDesiredSampleRate: samplesPerSec stereo: stereoFlag semaIndex: anInteger
-	"Start sound recording with the given stereo setting. Use a sampling rate as close to the desired rate as the underlying platform will support. If the given semaphore index is > 0, it is taken to be the index of a Semaphore in the external objects array to be signalled every time a recording buffer is filled."
-
-	<primitive: 'primitiveSoundStartRecording' module: 'SoundPlugin'>
-	self primitiveFailed
-! !
-
-!SoundRecorder methodsFor: 'primitives' stamp: 'tpr 2/15/2001 17:13'!
-primStopRecording
-	"Stop sound recording. Does nothing if recording is not currently in progress. Do not fail if plugin is not available"
-
-	<primitive: 'primitiveSoundStopRecording' module: 'SoundPlugin'>! !
-
-!SoundRecorder methodsFor: 'accessing' stamp: 'jm 7/4/1998 15:03'!
-recordLevel
-
-	^ recordLevel
-! !
-
-!SoundRecorder methodsFor: 'accessing' stamp: 'jm 7/4/1998 15:04'!
-recordLevel: level
-	"Set the desired recording level to the given value in the range 0.0 to 1.0, where 0.0 is the lowest recording level and 1.0 is the maximum. Do nothing if the sound input hardware does not support changing the recording level."
-	"Details: On the Macintosh, the lowest possible record level attenuates the input signal, but does not silence it entirely." 
-
-	recordLevel _ (level asFloat min: 1.0) max: 0.0.
-	recordProcess ifNotNil: [
-		self primSetRecordLevel: (1000.0 * recordLevel) asInteger].
-! !
-
-!SoundRecorder methodsFor: 'private' stamp: 'di 2/16/1999 08:55'!
-recordLoop
-	"Record process loop that records samples."
-
-	| n sampleCount |
-	n _ 0.
-	[true] whileTrue: [
-		n = 0 ifTrue: [bufferAvailableSema wait].
-		paused
-			ifTrue: [
-				n _ self primRecordSamplesInto: meteringBuffer startingAt: 1.
-				self meterFrom: 1 count: n in: meteringBuffer]
-			ifFalse: [
-				n _ self primRecordSamplesInto: currentBuffer startingAt: nextIndex.
-				self meterFrom: nextIndex count: n in: currentBuffer.
-				nextIndex _ nextIndex + n.
-				stereo
-					ifTrue: [sampleCount _ currentBuffer stereoSampleCount]
-					ifFalse: [sampleCount _ currentBuffer monoSampleCount].
-				nextIndex > sampleCount
-					ifTrue: [
-						self emitBuffer: currentBuffer.
-						self allocateBuffer]]].
-! !
-
-!SoundRecorder methodsFor: 'results' stamp: 'di 2/17/1999 11:07'!
-recordedSound
-	"Return the sound that was recorded."
-
-	^ recordedSound
-! !
-
-!SoundRecorder methodsFor: 'recording controls' stamp: 'RAA 8/13/2000 11:41'!
-resumeRecording
-	"Continue recording from the point at which it was last paused."
-
-	self flag: #bob.
-	"Note: If canRecordWhilePlaying is true, then recordings may never get started (at least by this method). One possibility, used in a subclass, is to make the #startPlaying unconditional. Another would be to use #startPlaying instead of #resumePlaying in appropriate cases"
-
-	Preferences canRecordWhilePlaying ifFalse: [self startRecording].
-	paused _ false.
-! !
-
-!SoundRecorder methodsFor: 'private' stamp: 'jmv 3/1/2010 13:35'!
-samplesPerFrame
-	"Can be overridden to quantize buffer size for, eg, fixed-frame codecs"
-
-	^codec
-		ifNil: [1]
-		ifNotNil: [codec samplesPerFrame]! !
-
-!SoundRecorder methodsFor: 'accessing' stamp: 'jm 12/15/97 14:28'!
-samplingRate
-
-	^ samplingRate
-! !
-
-!SoundRecorder methodsFor: 'accessing' stamp: 'di 2/16/1999 09:58'!
-samplingRate: newRate
-
-	samplingRate _ newRate  "Best are 44100 22050 11025"
-! !
 
 !SoundRecorder methodsFor: 'trimming' stamp: 'di 2/16/1999 23:19'!
 scanForEndThreshold: threshold dcOffset: dcOffset minLull: lull startingAt: startPlace
@@ -10318,53 +10316,6 @@ segmentsAbove: threshold normalizedVolume: percentOfMaxVolume
 	recordedBuffers _ nil.
 	^ segments! !
 
-!SoundRecorder methodsFor: 'results' stamp: 'di 2/17/1999 21:24'!
-soundSegments
-
-	^ self segmentsAbove: 1000 normalizedVolume: 80.0
-! !
-
-!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 10/8/2012 22:13'!
-startRecording
-	"Turn of the sound input driver and start the recording process. Initially, recording is paused."
-
-	| semaIndex |
-	recordLevel ifNil: [recordLevel _ 0.5].  "lazy initialization"
-	Preferences canRecordWhilePlaying ifFalse: [SoundPlayer shutDown].
-	recordProcess ifNotNil: [self stopRecording].
-	paused _ true.
-	meteringBuffer _ SoundBuffer newMonoSampleCount: 1024.
-	meterLevel _ 0.
-	self allocateBuffer.
-	bufferAvailableSema _ Semaphore new.
-	semaIndex _ Smalltalk registerExternalObject: bufferAvailableSema.
-	self primStartRecordingDesiredSampleRate: samplingRate asInteger
-		stereo: stereo
-		semaIndex: semaIndex.
-	RecorderActive _ true.
-	samplingRate _ self primGetActualRecordingSampleRate.
-	self primSetRecordLevel: (1000.0 * recordLevel) asInteger.
-	recordProcess _ [self recordLoop] newProcess.
-	recordProcess
-		priority: Processor userInterruptPriority;
-		name: 'Sound Recorder';
-		resume.
-! !
-
-!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 3/1/2010 14:08'!
-stopRecording
-	"Stop the recording process and turn of the sound input driver."
-
-	recordProcess ifNotNil: [recordProcess terminate].
-	recordProcess _ nil.
-	self primStopRecording.
-	RecorderActive _ false.
-	Smalltalk unregisterExternalObject: bufferAvailableSema.
-	(currentBuffer notNil and: [nextIndex > 1])
-		ifTrue: [self emitPartialBuffer].
-	self initializeRecordingState.
-! !
-
 !SoundRecorder methodsFor: 'trimming' stamp: 'di 2/17/1999 20:38'!
 suppressSilence
 
@@ -10410,16 +10361,66 @@ trim: threshold normalizedVolume: percentOfMaxVolume
 	recordedBuffers _ nil
 ! !
 
-!SoundRecorder methodsFor: 'recording controls' stamp: 'jmv 2/22/2011 22:51'!
-verifyExistenceOfRecordedSound
-	"If the receiver has a recorded sound, answer true; if not, put up an informer and answer false"
+!SoundRecorder methodsFor: 'initialization' stamp: 'jm 4/22/1999 14:30'!
+initialize
+	"SoundRecorder new"
 
-	^ self recordedSound
-		ifNotNil:
-			[true]
-		ifNil: [
-			self inform: 'please record a sound first'.
-			false]! !
+	stereo _ false.
+	samplingRate _ 11025.
+	recordLevel _ 0.5.
+	self initializeRecordingState.
+! !
+
+!SoundRecorder methodsFor: 'initialization' stamp: 'jhm 10/15/97 14:30'!
+initializeRecordingState
+
+	recordProcess _ nil.
+	bufferAvailableSema _ nil.
+	paused _ true.
+	meteringBuffer _ nil.
+	meterLevel _ 0.
+	soundPlaying _ nil.
+	currentBuffer _ nil.
+	nextIndex _ 1.
+! !
+
+!SoundRecorder methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primGetActualRecordingSampleRate
+	"Return the actual sample rate being used for recording. This primitive fails unless sound recording is currently in progress."
+
+	<primitive: 'primitiveSoundGetRecordingSampleRate' module: 'SoundPlugin'>
+	self primitiveFailed
+! !
+
+!SoundRecorder methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primRecordSamplesInto: aWordArray startingAt: index
+	"Record a sequence of 16-bit sound samples into the given array starting at the given sample index. Return the number of samples recorded, which may be zero if no samples are currently available."
+
+	<primitive: 'primitiveSoundRecordSamples' module: 'SoundPlugin'>
+	self primitiveFailed
+! !
+
+!SoundRecorder methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primSetRecordLevel: anInteger
+	"Set the desired recording level to the given value in the range 0-1000, where 0 is the lowest recording level and 1000 is the maximum. Do nothing if the sound input hardware does not support changing the recording level."
+
+	<primitive: 'primitiveSoundSetRecordLevel' module: 'SoundPlugin'>
+	self primitiveFailed
+! !
+
+!SoundRecorder methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
+primStartRecordingDesiredSampleRate: samplesPerSec stereo: stereoFlag semaIndex: anInteger
+	"Start sound recording with the given stereo setting. Use a sampling rate as close to the desired rate as the underlying platform will support. If the given semaphore index is > 0, it is taken to be the index of a Semaphore in the external objects array to be signalled every time a recording buffer is filled."
+
+	<primitive: 'primitiveSoundStartRecording' module: 'SoundPlugin'>
+	self primitiveFailed
+! !
+
+!SoundRecorder methodsFor: 'primitives' stamp: 'tpr 2/15/2001 17:13'!
+primStopRecording
+	"Stop sound recording. Does nothing if recording is not currently in progress. Do not fail if plugin is not available"
+
+	<primitive: 'primitiveSoundStopRecording' module: 'SoundPlugin'>! !
 
 !SoundRecorder class methodsFor: 'accessing' stamp: 'ar 2/1/2001 15:20'!
 anyActive
@@ -10449,6 +10450,13 @@ allocateBuffer
 	nextIndex _ 1.
 ! !
 
+!SoundInputStream methodsFor: 'private' stamp: 'jm 9/8/1999 15:24'!
+emitBuffer: buffer
+	"Queue a buffer for later processing. This message is sent by the sound input process."
+
+	mutex critical: [recordedBuffers addLast: buffer].
+! !
+
 !SoundInputStream methodsFor: 'accessing' stamp: 'jm 9/8/1999 15:26'!
 bufferCount
 	"Answer the number of sound buffers that have been queued."
@@ -10472,21 +10480,6 @@ bufferSize: aNumber
 	bufferSize _ aNumber truncated.
 ! !
 
-!SoundInputStream methodsFor: 'private' stamp: 'jm 9/8/1999 15:24'!
-emitBuffer: buffer
-	"Queue a buffer for later processing. This message is sent by the sound input process."
-
-	mutex critical: [recordedBuffers addLast: buffer].
-! !
-
-!SoundInputStream methodsFor: 'initialization' stamp: 'jm 9/8/1999 15:22'!
-initialize
-
-	super initialize.
-	bufferSize _ 1024.
-	mutex _ nil.
-! !
-
 !SoundInputStream methodsFor: 'accessing' stamp: 'jmv 3/1/2010 14:07'!
 isRecording
 	"Answer true if the sound input process is running."
@@ -10505,6 +10498,14 @@ nextBufferOrNil
 			ifTrue: [result _ recordedBuffers removeFirst]
 			ifFalse: [result _ nil]].
 	^ result
+! !
+
+!SoundInputStream methodsFor: 'initialization' stamp: 'jm 9/8/1999 15:22'!
+initialize
+
+	super initialize.
+	bufferSize _ 1024.
+	mutex _ nil.
 ! !
 
 !SoundInputStream methodsFor: 'recording controls' stamp: 'jm 9/8/1999 15:23'!
@@ -10538,6 +10539,18 @@ endTime
 	"Subclasses should override to return the ending time if the event has some duration."
 
 	^ time
+! !
+
+!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:43'!
+time
+
+	^ time
+! !
+
+!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:43'!
+time: aNumber
+
+	time _ aNumber.
 ! !
 
 !AbstractScoreEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:43'!
@@ -10575,18 +10588,6 @@ outputOnMidiPort: aMidiPort
 	"Output this event to the given MIDI port. This default implementation does nothing."
 ! !
 
-!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:43'!
-time
-
-	^ time
-! !
-
-!AbstractScoreEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:43'!
-time: aNumber
-
-	time _ aNumber.
-! !
-
 !ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
 channel
 
@@ -10619,6 +10620,18 @@ control: midiControl value: midiControlValue channel: midiChannel
 	channel _ midiChannel.
 ! !
 
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:02'!
+value
+
+	^ value
+! !
+
+!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:03'!
+value: midiControlValue
+
+	value _ midiControlValue.
+! !
+
 !ControlChangeEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:45'!
 isControlChange
 
@@ -10647,18 +10660,6 @@ printOn: aStream
 		print: value;
 		nextPut: $)! !
 
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:02'!
-value
-
-	^ value
-! !
-
-!ControlChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 08:03'!
-value: midiControlValue
-
-	value _ midiControlValue.
-! !
-
 !NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:02'!
 channel
 
@@ -10683,27 +10684,10 @@ duration: aNumber
 	duration _ aNumber.
 ! !
 
-!NoteEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 15:58'!
-endNoteOnMidiPort: aMidiPort
-	"Output a noteOff event to the given MIDI port. (Actually, output a noteOff event with zero velocity. This does the same thing, but allows running status to be used when sending a mixture of note on and off commands.)"
-
-	aMidiPort
-		midiCmd: 16r90
-		channel: channel
-		byte: midiKey
-		byte: 0.
-! !
-
 !NoteEvent methodsFor: 'accessing' stamp: 'jm 8/27/1998 16:38'!
 endTime
 
 	^ time + duration
-! !
-
-!NoteEvent methodsFor: 'classification' stamp: 'jm 12/31/97 11:48'!
-isNoteEvent
-
-	^ true
 ! !
 
 !NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:07'!
@@ -10712,16 +10696,6 @@ key: midiKeyNum velocity: midiVelocity channel: midiChannel
 	midiKey _ midiKeyNum.
 	velocity _ midiVelocity.
 	channel _ midiChannel.
-! !
-
-!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:58'!
-keyName
-	"Return a note name for my pitch."
-
-	| pitchName octave |
-	pitchName _ #(c cs d ef e f fs g af a bf b) at: (midiKey \\ 12) + 1.
-	octave _ (#(-1 0 1 2 3 4 5 6 7 8 9) at: (midiKey // 12) + 1) printString.
-	^ pitchName, octave
 ! !
 
 !NoteEvent methodsFor: 'accessing' stamp: 'jm 12/18/97 20:58'!
@@ -10743,16 +10717,27 @@ pitch
 	^ AbstractSound pitchForMIDIKey: midiKey
 ! !
 
-!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:59'!
-printOn: aStream
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 09:32'!
+velocity
 
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': '.
-	aStream nextPutAll: self keyName.
-	aStream space.
-	duration printOn: aStream.
-	aStream nextPut: $).
+	^ velocity
+! !
+
+!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:51'!
+velocity: midiVelocity
+
+	velocity _ midiVelocity.
+! !
+
+!NoteEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 15:58'!
+endNoteOnMidiPort: aMidiPort
+	"Output a noteOff event to the given MIDI port. (Actually, output a noteOff event with zero velocity. This does the same thing, but allows running status to be used when sending a mixture of note on and off commands.)"
+
+	aMidiPort
+		midiCmd: 16r90
+		channel: channel
+		byte: midiKey
+		byte: 0.
 ! !
 
 !NoteEvent methodsFor: 'midi' stamp: 'jm 9/10/1998 15:56'!
@@ -10766,16 +10751,32 @@ startNoteOnMidiPort: aMidiPort
 		byte: velocity.
 ! !
 
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 09:32'!
-velocity
+!NoteEvent methodsFor: 'classification' stamp: 'jm 12/31/97 11:48'!
+isNoteEvent
 
-	^ velocity
+	^ true
 ! !
 
-!NoteEvent methodsFor: 'accessing' stamp: 'jm 12/31/97 11:51'!
-velocity: midiVelocity
+!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:58'!
+keyName
+	"Return a note name for my pitch."
 
-	velocity _ midiVelocity.
+	| pitchName octave |
+	pitchName _ #(c cs d ef e f fs g af a bf b) at: (midiKey \\ 12) + 1.
+	octave _ (#(-1 0 1 2 3 4 5 6 7 8 9) at: (midiKey // 12) + 1) printString.
+	^ pitchName, octave
+! !
+
+!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:59'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': '.
+	aStream nextPutAll: self keyName.
+	aStream space.
+	duration printOn: aStream.
+	aStream nextPut: $).
 ! !
 
 !PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
@@ -10848,6 +10849,25 @@ channel: midiChannel
 	channel _ midiChannel.
 ! !
 
+!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
+program
+
+	^ program
+! !
+
+!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
+program: midiProgramChange
+
+	program _ midiProgramChange.
+! !
+
+!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
+program: midiProgramChange channel: midiChannel
+
+	program _ midiProgramChange.
+	channel _ midiChannel.
+! !
+
 !ProgramChangeEvent methodsFor: 'classification' stamp: 'jm 9/10/1998 09:46'!
 isProgramChange
 
@@ -10872,25 +10892,6 @@ printOn: aStream
 	aStream nextPutAll: ': prog '.
 	program printOn: aStream.
 	aStream nextPut: $).
-! !
-
-!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
-program
-
-	^ program
-! !
-
-!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
-program: midiProgramChange
-
-	program _ midiProgramChange.
-! !
-
-!ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:48'!
-program: midiProgramChange channel: midiChannel
-
-	program _ midiProgramChange.
-	channel _ midiChannel.
 ! !
 
 !TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:10'!
@@ -10931,6 +10932,66 @@ asScore
 		ticksPerQuarterNote: ticksPerQuarter
 ! !
 
+!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jmv 3/13/2012 12:37'!
+readHeaderChunk
+
+	| chunkType chunkSize division |
+	chunkType _ self readChunkType.
+	chunkType = 'RIFF' ifTrue:[chunkType _ self riffSkipToMidiChunk].
+	chunkType = 'MThd' ifFalse: [self scanForMIDIHeader].
+	chunkSize _ self readChunkSize.
+	fileType _ self next16BitWord.
+	trackCount _ self next16BitWord.
+	division _ self next16BitWord.
+	(division anyMask: 16r8000)
+		ifTrue: [self error: 'SMPTE time formats are not yet supported']
+		ifFalse: [ticksPerQuarter _ division].
+	maxNoteTicks _ 12 * 4 * ticksPerQuarter.
+		"longest acceptable note; used to detect stuck notes"
+
+	"sanity checks"
+	((chunkSize < 6) or: [chunkSize > 100])
+		ifTrue: [self error: 'unexpected MIDI header size ', chunkSize printString].
+	(#(0 1 2) includes: fileType)
+		ifFalse: [self error: 'unknown MIDI file type ', fileType printString].
+
+	Transcript
+		show: 'Reading Type ', fileType printString, ' MIDI File (';
+		show: trackCount printString, ' tracks, ';
+		show: ticksPerQuarter printString, ' ticks per quarter note)';
+		newLine.
+! !
+
+!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 9/12/1998 19:08'!
+readMIDIFrom: aBinaryStream
+	"Read one or more MIDI tracks from the given binary stream."
+
+	stream _ aBinaryStream.
+	tracks _ OrderedCollection new.
+	trackInfo _ OrderedCollection new.
+	self readHeaderChunk.
+	trackCount timesRepeat: [self readTrackChunk].
+	stream atEnd ifFalse: [self report: 'data beyond final track'].
+	fileType = 0 ifTrue: [self splitIntoTracks].
+	self guessMissingInstrumentNames.
+! !
+
+!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 12/31/97 10:41'!
+readTrackChunk
+
+	| chunkType chunkSize |
+	chunkType _ self readChunkType.
+	[chunkType = 'MTrk'] whileFalse: [
+		self report: 'skipping unexpected chunk type "', chunkType, '"'.
+		stream skip: (self readChunkSize).  "skip it"
+		chunkType _ (stream next: 4) asString].
+	chunkSize _ self readChunkSize.
+	chunkSize < 10000000 ifFalse: [
+		self error: 'suspiciously large track chunk; this may not be MIDI file'].
+
+	self readTrackContents: chunkSize.
+! !
+
 !MIDIFileReader methodsFor: 'track reading' stamp: 'jm 3/28/98 05:44'!
 endAllNotesAt: endTicks
 	"End of score; end any notes still sounding."
@@ -10953,20 +11014,6 @@ endNote: midiKey chan: channel at: endTicks
 		ifNone: [^ self].
 	evt duration: (endTicks - evt time).
 	activeEvents remove: evt ifAbsent: nil! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jmv 3/2/2010 09:56'!
-guessMissingInstrumentNames
-	"Attempt to guess missing instrument names from the first program change in that track."
-
-	| progChange instrIndex instrName |
-	1 to: tracks size do: [:i |
-		(trackInfo at: i) isEmpty ifTrue: [
-			progChange _ (tracks at: i) detect: [:e | e isProgramChange] ifNone: nil.
-			progChange ifNotNil: [
-				instrIndex _ progChange program + 1.
-				instrName _ self class standardMIDIInstrumentNames at: instrIndex.
-				trackInfo at: i put: instrName]]].
-! !
 
 !MIDIFileReader methodsFor: 'track reading' stamp: 'jm 1/3/98 09:45'!
 isTempoTrack: anEventList
@@ -11030,110 +11077,6 @@ metaEventAt: ticks
 		'skipping unrecognized meta event: ', (type printStringBase: 16),
 		' (', length printString, ' bytes)'.
 	trackStream skip: length.
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 10:30'!
-next16BitWord
-	"Read a 16-bit positive integer from the input stream, most significant byte first."
-	"Assume: Stream has at least two bytes left."
-
-	| n |
-	n _ stream next.
-	^ (n bitShift: 8) + stream next
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'ar 1/27/98 17:27'!
-next32BitWord: msbFirst
-	"Read a 32-bit positive integer from the input stream."
-	"Assume: Stream has at least four bytes left."
-
-	| n |
-	n _ stream next: 4.
-	^msbFirst
-		ifTrue:[((n at: 1) bitShift: 24) + ((n at: 2) bitShift: 16) + ((n at: 3) bitShift: 8) + (n at: 4)]
-		ifFalse:[((n at: 4) bitShift: 24) + ((n at: 3) bitShift: 16) + ((n at: 2) bitShift: 8) + (n at: 1)]
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 10:29'!
-readChunkSize
-	"Read a 32-bit positive integer from the next 4 bytes, most significant byte first."
-	"Assume: Stream has at least four bytes left."
-
-	| n |
-	n _ 0.
-	1 to: 4 do: [:ignore | n _ (n bitShift: 8) + stream next].
-	^ n
-! !
-
-!MIDIFileReader methodsFor: 'private' stamp: 'jm 9/12/1998 17:32'!
-readChunkType
-	"Read a chunk ID string from the next 4 bytes."
-	"Assume: Stream has at least four bytes left."
-
-	| s |
-	s _ String new: 4.
-	1 to: 4 do: [:i | s at: i put: (stream next) asCharacter].
-	^ s
-! !
-
-!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jmv 3/13/2012 12:37'!
-readHeaderChunk
-
-	| chunkType chunkSize division |
-	chunkType _ self readChunkType.
-	chunkType = 'RIFF' ifTrue:[chunkType _ self riffSkipToMidiChunk].
-	chunkType = 'MThd' ifFalse: [self scanForMIDIHeader].
-	chunkSize _ self readChunkSize.
-	fileType _ self next16BitWord.
-	trackCount _ self next16BitWord.
-	division _ self next16BitWord.
-	(division anyMask: 16r8000)
-		ifTrue: [self error: 'SMPTE time formats are not yet supported']
-		ifFalse: [ticksPerQuarter _ division].
-	maxNoteTicks _ 12 * 4 * ticksPerQuarter.
-		"longest acceptable note; used to detect stuck notes"
-
-	"sanity checks"
-	((chunkSize < 6) or: [chunkSize > 100])
-		ifTrue: [self error: 'unexpected MIDI header size ', chunkSize printString].
-	(#(0 1 2) includes: fileType)
-		ifFalse: [self error: 'unknown MIDI file type ', fileType printString].
-
-	Transcript
-		show: 'Reading Type ', fileType printString, ' MIDI File (';
-		show: trackCount printString, ' tracks, ';
-		show: ticksPerQuarter printString, ' ticks per quarter note)';
-		newLine.
-! !
-
-!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 9/12/1998 19:08'!
-readMIDIFrom: aBinaryStream
-	"Read one or more MIDI tracks from the given binary stream."
-
-	stream _ aBinaryStream.
-	tracks _ OrderedCollection new.
-	trackInfo _ OrderedCollection new.
-	self readHeaderChunk.
-	trackCount timesRepeat: [self readTrackChunk].
-	stream atEnd ifFalse: [self report: 'data beyond final track'].
-	fileType = 0 ifTrue: [self splitIntoTracks].
-	self guessMissingInstrumentNames.
-! !
-
-!MIDIFileReader methodsFor: 'chunk reading' stamp: 'jm 12/31/97 10:41'!
-readTrackChunk
-
-	| chunkType chunkSize |
-	chunkType _ self readChunkType.
-	[chunkType = 'MTrk'] whileFalse: [
-		self report: 'skipping unexpected chunk type "', chunkType, '"'.
-		stream skip: (self readChunkSize).  "skip it"
-		chunkType _ (stream next: 4) asString].
-	chunkSize _ self readChunkSize.
-	chunkSize < 10000000 ifFalse: [
-		self error: 'suspiciously large track chunk; this may not be MIDI file'].
-
-	self readTrackContents: chunkSize.
 ! !
 
 !MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/13/2012 12:37'!
@@ -11221,6 +11164,94 @@ readTrackEvents
 	]].
 ! !
 
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/2/2010 09:56'!
+startNote: midiKey vel: vel chan: chan at: startTicks
+	"Record the beginning of a note."
+	"Details: Some MIDI scores have missing note-off events, causing a note-on to be received for a (key, channel) that is already sounding. If the previous note is suspiciously long, truncate it."
+
+	| newActiveEvents dur noteOnEvent |
+	newActiveEvents _ nil.
+	activeEvents do: [:e |
+		((e midiKey = midiKey) and: [e channel = chan]) ifTrue: [
+			"turn off key already sounding"
+			dur _ startTicks - e time.
+			dur > maxNoteTicks ifTrue: [dur _ ticksPerQuarter].  "truncate"
+			e duration: dur.
+			newActiveEvents ifNil: [newActiveEvents _ activeEvents copy].
+			newActiveEvents remove: e ifAbsent: nil]].
+	newActiveEvents ifNotNil: [activeEvents _ newActiveEvents].
+
+	noteOnEvent _ NoteEvent new key: midiKey velocity: vel channel: chan.
+	noteOnEvent time: startTicks.
+	track add: noteOnEvent.
+	activeEvents add: noteOnEvent! !
+
+!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 9/12/1998 17:15'!
+trackContainsNotes: eventList
+	"Answer true if the given track contains at least one note event."
+
+	eventList do: [:e | e isNoteEvent ifTrue: [^ true]].
+	^ false
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jmv 3/2/2010 09:56'!
+guessMissingInstrumentNames
+	"Attempt to guess missing instrument names from the first program change in that track."
+
+	| progChange instrIndex instrName |
+	1 to: tracks size do: [:i |
+		(trackInfo at: i) isEmpty ifTrue: [
+			progChange _ (tracks at: i) detect: [:e | e isProgramChange] ifNone: nil.
+			progChange ifNotNil: [
+				instrIndex _ progChange program + 1.
+				instrName _ self class standardMIDIInstrumentNames at: instrIndex.
+				trackInfo at: i put: instrName]]].
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 10:30'!
+next16BitWord
+	"Read a 16-bit positive integer from the input stream, most significant byte first."
+	"Assume: Stream has at least two bytes left."
+
+	| n |
+	n _ stream next.
+	^ (n bitShift: 8) + stream next
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'ar 1/27/98 17:27'!
+next32BitWord: msbFirst
+	"Read a 32-bit positive integer from the input stream."
+	"Assume: Stream has at least four bytes left."
+
+	| n |
+	n _ stream next: 4.
+	^msbFirst
+		ifTrue:[((n at: 1) bitShift: 24) + ((n at: 2) bitShift: 16) + ((n at: 3) bitShift: 8) + (n at: 4)]
+		ifFalse:[((n at: 4) bitShift: 24) + ((n at: 3) bitShift: 16) + ((n at: 2) bitShift: 8) + (n at: 1)]
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 10:29'!
+readChunkSize
+	"Read a 32-bit positive integer from the next 4 bytes, most significant byte first."
+	"Assume: Stream has at least four bytes left."
+
+	| n |
+	n _ 0.
+	1 to: 4 do: [:ignore | n _ (n bitShift: 8) + stream next].
+	^ n
+! !
+
+!MIDIFileReader methodsFor: 'private' stamp: 'jm 9/12/1998 17:32'!
+readChunkType
+	"Read a chunk ID string from the next 4 bytes."
+	"Assume: Stream has at least four bytes left."
+
+	| s |
+	s _ String new: 4.
+	1 to: 4 do: [:i | s at: i put: (stream next) asCharacter].
+	^ s
+! !
+
 !MIDIFileReader methodsFor: 'private' stamp: 'jm 12/31/97 11:33'!
 readVarLengthIntFrom: aBinaryStream
 	"Read a one to four byte positive integer from the given stream, most significant byte first. Use only the lowest seven bits of each byte. The highest bit of a byte is set for all bytes except the last."
@@ -11304,36 +11335,6 @@ splitIntoTracks
 	newTracks _ newTracks select: [:t | self trackContainsNotes: t].
 	tracks _ newTracks collect: [:t | t asArray].
 	trackInfo _ trackInfo, ((2 to: tracks size) collect: [:i | '']).
-! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jmv 3/2/2010 09:56'!
-startNote: midiKey vel: vel chan: chan at: startTicks
-	"Record the beginning of a note."
-	"Details: Some MIDI scores have missing note-off events, causing a note-on to be received for a (key, channel) that is already sounding. If the previous note is suspiciously long, truncate it."
-
-	| newActiveEvents dur noteOnEvent |
-	newActiveEvents _ nil.
-	activeEvents do: [:e |
-		((e midiKey = midiKey) and: [e channel = chan]) ifTrue: [
-			"turn off key already sounding"
-			dur _ startTicks - e time.
-			dur > maxNoteTicks ifTrue: [dur _ ticksPerQuarter].  "truncate"
-			e duration: dur.
-			newActiveEvents ifNil: [newActiveEvents _ activeEvents copy].
-			newActiveEvents remove: e ifAbsent: nil]].
-	newActiveEvents ifNotNil: [activeEvents _ newActiveEvents].
-
-	noteOnEvent _ NoteEvent new key: midiKey velocity: vel channel: chan.
-	noteOnEvent time: startTicks.
-	track add: noteOnEvent.
-	activeEvents add: noteOnEvent! !
-
-!MIDIFileReader methodsFor: 'track reading' stamp: 'jm 9/12/1998 17:15'!
-trackContainsNotes: eventList
-	"Answer true if the given track contains at least one note event."
-
-	eventList do: [:e | e isNoteEvent ifTrue: [^ true]].
-	^ false
 ! !
 
 !MIDIFileReader class methodsFor: 'as yet unclassified' stamp: 'jmv 4/1/2009 21:42'!
@@ -11522,60 +11523,28 @@ clearBuffers
 	state _ #idle.
 ! !
 
+!MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 21:06'!
+processMIDIData
+	"Process all MIDI data that has arrived since the last time this method was executed. This method should be called frequently to process, filter, and timestamp MIDI data as it arrives."
+
+	| bytesRead |
+	[(bytesRead _ midiPort readInto: rawDataBuffer) > 0] whileTrue: [
+		timeNow _ (midiPort bufferTimeStampFrom: rawDataBuffer) - startTime.
+		5 to: bytesRead do: [:i | self processByte: (rawDataBuffer at: i)]].
+! !
+
+!MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 20:24'!
+received
+	"Answer my current collection of all MIDI commands received. Items in this list have the form (<time><cmd byte>[<arg1>[<arg2>]]). Note that the real-time processing facility, midiDo:, removes items from this list as it processes them."
+
+	^ received
+! !
+
 !MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 18:34'!
 endSysExclusive: cmdByte
 	"Error!! Received 'end system exclusive' command when not receiving system exclusive data."
 
 	self error: 'unexpected ''End of System Exclusive'' command'.
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:39'!
-ignoreChannel: channel
-	"Don't record any events arriving on the given MIDI channel (in the range 1-16)."
-
-	((channel isInteger not) | (channel < 1) | (channel > 16))
-		ifTrue: [^ self error: 'bad MIDI channel number', channel printString].
-
-	"two-arg channel messages"
-	#(128 144 160 176 224) do: [:i | cmdActionTable at: (i bitOr: channel - 1) put: #ignoreTwo:].
-
-	"one-arg channel messages"
-	#(192 208) do: [:i | cmdActionTable at: (i bitOr: channel - 1) put: #ignoreOne:].
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:40'!
-ignoreCommand: midiCmd
-	"Don't record the given MIDI command on any channel."
-
-	| cmd sel | 
-	((midiCmd isInteger not) | (midiCmd < 128) | (midiCmd > 255))
-		ifTrue: [^ self error: 'bad MIDI command'].
-
-	midiCmd < 240 ifTrue: [  "channel commands; ignore on all channels"
-		cmd _ midiCmd bitAnd: 2r11110000.
-		sel _ (#(128 144 160 176 224) includes: cmd)
-			ifTrue: [#ignoreTwo:]
-			ifFalse: [#ignoreOne:].
-		 1 to: 16 do: [:ch | cmdActionTable at: (cmd bitOr: ch - 1) put: sel].
-		^ self].
-
-	(#(240 241 244 245 247 249 253) includes: midiCmd) ifTrue: [
-		^ self error: 'You can''t ignore the undefined MIDI command: ', midiCmd printString].
-
-	midiCmd = 242 ifTrue: [  "two-arg command"
-		cmdActionTable at: midiCmd put: #ignoreTwo:.
-		 ^ self].
-
-	midiCmd = 243 ifTrue: [  "one-arg command"
-		cmdActionTable at: midiCmd put: #ignoreOne:.
-		^ self].
-
-	(#(246 248 250 251 252 254 255) includes: midiCmd) ifTrue:	[  "zero-arg command"
-		cmdActionTable at: midiCmd put: #ignore.
-		 ^ self].
-
-	"we should not get here"
-	self error: 'implementation error'.
 ! !
 
 !MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
@@ -11585,26 +11554,6 @@ ignoreOne: cmdByte
 	lastCmdByte _ cmdByte.
 	lastSelector _ #ignoreOne:.
 	state _ #ignore1.
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:38'!
-ignoreSysEx: aBoolean
-	"If the argument is true, then ignore incoming system exclusive message."
-
-	ignoreSysEx _ aBoolean.
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/9/1998 07:46'!
-ignoreTuneAndRealTimeCommands
-	"Ignore tuning requests and real-time commands."
-
-	cmdActionTable at: 246 put: #ignoreZero:.	"tune request"
-	cmdActionTable at: 248 put: #ignoreZero:.	"timing clock"
-	cmdActionTable at: 250 put: #ignoreZero:.	"start"
-	cmdActionTable at: 251 put: #ignoreZero:.		"continue"
-	cmdActionTable at: 252 put: #ignoreZero:.	"stop/Clock"
-	cmdActionTable at: 254 put: #ignoreZero:.	"active sensing"
-	cmdActionTable at: 255 put: #ignoreZero:.	"system reset"
 ! !
 
 !MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
@@ -11621,94 +11570,6 @@ ignoreZero: cmdByte
 	"Ignore a zero argument command, such as tune request or a real-time message. Stay in the current and don't change active status. Note that real-time messages can arrive between data bytes without disruption."	
 
 	"do nothing"
-! !
-
-!MIDIInputParser methodsFor: 'real-time processing' stamp: 'jm 10/9/1998 07:53'!
-midiDo: aBlock
-	"Poll the incoming MIDI stream in real time and call the given block for each complete command that has been received. The block takes one argument, which is an array of the form (<time><cmd byte>[<arg1>[<arg2>]]). The number of arguments depends on the command byte. For system exclusive commands, the argument is a ByteArray containing the system exclusive message."
-
-	self processMIDIData.
-	[received isEmpty] whileFalse:
-		[aBlock value: received removeFirst].
-! !
-
-!MIDIInputParser methodsFor: 'real-time processing' stamp: 'jmv 1/14/2013 21:13'!
-midiDoUntilMouseDown: midiActionBlock
-	"Process the incoming MIDI stream in real time by calling midiActionBlock for each MIDI event. This block takes three arguments: the MIDI command byte and two argument bytes. One or both argument bytes may be nil, depending on the MIDI command. If not nil, evaluatue idleBlock regularly whether MIDI data is available or not. Pressing any mouse button terminates the interaction."
-
-	| time cmd arg1 arg2 |
-	self clearBuffers.
-	[ Sensor isAnyButtonPressed ] whileFalse: [
-		self midiDo: [ :item |
-			time _ item at: 1.
-			cmd _ item at: 2.
-			arg1 _ arg2 _ nil.
-			item size > 2 ifTrue: [
-				arg1 _ item at: 3.
-				item size > 3 ifTrue: [arg2 _ item at: 4]].
-				midiActionBlock value: cmd value: arg1 value: arg2]].
-! !
-
-!MIDIInputParser methodsFor: 'accessing' stamp: 'jm 1/6/1999 08:25'!
-midiPort
-
-	^ midiPort
-! !
-
-!MIDIInputParser methodsFor: 'accessing' stamp: 'jm 1/6/1999 08:24'!
-midiPort: aMIDIPort
-	"Use the given MIDI port."
-
-	midiPort _ aMIDIPort.
-	self clearBuffers.
-! !
-
-!MIDIInputParser methodsFor: 'midi monitor' stamp: 'jm 10/8/1998 21:22'!
-monitor
-	"Print MIDI messages to the transcript until any mouse button is pressed."
-
-	self midiDoUntilMouseDown: [:cmd :arg1 :arg2 |
-		self printCmd: cmd with: arg1 with: arg2].
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jmv 5/20/2011 11:14'!
-noFiltering
-	"Revert to accepting all MIDI commands on all channels. This undoes any earlier request to filter the incoming MIDI stream."
-
-	cmdActionTable _ DefaultMidiTable copy.
-	ignoreSysEx _ false! !
-
-!MIDIInputParser methodsFor: 'midi monitor' stamp: 'jmv 3/13/2012 12:38'!
-printCmd: cmdByte with: arg1 with: arg2
-	"Print the given MIDI command."
-
-	| cmd ch bend |
-	cmdByte < 240
-		ifTrue: [  "channel message" 
-			cmd _ cmdByte bitAnd: 2r11110000.
-			ch _ (cmdByte bitAnd: 2r00001111) + 1]
-		ifFalse: [cmd _ cmdByte].  "system message"
-
-	cmd = 128 ifTrue: [
-		^ Transcript show: ('key up ', arg1 printString, ' vel: ', arg2 printString, ' chan: ', ch printString); newLine].
-	cmd = 144 ifTrue: [
-		^ Transcript show: ('key down: ', arg1 printString, ' vel: ', arg2 printString, ' chan: ', ch printString); newLine].
-	cmd = 160 ifTrue: [
-		^ Transcript show: ('key pressure: ', arg1 printString, ' val: ', arg2 printString, ' chan: ', ch printString); newLine].
-	cmd = 176 ifTrue: [
-		^ Transcript show: ('CC', arg1 printString, ': val: ', arg2 printString, ' chan: ', ch printString); newLine].
-	cmd = 192 ifTrue: [
-		^ Transcript show: ('prog: ', (arg1 + 1) printString, ' chan: ', ch printString); newLine].
-	cmd = 208 ifTrue: [
-		^ Transcript show: ('channel pressure ', arg1 printString, ' chan: ', ch printString); newLine].
-	cmd = 224 ifTrue: [
-		bend _ ((arg2 bitShift: 7) + arg1) - 8192.
-		^ Transcript show: ('bend: ', bend printString, ' chan: ', ch printString); newLine].
-
-	cmd = 240 ifTrue: [
-		^ Transcript show: ('system exclusive: ', (arg1 at: 1) printString, ' (', arg1 size printString, ' bytes)'); newLine].
-
-	Transcript show: 'cmd: ', cmd printString, ' arg1: ', arg1 printString, ' arg2: ', arg2 printString; newLine.
 ! !
 
 !MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 09:36'!
@@ -11764,23 +11625,6 @@ processByte: aByte
 					ifFalse: [^ self processByte: aByte]]]].  	"no endSysExclusive; just start the next command"
 ! !
 
-!MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 21:06'!
-processMIDIData
-	"Process all MIDI data that has arrived since the last time this method was executed. This method should be called frequently to process, filter, and timestamp MIDI data as it arrives."
-
-	| bytesRead |
-	[(bytesRead _ midiPort readInto: rawDataBuffer) > 0] whileTrue: [
-		timeNow _ (midiPort bufferTimeStampFrom: rawDataBuffer) - startTime.
-		5 to: bytesRead do: [:i | self processByte: (rawDataBuffer at: i)]].
-! !
-
-!MIDIInputParser methodsFor: 'recording' stamp: 'jm 10/8/1998 20:24'!
-received
-	"Answer my current collection of all MIDI commands received. Items in this list have the form (<time><cmd byte>[<arg1>[<arg2>]]). Note that the real-time processing facility, midiDo:, removes items from this list as it processes them."
-
-	^ received
-! !
-
 !MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
 recordOne: cmdByte
 	"Record a one argument command at the current time."	
@@ -11788,17 +11632,6 @@ recordOne: cmdByte
 	lastCmdByte _ cmdByte.
 	lastSelector _ #recordOne:.
 	state _ #want1only.
-! !
-
-!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/9/1998 07:50'!
-recordOnlyChannels: channelList
-	"Record only MIDI data arriving on the given list of channel numbers (in the range 1-16)."
-
-	channelList do: [:ch |
-		((ch isInteger not) | (ch < 1) | (ch > 16))
-			ifTrue: [^ self error: 'bad Midi channel specification: ', ch printString]].
-
-	1 to: 16 do: [:ch | (channelList includes: ch) ifFalse: [self ignoreChannel: ch]].
 ! !
 
 !MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/8/1998 19:24'!
@@ -11817,16 +11650,6 @@ recordZero: cmdByte
 	received addLast: (Array with: timeNow with: cmdByte).
 ! !
 
-!MIDIInputParser methodsFor: 'private-other' stamp: 'jm 10/9/1998 07:56'!
-setMIDIPort: aMIDIPort
-	"Initialize this instance for recording from the given MIDI port. Tune and real-time commands are filtered out by default; the client can send noFiltering to receive these messages."
-
-	midiPort _ aMIDIPort.
-	received _ OrderedCollection new.
-	self noFiltering.  "initializes cmdActionTable"
-	self ignoreTuneAndRealTimeCommands.
-! !
-
 !MIDIInputParser methodsFor: 'private-state machine' stamp: 'jm 10/9/1998 09:38'!
 startSysExclusive: cmdByte
 	"The beginning of a variable length 'system exclusive' command."
@@ -11842,6 +11665,184 @@ undefined: cmdByte
 	"We have received an unexpected MIDI byte (e.g., a data byte when we were expecting a command). This should never happen."
 
 	self error: 'unexpected MIDI byte ', cmdByte printString.
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:39'!
+ignoreChannel: channel
+	"Don't record any events arriving on the given MIDI channel (in the range 1-16)."
+
+	((channel isInteger not) | (channel < 1) | (channel > 16))
+		ifTrue: [^ self error: 'bad MIDI channel number', channel printString].
+
+	"two-arg channel messages"
+	#(128 144 160 176 224) do: [:i | cmdActionTable at: (i bitOr: channel - 1) put: #ignoreTwo:].
+
+	"one-arg channel messages"
+	#(192 208) do: [:i | cmdActionTable at: (i bitOr: channel - 1) put: #ignoreOne:].
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:40'!
+ignoreCommand: midiCmd
+	"Don't record the given MIDI command on any channel."
+
+	| cmd sel | 
+	((midiCmd isInteger not) | (midiCmd < 128) | (midiCmd > 255))
+		ifTrue: [^ self error: 'bad MIDI command'].
+
+	midiCmd < 240 ifTrue: [  "channel commands; ignore on all channels"
+		cmd _ midiCmd bitAnd: 2r11110000.
+		sel _ (#(128 144 160 176 224) includes: cmd)
+			ifTrue: [#ignoreTwo:]
+			ifFalse: [#ignoreOne:].
+		 1 to: 16 do: [:ch | cmdActionTable at: (cmd bitOr: ch - 1) put: sel].
+		^ self].
+
+	(#(240 241 244 245 247 249 253) includes: midiCmd) ifTrue: [
+		^ self error: 'You can''t ignore the undefined MIDI command: ', midiCmd printString].
+
+	midiCmd = 242 ifTrue: [  "two-arg command"
+		cmdActionTable at: midiCmd put: #ignoreTwo:.
+		 ^ self].
+
+	midiCmd = 243 ifTrue: [  "one-arg command"
+		cmdActionTable at: midiCmd put: #ignoreOne:.
+		^ self].
+
+	(#(246 248 250 251 252 254 255) includes: midiCmd) ifTrue:	[  "zero-arg command"
+		cmdActionTable at: midiCmd put: #ignore.
+		 ^ self].
+
+	"we should not get here"
+	self error: 'implementation error'.
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/8/1998 20:38'!
+ignoreSysEx: aBoolean
+	"If the argument is true, then ignore incoming system exclusive message."
+
+	ignoreSysEx _ aBoolean.
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/9/1998 07:46'!
+ignoreTuneAndRealTimeCommands
+	"Ignore tuning requests and real-time commands."
+
+	cmdActionTable at: 246 put: #ignoreZero:.	"tune request"
+	cmdActionTable at: 248 put: #ignoreZero:.	"timing clock"
+	cmdActionTable at: 250 put: #ignoreZero:.	"start"
+	cmdActionTable at: 251 put: #ignoreZero:.		"continue"
+	cmdActionTable at: 252 put: #ignoreZero:.	"stop/Clock"
+	cmdActionTable at: 254 put: #ignoreZero:.	"active sensing"
+	cmdActionTable at: 255 put: #ignoreZero:.	"system reset"
+! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jmv 5/20/2011 11:14'!
+noFiltering
+	"Revert to accepting all MIDI commands on all channels. This undoes any earlier request to filter the incoming MIDI stream."
+
+	cmdActionTable _ DefaultMidiTable copy.
+	ignoreSysEx _ false! !
+
+!MIDIInputParser methodsFor: 'midi filtering' stamp: 'jm 10/9/1998 07:50'!
+recordOnlyChannels: channelList
+	"Record only MIDI data arriving on the given list of channel numbers (in the range 1-16)."
+
+	channelList do: [:ch |
+		((ch isInteger not) | (ch < 1) | (ch > 16))
+			ifTrue: [^ self error: 'bad Midi channel specification: ', ch printString]].
+
+	1 to: 16 do: [:ch | (channelList includes: ch) ifFalse: [self ignoreChannel: ch]].
+! !
+
+!MIDIInputParser methodsFor: 'real-time processing' stamp: 'jm 10/9/1998 07:53'!
+midiDo: aBlock
+	"Poll the incoming MIDI stream in real time and call the given block for each complete command that has been received. The block takes one argument, which is an array of the form (<time><cmd byte>[<arg1>[<arg2>]]). The number of arguments depends on the command byte. For system exclusive commands, the argument is a ByteArray containing the system exclusive message."
+
+	self processMIDIData.
+	[received isEmpty] whileFalse:
+		[aBlock value: received removeFirst].
+! !
+
+!MIDIInputParser methodsFor: 'real-time processing' stamp: 'jmv 1/14/2013 21:13'!
+midiDoUntilMouseDown: midiActionBlock
+	"Process the incoming MIDI stream in real time by calling midiActionBlock for each MIDI event. This block takes three arguments: the MIDI command byte and two argument bytes. One or both argument bytes may be nil, depending on the MIDI command. If not nil, evaluatue idleBlock regularly whether MIDI data is available or not. Pressing any mouse button terminates the interaction."
+
+	| time cmd arg1 arg2 |
+	self clearBuffers.
+	[ Sensor isAnyButtonPressed ] whileFalse: [
+		self midiDo: [ :item |
+			time _ item at: 1.
+			cmd _ item at: 2.
+			arg1 _ arg2 _ nil.
+			item size > 2 ifTrue: [
+				arg1 _ item at: 3.
+				item size > 3 ifTrue: [arg2 _ item at: 4]].
+				midiActionBlock value: cmd value: arg1 value: arg2]].
+! !
+
+!MIDIInputParser methodsFor: 'accessing' stamp: 'jm 1/6/1999 08:25'!
+midiPort
+
+	^ midiPort
+! !
+
+!MIDIInputParser methodsFor: 'accessing' stamp: 'jm 1/6/1999 08:24'!
+midiPort: aMIDIPort
+	"Use the given MIDI port."
+
+	midiPort _ aMIDIPort.
+	self clearBuffers.
+! !
+
+!MIDIInputParser methodsFor: 'midi monitor' stamp: 'jm 10/8/1998 21:22'!
+monitor
+	"Print MIDI messages to the transcript until any mouse button is pressed."
+
+	self midiDoUntilMouseDown: [:cmd :arg1 :arg2 |
+		self printCmd: cmd with: arg1 with: arg2].
+! !
+
+!MIDIInputParser methodsFor: 'midi monitor' stamp: 'jmv 3/13/2012 12:38'!
+printCmd: cmdByte with: arg1 with: arg2
+	"Print the given MIDI command."
+
+	| cmd ch bend |
+	cmdByte < 240
+		ifTrue: [  "channel message" 
+			cmd _ cmdByte bitAnd: 2r11110000.
+			ch _ (cmdByte bitAnd: 2r00001111) + 1]
+		ifFalse: [cmd _ cmdByte].  "system message"
+
+	cmd = 128 ifTrue: [
+		^ Transcript show: ('key up ', arg1 printString, ' vel: ', arg2 printString, ' chan: ', ch printString); newLine].
+	cmd = 144 ifTrue: [
+		^ Transcript show: ('key down: ', arg1 printString, ' vel: ', arg2 printString, ' chan: ', ch printString); newLine].
+	cmd = 160 ifTrue: [
+		^ Transcript show: ('key pressure: ', arg1 printString, ' val: ', arg2 printString, ' chan: ', ch printString); newLine].
+	cmd = 176 ifTrue: [
+		^ Transcript show: ('CC', arg1 printString, ': val: ', arg2 printString, ' chan: ', ch printString); newLine].
+	cmd = 192 ifTrue: [
+		^ Transcript show: ('prog: ', (arg1 + 1) printString, ' chan: ', ch printString); newLine].
+	cmd = 208 ifTrue: [
+		^ Transcript show: ('channel pressure ', arg1 printString, ' chan: ', ch printString); newLine].
+	cmd = 224 ifTrue: [
+		bend _ ((arg2 bitShift: 7) + arg1) - 8192.
+		^ Transcript show: ('bend: ', bend printString, ' chan: ', ch printString); newLine].
+
+	cmd = 240 ifTrue: [
+		^ Transcript show: ('system exclusive: ', (arg1 at: 1) printString, ' (', arg1 size printString, ' bytes)'); newLine].
+
+	Transcript show: 'cmd: ', cmd printString, ' arg1: ', arg1 printString, ' arg2: ', arg2 printString; newLine.
+! !
+
+!MIDIInputParser methodsFor: 'private-other' stamp: 'jm 10/9/1998 07:56'!
+setMIDIPort: aMIDIPort
+	"Initialize this instance for recording from the given MIDI port. Tune and real-time commands are filtered out by default; the client can send noFiltering to receive these messages."
+
+	midiPort _ aMIDIPort.
+	received _ OrderedCollection new.
+	self noFiltering.  "initializes cmdActionTable"
+	self ignoreTuneAndRealTimeCommands.
 ! !
 
 !MIDIInputParser class methodsFor: 'class initialization' stamp: 'jm 10/9/1998 07:35'!
@@ -11915,19 +11916,6 @@ cutSelection: selection
 			[:i | (track at: i) adjustTimeBy: delta]].
 	tracks at: selection first put: track! !
 
-!MIDIScore methodsFor: 'nil' stamp: 'jmv 4/6/2009 17:15'!
-durationInTicks
-	
-	| t |
-	t _ 0.
-	tracks do: [ :track |
-		track do:
-			[:n | (n isNoteEvent)
-				ifTrue: [t _ t max: n endTime]
-				ifFalse: [t _ t max: n time]]].
-	^ t
-! !
-
 !MIDIScore methodsFor: 'editing' stamp: 'jm 9/10/1998 17:22'!
 eventForTrack: trackIndex after: eventIndex ticks: scoreTick
 
@@ -11959,14 +11947,6 @@ gridTrack: trackIndex toQuarter: quarterDelta at: indexInTrack
 				- selStartTime.
 	indexInTrack to: track size do:
 		[:i | (track at: i) adjustTimeBy: delta].
-! !
-
-!MIDIScore methodsFor: 'initialization' stamp: 'jmv 4/6/2009 17:15'!
-initialize
-
-	tracks _ #().
-	tempoMap _ #().
-	ticksPerQuarterNote _ 100.
 ! !
 
 !MIDIScore methodsFor: 'editing' stamp: 'di 6/21/1999 10:56'!
@@ -12009,6 +11989,27 @@ jitterStartAndEndTimesBy: mSecs
 				e duration: (newEnd - newStart)]]].
 
 				! !
+
+!MIDIScore methodsFor: 'nil' stamp: 'jmv 4/6/2009 17:15'!
+durationInTicks
+	
+	| t |
+	t _ 0.
+	tracks do: [ :track |
+		track do:
+			[:n | (n isNoteEvent)
+				ifTrue: [t _ t max: n endTime]
+				ifFalse: [t _ t max: n time]]].
+	^ t
+! !
+
+!MIDIScore methodsFor: 'initialization' stamp: 'jmv 4/6/2009 17:15'!
+initialize
+
+	tracks _ #().
+	tempoMap _ #().
+	ticksPerQuarterNote _ 100.
+! !
 
 !MIDIScore methodsFor: 'accessing' stamp: 'jm 1/3/98 07:36'!
 tempoMap
@@ -12250,6 +12251,30 @@ adjustPitch: bend
 		snd internalizeModulationAndRatio].
 ! !
 
+!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 15:43'!
+convertVelocity: valueByte
+	"Map a value in the range 0..127 to a volume in the range 0.0..1.0."
+	"Details: A quadratic function seems to give a good keyboard feel."
+
+	| r |
+	r _ (valueByte * valueByte) / 12000.0.
+	r > 1.0 ifTrue: [^ 1.0].
+	r < 0.08 ifTrue: [^ 0.08].
+	^ r
+! !
+
+!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 15:41'!
+newVolume: valueByte
+	"Set the channel volume to the level given by the given number in the range 0..127."
+
+	| snd newVolume |
+	channelVolume _ valueByte asFloat / 127.0.
+	newVolume _ masterVolume * channelVolume.
+	activeSounds do: [:entry |
+		snd _ entry at: 2.
+		snd adjustVolumeTo: newVolume overMSecs: 10].
+! !
+
 !MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 15:40'!
 channelPressure: newPressure
 	"Handle a channel pressure (channel aftertouch) change."
@@ -12262,18 +12287,6 @@ control: control value: newValue
 	"Handle a continuous controller change."
 
 	control = 2 ifTrue: [self newVolume: newValue].  "breath controller"
-! !
-
-!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 15:43'!
-convertVelocity: valueByte
-	"Map a value in the range 0..127 to a volume in the range 0.0..1.0."
-	"Details: A quadratic function seems to give a good keyboard feel."
-
-	| r |
-	r _ (valueByte * valueByte) / 12000.0.
-	r > 1.0 ifTrue: [^ 1.0].
-	r < 0.08 ifTrue: [^ 0.08].
-	^ r
 ! !
 
 !MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:44'!
@@ -12291,30 +12304,6 @@ doChannelCmd: cmdByte byte1: byte1 byte2: byte2
 	cmdByte = 208 ifTrue: [^ self channelPressure: byte1].
 	cmdByte = 160 ifTrue: [^ self key: byte1 pressure: byte2].
 	cmdByte = 192 ifTrue: [^ self programChange: byte1].
-! !
-
-!MIDISynthChannel methodsFor: 'initialization' stamp: 'jm 1/6/1999 20:10'!
-initialize
-
-	instrument _ FMSound default.
-	muted _ false.
-	masterVolume _ 0.5.
-	channelVolume _ 1.0.
-	pan _ 0.5.
-	pitchBend _ 0.0.
-	activeSounds _ OrderedCollection new.
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:45'!
-instrument
-
-	^ instrument
-! !
-
-!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:45'!
-instrument: aSound
-
-	instrument _ aSound.
 ! !
 
 !MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:49'!
@@ -12352,6 +12341,44 @@ keyUp: key vel: vel
 			activeSounds remove: entry]].
 ! !
 
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 1/11/1999 11:32'!
+pitchBend: bend
+	"Handle a pitch-bend change."
+
+	self adjustPitch: bend.
+! !
+
+!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:50'!
+programChange: newProgram
+	"Handle a program (instrument) change."
+
+	"Do nothing for now."
+! !
+
+!MIDISynthChannel methodsFor: 'initialization' stamp: 'jm 1/6/1999 20:10'!
+initialize
+
+	instrument _ FMSound default.
+	muted _ false.
+	masterVolume _ 0.5.
+	channelVolume _ 1.0.
+	pan _ 0.5.
+	pitchBend _ 0.0.
+	activeSounds _ OrderedCollection new.
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:45'!
+instrument
+
+	^ instrument
+! !
+
+!MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:45'!
+instrument: aSound
+
+	instrument _ aSound.
+! !
+
 !MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 10/13/1998 09:47'!
 masterVolume
 
@@ -12377,18 +12404,6 @@ muted: aBoolean
 	muted _ aBoolean.
 ! !
 
-!MIDISynthChannel methodsFor: 'other' stamp: 'jm 10/14/1998 15:41'!
-newVolume: valueByte
-	"Set the channel volume to the level given by the given number in the range 0..127."
-
-	| snd newVolume |
-	channelVolume _ valueByte asFloat / 127.0.
-	newVolume _ masterVolume * channelVolume.
-	activeSounds do: [:entry |
-		snd _ entry at: 2.
-		snd adjustVolumeTo: newVolume overMSecs: 10].
-! !
-
 !MIDISynthChannel methodsFor: 'accessing' stamp: 'jm 1/6/1999 19:43'!
 pan
 
@@ -12402,20 +12417,6 @@ pan: aNumber
 	pan _ aNumber asFloat.
 ! !
 
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 1/11/1999 11:32'!
-pitchBend: bend
-	"Handle a pitch-bend change."
-
-	self adjustPitch: bend.
-! !
-
-!MIDISynthChannel methodsFor: 'midi dispatching' stamp: 'jm 10/14/1998 13:50'!
-programChange: newProgram
-	"Handle a program (instrument) change."
-
-	"Do nothing for now."
-! !
-
 !SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/8/1998 19:47'!
 bufferTimeStampFrom: aByteArray
 	"Return the timestamp from the given MIDI input buffer. Assume the given buffer is at least 4 bytes long."
@@ -12424,6 +12425,22 @@ bufferTimeStampFrom: aByteArray
 	  ((aByteArray at: 2) bitShift: 16) +
 	  ((aByteArray at: 3) bitShift: 8) +
 	   (aByteArray at: 4)
+! !
+
+!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/8/1998 19:53'!
+flushInput
+	"Read any lingering MIDI data from this port's input buffer."
+
+	| buf |
+	buf _ ByteArray new: 1000.
+	[(self readInto: buf) > 0] whileTrue.
+! !
+
+!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/12/1998 15:49'!
+readInto: aByteArray
+	"Read any data from this port into the given buffer."
+
+	^ self primMIDIReadPort: portNumber into: aByteArray
 ! !
 
 !SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:10'!
@@ -12446,13 +12463,21 @@ ensureOpen
 	lastCommandByteOut _ Array new: 16 withAll: 0.  "clear running status"
 ! !
 
-!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/8/1998 19:53'!
-flushInput
-	"Read any lingering MIDI data from this port's input buffer."
+!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:09'!
+openOnPortNumber: portNum
+	"Open this MIDI port on the given port number."
 
-	| buf |
-	buf _ ByteArray new: 1000.
-	[(self readInto: buf) > 0] whileTrue.
+	self close.
+	portNumber _ portNum.
+	accessSema _ Semaphore forMutualExclusion.
+	self ensureOpen.
+! !
+
+!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 10/12/1998 15:48'!
+portNumber
+	"Answer my port number."
+
+	^ portNumber
 ! !
 
 !SimpleMIDIPort methodsFor: 'output' stamp: 'jm 9/28/1998 22:00'!
@@ -12488,23 +12513,6 @@ midiOutput: aByteArray
 		self primMIDIWritePort: portNumber from: aByteArray at: 0].
 ! !
 
-!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 1/13/1999 08:09'!
-openOnPortNumber: portNum
-	"Open this MIDI port on the given port number."
-
-	self close.
-	portNumber _ portNum.
-	accessSema _ Semaphore forMutualExclusion.
-	self ensureOpen.
-! !
-
-!SimpleMIDIPort methodsFor: 'open/close' stamp: 'jm 10/12/1998 15:48'!
-portNumber
-	"Answer my port number."
-
-	^ portNumber
-! !
-
 !SimpleMIDIPort methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
 primMIDIClosePort: portNum
 	"Close the given MIDI port. Don't fail if port is already closed."
@@ -12536,13 +12544,6 @@ primMIDIWritePort: portNum from: byteArray at: midiClockValue
 	self primitiveFailed.
 ! !
 
-!SimpleMIDIPort methodsFor: 'input' stamp: 'jm 10/12/1998 15:49'!
-readInto: aByteArray
-	"Read any data from this port into the given buffer."
-
-	^ self primMIDIReadPort: portNumber into: aByteArray
-! !
-
 !SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 1/13/1999 08:11'!
 closeAllPorts
 	"Close all MIDI ports."
@@ -12553,23 +12554,17 @@ closeAllPorts
 	0 to: lastPortNum do: [:portNum | self basicNew primMIDIClosePort: portNum].
 ! !
 
-!SimpleMIDIPort class methodsFor: 'class initialization' stamp: 'jm 9/10/1998 15:33'!
-initialize
-	"SimpleMIDIPort initialize"
-
-	InterfaceClockRate _ 1000000.
-	DefaultPortNumber _ 0.
-! !
-
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 12/15/2014 22:03'!
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 5/13/2018 19:06:00'!
 inputPortNumFromUser
 	"Prompt the user for a MIDI input port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
-	"SimpleMIDIPort inputPortNumFromUser"
+	"
+	SimpleMIDIPort inputPortNumFromUser
+	"
 
 	| portCount aMenu dir |
 	portCount _ self primPortCount.
 	portCount = 0 ifTrue: [^ nil].
-	aMenu _ CustomMenu new title: 'MIDI port for input:'.
+	aMenu _ PopUpMenu new label: 'MIDI port for input:'.
 	0 to: portCount - 1 do:[:i |
 		dir _ self primPortDirectionalityOf: i.
 		(dir = 1) | (dir = 3) ifTrue:[
@@ -12581,6 +12576,46 @@ midiIsSupported
 	"Answer true if this platform supports MIDI."
 
 	^ self primPortCount > 0
+! !
+
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 5/13/2018 19:06:33'!
+outputPortNumFromUser
+	"Prompt the user for a MIDI output port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
+	"
+	SimpleMIDIPort outputPortNumFromUser
+	"
+
+	| portCount aMenu dir |
+	portCount _ self primPortCount.
+	portCount = 0 ifTrue: [^ nil].
+	aMenu _ PopUpMenu new label: 'MIDI port for output:'.
+	0 to: portCount - 1 do:[:i |
+		dir _ self primPortDirectionalityOf: i.
+		(dir = 2) | (dir = 3) ifTrue:[
+			aMenu add: (self portDescription: i) action: i]].
+	 ^ aMenu startUpMenu! !
+
+!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 17:46'!
+portDescription: portNum
+	"Answer a string indicating the directionality of the given MIDI port."
+	"(0 to: SimpleMIDIPort primPortCount - 1) collect:
+		[:i | SimpleMIDIPort portDescription: i]"
+
+	| portName dir |
+	portName _ self primPortNameOf: portNum.
+	dir _ self primPortDirectionalityOf: portNum.
+	dir = 1 ifTrue: [^ portName, ' (in)'].
+	dir = 2 ifTrue: [^ portName, ' (out)'].
+	dir = 3 ifTrue: [^ portName, ' (in/out)'].
+	^ self error: 'unknown MIDI port directionality'
+! !
+
+!SimpleMIDIPort class methodsFor: 'class initialization' stamp: 'jm 9/10/1998 15:33'!
+initialize
+	"SimpleMIDIPort initialize"
+
+	InterfaceClockRate _ 1000000.
+	DefaultPortNumber _ 0.
 ! !
 
 !SimpleMIDIPort class methodsFor: 'instance creation' stamp: 'jm 9/10/1998 18:36'!
@@ -12601,36 +12636,6 @@ openOnPortNumber: portNum
 			^ p]].
 
 	^ super new openOnPortNumber: portNum
-! !
-
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jmv 12/15/2014 22:03'!
-outputPortNumFromUser
-	"Prompt the user for a MIDI output port. Answer a port number, or nil if the user does not select a port or if MIDI is not supported on this platform."
-	"SimpleMIDIPort outputPortNumFromUser"
-
-	| portCount aMenu dir |
-	portCount _ self primPortCount.
-	portCount = 0 ifTrue: [^ nil].
-	aMenu _ CustomMenu new title: 'MIDI port for output:'.
-	0 to: portCount - 1 do:[:i |
-		dir _ self primPortDirectionalityOf: i.
-		(dir = 2) | (dir = 3) ifTrue:[
-			aMenu add: (self portDescription: i) action: i]].
-	 ^ aMenu startUpMenu! !
-
-!SimpleMIDIPort class methodsFor: 'utilities' stamp: 'jm 10/12/1998 17:46'!
-portDescription: portNum
-	"Answer a string indicating the directionality of the given MIDI port."
-	"(0 to: SimpleMIDIPort primPortCount - 1) collect:
-		[:i | SimpleMIDIPort portDescription: i]"
-
-	| portName dir |
-	portName _ self primPortNameOf: portNum.
-	dir _ self primPortDirectionalityOf: portNum.
-	dir = 1 ifTrue: [^ portName, ' (in)'].
-	dir = 2 ifTrue: [^ portName, ' (out)'].
-	dir = 3 ifTrue: [^ portName, ' (in/out)'].
-	^ self error: 'unknown MIDI port directionality'
 ! !
 
 !SimpleMIDIPort class methodsFor: 'primitives' stamp: 'ar 2/2/2001 15:09'!
@@ -12710,6 +12715,13 @@ newDefault
 
 	^ self new! !
 
+!Beeper class methodsFor: 'customize' stamp: 'gk 2/22/2004 17:54'!
+setDefault: aPlayableEntity
+	"Set the playable entity used when making a beep.
+	The playable entity should implement the message #play."
+
+	default := aPlayableEntity! !
+
 !Beeper class methodsFor: 'private' stamp: 'gk 2/24/2004 23:51'!
 primitiveBeep
 	"Make a primitive beep. Not to be called directly.
@@ -12721,13 +12733,6 @@ primitiveBeep
 
 	<primitive: 140>
 	self primitiveFailed! !
-
-!Beeper class methodsFor: 'customize' stamp: 'gk 2/22/2004 17:54'!
-setDefault: aPlayableEntity
-	"Set the playable entity used when making a beep.
-	The playable entity should implement the message #play."
-
-	default := aPlayableEntity! !
 
 !SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
 beep
@@ -12838,6 +12843,10 @@ initialize
 !SoundSystem class methodsFor: 'as yet unclassified' stamp: 'jmv 6/7/2013 22:05'!
 shutDown
 	SoundPlayer shutDown! !
+
+!FileEntry methodsFor: '*Sound' stamp: 'jmv 7/24/2017 16:25:59'!
+wavContents
+	^SampledSound fromFileEntry: self! !
 SoundBuffer initialize!
 AbstractSound initialize!
 FMSound initialize!
