@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3272] on 12 March 2018 at 5:37:38 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3293] on 15 May 2018 at 4:38:09 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 87!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'SignalProcessing' 1 88!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -3116,11 +3116,13 @@ writeFileNamed: filename
 		(ReferenceStream on: stream)
 			nextPut: self ]! !
 
-!FloatImage methodsFor: 'file operations' stamp: 'jmv 4/28/2015 11:59'!
+!FloatImage methodsFor: 'file operations' stamp: 'jmv 5/4/2018 14:10:12'!
 writePNGfileNamed: fName
 
-	self replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
-	self asForm writePNGfileNamed: fName! !
+	| c |
+	c _ self copy.
+	c replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	c asForm writePNGfileNamed: fName! !
 
 !FloatImage methodsFor: 'accessing' stamp: 'jmv 8/23/2014 23:46'!
 xyForMax
