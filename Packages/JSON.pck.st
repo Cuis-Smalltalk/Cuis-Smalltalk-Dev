@@ -1,6 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3134] on 3 August 2017 at 2:18:05 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3293] on 15 May 2018 at 4:39:11 pm'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 14!
+!provides: 'JSON' 1 15!
+SystemOrganization addCategory: #JSON!
+
+
 !classDefinition: #JsonObject category: #JSON!
 Dictionary subclass: #JsonObject
 	instanceVariableNames: ''
@@ -61,123 +64,21 @@ I provide a number of test cases for class Json.!
 !Json commentStamp: '<historical>' prior: 0!
 This class reads and writes JSON format data - strings, numbers, boolean, nil, arrays and dictionaries. See http://www.json.org . It has been extended with syntax for invoking a prearranged list of constructors on read objects.!
 
-!Object methodsFor: '*JSON' stamp: 'Igor.Stasenko 1/9/2010 16:18'!
-asJsonString
-
-	^ String streamContents: [:str |
-		self jsonWriteOn: str ]! !
-
-!False methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:43'!
-jsonWriteOn: aStream
-	aStream nextPutAll: 'false'! !
-
-!True methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:44'!
-jsonWriteOn: aStream
-	aStream nextPutAll: 'true'! !
-
-!UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:45'!
-jsonWriteOn: aWriteStream 
-	aWriteStream nextPutAll: 'null'! !
-
-!Number methodsFor: '*JSON-writing' stamp: 'ul 11/4/2008 04:46'!
-jsonWriteOn: aWriteStream 
-
-	self printOn: aWriteStream base: 10! !
-
-!Integer methodsFor: '*JSON-writing' stamp: 'Igor.Stasenko 12/27/2009 08:05'!
-jsonWriteOn: aWriteStream
-	^ self printOn: aWriteStream base: 10
-! !
-
-!Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
-jsonWriteOn: aStream
-	self key asString jsonWriteOn: aStream.
-	aStream nextPut: $:; space.
-	self value jsonWriteOn: aStream.! !
-
-!Collection methodsFor: '*JSON' stamp: 'jmv 5/17/2016 13:11'!
-jsonObjectWriteOn: aStream
-	"Write as 'JSON Object' format
-	This is a list of (name:value) pairs, and is analogous to Smalltalk Dictionaries where names (keys) are strings.
-	Assume the receiver is either:
-	- a Dictionary
-	- a collection of Association objects (or some sort of object that on #jsonWriteOn: print like an Association)"
-
-	| needComma |
-	needComma := false.
-	aStream nextPut: ${.
-	self associationsDo: [ :assoc |
-		needComma
-			ifTrue: [ aStream nextPut: $, ; space]
-			ifFalse: [ needComma := true ].
-		assoc jsonWriteOn: aStream ].
-	aStream nextPut: $}! !
-
-!Collection methodsFor: '*JSON' stamp: 'Igor.Stasenko 12/27/2009 08:03'!
-jsonWriteOn: aStream
-	"By default, use array braces "
-	aStream nextPut: $[.
-	
-	self do: [:each |
-		each jsonWriteOn: aStream
-		  ] separatedBy: [ aStream nextPut: $, ].
-
-	aStream nextPut: $]! !
-
-!String methodsFor: '*JSON-writing' stamp: 'ul 11/9/2010 04:07'!
-jsonWriteOn: aStream
-
-	aStream nextPut: $".
-	self do: [ :ch |
-		(Json escapeForCharacter: ch)
-			ifNil: [ aStream nextPut: ch ]
-			ifNotNil: [ :replacement |
-				aStream nextPutAll: replacement ] ].
-	aStream nextPut: $".
-! !
-
-!Text methodsFor: '*JSON-printing' stamp: 'cwp 10/26/2006 22:25'!
-jsonWriteOn: aStream
-	self string jsonWriteOn: aStream! !
-
-!Dictionary methodsFor: '*JSON-writing' stamp: 'jmv 5/17/2016 12:47'!
-jsonWriteOn: aStream
-	"Dictionaries are written as 'JSON Objects'
-	Use the general implementation for that."
-
-	self jsonObjectWriteOn: aStream! !
-
-!Array2D methodsFor: '*JSON' stamp: 'jmv 8/3/2017 12:07:00'!
-jsonWriteOn: aStream
-	"By default, use array braces "
-	aStream nextPut: $[.
-	1 to: height
-		do: [ :i |
-			aStream nextPut: $[.
-				1 to: width
-					do: [ :j | (self i: i j: j) jsonWriteOn: aStream ]
-					separatedBy: [aStream nextPut: $, ; space].
-			aStream nextPut: $] ]
-		separatedBy: [aStream nextPut: $, ; newLine ].
-	aStream nextPut: $]! !
-
-!WriteStream methodsFor: '*JSON-printing' stamp: 'cwp 10/25/2006 12:27'!
-jsonPrint: anObject
-	anObject jsonWriteOn: self! !
-
-!FileEntry methodsFor: '*json' stamp: 'pb 5/25/2016 01:32'!
-jsonContents
-	"
-	'noesta.json' asFileEntry jsonContents
-	"
-	^self readStreamDo: [ :stream |
-		Json readFrom: stream ]! !
-
 !JsonObject methodsFor: 'accessing' stamp: 'rh 2/19/2010 21:34'!
 at: aKey
 
 	"make it work more like javascript objects"
 	^ self at: aKey ifAbsent: [nil]! !
+
+!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:03'!
+name
+"override 'cause Object defines this"
+	^self at: 'name'! !
+
+!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:04'!
+value
+"override 'cause Object defines this"
+	^self at: 'value'! !
 
 !JsonObject methodsFor: 'as yet unclassified' stamp: 'rh 2/19/2010 21:33'!
 doesNotUnderstand: aMessage
@@ -190,16 +91,6 @@ doesNotUnderstand: aMessage
 		ifFalse: [super doesNotUnderstand: aMessage]
 				
 	! !
-
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:03'!
-name
-"override 'cause Object defines this"
-	^self at: 'name'! !
-
-!JsonObject methodsFor: 'accessing' stamp: 'rh 2/27/2010 00:04'!
-value
-"override 'cause Object defines this"
-	^self at: 'value'! !
 
 !JsonObject class methodsFor: 'as yet unclassified' stamp: 'Igor.Stasenko 1/9/2010 16:51'!
 fromAssociations: collectionOfAssociations
@@ -350,14 +241,6 @@ consume: aString returning: anObject
 	aString do: [:c | stream next == c ifFalse: [JsonSyntaxError signal: 'Expected ''', aString, ''''] ].
 	^ anObject! !
 
-!Json methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 11:40'!
-ctorMap
-	^ ctorMap! !
-
-!Json methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:52'!
-ctorMap: m
-	ctorMap := m! !
-
 !Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:15'!
 interpretStringEscapeTo: aStream
 	| c |
@@ -381,25 +264,6 @@ interpretStringEscapeTo: aStream
 		self unescapeUnicodeTo: aStream.
 		^ self ].
 	aStream nextPut: c! !
-
-!Json methodsFor: 'parsing' stamp: 'jmv 11/16/2016 15:54:38'!
-readAny
-	"This is the main entry point for the JSON parser. See also readFrom: on the class side."
-	| c |
-	self skipWhitespace.
-	c := stream peek.
-	c == ${ ifTrue: [stream next. ^ self readDictionary].
-	c == $[ ifTrue: [stream next. ^ self readArray].
-	c == $" ifTrue: [stream next. ^ self readString].
-	c == $t ifTrue: [^ self consume: 'true' returning: true].
-	c == $f ifTrue: [^ self consume: 'false' returning: false].
-	c == $n ifTrue: [^ self consume: 'null' returning: nil].
-	c == $@ ifTrue: [stream next. ^ self readConstructor].
-	(Json numbersMayContain: c) ifTrue: [^ self readNumber].
-	c == $N ifTrue: [^ self consume: 'NaN' returning: Float nan].
-	"c == $N ifTrue: [^ self readNumber].
-	c == $I ifTrue: [^ self readNumber]."
-	JsonSyntaxError signal: 'Unknown Json input'! !
 
 !Json methodsFor: 'private' stamp: 'Igor.Stasenko 4/7/2010 01:39'!
 readArray
@@ -456,15 +320,6 @@ readDictionary
 		m at: k put: v.
 	] repeat.
 ! !
-
-!Json methodsFor: 'parsing' stamp: 'jmv 1/18/2017 16:52:22'!
-readFrom: aStream
-	"aStream must be on a String.
-	This means that it should contain only Characters (i.e. ISO 8859-15).
-	To handle a ByteArray with utf-8, please do 'String fromUtf8: aByteArray' or similar"
-	aStream atEnd ifTrue: [ ^ JsonObject new ].
-	self stream: aStream.
-	^ self readAny! !
 
 !Json methodsFor: 'private' stamp: 'jmv 11/17/2016 11:35:09'!
 readNumber
@@ -528,6 +383,21 @@ skipWhitespace
 	[stream peek isSeparator] whileTrue: [stream next].
 	self skipComment.! !
 
+!Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:17'!
+unescapeUnicodeTo: aStream
+	| string codePoint |
+	string _ (String with: stream next with: stream next with: stream next with: stream next) asUppercase.
+	codePoint _ Integer readFrom: string readStream base: 16.
+	String addUnicodeCodePoint: codePoint to: aStream hex: true! !
+
+!Json methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 11:40'!
+ctorMap
+	^ ctorMap! !
+
+!Json methodsFor: 'accessing' stamp: 'dkb 12/25/2009 02:52'!
+ctorMap: m
+	ctorMap := m! !
+
 !Json methodsFor: 'accessing' stamp: 'tonyg 8/16/2005 20:20'!
 stream
 	"Answer the value of stream"
@@ -547,12 +417,33 @@ stream: aStream
 	stream reset
 	"! !
 
-!Json methodsFor: 'private' stamp: 'jmv 8/28/2013 12:17'!
-unescapeUnicodeTo: aStream
-	| string codePoint |
-	string _ (String with: stream next with: stream next with: stream next with: stream next) asUppercase.
-	codePoint _ Integer readFrom: string readStream base: 16.
-	String addUnicodeCodePoint: codePoint to: aStream hex: true! !
+!Json methodsFor: 'parsing' stamp: 'jmv 11/16/2016 15:54:38'!
+readAny
+	"This is the main entry point for the JSON parser. See also readFrom: on the class side."
+	| c |
+	self skipWhitespace.
+	c := stream peek.
+	c == ${ ifTrue: [stream next. ^ self readDictionary].
+	c == $[ ifTrue: [stream next. ^ self readArray].
+	c == $" ifTrue: [stream next. ^ self readString].
+	c == $t ifTrue: [^ self consume: 'true' returning: true].
+	c == $f ifTrue: [^ self consume: 'false' returning: false].
+	c == $n ifTrue: [^ self consume: 'null' returning: nil].
+	c == $@ ifTrue: [stream next. ^ self readConstructor].
+	(Json numbersMayContain: c) ifTrue: [^ self readNumber].
+	c == $N ifTrue: [^ self consume: 'NaN' returning: Float nan].
+	"c == $N ifTrue: [^ self readNumber].
+	c == $I ifTrue: [^ self readNumber]."
+	JsonSyntaxError signal: 'Unknown Json input'! !
+
+!Json methodsFor: 'parsing' stamp: 'jmv 1/18/2017 16:52:22'!
+readFrom: aStream
+	"aStream must be on a String.
+	This means that it should contain only Characters (i.e. ISO 8859-15).
+	To handle a ByteArray with utf-8, please do 'String fromUtf8: aByteArray' or similar"
+	aStream atEnd ifTrue: [ ^ JsonObject new ].
+	self stream: aStream.
+	^ self readAny! !
 
 !Json class methodsFor: 'as yet unclassified' stamp: 'ul 11/9/2010 04:07'!
 escapeForCharacter: c
@@ -630,6 +521,11 @@ renderInstanceVariables: aCollection of: anObject on: aStream
 		b = other b and: [
 		c = other c]]]! !
 
+!JsonDummyTestObject methodsFor: 'as yet unclassified' stamp: 'tonyg 11/30/2005 16:42'!
+jsonWriteOn: s
+	Json renderInstanceVariables: {#a. #b. #c} of: self on: s
+! !
+
 !JsonDummyTestObject methodsFor: 'accessing' stamp: 'tonyg 11/29/2005 17:48'!
 a
 	"Answer the value of a"
@@ -666,12 +562,125 @@ c: anObject
 
 	c := anObject! !
 
-!JsonDummyTestObject methodsFor: 'as yet unclassified' stamp: 'tonyg 11/30/2005 16:42'!
-jsonWriteOn: s
-	Json renderInstanceVariables: {#a. #b. #c} of: self on: s
-! !
-
 !JsonDummyTestObject class methodsFor: 'as yet unclassified' stamp: 'tonyg 11/29/2005 17:49'!
 constructFromJson: j
 	^ self new a: (j at: 'a'); b: (j at: 'b'); c: (j at: 'c'); yourself! !
+
+!Object methodsFor: '*JSON' stamp: 'Igor.Stasenko 1/9/2010 16:18'!
+asJsonString
+
+	^ String streamContents: [:str |
+		self jsonWriteOn: str ]! !
+
+!False methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:43'!
+jsonWriteOn: aStream
+	aStream nextPutAll: 'false'! !
+
+!True methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:44'!
+jsonWriteOn: aStream
+	aStream nextPutAll: 'true'! !
+
+!UndefinedObject methodsFor: '*JSON-writing' stamp: 'tonyg 8/17/2005 00:45'!
+jsonWriteOn: aWriteStream 
+	aWriteStream nextPutAll: 'null'! !
+
+!Number methodsFor: '*JSON-writing' stamp: 'ul 11/4/2008 04:46'!
+jsonWriteOn: aWriteStream 
+
+	self printOn: aWriteStream base: 10! !
+
+!Integer methodsFor: '*JSON-writing' stamp: 'Igor.Stasenko 12/27/2009 08:05'!
+jsonWriteOn: aWriteStream
+	^ self printOn: aWriteStream base: 10
+! !
+
+!Association methodsFor: '*JSON-writing' stamp: 'jmv 6/2/2016 09:35'!
+jsonWriteOn: aStream
+	self key asString jsonWriteOn: aStream.
+	aStream nextPut: $:; space.
+	self value jsonWriteOn: aStream.! !
+
+!Collection methodsFor: '*JSON' stamp: 'jmv 5/17/2016 13:11'!
+jsonObjectWriteOn: aStream
+	"Write as 'JSON Object' format
+	This is a list of (name:value) pairs, and is analogous to Smalltalk Dictionaries where names (keys) are strings.
+	Assume the receiver is either:
+	- a Dictionary
+	- a collection of Association objects (or some sort of object that on #jsonWriteOn: print like an Association)"
+
+	| needComma |
+	needComma := false.
+	aStream nextPut: ${.
+	self associationsDo: [ :assoc |
+		needComma
+			ifTrue: [ aStream nextPut: $, ; space]
+			ifFalse: [ needComma := true ].
+		assoc jsonWriteOn: aStream ].
+	aStream nextPut: $}! !
+
+!Collection methodsFor: '*JSON' stamp: 'jmv 5/15/2018 16:23:11'!
+jsonWriteOn: aStream
+	"By default, use array braces "
+	| useNewLines |
+	aStream nextPut: $[.
+
+	useNewLines _ nil.
+	self do: [ :each |
+		useNewLines ifNil: [
+			useNewLines _ each isLiteral not ].
+		each jsonWriteOn: aStream.
+	] separatedBy: [
+		aStream nextPut: $, .
+		useNewLines ifTrue: [ aStream newLine ]].
+
+	aStream nextPut: $]! !
+
+!String methodsFor: '*JSON-writing' stamp: 'ul 11/9/2010 04:07'!
+jsonWriteOn: aStream
+
+	aStream nextPut: $".
+	self do: [ :ch |
+		(Json escapeForCharacter: ch)
+			ifNil: [ aStream nextPut: ch ]
+			ifNotNil: [ :replacement |
+				aStream nextPutAll: replacement ] ].
+	aStream nextPut: $".
+! !
+
+!Text methodsFor: '*JSON-printing' stamp: 'cwp 10/26/2006 22:25'!
+jsonWriteOn: aStream
+	self string jsonWriteOn: aStream! !
+
+!Dictionary methodsFor: '*JSON-writing' stamp: 'jmv 5/17/2016 12:47'!
+jsonWriteOn: aStream
+	"Dictionaries are written as 'JSON Objects'
+	Use the general implementation for that."
+
+	self jsonObjectWriteOn: aStream! !
+
+!Array2D methodsFor: '*JSON' stamp: 'jmv 8/3/2017 12:07:00'!
+jsonWriteOn: aStream
+	"By default, use array braces "
+	aStream nextPut: $[.
+	1 to: height
+		do: [ :i |
+			aStream nextPut: $[.
+				1 to: width
+					do: [ :j | (self i: i j: j) jsonWriteOn: aStream ]
+					separatedBy: [aStream nextPut: $, ; space].
+			aStream nextPut: $] ]
+		separatedBy: [aStream nextPut: $, ; newLine ].
+	aStream nextPut: $]! !
+
+!WriteStream methodsFor: '*JSON-printing' stamp: 'cwp 10/25/2006 12:27'!
+jsonPrint: anObject
+	anObject jsonWriteOn: self! !
+
+!FileEntry methodsFor: '*json' stamp: 'pb 5/25/2016 01:32'!
+jsonContents
+	"
+	'noesta.json' asFileEntry jsonContents
+	"
+	^self readStreamDo: [ :stream |
+		Json readFrom: stream ]! !
 Json initialize!

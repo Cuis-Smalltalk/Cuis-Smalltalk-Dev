@@ -1,7 +1,7 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3288] on 13 April 2018 at 5:02:26 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Statistics' 1 8!
-!requires: 'Goodies' 1 0 nil!
+!provides: 'Statistics' 1 9!
+!requires: 'Pen' 1 0 nil!
 SystemOrganization addCategory: #Statistics!
 
 
