@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3288] on 13 April 2018 at 5:02:26 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3332] on 25 May 2018 at 11:25:22 am'!
 'Description Please enter a description for this package'!
-!provides: 'Statistics' 1 9!
+!provides: 'Statistics' 1 10!
 !requires: 'Pen' 1 0 nil!
 SystemOrganization addCategory: #Statistics!
 
@@ -320,14 +320,17 @@ basicPercentile: percentile
 
 	^ self binCenter:( self basicIndexForPercentile: percentile)! !
 
-!Histogram methodsFor: 'private' stamp: 'jmv 7/19/2016 12:47:51'!
+!Histogram methodsFor: 'private' stamp: 'jmv 5/25/2018 10:51:26'!
 binCenter: binIndex
 	"Answer the value for the center of the slot"
-	^ (binIndex-1) / (tallies size-1) * (highBinCenter - lowBinCenter ) + lowBinCenter! !
+	| fraction |
+	fraction _ tallies size = 1 ifFalse: [(binIndex-1) / (tallies size-1)] ifTrue: [1/2].
+	^ fraction * (highBinCenter - lowBinCenter ) + lowBinCenter! !
 
-!Histogram methodsFor: 'private' stamp: 'jmv 4/6/2015 11:43'!
+!Histogram methodsFor: 'private' stamp: 'jmv 5/25/2018 10:48:33'!
 indexFor: aValue
 	| slotIndex |
+	tallies size = 1 ifTrue: [ ^1 ].
 	slotIndex _ ((aValue - lowBinCenter / (highBinCenter -lowBinCenter )) * (tallies size-1)) rounded + 1.
 	^slotIndex min: tallies size max: 1.! !
 
@@ -372,10 +375,10 @@ jetPlotOn: aForm y: y
 	1 to: w do: [ :j |
 		aForm colorAt: j-1 @ y put: (Color jet: (tallies at: (j * count / w) ceiling) / max) ]! !
 
-!Histogram methodsFor: 'aux' stamp: 'jmv 3/7/2018 11:04:03'!
+!Histogram methodsFor: 'aux' stamp: 'jmv 5/24/2018 09:00:29'!
 percentile: percentile plotOn: aForm y: y
 	"
-	percentile in [0.0 .. 1.0]
+	Assume percentile in [0.0 .. 1.0]
 	"
 	
 	| x |

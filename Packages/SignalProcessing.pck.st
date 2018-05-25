@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3293] on 15 May 2018 at 4:38:09 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3332] on 25 May 2018 at 11:32:46 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 88!
+!provides: 'SignalProcessing' 1 89!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Sound' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
 !requires: 'Statistics' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
@@ -576,7 +576,7 @@ gammaEncodedToLinearSpace
 	"
 	self replaceValues: [ :i :j :v | Color sRGBGammaToLinear: v ]! !
 
-!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 6/4/2015 10:55'!
+!FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 5/24/2018 09:00:42'!
 histogramEq
 	"Could include random noise to distribute pixels over all possible values... Dithering...
 	To do this properly we'd need to know more about distribution of values. For instance, if an 8-bit image, just use a 256 bins histogram and dither.
@@ -589,7 +589,7 @@ histogramEq
 	(FloatImage lena ditherForHistogramEq; histogramEq; histogram) plot.
 	"
 
-	self applyMap: self histogram accumulatedAsMap! !
+	self applyMap: self histogramUnitRange accumulatedAsMap! !
 
 !FloatImage methodsFor: 'dynamic range operations' stamp: 'jmv 8/23/2014 23:41'!
 linearSpaceToGammaEncoded
@@ -2716,21 +2716,43 @@ with: anotherImage replaceValues: aBlock
 histogram
 	^self histogram: 256! !
 
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/18/2016 23:13:49'!
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 5/24/2018 09:11:04'!
 histogram: slotCount
-	| answer lowValue highValue halfSlot |
-"	answer _ ImageHistogram3 new: slotCount."
+	"Include the actual pixel range in the image."
+
+	| lowValue highValue |
+	lowValue _ elements min.
+	highValue _ elements max.
+	^ self histogram: slotCount lowValue: lowValue highValue: highValue! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 5/25/2018 10:47:53'!
+histogram: slotCount lowValue: lowValue highValue: highValue
+
+	| answer halfSlot binsToUse |
+	halfSlot _ highValue-lowValue / (slotCount-1) / 2.
+	"If low and high are the same, use just 1 bin"
+	binsToUse _ halfSlot = 0.0 ifFalse: [slotCount] ifTrue: [1].
+	answer _ Histogram binCount: binsToUse minValue: lowValue-halfSlot maxValue: highValue+halfSlot.
+	elements do: [ :pixelValue |
+		answer addValue: pixelValue ].
+	^answer! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 5/24/2018 08:54:01'!
+histogramUnitRange
+	"Answer a histogram with 256 slots over the [0.0 .. 1.0) range of pixel values."
+
+	^ self histogramUnitRange: 256! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 5/24/2018 08:53:25'!
+histogramUnitRange: slotCount
+	| lowValue highValue |
 	
 	"Follow convention when converting Forms to FloatImage: we don't reach 1.0
 	Alternatively, these could be min and max values in receiver..."
 	lowValue _ 0.0.
 	highValue _ 255/256.0.
 	
-	halfSlot _ highValue-lowValue / (slotCount-1) / 2.
-	answer _ Histogram binCount: slotCount minValue: lowValue-halfSlot maxValue: highValue+halfSlot.
-	elements do: [ :pixelValue |
-		answer addValue: pixelValue ].
-	^answer! !
+	^ self histogram: slotCount lowValue: lowValue highValue: highValue! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 9/25/2012 15:33'!
 mean: aRect
@@ -2748,37 +2770,44 @@ mean: aRect
 			mean _ mean + (self x: x y: y) ]].
 	^mean / count! !
 
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:04:46'!
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 5/24/2018 09:15:03'!
 median
-	"Very expensive on large collections. Consider using a Histogram:
-		aMatrix histogram median
+	"Uses 256 slot histogram. For FloatImages that really use the Float dynamic range, more slots might be appropriate.
+	
+	FloatImage lena median
 	"
-	^elements median! !
 
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:21:17'!
+	^self histogram median! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 5/24/2018 09:14:39'!
 mode
-	"Very expensive on large collections. Consider using a Histogram:
-		aMatrix histogram mode
+	"Uses 256 slot histogram. For FloatImages that really use the Float dynamic range, more slots might be appropriate.
+	
+	FloatImage lena mode
 	"
-	^elements mode! !
 
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:04:51'!
+	^self histogram mode! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 5/24/2018 09:04:17'!
 percentile: percentile
-	"Very expensive on large collections. Consider using a Histogram:
-		aMatrix histogram percentile: percentile
+	"Uses 256 slot histogram. For FloatImages that really use the Float dynamic range, more slots might be appropriate.
+	
+	FloatImage lena percentile: 0.99
 	"
-	^elements percentile: percentile! !
 
-!FloatImage methodsFor: 'statistics' stamp: 'jmv 7/19/2016 12:04:54'!
+	^self histogram percentile: percentile! !
+
+!FloatImage methodsFor: 'statistics' stamp: 'jmv 5/24/2018 09:16:00'!
 standardDeviation
 	"
 	See
 		http://en.wikipedia.org/wiki/Variance
 		http://www.mathsisfun.com/data/standard-deviation.html
 	{600. 470. 170. 430. 300} standardDeviation
+	FloatImage lena standardDeviation
 	"
 
-	^elements standardDeviation! !
+	^self histogram standardDeviation! !
 
 !FloatImage methodsFor: 'normalized coordinates' stamp: 'jmv 2/25/2016 16:51'!
 normalizedCoordinatesForOneBased: oneBasedCoordinates
@@ -3103,11 +3132,13 @@ resultExtentFor: anAffineTransformation
 	^(anAffineTransformation displayBoundsOfTransformOf: (0@0 extent: width@ height))
 		corner! !
 
-!FloatImage methodsFor: 'file operations' stamp: 'jmv 3/11/2016 15:57'!
+!FloatImage methodsFor: 'file operations' stamp: 'jmv 5/24/2018 11:04:05'!
 writeBMPfileNamed: fName
 
-	self replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
-	self asForm writeBMPfileNamed: fName! !
+	| c |
+	c _ self copy.
+	c replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	c asForm writeBMPfileNamed: fName! !
 
 !FloatImage methodsFor: 'file operations' stamp: 'jmv 5/31/2016 11:24'!
 writeFileNamed: filename
@@ -3115,6 +3146,14 @@ writeFileNamed: filename
 	filename asFileEntry forceWriteStreamDo: [ :stream |
 		(ReferenceStream on: stream)
 			nextPut: self ]! !
+
+!FloatImage methodsFor: 'file operations' stamp: 'jmv 5/24/2018 11:04:28'!
+writeJPEGfileNamed: fName
+
+	| c |
+	c _ self copy.
+	c replaceValues:  [ :i :j :v | v min: 255.0/256.0 max: 0.0 ].
+	c asForm writeJPEGfileNamed: fName! !
 
 !FloatImage methodsFor: 'file operations' stamp: 'jmv 5/4/2018 14:10:12'!
 writePNGfileNamed: fName
@@ -3134,7 +3173,7 @@ xyForMax
 	^x@y
 ! !
 
-!FloatImage methodsFor: 'visualizations' stamp: 'jmv 3/7/2018 11:22:18'!
+!FloatImage methodsFor: 'visualizations' stamp: 'jmv 5/24/2018 09:00:03'!
 lineHistogramsHeatmap
 	"
 	FloatImage lena display.
@@ -3145,7 +3184,7 @@ lineHistogramsHeatmap
 	plot _ Form extent: width@height depth: 32.
 	1 to: height do: [ :i |
 		row _ self i: i.
-		h _ row histogram.
+		h _ row histogramUnitRange.
 		h jetPlotOn: plot y: i-1.
 		h percentile: 0.1 plotOn: plot y: i-1.
 		h percentile: 0.5 plotOn: plot y: i-1.
@@ -4524,7 +4563,7 @@ testCentroids
 			]]].
 	max print! !
 
-!FloatImageTest methodsFor: 'testing' stamp: 'jmv 4/10/2015 16:23'!
+!FloatImageTest methodsFor: 'testing' stamp: 'jmv 5/24/2018 08:54:22'!
 testHistogram
 	"
 	FloatImageTest new testHistogram
@@ -4533,7 +4572,7 @@ testHistogram
 	image _ FloatImage fromArrayOfArrays: #(
 		#(0.1   0.3   0.5   0.7   0.9 )
 	).
-	histogram _ image histogram: 5.
+	histogram _ image histogramUnitRange: 5.
 	self assert: (histogram countAt: 0.0) = 1.
 	self assert: (histogram countAt: 1.0) = 1.
 	self assert: (histogram accumulated countAt: 0.0) = 1.

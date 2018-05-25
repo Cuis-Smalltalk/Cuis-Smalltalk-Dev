@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3285] on 5 April 2018 at 2:35:30 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3332] on 25 May 2018 at 10:56:28 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 76!
+!provides: 'Tests' 1 77!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -411,6 +411,16 @@ TestCase subclass: #OrderedCollectionTest
 	category: 'Tests-Kernel-Collections'!
 !classDefinition: 'OrderedCollectionTest class' category: #'Tests-Kernel-Collections'!
 OrderedCollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedDictionaryTest category: #'Tests-Kernel-Collections'!
+TestCase subclass: #OrderedDictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Collections'!
+!classDefinition: 'OrderedDictionaryTest class' category: #'Tests-Kernel-Collections'!
+OrderedDictionaryTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ShortIntegerArrayTest category: #'Tests-Kernel-Collections'!
@@ -7251,6 +7261,78 @@ testReverseDoAsReceiverIsModified
 		col size > 3 ifTrue: [ col removeFirst ]].
 	"Not nice, but what can we expect if we remove stuff during iteration?"
 	self assert: result = #(nil nil 3 4 5) asOrderedCollection reversed! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
+testOrder
+	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+
+
+	"Test that order is correct even if different. Also test alternative way to add stuff to dict."
+	dict _ OrderedDictionary new.
+	data _ self sampleData reversed.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict add: pair first -> pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
+testRemove
+	| data dict dataToRemove desiredOrder orderingByDo |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	dataToRemove _ self sampleData2.
+
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+	dataToRemove do: [ :pair |
+		dict removeKey: pair first ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+
+	desiredOrder _ OrderedCollection new.
+	data do: [ :pair | desiredOrder add: pair second ].
+	dataToRemove do: [ :pair | desiredOrder remove: pair second ].
+	
+	self assert: orderingByDo = desiredOrder asArray.! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
+sampleData
+	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
+sampleData2
+	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
 
 !ShortIntegerArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
 testShortIntegerArray
