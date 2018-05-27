@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3332] on 25 May 2018 at 11:32:46 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3338] on 26 May 2018 at 11:16:36 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 89!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'SignalProcessing' 1 90!
+!requires: 'Statistics' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'Statistics' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -2521,46 +2521,48 @@ displayWithGammaAt: aPoint
 
 	self asGammaFormUnitRange displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/11/2017 14:21:35'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 5/26/2018 17:37:25'!
 withImaginary: aFloatImage displayMagnitudeAt: aPoint
 	"Show magnitude of receiver and argument considered as a Complex image
 	Usually prefer #withImaginary:displayMagnitudeLogAt:
+	FloatImage lena withImaginary: FloatImage lena sqrt displayMagnitudeAt: 100@100
 	"
 
 	| f imaginaryValues complex magnitude max |
 	imaginaryValues _ aFloatImage elements.
-	complex _ 1 + 1i.
 	max _ elements max.
 	f _ self as8bitFormEvaluating: [ :index |
-		complex real: (elements at: index) imaginary: (imaginaryValues at: index).
+		complex _ (elements at: index) + (imaginaryValues at: index) i.
 		magnitude _ complex magnitude.
 		(magnitude / max * 255 + 0.5) truncated min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/11/2017 14:22:03'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 5/26/2018 17:37:55'!
 withImaginary: aFloatImage displayMagnitudeLogAt: aPoint
-	"Show logarithm of magnitude of receiver and argument considered as a Complex image"
+	"Show logarithm of magnitude of receiver and argument considered as a Complex image
+	FloatImage lena withImaginary: FloatImage lena sqrt displayMagnitudeLogAt: 100@100
+	"
 
 	| f imaginaryValues complex magnitude max |
 	imaginaryValues _ aFloatImage elements.
-	complex _ 1 + 1i.
 	max _ elements max log.
 	f _ self as8bitFormEvaluating: [ :index |
-		complex real: (elements at: index) imaginary: (imaginaryValues at: index).
+		complex _ (elements at: index) + (imaginaryValues at: index) i.
 		magnitude _ complex magnitude log.
 		(magnitude / max * 255 + 0.5) truncated min: 255 max: 0 ].
 	f displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 1/9/2015 17:25'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 5/26/2018 17:38:20'!
 withImaginary: aFloatImage displayPhaseAt: aPoint
-	"Show phase of receiver and argument considered as a Complex image"
+	"Show phase of receiver and argument considered as a Complex image
+	FloatImage lena withImaginary: FloatImage lena sqrt displayPhaseAt: 100@100
+	"
 
 	| f imaginaryValues complex twoPi phase |
 	imaginaryValues _ aFloatImage elements.
-	complex _ 1 + 1i.
 	twoPi _ Float twoPi.
 	f _ self as8bitFormEvaluating: [ :index |
-		complex real: (elements at: index) imaginary: (imaginaryValues at: index).
+		complex _ (elements at: index) + (imaginaryValues at: index) i.
 		phase _ complex phase.
 		(phase / twoPi + 0.5 * 255) rounded ].
 	f displayAt: aPoint! !
