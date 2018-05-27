@@ -23,7 +23,7 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_linux64x64_squeak.cog.spur_201712121955.tar.gz
+wget -O cogspur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=squeak.cog.spur_linux64x64_201805221836.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
 ```
