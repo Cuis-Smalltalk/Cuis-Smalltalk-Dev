@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3285] on 5 April 2018 at 2:35:30 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3338] on 26 May 2018 at 11:14:05 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 76!
+!provides: 'Tests' 1 78!
+!requires: 'Compression' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -101,6 +101,16 @@ TestCase subclass: #AbstractNumberTest
 	category: 'Tests-Kernel-Numbers'!
 !classDefinition: 'AbstractNumberTest class' category: #'Tests-Kernel-Numbers'!
 AbstractNumberTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ComplexTest category: #'Tests-Kernel-Numbers'!
+AbstractNumberTest subclass: #ComplexTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Numbers'!
+!classDefinition: 'ComplexTest class' category: #'Tests-Kernel-Numbers'!
+ComplexTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #FloatTest category: #'Tests-Kernel-Numbers'!
@@ -411,6 +421,16 @@ TestCase subclass: #OrderedCollectionTest
 	category: 'Tests-Kernel-Collections'!
 !classDefinition: 'OrderedCollectionTest class' category: #'Tests-Kernel-Collections'!
 OrderedCollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedDictionaryTest category: #'Tests-Kernel-Collections'!
+TestCase subclass: #OrderedDictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Collections'!
+!classDefinition: 'OrderedDictionaryTest class' category: #'Tests-Kernel-Collections'!
+OrderedDictionaryTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ShortIntegerArrayTest category: #'Tests-Kernel-Collections'!
@@ -1600,6 +1620,187 @@ deny: aNumber isAbout: anotherNumber description: aString
 
 	self deny: (aNumber isWithin: 1 ulpsFrom: anotherNumber) description: aString! !
 
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/20/2018 20:59:02'!
+testCreation
+	| c c1 c2 c3 |
+	c _ 1 + 2i.
+	self assert: c real = 1.
+	self assert: c imaginary = 2.
+
+
+	c1 _ 1/3 + (10/11)i.
+	self assert: c1 real = (1/3).
+	self assert: c1 imaginary = (10/11).
+	self assert: c1 - (10/11)i = (1/3).
+	self assert: 1 + c1 = (4/3 + (10/11)i).
+	self assert: c1+1 = (4/3 + (10/11)i).
+
+	c1 _ 0.5 + (10/11)i.
+	self assert: 1.0 + c1 = (1.5 + (10/11)i).
+	self assert: c1+1.0 = (1.5 + (10/11)i).
+
+	c2 _ Complex abs: 5 arg: 0.
+	self assert: c2 = 5.
+	self assert: c2 isFloat.
+	c3 _ Complex abs: 5 arg: Float twoPi.
+	self assert: c3 = 5.
+	self assert: c2 isFloat.
+
+	c2 _ Complex abs: 5.1 arg: 0.
+	self assert: c2 = 5.1.
+	c3 _ Complex abs: 5.1 arg: Float twoPi.
+	self assert: c3 = 5.1.! !
+
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:08:29'!
+testFourthRoot
+
+	"SmallInteger"
+	self assert: ((-1 nthRoot: 4) real closeTo: 1.0 / 2.0 sqrt).
+	self assert: ((-1 nthRoot: 4) imaginary closeTo: 1.0 / 2.0 sqrt).
+
+	"LargeNegativeInteger"
+	self assert: ((100 factorial negated nthRoot: 4) abs closeTo: (100 factorial nthRoot: 4)).
+	self assert: (100 factorial negated nthRoot: 4) arg = (Float pi / 4).
+
+	"Fraction"
+	self assert: ((-1/4 nthRoot: 4) abs closeTo: 1.0 / 2.0 sqrt).
+	self assert: ((-1/4 nthRoot: 4) arg closeTo: Float pi / 4).
+
+	"Float"
+	self assert: ((-1.0 nthRoot: 4) abs closeTo: 1.0).
+	self assert: ((-1.0 nthRoot: 4) arg closeTo: Float pi / 4).
+	self assert: ((-0.25 nthRoot: 4) abs closeTo: 1.0 / 2.0 sqrt).
+	self assert: ((-0.25 nthRoot: 4) arg closeTo: Float pi / 4).! !
+
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:16:47'!
+testRaisedToOneFourth
+
+	"SmallInteger"
+	self assert: ((-1 raisedTo: 1/4) real closeTo: 1.0 / 2.0 sqrt).
+	self assert: ((-1 raisedTo: 1/4) imaginary closeTo: 1.0 / 2.0 sqrt).
+
+	"LargeNegativeInteger"
+	self assert: ((100 factorial negated raisedTo: 1/4) abs closeTo: (100 factorial nthRoot: 4)).
+	self assert: (100 factorial negated raisedTo: 1/4) arg = (Float pi / 4).
+
+	"Fraction"
+	self assert: ((-1/4 raisedTo: 1/4) abs closeTo: 1.0 / 2.0 sqrt).
+	self assert: ((-1/4 raisedTo: 1/4) arg closeTo: Float pi / 4).
+
+	"Float"
+	self assert: ((-1.0 raisedTo: 1/4) abs closeTo: 1.0).
+	self assert: ((-1.0 raisedTo: 1/4) arg closeTo: Float pi / 4).
+	self assert: ((-0.25 raisedTo: 1/4) abs closeTo: 1.0 / 2.0 sqrt).
+	self assert: ((-0.25 raisedTo: 1/4) arg closeTo: Float pi / 4).! !
+
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:48:13'!
+testRaisedToOneHalf
+
+	"SmallInteger"
+	self assert: (-1 raisedTo: 1/2) equals: 1i.
+	self assert: (-1 raisedTo: 1/2) imaginary isInteger.
+	self assert: (-3 raisedTo: 1/2) imaginary isFloat.
+	self assert: (-4 raisedTo: 3/2) equals: -8i.
+	self assert: (-4 raisedTo: 3/2) imaginary isInteger.
+	self assert: (-4 raisedTo: 5/2) equals: 32i.
+	self assert: (-4 raisedTo: 5/2) imaginary isInteger.
+
+	"LargeNegativeInteger"
+	self assert: (100 factorial negated raisedTo: 1/2) imaginary = 100 factorial sqrt.
+
+	"Fraction"
+	self assert: ((-1/4) raisedTo: 1/2) = (1/2)i.
+	self assert: ((-1/4) raisedTo: 3/2) = (-1/8)i.
+	self assert: ((-1/4) raisedTo: 5/2) = (1/32)i.
+	self assert: ((-100/101) raisedTo: 1/2) imaginary = (100/101) sqrt.
+
+	"Float"
+	self assert: (-1.0 raisedTo: 1/2) equals: 0 + 1.0i.
+	self assert: (-1.0 raisedTo: 1/2) real isInteger.
+	self assert: (-1.0 raisedTo: 1/2) imaginary isFloat.
+	self assert: (-4.0 raisedTo: 1/2) equals: 0 + 2.0i.
+	self assert: (-4.0 raisedTo: 1/2) real isInteger.
+	self assert: (-4.0 raisedTo: 1/2) imaginary isFloat.
+	self assert: (-0.25 raisedTo: 1/2) equals: 0 + 0.5i.
+	self assert: (-0.25 raisedTo: 1/2) real isInteger.
+	self assert: (-0.25 raisedTo: 1/2) imaginary isFloat.
+
+	"Complex"
+	self assert: ((Complex basicReal: -1 imaginary: 0) raisedTo: 1/2) equals: 1i.
+	self assert: ((Complex basicReal: -1 imaginary: 0) raisedTo: 1/2) imaginary isInteger.
+	self assert: ((Complex basicReal: -3 imaginary: 0) raisedTo: 1/2) imaginary isFloat.
+	self assert: ((1+1i raisedTo: 1/2 :: raisedTo: 2) real closeTo: 1).
+	self assert: ((1+1i raisedTo: 1/2 :: raisedTo: 2) imaginary closeTo: 1).! !
+
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:35:29'!
+testRaisedToPointFive
+
+	"SmallInteger"
+	self assert: ((-1 raisedTo: 0.5) real closeTo: 0.0).
+	self assert: ((-1 raisedTo: 0.5) imaginary closeTo: 1.0).
+
+	"LargeNegativeInteger"
+	self assert: ((100 factorial negated raisedTo: 0.5) imaginary closeTo: 100 factorial sqrt).
+
+	"Fraction"
+	self assert: (((-1/4) raisedTo: 0.5) real closeTo: 0.0).
+	self assert: (((-1/4) raisedTo: 0.5) imaginary closeTo: 0.5).
+	self assert: ((-100/101) raisedTo: 0.5) imaginary = (100/101) sqrt.
+
+	"Float"
+	self assert: ((-1.0 raisedTo: 0.5) real closeTo: 0.0).
+	self assert: ((-1.0 raisedTo: 0.5) imaginary closeTo: 1.0).
+	self assert: ((-0.25 raisedTo: 0.5) real closeTo: 0.0).
+	self assert: ((-0.25 raisedTo: 0.5) imaginary closeTo: 0.5).
+
+	"Complex"
+	self assert: (((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) real closeTo: 0.0).
+	self assert: (((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) imaginary closeTo: 1.0).
+	self assert: (((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) real closeTo: 0.0).
+	self assert: (((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) imaginary closeTo: 0.5).! !
+
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 20:26:06'!
+testSecondRoot
+
+	"SmallInteger"
+	self assert: (-1 nthRoot: 2) equals: 1i.
+	self assert: (-1 nthRoot: 2) imaginary isInteger.
+	self assert: (-3 nthRoot: 2) imaginary isFloat.
+
+	"LargeNegativeInteger"
+	self assert: (100 factorial negated nthRoot: 2) imaginary = 100 factorial sqrt.
+
+	"Fraction"
+	self assert: ((-1/4) nthRoot: 2) = (1/2)i.
+	self assert: ((-100/101) nthRoot: 2) imaginary = (100/101) sqrt.
+
+	"Float"
+	self assert: (-1.0 nthRoot: 2) equals: 0.0 + 1.0i.
+	self assert: (-1.0 nthRoot: 2) imaginary isFloat.
+	self assert: (-0.25 nthRoot: 2) = (1/2)i.
+	self assert: (-0.25 nthRoot: 2) imaginary isFloat.! !
+
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 23:02:36'!
+testSqrt
+
+	"SmallInteger"
+	self assert: -1 sqrt equals: 1i.
+	self assert: -1 sqrt imaginary isInteger.
+
+	"LargeNegativeInteger"
+	self assert: 100 factorial negated sqrt imaginary = 100 factorial sqrt.
+
+	"Fraction"
+	self assert: (-1/4) sqrt = (1/2)i.
+	self assert: (-100/101) sqrt imaginary = (100/101) sqrt.
+	self assert: ((1 << 1024 + 1) / (1 << 1024 + 3)) negated sqrt = (0 + 1.0i).
+
+	"Float"
+	self assert: -1.0 sqrt equals: 0.0 + 1.0i.
+	self assert: -1.0 sqrt imaginary isFloat.
+	self assert: -0.25 sqrt = (1/2)i.
+	self assert: -0.25 sqrt imaginary isFloat.! !
+
 !FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/2/2015 09:29'!
 test32bitConversion
 	"Except for NaN, we can convert a 32bits float to a 64bits float exactly.
@@ -2386,20 +2587,6 @@ testReciprocal
 		
 	self should: [ 0.0 reciprocal ] raise: ZeroDivide! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 09:06'!
-testNthRoot
-	"
-	FloatTest new testNthRoot
-	"
-	self should: [ -1.23 nthRoot: 4 ] raise: ArithmeticError! !
-
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 09:06'!
-testRaisedTo
-	"
-	FloatTest new testRaisedTo
-	"
-	self should: [ -1.23 raisedTo: 1/4 ] raise: ArithmeticError! !
-
 !FloatTest methodsFor: 'printing' stamp: 'nice 10/11/2008 21:45'!
 testStoreBase16
 	"This bug was reported in mantis http://bugs.squeak.org/view.php?id=6695"
@@ -2552,22 +2739,6 @@ testLog
 testNthRoot
 	self assert: ((-2 raisedTo: 35) / (3 raisedTo: 20) raisedTo: 1/5) equals: (-2 raisedTo: 7) / (3 raisedTo: 4).
 	self assert: (1 / (1 << 2000) raisedTo: 1/100) equals: 1 / (1 << 20)! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:49'!
-testRaisedToErrorConditions
-	"
-	FractionTest new testRaisedToErrorConditions
-	"
-	self should: [ (-1/16) raisedTo: 1/4 ] raise: ArithmeticError.
-	self should: [ ((1 << 1024 + 1) / (1 << 1024 + 3)) negated raisedTo: 1/4 ] raise: ArithmeticError! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:48'!
-testSqrtErrorConditions
-	"
-	FractionTest new testSqrtErrorConditions
-	"
-	self should: [ (-1/4) sqrt ] raise: DomainError.
-	self should: [ ((1 << 1024 + 1) / (1 << 1024 + 3)) negated sqrt ] raise: DomainError! !
 
 !FractionTest methodsFor: 'tests - printing' stamp: 'nice 7/24/2010 18:43'!
 testFractionPrinting
@@ -3016,23 +3187,6 @@ testNthRootTruncated
 			theTruncatedRoot _ n nthRootTruncated: thePower.
 			self assert: (theTruncatedRoot raisedTo: thePower) <= n.
 			self assert: (theTruncatedRoot + 1 raisedTo: thePower) > n]]! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:45'!
-testRaisedToErrorConditions
-	"
-	IntegerTest new testRaisedToErrorConditions
-	"
-
-	self should: [ -2 raisedTo: 1/4 ] raise: ArithmeticError.
-	self should: [ -2 raisedTo: 1.24 ] raise: ArithmeticError.! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
-testSqrtErrorConditions
-	"
-	IntegerTest new testSqrtErrorConditions
-	"
-
-	self should: [ -1 sqrt ] raise: ArithmeticError! !
 
 !IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'ul 11/25/2009 03:01'!
 testSqrtFloor
@@ -7251,6 +7405,78 @@ testReverseDoAsReceiverIsModified
 		col size > 3 ifTrue: [ col removeFirst ]].
 	"Not nice, but what can we expect if we remove stuff during iteration?"
 	self assert: result = #(nil nil 3 4 5) asOrderedCollection reversed! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
+testOrder
+	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+
+
+	"Test that order is correct even if different. Also test alternative way to add stuff to dict."
+	dict _ OrderedDictionary new.
+	data _ self sampleData reversed.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict add: pair first -> pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
+testRemove
+	| data dict dataToRemove desiredOrder orderingByDo |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	dataToRemove _ self sampleData2.
+
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+	dataToRemove do: [ :pair |
+		dict removeKey: pair first ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+
+	desiredOrder _ OrderedCollection new.
+	data do: [ :pair | desiredOrder add: pair second ].
+	dataToRemove do: [ :pair | desiredOrder remove: pair second ].
+	
+	self assert: orderingByDo = desiredOrder asArray.! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
+sampleData
+	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
+sampleData2
+	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
 
 !ShortIntegerArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
 testShortIntegerArray

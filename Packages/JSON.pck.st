@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3293] on 15 May 2018 at 4:39:11 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3332] on 25 May 2018 at 11:23:46 am'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 15!
+!provides: 'JSON' 1 16!
 SystemOrganization addCategory: #JSON!
 
 
 !classDefinition: #JsonObject category: #JSON!
-Dictionary subclass: #JsonObject
+OrderedDictionary subclass: #JsonObject
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
