@@ -1,8 +1,32 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3281] on 27 March 2018 at 11:46:52 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3341] on 1 June 2018 at 9:01:27 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Color-Extras' 1 4!
+!provides: 'Color-Extras' 1 5!
+SystemOrganization addCategory: #'Color-Extras'!
 
 
+!classDefinition: #ColorExtrasPackage category: #'Color-Extras'!
+CodePackage subclass: #ColorExtrasPackage
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Color-Extras'!
+!classDefinition: 'ColorExtrasPackage class' category: #'Color-Extras'!
+ColorExtrasPackage class
+	instanceVariableNames: ''!
+
+
+!ColorExtrasPackage class methodsFor: 'installing' stamp: 'jmv 6/1/2018 20:58:19'!
+postPackageInstall
+	"This gets called after installing all the package code"
+
+	Color initializeColorExtras! !
+
+!ColorExtrasPackage class methodsFor: 'installing' stamp: 'jmv 6/1/2018 20:57:48'!
+prePackageInstall
+	"This gets called after creating the package class and installing its code, but before installing the rest of the package code"
+
+	Color classPool declare: #ColorNamesDict from: Undeclared! !
+ColorExtrasPackage prePackageInstall!
 
 !Color methodsFor: '*color-extras-named colors' stamp: 'KenD 12/8/2013 14:59'!
 closestAssocFrom: aColorDict
@@ -852,4 +876,4 @@ yellowColorDict: aColorDict
 			ifTrue: [dict add: assoc]
 		].
 	^dict! !
-Color initializeColorExtras!
+ColorExtrasPackage postPackageInstall!
