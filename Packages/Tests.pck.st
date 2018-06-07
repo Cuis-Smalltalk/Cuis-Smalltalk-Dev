@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3338] on 26 May 2018 at 11:14:05 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3345] on 7 June 2018 at 11:58:26 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 78!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 79!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'SignalProcessing' 1 nil nil!
@@ -31,6 +31,7 @@ SystemOrganization addCategory: #'Tests-Compression'!
 SystemOrganization addCategory: #'Tests-Statistics'!
 SystemOrganization addCategory: #'Tests-Kernel-Classes'!
 SystemOrganization addCategory: #'Tests-Tools-Testing'!
+SystemOrganization addCategory: #'Tests-YAXO'!
 
 
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -851,6 +852,16 @@ TestCase subclass: #TestSuiteTest
 	category: 'Tests-Tools-Testing'!
 !classDefinition: 'TestSuiteTest class' category: #'Tests-Tools-Testing'!
 TestSuiteTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #YAXOTest category: #'Tests-YAXO'!
+TestCase subclass: #YAXOTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-YAXO'!
+!classDefinition: 'YAXOTest class' category: #'Tests-YAXO'!
+YAXOTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTester category: #'Tests-Exceptions'!
@@ -11426,6 +11437,62 @@ test10CanNotDebugAsFailureQuickMethods
 
 	self class debugAsFailure: #quickMethodTest ifCanNot: [ ^self ].
 	self fail! !
+
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 6/7/2018 10:58:14'!
+test01
+	| xmlDocument element subElements heading |
+	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString01 readStream.
+	self assert: xmlDocument version = '1.0'.
+	self assert: xmlDocument encoding = 'UTF-8' .
+	self assert: xmlDocument dtd isNil.
+	self assert: xmlDocument elements size = 1.
+	element _ xmlDocument elements first.
+	self assert: element name = #note.
+	subElements _ element elements.
+	self assert: subElements size = 4.
+	heading _ subElements third.
+	self assert: heading name = #heading.
+	self assert: heading contents first string = 'Reminder'! !
+
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 6/7/2018 11:42:02'!
+test02
+	| xmlDocument element subElements heading |
+	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString02 readStream.
+	self assert: xmlDocument version = '1.0'.
+	self assert: xmlDocument encoding = 'UTF-8' .
+	self assert: xmlDocument dtd isNil.
+	self assert: xmlDocument elements size = 1.
+	element _ xmlDocument elements first.
+	self assert: element name = #note.
+	subElements _ element elements.
+	self assert: subElements size = 4.
+	heading _ subElements third.
+	self assert: heading name = #heading.
+	self assert: heading contents first string = '&#8222;Sicherheitshinweise&#8220;'! !
+
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 6/7/2018 11:14:23'!
+exampleString01
+	"https://www.w3schools.com/xml/note.xml"
+	^
+'<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don''t forget me this weekend!!</body>
+</note>'! !
+
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 6/7/2018 11:41:58'!
+exampleString02
+	"https://www.w3schools.com/xml/note.xml"
+	^
+'<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>&#8222;Sicherheitshinweise&#8220;</heading>
+  <body>Don''t forget me this weekend!!</body>
+</note>'! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
