@@ -1,11 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3345] on 7 June 2018 at 11:58:26 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3350] on 15 June 2018 at 10:54:29 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 79!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Tests' 1 81!
 !requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -492,6 +494,16 @@ TestCase subclass: #ProcessorTest
 	category: 'Tests-Kernel'!
 !classDefinition: 'ProcessorTest class' category: #'Tests-Kernel'!
 ProcessorTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SpecialSelectorsTest category: #'Tests-Kernel'!
+TestCase subclass: #SpecialSelectorsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel'!
+!classDefinition: 'SpecialSelectorsTest class' category: #'Tests-Kernel'!
+SpecialSelectorsTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #StrikeFontTest category: #'Tests-Kernel'!
@@ -1059,6 +1071,9 @@ WeakKeyDictionary. #scanFor:.
 WeakSet. #scanFor:.
 WeakSet. #scanForLoadedSymbol:.
 }!
+
+!SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
+Tests for proper behavior of Special Selectors, for example #@!
 
 !CuisSourceFileArrayTest commentStamp: 'pb 1/24/2016 20:00' prior: 0!
 This test documents the source pointer address conversion methods for CuisSourceFileArray.
@@ -8112,6 +8127,34 @@ testValueUnpreemptively
 !ProcessorTest methodsFor: 'private' stamp: 'jmv 9/22/2009 09:42'!
 wasteTime: iterations
 	iterations timesRepeat: [1.23 asString asNumber]! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:17:20'!
+testCollectionAtSymbol
+	self assert: (#(1 2 3) @ #(10 20 30)) class == Array! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:22:32'!
+testFloatPointAtSymbol
+	self assert: (1.0@2.0 @ 3.0 ) class == Float64Vector3 ! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:26:17'!
+testFloatPointAtSymbol2
+	self assert: (self p2) class == Float64Vector3 ! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:24:52'!
+testIntPointAtSymbol
+
+	self assert: (1@2 @ 3 ) class == Float64Vector3 ! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:16:49'!
+testNumberAtSymbol
+	self assert: (1@2) class == Point! !
+
+!SpecialSelectorsTest methodsFor: 'aux' stamp: 'jmv 6/5/2017 12:25:48'!
+p2
+	"
+	SpecialSelectorsTest new p2 class
+	"
+	^ (1.0@2.0)@3.0! !
 
 !StrikeFontTest methodsFor: 'testing' stamp: 'jmv 4/12/2011 10:01'!
 testBaseAndDerivedFont
