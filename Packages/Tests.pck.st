@@ -1,11 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3338] on 26 May 2018 at 11:14:05 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3350] on 15 June 2018 at 10:54:29 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 78!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Tests' 1 81!
 !requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -31,6 +33,7 @@ SystemOrganization addCategory: #'Tests-Compression'!
 SystemOrganization addCategory: #'Tests-Statistics'!
 SystemOrganization addCategory: #'Tests-Kernel-Classes'!
 SystemOrganization addCategory: #'Tests-Tools-Testing'!
+SystemOrganization addCategory: #'Tests-YAXO'!
 
 
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -493,6 +496,16 @@ TestCase subclass: #ProcessorTest
 ProcessorTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #SpecialSelectorsTest category: #'Tests-Kernel'!
+TestCase subclass: #SpecialSelectorsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel'!
+!classDefinition: 'SpecialSelectorsTest class' category: #'Tests-Kernel'!
+SpecialSelectorsTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #StrikeFontTest category: #'Tests-Kernel'!
 TestCase subclass: #StrikeFontTest
 	instanceVariableNames: ''
@@ -853,6 +866,16 @@ TestCase subclass: #TestSuiteTest
 TestSuiteTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #YAXOTest category: #'Tests-YAXO'!
+TestCase subclass: #YAXOTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-YAXO'!
+!classDefinition: 'YAXOTest class' category: #'Tests-YAXO'!
+YAXOTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #ExceptionTester category: #'Tests-Exceptions'!
 Object subclass: #ExceptionTester
 	instanceVariableNames: 'log suiteLog iterationsBeforeTimeout'
@@ -1048,6 +1071,9 @@ WeakKeyDictionary. #scanFor:.
 WeakSet. #scanFor:.
 WeakSet. #scanForLoadedSymbol:.
 }!
+
+!SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
+Tests for proper behavior of Special Selectors, for example #@!
 
 !CuisSourceFileArrayTest commentStamp: 'pb 1/24/2016 20:00' prior: 0!
 This test documents the source pointer address conversion methods for CuisSourceFileArray.
@@ -8102,6 +8128,34 @@ testValueUnpreemptively
 wasteTime: iterations
 	iterations timesRepeat: [1.23 asString asNumber]! !
 
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:17:20'!
+testCollectionAtSymbol
+	self assert: (#(1 2 3) @ #(10 20 30)) class == Array! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:22:32'!
+testFloatPointAtSymbol
+	self assert: (1.0@2.0 @ 3.0 ) class == Float64Vector3 ! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:26:17'!
+testFloatPointAtSymbol2
+	self assert: (self p2) class == Float64Vector3 ! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:24:52'!
+testIntPointAtSymbol
+
+	self assert: (1@2 @ 3 ) class == Float64Vector3 ! !
+
+!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:16:49'!
+testNumberAtSymbol
+	self assert: (1@2) class == Point! !
+
+!SpecialSelectorsTest methodsFor: 'aux' stamp: 'jmv 6/5/2017 12:25:48'!
+p2
+	"
+	SpecialSelectorsTest new p2 class
+	"
+	^ (1.0@2.0)@3.0! !
+
 !StrikeFontTest methodsFor: 'testing' stamp: 'jmv 4/12/2011 10:01'!
 testBaseAndDerivedFont
 	"
@@ -11426,6 +11480,62 @@ test10CanNotDebugAsFailureQuickMethods
 
 	self class debugAsFailure: #quickMethodTest ifCanNot: [ ^self ].
 	self fail! !
+
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 6/7/2018 10:58:14'!
+test01
+	| xmlDocument element subElements heading |
+	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString01 readStream.
+	self assert: xmlDocument version = '1.0'.
+	self assert: xmlDocument encoding = 'UTF-8' .
+	self assert: xmlDocument dtd isNil.
+	self assert: xmlDocument elements size = 1.
+	element _ xmlDocument elements first.
+	self assert: element name = #note.
+	subElements _ element elements.
+	self assert: subElements size = 4.
+	heading _ subElements third.
+	self assert: heading name = #heading.
+	self assert: heading contents first string = 'Reminder'! !
+
+!YAXOTest methodsFor: 'tests' stamp: 'jmv 6/7/2018 11:42:02'!
+test02
+	| xmlDocument element subElements heading |
+	xmlDocument _ XMLDOMParser parseDocumentFrom: self exampleString02 readStream.
+	self assert: xmlDocument version = '1.0'.
+	self assert: xmlDocument encoding = 'UTF-8' .
+	self assert: xmlDocument dtd isNil.
+	self assert: xmlDocument elements size = 1.
+	element _ xmlDocument elements first.
+	self assert: element name = #note.
+	subElements _ element elements.
+	self assert: subElements size = 4.
+	heading _ subElements third.
+	self assert: heading name = #heading.
+	self assert: heading contents first string = '&#8222;Sicherheitshinweise&#8220;'! !
+
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 6/7/2018 11:14:23'!
+exampleString01
+	"https://www.w3schools.com/xml/note.xml"
+	^
+'<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don''t forget me this weekend!!</body>
+</note>'! !
+
+!YAXOTest methodsFor: 'examples' stamp: 'jmv 6/7/2018 11:41:58'!
+exampleString02
+	"https://www.w3schools.com/xml/note.xml"
+	^
+'<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>&#8222;Sicherheitshinweise&#8220;</heading>
+  <body>Don''t forget me this weekend!!</body>
+</note>'! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
