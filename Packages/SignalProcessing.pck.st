@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3338] on 26 May 2018 at 11:16:36 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3354] on 26 June 2018 at 2:26:59 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 90!
+!provides: 'SignalProcessing' 1 91!
 !requires: 'Statistics' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -530,18 +530,40 @@ addNormalNoise: standardDeviation
 	random _ NormalProbabilityDistribution mean: 0.0 standardDeviation: standardDeviation.
 	self replaceValues: [ :i :j :v | random nextRandomNumber + v ]! !
 
-!FloatImage methodsFor: 'noise generation' stamp: 'jmv 4/8/2015 16:07'!
+!FloatImage methodsFor: 'noise generation' stamp: 'jmv 6/25/2018 15:27:20'!
 simulatePhotonNoise
-	"Simulate photon noise, assuming we count electrons. See senders."
+	"Simulate Photon Noise, assuming we count electrons (i.e. photons converted into electrons by an image sensor).
+	Good approximation of Poisson noise by a Normal noise (proportional to square root of electron count).
+	Example of use:"
+	"
+	| image sensorPixelFullWell electronsWithSimulatedPhotonNoise imageWithNoise |
+	image := FloatImage lena. 															'element values in [0.0 .. 1.0]'.
+	sensorPixelFullWell := 500. 															'electrons, as per sensor spec'.
+	electronsWithSimulatedPhotonNoise := image * sensorPixelFullWell.				'Make it count electrons (no prob if not integer)'.
+	electronsWithSimulatedPhotonNoise simulatePhotonNoise.							'Add simulated noise'.
+	imageWithNoise := electronsWithSimulatedPhotonNoise / sensorPixelFullWell.	'Convert back to [0.0 .. 1.0]'.
+	imageWithNoise display
+	"
 
 	| random |
 	random _ NormalProbabilityDistribution new.
 	self replaceValues: [ :i :j :v |
 		(v max: 0) sqrt * random nextRandomNumber + v max: 0 ]! !
 
-!FloatImage methodsFor: 'noise generation' stamp: 'jmv 4/6/2015 12:30'!
+!FloatImage methodsFor: 'noise generation' stamp: 'jmv 6/25/2018 10:31:31'!
 simulateReadNoise: electrons
-	"Simulate Read Noise"
+	"Simulate Read Noise,  assuming we count electrons (i.e. photons converted into electrons by an image sensor).
+	Example of use:"
+	"
+	| image sensorPixelFullWell sensorReadNoise electronsWithSimulatedReadNoise imageWithNoise |
+	image := FloatImage lena. 															'element values in [0.0 .. 1.0]'.
+	sensorPixelFullWell := 500. 															'electrons, as per sensor spec'.
+	sensorReadNoise := 20. 															 	'electrons, as per sensor spec'.
+	electronsWithSimulatedReadNoise := image * sensorPixelFullWell.					'Make it count electrons (no prob if not integer)'.
+	electronsWithSimulatedReadNoise simulateReadNoise: sensorReadNoise.			'Add simulated noise'.
+	imageWithNoise := electronsWithSimulatedReadNoise / sensorPixelFullWell.		'Convert back to [0.0 .. 1.0]'.
+	imageWithNoise display
+	"
 
 	self addNormalNoise: electrons! !
 
@@ -1183,7 +1205,7 @@ shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrN
 			scaled x: x y: y put: v ]].
 	^scaled! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 7/18/2016 11:46:01'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:25:07'!
 asForm
 	"Assume the receiver is normalized in [0.0 .. 255/256.0]. Clip values out of range.
 	For this reason, don't move this implementation to FloatMatrix, they will most likely use
@@ -1195,7 +1217,7 @@ asForm
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
 
 	| answer |
-	answer _ self as8bitFormEvaluating: [ :index | | value |
+	answer _ self as8bitForm: [ :index | | value |
 		value _ elements at: index.
 		"Assume the receiver is normalized in [0.0 .. 255/256.0]
 		Multiply by 256, to get values in [0.0 .. 255.0] and then round."
@@ -1233,11 +1255,11 @@ asFormQuick
 	self fillGrayForm: answer.
 	^answer! !
 
-!FloatImage methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:05'!
+!FloatImage methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:25:10'!
 asGammaFormUnitRange
 	"See comment at #fullRangeDisplayAt:"
 
-	^ self as8bitFormEvaluating: [ :index | | value |
+	^ self as8bitForm: [ :index | | value |
 		value _ Color linearTosRGBGamma: ((elements at: index) min: 1.0 max: 0.0).
 		(value * 255 + 0.5) truncated ]! !
 
@@ -2473,6 +2495,21 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNi
 
 	^dx @dy! !
 
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 13:43:30'!
+displayAsHeatmapAt: aPoint zoom: anInteger
+	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
+	
+	FloatImage lena displayAsHeatmapAt: 10@10 zoom: 4
+	(FloatImage lena copy: (120@120 extent: 30@30)) displayAsHeatmapAt: 10@10 zoom: 15
+	(FloatImage lena -0.5 * 2 copy: (120@120 extent: 30@30)) displayAsHeatmapAt: 10@10 zoom: 15
+	"
+	"Use Jet heatmap color. Zero is green. 1 is red. -1 is blue."
+	| form |
+	form _ self asHeatmap: [ :index | elements at: index ] minVal: -1 maxVal: 1.
+	anInteger = 1 ifFalse: [
+		form _ form magnifyBy: anInteger ].
+	form displayAt: aPoint! !
+
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 7/18/2016 10:16:43'!
 displayAt: aPoint
 	"Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
@@ -2484,7 +2521,7 @@ displayAt: aPoint
 
 	self asForm displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 8/24/2017 11:38:28'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 13:42:32'!
 displayAt: aPoint zoom: anInteger
 	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
 	
@@ -2495,7 +2532,7 @@ displayAt: aPoint zoom: anInteger
 "
 	(self asForm magnifyBy: anInteger) displayAt: aPoint.
 "
-	| max min k b g r |
+	| max min k b g r form |
 	min _ self min.
 	max _ self max.
 	max > min ifFalse: [
@@ -2503,69 +2540,85 @@ displayAt: aPoint zoom: anInteger
 
 	"Make positive values gray, and negative values green"
 	k _ 255.0 / (max max: min negated).
-	((self as32bitFormEvaluating: [ :index :word |
+	form _ self as32bitForm: [ :index :word |
 		g _ (((elements at: index) abs) * k + 0.5) truncated min: 255 max: 0.
 		(elements at: index) > 0
 			ifTrue: [ r _ b _ g ]
 			ifFalse: [ r _ b _ 0 ].
-		word at: 1 put: b; at: 2 put: g; at: 3 put: r ]
-	)
-			magnifyBy: anInteger) displayAt: aPoint.! !
+		word at: 1 put: b; at: 2 put: g; at: 3 put: r ].
+	anInteger = 1 ifFalse: [
+		form _ form magnifyBy: anInteger ].
+	form displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 5/4/2016 11:11'!
-displayWithGammaAt: aPoint
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 12:21:54'!
+displayWithGammaAt: aPoint zoom: anInteger
 	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
 	Assume receiver is in linear scale.
 	Apply appropriate gamma encoding to make good use of pixel dynamic range.
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
 
-	self asGammaFormUnitRange displayAt: aPoint! !
+	| form |
+	form _ self asGammaFormUnitRange displayAt: aPoint.
+	anInteger = 1 ifFalse: [
+		form _ form magnifyBy: anInteger ].
+	form displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 5/26/2018 17:37:25'!
-withImaginary: aFloatImage displayMagnitudeAt: aPoint
-	"Show magnitude of receiver and argument considered as a Complex image
-	Usually prefer #withImaginary:displayMagnitudeLogAt:
-	FloatImage lena withImaginary: FloatImage lena sqrt displayMagnitudeAt: 100@100
-	"
-
-	| f imaginaryValues complex magnitude max |
-	imaginaryValues _ aFloatImage elements.
-	max _ elements max.
-	f _ self as8bitFormEvaluating: [ :index |
-		complex _ (elements at: index) + (imaginaryValues at: index) i.
-		magnitude _ complex magnitude.
-		(magnitude / max * 255 + 0.5) truncated min: 255 max: 0 ].
-	f displayAt: aPoint! !
-
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 5/26/2018 17:37:55'!
-withImaginary: aFloatImage displayMagnitudeLogAt: aPoint
-	"Show logarithm of magnitude of receiver and argument considered as a Complex image
-	FloatImage lena withImaginary: FloatImage lena sqrt displayMagnitudeLogAt: 100@100
-	"
-
-	| f imaginaryValues complex magnitude max |
-	imaginaryValues _ aFloatImage elements.
-	max _ elements max log.
-	f _ self as8bitFormEvaluating: [ :index |
-		complex _ (elements at: index) + (imaginaryValues at: index) i.
-		magnitude _ complex magnitude log.
-		(magnitude / max * 255 + 0.5) truncated min: 255 max: 0 ].
-	f displayAt: aPoint! !
-
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 5/26/2018 17:38:20'!
-withImaginary: aFloatImage displayPhaseAt: aPoint
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 19:14:23'!
+withImaginary: aFloatImage displayMagnitudeLog: takeLog andPhaseAt: aPoint zoom: anInteger
 	"Show phase of receiver and argument considered as a Complex image
 	FloatImage lena withImaginary: FloatImage lena sqrt displayPhaseAt: 100@100
 	"
 
-	| f imaginaryValues complex twoPi phase |
+	| imaginaryValues max form complex magnitude |
 	imaginaryValues _ aFloatImage elements.
-	twoPi _ Float twoPi.
-	f _ self as8bitFormEvaluating: [ :index |
+	max _ elements max.
+	takeLog ifTrue: [ max _ (max+1) log ].
+	form _ self asComplexHeatmap: [ :index |
 		complex _ (elements at: index) + (imaginaryValues at: index) i.
-		phase _ complex phase.
-		(phase / twoPi + 0.5 * 255) rounded ].
-	f displayAt: aPoint! !
+		takeLog ifTrue: [
+			magnitude _ complex magnitude.
+			complex _ magnitude isZero ifTrue: [0] ifFalse: [complex * ((magnitude+1) log/ magnitude)]].
+		complex ]
+		maxMagnitude: max.
+	anInteger = 1 ifFalse: [
+		form _ form magnifyBy: anInteger ].
+	form displayAt: aPoint! !
+
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 14:55:40'!
+withImaginary: aFloatImage displayMagnitudeLog: takeLog at: aPoint zoom: anInteger
+	"Show logarithm of magnitude of receiver and argument considered as a Complex image
+	FloatImage lena withImaginary: FloatImage lena sqrt displayMagnitudeLog: false at: 100@100 zoom: 2
+	FloatImage lena withImaginary: FloatImage lena sqrt displayMagnitudeLog: true at: 100@100 zoom: 2
+	"
+
+	| form imaginaryValues complex magnitude max |
+	imaginaryValues _ aFloatImage elements.
+	max _ elements max.
+	takeLog ifTrue: [ max _ (max+1) log ].
+	form _ self as8bitForm: [ :index |
+		complex _ (elements at: index) + (imaginaryValues at: index) i.
+		magnitude _ complex magnitude.
+		takeLog ifTrue: [ magnitude _ (magnitude+1) log ].
+		(magnitude / max * 255 + 0.5) truncated min: 255 max: 0 ].
+	anInteger = 1 ifFalse: [
+		form _ form magnifyBy: anInteger ].
+	form displayAt: aPoint! !
+
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/26/2018 14:22:06'!
+withImaginary: aFloatImage displayPhaseAt: aPoint zoom: anInteger
+	"Show phase of receiver and argument considered as a Complex image
+	FloatImage lena withImaginary: FloatImage lena sqrt displayPhaseAt: 100@100 zoom: 2
+	"
+
+	| form imaginaryValues complex |
+	imaginaryValues _ aFloatImage elements.
+	form _ self asHeatmap: [ :index |
+		complex _ (elements at: index) + (imaginaryValues at: index) i.
+		complex phase ]
+		minVal: Float pi negated maxVal: Float pi.
+	anInteger = 1 ifFalse: [
+		form _ form magnifyBy: anInteger ].
+	form displayAt: aPoint! !
 
 !FloatImage methodsFor: 'private' stamp: 'jmv 10/19/2017 13:17:52'!
 erodedBy: erosionRadious
@@ -3194,7 +3247,7 @@ lineHistogramsHeatmap
 	].
 	^ plot! !
 
-!FloatImage class methodsFor: 'experiments' stamp: 'jmv 12/13/2016 10:46:40'!
+!FloatImage class methodsFor: 'experiments' stamp: 'jmv 6/25/2018 12:22:05'!
 blurEstimationExperiment
 
 | answer aux bits blur blurred electronsPerDN estimation exposure f fullWell gap maxD maxDN original plotter r readNoiseElectrons sharpnessessX sharpnessessY xDer xDerDer xDerDerDer xDerDerDerDer zeros |
@@ -3239,7 +3292,7 @@ zeros _ FloatArray new: maxD.
 	blurred /= f.
 	""
 	
-	blurred displayWithGammaAt: (blurIndex-1*(256+gap))+2@0.
+	blurred displayWithGammaAt: (blurIndex-1*(256+gap))+2@0 zoom: 1.
 	1 to: maxD do: [ :d |
 		sharpnessessX at: d put: (blurred acutanceAt: d@0 aux: aux).
 	].
@@ -3349,23 +3402,25 @@ interpolationExperiment3
 	p _ p + (e x@0).
 	(original shiftedLinearTransformedBy: t resultExtent: e) displayAt: p.! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 8/28/2012 17:24'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 6/25/2018 16:50:01'!
 checkerboard: extent n: n
 	"Build and answer a checkerboard pattern
 	(FloatImage checkerboard: 200@200 n: 8) display
 	"
-	| answer cellExtent |
+	| answer cellExtent highValue lowValue |
+	highValue _ 200 / 256.0.
+	lowValue _ 50 / 256.0.
 	cellExtent _ extent // n.
 	answer _ self width: cellExtent x * n height: cellExtent y * n.
 	1 to: answer height do: [ :y |
 		1 to: answer width do: [ :x |
-			answer x: x y: y put: (x-1//cellExtent x) + (y-1//cellExtent y) +1 \\ 2 ]].
+			answer x: x y: y put: ((x-1//cellExtent x) + (y-1//cellExtent y) +1 \\ 2) * (highValue-lowValue)+lowValue ]].
 	^answer! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 2/22/2016 15:15'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 6/25/2018 09:54:20'!
 gradient: extent
 	"Build and answer a gradient pattern
-	(FloatImage gradient: 20@20) display
+	(FloatImage gradient: 200@200) display
 	"
 	| answer |
 	answer _ self extent: extent.
@@ -3373,6 +3428,65 @@ gradient: extent
 		1 to: extent x do: [ :x |
 			answer x: x y: y put: x+y-2 / (extent x + extent y - 2) ]].
 	^answer! !
+
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 6/25/2018 10:34:40'!
+resolutionTarget: extent
+	"
+	FloatImage resolutionTarget: 256 :: display
+	"
+	^ self resolutionTarget: extent offsetFromCenter: nil backColor: nil blackColor: nil grayColor: nil whiteColor: nil! !
+
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 6/25/2018 10:38:06'!
+resolutionTarget: extent offsetFromCenter: anOffsetFromCenter
+	"
+	FloatImage resolutionTarget: 256 offsetFromCenter: 0@0:: display writePNGfileNamed: '1.png'.
+	FloatImage resolutionTarget: 256 offsetFromCenter: 0.5@0.5:: display writePNGfileNamed: '2.png'.
+	FloatImage resolutionTarget: 256 offsetFromCenter: 1@1:: display writePNGfileNamed: '3.png'.
+	"
+	^ self resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: nil blackColor: nil grayColor: nil whiteColor: nil! !
+
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 6/25/2018 10:34:21'!
+resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: aBackColor blackColor: aBlackColor grayColor: aGrayColor whiteColor: aWhiteColor
+
+	| offsetFromCenter backColor blackColor grayColor whiteColor location canvas form |
+	offsetFromCenter := anOffsetFromCenter ifNil: [ `0@0` ].
+	backColor _ aBackColor ifNil: [`Color gray: 30/255`].
+	blackColor _ aBlackColor ifNil: [`Color gray: 50/255`].
+	grayColor _ aGrayColor ifNil: [`Color gray: 100/255`].
+	whiteColor _ aWhiteColor ifNil: [`Color gray: 200/255`].
+
+	form _ Form extent: extent asPoint depth: 32.
+	form fillColor: backColor.
+	location _ (AffineTransformation withRadians: -3/360*Float twoPi scale: 256*0.35 position: 127.5@127.5 + offsetFromCenter) withYAxisNegated.
+	canvas _ VectorCanvas onForm: form.
+	canvas intoLocation: location.
+	canvas fillColor: whiteColor do: [
+		canvas
+			moveToX: 1 y: 1;
+			lineToX: 0 y: 1;
+			lineToX: -1 y: 0;
+			lineToX: -1 y: -1;
+			lineToX: 0 y: -1;
+			lineToX: 1 y: 0;
+			lineToX: 1 y: 1.
+	].
+	canvas fillColor: blackColor do: [
+		canvas
+			moveToX: 0 y: 0;
+			lineToX: -1 y: 0;
+			lineToX: -1 y: 1;
+			lineToX: 0 y: 1;
+			lineToX: 0 y: 0
+	].
+	canvas fillColor: grayColor do: [
+		canvas
+			moveToX: 0 y: 0;
+			lineToX: 1 y: 0;
+			lineToX: 1 y: -1;
+			lineToX: 0 y: -1;
+			lineToX: 0 y: 0
+	].
+	^ FloatImage from32BitColorForm: form component: #green.! !
 
 !FloatImage class methodsFor: 'examples' stamp: 'jmv 4/28/2015 12:00'!
 example3
@@ -6329,12 +6443,12 @@ fftRealForward: forward
 	transform realData: self.
 	transform transformForward: forward! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/16/2015 12:27'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 6/25/2018 19:33:53'!
 fillWithGaussianKernelSigmaY: sigmaY sigmaX: sigmaX
 	"
 	Fill the receiver with a gaussian function. sigmaX and sigmaY are the standard deviation of the gaussian, measured in elements (i.e. 'pixels').
-	Origin is at topLeft, appropriate for doing a convolution.
-	#moveOriginToCenter to make it more confortable to see.
+	Origin is at topLeft, appropriate for doing a circular convolution.
+	#moveOriginToCenter to make it more confortable to see, and to make it appropriate for linear convolution.
 
 	| f |
 	f _ FloatMatrix height: 16 width: 16.
