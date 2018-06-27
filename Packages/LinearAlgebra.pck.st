@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3293] on 27 April 2018 at 1:49:10 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3354] on 26 June 2018 at 2:26:43 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 45!
+!provides: 'LinearAlgebra' 1 46!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #LinearAlgebra!
 
@@ -220,8 +220,8 @@ appropriateResultClass
 
 	^self class! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 8/24/2017 11:37:40'!
-as32bitFormEvaluating: aBlock
+!Matrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:23:45'!
+as32bitForm: aBlock
 	"Fill 32bit Form with rgb values as computed by aBlock. See senders."
 
 	| answer bits word index |
@@ -237,8 +237,8 @@ as32bitFormEvaluating: aBlock
 			index _ index + 1 ]].
 	^answer! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 8/11/2017 14:26:09'!
-as8bitFormEvaluating: aBlock
+!Matrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:23:51'!
+as8bitForm: aBlock
 	"Fill an 8-bit GrayForm with gray values."
 
 	| answer bits bitsIndex elementsIndex bytesPerRow |
@@ -253,6 +253,17 @@ as8bitFormEvaluating: aBlock
 			bitsIndex _ bitsIndex + 1.
 			bits byteAt: bitsIndex put: (aBlock value: elementsIndex) bigEndian: answer isBigEndian ]].
 	^answer! !
+
+!Matrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 14:21:52'!
+asComplexHeatmap: aBlock maxMagnitude: maxMagnitude
+	"Fill 32bit Form with rgb values as computed by aBlock. See senders."
+
+	| color |
+	^ self as32bitForm: [ :index :word | | complex |
+		complex _ aBlock value: index.
+		color _ Color jet: ((complex phase + Float pi) / Float twoPi).
+		color _ color * (complex magnitude / maxMagnitude).
+		word at: 1 put: color blue * 255 // 1; at: 2 put: color green * 255 // 1; at: 3 put: color red * 255// 1 ]! !
 
 !Matrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:18'!
 asForm
@@ -279,27 +290,38 @@ asFormG: greenMatrix b: blueMatrix
 	max _ (self max max: greenMatrix max) max: blueMatrix max.
 	^self asFormG: greenMatrix b: blueMatrix min: min max: max! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 4/28/2015 10:26'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:24:21'!
 asFormG: greenMatrix b: blueMatrix min: min max: max
 	| k r g b blueElements greenElements |
 	k _ 255.0 / (max-min).
 	greenElements _ greenMatrix elements.
 	blueElements _ blueMatrix elements.
-	^ self as32bitFormEvaluating: [ :index :word |
+	^ self as32bitForm: [ :index :word |
 		r _ (((elements at: index) - min) * k + 0.5) truncated min: 255 max: 0.
 		g _ (((greenElements at: index) - min) * k + 0.5) truncated min: 255 max: 0.
 		b _ (((blueElements at: index) - min) * k + 0.5) truncated min: 255 max: 0.
 		word at: 1 put: b; at: 2 put: g; at: 3 put: r ]! !
 
-!Matrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 10:49'!
+!Matrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:25:22'!
 asFormMin: min max: max
 	"Answer a 8bit Form with gray values.
 	Map used range of pixel values to available gray values."
 
 	| k |
 	k _ 255.0 / (max-min).
-	^ self as8bitFormEvaluating: [ :index |
+	^ self as8bitForm: [ :index |
 		(((elements at: index) - min) * k + 0.5) truncated min: 255 max: 0 ]! !
+
+!Matrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 13:43:26'!
+asHeatmap: aBlock minVal: minVal maxVal: maxVal
+	"Fill 32bit Form with rgb values as computed by aBlock. See senders."
+
+	| color fraction |
+	^ self as32bitForm: [ :index :word |
+		fraction _ ((aBlock value: index) - minVal) / (maxVal - minVal).
+		color _ Color jet: fraction.
+		color _ color mixed: 0.6 with: Color gray.
+		word at: 1 put: color blue * 255 // 1; at: 2 put: color green * 255 // 1; at: 3 put: color red * 255// 1 ]! !
 
 !Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:56'!
 average
@@ -976,12 +998,12 @@ withRows: aCollectionOfRows
 	"
 	^self fromArrayOfArrays: aCollectionOfRows! !
 
-!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 10:47'!
+!ByteMatrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:25:04'!
 asForm
 	"Our pixel values are already constrained to 0..255.
 	Converting to an 8bit gray Form is straightforward."
 
-	^ self as8bitFormEvaluating: [ :index | elements at: index ]! !
+	^ self as8bitForm: [ :index | elements at: index ]! !
 
 !ByteMatrix methodsFor: 'conversion' stamp: 'jmv 5/12/2016 18:30'!
 fillFrom32BitForm: aForm component: aSymbol
@@ -1022,7 +1044,7 @@ initializeElements
 
 	elements _ ByteArray new: height * width! !
 
-!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:07'!
+!FloatMatrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:25:19'!
 asGammaFormFullRange
 	"See comment at #fullRangeDisplayAt:"
 
@@ -1032,7 +1054,7 @@ asGammaFormFullRange
 	scale _ scale > 0.0
 		ifTrue: [ 1.0 / scale ]
 		ifFalse: [ 1.0 ].
-	^self as8bitFormEvaluating: [ :index | | value |
+	^self as8bitForm: [ :index | | value |
 		value _ Color linearTosRGBGamma: (elements at: index)-min * scale.
 		(value * 255 + 0.5) truncated ]! !
 
