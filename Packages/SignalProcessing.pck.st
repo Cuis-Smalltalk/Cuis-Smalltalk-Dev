@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3354] on 26 June 2018 at 2:26:59 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3359] on 4 July 2018 at 5:48:40 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 91!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'SignalProcessing' 1 92!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -21,6 +21,16 @@ FloatMatrix subclass: #FloatImage
 	category: 'SignalProcessing-Images'!
 !classDefinition: 'FloatImage class' category: #'SignalProcessing-Images'!
 FloatImage class
+	instanceVariableNames: ''!
+
+!classDefinition: #ConvolutionKernel category: #'SignalProcessing-Images'!
+FloatImage subclass: #ConvolutionKernel
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SignalProcessing-Images'!
+!classDefinition: 'ConvolutionKernel class' category: #'SignalProcessing-Images'!
+ConvolutionKernel class
 	instanceVariableNames: ''!
 
 !classDefinition: #IrregularSampledImage category: #'SignalProcessing-Images'!
@@ -71,6 +81,16 @@ Object subclass: #AccumulatedImageHistogram
 	category: 'SignalProcessing-Images'!
 !classDefinition: 'AccumulatedImageHistogram class' category: #'SignalProcessing-Images'!
 AccumulatedImageHistogram class
+	instanceVariableNames: ''!
+
+!classDefinition: #ComplexImage category: #'SignalProcessing-Images'!
+Object subclass: #ComplexImage
+	instanceVariableNames: 'real imaginary'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SignalProcessing-Images'!
+!classDefinition: 'ComplexImage class' category: #'SignalProcessing-Images'!
+ComplexImage class
 	instanceVariableNames: ''!
 
 !classDefinition: #GeneralizedInterpolatingImage category: #'SignalProcessing-Images'!
@@ -190,6 +210,13 @@ A glimpse of the things you can do:
 	diff histogram plot.
 !
 
+!ConvolutionKernel commentStamp: 'jmv 6/27/2018 16:01:07' prior: 0!
+A ConvolutionKernel is a relatively small image with odd size in both directions. It is used to hold a PSF or a filter, and applied with convolution operations.
+
+The sum of all elemente is 1.0
+
+The origin (usually the largest element) is at the center. If used for CircularConvolution, adjustments are done as required.!
+
 !IrregularSampledImage commentStamp: '<historical>' prior: 0!
 Some real, known, pixels are added one by one (pixel position is usually random). At any point, all the other pixels can quickly be interpolated.
 Allows for progressive reconstruction, with higher quality, as new data is available.
@@ -235,6 +262,9 @@ Used by Histogram Equalization.
 ImageHistogram, ImageHistogram2, ImageHistogram3, AccumulatedImageHistogram
 are now obsolete. They have been superseded by Histogram and UnitaryMonotonicMap
 ======================================================!
+
+!ComplexImage commentStamp: '<historical>' prior: 0!
+My instances hold a real part and an imaginary part, which are FloatImage(s).!
 
 !GeneralizedInterpolatingImage commentStamp: '<historical>' prior: 0!
 A kind of FloatImage that can interpolate values at any Float position (inside its bounds). Allows for "Generalized Interpolation" as described in:
@@ -383,18 +413,6 @@ The following changes from cody's listings should also be noted...
 	^self copy *= aFloatImageOrNumber! !
 
 !FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/27/2012 18:16'!
-+ aFloatImageOrNumber
-	"Answer a new FloatImage. Don't affect receiver or argument in any way."
-
-	^self copy += aFloatImageOrNumber! !
-
-!FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/27/2012 18:16'!
-- aFloatImageOrNumber
-	"Answer a new FloatImage. Don't affect receiver or argument in any way."
-
-	^self copy -= aFloatImageOrNumber! !
-
-!FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/27/2012 18:16'!
 / aFloatImageOrNumber
 	"Answer a new FloatImage. Don't affect receiver or argument in any way."
 
@@ -422,26 +440,6 @@ squared
 			elements *= aFloatImageOrNumber elements ]! !
 
 !FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 8/23/2014 23:38'!
-+= aFloatImageOrNumber
-	"Add an image (pixel by pixel) or number to receiver"
-
-	aFloatImageOrNumber isNumber
-		ifTrue: [ elements += aFloatImageOrNumber ]
-		ifFalse: [
-			self validateSameSize: aFloatImageOrNumber.
-			elements += aFloatImageOrNumber elements ]! !
-
-!FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 9/18/2017 17:31:33'!
--= aFloatImageOrNumber
-	"Subtract an image (pixel by pixel) or number to receiver"
-
-	aFloatImageOrNumber isNumber
-		ifTrue: [ elements -= aFloatImageOrNumber ]
-		ifFalse: [
-			self validateSameSize: aFloatImageOrNumber.
-			elements -= aFloatImageOrNumber elements ]! !
-
-!FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 8/23/2014 23:38'!
 /= aFloatImageOrNumber
 	"Divide receiver by an image (pixel by pixel) or number"
 
@@ -450,79 +448,6 @@ squared
 		ifFalse: [
 			self validateSameSize: aFloatImageOrNumber.
 			elements /= aFloatImageOrNumber elements ]! !
-
-!FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 8/23/2014 23:40'!
-beMagnitudeOfComplexesWith: imaginary
-	"Warning. Modifies self to store result. In the process, modifies the argument."
-
-	| iv |
-	iv _ imaginary elements.
-	elements *= elements.
-	iv *= iv.
-	elements += iv.
-	self replaceValues: [ :i :j :v | v sqrt ]! !
-
-!FloatImage methodsFor: 'metrics' stamp: 'jmv 9/2/2014 13:22'!
-acutance
-	"Measure image acutance."
-	| aux eAcutance nAcutance neAcutance nwAcutance |
-	aux _ FloatImage extent: self extent.
-	eAcutance _ self acutanceAt: 1@0 aux: aux.
-	neAcutance _ (self acutanceAt: 1@1 aux: aux) * 0.75.
-	nAcutance _ self acutanceAt: 0@1 aux: aux.
-	nwAcutance _ (self acutanceAt: -1@1 aux: aux) * 0.75.
-	^((eAcutance max: neAcutance) max: nAcutance) max: nwAcutance! !
-
-!FloatImage methodsFor: 'metrics' stamp: 'jmv 3/25/2015 09:48'!
-acutanceAt: delta aux: auxImage
-	"Note: auxImage extent must equal self extent
-		displacement is integer!!
-	"
-
-	auxImage fillWith: self cheaplyDisplaced: delta.
-	auxImage -= self.
-	auxImage *= auxImage.
-	auxImage replaceValues: [ :i :j :v |
-		((i between: delta y+1 and: height + delta y) and: [
-			(j between: delta x+1 and: width + delta x) ])
-				ifTrue: [v sqrt] 
-				ifFalse: [0]].
-	^auxImage mean! !
-
-!FloatImage methodsFor: 'metrics' stamp: 'jmv 9/4/2014 14:22'!
-blurEstimator
-	"Estimate blur"
-	| aux eBlur nBlur |
-	aux _ FloatImage extent: self extent.
-	eBlur _ self blurEstimatorDirection: 1@0 aux: aux.
-	nBlur _ self blurEstimatorDirection: 0@1 aux: aux.
-	^eBlur @ nBlur! !
-
-!FloatImage methodsFor: 'metrics' stamp: 'jmv 9/8/2014 16:25'!
-blurEstimatorDirection: direction aux: auxImage
-"aca lo que buscamos es que la derivada del 'accutance' baje a la mitad del primer valor..."
-"
-Anda bien para blurs de entre 1 y 40 pixels
-Nunca iterar mas de 100 veces, ni contestar valores mayores que 100
-FloatImage blurEstimationExperiment
-"
-	| butLastValue lastValue delta derivative firstValueOfDerivative stepCount |
-	delta _ direction.
-	butLastValue _ self acutanceAt: delta aux: auxImage.
-	delta _ delta + direction. 
-	lastValue _ self acutanceAt: delta aux: auxImage.
-	derivative _ lastValue - butLastValue.
-	firstValueOfDerivative _ derivative.
-	firstValueOfDerivative < 1.2e-4 ifTrue: [ ^ 100 ].
-	delta _ delta + direction. 
-	stepCount _ 0.
-	[ derivative > (firstValueOfDerivative / 2) and: [stepCount < 100]] whileTrue: [
-		butLastValue _ lastValue.
-		lastValue _ self acutanceAt: delta aux: auxImage.
-		derivative _ lastValue - butLastValue.
-		stepCount _ stepCount + 1.
-		delta _ delta + direction. ].
-	^stepCount! !
 
 !FloatImage methodsFor: 'noise generation' stamp: 'jmv 7/19/2016 12:08:32'!
 addNormalNoise: standardDeviation
@@ -1009,25 +934,22 @@ bilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
 		]].
 	^scaled! !
 
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 8/31/2015 12:45'!
+!FloatImage methodsFor: 'resampling' stamp: 'jmv 7/2/2018 14:52:28'!
 fourierDoubledBilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	| biggerExtent biggerImaginary biggerReal fftExtent imaginary real 
+	| fftExtent complex biggerExtent biggerComplex 
 	e resultWidth resultHeight scaled inverseTransformation p v totalScale |
 	fftExtent _ 2 raisedToInteger: ((width max: height) log: 2) ceiling.
-	real _ FloatImage extent: fftExtent@fftExtent.
-	imaginary _ FloatImage extent: fftExtent@fftExtent.
-	real fillWith: self.
-	real fftImaginary:  imaginary forward: true.
-	
+
+	complex _ ComplexImage extent: fftExtent.
+	complex realPart fillWith: self.
+	complex fftTransform: true.
+
 	biggerExtent _ 2 raisedToInteger: ((width max: height) log: 2) ceiling + 1.
+	biggerComplex _ ComplexImage extent: biggerExtent.
+	biggerComplex fillLowFFTFrequenciesWith: complex.
+	biggerComplex *= 4.
+	biggerComplex fftTransform: false.
 	totalScale _ biggerExtent / width.
-	biggerReal _ FloatImage extent: biggerExtent@biggerExtent.
-	biggerImaginary _ FloatImage extent: biggerExtent@biggerExtent.
-	biggerReal fillLowFFTFrequenciesWith: real.
-	biggerImaginary fillLowFFTFrequenciesWith: imaginary.
-	biggerReal *= 4.
-	biggerImaginary *= 4.
-	biggerReal fftImaginary:  biggerImaginary forward: false.
 	
 	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
 	resultWidth _ e x.
@@ -1038,8 +960,7 @@ fourierDoubledBilinearTransformedBy: anAffineTransformation resultExtent: result
 		1to: resultWidth do: [ :x |
 			p _ inverseTransformation transform: x@y.
 			p _ p * totalScale.
-			"cuando haya escala, no estoy seguro si es aca que hay que restar 1 para que no camine..."
-			v _ biggerReal bilinearInterpolatedValueAtX: p x-1 y: p y-1.
+			v _ biggerComplex realPart bilinearInterpolatedValueAtX: p x-1 y: p y-1.
 			scaled x: x y: y put: v
 		]].
 	^scaled! !
@@ -1689,6 +1610,14 @@ crazyFactor _ 1.8892666638.
 
 	^centroidX @ centroidY! !
 
+!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/2/2018 10:15:34'!
+largestColumnAndRow
+	"Answer coordinates for column and row with maximum sum.
+	A more robust indicator of center of a PSF than #centerOfMass"
+	^ ((1 to: width) detectMax: [ :j | (self j: j) sum ])
+		@
+			((1 to: height) detectMax: [ :i | (self i: i) sum ])! !
+
 !FloatImage methodsFor: 'copying' stamp: 'jmv 5/22/2015 12:25'!
 cheapDisplacedBy: deltaPoint
 	"Answer a new image our contents, sort of displaced by aPoint.
@@ -1711,7 +1640,29 @@ fillWith: aFloatImage cheaplyDisplaced: deltaPoint
 	
 	self fillElementsWith: aFloatImage elements displacedBy: deltaPoint y*width + deltaPoint x! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 5/22/2015 13:08'!
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:02'!
+convolutionCircularWith: psf
+	"Compute circular convolution with aMatrix, usig 2D FFT. Answer a new instance.
+	- extent is appropriate for FFT (i.e. integer power of two)
+	- psf is a ConvolutionKernel
+	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	
+	FloatImage lena convolutionCircularWith: (ConvolutionKernel gaussian: 13@1 extent: 11) :: displayAt: 0@0 zoom: 2
+	"
+
+	| otf complex answer |
+
+	"Prepare convolution kernel for the actual extent of the tile."
+	otf _ psf otf: width.
+
+	answer _ self copy.
+	complex _ ComplexImage realPart: answer.
+	complex fftTransform: true.
+	complex *= otf.
+	complex fftTransform: false.
+	^ answer! !
+
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:11'!
 convolutionLinearWith: aFloatMatrix
 	"Linear convolution. Warning: Slow.
 	Answer is of enough size to hold the whole convolution
@@ -1720,7 +1671,10 @@ convolutionLinearWith: aFloatMatrix
 	Answer a new FloatImage. Don't modify receiver or argument.
 	
 	Performance could be enhanced using the fast #fillWith:displaced: on a temporal image, for each nonzero element of the kernel,
-	and multiply and add with fast floatArray operations"
+	and multiply and add with fast floatArray operations
+
+	FloatImage lena convolutionLinearWith: (ConvolutionKernel gaussian: 1) :: displayAt: 0@0 zoom: 2
+	"
 
 	| answer h w v |
 	h _ aFloatMatrix height.
@@ -1737,7 +1691,7 @@ convolutionLinearWith: aFloatMatrix
 					]]]].
 	^answer! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 5/22/2015 13:08'!
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:24'!
 convolutionLinearWithSmallKernel: kernel
 	"Linear convolution. Warning: Slow.
 	Answer is same extent as receiver.
@@ -1746,7 +1700,10 @@ convolutionLinearWithSmallKernel: kernel
 	Answer a new FloatImage. Don't modify receiver or argument.
 
 	Performance could be enhanced using the fast #fillWith:displaced: on a temporal image, for each nonzero element of the kernel,
-	and multiply and add with fast floatArray operations"
+	and multiply and add with fast floatArray operations
+
+	FloatImage lena convolutionLinearWithSmallKernel: (ConvolutionKernel gaussian: 3@1 extent: 11) :: displayAt: 0@0 zoom: 2
+	"
 
 	| answer kernelH kernelW v deltaI deltaJ iMax iMin jMax jMin xx yy |
 	kernelH _ kernel height.
@@ -1773,64 +1730,60 @@ convolutionLinearWithSmallKernel: kernel
 			answer x: x y: y put: v ]].
 	^answer! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:40:32'!
-convolutionWith: trimmedPsf
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:29'!
+convolutionWith: psf
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
-	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
-		(as image filters are usually specified)
-	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
-	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
-	- Implemented with tiles. Tile border effects are taken care of.
-	
-	"
-
-	^ self convolutionWith: trimmedPsf trimResult: true guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
-
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:39:05'!
-convolutionWith: trimmedPsf trimResult: trimResult guardZoneInto: aBlock
-	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
-	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
-		(as image filters are usually specified)
+	- psf is a ConvolutionKernel
 	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
 	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
 	- Implemented with tiles. Tile border effects are taken care of.
 
-	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image. If trimResult is false, then keep original size, but leave a black border at the edges, covering the result guard zone.
+	FloatImage lena convolutionWith: (ConvolutionKernel gaussian: 3@1 extent: 11) :: displayAt: 0@0 zoom: 2
 	"
 
-	| tileSize otfRealPart otfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth |
-	tileSize _ 1024 min: (2 raisedToInteger: (width max: height) log2 ceiling).
+	^ self convolutionWith: psf guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
+
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:50'!
+convolutionWith: psf guardZoneInto: aBlock
+	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
+	- psf is a ConvolutionKernel
+	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
+	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
+	- Implemented with tiles. Tile border effects are taken care of.
+
+	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image.
+
+	FloatImage lena convolutionWith: (ConvolutionKernel gaussian: 3@1 extent: 11) guardZoneInto: [ :w :h |] :: displayAt: 0@0 zoom: 2
+	"
+
+	| otf  tileSize tile guardZoneHeight guardZoneWidth maxTileSize minTileSize |
+	"Borders of each tile that we need to discard due to border effects in circular convolution on the tile"
+	minTileSize _ 2 raisedToInteger: ((psf width max: psf width) * 2) log2 ceiling.					"So at least 1/4 of the tile is effectively used to compose result"
+	maxTileSize _ 2 raisedToInteger: (width + psf width max: height + psf width) log2 ceiling.	"This is already enough for all the image plus the guard zone, so it doesn't make sense to go beyond that."
+	tileSize _ (1024*0+128 max: minTileSize) min: maxTileSize. 												"Some reasonable default, but never below min nor beyond max"
+	guardZoneWidth _ psf width // 2 min: tileSize // 4.
+	guardZoneHeight _  psf width // 2 min: tileSize // 4.
 
 	"Prepare convolution kernel for the actual extent of the tile."
-	fft _ self otfForPsf: trimmedPsf heightAndWidth: tileSize.
-	otfRealPart _ fft realData.
-	otfImaginaryPart _ fft imagData.
+	otf _ psf otf: tileSize.
 
 	"Do convolution in each tile and get results."
-	guardZoneWidth _ (trimmedPsf width / 2) ceiling.		"Number of pixels we are willing to lose on each side, to avoid border effects."
-	guardZoneHeight _ (trimmedPsf height / 2) ceiling.		"Number of pixels we are willing to lose at top and bottom, to avoid border effects."
 	aBlock value: guardZoneHeight value: guardZoneWidth.
-	tileImaginary _ FloatImage width: tileSize height: tileSize.
+	tile _ ComplexImage height: tileSize width: tileSize.
 	^ self
-		withTilesDo: [ :tileReal |
-			tileImaginary *= 0.
-			"Transform to Fourier space"
-			fft realData: tileReal imagData: tileImaginary.
-			fft transformForward: true.
-			"Multiply."
-			tileReal imaginary: tileImaginary elementMultiplyBy: otfRealPart imaginary: otfImaginaryPart.
-			"And transform back"
-			fft transformForward: false ] 
-		tileSize: tileSize
+		over: tile realPart
+		do: [
+			tile imaginaryPart *= 0.
+			tile fftTransform: true.
+			tile *= otf.
+			tile fftTransform: false ]
 		horizontalGuardZone: guardZoneWidth
-		verticalGuardZone: guardZoneHeight
-		trimResult: trimResult! !
+		verticalGuardZone: guardZoneHeight! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:40:51'!
-deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:44'!
+deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
-	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
-		(as image filters are usually specified)
+	- psf is a ConvolutionKernel
 	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
 	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
 	- Implemented with tiles. Tile border effects are taken care of.
@@ -1838,12 +1791,11 @@ deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor
 
 Play with this in a Workspace
 i _ FloatImage lena.
-psf _ FloatMatrix withRows: #(
+psf _ ConvolutionKernel withRows: #(
 		#(0.8 0.0 0.2) 
 		#(0.0 0.1 0.2) 
 		#(0.20 0.0 0.0)
 	).
-psf normalizeSum.
 convolved _ i convolutionWith: psf.
 noisy _ convolved copy addNormalNoise: 0.05.
 deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13.
@@ -1854,31 +1806,29 @@ noisy displayAt: 10@10.
 deconvolved displayAt: 10@10.
 	"
 
-	^ self deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor trimResult: true guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
+	^ self deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:39:38'!
-deconvolutionWith: trimmedPsf maxNoiseAmplification: maxNoiseFactor trimResult: trimResult guardZoneInto: aBlock
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:54'!
+deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor guardZoneInto: aBlock
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
-	- pixelScaledPsf is at the same scale as receiver, but usually much smaller. Largest coefficients should be at the center of the image
-		(as image filters are usually specified)
+	- psf is a ConvolutionKernel
 	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
 	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
 	- Implemented with tiles. Tile border effects are taken care of.
 	- maxNoiseFactor is required in many case to avoid division by zero. Typical values are between 4 and 8. Use values larger than 20 if you know what you are doing.
 
-	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image. If trimResult is false, then keep original size, but leave a black border at the edges, covering the result guard zone.
+	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image.
 
 Play with this in a Workspace
 i _ FloatImage lena.
-psf _ FloatMatrix withRows: #(
+psf _ ConvolutionKernel withRows: #(
 		#(0.8 0.0 0.2) 
 		#(0.0 0.1 0.2) 
 		#(0.20 0.0 0.0)
 	).
-psf normalizeSum.
-convolved _ i convolutionWith: psf trimResult: true.
-noisy _ convolved copy addNormalNoise: 0.05.
-deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13 trimResult: true.
+convolved _ i convolutionWith: psf.
+noisy _ convolved copy addNormalNoise: 0.1.
+deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 1.5 guardZoneInto: [ :gzh :ghw ].
 i display.
 convolved display.
 noisy display.
@@ -1886,104 +1836,62 @@ deconvolved display.
 
 Play with this in a Workspace
 i _ FloatImage lena.
-psf _ FloatMatrix withRows: #(
+psf _ ConvolutionKernel withRows: #(
 		#(0.8 0.0 0.2) 
 		#(0.0 0.1 0.2) 
 		#(0.20 0.0 0.0)
 	).
-psf normalizeSum.
-convolved _ i convolutionWith: psf trimResult: false.
+convolved _ i convolutionWith: psf guardZoneInto: [ :gzh :ghw ].
 noisy _ convolved copy addNormalNoise: 0.05.
-deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13 trimResult: false.
+deconvolved _ noisy deconvolutionWith: psf maxNoiseAmplification: 13 guardZoneInto: [ :gzh :ghw ].
 i display.
 convolved display.
 noisy display.
 deconvolved display.
 	"
 
-	| tileSize otfRealPart otfImaginaryPart fft tileImaginary guardZoneHeight guardZoneWidth otfInverseImaginaryPart otfInverseRealPart psfInverseImaginaryPart psfInverseRealPart trimmed |
+	| otf tileSize tile guardZoneHeight guardZoneWidth otfInverse inversePSF trimmedInversePSF |
 
-	tileSize _ 1024 min: (2 raisedToInteger: (width max: height) log2 ceiling).
+	"If image is rather small, make tile big enough for an inverse psf of the same extent of image itself"
+	tileSize _ 1024 min: (2 raisedToInteger: (width max: height)*2 log2 ceiling).
 
 	"Prepare convolution kernel for the actual extent of the tile."
-	fft _ self otfForPsf: trimmedPsf heightAndWidth: tileSize.
-	otfRealPart _ fft realData.
-	otfImaginaryPart _ fft imagData.
+	otf _ psf otf: tileSize.
 
 	"Compute the 'inverse' otf, limiting noise amplification"
-	otfInverseRealPart _ FloatImage width: tileSize height: tileSize.
-	otfInverseImaginaryPart _ FloatImage width: tileSize height: tileSize.
-	otfInverseRealPart += 1.
-	otfInverseRealPart imaginary: otfInverseImaginaryPart elementDivideBy: otfRealPart imaginary: otfImaginaryPart maxGain: maxNoiseFactor.
+	otfInverse _ ComplexImage extent: tileSize.
+	otfInverse realPart += 1.
+	otfInverse  elementDivideBy: otf maxGain: maxNoiseFactor.
 
-	"Compute the 'inverse' psf, to check its support, and find proper guard zones"
-	psfInverseRealPart _ otfInverseRealPart copy.
-	psfInverseImaginaryPart _ otfInverseImaginaryPart copy.
-
-"Plot in the Fourier domain. Enable to understand better how these animals behave."
-"
-trimmed _ psfInverseRealPart moveOriginToCenter: false.
-rrf _ trimmed i: trimmed height / 2*0 + 1.
-trimmedI _ psfInverseImaginaryPart moveOriginToCenter: false.
-iif _ trimmedI i: trimmed height / 2*0 + 1.
-g _ FunctionGraphMorph new.
-g domain: (1 to: 256).
-g addFunction: [ :i | rrf at: i ] color: Color green.
-g addFunction: [ :i | iif at: i ] color: Color red.
-g addFunction: [ :i | ((rrf at: i) squared + (iif at: i) squared)sqrt ] color: Color blue.
-(g embeddedInMorphicWindowLabeled: 'graph') openInWorld.
-"
-
-	fft realData: psfInverseRealPart imagData: psfInverseImaginaryPart.
-	fft transformForward: false.
-
-"Plot in the spatial domain. Enable to understand better how these animals behave."
-"
-trimmed _ psfInverseRealPart moveOriginToCenter: false.
-rr _ trimmed i: trimmed height / 2*0 + 1.
-trimmedI _ psfInverseImaginaryPart moveOriginToCenter: false.
-ii _ trimmedI i: trimmed height / 2*0 + 1.
-g _ FunctionGraphMorph new.
-g domain: (1 to: 256).
-g addFunction: [ :i | rr at: i ] color: Color green.
-g addFunction: [ :i | ii at: i ] color: Color red.
-g addFunction: [ :i | ((rr at: i) squared + (ii at: i) squared)sqrt ] color: Color blue.
-(g embeddedInMorphicWindowLabeled: 'graph') openInWorld.
-"
-
-	trimmed _ psfInverseRealPart moveOriginToCenter: false.
-
-"Difficult balance between artifacts and lost pixels!!"
-"	trimmed _ trimmed trimCentered: trimmed sum / 512."
-	"For convolution, we chose sum/512. Support is usually very small and all values are positive (their effect accumulates).
-	But deconvolution (inverse) kernels tend to have larger support, and both positive and negative coefficients (whose effects sorts of cancels when coefficients gets smaller to the sides)"
-	"trimmed _ trimmed trimCentered: trimmed sum / 64."
+	"Find and apply proper Guard Zones.
+	For this, compute the 'inverse' psf, to check its support"
+	inversePSF _ ComplexImage realPart: otfInverse realPart copy imaginaryPart: otfInverse imaginaryPart copy.
+	inversePSF fftTransform: false.
+	trimmedInversePSF _ inversePSF realPart moveOriginToCenter: true.
 	"Maybe should be a parameter. For very large images, this seems appropriate."
-	trimmed _ trimmed trimCentered: trimmed sum / 1024.
+	trimmedInversePSF _ trimmedInversePSF trimCentered: trimmedInversePSF sum / 1024.
+	"
+	inversePSF realPart moveOriginToCenter: true :: * 1000 :: display
+	trimmedInversePSF * 1000::display
+	"
 	"Number of pixels we are willing to lose on each side, to avoid border effects."
-	guardZoneWidth _ trimmed width / 2.
-	guardZoneHeight _ trimmed height / 2.
+	guardZoneWidth _ trimmedInversePSF width / 2 min: tileSize//4.
+	guardZoneHeight _ trimmedInversePSF height / 2 min: tileSize//4.
 	aBlock value: guardZoneHeight value: guardZoneWidth.
 
 	"Do convolution in each tile and get results."
-	tileImaginary _ FloatImage width: tileSize height: tileSize.
+	tile _ ComplexImage height: tileSize width: tileSize.
 	^ self
-		withTilesDo: [ :tileReal |
-			tileImaginary *= 0.
-			"Transform to Fourier space"
-			fft realData: tileReal imagData: tileImaginary.
-			fft transformForward: true.
-			"Multiply."
-"			tileReal imaginary: tileImaginary elementDivideBy: otfRealPart imaginary: otfImaginaryPart maxGain: maxNoiseFactor."
-			tileReal imaginary: tileImaginary elementMultiplyBy: otfInverseRealPart imaginary: otfInverseImaginaryPart.
-			"And transform back"
-			fft transformForward: false ] 
-		tileSize: tileSize
+		over: tile realPart
+		do: [
+			tile imaginaryPart *= 0.
+			tile fftTransform: true.
+			tile *= otfInverse.
+			tile fftTransform: false ]
 		horizontalGuardZone: guardZoneWidth
-		verticalGuardZone: guardZoneHeight
-		trimResult: trimResult! !
+		verticalGuardZone: guardZoneHeight! !
 
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 12/13/2016 10:52:05'!
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:20:27'!
 fourierDeconvolutionOf: blurredImages deconvolve: kernels maxNoiseAmplification: maxNoiseFactor
 	"
 	Experiments towards good deconvolution with SEVERAL images and kernels.
@@ -2017,14 +1925,14 @@ fourierDeconvolutionOf: blurredImages deconvolve: kernels maxNoiseAmplification:
 		imageReals at: idx put: imageR.
 		imageI _ FloatImage width: width height: height.
 		imageImaginaries at: idx put: imageI.
-		fft realData: imageR imagData: imageI.
+		fft realMatrix: imageR imaginaryMatrix: imageI.
 		fft transformForward: true.
 		kernelR _ FloatImage width: width height: height.
 		kernelR fillWith: (kernels at: idx).
 		kernelReals at: idx put: kernelR.
 		kernelI _ FloatImage width: width height: height.
 		kernelImaginaries at: idx put: kernelI.
-		fft realData: kernelR imagData: kernelI.
+		fft realMatrix: kernelR imaginaryMatrix: kernelI.
 		fft transformForward: true ].
 	resultI _ FloatImage width: width height: height.
 	1 to: height do: [ :y |
@@ -2055,7 +1963,7 @@ fourierDeconvolutionOf: blurredImages deconvolve: kernels maxNoiseAmplification:
 			self x: x y: y put: eSum.
 			resultI x: x y: y put: fSum.
 			]].
-	fft realData: self imagData: resultI.
+	fft realMatrix: self imaginaryMatrix: resultI.
 	"Do not transform back self"
 	"fft transformForward: false"
 	^fft! !
@@ -2079,25 +1987,6 @@ laplacian
 	aux fillWith: self displaced: 1 @ 0.
 	yFiltered elements += aux elements.
 	^yFiltered! !
-
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 7/31/2017 22:50:43'!
-otfForPsf: trimmedPsf heightAndWidth: aNumber
-	"Compute the OTF
-	https://en.wikipedia.org/wiki/Optical_transfer_function
-	"
-	| movedToOriginPsf otfRealPart otfImaginaryPart fft |
-	movedToOriginPsf _ trimmedPsf moveOriginToCenter: false.
-	movedToOriginPsf normalizeSum.
-
-	"Prepare convolution kernel for the actual extent of the tile."
-	otfRealPart _ FloatImage width: aNumber height: aNumber.
-	otfImaginaryPart _ FloatImage width: aNumber height: aNumber.
-	otfRealPart fillLowFFTFrequenciesWith: movedToOriginPsf.
-
-	fft _ FFT2D new.
-	fft realData: otfRealPart imagData: otfImaginaryPart.
-	fft transformForward: true.
-	^ fft! !
 
 !FloatImage methodsFor: 'filtering' stamp: 'jmv 10/19/2017 12:43:43'!
 scharr
@@ -2188,53 +2077,6 @@ scharrNoDataValue: noDataValue dilatedBy: extraPixels avoidSaturatedPixels: aBoo
 	mask _ mask erodedBy: neighborhood.
 	borders *= mask.
 	^ borders! !
-
-!FloatImage methodsFor: 'filtering' stamp: 'jmv 9/29/2017 16:27:15'!
-withTilesDo: aBlock tileSize: aNumber horizontalGuardZone: guardZoneWidth verticalGuardZone: guardZoneHeight trimResult: trimResult
-	"
-	Split receiver in tiles that are an integer power of 2 in height and width.
-	Evaluate a block with each tile.
-	For many operation that produce defects on the borders of the image (such as FFT-based, i.e. circular, convolution and deconvolution):
-		guardZoneWidth: 		Number of pixels we are willing to lose on each side of a tile, to avoid border effects.
-		guardZoneHeight:	Number of pixels we are willing to lose at top and bottom of a tile, to avoid border effects.
-	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image. If trimResult is false, then keep original size, but leave a black border at the edges, covering the result guard zone.
-	"
-	| activeTileWidth activeTileHeight result tile verticalTileCount horizontalTileCount tileOriginInSelf activeResultHeight activeResultWidth tilePositionInResult |
-	activeTileWidth _ aNumber - (2*guardZoneWidth).
-	activeTileHeight _ aNumber - (2*guardZoneHeight).
-	activeResultWidth _ self width - (guardZoneWidth * 2).
-	activeResultHeight _ self height - (guardZoneHeight * 2).
-	result _ FloatImage extent: (trimResult ifTrue: [activeResultWidth @ activeResultHeight ] ifFalse: [self extent]).
-
-	tile _ FloatImage width: aNumber height: aNumber.
-	verticalTileCount _ (activeResultHeight / activeTileHeight) ceiling.
-	horizontalTileCount _ (activeResultWidth / activeTileWidth) ceiling.
-	activeTileHeight _ (activeResultHeight / verticalTileCount) ceiling.
-	activeTileWidth _ (activeResultWidth / horizontalTileCount) ceiling.
-	
-	1 to: verticalTileCount do: [ :iTile |
-		1 to: horizontalTileCount do: [ :jTile |
-
-			"Copy stuff to tile"
-			tileOriginInSelf _ (jTile-1 * activeTileWidth +1) @ (iTile-1 * activeTileHeight +1).
-			tile *= 0.	"Remove possible leftovers from last iteration"
-			self
-				copyToTile: tile
-				position: tileOriginInSelf.
-
-			"Do stuff"
-			aBlock value: tile.
-
-			"Grab results"
-			tilePositionInResult _ trimResult ifTrue: [tileOriginInSelf - (guardZoneWidth@guardZoneHeight)] ifFalse: [tileOriginInSelf].
-			result
-				copyFromTile: tile
-				position: tilePositionInResult
-				leftGuardZone: guardZoneWidth
-				topGuardZone: guardZoneHeight
-				activewWidth: activeTileWidth
-				activeHeight: activeTileHeight ]].
-	^ result! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 6/30/2017 11:58:11'!
 correlationABSWith: another deltai: di deltaj: dj
@@ -2385,7 +2227,7 @@ correlationWith: another deltai: di deltaj: dj
 	sum = 0.0 ifTrue: [ ^ 0.0 ].
 	^ sum / (mySquaredSum * othersSquaredSum) sqrt! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 10/17/2016 10:39:31'!
+!FloatImage methodsFor: 'image registration' stamp: 'jmv 7/2/2018 14:48:42'!
 crossCorrelationWith: aFloatImage phase: aBoolean
 	"Compute cross correlation with argument, usig 2D FFT. Store the result on self.
 	if aBoolean, compute phase correlation.
@@ -2396,42 +2238,25 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 
 	Note: Circular convolution (input is considered periodic, repeating itself at ends).
 	Note: Input is assumed to be real, and answer is real too.
-	Note: modifies both self and aFloatImage. Call with copies if appropriate.
+	Note: modifies both self and aFloatImage. Call with copies if appropriate."
 	"
-	| imaginary argumentImaginary fft a b c d e f magnitude |
-	imaginary _ FloatImage width: width height: height.
-	argumentImaginary _ FloatImage width: width height: height.
-
-	"Transform both to Fourier space. Allocate space for imaginary coefficients."
-	fft _ FFT2D new.
-	fft realData: aFloatImage imagData: argumentImaginary.
-	fft transformForward: true.
-	fft realData: self imagData: imaginary.
-	fft transformForward: true.
-
-	"Use complex conjugate of argument"
-	argumentImaginary *= -1.
-"imaginary *= -1."
-
-	"Multiply"
-	1 to: height do: [ :y |
-		1 to: width do: [ :x |
-			a _ self x: x y: y.
-			b _ imaginary x: x y: y.
-			c _ aFloatImage x: x y: y.
-			d _ argumentImaginary x: x y: y.
-			e _ a * c - (b * d).
-			f _ b * c + (a * d).
-			aBoolean ifTrue: [
-				magnitude _ (e squared + f squared) sqrt.
-				magnitude = 0.0 ifFalse: [
-					e _ e / magnitude.
-					f _ f / magnitude ]].
-			self x: x y: y put: e.
-			imaginary x: x y: y put: f ]].
-
-	"And transform back self"
-	fft transformForward: false! !
+	| i1 i2 t phaseCorrelation |
+	i1 _ FloatImage lena.
+	t _ AffineTransformation withTranslation: 115.0 / 4 @ (213.0/4).
+	i2 _ i1 areaTransformedBy: t resultExtent: i1 extent.
+	phaseCorrelation _ i2 crossCorrelationWith: i1 phase: true.
+	phaseCorrelation *10 :: display
+	"
+	| complex other |
+	complex _ ComplexImage realPart: self.
+	other _ ComplexImage realPart: aFloatImage.
+	complex fftTransform: true.
+	other fftTransform: true.
+	other beComplexConjugate.
+	complex *= other.
+	aBoolean ifTrue: [
+		complex normalizeMagnitudes ].
+	complex fftTransform: false! !
 
 !FloatImage methodsFor: 'image registration' stamp: 'jmv 11/30/2016 10:51:36'!
 deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNil
@@ -2495,8 +2320,8 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNi
 
 	^dx @dy! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 13:43:30'!
-displayAsHeatmapAt: aPoint zoom: anInteger
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:19:07'!
+displayAsHeatmapAt: aPoint zoom: scale
 	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
 	
 	FloatImage lena displayAsHeatmapAt: 10@10 zoom: 4
@@ -2506,8 +2331,8 @@ displayAsHeatmapAt: aPoint zoom: anInteger
 	"Use Jet heatmap color. Zero is green. 1 is red. -1 is blue."
 	| form |
 	form _ self asHeatmap: [ :index | elements at: index ] minVal: -1 maxVal: 1.
-	anInteger = 1 ifFalse: [
-		form _ form magnifyBy: anInteger ].
+	scale = 1 ifFalse: [
+		form _ form magnifyBy: scale ].
 	form displayAt: aPoint! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 7/18/2016 10:16:43'!
@@ -2521,8 +2346,8 @@ displayAt: aPoint
 
 	self asForm displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 13:42:32'!
-displayAt: aPoint zoom: anInteger
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:19:14'!
+displayAt: aPoint zoom: scale
 	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
 	
 	FloatImage lena displayAt: 10@10 zoom: 4
@@ -2546,12 +2371,12 @@ displayAt: aPoint zoom: anInteger
 			ifTrue: [ r _ b _ g ]
 			ifFalse: [ r _ b _ 0 ].
 		word at: 1 put: b; at: 2 put: g; at: 3 put: r ].
-	anInteger = 1 ifFalse: [
-		form _ form magnifyBy: anInteger ].
+	scale = 1 ifFalse: [
+		form _ form magnifyBy: scale ].
 	form displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 12:21:54'!
-displayWithGammaAt: aPoint zoom: anInteger
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:19:21'!
+displayWithGammaAt: aPoint zoom: scale
 	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
 	Assume receiver is in linear scale.
 	Apply appropriate gamma encoding to make good use of pixel dynamic range.
@@ -2559,65 +2384,8 @@ displayWithGammaAt: aPoint zoom: anInteger
 
 	| form |
 	form _ self asGammaFormUnitRange displayAt: aPoint.
-	anInteger = 1 ifFalse: [
-		form _ form magnifyBy: anInteger ].
-	form displayAt: aPoint! !
-
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 19:14:23'!
-withImaginary: aFloatImage displayMagnitudeLog: takeLog andPhaseAt: aPoint zoom: anInteger
-	"Show phase of receiver and argument considered as a Complex image
-	FloatImage lena withImaginary: FloatImage lena sqrt displayPhaseAt: 100@100
-	"
-
-	| imaginaryValues max form complex magnitude |
-	imaginaryValues _ aFloatImage elements.
-	max _ elements max.
-	takeLog ifTrue: [ max _ (max+1) log ].
-	form _ self asComplexHeatmap: [ :index |
-		complex _ (elements at: index) + (imaginaryValues at: index) i.
-		takeLog ifTrue: [
-			magnitude _ complex magnitude.
-			complex _ magnitude isZero ifTrue: [0] ifFalse: [complex * ((magnitude+1) log/ magnitude)]].
-		complex ]
-		maxMagnitude: max.
-	anInteger = 1 ifFalse: [
-		form _ form magnifyBy: anInteger ].
-	form displayAt: aPoint! !
-
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/25/2018 14:55:40'!
-withImaginary: aFloatImage displayMagnitudeLog: takeLog at: aPoint zoom: anInteger
-	"Show logarithm of magnitude of receiver and argument considered as a Complex image
-	FloatImage lena withImaginary: FloatImage lena sqrt displayMagnitudeLog: false at: 100@100 zoom: 2
-	FloatImage lena withImaginary: FloatImage lena sqrt displayMagnitudeLog: true at: 100@100 zoom: 2
-	"
-
-	| form imaginaryValues complex magnitude max |
-	imaginaryValues _ aFloatImage elements.
-	max _ elements max.
-	takeLog ifTrue: [ max _ (max+1) log ].
-	form _ self as8bitForm: [ :index |
-		complex _ (elements at: index) + (imaginaryValues at: index) i.
-		magnitude _ complex magnitude.
-		takeLog ifTrue: [ magnitude _ (magnitude+1) log ].
-		(magnitude / max * 255 + 0.5) truncated min: 255 max: 0 ].
-	anInteger = 1 ifFalse: [
-		form _ form magnifyBy: anInteger ].
-	form displayAt: aPoint! !
-
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 6/26/2018 14:22:06'!
-withImaginary: aFloatImage displayPhaseAt: aPoint zoom: anInteger
-	"Show phase of receiver and argument considered as a Complex image
-	FloatImage lena withImaginary: FloatImage lena sqrt displayPhaseAt: 100@100 zoom: 2
-	"
-
-	| form imaginaryValues complex |
-	imaginaryValues _ aFloatImage elements.
-	form _ self asHeatmap: [ :index |
-		complex _ (elements at: index) + (imaginaryValues at: index) i.
-		complex phase ]
-		minVal: Float pi negated maxVal: Float pi.
-	anInteger = 1 ifFalse: [
-		form _ form magnifyBy: anInteger ].
+	scale = 1 ifFalse: [
+		form _ form magnifyBy: scale ].
 	form displayAt: aPoint! !
 
 !FloatImage methodsFor: 'private' stamp: 'jmv 10/19/2017 13:17:52'!
@@ -2724,13 +2492,6 @@ guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValu
 					f _ yb-y / guardZone y abs+1 max: 0.0.
 					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
 	self x: x y: y put: nullValue! !
-
-!FloatImage methodsFor: 'private' stamp: 'jmv 8/13/2012 16:52'!
-validateSameSize: aFloatImage
-	"For arithmetic between the receiver and the argument."
-
-	(height = aFloatImage height and: [ width = aFloatImage width ]) ifFalse: [
-		self error: 'Receiver and argument should be of the same size' ]! !
 
 !FloatImage methodsFor: 'operations' stamp: 'jmv 9/1/2014 14:27'!
 fillRect: aRectangle with: aFloat
@@ -2987,6 +2748,53 @@ openCLNormalizedCoordinatesForOneBased: oneBasedCoordinates
 	See NormalizedCoordinatesExperiment in the OpenCL package"
 
 	^ ((oneBasedCoordinates x-0.5)/width) @ ((oneBasedCoordinates y-0.5)/height)! !
+
+!FloatImage methodsFor: 'iterating' stamp: 'jmv 7/4/2018 16:20:48'!
+over: tile do: aBlock horizontalGuardZone: guardZoneWidth verticalGuardZone: guardZoneHeight
+	"
+	Split receiver in tiles that are an integer power of 2 in height and width.
+	Evaluate a block with each tile.
+	For many operation that produce defects on the borders of the image (such as FFT-based, i.e. circular, convolution and deconvolution):
+		guardZoneWidth: 		Number of pixels we are willing to lose on each side of a tile, to avoid border effects.
+		guardZoneHeight:	Number of pixels we are willing to lose at top and bottom of a tile, to avoid border effects.
+	"
+	| activeTileWidth activeTileHeight result verticalTileCount horizontalTileCount tileOriginInSelf activeResultHeight activeResultWidth tilePositionInResult |
+	activeTileWidth _ tile width - (2*guardZoneWidth).
+	activeTileHeight _ tile height - (2*guardZoneHeight).
+	activeResultWidth _ self width.
+	activeResultHeight _ self height.
+	result _ FloatImage extent: self extent.
+
+	verticalTileCount _ (activeResultHeight / activeTileHeight) ceiling.
+	horizontalTileCount _ (activeResultWidth / activeTileWidth) ceiling.
+	activeTileHeight _ (activeResultHeight / verticalTileCount) ceiling.
+	activeTileWidth _ (activeResultWidth / horizontalTileCount) ceiling.
+
+	1 to: verticalTileCount do: [ :iTile |
+		1 to: horizontalTileCount do: [ :jTile |
+
+			"Copy stuff to tile"
+			tileOriginInSelf _ (jTile-1 * activeTileWidth +1-guardZoneWidth) @ (iTile-1 * activeTileHeight +1-guardZoneHeight).
+			tile *= 0.	"Remove possible leftovers from last iteration"
+			self
+				copyToTile: tile
+				startingJ: tileOriginInSelf x
+				i: tileOriginInSelf y
+				mirrorWidth: guardZoneWidth
+				mirrorHeight: guardZoneHeight.
+			"Do stuff"
+			aBlock value.
+
+			"Grab results"
+			tilePositionInResult _ tileOriginInSelf.
+			result
+				copyFromTile: tile
+				position: tilePositionInResult
+				leftGuardZone: guardZoneWidth
+				topGuardZone: guardZoneHeight
+				activewWidth: activeTileWidth
+				activeHeight: activeTileHeight ]].
+	^ result! !
 
 !FloatImage methodsFor: 'iterating' stamp: 'jmv 8/24/2014 00:12'!
 pixelsAtChebyshevDistance: distance ofX: baseX y: baseY do: aBlock
@@ -3246,75 +3054,6 @@ lineHistogramsHeatmap
 		h percentile: 0.9 plotOn: plot y: i-1.
 	].
 	^ plot! !
-
-!FloatImage class methodsFor: 'experiments' stamp: 'jmv 6/25/2018 12:22:05'!
-blurEstimationExperiment
-
-| answer aux bits blur blurred electronsPerDN estimation exposure f fullWell gap maxD maxDN original plotter r readNoiseElectrons sharpnessessX sharpnessessY xDer xDerDer xDerDerDer xDerDerDerDer zeros |
-Display fill: (0@0 extent: 1900@800) fillColor: Color white.
-gap _ 40.
-fullWell _ 22050.
-bits _ 8.
-maxDN _ 1 << bits - 1.
-electronsPerDN _ fullWell / maxDN.
-readNoiseElectrons _ 43.	"Vita 25 specs say 2 DN10 22050/1024*2.0"
-exposure _ 0.5.
-exposure _ 0.1.
-exposure _ 0.9.
-exposure _ 0.3.
-original _ FloatImage lena.
-original _ original copy: (1@1 extent: 256@128).
-aux _ FloatImage extent: original extent.
-f _ fullWell*exposure.
-maxD _ 20.
-sharpnessessX _ FloatArray new: maxD.
-sharpnessessY _ FloatArray new: maxD.
-zeros _ FloatArray new: maxD.
-"#(0.5 0.7 1 1.2 1.5 2 3 4 5 6 7 8 9 10 15 20 22 25 28 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100) withIndexDo: [ :b :blurIndex |"
-"#(10 15 20 25 30 35 40) withIndexDo: [ :b :blurIndex |"
-"#(1.5 2 3 4 5 6 ) withIndexDo: [ :b :blurIndex |"
-"#(0.5 1 1.2 1.3 1.4 1.5) withIndexDo: [ :b :blurIndex |"
-"#(0.5 1 1.2 1.3 1.4 1.5 2 4 6 8 10 20 30 40) withIndexDo: [ :b :blurIndex |"
-"#(44 45 46 47 48 49 50 51 ) withIndexDo: [ :b :blurIndex |"
-#(1 1.2 2 4 6 8 10) withIndexDo: [ :b :blurIndex |
-	blur _ FloatMatrix newSize: original extent.
-	blur fillWithGaussianKernelSigmaY: b sigmaX: 3*b/2; normalizeSum.
-
-	"#convolveWith: no longer available. Check the suitability of #convolutionWith:"
-	self halt: 'You need to check this code!!'.
-"	blurred _ original copy convolveWith: blur copy."
-	blurred _ original copy convolutionWith: blur copy.
-
-	""
-	blurred *= f.
-	blurred simulatePhotonNoise.
-	blurred simulateReadNoise: readNoiseElectrons.
-	blurred /= f.
-	""
-	
-	blurred displayWithGammaAt: (blurIndex-1*(256+gap))+2@0 zoom: 1.
-	1 to: maxD do: [ :d |
-		sharpnessessX at: d put: (blurred acutanceAt: d@0 aux: aux).
-	].
-sharpnessessY _ sharpnessessX copy.
-	xDer _ sharpnessessX derivative.
-	xDerDer _ xDer derivative.
-	xDerDerDer _ xDerDer derivative.
-	xDerDerDerDer _ xDerDerDer derivative.
-	plotter _ FFT new.
-	r _ (blurIndex-1*(256+gap))+2@257 extent:256@512.
-	plotter plot: zeros in: r color: Color green min: -0.01 max: 0.01.
-	plotter verticalLine: b range: maxD in: r color: Color green.
-	plotter plot: sharpnessessX in: r color: Color blue min: -0.1 max: 0.1.
-	plotter plot: xDer in: r color: Color cyan min: -0.01 max: 0.01.
-	estimation _ blurred blurEstimator.
-	{3*b@b. blurred blurEstimator. estimation. sharpnessessX first. blurred acutance} print.
-"	blurred blurEstimator."
-	plotter verticalLine: blurred blurEstimator x range: maxD in: r color: Color blue.
-"	plotter verticalLine: blurred blurEstimator y range: maxD in: r color: Color blue."
-].
-answer.
-! !
 
 !FloatImage class methodsFor: 'experiments' stamp: 'jmv 6/2/2016 20:33'!
 interpolationExperiment1
@@ -4253,6 +3992,199 @@ testZoomOut
 	'=== Area is really good, and very very cheap.' print.
 	'=== Lanczos gives best avoidance of aliasing effects but is quite expensive.' print.! !
 
+!ConvolutionKernel methodsFor: 'initialization' stamp: 'jmv 6/27/2018 18:10:30'!
+fillWithGaussianKernelSigmaY: sigmaY sigmaX: sigmaX
+	"
+	Fill the receiver with a gaussian function. sigmaX and sigmaY are the standard deviation of the gaussian, measured in elements (i.e. 'pixels').
+
+	(ConvolutionKernel gaussian: 2 extent: 15) normalizeMax display.
+	FFT new plot: ((ConvolutionKernel gaussian: 20 extent: 215) i: 8) normalizeMax elements in: (0@0 extent: 200@100) color: Color red min: 0 max: 1
+	"
+	| supportH supportW originI originJ v |
+	"15 sigmas is enough for the exponential function to underflow in 32 bit Float
+	(and gives a big performance gain compared with filling a huge image everywhere with zeros)"
+	supportH _ height//2 min: (15 * sigmaY) ceiling.
+	supportW _ width//2 min: (15 * sigmaX) ceiling.
+
+	"centerJ@centerI"
+	originI _ height // 2+1.
+	originJ _ width // 2+1.
+	
+	self i: originI j: originJ put: 1.
+
+	"j@centerI"
+	1 to: supportW do: [ :j |
+		v _ self gaussianI: 0 j: j sigmaY: sigmaY sigmaX: sigmaX.
+		self i: originI j: originJ+j put: v .
+		self i: originI j: originJ-j put: v ].
+
+	"centerJ@i"
+	1 to: supportH do: [ :i |
+		v _ self gaussianI: i j: 0 sigmaY: sigmaY sigmaX: sigmaX.
+		self i: originI+i j: originJ put: v.
+		self i: originI-i j: originJ put: v ].
+
+	"j@i"
+	1 to: supportH do: [ :i |
+		1 to: supportW do: [ :j |
+			v _ self gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX.
+			self i: originI+i j: originJ+j put: v.
+			self i: originI+i j: originJ-j put: v.
+			self i: originI-i j: originJ+j put: v.
+			self i: originI-i j: originJ-j put: v ]].
+	
+	self normalizeSum! !
+
+!ConvolutionKernel methodsFor: 'initialization' stamp: 'jmv 7/2/2018 12:37:14'!
+initHeight: h width: w
+	"Please only use creation methods specific for this class,
+	to help ensure immutability, odd size and sum=1.0"
+	self shouldNotImplement! !
+
+!ConvolutionKernel methodsFor: 'initialization' stamp: 'jmv 7/2/2018 12:37:17'!
+initializeElements
+	"Please only use creation methods specific for this class,
+	to help ensure immutability, odd size and sum=1.0"
+	self shouldNotImplement! !
+
+!ConvolutionKernel methodsFor: 'copying' stamp: 'jmv 7/2/2018 12:55:12'!
+trimCentered: threshold
+
+	^ ConvolutionKernel fromMatrix: (super trimCentered: threshold)! !
+
+!ConvolutionKernel methodsFor: 'misc' stamp: 'jmv 7/2/2018 12:55:53'!
+appropriateResultClass
+	"Many operations will result in a general (non sum 1.0, or odd size) matrix."
+
+	^FloatImage! !
+
+!ConvolutionKernel methodsFor: 'processing' stamp: 'jmv 7/2/2018 14:48:34'!
+otf: extent
+	"Answer the OTF of the receiver (understood as a PSF).
+	https://en.wikipedia.org/wiki/Optical_transfer_function
+	Result is a ComplexImage of required extent, suitable for processing in Fourier space.
+	Frequency zero is at top left.
+	
+	(ConvolutionKernel gaussian: 1 extent: 9) otf: 20@20
+	(ConvolutionKernel gradient: 9@9) otf: 20@20
+	"
+
+	| otfRealPart otf |
+	otfRealPart _ self withOriginOnCorners: extent asPoint.
+	otf _ ComplexImage realPart: otfRealPart.
+	otf fftTransform: true.
+	^ otf
+! !
+
+!ConvolutionKernel methodsFor: 'private' stamp: 'jmv 7/2/2018 12:38:46'!
+privateInitHeight: h width: w
+	"To be called only from instance creation methods specific to this class,
+	to help ensure immutability, odd size and sum=1.0"
+
+	height _ h.
+	width _ w.
+	elements _ FloatArray new: height * width! !
+
+!ConvolutionKernel methodsFor: 'private' stamp: 'jmv 6/27/2018 17:40:55'!
+withOriginOnCorners: extent
+	"Answer a FloaImage of required extent, with our contents on 4 corners, appropriate for FFT"
+
+	| answer widthHalf1 widthHalf0 heightHalf1 heightHalf0 formSelf formAnswer blitter|
+	answer _ FloatImage extent: extent.
+
+	widthHalf0 _ width // 2.
+	widthHalf1 _ width - widthHalf0.
+	heightHalf0 _ height // 2.
+	heightHalf1 _ height - heightHalf0.
+
+	formSelf _ Form new hackBitsForFloatMatrix: self.
+	formAnswer _ Form new hackBitsForFloatMatrix: answer.
+	blitter _ BitBlt toForm: formAnswer.
+	blitter sourceForm: formSelf; setDestForm: formAnswer; combinationRule: 3.
+
+	blitter
+		destX: 0 destY: 0 width: widthHalf1 height: heightHalf1;
+		sourceOrigin: widthHalf0@heightHalf0;
+		copyBits.
+	blitter
+		destX: extent x-widthHalf0 destY: 0 width: widthHalf0 height: heightHalf1;
+		sourceOrigin: 0@heightHalf0;
+		copyBits.
+	blitter
+		destX: 0 destY: extent y-heightHalf0 width: widthHalf1 height: heightHalf0;
+		sourceOrigin: widthHalf0@0;
+		copyBits.
+	blitter
+		destX: extent x-widthHalf0 destY: extent y-heightHalf0 width: widthHalf0 height: heightHalf0;
+		sourceOrigin: 0@0;
+		copyBits.
+
+	^answer! !
+
+!ConvolutionKernel class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 12:50:39'!
+fromMatrix: aMatrix
+	| answer |
+	answer _ self privateExtent: aMatrix extent.
+	answer += aMatrix.
+	answer normalizeSum.
+	^ answer! !
+
+!ConvolutionKernel class methodsFor: 'instance creation' stamp: 'jmv 6/27/2018 16:28:28'!
+gaussian: sigma
+	"
+	(ConvolutionKernel gaussian: 2) normalizeMax display.
+	FFT new plot: ((ConvolutionKernel gaussian: 20) i: 8) normalizeMax elements in: (0@0 extent: 200@100) color: Color red min: 0 max: 1
+	"
+	| extentX extentY sigmaCount sigmaX sigmaY |
+	sigmaCount _ 2.	"Usually enough. YMMV."
+	sigmaX _ sigma isPoint ifTrue: [sigma x] ifFalse: [sigma].
+	sigmaY _ sigma isPoint ifTrue: [sigma y] ifFalse: [sigma].
+	extentX _ (sigmaX * sigmaCount) ceiling * 2 +1.
+	extentY _ (sigmaY * sigmaCount) ceiling * 2 +1.
+	^ self gaussian: sigma extent: extentX@extentY! !
+
+!ConvolutionKernel class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 12:43:52'!
+gaussian: sigma extent: extent
+	"
+	(ConvolutionKernel gaussian: 2 extent: 15) displayAt: 10@10 zoom: 10.
+	FFT new plot: ((ConvolutionKernel gaussian: 20 extent: 215) i: 8) normalizeMax elements in: (0@0 extent: 200@100) color: Color red min: 0 max: 1
+	"
+	| k s e |
+	e _  extent asPoint.
+	e x even ifTrue: [ self error: 'Kernels must be of odd size' ].
+	e y even ifTrue: [ self error: 'Kernels must be of odd size' ].
+	k _ self privateExtent: e.
+	s _ sigma asPoint.
+	k fillWithGaussianKernelSigmaY: s y sigmaX: s x.
+	^ k! !
+
+!ConvolutionKernel class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 12:48:53'!
+withRows: aCollectionOfRows
+	"Example:
+	ConvolutionKernel withRows: #(
+		#(1 2 0 0 0 0 0) 
+		#(0 1 1 1 0 0 0)
+		#(0 0 1 1 1 0 0)
+		#(0 0 0 1 1 1 0)
+		#(0 1 0 0 1 1 0)
+	).
+	"
+
+	| result |
+	result _ self privateExtent: aCollectionOfRows first size @ aCollectionOfRows size.
+	result fillWithArrayOfArrays: aCollectionOfRows.
+	result normalizeSum.
+	^result
+! !
+
+!ConvolutionKernel class methodsFor: 'private' stamp: 'jmv 7/2/2018 12:38:39'!
+privateExtent: aPoint
+	"To be called only from instance creation methods specific to this class,
+	to help ensure immutability, odd size and sum=1.0"
+	aPoint x even ifTrue: [ self error: 'Kernels must be of odd size' ].
+	aPoint y even ifTrue: [ self error: 'Kernels must be of odd size' ].
+	^ self basicNew privateInitHeight: aPoint y width: aPoint x! !
+
 !IrregularSampledImage methodsFor: 'accessing' stamp: 'jmv 2/25/2014 10:37'!
 addVoronoiCellX: seedX y: seedY
 	"Add a new Voronoi cell to the diagram
@@ -4917,6 +4849,285 @@ plotIn: rect color: aColor min: min max: max
 from: anImageHistogram
 
 	^self new fillFrom: anImageHistogram! !
+
+!ComplexImage methodsFor: 'accessing' stamp: 'jmv 7/2/2018 19:03:43'!
+height
+	^ real height! !
+
+!ComplexImage methodsFor: 'accessing' stamp: 'jmv 7/2/2018 14:42:24'!
+imaginaryPart
+	^ imaginary! !
+
+!ComplexImage methodsFor: 'accessing' stamp: 'jmv 7/2/2018 14:42:24'!
+realPart
+	^ real! !
+
+!ComplexImage methodsFor: 'accessing' stamp: 'jmv 7/2/2018 14:47:34'!
+realPart: aFloatImage imaginaryPart: otherFloatImage
+	"Both real data and imaginary data is provided."
+
+	real _ aFloatImage.
+	imaginary _ otherFloatImage! !
+
+!ComplexImage methodsFor: 'accessing' stamp: 'jmv 7/2/2018 19:03:37'!
+width
+	^ real width! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:46:07'!
+*= aComplexImageOrNumber
+	aComplexImageOrNumber isNumber ifTrue: [
+		real *= aComplexImageOrNumber.
+		imaginary *= aComplexImageOrNumber ]
+	ifFalse: [
+		self elementMultiplyBy: aComplexImageOrNumber ]! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:43:52'!
++= aComplexImage
+	real += aComplexImage realPart.
+	imaginary += aComplexImage imaginaryPart! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:43:59'!
+-= aComplexImage
+	real -= aComplexImage realPart.
+	imaginary -= aComplexImage imaginaryPart! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:43:22'!
+/= aComplexImageOrNumber
+	aComplexImageOrNumber isNumber ifTrue: [
+		real /= aComplexImageOrNumber.
+		imaginary /= aComplexImageOrNumber ]
+	ifFalse: [
+		self elementDivideBy: aComplexImageOrNumber maxGain: nil ]! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:42:24'!
+beComplexConjugate
+	imaginary *= -1! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:49:39'!
+elementDivideBy: aComplexImage maxGain: allowedMagnitudeGrowthOrNil
+	"Fill the receiver with the result of complex division with operand, element by element.
+	I.e., at each position of the matrix, compute (e+if) = (a+ib) / (c+id)
+
+	| m1 m1a m2 r1 i1 r1a i1a r2 i2 |
+	r1 := FloatMatrix fromArrayOfArrays: #(
+		#( 1 1 1)
+		#( 2 2 2)
+		#( 1 1 1)).
+	i1 := FloatMatrix fromArrayOfArrays: #(
+		#( 2 2 2)
+		#( 1 1 1)
+		#( 2 2 2)).
+	r2 := FloatMatrix fromArrayOfArrays: #(
+		#( 0.1 0.5 1.0)
+		#( 0.1 0.5 1.0)
+		#( 0.1 0.5 1.0)).
+	i2 := FloatMatrix fromArrayOfArrays: #(
+		#( 0.1 0.5 1.0)
+		#( 0.1 0.5 1.0)
+		#( 0.1 0.5 1.0)).
+	r1a := r1 copy.
+	i1a := i1 copy.
+	Transcript clear.
+	'---------' print.
+	r1 print. i1 print.
+	m1 := ComplexImage realPart: r1 imaginaryPart: i1.
+	m1a := ComplexImage realPart: r1a imaginaryPart: i1a.
+	m2 := ComplexImage realPart: r2 imaginaryPart: i2.
+	m1 /= m2.
+	'=====' print.
+	r1 print. i1 print.
+	m1a elementDivideBy: m2 maxGain: 2.
+	'............' print.
+	r1a print. i1a print
+	"
+
+	| a b c d e f operandNormSquared alreadyAppliedGain gainLimiter |
+	1 to: real height do: [ :i |
+		1 to: real width do: [ :j |
+			c _ aComplexImage realPart i: i j: j.
+			d _ aComplexImage imaginaryPart i: i j: j.
+			e _ 0.0.
+			f _ 0.0.
+			operandNormSquared _ c * c + (d * d).
+			operandNormSquared isZero ifFalse: [
+				a _ real i: i j: j.
+				b _ imaginary i: i j: j.
+				e _ a * c + (b * d) / operandNormSquared.
+				f _ b * c - (a * d) / operandNormSquared.
+				"Only if a limit to applied gain is specified..."
+				allowedMagnitudeGrowthOrNil ifNotNil: [
+					alreadyAppliedGain _ 1.0 / operandNormSquared sqrt.
+					allowedMagnitudeGrowthOrNil < alreadyAppliedGain ifTrue: [
+						"Less than one if gain limiting needed"
+						gainLimiter _ allowedMagnitudeGrowthOrNil / alreadyAppliedGain.
+						e _ e * gainLimiter.
+						f _ f * gainLimiter.
+					].
+				].
+			].
+			real i: i j: j put: e.
+			imaginary i: i j: j put: f ]]! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:46:47'!
+elementMultiplyBy: aComplexImage
+	"Fill the receiver with the result of complex multiplication with operand, element by element.
+	I.e., at each position of the matrix, compute (e+if) = (a+ib) * (c+id)"
+
+	"Slow reference version"
+	"
+	| a b c d e f |
+	1 to: real height do: [ :i |
+		1 to: real width do: [ :j |
+			a _ real i: i j: j.
+			b _ imaginary i: i j: j.
+			c _ aComplexImage realPart i: i j: j.
+			d _ aComplexImage imaginaryPart i: i j: j.
+			e _ a * c - (b * d).
+			f _ b * c + (a * d).
+			real i: i j: j put: e.
+			imaginary i: i j: j put: f ]]
+	"
+
+	| width c d aByC bByC aByD bByD e f |
+	width _ real width.
+	c _ FloatMatrix newRowVectorSize: width.
+	d _ FloatMatrix newRowVectorSize: width.
+	aByC _ FloatMatrix newRowVectorSize: width.
+	bByC _ FloatMatrix newRowVectorSize: width.
+	aByD _ FloatMatrix newRowVectorSize: width.
+	bByD _ FloatMatrix newRowVectorSize: width.
+	1 to: real height do: [ :i |
+		
+		" Compute:
+		e _ a * c - (b * d).
+		f _ b * c + (a * d)."
+		
+		aComplexImage realPart i: i copyTo: c.
+		real i: i copyTo: aByC.
+		aByC elements *= c elements.
+		imaginary i: i copyTo: bByC.
+		bByC elements *= c elements.
+		
+		aComplexImage imaginaryPart i: i copyTo: d.
+		real i: i copyTo: aByD.
+		aByD elements *= d elements.
+		imaginary i: i copyTo: bByD.
+		bByD elements *= d elements.
+		
+		e _ aByC.
+		e elements -= bByD elements.
+		f _ bByC.
+		f elements += aByD elements.
+
+		real i: i put: e.
+		imaginary i: i put: f ]! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:42:24'!
+normalizeMagnitudes
+	"Make the magnitude of all complex elements be 1.0.
+	Keep only phase information"
+	
+	| magnitude |
+	magnitude _ self magnitude.
+	real /= magnitude.
+	imaginary /= magnitude.! !
+
+!ComplexImage methodsFor: 'magnitude and phase' stamp: 'jmv 7/2/2018 14:42:24'!
+magnitude
+
+	^real squared + imaginary squared :: sqrt! !
+
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 16:49:29'!
+asHeatmap: aBlock maxMagnitude: maxMagnitude
+	"Fill 32bit Form with rgb values as computed by aBlock. See senders."
+
+	^ real as32bitForm: [ :index :word | | complex color |
+		complex _ aBlock value: index.
+		color _ Color h: complex phase / Float twoPi *360 + Color green hue s: 0.7 v: complex magnitude / maxMagnitude * 0.8.
+		word at: 1 put: color blue * 255 // 1; at: 2 put: color green * 255 // 1; at: 3 put: color red * 255// 1 ]! !
+
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:18:46'!
+displayMagnitude: compressMagnitude andPhaseAt: aPoint zoom: scale
+	"Show magnitude and phase of receiver
+	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitude: false andPhaseAt: 100@100 zoom: 2
+	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitude: true andPhaseAt: 100@100 zoom: 2
+	"
+	| realValues imaginaryValues max form complex |
+	realValues _ real elements.
+	imaginaryValues _ imaginary elements.
+	max _ realValues max + imaginaryValues max.
+	compressMagnitude ifTrue: [ max _ max sqrt ].
+	form _ self asHeatmap: [ :index |
+		complex _ (realValues at: index) + (imaginaryValues at: index) i.
+		compressMagnitude ifTrue: [
+			complex _ Complex magnitude: complex magnitude sqrt phase: complex phase ].
+		complex ]
+		maxMagnitude: max.
+	scale = 1 ifFalse: [
+		form _ form magnifyBy: scale ].
+	form displayAt: aPoint! !
+
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:18:52'!
+displayMagnitudeAndPhaseAt: aPoint zoom: scale
+	"Show magnitude and phase of receiver
+	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitudeAndPhaseAt: 100@100 zoom: 2
+	"
+	^ self displayMagnitude: true andPhaseAt: aPoint zoom: scale! !
+
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:18:59'!
+displayPhaseAt: aPoint zoom: scale
+	"Show phase of receive
+	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayPhaseAt: 100@100 zoom: 2
+	"
+	| realValues imaginaryValues form |
+	realValues _ real elements.
+	imaginaryValues _ imaginary elements.
+	form _ self asHeatmap: [ :index |
+		Complex
+			magnitude: 1
+			phase: ((realValues at: index) + (imaginaryValues at: index) i) phase ]
+		maxMagnitude: 2.
+	scale = 1 ifFalse: [
+		form _ form magnifyBy: scale ].
+	form displayAt: aPoint! !
+
+!ComplexImage methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 14:42:24'!
+fftTransform: forward
+	"Compute complex 2d FFT, being me the real part and aMatrix the imaginary part of the data to transform.
+	Frequency zero is at topLeft, i=1;j=1.
+	"
+	| transform |
+	transform _ FFT2D new.
+	transform complexMatrix: self.
+	transform transformForward: forward! !
+
+!ComplexImage methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 14:46:53'!
+fillLowFFTFrequenciesWith: aComplexImage
+	real fillLowFFTFrequenciesWith: aComplexImage realPart.
+	imaginary fillLowFFTFrequenciesWith: aComplexImage imaginaryPart! !
+
+!ComplexImage class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 14:52:55'!
+extent: aPointOrNumber
+	"Answer an instance"
+	^ self
+		realPart: (FloatImage extent: aPointOrNumber asPoint)
+		imaginaryPart: (FloatImage extent: aPointOrNumber asPoint)! !
+
+!ComplexImage class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 14:53:01'!
+height: h width: w
+	"Answer an instance"
+	^ self
+		realPart: (FloatImage extent: w@h)
+		imaginaryPart: (FloatImage extent: w@h)! !
+
+!ComplexImage class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 14:42:24'!
+realPart: real
+	"Only real part supplied. Assume imaginary part is zero."
+	^ self new realPart: real imaginaryPart: (real class extent: real extent)! !
+
+!ComplexImage class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 14:42:24'!
+realPart: real imaginaryPart: imag
+	^ self new realPart: real imaginaryPart: imag! !
 
 !BSplineInterpolatingImage methodsFor: 'private' stamp: 'jmv 8/13/2012 17:00'!
 coefficientAtX: x y: y
@@ -6013,21 +6224,38 @@ new: anIntegerPowerOfTwo
 	^ self new setSize: anIntegerPowerOfTwo
 ! !
 
-!FFT2D methodsFor: 'outputs' stamp: 'jmv 9/17/2007 12:49'!
-imagData
+!FFT2D methodsFor: 'outputs' stamp: 'jmv 6/27/2018 11:05:53'!
+imaginaryMatrix
 	^ imagMatrix! !
 
-!FFT2D methodsFor: 'outputs' stamp: 'jmv 9/17/2007 12:49'!
-realData
+!FFT2D methodsFor: 'outputs' stamp: 'jmv 6/27/2018 11:05:58'!
+realMatrix
 	^ realMatrix! !
 
-!FFT2D methodsFor: 'inputs' stamp: 'jmv 9/17/2007 09:55'!
-realData: real
+!FFT2D methodsFor: 'inputs' stamp: 'jmv 6/27/2018 15:06:46'!
+complexMatrix: aComplexMatrix
+	"Both real data and imaginary data is provided.
+	When the FFT is computed, the result includes both real and imaginary information"
+
+	realMatrix _ aComplexMatrix realPart.
+	imagMatrix _ aComplexMatrix imaginaryPart! !
+
+!FFT2D methodsFor: 'inputs' stamp: 'jmv 6/27/2018 10:59:53'!
+realMatrix: real
+	"Only real data is provided, not imaginary data.
+	When the FFT is computed, imaginary data is considered zero on input and discarded on output.
+	The result is usually only useful is input data is symmetric (and then we know that Fourier transform is Real)"
+
 	realMatrix _ real.
 	imagMatrix _ nil! !
 
-!FFT2D methodsFor: 'inputs' stamp: 'jmv 9/17/2007 09:55'!
-realData: real imagData: imag
+!FFT2D methodsFor: 'inputs' stamp: 'jmv 6/27/2018 14:25:57'!
+realMatrix: real imaginaryMatrix: imag
+	"Both real data and imaginary data is provided.
+	When the FFT is computed, the result includes both real and imaginary information
+	Prefer #complexMatrix:
+	"
+
 	realMatrix _ real.
 	imagMatrix _ imag! !
 
@@ -6380,119 +6608,26 @@ bilinearInterpolatedValueAtX: x y: y
 
 	^interpolated! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/24/2015 11:06'!
-convolutionLinearWith: aForm
-	"Apply a linear convolution with self to aForm. Warning: Slow.
-	It is usually preferred to do a circular convolution via FFT and take care of border effects."
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 14:48:55'!
+gaussianBlur: sigma
+	"Apply an arbitrary low pass filtar to remove the high frequency content.
+	width and height must be an integer power of 2.
+	sigma is the width of the filter in spatial domain
 	"
-	| f m |
-	f _ Form fromUser.
-	m _ FloatMatrix m: 7 n: 7.
-	m fillWithGaussianKernelSigmaY: 1 sigmaX: 1.
-	m _ m moveOriginToCenter: true.
-	(m convolutionLinearWith: f) display
 	"
-
-	| resultWidth resultHeight result xx yy blue c green red k deltaI deltaJ |
-	resultWidth _ aForm width.
-	resultHeight _ aForm height.
-	k _ 1.0 / elements sum.
-	result _ Form extent: resultWidth@resultHeight depth: 32.
-	deltaI _ height // 2 + 1.
-	deltaJ _ width // 2 + 1.
-	1 to: resultHeight do: [ :y |
-		1 to: resultWidth do: [ :x |
-			red _ 0.0.
-			green _ 0.0.
-			blue _ 0.0.
-			1 to: height do: [ :j |
-				1 to: width do: [ :i |
-					xx _ x-i+deltaI.
-					yy _ y-j+deltaJ.
-					(xx > 0) & (xx <= aForm width) & (yy > 0) & (yy <= aForm height)
-						ifTrue: [
-							c _ aForm colorAt: xx@yy.
-							red _ c red * (self i: i j: j) + red.
-							green _ c green * (self i: i j: j) + green.
-							blue _ c blue * (self i: i j: j) + blue ]]].
-			red _ red * k min: 1.0 max: 0.0.
-			green _ green * k min: 1.0 max: 0.0.
-			blue _ blue * k min: 1.0 max: 0.0.
-			result colorAt: x@y put:
-				(Color r: red g: green b: blue).
-		].
-	].
-	^result! !
-
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/28/2015 11:09'!
-fftImaginary: aMatrix forward: forward
-	"Compute complex 2d FFT, being me the real part and aMatrix the imaginary part of the data to transform.
-	Frequency zero is at topLeft, i=1;j=1.
+	FloatImage lena displayAt: 0@0.
+	FloatImage lena gaussianBlur:2 :: displayAt: 256@0.
+	FloatImage lena gaussianBlur:5 :: displayAt: 512@0.
 	"
-	| transform |
-	transform _ FFT2D new.
-	transform realData: self imagData: aMatrix.
-	transform transformForward: forward! !
+	
+	| complex blur |
+	complex _ ComplexImage realPart: self.
+	complex fftTransform: true.
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 9/18/2007 13:56'!
-fftRealForward: forward
-	"Answer real part of 2d FFT, being me the real part of the data to transform.
-	I.e. no imaginary part on input, and imaginary part on output is discarded"
-	| transform |
-	transform _ FFT2D new.
-	transform realData: self.
-	transform transformForward: forward! !
+	blur _ (ConvolutionKernel gaussian: sigma) otf: width@height.
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 6/25/2018 19:33:53'!
-fillWithGaussianKernelSigmaY: sigmaY sigmaX: sigmaX
-	"
-	Fill the receiver with a gaussian function. sigmaX and sigmaY are the standard deviation of the gaussian, measured in elements (i.e. 'pixels').
-	Origin is at topLeft, appropriate for doing a circular convolution.
-	#moveOriginToCenter to make it more confortable to see, and to make it appropriate for linear convolution.
-
-	| f |
-	f _ FloatMatrix height: 16 width: 16.
-	f fillWithGaussianKernelSigmaY: 1 sigmaX: 1.
-	f _ f moveOriginToCenter: true.
-	f asForm display.
-	FFT new plot: (f i: f height//2+1) elements in: (0@0 extent: 200@100) color: Color red min: 0 max: 1
-
-	| f |
-	f _ FloatMatrix height: 1000 width: 1000.
-	f fillWithGaussianKernelSigmaY: 22 sigmaX: 12.5.
-	f _ f moveOriginToCenter: true.
-	f asForm display.
-	FFT new plot: (f i: f height//2+1) elements in: (0@0 extent: 200@100) color: Color red min: 0 max: 1
-	"
-	| supportH supportW v |
-	"15 sigmas is enough for the exponential function to underflow in 32 bit Float
-	(and gives a big performance gain compared with filling everything with zeros)"
-	supportH _ height//2 min: (15 * sigmaY) ceiling.
-	supportW _ width//2 min: (15 * sigmaX) ceiling.
-
-	"0@0"
-	self i: 1 j: 1 put: 1.
-
-	"j@0"
-	1 to: supportW do: [ :j |
-		v _ self gaussianI: 0 j: j sigmaY: sigmaY sigmaX: sigmaX.
-		self i: 1 j: j+1 put: v .
-		self i: 1 j: width-j+1 put: v ].
-
-	"i@0"
-	1 to: supportH do: [ :i |
-		v _ self gaussianI: i j: 0 sigmaY: sigmaY sigmaX: sigmaX.
-		self i: i+1 j: 1 put: v.
-		self i: height-i+1 j: 1 put: v ].
-
-	"i@j"
-	1 to: supportH do: [ :i |
-		1 to: supportW do: [ :j |
-			v _ self gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX.
-			self i: i+1 j: j+1 put: v.
-			self i: i+1 j: width-j+1 put: v.
-			self i: height-i+1 j: j+1 put: v.
-			self i: height-i+1 j: width-j+1 put: v ]]! !
+	complex *= blur.
+	complex fftTransform: false! !
 
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/27/2015 15:34'!
 gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX
@@ -6513,34 +6648,18 @@ gaussianI: i j: j sigmaY: sigmaY sigmaX: sigmaX
 	"
 	^ (((1.0*j/sigmaX) squared + (1.0*i/sigmaY) squared) / 2) negated exp! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 4/16/2015 12:25'!
-lowPassFilter
-	"Apply a low pass filtar to remove the high half frequency content.
-	width and height must be an integer power of 2.
-	Before using this, reevaluate assumtions, etc. This is not a good filter by most measures..."
-	
-	| imaginary transform blur |
-	imaginary _ FloatMatrix height: height width: width.
-	transform _ FFT2D new.
-	transform realData: self imagData: imaginary.
-	transform transformForward: true.
-
-	blur _ FloatMatrix height: height width: width.
-	blur fillWithGaussianKernelSigmaY: 16 sigmaX: 16.
-	self elements *= blur elements.
-	imaginary elements *= blur elements.
-
-	transform transformForward: false! !
-
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/17/2011 13:21'!
 normalizeMax
 	"An image can be said to be properly exposed when the maximum value is 1.0"
 	elements /= elements max! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/17/2011 13:15'!
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 11:13:17'!
 normalizeSum
 	"A filter is normalized when its elements add to 1.0"
-	elements /= elements sum! !
+	| sum |
+	sum _ elements sum.
+	sum isZero ifFalse: [
+		elements /= sum ]! !
 
 !FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 8/26/2011 10:03'!
 scatterPlotWith: aFloatMatrix size: n
