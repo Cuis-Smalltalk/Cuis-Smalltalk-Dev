@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3359] on 4 July 2018 at 5:48:27 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3364] on 6 July 2018 at 8:59:44 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 47!
+!provides: 'LinearAlgebra' 1 48!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #LinearAlgebra!
 
@@ -2151,6 +2151,36 @@ round
 				a _ self i: i j: j.
 				b _ (10.0 raisedTo: a abs log truncated - 5).
 				self i: i j: j put: (a roundTo: b) ] ] ]! !
+
+!FloatMatrix methodsFor: 'iterating' stamp: 'jmv 7/5/2018 15:35:49'!
+with: anotherImage collect: aBlock
+	"
+	FloatImage lena with: (FloatMatrix identity: 256) collect: [ :v1 :v2 | v1-v2] :: display
+	"
+	| otherValues answer answerElements |
+	self validateSameSize: anotherImage.
+	otherValues _ anotherImage elements.
+	answer _ self appropriateResultClass width: width height: height.
+	answerElements _ answer elements.
+	1
+		to: elements size
+		do: [ :i |
+			answerElements
+				at: i
+				put: (aBlock value: (elements at: i) value: (otherValues at: i)) ].
+	^ answer! !
+
+!FloatMatrix methodsFor: 'iterating' stamp: 'jmv 7/5/2018 15:32:15'!
+with: anotherImage replaceValues: aBlock
+	| otherValues |
+	self validateSameSize: anotherImage.
+	otherValues _ anotherImage elements.
+	1
+		to: elements size
+		do: [ :i |
+			elements
+				at: i
+				put: (aBlock value: (elements at: i) value: (otherValues at: i)) ]! !
 
 !FloatMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:26'!
 form: aForm color: aSymbol

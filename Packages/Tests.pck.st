@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3350] on 15 June 2018 at 10:54:29 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3362] on 6 July 2018 at 8:44:16 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 81!
-!requires: 'SignalProcessing' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 82!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -674,6 +674,16 @@ TestCase subclass: #FileManTest
 	category: 'Tests-FileMan'!
 !classDefinition: 'FileManTest class' category: #'Tests-FileMan'!
 FileManTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CollectionTest category: #'Tests-Collections'!
+TestCase subclass: #CollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections'!
+!classDefinition: 'CollectionTest class' category: #'Tests-Collections'!
+CollectionTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #IntervalTest category: #'Tests-Collections'!
@@ -9566,6 +9576,29 @@ testStream
 	file1 delete.
 	self should: [file1 exists not].
 	! !
+
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:14:11'!
+testGroupByHavingSelectsTheResultOfGroupBy
+
+	| collectionToGroupBy groupedByEven |
+	
+	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
+	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ] having: [ :group | group size > 2 ].
+	
+	self assert: 1 equals: (groupedByEven size).	
+	self assert: (collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false) ! !
+
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:15:41'!
+testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
+
+	| collectionToGroupBy groupedByEven |
+	
+	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
+	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ].
+	
+	self assert: 2 equals: groupedByEven size.
+	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
+	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
 
 !IntervalTest methodsFor: 'helpers' stamp: 'sqr 5/26/2016 18:13'!
 assert: aNumber isAbout: anotherNumber

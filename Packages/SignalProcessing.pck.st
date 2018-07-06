@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3359] on 4 July 2018 at 5:48:40 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3364] on 6 July 2018 at 9:00:03 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 92!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'SignalProcessing' 1 93!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'Statistics' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -406,15 +406,17 @@ The following changes from cody's listings should also be noted...
 2.  The four routines WaveletDecomposition, DecomposeBranches, WaveletReconstruction, ReconstructBranches have all been merged into transformForward:.
 3.  All indexing follows the Smalltalk 1-to-N convention, naturally.!
 
-!FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/27/2012 18:16'!
+!FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/5/2018 07:27:09'!
 * aFloatImageOrNumber
-	"Answer a new FloatImage. Don't affect receiver or argument in any way."
+	"Answer a new FloatImage. Don't affect receiver or argument in any way.
+	Element by element product."
 
 	^self copy *= aFloatImageOrNumber! !
 
-!FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/27/2012 18:16'!
+!FloatImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/5/2018 07:28:10'!
 / aFloatImageOrNumber
-	"Answer a new FloatImage. Don't affect receiver or argument in any way."
+	"Answer a new FloatImage. Don't affect receiver or argument in any way.
+	Element by element division."
 
 	^self copy /= aFloatImageOrNumber! !
 
@@ -2516,18 +2518,6 @@ guardZone: aPoint
 	"
 	self guardZone: aPoint topLeftNullFill: 0@0 bottomRightNullFill: 0@0! !
 
-!FloatImage methodsFor: 'operations' stamp: 'jmv 8/23/2014 23:44'!
-with: anotherImage replaceValues: aBlock
-	| otherValues |
-	self validateSameSize: anotherImage.
-	otherValues _ anotherImage elements.
-	1
-		to: elements size
-		do: [ :i |
-			elements
-				at: i
-				put: (aBlock value: (elements at: i) value: (otherValues at: i)) ]! !
-
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 8/9/2012 15:42'!
 histogram
 	^self histogram: 256! !
@@ -3168,6 +3158,33 @@ gradient: extent
 			answer x: x y: y put: x+y-2 / (extent x + extent y - 2) ]].
 	^answer! !
 
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 09:59:06'!
+randomBoxes: extent
+"
+FloatImage randomBoxes: 256 :: display
+"
+	| backColor canvas form location boxExtent x0 y0 |
+	backColor _ `Color gray: 30/255`.
+	form _ Form extent: extent asPoint depth: 32.
+	form fillColor: backColor.
+	location _ (AffineTransformation withRadians: -3/360*Float twoPi scale: 256*0.35 position: 127.5@127.5) withYAxisNegated.
+	canvas _ VectorCanvas onForm: form.
+	canvas intoLocation: location.
+	20 timesRepeat: [
+		canvas fillColor: (Random withDefaultDo: [ :r | Color gray: r next]) do: [
+			boxExtent _ Random withDefaultDo: [ :r | r next].
+			x0 _ Random withDefaultDo: [ :r | r next*2-1+(boxExtent/2)].
+			y0 _ Random withDefaultDo: [ :r | r next*2-1-(boxExtent/2)].
+			canvas
+			moveToX: x0 y: y0;
+			lineToX: x0-boxExtent y: y0;
+			lineToX: x0-boxExtent y: y0+boxExtent;
+			lineToX: x0 y: y0+boxExtent;
+			lineToX: x0 y: y0
+		].
+	].
+	^ FloatImage from32BitColorForm: form component: #green.! !
+
 !FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 6/25/2018 10:34:40'!
 resolutionTarget: extent
 	"
@@ -3184,7 +3201,7 @@ resolutionTarget: extent offsetFromCenter: anOffsetFromCenter
 	"
 	^ self resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: nil blackColor: nil grayColor: nil whiteColor: nil! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 6/25/2018 10:34:21'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 14:27:18'!
 resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: aBackColor blackColor: aBlackColor grayColor: aGrayColor whiteColor: aWhiteColor
 
 	| offsetFromCenter backColor blackColor grayColor whiteColor location canvas form |
@@ -3196,7 +3213,7 @@ resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: aBackCo
 
 	form _ Form extent: extent asPoint depth: 32.
 	form fillColor: backColor.
-	location _ (AffineTransformation withRadians: -3/360*Float twoPi scale: 256*0.35 position: 127.5@127.5 + offsetFromCenter) withYAxisNegated.
+	location _ (AffineTransformation withRadians: -3/360*Float twoPi scale: extent*0.35 position: extent-1/2.0 + offsetFromCenter) withYAxisNegated.
 	canvas _ VectorCanvas onForm: form.
 	canvas intoLocation: location.
 	canvas fillColor: whiteColor do: [
@@ -3226,6 +3243,44 @@ resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: aBackCo
 			lineToX: 0 y: 0
 	].
 	^ FloatImage from32BitColorForm: form component: #green.! !
+
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 14:52:38'!
+siemensStar: extent
+	"
+	FloatImage siemensStar: 256 :: displayAt: 0@0 zoom: 4
+	"
+	^ self siemensStar: extent count: 32 offsetFromCenter: 0@0 backColor: `Color gray: 50/255` foreColor: `Color gray: 200/255`! !
+
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 14:52:05'!
+siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: backColor foreColor: foreColor
+	"
+	FloatImage siemensStar: 256 :: displayAt: 0@0 zoom: 4
+	"
+	| angle canvas form location |
+	angle _ Float twoPi / count / 2.
+	form _ Form extent: extent asPoint depth: 32.
+	form fillColor: backColor.
+	canvas _ VectorCanvas onForm: form.
+	1 to: count do: [ :i |
+		location _ AffineTransformation withRadians: i * angle * 2+0.02 scale: extent*0.45 position: extent-1/2.0 + offsetFromCenter.
+		canvas intoLocation: location.
+		canvas fillColor: foreColor do: [
+			canvas
+				moveToX: 0 y: 0;
+				lineToX: 1 y: 0;
+				lineToX: angle cos y: angle sin;
+				lineToX: 0 y: 0.
+		canvas outOfLocation.
+		].
+	].
+	^FloatImage from32BitColorForm: form component: #green! !
+
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 14:53:59'!
+siemensStar: extent offsetFromCenter: anOffsetFromCenter
+	"
+	FloatImage siemensStar: 256 :: displayAt: 0@0 zoom: 4
+	"
+	^ self siemensStar: extent count: 32 offsetFromCenter: anOffsetFromCenter backColor: `Color gray: 50/255` foreColor: `Color gray: 200/255`! !
 
 !FloatImage class methodsFor: 'examples' stamp: 'jmv 4/28/2015 12:00'!
 example3
@@ -4873,31 +4928,75 @@ realPart: aFloatImage imaginaryPart: otherFloatImage
 width
 	^ real width! !
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:46:07'!
-*= aComplexImageOrNumber
-	aComplexImageOrNumber isNumber ifTrue: [
-		real *= aComplexImageOrNumber.
-		imaginary *= aComplexImageOrNumber ]
+!ComplexImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/5/2018 07:27:02'!
+* aComplexImageOrNumber
+	"Answer a new ComplexImage. Don't affect receiver or argument in any way.
+	Element by element product."
+
+	^self copy *= aComplexImageOrNumber! !
+
+!ComplexImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/5/2018 07:27:43'!
++ aComplexImageOrNumber
+	"Answer a new ComplexImage. Don't affect receiver or argument in any way.
+	Element by element adition."
+
+	^self copy += aComplexImageOrNumber! !
+
+!ComplexImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/5/2018 07:27:55'!
+- aComplexImageOrNumber
+	"Answer a new ComplexImage. Don't affect receiver or argument in any way.
+	Element by element substraction."
+
+	^self copy -= aComplexImageOrNumber! !
+
+!ComplexImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/5/2018 07:27:27'!
+/ aComplexImageOrNumber
+	"Answer a new ComplexImage. Don't affect receiver or argument in any way.
+	Element by element division."
+
+	^self copy /= aComplexImageOrNumber! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/5/2018 12:37:44'!
+*= aComplexOrFloatImageOrNumber
+	"Element by element"
+
+	(aComplexOrFloatImageOrNumber is: #ComplexImage) ifTrue: [
+		self elementMultiplyBy: aComplexOrFloatImageOrNumber ]
 	ifFalse: [
-		self elementMultiplyBy: aComplexImageOrNumber ]! !
+		real *= aComplexOrFloatImageOrNumber.
+		imaginary *= aComplexOrFloatImageOrNumber ]! !
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:43:52'!
-+= aComplexImage
-	real += aComplexImage realPart.
-	imaginary += aComplexImage imaginaryPart! !
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/5/2018 12:37:49'!
++= aComplexOrFloatImageOrNumber
+	"Element by element"
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:43:59'!
--= aComplexImage
-	real -= aComplexImage realPart.
-	imaginary -= aComplexImage imaginaryPart! !
-
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:43:22'!
-/= aComplexImageOrNumber
-	aComplexImageOrNumber isNumber ifTrue: [
-		real /= aComplexImageOrNumber.
-		imaginary /= aComplexImageOrNumber ]
+	(aComplexOrFloatImageOrNumber is: #ComplexImage) ifTrue: [
+		real += aComplexOrFloatImageOrNumber realPart.
+		imaginary += aComplexOrFloatImageOrNumber imaginaryPart ]
 	ifFalse: [
-		self elementDivideBy: aComplexImageOrNumber maxGain: nil ]! !
+		real += aComplexOrFloatImageOrNumber.
+		imaginary += aComplexOrFloatImageOrNumber ]! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/5/2018 12:37:37'!
+-= aComplexOrFloatImageOrNumber
+	"Element by element"
+
+	(aComplexOrFloatImageOrNumber is: #ComplexImage) ifTrue: [
+		real -= aComplexOrFloatImageOrNumber realPart.
+		imaginary -= aComplexOrFloatImageOrNumber imaginaryPart ]
+	ifFalse: [
+		real -= aComplexOrFloatImageOrNumber.
+		imaginary -= aComplexOrFloatImageOrNumber ]! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/5/2018 12:38:28'!
+/= aComplexOrFloatImageOrNumber
+	"Element by element"
+
+	(aComplexOrFloatImageOrNumber is: #ComplexImage) ifTrue: [
+		self elementDivideBy: aComplexOrFloatImageOrNumber maxGain: nil ]
+	ifFalse: [
+		real /= aComplexOrFloatImageOrNumber.
+		imaginary /= aComplexOrFloatImageOrNumber ]! !
 
 !ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:42:24'!
 beComplexConjugate
@@ -5022,20 +5121,24 @@ elementMultiplyBy: aComplexImage
 		real i: i put: e.
 		imaginary i: i put: f ]! !
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:42:24'!
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/5/2018 12:40:28'!
 normalizeMagnitudes
 	"Make the magnitude of all complex elements be 1.0.
 	Keep only phase information"
 	
-	| magnitude |
-	magnitude _ self magnitude.
-	real /= magnitude.
-	imaginary /= magnitude.! !
+	self /= self magnitude! !
 
 !ComplexImage methodsFor: 'magnitude and phase' stamp: 'jmv 7/2/2018 14:42:24'!
 magnitude
 
 	^real squared + imaginary squared :: sqrt! !
+
+!ComplexImage methodsFor: 'processing' stamp: 'jmv 7/5/2018 09:33:44'!
+psf
+	| psf |
+	psf _ self copy fftTransform: false :: realPart :: moveOriginToCenter: true.
+	psf _ psf copy: (Rectangle origin: 2@2 extent: psf extent-1).
+	^ ConvolutionKernel fromMatrix: (psf trimCentered: 1.0e-3)! !
 
 !ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 16:49:29'!
 asHeatmap: aBlock maxMagnitude: maxMagnitude
@@ -5046,8 +5149,18 @@ asHeatmap: aBlock maxMagnitude: maxMagnitude
 		color _ Color h: complex phase / Float twoPi *360 + Color green hue s: 0.7 v: complex magnitude / maxMagnitude * 0.8.
 		word at: 1 put: color blue * 255 // 1; at: 2 put: color green * 255 // 1; at: 3 put: color red * 255// 1 ]! !
 
-!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:18:46'!
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/5/2018 15:05:40'!
 displayMagnitude: compressMagnitude andPhaseAt: aPoint zoom: scale
+	"Show magnitude and phase of receiver
+	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitude: false andPhaseAt: 100@100 zoom: 2
+	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitude: true andPhaseAt: 100@100 zoom: 2
+	"
+	| max |
+	max _ real elements max + imaginary elements max.
+	self displayMagnitude: compressMagnitude max: max andPhaseAt: aPoint zoom: scale! !
+
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/5/2018 11:22:27'!
+displayMagnitude: compressMagnitude max: maxMagnitude andPhaseAt: aPoint zoom: scale
 	"Show magnitude and phase of receiver
 	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitude: false andPhaseAt: 100@100 zoom: 2
 	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitude: true andPhaseAt: 100@100 zoom: 2
@@ -5055,7 +5168,7 @@ displayMagnitude: compressMagnitude andPhaseAt: aPoint zoom: scale
 	| realValues imaginaryValues max form complex |
 	realValues _ real elements.
 	imaginaryValues _ imaginary elements.
-	max _ realValues max + imaginaryValues max.
+	max _ maxMagnitude.
 	compressMagnitude ifTrue: [ max _ max sqrt ].
 	form _ self asHeatmap: [ :index |
 		complex _ (realValues at: index) + (imaginaryValues at: index) i.
@@ -5074,6 +5187,27 @@ displayMagnitudeAndPhaseAt: aPoint zoom: scale
 	"
 	^ self displayMagnitude: true andPhaseAt: aPoint zoom: scale! !
 
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/5/2018 08:07:40'!
+displayMagnitudeAt: aPoint zoom: scale
+	"Show magnitude and phase of receiver
+	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitudeAt: 100@100 zoom: 2
+	"
+	| realValues imaginaryValues max form complex compressMagnitude |
+	realValues _ real elements.
+	imaginaryValues _ imaginary elements.
+	max _ realValues max + imaginaryValues max.
+compressMagnitude _ true.
+	compressMagnitude ifTrue: [ max _ max sqrt ].
+	form _ real asHeatmap: [ :index |
+		complex _ (realValues at: index) + (imaginaryValues at: index) i.
+		compressMagnitude ifTrue: [
+			complex _ Complex magnitude: complex magnitude sqrt phase: complex phase ].
+		complex magnitude ]
+		minVal: 0 maxVal: max.
+	scale = 1 ifFalse: [
+		form _ form magnifyBy: scale ].
+	form displayAt: aPoint! !
+
 !ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:18:59'!
 displayPhaseAt: aPoint zoom: scale
 	"Show phase of receive
@@ -5090,6 +5224,37 @@ displayPhaseAt: aPoint zoom: scale
 	scale = 1 ifFalse: [
 		form _ form magnifyBy: scale ].
 	form displayAt: aPoint! !
+
+!ComplexImage methodsFor: 'copying' stamp: 'jmv 7/5/2018 08:17:06'!
+postCopy
+	real _ real copy.
+	imaginary _ imaginary copy! !
+
+!ComplexImage methodsFor: 'testing' stamp: 'jmv 7/5/2018 12:34:22'!
+is: aSymbol
+	^ aSymbol == #ComplexImage or: [ super is: aSymbol ]! !
+
+!ComplexImage methodsFor: 'iterating' stamp: 'jmv 7/5/2018 15:42:32'!
+with: otherImage collect: aBlock
+	| answer answerImaginaryElements answerRealElements imaginaryElements otherImaginaryElements otherRealElements realElements |
+	real validateSameSize: otherImage.
+	realElements _ real elements.
+	imaginaryElements _ imaginary elements.
+	otherRealElements _ otherImage realPart elements.
+	otherImaginaryElements _ otherImage imaginaryPart elements.
+
+	answer _ ComplexImage width: real width height: real height.
+	answerRealElements _ answer realPart elements.
+	answerImaginaryElements _ answer imaginaryPart elements.
+	1
+		to: realElements size
+	 	do: [ :i | | c c1 c2 |
+			c1 _ (realElements at: i) + (imaginaryElements at: i) i.
+			c2 _ (otherRealElements at: i) + (otherImaginaryElements at: i) i.
+			c _ aBlock value: c1 value: c2.
+			answerRealElements at: i put: c real.
+			answerImaginaryElements at: i put: c imaginary ].
+	^ answer! !
 
 !ComplexImage methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 14:42:24'!
 fftTransform: forward
@@ -5128,6 +5293,13 @@ realPart: real
 !ComplexImage class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 14:42:24'!
 realPart: real imaginaryPart: imag
 	^ self new realPart: real imaginaryPart: imag! !
+
+!ComplexImage class methodsFor: 'instance creation' stamp: 'jmv 7/5/2018 15:38:51'!
+width: w height: h
+	"Answer an instance"
+	^ self
+		realPart: (FloatImage extent: w@h)
+		imaginaryPart: (FloatImage extent: w@h)! !
 
 !BSplineInterpolatingImage methodsFor: 'private' stamp: 'jmv 8/13/2012 17:00'!
 coefficientAtX: x y: y

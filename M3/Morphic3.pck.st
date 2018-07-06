@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3287] on 4 April 2018 at 6:21:07 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3364] on 6 July 2018 at 8:59:15 am'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 49!
+!provides: 'Morphic3' 1 50!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
 !requires: 'OpenCL' 1 nil nil!
@@ -4833,6 +4833,35 @@ experiment4
 	Display forceToScreen.
 	].
 Display forceToScreen! !
+
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 7/6/2018 08:53:09'!
+siemensStar
+	"
+	VectorEngine siemensStar display
+	"
+	| angle backColor canvas count extent foreColor form location offsetFromCenter |
+	count _ 32.
+	angle _ Float twoPi / count / 2.
+	extent _ 512.
+	offsetFromCenter _ 0.
+	backColor _ `Color gray: 50/255`.
+	foreColor _ `Color gray: 200/255`.
+	form _ Form extent: extent asPoint depth: 32.
+	form fillColor: backColor.
+	canvas _ VectorCanvas onForm: form.
+	1 to: count do: [ :i |
+		location _ AffineTransformation withRadians: i * angle * 2+0.02 scale: extent*0.45 position: extent-1/2.0 + offsetFromCenter.
+		canvas intoLocation: location.
+		canvas fillColor: foreColor do: [
+			canvas
+				moveToX: 0 y: 0;
+				lineToX: 1 y: 0;
+				lineToX: angle cos y: angle sin;
+				lineToX: 0 y: 0.
+		canvas outOfLocation.
+		].
+	].
+	^form! !
 
 !VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 12/16/2017 18:17:50'!
 onForm: aForm
