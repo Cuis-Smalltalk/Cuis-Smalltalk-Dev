@@ -1,18 +1,17 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3362] on 6 July 2018 at 8:44:16 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3367] on 9 July 2018 at 4:50:10 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 82!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'SignalProcessing' 1 nil nil!
+!provides: 'Tests' 1 84!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
 SystemOrganization addCategory: #'Tests-Compiler'!
-SystemOrganization addCategory: #'Tests-Kernel-Collections'!
 SystemOrganization addCategory: #'Tests-Graphics Primitives'!
 SystemOrganization addCategory: #'Tests-Kernel'!
 SystemOrganization addCategory: #'Tests-Files'!
@@ -34,6 +33,7 @@ SystemOrganization addCategory: #'Tests-Statistics'!
 SystemOrganization addCategory: #'Tests-Kernel-Classes'!
 SystemOrganization addCategory: #'Tests-Tools-Testing'!
 SystemOrganization addCategory: #'Tests-YAXO'!
+SystemOrganization addCategory: #'Tests-Collections-Arrayed'!
 
 
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -396,66 +396,6 @@ TestCase subclass: #ScannerTest
 ScannerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BinarySearchTest category: #'Tests-Kernel-Collections'!
-TestCase subclass: #BinarySearchTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Kernel-Collections'!
-!classDefinition: 'BinarySearchTest class' category: #'Tests-Kernel-Collections'!
-BinarySearchTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CollectTest category: #'Tests-Kernel-Collections'!
-TestCase subclass: #CollectTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Kernel-Collections'!
-!classDefinition: 'CollectTest class' category: #'Tests-Kernel-Collections'!
-CollectTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #OrderedCollectionTest category: #'Tests-Kernel-Collections'!
-TestCase subclass: #OrderedCollectionTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Kernel-Collections'!
-!classDefinition: 'OrderedCollectionTest class' category: #'Tests-Kernel-Collections'!
-OrderedCollectionTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #OrderedDictionaryTest category: #'Tests-Kernel-Collections'!
-TestCase subclass: #OrderedDictionaryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Kernel-Collections'!
-!classDefinition: 'OrderedDictionaryTest class' category: #'Tests-Kernel-Collections'!
-OrderedDictionaryTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ShortIntegerArrayTest category: #'Tests-Kernel-Collections'!
-TestCase subclass: #ShortIntegerArrayTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Kernel-Collections'!
-!classDefinition: 'ShortIntegerArrayTest class' category: #'Tests-Kernel-Collections'!
-ShortIntegerArrayTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ShortWordArrayTest category: #'Tests-Kernel-Collections'!
-TestCase subclass: #ShortWordArrayTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Kernel-Collections'!
-!classDefinition: 'ShortWordArrayTest class' category: #'Tests-Kernel-Collections'!
-ShortWordArrayTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #BitBltTest category: #'Tests-Graphics Primitives'!
 TestCase subclass: #BitBltTest
 	instanceVariableNames: ''
@@ -464,6 +404,16 @@ TestCase subclass: #BitBltTest
 	category: 'Tests-Graphics Primitives'!
 !classDefinition: 'BitBltTest class' category: #'Tests-Graphics Primitives'!
 BitBltTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #BooleanTest category: #'Tests-Kernel'!
+TestCase subclass: #BooleanTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel'!
+!classDefinition: 'BooleanTest class' category: #'Tests-Kernel'!
+BooleanTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #CharacterTest category: #'Tests-Kernel'!
@@ -676,6 +626,26 @@ TestCase subclass: #FileManTest
 FileManTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #BinarySearchTest category: #'Tests-Collections'!
+TestCase subclass: #BinarySearchTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections'!
+!classDefinition: 'BinarySearchTest class' category: #'Tests-Collections'!
+BinarySearchTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CollectTest category: #'Tests-Collections'!
+TestCase subclass: #CollectTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections'!
+!classDefinition: 'CollectTest class' category: #'Tests-Collections'!
+CollectTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #CollectionTest category: #'Tests-Collections'!
 TestCase subclass: #CollectionTest
 	instanceVariableNames: ''
@@ -694,6 +664,46 @@ TestCase subclass: #IntervalTest
 	category: 'Tests-Collections'!
 !classDefinition: 'IntervalTest class' category: #'Tests-Collections'!
 IntervalTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedCollectionTest category: #'Tests-Collections'!
+TestCase subclass: #OrderedCollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections'!
+!classDefinition: 'OrderedCollectionTest class' category: #'Tests-Collections'!
+OrderedCollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedDictionaryTest category: #'Tests-Collections'!
+TestCase subclass: #OrderedDictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections'!
+!classDefinition: 'OrderedDictionaryTest class' category: #'Tests-Collections'!
+OrderedDictionaryTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ShortIntegerArrayTest category: #'Tests-Collections'!
+TestCase subclass: #ShortIntegerArrayTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections'!
+!classDefinition: 'ShortIntegerArrayTest class' category: #'Tests-Collections'!
+ShortIntegerArrayTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ShortWordArrayTest category: #'Tests-Collections'!
+TestCase subclass: #ShortWordArrayTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections'!
+!classDefinition: 'ShortWordArrayTest class' category: #'Tests-Collections'!
+ShortWordArrayTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #WeakIdentitySetTest category: #'Tests-Collections'!
@@ -884,6 +894,26 @@ TestCase subclass: #YAXOTest
 	category: 'Tests-YAXO'!
 !classDefinition: 'YAXOTest class' category: #'Tests-YAXO'!
 YAXOTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #FloatArray64Test category: #'Tests-Collections-Arrayed'!
+TestCase subclass: #FloatArray64Test
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections-Arrayed'!
+!classDefinition: 'FloatArray64Test class' category: #'Tests-Collections-Arrayed'!
+FloatArray64Test class
+	instanceVariableNames: ''!
+
+!classDefinition: #FloatArrayTest category: #'Tests-Collections-Arrayed'!
+TestCase subclass: #FloatArrayTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections-Arrayed'!
+!classDefinition: 'FloatArrayTest class' category: #'Tests-Collections-Arrayed'!
+FloatArrayTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTester category: #'Tests-Exceptions'!
@@ -7298,262 +7328,6 @@ testLiteralSymbols
 			self assert: (Compiler evaluate: str asSymbol printString) = str asSymbol
 				description: 'in all case, a Symbol must be printed in an interpretable fashion']! !
 
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
-testquickFindFirst
-
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickFindFirst: [:one | one >= eachElement]) = eachIndex.
-			self assert: (collection quickFindFirst: [:one | one >= (eachElement - 0.5)]) = eachIndex
-		].
-	self assert: (collection quickFindFirst: [:one | one > 2101]) = 0! !
-
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
-testquickFindLast
-
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickFindLast: [:one | one <= eachElement]) = eachIndex.
-			self assert: (collection quickFindLast: [:one | one <= (eachElement + 0.5)]) = eachIndex
-		].
-	self assert: (collection quickFindLast: [:one | one < 0]) = 0! !
-
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:46'!
-testquickIndexOf
-
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickIndexOf: eachElement) = eachIndex
-		].
-	self assert: (collection quickIndexOf: 999) = 0.
-	self assert: (collection quickIndexOf: 2101) = 0! !
-
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 15:01'!
-testquickIndexOfWithSemistableOrder
-
-	| collection |
-	collection := SortedCollection
-		sortBlock: [:x :y | x key <= y key].
-	1 to: 1000 do: [:each | collection add: each -> each].
-	1 to: 50 do: [:each | collection add: 42 -> each].
-	self assert: (collection quickIndexOf: 42 -> 6) = 48! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
-testIdentitySet
-	"
-	CollectTest  new testIdentitySet
-	"
-	| col result |
-	col _ #(1 2 3 1.0 2.0 3.0) asIdentitySet.
-	result _ col collect: [ :elem |  elem yourself ].
-	self assert: result class = IdentitySet.
-	self assert: result = #(1 2 3 1.0 2.0 3.0) asIdentitySet.
-	self assert: result = col! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 10:51'!
-testOrderedCollection
-	"
-	CollectTest  new testOrderedCollection
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ col collect: [ :elem |  elem * 2 ].
-	self assert: result class = OrderedCollection.
-	self assert: result = #(2 4 6 8 10) asOrderedCollection! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
-testSet
-	"
-	CollectTest  new testSet
-	"
-	| col result |
-	col _ #(1 2 3 1.0 2.0 3.0) asSet.
-	result _ col collect: [ :elem |  elem yourself ].
-	self assert: result class = Set.
-	self assert: result = #(1 2 3) asSet.
-	self assert: result = col! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:01'!
-testSortedCollection
-	"
-	CollectTest  new testSortedCollection
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asSortedCollection: [ :a :b | a > b ].
-	result _ col collect: [ :elem |  elem * 2 ].
-	self assert: result class = OrderedCollection.
-	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
-testCollectAsReceiverIsModified
-	"
-	This test modifies a collection while iterating it.
-	This is very bad practice and should never be done.
-	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #collect:
-
-	OrderedCollectionTest new testCollectAsReceiverIsModified
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ OrderedCollection new.
-	col collect: [ :elem | 
-		result add: elem.
-		elem < 4 ifTrue: [ col add: col size + 1 ]].
-	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
-testDoAsReceiverIsModified
-	"
-	This test modifies a collection while iterating it.
-	This is very bad practice and should never be done.
-	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #do:
-
-	OrderedCollectionTest new testDoAsReceiverIsModified
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ OrderedCollection new.
-	col do: [ :elem | 
-		result add: elem.
-		elem < 4 ifTrue: [ col add: col size + 1 ]].
-	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
-testReverseDoAsReceiverIsModified
-	"
-	This test modifies a collection while iterating it.
-	This is very bad practice and should never be done.
-	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:by:do:,  as called by #reverseDo:
-
-	OrderedCollectionTest new testReverseDoAsReceiverIsModified
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ OrderedCollection new.
-	col reverseDo: [ :elem |
-		result add: elem.
-		col size > 3 ifTrue: [ col removeFirst ]].
-	"Not nice, but what can we expect if we remove stuff during iteration?"
-	self assert: result = #(nil nil 3 4 5) asOrderedCollection reversed! !
-
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
-testOrder
-	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
-
-	"Test that #do:, #select: and #collect: iterate in the correct order"
-	dict _ OrderedDictionary new.
-	data _ self sampleData.
-	desiredOrder _ data collect: [ :pair | pair second ].
-	data do: [ :pair |
-		dict at: pair first put: pair second ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-	self assert: orderingByDo = desiredOrder.
-
-	aux _ dict select: [ :each | true ].
-	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingBySelect = desiredOrder.
-
-	aux _ dict collect: [ :each | each yourself ].
-	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingByCollect = desiredOrder.
-
-
-	"Test that order is correct even if different. Also test alternative way to add stuff to dict."
-	dict _ OrderedDictionary new.
-	data _ self sampleData reversed.
-	desiredOrder _ data collect: [ :pair | pair second ].
-	data do: [ :pair |
-		dict add: pair first -> pair second ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-	self assert: orderingByDo = desiredOrder.
-
-	aux _ dict select: [ :each | true ].
-	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingBySelect = desiredOrder.
-
-	aux _ dict collect: [ :each | each yourself ].
-	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingByCollect = desiredOrder.
-! !
-
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
-testRemove
-	| data dict dataToRemove desiredOrder orderingByDo |
-
-	"Test that #do:, #select: and #collect: iterate in the correct order"
-	dict _ OrderedDictionary new.
-	data _ self sampleData.
-	dataToRemove _ self sampleData2.
-
-	data do: [ :pair |
-		dict at: pair first put: pair second ].
-	dataToRemove do: [ :pair |
-		dict removeKey: pair first ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-
-	desiredOrder _ OrderedCollection new.
-	data do: [ :pair | desiredOrder add: pair second ].
-	dataToRemove do: [ :pair | desiredOrder remove: pair second ].
-	
-	self assert: orderingByDo = desiredOrder asArray.! !
-
-!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
-sampleData
-	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
-
-!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
-sampleData2
-	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
-
-!ShortIntegerArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
-testShortIntegerArray
-	"
-	Short IntegerArray holds 16 bit signed numbers.
-	ShortIntegerArrayTest new testShortIntegerArray
-	"
-        | u16 |
-        u16 := ShortIntegerArray new: 8.
-
-        u16 at: 1 put:  16r7123.
-        self assert: ((u16 at: 1) = 16r7123).
-        u16 at: 1 put: 0.
-        self assert: ((u16 at: 1) = 0).
-        u16 at: 1 put:  -1.
-        self assert: ((u16 at: 1) = -1).
-        u16 at: 1 put:  -32768.
-        self assert: ((u16 at: 1) = -32768).
-        self should: [u16 at: 1 put:  -32769] raise: Error. "to big"
-        self should: [u16 at: 1 put:  (16r7FFF + 1)] raise: Error. "too big"! !
-
-!ShortWordArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
-testShortWordArray
-	"
-	Short IntegerArray holds 16 bit unsigned numbers.
-	ShortWordArrayTest new testShortWordArray
-	"
-        | u16 |
-        u16 := ShortWordArray new: 8.
-
-        u16 at: 1 put:  16r8123.
-        self assert: ((u16 at: 1) = 16r8123).
-        u16 at: 1 put: 0.
-        self assert: ((u16 at: 1) = 0).
-        u16 at: 1 put:  32768.
-        self assert: ((u16 at: 1) = 32768).
-        u16 at: 1 put:  16rFFFF.
-        self assert: ((u16 at: 1) = 16rFFFF).
-        self should: [u16 at: 1 put:  -1] raise: Error. "wrong sign"
-        self should: [u16 at: 1 put:  (16rFFFF + 1)] raise: Error. "too big"! !
-
 !BitBltTest methodsFor: 'bugs' stamp: 'jmv 3/11/2010 08:40'!
 testAllAlphasRgbAdd
 	"self run: #testAllAlphasRgbAdd"
@@ -7752,6 +7526,106 @@ testAlphaCompositing2
 		self assert: (result red - mixColor alpha) abs < eps.
 		self assert: result alpha = mixColor alpha.
 	].! !
+
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:35'!
+testAndAndAndAndTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth :fifth | 
+			self 
+				assert: (first and: [second] and: [third] and: [fourth] and: [fifth]) 
+				equals: ((((first and: [second]) and: [third]) and: [ fourth ]) and: [ fifth ]) ]
+		forCombinationOf: 5
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:46'!
+testAndAndAndTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth | 
+			self 
+				assert: (first and: [second] and: [third] and: [fourth]) 
+				equals: (((first and: [second]) and: [third]) and: [ fourth ]) ]
+		forCombinationOf: 4
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:04:00'!
+testAndAndTrueTable
+
+	self 
+		evaluate: [ :first :second :third | 
+			self 
+				assert: (first and: [second] and: [third]) 
+				equals: ((first and: [second]) and: [third]) ]
+		forCombinationOf: 3
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:10'!
+testOrOrOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth :fifth | 
+			self 
+				assert: (first or: [second] or: [third] or: [fourth] or: [fifth]) 
+				equals: ((((first or: [second]) or: [third]) or: [ fourth ]) or: [ fifth ]) ]
+		forCombinationOf: 5
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:18'!
+testOrOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third :fourth | 
+			self 
+				assert: (first or: [second] or: [third] or: [fourth]) 
+				equals: (((first or: [second]) or: [third]) or: [ fourth ]) ]
+		forCombinationOf: 4
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'or tests' stamp: 'HAW 7/8/2018 20:04:25'!
+testOrOrTrueTable
+
+	self 
+		evaluate: [ :first :second :third | 
+			self 
+				assert: (first or: [second] or: [third]) 
+				equals: ((first or: [second]) or: [third]) ]
+		forCombinationOf: 3
+		
+	
+	
+	! !
+
+!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:51:52'!
+evaluate: aBlock collectingValuesInto: values at: aPosition 
+	
+	aPosition = 0 
+		ifTrue: [ aBlock valueWithArguments: values ]
+		ifFalse: [ 
+			#(true false) do: [ :value | 
+				values at: aPosition put: value. 
+				self evaluate: aBlock collectingValuesInto: values at: aPosition - 1 ]]! !
+
+!BooleanTest methodsFor: 'combination generation' stamp: 'HAW 7/8/2018 19:50:53'!
+evaluate: aBlock forCombinationOf: aNumberOfValues
+
+	self evaluate: aBlock collectingValuesInto: (Array new: aNumberOfValues) at: aNumberOfValues 
+	! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
 testCaseConversion
@@ -9577,6 +9451,98 @@ testStream
 	self should: [file1 exists not].
 	! !
 
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+testquickFindFirst
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickFindFirst: [:one | one >= eachElement]) = eachIndex.
+			self assert: (collection quickFindFirst: [:one | one >= (eachElement - 0.5)]) = eachIndex
+		].
+	self assert: (collection quickFindFirst: [:one | one > 2101]) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+testquickFindLast
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickFindLast: [:one | one <= eachElement]) = eachIndex.
+			self assert: (collection quickFindLast: [:one | one <= (eachElement + 0.5)]) = eachIndex
+		].
+	self assert: (collection quickFindLast: [:one | one < 0]) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:46'!
+testquickIndexOf
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickIndexOf: eachElement) = eachIndex
+		].
+	self assert: (collection quickIndexOf: 999) = 0.
+	self assert: (collection quickIndexOf: 2101) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 15:01'!
+testquickIndexOfWithSemistableOrder
+
+	| collection |
+	collection := SortedCollection
+		sortBlock: [:x :y | x key <= y key].
+	1 to: 1000 do: [:each | collection add: each -> each].
+	1 to: 50 do: [:each | collection add: 42 -> each].
+	self assert: (collection quickIndexOf: 42 -> 6) = 48! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+testIdentitySet
+	"
+	CollectTest  new testIdentitySet
+	"
+	| col result |
+	col _ #(1 2 3 1.0 2.0 3.0) asIdentitySet.
+	result _ col collect: [ :elem |  elem yourself ].
+	self assert: result class = IdentitySet.
+	self assert: result = #(1 2 3 1.0 2.0 3.0) asIdentitySet.
+	self assert: result = col! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 10:51'!
+testOrderedCollection
+	"
+	CollectTest  new testOrderedCollection
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ col collect: [ :elem |  elem * 2 ].
+	self assert: result class = OrderedCollection.
+	self assert: result = #(2 4 6 8 10) asOrderedCollection! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+testSet
+	"
+	CollectTest  new testSet
+	"
+	| col result |
+	col _ #(1 2 3 1.0 2.0 3.0) asSet.
+	result _ col collect: [ :elem |  elem yourself ].
+	self assert: result class = Set.
+	self assert: result = #(1 2 3) asSet.
+	self assert: result = col! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:01'!
+testSortedCollection
+	"
+	CollectTest  new testSortedCollection
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asSortedCollection: [ :a :b | a > b ].
+	result _ col collect: [ :elem |  elem * 2 ].
+	self assert: result class = OrderedCollection.
+	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
+
 !CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:14:11'!
 testGroupByHavingSelectsTheResultOfGroupBy
 
@@ -9686,6 +9652,170 @@ testIntegerToByDo
 	self assert: toByDo size = interval size.
 	1 to: toByDo size do: [ :i |
 		self assert: (toByDo at: i) = (interval at: i) ]! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
+testCollectAsReceiverIsModified
+	"
+	This test modifies a collection while iterating it.
+	This is very bad practice and should never be done.
+	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #collect:
+
+	OrderedCollectionTest new testCollectAsReceiverIsModified
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ OrderedCollection new.
+	col collect: [ :elem | 
+		result add: elem.
+		elem < 4 ifTrue: [ col add: col size + 1 ]].
+	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
+testDoAsReceiverIsModified
+	"
+	This test modifies a collection while iterating it.
+	This is very bad practice and should never be done.
+	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #do:
+
+	OrderedCollectionTest new testDoAsReceiverIsModified
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ OrderedCollection new.
+	col do: [ :elem | 
+		result add: elem.
+		elem < 4 ifTrue: [ col add: col size + 1 ]].
+	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
+testReverseDoAsReceiverIsModified
+	"
+	This test modifies a collection while iterating it.
+	This is very bad practice and should never be done.
+	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:by:do:,  as called by #reverseDo:
+
+	OrderedCollectionTest new testReverseDoAsReceiverIsModified
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ OrderedCollection new.
+	col reverseDo: [ :elem |
+		result add: elem.
+		col size > 3 ifTrue: [ col removeFirst ]].
+	"Not nice, but what can we expect if we remove stuff during iteration?"
+	self assert: result = #(nil nil 3 4 5) asOrderedCollection reversed! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
+testOrder
+	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+
+
+	"Test that order is correct even if different. Also test alternative way to add stuff to dict."
+	dict _ OrderedDictionary new.
+	data _ self sampleData reversed.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict add: pair first -> pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
+testRemove
+	| data dict dataToRemove desiredOrder orderingByDo |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	dataToRemove _ self sampleData2.
+
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+	dataToRemove do: [ :pair |
+		dict removeKey: pair first ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+
+	desiredOrder _ OrderedCollection new.
+	data do: [ :pair | desiredOrder add: pair second ].
+	dataToRemove do: [ :pair | desiredOrder remove: pair second ].
+	
+	self assert: orderingByDo = desiredOrder asArray.! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
+sampleData
+	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
+sampleData2
+	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
+
+!ShortIntegerArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
+testShortIntegerArray
+	"
+	Short IntegerArray holds 16 bit signed numbers.
+	ShortIntegerArrayTest new testShortIntegerArray
+	"
+        | u16 |
+        u16 := ShortIntegerArray new: 8.
+
+        u16 at: 1 put:  16r7123.
+        self assert: ((u16 at: 1) = 16r7123).
+        u16 at: 1 put: 0.
+        self assert: ((u16 at: 1) = 0).
+        u16 at: 1 put:  -1.
+        self assert: ((u16 at: 1) = -1).
+        u16 at: 1 put:  -32768.
+        self assert: ((u16 at: 1) = -32768).
+        self should: [u16 at: 1 put:  -32769] raise: Error. "to big"
+        self should: [u16 at: 1 put:  (16r7FFF + 1)] raise: Error. "too big"! !
+
+!ShortWordArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
+testShortWordArray
+	"
+	Short IntegerArray holds 16 bit unsigned numbers.
+	ShortWordArrayTest new testShortWordArray
+	"
+        | u16 |
+        u16 := ShortWordArray new: 8.
+
+        u16 at: 1 put:  16r8123.
+        self assert: ((u16 at: 1) = 16r8123).
+        u16 at: 1 put: 0.
+        self assert: ((u16 at: 1) = 0).
+        u16 at: 1 put:  32768.
+        self assert: ((u16 at: 1) = 32768).
+        u16 at: 1 put:  16rFFFF.
+        self assert: ((u16 at: 1) = 16rFFFF).
+        self should: [u16 at: 1 put:  -1] raise: Error. "wrong sign"
+        self should: [u16 at: 1 put:  (16rFFFF + 1)] raise: Error. "too big"! !
 
 !WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
 test
@@ -11569,6 +11699,239 @@ exampleString02
   <heading>&#8222;Sicherheitshinweise&#8220;</heading>
   <body>Don''t forget me this weekend!!</body>
 </note>'! !
+
+!FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:38:50'!
+testZeroArrayDividend
+
+	self assert: #[1.2 2.4 0.0 ] / #[1.2 1.2 1.2 ] = #[1.0 2.0 0.0 ] ! !
+
+!FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:51:49'!
+testZeroArrayDivisor
+
+	"Test implicit exception"
+	self should: [ #[1.2 2.4 3.6 ] / #[1.0 1.0 0.0 ]] raise: ZeroDivide.
+
+	"Test explicit alternative value"
+	self assert: (#[1.0 2.0 3.141592 0.0] copy divideBy: #[1.0 1.0 0.0 0.0 ] ifDivisorZero: -100 ifBothZero: -200) = 
+		#[1.0 2.0 -100.0 -200.0 ].
+
+	"Test explicit exceptions"
+	self should: [
+		#[1.0 2.0 3.141592] copy
+			divideBy: #[1.0 1.0 0.0] 
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: ZeroDivide.
+	self should: [
+		#[0.0 2.0 3.141592] copy
+			divideBy: #[0.0 1.0 1.0] 
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: DomainError.
+
+	"Test non local returns in blocks"
+	self assert: self divideByArrayOne = #[0.0 2.0 3.141592].
+	self assert: self divideByArrayZero = #divisionByZero.
+	self assert: self divideByArrayIndeterminate = #indeterminateResult.! !
+
+!FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:39:14'!
+testZeroDividend
+
+	self assert: #[1.2 2.4 3.6 0.0 ] / 1.2 = #[1.0 2.0 3.0 0.0 ] ! !
+
+!FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:53:42'!
+testZeroDivisor
+
+	"Test implicit exception"
+	| |
+	self should: [ #[1.2 2.4 3.6 ] / 0.0] raise: ZeroDivide.
+
+	"Test explicit alternative value"
+	self assert: (#[1.0 2.0 3.141592 0.0] copy divideBy: 0.0 ifDivisorZero: -100 ifBothZero: -200) = 
+		#[-100.0 -100.0 -100.0 -200.0 ].
+
+	"Test explicit exceptions"
+	self should: [
+		#[1.0 2.0 3.141592] copy
+			divideBy: 0.0
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: ZeroDivide.
+	self should: [
+		#[0.0 2.0 3.141592] copy
+			divideBy: 0.0
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: DomainError.
+
+	"Test non local returns in blocks"
+	self assert: self divideByScalarOne = #[0.0 2.0 3.141592].
+	self assert: self divideByScalarZero = #divisionByZero.
+	self assert: self divideByScalarIndeterminate = #indeterminateResult.! !
+
+!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:52:51'!
+divideByArrayIndeterminate
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] copy
+		divideBy: #[0.0 2.0 3.141592]
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:52:56'!
+divideByArrayOne
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] copy
+		divideBy: #[1.0 1.0 1.0]
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:53:05'!
+divideByArrayZero
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[1.0 2.0 3.141592] copy
+		divideBy: #[0.0 2.0 3.141592]
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:35'!
+divideByScalarIndeterminate
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592]
+		divideBy: 0.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:39'!
+divideByScalarOne
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592]
+		divideBy: 1.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:43'!
+divideByScalarZero
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[1.0 2.0 3.141592]
+		divideBy: 0.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:31:37'!
+testZeroArrayDividend
+
+	self assert: #[1.2 2.4 0.0 ] asFloatArray / #[1.2 1.2 1.2 ] asFloatArray = #[1.0 2.0 0.0 ] asFloatArray ! !
+
+!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:36:58'!
+testZeroArrayDivisor
+
+	"Test implicit exception"
+	self should: [ #[1.2 2.4 3.6 ] asFloatArray / #[1.0 1.0 0.0 ] asFloatArray] raise: ZeroDivide.
+
+	"Test explicit alternative value"
+	self assert: (#[1.0 2.0 3.141592 0.0] asFloatArray divideBy: #[1.0 1.0 0.0 0.0 ] asFloatArray ifDivisorZero: -100 ifBothZero: -200) = 
+		#[1.0 2.0 -100.0 -200.0 ] asFloatArray.
+
+	"Test explicit exceptions"
+	self should: [
+		#[1.0 2.0 3.141592] asFloatArray
+			divideBy: #[1.0 1.0 0.0] 
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: ZeroDivide.
+	self should: [
+		#[0.0 2.0 3.141592] asFloatArray
+			divideBy: #[0.0 1.0 1.0] 
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: DomainError.
+
+	"Test non local returns in blocks"
+	self assert: self divideByArrayOne = #[0.0 2.0 3.141592] asFloatArray.
+	self assert: self divideByArrayZero = #divisionByZero.
+	self assert: self divideByArrayIndeterminate = #indeterminateResult.! !
+
+!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:12:18'!
+testZeroDividend
+
+	self assert: #[1.2 2.4 3.6 0.0 ] asFloatArray / 1.2 = #[1.0 2.0 3.0 0.0 ] asFloatArray ! !
+
+!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:37:14'!
+testZeroDivisor
+
+	"Test implicit exception"
+	self should: [ #[1.2 2.4 3.6 ] asFloatArray / 0.0] raise: ZeroDivide.
+
+	"Test explicit alternative value"
+	self assert: (#[1.0 2.0 3.141592 0.0] asFloatArray divideBy: 0.0 ifDivisorZero: -100 ifBothZero: -200) = 
+		#[-100.0 -100.0 -100.0 -200.0 ] asFloatArray.
+
+	"Test explicit exceptions"
+	self should: [
+		#[1.0 2.0 3.141592] asFloatArray
+			divideBy: 0.0
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: ZeroDivide.
+	self should: [
+		#[0.0 2.0 3.141592] asFloatArray
+			divideBy: 0.0
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: DomainError.
+
+	"Test non local returns in blocks"
+	self assert: self divideByScalarOne = #[0.0 2.0 3.141592] asFloatArray.
+	self assert: self divideByScalarZero = #divisionByZero.
+	self assert: self divideByScalarIndeterminate = #indeterminateResult.! !
+
+!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:35:20'!
+divideByArrayIndeterminate
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] asFloatArray
+		divideBy: #[0.0 2.0 3.141592] asFloatArray
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:35:48'!
+divideByArrayOne
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] asFloatArray
+		divideBy: #[1.0 1.0 1.0] asFloatArray
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:36:13'!
+divideByArrayZero
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[1.0 2.0 3.141592] asFloatArray
+		divideBy: #[0.0 2.0 3.141592] asFloatArray
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:25:36'!
+divideByScalarIndeterminate
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] asFloatArray
+		divideBy: 0.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:37:06'!
+divideByScalarOne
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] asFloatArray
+		divideBy: 1.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:25:45'!
+divideByScalarZero
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[1.0 2.0 3.141592] asFloatArray
+		divideBy: 0.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors

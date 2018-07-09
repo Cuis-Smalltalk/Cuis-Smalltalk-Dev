@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3364] on 6 July 2018 at 9:00:03 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3367] on 9 July 2018 at 4:54:06 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 93!
+!provides: 'SignalProcessing' 1 94!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
 !requires: 'Sound' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
@@ -441,15 +441,23 @@ squared
 			self validateSameSize: aFloatImageOrNumber.
 			elements *= aFloatImageOrNumber elements ]! !
 
-!FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 8/23/2014 23:38'!
+!FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/8/2018 18:52:46'!
 /= aFloatImageOrNumber
 	"Divide receiver by an image (pixel by pixel) or number"
 
+	^self divideBy: aFloatImageOrNumber
+		ifDivisorZero: [^ZeroDivide signalWithDividend: self]
+		ifBothZero: [^ZeroDivide signalWithDividend: self]! !
+
+!FloatImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/8/2018 18:30:56'!
+divideBy: aFloatImageOrNumber ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue
+	"Divide receiver by an image (pixel by pixel) or number"
+
 	aFloatImageOrNumber isNumber
-		ifTrue: [ elements /= aFloatImageOrNumber ]
+		ifTrue: [ elements divideBy: aFloatImageOrNumber ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue]
 		ifFalse: [
 			self validateSameSize: aFloatImageOrNumber.
-			elements /= aFloatImageOrNumber elements ]! !
+			elements divideBy: aFloatImageOrNumber elements ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue ]! !
 
 !FloatImage methodsFor: 'noise generation' stamp: 'jmv 7/19/2016 12:08:32'!
 addNormalNoise: standardDeviation
@@ -1810,7 +1818,7 @@ deconvolved displayAt: 10@10.
 
 	^ self deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
 
-!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:54'!
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/8/2018 22:00:04'!
 deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor guardZoneInto: aBlock
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- psf is a ConvolutionKernel
@@ -1863,7 +1871,9 @@ deconvolved display.
 	"Compute the 'inverse' otf, limiting noise amplification"
 	otfInverse _ ComplexImage extent: tileSize.
 	otfInverse realPart += 1.
-	otfInverse  elementDivideBy: otf maxGain: maxNoiseFactor.
+	otfInverse  divideByComplex: otf maxGain: maxNoiseFactor
+		ifDivisorZero: [^ZeroDivide signalWithDividend: otfInverse]
+		ifBothZero: [^ZeroDivide signalWithDividend: otfInverse].
 
 	"Find and apply proper Guard Zones.
 	For this, compute the 'inverse' psf, to check its support"
@@ -4956,12 +4966,12 @@ width
 
 	^self copy /= aComplexImageOrNumber! !
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/5/2018 12:37:44'!
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/8/2018 21:59:12'!
 *= aComplexOrFloatImageOrNumber
 	"Element by element"
 
 	(aComplexOrFloatImageOrNumber is: #ComplexImage) ifTrue: [
-		self elementMultiplyBy: aComplexOrFloatImageOrNumber ]
+		self multiplyByComplexImage: aComplexOrFloatImageOrNumber ]
 	ifFalse: [
 		real *= aComplexOrFloatImageOrNumber.
 		imaginary *= aComplexOrFloatImageOrNumber ]! !
@@ -4988,25 +4998,33 @@ width
 		real -= aComplexOrFloatImageOrNumber.
 		imaginary -= aComplexOrFloatImageOrNumber ]! !
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/5/2018 12:38:28'!
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/8/2018 18:52:09'!
 /= aComplexOrFloatImageOrNumber
 	"Element by element"
 
-	(aComplexOrFloatImageOrNumber is: #ComplexImage) ifTrue: [
-		self elementDivideBy: aComplexOrFloatImageOrNumber maxGain: nil ]
-	ifFalse: [
-		real /= aComplexOrFloatImageOrNumber.
-		imaginary /= aComplexOrFloatImageOrNumber ]! !
+	^self divideBy: aComplexOrFloatImageOrNumber
+		ifDivisorZero: [^ZeroDivide signalWithDividend: self]
+		ifBothZero: [^ZeroDivide signalWithDividend: self]! !
 
 !ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:42:24'!
 beComplexConjugate
 	imaginary *= -1! !
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:49:39'!
-elementDivideBy: aComplexImage maxGain: allowedMagnitudeGrowthOrNil
-	"Fill the receiver with the result of complex division with operand, element by element.
-	I.e., at each position of the matrix, compute (e+if) = (a+ib) / (c+id)
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/8/2018 21:59:57'!
+divideBy: aComplexOrFloatImageOrNumber ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue
+	"Element by element"
 
+	(aComplexOrFloatImageOrNumber is: #ComplexImage) ifTrue: [
+		self divideByComplex: aComplexOrFloatImageOrNumber maxGain: nil ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue ]
+	ifFalse: [
+		real divideBy: aComplexOrFloatImageOrNumber ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue.
+		imaginary divideBy: aComplexOrFloatImageOrNumber ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue ]! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/9/2018 10:03:54'!
+divideByComplex: aComplexImage maxGain: allowedMagnitudeGrowthOrNil ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue
+	"Fill the receiver with the result of complex division with operand, element by element.
+	I.e., at each position of the matrix, compute (e+if) = (a+ib) / (c+id)"
+	"
 	| m1 m1a m2 r1 i1 r1a i1a r2 i2 |
 	r1 := FloatMatrix fromArrayOfArrays: #(
 		#( 1 1 1)
@@ -5035,22 +5053,29 @@ elementDivideBy: aComplexImage maxGain: allowedMagnitudeGrowthOrNil
 	m1 /= m2.
 	'=====' print.
 	r1 print. i1 print.
-	m1a elementDivideBy: m2 maxGain: 2.
+	m1a divideByComplex: m2 maxGain: 2 ifDivisorZero: 0.0 ifBothZero: 0.0.
 	'............' print.
 	r1a print. i1a print
 	"
 
-	| a b c d e f operandNormSquared alreadyAppliedGain gainLimiter |
+	| a b c d e f operandNormSquared alreadyAppliedGain gainLimiter complex |
 	1 to: real height do: [ :i |
 		1 to: real width do: [ :j |
+			a _ real i: i j: j.
+			b _ imaginary i: i j: j.
 			c _ aComplexImage realPart i: i j: j.
 			d _ aComplexImage imaginaryPart i: i j: j.
 			e _ 0.0.
 			f _ 0.0.
 			operandNormSquared _ c * c + (d * d).
-			operandNormSquared isZero ifFalse: [
-				a _ real i: i j: j.
-				b _ imaginary i: i j: j.
+			operandNormSquared isZero
+			ifTrue: [
+				complex _ (a isZero and: [b isZero])
+					ifTrue: indeterminateBlockOrValue 
+					ifFalse: zeroDivisionBlockOrValue.
+				e _ complex real.
+				f _ complex imaginary ]
+			ifFalse: [
 				e _ a * c + (b * d) / operandNormSquared.
 				f _ b * c - (a * d) / operandNormSquared.
 				"Only if a limit to applied gain is specified..."
@@ -5067,8 +5092,8 @@ elementDivideBy: aComplexImage maxGain: allowedMagnitudeGrowthOrNil
 			real i: i j: j put: e.
 			imaginary i: i j: j put: f ]]! !
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/2/2018 14:46:47'!
-elementMultiplyBy: aComplexImage
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/8/2018 21:59:06'!
+multiplyByComplexImage: aComplexImage
 	"Fill the receiver with the result of complex multiplication with operand, element by element.
 	I.e., at each position of the matrix, compute (e+if) = (a+ib) * (c+id)"
 
@@ -5121,12 +5146,26 @@ elementMultiplyBy: aComplexImage
 		real i: i put: e.
 		imaginary i: i put: f ]! !
 
-!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/5/2018 12:40:28'!
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 7/9/2018 10:01:45'!
 normalizeMagnitudes
 	"Make the magnitude of all complex elements be 1.0.
-	Keep only phase information"
-	
-	self /= self magnitude! !
+	Keep only phase information.
+	If at some element both real and imaginary parts are zero, then do not normalize, and leave that element at zero"
+	"
+	(ComplexImage
+		realPart: (FloatImage withRows: #(
+			#(1 2 3)
+			#(4 5 6)
+			#(7 8 0)))
+		imaginaryPart: (FloatImage withRows: #(
+			#(1 2 3)
+			#(0 0 0)
+			#(14 4 0)))) normalizeMagnitudes
+	"
+
+	self divideBy: self magnitude
+		ifDivisorZero: [0.0]
+		ifBothZero: [0.0]! !
 
 !ComplexImage methodsFor: 'magnitude and phase' stamp: 'jmv 7/2/2018 14:42:24'!
 magnitude
