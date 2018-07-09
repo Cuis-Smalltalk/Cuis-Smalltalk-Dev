@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3354] on 26 June 2018 at 2:26:43 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3364] on 6 July 2018 at 8:59:44 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 46!
+!provides: 'LinearAlgebra' 1 48!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #LinearAlgebra!
 
@@ -253,17 +253,6 @@ as8bitForm: aBlock
 			bitsIndex _ bitsIndex + 1.
 			bits byteAt: bitsIndex put: (aBlock value: elementsIndex) bigEndian: answer isBigEndian ]].
 	^answer! !
-
-!Matrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 14:21:52'!
-asComplexHeatmap: aBlock maxMagnitude: maxMagnitude
-	"Fill 32bit Form with rgb values as computed by aBlock. See senders."
-
-	| color |
-	^ self as32bitForm: [ :index :word | | complex |
-		complex _ aBlock value: index.
-		color _ Color jet: ((complex phase + Float pi) / Float twoPi).
-		color _ color * (complex magnitude / maxMagnitude).
-		word at: 1 put: color blue * 255 // 1; at: 2 put: color green * 255 // 1; at: 3 put: color red * 255// 1 ]! !
 
 !Matrix methodsFor: 'conversion' stamp: 'jmv 5/4/2016 11:18'!
 asForm
@@ -883,6 +872,13 @@ fromGrayForm: aGrayForm
 	instance fillFromGrayForm: aGrayForm.
 	^instance! !
 
+!Matrix class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 11:16:49'!
+fromMatrix: aMatrix
+	| answer |
+	answer _ self extent: aMatrix extent.
+	answer += aMatrix.
+	^ answer! !
+
 !Matrix class methodsFor: 'instance creation' stamp: 'jmv 11/16/2014 19:56'!
 hilbert: n
 "
@@ -1044,6 +1040,38 @@ initializeElements
 
 	elements _ ByteArray new: height * width! !
 
+!FloatMatrix methodsFor: 'arithmetic-modify self' stamp: 'jmv 6/27/2018 12:05:44'!
++= aFloatMatrixOrNumber
+	"Add a matrix or image (pixel by pixel, element by element) or number to receiver"
+
+	aFloatMatrixOrNumber isNumber
+		ifTrue: [ elements += aFloatMatrixOrNumber ]
+		ifFalse: [
+			self validateSameSize: aFloatMatrixOrNumber.
+			elements += aFloatMatrixOrNumber elements ]! !
+
+!FloatMatrix methodsFor: 'arithmetic-modify self' stamp: 'jmv 6/27/2018 12:07:00'!
+-= aFloatMatrixOrNumber
+	"Subtract a matrix or image (pixel by pixel, element by element) or number from receiver"
+
+	aFloatMatrixOrNumber isNumber
+		ifTrue: [ elements -= aFloatMatrixOrNumber ]
+		ifFalse: [
+			self validateSameSize: aFloatMatrixOrNumber.
+			elements -= aFloatMatrixOrNumber elements ]! !
+
+!FloatMatrix methodsFor: 'arithmetic-answer new' stamp: 'jmv 6/27/2018 12:10:39'!
++ aFloatMatrixOrNumber
+	"Answer a new instance. Don't affect receiver or argument in any way."
+
+	^self copy += aFloatMatrixOrNumber! !
+
+!FloatMatrix methodsFor: 'arithmetic-answer new' stamp: 'jmv 6/27/2018 12:10:51'!
+- aFloatMatrixOrNumber
+	"Answer a new instance. Don't affect receiver or argument in any way."
+
+	^self copy -= aFloatMatrixOrNumber! !
+
 !FloatMatrix methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:25:19'!
 asGammaFormFullRange
 	"See comment at #fullRangeDisplayAt:"
@@ -1176,6 +1204,13 @@ j: j copyTo: column
 	"Assumes column is of of apropriate size"
 	self copyToTile: column position: j@1! !
 
+!FloatMatrix methodsFor: 'private' stamp: 'jmv 6/27/2018 12:04:20'!
+validateSameSize: aFloatMatrix
+	"For arithmetic between the receiver and the argument."
+
+	(height = aFloatMatrix height and: [ width = aFloatMatrix width ]) ifFalse: [
+		self error: 'Receiver and argument should be of the same size' ]! !
+
 !FloatMatrix methodsFor: 'norm and condition number' stamp: 'jmv 7/19/2012 10:57'!
 conditionNumber
 	^self norm * self inverse norm! !
@@ -1283,6 +1318,87 @@ copyToTile: aFloatMatrix position: aPoint
 		blitOn: formArgument source: formSelf
 		destOrigin: 0@0 sourceOrigin: aPoint-1
 		using: BitBlt new! !
+
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 7/4/2018 11:06:24'!
+copyToTile: tile startingJ: j i: i mirrorWidth: mirrorWidth mirrorHeight: mirrorHeight
+"
+FloatImage lena convolutionWith: (ConvolutionKernel gaussian: 1@2 extent: 41) guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ] :: displayAt: 0@0 zoom: 2.
+Display writePNGfileNamed: 'ddd0.png'
+FloatImage lena writePNGfileNamed: 'lena.png'.
+"
+	"
+	aPoint is the position in self where the contents of aFloatMatrix are to be taken from
+	As in all Matrix protocol, aPoint is 1-based
+
+	| i t |
+	i _ FloatImage from32BitColorForm: (Display copy: (1@1 extent: 100@100)) component: #red.
+	t _ FloatImage extent: 256@256.
+	i copyToTile: t position: -10@0.
+	t display.
+	"
+	| selfForm tileForm blitter destX destY sourceX sourceY sourceX2 sourceY2 tileHeight tileWidth blitWidth blitHeight |
+	tileWidth _ tile width.
+	tileHeight _ tile height.
+	tileForm _ tile hackBitsForm.
+	selfForm _ self hackBitsForm.
+	blitter _ BitBlt new.
+	blitter
+		setDestForm: tileForm;
+		sourceForm: selfForm;
+		combinationRule: 3.
+	j > 0 ifTrue: [
+		sourceX _ j-1.
+		destX _ 0 ]
+	ifFalse: [
+		sourceX _ 0.
+		destX _ 1-j ].
+	blitWidth _ tileWidth - destX min: selfForm width - sourceX.
+	i > 0 ifTrue: [
+		sourceY _ i-1.
+		destY _ 0 ]
+	ifFalse: [
+		sourceY _ 0.
+		destY _ 1-i ].
+	blitHeight _ tileHeight - destY min: selfForm height - sourceY.
+	blitter
+		sourceOrigin: sourceX@sourceY;
+		destX: destX destY: destY width: blitWidth height: tileHeight;
+		copyBits.
+
+	blitter destX: destX destY: destY width: 1 height: tileHeight.
+	destX = 0 ifFalse: [
+		sourceX2 _ sourceX+1.
+		destX-1 to: 0 by: -1 do: [ :destX2 |
+			blitter
+				sourceOrigin: sourceX2@sourceY;
+				destX: destX2;
+				copyBits.
+			sourceX2 _ sourceX2 + 1 ]].
+	sourceX2 _ sourceX + blitWidth-1.
+	destX+blitWidth-1 to: (tileWidth min: destX+blitWidth+mirrorHeight) do: [ :destX2 |
+		blitter
+			sourceOrigin: sourceX2@sourceY;
+			destX: destX2;
+			copyBits.
+		sourceX2 _ sourceX2 - 1 ].
+
+	blitter sourceForm: tileForm.
+	blitter destX: 0 destY: destY width: tileWidth height: 1.
+	destY = 0 ifFalse: [
+		sourceY2 _ destY +1.
+		destY-1 to: 0 by: -1 do: [ :destY2 |
+			blitter
+				sourceOrigin: 0@sourceY2;
+				destY: destY2;
+				copyBits.
+			sourceY2 _ sourceY2 + 1 ]].
+	sourceY2 _ destY + blitHeight-1.
+	destY+blitHeight-1 to: (tileHeight min: destY+blitHeight+mirrorHeight) do: [ :destY2 |
+		blitter
+			sourceOrigin: 0@sourceY2;
+			destY: destY2;
+			copyBits.
+		sourceY2 _ sourceY2 - 1 ]! !
 
 !FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:26:44'!
 expandTo: newExtent
@@ -1950,167 +2066,6 @@ fullRangeG: greenImage b: blueImage displayAt: aPoint
 
 	(self asGammaFormFullRangeG: greenImage b: blueImage) displayAt: aPoint! !
 
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 12/12/2016 10:09:46'!
-imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart
-	"The receiver and imaginaryPart conform a complex matrix.
-	operandRealPart and operandImaginaryPart conform another complex matrix.
-	fill the receiver (and imaginaryPart) with the result of complex division with operand, element by element.
-	I.e., at each position of the matrix, compute (e+if) = (a+ib) / (c+id)
-
-	| r1 i1 r2 i2 |
-	r1 _ FloatMatrix fromArrayOfArrays: #(
-		#( 1 2 3)
-		#( 4 5 6)
-		#( 1 2 3)).
-	i1 _ FloatMatrix fromArrayOfArrays: #(
-		#( 1 1 0)
-		#( 0 0 1)
-		#( 0 0 0)).
-	r2 _ FloatMatrix fromArrayOfArrays: #(
-		#( 2 4 6)
-		#( 4 5 6)
-		#( 1 2 3)).
-	i2 _ FloatMatrix fromArrayOfArrays: #(
-		#( 5 5 5)
-		#( 5 5 5)
-		#( 7 8 9)).
-	Transcript clear.
-	r1 print. i1 print.
-	r1 imaginary: i1 elementMultiplyBy: r2 imaginary: i2.
-	r1 print. i1 print.
-	r1 imaginary: i1 elementDivideBy: r2 imaginary: i2.
-	r1 print. i1 print
-	"
-
-	^ self imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart maxGain: nil! !
-
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 12/12/2016 12:15:08'!
-imaginary: imaginaryPart elementDivideBy: operandRealPart imaginary: operandImaginaryPart maxGain: allowedMagnitudeGrowthOrNil
-	"The receiver and imaginaryPart conform a complex matrix.
-	operandRealPart and operandImaginaryPart conform another complex matrix.
-	fill the receiver (and imaginaryPart) with the result of complex division with operand, element by element.
-	I.e., at each position of the matrix, compute (e+if) = (a+ib) / (c+id)
-
-	| r1 i1 r1a i1a r2 i2 |
-	r1 := FloatMatrix fromArrayOfArrays: #(
-		#( 1 1 1)
-		#( 2 2 2)
-		#( 1 1 1)).
-	i1 := FloatMatrix fromArrayOfArrays: #(
-		#( 2 2 2)
-		#( 1 1 1)
-		#( 2 2 2)).
-	r2 := FloatMatrix fromArrayOfArrays: #(
-		#( 0.1 0.5 1.0)
-		#( 0.1 0.5 1.0)
-		#( 0.1 0.5 1.0)).
-	i2 := FloatMatrix fromArrayOfArrays: #(
-		#( 0.1 0.5 1.0)
-		#( 0.1 0.5 1.0)
-		#( 0.1 0.5 1.0)).
-	r1a := r1 copy.
-	i1a := i1 copy.
-	Transcript clear.
-	r1 print. i1 print.
-	r1 imaginary: i1 elementDivideBy: r2 imaginary: i2.
-	r1 print. i1 print.
-	r1a imaginary: i1a elementDivideBy: r2 imaginary: i2 maxGain: 2.
-	r1a print. i1a print
-	"
-
-	| a b c d e f operandNormSquared alreadyAppliedGain gainLimiter |
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			c _ operandRealPart i: i j: j.
-			d _ operandImaginaryPart i: i j: j.
-			e _ 0.0.
-			f _ 0.0.
-			operandNormSquared _ c * c + (d * d).
-			operandNormSquared isZero ifFalse: [
-				a _ self i: i j: j.
-				b _ imaginaryPart i: i j: j.
-				e _ a * c + (b * d) / operandNormSquared.
-				f _ b * c - (a * d) / operandNormSquared.
-				"Only if a limit to applied gain is specified..."
-				allowedMagnitudeGrowthOrNil ifNotNil: [
-					alreadyAppliedGain _ 1.0 / operandNormSquared sqrt.
-					allowedMagnitudeGrowthOrNil < alreadyAppliedGain ifTrue: [
-						"Less than one if gain limiting needed"
-						gainLimiter _ allowedMagnitudeGrowthOrNil / alreadyAppliedGain.
-						e _ e * gainLimiter.
-						f _ f * gainLimiter.
-					].
-				].
-			].
-			self i: i j: j put: e.
-			imaginaryPart i: i j: j put: f ]]! !
-
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 4/27/2015 12:26'!
-imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandImaginaryPart
-	"The receiver and imaginaryPart conform a complex matrix.
-	operandRealPart and operandImaginaryPart conform another complex matrix.
-	fill the receiver (and imaginaryPart) with the result of complex multiplication with operand, element by element.
-	I.e., at each position of the matrix, compute (e+if) = (a+ib) * (c+id)"
-
-"
-	| a b c d e f |
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			a _ self i: i j: j.
-			b _ imaginaryPart i: i j: j.
-			c _ operandRealPart i: i j: j.
-			d _ operandImaginaryPart i: i j: j.
-			e _ a * c - (b * d).
-			f _ b * c + (a * d).
-			self i: i j: j put: e.
-			imaginaryPart i: i j: j put: f ]]
-"
-	| c d aByC bByC aByD bByD e f |
-	c _ FloatMatrix newRowVectorSize: width.
-	d _ FloatMatrix newRowVectorSize: width.
-	aByC _ FloatMatrix newRowVectorSize: width.
-	bByC _ FloatMatrix newRowVectorSize: width.
-	aByD _ FloatMatrix newRowVectorSize: width.
-	bByD _ FloatMatrix newRowVectorSize: width.
-	1 to: height do: [ :i |
-		
-		" Compute:
-		e _ a * c - (b * d).
-		f _ b * c + (a * d)."
-		
-		operandRealPart i: i copyTo: c.
-		self i: i copyTo: aByC.
-		aByC elements *= c elements.
-		imaginaryPart i: i copyTo: bByC.
-		bByC elements *= c elements.
-		
-		operandImaginaryPart i: i copyTo: d.
-		self i: i copyTo: aByD.
-		aByD elements *= d elements.
-		imaginaryPart i: i copyTo: bByD.
-		bByD elements *= d elements.
-		
-		e _ aByC.
-		e elements -= bByD elements.
-		f _ bByC.
-		f elements += aByD elements.
-
-		self i: i put: e.
-		imaginaryPart i: i put: f ]! !
-
-!FloatMatrix methodsFor: 'aritmethic - complex' stamp: 'jmv 4/24/2015 10:27'!
-magnitudeWithImaginary: imaginaryPart
-	"answer a new matrix"
-	| result a b magnitude |
-	result _ self appropriateResultClass newSize: self size.
-	1 to: height do: [ :i |
-		1 to: width do: [ :j |
-			a _ self i: i j: j.
-			b _ imaginaryPart i: i j: j.
-			magnitude _ (a * a + (b * b)) sqrt.
-			result i: i j: j put: magnitude ]].
-	^result! !
-
 !FloatMatrix methodsFor: 'initialization' stamp: 'jmv 6/18/2001 19:10'!
 initializeElements
 
@@ -2196,6 +2151,36 @@ round
 				a _ self i: i j: j.
 				b _ (10.0 raisedTo: a abs log truncated - 5).
 				self i: i j: j put: (a roundTo: b) ] ] ]! !
+
+!FloatMatrix methodsFor: 'iterating' stamp: 'jmv 7/5/2018 15:35:49'!
+with: anotherImage collect: aBlock
+	"
+	FloatImage lena with: (FloatMatrix identity: 256) collect: [ :v1 :v2 | v1-v2] :: display
+	"
+	| otherValues answer answerElements |
+	self validateSameSize: anotherImage.
+	otherValues _ anotherImage elements.
+	answer _ self appropriateResultClass width: width height: height.
+	answerElements _ answer elements.
+	1
+		to: elements size
+		do: [ :i |
+			answerElements
+				at: i
+				put: (aBlock value: (elements at: i) value: (otherValues at: i)) ].
+	^ answer! !
+
+!FloatMatrix methodsFor: 'iterating' stamp: 'jmv 7/5/2018 15:32:15'!
+with: anotherImage replaceValues: aBlock
+	| otherValues |
+	self validateSameSize: anotherImage.
+	otherValues _ anotherImage elements.
+	1
+		to: elements size
+		do: [ :i |
+			elements
+				at: i
+				put: (aBlock value: (elements at: i) value: (otherValues at: i)) ]! !
 
 !FloatMatrix class methodsFor: 'instance creation' stamp: 'jmv 8/23/2014 23:26'!
 form: aForm color: aSymbol
@@ -2314,10 +2299,6 @@ hackBitsForm
 
 !Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:52:24'!
 fillFrom32BitForm: aForm component: aSymbol
-	self halt! !
-
-!Float64Matrix methodsFor: 'yet unimplemented' stamp: 'jmv 10/11/2016 10:53:11'!
-imaginary: imaginaryPart elementMultiplyBy: operandRealPart imaginary: operandImaginaryPart
 	self halt! !
 
 !Float64Matrix methodsFor: 'copying' stamp: 'jmv 10/11/2016 10:52:42'!
