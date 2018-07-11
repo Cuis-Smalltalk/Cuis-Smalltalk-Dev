@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3367] on 9 July 2018 at 4:54:06 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3368] on 11 July 2018 at 3:17:49 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 94!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
+!provides: 'SignalProcessing' 1 95!
+!requires: 'Statistics' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Statistics' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -2358,7 +2358,7 @@ displayAt: aPoint
 
 	self asForm displayAt: aPoint! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:19:14'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/11/2018 10:18:09'!
 displayAt: aPoint zoom: scale
 	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
 	
@@ -2385,7 +2385,8 @@ displayAt: aPoint zoom: scale
 		word at: 1 put: b; at: 2 put: g; at: 3 put: r ].
 	scale = 1 ifFalse: [
 		form _ form magnifyBy: scale ].
-	form displayAt: aPoint! !
+	form displayAt: aPoint.
+	^ form! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:19:21'!
 displayWithGammaAt: aPoint zoom: scale
@@ -5198,7 +5199,7 @@ displayMagnitude: compressMagnitude andPhaseAt: aPoint zoom: scale
 	max _ real elements max + imaginary elements max.
 	self displayMagnitude: compressMagnitude max: max andPhaseAt: aPoint zoom: scale! !
 
-!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/5/2018 11:22:27'!
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/11/2018 09:57:34'!
 displayMagnitude: compressMagnitude max: maxMagnitude andPhaseAt: aPoint zoom: scale
 	"Show magnitude and phase of receiver
 	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitude: false andPhaseAt: 100@100 zoom: 2
@@ -5217,7 +5218,8 @@ displayMagnitude: compressMagnitude max: maxMagnitude andPhaseAt: aPoint zoom: s
 		maxMagnitude: max.
 	scale = 1 ifFalse: [
 		form _ form magnifyBy: scale ].
-	form displayAt: aPoint! !
+	form displayAt: aPoint.
+	^ form! !
 
 !ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:18:52'!
 displayMagnitudeAndPhaseAt: aPoint zoom: scale
