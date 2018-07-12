@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3368] on 11 July 2018 at 3:17:49 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3371] on 12 July 2018 at 3:45:30 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 95!
+!provides: 'SignalProcessing' 1 96!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Sound' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -3262,7 +3262,7 @@ siemensStar: extent
 	"
 	^ self siemensStar: extent count: 32 offsetFromCenter: 0@0 backColor: `Color gray: 50/255` foreColor: `Color gray: 200/255`! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 14:52:05'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/12/2018 15:45:01'!
 siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: backColor foreColor: foreColor
 	"
 	FloatImage siemensStar: 256 :: displayAt: 0@0 zoom: 4
@@ -3275,7 +3275,9 @@ siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: b
 	1 to: count do: [ :i |
 		location _ AffineTransformation withRadians: i * angle * 2+0.02 scale: extent*0.45 position: extent-1/2.0 + offsetFromCenter.
 		canvas intoLocation: location.
-		canvas fillColor: foreColor do: [
+		"Alternatively...
+		canvas fillColor: foreColor do: ["
+		canvas strokeWidth: 3.0/extent color: foreColor fillColor: foreColor do: [
 			canvas
 				moveToX: 0 y: 0;
 				lineToX: 1 y: 0;
@@ -6821,8 +6823,8 @@ bilinearInterpolatedValueAtX: x y: y
 
 	^interpolated! !
 
-!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 14:48:55'!
-gaussianBlur: sigma
+!FloatMatrix methodsFor: '*SignalProcessing' stamp: 'jmv 7/12/2018 14:42:54'!
+gaussianBlur: pixelWidth
 	"Apply an arbitrary low pass filtar to remove the high frequency content.
 	width and height must be an integer power of 2.
 	sigma is the width of the filter in spatial domain
@@ -6837,7 +6839,7 @@ gaussianBlur: sigma
 	complex _ ComplexImage realPart: self.
 	complex fftTransform: true.
 
-	blur _ (ConvolutionKernel gaussian: sigma) otf: width@height.
+	blur _ (ConvolutionKernel gaussian: pixelWidth/2) otf: width@height.
 
 	complex *= blur.
 	complex fftTransform: false! !
