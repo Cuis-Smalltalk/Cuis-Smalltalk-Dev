@@ -1,6 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2935] on 11 September 2016 at 8:39:43 pm'!
-'Description Displays topics to aid the writing of Smalltalk code for Cuis.'!
-!provides: 'TerseGuide' 1 129!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3345] on 15 July 2018 at 1:46:33 am'!
+'Description Add ability to dynamically add topic pages from other sources.'!
+!provides: 'TerseGuide' 1 130!
+SystemOrganization addCategory: #TerseGuide!
+
+
 !classDefinition: #TerseGuideHelp category: #TerseGuide!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
@@ -19,6 +22,16 @@ WorkspaceWindow subclass: #TerseGuideWindow
 	category: 'TerseGuide'!
 !classDefinition: 'TerseGuideWindow class' category: #TerseGuide!
 TerseGuideWindow class
+	instanceVariableNames: ''!
+
+!classDefinition: #TerseGuideTopic category: #TerseGuide!
+Object subclass: #TerseGuideTopic
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerseGuide'!
+!classDefinition: 'TerseGuideTopic class' category: #TerseGuide!
+TerseGuideTopic class
 	instanceVariableNames: ''!
 
 
@@ -42,25 +55,29 @@ Show a terse guide to Cuis in a system window. The window has a text pane with a
 TerseGuideWindow openTerseGuide
 !
 
-!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 5/17/2016 16:50'!
-initialize
-	super initialize.
-	topics _ self terseTopics.
-	topicList _ self class pages.
-! !
+!TerseGuideTopic commentStamp: '<historical>' prior: 0!
+I represent a topic that can be added to the TerseGuide. Subclasses of me should implement #title and #examples. For instance:
 
-!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 6/15/2016 18:29'!
-selectedTopic: aTopic
-	"Set the value of selectedTopic and set the contents of the text pane"
+>>title
+    ^ 'Numbers'
+
+>> examples
+     ^ {
+            { #code -> '4 factorial' . #category -> 'Common functions' . #description -> 'factorial' } as: Dictionary.
+            { #code -> '2 even' . #category -> 'Common functions' . #description -> 'check if a number is even' } as: Dictionary.
+        }!
+
+!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 7/15/2018 01:31:53'!
+addAdditionalTopicsTo: topicsList
 	
-	selectedTopic _ aTopic.
-	textPane model actualContents: self updateTopicText.
-	self triggerEvent: #topicListIndex! !
+	self class additionalTopics do: [ :each |
+		topicsList at: each title put: each
+	].! !
 
-!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 2/19/2016 20:35'!
-terseTopics
-	"Translate a list item to a class method selector"
-	^ Dictionary new
+!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 7/15/2018 01:30:05'!
+coreTopics
+	
+	^ `Dictionary new
 	at: 'Arithmetic' put: #arithmetic;
 	at: 'Arrays' put: #array;
 	at: 'Assignment' put: #assignment;
@@ -110,13 +127,30 @@ terseTopics
 	at: 'Time' put: #time;
 	at: 'Transcript' put: #transcript;	
 	at: 'Trie' put: #trie;
-	yourself! !
+	yourself`! !
 
-!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 10/18/2015 20:01'!
-textPane: anObject
-	"Set the value of textPane"
+!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 7/15/2018 01:31:23'!
+terseTopics
+	"Translate a list item to a class method selector"
+	|allTopics|
+	allTopics _ self coreTopics.
+	self addAdditionalTopicsTo: allTopics.
+	^ allTopics! !
+
+!TerseGuideHelp methodsFor: 'initialization' stamp: 'dhn 5/17/2016 16:50'!
+initialize
+	super initialize.
+	topics _ self terseTopics.
+	topicList _ self class pages.
+! !
+
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 6/15/2016 18:29'!
+selectedTopic: aTopic
+	"Set the value of selectedTopic and set the contents of the text pane"
 	
-	textPane _ anObject! !
+	selectedTopic _ aTopic.
+	textPane model actualContents: self updateTopicText.
+	self triggerEvent: #topicListIndex! !
 
 !TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 2/26/2015 07:59'!
 topicList
@@ -135,18 +169,22 @@ topicListIndex: index
 	self selectedTopic: 
 		(topicList at: index ifAbsent: nil)! !
 
-!TerseGuideHelp methodsFor: 'user interface support' stamp: 'dhn 10/18/2015 20:48'!
+!TerseGuideHelp methodsFor: 'user interface support' stamp: 'RNG 7/15/2018 01:45:10'!
 updateTopicText
 	"Answer the text of the selected topic and change the window label accordingly"
-	| topic |
+	| topic topicTitle |
 	
-	topicListIndex = 0 
-		ifTrue: [
-			window setLabel: 'Terse Guide'.
-			^ ''].
+	topicListIndex = 0 ifTrue: [ window setLabel: 'Terse Guide'. ^ ''].
 	topic _ topics at: selectedTopic.
-	window setLabel: ('Terse Guide to ', (self class class firstPrecodeCommentFor: topic)).
-	^ self class perform: topic! !
+	topicTitle _ topic isSymbol ifTrue: [ self terseTopics keyAtValue: topic ] ifFalse: [ topic title ].
+	window setLabel: ('Terse Guide to ', topicTitle).
+	^ topic isSymbol ifTrue: [ self class perform: topic ] ifFalse: [ topic script ]! !
+
+!TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 10/18/2015 20:01'!
+textPane: anObject
+	"Set the value of textPane"
+	
+	textPane _ anObject! !
 
 !TerseGuideHelp methodsFor: 'accessing' stamp: 'dhn 2/27/2015 21:07'!
 window: anObject
@@ -916,15 +954,6 @@ Smalltalk removeKey: #CuisGlobal ifAbsent: [].	"remove entry from Smalltalk dict
  will answer the collection instead of the argument."
 
 '! !
-
-!TerseGuideHelp class methodsFor: 'displaying' stamp: 'dhn 11/14/2015 13:08'!
-display: aSelector    
-	"Open a Workspace on the text in aSelector"    
-	| window |
-	  
-	window _ TerseGuideHelp new.    
-	window 	actualContents: (self perform: aSelector).    
-	window	openLabel: ('Terse Guide to ', (self class firstPrecodeCommentFor: aSelector))! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 2/24/2015 14:38'!
 dynamic
@@ -1724,61 +1753,6 @@ y _ x asSet.										"convert to set collection"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 2/19/2016 20:30'!
-pages
-	"Answer the topics, in order, for the window list pane"
-	^  OrderedCollection new
-		add: 'Introduction'; 
-		add: 'Syntax'; 
-		add: 'Transcript'; 
-		add: 'Assignment'; 
-		add: 'Literals'; 
-		add: 'Booleans'; 
-		add: 'Arithmetic'; 
-		add: 'Bit-Wise'; 
-		add: 'Conversion'; 
-		add: 'Blocks'; 
-		add: 'Exceptions'; 
-		add: 'Method Calls'; 
-		add: 'Conditional Statements'; 
-		add: 'Iterations'; 
-		add: 'Character'; 
-		add: 'Symbols'; 
-		add: 'Strings'; 
-		add: 'Fonts'; 
-		add: 'Arrays'; 
-		add: 'Ordered Collections'; 
-		add: 'Sorted Collections'; 
-		add: 'Bags'; 
-		add: 'Sets'; 
-		add: 'Intervals'; 
-		add: 'Associations'; 
-		add: 'Dictionary'; 
-		add: 'Trie'; 
-		add: 'Heap'; 
-		add: 'Internal Streams'; 
-		add: 'Coding'; 
-		add: 'File Operations'; 
-		add: 'Features'; 
-		add: 'Date'; 
-		add: 'Time'; 
-		add: 'Point'; 
-		add: 'Rectangle'; 
-		add: 'Forms'; 
-		add: 'Canvas'; 
-		add: 'Colors'; 
-		add: 'Morphs'; 
-		add: 'Layout Morph'; 
-		add: 'Layout Spec'; 
-		add: 'PopUpMenu'; 
-		add: 'Dynamic Messages'; 
-		add: 'Object'; 
-		add: 'Metaclass'; 
-		add: 'Debugging'; 
-		add: 'Miscellaneous'; 
-		add: 'Primitives'; 
-		yourself! !
-
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 9/6/2016 20:21:59'!
 point
 	"Point"
@@ -2222,6 +2196,81 @@ t explore.
 '
 ! !
 
+!TerseGuideHelp class methodsFor: 'displaying' stamp: 'dhn 11/14/2015 13:08'!
+display: aSelector    
+	"Open a Workspace on the text in aSelector"    
+	| window |
+	  
+	window _ TerseGuideHelp new.    
+	window 	actualContents: (self perform: aSelector).    
+	window	openLabel: ('Terse Guide to ', (self class firstPrecodeCommentFor: aSelector))! !
+
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 7/15/2018 01:33:41'!
+additionalTopicTitles
+
+	^ (self additionalTopics collect: [ :topic | topic title ]) asArray! !
+
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 7/15/2018 01:34:27'!
+additionalTopics
+	"Topics that can be dynamically added by creating subclasses of TerseGuideTopic"
+
+	^ TerseGuideTopic allSubclasses collect: [ :topicClass | topicClass new ]! !
+
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 7/15/2018 01:32:52'!
+pages
+	"Answer the topics, in order, for the window list pane"
+	^ #(
+		'Introduction'
+		'Syntax'
+		'Transcript'
+		'Assignment'
+		'Literals'
+		'Booleans'
+		'Arithmetic'
+		'Bit-Wise'
+		'Conversion'
+		'Blocks'
+		'Exceptions'
+		'Method Calls'
+		'Conditional Statements'
+		'Iterations'
+		'Character'
+		'Symbols'
+		'Strings'
+		'Fonts'
+		'Arrays'
+		'Ordered Collections'
+		'Sorted Collections'
+		'Bags'
+		'Sets'
+		'Intervals'
+		'Associations'
+		'Dictionary'
+		'Trie'
+		'Heap'
+		'Internal Streams'
+		'Coding'
+		'File Operations'
+		'Features'
+		'Date'
+		'Time'
+		'Point'
+		'Rectangle'
+		'Forms'
+		'Canvas'
+		'Colors'
+		'Morphs'
+		'Layout Morph'
+		'Layout Spec'
+		'PopUpMenu'
+		'Dynamic Messages'
+		'Object'
+		'Metaclass'
+		'Debugging'
+		'Miscellaneous'
+		'Primitives'
+	) , self additionalTopicTitles! !
+
 !TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 6/15/2016 19:03'!
 buildMorphicWindow
 	"Define the window layout for Terse Guide"
@@ -2269,3 +2318,36 @@ openTerseGuide
 	help 
 		contents: '';
 		window: window! !
+
+!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 7/15/2018 01:02:39'!
+examples
+
+	^ #()! !
+
+!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 7/15/2018 01:37:27'!
+script
+
+	^ String streamContents: [ :stream |
+		self examples do: [ :example |
+			self append: example toScript: stream
+		]
+	]! !
+
+!TerseGuideTopic methodsFor: 'accessing' stamp: 'RNG 7/15/2018 01:02:32'!
+title
+
+	self subclassResponsibility! !
+
+!TerseGuideTopic methodsFor: 'private - script building' stamp: 'RNG 7/15/2018 01:38:22'!
+append: example toScript: stream
+
+	stream
+		nextPutAll: (example at: #code);
+		nextPutAll: '. ';
+		nextPutAll: (self commentFor: example);
+		newLine! !
+
+!TerseGuideTopic methodsFor: 'private - script building' stamp: 'RNG 7/15/2018 01:38:32'!
+commentFor: example
+
+	^ '"' , (example at: #category) , ' - ' , (example at: #description) , '"'! !
