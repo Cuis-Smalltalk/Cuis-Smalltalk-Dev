@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3371] on 12 July 2018 at 3:45:30 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3374] on 19 July 2018 at 11:33:53 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 96!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'SignalProcessing' 1 97!
 !requires: 'Sound' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
 !requires: 'LinearAlgebra' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -2332,7 +2332,7 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNi
 
 	^dx @dy! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:19:07'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/19/2018 11:30:10'!
 displayAsHeatmapAt: aPoint zoom: scale
 	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
 	
@@ -2345,9 +2345,10 @@ displayAsHeatmapAt: aPoint zoom: scale
 	form _ self asHeatmap: [ :index | elements at: index ] minVal: -1 maxVal: 1.
 	scale = 1 ifFalse: [
 		form _ form magnifyBy: scale ].
-	form displayAt: aPoint! !
+	form displayAt: aPoint.
+	^ form! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/18/2016 10:16:43'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/19/2018 11:30:03'!
 displayAt: aPoint
 	"Assume the receiver is normalized in [0.0 .. 1.0]. Clip values out of range.
 	For this reason, don't move this implementation to FloatMatrix, they will most likely use
@@ -2356,7 +2357,10 @@ displayAt: aPoint
 	Assume receiver is in gamma space (as a Form, and as jpg or png files) and there's no need to apply gamma.
 	(See #linearSpaceToGammaEncoded and #linearSpaceToGammaEncoded)"
 
-	self asForm displayAt: aPoint! !
+	| form |
+	form _ self asForm.
+	form displayAt: aPoint.
+	^ form! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 7/11/2018 10:18:09'!
 displayAt: aPoint zoom: scale
@@ -2388,7 +2392,7 @@ displayAt: aPoint zoom: scale
 	form displayAt: aPoint.
 	^ form! !
 
-!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:19:21'!
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/19/2018 11:29:38'!
 displayWithGammaAt: aPoint zoom: scale
 	"Values are in linear space, and [0.0 1.0]. Clip values out of range.
 	Assume receiver is in linear scale.
@@ -2399,7 +2403,8 @@ displayWithGammaAt: aPoint zoom: scale
 	form _ self asGammaFormUnitRange displayAt: aPoint.
 	scale = 1 ifFalse: [
 		form _ form magnifyBy: scale ].
-	form displayAt: aPoint! !
+	form displayAt: aPoint.
+	^ form! !
 
 !FloatImage methodsFor: 'private' stamp: 'jmv 10/19/2017 13:17:52'!
 erodedBy: erosionRadious
@@ -4922,6 +4927,15 @@ from: anImageHistogram
 height
 	^ real height! !
 
+!ComplexImage methodsFor: 'accessing' stamp: 'jmv 7/16/2018 14:59:01'!
+i: i j: j
+	^ (real i: i j: j) + (imaginary i: i j: j) i! !
+
+!ComplexImage methodsFor: 'accessing' stamp: 'jmv 7/16/2018 15:01:45'!
+i: i j: j put: aComplexNumber
+	real i: i j: j put: aComplexNumber real.
+	imaginary i: i j: j put: aComplexNumber imaginary! !
+
 !ComplexImage methodsFor: 'accessing' stamp: 'jmv 7/2/2018 14:42:24'!
 imaginaryPart
 	^ imaginary! !
@@ -5175,6 +5189,11 @@ magnitude
 
 	^real squared + imaginary squared :: sqrt! !
 
+!ComplexImage methodsFor: 'magnitude and phase' stamp: 'jmv 7/18/2018 15:37:42'!
+phase
+
+	^self collectReal: [ :c | c phase ]! !
+
 !ComplexImage methodsFor: 'processing' stamp: 'jmv 7/5/2018 09:33:44'!
 psf
 	| psf |
@@ -5191,7 +5210,14 @@ asHeatmap: aBlock maxMagnitude: maxMagnitude
 		color _ Color h: complex phase / Float twoPi *360 + Color green hue s: 0.7 v: complex magnitude / maxMagnitude * 0.8.
 		word at: 1 put: color blue * 255 // 1; at: 2 put: color green * 255 // 1; at: 3 put: color red * 255// 1 ]! !
 
-!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/5/2018 15:05:40'!
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/19/2018 11:30:56'!
+display
+	"Show magnitude and phase of receiver
+	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) display
+	"
+	^ self displayMagnitudeAndPhaseAt: 0@0 zoom: 1! !
+
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/16/2018 15:58:08'!
 displayMagnitude: compressMagnitude andPhaseAt: aPoint zoom: scale
 	"Show magnitude and phase of receiver
 	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitude: false andPhaseAt: 100@100 zoom: 2
@@ -5199,7 +5225,7 @@ displayMagnitude: compressMagnitude andPhaseAt: aPoint zoom: scale
 	"
 	| max |
 	max _ real elements max + imaginary elements max.
-	self displayMagnitude: compressMagnitude max: max andPhaseAt: aPoint zoom: scale! !
+	^ self displayMagnitude: compressMagnitude max: max andPhaseAt: aPoint zoom: scale! !
 
 !ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/11/2018 09:57:34'!
 displayMagnitude: compressMagnitude max: maxMagnitude andPhaseAt: aPoint zoom: scale
@@ -5230,7 +5256,7 @@ displayMagnitudeAndPhaseAt: aPoint zoom: scale
 	"
 	^ self displayMagnitude: true andPhaseAt: aPoint zoom: scale! !
 
-!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/5/2018 08:07:40'!
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/19/2018 11:31:04'!
 displayMagnitudeAt: aPoint zoom: scale
 	"Show magnitude and phase of receiver
 	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayMagnitudeAt: 100@100 zoom: 2
@@ -5249,9 +5275,10 @@ compressMagnitude _ true.
 		minVal: 0 maxVal: max.
 	scale = 1 ifFalse: [
 		form _ form magnifyBy: scale ].
-	form displayAt: aPoint! !
+	form displayAt: aPoint.
+	^ form! !
 
-!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 17:18:59'!
+!ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/19/2018 11:31:09'!
 displayPhaseAt: aPoint zoom: scale
 	"Show phase of receive
 	(ComplexImage realPart: FloatImage lena*2-1 imaginaryPart: FloatImage lena sqrt*2-1) displayPhaseAt: 100@100 zoom: 2
@@ -5266,7 +5293,8 @@ displayPhaseAt: aPoint zoom: scale
 		maxMagnitude: 2.
 	scale = 1 ifFalse: [
 		form _ form magnifyBy: scale ].
-	form displayAt: aPoint! !
+	form displayAt: aPoint.
+	^ form! !
 
 !ComplexImage methodsFor: 'copying' stamp: 'jmv 7/5/2018 08:17:06'!
 postCopy
@@ -5276,6 +5304,60 @@ postCopy
 !ComplexImage methodsFor: 'testing' stamp: 'jmv 7/5/2018 12:34:22'!
 is: aSymbol
 	^ aSymbol == #ComplexImage or: [ super is: aSymbol ]! !
+
+!ComplexImage methodsFor: 'iterating' stamp: 'jmv 7/18/2018 15:36:05'!
+collect: aBlock
+	| answer answerImaginaryElements answerRealElements imaginaryElements realElements |
+	realElements _ real elements.
+	imaginaryElements _ imaginary elements.
+
+	answer _ ComplexImage width: real width height: real height.
+	answerRealElements _ answer realPart elements.
+	answerImaginaryElements _ answer imaginaryPart elements.
+	1
+		to: realElements size
+	 	do: [ :i | | c c1 |
+			c1 _ (realElements at: i) + (imaginaryElements at: i) i.
+			c _ aBlock value: c1.
+			answerRealElements at: i put: c real.
+			answerImaginaryElements at: i put: c imaginary ].
+	^ answer! !
+
+!ComplexImage methodsFor: 'iterating' stamp: 'jmv 7/18/2018 15:37:37'!
+collectReal: aBlock
+	| answer answerElements imaginaryElements realElements |
+	realElements _ real elements.
+	imaginaryElements _ imaginary elements.
+
+	answer _ FloatImage width: real width height: real height.
+	answerElements _ answer elements.
+	1
+		to: realElements size
+	 	do: [ :i | | c |
+			c _ (realElements at: i) + (imaginaryElements at: i) i.
+			answerElements at: i put: (aBlock value: c) ].
+	^ answer! !
+
+!ComplexImage methodsFor: 'iterating' stamp: 'jmv 7/19/2018 11:32:09'!
+do: aBlock
+	"Evaluate aBlock on each element"
+
+	| w |
+	w _ real width.
+	1 to: real height do: [ :i |
+		1 to: w do: [ :j |
+			aBlock value: (self i: i j: j) ] ]! !
+
+!ComplexImage methodsFor: 'iterating' stamp: 'jmv 7/18/2018 15:46:58'!
+replaceValues: aBlock
+	"Replace each value with the result of evaluating aBlock, with i, j and the previous value as the arguments"
+
+	| w |
+	w _ real width.
+	1 to: real height do: [ :i |
+		1 to: w do: [ :j |
+			self i: i j: j put:
+				(aBlock value: i value: j value: (self i: i j: j)) ] ]! !
 
 !ComplexImage methodsFor: 'iterating' stamp: 'jmv 7/5/2018 15:42:32'!
 with: otherImage collect: aBlock
@@ -5298,6 +5380,26 @@ with: otherImage collect: aBlock
 			answerRealElements at: i put: c real.
 			answerImaginaryElements at: i put: c imaginary ].
 	^ answer! !
+
+!ComplexImage methodsFor: 'iterating' stamp: 'jmv 7/19/2018 11:32:45'!
+with: otherImage do: aBlock
+	"Evaluate aBlock on each element"
+
+	| w |
+	w _ real width.
+	1 to: real height do: [ :i |
+		1 to: w do: [ :j |
+			aBlock value: (self i: i j: j) value: (otherImage i: i j: j) ] ]! !
+
+!ComplexImage methodsFor: 'iterating' stamp: 'jmv 7/19/2018 11:32:52'!
+withIndexesDo: aBlock
+	"Evaluate aBlock on each element, including i, j indexes also as arguments"
+
+	| w |
+	w _ real width.
+	1 to: real height do: [ :i |
+		1 to: w do: [ :j |
+			aBlock value: i value: j value: (self i: i j: j) ] ]! !
 
 !ComplexImage methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 14:42:24'!
 fftTransform: forward
