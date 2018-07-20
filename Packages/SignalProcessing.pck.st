@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3374] on 19 July 2018 at 11:33:53 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3374] on 20 July 2018 at 11:43:39 am'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 97!
-!requires: 'Sound' 1 nil nil!
+!provides: 'SignalProcessing' 1 99!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Sound' 1 nil nil!
 !requires: 'Goodies' 1 0 nil!
-!requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -459,6 +459,344 @@ divideBy: aFloatImageOrNumber ifDivisorZero: zeroDivisionBlockOrValue ifBothZero
 			self validateSameSize: aFloatImageOrNumber.
 			elements divideBy: aFloatImageOrNumber elements ifDivisorZero: zeroDivisionBlockOrValue ifBothZero: indeterminateBlockOrValue ]! !
 
+!FloatImage methodsFor: 'resampling-basic' stamp: 'jmv 4/8/2015 15:28'!
+scaledBy: scale
+	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
+	Gives very good results for any scale values, including very large and very small.
+	Uses unfiltered BSpline interpolation for large scale factors, and Lanczos filtering and resampling for small scale factors. 
+	But you can use the methods specific to each technique if you know what you want.
+
+	| original |
+	original _ FloatImage checkerboard: 100@100 n: 50.
+	(original scaledBy: 4.0) display.
+	original display.
+	(original scaledBy: 0.25) display.
+
+	| original |
+	original _ FloatImage from8BitColorForm: Cursor read as8BitColorForm.
+	(original scaledBy: 4.0) display.
+	original asForm displayAt: 16@0.
+	(original scaledBy: 0.7) display.
+	"
+	| t |
+	t _ AffineTransformation forImageZoom: scale.
+	^scale < 0.8
+		ifTrue: [
+			scale < 0.25
+				ifTrue: [self areaTransformedBy: t resultExtent: nil]
+				ifFalse: [self lanczosTransformedBy: t resultExtent: nil]]
+		ifFalse: [self bSplineTransformedBy: t resultExtent: nil ]! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 7/20/2018 11:27:33'!
+areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Apply a pixel area filtering for interpolation, akin to OpenCV's CV_INTER_AREA.
+	Very fast. Very good for strong zoom out (like building image thumbnails). Essentially the same as Same as #nearestNeighborTransformedBy:resultExtent: for scale factors >=1 (zoom in)
+	"
+	| scaled resultHeight resultWidth p v hh hw inverseTransformation e |
+
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	hw _ 0.5 * width / resultWidth max: 0.5.
+	hh _ 0.5 * height / resultHeight max: 0.5.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			v _ self areaFilteredValueAtX: p x y: p y halfWidth: hw halfHeight: hh.
+			scaled x: x y: y put: v 
+		]].
+	^scaled! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 5/22/2015 12:25'!
+bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	See comment at BSplineInterpolatingImage. Not available in OpenCV.
+	Gives top quality results for large scale values (not much smaller than 1.0)
+	 In such cases, prefer a filtering technique such as Area or Lanczos to avoid aliasing.
+	"
+	| scaled interpolator resultHeight resultWidth p v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.	
+	interpolator _ BSplineInterpolatingImage from: self.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			v _ interpolator interpolatedValueAtX: p x y: p y.
+			scaled x: x y: y put: v ]].
+	^scaled! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 5/22/2015 12:25'!
+bicubicTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Evaluate a bicubic (i.e. good quality) interpolation. Like OpenCV's CV_INTER_CUBIC
+	"
+	| scaled resultHeight resultWidth p v xFilter inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	xFilter _ FloatArray new: 4.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			v _ self bicubicInterpolatedValueAtX: p x y: p y xFilterStore: xFilter.
+			scaled x: x y: y put: v
+		]].
+	^scaled! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 5/22/2015 12:25'!
+bilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Evaluate a bilinear (i.e. cheap) interpolation.
+	Like OpenCV's CV_INTER_LINEAR"
+
+	| scaled resultHeight resultWidth p v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			v _ self bilinearInterpolatedValueAtX: p x y: p y.
+			scaled x: x y: y put: v
+		]].
+	^scaled! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 7/19/2018 16:09:01'!
+fourierDoubledBilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Evaluate a bilinear interpolation on a reasonably good upscaled version of the receiver.
+	Result is very sharp, but with a bit of high frequency ripple.
+	Not very practical, but instructive. Results are very similar to fourierPhaseDisplacedBy: that is also very instructive."
+
+	| fftExtent complex biggerExtent biggerComplex 
+	e resultWidth resultHeight scaled inverseTransformation p v totalScale |
+	fftExtent _ 2 raisedToInteger: ((width max: height) log: 2) ceiling.
+
+	complex _ ComplexImage extent: fftExtent.
+	complex realPart fillWith: self.
+	complex fftTransform: true.
+
+	biggerExtent _ 2 raisedToInteger: ((width max: height) log: 2) ceiling + 1.
+	biggerComplex _ ComplexImage extent: biggerExtent.
+	biggerComplex fillLowFFTFrequenciesWith: complex.
+	biggerComplex *= 4.
+	biggerComplex fftTransform: false.
+	totalScale _ biggerExtent / width.
+	
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
+			inverseTransformation _ anAffineTransformation inverseTransformation.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			p _ p * totalScale.
+			v _ biggerComplex realPart bilinearInterpolatedValueAtX: p x-1 y: p y-1.
+			scaled x: x y: y put: v
+		]].
+	^scaled! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 7/19/2018 16:14:52'!
+fourierPhaseDisplacedBy: delta
+	"Answer a new image.
+	
+	See #fourierPhaseDisplaceBy:
+
+	Not very practical, but instructive. Results are very similar to #fourierDoubledBilinearTransformedBy:resultExtent:  that is also very instructive.
+	
+	FloatImage lena fourierPhaseDisplacedBy: 0.4@0 :: displayAt: 0@0 zoom: 4
+	"
+
+	| fftExtent complex answer |
+	fftExtent _ 2 raisedToInteger: ((width max: height) log: 2) ceiling.
+
+	complex _ ComplexImage extent: fftExtent.
+	complex realPart fillWith: self.
+	complex fftTransform: true.
+	complex fourierPhaseDisplaceBy: delta.
+	complex fftTransform: false.
+
+	fftExtent = self extent 
+		ifTrue: [ answer _ complex realPart ]
+		ifFalse: [
+			answer _ FloatImage extent: self extent.
+			answer fillWith: complex realPart ].
+	^answer! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 5/22/2015 12:27'!
+lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+	
+	Note about OpenCV's INTER_LANCZOS4:
+		According to online documentation, It looks like OpenCV a Lanczos filter of fixed support. 
+		That means that the filter is fitted to the sampling frequency of the source image.
+		So, no real filtering is done, just interpolation. Aliasing is expected when zooming out!!
+		http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize
+
+	This method of image resampling is very good for scale < 0.9, because of good filtering.
+	Even in these cases, Area filtering might be preferred, because it is quite good and much faster.
+
+	For scale close to 1.0 and greater, no filtering is needed. In such cases a good interpolation
+	like #bSplineTransformedBy:resultExtent: could give better results, and better performance
+	(especially if many resamplings will be done on the same source image).
+	"
+	| scaled resultHeight resultWidth p filterScale n xFilter yFilter v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+
+	"If downscaling (zooming out, filterScale<1, subsampling) remove frequencies above sf, as they would become aliasing in the result.
+	If upscaling (zooming in, filterScale > 1), avoid creating frequencies above 1 in the result, as they were not in ourselves."
+	filterScale _ ((resultWidth / width) min: (resultHeight / height)) min: 1.0.
+	n _ (4 / filterScale) floor +1.
+	xFilter _ FloatArray new: n.
+	yFilter _ FloatArray new: n.
+	1 to: resultHeight do: [ :y |
+		1 to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			v _ self lanczosFilteredValueAtX: p x y: p y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter.
+			scaled x: x y: y put: v ]].
+	^scaled! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 5/22/2015 12:27'!
+nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Evaluate a Nearest Neighbor (i.e. very cheap, low quality) interpolation.
+	Like OpenCV's CV_INTER_NN
+	"
+	| scaled resultHeight resultWidth p v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			"Protect against invalid access"
+			(p >= (0.5@0.5) and: [ p < (width@height + 0.5) ]) ifTrue: [
+				v _ self x: p x rounded y: p y rounded.
+				scaled x: x y: y put: v 
+			]
+		]].
+	^scaled! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 6/15/2015 16:30'!
+perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft bottomRight: bottomRight
+	"Resample the receiver to a new Float image.
+	The arguments specify which point in the receiver maps to each corner of the result.
+	The arguments might be Integer or Float points.
+	Apply a PerspectiveTransformation"
+"
+| i p r |
+i _ FloatImage lena.
+p _ i perspectiveTransformTopLeft: -800@1 topRight: 256+800@1bottomLeft: 1@256 bottomRight: 256@256.
+r _ p perspectiveTransformTopLeft: 111.1+0@1 topRight: 146+0.1@1bottomLeft: 1@256 bottomRight: 256@256.
+i displayAt: 0@0.
+p displayAt: 256@0.
+r displayAt: 512@0.
+"
+	| scaled resultHeight resultWidth p v cornersInSource transformation resultCorners interpolator |
+	cornersInSource _ {topLeft. topRight. bottomLeft. bottomRight }.
+	resultWidth _ width.
+	resultHeight _ height.
+	
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
+	resultCorners _ { 1@1. resultWidth@1. 1@resultHeight. resultWidth@resultHeight }.
+	
+	transformation _ PerspectiveTransformation map: resultCorners to: cornersInSource.	
+	interpolator _ BSplineInterpolatingImage from: self.
+
+	1 to: resultHeight do: [ :y |
+		1 to: resultWidth do: [ :x |
+			p _ transformation map: x@y.
+			v _ interpolator interpolatedValueAtX: p x y: p y.
+			scaled x: x y: y put: v ]].
+	^scaled! !
+
+!FloatImage methodsFor: 'resampling-advanced' stamp: 'jmv 5/22/2015 12:27'!
+shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
+	"Answer a new image.
+	anAffineTransformation specifies the transformation from us to the result image.
+	resultExtentOrNil ifNil: [ make it large enough ]
+
+	Warning: there could be black areas in the result, and/or some image content in self could be lost.
+	This depends on the arguments.
+
+	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
+	as #lanczosTransformedBy:resultExtent: to avoid aliasing.
+
+	See ShiftedLinearInterpolatingImage class comment.
+	Not available in OpenCV.
+	"
+	| scaled interpolator resultHeight resultWidth p v inverseTransformation e |
+	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
+	resultWidth _ e x.
+	resultHeight _ e y.
+	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.	
+	interpolator _ ShiftedLinearInterpolatingImage from: self.
+	inverseTransformation _ anAffineTransformation inverseTransformation.
+	1 to: resultHeight do: [ :y |
+		1to: resultWidth do: [ :x |
+			p _ inverseTransformation transform: x@y.
+			v _ interpolator interpolatedValueAtX: p x y: p y.
+			scaled x: x y: y put: v ]].
+	^scaled! !
+
 !FloatImage methodsFor: 'noise generation' stamp: 'jmv 7/19/2016 12:08:32'!
 addNormalNoise: standardDeviation
 	| random |
@@ -835,306 +1173,6 @@ lanczosFilteredValueOLDAtX: x y: y filterScale: filterScale xFilterStore: xFilte
 			sum _ (self x: (xxx min: width max: 1) y: (yyy min: height max: 1)) * (xFilter at: xxx-xStart+1) * (yFilter at: yyy-yStart+1) + sum ]].
 	
 	^sum! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
-areaTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	resultExtentOrNil ifNil: [ make it large enough ]
-
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-
-	Apply a pixel area filtering for interpolation, akin to OpenCV's CV_INTER_AREA.
-	Very fast. Very good for strong zoom out (like building image thumbnails).
-	"
-	| scaled resultHeight resultWidth p v hh hw inverseTransformation e |
-
-	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
-	resultWidth _ e x.
-	resultHeight _ e y.
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
-	inverseTransformation _ anAffineTransformation inverseTransformation.
-	hw _ 0.5 * width / resultWidth.
-	hh _ 0.5 * height / resultHeight.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ inverseTransformation transform: x@y.
-			v _ self areaFilteredValueAtX: p x y: p y halfWidth: hw halfHeight: hh.
-			scaled x: x y: y put: v 
-		]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
-bSplineTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	resultExtentOrNil ifNil: [ make it large enough ]
-
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-
-	See comment at BSplineInterpolatingImage. Not available in OpenCV.
-	Gives top quality results for large scale values (not much smaller than 1.0)
-	 In such cases, prefer a filtering technique such as Area or Lanczos to avoid aliasing.
-	"
-	| scaled interpolator resultHeight resultWidth p v inverseTransformation e |
-	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
-	resultWidth _ e x.
-	resultHeight _ e y.
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.	
-	interpolator _ BSplineInterpolatingImage from: self.
-	inverseTransformation _ anAffineTransformation inverseTransformation.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ inverseTransformation transform: x@y.
-			v _ interpolator interpolatedValueAtX: p x y: p y.
-			scaled x: x y: y put: v ]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
-bicubicTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	resultExtentOrNil ifNil: [ make it large enough ]
-
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-
-	Evaluate a bicubic (i.e. good quality) interpolation. Like OpenCV's CV_INTER_CUBIC
-	"
-	| scaled resultHeight resultWidth p v xFilter inverseTransformation e |
-	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
-	resultWidth _ e x.
-	resultHeight _ e y.
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
-	inverseTransformation _ anAffineTransformation inverseTransformation.
-	xFilter _ FloatArray new: 4.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ inverseTransformation transform: x@y.
-			v _ self bicubicInterpolatedValueAtX: p x y: p y xFilterStore: xFilter.
-			scaled x: x y: y put: v
-		]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:25'!
-bilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	resultExtentOrNil ifNil: [ make it large enough ]
-
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-
-	Evaluate a bilinear (i.e. cheap) interpolation.
-	Like OpenCV's CV_INTER_LINEAR"
-
-	| scaled resultHeight resultWidth p v inverseTransformation e |
-	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
-	resultWidth _ e x.
-	resultHeight _ e y.
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
-	inverseTransformation _ anAffineTransformation inverseTransformation.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ inverseTransformation transform: x@y.
-			v _ self bilinearInterpolatedValueAtX: p x y: p y.
-			scaled x: x y: y put: v
-		]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 7/2/2018 14:52:28'!
-fourierDoubledBilinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	| fftExtent complex biggerExtent biggerComplex 
-	e resultWidth resultHeight scaled inverseTransformation p v totalScale |
-	fftExtent _ 2 raisedToInteger: ((width max: height) log: 2) ceiling.
-
-	complex _ ComplexImage extent: fftExtent.
-	complex realPart fillWith: self.
-	complex fftTransform: true.
-
-	biggerExtent _ 2 raisedToInteger: ((width max: height) log: 2) ceiling + 1.
-	biggerComplex _ ComplexImage extent: biggerExtent.
-	biggerComplex fillLowFFTFrequenciesWith: complex.
-	biggerComplex *= 4.
-	biggerComplex fftTransform: false.
-	totalScale _ biggerExtent / width.
-	
-	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
-	resultWidth _ e x.
-	resultHeight _ e y.
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
-			inverseTransformation _ anAffineTransformation inverseTransformation.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ inverseTransformation transform: x@y.
-			p _ p * totalScale.
-			v _ biggerComplex realPart bilinearInterpolatedValueAtX: p x-1 y: p y-1.
-			scaled x: x y: y put: v
-		]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
-lanczosTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	resultExtentOrNil ifNil: [ make it large enough ]
-
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-	
-	Note about OpenCV's INTER_LANCZOS4:
-		According to online documentation, It looks like OpenCV a Lanczos filter of fixed support. 
-		That means that the filter is fitted to the sampling frequency of the source image.
-		So, no real filtering is done, just interpolation. Aliasing is expected when zooming out!!
-		http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize
-
-	This method of image resampling is very good for scale < 0.9, because of good filtering.
-	Even in these cases, Area filtering might be preferred, because it is quite good and much faster.
-
-	For scale close to 1.0 and greater, no filtering is needed. In such cases a good interpolation
-	like #bSplineTransformedBy:resultExtent: could give better results, and better performance
-	(especially if many resamplings will be done on the same source image).
-	"
-	| scaled resultHeight resultWidth p filterScale n xFilter yFilter v inverseTransformation e |
-	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
-	resultWidth _ e x.
-	resultHeight _ e y.
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
-	inverseTransformation _ anAffineTransformation inverseTransformation.
-
-	"If downscaling (zooming out, filterScale<1, subsampling) remove frequencies above sf, as they would become aliasing in the result.
-	If upscaling (zooming in, filterScale > 1), avoid creating frequencies above 1 in the result, as they were not in ourselves."
-	filterScale _ ((resultWidth / width) min: (resultHeight / height)) min: 1.0.
-	n _ (4 / filterScale) floor +1.
-	xFilter _ FloatArray new: n.
-	yFilter _ FloatArray new: n.
-	1 to: resultHeight do: [ :y |
-		1 to: resultWidth do: [ :x |
-			p _ inverseTransformation transform: x@y.
-			v _ self lanczosFilteredValueAtX: p x y: p y filterScale: filterScale xFilterStore: xFilter yFilterStore: yFilter.
-			scaled x: x y: y put: v ]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
-nearestNeighborTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	resultExtentOrNil ifNil: [ make it large enough ]
-
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-
-	Evaluate a Nearest Neighbor (i.e. very cheap, low quality) interpolation.
-	Like OpenCV's CV_INTER_NN
-	"
-	| scaled resultHeight resultWidth p v inverseTransformation e |
-	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
-	resultWidth _ e x.
-	resultHeight _ e y.
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
-	inverseTransformation _ anAffineTransformation inverseTransformation.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ inverseTransformation transform: x@y.
-			"Protect against invalid access"
-			(p >= (0.5@0.5) and: [ p < (width@height + 0.5) ]) ifTrue: [
-				v _ self x: p x rounded y: p y rounded.
-				scaled x: x y: y put: v 
-			]
-		]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 6/15/2015 16:30'!
-perspectiveTransformTopLeft: topLeft topRight: topRight bottomLeft: bottomLeft bottomRight: bottomRight
-	"Resample the receiver to a new Float image.
-	The arguments specify which point in the receiver maps to each corner of the result.
-	The arguments might be Integer or Float points.
-	Apply a PerspectiveTransformation"
-"
-| i p r |
-i _ FloatImage lena.
-p _ i perspectiveTransformTopLeft: -800@1 topRight: 256+800@1bottomLeft: 1@256 bottomRight: 256@256.
-r _ p perspectiveTransformTopLeft: 111.1+0@1 topRight: 146+0.1@1bottomLeft: 1@256 bottomRight: 256@256.
-i displayAt: 0@0.
-p displayAt: 256@0.
-r displayAt: 512@0.
-"
-	| scaled resultHeight resultWidth p v cornersInSource transformation resultCorners interpolator |
-	cornersInSource _ {topLeft. topRight. bottomLeft. bottomRight }.
-	resultWidth _ width.
-	resultHeight _ height.
-	
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.
-	resultCorners _ { 1@1. resultWidth@1. 1@resultHeight. resultWidth@resultHeight }.
-	
-	transformation _ PerspectiveTransformation map: resultCorners to: cornersInSource.	
-	interpolator _ BSplineInterpolatingImage from: self.
-
-	1 to: resultHeight do: [ :y |
-		1 to: resultWidth do: [ :x |
-			p _ transformation map: x@y.
-			v _ interpolator interpolatedValueAtX: p x y: p y.
-			scaled x: x y: y put: v ]].
-	^scaled! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 4/8/2015 15:28'!
-scaledBy: scale
-	"Answer a new image. Extent is multiplied by scale (i.e. scale=0.5 means half size, scale=2 means twice size.
-	Gives very good results for any scale values, including very large and very small.
-	Uses unfiltered BSpline interpolation for large scale factors, and Lanczos filtering and resampling for small scale factors. 
-	But you can use the methods specific to each technique if you know what you want.
-
-	| original |
-	original _ FloatImage checkerboard: 100@100 n: 50.
-	(original scaledBy: 4.0) display.
-	original display.
-	(original scaledBy: 0.25) display.
-
-	| original |
-	original _ FloatImage from8BitColorForm: Cursor read as8BitColorForm.
-	(original scaledBy: 4.0) display.
-	original asForm displayAt: 16@0.
-	(original scaledBy: 0.7) display.
-	"
-	| t |
-	t _ AffineTransformation forImageZoom: scale.
-	^scale < 0.8
-		ifTrue: [
-			scale < 0.25
-				ifTrue: [self areaTransformedBy: t resultExtent: nil]
-				ifFalse: [self lanczosTransformedBy: t resultExtent: nil]]
-		ifFalse: [self bSplineTransformedBy: t resultExtent: nil ]! !
-
-!FloatImage methodsFor: 'resampling' stamp: 'jmv 5/22/2015 12:27'!
-shiftedLinearTransformedBy: anAffineTransformation resultExtent: resultExtentOrNil
-	"Answer a new image.
-	anAffineTransformation specifies the transformation from us to the result image.
-	resultExtentOrNil ifNil: [ make it large enough ]
-
-	Warning: there could be black areas in the result, and/or some image content in self could be lost.
-	This depends on the arguments.
-
-	Gives very good results for scale values not much smaller than 1.0. In such cases, prefer a filtering technique such
-	as #lanczosTransformedBy:resultExtent: to avoid aliasing.
-
-	See ShiftedLinearInterpolatingImage class comment.
-	Not available in OpenCV.
-	"
-	| scaled interpolator resultHeight resultWidth p v inverseTransformation e |
-	e _ resultExtentOrNil ifNil: [ self resultExtentFor: anAffineTransformation ].
-	resultWidth _ e x.
-	resultHeight _ e y.
-	scaled _ self appropriateResultClass width: resultWidth height: resultHeight.	
-	interpolator _ ShiftedLinearInterpolatingImage from: self.
-	inverseTransformation _ anAffineTransformation inverseTransformation.
-	1 to: resultHeight do: [ :y |
-		1to: resultWidth do: [ :x |
-			p _ inverseTransformation transform: x@y.
-			v _ interpolator interpolatedValueAtX: p x y: p y.
-			scaled x: x y: y put: v ]].
-	^scaled! !
 
 !FloatImage methodsFor: 'conversion' stamp: 'jmv 6/25/2018 15:25:07'!
 asForm
@@ -3061,6 +3099,502 @@ lineHistogramsHeatmap
 	].
 	^ plot! !
 
+!FloatImage methodsFor: 'Fourier' stamp: 'jmv 7/19/2018 16:42:23'!
+fftTransform: forward
+	"Answer a ComplexMatrix that is the Fourier transform of self.
+	Make a copy, do not modify receiver"
+	| complex |
+	complex _ ComplexImage realPart: self copy.
+	complex fftTransform: true.
+	^complex! !
+
+!FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 7/19/2018 16:34:01'!
+showRotations
+	"
+	FloatImage showRotations
+
+	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
+	"
+	| a c e original transformed t xx  yy |
+	Transcript newLine.
+	'Test resampling algorithms without significant scaling.' print.
+	'The approach is to do successive rotations.'  print.
+
+	c _ 140.	"Evidencia la falta de nitidez de BiCubic, y tambien cierta deformación geométrica de Lanczos. BSpline es impresionante."
+	c _ 27.
+	a _ -360.0 / (c+1).
+
+	xx _ 0.
+	yy _ 0.
+	original _ FloatImage lena.
+	original displayAt: 0@0.
+	Display getCanvas drawString: 'Original' at: xx@240 font: nil color: Color lightBrown embossed: true.
+	e _ original extent.
+	t _ (AffineTransformation withRadians: a/180*Float pi ) scaledBy: 1/1.0.
+	t _ (AffineTransformation withTranslation: e // 2) composedWith:
+			(t composedWith:
+					(AffineTransformation withTranslation: e // 2  negated)).
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
+	c timesRepeat: [
+		transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
+	c timesRepeat: [
+		transformed _ transformed areaTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed areaTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
+	c timesRepeat: [
+		transformed _ transformed bilinearTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bilinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) | true ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
+	c timesRepeat: [
+		transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Oversampled Bilinear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
+	c timesRepeat: [
+		transformed _ transformed bicubicTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bicubicTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
+	c timesRepeat: [
+		transformed _ transformed lanczosTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed lanczosTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
+	c timesRepeat: [
+		transformed _ transformed bSplineTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bSplineTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
+	c timesRepeat: [
+		transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Shifted Linear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	'=== BSpline gives outstanding results.'print.
+	'=== Next comes BiCubic and Oversampled Bilinear. Then and Lanczos.' print.
+	'         (beware about Oversampled Bilinear: on larger images, It requres extra 4x memory, and FFT might make it slower than others)' print.
+	'=== The extra cost of Lanczos doesnt seem worth in this case.' print.! !
+
+!FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 7/20/2018 11:35:53'!
+showTranslationAndFourierPhase
+	"
+	Extremely instructive!!
+	FloatImage showTranslationAndFourierPhase
+	"
+	| i fourier phaseDisplaceFourier phaseDisplace bSpline bSplineFourier lanczos lanczosFourier biCubic biCubicFourier doubledBilinear doubledBilinearFourier zoom displacement t |
+	i _ FloatImage lena.
+	fourier _ i fftTransform: true.
+	displacement _ 0.4@0.7.
+	t _ AffineTransformation withTranslation: displacement.
+
+	phaseDisplaceFourier _ fourier copy fourierPhaseDisplaceBy: displacement.
+	phaseDisplace _ phaseDisplaceFourier copy fftTransform: false :: realPart.
+
+	bSpline _ i bSplineTransformedBy: t resultExtent: 256@256.
+	lanczos _ i lanczosTransformedBy: t resultExtent: 256@256.
+	biCubic _ i bicubicTransformedBy: t resultExtent: 256@256.
+	doubledBilinear _ i fourierDoubledBilinearTransformedBy: t resultExtent: 256@256.
+	bSplineFourier _ bSpline fftTransform: true.
+	lanczosFourier _ lanczos fftTransform: true.
+	biCubicFourier _ biCubic fftTransform: true.
+	doubledBilinearFourier _ doubledBilinear fftTransform: true.
+
+zoom _ 2.
+	phaseDisplace displayAt: 0@0*zoom zoom: zoom.
+	doubledBilinear displayAt: 256@0*zoom zoom: zoom.
+	bSpline displayAt: 512@0*zoom zoom: zoom.
+	biCubic displayAt: 768@0*zoom zoom: zoom.
+
+	phaseDisplaceFourier / fourier displayMagnitude: true max: 1 andPhaseAt: 0@256*zoom zoom: zoom.
+	doubledBilinearFourier / fourier displayMagnitude: true max: 1 andPhaseAt: 256@256*zoom zoom: zoom.
+	bSplineFourier / fourier displayMagnitude: true max: 1 andPhaseAt: 512@256*zoom zoom: zoom.
+	biCubicFourier / fourier displayMagnitude: true max: 1 andPhaseAt: 768@256*zoom zoom: zoom.! !
+
+!FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 7/19/2018 16:34:20'!
+showTranslations
+	"
+	FloatImage showTranslations
+
+	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
+	"
+	| c e original transformed t xx  yy |
+	Transcript newLine.
+	'Test resampling algorithms without significant scaling.' print.
+	'The approach is to do successive fractional translations.'  print.
+
+	c _ 140.	"Evidencia la falta de nitidez de BiCubic, y tambien cierta deformación geométrica de Lanczos. BSpline es impresionante."
+	c _ 27.
+
+	xx _ 0.
+	yy _ 0.
+	original _ FloatImage lena.
+	original displayAt: 0@0.
+	Display getCanvas drawString: 'Original' at: xx@240 font: nil color: Color lightBrown embossed: true.
+	e _ original extent.
+	t _ AffineTransformation withTranslation: 15.0 / c @ (3.0/c).
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
+	c timesRepeat: [
+		transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
+	c timesRepeat: [
+		transformed _ transformed areaTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed areaTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
+	c timesRepeat: [
+		transformed _ transformed bilinearTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bilinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) | true ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
+	c timesRepeat: [
+		transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Oversampled Bilinear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
+	c timesRepeat: [
+		transformed _ transformed bicubicTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bicubicTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
+	c timesRepeat: [
+		transformed _ transformed lanczosTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed lanczosTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
+	c timesRepeat: [
+		transformed _ transformed bSplineTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bSplineTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
+	c timesRepeat: [
+		transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Shifted Linear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + 256.
+	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
+	transformed _ original.
+	Transcript show: 'Linear Phase shift in Fourier domain, unavailable in OpenCV (ms): '.
+	c timesRepeat: [
+		transformed _ transformed fourierPhaseDisplacedBy: t translation.
+		transformed displayAt: xx@yy ].
+	Smalltalk garbageCollect.
+	[ transformed _ transformed fourierPhaseDisplacedBy: t translation ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Fourier Phase Shift, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
+
+	'=== BSpline gives outstanding results. Next comes Oversampled Bilinear, that is very fast.' print.
+	'         (beware about Oversampled Bilinear: on larger images, It requres extra 4x memory, and FFT might make it slower than others)' print.
+	'=== Then comes BiCubic and Lanczos. The extra cost of Lanczos doesnt seem worth in this case.' print.
+	'=== Nearest Neighbor and Shifted Linear dont give consistent results across different transformations' print.! !
+
+!FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 7/19/2018 16:34:35'!
+showZoomIn
+	"
+	FloatImage showZoomIn
+
+	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
+	"
+	| original transformed t xx yy e scale |
+	Transcript newLine.
+	'Test image enlarging algorithms.' print.
+
+	scale _ 2.7.
+scale _ 2.
+scale _ 2.7.
+	xx _ 0.
+	yy _ 0.
+	original _ FloatImage lena copy: (100@100 extent: 100@100).
+original _ FloatImage lena copy: (70@80 extent: 128@128).
+	e _ (original extent * scale) rounded.
+	original displayAt: 0@0.
+	Display getCanvas drawString: 'Original' at: xx@240 font: nil color: Color lightBrown embossed: true.
+	t _ AffineTransformation forImageZoom: scale.
+
+	xx _ original  width.
+	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
+	transformed _ original.
+	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
+	Smalltalk garbageCollect.
+	[ transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
+	transformed _ original.
+	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
+	Smalltalk garbageCollect.
+	[ transformed _ transformed areaTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
+	transformed _ original.
+	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bilinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	xx > (Display width-e x) | true ifTrue: [xx _ original  width. yy _ yy + e y ].
+	transformed _ original copy guardZone: 2@2.
+	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
+	Smalltalk garbageCollect.
+	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Oversampled Bilinear, unavail.in OpenCV' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
+	transformed _ original.
+	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bicubicTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
+	transformed _ original.
+	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
+	Smalltalk garbageCollect.
+	[ transformed _ transformed lanczosTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
+	transformed _ original.
+	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
+	Smalltalk garbageCollect.
+	[ transformed _ transformed bSplineTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
+	transformed _ original.
+	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
+	Smalltalk garbageCollect.
+	[ transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
+	transformed displayAt: xx@yy.
+	Display getCanvas drawString: 'Shifted Linear, unavail.in OpenCV' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
+
+	'=== Oversampled Bilinear gives outstanding best results' print.
+	'         (beware about Oversampled Bilinear: on larger images, It requres extra 4x memory, and FFT might make it slower than others)' print.
+	'=== BSpline gives great results. Next comes BiCubic, Lanczos and Bilinear.' print.! !
+
+!FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 7/19/2018 16:34:48'!
+showZoomOut
+	"
+	FloatImage showZoomOut
+
+	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
+	"
+	| original transformed t xx e scale |
+	Transcript newLine.
+	'Test subsampling algorithms.' print.
+
+	scale _ 0.71.
+	scale _ 0.371.
+	scale _ 0.55.
+	scale _ 0.25.
+	xx _ 0.
+	original _ FloatImage lena.
+	e _ (original extent * scale) rounded.
+	original displayAt: 0@0.
+	Display getCanvas drawString: 'Original' at: xx@270 font: nil color: Color lightBrown embossed: true.
+	t _ AffineTransformation forImageZoom: scale.
+
+	xx _ xx + original  width.
+	transformed _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
+	[ transformed _ transformed nearestNeighborTransformedBy: t resultExtent: nil ] timeToRun print.
+	transformed displayAt: xx@0.
+	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@70 font: nil color: Color lightBrown embossed: true.
+	
+	xx _ xx + e x.
+	transformed _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
+	[ transformed _ transformed areaTransformedBy: t resultExtent: nil ] timeToRun print.
+	transformed displayAt: xx@0.
+	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@85 font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	transformed _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
+	[ transformed _ transformed bilinearTransformedBy: t resultExtent: nil ] timeToRun print.
+	transformed displayAt: xx@0.
+	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@100 font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	transformed _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
+	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: nil ] timeToRun print.
+	transformed displayAt: xx@0.
+	Display getCanvas drawString: 'Oversampled Bilinear, unavail.in OpenCV' at: xx@115 font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	transformed _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
+	[ transformed _ transformed bicubicTransformedBy: t resultExtent: nil ] timeToRun print.
+	transformed displayAt: xx@0.
+	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@130 font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	transformed _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
+	[ transformed _ transformed lanczosTransformedBy: t resultExtent: nil ] timeToRun print.
+	transformed displayAt: xx@0.
+	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@145 font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	transformed _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
+	[ transformed _ transformed bSplineTransformedBy: t resultExtent: nil ] timeToRun print.
+	transformed displayAt: xx@0.
+	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@160 font: nil color: Color lightBrown embossed: true.
+
+	xx _ xx + e x.
+	transformed _ original.
+	Smalltalk garbageCollect.
+	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
+	[ transformed _ transformed shiftedLinearTransformedBy: t resultExtent: nil ] timeToRun print.
+	transformed displayAt: xx@0.
+	Display getCanvas drawString: 'Shifted Linear, unavailable in OpenCV' at: xx@175 font: nil color: Color lightBrown embossed: true.
+	
+	'=== Area is really good, and very very cheap.' print.
+	'=== Lanczos gives best avoidance of aliasing effects but is quite expensive.' print.! !
+
 !FloatImage class methodsFor: 'experiments' stamp: 'jmv 6/2/2016 20:33'!
 interpolationExperiment1
 	"
@@ -3624,446 +4158,6 @@ testNoRotations
 	Display getCanvas drawString: 'Shifted Linear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
 
 	'=== The only one that fails this test is CV_INTER_AREA. It blurs the image and makes it "walk".'  print.! !
-
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 9/1/2015 10:48'!
-testRotations
-	"
-	FloatImage testRotations
-
-	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
-	"
-	| a c e original transformed t xx  yy |
-	Transcript newLine.
-	'Test resampling algorithms without significant scaling.' print.
-	'The approach is to do successive rotations.'  print.
-
-	c _ 140.	"Evidencia la falta de nitidez de BiCubic, y tambien cierta deformación geométrica de Lanczos. BSpline es impresionante."
-	c _ 27.
-	a _ -360.0 / (c+1).
-
-	xx _ 0.
-	yy _ 0.
-	original _ FloatImage lena.
-	original displayAt: 0@0.
-	Display getCanvas drawString: 'Original' at: xx@240 font: nil color: Color lightBrown embossed: true.
-	e _ original extent.
-	t _ (AffineTransformation withRadians: a/180*Float pi ) scaledBy: 1/1.0.
-	t _ (AffineTransformation withTranslation: e // 2) composedWith:
-			(t composedWith:
-					(AffineTransformation withTranslation: e // 2  negated)).
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
-	c timesRepeat: [
-		transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
-	c timesRepeat: [
-		transformed _ transformed areaTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed areaTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
-	c timesRepeat: [
-		transformed _ transformed bilinearTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bilinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) | true ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
-	c timesRepeat: [
-		transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Oversampled Bilinear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
-	c timesRepeat: [
-		transformed _ transformed bicubicTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bicubicTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
-	c timesRepeat: [
-		transformed _ transformed lanczosTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed lanczosTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
-	c timesRepeat: [
-		transformed _ transformed bSplineTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bSplineTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
-	c timesRepeat: [
-		transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Shifted Linear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	'=== BSpline gives outstanding results.'print.
-	'=== Next comes BiCubic and Oversampled Bilinear. Then and Lanczos.' print.
-	'         (beware about Oversampled Bilinear: on larger images, It requres extra 4x memory, and FFT might make it slower than others)' print.
-	'=== The extra cost of Lanczos doesnt seem worth in this case.' print.! !
-
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 9/1/2015 10:44'!
-testTranslation
-	"
-	FloatImage testTranslation
-
-	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
-	"
-	| c e original transformed t xx  yy |
-	Transcript newLine.
-	'Test resampling algorithms without significant scaling.' print.
-	'The approach is to do successive rotations.'  print.
-
-	c _ 140.	"Evidencia la falta de nitidez de BiCubic, y tambien cierta deformación geométrica de Lanczos. BSpline es impresionante."
-	c _ 27.
-
-	xx _ 0.
-	yy _ 0.
-	original _ FloatImage lena.
-	original displayAt: 0@0.
-	Display getCanvas drawString: 'Original' at: xx@240 font: nil color: Color lightBrown embossed: true.
-	e _ original extent.
-	t _ AffineTransformation withTranslation: 15.0 / c @ (3.0/c).
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
-	c timesRepeat: [
-		transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
-	c timesRepeat: [
-		transformed _ transformed areaTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed areaTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
-	c timesRepeat: [
-		transformed _ transformed bilinearTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bilinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) | true ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
-	c timesRepeat: [
-		transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Oversampled Bilinear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
-	c timesRepeat: [
-		transformed _ transformed bicubicTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bicubicTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
-	c timesRepeat: [
-		transformed _ transformed lanczosTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed lanczosTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
-	c timesRepeat: [
-		transformed _ transformed bSplineTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bSplineTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + 256.
-	xx > (Display width-256) ifTrue: [xx _ 0. yy _ yy + 256 ].
-	transformed _ original.
-	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
-	c timesRepeat: [
-		transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e.
-		transformed displayAt: xx@yy ].
-	Smalltalk garbageCollect.
-	[ transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Shifted Linear, unavail.in OpenCV' at: xx@(yy+240) font: nil color: Color lightBrown embossed: true.
-
-	'=== BSpline gives outstanding results. Next comes Oversampled Bilinear, that is very fast.' print.
-	'         (beware about Oversampled Bilinear: on larger images, It requres extra 4x memory, and FFT might make it slower than others)' print.
-	'=== Then comes BiCubic and Lanczos. The extra cost of Lanczos doesnt seem worth in this case.' print.
-	'=== Nearest Neighbor and Shifted Linear dont give consistent results across different transformations' print.! !
-
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 9/1/2015 10:44'!
-testZoomIn
-	"
-	FloatImage testZoomIn
-
-	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
-	"
-	| original transformed t xx yy e scale |
-	Transcript newLine.
-	'Test image enlarging algorithms.' print.
-
-	scale _ 2.7.
-scale _ 2.
-scale _ 2.7.
-	xx _ 0.
-	yy _ 0.
-	original _ FloatImage lena copy: (100@100 extent: 100@100).
-original _ FloatImage lena copy: (70@80 extent: 128@128).
-	e _ (original extent * scale) rounded.
-	original displayAt: 0@0.
-	Display getCanvas drawString: 'Original' at: xx@240 font: nil color: Color lightBrown embossed: true.
-	t _ AffineTransformation forImageZoom: scale.
-
-	xx _ original  width.
-	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original.
-	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
-	Smalltalk garbageCollect.
-	[ transformed _ transformed nearestNeighborTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original.
-	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
-	Smalltalk garbageCollect.
-	[ transformed _ transformed areaTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original.
-	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bilinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	xx > (Display width-e x) | true ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original copy guardZone: 2@2.
-	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
-	Smalltalk garbageCollect.
-	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Oversampled Bilinear, unavail.in OpenCV' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original.
-	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bicubicTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original.
-	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
-	Smalltalk garbageCollect.
-	[ transformed _ transformed lanczosTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original.
-	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
-	Smalltalk garbageCollect.
-	[ transformed _ transformed bSplineTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	xx > (Display width-e x) ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original.
-	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
-	Smalltalk garbageCollect.
-	[ transformed _ transformed shiftedLinearTransformedBy: t resultExtent: e ] timeToRun print.
-	transformed displayAt: xx@yy.
-	Display getCanvas drawString: 'Shifted Linear, unavail.in OpenCV' at: xx@(yy+e y-20) font: nil color: Color lightBrown embossed: true.
-
-	'=== Oversampled Bilinear gives outstanding best results' print.
-	'         (beware about Oversampled Bilinear: on larger images, It requres extra 4x memory, and FFT might make it slower than others)' print.
-	'=== BSpline gives great results. Next comes BiCubic, Lanczos and Bilinear.' print.! !
-
-!FloatImage class methodsFor: 'testing' stamp: 'jmv 8/31/2015 13:36'!
-testZoomOut
-	"
-	FloatImage testZoomOut
-
-	See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize for OpenCV interpolation methods.
-	"
-	| original transformed t xx e scale |
-	Transcript newLine.
-	'Test subsampling algorithms.' print.
-
-	scale _ 0.71.
-	scale _ 0.371.
-	scale _ 0.55.
-	scale _ 0.25.
-	xx _ 0.
-	original _ FloatImage lena.
-	e _ (original extent * scale) rounded.
-	original displayAt: 0@0.
-	Display getCanvas drawString: 'Original' at: xx@270 font: nil color: Color lightBrown embossed: true.
-	t _ AffineTransformation forImageZoom: scale.
-
-	xx _ xx + original  width.
-	transformed _ original.
-	Smalltalk garbageCollect.
-	Transcript show: 'Nearest Neighbor, like CV_INTER_NN (ms): '.
-	[ transformed _ transformed nearestNeighborTransformedBy: t resultExtent: nil ] timeToRun print.
-	transformed displayAt: xx@0.
-	Display getCanvas drawString: 'Nearest Neighbor, like CV_INTER_NN' at: xx@70 font: nil color: Color lightBrown embossed: true.
-	
-	xx _ xx + e x.
-	transformed _ original.
-	Smalltalk garbageCollect.
-	Transcript show: 'Area, like CV_INTER_AREA (ms): '.
-	[ transformed _ transformed areaTransformedBy: t resultExtent: nil ] timeToRun print.
-	transformed displayAt: xx@0.
-	Display getCanvas drawString: 'Area, like CV_INTER_AREA' at: xx@85 font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	transformed _ original.
-	Smalltalk garbageCollect.
-	Transcript show: 'Bilinear, like CV_INTER_LINEAR (ms): '.
-	[ transformed _ transformed bilinearTransformedBy: t resultExtent: nil ] timeToRun print.
-	transformed displayAt: xx@0.
-	Display getCanvas drawString: 'Bilinear, like CV_INTER_LINEAR' at: xx@100 font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	transformed _ original.
-	Smalltalk garbageCollect.
-	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
-	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: nil ] timeToRun print.
-	transformed displayAt: xx@0.
-	Display getCanvas drawString: 'Oversampled Bilinear, unavail.in OpenCV' at: xx@115 font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	transformed _ original.
-	Smalltalk garbageCollect.
-	Transcript show: 'BiCubic, like CV_INTER_CUBIC (ms): '.
-	[ transformed _ transformed bicubicTransformedBy: t resultExtent: nil ] timeToRun print.
-	transformed displayAt: xx@0.
-	Display getCanvas drawString: 'BiCubic, like CV_INTER_CUBIC' at: xx@130 font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	transformed _ original.
-	Smalltalk garbageCollect.
-	Transcript show: 'Lanczos, like INTER_LANCZOS4 (ms): '.
-	[ transformed _ transformed lanczosTransformedBy: t resultExtent: nil ] timeToRun print.
-	transformed displayAt: xx@0.
-	Display getCanvas drawString: 'Lanczos, like INTER_LANCZOS4' at: xx@145 font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	transformed _ original.
-	Smalltalk garbageCollect.
-	Transcript show: 'BSpline, unavailable in OpenCV (ms): '.
-	[ transformed _ transformed bSplineTransformedBy: t resultExtent: nil ] timeToRun print.
-	transformed displayAt: xx@0.
-	Display getCanvas drawString: 'BSpline, unavailable in OpenCV' at: xx@160 font: nil color: Color lightBrown embossed: true.
-
-	xx _ xx + e x.
-	transformed _ original.
-	Smalltalk garbageCollect.
-	Transcript show: 'Shifted Linear, unavailable in OpenCV (ms): '.
-	[ transformed _ transformed shiftedLinearTransformedBy: t resultExtent: nil ] timeToRun print.
-	transformed displayAt: xx@0.
-	Display getCanvas drawString: 'Shifted Linear, unavailable in OpenCV' at: xx@175 font: nil color: Color lightBrown embossed: true.
-	
-	'=== Area is really good, and very very cheap.' print.
-	'=== Lanczos gives best avoidance of aliasing effects but is quite expensive.' print.! !
 
 !ConvolutionKernel methodsFor: 'initialization' stamp: 'jmv 6/27/2018 18:10:30'!
 fillWithGaussianKernelSigmaY: sigmaY sigmaX: sigmaX
@@ -5401,7 +5495,7 @@ withIndexesDo: aBlock
 		1 to: w do: [ :j |
 			aBlock value: i value: j value: (self i: i j: j) ] ]! !
 
-!ComplexImage methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 14:42:24'!
+!ComplexImage methodsFor: 'Fourier' stamp: 'jmv 7/2/2018 14:42:24'!
 fftTransform: forward
 	"Compute complex 2d FFT, being me the real part and aMatrix the imaginary part of the data to transform.
 	Frequency zero is at topLeft, i=1;j=1.
@@ -5411,10 +5505,43 @@ fftTransform: forward
 	transform complexMatrix: self.
 	transform transformForward: forward! !
 
-!ComplexImage methodsFor: '*SignalProcessing' stamp: 'jmv 7/2/2018 14:46:53'!
+!ComplexImage methodsFor: 'Fourier' stamp: 'jmv 7/2/2018 14:46:53'!
 fillLowFFTFrequenciesWith: aComplexImage
 	real fillLowFFTFrequenciesWith: aComplexImage realPart.
 	imaginary fillLowFFTFrequenciesWith: aComplexImage imaginaryPart! !
+
+!ComplexImage methodsFor: 'Fourier' stamp: 'jmv 7/20/2018 11:40:56'!
+fourierPhaseDisplaceBy: aPoint
+	"Assume receiver is in Fourier space.
+	Adjust phase of all elements to produce the requested displacement when transformed back to space domain.
+	
+	Does not lowpass result at all. Therefore, some high frequency ripple is produced. Similar results to #fourierDoubledBilinearTransformedBy:resultExtent:
+	
+	Play with
+		FloatImage showTranslationAndFourierPhase
+	"
+	| h halfH w halfW |
+	h _ real height.
+	halfH _ h / 2.
+	w _ real width.
+	halfW _ w / 2.
+	1 to: real height do: [ :i | | iFrequency |
+		iFrequency _ i-1.
+		iFrequency _ (iFrequency < halfH
+			ifTrue: [iFrequency]
+			ifFalse: [iFrequency-h]) * Float twoPi / h.
+		1 to: real width do: [ :j | | jFrequency v v2 |
+			jFrequency _ j-1.
+			jFrequency _ (jFrequency < halfW
+				ifTrue: [jFrequency]
+				ifFalse: [jFrequency-w]) * Float twoPi / w.
+			v _ self i: i j: j.
+			v2 _ v * (Complex
+				magnitude: 1
+				phase: ((iFrequency * aPoint y) + (jFrequency * aPoint x))).
+			self i: i j: j put: v2
+		]
+	].! !
 
 !ComplexImage class methodsFor: 'instance creation' stamp: 'jmv 7/2/2018 14:52:55'!
 extent: aPointOrNumber
