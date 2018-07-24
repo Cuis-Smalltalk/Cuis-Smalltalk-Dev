@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3332] on 25 May 2018 at 11:23:46 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3371] on 11 July 2018 at 6:16:30 pm'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 16!
+!provides: 'JSON' 1 17!
 SystemOrganization addCategory: #JSON!
 
 
@@ -618,7 +618,13 @@ jsonObjectWriteOn: aStream
 		assoc jsonWriteOn: aStream ].
 	aStream nextPut: $}! !
 
-!Collection methodsFor: '*JSON' stamp: 'jmv 5/15/2018 16:23:11'!
+!Collection methodsFor: '*JSON' stamp: 'jmv 7/11/2018 17:31:14'!
+jsonWriteElement: element on: aStream
+	"Allow for specific subclasses (FloatArray, using 32 bit Floats!!) to use specific way to write its elements"
+
+	element jsonWriteOn: aStream! !
+
+!Collection methodsFor: '*JSON' stamp: 'jmv 7/11/2018 17:31:50'!
 jsonWriteOn: aStream
 	"By default, use array braces "
 	| useNewLines |
@@ -628,7 +634,7 @@ jsonWriteOn: aStream
 	self do: [ :each |
 		useNewLines ifNil: [
 			useNewLines _ each isLiteral not ].
-		each jsonWriteOn: aStream.
+		self jsonWriteElement: each on: aStream.
 	] separatedBy: [
 		aStream nextPut: $, .
 		useNewLines ifTrue: [ aStream newLine ]].
@@ -647,6 +653,13 @@ jsonWriteOn: aStream
 	aStream nextPut: $".
 ! !
 
+!FloatArray methodsFor: '*JSON' stamp: 'jmv 7/11/2018 18:14:09'!
+jsonWriteElement: element on: aStream
+	"FloatArray elements are answered as 64 bit Float, but are really 32 bit Float.
+	When writing to JSON (or printing), print them as 32 bit Float."
+
+	element printAsIEEE32BitPrecisionFloatOn: aStream base: 10! !
+
 !Text methodsFor: '*JSON-printing' stamp: 'cwp 10/26/2006 22:25'!
 jsonWriteOn: aStream
 	self string jsonWriteOn: aStream! !
@@ -658,7 +671,7 @@ jsonWriteOn: aStream
 
 	self jsonObjectWriteOn: aStream! !
 
-!Array2D methodsFor: '*JSON' stamp: 'jmv 8/3/2017 12:07:00'!
+!Array2D methodsFor: '*JSON' stamp: 'jmv 7/11/2018 17:33:20'!
 jsonWriteOn: aStream
 	"By default, use array braces "
 	aStream nextPut: $[.
@@ -666,7 +679,7 @@ jsonWriteOn: aStream
 		do: [ :i |
 			aStream nextPut: $[.
 				1 to: width
-					do: [ :j | (self i: i j: j) jsonWriteOn: aStream ]
+					do: [ :j | elements jsonWriteElement: (self i: i j: j) on: aStream ]
 					separatedBy: [aStream nextPut: $, ; space].
 			aStream nextPut: $] ]
 		separatedBy: [aStream nextPut: $, ; newLine ].
