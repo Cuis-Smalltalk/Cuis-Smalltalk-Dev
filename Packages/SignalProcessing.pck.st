@@ -1,13 +1,15 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3374] on 20 July 2018 at 11:43:39 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3374] on 26 July 2018 at 1:47:58 pm'!
 'Description Image Processing and Signal Processing algorithms. FloatImage, Interpolation, Histograms, etc.'!
-!provides: 'SignalProcessing' 1 99!
-!requires: 'Statistics' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Sound' 1 nil nil!
-!requires: 'Goodies' 1 0 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
+!provides: 'SignalProcessing' 1 100!
 !requires: 'Collections-CompactArrays' 1 2 nil!
+!requires: 'Sound' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'NumericalMethods' 1 8 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Goodies' 1 0 nil!
+!requires: 'Morphic3' 1 0 nil!
 SystemOrganization addCategory: #'SignalProcessing-Images'!
 SystemOrganization addCategory: #'SignalProcessing-SoundSynthesis'!
 SystemOrganization addCategory: #SignalProcessing!
@@ -1598,7 +1600,7 @@ centroidAround4: aPoint
 
 	^centroidX @ centroidY! !
 
-!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/5/2016 14:44'!
+!FloatImage methodsFor: 'centroids' stamp: 'jmv 7/26/2018 10:08:46'!
 centroidAround: aPoint
 	"Find the centroid of the spot that covers aPoint. aPoint must contain the local maximum.
 	See #testCentroids
@@ -1631,14 +1633,10 @@ centroidAround: aPoint
 			y2 = (height+1)
 				ifTrue: [ y2 _ 1 ]].
 
-"Este valor fue encontrado usando #testCentroids
-Hace que los lobulos negativos de una sinc se parezcan un poco a una parábola."
+"This factor was found doing experiments in #testCentroid.
+It makes the negative lobes of a sinc look a bit like a parabola.
+Just make it 1.0 to follow https://ccrma.stanford.edu/~jos/parshl/Peak_Detection_Steps_3.html exactly"
 crazyFactor _ 1.8892666638.
-
-"Asi optimiza autoCorregistraction7.txt ... Pero parece una exageracion!!"
-"crazyFactor _ 7.6."
-
-"La conclusion seria que el remuestreo de una imagen raw genera algo que no es exactamente una sinc..."
 
 	alpha _ self x: x0 y: y1.
 	beta _ self x: x1 y: y1.
@@ -2128,7 +2126,7 @@ scharrNoDataValue: noDataValue dilatedBy: extraPixels avoidSaturatedPixels: aBoo
 	borders *= mask.
 	^ borders! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 6/30/2017 11:58:11'!
+!FloatImage methodsFor: 'correlation & registration' stamp: 'jmv 6/30/2017 11:58:11'!
 correlationABSWith: another deltai: di deltaj: dj
 	"Quite like #correlationWith:deltai:deltaj: Please understand it before this.
 	
@@ -2211,7 +2209,7 @@ correlationABSWith: another deltai: di deltaj: dj
 	sum = 0.0 ifTrue: [ ^ 0.0 ].
 	^ sum / (mySquaredSum * othersSquaredSum) sqrt! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 9/29/2017 15:38:20'!
+!FloatImage methodsFor: 'correlation & registration' stamp: 'jmv 9/29/2017 15:38:20'!
 correlationWith: another deltai: di deltaj: dj
 	"https://en.wikipedia.org/wiki/Digital_image_correlation
 
@@ -2277,9 +2275,9 @@ correlationWith: another deltai: di deltaj: dj
 	sum = 0.0 ifTrue: [ ^ 0.0 ].
 	^ sum / (mySquaredSum * othersSquaredSum) sqrt! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 7/2/2018 14:48:42'!
+!FloatImage methodsFor: 'correlation & registration' stamp: 'jmv 7/26/2018 09:58:01'!
 crossCorrelationWith: aFloatImage phase: aBoolean
-	"Compute cross correlation with argument, usig 2D FFT. Store the result on self.
+	"Compute cross correlation with argument, usig 2D FFT. Store the result on self. Also modies aFloatImage. Make copies as needed.
 	if aBoolean, compute phase correlation.
 
 	See http://en.wikipedia.org/wiki/Cross_correlation
@@ -2295,7 +2293,7 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 	t _ AffineTransformation withTranslation: 115.0 / 4 @ (213.0/4).
 	i2 _ i1 areaTransformedBy: t resultExtent: i1 extent.
 	phaseCorrelation _ i2 crossCorrelationWith: i1 phase: true.
-	phaseCorrelation *10 :: display
+	phaseCorrelation *10 :: displayAt: 0@0 zoom: 2
 	"
 	| complex other |
 	complex _ ComplexImage realPart: self.
@@ -2308,20 +2306,51 @@ crossCorrelationWith: aFloatImage phase: aBoolean
 		complex normalizeMagnitudes ].
 	complex fftTransform: false! !
 
-!FloatImage methodsFor: 'image registration' stamp: 'jmv 11/30/2016 10:51:36'!
-deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNil
-	"Compute the image registration between self and anImage. Answer the delta aFloatImage should be moved to align perfectly with self.
+!FloatImage methodsFor: 'correlation & registration' stamp: 'jmv 7/26/2018 13:45:25'!
+displacementFrom: referenceImage
+	"Compute the image registration between self and anImage.
+	Answer the delta the receiver seems to be displacement wrt referenceImage. This is, the delta referenceImage should be moved by to align perfectly with self.
 	Assume there is no scale change and no rotation.
-	It is required that both images are of the same size, and that width and height are an integer power of two (to ease FFT).
-	It is also required that there is a significant overlap between both images, and that they are not dominated by horizontal or vertical stripes of the same illumination level.
+	It is required that both images are of the same size.
+	It is also required that there is a significant overlap between both images.
+	
+	See https://en.wikipedia.org/wiki/Phase_correlation
+	Also of interest: http://www.lira.dist.unige.it/teaching/SINA_10/slides-current/fourier-mellin-paper.pdf
+
+	Makes copies of both image. Receiver and argument are not modified."
+	"
+	| reference moved |
+	reference _ FloatImage siemensStar: 300 offsetFromCenter: 0@0.
+	moved _ FloatImage siemensStar: 300 offsetFromCenter: 5.7@3.1.
+
+	reference addNormalNoise: 0.02.
+	moved addNormalNoise: 0.05.
+
+	reference displayAt: 0@0 zoom: 1.
+	moved displayAt: 0@300 zoom: 1.
+
+	moved displacementFrom: reference."
+	
+	| initialApproximation |
+	initialApproximation _ self displacementFrom: referenceImage imagesAreRaw: false rawDelta: nil.
+	^ self displacementFrom: referenceImage initialGuess: initialApproximation errorOfGuess: 0.1 epsilon: 0.01! !
+
+!FloatImage methodsFor: 'correlation & registration' stamp: 'jmv 7/26/2018 12:11:52'!
+displacementFrom: referenceImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNil
+	"Compute the image registration between self and anImage.
+	Answer the delta the receiver seems to be displaced wrt referenceImage. This is, the delta referenceImage should be moved by to align perfectly with self.
+	Assume there is no scale change and no rotation.
+	It is required that both images are of the same size.
+	It is also required that there is a significant overlap between both images.
+	
+	See https://en.wikipedia.org/wiki/Phase_correlation
+	Also of interest: http://www.lira.dist.unige.it/teaching/SINA_10/slides-current/fourier-mellin-paper.pdf
 
 	imagesAreRaw indicates whether receiver and argument are pure raw sensor images, or they have been compensated for bias and dark frame.
 	If imagesAreRaw is true, then images should come from the same sensor, at the same temperature, and similar exposure time. In addition to this, images should be cropped (or not) idetically, meaning that the hot pixels, or any other dark frame anomaly shows exactly at the same pixel position in both images. Additionally, there must be a non zero displacement between content in both images. Two images of exactly the same area, or two copies of the same image will fail.
 	
-	If imagesAreRaw is false, then it is assumed that there are no hot pixels, or any ther dark frame anomaly. Therefore, it is acceptable that images come from crops of different parts of the sensor.
+	If imagesAreRaw is false, then it is assumed that there are no hot pixels, or any ther dark frame anomaly. Therefore, it is acceptable that images come from crops of different parts of a sensor.
 
-	doPhaseCorrelation ifTrue: [ do phase correlation ] ifFalse: [ do cross correlation ].
-	
 	Makes copies of both image. Receiver and argument are not modified."
 	
 	| correlation target x y dx dy c xy doPhaseCorrelation rawPatternPosition h w |
@@ -2329,20 +2358,21 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNi
 	(width isPowerOfTwo and: [ height isPowerOfTwo ]) 
 		ifTrue: [
 			correlation _ self copy.
-			target _ aFloatImage copy ]
+			target _ referenceImage copy ]
 		ifFalse: [ | r |
 			w _ 2 raisedToInteger: width log2 floor.
 			h _ 2 raisedToInteger: height log2 floor.
 			r _ Rectangle center: width@height//2 extent: w@h.
 			correlation _ self copy: r.
-			target _ aFloatImage copy: r ].
+			target _ referenceImage copy: r ].
 
-	"Do Phase Correlation. This normalizes the cross correlation result, meaning it makes sense to ask the max value to be above some minimum to be meaningful."
+	"Do Phase Correlation"
 	doPhaseCorrelation _ true.
 	correlation crossCorrelationWith: target phase: doPhaseCorrelation.
 
 	"If images are Raw there will be a spurious local maximum at 1@1, or at whatever distance the two images where taken from the original raws.
-	This is due to usual sensor pixel gain non uniformity, hot & dead pixels, etc."
+	This is due to usual sensor pixel gain non uniformity, hot & dead pixels, etc.
+	Remove it."
 	imagesAreRaw ifTrue: [
 		rawPatternPosition _ (rawDeltaPointOrNil ifNotNil: [rawDeltaPointOrNil rounded] ifNil: [0@0])+1.
 		correlation wrapI: rawPatternPosition y j: rawPatternPosition x put: 0.
@@ -2356,7 +2386,7 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNi
 	x _ xy x.
 	y _ xy y.
 
-	"Solo considerar valido el maximo si es mayor que 0.03. Suponemos phase = true. ver 
+	"If no reasonable correlation found, fail. See
 	An FFT-Based Technique for Translation, Rotation, and Scale-Invariant Image Registration"
 	(doPhaseCorrelation and: [ (correlation x: x y: y) < 0.02 ]) ifTrue: [
 		self error: 'The displacement between images could not be found' ].
@@ -2365,10 +2395,36 @@ deltaToAlign: aFloatImage imagesAreRaw: imagesAreRaw rawDelta: rawDeltaPointOrNi
 	c _ correlation centroidAround: x@y.
 	dx _ c x-1.
 	dy _ c y-1.
-	dx > (width//2) ifTrue: [ dx _ dx - width ].
-	dy > (height//2) ifTrue: [ dy _ dy - height ].
+	dx > (correlation width//2) ifTrue: [ dx _ dx - correlation width ].
+	dy > (correlation height//2) ifTrue: [ dy _ dy - correlation height ].
 
 	^dx @dy! !
+
+!FloatImage methodsFor: 'correlation & registration' stamp: 'jmv 7/26/2018 13:04:23'!
+displacementFrom: reference initialGuess: initGuess errorOfGuess: errorOfGuess epsilon: epsilon
+	"
+	Call a high precision iterative method in Fourier space.
+	Prior to that, senders will typically use Phase Correlation to do an initial guess.
+	"
+	| integerInitialGuessX integerInitialGuessY fourierW fourierH center movedDelta referenceDelta part referencePart fourier fourierReference fineEstimation |
+	integerInitialGuessX _ initGuess x rounded.
+	integerInitialGuessY _ initGuess y rounded.
+	fourierW _ 2 raisedToInteger: (width - integerInitialGuessX abs) log2 floor.
+	fourierH _ 2 raisedToInteger: (height - integerInitialGuessY abs) log2 floor.
+
+	center _ width@height//2.
+	movedDelta _ (integerInitialGuessX // 2) @ (integerInitialGuessY // 2).
+	referenceDelta _ movedDelta - (integerInitialGuessX@integerInitialGuessY).
+	part _ self copy: (Rectangle center: center + movedDelta extent: fourierW@fourierH).
+	referencePart _ reference copy: (Rectangle center: center + referenceDelta extent: fourierW@fourierH).
+
+	fourier _ ComplexImage realPart: part.
+	fourier fftTransform: true.
+	fourierReference _ ComplexImage realPart: referencePart.
+	fourierReference fftTransform: true.
+
+	fineEstimation _ fourier displacementFrom: fourierReference initialGuess: initGuess-(integerInitialGuessX@integerInitialGuessY) errorOfGuess: errorOfGuess epsilon: epsilon.
+	^movedDelta-referenceDelta+fineEstimation.! !
 
 !FloatImage methodsFor: 'displaying' stamp: 'jmv 7/19/2018 11:30:10'!
 displayAsHeatmapAt: aPoint zoom: scale
@@ -2397,6 +2453,25 @@ displayAt: aPoint
 
 	| form |
 	form _ self asForm.
+	form displayAt: aPoint.
+	^ form! !
+
+!FloatImage methodsFor: 'displaying' stamp: 'jmv 7/25/2018 11:08:42'!
+displayAt: aPoint min: min max: max zoom: scale
+	"Uses Nearest Neighbor interpolation, to help see each pixel. Usually useful to view very small images, such as PSFs
+	
+	FloatImage lena displayAt: 10@10 min: 0.3 max: 0.4 zoom: 2
+	"
+"
+	(self asForm magnifyBy: anInteger) displayAt: aPoint.
+"
+	| k form |
+	k _ 255 / (max - min).
+	form _ self as8bitForm: [ :index | | value |
+		value _ elements at: index.
+		(value -min * k) rounded min: 255 max: 0].
+	scale = 1 ifFalse: [
+		form _ form magnifyBy: scale ].
 	form displayAt: aPoint.
 	^ form! !
 
@@ -4744,12 +4819,12 @@ testAreaInterpolation
 	subsampled _ large areaTransformedBy: t resultExtent: nil.
 	self assert: subsampled = desiredResult.! !
 
-!FloatImageTest methodsFor: 'testing' stamp: 'jmv 12/10/2012 17:09'!
+!FloatImageTest methodsFor: 'testing' stamp: 'jmv 7/26/2018 10:07:29'!
 testCentroids
 	"Some test on the centroid functionality
 	FloatImageTest new testCentroids
 	This is the performance of the various centroid algorithms I tried
-	centroidAround: 		0.03
+	centroidAround: 	0.03
 	centroidAround4 	0.063
 	centroidAround5 	0.25
 	centroidAround1 	1.06
@@ -5494,6 +5569,115 @@ withIndexesDo: aBlock
 	1 to: real height do: [ :i |
 		1 to: w do: [ :j |
 			aBlock value: i value: j value: (self i: i j: j) ] ]! !
+
+!ComplexImage methodsFor: 'correlation & registration' stamp: 'jmv 7/26/2018 12:01:20'!
+displacementFrom: referenceImage initialGuess: initGuess errorOfGuess: errorOfGuess epsilon: epsilon
+	"High quality image registration.
+		initGuess must be less than a couple of pixels of errors. See senders.
+		epsilon is desired precision. 0.01 (1%) is perfectly reasonable. If noise is low and dynamic range is high, 0.001 is possible."
+
+	| algorithm f answer |
+	algorithm _ NelderMeadMethod new.
+	f _ [ :displacementFloatArray |
+		(self
+			scoreOf: displacementFloatArray first @ displacementFloatArray second
+			asDisplacementFrom: referenceImage) negated ].
+	algorithm objectiveFunction: f.
+	algorithm initialPoint: (FloatArray with: initGuess x with: initGuess y) distanceForOthers: (errorOfGuess max: epsilon * 2).
+	algorithm epsilon: epsilon.
+	answer _ algorithm solve.
+	^ answer first @ answer second
+
+"
+reference _ FloatImage lena.
+moved _ FloatImage lena bSplineTransformedBy: (AffineTransformation withTranslation: -3.4@ -2.7) resultExtent: 256@256.
+reference addNormalNoise: 0.02.
+moved addNormalNoise: 0.02.
+
+phaseCorr _ reference copy crossCorrelationWith: moved copy phase: true.
+integerDisplacement _ phaseCorr xyForMax -1.
+
+fourierReference _ ComplexImage realPart: reference copy.
+fourierReference fftTransform: true.
+fourierMoved _ ComplexImage realPart: moved copy.
+fourierMoved fftTransform: true.
+
+standard _ moved displacementFrom: reference.
+great _ fourierMoved displacementFrom: fourierReference initialGuess: integerDisplacement negated errorOfGuess: 0.5 epsilon: 0.1.
+
+standardAligned _ moved bSplineTransformedBy: (AffineTransformation withTranslation: standard negated) resultExtent: 256@256.
+greatAligned _ moved bSplineTransformedBy: (AffineTransformation withTranslation: great negated) resultExtent: 256@256.
+
+moved displayAt: 0@0 zoom: 4.
+reference displayAt: 0@0 zoom: 4.
+standardAligned displayAt: 0@0 zoom: 4.
+greatAligned displayAt: 0@0 zoom: 4.
+
+reference - standardAligned displayAt: 0@0 min: -0.2 max: 0.2 zoom: 4.
+reference - greatAligned displayAt: 0@0 min: -0.2 max: 0.2 zoom: 4.
+"
+"
+reference _ FloatImage siemensStar: 256 offsetFromCenter: 0@0.
+moved _ FloatImage siemensStar: 256 offsetFromCenter: -3.4@-2.7.
+reference addNormalNoise: 0.02.
+moved addNormalNoise: 0.02.
+
+phaseCorr _ reference copy crossCorrelationWith: moved copy phase: true.
+integerDisplacement _ phaseCorr xyForMax -1.
+
+fourierReference _ ComplexImage realPart: reference copy.
+fourierReference fftTransform: true.
+fourierMoved _ ComplexImage realPart: moved copy.
+fourierMoved fftTransform: true.
+
+standard _ moved displacementFrom: reference.
+great _ fourierMoved displacementFrom: fourierReference initialGuess: integerDisplacement negated errorOfGuess: 0.5 epsilon: 0.1.
+
+standardAligned _ moved bSplineTransformedBy: (AffineTransformation withTranslation: standard negated) resultExtent: 256@256.
+greatAligned _ moved bSplineTransformedBy: (AffineTransformation withTranslation: great negated) resultExtent: 256@256.
+
+moved displayAt: 0@0 zoom: 4.
+reference displayAt: 0@0 zoom: 4.
+standardAligned displayAt: 0@0 zoom: 4.
+greatAligned displayAt: 0@0 zoom: 4.
+
+reference - standardAligned displayAt: 0@0 min: -0.2 max: 0.2 zoom: 4.
+reference - greatAligned displayAt: 0@0 min: -0.2 max: 0.2 zoom: 4.
+"! !
+
+!ComplexImage methodsFor: 'correlation & registration' stamp: 'jmv 7/26/2018 11:07:05'!
+scoreOf: displacement asDisplacementFrom: referenceImage
+	"Receiver and referenceImage are Fourier transform of two images in the spatial domain
+	aPoint is an estimation of displacement between them, in spatial domain.
+	Useful for iterative algorithms that estimate displacement of images, that might perform better than classical Phase Correlation. See senders.
+	"
+	| h halfH w halfW count |
+	h _ real height.
+	halfH _ h / 2.
+	w _ real width.
+	halfW _ w / 2.
+	count _ 0.
+	self withIndexesDo: [ :i :j :v | | phase phaseForDisplacement referenceValue phaseForReference phaseDifference iFrequency jFrequency |
+
+		"Spatial Frequency for displacement, at (i, j)"
+		iFrequency _ i-1.
+		iFrequency _ (iFrequency < halfH
+			ifTrue: [iFrequency]
+			ifFalse: [iFrequency-h]) * Float twoPi / h.
+		jFrequency _ j-1.
+		jFrequency _ (jFrequency < halfW
+			ifTrue: [jFrequency]
+			ifFalse: [jFrequency-w]) * Float twoPi / w.
+		phaseForDisplacement _ (iFrequency * displacement y) + (jFrequency * displacement x).
+
+		phase _ v phase.
+		referenceValue _ referenceImage i:i j: j.
+		phaseForReference _ referenceValue phase.
+		phaseDifference _ phase - phaseForDisplacement - phaseForReference.
+		count _ (phaseDifference smoothIsAbsBelow: Float halfPi/12) + count.
+		
+		].
+	^ count! !
 
 !ComplexImage methodsFor: 'Fourier' stamp: 'jmv 7/2/2018 14:42:24'!
 fftTransform: forward
