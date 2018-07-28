@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3293] on 14 May 2018 at 12:57:01 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3383] on 27 July 2018 at 9:01:05 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Goodies' 1 7!
+!provides: 'Goodies' 1 8!
 SystemOrganization addCategory: #'Goodies-AsyncFile'!
 SystemOrganization addCategory: #'Goodies-Collections'!
 SystemOrganization addCategory: #'Goodies-Tools-FileList'!
@@ -549,15 +549,15 @@ getTypedFileName: aResult
 			name: name
 ! !
 
-!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 7/24/2009 20:46'!
-startUpWithCaption: aString at: location
+!StandardFileMenu methodsFor: 'basic control sequences' stamp: 'jmv 7/27/2018 20:59:10'!
+startUpWithCaption: aString at: location allowKeyboard: aBoolean
 
 	|result|
-	result _ super startUpWithCaption: aString at: location.
+	result _ super startUpWithCaption: aString at: location allowKeyboard: aBoolean.
 	result ifNil: [^nil].
 	result isDirectory ifTrue:
 		[self makeFileMenuFor: result directory.
-		 ^self startUpWithCaption: aString at: location].
+		 ^self startUpWithCaption: aString at: location allowKeyboard: aBoolean].
 	result isCommand ifTrue: 
 		[result _ self getTypedFileName: result.
 		result ifNil: [^nil]].
