@@ -41,7 +41,7 @@ browseRecentLogOn: origChangesFileName startingFrom: initialPos
 		positions _ OrderedCollection new.
 		end _ changesFile size.
 		pos _ initialPos.
-		[pos print = 0
+		[pos = 0
 			or: [banners size > 20]] 		"Go back at most 20 image exits"
 			whileFalse: [
 				changesFile position: pos.
