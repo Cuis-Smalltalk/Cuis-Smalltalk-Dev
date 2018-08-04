@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3367] on 9 July 2018 at 4:50:10 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3395] on 4 August 2018 at 3:02:56 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 84!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'SignalProcessing' 1 nil nil!
+!provides: 'Tests' 1 86!
 !requires: 'Math 3D' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'SignalProcessing' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
@@ -858,12 +858,22 @@ StatisticsTest class
 
 !classDefinition: #BehaviorTest category: #'Tests-Kernel-Classes'!
 TestCase subclass: #BehaviorTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'unreferenced referenced'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Tests-Kernel-Classes'!
 !classDefinition: 'BehaviorTest class' category: #'Tests-Kernel-Classes'!
 BehaviorTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #BehaviorTestSubclass category: #'Tests-Kernel-Classes'!
+BehaviorTest subclass: #BehaviorTestSubclass
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Classes'!
+!classDefinition: 'BehaviorTestSubclass class' category: #'Tests-Kernel-Classes'!
+BehaviorTestSubclass class
 	instanceVariableNames: ''!
 
 !classDefinition: #TestCaseTest category: #'Tests-Tools-Testing'!
@@ -8125,6 +8135,17 @@ testBase64
 'eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4
 eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA==' ! !
 
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 10:42:26'!
+testAfterBlanksEndsWith
+
+	self assert: (' abc' afterBlanksEndsWith: 'abc').
+	self assert: ('abc' afterBlanksEndsWith: 'abc').
+	
+	self deny: (' ab' afterBlanksEndsWith: 'abc').
+	self deny: (' ab' afterBlanksEndsWith: 'a').
+	self deny: ('' afterBlanksEndsWith: 'abc').
+	self deny: (' a a bc' afterBlanksEndsWith: 'a bc').! !
+
 !StringTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
 testCaseConversion
 	"
@@ -8219,6 +8240,21 @@ b' encompassParagraph: (3 to: 3)) = (3 to: 3).
 self assert: ('a
 b' encompassParagraph: (4 to: 3)) = (3 to: 3).! !
 
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:03:25'!
+testFirstNoBlankIndex
+
+	self assert: 1 equals: 'abc' firstNoBlankIndex.
+	self assert: 2 equals: ' abc' firstNoBlankIndex.
+	self assert: 0 equals: '' firstNoBlankIndex ! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:10:05'!
+testLastNoBlankIndex
+
+	self assert: 3 equals: 'abc' lastNoBlankIndex.
+	self assert: 3 equals: 'abc ' lastNoBlankIndex.
+	self assert: 4 equals: ' abc ' lastNoBlankIndex.
+	self assert: 0 equals: '' lastNoBlankIndex ! !
+
 !StringTest methodsFor: 'testing' stamp: 'jmv 12/17/2012 10:51'!
 testLineSeparators
 	"
@@ -8276,6 +8312,32 @@ self new testSorting
 	self assert: ('á' caseInsensitiveLessOrEqual: 'B').
 	self assert: ('Á' caseInsensitiveLessOrEqual: 'b').
 	self assert: ('Á' caseInsensitiveLessOrEqual: 'B').! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
+testWithBlanksTrimmed
+
+	self assert: 'abc' equals: ' abc' withBlanksTrimmed.
+	self assert: 'abc' equals: 'abc ' withBlanksTrimmed.
+	self assert: 'abc' equals: ' abc ' withBlanksTrimmed.
+	self assert: 'a b c' equals: ' a b c ' withBlanksTrimmed.
+	self assert: '' equals: '' withBlanksTrimmed.
+	! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:28'!
+testWithoutLeadingBlanks
+
+	self assert: 'abc' equals: ' abc' withoutLeadingBlanks.
+	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
+	self assert: '' withoutLeadingBlanks isEmpty
+! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:32'!
+testWithoutTrailingBlanks
+
+	self assert: 'abc' equals: 'abc ' withoutTrailingBlanks.
+	self assert: 'abc' equals: 'abc' withoutTrailingBlanks.
+	self assert: '' withoutTrailingBlanks isEmpty
+! !
 
 !CuisSourceFileArrayTest methodsFor: 'testing' stamp: 'jmv 5/22/2011 23:57'!
 testAddressRange
@@ -11444,6 +11506,45 @@ testWithAllSuperclassesUpToIncludesReceiverClass
 	self assert: SmallInteger equals: superclasses first.
 	self assert: Integer equals: superclasses second.
 	self assert: Number equals: superclasses third ! !
+
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:42'!
+testAllUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
+
+	| unreferencedVariables |
+	
+	unreferencedVariables := BehaviorTestSubclass allUnreferencedInstanceVariables.
+	
+	self assert: 1 equals: unreferencedVariables size.
+	self assert: (unreferencedVariables includes: 'unreferenced') ! !
+
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:45'!
+testHasReferencesToInstanceVariableNamedLooksInClassOnly
+
+	self deny: (self class hasReferencesToInstanceVariableNamed: 'referenced').
+	self assert: (BehaviorTestSubclass hasReferencesToInstanceVariableNamed: 'referenced').
+	! !
+
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:48'!
+testIsInstanceVariableNamedReferencedInHierarchyLooksReferencesInHierarchy
+
+	self assert: (self class isInstanceVariableNamedReferencedInHierarchy: 'referenced').
+	self deny: (self class isInstanceVariableNamedReferencedInHierarchy: 'unreferenced').
+	! !
+
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:52'!
+testUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
+
+	| unreferencedVariables |
+	
+	unreferencedVariables := self class unreferencedInstanceVariables.
+	
+	self assert: 1 equals: unreferencedVariables size.
+	self assert: (unreferencedVariables includes: 'unreferenced') ! !
+
+!BehaviorTestSubclass methodsFor: 'test data' stamp: 'HAW 8/2/2018 16:54:29'!
+methodReferencingReferencedVariable
+
+	^referenced  ! !
 
 !TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 4/5/2018 14:32:15'!
 testShouldRaiseWithExceptionDoCanExpectException
