@@ -31,7 +31,7 @@ Cuis Smalltalk is our attempt at this challenge. Furthermore, we believe we are 
 Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. We also adopt recent enhancements from Squeak and share our work with the wider Squeak and Smalltalk community.
 
 ### About the name Cuis ###
-Cuis is the common name of a small rodent that lives in Argentina's countryside, http://en.wikipedia.org/wiki/Common_Yellow-toothed_Cavy . Cuis Smalltalk was originally forked from Squeak Smalltalk and many of us are also active in the Squeak community. So, it was natural to also chose the onomatopoeia of the voice of a mouse as a name. As the project was started in Buenos Aires, 'Cuis' (essentially 'Squeak' in Rioplatense Spanish) was the obvious choice.
+Cuis is the common name of a small rodent that lives in Argentina's countryside: http://en.wikipedia.org/wiki/Common_Yellow-toothed_Cavy . Cuis Smalltalk was originally forked from Squeak Smalltalk and many of us are also active in the Squeak community. So, picking the onomatopoeia of the voice of a mouse for the name makes sense. As the project was started in Buenos Aires, 'Cuis' (essentially 'Squeak' in Rioplatense Spanish) was the obvious choice.
 
 ### Setting up Cuis in your machine ###
 Just follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
