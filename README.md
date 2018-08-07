@@ -30,6 +30,9 @@ Cuis Smalltalk is our attempt at this challenge. Furthermore, we believe we are 
 
 Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. We also adopt recent enhancements from Squeak and share our work with the wider Squeak and Smalltalk community.
 
+### About the name Cuis ###
+Cuis is the common name of a small rodent that lives in Argentina's countryside: http://en.wikipedia.org/wiki/Common_Yellow-toothed_Cavy . Cuis Smalltalk was originally forked from Squeak Smalltalk and many of us are also active in the Squeak community. So, picking the onomatopoeia of the voice of a mouse for the name makes sense. As the project was started in Buenos Aires, 'Cuis' (essentially 'Squeak' in Rioplatense Spanish) was the obvious choice.
+
 ### Setting up Cuis in your machine ###
 Just follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
 
@@ -41,9 +44,9 @@ Additionally, there are many tutorials and references for Smalltalk in the web. 
 The user interface enables you to access most of the code and conduct Smalltalk experiments on your own. You can review its features at ["Quick Tour of the UI"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis/blob/master/Quick-UI-Tour.md). 
 
 ### Contributing to Cuis ###
-Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.
+Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev. The main meeting point for Cuis users and developers is the mail list http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org . You can broswse the archives for a glimpse of our discussions.
 
-Please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
+If you want to contribute code to the project, please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
 
 In any case, we also accept contributions as ChangeSet files in email. Any contribution must be under the MIT license.
 
