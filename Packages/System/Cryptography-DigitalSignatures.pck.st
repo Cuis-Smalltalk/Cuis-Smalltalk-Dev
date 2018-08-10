@@ -1,0 +1,1062 @@
+'From Cuis 4.2 of 25 July 2013 [latest update: #2933] on 6 September 2016 at 10:15:38 am'!
+'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
+!provides: 'Cryptography-DigitalSignatures' 1 7!
+!requires: 'Sound' 1 3 nil!
+!classDefinition: #SecureHashAlgorithmTest category: #'Cryptography-DigitalSignatures-Tests'!
+TestCase subclass: #SecureHashAlgorithmTest
+	instanceVariableNames: 'hash'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Cryptography-DigitalSignatures-Tests'!
+!classDefinition: 'SecureHashAlgorithmTest class' category: #'Cryptography-DigitalSignatures-Tests'!
+SecureHashAlgorithmTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DigitalSignatureAlgorithm category: #'Cryptography-DigitalSignatures'!
+Object subclass: #DigitalSignatureAlgorithm
+	instanceVariableNames: 'randKey randSeed'
+	classVariableNames: 'HighBitOfByte SmallPrimes'
+	poolDictionaries: ''
+	category: 'Cryptography-DigitalSignatures'!
+!classDefinition: 'DigitalSignatureAlgorithm class' category: #'Cryptography-DigitalSignatures'!
+DigitalSignatureAlgorithm class
+	instanceVariableNames: ''!
+
+!classDefinition: #SecureHashAlgorithm category: #'Cryptography-DigitalSignatures'!
+Object subclass: #SecureHashAlgorithm
+	instanceVariableNames: 'totalA totalB totalC totalD totalE totals'
+	classVariableNames: 'K1 K2 K3 K4'
+	poolDictionaries: ''
+	category: 'Cryptography-DigitalSignatures'!
+!classDefinition: 'SecureHashAlgorithm class' category: #'Cryptography-DigitalSignatures'!
+SecureHashAlgorithm class
+	instanceVariableNames: ''!
+
+!classDefinition: #ThirtyTwoBitRegister category: #'Cryptography-DigitalSignatures'!
+Object subclass: #ThirtyTwoBitRegister
+	instanceVariableNames: 'hi low'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Cryptography-DigitalSignatures'!
+!classDefinition: 'ThirtyTwoBitRegister class' category: #'Cryptography-DigitalSignatures'!
+ThirtyTwoBitRegister class
+	instanceVariableNames: ''!
+
+
+!SecureHashAlgorithmTest commentStamp: '<historical>' prior: 0!
+This is the unit test for the class SecureHashAlgorithm. Unit tests are a good way to exercise the functionality of your system in a repeatable and automatic manner. They are therefore recommended if you plan to release anything. For more information, see: 
+	- http://www.c2.com/cgi/wiki?UnitTest
+	- http://minnow.cc.gatech.edu/squeak/1547
+	- the sunit class category!
+
+!DigitalSignatureAlgorithm commentStamp: '<historical>' prior: 0!
+This class implements the Digital Signature Algorithm (DSA) of the U.S. government's "Digital Signature Standard" (DSS). The DSA algorithm was proposed in 1991 and became a standard in May 1994. The official description is available as a Federal Information Processing Standards Publication (FIPS PUB 186, May 19, 1994). A companion standard, the Secure Hash Standard, or SHS (FIPS PUB 180-1, April 17, 1995), describes a 160-bit message digest algorithm known as the Secure Hash Algorithm (SHA). This message digest is used to compute the document signature.
+
+Here's how to use it:
+
+  1. The "signer" creates a pair of keys. One of these must be kept private. The other may be freely distributed. For example, it could be built into the signature checking code of an application.
+
+  2. When the signer wishes to sign a packet of data (a "message") , he uses the secure hash algorithm to create a 160-bit message digest (hash) which is used as the input to DSA. The result of this is a pair of large numbers called a "signature" that is attached to the original message.
+
+  3. When someone receives a signed message purported to have come from the signer, they compute the 160-bit hash of the message and pass that, along with the message signature and the signer's public key, to the signature verification algorithm. If the signature checks, then it is virtually guaranteed that the message originated from someone who had the signer's private key. That is, the message is not a forgery and has not been modified since it was signed. For example, if the message contains a program, and the recipient trusts the signer, then the recipient can run the program with the assurance that it won't do anything harmful. (At least, not intentionally. A digital signature is no guarantee against bugs!! :->)
+
+The signer must keep the private key secure, since anyone who has the private key can forge the signer's signature on any message they like. As long as the secret key is not stolen, cryptographers believe it to be virtually impossible either to forge a signature, to find a message that matches an existing sigature, or to discover the signer's private key by analyzing message signatures. Knowing the public key (which, for example, could be recovered from an application that had it built in), does not weaken the security at all.
+
+An excellent reference work on digital signatures and cryptography in general is:
+
+  Schneier, Bruce
+  "Applied Cryptography: Protocols, Algorithms, and Source Code in C"
+  John Wiley and Sons, 1996.
+
+I used this book as a guide to implementing many of the numerical algorithms required by DSA.
+
+Patents and Export Restrictions:
+
+Many digital signature technologies are patented. DSA is also patented, but the patent is owned by the U.S. government which has made DSA available royalty-free. There is a claim that the government patent infringes on an earlier patent by Schnorr, but the government is requiring the use of DSA, so they apparently believe this claim is not strong enough to be a serious threat to their own patent.
+
+Most cryptography technology, including digital signature technology, requires an export license for it to be distributed outside the U.S. Recent legislation may have relaxed the export license requirements, but it would be prudent to check the current regulations before exporting this code.!
+
+!SecureHashAlgorithm commentStamp: '<historical>' prior: 0!
+This class implements the Secure Hash Algorithm (SHA) described in the U.S. government's Secure Hash Standard (SHS). This standard is described in FIPS PUB 180-1, "SECURE HASH STANDARD", April 17, 1995.
+
+The Secure Hash Algorithm is also described on p. 442 of 'Applied Cryptography: Protocols, Algorithms, and Source Code in C' by Bruce Scheier, Wiley, 1996.
+
+See the comment in class DigitalSignatureAlgorithm for details on its use.
+
+Implementation notes:
+The secure hash standard was created with 32-bit hardware in mind. All arithmetic in the hash computation must be done modulo 2^32. This implementation uses ThirtyTwoBitRegister objects to simulate hardware registers; this implementation is about six times faster than using LargePositiveIntegers (measured on a Macintosh G3 Powerbook). Implementing a primitive to process each 64-byte buffer would probably speed up the computation by a factor of 20 or more.
+!
+
+!ThirtyTwoBitRegister commentStamp: '<historical>' prior: 0!
+I represent a 32-bit register. An instance of me can hold any non-negative integer in the range [0..(2^32 - 1)]. Operations are performed on my contents in place, like a hardware register, and results are always modulo 2^32.
+
+This class is primarily meant for use by the SecureHashAlgorithm class.
+!
+
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'DSG 3/28/2015 15:02'!
+testEmptyInput
+	self assert: ((SecureHashAlgorithm new hashMessage: '') printStringBase: 16)
+			= 'DA39A3EE5E6B4B0D3255BFEF95601890AFD80709'! !
+
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:23'!
+testExample1
+
+	"This is the first example from the specification document (FIPS PUB 180-1)"
+
+	hash := SecureHashAlgorithm new hashMessage: 'abc'.
+	self assert: (hash = 16rA9993E364706816ABA3E25717850C26C9CD0D89D).
+		! !
+
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:23'!
+testExample2
+
+	"This is the second example from the specification document (FIPS PUB 180-1)"
+
+	hash := SecureHashAlgorithm new hashMessage:
+		'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'.
+	self assert: (hash = 16r84983E441C3BD26EBAAE4AA1F95129E5E54670F1).! !
+
+!SecureHashAlgorithmTest methodsFor: 'testing - examples' stamp: 'md 4/21/2003 12:25'!
+testExample3
+
+	"This is the third example from the specification document (FIPS PUB 180-1). 
+	This example may take several minutes."
+
+	hash := SecureHashAlgorithm new hashMessage: (String new: 1000000 withAll: $a).
+	self assert: (hash = 16r34AA973CD4C4DAA4F61EEB2BDBAD27316534016F).! !
+
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'nice 9/2/2010 21:48'!
+computeSignatureForMessageHash: hash privateKey: privateKey
+	"Answer the digital signature of the given message hash using the given private key. A signature is a pair of large integers. The private key is an array of four large integers: (p, q, g, x)."
+
+	| p q g x r s k tmp |
+	p := privateKey first.
+	q := privateKey second.
+	g := privateKey third.
+	x := privateKey fourth.
+
+	r := s := 0.
+	[r = 0 or: [s = 0]] whileTrue: [
+		k := self nextRandom160 \\ q.
+		r := (g raisedTo: k modulo: p) \\ q.
+		tmp := (hash + (x * r)) \\ q.
+		s := ((k reciprocalModulo: q) * tmp) \\ q].
+
+	^ Array with: r with: s
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'jmv 5/19/2015 21:41'!
+generateKeySet
+	"Generate and answer a key set for DSA. The result is a pair (<private key><public key>). Each key is an array of four large integers. The private key is (p, q, g, x); the public one is (p, q, g, y). The signer must be sure to record (p, q, g, x), and must keep x secret to prevent someone from forging their signature."
+	"Note: Key generation can take some time. Open a transcript so you can see what's happening and take a coffee break!!"
+
+	| qAndPandS q p exp g h x y |
+	qAndPandS := self generateQandP.
+	Transcript show: 'Computing g...'.
+	q := qAndPandS first.
+	p := qAndPandS second.
+	exp := (p - 1) / q.
+	h := 2.
+	[g := h raisedTo: exp modulo: p. g = 1] whileTrue: [h := h + 1].
+	Transcript show: 'done.'; newLine.
+	Transcript show: 'Computing x and y...'.
+	x := self nextRandom160.
+	y := g raisedTo: x modulo: p.
+	Transcript show: 'done.'; newLine.
+	Transcript show: 'Key generation complete!!'; newLine.
+	^ Array
+		with: (Array with: p with: q with: g with: x)
+		with: (Array with: p with: q with: g with: y)
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jmv 5/19/2015 21:41'!
+generateQandP
+	"Generate the two industrial-grade primes, q (160-bits) and p (512-bit) needed to build a key set. Answer the array (q, p, s), where s is the seed that from which q and p were created. This seed is normally discarded, but can be used to verify the key generation process if desired."
+
+	| pBits halfTwoToTheP chunkCount sAndq q twoQ n c w x p s |
+	pBits := 512.  "desired size of p in bits"
+	halfTwoToTheP := 2 raisedTo: (pBits - 1).
+	chunkCount := pBits // 160.
+
+	Transcript show: 'Searching for primes q and p...'; newLine.
+	[
+		sAndq := self generateSandQ.
+		Transcript show: '  Found a candidate q.';newLine.
+		s := sAndq first.
+		q := sAndq last.
+		twoQ := q bitShift: 1.
+		n := 2.
+		c := 0.
+		[c < 4096] whileTrue: [
+			w := self generateRandomLength: pBits s: s n: n.
+			x := w + halfTwoToTheP.
+			p := (x - ( x \\ twoQ)) + 1.
+			p highBit = pBits ifTrue: [
+				Transcript show: '    Testing potential p ', (c + 1) printString, '...'; newLine.
+				(self isProbablyPrime: p) ifTrue: [
+					Transcript show: '  Found p!!'; newLine .
+					^ Array with: q with: p with: s]].
+			n := n + chunkCount + 1.
+			c := c + 1]] repeat! !
+
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jm 12/13/1999 16:36'!
+generateRandomLength: bitLength s: s n: n
+	"Answer a random number of bitLength bits generated using the secure hash algorithm."
+
+	| sha out count extraBits v |
+	sha := SecureHashAlgorithm new.
+	out := 0.
+	count := (bitLength // 160).
+	extraBits := bitLength - (count * 160).
+	0 to: count do: [:k |
+		v := sha hashInteger: (s + n + k).
+		k = count ifTrue: [
+			v := v - ((v >> extraBits) << extraBits)].
+		out := out bitOr: (v bitShift: (160 * k))].
+	^ out
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'nice 4/11/2011 17:01'!
+generateSandQ
+	"Generate a 160-bit random seed s and an industrial grade prime q."
+
+	| hasher s sPlusOne u q |
+	hasher := SecureHashAlgorithm new.
+	[
+		s := self nextRandom160.
+		sPlusOne := s + 1.
+		sPlusOne highBit > 160 ifTrue: [sPlusOne := sPlusOne bitAnd: (1 bitShift: 160) - 1].
+		u := (hasher hashInteger: s) bitXor: (hasher hashInteger: sPlusOne).
+		q := u bitOr: ((1 bitShift: 159) bitOr: 1).
+		(self isProbablyPrime: q) ifTrue: [^ Array with: s with: q]] repeat! !
+
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 5/19/2015 21:41'!
+initRandom: randomInteger
+	"Initialize the the secure random number generator with the given value. The argument should be a positive integer of up to 512 bits chosen randomly to avoid someone being able to predict the sequence of random values generated."
+	"Note: The random generator must be initialized before generating a key set or signature. Signature verification does not require initialization of the random generator."
+
+	randSeed := 16rEFCDAB8998BADCFE10325476C3D2E1F067452301.  "initial seed"
+	randKey := randomInteger.
+	Transcript show: 'Random seed: ', randomInteger printString; newLine.
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/5/2016 21:13:01'!
+initRandomFromString: aString
+	"Ask the user to type a long random string and use the result to seed the secure random number generator."
+
+	| s k srcIndex |
+	s := aString.
+	k := LargePositiveInteger new: (s size min: 64).
+	srcIndex := 0.
+	k digitLength to: 1 by: -1 do: [:i |
+		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) numericValue].
+	k := k normalize + (Random new next * 16r7FFFFFFF) asInteger.  "a few additional bits randomness"
+	k highBit > 512 ifTrue: [k := k bitShift: k highBit - 512].
+	self initRandom: k.
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'jmv 9/5/2016 21:13:06'!
+initRandomFromUser
+	"Ask the user to type a long random string and use the result to seed the secure random number generator."
+
+	| s k srcIndex |
+	s := FillInTheBlankMorph request: 'Enter a long random string to seed the random generator.'.
+	k := LargePositiveInteger new: (s size min: 64).
+	srcIndex := 0.
+	k digitLength to: 1 by: -1 do: [:i |
+		k digitAt: i put: (s at: (srcIndex := srcIndex + 1)) numericValue].
+	k := k normalize + (Random new next * 16r7FFFFFFF) asInteger.  "a few additional bits randomness"
+	k highBit > 512 ifTrue: [k := k bitShift: k highBit - 512].
+	self initRandom: k.
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'initialization' stamp: 'DSG 12/4/2013 17:41'!
+initRandomNonInteractively
+	[self initRandom: (SoundSystem default randomBitsFromSoundInput: 512)]
+		ifError: [self initRandomFromString: 
+			Time millisecondClockValue printString, 
+			Date today printString, 
+			Smalltalk platformName printString].! !
+
+!DigitalSignatureAlgorithm methodsFor: 'large integer arithmetic' stamp: 'nice 8/28/2010 21:16'!
+inverseOf: x mod: n
+	"Answer the inverse of x modulus n. That is, the integer y such that (x * y) \\ n is 1. Both x and n must be positive, and it is assumed that x < n and that x and n are integers."
+	"Details: Use the extended Euclidean algorithm, Schneier, p. 247."
+
+	| v u u1 u2 u3 t1 t2 t3 tmp |
+	((x <= 0) or: [n <= 0]) ifTrue: [self error: 'x and n must be greater than zero'].
+	x >= n ifTrue: [self error: 'x must be < n'].
+
+	v := x.
+	u := n.
+	(x even and: [n even]) ifTrue: [self error: 'no inverse'].
+
+	u1 := 1. u2 := 0. u3 := u.
+	t1 := v. t2 := u - 1. t3 := v.
+	[	[u3 even ifTrue: [
+			((u1 odd) or: [u2 odd]) ifTrue: [
+				u1 := u1 + v.
+				u2 := u2 + u].
+			u1 := u1 bitShift: -1.
+			u2 := u2 bitShift: -1.
+			u3 := u3 bitShift: -1].
+		((t3 even) or: [u3 < t3]) ifTrue: [
+			tmp := u1. u1 := t1. t1 := tmp.
+			tmp := u2. u2 := t2. t2 := tmp.
+			tmp := u3. u3 := t3. t3 := tmp].
+		u3 even and: [u3 > 0]] whileTrue: ["loop while u3 is even"].
+
+		[((u1 < t1) or: [u2 < t2]) and: [u1 > 0]] whileTrue: [
+			u1 := u1 + v.
+			u2 := u2 + u].
+	
+		u1 := u1 - t1.
+		u2 := u2 - t2.
+		u3 := u3 - t3.
+		t3 > 0] whileTrue: ["loop while t3 > 0"].
+
+	[u1 >= v and: [u2 >= u]] whileTrue: [
+		u1 := u1 - v.
+		u2 := u2 - u].
+
+	u3 = 1 ifFalse: [self error: 'no inverse'].
+	^ u - u2
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'large integer arithmetic' stamp: 'jmv 5/19/2015 21:46'!
+isProbablyPrime: p
+	"Answer true if p is prime with very high probability. Such a number is sometimes called an 'industrial grade prime'--a large number that is so extremely likely to be prime that it can assumed that it actually is prime for all practical purposes. This implementation uses the Rabin-Miller algorithm (Schneier, p. 159)."
+
+	| iterations factor pMinusOne b m r a j z couldBePrime |
+	iterations := 50.  "Note: The DSA spec requires >50 iterations; Schneier says 5 are enough (p. 260)"
+
+	"quick elimination: check for p divisible by a small prime"
+	SmallPrimes ifNil: [  "generate list of small primes > 2"
+		SmallPrimes := Integer primesUpTo: 2000.
+		SmallPrimes := SmallPrimes copyFrom: 2 to: SmallPrimes size].
+	factor := SmallPrimes detect: [:f | (p \\ f) = 0] ifNone: [nil].
+	factor ifNotNil: [^ p = factor].
+
+	pMinusOne := p - 1.
+	b := self logOfLargestPowerOfTwoDividing: pMinusOne.
+	m := pMinusOne bitShift: b negated.
+	"Assert: pMinusOne = m * (2 raisedTo: b) and m is odd"
+
+	Transcript show: '      Prime test pass '.
+	r := Random new.
+	1 to: iterations do: [:i |
+		Transcript show: i printString; space.
+		a := (r next * 16rFFFFFF) truncated.
+		j := 0.
+		z := (a raisedTo: m modulo: p) normalize.
+		couldBePrime := z = 1.
+		[couldBePrime] whileFalse: [
+			z = 1 ifTrue: [Transcript show: 'failed!!'; newLine. ^ false].  "not prime"
+			z = pMinusOne
+				ifTrue: [couldBePrime := true]
+				ifFalse: [
+					(j := j + 1) < b
+						ifTrue: [z := (z * z) \\ p]
+						ifFalse: [Transcript show: 'failed!!'; newLine. ^ false]]]].  "not prime"
+
+	Transcript show: 'passed!!'; newLine.
+	^ true  "passed all tests; probably prime"
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'nice 8/28/2010 21:04'!
+logOfLargestPowerOfTwoDividing: aPositiveInteger
+	"Answer the base-2 log of the largest power of two that divides the given integer. For example, the largest power of two that divides 24 is 8, whose log base-2 is 3. Do this efficiently even when the given number is a large integer. Assume that the given integer is > 0."
+	"DigitalSignatureAlgorithm new logOfLargestPowerOfTwoDividing: (32 * 3)"
+
+	^aPositiveInteger lowBit - 1! !
+
+!DigitalSignatureAlgorithm methodsFor: 'private' stamp: 'jm 12/13/1999 14:39'!
+nextRandom160
+	"Answer a newly generated 160-bit random number in the range [1..(2^160 - 1)]."
+	"Details: Try again in the extremely unlikely chance that zero is encountered."
+
+	| result |
+	result := 0.
+	[result = 0] whileTrue: [
+		result := SecureHashAlgorithm new hashInteger: randKey seed: randSeed.
+		randKey := randKey + result + 1].
+	^ result
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'md 7/30/2005 14:12'!
+signatureToString: aSignature
+	"Answer a string representation of the given signature. This string can be parsed using the stringToSignature: method."
+
+	| s |
+	s := WriteStream on: (String new: 2000).
+	s nextPutAll: '[DSA digital signature '.
+	s nextPutAll: aSignature first printStringHex.
+	s space.
+	s nextPutAll: aSignature second printStringHex.
+	s nextPutAll: ']'.
+	^ s contents
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'jm 12/14/1999 13:33'!
+stringToSignature: aString
+	"Answer the signature stored in the given string. A signature string has the format:
+
+		 '[DSA digital signature <r> <s>]'
+
+	where <r> and <s> are large positive integers represented by strings of hexidecimal digits."
+
+	| prefix stream r s |
+	prefix := '[DSA digital signature '.
+	(aString beginsWith: prefix) ifFalse: [self error: 'bad signature prefix'].
+	stream := ReadStream on: aString.
+	stream position: prefix size.
+	r := Integer readFrom: stream base: 16.
+	stream next.
+	s := Integer readFrom: stream base: 16.
+	^ Array with: r with: s
+! !
+
+!DigitalSignatureAlgorithm methodsFor: 'public' stamp: 'nice 9/2/2010 21:48'!
+verifySignature: aSignature ofMessageHash: hash publicKey: publicKey
+	"Answer true if the given signature is the authentic signature of the given message hash. That is, if the signature must have been computed using the private key set corresponding to the given public key. The public key is an array of four large integers: (p, q, g, y)."
+
+	| p q g y r s w u1 u2 v0 v |
+	p := publicKey first.
+	q := publicKey second.
+	g := publicKey third.
+	y := publicKey fourth.
+	r := aSignature first.
+	s := aSignature last.
+	((r > 0) and: [r < q]) ifFalse: [^ false].  "reject"
+	((s > 0) and: [s < q]) ifFalse: [^ false].  "reject"
+
+	w := s reciprocalModulo: q.
+	u1 := (hash * w) \\ q.
+	u2 := (r * w) \\ q.
+	v0 := (g raisedTo: u1 modulo: p) * (y raisedTo: u2 modulo: p).
+	v := ( v0 \\ p) \\ q.
+	^ v = r
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jm 12/22/1999 11:23'!
+example
+	"Example of signing a message and verifying its signature."
+	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
+	"DigitalSignatureAlgorithm example"
+
+	| msg keys sig |
+	msg := 'This is a test...'.
+	keys := self testKeySet.
+	sig := self sign: msg privateKey: keys first.
+	self inform: 'Signature created'.
+	(self verify: sig isSignatureOf: msg publicKey: keys last)
+		ifTrue: [self inform: 'Signature verified.']
+		ifFalse: [self error: 'ERROR!! Signature verification failed'].
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'ads 7/31/2003 14:01'!
+generateKeySet
+	"Generate and answer a key set for code signing. The result is a pair (<private key><public key>). Each key is an array of four large integers. The signer must be sure to record this keys set and must keep the private key secret to prevent someone from forging their signature."
+	"Note: Key generation can take some time. Open a transcript so you can see what's happening and take a coffee break!!"
+	"Note: Unguessable random numbers are needed for key generation. The user will be prompted to type a really long random string (two or three lines) to initialize the random number generator before generating a key set. A different random string should be typed for every session; it is not a password and we wish to produce different random number streams."
+	"DigitalSignatureAlgorithm generateKeySet"
+
+	| dsa |
+	dsa := DigitalSignatureAlgorithm new.
+	(self confirm: 'Shall I seed the random generator from the current sound input?')
+		ifTrue: [dsa initRandomNonInteractively]
+		ifFalse: [dsa initRandomFromUser].
+	^ dsa generateKeySet
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'class initialization' stamp: 'jm 12/21/1999 19:15'!
+initialize
+	"DigitalSignatureAlgorithm initialize"
+
+	"SmallPrimes is a list of small primes greater than two."
+	SmallPrimes := Integer primesUpTo: 2000.
+	SmallPrimes := SmallPrimes copyFrom: 2 to: SmallPrimes size.
+
+	"HighBitOfByte maps a byte to the index of its top non-zero bit."
+	HighBitOfByte := (0 to: 255) collect: [:byte | byte highBit].
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'jm 12/22/1999 11:18'!
+sign: aStringOrStream privateKey: privateKey
+	"Sign the given message (a stream or string) and answer a signature string."
+	"Note: Unguessable random numbers are needed for message signing. The user will be prompted to type a really long random string (two or three lines) to initialize the random number generator before signing a message. A different random string should be typed for every session; it is not a password and we wish to produce different random number streams."
+
+	| dsa hasher h sig |
+	dsa := DigitalSignatureAlgorithm new.
+	dsa initRandomFromUser.
+	hasher := SecureHashAlgorithm new.
+	(aStringOrStream class isBytes)
+		ifTrue: [h := hasher hashMessage: aStringOrStream]
+		ifFalse: [h := hasher hashStream: aStringOrStream].
+	sig := dsa computeSignatureForMessageHash: h privateKey: privateKey.
+	^ dsa signatureToString: sig
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'RAA 5/31/2000 08:46'!
+sign: aStringOrStream privateKey: privateKey dsa: dsa
+	"Sign the given message (a stream or string) and answer a signature string."
+	"Note: Unguessable random numbers are needed for message signing. The user will be prompted to type a really long random string (two or three lines) to initialize the random number generator before signing a message. A different random string should be typed for every session; it is not a password and we wish to produce different random number streams."
+
+	| hasher h sig |
+
+	hasher := SecureHashAlgorithm new.
+	(aStringOrStream class isBytes)
+		ifTrue: [h := hasher hashMessage: aStringOrStream]
+		ifFalse: [h := hasher hashStream: aStringOrStream].
+	sig := dsa computeSignatureForMessageHash: h privateKey: privateKey.
+	^ dsa signatureToString: sig
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'pb 5/25/2016 01:32'!
+testExamplesFromDisk
+	"verify messages from file on disk"
+	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
+	"DigitalSignatureAlgorithm testExamplesFromDisk"
+
+	'dsa.test.out' asFileEntry readStreamDo: [ :stream |
+		| msg  sig publicKey |
+		[stream atEnd] whileFalse: [
+			sig := stream nextChunk.
+			msg := stream nextChunk.
+			publicKey := Compiler evaluate: stream nextChunk.
+			(self verify: sig isSignatureOf: msg publicKey: publicKey) ifTrue: [
+				Transcript show: 'SUCCESS: ',msg; newLine.
+			] ifFalse: [
+				self error: 'ERROR!! Signature verification failed'
+			].
+		].
+	]! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jm 12/22/1999 11:28'!
+testKeySet
+	"Answer a pair of keys for testing. The first key is the private key, the second one is the public key."
+	"WARNING: This test key set is public should be used only for testing!! In a real application, the user would create a set of keys using generateKeySet and would keep the private key secret."
+
+	^ #(
+		(8343811888543852523216773185009428259187948644369498021763210776677854991854533186365944349987509452133156416880596803846631577352387751880552969116768071 1197175832754339660404549606408619548226315875117 1433467472198821951822151391684734233265646022897503720591270330985699984763922266163182803556189497900262038518780931942996381297743579119123094520048965 957348690772296812)
+		(8343811888543852523216773185009428259187948644369498021763210776677854991854533186365944349987509452133156416880596803846631577352387751880552969116768071 1197175832754339660404549606408619548226315875117 1433467472198821951822151391684734233265646022897503720591270330985699984763922266163182803556189497900262038518780931942996381297743579119123094520048965 4645213122572190617807944614677917601101008235397095646475699959851618402406173485853587185431290863173614335452934961425661774118334228449202337038283799))
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'testing' stamp: 'RAA 5/31/2000 08:21'!
+time: aBlock as: aString count: anInteger
+
+	^{anInteger. aString. (Time millisecondsToRun: aBlock)}! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'jmv 9/5/2016 20:48:35'!
+timeDecode: count
+	"Example of signing a message and verifying its signature."
+	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
+	"DigitalSignatureAlgorithm timeDecode: 20"
+
+	| dsa |
+	dsa := DigitalSignatureAlgorithm new.
+	dsa initRandomFromUser.
+
+	#(1 10 100 1000 10000 100000) do: [ :extraLen |
+		| msg keys sig s |
+		s := String new: extraLen.
+		1 to: s size do: [ :i | s at: i put: (Character numericValue: 200 atRandom)].
+		msg := 'This is a test...',s.
+		keys := self testKeySet.
+		sig := self sign: msg privateKey: keys first dsa: dsa.
+		"self inform: 'Signature created'."
+		self timeDirect: [
+			count timesRepeat: [
+				(self verify: sig isSignatureOf: msg publicKey: keys last)
+					ifFalse: [self error: 'ERROR!! Signature verification failed'].
+			].
+		] as: 'verify msgLen = ',msg size printString count: count
+	].
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'testing' stamp: 'jmv 5/19/2015 21:48'!
+timeDirect: aBlock as: aString count: anInteger
+
+	Transcript show: anInteger printStringWithCommas,'  ',
+		aString ,' took ',
+		(Time millisecondsToRun: aBlock) printStringWithCommas,' ms'; newLine
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'public' stamp: 'jm 12/22/1999 11:20'!
+verify: signatureString isSignatureOf: aStringOrStream publicKey: publicKey
+	"Answer true if the given signature string signs the given message (a stream or string)."
+	"Note: Random numbers are not needed for signature verification; thus, there is no need to call initRandomFromUser before verifying a signature."
+
+	| dsa hasher h sig |
+	dsa := DigitalSignatureAlgorithm new.
+	hasher := SecureHashAlgorithm new.
+	(aStringOrStream class isBytes)
+		ifTrue: [h := hasher hashMessage: aStringOrStream]
+		ifFalse: [h := hasher hashStream: aStringOrStream].
+	sig := dsa stringToSignature: signatureString.
+	^ dsa verifySignature: sig ofMessageHash: h publicKey: publicKey
+! !
+
+!DigitalSignatureAlgorithm class methodsFor: 'examples' stamp: 'pb 5/25/2016 01:36'!
+writeExamplesToDisk
+	"Example of signing a message and verifying its signature. Used to create samples from one implementation that could later be tested with a different implementation"
+	"Note: Secure random numbers are needed for key generation and message signing, but not for signature verification. There is no need to call initRandomFromUser if you are merely checking a signature."
+	"DigitalSignatureAlgorithm writeExamplesToDisk"
+
+	| keyList dsa msgList |
+	dsa := DigitalSignatureAlgorithm new.
+	dsa initRandomFromUser.
+	self inform: 'About to generate 5 key sets. Will take a while'.
+	keyList := {self testKeySet},((1 to: 5) collect: [ :ignore | self generateKeySet]).
+	msgList := {'This is a test...'. 'This is the second test period.'. 'And finally, a third message'}.
+	'dsa.test.out' asFileEntry writeStreamDo: [ :stream |
+		msgList do: [ :msg |
+			keyList do: [ :keys |
+				| sig |
+				sig := self sign: msg privateKey: keys first dsa: dsa.
+				(self verify: sig isSignatureOf: msg publicKey: keys last) ifTrue: [
+					stream
+						nextChunkPut: sig;
+						nextChunkPut: msg;
+						nextChunkPut: keys last storeString.
+				] ifFalse: [
+					self error: 'ERROR!! Signature verification failed'
+				].
+			].
+		].
+	]! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/7/1999 23:25'!
+constantForStep: i
+	"Answer the constant for the i-th step of the block hash loop. We number our steps 1-80, versus the 0-79 of the standard."
+
+	i <= 20 ifTrue: [^ K1].
+	i <= 40 ifTrue: [^ K2].
+	i <= 60 ifTrue: [^ K3].
+	^ K4
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 8/28/2010 22:43'!
+expandedBlock: aByteArray
+	"Convert the given 64 byte buffer into 80 32-bit registers and answer the result." 
+	| out src v |
+	out := Array new: 80.
+	src := 1.
+	1 to: 16 do: [:i |
+		out at: i put: (ThirtyTwoBitRegister fromByteArray: aByteArray at: src).
+		src := src + 4].
+
+	17 to: 80 do: [:i |
+		v := (out at: i - 3) copy.
+		v	bitXor: (out at: i - 8);
+			bitXor: (out at: i - 14);
+			bitXor: (out at: i - 16);
+			leftRotateBy: 1.
+		out at: i put: v].
+	^ out
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/21/1999 20:02'!
+finalHash
+	"Concatenate the final totals to build the 160-bit integer result."
+	"Details: If the primitives are supported, the results are in the totals array. Otherwise, they are in the instance variables totalA through totalE."
+
+	| r |
+	totals ifNil: [  "compute final hash when not using primitives"
+		^ (totalA asInteger bitShift: 128) +
+		  (totalB asInteger bitShift:  96) +
+		  (totalC asInteger bitShift:  64) +
+		  (totalD asInteger bitShift:  32) +
+		  (totalE asInteger)].
+
+	"compute final hash when using primitives"
+	r := 0.
+	1 to: 5 do: [:i |
+		r := r bitOr: ((totals at: i) bitShift: (32 * (5 - i)))].
+	^ r
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/7/1999 22:15'!
+hashFunction: i of: x with: y with: z
+	"Compute the hash function for the i-th step of the block hash loop. We number our steps 1-80, versus the 0-79 of the standard."
+	"Details: There are four functions, one for each 20 iterations. The second and fourth are the same."
+
+	i <= 20 ifTrue: [^ x copy bitAnd: y; bitOr: (x copy bitInvert; bitAnd: z)].
+	i <= 40 ifTrue: [^ x copy bitXor: y; bitXor: z].
+	i <= 60 ifTrue: [^ x copy bitAnd: y; bitOr: (x copy bitAnd: z); bitOr: (y copy bitAnd: z)].
+	^ x copy bitXor: y; bitXor: z
+! !
+
+!SecureHashAlgorithm methodsFor: 'public' stamp: 'jm 12/14/1999 11:56'!
+hashInteger: aPositiveInteger
+	"Hash the given positive integer. The integer to be hashed should have 512 or fewer bits. This entry point is used in key generation."
+
+	| buffer dstIndex |
+	self initializeTotals.
+
+	"pad integer with zeros"
+	aPositiveInteger highBit <= 512
+		ifFalse: [self error: 'integer cannot exceed 512 bits'].
+	buffer := ByteArray new: 64.
+	dstIndex := 0.
+	aPositiveInteger digitLength to: 1 by: -1 do: [:i |
+		buffer at: (dstIndex := dstIndex + 1) put: (aPositiveInteger digitAt: i)].
+
+	"process that one block"
+	self processBuffer: buffer.
+
+	^ self finalHash
+! !
+
+!SecureHashAlgorithm methodsFor: 'public' stamp: 'nice 8/28/2010 22:40'!
+hashInteger: aPositiveInteger seed: seedInteger
+	"Hash the given positive integer. The integer to be hashed should have 512 or fewer bits. This entry point is used in the production of random numbers"
+
+	| buffer dstIndex |
+	"Initialize totalA through totalE to their seed values."
+	totalA := ThirtyTwoBitRegister
+		fromInteger: ((seedInteger bitShift: -128) bitAnd: 16rFFFFFFFF).
+	totalB := ThirtyTwoBitRegister
+		fromInteger: ((seedInteger bitShift: -96) bitAnd: 16rFFFFFFFF).
+	totalC := ThirtyTwoBitRegister
+		fromInteger: ((seedInteger bitShift: -64) bitAnd: 16rFFFFFFFF).
+	totalD := ThirtyTwoBitRegister
+		fromInteger: ((seedInteger bitShift: -32) bitAnd: 16rFFFFFFFF).
+	totalE := ThirtyTwoBitRegister
+		fromInteger: (seedInteger bitAnd: 16rFFFFFFFF).
+	self initializeTotalsArray.
+
+	"pad integer with zeros"
+	buffer := ByteArray new: 64.
+	dstIndex := 0.
+	aPositiveInteger digitLength to: 1 by: -1 do: [:i |
+		buffer at: (dstIndex := dstIndex + 1) put: (aPositiveInteger digitAt: i)].
+
+	"process that one block"
+	self processBuffer: buffer.
+
+	^ self finalHash
+! !
+
+!SecureHashAlgorithm methodsFor: 'public' stamp: 'jm 12/14/1999 11:28'!
+hashMessage: aStringOrByteArray
+	"Hash the given message using the Secure Hash Algorithm."
+
+	^ self hashStream: (ReadStream on: aStringOrByteArray asByteArray)
+! !
+
+!SecureHashAlgorithm methodsFor: 'public' stamp: 'ar 2/25/2010 23:40'!
+hashStream: aPositionableStream
+	"Hash the contents of the given stream from the current position to the end using the Secure Hash Algorithm. The SHA algorithm is defined in FIPS PUB 180-1. It is also described on p. 442 of 'Applied Cryptography: Protocols, Algorithms, and Source Code in C' by Bruce Scheier, Wiley, 1996."
+	"SecureHashAlgorithm new hashStream: (ReadStream on: 'foo')"
+
+	| startPosition buf bitLength |
+	self initializeTotals.
+
+	"(SecureHashAlgorithm new hashMessage: '') radix: 16 	
+	=> 'DA39A3EE5E6B4B0D3255BFEF95601890AFD80709'"
+	aPositionableStream atEnd ifTrue: [self processFinalBuffer: #() bitLength: 0].
+
+	startPosition := aPositionableStream position.
+	[aPositionableStream atEnd] whileFalse: [
+		buf := aPositionableStream next: 64.
+		(aPositionableStream atEnd not and: [buf size = 64])
+			ifTrue: [self processBuffer: buf]
+			ifFalse: [
+				bitLength := (aPositionableStream position - startPosition) * 8.
+				self processFinalBuffer: buf bitLength: bitLength]].
+
+	^ self finalHash
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 8/28/2010 22:39'!
+initializeTotals
+	"Initialize totalA through totalE to their seed values."
+
+	"total registers for use when primitives are absent"
+	totalA := ThirtyTwoBitRegister fromInteger: 16r67452301.
+	totalB := ThirtyTwoBitRegister fromInteger: 16rEFCDAB89.
+	totalC := ThirtyTwoBitRegister fromInteger: 16r98BADCFE.
+	totalD := ThirtyTwoBitRegister fromInteger: 16r10325476.
+	totalE := ThirtyTwoBitRegister fromInteger: 16rC3D2E1F0.
+	self initializeTotalsArray.
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/21/1999 19:38'!
+initializeTotalsArray
+	"Initialize the totals array from the registers for use with the primitives."
+
+	totals := Bitmap new: 5.
+	totals at: 1 put: totalA asInteger.
+	totals at: 2 put: totalB asInteger.
+	totals at: 3 put: totalC asInteger.
+	totals at: 4 put: totalD asInteger.
+	totals at: 5 put: totalE asInteger.
+! !
+
+!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 12/21/1999 20:11'!
+primExpandBlock: aByteArray into: wordBitmap
+	"Expand the given 64-byte buffer into the given Bitmap of length 80."
+
+	<primitive: 'primitiveExpandBlock' module: 'DSAPrims'>
+	^ self primitiveFailed
+! !
+
+!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 12/21/1999 22:58'!
+primHasSecureHashPrimitive
+	"Answer true if this platform has primitive support for the Secure Hash Algorithm."
+
+	<primitive: 'primitiveHasSecureHashPrimitive' module: 'DSAPrims'>
+	^ false
+! !
+
+!SecureHashAlgorithm methodsFor: 'primitives' stamp: 'jm 12/21/1999 20:13'!
+primHashBlock: blockBitmap using: workingTotalsBitmap
+	"Hash the given block (a Bitmap) of 80 32-bit words, using the given workingTotals."
+
+	<primitive: 'primitiveHashBlock' module: 'DSAPrims'>
+	^ self primitiveFailed
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'nice 8/28/2010 22:28'!
+processBuffer: aByteArray
+	"Process given 64-byte buffer, accumulating the results in totalA through totalE."
+
+	| a b c d e w tmp |
+	self primHasSecureHashPrimitive
+		ifTrue: [^ self processBufferUsingPrimitives: aByteArray]
+		ifFalse: [totals := nil].
+
+	"initialize registers a through e from the current totals" 
+	a := totalA copy.
+	b := totalB copy.
+	c := totalC copy.
+	d := totalD copy.
+	e := totalE copy.
+
+	"expand and process the buffer"
+	w := self expandedBlock: aByteArray.
+	1 to: 80 do: [:i |
+		tmp := (a copy leftRotateBy: 5)
+			+= (self hashFunction: i of: b with: c with: d);
+			+= e;
+			+= (w at: i);
+			+= (self constantForStep: i).
+		e := d.
+		d := c.
+		c := b leftRotateBy: 30.
+		b := a.
+		a := tmp].
+
+	"add a through e into total accumulators"
+	totalA += a.
+	totalB += b.
+	totalC += c.
+	totalD += d.
+	totalE += e.
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/21/1999 23:32'!
+processBufferUsingPrimitives: aByteArray
+	"Process given 64-byte buffer using the primitives, accumulating the results in totals."
+
+	| w |
+	"expand and process the buffer"
+	w := Bitmap new: 80.
+	self primExpandBlock: aByteArray into: w.
+	self primHashBlock: w using: totals.
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/14/1999 11:40'!
+processFinalBuffer: buffer bitLength: bitLength
+	"Process given buffer, whose length may be <= 64 bytes, accumulating the results in totalA through totalE. Also process the final padding bits and length."
+
+	| out |
+	out := ByteArray new: 64.
+	out replaceFrom: 1 to: buffer size with: buffer startingAt: 1.
+	buffer size < 56 ifTrue: [  "padding and length fit in last data block"
+		out at: buffer size + 1 put: 128.  "trailing one bit"
+		self storeLength: bitLength in: out.  "end with length"
+		self processBuffer: out.
+		^ self].
+
+	"process the final data block"
+	buffer size < 64 ifTrue: [
+		out at: buffer size + 1 put: 128].  "trailing one bit"
+	self processBuffer: out.
+
+	"process one additional block of padding ending with the length"
+	out := ByteArray new: 64.  "filled with zeros"
+	buffer size = 64 ifTrue: [
+		"add trailing one bit that didn't fit in final data block"
+		out at: 1 put: 128].
+	self storeLength: bitLength in: out.
+	self processBuffer: out.
+! !
+
+!SecureHashAlgorithm methodsFor: 'private' stamp: 'jm 12/14/1999 11:10'!
+storeLength: bitLength in: aByteArray
+	"Fill in the final 8 bytes of the given ByteArray with a 64-bit big-endian representation of the original message length in bits."
+
+	| n i |
+	n := bitLength.
+	i := aByteArray size.
+	[n > 0] whileTrue: [
+		aByteArray at: i put: (n bitAnd: 16rFF).
+		n := n bitShift: -8.
+		i := i - 1].
+! !
+
+!SecureHashAlgorithm class methodsFor: 'class initialization' stamp: 'nice 8/28/2010 22:39'!
+initialize
+	"SecureHashAlgorithm initialize"
+	"For the curious, here's where these constants come from:
+	  #(2 3 5 10) collect: [:x | ((x sqrt / 4.0) * (2.0 raisedTo: 32)) truncated hex]"
+
+	K1 := ThirtyTwoBitRegister fromInteger: 16r5A827999.
+	K2 := ThirtyTwoBitRegister fromInteger: 16r6ED9EBA1.
+	K3 := ThirtyTwoBitRegister fromInteger: 16r8F1BBCDC.
+	K4 := ThirtyTwoBitRegister fromInteger: 16rCA62C1D6.
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:36'!
++= aThirtTwoBitRegister
+	"Replace my contents with the sum of the given register and my current contents."
+
+	| lowSum |
+	lowSum := low + aThirtTwoBitRegister low.
+	hi := (hi + aThirtTwoBitRegister hi + (lowSum bitShift: -16)) bitAnd: 16rFFFF.
+	low := lowSum bitAnd: 16rFFFF.
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 12/14/1999 16:03'!
+asInteger
+	"Answer the integer value of my current contents."
+
+	^ (hi bitShift: 16) + low
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:41'!
+bitAnd: aThirtTwoBitRegister
+	"Replace my contents with the bitwise AND of the given register and my current contents."
+
+	hi := hi bitAnd: aThirtTwoBitRegister hi.
+	low := low bitAnd: aThirtTwoBitRegister low.
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:40'!
+bitInvert
+	"Replace my contents with the bitwise inverse my current contents."
+
+	hi := hi bitXor: 16rFFFF.
+	low := low bitXor: 16rFFFF.
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:40'!
+bitOr: aThirtTwoBitRegister
+	"Replace my contents with the bitwise OR of the given register and my current contents."
+
+	hi := hi bitOr: aThirtTwoBitRegister hi.
+	low := low bitOr: aThirtTwoBitRegister low.
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'jm 12/7/1999 15:38'!
+bitXor: aThirtTwoBitRegister
+	"Replace my contents with the bitwise exclusive OR of the given register and my current contents."
+
+	hi := hi bitXor: aThirtTwoBitRegister hi.
+	low := low bitXor: aThirtTwoBitRegister low.
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'copying' stamp: 'jm 12/7/1999 15:26'!
+copy
+	"Use the clone primitive for speed."
+
+	<primitive: 148>
+	^ super copy
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 12/7/1999 15:26'!
+hi
+
+	^ hi
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accumulator ops' stamp: 'nice 8/28/2010 21:03'!
+leftRotateBy: bits
+	"Rotate my contents left by the given number of bits, retaining exactly 32 bits."
+	"Details: Perform this operation with as little LargeInteger arithmetic as possible."
+
+	| bitCount s1 s2 newHi |
+	"ensure bitCount is in range [0..31]"
+	bitCount := bits \\ 32.
+	bitCount > 16
+		ifTrue: [
+			s1 := bitCount - 16.
+			s2 := s1 - 16.
+			newHi := ((low bitShift: s1) bitAnd: 16rFFFF) bitOr: (hi bitShift: s2).
+			low := ((hi bitShift: s1) bitAnd: 16rFFFF) bitOr: (low bitShift: s2).
+			hi := newHi]
+		ifFalse: [
+			s1 := bitCount.
+			s2 := s1 - 16.
+			newHi := ((hi bitShift: s1) bitAnd: 16rFFFF) bitOr: (low bitShift: s2).
+			low := ((low bitShift: s1) bitAnd: 16rFFFF) bitOr: (hi bitShift: s2).
+			hi := newHi]
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'nice 8/28/2010 22:34'!
+load: anInteger
+	"Set my contents to the value of given integer."
+
+	(anInteger positive and: [anInteger digitLength <= 4])
+		ifFalse: [self error: 'out of range: ', anInteger printString].
+	low := anInteger bitAnd: 16rFFFF.
+	hi := (anInteger bitShift: -16) bitAnd: 16rFFFF
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 12/14/1999 16:07'!
+loadFrom: aByteArray at: index
+	"Load my 32-bit value from the four bytes of the given ByteArray starting at the given index. Consider the first byte to contain the most significant bits of the word (i.e., use big-endian byte ordering)."
+
+	hi := ((aByteArray at: index) bitShift: 8) + ( aByteArray at: index + 1).
+	low := ((aByteArray at: index + 2) bitShift: 8) + ( aByteArray at: index + 3).
+! !
+
+!ThirtyTwoBitRegister methodsFor: 'accessing' stamp: 'jm 12/7/1999 15:26'!
+low
+
+	^ low! !
+
+!ThirtyTwoBitRegister methodsFor: 'printing' stamp: 'laza 3/29/2004 12:22'!
+printOn: aStream
+	"Print my contents in hex with a leading 'R' to show that it is a register object being printed."
+
+	aStream nextPutAll: 'R:'.
+	self asInteger storeOn: aStream base: 16.
+! !
+
+!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'nice 8/28/2010 22:42'!
+fromByteArray: aByteArray at: startIndex
+	"Answer a new instance whose initial contents is copied from next four bytes from aByteArray starting at startIndex..
+	Convention is Most Significant Byte first (aka big endian)."
+
+	^ self basicNew loadFrom: aByteArray at: startIndex
+! !
+
+!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'nice 8/28/2010 22:38'!
+fromInteger: aPositiveInteger
+	"Answer a new instance whose initial contents is copied from aPositiveInteger.
+	It is required that aPositiveInteger has no more than 32 bits."
+
+	^ self basicNew load: aPositiveInteger
+! !
+
+!ThirtyTwoBitRegister class methodsFor: 'instance creation' stamp: 'jm 12/14/1999 16:05'!
+new
+	"Answer a new instance whose initial contents is zero."
+
+	^ super new load: 0
+! !
+DigitalSignatureAlgorithm initialize!
+SecureHashAlgorithm initialize!
