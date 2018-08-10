@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3401] on 9 August 2018 at 6:24:52 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3403] on 10 August 2018 at 4:58:37 pm'!
 'Description Please enter a description for this package'!
-!provides: 'GeographicDatasets' 1 5!
-!requires: 'Cartography' 1 1 nil!
+!provides: 'GeographicDatasets' 1 6!
 !requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Cartography' 1 1 nil!
 SystemOrganization addCategory: #'GeographicDatasets-Tests'!
 SystemOrganization addCategory: #GeographicDatasets!
 
@@ -89,7 +89,7 @@ ValidableTile class
 
 !classDefinition: #TiledSampledWorld category: #GeographicDatasets!
 Object subclass: #TiledSampledWorld
-	instanceVariableNames: 'allTiles cachedTiles datasetPath'
+	instanceVariableNames: 'name allTiles cachedTiles datasetPath'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'GeographicDatasets'!
@@ -288,15 +288,13 @@ Each tile can have different size and resolution. Sampling is done with normaliz
 - tilesPerFaceSide is the number of tiles each face is divided in, both horizontally and vertically.
 - maxSamplesPerTileSide is a hint for building tiles. Do not use tiles larger than this.!
 
-!TiledECEFVariableSampledDEM commentStamp: '<historical>' prior: 0!
+!TiledECEFVariableSampledDEM commentStamp: 'jmv 8/10/2018 15:48:47' prior: 0!
 ECEF sampled DEM with tiles of uniform extent in metres, but with varying resolution (and sample count).
 
-TiledECEFVariableSampledDEM getInstance exampleSanFrancisco.
 TiledECEFVariableSampledDEM loRes exampleSanFrancisco.
 TiledECEFVariableSampledDEM hiRes exampleSanFrancisco.
 
 TiledECEFVariableSampledDEM hiRes exampleBuenosAires.
-TiledECEFVariableSampledDEM hiRes exampleBuenosAiresDelta.
 TiledECEFVariableSampledDEM loRes exampleArgentina.
 TiledECEFVariableSampledDEM loRes exampleWorld.!
 
@@ -318,10 +316,9 @@ EGM96Geoid5 getInstance atLatitude: -32.6534 longitude: -70.0111
 EGM96Geoid5 getInstance exampleArgentina.
 EGM96Geoid5 getInstance exampleWorld.!
 
-!NaturalEarth commentStamp: '<historical>' prior: 0!
+!NaturalEarth commentStamp: 'jmv 8/10/2018 15:56:15' prior: 0!
 Cool RGB images of the whole world.
 
-NaturalEarth getInstance exampleBuenosAiresDelta.
 NaturalEarth getInstance exampleArgentina.
 NaturalEarth getInstance exampleWorld.
 !
@@ -344,7 +341,7 @@ ShuttleRadarTopographyMission3 getInstance atLatitude: -90 longitude: 180
 ShuttleRadarTopographyMission3 getInstance exampleSanFrancisco.
 ShuttleRadarTopographyMission3 getInstance exampleBuenosAires.!
 
-!ShuttleRadarTopographyMission30 commentStamp: '<historical>' prior: 0!
+!ShuttleRadarTopographyMission30 commentStamp: 'jmv 8/10/2018 15:56:33' prior: 0!
 30 arc sec. 16bit signed data. Horizontal resolution is 30 arc sec (lat/lon) or about 900 meters. Vertical resolution is also of approximately 900m. Relative to WGS84 / EGM96 geoid (see http://en.wikipedia.org/wiki/EGM96 ).
 
 Aconcagua (slightly off, this answers the highest sample around):
@@ -359,7 +356,6 @@ ShuttleRadarTopographyMission30 getInstance atLatitude: -90 longitude: 179.99
 
 ShuttleRadarTopographyMission30 getInstance exampleSanFrancisco.
 ShuttleRadarTopographyMission30 getInstance exampleBuenosAires.
-ShuttleRadarTopographyMission30 getInstance exampleBuenosAiresDelta.
 ShuttleRadarTopographyMission30 getInstance exampleArgentina.!
 
 !TrueMarble commentStamp: '<historical>' prior: 0!
@@ -950,62 +946,139 @@ sampleTile: tile at: zeroBasedPosition
 demoResult: extent
 	^ FloatImage extent: extent! !
 
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:50:44'!
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 16:17:40'!
+example: aString  lat0: lat0 long0: long0 pixelExtent: pixelExtent gsdArcSeconds: gsdArcSeconds
+
+	| demo lat1 long1 filename |
+	filename _ name, '-', aString.
+	lat1 _ lat0 - (pixelExtent y-1  * gsdArcSeconds / 3600.0).
+	long1 _ long0 + (pixelExtent x-1  * gsdArcSeconds / 3600.0).
+	demo _ self demoResult: pixelExtent.
+	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
+	demo asFormAutoRange writePNGfileNamed: filename, '.png'.
+	(filename, '.wld') asFileEntry forceWriteStreamDo: [ :strm |
+		gsdArcSeconds / 3600.0 printOn: strm. strm newLine.
+		0 printOn: strm. strm newLine.
+		0 printOn: strm. strm newLine.
+		gsdArcSeconds / 3600.0 negated printOn: strm. strm newLine.
+		long0 printOn: strm. strm newLine.
+		lat0 printOn: strm. strm newLine ].
+	(filename, '-toTiff.sh') asFileEntry forceWriteStreamDo: [ :stream |
+		stream
+			nextPutAll: 'gdalwarp -s_srs "EPSG:4326" ';
+			nextPutAll: filename, '.png ';
+			nextPutAll: filename, '.tiff';
+			newLine ].
+	^ demo! !
+
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 16:08:50'!
+exampleAconcagua
+	"
+	ShuttleRadarTopographyMission30 getInstance exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 getInstance exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM loRes exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM hiRes exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble getInstance exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'Aconcagua'
+		lat0: -32.575
+		long0: -70.095
+		pixelExtent:  400@400
+		gsdArcSeconds: 1.5.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 15:34:31'!
 exampleArgentina
+	"
+	EGM96Geoid5 getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	ShuttleRadarTopographyMission30 getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	TiledECEFVariableSampledDEM loRes exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	NaturalEarth getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	"
+	^ self
+		example: 'Argentina'
+		lat0: -19
+		long0: -76
+		pixelExtent:  440@700
+		gsdArcSeconds: 200.			"Same for latitude and longitude"! !
 
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ -21. lat1 _ -56.		"South"
-	long0 _ -75. long1 _ -53. "West"
-	demo _ self demoResult: 440@700.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:50:52'!
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 15:42:12'!
 exampleBuenosAires
+	"
+	ShuttleRadarTopographyMission30 getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	ShuttleRadarTopographyMission3 getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	TiledECEFVariableSampledDEM loRes exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	TiledECEFVariableSampledDEM hiRes exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	TrueMarble getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	"
+	^ self
+		example: 'BuenosAires'
+		lat0: -34.0
+		long0: -58.9
+		pixelExtent:  800@800
+		gsdArcSeconds: 4.			"Same for latitude and longitude"! !
 
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ -34.3. lat1 _ -34.8.		"South"
-	long0 _ -58.7. long1 _ -58.2. 	"West"
-	demo _ self demoResult: 800@800.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 16:37:18'!
+exampleMaunaLoa
+	"
+	ShuttleRadarTopographyMission30 getInstance exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	ShuttleRadarTopographyMission3 getInstance exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	TiledECEFVariableSampledDEM loRes exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	TiledECEFVariableSampledDEM hiRes exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	TrueMarble getInstance exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	"
+	^ self
+		example: 'MaunaLoa'
+		lat0: 19.95
+		long0: -155.95
+		pixelExtent:  1600@1600
+		gsdArcSeconds: 1.5.			"Same for latitude and longitude"! !
 
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:50:56'!
-exampleBuenosAiresDelta
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 16:19:26'!
+exampleNauru
+	"
+	ShuttleRadarTopographyMission30 getInstance exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 getInstance exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM loRes exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM hiRes exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble getInstance exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'Nauru'
+		lat0: -0.47
+		long0: 166.88
+		pixelExtent:  400@400
+		gsdArcSeconds: 1.			"Same for latitude and longitude"! !
 
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ -32.0. lat1 _ -37.0.		"South"
-	long0 _ -61.0. long1 _ -56.0. "West"
-	demo _ self demoResult: 800@800.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:50:59'!
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 15:29:36'!
 exampleSanFrancisco
+	"
+	ShuttleRadarTopographyMission30 getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM loRes exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM hiRes exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'SanFrancisco'
+		lat0: 3.65/60+9/60+37
+		long0: (50.51/60+13/60+121) negated
+		pixelExtent:  600@400
+		gsdArcSeconds: 1.			"Same for latitude and longitude"! !
 
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ 3.65/60+9/60+37.
-	lat1 _ 11.19/60+4/60+37.
-	long0 _ (50.51/60+13/60+121) negated.
-	long1 _ (10.65/60+6/60+121) negated.
-	demo _ self demoResult: 158@126.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:51:02'!
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 15:55:24'!
 exampleWorld
-
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ 90. lat1 _ -90.			"North..South"
-	long0 _ -180. long1 _ 180. 	"West..East"
-	demo _ self demoResult: 800@400.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
+	"
+	EGM96Geoid5 getInstance exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	TiledECEFVariableSampledDEM loRes exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	NaturalEarth getInstance exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	"
+	^ self
+		example: 'World'
+		lat0: 90
+		long0: -180
+		pixelExtent:  800@400
+		gsdArcSeconds: 1620.			"Same for latitude and longitude"! !
 
 !TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:33:47'!
 fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1
@@ -1634,6 +1707,11 @@ sampleTile: tile at: zeroBasedPosition
 sourceDataset: aNaturalEarth
 	sourceDataset _ aNaturalEarth! !
 
+!TiledECEFNaturalEarth methodsFor: 'initialization' stamp: 'jmv 8/10/2018 14:59:45'!
+initialize
+	super initialize.
+	name _ 'ECEF-NaturalEarth'.! !
+
 !TiledECEFNaturalEarth class methodsFor: 'examples' stamp: 'lpc 3/28/2016 14:49'!
 example1
 	"
@@ -1983,6 +2061,10 @@ subsamplingTolerance
 				Still allows viewing trees!!
 				See example4"! !
 
+!TiledECEFVariableSampledDEM methodsFor: 'accessing' stamp: 'jmv 8/10/2018 15:17:31'!
+name: aString
+	name _ aString! !
+
 !TiledECEFVariableSampledDEM methodsFor: 'accessing' stamp: 'lpc 2/29/2016 14:00'!
 sourceDEM: aDEM geoid: aGeoid
 	sourceDEM _ aDEM.
@@ -1997,6 +2079,11 @@ fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1
 			long _ x / (demo width-1.0) * (long1-long0) + long0.
 			v _ (self gpsPositionOnTerrainFor: (GPSPosition latitude: lat longitude: long altitude: 0)) altitude.
 			demo i: y+1 j: x+1  put: v ]]! !
+
+!TiledECEFVariableSampledDEM methodsFor: 'initialization' stamp: 'jmv 8/10/2018 15:00:47'!
+initialize
+	super initialize.
+	name _ 'ECEFvar-DEM'.! !
 
 !TiledECEFVariableSampledDEM class methodsFor: 'standalone application' stamp: 'jmv 4/5/2016 11:26'!
 build: columnNumberString
@@ -2218,7 +2305,7 @@ getInstance
 		].
 	^ instance! !
 
-!TiledECEFVariableSampledDEM class methodsFor: 'singleton' stamp: 'jmv 8/9/2018 17:41:13'!
+!TiledECEFVariableSampledDEM class methodsFor: 'singleton' stamp: 'jmv 8/10/2018 15:17:52'!
 hiRes
 	"
 	TiledECEFVariableSampledDEM hiRes
@@ -2226,16 +2313,18 @@ hiRes
 	"512 might be a reasonabla balance between file size and file count"
 	| answer |
 	answer _ self gsd: 90 samplesPerTileSide: 512.
+	answer name: 'ECEFvar-DEM'.
 	^ answer datasetPath asDirectoryEntry exists
 		ifTrue: [ answer ]! !
 
-!TiledECEFVariableSampledDEM class methodsFor: 'singleton' stamp: 'jmv 8/9/2018 18:20:52'!
+!TiledECEFVariableSampledDEM class methodsFor: 'singleton' stamp: 'jmv 8/10/2018 15:18:03'!
 loRes
 	"
 	TiledECEFVariableSampledDEM loRes
 	"
 	| answer |
 	answer _ self gsd: 90*64 samplesPerTileSide: 512.
+	answer name: 'ECEFvar-DEM-LoRes'.
 	^ answer datasetPath asDirectoryEntry exists
 		ifTrue: [ answer ]! !
 
@@ -2315,6 +2404,11 @@ subsamplingTolerance
 !TiledECEFVariableSampledNaturalEarth methodsFor: 'accessing' stamp: 'jmv 2/23/2016 12:39'!
 sourceDataset: aNaturalEarth
 	sourceDataset _ aNaturalEarth! !
+
+!TiledECEFVariableSampledNaturalEarth methodsFor: 'initialization' stamp: 'jmv 8/10/2018 15:00:42'!
+initialize
+	super initialize.
+	name _ 'ECEFvar-NaturalEarth'.! !
 
 !TiledECEFVariableSampledNaturalEarth class methodsFor: 'examples' stamp: 'lpc 3/28/2016 14:50'!
 example1
@@ -2651,9 +2745,10 @@ loadSamplesAt: aPoint
 	'done' print.
 	^ answer! !
 
-!EGM96Geoid5 methodsFor: 'initialization' stamp: 'jmv 1/7/2016 14:00'!
+!EGM96Geoid5 methodsFor: 'initialization' stamp: 'jmv 8/10/2018 15:15:43'!
 initialize
 	super initialize.
+	name _ 'Geoid'.
 	self datasetPath: 'payload/datasets/Geoid/egm96-5.pgm'! !
 
 !EGM96Geoid5 methodsFor: 'private' stamp: 'jmv 5/31/2016 16:09'!
@@ -2791,9 +2886,10 @@ loadSamplesAt: aPoint
 	'done' print.
 	^ samples! !
 
-!NaturalEarth methodsFor: 'initialization' stamp: 'jmv 2/17/2017 17:14:04'!
+!NaturalEarth methodsFor: 'initialization' stamp: 'jmv 8/10/2018 14:57:11'!
 initialize
 	super initialize.
+	name _ 'NaturalEarth'.
 	self datasetPath: 'payload/datasets/NaturalEarthPlusBathymetry/NE_Drape-3000x1500.tif'! !
 
 !NaturalEarth methodsFor: 'private' stamp: 'jmv 3/23/2016 12:27'!
@@ -3088,9 +3184,10 @@ validate: tile from: aPoint
 cacheSize
 	^cacheSize! !
 
-!ShuttleRadarTopographyMission3 methodsFor: 'initialization' stamp: 'lpc 4/5/2016 11:08'!
+!ShuttleRadarTopographyMission3 methodsFor: 'initialization' stamp: 'jmv 8/10/2018 15:02:13'!
 initialize
 	super initialize.
+	name _ 'VFPanoramas3'.
 	self datasetPath: 'payload/datasets/DEM-ViewfinderPanoramas'.
 	logFilename _ self class name asString, 'validationLog', Date today yyyymmdd asString, '.txt'.
 	cacheSize _ 28! !
@@ -3187,9 +3284,10 @@ filenameForTileAt: aPoint
 		
 	^ lonChar, (tileLeftLongitude abs printStringBase: 10 length: 3 padded: true), latChar, (tileTopLatitude abs printStringBase: 10 length: 2 padded: true), '.', self class tileExtension! !
 
-!ShuttleRadarTopographyMission30 methodsFor: 'initialization' stamp: 'lpc 1/13/2016 10:40'!
+!ShuttleRadarTopographyMission30 methodsFor: 'initialization' stamp: 'jmv 8/10/2018 14:57:27'!
 initialize
 	super initialize.
+	name _ 'SRTM30'.
 	self datasetPath: 'payload/datasets/SRTM30'! !
 
 !ShuttleRadarTopographyMission30 methodsFor: 'private' stamp: 'jmv 8/9/2018 16:11:13'!
@@ -3340,9 +3438,10 @@ loadSamplesAt: aPoint
 cacheSize
 	^4*4! !
 
-!TrueMarble methodsFor: 'initialization' stamp: 'jmv 1/7/2016 14:01'!
+!TrueMarble methodsFor: 'initialization' stamp: 'jmv 8/10/2018 14:57:47'!
 initialize
 	super initialize.
+	name _ 'TrueMarble'.
 	self datasetPath: 'payload/datasets/TrueMarble/TrueMarble-250m'! !
 
 !TrueMarble methodsFor: 'private' stamp: 'jmv 3/23/2016 12:28'!
