@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3371] on 11 July 2018 at 6:16:30 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3397] on 8 August 2018 at 1:23:13 pm'!
 'Description Please enter a description for this package '!
-!provides: 'JSON' 1 17!
+!provides: 'JSON' 1 18!
 SystemOrganization addCategory: #JSON!
 
 
@@ -417,7 +417,7 @@ stream: aStream
 	stream reset
 	"! !
 
-!Json methodsFor: 'parsing' stamp: 'jmv 11/16/2016 15:54:38'!
+!Json methodsFor: 'parsing' stamp: 'jmv 8/8/2018 13:21:08'!
 readAny
 	"This is the main entry point for the JSON parser. See also readFrom: on the class side."
 	| c |
@@ -430,10 +430,12 @@ readAny
 	c == $f ifTrue: [^ self consume: 'false' returning: false].
 	c == $n ifTrue: [^ self consume: 'null' returning: nil].
 	c == $@ ifTrue: [stream next. ^ self readConstructor].
+	c == $- ifTrue: [ 	"Negative number or '-Infinity' - > Float negativeInfinity "
+		stream next.
+		^ self readAny negated ].
 	(Json numbersMayContain: c) ifTrue: [^ self readNumber].
 	c == $N ifTrue: [^ self consume: 'NaN' returning: Float nan].
-	"c == $N ifTrue: [^ self readNumber].
-	c == $I ifTrue: [^ self readNumber]."
+	c == $I ifTrue: [^ self consume: 'Infinity' returning: Float infinity].
 	JsonSyntaxError signal: 'Unknown Json input'! !
 
 !Json methodsFor: 'parsing' stamp: 'jmv 1/18/2017 16:52:22'!
