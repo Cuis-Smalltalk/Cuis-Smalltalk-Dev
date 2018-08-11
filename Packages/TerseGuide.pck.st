@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3345] on 15 July 2018 at 1:46:33 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3403] on 11 August 2018 at 11:52:54 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 130!
+!provides: 'TerseGuide' 1 131!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1782,7 +1782,7 @@ x _ 20@5 dotProduct: 10@2.					"sum of product (x1*x2 + y1*y2)"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/14/2016 11:29'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 8/10/2018 18:30:51'!
 popUpMenu
 	"PopUpMenu"
 	^
@@ -1796,7 +1796,6 @@ b _ PopUpMenu
 PopUpMenu inform: ''I like Cuis''.
 arr _ #(''Alpha'' ''Beta'' ''Gamma'' ''something else'').
 x _ (PopUpMenu labelArray: arr) startUpWithCaption: ''Please pick one.''.
-x _ (PopUpMenu labelArray: arr) startUpWithCaption: nil at: 450@200.
 lin _ #(3).
 x _ (PopUpMenu labelArray: arr lines: lin) 
 	startUpWithCaption: nil 
