@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3401] on 9 August 2018 at 6:16:32 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 13 August 2018 at 1:42:03 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Cartography' 1 12!
-!requires: 'Math 3D' 1 4 nil!
+!provides: 'Cartography' 1 13!
 !requires: 'Graphics-Files-Additional' 1 4 nil!
+!requires: 'Math 3D' 1 4 nil!
 SystemOrganization addCategory: #Cartography!
 
 
@@ -75,14 +75,14 @@ Mercator projection is:
 
 Mercator projection is centered at the Equator and meridian 0 (Greenwich).!
 
-!PseudoMercatorProjection commentStamp: '<historical>' prior: 0!
+!PseudoMercatorProjection commentStamp: 'jmv 8/13/2018 11:17:08' prior: 0!
 As in http://en.wikipedia.org/wiki/Web_Mercator
 Used by http://www.openstreetmap.org , http://maps.google.com , etc
 Uses elliptic (geodetic) latitude and longitude for, but projects them using a spherical model of Earth.
 In different words, we take geodetic (elliptical Earth) (latitude, longitude), map them to geographic (latitude, longitude) on a sphere, and do a Mercator projection of the sphere. As there is a slight distorion going from the ellipsoid to the sphere, the PseudoMercatorProjection is not conformal, but almost.
 
 | tm ww hh e pseudoMercator proj ll xInTM yInTM |
-tm _ Form fromFileNamed: './Datasets/CleanTOPO2/NaturalEarthPlusBathymetry/NE_Drape-3000x1500.tif'.
+tm _ Form fromFileNamed: 'payload/datasets/NaturalEarthPlusBathymetry/NE_Drape-3000x1500.tif'.
 ww _ tm width.
 hh _ tm height.
 e _ 900.

@@ -1,8 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3403] on 10 August 2018 at 4:58:37 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 13 August 2018 at 1:45:31 pm'!
 'Description Please enter a description for this package'!
-!provides: 'GeographicDatasets' 1 6!
-!requires: 'ImageProcessing' 1 nil nil!
+!provides: 'GeographicDatasets' 1 7!
+!requires: 'WebClient' 1 16 nil!
 !requires: 'Cartography' 1 1 nil!
+!requires: 'ImageProcessing' 1 nil nil!
 SystemOrganization addCategory: #'GeographicDatasets-Tests'!
 SystemOrganization addCategory: #GeographicDatasets!
 
@@ -228,6 +229,9 @@ TrueMarble class
 	instanceVariableNames: ''!
 
 
+!MeridiansAndParallelsSampledWorld commentStamp: '<historical>' prior: 0!
+A synthetic dataset that simply plots a latitude and longitude grid.!
+
 !SampledTile commentStamp: '<historical>' prior: 0!
 A sampled tile for any subclass of TiledSampledWorld. Holds 'samples'. If nil, the tile is null (no data available).!
 
@@ -288,15 +292,15 @@ Each tile can have different size and resolution. Sampling is done with normaliz
 - tilesPerFaceSide is the number of tiles each face is divided in, both horizontally and vertically.
 - maxSamplesPerTileSide is a hint for building tiles. Do not use tiles larger than this.!
 
-!TiledECEFVariableSampledDEM commentStamp: 'jmv 8/10/2018 15:48:47' prior: 0!
+!TiledECEFVariableSampledDEM commentStamp: 'jmv 8/13/2018 13:35:30' prior: 0!
 ECEF sampled DEM with tiles of uniform extent in metres, but with varying resolution (and sample count).
 
-TiledECEFVariableSampledDEM loRes exampleSanFrancisco.
-TiledECEFVariableSampledDEM hiRes exampleSanFrancisco.
+TiledECEFVariableSampledDEM loRes exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
+TiledECEFVariableSampledDEM hiRes exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
 
-TiledECEFVariableSampledDEM hiRes exampleBuenosAires.
-TiledECEFVariableSampledDEM loRes exampleArgentina.
-TiledECEFVariableSampledDEM loRes exampleWorld.!
+TiledECEFVariableSampledDEM hiRes exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
+TiledECEFVariableSampledDEM loRes exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.
+TiledECEFVariableSampledDEM loRes exampleWorld displayAutoRangeAt: 0@0 zoom: 1.!
 
 !TiledECEFVariableSampledNaturalEarth commentStamp: '<historical>' prior: 0!
 Quite like TiledECEFNaturalEarth, but with tiles of non-equal size. Also, tiles are instances of FloatMatrix (i.e. monochrome).!
@@ -307,26 +311,26 @@ This is the same projection used by most global raster datasets (BlueMarble, Tru
 
 Fine sampling of the whole world would result in too high memory usage. Tiles include an integer number of degrees of latitude and longitude. There is a cache that forgets LRU tiles.!
 
-!EGM96Geoid5 commentStamp: '<historical>' prior: 0!
+!EGM96Geoid5 commentStamp: 'jmv 8/13/2018 13:35:48' prior: 0!
 This class implements the EGM96 Geoid Dataset with a sample grid of 5 minutes. It is based on the data file obtained from: http://geographiclib.sourceforge.net/html/geoid.html#geoidinst. 
 
 Aconcagua:
 EGM96Geoid5 getInstance atLatitude: -32.6534 longitude: -70.0111
 
-EGM96Geoid5 getInstance exampleArgentina.
-EGM96Geoid5 getInstance exampleWorld.!
+EGM96Geoid5 getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.
+EGM96Geoid5 getInstance exampleWorld displayAutoRangeAt: 0@0 zoom: 1.!
 
-!NaturalEarth commentStamp: 'jmv 8/10/2018 15:56:15' prior: 0!
+!NaturalEarth commentStamp: 'jmv 8/13/2018 13:36:01' prior: 0!
 Cool RGB images of the whole world.
 
-NaturalEarth getInstance exampleArgentina.
-NaturalEarth getInstance exampleWorld.
+NaturalEarth getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.
+NaturalEarth getInstance exampleWorld displayAutoRangeAt: 0@0 zoom: 1.
 !
 
 !ShuttleRadarTopographyMission commentStamp: '<historical>' prior: 0!
 Abstract superclass for SRTM and SRTM-like DEMs.!
 
-!ShuttleRadarTopographyMission3 commentStamp: '<historical>' prior: 0!
+!ShuttleRadarTopographyMission3 commentStamp: 'jmv 8/13/2018 13:36:15' prior: 0!
 3 arc sec. 16bit signed data. Horizontal resolution is 3 arc sec (lat/lon) or about 90 meters. Vertical resolution is 1 m. Vertical accuracy is about 17m. Relative to WGS84 / EGM96 geoid (see http://en.wikipedia.org/wiki/EGM96 ).
 
 Aconcagua:
@@ -338,10 +342,10 @@ ShuttleRadarTopographyMission3 getInstance atLatitude: -80 longitude: 180
 ShuttleRadarTopographyMission3 getInstance atLatitude: -30 longitude: 180
 ShuttleRadarTopographyMission3 getInstance atLatitude: -90 longitude: 180
 
-ShuttleRadarTopographyMission3 getInstance exampleSanFrancisco.
-ShuttleRadarTopographyMission3 getInstance exampleBuenosAires.!
+ShuttleRadarTopographyMission3 getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
+ShuttleRadarTopographyMission3 getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.!
 
-!ShuttleRadarTopographyMission30 commentStamp: 'jmv 8/10/2018 15:56:33' prior: 0!
+!ShuttleRadarTopographyMission30 commentStamp: 'jmv 8/13/2018 13:36:48' prior: 0!
 30 arc sec. 16bit signed data. Horizontal resolution is 30 arc sec (lat/lon) or about 900 meters. Vertical resolution is also of approximately 900m. Relative to WGS84 / EGM96 geoid (see http://en.wikipedia.org/wiki/EGM96 ).
 
 Aconcagua (slightly off, this answers the highest sample around):
@@ -354,15 +358,15 @@ ShuttleRadarTopographyMission30 getInstance atLatitude: -80 longitude: 179.99
 ShuttleRadarTopographyMission30 getInstance atLatitude: -30 longitude: 179.99
 ShuttleRadarTopographyMission30 getInstance atLatitude: -90 longitude: 179.99
 
-ShuttleRadarTopographyMission30 getInstance exampleSanFrancisco.
-ShuttleRadarTopographyMission30 getInstance exampleBuenosAires.
-ShuttleRadarTopographyMission30 getInstance exampleArgentina.!
+ShuttleRadarTopographyMission30 getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
+ShuttleRadarTopographyMission30 getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
+ShuttleRadarTopographyMission30 getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.!
 
-!TrueMarble commentStamp: '<historical>' prior: 0!
+!TrueMarble commentStamp: 'jmv 8/13/2018 13:37:27' prior: 0!
 Cool RGB images of the whole world. Resolution is 7.5 arc sec (lat/lon), or about 250 meters.
 
-TrueMarble getInstance exampleSanFrancisco.
-TrueMarble getInstance exampleBuenosAires.
+TrueMarble getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
+TrueMarble getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
 
 For example, for original tile A1, geotiff data (read with listgeo.exe):
 ----------------------------------------------------------------------------------------------------
@@ -906,10 +910,6 @@ datasetPath
 datasetPath: aString
 	datasetPath _ aString! !
 
-!TiledSampledWorld methodsFor: 'accessing' stamp: 'jmv 7/12/2016 14:40:14'!
-nominalGSD: meters
-	"Ignored"! !
-
 !TiledSampledWorld methodsFor: 'initialization' stamp: 'jmv 11/10/2015 13:05'!
 initialize
 	allTiles _ Array2D extent: self class tileCount.
@@ -1346,33 +1346,6 @@ buildFace: faceNumber
 
 !TiledECEFSampledWorld methodsFor: 'building' stamp: 'jmv 3/23/2016 16:44'!
 buildFace: faceNumber at: tilePosition
-	"Does not store the tiles in the cache, just build them and save them to disk.
-	tilePosition is zero-based"
-	| tileSamples tileHasValidData h w |
-	tileSamples _ self newTileSamples.
-	h _ tileSamples height.
-	w _ tileSamples width.
-	tileHasValidData _ false.
-	0 to: h-1 do: [ :y |
-"		(tileHasValidData and: [y \\ 50 = 49]) ifTrue: [ self display: tile at: 0@0 ]."
-		0 to: w-1 do: [ :x |
-			self ecefOfFace: faceNumber tilePosition: tilePosition positionInTile: x@y samples: tileSamples
-				into: [ :ecef :pointBelongsInFace :pointBelongsInExtendedFace |
-					self fillTileSamples: tileSamples at: x@y withDataForECEF: ecef pointBelongsInFace: pointBelongsInFace pointBelongsInExtendedFace: pointBelongsInExtendedFace.
-					pointBelongsInExtendedFace ifTrue: [
-							tileHasValidData _ true ]
-					
-				]]].
-		tileHasValidData ifTrue: [
-			tileSamples _ self subsample: tileSamples.
-"			self display: tile at: 0@0."
-			self writeToDisk: tileSamples face: faceNumber tilePosition: tilePosition ]
-		ifFalse: [ 
-			tileSamples _ nil ].
-	^ tileSamples! !
-
-!TiledECEFSampledWorld methodsFor: 'building' stamp: 'jmv 3/23/2016 16:44'!
-buildFace: faceNumber tile: tilePosition
 	"Does not store the tiles in the cache, just build them and save them to disk.
 	tilePosition is zero-based"
 	| tileSamples tileHasValidData h w |
