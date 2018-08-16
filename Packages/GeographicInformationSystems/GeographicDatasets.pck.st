@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 14 August 2018 at 12:35:17 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 15 August 2018 at 10:12:02 am'!
 'Description Please enter a description for this package'!
-!provides: 'GeographicDatasets' 1 9!
+!provides: 'GeographicDatasets' 1 10!
 !requires: 'Cartography' 1 1 nil!
 !requires: 'WebClient' 1 16 nil!
 !requires: 'ImageProcessing' 1 nil nil!
@@ -3559,8 +3559,25 @@ initializeZoomLevel: anInteger
 	allTiles _ Dictionary new.
 	cachedTiles _ OrderedCollection new! !
 
-!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/14/2018 11:31:01'!
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:10:19'!
+atGPSPosition: aGPSPosition
+	"This method is to be used when source dataset is similar resolution than destination.
+	See comment at atGPSPosition:areaFilterMeters:
+	"
+	^self atLatitude: aGPSPosition latitude longitude: aGPSPosition longitude! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:05:37'!
+atGPSPosition: aGPSPosition areaFilterMeters: filterWidthMeters
+	"Area filtering is useful when source dataset is higher resolution than destination.
+	In this cases, source includes high spatial frequency content that destination can't handle. Area filtering is a reasonable way to filter it out."
+
+	^self atLatitude: aGPSPosition latitude longitude: aGPSPosition longitude areaFilterMeters: filterWidthMeters! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:09:36'!
 atLatitude: lat longitude: lon
+	"This method is to be used when source dataset is similar resolution than destination.
+	See comment at atLatitude:longitude:areaFilterMeters:
+	"
 	| positionInMap tileAndPositionInTile tile |
 	positionInMap _ projection mapPositionFromLat: lat long: lon.
 	(positionInMap between: 0@0 and: 1@1)
@@ -3568,6 +3585,23 @@ atLatitude: lat longitude: lon
 	tileAndPositionInTile _ positionInMap * (2 raisedToInteger: zoomLevel).
 	tile _ self tileAt: tileAndPositionInTile truncated.
 	^ self sampleTile: tile at: (tileAndPositionInTile - tileAndPositionInTile truncated) * self samplesPerTileSide! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:05:57'!
+atLatitude: lat longitude: lon areaFilterMeters: filterWidthMeters
+	"Area filtering is useful when source dataset is higher resolution than destination.
+	In this cases, source includes high spatial frequency content that destination can't handle. Area filtering is a reasonable way to filter it out."
+
+	| positionInMap tileAndPositionInTile tile gsd |
+	positionInMap _ projection mapPositionFromLat: lat long: lon.
+	(positionInMap between: 0@0 and: 1@1)
+		ifFalse: [ ^ self outOfWorldValue ].	"Invalid coodinates, or outside the area covered by Webmercator"
+	tileAndPositionInTile _ positionInMap * (2 raisedToInteger: zoomLevel).
+	tile _ self tileAt: tileAndPositionInTile truncated.
+	gsd _ projection gsdAtLatitude: lat zoomLevel: zoomLevel.
+	^ self
+		sampleTile: tile
+		at: (tileAndPositionInTile - tileAndPositionInTile truncated) * self samplesPerTileSide
+		filterHalfExtent: filterWidthMeters / gsd / 2! !
 
 !TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/14/2018 12:11:15'!
 tileAt: zeroBasedTilePosition
@@ -3668,6 +3702,29 @@ sampleTile: tile at: zeroBasedPosition
 	y _ zeroBasedPosition y.
 	y _ y isZero ifTrue: [ 0 ] ifFalse: [ (y - 0.5) rounded ].
 	^tile samples colorAt: x@y
+
+	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"! !
+
+!GoogleSampledWorld methodsFor: 'private' stamp: 'jmv 8/15/2018 10:07:32'!
+sampleTile: tile at: zeroBasedPosition filterHalfExtent: aNumber
+	"Call #sampleTile:at: when destination has similar resolution as source dataset.
+	Call this method, for higher quality results, with a source dataset with higher resolution than destination."
+
+	"zeroBasedPosition = 0@0 means topLeft, width@height means bottomRight
+	This datasets considers pixels as areas, not samples.
+	Samples is a Form, and therefore zero based.
+	This means that:
+		- topLeft pixel covers zeroBasedPosition values in 0@0 to 1@1. zeroBasedPosition = 0.5@0.5 hits pixel 0@0 exactly
+		- bottomRight pixel covers zeroBasedPosition values in width@height-1 to width@height. zeroBasedPosition = width@height-0.5 hits pixel width@height-1 (bottomRight pixel) exactly
+	Additionally, 0@0 is a valid zeroBasedPosition. Make the valid interval for zeroBasedPosition be [0.0 .. width) x [0.0 .. height) and not (0.0 .. width) x (0.0 .. height).
+	This is, make the start of the interval closed. Make 0@0 a valid coordinate.
+	"
+	| x y |
+	x _ zeroBasedPosition x.
+	x _ x isZero ifTrue: [ 0 ] ifFalse: [ (x - 0.5) rounded ].
+	y _ zeroBasedPosition y.
+	y _ y isZero ifTrue: [ 0 ] ifFalse: [ (y - 0.5) rounded ].
+	^tile samples areaFilteredColorAt: x@y halfWidth: aNumber halfHeight: aNumber
 
 	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"! !
 

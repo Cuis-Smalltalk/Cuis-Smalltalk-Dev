@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 14 August 2018 at 9:39:56 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 15 August 2018 at 9:18:24 am'!
 'Description Please enter a description for this package'!
-!provides: 'Cartography' 1 14!
-!requires: 'Math 3D' 1 4 nil!
+!provides: 'Cartography' 1 15!
 !requires: 'Graphics-Files-Additional' 1 4 nil!
+!requires: 'Math 3D' 1 4 nil!
 SystemOrganization addCategory: #Cartography!
 
 
@@ -412,3 +412,35 @@ mapPositionFromLatLong: aGPSPosition
 	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: -66.51326 longitude: 0.0 altitude: 0.0)
 	" 
 	^ self mapPositionFromLat: aGPSPosition latitude long: aGPSPosition longitude! !
+
+!WebmercatorProjection methodsFor: 'services' stamp: 'jmv 8/14/2018 16:34:34'!
+gsdAtLatitude: latitudeDegrees zoomLevel: aZoomLevel
+	"Answer an approximate GSD at latitudeDegrees for aZoomLevel.
+	It is approximate because it is not really constant!!
+	WebmercatorProjection  new gsdAtLatitude: 33.144 zoomLevel: 17
+	"
+	| gsdAtEquator gsdAtLatitude |
+	gsdAtEquator _ GPSPosition wgs84SemiMajorAxis * Float twoPi / 256 / (2 raisedToInteger: aZoomLevel).
+	gsdAtLatitude _ (gsdAtEquator * latitudeDegrees degreesToRadians cos).
+	^ gsdAtLatitude
+
+"Play with this:"
+"zoomLevel _ 19.
+gsdAtEquator _ GPSPosition wgs84SemiMajorAxis * Float twoPi / 256 / (2 raisedToInteger: zoomLevel).
+latitude _ 43.
+
+base _ GPSPosition latitude: latitude longitude: 0 altitude: 0.
+inMap _ (WebmercatorProjection new mapPositionFromLatLong: base) * (2 raisedToInteger: zoomLevel) * 256.
+oneToTheEast _ inMap + (1@0).
+oneToTheWest _ inMap - (1@0).
+oneToTheSouth _ inMap + (0@1).
+oneToTheNorth _ inMap - (0@1).
+
+'-----' print.
+gsdAtLat _ (gsdAtEquator * latitude degreesToRadians cos) print.
+((WebmercatorProjection new latLongFromMapPosition: oneToTheEast / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
+((WebmercatorProjection new latLongFromMapPosition: oneToTheWest / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
+((WebmercatorProjection new latLongFromMapPosition: oneToTheSouth / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
+((WebmercatorProjection new latLongFromMapPosition: oneToTheNorth / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
+nil.
+"! !

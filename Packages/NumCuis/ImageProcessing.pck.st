@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3399] on 9 August 2018 at 2:32:31 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 15 August 2018 at 10:00:49 am'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 4!
+!provides: 'ImageProcessing' 1 5!
 !requires: 'Statistics' 1 nil nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'NumericalMethods' 1 8 nil!
 !requires: 'Morphic3' 1 50 nil!
-!requires: 'SignalProcessing' 1 100 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'NumericalMethods' 1 8 nil!
+!requires: 'SignalProcessing' 1 100 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -822,7 +822,7 @@ normalizeValuesFloor: min ceiling: max
 
 	self replaceValues: [ :i :j :v | v - min / max min: 1.0 max: 0.0 ]! !
 
-!FloatImage methodsFor: 'interpolation' stamp: 'jmv 3/12/2017 19:28:39'!
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 8/14/2018 17:28:21'!
 areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	"Answer an interpolated value at (most likely) non-integer x@y.
 	x and y can be any Float values in in [1.0 .. width] and [1.0 .. height].
@@ -862,10 +862,10 @@ areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	yIndex0 > height ifTrue: [ ^0.0 ].
 	(yIndex0 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
 
-	xStart _ (x - hw) ceiling max: 1.
-	xStop _ (x + hw) floor min: width.
-	yStart _ (y - hh) ceiling max: 1.
-	yStop _ (y + hh) floor min: height.
+	xStart _ (x - hw) rounded max: 1.
+	xStop _ (x + hw) rounded min: width.
+	yStart _ (y - hh) rounded max: 1.
+	yStop _ (y + hh) rounded min: height.
 
 	"Apply filter."
 	sum _ 0.0.
@@ -6282,6 +6282,63 @@ subsampled: n
 		1 to: answer width do: [ :j |
 			answer i: i j: j put: (self i: i*n j: j*n) ]].
 	^ answer! !
+
+!Form methodsFor: '*ImageProcessing' stamp: 'jmv 8/14/2018 17:30:58'!
+areaFilteredColorAt: aPoint halfWidth: hw halfHeight: hh
+	"Answer an interpolated value at (most likely) non-integer x@y.
+	x and y can be any Float values in in [0.0 .. width-1.0] and [0.0 .. height-1.0].
+	
+	Akin to OpenCV's CV_INTER_AREA.
+	Applies a step filter over the samples in the receiver that lie in a rectangle centered at x@y, as specified by hw and hh.
+	
+	Note: We could also consider the pixels in the receiver as squares and compute area intersection with result pixel.
+	Results would be slightly better. But here we are focused on speed. If you need higher quality, please use Lanczos.
+
+	Computationally very cheap.
+	Avoids aliasing while reasonably keeps detail.
+	Gives very good results for strong subsampling (zoom out, scale factors less than 0.4).
+
+	Compute parameters as (scale usually <= 0.25):
+		hw _ 1 / scale / 2.0.
+		hh _ 1 / scale / 2.0.
+	or (resultWidth usually much smaller than original, same for height):
+		hw _ originalWidth / resultWidth / 2.0.
+		hh _ originalHeight / resultHeight / 2.0.
+	"
+	| x y xStart xStop yStart yStop sum xIndex0 yIndex0 count |
+	x _ aPoint x.
+	y _ aPoint y.
+
+	"Validate inside some reasonable bounds. We allow extending up to 0.8 in any direction"
+	xIndex0 _ x floor.
+	"x < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	xIndex0 < -1 ifTrue: [ ^0.0 ].
+	(xIndex0 = -1 and: [x < 0.2]) ifTrue: [ ^0.0 ].
+	"x > (width + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	xIndex0 > width ifTrue: [ ^0.0 ].
+	(xIndex0 = width and: [x > (width + 0.8)]) ifTrue: [ ^0.0 ].
+
+	yIndex0 _ y floor.
+	"y < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	yIndex0 < -1 ifTrue: [ ^0.0 ].
+	(yIndex0 = -1 and: [y < 0.2]) ifTrue: [ ^0.0 ].
+	"y > (height + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	yIndex0 > height ifTrue: [ ^0.0 ].
+	(yIndex0 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
+
+	xStart _ (x - hw) rounded max: 0.
+	xStop _ (x + hw) rounded min: width-1.
+	yStart _ (y - hh) rounded max: 0.
+	yStop _ (y + hh) rounded min: height-1.
+
+	"Apply filter."
+	sum _ Color r: 0.0 g: 0.0 b: 0.0.
+	count _ (xStop-xStart+1) * (yStop-yStart+1).
+	yStart to: yStop do: [ :yyy |
+		xStart to: xStop do: [ :xxx |
+			sum _ (self colorAt: xxx@yyy) / count + sum ]].
+	sum = 0.0 ifTrue: [ ^0.0 ].
+	^sum! !
 
 !Form class methodsFor: '*ImageProcessing-examples' stamp: 'jmv 6/2/2016 20:13'!
 lena
