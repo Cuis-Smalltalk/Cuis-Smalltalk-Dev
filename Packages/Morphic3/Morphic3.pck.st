@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3364] on 6 July 2018 at 8:59:15 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 4:04:42 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 51!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'Morphic3' 1 52!
 !requires: 'YAXO' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 SystemOrganization addCategory: #'Morphic3-Kernel'!
 SystemOrganization addCategory: #'Morphic3-SVG'!
 SystemOrganization addCategory: #'Morphic3-SVG shapes'!
@@ -2129,7 +2129,7 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				engine rel_QuadraticBezierSmoothToX: to x y: to y ]]! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 4/4/2018 15:15:44'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 8/17/2018 14:54:43'!
 drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
 
 	| font loc ps |
@@ -2145,7 +2145,8 @@ drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil co
 	font class = StrokeFont ifTrue: [
 		ps _ font pointSize.
 		loc _ AffineTransformation withScale: ps.
-		self intoLocation: loc.
+		loc _ currentTransformation composedWith: loc.
+		engine geometryTransformation: loc.
 		engine
 			displayString: aString
 			from: firstIndex
@@ -2153,11 +2154,12 @@ drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil co
 			at: aPoint / ps
 			strokeFont: font
 			color: aColor.
-		self outOfLocation ]
+		engine geometryTransformation: currentTransformation ]
 	ifFalse: [
 		ps _ font pointSize.
 		loc _ AffineTransformation withScale: ps*1.3.
-		self intoLocation: loc.
+		loc _ currentTransformation composedWith: loc.
+		engine geometryTransformation: loc.
 		engine
 			displayString: aString
 			from: firstIndex
@@ -2165,7 +2167,7 @@ drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil co
 			at: aPoint / ps
 			trueTypeFont: font
 			color: aColor.
-		self outOfLocation ]! !
+		engine geometryTransformation: currentTransformation ]! !
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/30/2014 20:02'!
 drawButtonIconFromCurrentMorph
@@ -2377,26 +2379,18 @@ initializeWith: aForm origin: aPoint
 	super initializeWith: aForm origin: aPoint.
 	engine geometryTransformation: currentTransformation! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 10/14/2014 16:14'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 8/16/2018 15:37:39'!
 into: aMorph
 	super into: aMorph.
 	engine currentMorph: currentMorph.
-	engine resetMorphBounds! !
+	engine geometryTransformation: currentTransformation.
+	engine resetMorphBounds.! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/31/2017 13:22:37'!
-intoLocation: anAffineTransformation
-	super intoLocation: anAffineTransformation.
-	engine geometryTransformation: currentTransformation! !
-
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/31/2017 13:22:42'!
-outOfLocation
-	super outOfLocation.
-	engine geometryTransformation: currentTransformation! !
-
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 10/14/2014 16:14'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 8/16/2018 15:37:22'!
 outOfMorph
 	super outOfMorph.
-	engine currentMorph: currentMorph.! !
+	engine currentMorph: currentMorph.
+	engine geometryTransformation: currentTransformation! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 10/13/2014 16:17'!
 setClipRect: aRectangle
@@ -2586,6 +2580,10 @@ currentMorph: aMorph
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 12/16/2017 18:17:50'!
 currentOwnerIfClips: currentMorphOwnerOrNil
 	currentOwnerIfClips _ currentMorphOwnerOrNil! !
+
+!VectorEngine methodsFor: 'accessing' stamp: 'jmv 8/17/2018 15:42:34'!
+geometryTransformation
+	^geometryTransformation! !
 
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 12/31/2017 13:22:19'!
 geometryTransformation: aGeometryTransformation
@@ -4833,7 +4831,7 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 7/6/2018 08:53:09'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 8/16/2018 15:47:00'!
 siemensStar
 	"
 	VectorEngine siemensStar display
@@ -4850,14 +4848,14 @@ siemensStar
 	canvas _ VectorCanvas onForm: form.
 	1 to: count do: [ :i |
 		location _ AffineTransformation withRadians: i * angle * 2+0.02 scale: extent*0.45 position: extent-1/2.0 + offsetFromCenter.
-		canvas intoLocation: location.
+		canvas engine geometryTransformation: location.
 		canvas fillColor: foreColor do: [
 			canvas
 				moveToX: 0 y: 0;
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas outOfLocation.
+		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
@@ -4972,9 +4970,9 @@ basicQuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	didStuff _ true.
 	self halt! !
 
-!CodeGeneratingVectorEngine methodsFor: 'private' stamp: 'jmv 1/4/2018 15:53:35'!
-drawCharCode: charCode italics: doItalics renderer: aVectorFontRenderer canvas: aVectorCanvas
-	aVectorFontRenderer drawCharCode: charCode atX: 0 y: 0 pointSize: 1.0 italics: doItalics canvas: aVectorCanvas! !
+!CodeGeneratingVectorEngine methodsFor: 'private' stamp: 'jmv 8/17/2018 15:45:34'!
+drawCharCode: charCode italics: doItalics renderer: aVectorFontRenderer
+	aVectorFontRenderer drawCharCode: charCode atX: 0 y: 0 pointSize: 1.0 italics: doItalics! !
 
 !VectorFontRenderer methodsFor: 'accessing' stamp: 'jmv 1/4/2018 15:57:50'!
 vectorGraphicsEngine: aVectorGraphicsEngine
@@ -4985,8 +4983,8 @@ vectorGraphicsEngine: aVectorGraphicsEngine
 for: aVectorGraphicsEngine
 	^ self new vectorGraphicsEngine: aVectorGraphicsEngine! !
 
-!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:11:45'!
-drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics canvas: aVectorCanvas
+!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 8/17/2018 15:47:05'!
+drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics
 "No usado directamente por M3. Usado solo por CodeGeneratingVectorEngine para generar los que si se usan."
 "TrueType en M3. Bitstream Vera Sans, importado asi: TTF -> PDF -> SVG -> Codigo Smalltalk.
 "
@@ -4997,8 +4995,8 @@ c _ (VectorCanvas onForm: Display)
 c engine
 	strokeWidth: 1 color: Color black fillColor: Color blue do: [
 		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
-			drawCharCode: 167 atX: 150 y: 200 pointSize: 200 italics: false canvas: c;
-			drawCharCode: 167 atX: 220 y: 200 pointSize: 200 italics: true canvas: c ].
+			drawCharCode: 167 atX: 150 y: 200 pointSize: 200 italics: false;
+			drawCharCode: 167 atX: 220 y: 200 pointSize: 200 italics: true  ].
 Display forceToScreen
 "
 "
@@ -5008,7 +5006,7 @@ c _ (VectorCanvas onForm: Display)
 c engine
 	strokeWidth: 3.25 color: Color black fillColor: Color blue do: [
 		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
-			drawCharCode: 97 atX: 150 y: 200 pointSize: 120 italics: false canvas: c ].
+			drawCharCode: 97 atX: 150 y: 200 pointSize: 120 italics: false ].
 Display forceToScreen
 "
 "
@@ -5018,30 +5016,32 @@ c _ (VectorCanvas onForm: Display)
 c engine
 	fillColor: Color black do: [
 		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
-			drawCharCode: 97 atX: 150 y: 200 pointSize: 12 italics: false canvas: c;
-			drawCharCode: 97 atX: 158 y: 200.25 pointSize: 12 italics: false canvas: c;
-			drawCharCode: 97 atX: 166 y: 200.5 pointSize: 12 italics: false canvas: c;
-			drawCharCode: 97 atX: 174 y: 200.75 pointSize: 12 italics: false canvas: c;
-			drawCharCode: 97 atX: 182 y: 201 pointSize: 12 italics: false canvas: c ].
+			drawCharCode: 97 atX: 150 y: 200 pointSize: 12 italics: false;
+			drawCharCode: 97 atX: 158 y: 200.25 pointSize: 12 italics: false;
+			drawCharCode: 97 atX: 166 y: 200.5 pointSize: 12 italics: false;
+			drawCharCode: 97 atX: 174 y: 200.75 pointSize: 12 italics: false;
+			drawCharCode: 97 atX: 182 y: 201 pointSize: 12 italics: false ].
 Display forceToScreen
 "
-	| symbol loc |
+	| symbol loc prevLoc |
 	charCode < 33 ifTrue: [ ^self ].
 	charCode = 127 ifTrue: [ ^self ].
 	(charCode between: 132 and: 160) ifTrue: [ ^self ].
 
 	"Recibir la location y modificarla, no?"
+	prevLoc _ vectorGraphicsEngine geometryTransformation.
 	loc _ AffineTransformation withRadians: 0.0 scale: ps position: x0@y0.
 	doItalics ifTrue: [ loc _ loc italizing2 ].
-	aVectorCanvas intoLocation: loc.
+	loc _ prevLoc composedWith: loc.
+	vectorGraphicsEngine geometryTransformation: loc.
 
 	symbol _ ('drawRelVeraSans', charCode printString) asSymbol.
 	vectorGraphicsEngine abs_MoveToX: 0.0 y: 0.0.
 	self perform: symbol.
 
-	aVectorCanvas outOfLocation! !
+	vectorGraphicsEngine geometryTransformation: prevLoc.! !
 
-!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:11:12'!
+!BitstreamVeraRenderer methodsFor: 'services' stamp: 'jmv 8/17/2018 15:56:15'!
 drawCharCode: charCode italics: doItalics
 "Usado de verdad por M3.
 Creado por CodeGeneratingVectorEngine a partir de #drawCharCode:atX:y:pointSize:italics:canvas:
@@ -5050,40 +5050,43 @@ Usado solo para crear las versiones italics
 Todos los glyphs usados de verdad son en comandos relativos.
 "
 "
-| c loc  r |
-c _ (VectorCanvas onForm: Display)
-	into: self runningWorld.
+| e loc  r |
+e _ (VectorCanvas onForm: Display)
+	into: self runningWorld;
+	engine.
 loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@22.
-c intoLocation: loc.
-r _ BitstreamVeraRenderer new vectorGraphicsEngine: c engine.
-c engine
-	strokeWidth: 0.005 color: Color black fillColor: Color blue do: [ :e |
+e geometryTransformation: loc.
+r _ BitstreamVeraRenderer new vectorGraphicsEngine: e.
+e
+	strokeWidth: 0.005 color: Color black fillColor: Color blue do: [
 		r drawCharCode: 167 italics: false.
 		e abs_MoveToX: 0.7 y: 0.
 		r drawCharCode: 167 italics: true ].
 Display forceToScreen
 "
 "
-| c loc |
-c _ (VectorCanvas onForm: Display)
-	into: self runningWorld.
+| e loc |
+e _ (VectorCanvas onForm: Display)
+	into: self runningWorld;
+	engine.
 loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@222.
-c intoLocation: loc.
-c engine
+e geometryTransformation: loc.
+e
 	strokeWidth: 3.25/200 color: Color black fillColor: Color blue do: [
-		(BitstreamVeraRenderer new vectorGraphicsEngine: c engine)
+		(BitstreamVeraRenderer new vectorGraphicsEngine: e)
 			drawCharCode: 97 italics: false ].
 Display forceToScreen
 "
 "
-| c loc r |
-c _ (VectorCanvas onForm: Display)
-	into: self runningWorld.
+| e loc r |
+e _ (VectorCanvas onForm: Display)
+	into: self runningWorld;
+	engine.
 loc _ AffineTransformation withRadians: 0.0 scale: 12 position: 38@22.
-r _ BitstreamVeraRenderer new vectorGraphicsEngine: c engine.
-c intoLocation: loc.
-c engine
-	fillColor: Color black do: [ :e |
+r _ BitstreamVeraRenderer new vectorGraphicsEngine: e.
+e geometryTransformation: loc.
+e
+	fillColor: Color black do: [
 		r drawCharCode: 97 italics: false.
 		e abs_MoveToX: 0.6 y: 1/12/3.
 		r drawCharCode: 97 italics: false.
@@ -14751,7 +14754,7 @@ drawVeraSansItalics99
 		rel_CubicBezierToX: 0.079 y: 0.009 control1X: 0.028 y: 0.000 control2X: 0.054 y: 0.003;
 		rel_CubicBezierToX: 0.072 y: 0.025 control1X: 0.025 y: 0.006 control2X: 0.049 y: 0.014! !
 
-!BitstreamVeraRenderer class methodsFor: 'testing' stamp: 'jmv 1/4/2018 15:58:52'!
+!BitstreamVeraRenderer class methodsFor: 'testing' stamp: 'jmv 8/16/2018 15:52:10'!
 testCharacter: code
 	"
 	BitstreamVeraRenderer testCharacter: 100
@@ -14759,18 +14762,18 @@ testCharacter: code
 	| c r  loc |
 	c _ (VectorCanvas onForm: Display) into: self runningWorld.
 	loc _ AffineTransformation withRadians: 0.0 scale: 160 position: 38@22.
-	c intoLocation: loc.
+	c engine geometryTransformation: loc.
 	r _ BitstreamVeraRenderer new vectorGraphicsEngine: c engine.
 	c engine fillColor: Color green do: [ :e |
 		r drawCharCode: code italics: false ].
 	Display forceToScreen! !
 
-!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:12:09'!
-drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics canvas: aVectorCanvas
+!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 8/17/2018 15:47:34'!
+drawCharCode: charCode atX: x0 y: y0 pointSize: ps italics: doItalics
 "No usado directamente por M3.
 Usado solo por CodeGeneratingVectorEngine para generar los que si se usan.
 Definicion de glyphs comoda para el diseniador"
-	| symbol loc |
+	| symbol loc prevLoc |
 "
 | c |
 c _ (VectorCanvas onForm: Display)
@@ -14778,8 +14781,8 @@ c _ (VectorCanvas onForm: Display)
 c engine
 	strokeWidth: 20 color: Color black do: [
 		(TechnicalFontRenderer new vectorGraphicsEngine: c engine)
-			drawCharCode: 97 atX: 150 y: 200 pointSize: 200 italics: false canvas: c;
-			drawCharCode: 97 atX: 250 y: 200 pointSize: 200 italics: true canvas: c ].
+			drawCharCode: 97 atX: 150 y: 200 pointSize: 200 italics: false;
+			drawCharCode: 97 atX: 250 y: 200 pointSize: 200 italics: true ].
 Display forceToScreen
 "
 "
@@ -14789,11 +14792,11 @@ c _ (VectorCanvas onForm: Display)
 c engine
 	strokeWidth: 1.25 color: Color black do: [
 		(TechnicalFontRenderer new vectorGraphicsEngine: c engine)
-			drawCharCode: 97 atX: 150 y: 200 pointSize: 12 italics: false canvas: c;
-			drawCharCode: 97 atX: 158 y: 200.25 pointSize: 12 italics: false canvas: c;
-			drawCharCode: 97 atX: 166 y: 200.5 pointSize: 12 italics: false canvas: c;
-			drawCharCode: 97 atX: 174 y: 200.75 pointSize: 12 italics: false canvas: c;
-			drawCharCode: 97 atX: 182 y: 201 pointSize: 12 italics: false canvas: c ].
+			drawCharCode: 97 atX: 150 y: 200 pointSize: 12 italics: false;
+			drawCharCode: 97 atX: 158 y: 200.25 pointSize: 12 italics: false;
+			drawCharCode: 97 atX: 166 y: 200.5 pointSize: 12 italics: false;
+			drawCharCode: 97 atX: 174 y: 200.75 pointSize: 12 italics: false;
+			drawCharCode: 97 atX: 182 y: 201 pointSize: 12 italics: false ].
 Display forceToScreen
 "
 	"revisar todo este metodo"
@@ -14805,17 +14808,19 @@ Display forceToScreen
 	charCode > 127 ifTrue: [ ^self ].
 	
 	"Recibir la location y modificarla, no?"
+	prevLoc _ vectorGraphicsEngine geometryTransformation.
 	loc _ (AffineTransformation withRadians: 0.0 scale: ps/10 position: x0@(y0+ps)) withYAxisNegated.
 	doItalics ifTrue: [ loc _ loc italizing ].
-	aVectorCanvas intoLocation: loc.
+	loc _ prevLoc composedWith: loc.
+	vectorGraphicsEngine geometryTransformation: loc.
 
 	symbol _ ('drawTechnical', charCode printString) asSymbol.
 	vectorGraphicsEngine abs_MoveToX: 0.0 y: 0.0.
 	self perform: symbol.
-	
-	aVectorCanvas outOfLocation! !
 
-!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 4/4/2018 18:10:33'!
+	vectorGraphicsEngine geometryTransformation: prevLoc.! !
+
+!TechnicalFontRenderer methodsFor: 'services' stamp: 'jmv 8/17/2018 15:59:59'!
 drawCharCode: charCode italics: doItalics
 "Usado de verdad por M3.
 Creado por CodeGeneratingVectorEngine a partir de #drawCharCode:atX:y:pointSize:italics:canvas:
@@ -14824,28 +14829,30 @@ Todos los glyphs usados de verdad son en comandos relativos.
 "
 	| symbol |
 "
-| c loc  r |
-c _ (VectorCanvas onForm: Display)
-	into: self runningWorld.
+| e loc  r |
+e _ (VectorCanvas onForm: Display)
+	into: self runningWorld;
+	engine.
 loc _ AffineTransformation withRadians: 0.0 scale: 200 position: 38@222.
-c intoLocation: loc.
-r _ TechnicalFontRenderer new vectorGraphicsEngine: c engine.
-c engine
-	strokeWidth: 0.1 color: Color black do: [ :e |
+e geometryTransformation: loc.
+r _ TechnicalFontRenderer new vectorGraphicsEngine: e.
+e
+	strokeWidth: 0.1 color: Color black do: [
 		r drawCharCode: 97 italics: false.
 		e abs_MoveToX: 0.52 y: 0.
 		r drawCharCode: 97 italics: true ].
 Display forceToScreen
 "
 "
-| c loc r |
-c _ (VectorCanvas onForm: Display)
-	into: self runningWorld.
+| e loc r |
+e _ (VectorCanvas onForm: Display)
+	into: self runningWorld;
+	engine.
 loc _ AffineTransformation withRadians: 0.0 scale: 12 position: 38@22.
-r _ TechnicalFontRenderer new vectorGraphicsEngine: c engine.
-c intoLocation: loc.
-c engine
-	strokeWidth: 0.1 color: Color black do: [ :e |
+r _ TechnicalFontRenderer new vectorGraphicsEngine: e.
+e geometryTransformation: loc.
+e
+	strokeWidth: 0.1 color: Color black do: [
 		r drawCharCode: 97 italics: false.
 		e abs_MoveToX: 0.6 y: 1/12/3.
 		r drawCharCode: 97 italics: false.
@@ -14870,10 +14877,10 @@ Display forceToScreen
 		symbol _ ('draw_TechnicalItalics', charCode printString) asSymbol ].
 	self perform: symbol! !
 
-!TechnicalFontRenderer methodsFor: 'other' stamp: 'jmv 1/4/2018 15:52:01'!
+!TechnicalFontRenderer methodsFor: 'other' stamp: 'jmv 8/17/2018 15:50:56'!
 drawM3BoxAtX: x0 y: y0 pointSize: ps italics: doItalics canvas: aVectorCanvas
 
-	aVectorCanvas intoLocation: (AffineTransformation withRadians: 0 scale: ps//10 position: x0@y0).
+	vectorGraphicsEngine geometryTransformation: (AffineTransformation withRadians: 0 scale: ps//10 position: x0@y0).
 	aVectorCanvas strokeWidth: 0.15 color: Color red do: [
 		-0.5 to: 9.5 do: [ :x |
 			aVectorCanvas
@@ -14883,7 +14890,7 @@ drawM3BoxAtX: x0 y: y0 pointSize: ps italics: doItalics canvas: aVectorCanvas
 			aVectorCanvas
 				moveToX: -0.5 y: y;
 				lineToX: 5.5 y: y ]].
-	aVectorCanvas outOfLocation! !
+	vectorGraphicsEngine geometryTransformation: aVectorCanvas currentTransformation! !
 
 !TechnicalFontRenderer methodsFor: 'glyphs' stamp: 'jmv 1/3/2018 10:19:21'!
 drawTechnical100
@@ -18304,7 +18311,7 @@ draw_TechnicalItalics99
 		rel_CubicBezierToX: 0.120 y: 0.150 control1X: -0.015 y: 0.075 control2X: 0.045 y: 0.150;
 		rel_LineToX: 0.150 y: 0.000! !
 
-!TechnicalFontRenderer class methodsFor: 'testing' stamp: 'jmv 1/4/2018 15:59:15'!
+!TechnicalFontRenderer class methodsFor: 'testing' stamp: 'jmv 8/16/2018 15:44:56'!
 testCharacter: code
 	"
 	TechnicalFontRenderer testCharacter: 100
@@ -18314,7 +18321,7 @@ testCharacter: code
 	r _ TechnicalFontRenderer new vectorGraphicsEngine: c engine.
 	r drawM3BoxAtX: 38 y: 22 pointSize: 160 italics: false canvas: c.
 	loc _ AffineTransformation withRadians: 0.0 scale: 160 position: 38@182.
-	c intoLocation: loc.
+	c engine geometryTransformation: loc.
 	c engine strokeWidth: 0.1 color: Color green do: [
 		r drawCharCode: code italics: false ].
 	Display forceToScreen! !

@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 15 August 2018 at 10:12:02 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 5:34:12 pm'!
 'Description Please enter a description for this package'!
-!provides: 'GeographicDatasets' 1 10!
-!requires: 'Cartography' 1 1 nil!
+!provides: 'GeographicDatasets' 1 12!
 !requires: 'WebClient' 1 16 nil!
+!requires: 'Cartography' 1 1 nil!
 !requires: 'ImageProcessing' 1 nil nil!
 SystemOrganization addCategory: #'GeographicDatasets-Tests'!
 SystemOrganization addCategory: #GeographicDatasets!
@@ -934,6 +934,14 @@ samples: data
 validated
 	needsValidation _ false! !
 
+!TiledSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 10:01:07'!
+atLatitude: lat longitude: lon sampleArea: scalarSampleSizeMeters
+	"scalarSampleSizeMeters is a number that usually the gsd in meters of the destination.
+	It might be used to apply some low pass filtering for certain datasets.
+	For example, GoogleSampledWorld supports using source tiles with higher resolution than destination, and apply a low pass, for maximum quality.
+	Default implementation ignores the extra parameter."
+	^ self atLatitude: lat longitude: lon! !
+
 !TiledSampledWorld methodsFor: 'accessing' stamp: 'lpc 4/26/2016 15:25'!
 datasetPath
 	^ datasetPath! !
@@ -978,15 +986,25 @@ sampleTile: tile at: zeroBasedPosition
 demoResult: extent
 	^ FloatImage extent: extent! !
 
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/10/2018 16:17:40'!
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/17/2018 17:03:11'!
 example: aString  lat0: lat0 long0: long0 pixelExtent: pixelExtent gsdArcSeconds: gsdArcSeconds
+	"Result is in an equal spaced latLong grid
+	gsdArcSeconds gives that spacing"
 
-	| demo lat1 long1 filename |
+	| demo lat1 long1 filename pixelSizeOnGroundMeters |
 	filename _ name, '-', aString.
 	lat1 _ lat0 - (pixelExtent y-1  * gsdArcSeconds / 3600.0).
 	long1 _ long0 + (pixelExtent x-1  * gsdArcSeconds / 3600.0).
 	demo _ self demoResult: pixelExtent.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
+	"On a latLong grid, gsd in the vertical direction almost doesn't change. Compute it and use it for sample filtering.
+	Truth is that on a latLong grid vertical resolution is not the same as horizontal resolution, especially at high latitudes.
+	We'd need an area filter that (in meters) gets horizontally narrower as we get closer to the poles.
+	Here we just use the correct vertical direction filter height for both direcions. The effect is an oversmoothing in
+	the horizontal direction.
+	Well, after all this method is just a demo.
+	"
+	pixelSizeOnGroundMeters _ (gsdArcSeconds / 3600.0) "degrees " / 360 "fraction of diameter" * 40e6. "meters"
+	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1 sampleArea: pixelSizeOnGroundMeters.
 	demo asFormAutoRange writePNGfileNamed: filename, '.png'.
 	(filename, '.wld') asFileEntry forceWriteStreamDo: [ :strm |
 		gsdArcSeconds / 3600.0 printOn: strm. strm newLine.
@@ -1003,145 +1021,14 @@ example: aString  lat0: lat0 long0: long0 pixelExtent: pixelExtent gsdArcSeconds
 			newLine ].
 	^ demo! !
 
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/13/2018 20:32:49'!
-exampleAconcagua
-	"
-	ShuttleRadarTopographyMission30 getInstance exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
-	ShuttleRadarTopographyMission3 getInstance exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
-	TiledECEFVariableSampledDEM loRes exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
-	TiledECEFVariableSampledDEM hiRes exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
-	TrueMarble getInstance exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
-	(GoogleSampledWorld zoomLevel: 12) exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
-	"
-	^ self
-		example: 'Aconcagua'
-		lat0: -32.575
-		long0: -70.095
-		pixelExtent:  400@400
-		gsdArcSeconds: 1.5.			"Same for latitude and longitude"! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/13/2018 20:35:53'!
-exampleArgentina
-	"
-	EGM96Geoid5 getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
-	ShuttleRadarTopographyMission30 getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
-	TiledECEFVariableSampledDEM loRes exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
-	NaturalEarth getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
-	(GoogleSampledWorld zoomLevel: 5) exampleArgentina displayAutoRangeAt: 0@0 zoom: 2
-	"
-	^ self
-		example: 'Argentina'
-		lat0: -19
-		long0: -76
-		pixelExtent:  440@700
-		gsdArcSeconds: 200.			"Same for latitude and longitude"! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/13/2018 20:30:59'!
-exampleBuenosAires
-	"
-	ShuttleRadarTopographyMission30 getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
-	ShuttleRadarTopographyMission3 getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
-	TiledECEFVariableSampledDEM loRes exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
-	TiledECEFVariableSampledDEM hiRes exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
-	TrueMarble getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
-	(GoogleSampledWorld zoomLevel: 11) exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
-	"
-	^ self
-		example: 'BuenosAires'
-		lat0: -34.0
-		long0: -58.9
-		pixelExtent:  800@800
-		gsdArcSeconds: 4.			"Same for latitude and longitude"! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/13/2018 20:17:04'!
-exampleMaunaLoa
-	"
-	ShuttleRadarTopographyMission30 getInstance exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
-	ShuttleRadarTopographyMission3 getInstance exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
-	TiledECEFVariableSampledDEM loRes exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
-	TiledECEFVariableSampledDEM hiRes exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
-	TrueMarble getInstance exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
-	(GoogleSampledWorld zoomLevel: 12) exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
-	"
-	^ self
-		example: 'MaunaLoa'
-		lat0: 19.95
-		long0: -155.95
-		pixelExtent:  1600@1600
-		gsdArcSeconds: 1.5.			"Same for latitude and longitude"! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/13/2018 20:38:57'!
-exampleNauru
-	"
-	ShuttleRadarTopographyMission30 getInstance exampleNauru displayAutoRangeAt: 0@0 zoom: 2
-	ShuttleRadarTopographyMission3 getInstance exampleNauru displayAutoRangeAt: 0@0 zoom: 2
-	TiledECEFVariableSampledDEM loRes exampleNauru displayAutoRangeAt: 0@0 zoom: 2
-	TiledECEFVariableSampledDEM hiRes exampleNauru displayAutoRangeAt: 0@0 zoom: 2
-	TrueMarble getInstance exampleNauru displayAutoRangeAt: 0@0 zoom: 2
-	(GoogleSampledWorld zoomLevel: 13) exampleNauru displayAutoRangeAt: 0@0 zoom: 2
-	"
-	^ self
-		example: 'Nauru'
-		lat0: -0.47
-		long0: 166.88
-		pixelExtent:  400@400
-		gsdArcSeconds: 1.			"Same for latitude and longitude"! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/13/2018 19:56:52'!
-exampleSanFrancisco
-	"
-	ShuttleRadarTopographyMission30 getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
-	ShuttleRadarTopographyMission3 getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
-	TiledECEFVariableSampledDEM loRes exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
-	TiledECEFVariableSampledDEM hiRes exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
-	TrueMarble getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
-	(GoogleSampledWorld zoomLevel: 13) exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
-	"
-	^ self
-		example: 'SanFrancisco'
-		lat0: 3.65/60+9/60+37
-		long0: (50.51/60+13/60+121) negated
-		pixelExtent:  600@400
-		gsdArcSeconds: 1.			"Same for latitude and longitude"! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/14/2018 12:22:55'!
-exampleVicenteLopez
-	"
-	ShuttleRadarTopographyMission30 getInstance exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
-	ShuttleRadarTopographyMission3 getInstance exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
-	TiledECEFVariableSampledDEM hiRes exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
-	(GoogleSampledWorld zoomLevel: 17) exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1.
-	"
-	^ self
-		example: 'VicenteLopez'
-		lat0: -34.524
-		long0: -58.469
-		pixelExtent:  800@800
-		gsdArcSeconds: 0.03.			"Same for latitude and longitude"! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/14/2018 11:24:54'!
-exampleWorld
-	"
-	EGM96Geoid5 getInstance exampleWorld displayAutoRangeAt: 0@0 zoom: 1
-	TiledECEFVariableSampledDEM loRes exampleWorld displayAutoRangeAt: 0@0 zoom: 1
-	NaturalEarth getInstance exampleWorld displayAutoRangeAt: 0@0 zoom: 1
-	(GoogleSampledWorld zoomLevel: 2) exampleWorld displayAutoRangeAt: 0@0 zoom: 1
-	"
-	^ self
-		example: 'World'
-		lat0: 90
-		long0: -180
-		pixelExtent:  800@400
-		gsdArcSeconds: 1620.			"Same for latitude and longitude"! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:33:47'!
-fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/17/2018 16:49:50'!
+fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1 sampleArea: pixelSizeOnGroundMeters
 	| lat long v |
 	0 to: demo height-1 do: [ :y |
 		lat _ y / (demo height-1.0) * (lat1-lat0) + lat0.
 		0 to: demo width-1 do: [ :x |
 			long _ x / (demo width-1.0) * (long1-long0) + long0.
-			v _ self atLatitude: lat longitude: long.
+			v _ self atLatitude: lat longitude: long sampleArea: pixelSizeOnGroundMeters.
 			demo i: y+1 j: x+1  put: v ]]! !
 
 !TiledSampledWorld class methodsFor: 'singleton' stamp: 'jmv 3/2/2016 14:18'!
@@ -1160,6 +1047,141 @@ getInstance
 				self error: 'Whoops, there''s no dataset you can use (or it''s stored in the wrong place)'.
 				instance _ nil ]]].
 	^ instance! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:13:19'!
+example: aString  lat0: lat0 long0: long0 pixelExtent: pixelExtent gsdArcSeconds: gsdArcSeconds
+
+	^ self getInstance
+		example: aString
+		lat0: lat0
+		long0: long0
+		pixelExtent: pixelExtent
+		gsdArcSeconds: gsdArcSeconds! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 14:17:51'!
+exampleAconcagua
+	"
+	ShuttleRadarTopographyMission30 exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	GoogleSampledWorld exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'Aconcagua'
+		lat0: -32.575
+		long0: -70.095
+		pixelExtent:  400@400
+		gsdArcSeconds: 1.5.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 14:45:20'!
+exampleArgentina
+	"
+	EGM96Geoid5 exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	ShuttleRadarTopographyMission30 exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	NaturalEarth exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	GoogleSampledWorld exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	"
+	^ self
+		example: 'Argentina'
+		lat0: -19
+		long0: -76
+		pixelExtent:  440@700
+		gsdArcSeconds: 200.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:31:02'!
+exampleBuenosAires
+	"
+	ShuttleRadarTopographyMission30 exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	ShuttleRadarTopographyMission3 exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	TiledECEFVariableSampledDEM exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	TrueMarble exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	GoogleSampledWorld exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
+	"
+	^ self
+		example: 'BuenosAires'
+		lat0: -34.0
+		long0: -58.9
+		pixelExtent:  800@800
+		gsdArcSeconds: 4.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:31:19'!
+exampleMaunaLoa
+	"
+	ShuttleRadarTopographyMission30 exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	ShuttleRadarTopographyMission3 exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	TiledECEFVariableSampledDEM exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	TrueMarble exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	GoogleSampledWorld exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	"
+	^ self
+		example: 'MaunaLoa'
+		lat0: 19.95
+		long0: -155.95
+		pixelExtent:  1600@1600
+		gsdArcSeconds: 1.5.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 14:47:45'!
+exampleNauru
+	"
+	ShuttleRadarTopographyMission30 exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	GoogleSampledWorld exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'Nauru'
+		lat0: -0.47
+		long0: 166.88
+		pixelExtent:  400@400
+		gsdArcSeconds: 1.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:31:49'!
+exampleSanFrancisco
+	"
+	ShuttleRadarTopographyMission30 exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	GoogleSampledWorld exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'SanFrancisco'
+		lat0: 3.65/60+9/60+37
+		long0: (50.51/60+13/60+121) negated
+		pixelExtent:  600@400
+		gsdArcSeconds: 1.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:32:00'!
+exampleVicenteLopez
+	"
+	ShuttleRadarTopographyMission30 exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
+	ShuttleRadarTopographyMission3 exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
+	TiledECEFVariableSampledDEM exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
+	GoogleSampledWorld exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1.
+	"
+	^ self
+		example: 'VicenteLopez'
+		lat0: -34.524
+		long0: -58.469
+		pixelExtent:  800@800
+		gsdArcSeconds: 0.03.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:32:19'!
+exampleWorld
+	"
+	EGM96Geoid5 exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	NaturalEarth exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	GoogleSampledWorld exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	"
+	^ self
+		example: 'World'
+		lat0: 90
+		long0: -180
+		pixelExtent:  800@400
+		gsdArcSeconds: 1620.			"Same for latitude and longitude"! !
 
 !TiledECEFSampledWorld methodsFor: 'iterating' stamp: 'jmv 4/7/2016 11:23'!
 allFaceTilesInto: aBlock
@@ -2097,8 +2119,8 @@ sourceDEM: aDEM geoid: aGeoid
 	sourceDEM _ aDEM.
 	sourceGeoid _ aGeoid.! !
 
-!TiledECEFVariableSampledDEM methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:33:23'!
-fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1
+!TiledECEFVariableSampledDEM methodsFor: 'examples' stamp: 'jmv 8/17/2018 14:28:02'!
+fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1 sampleArea: pixelSizeOnGroundMeters
 	| lat long v |
 	0 to: demo height-1 do: [ :y |
 		lat _ y / (demo height-1.0) * (lat1-lat0) + lat0.
@@ -3566,12 +3588,12 @@ atGPSPosition: aGPSPosition
 	"
 	^self atLatitude: aGPSPosition latitude longitude: aGPSPosition longitude! !
 
-!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:05:37'!
-atGPSPosition: aGPSPosition areaFilterMeters: filterWidthMeters
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 14:30:26'!
+atGPSPosition: aGPSPosition sampleArea: pixelSizeOnGroundMeters
 	"Area filtering is useful when source dataset is higher resolution than destination.
 	In this cases, source includes high spatial frequency content that destination can't handle. Area filtering is a reasonable way to filter it out."
 
-	^self atLatitude: aGPSPosition latitude longitude: aGPSPosition longitude areaFilterMeters: filterWidthMeters! !
+	^self atLatitude: aGPSPosition latitude longitude: aGPSPosition longitude sampleArea: pixelSizeOnGroundMeters! !
 
 !TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:09:36'!
 atLatitude: lat longitude: lon
@@ -3586,24 +3608,24 @@ atLatitude: lat longitude: lon
 	tile _ self tileAt: tileAndPositionInTile truncated.
 	^ self sampleTile: tile at: (tileAndPositionInTile - tileAndPositionInTile truncated) * self samplesPerTileSide! !
 
-!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:05:57'!
-atLatitude: lat longitude: lon areaFilterMeters: filterWidthMeters
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 17:23:04'!
+atLatitude: lat longitude: lon sampleArea: pixelSizeOnGroundMeters
 	"Area filtering is useful when source dataset is higher resolution than destination.
 	In this cases, source includes high spatial frequency content that destination can't handle. Area filtering is a reasonable way to filter it out."
 
-	| positionInMap tileAndPositionInTile tile gsd |
+	| positionInMap tileAndPositionInTile tile tileGSDmeters |
 	positionInMap _ projection mapPositionFromLat: lat long: lon.
 	(positionInMap between: 0@0 and: 1@1)
 		ifFalse: [ ^ self outOfWorldValue ].	"Invalid coodinates, or outside the area covered by Webmercator"
 	tileAndPositionInTile _ positionInMap * (2 raisedToInteger: zoomLevel).
 	tile _ self tileAt: tileAndPositionInTile truncated.
-	gsd _ projection gsdAtLatitude: lat zoomLevel: zoomLevel.
+	tileGSDmeters _ projection gsdAtLatitude: lat zoomLevel: zoomLevel.
 	^ self
 		sampleTile: tile
 		at: (tileAndPositionInTile - tileAndPositionInTile truncated) * self samplesPerTileSide
-		filterHalfExtent: filterWidthMeters / gsd / 2! !
+		filterHalfExtent: (pixelSizeOnGroundMeters / tileGSDmeters / 2)! !
 
-!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/14/2018 12:11:15'!
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 14:40:01'!
 tileAt: zeroBasedTilePosition
 
 	| tileCoordinates tileData |
@@ -3628,7 +3650,7 @@ tileAt: zeroBasedTilePosition
 					ifNil: [ SampledTile null ]
 					ifNotNil: [
 						"Null tiles don't take space in the cache."
-						('Cached in RAM: ', zeroBasedTilePosition printString) print.
+						('Cached in RAM: ', name, ' ', zeroBasedTilePosition printString) print.
 						cachedTiles addFirst: zeroBasedTilePosition.
 						SampledTile samples: tileData ]) ]! !
 
@@ -3655,10 +3677,10 @@ folderForId: hexFileId createifAbsent: aBoolean
 			ifFalse: [ folder exists ifFalse: [ ^ nil ]]].
 	^ folder! !
 
-!TiledWebmercatorSampledWorld methodsFor: 'constants' stamp: 'jmv 8/13/2018 14:11:55'!
+!TiledWebmercatorSampledWorld methodsFor: 'constants' stamp: 'jmv 8/17/2018 09:50:00'!
 cacheSize
-"maybe more"
-	^1000! !
+
+	^3000! !
 
 !TiledWebmercatorSampledWorld methodsFor: 'constants' stamp: 'jmv 8/14/2018 11:30:16'!
 outOfWorldValue
@@ -3674,6 +3696,10 @@ zoomLevel: anInteger
 	instance ifNil: [ instance _ Dictionary new ].
 	^ instance at: anInteger ifAbsentPut: [
 		self basicNew initializeZoomLevel: anInteger ]! !
+
+!TiledWebmercatorSampledWorld class methodsFor: 'singleton' stamp: 'jmv 8/17/2018 14:37:53'!
+getInstance
+	^ self error: 'Please call #zoomLevel:'! !
 
 !GoogleSampledWorld methodsFor: 'initialization' stamp: 'jmv 8/13/2018 10:57:44'!
 initializeZoomLevel: anInteger
@@ -3749,11 +3775,35 @@ fetchTileSamples: aPoint
 	form _ JPEGReadWriter2 new uncompress: bytes into: nil.
 	^ form! !
 
-!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/13/2018 19:03:21'!
+!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/16/2018 11:56:56'!
 loadTileSamples: aPoint
 	| hexFileId file |
 	hexFileId _ self fileIdFor: aPoint.
 	(self folderForId: hexFileId createifAbsent: false) ifNotNil: [ :folder |
 		file _ folder // (hexFileId, name, '.jpg').
-		file exists ifTrue: [ ^ file formContents ]].
+		file exists ifTrue: [ ^ [file formContents] on: Error do: [nil] ]].
 	^ nil! !
+
+!GoogleSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 17:21:54'!
+example: aString  lat0: lat0 long0: long0 pixelExtent: pixelExtent gsdArcSeconds: gsdArcSeconds
+"
+	GoogleSampledWorld 
+		example: 'VicenteLopez'
+		lat0: -34.524
+		long0: -58.469
+		pixelExtent:  800@800
+		gsdArcSeconds: 0.03
+"
+	| gsdDegrees gsdDegreesAtEquatorScaleZero zoom |
+	gsdDegrees _ gsdArcSeconds / 3600.
+	gsdDegreesAtEquatorScaleZero _ 360.0 / 256.
+	"If we are far enough from equator, we can do with a smaller zoom factor.
+	Real applications (this method is just a demo, and we don't care about some overkill here)
+	should call #minZoomLevelForGsd:latitude: with the latitud closest to equator they will need."
+	zoom _ (gsdDegreesAtEquatorScaleZero / gsdDegrees) log2 ceiling.
+	^ (self zoomLevel: zoom)
+		example: aString
+		lat0: lat0
+		long0: long0
+		pixelExtent: pixelExtent
+		gsdArcSeconds: gsdArcSeconds! !

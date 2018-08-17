@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 15 August 2018 at 9:18:24 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 5:32:32 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Cartography' 1 15!
+!provides: 'Cartography' 1 16!
 !requires: 'Graphics-Files-Additional' 1 4 nil!
 !requires: 'Math 3D' 1 4 nil!
 SystemOrganization addCategory: #Cartography!
@@ -413,9 +413,9 @@ mapPositionFromLatLong: aGPSPosition
 	" 
 	^ self mapPositionFromLat: aGPSPosition latitude long: aGPSPosition longitude! !
 
-!WebmercatorProjection methodsFor: 'services' stamp: 'jmv 8/14/2018 16:34:34'!
+!WebmercatorProjection methodsFor: 'services' stamp: 'jmv 8/17/2018 16:21:15'!
 gsdAtLatitude: latitudeDegrees zoomLevel: aZoomLevel
-	"Answer an approximate GSD at latitudeDegrees for aZoomLevel.
+	"Answer an approximate GSD in meters at latitudeDegrees for aZoomLevel.
 	It is approximate because it is not really constant!!
 	WebmercatorProjection  new gsdAtLatitude: 33.144 zoomLevel: 17
 	"
@@ -444,3 +444,12 @@ gsdAtLat _ (gsdAtEquator * latitude degreesToRadians cos) print.
 ((WebmercatorProjection new latLongFromMapPosition: oneToTheNorth / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
 nil.
 "! !
+
+!WebmercatorProjection methodsFor: 'services' stamp: 'jmv 8/17/2018 16:28:15'!
+minZoomLevelForGsd: desiredGSDmeters latitude: latitudeDegrees
+	"Answer the minimum zoom level to be used to use tiles of desiredGSDmeters or better, at specified latitude."
+
+	| tileGSDmetersZoomZero zoom |
+	tileGSDmetersZoomZero _ self gsdAtLatitude: latitudeDegrees zoomLevel: 0.
+	zoom _ (tileGSDmetersZoomZero / desiredGSDmeters) log2 ceiling.
+	^ zoom! !

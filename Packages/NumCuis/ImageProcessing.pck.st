@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3404] on 15 August 2018 at 10:00:49 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 4:04:26 pm'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 5!
-!requires: 'Statistics' 1 nil nil!
+!provides: 'ImageProcessing' 1 6!
 !requires: 'Morphic3' 1 50 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Statistics' 1 nil nil!
 !requires: 'NumericalMethods' 1 8 nil!
-!requires: 'SignalProcessing' 1 100 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'SignalProcessing' 1 100 nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -3595,7 +3595,7 @@ gradient: extent
 			answer x: x y: y put: x+y-2 / (extent x + extent y - 2) ]].
 	^answer! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 09:59:06'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 8/16/2018 15:40:26'!
 randomBoxes: extent
 "
 FloatImage randomBoxes: 256 :: display
@@ -3606,7 +3606,7 @@ FloatImage randomBoxes: 256 :: display
 	form fillColor: backColor.
 	location _ (AffineTransformation withRadians: -3/360*Float twoPi scale: 256*0.35 position: 127.5@127.5) withYAxisNegated.
 	canvas _ VectorCanvas onForm: form.
-	canvas intoLocation: location.
+	canvas engine geometryTransformation:  location.
 	20 timesRepeat: [
 		canvas fillColor: (Random withDefaultDo: [ :r | Color gray: r next]) do: [
 			boxExtent _ Random withDefaultDo: [ :r | r next].
@@ -3638,7 +3638,7 @@ resolutionTarget: extent offsetFromCenter: anOffsetFromCenter
 	"
 	^ self resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: nil blackColor: nil grayColor: nil whiteColor: nil! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 14:27:18'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 8/16/2018 15:42:30'!
 resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: aBackColor blackColor: aBlackColor grayColor: aGrayColor whiteColor: aWhiteColor
 
 	| offsetFromCenter backColor blackColor grayColor whiteColor location canvas form |
@@ -3652,7 +3652,7 @@ resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: aBackCo
 	form fillColor: backColor.
 	location _ (AffineTransformation withRadians: -3/360*Float twoPi scale: extent*0.35 position: extent-1/2.0 + offsetFromCenter) withYAxisNegated.
 	canvas _ VectorCanvas onForm: form.
-	canvas intoLocation: location.
+	canvas engine geometryTransformation: location.
 	canvas fillColor: whiteColor do: [
 		canvas
 			moveToX: 1 y: 1;
@@ -3688,7 +3688,7 @@ siemensStar: extent
 	"
 	^ self siemensStar: extent count: 32 offsetFromCenter: 0@0 backColor: `Color gray: 50/255` foreColor: `Color gray: 200/255`! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/12/2018 15:45:01'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 8/16/2018 15:43:26'!
 siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: backColor foreColor: foreColor
 	"
 	FloatImage siemensStar: 256 :: displayAt: 0@0 zoom: 4
@@ -3700,7 +3700,7 @@ siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: b
 	canvas _ VectorCanvas onForm: form.
 	1 to: count do: [ :i |
 		location _ AffineTransformation withRadians: i * angle * 2+0.02 scale: extent*0.45 position: extent-1/2.0 + offsetFromCenter.
-		canvas intoLocation: location.
+		canvas engine geometryTransformation: location.
 		"Alternatively...
 		canvas fillColor: foreColor do: ["
 		canvas strokeWidth: 3.0/extent color: foreColor fillColor: foreColor do: [
@@ -3709,7 +3709,7 @@ siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: b
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas outOfLocation.
+		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^FloatImage from32BitColorForm: form component: #green! !
