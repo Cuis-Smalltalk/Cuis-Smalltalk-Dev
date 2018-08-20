@@ -1,6 +1,7 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3401] on 9 August 2018 at 6:24:52 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 5:34:12 pm'!
 'Description Please enter a description for this package'!
-!provides: 'GeographicDatasets' 1 5!
+!provides: 'GeographicDatasets' 1 12!
+!requires: 'WebClient' 1 16 nil!
 !requires: 'Cartography' 1 1 nil!
 !requires: 'ImageProcessing' 1 nil nil!
 SystemOrganization addCategory: #'GeographicDatasets-Tests'!
@@ -89,7 +90,7 @@ ValidableTile class
 
 !classDefinition: #TiledSampledWorld category: #GeographicDatasets!
 Object subclass: #TiledSampledWorld
-	instanceVariableNames: 'allTiles cachedTiles datasetPath'
+	instanceVariableNames: 'name allTiles cachedTiles datasetPath'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'GeographicDatasets'!
@@ -227,6 +228,29 @@ TiledLatitudeLongitudeSampledWorld subclass: #TrueMarble
 TrueMarble class
 	instanceVariableNames: ''!
 
+!classDefinition: #TiledWebmercatorSampledWorld category: #GeographicDatasets!
+TiledSampledWorld subclass: #TiledWebmercatorSampledWorld
+	instanceVariableNames: 'projection zoomLevel'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'GeographicDatasets'!
+!classDefinition: 'TiledWebmercatorSampledWorld class' category: #GeographicDatasets!
+TiledWebmercatorSampledWorld class
+	instanceVariableNames: ''!
+
+!classDefinition: #GoogleSampledWorld category: #GeographicDatasets!
+TiledWebmercatorSampledWorld subclass: #GoogleSampledWorld
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'GeographicDatasets'!
+!classDefinition: 'GoogleSampledWorld class' category: #GeographicDatasets!
+GoogleSampledWorld class
+	instanceVariableNames: ''!
+
+
+!MeridiansAndParallelsSampledWorld commentStamp: '<historical>' prior: 0!
+A synthetic dataset that simply plots a latitude and longitude grid.!
 
 !SampledTile commentStamp: '<historical>' prior: 0!
 A sampled tile for any subclass of TiledSampledWorld. Holds 'samples'. If nil, the tile is null (no data available).!
@@ -288,17 +312,15 @@ Each tile can have different size and resolution. Sampling is done with normaliz
 - tilesPerFaceSide is the number of tiles each face is divided in, both horizontally and vertically.
 - maxSamplesPerTileSide is a hint for building tiles. Do not use tiles larger than this.!
 
-!TiledECEFVariableSampledDEM commentStamp: '<historical>' prior: 0!
+!TiledECEFVariableSampledDEM commentStamp: 'jmv 8/13/2018 13:35:30' prior: 0!
 ECEF sampled DEM with tiles of uniform extent in metres, but with varying resolution (and sample count).
 
-TiledECEFVariableSampledDEM getInstance exampleSanFrancisco.
-TiledECEFVariableSampledDEM loRes exampleSanFrancisco.
-TiledECEFVariableSampledDEM hiRes exampleSanFrancisco.
+TiledECEFVariableSampledDEM loRes exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
+TiledECEFVariableSampledDEM hiRes exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
 
-TiledECEFVariableSampledDEM hiRes exampleBuenosAires.
-TiledECEFVariableSampledDEM hiRes exampleBuenosAiresDelta.
-TiledECEFVariableSampledDEM loRes exampleArgentina.
-TiledECEFVariableSampledDEM loRes exampleWorld.!
+TiledECEFVariableSampledDEM hiRes exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
+TiledECEFVariableSampledDEM loRes exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.
+TiledECEFVariableSampledDEM loRes exampleWorld displayAutoRangeAt: 0@0 zoom: 1.!
 
 !TiledECEFVariableSampledNaturalEarth commentStamp: '<historical>' prior: 0!
 Quite like TiledECEFNaturalEarth, but with tiles of non-equal size. Also, tiles are instances of FloatMatrix (i.e. monochrome).!
@@ -309,27 +331,26 @@ This is the same projection used by most global raster datasets (BlueMarble, Tru
 
 Fine sampling of the whole world would result in too high memory usage. Tiles include an integer number of degrees of latitude and longitude. There is a cache that forgets LRU tiles.!
 
-!EGM96Geoid5 commentStamp: '<historical>' prior: 0!
+!EGM96Geoid5 commentStamp: 'jmv 8/13/2018 13:35:48' prior: 0!
 This class implements the EGM96 Geoid Dataset with a sample grid of 5 minutes. It is based on the data file obtained from: http://geographiclib.sourceforge.net/html/geoid.html#geoidinst. 
 
 Aconcagua:
 EGM96Geoid5 getInstance atLatitude: -32.6534 longitude: -70.0111
 
-EGM96Geoid5 getInstance exampleArgentina.
-EGM96Geoid5 getInstance exampleWorld.!
+EGM96Geoid5 getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.
+EGM96Geoid5 getInstance exampleWorld displayAutoRangeAt: 0@0 zoom: 1.!
 
-!NaturalEarth commentStamp: '<historical>' prior: 0!
+!NaturalEarth commentStamp: 'jmv 8/13/2018 13:36:01' prior: 0!
 Cool RGB images of the whole world.
 
-NaturalEarth getInstance exampleBuenosAiresDelta.
-NaturalEarth getInstance exampleArgentina.
-NaturalEarth getInstance exampleWorld.
+NaturalEarth getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.
+NaturalEarth getInstance exampleWorld displayAutoRangeAt: 0@0 zoom: 1.
 !
 
 !ShuttleRadarTopographyMission commentStamp: '<historical>' prior: 0!
 Abstract superclass for SRTM and SRTM-like DEMs.!
 
-!ShuttleRadarTopographyMission3 commentStamp: '<historical>' prior: 0!
+!ShuttleRadarTopographyMission3 commentStamp: 'jmv 8/13/2018 13:36:15' prior: 0!
 3 arc sec. 16bit signed data. Horizontal resolution is 3 arc sec (lat/lon) or about 90 meters. Vertical resolution is 1 m. Vertical accuracy is about 17m. Relative to WGS84 / EGM96 geoid (see http://en.wikipedia.org/wiki/EGM96 ).
 
 Aconcagua:
@@ -341,10 +362,10 @@ ShuttleRadarTopographyMission3 getInstance atLatitude: -80 longitude: 180
 ShuttleRadarTopographyMission3 getInstance atLatitude: -30 longitude: 180
 ShuttleRadarTopographyMission3 getInstance atLatitude: -90 longitude: 180
 
-ShuttleRadarTopographyMission3 getInstance exampleSanFrancisco.
-ShuttleRadarTopographyMission3 getInstance exampleBuenosAires.!
+ShuttleRadarTopographyMission3 getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
+ShuttleRadarTopographyMission3 getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.!
 
-!ShuttleRadarTopographyMission30 commentStamp: '<historical>' prior: 0!
+!ShuttleRadarTopographyMission30 commentStamp: 'jmv 8/13/2018 13:36:48' prior: 0!
 30 arc sec. 16bit signed data. Horizontal resolution is 30 arc sec (lat/lon) or about 900 meters. Vertical resolution is also of approximately 900m. Relative to WGS84 / EGM96 geoid (see http://en.wikipedia.org/wiki/EGM96 ).
 
 Aconcagua (slightly off, this answers the highest sample around):
@@ -357,16 +378,15 @@ ShuttleRadarTopographyMission30 getInstance atLatitude: -80 longitude: 179.99
 ShuttleRadarTopographyMission30 getInstance atLatitude: -30 longitude: 179.99
 ShuttleRadarTopographyMission30 getInstance atLatitude: -90 longitude: 179.99
 
-ShuttleRadarTopographyMission30 getInstance exampleSanFrancisco.
-ShuttleRadarTopographyMission30 getInstance exampleBuenosAires.
-ShuttleRadarTopographyMission30 getInstance exampleBuenosAiresDelta.
-ShuttleRadarTopographyMission30 getInstance exampleArgentina.!
+ShuttleRadarTopographyMission30 getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
+ShuttleRadarTopographyMission30 getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
+ShuttleRadarTopographyMission30 getInstance exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.!
 
-!TrueMarble commentStamp: '<historical>' prior: 0!
+!TrueMarble commentStamp: 'jmv 8/13/2018 13:37:27' prior: 0!
 Cool RGB images of the whole world. Resolution is 7.5 arc sec (lat/lon), or about 250 meters.
 
-TrueMarble getInstance exampleSanFrancisco.
-TrueMarble getInstance exampleBuenosAires.
+TrueMarble getInstance exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 1.
+TrueMarble getInstance exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
 
 For example, for original tile A1, geotiff data (read with listgeo.exe):
 ----------------------------------------------------------------------------------------------------
@@ -414,6 +434,18 @@ Setting the GTRasterTypeGeoKey value to RasterPixelIsPoint or RasterPixelIsArea 
 The net effect is a half pixel offset when interpreting PixelIsPoint vs. PixelIsArea images. There has been some confusion on the intepretation of this value in the GeoTIFF community for some time and some held the opinion that this parameter should have no effect on the georeferencing of the image. While this matter has been settled, the result is that some software packages, particularly those built on GDAL 1.7.x or older incorrectly interprete the georeferenced location of PixelIsPoint images - placing them offset by half a pixel. One way of avoiding compatability problems is to produce GeoTIFF files with the default PixelIsArea interpretation.
 
 For us, I (jmv) divided each TrueMarble tile into 5x5 smaller tiles, and saved each of these in a file. Each smaller tile is 9x9 degrees of long/lat (original are 45x45 degrees) and 4320x4320 pixels (original are 21600x21600 pxels). This is to save memory, and better caching behavior.!
+
+!TiledWebmercatorSampledWorld commentStamp: '<historical>' prior: 0!
+Tiles are web mercator projection, with integer scale, as used by most popular mapping apps.
+
+zoomLevel is an integer greater or equal to zero. Tiles are always 256@256 in extent. The world is divided in (2 ^ zoomLevel) tiles in each direction. Total tiles is (2^(2*zoomLevel)). Tiles have no overlap. The origin is the 'topLeft' corner of the topLeft pixel. This means that the value for the topLeft pixel is actually for coordinates 0.5@0.5.
+
+See https://wiki.openstreetmap.org/wiki/Zoom_levels!
+
+!GoogleSampledWorld commentStamp: 'jmv 8/13/2018 13:37:38' prior: 0!
+Google maps tiles.
+
+(GoogleSampledWorld zoomLevel: 0) exampleArgentina displayAutoRangeAt: 0@0 zoom: 1.!
 
 !EGM96Geoid5Test methodsFor: 'setUp - tearDown' stamp: 'jmv 3/4/2016 10:39'!
 setUp
@@ -902,6 +934,14 @@ samples: data
 validated
 	needsValidation _ false! !
 
+!TiledSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 10:01:07'!
+atLatitude: lat longitude: lon sampleArea: scalarSampleSizeMeters
+	"scalarSampleSizeMeters is a number that usually the gsd in meters of the destination.
+	It might be used to apply some low pass filtering for certain datasets.
+	For example, GoogleSampledWorld supports using source tiles with higher resolution than destination, and apply a low pass, for maximum quality.
+	Default implementation ignores the extra parameter."
+	^ self atLatitude: lat longitude: lon! !
+
 !TiledSampledWorld methodsFor: 'accessing' stamp: 'lpc 4/26/2016 15:25'!
 datasetPath
 	^ datasetPath! !
@@ -909,10 +949,6 @@ datasetPath
 !TiledSampledWorld methodsFor: 'accessing' stamp: 'jmv 9/11/2015 15:44'!
 datasetPath: aString
 	datasetPath _ aString! !
-
-!TiledSampledWorld methodsFor: 'accessing' stamp: 'jmv 7/12/2016 14:40:14'!
-nominalGSD: meters
-	"Ignored"! !
 
 !TiledSampledWorld methodsFor: 'initialization' stamp: 'jmv 11/10/2015 13:05'!
 initialize
@@ -950,71 +986,49 @@ sampleTile: tile at: zeroBasedPosition
 demoResult: extent
 	^ FloatImage extent: extent! !
 
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:50:44'!
-exampleArgentina
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/17/2018 17:03:11'!
+example: aString  lat0: lat0 long0: long0 pixelExtent: pixelExtent gsdArcSeconds: gsdArcSeconds
+	"Result is in an equal spaced latLong grid
+	gsdArcSeconds gives that spacing"
 
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ -21. lat1 _ -56.		"South"
-	long0 _ -75. long1 _ -53. "West"
-	demo _ self demoResult: 440@700.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
+	| demo lat1 long1 filename pixelSizeOnGroundMeters |
+	filename _ name, '-', aString.
+	lat1 _ lat0 - (pixelExtent y-1  * gsdArcSeconds / 3600.0).
+	long1 _ long0 + (pixelExtent x-1  * gsdArcSeconds / 3600.0).
+	demo _ self demoResult: pixelExtent.
+	"On a latLong grid, gsd in the vertical direction almost doesn't change. Compute it and use it for sample filtering.
+	Truth is that on a latLong grid vertical resolution is not the same as horizontal resolution, especially at high latitudes.
+	We'd need an area filter that (in meters) gets horizontally narrower as we get closer to the poles.
+	Here we just use the correct vertical direction filter height for both direcions. The effect is an oversmoothing in
+	the horizontal direction.
+	Well, after all this method is just a demo.
+	"
+	pixelSizeOnGroundMeters _ (gsdArcSeconds / 3600.0) "degrees " / 360 "fraction of diameter" * 40e6. "meters"
+	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1 sampleArea: pixelSizeOnGroundMeters.
+	demo asFormAutoRange writePNGfileNamed: filename, '.png'.
+	(filename, '.wld') asFileEntry forceWriteStreamDo: [ :strm |
+		gsdArcSeconds / 3600.0 printOn: strm. strm newLine.
+		0 printOn: strm. strm newLine.
+		0 printOn: strm. strm newLine.
+		gsdArcSeconds / 3600.0 negated printOn: strm. strm newLine.
+		long0 printOn: strm. strm newLine.
+		lat0 printOn: strm. strm newLine ].
+	(filename, '-toTiff.sh') asFileEntry forceWriteStreamDo: [ :stream |
+		stream
+			nextPutAll: 'gdalwarp -s_srs "EPSG:4326" ';
+			nextPutAll: filename, '.png ';
+			nextPutAll: filename, '.tiff';
+			newLine ].
 	^ demo! !
 
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:50:52'!
-exampleBuenosAires
-
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ -34.3. lat1 _ -34.8.		"South"
-	long0 _ -58.7. long1 _ -58.2. 	"West"
-	demo _ self demoResult: 800@800.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:50:56'!
-exampleBuenosAiresDelta
-
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ -32.0. lat1 _ -37.0.		"South"
-	long0 _ -61.0. long1 _ -56.0. "West"
-	demo _ self demoResult: 800@800.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:50:59'!
-exampleSanFrancisco
-
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ 3.65/60+9/60+37.
-	lat1 _ 11.19/60+4/60+37.
-	long0 _ (50.51/60+13/60+121) negated.
-	long1 _ (10.65/60+6/60+121) negated.
-	demo _ self demoResult: 158@126.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:51:02'!
-exampleWorld
-
-	| demo lat0 lat1 long0 long1 |
-	lat0 _ 90. lat1 _ -90.			"North..South"
-	long0 _ -180. long1 _ 180. 	"West..East"
-	demo _ self demoResult: 800@400.
-	self fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1.
-	demo displayAutoRangeAt: 0@0.
-	^ demo! !
-
-!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:33:47'!
-fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1
+!TiledSampledWorld methodsFor: 'examples' stamp: 'jmv 8/17/2018 16:49:50'!
+fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1 sampleArea: pixelSizeOnGroundMeters
 	| lat long v |
 	0 to: demo height-1 do: [ :y |
 		lat _ y / (demo height-1.0) * (lat1-lat0) + lat0.
 		0 to: demo width-1 do: [ :x |
 			long _ x / (demo width-1.0) * (long1-long0) + long0.
-			v _ self atLatitude: lat longitude: long.
+			v _ self atLatitude: lat longitude: long sampleArea: pixelSizeOnGroundMeters.
 			demo i: y+1 j: x+1  put: v ]]! !
 
 !TiledSampledWorld class methodsFor: 'singleton' stamp: 'jmv 3/2/2016 14:18'!
@@ -1033,6 +1047,141 @@ getInstance
 				self error: 'Whoops, there''s no dataset you can use (or it''s stored in the wrong place)'.
 				instance _ nil ]]].
 	^ instance! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:13:19'!
+example: aString  lat0: lat0 long0: long0 pixelExtent: pixelExtent gsdArcSeconds: gsdArcSeconds
+
+	^ self getInstance
+		example: aString
+		lat0: lat0
+		long0: long0
+		pixelExtent: pixelExtent
+		gsdArcSeconds: gsdArcSeconds! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 14:17:51'!
+exampleAconcagua
+	"
+	ShuttleRadarTopographyMission30 exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	GoogleSampledWorld exampleAconcagua displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'Aconcagua'
+		lat0: -32.575
+		long0: -70.095
+		pixelExtent:  400@400
+		gsdArcSeconds: 1.5.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 14:45:20'!
+exampleArgentina
+	"
+	EGM96Geoid5 exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	ShuttleRadarTopographyMission30 exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	NaturalEarth exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	GoogleSampledWorld exampleArgentina displayAutoRangeAt: 0@0 zoom: 1
+	"
+	^ self
+		example: 'Argentina'
+		lat0: -19
+		long0: -76
+		pixelExtent:  440@700
+		gsdArcSeconds: 200.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:31:02'!
+exampleBuenosAires
+	"
+	ShuttleRadarTopographyMission30 exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	ShuttleRadarTopographyMission3 exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	TiledECEFVariableSampledDEM exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	TrueMarble exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1
+	GoogleSampledWorld exampleBuenosAires displayAutoRangeAt: 0@0 zoom: 1.
+	"
+	^ self
+		example: 'BuenosAires'
+		lat0: -34.0
+		long0: -58.9
+		pixelExtent:  800@800
+		gsdArcSeconds: 4.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:31:19'!
+exampleMaunaLoa
+	"
+	ShuttleRadarTopographyMission30 exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	ShuttleRadarTopographyMission3 exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	TiledECEFVariableSampledDEM exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	TrueMarble exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	GoogleSampledWorld exampleMaunaLoa displayAutoRangeAt: 0@0 zoom: 1.
+	"
+	^ self
+		example: 'MaunaLoa'
+		lat0: 19.95
+		long0: -155.95
+		pixelExtent:  1600@1600
+		gsdArcSeconds: 1.5.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 14:47:45'!
+exampleNauru
+	"
+	ShuttleRadarTopographyMission30 exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	GoogleSampledWorld exampleNauru displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'Nauru'
+		lat0: -0.47
+		long0: 166.88
+		pixelExtent:  400@400
+		gsdArcSeconds: 1.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:31:49'!
+exampleSanFrancisco
+	"
+	ShuttleRadarTopographyMission30 exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	ShuttleRadarTopographyMission3 exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	TiledECEFVariableSampledDEM exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	TrueMarble exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	GoogleSampledWorld exampleSanFrancisco displayAutoRangeAt: 0@0 zoom: 2
+	"
+	^ self
+		example: 'SanFrancisco'
+		lat0: 3.65/60+9/60+37
+		long0: (50.51/60+13/60+121) negated
+		pixelExtent:  600@400
+		gsdArcSeconds: 1.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:32:00'!
+exampleVicenteLopez
+	"
+	ShuttleRadarTopographyMission30 exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
+	ShuttleRadarTopographyMission3 exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
+	TiledECEFVariableSampledDEM exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1
+	GoogleSampledWorld exampleVicenteLopez displayAutoRangeAt: 0@0 zoom: 1.
+	"
+	^ self
+		example: 'VicenteLopez'
+		lat0: -34.524
+		long0: -58.469
+		pixelExtent:  800@800
+		gsdArcSeconds: 0.03.			"Same for latitude and longitude"! !
+
+!TiledSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 11:32:19'!
+exampleWorld
+	"
+	EGM96Geoid5 exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	NaturalEarth exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	GoogleSampledWorld exampleWorld displayAutoRangeAt: 0@0 zoom: 1
+	"
+	^ self
+		example: 'World'
+		lat0: 90
+		long0: -180
+		pixelExtent:  800@400
+		gsdArcSeconds: 1620.			"Same for latitude and longitude"! !
 
 !TiledECEFSampledWorld methodsFor: 'iterating' stamp: 'jmv 4/7/2016 11:23'!
 allFaceTilesInto: aBlock
@@ -1076,7 +1225,7 @@ atECEF: ecef fromFace: faceNumber
 	self withTileAndPositionInTileOf: ecef atFace: faceNumber evaluate: [ :tilePos :posInTile |
 		^ self sampleTile: (self tileAt: faceNumber at: tilePos) at: posInTile ]! !
 
-!TiledECEFSampledWorld methodsFor: 'accessing' stamp: 'jmv 3/23/2016 16:39'!
+!TiledECEFSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/13/2018 15:00:38'!
 tileAt: faceNumber at: zeroBasedTilePosition
 	"faceNumber in #(1 2 3 4 5 6)
 	aPoint is zero-based.
@@ -1095,9 +1244,9 @@ tileAt: faceNumber at: zeroBasedTilePosition
 			tileCoordinates _ cachedTiles removeLast.
 			(allTiles at: tileCoordinates first) at: tileCoordinates second put: nil ].
 
-		tileData _ (self loadFace: faceNumber at: zeroBasedTilePosition). 		"Might answer nil"
+		tileData _ self loadFace: faceNumber at: zeroBasedTilePosition. 		"Might answer nil"
 		(tileData isNil and: [ self hasSourceDataset ]) ifTrue: [
-				tileData _ self buildFace: faceNumber at: zeroBasedTilePosition ]. 	"Might answer nil"
+			tileData _ self buildFace: faceNumber at: zeroBasedTilePosition ]. 	"Might answer nil"
 
 		tile _ tileData
 			ifNil: [ SampledTile null ]
@@ -1273,33 +1422,6 @@ buildFace: faceNumber
 
 !TiledECEFSampledWorld methodsFor: 'building' stamp: 'jmv 3/23/2016 16:44'!
 buildFace: faceNumber at: tilePosition
-	"Does not store the tiles in the cache, just build them and save them to disk.
-	tilePosition is zero-based"
-	| tileSamples tileHasValidData h w |
-	tileSamples _ self newTileSamples.
-	h _ tileSamples height.
-	w _ tileSamples width.
-	tileHasValidData _ false.
-	0 to: h-1 do: [ :y |
-"		(tileHasValidData and: [y \\ 50 = 49]) ifTrue: [ self display: tile at: 0@0 ]."
-		0 to: w-1 do: [ :x |
-			self ecefOfFace: faceNumber tilePosition: tilePosition positionInTile: x@y samples: tileSamples
-				into: [ :ecef :pointBelongsInFace :pointBelongsInExtendedFace |
-					self fillTileSamples: tileSamples at: x@y withDataForECEF: ecef pointBelongsInFace: pointBelongsInFace pointBelongsInExtendedFace: pointBelongsInExtendedFace.
-					pointBelongsInExtendedFace ifTrue: [
-							tileHasValidData _ true ]
-					
-				]]].
-		tileHasValidData ifTrue: [
-			tileSamples _ self subsample: tileSamples.
-"			self display: tile at: 0@0."
-			self writeToDisk: tileSamples face: faceNumber tilePosition: tilePosition ]
-		ifFalse: [ 
-			tileSamples _ nil ].
-	^ tileSamples! !
-
-!TiledECEFSampledWorld methodsFor: 'building' stamp: 'jmv 3/23/2016 16:44'!
-buildFace: faceNumber tile: tilePosition
 	"Does not store the tiles in the cache, just build them and save them to disk.
 	tilePosition is zero-based"
 	| tileSamples tileHasValidData h w |
@@ -1633,6 +1755,11 @@ sampleTile: tile at: zeroBasedPosition
 !TiledECEFNaturalEarth methodsFor: 'accessing' stamp: 'jmv 2/23/2016 11:05'!
 sourceDataset: aNaturalEarth
 	sourceDataset _ aNaturalEarth! !
+
+!TiledECEFNaturalEarth methodsFor: 'initialization' stamp: 'jmv 8/10/2018 14:59:45'!
+initialize
+	super initialize.
+	name _ 'ECEF-NaturalEarth'.! !
 
 !TiledECEFNaturalEarth class methodsFor: 'examples' stamp: 'lpc 3/28/2016 14:49'!
 example1
@@ -1983,13 +2110,17 @@ subsamplingTolerance
 				Still allows viewing trees!!
 				See example4"! !
 
+!TiledECEFVariableSampledDEM methodsFor: 'accessing' stamp: 'jmv 8/10/2018 15:17:31'!
+name: aString
+	name _ aString! !
+
 !TiledECEFVariableSampledDEM methodsFor: 'accessing' stamp: 'lpc 2/29/2016 14:00'!
 sourceDEM: aDEM geoid: aGeoid
 	sourceDEM _ aDEM.
 	sourceGeoid _ aGeoid.! !
 
-!TiledECEFVariableSampledDEM methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:33:23'!
-fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1
+!TiledECEFVariableSampledDEM methodsFor: 'examples' stamp: 'jmv 8/17/2018 14:28:02'!
+fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1 sampleArea: pixelSizeOnGroundMeters
 	| lat long v |
 	0 to: demo height-1 do: [ :y |
 		lat _ y / (demo height-1.0) * (lat1-lat0) + lat0.
@@ -1997,6 +2128,11 @@ fillExample: demo lat0: lat0 lat1: lat1 long0: long0 long1: long1
 			long _ x / (demo width-1.0) * (long1-long0) + long0.
 			v _ (self gpsPositionOnTerrainFor: (GPSPosition latitude: lat longitude: long altitude: 0)) altitude.
 			demo i: y+1 j: x+1  put: v ]]! !
+
+!TiledECEFVariableSampledDEM methodsFor: 'initialization' stamp: 'jmv 8/10/2018 15:00:47'!
+initialize
+	super initialize.
+	name _ 'ECEFvar-DEM'.! !
 
 !TiledECEFVariableSampledDEM class methodsFor: 'standalone application' stamp: 'jmv 4/5/2016 11:26'!
 build: columnNumberString
@@ -2218,7 +2354,7 @@ getInstance
 		].
 	^ instance! !
 
-!TiledECEFVariableSampledDEM class methodsFor: 'singleton' stamp: 'jmv 8/9/2018 17:41:13'!
+!TiledECEFVariableSampledDEM class methodsFor: 'singleton' stamp: 'jmv 8/10/2018 15:17:52'!
 hiRes
 	"
 	TiledECEFVariableSampledDEM hiRes
@@ -2226,16 +2362,18 @@ hiRes
 	"512 might be a reasonabla balance between file size and file count"
 	| answer |
 	answer _ self gsd: 90 samplesPerTileSide: 512.
+	answer name: 'ECEFvar-DEM'.
 	^ answer datasetPath asDirectoryEntry exists
 		ifTrue: [ answer ]! !
 
-!TiledECEFVariableSampledDEM class methodsFor: 'singleton' stamp: 'jmv 8/9/2018 18:20:52'!
+!TiledECEFVariableSampledDEM class methodsFor: 'singleton' stamp: 'jmv 8/10/2018 15:18:03'!
 loRes
 	"
 	TiledECEFVariableSampledDEM loRes
 	"
 	| answer |
 	answer _ self gsd: 90*64 samplesPerTileSide: 512.
+	answer name: 'ECEFvar-DEM-LoRes'.
 	^ answer datasetPath asDirectoryEntry exists
 		ifTrue: [ answer ]! !
 
@@ -2315,6 +2453,11 @@ subsamplingTolerance
 !TiledECEFVariableSampledNaturalEarth methodsFor: 'accessing' stamp: 'jmv 2/23/2016 12:39'!
 sourceDataset: aNaturalEarth
 	sourceDataset _ aNaturalEarth! !
+
+!TiledECEFVariableSampledNaturalEarth methodsFor: 'initialization' stamp: 'jmv 8/10/2018 15:00:42'!
+initialize
+	super initialize.
+	name _ 'ECEFvar-NaturalEarth'.! !
 
 !TiledECEFVariableSampledNaturalEarth class methodsFor: 'examples' stamp: 'lpc 3/28/2016 14:50'!
 example1
@@ -2424,7 +2567,7 @@ globalPixelPositionForLatitude: latitude longitude: longitude
 
 	self subclassResponsibility! !
 
-!TiledLatitudeLongitudeSampledWorld methodsFor: 'accessing' stamp: 'lpc 3/28/2016 11:25'!
+!TiledLatitudeLongitudeSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/14/2018 11:18:49'!
 tileAt: zeroBasedTilePosition
 	"aPoint is zero-based.
 	allTiles coordinates are 1-based, i.e. they go from 1@1 to tileHorizontalCount@tileVerticalCount
@@ -2440,10 +2583,10 @@ tileAt: zeroBasedTilePosition
 			This is not the LRU element!!
 			Freeing the LRU element requires moving the cached element to the first position if found. Worth it?"
 			tileCoordinates _ cachedTiles removeLast.
-			('Removed: ', tileCoordinates printString) print.
+			('Removed from RAM Cache: ', tileCoordinates printString) print.
 			allTiles at: tileCoordinates put: nil ].
 
-		tile _ (self loadSamplesAt: zeroBasedTilePosition)	"Might answer nil"
+		tile _ (self loadTileSamples: zeroBasedTilePosition)	"Might answer nil"
 			ifNil: [ self newNullTile ]
 			ifNotNil: [ :tileData |
 				"Null tiles don't take space in the cache."
@@ -2451,11 +2594,11 @@ tileAt: zeroBasedTilePosition
 				self newTileWith: tileData ].
 
 		allTiles at: oneBasedTilePosition put: tile.
-		('Stored at: ', oneBasedTilePosition printString) print ].
+		('Cached in RAM: ', oneBasedTilePosition printString) print ].
 	^tile! !
 
-!TiledLatitudeLongitudeSampledWorld methodsFor: 'private' stamp: 'lpc 3/23/2016 15:56'!
-loadSamplesAt: aPoint
+!TiledLatitudeLongitudeSampledWorld methodsFor: 'private' stamp: 'jmv 8/14/2018 09:41:53'!
+loadTileSamples: aPoint
 	"aPoint is zero-based"
 	self subclassResponsibility! !
 
@@ -2640,8 +2783,8 @@ globalPixelPositionForLatitude: latitude longitude: longitude
 	x _ (longitude \\ 360) *60*60 / self class sampleWidthSeconds.
 	^x@y! !
 
-!EGM96Geoid5 methodsFor: 'accessing' stamp: 'lpc 3/23/2016 15:40'!
-loadSamplesAt: aPoint
+!EGM96Geoid5 methodsFor: 'accessing' stamp: 'jmv 8/14/2018 09:41:42'!
+loadTileSamples: aPoint
 	"aPoint is zero-based.
 	All EGM96_5 dataset is contained in one file. Thus, we always load the same file despite the point  recieved"
 
@@ -2651,9 +2794,10 @@ loadSamplesAt: aPoint
 	'done' print.
 	^ answer! !
 
-!EGM96Geoid5 methodsFor: 'initialization' stamp: 'jmv 1/7/2016 14:00'!
+!EGM96Geoid5 methodsFor: 'initialization' stamp: 'jmv 8/10/2018 15:15:43'!
 initialize
 	super initialize.
+	name _ 'Geoid'.
 	self datasetPath: 'payload/datasets/Geoid/egm96-5.pgm'! !
 
 !EGM96Geoid5 methodsFor: 'private' stamp: 'jmv 5/31/2016 16:09'!
@@ -2780,8 +2924,8 @@ globalPixelPositionForLatitude: latitude longitude: longitude
 	longitude = 180 ifTrue: [ x _ x predecessor ].
 	^(x @ y) floor! !
 
-!NaturalEarth methodsFor: 'accessing' stamp: 'lpc 3/23/2016 15:40'!
-loadSamplesAt: aPoint
+!NaturalEarth methodsFor: 'accessing' stamp: 'jmv 8/14/2018 09:41:46'!
+loadTileSamples: aPoint
 	"aPoint is zero-based."
 	"Filename is in datasetPath, as we use a single file
 	"
@@ -2791,18 +2935,31 @@ loadSamplesAt: aPoint
 	'done' print.
 	^ samples! !
 
-!NaturalEarth methodsFor: 'initialization' stamp: 'jmv 2/17/2017 17:14:04'!
+!NaturalEarth methodsFor: 'initialization' stamp: 'jmv 8/10/2018 14:57:11'!
 initialize
 	super initialize.
+	name _ 'NaturalEarth'.
 	self datasetPath: 'payload/datasets/NaturalEarthPlusBathymetry/NE_Drape-3000x1500.tif'! !
 
-!NaturalEarth methodsFor: 'private' stamp: 'jmv 3/23/2016 12:27'!
+!NaturalEarth methodsFor: 'private' stamp: 'jmv 8/14/2018 10:16:29'!
 sampleTile: tile at: zeroBasedPosition
-	"zeroBasedPosition = 0@0 means topLeft.
-	Forms are zero based, meaning topLeft element is at 0@0.
-	Argument is integer point"
+	"zeroBasedPosition = 0@0 means topLeft, width@height means bottomRight
+	This datasets considers pixels as areas, not samples.
+	Samples is a Form, and therefore zero based.
+	This means that:
+		- topLeft pixel covers zeroBasedPosition values in 0@0 to 1@1. zeroBasedPosition = 0.5@0.5 hits pixel 0@0 exactly
+		- bottomRight pixel covers zeroBasedPosition values in width@height-1 to width@height. zeroBasedPosition = width@height-0.5 hits pixel width@height-1 (bottomRight pixel) exactly
+	Additionally, 0@0 is a valid zeroBasedPosition. Make the valid interval for zeroBasedPosition be [0.0 .. width) x [0.0 .. height) and not (0.0 .. width) x (0.0 .. height).
+	This is, make the start of the interval closed. Make 0@0 a valid coordinate.
+	"
+	| x y |
+	x _ zeroBasedPosition x.
+	x _ x isZero ifTrue: [ 0 ] ifFalse: [ (x - 0.5) rounded ].
+	y _ zeroBasedPosition y.
+	y _ y isZero ifTrue: [ 0 ] ifFalse: [ (y - 0.5) rounded ].
+	^tile samples colorAt: x@y
 
-	^tile samples colorAt: zeroBasedPosition rounded! !
+	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"! !
 
 !NaturalEarth methodsFor: 'examples' stamp: 'jmv 8/9/2018 17:34:26'!
 demoResult: extent
@@ -2939,8 +3096,8 @@ loadFromFile: aFilename
 
 	^m.! !
 
-!ShuttleRadarTopographyMission methodsFor: 'private' stamp: 'lpc 3/23/2016 15:39'!
-loadSamplesAt: aPoint
+!ShuttleRadarTopographyMission methodsFor: 'private' stamp: 'jmv 8/14/2018 09:41:50'!
+loadTileSamples: aPoint
 	"The name is (for example) N40W118.hgt
 	Argument is number of tile horizontally @ number of tile vertically, zero based."
 	
@@ -3088,9 +3245,10 @@ validate: tile from: aPoint
 cacheSize
 	^cacheSize! !
 
-!ShuttleRadarTopographyMission3 methodsFor: 'initialization' stamp: 'lpc 4/5/2016 11:08'!
+!ShuttleRadarTopographyMission3 methodsFor: 'initialization' stamp: 'jmv 8/10/2018 15:02:13'!
 initialize
 	super initialize.
+	name _ 'VFPanoramas3'.
 	self datasetPath: 'payload/datasets/DEM-ViewfinderPanoramas'.
 	logFilename _ self class name asString, 'validationLog', Date today yyyymmdd asString, '.txt'.
 	cacheSize _ 28! !
@@ -3187,9 +3345,10 @@ filenameForTileAt: aPoint
 		
 	^ lonChar, (tileLeftLongitude abs printStringBase: 10 length: 3 padded: true), latChar, (tileTopLatitude abs printStringBase: 10 length: 2 padded: true), '.', self class tileExtension! !
 
-!ShuttleRadarTopographyMission30 methodsFor: 'initialization' stamp: 'lpc 1/13/2016 10:40'!
+!ShuttleRadarTopographyMission30 methodsFor: 'initialization' stamp: 'jmv 8/10/2018 14:57:27'!
 initialize
 	super initialize.
+	name _ 'SRTM30'.
 	self datasetPath: 'payload/datasets/SRTM30'! !
 
 !ShuttleRadarTopographyMission30 methodsFor: 'private' stamp: 'jmv 8/9/2018 16:11:13'!
@@ -3319,8 +3478,8 @@ globalPixelPositionForLatitude: latitude longitude: longitude
 	longitude = 180 ifTrue: [ x _ x predecessor ].
 	^x @ y! !
 
-!TrueMarble methodsFor: 'accessing' stamp: 'jmv 8/8/2018 13:46:14'!
-loadSamplesAt: aPoint
+!TrueMarble methodsFor: 'accessing' stamp: 'jmv 8/14/2018 09:41:56'!
+loadTileSamples: aPoint
 	"aPoint is zero-based."
 	"Filenames are like
 	TrueMarble_250m_4320x4320_C2_3_2.png
@@ -3340,29 +3499,41 @@ loadSamplesAt: aPoint
 cacheSize
 	^4*4! !
 
-!TrueMarble methodsFor: 'initialization' stamp: 'jmv 1/7/2016 14:01'!
+!TrueMarble methodsFor: 'initialization' stamp: 'jmv 8/10/2018 14:57:47'!
 initialize
 	super initialize.
+	name _ 'TrueMarble'.
 	self datasetPath: 'payload/datasets/TrueMarble/TrueMarble-250m'! !
 
-!TrueMarble methodsFor: 'private' stamp: 'jmv 3/23/2016 12:28'!
+!TrueMarble methodsFor: 'private' stamp: 'jmv 8/14/2018 10:17:55'!
 sampleTile: tile at: zeroBasedPosition
-	"zeroBasedPosition = 0@0 means topLeft.
-	Forms are zero based, meaning topLeft element is at 0@0.
-	Argument is integer point"
+	"zeroBasedPosition = 0@0 means topLeft, width@height means bottomRight
+	This datasets considers pixels as areas, not samples.
+	Samples is a Form, and therefore zero based.
+	This means that:
+		- topLeft pixel covers zeroBasedPosition values in 0@0 to 1@1. zeroBasedPosition = 0.5@0.5 hits pixel 0@0 exactly
+		- bottomRight pixel covers zeroBasedPosition values in width@height-1 to width@height. zeroBasedPosition = width@height-0.5 hits pixel width@height-1 (bottomRight pixel) exactly
+	Additionally, 0@0 is a valid zeroBasedPosition. Make the valid interval for zeroBasedPosition be [0.0 .. width) x [0.0 .. height) and not (0.0 .. width) x (0.0 .. height).
+	This is, make the start of the interval closed. Make 0@0 a valid coordinate.
+	"
+	| x y |
+	x _ zeroBasedPosition x.
+	x _ x isZero ifTrue: [ 0 ] ifFalse: [ (x - 0.5) rounded ].
+	y _ zeroBasedPosition y.
+	y _ y isZero ifTrue: [ 0 ] ifFalse: [ (y - 0.5) rounded ].
+	^tile samples colorAt: x@y
 
-	^tile samples colorAt: zeroBasedPosition
+	"About interpolating samples.
+
+	Bilinear interpolation is reasonably ok if the target gsd is not coarser than dataset.
+	If target has lower resolution than dataset, the some anti aliasing filtering (such as Area filtering) is in order!!
 	
-	"In reality, bilinear interpolation is reasonably ok if the target gsd is not coarser than dataset.
-	If target has lower resolution than dataset, the some anti aliasing filtering (such as Area filtering)
-	is in order!!
-	
-	But if we ever enable interpolation for TrueMarble, keep in mind
+	But if we ever enable interpolation for this dataset, keep in mind
 		- Out of range latitudes  (i.e. latitudes really close to the poles) should be rounded. 
 			There's no point in iterpolating that, and computing the missing samples is not trivial
 		- To be able to interpolate values close to 180W or 180E, an extra first column is needed (duplicating the original last column) 
 			and an extra last column is needed (duplicating the original first column).
-			Keep in mind that other datasets, like EGM96 and SRTM just need an extra last column (and not an extra first column),
+			Keep in mind that other datasets, like EGM96 and SRTM just need an extra last column that they already include (and not an extra first column),
 			because they consider the origin the center of the topLeft pixel, while TrueMarble considers the origin at 
 			the topLeft corner of the little square covered by the topLeft pixel
 
@@ -3401,3 +3572,238 @@ tileWidthInSamples
 	"Not the count of samples, but the total width.
 	If there is superpostion of tiles, do not include it."
 	^4320! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'initialization' stamp: 'jmv 8/14/2018 12:00:50'!
+initializeZoomLevel: anInteger
+
+	projection _ WebmercatorProjection new.
+	zoomLevel _ anInteger.
+	allTiles _ Dictionary new.
+	cachedTiles _ OrderedCollection new! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:10:19'!
+atGPSPosition: aGPSPosition
+	"This method is to be used when source dataset is similar resolution than destination.
+	See comment at atGPSPosition:areaFilterMeters:
+	"
+	^self atLatitude: aGPSPosition latitude longitude: aGPSPosition longitude! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 14:30:26'!
+atGPSPosition: aGPSPosition sampleArea: pixelSizeOnGroundMeters
+	"Area filtering is useful when source dataset is higher resolution than destination.
+	In this cases, source includes high spatial frequency content that destination can't handle. Area filtering is a reasonable way to filter it out."
+
+	^self atLatitude: aGPSPosition latitude longitude: aGPSPosition longitude sampleArea: pixelSizeOnGroundMeters! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:09:36'!
+atLatitude: lat longitude: lon
+	"This method is to be used when source dataset is similar resolution than destination.
+	See comment at atLatitude:longitude:areaFilterMeters:
+	"
+	| positionInMap tileAndPositionInTile tile |
+	positionInMap _ projection mapPositionFromLat: lat long: lon.
+	(positionInMap between: 0@0 and: 1@1)
+		ifFalse: [ ^ self outOfWorldValue ].	"Invalid coodinates, or outside the area covered by Webmercator"
+	tileAndPositionInTile _ positionInMap * (2 raisedToInteger: zoomLevel).
+	tile _ self tileAt: tileAndPositionInTile truncated.
+	^ self sampleTile: tile at: (tileAndPositionInTile - tileAndPositionInTile truncated) * self samplesPerTileSide! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 17:23:04'!
+atLatitude: lat longitude: lon sampleArea: pixelSizeOnGroundMeters
+	"Area filtering is useful when source dataset is higher resolution than destination.
+	In this cases, source includes high spatial frequency content that destination can't handle. Area filtering is a reasonable way to filter it out."
+
+	| positionInMap tileAndPositionInTile tile tileGSDmeters |
+	positionInMap _ projection mapPositionFromLat: lat long: lon.
+	(positionInMap between: 0@0 and: 1@1)
+		ifFalse: [ ^ self outOfWorldValue ].	"Invalid coodinates, or outside the area covered by Webmercator"
+	tileAndPositionInTile _ positionInMap * (2 raisedToInteger: zoomLevel).
+	tile _ self tileAt: tileAndPositionInTile truncated.
+	tileGSDmeters _ projection gsdAtLatitude: lat zoomLevel: zoomLevel.
+	^ self
+		sampleTile: tile
+		at: (tileAndPositionInTile - tileAndPositionInTile truncated) * self samplesPerTileSide
+		filterHalfExtent: (pixelSizeOnGroundMeters / tileGSDmeters / 2)! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 14:40:01'!
+tileAt: zeroBasedTilePosition
+
+	| tileCoordinates tileData |
+	^allTiles
+		at: zeroBasedTilePosition
+		ifAbsent: [
+			cachedTiles size >= self cacheSize ifTrue: [
+				"free oldest cache element.
+				This is not the LRU element!!
+				Freeing the LRU element requires moving the cached element to the first position if found. Worth it?"
+				tileCoordinates _ cachedTiles removeLast.
+				('Removed from RAM Cache: ', tileCoordinates printString) print.
+				allTiles removeKey: tileCoordinates ].
+			tileData _ self loadTileSamples: zeroBasedTilePosition.	"Might answer nil"
+			tileData
+				ifNil: [
+					tileData _ self fetchTileSamples: zeroBasedTilePosition.
+					tileData ifNotNil: [ ('Fetched and cached on Disk: ', zeroBasedTilePosition printString) print ] ].
+			allTiles
+				at: zeroBasedTilePosition
+				put: (tileData
+					ifNil: [ SampledTile null ]
+					ifNotNil: [
+						"Null tiles don't take space in the cache."
+						('Cached in RAM: ', name, ' ', zeroBasedTilePosition printString) print.
+						cachedTiles addFirst: zeroBasedTilePosition.
+						SampledTile samples: tileData ]) ]! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'private' stamp: 'jmv 8/13/2018 16:38:19'!
+fileIdFor: aPoint
+	"Answer a string with an even number of hex digits"
+	| hexDigits |
+	hexDigits _ (zoomLevel / 4) ceiling.
+	^ (aPoint x printStringBase: 16 length: hexDigits padded: true),
+		(aPoint y printStringBase: 16 length: hexDigits padded: true)! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'private' stamp: 'jmv 8/13/2018 16:35:42'!
+folderForId: hexFileId createifAbsent: aBoolean
+
+	| folder |
+	folder _ datasetPath asDirectoryEntry.
+	aBoolean
+		ifTrue: [ folder assureExistence ]
+		ifFalse: [ folder exists ifFalse: [ ^ nil ]].
+	2 to: hexFileId size-2 by: 2 do: [ :i |
+		folder _ folder / (hexFileId copyFrom: 1 to: i).
+		aBoolean
+			ifTrue: [ folder assureExistence ]
+			ifFalse: [ folder exists ifFalse: [ ^ nil ]]].
+	^ folder! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'constants' stamp: 'jmv 8/17/2018 09:50:00'!
+cacheSize
+
+	^3000! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'constants' stamp: 'jmv 8/14/2018 11:30:16'!
+outOfWorldValue
+	"Value to answer for areas too close to poles, outside Webmercator"
+	self subclassResponsibility! !
+
+!TiledWebmercatorSampledWorld methodsFor: 'constants' stamp: 'jmv 8/13/2018 14:34:57'!
+samplesPerTileSide
+	^ self subclassResponsibility! !
+
+!TiledWebmercatorSampledWorld class methodsFor: 'instance creation' stamp: 'jmv 8/13/2018 19:18:14'!
+zoomLevel: anInteger
+	instance ifNil: [ instance _ Dictionary new ].
+	^ instance at: anInteger ifAbsentPut: [
+		self basicNew initializeZoomLevel: anInteger ]! !
+
+!TiledWebmercatorSampledWorld class methodsFor: 'singleton' stamp: 'jmv 8/17/2018 14:37:53'!
+getInstance
+	^ self error: 'Please call #zoomLevel:'! !
+
+!GoogleSampledWorld methodsFor: 'initialization' stamp: 'jmv 8/13/2018 10:57:44'!
+initializeZoomLevel: anInteger
+	super initializeZoomLevel: anInteger.
+	name _ 'Google', anInteger printString.
+	self datasetPath: 'payload/datasets/', name! !
+
+!GoogleSampledWorld methodsFor: 'examples' stamp: 'jmv 8/13/2018 13:31:07'!
+demoResult: extent
+	^ Form extent: extent depth: 32! !
+
+!GoogleSampledWorld methodsFor: 'private' stamp: 'jmv 8/14/2018 10:14:42'!
+sampleTile: tile at: zeroBasedPosition
+	"zeroBasedPosition = 0@0 means topLeft, width@height means bottomRight
+	This datasets considers pixels as areas, not samples.
+	Samples is a Form, and therefore zero based.
+	This means that:
+		- topLeft pixel covers zeroBasedPosition values in 0@0 to 1@1. zeroBasedPosition = 0.5@0.5 hits pixel 0@0 exactly
+		- bottomRight pixel covers zeroBasedPosition values in width@height-1 to width@height. zeroBasedPosition = width@height-0.5 hits pixel width@height-1 (bottomRight pixel) exactly
+	Additionally, 0@0 is a valid zeroBasedPosition. Make the valid interval for zeroBasedPosition be [0.0 .. width) x [0.0 .. height) and not (0.0 .. width) x (0.0 .. height).
+	This is, make the start of the interval closed. Make 0@0 a valid coordinate.
+	"
+	| x y |
+	x _ zeroBasedPosition x.
+	x _ x isZero ifTrue: [ 0 ] ifFalse: [ (x - 0.5) rounded ].
+	y _ zeroBasedPosition y.
+	y _ y isZero ifTrue: [ 0 ] ifFalse: [ (y - 0.5) rounded ].
+	^tile samples colorAt: x@y
+
+	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"! !
+
+!GoogleSampledWorld methodsFor: 'private' stamp: 'jmv 8/15/2018 10:07:32'!
+sampleTile: tile at: zeroBasedPosition filterHalfExtent: aNumber
+	"Call #sampleTile:at: when destination has similar resolution as source dataset.
+	Call this method, for higher quality results, with a source dataset with higher resolution than destination."
+
+	"zeroBasedPosition = 0@0 means topLeft, width@height means bottomRight
+	This datasets considers pixels as areas, not samples.
+	Samples is a Form, and therefore zero based.
+	This means that:
+		- topLeft pixel covers zeroBasedPosition values in 0@0 to 1@1. zeroBasedPosition = 0.5@0.5 hits pixel 0@0 exactly
+		- bottomRight pixel covers zeroBasedPosition values in width@height-1 to width@height. zeroBasedPosition = width@height-0.5 hits pixel width@height-1 (bottomRight pixel) exactly
+	Additionally, 0@0 is a valid zeroBasedPosition. Make the valid interval for zeroBasedPosition be [0.0 .. width) x [0.0 .. height) and not (0.0 .. width) x (0.0 .. height).
+	This is, make the start of the interval closed. Make 0@0 a valid coordinate.
+	"
+	| x y |
+	x _ zeroBasedPosition x.
+	x _ x isZero ifTrue: [ 0 ] ifFalse: [ (x - 0.5) rounded ].
+	y _ zeroBasedPosition y.
+	y _ y isZero ifTrue: [ 0 ] ifFalse: [ (y - 0.5) rounded ].
+	^tile samples areaFilteredColorAt: x@y halfWidth: aNumber halfHeight: aNumber
+
+	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"! !
+
+!GoogleSampledWorld methodsFor: 'constants' stamp: 'jmv 8/14/2018 11:30:24'!
+outOfWorldValue
+	"Value to answer for areas too close to poles, outside Webmercator"
+	^ Color black! !
+
+!GoogleSampledWorld methodsFor: 'constants' stamp: 'jmv 8/13/2018 14:35:07'!
+samplesPerTileSide
+	^ 256! !
+
+!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/13/2018 19:00:35'!
+fetchTileSamples: aPoint
+	| answer bytes form hexFileId folder |
+	answer _ WebClient httpGet: 'http://mt1.google.com/vt/lyrs=s&x=', aPoint x printString, '&y=', aPoint y printString, '&z=', zoomLevel printString.
+	bytes _ answer content asByteArray.
+	hexFileId _ self fileIdFor: aPoint.
+	folder _ self folderForId: hexFileId createifAbsent: true.
+	folder // (hexFileId, name, '.jpg') forceWriteStreamDo: [ :strm |
+		strm binary; nextPutAll: bytes ].
+	form _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	^ form! !
+
+!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/16/2018 11:56:56'!
+loadTileSamples: aPoint
+	| hexFileId file |
+	hexFileId _ self fileIdFor: aPoint.
+	(self folderForId: hexFileId createifAbsent: false) ifNotNil: [ :folder |
+		file _ folder // (hexFileId, name, '.jpg').
+		file exists ifTrue: [ ^ [file formContents] on: Error do: [nil] ]].
+	^ nil! !
+
+!GoogleSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 17:21:54'!
+example: aString  lat0: lat0 long0: long0 pixelExtent: pixelExtent gsdArcSeconds: gsdArcSeconds
+"
+	GoogleSampledWorld 
+		example: 'VicenteLopez'
+		lat0: -34.524
+		long0: -58.469
+		pixelExtent:  800@800
+		gsdArcSeconds: 0.03
+"
+	| gsdDegrees gsdDegreesAtEquatorScaleZero zoom |
+	gsdDegrees _ gsdArcSeconds / 3600.
+	gsdDegreesAtEquatorScaleZero _ 360.0 / 256.
+	"If we are far enough from equator, we can do with a smaller zoom factor.
+	Real applications (this method is just a demo, and we don't care about some overkill here)
+	should call #minZoomLevelForGsd:latitude: with the latitud closest to equator they will need."
+	zoom _ (gsdDegreesAtEquatorScaleZero / gsdDegrees) log2 ceiling.
+	^ (self zoomLevel: zoom)
+		example: aString
+		lat0: lat0
+		long0: long0
+		pixelExtent: pixelExtent
+		gsdArcSeconds: gsdArcSeconds! !

@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3399] on 9 August 2018 at 2:32:31 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 4:04:26 pm'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 4!
-!requires: 'Statistics' 1 nil nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'NumericalMethods' 1 8 nil!
+!provides: 'ImageProcessing' 1 6!
 !requires: 'Morphic3' 1 50 nil!
-!requires: 'SignalProcessing' 1 100 nil!
+!requires: 'Statistics' 1 nil nil!
+!requires: 'NumericalMethods' 1 8 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'SignalProcessing' 1 100 nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -822,7 +822,7 @@ normalizeValuesFloor: min ceiling: max
 
 	self replaceValues: [ :i :j :v | v - min / max min: 1.0 max: 0.0 ]! !
 
-!FloatImage methodsFor: 'interpolation' stamp: 'jmv 3/12/2017 19:28:39'!
+!FloatImage methodsFor: 'interpolation' stamp: 'jmv 8/14/2018 17:28:21'!
 areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	"Answer an interpolated value at (most likely) non-integer x@y.
 	x and y can be any Float values in in [1.0 .. width] and [1.0 .. height].
@@ -862,10 +862,10 @@ areaFilteredValueAtX: x y: y halfWidth: hw halfHeight: hh
 	yIndex0 > height ifTrue: [ ^0.0 ].
 	(yIndex0 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
 
-	xStart _ (x - hw) ceiling max: 1.
-	xStop _ (x + hw) floor min: width.
-	yStart _ (y - hh) ceiling max: 1.
-	yStop _ (y + hh) floor min: height.
+	xStart _ (x - hw) rounded max: 1.
+	xStop _ (x + hw) rounded min: width.
+	yStart _ (y - hh) rounded max: 1.
+	yStop _ (y + hh) rounded min: height.
 
 	"Apply filter."
 	sum _ 0.0.
@@ -3595,7 +3595,7 @@ gradient: extent
 			answer x: x y: y put: x+y-2 / (extent x + extent y - 2) ]].
 	^answer! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 09:59:06'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 8/16/2018 15:40:26'!
 randomBoxes: extent
 "
 FloatImage randomBoxes: 256 :: display
@@ -3606,7 +3606,7 @@ FloatImage randomBoxes: 256 :: display
 	form fillColor: backColor.
 	location _ (AffineTransformation withRadians: -3/360*Float twoPi scale: 256*0.35 position: 127.5@127.5) withYAxisNegated.
 	canvas _ VectorCanvas onForm: form.
-	canvas intoLocation: location.
+	canvas engine geometryTransformation:  location.
 	20 timesRepeat: [
 		canvas fillColor: (Random withDefaultDo: [ :r | Color gray: r next]) do: [
 			boxExtent _ Random withDefaultDo: [ :r | r next].
@@ -3638,7 +3638,7 @@ resolutionTarget: extent offsetFromCenter: anOffsetFromCenter
 	"
 	^ self resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: nil blackColor: nil grayColor: nil whiteColor: nil! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/5/2018 14:27:18'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 8/16/2018 15:42:30'!
 resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: aBackColor blackColor: aBlackColor grayColor: aGrayColor whiteColor: aWhiteColor
 
 	| offsetFromCenter backColor blackColor grayColor whiteColor location canvas form |
@@ -3652,7 +3652,7 @@ resolutionTarget: extent offsetFromCenter: anOffsetFromCenter backColor: aBackCo
 	form fillColor: backColor.
 	location _ (AffineTransformation withRadians: -3/360*Float twoPi scale: extent*0.35 position: extent-1/2.0 + offsetFromCenter) withYAxisNegated.
 	canvas _ VectorCanvas onForm: form.
-	canvas intoLocation: location.
+	canvas engine geometryTransformation: location.
 	canvas fillColor: whiteColor do: [
 		canvas
 			moveToX: 1 y: 1;
@@ -3688,7 +3688,7 @@ siemensStar: extent
 	"
 	^ self siemensStar: extent count: 32 offsetFromCenter: 0@0 backColor: `Color gray: 50/255` foreColor: `Color gray: 200/255`! !
 
-!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 7/12/2018 15:45:01'!
+!FloatImage class methodsFor: 'synthetic images' stamp: 'jmv 8/16/2018 15:43:26'!
 siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: backColor foreColor: foreColor
 	"
 	FloatImage siemensStar: 256 :: displayAt: 0@0 zoom: 4
@@ -3700,7 +3700,7 @@ siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: b
 	canvas _ VectorCanvas onForm: form.
 	1 to: count do: [ :i |
 		location _ AffineTransformation withRadians: i * angle * 2+0.02 scale: extent*0.45 position: extent-1/2.0 + offsetFromCenter.
-		canvas intoLocation: location.
+		canvas engine geometryTransformation: location.
 		"Alternatively...
 		canvas fillColor: foreColor do: ["
 		canvas strokeWidth: 3.0/extent color: foreColor fillColor: foreColor do: [
@@ -3709,7 +3709,7 @@ siemensStar: extent count: count offsetFromCenter: offsetFromCenter backColor: b
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas outOfLocation.
+		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^FloatImage from32BitColorForm: form component: #green! !
@@ -6282,6 +6282,63 @@ subsampled: n
 		1 to: answer width do: [ :j |
 			answer i: i j: j put: (self i: i*n j: j*n) ]].
 	^ answer! !
+
+!Form methodsFor: '*ImageProcessing' stamp: 'jmv 8/14/2018 17:30:58'!
+areaFilteredColorAt: aPoint halfWidth: hw halfHeight: hh
+	"Answer an interpolated value at (most likely) non-integer x@y.
+	x and y can be any Float values in in [0.0 .. width-1.0] and [0.0 .. height-1.0].
+	
+	Akin to OpenCV's CV_INTER_AREA.
+	Applies a step filter over the samples in the receiver that lie in a rectangle centered at x@y, as specified by hw and hh.
+	
+	Note: We could also consider the pixels in the receiver as squares and compute area intersection with result pixel.
+	Results would be slightly better. But here we are focused on speed. If you need higher quality, please use Lanczos.
+
+	Computationally very cheap.
+	Avoids aliasing while reasonably keeps detail.
+	Gives very good results for strong subsampling (zoom out, scale factors less than 0.4).
+
+	Compute parameters as (scale usually <= 0.25):
+		hw _ 1 / scale / 2.0.
+		hh _ 1 / scale / 2.0.
+	or (resultWidth usually much smaller than original, same for height):
+		hw _ originalWidth / resultWidth / 2.0.
+		hh _ originalHeight / resultHeight / 2.0.
+	"
+	| x y xStart xStop yStart yStop sum xIndex0 yIndex0 count |
+	x _ aPoint x.
+	y _ aPoint y.
+
+	"Validate inside some reasonable bounds. We allow extending up to 0.8 in any direction"
+	xIndex0 _ x floor.
+	"x < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	xIndex0 < -1 ifTrue: [ ^0.0 ].
+	(xIndex0 = -1 and: [x < 0.2]) ifTrue: [ ^0.0 ].
+	"x > (width + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	xIndex0 > width ifTrue: [ ^0.0 ].
+	(xIndex0 = width and: [x > (width + 0.8)]) ifTrue: [ ^0.0 ].
+
+	yIndex0 _ y floor.
+	"y < 0.2 ifTrue: [ ^0.0 ]."			"Do it with integer arithmetic if at all possible"
+	yIndex0 < -1 ifTrue: [ ^0.0 ].
+	(yIndex0 = -1 and: [y < 0.2]) ifTrue: [ ^0.0 ].
+	"y > (height + 0.8) ifTrue: [ ^0.0 ]."	"Do it with integer arithmetic if at all possible"
+	yIndex0 > height ifTrue: [ ^0.0 ].
+	(yIndex0 = height and: [y > (height + 0.8)]) ifTrue: [ ^0.0 ].
+
+	xStart _ (x - hw) rounded max: 0.
+	xStop _ (x + hw) rounded min: width-1.
+	yStart _ (y - hh) rounded max: 0.
+	yStop _ (y + hh) rounded min: height-1.
+
+	"Apply filter."
+	sum _ Color r: 0.0 g: 0.0 b: 0.0.
+	count _ (xStop-xStart+1) * (yStop-yStart+1).
+	yStart to: yStop do: [ :yyy |
+		xStart to: xStop do: [ :xxx |
+			sum _ (self colorAt: xxx@yyy) / count + sum ]].
+	sum = 0.0 ifTrue: [ ^0.0 ].
+	^sum! !
 
 !Form class methodsFor: '*ImageProcessing-examples' stamp: 'jmv 6/2/2016 20:13'!
 lena

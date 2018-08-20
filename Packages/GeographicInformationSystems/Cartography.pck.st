@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3401] on 9 August 2018 at 6:16:32 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 5:32:32 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Cartography' 1 12!
-!requires: 'Math 3D' 1 4 nil!
+!provides: 'Cartography' 1 16!
 !requires: 'Graphics-Files-Additional' 1 4 nil!
+!requires: 'Math 3D' 1 4 nil!
 SystemOrganization addCategory: #Cartography!
 
 
@@ -36,14 +36,14 @@ CartographicProjection subclass: #MercatorProjection
 MercatorProjection class
 	instanceVariableNames: ''!
 
-!classDefinition: #PseudoMercatorProjection category: #Cartography!
-CartographicProjection subclass: #PseudoMercatorProjection
+!classDefinition: #WebmercatorProjection category: #Cartography!
+CartographicProjection subclass: #WebmercatorProjection
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Cartography'!
-!classDefinition: 'PseudoMercatorProjection class' category: #Cartography!
-PseudoMercatorProjection class
+!classDefinition: 'WebmercatorProjection class' category: #Cartography!
+WebmercatorProjection class
 	instanceVariableNames: ''!
 
 
@@ -75,25 +75,25 @@ Mercator projection is:
 
 Mercator projection is centered at the Equator and meridian 0 (Greenwich).!
 
-!PseudoMercatorProjection commentStamp: '<historical>' prior: 0!
+!WebmercatorProjection commentStamp: 'jmv 8/13/2018 14:02:18' prior: 0!
 As in http://en.wikipedia.org/wiki/Web_Mercator
 Used by http://www.openstreetmap.org , http://maps.google.com , etc
 Uses elliptic (geodetic) latitude and longitude for, but projects them using a spherical model of Earth.
-In different words, we take geodetic (elliptical Earth) (latitude, longitude), map them to geographic (latitude, longitude) on a sphere, and do a Mercator projection of the sphere. As there is a slight distorion going from the ellipsoid to the sphere, the PseudoMercatorProjection is not conformal, but almost.
+In different words, we take geodetic (elliptical Earth) (latitude, longitude), and do a spherical Mercator projection as if our latitude and longitude were spherical (defined on the sphere). As there is a slight distorion going from the ellipsoid to the sphere, the PseudoMercatorProjection is not conformal, but almost.
 
-| tm ww hh e pseudoMercator proj ll xInTM yInTM |
-tm _ Form fromFileNamed: './Datasets/CleanTOPO2/NaturalEarthPlusBathymetry/NE_Drape-3000x1500.tif'.
+| tm ww hh e webmercator proj ll xInTM yInTM |
+tm _ Form fromFileNamed: 'payload/datasets/NaturalEarthPlusBathymetry/NE_Drape-3000x1500.tif'.
 ww _ tm width.
 hh _ tm height.
 e _ 900.
-pseudoMercator _ Form extent: e@e depth: 32.
-proj _ PseudoMercatorProjection new.
-0 to: pseudoMercator height by: 1 do: [ :y | 0 to: pseudoMercator width by: 1 do: [ :x |
-		ll _ proj xyToLL: x@y / e.
+webmercator _ Form extent: e@e depth: 32.
+proj _ WebmercatorProjection new.
+0 to: webmercator height by: 1 do: [ :y | 0 to: webmercator width by: 1 do: [ :x |
+		ll _ proj latLongFromMapPosition: x@y / e.
 		xInTM _ ll lambda + 180 / 360 * ww.
 		yInTM _ 90 - ll phi / 180 * hh.
-		pseudoMercator colorAt: x@y+1 put: (tm colorAt:xInTM@yInTM+1)]].
-pseudoMercator display. Display forceToScreen!
+		webmercator colorAt: x@y+1 put: (tm colorAt:xInTM@yInTM+1)]].
+webmercator display. Display forceToScreen!
 
 !GPSPosition methodsFor: 'accessing' stamp: 'jmv 3/3/2015 11:21'!
 altitude
@@ -368,40 +368,88 @@ wgsFlattening
 	b _ self wgs84SemiMinorAxis.
 	^a-b / a! !
 
-!PseudoMercatorProjection methodsFor: 'conversion' stamp: 'jmv 3/17/2015 14:25'!
-llToXY: aGPSPosition
+!WebmercatorProjection methodsFor: 'conversion' stamp: 'jmv 8/13/2018 14:01:54'!
+latLongFromMapPosition: aPoint
 	"
 	x and y go from 0.0 to 1.0
-	PseudoMercatorProjection new llToXY: (GPSPosition latitude: -34.6 longitude: -58.4 altitude: 25)
-	PseudoMercatorProjection new llToXY: (GPSPosition latitude: 0.0 longitude: 0.0 altitude: 0.0)
-	PseudoMercatorProjection new llToXY: (GPSPosition latitude: 0.0 longitude: -180.0 altitude: 0.0)
-	PseudoMercatorProjection new llToXY: (GPSPosition latitude: 0.0 longitude: 180.0 altitude: 0.0)
-	PseudoMercatorProjection new llToXY: (GPSPosition latitude: 85.051129 longitude: 0.0 altitude: 0.0)
-	PseudoMercatorProjection new llToXY: (GPSPosition latitude: -85.051129 longitude: 0.0 altitude: 0.0)
-	PseudoMercatorProjection new llToXY: (GPSPosition latitude: 66.51326 longitude: 0.0 altitude: 0.0)
-	PseudoMercatorProjection new llToXY: (GPSPosition latitude: -66.51326 longitude: 0.0 altitude: 0.0)
-	" 
-	| x y pi |
-	pi _ Float pi.
-	x _ 0.5 / pi * (aGPSPosition lambda degreesToRadians + pi).
-	y _ 0.5 / pi * ( pi - (pi / 4 + (aGPSPosition phi degreesToRadians/2.0)) tan ln ).
-	^ x@y! !
-
-!PseudoMercatorProjection methodsFor: 'conversion' stamp: 'jmv 3/17/2015 14:26'!
-xyToLL: aPoint
-	"
-	x and y go from 0.0 to 1.0
-	PseudoMercatorProjection new xyToLL:(PseudoMercatorProjection new llToXY: (GPSPosition latitude: -34.6 longitude: -58.4 altitude: 25))
-	PseudoMercatorProjection new xyToLL:(PseudoMercatorProjection new llToXY: (GPSPosition latitude: 0.0 longitude: 0.0 altitude: 0.0))
-	PseudoMercatorProjection new xyToLL:(PseudoMercatorProjection new llToXY: (GPSPosition latitude: 0.0 longitude: -180.0 altitude: 0.0))
-	PseudoMercatorProjection new xyToLL:(PseudoMercatorProjection new llToXY: (GPSPosition latitude: 0.0 longitude: 180.0 altitude: 0.0))
-	PseudoMercatorProjection new xyToLL:(PseudoMercatorProjection new llToXY: (GPSPosition latitude: 85.051129 longitude: 0.0 altitude: 0.0))
-	PseudoMercatorProjection new xyToLL:(PseudoMercatorProjection new llToXY: (GPSPosition latitude: -85.051129 longitude: 0.0 altitude: 0.0))
-	PseudoMercatorProjection new xyToLL:(PseudoMercatorProjection new llToXY: (GPSPosition latitude: 66.51326 longitude: 0.0 altitude: 0.0))
-	PseudoMercatorProjection new xyToLL:(PseudoMercatorProjection new llToXY: (GPSPosition latitude: -66.51326 longitude: 0.0 altitude: 0.0))
+	WebmercatorProjection new latLongFromMapPosition:(WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: -34.6 longitude: -58.4 altitude: 25))
+	WebmercatorProjection new latLongFromMapPosition:(WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 0.0 longitude: 0.0 altitude: 0.0))
+	WebmercatorProjection new latLongFromMapPosition:(WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 0.0 longitude: -180.0 altitude: 0.0))
+	WebmercatorProjection new latLongFromMapPosition:(WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 0.0 longitude: 180.0 altitude: 0.0))
+	WebmercatorProjection new latLongFromMapPosition:(WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 85.051129 longitude: 0.0 altitude: 0.0))
+	WebmercatorProjection new latLongFromMapPosition:(WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: -85.051129 longitude: 0.0 altitude: 0.0))
+	WebmercatorProjection new latLongFromMapPosition:(WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 66.51326 longitude: 0.0 altitude: 0.0))
+	WebmercatorProjection new latLongFromMapPosition:(WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: -66.51326 longitude: 0.0 altitude: 0.0))
 	"
 	
 	| lambda phi |
 	lambda _ aPoint x  * 2 * Float pi - Float pi.
 	phi _ ((Float e raisedTo: (Float pi - (2 * Float pi * aPoint y))) arcTan - (Float pi / 4)) * 2.
 	^ GPSPosition latitude: phi radiansToDegrees longitude: lambda radiansToDegrees altitude: 0.! !
+
+!WebmercatorProjection methodsFor: 'conversion' stamp: 'jmv 8/13/2018 14:08:25'!
+mapPositionFromLat: latitude long: longitude
+	"
+	x and y go from 0.0 to 1.0
+	" 
+	| x y pi |
+	pi _ Float pi.
+	x _ 0.5 / pi * (longitude degreesToRadians + pi).
+	y _ 0.5 / pi * ( pi - (pi / 4 + (latitude degreesToRadians/2.0)) tan ln ).
+	^ x@y! !
+
+!WebmercatorProjection methodsFor: 'conversion' stamp: 'jmv 8/13/2018 14:08:47'!
+mapPositionFromLatLong: aGPSPosition
+	"
+	x and y go from 0.0 to 1.0
+	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: -34.6 longitude: -58.4 altitude: 25)
+	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 0.0 longitude: 0.0 altitude: 0.0)
+	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 0.0 longitude: -180.0 altitude: 0.0)
+	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 0.0 longitude: 180.0 altitude: 0.0)
+	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 85.051129 longitude: 0.0 altitude: 0.0)
+	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: -85.051129 longitude: 0.0 altitude: 0.0)
+	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: 66.51326 longitude: 0.0 altitude: 0.0)
+	WebmercatorProjection new mapPositionFromLatLong: (GPSPosition latitude: -66.51326 longitude: 0.0 altitude: 0.0)
+	" 
+	^ self mapPositionFromLat: aGPSPosition latitude long: aGPSPosition longitude! !
+
+!WebmercatorProjection methodsFor: 'services' stamp: 'jmv 8/17/2018 16:21:15'!
+gsdAtLatitude: latitudeDegrees zoomLevel: aZoomLevel
+	"Answer an approximate GSD in meters at latitudeDegrees for aZoomLevel.
+	It is approximate because it is not really constant!!
+	WebmercatorProjection  new gsdAtLatitude: 33.144 zoomLevel: 17
+	"
+	| gsdAtEquator gsdAtLatitude |
+	gsdAtEquator _ GPSPosition wgs84SemiMajorAxis * Float twoPi / 256 / (2 raisedToInteger: aZoomLevel).
+	gsdAtLatitude _ (gsdAtEquator * latitudeDegrees degreesToRadians cos).
+	^ gsdAtLatitude
+
+"Play with this:"
+"zoomLevel _ 19.
+gsdAtEquator _ GPSPosition wgs84SemiMajorAxis * Float twoPi / 256 / (2 raisedToInteger: zoomLevel).
+latitude _ 43.
+
+base _ GPSPosition latitude: latitude longitude: 0 altitude: 0.
+inMap _ (WebmercatorProjection new mapPositionFromLatLong: base) * (2 raisedToInteger: zoomLevel) * 256.
+oneToTheEast _ inMap + (1@0).
+oneToTheWest _ inMap - (1@0).
+oneToTheSouth _ inMap + (0@1).
+oneToTheNorth _ inMap - (0@1).
+
+'-----' print.
+gsdAtLat _ (gsdAtEquator * latitude degreesToRadians cos) print.
+((WebmercatorProjection new latLongFromMapPosition: oneToTheEast / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
+((WebmercatorProjection new latLongFromMapPosition: oneToTheWest / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
+((WebmercatorProjection new latLongFromMapPosition: oneToTheSouth / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
+((WebmercatorProjection new latLongFromMapPosition: oneToTheNorth / (2 raisedToInteger: zoomLevel) / 256) asECEF - base asECEF) length print.
+nil.
+"! !
+
+!WebmercatorProjection methodsFor: 'services' stamp: 'jmv 8/17/2018 16:28:15'!
+minZoomLevelForGsd: desiredGSDmeters latitude: latitudeDegrees
+	"Answer the minimum zoom level to be used to use tiles of desiredGSDmeters or better, at specified latitude."
+
+	| tileGSDmetersZoomZero zoom |
+	tileGSDmetersZoomZero _ self gsdAtLatitude: latitudeDegrees zoomLevel: 0.
+	zoom _ (tileGSDmetersZoomZero / desiredGSDmeters) log2 ceiling.
+	^ zoom! !
