@@ -49,8 +49,16 @@ Log out and log back in, or reboot the machine.
 ### Get and set up an appropriate VM ###
 ```
 cd MyProject
-curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201708312323.tar.gz
 curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_macos64x64_201807260206.dmg
+Open Finder on your folder
+Double click on the dmg file
+Drag Squeak.app to your folder
+```
+
+### For older versions of MacOS X: Get and set up an appropriate VM ###
+```
+cd MyProject
+curl -L -o CogSpur.tgz https://bintray.com/opensmalltalk/vm/download_file?file_path=cog_macos64x64_squeak.cog.spur_201708312323.tar.gz
 tar -zxvf CogSpur.tgz
 ```
 
