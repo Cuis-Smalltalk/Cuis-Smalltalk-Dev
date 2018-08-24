@@ -70,12 +70,11 @@ cd MyProject
 rm -r cogspur
 curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win64x64_201807260206.zip
 unzip cogspur.zip -d cogspur
-mv ./cogspur/build/vm/*.* ./cogspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3418.image
+cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3418.image
 ```
 
 ## For Raspberry Pi Raspian ##
