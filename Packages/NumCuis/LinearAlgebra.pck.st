@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3399] on 9 August 2018 at 2:33:06 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3429] on 24 August 2018 at 10:20:56 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 49!
+!provides: 'LinearAlgebra' 1 50!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #LinearAlgebra!
 
@@ -1283,18 +1283,16 @@ norm2Squared
 			result _ result + (self i: 1 j: i) squared ] ].
 	^result! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/14/2017 14:28:54'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 8/24/2018 10:20:36'!
 copy: aRectangle
 	"
-	|m|
-	m _ FloatMatrix m: 7 n: 7.
-	m fillWithGaussianKernelSigmaY: 1 sigmaX: 1.
-	m copy: (1@1 extent: 4@5).
+	Answer follows usual Rectangle convention: corner is one position rightDown after last point included.
+	It is advisable to create it using the #extent: message and _not_ the #corner: message for readibility.
+	Extent is honored, but it is really arguable whether corner is honored or not...
 	"
 	"
-	|m|
-	m _ Float64Matrix m: 7 n: 7.
-	m fillWithGaussianKernelSigmaY: 1 sigmaX: 1.
+	| m |
+	m _ FloatMatrix identity: 7.
 	m copy: (1@1 extent: 4@5).
 	"
 	| answer |
@@ -2087,6 +2085,35 @@ j: j put: column
 	"
 
 	self copyFromTile: column position: j@1! !
+
+!FloatMatrix methodsFor: 'accessing' stamp: 'jmv 8/24/2018 09:54:48'!
+onionLayer: i
+	"Answer a FloatArray with all elements at onion layer i
+	onionLayer: 1 includes all samples at the border of the matrix, i.e. those at first or last row or column.
+	onionLayer: 2 is the onlionLayer 1 of the matrix that results from removing onion layer 1 of original matrix.
+	And so on."
+	"
+	FloatMatrix identity: 11 :: onionLayer: 1
+	FloatImage lena onionLayer: 1
+	{FloatImage lena i: 1. FloatImage lena i: 256. FloatImage lena j: 1. FloatImage lena j: 256}
+	FloatImage lena onionLayer: 2
+	{FloatImage lena i: 2. FloatImage lena i: 255. FloatImage lena j: 2. FloatImage lena j: 255}
+	"
+
+	| rowWidth columnHeight column answer |
+	rowWidth _ width - (i-1*2).
+	columnHeight _ height - (i*2).
+	answer _ FloatArray new: rowWidth+columnHeight*2.
+	answer replaceFrom: 1 to: rowWidth with: elements startingAt: i-1 * width + i.
+	answer replaceFrom: rowWidth+1 to: rowWidth*2 with: elements startingAt: height-i * width + i.
+	
+	column _ self appropriateResultClass newColumnVectorSize: columnHeight.
+	self copyToTile: column position: i@(i+1).
+	answer replaceFrom: rowWidth*2+1 to: rowWidth*2+columnHeight with: column elements startingAt: 1.
+	self copyToTile: column position: width+1-i@(i+1).
+	answer replaceFrom: rowWidth*2+columnHeight+1 to: rowWidth+columnHeight*2 with: column elements startingAt: 1.
+	
+	^ answer! !
 
 !FloatMatrix methodsFor: 'initialization' stamp: 'jmv 6/18/2001 19:10'!
 initializeElements

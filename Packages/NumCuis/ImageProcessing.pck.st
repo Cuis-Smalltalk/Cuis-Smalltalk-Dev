@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 4:04:26 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3429] on 24 August 2018 at 10:18:35 am'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 6!
+!provides: 'ImageProcessing' 1 7!
 !requires: 'Morphic3' 1 50 nil!
 !requires: 'Statistics' 1 nil nil!
-!requires: 'NumericalMethods' 1 8 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'SignalProcessing' 1 100 nil!
+!requires: 'NumericalMethods' 1 8 nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -4112,15 +4112,15 @@ appropriateResultClass
 
 	^FloatImage! !
 
-!ConvolutionKernel methodsFor: 'processing' stamp: 'jmv 7/2/2018 14:48:34'!
+!ConvolutionKernel methodsFor: 'processing' stamp: 'jmv 8/24/2018 10:00:02'!
 otf: extent
 	"Answer the OTF of the receiver (understood as a PSF).
 	https://en.wikipedia.org/wiki/Optical_transfer_function
 	Result is a ComplexImage of required extent, suitable for processing in Fourier space.
 	Frequency zero is at top left.
 	
-	(ConvolutionKernel gaussian: 1 extent: 9) otf: 20@20
-	(ConvolutionKernel gradient: 9@9) otf: 20@20
+	(ConvolutionKernel gaussian: 1 extent: 9) otf: 32@32
+	(ConvolutionKernel fromMatrix: (FloatImage gradient: 9@9)) otf: 32@32
 	"
 
 	| otfRealPart otf |
@@ -4851,12 +4851,30 @@ phase
 
 	^self collectReal: [ :c | c phase ]! !
 
-!ComplexImage methodsFor: 'processing' stamp: 'jmv 7/5/2018 09:33:44'!
+!ComplexImage methodsFor: 'processing' stamp: 'jmv 8/24/2018 10:16:40'!
 psf
-	| psf |
+	"We are an OTF, i.e. the complex Fourier transform of some PSF. See #otf:
+	We want to answer the smallest possible ConvolutionKernel that represents us.
+	This is not trivial in the presence of noise.
+	We keep removing 'onion layers' to the computed psf until the coefficients we are about to discard become relevant."
+	"
+	| originalPSF otf |
+	originalPSF := ConvolutionKernel gaussian: 1 extent: 9.
+	otf := originalPSF otf: 256@256.
+	otf realPart addNormalNoise: 0.1.
+	otf imaginaryPart addNormalNoise: 0.1.
+	{originalPSF. otf psf}
+	"
+	| psf i onionLayers meanAndStandardDeviation |
 	psf _ self copy fftTransform: false :: realPart :: moveOriginToCenter: true.
 	psf _ psf copy: (Rectangle origin: 2@2 extent: psf extent-1).
-	^ ConvolutionKernel fromMatrix: (psf trimCentered: 1.0e-3)! !
+	onionLayers _ (psf extent x min: psf extent y) // 2.
+	i _ 1.
+	[i < onionLayers and: [
+		meanAndStandardDeviation _ (psf onionLayer: i) meanAndStandardDeviation.
+		meanAndStandardDeviation first < (meanAndStandardDeviation second*0.75) ]] whileTrue: [
+			i _ i + 1].
+	^ ConvolutionKernel fromMatrix: (psf copy: (i@i extent: psf extent - (i-1*2)))! !
 
 !ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 16:49:29'!
 asHeatmap: aBlock maxMagnitude: maxMagnitude

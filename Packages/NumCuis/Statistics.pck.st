@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3332] on 25 May 2018 at 11:25:22 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3429] on 24 August 2018 at 9:51:16 am'!
 'Description Please enter a description for this package'!
-!provides: 'Statistics' 1 10!
+!provides: 'Statistics' 1 11!
 !requires: 'Pen' 1 0 nil!
 SystemOrganization addCategory: #Statistics!
 
@@ -527,6 +527,33 @@ binCount: regularBinCount minValue: min maxValue: max extraBinsForClampedValues:
 		highBinCenter: highBinCenter
 		extraBinsForClampedValues: aBoolean! !
 
+!Collection methodsFor: '*Statistics' stamp: 'jmv 8/24/2018 09:49:05'!
+meanAndStandardDeviation
+	"
+	See
+		http://en.wikipedia.org/wiki/Variance
+		http://www.mathsisfun.com/data/standard-deviation.html
+	{600. 470. 170. 430. 300} meanAndStandardDeviation
+	"
+
+	| meanAndVariance |
+	meanAndVariance _ self meanAndVariance.
+	^{meanAndVariance first.  meanAndVariance second sqrt}! !
+
+!Collection methodsFor: '*Statistics' stamp: 'jmv 8/24/2018 09:48:43'!
+meanAndVariance
+	"
+	See
+		http://en.wikipedia.org/wiki/Variance
+		http://www.mathsisfun.com/data/standard-deviation.html
+	{600. 470. 170. 430. 300} meanAndVariance
+	"
+
+	| sum mean |
+	mean _ self mean.
+	sum _ self collect: [ :each | (each - mean) squared ] andFold: [ :a :b | a + b ].
+	^{mean.  sum / self size}! !
+
 !Collection methodsFor: '*Statistics' stamp: 'jmv 3/20/2018 11:28:18'!
 median
 	"See comment in SortedCollection.
@@ -589,7 +616,7 @@ sampleVariance
 	sum _ self collect: [ :each | (each - mean) squared ] andFold: [ :a :b | a + b ].
 	^sum / (self size-1)! !
 
-!Collection methodsFor: '*Statistics' stamp: 'jmv 7/19/2016 11:16:28'!
+!Collection methodsFor: '*Statistics' stamp: 'jmv 8/24/2018 09:47:54'!
 standardDeviation
 	"
 	See
@@ -598,9 +625,9 @@ standardDeviation
 	{600. 470. 170. 430. 300} standardDeviation
 	"
 
-	^self variance sqrt! !
+	^ self meanAndVariance second sqrt! !
 
-!Collection methodsFor: '*Statistics' stamp: 'jmv 7/19/2016 11:18:28'!
+!Collection methodsFor: '*Statistics' stamp: 'jmv 8/24/2018 09:47:37'!
 variance
 	"
 	See
@@ -609,10 +636,7 @@ variance
 	{600. 470. 170. 430. 300} variance
 	"
 
-	| sum mean |
-	mean _ self mean.
-	sum _ self collect: [ :each | (each - mean) squared ] andFold: [ :a :b | a + b ].
-	^sum / self size! !
+	^ self meanAndVariance second! !
 
 !SortedCollection methodsFor: '*Statistics' stamp: 'jmv 3/20/2018 11:28:02'!
 median
