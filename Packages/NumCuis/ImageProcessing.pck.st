@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3429] on 24 August 2018 at 10:18:35 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 25 August 2018 at 11:13:50 am'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 7!
-!requires: 'Morphic3' 1 50 nil!
+!provides: 'ImageProcessing' 1 8!
 !requires: 'Statistics' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic3' 1 50 nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'SignalProcessing' 1 100 nil!
 !requires: 'NumericalMethods' 1 8 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -1667,7 +1667,7 @@ convolutionLinearWithSmallKernel: kernel
 			answer x: x y: y put: v ]].
 	^answer! !
 
-!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:29'!
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 8/23/2018 09:02:10'!
 convolutionWith: psf
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- psf is a ConvolutionKernel
@@ -1676,19 +1676,21 @@ convolutionWith: psf
 	- Implemented with tiles. Tile border effects are taken care of.
 
 	FloatImage lena convolutionWith: (ConvolutionKernel gaussian: 3@1 extent: 11) :: displayAt: 0@0 zoom: 2
+	FloatImage lena displayAt: 0@0 zoom: 2
 	"
 
-	^ self convolutionWith: psf guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
+	^ self convolutionWith: psf guardZoneInto: nil! !
 
-!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/4/2018 16:19:50'!
-convolutionWith: psf guardZoneInto: aBlock
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 8/23/2018 09:08:31'!
+convolutionWith: psf guardZoneInto: aBlockOrNil
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- psf is a ConvolutionKernel
 	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
 	- This method uses a a Circular Convolution, but the edges are trimmed to remove border effects.
 	- Implemented with tiles. Tile border effects are taken care of.
+	- Extent of used Guard Zone is passed to optional parameter aBlockOrNil
 
-	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image.
+	Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image.
 
 	FloatImage lena convolutionWith: (ConvolutionKernel gaussian: 3@1 extent: 11) guardZoneInto: [ :w :h |] :: displayAt: 0@0 zoom: 2
 	"
@@ -1705,7 +1707,7 @@ convolutionWith: psf guardZoneInto: aBlock
 	otf _ psf otf: tileSize.
 
 	"Do convolution in each tile and get results."
-	aBlock value: guardZoneHeight value: guardZoneWidth.
+	aBlockOrNil ifNotNil: [ aBlockOrNil value: guardZoneHeight value: guardZoneWidth ].
 	tile _ ComplexImage height: tileSize width: tileSize.
 	^ self
 		over: tile realPart
@@ -1745,8 +1747,8 @@ deconvolved displayAt: 10@10.
 
 	^ self deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor guardZoneInto: [ :guardZoneHeight : guardZoneWidth | ]! !
 
-!FloatImage methodsFor: 'convolution' stamp: 'jmv 7/8/2018 22:00:04'!
-deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor guardZoneInto: aBlock
+!FloatImage methodsFor: 'convolution' stamp: 'jmv 8/23/2018 09:08:24'!
+deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor guardZoneInto: aBlockOrNil
 	"Compute convolution with aMatrix, usig 2D FFT. Answer a new instance.
 	- psf is a ConvolutionKernel
 	- The convolution is computed in the complex DFT space. Input is assumed to be real, and answer is real too.
@@ -1754,7 +1756,7 @@ deconvolutionWith: psf maxNoiseAmplification: maxNoiseFactor guardZoneInto: aBlo
 	- Implemented with tiles. Tile border effects are taken care of.
 	- maxNoiseFactor is required in many case to avoid division by zero. Typical values are between 4 and 8. Use values larger than 20 if you know what you are doing.
 
-	Result image is smaller. Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image.
+	Guard zones are used to avoid border effects in each tile, but also to avoid them in the result image.
 
 Play with this in a Workspace
 i _ FloatImage lena.
@@ -1816,7 +1818,7 @@ deconvolved display.
 	"Number of pixels we are willing to lose on each side, to avoid border effects."
 	guardZoneWidth _ trimmedInversePSF width / 2 min: tileSize//4.
 	guardZoneHeight _ trimmedInversePSF height / 2 min: tileSize//4.
-	aBlock value: guardZoneHeight value: guardZoneWidth.
+	aBlockOrNil ifNotNil: [ aBlockOrNil value: guardZoneHeight value: guardZoneWidth ].
 
 	"Do convolution in each tile and get results."
 	tile _ ComplexImage height: tileSize width: tileSize.
@@ -2367,97 +2369,48 @@ fillElementsWith: aFloatArray displacedBy: anInteger
 			elements replaceFrom: 1+anInteger to: elements size with: aFloatArray startingAt: 1.
 			elements replaceFrom: 1 to: 1 + anInteger - 1 with: aFloatArray startingAt: elements size - anInteger+1 ]! !
 
-!FloatImage methodsFor: 'private' stamp: 'jmv 5/21/2015 11:02'!
-guardZone: guardZone topLeftNullFill: leadingNulls bottomRightNullFill: trailingNulls
-	"Guard Zones
-	(((FloatImage fromArrayOfArrays: #(
-		(9 9 9 9 9 9 9 9)
-		(9 9 9 9 9 9 9 9)
-		(9 9 9 9 9 9 9 9)
-		(9 9 9 -9 -9 -9 9 9)
-		(9 9 9 -9 -9 -9 -9 9)
-		(9 9 9 -9 -9 -9 9 9)
-		(9 9 9 -9 -9 -9 9 9)
-		(9 9 9 9 9 9 9 9)
-		))
-			guardZone: 3@2 topLeftNullFill: 1@0 bottomRightNullFill: 0@1;
-			print;
-			asForm) magnifyTo: 80@80) display
+!FloatImage methodsFor: 'operations' stamp: 'jmv 8/23/2018 16:12:02'!
+applyWindowTransitionWidth: transitionWidth
+	"Apply a rectangular window function that:
+		- makes a border of nullAreaWidth size around edges be nullValue
+		- makes an inner border of transitionWidth size a smooth transition area
+		- leaves an inner rectangle unmodified
+	Useful for avoiding edge effects in FFT, bounding PSFs, etc."
 	"
-	| outerRect innerRect nullValue |
-	self assert: width > (guardZone x * 2 + leadingNulls x + trailingNulls x).
-	self assert: height > (guardZone y * 2 + leadingNulls y + trailingNulls y).
-	nullValue _ elements sum / elements size.
-	outerRect _ 1@1 extent: width@height.
-	innerRect _ outerRect insetBy: (leadingNulls + guardZone abs ceiling corner: trailingNulls + guardZone abs ceiling).
-	outerRect areasOutside: innerRect do: [ :rect |
-		rect top to: rect bottom-1 do: [ :y |
-			rect left to: rect right-1 do: [ :x |
-				self guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValue ]]]! !
+	FloatImage lena applyWindowTransitionWidth: 10 :: displayAt: 10@10 zoom: 12
+	"
 
-!FloatImage methodsFor: 'private' stamp: 'jmv 1/26/2015 15:33'!
-guardZoneX: x y: y guardZone: guardZone innerRect: innerRect nullValue: nullValue
-	"nullValue is the value to be used outside the guardZone, and the value the guardZone gradient goes to.
-	It used to be zero, but it is better to be a parameter"
-	| f xb yb keepLeft keepRight keepTop keepBottom |
-	keepLeft _ innerRect left.
-	keepTop _ innerRect top.
-	keepRight _ innerRect right - 1.
-	keepBottom _ innerRect bottom -1.
-	guardZone x = 0 ifFalse: [
-		x < keepLeft
-			ifTrue: [
-				xb _ keepLeft.
-				yb _ xb-x / guardZone x * guardZone y + y.
-				(yb >= keepTop and: [ yb <= keepBottom ]) ifTrue: [
-					f _ x-xb / guardZone x abs+1 max: 0.0.
-					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]].
-		x > keepRight
-			ifTrue: [
-				xb _ keepRight.
-				yb _ xb-x / guardZone x * guardZone y + y.
-				(yb >= keepTop and: [ yb <= keepBottom ]) ifTrue: [
-					f _ xb-x / guardZone x abs+1 max: 0.0.
-					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
-	guardZone y = 0 ifFalse: [
-		y < keepTop
-			ifTrue: [
-				yb _ keepTop.
-				xb _ yb-y / guardZone y * guardZone x + x.
-				(xb >= keepLeft and: [ xb <= keepRight ]) ifTrue: [
-					f _ y - yb / guardZone y abs+1 max: 0.0.
-					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]].
-		y > keepBottom
-			ifTrue: [
-				yb _ keepBottom.
-				xb _ yb-y / guardZone y * guardZone x + x.
-				(xb >= keepLeft and: [ xb <= keepRight ]) ifTrue: [
-					f _ yb-y / guardZone y abs+1 max: 0.0.
-					^self x: x y: y put: (self bilinearInterpolatedValueAtX: xb y: yb) * f + (1-f * nullValue)]]].
-	self x: x y: y put: nullValue! !
+	self applyWindowTransitionWidth: transitionWidth nullWidth: 0 nullValue: self mean! !
+
+!FloatImage methodsFor: 'operations' stamp: 'jmv 8/23/2018 16:23:46'!
+applyWindowTransitionWidth: transitionWidth nullWidth: nullAreaWidth nullValue: nullValue
+	"Apply a rectangular window function that:
+		- makes a border of nullAreaWidth size around edges be nullValue
+		- makes an inner border of transitionWidth size a smooth transition area
+		- leaves an inner rectangle unmodified
+	Useful for avoiding edge effects in FFT, bounding PSFs, etc."
+	"
+	FloatImage lena applyWindowTransitionWidth: 1 nullWidth: 3 nullValue: 0.5 :: displayAt: 10@10 zoom: 12
+	FloatImage lena applyWindowTransitionWidth: 10 nullWidth: 0 nullValue: 0.0 :: displayAt: 10@10 zoom: 12
+	FloatImage lena applyWindowTransitionWidth: 20 nullWidth: 30 nullValue: 0.8 :: displayAt: 10@10 zoom: 3
+	"
+"Ojo. Falta la circularmente simetrica, y tambien que pueda estar centrada en el origen
+Ponerlo tambien en ComplexImage!!"
+	| halfInnerWidth hSmoothStep halfInnerHeight smoothStep vSmoothStep |
+	halfInnerWidth _ width / 2.0 - (nullAreaWidth + transitionWidth).
+	halfInnerHeight _ height / 2.0 - (nullAreaWidth + transitionWidth).
+	self replaceValues: [ :i :j :v |
+		hSmoothStep _ ((j - (width+1 * 0.5)) abs - halfInnerWidth * 2 / transitionWidth - 1) smoothStep.
+		vSmoothStep _ ((i - (height+1 * 0.5)) abs - halfInnerHeight * 2 / transitionWidth - 1) smoothStep.
+		smoothStep _ hSmoothStep * vSmoothStep.
+		(v * smoothStep) + (1-smoothStep * nullValue)
+		]! !
 
 !FloatImage methodsFor: 'operations' stamp: 'jmv 9/1/2014 14:27'!
 fillRect: aRectangle with: aFloat
 	aRectangle top to: aRectangle bottom-1 do: [ :y |
 		aRectangle left to: aRectangle right-1 do: [ :x |
 			self x: x y: y put: aFloat ]]! !
-
-!FloatImage methodsFor: 'operations' stamp: 'jmv 8/5/2014 16:46'!
-guardZone: aPoint
-	"Guard Zones
-	((FloatImage fromArrayOfArrays: #(
-		(9 9 9 9 9 9)
-		(9 9 9 9 9 9)
-		(9 9 9 0 9 9)
-		(9 9 9 0 9 9)
-		(9 9 9 0 9 9)
-		(9 9 9 9 9 9)
-		))
-			guardZone: 1@2;
-			asFloatMatrix)
-			print
-	"
-	self guardZone: aPoint topLeftNullFill: 0@0 bottomRightNullFill: 0@0! !
 
 !FloatImage methodsFor: 'statistics' stamp: 'jmv 8/9/2012 15:42'!
 histogram
@@ -2680,7 +2633,7 @@ openCLNormalizedCoordinatesForOneBased: oneBasedCoordinates
 
 	^ ((oneBasedCoordinates x-0.5)/width) @ ((oneBasedCoordinates y-0.5)/height)! !
 
-!FloatImage methodsFor: 'iterating' stamp: 'jmv 7/4/2018 16:20:48'!
+!FloatImage methodsFor: 'iterating' stamp: 'jmv 8/25/2018 11:08:15'!
 over: tile do: aBlock horizontalGuardZone: guardZoneWidth verticalGuardZone: guardZoneHeight
 	"
 	Split receiver in tiles that are an integer power of 2 in height and width.
@@ -2723,7 +2676,7 @@ over: tile do: aBlock horizontalGuardZone: guardZoneWidth verticalGuardZone: gua
 				position: tilePositionInResult
 				leftGuardZone: guardZoneWidth
 				topGuardZone: guardZoneHeight
-				activewWidth: activeTileWidth
+				activeWidth: activeTileWidth
 				activeHeight: activeTileHeight ]].
 	^ result! !
 
@@ -3294,7 +3247,7 @@ showTranslations
 	'=== Then comes BiCubic and Lanczos. The extra cost of Lanczos doesnt seem worth in this case.' print.
 	'=== Nearest Neighbor and Shifted Linear dont give consistent results across different transformations' print.! !
 
-!FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 7/19/2018 16:34:35'!
+!FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 8/23/2018 16:30:10'!
 showZoomIn
 	"
 	FloatImage showZoomIn
@@ -3346,7 +3299,7 @@ original _ FloatImage lena copy: (70@80 extent: 128@128).
 
 	xx _ xx + e x.
 	xx > (Display width-e x) | true ifTrue: [xx _ original  width. yy _ yy + e y ].
-	transformed _ original copy guardZone: 2@2.
+	transformed _ original copy applyWindowTransitionWidth: 1.
 	Transcript show: 'Oversampled Bilinear, unavailable in OpenCV (ms): '.
 	Smalltalk garbageCollect.
 	[ transformed _ transformed fourierDoubledBilinearTransformedBy: t resultExtent: e ] timeToRun print.

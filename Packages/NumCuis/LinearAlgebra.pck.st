@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3429] on 24 August 2018 at 10:20:56 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 25 August 2018 at 11:14:08 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 50!
+!provides: 'LinearAlgebra' 1 51!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #LinearAlgebra!
 
@@ -1314,8 +1314,8 @@ copyFromTile: aFloatMatrix position: aPoint
 		destOrigin: aPoint-1 sourceOrigin: 0@0
 		using: BitBlt new! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/15/2017 11:20:37'!
-copyFromTile: aFloatMatrix position: aPoint leftGuardZone: borderWidth topGuardZone: borderHeight activewWidth: activeWidth activeHeight: activeHeight
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 8/25/2018 11:08:08'!
+copyFromTile: aFloatMatrix position: aPoint leftGuardZone: borderWidth topGuardZone: borderHeight activeWidth: activeWidth activeHeight: activeHeight
 	"
 	aPoint is the position in self where the contents of aFloatMatrix are to be stored
 	As in all Matrix protocol, aPoint is 1-based
