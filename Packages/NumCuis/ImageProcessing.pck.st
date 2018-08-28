@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 25 August 2018 at 11:13:50 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 28 August 2018 at 5:06:08 pm'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 8!
+!provides: 'ImageProcessing' 1 9!
+!requires: 'ProbabilityDistributions' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
 !requires: 'Morphic3' 1 50 nil!
-!requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'SignalProcessing' 1 100 nil!
 !requires: 'NumericalMethods' 1 8 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'SignalProcessing' 1 100 nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -2939,13 +2939,13 @@ lineHistogramsHeatmap
 	].
 	^ plot! !
 
-!FloatImage methodsFor: 'Fourier' stamp: 'jmv 7/19/2018 16:42:23'!
+!FloatImage methodsFor: 'Fourier' stamp: 'jmv 8/28/2018 15:51:39'!
 fftTransform: forward
 	"Answer a ComplexMatrix that is the Fourier transform of self.
 	Make a copy, do not modify receiver"
 	| complex |
 	complex _ ComplexImage realPart: self copy.
-	complex fftTransform: true.
+	complex fftTransform: forward.
 	^complex! !
 
 !FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 7/19/2018 16:34:01'!
