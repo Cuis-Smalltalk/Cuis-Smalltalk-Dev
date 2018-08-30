@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 28 August 2018 at 5:06:08 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 30 August 2018 at 9:03:05 am'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 9!
+!provides: 'ImageProcessing' 1 10!
 !requires: 'ProbabilityDistributions' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
-!requires: 'Morphic3' 1 50 nil!
-!requires: 'NumericalMethods' 1 8 nil!
 !requires: 'SignalProcessing' 1 100 nil!
+!requires: 'Morphic3' 1 50 nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'NumericalMethods' 1 8 nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -2948,6 +2948,69 @@ fftTransform: forward
 	complex fftTransform: forward.
 	^complex! !
 
+!FloatImage methodsFor: 'mirroring' stamp: 'jmv 8/30/2018 08:58:20'!
+mirrorHorizontally
+	"
+	See also #mirrorHorizontallyButFirst
+
+	FloatImage lena display
+	FloatImage lena mirrorHorizontally display
+	FloatImage lena mirrorHorizontally mirrorVertically display
+	"
+	| c1 c2 |
+	1 to: width//2 do: [ :j |
+		c1 _ self j: j.
+		c2 _ self j: width-j+1.
+		self j: j put: c2.
+		self j: width-j+1 put: c1 ]! !
+
+!FloatImage methodsFor: 'mirroring' stamp: 'jmv 8/30/2018 08:58:25'!
+mirrorHorizontallyButFirst
+	"
+	Appropriate for FFT data, where we might want to keep frequencies zero and Nyquist unchanged.
+	See also #mirrorHorizontally
+
+	FloatImage lena displayAt: 0@0 zoom: 3
+	FloatImage lena mirrorHorizontallyButFirst displayAt: 0@0 zoom: 3
+	FloatImage lena mirrorHorizontallyButFirst mirrorVerticallyButFirst displayAt: 0@0 zoom: 3
+	"
+	| c1 c2 |
+	2 to: width//2 do: [ :j |
+		c1 _ self j: j.
+		c2 _ self j: width-j+2.
+		self j: j put: c2.
+		self j: width-j+2 put: c1 ]! !
+
+!FloatImage methodsFor: 'mirroring' stamp: 'jmv 8/30/2018 08:58:35'!
+mirrorVertically
+	"
+	See also #mirrorVerticallyButFirst
+
+	FloatImage lena mirrorVertically display
+	"
+	| r1 r2 |
+	1 to: height//2 do: [ :i |
+		r1 _ self i: i.
+		r2 _ self i: height-i+1.
+		self i: i put: r2.
+		self i: height-i+1 put: r1 ]! !
+
+!FloatImage methodsFor: 'mirroring' stamp: 'jmv 8/30/2018 08:58:56'!
+mirrorVerticallyButFirst
+	"
+	Appropriate for FFT data, where we might want to keep frequencies zero and Nyquist unchanged.
+	See also #mirrorVertically
+
+	FloatImage lena displayAt: 0@0 zoom: 3
+	FloatImage lena mirrorVerticallyButFirst displayAt: 0@0 zoom: 3
+	"
+	| r1 r2 |
+	2 to: height//2 do: [ :i |
+		r1 _ self i: i.
+		r2 _ self i: height-i+2.
+		self i: i put: r2.
+		self i: height-i+2 put: r1 ]! !
+
 !FloatImage class methodsFor: 'interpolation showcase' stamp: 'jmv 7/19/2018 16:34:01'!
 showRotations
 	"
@@ -4565,12 +4628,12 @@ realPart: aFloatImage imaginaryPart: otherFloatImage
 width
 	^ real width! !
 
-!ComplexImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/5/2018 07:27:02'!
-* aComplexImageOrNumber
+!ComplexImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 8/29/2018 12:58:40'!
+* aComplexOrFloatImageOrNumber
 	"Answer a new ComplexImage. Don't affect receiver or argument in any way.
 	Element by element product."
 
-	^self copy *= aComplexImageOrNumber! !
+	^self copy *= aComplexOrFloatImageOrNumber! !
 
 !ComplexImage methodsFor: 'arithmetic-answer new' stamp: 'jmv 7/5/2018 07:27:43'!
 + aComplexImageOrNumber
@@ -4804,7 +4867,7 @@ phase
 
 	^self collectReal: [ :c | c phase ]! !
 
-!ComplexImage methodsFor: 'processing' stamp: 'jmv 8/24/2018 10:16:40'!
+!ComplexImage methodsFor: 'processing' stamp: 'jmv 8/29/2018 15:23:56'!
 psf
 	"We are an OTF, i.e. the complex Fourier transform of some PSF. See #otf:
 	We want to answer the smallest possible ConvolutionKernel that represents us.
@@ -4818,15 +4881,34 @@ psf
 	otf imaginaryPart addNormalNoise: 0.1.
 	{originalPSF. otf psf}
 	"
+	^ self psfTrimmed: 0.75! !
+
+!ComplexImage methodsFor: 'processing' stamp: 'jmv 8/30/2018 09:00:53'!
+psfTrimmed: k
+	"We are an OTF, i.e. the complex Fourier transform of some PSF. See #otf:
+	We want to answer the smallest possible ConvolutionKernel that represents us.
+	This is not trivial in the presence of noise.
+	We keep removing 'onion layers' to the computed psf until the coefficients we are about to discard become relevant.
+	
+	This is only done if k if not nil. See senders."
+	"
+	| originalPSF otf |
+	originalPSF := ConvolutionKernel gaussian: 1 extent: 9.
+	otf := originalPSF otf: 256@256.
+	otf realPart addNormalNoise: 0.1.
+	otf imaginaryPart addNormalNoise: 0.1.
+	{originalPSF. otf psf}
+	"
 	| psf i onionLayers meanAndStandardDeviation |
 	psf _ self copy fftTransform: false :: realPart :: moveOriginToCenter: true.
 	psf _ psf copy: (Rectangle origin: 2@2 extent: psf extent-1).
 	onionLayers _ (psf extent x min: psf extent y) // 2.
 	i _ 1.
-	[i < onionLayers and: [
-		meanAndStandardDeviation _ (psf onionLayer: i) meanAndStandardDeviation.
-		meanAndStandardDeviation first < (meanAndStandardDeviation second*0.75) ]] whileTrue: [
-			i _ i + 1].
+	k ifNotNil: [
+		[i < onionLayers and: [
+			meanAndStandardDeviation _ (psf onionLayer: i) meanAndStandardDeviation.
+			meanAndStandardDeviation first abs < (meanAndStandardDeviation second*k) ]] whileTrue: [
+				i _ i + 1]].
 	^ ConvolutionKernel fromMatrix: (psf copy: (i@i extent: psf extent - (i-1*2)))! !
 
 !ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 16:49:29'!
