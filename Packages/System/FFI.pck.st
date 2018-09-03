@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 8 March 2018 at 11:35:21 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3436] on 3 September 2018 at 9:11:25 am'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 29!
+!provides: 'FFI' 1 30!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 
@@ -78,7 +78,7 @@ ExternalLibrary class
 !classDefinition: #ExternalStructure category: #'FFI-Kernel'!
 ExternalObject subclass: #ExternalStructure
 	instanceVariableNames: ''
-	classVariableNames: ''
+	classVariableNames: 'PreviousPlatform'
 	poolDictionaries: 'FFIConstants'
 	category: 'FFI-Kernel'!
 !classDefinition: 'ExternalStructure class' category: #'FFI-Kernel'!
@@ -93,6 +93,16 @@ ExternalStructure subclass: #ExternalData
 	category: 'FFI-Kernel'!
 !classDefinition: 'ExternalData class' category: #'FFI-Kernel'!
 ExternalData class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExternalUnion category: #'FFI-Kernel'!
+ExternalStructure subclass: #ExternalUnion
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'FFI-Kernel'!
+!classDefinition: 'ExternalUnion class' category: #'FFI-Kernel'!
+ExternalUnion class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExternalType category: #'FFI-Kernel'!
@@ -157,13 +167,67 @@ An external library bundles calls to functions from the same library. It is prov
 
 Every external function that is defined in an external library by default will use the library it is defined in. This can always be modified by providing the appropriate module in the specification. !
 
-!ExternalStructure commentStamp: '<historical>' prior: 0!
-This class provides an abstract base for all structures that can be used by external functions. ExternalStructures have two possible handle types:
+!ExternalStructure commentStamp: 'jmv 8/31/2018 12:00:04' prior: 0!
+An ExternalStructure is for representing external data that is
+- either a structure composed of different fields (a struct of C language)
+- or an alias for another type (like a typedef of C language)
+
+It reserves enough bytes of data for representing all the fields.
+
+The data is stored into the handle instance variable which can be of two different types:
 	- ExternalAddress
 		If the handle is an external address then the object described does not reside in the Smalltalk object memory.
 	- ByteArray
 		If the handle is a byte array then the object described resides in Smalltalk memory.
-Useful methods should be implemented by subclasses of ExternalStructure using the common ByteArray/ExternalAddress platform dependent access protocol which will transparently access the correct memory location.!
+
+A specific structure is defined by subclassing ExternalStructure and specifying its #fields via a class side method.
+For example if we define a subclass:
+	ExternalStructure subclass: #StructExample
+		instanceVariableNames: ''
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'garbage'.
+Then declare the fields like this:
+    StructExample class compile: 'fields  ^#( (name ''char*'') (color ''ulong'') )' classified: 'garbage'.
+
+It means that this type is composed of two different fields:
+- a string (accessed thru the field #name)
+- and an unsigned 32bit integer (accessed thru the field #color).
+It represents the following C type:
+   struct StructExample {char *name; uint32_t color; };
+
+The accessors for those fields can be generated automatically like this:
+	StructExample defineFields.
+As can be verified in a Browser:
+	StructExample browse.
+We see that name and color fields are stored sequentially in different zones of data.
+
+The total size of the structure can be verified with:
+	StructExample byteSize = (Smalltalk wordSize + 4).
+
+An ExternalStructure can also be used for defining an alias.
+The fields definition must contain only 2 elements: an eventual accessor (or nil) and the type.
+For example, We can define a machine dependent 'unsigned long' like this:
+	ExternalStructure subclass: #UnsignedLong
+		instanceVariableNames: ''
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'garbage'.
+Then set the fields like this:
+    UnsignedLong class compile: 'fields  ^(Smalltalk wordSize=4 or: [Smalltalk platformName=''Win64''])
+		ifTrue: [#(nil ''ulong'')] ifFalse: [#(nil ''ulonglong'')]' classified: 'garbage'.
+And verify the size on current platform:
+	UnsignedLong byteSize.
+	
+Then, the class names 'UnsignedLong' and 'StructExamples' acts as a type specification.
+They can be used for composing other types, and for defining prototype of external functions:
+
+LibraryExample>>initMyStruct: aStructExample name: name color: anInteger
+	<cdecl: void 'init_my_struct'( StructExample * char * UnsignedLong )>
+	self externalCallFailed
+
+
+!
 
 !ExternalData commentStamp: '<historical>' prior: 0!
 Instances of ExternalData explicitly describe objects with associated type. They can be used for describing atomic C types like arrays of atomic types (e.g., 'int[]') or pointer to atomic types (e.g., 'int *').
@@ -174,6 +238,37 @@ Instance variables:
 The encoding of type is equivalent to that of the basic type in class ExternalType. The interpretation of whether the receiver describes an array of data or a pointer to data depends on the contents of the instance variable 'handle'. If handle contains an ExternalAddress the receiver is treated as pointer to type. If the handle contains a ByteArray the receiver is interpreted as describing an array of type. Note that both interpretations are treated equivalent in external calls, e.g., if one describes an argument to an external call as taking 'int*' then, depending on the type of handle either the actual contents (if ExternalAddress) or a pointer to the contents (if ByteArray) is passed.
 
 !
+
+!ExternalUnion commentStamp: 'nice 4/13/2018 21:07' prior: 0!
+An ExternalUnion is for representing external data that is a union of possible fields.
+It corresponds to the C type union.
+It reserves enough bytes of data for representing the largest field.
+
+A specific union is defined by subclassing ExternalUnion and specifying its #fields via a class side.
+
+For example if we define a subclass:
+	ExternalUnion subclass: #UnionExample
+		instanceVariableNames: ''
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'garbage'.
+Then set the fields like this:
+    UnionExample class compile: 'fields  ^#( (name ''char*'') (color ''ulong'') )' classified: 'garbage'.
+
+It means that this type will represents
+- either a string (accessed thru the field #name)
+- or an unsigned 32bit integer (accessed thru the field #color).
+
+It represents the following C type:
+   union UnionExample {char *name; uint32_t color; };
+
+The accessors for those fields can be generated automatically like this:
+	UnionExample defineFields.
+As can be verified in a Browser:
+	UnionExample browse.
+We see that color and name fields both interpret the same zone of data (starting at 1st byte), but with a different interpretation.
+The size of the union can be verified with:
+	UnionExample byteSize = (Smalltalk wordSize max: 4).!
 
 !ExternalType commentStamp: '<historical>' prior: 0!
 An external type represents the type of external objects.
@@ -317,31 +412,27 @@ initializeTypeConstants
 	FFIAtomicTypeShift := 24. "shift for atomic type"
 ! !
 
-!ExternalAddress methodsFor: 'arithmetic' stamp: 'pb 5/12/2017 23:44:52'!
+!ExternalAddress methodsFor: 'arithmetic' stamp: 'nice 4/13/2018 07:41'!
 + offset
 	"Create an address that is offset by the given number of bytes.
 	More tricky than one would think due to the FFI's handling of ExternalAddress
 	as pointer to an object so that 'self unsignedLongAt: ' would dereference."
-	"Convert xaddr -> bytes"
+
 	| bytes |
+	"Convert xaddr -> bytes"
 	bytes := self asByteArrayPointer.
 	"Update bytes using platform dependent accessors"
-	Smalltalk wordSize = 4
-		ifTrue: [
-			bytes
-				unsignedLongAt: 1
-				put: (bytes unsignedLongAt: 1) + offset ]
-		ifFalse: [
-			bytes
-				unsignedLongLongAt: 1
-				put: (bytes unsignedLongLongAt: 1) + offset ].
-	^ bytes asExternalPointer.! !
+	self size = 4
+		ifTrue: [bytes unsignedLongAt: 1 put: (bytes unsignedLongAt: 1) + offset]
+		ifFalse: [bytes unsignedLongLongAt: 1 put: (bytes unsignedLongLongAt: 1) + offset].
+	"Convert bytes -> xaddr"
+	^bytes asExternalPointer! !
 
-!ExternalAddress methodsFor: 'private' stamp: 'eem 2/22/2016 10:03'!
+!ExternalAddress methodsFor: 'private' stamp: 'nice 4/13/2018 07:48'!
 asByteArrayPointer
 	"Answer a ByteArray containing a copy of pointer to the contents of the receiver."
 	| sz |
-	^(ByteArray basicNew: (sz := self class wordSize))
+	^(ByteArray basicNew: (sz := self size))
 		replaceFrom: 1 to: sz with: self startingAt: 1 "answers self"! !
 
 !ExternalAddress methodsFor: 'private' stamp: 'jcg 2/16/2010 01:00'!
@@ -349,18 +440,18 @@ asExternalPointer
 	"No need to convert."
 	^self! !
 
-!ExternalAddress methodsFor: 'converting' stamp: 'eem 2/21/2016 15:23'!
+!ExternalAddress methodsFor: 'converting' stamp: 'nice 4/13/2018 07:42'!
 asInteger
 	"convert address to integer"
-	^ self asByteArrayPointer integerAt: 1 size: self class wordSize signed: false! !
+	^ self asByteArrayPointer integerAt: 1 size: self size signed: false! !
 
-!ExternalAddress methodsFor: 'converting' stamp: 'eem 2/21/2016 15:29'!
+!ExternalAddress methodsFor: 'converting' stamp: 'nice 4/13/2018 07:44'!
 fromInteger: address
 	"set my handle to point at address."
 	"Do we really need this? bf 2/21/2001 23:48"
 
 	| sz pointer |
-	sz := self class wordSize.
+	sz := self size.
 	pointer := ByteArray new: sz.
 	pointer integerAt: 1 put: address size: sz signed: false. .
 	self basicAt: 1 put: (pointer byteAt: 1);
@@ -709,10 +800,10 @@ invokeWith: arg1 with: arg2 with: arg3 with: arg4 with: arg5
 invokeWith: arg1 with: arg2 with: arg3 with: arg4 with: arg5 with: arg6
 	^self invokeWithArguments: (Array with: arg1 with: arg2 with: arg3 with: arg4 with: arg5 with: arg6)! !
 
-!ExternalFunction methodsFor: 'invoking' stamp: 'ar 11/28/1999 20:12'!
+!ExternalFunction methodsFor: 'invoking' stamp: 'eem 8/23/2018 14:05'!
 invokeWithArguments: argArray
 	"Manually invoke the receiver, representing an external function."
-	<primitive: 'primitiveCalloutWithArgs' module:'SqueakFFIPrims'>
+	<primitive: 'primitiveCalloutWithArgs' module: 'SqueakFFIPrims' error: ec>
 	^self externalCallFailed! !
 
 !ExternalFunction methodsFor: 'invoking' stamp: 'eem 2/20/2016 17:25'!
@@ -914,16 +1005,21 @@ free
 	(handle ~~ nil and:[handle isExternalAddress]) ifTrue:[handle free].
 	handle := nil.! !
 
-!ExternalStructure methodsFor: 'printing' stamp: 'jmv 3/13/2012 12:33'!
+!ExternalStructure methodsFor: 'printing' stamp: 'eem 5/1/2018 15:18'!
+compositeName
+	^self class compositeName! !
+
+!ExternalStructure methodsFor: 'printing' stamp: 'jmv 8/31/2018 12:14:52'!
 longPrintOn: aStream 
 	"Append to the argument, aStream, the names and values of all the record's variables."
 	| fields |
 	fields := self class fields.
-	(fields isEmpty or: [fields first isNil]) ifTrue: [fields := #()]
-		ifFalse: [(fields first isKindOf: Array) ifFalse: [fields := Array with: fields]].
+	(fields isEmpty or: [fields first isNil])
+		ifTrue: [fields := #()]
+		ifFalse: [fields first isArray ifFalse: [fields := Array with: fields]].
 	fields do: [ :field |
-		field first notNil ifTrue: [
-			aStream nextPutAll: field first; nextPut: $:; space; tab.
+		field first ifNotNil:
+			[aStream nextPutAll: field first; nextPut: $:; space; tab.
 			(self perform: field first) printOn: aStream.
 			aStream newLine]].! !
 
@@ -932,11 +1028,28 @@ byteSize
 	"Return the size in bytes of this structure."
 	^self compiledSpec first bitAnd: FFIStructSizeMask! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'gk 3/1/2005 12:06'!
-compileAlias: spec withAccessors: aBool
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 4/16/2018 09:25'!
+checkFieldLayoutChange
+	"Recompile the spec and field accessors if the layout changed.
+	Answer true if the layout changed.
+	This is usefull at system startup if some structure are machine dependent.
+	No provision is made for correct initialization order of nested structures.
+	The correct order of invocation is left at upper responsibility."
+	
+	| newCompiledSpec oldCompiledSpec |
+	oldCompiledSpec := compiledSpec.
+	newCompiledSpec := self compileFields: self fields withAccessors: #never.
+	oldCompiledSpec = newCompiledSpec ifTrue: [^false].
+	"only regenerate the automatically generated fields: the others are under user responsibility"
+	compiledSpec := self compileFields: self fields withAccessors: #generated.
+	ExternalType noticeModificationOf: self.
+	^true! !
+
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 4/13/2018 14:44'!
+compileAlias: spec withAccessors: aSymbol
 	"Define all the fields in the receiver.
 	Return the newly compiled spec."
-	| fieldName fieldType isPointerField externalType |
+	| fieldName fieldType isPointerField externalType newCompiledSpec |
 	fieldName := spec first.
 	fieldType := spec second.
 	isPointerField := fieldType last = $*.
@@ -949,15 +1062,14 @@ compileAlias: spec withAccessors: aBool
 		Transcript show:'(', fieldType,' is void)'.
 		externalType := ExternalType void].
 	isPointerField ifTrue:[externalType := externalType asPointerType].
-	(fieldName notNil and:[aBool]) ifTrue:[
+	(fieldName notNil and:[self shouldGenerate: fieldName policy: aSymbol]) ifTrue:[
 		self defineAliasAccessorsFor: fieldName
 			type: externalType].
-	isPointerField 
-		ifTrue:[compiledSpec := WordArray with: 
+	newCompiledSpec := isPointerField 
+		ifTrue:[WordArray with: 
 					(ExternalType structureSpec bitOr: ExternalType pointerSpec)]
-		ifFalse:[compiledSpec := externalType compiledSpec].
-	ExternalType noticeModificationOf: self.
-	^compiledSpec! !
+		ifFalse:[externalType compiledSpec].
+	^newCompiledSpec! !
 
 !ExternalStructure class methodsFor: 'field definition' stamp: 'ar 12/2/1999 15:35'!
 compileAllFields
@@ -972,19 +1084,26 @@ compileFields
 	Return the newly compiled spec."
 	^self compileFields: self fields! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 12/2/1999 14:28'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 4/13/2018 14:31'!
 compileFields: fieldSpec
 	"Compile the field definition of the receiver.
 	Return the newly compiled spec."
-	^self compileFields: fieldSpec withAccessors: false.! !
+	compiledSpec := self compileFields: fieldSpec withAccessors: #never.
+	ExternalType noticeModificationOf: self.
+	^compiledSpec! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'eem 2/16/2016 12:56'!
-compileFields: specArray withAccessors: aBool 
-	"Define all the fields in the receiver. 
-	Return the newly compiled spec."
-	| byteOffset typeSpec |
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 4/13/2018 14:36'!
+compileFields: specArray withAccessors: aSymbol 
+	"Compile a type specification for the FFI machinery.
+	Return the newly compiled spec.
+	Eventually generate the field accessors according to following rules:
+	- aSymbol = #always always generate the accessors
+	- aSymbol = #never never generate the accessors
+	- aSymbol = #generated only generate the auto-generated accessors
+	- aSymbol = #absent only generate the absent accessors"
+	| byteOffset typeSpec newCompiledSpec |
 	(specArray size > 0 and: [specArray first class ~~ Array]) ifTrue:
-		[^ self compileAlias: specArray withAccessors: aBool].
+		[^ self compileAlias: specArray withAccessors: aSymbol].
 	byteOffset := 1.
 	typeSpec := WriteStream on: (WordArray new: 10).
 	typeSpec nextPut: FFIFlagStructure.
@@ -1016,23 +1135,22 @@ compileFields: specArray withAccessors: aBool
 					ifTrue: [^ self error: 'Explicit type size is less than expected'].
 				typeSize := spec third.
 			].
-			(fieldName notNil and: [aBool]) ifTrue: [
+			(fieldName notNil and: [self shouldGenerate: fieldName policy: aSymbol]) ifTrue: [
 				self defineFieldAccessorsFor: fieldName startingAt: byteOffset type: externalType.
 			].
 			typeSpec nextPutAll: (externalType embeddedSpecWithSize: typeSize).
 			byteOffset := byteOffset + typeSize.
 		].
-	compiledSpec := typeSpec contents.
-	compiledSpec at: 1 put: (byteOffset - 1 bitOr: FFIFlagStructure).
-	ExternalType noticeModificationOf: self.
-	^ compiledSpec! !
+	newCompiledSpec := typeSpec contents.
+	newCompiledSpec at: 1 put: (byteOffset - 1 bitOr: FFIFlagStructure).
+	^ newCompiledSpec! !
 
 !ExternalStructure class methodsFor: 'field definition' stamp: 'ar 12/2/1999 14:28'!
 compiledSpec
 	"Return the compiled spec of the receiver"
 	^compiledSpec ifNil:[self compileFields].! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 4/16/2017 20:57:12'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 8/31/2018 12:11:18'!
 defineAliasAccessorsFor: fieldName type: type
 	"Define read/write accessors for the given field"
 	| code refClass argName |
@@ -1041,7 +1159,8 @@ defineAliasAccessorsFor: fieldName type: type
 	code := String streamContents:[:s|
 		s 
 			nextPutAll: fieldName; newLine; tab;
-			nextPutAll:'"This method was automatically generated"'; newLine; tab.
+			nextPutAll:'"This method was automatically generated"'; newLine; tab;
+			nextPut: $<; nextPutAll: #generated; nextPut: $>; newLine; tab.
 		refClass == nil 
 			ifTrue:[(type isAtomic and:[type isPointerType not]) 
 				ifTrue:[s nextPutAll:'^handle']
@@ -1061,19 +1180,22 @@ defineAliasAccessorsFor: fieldName type: type
 			ifFalse:['a',refClass name].
 		s
 			nextPutAll: fieldName,': '; nextPutAll: argName; newLine; tab;
-			nextPutAll:'"This method was automatically generated"'; newLine; tab.
+			nextPutAll:'"This method was automatically generated"'; newLine; tab;
+			nextPut: $<; nextPutAll: #generated; nextPut: $>; newLine; tab.
 		(refClass == nil and:[type isAtomic and:[type isPointerType not]])
 			ifTrue:[s nextPutAll:'handle := ', argName]
 			ifFalse:[s nextPutAll:'handle := ', argName,' getHandle'.
 					type isPointerType ifTrue:[s nextPutAll:' asByteArrayPointer']]].
 	self compile: code classified: 'accessing' withStamp: nil notifying: nil.! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 12/19/2016 15:52:42'!
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 8/31/2018 12:13:06'!
 defineFieldAccessorsFor: fieldName startingAt: byteOffset type: type
 	"Define read/write accessors for the given field"
 	| comment |
 	(type isVoid and: [type isPointerType not]) ifTrue:[^self].
-	comment := ('\	"This method was automatically generated. See ', self class name, '>>fields."\	') withNewLines.
+	comment := String streamContents: [:strm |
+		strm newLine; tab; nextPutAll: '"This method was automatically generated. See '; nextPutAll: self class name; nextPutAll: '>>fields."'; newLine; tab.
+		strm nextPut: $<; nextPutAll: #generated; nextPut: $>; newLine; tab.].
 	self maybeCompileAccessor: fieldName, comment, (type readFieldAt: byteOffset)
 		withSelector: fieldName asSymbol.
 	self maybeCompileAccessor: fieldName,': anObject', comment, (type writeFieldAt: byteOffset with: 'anObject')
@@ -1084,15 +1206,59 @@ defineFields
 	"Define all the fields in the receiver"
 	self defineFields: self fields.! !
 
-!ExternalStructure class methodsFor: 'field definition' stamp: 'ar 12/2/1999 14:38'!
-defineFields: fields
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 4/13/2018 14:30'!
+defineFields: fieldSpec
 	"Define all the fields in the receiver"
-	self compileFields: fields withAccessors: true.! !
+	compiledSpec := self compileFields: fieldSpec withAccessors: #always.
+	ExternalType noticeModificationOf: self.
+	^compiledSpec! !
 
 !ExternalStructure class methodsFor: 'field definition' stamp: 'ar 11/29/1999 00:28'!
 fields
 	"Return the fields defining the receiver"
 	^#()! !
+
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 4/13/2018 21:23'!
+shouldGenerate: fieldname policy: aSymbol 
+	"Answer true if the field accessors must be compiled.
+	Do so according to the following rules:
+	- aSymbol = #always always generate the accessors
+	- aSymbol = #never never generate the accessors
+	- aSymbol = #generated only re-generate the auto-generated accessors
+	- aSymbol = #absent only generate the absent accessors"
+	aSymbol = #never ifTrue: [^ false].
+	aSymbol = #always ifTrue: [^ true].
+	aSymbol = #absent ifTrue: [^ (self methodDictionary includesKey: fieldname) not].
+	aSymbol = #generated
+		ifTrue: [^ (self methodDictionary includesKey: fieldname)
+				and: [(self methodDictionary at: fieldname) pragmas
+						anySatisfy: [:p | p keyword = #generated]]].
+	self error: 'unknow generation policy'! !
+
+!ExternalStructure class methodsFor: 'field definition' stamp: 'nice 4/13/2018 14:53'!
+sortStructs: structureClasses into: sortedClasses 
+	"Sort the structure definitions so as to obtain a correct initialization order."
+	
+	[| structClass prevStructClass dependsOnOtherTypes |
+	structureClasses isEmpty ifTrue: [^ self].
+	structClass := structureClasses anyOne.
+	
+	[dependsOnOtherTypes := structClass typeNamesFromWhichIDepend.
+	prevStructClass := structureClasses detect: [:c | c ~~ structClass and: [dependsOnOtherTypes includes: c name]] ifNone: [nil].
+	prevStructClass isNil]
+		whileFalse: [structClass := prevStructClass].
+
+	"we found a structure/alias which does not depend on other structures/aliases
+	add the corresponding class to the initialization list"
+	sortedClasses add: (structureClasses remove: structClass)] repeat! !
+
+!ExternalStructure class methodsFor: 'field definition' stamp: 'jmv 8/31/2018 12:20:47'!
+typeNamesFromWhichIDepend
+	"Answer the set of type names of my fields (including pointer stars)"
+	| f |
+	(f := self fields) isEmpty ifTrue: [^Set new].
+	f first isArray ifFalse: [^Set with: f second].
+	^(f collect: [:e | e second]) as: Set! !
 
 !ExternalStructure class methodsFor: 'class management' stamp: 'ar 11/22/1999 10:10'!
 doneCompiling
@@ -1150,6 +1316,10 @@ fromHandle: aHandle
 new
 	^self fromHandle: (ByteArray new: self byteSize)! !
 
+!ExternalStructure class methodsFor: 'converting' stamp: 'eem 5/1/2018 15:17'!
+compositeName
+	^'struct'! !
+
 !ExternalStructure class methodsFor: 'converting' stamp: 'ar 12/2/1999 16:55'!
 externalType
 	"Return an external type describing the receiver as a structure"
@@ -1178,6 +1348,28 @@ pointerSize
 	 Subclasses that contain pointers must define the size of a pointer if the code is to operate on 64-bit and 32-bit platforms.
 	 Currently we have no way of converting a type between 32- and 64- bit versions beyond recompiling it."
 	^nil! !
+
+!ExternalStructure class methodsFor: 'system startup' stamp: 'nice 4/13/2018 12:36'!
+install
+	"Resuming the image on another architecture may require a re-compilation of structure layout."
+	| newPlatform |
+	newPlatform := Smalltalk platformName.
+	PreviousPlatform = newPlatform
+		ifFalse:
+			[self recompileStructures.
+			PreviousPlatform := newPlatform]! !
+
+!ExternalStructure class methodsFor: 'system startup' stamp: 'nice 4/13/2018 12:35'!
+recompileStructures
+	"Check and update the layout of all subclasses for host machine dependency.
+	Arrange to check the inner nested structures first."
+	
+	"ExternalStructure recompileStructures"
+	| sorted unsorted |
+	unsorted := self withAllSubclasses.
+	sorted := OrderedCollection new: unsorted size.
+	self sortStructs: unsorted into: sorted.
+	sorted do: [:e | e checkFieldLayoutChange]! !
 
 !ExternalData methodsFor: 'conversion' stamp: 'hg 2/25/2000 14:51'!
 fromCString
@@ -1258,6 +1450,61 @@ fromHandle: aHandle type: aType
 new
 	"You better not..."
 	^self shouldNotImplement! !
+
+!ExternalUnion class methodsFor: 'field definition' stamp: 'nice 4/13/2018 20:21'!
+compileFields: specArray withAccessors: aSymbol 
+	"Compile a type specification for the FFI machinery.
+	Return the newly compiled spec.
+	Eventually generate the field accessors according to the policy defined in aSymbol."
+	| byteOffset maxByteSize typeSpec newCompiledSpec |
+	(specArray size > 0 and: [specArray first class ~~ Array]) ifTrue:
+		[^ self error: 'unions must have fields defined by sub-Array'].
+	byteOffset := 1.
+	maxByteSize := 0.
+	typeSpec := WriteStream on: (WordArray new: specArray size + 1).
+	typeSpec nextPut: FFIFlagStructure.
+	"dummy for size"
+	specArray do:
+		[:spec |
+		| fieldName fieldType isPointerField externalType typeSize selfRefering |
+		fieldName := spec first.
+		fieldType := spec second.
+		isPointerField := fieldType last = $*.
+		fieldType := (fieldType findTokens: ' *') first.
+		externalType := ExternalType atomicTypeNamed: fieldType.
+		selfRefering := isPointerField and: [externalType isNil and: [fieldType = self asString]].
+		selfRefering ifTrue: [
+			externalType := ExternalType void asPointerType
+		] ifFalse:[
+			externalType == nil ifTrue: ["non-atomic"
+				Symbol
+					hasInterned: fieldType
+					ifTrue: [:sym | externalType := ExternalType structTypeNamed: sym].
+			].
+			externalType == nil ifTrue:[
+				Transcript show: '(' , fieldType , ' is void)'.
+				externalType := ExternalType void.
+			].
+			isPointerField ifTrue: [externalType := externalType asPointerType: self pointerSize]].
+			typeSize := externalType byteSize.
+			spec size > 2 ifTrue: ["extra size"
+				spec third < typeSize
+					ifTrue: [^ self error: 'Explicit type size is less than expected'].
+				typeSize := spec third.
+			].
+			(fieldName notNil and: [self shouldGenerate: fieldName policy: aSymbol]) ifTrue: [
+				self defineFieldAccessorsFor: fieldName startingAt: byteOffset type: externalType.
+			].
+			typeSpec nextPutAll: (externalType embeddedSpecWithSize: typeSize).
+			maxByteSize := maxByteSize max: typeSize.
+		].
+	newCompiledSpec := typeSpec contents.
+	newCompiledSpec at: 1 put: (maxByteSize bitOr: FFIFlagStructure).
+	^ newCompiledSpec! !
+
+!ExternalUnion class methodsFor: 'converting' stamp: 'eem 5/1/2018 15:18'!
+compositeName
+	^'union'! !
 
 !ExternalType methodsFor: 'converting' stamp: 'ar 12/2/1999 16:41'!
 asNonPointerType
@@ -1494,7 +1741,7 @@ printOn: aStream
 		ifFalse:[aStream nextPutAll: referentClass name].
 	self isPointerType ifTrue:[aStream nextPut: $*].! !
 
-!ExternalType methodsFor: 'printing' stamp: 'jmv 12/18/2016 18:29:56'!
+!ExternalType methodsFor: 'printing' stamp: 'jmv 8/31/2018 14:35:20'!
 printStructureFieldStartingAt: initialSpecIndex withName: name inClass: structureClass on: aStream indent: indent
 	"Print the structure's field starting at initialSpecIndex and answer the index in compiledSpec of the subsequent type."
 	| spec subStructureClassBinding |
@@ -1509,7 +1756,9 @@ printStructureFieldStartingAt: initialSpecIndex withName: name inClass: structur
 	(spec bitClear: FFIStructSizeMask) = FFIFlagStructure ifTrue:
 		[| next |
 		 next := initialSpecIndex + 1.
-		 aStream nextPutAll: 'struct {'.
+		 aStream
+			nextPutAll: subStructureClassBinding value compositeName;
+			nextPutAll: ' {'.
 		 subStructureClassBinding value fields withIndexDo:
 			[:tuple :i|
 			aStream newLine.
@@ -1524,17 +1773,31 @@ printStructureFieldStartingAt: initialSpecIndex withName: name inClass: structur
 		 self assert: (next - 1 = compiledSpec size or: [(compiledSpec at: next) = FFIFlagStructure]).
 		 ^next <= compiledSpec size ifTrue: [next + 1] ifFalse: [next]].
 	self assert: (spec anyMask: FFIFlagPointer).
-	aStream nextPutAll: 'struct '; nextPutAll: subStructureClassBinding value name; nextPutAll: ' *'; nextPutAll: name.
+
+
+self halt.
+	(subStructureClassBinding value isKindOf: ExternalUnion)
+			ifTrue: [aStream nextPutAll: 'union ']
+			ifFalse: [aStream nextPutAll: 'struct '].
+"	aStream nextPutAll: subStructureClassBinding value compositeName."
+
+
+
+
+	aStream nextPutAll: subStructureClassBinding value name; nextPutAll: ' *'; nextPutAll: name.
 	^initialSpecIndex + 1! !
 
-!ExternalType methodsFor: 'printing' stamp: 'jmv 12/18/2016 18:30:07'!
+!ExternalType methodsFor: 'printing' stamp: 'jmv 8/31/2018 12:48:49'!
 printTypedefOn: s
 	s nextPutAll: 'typedef '.
-	(compiledSpec first bitClear: FFIStructSizeMask) = FFIFlagStructure
+	(referentClass notNil
+	 and: [(compiledSpec first bitClear: FFIStructSizeMask) = FFIFlagStructure])
 		ifTrue:
 			[| next |
 			 next := 2.
-			 s nextPutAll: 'struct {'.
+			 s
+				nextPutAll: referentClass compositeName;
+				nextPutAll: ' {'.
 			 referentClass fields withIndexDo:
 				[:tuple :i|
 				s newLine.
@@ -1891,12 +2154,12 @@ asExternalPointer
 	"Convert the receiver assuming that it describes a pointer to an object."
 	^ self pointerAt: 1! !
 
-!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 1/10/2017 16:03:53'!
+!ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 8/31/2018 11:49:53'!
 booleanAt: byteOffset
 	"Booleans are just integers in C word"
 	"If a regular ByteArray, byteOffset is the start position in self.
 	If an ExternalAddress, take us as a pointer. byteOffset is applied to the pointer. Access memory at pointer+offset."
-	^((self integerAt: byteOffset size: 1 signed: false) == 0) not! !
+	^(self integerAt: byteOffset size: 1 signed: false) ~= 0! !
 
 !ByteArray methodsFor: '*FFI-Kernel' stamp: 'jmv 12/22/2016 17:10:06'!
 booleanAt: byteOffset put: value
