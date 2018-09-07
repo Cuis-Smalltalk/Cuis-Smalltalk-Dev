@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 30 August 2018 at 9:03:05 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3437] on 7 September 2018 at 4:36:56 pm'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 10!
-!requires: 'ProbabilityDistributions' 1 nil nil!
+!provides: 'ImageProcessing' 1 11!
+!requires: 'NumericalMethods' 1 8 nil!
 !requires: 'Statistics' 1 nil nil!
-!requires: 'SignalProcessing' 1 100 nil!
+!requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Morphic3' 1 50 nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'NumericalMethods' 1 8 nil!
+!requires: 'SignalProcessing' 1 100 nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -4856,6 +4856,17 @@ normalizeMagnitudes
 	self divideBy: self magnitude
 		ifDivisorZero: [0.0]
 		ifBothZero: [0.0]! !
+
+!ComplexImage methodsFor: 'arithmetic-modify self' stamp: 'jmv 9/7/2018 16:17:57'!
+substractPhaseOf: aComplexImage
+	"Rotate each element by the negated phase of the corresponding element in aComplexImage"
+	"
+	Slow reference version
+	self /= aComplexImage.
+	self *= aComplexImage magnitude
+	"
+
+	self *= aComplexImage copy normalizeMagnitudes beComplexConjugate! !
 
 !ComplexImage methodsFor: 'magnitude and phase' stamp: 'jmv 7/2/2018 14:42:24'!
 magnitude
