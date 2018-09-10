@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3395] on 4 August 2018 at 3:02:56 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3442] on 10 September 2018 at 12:04:18 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 87!
-!requires: 'Math 3D' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 88!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'ImageProcessing' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -4893,6 +4893,22 @@ testSlashSlashLpSp
 	self assert: 42391158275216203514294433203 // 3 = 14130386091738734504764811067.
 	self assert: 42391158275216203514294433204 // 3 = 14130386091738734504764811068! !
 
+!IntegerTest methodsFor: 'as yet unclassified' stamp: 'jmv 9/10/2018 10:28:17'!
+test01readFromWithEmptyStringRaisesAnError
+	|input|
+	
+	input := ReadStream on: ''.
+
+	self should: [ Integer readFrom: input ] raise: Error description: 'At least one digit expected here'! !
+
+!IntegerTest methodsFor: 'as yet unclassified' stamp: 'jmv 9/10/2018 10:28:20'!
+test02readFromWithInvalidStringRaisesAnError
+	| input |
+	
+	input := ReadStream on: 'hello'.
+
+	self should: [ Integer readFrom: input ] raise: Error description: 'At least one digit expected here'! !
+
 !LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 8/21/2016 20:04:13'!
 testCompactClassIndex
 	Smalltalk isSpur ifFalse: [
@@ -5128,6 +5144,98 @@ testReciprocal
 		assert: -3 reciprocal = (-1/3).
 		
 	self should: [ 0 reciprocal ] raise: ZeroDivide! !
+
+!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 14:51:43'!
+test01readFromWhenTheInitilValueIsNaNTheResultIsNaN
+
+	|initialValue nan result |
+	
+	nan := Float nan.
+	initialValue := 'NaN'.
+	result := self subject: initialValue.
+	
+	self assert: result is: nan! !
+
+!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 15:07:25'!
+test02readFromWhenTheInitilValueIsInfinityTheResultIsInfinity
+	
+	self assertThat: 'Infinity' isEqualTo: Float infinity! !
+
+!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 15:07:50'!
+test03readFromWhenTheInitilValueIsMinusInfinityTheResultIsNegativeInfinity
+
+	self assertThat: '-Infinity' isEqualTo: Float negativeInfinity! !
+
+!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 15:08:34'!
+test04readFromWhenTheInitilValueIsANegativeNumberTheResultIsThatNumberNegated
+	
+	self assertThat: '-3' isEqualTo: -3! !
+
+!NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 15:09:00'!
+test05readFromWhenTheInitilValueIsJustANumberTheResultIsThatNumber
+	
+	self assertThat: '3' isEqualTo: 3! !
+
+!NumberTest methodsFor: 'test' stamp: 'GC 9/9/2018 16:32:38'!
+test06readFromWhenTheInitialValueIncludesRadixItIsConvertedWithTheIndicatedRadixBase
+	|radixBase number initualNumber |
+	
+	radixBase := '2r'.
+	number := '11110'.
+	
+	initualNumber := radixBase, number.
+	
+	self assert: initualNumber asNumber equals: 30! !
+
+!NumberTest methodsFor: 'test' stamp: 'jmv 9/10/2018 10:28:22'!
+test07readFromWhenTheInitialValueIncludesAnInvalidRadixItRaisesAnError
+	|radixBase number initualNumber |
+	
+	radixBase := '0r'.
+	number := '11110'.
+	
+	initualNumber := radixBase, number.
+	
+	
+	self should: [ initualNumber asNumber ] raise: Error description: 'Invalid radix'! !
+
+!NumberTest methodsFor: 'test' stamp: 'GC 9/9/2018 16:32:50'!
+test08readFromWhenTheInitialValueIncludesANegativeRadixItConvertsTheNumberWithTheIndicatedRadixBase
+	|radixBase number initualNumber |
+	
+	radixBase := '-2r'.
+	number := '11110'.
+	
+	initualNumber := radixBase, number.
+	
+	self assert: initualNumber asNumber equals: -30! !
+
+!NumberTest methodsFor: 'test' stamp: 'jmv 9/10/2018 10:28:25'!
+test09readFromWhenTheInitialValueIsEmptyItRaisesAnError
+	
+	self should: [ Number readFrom: '' ] raise: Error description: 'At least one digit expected here'! !
+
+!NumberTest methodsFor: 'support' stamp: 'GC 9/8/2018 14:45:07'!
+assert: expected is: actual
+	^ self
+		assert: (expected == actual)
+		description: (self comparingStringBetween: expected and: actual)! !
+
+!NumberTest methodsFor: 'support' stamp: 'GC 9/8/2018 15:06:11'!
+assertThat: aNumber isEqualTo: anExpectedNumber
+
+	| result |
+	result := self subject: aNumber.
+	
+	self assert: result equals: anExpectedNumber! !
+
+!NumberTest methodsFor: 'support' stamp: 'GC 9/8/2018 14:48:11'!
+subject: aString
+
+	| aStream |
+	aStream := ReadStream on: aString.
+
+	^ Number readFrom: aStream! !
 
 !SmallIntegerTest methodsFor: 'testing - Class Methods' stamp: 'sd 6/5/2005 08:59'!
 testBasicNew
