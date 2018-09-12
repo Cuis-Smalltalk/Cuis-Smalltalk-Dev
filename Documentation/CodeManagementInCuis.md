@@ -1,10 +1,10 @@
 # Managing your code in Cuis
 
-Cuis includes tools and procedures for managing Smalltalk code. Code that is not part of the Cuis Core image itself, like applications, frameworks and libraries, should be stored in *Packages*. New code that is meant as patches, fixes or additions; that could eventually become part of Cuis itself, is not part of any *Package*, and is therefore automatically stored in *ChangeSets*.
+Cuis includes tools and procedures for managing Smalltalk code. Code that is not part of the Cuis Core image itself, like applications, frameworks and libraries, should be stored in *Packages*. New code that are meant as patches, fixes or additions; that could eventually become part of Cuis itself, is not part of any *Package*, and is therefore automatically stored in *ChangeSets*.
 
 ## Packages
 
-Let's start with *Packages*. The Package implementation in Cuis is based on PackageInfo, the standard way to specify packages in Squeak and its derivatives, and used, for example, by Monticello. It uses Package names, to specify prefixes for Class and Method categories. Classes and Methods whose categories match a Package's prefixes belong in that Package. More details about how PackageInfo decides what code belongs in a package are available at http://wiki.squeak.org/squeak/3329 .
+Let's start with *Packages*. The Package implementation in Cuis is based on PackageInfo, the standard way to specify packages in Squeak and its derivatives, and used, for example, by Monticello. It uses Package names to specify prefixes for Class and Method categories. Classes and Methods whose categories match a Package's prefixes belong in that Package. More details about how PackageInfo decides what code belongs in a package are available at http://wiki.squeak.org/squeak/3329 .
 
 To install packages *(.pck.st files)* in Cuis, use the **FileList**, navigate to the appropriate directory (on disk, or in a GitHub repository, etc), select the package file and click on **[Install Package]**.
 
@@ -12,7 +12,7 @@ Cuis includes a tool to manage installed *Packages*. It is at *World / Open / In
 
 The operations available on installed or newly created packages are:
 
-**[Save]** Saves a package on the file system. Overwrites any existing version. It is good to save package from time to time, to reduce the risk of losing code.
+**[Save]** Saves a package on the file system. Overwrites any existing version. It is good to save the package from time to time, to reduce the risk of losing code.
 
 **[Delete]** Removes the Package instance from the image. Does not remove any code. This means, effectively, to merge back the code into Cuis.
 
@@ -32,7 +32,7 @@ This is not unlike using Git or GitHub with a file-based development environment
 
 The way *ChangeSets* are created and managed in Cuis is different from Squeak. This was done to make ChangeSets a good way to manage changes to the base Cuis Core image, while keeping code in Packages out of the way, so they don't get mixed together.
 
-What is not in a Package belongs (at least temporarily) in the Cuis Core image. Such code is automatically captured in a *ChangeSet*. The ChangeSet for Core changes is created automatically and named like *"1243-CuisCore-JuanVuletich-2012Apr03-22h50m"*. The number at the beginning is the next number for the Cuis update stream, and is provided only as a suggestion. The "CuisCore" part is to reveal that the code belongs in the base image and not in some package. Then we have author name and date / time of creation. These *ChangeSets* are created automatically. There is no longer a way to manually create them, or make them "current" or "active". It is best to rename them, replacing *'CuisCore'* with some meaningful name. These *ChangeSets* will not capture any code that belongs in a Package.
+What is not in a Package belongs (at least temporarily) to the Cuis Core image. Such code is automatically captured in a *ChangeSet*. The ChangeSet for Core changes is created automatically and named like *"1243-CuisCore-JuanVuletich-2012Apr03-22h50m"*. The number at the beginning is the next number for the Cuis update stream, and is provided only as a suggestion. The "CuisCore" part is to reveal that the code belongs in the base image and not in some package. Then we have author name and date / time of creation. These *ChangeSets* are created automatically. There is no longer a way to manually create them, or make them "current" or "active". It is best to rename them, replacing *'CuisCore'* with some meaningful name. These *ChangeSets* will not capture any code that belongs in a Package.
 
 Opening a **Change Sorter** will show the CuisCore change set. This is useful, for example, to check that no code that was intended for a Package ends here by mistake (because of the wrong class or method category). But it is also useful when doing changes to the base system. Now, we can do changes both to the base system and to a number of packages, all in the same session, without having to be careful about selecting the proper change set before saving a method: The code is automatically added to the proper *Package* or *ChangeSet*, simply following the class or method category. Gone are the days of messed up change sets and lost code!
 
