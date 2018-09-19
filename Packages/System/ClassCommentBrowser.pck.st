@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3327] on 14 May 2018 at 10:11:45 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3446] on 19 September 2018 at 8:39:19 am'!
 'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 36!
+!provides: 'ClassCommentBrowser' 1 37!
 SystemOrganization addCategory: #ClassCommentBrowser!
 
 
@@ -480,7 +480,7 @@ searchAllComments
 					
 	^ nil! !
 
-!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 9/21/2015 16:50'!
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 9/18/2018 17:55:56'!
 searchClassNames
 	"Search class names for a string"
 	| arg str hits menu |
@@ -500,12 +500,12 @@ searchClassNames
 		hits 
 			ifEmpty: [listMorph flash]
 			ifNotEmpty: [
-				hits do: [:h | menu add: h selector: #showFind: argument: h].
+				hits do: [:h | menu add: h target: self action: #showFind: argument: h].
 				menu 
 					openInWorld;
 					morphPosition: self morphPosition + (-70@50)]]! !
 
-!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 11/5/2015 16:21'!
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 9/18/2018 18:16:02'!
 searchComment
 	"Search for a string in class comments of root siblings"
 	| arg hits col nam menu |
@@ -526,7 +526,7 @@ searchComment
 		hits 
 			ifEmpty: [listMorph flash]
 			ifNotEmpty: [
-				hits do: [:h | menu add: h selector: #showFind: argument: h].
+				hits do: [:h | menu add: h target: self action: #showFind: argument: h].
 				menu 
 					openInWorld;
 					morphPosition: self morphPosition + (-70@50)].
