@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3437] on 7 September 2018 at 4:36:56 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3449] on 20 September 2018 at 3:33:29 pm'!
 'Description Please enter a description for this package'!
-!provides: 'ImageProcessing' 1 11!
-!requires: 'NumericalMethods' 1 8 nil!
+!provides: 'ImageProcessing' 1 12!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Statistics' 1 nil nil!
+!requires: 'SignalProcessing' 1 100 nil!
+!requires: 'NumericalMethods' 1 8 nil!
 !requires: 'ProbabilityDistributions' 1 nil nil!
 !requires: 'Morphic3' 1 50 nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'SignalProcessing' 1 100 nil!
 SystemOrganization addCategory: #ImageProcessing!
 SystemOrganization addCategory: #'ImageProcessing-Images'!
 SystemOrganization addCategory: #'ImageProcessing-Interpolators'!
@@ -4878,7 +4878,7 @@ phase
 
 	^self collectReal: [ :c | c phase ]! !
 
-!ComplexImage methodsFor: 'processing' stamp: 'jmv 8/29/2018 15:23:56'!
+!ComplexImage methodsFor: 'processing' stamp: 'jmv 9/20/2018 11:05:42'!
 psf
 	"We are an OTF, i.e. the complex Fourier transform of some PSF. See #otf:
 	We want to answer the smallest possible ConvolutionKernel that represents us.
@@ -4892,16 +4892,14 @@ psf
 	otf imaginaryPart addNormalNoise: 0.1.
 	{originalPSF. otf psf}
 	"
-	^ self psfTrimmed: 0.75! !
+	^ self psfTrimmed: 0.01! !
 
-!ComplexImage methodsFor: 'processing' stamp: 'jmv 8/30/2018 09:00:53'!
+!ComplexImage methodsFor: 'processing' stamp: 'jmv 9/20/2018 11:05:37'!
 psfTrimmed: k
 	"We are an OTF, i.e. the complex Fourier transform of some PSF. See #otf:
 	We want to answer the smallest possible ConvolutionKernel that represents us.
 	This is not trivial in the presence of noise.
-	We keep removing 'onion layers' to the computed psf until the coefficients we are about to discard become relevant.
-	
-	This is only done if k if not nil. See senders."
+	We keep removing 'onion layers' to the computed psf until the coefficients we are about to discard become relevant."
 	"
 	| originalPSF otf |
 	originalPSF := ConvolutionKernel gaussian: 1 extent: 9.
@@ -4910,16 +4908,26 @@ psfTrimmed: k
 	otf imaginaryPart addNormalNoise: 0.1.
 	{originalPSF. otf psf}
 	"
-	| psf i onionLayers meanAndStandardDeviation |
+	| psf i maxLayersToRemove meanAndStandardDeviation absMax stopTrimming |
 	psf _ self copy fftTransform: false :: realPart :: moveOriginToCenter: true.
 	psf _ psf copy: (Rectangle origin: 2@2 extent: psf extent-1).
-	onionLayers _ (psf extent x min: psf extent y) // 2.
+	absMax _ psf absMax.
+	maxLayersToRemove _ (psf extent x min: psf extent y) // 2-2.
 	i _ 1.
 	k ifNotNil: [
-		[i < onionLayers and: [
-			meanAndStandardDeviation _ (psf onionLayer: i) meanAndStandardDeviation.
-			meanAndStandardDeviation first abs < (meanAndStandardDeviation second*k) ]] whileTrue: [
-				i _ i + 1]].
+		[
+			stopTrimming _ i > maxLayersToRemove.
+			stopTrimming ifFalse: [
+				meanAndStandardDeviation _ (psf onionLayer: i) meanAndStandardDeviation.
+				"If mean of onion ring is significant, then stop trimming and keep all what is left."
+				stopTrimming _ meanAndStandardDeviation first abs > (absMax * k).
+				stopTrimming ifFalse: [
+					"If mean is small, maybe stop triming if noise is even smaller"
+					meanAndStandardDeviation first abs > (absMax * k/10) ifTrue: [
+						stopTrimming _ meanAndStandardDeviation first abs > meanAndStandardDeviation second ] ] ].
+			stopTrimming
+		] whileFalse: [
+			i _ i + 1]].
 	^ ConvolutionKernel fromMatrix: (psf copy: (i@i extent: psf extent - (i-1*2)))! !
 
 !ComplexImage methodsFor: 'displaying' stamp: 'jmv 7/4/2018 16:49:29'!

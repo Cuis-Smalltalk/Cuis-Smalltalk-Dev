@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 25 August 2018 at 11:14:08 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3449] on 20 September 2018 at 3:32:53 pm'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 51!
+!provides: 'LinearAlgebra' 1 52!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #LinearAlgebra!
 
@@ -335,6 +335,10 @@ asHeatmap: aBlock minVal: minVal maxVal: maxVal
 		color _ Color jet: fraction.
 		color _ color mixed: 0.6 with: Color gray.
 		word at: 1 put: color blue * 255 // 1; at: 2 put: color green * 255 // 1; at: 3 put: color red * 255// 1 ]! !
+
+!Matrix methodsFor: 'statistics' stamp: 'jmv 9/20/2018 09:56:23'!
+absMax
+	^ elements max abs max: elements min abs! !
 
 !Matrix methodsFor: 'statistics' stamp: 'jmv 5/12/2015 11:56'!
 average
