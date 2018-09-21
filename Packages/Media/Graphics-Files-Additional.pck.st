@@ -1,7 +1,10 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3063] on 13 March 2017 at 4:14:44 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3449] on 21 September 2018 at 5:03:40 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Graphics-Files-Additional' 1 21!
+!provides: 'Graphics-Files-Additional' 1 22!
 !requires: 'Compression' 1 nil nil!
+SystemOrganization addCategory: #'Graphics-Files-Additional'!
+
+
 !classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
 	instanceVariableNames: 'chunk form width height depth backColor bitsPerChannel colorType interlaceMethod bitsPerPixel bytesPerScanline thisScanline prevScanline rowSize globalDataChunk unknownChunks palette transparentPixelValue filtersSeen cachedDecoderMap bigEndian auxBitBlt auxSource auxDest auxCMap'
@@ -167,13 +170,6 @@ Structure:
 I hold the logical structure of the TIFF, but I do not preserve the physical structure (specific offsets) of the file I was parsed from (except for the offsets of the pixel data.)
 
 See TIFFReader (and future TIFFWriter) for more information about the structure into which I fit.!
-
-!Form methodsFor: '*Graphics-Files-Additional' stamp: 'jmv 6/8/2013 14:08'!
-writePNGfileNamed: fName
-	"
-	Display writePNGfileNamed: 'display.png'
-	"
-	PNGReadWriter putForm: self onFileNamed: fName! !
 
 !PNGReadWriter methodsFor: 'pixel copies' stamp: 'DSM 3/26/2000 21:32'!
 copyPixels: y
@@ -727,10 +723,85 @@ copyPixelsRGBA: y at: startX by: incX
 
 ! !
 
+!PNGReadWriter methodsFor: 'pixel copies' stamp: 'ar 2/19/2004 00:10'!
+rgbaDecoderMapForDepth: decoderDepth
+	bigEndian ifTrue:[
+		depth = 16 ifTrue:[
+			"Big endian, 32 -> 16 color mapping."
+			^ColorMap
+				shifts: #(-17 -14 -11 0)
+				masks: #(16rF8000000 16rF80000 16rF800 16r00)
+		] ifFalse:[
+			"Big endian, 32 -> 32 color mapping"
+			^ColorMap 
+				shifts: #(-8 -8 -8 24) 
+				masks: #(16rFF000000 16rFF0000 16rFF00 16rFF).
+		].
+	].
+	depth = 16 ifTrue:[
+		"Little endian, 32 -> 16 color mapping."
+		^ColorMap
+			shifts: #(7 -6 -19 0)
+			masks: #(16rF8 16rF800 16rF80000 0)
+	] ifFalse:[
+		"Little endian, 32 -> 32 color mapping"
+		^ColorMap 
+			shifts: #(-16 0 16 0) 
+			masks: #(16rFF0000 16rFF00 16rFF 16rFF000000).
+	].! !
+
 !PNGReadWriter methodsFor: 'accessing' stamp: 'RAA 11/7/2000 09:20'!
 debugging
 
 	^Debugging == true! !
+
+!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 5/13/2016 15:14'!
+nextImage
+	bigEndian := Smalltalk isBigEndian.
+	filtersSeen _ Bag new.
+	globalDataChunk _ nil.
+	transparentPixelValue _ nil.
+	unknownChunks _ Set new.
+	stream reset.
+	stream skip: 8.
+	[stream atEnd] whileFalse: [self processNextChunk].
+
+	"Set up our form"
+	(depth = 8 and: [ palette isNil ]) ifTrue: [
+		form _ GrayForm extent: width@height
+	] ifFalse: [
+		palette ifNotNil: [ 		"Dump the palette if it's the same as our standard palette"
+			palette = (StandardColors copyFrom: 1 to: palette size) 
+				ifTrue: [palette := nil]].
+		(depth <= 8 and: [ palette notNil ]) ifTrue: [
+			form := ColorForm extent: width@height nativeDepthFrom: depth.
+			form colors: palette.
+		] ifFalse:[
+			form := Form extent: width@height depth: depth.
+		]
+	].
+
+	backColor ifNotNil:[form fillColor: backColor].
+	chunk _ globalDataChunk ifNil:[self error: 'image data is missing'].
+	chunk ifNotNil: [self processIDATChunk].
+	unknownChunks isEmpty ifFalse: [
+		"Transcript show: ' ',unknownChunks asSortedCollection asArray printString."
+	].
+	self debugging ifTrue: [
+		Transcript newLine; show: 'form = ',form printString.
+		Transcript newLine; show: 'colorType = ',colorType printString.
+		Transcript newLine; show: 'interlaceMethod = ',interlaceMethod printString.
+		Transcript newLine; show: 'filters = ',filtersSeen sortedCounts asArray printString.
+	].
+	^ form
+! !
+
+!PNGReadWriter methodsFor: 'accessing' stamp: 'DSM 3/24/2000 01:12'!
+understandsImageFormat
+	#(137 80 78 71 13 10 26 10) do: [ :byte |
+		stream next = byte ifFalse: [^ false]].
+	^ true
+! !
 
 !PNGReadWriter methodsFor: 'miscellaneous' stamp: 'DSM 4/27/2000 13:09'!
 doPass: pass
@@ -746,6 +817,35 @@ dimensions"
 	pass = 6 ifTrue: [ ^ width >=2 ].
 	pass = 7 ifTrue: [ ^ height >=2 ].
 
+! !
+
+!PNGReadWriter methodsFor: 'miscellaneous' stamp: 'jmv 4/15/2010 10:19'!
+grayColorsFor: d
+	"return a color table for a gray image"
+
+	palette _ Array new: 1<<d.
+	d = 1 ifTrue: [
+		palette at: 1 put: Color black.
+		palette at: 2 put: Color white.
+		^  palette
+		].
+	d = 2 ifTrue: [
+		palette at: 1 put: Color black.
+		palette at: 2 put: (Color gray: 85.0 / 255.0).
+		palette at: 3 put: (Color gray: 170.0 / 255.0).
+		palette at: 4 put: Color white.
+		^ palette
+		].
+	d = 4 ifTrue: [
+		0 to: 15 do: [ :g |
+			palette at: g+1 put: (Color gray: (g/15) asFloat) ].
+		^ palette
+		].
+	d = 8 ifTrue: [
+		0 to: 255 do: [ :g |
+			palette at: g+1 put: (Color gray: (g/255) asFloat) ].
+		^ palette
+		].
 ! !
 
 !PNGReadWriter methodsFor: 'filtering' stamp: 'RAA 11/7/2000 09:43'!
@@ -821,74 +921,20 @@ filterVertical: count
 
 ! !
 
-!PNGReadWriter methodsFor: 'miscellaneous' stamp: 'jmv 4/15/2010 10:19'!
-grayColorsFor: d
-	"return a color table for a gray image"
+!PNGReadWriter methodsFor: 'filtering' stamp: 'eat 9/11/2000 20:05'!
+paethPredictLeft: a above: b aboveLeft: c
+	"Predicts the value of a pixel based on nearby pixels, based on
+Paeth (GG II, 1991)"
 
-	palette _ Array new: 1<<d.
-	d = 1 ifTrue: [
-		palette at: 1 put: Color black.
-		palette at: 2 put: Color white.
-		^  palette
-		].
-	d = 2 ifTrue: [
-		palette at: 1 put: Color black.
-		palette at: 2 put: (Color gray: 85.0 / 255.0).
-		palette at: 3 put: (Color gray: 170.0 / 255.0).
-		palette at: 4 put: Color white.
-		^ palette
-		].
-	d = 4 ifTrue: [
-		0 to: 15 do: [ :g |
-			palette at: g+1 put: (Color gray: (g/15) asFloat) ].
-		^ palette
-		].
-	d = 8 ifTrue: [
-		0 to: 255 do: [ :g |
-			palette at: g+1 put: (Color gray: (g/255) asFloat) ].
-		^ palette
-		].
-! !
-
-!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 5/13/2016 15:14'!
-nextImage
-	bigEndian := Smalltalk isBigEndian.
-	filtersSeen _ Bag new.
-	globalDataChunk _ nil.
-	transparentPixelValue _ nil.
-	unknownChunks _ Set new.
-	stream reset.
-	stream skip: 8.
-	[stream atEnd] whileFalse: [self processNextChunk].
-
-	"Set up our form"
-	(depth = 8 and: [ palette isNil ]) ifTrue: [
-		form _ GrayForm extent: width@height
-	] ifFalse: [
-		palette ifNotNil: [ 		"Dump the palette if it's the same as our standard palette"
-			palette = (StandardColors copyFrom: 1 to: palette size) 
-				ifTrue: [palette := nil]].
-		(depth <= 8 and: [ palette notNil ]) ifTrue: [
-			form := ColorForm extent: width@height nativeDepthFrom: depth.
-			form colors: palette.
-		] ifFalse:[
-			form := Form extent: width@height depth: depth.
-		]
-	].
-
-	backColor ifNotNil:[form fillColor: backColor].
-	chunk _ globalDataChunk ifNil:[self error: 'image data is missing'].
-	chunk ifNotNil: [self processIDATChunk].
-	unknownChunks isEmpty ifFalse: [
-		"Transcript show: ' ',unknownChunks asSortedCollection asArray printString."
-	].
-	self debugging ifTrue: [
-		Transcript newLine; show: 'form = ',form printString.
-		Transcript newLine; show: 'colorType = ',colorType printString.
-		Transcript newLine; show: 'interlaceMethod = ',interlaceMethod printString.
-		Transcript newLine; show: 'filters = ',filtersSeen sortedCounts asArray printString.
-	].
-	^ form
+	| pa pb pc |
+	pa _ b > c ifTrue: [b - c] ifFalse: [c - b].
+	pb _ a > c ifTrue: [a - c] ifFalse: [c - a].
+	pc _ a + b - c - c.
+	pc < 0 ifTrue: [
+		pc := pc * -1].
+	((pa <= pb) and: [pa <= pc]) ifTrue: [^ a].
+	(pb <= pc) ifTrue: [^ b].
+	^ c
 ! !
 
 !PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 16:37'!
@@ -952,21 +998,174 @@ nextPutImage: aForm interlace: aMethod filter: aFilterType
 	self writeIENDChunkOn: crcStream.
 	self writeChunk: crcStream.! !
 
-!PNGReadWriter methodsFor: 'filtering' stamp: 'eat 9/11/2000 20:05'!
-paethPredictLeft: a above: b aboveLeft: c
-	"Predicts the value of a pixel based on nearby pixels, based on
-Paeth (GG II, 1991)"
+!PNGReadWriter methodsFor: 'writing' stamp: 'nk 2/17/2004 16:51'!
+updateCrc: oldCrc from: start to: stop in: aCollection
+	^ZipWriteStream updateCrc: oldCrc from: start to: stop in: aCollection! !
 
-	| pa pb pc |
-	pa _ b > c ifTrue: [b - c] ifFalse: [c - b].
-	pb _ a > c ifTrue: [a - c] ifFalse: [c - a].
-	pc _ a + b - c - c.
-	pc < 0 ifTrue: [
-		pc := pc * -1].
-	((pa <= pb) and: [pa <= pc]) ifTrue: [^ a].
-	(pb <= pc) ifTrue: [^ b].
-	^ c
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 2/26/2016 17:06'!
+writeChunk: crcStream
+	| bytes length crc debug |
+	debug := self debugging.
+	bytes := crcStream originalContents.
+	length := crcStream position.
+	crc := self updateCrc: 16rFFFFFFFF from: 1 to: length in: bytes.
+	crc := crc bitXor: 16rFFFFFFFF.
+	debug ifTrue: [
+		Transcript newLine;
+			print: stream position; space;
+			nextPutAll: (bytes copyFrom: 1 to: 4) asString;
+			nextPutAll: ' len='; print: length;
+			nextPutAll: ' crc=0x'; nextPutAll: crc printStringHex  ].
+	stream nextUnsignedInt32Put: length-4 bigEndian: true. "exclude chunk name"
+	stream next: length putAll: bytes startingAt: 1.
+	stream nextUnsignedInt32Put: crc bigEndian: true.
+	debug ifTrue: [ Transcript nextPutAll: ' afterPos='; print: stream position ].
+	crcStream resetToStart.! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'nice 1/18/2010 18:08'!
+writeFileSignature
+	stream nextPutAll: #[ 16r89 16r50 16r4E  16r47 16r0D 16r0A 16r1A 16r0A ]! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 3/12/2017 19:19:47'!
+writeIDATChunkOn: aStream
+	"Write the IDAT chunk"
+	| z |
+	aStream nextPutAll: 'IDAT' asByteArray.
+
+	"Avoid growing multiple times. do a rough estimation of space needed"
+	aStream growTo: bytesPerScanline * height *11//20.
+
+	z _ ZLibWriteStream on: aStream.
+	form depth <= 8 
+		ifTrue: [ 
+			"Same format for type 3 (indexed color) and type 0 (grayscale, GrayForm)"
+			self writeType3DataOn: z ]
+		ifFalse: [ self writeType6DataOn: z ].
+	z close.
+	self debugging ifTrue: [
+		Transcript newLine;
+			nextPutAll: 'compressed size=';
+			print: aStream position;
+			nextPutAll: ' uncompressed size=';
+			print: z position ]! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 17:08'!
+writeIENDChunkOn: aStream
+	"Write the IEND chunk"
+	aStream nextPutAll: 'IEND' asByteArray.! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 2/26/2016 17:06'!
+writeIHDRChunkOn: aStream
+	"Write the IHDR chunk"
+	aStream nextPutAll: 'IHDR' asByteArray.
+	aStream nextSignedInt32Put: width bigEndian: true.
+	aStream nextSignedInt32Put: height bigEndian: true.
+	aStream nextPut: bitsPerChannel.
+	aStream nextPut: colorType.
+	aStream nextPut: 0. "compression"
+	aStream nextPut: 0. "filter method"
+	aStream nextPut: 0. "interlace method"
 ! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 1/12/2010 12:12'!
+writePLTEChunkOn: aStream
+	"Write the PLTE chunk"
+	| r g b colors |
+	aStream nextPutAll: 'PLTE' asByteArray.
+	(form is: #ColorForm) 
+		ifTrue: [ colors := form colors]
+		ifFalse: [ colors := Color indexedColors copyFrom: 1 to: (1 bitShift: form depth)].
+	colors do:[:aColor|
+		r := (aColor red * 255) truncated.
+		g := (aColor green * 255) truncated.
+		b := (aColor blue * 255) truncated.
+		aStream nextPut: r; nextPut: g; nextPut: b.
+	].! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 18:29'!
+writeSBITChunkOn: aStream
+	"Write the IDAT chunk"
+	aStream nextPutAll: 'sBIT' asByteArray.
+	form depth = 16 ifFalse:[self error: 'Unimplemented feature'].
+	aStream nextPut: 5.
+	aStream nextPut: 5.
+	aStream nextPut: 5.
+	aStream nextPut: 1.! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 17:34'!
+writeTRNSChunkOn: aStream
+	"Write out tRNS chunk"
+	aStream nextPutAll: 'tRNS' asByteArray.
+	form colors do:[:aColor|
+		aStream nextPut: (aColor alpha * 255) truncated.
+	].! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/3/2015 14:18'!
+writeType3DataOn: zStream
+	"Write color indexed data."
+	| scanline hack hackBlt swizzleBlt swizzleHack hackDepth |
+	scanline := ByteArray new: bytesPerScanline + 3 // 4 * 4.
+	hackDepth := bigEndian ifTrue:[form depth] ifFalse:[form depth negated].
+	hack := Form extent: width@1 depth: hackDepth bits: scanline.
+	hackBlt := BitBlt toForm: hack.
+	hackBlt sourceForm: form.
+	hackBlt combinationRule: Form over.
+	hackBlt destOrigin: 0@0.
+	hackBlt width: width; height: 1.
+	(form depth < 8 and:[bigEndian not]) ifTrue:[
+		swizzleHack := Form new hackBits: scanline.
+		swizzleBlt := BitBlt toForm: swizzleHack.
+		swizzleBlt sourceForm: swizzleHack.
+		swizzleBlt combinationRule: Form over.
+		swizzleBlt colorMap: (StandardSwizzleMaps at: form depth).
+	].
+	0 to: height-1 do:[:i|
+		hackBlt sourceOrigin: 0@i; copyBits.
+		swizzleBlt ifNotNil:[swizzleBlt copyBits].
+		zStream nextPut: 0. "filterType"
+		zStream next: bytesPerScanline putAll: scanline startingAt: 1.
+	]! !
+
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/3/2015 14:19'!
+writeType6DataOn: zStream
+	"Write RGBA data."
+	| scanline hack hackBlt cm miscBlt |
+	scanline := ByteArray new: bytesPerScanline.
+	hack := Form extent: width@1 depth: 32 bits: scanline.
+	form depth = 16 ifTrue:[
+		"Expand 16 -> 32"
+		miscBlt := BitBlt toForm: hack.
+		miscBlt sourceForm: form.
+		miscBlt combinationRule: Form over.
+		miscBlt destOrigin: 0@0.
+		miscBlt width: width; height: 1.
+	].
+	hackBlt := BitBlt toForm: hack.
+	hackBlt sourceForm: (miscBlt ifNil:[form] ifNotNil:[hack]).
+	hackBlt combinationRule: Form over.
+	hackBlt destOrigin: 0@0.
+	hackBlt width: width; height: 1.
+	bigEndian ifTrue:[
+		cm := ColorMap 
+			shifts: #(8 8 8 -24) 
+			masks: #(16rFF0000 16rFF00 16rFF 16rFF000000).
+	] ifFalse:[
+		cm := ColorMap 
+			shifts: #(-16 0 16 0) 
+			masks: #(16rFF0000 16rFF00 16rFF 16rFF000000).
+	].
+	hackBlt colorMap: cm.
+	0 to: height-1 do:[:i|
+		miscBlt ifNil:[
+			hackBlt sourceOrigin: 0@i; copyBits.
+		] ifNotNil:[
+			miscBlt sourceOrigin: 0@i; copyBits.
+			hack fixAlpha.
+			hackBlt copyBits.
+		].
+		zStream nextPut: 0. "filterType"
+		zStream nextPutAll: scanline.
+	]! !
 
 !PNGReadWriter methodsFor: 'chunks' stamp: 'ar 2/10/2004 23:55'!
 processBackgroundChunk
@@ -1233,209 +1432,6 @@ processTransparencyChunk
 			palette at: index put: ((palette at: index) alpha: alpha / 255) ].
 		^ self ]! !
 
-!PNGReadWriter methodsFor: 'pixel copies' stamp: 'ar 2/19/2004 00:10'!
-rgbaDecoderMapForDepth: decoderDepth
-	bigEndian ifTrue:[
-		depth = 16 ifTrue:[
-			"Big endian, 32 -> 16 color mapping."
-			^ColorMap
-				shifts: #(-17 -14 -11 0)
-				masks: #(16rF8000000 16rF80000 16rF800 16r00)
-		] ifFalse:[
-			"Big endian, 32 -> 32 color mapping"
-			^ColorMap 
-				shifts: #(-8 -8 -8 24) 
-				masks: #(16rFF000000 16rFF0000 16rFF00 16rFF).
-		].
-	].
-	depth = 16 ifTrue:[
-		"Little endian, 32 -> 16 color mapping."
-		^ColorMap
-			shifts: #(7 -6 -19 0)
-			masks: #(16rF8 16rF800 16rF80000 0)
-	] ifFalse:[
-		"Little endian, 32 -> 32 color mapping"
-		^ColorMap 
-			shifts: #(-16 0 16 0) 
-			masks: #(16rFF0000 16rFF00 16rFF 16rFF000000).
-	].! !
-
-!PNGReadWriter methodsFor: 'accessing' stamp: 'DSM 3/24/2000 01:12'!
-understandsImageFormat
-	#(137 80 78 71 13 10 26 10) do: [ :byte |
-		stream next = byte ifFalse: [^ false]].
-	^ true
-! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'nk 2/17/2004 16:51'!
-updateCrc: oldCrc from: start to: stop in: aCollection
-	^ZipWriteStream updateCrc: oldCrc from: start to: stop in: aCollection! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 2/26/2016 17:06'!
-writeChunk: crcStream
-	| bytes length crc debug |
-	debug := self debugging.
-	bytes := crcStream originalContents.
-	length := crcStream position.
-	crc := self updateCrc: 16rFFFFFFFF from: 1 to: length in: bytes.
-	crc := crc bitXor: 16rFFFFFFFF.
-	debug ifTrue: [
-		Transcript newLine;
-			print: stream position; space;
-			nextPutAll: (bytes copyFrom: 1 to: 4) asString;
-			nextPutAll: ' len='; print: length;
-			nextPutAll: ' crc=0x'; nextPutAll: crc printStringHex  ].
-	stream nextUnsignedInt32Put: length-4 bigEndian: true. "exclude chunk name"
-	stream next: length putAll: bytes startingAt: 1.
-	stream nextUnsignedInt32Put: crc bigEndian: true.
-	debug ifTrue: [ Transcript nextPutAll: ' afterPos='; print: stream position ].
-	crcStream resetToStart.! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'nice 1/18/2010 18:08'!
-writeFileSignature
-	stream nextPutAll: #[ 16r89 16r50 16r4E  16r47 16r0D 16r0A 16r1A 16r0A ]! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 3/12/2017 19:19:47'!
-writeIDATChunkOn: aStream
-	"Write the IDAT chunk"
-	| z |
-	aStream nextPutAll: 'IDAT' asByteArray.
-
-	"Avoid growing multiple times. do a rough estimation of space needed"
-	aStream growTo: bytesPerScanline * height *11//20.
-
-	z _ ZLibWriteStream on: aStream.
-	form depth <= 8 
-		ifTrue: [ 
-			"Same format for type 3 (indexed color) and type 0 (grayscale, GrayForm)"
-			self writeType3DataOn: z ]
-		ifFalse: [ self writeType6DataOn: z ].
-	z close.
-	self debugging ifTrue: [
-		Transcript newLine;
-			nextPutAll: 'compressed size=';
-			print: aStream position;
-			nextPutAll: ' uncompressed size=';
-			print: z position ]! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 17:08'!
-writeIENDChunkOn: aStream
-	"Write the IEND chunk"
-	aStream nextPutAll: 'IEND' asByteArray.! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 2/26/2016 17:06'!
-writeIHDRChunkOn: aStream
-	"Write the IHDR chunk"
-	aStream nextPutAll: 'IHDR' asByteArray.
-	aStream nextSignedInt32Put: width bigEndian: true.
-	aStream nextSignedInt32Put: height bigEndian: true.
-	aStream nextPut: bitsPerChannel.
-	aStream nextPut: colorType.
-	aStream nextPut: 0. "compression"
-	aStream nextPut: 0. "filter method"
-	aStream nextPut: 0. "interlace method"
-! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 1/12/2010 12:12'!
-writePLTEChunkOn: aStream
-	"Write the PLTE chunk"
-	| r g b colors |
-	aStream nextPutAll: 'PLTE' asByteArray.
-	(form is: #ColorForm) 
-		ifTrue: [ colors := form colors]
-		ifFalse: [ colors := Color indexedColors copyFrom: 1 to: (1 bitShift: form depth)].
-	colors do:[:aColor|
-		r := (aColor red * 255) truncated.
-		g := (aColor green * 255) truncated.
-		b := (aColor blue * 255) truncated.
-		aStream nextPut: r; nextPut: g; nextPut: b.
-	].! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 18:29'!
-writeSBITChunkOn: aStream
-	"Write the IDAT chunk"
-	aStream nextPutAll: 'sBIT' asByteArray.
-	form depth = 16 ifFalse:[self error: 'Unimplemented feature'].
-	aStream nextPut: 5.
-	aStream nextPut: 5.
-	aStream nextPut: 5.
-	aStream nextPut: 1.! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'ar 12/12/2003 17:34'!
-writeTRNSChunkOn: aStream
-	"Write out tRNS chunk"
-	aStream nextPutAll: 'tRNS' asByteArray.
-	form colors do:[:aColor|
-		aStream nextPut: (aColor alpha * 255) truncated.
-	].! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/3/2015 14:18'!
-writeType3DataOn: zStream
-	"Write color indexed data."
-	| scanline hack hackBlt swizzleBlt swizzleHack hackDepth |
-	scanline := ByteArray new: bytesPerScanline + 3 // 4 * 4.
-	hackDepth := bigEndian ifTrue:[form depth] ifFalse:[form depth negated].
-	hack := Form extent: width@1 depth: hackDepth bits: scanline.
-	hackBlt := BitBlt toForm: hack.
-	hackBlt sourceForm: form.
-	hackBlt combinationRule: Form over.
-	hackBlt destOrigin: 0@0.
-	hackBlt width: width; height: 1.
-	(form depth < 8 and:[bigEndian not]) ifTrue:[
-		swizzleHack := Form new hackBits: scanline.
-		swizzleBlt := BitBlt toForm: swizzleHack.
-		swizzleBlt sourceForm: swizzleHack.
-		swizzleBlt combinationRule: Form over.
-		swizzleBlt colorMap: (StandardSwizzleMaps at: form depth).
-	].
-	0 to: height-1 do:[:i|
-		hackBlt sourceOrigin: 0@i; copyBits.
-		swizzleBlt ifNotNil:[swizzleBlt copyBits].
-		zStream nextPut: 0. "filterType"
-		zStream next: bytesPerScanline putAll: scanline startingAt: 1.
-	]! !
-
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 10/3/2015 14:19'!
-writeType6DataOn: zStream
-	"Write RGBA data."
-	| scanline hack hackBlt cm miscBlt |
-	scanline := ByteArray new: bytesPerScanline.
-	hack := Form extent: width@1 depth: 32 bits: scanline.
-	form depth = 16 ifTrue:[
-		"Expand 16 -> 32"
-		miscBlt := BitBlt toForm: hack.
-		miscBlt sourceForm: form.
-		miscBlt combinationRule: Form over.
-		miscBlt destOrigin: 0@0.
-		miscBlt width: width; height: 1.
-	].
-	hackBlt := BitBlt toForm: hack.
-	hackBlt sourceForm: (miscBlt ifNil:[form] ifNotNil:[hack]).
-	hackBlt combinationRule: Form over.
-	hackBlt destOrigin: 0@0.
-	hackBlt width: width; height: 1.
-	bigEndian ifTrue:[
-		cm := ColorMap 
-			shifts: #(8 8 8 -24) 
-			masks: #(16rFF0000 16rFF00 16rFF 16rFF000000).
-	] ifFalse:[
-		cm := ColorMap 
-			shifts: #(-16 0 16 0) 
-			masks: #(16rFF0000 16rFF00 16rFF 16rFF000000).
-	].
-	hackBlt colorMap: cm.
-	0 to: height-1 do:[:i|
-		miscBlt ifNil:[
-			hackBlt sourceOrigin: 0@i; copyBits.
-		] ifNotNil:[
-			miscBlt sourceOrigin: 0@i; copyBits.
-			hack fixAlpha.
-			hackBlt copyBits.
-		].
-		zStream nextPut: 0. "filterType"
-		zStream nextPutAll: scanline.
-	]! !
-
 !PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'ar 2/11/2004 00:54'!
 computeSwizzleMapForDepth: depth
 	"Answer a map that maps pixels in a word to their opposite location. Used for 'middle-endian' forms where the byte-order is different from the bit order (good joke, eh?)."
@@ -1589,6 +1585,13 @@ parseFrom: aTIFFStream
 			^ nil].
 	self perform: selector with: aTIFFStream.
 	! !
+
+!TIFFField methodsFor: 'private' stamp: 'mrm 7/28/2001 16:27'!
+tag: tagInteger type: typeInteger values: valueArray
+	"Set my state to the given values."
+	tag _ tagInteger.
+	type _ typeInteger.
+	values _ valueArray.! !
 
 !TIFFField methodsFor: 'printing' stamp: 'mrm 7/31/2001 21:51'!
 printOn: aStream
@@ -1760,13 +1763,6 @@ tag
 	"Return the tag integer that indicates what kind of TIFF field this is."
 	^ tag.
 ! !
-
-!TIFFField methodsFor: 'private' stamp: 'mrm 7/28/2001 16:27'!
-tag: tagInteger type: typeInteger values: valueArray
-	"Set my state to the given values."
-	tag _ tagInteger.
-	type _ typeInteger.
-	values _ valueArray.! !
 
 !TIFFField methodsFor: 'accessing' stamp: 'mrm 7/31/2001 20:12'!
 tagSymbol
@@ -1986,48 +1982,6 @@ positionStreamToStripNum: anInteger
 	stream position: ((structure at: #StripOffsets) at: anInteger).
 	stream newStrip! !
 
-!TIFFReader methodsFor: 'reading' stamp: 'jmv 8/1/2016 10:37:24'!
-readForm
-	"Answer a Form created from the data in my stream and structure."
-	| result bps |
-	self validateTIFFType. "Make sure it's a type we can handle."
-	
-	(structure at: #SamplesPerPixel) >= 3 ifTrue: [
-		result _ Form 
-				extent: self extent
-				depth: 32. "32 bits form with RGB or RGBA"
-		
-		((structure at: #PlanarConfiguration) = 1)
-		ifTrue: [ 	"chunky" 
-			self
-				readRGB8PixelsInto: result
-				readAlpha: (structure at: #SamplesPerPixel) = 4
-				horizontalPredictor: ((structure at: #Predictor) = 2) ]
-		ifFalse: [ 	"planar"
-			self
-				readPlanarRGB8PixelsInto: result
-				readAlpha: (structure at: #SamplesPerPixel) = 4
-				horizontalPredictor: (structure at: #Predictor) = 2 ]].
-	
-	(structure at: #SamplesPerPixel) = 1 ifTrue: [
-		bps _ (structure at: #BitsPerSample) at: 1.
-		bps caseOf: {
-			[ 8 ] -> [
-				"ColorForm set for 8bpp gray scale images"
-				result _ GrayForm extent: self extent.
-				self
-					readGray8PixelsInto: result
-					horizontalPredictor: ((structure at: #Predictor) = 2) ].
-
-			[ 16 ] -> [
-				"float image"
-				result _ (Smalltalk at: #ShortWordMatrix ifAbsent: [
-						self error: '16bpp TIFF requires ShortWordMatrix (LinearAlgebra package)' ])
-					extent: self extent.
-				self readGray16PixelsInto: result ] }].
-
-	^ result! !
-
 !TIFFReader methodsFor: 'private' stamp: 'jmv 7/26/2016 15:55:59'!
 readGray16PixelsInto: aShortWordMatrix
 	"Replace the given Form's pixel values with pixel values from my TIFFStream. aForm must have the correct extent.
@@ -2202,6 +2156,48 @@ validateTIFFType
 	((#(1 3 4) includes: bpsArray size) and: [ (bpsArray allSatisfy: [ :d | d = 8 ]) or: [bpsArray = #(16)]])
 		ifFalse: [self error: 'Cannot read, this TIFF is not a Gray, RGB or RGBA TIFF with 8bpp or Gray 16bpp.']! !
 
+!TIFFReader methodsFor: 'reading' stamp: 'jmv 8/1/2016 10:37:24'!
+readForm
+	"Answer a Form created from the data in my stream and structure."
+	| result bps |
+	self validateTIFFType. "Make sure it's a type we can handle."
+	
+	(structure at: #SamplesPerPixel) >= 3 ifTrue: [
+		result _ Form 
+				extent: self extent
+				depth: 32. "32 bits form with RGB or RGBA"
+		
+		((structure at: #PlanarConfiguration) = 1)
+		ifTrue: [ 	"chunky" 
+			self
+				readRGB8PixelsInto: result
+				readAlpha: (structure at: #SamplesPerPixel) = 4
+				horizontalPredictor: ((structure at: #Predictor) = 2) ]
+		ifFalse: [ 	"planar"
+			self
+				readPlanarRGB8PixelsInto: result
+				readAlpha: (structure at: #SamplesPerPixel) = 4
+				horizontalPredictor: (structure at: #Predictor) = 2 ]].
+	
+	(structure at: #SamplesPerPixel) = 1 ifTrue: [
+		bps _ (structure at: #BitsPerSample) at: 1.
+		bps caseOf: {
+			[ 8 ] -> [
+				"ColorForm set for 8bpp gray scale images"
+				result _ GrayForm extent: self extent.
+				self
+					readGray8PixelsInto: result
+					horizontalPredictor: ((structure at: #Predictor) = 2) ].
+
+			[ 16 ] -> [
+				"float image"
+				result _ (Smalltalk at: #ShortWordMatrix ifAbsent: [
+						self error: '16bpp TIFF requires ShortWordMatrix (LinearAlgebra package)' ])
+					extent: self extent.
+				self readGray16PixelsInto: result ] }].
+
+	^ result! !
+
 !TIFFReader class methodsFor: 'instance creation' stamp: 'jmv 12/21/2013 09:28'!
 onTiffStream: aTIFFStream
 	"Create and answer an instance of the receiver based on the given TIFFStream. Parse the structure at this time as well."
@@ -2215,12 +2211,6 @@ checkLZWCodeSize
 		codeSize := codeSize + 1.
 		maxCode := (1 bitShift: codeSize) - 1 ]! !
 
-!TIFFStream methodsFor: 'accessing' stamp: 'jmv 1/12/2011 16:05'!
-compressionType: aNumber
-	compressionType _ aNumber.
-	aNumber = 5 ifTrue: [
-		self initializeLZWDecompression ]! !
-
 !TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 16:57'!
 initializeLZWDecompression
 
@@ -2231,37 +2221,6 @@ initializeLZWDecompression
 	prefixTable := Array new: 4096.
 	suffixTable := Array new: 4096.
 	bitMask := (1 bitShift: 8) - 1! !
-
-!TIFFStream methodsFor: 'accessing' stamp: 'mrm 7/22/2001 21:59'!
-isBigEndian
-	"Return true if I am a big-endian TIFF, false if I am little-endian."
-	^ bigEndian.
-! !
-
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 1/12/2011 17:02'!
-newStrip
-	remainBitCount _ 0.
-	self reInitializeLZWDecompression! !
-
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:23'!
-next: anInteger
-
-	"Answer the next anInteger elements of my stream's collection."
-	^ stream next: anInteger.! !
-
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'mrm 7/27/2001 17:49'!
-nextByte
-	"Answer the next 8-bit unsigned quantity from the stream."
-
-	^ stream next.! !
-
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 1/13/2011 10:13'!
-nextByteInBody
-	"Answer the next 8-bit unsigned quantity from the stream.
-	Uncompress data if appropriate"
-	compressionType = 5 ifTrue: [
-		^self nextLZWUncompressedByte ].
-	^ stream next! !
 
 !TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 17:02'!
 nextLZWCode
@@ -2301,48 +2260,6 @@ nextLZWUncompressedByte
 	answer _ outCodes at: outCount.
 	outCount _ outCount - 1.
 	^answer! !
-
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 2/29/2016 11:21'!
-nextUnsignedInt16
-	"Read a 16-bit unsigned quantity from the stream."
-
-	^ stream nextUnsignedInt16BigEndian: bigEndian! !
-
-!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 2/29/2016 11:18'!
-nextUnsignedInt32
-	"Read a 32-bit unsigned quantity from the stream."
-
-	^ stream nextUnsignedInt32BigEndian: bigEndian! !
-
-!TIFFStream methodsFor: 'private' stamp: 'mrm 7/22/2001 20:34'!
-on: aPositionableStream bigEndian: aBoolean
-
-	"Make aPositionableStream be the stream I'm wrapping. Interpret it as big or little-endian according to aBoolean."
-	stream _ aPositionableStream.
-	bigEndian _ aBoolean.
-! !
-
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/27/2001 17:35'!
-peek
-
-	"Answer the next byte of my underlying stream."
-	^ stream peek.
-
-! !
-
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:11'!
-position
-
-	"Answer the current position of accessing the sequence of objects."
-	^ stream position.! !
-
-!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:18'!
-position: anInteger 
-
-	"Set the current position for accessing the objects to be anInteger, as long 
-	as anInteger is within the bounds of the receiver's contents. If it is not, 
-	create an error notification."
-	stream position: anInteger.! !
 
 !TIFFStream methodsFor: 'LZW uncompressions' stamp: 'jmv 1/12/2011 15:18'!
 reInitializeLZWDecompression
@@ -2392,6 +2309,77 @@ readAdditionalLZWStuff
 		at: (outCount := outCount + 1)
 		put: finChar! !
 
+!TIFFStream methodsFor: 'accessing' stamp: 'jmv 1/12/2011 16:05'!
+compressionType: aNumber
+	compressionType _ aNumber.
+	aNumber = 5 ifTrue: [
+		self initializeLZWDecompression ]! !
+
+!TIFFStream methodsFor: 'accessing' stamp: 'mrm 7/22/2001 21:59'!
+isBigEndian
+	"Return true if I am a big-endian TIFF, false if I am little-endian."
+	^ bigEndian.
+! !
+
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 1/12/2011 17:02'!
+newStrip
+	remainBitCount _ 0.
+	self reInitializeLZWDecompression! !
+
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'mrm 7/27/2001 17:49'!
+nextByte
+	"Answer the next 8-bit unsigned quantity from the stream."
+
+	^ stream next.! !
+
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 1/13/2011 10:13'!
+nextByteInBody
+	"Answer the next 8-bit unsigned quantity from the stream.
+	Uncompress data if appropriate"
+	compressionType = 5 ifTrue: [
+		^self nextLZWUncompressedByte ].
+	^ stream next! !
+
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 2/29/2016 11:21'!
+nextUnsignedInt16
+	"Read a 16-bit unsigned quantity from the stream."
+
+	^ stream nextUnsignedInt16BigEndian: bigEndian! !
+
+!TIFFStream methodsFor: 'TIFF type access' stamp: 'jmv 2/29/2016 11:18'!
+nextUnsignedInt32
+	"Read a 32-bit unsigned quantity from the stream."
+
+	^ stream nextUnsignedInt32BigEndian: bigEndian! !
+
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:23'!
+next: anInteger
+
+	"Answer the next anInteger elements of my stream's collection."
+	^ stream next: anInteger.! !
+
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/27/2001 17:35'!
+peek
+
+	"Answer the next byte of my underlying stream."
+	^ stream peek.
+
+! !
+
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:11'!
+position
+
+	"Answer the current position of accessing the sequence of objects."
+	^ stream position.! !
+
+!TIFFStream methodsFor: 'stream access' stamp: 'mrm 7/22/2001 20:18'!
+position: anInteger 
+
+	"Set the current position for accessing the objects to be anInteger, as long 
+	as anInteger is within the bounds of the receiver's contents. If it is not, 
+	create an error notification."
+	stream position: anInteger.! !
+
 !TIFFStream methodsFor: 'stream access' stamp: 'jmv 1/12/2011 10:01'!
 reset
 	"Goto start."
@@ -2410,6 +2398,14 @@ skip: anInteger
 	"Set the receiver's position to be the current position+anInteger."
 
 	stream skip: anInteger.! !
+
+!TIFFStream methodsFor: 'private' stamp: 'mrm 7/22/2001 20:34'!
+on: aPositionableStream bigEndian: aBoolean
+
+	"Make aPositionableStream be the stream I'm wrapping. Interpret it as big or little-endian according to aBoolean."
+	stream _ aPositionableStream.
+	bigEndian _ aBoolean.
+! !
 
 !TIFFStream class methodsFor: 'instance creation' stamp: 'mrm 7/22/2001 20:42'!
 on: aPositionableStream bigEndian: aBoolean
@@ -2479,5 +2475,19 @@ parseFrom: aTIFFStream
 	"Answer a new instance of the receiver resulting from parsing the given TIFFStream from a position of 0. Error if the TIFFStream does not contain a valid TIFF."
 
 	^ self new parseFrom: aTIFFStream.! !
+
+!Form methodsFor: '*Graphics-Files-Additional' stamp: 'jmv 9/21/2018 16:57:37'!
+writePNGfile: fileEntry
+	"
+	Display writePNGfile: 'display.png' asFileEntry
+	"
+	PNGReadWriter putForm: self onFile: fileEntry! !
+
+!Form methodsFor: '*Graphics-Files-Additional' stamp: 'jmv 6/8/2013 14:08'!
+writePNGfileNamed: fName
+	"
+	Display writePNGfileNamed: 'display.png'
+	"
+	PNGReadWriter putForm: self onFileNamed: fName! !
 PNGReadWriter initialize!
 TIFFField initialize!
