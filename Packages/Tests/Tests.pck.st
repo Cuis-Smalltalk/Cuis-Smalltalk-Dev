@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3442] on 10 September 2018 at 12:04:18 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3452] on 24 September 2018 at 11:03:56 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 88!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 89!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'ImageProcessing' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -2153,6 +2153,72 @@ testAsTrueFraction
 	x _ 1.0234e308.
 	self assert: x asTrueFraction asFloat = x.! !
 
+!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/24/2018 10:52:30'!
+testExactAsString
+	"Tests that conversion to / from Strings is exact (same Float is re-created) when using #asString
+	(whose output is meant to be a readable String).
+	Use some relevant examples."
+
+	| examples |
+	examples _ {
+		1.0. 
+		Float fminNormalized / 2. 
+		Float fminNormalized / 10. 
+		Float fminNormalized / 13. 
+		2.0. 
+		2 sqrt. 
+		Float pi. 
+		Float fminDenormalized. 
+		Float fminDenormalized * 2. 
+		Float fminDenormalized * 3. 
+		Float fminDenormalized * 13 },
+	{
+		Float zero.
+		Float negativeZero.
+		Float negativeInfinity.
+		Float infinity }.
+
+	examples do: [ :float |
+		self assert: float predecessor asString asNumber = float predecessor.
+		self assert: float asString asNumber = float.
+		self assert: float successor asString asNumber = float successor ].
+
+	"NaN are special, in that they are not even equal to themselves"
+	self assert: Float nan asString asNumber isNaN! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/24/2018 10:51:07'!
+testExactStoreString
+	"Tests that conversion to / from Strings is exact (same Float is re-created) when using #storeString
+	(whose output is meant to be compilable smalltalk code).
+	Use some relevant examples."
+
+	| examples |
+	examples _ {
+		1.0. 
+		Float fminNormalized / 2. 
+		Float fminNormalized / 10. 
+		Float fminNormalized / 13. 
+		2.0. 
+		2 sqrt. 
+		Float pi. 
+		Float fminDenormalized. 
+		Float fminDenormalized * 2. 
+		Float fminDenormalized * 3. 
+		Float fminDenormalized * 13 },
+	{
+		Float zero.
+		Float negativeZero.
+		Float negativeInfinity.
+		Float infinity }.
+
+	examples do: [ :float |
+		self assert: (Compiler evaluate: float predecessor storeString) = float predecessor.
+		self assert: (Compiler evaluate: float storeString) = float.
+		self assert: (Compiler evaluate: float successor storeString) = float successor ].
+
+	"NaN are special, in that they are not even equal to themselves"
+	self assert: (Compiler evaluate: Float nan storeString) isNaN! !
+
 !FloatTest methodsFor: 'testing - conversion' stamp: 'nice 7/24/2008 02:04'!
 testFloatRounded
 	"5000000000000001 asFloat has an exact representation (no round off error).
@@ -2233,6 +2299,11 @@ testFractionAsFloat2
 	self assert: ((1<<52)+1+(1/4)) asFloat asTrueFraction = ((1<<52)+1).
 	self assert: ((1<<52)+1+(1/2)) asFloat asTrueFraction = ((1<<52)+2).
 	self assert: ((1<<52)+1+(3/4)) asFloat asTrueFraction = ((1<<52)+2).! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/24/2018 10:54:15'!
+testFromStringDoesntUnderflow
+	self assert: '12345678901234567890.0e-330' asNumber isZero not.
+	self assert: (Compiler evaluate: '12345678901234567890.0e-330')isZero not.! !
 
 !FloatTest methodsFor: 'testing - conversion' stamp: 'nice 5/6/2006 22:13'!
 testIntegerAsFloat
