@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3455] on 27 September 2018 at 9:37:50 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3456] on 27 September 2018 at 10:51:16 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 90!
+!provides: 'Tests' 1 91!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
 !requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -9830,6 +9830,11 @@ testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
 	self assert: 2 equals: groupedByEven size.
 	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
 	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'RNG 9/22/2018 10:26:34'!
+testsAverageWorksWithABlock
+
+	self assert: ({ '1' . '2' . '3' } average: [ :each | each asInteger ]) equals: 2! !
 
 !IntervalTest methodsFor: 'helpers' stamp: 'sqr 5/26/2016 18:13'!
 assert: aNumber isAbout: anotherNumber
