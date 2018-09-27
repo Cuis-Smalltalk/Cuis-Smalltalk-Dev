@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3452] on 24 September 2018 at 11:03:56 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3455] on 27 September 2018 at 9:37:50 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 89!
-!requires: 'Collections-CompactArrays' 1 nil nil!
+!provides: 'Tests' 1 90!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -2314,6 +2314,30 @@ testIntegerAsFloat
 	self assert: 16r1FFFFFFFFFFF1F800 asFloat = 16r1FFFFFFFFFFF20000 asFloat. "nearest even is upper"
 	self assert: 16r1FFFFFFFFFFFF0800 asFloat = 16r1FFFFFFFFFFFF0000 asFloat. "nearest even is lower"
 ! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/27/2018 09:37:10'!
+testMinimalAsString
+	"Tests that the conversion from String / to String ends in a minimal String representation.
+	This means that there are no extra unneded digits at the end.
+	For example, 0.1 (actually the closest Float, to 1/10, i.e. ((1/10) asFloat),  prints as 0.1, because 
+	it can be recovered from that String"
+
+	"These are just to start on solid ground. If these fail, what follows is meaningless."
+	self assert: 0.1 = ((1/10) asFloat).		"0.1 really is what it should be. Compiler works ok."
+	self assert: '0.1' asNumber = 0.1.			"#asNumber works ok. String '0.1' is what we want."
+	"Now the real test."
+	self assert: 0.1 printString = '0.1'.		"String '0.1' is what we get. No unneded extra digits."
+
+	"Some more.
+	Not as careful as before, but whatever Float these String represent, print it back the same (no extra digits)"
+	self assert: '0.2' asNumber printString = '0.2'.
+	{
+		'0.1'. '0.2'. '0.3'. '0.4'. '0.5'. '0.6'. '0.7'. '0.8'. '0.9'. 
+		'1.0'. '1.1'. '1.2'. '1.3'. '1.4'. '1.5'. '1.6'. '1.7'. '1.8'. '1.9'. '2.0'.
+		'1.01'. '1.001'. '1.0001'. '1.00001'. '1.000001'. '1.0000001'. '1.00000001'. '1.000000001'. '1.0000000001'. '1.00000000001'. '1.000000000001'.
+		'1.03'. '1.003'. '1.0003'. '1.00003'. '1.000003'. '1.0000003'. '1.00000003'. '1.000000003'. '1.0000000003'. '1.00000000003'. '1.000000000003'. 
+	} do: [ :string |
+		self assert: string asNumber printString = string ].! !
 
 !FloatTest methodsFor: 'testing - conversion' stamp: 'dtl 9/18/2004 12:40'!
 testStringAsNumber
