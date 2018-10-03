@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3449] on 20 September 2018 at 3:32:53 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3464] on 3 October 2018 at 10:27:37 am'!
 'Description Please enter a description for this package '!
-!provides: 'LinearAlgebra' 1 52!
+!provides: 'LinearAlgebra' 1 53!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #LinearAlgebra!
 
@@ -1612,7 +1612,7 @@ trim: threshold
 	right _ (width to: 1 by: -1) detect: [ :j | (self j: j) max > threshold ].
 	^ self copy: (left@top corner: right@bottom+1)! !
 
-!FloatMatrix methodsFor: 'copying' stamp: 'jmv 12/12/2016 19:03:29'!
+!FloatMatrix methodsFor: 'copying' stamp: 'jmv 10/3/2018 10:26:54'!
 trimCentered: threshold
 	"Answer a new, usually smaller, instance by removing rows and columns at the edges with no values greater than threshold.
 	Similar to #trim, but remove an equal number of rows at each end, and an equal number of columns at each end, even if leaving extra rows or columns.
@@ -1622,6 +1622,8 @@ trimCentered: threshold
 		#( 1 2 1)
 		#( 4 5 2)
 		#( 1 2 1))) trimCentered: 3
+
+	Note: It would be nice to remove this method and just use ConvolutionKernel . But ther might be apps that still use it.
 	"
 	| top left |
 	top _ (1 to: (height/2) ceiling) detect: [ :i | 

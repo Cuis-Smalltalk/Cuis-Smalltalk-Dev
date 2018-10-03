@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 5:34:12 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3464] on 3 October 2018 at 9:15:48 am'!
 'Description Please enter a description for this package'!
-!provides: 'GeographicDatasets' 1 12!
+!provides: 'GeographicDatasets' 1 13!
+!requires: 'ImageProcessing' 1 nil nil!
 !requires: 'WebClient' 1 16 nil!
 !requires: 'Cartography' 1 1 nil!
-!requires: 'ImageProcessing' 1 nil nil!
 SystemOrganization addCategory: #'GeographicDatasets-Tests'!
 SystemOrganization addCategory: #GeographicDatasets!
 
@@ -240,7 +240,7 @@ TiledWebmercatorSampledWorld class
 
 !classDefinition: #GoogleSampledWorld category: #GeographicDatasets!
 TiledWebmercatorSampledWorld subclass: #GoogleSampledWorld
-	instanceVariableNames: ''
+	instanceVariableNames: 'loPassSigma'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'GeographicDatasets'!
@@ -3595,18 +3595,19 @@ atGPSPosition: aGPSPosition sampleArea: pixelSizeOnGroundMeters
 
 	^self atLatitude: aGPSPosition latitude longitude: aGPSPosition longitude sampleArea: pixelSizeOnGroundMeters! !
 
-!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/15/2018 10:09:36'!
+!TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 9/19/2018 15:58:54'!
 atLatitude: lat longitude: lon
 	"This method is to be used when source dataset is similar resolution than destination.
 	See comment at atLatitude:longitude:areaFilterMeters:
 	"
-	| positionInMap tileAndPositionInTile tile |
+	| positionInMap tileAndPositionInTile tile posInTile |
 	positionInMap _ projection mapPositionFromLat: lat long: lon.
 	(positionInMap between: 0@0 and: 1@1)
 		ifFalse: [ ^ self outOfWorldValue ].	"Invalid coodinates, or outside the area covered by Webmercator"
 	tileAndPositionInTile _ positionInMap * (2 raisedToInteger: zoomLevel).
 	tile _ self tileAt: tileAndPositionInTile truncated.
-	^ self sampleTile: tile at: (tileAndPositionInTile - tileAndPositionInTile truncated) * self samplesPerTileSide! !
+	posInTile _ (tileAndPositionInTile - tileAndPositionInTile truncated) * self samplesPerTileSide.
+	^ self sampleTile: tile at: posInTile! !
 
 !TiledWebmercatorSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/17/2018 17:23:04'!
 atLatitude: lat longitude: lon sampleArea: pixelSizeOnGroundMeters
@@ -3711,7 +3712,7 @@ initializeZoomLevel: anInteger
 demoResult: extent
 	^ Form extent: extent depth: 32! !
 
-!GoogleSampledWorld methodsFor: 'private' stamp: 'jmv 8/14/2018 10:14:42'!
+!GoogleSampledWorld methodsFor: 'private' stamp: 'jmv 9/19/2018 16:25:58'!
 sampleTile: tile at: zeroBasedPosition
 	"zeroBasedPosition = 0@0 means topLeft, width@height means bottomRight
 	This datasets considers pixels as areas, not samples.
@@ -3719,17 +3720,10 @@ sampleTile: tile at: zeroBasedPosition
 	This means that:
 		- topLeft pixel covers zeroBasedPosition values in 0@0 to 1@1. zeroBasedPosition = 0.5@0.5 hits pixel 0@0 exactly
 		- bottomRight pixel covers zeroBasedPosition values in width@height-1 to width@height. zeroBasedPosition = width@height-0.5 hits pixel width@height-1 (bottomRight pixel) exactly
-	Additionally, 0@0 is a valid zeroBasedPosition. Make the valid interval for zeroBasedPosition be [0.0 .. width) x [0.0 .. height) and not (0.0 .. width) x (0.0 .. height).
-	This is, make the start of the interval closed. Make 0@0 a valid coordinate.
 	"
-	| x y |
-	x _ zeroBasedPosition x.
-	x _ x isZero ifTrue: [ 0 ] ifFalse: [ (x - 0.5) rounded ].
-	y _ zeroBasedPosition y.
-	y _ y isZero ifTrue: [ 0 ] ifFalse: [ (y - 0.5) rounded ].
-	^tile samples colorAt: x@y
-
-	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"! !
+	^ true
+		ifTrue: [ self sampleTileInterpolated: tile at: zeroBasedPosition ]
+		ifFalse: [ self sampleTileNearestNeighbor: tile at: zeroBasedPosition ]! !
 
 !GoogleSampledWorld methodsFor: 'private' stamp: 'jmv 8/15/2018 10:07:32'!
 sampleTile: tile at: zeroBasedPosition filterHalfExtent: aNumber
@@ -3754,6 +3748,47 @@ sampleTile: tile at: zeroBasedPosition filterHalfExtent: aNumber
 
 	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"! !
 
+!GoogleSampledWorld methodsFor: 'private' stamp: 'jmv 9/19/2018 16:25:35'!
+sampleTileInterpolated: tile at: zeroBasedPosition
+	"zeroBasedPosition = 0@0 means topLeft, width@height means bottomRight
+	This datasets considers pixels as areas, not samples.
+	Samples is a Form, and therefore zero based.
+	This means that:
+		- topLeft pixel covers zeroBasedPosition values in 0@0 to 1@1. zeroBasedPosition = 0.5@0.5 hits pixel 0@0 exactly
+		- bottomRight pixel covers zeroBasedPosition values in width@height-1 to width@height. zeroBasedPosition = width@height-0.5 hits pixel width@height-1 (bottomRight pixel) exactly
+	
+	But we can not interpolate before the first sample or after the last sample. Unfortunately this dataset doesn't include extra row and column (copied from next tile) to allow for this, like SRTM and derivatives do.
+	So, zeroBasedPositionis in [0.0 .. width) x [0.0 .. height) but interpolation is only correct in [0.5 .. width-0.5] x [0.5 .. height-0.5]
+	Slight artifacts will occur at the edges of tiles, when jumping from one tile to another.
+	"
+	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"
+	| px py |
+	px _ zeroBasedPosition x - 0.5.
+	py _ zeroBasedPosition y - 0.5.
+	px _ px min: tile samples width-1 max: 0.
+	py _ py min: tile samples height-1 max: 0.
+	^ tile samples colorInterpolatedAt: px @ py! !
+
+!GoogleSampledWorld methodsFor: 'private' stamp: 'jmv 9/19/2018 16:02:48'!
+sampleTileNearestNeighbor: tile at: zeroBasedPosition
+	"zeroBasedPosition = 0@0 means topLeft, width@height means bottomRight
+	This datasets considers pixels as areas, not samples.
+	Samples is a Form, and therefore zero based.
+	This means that:
+		- topLeft pixel covers zeroBasedPosition values in 0@0 to 1@1. zeroBasedPosition = 0.5@0.5 hits pixel 0@0 exactly
+		- bottomRight pixel covers zeroBasedPosition values in width@height-1 to width@height. zeroBasedPosition = width@height-0.5 hits pixel width@height-1 (bottomRight pixel) exactly
+	Additionally, 0@0 is a valid zeroBasedPosition. Make the valid interval for zeroBasedPosition be [0.0 .. width) x [0.0 .. height) and not (0.0 .. width) x (0.0 .. height).
+	This is, make the start of the interval closed. Make 0@0 a valid coordinate.
+	"
+	| x y |
+	x _ zeroBasedPosition x.
+	x _ x isZero ifTrue: [ 0 ] ifFalse: [ (x - 0.5) rounded ].
+	y _ zeroBasedPosition y.
+	y _ y isZero ifTrue: [ 0 ] ifFalse: [ (y - 0.5) rounded ].
+	^tile samples colorAt: x@y
+
+	"See comment on color interpolation at TrueMarble>>#sampleTile:at:"! !
+
 !GoogleSampledWorld methodsFor: 'constants' stamp: 'jmv 8/14/2018 11:30:24'!
 outOfWorldValue
 	"Value to answer for areas too close to poles, outside Webmercator"
@@ -3763,25 +3798,54 @@ outOfWorldValue
 samplesPerTileSide
 	^ 256! !
 
-!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/13/2018 19:00:35'!
+!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 9/21/2018 11:59:17'!
 fetchTileSamples: aPoint
 	| answer bytes form hexFileId folder |
 	answer _ WebClient httpGet: 'http://mt1.google.com/vt/lyrs=s&x=', aPoint x printString, '&y=', aPoint y printString, '&z=', zoomLevel printString.
 	bytes _ answer content asByteArray.
+	form _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	
+	"If bad data, retry once"
+	form boundingBox area isZero ifTrue: [
+		answer _ WebClient httpGet: 'http://mt1.google.com/vt/lyrs=s&x=', aPoint x printString, '&y=', aPoint y printString, '&z=', zoomLevel printString.
+		bytes _ answer content asByteArray.
+		form _ JPEGReadWriter2 new uncompress: bytes into: nil.
+	].
+	"Do nothing if bad data. Answer nil, don't save to disk"
+	form boundingBox area isZero ifTrue: [ ^ nil ].
+	
 	hexFileId _ self fileIdFor: aPoint.
 	folder _ self folderForId: hexFileId createifAbsent: true.
 	folder // (hexFileId, name, '.jpg') forceWriteStreamDo: [ :strm |
 		strm binary; nextPutAll: bytes ].
-	form _ JPEGReadWriter2 new uncompress: bytes into: nil.
-	^ form! !
+	^ self filter: form! !
 
-!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 8/16/2018 11:56:56'!
+!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 9/19/2018 15:42:44'!
+filter: form
+	| blue green lopass red |
+	^loPassSigma
+		ifNil: [ form ]
+		ifNotNil: [
+			lopass _ ConvolutionKernel gaussian: loPassSigma.
+			red _ FloatImage from32BitColorForm: form component: #red.
+			green _ FloatImage from32BitColorForm: form component: #green.
+			blue _ FloatImage from32BitColorForm: form component: #blue.
+			red _ red convolutionWith: lopass.
+			green _ green convolutionWith: lopass.
+			blue _ blue convolutionWith: lopass.
+			red asFormG: green b: blue ]! !
+
+!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 9/18/2018 17:37:42'!
+loPassSigma: sigma
+	loPassSigma _ sigma! !
+
+!GoogleSampledWorld methodsFor: 'accessing' stamp: 'jmv 9/19/2018 15:43:19'!
 loadTileSamples: aPoint
 	| hexFileId file |
 	hexFileId _ self fileIdFor: aPoint.
 	(self folderForId: hexFileId createifAbsent: false) ifNotNil: [ :folder |
 		file _ folder // (hexFileId, name, '.jpg').
-		file exists ifTrue: [ ^ [file formContents] on: Error do: [nil] ]].
+		file exists ifTrue: [ ^ [self filter: file formContents] on: Error do: [nil] ]].
 	^ nil! !
 
 !GoogleSampledWorld class methodsFor: 'examples' stamp: 'jmv 8/17/2018 17:21:54'!
