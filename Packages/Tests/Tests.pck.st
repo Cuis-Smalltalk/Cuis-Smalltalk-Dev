@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3456] on 27 September 2018 at 10:51:16 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3469] on 4 October 2018 at 9:43:26 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 91!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
+!provides: 'Tests' 1 93!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -1727,6 +1727,32 @@ testCreation
 	c3 _ Complex abs: 5.1 arg: Float twoPi.
 	self assert: c3 = 5.1.! !
 
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 10/3/2018 14:30:46'!
+testCreation2
+	"self run: #testCreation"
+	
+	| c |
+	c := 5 i.
+	self assert: (c real = 0).
+	self assert: (c imaginary = 5).
+	
+	c := 6 + 7 i.
+	self assert: (c real = 6).
+	self assert: ( c imaginary = 7).
+	
+	c := 5.6 - 8 i.
+	self assert: (c real = 5.6).
+	self assert: (c imaginary = -8).
+	
+	c := Complex real: 10 imaginary: 5.
+	self assert: (c real = 10).
+	self assert: (c imaginary = 5).
+	
+	c := Complex abs: 5 arg: (Float pi/2).
+	self assert: (c real rounded = 0).
+	self assert: (c imaginary = 5).
+	! !
+
 !ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:08:29'!
 testFourthRoot
 
@@ -1877,6 +1903,316 @@ testSqrt
 	self assert: -0.25 sqrt = (1/2)i.
 	self assert: -0.25 sqrt imaginary isFloat.! !
 
+!ComplexTest methodsFor: 'testing' stamp: 'nice 2/8/2006 22:09'!
+testEquality
+	"self run: #testEquality"
+	"self debug: #testEquality"
+	
+	self assert: 0i = 0.
+	self assert: (2 - 5i) = ((1 -4 i) + (1 - 1i)).
+	self assert: 0i isZero.
+	self deny: (1 + 3 i) = 1.
+	self deny: (1 + 3 i) = (1 + 2i).
+
+"Some more stuff"
+	self deny: (1 i) = nil.
+	self deny: nil = (1 i).
+
+	self deny: (1 i) = #(1 2 3).
+	self deny: #(1 2 3) = (1 i).
+
+	self deny: (1 i) = 0.
+	self deny: 0 = (1 i).
+
+	self assert:  (1 + 0 i) = 1.
+	self assert:  1 = (1+ 0 i).
+
+	self assert:  (1 + 0 i) = 1.0.
+	self assert:  1.0 = (1+ 0 i).
+
+	self assert:  (1/2 + 0 i) = (1/2).
+	self assert:  (1/2) = (1/2+ 0 i).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:00'!
+testAbs
+	"self run: #testAbs"
+	"self debug: #testAbs"
+	
+	| c |
+	c := (6 - 6 i).
+	self assert: c abs  = 72 sqrt.
+	! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 13:59'!
+testAdding
+	"self run: #testAdding"
+	
+	| c |
+	c := (5 - 6 i) + (-5 + 8 i).     "Complex with Complex"
+	self assert: (c =  (0 + 2 i)).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/24/2011 22:29'!
+testArcTan
+	| c |
+	c := (0.5 + 0 i).
+	self assert: (c arcTan real closeTo: c real arcTan).
+	self assert: (c arcTan imaginary closeTo: 0).
+	#(-0.5 -2 -3 0 0.5 2 3) do: [:real |
+	#(-0.5 -2 -3 0 0.5 2 3) do: [:imag |
+		c := real + imag i.
+		self assert: (c arcTan tan real closeTo: c real).
+		self assert: (c arcTan tan imaginary closeTo: c imaginary)]]! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:02'!
+testArg
+	"self run: #testArg"
+	"self debug: #testArg"
+	
+	| c |
+	c := (0 + 5 i) .
+	self assert: c arg  = (Float pi/ 2).
+	! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:13'!
+testComplexCollection
+	"self run: #testComplexCollection"
+	"self debug: #testComplexCollection"
+	
+	| array array2 |
+	array := Array with: 1 + 2i with:  3 + 4i with: 5 + 6i.
+	array2 := 2 * array.
+	array with:  array2 do: [:one :two | self assert: (2 * one) = two ] ! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:06'!
+testConjugated
+	
+	| c cc |
+	c := (5 - 6 i).
+	cc := c conjugated.
+	self assert: cc real = c real.
+	self assert: cc imaginary = c imaginary negated.! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:16'!
+testConversion
+	"self run: #testConversion"
+	"self debug: #testConversion"
+	
+	self assert: ((1 + 2i) + 1) =  (2 + 2 i).
+	self assert: (1 + (1 + 2i)) =  (2 + 2 i).
+	self assert: ((1 + 2i) + 1.0) =  (2.0 + 2 i).
+	self assert: (1.0 + (1 + 2i)) =  (2.0 + 2 i).
+	self assert: ((1 + 2i) + (2/3)) = ((5/3) + 2 i ).
+	self assert: ((2/3) + (1 + 2i)) = ((5/3) + 2 i )! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:41'!
+testCos
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: (c cos real closeTo: c real cos).
+	self assert: (c cos imaginary closeTo: 0).
+	c := (2 + 3 i).
+	c2 := c i exp + c i negated exp / 2.
+	self assert: (c cos real closeTo: c2 real).
+	self assert: (c cos imaginary closeTo: c2 imaginary).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/24/2011 21:33'!
+testCos2PlusSin2
+	| c |
+	#(-0.5 -2 -3 0 0.5 2 3) do: [:real |
+	#(-0.5 -2 -3 0 0.5 2 3) do: [:imag |
+		c := real + imag i.
+		self assert: ((c cos squared + c sin squared) real closeTo: 1).
+		self assert: ((c cos squared + c sin squared) imaginary closeTo: 0.0)]]! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:36'!
+testCosh
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: (c cosh real closeTo: c real cosh).
+	self assert: (c cosh imaginary closeTo: 0).
+	c := (2 + 3 i).
+	c2 := c exp + c negated exp / 2.
+	self assert: (c cosh real closeTo: c2 real).
+	self assert: (c cosh imaginary closeTo: c2 imaginary).
+	c2 := c i cos.
+	self assert: (c cosh real closeTo: c2 real).
+	self assert: (c cosh imaginary closeTo: c2 imaginary).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/24/2011 21:34'!
+testCosh2MinusSinh2
+	| c |
+	#(-0.5 -2 -3 0 0.5 2 3) do: [:real |
+	#(-0.5 -2 -3 0 0.5 2 3) do: [:imag |
+		c := real + imag i.
+		self assert: ((c cosh squared - c sinh squared) real closeTo: 1).
+		self assert: ((c cosh squared - c sinh squared) imaginary closeTo: 0.0)]]! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 6/5/2005 08:29'!
+testDivision1
+	"self run: #testDivision1"
+	"self debug: #testDivision1"
+	
+	| c1 c2 quotient |
+	c1 := 2.0e252 + 3.0e70 i.
+	c2 := c1.
+	quotient := c1 / c2.
+ 	self deny: (quotient - 1) isZero.
+	
+	"This test fails due to the wonders of floating point arithmetic. 
+	 Please have a look at Complex>>divideSecureBy: and #divideFastAndSecureBy:
+	how this can be avoided."
+	
+! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'laza 9/26/2005 10:24'!
+testLn
+	self assert: (Float e + 0 i) ln = Float e ln "See Bug 1815 on Mantis"! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:05'!
+testMultiplyByI
+	
+	| c |
+	c := (5 - 6 i).
+	self assert: (c * 1i = c i)! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:03'!
+testNegated
+	"self run: #testNegated"
+	"self debug: #testNegated"
+	
+	| c |
+	c := (2 + 5 i) .
+	self assert: c negated  = (-2 - 5i).
+	! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:40'!
+testRaisedTo
+	
+	| c c3 |
+	c := (5 - 6 i).
+	c3 := (c raisedTo: 0.2) raisedTo: 5.
+	self assert: (c3 real closeTo: c real).
+	self assert: (c3 imaginary closeTo: c imaginary).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:05'!
+testRaisedToInteger
+	
+	| c c3 |
+	c := (5 - 6 i).
+	c3 := (c * c * c).
+	self assert: (c3 = (c raisedToInteger: 3)).
+	self assert: (c3 reciprocal = (c raisedToInteger: -3)).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:05'!
+testReciprocal
+	"self run: #testReciprocal"
+	"self debug: #testReciprocal"
+	
+	| c |
+	c := (2 + 5 i).
+	self assert: c reciprocal  = ((2/29) - (5/29)i).
+	! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:07'!
+testReciprocalError
+	"self run: #testReciprocalError"
+	"self debug: #testReciprocalError"
+	
+	| c |
+	c := (0 i).
+	self should: [c reciprocal] raise: ZeroDivide
+	! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 6/5/2005 08:29'!
+testSecureDivision1
+	"self run: #testSecureDivision1"
+	"self debug: #testSecureDivision1"
+	
+	| c1 c2 quotient |
+	c1 := 2.0e252 + 3.0e70 i.
+	c2 := c1.
+	quotient := c1 divideSecureBy: c2.
+	self assert: (quotient - 1) isZero.
+	! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 6/5/2005 08:29'!
+testSecureDivision2
+	"self run: #testSecureDivision2"
+	"self debug: #testSecureDivision2"
+	
+	| c1 c2 quotient |
+ 	c1 := 2.0e252 + 3.0e70 i.
+ 	c2 := c1.
+ 	quotient := c1 divideFastAndSecureBy: c2.
+	self assert: (quotient - 1) isZero.
+	! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/24/2011 21:33'!
+testSin
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: (c sin real closeTo: c real sin).
+	self assert: (c sin imaginary closeTo: 0).
+	c := 2 + 3 i.
+	c2 := c i exp - c i negated exp / 2 i.
+	self assert: (c sin real closeTo: c2 real).
+	self assert: (c sin imaginary closeTo: c2 imaginary).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:38'!
+testSinh
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: (c sinh real closeTo: c real sinh).
+	self assert: (c sinh imaginary closeTo: 0).
+	c := 2 + 3 i.
+	c := c cosh squared - c sinh squared.
+	self assert: (c real closeTo: 1).
+	self assert: (c imaginary closeTo: 0).
+	c2 := c exp - c negated exp / 2.
+	self assert: (c sinh real closeTo: c2 real).
+	self assert: (c sinh imaginary closeTo: c2 imaginary).
+	c2 := c i sin i negated.
+	self assert: (c sinh real closeTo: c2 real).
+	self assert: (c sinh imaginary closeTo: c2 imaginary).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 13:24'!
+testSquared
+	"self run: #testSquared"
+	"self debug: #testSquared"
+	
+	| c c2 |
+	c := (6 - 6 i).
+	c2 := (c squared).
+	self assert: c2 imaginary = -72.
+	self assert: c2 real = 0.! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:17'!
+testTan
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: (c tan real closeTo: c real tan).
+	self assert: (c tan imaginary closeTo: 0).
+	c := 2 + 3 i.
+	c2 := c sin / c cos.
+	self assert: (c2 real closeTo: c tan real).
+	self assert: (c2 imaginary closeTo: c tan imaginary).! !
+
+!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:16'!
+testTanh
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: (c tanh real closeTo: c real tanh).
+	self assert: (c tanh imaginary closeTo: 0).
+	c := 2 + 3 i.
+	c2 := c sinh / c cosh.
+	self assert: (c2 real closeTo: c tanh real).
+	self assert: (c2 imaginary closeTo: c tanh imaginary).! !
+
+!ComplexTest methodsFor: 'testing - bugs' stamp: 'md 2/18/2006 16:53'!
+testBug1
+
+	self assert: (0.5 * (2+0i) ln) exp = (0.5 * 2 ln) exp.! !
+
 !FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/2/2015 09:29'!
 test32bitConversion
 	"Except for NaN, we can convert a 32bits float to a 64bits float exactly.
@@ -1941,7 +2277,7 @@ test32bitConversion2
 	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderSuc. roundedByConversion _ aux at: 1.
 	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex! !
 
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 5/27/2015 13:38'!
+!FloatTest methodsFor: 'IEEE 754' stamp: 'nice 5/30/2006 02:34'!
 test32bitGradualUnderflow
 	"method asIEEE32BitWord did not respect IEEE gradual underflow"
 	
@@ -1962,7 +2298,7 @@ test32bitGradualUnderflow
 	self assert: expected = conv.
 	
 	"case 2: smallest number"
-	conv := (Compiler evaluate: '2r0.00000000000000000000001e-126') asIEEE32BitWord.
+	conv := 2r0.00000000000000000000001e-126 asIEEE32BitWord.
 	expected := exponentPart bitOr: 2r1.
 	self assert: expected = conv.
 	
@@ -2114,7 +2450,7 @@ testSetOfFloat
 	size4 := (Set new: 4) add: 3; add: 3.0; size.
 	self assert: size3 = size4 description: 'The size of a Set should not depend on its capacity.'! !
 
-!FloatTest methodsFor: 'testing' stamp: 'nice 11/1/2009 18:58'!
+!FloatTest methodsFor: 'testing' stamp: 'nice 5/3/2014 22:32:20.636'!
 testStoreOn
 	"If storeOn: prints exactly and the parser avoid cumulating round off Errors,
 	then Float should be read back exactly.
@@ -2123,7 +2459,7 @@ testStoreOn
 	self assert: (Compiler evaluate: Float halfPi storeString) = Float halfPi.
 	self assert: (Compiler evaluate: Float halfPi negated storeString) = Float halfPi negated.
 	self assert: (Compiler evaluate: Float infinity storeString) = Float infinity.
-	self assert: (Compiler evaluate: Float infinity negated storeString) = Float infinity negated.
+	self assert: (Compiler evaluate: Float negativeInfinity storeString) = Float negativeInfinity.
 	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
 
 !FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/7/2010 12:12'!
@@ -2152,6 +2488,13 @@ testAsTrueFraction
 	self assert: x asTrueFraction asFloat = x.
 	x _ 1.0234e308.
 	self assert: x asTrueFraction asFloat = x.! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 6/3/2011 21:28'!
+testCeiling
+	self assert: 1.0 ceiling = 1.
+	self assert: 1.1 ceiling = 2.
+	self assert: -2.0 ceiling = -2.
+	self assert: -2.1 ceiling = -2.! !
 
 !FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/24/2018 10:52:30'!
 testExactAsString
@@ -2270,6 +2613,13 @@ testFloatTruncated
 		x := r next * 1.9999e16 + 1.0e12 .
 		self assert: x truncated = x asTrueFraction truncated]! !
 
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 6/3/2011 21:29'!
+testFloor
+	self assert: 1.0 floor = 1.
+	self assert: 1.1 floor = 1.
+	self assert: -2.0 floor = -2.
+	self assert: -2.1 floor = -3.! !
+
 !FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 3/28/2016 09:48'!
 testFractionAsFloat
 	"use a random test"
@@ -2299,6 +2649,15 @@ testFractionAsFloat2
 	self assert: ((1<<52)+1+(1/4)) asFloat asTrueFraction = ((1<<52)+1).
 	self assert: ((1<<52)+1+(1/2)) asFloat asTrueFraction = ((1<<52)+2).
 	self assert: ((1<<52)+1+(3/4)) asFloat asTrueFraction = ((1<<52)+2).! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 10/3/2018 16:22:06'!
+testFractionAsFloatWithUnderflow
+	"test rounding to nearest even"
+
+	| underflowPower |
+	underflowPower := Float emin - Float precision.
+	self assertIsPositiveZero: (2 raisedTo: underflowPower) asFloat.	
+	self assertIsNegativeZero: (2 raisedTo: underflowPower) negated asFloat! !
 
 !FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/24/2018 10:54:15'!
 testFromStringDoesntUnderflow
@@ -2339,6 +2698,30 @@ testMinimalAsString
 	} do: [ :string |
 		self assert: string asNumber printString = string ].! !
 
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 3/14/2008 23:59'!
+testReadFromManyDigits
+	"A naive algorithm may interpret these representations as Infinity or NaN.
+	This is http://bugs.squeak.org/view.php?id=6982"
+	
+	| s1 s2 |
+	s1 := '1' , (String new: 321 withAll: $0) , '.0e-321'.
+	s2 := '0.' , (String new: 320 withAll: $0) , '1e321'.
+	self assert: (Number readFrom: s1) = 1.
+	self assert: (Number readFrom: s2) = 1.! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 6/3/2011 21:37'!
+testRounded
+	self assert: 0.9 rounded = 1.
+	self assert: 1.0 rounded = 1.
+	self assert: 1.1 rounded = 1.
+	self assert: -1.9 rounded = -2.
+	self assert: -2.0 rounded = -2.
+	self assert: -2.1 rounded = -2.
+	
+	"In case of tie, round to upper magnitude"
+	self assert: 1.5 rounded = 2.
+	self assert: -1.5 rounded = -2.! !
+
 !FloatTest methodsFor: 'testing - conversion' stamp: 'dtl 9/18/2004 12:40'!
 testStringAsNumber
 	"This covers parsing in Number>>readFrom:"
@@ -2358,7 +2741,21 @@ testStringAsNumber
 	self assert: 1234.56 = aFloat.
 ! !
 
-!FloatTest methodsFor: 'characterization' stamp: 'nice 6/11/2009 20:47'!
+!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 6/3/2011 21:34'!
+testTruncated
+	self assert: 1.0 truncated = 1.
+	self assert: 1.1 truncated = 1.
+	self assert: -2.0 truncated = -2.
+	self assert: -2.1 truncated = -2.! !
+
+!FloatTest methodsFor: 'characterization' stamp: 'mt 8/16/2016 09:42'!
+expectedFailures
+
+	^ Smalltalk platformName = 'Win32'
+		ifTrue: [#(testTimesTwoPowerGradualUnderflow)]
+		ifFalse: [#()]! !
+
+!FloatTest methodsFor: 'characterization' stamp: 'jmv 10/3/2018 16:08:02'!
 testCharacterization
 
 	"Test the largest finite representable floating point value"
@@ -2394,7 +2791,9 @@ testCharacterization
 	self assert: Float one negated predecessor successor = Float one negated.
 	self assert: Float one negated successor predecessor = Float one negated.
 	self assert: Float infinity successor = Float infinity.
-	self assert: Float infinity negated predecessor = Float infinity negated.
+	self assert: Float negativeInfinity predecessor = Float negativeInfinity.
+	self assertIsNegativeZero: Float fmin negated successor.
+	self assertIsPositiveZero: Float fmin predecessor.
 	self assert: Float nan predecessor isNaN.
 	self assert: Float nan successor isNaN.
 	
@@ -2406,9 +2805,114 @@ testCharacterization
 	self assert: Float negativeZero hex = '8000000000000000'.
 	self assert: Float one hex = '3FF0000000000000'.
 	self assert: Float infinity hex = '7FF0000000000000'.
-	self assert: Float infinity negated hex = 'FFF0000000000000'.! !
+	self assert: Float negativeInfinity hex = 'FFF0000000000000'.! !
 
-!FloatTest methodsFor: 'testing compare' stamp: 'jmv 5/27/2015 13:35'!
+!FloatTest methodsFor: 'characterization' stamp: 'nice 5/3/2014 22:31:57.837'!
+testSignificandAndExponent
+	| denormals exceptionals normals |
+	
+	normals := {Float pi. Float pi * 100.0. Float pi/ -100.0. Float fmax. Float fminNormalized}.
+	denormals := {0.0. Float negativeZero. Float fminNormalized predecessor. Float fmin negated}.
+	exceptionals := {Float nan. Float infinity. Float negativeInfinity.}.
+	
+	normals , denormals , exceptionals do: [:aFloat |
+		"Any Float can be decomposed into its significand and exponent, and the significand holds the sign"
+		aFloat isNaN
+			ifTrue: [self assert: (aFloat significand timesTwoPower: aFloat exponent) isNaN]
+			ifFalse: [self
+				assert: (aFloat significand timesTwoPower: aFloat exponent)
+				equals: aFloat]].
+	
+	normals , denormals do: [:aFloat |
+		"The significand magnitude is in interval [1.0,2.0( "
+		aFloat = 0.0
+			ifTrue: [self assert: aFloat significand equals: 0]
+			ifFalse: [self
+				assert: aFloat significand abs >= 1.0;
+				assert: aFloat significand abs < 2.0]]! !
+
+!FloatTest methodsFor: 'characterization' stamp: 'jmv 10/3/2018 17:41:49'!
+testSignificandAsInteger
+	| mantissaBits denormalPowersOfTwo denormals exceptionals normalPowersOfTwo normals |
+	"There are 52 bits used for representing the mantissa (plus an eventual leading 1, see below)"
+	mantissaBits := Float precision - 1.
+	
+	normals := {Float pi. Float pi * 100.0. Float pi/ -100.0. Float fmax. Float fminNormalized}.
+	denormals := {0.0. Float negativeZero. Float fminNormalized predecessor. Float fmin negated}.
+	exceptionals := {Float nan. Float infinity. Float negativeInfinity.}.
+	normalPowersOfTwo := (-10 to: 10) collect: [:i | 1.0 timesTwoPower: i].
+	denormalPowersOfTwo := (Float emin - mantissaBits to: Float emin - 1) collect: [:i | 1.0 timesTwoPower: i].
+	
+	normals do: [:aNormalFloat |
+		"Assume the mantissa is written in least 52 bits of hex format, with an implied 1 on position 53"
+		self
+			assert: (((Integer readFrom: aNormalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1) bitOr: 1<<mantissaBits)
+			equals: aNormalFloat significandAsInteger].
+	
+	denormals do: [:aDenormalFloat |
+		"For zero and denormal, no implied leading one"
+		self
+			assert: ((Integer readFrom: aDenormalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1)
+			equals: aDenormalFloat significandAsInteger].
+
+"This currently is not allowed in Cuis"
+false ifTrue: [
+	exceptionals do: [:aDenormalOrExceptionalFloat |
+		"For every other Float, zero, denormal or exceptional, no implied leading one"
+		self
+			assert: ((Integer readFrom: aDenormalOrExceptionalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1)
+			equals: aDenormalOrExceptionalFloat significandAsInteger].
+].
+
+	normalPowersOfTwo do: [:aNormalPowerOfTwoFloat |
+		"The significand of a power of two is a power of two, with high bit of expected precision"
+		self assert: aNormalPowerOfTwoFloat significandAsInteger isPowerOfTwo.
+		self assert: aNormalPowerOfTwoFloat significandAsInteger highBit equals: Float precision.
+		self assert: aNormalPowerOfTwoFloat successor significandAsInteger equals: aNormalPowerOfTwoFloat significandAsInteger + 1.
+		"The last one is not true for fminNormalized"
+		aNormalPowerOfTwoFloat = Float fminNormalized or: [
+			self assert: aNormalPowerOfTwoFloat predecessor significandAsInteger equals: aNormalPowerOfTwoFloat significandAsInteger * 2 - 1]].
+	
+	denormalPowersOfTwo do: [:aDenormalPowerOfTwoFloat |
+		"The significand of a denormal power of two is a power of two, just with less bits"
+		self assert: aDenormalPowerOfTwoFloat significandAsInteger isPowerOfTwo.
+		self assert: aDenormalPowerOfTwoFloat significandAsInteger highBit equals: Float precision + aDenormalPowerOfTwoFloat exponent - Float emin.
+		aDenormalPowerOfTwoFloat successor = Float fminNormalized or: [
+			self assert: aDenormalPowerOfTwoFloat successor significandAsInteger equals: aDenormalPowerOfTwoFloat significandAsInteger + 1].
+		self assert: aDenormalPowerOfTwoFloat predecessor significandAsInteger equals: aDenormalPowerOfTwoFloat significandAsInteger - 1.].
+	
+	"Well known value for a few extremal cases"
+	self assert: Float fmax significandAsInteger equals: 1 << Float precision - 1.
+	self assert: Float fmin significandAsInteger equals: 1.
+	self assert: 0.0 significandAsInteger equals: 0.
+"This currently is not allowed in Cuis"
+false ifTrue: [
+	self assert: Float infinity significandAsInteger equals: 0.
+	self assert: Float nan significandAsInteger > 0
+].! !
+
+!FloatTest methodsFor: 'characterization' stamp: 'jmv 10/3/2018 17:34:05'!
+testUlp
+
+	{Float pi predecessor. Float pi. Float pi successor} do:
+		[:f |
+		self assert: (f * 2) ulp = (f ulp * 2).
+		self assert: (f / 2) ulp = (f ulp / 2).
+		self deny: f + f ulp = f.
+		self deny: f - f ulp = f.
+		"Tests below are valid as long as default rounding mode (to nearest even) is used"
+		self assert: f significandAsInteger odd not | (f ulp / 2.0 + f = f successor).
+		self assert: f significandAsInteger even not | (f ulp / 2.0 + f = f)].
+	
+	self assert: 0.0 ulp = Float fmin.
+	self assert: 1.0 ulp = Float epsilon.
+	self assert: Float nan ulp isNaN.
+	self assert: Float infinity ulp = Float infinity.
+	self assert: Float negativeInfinity ulp = Float infinity.
+
+	self assert: ((0 to: Float precision - 1) allSatisfy: [:each | (Float fmin timesTwoPower: each) ulp = Float fmin]).	! !
+
+!FloatTest methodsFor: 'testing compare' stamp: 'nice 7/19/2009 19:24'!
 testCloseTo
 	self deny: (Float nan closeTo: Float nan) description: 'NaN isn''t close to anything'.
 	self deny: (Float nan closeTo: 1.0) description: 'NaN isn''t close to anything'.
@@ -2423,7 +2927,7 @@ testCloseTo
 	self assert: (0 closeTo: 1.0e-8).
 	self assert: (1+1.0e-8 closeTo: 1.0).
 	
-	self assert: (1000000001 * 1.0 closeTo: 1000000000.0).
+	self assert: (1000000001.0 closeTo: 1000000000.0).
 	self deny: (1000000001 closeTo: 1000000000) description: 'exact representation are considered closeTo: only if equal'.! !
 
 !FloatTest methodsFor: 'testing compare' stamp: 'jmv 9/1/2010 11:58'!
@@ -2522,6 +3026,21 @@ testIsWithinUlpsFrom
 	self assert: (1.0 successor isWithin: 1 ulpsFrom: 1.0).
 	self deny: (1.0 successor successor isWithin: 1 ulpsFrom: 1.0)! !
 
+!FloatTest methodsFor: 'testing compare' stamp: 'nice 10/27/2014 21:50'!
+testLiteralEqualityOfNan
+	| nan |
+	nan := Float nan.
+	self assert: (nan literalEqual: nan)
+		description: 'Float nan is not equal to itself, though it is literally equal'.! !
+
+!FloatTest methodsFor: 'testing compare' stamp: 'jmv 10/3/2018 16:29:31'!
+testLiteralEqualityOfZeroAndNegativeZero
+	self assert: Float zero = Float negativeZero.
+	self deny: (Float zero literalEqual: Float negativeZero).
+	self
+		assert: (Compiler evaluate: '1>2 ifTrue: [0.0] ifFalse: [-0.0]') hex = Float negativeZero hex
+		description: 'Float zero and negativeZero are not literally substituable'.! !
+
 !FloatTest methodsFor: 'testing - arithmetic' stamp: 'GabrielOmarCotelli 6/6/2009 17:14'!
 testDivide
 
@@ -2560,6 +3079,25 @@ testTimesTwoPowerGradualUnderflow
 				g := f timesTwoPower: exp.
 				self assert: (g timesTwoPower: Float fmin exponent - g exponent) = Float fmin]! !
 
+!FloatTest methodsFor: 'testing - arithmetic' stamp: 'nice 2/12/2015 02:52'!
+testTimesTwoPowerOverflow
+	self assert: (Float fminNormalized timesTwoPower: Float emax - Float emin) equals: (2.0 raisedTo: Float emax).
+	self assert: (Float zero timesTwoPower: SmallInteger maxVal squared) equals: Float zero.
+! !
+
+!FloatTest methodsFor: 'testing - arithmetic' stamp: 'nice 2/12/2015 02:52'!
+testTimesTwoPowerUnderflow
+	self assert: ((2.0 raisedTo: Float emax) timesTwoPower: Float emin - Float emax) equals: Float fminNormalized.
+	self assert: (Float infinity timesTwoPower: SmallInteger minVal * SmallInteger maxVal) equals: Float infinity.
+! !
+
+!FloatTest methodsFor: 'testing - arithmetic' stamp: 'nice 10/14/2011 21:43'!
+testZeroRaisedToNegativePower
+	"this is a test related to http://bugs.squeak.org/view.php?id=6781"
+	
+	self should: [0.0 raisedTo: -1] raise: ZeroDivide.
+	self should: [0.0 raisedTo: -1.0] raise: ZeroDivide.! !
+
 !FloatTest methodsFor: 'infinity behavior' stamp: 'nice 7/14/2009 09:32'!
 testHugeIntegerCloseTo
 	"This is a test for bug http://bugs.squeak.org/view.php?id=7368"
@@ -2596,14 +3134,21 @@ testInfinity2
   	"All infinities are signed. Negative infinity is not equal to Infinity"
 ! !
 
-!FloatTest methodsFor: 'infinity behavior' stamp: 'nice 10/17/2007 23:54'!
+!FloatTest methodsFor: 'infinity behavior' stamp: 'nice 5/3/2014 22:31:23.35'!
 testInfinityCloseTo
 	"This is a test for bug http://bugs.squeak.org/view.php?id=6729:"
 	
  	"FloatTest new testInfinityCloseTo"
 
-	self deny: (Float infinity closeTo: Float infinity negated).
-	self deny: (Float infinity negated closeTo: Float infinity).! !
+	self deny: (Float infinity closeTo: Float negativeInfinity).
+	self deny: (Float negativeInfinity closeTo: Float infinity).! !
+
+!FloatTest methodsFor: 'zero behavior' stamp: 'nice 1/27/2017 22:01'!
+testCopySign
+	self assert: (0.0 copySignTo: 1) = 1.
+	self assert: (Float negativeZero copySignTo: 1) = -1.
+	self assertIsNegativeZero: (-1 copySignTo: 0.0).
+	self assertIsPositiveZero: (1 copySignTo: Float negativeZero).! !
 
 !FloatTest methodsFor: 'zero behavior' stamp: 'md 4/16/2003 15:02'!
 testIsZero
@@ -2766,33 +3311,153 @@ testStoreBase16
 		assert: (20.0 storeStringBase: 16) = '16r14.0'
 		description: 'the radix prefix should not be omitted, except in base 10'! !
 
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 4/23/2011 02:55'!
+testArCosh
+	self assert: 1.0 arCosh = 0.0.
+	self deny: Float infinity arCosh isFinite.
+	self assert: (2.5 arCosh cosh closeTo: 2.5).! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:59'!
+testArSinh
+	self assertIsPositiveZero: 0.0 arSinh.
+	self assertIsNegativeZero: Float negativeZero arSinh.
+	self deny: Float infinity arSinh isFinite.
+	self assert: (0.5 arSinh negated closeTo: 0.5 negated arSinh).
+	self assert: (0.5 arSinh sinh closeTo: 0.5).
+	self assert: (-2.5 arSinh sinh closeTo: -2.5).! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:59'!
+testArTanh
+	self assertIsPositiveZero: 0.0 arTanh.
+	self assertIsNegativeZero: Float negativeZero arTanh.
+	self deny: 1 arTanh isFinite.
+	self assert: (0.5 arTanh negated closeTo: 0.5 negated arTanh).
+	self assert: (0.5 arTanh tanh closeTo: 0.5).
+	self assert: (-0.5 arTanh tanh closeTo: -0.5).! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 4/23/2011 02:49'!
+testCosh
+	self assert: (0.0 cosh closeTo: 1).
+	self deny: Float infinity cosh isFinite.
+	self assert: (2.0 cosh squared - 2.0 sinh squared closeTo: 1).
+	self assert: (2.0 cosh closeTo: 2.0 negated cosh).! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:36'!
+testDegreeCos	
+	"Following tests use approximate equality, because cosine are generally evaluated using inexact Floating point arithmetic"
+	self assert: (45.0 degreeCos squared - 0.5) abs <= Float epsilon.
+	self assert: (60.0 degreeCos - 0.5) abs <= Float epsilon.
+	self assert: (120.0 degreeCos + 0.5) abs <= Float epsilon.
+	-360.0 to: 360.0 do: [:i |
+		self assert: (i degreeCos closeTo: i degreesToRadians cos)].
+	
+	"Following tests use strict equality which is a requested property of degreeCos"
+	-10.0 to: 10.0 do: [:k |
+		self assert: (k*360 + 90) degreeCos = 0.
+		self assert: (k*360 - 90) degreeCos = 0.
+		self assert: (k*360 + 180) degreeCos + 1 = 0.
+		self assert: (k*360) degreeCos - 1 = 0.].! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 5/3/2014 22:30:50.872'!
+testDegreeCosForExceptionalValues
+	self assert: Float nan degreeCos isNaN.
+	self assert: Float infinity degreeCos isNaN.
+	self assert: Float negativeInfinity degreeCos isNaN.! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:37'!
+testDegreeSin	
+	"Following tests use approximate equality, because sine are generally evaluated using inexact Floating point arithmetic"
+	self assert: (45.0 degreeSin squared - 0.5) abs <= Float epsilon.
+	self assert: (30.0 degreeSin - 0.5) abs <= Float epsilon.
+	self assert: (-30.0 degreeSin + 0.5) abs <= Float epsilon.
+	-360.0 to: 360.0 do: [:i |
+		self assert: (i degreeSin closeTo: i degreesToRadians sin)].
+	
+	"Following tests use strict equality which is a requested property of degreeSin"
+	-10.0 to: 10.0 do: [:k |
+		self assert: (k*360 + 90) degreeSin - 1 = 0.
+		self assert: (k*360 - 90) degreeSin + 1= 0.
+		self assert: (k*360 + 180) degreeSin = 0.
+		self assert: (k*360) degreeSin = 0.].! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 5/3/2014 22:30:55.613'!
+testDegreeSinForExceptionalValues
+	self assert: Float nan degreeSin isNaN.
+	self assert: Float infinity degreeSin isNaN.
+	self assert: Float negativeInfinity degreeSin isNaN.! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/3/2018 17:43:27'!
+testFloorLog2
+	"Float internal representation of Float being in base 2, we expect (aFloat floorLog: 2) to be exact."
+	
+	| aBitLess aBitMore |
+	aBitMore := 1 + Float epsilon.
+	aBitLess := 1 - Float epsilon.
+	Float emin + 1 to: Float emax - 1 do: [:exp |
+		| exactPowerOfTwo |
+		exactPowerOfTwo := 1.0 timesTwoPower: exp.
+		self assert: exp equals: (exactPowerOfTwo floorLog: 2).
+		self assert: exp equals: (exactPowerOfTwo * aBitMore floorLog: 2).
+		self assert: exp-1 equals: (exactPowerOfTwo * aBitLess floorLog: 2) ].! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:59'!
+testSinh
+	self assertIsPositiveZero: 0.0 sinh.
+	self assertIsNegativeZero: Float negativeZero sinh.
+	self deny: Float infinity sinh isFinite.
+	self assert: (2.0 cosh squared - 2.0 sinh squared closeTo: 1).
+	self assert: (2.0 sinh negated closeTo: 2.0 negated sinh).! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:58'!
+testTanh
+	self assertIsPositiveZero: 0.0 tanh.
+	self assertIsNegativeZero: Float negativeZero tanh.
+	self assert: (Float infinity tanh closeTo: 1).
+	self assert: (2.0 cosh squared - 2.0 sinh squared closeTo: 1).
+	self assert: (2.0 tanh negated closeTo: 2.0 negated tanh).! !
+
+!FloatTest methodsFor: 'accessing' stamp: 'jmv 10/3/2018 15:43:27'!
+assertIsNegativeZero: aFloat
+	"Assert that aFloat is Float negativeZero"
+	self assert: aFloat hex = Float negativeZero hex! !
+
+!FloatTest methodsFor: 'accessing' stamp: 'jmv 10/3/2018 15:43:47'!
+assertIsPositiveZero: aFloat
+	"Assert that aFloat is Float zero (the positive one)"
+	self assert: aFloat hex = 0.0 hex! !
+
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!
 assert: a classAndValueEquals: b
 	self assert: a class = b class.
 	self assert: a = b! !
 
-!FractionTest methodsFor: 'tests - sinuses' stamp: 'sd 3/4/2004 21:13'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:38'!
 testDegreeCos
 	"self run: #testDegreeCos"
 	
-	self shouldnt: [ (4/3) degreeCos] raise: Error.
-	self assert: (1/3) degreeCos printString =  '0.999983076857744'! !
+	-361/3 to: 359/3 do: [:i |
+		self assert: (i degreeCos closeTo: i degreesToRadians cos)].! !
 
-!FractionTest methodsFor: 'tests - sinuses' stamp: 'sd 3/5/2004 14:54'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/3/2018 15:19:28'!
+testDegreeCos2
+	"self run: #testDegreeCos"
+	
+	self shouldnt: [ (4/3) degreeCos] raise: Error.
+	self assert: (1/3) degreeCos printString =  '0.9999830768577442'! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:38'!
 testDegreeSin
+	"self run: #testDegreeSin"
+
+	-361/3 to: 359/3 do: [:i |
+		self assert: (i degreeSin closeTo: i degreesToRadians sin)].! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/3/2018 15:19:31'!
+testDegreeSin2
 	"self run: #testDegreeSin"
 	
 	self shouldnt: [ (4/3) degreeSin] raise: Error.
 	self assert: (1/3) degreeSin printString =  '0.005817731354993834'.! !
-
-!FractionTest methodsFor: 'tests - sinuses' stamp: 'GabrielOmarCotelli 5/23/2009 20:19'!
-testReciprocal
-
-	self 
-		assert: (1/2) reciprocal = 2;
-		assert: (3/4) reciprocal = (4/3);
-		assert: (-1/3) reciprocal = -3;
-		assert: (-3/5) reciprocal = (-5/3)! !
 
 !FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/11/2011 22:27'!
 testExactRaisedTo
@@ -2878,6 +3543,28 @@ testExactSqrt
 		self assert: f squared sqrt classAndValueEquals: f.
 		f _ j / i.
 		self assert: f squared sqrt classAndValueEquals: f ]! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 12/11/2012 19:56'!
+testFloorLog
+	self assert: (1/100 floorLog: 10) = -2.
+	self assert: (((2 raisedTo: Float emax + 11)/3) floorLog: 10)
+		= ((Float emax + 11)*2 log - 3 log) floor description: 'Fraction>>log should not overflow'.
+	self assert: ((3/(2 raisedTo: Float precision - Float emin)) floorLog: 10)
+		= ((Float emin - Float precision)*2 log + 3 log) floor description: 'Fraction>>log should not underflow'! !
+
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 12/11/2012 22:27'!
+testFloorLogExactness
+
+	1 + (Float fminDenormalized floorLog: 10) to: -1 do: [:n |
+		self assert: ((10 raisedTo: n) floorLog: 10) = n].
+
+	"Float version is not exact for at least 2 reasons:
+	1/(10 raisedTo: n) asFloat is not exact
+	(aFloat log: radix) is not exact
+
+	(1 + (Float fminDenormalized floorLog: 10) to: -1) count: [:n |
+		((10 raisedTo: n) asFloat floorLog: 10) ~= n]."
+	! !
 
 !FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:38'!
 testInexactRaisedTo
@@ -2991,6 +3678,120 @@ testFractionPrinting
 	self assert: ((5 / -7) printStringBase: 3) = '(-12/21)'.
 	self assert: ((5 / -7) storeStringBase: 3) = '(-3r12/3r21)'.
 ! !
+
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+testIntegerWholeDivision
+	
+	self assert: 4 / (2/3) classAndValueEquals: 6.
+	
+	self assert: 4 / (-2/3) classAndValueEquals: -6.
+	
+	self assert: -4 / (-2/3) classAndValueEquals: 6.
+	
+	self assert: -4 / (2/3) classAndValueEquals: -6.! !
+
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+testIntegerWholeMultiplication
+	
+	self assert: 4 * (3/2) classAndValueEquals: 6.
+	
+	self assert: 4 * (-3/2) classAndValueEquals: -6.
+	
+	self assert: -4 * (-3/2) classAndValueEquals: 6.
+	
+	self assert: -4 * (3/2) classAndValueEquals: -6.! !
+
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+testReciprocal
+
+	self 
+		assert: (1/2) reciprocal classAndValueEquals: 2;
+		assert: (3/4) reciprocal equals: (4/3);
+		assert: (-1/3) reciprocal classAndValueEquals: -3;
+		assert: (-3/5) reciprocal equals: (-5/3)! !
+
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+testWholeDifference
+	
+	self assert: (2/3) - (5/3) classAndValueEquals: -1.! !
+
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:56'!
+testWholeDivision
+	
+	self assert: (3/2) / (3/4) classAndValueEquals: 2.
+	
+	self assert: (3/2) / (-3/4) classAndValueEquals: -2.
+	
+	self assert: (-3/2) / (-3/4) classAndValueEquals: 2.
+	
+	self assert: (-3/2) / (3/4) classAndValueEquals: -2.! !
+
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:57'!
+testWholeMultiplication
+	
+	self assert: (3/2) * (4/3) classAndValueEquals: 2.
+	
+	self assert: (3/2) * (-4/3) classAndValueEquals: -2.
+	
+	self assert: (-3/2) * (-4/3) classAndValueEquals: 2.
+	
+	self assert: (-3/2) * (4/3) classAndValueEquals: -2.! !
+
+!FractionTest methodsFor: 'tests - arithmetic' stamp: 'nice 1/22/2012 18:57'!
+testWholeSum
+	
+	self assert: (5/3) + (1/3) classAndValueEquals: 2.! !
+
+!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 6/3/2011 21:32'!
+testCeiling
+	self assert: (3 / 2) ceiling = 2.
+	self assert: (-3 / 2) ceiling = -1.! !
+
+!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 6/3/2011 21:32'!
+testFloor
+	self assert: (3 / 2) floor = 1.
+	self assert: (-3 / 2) floor = -2.! !
+
+!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 6/3/2011 21:39'!
+testRounded
+	self assert: (4 / 5) rounded = 1.
+	self assert: (6 / 5) rounded = 1.
+	self assert: (-4 / 5) rounded = -1.
+	self assert: (-6 / 5) rounded = -1.
+	
+	"In case of tie, round to upper magnitude"
+	self assert: (3 / 2) rounded = 2.
+	self assert: (-3 / 2) rounded = -2.! !
+
+!FractionTest methodsFor: 'tests - conversions' stamp: 'nice 6/3/2011 21:35'!
+testTruncated
+	self assert: (3 / 2) truncated = 1.
+	self assert: (-3 / 2) truncated = -1.! !
+
+!FractionTest methodsFor: 'tests - invariants' stamp: 'nice 1/22/2012 19:07'!
+testThatFractionDenominatorIsPositive
+	self assert: (-3 / 2) numerator negative description: 'a Fraction sign is allways carried by its numerator'.
+	self assert: (-3 / 2) denominator positive description: 'a Fraction denominator is allways positive'.
+	
+	self assert: (3 / -2) numerator negative description: 'a Fraction sign is allways carried by its numerator'.
+	self assert: (3 / -2) denominator positive description: 'a Fraction denominator is allways positive'.
+	
+	self assert: (-3 / -2) numerator positive description: 'two negative signs are simplified'.
+	self assert: (-3 / -2) denominator positive description: 'a Fraction denominator is allways positive'.! !
+
+!FractionTest methodsFor: 'tests - invariants' stamp: 'nice 1/22/2012 19:12'!
+testThatFractionIsReduced
+	self assert: (4 / 6) numerator equals: 2.
+	self assert: (4 / 6) denominator equals: 3.
+	
+	self assert: (4 / 2) classAndValueEquals: 2.
+	
+	"Fraction class>>#numerator:denominator: does not automatically reduce the Fraction.
+	Since it does not guaranty above invariant, it must be used with care."
+	self assert: (Fraction numerator: 4 denominator: 6) numerator equals: 4.
+	self assert: (Fraction numerator: 4 denominator: 6) denominator equals: 6.
+	self assert: (Fraction numerator: 4 denominator: 6) reduced numerator equals: 2.
+	self assert: (Fraction numerator: 4 denominator: 6) reduced denominator equals: 3.! !
 
 !IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:12'!
 testAndSingleBitWithMinusOne
@@ -3245,6 +4046,42 @@ testBigReceiverInexactSqrt
 	self assert: (result successor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.
 	self assert: (result predecessor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.! !
 
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:39'!
+testDegreeCos
+	"self run: #testDegreeCos"
+	
+	"Following tests use approximate equality, because cosine are generally evaluated using inexact Floating point arithmetic"
+	self assert: (45 degreeCos squared - (1/2)) abs <= Float epsilon.
+	self assert: (60 degreeCos - (1/2)) abs <= Float epsilon.
+	self assert: (120 degreeCos + (1/2)) abs <= Float epsilon.
+	-360 to: 360 do: [:i |
+		self assert: (i degreeCos closeTo: i degreesToRadians cos)].
+	
+	"Following tests use strict equality which is a requested property of degreeCos"
+	-10 to: 10 do: [:k |
+		self assert: (k*360 + 90) degreeCos = 0.
+		self assert: (k*360 - 90) degreeCos = 0.
+		self assert: (k*360 + 180) degreeCos + 1 = 0.
+		self assert: (k*360) degreeCos - 1 = 0.].! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:39'!
+testDegreeSin
+	"self run: #testDegreeSin"
+	
+	"Following tests use approximate equality, because sine are generally evaluated using inexact Floating point arithmetic"
+	self assert: (45 degreeSin squared - (1/2)) abs <= Float epsilon.
+	self assert: (30 degreeSin - (1/2)) abs <= Float epsilon.
+	self assert: (-30 degreeSin + (1/2)) abs <= Float epsilon.
+	-360 to: 360 do: [:i |
+		self assert: (i degreeSin closeTo: i degreesToRadians sin)].
+	
+	"Following tests use strict equality which is a requested property of degreeSin"
+	-10 to: 10 do: [:k |
+		self assert: (k*360 + 90) degreeSin - 1 = 0.
+		self assert: (k*360 - 90) degreeSin + 1= 0.
+		self assert: (k*360 + 180) degreeSin = 0.
+		self assert: (k*360) degreeSin = 0].! !
+
 !IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
 testExactRaisedTo
 	"
@@ -3307,6 +4144,24 @@ testExactSqrt
 	#( 1 5 29 135 1234 567890 123123123 456456456456 98765432109876543210987654321 987123987123987123987123987123987123987123987123) do: [ :i |
 		self assert: i squared sqrt classAndValueEquals: i ]! !
 
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 12/11/2012 19:53'!
+testFloorLog
+	self assert: (100 floorLog: 10) = 2.
+	self assert: (((2 raisedTo: Float emax + 3) floorLog: 10) = (2 log*(Float emax + 3)) floor) description: 'Integer>>floorLog: should not overflow'! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 12/11/2012 22:30'!
+testFloorLogExactness
+
+	1 to: (Float fmax floorLog: 10) do: [:n |
+		self assert: ((10 raisedTo: n) floorLog: 10) = n].
+
+	"Float version is not exact for at least 2 reasons:
+	(10 raisedTo: n) asFloat is not exact for n > 22
+	(aFloat log: radix) is not exact
+
+	(1 to: (Float fmax floorLog: 10)) count: [:n |
+		((10 raisedTo: n) asFloat floorLog: 10) ~= n]."! !
+
 !IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:09'!
 testLn
 	self assert: 100 ln isAbout: 10 ln*2.
@@ -3339,11 +4194,18 @@ testNthRootErrorConditions
 	self should: [ -2 nthRoot: 1/4 ] raise: ArithmeticError.
 	self should: [ -2 nthRoot: 1.24 ] raise: ArithmeticError.! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/27/2015 13:43'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 3/15/2014 14:50'!
+testNthRootExactness
+	| inexactRoots largeRaisedTo6 |
+	largeRaisedTo6 := (2 to: 100) collect: [:k | (k raisedTo: 11) raisedTo: 6].
+	inexactRoots := largeRaisedTo6 reject: [:e | (e nthRoot: 6) isInteger].
+	self assert: inexactRoots isEmpty description: 'Failed to find the exact 6th root of these numbers'! !
+
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'nice 10/19/2011 21:03'!
 testNthRootTruncated
 	<timeout:  5 "seconds">
-	| tooBigToBeAFloat large theTruncatedRoot |
-	tooBigToBeAFloat _ 1 << 2000.
+	| tooBigToBeAFloat large |
+	tooBigToBeAFloat := 1 << 2000.
 	self assert: (tooBigToBeAFloat nthRootTruncated: 100) equals: 1 << 20.
 	self assert: (tooBigToBeAFloat + 1 nthRootTruncated: 100) equals: 1 << 20.
 	self assert: (tooBigToBeAFloat - 1 nthRootTruncated: 100) equals: 1 << 20 - 1.
@@ -3355,7 +4217,8 @@ testNthRootTruncated
 	
 	2 to: 10 do: [:thePower |
 		1 to: 10000 do: [:n |
-			theTruncatedRoot _ n nthRootTruncated: thePower.
+			| theTruncatedRoot |
+			theTruncatedRoot := n nthRootTruncated: thePower.
 			self assert: (theTruncatedRoot raisedTo: thePower) <= n.
 			self assert: (theTruncatedRoot + 1 raisedTo: thePower) > n]]! !
 
@@ -3447,6 +4310,15 @@ testBitLogic
 
 	self assert: (-2 bitAnd: 16rFFFFFFFF) = 16rFFFFFFFE.! !
 
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'jmv 10/3/2018 18:03:31'!
+testBitReversal
+	{ 0. 1. SmallInteger maxVal-1. SmallInteger maxVal. SmallInteger maxVal+1. (2 raisedTo: 64)-1091. (2 raisedTo: 64)-1090. (2 raisedTo: 64)-1 } do: 
+		[ : fixture |
+		| printedThenReversed reversedThenPrinted |
+		printedThenReversed := (fixture printStringBase: 2 length: 64 padded: true) reversed.
+		reversedThenPrinted := (fixture bitReverse: 64) printStringBase: 2 length: 64 padded: true.
+		self assert: printedThenReversed = reversedThenPrinted ]! !
+
 !IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:47'!
 testHighBit
 	| suite |
@@ -3529,6 +4401,51 @@ testCrossSumBase
 		#(2 3 2 2 1 4 3 3 2 3 2 2 1 3 2 2 1 2 1 1 0 1 1 2 1 2 2 3 1 2 2 3 2 3 3 4 1 2 2 3 2)).
 	self should: [10 crossSumBase: 1] raise: AssertionFailure! !
 
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 1/9/2013 02:11'!
+testIntegerDivision
+	| suite |
+	suite := #( 1 2 5 1000 123456798  111222333444555 987654321098765432109876 ).
+	suite := suite , (suite collect: [:e | e negated]).
+	suite do: [:a |
+		suite do: [:b |
+			| q r |
+			q := a // b.
+			r := a \\ b.
+			self assert: b * q + r = a.
+			self assert: r abs < b abs.
+			self assert: (r isZero or: [b negative = r negative])]].! !
+
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 1/16/2013 18:38'!
+testMontgomeryMultiplication
+	| a m mInv |
+	m := 15485863.
+	mInv := m montgomeryDigitBase - ((m bitAnd: m montgomeryDigitMax) reciprocalModulo: m montgomeryDigitBase).
+	a := (m montgomeryDigitBase raisedTo: m montgomeryNumberOfDigits) \\ m.
+	#(483933 3871465 8951195) do: [:s |
+		(s montgomeryTimes: a modulo: m mInvModB: mInv) ifNotNil: [:s1 |
+			| s2 sa ssa |
+			self assert: s = s1.
+			sa := s montgomeryTimes: (a * a \\ m) modulo: m mInvModB: mInv.
+			self assert: sa = (s * a \\ m).
+			ssa := sa montgomeryTimes: sa modulo: m mInvModB: mInv.
+			self assert: ssa = (s * s * a \\ m).
+			s2 := ssa montgomeryTimes: 1 modulo: m mInvModB: mInv.
+			self assert: s2 = (s * s \\ m)]].! !
+
+!IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 1/9/2013 02:11'!
+testQuoRem
+	| suite |
+	suite := #( 1 2 5 1000 123456798 111222333444555 987654321098765432109876 ).
+	suite := suite , (suite collect: [:e | e negated]).
+	suite do: [:a |
+		suite do: [:b |
+			| q r |
+			q := a quo: b.
+			r := a rem: b.
+			self assert: b * q + r = a.
+			self assert: r abs < b abs.
+			self assert: (r isZero or: [a negative = r negative])]].! !
+
 !IntegerTest methodsFor: 'testing - arithmetic' stamp: 'nice 6/4/2011 20:46'!
 testRaisedToModulo
 	#(301 2047) do: [:m |
@@ -3536,16 +4453,6 @@ testRaisedToModulo
 			11 to: m - 1 by: (m // 40) do: [:y |
 				self assert: (x raisedTo: y) \\ m = (x raisedTo: y modulo: m)]]].
 	self assert: (8951195 raisedTo: 7742931 modulo: 15485863) = 15485862.! !
-
-!IntegerTest methodsFor: 'tests - basic' stamp: 'jmv 3/14/2012 09:05'!
-testDegreeCos
-	"
-	self run: #testDegreeCos
-	"
-	self
-		shouldnt: [ 45 degreeCos ]
-		raise: Error.
-	self assert: (45 degreeCos roundTo: 1e-14) = ((2 sqrt / 2) asFloat roundTo: 1e-14).! !
 
 !IntegerTest methodsFor: 'tests - basic' stamp: 'md 4/21/2003 16:17'!
 testEven
@@ -3633,6 +4540,13 @@ testPrimesUpTo
 	nn := 5. 
 	self deny: (Integer primesUpTo: nn) last = nn.
 	self assert: (Integer primesUpTo: nn + 1) last  = nn.! !
+
+!IntegerTest methodsFor: 'tests - basic' stamp: 'eem 7/16/2014 15:29'!
+testRange
+	self assert: SmallInteger maxVal class equals: SmallInteger.
+	self assert: (SmallInteger maxVal + 1) class equals: LargePositiveInteger.
+	self assert: SmallInteger minVal class equals: SmallInteger.
+	self assert: (SmallInteger minVal - 1) class equals: LargeNegativeInteger! !
 
 !IntegerTest methodsFor: 'tests - instance creation' stamp: 'sd 6/5/2005 08:46'!
 testDifferentBases
@@ -4108,12 +5022,12 @@ testNegativeIntegerPrinting
 	self assert: (-106300512100105327644605138221229898724869759421181854980 storeStringBase: 36) = '-36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210'.
 	self assert: -106300512100105327644605138221229898724869759421181854980 storeStringHex = '-16r455D441E55A37239AB4C303189576071AF5578FFCA80504'.! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 5/27/2015 14:04'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'nice 2/15/2008 22:23'!
 testNumberOfDigits
-
-	| bRaisedToN |
-	2 to: 32 do: [ :b |
-		1 to: 1000//b do: [ :n |
+	
+	2 to: 32 do: [:b |
+		1 to: 1000//b do: [:n |
+			| bRaisedToN |
 			bRaisedToN := b raisedTo: n.
 			self assert: (bRaisedToN - 1 numberOfDigitsInBase: b) = n.
 			self assert: (bRaisedToN numberOfDigitsInBase: b) = (n+1).
@@ -4272,12 +5186,18 @@ testPositiveIntegerPrinting
 	self assert: (106300512100105327644605138221229898724869759421181854980 storeStringBase: 36) = '36rZYXWVUTSRQPONMLKJIHGFEDCBA9876543210'.
 	self assert: 106300512100105327644605138221229898724869759421181854980 storeStringHex = '16r455D441E55A37239AB4C303189576071AF5578FFCA80504'.! !
 
-!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 5/27/2015 14:05'!
+!IntegerTest methodsFor: 'tests - printing' stamp: 'jmv 10/3/2018 18:05:41'!
+testPrintOnBaseShowRadix
+
+	self assert: (123 printStringRadix: 10) = '10r123'.
+	self assert: (123 printStringRadix: 8) = '8r173'.! !
+
+!IntegerTest methodsFor: 'tests - printing' stamp: 'nice 2/15/2008 22:31'!
 testPrintStringBase
 	
-	| bRaisedToN |
-	2 to: 32 do: [ :b |
-		1 to: 1000//b do: [ :n |
+	2 to: 32 do: [:b |
+		1 to: 1000//b do: [:n |
+			| bRaisedToN |
 			bRaisedToN := b raisedTo: n.
 			self assert: (bRaisedToN - 1 printStringBase: b) = (String new: n withAll: (Character digitValue: b-1)).
 			self assert: (bRaisedToN printStringBase: b) = ('1' , (String new: n withAll: $0)).
@@ -5009,7 +5929,7 @@ testCompactClassIndex
 	Smalltalk isSpur ifFalse: [
 		self assert: LargeNegativeInteger indexIfCompact = 4 ]! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:46'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:51'!
 testDenormalizedPrintString
 	"Check that an un-normalized instance behaves reasonably."
 
@@ -5019,13 +5939,42 @@ testDenormalizedPrintString
 	self assert: i size = 4.
 	self assert: i printString = '-65280'.	"-256*255"
 	self assert: i normalize = -65280.
+	self assert: (i normalize isMemberOf: SmallInteger).
 	
 	i0 := LargeNegativeInteger new: 0.
 	self assert: i0 size = 0.
 	self assert: i0 printString = '-0'.
-	self assert: i0 normalize = 0.! !
+	self assert: i0 normalize = 0.
+	self assert: (i0 normalize isMemberOf: SmallInteger)! !
 
-!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:47'!
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:40'!
+testDigitAt
+
+	| lni |
+	lni := -114605103402541699037609980192546360895434064385.
+	1 to: 20 do: [:i | | digit |
+		digit := lni digitAt: i.
+		self assert: i equals: digit]
+! !
+
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 22:25'!
+testDigitAtPut
+
+	| lni |
+	lni := LargeNegativeInteger new: 20.
+	1 to: 20 do: [:i | lni digitAt: i put: i].
+	self assert: -114605103402541699037609980192546360895434064385equals: lni
+! !
+
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:39'!
+testDigitLength
+
+	| lni |
+	lni := -114605103402541699037609980192546360895434064385.
+	self assert: 20 equals: lni digitLength
+! !
+
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
 testEmptyTemplate
 	"Check that an uninitialized instance behaves reasonably."
 
@@ -5033,7 +5982,51 @@ testEmptyTemplate
 	i := LargeNegativeInteger new: 4.
 	self assert: i size = 4.
 	self assert: i printString = '-0'.
-	self assert: i normalize = 0! !
+	self assert: i normalize = 0.
+	self assert: (i normalize isMemberOf: SmallInteger)! !
+
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'nice 8/31/2012 23:00'!
+testMinimumNegativeIntegerArithmetic
+	"We are speaking of minimum integer in underlying hardware here.
+	In 2-complement, abs(INT_MIN) = (INT-MAX+1) and thus overflows hardware register.
+	Since some old VM forgot this edge case they may fail and it's better to be aware of it.
+	http://code.google.com/p/cog/issues/detail?id=92
+	http://bugs.squeak.org/view.php?id=7705
+	We only test the cases of 32 and 64 bit signed integers."
+
+	#(32 64) do: [:nBits |
+		| largePositiveInt largeNegativeInt |
+		largePositiveInt := (1 << (nBits - 1)).
+		largeNegativeInt := largePositiveInt negated.
+		self assert: (largeNegativeInt >> 3) equals: (largeNegativeInt bitInvert >> 3) bitInvert.
+		self assert: (largeNegativeInt + 1) equals: (largePositiveInt - 1) negated.
+		self assert: (largeNegativeInt - -1) equals: (largePositiveInt - 1) negated.
+		self assert: (largeNegativeInt // -1) equals: largePositiveInt.
+		self assert: (largeNegativeInt \\ -1) equals: 0.
+		self assert: (largeNegativeInt rem: -1) equals: 0.
+		self assert: (largeNegativeInt quo: -1) equals: largePositiveInt.
+		self assert: (largeNegativeInt * -1) equals: largePositiveInt.
+		self assert: (largeNegativeInt / -1) equals: largePositiveInt]! !
+
+!LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 22:26'!
+testReplaceFromToWithStartingAt
+
+	| lni20 lni7 |
+	lni20 := LargeNegativeInteger new: 20.
+	1 to: 20 do: [:i | lni20 digitAt: i put: i].
+	lni7 := LargeNegativeInteger new: 7.
+	1 to: 7 do: [:i | lni7 digitAt: i put: 11 - i].
+	lni20 replaceFrom: 6 to: 10 with: lni7 startingAt: 2.
+	"unmodified digits"
+	(1 to: 5) , (11 to: 20) do: [:e | | digit |
+		digit := lni20 digitAt: e.
+		self assert: e equals: digit].
+	"replaced digits"
+	6 to: 10 do: [:e | | digit replacementDigit |
+		digit := lni20 digitAt: e.
+		replacementDigit := lni7 digitAt: e - 4.
+		self assert: replacementDigit equals: digit]
+! !
 
 !LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:47'!
 testBitShift
@@ -5047,7 +6040,7 @@ testCompactClassIndex
 	Smalltalk isSpur ifFalse: [
 		self assert: LargePositiveInteger indexIfCompact = 5 ]! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:47'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
 testDenormalizedPrintString
 	"Check that an un-normalized instance behaves reasonably."
 
@@ -5057,13 +6050,42 @@ testDenormalizedPrintString
 	self assert: i size = 4.
 	self assert: i printString = '65280'.	"256*255"
 	self assert: i normalize = 65280.
+	self assert: (i normalize isMemberOf: SmallInteger).
 	
 	i0 := LargePositiveInteger new: 0.
 	self assert: i0 size = 0.
 	self assert: i0 printString = '0'.
-	self assert: i0 normalize = 0.! !
+	self assert: i0 normalize = 0.
+	self assert: (i0 normalize isMemberOf: SmallInteger)! !
 
-!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'jmv 9/1/2010 13:47'!
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:40'!
+testDigitAt
+
+	| lpi |
+	lpi := 114605103402541699037609980192546360895434064385.
+	1 to: 20 do: [:i | | digit |
+		digit := lpi digitAt: i.
+		self assert: i equals: digit]
+! !
+
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:35'!
+testDigitAtPut
+
+	| lpi |
+	lpi := LargePositiveInteger new: 20.
+	1 to: 20 do: [:i | lpi digitAt: i put: i].
+	self assert: 114605103402541699037609980192546360895434064385equals: lpi
+! !
+
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:39'!
+testDigitLength
+
+	| lpi |
+	lpi := 114605103402541699037609980192546360895434064385.
+	self assert: 20 equals: lpi digitLength
+! !
+
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'ul 11/15/2010 11:52'!
 testEmptyTemplate
 
 	"Check that an uninitialized instance behaves reasonably."
@@ -5072,7 +6094,19 @@ testEmptyTemplate
 	i := LargePositiveInteger new: 4.
 	self assert: i size = 4.
 	self assert: i printString = '0'.
-	self assert: i normalize = 0! !
+	self assert: i normalize = 0.
+	self assert: (i normalize isMemberOf: SmallInteger)! !
+
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'nice 3/21/2014 18:38'!
+testLargeSqrtFloor
+	"This test fails if a careless implementation naivly factors out the power of two (remove the trailing zeroes up to lowBit).
+	This was the case in a previous Squeak 4.x implementation."
+
+	| large root |
+	large := (SmallInteger maxVal << 100 + 1) << 100.
+	root := large sqrtFloor.
+	self assert: root squared <= large.
+	self assert: (root+1) squared > large.! !
 
 !LargePositiveIntegerTest methodsFor: 'tests' stamp: 'sd 6/5/2005 08:52'!
 testMultDicAddSub
@@ -5098,6 +6132,26 @@ testNormalize
 	self assert: (SmallInteger maxVal + 3 - 6) = (SmallInteger maxVal-3).
 	self should: ((SmallInteger minVal - 1 + 1) = SmallInteger minVal).
 	self assert: (SmallInteger minVal - 3 + 6) = (SmallInteger minVal+3).! !
+
+!LargePositiveIntegerTest methodsFor: 'tests' stamp: 'dtl 7/22/2014 21:59'!
+testReplaceFromToWithStartingAt
+
+	| lpi20 lpi7 |
+	lpi20 := LargePositiveInteger new: 20.
+	1 to: 20 do: [:i | lpi20 digitAt: i put: i].
+	lpi7 := LargePositiveInteger new: 7.
+	1 to: 7 do: [:i | lpi7 digitAt: i put: 11 - i].
+	lpi20 replaceFrom: 6 to: 10 with: lpi7 startingAt: 2.
+	"unmodified digits"
+	(1 to: 5) , (11 to: 20) do: [:e | | digit |
+		digit := lpi20 digitAt: e.
+		self assert: e equals: digit].
+	"replaced digits"
+	6 to: 10 do: [:e | | digit replacementDigit |
+		digit := lpi20 digitAt: e.
+		replacementDigit := lpi7 digitAt: e - 4.
+		self assert: replacementDigit equals: digit]
+! !
 
 !NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/26/2009 21:57'!
 testFractionPart
@@ -5239,6 +6293,23 @@ testReciprocal
 		assert: -3 reciprocal = (-1/3).
 		
 	self should: [ 0 reciprocal ] raise: ZeroDivide! !
+
+!NumberTest methodsFor: 'tests' stamp: 'nice 5/3/2014 22:32:48.234'!
+testZeroDivideHandler
+	"Test for user-defined ZeroDivide behavior"
+
+	[
+		self assert: 1 / 0 = Float infinity.
+		self assert: -1 / 0 = Float negativeInfinity.
+		self assert: 1.0 / 0 = Float infinity.
+		self assert: -1.0 / 0 = Float negativeInfinity.
+		self assert: 1 / 0.0 = Float infinity.
+		self assert: -1 / 0.0 = Float negativeInfinity.
+		self assert: 1.0 / 0.0 = Float infinity.
+		self assert: -1.0 / 0.0 = Float negativeInfinity.
+	]	on: ZeroDivide
+		do: [:ex | ex resume: ex dividend sign * Float infinity ]
+! !
 
 !NumberTest methodsFor: 'test' stamp: 'GC 9/8/2018 14:51:43'!
 test01readFromWhenTheInitilValueIsNaNTheResultIsNaN
@@ -5477,6 +6548,24 @@ rng
 rngClass
 
 	self subclassResponsibility! !
+
+!RandomTest methodsFor: 'tests' stamp: 'ul 2/27/2015 13:53'!
+testNext
+	"Generate some float values, and see if they are in the [0,1) interval. Also check that the smallest and the largest values are small/large enough."
+
+	| random min max |
+	min := Float infinity.
+	max := Float negativeInfinity.
+	random := Random seed: 112629.
+	100000 timesRepeat: [
+		| next | 
+		next := random next.
+		next < min ifTrue: [ min := next ].
+		next > max ifTrue: [ max := next ].
+		self assert: next >= 0.0 description: [ 'Generated value ', next asString, ' should be non-negative.' ].
+		self assert: next < 1.0 description: [ 'Generated value ', next asString, ' should be less than 1.0.' ] ].
+	self assert: max > 0.9999 description: 'The largest generated value should be greater than 0.9999.'.
+	self assert: min < 0.0001 description: 'The smallest generated value should be less than 0.0001.'! !
 
 !RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:38'!
 testRandomLargeInteger1
