@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3329] on 14 May 2018 at 1:04:25 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3430] on 4 October 2018 at 7:52:10 pm'!
 'Description Assessments is a replacement / reimplementation of the SUnit evaluation machinery, published under the MIT license (see below), with the following characteristics.
 
 * It provides all the functionality and features of SUnit and SUnit VM (including SUnit Based Validation and SUnit Benchmarks) natively.
@@ -143,7 +143,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '!
-!provides: 'Assessments' 2 32!
+!provides: 'Assessments' 2 33!
 SystemOrganization addCategory: #'Assessments-Framework-Exceptions'!
 SystemOrganization addCategory: #'Assessments-Tools'!
 SystemOrganization addCategory: #'Assessments-Tools-Support'!
@@ -4113,7 +4113,7 @@ forFileNamed: aString
 		fileName: aString;
 		yourself! !
 
-!HardenedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
+!HardenedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'sqr 10/4/2018 19:48:32'!
 aboutToEvaluateAssessment
 
 	| appendStream |
@@ -4123,10 +4123,10 @@ aboutToEvaluateAssessment
 		self
 			log: 'Assessment created with ', self numberOfChecks printString, ' checks.'
 			on: appendStream.
-		appendStream cr
+		appendStream newLine
 	] ensure: [appendStream close]! !
 
-!HardenedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
+!HardenedFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'sqr 10/4/2018 19:48:42'!
 doneEvaluatingAssessment
 
 	| appendStream |
@@ -4136,10 +4136,10 @@ doneEvaluatingAssessment
 		self
 			log: 'Done evaluating assessment, ', self numberOfChecks printString, ' checks.'
 			on: appendStream.
-		appendStream cr
+		appendStream newLine
 	] ensure: [appendStream close]! !
 
-!HardenedFileLogAssessmentResultPolicy methodsFor: 'results' stamp: 'SqR 3/8/2015 18:10'!
+!HardenedFileLogAssessmentResultPolicy methodsFor: 'results' stamp: 'sqr 10/4/2018 19:48:37'!
 addResult: aCheckResult
 
 	| appendStream |
@@ -4147,33 +4147,33 @@ addResult: aCheckResult
 	appendStream := self appendFileStream.
 	[
 		self print: aCheckResult on: appendStream.
-		appendStream cr
+		appendStream newLine
 	] ensure: [appendStream close]! !
 
-!SoftFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
+!SoftFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'sqr 10/4/2018 19:48:50'!
 aboutToEvaluateAssessment
 
 	super aboutToEvaluateAssessment.
 	self
 		log: 'Assessment created with ', self numberOfChecks printString, ' checks.'
 		on: self writeStream.
-	self writeStream cr! !
+	self writeStream newLine! !
 
-!SoftFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
+!SoftFileLogAssessmentResultPolicy methodsFor: 'actions' stamp: 'sqr 10/4/2018 19:48:59'!
 doneEvaluatingAssessment
 
 	super doneEvaluatingAssessment.
 	self
 		log: 'Done evaluating assessment, ', self numberOfChecks printString, ' checks.'
 		on: self writeStream.
-	self writeStream cr! !
+	self writeStream newLine! !
 
-!SoftFileLogAssessmentResultPolicy methodsFor: 'results' stamp: 'SqR 3/8/2015 18:10'!
+!SoftFileLogAssessmentResultPolicy methodsFor: 'results' stamp: 'sqr 10/4/2018 19:48:55'!
 addResult: aCheckResult
 
 	super addResult: aCheckResult.
 	self print: aCheckResult on: self writeStream.
-	self writeStream cr! !
+	self writeStream newLine! !
 
 !SoftFileLogAssessmentResultPolicy methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
 writeStream
@@ -5344,7 +5344,7 @@ initialize
 
 	self results: Dictionary new! !
 
-!AssessmentResult methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
+!AssessmentResult methodsFor: 'printing' stamp: 'sqr 10/4/2018 19:49:15'!
 printOn: aStream
 
 	aStream nextPutAll: self class name.
@@ -5354,9 +5354,9 @@ printOn: aStream
 			[:eachResultTag |
 				(self results at: eachResultTag)
 					do: [:eachResult | eachResult printOn: aStream]
-					separatedBy: [aStream cr]
+					separatedBy: [aStream newLine]
 			]
-		separatedBy: [aStream cr; cr].
+		separatedBy: [aStream newLine; newLine].
 	aStream nextPut: $)! !
 
 !AssessmentResult methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
