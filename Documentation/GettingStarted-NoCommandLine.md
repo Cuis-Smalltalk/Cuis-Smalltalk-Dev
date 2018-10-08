@@ -12,7 +12,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file to your folder
 * download [`squeak.cog.spur_win64x64_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win64x64_201807260206.zip)
 * extract the contents of the zip file to your folder
-* drop the Cuis5.0-3430-32.image over the Squeak.exe file
+* drop the Cuis5.0-3470-32.image over the Squeak.exe file
 
 ## On Mac OS X ##
 * Create a new folder in your machine using Mac Finder
@@ -20,10 +20,10 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file to your folder
 * download [`squeak.cog.spur_macos64x64_201807260206.dmg`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_macos64x64_201807260206.dmg)
 * double click on the dmg file
-* drop the Cuis5.0-3430.image over the Squeak.app file
+* drop the Cuis5.0-3470.image over the Squeak.app file
 * open System Preferences and go to Security Privacy. You will see that Squeak.app was not allowed to be installed and you have to click Allow.
-* drop the Cuis5.0-3430.image over the Squeak.app file. On subsequent runs, drop the Cuis5.0-3430.image over the Squeak.app file
+* drop the Cuis5.0-3470.image over the Squeak.app file. On subsequent runs, drop the Cuis5.0-3470.image over the Squeak.app file
 
 ## Notes ##
-* If you can't find Cuis5.0-3430.image, then this document is outdated. Use the Cuis image with the latest update number available.
+* If you can't find Cuis5.0-3470.image, then this document is outdated. Use the Cuis image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available from https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/latest or http://opensmalltalk.org/
