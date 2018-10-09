@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3471] on 9 October 2018 at 9:38:05 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3475] on 9 October 2018 at 4:21:58 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 94!
+!provides: 'Tests' 1 96!
+!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -2428,8 +2428,34 @@ testCopy
 	self assert: 0.0 copy hex = 0.0 hex.
 	self assert: Float negativeZero copy hex = Float negativeZero hex.! !
 
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/8/2018 16:35:12'!
-testHash
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 14:02:56'!
+testHashWithBigNegativeSmallInteger
+	"Not in the Float range"
+	| a float smallInteger |
+	smallInteger _ SmallInteger minVal+1.
+	self deny: smallInteger isLarge description: 'precondition'.
+	float _ smallInteger asFloat.
+	self assert: smallInteger = float description: 'precondition'.
+	self assert: float = smallInteger description: 'precondition'.
+	a _ Set new.
+	a add: smallInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 14:01:27'!
+testHashWithBigSmallInteger
+	"Not in the Float range"
+	| a float smallInteger |
+	smallInteger _ SmallInteger maxVal.
+	self deny: smallInteger isLarge description: 'precondition'.
+	float _ smallInteger asFloat.
+	self assert: smallInteger = float description: 'precondition'.
+	self assert: float = smallInteger description: 'precondition'.
+	a _ Set new.
+	a add: smallInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:43:35'!
+testHashWithFraction
 
 	| a float fraction |
 	fraction _ 1/3.
@@ -2438,6 +2464,58 @@ testHash
 	self assert: float = fraction description: 'precondition'.
 	a _ Set new.
 	a add: fraction; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:32'!
+testHashWithLargeNegativeInteger
+	"Not in the Float range"
+	| a float largeInteger |
+	largeInteger _ -1e400.
+	self assert: largeInteger isLarge description: 'precondition'.
+	float _ largeInteger asFloat.
+	self assert: largeInteger = float description: 'precondition'.
+	self assert: float = largeInteger description: 'precondition'.
+	a _ Set new.
+	a add: largeInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:37'!
+testHashWithLargePositiveInteger
+	"Not in the Float range"
+	| a float largeInteger |
+	largeInteger _ 1e400.
+	self assert: largeInteger isLarge description: 'precondition'.
+	float _ largeInteger asFloat.
+	self assert: largeInteger = float description: 'precondition'.
+	self assert: float = largeInteger description: 'precondition'.
+	a _ Set new.
+	a add: largeInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:40'!
+testHashWithSmallishLargeNegativeInteger
+	"In the Float range"
+	| a float largeInteger |
+	largeInteger _ SmallInteger minVal -1.
+	self assert: largeInteger isLarge description: 'precondition'.
+	float _ largeInteger asFloat.
+	self assert: largeInteger = float description: 'precondition'.
+	self assert: float = largeInteger description: 'precondition'.
+	a _ Set new.
+	a add: largeInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:44'!
+testHashWithSmallishLargePositiveInteger
+	"In the Float range"
+	| a float largeInteger |
+	largeInteger _ SmallInteger maxVal +1.
+	self assert: largeInteger isLarge description: 'precondition'.
+	float _ largeInteger asFloat.
+	self assert: largeInteger = float description: 'precondition'.
+	self assert: float = largeInteger description: 'precondition'.
+	a _ Set new.
+	a add: largeInteger; add: float.
 	self assert: a size = 1! !
 
 !FloatTest methodsFor: 'testing' stamp: 'jmv 10/11/2011 08:55'!
@@ -3472,6 +3550,16 @@ assertIsPositiveZero: aFloat
 	"Assert that aFloat is Float zero (the positive one)"
 	self assert: aFloat hex = 0.0 hex! !
 
+!FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/9/2018 16:12:35'!
+testRoundHalfToEven
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
+	self assert: 0.5 rounded = 0.
+	self assert: 1.5 rounded = 2.
+	self assert: -0.5 rounded = -0.
+	self assert: -1.5 rounded = -2.
+	self assert: (((0.0 to: 5.0 by: 0.25) collect: [ :f | f rounded ]) = #(0 0 0 1 1 1 2 2 2 2 2 3 3 3 4 4 4 4 4 5 5) ).
+	self assert: (((-0.0 to: -5.0 by: -0.25) collect: [ :f | f rounded ]) = #(0 0 0 -1 -1 -1 -2 -2 -2 -2 -2 -3 -3 -3 -4 -4 -4 -4 -4 -5 -5) )! !
+
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!
 assert: a classAndValueEquals: b
 	self assert: a class = b class.
@@ -3850,6 +3938,16 @@ testHash
 	a _ Set new.
 	a add: fraction1; add: fraction2.
 	self assert: a size = 2! !
+
+!FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 10/9/2018 16:12:18'!
+testRoundHalfToEven
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
+	self assert: (1/2) rounded = 0.
+	self assert: (3/2) rounded = 2.
+	self assert: (-1/2) rounded = 0.
+	self assert: (-3/2) rounded = -2.
+	self assert: (((0 to: 5 by: 1/4) collect: [ :f | f rounded ]) = #(0 0 0 1 1 1 2 2 2 2 2 3 3 3 4 4 4 4 4 5 5) ).
+	self assert: (((0 to: -5 by: -1/4) collect: [ :f | f rounded ]) = #(0 0 0 -1 -1 -1 -2 -2 -2 -2 -2 -3 -3 -3 -4 -4 -4 -4 -4 -5 -5) ).! !
 
 !IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:12'!
 testAndSingleBitWithMinusOne
