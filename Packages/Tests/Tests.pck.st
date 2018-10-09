@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3469] on 4 October 2018 at 9:43:26 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3471] on 9 October 2018 at 9:38:05 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 93!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
+!provides: 'Tests' 1 94!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -2428,6 +2428,18 @@ testCopy
 	self assert: 0.0 copy hex = 0.0 hex.
 	self assert: Float negativeZero copy hex = Float negativeZero hex.! !
 
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/8/2018 16:35:12'!
+testHash
+
+	| a float fraction |
+	fraction _ 1/3.
+	float _ (1/3) asFloat.
+	self assert: fraction = float description: 'precondition'.
+	self assert: float = fraction description: 'precondition'.
+	a _ Set new.
+	a add: fraction; add: float.
+	self assert: a size = 1! !
+
 !FloatTest methodsFor: 'testing' stamp: 'jmv 10/11/2011 08:55'!
 testMaxExactInteger
 	"
@@ -3002,6 +3014,31 @@ testComparisonWhenPrimitiveFails
 	self deny: 0.5 ~= (1/2).
 	self assert: 0.5 ~= (3/4).! !
 
+!FloatTest methodsFor: 'testing compare' stamp: 'jmv 10/8/2018 16:20:48'!
+testComparisonWithFraction
+	self assert: 0.5 = (1/2).
+	self assert: (1/2) = 0.5.
+	self assert: 0.1 = (1/10).
+	self assert: (1/10) = 0.1! !
+
+!FloatTest methodsFor: 'testing compare' stamp: 'jmv 10/8/2018 16:18:13'!
+testHugeValues
+
+	self assert: 1e400 = Float infinity.
+	self deny: 1e400 < Float infinity.
+	self deny: 1e400 > Float infinity.
+
+	self assert: 1e400 = 1.0e309.
+	self assert: 1e400 > 1.0e308.
+
+
+	self assert: -1e400 = Float negativeInfinity.
+	self deny: -1e400 < Float negativeInfinity.
+	self deny: -1e400 > Float negativeInfinity.
+
+	self assert: -1e400 = -1.0e309.
+	self assert: -1e400 < -1.0e308.! !
+
 !FloatTest methodsFor: 'testing compare' stamp: 'sqr 5/26/2016 18:11'!
 testIsWithinUlpsFrom
 
@@ -3097,6 +3134,15 @@ testZeroRaisedToNegativePower
 	
 	self should: [0.0 raisedTo: -1] raise: ZeroDivide.
 	self should: [0.0 raisedTo: -1.0] raise: ZeroDivide.! !
+
+!FloatTest methodsFor: 'testing - arithmetic' stamp: 'jmv 10/8/2018 16:24:31'!
+testZeroes
+	self assert: -1.0 * 0.0 = 0.0.
+	self assert: (-1.0 * 0.0) sign =  -1.
+	self assert: 1.0 * -0.0 = 0.0.
+	self assert: (1.0 * -0.0) sign =  -1.
+	self assert: -1.0 * -0.0 = 0.0.
+	self assert: (-1.0 * -0.0) sign =  0.! !
 
 !FloatTest methodsFor: 'infinity behavior' stamp: 'nice 7/14/2009 09:32'!
 testHugeIntegerCloseTo
@@ -3792,6 +3838,18 @@ testThatFractionIsReduced
 	self assert: (Fraction numerator: 4 denominator: 6) denominator equals: 6.
 	self assert: (Fraction numerator: 4 denominator: 6) reduced numerator equals: 2.
 	self assert: (Fraction numerator: 4 denominator: 6) reduced denominator equals: 3.! !
+
+!FractionTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 09:37:12'!
+testHash
+
+	| a fraction1 fraction2 |
+	fraction1 _ 1/3.
+	fraction2 _ (1/3) + (1e-1000).
+	self deny: fraction1 = fraction2 description: 'precondition'.
+	self assert: fraction1 asFloat = fraction2 asFloat description: 'precondition'.
+	a _ Set new.
+	a add: fraction1; add: fraction2.
+	self assert: a size = 2! !
 
 !IntegerDigitLogicTest methodsFor: 'tests' stamp: 'hmm 1/7/2002 21:12'!
 testAndSingleBitWithMinusOne
