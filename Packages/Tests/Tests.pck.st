@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3475] on 9 October 2018 at 4:21:58 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3478] on 10 October 2018 at 7:02:29 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 96!
-!requires: 'ImageProcessing' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Tests' 1 97!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -2505,6 +2505,18 @@ testHashWithSmallishLargeNegativeInteger
 	a add: largeInteger; add: float.
 	self assert: a size = 1! !
 
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/10/2018 15:40:00'!
+testHashWithSmallishLargeNegativeInteger2
+	"In the Float range"
+	| a float integer |
+	integer _ Float maxExactInteger negated -1.
+	float _ integer asFloat.
+	self assert: integer = float description: 'precondition'.
+	self assert: float = integer description: 'precondition'.
+	a _ Set new.
+	a add: integer; add: float.
+	self assert: a size = 1! !
+
 !FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:44'!
 testHashWithSmallishLargePositiveInteger
 	"In the Float range"
@@ -2518,6 +2530,18 @@ testHashWithSmallishLargePositiveInteger
 	a add: largeInteger; add: float.
 	self assert: a size = 1! !
 
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/10/2018 15:40:11'!
+testHashWithSmallishLargePositiveInteger2
+	"In the Float range"
+	| a float integer |
+	integer _ Float maxExactInteger +1.
+	float _ integer asFloat.
+	self assert: integer = float description: 'precondition'.
+	self assert: float = integer description: 'precondition'.
+	a _ Set new.
+	a add: integer; add: float.
+	self assert: a size = 1! !
+
 !FloatTest methodsFor: 'testing' stamp: 'jmv 10/11/2011 08:55'!
 testMaxExactInteger
 	"
@@ -2529,6 +2553,13 @@ testMaxExactInteger
 		self assert: (Float maxExactInteger-j) asFloat truncated = (Float maxExactInteger-j) ].
 	self deny: (Float maxExactInteger+1) asFloat truncated = (Float maxExactInteger+1)
 	! !
+
+!FloatTest methodsFor: 'testing' stamp: 'jmv 10/10/2018 15:57:54'!
+testNoIntegerHash
+
+	self deny: Float pi hash = 3 hash.
+	self deny: Float pi hash = (Float pi *1.00000000000001) hash.
+	self deny: Float pi hash = (Float pi /1.00000000000001) hash.! !
 
 !FloatTest methodsFor: 'testing' stamp: 'nice 2/13/2010 04:15'!
 testSetOfFloat
@@ -3550,6 +3581,39 @@ assertIsPositiveZero: aFloat
 	"Assert that aFloat is Float zero (the positive one)"
 	self assert: aFloat hex = 0.0 hex! !
 
+!FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/10/2018 16:47:20'!
+testFractionAsFloatRoundsHalfToEven
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
+	Test that rounding Fraction to Float picks even mantissa if tie."
+
+	| floatWithEvenMantissa floatWithEvenMantissa2 floatWithOddMantissa |
+	floatWithEvenMantissa _ Float maxExactInteger * 1.23.
+	self assert: floatWithEvenMantissa mantissaPart even description: 'precondition'.
+
+	floatWithOddMantissa _ floatWithEvenMantissa successor.
+	self assert: floatWithOddMantissa mantissaPart even not description: 'precondition'.
+
+	floatWithEvenMantissa2 _ floatWithOddMantissa successor.
+	self assert: floatWithEvenMantissa2 mantissaPart even description: 'precondition'.
+
+	self assert: ((floatWithEvenMantissa asTrueFraction *4) + (floatWithOddMantissa asTrueFraction *0) / 4) = floatWithEvenMantissa description: 'precondition'.
+	self assert: ((floatWithEvenMantissa asTrueFraction *3) + (floatWithOddMantissa asTrueFraction *1) / 4) = floatWithEvenMantissa description: 'precondition'.
+	self assert: ((floatWithEvenMantissa asTrueFraction *100) + (floatWithOddMantissa asTrueFraction *1) / 101) = floatWithEvenMantissa description: 'precondition'.
+	self assert: ((floatWithEvenMantissa asTrueFraction *1) + (floatWithOddMantissa asTrueFraction *100) / 101) = floatWithOddMantissa description: 'precondition'.
+	self assert: ((floatWithEvenMantissa asTrueFraction *1) + (floatWithOddMantissa asTrueFraction *3) / 4) = floatWithOddMantissa description: 'precondition'.
+	self assert: ((floatWithEvenMantissa asTrueFraction *0) + (floatWithOddMantissa asTrueFraction *4) / 4) = floatWithOddMantissa description: 'precondition'.
+
+	self assert: ((floatWithEvenMantissa asTrueFraction *2) + (floatWithOddMantissa asTrueFraction *2) / 4) = floatWithEvenMantissa description: 'Must round to closest even mantissa'.
+
+	self assert: ((floatWithOddMantissa asTrueFraction *4) + (floatWithEvenMantissa2 asTrueFraction *0)/4) = floatWithOddMantissa description: 'precondition'.
+	self assert: ((floatWithOddMantissa asTrueFraction *3) + (floatWithEvenMantissa2 asTrueFraction *1)/4) = floatWithOddMantissa description: 'precondition'.
+	self assert: ((floatWithOddMantissa asTrueFraction *100) + (floatWithEvenMantissa2 asTrueFraction *1)/101) = floatWithOddMantissa description: 'precondition'.
+	self assert: ((floatWithOddMantissa asTrueFraction *1) + (floatWithEvenMantissa2 asTrueFraction *100)/101) = floatWithEvenMantissa2 description: 'precondition'.
+	self assert: ((floatWithOddMantissa asTrueFraction *1) + (floatWithEvenMantissa2 asTrueFraction *3)/4) = floatWithEvenMantissa2 description: 'precondition'.
+	self assert: ((floatWithOddMantissa asTrueFraction *0) + (floatWithEvenMantissa2 asTrueFraction *4)/4) = floatWithEvenMantissa2 description: 'precondition'.
+
+	self assert: ((floatWithOddMantissa asTrueFraction *2) + (floatWithEvenMantissa2 asTrueFraction *2)/4) = floatWithEvenMantissa2 description: 'Must round to closest even mantissa'.! !
+
 !FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/9/2018 16:12:35'!
 testRoundHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
@@ -3559,6 +3623,58 @@ testRoundHalfToEven
 	self assert: -1.5 rounded = -2.
 	self assert: (((0.0 to: 5.0 by: 0.25) collect: [ :f | f rounded ]) = #(0 0 0 1 1 1 2 2 2 2 2 3 3 3 4 4 4 4 4 5 5) ).
 	self assert: (((-0.0 to: -5.0 by: -0.25) collect: [ :f | f rounded ]) = #(0 0 0 -1 -1 -1 -2 -2 -2 -2 -2 -3 -3 -3 -4 -4 -4 -4 -4 -5 -5) )! !
+
+!FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/10/2018 16:53:57'!
+testStringAsFloatRoundsHalfToEven
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
+	Test that rounding Fraction to Float picks even mantissa if tie."
+
+	| floatWithEvenMantissa floatWithEvenMantissa2 floatWithOddMantissa halfway1 halfway2 |
+	floatWithEvenMantissa _ Float maxExactInteger * 1.23.
+	self assert: floatWithEvenMantissa mantissaPart even description: 'precondition'.
+
+	floatWithOddMantissa _ floatWithEvenMantissa successor.
+	self assert: floatWithOddMantissa mantissaPart even not description: 'precondition'.
+
+	floatWithEvenMantissa2 _ floatWithOddMantissa successor.
+	self assert: floatWithEvenMantissa2 mantissaPart even description: 'precondition'.
+
+	halfway1 _ floatWithEvenMantissa asTrueFraction + floatWithOddMantissa asTrueFraction / 2.
+	self assert: halfway1 = floatWithEvenMantissa description: 'precondition-Must round to closest even mantissa'.
+	self assert: halfway1 printString = '11078855083331421' description: 'precondition'.
+	self assert: '11078855083331421.0' asNumber = floatWithEvenMantissa description: 'when converting string to Float, if tie, round to closest even mantissa'.
+
+	halfway2 _ floatWithOddMantissa asTrueFraction + floatWithEvenMantissa2 asTrueFraction / 2.
+	self assert: halfway2 = floatWithEvenMantissa2 description: 'precondition-Must round to closest even mantissa'.
+	self assert: halfway2 printString = '11078855083331423' description: 'precondition'.
+	self assert: '11078855083331423.0' asNumber = floatWithEvenMantissa2 description: 'when converting string to Float, if tie, round to closest even mantissa'.! !
+
+!FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/10/2018 17:17:33'!
+testStringAsFloatRoundsHalfToEven2
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
+	Test that rounding Fraction to Float picks even mantissa if tie."
+
+	| evenMantissa oddMantissa scaledEven scaledOdd evenMantissa2 scaledEven2 |
+	evenMantissa _ 1.0.
+	self assert: evenMantissa mantissaPart even description: 'precondition'.
+	oddMantissa _ 1.0 successor.
+	self assert: oddMantissa mantissaPart even not description: 'precondition'.
+	evenMantissa2 _ oddMantissa successor.
+	self assert: evenMantissa2 mantissaPart even description: 'precondition'.
+
+	scaledEven _ evenMantissa asTrueFraction * 1e53.
+	scaledOdd _ oddMantissa asTrueFraction * 1e53.
+	scaledEven2 _ evenMantissa2 asTrueFraction * 1e53.
+
+	self assert: (scaledEven + scaledOdd / 2) printString = '100000000000000011102230246251565404236316680908203125' description: 'precondition'.
+	self assert: '1.00000000000000011102230246251565404236316680908203124999' asNumber = evenMantissa description: 'precondition'.
+	self assert: '1.00000000000000011102230246251565404236316680908203125001' asNumber = oddMantissa description: 'precondition'.
+	self assert: '1.00000000000000011102230246251565404236316680908203125' asNumber = evenMantissa description: 'when converting string to Float, if tie, round to closest even mantissa'.
+
+	self assert: (scaledEven2 + scaledOdd / 2) printString = '100000000000000033306690738754696212708950042724609375' description: 'precondition'.
+	self assert: '1.00000000000000033306690738754696212708950042724609374999' asNumber = oddMantissa description: 'precondition'.
+	self assert: '1.00000000000000033306690738754696212708950042724609375001' asNumber = evenMantissa2 description: 'precondition'.
+	self assert: '1.00000000000000033306690738754696212708950042724609375' asNumber = evenMantissa2 description: 'when converting string to Float, if tie, round to closest even mantissa'.! !
 
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!
 assert: a classAndValueEquals: b
