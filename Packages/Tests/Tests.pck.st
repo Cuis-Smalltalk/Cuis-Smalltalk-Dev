@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3478] on 10 October 2018 at 7:02:29 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3484] on 19 October 2018 at 4:34:15 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 97!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 98!
 !requires: 'YAXO' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !requires: 'ImageProcessing' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -2842,6 +2842,15 @@ testRounded
 	"In case of tie, round to upper magnitude"
 	self assert: 1.5 rounded = 2.
 	self assert: -1.5 rounded = -2.! !
+
+!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 10/19/2018 16:33:22'!
+testSomeNines
+	| twelveNines |
+	twelveNines _ Compiler evaluate: '999999 + 0.999999'.
+	self assert: twelveNines printString = '999999.999999'.
+	self assert: twelveNines printString asNumber = twelveNines.
+	self assert: twelveNines printString asNumber - twelveNines = 0.0.
+	self assert: twelveNines + 1e-6 = 1e6! !
 
 !FloatTest methodsFor: 'testing - conversion' stamp: 'dtl 9/18/2004 12:40'!
 testStringAsNumber
