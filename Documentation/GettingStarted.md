@@ -30,7 +30,7 @@ mv ./sqcogspur64linuxht ./cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3470.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3485.image
 ```
 If you get this error message (you won't get it if you run Cuis as root or sudo):
 ```
@@ -65,7 +65,7 @@ tar -zxvf CogSpur.tgz
 ### Starting Cuis Smalltalk ###
 
 ```
-./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3470.image
+./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3485.image
 ```
 
 ## For 64 bits Windows (Git Bash) ##
@@ -82,7 +82,7 @@ unzip cogspur.zip -d cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3470.image
+cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3485.image
 ```
 
 ## For Raspberry Pi Raspian ##
@@ -98,7 +98,7 @@ mv ./sqcogspurlinuxhtRPi ./cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3470-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3485-32.image
 ```
 
 ## For Chromebooks ##
@@ -129,14 +129,14 @@ mv ./sqstkspurlinuxhtRPi ./stkspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3470-32.image
-stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3470-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3485-32.image
+stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3485-32.image
 ```
 
 ## Notes ##
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", (1007290890 or some other absurd number) it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
-* If you can't find Cuis5.0-3470-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3485-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available from http://opensmalltalk.org/
 * To get the contents of this repository without using Git, you can do
 ```
