@@ -1,8 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3421] on 17 August 2018 at 4:04:42 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3485] on 1 November 2018 at 10:11:40 am'!
 'Description Please enter a description for this package '!
-!provides: 'Morphic3' 1 52!
-!requires: 'YAXO' 1 nil nil!
+!provides: 'Morphic3' 1 54!
 !requires: 'LinearAlgebra' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'Color-Extras' 1 nil nil!
 SystemOrganization addCategory: #'Morphic3-Kernel'!
 SystemOrganization addCategory: #'Morphic3-SVG'!
 SystemOrganization addCategory: #'Morphic3-SVG shapes'!
@@ -1074,43 +1075,19 @@ svgName
 
 	^self subclassResponsibility! !
 
-!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 1/1/2018 11:27:59'!
+!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 11/1/2018 10:04:57'!
 examples
 "
 SVGElementMorph examples
 "
 | m base |
-base _ 'Cuis-Smalltalk-Dev/M3/SVGSamples/'.
+base _ 'Cuis-Smalltalk-Dev/Packages/Morphic3/SVGSamples/'.
 #('lion' 'lionx' 'tiger1' 'magician' 'beer' 'butterfly' 'picasso' 'Phone' 'baby' 'longhorn' 'cowboy' 'dancer' 'b8' 'clinton' 'pixelCoverageSucks') do: [ :fn |
 Transcript clear.
 "["
 [
 [
 	m _ SVGMainMorph fromFileNamed: base, fn, '.svg'.
-"		'lionx.svg'"
-"		'tiger1.svg'"
-"		'magician.svg'"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/Phone.svg'"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/pixelCoverageSucks.svg'"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/svg/lion.svg'"
-"		'svgSamples\b8.svg'"
-"		'svgSamples/baby.svg'"
-"		 'svgSamples/beer.svg'"
-"		'svgSamples/clinton.svg'"
-"		'svgSamples/dancer.svg'"
-"		'svgSamples/longhorn.svg'"
-"		'svgSamples/butterfly.svg'"
-"		'svgSamples/picasso.svg'"
-"gradients"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/http-openclipart.org/people/adam_lowe/adam_lowe_Branches_Flowers_Birds.svg'"	
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/http-openclipart.org/people/adam_lowe/adam_lowe_Owl.svg'"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/http-openclipart.org/people/addon/addon_the_artist.svg'"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/http-openclipart.org/people/addon/addon_the_photographer.svg'"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/http-openclipart.org/people/addon/addon_sandcastle_2.svg'"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/http-openclipart.org/people/adam_lowe/flower1.svg'"
-"zeroDivide!!!!!!"
-"		'/Users/juanvuletich/Desktop/Morphic 3/svgSamples/http-openclipart.org/people/adam_lowe/adam_lowe_Anime_Schoolgirl.svg'"	
-		.
 	m privateOwner: self runningWorld.
 	m morphPosition: 100@100.
 	(VectorCanvas onForm: Display) fullDraw: m.
@@ -1124,14 +1101,14 @@ Transcript clear.
 ]
 "] on: Error do: [ :dnu | ('Server error: ', dnu printString) print. dnu return ]"! !
 
-!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 5/30/2017 15:24:25'!
+!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 11/1/2018 10:05:13'!
 examplesBeer
 "
 SVGElementMorph examplesBeer
 "
 | m base |
 Transcript clear.
-base _ 'Cuis-Smalltalk-Dev/Experimental/SVGSamples/'.
+base _ 'Cuis-Smalltalk-Dev/Packages/Morphic3/SVGSamples/'.
 "["
 [
 [
@@ -1146,14 +1123,14 @@ base _ 'Cuis-Smalltalk-Dev/Experimental/SVGSamples/'.
 ] on: SVGError do: [ :error | error print. error return ]
 "] on: Error do: [ :dnu | ('Server error: ', dnu printString) print. dnu return ]"! !
 
-!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 5/30/2017 15:24:33'!
+!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 11/1/2018 10:05:42'!
 examplesLion
 "
 SVGElementMorph examplesLion
 "
 | m base |
 Transcript clear.
-base _ 'Cuis-Smalltalk-Dev/Experimental/SVGSamples/'.
+base _ 'Cuis-Smalltalk-Dev/Packages/Morphic3/SVGSamples/'.
 "["
 [
 [
@@ -1169,14 +1146,14 @@ base _ 'Cuis-Smalltalk-Dev/Experimental/SVGSamples/'.
 ] on: SVGError do: [ :error | error print. error return ]
 "] on: Error do: [ :dnu | ('Server error: ', dnu printString) print. dnu return ]"! !
 
-!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 5/30/2017 15:27:26'!
+!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 11/1/2018 10:05:59'!
 examplesMagician
 "
 SVGElementMorph examplesMagician
 "
 | m base |
 Transcript clear.
-base _ 'Cuis-Smalltalk-Dev/M3/SVGSamples/'.
+base _ 'Cuis-Smalltalk-Dev/Packages/Morphic3/SVGSamples/'.
 "["
 [
 [
@@ -1191,14 +1168,14 @@ base _ 'Cuis-Smalltalk-Dev/M3/SVGSamples/'.
 ] on: SVGError do: [ :error | error print. error return ]
 "] on: Error do: [ :dnu | ('Server error: ', dnu printString) print. dnu return ]"! !
 
-!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 5/30/2017 15:24:39'!
+!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 11/1/2018 10:06:38'!
 examplesTiger
 "
 SVGElementMorph examplesTiger
 "
 | m base |
 Transcript clear.
-base _ 'Cuis-Smalltalk-Dev/Experimental/SVGSamples/'.
+base _ 'Cuis-Smalltalk-Dev/Packages/Morphic3/SVGSamples/'.
 "["
 [
 [
@@ -1225,13 +1202,13 @@ base _ 'Cuis-Smalltalk-Dev/Experimental/SVGSamples/'.
 ] on: SVGError do: [ :error | error print. error return ]
 "] on: Error do: [ :dnu | ('Server error: ', dnu printString) print. dnu return ]"! !
 
-!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 5/30/2017 15:24:29'!
+!SVGElementMorph class methodsFor: 'examples' stamp: 'jmv 11/1/2018 10:09:09'!
 phoneExample
 "
 SVGElementMorph phoneExample
 "
 | m base |
-base _ 'Cuis-Smalltalk-Dev/Experimental/SVGSamples/'.
+base _ 'Cuis-Smalltalk-Dev/Packages/Morphic3/SVGSamples/'.
 Transcript clear.
 "["
 [
