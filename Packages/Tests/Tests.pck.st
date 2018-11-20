@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3484] on 19 October 2018 at 4:34:15 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3489] on 20 November 2018 at 12:22:39 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 98!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
+!provides: 'Tests' 1 99!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -11200,6 +11200,36 @@ testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
 	self assert: 2 equals: groupedByEven size.
 	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
 	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:15'!
+testAverageFailsWhenTheCollectionIsEmpty
+
+	self 
+		should: [ #() average: [ :each | each ] ]
+		raise: Error 
+		description: Collection emptyCollectionDescription! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:19'!
+testAverageIfEmptyCalculatesItAsUsualWhenTheCollectionIsNotEmpty
+
+	| someNumbers |
+	
+	someNumbers _ #(1 5).
+
+	self 
+		assert: (someNumbers average: [ :each | each ] ifEmpty: [ self fail ])
+		equals: someNumbers average! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:22'!
+testAverageIfEmptyEvaluatesEmptyBlockWhenTheCollectionIsEmpty
+
+	| emptyBlock |
+	
+	emptyBlock _ [ 0 ].
+
+	self 
+		assert: (#() average: [ :each | each asInteger ] ifEmpty: emptyBlock)
+		equals: emptyBlock value! !
 
 !CollectionTest methodsFor: 'average tests' stamp: 'RNG 9/22/2018 10:26:34'!
 testsAverageWorksWithABlock
