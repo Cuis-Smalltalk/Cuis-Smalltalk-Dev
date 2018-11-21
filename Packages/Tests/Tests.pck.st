@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3489] on 20 November 2018 at 12:22:39 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3495] on 21 November 2018 at 5:47:57 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 99!
+!provides: 'Tests' 1 100!
+!requires: 'ImageProcessing' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -6445,6 +6445,72 @@ testFractionPart
 		assert: 0.5 fractionPart = 0.5;
 		assert: 2.5 fractionPart = 0.5
 ! !
+
+!NumberTest methodsFor: 'tests' stamp: 'jmv 11/21/2018 17:38:59'!
+testHash1
+	"Hash should be the same for equivalent instances of various Number classes"
+
+	| boxedFloat float hash largeInteger smallInteger |
+	largeInteger := (LargePositiveInteger new: 4)
+			digitAt: 1 put: 1;
+			digitAt: 2 put: 2;
+			digitAt: 3 put: 3;
+			digitAt: 4 put: 4;
+			yourself.
+	smallInteger := largeInteger normalize.
+	float := smallInteger asFloat.
+	boxedFloat := BoxedFloat64 new
+		basicAt: 1 put: (float basicAt: 1);
+		basicAt: 2 put: (float basicAt: 2); yourself.
+	
+	hash := largeInteger hash.
+	self assert: smallInteger hash = hash.
+	self assert: float hash = hash.
+	self assert: boxedFloat hash = hash! !
+
+!NumberTest methodsFor: 'tests' stamp: 'jmv 11/21/2018 17:39:36'!
+testHash2
+	"Hash should be the same for equivalent instances of various Number classes"
+
+	| boxedFloat float hash largeInteger smallIntIn64ButLargeIntIn32Bits |
+	largeInteger := (LargePositiveInteger new: 4)
+			digitAt: 1 put: 0;
+			digitAt: 2 put: 0;
+			digitAt: 3 put: 0;
+			digitAt: 4 put: 64;
+			yourself.
+	smallIntIn64ButLargeIntIn32Bits := largeInteger normalize.
+	float := smallIntIn64ButLargeIntIn32Bits asFloat.
+	boxedFloat := BoxedFloat64 new
+		basicAt: 1 put: (float basicAt: 1);
+		basicAt: 2 put: (float basicAt: 2); yourself.
+	
+	hash := largeInteger hash.
+	self assert: smallIntIn64ButLargeIntIn32Bits hash = hash.
+	self assert: float hash = hash.
+	self assert: boxedFloat hash = hash! !
+
+!NumberTest methodsFor: 'tests' stamp: 'jmv 11/21/2018 17:39:51'!
+testHash3
+	"Hash should be the same for equivalent instances of various Number classes"
+
+	| boxedFloat float hash largeInteger smallIntIn64ButLargeIntIn32Bits |
+	largeInteger := (LargePositiveInteger new: 4)
+			digitAt: 1 put: 1;
+			digitAt: 2 put: 2;
+			digitAt: 3 put: 3;
+			digitAt: 4 put: 80;
+			yourself.
+	smallIntIn64ButLargeIntIn32Bits := largeInteger normalize.
+	float := smallIntIn64ButLargeIntIn32Bits asFloat.
+	boxedFloat := BoxedFloat64 new
+		basicAt: 1 put: (float basicAt: 1);
+		basicAt: 2 put: (float basicAt: 2); yourself.
+	
+	hash := largeInteger hash.
+	self assert: smallIntIn64ButLargeIntIn32Bits hash = hash.
+	self assert: float hash = hash.
+	self assert: boxedFloat hash = hash! !
 
 !NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/26/2009 21:55'!
 testIntegerPart
