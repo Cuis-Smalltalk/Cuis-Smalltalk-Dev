@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3495] on 21 November 2018 at 5:47:57 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3504] on 27 November 2018 at 1:45:40 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 100!
-!requires: 'ImageProcessing' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!provides: 'Tests' 1 101!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
@@ -1882,7 +1882,7 @@ testSecondRoot
 	self assert: (-0.25 nthRoot: 2) = (1/2)i.
 	self assert: (-0.25 nthRoot: 2) imaginary isFloat.! !
 
-!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 23:02:36'!
+!ComplexTest methodsFor: 'Testing' stamp: 'jmv 11/27/2018 10:49:57'!
 testSqrt
 
 	"SmallInteger"
@@ -1901,7 +1901,8 @@ testSqrt
 	self assert: -1.0 sqrt equals: 0.0 + 1.0i.
 	self assert: -1.0 sqrt imaginary isFloat.
 	self assert: -0.25 sqrt = (1/2)i.
-	self assert: -0.25 sqrt imaginary isFloat.! !
+	self assert: -0.25 sqrt imaginary isFloat.
+	self assert: Float negativeInfinity sqrt = Float infinity i.! !
 
 !ComplexTest methodsFor: 'testing' stamp: 'nice 2/8/2006 22:09'!
 testEquality
@@ -3499,6 +3500,15 @@ testArTanh
 	self assert: (0.5 arTanh tanh closeTo: 0.5).
 	self assert: (-0.5 arTanh tanh closeTo: -0.5).! !
 
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:11:53'!
+testArcTanNonPrimitive
+
+	#[0.0 0.01 0.1 0.3 0.5 0.7 0.8 1.0 2.0 5.0 20.0] do: [ :x | | computed |
+		computed _ x arcTanNonPrimitive.
+		self assert: (computed tan -x ) abs <= (computed predecessor tan -x ) abs.
+		self assert: (computed tan -x ) abs <= (computed successor tan -x ) abs.
+		]! !
+
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 4/23/2011 02:49'!
 testCosh
 	self assert: (0.0 cosh closeTo: 1).
@@ -3550,6 +3560,21 @@ testDegreeSinForExceptionalValues
 	self assert: Float infinity degreeSin isNaN.
 	self assert: Float negativeInfinity degreeSin isNaN.! !
 
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:15:27'!
+testExp
+	self assert: 0.0 exp = 1.0.
+	self assert: 1.0 exp = Float e.
+	self assert: 2.0 exp sqrt = Float e! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:28:53'!
+testExpNonPrimitive
+
+	#[0.0 0.01 0.1 0.3 0.5 0.7 0.8 1.0 2.0 5.0 ] do: [ :x | | computed expected |
+		computed _ x expNonPrimitive.
+		expected _ x exp.
+		self assert: (computed - expected) abs <= (expected ulp*2)
+		]! !
+
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/3/2018 17:43:27'!
 testFloorLog2
 	"Float internal representation of Float being in base 2, we expect (aFloat floorLog: 2) to be exact."
@@ -3564,6 +3589,33 @@ testFloorLog2
 		self assert: exp equals: (exactPowerOfTwo * aBitMore floorLog: 2).
 		self assert: exp-1 equals: (exactPowerOfTwo * aBitLess floorLog: 2) ].! !
 
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:33:48'!
+testLn
+	self assert: 0.0 exp ln = 0.0.
+	self assert: 1.0 exp ln = 1.0.
+	self assert: 2.0 exp ln = 2.0.! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:35:03'!
+testLnNonPrimitive
+
+	#[0.0 0.01 0.1 0.3 0.5 0.7 0.8 1.0 2.0 5.0 ] do: [ :x | | computed expected |
+		computed _ x exp lnNonPrimitive.
+		expected _ x exp ln.
+		self assert: (computed - expected) abs <= (expected ulp*2)
+		]! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:38:05'!
+testSin
+	self assert: 0.0 sin = 0.0.
+	self assert: (45 degreesToRadians sin - 0.5 sqrt)abs <= 0.5 ulp.
+	self assert: 90 degreesToRadians sin = 1.0! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:40:27'!
+testSinNonPrimitive
+	self assert: 0.0 sinNonPrimitive = 0.0.
+	self assert: (45 degreesToRadians sinNonPrimitive - 0.5 sqrt) abs <= 0.5 ulp.
+	self assert: (90 degreesToRadians sinNonPrimitive - 1.0) abs <= 1.0 ulp.! !
+
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:59'!
 testSinh
 	self assertIsPositiveZero: 0.0 sinh.
@@ -3571,6 +3623,26 @@ testSinh
 	self deny: Float infinity sinh isFinite.
 	self assert: (2.0 cosh squared - 2.0 sinh squared closeTo: 1).
 	self assert: (2.0 sinh negated closeTo: 2.0 negated sinh).! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 10:51:34'!
+testSqrt
+	self assert: Float nan sqrt isNaN.
+	self assert: Float infinity sqrt = Float infinity.
+	self assertIsPositiveZero: Float zero sqrt.
+	self assertIsNegativeZero: Float negativeZero sqrt.! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 11:03:49'!
+testSqrtNonPrimitive
+	self assert: Float nan sqrtNonPrimitive isNaN.
+	self assert: Float infinity sqrtNonPrimitive = Float infinity.
+	self assertIsPositiveZero: Float zero sqrtNonPrimitive.
+	self assertIsNegativeZero: Float negativeZero sqrtNonPrimitive.
+	
+	self assert: 1.0 sqrt = 1.0 sqrtNonPrimitive.
+	self assert: 2.0 sqrt = 2.0 sqrtNonPrimitive.
+	self assert: 4.0 sqrt = 4.0 sqrtNonPrimitive.
+	self assert: 8.0 sqrt = 8.0 sqrtNonPrimitive.
+	self assert: 9.0 sqrt = 9.0 sqrtNonPrimitive.! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:58'!
 testTanh
