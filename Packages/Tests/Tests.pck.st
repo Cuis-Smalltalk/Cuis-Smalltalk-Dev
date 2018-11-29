@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3504] on 27 November 2018 at 1:45:40 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3510] on 29 November 2018 at 7:13:39 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 101!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
+!provides: 'Tests' 1 107!
 !requires: 'Math 3D' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -2214,990 +2214,7 @@ testBug1
 
 	self assert: (0.5 * (2+0i) ln) exp = (0.5 * 2 ln) exp.! !
 
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/2/2015 09:29'!
-test32bitConversion
-	"Except for NaN, we can convert a 32bits float to a 64bits float exactly.
-	Thus we can convert the 64bits float to the original 32bits float pattern."
- 
-	#(
-		16r0 				"zero"
-		16r80000000 		"negative zero"
-		16r1 				"min unormalized"
-		16r12345 			"a unnormalized"
-		16r801FEDCB 		"a negative unnormalized"
-		16r7FFFFF 			"largest unnormalized"
-		16r800000 		"smallest normalized"
-		16r468ACDEF 		"a normalized float"
-		16rCABD1234 		"a negative normalized float"
-		16r7F7FFFFF 		"largest finite float"
-		16r7F800000 		"positive infinity"
-		16rFF800000 		"negative infinity"
-		16r803FFFFC
-		16r803FFFFD
-	)
-		do: [ :originalWord | self assert: (Float fromIEEE32Bit: originalWord) asIEEE32BitWord = originalWord ]! !
-
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 12/1/2015 12:31'!
-test32bitConversion2
-	"This tests the rounding done when going from 64bit Float to 32bit Float
-	self new test32bitConversion2
-	"
-
-	| pi32 pi32Predecessor roundingTo32Border roundingBorderPrev roundingBorderSuc aux roundedByConversion |
-	"Pick two neighbors in the 32-bit Float world"
-	pi32 _ Float fromIEEE32Bit: Float pi asIEEE32BitWord.
-	pi32Predecessor _ Float fromIEEE32Bit: Float pi asIEEE32BitWord-1.
-	"Find the middle value in the 64-bit Float world, and both its neighbors"
-	roundingTo32Border _ pi32 + pi32Predecessor / 2.0.
-	roundingBorderPrev _ roundingTo32Border predecessor.
-	roundingBorderSuc _ roundingTo32Border successor.
-
-	"64 bit middle value is not like any of the 32 bit values. Same for neighbors."
-	self deny: roundingTo32Border mantissaPart hex = pi32 mantissaPart hex.
-	self deny: roundingTo32Border mantissaPart hex = pi32Predecessor mantissaPart hex.
-	self deny: roundingBorderPrev mantissaPart hex = pi32Predecessor mantissaPart hex.
-	self deny: roundingBorderPrev mantissaPart hex = pi32 mantissaPart hex.
-	self deny: roundingBorderSuc mantissaPart hex = pi32Predecessor mantissaPart hex.
-	self deny: roundingBorderSuc mantissaPart hex = pi32 mantissaPart hex.
-
-	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
-	roundedByConversion _ Float fromIEEE32Bit: roundingTo32Border asIEEE32BitWord.
-	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
-	aux _ FloatArray new: 1. aux at: 1 put: roundingTo32Border. roundedByConversion _ aux at: 1.
-	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
-
-	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
-	roundedByConversion _ Float fromIEEE32Bit: roundingBorderPrev asIEEE32BitWord.
-	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
-	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderPrev. roundedByConversion _ aux at: 1.
-	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
-
-	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
-	roundedByConversion _ Float fromIEEE32Bit: roundingBorderSuc asIEEE32BitWord.
-	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex.
-	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderSuc. roundedByConversion _ aux at: 1.
-	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex! !
-
-!FloatTest methodsFor: 'IEEE 754' stamp: 'nice 5/30/2006 02:34'!
-test32bitGradualUnderflow
-	"method asIEEE32BitWord did not respect IEEE gradual underflow"
-	
-	| conv expected exponentPart |
-	
-	"IEEE 32 bits Float have 1 bit sign/8 bit exponent/23 bits of mantissa after leading 1
-	2r1.mmmmmmmmmmmmmmmmmmmmmmm * (2 raisedTo: 2reeeeeeee-127) * sign
-	except when 2reeeeeeee isZero, which is a gradual underflow:
-	2r0.mmmmmmmmmmmmmmmmmmmmmmm * (2 raisedTo: 2r00000000-126) * sign
-	and when 2reeeeeeee = 255, which is infinity if mantissa all zero or nan otherwise"
-	
-	"case 1: This example is the first gradual underflow case"
-	conv := 2r0.11111111111111111111111e-126 asIEEE32BitWord.
-	
-	"expected float encoded as sign/exponent/mantissa (whithout leading 1 or 0)"
-	exponentPart := 0.
-	expected := exponentPart bitOr: 2r11111111111111111111111.
-	self assert: expected = conv.
-	
-	"case 2: smallest number"
-	conv := 2r0.00000000000000000000001e-126 asIEEE32BitWord.
-	expected := exponentPart bitOr: 2r1.
-	self assert: expected = conv.
-	
-	"case 3: round to nearest even also in underflow cases... here round to upper"
-	conv := 2r0.000000000000000000000011e-126 asIEEE32BitWord.
-	expected := exponentPart bitOr: 2r10.
-	self assert: expected = conv.
-	
-	"case 4: round to nearest even also in underflow cases... here round to lower"
-	conv := 2r0.000000000000000000000101e-126 asIEEE32BitWord.
-	expected := exponentPart bitOr: 2r10.
-	self assert: expected = conv.
-	
-	"case 5: round to nearest even also in underflow cases... here round to upper"
-	conv := 2r0.0000000000000000000001011e-126 asIEEE32BitWord.
-	expected := exponentPart bitOr: 2r11.
-	self assert: expected = conv.
-	! !
-
-!FloatTest methodsFor: 'IEEE 754' stamp: 'nice 5/30/2006 00:07'!
-test32bitRoundingMode
-	"method asIEEE32BitWord did not respect IEEE default rounding mode"
-	
-	| conv expected exponentPart |
-	
-	"IEEE 32 bits Float have 1 bit sign/8 bit exponent/23 bits of mantissa after leading 1
-	2r1.mmmmmmmmmmmmmmmmmmmmmmm * (2 raisedTo: 2reeeeeeee-127) * sign
-	except when 2reeeeeeee isZero, which is a gradual underflow:
-	2r0.mmmmmmmmmmmmmmmmmmmmmmm * (2 raisedTo: 2r00000000-127) * sign
-	and when 2reeeeeeee = 255, which is infinity if mantissa all zero or nan otherwise"
-	
-	"This example has two extra bits in mantissa for testing rounding mode
-	case 1: should obviously round to upper"
-	conv := 2r1.0000000000000000000000111e25 asIEEE32BitWord.
-	
-	"expected float encoded as sign/exponent/mantissa (whithout leading 1)"
-	exponentPart := 25+127 bitShift: 23. "127 is 2r01111111 or 16r7F"
-	expected := exponentPart bitOr: 2r10.
-	self assert: expected = conv.
-	
-	"case 2: exactly in the mid point of two 32 bit float: round toward nearest even (to upper)"
-	conv := 2r1.0000000000000000000000110e25 asIEEE32BitWord.
-	expected := exponentPart bitOr: 2r10.
-	self assert: expected = conv.
-	
-	"case 3: exactly in the mid point of two 32 bit float: round toward nearest even (to lower)"
-	conv := 2r1.0000000000000000000000010e25 asIEEE32BitWord.
-	expected := exponentPart bitOr: 2r0.
-	self assert: expected = conv.
-	
-	"case 4: obviously round to upper"
-	conv := 2r1.0000000000000000000000011e25 asIEEE32BitWord.
-	expected := exponentPart bitOr: 2r1.
-	self assert: expected = conv.
-! !
-
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:43'!
-testInfinity3
-	self assert:
-		(Float infinity negated asIEEE32BitWord
-			printStringBase: 2 length: 32 padded: true) = '11111111100000000000000000000000'.
-	self assert:
-		(Float fromIEEE32Bit:
-			(Integer
-				readFrom: '11111111100000000000000000000000' readStream
-				base: 2)) = Float infinity negated! !
-
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:43'!
-testNaN5
-	| nanstr |
-	
-	"check the NaN string representation conforms to IEEE 754"
-	nanstr := Float nan asIEEE32BitWord printStringBase: 2 length: 32 padded: true.
-	self
-		assert: (#($0 $1) includes: (nanstr at: 1));
-		assert: (nanstr copyFrom: 2 to: 9) = '11111111';
-		assert: (#($0 $1) includes: (nanstr at: 10)); "accept both quiet and signalled NaNs"
-		assert: ((nanstr copyFrom: 11 to: 32) reject: [ :c | #($0 $1) includes: c ]) isEmpty.
-	
-	"check a correct quiet NaN is created from a string"
-	self assert: (Float fromIEEE32Bit:
-		(Integer readFrom: '01111111110000000000000000000000' readStream base: 2)) isNaN! !
-
-!FloatTest methodsFor: 'IEEE 754' stamp: 'jmv 1/9/2014 23:42'!
-testZero2
-	self assert:
-		(Float negativeZero asIEEE32BitWord
-			printStringBase: 2 length: 32 padded: true) = '10000000000000000000000000000000'.
-	self assert:
-		(Float fromIEEE32Bit:
-			(Integer
-				readFrom: '10000000000000000000000000000000' readStream
-				base: 2)) = Float negativeZero! !
-
-!FloatTest methodsFor: 'testing' stamp: 'sqr 5/26/2016 18:06'!
-testArcTan
-
-	self assert: (100 arcTan: 100) isAbout: Float pi / 4.
-	self assert: (-100 arcTan: 100) isAbout: Float pi / -4.
-	self assert: (100 arcTan: -100) isAbout: Float pi * 3 / 4.
-	self assert: (-100 arcTan: -100) isAbout: Float pi * -3 / 4.
-	self assert: (0 arcTan: 100) isAbout: 0.
-	self assert: (0 arcTan: -100) isAbout: Float pi.
-	self assert: (100 arcTan: 0) isAbout: Float pi / 2.
-	self assert: (-100 arcTan: 0) isAbout: Float pi / -2.
-	
-	self assert: (Float negativeZero arcTan: 100) isAbout: 0.
-	self assert: (Float negativeZero arcTan: -100) isAbout: Float pi * -1.
-	
-	self assert: (0 arcTan: 0) = 0.
-	self assert: (Float negativeZero arcTan: 0) = 0.
-	self assert: (0 arcTan: Float negativeZero) isAbout: Float pi.
-	self assert: (Float negativeZero arcTan: Float negativeZero) isAbout: Float pi negated! !
-
-!FloatTest methodsFor: 'testing' stamp: 'nice 10/4/2009 23:13'!
-testCopy
-	"Elementary tests"
-	self assert: 2.0 copy = 2.0.
-	self assert: -0.5 copy = -0.5.
-	
-	"Are exceptional Floats preserved by the copy ?"
-	self assert: Float nan copy isNaN.
-	self assert: Float infinity copy = Float infinity.
-	self assert: Float infinity negated copy = Float infinity negated.
-	
-	"Is the sign of zero preserved by the copy ?"
-	self assert: 0.0 copy hex = 0.0 hex.
-	self assert: Float negativeZero copy hex = Float negativeZero hex.! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 14:02:56'!
-testHashWithBigNegativeSmallInteger
-	"Not in the Float range"
-	| a float smallInteger |
-	smallInteger _ SmallInteger minVal+1.
-	self deny: smallInteger isLarge description: 'precondition'.
-	float _ smallInteger asFloat.
-	self assert: smallInteger = float description: 'precondition'.
-	self assert: float = smallInteger description: 'precondition'.
-	a _ Set new.
-	a add: smallInteger; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 14:01:27'!
-testHashWithBigSmallInteger
-	"Not in the Float range"
-	| a float smallInteger |
-	smallInteger _ SmallInteger maxVal.
-	self deny: smallInteger isLarge description: 'precondition'.
-	float _ smallInteger asFloat.
-	self assert: smallInteger = float description: 'precondition'.
-	self assert: float = smallInteger description: 'precondition'.
-	a _ Set new.
-	a add: smallInteger; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:43:35'!
-testHashWithFraction
-
-	| a float fraction |
-	fraction _ 1/3.
-	float _ (1/3) asFloat.
-	self assert: fraction = float description: 'precondition'.
-	self assert: float = fraction description: 'precondition'.
-	a _ Set new.
-	a add: fraction; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:32'!
-testHashWithLargeNegativeInteger
-	"Not in the Float range"
-	| a float largeInteger |
-	largeInteger _ -1e400.
-	self assert: largeInteger isLarge description: 'precondition'.
-	float _ largeInteger asFloat.
-	self assert: largeInteger = float description: 'precondition'.
-	self assert: float = largeInteger description: 'precondition'.
-	a _ Set new.
-	a add: largeInteger; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:37'!
-testHashWithLargePositiveInteger
-	"Not in the Float range"
-	| a float largeInteger |
-	largeInteger _ 1e400.
-	self assert: largeInteger isLarge description: 'precondition'.
-	float _ largeInteger asFloat.
-	self assert: largeInteger = float description: 'precondition'.
-	self assert: float = largeInteger description: 'precondition'.
-	a _ Set new.
-	a add: largeInteger; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:40'!
-testHashWithSmallishLargeNegativeInteger
-	"In the Float range"
-	| a float largeInteger |
-	largeInteger _ SmallInteger minVal -1.
-	self assert: largeInteger isLarge description: 'precondition'.
-	float _ largeInteger asFloat.
-	self assert: largeInteger = float description: 'precondition'.
-	self assert: float = largeInteger description: 'precondition'.
-	a _ Set new.
-	a add: largeInteger; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/10/2018 15:40:00'!
-testHashWithSmallishLargeNegativeInteger2
-	"In the Float range"
-	| a float integer |
-	integer _ Float maxExactInteger negated -1.
-	float _ integer asFloat.
-	self assert: integer = float description: 'precondition'.
-	self assert: float = integer description: 'precondition'.
-	a _ Set new.
-	a add: integer; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/9/2018 10:51:44'!
-testHashWithSmallishLargePositiveInteger
-	"In the Float range"
-	| a float largeInteger |
-	largeInteger _ SmallInteger maxVal +1.
-	self assert: largeInteger isLarge description: 'precondition'.
-	float _ largeInteger asFloat.
-	self assert: largeInteger = float description: 'precondition'.
-	self assert: float = largeInteger description: 'precondition'.
-	a _ Set new.
-	a add: largeInteger; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/10/2018 15:40:11'!
-testHashWithSmallishLargePositiveInteger2
-	"In the Float range"
-	| a float integer |
-	integer _ Float maxExactInteger +1.
-	float _ integer asFloat.
-	self assert: integer = float description: 'precondition'.
-	self assert: float = integer description: 'precondition'.
-	a _ Set new.
-	a add: integer; add: float.
-	self assert: a size = 1! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/11/2011 08:55'!
-testMaxExactInteger
-	"
-	FloatTest new testMaxExactInteger
-	"
-
-	self assert: Float maxExactInteger asFloat truncated = Float maxExactInteger.
-	0 to: 10000 do: [ :j |
-		self assert: (Float maxExactInteger-j) asFloat truncated = (Float maxExactInteger-j) ].
-	self deny: (Float maxExactInteger+1) asFloat truncated = (Float maxExactInteger+1)
-	! !
-
-!FloatTest methodsFor: 'testing' stamp: 'jmv 10/10/2018 15:57:54'!
-testNoIntegerHash
-
-	self deny: Float pi hash = 3 hash.
-	self deny: Float pi hash = (Float pi *1.00000000000001) hash.
-	self deny: Float pi hash = (Float pi /1.00000000000001) hash.! !
-
-!FloatTest methodsFor: 'testing' stamp: 'nice 2/13/2010 04:15'!
-testSetOfFloat
-	"Classical disagreement between hash and = did lead to a bug.
-	This is a non regression test from http://bugs.squeak.org/view.php?id=3360"
-
-	| size3 size4 |
-	size3 := (Set new: 3) add: 3; add: 3.0; size.
-	size4 := (Set new: 4) add: 3; add: 3.0; size.
-	self assert: size3 = size4 description: 'The size of a Set should not depend on its capacity.'! !
-
-!FloatTest methodsFor: 'testing' stamp: 'nice 5/3/2014 22:32:20.636'!
-testStoreOn
-	"If storeOn: prints exactly and the parser avoid cumulating round off Errors,
-	then Float should be read back exactly.
-	Note: there is no guarantee to restore the bit pattern of NaN though"
-	
-	self assert: (Compiler evaluate: Float halfPi storeString) = Float halfPi.
-	self assert: (Compiler evaluate: Float halfPi negated storeString) = Float halfPi negated.
-	self assert: (Compiler evaluate: Float infinity storeString) = Float infinity.
-	self assert: (Compiler evaluate: Float negativeInfinity storeString) = Float negativeInfinity.
-	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/7/2010 12:12'!
-testAsTrueFraction
-	"
-	self new testAsTrueFraction
-	"
-	| x |
-	x _ Float pi.
-	self assert: x asTrueFraction asFloat = x.
-	x _ 1.0 / 3.0.
-	self assert: x asTrueFraction asFloat = x.
-	x _ Float fminNormalized.
-	self assert: x asTrueFraction asFloat = x.
-	x _ 0.0 - Float fminDenormalized.
-	self assert: x asTrueFraction asFloat = x.
-	x _ Float fminNormalized.
-	self assert: x asTrueFraction asFloat = x.
-	x _ 0.0 - Float fminDenormalized.
-	self assert: x asTrueFraction asFloat = x.
-	x _ 1.023399999997e-312.
-	self assert: x asTrueFraction asFloat = x.
-	x _ Float fmax.
-	self assert: x asTrueFraction asFloat = x.
-	x _ 0.0 - Float fmax.
-	self assert: x asTrueFraction asFloat = x.
-	x _ 1.0234e308.
-	self assert: x asTrueFraction asFloat = x.! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 6/3/2011 21:28'!
-testCeiling
-	self assert: 1.0 ceiling = 1.
-	self assert: 1.1 ceiling = 2.
-	self assert: -2.0 ceiling = -2.
-	self assert: -2.1 ceiling = -2.! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/24/2018 10:52:30'!
-testExactAsString
-	"Tests that conversion to / from Strings is exact (same Float is re-created) when using #asString
-	(whose output is meant to be a readable String).
-	Use some relevant examples."
-
-	| examples |
-	examples _ {
-		1.0. 
-		Float fminNormalized / 2. 
-		Float fminNormalized / 10. 
-		Float fminNormalized / 13. 
-		2.0. 
-		2 sqrt. 
-		Float pi. 
-		Float fminDenormalized. 
-		Float fminDenormalized * 2. 
-		Float fminDenormalized * 3. 
-		Float fminDenormalized * 13 },
-	{
-		Float zero.
-		Float negativeZero.
-		Float negativeInfinity.
-		Float infinity }.
-
-	examples do: [ :float |
-		self assert: float predecessor asString asNumber = float predecessor.
-		self assert: float asString asNumber = float.
-		self assert: float successor asString asNumber = float successor ].
-
-	"NaN are special, in that they are not even equal to themselves"
-	self assert: Float nan asString asNumber isNaN! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/24/2018 10:51:07'!
-testExactStoreString
-	"Tests that conversion to / from Strings is exact (same Float is re-created) when using #storeString
-	(whose output is meant to be compilable smalltalk code).
-	Use some relevant examples."
-
-	| examples |
-	examples _ {
-		1.0. 
-		Float fminNormalized / 2. 
-		Float fminNormalized / 10. 
-		Float fminNormalized / 13. 
-		2.0. 
-		2 sqrt. 
-		Float pi. 
-		Float fminDenormalized. 
-		Float fminDenormalized * 2. 
-		Float fminDenormalized * 3. 
-		Float fminDenormalized * 13 },
-	{
-		Float zero.
-		Float negativeZero.
-		Float negativeInfinity.
-		Float infinity }.
-
-	examples do: [ :float |
-		self assert: (Compiler evaluate: float predecessor storeString) = float predecessor.
-		self assert: (Compiler evaluate: float storeString) = float.
-		self assert: (Compiler evaluate: float successor storeString) = float successor ].
-
-	"NaN are special, in that they are not even equal to themselves"
-	self assert: (Compiler evaluate: Float nan storeString) isNaN! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 7/24/2008 02:04'!
-testFloatRounded
-	"5000000000000001 asFloat has an exact representation (no round off error).
-	It should round to nearest integer without loosing bits.
-	This is a no regression test on http://bugs.squeak.org/view.php?id=7134"
-	
-	| x y int r |
-	
-	"This is a preamble asserting exactness of representation
-	and quality of various conversions"
-	int := 5000000000000001.
-	x := int asFloat.
-	y := (5 asFloat squared squared squared squared timesTwoPower: 15) + 1.
-	self assert: x = y.
-	self assert: x asTrueFraction = int.
-	
-	"this one should be true for any float
-	in order to conform to ISO/IEC 10967-2"
-	self assert: x rounded = x asTrueFraction rounded.
-	self assert: x negated rounded = x negated asTrueFraction rounded.
-
-	"a random test"
-	r := Random new.
-	10000 timesRepeat: [
-		x := r next * 1.9999e16 + 1.0e12 .
-		self assert: x rounded = x asTrueFraction rounded.
-		self assert: x negated rounded = x negated asTrueFraction rounded]! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 4/26/2006 05:21'!
-testFloatTruncated
-	"(10 raisedTo: 16) asFloat has an exact representation (no round off error).
-	It should convert back to integer without loosing bits.
-	This is a no regression test on http://bugs.impara.de/view.php?id=3504"
-	
-	| x y int r |
-	int := 10 raisedTo: 16.
-	x := int asFloat.
-	y := (5 raisedTo: 16) asFloat timesTwoPower: 16.
-	self assert: x = y.
-	
-	self assert: x asInteger = int.
-	
-	"this one should be true for any float"
-	self assert: x asInteger = x asTrueFraction asInteger.
-
-	"a random test"
-	r := Random new.
-	10000 timesRepeat: [
-		x := r next * 1.9999e16 + 1.0e12 .
-		self assert: x truncated = x asTrueFraction truncated]! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 6/3/2011 21:29'!
-testFloor
-	self assert: 1.0 floor = 1.
-	self assert: 1.1 floor = 1.
-	self assert: -2.0 floor = -2.
-	self assert: -2.1 floor = -3.! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 3/28/2016 09:48'!
-testFractionAsFloat
-	"use a random test"
-	
-	| r m frac err collec |
-	r := Random new seed: 1234567.
-	m := (2 raisedTo: 54) - 1.
-	200 timesRepeat: [
-		frac := ((r nextInteger: m) * (r nextInteger: m) + 1) / ((r nextInteger: m) * (r nextInteger: m) + 1).
-		err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
-		self assert: err < (1/2)].
-	
-	collec := #(16r10000000000000 16r1FFFFFFFFFFFFF 1 2 16r20000000000000 16r20000000000001 16r3FFFFFFFFFFFFF 16r3FFFFFFFFFFFFE 16r3FFFFFFFFFFFFD).
-	collec do: [:num |
-		collec do: [:den |
-			frac := Fraction numerator: num denominator: den.
-			err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
-			self assert: err <= (1/2)]].! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 1/10/2007 02:29'!
-testFractionAsFloat2
-	"test rounding to nearest even"
-		
-	self assert: ((1<<52)+0+(1/4)) asFloat asTrueFraction = ((1<<52)+0).
-	self assert: ((1<<52)+0+(1/2)) asFloat asTrueFraction = ((1<<52)+0).
-	self assert: ((1<<52)+0+(3/4)) asFloat asTrueFraction = ((1<<52)+1).
-	self assert: ((1<<52)+1+(1/4)) asFloat asTrueFraction = ((1<<52)+1).
-	self assert: ((1<<52)+1+(1/2)) asFloat asTrueFraction = ((1<<52)+2).
-	self assert: ((1<<52)+1+(3/4)) asFloat asTrueFraction = ((1<<52)+2).! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 10/3/2018 16:22:06'!
-testFractionAsFloatWithUnderflow
-	"test rounding to nearest even"
-
-	| underflowPower |
-	underflowPower := Float emin - Float precision.
-	self assertIsPositiveZero: (2 raisedTo: underflowPower) asFloat.	
-	self assertIsNegativeZero: (2 raisedTo: underflowPower) negated asFloat! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/24/2018 10:54:15'!
-testFromStringDoesntUnderflow
-	self assert: '12345678901234567890.0e-330' asNumber isZero not.
-	self assert: (Compiler evaluate: '12345678901234567890.0e-330')isZero not.! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 5/6/2006 22:13'!
-testIntegerAsFloat
-	"assert IEEE 754 round to nearest even mode is honoured"
-	
-	self deny: 16r1FFFFFFFFFFFF0801 asFloat = 16r1FFFFFFFFFFFF0800 asFloat. "this test is on 65 bits"
-	self deny: 16r1FFFFFFFFFFFF0802 asFloat = 16r1FFFFFFFFFFFF0800 asFloat. "this test is on 64 bits"
-	self assert: 16r1FFFFFFFFFFF1F800 asFloat = 16r1FFFFFFFFFFF20000 asFloat. "nearest even is upper"
-	self assert: 16r1FFFFFFFFFFFF0800 asFloat = 16r1FFFFFFFFFFFF0000 asFloat. "nearest even is lower"
-! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 9/27/2018 09:37:10'!
-testMinimalAsString
-	"Tests that the conversion from String / to String ends in a minimal String representation.
-	This means that there are no extra unneded digits at the end.
-	For example, 0.1 (actually the closest Float, to 1/10, i.e. ((1/10) asFloat),  prints as 0.1, because 
-	it can be recovered from that String"
-
-	"These are just to start on solid ground. If these fail, what follows is meaningless."
-	self assert: 0.1 = ((1/10) asFloat).		"0.1 really is what it should be. Compiler works ok."
-	self assert: '0.1' asNumber = 0.1.			"#asNumber works ok. String '0.1' is what we want."
-	"Now the real test."
-	self assert: 0.1 printString = '0.1'.		"String '0.1' is what we get. No unneded extra digits."
-
-	"Some more.
-	Not as careful as before, but whatever Float these String represent, print it back the same (no extra digits)"
-	self assert: '0.2' asNumber printString = '0.2'.
-	{
-		'0.1'. '0.2'. '0.3'. '0.4'. '0.5'. '0.6'. '0.7'. '0.8'. '0.9'. 
-		'1.0'. '1.1'. '1.2'. '1.3'. '1.4'. '1.5'. '1.6'. '1.7'. '1.8'. '1.9'. '2.0'.
-		'1.01'. '1.001'. '1.0001'. '1.00001'. '1.000001'. '1.0000001'. '1.00000001'. '1.000000001'. '1.0000000001'. '1.00000000001'. '1.000000000001'.
-		'1.03'. '1.003'. '1.0003'. '1.00003'. '1.000003'. '1.0000003'. '1.00000003'. '1.000000003'. '1.0000000003'. '1.00000000003'. '1.000000000003'. 
-	} do: [ :string |
-		self assert: string asNumber printString = string ].! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 3/14/2008 23:59'!
-testReadFromManyDigits
-	"A naive algorithm may interpret these representations as Infinity or NaN.
-	This is http://bugs.squeak.org/view.php?id=6982"
-	
-	| s1 s2 |
-	s1 := '1' , (String new: 321 withAll: $0) , '.0e-321'.
-	s2 := '0.' , (String new: 320 withAll: $0) , '1e321'.
-	self assert: (Number readFrom: s1) = 1.
-	self assert: (Number readFrom: s2) = 1.! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 6/3/2011 21:37'!
-testRounded
-	self assert: 0.9 rounded = 1.
-	self assert: 1.0 rounded = 1.
-	self assert: 1.1 rounded = 1.
-	self assert: -1.9 rounded = -2.
-	self assert: -2.0 rounded = -2.
-	self assert: -2.1 rounded = -2.
-	
-	"In case of tie, round to upper magnitude"
-	self assert: 1.5 rounded = 2.
-	self assert: -1.5 rounded = -2.! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'jmv 10/19/2018 16:33:22'!
-testSomeNines
-	| twelveNines |
-	twelveNines _ Compiler evaluate: '999999 + 0.999999'.
-	self assert: twelveNines printString = '999999.999999'.
-	self assert: twelveNines printString asNumber = twelveNines.
-	self assert: twelveNines printString asNumber - twelveNines = 0.0.
-	self assert: twelveNines + 1e-6 = 1e6! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'dtl 9/18/2004 12:40'!
-testStringAsNumber
-	"This covers parsing in Number>>readFrom:"
-
-	| aFloat |
-	aFloat := '10r-12.3456' asNumber.
-	self assert: -12.3456 = aFloat.
-	aFloat := '10r-12.3456e2' asNumber.
-	self assert: -1234.56 = aFloat.
-	aFloat := '10r-12.3456d2' asNumber.
-	self assert: -1234.56 = aFloat.
-	aFloat := '10r-12.3456q2' asNumber.
-	self assert: -1234.56 = aFloat.
-	aFloat := '-12.3456q2' asNumber.
-	self assert: -1234.56 = aFloat.
-	aFloat := '12.3456q2' asNumber.
-	self assert: 1234.56 = aFloat.
-! !
-
-!FloatTest methodsFor: 'testing - conversion' stamp: 'nice 6/3/2011 21:34'!
-testTruncated
-	self assert: 1.0 truncated = 1.
-	self assert: 1.1 truncated = 1.
-	self assert: -2.0 truncated = -2.
-	self assert: -2.1 truncated = -2.! !
-
-!FloatTest methodsFor: 'characterization' stamp: 'mt 8/16/2016 09:42'!
-expectedFailures
-
-	^ Smalltalk platformName = 'Win32'
-		ifTrue: [#(testTimesTwoPowerGradualUnderflow)]
-		ifFalse: [#()]! !
-
-!FloatTest methodsFor: 'characterization' stamp: 'jmv 10/3/2018 16:08:02'!
-testCharacterization
-
-	"Test the largest finite representable floating point value"
-	self assert: Float fmax successor = Float infinity.
-	self assert: Float infinity predecessor = Float fmax.
-	self assert: Float fmax negated predecessor = Float infinity negated.
-	self assert: Float infinity negated successor = Float fmax negated.
-	
-	"Test the smallest positive representable floating point value"
-	self assert: Float fmin predecessor = 0.0.
-	self assert: 0.0 successor = Float fmin.
-	self assert: Float fmin negated successor = 0.0.
-	self assert: 0.0 predecessor = Float fmin negated.
-	
-	"Test the relative precision"
-	self assert: Float one + Float epsilon > Float one.
-	self assert: Float one + Float epsilon = Float one successor.
-	self assert: Float one + (Float epsilon / Float radix) = Float one.
-	
-	"Test maximum and minimum exponent"
-	self assert: Float fmax exponent = Float emax.
-	self assert: Float fminNormalized exponent = Float emin.
-	Float denormalized ifTrue: [
-		self assert: Float fminDenormalized exponent = (Float emin + 1 - Float precision)].
-	
-	"Alternative tests for maximum and minimum"
-	self assert: (Float radix - Float epsilon) * (Float radix raisedTo: Float emax) = Float fmax.
-	self assert: Float epsilon * (Float radix raisedTo: Float emin) = Float fmin.
-	
-	"Test sucessors and predecessors"
-	self assert: Float one predecessor successor = Float one.
-	self assert: Float one successor predecessor = Float one.
-	self assert: Float one negated predecessor successor = Float one negated.
-	self assert: Float one negated successor predecessor = Float one negated.
-	self assert: Float infinity successor = Float infinity.
-	self assert: Float negativeInfinity predecessor = Float negativeInfinity.
-	self assertIsNegativeZero: Float fmin negated successor.
-	self assertIsPositiveZero: Float fmin predecessor.
-	self assert: Float nan predecessor isNaN.
-	self assert: Float nan successor isNaN.
-	
-	"SPECIFIC FOR IEEE 754 double precision - 64 bits"
-	self assert: Float fmax hex = '7FEFFFFFFFFFFFFF'.
-	self assert: Float fminDenormalized hex = '0000000000000001'.
-	self assert: Float fminNormalized hex = '0010000000000000'.
-	self assert: 0.0 hex = '0000000000000000'.
-	self assert: Float negativeZero hex = '8000000000000000'.
-	self assert: Float one hex = '3FF0000000000000'.
-	self assert: Float infinity hex = '7FF0000000000000'.
-	self assert: Float negativeInfinity hex = 'FFF0000000000000'.! !
-
-!FloatTest methodsFor: 'characterization' stamp: 'nice 5/3/2014 22:31:57.837'!
-testSignificandAndExponent
-	| denormals exceptionals normals |
-	
-	normals := {Float pi. Float pi * 100.0. Float pi/ -100.0. Float fmax. Float fminNormalized}.
-	denormals := {0.0. Float negativeZero. Float fminNormalized predecessor. Float fmin negated}.
-	exceptionals := {Float nan. Float infinity. Float negativeInfinity.}.
-	
-	normals , denormals , exceptionals do: [:aFloat |
-		"Any Float can be decomposed into its significand and exponent, and the significand holds the sign"
-		aFloat isNaN
-			ifTrue: [self assert: (aFloat significand timesTwoPower: aFloat exponent) isNaN]
-			ifFalse: [self
-				assert: (aFloat significand timesTwoPower: aFloat exponent)
-				equals: aFloat]].
-	
-	normals , denormals do: [:aFloat |
-		"The significand magnitude is in interval [1.0,2.0( "
-		aFloat = 0.0
-			ifTrue: [self assert: aFloat significand equals: 0]
-			ifFalse: [self
-				assert: aFloat significand abs >= 1.0;
-				assert: aFloat significand abs < 2.0]]! !
-
-!FloatTest methodsFor: 'characterization' stamp: 'jmv 10/3/2018 17:41:49'!
-testSignificandAsInteger
-	| mantissaBits denormalPowersOfTwo denormals exceptionals normalPowersOfTwo normals |
-	"There are 52 bits used for representing the mantissa (plus an eventual leading 1, see below)"
-	mantissaBits := Float precision - 1.
-	
-	normals := {Float pi. Float pi * 100.0. Float pi/ -100.0. Float fmax. Float fminNormalized}.
-	denormals := {0.0. Float negativeZero. Float fminNormalized predecessor. Float fmin negated}.
-	exceptionals := {Float nan. Float infinity. Float negativeInfinity.}.
-	normalPowersOfTwo := (-10 to: 10) collect: [:i | 1.0 timesTwoPower: i].
-	denormalPowersOfTwo := (Float emin - mantissaBits to: Float emin - 1) collect: [:i | 1.0 timesTwoPower: i].
-	
-	normals do: [:aNormalFloat |
-		"Assume the mantissa is written in least 52 bits of hex format, with an implied 1 on position 53"
-		self
-			assert: (((Integer readFrom: aNormalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1) bitOr: 1<<mantissaBits)
-			equals: aNormalFloat significandAsInteger].
-	
-	denormals do: [:aDenormalFloat |
-		"For zero and denormal, no implied leading one"
-		self
-			assert: ((Integer readFrom: aDenormalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1)
-			equals: aDenormalFloat significandAsInteger].
-
-"This currently is not allowed in Cuis"
-false ifTrue: [
-	exceptionals do: [:aDenormalOrExceptionalFloat |
-		"For every other Float, zero, denormal or exceptional, no implied leading one"
-		self
-			assert: ((Integer readFrom: aDenormalOrExceptionalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1)
-			equals: aDenormalOrExceptionalFloat significandAsInteger].
-].
-
-	normalPowersOfTwo do: [:aNormalPowerOfTwoFloat |
-		"The significand of a power of two is a power of two, with high bit of expected precision"
-		self assert: aNormalPowerOfTwoFloat significandAsInteger isPowerOfTwo.
-		self assert: aNormalPowerOfTwoFloat significandAsInteger highBit equals: Float precision.
-		self assert: aNormalPowerOfTwoFloat successor significandAsInteger equals: aNormalPowerOfTwoFloat significandAsInteger + 1.
-		"The last one is not true for fminNormalized"
-		aNormalPowerOfTwoFloat = Float fminNormalized or: [
-			self assert: aNormalPowerOfTwoFloat predecessor significandAsInteger equals: aNormalPowerOfTwoFloat significandAsInteger * 2 - 1]].
-	
-	denormalPowersOfTwo do: [:aDenormalPowerOfTwoFloat |
-		"The significand of a denormal power of two is a power of two, just with less bits"
-		self assert: aDenormalPowerOfTwoFloat significandAsInteger isPowerOfTwo.
-		self assert: aDenormalPowerOfTwoFloat significandAsInteger highBit equals: Float precision + aDenormalPowerOfTwoFloat exponent - Float emin.
-		aDenormalPowerOfTwoFloat successor = Float fminNormalized or: [
-			self assert: aDenormalPowerOfTwoFloat successor significandAsInteger equals: aDenormalPowerOfTwoFloat significandAsInteger + 1].
-		self assert: aDenormalPowerOfTwoFloat predecessor significandAsInteger equals: aDenormalPowerOfTwoFloat significandAsInteger - 1.].
-	
-	"Well known value for a few extremal cases"
-	self assert: Float fmax significandAsInteger equals: 1 << Float precision - 1.
-	self assert: Float fmin significandAsInteger equals: 1.
-	self assert: 0.0 significandAsInteger equals: 0.
-"This currently is not allowed in Cuis"
-false ifTrue: [
-	self assert: Float infinity significandAsInteger equals: 0.
-	self assert: Float nan significandAsInteger > 0
-].! !
-
-!FloatTest methodsFor: 'characterization' stamp: 'jmv 10/3/2018 17:34:05'!
-testUlp
-
-	{Float pi predecessor. Float pi. Float pi successor} do:
-		[:f |
-		self assert: (f * 2) ulp = (f ulp * 2).
-		self assert: (f / 2) ulp = (f ulp / 2).
-		self deny: f + f ulp = f.
-		self deny: f - f ulp = f.
-		"Tests below are valid as long as default rounding mode (to nearest even) is used"
-		self assert: f significandAsInteger odd not | (f ulp / 2.0 + f = f successor).
-		self assert: f significandAsInteger even not | (f ulp / 2.0 + f = f)].
-	
-	self assert: 0.0 ulp = Float fmin.
-	self assert: 1.0 ulp = Float epsilon.
-	self assert: Float nan ulp isNaN.
-	self assert: Float infinity ulp = Float infinity.
-	self assert: Float negativeInfinity ulp = Float infinity.
-
-	self assert: ((0 to: Float precision - 1) allSatisfy: [:each | (Float fmin timesTwoPower: each) ulp = Float fmin]).	! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'nice 7/19/2009 19:24'!
-testCloseTo
-	self deny: (Float nan closeTo: Float nan) description: 'NaN isn''t close to anything'.
-	self deny: (Float nan closeTo: 1.0) description: 'NaN isn''t close to anything'.
-	self deny: (1.0 closeTo: Float nan) description: 'NaN isn''t close to anything'.
-	
-	self deny: (-1.0 closeTo: 1.0).
-	self deny: (1.0 closeTo: Float infinity).
-	self assert: (Float infinity closeTo: Float infinity) description: 'since they are =, they also are closeTo:'.
-	
-	self assert: (1.0/3.0 closeTo: 1/3).
-	self assert: (1.0e-8 closeTo: 0).
-	self assert: (0 closeTo: 1.0e-8).
-	self assert: (1+1.0e-8 closeTo: 1.0).
-	
-	self assert: (1000000001.0 closeTo: 1000000000.0).
-	self deny: (1000000001 closeTo: 1000000000) description: 'exact representation are considered closeTo: only if equal'.! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'jmv 9/1/2010 11:58'!
-testComparison
-				"In Cuis, it was decided to coerce operands to Float for comparison (if any of them was float),
-				in the classic ST-80 way"
-	| a b c |
-	
-	"Test equality when Float conversion exact"
-	self assert: 16r1FFFFFFFFFFFFF = 16r1FFFFFFFFFFFFF asFloat.
-	self assert: 16r1FFFFFFFFFFFFF = 16r1FFFFFFFFFFFFF asFloat asInteger.
-	
-	self assert: (((1 bitShift: 54)+1)/(1 bitShift: 54)) > 1.
-	self assert: (((1 bitShift: 54)+1)/(1 bitShift: 54)) = 1.0.			"Coerce to Float"
-	
-	self assert: (((1 bitShift: 54)-1)/(1 bitShift: 54)) < 1.
-	self assert: (((1 bitShift: 54)-1)/(1 bitShift: 54)) = 1.0.			"Coerce to Float"
-	
-	"Test exact vs inexact arithmetic"
-	(1 to: 100) do: [:i |
-		i isPowerOfTwo
-			ifTrue: [self assert: (1/i) = (1/i) asFloat]
-			ifFalse: [
-				"Coerce to Float"
-				self assert: (1/i) = (1/i) asFloat]].
-	
-	"Test overflow (compare to infinity)"
-	a := (11 raisedTo: 400) / 2.
-	b := (13 raisedTo: 400) / 2.
-	c := a asFloat.
-	self assert: ((a = c) & (b = c)).			"Coerce to Float"
-	self deny:  (a = b).
-	
-	"every integer is smaller than infinity"
-	self assert: a = Float infinity.			"Coerce to Float"
-	self assert: a > Float infinity negated.
-	
-	"Test underflow"
-	self deny: 1 / (11 raisedTo: 400) = 0.
-	self assert: 1 / (11 raisedTo: 400) = 0.0.		"Coerce to Float"
-	
-	"Test hash code"
-	self assert:
-		((Set new: 3) add: 3; add: 3.0; size) =
-		((Set new: 4) add: 3; add: 3.0; size).! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'nice 7/10/2009 22:27'!
-testComparisonWhenPrimitiveFails
-	"This is related to http://bugs.squeak.org/view.php?id=7361"
-
-	self deny: 0.5 < (1/4).
-	self deny: 0.5 < (1/2).
-	self assert: 0.5 < (3/4).
-	
-	self deny: 0.5 <= (1/4).
-	self assert: 0.5 <= (1/2).
-	self assert: 0.5 <= (3/4).
-	
-	self assert: 0.5 > (1/4).
-	self deny: 0.5 > (1/2).
-	self deny: 0.5 > (3/4).
-	
-	self assert: 0.5 >= (1/4).
-	self assert: 0.5 >= (1/2).
-	self deny: 0.5 >= (3/4).
-	
-	self deny: 0.5 = (1/4).
-	self assert: 0.5 = (1/2).
-	self deny: 0.5 = (3/4).
-	
-	self assert: 0.5 ~= (1/4).
-	self deny: 0.5 ~= (1/2).
-	self assert: 0.5 ~= (3/4).! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'jmv 10/8/2018 16:20:48'!
-testComparisonWithFraction
-	self assert: 0.5 = (1/2).
-	self assert: (1/2) = 0.5.
-	self assert: 0.1 = (1/10).
-	self assert: (1/10) = 0.1! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'jmv 10/8/2018 16:18:13'!
-testHugeValues
-
-	self assert: 1e400 = Float infinity.
-	self deny: 1e400 < Float infinity.
-	self deny: 1e400 > Float infinity.
-
-	self assert: 1e400 = 1.0e309.
-	self assert: 1e400 > 1.0e308.
-
-
-	self assert: -1e400 = Float negativeInfinity.
-	self deny: -1e400 < Float negativeInfinity.
-	self deny: -1e400 > Float negativeInfinity.
-
-	self assert: -1e400 = -1.0e309.
-	self assert: -1e400 < -1.0e308.! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'sqr 5/26/2016 18:11'!
-testIsWithinUlpsFrom
-
-	self deny: (Float nan isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
-	self deny: (Float nan isWithin: Float fmax ulpsFrom: 1.0) description: 'NaN isn''t close to anything'.
-	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
-	
-	self deny: (-1.0 isWithin: 1000 ulpsFrom: 1.0).
-	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float infinity).
-	self deny: (Float infinity isWithin: Float fmax ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
-	self deny: (Float infinity isWithin: Float infinity ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
-	
-	self assert: (1.0/3.0 isWithin: 1 ulpsFrom: 1/3).
-	self assert: (1.0e-8 isWithin: 1.0e-8 / 0.0 ulp ulpsFrom: 0).
-	self assert: (0.0 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0e-8).
-	self assert: (1+1.0e-8 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0).
-	
-	self assert: (1000000001.0 isWithin: (1 bitShift: 23) ulpsFrom: 1000000000.0).
-	self assert: ((1 bitShift: 52) asFloat + 1.0 isWithin: 1 ulpsFrom: (1 bitShift: 52) asFloat).
-
-	self assert: (1.0 isWithin: 1 ulpsFrom: 1.0).
-	self assert: (1.0 successor isWithin: 1 ulpsFrom: 1.0).
-	self deny: (1.0 successor successor isWithin: 1 ulpsFrom: 1.0)! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'nice 10/27/2014 21:50'!
-testLiteralEqualityOfNan
-	| nan |
-	nan := Float nan.
-	self assert: (nan literalEqual: nan)
-		description: 'Float nan is not equal to itself, though it is literally equal'.! !
-
-!FloatTest methodsFor: 'testing compare' stamp: 'jmv 10/3/2018 16:29:31'!
-testLiteralEqualityOfZeroAndNegativeZero
-	self assert: Float zero = Float negativeZero.
-	self deny: (Float zero literalEqual: Float negativeZero).
-	self
-		assert: (Compiler evaluate: '1>2 ifTrue: [0.0] ifFalse: [-0.0]') hex = Float negativeZero hex
-		description: 'Float zero and negativeZero are not literally substituable'.! !
-
-!FloatTest methodsFor: 'testing - arithmetic' stamp: 'GabrielOmarCotelli 6/6/2009 17:14'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'GabrielOmarCotelli 6/6/2009 17:14'!
 testDivide
 
 	self assert: 1.5 / 2.0 = 0.75.
@@ -3210,7 +2227,7 @@ testDivide
 	self should: [ 1.2 / (1.3 - 1.3) ] raise: ZeroDivide
 	! !
 
-!FloatTest methodsFor: 'testing - arithmetic' stamp: 'jmv 10/30/2016 17:12:55'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 10/30/2016 17:12:55'!
 testTimesTwoPowerGradualUnderflow
 	"Here is a vicious case where timesTwoPower is inexact because it underflows.
 	And two consecutive inexact operations lead to a different result than a single one.
@@ -3235,26 +2252,26 @@ testTimesTwoPowerGradualUnderflow
 				g := f timesTwoPower: exp.
 				self assert: (g timesTwoPower: Float fmin exponent - g exponent) = Float fmin]! !
 
-!FloatTest methodsFor: 'testing - arithmetic' stamp: 'nice 2/12/2015 02:52'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'nice 2/12/2015 02:52'!
 testTimesTwoPowerOverflow
 	self assert: (Float fminNormalized timesTwoPower: Float emax - Float emin) equals: (2.0 raisedTo: Float emax).
 	self assert: (Float zero timesTwoPower: SmallInteger maxVal squared) equals: Float zero.
 ! !
 
-!FloatTest methodsFor: 'testing - arithmetic' stamp: 'nice 2/12/2015 02:52'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'nice 2/12/2015 02:52'!
 testTimesTwoPowerUnderflow
 	self assert: ((2.0 raisedTo: Float emax) timesTwoPower: Float emin - Float emax) equals: Float fminNormalized.
 	self assert: (Float infinity timesTwoPower: SmallInteger minVal * SmallInteger maxVal) equals: Float infinity.
 ! !
 
-!FloatTest methodsFor: 'testing - arithmetic' stamp: 'nice 10/14/2011 21:43'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'nice 10/14/2011 21:43'!
 testZeroRaisedToNegativePower
 	"this is a test related to http://bugs.squeak.org/view.php?id=6781"
 	
 	self should: [0.0 raisedTo: -1] raise: ZeroDivide.
 	self should: [0.0 raisedTo: -1.0] raise: ZeroDivide.! !
 
-!FloatTest methodsFor: 'testing - arithmetic' stamp: 'jmv 10/8/2018 16:24:31'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 10/8/2018 16:24:31'!
 testZeroes
 	self assert: -1.0 * 0.0 = 0.0.
 	self assert: (-1.0 * 0.0) sign =  -1.
@@ -3262,219 +2279,6 @@ testZeroes
 	self assert: (1.0 * -0.0) sign =  -1.
 	self assert: -1.0 * -0.0 = 0.0.
 	self assert: (-1.0 * -0.0) sign =  0.! !
-
-!FloatTest methodsFor: 'infinity behavior' stamp: 'nice 7/14/2009 09:32'!
-testHugeIntegerCloseTo
-	"This is a test for bug http://bugs.squeak.org/view.php?id=7368"
-	
- 	"FloatTest new testHugeIntegerCloseTo"
-
-	self deny: (1.0 closeTo: 200 factorial).
-	self deny: (200 factorial closeTo: 1.0).
-	self assert: (Float infinity closeTo: 200 factorial) = (200 factorial closeTo: Float infinity).! !
-
-!FloatTest methodsFor: 'infinity behavior' stamp: 'sd 6/5/2005 08:30'!
-testInfinity1
-   "FloatTest new testInfinity1"
-
-	| i1  i2 |
-
-	i1 := 10000 exp.
-	i2 := 1000000000 exp.
-	self assert: i1 isInfinite & i2 isInfinite & (i1 = i2).
-	"All infinities are equal. (This is a very substantial difference to NaN's, which are never equal."
-! !
-
-!FloatTest methodsFor: 'infinity behavior' stamp: 'sd 6/5/2005 08:30'!
-testInfinity2
-   "FloatTest new testInfinity2"
-
-	| i1  i2 |
-	i1 := 10000 exp.
-	i2 := 1000000000 exp.
-	i2 := 0 - i2. " this is entirely ok. You can compute with infinite values."
-
-	self assert: i1 isInfinite & i2 isInfinite & i1 positive & i2 negative.
-	self deny: i1 = i2.
-  	"All infinities are signed. Negative infinity is not equal to Infinity"
-! !
-
-!FloatTest methodsFor: 'infinity behavior' stamp: 'nice 5/3/2014 22:31:23.35'!
-testInfinityCloseTo
-	"This is a test for bug http://bugs.squeak.org/view.php?id=6729:"
-	
- 	"FloatTest new testInfinityCloseTo"
-
-	self deny: (Float infinity closeTo: Float negativeInfinity).
-	self deny: (Float negativeInfinity closeTo: Float infinity).! !
-
-!FloatTest methodsFor: 'zero behavior' stamp: 'nice 1/27/2017 22:01'!
-testCopySign
-	self assert: (0.0 copySignTo: 1) = 1.
-	self assert: (Float negativeZero copySignTo: 1) = -1.
-	self assertIsNegativeZero: (-1 copySignTo: 0.0).
-	self assertIsPositiveZero: (1 copySignTo: Float negativeZero).! !
-
-!FloatTest methodsFor: 'zero behavior' stamp: 'md 4/16/2003 15:02'!
-testIsZero
-	self assert: 0.0 isZero.
-	self deny:  0.1 isZero.! !
-
-!FloatTest methodsFor: 'zero behavior' stamp: 'nice 8/21/2010 22:29'!
-testNegativeZeroAbs
-	self assert: Float negativeZero abs sign positive description: 'the absolute value of a negative zero is zero'! !
-
-!FloatTest methodsFor: 'zero behavior' stamp: 'nice 8/21/2010 22:30'!
-testNegativeZeroSign
-	self assert: Float negativeZero sign = -1! !
-
-!FloatTest methodsFor: 'zero behavior' stamp: 'sd 6/5/2005 08:33'!
-testZero1
-	"FloatTest new testZero1"
-
-	self assert: Float negativeZero = 0 asFloat.
-	self assert: (Float negativeZero at: 1) ~= (0 asFloat at: 1).
-
-	"The negative zero has a bit representation that is different from the bit representation of the positive zero. Nevertheless, both values are defined to be equal."
-! !
-
-!FloatTest methodsFor: 'zero behavior' stamp: 'nice 3/23/2008 16:00'!
-testZeroSignificandAsInteger
-	"This is about http://bugs.squeak.org/view.php?id=6990"
-	
-	self assert: 0.0 significandAsInteger = 0! !
-
-!FloatTest methodsFor: 'NaN behavior' stamp: 'sd 6/5/2005 08:31'!
-testNaN1
-   	"FloatTest new testNaN1"
-
-	self assert: Float nan == Float nan.
-	self deny: Float nan = Float nan.
-	"a NaN is not equal to itself."
-! !
-
-!FloatTest methodsFor: 'NaN behavior' stamp: 'jmv 11/18/2011 22:54'!
-testNaN2
-	"Two NaN values are always considered to be different.
-	On an little-endian machine (32 bit Intel), Float nan is 16rFFF80000 16r00000000.
-	On a big-endian machine (PowerPC), Float nan is 16r7FF80000 16r00000000. Changing
-	the bit pattern of the first word of a NaN produces another value that is still
-	considered equal to NaN. This test should work on both little endian and big
-	endian machines. However, it is not guaranteed to work on future 64 bit versions
-	of Squeak, for which Float may have different internal representations."
-
-	"FloatTest new testNaN2"
-
-	| nan1 nan2 |
-	nan1 := Float nan copy.
-	nan2 := Float nan copy.
-
-	"test two instances of NaN with the same bit pattern"
-	self deny: nan1 = nan2.
-	self deny: nan1 == nan2.
-	self deny: nan1 = nan1.
-	self assert: nan1 == nan1.
-
-	"change the bit pattern of nan1"
-	self assert: nan1 size = 2.
-	self assert: (nan1 at: 2) = 0.
-	nan1 at: 1 put: (nan1 at: 1) + 999.
-	self assert: nan1 isNaN.
-	self assert: nan2 isNaN.
-	self deny: (nan1 at: 1) = (nan2 at: 1).
-
-	"test two instances of NaN with different bit patterns"
-	self deny: nan1 = nan2.
-	self deny: nan1 == nan2.
-	self deny: nan1 = nan1.
-	self assert: nan1 == nan1! !
-
-!FloatTest methodsFor: 'NaN behavior' stamp: 'sd 6/5/2005 08:32'!
-testNaN3
-   "FloatTest new testNaN3"
-
-   	| set item identitySet |
-	set := Set new.
-	set add: (item := Float nan).
-	self deny: (set includes: item).
-	identitySet := IdentitySet new.
-	identitySet add: (item := Float nan).
-	self assert: (identitySet includes: item).
-	"as a NaN is not equal to itself, it can not be retrieved from a set"
-! !
-
-!FloatTest methodsFor: 'NaN behavior' stamp: 'sd 6/5/2005 08:32'!
-testNaN4
-   	"FloatTest new testNaN4"
-
-	| dict |
-	dict := Dictionary new.
-	dict at: Float nan put: #NaN.
-	self deny: (dict includes: Float nan).
-	"as a NaN is not equal to itself, it can not be retrieved when it is used as a dictionary key"
-! !
-
-!FloatTest methodsFor: 'NaN behavior' stamp: 'jmv 3/13/2012 12:34'!
-testNaNCompare
-	"IEEE 754 states that NaN cannot be ordered.
-	As a consequence, every arithmetic comparison involving a NaN SHOULD return false.
-	Except the is different test (~=).
-	This test does verify this rule"
-	
-	| compareSelectors theNaN anotherNaN comparand brokenMethods warningMessage |
-	compareSelectors := #(#< #<= #> #>= #=).
-	theNaN := Float nan.
-	anotherNaN := Float infinity - Float infinity.
-	comparand := {1. 2.3. Float infinity. 2/3. 1.25. 2 raisedTo: 50}.
-	comparand := comparand , (comparand collect: [:e | e negated]).
-	comparand := comparand , {theNaN. anotherNaN}.
-
-"do a first pass to collect all broken methods"
-	brokenMethods := Set new.
-	comparand do: [:comp |
-		compareSelectors do: [:op |
-			(theNaN perform: op with: comp) ifTrue: [brokenMethods add: (theNaN class lookupSelector: op)].
-			(comp perform: op with: theNaN) ifTrue: [brokenMethods add: (comp class lookupSelector: op)]].
-		(theNaN ~= comp) ifFalse: [brokenMethods add: (theNaN class lookupSelector: #~=)].
-		(comp ~= theNaN) ifFalse: [brokenMethods add: (comp class lookupSelector: #~=)]].
-	
-"build a warning message to tell about all broken methods at once"
-	warningMessage := String streamContents: [:s |
-			s nextPutAll: 'According to IEEE 754 comparing with a NaN should always return false, except ~= that should return true.'; newLine.
-			s nextPutAll: 'All these methods failed to do so. They are either broken or call a broken one'.
-			brokenMethods do: [:e | s newLine; print: e methodClass; nextPutAll: '>>'; print: e selector]].
-		
-"Redo the tests so as to eventually open a debugger on one of the failures"
-	brokenMethods := Set new.
-	comparand do: [:comp2 |
-		compareSelectors do: [:op2 |
-			self deny: (theNaN perform: op2 with: comp2) description: warningMessage.
-			self deny: (comp2 perform: op2 with: theNaN) description: warningMessage].
-		self assert: (theNaN ~= comp2) description: warningMessage.
-		self assert: (comp2 ~= theNaN) description: warningMessage].! !
-
-!FloatTest methodsFor: 'NaN behavior' stamp: 'nice 3/14/2008 23:42'!
-testNaNisLiteral
-	self deny: Float nan isLiteral description: 'there is no literal representation of NaN'! !
-
-!FloatTest methodsFor: 'NaN behavior' stamp: 'GabrielOmarCotelli 5/23/2009 20:38'!
-testReciprocal
-
-	self 
-		assert: 1.0 reciprocal = 1.0;
-		assert: 2.0 reciprocal = 0.5;
-		assert: -1.0 reciprocal = -1.0;
-		assert: -2.0 reciprocal = -0.5.
-		
-	self should: [ 0.0 reciprocal ] raise: ZeroDivide! !
-
-!FloatTest methodsFor: 'printing' stamp: 'nice 10/11/2008 21:45'!
-testStoreBase16
-	"This bug was reported in mantis http://bugs.squeak.org/view.php?id=6695"
-
-	self
-		assert: (20.0 storeStringBase: 16) = '16r14.0'
-		description: 'the radix prefix should not be omitted, except in base 10'! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 4/23/2011 02:55'!
 testArCosh
@@ -3499,6 +2303,26 @@ testArTanh
 	self assert: (0.5 arTanh negated closeTo: 0.5 negated arTanh).
 	self assert: (0.5 arTanh tanh closeTo: 0.5).
 	self assert: (-0.5 arTanh tanh closeTo: -0.5).! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:06'!
+testArcTan
+
+	self assert: (100 arcTan: 100) isAbout: Float pi / 4.
+	self assert: (-100 arcTan: 100) isAbout: Float pi / -4.
+	self assert: (100 arcTan: -100) isAbout: Float pi * 3 / 4.
+	self assert: (-100 arcTan: -100) isAbout: Float pi * -3 / 4.
+	self assert: (0 arcTan: 100) isAbout: 0.
+	self assert: (0 arcTan: -100) isAbout: Float pi.
+	self assert: (100 arcTan: 0) isAbout: Float pi / 2.
+	self assert: (-100 arcTan: 0) isAbout: Float pi / -2.
+	
+	self assert: (Float negativeZero arcTan: 100) isAbout: 0.
+	self assert: (Float negativeZero arcTan: -100) isAbout: Float pi * -1.
+	
+	self assert: (0 arcTan: 0) = 0.
+	self assert: (Float negativeZero arcTan: 0) = 0.
+	self assert: (0 arcTan: Float negativeZero) isAbout: Float pi.
+	self assert: (Float negativeZero arcTan: Float negativeZero) isAbout: Float pi negated! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:11:53'!
 testArcTanNonPrimitive
@@ -3652,17 +2476,301 @@ testTanh
 	self assert: (2.0 cosh squared - 2.0 sinh squared closeTo: 1).
 	self assert: (2.0 tanh negated closeTo: 2.0 negated tanh).! !
 
-!FloatTest methodsFor: 'accessing' stamp: 'jmv 10/3/2018 15:43:27'!
-assertIsNegativeZero: aFloat
-	"Assert that aFloat is Float negativeZero"
-	self assert: aFloat hex = Float negativeZero hex! !
+!FloatTest methodsFor: 'tests - comparing' stamp: 'nice 7/19/2009 19:24'!
+testCloseTo
+	self deny: (Float nan closeTo: Float nan) description: 'NaN isn''t close to anything'.
+	self deny: (Float nan closeTo: 1.0) description: 'NaN isn''t close to anything'.
+	self deny: (1.0 closeTo: Float nan) description: 'NaN isn''t close to anything'.
+	
+	self deny: (-1.0 closeTo: 1.0).
+	self deny: (1.0 closeTo: Float infinity).
+	self assert: (Float infinity closeTo: Float infinity) description: 'since they are =, they also are closeTo:'.
+	
+	self assert: (1.0/3.0 closeTo: 1/3).
+	self assert: (1.0e-8 closeTo: 0).
+	self assert: (0 closeTo: 1.0e-8).
+	self assert: (1+1.0e-8 closeTo: 1.0).
+	
+	self assert: (1000000001.0 closeTo: 1000000000.0).
+	self deny: (1000000001 closeTo: 1000000000) description: 'exact representation are considered closeTo: only if equal'.! !
 
-!FloatTest methodsFor: 'accessing' stamp: 'jmv 10/3/2018 15:43:47'!
-assertIsPositiveZero: aFloat
-	"Assert that aFloat is Float zero (the positive one)"
-	self assert: aFloat hex = 0.0 hex! !
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 9/1/2010 11:58'!
+testComparison
+				"In Cuis, it was decided to coerce operands to Float for comparison (if any of them was float),
+				in the classic ST-80 way"
+	| a b c |
+	
+	"Test equality when Float conversion exact"
+	self assert: 16r1FFFFFFFFFFFFF = 16r1FFFFFFFFFFFFF asFloat.
+	self assert: 16r1FFFFFFFFFFFFF = 16r1FFFFFFFFFFFFF asFloat asInteger.
+	
+	self assert: (((1 bitShift: 54)+1)/(1 bitShift: 54)) > 1.
+	self assert: (((1 bitShift: 54)+1)/(1 bitShift: 54)) = 1.0.			"Coerce to Float"
+	
+	self assert: (((1 bitShift: 54)-1)/(1 bitShift: 54)) < 1.
+	self assert: (((1 bitShift: 54)-1)/(1 bitShift: 54)) = 1.0.			"Coerce to Float"
+	
+	"Test exact vs inexact arithmetic"
+	(1 to: 100) do: [:i |
+		i isPowerOfTwo
+			ifTrue: [self assert: (1/i) = (1/i) asFloat]
+			ifFalse: [
+				"Coerce to Float"
+				self assert: (1/i) = (1/i) asFloat]].
+	
+	"Test overflow (compare to infinity)"
+	a := (11 raisedTo: 400) / 2.
+	b := (13 raisedTo: 400) / 2.
+	c := a asFloat.
+	self assert: ((a = c) & (b = c)).			"Coerce to Float"
+	self deny:  (a = b).
+	
+	"every integer is smaller than infinity"
+	self assert: a = Float infinity.			"Coerce to Float"
+	self assert: a > Float infinity negated.
+	
+	"Test underflow"
+	self deny: 1 / (11 raisedTo: 400) = 0.
+	self assert: 1 / (11 raisedTo: 400) = 0.0.		"Coerce to Float"
+	
+	"Test hash code"
+	self assert:
+		((Set new: 3) add: 3; add: 3.0; size) =
+		((Set new: 4) add: 3; add: 3.0; size).! !
 
-!FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/10/2018 16:47:20'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'nice 7/10/2009 22:27'!
+testComparisonWhenPrimitiveFails
+	"This is related to http://bugs.squeak.org/view.php?id=7361"
+
+	self deny: 0.5 < (1/4).
+	self deny: 0.5 < (1/2).
+	self assert: 0.5 < (3/4).
+	
+	self deny: 0.5 <= (1/4).
+	self assert: 0.5 <= (1/2).
+	self assert: 0.5 <= (3/4).
+	
+	self assert: 0.5 > (1/4).
+	self deny: 0.5 > (1/2).
+	self deny: 0.5 > (3/4).
+	
+	self assert: 0.5 >= (1/4).
+	self assert: 0.5 >= (1/2).
+	self deny: 0.5 >= (3/4).
+	
+	self deny: 0.5 = (1/4).
+	self assert: 0.5 = (1/2).
+	self deny: 0.5 = (3/4).
+	
+	self assert: 0.5 ~= (1/4).
+	self deny: 0.5 ~= (1/2).
+	self assert: 0.5 ~= (3/4).! !
+
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 10/8/2018 16:20:48'!
+testComparisonWithFraction
+	self assert: 0.5 = (1/2).
+	self assert: (1/2) = 0.5.
+	self assert: 0.1 = (1/10).
+	self assert: (1/10) = 0.1! !
+
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 11/29/2018 17:45:49'!
+testEquals
+	"Check #="
+	self assert: 1.0 = 1.0.
+	self deny: 1.0 = 2.0.
+	self assert: 0.0 = 0.0.
+	self deny: 0.0 = 1.0.
+	self deny: 1.0 = 0.0.
+	self assert: 1.0 = 1.
+	self deny: 1.0 = 2.
+	self assert: Float fmax = Float fmax.
+	self assert: Float fminNormalized = Float fminNormalized.
+	self assert: Float fminDenormalized = Float fminDenormalized.
+	self deny: Float fmax = Float fminNormalized.
+	self deny: Float fminNormalized = Float fmax.
+	self deny: Float fminDenormalized = Float fminNormalized.
+	self deny: Float fminNormalized = Float fminDenormalized.! !
+
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 10/8/2018 16:18:13'!
+testHugeValues
+
+	self assert: 1e400 = Float infinity.
+	self deny: 1e400 < Float infinity.
+	self deny: 1e400 > Float infinity.
+
+	self assert: 1e400 = 1.0e309.
+	self assert: 1e400 > 1.0e308.
+
+
+	self assert: -1e400 = Float negativeInfinity.
+	self deny: -1e400 < Float negativeInfinity.
+	self deny: -1e400 > Float negativeInfinity.
+
+	self assert: -1e400 = -1.0e309.
+	self assert: -1e400 < -1.0e308.! !
+
+!FloatTest methodsFor: 'tests - comparing' stamp: 'sqr 5/26/2016 18:11'!
+testIsWithinUlpsFrom
+
+	self deny: (Float nan isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
+	self deny: (Float nan isWithin: Float fmax ulpsFrom: 1.0) description: 'NaN isn''t close to anything'.
+	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
+	
+	self deny: (-1.0 isWithin: 1000 ulpsFrom: 1.0).
+	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float infinity).
+	self deny: (Float infinity isWithin: Float fmax ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
+	self deny: (Float infinity isWithin: Float infinity ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
+	
+	self assert: (1.0/3.0 isWithin: 1 ulpsFrom: 1/3).
+	self assert: (1.0e-8 isWithin: 1.0e-8 / 0.0 ulp ulpsFrom: 0).
+	self assert: (0.0 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0e-8).
+	self assert: (1+1.0e-8 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0).
+	
+	self assert: (1000000001.0 isWithin: (1 bitShift: 23) ulpsFrom: 1000000000.0).
+	self assert: ((1 bitShift: 52) asFloat + 1.0 isWithin: 1 ulpsFrom: (1 bitShift: 52) asFloat).
+
+	self assert: (1.0 isWithin: 1 ulpsFrom: 1.0).
+	self assert: (1.0 successor isWithin: 1 ulpsFrom: 1.0).
+	self deny: (1.0 successor successor isWithin: 1 ulpsFrom: 1.0)! !
+
+!FloatTest methodsFor: 'tests - comparing' stamp: 'nice 10/27/2014 21:50'!
+testLiteralEqualityOfNan
+	| nan |
+	nan := Float nan.
+	self assert: (nan literalEqual: nan)
+		description: 'Float nan is not equal to itself, though it is literally equal'.! !
+
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 10/3/2018 16:29:31'!
+testLiteralEqualityOfZeroAndNegativeZero
+	self assert: Float zero = Float negativeZero.
+	self deny: (Float zero literalEqual: Float negativeZero).
+	self
+		assert: (Compiler evaluate: '1>2 ifTrue: [0.0] ifFalse: [-0.0]') hex = Float negativeZero hex
+		description: 'Float zero and negativeZero are not literally substituable'.! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 9/7/2010 12:12'!
+testAsTrueFraction
+	"
+	self new testAsTrueFraction
+	"
+	| x |
+	x _ Float pi.
+	self assert: x asTrueFraction asFloat = x.
+	x _ 1.0 / 3.0.
+	self assert: x asTrueFraction asFloat = x.
+	x _ Float fminNormalized.
+	self assert: x asTrueFraction asFloat = x.
+	x _ 0.0 - Float fminDenormalized.
+	self assert: x asTrueFraction asFloat = x.
+	x _ Float fminNormalized.
+	self assert: x asTrueFraction asFloat = x.
+	x _ 0.0 - Float fminDenormalized.
+	self assert: x asTrueFraction asFloat = x.
+	x _ 1.023399999997e-312.
+	self assert: x asTrueFraction asFloat = x.
+	x _ Float fmax.
+	self assert: x asTrueFraction asFloat = x.
+	x _ 0.0 - Float fmax.
+	self assert: x asTrueFraction asFloat = x.
+	x _ 1.0234e308.
+	self assert: x asTrueFraction asFloat = x.! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 6/3/2011 21:28'!
+testCeiling
+	self assert: 1.0 ceiling = 1.
+	self assert: 1.1 ceiling = 2.
+	self assert: -2.0 ceiling = -2.
+	self assert: -2.1 ceiling = -2.! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 7/24/2008 02:04'!
+testFloatRounded
+	"5000000000000001 asFloat has an exact representation (no round off error).
+	It should round to nearest integer without loosing bits.
+	This is a no regression test on http://bugs.squeak.org/view.php?id=7134"
+	
+	| x y int r |
+	
+	"This is a preamble asserting exactness of representation
+	and quality of various conversions"
+	int := 5000000000000001.
+	x := int asFloat.
+	y := (5 asFloat squared squared squared squared timesTwoPower: 15) + 1.
+	self assert: x = y.
+	self assert: x asTrueFraction = int.
+	
+	"this one should be true for any float
+	in order to conform to ISO/IEC 10967-2"
+	self assert: x rounded = x asTrueFraction rounded.
+	self assert: x negated rounded = x negated asTrueFraction rounded.
+
+	"a random test"
+	r := Random new.
+	10000 timesRepeat: [
+		x := r next * 1.9999e16 + 1.0e12 .
+		self assert: x rounded = x asTrueFraction rounded.
+		self assert: x negated rounded = x negated asTrueFraction rounded]! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 4/26/2006 05:21'!
+testFloatTruncated
+	"(10 raisedTo: 16) asFloat has an exact representation (no round off error).
+	It should convert back to integer without loosing bits.
+	This is a no regression test on http://bugs.impara.de/view.php?id=3504"
+	
+	| x y int r |
+	int := 10 raisedTo: 16.
+	x := int asFloat.
+	y := (5 raisedTo: 16) asFloat timesTwoPower: 16.
+	self assert: x = y.
+	
+	self assert: x asInteger = int.
+	
+	"this one should be true for any float"
+	self assert: x asInteger = x asTrueFraction asInteger.
+
+	"a random test"
+	r := Random new.
+	10000 timesRepeat: [
+		x := r next * 1.9999e16 + 1.0e12 .
+		self assert: x truncated = x asTrueFraction truncated]! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 6/3/2011 21:29'!
+testFloor
+	self assert: 1.0 floor = 1.
+	self assert: 1.1 floor = 1.
+	self assert: -2.0 floor = -2.
+	self assert: -2.1 floor = -3.! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 3/28/2016 09:48'!
+testFractionAsFloat
+	"use a random test"
+	
+	| r m frac err collec |
+	r := Random new seed: 1234567.
+	m := (2 raisedTo: 54) - 1.
+	200 timesRepeat: [
+		frac := ((r nextInteger: m) * (r nextInteger: m) + 1) / ((r nextInteger: m) * (r nextInteger: m) + 1).
+		err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
+		self assert: err < (1/2)].
+	
+	collec := #(16r10000000000000 16r1FFFFFFFFFFFFF 1 2 16r20000000000000 16r20000000000001 16r3FFFFFFFFFFFFF 16r3FFFFFFFFFFFFE 16r3FFFFFFFFFFFFD).
+	collec do: [:num |
+		collec do: [:den |
+			frac := Fraction numerator: num denominator: den.
+			err := (frac - frac asFloat asTrueFraction) * frac reciprocal * (1 bitShift: 52).
+			self assert: err <= (1/2)]].! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 1/10/2007 02:29'!
+testFractionAsFloat2
+	"test rounding to nearest even"
+		
+	self assert: ((1<<52)+0+(1/4)) asFloat asTrueFraction = ((1<<52)+0).
+	self assert: ((1<<52)+0+(1/2)) asFloat asTrueFraction = ((1<<52)+0).
+	self assert: ((1<<52)+0+(3/4)) asFloat asTrueFraction = ((1<<52)+1).
+	self assert: ((1<<52)+1+(1/4)) asFloat asTrueFraction = ((1<<52)+1).
+	self assert: ((1<<52)+1+(1/2)) asFloat asTrueFraction = ((1<<52)+2).
+	self assert: ((1<<52)+1+(3/4)) asFloat asTrueFraction = ((1<<52)+2).! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/10/2018 16:47:20'!
 testFractionAsFloatRoundsHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
 	Test that rounding Fraction to Float picks even mantissa if tie."
@@ -3695,7 +2803,26 @@ testFractionAsFloatRoundsHalfToEven
 
 	self assert: ((floatWithOddMantissa asTrueFraction *2) + (floatWithEvenMantissa2 asTrueFraction *2)/4) = floatWithEvenMantissa2 description: 'Must round to closest even mantissa'.! !
 
-!FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/9/2018 16:12:35'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/3/2018 16:22:06'!
+testFractionAsFloatWithUnderflow
+	"test rounding to nearest even"
+
+	| underflowPower |
+	underflowPower := Float emin - Float precision.
+	self assertIsPositiveZero: (2 raisedTo: underflowPower) asFloat.	
+	self assertIsNegativeZero: (2 raisedTo: underflowPower) negated asFloat! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 5/6/2006 22:13'!
+testIntegerAsFloat
+	"assert IEEE 754 round to nearest even mode is honoured"
+	
+	self deny: 16r1FFFFFFFFFFFF0801 asFloat = 16r1FFFFFFFFFFFF0800 asFloat. "this test is on 65 bits"
+	self deny: 16r1FFFFFFFFFFFF0802 asFloat = 16r1FFFFFFFFFFFF0800 asFloat. "this test is on 64 bits"
+	self assert: 16r1FFFFFFFFFFF1F800 asFloat = 16r1FFFFFFFFFFF20000 asFloat. "nearest even is upper"
+	self assert: 16r1FFFFFFFFFFFF0800 asFloat = 16r1FFFFFFFFFFFF0000 asFloat. "nearest even is lower"
+! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/9/2018 16:12:35'!
 testRoundHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
 	self assert: 0.5 rounded = 0.
@@ -3705,7 +2832,20 @@ testRoundHalfToEven
 	self assert: (((0.0 to: 5.0 by: 0.25) collect: [ :f | f rounded ]) = #(0 0 0 1 1 1 2 2 2 2 2 3 3 3 4 4 4 4 4 5 5) ).
 	self assert: (((-0.0 to: -5.0 by: -0.25) collect: [ :f | f rounded ]) = #(0 0 0 -1 -1 -1 -2 -2 -2 -2 -2 -3 -3 -3 -4 -4 -4 -4 -4 -5 -5) )! !
 
-!FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/10/2018 16:53:57'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 6/3/2011 21:37'!
+testRounded
+	self assert: 0.9 rounded = 1.
+	self assert: 1.0 rounded = 1.
+	self assert: 1.1 rounded = 1.
+	self assert: -1.9 rounded = -2.
+	self assert: -2.0 rounded = -2.
+	self assert: -2.1 rounded = -2.
+	
+	"In case of tie, round to upper magnitude"
+	self assert: 1.5 rounded = 2.
+	self assert: -1.5 rounded = -2.! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/10/2018 16:53:57'!
 testStringAsFloatRoundsHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
 	Test that rounding Fraction to Float picks even mantissa if tie."
@@ -3730,7 +2870,7 @@ testStringAsFloatRoundsHalfToEven
 	self assert: halfway2 printString = '11078855083331423' description: 'precondition'.
 	self assert: '11078855083331423.0' asNumber = floatWithEvenMantissa2 description: 'when converting string to Float, if tie, round to closest even mantissa'.! !
 
-!FloatTest methodsFor: 'tests - rounding' stamp: 'jmv 10/10/2018 17:17:33'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/10/2018 17:17:33'!
 testStringAsFloatRoundsHalfToEven2
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even
 	Test that rounding Fraction to Float picks even mantissa if tie."
@@ -3756,6 +2896,930 @@ testStringAsFloatRoundsHalfToEven2
 	self assert: '1.00000000000000033306690738754696212708950042724609374999' asNumber = oddMantissa description: 'precondition'.
 	self assert: '1.00000000000000033306690738754696212708950042724609375001' asNumber = evenMantissa2 description: 'precondition'.
 	self assert: '1.00000000000000033306690738754696212708950042724609375' asNumber = evenMantissa2 description: 'when converting string to Float, if tie, round to closest even mantissa'.! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'nice 6/3/2011 21:34'!
+testTruncated
+	self assert: 1.0 truncated = 1.
+	self assert: 1.1 truncated = 1.
+	self assert: -2.0 truncated = -2.
+	self assert: -2.1 truncated = -2.! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 9/24/2018 10:52:30'!
+testExactAsString
+	"Tests that conversion to / from Strings is exact (same Float is re-created) when using #asString
+	(whose output is meant to be a readable String).
+	Use some relevant examples."
+
+	| examples |
+	examples _ {
+		1.0. 
+		Float fminNormalized / 2. 
+		Float fminNormalized / 10. 
+		Float fminNormalized / 13. 
+		2.0. 
+		2 sqrt. 
+		Float pi. 
+		Float fminDenormalized. 
+		Float fminDenormalized * 2. 
+		Float fminDenormalized * 3. 
+		Float fminDenormalized * 13 },
+	{
+		Float zero.
+		Float negativeZero.
+		Float negativeInfinity.
+		Float infinity }.
+
+	examples do: [ :float |
+		self assert: float predecessor asString asNumber = float predecessor.
+		self assert: float asString asNumber = float.
+		self assert: float successor asString asNumber = float successor ].
+
+	"NaN are special, in that they are not even equal to themselves"
+	self assert: Float nan asString asNumber isNaN! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 11/29/2018 18:02:37'!
+testExactAsString2
+	"If storeOn: prints exactly and the parser avoid cumulating round off Errors,
+	then Float should be read back exactly.
+	Note: there is no guarantee to restore the bit pattern of NaN though"
+
+	self assert: Float halfPi asString asNumber = Float halfPi.
+	self assert: Float halfPi negated asString asNumber = Float halfPi negated.
+	self assert: Float pi asString asNumber = Float pi.
+	self assert: Float pi negated asString asNumber = Float pi negated.
+	self assert: 2.0 sqrt asString asNumber = 2.0 sqrt.
+	self assert: 2.0 sqrt negated asString asNumber = 2.0 sqrt negated.
+	self assert: Float infinity asString asNumber = Float infinity.
+	self assert: Float negativeInfinity asString asNumber = Float negativeInfinity.
+	self assert: Float nan asString asNumber isNaN.! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 9/24/2018 10:51:07'!
+testExactStoreString
+	"Tests that conversion to / from Strings is exact (same Float is re-created) when using #storeString
+	(whose output is meant to be compilable smalltalk code).
+	Use some relevant examples."
+
+	| examples |
+	examples _ {
+		1.0. 
+		Float fminNormalized / 2. 
+		Float fminNormalized / 10. 
+		Float fminNormalized / 13. 
+		2.0. 
+		2 sqrt. 
+		Float pi. 
+		Float fminDenormalized. 
+		Float fminDenormalized * 2. 
+		Float fminDenormalized * 3. 
+		Float fminDenormalized * 13 },
+	{
+		Float zero.
+		Float negativeZero.
+		Float negativeInfinity.
+		Float infinity }.
+
+	examples do: [ :float |
+		self assert: (Compiler evaluate: float predecessor storeString) = float predecessor.
+		self assert: (Compiler evaluate: float storeString) = float.
+		self assert: (Compiler evaluate: float successor storeString) = float successor ].
+
+	"NaN are special, in that they are not even equal to themselves"
+	self assert: (Compiler evaluate: Float nan storeString) isNaN! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 11/29/2018 15:46:34'!
+testExactStoreString2
+	"If storeOn: prints exactly and the parser avoid cumulating round off Errors,
+	then Float should be read back exactly.
+	Note: there is no guarantee to restore the bit pattern of NaN though"
+	
+	self assert: (Compiler evaluate: Float halfPi storeString) = Float halfPi.
+	self assert: (Compiler evaluate: Float halfPi negated storeString) = Float halfPi negated.
+	self assert: (Compiler evaluate: Float infinity storeString) = Float infinity.
+	self assert: (Compiler evaluate: Float negativeInfinity storeString) = Float negativeInfinity.
+	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 9/24/2018 10:54:15'!
+testFromStringDoesntUnderflow
+	self assert: '12345678901234567890.0e-330' asNumber isZero not.
+	self assert: (Compiler evaluate: '12345678901234567890.0e-330')isZero not.! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 11/29/2018 18:11:07'!
+testMinimalAsString
+	"Tests that the conversion from String / to String ends in a minimal String representation.
+	This means that there are no extra unneded digits at the end.
+	For example, 0.1 (actually the closest Float, to 1/10, i.e. ((1/10) asFloat),  prints as 0.1, because 
+	it can be recovered from that String"
+
+	"These are just to start on solid ground. If these fail, what follows is meaningless."
+	self assert: 0.1 = ((1/10) asFloat).		"0.1 really is what it should be. Compiler works ok."
+	self assert: '0.1' asNumber = 0.1.			"#asNumber works ok. String '0.1' is what we want."
+	"Now the real test."
+	self assert: 0.1 printString = '0.1'.		"String '0.1' is what we get. No unneded extra digits."
+
+	"Some more.
+	Not as careful as before, but whatever Float these String represent, print it back the same (no extra digits)"
+	self assert: '0.2' asNumber printString = '0.2'.
+	#(
+		'0.1' '0.2' '0.3' '0.4' '0.5' '0.6' '0.7' '0.8' '0.9' 
+		'1.0' '1.1' '1.2' '1.3' '1.4' '1.5' '1.6' '1.7' '1.8' '1.9' '2.0'
+		'1.01' '1.001' '1.0001' '1.00001' '1.000001' '1.0000001' '1.00000001' '1.000000001' '1.0000000001' '1.00000000001' '1.000000000001'
+		'1.03' '1.003' '1.0003' '1.00003' '1.000003' '1.0000003' '1.00000003' '1.000000003' '1.0000000003' '1.00000000003' '1.000000000003' 
+	) do: [ :string |
+		self assert: string asNumber printString = string ].! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 3/14/2008 23:59'!
+testReadFromManyDigits
+	"A naive algorithm may interpret these representations as Infinity or NaN.
+	This is http://bugs.squeak.org/view.php?id=6982"
+	
+	| s1 s2 |
+	s1 := '1' , (String new: 321 withAll: $0) , '.0e-321'.
+	s2 := '0.' , (String new: 320 withAll: $0) , '1e321'.
+	self assert: (Number readFrom: s1) = 1.
+	self assert: (Number readFrom: s2) = 1.! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 10/19/2018 16:33:22'!
+testSomeNines
+	| twelveNines |
+	twelveNines _ Compiler evaluate: '999999 + 0.999999'.
+	self assert: twelveNines printString = '999999.999999'.
+	self assert: twelveNines printString asNumber = twelveNines.
+	self assert: twelveNines printString asNumber - twelveNines = 0.0.
+	self assert: twelveNines + 1e-6 = 1e6! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 10/11/2008 21:45'!
+testStoreBase16
+	"This bug was reported in mantis http://bugs.squeak.org/view.php?id=6695"
+
+	self
+		assert: (20.0 storeStringBase: 16) = '16r14.0'
+		description: 'the radix prefix should not be omitted, except in base 10'! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 5/3/2014 22:32:20.636'!
+testStoreOn
+	"If storeOn: prints exactly and the parser avoid cumulating round off Errors,
+	then Float should be read back exactly.
+	Note: there is no guarantee to restore the bit pattern of NaN though"
+	
+	self assert: (Compiler evaluate: Float halfPi storeString) = Float halfPi.
+	self assert: (Compiler evaluate: Float halfPi negated storeString) = Float halfPi negated.
+	self assert: (Compiler evaluate: Float infinity storeString) = Float infinity.
+	self assert: (Compiler evaluate: Float negativeInfinity storeString) = Float negativeInfinity.
+	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'dtl 9/18/2004 12:40'!
+testStringAsNumber
+	"This covers parsing in Number>>readFrom:"
+
+	| aFloat |
+	aFloat := '10r-12.3456' asNumber.
+	self assert: -12.3456 = aFloat.
+	aFloat := '10r-12.3456e2' asNumber.
+	self assert: -1234.56 = aFloat.
+	aFloat := '10r-12.3456d2' asNumber.
+	self assert: -1234.56 = aFloat.
+	aFloat := '10r-12.3456q2' asNumber.
+	self assert: -1234.56 = aFloat.
+	aFloat := '-12.3456q2' asNumber.
+	self assert: -1234.56 = aFloat.
+	aFloat := '12.3456q2' asNumber.
+	self assert: 1234.56 = aFloat.
+! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 11/29/2018 15:37:06'!
+testStringAsNumber2
+
+	"Check that small but normal Floats can be created from String"
+    | aFloat |
+
+    aFloat := '12345678901234567890.0e-326' asNumber.
+    self deny: aFloat = 0.0.
+    self assert: aFloat > 0.0.
+    self assert: aFloat - 1.2345678901234568e-307 = 0.
+    self assert: aFloat = 1.2345678901234568e-307.! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 14:02:56'!
+testHashWithBigNegativeSmallInteger
+	"Not in the Float range"
+	| a float smallInteger |
+	smallInteger _ SmallInteger minVal+1.
+	self deny: smallInteger isLarge description: 'precondition'.
+	float _ smallInteger asFloat.
+	self assert: smallInteger = float description: 'precondition'.
+	self assert: float = smallInteger description: 'precondition'.
+	a _ Set new.
+	a add: smallInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 14:01:27'!
+testHashWithBigSmallInteger
+	"Not in the Float range"
+	| a float smallInteger |
+	smallInteger _ SmallInteger maxVal.
+	self deny: smallInteger isLarge description: 'precondition'.
+	float _ smallInteger asFloat.
+	self assert: smallInteger = float description: 'precondition'.
+	self assert: float = smallInteger description: 'precondition'.
+	a _ Set new.
+	a add: smallInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:43:35'!
+testHashWithFraction
+
+	| a float fraction |
+	fraction _ 1/3.
+	float _ (1/3) asFloat.
+	self assert: fraction = float description: 'precondition'.
+	self assert: float = fraction description: 'precondition'.
+	a _ Set new.
+	a add: fraction; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:51:32'!
+testHashWithLargeNegativeInteger
+	"Not in the Float range"
+	| a float largeInteger |
+	largeInteger _ -1e400.
+	self assert: largeInteger isLarge description: 'precondition'.
+	float _ largeInteger asFloat.
+	self assert: largeInteger = float description: 'precondition'.
+	self assert: float = largeInteger description: 'precondition'.
+	a _ Set new.
+	a add: largeInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:51:37'!
+testHashWithLargePositiveInteger
+	"Not in the Float range"
+	| a float largeInteger |
+	largeInteger _ 1e400.
+	self assert: largeInteger isLarge description: 'precondition'.
+	float _ largeInteger asFloat.
+	self assert: largeInteger = float description: 'precondition'.
+	self assert: float = largeInteger description: 'precondition'.
+	a _ Set new.
+	a add: largeInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:51:40'!
+testHashWithSmallishLargeNegativeInteger
+	"In the Float range"
+	| a float largeInteger |
+	largeInteger _ SmallInteger minVal -1.
+	self assert: largeInteger isLarge description: 'precondition'.
+	float _ largeInteger asFloat.
+	self assert: largeInteger = float description: 'precondition'.
+	self assert: float = largeInteger description: 'precondition'.
+	a _ Set new.
+	a add: largeInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/10/2018 15:40:00'!
+testHashWithSmallishLargeNegativeInteger2
+	"In the Float range"
+	| a float integer |
+	integer _ Float maxExactInteger negated -1.
+	float _ integer asFloat.
+	self assert: integer = float description: 'precondition'.
+	self assert: float = integer description: 'precondition'.
+	a _ Set new.
+	a add: integer; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/9/2018 10:51:44'!
+testHashWithSmallishLargePositiveInteger
+	"In the Float range"
+	| a float largeInteger |
+	largeInteger _ SmallInteger maxVal +1.
+	self assert: largeInteger isLarge description: 'precondition'.
+	float _ largeInteger asFloat.
+	self assert: largeInteger = float description: 'precondition'.
+	self assert: float = largeInteger description: 'precondition'.
+	a _ Set new.
+	a add: largeInteger; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/10/2018 15:40:11'!
+testHashWithSmallishLargePositiveInteger2
+	"In the Float range"
+	| a float integer |
+	integer _ Float maxExactInteger +1.
+	float _ integer asFloat.
+	self assert: integer = float description: 'precondition'.
+	self assert: float = integer description: 'precondition'.
+	a _ Set new.
+	a add: integer; add: float.
+	self assert: a size = 1! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'jmv 10/10/2018 15:57:54'!
+testNoIntegerHash
+
+	self deny: Float pi hash = 3 hash.
+	self deny: Float pi hash = (Float pi *1.00000000000001) hash.
+	self deny: Float pi hash = (Float pi /1.00000000000001) hash.! !
+
+!FloatTest methodsFor: 'tests - hash' stamp: 'nice 2/13/2010 04:15'!
+testSetOfFloat
+	"Classical disagreement between hash and = did lead to a bug.
+	This is a non regression test from http://bugs.squeak.org/view.php?id=3360"
+
+	| size3 size4 |
+	size3 := (Set new: 3) add: 3; add: 3.0; size.
+	size4 := (Set new: 4) add: 3; add: 3.0; size.
+	self assert: size3 = size4 description: 'The size of a Set should not depend on its capacity.'! !
+
+!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 10/11/2011 08:55'!
+testMaxExactInteger
+	"
+	FloatTest new testMaxExactInteger
+	"
+
+	self assert: Float maxExactInteger asFloat truncated = Float maxExactInteger.
+	0 to: 10000 do: [ :j |
+		self assert: (Float maxExactInteger-j) asFloat truncated = (Float maxExactInteger-j) ].
+	self deny: (Float maxExactInteger+1) asFloat truncated = (Float maxExactInteger+1)
+	! !
+
+!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 11/29/2018 16:49:02'!
+testPi
+	"Just in case..."
+
+	self assert: Float pi = 3.141592653589793.! !
+
+!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 10/3/2018 16:08:02'!
+testCharacterization
+
+	"Test the largest finite representable floating point value"
+	self assert: Float fmax successor = Float infinity.
+	self assert: Float infinity predecessor = Float fmax.
+	self assert: Float fmax negated predecessor = Float infinity negated.
+	self assert: Float infinity negated successor = Float fmax negated.
+	
+	"Test the smallest positive representable floating point value"
+	self assert: Float fmin predecessor = 0.0.
+	self assert: 0.0 successor = Float fmin.
+	self assert: Float fmin negated successor = 0.0.
+	self assert: 0.0 predecessor = Float fmin negated.
+	
+	"Test the relative precision"
+	self assert: Float one + Float epsilon > Float one.
+	self assert: Float one + Float epsilon = Float one successor.
+	self assert: Float one + (Float epsilon / Float radix) = Float one.
+	
+	"Test maximum and minimum exponent"
+	self assert: Float fmax exponent = Float emax.
+	self assert: Float fminNormalized exponent = Float emin.
+	Float denormalized ifTrue: [
+		self assert: Float fminDenormalized exponent = (Float emin + 1 - Float precision)].
+	
+	"Alternative tests for maximum and minimum"
+	self assert: (Float radix - Float epsilon) * (Float radix raisedTo: Float emax) = Float fmax.
+	self assert: Float epsilon * (Float radix raisedTo: Float emin) = Float fmin.
+	
+	"Test sucessors and predecessors"
+	self assert: Float one predecessor successor = Float one.
+	self assert: Float one successor predecessor = Float one.
+	self assert: Float one negated predecessor successor = Float one negated.
+	self assert: Float one negated successor predecessor = Float one negated.
+	self assert: Float infinity successor = Float infinity.
+	self assert: Float negativeInfinity predecessor = Float negativeInfinity.
+	self assertIsNegativeZero: Float fmin negated successor.
+	self assertIsPositiveZero: Float fmin predecessor.
+	self assert: Float nan predecessor isNaN.
+	self assert: Float nan successor isNaN.
+	
+	"SPECIFIC FOR IEEE 754 double precision - 64 bits"
+	self assert: Float fmax hex = '7FEFFFFFFFFFFFFF'.
+	self assert: Float fminDenormalized hex = '0000000000000001'.
+	self assert: Float fminNormalized hex = '0010000000000000'.
+	self assert: 0.0 hex = '0000000000000000'.
+	self assert: Float negativeZero hex = '8000000000000000'.
+	self assert: Float one hex = '3FF0000000000000'.
+	self assert: Float infinity hex = '7FF0000000000000'.
+	self assert: Float negativeInfinity hex = 'FFF0000000000000'.! !
+
+!FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 10/3/2018 17:34:05'!
+testUlp
+
+	{Float pi predecessor. Float pi. Float pi successor} do:
+		[:f |
+		self assert: (f * 2) ulp = (f ulp * 2).
+		self assert: (f / 2) ulp = (f ulp / 2).
+		self deny: f + f ulp = f.
+		self deny: f - f ulp = f.
+		"Tests below are valid as long as default rounding mode (to nearest even) is used"
+		self assert: f significandAsInteger odd not | (f ulp / 2.0 + f = f successor).
+		self assert: f significandAsInteger even not | (f ulp / 2.0 + f = f)].
+	
+	self assert: 0.0 ulp = Float fmin.
+	self assert: 1.0 ulp = Float epsilon.
+	self assert: Float nan ulp isNaN.
+	self assert: Float infinity ulp = Float infinity.
+	self assert: Float negativeInfinity ulp = Float infinity.
+
+	self assert: ((0 to: Float precision - 1) allSatisfy: [:each | (Float fmin timesTwoPower: each) ulp = Float fmin]).	! !
+
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'nice 10/4/2009 23:13'!
+testCopy
+	"Elementary tests"
+	self assert: 2.0 copy = 2.0.
+	self assert: -0.5 copy = -0.5.
+	
+	"Are exceptional Floats preserved by the copy ?"
+	self assert: Float nan copy isNaN.
+	self assert: Float infinity copy = Float infinity.
+	self assert: Float infinity negated copy = Float infinity negated.
+	
+	"Is the sign of zero preserved by the copy ?"
+	self assert: 0.0 copy hex = 0.0 hex.
+	self assert: Float negativeZero copy hex = Float negativeZero hex.! !
+
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'nice 5/3/2014 22:31:57.837'!
+testSignificandAndExponent
+	| denormals exceptionals normals |
+	
+	normals := {Float pi. Float pi * 100.0. Float pi/ -100.0. Float fmax. Float fminNormalized}.
+	denormals := {0.0. Float negativeZero. Float fminNormalized predecessor. Float fmin negated}.
+	exceptionals := {Float nan. Float infinity. Float negativeInfinity.}.
+	
+	normals , denormals , exceptionals do: [:aFloat |
+		"Any Float can be decomposed into its significand and exponent, and the significand holds the sign"
+		aFloat isNaN
+			ifTrue: [self assert: (aFloat significand timesTwoPower: aFloat exponent) isNaN]
+			ifFalse: [self
+				assert: (aFloat significand timesTwoPower: aFloat exponent)
+				equals: aFloat]].
+	
+	normals , denormals do: [:aFloat |
+		"The significand magnitude is in interval [1.0,2.0( "
+		aFloat = 0.0
+			ifTrue: [self assert: aFloat significand equals: 0]
+			ifFalse: [self
+				assert: aFloat significand abs >= 1.0;
+				assert: aFloat significand abs < 2.0]]! !
+
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 10/3/2018 17:41:49'!
+testSignificandAsInteger
+	| mantissaBits denormalPowersOfTwo denormals exceptionals normalPowersOfTwo normals |
+	"There are 52 bits used for representing the mantissa (plus an eventual leading 1, see below)"
+	mantissaBits := Float precision - 1.
+	
+	normals := {Float pi. Float pi * 100.0. Float pi/ -100.0. Float fmax. Float fminNormalized}.
+	denormals := {0.0. Float negativeZero. Float fminNormalized predecessor. Float fmin negated}.
+	exceptionals := {Float nan. Float infinity. Float negativeInfinity.}.
+	normalPowersOfTwo := (-10 to: 10) collect: [:i | 1.0 timesTwoPower: i].
+	denormalPowersOfTwo := (Float emin - mantissaBits to: Float emin - 1) collect: [:i | 1.0 timesTwoPower: i].
+	
+	normals do: [:aNormalFloat |
+		"Assume the mantissa is written in least 52 bits of hex format, with an implied 1 on position 53"
+		self
+			assert: (((Integer readFrom: aNormalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1) bitOr: 1<<mantissaBits)
+			equals: aNormalFloat significandAsInteger].
+	
+	denormals do: [:aDenormalFloat |
+		"For zero and denormal, no implied leading one"
+		self
+			assert: ((Integer readFrom: aDenormalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1)
+			equals: aDenormalFloat significandAsInteger].
+
+"This currently is not allowed in Cuis"
+false ifTrue: [
+	exceptionals do: [:aDenormalOrExceptionalFloat |
+		"For every other Float, zero, denormal or exceptional, no implied leading one"
+		self
+			assert: ((Integer readFrom: aDenormalOrExceptionalFloat hex readStream base: 16) bitAnd: 1<<mantissaBits-1)
+			equals: aDenormalOrExceptionalFloat significandAsInteger].
+].
+
+	normalPowersOfTwo do: [:aNormalPowerOfTwoFloat |
+		"The significand of a power of two is a power of two, with high bit of expected precision"
+		self assert: aNormalPowerOfTwoFloat significandAsInteger isPowerOfTwo.
+		self assert: aNormalPowerOfTwoFloat significandAsInteger highBit equals: Float precision.
+		self assert: aNormalPowerOfTwoFloat successor significandAsInteger equals: aNormalPowerOfTwoFloat significandAsInteger + 1.
+		"The last one is not true for fminNormalized"
+		aNormalPowerOfTwoFloat = Float fminNormalized or: [
+			self assert: aNormalPowerOfTwoFloat predecessor significandAsInteger equals: aNormalPowerOfTwoFloat significandAsInteger * 2 - 1]].
+	
+	denormalPowersOfTwo do: [:aDenormalPowerOfTwoFloat |
+		"The significand of a denormal power of two is a power of two, just with less bits"
+		self assert: aDenormalPowerOfTwoFloat significandAsInteger isPowerOfTwo.
+		self assert: aDenormalPowerOfTwoFloat significandAsInteger highBit equals: Float precision + aDenormalPowerOfTwoFloat exponent - Float emin.
+		aDenormalPowerOfTwoFloat successor = Float fminNormalized or: [
+			self assert: aDenormalPowerOfTwoFloat successor significandAsInteger equals: aDenormalPowerOfTwoFloat significandAsInteger + 1].
+		self assert: aDenormalPowerOfTwoFloat predecessor significandAsInteger equals: aDenormalPowerOfTwoFloat significandAsInteger - 1.].
+	
+	"Well known value for a few extremal cases"
+	self assert: Float fmax significandAsInteger equals: 1 << Float precision - 1.
+	self assert: Float fmin significandAsInteger equals: 1.
+	self assert: 0.0 significandAsInteger equals: 0.
+"This currently is not allowed in Cuis"
+false ifTrue: [
+	self assert: Float infinity significandAsInteger equals: 0.
+	self assert: Float nan significandAsInteger > 0
+].! !
+
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 1/27/2017 22:01'!
+testCopySign
+	self assert: (0.0 copySignTo: 1) = 1.
+	self assert: (Float negativeZero copySignTo: 1) = -1.
+	self assertIsNegativeZero: (-1 copySignTo: 0.0).
+	self assertIsPositiveZero: (1 copySignTo: Float negativeZero).! !
+
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'md 4/16/2003 15:02'!
+testIsZero
+	self assert: 0.0 isZero.
+	self deny:  0.1 isZero.! !
+
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 8/21/2010 22:29'!
+testNegativeZeroAbs
+	self assert: Float negativeZero abs sign positive description: 'the absolute value of a negative zero is zero'! !
+
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 8/21/2010 22:30'!
+testNegativeZeroSign
+	self assert: Float negativeZero sign = -1! !
+
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'sd 6/5/2005 08:33'!
+testZero1
+	"FloatTest new testZero1"
+
+	self assert: Float negativeZero = 0 asFloat.
+	self assert: (Float negativeZero at: 1) ~= (0 asFloat at: 1).
+
+	"The negative zero has a bit representation that is different from the bit representation of the positive zero. Nevertheless, both values are defined to be equal."
+! !
+
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 3/23/2008 16:00'!
+testZeroSignificandAsInteger
+	"This is about http://bugs.squeak.org/view.php?id=6990"
+	
+	self assert: 0.0 significandAsInteger = 0! !
+
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'nice 7/14/2009 09:32'!
+testHugeIntegerCloseTo
+	"This is a test for bug http://bugs.squeak.org/view.php?id=7368"
+	
+ 	"FloatTest new testHugeIntegerCloseTo"
+
+	self deny: (1.0 closeTo: 200 factorial).
+	self deny: (200 factorial closeTo: 1.0).
+	self assert: (Float infinity closeTo: 200 factorial) = (200 factorial closeTo: Float infinity).! !
+
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'sd 6/5/2005 08:30'!
+testInfinity1
+   "FloatTest new testInfinity1"
+
+	| i1  i2 |
+
+	i1 := 10000 exp.
+	i2 := 1000000000 exp.
+	self assert: i1 isInfinite & i2 isInfinite & (i1 = i2).
+	"All infinities are equal. (This is a very substantial difference to NaN's, which are never equal."
+! !
+
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'sd 6/5/2005 08:30'!
+testInfinity2
+   "FloatTest new testInfinity2"
+
+	| i1  i2 |
+	i1 := 10000 exp.
+	i2 := 1000000000 exp.
+	i2 := 0 - i2. " this is entirely ok. You can compute with infinite values."
+
+	self assert: i1 isInfinite & i2 isInfinite & i1 positive & i2 negative.
+	self deny: i1 = i2.
+  	"All infinities are signed. Negative infinity is not equal to Infinity"
+! !
+
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'nice 5/3/2014 22:31:23.35'!
+testInfinityCloseTo
+	"This is a test for bug http://bugs.squeak.org/view.php?id=6729:"
+	
+ 	"FloatTest new testInfinityCloseTo"
+
+	self deny: (Float infinity closeTo: Float negativeInfinity).
+	self deny: (Float negativeInfinity closeTo: Float infinity).! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sd 6/5/2005 08:31'!
+testNaN1
+   	"FloatTest new testNaN1"
+
+	self assert: Float nan == Float nan.
+	self deny: Float nan = Float nan.
+	"a NaN is not equal to itself."
+! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 11/18/2011 22:54'!
+testNaN2
+	"Two NaN values are always considered to be different.
+	On an little-endian machine (32 bit Intel), Float nan is 16rFFF80000 16r00000000.
+	On a big-endian machine (PowerPC), Float nan is 16r7FF80000 16r00000000. Changing
+	the bit pattern of the first word of a NaN produces another value that is still
+	considered equal to NaN. This test should work on both little endian and big
+	endian machines. However, it is not guaranteed to work on future 64 bit versions
+	of Squeak, for which Float may have different internal representations."
+
+	"FloatTest new testNaN2"
+
+	| nan1 nan2 |
+	nan1 := Float nan copy.
+	nan2 := Float nan copy.
+
+	"test two instances of NaN with the same bit pattern"
+	self deny: nan1 = nan2.
+	self deny: nan1 == nan2.
+	self deny: nan1 = nan1.
+	self assert: nan1 == nan1.
+
+	"change the bit pattern of nan1"
+	self assert: nan1 size = 2.
+	self assert: (nan1 at: 2) = 0.
+	nan1 at: 1 put: (nan1 at: 1) + 999.
+	self assert: nan1 isNaN.
+	self assert: nan2 isNaN.
+	self deny: (nan1 at: 1) = (nan2 at: 1).
+
+	"test two instances of NaN with different bit patterns"
+	self deny: nan1 = nan2.
+	self deny: nan1 == nan2.
+	self deny: nan1 = nan1.
+	self assert: nan1 == nan1! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sd 6/5/2005 08:32'!
+testNaN3
+   "FloatTest new testNaN3"
+
+   	| set item identitySet |
+	set := Set new.
+	set add: (item := Float nan).
+	self deny: (set includes: item).
+	identitySet := IdentitySet new.
+	identitySet add: (item := Float nan).
+	self assert: (identitySet includes: item).
+	"as a NaN is not equal to itself, it can not be retrieved from a set"
+! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sd 6/5/2005 08:32'!
+testNaN4
+   	"FloatTest new testNaN4"
+
+	| dict |
+	dict := Dictionary new.
+	dict at: Float nan put: #NaN.
+	self deny: (dict includes: Float nan).
+	"as a NaN is not equal to itself, it can not be retrieved when it is used as a dictionary key"
+! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 3/13/2012 12:34'!
+testNaNCompare
+	"IEEE 754 states that NaN cannot be ordered.
+	As a consequence, every arithmetic comparison involving a NaN SHOULD return false.
+	Except the is different test (~=).
+	This test does verify this rule"
+	
+	| compareSelectors theNaN anotherNaN comparand brokenMethods warningMessage |
+	compareSelectors := #(#< #<= #> #>= #=).
+	theNaN := Float nan.
+	anotherNaN := Float infinity - Float infinity.
+	comparand := {1. 2.3. Float infinity. 2/3. 1.25. 2 raisedTo: 50}.
+	comparand := comparand , (comparand collect: [:e | e negated]).
+	comparand := comparand , {theNaN. anotherNaN}.
+
+"do a first pass to collect all broken methods"
+	brokenMethods := Set new.
+	comparand do: [:comp |
+		compareSelectors do: [:op |
+			(theNaN perform: op with: comp) ifTrue: [brokenMethods add: (theNaN class lookupSelector: op)].
+			(comp perform: op with: theNaN) ifTrue: [brokenMethods add: (comp class lookupSelector: op)]].
+		(theNaN ~= comp) ifFalse: [brokenMethods add: (theNaN class lookupSelector: #~=)].
+		(comp ~= theNaN) ifFalse: [brokenMethods add: (comp class lookupSelector: #~=)]].
+	
+"build a warning message to tell about all broken methods at once"
+	warningMessage := String streamContents: [:s |
+			s nextPutAll: 'According to IEEE 754 comparing with a NaN should always return false, except ~= that should return true.'; newLine.
+			s nextPutAll: 'All these methods failed to do so. They are either broken or call a broken one'.
+			brokenMethods do: [:e | s newLine; print: e methodClass; nextPutAll: '>>'; print: e selector]].
+		
+"Redo the tests so as to eventually open a debugger on one of the failures"
+	brokenMethods := Set new.
+	comparand do: [:comp2 |
+		compareSelectors do: [:op2 |
+			self deny: (theNaN perform: op2 with: comp2) description: warningMessage.
+			self deny: (comp2 perform: op2 with: theNaN) description: warningMessage].
+		self assert: (theNaN ~= comp2) description: warningMessage.
+		self assert: (comp2 ~= theNaN) description: warningMessage].! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'nice 3/14/2008 23:42'!
+testNaNisLiteral
+	self deny: Float nan isLiteral description: 'there is no literal representation of NaN'! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'GabrielOmarCotelli 5/23/2009 20:38'!
+testReciprocal
+
+	self 
+		assert: 1.0 reciprocal = 1.0;
+		assert: 2.0 reciprocal = 0.5;
+		assert: -1.0 reciprocal = -1.0;
+		assert: -2.0 reciprocal = -0.5.
+		
+	self should: [ 0.0 reciprocal ] raise: ZeroDivide! !
+
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 1/2/2015 09:29'!
+test32bitConversion
+	"Except for NaN, we can convert a 32bits float to a 64bits float exactly.
+	Thus we can convert the 64bits float to the original 32bits float pattern."
+ 
+	#(
+		16r0 				"zero"
+		16r80000000 		"negative zero"
+		16r1 				"min unormalized"
+		16r12345 			"a unnormalized"
+		16r801FEDCB 		"a negative unnormalized"
+		16r7FFFFF 			"largest unnormalized"
+		16r800000 		"smallest normalized"
+		16r468ACDEF 		"a normalized float"
+		16rCABD1234 		"a negative normalized float"
+		16r7F7FFFFF 		"largest finite float"
+		16r7F800000 		"positive infinity"
+		16rFF800000 		"negative infinity"
+		16r803FFFFC
+		16r803FFFFD
+	)
+		do: [ :originalWord | self assert: (Float fromIEEE32Bit: originalWord) asIEEE32BitWord = originalWord ]! !
+
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 12/1/2015 12:31'!
+test32bitConversion2
+	"This tests the rounding done when going from 64bit Float to 32bit Float
+	self new test32bitConversion2
+	"
+
+	| pi32 pi32Predecessor roundingTo32Border roundingBorderPrev roundingBorderSuc aux roundedByConversion |
+	"Pick two neighbors in the 32-bit Float world"
+	pi32 _ Float fromIEEE32Bit: Float pi asIEEE32BitWord.
+	pi32Predecessor _ Float fromIEEE32Bit: Float pi asIEEE32BitWord-1.
+	"Find the middle value in the 64-bit Float world, and both its neighbors"
+	roundingTo32Border _ pi32 + pi32Predecessor / 2.0.
+	roundingBorderPrev _ roundingTo32Border predecessor.
+	roundingBorderSuc _ roundingTo32Border successor.
+
+	"64 bit middle value is not like any of the 32 bit values. Same for neighbors."
+	self deny: roundingTo32Border mantissaPart hex = pi32 mantissaPart hex.
+	self deny: roundingTo32Border mantissaPart hex = pi32Predecessor mantissaPart hex.
+	self deny: roundingBorderPrev mantissaPart hex = pi32Predecessor mantissaPart hex.
+	self deny: roundingBorderPrev mantissaPart hex = pi32 mantissaPart hex.
+	self deny: roundingBorderSuc mantissaPart hex = pi32Predecessor mantissaPart hex.
+	self deny: roundingBorderSuc mantissaPart hex = pi32 mantissaPart hex.
+
+	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
+	roundedByConversion _ Float fromIEEE32Bit: roundingTo32Border asIEEE32BitWord.
+	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
+	aux _ FloatArray new: 1. aux at: 1 put: roundingTo32Border. roundedByConversion _ aux at: 1.
+	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
+
+	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
+	roundedByConversion _ Float fromIEEE32Bit: roundingBorderPrev asIEEE32BitWord.
+	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
+	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderPrev. roundedByConversion _ aux at: 1.
+	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
+
+	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
+	roundedByConversion _ Float fromIEEE32Bit: roundingBorderSuc asIEEE32BitWord.
+	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex.
+	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderSuc. roundedByConversion _ aux at: 1.
+	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex! !
+
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'nice 5/30/2006 02:34'!
+test32bitGradualUnderflow
+	"method asIEEE32BitWord did not respect IEEE gradual underflow"
+	
+	| conv expected exponentPart |
+	
+	"IEEE 32 bits Float have 1 bit sign/8 bit exponent/23 bits of mantissa after leading 1
+	2r1.mmmmmmmmmmmmmmmmmmmmmmm * (2 raisedTo: 2reeeeeeee-127) * sign
+	except when 2reeeeeeee isZero, which is a gradual underflow:
+	2r0.mmmmmmmmmmmmmmmmmmmmmmm * (2 raisedTo: 2r00000000-126) * sign
+	and when 2reeeeeeee = 255, which is infinity if mantissa all zero or nan otherwise"
+	
+	"case 1: This example is the first gradual underflow case"
+	conv := 2r0.11111111111111111111111e-126 asIEEE32BitWord.
+	
+	"expected float encoded as sign/exponent/mantissa (whithout leading 1 or 0)"
+	exponentPart := 0.
+	expected := exponentPart bitOr: 2r11111111111111111111111.
+	self assert: expected = conv.
+	
+	"case 2: smallest number"
+	conv := 2r0.00000000000000000000001e-126 asIEEE32BitWord.
+	expected := exponentPart bitOr: 2r1.
+	self assert: expected = conv.
+	
+	"case 3: round to nearest even also in underflow cases... here round to upper"
+	conv := 2r0.000000000000000000000011e-126 asIEEE32BitWord.
+	expected := exponentPart bitOr: 2r10.
+	self assert: expected = conv.
+	
+	"case 4: round to nearest even also in underflow cases... here round to lower"
+	conv := 2r0.000000000000000000000101e-126 asIEEE32BitWord.
+	expected := exponentPart bitOr: 2r10.
+	self assert: expected = conv.
+	
+	"case 5: round to nearest even also in underflow cases... here round to upper"
+	conv := 2r0.0000000000000000000001011e-126 asIEEE32BitWord.
+	expected := exponentPart bitOr: 2r11.
+	self assert: expected = conv.
+	! !
+
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'nice 5/30/2006 00:07'!
+test32bitRoundingMode
+	"method asIEEE32BitWord did not respect IEEE default rounding mode"
+	
+	| conv expected exponentPart |
+	
+	"IEEE 32 bits Float have 1 bit sign/8 bit exponent/23 bits of mantissa after leading 1
+	2r1.mmmmmmmmmmmmmmmmmmmmmmm * (2 raisedTo: 2reeeeeeee-127) * sign
+	except when 2reeeeeeee isZero, which is a gradual underflow:
+	2r0.mmmmmmmmmmmmmmmmmmmmmmm * (2 raisedTo: 2r00000000-127) * sign
+	and when 2reeeeeeee = 255, which is infinity if mantissa all zero or nan otherwise"
+	
+	"This example has two extra bits in mantissa for testing rounding mode
+	case 1: should obviously round to upper"
+	conv := 2r1.0000000000000000000000111e25 asIEEE32BitWord.
+	
+	"expected float encoded as sign/exponent/mantissa (whithout leading 1)"
+	exponentPart := 25+127 bitShift: 23. "127 is 2r01111111 or 16r7F"
+	expected := exponentPart bitOr: 2r10.
+	self assert: expected = conv.
+	
+	"case 2: exactly in the mid point of two 32 bit float: round toward nearest even (to upper)"
+	conv := 2r1.0000000000000000000000110e25 asIEEE32BitWord.
+	expected := exponentPart bitOr: 2r10.
+	self assert: expected = conv.
+	
+	"case 3: exactly in the mid point of two 32 bit float: round toward nearest even (to lower)"
+	conv := 2r1.0000000000000000000000010e25 asIEEE32BitWord.
+	expected := exponentPart bitOr: 2r0.
+	self assert: expected = conv.
+	
+	"case 4: obviously round to upper"
+	conv := 2r1.0000000000000000000000011e25 asIEEE32BitWord.
+	expected := exponentPart bitOr: 2r1.
+	self assert: expected = conv.
+! !
+
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 1/9/2014 23:43'!
+testInfinity3
+	self assert:
+		(Float infinity negated asIEEE32BitWord
+			printStringBase: 2 length: 32 padded: true) = '11111111100000000000000000000000'.
+	self assert:
+		(Float fromIEEE32Bit:
+			(Integer
+				readFrom: '11111111100000000000000000000000' readStream
+				base: 2)) = Float infinity negated! !
+
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 1/9/2014 23:43'!
+testNaN5
+	| nanstr |
+	
+	"check the NaN string representation conforms to IEEE 754"
+	nanstr := Float nan asIEEE32BitWord printStringBase: 2 length: 32 padded: true.
+	self
+		assert: (#($0 $1) includes: (nanstr at: 1));
+		assert: (nanstr copyFrom: 2 to: 9) = '11111111';
+		assert: (#($0 $1) includes: (nanstr at: 10)); "accept both quiet and signalled NaNs"
+		assert: ((nanstr copyFrom: 11 to: 32) reject: [ :c | #($0 $1) includes: c ]) isEmpty.
+	
+	"check a correct quiet NaN is created from a string"
+	self assert: (Float fromIEEE32Bit:
+		(Integer readFrom: '01111111110000000000000000000000' readStream base: 2)) isNaN! !
+
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 1/9/2014 23:42'!
+testZero2
+	self assert:
+		(Float negativeZero asIEEE32BitWord
+			printStringBase: 2 length: 32 padded: true) = '10000000000000000000000000000000'.
+	self assert:
+		(Float fromIEEE32Bit:
+			(Integer
+				readFrom: '10000000000000000000000000000000' readStream
+				base: 2)) = Float negativeZero! !
+
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 10/3/2018 15:43:27'!
+assertIsNegativeZero: aFloat
+	"Assert that aFloat is Float negativeZero"
+	self assert: aFloat hex = Float negativeZero hex! !
+
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 10/3/2018 15:43:47'!
+assertIsPositiveZero: aFloat
+	"Assert that aFloat is Float zero (the positive one)"
+	self assert: aFloat hex = 0.0 hex! !
+
+!FloatTest methodsFor: 'helpers' stamp: 'mt 8/16/2016 09:42'!
+expectedFailures
+
+	^ Smalltalk platformName = 'Win32'
+		ifTrue: [#(testTimesTwoPowerGradualUnderflow)]
+		ifFalse: [#()]! !
 
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!
 assert: a classAndValueEquals: b
