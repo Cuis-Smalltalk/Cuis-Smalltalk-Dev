@@ -1,19 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3500] on 27 November 2018 at 10:17:06 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3508] on 29 November 2018 at 12:40:22 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Theme-Themes' 1 4!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Theme-Themes' 1 5!
 SystemOrganization addCategory: #'Theme-Themes'!
 
-
-!classDefinition: #BlueTheme category: #'Theme-Themes'!
-Theme subclass: #BlueTheme
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Theme-Themes'!
-!classDefinition: 'BlueTheme class' category: #'Theme-Themes'!
-BlueTheme class
-	instanceVariableNames: ''!
 
 !classDefinition: #ClassicTheme category: #'Theme-Themes'!
 Theme subclass: #ClassicTheme
@@ -25,34 +14,24 @@ Theme subclass: #ClassicTheme
 ClassicTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #DarkGrayTheme category: #'Theme-Themes'!
-Theme subclass: #DarkGrayTheme
+!classDefinition: #DarkBlueTheme category: #'Theme-Themes'!
+Theme subclass: #DarkBlueTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'DarkGrayTheme class' category: #'Theme-Themes'!
-DarkGrayTheme class
+!classDefinition: 'DarkBlueTheme class' category: #'Theme-Themes'!
+DarkBlueTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #DarkTheme category: #'Theme-Themes'!
-Theme subclass: #DarkTheme
+!classDefinition: #DarkColorTheme category: #'Theme-Themes'!
+Theme subclass: #DarkColorTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'DarkTheme class' category: #'Theme-Themes'!
-DarkTheme class
-	instanceVariableNames: ''!
-
-!classDefinition: #GrayTheme category: #'Theme-Themes'!
-Theme subclass: #GrayTheme
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Theme-Themes'!
-!classDefinition: 'GrayTheme class' category: #'Theme-Themes'!
-GrayTheme class
+!classDefinition: 'DarkColorTheme class' category: #'Theme-Themes'!
+DarkColorTheme class
 	instanceVariableNames: ''!
 
 !classDefinition: #HighContrastBlackTheme category: #'Theme-Themes'!
@@ -75,19 +54,26 @@ Theme subclass: #HighContrastWhiteTheme
 HighContrastWhiteTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #SkypeTheme category: #'Theme-Themes'!
-Theme subclass: #SkypeTheme
+!classDefinition: #LightBluetheme category: #'Theme-Themes'!
+Theme subclass: #LightBluetheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Theme-Themes'!
-!classDefinition: 'SkypeTheme class' category: #'Theme-Themes'!
-SkypeTheme class
+!classDefinition: 'LightBluetheme class' category: #'Theme-Themes'!
+LightBluetheme class
 	instanceVariableNames: ''!
 
+!classDefinition: #LightTheme category: #'Theme-Themes'!
+Theme subclass: #LightTheme
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Theme-Themes'!
+!classDefinition: 'LightTheme class' category: #'Theme-Themes'!
+LightTheme class
+	instanceVariableNames: ''!
 
-!BlueTheme commentStamp: '<historical>' prior: 0!
-A nice deep blue theme.!
 
 !ClassicTheme commentStamp: 'cbr 4/22/2011 12:07' prior: 0!
 This is the theme from Cuis 2.9.
@@ -98,15 +84,12 @@ Some of the icons in this theme were originally created with:
 	Clipboard default storeObject:
 	 	((PNGReadWriter bytesFor: (Form fromFileNamed: 'appearanceIcon.png')) asString base64Encoded)!
 
-!DarkGrayTheme commentStamp: 'cbr 10/15/2012 18:19' prior: 0!
-A low contrast, darker gray theme with square corners and some alpha. The Shout configuration should be a good starting place for doing darker, lower contrast themes.!
+!DarkBlueTheme commentStamp: '<historical>' prior: 0!
+A nice deep blue theme.!
 
-!DarkTheme commentStamp: 'jmv 11/18/2010 13:15' prior: 0!
+!DarkColorTheme commentStamp: 'jmv 11/18/2010 13:15' prior: 0!
 Most colors are the based on ColorTheme:
 	baseColor adjustSaturation: -0.1 brightness: -0.7!
-
-!GrayTheme commentStamp: '<historical>' prior: 0!
-A very gray theme. Easy on those who are used to using gray operating systems and such.!
 
 !HighContrastBlackTheme commentStamp: '<historical>' prior: 0!
 A very dark, high contrast theme.!
@@ -114,96 +97,11 @@ A very dark, high contrast theme.!
 !HighContrastWhiteTheme commentStamp: '<historical>' prior: 0!
 Bright white theme: good for subclassing.!
 
-!SkypeTheme commentStamp: '<historical>' prior: 0!
+!LightBluetheme commentStamp: '<historical>' prior: 0!
 A nice deep blue theme.!
 
-!BlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:37'!
-buttonLabel
-	^ `Color hue: 212 chroma: 0.3 luminance: 0.8`! !
-
-!BlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:43'!
-paneBackgroundFrom: aColor
-	^ `(Color hue: 212 chroma: 0.8 luminance: 0.4) muchDarker`! !
-
-!BlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 09:58:03'!
-shout
-	"Color symbols as an association list."
-
-	^ {
-		#selector  						-> nil.
-		#arguments 						-> #white.
-		#comment 						-> #(green lighter).
-		#tempBar 						-> #gray.
-		#tempVars 						-> #(gray quiteWhiter).
-		#instVar 						-> #(magenta muchDarker).
-		#pseudoVariables 				-> #(red veryMuchLighter).
-		#literals 						-> #(green veryMuchLighter).
-		#messages 						-> #(cyan).
-		#incompleteMessages 			-> #(gray veryMuchDarker).
-		#blockLevelZero 				-> #black.
-		#blockLevelOne 				-> #brown.
-		#blockLevelTwo 				-> #magenta.
-		#blockLevelThree 				-> #red.
-		#blockLevelFour 				-> #(green darker).
-		#blockLevelFive 				-> #(red darker).
-		#blockLevelSix 				-> #(magenta darker).
-		#blockLevelSeven 				-> #blue.
-		#defaults 						-> #white.
-		#undefined 						-> #(orange lighter).
-		#methodTags 					-> #(green lighter).
-	}! !
-
-!BlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:48'!
-text
-	^ `Color hue: 212 chroma: 0.3 luminance: 0.8`! !
-
-!BlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:52'!
-textHighlight
-	^ `Color hue: 212 chroma: 0.4 luminance: 0.3`! !
-
-!BlueTheme methodsFor: 'colors' stamp: 'jmv 11/23/2010 11:08'!
-unfocusedTextHighlightFrom: aColor
-	^aColor adjustSaturation: 0.0 brightness: 0.08! !
-
-!BlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:59'!
-windowLabel
-	^ `Color hue: 212 chroma: 0.4 luminance: 0.6`! !
-
-!BlueTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:06:06'!
-defaultWindowColor
-	^ `Color hue: 212 chroma: 0.6 luminance: 0.24`! !
-
-!BlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
-embossedTitles
-	^true! !
-
-!BlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
-roundWindowCorners
-	^true! !
-
-!BlueTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
-useButtonGradient
-	^true! !
-
-!BlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:32'!
-useUniformColors
-	^true! !
-
-!BlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
-useWindowTitleGradient
-	^true! !
-
-!BlueTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:06:16'!
-menu
-	^ `Color hue: 212 chroma: 0.6 luminance: 0.3`! !
-
-!BlueTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:06:19'!
-menuText
-	^ `Color hue: 212 chroma: 0.3 luminance: 0.8`! !
-
-!BlueTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:06:42'!
-menuTitleBar
-	^ `(Color hue: 212 chroma: 0.6 luminance: 0.3) twiceDarker`! !
+!LightTheme commentStamp: '<historical>' prior: 0!
+A very gray theme. Easy on those who are used to using gray operating systems and such.!
 
 !ClassicTheme methodsFor: 'icons' stamp: 'cbr 5/16/2011 01:12'!
 acceptIcon
@@ -386,203 +284,181 @@ useWindowTitleGradient
 windowLabel
 	^ `Color black`! !
 
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:07:19'!
-background
-	^ `Color black`! !
-
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/26/2018 18:24:15'!
+!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:37'!
 buttonLabel
-	^ `Color gray: 0.48`! !
+	^ `Color hue: 212 chroma: 0.3 luminance: 0.8`! !
 
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:07:25'!
-defaultWindowColor
-	^ `Color hue: 212 chroma: 0.015 luminance: 0.25`! !
-
-!DarkGrayTheme methodsFor: 'colors' stamp: 'cbr 10/10/2012 20:18'!
-missingCommentTextColor
-
-	^ TextColor cyan! !
-
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/26/2018 16:59:09'!
+!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:43'!
 paneBackgroundFrom: aColor
-	^ aColor alphaMixed: 0.7 with: Color black! !
+	^ `(Color hue: 212 chroma: 0.8 luminance: 0.4) muchDarker`! !
 
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 09:59:07'!
+!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 09:58:03'!
 shout
 	"Color symbols as an association list."
 
 	^ {
-		#selector  					-> '#B59F60'.
-		#arguments 					-> '#289078'.
-		#comment 					-> #(green duller).
-		#tempBar 					-> #gray.
-		#tempVars 					-> '#767836'.
-		#instVar 					-> '#B3695A'.
-		#pseudoVariables 			-> '#2070E0'.
-		#literals 					-> #green.
-		#messages 					-> '#6FB3BD'.
-		#incompleteMessages  	-> '#F08060'.
-		#blockLevelZero 			-> '#6FB3BD'.
-		#blockLevelOne 			-> '#FFB0B0'.
-		#blockLevelTwo 			-> '#B0FFB0'.
-		#blockLevelThree 			-> '#B0B0FF'.
-		#blockLevelFour 			-> '#00B0B0'.
-		#blockLevelFive 			-> '#E03030'.
-		#blockLevelSix 			-> '#30E030'.
-		#blockLevelSeven 			-> '#3030E0'.
-		#defaults 					-> '#A1AFBF'.
-		#undefined 					-> '#E04020'.
-		#methodTags 				-> #green.
+		#selector  						-> nil.
+		#arguments 						-> #white.
+		#comment 						-> #(green lighter).
+		#tempBar 						-> #gray.
+		#tempVars 						-> #(gray quiteWhiter).
+		#instVar 						-> #(magenta muchDarker).
+		#pseudoVariables 				-> #(red veryMuchLighter).
+		#literals 						-> #(green veryMuchLighter).
+		#messages 						-> #(cyan).
+		#incompleteMessages 			-> #(gray veryMuchDarker).
+		#blockLevelZero 				-> #black.
+		#blockLevelOne 				-> #brown.
+		#blockLevelTwo 				-> #magenta.
+		#blockLevelThree 				-> #red.
+		#blockLevelFour 				-> #(green darker).
+		#blockLevelFive 				-> #(red darker).
+		#blockLevelSix 				-> #(magenta darker).
+		#blockLevelSeven 				-> #blue.
+		#defaults 						-> #white.
+		#undefined 						-> #(orange lighter).
+		#methodTags 					-> #(green lighter).
 	}! !
 
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:07:33'!
+!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:48'!
 text
-	^ `Color veryLightGray`! !
+	^ `Color hue: 212 chroma: 0.3 luminance: 0.8`! !
 
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/26/2018 18:08:53'!
+!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:52'!
 textHighlight
-	"A nice light blue."
-	"
-	^ Color r: 0.71 g: 0.835 b: 1.0
-	^ Color hue: 214 chroma: 0.29 luminance: 0.816
-	"
-	^ `Color hue: 204 chroma: 0.29 luminance: 0.22`! !
+	^ `Color hue: 212 chroma: 0.4 luminance: 0.3`! !
 
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:07:40'!
-textPane
-	^ `Color gray`! !
-
-!DarkGrayTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:07:46'!
+!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/23/2010 11:08'!
 unfocusedTextHighlightFrom: aColor
-	^ aColor adjustSaturation: -0.15 brightness: -0.07! !
+	^aColor adjustSaturation: 0.0 brightness: 0.08! !
 
-!DarkGrayTheme methodsFor: 'colors' stamp: 'cbr 10/10/2012 18:32'!
-useUniformColors
-	^ true! !
-
-!DarkGrayTheme methodsFor: 'other options' stamp: 'jmv 11/27/2018 10:07:56'!
+!DarkBlueTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:05:59'!
 windowLabel
-	^ `Color gray: 0.55`! !
+	^ `Color hue: 212 chroma: 0.4 luminance: 0.6`! !
 
-!DarkGrayTheme methodsFor: 'menu colors' stamp: 'jmv 11/26/2018 18:29:15'!
+!DarkBlueTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:06:06'!
+defaultWindowColor
+	^ `Color hue: 212 chroma: 0.6 luminance: 0.24`! !
+
+!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
+embossedTitles
+	^true! !
+
+!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
+roundWindowCorners
+	^true! !
+
+!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
+useButtonGradient
+	^true! !
+
+!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:32'!
+useUniformColors
+	^true! !
+
+!DarkBlueTheme methodsFor: 'other options' stamp: 'jmv 11/22/2010 16:05'!
+useWindowTitleGradient
+	^true! !
+
+!DarkBlueTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:06:16'!
 menu
-	^ `Color darkGray`! !
+	^ `Color hue: 212 chroma: 0.6 luminance: 0.3`! !
 
-!DarkGrayTheme methodsFor: 'menu colors' stamp: 'jmv 11/26/2018 18:31:04'!
+!DarkBlueTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:06:19'!
 menuText
-	^ self text! !
+	^ `Color hue: 212 chroma: 0.3 luminance: 0.8`! !
 
-!DarkTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:08:09'!
+!DarkBlueTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:06:42'!
+menuTitleBar
+	^ `(Color hue: 212 chroma: 0.6 luminance: 0.3) twiceDarker`! !
+
+!DarkColorTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:08:09'!
 background
 	^ `Color darkGray darker`! !
 
-!DarkTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:08:13'!
+!DarkColorTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:08:13'!
 buttonLabel
 	^ `Color gray: 0.8`! !
 
-!DarkTheme methodsFor: 'colors' stamp: 'jmv 11/23/2010 11:21'!
+!DarkColorTheme methodsFor: 'colors' stamp: 'jmv 11/23/2010 11:21'!
 paneBackgroundFrom: aColor
 	^ (aColor adjustSaturation: -0.2 brightness: 0.3) alpha: 0.9! !
 
-!DarkTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:08:20'!
+!DarkColorTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:08:20'!
 windowLabel
 	^ `Color gray: 0.6`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:26'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:26'!
 browser
 	^ `Color r: 0.255 g: 0.3 b: 0.21`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:30'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:30'!
 debugger
 	^ `Color r: 0.3 g: 0.27 b: 0.27`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:33'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:33'!
 fileContentsBrowser
 	^ `Color r: 0.1 g: 0.1 b: 0.072`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:36'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:36'!
 fileList
 	^ `Color r: 0.4 g: 0.36 b: 0.4`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:40'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:40'!
 messageNames
 	^ `Color r: 0.213 g: 0.3 b: 0.165`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:42'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:42'!
 messageSet
 	^ `Color r: 0.27 g: 0.3 b: 0.3`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:46'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:46'!
 object
 	^ `Color r: 0.3 g: 0.298 b: 0.298`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:49'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:49'!
 packageList
 	^ `Color r: 0.2 g: 0.16 b: 0.04`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:53'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:53'!
 testRunner
 	^ `Color r: 0.211 g: 0.232 b: 0.276`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:56'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:08:56'!
 transcript
 	^ `Color r: 0.3 g: 0.25 b: 0.15`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:09:00'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:09:00'!
 versionsBrowser
 	^ `Color r: 0.277 g: 0.256 b: 0.3`! !
 
-!DarkTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:09:03'!
+!DarkColorTheme methodsFor: 'tool colors' stamp: 'jmv 11/27/2018 10:09:03'!
 workspace
 	^ `Color r: 0.3 g: 0.3 b: 0.27`! !
 
-!DarkTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
+!DarkColorTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
 embossedTitles
 	^true! !
 
-!DarkTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
+!DarkColorTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
 roundWindowCorners
 	^true! !
 
-!DarkTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
+!DarkColorTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
 useButtonGradient
 	^true! !
 
-!DarkTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
+!DarkColorTheme methodsFor: 'other options' stamp: 'jmv 11/18/2010 12:03'!
 useWindowTitleGradient
 	^true! !
 
-!DarkTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:09:13'!
+!DarkColorTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:09:13'!
 menu
 	^ `Color darkGray`! !
 
-!DarkTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:09:17'!
+!DarkColorTheme methodsFor: 'menu colors' stamp: 'jmv 11/27/2018 10:09:17'!
 menuText
 	^ `Color gray: 0.9`! !
-
-!GrayTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
-embossedTitles
-	^true! !
-
-!GrayTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
-roundWindowCorners
-	^true! !
-
-!GrayTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
-useButtonGradient
-	^true! !
-
-!GrayTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:22'!
-useUniformColors
-	^true! !
-
-!GrayTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
-useWindowTitleGradient
-	^true! !
-
-!GrayTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:09:27'!
-windowLabel
-	^ `Color gray: 0.3`! !
 
 !HighContrastBlackTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:09:32'!
 background
@@ -705,16 +581,16 @@ menu
 useUniformColors
 	^true! !
 
-!SkypeTheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 09:46'!
+!LightBluetheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 09:46'!
 buttonLabel
 	^ Color hue: 0 chroma: 0 luminance: 0.13! !
 
-!SkypeTheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 12:17'!
+!LightBluetheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 12:17'!
 paneBackgroundFrom: aColor
 	^ Color hue: 0 chroma: 0 luminance: 1.
 	"^ (Color hue: 212 chroma: 0.8 luminance: 0.4) muchDarker"! !
 
-!SkypeTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 09:58:17'!
+!LightBluetheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 09:58:17'!
 shout
 	"Color symbols as an association list."
 
@@ -742,16 +618,16 @@ shout
 		#methodTags 				-> #(green muchDarker).
 	}! !
 
-!SkypeTheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 09:47'!
+!LightBluetheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 09:47'!
 text
 	^ Color hue: 0 chroma: 0 luminance: 0.13! !
 
-!SkypeTheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 13:11'!
+!LightBluetheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 13:11'!
 textHighlight
 	"^ Color hue: 0 chroma: 0.56 luminance: 0.45"
 	^ Color r: 0 g: 0.584 b: 0.8.! !
 
-!SkypeTheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 14:05'!
+!LightBluetheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 14:05'!
 textHighlightFocused: focused
 	"A nice light blue."
 	| textHighlight |
@@ -762,59 +638,83 @@ textHighlightFocused: focused
 		ifTrue: [ textHighlight ]
 		ifFalse: [ self unfocusedTextHighlightFrom: textHighlight ]! !
 
-!SkypeTheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 09:27'!
+!LightBluetheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 09:27'!
 unfocusedTextHighlightFrom: aColor
 	^aColor adjustSaturation: 0.0 brightness: 0.08! !
 
-!SkypeTheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 13:42'!
+!LightBluetheme methodsFor: 'colors' stamp: 'gsa 6/18/2014 13:42'!
 windowLabel
 	"^ Color hue: 0 chroma: 0.56 luminance: 0.45	"
 	^ Color r: 0.2 g: 0.2 b: 0.2! !
 
-!SkypeTheme methodsFor: 'tool colors' stamp: 'gsa 5/1/2015 11:30'!
+!LightBluetheme methodsFor: 'tool colors' stamp: 'gsa 5/1/2015 11:30'!
 debugger
 	^ Color lightYellow
 	! !
 
-!SkypeTheme methodsFor: 'tool colors' stamp: 'gsa 6/18/2014 13:44'!
+!LightBluetheme methodsFor: 'tool colors' stamp: 'gsa 6/18/2014 13:44'!
 defaultWindowColor
 	"^ Color hue: 0 chroma: 0 luminance: 1."
 	^ Color r: 0.686 g: 0.796 b: 0.910! !
 
-!SkypeTheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
+!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
 embossedTitles
 	^true! !
 
-!SkypeTheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
+!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
 roundWindowCorners
 	^true! !
 
-!SkypeTheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
+!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
 useButtonGradient
 	^true! !
 
-!SkypeTheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 14:21'!
+!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 14:21'!
 useUniformColors
 	^true! !
 
-!SkypeTheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
+!LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
 useWindowTitleGradient
 	^true! !
 
-!SkypeTheme methodsFor: 'widget colors' stamp: 'gsa 6/18/2014 14:09'!
+!LightBluetheme methodsFor: 'widget colors' stamp: 'gsa 6/18/2014 14:09'!
 listSelectedRowText
 	^ Color white! !
 
-!SkypeTheme methodsFor: 'menu colors' stamp: 'gsa 6/18/2014 13:47'!
+!LightBluetheme methodsFor: 'menu colors' stamp: 'gsa 6/18/2014 13:47'!
 menu
 	"^ Color hue: 212 chroma: 0.6 luminance: 0.3"
 		^ Color r: 0.686 g: 0.796 b: 0.910! !
 
-!SkypeTheme methodsFor: 'menu colors' stamp: 'gsa 6/18/2014 13:47'!
+!LightBluetheme methodsFor: 'menu colors' stamp: 'gsa 6/18/2014 13:47'!
 menuText
 	"^ Color hue: 212 chroma: 0.3 luminance: 0.8"
 		^ Color hue: 0 chroma: 0 luminance: 0.13! !
 
-!SkypeTheme methodsFor: 'menu colors' stamp: 'gsa 6/18/2014 09:27'!
+!LightBluetheme methodsFor: 'menu colors' stamp: 'gsa 6/18/2014 09:27'!
 menuTitleBar
 	^ self menu twiceDarker! !
+
+!LightTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
+embossedTitles
+	^true! !
+
+!LightTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
+roundWindowCorners
+	^true! !
+
+!LightTheme methodsFor: 'other options' stamp: 'jmv 11/30/2010 10:59'!
+useButtonGradient
+	^true! !
+
+!LightTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:22'!
+useUniformColors
+	^true! !
+
+!LightTheme methodsFor: 'other options' stamp: 'jmv 11/23/2010 09:32'!
+useWindowTitleGradient
+	^true! !
+
+!LightTheme methodsFor: 'colors' stamp: 'jmv 11/27/2018 10:09:27'!
+windowLabel
+	^ `Color gray: 0.3`! !
