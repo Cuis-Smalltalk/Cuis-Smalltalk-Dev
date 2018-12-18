@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3529] on 18 December 2018 at 4:34:10 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3529] on 18 December 2018 at 5:03:00 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 109!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
+!provides: 'Tests' 1 110!
 !requires: 'Math 3D' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -1884,55 +1884,49 @@ testEquality
 	self assert:  (1/2 + 0 i) = (1/2).
 	self assert:  (1/2) = (1/2+ 0 i).! !
 
-!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:22:09'!
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 16:51:47'!
 testFourthRoot
 
 	"SmallInteger"
-	self verify: (-1 nthRoot: 4) isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt)i.
+	self verify: (-1 nthRoot: 4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt)i.
 
 	"LargeNegativeInteger"
 	self assert: (100 factorial negated nthRoot: 4) abs = (100 factorial nthRoot: 4).
 	self assert: (100 factorial negated nthRoot: 4) arg = (Float pi / 4).
 
 	"Fraction"
-	self verify: (-1/4 nthRoot: 4) abs isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt.
-	self verify: (-1/4 nthRoot: 4) arg isWithin: 1 floatsAwayFrom: Float pi / 4.
+	self verify: (-1/4 nthRoot: 4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1/2 + (1/2) i.
 
 	"Float"
-	self verify: (-1.0 nthRoot: 4) abs isWithin: 1 floatsAwayFrom: 1.0.
-	self verify: (-1.0 nthRoot: 4) arg isWithin: 1 floatsAwayFrom: Float pi / 4.
-	self verify: (-0.25 nthRoot: 4) abs isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt.
-	self verify: (-0.25 nthRoot: 4) arg isWithin: 1 floatsAwayFrom: Float pi / 4! !
+	self verify: (-1.0 nthRoot: 4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt)i.
+	self verify: (-0.25 nthRoot: 4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 0.5 + 0.5 i.! !
 
-!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:22:45'!
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 16:53:09'!
 testRaisedTo
 	
 	| c c3 |
 	c := (5 - 6 i).
 	c3 := (c raisedTo: 0.2) raisedTo: 5.
-	self verify: c3 isWithin: 7 floatsAwayFrom: c.! !
+	self verify: c3 isMagnitudeAndArgumentWithin: 7 floatsAwayFrom: c.! !
 
-!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:23:43'!
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 16:54:06'!
 testRaisedToOneFourth
 
 	"SmallInteger"
-	self verify: (-1 raisedTo: 1/4) isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt) i.
+	self verify: (-1 raisedTo: 1/4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt)i.
 
 	"LargeNegativeInteger"
 	self assert: (100 factorial negated raisedTo: 1/4) abs = (100 factorial nthRoot: 4).
 	self assert: (100 factorial negated raisedTo: 1/4) arg = (Float pi / 4).
 
 	"Fraction"
-	self verify: (-1/4 raisedTo: 1/4) abs isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt.
-	self verify: (-1/4 raisedTo: 1/4) arg isWithin: 1 floatsAwayFrom: Float pi / 4.
+	self verify: (-1/4 raisedTo: 1/4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1/2 + (1/2) i.
 
 	"Float"
-	self verify: (-1.0 raisedTo: 1/4) abs isWithin: 1 floatsAwayFrom: 1.0.
-	self verify: (-1.0 raisedTo: 1/4) arg isWithin: 1 floatsAwayFrom: Float pi / 4.
-	self verify: (-0.25 raisedTo: 1/4) abs isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt.
-	self verify: (-0.25 raisedTo: 1/4) arg isWithin: 1 floatsAwayFrom: Float pi / 4! !
+	self verify: (-1.0 raisedTo: 1/4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt)i.
+	self verify: (-0.25 raisedTo: 1/4) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 0.5 + 0.5 i.! !
 
-!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:24:41'!
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 16:54:44'!
 testRaisedToOneHalf
 
 	"SmallInteger"
@@ -1968,34 +1962,28 @@ testRaisedToOneHalf
 	self assert: ((Complex basicReal: -1 imaginary: 0) raisedTo: 1/2) equals: 1i.
 	self assert: ((Complex basicReal: -1 imaginary: 0) raisedTo: 1/2) imaginary isInteger.
 	self assert: ((Complex basicReal: -3 imaginary: 0) raisedTo: 1/2) imaginary isFloat.
-	self verify: (1+1i raisedTo: 1/2 :: raisedTo: 2) isWithin: 3 floatsAwayFrom: 1.0 + 1.0 i.! !
+	self verify: (1+1i raisedTo: 1/2 :: raisedTo: 2) isMagnitudeAndArgumentWithin: 3 floatsAwayFrom: 1.0 + 1.0 i.! !
 
-!ComplexTest methodsFor: 'testing' stamp: 'sqr 12/15/2018 01:48:59'!
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 17:01:09'!
 testRaisedToPointFive
 
 	"SmallInteger"
-	self assert: (-1 raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
-	self assert: (-1 raisedTo: 0.5) imaginary = 1.0.
+	self verify: (-1 raisedTo: 0.5) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1 i.
 
 	"LargeNegativeInteger"
-	self verify: (100 factorial negated raisedTo: 0.5) imaginary isWithin: 60 floatsAwayFrom: 100 factorial sqrt.
+	self verify: (100 factorial negated raisedTo: 0.5) isMagnitudeAndArgumentWithin: 60 floatsAwayFrom: 100 factorial sqrt i.
 
 	"Fraction"
-	self assert: ((-1/4) raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
-	self assert: ((-1/4) raisedTo: 0.5) imaginary = 0.5.
+	self verify: ((-1/4) raisedTo: 0.5) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 0.5 i.
 	self assert: ((-100/101) raisedTo: 0.5) imaginary = (100/101) sqrt.
 
 	"Float"
-	self assert: (-1.0 raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
-	self assert: (-1.0 raisedTo: 0.5) imaginary = 1.0.
-	self assert: (-0.25 raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
-	self assert: (-0.25 raisedTo: 0.5) imaginary = 0.5.
+	self verify: (-1.0 raisedTo: 0.5) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1 i.
+	self verify: (-0.25 raisedTo: 0.5) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 0.5 i.
 
 	"Complex"
-	self assert: ((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
-	self assert: ((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) imaginary = 1.0.
-	self assert: ((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
-	self assert: ((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) imaginary = 0.5.! !
+	self verify: ((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 1 i.
+	self verify: ((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) isMagnitudeAndArgumentWithin: 1 floatsAwayFrom: 0.5 i.! !
 
 !ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:26:13'!
 testSin
@@ -2249,11 +2237,6 @@ testBug1
 
 	self assert: (0.5 * (2+0i) ln) exp = (0.5 * 2 ln) exp.! !
 
-!ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:29:09'!
-effectiveZeroExponent
-
-	^-52! !
-
 !ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:27'!
 effectiveZeroExponentForTrigonometry
 
@@ -2269,25 +2252,20 @@ trigonometricPrecision
 
 	^384! !
 
-!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:01'!
-verify: aComplex is: anInteger floatsAwayFrom: anotherComplex
-	super verify: aComplex real asFloat is: anInteger floatsAwayFrom: anotherComplex real asFloat.
-	super verify: aComplex imaginary asFloat is: anInteger floatsAwayFrom: anotherComplex imaginary asFloat.! !
-
 !ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:11'!
 verify: aComplex isHyperbolicallyEqualTo: anotherComplex
 	super verify: aComplex real asFloat isHyperbolicallyEqualTo: anotherComplex real asFloat.
 	super verify: aComplex imaginary asFloat isHyperbolicallyEqualTo: anotherComplex imaginary asFloat.! !
 
+!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/18/2018 16:47:43'!
+verify: aComplex isMagnitudeAndArgumentWithin: anInteger floatsAwayFrom: anotherComplex
+	self verify: aComplex magnitude asFloat isWithin: anInteger floatsAwayFrom: anotherComplex magnitude asFloat.
+	self verify: aComplex argument asFloat isWithin: anInteger floatsAwayFrom: anotherComplex argument asFloat.! !
+
 !ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:18'!
 verify: aComplex isTrigonometricallyEqualTo: anotherComplex
 	super verify: aComplex real asFloat isTrigonometricallyEqualTo: anotherComplex real asFloat.
 	super verify: aComplex imaginary asFloat isTrigonometricallyEqualTo: anotherComplex imaginary asFloat.! !
-
-!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:24'!
-verify: aComplex isWithin: anInteger floatsAwayFrom: anotherComplex
-	super verify: aComplex real asFloat isWithin: anInteger floatsAwayFrom: anotherComplex real asFloat.
-	super verify: aComplex imaginary asFloat isWithin: anInteger floatsAwayFrom: anotherComplex imaginary asFloat.! !
 
 !FloatTest methodsFor: 'tests - arithmetic' stamp: 'GabrielOmarCotelli 6/6/2009 17:14'!
 testDivide
