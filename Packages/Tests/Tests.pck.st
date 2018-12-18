@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3520] on 12 December 2018 at 2:45:06 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3529] on 18 December 2018 at 4:34:10 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 108!
-!requires: 'Compression' 1 nil nil!
+!provides: 'Tests' 1 109!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'ImageProcessing' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -714,6 +714,16 @@ TestCase subclass: #WeakIdentitySetTest
 	category: 'Tests-Collections'!
 !classDefinition: 'WeakIdentitySetTest class' category: #'Tests-Collections'!
 WeakIdentitySetTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ColorTest category: #'Tests-Graphics'!
+TestCase subclass: #ColorTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Graphics'!
+!classDefinition: 'ColorTest class' category: #'Tests-Graphics'!
+ColorTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #JpegTest category: #'Tests-Graphics'!
@@ -1676,25 +1686,73 @@ testUnwindFromForeignProcess
 	self shouldnt: [process terminate] raise: BlockCannotReturn.
 	self assert: sema isSignaled! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 5/26/2016 18:00'!
-assert: aNumber isAbout: anotherNumber
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:22'!
+effectiveZeroExponentForTrigonometry
 
-	self assert: (aNumber isWithin: 1 ulpsFrom: anotherNumber)! !
+	^-50! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 5/26/2016 18:04'!
-assert: aNumber isAbout: anotherNumber description: aString
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 01:19:37'!
+hyperbolicPrecision
 
-	self assert: (aNumber isWithin: 1 ulpsFrom: anotherNumber) description: aString! !
+	^16! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 5/26/2016 18:01'!
-deny: aNumber isAbout: anotherNumber
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 01:12:19'!
+trigonometricDegreePrecision
 
-	self deny: (aNumber isWithin: 1 ulpsFrom: anotherNumber)! !
+	^4! !
 
-!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 5/26/2016 18:02'!
-deny: aNumber isAbout: anotherNumber description: aString
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 00:25:51'!
+trigonometricPrecision
 
-	self deny: (aNumber isWithin: 1 ulpsFrom: anotherNumber) description: aString! !
+	^3! !
+
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 00:22:44'!
+verify: aFloat is: anInteger floatsAwayFrom: anotherFloat
+
+	self assert: (aFloat floatsAwayFrom: anotherFloat) = anInteger.
+	self assert: (anotherFloat floatsAwayFrom: aFloat) = anInteger negated.
+	self assert: (aFloat negated floatsAwayFrom: anotherFloat negated) = anInteger negated.
+	self assert: (anotherFloat negated floatsAwayFrom: aFloat negated) = anInteger! !
+
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:33'!
+verify: aFloat isDegreeTrigonometricallyEqualTo: anotherFloat
+
+	aFloat = 0.0 ifTrue: [
+		anotherFloat = 0.0 ifTrue: [^self ].
+		^self assert: anotherFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
+	anotherFloat = 0.0 ifTrue: [^self assert: aFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
+	self verify: aFloat asFloat isWithin: self trigonometricDegreePrecision floatsAwayFrom: anotherFloat asFloat! !
+
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:38'!
+verify: aFloat isHyperbolicallyEqualTo: anotherFloat
+
+	aFloat = 0.0 ifTrue: [
+		anotherFloat = 0.0 ifTrue: [^self ].
+		^anotherFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
+	anotherFloat = 0.0 ifTrue: [^aFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
+	self verify: aFloat asFloat isWithin: self hyperbolicPrecision floatsAwayFrom: anotherFloat asFloat! !
+
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:41'!
+verify: aFloat isTrigonometricallyEqualTo: anotherFloat
+
+	aFloat = 0.0 ifTrue: [
+		anotherFloat = 0.0 ifTrue: [^self ].
+		^self assert: anotherFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
+	anotherFloat = 0.0 ifTrue: [^self assert: aFloat asFloat exponent <= self effectiveZeroExponentForTrigonometry].
+	self verify: aFloat asFloat isWithin: self trigonometricPrecision floatsAwayFrom: anotherFloat asFloat! !
+
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 00:22:57'!
+verify: aFloat isWithin: anInteger floatsAwayFrom: anotherFloat
+
+	self assert: (aFloat floatsAwayFrom: anotherFloat) abs <= anInteger.
+	self assert: (anotherFloat floatsAwayFrom: aFloat) abs <= anInteger.
+	self assert: (aFloat negated floatsAwayFrom: anotherFloat negated) abs <= anInteger.
+	self assert: (anotherFloat negated floatsAwayFrom: aFloat negated) abs <= anInteger! !
+
+!AbstractNumberTest methodsFor: 'helpers' stamp: 'jmv 12/18/2018 10:40:29'!
+verify: aFloat isWithinOneFloatAwayFrom: anotherFloat
+
+	self verify: aFloat isWithin: 1 floatsAwayFrom: anotherFloat! !
 
 !ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/20/2018 20:59:02'!
 testCreation
@@ -1752,114 +1810,6 @@ testCreation2
 	self assert: (c real rounded = 0).
 	self assert: (c imaginary = 5).
 	! !
-
-!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:08:29'!
-testFourthRoot
-
-	"SmallInteger"
-	self assert: ((-1 nthRoot: 4) real closeTo: 1.0 / 2.0 sqrt).
-	self assert: ((-1 nthRoot: 4) imaginary closeTo: 1.0 / 2.0 sqrt).
-
-	"LargeNegativeInteger"
-	self assert: ((100 factorial negated nthRoot: 4) abs closeTo: (100 factorial nthRoot: 4)).
-	self assert: (100 factorial negated nthRoot: 4) arg = (Float pi / 4).
-
-	"Fraction"
-	self assert: ((-1/4 nthRoot: 4) abs closeTo: 1.0 / 2.0 sqrt).
-	self assert: ((-1/4 nthRoot: 4) arg closeTo: Float pi / 4).
-
-	"Float"
-	self assert: ((-1.0 nthRoot: 4) abs closeTo: 1.0).
-	self assert: ((-1.0 nthRoot: 4) arg closeTo: Float pi / 4).
-	self assert: ((-0.25 nthRoot: 4) abs closeTo: 1.0 / 2.0 sqrt).
-	self assert: ((-0.25 nthRoot: 4) arg closeTo: Float pi / 4).! !
-
-!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:16:47'!
-testRaisedToOneFourth
-
-	"SmallInteger"
-	self assert: ((-1 raisedTo: 1/4) real closeTo: 1.0 / 2.0 sqrt).
-	self assert: ((-1 raisedTo: 1/4) imaginary closeTo: 1.0 / 2.0 sqrt).
-
-	"LargeNegativeInteger"
-	self assert: ((100 factorial negated raisedTo: 1/4) abs closeTo: (100 factorial nthRoot: 4)).
-	self assert: (100 factorial negated raisedTo: 1/4) arg = (Float pi / 4).
-
-	"Fraction"
-	self assert: ((-1/4 raisedTo: 1/4) abs closeTo: 1.0 / 2.0 sqrt).
-	self assert: ((-1/4 raisedTo: 1/4) arg closeTo: Float pi / 4).
-
-	"Float"
-	self assert: ((-1.0 raisedTo: 1/4) abs closeTo: 1.0).
-	self assert: ((-1.0 raisedTo: 1/4) arg closeTo: Float pi / 4).
-	self assert: ((-0.25 raisedTo: 1/4) abs closeTo: 1.0 / 2.0 sqrt).
-	self assert: ((-0.25 raisedTo: 1/4) arg closeTo: Float pi / 4).! !
-
-!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:48:13'!
-testRaisedToOneHalf
-
-	"SmallInteger"
-	self assert: (-1 raisedTo: 1/2) equals: 1i.
-	self assert: (-1 raisedTo: 1/2) imaginary isInteger.
-	self assert: (-3 raisedTo: 1/2) imaginary isFloat.
-	self assert: (-4 raisedTo: 3/2) equals: -8i.
-	self assert: (-4 raisedTo: 3/2) imaginary isInteger.
-	self assert: (-4 raisedTo: 5/2) equals: 32i.
-	self assert: (-4 raisedTo: 5/2) imaginary isInteger.
-
-	"LargeNegativeInteger"
-	self assert: (100 factorial negated raisedTo: 1/2) imaginary = 100 factorial sqrt.
-
-	"Fraction"
-	self assert: ((-1/4) raisedTo: 1/2) = (1/2)i.
-	self assert: ((-1/4) raisedTo: 3/2) = (-1/8)i.
-	self assert: ((-1/4) raisedTo: 5/2) = (1/32)i.
-	self assert: ((-100/101) raisedTo: 1/2) imaginary = (100/101) sqrt.
-
-	"Float"
-	self assert: (-1.0 raisedTo: 1/2) equals: 0 + 1.0i.
-	self assert: (-1.0 raisedTo: 1/2) real isInteger.
-	self assert: (-1.0 raisedTo: 1/2) imaginary isFloat.
-	self assert: (-4.0 raisedTo: 1/2) equals: 0 + 2.0i.
-	self assert: (-4.0 raisedTo: 1/2) real isInteger.
-	self assert: (-4.0 raisedTo: 1/2) imaginary isFloat.
-	self assert: (-0.25 raisedTo: 1/2) equals: 0 + 0.5i.
-	self assert: (-0.25 raisedTo: 1/2) real isInteger.
-	self assert: (-0.25 raisedTo: 1/2) imaginary isFloat.
-
-	"Complex"
-	self assert: ((Complex basicReal: -1 imaginary: 0) raisedTo: 1/2) equals: 1i.
-	self assert: ((Complex basicReal: -1 imaginary: 0) raisedTo: 1/2) imaginary isInteger.
-	self assert: ((Complex basicReal: -3 imaginary: 0) raisedTo: 1/2) imaginary isFloat.
-	self assert: ((1+1i raisedTo: 1/2 :: raisedTo: 2) real closeTo: 1).
-	self assert: ((1+1i raisedTo: 1/2 :: raisedTo: 2) imaginary closeTo: 1).! !
-
-!ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 22:35:29'!
-testRaisedToPointFive
-
-	"SmallInteger"
-	self assert: ((-1 raisedTo: 0.5) real closeTo: 0.0).
-	self assert: ((-1 raisedTo: 0.5) imaginary closeTo: 1.0).
-
-	"LargeNegativeInteger"
-	self assert: ((100 factorial negated raisedTo: 0.5) imaginary closeTo: 100 factorial sqrt).
-
-	"Fraction"
-	self assert: (((-1/4) raisedTo: 0.5) real closeTo: 0.0).
-	self assert: (((-1/4) raisedTo: 0.5) imaginary closeTo: 0.5).
-	self assert: ((-100/101) raisedTo: 0.5) imaginary = (100/101) sqrt.
-
-	"Float"
-	self assert: ((-1.0 raisedTo: 0.5) real closeTo: 0.0).
-	self assert: ((-1.0 raisedTo: 0.5) imaginary closeTo: 1.0).
-	self assert: ((-0.25 raisedTo: 0.5) real closeTo: 0.0).
-	self assert: ((-0.25 raisedTo: 0.5) imaginary closeTo: 0.5).
-
-	"Complex"
-	self assert: (((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) real closeTo: 0.0).
-	self assert: (((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) imaginary closeTo: 1.0).
-	self assert: (((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) real closeTo: 0.0).
-	self assert: (((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) imaginary closeTo: 0.5).! !
 
 !ComplexTest methodsFor: 'Testing' stamp: 'jmv 5/26/2018 20:26:06'!
 testSecondRoot
@@ -1934,6 +1884,159 @@ testEquality
 	self assert:  (1/2 + 0 i) = (1/2).
 	self assert:  (1/2) = (1/2+ 0 i).! !
 
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:22:09'!
+testFourthRoot
+
+	"SmallInteger"
+	self verify: (-1 nthRoot: 4) isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt)i.
+
+	"LargeNegativeInteger"
+	self assert: (100 factorial negated nthRoot: 4) abs = (100 factorial nthRoot: 4).
+	self assert: (100 factorial negated nthRoot: 4) arg = (Float pi / 4).
+
+	"Fraction"
+	self verify: (-1/4 nthRoot: 4) abs isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt.
+	self verify: (-1/4 nthRoot: 4) arg isWithin: 1 floatsAwayFrom: Float pi / 4.
+
+	"Float"
+	self verify: (-1.0 nthRoot: 4) abs isWithin: 1 floatsAwayFrom: 1.0.
+	self verify: (-1.0 nthRoot: 4) arg isWithin: 1 floatsAwayFrom: Float pi / 4.
+	self verify: (-0.25 nthRoot: 4) abs isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt.
+	self verify: (-0.25 nthRoot: 4) arg isWithin: 1 floatsAwayFrom: Float pi / 4! !
+
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:22:45'!
+testRaisedTo
+	
+	| c c3 |
+	c := (5 - 6 i).
+	c3 := (c raisedTo: 0.2) raisedTo: 5.
+	self verify: c3 isWithin: 7 floatsAwayFrom: c.! !
+
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:23:43'!
+testRaisedToOneFourth
+
+	"SmallInteger"
+	self verify: (-1 raisedTo: 1/4) isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt + (1.0 / 2.0 sqrt) i.
+
+	"LargeNegativeInteger"
+	self assert: (100 factorial negated raisedTo: 1/4) abs = (100 factorial nthRoot: 4).
+	self assert: (100 factorial negated raisedTo: 1/4) arg = (Float pi / 4).
+
+	"Fraction"
+	self verify: (-1/4 raisedTo: 1/4) abs isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt.
+	self verify: (-1/4 raisedTo: 1/4) arg isWithin: 1 floatsAwayFrom: Float pi / 4.
+
+	"Float"
+	self verify: (-1.0 raisedTo: 1/4) abs isWithin: 1 floatsAwayFrom: 1.0.
+	self verify: (-1.0 raisedTo: 1/4) arg isWithin: 1 floatsAwayFrom: Float pi / 4.
+	self verify: (-0.25 raisedTo: 1/4) abs isWithin: 1 floatsAwayFrom: 1.0 / 2.0 sqrt.
+	self verify: (-0.25 raisedTo: 1/4) arg isWithin: 1 floatsAwayFrom: Float pi / 4! !
+
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:24:41'!
+testRaisedToOneHalf
+
+	"SmallInteger"
+	self assert: (-1 raisedTo: 1/2) equals: 1i.
+	self assert: (-1 raisedTo: 1/2) imaginary isInteger.
+	self assert: (-3 raisedTo: 1/2) imaginary isFloat.
+	self assert: (-4 raisedTo: 3/2) equals: -8i.
+	self assert: (-4 raisedTo: 3/2) imaginary isInteger.
+	self assert: (-4 raisedTo: 5/2) equals: 32i.
+	self assert: (-4 raisedTo: 5/2) imaginary isInteger.
+
+	"LargeNegativeInteger"
+	self assert: (100 factorial negated raisedTo: 1/2) imaginary = 100 factorial sqrt.
+
+	"Fraction"
+	self assert: ((-1/4) raisedTo: 1/2) = (1/2)i.
+	self assert: ((-1/4) raisedTo: 3/2) = (-1/8)i.
+	self assert: ((-1/4) raisedTo: 5/2) = (1/32)i.
+	self assert: ((-100/101) raisedTo: 1/2) imaginary = (100/101) sqrt.
+
+	"Float"
+	self assert: (-1.0 raisedTo: 1/2) equals: 0 + 1.0i.
+	self assert: (-1.0 raisedTo: 1/2) real isInteger.
+	self assert: (-1.0 raisedTo: 1/2) imaginary isFloat.
+	self assert: (-4.0 raisedTo: 1/2) equals: 0 + 2.0i.
+	self assert: (-4.0 raisedTo: 1/2) real isInteger.
+	self assert: (-4.0 raisedTo: 1/2) imaginary isFloat.
+	self assert: (-0.25 raisedTo: 1/2) equals: 0 + 0.5i.
+	self assert: (-0.25 raisedTo: 1/2) real isInteger.
+	self assert: (-0.25 raisedTo: 1/2) imaginary isFloat.
+
+	"Complex"
+	self assert: ((Complex basicReal: -1 imaginary: 0) raisedTo: 1/2) equals: 1i.
+	self assert: ((Complex basicReal: -1 imaginary: 0) raisedTo: 1/2) imaginary isInteger.
+	self assert: ((Complex basicReal: -3 imaginary: 0) raisedTo: 1/2) imaginary isFloat.
+	self verify: (1+1i raisedTo: 1/2 :: raisedTo: 2) isWithin: 3 floatsAwayFrom: 1.0 + 1.0 i.! !
+
+!ComplexTest methodsFor: 'testing' stamp: 'sqr 12/15/2018 01:48:59'!
+testRaisedToPointFive
+
+	"SmallInteger"
+	self assert: (-1 raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
+	self assert: (-1 raisedTo: 0.5) imaginary = 1.0.
+
+	"LargeNegativeInteger"
+	self verify: (100 factorial negated raisedTo: 0.5) imaginary isWithin: 60 floatsAwayFrom: 100 factorial sqrt.
+
+	"Fraction"
+	self assert: ((-1/4) raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
+	self assert: ((-1/4) raisedTo: 0.5) imaginary = 0.5.
+	self assert: ((-100/101) raisedTo: 0.5) imaginary = (100/101) sqrt.
+
+	"Float"
+	self assert: (-1.0 raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
+	self assert: (-1.0 raisedTo: 0.5) imaginary = 1.0.
+	self assert: (-0.25 raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
+	self assert: (-0.25 raisedTo: 0.5) imaginary = 0.5.
+
+	"Complex"
+	self assert: ((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
+	self assert: ((Complex basicReal: -1.0 imaginary: 0.0) raisedTo: 0.5) imaginary = 1.0.
+	self assert: ((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) real exponent <= self effectiveZeroExponent.
+	self assert: ((Complex basicReal: -0.25 imaginary: 0.0) raisedTo: 0.5) imaginary = 0.5.! !
+
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:26:13'!
+testSin
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: c sin = c real sin. 
+	c := 2 + 3 i.
+	c2 := c i exp - c i negated exp / 2 i.
+	self verify: c sin isTrigonometricallyEqualTo: c2.! !
+
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:27:05'!
+testSinh
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: c sinh = c real sinh.
+	c := 2 + 3 i.
+	c := c cosh squared - c sinh squared.
+	self verify: c isHyperbolicallyEqualTo: 1.0.
+	c2 := c exp - c negated exp / 2.
+	self verify: c sinh isHyperbolicallyEqualTo: c2.
+	c2 := c i sin i negated.
+	self verify: c sinh isHyperbolicallyEqualTo: c2.! !
+
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:27:24'!
+testTan
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: c tan = c real tan.
+	c := 2 + 3 i.
+	c2 := c sin / c cos.
+	self verify: c2 isTrigonometricallyEqualTo: c tan.! !
+
+!ComplexTest methodsFor: 'testing' stamp: 'jmv 12/17/2018 19:27:46'!
+testTanh
+	| c c2 |
+	c := (2 + 0 i).
+	self assert: c tanh = c real tanh.
+	c := 2 + 3 i.
+	c2 := c sinh / c cosh.
+	self verify: c2 isHyperbolicallyEqualTo: c tanh.! !
+
 !ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:00'!
 testAbs
 	"self run: #testAbs"
@@ -1952,17 +2055,15 @@ testAdding
 	c := (5 - 6 i) + (-5 + 8 i).     "Complex with Complex"
 	self assert: (c =  (0 + 2 i)).! !
 
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/24/2011 22:29'!
+!ComplexTest methodsFor: 'tests' stamp: 'jmv 12/17/2018 19:09:11'!
 testArcTan
 	| c |
 	c := (0.5 + 0 i).
-	self assert: (c arcTan real closeTo: c real arcTan).
-	self assert: (c arcTan imaginary closeTo: 0).
-	#(-0.5 -2 -3 0 0.5 2 3) do: [:real |
-	#(-0.5 -2 -3 0 0.5 2 3) do: [:imag |
+	self assert: c arcTan = c real arcTan.
+	#(-0.5 -2 -3 0 0.5 2 3) do: [ :real |
+	#(-0.5 -2 -3 0 0.5 2 3) do: [ :imag |
 		c := real + imag i.
-		self assert: (c arcTan tan real closeTo: c real).
-		self assert: (c arcTan tan imaginary closeTo: c imaginary)]]! !
+		self verify: c arcTan tan isTrigonometricallyEqualTo: c ]]! !
 
 !ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 14:02'!
 testArg
@@ -2005,48 +2106,41 @@ testConversion
 	self assert: ((1 + 2i) + (2/3)) = ((5/3) + 2 i ).
 	self assert: ((2/3) + (1 + 2i)) = ((5/3) + 2 i )! !
 
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:41'!
+!ComplexTest methodsFor: 'tests' stamp: 'jmv 12/17/2018 19:17:39'!
 testCos
 	| c c2 |
 	c := (2 + 0 i).
-	self assert: (c cos real closeTo: c real cos).
-	self assert: (c cos imaginary closeTo: 0).
+	self assert: c cos = c real cos.
 	c := (2 + 3 i).
 	c2 := c i exp + c i negated exp / 2.
-	self assert: (c cos real closeTo: c2 real).
-	self assert: (c cos imaginary closeTo: c2 imaginary).! !
+	self verify: c cos isTrigonometricallyEqualTo: c2.! !
 
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/24/2011 21:33'!
+!ComplexTest methodsFor: 'tests' stamp: 'jmv 12/17/2018 19:18:13'!
 testCos2PlusSin2
 	| c |
-	#(-0.5 -2 -3 0 0.5 2 3) do: [:real |
-	#(-0.5 -2 -3 0 0.5 2 3) do: [:imag |
+	#(-0.5 -2 -3 0 0.5 2 3) do:  [:real |
+	#(-0.5 -2 -3 0 0.5 2 3) do: [ :imag |
 		c := real + imag i.
-		self assert: ((c cos squared + c sin squared) real closeTo: 1).
-		self assert: ((c cos squared + c sin squared) imaginary closeTo: 0.0)]]! !
+		self verify: (c cos squared + c sin squared) isTrigonometricallyEqualTo: 1.0 ]]! !
 
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:36'!
+!ComplexTest methodsFor: 'tests' stamp: 'jmv 12/17/2018 19:19:33'!
 testCosh
 	| c c2 |
 	c := (2 + 0 i).
-	self assert: (c cosh real closeTo: c real cosh).
-	self assert: (c cosh imaginary closeTo: 0).
+	self assert: c cosh = c real cosh.
 	c := (2 + 3 i).
 	c2 := c exp + c negated exp / 2.
-	self assert: (c cosh real closeTo: c2 real).
-	self assert: (c cosh imaginary closeTo: c2 imaginary).
+	self verify: c cosh isHyperbolicallyEqualTo: c2.
 	c2 := c i cos.
-	self assert: (c cosh real closeTo: c2 real).
-	self assert: (c cosh imaginary closeTo: c2 imaginary).! !
+	self verify: c cosh isHyperbolicallyEqualTo: c2.! !
 
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/24/2011 21:34'!
+!ComplexTest methodsFor: 'tests' stamp: 'jmv 12/17/2018 19:19:49'!
 testCosh2MinusSinh2
 	| c |
 	#(-0.5 -2 -3 0 0.5 2 3) do: [:real |
 	#(-0.5 -2 -3 0 0.5 2 3) do: [:imag |
 		c := real + imag i.
-		self assert: ((c cosh squared - c sinh squared) real closeTo: 1).
-		self assert: ((c cosh squared - c sinh squared) imaginary closeTo: 0.0)]]! !
+		self verify: (c cosh squared - c sinh squared) isHyperbolicallyEqualTo: 1.0 ]]! !
 
 !ComplexTest methodsFor: 'tests' stamp: 'sd 6/5/2005 08:29'!
 testDivision1
@@ -2085,15 +2179,6 @@ testNegated
 	c := (2 + 5 i) .
 	self assert: c negated  = (-2 - 5i).
 	! !
-
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:40'!
-testRaisedTo
-	
-	| c c3 |
-	c := (5 - 6 i).
-	c3 := (c raisedTo: 0.2) raisedTo: 5.
-	self assert: (c3 real closeTo: c real).
-	self assert: (c3 imaginary closeTo: c imaginary).! !
 
 !ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:05'!
 testRaisedToInteger
@@ -2148,34 +2233,6 @@ testSecureDivision2
 	self assert: (quotient - 1) isZero.
 	! !
 
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/24/2011 21:33'!
-testSin
-	| c c2 |
-	c := (2 + 0 i).
-	self assert: (c sin real closeTo: c real sin).
-	self assert: (c sin imaginary closeTo: 0).
-	c := 2 + 3 i.
-	c2 := c i exp - c i negated exp / 2 i.
-	self assert: (c sin real closeTo: c2 real).
-	self assert: (c sin imaginary closeTo: c2 imaginary).! !
-
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:38'!
-testSinh
-	| c c2 |
-	c := (2 + 0 i).
-	self assert: (c sinh real closeTo: c real sinh).
-	self assert: (c sinh imaginary closeTo: 0).
-	c := 2 + 3 i.
-	c := c cosh squared - c sinh squared.
-	self assert: (c real closeTo: 1).
-	self assert: (c imaginary closeTo: 0).
-	c2 := c exp - c negated exp / 2.
-	self assert: (c sinh real closeTo: c2 real).
-	self assert: (c sinh imaginary closeTo: c2 imaginary).
-	c2 := c i sin i negated.
-	self assert: (c sinh real closeTo: c2 real).
-	self assert: (c sinh imaginary closeTo: c2 imaginary).! !
-
 !ComplexTest methodsFor: 'tests' stamp: 'sd 7/17/2004 13:24'!
 testSquared
 	"self run: #testSquared"
@@ -2187,32 +2244,50 @@ testSquared
 	self assert: c2 imaginary = -72.
 	self assert: c2 real = 0.! !
 
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:17'!
-testTan
-	| c c2 |
-	c := (2 + 0 i).
-	self assert: (c tan real closeTo: c real tan).
-	self assert: (c tan imaginary closeTo: 0).
-	c := 2 + 3 i.
-	c2 := c sin / c cos.
-	self assert: (c2 real closeTo: c tan real).
-	self assert: (c2 imaginary closeTo: c tan imaginary).! !
-
-!ComplexTest methodsFor: 'tests' stamp: 'nice 4/23/2011 03:16'!
-testTanh
-	| c c2 |
-	c := (2 + 0 i).
-	self assert: (c tanh real closeTo: c real tanh).
-	self assert: (c tanh imaginary closeTo: 0).
-	c := 2 + 3 i.
-	c2 := c sinh / c cosh.
-	self assert: (c2 real closeTo: c tanh real).
-	self assert: (c2 imaginary closeTo: c tanh imaginary).! !
-
 !ComplexTest methodsFor: 'testing - bugs' stamp: 'md 2/18/2006 16:53'!
 testBug1
 
 	self assert: (0.5 * (2+0i) ln) exp = (0.5 * 2 ln) exp.! !
+
+!ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:29:09'!
+effectiveZeroExponent
+
+	^-52! !
+
+!ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:27'!
+effectiveZeroExponentForTrigonometry
+
+	^-46! !
+
+!ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 01:19:43'!
+hyperbolicPrecision
+
+	^384! !
+
+!ComplexTest methodsFor: 'helpers' stamp: 'sqr 12/15/2018 00:55:13'!
+trigonometricPrecision
+
+	^384! !
+
+!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:01'!
+verify: aComplex is: anInteger floatsAwayFrom: anotherComplex
+	super verify: aComplex real asFloat is: anInteger floatsAwayFrom: anotherComplex real asFloat.
+	super verify: aComplex imaginary asFloat is: anInteger floatsAwayFrom: anotherComplex imaginary asFloat.! !
+
+!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:11'!
+verify: aComplex isHyperbolicallyEqualTo: anotherComplex
+	super verify: aComplex real asFloat isHyperbolicallyEqualTo: anotherComplex real asFloat.
+	super verify: aComplex imaginary asFloat isHyperbolicallyEqualTo: anotherComplex imaginary asFloat.! !
+
+!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:18'!
+verify: aComplex isTrigonometricallyEqualTo: anotherComplex
+	super verify: aComplex real asFloat isTrigonometricallyEqualTo: anotherComplex real asFloat.
+	super verify: aComplex imaginary asFloat isTrigonometricallyEqualTo: anotherComplex imaginary asFloat.! !
+
+!ComplexTest methodsFor: 'helpers' stamp: 'jmv 12/17/2018 19:13:24'!
+verify: aComplex isWithin: anInteger floatsAwayFrom: anotherComplex
+	super verify: aComplex real asFloat isWithin: anInteger floatsAwayFrom: anotherComplex real asFloat.
+	super verify: aComplex imaginary asFloat isWithin: anInteger floatsAwayFrom: anotherComplex imaginary asFloat.! !
 
 !FloatTest methodsFor: 'tests - arithmetic' stamp: 'GabrielOmarCotelli 6/6/2009 17:14'!
 testDivide
@@ -2280,49 +2355,49 @@ testZeroes
 	self assert: -1.0 * -0.0 = 0.0.
 	self assert: (-1.0 * -0.0) sign =  0.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 4/23/2011 02:55'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:56:51'!
 testArCosh
 	self assert: 1.0 arCosh = 0.0.
 	self deny: Float infinity arCosh isFinite.
-	self assert: (2.5 arCosh cosh closeTo: 2.5).! !
+	self verify: 2.5 arCosh cosh isHyperbolicallyEqualTo: 2.5! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:59'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:57:19'!
 testArSinh
-	self assertIsPositiveZero: 0.0 arSinh.
+	self assertIsPositiveZero: 0.0.
 	self assertIsNegativeZero: Float negativeZero arSinh.
 	self deny: Float infinity arSinh isFinite.
-	self assert: (0.5 arSinh negated closeTo: 0.5 negated arSinh).
-	self assert: (0.5 arSinh sinh closeTo: 0.5).
-	self assert: (-2.5 arSinh sinh closeTo: -2.5).! !
+	self verify: 0.5 arSinh negated isHyperbolicallyEqualTo: 0.5 negated arSinh.
+	self verify: 0.5 arSinh sinh isHyperbolicallyEqualTo: 0.5.
+	self verify: -2.5 arSinh sinh isHyperbolicallyEqualTo: -2.5! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:59'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:57:47'!
 testArTanh
 	self assertIsPositiveZero: 0.0 arTanh.
 	self assertIsNegativeZero: Float negativeZero arTanh.
 	self deny: 1 arTanh isFinite.
-	self assert: (0.5 arTanh negated closeTo: 0.5 negated arTanh).
-	self assert: (0.5 arTanh tanh closeTo: 0.5).
-	self assert: (-0.5 arTanh tanh closeTo: -0.5).! !
+	self verify: 0.5 arTanh negated isHyperbolicallyEqualTo: 0.5 negated arTanh.
+	self verify: 0.5 arTanh tanh isHyperbolicallyEqualTo: 0.5.
+	self verify: -0.5 arTanh tanh isHyperbolicallyEqualTo: -0.5! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:06'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:52:08'!
 testArcTan
 
-	self assert: (100 arcTan: 100) isAbout: Float pi / 4.
-	self assert: (-100 arcTan: 100) isAbout: Float pi / -4.
-	self assert: (100 arcTan: -100) isAbout: Float pi * 3 / 4.
-	self assert: (-100 arcTan: -100) isAbout: Float pi * -3 / 4.
-	self assert: (0 arcTan: 100) isAbout: 0.
-	self assert: (0 arcTan: -100) isAbout: Float pi.
-	self assert: (100 arcTan: 0) isAbout: Float pi / 2.
-	self assert: (-100 arcTan: 0) isAbout: Float pi / -2.
+	self verify: (100 arcTan: 100) isTrigonometricallyEqualTo: Float pi / 4.
+	self verify: (-100 arcTan: 100) isTrigonometricallyEqualTo: Float pi / -4.
+	self verify: (100 arcTan: -100) isTrigonometricallyEqualTo: Float pi * 3 / 4.
+	self verify: (-100 arcTan: -100) isTrigonometricallyEqualTo: Float pi * -3 / 4.
+	self verify: (0 arcTan: 100) isTrigonometricallyEqualTo: 0.
+	self verify: (0 arcTan: -100) isTrigonometricallyEqualTo: Float pi.
+	self verify: (100 arcTan: 0) isTrigonometricallyEqualTo: Float pi / 2.
+	self verify: (-100 arcTan: 0) isTrigonometricallyEqualTo: Float pi / -2.
 	
-	self assert: (Float negativeZero arcTan: 100) isAbout: 0.
-	self assert: (Float negativeZero arcTan: -100) isAbout: Float pi * -1.
+	self verify: (Float negativeZero arcTan: 100) isTrigonometricallyEqualTo: 0.
+	self verify: (Float negativeZero arcTan: -100) isTrigonometricallyEqualTo: Float pi * -1.
 	
 	self assert: (0 arcTan: 0) = 0.
 	self assert: (Float negativeZero arcTan: 0) = 0.
-	self assert: (0 arcTan: Float negativeZero) isAbout: Float pi.
-	self assert: (Float negativeZero arcTan: Float negativeZero) isAbout: Float pi negated! !
+	self verify: (0 arcTan: Float negativeZero) isTrigonometricallyEqualTo: Float pi.
+	self verify: (Float negativeZero arcTan: Float negativeZero) isTrigonometricallyEqualTo: Float pi negated.! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 13:11:53'!
 testArcTanNonPrimitive
@@ -2333,22 +2408,42 @@ testArcTanNonPrimitive
 		self assert: (computed tan -x ) abs <= (computed successor tan -x ) abs.
 		]! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 4/23/2011 02:49'!
-testCosh
-	self assert: (0.0 cosh closeTo: 1).
-	self deny: Float infinity cosh isFinite.
-	self assert: (2.0 cosh squared - 2.0 sinh squared closeTo: 1).
-	self assert: (2.0 cosh closeTo: 2.0 negated cosh).! !
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:48:21'!
+testCos
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:36'!
+	self verify: 0.0 cos isTrigonometricallyEqualTo: 1.0.
+	self verify: (Float pi / 3) cos isTrigonometricallyEqualTo: 1.0 sqrt / 2.0.
+	self verify: (Float pi / 4) cos isTrigonometricallyEqualTo: 2.0 sqrt / 2.0.
+	self verify: (Float pi / 6) cos isTrigonometricallyEqualTo: 3.0 sqrt / 2.0.
+	self verify: (Float pi / 2) cos isTrigonometricallyEqualTo: 0.0! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:58:14'!
+testCosh
+	self verify: 0.0 cosh isHyperbolicallyEqualTo: 1.0.
+	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
+	self verify: 2.0 cosh isHyperbolicallyEqualTo: 2.0 negated cosh.
+	self deny: Float infinity cosh isFinite	! !
+
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/18/2018 16:27:57'!
 testDegreeCos	
 	"Following tests use approximate equality, because cosine are generally evaluated using inexact Floating point arithmetic"
-	self assert: (45.0 degreeCos squared - 0.5) abs <= Float epsilon.
-	self assert: (60.0 degreeCos - 0.5) abs <= Float epsilon.
-	self assert: (120.0 degreeCos + 0.5) abs <= Float epsilon.
-	-360.0 to: 360.0 do: [:i |
-		self assert: (i degreeCos closeTo: i degreesToRadians cos)].
-	
+	self verify: 45 degreeCos squared isDegreeTrigonometricallyEqualTo: 0.5.
+	self verify: 45.0 degreeCos squared isDegreeTrigonometricallyEqualTo: 0.5.
+	self verify: 60 degreeCos isDegreeTrigonometricallyEqualTo: 0.5.
+	self verify: 60.0 degreeCos isDegreeTrigonometricallyEqualTo: 0.5.
+	self verify: 120 degreeCos isDegreeTrigonometricallyEqualTo: -0.5.
+	self verify: 120.0 degreeCos isDegreeTrigonometricallyEqualTo: -0.5.
+	-360 to: 360 by: 1/3 do:
+		[:step |
+			| expected actual |
+			expected := step degreesToRadians cos.
+			actual := step degreeCos.
+			expected = actual ifFalse: [self assert: (expected - actual) exponent <= self effectiveZeroExponentForTrigonometry].
+			expected := step asFloat degreesToRadians cos.
+			actual := step asFloat degreeCos.
+			expected = actual ifFalse: [self assert: (expected - actual) exponent <= self effectiveZeroExponentForTrigonometry]
+		].
+
 	"Following tests use strict equality which is a requested property of degreeCos"
 	-10.0 to: 10.0 do: [:k |
 		self assert: (k*360 + 90) degreeCos = 0.
@@ -2362,15 +2457,26 @@ testDegreeCosForExceptionalValues
 	self assert: Float infinity degreeCos isNaN.
 	self assert: Float negativeInfinity degreeCos isNaN.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:37'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/18/2018 16:28:02'!
 testDegreeSin	
 	"Following tests use approximate equality, because sine are generally evaluated using inexact Floating point arithmetic"
-	self assert: (45.0 degreeSin squared - 0.5) abs <= Float epsilon.
-	self assert: (30.0 degreeSin - 0.5) abs <= Float epsilon.
-	self assert: (-30.0 degreeSin + 0.5) abs <= Float epsilon.
-	-360.0 to: 360.0 do: [:i |
-		self assert: (i degreeSin closeTo: i degreesToRadians sin)].
-	
+	self verify: 45 degreeSin squared isDegreeTrigonometricallyEqualTo: 0.5.
+	self verify: 45.0 degreeSin squared isDegreeTrigonometricallyEqualTo: 0.5.
+	self verify: 30 degreeSin isDegreeTrigonometricallyEqualTo: 0.5.
+	self verify: 30.0 degreeSin isDegreeTrigonometricallyEqualTo: 0.5.
+	self verify: -30 degreeSin isDegreeTrigonometricallyEqualTo: -0.5.
+	self verify: -30.0 degreeSin isDegreeTrigonometricallyEqualTo: -0.5.
+	-360 to: 360 by: 1/3 do:
+		[:step |
+			| expected actual |
+			expected := step degreesToRadians sin.
+			actual := step degreeSin.
+			expected = actual ifFalse: [self assert: (expected - actual) exponent <= self effectiveZeroExponentForTrigonometry].
+			expected := step asFloat degreesToRadians sin.
+			actual := step asFloat degreeSin.
+			expected = actual ifFalse: [self assert: (expected - actual) exponent <= self effectiveZeroExponentForTrigonometry].
+		].
+
 	"Following tests use strict equality which is a requested property of degreeSin"
 	-10.0 to: 10.0 do: [:k |
 		self assert: (k*360 + 90) degreeSin - 1 = 0.
@@ -2419,6 +2525,13 @@ testLn
 	self assert: 1.0 exp ln = 1.0.
 	self assert: 2.0 exp ln = 2.0.! !
 
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/14/2018 23:53:24'!
+testLnForExceptionalValues
+
+	self assert: -1.0 ln isNaN.
+	self assert: Float infinity ln = Float infinity.
+	self assert: Float negativeInfinity ln isNaN! !
+
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/11/2018 13:39:49'!
 testLnNonPrimitive
 
@@ -2428,11 +2541,14 @@ testLnNonPrimitive
 		self assert: (computed - expected) abs <= (expected ulp*2)
 		]! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/11/2018 13:41:22'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:47:34'!
 testSin
-	self assert: 0.0 sin = 0.0.
-	self assert: (45 degreesToRadians sin - 0.5 sqrt)abs <= (0.5 ulp * 2).
-	self assert: 90 degreesToRadians sin = 1.0! !
+
+	self verify: 0.0 sin isTrigonometricallyEqualTo: 0.0.
+	self verify: (Float pi / 6) sin isTrigonometricallyEqualTo: 1.0 sqrt / 2.0.
+	self verify: (Float pi / 4) sin isTrigonometricallyEqualTo: 2.0 sqrt / 2.0.
+	self verify: (Float pi / 3) sin isTrigonometricallyEqualTo: 3.0 sqrt / 2.0.
+	self verify: (Float pi / 2) sin isTrigonometricallyEqualTo: 1.0! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/11/2018 13:41:55'!
 testSinNonPrimitive
@@ -2440,13 +2556,13 @@ testSinNonPrimitive
 	self assert: (45 degreesToRadians sinNonPrimitive - 0.5 sqrt) abs <= (0.5 ulp * 2).
 	self assert: (90 degreesToRadians sinNonPrimitive - 1.0) abs <= (1.0 ulp * 2).! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:59'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:58:36'!
 testSinh
 	self assertIsPositiveZero: 0.0 sinh.
 	self assertIsNegativeZero: Float negativeZero sinh.
 	self deny: Float infinity sinh isFinite.
-	self assert: (2.0 cosh squared - 2.0 sinh squared closeTo: 1).
-	self assert: (2.0 sinh negated closeTo: 2.0 negated sinh).! !
+	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
+	self verify: 2.0 sinh negated isHyperbolicallyEqualTo: 2.0 negated sinh! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 10:51:34'!
 testSqrt
@@ -2468,31 +2584,13 @@ testSqrtNonPrimitive
 	self assert: 8.0 sqrt = 8.0 sqrtNonPrimitive.
 	self assert: 9.0 sqrt = 9.0 sqrtNonPrimitive.! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'nice 1/27/2017 21:58'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:58:54'!
 testTanh
 	self assertIsPositiveZero: 0.0 tanh.
 	self assertIsNegativeZero: Float negativeZero tanh.
-	self assert: (Float infinity tanh closeTo: 1).
-	self assert: (2.0 cosh squared - 2.0 sinh squared closeTo: 1).
-	self assert: (2.0 tanh negated closeTo: 2.0 negated tanh).! !
-
-!FloatTest methodsFor: 'tests - comparing' stamp: 'nice 7/19/2009 19:24'!
-testCloseTo
-	self deny: (Float nan closeTo: Float nan) description: 'NaN isn''t close to anything'.
-	self deny: (Float nan closeTo: 1.0) description: 'NaN isn''t close to anything'.
-	self deny: (1.0 closeTo: Float nan) description: 'NaN isn''t close to anything'.
-	
-	self deny: (-1.0 closeTo: 1.0).
-	self deny: (1.0 closeTo: Float infinity).
-	self assert: (Float infinity closeTo: Float infinity) description: 'since they are =, they also are closeTo:'.
-	
-	self assert: (1.0/3.0 closeTo: 1/3).
-	self assert: (1.0e-8 closeTo: 0).
-	self assert: (0 closeTo: 1.0e-8).
-	self assert: (1+1.0e-8 closeTo: 1.0).
-	
-	self assert: (1000000001.0 closeTo: 1000000000.0).
-	self deny: (1000000001 closeTo: 1000000000) description: 'exact representation are considered closeTo: only if equal'.! !
+	self assert: Float infinity tanh = 1.0.
+	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
+	self verify: 2.0 tanh negated isHyperbolicallyEqualTo: 2.0 negated tanh! !
 
 !FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 9/1/2010 11:58'!
 testComparison
@@ -2592,6 +2690,36 @@ testEquals
 	self deny: Float fminDenormalized = Float fminNormalized.
 	self deny: Float fminNormalized = Float fminDenormalized.! !
 
+!FloatTest methodsFor: 'tests - comparing' stamp: 'sqr 12/14/2018 23:02:34'!
+testFloatsAwayFrom
+
+	self verify: 1.0 is: 0 floatsAwayFrom: 1.0.
+	self verify: 1.0 is: -1 floatsAwayFrom: 1.0 successor.
+	self verify: 1.0 is: 1 floatsAwayFrom: 1.0 predecessor.
+	self verify: 0.0 is: 0 floatsAwayFrom: Float negativeZero.
+	self verify: Float infinity is: 1 floatsAwayFrom: Float fmax.
+	self verify: Float fmax is: -1 floatsAwayFrom: Float infinity.
+	self verify: Float negativeInfinity is: -1 floatsAwayFrom: Float fmax negated.
+	self verify: Float fmax negated is: 1 floatsAwayFrom: Float negativeInfinity.
+	self verify: 0.0 is: -1 floatsAwayFrom: Float fminDenormalized.
+	self verify: Float negativeZero is: -1 floatsAwayFrom: Float fminDenormalized.
+	self verify: Float fmax is: (1 bitShift: Float precision - 1) - 1 floatsAwayFrom: (1.0 timesTwoPower: Float emax)! !
+
+!FloatTest methodsFor: 'tests - comparing' stamp: 'sqr 12/14/2018 23:02:43'!
+testFloatsAwayFromWithPowersOfTwo
+
+	| previous current soMany |
+	previous := 0.0.
+	current := Float fminDenormalized.
+	soMany := 1.
+	[current isFinite] whileTrue:
+		[
+			self verify: current is: soMany floatsAwayFrom: previous.
+			soMany < 4503599627370496 :: and: [previous > 0.0] :: ifTrue: [soMany := soMany * 2].
+			previous := current.
+			current := current * 2.0
+		]! !
+
 !FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 10/8/2018 16:18:13'!
 testHugeValues
 
@@ -2609,37 +2737,6 @@ testHugeValues
 
 	self assert: -1e400 = -1.0e309.
 	self assert: -1e400 < -1.0e308.! !
-
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 12/11/2018 13:19:10'!
-testIsWithinUlpsFrom
-
-	self deny: (Float nan isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
-	self deny: (Float nan isWithin: Float fmax ulpsFrom: 1.0) description: 'NaN isn''t close to anything'.
-	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float nan) description: 'NaN isn''t close to anything'.
-	
-	self deny: (-1.0 isWithin: 1000 ulpsFrom: 1.0).
-	self deny: (1.0 isWithin: Float fmax ulpsFrom: Float infinity).
-	self deny: (Float infinity isWithin: Float fmax ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
-	self deny: (Float infinity isWithin: Float infinity ulpsFrom: Float infinity) description: 'infinites are not comparable like that'.
-	
-	self assert: (1.0/3.0 isWithin: 1 ulpsFrom: 1/3).
-	self assert: (1.0e-8 isWithin: 1.0e-8 / 0.0 ulp ulpsFrom: 0).
-	self assert: (0.0 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0e-8).
-	self assert: (1+1.0e-8 isWithin: 1.0e-8 ulp reciprocal ulpsFrom: 1.0).
-	
-	self assert: (1000000001.0 isWithin: (1 bitShift: 23) ulpsFrom: 1000000000.0).
-	self assert: ((1 bitShift: 52) asFloat + 1.0 isWithin: 2 ulpsFrom: (1 bitShift: 52) asFloat).
-
-	self assert: (0.9 isWithin: 1 ulpsFrom: 0.9).
-	self assert: (0.9 predecessor isWithin: 1 ulpsFrom: 0.9).
-	self deny: (0.9 predecessor predecessor isWithin: 1 ulpsFrom: 0.9).
-	self assert: (0.9 successor isWithin: 1 ulpsFrom: 0.9).
-	self deny: (0.9 successor successor isWithin: 1 ulpsFrom: 0.9).
-
-	self assert: (1.0 isWithin: 1 ulpsFrom: 1.0).
-	self assert: (1.0 predecessor isWithin: 1 ulpsFrom: 1.0).
-	self deny: (1.0 predecessor predecessor isWithin: 1 ulpsFrom: 1.0).
-	self deny: (1.0 successor isWithin: 1 ulpsFrom: 1.0)! !
 
 !FloatTest methodsFor: 'tests - comparing' stamp: 'nice 10/27/2014 21:50'!
 testLiteralEqualityOfNan
@@ -3563,16 +3660,6 @@ testZeros
 	self assert: 0.0 - -0.0 = 0.0.
 	self assert: 0.0 = -0.0.! !
 
-!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'nice 7/14/2009 09:32'!
-testHugeIntegerCloseTo
-	"This is a test for bug http://bugs.squeak.org/view.php?id=7368"
-	
- 	"FloatTest new testHugeIntegerCloseTo"
-
-	self deny: (1.0 closeTo: 200 factorial).
-	self deny: (200 factorial closeTo: 1.0).
-	self assert: (Float infinity closeTo: 200 factorial) = (200 factorial closeTo: Float infinity).! !
-
 !FloatTest methodsFor: 'tests - infinity behavior' stamp: 'sd 6/5/2005 08:30'!
 testInfinity1
    "FloatTest new testInfinity1"
@@ -3598,15 +3685,6 @@ testInfinity2
 	self deny: i1 = i2.
   	"All infinities are signed. Negative infinity is not equal to Infinity"
 ! !
-
-!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'nice 5/3/2014 22:31:23.35'!
-testInfinityCloseTo
-	"This is a test for bug http://bugs.squeak.org/view.php?id=6729:"
-	
- 	"FloatTest new testInfinityCloseTo"
-
-	self deny: (Float infinity closeTo: Float negativeInfinity).
-	self deny: (Float negativeInfinity closeTo: Float infinity).! !
 
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sd 6/5/2005 08:31'!
 testNaN1
@@ -3934,26 +4012,12 @@ assert: a classAndValueEquals: b
 	self assert: a class = b class.
 	self assert: a = b! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:38'!
-testDegreeCos
-	"self run: #testDegreeCos"
-	
-	-361/3 to: 359/3 do: [:i |
-		self assert: (i degreeCos closeTo: i degreesToRadians cos)].! !
-
 !FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/3/2018 15:19:28'!
 testDegreeCos2
 	"self run: #testDegreeCos"
 	
 	self shouldnt: [ (4/3) degreeCos] raise: Error.
 	self assert: (1/3) degreeCos printString =  '0.9999830768577442'! !
-
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:38'!
-testDegreeSin
-	"self run: #testDegreeSin"
-
-	-361/3 to: 359/3 do: [:i |
-		self assert: (i degreeSin closeTo: i degreesToRadians sin)].! !
 
 !FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/3/2018 15:19:31'!
 testDegreeSin2
@@ -4084,17 +4148,17 @@ testInexactSqrt
 	"
 	self assert: ((1 << 1024 + 1) / (1 << 1024 + 3)) sqrt = 1.0! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:07'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:42:49'!
 testLn
-	self assert: (1/100) ln isAbout: -2 * 10 ln.
-	self assert: ((2 raisedTo: Float emax + 11) / 3) ln isAbout: (Float emax + 11) * 2 ln - 3 ln description: 'Fraction>>ln should not overflow'.
-	self assert: (3 / (2 raisedTo: Float precision - Float emin)) ln isAbout: (Float emin - Float precision) * 2 ln + 3 ln description: 'Fraction>>ln should not underflow'! !
+	self verify: (1/100) ln isWithinOneFloatAwayFrom: -2 * 10 ln.
+	self verify: ((2 raisedTo: Float emax + 11) / 3) ln isWithinOneFloatAwayFrom: (Float emax + 11) * 2 ln - 3 ln.
+	self verify: (3 / (2 raisedTo: Float precision - Float emin)) ln isWithinOneFloatAwayFrom: (Float emin - Float precision) * 2 ln + 3 ln! !
 
-!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:08'!
+!FractionTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:45:24'!
 testLog
-	self assert: (1/100) log isAbout: -2.
-	self assert: ((2 raisedTo: Float emax + 11) / 3) log isAbout: (Float emax + 11) * 2 log - 3 log description: 'Fraction>>log should not overflow'.
-	self assert: (3 / (2 raisedTo: Float precision - Float emin)) log isAbout: (Float emin - Float precision) * 2 log + 3 log description: 'Fraction>>log should not underflow'! !
+	self assert: (1/100) log = -2.
+	self verify: ((2 raisedTo: Float emax + 11) / 3) log isWithinOneFloatAwayFrom: (Float emax + 11) * 2 log - 3 log.
+	self verify: (3 / (2 raisedTo: Float precision - Float emin)) log isWithinOneFloatAwayFrom: (Float emin - Float precision) * 2 log + 3 log.! !
 
 !FractionTest methodsFor: 'tests - mathematical functions' stamp: 'nice 10/19/2011 20:48'!
 testNthRoot
@@ -4571,42 +4635,6 @@ testBigReceiverInexactSqrt
 	self assert: (result successor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.
 	self assert: (result predecessor asFraction squared - bigNum) abs >= (result asFraction squared - bigNum) abs.! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:39'!
-testDegreeCos
-	"self run: #testDegreeCos"
-	
-	"Following tests use approximate equality, because cosine are generally evaluated using inexact Floating point arithmetic"
-	self assert: (45 degreeCos squared - (1/2)) abs <= Float epsilon.
-	self assert: (60 degreeCos - (1/2)) abs <= Float epsilon.
-	self assert: (120 degreeCos + (1/2)) abs <= Float epsilon.
-	-360 to: 360 do: [:i |
-		self assert: (i degreeCos closeTo: i degreesToRadians cos)].
-	
-	"Following tests use strict equality which is a requested property of degreeCos"
-	-10 to: 10 do: [:k |
-		self assert: (k*360 + 90) degreeCos = 0.
-		self assert: (k*360 - 90) degreeCos = 0.
-		self assert: (k*360 + 180) degreeCos + 1 = 0.
-		self assert: (k*360) degreeCos - 1 = 0.].! !
-
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'fbs 11/5/2013 18:39'!
-testDegreeSin
-	"self run: #testDegreeSin"
-	
-	"Following tests use approximate equality, because sine are generally evaluated using inexact Floating point arithmetic"
-	self assert: (45 degreeSin squared - (1/2)) abs <= Float epsilon.
-	self assert: (30 degreeSin - (1/2)) abs <= Float epsilon.
-	self assert: (-30 degreeSin + (1/2)) abs <= Float epsilon.
-	-360 to: 360 do: [:i |
-		self assert: (i degreeSin closeTo: i degreesToRadians sin)].
-	
-	"Following tests use strict equality which is a requested property of degreeSin"
-	-10 to: 10 do: [:k |
-		self assert: (k*360 + 90) degreeSin - 1 = 0.
-		self assert: (k*360 - 90) degreeSin + 1= 0.
-		self assert: (k*360 + 180) degreeSin = 0.
-		self assert: (k*360) degreeSin = 0].! !
-
 !IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/13/2011 21:46'!
 testExactRaisedTo
 	"
@@ -4687,15 +4715,15 @@ testFloorLogExactness
 	(1 to: (Float fmax floorLog: 10)) count: [:n |
 		((10 raisedTo: n) asFloat floorLog: 10) ~= n]."! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:09'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:47:37'!
 testLn
-	self assert: 100 ln isAbout: 10 ln*2.
-	self assert: (2 raisedTo: Float emax + 3) ln isAbout: 2 ln * (Float emax + 3) description: 'Integer>>ln should not overflow'! !
+	self verify: 100 ln isWithinOneFloatAwayFrom: 10 ln*2.
+	self verify: (2 raisedTo: Float emax + 3) ln isWithinOneFloatAwayFrom: 2 ln * (Float emax + 3)! !
 
-!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 5/26/2016 18:09'!
+!IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 10:48:49'!
 testLog
-	self assert: 100 log isAbout: 2.
-	self assert: (2 raisedTo: Float emax + 3) log isAbout: 2 log * (Float emax + 3) description: 'Integer>>log should not overflow'! !
+	self assert: 100 log = 2.
+	self verify: (2 raisedTo: Float emax + 3) log isWithinOneFloatAwayFrom: 2 log * (Float emax + 3)! !
 
 !IntegerTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 10/19/2011 22:48'!
 testNthRoot
@@ -11548,12 +11576,7 @@ testsAverageWorksWithABlock
 
 	self assert: ({ '1' . '2' . '3' } average: [ :each | each asInteger ]) equals: 2! !
 
-!IntervalTest methodsFor: 'helpers' stamp: 'sqr 5/26/2016 18:13'!
-assert: aNumber isAbout: anotherNumber
-
-	self assert: (aNumber isWithin: 1 ulpsFrom: anotherNumber)! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'sqr 5/26/2016 18:09'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:31'!
 testAt
 	"
 	IntervalTest new testAt
@@ -11565,14 +11588,14 @@ testAt
 
 	self assert: (0 to: 2.4 by: 0.1) first = 0.
 	self assert: ((0 to: 2.4 by: 0.1) at: 1) = 0.
-	self assert: ((0 to: 2.4 by: 0.1) at: 2) isAbout: 0.1.
-	self assert: ((0 to: 2.4 by: 0.1) at: 3) isAbout: 0.2.
-	self assert: ((0 to: 2.4 by: 0.1) at: 23) isAbout: 2.2.
+	self assert: (((0 to: 2.4 by: 0.1) at: 2) isWithin: 1 floatsFrom: 0.1).
+	self assert: (((0 to: 2.4 by: 0.1) at: 3) isWithin: 1 floatsFrom: 0.2).
+	self assert: (((0 to: 2.4 by: 0.1) at: 23) isWithin: 1 floatsFrom: 2.2).
 	self assert: ((0 to: 2.4 by: 0.1) at: 24) = 2.3.
 	self assert: ((0 to: 2.4 by: 0.1) at: 25) = 2.4.
 	self assert: (0 to: 2.4 by: 0.1) last = 2.4.! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'sqr 5/26/2016 18:10'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:59'!
 testFloatInterval
 	"
 	IntervalTest new testFloatInterval
@@ -11585,11 +11608,11 @@ testFloatInterval
 	2 to: 200 do: [ :n |
 		self assert: (0.0 to: 1.0 count: n) size = n.
 		self assert: (0.0 to: 1.0 count: n) first = 0.0.
-		self assert: (0.0 to: 1.0 count: n) last isAbout: 1.0].
+		self assert: ((0.0 to: 1.0 count: n) last isWithin: 1 floatsFrom: 1.0)].
 	2 to: 200 do: [ :n |
 		self assert: (1.0 to: 0.0 count: n) size = n.
 		self assert: (1.0 to: 0.0 count: n) first = 1.0.
-		self assert: (1.0 to: 0.0 count: n) last isAbout: 0.0]! !
+		self assert: ((1.0 to: 0.0 count: n) last isWithin: 1 floatsFrom: 0.0)].! !
 
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:49'!
 testFloatToByDo
@@ -11856,6 +11879,16 @@ test
 	self assert: count = 1.
 	self deny: (wi includes: ary2 first).
 	self assert: (wi includes: ary2 second).! !
+
+!ColorTest methodsFor: 'tests' stamp: 'sqr 12/14/2018 20:31:38'!
+testIsGrey
+
+	self assert: Color black isGrey.
+	self assert: Color grey isGrey.
+	self assert: Color white isGrey.
+	self deny: Color red isGrey.
+	self deny: Color green isGrey.
+	self deny: Color blue isGrey! !
 
 !JpegTest methodsFor: 'testing' stamp: 'jmv 6/3/2016 17:43'!
 test16bpp
@@ -13255,11 +13288,8 @@ testValidZipCrc
 	self shouldnt:[ readBytes _ reader next: 100 ] raise: CRCError.
 	self assert: readBytes = 'Hello World'.! !
 
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 7/19/2016 10:56:56'!
+!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:42:49'!
 testMax
-	"
-	StatisticsTest new testMax
-	"
 	| i correct gimpCorrect |
 	i _ FloatImage lena.
 	correct _ i elements inject: 0 into: [ :prev :each | prev max: each ].
@@ -13269,26 +13299,20 @@ testMax
 	self assert: i max = correct.
 	self assert: i histogram max = correct.! !
 
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 7/19/2016 10:57:56'!
+!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:11:12'!
 testMean
-	"
-	StatisticsTest new testMean
-	"
 	| i correct gimpCorrect |
 	i _ FloatImage lena.
 	correct _ i elements sum / i elements size.
 	gimpCorrect _ 124.7 / 256.0.
-	self assert: (correct roundTo: 0.001) = (gimpCorrect roundTo: 0.001).
+	self assert: correct % gimpCorrect <= 0.001.
 	self assert: i elements mean = correct.
 	self assert: i mean = correct.
-	self assert: i histogram mean = correct! !
+	self assert: correct % i histogram mean < 0.0001.! !
 
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 7/19/2016 10:58:18'!
+!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:55:33'!
 testMedian
-	"
-	StatisticsTest new testMedian
-	"
-	| i correct n sorted gimpCorrect |
+	| i correct n sorted gimpCorrect h |
 	i _ FloatImage lena.
 	sorted _ i elements asArray sort.
 	n _ sorted size.
@@ -13297,15 +13321,16 @@ testMedian
 	gimpCorrect _ 129 / 256.0.
 	self assert: correct = gimpCorrect.
 	self assert: i elements median = correct.
-	self assert: i median = correct.
-	self assert: i histogram median = correct.
-	self assert: i elements asSortedCollection median = correct.! !
+	self assert: i elements asSortedCollection median = correct.
+	"histogram well matched to pixel values"
+	self assert: (i histogram: 256 lowValue: 0.0 highValue: 255.0/256) median = correct.
+	"general histogram"
+	h _ i histogram.
+	self assert: (h median - correct) abs < h halfBinWidth.
+	self assert: (i median - correct) abs < h halfBinWidth.! !
 
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 7/19/2016 10:59:14'!
+!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:42:35'!
 testMin
-	"
-	StatisticsTest new testMin
-	"
 	| i correct gimpCorrect |
 	i _ FloatImage lena.
 	correct _ i elements inject: 1 into: [ :prev :each | prev min: each ].
@@ -13315,31 +13340,27 @@ testMin
 	self assert: i min = correct.
 	self assert: i histogram min = correct! !
 
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 7/19/2016 12:29:29'!
+!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:56:32'!
 testMode
-	"
-	StatisticsTest new testMode
-	"
-	| i correct |
+	| i correct h |
 	i _ FloatImage lena.
 	correct _ i elements asBag sortedCounts first value.
 
 	self assert: i elements mode = correct.
-	self assert: i mode = correct.
-	self assert: i histogram mode = correct! !
+	h _ i histogram.
+	self assert: (h mode - correct) abs < h halfBinWidth.
+	self assert: (i mode - correct) abs < h halfBinWidth.! !
 
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 7/19/2016 11:07:03'!
+!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:58:02'!
 testPercentiles
-	"
-	StatisticsTest new testPercentiles
-	"
-	| image correct n sorted i0 i1 p percentiles gimpCorrect gimpCorrectValues |
+	| image correct n sorted i0 i1 p percentiles gimpCorrect gimpCorrectValues histogram |
 	image _ FloatImage lena.
 	sorted _ image elements asArray sort.
 	n _ sorted size.
 	self assert: n even.
 	percentiles _ #(0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0).
 	gimpCorrectValues _ #(14 54 77 100 115 129 141 152 163 188 246).
+	histogram _ image histogram.
 	1 to: percentiles size do: [ :i |
 		p _ percentiles at: i.
 		i0 _ (n * p) floor max: 1.
@@ -13348,35 +13369,29 @@ testPercentiles
 		gimpCorrect _ (gimpCorrectValues at: i) / 256.0.
 		self assert: correct = gimpCorrect.
 		self assert: (image elements percentile: p) = correct.
-		self assert: (image percentile: p) = correct.
-		self assert: (image histogram percentile: p) = correct.
-		self assert: (image elements asSortedCollection percentile: p) = correct ]! !
+		self assert: (image elements asSortedCollection percentile: p) = correct.
+		self assert: ((histogram percentile: p) - correct) abs < histogram halfBinWidth.
+		self assert: ((image percentile: p) - correct) abs < histogram halfBinWidth.
+	]! !
 
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 7/19/2016 11:08:34'!
+!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:42:23'!
 testStandardDeviation
-	"
-	StatisticsTest new testStandardDeviation
-	"
 	| i correct gimpCorrect |
 	i _ FloatImage lena.
 	correct _ i elements standardDeviation.
 	gimpCorrect _ 46.7 / 256.0.
-	self assert: (correct roundTo: 0.001) = (gimpCorrect roundTo: 0.001).
-"	self assert: i elements standardDeviation = correct."
-	self assert: i standardDeviation = correct.
-	self assert: (i histogram standardDeviation closeTo: correct)! !
+	self assert: correct %  gimpCorrect < 0.0001.
+	self assert: correct % i standardDeviation < 0.0001.
+	self assert: correct % i histogram standardDeviation < 0.0001.! !
 
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 7/19/2016 10:41:31'!
+!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:10:38'!
 testSum
-	"
-	StatisticsTest new testSum
-	"
 	| i correct |
 	i _ FloatImage lena.
 	correct _ i elements inject: 0 into: [ :p :e | p + e ].
 	self assert: i elements sum = correct.
 	self assert: i sum = correct.
-	self assert: i histogram sum = correct! !
+	self assert: i histogram sum % correct < 0.0001.! !
 
 !BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HernanWilkinson 1/19/2017 20:32:36'!
 testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass

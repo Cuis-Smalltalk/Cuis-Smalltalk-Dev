@@ -1,6 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3190] on 19 October 2017 at 4:19:49 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3528] on 18 December 2018 at 12:54:11 pm'!
 'Description A collection of general numerical algorithms for continuous problems.'!
-!provides: 'NumericalMethods' 1 8!
+!provides: 'NumericalMethods' 1 9!
+SystemOrganization addCategory: #NumericalMethods!
+
+
 !classDefinition: #NelderMeadMethod category: #NumericalMethods!
 Object subclass: #NelderMeadMethod
 	instanceVariableNames: 'objectiveFunction testPoints epsilon'
@@ -61,7 +64,7 @@ objectiveFunction: aBlock
 
 	objectiveFunction _ aBlock! !
 
-!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 10/19/2017 16:18:28'!
+!NelderMeadMethod methodsFor: 'computing' stamp: 'jmv 12/18/2018 11:04:37'!
 solve
 	"Closely follows implementation at
 		https://en.wikipedia.org/wiki/Nelder-Mead_method
@@ -88,7 +91,7 @@ solve
 			- or function values are almost the same. The amount of ulps to allow is rather arbitrary... Maybe it can safely be made a lot smaller.
 				(this depends on the numerical convergence of objectiveFunction)"
 		(((worstPointXnPlus1 - bestPointX1) abs - epsilon allSatisfy: [ :v | v < 0.0 ])
-			or: [ bestValueX1 isWithin: 1e3 ulpsFrom: worstValueXnPlus1 ])
+			or: [ bestValueX1 % worstValueXnPlus1 < 1.0e-12])
 	] whileFalse: [
 	
 		"Centroid"

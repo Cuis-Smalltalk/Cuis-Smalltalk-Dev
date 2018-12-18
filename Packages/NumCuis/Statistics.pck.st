@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3429] on 24 August 2018 at 9:51:16 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3528] on 18 December 2018 at 12:54:27 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Statistics' 1 11!
+!provides: 'Statistics' 1 12!
 !requires: 'Pen' 1 0 nil!
 SystemOrganization addCategory: #Statistics!
 
@@ -312,20 +312,13 @@ basicPercentile2: percentile
 	c _ (highBinCenter -lowBinCenter ) / (tallies size-1).
 	^ lm + ((n2-fm_1/fm)*c)! !
 
-!Histogram methodsFor: 'private' stamp: 'jmv 7/19/2016 12:48:11'!
+!Histogram methodsFor: 'private' stamp: 'jmv 12/18/2018 09:21:14'!
 basicPercentile: percentile
 	"Only meaningful for the accumulated histogram of a collection (such as a FloatImage)
 	percentile in [0.0 .. 1.0]
 	"
 
-	^ self binCenter:( self basicIndexForPercentile: percentile)! !
-
-!Histogram methodsFor: 'private' stamp: 'jmv 5/25/2018 10:51:26'!
-binCenter: binIndex
-	"Answer the value for the center of the slot"
-	| fraction |
-	fraction _ tallies size = 1 ifFalse: [(binIndex-1) / (tallies size-1)] ifTrue: [1/2].
-	^ fraction * (highBinCenter - lowBinCenter ) + lowBinCenter! !
+	^ self binCenter: (self basicIndexForPercentile: percentile)! !
 
 !Histogram methodsFor: 'private' stamp: 'jmv 5/25/2018 10:48:33'!
 indexFor: aValue
@@ -353,6 +346,27 @@ talliesCount
 
 	^ tallies size! !
 
+!Histogram methodsFor: 'accessing' stamp: 'jmv 12/18/2018 09:49:28'!
+binCenter: binIndex
+	"Answer the value for the center of the slot"
+	| fraction |
+	fraction _ tallies size = 1
+		ifFalse: [ (binIndex-1) / (tallies size-1) ]
+		ifTrue: [ 1/2 ].
+	^ fraction * (highBinCenter - lowBinCenter ) + lowBinCenter.! !
+
+!Histogram methodsFor: 'accessing' stamp: 'jmv 12/18/2018 10:03:40'!
+binSize
+	"Answer the number of bins"
+
+	^tallies size! !
+
+!Histogram methodsFor: 'accessing' stamp: 'jmv 12/18/2018 09:51:14'!
+binWidth
+	"Answer the width for each bin"
+
+	^highBinCenter - lowBinCenter / (tallies size-1)! !
+
 !Histogram methodsFor: 'accessing' stamp: 'jmv 4/10/2015 16:11'!
 countAt: value
 	^tallies at: (self indexFor: value)! !
@@ -364,6 +378,13 @@ counts
 !Histogram methodsFor: 'accessing' stamp: 'jmv 7/9/2017 19:58:20'!
 domain
 	^ (1 to: tallies size) collect: [ :i | self binCenter: i ]! !
+
+!Histogram methodsFor: 'accessing' stamp: 'jmv 12/18/2018 09:52:36'!
+halfBinWidth
+	"Answer the half the width for each bin.
+	This is the maximum error for statistics such as mode, median and percentiles."
+
+	^self binWidth / 2! !
 
 !Histogram methodsFor: 'aux' stamp: 'jmv 3/7/2018 10:59:07'!
 jetPlotOn: aForm y: y
@@ -554,15 +575,15 @@ meanAndVariance
 	sum _ self collect: [ :each | (each - mean) squared ] andFold: [ :a :b | a + b ].
 	^{mean.  sum / self size}! !
 
-!Collection methodsFor: '*Statistics' stamp: 'jmv 3/20/2018 11:28:18'!
+!Collection methodsFor: '*Statistics' stamp: 'jmv 12/18/2018 09:18:58'!
 median
 	"See comment in SortedCollection.
 	Very expensive on large collections. Consider using a Histogram."
 	| sorted  center e0 e1 i0 |
 	sorted _ self asArray sort.
-	center _ sorted size / 2.
+	center _ sorted size+1 / 2.
 	^ center isInteger
-		ifTrue: [ self at: center ]
+		ifTrue: [ sorted at: center ]
 		ifFalse: [
 			i0 _ center floor.
 			e0 _ sorted at: i0.
@@ -638,12 +659,12 @@ variance
 
 	^ self meanAndVariance second! !
 
-!SortedCollection methodsFor: '*Statistics' stamp: 'jmv 3/20/2018 11:28:02'!
+!SortedCollection methodsFor: '*Statistics' stamp: 'jmv 12/18/2018 09:17:32'!
 median
 	"Return the center element, or the average of 2 center elements (if size is even, there's no center element)."
 
 	| center e0 e1 i0 |
-	center _ self size / 2.
+	center _ self size+1 / 2.
 	^ center isInteger
 		ifTrue: [ self at: center ]
 		ifFalse: [

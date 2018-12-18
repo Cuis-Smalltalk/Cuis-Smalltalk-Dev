@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3341] on 1 June 2018 at 9:01:27 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3528] on 18 December 2018 at 12:53:47 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Color-Extras' 1 5!
+!provides: 'Color-Extras' 1 6!
 SystemOrganization addCategory: #'Color-Extras'!
 
 
@@ -135,12 +135,11 @@ isDark
 
 	^self brightness < 0.5! !
 
-!Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 16:42'!
+!Color methodsFor: '*color-extras-selection' stamp: 'jmv 12/17/2018 10:45:56'!
 isGray
 	"Am I considered Gray  ?"
 
-	^(self red closeTo: self green)
-		and: [self blue closeTo: self green ]! !
+	^ self saturation < 0.03! !
 
 !Color methodsFor: '*color-extras-selection' stamp: 'KenD 1/30/2013 17:40'!
 isGrey

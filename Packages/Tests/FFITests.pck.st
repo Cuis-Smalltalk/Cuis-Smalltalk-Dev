@@ -1,7 +1,10 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3007] on 19 December 2016 at 3:58:52 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3528] on 18 December 2018 at 12:53:59 pm'!
 'Description Please enter a description for this package'!
-!provides: 'FFITests' 1 6!
+!provides: 'FFITests' 1 7!
 !requires: 'FFI' 1 nil nil!
+SystemOrganization addCategory: #FFITests!
+
+
 !classDefinition: #FFIPluginTests category: #FFITests!
 TestCase subclass: #FFIPluginTests
 	instanceVariableNames: ''
@@ -185,7 +188,7 @@ testGenericIntCall
 	result := FFITestLibrary ffiTestInt: $A with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'djm 5/6/2014 17:29'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 12/17/2018 12:42:54'!
 testGenericMixedDoublesIntAndStruct
 	"Test using generic FFI spec"
 	| result i struct |
@@ -193,14 +196,14 @@ testGenericMixedDoublesIntAndStruct
 	struct := FFITestPoint4 new.
 	struct x: 1. struct y: 2. struct z: 3. struct w: 4.
 	result := FFITestLibrary ffiTestMixedDoublesIntAndStruct: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0 i: 42 s: struct.
-	self assert: (result closeTo: 45.0 + 42 + 10) ! !
+	self assert: result = (45.0 + 42 + 10)! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'djm 5/6/2014 05:14'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 12/17/2018 12:44:56'!
 testGenericMixedFloatsAndDouble
 	"Test using generic FFI spec"
 	| result |
 	result := FFITestLibrary ffiTestMixedFloatsAndDouble: 1.2 with: 3.4 with: 5.6 with: 7.8.
-	self assert: (result closeTo: 1.2 + 3.4 + 5.6 + 7.8) ! !
+	self assert: (1.2 + 3.4 + 5.6 + 7.8 - result) abs < 1.0e-6! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 8/14/2006 19:17'!
 testGenericPrintString
@@ -252,23 +255,6 @@ testLibraryPrintString
 	result := FFITestLibrary new ffiPrintString:'Hello World!!'.
 	self assert: result = 'Hello World!!'.! !
 
-!FFIPluginTests methodsFor: 'other tests' stamp: 'EstebanLorenzano 8/31/2015 11:24'!
-testLoadSymbolFromModule
-	| address |
-	
-	"Ok"
-	address := ExternalAddress loadSymbol: 'ffiTestFloats' module: FFITestLibrary moduleName.
-	self deny: address isNil.
-	self deny: address isNull.
-	"Symbol does not exists"
-	self 
-		should: [ ExternalAddress loadSymbol: 'ffi_does_not_exist' module: FFITestLibrary moduleName ]
-		raise: Error.
-	"Module does not exists"
-	self 
-		should: [ ExternalAddress loadSymbol: 'ffiTestFloats' module: 'NonExistingModule' ]
-		raise: Error.		! !
-
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'djm 5/6/2014 01:54'!
 testLongLongA1
 	"Test passing a char and two longlongs."
@@ -288,6 +274,30 @@ testLongLongA3
 	byte2 := 4.
 	long2 := FFITestLibrary ffiTestLongLongA3: byte1 with: long1 with: byte2.
 	self assert: long2 = (byte1 + long1 + byte2)! !
+
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 7/28/2009 20:53'!
+testUlongRange
+	"Simple test for making sure the FFI can call certain numbers in the ulong range"
+	| result |
+	self shouldnt:[result := FFITestLibrary ffiTestUlong: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339] raise: Error.
+	self should: result =  1912741382.! !
+
+!FFIPluginTests methodsFor: 'other tests' stamp: 'EstebanLorenzano 8/31/2015 11:24'!
+testLoadSymbolFromModule
+	| address |
+	
+	"Ok"
+	address := ExternalAddress loadSymbol: 'ffiTestFloats' module: FFITestLibrary moduleName.
+	self deny: address isNil.
+	self deny: address isNull.
+	"Symbol does not exists"
+	self 
+		should: [ ExternalAddress loadSymbol: 'ffi_does_not_exist' module: FFITestLibrary moduleName ]
+		raise: Error.
+	"Module does not exists"
+	self 
+		should: [ ExternalAddress loadSymbol: 'ffiTestFloats' module: 'NonExistingModule' ]
+		raise: Error.		! !
 
 !FFIPluginTests methodsFor: 'structure tests' stamp: 'ar 8/14/2006 19:23'!
 testLongLongs
@@ -378,13 +388,6 @@ testSmallStructureReturn
 	pt1 := FFITestLibrary ffiTestSmallStructReturn.
 	self assert: pt1 x = 3.
 	self assert: pt1 y = 4.! !
-
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'ar 7/28/2009 20:53'!
-testUlongRange
-	"Simple test for making sure the FFI can call certain numbers in the ulong range"
-	| result |
-	self shouldnt:[result := FFITestLibrary ffiTestUlong: 3103854339 with: 3103854339 with: 3103854339 with: 3103854339] raise: Error.
-	self should: result =  1912741382.! !
 
 !FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 21:59'!
 ffiPrintString: aString
