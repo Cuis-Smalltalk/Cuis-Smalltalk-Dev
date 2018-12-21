@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3529] on 18 December 2018 at 5:03:00 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3539] on 21 December 2018 at 2:58:17 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 110!
+!provides: 'Tests' 1 113!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -2993,9 +2993,9 @@ testTruncated
 	self assert: -2.0 truncated = -2.
 	self assert: -2.1 truncated = -2.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/4/2018 12:29:21'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 11:36:52'!
 testExactAsString
-	"Ensures round-trip string conversion when using #asString...
+	"Ensures round-trip string conversion when using #asString.
 	Use some relevant examples."
 
 	| examples |
@@ -3026,10 +3026,10 @@ testExactAsString
 	"NaN are special, in that they are not even equal to themselves"
 	self assert: Float nan asString asNumber isNaN! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/4/2018 12:09:17'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 14:56:27'!
 testExactAsString2
-	"If storeOn: prints exactly and the parser avoids cumulating rounding errors,
-	then the Float should be read back exactly.
+	"Ensures round-trip string conversion when using #asString.
+	Use some relevant examples.
 	Note: there is no guarantee to restore the bit pattern of NaN though"
 
 	self assert: Float halfPi asString asNumber = Float halfPi.
@@ -3087,26 +3087,25 @@ testExactStoreString2
 	self assert: (Compiler evaluate: Float negativeInfinity storeString) = Float negativeInfinity.
 	self assert: (Compiler evaluate: Float nan storeString) isNaN.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 9/24/2018 10:54:15'!
-testFromStringDoesntUnderflow
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 11:40:15'!
+testFromStringDoesNotUnderflow
 	self assert: '12345678901234567890.0e-330' asNumber isZero not.
 	self assert: (Compiler evaluate: '12345678901234567890.0e-330')isZero not.! !
 
-!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/4/2018 12:30:17'!
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 11:44:33'!
 testMinimalAsString
 	"Tests that the conversion from String / to String ends in a minimal String representation.
 	This means that there are no extra unneded digits at the end.
-	For example, 0.1 (actually the closest Float, to 1/10, i.e. ((1/10) asFloat), prints as 0.1, because 
+	For example, 0.1 (actually the closest Float to 1/10, i.e. ((1/10) asFloat), prints as 0.1, because 
 	it can be recovered from that String"
 
 	"These are just to start on solid ground. If these fail, what follows is meaningless."
 	self assert: 0.1 = ((1/10) asFloat).		"0.1 really is what it should be. Compiler works ok."
-	self assert: '0.1' asNumber = 0.1.			"#asNumber works ok. String '0.1' is what we want."
+	self assert: '0.1' asNumber = 0.1.			"#asNumber works ok. The string '0.1' is what we want."
 	"Now the real test."
 	self assert: 0.1 printString = '0.1'.		"String '0.1' is what we get. No unneded extra digits."
 
-	"Some more.
-	Not as careful as before, but whatever Float these Strings represent, print them back the same (no extra digits)"
+	"Whatever Float these Strings represent, print them back the same (no extra digits)"
 	self assert: '0.2' asNumber printString = '0.2'.
 	#(
 		'0.1' '0.2' '0.3' '0.4' '0.5' '0.6' '0.7' '0.8' '0.9' 
@@ -3115,6 +3114,14 @@ testMinimalAsString
 		'1.03' '1.003' '1.0003' '1.00003' '1.000003' '1.0000003' '1.00000003' '1.000000003' '1.0000000003' '1.00000000003' '1.000000000003' 
 	) do: [ :string |
 		self assert: string asNumber printString = string ].! !
+
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/21/2018 12:15:04'!
+testPrintShowingDecimalPlaces4
+	| requiredDigits |
+	requiredDigits _ Float pi printString size - 2.
+	self assert: (Float pi printStringFractionDigits: requiredDigits) = Float pi printString.
+	0 to: 100 do: [ :extra |
+		self assert: (Float pi printStringFractionDigits: requiredDigits + extra) asNumber = Float pi ]! !
 
 !FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 3/14/2008 23:59'!
 testReadFromManyDigits
@@ -6797,24 +6804,29 @@ testPrintShowingDecimalPlaces
 	self assert: (String streamContents: [ :s | 2.567 printOn: s fractionDigits: 2]) = '2.57'.
 	self assert: (String streamContents: [ :s | -2.567 printOn: s fractionDigits: 2]) = '-2.57'! !
 
-!NumberTest methodsFor: 'tests' stamp: 'jmv 1/9/2014 21:21'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 12/21/2018 12:00:50'!
 testPrintShowingDecimalPlaces2
 	"This tests problems related to Float>>rounded and Float>>roundTo::
 	- Float>>#rounded is inexact
 	- Float>>#roundTo: might overflow"
 
-	"5000000000000001.0 asTrueFraction = 5000000000000001.
-	5000000000000001 highBit = 53.
-	This number is represented exactly asFloat, it should print exactly"
-	self assert: (String streamContents: [ :s | 5000000000000001.0 printOn: s fractionDigits: 0]) = '5000000000000001'.
+	"This number is represented exactly asFloat, it should print exactly"
+	self assert: 5000000000000001.0 asTrueFraction = 5000000000000001.
+	self assert: 5000000000000001 highBit = 53.
+	self assert: (5000000000000001.0 printStringFractionDigits: 0) = '5000000000000001'.
 	
 	"50000000000001.25 asTrueFraction = (200000000000005/4).
 	200000000000005 highBit = 48, 4 isPowerOfTwo,
 	So this number is also represented exactly as Float, it should print exactly.
 	Beware: (50000000000001.25 / 0.01) rounded exhibit the same problem as above."
 	self assert: (String streamContents: [ :s | 50000000000001.25 printOn: s fractionDigits: 2]) = '50000000000001.25'.
+
+	"Since 4 isPowerOfTwo, this number is also represented exactly as Float, it should print exactly"
+	self assert: 50000000000001.25 asTrueFraction = (200000000000005/4).
+	self assert: 200000000000005 highBit = 48.
+	self assert: (50000000000001.25 printStringFractionDigits: 2) = '50000000000001.25'.
 	
-	"This number is close to maximum float value"
+	"This number is close to fmax"
 	self shouldnt: [String streamContents: [ :s | 1.0e306 printOn: s fractionDigits: 3]] raise: Error.! !
 
 !NumberTest methodsFor: 'tests' stamp: 'jmv 1/9/2014 21:22'!

@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3120] on 26 June 2017 at 6:41:20 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Network-Kernel' 1 3!
+!provides: 'Network-Kernel' 1 4!
 !classDefinition: #InvalidSocketStatusException category: #'Network-Kernel'!
 Error subclass: #InvalidSocketStatusException
 	instanceVariableNames: ''
@@ -571,7 +571,7 @@ primAddressLookupResult
 
 !NetNameResolver class methodsFor: 'network initialization' stamp: 'ar 2/2/2001 15:09'!
 primInitializeNetwork: resolverSemaIndex
-	"Initialize the network drivers on platforms that need it, such as the Macintosh, and return nil if network initialization failed or the reciever if it succeeds. Since mobile computers may not always be connected to a network, this method should NOT be called automatically at startup time; rather, it should be called when first starting a networking application. It is a noop if the network driver has already been initialized. If non-zero, resolverSemaIndex is the index of a VM semaphore to be associated with the network name resolver. This semaphore will be signalled when the resolver status changes, such as when a name lookup query is completed."
+	"Initialize the network drivers on platforms that need it, such as the Macintosh, and return nil if network initialization failed or the receiver if it succeeds. Since mobile computers may not always be connected to a network, this method should NOT be called automatically at startup time; rather, it should be called when first starting a networking application. It is a noop if the network driver has already been initialized. If non-zero, resolverSemaIndex is the index of a VM semaphore to be associated with the network name resolver. This semaphore will be signalled when the resolver status changes, such as when a name lookup query is completed."
 	"Note: some platforms (e.g., Mac) only allow only one name lookup query at a time, so a manager process should be used to serialize resolver lookup requests."
 
 	<primitive: 'primitiveInitializeNetwork' module: 'SocketPlugin'>
@@ -2155,7 +2155,7 @@ pingPortsOn: hostName
 
 !Socket class methodsFor: 'network initialization' stamp: 'mir 2/22/2002 14:59'!
 primInitializeNetwork: resolverSemaIndex
-	"Initialize the network drivers on platforms that need it, such as the Macintosh, and return nil if network initialization failed or the reciever if it succeeds. Since mobile computers may not always be connected to a network, this method should NOT be called automatically at startup time; rather, it should be called when first starting a networking application. It is a noop if the network driver has already been initialized. If non-zero, resolverSemaIndex is the index of a VM semaphore to be associated with the network name resolver. This semaphore will be signalled when the resolver status changes, such as when a name lookup query is completed."
+	"Initialize the network drivers on platforms that need it, such as the Macintosh, and return nil if network initialization failed or the receiver if it succeeds. Since mobile computers may not always be connected to a network, this method should NOT be called automatically at startup time; rather, it should be called when first starting a networking application. It is a noop if the network driver has already been initialized. If non-zero, resolverSemaIndex is the index of a VM semaphore to be associated with the network name resolver. This semaphore will be signalled when the resolver status changes, such as when a name lookup query is completed."
 	"Note: some platforms (e.g., Mac) only allow only one name lookup query at a time, so a manager process should be used to serialize resolver lookup requests."
 
 	<primitive: 'primitiveInitializeNetwork' module: 'SocketPlugin'>
