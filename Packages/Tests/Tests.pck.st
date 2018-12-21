@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3539] on 21 December 2018 at 2:58:17 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3543] on 21 December 2018 at 5:42:36 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 113!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
+!provides: 'Tests' 1 114!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -686,26 +686,6 @@ TestCase subclass: #OrderedDictionaryTest
 OrderedDictionaryTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ShortIntegerArrayTest category: #'Tests-Collections'!
-TestCase subclass: #ShortIntegerArrayTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Collections'!
-!classDefinition: 'ShortIntegerArrayTest class' category: #'Tests-Collections'!
-ShortIntegerArrayTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ShortWordArrayTest category: #'Tests-Collections'!
-TestCase subclass: #ShortWordArrayTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Collections'!
-!classDefinition: 'ShortWordArrayTest class' category: #'Tests-Collections'!
-ShortWordArrayTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #WeakIdentitySetTest category: #'Tests-Collections'!
 TestCase subclass: #WeakIdentitySetTest
 	instanceVariableNames: ''
@@ -916,6 +896,16 @@ TestCase subclass: #YAXOTest
 YAXOTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #ArrayTest category: #'Tests-Collections-Arrayed'!
+TestCase subclass: #ArrayTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections-Arrayed'!
+!classDefinition: 'ArrayTest class' category: #'Tests-Collections-Arrayed'!
+ArrayTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #FloatArray64Test category: #'Tests-Collections-Arrayed'!
 TestCase subclass: #FloatArray64Test
 	instanceVariableNames: ''
@@ -934,6 +924,26 @@ TestCase subclass: #FloatArrayTest
 	category: 'Tests-Collections-Arrayed'!
 !classDefinition: 'FloatArrayTest class' category: #'Tests-Collections-Arrayed'!
 FloatArrayTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ShortIntegerArrayTest category: #'Tests-Collections-Arrayed'!
+TestCase subclass: #ShortIntegerArrayTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections-Arrayed'!
+!classDefinition: 'ShortIntegerArrayTest class' category: #'Tests-Collections-Arrayed'!
+ShortIntegerArrayTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ShortWordArrayTest category: #'Tests-Collections-Arrayed'!
+TestCase subclass: #ShortWordArrayTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Collections-Arrayed'!
+!classDefinition: 'ShortWordArrayTest class' category: #'Tests-Collections-Arrayed'!
+ShortWordArrayTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTester category: #'Tests-Exceptions'!
@@ -11772,46 +11782,6 @@ sampleData
 sampleData2
 	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
 
-!ShortIntegerArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
-testShortIntegerArray
-	"
-	Short IntegerArray holds 16 bit signed numbers.
-	ShortIntegerArrayTest new testShortIntegerArray
-	"
-        | u16 |
-        u16 := ShortIntegerArray new: 8.
-
-        u16 at: 1 put:  16r7123.
-        self assert: ((u16 at: 1) = 16r7123).
-        u16 at: 1 put: 0.
-        self assert: ((u16 at: 1) = 0).
-        u16 at: 1 put:  -1.
-        self assert: ((u16 at: 1) = -1).
-        u16 at: 1 put:  -32768.
-        self assert: ((u16 at: 1) = -32768).
-        self should: [u16 at: 1 put:  -32769] raise: Error. "to big"
-        self should: [u16 at: 1 put:  (16r7FFF + 1)] raise: Error. "too big"! !
-
-!ShortWordArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
-testShortWordArray
-	"
-	Short IntegerArray holds 16 bit unsigned numbers.
-	ShortWordArrayTest new testShortWordArray
-	"
-        | u16 |
-        u16 := ShortWordArray new: 8.
-
-        u16 at: 1 put:  16r8123.
-        self assert: ((u16 at: 1) = 16r8123).
-        u16 at: 1 put: 0.
-        self assert: ((u16 at: 1) = 0).
-        u16 at: 1 put:  32768.
-        self assert: ((u16 at: 1) = 32768).
-        u16 at: 1 put:  16rFFFF.
-        self assert: ((u16 at: 1) = 16rFFFF).
-        self should: [u16 at: 1 put:  -1] raise: Error. "wrong sign"
-        self should: [u16 at: 1 put:  (16rFFFF + 1)] raise: Error. "too big"! !
-
 !WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
 test
 	"
@@ -13726,6 +13696,51 @@ exampleString02
   <body>Don''t forget me this weekend!!</body>
 </note>'! !
 
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:41:00'!
+testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
+
+	| arrayToInsertTo invalidIndex |
+	
+	arrayToInsertTo := #(1 2 3) copy.
+	invalidIndex := arrayToInsertTo size + 1.
+	
+	self 
+		should: [ arrayToInsertTo insert: 0 shiftingRightAt: invalidIndex ]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: anError messageText equals: (Object errorDescriptionForSubcriptBounds: invalidIndex).
+			self assert: arrayToInsertTo equals: #(1 2 3) ].! !
+
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:39:47'!
+testCanNotInsertShiftingRightWhenInsertionPointIsLessThanOne
+
+	| arrayToInsertTo invalidIndex |
+	
+	arrayToInsertTo := #(1 2 3) copy.
+	invalidIndex := 0.
+	
+	self 
+		should: [ arrayToInsertTo insert: 0 shiftingRightAt: invalidIndex ]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: anError messageText equals: (Object errorDescriptionForSubcriptBounds: invalidIndex).
+			self assert: arrayToInsertTo equals: #(1 2 3) ].! !
+
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:27:08'!
+testInsertShiftingRightLoosesLastElementAndKeepsPreviousOnes
+
+	self assert: (#(1 3 4 5) copy insert: 2 shiftingRightAt: 2) equals: #(1 2 3 4)! !
+
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:27:21'!
+testInsertShiftingRightReplacesElementWhenSizeIsOne
+
+	self assert: (#(1) copy insert: 2 shiftingRightAt: 1) equals: #(2)! !
+
+!ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:28:20'!
+testInsertShiftingRightReplacesLastElementWhenInsertingAtLastIndex
+
+	self assert: (#(1 3 4 5) copy insert: 2 shiftingRightAt: 4) equals: #(1 3 4 2)! !
+
 !FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:38:50'!
 testZeroArrayDividend
 
@@ -13958,6 +13973,46 @@ divideByScalarZero
 		divideBy: 0.0
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
+
+!ShortIntegerArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
+testShortIntegerArray
+	"
+	Short IntegerArray holds 16 bit signed numbers.
+	ShortIntegerArrayTest new testShortIntegerArray
+	"
+        | u16 |
+        u16 := ShortIntegerArray new: 8.
+
+        u16 at: 1 put:  16r7123.
+        self assert: ((u16 at: 1) = 16r7123).
+        u16 at: 1 put: 0.
+        self assert: ((u16 at: 1) = 0).
+        u16 at: 1 put:  -1.
+        self assert: ((u16 at: 1) = -1).
+        u16 at: 1 put:  -32768.
+        self assert: ((u16 at: 1) = -32768).
+        self should: [u16 at: 1 put:  -32769] raise: Error. "to big"
+        self should: [u16 at: 1 put:  (16r7FFF + 1)] raise: Error. "too big"! !
+
+!ShortWordArrayTest methodsFor: 'testing' stamp: 'jmv 2/28/2013 16:58'!
+testShortWordArray
+	"
+	Short IntegerArray holds 16 bit unsigned numbers.
+	ShortWordArrayTest new testShortWordArray
+	"
+        | u16 |
+        u16 := ShortWordArray new: 8.
+
+        u16 at: 1 put:  16r8123.
+        self assert: ((u16 at: 1) = 16r8123).
+        u16 at: 1 put: 0.
+        self assert: ((u16 at: 1) = 0).
+        u16 at: 1 put:  32768.
+        self assert: ((u16 at: 1) = 32768).
+        u16 at: 1 put:  16rFFFF.
+        self assert: ((u16 at: 1) = 16rFFFF).
+        self should: [u16 at: 1 put:  -1] raise: Error. "wrong sign"
+        self should: [u16 at: 1 put:  (16rFFFF + 1)] raise: Error. "too big"! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
