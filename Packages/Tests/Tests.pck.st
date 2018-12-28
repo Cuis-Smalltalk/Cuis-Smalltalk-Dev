@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3543] on 21 December 2018 at 5:42:36 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3550] on 27 December 2018 at 6:42:42 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 114!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 116!
 !requires: 'ImageProcessing' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Math 3D' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -3133,6 +3133,33 @@ testPrintShowingDecimalPlaces4
 	0 to: 100 do: [ :extra |
 		self assert: (Float pi printStringFractionDigits: requiredDigits + extra) asNumber = Float pi ]! !
 
+!FloatTest methodsFor: 'tests - conversion from to String' stamp: 'jmv 12/27/2018 16:50:31'!
+testPrintStringStress
+	| eWidth mWidth ePrimeScale mPrimeScale |
+	eWidth _ Float emax - Float emin.
+	"211 for a more exhaustive but slower test. 41 for a quick run."
+	ePrimeScale _ 211.
+	ePrimeScale _ 41.
+	mWidth _ 1 bitShift: Float precision.
+	"9931 for a more exhaustive but slower test. 37 for a quick run."
+	mPrimeScale _ 9931.
+	mPrimeScale _ 37.
+	0
+		to: mWidth - 1 * mPrimeScale
+		by: mWidth
+		do: [ :mScaled | | m eAdjustment |
+			m _ mScaled // mPrimeScale.
+			eAdjustment _ m highBit - 1.
+			{mScaled. m. m hex. eAdjustment } print.
+			Float emin * ePrimeScale
+				to: Float emax * ePrimeScale
+				by: eWidth
+				do: [ :eFraction | | e fp |
+					e _ eFraction // ePrimeScale - eAdjustment.
+					fp _ m asFloat timesTwoPower: e.
+					self assert: fp printString asNumber = fp.
+					self assert: fp negated printString asNumber = fp negated ]]! !
+
 !FloatTest methodsFor: 'tests - conversion from to String' stamp: 'nice 3/14/2008 23:59'!
 testReadFromManyDigits
 	"A naive algorithm may interpret these representations as Infinity or NaN.
@@ -3334,11 +3361,13 @@ testSetOfFloat
 	size4 := (Set new: 4) add: 3; add: 3.0; size.
 	self assert: size3 = size4 description: 'The size of a Set should not depend on its capacity.'! !
 
-!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 12/6/2018 13:54:11'!
+!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 12/27/2018 18:37:19'!
 testE
 	"Just in case..."
 
 	self assert: Float e = 2.718281828459045.
+	self assert: Float e ln = 1.0.
+	self assert: Float e = 1.0 exp.
 	self assert: Float e hex = '4005BF0A8B145769'.! !
 
 !FloatTest methodsFor: 'tests - constants' stamp: 'jmv 10/11/2011 08:55'!
@@ -3353,11 +3382,12 @@ testMaxExactInteger
 	self deny: (Float maxExactInteger+1) asFloat truncated = (Float maxExactInteger+1)
 	! !
 
-!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 12/3/2018 21:16:54'!
+!FloatTest methodsFor: 'tests - constants' stamp: 'jmv 12/27/2018 18:39:24'!
 testPi
 	"Just in case..."
 
 	self assert: Float pi = 3.141592653589793.
+	self assert: Float pi = (1.0 arcTan * 4).
 	self assert: Float pi hex = '400921FB54442D18' ! !
 
 !FloatTest methodsFor: 'tests - precision and extreme values' stamp: 'jmv 12/12/2018 14:36:57'!
