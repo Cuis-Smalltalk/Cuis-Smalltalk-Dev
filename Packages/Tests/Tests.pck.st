@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3550] on 27 December 2018 at 6:42:42 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3568] on 8 January 2019 at 5:16:43 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 116!
-!requires: 'ImageProcessing' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 117!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
@@ -34,6 +34,7 @@ SystemOrganization addCategory: #'Tests-Kernel-Classes'!
 SystemOrganization addCategory: #'Tests-Tools-Testing'!
 SystemOrganization addCategory: #'Tests-YAXO'!
 SystemOrganization addCategory: #'Tests-Collections-Arrayed'!
+SystemOrganization addCategory: #'Tests-Kernel-Methods'!
 
 
 !classDefinition: #MyResumableTestError category: #'Tests-Exceptions'!
@@ -944,6 +945,16 @@ TestCase subclass: #ShortWordArrayTest
 	category: 'Tests-Collections-Arrayed'!
 !classDefinition: 'ShortWordArrayTest class' category: #'Tests-Collections-Arrayed'!
 ShortWordArrayTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CompiledMethodTest category: #'Tests-Kernel-Methods'!
+TestCase subclass: #CompiledMethodTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel-Methods'!
+!classDefinition: 'CompiledMethodTest class' category: #'Tests-Kernel-Methods'!
+CompiledMethodTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionTester category: #'Tests-Exceptions'!
@@ -14043,6 +14054,408 @@ testShortWordArray
         self assert: ((u16 at: 1) = 16rFFFF).
         self should: [u16 at: 1 put:  -1] raise: Error. "wrong sign"
         self should: [u16 at: 1 put:  (16rFFFF + 1)] raise: Error. "too big"! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:03:52'!
+test01withPropertiesDoIfSelectorEvaluatesFirstBlockWhenMethodHasProperties
+
+	| thisMethod propertyName methodProperties |
+	
+	propertyName := #testProperty.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: propertyName put: true.
+
+	thisMethod 
+		withPropertiesDo: [ :properties | methodProperties := properties ]
+		ifSelector: [ self fail ].
+	
+	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
+	self assert: (methodProperties at: propertyName)! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:04:31'!
+test02removePropertiesRestoresPenultimalLiteralToSelector
+
+	| thisMethod propertyName |
+	
+	propertyName := #testProperty.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: propertyName put: true.
+	thisMethod removeProperties.
+
+	self assert: thisMethod penultimateLiteral equals: thisContext selector.
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:04:52'!
+test03removePropertiesKeepsSelectorIfMethodDoesNotHaveProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	"I have to remove it twice because when running with live typing methods always have method properties - Hernan"
+	thisMethod removeProperties.
+	thisMethod removeProperties.
+
+	self assert: thisMethod penultimateLiteral equals: thisContext selector.
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:05:22'!
+test04withPropertiesDoIfSelectorEvaluatesSecondBlockWhenMethodHasNoProperties
+
+	| thisMethod methodSelector |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	thisMethod 
+		withPropertiesDo: [ :properties | self fail ]
+		ifSelector: [ :selector | methodSelector := selector ].
+		
+	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
+	self assert: methodSelector equals: thisContext selector! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:05:40'!
+test05hasLiteralSuchThatTravelsListeralsWhenMethodHasProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: #testProperty put: true.
+	
+	self assert: (thisMethod hasLiteralSuchThat: [ :aLiteral | aLiteral = #class ]).
+	
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:05:54'!
+test06hasLiteralSuchThatTravelsListeralsWhenMethodHasNoProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	self assert: (thisMethod hasLiteralSuchThat: [ :aLiteral | aLiteral = #class ]).
+	
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:06:51'!
+test0701withPropertiesDoReturnsNilIfMethodHasNoProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+
+	self assert: (thisMethod withPropertiesDo: [ :properties | self fail ]) isNil! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:07:21'!
+test07withPropertiesDoEvaluatesBlockOnlyWhenMethodHasProperties
+
+	| thisMethod propertyName methodProperties |
+	
+	propertyName := #testProperty.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: propertyName put: true.
+
+	thisMethod withPropertiesDo: [ :properties | methodProperties := properties ].
+	
+	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
+	self assert: (methodProperties at: propertyName)! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:07:47'!
+test08hasLiteralThoroughReturnTrueWhenMethodHasPropertiesAndHasLiteral
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: #testProperty put: true.
+	
+	self assert: (thisMethod hasLiteralThorough: #class).
+	
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:08:08'!
+test09hasLiteralThoroughReturnFalseWhenMethodHasPropertiesAndHasNoLiteral
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: #testProperty put: true.
+	
+	self deny: (thisMethod hasLiteralThorough: 'abc' asSymbol).
+	
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:08:21'!
+test10hasLiteralThoroughReturnTrueWhenMethodHasNoPropertiesAndHasLiteral
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	self assert: (thisMethod hasLiteralThorough: #class).
+	
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:08:34'!
+test11hasLiteralThoroughReturnFalseWhenMethodHasNoPropertiesAndHasNoLiteral
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	self deny: (thisMethod hasLiteralThorough: 'abc' asSymbol).
+	
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:08:51'!
+test12pragmaAtReturnsPragmaIfExist
+
+	<test>
+	
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	
+	self assert: (thisMethod pragmaAt: #test) key equals: #test! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:09:07'!
+test13pragmaAtReturnsNilIfPragmaDoesNotExist
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	
+	self assert: (thisMethod pragmaAt: #test) isNil! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:09:26'!
+test14pragmasReturnsCollectionOfMethodPragmas
+
+	<test>
+	
+	| thisMethod pragmas |
+	
+	thisMethod := self class>>thisContext selector.
+	pragmas := thisMethod pragmas.
+	
+	self assert: pragmas size equals: 1.
+	self assert: pragmas first key equals: #test! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:09:49'!
+test15pragmasReturnsEmptyCollectionWhenMethodHasNoProperties
+
+	| thisMethod pragmas |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	pragmas := thisMethod pragmas.
+	
+	self assert: pragmas isEmpty ! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:14:18'!
+test16propertiesReturnsAnNewAdditionalMethodStateWhenNoPropertiesHasBeenSet
+
+	| thisMethod properties |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	properties := thisMethod properties.
+	
+	self assert: properties isEmpty.
+	self assert: properties selector equals: thisContext selector.
+	self deny: properties == thisMethod properties ! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:14:35'!
+test17propertiesReturnsTheAlreadySetAdditionalMethodStateWhenHasProperties
+
+	| propertyName thisMethod properties |
+	
+	propertyName := #testProperty.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: propertyName put: true.
+	
+	properties := thisMethod properties.
+	self assert: (properties includesKey: propertyName).
+	self assert: properties selector equals: thisContext selector.
+	! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:17:28'!
+test18propertyKeysAndValuesDoIteratesOverProperties
+
+	| propertyName thisMethod properties |
+	
+	propertyName := #testProperty.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: propertyName put: true.
+	
+	properties := OrderedCollection new.
+	thisMethod propertyKeysAndValuesDo: [ :key :value | properties add: key -> value ].
+	
+	self assert: properties size equals: 1.
+	self assert: properties first equals: propertyName -> true! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:20:11'!
+test19propertyKeysAndValuesDoDoesNotEvaluateBlockWhenMethodHasNoProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	thisMethod propertyKeysAndValuesDo: [ :key :value | self fail ]! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:58:44'!
+test20propertyValueAtReturnsPropertyValueWhenSetted
+
+	| propertyName propertyValue thisMethod |
+	
+	propertyName := #testProperty.
+	propertyValue := 1.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: propertyName put: propertyValue.
+	
+	self assert: (thisMethod propertyValueAt: propertyName) equals: propertyValue ! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:56:20'!
+test21propertyValueAtReturnsNilWhenPropertyIsNotFound
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: #testProperty put: 1.
+	
+	self assert: (thisMethod propertyValueAt: #abc) isNil! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:55:00'!
+test22propertyValueAtReturnsNilWhenMethodHasNoProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	self assert: (thisMethod propertyValueAt: #testProperty) isNil! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:58:18'!
+test23propertyValueAtIfAbsetReturnsPropertyValueWhenFound
+
+	| propertyName propertyValue thisMethod |
+	
+	propertyName := #testProperty.
+	propertyValue := 1.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: propertyName put: propertyValue.
+	
+	self assert: (thisMethod propertyValueAt: propertyName ifAbsent: [ self fail ]) equals: propertyValue ! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:59:33'!
+test24propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenNotFound
+
+	| propertyName propertyValue thisMethod |
+	
+	propertyName := #testProperty.
+	propertyValue := 1.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: propertyName put: propertyValue.
+	
+	self assert: (thisMethod propertyValueAt: #abc ifAbsent: [ propertyValue + 1]) equals: propertyValue + 1 ! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:39:17'!
+test25propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenMethodHasNoProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	self assert: (thisMethod propertyValueAt: #testProperty ifAbsent: [ 1 ]) equals: 1! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:44:05'!
+test26propertyValueAtPutCreatesPropertiesWithNewOne
+
+	| thisMethod testProperty propertyValue |
+	
+	testProperty := #testProperty.
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	propertyValue := thisMethod propertyValueAt: testProperty put: 1.
+	
+	self assert: propertyValue equals: 1.
+	self assert: (thisMethod propertyValueAt: testProperty) equals: 1! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:44:40'!
+test27propertyValueAtPutReplacesPropertyIfAlreadyExisted
+
+	| thisMethod testProperty propertyValue |
+	
+	testProperty := #testProperty.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: testProperty put: 1.
+	propertyValue := thisMethod propertyValueAt: testProperty put: 2.
+	
+	self assert: propertyValue equals: 2.
+	self assert: (thisMethod propertyValueAt: testProperty) equals: 2! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:45:06'!
+test28propertyValueAtPutAddsNewPropertyIfPropertiesExisted
+
+	| thisMethod testProperty1 testProperty2 propertyValue |
+	
+	testProperty1 := #testProperty1.
+	testProperty2 := #testProperty2.
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: testProperty1 put: 1.
+	propertyValue := thisMethod propertyValueAt: testProperty2 put: 2.
+	
+	self assert: propertyValue equals: 2.
+	self assert: (thisMethod propertyValueAt: testProperty1) equals: 1.
+	self assert: (thisMethod propertyValueAt: testProperty2) equals: 2! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:47:40'!
+test29selectorReturnsMethodSelectorWhenNoProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod removeProperties.
+	
+	self assert: thisMethod selector equals: thisContext selector! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:48:40'!
+test30selectorReturnsMethodSelectorWhenHasProperties
+
+	| thisMethod |
+	
+	thisMethod := self class>>thisContext selector.
+	thisMethod propertyValueAt: #testProperty put: 1.
+	
+	self assert: thisMethod selector equals: thisContext selector! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:54:03'!
+test31SettingSelectorWhenHasNoProperties
+
+	| currentSelector thisMethod |
+	
+	currentSelector := thisContext selector.
+	thisMethod := self class>>currentSelector.
+	thisMethod removeProperties.
+	
+	[ thisMethod selector: #test.
+	self assert: thisMethod selector equals: #test ] ensure: [ thisMethod selector: currentSelector ]! !
+
+!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:54:47'!
+test32SettingSelectorWhenHasProperties
+
+	| currentSelector thisMethod |
+	
+	currentSelector := thisContext selector.
+	thisMethod := self class>>currentSelector.
+	thisMethod propertyValueAt: #testProperty put: 1.
+	
+	[ thisMethod selector: #test.
+	self assert: thisMethod selector equals: #test ] ensure: [ thisMethod selector: currentSelector ]! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
