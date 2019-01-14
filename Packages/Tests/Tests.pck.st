@@ -1,13 +1,13 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3568] on 8 January 2019 at 5:16:43 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3576] on 14 January 2019 at 4:37:44 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 117!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
+!provides: 'Tests' 1 118!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
+!requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -405,6 +405,16 @@ TestCase subclass: #BitBltTest
 	category: 'Tests-Graphics Primitives'!
 !classDefinition: 'BitBltTest class' category: #'Tests-Graphics Primitives'!
 BitBltTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #BecomeTest category: #'Tests-Kernel'!
+TestCase subclass: #BecomeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel'!
+!classDefinition: 'BecomeTest class' category: #'Tests-Kernel'!
+BecomeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BooleanTest category: #'Tests-Kernel'!
@@ -967,6 +977,16 @@ Object subclass: #ExceptionTester
 ExceptionTester class
 	instanceVariableNames: ''!
 
+!classDefinition: #BecomeTestExperiment category: #'Tests-Kernel'!
+Object subclass: #BecomeTestExperiment
+	instanceVariableNames: 'a b'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tests-Kernel'!
+!classDefinition: 'BecomeTestExperiment class' category: #'Tests-Kernel'!
+BecomeTestExperiment class
+	instanceVariableNames: ''!
+
 
 !FloatTest commentStamp: 'fbs 3/8/2004 22:13' prior: 0!
 I provide a test suite for Float values. Examine my tests to see how Floats should behave, and see how to use them.!
@@ -1153,6 +1173,9 @@ WeakSet. #scanFor:.
 WeakSet. #scanForLoadedSymbol:.
 }!
 
+!BecomeTest commentStamp: '<historical>' prior: 0!
+Tests that common uses of #become: and related methods don't crash the system when some method could resume execution on a 'becomed' instance.!
+
 !SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
 Tests for proper behavior of Special Selectors, for example #@!
 
@@ -1185,6 +1208,9 @@ If you break #shout and switch themes, you may not be able to edit text or use t
 
 !StatisticsTest commentStamp: '<historical>' prior: 0!
 Test statistics in Collection, Matrix and Histogram hierarchies. (This includes FloatMatrix, FloatImage, FloatArray, etc).!
+
+!BecomeTestExperiment commentStamp: '<historical>' prior: 0!
+To be used by BecomeTest!
 
 !MyResumableTestError methodsFor: 'exceptionDescription' stamp: 'tfei 6/13/1999 00:46'!
 isResumable
@@ -9491,6 +9517,20 @@ testAlphaCompositing2
 		self assert: result alpha = mixColor alpha.
 	].! !
 
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/11/2019 16:57:27'!
+testBecome
+	| e |
+	BecomeTestExperiment twoVars.
+	e _ BecomeTestExperiment new.
+	self should: [ e messStuffUpWBecome ] raise: AttemptToMutateObjectInCallStack! !
+
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/11/2019 16:57:24'!
+testShapeMutation
+	| e |
+	BecomeTestExperiment twoVars.
+	e _ BecomeTestExperiment new.
+	self should: [ e messStuffUp ] raise: AttemptToMutateObjectInCallStack! !
+
 !BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:35'!
 testAndAndAndAndTrueTable
 
@@ -15078,3 +15118,60 @@ runTest: aSelector
 		ifTrue: [self logTestResult: 'succeeded']
 		ifFalse: [self logTestResult: 'failed' ].
 ! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
+initialize
+	a _ 1.
+	b _ 2.! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:25:10'!
+messStuffUp
+"In a Workspace
+
+BecomeTestExperiment twoVars.
+e _ BecomeTestExperiment new.
+e messStuffUp.
+
+e _ nil. Smalltalk garbageCollect.
+BecomeTestExperiment allInstances
+
+Processor anyReceiverInStackIsKindOf: BecomeTestExperiment
+"
+
+	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
+	^a + b! !
+
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:25:25'!
+messStuffUpWBecome
+"In a Workspace
+
+BecomeTestExperiment twoVars.
+e _ BecomeTestExperiment new.
+e messStuffUpWBecome.
+
+e _ nil. Smalltalk garbageCollect.
+BecomeTestExperiment allInstances
+
+Processor anyReceiverInStackIsKindOf: BecomeTestExperiment
+"
+
+	self becomeForward: {22}.
+	^a + b! !
+
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:22:41'!
+threeVars
+
+	Object subclass: #BecomeTestExperiment
+		instanceVariableNames: 'c a b'
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'Tests-Kernel'! !
+
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:22:35'!
+twoVars
+
+	Object subclass: #BecomeTestExperiment
+		instanceVariableNames: 'a b'
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: 'Tests-Kernel'! !
