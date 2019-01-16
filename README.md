@@ -12,7 +12,7 @@ Like Squeak, Cuis is also:
 * Self contained
 * Multiplatform
 
-Like other Smalltalk-80 environments (including Squeak, Pharo and others), Cuis is also:
+Like other Smalltalk systems (including Squeak, Pharo and others), Cuis is also:
 * A complete development environment written in itself
 * A pure, dynamic Object Oriented language
 
