@@ -15,8 +15,8 @@ in the early days of PARC (heh heh -- others might disagree ...). But just
 having the right looking and acting HW doesn't come close, because the
 Dynabook was always a "user relationship" idea.
 
-     One of the titles of an early paper was "A Dynamic Medium for Creative
-Thought", and the main analogy was always to art and literature (especially
+     One of the titles of an early paper was 'A Dynamic Medium for Creative
+Thought', and the main analogy was always to art and literature (especially
 of the scientific type). In another early paper, I called the computer a
 "metamedium" since its content was dynamic descriptions of media. The most
 important new powerful idea that the computer brought to art and literature
