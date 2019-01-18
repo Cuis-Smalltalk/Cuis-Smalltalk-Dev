@@ -37,7 +37,7 @@ http://lists.squeakfoundation.org/pipermail/squeak-dev/2012-May/164142.html
 https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev  
 Adopting GitHub as our code repository greately eases project managing, gives us wider visibility, and protects the future of the project.
 
-## 2016-11-7 - Cuis5.0 ##
+## 2016-11-7 - Cuis 5.0 ##
 The [OpenSmalltalk](http://www.opensmalltalk.org) project keeps developing modern VMs for Open Source Smalltalk systems. We add Cuis images in the new Spur 32 and 64 bits formats to be used with them, in addition to the existing V3 32 bit image for existing VMs. Cuis is the only Smalltalk system that runs with exactly the same source code on 32 and 64 bits, and with many VM flavors and platforms, including:
 - Cog Spur 64 (High Performance 64 bits, jitted, for Intel)  
 - Cog Spur 32 (High Performance 32 bits, jitted, for Intel)  
