@@ -9,7 +9,7 @@ http://lists.squeakfoundation.org/pipermail/squeak-dev/2005-February/088787.html
 http://www.jvuletich.org/Squeak/EToysFreeMorphic/EtoysFreeMorphic.html  
 
 ## 2007-07-26 - Cheap, High Quality Fonts in Squeak ##
-Until this moment, Squeak only had 1 bit bitmap fonts that used to look reasonable on cathode ray displays, but look extremely pixelated on any modern display. I (Juan) developed the techniques to allow high quality, anti-aliased, sub-pixel rendered bitmap fonts with the existing VM support, including colored and alpha-blended text. I also built the font set. This work was developed for my fork, but was also adopted by Squeak and Pharo.  
+Until this moment, Squeak only had 1 bit bitmap fonts that used to look reasonable on cathode ray displays, but look extremely pixelated on any modern display. I (Juan) developed the techniques to allow high quality, anti-aliased, sub-pixel rendered bitmap fonts with the existing VM support, including colored and alpha-blended text. I also built several font sets, that got better over time. This work was developed for my fork, but was also adopted by Squeak and Pharo.  
 http://www.jvuletich.org/issues/Issue0010.htm  
 http://lists.squeakfoundation.org/pipermail/squeak-dev/2007-April/115930.html  
 http://lists.squeakfoundation.org/pipermail/squeak-dev/2007-April/115948.html  
