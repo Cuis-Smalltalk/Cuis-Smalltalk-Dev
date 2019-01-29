@@ -1,11 +1,11 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3576] on 14 January 2019 at 4:37:44 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3589] on 29 January 2019 at 1:05:38 pm'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 118!
+!provides: 'Tests' 1 119!
 !requires: 'Morphic-Widgets-Extras' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Math 3D' 1 nil nil!
 !requires: 'ImageProcessing' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
 !requires: 'YAXO' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
@@ -9517,19 +9517,19 @@ testAlphaCompositing2
 		self assert: result alpha = mixColor alpha.
 	].! !
 
-!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/11/2019 16:57:27'!
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:40'!
 testBecome
 	| e |
 	BecomeTestExperiment twoVars.
 	e _ BecomeTestExperiment new.
-	self should: [ e messStuffUpWBecome ] raise: AttemptToMutateObjectInCallStack! !
+	self should: [ e messStuffUpWBecome ] raise: MethodInCallStackToBecomeInvalid! !
 
-!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/11/2019 16:57:24'!
+!BecomeTest methodsFor: 'testing' stamp: 'jmv 1/29/2019 12:03:42'!
 testShapeMutation
 	| e |
 	BecomeTestExperiment twoVars.
 	e _ BecomeTestExperiment new.
-	self should: [ e messStuffUp ] raise: AttemptToMutateObjectInCallStack! !
+	self should: [ e messStuffUp ] raise: MethodInCallStackToBecomeInvalid! !
 
 !BooleanTest methodsFor: 'and tests' stamp: 'HAW 7/8/2018 20:03:35'!
 testAndAndAndAndTrueTable
@@ -15124,7 +15124,7 @@ initialize
 	a _ 1.
 	b _ 2.! !
 
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:25:10'!
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:12'!
 messStuffUp
 "In a Workspace
 
@@ -15135,13 +15135,13 @@ e messStuffUp.
 e _ nil. Smalltalk garbageCollect.
 BecomeTestExperiment allInstances
 
-Processor anyReceiverInStackIsKindOf: BecomeTestExperiment
+Processor invalidMethodInStackDueToClass: BecomeTestExperiment
 "
 
 	BecomeTestExperiment threeVars. "New ivar c is added before a and be"
 	^a + b! !
 
-!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:25:25'!
+!BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/29/2019 10:59:16'!
 messStuffUpWBecome
 "In a Workspace
 
@@ -15152,7 +15152,7 @@ e messStuffUpWBecome.
 e _ nil. Smalltalk garbageCollect.
 BecomeTestExperiment allInstances
 
-Processor anyReceiverInStackIsKindOf: BecomeTestExperiment
+Processor invalidMethodInStackDueToClass: BecomeTestExperiment
 "
 
 	self becomeForward: {22}.
