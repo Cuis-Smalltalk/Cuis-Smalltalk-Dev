@@ -1,13 +1,10 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3589] on 29 January 2019 at 1:05:38 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3593] on 1 February 2019 at 10:55:48 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 119!
-!requires: 'Morphic-Widgets-Extras' 1 nil nil!
+!provides: 'Tests' 1 122!
+!requires: 'YAXO' 1 nil nil!
 !requires: 'Compression' 1 nil nil!
-!requires: 'Math 3D' 1 nil nil!
-!requires: 'ImageProcessing' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -777,16 +774,6 @@ TestCase subclass: #SystemDictionaryTest
 SystemDictionaryTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TextEditorTest category: #'Tests-System'!
-TestCase subclass: #TextEditorTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-System'!
-!classDefinition: 'TextEditorTest class' category: #'Tests-System'!
-TextEditorTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #TrieTest category: #'Tests-System'!
 TestCase subclass: #TrieTest
 	instanceVariableNames: ''
@@ -845,16 +832,6 @@ TestCase subclass: #ZipCrcTests
 	category: 'Tests-Compression'!
 !classDefinition: 'ZipCrcTests class' category: #'Tests-Compression'!
 ZipCrcTests class
-	instanceVariableNames: ''!
-
-!classDefinition: #StatisticsTest category: #'Tests-Statistics'!
-TestCase subclass: #StatisticsTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Tests-Statistics'!
-!classDefinition: 'StatisticsTest class' category: #'Tests-Statistics'!
-StatisticsTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BehaviorTest category: #'Tests-Kernel-Classes'!
@@ -1205,9 +1182,6 @@ Tests for the Taskbar.!
 
 !ThemesTest commentStamp: '<historical>' prior: 0!
 If you break #shout and switch themes, you may not be able to edit text or use the debugger. This seemed worthy of a test case.!
-
-!StatisticsTest commentStamp: '<historical>' prior: 0!
-Test statistics in Collection, Matrix and Histogram hierarchies. (This includes FloatMatrix, FloatImage, FloatArray, etc).!
 
 !BecomeTestExperiment commentStamp: '<historical>' prior: 0!
 To be used by BecomeTest!
@@ -10020,29 +9994,9 @@ wasteTime: iterations
 testCollectionAtSymbol
 	self assert: (#(1 2 3) @ #(10 20 30)) class == Array! !
 
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:22:32'!
-testFloatPointAtSymbol
-	self assert: (1.0@2.0 @ 3.0 ) class == Float64Vector3 ! !
-
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:26:17'!
-testFloatPointAtSymbol2
-	self assert: (self p2) class == Float64Vector3 ! !
-
-!SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:24:52'!
-testIntPointAtSymbol
-
-	self assert: (1@2 @ 3 ) class == Float64Vector3 ! !
-
 !SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:16:49'!
 testNumberAtSymbol
 	self assert: (1@2) class == Point! !
-
-!SpecialSelectorsTest methodsFor: 'aux' stamp: 'jmv 6/5/2017 12:25:48'!
-p2
-	"
-	SpecialSelectorsTest new p2 class
-	"
-	^ (1.0@2.0)@3.0! !
 
 !StrikeFontTest methodsFor: 'testing' stamp: 'jmv 4/12/2011 10:01'!
 testBaseAndDerivedFont
@@ -12483,67 +12437,6 @@ testMethodsWithUnboundGlobals
 	"
 	self assert: Smalltalk methodsWithUnboundGlobals isEmpty! !
 
-!TextEditorTest methodsFor: 'as yet unclassified' stamp: 'jmv 12/28/2017 16:11:57'!
-testSimpleEditor
-	"
-	TextEditorTest new testSimpleEditor
-	"
-	| m |
-	self shouldnt: [
-		m _ OneLineEditorMorph new.
-		m editor offerMenuFromEsc:
-			(KeyboardEvent new
-				setType: #keystroke
-				buttons: 0
-				position: 0@0
-				keyValue: 65
-				hand: UISupervisor ui activeHand
-				stamp: 0)
-	] raise: Exception! !
-
-!TextEditorTest methodsFor: 'testing' stamp: 'jmv 4/19/2016 10:22'!
-testUndoRedo
-	"
-	TextEditorTest new testUndoRedo
-	"
-	| editor model textComposition m text1 text0 text2 |
-	text0 _ ''.
-	model _ TextModel withText: text0 copy.
-	editor _ TextEditor new.
-	m _ InnerTextMorph new.
-	m privateOwner: TextModelMorph new.
-	m model: model.
-	editor morph: m.
-	editor instVarNamed: 'emphasisHere' put: Array new.
-	editor model: model.
-	textComposition _ TextComposition new.
-	textComposition
-		setModel: model;
-		extentForComposing: 300@300.
-	editor textComposition: textComposition.
-	textComposition editor: editor.
-	textComposition composeAll.
-
-	text1 _ 'some words' asText.
-	editor addString: text1.
-	self assert: model actualContents = text1.
-	editor undo.
-	self assert: model actualContents = text0.
-	editor redo.
-	self assert: model actualContents = text1.
-
-	text2 _ ' additional inserted stuff' asText.
-	editor addString: text2.
-	self assert: model actualContents = (text1, text2).
-	editor undo.
-	self assert: model actualContents = text1.
-	editor undo.
-	self assert: model actualContents = text0.
-	editor redo.
-	self assert: model actualContents = text1.
-	editor redo.
-	self assert: model actualContents = (text1, text2).! !
-
 !TrieTest methodsFor: 'aux' stamp: 'jmv 6/21/2011 22:05'!
 assert: subject isEquivalentToDictionary: controlGroup
 	"Test #size, #do:, "
@@ -13328,111 +13221,6 @@ testValidZipCrc
 	reader expectedCrc: writer crc.
 	self shouldnt:[ readBytes _ reader next: 100 ] raise: CRCError.
 	self assert: readBytes = 'Hello World'.! !
-
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:42:49'!
-testMax
-	| i correct gimpCorrect |
-	i _ FloatImage lena.
-	correct _ i elements inject: 0 into: [ :prev :each | prev max: each ].
-	gimpCorrect _ 246 / 256.0.
-	self assert: correct = gimpCorrect.
-	self assert: i elements max = correct.
-	self assert: i max = correct.
-	self assert: i histogram max = correct.! !
-
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:11:12'!
-testMean
-	| i correct gimpCorrect |
-	i _ FloatImage lena.
-	correct _ i elements sum / i elements size.
-	gimpCorrect _ 124.7 / 256.0.
-	self assert: correct % gimpCorrect <= 0.001.
-	self assert: i elements mean = correct.
-	self assert: i mean = correct.
-	self assert: correct % i histogram mean < 0.0001.! !
-
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:55:33'!
-testMedian
-	| i correct n sorted gimpCorrect h |
-	i _ FloatImage lena.
-	sorted _ i elements asArray sort.
-	n _ sorted size.
-	self assert: n even.
-	correct _ ((sorted at: n/2) + (sorted at: n/2+1)) * 0.5.
-	gimpCorrect _ 129 / 256.0.
-	self assert: correct = gimpCorrect.
-	self assert: i elements median = correct.
-	self assert: i elements asSortedCollection median = correct.
-	"histogram well matched to pixel values"
-	self assert: (i histogram: 256 lowValue: 0.0 highValue: 255.0/256) median = correct.
-	"general histogram"
-	h _ i histogram.
-	self assert: (h median - correct) abs < h halfBinWidth.
-	self assert: (i median - correct) abs < h halfBinWidth.! !
-
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:42:35'!
-testMin
-	| i correct gimpCorrect |
-	i _ FloatImage lena.
-	correct _ i elements inject: 1 into: [ :prev :each | prev min: each ].
-	gimpCorrect _ 14 / 256.0.
-	self assert: correct = gimpCorrect.
-	self assert: i elements min = correct.
-	self assert: i min = correct.
-	self assert: i histogram min = correct! !
-
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:56:32'!
-testMode
-	| i correct h |
-	i _ FloatImage lena.
-	correct _ i elements asBag sortedCounts first value.
-
-	self assert: i elements mode = correct.
-	h _ i histogram.
-	self assert: (h mode - correct) abs < h halfBinWidth.
-	self assert: (i mode - correct) abs < h halfBinWidth.! !
-
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:58:02'!
-testPercentiles
-	| image correct n sorted i0 i1 p percentiles gimpCorrect gimpCorrectValues histogram |
-	image _ FloatImage lena.
-	sorted _ image elements asArray sort.
-	n _ sorted size.
-	self assert: n even.
-	percentiles _ #(0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0).
-	gimpCorrectValues _ #(14 54 77 100 115 129 141 152 163 188 246).
-	histogram _ image histogram.
-	1 to: percentiles size do: [ :i |
-		p _ percentiles at: i.
-		i0 _ (n * p) floor max: 1.
-		i1 _ (n * p) ceiling max: 1.
-		correct _ ((sorted at: i0) + (sorted at: i1)) * 0.5.
-		gimpCorrect _ (gimpCorrectValues at: i) / 256.0.
-		self assert: correct = gimpCorrect.
-		self assert: (image elements percentile: p) = correct.
-		self assert: (image elements asSortedCollection percentile: p) = correct.
-		self assert: ((histogram percentile: p) - correct) abs < histogram halfBinWidth.
-		self assert: ((image percentile: p) - correct) abs < histogram halfBinWidth.
-	]! !
-
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 09:42:23'!
-testStandardDeviation
-	| i correct gimpCorrect |
-	i _ FloatImage lena.
-	correct _ i elements standardDeviation.
-	gimpCorrect _ 46.7 / 256.0.
-	self assert: correct %  gimpCorrect < 0.0001.
-	self assert: correct % i standardDeviation < 0.0001.
-	self assert: correct % i histogram standardDeviation < 0.0001.! !
-
-!StatisticsTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:10:38'!
-testSum
-	| i correct |
-	i _ FloatImage lena.
-	correct _ i elements inject: 0 into: [ :p :e | p + e ].
-	self assert: i elements sum = correct.
-	self assert: i sum = correct.
-	self assert: i histogram sum % correct < 0.0001.! !
 
 !BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HernanWilkinson 1/19/2017 20:32:36'!
 testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass
