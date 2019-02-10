@@ -1,10 +1,10 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3593] on 1 February 2019 at 10:55:48 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3606] on 10 February 2019 at 8:47:31 am'!
 'Description test that verifies that #should:raise: can expect Exception'!
-!provides: 'Tests' 1 122!
+!provides: 'Tests' 1 123!
 !requires: 'YAXO' 1 nil nil!
-!requires: 'Compression' 1 nil nil!
-!requires: 'Graphics-Files-Additional' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 nil nil!
+!requires: 'Graphics-Files-Additional' 1 nil nil!
+!requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Tests-Exceptions'!
 SystemOrganization addCategory: #'Tests-Kernel-Numbers'!
 SystemOrganization addCategory: #'Tests-Morphic-Kernel'!
@@ -13388,6 +13388,34 @@ testShouldRaiseWithExceptionDoValuesAssertionsBlockWhenExceptionIsRaised
 			assertionsBlockEvaluated := true ].
 		
 	self assert: assertionsBlockEvaluated ! !
+
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 2/6/2019 13:37:19'!
+testShouldRaiseWithMessageTextDoesNotFailWithRightMessageText
+
+	| messageText |
+	
+	messageText := 'some message'.
+	
+	self 
+		shouldnt: [ 
+			self 
+				should: [ self error: messageText ]
+				raise: Error
+				withMessageText: messageText ]
+		raise: TestResult failure 
+		! !
+
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 2/6/2019 13:38:00'!
+testShouldRaiseWithMessageTextFailsWithDifferentMessageText
+
+	self 
+		should: [ 
+			self 
+				should: [ self error: 'some message' ]
+				raise: Error
+				withMessageText: '' ]
+		raise: TestResult failure 
+		! !
 
 !TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:11:43'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
