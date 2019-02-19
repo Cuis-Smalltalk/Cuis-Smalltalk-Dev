@@ -1,7 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3528] on 18 December 2018 at 12:53:59 pm'!
-'Description Please enter a description for this package'!
-!provides: 'FFITests' 1 7!
-!requires: 'FFI' 1 nil nil!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3618] on 19 February 2019 at 5:11:21 pm'!
+'Description Changed 2 float tests from (a=b) to ((a - b) < epsilon)'!
+!provides: 'FFITests' 1 11!
+!requires: 'Cuis-Base' 50 3589 nil!
+!requires: 'FFI' 1 30 nil!
 SystemOrganization addCategory: #FFITests!
 
 
@@ -35,6 +36,16 @@ ExternalStructure subclass: #FFISmallStruct1
 FFISmallStruct1 class
 	instanceVariableNames: ''!
 
+!classDefinition: #FFITestBiggerStruct category: #FFITests!
+ExternalStructure subclass: #FFITestBiggerStruct
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'FFITests'!
+!classDefinition: 'FFITestBiggerStruct class' category: #FFITests!
+FFITestBiggerStruct class
+	instanceVariableNames: ''!
+
 !classDefinition: #FFITestPoint2 category: #FFITests!
 ExternalStructure subclass: #FFITestPoint2
 	instanceVariableNames: ''
@@ -61,6 +72,9 @@ SUnitized tests for the FFI (mostly the plugin side)!
 
 !FFITestLibrary commentStamp: 'ar 8/14/2006 23:06' prior: 0!
 ExternalLibrarty used in FFI tests!
+
+!FFITestBiggerStruct commentStamp: '<historical>' prior: 0!
+Used in FFI unit test(s)!
 
 !FFITestPoint2 commentStamp: 'ar 8/14/2006 23:06' prior: 0!
 A class used for testing structures as arguments for the FFI.!
@@ -299,6 +313,24 @@ testLoadSymbolFromModule
 		should: [ ExternalAddress loadSymbol: 'ffiTestFloats' module: 'NonExistingModule' ]
 		raise: Error.		! !
 
+!FFIPluginTests methodsFor: 'structure tests' stamp: 'KenD 2/4/2019 15:36:17'!
+testBiggerStruct
+	"Test passing and returning up of structures > 64 bit"
+	| pt1 pt2 pt3 |
+	pt1 := FFITestPoint4 new.
+	pt1 x: 1. pt1 y: 2. pt1 z: 3. pt1 w: 4.
+	pt2 := FFITestPoint4 new.
+	pt2 x: 5. pt2 y: 6. pt2 z: 7. pt2 w: 8.
+	pt3 := FFITestLibrary ffiTestBiggerStruct: pt1 with: pt2.
+	self assert: pt3 x = 1.
+	self assert: pt3 y = 2.
+	self assert: pt3 z = 3.
+	self assert: pt3 w = 4.
+	self assert: pt3 r = 5.
+	self assert: pt3 s = 6.
+	self assert: pt3 t = 7.
+	self assert: pt3 u = 8.! !
+
 !FFIPluginTests methodsFor: 'structure tests' stamp: 'ar 8/14/2006 19:23'!
 testLongLongs
 	"Test passing and returning longlongs"
@@ -395,6 +427,11 @@ ffiPrintString: aString
 	<cdecl: char* 'ffiPrintString' (char *)>
 	^self externalCallFailed! !
 
+!FFITestLibrary methodsFor: 'primitives' stamp: 'KenD 2/4/2019 15:27:30'!
+ffiTestBiggerStruct: pt1 with: pt2
+	<cdecl: FFITestBiggerStruct 'ffiTestStructBigger' (FFITestPoint4 FFITestPoint4) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
 !FFITestLibrary methodsFor: 'primitives' stamp: 'ar 8/29/2011 21:59'!
 ffiTestChar: c1 with: c2 with: c3 with: c4
 	"FFITestLibrary new ffiTestChar: $A with: 65 with: 65.0 with: true"
@@ -429,6 +466,11 @@ ffiTestShort: c1 with: c2 with: c3 with: c4
 ffiPrintString: aString
 	"FFITestLibrary ffiPrintString: 'Hello'"
 	<cdecl: char* 'ffiPrintString' (char *) module:'SqueakFFIPrims'>
+	^self externalCallFailed! !
+
+!FFITestLibrary class methodsFor: 'primitives' stamp: 'KenD 2/7/2019 02:52:17'!
+ffiTestBiggerStruct: pt1 with: pt2
+	<cdecl: FFITestBiggerStruct 'ffiTestStructBigger' (FFITestPoint4 FFITestPoint4) module:'SqueakFFIPrims'>
 	^self externalCallFailed! !
 
 !FFITestLibrary class methodsFor: 'primitives' stamp: 'ar 8/14/2006 19:27'!
@@ -580,6 +622,123 @@ fields
 initialize
 	self compileFields! !
 
+!FFITestBiggerStruct methodsFor: 'accessing'!
+r
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle signedLongLongAt: 33! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+r: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle signedLongLongAt: 33 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+s
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle signedLongLongAt: 41! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+s: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle signedLongLongAt: 41 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+t
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle signedLongLongAt: 49! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+t: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle signedLongLongAt: 49 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+u
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle signedLongLongAt: 57! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+u: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle signedLongLongAt: 57 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+w
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle signedLongLongAt: 25! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+w: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle signedLongLongAt: 25 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+x
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle signedLongLongAt: 1! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+x: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle signedLongLongAt: 1 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+y
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle signedLongLongAt: 9! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+y: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle signedLongLongAt: 9 put: anObject! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+z
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	^handle signedLongLongAt: 17! !
+
+!FFITestBiggerStruct methodsFor: 'accessing'!
+z: anObject
+	"This method was automatically generated. See FFITestBiggerStruct class>>fields."
+	<generated>
+	handle signedLongLongAt: 17 put: anObject! !
+
+!FFITestBiggerStruct class methodsFor: 'field definition' stamp: 'KenD 2/7/2019 03:04:19'!
+fields
+	"FFITestPoint4 defineFields"
+	^#(
+		(x	'longlong')
+		(y	'longlong')
+		(z	'longlong')
+		(w	'longlong')
+		(r  'longlong')
+		(s  'longlong')
+		(t  'longlong')
+		(u  'longlong')
+	)! !
+
+!FFITestBiggerStruct class methodsFor: 'class initialization' stamp: 'KenD 2/7/2019 03:04:32'!
+initialize
+"
+	self defineFields; compileFields.
+"
+	self compileFields! !
+
 !FFITestPoint2 methodsFor: 'accessing' stamp: 'ar 12/1/1999 16:42'!
 x
 	"This method was automatically generated"
@@ -666,5 +825,6 @@ fields
 initialize
 	self compileFields! !
 FFISmallStruct1 initialize!
+FFITestBiggerStruct initialize!
 FFITestPoint2 initialize!
 FFITestPoint4 initialize!
