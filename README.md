@@ -34,7 +34,8 @@ Cuis is continuously evolving towards simplicity. Each release is better (i.e. s
 Cuis is the common name of a [small animal](https://en.wikipedia.org/wiki/Southern_mountain_cavy) that lives in Argentina's countryside. Cuis Smalltalk was originally forked from Squeak Smalltalk and many of us are also active in the Squeak community. So, picking the onomatopoeia of the voice of a mouse for the name makes sense. As the project was started in Buenos Aires, 'Cuis' (essentially 'Squeak' in Rioplatense Spanish) was the obvious choice.
 
 ### Setting up Cuis in your machine ###
-Just follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
+The quickest way to try Cuis (on Windows or MacOS) is by following [Getting started using Mac Finder or Windows Explorer](Documentation/GettingStarted-NoCommandLine.md) .
+If you are on a Linux system, or have git available and are comfortable with it, follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
 
 ### Learning about Cuis Smalltalk ###
 If you are learning Smalltalk, the Cuis community can help you. Check the ["Learning Cuis Smalltalk"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis "Learning Cuis Smalltalk") repository. It includes several great tutorials. Also, the TerseGuide.pck.st package (in the /Packages folder in this repo) is useful both as a guide and a reference.

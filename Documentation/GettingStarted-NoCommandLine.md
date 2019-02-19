@@ -1,4 +1,4 @@
-# Setting up and starting Cuis using a Windows or MacOS (no command line required) #
+# Setting up and starting Cuis using MacOS Finder or Windows Explorer (no command line required) #
 
 What follows are instructions for setting up Cuis on Windows or Mac OS X without using the command line. If you are comfortable with Git, please see [Getting started using Git Bash](GettingStarted.md). This document is intended for beginners, and tries to require as little previous knowledge as possible.
 
