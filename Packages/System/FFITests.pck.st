@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3618] on 19 February 2019 at 5:11:21 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3618] on 20 February 2019 at 12:11:02 am'!
 'Description Changed 2 float tests from (a=b) to ((a - b) < epsilon)'!
-!provides: 'FFITests' 1 11!
-!requires: 'Cuis-Base' 50 3589 nil!
+!provides: 'FFITests' 1 12!
 !requires: 'FFI' 1 30 nil!
+!requires: 'Cuis-Base' 50 3589 nil!
 SystemOrganization addCategory: #FFITests!
 
 
@@ -202,14 +202,14 @@ testGenericIntCall
 	result := FFITestLibrary ffiTestInt: $A with: 65 with: 65.0 with: true.
 	self assert: result = 130.! !
 
-!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 12/17/2018 12:42:54'!
+!FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 2/20/2019 00:10:42'!
 testGenericMixedDoublesIntAndStruct
 	"Test using generic FFI spec"
 	| result i struct |
 	i := 42.
 	struct := FFITestPoint4 new.
 	struct x: 1. struct y: 2. struct z: 3. struct w: 4.
-	result := FFITestLibrary ffiTestMixedDoublesIntAndStruct: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0 i: 42 s: struct.
+	result := FFITestLibrary ffiTestMixedDoublesIntAndStruct: 1.0 d: 2.0 d: 3.0 d: 4.0 d: 5.0 d: 6.0 d: 7.0 d: 8.0 d: 9.0 i: i s: struct.
 	self assert: result = (45.0 + 42 + 10)! !
 
 !FFIPluginTests methodsFor: 'simple tests' stamp: 'jmv 12/17/2018 12:44:56'!
