@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3622] on 21 February 2019 at 5:10:06 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3622] on 21 February 2019 at 5:54:55 pm'!
 'Description Tests for code included in the Base Cuis image.'!
-!provides: 'BaseImageTests' 1 125!
+!provides: 'BaseImageTests' 1 126!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Chronology'!
@@ -1803,7 +1803,24 @@ verify: aComplex isTrigonometricallyEqualTo: anotherComplex
 	super verify: aComplex real asFloat isTrigonometricallyEqualTo: anotherComplex real asFloat.
 	super verify: aComplex imaginary asFloat isTrigonometricallyEqualTo: anotherComplex imaginary asFloat.! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'GabrielOmarCotelli 6/6/2009 17:14'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/21/2019 17:38:32'!
+testAdd
+
+	self assert: 1.0 + 1.0 = 2.0.
+	self assert: Float fminNormalized + Float fminDenormalized > Float fminNormalized.
+	self assert: Float fminNormalized + Float fminDenormalized - Float fminNormalized = Float fminDenormalized.
+	self assert: 1.0 + Float zero = 1.0.
+	self assert: Float zero + 1.0 = 1.0.
+	self assert: 1.0 + Float negativeZero = 1.0.
+	self assert: Float negativeZero + 1.0 = 1.0.
+	self assert: 1.0 + Float infinity = Float infinity.
+	self assert: Float infinity + 1.0 = Float infinity.
+	self assert: 1.0 + Float negativeInfinity = Float negativeInfinity.
+	self assert: Float negativeInfinity + 1.0 = Float negativeInfinity.
+	self assert: (1.0 + Float nan) isNaN.
+	self assert: (Float nan + 1.0) isNaN.! !
+
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/21/2019 17:53:09'!
 testDivide
 
 	self assert: 1.5 / 2.0 = 0.75.
@@ -1813,8 +1830,53 @@ testDivide
 	self should: [ 2.0 / 0 ] raise: ZeroDivide.
 	self should: [ 2.0 / 0.0 ] raise: ZeroDivide.
 	self should: [ 1.2 / Float negativeZero ] raise: ZeroDivide.
-	self should: [ 1.2 / (1.3 - 1.3) ] raise: ZeroDivide
-	! !
+	self should: [ 1.2 / (1.3 - 1.3) ] raise: ZeroDivide.
+
+	self assert: 2.0 / 2.0 = 1.0.
+	self assert: Float fminNormalized / 2.0 * 2.0 = Float fminNormalized.
+	self assert: Float fminDenormalized * 2.0 / 2.0 = Float fminDenormalized.
+	self assertIsPositiveZero: Float zero / 1.0.
+	self assertIsNegativeZero: Float negativeZero / 1.0.
+	self assertIsPositiveZero: 1.0 / Float infinity.
+	self assert: Float infinity / 1.0 = Float infinity.
+	self assertIsNegativeZero: 1.0 / Float negativeInfinity.
+	self assert: Float negativeInfinity / 1.0 = Float negativeInfinity.
+	self assert: (1.0 / Float nan) isNaN.
+	self assert: (Float nan / 1.0) isNaN.! !
+
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/21/2019 17:53:58'!
+testMultiply
+
+	self assert: 2.0 * 2.0 = 4.0.
+	self assert: Float fminNormalized * 2.0 = (Float fminNormalized + Float fminNormalized).
+	self assert: Float fminDenormalized * 2.0 = (Float fminDenormalized + Float fminDenormalized).
+	self assertIsPositiveZero: 1.0 * Float zero.
+	self assertIsPositiveZero: Float zero * 1.0.
+	self assertIsNegativeZero: 1.0 * Float negativeZero.
+	self assertIsNegativeZero: Float negativeZero * 1.0.
+	self assert: 1.0 * Float infinity = Float infinity.
+	self assert: Float infinity * 1.0 = Float infinity.
+	self assert: 1.0 * Float negativeInfinity = Float negativeInfinity.
+	self assert: Float negativeInfinity * 1.0 = Float negativeInfinity.
+	self assert: (1.0 * Float nan) isNaN.
+	self assert: (Float nan * 1.0) isNaN.! !
+
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 2/21/2019 17:41:52'!
+testSubtract
+
+	self assert: 3.0 - 1.0 = 2.0.
+	self assert: Float fminNormalized - Float fminDenormalized < Float fminNormalized.
+	self assert: Float fminNormalized - Float fminDenormalized - Float fminNormalized = Float fminDenormalized negated.
+	self assert: 1.0 - Float zero = 1.0.
+	self assert: Float zero - 1.0 = -1.0.
+	self assert: 1.0 - Float negativeZero = 1.0.
+	self assert: Float negativeZero - 1.0 = -1.0.
+	self assert: 1.0 - Float infinity = Float negativeInfinity.
+	self assert: Float infinity - 1.0 = Float infinity.
+	self assert: 1.0 - Float negativeInfinity = Float infinity.
+	self assert: Float negativeInfinity - 1.0 = Float negativeInfinity.
+	self assert: (1.0 - Float nan) isNaN.
+	self assert: (Float nan - 1.0) isNaN.! !
 
 !FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 10/30/2016 17:12:55'!
 testTimesTwoPowerGradualUnderflow
@@ -2078,12 +2140,13 @@ testSinh
 	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
 	self verify: 2.0 sinh negated isHyperbolicallyEqualTo: 2.0 negated sinh! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 10:51:34'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 2/21/2019 17:52:04'!
 testSqrt
 	self assert: Float nan sqrt isNaN.
 	self assert: Float infinity sqrt = Float infinity.
 	self assertIsPositiveZero: Float zero sqrt.
-	self assertIsNegativeZero: Float negativeZero sqrt.! !
+	self assertIsNegativeZero: Float negativeZero sqrt.
+	self assert: Float fminNormalized sqrt squared = Float fminNormalized ! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 11:03:49'!
 testSqrtNonPrimitive
