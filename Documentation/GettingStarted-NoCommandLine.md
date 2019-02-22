@@ -12,7 +12,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file to your folder
 * download [`squeak.cog.spur_win64x64_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win64x64_201807260206.zip)
 * extract the contents of the zip file to your folder
-* drop the Cuis5.0-3610-32.image over the Squeak.exe file
+* drop the Cuis5.0-3610.image over the Squeak.exe file
 
 ## On Mac OS X ##
 * Create a new folder in your machine using Mac Finder
