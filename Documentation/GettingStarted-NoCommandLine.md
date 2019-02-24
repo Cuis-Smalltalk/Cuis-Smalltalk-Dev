@@ -6,21 +6,21 @@ If you want to contribute back to the community, you might subscribe to the Cuis
 
 The Cuis image specified is the most current one. The VM specified is the latest one too.
 
-## On Windows (64 bit systems) ##
-* Create a new folder in your machine using Windows Explorer
-* download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip), saving it to that folder.
-* extract the contents of the zip file right there ("extract here")
-* download [`squeak.cog.spur_win64x64_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win64x64_201807260206.zip), saving it to yourFolder\Cuis-Smalltalk-Dev-master\ (the folder that was just created while extracting the first zip file).
-* extract the contents of the zip file right there ("extract here")
-* drop the Cuis5.0-3610.image over the Squeak.exe file. Alternatively, double click on the Squeak.exe file, and when prompted to select an image file, select Cuis5.0-3610.image.
-
-## On Windows (32 bit systems) ##
+## On Windows ##
 * Create a new folder in your machine using Windows Explorer
 * download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip), saving it to that folder.
 * extract the contents of the zip file right there ("extract here")
 * download [`squeak.cog.spur_win32x86_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win32x86_201807260206.zip), saving it to yourFolder\Cuis-Smalltalk-Dev-master\ (the folder that was just created while extracting the first zip file).
 * extract the contents of the zip file right there ("extract here")
 * drop the Cuis5.0-3610-32.image over the Squeak.exe file. Alternatively, double click on the Squeak.exe file, and when prompted to select an image file, select Cuis5.0-3610-32.image.
+
+## On Windows (64 bit systems only) ##
+* Create a new folder in your machine using Windows Explorer
+* download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip), saving it to that folder.
+* extract the contents of the zip file right there ("extract here")
+* download [`squeak.cog.spur_win64x64_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win64x64_201807260206.zip), saving it to yourFolder\Cuis-Smalltalk-Dev-master\ (the folder that was just created while extracting the first zip file).
+* extract the contents of the zip file right there ("extract here")
+* drop the Cuis5.0-3610.image over the Squeak.exe file. Alternatively, double click on the Squeak.exe file, and when prompted to select an image file, select Cuis5.0-3610.image.
 
 ## On Mac OS X ##
 * Create a new folder in your machine using Mac Finder
