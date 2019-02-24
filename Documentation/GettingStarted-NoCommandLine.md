@@ -14,6 +14,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file right there ("extract here")
 * drop the Cuis5.0-3610-32.image over the Squeak.exe file. Alternatively, double click on the Squeak.exe file, and when prompted to select an image file, select Cuis5.0-3610-32.image.
 * If you get a message like "This publisher could not be verified. Are you sure you want to run this software?", then untag "Always ask before opening this file" (if present) and click [Run].
+* If you get a message like "Windows has just protected your PC", then click on "Additional Information", and click [Run anyway].
 
 ## On Windows (64 bit systems only) ##
 * Create a new folder in your machine using Windows Explorer
@@ -23,6 +24,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * extract the contents of the zip file right there ("extract here")
 * drop the Cuis5.0-3610.image over the Squeak.exe file. Alternatively, double click on the Squeak.exe file, and when prompted to select an image file, select Cuis5.0-3610.image.
 * If you get a message like "This publisher could not be verified. Are you sure you want to run this software?", then untag "Always ask before opening this file" (if present) and click [Run].
+* If you get a message like "Windows has just protected your PC", then click on "Additional Information", and click [Run anyway].
 
 ## On Mac OS X ##
 * Create a new folder in your machine using Mac Finder
