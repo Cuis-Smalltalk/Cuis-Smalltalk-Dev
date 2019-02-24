@@ -13,6 +13,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * download [`squeak.cog.spur_win32x86_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win32x86_201807260206.zip), saving it to yourFolder\Cuis-Smalltalk-Dev-master\ (the folder that was just created while extracting the first zip file).
 * extract the contents of the zip file right there ("extract here")
 * drop the Cuis5.0-3610-32.image over the Squeak.exe file. Alternatively, double click on the Squeak.exe file, and when prompted to select an image file, select Cuis5.0-3610-32.image.
+* If you get a message like "This publisher could not be verified. Are you sure you want to run this software?", then untag "Always ask before opening this file" (if present) and click [Run].
 
 ## On Windows (64 bit systems only) ##
 * Create a new folder in your machine using Windows Explorer
@@ -21,6 +22,7 @@ The Cuis image specified is the most current one. The VM specified is the latest
 * download [`squeak.cog.spur_win64x64_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win64x64_201807260206.zip), saving it to yourFolder\Cuis-Smalltalk-Dev-master\ (the folder that was just created while extracting the first zip file).
 * extract the contents of the zip file right there ("extract here")
 * drop the Cuis5.0-3610.image over the Squeak.exe file. Alternatively, double click on the Squeak.exe file, and when prompted to select an image file, select Cuis5.0-3610.image.
+* If you get a message like "This publisher could not be verified. Are you sure you want to run this software?", then untag "Always ask before opening this file" (if present) and click [Run].
 
 ## On Mac OS X ##
 * Create a new folder in your machine using Mac Finder
