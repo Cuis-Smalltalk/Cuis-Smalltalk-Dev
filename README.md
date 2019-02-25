@@ -1,6 +1,6 @@
 # Cuis
 
-[Cuis](http://www.cuis-smalltalk.org) is a free [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) environment originally derived from [Squeak](http://www.squeak.org) with a specific set of goals: being simple and powerful. It is also portable to any platform, fast and efficient. This means it is a great tool for running on any hardware, ranging from RasPis and the like, and phones, up to cloud servers, and everything in between, including regular laptops and PCs.
+[Cuis](http://www.cuis-smalltalk.org) is an Open Source, multiplatform [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system.
 
 Cuis is
 * Small
