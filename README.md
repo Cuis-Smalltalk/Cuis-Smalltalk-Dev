@@ -1,7 +1,10 @@
 # Table of Contents
 
-## [About Cuis](#about)
-## [Stuff](#stuff)
+## [About Cuis](#about-cuis)
+## [About the name Cuis](#about-the-name-cuis)
+## [Setting up Cuis in your machine](#setting-up-cuis-in-your-machine)
+## [Learning about Cuis Smalltalk](#learning-about-cuis-smalltalk)
+## [Contributing to Cuis](#contributing-to-cuis)
 
 ## About Cuis
 
@@ -34,21 +37,21 @@ Cuis Smalltalk is our attempt at this challenge. Furthermore, we believe we are 
 
 Cuis is continuously evolving towards simplicity. Each release is better (i.e. simpler) than the previous one. At the same time, features are enhanced, and any reported bugs fixed. We also adopt recent enhancements from Squeak and share our work with the wider Squeak and Smalltalk community.
 
-### About the name Cuis ###
+## About the name Cuis
 Cuis is the common name of a [small animal](https://en.wikipedia.org/wiki/Southern_mountain_cavy) that lives in Argentina's countryside. Cuis Smalltalk was originally forked from Squeak Smalltalk and many of us are also active in the Squeak community. So, picking the onomatopoeia of the voice of a mouse for the name makes sense. As the project was started in Buenos Aires, 'Cuis' (essentially 'Squeak' in Rioplatense Spanish) was the obvious choice.
 
-### Setting up Cuis in your machine ###
+## Setting up Cuis in your machine
 The quickest way to try Cuis (on Windows or MacOS) is by following [Getting started using Mac Finder or Windows Explorer](Documentation/GettingStarted-NoCommandLine.md) .
 If you are on a Linux system, or have git available and are comfortable with it, follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
 
-### Learning about Cuis Smalltalk ###
+## Learning about Cuis Smalltalk
 If you are learning Smalltalk, the Cuis community can help you. Check the ["Learning Cuis Smalltalk"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis "Learning Cuis Smalltalk") repository. It includes several great tutorials. Also, the TerseGuide.pck.st package (in the /Packages folder in this repo) is useful both as a guide and a reference.
 
 Additionally, there are many tutorials and references for Smalltalk in the web. They apply quite well to Cuis, especially those written originally for Smalltalk-80 or Squeak. These books ["Smalltalk-80 the language and its implementation"](http://stephane.ducasse.free.fr/FreeBooks/BlueBook/Bluebook.pdf) and ["Inside Smalltalk volume I"](http://stephane.ducasse.free.fr/FreeBooks/InsideST/InsideSmalltalk.pdf) are great introductory texts, and they are also the reference for the language and basic class library. Both are freely available.
 
 The user interface enables you to access most of the code and conduct Smalltalk experiments on your own. You can review its features at ["Quick Tour of the UI"](https://github.com/Cuis-Smalltalk-Learning/Learning-Cuis/blob/master/Quick-UI-Tour.md). 
 
-### Contributing to Cuis ###
+## Contributing to Cuis
 Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev. The main meeting point for Cuis users and developers is the mail list http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org . You can broswse the archives for a glimpse of our discussions.
 
 If you want to contribute code to the project, please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
