@@ -1,10 +1,11 @@
 # Table of Contents
 
-#### [About](#about-cuis)
-#### [About the name](#about-the-name-cuis)
-##### [Running Cuis](#setting-up-cuis-in-your-machine)
-##### [Learning Cuis Smalltalk](#learning-about-cuis-smalltalk)
-##### [Contributing](#contributing-to-cuis)
+#### [About Cuis Smalltalk](#about-cuis)
+#### [Philosophy behind Cuis Smalltalk](#philosophy-behind-cuis)
+#### [About the name Cuis Smalltalk](#about-the-name-cuis)
+#### [Running Cuis Smalltalk](#setting-up-cuis-in-your-machine)
+#### [Learning Cuis Smalltalk](#learning-about-cuis-smalltalk)
+#### [Contributing to the project](#contributing-to-cuis)
 
 ## About Cuis
 [(back to ToC)](#table-of-contents)
@@ -24,7 +25,13 @@ Like other Smalltalk systems, Cuis is also:
 * A complete development environment written in itself
 * A pure, dynamic Object Oriented language
 
-Cuis shares the [OpenSmalltalk Virtual Machine](http://www.opensmalltalk.org) with Squeak, Pharo and Newspeak. What sets Cuis apart from the other members of the Squeak family is the focus on Smalltalk-80 and an active attitude towards system complexity:
+Cuis shares the [OpenSmalltalk Virtual Machine](http://www.opensmalltalk.org) with Squeak, Pharo and Newspeak.
+
+
+## Philosophy behind Cuis
+[(back to ToC)](#table-of-contents)
+
+What sets Cuis apart from the other members of the Squeak family is the focus on Smalltalk-80 and an active attitude towards system complexity:
 
 Unbound complexity growth, together with development strategies focused only in the short term, are the worst long term enemies of all software systems. As systems grow older, they usually become more complex. New features are added as layers on top of whatever is below, sometimes without really understanding it, and almost always without modifying it. Complexity and size grow without control. Evolution slows down. Understanding the system becomes harder every day. Bugs are harder to fix. Codebases become huge for no clear reason. At some point, the system can't evolve anymore and becomes "legacy code".
 
