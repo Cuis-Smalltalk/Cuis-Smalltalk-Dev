@@ -7,9 +7,8 @@ Cuis is
 * Clean
 * Appropriable
 
-Like Squeak, Cuis is also:
+Cuis is also:
 * Open Source
-* Self contained
 * Multiplatform
 
 Like other Smalltalk systems (including Squeak, Pharo and others), Cuis is also:
