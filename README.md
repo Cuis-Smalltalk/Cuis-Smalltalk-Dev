@@ -1,10 +1,10 @@
 # Table of Contents
 
-## [About Cuis](#about-cuis)
-## [About the name Cuis](#about-the-name-cuis)
-## [Setting up Cuis in your machine](#setting-up-cuis-in-your-machine)
-## [Learning about Cuis Smalltalk](#learning-about-cuis-smalltalk)
-## [Contributing to Cuis](#contributing-to-cuis)
+## [xAbout Cuis](#about-cuis)
+## [xAbout the name Cuis](#about-the-name-cuis)
+## [xSetting up Cuis in your machine](#setting-up-cuis-in-your-machine)
+## [xxxxxxxxxxxxxxxxxxxxLearning about Cuis Smalltalk](#learning-about-cuis-smalltalk)
+## [Cxontributing to Cuis](#contributing-to-cuis)
 
 ## About Cuis
 
