@@ -1,5 +1,9 @@
 # A short story of Cuis #
 
+The project is led by Juan Vuletich, who started it 15 years ago, after leading the development of an OS/2 specific VM for Squeak, and leading several Squeak projects. The focus has always been to develop a general purpose Smalltalk system that doesn't include application specific code by default, so it doesn't mandate extra burden on the developer. A friendly and enthusiastic community has formed around it, developing additional code packages and applications.
+
+Some landmarks in the project were:
+
 ## September, 2004 - Etoys free Morphic ##
 This is the point where the Smalltalk image that would later be called Cuis started to diverge from Squeak 3.7. The initial objective was to remove Etoys and other applications, resulting in a bare Morphic Smalltalk system that would not include any application specific code. Work started on September 2004, shortly after Squeak 3.7 was released.  
 http://lists.squeakfoundation.org/pipermail/squeak-dev/2005-February/087571.html  
