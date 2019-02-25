@@ -1,4 +1,9 @@
-# Cuis Smalltalk
+# Table of Contents
+
+## [About Cuis](#about)
+## [Stuff](#stuff)
+
+## About Cuis
 
 Cuis is an Open Source, multiplatform [Smalltalk-80](https://en.wikipedia.org/wiki/Smalltalk) system.
 
@@ -7,11 +12,11 @@ Cuis is
 * Clean
 * Appropriable
 
-Cuis is also:
+Additionally, Cuis is:
 * Open Source
 * Multiplatform
 
-Like other Smalltalk systems (including Squeak, Pharo and others), Cuis is also:
+Like other Smalltalk systems, Cuis is also:
 * A complete development environment written in itself
 * A pure, dynamic Object Oriented language
 
