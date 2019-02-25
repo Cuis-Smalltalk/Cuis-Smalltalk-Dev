@@ -1,7 +1,7 @@
 # Table of Contents
 
 #### [About Cuis Smalltalk](#about-cuis)
-#### [Philosophy behind Cuis Smalltalk](#philosophy-behind-cuis)
+#### [The Philosophy behind Cuis Smalltalk](#the-philosophy-behind-cuis)
 #### [About the name Cuis Smalltalk](#about-the-name-cuis)
 #### [Running Cuis Smalltalk](#setting-up-cuis-in-your-machine)
 #### [Learning Cuis Smalltalk](#learning-about-cuis-smalltalk)
@@ -28,7 +28,7 @@ Like other Smalltalk systems, Cuis is also:
 Cuis shares the [OpenSmalltalk Virtual Machine](http://www.opensmalltalk.org) with Squeak, Pharo and Newspeak.
 
 
-## Philosophy behind Cuis
+## The Philosophy behind Cuis
 [(back to ToC)](#table-of-contents)
 
 What sets Cuis apart from the other members of the Squeak family is the focus on Smalltalk-80 and an active attitude towards system complexity:
