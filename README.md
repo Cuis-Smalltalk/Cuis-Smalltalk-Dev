@@ -25,7 +25,7 @@ Like other Smalltalk systems, Cuis is also:
 * A complete development environment written in itself
 * A pure, dynamic Object Oriented language
 
-Cuis shares the [OpenSmalltalk Virtual Machine](http://www.opensmalltalk.org) with Squeak, Pharo and Newspeak.
+Cuis assumes very little on the underlying platform, and this lets it run out-of-the-box on Windows, MacOS, Linux, ChromeOS and WebBrowsers. Cuis shares the [OpenSmalltalk Virtual Machine](http://www.opensmalltalk.org) with Squeak, Pharo and Newspeak.
 
 
 ## The Philosophy behind Cuis
@@ -54,6 +54,7 @@ Cuis is the common name of a [small animal](https://en.wikipedia.org/wiki/Southe
 [(back to ToC)](#table-of-contents)
 
 The quickest way to try Cuis (on Windows or MacOS) is by following [Getting started using Mac Finder or Windows Explorer](Documentation/GettingStarted-NoCommandLine.md) .
+
 If you are on a Linux system, or have git available and are comfortable with it, follow [Setting up and starting Cuis Smalltalk](Documentation/GettingStarted.md) .
 
 ## Learning about Cuis Smalltalk
@@ -74,7 +75,7 @@ If you want to contribute code to the project, please read [Code Management in C
 
 In any case, we also accept contributions as ChangeSet files in email. Any contribution must be under the MIT license.
 
-To contribute code, please use an image with all included packages already loaded, using updated versions, especially, of any affected packages. This will ensure we don't break them while we evolve Cuis.
+To contribute code, please use an image with all relevant packages already loaded, using updated versions, especially, of any affected packages. This will ensure we don't break them while we evolve Cuis.
 Here is a Smalltalk script to load all packages currently included:
 ```
 Feature require: 'Core-Packages'
