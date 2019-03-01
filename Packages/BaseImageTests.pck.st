@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3622] on 21 February 2019 at 5:54:55 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3636] on 1 March 2019 at 2:19:38 pm'!
 'Description Tests for code included in the Base Cuis image.'!
-!provides: 'BaseImageTests' 1 126!
+!provides: 'BaseImageTests' 1 127!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Chronology'!
@@ -1221,6 +1221,11 @@ testUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
 methodReferencingReferencedVariable
 
 	^referenced  ! !
+
+!BehaviorTestSubclass class methodsFor: 'as yet unclassified' stamp: 'HAW 2/28/2019 19:18:42'!
+isAbstract
+
+	^true! !
 
 !AbstractNumberTest methodsFor: 'helpers' stamp: 'sqr 12/18/2018 16:27:22'!
 effectiveZeroExponentForTrigonometry
