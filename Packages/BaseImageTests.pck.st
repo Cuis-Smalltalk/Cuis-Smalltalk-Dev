@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3640] on 7 March 2019 at 10:40:35 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3649] on 7 March 2019 at 6:27:14 pm'!
 'Description Tests for code included in the Base Cuis image.'!
-!provides: 'BaseImageTests' 1 129!
+!provides: 'BaseImageTests' 1 130!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -627,16 +627,6 @@ DecompilerTests subclass: #DecompilerTestFailuresCollector
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'DecompilerTestFailuresCollector class' category: #'BaseImageTests-Compiler'!
 DecompilerTestFailuresCollector class
-	instanceVariableNames: ''!
-
-!classDefinition: #MethodNodeTest category: #'BaseImageTests-Compiler'!
-TestCase subclass: #MethodNodeTest
-	instanceVariableNames: 'anInstVar'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'MethodNodeTest class' category: #'BaseImageTests-Compiler'!
-MethodNodeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #MirrorPrimitiveTests category: #'BaseImageTests-Compiler'!
@@ -11358,30 +11348,6 @@ assert: aBoolean description: aString resumable: resumableBoolean
 failures
 	^failures! !
 
-!MethodNodeTest methodsFor: 'test data' stamp: 'HAW 3/1/2019 13:58:08'!
-blockParameterNamedAsInstVar
-
-    anInstVar isNil.
-    [:anInstVar | anInstVar isNil].! !
-
-!MethodNodeTest methodsFor: 'testing' stamp: 'HAW 3/1/2019 14:35:36'!
-test01PositionsForInstanceVariableWorksWhenThereAreLocalVarsWithSameName
-
-	| instVarName methodNode methodUnderTest positions startPosition expectedPosition |
-	
-	instVarName := 'anInstVar'.
-	methodUnderTest := self class >> #blockParameterNamedAsInstVar.
-	methodNode := methodUnderTest methodNode.
-	
-	positions := methodNode positionsForInstanceVariable: instVarName ifAbsent: [ self fail ].
-	"I assume the inst var is the first in the source code - Hernan"
-	startPosition := methodUnderTest sourceCode indexOfSubCollection: instVarName startingAt: 1.
-	expectedPosition := startPosition to: startPosition+instVarName size-1.
-	
-	self assert: 1 equals: positions size.
-	self assert: expectedPosition equals: positions first
-	! !
-
 !MirrorPrimitiveTests methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:06'!
 testMirrorAt
 	| stackpBefore stackpAfter array byteArray |
@@ -17099,20 +17065,20 @@ assertWasNotRenamedInClass: aClass
 	self deny: (senderMethod sendsOrRefersTo: newSelector).
 	self assert: (senderMethod sendsOrRefersTo: oldSelector)! !
 
-!RenameSelectorTest methodsFor: 'assertions' stamp: 'HAW 11/8/2018 15:30:32'!
-assertWasRenamedInClassAndMeta: classToRefactor
+!RenameSelectorTest methodsFor: 'assertions' stamp: 'HAW 3/7/2019 17:10:28'!
+assertWasRenamedInClassAndMeta: aClass
 	
 	| senderMethod |
 	
-	self assert: (classToRefactor includesSelector: newSelector).
-	self deny: (classToRefactor includesSelector: oldSelector).
-	senderMethod := classToRefactor compiledMethodAt: senderOfOldSelector.
+	self assert: (aClass includesSelector: newSelector).
+	self deny: (aClass includesSelector: oldSelector).
+	senderMethod := aClass compiledMethodAt: senderOfOldSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
 	self assert: (senderMethod sendsOrRefersTo: newSelector).
 	
-	self assert: (classToRefactor class includesSelector: newSelector).
-	self deny: (classToRefactor class includesSelector: oldSelector).
-	senderMethod := classToRefactor class compiledMethodAt: senderOfOldSelector.
+	self assert: (aClass class includesSelector: newSelector).
+	self deny: (aClass class includesSelector: oldSelector).
+	senderMethod := aClass class compiledMethodAt: senderOfOldSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
 	self assert: (senderMethod sendsOrRefersTo: newSelector).
 ! !
