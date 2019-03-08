@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3649] on 7 March 2019 at 6:27:14 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3651] on 8 March 2019 at 11:39:19 am'!
 'Description Tests for code included in the Base Cuis image.'!
-!provides: 'BaseImageTests' 1 130!
+!provides: 'BaseImageTests' 1 131!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -14631,8 +14631,8 @@ test08AddCreatesNewInstanceVariable
 	self assert: (classToRefactor definesInstanceVariableNamed: newVariable).
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:42:54'!
-test09WarnsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:43:31'!
+test09FailsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
 
 	| selector classToRefactor |
 
@@ -14643,11 +14643,11 @@ test09WarnsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
 	
 	self 
 		assertCreation: [ AddInstanceVariable named: newVariable to: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:43:00'!
-test10WarnsWhenNewVariableEqualsArgumentOfAMethodInClass
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:43:45'!
+test10FailsWhenNewVariableEqualsArgumentOfAMethodInClass
 
 	| selector classToRefactor |
 
@@ -14658,11 +14658,11 @@ test10WarnsWhenNewVariableEqualsArgumentOfAMethodInClass
 	
 	self 
 		assertCreation: [ AddInstanceVariable named: newVariable to: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:43:04'!
-test11WarnsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:44:12'!
+test11FailsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
 
 	| selector classToRefactor |
 
@@ -14673,11 +14673,11 @@ test11WarnsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
 		
 	self 
 		assertCreation: [ AddInstanceVariable named: newVariable to: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:43:08'!
-test12WarnsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:44:28'!
+test12FailsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
 
 	| selector classToRefactor |
 
@@ -14688,12 +14688,12 @@ test12WarnsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
 		
 	self 
 		assertCreation: [ AddInstanceVariable named: newVariable to: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	
 	! !
 
-!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:43:12'!
-test13WarnsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
+!AddInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:44:46'!
+test13FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 
 	| selector classToRefactor subclass |
 
@@ -14705,7 +14705,7 @@ test13WarnsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 		
 	self 
 		assertCreation: [ AddInstanceVariable named: newVariable to: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (subclass>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (subclass>>selector)) ].
 	
 	! !
 
@@ -15610,8 +15610,8 @@ test03NewVariableNameCanNotBeDefinedInMethod
 		failsWith: [ ExtractToTemporary errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: 1 ]
 	]	! !
 
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/30/2017 06:39:47'!
-test04WarnsIfNewTemporaryIsEqualToInstanceVariableInClass
+!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/7/2019 22:55:38'!
+test04FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 
 	| newVariable sourceCodeToExtract methodNodeToRefactor classToRefactor |
 	
@@ -15622,10 +15622,10 @@ test04WarnsIfNewTemporaryIsEqualToInstanceVariableInClass
 	
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		warnsWith: [ ExtractToTemporary warningMessageFor: newVariable willHideInstanceVariableDefinedIn: classToRefactor ]! !
+		failsWith: [ ExtractToTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: classToRefactor ]! !
 
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/30/2017 06:39:57'!
-test05WarnsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
+!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/7/2019 22:55:58'!
+test05FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 
 	| newVariable sourceCodeToExtract methodNodeToRefactor classToRefactor superclassToRefactor |
 	
@@ -15637,7 +15637,7 @@ test05WarnsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 	
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		warnsWith: [ ExtractToTemporary warningMessageFor: newVariable willHideInstanceVariableDefinedIn: superclassToRefactor ]! !
+		failsWith: [ ExtractToTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: superclassToRefactor ]! !
 
 !ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/30/2017 06:40:11'!
 test06SourceCodeToExtractMustBePartOfMethodNodeToRefactor
@@ -16932,8 +16932,8 @@ test14NewVariableOfExistingInstancesReferToOldVariableValue
 	self assert: 1 equals:  (instance instVarNamed: newVariable).
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:45:51'!
-test15WarnsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:45:27'!
+test15FailsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
 
 	| selector |
 
@@ -16943,11 +16943,11 @@ test15WarnsWhenNewVariableEqualsTemporaryVariableOfAMethodInClass
 	
 	self 
 		assertCreation: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:45:55'!
-test16WarnsWhenNewVariableEqualsArgumentOfAMethodInClass
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:45:44'!
+test16FailsWhenNewVariableEqualsArgumentOfAMethodInClass
 
 	| selector |
 
@@ -16957,11 +16957,11 @@ test16WarnsWhenNewVariableEqualsArgumentOfAMethodInClass
 	
 	self 
 		assertCreation: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:46:00'!
-test17WarnsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:45:59'!
+test17FailsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
 
 	| selector |
 
@@ -16971,11 +16971,11 @@ test17WarnsWhenNewVariableEqualsArgumentOfABlockInAMethodInClass
 	
 	self 
 		assertCreation: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:46:04'!
-test18WarnsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:46:25'!
+test18FailsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
 
 	| selector |
 
@@ -16985,11 +16985,11 @@ test18WarnsWhenNewVariableEqualsTemporaryOfABlockInAMethodInClass
 	
 	self 
 		assertCreation: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (classToRefactor>>selector)) ].
 	! !
 
-!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/3/2019 08:46:09'!
-test19WarnsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:46:39'!
+test19FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 
 	| selector subclass |
 
@@ -17000,7 +17000,7 @@ test19WarnsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 	
 	self 
 		assertCreation: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
-		warnsWith: [ NewInstanceVariablePrecondition warningMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (subclass>>selector)) ].
+		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (subclass>>selector)) ].
 	! !
 
 !RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 23:26:45'!
@@ -17645,8 +17645,8 @@ test04NewVariableNameCanNotBeDefinedInMethod
 		assertCreation: [RenameTemporary from: oldVariable to: oldVariable in: methodNode ]
 		failsWith: [RenameTemporary  errorMessageForNewTemporaryVariable: oldVariable isAlreadyDefinedIn: methodNode ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 6/25/2017 21:55:29'!
-test05WarnsIfNewTemporaryIsEqualToInstanceVariableInClass
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:56:31'!
+test05FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 
 	| methodNode oldVariable newVariable classToRefactor |
 	
@@ -17658,10 +17658,10 @@ test05WarnsIfNewTemporaryIsEqualToInstanceVariableInClass
 	
 	self 
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
-		warnsWith: [ RenameTemporary warningMessageFor: newVariable willHideInstanceVariableDefinedIn: classToRefactor ]! !
+		failsWith: [ RenameTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: classToRefactor ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 6/25/2017 21:55:35'!
-test06WarnsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:56:45'!
+test06FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 
 	| methodNode oldVariable newVariable classToRefactor superclassToRefactor |
 	
@@ -17674,7 +17674,7 @@ test06WarnsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 	
 	self 
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
-		warnsWith: [ RenameTemporary warningMessageFor: newVariable willHideInstanceVariableDefinedIn: superclassToRefactor ]! !
+		failsWith: [ RenameTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: superclassToRefactor ]! !
 
 !RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 19:28:36'!
 test07RenameCreatesNewTemporaryVariableAndDeletesOldOne
@@ -17975,23 +17975,23 @@ Processor invalidMethodInStackDueToClass: BecomeTestExperiment
 	self becomeForward: {22}.
 	^a + b! !
 
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:22:41'!
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:17'!
 threeVars
 
 	Object subclass: #BecomeTestExperiment
 		instanceVariableNames: 'c a b'
 		classVariableNames: ''
 		poolDictionaries: ''
-		category: 'Tests-Kernel'! !
+		category: 'BaseImageTests-Kernel'! !
 
-!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:22:35'!
+!BecomeTestExperiment class methodsFor: 'as yet unclassified' stamp: 'jmv 3/8/2019 11:37:22'!
 twoVars
 
 	Object subclass: #BecomeTestExperiment
 		instanceVariableNames: 'a b'
 		classVariableNames: ''
 		poolDictionaries: ''
-		category: 'Tests-Kernel'! !
+		category: 'BaseImageTests-Kernel'! !
 
 !ExceptionTester methodsFor: 'accessing' stamp: 'dtl 6/1/2004 21:53'!
 basicANSISignaledExceptionTestSelectors
