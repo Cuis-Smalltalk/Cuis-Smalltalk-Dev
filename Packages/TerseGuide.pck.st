@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3478] on 10 October 2018 at 7:31:35 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3652] on 10 March 2019 at 3:10:14 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 132!
+!provides: 'TerseGuide' 1 133!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -646,7 +646,7 @@ b _ $A <= $B.								"comparison"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 14:34:35'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 3/9/2019 11:52:37'!
 coding
 	"Code Patterns"
 	^
@@ -660,7 +660,7 @@ The decoupled style employs the ''observer pattern'' which ensures that the mode
 | b n |
 
 "To examine the patterns, in the parent directory which contains Cuis-Smalltalk-Dev* do the following:
-	''git clone https://github.com/dhnorton/Cuis-Smalltalk-patterns''
+	''git clone https://github.com/Cuis-Smalltalk/CodeExamples''
 	
 then, do the following:	
 "
