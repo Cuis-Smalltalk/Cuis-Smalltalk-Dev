@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3651] on 8 March 2019 at 11:39:19 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3653] on 11 March 2019 at 3:15:36 pm'!
 'Description Tests for code included in the Base Cuis image.'!
-!provides: 'BaseImageTests' 1 131!
+!provides: 'BaseImageTests' 1 132!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -19,7 +19,6 @@ SystemOrganization addCategory: #'BaseImageTests-System-Object Storage'!
 SystemOrganization addCategory: #'BaseImageTests-Graphics Primitives'!
 SystemOrganization addCategory: #'BaseImageTests-Graphics'!
 SystemOrganization addCategory: #'BaseImageTests-Morphic-Kernel'!
-SystemOrganization addCategory: #'BaseImageTests-Theme'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Autocompletion'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Taskbar'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Testing'!
@@ -489,16 +488,6 @@ TestCase subclass: #IntervalTest
 IntervalTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #OrderedCollectionTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #OrderedCollectionTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'OrderedCollectionTest class' category: #'BaseImageTests-Collections'!
-OrderedCollectionTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #OrderedDictionaryTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #OrderedDictionaryTest
 	instanceVariableNames: ''
@@ -807,16 +796,6 @@ TestCase subclass: #WorldTest
 	category: 'BaseImageTests-Morphic-Kernel'!
 !classDefinition: 'WorldTest class' category: #'BaseImageTests-Morphic-Kernel'!
 WorldTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ThemesTest category: #'BaseImageTests-Theme'!
-TestCase subclass: #ThemesTest
-	instanceVariableNames: 'theme'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Theme'!
-!classDefinition: 'ThemesTest class' category: #'BaseImageTests-Theme'!
-ThemesTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SmalltalkCompleterTest category: #'BaseImageTests-Tools-Autocompletion'!
@@ -1251,9 +1230,6 @@ Tests for composition of AffineTransformation and MorphicTranslation!
 
 !MorphicTranslationTest commentStamp: '<historical>' prior: 0!
 Tests for MorphicTranslation!
-
-!ThemesTest commentStamp: '<historical>' prior: 0!
-If you break #shout and switch themes, you may not be able to edit text or use the debugger. This seemed worthy of a test case.!
 
 !TaskbarTest commentStamp: '<historical>' prior: 0!
 Tests for the Taskbar.!
@@ -9327,7 +9303,7 @@ testFloatInterval
 		self assert: (1.0 to: 0.0 count: n) first = 1.0.
 		self assert: ((1.0 to: 0.0 count: n) last isWithin: 1 floatsFrom: 0.0)].! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:49'!
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 3/11/2019 15:06:54'!
 testFloatToByDo
 	"
 	IntervalTest new testFloatToByDo
@@ -9337,13 +9313,15 @@ testFloatToByDo
 	"See comment at #to:by:do:"
 	self flag: #expectedFailure.
 
+self shouldFix: [
 	interval _ 0 to: 2.4 by: 0.1.
 	toByDo _ Array streamContents: [ :strm |
 		0 to: 2.4 by: 0.1 do: [ :each |
 			strm nextPut: each ]].
 	self assert: toByDo size = interval size.
 	1 to: toByDo size do: [ :i |
-		self assert: (toByDo at: i) = (interval at: i) ]! !
+		self assert: (toByDo at: i) = (interval at: i) ]
+]! !
 
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
 testIntegerInterval
@@ -9370,58 +9348,6 @@ testIntegerToByDo
 	self assert: toByDo size = interval size.
 	1 to: toByDo size do: [ :i |
 		self assert: (toByDo at: i) = (interval at: i) ]! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
-testCollectAsReceiverIsModified
-	"
-	This test modifies a collection while iterating it.
-	This is very bad practice and should never be done.
-	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #collect:
-
-	OrderedCollectionTest new testCollectAsReceiverIsModified
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ OrderedCollection new.
-	col collect: [ :elem | 
-		result add: elem.
-		elem < 4 ifTrue: [ col add: col size + 1 ]].
-	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
-testDoAsReceiverIsModified
-	"
-	This test modifies a collection while iterating it.
-	This is very bad practice and should never be done.
-	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:do:,  as called by #do:
-
-	OrderedCollectionTest new testDoAsReceiverIsModified
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ OrderedCollection new.
-	col do: [ :elem | 
-		result add: elem.
-		elem < 4 ifTrue: [ col add: col size + 1 ]].
-	self assert: result = #(1 2 3 4 5) asOrderedCollection! !
-
-!OrderedCollectionTest methodsFor: 'tests' stamp: 'jmv 11/30/2014 10:47'!
-testReverseDoAsReceiverIsModified
-	"
-	This test modifies a collection while iterating it.
-	This is very bad practice and should never be done.
-	It is done here just to assert somewhat reasonable behavior, and more specifically, correct bytecode generation for #to:by:do:,  as called by #reverseDo:
-
-	OrderedCollectionTest new testReverseDoAsReceiverIsModified
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ OrderedCollection new.
-	col reverseDo: [ :elem |
-		result add: elem.
-		col size > 3 ifTrue: [ col removeFirst ]].
-	"Not nice, but what can we expect if we remove stuff during iteration?"
-	self assert: result = #(nil nil 3 4 5) asOrderedCollection reversed! !
 
 !OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
 testOrder
@@ -10515,13 +10441,15 @@ testBlockNumberingForInjectInto
 	self assert: ((tempRefs includesKey: (2 to: 4))
 				and: [(tempRefs at: (2 to: 4)) hasEqualElements: #(('each' 1) ('binaryBlock' 2) ('nextValue' (3 1)))])! !
 
-!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 12/28/2013 19:00'!
+!ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:15'!
 testDebuggerTempAccess
 
 	"This test also fails in Squeak. Check if it is ever fixed."
 	self flag: #expectedFailure.
 
-	self doTestDebuggerTempAccessWith: 1 with: 2! !
+self shouldFix: [
+	self doTestDebuggerTempAccessWith: 1 with: 2
+]! !
 
 !ClosureCompilerTest methodsFor: 'tests' stamp: 'jmv 5/27/2015 13:52'!
 testInjectIntoDecompilationsEncoderForV3PlusClosures
@@ -11130,29 +11058,41 @@ testDecompilerInClassesAAtoAM
 testDecompilerInClassesANtoAZ
 	self decompileClassesSelect: [:cn| cn first = $A and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:18'!
 testDecompilerInClassesBAtoBM
-	self decompileClassesSelect: [:cn| cn first = $B and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $B and: [cn second asUppercase <= $M]]
+]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:21'!
 testDecompilerInClassesBNtoBZ
-	self decompileClassesSelect: [:cn| cn first = $B and: [cn second asUppercase > $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $B and: [cn second asUppercase > $M]]
+]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:23'!
 testDecompilerInClassesCAtoCM
-	self decompileClassesSelect: [:cn| cn first = $C and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $C and: [cn second asUppercase <= $M]]
+]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:24'!
 testDecompilerInClassesCNtoCZ
-	self decompileClassesSelect: [:cn| cn first = $C and: [cn second asUppercase > $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $C and: [cn second asUppercase > $M]]
+]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:26'!
 testDecompilerInClassesDAtoDM
-	self decompileClassesSelect: [:cn| cn first = $D and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $D and: [cn second asUppercase <= $M]]
+]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:31'!
 testDecompilerInClassesDNtoDZ
-	self decompileClassesSelect: [:cn| cn first = $D and: [cn second asUppercase > $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $D and: [cn second asUppercase > $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesEAtoEM
@@ -11162,9 +11102,11 @@ testDecompilerInClassesEAtoEM
 testDecompilerInClassesENtoEZ
 	self decompileClassesSelect: [:cn| cn first = $E and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:32'!
 testDecompilerInClassesFAtoFM
-	self decompileClassesSelect: [:cn| cn first = $F and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $F and: [cn second asUppercase <= $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesFNtoFZ
@@ -11190,9 +11132,11 @@ testDecompilerInClassesHNtoHZ
 testDecompilerInClassesIAtoIM
 	self decompileClassesSelect: [:cn| cn first = $I and: [cn second asUppercase <= $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:35'!
 testDecompilerInClassesINtoIZ
-	self decompileClassesSelect: [:cn| cn first = $I and: [cn second asUppercase > $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $I and: [cn second asUppercase > $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesJAtoJM
@@ -11210,17 +11154,21 @@ testDecompilerInClassesKAtoKM
 testDecompilerInClassesKNtoKZ
 	self decompileClassesSelect: [:cn| cn first = $K and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:36'!
 testDecompilerInClassesLAtoLM
-	self decompileClassesSelect: [:cn| cn first = $L and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $L and: [cn second asUppercase <= $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesLNtoLZ
 	self decompileClassesSelect: [:cn| cn first = $L and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:38'!
 testDecompilerInClassesMAtoMM
-	self decompileClassesSelect: [:cn| cn first = $M and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $M and: [cn second asUppercase <= $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesMNtoMZ
@@ -11234,9 +11182,11 @@ testDecompilerInClassesNAtoNM
 testDecompilerInClassesNNtoNZ
 	self decompileClassesSelect: [:cn| cn first = $N and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:40'!
 testDecompilerInClassesOAtoOM
-	self decompileClassesSelect: [:cn| cn first = $O and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $O and: [cn second asUppercase <= $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesONtoOZ
@@ -11258,25 +11208,33 @@ testDecompilerInClassesQAtoQM
 testDecompilerInClassesQNtoQZ
 	self decompileClassesSelect: [:cn| cn first = $Q and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:42'!
 testDecompilerInClassesRAtoRM
-	self decompileClassesSelect: [:cn| cn first = $R and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $R and: [cn second asUppercase <= $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesRNtoRZ
 	self decompileClassesSelect: [:cn| cn first = $R and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:43'!
 testDecompilerInClassesSAtoSM
-	self decompileClassesSelect: [:cn| cn first = $S and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $S and: [cn second asUppercase <= $M]]
+]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:45'!
 testDecompilerInClassesSNtoSZ
-	self decompileClassesSelect: [:cn| cn first = $S and: [cn second asUppercase > $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $S and: [cn second asUppercase > $M]]
+]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:46'!
 testDecompilerInClassesTAtoTM
-	self decompileClassesSelect: [:cn| cn first = $T and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $T and: [cn second asUppercase <= $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesTNtoTZ
@@ -11290,17 +11248,21 @@ testDecompilerInClassesUAtoUM
 testDecompilerInClassesUNtoUZ
 	self decompileClassesSelect: [:cn| cn first = $U and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:48'!
 testDecompilerInClassesVAtoVM
-	self decompileClassesSelect: [:cn| cn first = $V and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $V and: [cn second asUppercase <= $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesVNtoVZ
 	self decompileClassesSelect: [:cn| cn first = $V and: [cn second asUppercase > $M]]! !
 
-!DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
+!DecompilerTests methodsFor: 'tests' stamp: 'jmv 3/11/2019 15:06:50'!
 testDecompilerInClassesWAtoWM
-	self decompileClassesSelect: [:cn| cn first = $W and: [cn second asUppercase <= $M]]! !
+self shouldFix: [
+	self decompileClassesSelect: [:cn| cn first = $W and: [cn second asUppercase <= $M]]
+]! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
 testDecompilerInClassesWNtoWZ
@@ -13690,60 +13652,6 @@ testDoOneCycleWorksWithDeferredQueue
                 finished _ true.
         ] valueWithin: 1 seconds onTimeout: [finished _ false ].
         self assert: finished! !
-
-!ThemesTest methodsFor: 'as yet unclassified' stamp: 'jmv 6/6/2012 22:37'!
-setUp
-	"Create an anonymous subclass of Theme, override #shout.
-	We do this because the ouput of #generateShoutConfig, the
-	method under test, is dependent on the color data answered 
-	by #shout, and we don't want the test to fail just because 
-	someone changed the colors on the default theme (Theme.)"
-
-	| metaclass |
-
-	metaclass := Metaclass new
-		superclass: Theme class;
-		methodDictionary: MethodDictionary new;
-		setFormat: Theme class format;
-		yourself.
-
-	theme := metaclass new
-		superclass: Theme;
-		methodDictionary: MethodDictionary new;
-		setFormat: Theme format;
-		yourself.
-		
-	theme compile:
-'	shout
-	"Color symbols as an association list."
-	
-	^ {
-		#defaults 				-> #black.
-		#undefined 			-> #green.
-		#methodTags 			-> #(green muchDarker).
-		#pseudoVariables 		-> #(red muchDarker).
-		#messages 			-> #(blue muchDarker).
-		#arguments 			-> #(cyan muchDarker).
-		#instVar 				-> #(magenta muchDarker).
-		#incompleteMessages -> #(gray veryMuchDarker).
-		#blockLevelFour 		-> #(green darker).
-		#blockLevelFive 		-> #(orange darker).
-		#blockLevelSix 		-> #(magenta darker).
-		#blockLevelSeven 		-> #blue.
-		#tempBar 				-> #gray.
-		#tempVars 			-> #(gray muchDarker).
-	}
-'! !
-
-!ThemesTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/19/2016 10:26'!
-shoutArray
-	^  #(#(#invalid #green) #(#excessCode #green) #(#'$' #green) #(#undefinedKeyword #green) #(#undefinedBinary #green) #(#undefinedUnary #green) #(#character #(#red #muchDarker)) #(#integer #(#red #muchDarker)) #(#number #(#red #muchDarker)) #(#- #(#red #muchDarker)) #(#blockStart3 #(#red #muchDarker)) #(#blockEnd3 #(#red #muchDarker)) #(#leftParenthesis3 #(#red #muchDarker)) #(#rightParenthesis3 #(#red #muchDarker)) #(#default #black) #(#arrayStart #black) #(#arrayEnd #black) #(#arrayStart1 #black) #(#arrayEnd1 #black) #(#leftBrace #black) #(#rightBrace #black) #(#cascadeSeparator #black) #(#chainSeparator #black) #(#statementSeparator #black) #(#externalCallType #black) #(#externalCallTypePointerIndicator #black) #(#rightParenthesis1 #black) #(#blockArgColon #black) #(#leftParenthesis #black) #(#rightParenthesis #black) #(#blockStart #black) #(#blockEnd #black) #(#self #(#red #muchDarker)) #(#super #(#red #muchDarker)) #(#true #(#red #muchDarker)) #(#false #(#red #muchDarker)) #(#nil #(#red #muchDarker)) #(#thisContext #(#red #muchDarker)) #(#blockStart4 #(#green #darker)) #(#blockEnd4 #(#green #darker)) #(#leftParenthesis4 #(#green #darker)) #(#rightParenthesis4 #(#green #darker)) #(#instVar #(#magenta #muchDarker)) #(#blockStart2 #(#magenta #muchDarker)) #(#blockEnd2 #(#magenta #muchDarker)) #(#leftParenthesis2 #(#magenta #muchDarker)) #(#rightParenthesis2 #(#magenta #muchDarker)) #(#keyword #(#blue #muchDarker)) #(#binary #(#blue #muchDarker)) #(#unary #(#blue #muchDarker)) #(#leftParenthesis5 #(#orange #darker)) #(#rightParenthesis5 #(#orange #darker)) #(#blockStart5 #(#orange #darker)) #(#blockEnd5 #(#orange #darker)) #(#leftParenthesis6 #(#magenta #darker)) #(#rightParenthesis6 #(#magenta #darker)) #(#blockStart6 #(#magenta #darker)) #(#blockEnd6 #(#magenta #darker)) #(#leftParenthesis7 #blue) #(#rightParenthesis7 #blue) #(#blockStart7 #blue) #(#blockEnd7 #blue) #(#methodTempBar #gray) #(#blockTempBar #gray) #(#blockArgsBar #gray) #(#primitive #(#green #muchDarker) #bold) #(#pragmaKeyword #(#green #muchDarker) #bold) #(#pragmaUnary #(#green #muchDarker) #bold) #(#pragmaBinary #(#green #muchDarker) #bold) #(#externalFunctionCallingConvention #(#green #muchDarker) #bold) #(#module #(#green #muchDarker) #bold) #(#primitiveOrExternalCallStart #black #bold) #(#primitiveOrExternalCallEnd #black #bold) #(#globalVar #black #bold) #(#workspaceVar #black #bold) #(#incompleteKeyword #(#gray #veryMuchDarker) #underlined) #(#incompleteBinary #(#gray #veryMuchDarker) #underlined) #(#incompleteUnary #(#gray #veryMuchDarker) #underlined) #(#patternArg #(#cyan #muchDarker) #italic) #(#methodArg #(#cyan #muchDarker) #italic) #(#blockPatternArg #(#cyan #muchDarker) #italic) #(#blockArg #(#cyan #muchDarker) #italic) #(#argument #(#cyan #muchDarker) #italic) #(#symbol #(#blue #muchDarker) #bold) #(#stringSymbol #(#blue #muchDarker) #bold) #(#literalArray #(#blue #muchDarker) #bold) #(#patternKeyword nil #bold) #(#patternBinary nil #bold) #(#patternUnary nil #bold) #(#ansiAssignment nil #bold) #(#assignment nil #(#bold #withST80Glyphs)) #(#return nil #(#bold #withST80Glyphs)) #(#tempVar #(#gray #muchDarker) #italic) #(#patternTempVar #(#gray #muchDarker) #italic) #(#poolConstant #(#gray #muchDarker) #italic) #(#blockTempVar #gray #italic) #(#blockPatternTempVar #gray #italic) #(#unfinishedString #green #normal) #(#undefinedIdentifier #green #bold) #(#unfinishedComment #(#red #muchDarker) #italic) #(#comment #(#green #muchDarker) #italic) #(#string #(#magenta #muchDarker) #normal) #(#literal nil #italic) #(#incompleteIdentifier #(#gray #muchDarker) #(#italic #underlined)) #(#classVar #(#gray #muchDarker) #bold))! !
-
-!ThemesTest methodsFor: 'as yet unclassified' stamp: 'cbr 12/17/2010 21:01'!
-testGenerateShoutConfig
-
-	self assert: 
-		(self shoutArray = theme new generateShoutConfig asArray)! !
 
 !SmalltalkCompleterTest methodsFor: 'testing' stamp: 'jmv 7/14/2011 14:26'!
 testMessages
