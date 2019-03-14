@@ -9,7 +9,7 @@ To load only some packages execute in a Workspace for example
 
     Feature require: 'Sound'.
     Feature require: 'WebClient'.
-    Feature require: 'Sound'.
+    Feature require: 'JSON'.
 
 Many additional packages are being developed by members of the Cuis community, and stored in their own repo. Most of them are of very high quality, well maintained and really useful.
 
