@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3653] on 11 March 2019 at 3:15:36 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3661] on 14 March 2019 at 3:48:23 pm'!
 'Description Tests for code included in the Base Cuis image.'!
-!provides: 'BaseImageTests' 1 132!
+!provides: 'BaseImageTests' 1 133!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -3717,6 +3717,12 @@ testZero2
 				readFrom: '10000000000000000000000000000000' readStream
 				base: 2)) = Float negativeZero! !
 
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 2/28/2019 16:13:30'!
+assertIsNaNorFail: aFloatOrSymbol
+	"Assert that aFloat is NaN or #fail.
+	For some BoxedFloat64, primitive 55 (sqrt) faile, unless jitter, where it answers NaN. We consider both values valid."
+	self assert: (aFloatOrSymbol = #fail or: [ aFloatOrSymbol isNaN ])! !
+
 !FloatTest methodsFor: 'helpers' stamp: 'jmv 10/3/2018 15:43:27'!
 assertIsNegativeZero: aFloat
 	"Assert that aFloat is Float negativeZero"
@@ -3733,6 +3739,410 @@ expectedFailures
 	^ Smalltalk platformName = 'Win32'
 		ifTrue: [#(testTimesTwoPowerGradualUnderflow)]
 		ifFalse: [#()]! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/27/2019 15:25:35'!
+testPrimAdd
+
+	self assert: (1.0 primTestAdd: 1.0) = 2.0.
+	self assert: (Float fminNormalized primTestAdd: Float fminDenormalized) > Float fminNormalized.
+	self assert: (Float fminNormalized primTestAdd: Float fminDenormalized) - Float fminNormalized = Float fminDenormalized.
+	self assert: (1.0 primTestAdd: Float zero) = 1.0.
+	self assert: (Float zero primTestAdd: 1.0) = 1.0.
+	self assert: (1.0 primTestAdd: Float negativeZero) = 1.0.
+	self assert: (Float negativeZero primTestAdd: 1.0) = 1.0.
+	self assert: (1.0 primTestAdd: Float infinity) = Float infinity.
+	self assert: (Float infinity primTestAdd: 1.0) = Float infinity.
+	self assert: (1.0 primTestAdd: Float negativeInfinity) = Float negativeInfinity.
+	self assert: (Float negativeInfinity primTestAdd: 1.0) = Float negativeInfinity.
+	self assert: (1.0 primTestAdd: Float nan) isNaN.
+	self assert: (Float nan primTestAdd: 1.0) isNaN.
+	self assert: (Float nan primTestAdd: Float nan) isNaN.! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 14:09:00'!
+testPrimArcTan
+
+	self verify: 1.0 primTestArcTan isTrigonometricallyEqualTo: Float pi / 4.
+	self verify: -1.0 primTestArcTan isTrigonometricallyEqualTo: Float pi / -4.
+	self verify: 0.0 primTestArcTan isTrigonometricallyEqualTo: 0.
+	self verify: Float infinity primTestArcTan isTrigonometricallyEqualTo: Float pi / 2.
+	self verify: Float negativeInfinity primTestArcTan isTrigonometricallyEqualTo: Float pi / -2.
+	self assert: Float nan primTestArcTan isNaN! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/28/2019 15:31:14'!
+testPrimDivideBy
+
+	self assert: (1.5 primTestDivideBy: 2.0) = 0.75.
+
+	self assert: (2.0 primTestDivideBy: 1) = 2.0.
+
+	self assert: (2.0 primTestDivideBy: 0) = #fail.
+	self assert: (2.0 primTestDivideBy: 0.0) = #fail.
+	self assert: (1.2 primTestDivideBy: Float negativeZero) = #fail.
+	self assert: (1.2 primTestDivideBy: (1.3 - 1.3)) = #fail.
+	self assert: (0.0 primTestDivideBy: 0.0) = #fail.
+	self assert: (0.0 primTestDivideBy: Float negativeZero) = #fail.
+	self assert: (Float negativeZero primTestDivideBy: 0.0) = #fail.
+	self assert: (Float negativeZero primTestDivideBy: Float negativeZero) = #fail.
+	self assert: (Float nan primTestDivideBy: 0.0) = #fail.
+	self assert: (Float nan primTestDivideBy: Float negativeZero) = #fail.
+	self assert: (Float infinity primTestDivideBy: 0.0) = #fail.
+	self assert: (Float negativeInfinity primTestDivideBy: Float negativeZero) = #fail.
+
+	self assert: (2.0 primTestDivideBy: 2.0) = 1.0.
+	self assert: (Float fminNormalized primTestDivideBy: 2.0) * 2.0 = Float fminNormalized.
+	self assert: (Float fminDenormalized * 2.0 primTestDivideBy: 2.0) = Float fminDenormalized.
+
+	self assertIsPositiveZero: (Float zero primTestDivideBy: 1.0).
+	self assertIsNegativeZero: (Float negativeZero primTestDivideBy: 1.0).
+
+	self assertIsPositiveZero: (1.0 primTestDivideBy: Float infinity).
+	self assert: (Float infinity primTestDivideBy: 1.0) = Float infinity.
+	self assertIsNegativeZero: (-1.0 primTestDivideBy: Float infinity).
+	self assert: (Float infinity primTestDivideBy: -1.0) = Float negativeInfinity.
+
+	self assertIsNegativeZero: (1.0 primTestDivideBy: Float negativeInfinity).
+	self assert: (Float negativeInfinity primTestDivideBy: 1.0) = Float negativeInfinity.
+	self assertIsPositiveZero: (-1.0 primTestDivideBy: Float negativeInfinity).
+	self assert: (Float negativeInfinity primTestDivideBy: -1.0) = Float infinity.
+
+	self assert: (1.0 primTestDivideBy: Float nan) isNaN.
+	self assert: (Float nan primTestDivideBy: 1.0) isNaN.
+	self assert: (Float nan primTestDivideBy: Float nan) isNaN.! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 18:00:27'!
+testPrimEqual
+
+	| samples |
+	samples _ { Float negativeInfinity. -1.0. Float fminNormalized negated. Float fminDenormalized negated. Float fminDenormalized. Float fminNormalized. 1.0. Float infinity }.
+
+	1 to: samples size do: [ :i |
+		1 to: samples size do: [ :j |
+			self assert: ((samples at: i) primTestEqual: (samples at: j)) = (i = j ) ]].
+
+	self assert: (Float zero primTestEqual: Float negativeZero).
+	self assert: (Float negativeZero primTestEqual: Float zero).
+	self deny: (Float zero primTestEqual: Float nan).
+	self deny: (Float nan primTestEqual: Float zero).
+	self deny: (Float negativeZero primTestEqual: Float nan).
+	self deny: (Float nan primTestEqual: Float negativeZero).
+	self deny: (Float nan primTestEqual: Float nan).
+
+	1 to: samples size do: [ :i |
+		self deny: ((samples at: i) primTestEqual: Float zero).
+		self deny: ((samples at: i) primTestEqual: Float negativeZero).
+		self deny: ((samples at: i) primTestEqual: Float nan).
+		self deny: (Float zero primTestEqual: (samples at: i)).
+		self deny: (Float negativeZero primTestEqual: (samples at: i)).
+		self deny: (Float nan primTestEqual: (samples at: i)) ].! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 13:51:33'!
+testPrimExpAndLn
+	| e |
+	e := Float e.
+	self assert: 1.0 primTestExp = e.
+	self assert: e primTestLn = 1.0.
+	self verify: 2.0 primTestExp isWithin: 1 floatsAwayFrom: e squared.
+	self assert: 2.0 primTestExp sqrt = e.
+	self assert: 2.0 primTestExp primTestLn = 2.0.
+	self assert: 0.0 primTestExp = 1.0.
+	self assert: 0.0 primTestLn = Float negativeInfinity.
+	self assert: 0.0 primTestLn primTestExp = 0.0.
+	self assert: 0.0 successor primTestLn ~= Float negativeInfinity.
+	self assert: 0.0 successor primTestLn primTestExp = 0.0 successor.
+	self assert: 0.0 successor primTestLn ceiling asFloat primTestExp > 0.0 successor.
+	self assertIsNaNorFail: -1.0 primTestLn.
+	self assert: Float nan primTestLn isNaN.
+	self assert: Float nan primTestExp isNaN! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 13:44:44'!
+testPrimExponent
+	self assert: 1.0 primTestExponent = 0.
+	self assert: 2.0 predecessor primTestExponent = 0.
+	self assert: 2.0 primTestExponent =  1.
+	self assert: 4.0 predecessor primTestExponent = 1.
+	self assert: 4.0 primTestExponent = 2.
+	self assert: Float fminNormalized primTestExponent = -1022.
+	self assert: Float fminDenormalized primTestExponent = (-1022-52).! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 17:50:52'!
+testPrimGreater
+	self deny: (1.0 primTestGreater: 1.0 successor).
+	self deny: (1.0 primTestGreater: 1.0).
+	self assert: (1.0 primTestGreater: 1.0 predecessor).
+	self assert: (0.0 primTestGreater: Float fminNormalized negated).
+	self assert: (0.0 primTestGreater: Float fminDenormalized negated).
+	self assert: (0.0 primTestGreater: -1.0).
+	self assert: (Float fminNormalized primTestGreater: 0.0).
+	self assert: (Float fminDenormalized primTestGreater: 0.0).
+	self deny: (-1.0 primTestGreater: 0.0).
+	self deny: (1.0 primTestGreater: Float infinity).
+	self deny: (Float infinity primTestGreater: Float infinity).
+	self deny: (Float negativeInfinity primTestGreater: Float infinity).
+	self deny: (Float negativeInfinity primTestGreater: -1.0).
+	self deny: (Float negativeInfinity primTestGreater: Float negativeZero).
+	self deny: (Float negativeZero primTestGreater: Float zero).
+	self deny: (Float zero primTestGreater: Float fminDenormalized).
+	self deny: (Float fminDenormalized primTestGreater: Float fminNormalized).
+	self deny: (Float fminNormalized primTestGreater: 1.0).
+	self deny: (Float nan primTestGreater: Float negativeInfinity).
+	self deny: (Float nan primTestGreater: Float negativeZero).
+	self deny: (Float nan primTestGreater: Float zero).
+	self deny: (Float nan primTestGreater: 1.0).
+	self deny: (Float nan primTestGreater: Float infinity).
+	self deny: (Float nan primTestGreater: Float nan).! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 17:53:17'!
+testPrimGreaterEqual
+	self deny: (1.0 primTestGreaterEqual: 1.0 successor).
+	self assert: (1.0 primTestGreaterEqual: 1.0).
+	self assert: (1.0 primTestGreaterEqual: 1.0 predecessor).
+	self assert: (0.0 primTestGreaterEqual: Float fminNormalized negated).
+	self assert: (0.0 primTestGreaterEqual: Float fminDenormalized negated).
+	self assert: (0.0 primTestGreaterEqual: -1.0).
+	self assert: (Float fminNormalized primTestGreaterEqual: 0.0).
+	self assert: (Float fminDenormalized primTestGreaterEqual: 0.0).
+	self deny: (-1.0 primTestGreaterEqual: 0.0).
+	self deny: (1.0 primTestGreaterEqual: Float infinity).
+	self assert: (Float infinity primTestGreaterEqual: Float infinity).
+	self deny: (Float negativeInfinity primTestGreaterEqual: Float infinity).
+	self deny: (Float negativeInfinity primTestGreaterEqual: -1.0).
+	self deny: (Float negativeInfinity primTestGreaterEqual: Float negativeZero).
+	self assert: (Float negativeZero primTestGreaterEqual: Float zero).
+	self deny: (Float zero primTestGreaterEqual: Float fminDenormalized).
+	self deny: (Float fminDenormalized primTestGreaterEqual: Float fminNormalized).
+	self deny: (Float fminNormalized primTestGreaterEqual: 1.0).
+	self deny: (Float nan primTestGreaterEqual: Float negativeInfinity).
+	self deny: (Float nan primTestGreaterEqual: Float negativeZero).
+	self deny: (Float nan primTestGreaterEqual: Float zero).
+	self deny: (Float nan primTestGreaterEqual: 1.0).
+	self deny: (Float nan primTestGreaterEqual: Float infinity).
+	self deny: (Float nan primTestGreaterEqual: Float nan).! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 17:46:13'!
+testPrimLess
+	self assert: (1.0 primTestLess: 1.0 successor).
+	self deny: (1.0 primTestLess: 1.0).
+	self deny: (1.0 primTestLess: 1.0 predecessor).
+	self assert: (0.0 primTestLess: Float fminNormalized).
+	self assert: (0.0 primTestLess: Float fminDenormalized).
+	self assert: (0.0 primTestLess: 1.0).
+	self assert: (Float fminNormalized negated primTestLess: 0.0).
+	self assert: (Float fminDenormalized negated primTestLess: 0.0).
+	self assert: (-1.0 primTestLess: 0.0).
+	self assert: (1.0 primTestLess: Float infinity).
+	self deny: (Float infinity primTestLess: Float infinity).
+	self assert: (Float negativeInfinity primTestLess: Float infinity).
+	self assert: (Float negativeInfinity primTestLess: -1.0).
+	self assert: (Float negativeInfinity primTestLess: Float negativeZero).
+	self deny: (Float negativeZero primTestLess: Float zero).
+	self assert: (Float zero primTestLess: Float fminDenormalized).
+	self assert: (Float fminDenormalized primTestLess: Float fminNormalized).
+	self assert: (Float fminNormalized primTestLess: 1.0).
+	self deny: (Float nan primTestLess: Float negativeInfinity).
+	self deny: (Float nan primTestLess: Float negativeZero).
+	self deny: (Float nan primTestLess: Float zero).
+	self deny: (Float nan primTestLess: 1.0).
+	self deny: (Float nan primTestLess: Float infinity).
+	self deny: (Float nan primTestLess: Float nan).! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 17:47:25'!
+testPrimLessEqual
+	self assert: (1.0 primTestLessEqual: 1.0 successor).
+	self assert: (1.0 primTestLessEqual: 1.0).
+	self deny: (1.0 primTestLessEqual: 1.0 predecessor).
+	self assert: (0.0 primTestLessEqual: Float fminNormalized).
+	self assert: (0.0 primTestLessEqual: Float fminDenormalized).
+	self assert: (0.0 primTestLessEqual: 1.0).
+	self assert: (Float fminNormalized negated primTestLessEqual: 0.0).
+	self assert: (Float fminDenormalized negated primTestLessEqual: 0.0).
+	self assert: (-1.0 primTestLessEqual: 0.0).
+	self assert: (1.0 primTestLessEqual: Float infinity).
+	self assert: (Float infinity primTestLessEqual: Float infinity).
+	self assert: (Float negativeInfinity primTestLessEqual: Float infinity).
+	self assert: (Float negativeInfinity primTestLessEqual: -1.0).
+	self assert: (Float negativeInfinity primTestLessEqual: Float negativeZero).
+	self assert: (Float negativeZero primTestLessEqual: Float zero).
+	self assert: (Float zero primTestLessEqual: Float fminDenormalized).
+	self assert: (Float fminDenormalized primTestLessEqual: Float fminNormalized).
+	self assert: (Float fminNormalized primTestLessEqual: 1.0).
+	self deny: (Float nan primTestLessEqual: Float negativeInfinity).
+	self deny: (Float nan primTestLessEqual: Float negativeZero).
+	self deny: (Float nan primTestLessEqual: Float zero).
+	self deny: (Float nan primTestLessEqual: 1.0).
+	self deny: (Float nan primTestLessEqual: Float infinity).
+	self deny: (Float nan primTestLessEqual: Float nan).! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/27/2019 15:26:33'!
+testPrimMultiplyBy
+
+	self assert: (2.0 primTestMultiplyBy: 2.0) = 4.0.
+	self assert: (Float fminNormalized primTestMultiplyBy: 2.0) = (Float fminNormalized + Float fminNormalized).
+	self assert: (Float fminDenormalized primTestMultiplyBy: 2.0) = (Float fminDenormalized + Float fminDenormalized).
+	self assertIsPositiveZero: (1.0 primTestMultiplyBy: Float zero).
+	self assertIsPositiveZero: (Float zero primTestMultiplyBy: 1.0).
+	self assertIsNegativeZero: (1.0 primTestMultiplyBy: Float negativeZero).
+	self assertIsNegativeZero: (Float negativeZero primTestMultiplyBy: 1.0).
+	self assert: (1.0 primTestMultiplyBy: Float infinity) = Float infinity.
+	self assert: (Float infinity primTestMultiplyBy: 1.0) = Float infinity.
+	self assert: (1.0 primTestMultiplyBy: Float negativeInfinity) = Float negativeInfinity.
+	self assert: (Float negativeInfinity primTestMultiplyBy: 1.0) = Float negativeInfinity.
+	self assert: (1.0 primTestMultiplyBy: Float nan) isNaN.
+	self assert: (Float nan primTestMultiplyBy: 1.0) isNaN.
+	self assert: (Float nan primTestMultiplyBy: Float nan) isNaN.! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/25/2019 18:02:13'!
+testPrimNotEqual
+
+	| samples |
+	samples _ { Float negativeInfinity. -1.0. Float fminNormalized negated. Float fminDenormalized negated. Float fminDenormalized. Float fminNormalized. 1.0. Float infinity }.
+
+	1 to: samples size do: [ :i |
+		1 to: samples size do: [ :j |
+			self assert: ((samples at: i) primTestNotEqual: (samples at: j)) ~= (i = j ) ]].
+
+	self deny: (Float zero primTestNotEqual: Float negativeZero).
+	self deny: (Float negativeZero primTestNotEqual: Float zero).
+	self assert: (Float zero primTestNotEqual: Float nan).
+	self assert: (Float nan primTestNotEqual: Float zero).
+	self assert: (Float negativeZero primTestNotEqual: Float nan).
+	self assert: (Float nan primTestNotEqual: Float negativeZero).
+	self assert: (Float nan primTestNotEqual: Float nan).
+
+	1 to: samples size do: [ :i |
+		self assert: ((samples at: i) primTestNotEqual: Float zero).
+		self assert: ((samples at: i) primTestNotEqual: Float negativeZero).
+		self assert: ((samples at: i) primTestNotEqual: Float nan).
+		self assert: (Float zero primTestNotEqual: (samples at: i)).
+		self assert: (Float negativeZero primTestNotEqual: (samples at: i)).
+		self assert: (Float nan primTestNotEqual: (samples at: i)) ].! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 13:57:07'!
+testPrimSin
+
+	self verify: 0.0 primTestSin isTrigonometricallyEqualTo: 0.0.
+	self verify: (Float pi / 6) primTestSin isTrigonometricallyEqualTo: 1.0 sqrt / 2.0.
+	self verify: (Float pi / 4) primTestSin isTrigonometricallyEqualTo: 2.0 sqrt / 2.0.
+	self verify: (Float pi / 3) primTestSin isTrigonometricallyEqualTo: 3.0 sqrt / 2.0.
+	self verify: (Float pi / 2) primTestSin isTrigonometricallyEqualTo: 1.0! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/12/2019 14:31:19'!
+testPrimSmallIntegerAsFloat
+	self assert: 7 asFloat = 7.0.
+	self assert: 0 asFloat = 0.0.
+	self assert: 1 asFloat = 1.0.
+	self assert: -1 asFloat = -1.0.
+	self assert: Float maxExactInteger asFloat = (Float maxExactInteger printString, '.0') asNumber.
+	self assert: Float maxExactInteger negated asFloat = (Float maxExactInteger negated printString, '.0') asNumber.
+	self assert: SmallInteger maxVal asFloat = (SmallInteger maxVal printString, '.0') asNumber.
+	self assert: SmallInteger minVal asFloat = (SmallInteger minVal printString, '.0') asNumber.! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/12/2019 14:27:58'!
+testPrimSqrt
+
+	self assert: 4.0 primTestSqrt = 2.0.
+	self assert: 0.0 primTestSqrt = 0.0.
+	self assert: Float negativeZero primTestSqrt = 0.0.
+	self assert: Float fminNormalized primTestSqrt squared = Float fminNormalized.
+	self assert: Float fminDenormalized primTestSqrt squared = Float fminDenormalized.
+	self assert: Float infinity primTestSqrt = Float infinity.
+	
+	"Seems to be #fail in workspaces, but for some BoxedFloat64, Cog seems to answer NaN.
+	Never mind. Both are valid. #primSqrt answers NaN in case of primitive failure."
+	self assertIsNaNorFail: -4.0 primTestSqrt.
+	self assertIsNaNorFail: Float fminNormalized negated primTestSqrt.
+	self assertIsNaNorFail: Float fminDenormalized negated primTestSqrt.
+	self assertIsNaNorFail: Float negativeInfinity primTestSqrt.
+	self assertIsNaNorFail: Float nan primTestSqrt.! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/27/2019 15:25:52'!
+testPrimSubtract
+
+	self assert: (3.0 primTestSubtract: 1.0) = 2.0.
+	self assert: (Float fminNormalized primTestSubtract: Float fminDenormalized) < Float fminNormalized.
+	self assert: (Float fminNormalized primTestSubtract: Float fminDenormalized) - Float fminNormalized = Float fminDenormalized negated.
+	self assert: (1.0 primTestSubtract: Float zero) = 1.0.
+	self assert: (Float zero primTestSubtract: 1.0) = -1.0.
+	self assert: (1.0 primTestSubtract: Float negativeZero) = 1.0.
+	self assert: (Float negativeZero primTestSubtract: 1.0) = -1.0.
+	self assert: (1.0 primTestSubtract: Float infinity) = Float negativeInfinity.
+	self assert: (Float infinity primTestSubtract: 1.0) = Float infinity.
+	self assert: (1.0 primTestSubtract: Float negativeInfinity) = Float infinity.
+	self assert: (Float negativeInfinity primTestSubtract: 1.0) = Float negativeInfinity.
+	self assert: (1.0 primTestSubtract: Float nan) isNaN.
+	self assert: (Float nan primTestSubtract: 1.0) isNaN.
+	self assert: (Float nan primTestSubtract: Float nan) isNaN.! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/14/2019 13:53:28'!
+testPrimTimesTwoPower
+
+	self assert: (Float fminNormalized timesTwoPower: -52) = Float fminDenormalized.
+	self assert: (Float fminDenormalized timesTwoPower: 52) = Float fminNormalized.
+	self assert: (Float fminNormalized timesTwoPower: -53) = 0.0.
+	self assert: (0.0 timesTwoPower: 53) = 0.0.
+
+	self assert: (Float fminNormalized timesTwoPower: 1022) = 1.0.
+	self assert: (Float fminDenormalized timesTwoPower: 1022+52) = 1.0 .
+	self assert: (1.0 timesTwoPower: -1022) = Float fminNormalized.
+	self assert:  (2.0 predecessor timesTwoPower: 1023) = Float fmax.
+
+	self assert: (Float pi timesTwoPower: 13) mantissaPart = Float pi mantissaPart.
+	
+	self assert: (Float infinity timesTwoPower: -1023) = Float infinity.
+	self assert: (Float infinity timesTwoPower: -1024) = Float infinity.
+	self assert: (Float negativeInfinity timesTwoPower: -1023) = Float negativeInfinity.
+	self assert: (Float negativeInfinity timesTwoPower: -1024) = Float negativeInfinity.
+	self assert: (Float nan timesTwoPower: 2) isNaN.! !
+
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 3/12/2019 14:39:27'!
+testPrimTruncated
+
+	self assert: 1.0 primTestTruncated == 1.
+	self assert: 1.1 primTestTruncated == 1.
+	self assert: 1.9 primTestTruncated == 1.
+	self assert: Float pi primTestTruncated == 3.
+	self assert: Float zero primTestTruncated = 0.
+	self assert: Float fminNormalized primTestTruncated = 0.
+	self assert: Float fminDenormalized primTestTruncated = 0.
+	self assert: Float infinity primTestTruncated = #fail.
+
+	self assert: -1.0 primTestTruncated == -1.
+	self assert: -1.1 primTestTruncated == -1.
+	self assert: -1.9 primTestTruncated == -1.
+	self assert: Float pi negated primTestTruncated == -3.
+	self assert: Float negativeZero primTestTruncated = 0.
+	self assert: Float fminNormalized negated primTestTruncated = 0.
+	self assert: Float fminDenormalized negated primTestTruncated = 0.
+	self assert: Float negativeInfinity primTestTruncated = #fail.
+
+	self assert: Float nan primTestTruncated = #fail.
+
+	"Only if SmallInteger primitive result is enough to hold the result"
+	SmallInteger maxVal >= Float maxExactInteger ifTrue: [
+		self assert: (Float maxExactInteger + 0.0) primTestTruncated == Float maxExactInteger.
+		self assert: (Float maxExactInteger + 0.9) primTestTruncated == Float maxExactInteger.
+		self assert: (Float maxExactInteger - 0.1) primTestTruncated == Float maxExactInteger.
+		self assert: (Float maxExactInteger negated + 0.0) primTestTruncated == Float maxExactInteger negated.
+		self assert: (Float maxExactInteger negated -  0.9) primTestTruncated == Float maxExactInteger negated.
+		self assert: (Float maxExactInteger negated + 0.1) primTestTruncated == Float maxExactInteger negated ].
+
+	self assert: SmallInteger maxVal asFloat predecessor asTrueFraction truncated class = SmallInteger.
+	self assert: SmallInteger maxVal asFloat predecessor primTestTruncated = SmallInteger maxVal asFloat predecessor asTrueFraction truncated.	
+	self assert: (SmallInteger maxVal+1) asFloat successor asTrueFraction truncated class = LargePositiveInteger.
+	self assert: (SmallInteger maxVal+1) asFloat successor primTestTruncated = # fail.
+	"Depends on rounding to nearest Float. This could change depending on SmallInteger maxVal. Currently false in 64 bits Spur image, but true in 32 bits Spur and V3 images."
+	SmallInteger maxVal asFloat asTrueFraction truncated class = SmallInteger
+		ifTrue: [ self assert: SmallInteger maxVal asFloat primTestTruncated = SmallInteger maxVal asFloat asTrueFraction truncated ]
+		ifFalse: [ self assert: SmallInteger maxVal asFloat primTestTruncated = #fail ].
+
+	self assert: SmallInteger minVal asFloat successor asTrueFraction truncated class = SmallInteger.
+	self assert: SmallInteger minVal asFloat successor primTestTruncated = SmallInteger minVal asFloat successor asTrueFraction truncated.	
+	self assert: (SmallInteger minVal-1) asFloat predecessor asTrueFraction truncated class = LargeNegativeInteger.
+	self assert: (SmallInteger minVal-1) asFloat predecessor primTestTruncated = # fail.
+	"Depends on rounding to nearestFloat. This could change depending on SmallInteger maxVal. Currently true in 64 bits Spur image, and in 32 bits Spur and V3 images."
+	SmallInteger minVal asFloat asTrueFraction truncated class = SmallInteger
+		ifTrue: [ self assert: SmallInteger minVal asFloat primTestTruncated = SmallInteger minVal asFloat asTrueFraction truncated ]
+		ifFalse: [ self assert: SmallInteger minVal asFloat primTestTruncated = #fail ].
+! !
 
 !FractionTest methodsFor: 'private' stamp: 'jmv 10/11/2011 22:12'!
 assert: a classAndValueEquals: b
@@ -6608,7 +7018,7 @@ testRaisedToInteger
 	
 	self should: [ 0 raisedTo: -1 ] raise: ZeroDivide! !
 
-!NumberTest methodsFor: 'tests' stamp: 'GabrielOmarCotelli 5/25/2009 16:46'!
+!NumberTest methodsFor: 'tests' stamp: 'jmv 3/14/2019 13:13:53'!
 testRaisedToIntegerWithFloats
 
 	self 
@@ -6618,17 +7028,22 @@ testRaisedToIntegerWithFloats
 		assert: (0.0 raisedToInteger: 0) = 1.0;
 		assert: (0.0 raisedToInteger: 2) = 0.0;
 		assert: (2.0 raisedToInteger: -1) = 0.5;
-		assert: (2.0 raisedToInteger: -4) = 0.0625.
-	
+		assert: (2.0 raisedToInteger: -4) = 0.0625;
+		assert: (Float e raisedToInteger: -746) = 0.0;
+		assert: (Float e raisedToInteger: -745) = 0.0 successor;
+		assert: (Float e raisedToInteger: -744) = 0.0 successor successor.	
 	self 
-		assert: (-3.0 raisedTo: 0) = 1.0;
-		assert: (-3.0 raisedTo: 1) = -3.0;
-		assert: (-3.0 raisedTo: 2) = 9.0;
-		assert: (-3.0 raisedTo: 3) = -27.0;
-		assert: (-2.0 raisedTo: -2) = 0.25;
-		assert: (-2.0 raisedTo: -3) = -0.125.
+		assert: (-3.0 raisedToInteger: 0) = 1.0;
+		assert: (-3.0 raisedToInteger: 1) = -3.0;
+		assert: (-3.0 raisedToInteger: 2) = 9.0;
+		assert: (-3.0 raisedToInteger: 3) = -27.0;
+		assert: (-2.0 raisedToInteger: -2) = 0.25;
+		assert: (-2.0 raisedToInteger: -3) = -0.125;
+		assert: (Float e negated raisedToInteger: -746) = 0.0;
+		assert: (Float e negated raisedToInteger: -745) = 0.0 predecessor;
+		assert: (Float e negated raisedToInteger: -744) = 0.0 successor successor.
 	
-	self should: [ 0.0 raisedTo: -1 ] raise: ZeroDivide! !
+	self should: [ 0.0 raisedToInteger: -1 ] raise: ZeroDivide! !
 
 !NumberTest methodsFor: 'tests' stamp: 'sd 6/5/2005 08:56'!
 testReadFrom
@@ -18522,3 +18937,291 @@ runTest: aSelector
 		ifTrue: [self logTestResult: 'succeeded']
 		ifFalse: [self logTestResult: 'failed' ].
 ! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:54'!
+primTestAdd: aNumber
+	"Primitive. Answer the sum of the receiver and aNumber. Essential.
+	Fail if the argument is not a Float. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 41>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 14:01:17'!
+primTestArcTan
+
+	<primitive: 57>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:58'!
+primTestDivideBy: aNumber
+	"Primitive. Answer the result of dividing receiver by aNumber.
+	Fail if the argument is not a Float.
+	Essential. See Object clas >> whatIsAPrimitive."
+
+	<primitive: 50>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:44'!
+primTestEqual: aNumber
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is equal to the argument. Otherwise return false.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 47>
+	^#fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 12:42:41'!
+primTestExp
+	"Primitive. Answer the sum of the receiver and aNumber. Essential.
+	Fail if the argument is not a Float. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 59>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 13:42:23'!
+primTestExponent
+	"Primitive. Answer the sum of the receiver and aNumber. Essential.
+	Fail if the argument is not a Float. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 53>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:41'!
+primTestGreater: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is greater than the argument. Otherwise return false.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 44>
+	^#fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:38'!
+primTestGreaterEqual: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is greater than or equal to the argument. Otherwise return
+	false. Fail if the argument is not a Float. Optional. See Object documentation 
+	whatIsAPrimitive. "
+
+	<primitive: 46>
+	^#fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:35'!
+primTestLess: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is less than the argument. Otherwise return false.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 43>
+	^#fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:32'!
+primTestLessEqual: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is less than or equal to the argument. Otherwise return
+	false. Fail if the argument is not a Float. Optional. See Object
+	documentation whatIsAPrimitive."
+
+	<primitive: 45>
+	^#fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 12:42:00'!
+primTestLn
+	"Primitive. Answer the sum of the receiver and aNumber. Essential.
+	Fail if the argument is not a Float. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 58>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:21:03'!
+primTestMultiplyBy: aNumber
+	"Primitive. Answer the result of multiplying the receiver by aNumber.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 49>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:29'!
+primTestNotEqual: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is not equal to the argument. Otherwise return false.
+	Fail if the argument is not a Float. Optional. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 48>
+	^#fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 13:55:50'!
+primTestSin
+	<primitive: 56>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/28/2019 15:38:43'!
+primTestSqrt
+	<primitive: 55>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:21:01'!
+primTestSubtract: aNumber
+	"Primitive. Answer the difference between the receiver and aNumber.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 42>
+	^ #fail! !
+
+!BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/11/2019 17:05:25'!
+primTestTruncated
+	<primitive: 51>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:13'!
+primTestAdd: aNumber
+	"Primitive. Answer the sum of the receiver and aNumber. Essential.
+	Fail if the argument is not a Float. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 541>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 14:01:27'!
+primTestArcTan
+
+	<primitive: 557>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:25'!
+primTestDivideBy: aNumber
+	"Primitive. Answer the result of dividing receiver by aNumber.
+	Fail if the argument is not a Float.
+	Essential. See Object clas >> whatIsAPrimitive."
+
+	<primitive: 550>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:38:02'!
+primTestEqual: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is equal to the argument. Otherwise return false.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 547>
+	^#fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 12:42:31'!
+primTestExp
+	"Primitive. Answer the sum of the receiver and aNumber. Essential.
+	Fail if the argument is not a Float. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 559>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 13:42:28'!
+primTestExponent
+	"Primitive. Answer the sum of the receiver and aNumber. Essential.
+	Fail if the argument is not a Float. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 553>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:38:00'!
+primTestGreater: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is greater than the argument. Otherwise return false.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 544>
+	^#fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:57'!
+primTestGreaterEqual: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is greater than or equal to the argument. Otherwise return
+	false. Fail if the argument is not a Float. Optional. See Object documentation 
+	whatIsAPrimitive. "
+
+	<primitive: 546>
+	^#fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:54'!
+primTestLess: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is less than the argument. Otherwise return false.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 543>
+	^#fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:52'!
+primTestLessEqual: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is less than or equal to the argument. Otherwise return
+	false. Fail if the argument is not a Float. Optional. See Object
+	documentation whatIsAPrimitive."
+
+	<primitive: 545>
+	^#fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 12:42:10'!
+primTestLn
+	"Primitive. Answer the sum of the receiver and aNumber. Essential.
+	Fail if the argument is not a Float. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 558>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:40'!
+primTestMultiplyBy: aNumber
+	"Primitive. Answer the result of multiplying the receiver by aNumber.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 549>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:37:49'!
+primTestNotEqual: aNumber 
+	"Primitive. Compare the receiver with the argument and return true
+	if the receiver is not equal to the argument. Otherwise return false.
+	Fail if the argument is not a Float. Optional. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 548>
+	^#fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/14/2019 13:55:56'!
+primTestSin
+	<primitive: 556>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/28/2019 15:38:37'!
+primTestSqrt
+	<primitive: 555>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:31'!
+primTestSubtract: aNumber
+	"Primitive. Answer the difference between the receiver and aNumber.
+	Fail if the argument is not a Float. Essential. See Object documentation
+	whatIsAPrimitive."
+
+	<primitive: 542>
+	^ #fail! !
+
+!SmallFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 3/11/2019 17:05:16'!
+primTestTruncated
+	<primitive: 551>
+	^ #fail! !
