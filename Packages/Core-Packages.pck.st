@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 16 January 2017 at 12:09:03.493729 am'!
 'Description Load all packages included with Cuis'!
-!provides: 'Core-Packages' 1 14!
+!provides: 'Core-Packages' 1 15!
 !requires: 'TerseGuide' 1 0 nil!
 !requires: 'Assessments' 1 0 nil!
 !requires: 'ClassCommentBrowser' 1 0 nil!
@@ -25,5 +25,5 @@
 !requires: 'Graphics-Files-Additional' 1 0 nil!
 !requires: 'Sound' 1 0 nil!
 !requires: 'Theme-Themes' 1 0 nil!
-!requires: 'Tests' 1 0 nil!
+!requires: 'BaseImageTests' 1 0 nil!
 !requires: 'FFITests' 1 0 nil!
