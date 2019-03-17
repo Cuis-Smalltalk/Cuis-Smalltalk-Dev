@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3666] on 17 March 2019 at 9:03:57 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3665] on 17 March 2019 at 9:14:29 am'!
 
 !PasteUpMorph methodsFor: 'accessing' stamp: 'GC 3/17/2019 08:16:08'!
 handlesKeyboard
@@ -420,5 +420,13 @@ keyStroke: aKeyboardEvent morph: aMorph
 ('menu' getMenu)
 ('initialization' initialize resetState textComposition:)
 ('testing' hasUnacceptedEdits hasUnacceptedEdits:)
+!
+
+"Postscript:
+Leave the line above, and replace the rest of this comment by a useful one.
+Executable statements should follow this comment, and should
+be separated by periods, with no exclamation points (!!).
+Be sure to put any further comments in double-quotes, like this one."
+Editor initialize.
 !
 
