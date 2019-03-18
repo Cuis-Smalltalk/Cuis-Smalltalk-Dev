@@ -1,4 +1,3 @@
-cd ..
 git clone https://github.com/Cuis-Smalltalk/CodeExamples.git
 git clone https://github.com/Cuis-Smalltalk/Games.git
 git clone https://github.com/Cuis-Smalltalk/AMQP.git

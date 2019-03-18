@@ -15,6 +15,7 @@ Note: The '--depth 1' option avoids cloning all repo history (most likely you do
 mkdir MyProject
 cd MyProject
 git clone --depth 1 https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
+./Cuis-Smalltalk-Dev/clonePackageRepos.sh
 ```
 
 ## For 64 bits Linux running on AMD/Intel x64 hardware ##
