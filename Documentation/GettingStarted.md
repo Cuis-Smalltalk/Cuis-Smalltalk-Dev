@@ -9,10 +9,12 @@ These instructions assume you have the Git code versioning system installed in y
 If you want to contribute back to the community, you can do pull requests to this repo and/or alternatively subscribe to the Cuis development mail list at http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org , and email your code there.
 
 ## For all systems: Create project folder and add Cuis Smalltalk ##
+
+Note: The '--depth 1' option avoids cloning all repo history (most likely you don't need it) and makes cloning the remo much faster, using less disk space.
 ```
 mkdir MyProject
 cd MyProject
-git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
+git clone --depth 1 https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ```
 
 ## For 64 bits Linux running on AMD/Intel x64 hardware ##
