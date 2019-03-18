@@ -27,3 +27,4 @@
 !requires: 'Theme-Themes' 1 0 nil!
 !requires: 'BaseImageTests' 1 0 nil!
 !requires: 'FFITests' 1 0 nil!
+!requires: 'Wallpaper' 1 0 nil!
