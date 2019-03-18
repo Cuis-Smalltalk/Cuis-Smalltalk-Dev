@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3669] on 18 March 2019 at 1:32:16 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3670] on 18 March 2019 at 1:42:34 pm'!
 'Description Tests for code included in the Base Cuis image.'!
-!provides: 'BaseImageTests' 1 134!
+!provides: 'BaseImageTests' 1 135!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -498,6 +498,16 @@ TestCase subclass: #OrderedDictionaryTest
 OrderedDictionaryTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #SequenceableCollectionTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #SequenceableCollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'SequenceableCollectionTest class' category: #'BaseImageTests-Collections'!
+SequenceableCollectionTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #WeakIdentitySetTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #WeakIdentitySetTest
 	instanceVariableNames: ''
@@ -896,6 +906,16 @@ RefactoringTest subclass: #AddParameterTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'AddParameterTest class' category: #'BaseImageTests-Tools-Refactoring'!
 AddParameterTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ChangeKeywordsSelectorOrderTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #ChangeKeywordsSelectorOrderTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'ChangeKeywordsSelectorOrderTest class' category: #'BaseImageTests-Tools-Refactoring'!
+ChangeKeywordsSelectorOrderTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExtractToTemporaryTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -9833,6 +9853,69 @@ sampleData
 sampleData2
 	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
 
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:33:35'!
+testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: 1.
+	traversedElements := OrderedCollection new.
+	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ self fail ] ].
+
+	self assert: collectionToTraverse equals: traversedElements! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:38:06'!
+testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: 1 with: 2.
+	traversedElements := OrderedCollection new.
+
+	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ traversedElements add: $-] ].
+
+	self assert: (OrderedCollection with: 1 with: $- with: 2) equals: traversedElements! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:29:27'!
+testDoSeparatedByDoesNothingForEmptyCollection
+
+	self shouldntFail: [ #() do: [ :anElement | self fail ] separatedBy: [ self fail ] ]! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:36:00'!
+testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: $a.
+	traversedElements := OrderedCollection new.
+
+	self shouldntFail: [ collectionToTraverse withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ] separatedBy: [ self fail ] ].
+
+	self assert: 1 equals: traversedElements size.
+	self assert: $a->1 equals: traversedElements first! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:40:01'!
+testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: $a with: $b.
+	traversedElements := OrderedCollection new.
+
+	collectionToTraverse
+		withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ]
+		separatedBy: [ traversedElements add: $-].
+
+	self assert: 3 equals: traversedElements size.
+	self assert: $a->1 equals: traversedElements first.
+	self assert: $- equals: traversedElements second.
+	self assert: $b->2 equals: traversedElements third! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:30:18'!
+testWithIndexDoSeparatedByDoesNothingForEmptyCollection
+
+	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
+
 !WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
 test
 	"
@@ -14212,6 +14295,18 @@ testShouldRaiseWithMessageTextFailsWithDifferentMessageText
 		raise: TestResult failure 
 		! !
 
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 06:42:30'!
+testShoulndFailErrorsWhenAnErrorIsSignaled
+
+	self
+		should: [ self shouldntFail: [ self fail ]]
+		raise: TestResult failure! !
+
+!TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 06:41:26'!
+testShoulndFailPassesWhenNoErrorIsSignaled
+
+	self shouldntFail: [ 1+2 ]! !
+
 !TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:11:43'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
 
@@ -15836,6 +15931,105 @@ test36ParentesisAreAddedToSendersOfUnaryMessage
 classToRefactorName
 	
 	^#ClassToAddParameter! !
+
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:18:58'!
+test01CannotChangeSelectorOrderInUnaryMessages
+
+	self
+		assertCreation: [ ChangeKeywordsSelectorOrder from: #m1 to: #m1 implementors: #() senders: #() ]
+		failsWith: [ ChangeKeywordsSelectorOrder selectorToChangeIsNotKeywordWithMoreThanOneParameterErrorMessage ]! !
+
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:18:58'!
+test02CannotChangeSelectorOrderInBinaryMessages
+
+	self
+		assertCreation: [ ChangeKeywordsSelectorOrder from: #+ to: #+ implementors: #() senders: #() ]
+		failsWith: [ ChangeKeywordsSelectorOrder selectorToChangeIsNotKeywordWithMoreThanOneParameterErrorMessage ]! !
+
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:18:58'!
+test03CannotChangeSelectorOrderInKeywordMessagesWithOneParameterOnly
+
+	self
+		assertCreation: [ ChangeKeywordsSelectorOrder from: #m1: to: #m1: implementors: #() senders: #() ]
+		 failsWith: [ ChangeKeywordsSelectorOrder selectorToChangeIsNotKeywordWithMoreThanOneParameterErrorMessage ]! !
+
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 05:44:03'!
+test04ChangesKeywordsOrder
+
+	| classToRefactor refactoring oldSelector newSelector |
+
+	oldSelector := #m1:m2:.
+	newSelector := #m2:m1:.
+	classToRefactor := self createClassNamed: #ClassToChangeSelectorOrder.
+	classToRefactor compile: (self selectorAndParametersFor: oldSelector).
+
+	refactoring := ChangeKeywordsSelectorOrder from: oldSelector to: newSelector implementors: { classToRefactor >> oldSelector } senders: #().
+	refactoring apply.
+
+	self assert: (classToRefactor includesSelector: newSelector).
+	self deny: (classToRefactor includesSelector: oldSelector)! !
+
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 05:52:51'!
+test05ChangesParametersOrder
+
+	| classToRefactor refactoring oldSelector newSelector renamedMethod parameters selectorAndParameters |
+
+	oldSelector := #m1:m2:.
+	newSelector := #m2:m1:.
+	classToRefactor := self createClassNamed: #ClassToChangeSelectorOrder.
+	selectorAndParameters := self selectorAndParametersFor: oldSelector.
+	classToRefactor compile: selectorAndParameters.
+
+	refactoring := ChangeKeywordsSelectorOrder from: oldSelector to: newSelector implementors: { classToRefactor >> oldSelector } senders: #().
+	refactoring apply.
+
+	renamedMethod := classToRefactor >> newSelector.
+	parameters := selectorAndParameters substrings reject: [ :aKeywordOrParameter | oldSelector keywords includes: aKeywordOrParameter  ].
+	self
+		assert: (OrderedCollection with: parameters second with: parameters first)
+		equals: renamedMethod methodNode argumentNames ! !
+
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 05:31:03'!
+test06NewSelectorMustIncludeOldSelectorKeywords
+
+	self
+		assertCreation: [ ChangeKeywordsSelectorOrder from: #m1:m2: to: #m3:m1: implementors: #() senders: #() ]
+		failsWith: [ ChangeKeywordsSelectorOrder newSelectorDoesNotIncludeOldSelectorKeywordsErrorMessage ]
+		! !
+
+!ChangeKeywordsSelectorOrderTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 05:52:00'!
+test07ChangesKeywordsAndParametersOrderForMoreThanTwoKeywords
+
+	| classToRefactor refactoring renamedMethod oldSelector newSelector selectorAndParameters parameters |
+
+	oldSelector := #m1:m2:m3:.
+	newSelector := #m2:m3:m1:.
+	classToRefactor := self createClassNamed: #ClassToChangeSelectorOrder.
+	selectorAndParameters := self selectorAndParametersFor: oldSelector.
+	classToRefactor compile: selectorAndParameters.
+
+	refactoring := ChangeKeywordsSelectorOrder from: oldSelector to: newSelector implementors: { classToRefactor >> oldSelector } senders: #().
+	refactoring apply.
+
+	renamedMethod := classToRefactor >> newSelector.
+	parameters := selectorAndParameters substrings reject: [ :aKeywordOrParameter | oldSelector keywords includes: aKeywordOrParameter  ].
+	self
+		assert: (OrderedCollection with: parameters second with: parameters third with: parameters first)
+		equals: renamedMethod methodNode argumentNames ! !
+
+!ChangeKeywordsSelectorOrderTest methodsFor: 'source code creation' stamp: 'HAW 3/17/2019 05:43:44'!
+selectorAndParametersFor: aKeywordSelector
+
+	^String streamContents: [ :stream |
+		aKeywordSelector keywords
+			withIndexDo: [ :aKeyword :index |
+				stream
+					nextPutAll: aKeyword;
+					space;
+					nextPut: $p;
+					print: index ]
+			separatedBy: [  stream space ]]
+				! !
 
 !ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/19/2017 05:41:39'!
 assertIsAssigment: aParseNode of: newVariable toLiteralValueOf: aValue
