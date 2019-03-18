@@ -1,12 +1,18 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3222] on 27 November 2017 at 12:07:16 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3668] on 18 March 2019 at 1:17:54 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 16!
+!provides: 'WebClient' 1 17!
+!requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
 !requires: 'Network-Kernel' 1 2 nil!
-!requires: 'Identities-UUID' 1 7 nil!
+SystemOrganization addCategory: #'WebClient-Core'!
+SystemOrganization addCategory: #'WebClient-SqueakSSL-Core'!
+SystemOrganization addCategory: #'WebClient-Tests'!
+SystemOrganization addCategory: #'WebClient-SqueakSSL-Tests'!
+
+
 !classDefinition: #WebChunkedStream category: #'WebClient-Core'!
 ReadStream subclass: #WebChunkedStream
 	instanceVariableNames: 'sourceStream chunkSize'
@@ -348,36 +354,81 @@ WebUtils contains a number of utility methods used by WebClient/WebServer.!
 SqueakSSL provides an interface to the platforms SSL/TLS facilities.
 !
 
-!SmallInteger methodsFor: '*WebClient' stamp: 'jmv 9/19/2016 22:04:27'!
-numericValue
-	"Shouldn't be needed!!"! !
+!WebClient methodsFor: 'printing' stamp: 'ar 8/9/2010 08:50'!
+printOn: aStream
+	"Print the receiver on aStream"
 
-!String methodsFor: '*WebClient' stamp: 'jmv 6/26/2017 19:36:20'!
-encodeForHTTP! !
+	aStream nextPutAll: self class name.
+	aStream nextPut: $(.
+	(stream notNil and:[stream isConnected]) ifTrue:[
+		aStream nextPutAll: 'Connected: '.
+	].
+	scheme ifNotNil:[aStream nextPutAll: scheme, '://'].
+	server ifNotNil:[aStream nextPutAll: server].
+	aStream nextPut:$).
+! !
 
-!String methodsFor: '*WebClient' stamp: 'jmv 9/5/2016 20:49:10'!
-unescapePercents
-	"change each %XY substring to the character with ASCII value XY in hex.  This is the opposite of #encodeForHTTP"
-	| ans c asciiVal pos oldPos specialChars |
-	ans _ WriteStream on: String new.
-	oldPos _ 1.
-	specialChars _ '+%' asCharacterSet.
+!WebCookie methodsFor: 'accessing' stamp: 'ar 8/5/2010 18:22'!
+comment
+	"Cookie comment"
 
-	[pos _ self indexOfAnyOf: specialChars startingAt: oldPos ifAbsent: [ 0 ]. pos > 0 ]
-	whileTrue: [
-		ans nextPutAll: (self copyFrom: oldPos to: pos - 1).
-		c _ self at: pos.
-		c = $+ ifTrue: [ans nextPut: $ ] ifFalse: [
-			(c = $% and: [pos + 2 <= self size]) ifTrue: [
-				asciiVal _ (self at: pos+1) asUppercase digitValue * 16 +
-					(self at: pos+2) asUppercase digitValue.
-				pos _ pos + 2.
-				asciiVal > 255 ifTrue: [^self].	"not really an escaped string"
-				ans nextPut: (Character numericValue: asciiVal)]
-			ifFalse: [ans nextPut: c]].
-		oldPos _ pos+1].
-	ans nextPutAll: (self copyFrom: oldPos to: self size).
-	^ ans contents! !
+	^comment! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 8/5/2010 18:22'!
+comment: aString
+	"Cookie comment"
+
+	comment := aString! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
+name
+	"The name of the cookie"
+
+	^name! !
+
+!WebCookie methodsFor: 'printing' stamp: 'jmv 6/25/2017 19:15:34'!
+printOn: aStream
+	"Creates the string representation for this cookie"
+
+	aStream nextPutAll: name, '=', value asString.
+	expiry ifNotNil:[ 
+		aStream nextPutAll:'; expires='.
+		aStream nextPutAll: expiry dayOfWeekName ,  ', '.
+		expiry date printOn: aStream format: #(1 2 3 $- 2 2 2 ).
+		aStream nextPutAll: ' ', expiry time print24,' GMT'.
+	].
+	path ifNotNil:[
+		aStream nextPutAll:'; path=', (WebUtils quote: path).
+	].
+	domain ifNotNil:[
+		aStream nextPutAll:'; domain=', (WebUtils quote: domain).
+	].
+	version ifNotNil:[
+		aStream nextPutAll:'; version=', version asString.
+	].
+	secure ifTrue:[
+		aStream nextPutAll: '; secure'.
+	].
+	httpOnly ifTrue:[
+		aStream nextPutAll: '; HttpOnly'.
+	].
+! !
+
+!WebMessage methodsFor: 'printing' stamp: 'ar 2/20/2010 11:05'!
+printOn: aStream
+	"Prints the receiver"
+
+	aStream nextPutAll: self class name.
+	aStream nextPut: $(.
+	self writeOn: aStream.
+	aStream nextPut: $).! !
+
+!WebSocket methodsFor: 'private' stamp: 'ar 7/8/2010 21:48'!
+printOn: aStream
+	"Print the receiver"
+
+	aStream nextPutAll: self class name.
+	aStream nextPutAll: '(', name, ')'.! !
 
 !WebChunkedStream methodsFor: 'testing' stamp: 'ar 1/31/2012 14:26'!
 atEnd
@@ -425,19 +476,19 @@ nextChunk
 	^chunk
 ! !
 
-!WebChunkedStream methodsFor: 'initialize' stamp: 'ar 1/31/2012 14:24'!
-on: aStream
-
-	sourceStream := aStream.
-	collection := (aStream isBinary ifTrue:[ByteArray] ifFalse:[String]) new.
-	position := readLimit := 0.! !
-
 !WebChunkedStream methodsFor: 'accessing' stamp: 'ar 1/31/2012 14:11'!
 pastEndRead
 	"Need more data"
 
 	self nextChunk.
 	^self next! !
+
+!WebChunkedStream methodsFor: 'initialize' stamp: 'ar 1/31/2012 14:24'!
+on: aStream
+
+	sourceStream := aStream.
+	collection := (aStream isBinary ifTrue:[ByteArray] ifFalse:[String]) new.
+	position := readLimit := 0.! !
 
 !SqueakSSLCertificateError methodsFor: 'testing' stamp: 'ar 8/16/2011 19:18'!
 isResumable
@@ -451,6 +502,28 @@ client
 
 	^client! !
 
+!WebAuthRequired methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:49'!
+message
+	"Answer a default message for the user to ask for input"
+
+	self isProxyAuth ifTrue:[
+		^'The proxy server at "', client proxyServerName, '" requires authentication.'.
+	].
+
+	^'The server at "', client serverName, '" requires authentication.'.! !
+
+!WebAuthRequired methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:04'!
+request
+	"The request object causing the exception"
+
+	^request! !
+
+!WebAuthRequired methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:05'!
+response
+	"The response object causing the exception"
+
+	^response! !
+
 !WebAuthRequired methodsFor: 'initialize' stamp: 'ar 2/10/2012 13:06'!
 client: aWebClient request: aWebRequest response: aWebResponse
 	"Initializes the exception"
@@ -458,6 +531,24 @@ client: aWebClient request: aWebRequest response: aWebResponse
 	client := aWebClient.
 	request := aWebRequest.
 	response := aWebResponse.
+! !
+
+!WebAuthRequired methodsFor: 'initialize' stamp: 'ar 2/10/2012 13:13'!
+username: username password: password
+	"Use the given username/password as credentials"
+
+	| params retry |
+	params := self isProxyAuth ifTrue:[client proxyParams] ifFalse:[client authParams].
+	retry := false.
+	(params at: #username ifAbsent:[nil]) = username ifFalse:[
+		params at: #username put: username.
+		retry := true.
+	].
+	(params at: #password ifAbsent:[nil]) = password ifFalse:[
+		params at: #password put: password.
+		retry := true.
+	].
+	retry ifTrue:[self resume: true].
 ! !
 
 !WebAuthRequired methodsFor: 'defaults' stamp: 'ar 2/10/2012 13:14'!
@@ -483,46 +574,6 @@ isUnauthorized
 
 	^response code = 401! !
 
-!WebAuthRequired methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:49'!
-message
-	"Answer a default message for the user to ask for input"
-
-	self isProxyAuth ifTrue:[
-		^'The proxy server at "', client proxyServerName, '" requires authentication.'.
-	].
-
-	^'The server at "', client serverName, '" requires authentication.'.! !
-
-!WebAuthRequired methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:04'!
-request
-	"The request object causing the exception"
-
-	^request! !
-
-!WebAuthRequired methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:05'!
-response
-	"The response object causing the exception"
-
-	^response! !
-
-!WebAuthRequired methodsFor: 'initialize' stamp: 'ar 2/10/2012 13:13'!
-username: username password: password
-	"Use the given username/password as credentials"
-
-	| params retry |
-	params := self isProxyAuth ifTrue:[client proxyParams] ifFalse:[client authParams].
-	retry := false.
-	(params at: #username ifAbsent:[nil]) = username ifFalse:[
-		params at: #username put: username.
-		retry := true.
-	].
-	(params at: #password ifAbsent:[nil]) = password ifFalse:[
-		params at: #password put: password.
-		retry := true.
-	].
-	retry ifTrue:[self resume: true].
-! !
-
 !WebAuthRequired class methodsFor: 'instance creation' stamp: 'ar 2/10/2012 13:16'!
 client: aWebClient request: aWebRequest response: aWebResponse
 	"Creates a new exception"
@@ -544,9 +595,165 @@ encode: anObject
 	
 	^WebUtils jsonEncode: anObject! !
 
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:46'!
+testArrays
+	"Test array encodings"
+
+	self assert: (self decode: '[]') = #().
+	self assert: (self decode: '[[]]') = #(#()).
+	self assert: (self decode: '[[], []]') = #(#() #()).
+	self assert: (self decode: '["hello", "world", 123]') = #('hello' 'world' 123).
+	self assert: (self decode: '[["true", false, null]]') = #(('true' false nil)).
+
+	self assert: (self encode: #()) =  '[]'.
+	self assert: (self encode: #(#())) = '[[]]'.
+	self assert: (self encode: #(#() #()) ) = '[[], []]'.
+	self assert: (self encode: #('hello' 'world' 123)) = '["hello", "world", 123]'.
+	self assert: (self encode: #(('true' false nil))) = '[["true", false, null]]'.
+
+	self should: [self decode: '['] raise: Error.
+	self should: [self decode: '[}'] raise: Error.
+	self should: [self decode: '{[}'] raise: Error.
+	self should: [self decode: '[[[]]'] raise: Error.
+! !
+
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:47'!
+testDictionaries
+	"Test dictionary encodings"
+
+	self assert: (self decode: '{}') = (Dictionary new).
+
+	self assert: (self decode: '{"foo" : "bar"}')
+		equals: (Dictionary newFromPairs: {
+			'foo'. 'bar'
+		}).
+
+	self assert: (self decode: '{"stuff" : [[], 42, "hello"]}')
+		equals: (Dictionary newFromPairs: {
+			'stuff'. #(() 42 'hello')
+		}).
+
+	self assert: (self decode: '{"x" : 42, "y": "77", "z": 0.1}')
+		equals: (Dictionary newFromPairs: {
+			'x'. 42.
+			'y'. '77'.
+			'z'. 0.1
+		}).
+
+
+	self assert: (self encode: Dictionary new) = '{}'.
+
+	self assert: (self encode: (Dictionary newFromPairs: {
+			'foo'. 'bar'
+		})) equals: '{"foo": "bar"}'.
+
+	self assert: (self encode: (Dictionary newFromPairs: {
+			'stuff'. #(() 42 'hello')
+		})) equals: '{"stuff": [[], 42, "hello"]}'.
+
+	self assert: (self encode: (Dictionary newFromPairs: {
+			'x'. 42.
+			'y'. '77'.
+			'z'. 0.1
+		})) equals: '{"x": 42, "y": "77", "z": 0.1}'.
+
+	self should: [self decode: '{'] raise: Error.
+	self should: [self decode: '{]'] raise: Error.
+	self should: [self decode: '[{]'] raise: Error.
+	self should: [self decode: '{"a"}'] raise: Error.
+	self should: [self decode: '{42: "hello"}'] raise: Error.
+	self should: [self decode: '{"a" : 42,}'] raise: Error.
+	self should: [self decode: '{"a" : 42 "b": 33}'] raise: Error.
+
+	self should: [self encode: (Dictionary newFromPairs: {1. 1})] raise: Error.! !
+
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:47'!
+testNilTrueFalse
+	"Test encodings of nil, true, false"
+
+	self assert: (self decode: 'true') = true.
+	self assert: (self decode: 'false') = false.
+	self assert: (self decode: 'null') = nil.
+
+	self assert: (self encode: true) = 'true'.
+	self assert: (self encode: false) = 'false'.
+	self assert: (self encode: nil) = 'null'.
+
+	self should: [self decode: 'nul'] raise: Error.
+	self should: [self decode: 'nullll'] raise: Error.
+	self should: [self decode: 'tru'] raise: Error.
+	self should: [self decode: 'falsef'] raise: Error.
+	self should: [self decode: 'truefalse'] raise: Error.
+! !
+
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'topa 4/20/2015 14:49'!
+testNumbers
+	"Test the encodings of numbers"
+
+	self assert: 42 equals: (self decode: '42').
+	self assert: -123 equals: (self decode: '-0123').
+	self assert: 42.3 equals: (self decode: '42.3').
+	self assert: -42.3e44 equals: (self decode: '-42.3e44').
+	self assert: -0.0 equals: (self decode: '-0.0e0').
+
+	self assert: '42' equals: (self encode: 42).
+	self assert: '-123' equals: (self encode: -123).
+	self assert: '42.3' equals: (self encode: 42.3).
+	self assert: '-4.23e45' equals: (self encode: -42.3e44).
+	self assert: '-0.0' equals: (self encode: -0.0e0).
+
+	self should: [self decode: '0x123'] raise: Error.
+	self should: [self decode: '-.e'] raise: Error.
+! !
+
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'jmv 6/26/2017 19:58:18'!
+testStrings
+	"Test string encodings"
+
+	self assert: (self decode: '"Hello World"') = 'Hello World'.
+	self assert: (self decode: '"\"Hello World\""') = '"Hello World"'.
+	self assert: (self decode: '"foo\\bar\/baz"') = 'foo\bar/baz'.
+	self assert: (self decode: '""') = ''.
+	self assert: (self decode: '"foo \u0026 bar"') = 'foo & bar'.
+	self assert: (self decode: '"\r\n"') = String crlfString.
+	self assert: (self decode: '"\u041F\u0440\u0430\u0432\u0434\u0430"')
+		equals: ( '&#x041F;&#x0440;&#x0430;&#x0432;&#x0434;&#x0430;' ).
+
+	self assert: (self encode: 'Hello World') = '"Hello World"'.
+	self assert: (self encode: '"Hello World"') = '"\"Hello World\""'.
+	self assert: (self encode: 'foo\bar/baz') = '"foo\\bar\/baz"'.
+	self assert: (self encode: '') = '""'.
+false ifTrue: [
+	self assert: (self encode: 'foo &#x100; bar') = '"foo \u0101 bar"' ].
+	self assert: (self encode: String crlfString) = '"\r\n"'.
+
+	self assert: (self encode: (String fromUtf8: #[208 159 209 128 208 176 208 178 208 180 208 176]))
+		equals:  '"&#1055;&#1088;&#1072;&#1074;&#1076;&#1072;"' .
+
+	self should: [self decode: '"hello'] raise: Error.
+	self should: [self decode: '"\'] raise: Error.
+	self should: [self decode: '"\"'] raise: Error.! !
+
 !WebClientServerTest methodsFor: 'setup' stamp: 'SvenVanCaekenberghe 6/14/2010 15:49'!
 localHostUrl
 	^'http://localhost:', self port asString! !
+
+!WebClientServerTest methodsFor: 'setup' stamp: 'fbs 4/4/2013 22:25'!
+port
+	"Use a random port to minimise chances of concurrently running test suites clashing."
+	^ port
+		ifNil: [port := (10000 to: 50000) atRandom]! !
+
+!WebClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
+setUp
+	server := WebServer new listenOn: self port.
+	server passwordAt: 'user' realm: 'test' put: 'pass'.
+! !
+
+!WebClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
+tearDown
+	server ifNotNil:[server destroy].
+! !
 
 !WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 21:56'!
 oAuthParams
@@ -572,44 +779,104 @@ oAuthParams
 		'oauth_signature_method'.	'HMAC-SHA1'.
 	}.! !
 
-!WebClientServerTest methodsFor: 'setup' stamp: 'fbs 4/4/2013 22:25'!
-port
-	"Use a random port to minimise chances of concurrently running test suites clashing."
-	^ port
-		ifNil: [port := (10000 to: 50000) atRandom]! !
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/11/2010 21:20'!
+testHmacSha1
+	"Test the SHA1 HMAC algorithm"
 
-!WebClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
-setUp
-	server := WebServer new listenOn: self port.
-	server passwordAt: 'user' realm: 'test' put: 'pass'.
+	| key message |
+	key := 'MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&'.
+	message := 'POST&https%3A%2F%2Fapi.twitter.com%2Foauth%2Frequest_token&oauth_callback%3Dhttp%253A%252F%252Flocalhost%253A3005%252Fthe_dance%252Fprocess_callback%253Fservice_provider_id%253D11%26oauth_consumer_key%3DGDdmIQH6jhtmLUypg82g%26oauth_nonce%3DQP70eNmVz8jvdPevU3oJD2AfF7R7odC2XJcn4XlZJqk%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1272323042%26oauth_version%3D1.0'.
+
+	self assert: (WebUtils hmacSha1: message key: key) base64Encoded = '8wUi7m5HFQy76nowoCThusfgB+Q='! !
+
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:03'!
+testSignOAuthGet
+	"Ensure that we can sign a request correctly using OAuth.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| request |
+	request := WebRequest new.
+	request method: 'GET'.
+	WebUtils oAuthSign: request 
+				url: 'http://host.net/resource'
+				using: self oAuthParams.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="dSI3zjYnriSnaB787UH2NDcS8Ss%3D"'.
 ! !
 
-!WebClientServerTest methodsFor: 'setup' stamp: 'ar 2/10/2012 13:27'!
-tearDown
-	server ifNotNil:[server destroy].
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+testSignOAuthGetDupFields
+	"Ensure that we can sign a request with duplicate fields correctly using OAuth.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| request |
+	request := WebRequest new.
+	request method: 'GET'.
+	WebUtils oAuthSign: request 
+				url: 'http://host.net/resource?name=value&name=value'
+				using: self oAuthParams.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="30p67coAX8YbxCKAGfaimydYK6g%3D"'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:46'!
-testArrays
-	"Test array encodings"
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:07'!
+testSignOAuthGetFields
+	"Ensure that we can sign a GET request with fields correctly using OAuth.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
 
-	self assert: (self decode: '[]') = #().
-	self assert: (self decode: '[[]]') = #(#()).
-	self assert: (self decode: '[[], []]') = #(#() #()).
-	self assert: (self decode: '["hello", "world", 123]') = #('hello' 'world' 123).
-	self assert: (self decode: '[["true", false, null]]') = #(('true' false nil)).
-
-	self assert: (self encode: #()) =  '[]'.
-	self assert: (self encode: #(#())) = '[[]]'.
-	self assert: (self encode: #(#() #()) ) = '[[], []]'.
-	self assert: (self encode: #('hello' 'world' 123)) = '["hello", "world", 123]'.
-	self assert: (self encode: #(('true' false nil))) = '[["true", false, null]]'.
-
-	self should: [self decode: '['] raise: Error.
-	self should: [self decode: '[}'] raise: Error.
-	self should: [self decode: '{[}'] raise: Error.
-	self should: [self decode: '[[[]]'] raise: Error.
+	| request |
+	request := WebRequest new.
+	request method: 'GET'.
+	WebUtils oAuthSign: request 
+				url: 'http://host.net/resource?name=value'
+				using: self oAuthParams.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="N6TOtNK6h3u9zqjqaF2kgpIVb%2F8%3D"'.
 ! !
+
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+testSignOAuthPostFields
+	"Ensure that we can sign a POST request with fields correctly using OAuth.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| request |
+	request := WebRequest new.
+	request method: 'POST'.
+	WebUtils oAuthSign: request 
+				url: 'http://host.net/resource'
+				extra:{'name' -> 'value'}
+				using: self oAuthParams.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="E7yVjmf%2F8UTF9ij15CtbBBhulMw%3D"'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
+testSignOAuthUrlEncoding
+	"Ensure that we can sign a request requiring url-encoded oauth params.
+	Example values taken from 
+		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
+	"
+
+	| params request |
+	"Consumer Key with url-encoded characters"
+	params := self oAuthParams.
+	params at: 'oauth_consumer_key' put: 'key with spaces'.
+
+	request := WebRequest new.
+	request method: 'GET'.
+	WebUtils oAuthSign: request 
+				url: 'http://host.net/resource'
+				using: params.
+	self assert: (request headerAt: 'Authorization')
+		equals: 'OAuth oauth_consumer_key="key%20with%20spaces",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="%2FxrAsx0Utt3V6ZbX00jWWpkqrvg%3D"'.! !
 
 !WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:26'!
 testAuthException
@@ -630,6 +897,57 @@ testAuthException
 	self shouldnt:[resp := client httpGet: self localHostUrl, '/test/auth'] 
 		raise: WebAuthRequired.
 	self assert: resp code = 401.
+! !
+
+!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
+testBasicAuth
+	"Test client and server basic auth"
+
+	| resp reqHeader |
+	server addService: '/test/auth' action:[:req | 
+		server authenticate: req realm: 'test' methods: #(basic) do:[
+			reqHeader := req headerAt: 'Authorization'.
+			req send200Response: 'ok'
+		].
+	].
+	resp := WebClient new httpGet: self localHostUrl, '/test/auth'.
+	self assert: resp code = 401.
+
+	[resp := WebClient httpGet: self localHostUrl, '/test/auth'] 
+		on: WebAuthRequired do:[:ex| ex username: 'squeak' password: 'squeak'].
+	self assert: resp code = 401.
+
+	[resp := WebClient httpGet: self localHostUrl, '/test/auth']
+		on: WebAuthRequired do:[:ex| ex username: 'user' password: 'pass'].
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (reqHeader beginsWith: 'Basic ').
+! !
+
+!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
+testDigestAuth
+	"Test client and server handling of digest auth"
+
+	| resp reqHeader |
+	server addService: '/test/auth' action:[:req | 
+		server authenticate: req realm: 'test' methods: #(digest) do:[
+			reqHeader := req headerAt: 'Authorization'.
+			req send200Response: 'ok'
+		].
+	].
+
+	resp := WebClient new httpGet: self localHostUrl, '/test/auth'.
+	self assert: resp code = 401.
+
+	[resp := WebClient httpGet: self localHostUrl, '/test/auth']
+		on: WebAuthRequired do:[:ex| ex username: 'squeak' password: 'squeak'].
+	self assert: resp code = 401.
+
+	[resp := WebClient httpGet: self localHostUrl, '/test/auth']
+		on: WebAuthRequired do:[:ex| ex username: 'user' password: 'pass'].
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: (reqHeader beginsWith: 'Digest ').
 ! !
 
 !WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:29'!
@@ -668,29 +986,157 @@ testAuthRedirectSession
 	self assert: (finalFields at: 'number') = '42'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
-testBasicAuth
-	"Test client and server basic auth"
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 8/10/2010 09:23'!
+testNo302Redirect
+	"Ensure compliance with RFC 2616 rules prohibiting auto redirect 
+	for 302/307 responses."
 
-	| resp reqHeader |
-	server addService: '/test/auth' action:[:req | 
-		server authenticate: req realm: 'test' methods: #(basic) do:[
-			reqHeader := req headerAt: 'Authorization'.
-			req send200Response: 'ok'
+	| resp |
+	server addService: '/302' action:[:req | 
+		req send3xxResponse: '/bar' code: 302
+	] methods: #('GET' 'PUT' 'POST' 'DELETE').
+	server addService: '/307' action:[:req | 
+		req send3xxResponse: '/bar' code: 307
+	] methods: #('GET' 'PUT' 'POST' 'DELETE').
+	server addService: '/bar' action:[:req | 
+		req send200Response: 'redirect ok'
+	] methods: #('GET' 'PUT' 'POST' 'DELETE').
+
+	resp := WebClient httpGet: self localHostUrl, '/302'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+
+	resp := WebClient httpGet: self localHostUrl, '/307'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+
+	resp := WebClient httpPost: self localHostUrl, '/302' content: '' type: 'text/plain'.
+	self assert: resp code = 302.
+	resp := WebClient httpPost: self localHostUrl, '/307' content: '' type: 'text/plain'.
+	self assert: resp code = 307.
+
+	resp := WebClient httpPost: self localHostUrl, '/302' content: '' type: 'text/plain'.
+	self assert: resp code = 302.
+	resp := WebClient httpPost: self localHostUrl, '/307' content: '' type: 'text/plain'.
+	self assert: resp code = 307.
+
+	resp := WebClient httpPut: self localHostUrl, '/302' content: '' type: 'text/plain'.
+	self assert: resp code = 302.
+	resp := WebClient httpPut: self localHostUrl, '/307' content: '' type: 'text/plain'.
+	self assert: resp code = 307.
+
+	resp := WebClient httpDelete: self localHostUrl, '/302'.
+	self assert: resp code = 302.
+	resp := WebClient httpDelete: self localHostUrl, '/307'.
+	self assert: resp code = 307.
+
+! !
+
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 2/10/2012 13:21'!
+testPersistentAuthRedirectSession
+	"Run a test for a full auth-redirect-cookie loop.
+	Ensure that the connection is persistent for the entire loop."
+
+	| loginOK finalUrl finalFields firstRedirect client resp url |
+	server addService: '/login' action:[:req | 
+		server authenticate: req realm: 'test' methods: #(digest) do:[ | id |
+			loginOK := true.
+			server sessionAt: (id := UUID new hex) put: ''.
+			req send302Response: (req fields at: 'url' ifAbsent:['/']) unescapePercents
+				do:[:reply| reply setCookie: 'session' value: id path: '/']]].
+	server addService: '/action' action:[:req | 
+		(server sessionAt: (req cookieAt: 'session')) ifNil:[
+			firstRedirect := true.
+			req send302Response: '/login?url=', req rawUrl encodeForHTTP.
+		] ifNotNil:[
+			finalUrl := req url.
+			finalFields := req fields.
+			req send200Response: 'ok'.
 		].
 	].
-	resp := WebClient new httpGet: self localHostUrl, '/test/auth'.
-	self assert: resp code = 401.
+	firstRedirect := loginOK := false.
+	server passwordAt: 'squeak' realm: 'test' put: 'foo'.
 
-	[resp := WebClient httpGet: self localHostUrl, '/test/auth'] 
-		on: WebAuthRequired do:[:ex| ex username: 'squeak' password: 'squeak'].
-	self assert: resp code = 401.
-
-	[resp := WebClient httpGet: self localHostUrl, '/test/auth']
-		on: WebAuthRequired do:[:ex| ex username: 'user' password: 'pass'].
+	client := WebClient new.
+	client allowRedirect: false.
+	url :=  self localHostUrl, '/action/foo/bar?string=hello&number=42'.
+	[[resp := client httpGet: url] on: WebAuthRequired 
+		do:[:ex| 	self assert: client == ex client.
+				self assert: client isConnected.
+				ex username: 'squeak' password: 'foo'.].
+	resp code = 302] whileTrue:[
+		self assert: client isConnected.
+		url := resp headerAt: 'Location'.
+	].
+	self assert: client isConnected.
 	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (reqHeader beginsWith: 'Basic ').
+	self assert: firstRedirect.
+	self assert: loginOK.
+	self assert: finalUrl = '/action/foo/bar'.
+	self assert: finalFields size = 2.
+	self assert: (finalFields at: 'string') = 'hello'.
+	self assert: (finalFields at: 'number') = '42'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
+testRedirect
+	"Test client and server handling of redirects"
+
+	| resp client |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/bar'
+	].
+	server addService: '/bar' action:[:req | 
+		req send200Response: 'redirect ok'
+	].
+
+	client := WebClient new.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+
+	client allowRedirect: false.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 302.
+
+	client allowRedirect: true.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
+testRedirectLoop
+	"Test client handling of redirect loops"
+
+	| resp |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/bar'
+	].
+	server addService: '/bar' action:[:req | 
+		req send302Response: '/foo'
+	].
+
+	resp := WebClient httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 302.
+! !
+
+!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:33'!
+testRedirectTrailingSlash
+	"Special test to ensure that a redirect from /foo to /foo/ works"
+
+	| resp client |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/foo/'
+	].
+	server addService: '/foo/' action:[:req | 
+		req send200Response: 'redirect ok'
+	].
+
+	client := WebClient new.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp content = 'redirect ok'.
 ! !
 
 !WebClientServerTest methodsFor: 'tests - chunked' stamp: 'ar 8/31/2010 23:17'!
@@ -913,105 +1359,6 @@ testCookies
 	self assert: resp content = ''.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 7/20/2010 20:38'!
-testDecodeWebSocketKey
-	"Ensure that decoding the Sec-WebSocket-Key fields works properly."
-
-	| key1 key2 data |
-	key1 := 155712099.
-	key2 := 173347027.
-	data := 'Tm[K T2u'.
-
-	self assert: (WebUtils extractWebSocketKey: '18x 6]8vM;54 *(5:  {   U1]8  z [  8') = key1.
-	self assert: (WebUtils extractWebSocketKey: '1_ tx7X d  <  nw  334J702) 7]o}` 0') = key2.
-
-	self assert: (WebUtils webSocketHandshake: key1 with: key2 with: data) asString = 'fQJ,fN/4F4!!~K~MH'.! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:30'!
-testDefault404
-	"Test that a new server responds with 404 to anything"
-
-	| resp |
-	resp := WebClient httpGet: self localHostUrl.
-	self assert: resp code = 404.
-! !
-
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:47'!
-testDictionaries
-	"Test dictionary encodings"
-
-	self assert: (self decode: '{}') = (Dictionary new).
-
-	self assert: (self decode: '{"foo" : "bar"}')
-		equals: (Dictionary newFromPairs: {
-			'foo'. 'bar'
-		}).
-
-	self assert: (self decode: '{"stuff" : [[], 42, "hello"]}')
-		equals: (Dictionary newFromPairs: {
-			'stuff'. #(() 42 'hello')
-		}).
-
-	self assert: (self decode: '{"x" : 42, "y": "77", "z": 0.1}')
-		equals: (Dictionary newFromPairs: {
-			'x'. 42.
-			'y'. '77'.
-			'z'. 0.1
-		}).
-
-
-	self assert: (self encode: Dictionary new) = '{}'.
-
-	self assert: (self encode: (Dictionary newFromPairs: {
-			'foo'. 'bar'
-		})) equals: '{"foo": "bar"}'.
-
-	self assert: (self encode: (Dictionary newFromPairs: {
-			'stuff'. #(() 42 'hello')
-		})) equals: '{"stuff": [[], 42, "hello"]}'.
-
-	self assert: (self encode: (Dictionary newFromPairs: {
-			'x'. 42.
-			'y'. '77'.
-			'z'. 0.1
-		})) equals: '{"x": 42, "y": "77", "z": 0.1}'.
-
-	self should: [self decode: '{'] raise: Error.
-	self should: [self decode: '{]'] raise: Error.
-	self should: [self decode: '[{]'] raise: Error.
-	self should: [self decode: '{"a"}'] raise: Error.
-	self should: [self decode: '{42: "hello"}'] raise: Error.
-	self should: [self decode: '{"a" : 42,}'] raise: Error.
-	self should: [self decode: '{"a" : 42 "b": 33}'] raise: Error.
-
-	self should: [self encode: (Dictionary newFromPairs: {1. 1})] raise: Error.! !
-
-!WebClientServerTest methodsFor: 'tests - auth' stamp: 'ar 2/10/2012 13:53'!
-testDigestAuth
-	"Test client and server handling of digest auth"
-
-	| resp reqHeader |
-	server addService: '/test/auth' action:[:req | 
-		server authenticate: req realm: 'test' methods: #(digest) do:[
-			reqHeader := req headerAt: 'Authorization'.
-			req send200Response: 'ok'
-		].
-	].
-
-	resp := WebClient new httpGet: self localHostUrl, '/test/auth'.
-	self assert: resp code = 401.
-
-	[resp := WebClient httpGet: self localHostUrl, '/test/auth']
-		on: WebAuthRequired do:[:ex| ex username: 'squeak' password: 'squeak'].
-	self assert: resp code = 401.
-
-	[resp := WebClient httpGet: self localHostUrl, '/test/auth']
-		on: WebAuthRequired do:[:ex| ex username: 'user' password: 'pass'].
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: (reqHeader beginsWith: 'Digest ').
-! !
-
 !WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 8/5/2010 19:36'!
 testDuplicateCookies
 	"Tests deleting cookies in WebClient"
@@ -1040,147 +1387,6 @@ testDuplicateCookies
 	self assert: resp code = 200.
 	self assert: resp content = '1'.
 ! !
-
-!WebClientServerTest methodsFor: 'tests - fields' stamp: 'ar 7/20/2010 20:12'!
-testGetFields
-	"Test client and server handling simple fields"
-
-	| resp |
-	server addService: '/fields' action:[:req | 
-		req send200Response: (String streamContents:[:s|
-			req fields keys asArray sort do:[:key | s cr; nextPutAll: key,'=', (req fields at: key)].
-		]).
-	].
-
-	resp := WebClient httpGet: self localHostUrl, '/fields?foo=123&bar=yoho'.
-	self assert: resp code = 200.
-	self assert: resp content = '
-bar=yoho
-foo=123'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/11/2010 21:20'!
-testHmacSha1
-	"Test the SHA1 HMAC algorithm"
-
-	| key message |
-	key := 'MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&'.
-	message := 'POST&https%3A%2F%2Fapi.twitter.com%2Foauth%2Frequest_token&oauth_callback%3Dhttp%253A%252F%252Flocalhost%253A3005%252Fthe_dance%252Fprocess_callback%253Fservice_provider_id%253D11%26oauth_consumer_key%3DGDdmIQH6jhtmLUypg82g%26oauth_nonce%3DQP70eNmVz8jvdPevU3oJD2AfF7R7odC2XJcn4XlZJqk%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1272323042%26oauth_version%3D1.0'.
-
-	self assert: (WebUtils hmacSha1: message key: key) base64Encoded = '8wUi7m5HFQy76nowoCThusfgB+Q='! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/1/2010 20:22'!
-testHtmlSubmit
-	"Ensure that we have round-trip conversion for html submit"
-
-	| fieldDict fieldList |
-	fieldDict := Dictionary newFromPairs: {'foo'. 123. 'bar'. 'yoho'}.
-	fieldList := {'foo' -> 123. 'bar' -> 'yoho'}.
-	self testHtmlSubmitUsing: fieldDict.
-	self testHtmlSubmitUsing: fieldList.! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/1/2010 20:22'!
-testHtmlSubmitUsing: fields
-	"Ensure that we have round-trip conversion for html submit"
-
-	| resp |
-	server addService: '/fields' action:[:req | 
-		req send200Response: (String streamContents:[:s|
-			req fields keys asArray sort do:[:key | s cr; nextPutAll: key,'=', (req fields at: key)].
-		]).
-	].
-	resp := WebClient htmlSubmit: (self localHostUrl, '/fields') fields: fields.
-	self assert: resp code = 200.
-	self assert: resp content = '
-bar=yoho
-foo=123'.
-
-	resp := WebClient htmlSubmit: (self localHostUrl, '/fields') fields: fields method: 'POST'.
-	self assert: resp code = 200.
-	self assert: resp content = '
-bar=yoho
-foo=123'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
-testHttpDelete
-	"Test for handling a DELETE request"
-
-	| resp |
-	server addService: '/nodelete' action:[:req | 
-		req send200Response: 'ok'.
-	].
-	server addService: '/delete' action:[:req | 
-		req send200Response: req method.
-	] methods: {'GET'. 'PUT'. 'DELETE'}.
-
-	resp := WebClient httpGet: self localHostUrl, '/nodelete'.
-	self assert: resp code = 200.
-	resp := WebClient httpDelete: self localHostUrl, '/nodelete'.
-	self assert: resp code = 405.
-
-	resp := WebClient httpGet: self localHostUrl, '/delete'.
-	self assert: resp code = 200.
-	resp := WebClient httpDelete: self localHostUrl, '/delete'.
-	self assert: resp code = 200.
-
-	resp := WebClient httpPost: self localHostUrl, '/delete' content:'' type: nil.
-	self assert: resp code = 405.
-! !
-
-!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 8/5/2010 22:32'!
-testHttpHead
-	"Test for handling a HEAD request"
-
-	| resp |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/bar'
-	].
-	server addService: '/bar' action:[:req | 
-		req send200Response: 'ok'
-	].
-
-	resp := WebClient httpHead: self localHostUrl, '/bar'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-	self deny: resp contentStream isDataAvailable..
-
-	resp := WebClient httpHead: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-! !
-
-!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
-testHttpOptions
-	"Test for handling the OPTIONS request"
-
-	| resp |
-	server addService: '/delete' action:[:req | 
-		req send200Response: req method.
-	] methods: {'GET'. 'PUT'. 'DELETE'}.
-
-	resp := WebClient httpOptions: self localHostUrl, '/*'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,POST'.
-
-	resp := WebClient httpOptions: self localHostUrl, '/delete'.
-	self assert: resp code = 200.
-	self assert: resp content = ''.
-	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,PUT,DELETE'.! !
-
-!WebClientServerTest methodsFor: 'tests - methods' stamp: 'jmv 6/26/2017 19:25:31'!
-testHttpTrace
-	"Test for handling the TRACE request"
-
-	| resp |
-	resp := WebClient httpTrace: self localHostUrl, '/bar'.
-	self assert: resp code = 200.
-	self assert: resp contentType = 'message/http'.
-	self assert: resp content =
-		( 'TRACE /bar HTTP/1.1', String crlfString,
-		'user-agent: ', WebClient new userAgent, String crlfString,
-		'host: localhost:', self port printString, String crlfString, String crlfString	)! !
 
 !WebClientServerTest methodsFor: 'tests - cookies' stamp: 'ar 5/11/2010 20:42'!
 testInvalidCookies
@@ -1255,603 +1461,19 @@ testInvalidCookies
 	self deny: resp content = '123'.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'dtl 7/17/2012 19:40'!
-testListenOnInterface
-	"Test that listening on a particular interface listens only on that interface"
-
-	| localHostAddr resp localHostName client |
-	server destroy.		"kill old server"
-
-	localHostAddr := NetNameResolver localHostAddress.
-	localHostAddr asByteArray = #(127 0 0 1) asByteArray ifTrue:[^self]. "skip test"
-
-	localHostName := NetNameResolver stringFromAddress: localHostAddr.
-
-	server := WebServer new listenOn: self port interface: localHostAddr.
-	server addService: '/' action:[:req| req send200Response: 'ok'].
-
-	client := WebClient new.
-	client timeout: 1.
-	self should:[resp := client httpGet: self localHostUrl, '/test'] raise: Error.
-
-	resp := client httpGet: 'http://', localHostName, ':', self port asString, '/test'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 6/26/2017 20:00:44'!
-testLogging200
-	"Test logging a regular 200 a-ok response"
-
-	| resp client log |
-	server addService: '/test' action:[:req | req send200Response: 'ok'].
-	server accessLog: String new writeStream.
-
-	client := WebClient new.
-	client accessLog: String new writeStream.
-	[resp := client httpGet: self localHostUrl, '/test'] ensure:[client close].
-
-	self assert: resp code = 200.
-
-	log := server accessLog contents.
-	self assert: ('127.0.0.1 - - [*] "GET /test HTTP/1.1" 200 2', String newLineString match: log).
-
-	log := client accessLog contents.
-	self assert: ('localhost - - [*] "GET /test HTTP/1.1" 200 2', String newLineString match: log).
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 6/26/2017 20:01:17'!
-testLogging404
-	"Test logging a 404 response"
-
-	| resp client log |
-	server accessLog: String new writeStream.
-	client := WebClient new.
-	client accessLog: String new writeStream.
-	[resp := client httpGet: self localHostUrl] ensure:[client close].
-
-	self assert: resp code = 404.
-
-	log := server accessLog contents.
-	self assert: ('127.0.0.1 - - [*] "GET / HTTP/1.1" 404 145', String newLineString match: log).
-
-	log := client accessLog contents.
-	self assert: ('localhost - - [*] "GET / HTTP/1.1" 404 145', String newLineString match: log).
-! !
-
-!WebClientServerTest methodsFor: 'tests - fields' stamp: 'ar 7/20/2010 20:12'!
-testMultipartFields
-	"Test client and server handling multipart/form-data fields"
-
-	| resp |
-	server addService: '/fields' action:[:req | 
-		req send200Response: (String streamContents:[:s|
-			req fields keys asArray sort do:[:key | s cr; nextPutAll: key,'=', (req fields at: key)].
-		]).
-	].
-
-	resp := WebClient httpPost: self localHostUrl,'/fields'  multipartFields: {
-		'foo' -> 123.
-		'bar' -> 'yoho'.
-	}.
-	self assert: resp code = 200.
-	self assert: resp content = '
-bar=yoho
-foo=123'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:32'!
-testNestedAction
-	"Test handling of nested actions"
-
-	| resp |
-	server addService: '/test' action:[:req | req send200Response: 'ok'].
-	server addService: '/test/42' action:[:req | req send200Response: '42'].
-
-	resp := WebClient httpGet: self localHostUrl, '/test'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-
-	resp := WebClient httpGet: self localHostUrl, '/test/42'.
-	self assert: resp code = 200.
-	self assert: resp content = '42'.
-
-	resp := WebClient httpGet: self localHostUrl, '/test/43'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'ar 2/10/2012 13:47'!
-testNilTrueFalse
-	"Test encodings of nil, true, false"
-
-	self assert: (self decode: 'true') = true.
-	self assert: (self decode: 'false') = false.
-	self assert: (self decode: 'null') = nil.
-
-	self assert: (self encode: true) = 'true'.
-	self assert: (self encode: false) = 'false'.
-	self assert: (self encode: nil) = 'null'.
-
-	self should: [self decode: 'nul'] raise: Error.
-	self should: [self decode: 'nullll'] raise: Error.
-	self should: [self decode: 'tru'] raise: Error.
-	self should: [self decode: 'falsef'] raise: Error.
-	self should: [self decode: 'truefalse'] raise: Error.
-! !
-
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 8/10/2010 09:23'!
-testNo302Redirect
-	"Ensure compliance with RFC 2616 rules prohibiting auto redirect 
-	for 302/307 responses."
-
-	| resp |
-	server addService: '/302' action:[:req | 
-		req send3xxResponse: '/bar' code: 302
-	] methods: #('GET' 'PUT' 'POST' 'DELETE').
-	server addService: '/307' action:[:req | 
-		req send3xxResponse: '/bar' code: 307
-	] methods: #('GET' 'PUT' 'POST' 'DELETE').
-	server addService: '/bar' action:[:req | 
-		req send200Response: 'redirect ok'
-	] methods: #('GET' 'PUT' 'POST' 'DELETE').
-
-	resp := WebClient httpGet: self localHostUrl, '/302'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-
-	resp := WebClient httpGet: self localHostUrl, '/307'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-
-	resp := WebClient httpPost: self localHostUrl, '/302' content: '' type: 'text/plain'.
-	self assert: resp code = 302.
-	resp := WebClient httpPost: self localHostUrl, '/307' content: '' type: 'text/plain'.
-	self assert: resp code = 307.
-
-	resp := WebClient httpPost: self localHostUrl, '/302' content: '' type: 'text/plain'.
-	self assert: resp code = 302.
-	resp := WebClient httpPost: self localHostUrl, '/307' content: '' type: 'text/plain'.
-	self assert: resp code = 307.
-
-	resp := WebClient httpPut: self localHostUrl, '/302' content: '' type: 'text/plain'.
-	self assert: resp code = 302.
-	resp := WebClient httpPut: self localHostUrl, '/307' content: '' type: 'text/plain'.
-	self assert: resp code = 307.
-
-	resp := WebClient httpDelete: self localHostUrl, '/302'.
-	self assert: resp code = 302.
-	resp := WebClient httpDelete: self localHostUrl, '/307'.
-	self assert: resp code = 307.
-
-! !
-
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'topa 4/20/2015 14:49'!
-testNumbers
-	"Test the encodings of numbers"
-
-	self assert: 42 equals: (self decode: '42').
-	self assert: -123 equals: (self decode: '-0123').
-	self assert: 42.3 equals: (self decode: '42.3').
-	self assert: -42.3e44 equals: (self decode: '-42.3e44').
-	self assert: -0.0 equals: (self decode: '-0.0e0').
-
-	self assert: '42' equals: (self encode: 42).
-	self assert: '-123' equals: (self encode: -123).
-	self assert: '42.3' equals: (self encode: 42.3).
-	self assert: '-4.23e45' equals: (self encode: -42.3e44).
-	self assert: '-0.0' equals: (self encode: -0.0e0).
-
-	self should: [self decode: '0x123'] raise: Error.
-	self should: [self decode: '-.e'] raise: Error.
-! !
-
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 2/10/2012 13:21'!
-testPersistentAuthRedirectSession
-	"Run a test for a full auth-redirect-cookie loop.
-	Ensure that the connection is persistent for the entire loop."
-
-	| loginOK finalUrl finalFields firstRedirect client resp url |
-	server addService: '/login' action:[:req | 
-		server authenticate: req realm: 'test' methods: #(digest) do:[ | id |
-			loginOK := true.
-			server sessionAt: (id := UUID new hex) put: ''.
-			req send302Response: (req fields at: 'url' ifAbsent:['/']) unescapePercents
-				do:[:reply| reply setCookie: 'session' value: id path: '/']]].
-	server addService: '/action' action:[:req | 
-		(server sessionAt: (req cookieAt: 'session')) ifNil:[
-			firstRedirect := true.
-			req send302Response: '/login?url=', req rawUrl encodeForHTTP.
-		] ifNotNil:[
-			finalUrl := req url.
-			finalFields := req fields.
-			req send200Response: 'ok'.
-		].
-	].
-	firstRedirect := loginOK := false.
-	server passwordAt: 'squeak' realm: 'test' put: 'foo'.
-
-	client := WebClient new.
-	client allowRedirect: false.
-	url :=  self localHostUrl, '/action/foo/bar?string=hello&number=42'.
-	[[resp := client httpGet: url] on: WebAuthRequired 
-		do:[:ex| 	self assert: client == ex client.
-				self assert: client isConnected.
-				ex username: 'squeak' password: 'foo'.].
-	resp code = 302] whileTrue:[
-		self assert: client isConnected.
-		url := resp headerAt: 'Location'.
-	].
-	self assert: client isConnected.
-	self assert: resp code = 200.
-	self assert: firstRedirect.
-	self assert: loginOK.
-	self assert: finalUrl = '/action/foo/bar'.
-	self assert: finalFields size = 2.
-	self assert: (finalFields at: 'string') = 'hello'.
-	self assert: (finalFields at: 'number') = '42'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - fields' stamp: 'ar 7/20/2010 20:11'!
-testPostFields
-	"Test client and server handling fields in url-encoded encoded post requests"
-
-	| resp |
-	server addService: '/fields' action:[:req | 
-		req send200Response: (String streamContents:[:s|
-			req fields keys asArray sort do:[:key | s cr; nextPutAll: key,'=', (req fields at: key)].
-		]).
-	].
-
-	resp := WebClient httpPost: self localHostUrl, '/fields' 
-				content: 'foo=123&bar=yoho'
-				type: 'application/x-www-form-urlencoded'.
-	self assert: resp code = 200.
-	self assert: resp content = '
-bar=yoho
-foo=123'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
-testRedirect
-	"Test client and server handling of redirects"
-
-	| resp client |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/bar'
-	].
-	server addService: '/bar' action:[:req | 
-		req send200Response: 'redirect ok'
-	].
-
-	client := WebClient new.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-
-	client allowRedirect: false.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 302.
-
-	client allowRedirect: true.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:32'!
-testRedirectLoop
-	"Test client handling of redirect loops"
-
-	| resp |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/bar'
-	].
-	server addService: '/bar' action:[:req | 
-		req send302Response: '/foo'
-	].
-
-	resp := WebClient httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 302.
-! !
-
-!WebClientServerTest methodsFor: 'tests - redirect' stamp: 'ar 5/7/2010 20:33'!
-testRedirectTrailingSlash
-	"Special test to ensure that a redirect from /foo to /foo/ works"
-
-	| resp client |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/foo/'
-	].
-	server addService: '/foo/' action:[:req | 
-		req send200Response: 'redirect ok'
-	].
-
-	client := WebClient new.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp content = 'redirect ok'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 8/24/2010 21:42'!
-testResponseUrl
-	"Tests that the response url is pointing to the final location"
-
-	| resp client |
-	server addService: '/foo' action:[:req | 
-		req send302Response: '/bar'
-	].
-	server addService: '/bar' action:[:req | 
-		req send200Response: 'redirect ok'
-	].
-
-	client := WebClient new.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 200.
-	self assert: resp url = (self localHostUrl, '/bar').
-
-	client := WebClient new.
-	client allowRedirect: false.
-	resp := client httpGet: self localHostUrl, '/foo'.
-	self assert: resp code = 302.
-	self assert: resp url = (self localHostUrl, '/foo').
-! !
-
-!WebClientServerTest methodsFor: 'tests - https' stamp: 'ar 7/21/2010 20:59'!
-testSchemeHandling
-	"Ensure that we handle only http and https schemes"
-
-	self shouldnt:[WebClient httpGet: 'http://localhost:', self port asString] raise: Error.
-	self should:[WebClient httpGet: 'ftp://localhost:', self port asString] raise: Error.
-
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/19/2011 18:20'!
-testServerDestroy
-	"Tests that connections get nuked when server gets killed"
-	
-	| client resp |
-	server addService: '/test' action:[:req | req send200Response: 'ok'].
-	client := WebClient new.
-	resp := client httpGet: self localHostUrl, '/test'.
-
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-	self assert: client isConnected.
-	self assert: server connections size = 1.
-
-	server destroy.
-
-	"Depending on OS the signal may not be delivered synchronously
-	and raise ConnectionClosed in the (signaling) peek. Give it a bit of 
-	time to deal with the close."
-	(Delay forMilliseconds: 100) wait.
-
-	"Make stream non-blocking otherwise peek can blow up in our face"
-	resp contentStream shouldSignal: false.
-	self assert: resp contentStream peek == nil.
-	self deny: client isConnected
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
-testServerError
-	"Test server handling of errors"
-
-	| resp |
-	server addService: '/test' action:[:req | self error: 'boom'].
-
-	resp := WebClient httpGet: self localHostUrl, '/test'.
-	self assert: resp code = 500.
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/1/2010 21:09'!
-testServerRegistry
-	"Ensure that the WebServer registry functions as intended"
-
-	| serverA serverB |
-	["Create a new server"
-	serverA := WebServer forUrl: 'http://foo.bar.com'.
-	serverA listenOn: self port+1.
-	self assert: serverA notNil.
-	self assert: serverA isRunning.
-
-	"Look it up again"
-	serverB := WebServer forUrl: 'http://foo.bar.com'.
-	self assert: serverA == serverB.
-
-	"Override with a new one (should shutdown serverA)"
-	serverB := WebServer newForUrl: 'http://foo.bar.com'.
-	self deny: serverA == serverB.
-	self deny: serverA isRunning.
-
-	"Destroy (should de-register serverB)"
-	serverB destroy.
-	self assert: (WebServer forUrl: 'http://foo.bar.com' ifAbsent:[nil]) == nil
-	] ensure:[
-		serverA ifNotNil:[serverA destroy].
-		serverB ifNotNil:[serverB destroy].
-	].! !
-
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:03'!
-testSignOAuthGet
-	"Ensure that we can sign a request correctly using OAuth.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| request |
-	request := WebRequest new.
-	request method: 'GET'.
-	WebUtils oAuthSign: request 
-				url: 'http://host.net/resource'
-				using: self oAuthParams.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="dSI3zjYnriSnaB787UH2NDcS8Ss%3D"'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
-testSignOAuthGetDupFields
-	"Ensure that we can sign a request with duplicate fields correctly using OAuth.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| request |
-	request := WebRequest new.
-	request method: 'GET'.
-	WebUtils oAuthSign: request 
-				url: 'http://host.net/resource?name=value&name=value'
-				using: self oAuthParams.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="30p67coAX8YbxCKAGfaimydYK6g%3D"'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:07'!
-testSignOAuthGetFields
-	"Ensure that we can sign a GET request with fields correctly using OAuth.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| request |
-	request := WebRequest new.
-	request method: 'GET'.
-	WebUtils oAuthSign: request 
-				url: 'http://host.net/resource?name=value'
-				using: self oAuthParams.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="N6TOtNK6h3u9zqjqaF2kgpIVb%2F8%3D"'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
-testSignOAuthPostFields
-	"Ensure that we can sign a POST request with fields correctly using OAuth.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| request |
-	request := WebRequest new.
-	request method: 'POST'.
-	WebUtils oAuthSign: request 
-				url: 'http://host.net/resource'
-				extra:{'name' -> 'value'}
-				using: self oAuthParams.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="abcd",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="E7yVjmf%2F8UTF9ij15CtbBBhulMw%3D"'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - oauth' stamp: 'ar 8/23/2010 22:04'!
-testSignOAuthUrlEncoding
-	"Ensure that we can sign a request requiring url-encoded oauth params.
-	Example values taken from 
-		http://oauth.googlecode.com/svn/code/javascript/example/signature.html
-	"
-
-	| params request |
-	"Consumer Key with url-encoded characters"
-	params := self oAuthParams.
-	params at: 'oauth_consumer_key' put: 'key with spaces'.
-
-	request := WebRequest new.
-	request method: 'GET'.
-	WebUtils oAuthSign: request 
-				url: 'http://host.net/resource'
-				using: params.
-	self assert: (request headerAt: 'Authorization')
-		equals: 'OAuth oauth_consumer_key="key%20with%20spaces",oauth_nonce="FWNkVaRJVzE",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1281668113",oauth_token="ijkl",oauth_version="1.0",oauth_signature="%2FxrAsx0Utt3V6ZbX00jWWpkqrvg%3D"'.! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/14/2010 21:06'!
-testSimpleServerAction
-	"Test client and server handling simple defaults"
-
-	| resp srvr |
-	server addService: '/test' action:[:req |
-		srvr := req server.
-		req send200Response: 'ok'].
-
-	resp := WebClient httpGet: self localHostUrl, '/test'.
-	self assert: srvr notNil.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
-testStreaming
-	"Run a test for a full auth-redirect-cookie loop"
-
-	| resp amount stream |
-	amount := 128*1024.
-	server addService: '/streaming' action:[:req|
-		req stream200Response: (String new: amount) readStream size: amount.
-	].
-	resp := WebClient httpGet: self localHostUrl, '/streaming'.
-	self assert: resp isSuccess.
-	stream := WriteStream on: String new.
-	resp streamTo: stream size: resp contentLength progress: nil.
-	self assert: stream position = amount.
-! !
-
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'jmv 6/26/2017 19:58:18'!
-testStrings
-	"Test string encodings"
-
-	self assert: (self decode: '"Hello World"') = 'Hello World'.
-	self assert: (self decode: '"\"Hello World\""') = '"Hello World"'.
-	self assert: (self decode: '"foo\\bar\/baz"') = 'foo\bar/baz'.
-	self assert: (self decode: '""') = ''.
-	self assert: (self decode: '"foo \u0026 bar"') = 'foo & bar'.
-	self assert: (self decode: '"\r\n"') = String crlfString.
-	self assert: (self decode: '"\u041F\u0440\u0430\u0432\u0434\u0430"')
-		equals: ( '&#x041F;&#x0440;&#x0430;&#x0432;&#x0434;&#x0430;' ).
-
-	self assert: (self encode: 'Hello World') = '"Hello World"'.
-	self assert: (self encode: '"Hello World"') = '"\"Hello World\""'.
-	self assert: (self encode: 'foo\bar/baz') = '"foo\\bar\/baz"'.
-	self assert: (self encode: '') = '""'.
-false ifTrue: [
-	self assert: (self encode: 'foo &#x100; bar') = '"foo \u0101 bar"' ].
-	self assert: (self encode: String crlfString) = '"\r\n"'.
-
-	self assert: (self encode: (String fromUtf8: #[208 159 209 128 208 176 208 178 208 180 208 176]))
-		equals:  '"&#1055;&#1088;&#1072;&#1074;&#1076;&#1072;"' .
-
-	self should: [self decode: '"hello'] raise: Error.
-	self should: [self decode: '"\'] raise: Error.
-	self should: [self decode: '"\"'] raise: Error.! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/19/2010 00:05'!
-testTransientPostContent
-	"Ensure that WebRequest>>content doesn't close the socket 
-	when used in a transient post request"
-
-	| resp client |
-	server addService: '/test' action:[:req |
-		req send200Response: req content].
-
-	client := WebClient new.
-	resp := client httpPost: self localHostUrl, '/test' content:'hello' type: nil do:[:req|
-		req protocol: 'HTTP/1.0'
-	].
-	self assert: resp code = 200.
-	self assert: resp content = 'hello'.
-! !
-
-!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 9/4/2010 11:35'!
-testUrlEncoding
-	"Test the default URL encoding behavior"
-	| resp |
-	server addService: '/hello world' action:[:req|
-		req send200Response: 'ok'.
-	].
-	resp := WebClient httpGet: self localHostUrl, '/hello%20world'.
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-
-	resp := WebClient httpGet: (WebUtils urlEncode: self localHostUrl, '/hello world').
-	self assert: resp code = 200.
-	self assert: resp content = 'ok'.
-! !
+!WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 7/20/2010 20:38'!
+testDecodeWebSocketKey
+	"Ensure that decoding the Sec-WebSocket-Key fields works properly."
+
+	| key1 key2 data |
+	key1 := 155712099.
+	key2 := 173347027.
+	data := 'Tm[K T2u'.
+
+	self assert: (WebUtils extractWebSocketKey: '18x 6]8vM;54 *(5:  {   U1]8  z [  8') = key1.
+	self assert: (WebUtils extractWebSocketKey: '1_ tx7X d  <  nw  334J702) 7]o}` 0') = key2.
+
+	self assert: (WebUtils webSocketHandshake: key1 with: key2 with: data) asString = 'fQJ,fN/4F4!!~K~MH'.! !
 
 !WebClientServerTest methodsFor: 'tests - websockets' stamp: 'ar 9/26/2011 10:29'!
 testWebSocketHash07
@@ -2088,6 +1710,435 @@ testWebSocketsFraming
 	sema wait.
 	self assert: (resp = nil).
 	self assert: (frameType = 255).! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:30'!
+testDefault404
+	"Test that a new server responds with 404 to anything"
+
+	| resp |
+	resp := WebClient httpGet: self localHostUrl.
+	self assert: resp code = 404.
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/1/2010 20:22'!
+testHtmlSubmit
+	"Ensure that we have round-trip conversion for html submit"
+
+	| fieldDict fieldList |
+	fieldDict := Dictionary newFromPairs: {'foo'. 123. 'bar'. 'yoho'}.
+	fieldList := {'foo' -> 123. 'bar' -> 'yoho'}.
+	self testHtmlSubmitUsing: fieldDict.
+	self testHtmlSubmitUsing: fieldList.! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/1/2010 20:22'!
+testHtmlSubmitUsing: fields
+	"Ensure that we have round-trip conversion for html submit"
+
+	| resp |
+	server addService: '/fields' action:[:req | 
+		req send200Response: (String streamContents:[:s|
+			req fields keys asArray sort do:[:key | s cr; nextPutAll: key,'=', (req fields at: key)].
+		]).
+	].
+	resp := WebClient htmlSubmit: (self localHostUrl, '/fields') fields: fields.
+	self assert: resp code = 200.
+	self assert: resp content = '
+bar=yoho
+foo=123'.
+
+	resp := WebClient htmlSubmit: (self localHostUrl, '/fields') fields: fields method: 'POST'.
+	self assert: resp code = 200.
+	self assert: resp content = '
+bar=yoho
+foo=123'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'dtl 7/17/2012 19:40'!
+testListenOnInterface
+	"Test that listening on a particular interface listens only on that interface"
+
+	| localHostAddr resp localHostName client |
+	server destroy.		"kill old server"
+
+	localHostAddr := NetNameResolver localHostAddress.
+	localHostAddr asByteArray = #(127 0 0 1) asByteArray ifTrue:[^self]. "skip test"
+
+	localHostName := NetNameResolver stringFromAddress: localHostAddr.
+
+	server := WebServer new listenOn: self port interface: localHostAddr.
+	server addService: '/' action:[:req| req send200Response: 'ok'].
+
+	client := WebClient new.
+	client timeout: 1.
+	self should:[resp := client httpGet: self localHostUrl, '/test'] raise: Error.
+
+	resp := client httpGet: 'http://', localHostName, ':', self port asString, '/test'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 6/26/2017 20:00:44'!
+testLogging200
+	"Test logging a regular 200 a-ok response"
+
+	| resp client log |
+	server addService: '/test' action:[:req | req send200Response: 'ok'].
+	server accessLog: String new writeStream.
+
+	client := WebClient new.
+	client accessLog: String new writeStream.
+	[resp := client httpGet: self localHostUrl, '/test'] ensure:[client close].
+
+	self assert: resp code = 200.
+
+	log := server accessLog contents.
+	self assert: ('127.0.0.1 - - [*] "GET /test HTTP/1.1" 200 2', String newLineString match: log).
+
+	log := client accessLog contents.
+	self assert: ('localhost - - [*] "GET /test HTTP/1.1" 200 2', String newLineString match: log).
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'jmv 6/26/2017 20:01:17'!
+testLogging404
+	"Test logging a 404 response"
+
+	| resp client log |
+	server accessLog: String new writeStream.
+	client := WebClient new.
+	client accessLog: String new writeStream.
+	[resp := client httpGet: self localHostUrl] ensure:[client close].
+
+	self assert: resp code = 404.
+
+	log := server accessLog contents.
+	self assert: ('127.0.0.1 - - [*] "GET / HTTP/1.1" 404 145', String newLineString match: log).
+
+	log := client accessLog contents.
+	self assert: ('localhost - - [*] "GET / HTTP/1.1" 404 145', String newLineString match: log).
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:32'!
+testNestedAction
+	"Test handling of nested actions"
+
+	| resp |
+	server addService: '/test' action:[:req | req send200Response: 'ok'].
+	server addService: '/test/42' action:[:req | req send200Response: '42'].
+
+	resp := WebClient httpGet: self localHostUrl, '/test'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+
+	resp := WebClient httpGet: self localHostUrl, '/test/42'.
+	self assert: resp code = 200.
+	self assert: resp content = '42'.
+
+	resp := WebClient httpGet: self localHostUrl, '/test/43'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 8/24/2010 21:42'!
+testResponseUrl
+	"Tests that the response url is pointing to the final location"
+
+	| resp client |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/bar'
+	].
+	server addService: '/bar' action:[:req | 
+		req send200Response: 'redirect ok'
+	].
+
+	client := WebClient new.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp url = (self localHostUrl, '/bar').
+
+	client := WebClient new.
+	client allowRedirect: false.
+	resp := client httpGet: self localHostUrl, '/foo'.
+	self assert: resp code = 302.
+	self assert: resp url = (self localHostUrl, '/foo').
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/19/2011 18:20'!
+testServerDestroy
+	"Tests that connections get nuked when server gets killed"
+	
+	| client resp |
+	server addService: '/test' action:[:req | req send200Response: 'ok'].
+	client := WebClient new.
+	resp := client httpGet: self localHostUrl, '/test'.
+
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+	self assert: client isConnected.
+	self assert: server connections size = 1.
+
+	server destroy.
+
+	"Depending on OS the signal may not be delivered synchronously
+	and raise ConnectionClosed in the (signaling) peek. Give it a bit of 
+	time to deal with the close."
+	(Delay forMilliseconds: 100) wait.
+
+	"Make stream non-blocking otherwise peek can blow up in our face"
+	resp contentStream shouldSignal: false.
+	self assert: resp contentStream peek == nil.
+	self deny: client isConnected
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
+testServerError
+	"Test server handling of errors"
+
+	| resp |
+	server addService: '/test' action:[:req | self error: 'boom'].
+
+	resp := WebClient httpGet: self localHostUrl, '/test'.
+	self assert: resp code = 500.
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 11/1/2010 21:09'!
+testServerRegistry
+	"Ensure that the WebServer registry functions as intended"
+
+	| serverA serverB |
+	["Create a new server"
+	serverA := WebServer forUrl: 'http://foo.bar.com'.
+	serverA listenOn: self port+1.
+	self assert: serverA notNil.
+	self assert: serverA isRunning.
+
+	"Look it up again"
+	serverB := WebServer forUrl: 'http://foo.bar.com'.
+	self assert: serverA == serverB.
+
+	"Override with a new one (should shutdown serverA)"
+	serverB := WebServer newForUrl: 'http://foo.bar.com'.
+	self deny: serverA == serverB.
+	self deny: serverA isRunning.
+
+	"Destroy (should de-register serverB)"
+	serverB destroy.
+	self assert: (WebServer forUrl: 'http://foo.bar.com' ifAbsent:[nil]) == nil
+	] ensure:[
+		serverA ifNotNil:[serverA destroy].
+		serverB ifNotNil:[serverB destroy].
+	].! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/14/2010 21:06'!
+testSimpleServerAction
+	"Test client and server handling simple defaults"
+
+	| resp srvr |
+	server addService: '/test' action:[:req |
+		srvr := req server.
+		req send200Response: 'ok'].
+
+	resp := WebClient httpGet: self localHostUrl, '/test'.
+	self assert: srvr notNil.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 5/7/2010 20:33'!
+testStreaming
+	"Run a test for a full auth-redirect-cookie loop"
+
+	| resp amount stream |
+	amount := 128*1024.
+	server addService: '/streaming' action:[:req|
+		req stream200Response: (String new: amount) readStream size: amount.
+	].
+	resp := WebClient httpGet: self localHostUrl, '/streaming'.
+	self assert: resp isSuccess.
+	stream := WriteStream on: String new.
+	resp streamTo: stream size: resp contentLength progress: nil.
+	self assert: stream position = amount.
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 6/19/2010 00:05'!
+testTransientPostContent
+	"Ensure that WebRequest>>content doesn't close the socket 
+	when used in a transient post request"
+
+	| resp client |
+	server addService: '/test' action:[:req |
+		req send200Response: req content].
+
+	client := WebClient new.
+	resp := client httpPost: self localHostUrl, '/test' content:'hello' type: nil do:[:req|
+		req protocol: 'HTTP/1.0'
+	].
+	self assert: resp code = 200.
+	self assert: resp content = 'hello'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - misc' stamp: 'ar 9/4/2010 11:35'!
+testUrlEncoding
+	"Test the default URL encoding behavior"
+	| resp |
+	server addService: '/hello world' action:[:req|
+		req send200Response: 'ok'.
+	].
+	resp := WebClient httpGet: self localHostUrl, '/hello%20world'.
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+
+	resp := WebClient httpGet: (WebUtils urlEncode: self localHostUrl, '/hello world').
+	self assert: resp code = 200.
+	self assert: resp content = 'ok'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - fields' stamp: 'ar 7/20/2010 20:12'!
+testGetFields
+	"Test client and server handling simple fields"
+
+	| resp |
+	server addService: '/fields' action:[:req | 
+		req send200Response: (String streamContents:[:s|
+			req fields keys asArray sort do:[:key | s cr; nextPutAll: key,'=', (req fields at: key)].
+		]).
+	].
+
+	resp := WebClient httpGet: self localHostUrl, '/fields?foo=123&bar=yoho'.
+	self assert: resp code = 200.
+	self assert: resp content = '
+bar=yoho
+foo=123'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - fields' stamp: 'ar 7/20/2010 20:12'!
+testMultipartFields
+	"Test client and server handling multipart/form-data fields"
+
+	| resp |
+	server addService: '/fields' action:[:req | 
+		req send200Response: (String streamContents:[:s|
+			req fields keys asArray sort do:[:key | s cr; nextPutAll: key,'=', (req fields at: key)].
+		]).
+	].
+
+	resp := WebClient httpPost: self localHostUrl,'/fields'  multipartFields: {
+		'foo' -> 123.
+		'bar' -> 'yoho'.
+	}.
+	self assert: resp code = 200.
+	self assert: resp content = '
+bar=yoho
+foo=123'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - fields' stamp: 'ar 7/20/2010 20:11'!
+testPostFields
+	"Test client and server handling fields in url-encoded encoded post requests"
+
+	| resp |
+	server addService: '/fields' action:[:req | 
+		req send200Response: (String streamContents:[:s|
+			req fields keys asArray sort do:[:key | s cr; nextPutAll: key,'=', (req fields at: key)].
+		]).
+	].
+
+	resp := WebClient httpPost: self localHostUrl, '/fields' 
+				content: 'foo=123&bar=yoho'
+				type: 'application/x-www-form-urlencoded'.
+	self assert: resp code = 200.
+	self assert: resp content = '
+bar=yoho
+foo=123'.
+! !
+
+!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
+testHttpDelete
+	"Test for handling a DELETE request"
+
+	| resp |
+	server addService: '/nodelete' action:[:req | 
+		req send200Response: 'ok'.
+	].
+	server addService: '/delete' action:[:req | 
+		req send200Response: req method.
+	] methods: {'GET'. 'PUT'. 'DELETE'}.
+
+	resp := WebClient httpGet: self localHostUrl, '/nodelete'.
+	self assert: resp code = 200.
+	resp := WebClient httpDelete: self localHostUrl, '/nodelete'.
+	self assert: resp code = 405.
+
+	resp := WebClient httpGet: self localHostUrl, '/delete'.
+	self assert: resp code = 200.
+	resp := WebClient httpDelete: self localHostUrl, '/delete'.
+	self assert: resp code = 200.
+
+	resp := WebClient httpPost: self localHostUrl, '/delete' content:'' type: nil.
+	self assert: resp code = 405.
+! !
+
+!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 8/5/2010 22:32'!
+testHttpHead
+	"Test for handling a HEAD request"
+
+	| resp |
+	server addService: '/foo' action:[:req | 
+		req send302Response: '/bar'
+	].
+	server addService: '/bar' action:[:req | 
+		req send200Response: 'ok'
+	].
+
+	resp := WebClient httpHead: self localHostUrl, '/bar'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+	self deny: resp contentStream isDataAvailable..
+
+	resp := WebClient httpHead: self localHostUrl, '/foo'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+! !
+
+!WebClientServerTest methodsFor: 'tests - methods' stamp: 'ar 5/11/2010 20:42'!
+testHttpOptions
+	"Test for handling the OPTIONS request"
+
+	| resp |
+	server addService: '/delete' action:[:req | 
+		req send200Response: req method.
+	] methods: {'GET'. 'PUT'. 'DELETE'}.
+
+	resp := WebClient httpOptions: self localHostUrl, '/*'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,POST'.
+
+	resp := WebClient httpOptions: self localHostUrl, '/delete'.
+	self assert: resp code = 200.
+	self assert: resp content = ''.
+	self assert: (resp headerAt: 'allow') = 'HEAD,TRACE,OPTIONS,GET,PUT,DELETE'.! !
+
+!WebClientServerTest methodsFor: 'tests - methods' stamp: 'jmv 6/26/2017 19:25:31'!
+testHttpTrace
+	"Test for handling the TRACE request"
+
+	| resp |
+	resp := WebClient httpTrace: self localHostUrl, '/bar'.
+	self assert: resp code = 200.
+	self assert: resp contentType = 'message/http'.
+	self assert: resp content =
+		( 'TRACE /bar HTTP/1.1', String crlfString,
+		'user-agent: ', WebClient new userAgent, String crlfString,
+		'host: localhost:', self port printString, String crlfString, String crlfString	)! !
+
+!WebClientServerTest methodsFor: 'tests - https' stamp: 'ar 7/21/2010 20:59'!
+testSchemeHandling
+	"Ensure that we handle only http and https schemes"
+
+	self shouldnt:[WebClient httpGet: 'http://localhost:', self port asString] raise: Error.
+	self should:[WebClient httpGet: 'ftp://localhost:', self port asString] raise: Error.
+
+! !
 
 !SqueakSSLTest methodsFor: 'setup' stamp: 'ar 7/30/2010 21:00'!
 certName
@@ -2641,6 +2692,15 @@ ensureValidCert
 certState
 	^ssl ifNotNil:[ssl certState]! !
 
+!SecureSocket methodsFor: 'accessing' stamp: 'ar 6/17/2012 11:07'!
+peerName
+	^ssl ifNotNil:[ssl peerName]! !
+
+!SecureSocket methodsFor: 'accessing' stamp: 'ar 6/17/2012 11:05'!
+ssl
+	"Answer the SqueakSSL instance"
+	^ssl! !
+
 !SecureSocket methodsFor: 'primitives' stamp: 'ar 6/17/2012 12:00'!
 decodeData
 	"Receive data from the given socket into the given array starting at the given index. Return the number of bytes read or zero if no data is available."
@@ -2661,33 +2721,12 @@ decodeData
 	decoded setFrom: 1 to: total.
 ! !
 
-!SecureSocket methodsFor: 'initialize' stamp: 'ar 6/17/2012 11:08'!
-destroy
-	ssl ifNotNil:[
-		ssl destroy.
-		ssl := nil
-	].
-	super destroy.! !
-
-!SecureSocket methodsFor: 'initialize' stamp: 'ar 6/17/2012 11:11'!
-initialize
-
-	super initialize.
-	decoded := ReadStream on: (ByteArray new: 20000) from: 1 to: 0.
-	sendBuf := ByteArray new: 4096.
-	readBuf := ByteArray new: 4096.
-! !
-
 !SecureSocket methodsFor: 'primitives' stamp: 'ar 6/19/2012 21:12'!
 isConnected
 	"Return true if this socket is connected."
 	"We mustn't return false if there is data available"
 
 	^super isConnected or:[self dataAvailable]! !
-
-!SecureSocket methodsFor: 'accessing' stamp: 'ar 6/17/2012 11:07'!
-peerName
-	^ssl ifNotNil:[ssl peerName]! !
 
 !SecureSocket methodsFor: 'primitives' stamp: 'ar 6/17/2012 12:00'!
 primSocket: socketID receiveDataInto: buffer startingAt: index count: count
@@ -2725,10 +2764,22 @@ primSocketReceiveDataAvailable: socketID
 	self decodeData.
 	^decoded atEnd not! !
 
-!SecureSocket methodsFor: 'accessing' stamp: 'ar 6/17/2012 11:05'!
-ssl
-	"Answer the SqueakSSL instance"
-	^ssl! !
+!SecureSocket methodsFor: 'initialize' stamp: 'ar 6/17/2012 11:08'!
+destroy
+	ssl ifNotNil:[
+		ssl destroy.
+		ssl := nil
+	].
+	super destroy.! !
+
+!SecureSocket methodsFor: 'initialize' stamp: 'ar 6/17/2012 11:11'!
+initialize
+
+	super initialize.
+	decoded := ReadStream on: (ByteArray new: 20000) from: 1 to: 0.
+	sendBuf := ByteArray new: 4096.
+	readBuf := ByteArray new: 4096.
+! !
 
 !SecureSocket methodsFor: 'connect' stamp: 'ar 6/17/2012 11:05'!
 sslAccept: certName
@@ -2852,13 +2903,6 @@ ascii
 			yourself.
 ! !
 
-!SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 11/23/2010 15:03'!
-atEnd
-	"Pre Squeak 4.2 compatibility"
-
-	self receiveAvailableData.
-	^super atEnd! !
-
 !SecureSocketStream methodsFor: 'accessing' stamp: 'ar 11/9/2010 11:09'!
 binary
 	"Switch to binary"
@@ -2869,14 +2913,6 @@ binary
 		from: 1 to: decoded size)
 			position: decoded position;
 			yourself.
-! !
-
-!SecureSocketStream methodsFor: 'errors' stamp: 'ar 8/16/2011 10:21'!
-certError: errorString code: reason
-	"Signal an issue with a certificate. If the reason code matches the acceptable cert issues, continue, otherwise signal an error."
-
-	(certIssues allMask: reason) ifTrue:[^self].
-	^SqueakSSLCertificateError signal: errorString, '(code: ', reason, ')'.
 ! !
 
 !SecureSocketStream methodsFor: 'accessing' stamp: 'ar 7/25/2010 16:31'!
@@ -2899,43 +2935,6 @@ certState
 	"
 
 	^ssl ifNotNil:[ssl certState]! !
-
-!SecureSocketStream methodsFor: 'initialize' stamp: 'ar 7/25/2010 17:30'!
-close
-	"Flush any data still not sent and take care of the socket."
-
-	super close.
-	ssl ifNotNil:[
-		ssl destroy.
-		ssl := nil.
-	].! !
-
-!SecureSocketStream methodsFor: 'initialize' stamp: 'ar 7/25/2010 17:34'!
-destroy
-	"Destroy the receiver and its underlying socket. Does not attempt to flush the output buffers. For a graceful close use SocketStream>>close instead."
-
-	"Pre-4.2 compatibility. Should be 'super destroy' instead of 'socket destroy'"
-	socket ifNotNil:[
-		socket destroy.
-		socket := nil.
-	].
-
-	ssl ifNotNil:[
-		ssl destroy.
-		ssl := nil.
-	].! !
-
-!SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 7/25/2010 17:33'!
-flush
-	"Pre-Squeak 4.2 compatibility"
-
-	((outNextToWrite > 1) and: [socket isOtherEndClosed not])
-		ifTrue: [
-			[self sendData: outBuffer count: outNextToWrite - 1]
-				on: ConnectionTimedOut
-				do: [:ex | shouldSignal ifFalse: ["swallow"]].
-			outNextToWrite := 1]
-! !
 
 !SecureSocketStream methodsFor: 'accessing' stamp: 'ar 7/25/2010 16:31'!
 ignoredCertIssues
@@ -2963,18 +2962,36 @@ ignoredCertIssues: reasonsMask
 
 	certIssues := reasonsMask! !
 
-!SecureSocketStream methodsFor: 'initialize' stamp: 'ar 7/25/2010 15:58'!
-initialize
-	"Initialize the receiver"
-	
-	"I think 16k is the max for SSL frames so use a tad more"
-	decoded := ReadStream on: (ByteArray new: 20000) from: 1 to: 0.
+!SecureSocketStream methodsFor: 'accessing' stamp: 'ar 7/25/2010 14:45'!
+peerName
+	"Returns the certificate name of the remote peer.
+	The method only returns a name if the certificate has been verified."
 
-	super initialize.
+	^ssl ifNotNil:[ssl peerName]! !
 
-	sendBuf := ByteArray new: 4096.
-	readBuf := ByteArray new: 4096.
-	certIssues := 0.
+!SecureSocketStream methodsFor: 'accessing' stamp: 'ar 7/25/2010 16:32'!
+ssl
+	"The SqueakSSL instance"
+
+	^ssl! !
+
+!SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 11/23/2010 15:03'!
+atEnd
+	"Pre Squeak 4.2 compatibility"
+
+	self receiveAvailableData.
+	^super atEnd! !
+
+!SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 7/25/2010 17:33'!
+flush
+	"Pre-Squeak 4.2 compatibility"
+
+	((outNextToWrite > 1) and: [socket isOtherEndClosed not])
+		ifTrue: [
+			[self sendData: outBuffer count: outNextToWrite - 1]
+				on: ConnectionTimedOut
+				do: [:ex | shouldSignal ifFalse: ["swallow"]].
+			outNextToWrite := 1]
 ! !
 
 !SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 11/23/2010 15:03'!
@@ -2998,47 +3015,12 @@ nextPutAllFlush: aCollection
 			do: [:ex | shouldSignal ifFalse: ["swallow"]]]
 ! !
 
-!SecureSocketStream methodsFor: 'accessing' stamp: 'ar 7/25/2010 14:45'!
-peerName
-	"Returns the certificate name of the remote peer.
-	The method only returns a name if the certificate has been verified."
-
-	^ssl ifNotNil:[ssl peerName]! !
-
 !SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 7/25/2010 17:32'!
 receiveAvailableData
 	"Pre Squeak 4.2 compatibility"
 	
 	recentlyRead := self receiveDataInto: inBuffer startingAt: inNextToWrite.
 	^self adjustInBuffer: recentlyRead
-! !
-
-!SecureSocketStream methodsFor: 'private-socket' stamp: 'ar 11/15/2010 11:39'!
-receiveData
-	"This method drains the available decryption data before waiting for the socket"
-
-	| pos |
-
-	"Note: The loop here is necessary to catch cases where a TLS packet is
-	split among TCP packets. In this case we would pull the first portion of
-	the TLS packet here but receiveAvailableData would return nothing since
-	the contents of the packet can't be decoded until the rest has come in."
-
-	[pos := inNextToWrite.
-	self receiveAvailableData.
-	pos = inNextToWrite ifFalse:[^pos].
-
-	"Pre-4.2 compatibility; should be 'super receiveData' instead."
-	socket
-		waitForDataFor: self timeout
-		ifClosed: [self shouldSignal 
-			ifTrue:[ConnectionClosed signal: 'Connection closed while waiting for data.']]
-		ifTimedOut: [self shouldTimeout
-			ifTrue:[ConnectionTimedOut signal: 'Data receive timed out.']].
-	self isConnected] whileTrue.
-
-	"Final attempt to read data if a non-signaling connection closes"
-	^self receiveAvailableData.
 ! !
 
 !SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 11/23/2010 15:03'!
@@ -3055,66 +3037,101 @@ receiveDataIfAvailable
 	^self receiveAvailableData
 ! !
 
-!SecureSocketStream methodsFor: 'private-socket' stamp: 'ar 11/17/2011 13:19'!
-receiveDataInto: buffer startingAt: index
-	"Read and decrypt the data from the underlying socket. "
+!SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 11/23/2010 15:03'!
+upToAll: aStringOrByteArray
+	"Pre Squeak 4.2 compatibility"
 
-	| count bytesRead |
-	"While in handshake, use the superclass version"
-	ssl ifNil:[
-		"Pre-4.2 compatibility; should be 'super receiveDataInto: buffer startingAt: index'"
-		^socket  receiveAvailableDataInto: buffer startingAt: index.
+	^self upToAll: aStringOrByteArray limit: 100000! !
+
+!SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 11/23/2010 15:03'!
+upToAll: aStringOrByteArray limit: nBytes
+	"Pre Squeak 4.2 compatibility"
+
+	| index sz result searchedSoFar target |
+	"Deal with ascii vs. binary"
+	self isBinary
+		ifTrue:[target := aStringOrByteArray asByteArray]
+		ifFalse:[target := aStringOrByteArray asString].
+
+	sz := target size.
+	"Look in the current inBuffer first"
+	index := inBuffer indexOfSubCollection: target
+						startingAt: lastRead - sz + 2.
+	(index > 0 and: [(index + sz) <= inNextToWrite]) ifTrue: ["found it"
+		result := self nextInBuffer: index - lastRead - 1.
+		self skip: sz.
+		^ result
 	].
 
-	"Only decode more data if all the decoded contents has been drained"
-	decoded atEnd ifTrue:[
-		"Decrypt more data if available"
-		bytesRead := 0.
-		[count := ssl decrypt: readBuf from: 1 to: bytesRead into: decoded originalContents.
-		count < 0 ifTrue:[^self error: 'SSL error, code: ', count].
-		bytesRead := 0.
-		count = 0 ifTrue:[
-			bytesRead := socket receiveAvailableDataInto: readBuf startingAt: 1.
+	[searchedSoFar :=  self inBufferSize.
+	"Receive more data"
+	self receiveData.
+	recentlyRead > 0] whileTrue:[
+
+		"Data begins at lastRead + 1, we add searchedSoFar as offset and 
+		backs up sz - 1 so that we can catch any borderline hits."
+
+		index := inBuffer indexOfSubCollection: target
+						startingAt: (lastRead + searchedSoFar - sz + 2 max: 1).
+		(index > 0 and: [(index + sz) <= inNextToWrite]) ifTrue: ["found it"
+			result := self nextInBuffer: index - lastRead - 1.
+			self skip: sz.
+			^ result
 		].
-		bytesRead = 0] whileFalse.
-		"Update for number of bytes decoded"
-		decoded setFrom: 1 to: count.
+		"Check if we've exceeded the max. amount"
+		(nBytes notNil and:[inNextToWrite - lastRead > nBytes]) 
+			ifTrue:[^self nextAllInBuffer].
 	].
 
-	"Push data from decoded into the result buffer"
-	count := (decoded size - decoded position) min: (buffer size - index + 1).
-	(decoded next: count into: buffer startingAt: index) size < count
-		ifTrue:[^self error: 'Unexpected read failure'].
-	^count
+	"not found and (non-signaling) connection was closed"
+	^self nextAllInBuffer! !
+
+!SecureSocketStream methodsFor: 'errors' stamp: 'ar 8/16/2011 10:21'!
+certError: errorString code: reason
+	"Signal an issue with a certificate. If the reason code matches the acceptable cert issues, continue, otherwise signal an error."
+
+	(certIssues allMask: reason) ifTrue:[^self].
+	^SqueakSSLCertificateError signal: errorString, '(code: ', reason, ')'.
 ! !
 
-!SecureSocketStream methodsFor: 'private-socket' stamp: 'ar 7/25/2010 17:37'!
-sendData: buffer count: n
-	"Encrypts the data before sending it on the underlying socket.
-	Breaks large chunks into 2k components to fit safely into ssl frame."
+!SecureSocketStream methodsFor: 'initialize' stamp: 'ar 7/25/2010 17:30'!
+close
+	"Flush any data still not sent and take care of the socket."
 
-	| remain start amount count |
-	"While in handshake, use the superclass version"
-	ssl ifNil:[
-		"Pre-4.2 compatibility; should be 'super sendData: buffer count: n' instead"
-		^socket sendData: buffer count: n
-	].
-
-	"Break the input into reasonable chunks and send them"
-	remain := n. start := 1.
-	[remain > 0] whileTrue:[
-		amount := remain min: 2048.
-		count := ssl encrypt: buffer from: start to: start+amount-1 into: sendBuf.
-		socket sendData: sendBuf count: count.
-		remain := remain - amount.
-		start := start + amount.
+	super close.
+	ssl ifNotNil:[
+		ssl destroy.
+		ssl := nil.
 	].! !
 
-!SecureSocketStream methodsFor: 'accessing' stamp: 'ar 7/25/2010 16:32'!
-ssl
-	"The SqueakSSL instance"
+!SecureSocketStream methodsFor: 'initialize' stamp: 'ar 7/25/2010 17:34'!
+destroy
+	"Destroy the receiver and its underlying socket. Does not attempt to flush the output buffers. For a graceful close use SocketStream>>close instead."
 
-	^ssl! !
+	"Pre-4.2 compatibility. Should be 'super destroy' instead of 'socket destroy'"
+	socket ifNotNil:[
+		socket destroy.
+		socket := nil.
+	].
+
+	ssl ifNotNil:[
+		ssl destroy.
+		ssl := nil.
+	].! !
+
+!SecureSocketStream methodsFor: 'initialize' stamp: 'ar 7/25/2010 15:58'!
+initialize
+	"Initialize the receiver"
+	
+	"I think 16k is the max for SSL frames so use a tad more"
+	decoded := ReadStream on: (ByteArray new: 20000) from: 1 to: 0.
+
+	super initialize.
+
+	sendBuf := ByteArray new: 4096.
+	readBuf := ByteArray new: 4096.
+	certIssues := 0.
+! !
 
 !SecureSocketStream methodsFor: 'initialize' stamp: 'ar 11/17/2011 17:10'!
 sslAccept: certName
@@ -3193,55 +3210,6 @@ sslConnectTo: serverName
 	].
 ! !
 
-!SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 11/23/2010 15:03'!
-upToAll: aStringOrByteArray
-	"Pre Squeak 4.2 compatibility"
-
-	^self upToAll: aStringOrByteArray limit: 100000! !
-
-!SecureSocketStream methodsFor: 'private-compat' stamp: 'ar 11/23/2010 15:03'!
-upToAll: aStringOrByteArray limit: nBytes
-	"Pre Squeak 4.2 compatibility"
-
-	| index sz result searchedSoFar target |
-	"Deal with ascii vs. binary"
-	self isBinary
-		ifTrue:[target := aStringOrByteArray asByteArray]
-		ifFalse:[target := aStringOrByteArray asString].
-
-	sz := target size.
-	"Look in the current inBuffer first"
-	index := inBuffer indexOfSubCollection: target
-						startingAt: lastRead - sz + 2.
-	(index > 0 and: [(index + sz) <= inNextToWrite]) ifTrue: ["found it"
-		result := self nextInBuffer: index - lastRead - 1.
-		self skip: sz.
-		^ result
-	].
-
-	[searchedSoFar :=  self inBufferSize.
-	"Receive more data"
-	self receiveData.
-	recentlyRead > 0] whileTrue:[
-
-		"Data begins at lastRead + 1, we add searchedSoFar as offset and 
-		backs up sz - 1 so that we can catch any borderline hits."
-
-		index := inBuffer indexOfSubCollection: target
-						startingAt: (lastRead + searchedSoFar - sz + 2 max: 1).
-		(index > 0 and: [(index + sz) <= inNextToWrite]) ifTrue: ["found it"
-			result := self nextInBuffer: index - lastRead - 1.
-			self skip: sz.
-			^ result
-		].
-		"Check if we've exceeded the max. amount"
-		(nBytes notNil and:[inNextToWrite - lastRead > nBytes]) 
-			ifTrue:[^self nextAllInBuffer].
-	].
-
-	"not found and (non-signaling) connection was closed"
-	^self nextAllInBuffer! !
-
 !SecureSocketStream methodsFor: 'initialize' stamp: 'ar 7/27/2010 21:09'!
 verifyCert: hostName
 	"Verifies the cert state and host name"
@@ -3254,6 +3222,89 @@ verifyCert: hostName
 		ifFalse:[self certError: 'Invalid certificate' code: certFlags].
 	(ssl peerName match: hostName) 
 		ifFalse:[self certError: 'Host name mismatch' code: -1].! !
+
+!SecureSocketStream methodsFor: 'private-socket' stamp: 'ar 11/15/2010 11:39'!
+receiveData
+	"This method drains the available decryption data before waiting for the socket"
+
+	| pos |
+
+	"Note: The loop here is necessary to catch cases where a TLS packet is
+	split among TCP packets. In this case we would pull the first portion of
+	the TLS packet here but receiveAvailableData would return nothing since
+	the contents of the packet can't be decoded until the rest has come in."
+
+	[pos := inNextToWrite.
+	self receiveAvailableData.
+	pos = inNextToWrite ifFalse:[^pos].
+
+	"Pre-4.2 compatibility; should be 'super receiveData' instead."
+	socket
+		waitForDataFor: self timeout
+		ifClosed: [self shouldSignal 
+			ifTrue:[ConnectionClosed signal: 'Connection closed while waiting for data.']]
+		ifTimedOut: [self shouldTimeout
+			ifTrue:[ConnectionTimedOut signal: 'Data receive timed out.']].
+	self isConnected] whileTrue.
+
+	"Final attempt to read data if a non-signaling connection closes"
+	^self receiveAvailableData.
+! !
+
+!SecureSocketStream methodsFor: 'private-socket' stamp: 'ar 11/17/2011 13:19'!
+receiveDataInto: buffer startingAt: index
+	"Read and decrypt the data from the underlying socket. "
+
+	| count bytesRead |
+	"While in handshake, use the superclass version"
+	ssl ifNil:[
+		"Pre-4.2 compatibility; should be 'super receiveDataInto: buffer startingAt: index'"
+		^socket  receiveAvailableDataInto: buffer startingAt: index.
+	].
+
+	"Only decode more data if all the decoded contents has been drained"
+	decoded atEnd ifTrue:[
+		"Decrypt more data if available"
+		bytesRead := 0.
+		[count := ssl decrypt: readBuf from: 1 to: bytesRead into: decoded originalContents.
+		count < 0 ifTrue:[^self error: 'SSL error, code: ', count].
+		bytesRead := 0.
+		count = 0 ifTrue:[
+			bytesRead := socket receiveAvailableDataInto: readBuf startingAt: 1.
+		].
+		bytesRead = 0] whileFalse.
+		"Update for number of bytes decoded"
+		decoded setFrom: 1 to: count.
+	].
+
+	"Push data from decoded into the result buffer"
+	count := (decoded size - decoded position) min: (buffer size - index + 1).
+	(decoded next: count into: buffer startingAt: index) size < count
+		ifTrue:[^self error: 'Unexpected read failure'].
+	^count
+! !
+
+!SecureSocketStream methodsFor: 'private-socket' stamp: 'ar 7/25/2010 17:37'!
+sendData: buffer count: n
+	"Encrypts the data before sending it on the underlying socket.
+	Breaks large chunks into 2k components to fit safely into ssl frame."
+
+	| remain start amount count |
+	"While in handshake, use the superclass version"
+	ssl ifNil:[
+		"Pre-4.2 compatibility; should be 'super sendData: buffer count: n' instead"
+		^socket sendData: buffer count: n
+	].
+
+	"Break the input into reasonable chunks and send them"
+	remain := n. start := 1.
+	[remain > 0] whileTrue:[
+		amount := remain min: 2048.
+		count := ssl encrypt: buffer from: start to: start+amount-1 into: sendBuf.
+		socket sendData: sendBuf count: count.
+		remain := remain - amount.
+		start := start + amount.
+	].! !
 
 !WebClient methodsFor: 'cookies' stamp: 'ar 8/12/2010 21:40'!
 acceptCookie: aCookie host: reqHost path: path
@@ -3346,6 +3397,159 @@ allowRedirect: aBool
 	flags := aBool ifTrue:[flags bitOr: FlagAllowRedirect] ifFalse:[flags bitClear: FlagAllowRedirect].
 ! !
 
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:13'!
+authParams
+	"The authentication parameters"
+
+	^authParams! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:13'!
+authParams: aDictionary
+	"The authentication parameters"
+
+	authParams := aDictionary! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/23/2010 10:31'!
+cookies
+	"The cookies that have been set for this session"
+
+	^cookies! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/23/2010 10:31'!
+cookies: aCollection
+	"The cookies that have been set for this session"
+
+	cookies := aCollection.! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 8/12/2010 21:16'!
+debugLog
+	"If provided, WebClient will print all requests and responses to the debugLog,
+	except from the content of the message. The debug log must be a stream of
+	some sort; file names (like for the accessLog are not supported)."
+
+	^debugLog! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 8/12/2010 21:17'!
+debugLog: aStream
+	"If provided, WebClient will print all requests and responses to the debugLog,
+	except from the content of the message. The debug log must be a stream of
+	some sort; file names (like for the accessLog are not supported)."
+
+	debugLog := aStream! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:12'!
+maxRedirect
+	"The max. number of redirects we allow for the SAME SITE before giving up.
+	Redirects can happen for any number of reasons between any number of sites
+	and we give up if we have seen the SAME SITE maxRedirect number of times."
+
+	^maxRedirect! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:12'!
+maxRedirect: aNumber
+	"The max. number of redirects we allow for the SAME SITE before giving up.
+	Redirects can happen for any number of reasons between any number of sites
+	and we give up if we have seen the SAME SITE maxRedirect number of times."
+
+	maxRedirect := aNumber! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 3/27/2010 12:01'!
+password
+	"The password for remote authentication.
+	The password should generally not be a plain-text
+	version but rather a block that can retrieve the password
+	when required."
+
+	^authParams at: #password ifAbsent:[nil]! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 3/27/2010 01:32'!
+password: aStringOrValuable
+	"The password for remote authentication.
+	The password should generally not be a plain-text
+	version but rather a block that can retrieve the password
+	when required."
+
+	^authParams at: #password put: aStringOrValuable! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 8/5/2010 19:50'!
+scheme
+	"The scheme used for the request (usually http or https)"
+
+	^scheme! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 8/5/2010 19:50'!
+scheme: aString
+	"The scheme used for the request (usually http or https)"
+
+	scheme := aString! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/21/2010 09:50'!
+server
+	"The server to use for connections.
+	The server is specified as server:port if needed"
+
+	^server! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/21/2010 09:50'!
+server: aString
+	"The server to use for connections.
+	The server should be specified as server:port if needed"
+
+	server := aString
+! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 19:22'!
+serverName
+	"Returns the name part of the server:port description"
+
+	^server copyUpTo: $:! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 19:21'!
+serverPort
+	"Returns the port of the server:port description"
+
+	^(server copyAfter: $:) 
+		ifEmpty:[self defaultPort]
+		ifNotEmpty:[:portString| portString asInteger].
+! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:12'!
+timeout
+	"Timeout for the http operations"
+
+	^timeout! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:12'!
+timeout: aNumber
+	"Timeout for the http operations"
+
+	timeout := aNumber! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:16'!
+userAgent
+	"The User-Agent string sent to the server"
+
+	^userAgent! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:17'!
+userAgent: aString
+	"The User-Agent string sent to the server. 
+	If no user agent should be sent, this value can be set to nil"
+
+	userAgent := aString! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 3/24/2010 16:05'!
+username
+	"The username for remote authentication"
+
+	^authParams at: #username ifAbsent:[nil]! !
+
+!WebClient methodsFor: 'accessing' stamp: 'ar 3/24/2010 16:05'!
+username: aString
+	"The username for remote authentication"
+
+	authParams at: #username put: aString! !
+
 !WebClient methodsFor: 'authentication' stamp: 'ar 3/30/2010 20:45'!
 authDispatch: request from: response header: authHeader params: params
 	"Dispatch on an authentication method. 
@@ -3359,17 +3563,83 @@ authDispatch: request from: response header: authHeader params: params
 	} otherwise:["ignore"].
 ! !
 
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:13'!
-authParams
-	"The authentication parameters"
+!WebClient methodsFor: 'authentication' stamp: 'jmv 6/25/2017 20:43:27'!
+basicAuth: request from: response header: header params: params
+	"Provide basic authentication for the request"
 
-	^authParams! !
+	| user pass args |
+	authParams at: #authMethod ifPresent:[:method| ^self]. "do not retry repeatedly"
+	authParams at: #authMethod put: 'Basic'.
 
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/10/2012 13:13'!
-authParams: aDictionary
-	"The authentication parameters"
+	args := WebUtils parseAuthParams: header.
+	args at: 'realm' ifPresent:[:realm| authParams at: #authRealm put: realm].
+	
+	user := (params at: #username ifAbsent:[nil]) ifNil:[^self].
+	pass := (params at: #password ifAbsent:[nil]) ifNil:[^self].
+	authParams at: #authResponse put: (user, ':', pass value) asUtf8 base64Encoded! !
 
-	authParams := aDictionary! !
+!WebClient methodsFor: 'authentication' stamp: 'ar 8/26/2010 07:48'!
+digestAuth: request from: response header: authHeader params: params
+	"Perform digest authentication"
+
+	| realm nonce ha1 ha2 nc cnonce qop header uri md5 key args user pass |
+	params at: #authMethod ifPresent:[:method| ^self]. "do not retry repeatedly"
+	params at: #authMethod put: 'Digest'.
+
+	args := WebUtils parseAuthParams: authHeader.
+	realm := args at: 'realm'.
+	authParams at: #authRealm put: realm.
+
+	user := (params at: #username ifAbsent:[nil]) ifNil:[^self].
+	pass := (params at: #password ifAbsent:[nil]) ifNil:[^self].
+
+	nonce := args at: 'nonce'.
+	uri := request rawUrl.
+
+	"VERY IMPORTANT NOTE: Some servers fail horribly if the nonce count
+	isn't precisely eight digits and without quotes."
+	nc := args at: 'nc' put: (args at: 'nc' ifAbsent:[0]) + 1.
+	nc := nc asString padded: #left to: 8 with: $0.
+	
+	key := user, ':', realm, ':', pass value.
+	ha1 := WebUtils md5Digest: key.
+	ha2 := WebUtils md5Digest: request method, ':', uri.
+	cnonce := UUID new hex.
+
+	(args includesKey: 'qop') ifTrue:["use qop"
+		qop := 'auth'. "the only qop we support"
+		md5 := WebUtils md5Digest: ha1, ':', nonce, ':', nc, ':', cnonce, ':', qop, ':', ha2.
+		header :=
+			'username="', user, '"',
+			', realm="', realm, '"',
+			', nonce="', nonce, '"',
+			', uri="', uri, '"',
+			', response="', md5, '"',
+			', qop="', qop,'"',
+			', nc="', nc, '"',
+			', cnonce="', cnonce, '"'.
+	] ifFalse:["ignore qop"
+		md5 := WebUtils md5Digest: ha1, ':', nonce, ':', ha2.
+		header :=
+			'username="', user, '"',
+			', realm="', realm, '"',
+			', nonce="', nonce, '"',
+			', uri="', uri, '"',
+			', response="', md5, '"'.
+	].
+	args at: 'opaque' ifPresent: [:opaque | 
+		header := header, ', opaque="', opaque, '"'
+	].
+	params at: #authResponse put: header.! !
+
+!WebClient methodsFor: 'authentication' stamp: 'ar 3/30/2010 20:46'!
+flushAuthState: params
+	"Fliush authentication state that should not been preserved 
+	inbetween failed attempts to authenticate. 
+	Subclasses can extend this method to support more auth methods."
+
+	params removeKey: #authMethod ifAbsent:[].
+! !
 
 !WebClient methodsFor: 'sending' stamp: 'ar 2/10/2012 13:12'!
 authenticate: request from: response
@@ -3434,20 +3704,191 @@ authenticate: request from: response
 	"And retry with the new credentials"
 	^self authenticate: request from: response! !
 
-!WebClient methodsFor: 'authentication' stamp: 'jmv 6/25/2017 20:43:27'!
-basicAuth: request from: response header: header params: params
-	"Provide basic authentication for the request"
+!WebClient methodsFor: 'sending' stamp: 'ar 9/4/2010 11:10'!
+redirect: request from: response
+	"Handle a 3xx redirect response"
 
-	| user pass args |
-	authParams at: #authMethod ifPresent:[:method| ^self]. "do not retry repeatedly"
-	authParams at: #authMethod put: 'Basic'.
-
-	args := WebUtils parseAuthParams: header.
-	args at: 'realm' ifPresent:[:realm| authParams at: #authRealm put: realm].
+	| location max |
 	
-	user := (params at: #username ifAbsent:[nil]) ifNil:[^self].
-	pass := (params at: #password ifAbsent:[nil]) ifNil:[^self].
-	authParams at: #authResponse put: (user, ':', pass value) asUtf8 base64Encoded! !
+	"Check if we handle the specific type of redirect here"
+	(#(	301 
+		302 "Found" 
+		303 "See Other" 
+		307 "Temporary Redirect")
+			includes: response code) ifFalse:[^false].
+
+	"RFC 2616 states that requests other than HEAD and GET MUST NOT be auto
+	redirected for 302 and 307 responses"
+	(request method = 'GET' or:[request method = 'HEAD']) ifFalse:[
+		(response code = 302 or:[response code = 307]) ifTrue:[^false].
+	].
+
+	"Find the new location"
+	location := response headerAt: 'location'.
+
+	"Check if we've exceeded max redirections"
+	max := redirections at: location ifAbsent:[0].
+	max > self maxRedirect ifTrue:[^false].
+	redirections at: location put: max+1.
+
+	"Do the actual redirect, i.e., set us up for the new url"
+	(location findString: '://') > 0 "do we have a scheme:// url?"
+		ifTrue:[self initializeFromUrl: location].
+
+	request initializeFromUrl: location.
+
+	^true! !
+
+!WebClient methodsFor: 'sending' stamp: 'ar 2/25/2010 22:16'!
+sendRequest: request
+	"Send an http request"
+
+	^self sendRequest: request content: nil size: 0! !
+
+!WebClient methodsFor: 'sending' stamp: 'DSG 5/25/2012 23:35'!
+sendRequest: request content: contentStream size: streamSize
+	"Send an http request"
+
+	^self sendRequest: request contentBlock:[:aStream|
+		contentStream ifNotNil:[
+			"Upload content if provided"
+			contentStream position: 0.
+			request streamFrom: contentStream to: aStream size: streamSize 
+				progress:[:total :amount|
+					(ProgressBarMorph new) 
+						progressValue: amount / total.
+						]]].
+! !
+
+!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:32:10'!
+sendRequest: request contentBlock: contentBlock
+	"Send an http request"
+
+	|  response repeatRedirect repeatAuth |
+
+	"XXXX: Fixme. Pre-authenticate the request if we have valid auth credentials"
+
+	redirections := Dictionary new.
+
+	["The outer loop handles redirections"
+	repeatRedirect := false.
+
+	"Always update the host header due to redirect"
+	request headerAt: 'Host' put: server.
+
+		["The inner loop handles authentication"
+		repeatAuth := false.
+
+		"Connect can fail if SSL proxy CONNECT is involved"
+		self connect ifNotNil:[:resp| ^resp].
+		
+		"Write the request to the debugLog if present"
+		debugLog ifNotNil:[self writeRequest: request on: debugLog].
+
+		"Send the request itself"
+		self writeRequest: request on: stream.
+		contentBlock value: stream.
+
+		response := request newResponse readFrom: stream.
+		response url: (scheme, '://', server, request rawUrl).
+
+		debugLog ifNotNil:[
+			response writeOn: debugLog.
+			debugLog flush.
+		].
+		response setCookiesDo:[:cookie| 
+			self acceptCookie: cookie host: self serverName path: request url.
+		].
+		accessLog ifNotNil:[
+			WebUtils logRequest: request response: response on: accessLog
+		].
+		"Handle authentication if needed"
+		(self allowAuth and:[response code = 401 or:[response code = 407]]) ifTrue:[
+			"Eat up the content of the previous response"
+			response content.
+			repeatAuth := self authenticate: request from: response.
+		].
+
+		repeatAuth] whileTrue.
+
+	"Flush previous authState.
+	XXXX: Fixme. authState must be preserved for pre-authentication of requests."
+	self flushAuthState.
+
+	"Handle redirect if needed"
+	(self allowRedirect and:[response isRedirect]) ifTrue:[
+		"Eat up the content of the previous response"
+		response content.
+		repeatRedirect := self redirect: request from: response.
+	].
+	repeatRedirect] whileTrue:[
+		"When redirecting, remove authentication headers"
+		request removeHeader: 'Authorization'.
+		request removeHeader: 'Proxy-Authorization'.
+	].
+
+	"If the response is not a success, eat up its content"
+	(response isSuccess or:[response isInformational]) ifFalse:[response content].
+
+	^response! !
+
+!WebClient methodsFor: 'sending' stamp: 'ar 8/12/2010 21:37'!
+writeCookiesFor: request on: stream
+	"Write the cookies for a particular request"
+
+	(cookies select:[:ck| (request acceptsCookie: ck from: self )]) ifNotEmpty:[:ckset|
+		stream nextPutAll: 'Cookie: '.
+		ckset 
+			do:[:ck| stream nextPutAll: ck name,'=', ck value]
+			separatedBy:[stream  nextPutAll:'; '].
+		stream crlf.
+	].
+! !
+
+!WebClient methodsFor: 'sending' stamp: 'DSG 5/24/2012 17:24'!
+writeHeadersFor: request on: aStream
+	"Write all the headers for the given request on aStream"
+
+	request headersDo:[:key :value| aStream nextPutAll: key, ': ', value asString; nextPutAll: String crlfString].
+! !
+
+!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:43:55'!
+writeRequest: request on: aStream
+	"Write all the request headers on the given stream"
+
+	self retryOnce: [
+		self writeRequestLine: request on: aStream.
+		self writeHeadersFor: request on: aStream.
+		self writeCookiesFor: request on: aStream.
+		aStream crlf.
+		aStream flush].! !
+
+!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:37:08'!
+writeRequestLine: request on: aStream
+	"Write the HTTP request line on the given stream"
+
+	aStream nextPutAll: request method; space.
+
+	"https proxy support is transparent via CONNECT"
+	(proxyServer notNil and:[scheme ~= 'https']) ifTrue:[
+		"http://www.ietf.org/rfc/rfc2616.txt 
+		5.1.2 Request-URI:
+			...
+		The absoluteURI form is REQUIRED when the request is being made to a
+		proxy. The proxy is requested to forward the request or service it
+		from a valid cache, and return the response. Note that the proxy MAY
+		forward the request on to another proxy or directly to the server"
+		aStream nextPutAll: scheme, '://', self server.
+
+		"XXXX: This is a hack. Indicate that we want the proxy connection 
+		to be persistent. This should NOT be necessary; the proxy should
+		know that from the HTTP/1.1 request but apparently, squid will fail 
+		NTLM and Negotiate authentication unless explicitly instructed to 
+		keep the proxy connection alive."
+		request headerAt: 'Proxy-Connection' put: 'keep-alive'.
+	].
+
+	aStream nextPutAll: request rawUrl; space; nextPutAll: request protocol; nextPutAll: String crlfString.! !
 
 !WebClient methodsFor: 'initialize' stamp: 'topa 6/17/2016 20:59'!
 close
@@ -3491,34 +3932,6 @@ connect
 	scheme = 'https' ifTrue:[self retryOnce: [^self sslConnect]].
 	^nil! !
 
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/23/2010 10:31'!
-cookies
-	"The cookies that have been set for this session"
-
-	^cookies! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/23/2010 10:31'!
-cookies: aCollection
-	"The cookies that have been set for this session"
-
-	cookies := aCollection.! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 8/12/2010 21:16'!
-debugLog
-	"If provided, WebClient will print all requests and responses to the debugLog,
-	except from the content of the message. The debug log must be a stream of
-	some sort; file names (like for the accessLog are not supported)."
-
-	^debugLog! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 8/12/2010 21:17'!
-debugLog: aStream
-	"If provided, WebClient will print all requests and responses to the debugLog,
-	except from the content of the message. The debug log must be a stream of
-	some sort; file names (like for the accessLog are not supported)."
-
-	debugLog := aStream! !
-
 !WebClient methodsFor: 'initialize' stamp: 'ar 7/21/2010 21:12'!
 defaultPort
 	"Return the default port to use if no port was specified.
@@ -3556,60 +3969,6 @@ detectProxyServer
 	proxyServer := ProxyHandler proxyServerFor: self server.
 ! !
 
-!WebClient methodsFor: 'authentication' stamp: 'ar 8/26/2010 07:48'!
-digestAuth: request from: response header: authHeader params: params
-	"Perform digest authentication"
-
-	| realm nonce ha1 ha2 nc cnonce qop header uri md5 key args user pass |
-	params at: #authMethod ifPresent:[:method| ^self]. "do not retry repeatedly"
-	params at: #authMethod put: 'Digest'.
-
-	args := WebUtils parseAuthParams: authHeader.
-	realm := args at: 'realm'.
-	authParams at: #authRealm put: realm.
-
-	user := (params at: #username ifAbsent:[nil]) ifNil:[^self].
-	pass := (params at: #password ifAbsent:[nil]) ifNil:[^self].
-
-	nonce := args at: 'nonce'.
-	uri := request rawUrl.
-
-	"VERY IMPORTANT NOTE: Some servers fail horribly if the nonce count
-	isn't precisely eight digits and without quotes."
-	nc := args at: 'nc' put: (args at: 'nc' ifAbsent:[0]) + 1.
-	nc := nc asString padded: #left to: 8 with: $0.
-	
-	key := user, ':', realm, ':', pass value.
-	ha1 := WebUtils md5Digest: key.
-	ha2 := WebUtils md5Digest: request method, ':', uri.
-	cnonce := UUID new hex.
-
-	(args includesKey: 'qop') ifTrue:["use qop"
-		qop := 'auth'. "the only qop we support"
-		md5 := WebUtils md5Digest: ha1, ':', nonce, ':', nc, ':', cnonce, ':', qop, ':', ha2.
-		header :=
-			'username="', user, '"',
-			', realm="', realm, '"',
-			', nonce="', nonce, '"',
-			', uri="', uri, '"',
-			', response="', md5, '"',
-			', qop="', qop,'"',
-			', nc="', nc, '"',
-			', cnonce="', cnonce, '"'.
-	] ifFalse:["ignore qop"
-		md5 := WebUtils md5Digest: ha1, ':', nonce, ':', ha2.
-		header :=
-			'username="', user, '"',
-			', realm="', realm, '"',
-			', nonce="', nonce, '"',
-			', uri="', uri, '"',
-			', response="', md5, '"'.
-	].
-	args at: 'opaque' ifPresent: [:opaque | 
-		header := header, ', opaque="', opaque, '"'
-	].
-	params at: #authResponse put: header.! !
-
 !WebClient methodsFor: 'initialize' stamp: 'ar 4/1/2010 18:51'!
 flushAuthState
 	"Flush all the auth state"
@@ -3617,14 +3976,152 @@ flushAuthState
 	self flushAuthState: authParams.
 	self flushAuthState: proxyParams.! !
 
-!WebClient methodsFor: 'authentication' stamp: 'ar 3/30/2010 20:46'!
-flushAuthState: params
-	"Fliush authentication state that should not been preserved 
-	inbetween failed attempts to authenticate. 
-	Subclasses can extend this method to support more auth methods."
+!WebClient methodsFor: 'initialize' stamp: 'ar 2/10/2012 13:33'!
+initialize
+	"Initializes the receiver"
+	flags := 0.
+	super initialize.
 
-	params removeKey: #authMethod ifAbsent:[].
+	self allowAuth: true.
+	self allowRedirect: true.
+	self acceptCookies: true.
+
+	timeout := Socket standardTimeout.
+	cookies := OrderedCollection new.
+	redirections := Dictionary new.
+	maxRedirect := 10.
+	userAgent := self defaultUserAgent.
+	authParams := IdentityDictionary new.
+	proxyParams := IdentityDictionary new.
+
+	"Use the default debug log"
+	debugLog := DebugLog.
 ! !
+
+!WebClient methodsFor: 'initialize' stamp: 'ar 7/25/2010 15:36'!
+initializeFromUrl: urlString
+	"Initialize the client from a url string"
+
+	| urlStream serverAndPort userAndPass |
+	urlStream := urlString readStream.
+	scheme := (urlStream upToAll: '://') asLowercase.
+	(scheme = 'http' or:[scheme = 'https'])
+		ifFalse:[self error: 'Unsupported scheme: ', scheme].
+	serverAndPort := urlStream upTo: $/.
+
+	userAndPass := serverAndPort copyUpTo: $@.
+	userAndPass = serverAndPort ifFalse:[
+		serverAndPort := serverAndPort copyAfter: $@.
+		self username: (userAndPass copyUpTo: $:).
+		self password: (userAndPass copyAfter: $:).
+	].
+
+	self server: serverAndPort.
+	self detectProxyServer.! !
+
+!WebClient methodsFor: 'initialize' stamp: 'ar 8/9/2010 08:30'!
+newRequest
+	"Create an return a new WebRequest.
+	Subclasses can use this method to override the default request class."
+
+	^WebRequest new! !
+
+!WebClient methodsFor: 'initialize' stamp: 'CK 11/24/2017 14:59:44'!
+proxyConnect
+	"Send a proxy CONNECT request to connect to a remote host via the chosen proxy server"
+
+	| uri request repeatAuth response |
+	uri := self serverName,':', self serverPort asString.
+	request := self newRequest.
+	request method: 'CONNECT'.
+	request rawUrl: uri.
+
+	[repeatAuth := false.
+
+	"The proxy response may use Connection: Close; reconnect when that happens"
+	self isConnected ifFalse:[
+		stream := SocketStream openConnectionToHostNamed: lastServer port: lastPort.
+		stream timeout: timeout.
+	].
+
+	debugLog ifNotNil:[
+		request writeOn: debugLog.
+		debugLog flush.
+	].
+
+	"Don't use 'self writeRequestOn:' since this will insert both cookies
+	as well as modify the url target when a proxy is present"
+	request writeOn: stream.
+	
+	stream flush.
+
+	response := request newResponse readFrom: stream.
+
+	debugLog ifNotNil:[
+		response writeOn: debugLog.
+		debugLog flush.
+	].
+
+	"Handle authentication if needed"
+	(self allowAuth and:[response code = 407]) ifTrue:[
+		"Eat up the content of the previous response"
+		response content.
+		repeatAuth := self authenticate: request from: response.
+	].
+	repeatAuth] whileTrue.
+
+	^response! !
+
+!WebClient methodsFor: 'initialize' stamp: 'ar 9/4/2010 11:10'!
+requestWithUrl: urlString
+	"Create and return a new WebRequest initialized with the given url."
+
+	^self  newRequest initializeFromUrl: urlString! !
+
+!WebClient methodsFor: 'initialize' stamp: 'topa 11/4/2014 00:13'!
+retryOnce: aTryBlock
+	" Retry the block once if it failes,
+	except for direct network errors.
+	This can help in cases like temporary failing
+	SqueakSSL primitives"
+	| again |
+	again := true.
+	[^ aTryBlock value.
+	] on: Error do: [:e |
+		((e isKindOf: NetworkError) or: [again not])
+			ifTrue: [e pass]
+			ifFalse: [again := false. e retry]].! !
+
+!WebClient methodsFor: 'initialize' stamp: 'CK 11/24/2017 14:25:04'!
+sslConnect
+	"Do the SSL handshake"
+	"Connect the client to a web server"
+
+	| sqSSL |
+	proxyServer ifNotNil:[ | resp |
+		"If we have a proxy server, do the proxy connect"
+		resp := self proxyConnect.
+		resp isSuccess ifFalse:[^resp].
+	].
+
+	sqSSL := Smalltalk at: #SqueakSSL ifAbsent:[self error: 'SqueakSSL is missing'].
+	"Convert the stream to a secure stream"
+	stream := sqSSL secureSocketStream on: stream socket.
+	stream timeout: timeout.
+	self sslConnect: stream to: lastServer.
+	"And cert verification
+	(unless on OSX, where this does not work yet)"
+	WebUtils platformName = 'Mac OS'
+		ifFalse: [stream verifyCert: self serverName].
+	^ nil"indicating success"
+! !
+
+!WebClient methodsFor: 'initialize' stamp: 'jmv 3/18/2019 13:15:39'!
+sslConnect: aStream to: aLastServer
+	"Do the SSL handshake, use SNI if available"
+	(aStream respondsTo: #sslConnectTo:)
+		ifTrue: [aStream sslConnectTo: aLastServer]
+		ifFalse: [aStream sslConnect].! !
 
 !WebClient methodsFor: 'methods' stamp: 'ar 5/11/2010 20:04'!
 httpDelete: urlString
@@ -3816,155 +4313,11 @@ httpTrace: urlString do: aBlock
 	^self sendRequest: request
 ! !
 
-!WebClient methodsFor: 'initialize' stamp: 'ar 2/10/2012 13:33'!
-initialize
-	"Initializes the receiver"
-	flags := 0.
-	super initialize.
-
-	self allowAuth: true.
-	self allowRedirect: true.
-	self acceptCookies: true.
-
-	timeout := Socket standardTimeout.
-	cookies := OrderedCollection new.
-	redirections := Dictionary new.
-	maxRedirect := 10.
-	userAgent := self defaultUserAgent.
-	authParams := IdentityDictionary new.
-	proxyParams := IdentityDictionary new.
-
-	"Use the default debug log"
-	debugLog := DebugLog.
-! !
-
-!WebClient methodsFor: 'initialize' stamp: 'ar 7/25/2010 15:36'!
-initializeFromUrl: urlString
-	"Initialize the client from a url string"
-
-	| urlStream serverAndPort userAndPass |
-	urlStream := urlString readStream.
-	scheme := (urlStream upToAll: '://') asLowercase.
-	(scheme = 'http' or:[scheme = 'https'])
-		ifFalse:[self error: 'Unsupported scheme: ', scheme].
-	serverAndPort := urlStream upTo: $/.
-
-	userAndPass := serverAndPort copyUpTo: $@.
-	userAndPass = serverAndPort ifFalse:[
-		serverAndPort := serverAndPort copyAfter: $@.
-		self username: (userAndPass copyUpTo: $:).
-		self password: (userAndPass copyAfter: $:).
-	].
-
-	self server: serverAndPort.
-	self detectProxyServer.! !
-
 !WebClient methodsFor: 'testing' stamp: 'ar 3/30/2010 19:18'!
 isConnected
 	"Returns true if the client is still connected"
 
 	^stream notNil and:[stream isConnected]! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:12'!
-maxRedirect
-	"The max. number of redirects we allow for the SAME SITE before giving up.
-	Redirects can happen for any number of reasons between any number of sites
-	and we give up if we have seen the SAME SITE maxRedirect number of times."
-
-	^maxRedirect! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:12'!
-maxRedirect: aNumber
-	"The max. number of redirects we allow for the SAME SITE before giving up.
-	Redirects can happen for any number of reasons between any number of sites
-	and we give up if we have seen the SAME SITE maxRedirect number of times."
-
-	maxRedirect := aNumber! !
-
-!WebClient methodsFor: 'initialize' stamp: 'ar 8/9/2010 08:30'!
-newRequest
-	"Create an return a new WebRequest.
-	Subclasses can use this method to override the default request class."
-
-	^WebRequest new! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 3/27/2010 12:01'!
-password
-	"The password for remote authentication.
-	The password should generally not be a plain-text
-	version but rather a block that can retrieve the password
-	when required."
-
-	^authParams at: #password ifAbsent:[nil]! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 3/27/2010 01:32'!
-password: aStringOrValuable
-	"The password for remote authentication.
-	The password should generally not be a plain-text
-	version but rather a block that can retrieve the password
-	when required."
-
-	^authParams at: #password put: aStringOrValuable! !
-
-!WebClient methodsFor: 'printing' stamp: 'ar 8/9/2010 08:50'!
-printOn: aStream
-	"Print the receiver on aStream"
-
-	aStream nextPutAll: self class name.
-	aStream nextPut: $(.
-	(stream notNil and:[stream isConnected]) ifTrue:[
-		aStream nextPutAll: 'Connected: '.
-	].
-	scheme ifNotNil:[aStream nextPutAll: scheme, '://'].
-	server ifNotNil:[aStream nextPutAll: server].
-	aStream nextPut:$).
-! !
-
-!WebClient methodsFor: 'initialize' stamp: 'CK 11/24/2017 14:59:44'!
-proxyConnect
-	"Send a proxy CONNECT request to connect to a remote host via the chosen proxy server"
-
-	| uri request repeatAuth response |
-	uri := self serverName,':', self serverPort asString.
-	request := self newRequest.
-	request method: 'CONNECT'.
-	request rawUrl: uri.
-
-	[repeatAuth := false.
-
-	"The proxy response may use Connection: Close; reconnect when that happens"
-	self isConnected ifFalse:[
-		stream := SocketStream openConnectionToHostNamed: lastServer port: lastPort.
-		stream timeout: timeout.
-	].
-
-	debugLog ifNotNil:[
-		request writeOn: debugLog.
-		debugLog flush.
-	].
-
-	"Don't use 'self writeRequestOn:' since this will insert both cookies
-	as well as modify the url target when a proxy is present"
-	request writeOn: stream.
-	
-	stream flush.
-
-	response := request newResponse readFrom: stream.
-
-	debugLog ifNotNil:[
-		response writeOn: debugLog.
-		debugLog flush.
-	].
-
-	"Handle authentication if needed"
-	(self allowAuth and:[response code = 407]) ifTrue:[
-		"Eat up the content of the previous response"
-		response content.
-		repeatAuth := self authenticate: request from: response.
-	].
-	repeatAuth] whileTrue.
-
-	^response! !
 
 !WebClient methodsFor: 'proxy' stamp: 'ar 2/10/2012 13:12'!
 proxyParams
@@ -4040,322 +4393,6 @@ proxyUser: aString
 
 	proxyParams at: #username put: aString! !
 
-!WebClient methodsFor: 'sending' stamp: 'ar 9/4/2010 11:10'!
-redirect: request from: response
-	"Handle a 3xx redirect response"
-
-	| location max |
-	
-	"Check if we handle the specific type of redirect here"
-	(#(	301 
-		302 "Found" 
-		303 "See Other" 
-		307 "Temporary Redirect")
-			includes: response code) ifFalse:[^false].
-
-	"RFC 2616 states that requests other than HEAD and GET MUST NOT be auto
-	redirected for 302 and 307 responses"
-	(request method = 'GET' or:[request method = 'HEAD']) ifFalse:[
-		(response code = 302 or:[response code = 307]) ifTrue:[^false].
-	].
-
-	"Find the new location"
-	location := response headerAt: 'location'.
-
-	"Check if we've exceeded max redirections"
-	max := redirections at: location ifAbsent:[0].
-	max > self maxRedirect ifTrue:[^false].
-	redirections at: location put: max+1.
-
-	"Do the actual redirect, i.e., set us up for the new url"
-	(location findString: '://') > 0 "do we have a scheme:// url?"
-		ifTrue:[self initializeFromUrl: location].
-
-	request initializeFromUrl: location.
-
-	^true! !
-
-!WebClient methodsFor: 'initialize' stamp: 'ar 9/4/2010 11:10'!
-requestWithUrl: urlString
-	"Create and return a new WebRequest initialized with the given url."
-
-	^self  newRequest initializeFromUrl: urlString! !
-
-!WebClient methodsFor: 'initialize' stamp: 'topa 11/4/2014 00:13'!
-retryOnce: aTryBlock
-	" Retry the block once if it failes,
-	except for direct network errors.
-	This can help in cases like temporary failing
-	SqueakSSL primitives"
-	| again |
-	again := true.
-	[^ aTryBlock value.
-	] on: Error do: [:e |
-		((e isKindOf: NetworkError) or: [again not])
-			ifTrue: [e pass]
-			ifFalse: [again := false. e retry]].! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 8/5/2010 19:50'!
-scheme
-	"The scheme used for the request (usually http or https)"
-
-	^scheme! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 8/5/2010 19:50'!
-scheme: aString
-	"The scheme used for the request (usually http or https)"
-
-	scheme := aString! !
-
-!WebClient methodsFor: 'sending' stamp: 'ar 2/25/2010 22:16'!
-sendRequest: request
-	"Send an http request"
-
-	^self sendRequest: request content: nil size: 0! !
-
-!WebClient methodsFor: 'sending' stamp: 'DSG 5/25/2012 23:35'!
-sendRequest: request content: contentStream size: streamSize
-	"Send an http request"
-
-	^self sendRequest: request contentBlock:[:aStream|
-		contentStream ifNotNil:[
-			"Upload content if provided"
-			contentStream position: 0.
-			request streamFrom: contentStream to: aStream size: streamSize 
-				progress:[:total :amount|
-					(ProgressBarMorph new) 
-						progressValue: amount / total.
-						]]].
-! !
-
-!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:32:10'!
-sendRequest: request contentBlock: contentBlock
-	"Send an http request"
-
-	|  response repeatRedirect repeatAuth |
-
-	"XXXX: Fixme. Pre-authenticate the request if we have valid auth credentials"
-
-	redirections := Dictionary new.
-
-	["The outer loop handles redirections"
-	repeatRedirect := false.
-
-	"Always update the host header due to redirect"
-	request headerAt: 'Host' put: server.
-
-		["The inner loop handles authentication"
-		repeatAuth := false.
-
-		"Connect can fail if SSL proxy CONNECT is involved"
-		self connect ifNotNil:[:resp| ^resp].
-		
-		"Write the request to the debugLog if present"
-		debugLog ifNotNil:[self writeRequest: request on: debugLog].
-
-		"Send the request itself"
-		self writeRequest: request on: stream.
-		contentBlock value: stream.
-
-		response := request newResponse readFrom: stream.
-		response url: (scheme, '://', server, request rawUrl).
-
-		debugLog ifNotNil:[
-			response writeOn: debugLog.
-			debugLog flush.
-		].
-		response setCookiesDo:[:cookie| 
-			self acceptCookie: cookie host: self serverName path: request url.
-		].
-		accessLog ifNotNil:[
-			WebUtils logRequest: request response: response on: accessLog
-		].
-		"Handle authentication if needed"
-		(self allowAuth and:[response code = 401 or:[response code = 407]]) ifTrue:[
-			"Eat up the content of the previous response"
-			response content.
-			repeatAuth := self authenticate: request from: response.
-		].
-
-		repeatAuth] whileTrue.
-
-	"Flush previous authState.
-	XXXX: Fixme. authState must be preserved for pre-authentication of requests."
-	self flushAuthState.
-
-	"Handle redirect if needed"
-	(self allowRedirect and:[response isRedirect]) ifTrue:[
-		"Eat up the content of the previous response"
-		response content.
-		repeatRedirect := self redirect: request from: response.
-	].
-	repeatRedirect] whileTrue:[
-		"When redirecting, remove authentication headers"
-		request removeHeader: 'Authorization'.
-		request removeHeader: 'Proxy-Authorization'.
-	].
-
-	"If the response is not a success, eat up its content"
-	(response isSuccess or:[response isInformational]) ifFalse:[response content].
-
-	^response! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/21/2010 09:50'!
-server
-	"The server to use for connections.
-	The server is specified as server:port if needed"
-
-	^server! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/21/2010 09:50'!
-server: aString
-	"The server to use for connections.
-	The server should be specified as server:port if needed"
-
-	server := aString
-! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 19:22'!
-serverName
-	"Returns the name part of the server:port description"
-
-	^server copyUpTo: $:! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 19:21'!
-serverPort
-	"Returns the port of the server:port description"
-
-	^(server copyAfter: $:) 
-		ifEmpty:[self defaultPort]
-		ifNotEmpty:[:portString| portString asInteger].
-! !
-
-!WebClient methodsFor: 'initialize' stamp: 'CK 11/24/2017 14:25:04'!
-sslConnect
-	"Do the SSL handshake"
-	"Connect the client to a web server"
-
-	| sqSSL |
-	proxyServer ifNotNil:[ | resp |
-		"If we have a proxy server, do the proxy connect"
-		resp := self proxyConnect.
-		resp isSuccess ifFalse:[^resp].
-	].
-
-	sqSSL := Smalltalk at: #SqueakSSL ifAbsent:[self error: 'SqueakSSL is missing'].
-	"Convert the stream to a secure stream"
-	stream := sqSSL secureSocketStream on: stream socket.
-	stream timeout: timeout.
-	self sslConnect: stream to: lastServer.
-	"And cert verification
-	(unless on OSX, where this does not work yet)"
-	WebUtils platformName = 'Mac OS'
-		ifFalse: [stream verifyCert: self serverName].
-	^ nil"indicating success"
-! !
-
-!WebClient methodsFor: 'initialize' stamp: 'topa 4/9/2015 21:21'!
-sslConnect: stream to: lastServer
-	"Do the SSL handshake, use SNI if available"
-	(stream respondsTo: #sslConnectTo:)
-		ifTrue: [stream sslConnectTo: lastServer]
-		ifFalse: [stream sslConnect].! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:12'!
-timeout
-	"Timeout for the http operations"
-
-	^timeout! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:12'!
-timeout: aNumber
-	"Timeout for the http operations"
-
-	timeout := aNumber! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:16'!
-userAgent
-	"The User-Agent string sent to the server"
-
-	^userAgent! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:17'!
-userAgent: aString
-	"The User-Agent string sent to the server. 
-	If no user agent should be sent, this value can be set to nil"
-
-	userAgent := aString! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 3/24/2010 16:05'!
-username
-	"The username for remote authentication"
-
-	^authParams at: #username ifAbsent:[nil]! !
-
-!WebClient methodsFor: 'accessing' stamp: 'ar 3/24/2010 16:05'!
-username: aString
-	"The username for remote authentication"
-
-	authParams at: #username put: aString! !
-
-!WebClient methodsFor: 'sending' stamp: 'ar 8/12/2010 21:37'!
-writeCookiesFor: request on: stream
-	"Write the cookies for a particular request"
-
-	(cookies select:[:ck| (request acceptsCookie: ck from: self )]) ifNotEmpty:[:ckset|
-		stream nextPutAll: 'Cookie: '.
-		ckset 
-			do:[:ck| stream nextPutAll: ck name,'=', ck value]
-			separatedBy:[stream  nextPutAll:'; '].
-		stream crlf.
-	].
-! !
-
-!WebClient methodsFor: 'sending' stamp: 'DSG 5/24/2012 17:24'!
-writeHeadersFor: request on: aStream
-	"Write all the headers for the given request on aStream"
-
-	request headersDo:[:key :value| aStream nextPutAll: key, ': ', value asString; nextPutAll: String crlfString].
-! !
-
-!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:43:55'!
-writeRequest: request on: aStream
-	"Write all the request headers on the given stream"
-
-	self retryOnce: [
-		self writeRequestLine: request on: aStream.
-		self writeHeadersFor: request on: aStream.
-		self writeCookiesFor: request on: aStream.
-		aStream crlf.
-		aStream flush].! !
-
-!WebClient methodsFor: 'sending' stamp: 'CK 11/24/2017 14:37:08'!
-writeRequestLine: request on: aStream
-	"Write the HTTP request line on the given stream"
-
-	aStream nextPutAll: request method; space.
-
-	"https proxy support is transparent via CONNECT"
-	(proxyServer notNil and:[scheme ~= 'https']) ifTrue:[
-		"http://www.ietf.org/rfc/rfc2616.txt 
-		5.1.2 Request-URI:
-			...
-		The absoluteURI form is REQUIRED when the request is being made to a
-		proxy. The proxy is requested to forward the request or service it
-		from a valid cache, and return the response. Note that the proxy MAY
-		forward the request on to another proxy or directly to the server"
-		aStream nextPutAll: scheme, '://', self server.
-
-		"XXXX: This is a hack. Indicate that we want the proxy connection 
-		to be persistent. This should NOT be necessary; the proxy should
-		know that from the HTTP/1.1 request but apparently, squid will fail 
-		NTLM and Negotiate authentication unless explicitly instructed to 
-		keep the proxy connection alive."
-		request headerAt: 'Proxy-Connection' put: 'keep-alive'.
-	].
-
-	aStream nextPutAll: request rawUrl; space; nextPutAll: request protocol; nextPutAll: String crlfString.! !
-
 !WebClient class methodsFor: 'accessing' stamp: 'ar 8/12/2010 21:20'!
 debugLog
 	"The default debugLog, if any:
@@ -4373,6 +4410,18 @@ debugLog: aStream
 	"
 
 	DebugLog := aStream.! !
+
+!WebClient class methodsFor: 'accessing' stamp: 'ar 2/23/2010 22:26'!
+proxyHandler
+	"The currently registered proxy handler"
+
+	^ProxyHandler! !
+
+!WebClient class methodsFor: 'accessing' stamp: 'ar 2/23/2010 22:26'!
+proxyHandler: anObject
+	"The currently registered proxy handler"
+
+	ProxyHandler := anObject! !
 
 !WebClient class methodsFor: 'utilities' stamp: 'ar 6/1/2010 20:24'!
 htmlSubmit: urlString fields: fieldMap
@@ -4450,6 +4499,25 @@ htmlSubmit: urlString fields: fields method: method encoding: encoding
 	self error: 'Unsupported method: ', method.
 ! !
 
+!WebClient class methodsFor: 'utilities' stamp: 'ar 7/20/2010 20:09'!
+httpPost: url multipartFields: fieldMap
+	"Make a form submission using multipart/form-data POST.
+
+	The fieldMap may contain MIMEDocument instances to indicate the presence
+	of a file to upload to the server. If the MIMEDocument is present, its
+	content type and file name will be used for the upload.
+
+	The fieldMap can be EITHER an array of associations OR a Dictionary of 
+	key value pairs (the former is useful for providing multiple fields and/or 
+	specifying the order of fields)."
+
+	| boundary |
+	boundary := WebUtils multipartBoundary.
+
+	^self httpPost: url 
+		content: (WebUtils encodeMultipartForm: fieldMap boundary: boundary) 
+		type: 'multipart/form-data; boundary=', boundary! !
+
 !WebClient class methodsFor: 'methods' stamp: 'ar 2/10/2012 13:30'!
 httpDelete: urlString
 	"Sends a DELETE request"
@@ -4499,25 +4567,6 @@ httpPost: urlString content: postData type: contentType
 	^self httpDo:[:client| client httpPost: urlString content: postData type: contentType]
 ! !
 
-!WebClient class methodsFor: 'utilities' stamp: 'ar 7/20/2010 20:09'!
-httpPost: url multipartFields: fieldMap
-	"Make a form submission using multipart/form-data POST.
-
-	The fieldMap may contain MIMEDocument instances to indicate the presence
-	of a file to upload to the server. If the MIMEDocument is present, its
-	content type and file name will be used for the upload.
-
-	The fieldMap can be EITHER an array of associations OR a Dictionary of 
-	key value pairs (the former is useful for providing multiple fields and/or 
-	specifying the order of fields)."
-
-	| boundary |
-	boundary := WebUtils multipartBoundary.
-
-	^self httpPost: url 
-		content: (WebUtils encodeMultipartForm: fieldMap boundary: boundary) 
-		type: 'multipart/form-data; boundary=', boundary! !
-
 !WebClient class methodsFor: 'methods' stamp: 'ar 2/10/2012 13:31'!
 httpPostChunked: urlString content: chunkBlock type: contentType
 	"POST the data to the given url using chunked transfer-encoding.
@@ -4560,18 +4609,6 @@ initialize
 
 	"Default proxy handler"
 	ProxyHandler := WebUtils! !
-
-!WebClient class methodsFor: 'accessing' stamp: 'ar 2/23/2010 22:26'!
-proxyHandler
-	"The currently registered proxy handler"
-
-	^ProxyHandler! !
-
-!WebClient class methodsFor: 'accessing' stamp: 'ar 2/23/2010 22:26'!
-proxyHandler: anObject
-	"The currently registered proxy handler"
-
-	ProxyHandler := anObject! !
 
 !WebClient class methodsFor: 'benchmark' stamp: 'jmv 6/25/2017 20:07:19'!
 requestBenchmark: url persistent: aBool
@@ -4723,23 +4760,17 @@ webSocketTo: serverUrl protocol: protocol
 		and:[aCookie domain = self domain
 		and:[aCookie path = self path]]].! !
 
+!WebCookie methodsFor: 'comparing' stamp: 'ar 5/11/2010 08:59'!
+hash
+	"Hash is re-implemented because #= is re-implemented"
+
+	^name hash + domain hash + path hash.! !
+
 !WebCookie methodsFor: 'converting' stamp: 'ar 2/20/2010 11:06'!
 asString
 	"Create the string representation for this cookie"
 
 	^String streamContents:[:s| self printOn: s].! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 8/5/2010 18:22'!
-comment
-	"Cookie comment"
-
-	^comment! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 8/5/2010 18:22'!
-comment: aString
-	"Cookie comment"
-
-	comment := aString! !
 
 !WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
 domain
@@ -4772,12 +4803,6 @@ expirySeconds: maxAge
 	maxAge = 0 ifTrue:[self expiry: DateAndTime new].
 	self expiry: DateAndTime now + maxAge seconds.! !
 
-!WebCookie methodsFor: 'comparing' stamp: 'ar 5/11/2010 08:59'!
-hash
-	"Hash is re-implemented because #= is re-implemented"
-
-	^name hash + domain hash + path hash.! !
-
 !WebCookie methodsFor: 'accessing' stamp: 'ar 3/31/2010 08:38'!
 httpOnly
 	"If the cookie should be httpOnly (not scriptable).
@@ -4791,27 +4816,6 @@ httpOnly: aBool
 	See http://msdn2.microsoft.com/en-us/library/ms533046.aspx"
 
 	httpOnly := aBool! !
-
-!WebCookie methodsFor: 'initialize' stamp: 'ar 3/31/2010 08:40'!
-initialize
-	"Initializes the receiver"
-	super initialize.
-	secure := false.
-	httpOnly := false.
-! !
-
-!WebCookie methodsFor: 'testing' stamp: 'ar 5/11/2010 20:06'!
-isExpired
-	"Return true if this cookie is expired"
-	
-	expiry ifNil:[^false].
-	^expiry asUTC < DateAndTime now asUTC! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
-name
-	"The name of the cookie"
-
-	^name! !
 
 !WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
 name: aString
@@ -4831,32 +4835,48 @@ path: aString
 
 	path := aString! !
 
-!WebCookie methodsFor: 'printing' stamp: 'jmv 6/25/2017 19:15:34'!
-printOn: aStream
-	"Creates the string representation for this cookie"
+!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
+secure
+	"Secure cookie flag"
 
-	aStream nextPutAll: name, '=', value asString.
-	expiry ifNotNil:[ 
-		aStream nextPutAll:'; expires='.
-		aStream nextPutAll: expiry dayOfWeekName ,  ', '.
-		expiry date printOn: aStream format: #(1 2 3 $- 2 2 2 ).
-		aStream nextPutAll: ' ', expiry time print24,' GMT'.
-	].
-	path ifNotNil:[
-		aStream nextPutAll:'; path=', (WebUtils quote: path).
-	].
-	domain ifNotNil:[
-		aStream nextPutAll:'; domain=', (WebUtils quote: domain).
-	].
-	version ifNotNil:[
-		aStream nextPutAll:'; version=', version asString.
-	].
-	secure ifTrue:[
-		aStream nextPutAll: '; secure'.
-	].
-	httpOnly ifTrue:[
-		aStream nextPutAll: '; HttpOnly'.
-	].
+	^secure! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
+secure: aBool
+	"Secure cookie flag"
+
+	secure := aBool! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
+value
+	"The value of the cookie"
+
+	^value! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:06'!
+value: aString
+	"The value of the cookie"
+
+	value := aString! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:06'!
+version
+	"Cookie version"
+
+	^version! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:06'!
+version: aString
+	"Cookie version"
+
+	version := aString! !
+
+!WebCookie methodsFor: 'initialize' stamp: 'ar 3/31/2010 08:40'!
+initialize
+	"Initializes the receiver"
+	super initialize.
+	secure := false.
+	httpOnly := false.
 ! !
 
 !WebCookie methodsFor: 'initialize' stamp: 'DSG 3/28/2015 16:36'!
@@ -4897,167 +4917,18 @@ readFrom: aStream
 		} otherwise:[Transcript log: 'Unknown cookie field: ', key].
 	].! !
 
-!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
-secure
-	"Secure cookie flag"
-
-	^secure! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
-secure: aBool
-	"Secure cookie flag"
-
-	secure := aBool! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
-value
-	"The value of the cookie"
-
-	^value! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:06'!
-value: aString
-	"The value of the cookie"
-
-	value := aString! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:06'!
-version
-	"Cookie version"
-
-	^version! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:06'!
-version: aString
-	"Cookie version"
-
-	version := aString! !
+!WebCookie methodsFor: 'testing' stamp: 'ar 5/11/2010 20:06'!
+isExpired
+	"Return true if this cookie is expired"
+	
+	expiry ifNil:[^false].
+	^expiry asUTC < DateAndTime now asUTC! !
 
 !WebMessage methodsFor: 'headers' stamp: 'ar 2/20/2010 16:31'!
 addHeader: key value: value
 	"Adds an ADDITIONAL header for the given key"
 
 	headers add: key -> value.! !
-
-!WebMessage methodsFor: 'converting' stamp: 'ar 2/23/2010 09:02'!
-asString
-	"Prints the receiver"
-
-	^String streamContents:[:s| self writeOn: s].! !
-
-!WebMessage methodsFor: 'streaming' stamp: 'ar 2/2/2012 15:55'!
-chunkFrom: srcStream to: dstStream progress: progressBlock
-	"Stream the content of srcStream to dstStream.
-	Use chunked transfer-encoding."
-
-	| chunkSize firstLine buffer totalRead |
-	totalRead := 0.
-	buffer := (srcStream isBinary ifTrue:[ByteArray] ifFalse:[String]) new.
-	[firstLine := srcStream nextLine asString.
-	chunkSize := ('16r',firstLine asUppercase) asNumber.
-	chunkSize = 0] whileFalse:[
-		progressBlock ifNotNil:[progressBlock value: nil value: totalRead].
-		buffer size = chunkSize ifFalse:[buffer := buffer class new: chunkSize].
-		buffer := srcStream next: chunkSize into: buffer startingAt: 1.
-		dstStream nextPutAll: buffer.
-		srcStream skip: 2. "CRLF"
-		totalRead := totalRead + chunkSize.
-	].
-	srcStream skip: 2. "CRLF"
-	dstStream flush.
-	progressBlock ifNotNil:[progressBlock value: nil value: totalRead].! !
-
-!WebMessage methodsFor: 'initialize' stamp: 'ar 5/4/2010 20:02'!
-close
-	"Always closes regardless of connection header"
-
-	stream ifNotNil:[stream close].! !
-
-!WebMessage methodsFor: 'initialize' stamp: 'ar 5/6/2010 20:47'!
-closeIfTransient
-	"Close the underlying connection if it's not persistent"
-
-	self isPersistent ifFalse:[self close].
-! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 6/18/2010 23:52'!
-content
-	"Reads and caches available content and returns it."
-
-	^content ifNil:[content := self getContent].
-! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 3/30/2010 22:05'!
-content: aString
-	"Sets content for a response"
-
-	content := aString.! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 2/23/2010 10:37'!
-contentLength
-	"Answers the numeric value of the Content-Length header, or nil if no header exist"
-
-	^(self headerAt: 'Content-Length' ifAbsent:[^nil]) asInteger! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 5/4/2010 21:04'!
-contentLength: aNumber
-	"Sets the numeric value of the Content-Length header"
-
-	^self headerAt: 'Content-Length' put: aNumber! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:01'!
-contentStream
-	"Answers a stream for the conent."
-
-	^stream! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:02'!
-contentType
-	"Answer the content type for the receiver"
-
-	^self headerAt: 'Content-Type' ifAbsent:['application/octet-stream']
-! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 3/30/2010 21:58'!
-contentType: aString
-	"Sets the content type for the receiver"
-
-	^self headerAt: 'Content-Type' put: aString! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ul 4/21/2015 06:40'!
-contentWithProgress: progressBlock
-	"Reads and caches available content and returns it."
-
-	^content ifNil: [ content := self getContentWithProgress: progressBlock ]! !
-
-!WebMessage methodsFor: 'initialize' stamp: 'ar 5/4/2010 20:02'!
-destroy
-	"Destroys the underlying stream"
-
-	stream ifNotNil:[stream destroy].! !
-
-!WebMessage methodsFor: 'private' stamp: 'ul 4/21/2015 06:31'!
-getContent
-	"Reads available content and returns it."
-
-	^self getContentWithProgress: nil! !
-
-!WebMessage methodsFor: 'private' stamp: 'jmv 6/25/2017 19:43:27'!
-getContentWithProgress: progressBlockOrNil
-	"Reads available content and returns it."
-
-	| length result |
-	length := self contentLength.
-	result := (stream isBinary ifTrue:[ ByteArray ] ifFalse: [ String ])
-		streamContents: [ :outputStream | 
-			self 
-				streamFrom: stream
-				to: outputStream
-				size: length
-				progress: progressBlockOrNil ]
-		estimatedSize: (length ifNil: [ 1000 ]).
-	(self headerAt: 'content-encoding') = 'gzip' ifFalse: [ ^result ].
-	^(GZipReadStream on: result) upToEnd! !
 
 !WebMessage methodsFor: 'headers' stamp: 'ar 2/20/2010 11:02'!
 headerAt: key
@@ -5120,29 +4991,40 @@ headersDo: aBlock
 		aBlock value: assoc key value: assoc value.
 	].! !
 
-!WebMessage methodsFor: 'testing' stamp: 'pmm 6/19/2010 08:05'!
-isPersistent
-	"Return true if this is a persistent connection"
+!WebMessage methodsFor: 'headers' stamp: 'ar 3/26/2010 19:02'!
+removeHeader: key
+	"Removes ALL headers with the given key"
 
-	"Check for explicit connection headers"
-	((self headerAt:'Connection') sameAs: 'close') ifTrue:[^false].
-	((self headerAt:'Connection') sameAs: 'keep-alive') ifTrue:[^true].
+	headers := headers reject:[:assoc| assoc key sameAs: key].
+! !
 
-	"Defaults for various versions"
-	(self protocol = 'HTTP/1.0') ifTrue:[^false].
-	(self protocol = 'HTTP/1.1') ifTrue:[^true].
+!WebMessage methodsFor: 'converting' stamp: 'ar 2/23/2010 09:02'!
+asString
+	"Prints the receiver"
 
-	"Assume that later HTTP versions are compatible with 1.1"
-	^true! !
+	^String streamContents:[:s| self writeOn: s].! !
 
-!WebMessage methodsFor: 'accessing' stamp: 'ar 7/20/2010 20:09'!
-multipartBoundary
-	"Answer the boundary of a multipart/form-data message"
+!WebMessage methodsFor: 'streaming' stamp: 'ar 2/2/2012 15:55'!
+chunkFrom: srcStream to: dstStream progress: progressBlock
+	"Stream the content of srcStream to dstStream.
+	Use chunked transfer-encoding."
 
-	| header |
-	header := self headerAt: 'Content-Type' ifAbsent:[^nil].
-	(header beginsWith: 'multipart/form-data') ifFalse:[^nil].
-	^(header copyFrom: (header findString: 'boundary=') + 9 to: header size)! !
+	| chunkSize firstLine buffer totalRead |
+	totalRead := 0.
+	buffer := (srcStream isBinary ifTrue:[ByteArray] ifFalse:[String]) new.
+	[firstLine := srcStream nextLine asString.
+	chunkSize := ('16r',firstLine asUppercase) asNumber.
+	chunkSize = 0] whileFalse:[
+		progressBlock ifNotNil:[progressBlock value: nil value: totalRead].
+		buffer size = chunkSize ifFalse:[buffer := buffer class new: chunkSize].
+		buffer := srcStream next: chunkSize into: buffer startingAt: 1.
+		dstStream nextPutAll: buffer.
+		srcStream skip: 2. "CRLF"
+		totalRead := totalRead + chunkSize.
+	].
+	srcStream skip: 2. "CRLF"
+	dstStream flush.
+	progressBlock ifNotNil:[progressBlock value: nil value: totalRead].! !
 
 !WebMessage methodsFor: 'streaming' stamp: 'DSG 3/29/2015 09:10'!
 nextChunk
@@ -5167,56 +5049,6 @@ nextChunkPut: chunk
 		stream nextPutAll: (chunk size printStringBase: 16); crlf.
 		stream nextPutAll: chunk; crlf; flush.
 	].! !
-
-!WebMessage methodsFor: 'printing' stamp: 'ar 2/20/2010 11:05'!
-printOn: aStream
-	"Prints the receiver"
-
-	aStream nextPutAll: self class name.
-	aStream nextPut: $(.
-	self writeOn: aStream.
-	aStream nextPut: $).! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 16:31'!
-protocol
-	"Returns the requested protocol"
-
-	^protocol! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 16:31'!
-protocol: aString
-	"Returns the requested protocol"
-
-	protocol := aString! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'dtl 7/17/2012 18:59'!
-remoteHost
-	"Return the name of the remote host"
-
-	| remote |
-	(stream isKindOf: SocketStream) ifFalse:[^nil]. "don't have it"
-	remote := stream socket remoteAddress.
-	^ NetNameResolver stringFromAddress: remote.
-! !
-
-!WebMessage methodsFor: 'headers' stamp: 'ar 3/26/2010 19:02'!
-removeHeader: key
-	"Removes ALL headers with the given key"
-
-	headers := headers reject:[:assoc| assoc key sameAs: key].
-! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:01'!
-stream
-	"Answers the underlying TCP stream"
-
-	^stream! !
-
-!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:01'!
-stream: aStream
-	"Sets the underlying TCP stream"
-
-	stream := aStream! !
 
 !WebMessage methodsFor: 'streaming' stamp: 'ar 5/4/2010 15:44'!
 streamFrom: srcStream size: size progress: aBlock
@@ -5265,6 +5097,156 @@ streamTo: dstStream size: size progress: aBlock
 	] ifNotNil:[
 		self streamFrom: content readStream to: dstStream size: size progress: aBlock
 	].! !
+
+!WebMessage methodsFor: 'initialize' stamp: 'ar 5/4/2010 20:02'!
+close
+	"Always closes regardless of connection header"
+
+	stream ifNotNil:[stream close].! !
+
+!WebMessage methodsFor: 'initialize' stamp: 'ar 5/6/2010 20:47'!
+closeIfTransient
+	"Close the underlying connection if it's not persistent"
+
+	self isPersistent ifFalse:[self close].
+! !
+
+!WebMessage methodsFor: 'initialize' stamp: 'ar 5/4/2010 20:02'!
+destroy
+	"Destroys the underlying stream"
+
+	stream ifNotNil:[stream destroy].! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 6/18/2010 23:52'!
+content
+	"Reads and caches available content and returns it."
+
+	^content ifNil:[content := self getContent].
+! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 3/30/2010 22:05'!
+content: aString
+	"Sets content for a response"
+
+	content := aString.! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 2/23/2010 10:37'!
+contentLength
+	"Answers the numeric value of the Content-Length header, or nil if no header exist"
+
+	^(self headerAt: 'Content-Length' ifAbsent:[^nil]) asInteger! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 5/4/2010 21:04'!
+contentLength: aNumber
+	"Sets the numeric value of the Content-Length header"
+
+	^self headerAt: 'Content-Length' put: aNumber! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:01'!
+contentStream
+	"Answers a stream for the conent."
+
+	^stream! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:02'!
+contentType
+	"Answer the content type for the receiver"
+
+	^self headerAt: 'Content-Type' ifAbsent:['application/octet-stream']
+! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 3/30/2010 21:58'!
+contentType: aString
+	"Sets the content type for the receiver"
+
+	^self headerAt: 'Content-Type' put: aString! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ul 4/21/2015 06:40'!
+contentWithProgress: progressBlock
+	"Reads and caches available content and returns it."
+
+	^content ifNil: [ content := self getContentWithProgress: progressBlock ]! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 7/20/2010 20:09'!
+multipartBoundary
+	"Answer the boundary of a multipart/form-data message"
+
+	| header |
+	header := self headerAt: 'Content-Type' ifAbsent:[^nil].
+	(header beginsWith: 'multipart/form-data') ifFalse:[^nil].
+	^(header copyFrom: (header findString: 'boundary=') + 9 to: header size)! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 16:31'!
+protocol
+	"Returns the requested protocol"
+
+	^protocol! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 16:31'!
+protocol: aString
+	"Returns the requested protocol"
+
+	protocol := aString! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'dtl 7/17/2012 18:59'!
+remoteHost
+	"Return the name of the remote host"
+
+	| remote |
+	(stream isKindOf: SocketStream) ifFalse:[^nil]. "don't have it"
+	remote := stream socket remoteAddress.
+	^ NetNameResolver stringFromAddress: remote.
+! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:01'!
+stream
+	"Answers the underlying TCP stream"
+
+	^stream! !
+
+!WebMessage methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:01'!
+stream: aStream
+	"Sets the underlying TCP stream"
+
+	stream := aStream! !
+
+!WebMessage methodsFor: 'private' stamp: 'ul 4/21/2015 06:31'!
+getContent
+	"Reads available content and returns it."
+
+	^self getContentWithProgress: nil! !
+
+!WebMessage methodsFor: 'private' stamp: 'jmv 6/25/2017 19:43:27'!
+getContentWithProgress: progressBlockOrNil
+	"Reads available content and returns it."
+
+	| length result |
+	length := self contentLength.
+	result := (stream isBinary ifTrue:[ ByteArray ] ifFalse: [ String ])
+		streamContents: [ :outputStream | 
+			self 
+				streamFrom: stream
+				to: outputStream
+				size: length
+				progress: progressBlockOrNil ]
+		estimatedSize: (length ifNil: [ 1000 ]).
+	(self headerAt: 'content-encoding') = 'gzip' ifFalse: [ ^result ].
+	^(GZipReadStream on: result) upToEnd! !
+
+!WebMessage methodsFor: 'testing' stamp: 'pmm 6/19/2010 08:05'!
+isPersistent
+	"Return true if this is a persistent connection"
+
+	"Check for explicit connection headers"
+	((self headerAt:'Connection') sameAs: 'close') ifTrue:[^false].
+	((self headerAt:'Connection') sameAs: 'keep-alive') ifTrue:[^true].
+
+	"Defaults for various versions"
+	(self protocol = 'HTTP/1.0') ifTrue:[^false].
+	(self protocol = 'HTTP/1.1') ifTrue:[^true].
+
+	"Assume that later HTTP versions are compatible with 1.1"
+	^true! !
 
 !WebMessage methodsFor: 'printing' stamp: 'DSG 5/24/2012 17:38'!
 writeHeadersOn: aStream
@@ -5362,6 +5344,48 @@ acceptsCookie: aCookie from: webClient
 		aCookie isExpired ifTrue:[^false].
 	].
 	^true! !
+
+!WebRequest methodsFor: 'testing' stamp: 'ar 6/23/2010 15:18'!
+isDeleteRequest
+	"Returns true if this is an HTTP DELETE request"
+
+	^self method = 'DELETE'! !
+
+!WebRequest methodsFor: 'testing' stamp: 'ar 2/20/2010 10:40'!
+isGetRequest
+	"Returns true if this is an HTTP GET request"
+
+	^self method = 'GET'! !
+
+!WebRequest methodsFor: 'testing' stamp: 'ar 2/20/2010 10:41'!
+isHeadRequest
+	"Returns true if this is an HTTP HEAD request"
+
+	^self method = 'HEAD'! !
+
+!WebRequest methodsFor: 'testing' stamp: 'ar 6/23/2010 15:19'!
+isOptionsRequest
+	"Returns true if this is an HTTP OPTIONS request"
+
+	^self method = 'OPTIONS'! !
+
+!WebRequest methodsFor: 'testing' stamp: 'ar 2/20/2010 10:41'!
+isPostRequest
+	"Returns true if this is an HTTP POST request"
+
+	^self method = 'POST'! !
+
+!WebRequest methodsFor: 'testing' stamp: 'ar 6/23/2010 15:18'!
+isPutRequest
+	"Returns true if this is an HTTP PUT request"
+
+	^self method = 'PUT'! !
+
+!WebRequest methodsFor: 'testing' stamp: 'ar 6/23/2010 15:18'!
+isTraceRequest
+	"Returns true if this is an HTTP TRACE request"
+
+	^self method = 'TRACE'! !
 
 !WebRequest methodsFor: 'converting' stamp: 'ar 9/26/2011 10:25'!
 asWebSocket
@@ -5486,6 +5510,47 @@ closeIfTransient: resp after: aBlock
 	close  ifTrue:[self close].
 ! !
 
+!WebRequest methodsFor: 'sending' stamp: 'ar 2/23/2010 22:04'!
+sendResponse: resp content: aString
+	"Send a WebResponse with content."
+
+	^self sendResponse: resp contentStream: aString readStream size: aString size! !
+
+!WebRequest methodsFor: 'sending' stamp: 'ar 8/31/2010 22:11'!
+sendResponse: resp contentBlock: contentBlock
+	"Sends a WebResponse, streaming its contents from aStream.
+	If a size is provided, insert a Content-Length header, otherwise
+	ensure that the connection is transient."
+
+	"Add Date and Server headers"
+	resp headerAt: 'Date' put: (server ifNil:[WebServer]) serverDate.
+	resp headerAt: 'Server' put: (server ifNil:[WebServer]) serverString.
+
+	self closeIfTransient: resp after:[
+		"Ignore all network errors while sending the response"
+		[resp writeOn: stream.
+		stream flush.
+		self isHeadRequest ifFalse:[contentBlock value: stream].
+		] on: NetworkError do:["ignore"].
+
+		"Make sure we log before closing the connection"
+		server ifNotNil:[server logRequest: self response: resp].
+	].! !
+
+!WebRequest methodsFor: 'sending' stamp: 'ar 8/31/2010 22:12'!
+sendResponse: resp contentStream: aStream size: streamSize
+	"Sends a WebResponse, streaming its contents from aStream.
+	If a size is provided, insert a Content-Length header, otherwise
+	ensure that the connection is transient."
+
+	streamSize 
+		ifNil:[self headerAt: 'Connection' put: 'close'] "mark transient"
+		ifNotNil:[resp headerAt: 'Content-Length' put: streamSize].
+
+	^self sendResponse: resp contentBlock:[:sockStream|
+		resp streamFrom: aStream to: sockStream size: streamSize progress: nil
+	]! !
+
 !WebRequest methodsFor: 'cookies' stamp: 'ar 2/20/2010 19:34'!
 cookieAt: aString
 	"Answer the value for a cookie with the given name"
@@ -5539,83 +5604,6 @@ getFields
 	^WebUtils decodeUrlEncodedForm: args multipleValues: false
 ! !
 
-!WebRequest methodsFor: 'initialize' stamp: 'ar 2/23/2010 09:02'!
-initialize
-	"Initialize the receiver"
-
-	super initialize.
-	method := 'GET'.
-	protocol := 'HTTP/1.1'.
-	headers := OrderedCollection new.! !
-
-!WebRequest methodsFor: 'initialize' stamp: 'ar 9/4/2010 11:09'!
-initializeFromUrl: urlString
-	"Initialize the client from a http url or string"
-
-	| urlStream |
-	urlStream := urlString readStream.
-	"Skip past scheme if present"
-	urlStream upToAll: '://'.
-	urlStream atEnd 
-		ifTrue:[rawUrl := urlString]
-		ifFalse:[rawUrl := urlStream upTo: $/; upToEnd].
-	(rawUrl beginsWith: '/') ifFalse:[rawUrl := '/', rawUrl].
-! !
-
-!WebRequest methodsFor: 'testing' stamp: 'ar 6/23/2010 15:18'!
-isDeleteRequest
-	"Returns true if this is an HTTP DELETE request"
-
-	^self method = 'DELETE'! !
-
-!WebRequest methodsFor: 'testing' stamp: 'ar 2/20/2010 10:40'!
-isGetRequest
-	"Returns true if this is an HTTP GET request"
-
-	^self method = 'GET'! !
-
-!WebRequest methodsFor: 'testing' stamp: 'ar 2/20/2010 10:41'!
-isHeadRequest
-	"Returns true if this is an HTTP HEAD request"
-
-	^self method = 'HEAD'! !
-
-!WebRequest methodsFor: 'testing' stamp: 'ar 6/23/2010 15:19'!
-isOptionsRequest
-	"Returns true if this is an HTTP OPTIONS request"
-
-	^self method = 'OPTIONS'! !
-
-!WebRequest methodsFor: 'testing' stamp: 'ar 2/20/2010 10:41'!
-isPostRequest
-	"Returns true if this is an HTTP POST request"
-
-	^self method = 'POST'! !
-
-!WebRequest methodsFor: 'testing' stamp: 'ar 6/23/2010 15:18'!
-isPutRequest
-	"Returns true if this is an HTTP PUT request"
-
-	^self method = 'PUT'! !
-
-!WebRequest methodsFor: 'testing' stamp: 'ar 6/23/2010 15:18'!
-isTraceRequest
-	"Returns true if this is an HTTP TRACE request"
-
-	^self method = 'TRACE'! !
-
-!WebRequest methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:40'!
-method
-	"The request method (GET, POST etc)"
-
-	^method! !
-
-!WebRequest methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:40'!
-method: aString
-	"The request method (GET, POST etc)"
-
-	method := aString! !
-
 !WebRequest methodsFor: 'fields' stamp: 'ar 7/28/2010 21:01'!
 multipartFields
 	"Answers the multipart fields of a post request"
@@ -5641,6 +5629,41 @@ multipartFieldsDo: aBlock
 			ifTrue: [WebUtils decodeMultipartForm: self content readStream boundary: self multipartBoundary do: aBlock]
 			ifFalse: [Dictionary new]! !
 
+!WebRequest methodsFor: 'fields' stamp: 'jmv 6/25/2017 20:10:00'!
+postFields
+	"Answers the multipart fields of a post request"
+
+	^(self isPostRequest and: [
+		self contentType beginsWith: 'application/x-www-form-urlencoded'])
+			ifTrue: [
+				WebUtils 
+					decodeUrlEncodedForm: self content 
+					multipleValues: true ]
+			ifFalse: [Dictionary new]! !
+
+!WebRequest methodsFor: 'initialize' stamp: 'ar 2/23/2010 09:02'!
+initialize
+	"Initialize the receiver"
+
+	super initialize.
+	method := 'GET'.
+	protocol := 'HTTP/1.1'.
+	headers := OrderedCollection new.! !
+
+!WebRequest methodsFor: 'initialize' stamp: 'ar 9/4/2010 11:09'!
+initializeFromUrl: urlString
+	"Initialize the client from a http url or string"
+
+	| urlStream |
+	urlStream := urlString readStream.
+	"Skip past scheme if present"
+	urlStream upToAll: '://'.
+	urlStream atEnd 
+		ifTrue:[rawUrl := urlString]
+		ifFalse:[rawUrl := urlStream upTo: $/; upToEnd].
+	(rawUrl beginsWith: '/') ifFalse:[rawUrl := '/', rawUrl].
+! !
+
 !WebRequest methodsFor: 'initialize' stamp: 'ar 4/1/2010 16:03'!
 newResponse
 	"Create a new response entitiy.
@@ -5656,31 +5679,6 @@ newWebSocketOn: aStream
 	Subclasses can override this method to provide a different response class"
 
 	^WebSocket on: aStream! !
-
-!WebRequest methodsFor: 'fields' stamp: 'jmv 6/25/2017 20:10:00'!
-postFields
-	"Answers the multipart fields of a post request"
-
-	^(self isPostRequest and: [
-		self contentType beginsWith: 'application/x-www-form-urlencoded'])
-			ifTrue: [
-				WebUtils 
-					decodeUrlEncodedForm: self content 
-					multipleValues: true ]
-			ifFalse: [Dictionary new]! !
-
-!WebRequest methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:40'!
-rawUrl
-	"The raw (unparsed) url"
-
-	^rawUrl! !
-
-!WebRequest methodsFor: 'accessing' stamp: 'ar 5/11/2010 20:07'!
-rawUrl: aString
-	"The raw (unparsed) url"
-
-	rawUrl := aString
-! !
 
 !WebRequest methodsFor: 'initialize' stamp: 'jmv 6/25/2017 19:15:52'!
 readFrom: aStream
@@ -5704,11 +5702,54 @@ readFrom: aStream
 	headers := WebUtils readHeadersFrom: stream.
 ! !
 
+!WebRequest methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:40'!
+method
+	"The request method (GET, POST etc)"
+
+	^method! !
+
+!WebRequest methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:40'!
+method: aString
+	"The request method (GET, POST etc)"
+
+	method := aString! !
+
+!WebRequest methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:40'!
+rawUrl
+	"The raw (unparsed) url"
+
+	^rawUrl! !
+
+!WebRequest methodsFor: 'accessing' stamp: 'ar 5/11/2010 20:07'!
+rawUrl: aString
+	"The raw (unparsed) url"
+
+	rawUrl := aString
+! !
+
 !WebRequest methodsFor: 'accessing' stamp: 'ar 7/28/2010 19:49'!
 requestLine
 	"The actual request line as sent by the client"
 
 	^request ifNil:[self method, ' ', self rawUrl, ' ', self protocol]! !
+
+!WebRequest methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:55'!
+server
+	"If non-nil, the WebServer instance associated with the request."
+
+	^server! !
+
+!WebRequest methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:55'!
+server: aWebServer
+	"If non-nil, the WebServer instance associated with the request."
+
+	server := aWebServer! !
+
+!WebRequest methodsFor: 'accessing' stamp: 'DSG 5/24/2012 21:18'!
+url
+	"The url without fragment or arguments"
+
+	^((rawUrl copyUpTo: $#) copyUpTo: $?) unescapePercents! !
 
 !WebRequest methodsFor: 'responses' stamp: 'DSG 12/5/2013 10:57'!
 send200Response: aString
@@ -5887,47 +5928,6 @@ sendResponse: code chunked: chunkBlock do: hdrBlock
 	].
 ! !
 
-!WebRequest methodsFor: 'sending' stamp: 'ar 2/23/2010 22:04'!
-sendResponse: resp content: aString
-	"Send a WebResponse with content."
-
-	^self sendResponse: resp contentStream: aString readStream size: aString size! !
-
-!WebRequest methodsFor: 'sending' stamp: 'ar 8/31/2010 22:11'!
-sendResponse: resp contentBlock: contentBlock
-	"Sends a WebResponse, streaming its contents from aStream.
-	If a size is provided, insert a Content-Length header, otherwise
-	ensure that the connection is transient."
-
-	"Add Date and Server headers"
-	resp headerAt: 'Date' put: (server ifNil:[WebServer]) serverDate.
-	resp headerAt: 'Server' put: (server ifNil:[WebServer]) serverString.
-
-	self closeIfTransient: resp after:[
-		"Ignore all network errors while sending the response"
-		[resp writeOn: stream.
-		stream flush.
-		self isHeadRequest ifFalse:[contentBlock value: stream].
-		] on: NetworkError do:["ignore"].
-
-		"Make sure we log before closing the connection"
-		server ifNotNil:[server logRequest: self response: resp].
-	].! !
-
-!WebRequest methodsFor: 'sending' stamp: 'ar 8/31/2010 22:12'!
-sendResponse: resp contentStream: aStream size: streamSize
-	"Sends a WebResponse, streaming its contents from aStream.
-	If a size is provided, insert a Content-Length header, otherwise
-	ensure that the connection is transient."
-
-	streamSize 
-		ifNil:[self headerAt: 'Connection' put: 'close'] "mark transient"
-		ifNotNil:[resp headerAt: 'Content-Length' put: streamSize].
-
-	^self sendResponse: resp contentBlock:[:sockStream|
-		resp streamFrom: aStream to: sockStream size: streamSize progress: nil
-	]! !
-
 !WebRequest methodsFor: 'responses' stamp: 'ar 7/28/2010 20:22'!
 sendResponseCode: code content: aString type: contentType close: aBool
 	"Send a 500 Internal server error response"
@@ -5951,18 +5951,6 @@ sendXmlResponse: xmlString
 	"Send an a-ok 200 xml-ish response"
 
 	^self send200Response: xmlString contentType: 'application/xml'! !
-
-!WebRequest methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:55'!
-server
-	"If non-nil, the WebServer instance associated with the request."
-
-	^server! !
-
-!WebRequest methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:55'!
-server: aWebServer
-	"If non-nil, the WebServer instance associated with the request."
-
-	server := aWebServer! !
 
 !WebRequest methodsFor: 'responses' stamp: 'ar 2/25/2010 03:48'!
 stream200Response: aStream
@@ -5991,12 +5979,6 @@ stream200Response: aStream size: streamSize type: contentType do: aBlock
 	resp headerAt: 'Content-Type' put: contentType.
 	aBlock value: resp.
 	^self sendResponse: resp contentStream: aStream size: streamSize.! !
-
-!WebRequest methodsFor: 'accessing' stamp: 'DSG 5/24/2012 21:18'!
-url
-	"The url without fragment or arguments"
-
-	^((rawUrl copyUpTo: $#) copyUpTo: $?) unescapePercents! !
 
 !WebRequest methodsFor: 'printing' stamp: 'CK 11/24/2017 14:53:04'!
 writeOn: aStream
@@ -6042,6 +6024,44 @@ contentStream
 		^WebChunkedStream on: stream.
 	].
 	^super contentStream! !
+
+!WebResponse methodsFor: 'accessing' stamp: 'ar 4/1/2010 16:02'!
+request
+	"The original request for this response"
+
+	^request! !
+
+!WebResponse methodsFor: 'accessing' stamp: 'ar 4/1/2010 16:03'!
+request: aRequest
+	"The original request for this response"
+
+	request := aRequest! !
+
+!WebResponse methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:39'!
+status
+	"The status line from the response"
+
+	^status! !
+
+!WebResponse methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:39'!
+status: aString
+	"The status line from the response"
+
+	status := aString! !
+
+!WebResponse methodsFor: 'accessing' stamp: 'ar 8/24/2010 21:37'!
+url
+	"The url of the resource at which a request was terminated after a series
+	of redirects. Without redirects, this will be the same as the request url."
+
+	^url! !
+
+!WebResponse methodsFor: 'accessing' stamp: 'ar 8/24/2010 21:37'!
+url: urlString
+	"The url of the resource at which a request was terminated after a series
+	of redirects. Without redirects, this will be the same as the request url."
+
+	url := urlString! !
 
 !WebResponse methodsFor: 'private' stamp: 'topa 4/3/2013 17:32'!
 getContent
@@ -6093,18 +6113,6 @@ readFrom: aStream
 	headers := WebUtils readHeadersFrom: stream.
 ! !
 
-!WebResponse methodsFor: 'accessing' stamp: 'ar 4/1/2010 16:02'!
-request
-	"The original request for this response"
-
-	^request! !
-
-!WebResponse methodsFor: 'accessing' stamp: 'ar 4/1/2010 16:03'!
-request: aRequest
-	"The original request for this response"
-
-	request := aRequest! !
-
 !WebResponse methodsFor: 'cookies' stamp: 'ar 2/20/2010 19:35'!
 setCookie: aCookie
 	"Adds a Set-Cookie header"
@@ -6152,32 +6160,6 @@ setCookiesDo: aBlock
 	].
 ! !
 
-!WebResponse methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:39'!
-status
-	"The status line from the response"
-
-	^status! !
-
-!WebResponse methodsFor: 'accessing' stamp: 'ar 2/20/2010 10:39'!
-status: aString
-	"The status line from the response"
-
-	status := aString! !
-
-!WebResponse methodsFor: 'accessing' stamp: 'ar 8/24/2010 21:37'!
-url
-	"The url of the resource at which a request was terminated after a series
-	of redirects. Without redirects, this will be the same as the request url."
-
-	^url! !
-
-!WebResponse methodsFor: 'accessing' stamp: 'ar 8/24/2010 21:37'!
-url: urlString
-	"The url of the resource at which a request was terminated after a series
-	of redirects. Without redirects, this will be the same as the request url."
-
-	url := urlString! !
-
 !WebResponse methodsFor: 'printing' stamp: 'ar 2/20/2010 16:33'!
 writeOn: aStream
 	"Store this response on aStream"
@@ -6215,6 +6197,20 @@ accessLog: aStreamOrFilename
 
 	accessLog := aStreamOrFilename! !
 
+!WebServer methodsFor: 'logging' stamp: 'ar 7/28/2010 20:02'!
+logRequest: request response: response
+	"Log a request after it has been successfully processed"
+
+	accessLog ifNil:[^self].
+
+	"Do not use the standard exception handler for errors logging; 
+	it would possibly send a 500 response. Really this should be handled
+	by a different process with its own error handler."
+
+	[WebUtils logRequest: request response: response on: accessLog]
+		on: Error do:[:ex| self log: 'Error in logging: ', ex description].
+! !
+
 !WebServer methodsFor: 'services' stamp: 'ar 5/11/2010 20:10'!
 addService: entryPoint action: aBlockOrMessage
 	"Add a service to the web server. The service is specified by an entryPoint, 
@@ -6239,6 +6235,14 @@ addService: entryPoint action: aBlockOrMessage methods: methods
 		entryPoints at: entryPoint asLowercase put: {methods. aBlockOrMessage}.
 	].! !
 
+!WebServer methodsFor: 'services' stamp: 'ar 2/22/2010 02:52'!
+removeService: entryPoint 
+	"Remove a service from the HTTP service provider.  See #addService:action:"
+
+	mutex critical:[
+		entryPoints removeKey: entryPoint asLowercase ifAbsent: [].
+	].! !
+
 !WebServer methodsFor: 'handling' stamp: 'ul 7/3/2014 23:56'!
 asyncHandleConnectionFrom: aSocket
 	"Handle an incoming connection asynchronously to avoid blocking the listener."
@@ -6257,6 +6261,125 @@ asyncHandleConnectionFrom: aSocket
 
 	handlerProcess resume.
 ! !
+
+!WebServer methodsFor: 'handling' stamp: 'ar 2/23/2010 22:34'!
+dispatchRequest: request
+	"Look up the handler for a given request and dispatch to it"
+
+	^self dispatchRequest: request url: request url! !
+
+!WebServer methodsFor: 'handling' stamp: 'ar 7/28/2010 20:11'!
+dispatchRequest: request url: dispatchUrl
+	"Look up the handler for a given url and dispatch to it"
+
+	| entryUrl action |
+	"Handle TRACE requests right away"
+	request method = 'TRACE' ifTrue:[
+		^request send200Response: request asString contentType: 'message/http'.
+	].
+
+	"Look up the entry point for the request"
+	action := nil.
+	entryUrl := dispatchUrl asLowercase.
+	(entryUrl beginsWith: '/') ifFalse:[entryUrl := '/', entryUrl].
+	mutex critical:[
+		[entryUrl notEmpty and:[action == nil]] whileTrue: [
+			action := entryPoints at: entryUrl ifAbsent:[nil].
+			entryUrl := entryUrl copyUpToLast: $/.
+		].
+		action ifNil:[action := entryPoints at: '/' ifAbsent:[nil]].
+	].
+
+	"Handle OPTIONS requests"
+	request method = 'OPTIONS' ifTrue:[
+		"HEAD, TRACE, and OPTIONS are always supported"
+		request sendOptionsResponse: self builtinHttpMethods,
+			(action ifNil:[self defaultHttpMethods] ifNotNil:[action first])
+	].
+
+	"Handle 404 not found"
+	action ifNil:[^request send404Response].
+
+	"Handle 405 method not allowed"
+	(request method = 'HEAD' "builtin" 
+		or:[(action at: 1) includes: request method]) ifFalse:[
+			^request send405Response: self builtinHttpMethods, action first.
+		].
+
+	^[self invokeAction: (action at: 2) request: request] 
+		on: Error do:[:ex|
+			errorHandler 
+				ifNil:[self handleError: ex request: request]
+				ifNotNil:[errorHandler value: ex value: request]
+		].
+! !
+
+!WebServer methodsFor: 'handling' stamp: 'ar 7/29/2010 18:46'!
+handleConnectionFrom: aSocket
+	"Synchronously handle an incoming socket connection."
+
+	| stream request |
+
+	"Give the process a pretty name"
+	Processor activeProcess name: (String streamContents:[:s|
+		aSocket remoteAddress do:[:b| s print: b] separatedBy:[s nextPut: $.].
+		s nextPut: $:; print: aSocket remotePort.
+		s nextPutAll: ' - ', self class name, ' request handler'.
+	]).
+
+	"Read the request from the socket, and dispatch it.
+	Since we've been forked already it's okay to block."
+	[
+		certName ifNil:["Regular request"
+			stream := SocketStream on: aSocket.
+		] ifNotNil:["SSL/TLS"
+			| ssl |
+			ssl := Smalltalk at: #SqueakSSL ifAbsent:[self error: 'SqueakSSL not installed'].
+			stream := ssl secureSocketStream on: aSocket.
+			[stream sslAccept: certName] on: Error do:[^stream destroy].
+		].
+
+		[aSocket isConnected] whileTrue:[
+
+			"Read the next request from the connection. If the connection is closed,
+			or if a network error occurs, or the read times out, just close the connection
+			without further ado (rather than logging an error). Any other error resulting
+			from parsing the input is treated as a 400 bad request."
+
+			stream peek ifNil:[^aSocket destroy].
+			request := self newRequest.
+			[request readFrom: stream] on: Error do:[:ex| 
+				(ex isKindOf: NetworkError) ifFalse:[
+					[request send400Response] on: Error do:[:ignore].
+				].
+				^aSocket destroy].
+
+			self dispatchRequest: request.
+		].
+	] on: Error do:[:ex|
+		(ex isKindOf: NetworkError) ifFalse:[
+			self log: 'Error in request handling: ', ex description.
+			self log: (self errorReportFor: ex).
+		].
+	].! !
+
+!WebServer methodsFor: 'handling' stamp: 'ar 2/20/2010 14:30'!
+invokeAction: action request: request
+	"Invokes the given action. Subclasses can override this method to serialize
+	actions if necessary. At this point, the request header has been read from
+	the network, but not its content."
+
+	^action valueWithArguments: {request}
+! !
+
+!WebServer methodsFor: 'handling' stamp: 'ar 7/28/2010 20:27'!
+newRequest
+	"Answer a new request.
+	Subclasses should override this method to use a different request class."
+
+	^(WebRequest new)
+		server: self;
+		yourself! !
 
 !WebServer methodsFor: 'authentication' stamp: 'ar 3/30/2010 20:43'!
 authAccept: method request: request realm: realm header: authHeader
@@ -6324,31 +6447,110 @@ basicAuth: request realm: realm header: authHeader
 	^(self passwordHashAt: user, ':', realm) = hash
 ! !
 
+!WebServer methodsFor: 'authentication' stamp: 'jmv 6/25/2017 19:16:08'!
+digestAuth: request realm: realm header: authHeader
+	"Authenticates an incoming request using Digest auth."
+
+	| user nonce uri response ha1 ha2 md5 qop nc cnonce 
+	  nonceData nonceCounter nonceTimeout params |
+
+	params := WebUtils parseAuthParams: authHeader.
+
+	"Flush the nonce cache randomly about every 100 auth attempts"
+	100 atRandom = 42 ifTrue:[self flushNonceCache].
+
+	user := params at: 'username' ifAbsent:[''].
+	nonce := params at: 'nonce' ifAbsent:[''].
+	uri := params at: 'uri' ifAbsent:[request url].
+	response := params at: 'response' ifAbsent:[''].
+	
+	qop := params at: 'qop' ifAbsent:[''].
+	qop = 'auth' ifFalse:[^false]. "we require qop=auth"
+
+	nc := params at: 'nc' ifAbsent:[''].
+	cnonce := params at: 'cnonce' ifAbsent:[''].
+	
+	"Verify that this is a nonce that we have handed out, that it isn't expired
+	and that the nc counter has increased from the last use."
+	mutex critical:[
+		nonceData := nonceCache at: nonce ifAbsent:[^false].
+	].
+	nonceCounter := nonceData first.		"last used nc"
+	nonceTimeout := nonceData second.	"timeout for nonce"
+	nc <= nonceCounter ifTrue:[^false]. 	"nc must increase"
+	Time localSecondClock > nonceTimeout ifTrue:[^false]. "nonce expired"
+	nonceData at: 1 put: nc.
+
+	ha1 := self passwordHashAt: user, ':', realm.
+	ha2 := WebUtils md5Digest: request method, ':', uri.
+	md5 := WebUtils md5Digest: ha1, ':', nonce, ':', nc, ':', cnonce, ':', qop, ':', ha2.
+	^md5 = response
+! !
+
+!WebServer methodsFor: 'authentication' stamp: 'DSG 12/5/2013 17:11'!
+flushNonceCache
+	"Flushes expired nonces from the cache"
+
+	| deadline |
+	deadline := Time localSecondClock.
+	mutex critical:[
+		nonceCache := nonceCache reject:[:nonceData| deadline > nonceData second]
+	].
+! !
+
+!WebServer methodsFor: 'authentication' stamp: 'ar 3/30/2010 20:36'!
+hashUser: user password: pass realm: realm
+	"Creates a hash for the given username password pair.
+	This method is the ha1 part of digest auth and can be used for both digest
+	as well as basic auth."
+
+	^WebUtils md5Digest: user, ':', realm, ':', pass! !
+
+!WebServer methodsFor: 'authentication' stamp: 'DSG 12/5/2013 17:12'!
+newNonce
+	"Create a new nonce to be used for a client authentication session"
+
+	| nonce |
+	nonce := UUID new hex.
+	mutex critical:[
+		nonceCache at: nonce put: {''. Time localSecondClock + self nonceDeadline}.
+	].
+	^nonce! !
+
+!WebServer methodsFor: 'authentication' stamp: 'ar 2/23/2010 09:20'!
+nonceDeadline
+	"Answer the number of seconds a nonce is considered valid for digest auth
+	by the server. After this period, the client will have to reauthenticate.
+	The default is 30 minutes."
+
+	^30*60 ! !
+
+!WebServer methodsFor: 'authentication' stamp: 'ar 2/20/2010 12:54'!
+passwordAt: username realm: realm put: password
+	"Store the password hash for the key."
+
+	| hash |
+	hash := self hashUser: username password: password realm: realm.
+	self passwordHashAt: (username,':',realm) put: hash! !
+
+!WebServer methodsFor: 'authentication' stamp: 'ar 2/20/2010 12:51'!
+passwordHashAt: key
+	"Answer the password hash for the given key"
+
+	^vault at: key ifAbsent:['']! !
+
+!WebServer methodsFor: 'authentication' stamp: 'ar 2/20/2010 12:01'!
+passwordHashAt: key put: hash
+	"Store the password hash for the key."
+
+	^vault at: key put: hash! !
+
 !WebServer methodsFor: 'initialize' stamp: 'ar 5/11/2010 20:10'!
 builtinHttpMethods
 	"Returns the list of HTTP methods that the server handles built-in,
 	i.e., without passing them to the registered service."
 
 	^#('HEAD' 'TRACE' 'OPTIONS')! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 7/29/2010 18:49'!
-certName
-	"The cert name to use for a secure (SSL/TLS) web server."
-
-	^certName! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 7/29/2010 18:49'!
-certName: aString
-	"The cert name to use for a secure (SSL/TLS) web server."
-
-	certName := aString.! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 5/11/2010 20:22'!
-connections
-	"The active connection processes. Can only be examined after aquiring
-	the WebServer's mutex."
-
-	^connections! !
 
 !WebServer methodsFor: 'initialize' stamp: 'ar 2/23/2010 12:10'!
 critical: aBlock
@@ -6390,97 +6592,44 @@ destroyConnections
 	mutex critical: [ connections removeAll ]
 ! !
 
-!WebServer methodsFor: 'authentication' stamp: 'jmv 6/25/2017 19:16:08'!
-digestAuth: request realm: realm header: authHeader
-	"Authenticates an incoming request using Digest auth."
+!WebServer methodsFor: 'initialize' stamp: 'DSG 3/28/2015 20:16'!
+initialize
+	"Initialize the receiver"
 
-	| user nonce uri response ha1 ha2 md5 qop nc cnonce 
-	  nonceData nonceCounter nonceTimeout params |
-
-	params := WebUtils parseAuthParams: authHeader.
-
-	"Flush the nonce cache randomly about every 100 auth attempts"
-	100 atRandom = 42 ifTrue:[self flushNonceCache].
-
-	user := params at: 'username' ifAbsent:[''].
-	nonce := params at: 'nonce' ifAbsent:[''].
-	uri := params at: 'uri' ifAbsent:[request url].
-	response := params at: 'response' ifAbsent:[''].
-	
-	qop := params at: 'qop' ifAbsent:[''].
-	qop = 'auth' ifFalse:[^false]. "we require qop=auth"
-
-	nc := params at: 'nc' ifAbsent:[''].
-	cnonce := params at: 'cnonce' ifAbsent:[''].
-	
-	"Verify that this is a nonce that we have handed out, that it isn't expired
-	and that the nc counter has increased from the last use."
-	mutex critical:[
-		nonceData := nonceCache at: nonce ifAbsent:[^false].
-	].
-	nonceCounter := nonceData first.		"last used nc"
-	nonceTimeout := nonceData second.	"timeout for nonce"
-	nc <= nonceCounter ifTrue:[^false]. 	"nc must increase"
-	Time localSecondClock > nonceTimeout ifTrue:[^false]. "nonce expired"
-	nonceData at: 1 put: nc.
-
-	ha1 := self passwordHashAt: user, ':', realm.
-	ha2 := WebUtils md5Digest: request method, ':', uri.
-	md5 := WebUtils md5Digest: ha1, ':', nonce, ':', nc, ':', cnonce, ':', qop, ':', ha2.
-	^md5 = response
+	mutex := Mutex new.
+	entryPoints := Dictionary new.
+	connections := IdentitySet new.
+	vault := Dictionary new.
+	nonceCache := Dictionary new.
+	sessions := Dictionary new.
+	self logAction:[:aString| Transcript log: aString].
 ! !
 
-!WebServer methodsFor: 'handling' stamp: 'ar 2/23/2010 22:34'!
-dispatchRequest: request
-	"Look up the handler for a given request and dispatch to it"
+!WebServer methodsFor: 'initialize' stamp: 'ar 2/22/2010 05:35'!
+log: aString
+	"Log the given information."
 
-	^self dispatchRequest: request url: request url! !
-
-!WebServer methodsFor: 'handling' stamp: 'ar 7/28/2010 20:11'!
-dispatchRequest: request url: dispatchUrl
-	"Look up the handler for a given url and dispatch to it"
-
-	| entryUrl action |
-	"Handle TRACE requests right away"
-	request method = 'TRACE' ifTrue:[
-		^request send200Response: request asString contentType: 'message/http'.
-	].
-
-	"Look up the entry point for the request"
-	action := nil.
-	entryUrl := dispatchUrl asLowercase.
-	(entryUrl beginsWith: '/') ifFalse:[entryUrl := '/', entryUrl].
-	mutex critical:[
-		[entryUrl notEmpty and:[action == nil]] whileTrue: [
-			action := entryPoints at: entryUrl ifAbsent:[nil].
-			entryUrl := entryUrl copyUpToLast: $/.
-		].
-		action ifNil:[action := entryPoints at: '/' ifAbsent:[nil]].
-	].
-
-	"Handle OPTIONS requests"
-	request method = 'OPTIONS' ifTrue:[
-		"HEAD, TRACE, and OPTIONS are always supported"
-		request sendOptionsResponse: self builtinHttpMethods,
-			(action ifNil:[self defaultHttpMethods] ifNotNil:[action first])
-	].
-
-	"Handle 404 not found"
-	action ifNil:[^request send404Response].
-
-	"Handle 405 method not allowed"
-	(request method = 'HEAD' "builtin" 
-		or:[(action at: 1) includes: request method]) ifFalse:[
-			^request send405Response: self builtinHttpMethods, action first.
-		].
-
-	^[self invokeAction: (action at: 2) request: request] 
-		on: Error do:[:ex|
-			errorHandler 
-				ifNil:[self handleError: ex request: request]
-				ifNotNil:[errorHandler value: ex value: request]
-		].
+	logAction ifNotNil:[logAction valueWithArguments: {aString}].
 ! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 7/29/2010 18:49'!
+certName
+	"The cert name to use for a secure (SSL/TLS) web server."
+
+	^certName! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 7/29/2010 18:49'!
+certName: aString
+	"The cert name to use for a secure (SSL/TLS) web server."
+
+	certName := aString.! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 5/11/2010 20:22'!
+connections
+	"The active connection processes. Can only be examined after aquiring
+	the WebServer's mutex."
+
+	^connections! !
 
 !WebServer methodsFor: 'accessing' stamp: 'ar 7/28/2010 20:24'!
 errorHandler
@@ -6501,6 +6650,92 @@ errorHandler: aBlock
 	WebServer's #handleError:request: method which is the default."
 
 	errorHandler := aBlock.! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:01'!
+listenerInterface
+	"Returns the listener interface for the server"
+
+	^interface! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:01'!
+listenerPort
+	"Returns the listener port for the server"
+
+	^port! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:00'!
+listenerProcess
+	"Returns the socket listener process for the server."
+
+	^listenerProcess! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:00'!
+listenerSocket
+	"Returns the listener socket for the server."
+
+	^listenerSocket! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 05:35'!
+logAction
+	"The current log action (a block or message)"
+
+	^logAction! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 05:36'!
+logAction: aBlockOrMessage
+	"The current log action (a block or message).
+	Example:
+		WebServer new logAction: [:aString| Transcript show: aString].
+		WebServer new logAction: (MessageSend receiver: Transcript selector: #show).
+	"
+
+	logAction := aBlockOrMessage! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:53'!
+serverDate
+	"Returns the date string to be used in responses"
+
+	^self class serverDate! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:54'!
+serverString
+	"Returns the server string to be used in responses.
+	The response is cached for efficiency."
+
+	^serverString ifNil:[serverString := self class serverString].! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:57'!
+serverString: aString
+	"Set the server string to be used in responses"
+
+	^serverString := aString! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 11/1/2010 21:01'!
+siteUrl
+	"The site URL for WebServer, i.e., http://www.mysite.com or http://www.mysite.com/server (when used in a proxied environment) or https://www.mysite.com (when using SSL). Used to allow a client to derive the 'correct' full URL for a running server instance."
+
+	^siteUrl! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 11/1/2010 21:13'!
+siteUrl: aString
+	"The site URL for WebServer, i.e., http://www.mysite.com or http://www.mysite.com/server (when used in a proxied environment) or https://www.mysite.com (when using SSL). Used to allow a client to derive the 'correct' full URL for a running server instance."
+
+	siteUrl := aString! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 2/20/2010 12:03'!
+vault
+	"The vault used for storing password hashes."
+
+	^vault! !
+
+!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 02:51'!
+vault: anObject
+	"The vault used for storing password hashes.
+
+	Clients can provide their own storage mechanism. 
+	Subclasses can also override the lookup and authentication mechanism."
+
+	vault := anObject! !
 
 !WebServer methodsFor: 'errors' stamp: 'ar 2/20/2010 10:35'!
 errorReportFor: anError
@@ -6546,66 +6781,6 @@ errorStackFor: anError stack: preStack on: strm
 	].
 ! !
 
-!WebServer methodsFor: 'authentication' stamp: 'DSG 12/5/2013 17:11'!
-flushNonceCache
-	"Flushes expired nonces from the cache"
-
-	| deadline |
-	deadline := Time localSecondClock.
-	mutex critical:[
-		nonceCache := nonceCache reject:[:nonceData| deadline > nonceData second]
-	].
-! !
-
-!WebServer methodsFor: 'handling' stamp: 'ar 7/29/2010 18:46'!
-handleConnectionFrom: aSocket
-	"Synchronously handle an incoming socket connection."
-
-	| stream request |
-
-	"Give the process a pretty name"
-	Processor activeProcess name: (String streamContents:[:s|
-		aSocket remoteAddress do:[:b| s print: b] separatedBy:[s nextPut: $.].
-		s nextPut: $:; print: aSocket remotePort.
-		s nextPutAll: ' - ', self class name, ' request handler'.
-	]).
-
-	"Read the request from the socket, and dispatch it.
-	Since we've been forked already it's okay to block."
-	[
-		certName ifNil:["Regular request"
-			stream := SocketStream on: aSocket.
-		] ifNotNil:["SSL/TLS"
-			| ssl |
-			ssl := Smalltalk at: #SqueakSSL ifAbsent:[self error: 'SqueakSSL not installed'].
-			stream := ssl secureSocketStream on: aSocket.
-			[stream sslAccept: certName] on: Error do:[^stream destroy].
-		].
-
-		[aSocket isConnected] whileTrue:[
-
-			"Read the next request from the connection. If the connection is closed,
-			or if a network error occurs, or the read times out, just close the connection
-			without further ado (rather than logging an error). Any other error resulting
-			from parsing the input is treated as a 400 bad request."
-
-			stream peek ifNil:[^aSocket destroy].
-			request := self newRequest.
-			[request readFrom: stream] on: Error do:[:ex| 
-				(ex isKindOf: NetworkError) ifFalse:[
-					[request send400Response] on: Error do:[:ignore].
-				].
-				^aSocket destroy].
-
-			self dispatchRequest: request.
-		].
-	] on: Error do:[:ex|
-		(ex isKindOf: NetworkError) ifFalse:[
-			self log: 'Error in request handling: ', ex description.
-			self log: (self errorReportFor: ex).
-		].
-	].! !
-
 !WebServer methodsFor: 'errors' stamp: 'jmv 5/19/2015 23:48'!
 handleError: ex request: aRequest
 	"The default error handling during processing. Sends a 500 response."
@@ -6621,35 +6796,32 @@ handleError: ex request: aRequest
 	[self log: String newLineString, errReport] on: Error do:[:ex2| ex return].
 	aRequest send500Response: errReport. ! !
 
-!WebServer methodsFor: 'authentication' stamp: 'ar 3/30/2010 20:36'!
-hashUser: user password: pass realm: realm
-	"Creates a hash for the given username password pair.
-	This method is the ha1 part of digest auth and can be used for both digest
-	as well as basic auth."
+!WebServer methodsFor: 'errors' stamp: 'jmv 6/25/2017 19:16:01'!
+systemInfoOn: strm
+	"Provides system information for a server error report"
+	| info |
+	strm nextPutAll: 'VM: ';
+		nextPutAll:  WebUtils platformName;
+		nextPutAll: ' - ';
+		nextPutAll: WebUtils vmVersion;
+		newLine.
 
-	^WebUtils md5Digest: user, ':', realm, ':', pass! !
+	strm nextPutAll: 'Image: ';
+		nextPutAll:  SystemVersion current version asString;
+		nextPutAll: ' [';
+		nextPutAll: Smalltalk lastUpdateString asString;
+		nextPutAll: ']';
+		newLine.
 
-!WebServer methodsFor: 'initialize' stamp: 'DSG 3/28/2015 20:16'!
-initialize
-	"Initialize the receiver"
+	strm newLine.
 
-	mutex := Mutex new.
-	entryPoints := Dictionary new.
-	connections := IdentitySet new.
-	vault := Dictionary new.
-	nonceCache := Dictionary new.
-	sessions := Dictionary new.
-	self logAction:[:aString| Transcript log: aString].
-! !
+	"SecurityManager default printStateOn: strm."
 
-!WebServer methodsFor: 'handling' stamp: 'ar 2/20/2010 14:30'!
-invokeAction: action request: request
-	"Invokes the given action. Subclasses can override this method to serialize
-	actions if necessary. At this point, the request header has been read from
-	the network, but not its content."
-
-	^action valueWithArguments: {request}
-! !
+	"Additional info available from the windows VM"
+	WebUtils platformName = 'Win32' ifTrue:[
+		10001 to: 10003 do: [ :i |
+			info := (Smalltalk getSystemAttribute: i) ifNil:[''].
+			info isEmpty ifFalse:[strm newLine; nextPutAll: info]]]! !
 
 !WebServer methodsFor: 'testing' stamp: 'ar 3/30/2010 22:09'!
 isRunning
@@ -6694,128 +6866,11 @@ listenOn: aPort interface: anInterface backlogSize: backlog
 	].
 	self startListener.! !
 
-!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:01'!
-listenerInterface
-	"Returns the listener interface for the server"
-
-	^interface! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:01'!
-listenerPort
-	"Returns the listener port for the server"
-
-	^port! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:00'!
-listenerProcess
-	"Returns the socket listener process for the server."
-
-	^listenerProcess! !
-
 !WebServer methodsFor: 'listening' stamp: 'ar 2/20/2010 10:28'!
 listenerProcessPriority
 	"The priority at which the listener process should run"
 
 	^Processor lowIOPriority! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 03:00'!
-listenerSocket
-	"Returns the listener socket for the server."
-
-	^listenerSocket! !
-
-!WebServer methodsFor: 'initialize' stamp: 'ar 2/22/2010 05:35'!
-log: aString
-	"Log the given information."
-
-	logAction ifNotNil:[logAction valueWithArguments: {aString}].
-! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 05:35'!
-logAction
-	"The current log action (a block or message)"
-
-	^logAction! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 05:36'!
-logAction: aBlockOrMessage
-	"The current log action (a block or message).
-	Example:
-		WebServer new logAction: [:aString| Transcript show: aString].
-		WebServer new logAction: (MessageSend receiver: Transcript selector: #show).
-	"
-
-	logAction := aBlockOrMessage! !
-
-!WebServer methodsFor: 'logging' stamp: 'ar 7/28/2010 20:02'!
-logRequest: request response: response
-	"Log a request after it has been successfully processed"
-
-	accessLog ifNil:[^self].
-
-	"Do not use the standard exception handler for errors logging; 
-	it would possibly send a 500 response. Really this should be handled
-	by a different process with its own error handler."
-
-	[WebUtils logRequest: request response: response on: accessLog]
-		on: Error do:[:ex| self log: 'Error in logging: ', ex description].
-! !
-
-!WebServer methodsFor: 'authentication' stamp: 'DSG 12/5/2013 17:12'!
-newNonce
-	"Create a new nonce to be used for a client authentication session"
-
-	| nonce |
-	nonce := UUID new hex.
-	mutex critical:[
-		nonceCache at: nonce put: {''. Time localSecondClock + self nonceDeadline}.
-	].
-	^nonce! !
-
-!WebServer methodsFor: 'handling' stamp: 'ar 7/28/2010 20:27'!
-newRequest
-	"Answer a new request.
-	Subclasses should override this method to use a different request class."
-
-	^(WebRequest new)
-		server: self;
-		yourself! !
-
-!WebServer methodsFor: 'authentication' stamp: 'ar 2/23/2010 09:20'!
-nonceDeadline
-	"Answer the number of seconds a nonce is considered valid for digest auth
-	by the server. After this period, the client will have to reauthenticate.
-	The default is 30 minutes."
-
-	^30*60 ! !
-
-!WebServer methodsFor: 'authentication' stamp: 'ar 2/20/2010 12:54'!
-passwordAt: username realm: realm put: password
-	"Store the password hash for the key."
-
-	| hash |
-	hash := self hashUser: username password: password realm: realm.
-	self passwordHashAt: (username,':',realm) put: hash! !
-
-!WebServer methodsFor: 'authentication' stamp: 'ar 2/20/2010 12:51'!
-passwordHashAt: key
-	"Answer the password hash for the given key"
-
-	^vault at: key ifAbsent:['']! !
-
-!WebServer methodsFor: 'authentication' stamp: 'ar 2/20/2010 12:01'!
-passwordHashAt: key put: hash
-	"Store the password hash for the key."
-
-	^vault at: key put: hash! !
-
-!WebServer methodsFor: 'services' stamp: 'ar 2/22/2010 02:52'!
-removeService: entryPoint 
-	"Remove a service from the HTTP service provider.  See #addService:action:"
-
-	mutex critical:[
-		entryPoints removeKey: entryPoint asLowercase ifAbsent: [].
-	].! !
 
 !WebServer methodsFor: 'listening' stamp: 'ar 5/4/2010 09:22'!
 runListener
@@ -6844,24 +6899,23 @@ runListener
 	]] on: Error do:[:ex| self log: ex].
 ! !
 
-!WebServer methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:53'!
-serverDate
-	"Returns the date string to be used in responses"
+!WebServer methodsFor: 'listening' stamp: 'ar 2/20/2010 10:29'!
+startListener
+	"Starts the server's listener process"
 
-	^self class serverDate! !
+	self stopListener.
+	listenerProcess := [self runListener] newProcess.
+	listenerProcess priority: self listenerProcessPriority.
+	listenerProcess name: self class name, '''s listener process'.
+	listenerProcess resume.
+! !
 
-!WebServer methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:54'!
-serverString
-	"Returns the server string to be used in responses.
-	The response is cached for efficiency."
+!WebServer methodsFor: 'listening' stamp: 'ar 2/20/2010 10:29'!
+stopListener
+	"Stops the server's listener process"
 
-	^serverString ifNil:[serverString := self class serverString].! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 6/14/2010 20:57'!
-serverString: aString
-	"Set the server string to be used in responses"
-
-	^serverString := aString! !
+	listenerProcess ifNotNil:[listenerProcess terminate].
+	listenerProcess := nil.! !
 
 !WebServer methodsFor: 'sessions' stamp: 'ar 2/23/2010 12:09'!
 sessionAt: key
@@ -6897,78 +6951,6 @@ sessions: aDictionary
 	
 	sessions := aDictionary! !
 
-!WebServer methodsFor: 'accessing' stamp: 'ar 11/1/2010 21:01'!
-siteUrl
-	"The site URL for WebServer, i.e., http://www.mysite.com or http://www.mysite.com/server (when used in a proxied environment) or https://www.mysite.com (when using SSL). Used to allow a client to derive the 'correct' full URL for a running server instance."
-
-	^siteUrl! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 11/1/2010 21:13'!
-siteUrl: aString
-	"The site URL for WebServer, i.e., http://www.mysite.com or http://www.mysite.com/server (when used in a proxied environment) or https://www.mysite.com (when using SSL). Used to allow a client to derive the 'correct' full URL for a running server instance."
-
-	siteUrl := aString! !
-
-!WebServer methodsFor: 'listening' stamp: 'ar 2/20/2010 10:29'!
-startListener
-	"Starts the server's listener process"
-
-	self stopListener.
-	listenerProcess := [self runListener] newProcess.
-	listenerProcess priority: self listenerProcessPriority.
-	listenerProcess name: self class name, '''s listener process'.
-	listenerProcess resume.
-! !
-
-!WebServer methodsFor: 'listening' stamp: 'ar 2/20/2010 10:29'!
-stopListener
-	"Stops the server's listener process"
-
-	listenerProcess ifNotNil:[listenerProcess terminate].
-	listenerProcess := nil.! !
-
-!WebServer methodsFor: 'errors' stamp: 'jmv 6/25/2017 19:16:01'!
-systemInfoOn: strm
-	"Provides system information for a server error report"
-	| info |
-	strm nextPutAll: 'VM: ';
-		nextPutAll:  WebUtils platformName;
-		nextPutAll: ' - ';
-		nextPutAll: WebUtils vmVersion;
-		newLine.
-
-	strm nextPutAll: 'Image: ';
-		nextPutAll:  SystemVersion current version asString;
-		nextPutAll: ' [';
-		nextPutAll: Smalltalk lastUpdateString asString;
-		nextPutAll: ']';
-		newLine.
-
-	strm newLine.
-
-	"SecurityManager default printStateOn: strm."
-
-	"Additional info available from the windows VM"
-	WebUtils platformName = 'Win32' ifTrue:[
-		10001 to: 10003 do: [ :i |
-			info := (Smalltalk getSystemAttribute: i) ifNil:[''].
-			info isEmpty ifFalse:[strm newLine; nextPutAll: info]]]! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 2/20/2010 12:03'!
-vault
-	"The vault used for storing password hashes."
-
-	^vault! !
-
-!WebServer methodsFor: 'accessing' stamp: 'ar 2/22/2010 02:51'!
-vault: anObject
-	"The vault used for storing password hashes.
-
-	Clients can provide their own storage mechanism. 
-	Subclasses can also override the lookup and authentication mechanism."
-
-	vault := anObject! !
-
 !WebServer class methodsFor: 'benchmarks' stamp: 'jmv 6/26/2017 19:12:52'!
 benchmark
 	"Runs a WebClient/WebServer streaming benchmark to measure throughput"
@@ -6995,7 +6977,29 @@ benchmark
 	^(amount  * 1000 // time) printStringWithCommas, ' bytes/sec'
 ! !
 
-!WebServer class methodsFor: 'examples' stamp: 'jmv 6/26/2017 19:40:42'!
+!WebServer class methodsFor: 'benchmarks' stamp: 'ar 5/4/2010 21:27'!
+requestBenchmark: persistent
+	"Runs a WebClient/WebServer benchmark to measure request handling speed.
+	Uses a persistent connection if requested."
+
+	"
+		WebServer requestBenchmark: false.
+		WebServer requestBenchmark: true.
+		MessageTally spyOn:[WebServer requestBenchmark: true]
+	"
+
+	| port |
+	port := 8888.
+	WebServer reset default listenOn: port.
+	WebServer default addService: '/benchmark' action:[:req|
+		req send200Response: ''.
+	].
+	^[WebClient 
+		requestBenchmark: 'http://localhost:', port, '/benchmark'
+		persistent: persistent] ensure:[WebServer reset].
+! !
+
+!WebServer class methodsFor: 'examples' stamp: 'jmv 3/18/2019 13:16:32'!
 browseDir: directory request: request
 	"Responds with a directory listing back to the original request"
 
@@ -7003,7 +7007,7 @@ browseDir: directory request: request
 	url := request url.
 	(url endsWith: '/') ifTrue:[url := url allButLast].
 
-	entries := directory entries sort:[:e1 :e2|
+	entries := directory children sort:[:e1 :e2|
 		e1 isDirectory = e2 isDirectory 
 			ifTrue:[e1 name <= e2 name]
 			ifFalse:[e2 isDirectory]].
@@ -7020,7 +7024,7 @@ browseDir: directory request: request
 			s nextPutAll: '</a>'.
 			e name size < 30 ifTrue:[s nextPutAll: (String new: 30 - e name size withAll: $ )].
 			s nextPutAll: (e modificationTime asString padded: #right to: 20 with: $ ).
-			s nextPutAll: (e fileSize asString padded: #right to: 20 with: $ ).
+			s nextPutAll: (e isDirectory ifTrue: [String new: 20] ifFalse: [e fileSize asString padded: #right to: 20 with: $ ]).
 			s cr; lf.
 		].
  	].
@@ -7044,11 +7048,11 @@ browseFile: file request: request
 	resp headerAt: 'Content-Type' put: mimeTypes first.
 	request sendResponse: resp contentStream: file size: fileSize.! !
 
-!WebServer class methodsFor: 'examples' stamp: 'pb 5/25/2016 01:51'!
+!WebServer class methodsFor: 'examples' stamp: 'jmv 3/18/2019 13:16:59'!
 browseRequest: request
 	"Handle an HTTP request for browsing some resource"
 
-	| path fd entry file |
+	| path fd file directoryEntry fileEntry |
 
 	"Extract the file path from the request"
 	path := request url findTokens: '/'.
@@ -7056,13 +7060,16 @@ browseRequest: request
 
 	"Find the directory entry for the resource"
 	fd := path allButLast inject: DirectoryEntry currentDirectory into: [ :dir :part | dir / part ].
-	entry := fd entryAt: path last ifAbsent: [ ^request send404Response ].
-
-	"Reply with the proper resource"
-	entry isDirectory ifTrue:[
+	
+	directoryEntry _ fd / path last.
+	directoryEntry exists ifTrue: [
 		"Send file listing. We handle this synchronously for simplicity."
-		self browseDir: (fd / entry name) request: request.
-	] ifFalse:[
+		self browseDir: directoryEntry request: request.
+		^ self].
+	fileEntry _ fd // path last.
+	fileEntry exists
+	ifFalse: [^request send404Response ]
+	ifTrue: [
 		"Send file content. Since files can be large, we fork this off.
 		However, since we forked it, we need to handle two different
 		possible conditions:
@@ -7070,18 +7077,12 @@ browseRequest: request
 			- handling errors when sending it
 		This makes the code below a bit ugly"
 		[[
-			file := (fd // entry name) readStream.
+			file := fileEntry readStream.
 			[ self browseFile: file request: request ]
 				ensure: [ file close ] 	"close file even in case of error"
 		] on: Error do: []				"ignore errors altogether"
 		] fork. 							"fork it"
 	]! !
-
-!WebServer class methodsFor: 'accessing' stamp: 'ar 2/23/2010 09:29'!
-default
-	"A default WebServer instance. Mostly for the examples."
-
-	^Default ifNil:[Default := self new].! !
 
 !WebServer class methodsFor: 'examples' stamp: 'ar 2/23/2010 09:30'!
 exampleAuth		"WebServer exampleAuth"
@@ -7189,6 +7190,45 @@ exampleSession		"WebServer exampleSession"
 			ifFalse:[req send302Response: '/login?url=', req url encodeForHTTP]].
 ! !
 
+!WebServer class methodsFor: 'accessing' stamp: 'ar 2/23/2010 09:29'!
+default
+	"A default WebServer instance. Mostly for the examples."
+
+	^Default ifNil:[Default := self new].! !
+
+!WebServer class methodsFor: 'accessing' stamp: 'ar 2/23/2010 09:29'!
+reset		"WebServer reset"
+	"Reset the default WebServer instance."
+
+	Default ifNotNil:[
+		Default destroy.
+		Default := nil.
+	].! !
+
+!WebServer class methodsFor: 'accessing' stamp: 'DSG 5/29/2012 17:57'!
+serverDate
+	"Returns the date string to be used in responses"
+	
+	"FIXME: check http spec for time format"
+
+	| date |
+	^String streamContents:[:s|
+		date := DateAndTime now asUTC.
+		s nextPutAll: date dayOfWeekAbbreviation, ', '.
+		date printOn: s.
+		s nextPutAll: ' GMT'.
+	].! !
+
+!WebServer class methodsFor: 'accessing' stamp: 'jmv 6/25/2017 20:15:47'!
+serverString
+	"Returns the server string to be used in responses"
+
+	^'WebServer/1.5 (',
+		SystemVersion current version,'-',
+		SystemVersion current highestUpdate printString, '; ',
+		WebUtils platformName,')'
+! !
+
 !WebServer class methodsFor: 'registry' stamp: 'ar 11/1/2010 20:59'!
 forUrl: urlString
 	"Answer the WebServer registered for a given URL string."
@@ -7237,66 +7277,28 @@ removeUrl: urlString ifAbsent: aBlock
 
 	^self registry removeKey: urlString ifAbsent: aBlock! !
 
-!WebServer class methodsFor: 'benchmarks' stamp: 'ar 5/4/2010 21:27'!
-requestBenchmark: persistent
-	"Runs a WebClient/WebServer benchmark to measure request handling speed.
-	Uses a persistent connection if requested."
-
-	"
-		WebServer requestBenchmark: false.
-		WebServer requestBenchmark: true.
-		MessageTally spyOn:[WebServer requestBenchmark: true]
-	"
-
-	| port |
-	port := 8888.
-	WebServer reset default listenOn: port.
-	WebServer default addService: '/benchmark' action:[:req|
-		req send200Response: ''.
-	].
-	^[WebClient 
-		requestBenchmark: 'http://localhost:', port, '/benchmark'
-		persistent: persistent] ensure:[WebServer reset].
-! !
-
-!WebServer class methodsFor: 'accessing' stamp: 'ar 2/23/2010 09:29'!
-reset		"WebServer reset"
-	"Reset the default WebServer instance."
-
-	Default ifNotNil:[
-		Default destroy.
-		Default := nil.
-	].! !
-
-!WebServer class methodsFor: 'accessing' stamp: 'DSG 5/29/2012 17:57'!
-serverDate
-	"Returns the date string to be used in responses"
-	
-	"FIXME: check http spec for time format"
-
-	| date |
-	^String streamContents:[:s|
-		date := DateAndTime now asUTC.
-		s nextPutAll: date dayOfWeekAbbreviation, ', '.
-		date printOn: s.
-		s nextPutAll: ' GMT'.
-	].! !
-
-!WebServer class methodsFor: 'accessing' stamp: 'jmv 6/25/2017 20:15:47'!
-serverString
-	"Returns the server string to be used in responses"
-
-	^'WebServer/1.5 (',
-		SystemVersion current version,'-',
-		SystemVersion current highestUpdate printString, '; ',
-		WebUtils platformName,')'
-! !
-
 !WebSocket methodsFor: 'initialize' stamp: 'ar 9/26/2011 13:06'!
 close
 	"Request graceful close"
 
 	^self subclassResponsibility! !
+
+!WebSocket methodsFor: 'initialize' stamp: 'ar 9/27/2011 13:42'!
+initialize
+	super initialize.
+	handlers := Dictionary new.! !
+
+!WebSocket methodsFor: 'initialize' stamp: 'DSG 3/28/2015 20:00'!
+on: aStream
+	"Create a new WebSocket instance using the given SocketStream"
+
+	stream := aStream.
+	name := String streamContents:[:s| 
+		stream socket remoteAddress 
+			do:[:b| s print: b] 
+			separatedBy:[s nextPut: $.]].
+	name := name, ':', stream socket remotePort asString.
+	! !
 
 !WebSocket methodsFor: 'running' stamp: 'ar 7/8/2010 20:00'!
 fork
@@ -7305,6 +7307,31 @@ fork
 	process := [self run] newProcess.
 	process resume.
 ! !
+
+!WebSocket methodsFor: 'running' stamp: 'ar 9/26/2011 10:46'!
+onClose: aBlock
+	"Set the handler block to invoke when the socket is closed"
+
+	handlers at: 'close' put: aBlock.! !
+
+!WebSocket methodsFor: 'running' stamp: 'ar 9/26/2011 10:45'!
+onError: aBlock
+	"Set the handler block to invoke when an error occurs"
+
+	handlers at: 'error' put: aBlock.! !
+
+!WebSocket methodsFor: 'running' stamp: 'ar 9/26/2011 10:45'!
+onMessage: aBlock
+	"Set the handler block to invoke when a message is received"
+
+	handlers at: 'message' put: aBlock.
+! !
+
+!WebSocket methodsFor: 'running' stamp: 'ar 9/26/2011 10:41'!
+run
+	"Run the WebSocket's input process."
+
+	^self subclassResponsibility! !
 
 !WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 11:41'!
 handle: selector arguments: argList
@@ -7335,55 +7362,6 @@ handleMessage: msgData type: msgType
 	"Handle an incoming message of the given type"
 
 	self handle: 'message' arguments: (Array with: msgData with: msgType with: self)! !
-
-!WebSocket methodsFor: 'initialize' stamp: 'ar 9/27/2011 13:42'!
-initialize
-	super initialize.
-	handlers := Dictionary new.! !
-
-!WebSocket methodsFor: 'initialize' stamp: 'DSG 3/28/2015 20:00'!
-on: aStream
-	"Create a new WebSocket instance using the given SocketStream"
-
-	stream := aStream.
-	name := String streamContents:[:s| 
-		stream socket remoteAddress 
-			do:[:b| s print: b] 
-			separatedBy:[s nextPut: $.]].
-	name := name, ':', stream socket remotePort asString.
-	! !
-
-!WebSocket methodsFor: 'running' stamp: 'ar 9/26/2011 10:46'!
-onClose: aBlock
-	"Set the handler block to invoke when the socket is closed"
-
-	handlers at: 'close' put: aBlock.! !
-
-!WebSocket methodsFor: 'running' stamp: 'ar 9/26/2011 10:45'!
-onError: aBlock
-	"Set the handler block to invoke when an error occurs"
-
-	handlers at: 'error' put: aBlock.! !
-
-!WebSocket methodsFor: 'running' stamp: 'ar 9/26/2011 10:45'!
-onMessage: aBlock
-	"Set the handler block to invoke when a message is received"
-
-	handlers at: 'message' put: aBlock.
-! !
-
-!WebSocket methodsFor: 'private' stamp: 'ar 7/8/2010 21:48'!
-printOn: aStream
-	"Print the receiver"
-
-	aStream nextPutAll: self class name.
-	aStream nextPutAll: '(', name, ')'.! !
-
-!WebSocket methodsFor: 'running' stamp: 'ar 9/26/2011 10:41'!
-run
-	"Run the WebSocket's input process."
-
-	^self subclassResponsibility! !
 
 !WebSocket methodsFor: 'read/write' stamp: 'ar 9/26/2011 10:42'!
 send: aString
@@ -7513,6 +7491,21 @@ close
 	].
 ! !
 
+!WebSocket00 methodsFor: 'running' stamp: 'ar 7/8/2010 21:49'!
+run
+	"Run the WebSocket's input process."
+
+	[[[stream isConnected] whileTrue:[
+		self readMessage.
+		"XXXX: Should this be moved into handleMessage:type: ???"
+		frameType = 255 ifTrue:[stream close. ^self].
+		self handleMessage: frameData type: frameType.
+	]] on: Error do:[:ex| self handleError: ex]] ensure:[
+		[stream socket destroy] on: Error do:[:ex|].
+		self handleClose.
+	].
+! !
+
 !WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 22:30:06'!
 readMessage
 	"Reads one frame worth of data"
@@ -7533,21 +7526,6 @@ readMessage
 		byte >= 128] whileTrue.
 		frameData := ByteArray new: length.
 		stream nextInto: frameData.
-	].
-! !
-
-!WebSocket00 methodsFor: 'running' stamp: 'ar 7/8/2010 21:49'!
-run
-	"Run the WebSocket's input process."
-
-	[[[stream isConnected] whileTrue:[
-		self readMessage.
-		"XXXX: Should this be moved into handleMessage:type: ???"
-		frameType = 255 ifTrue:[stream close. ^self].
-		self handleMessage: frameData type: frameType.
-	]] on: Error do:[:ex| self handleError: ex]] ensure:[
-		[stream socket destroy] on: Error do:[:ex|].
-		self handleClose.
 	].
 ! !
 
@@ -7592,14 +7570,6 @@ close
 		self send: #[] code: 8.
 	].! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
-firstFragment: aStringOrBytes
-	"Writes the first fragment of data"
-
-	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes asUtf8 code: 1 final: false]
-		ifFalse:[^self send: aStringOrBytes code: 2 final: false].! !
-
 !WebSocket07 methodsFor: 'control requests' stamp: 'ar 9/26/2011 13:07'!
 handleClose: payload
 	"Close is being sent by remote in process of shutting down connection"
@@ -7636,54 +7606,6 @@ handlePong: payload
 
 	self handle: 'pong' arguments: (Array with: payload with: self).! !
 
-!WebSocket07 methodsFor: 'initialize' stamp: 'klub 6/13/2012 17:00'!
-initialize
-
-	super initialize.
-	closing := false.
-	masking := true. " 	http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-07#section-4.1 says:
-   ''Frames sent from the client to the server are masked to
-   avoid confusing network intermediaries, such as intercepting proxies.''"! !
-
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
-lastFragment: aStringOrBytes
-	"Writes the last fragment of data.
-	Note: Spec says that code is ZERO for final fragment."
-
-	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: true]
-		ifFalse:[^self send: aStringOrBytes code: 0 final: true].! !
-
-!WebSocket07 methodsFor: 'accessing' stamp: 'ar 9/27/2011 13:47'!
-masking
-	"If true, outgoing frames are masked."
-
-	^masking! !
-
-!WebSocket07 methodsFor: 'accessing' stamp: 'ar 9/27/2011 13:47'!
-masking: aBool
-	"If true, outgoing frames are masked."
-
-	masking := aBool! !
-
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
-nextFragment: aStringOrBytes
-	"Writes the first fragment of data
-	Note: Spec says that code is ZERO for intermediate fragments."
-
-	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: false]
-		ifFalse:[^self send: aStringOrBytes code: 0 final: false].! !
-
-!WebSocket07 methodsFor: 'private' stamp: 'jmv 9/5/2016 21:35:24'!
-nextNumber: n from: aStream
-	"Answer the next n bytes as a positive Integer or LargePositiveInteger."
-	| s |
-	s := 0.
-	1 to: n do: 
-		[:i | s := (s bitShift: 8) bitOr: aStream next numericValue].
-	^ s normalize! !
-
 !WebSocket07 methodsFor: 'control requests' stamp: 'ar 9/26/2011 12:49'!
 onPing: aBlock
 	"Set the handler block to invoke when a ping is received"
@@ -7707,6 +7629,32 @@ pong: data
 	"Send a pong control request"
 
 	self send: data code: 10.! !
+
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
+firstFragment: aStringOrBytes
+	"Writes the first fragment of data"
+
+	aStringOrBytes isString 
+		ifTrue:[^self send: aStringOrBytes asUtf8 code: 1 final: false]
+		ifFalse:[^self send: aStringOrBytes code: 2 final: false].! !
+
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
+lastFragment: aStringOrBytes
+	"Writes the last fragment of data.
+	Note: Spec says that code is ZERO for final fragment."
+
+	aStringOrBytes isString 
+		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: true]
+		ifFalse:[^self send: aStringOrBytes code: 0 final: true].! !
+
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
+nextFragment: aStringOrBytes
+	"Writes the first fragment of data
+	Note: Spec says that code is ZERO for intermediate fragments."
+
+	aStringOrBytes isString 
+		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: false]
+		ifFalse:[^self send: aStringOrBytes code: 0 final: false].! !
 
 !WebSocket07 methodsFor: 'read/write' stamp: 'ar 9/27/2011 13:31'!
 readFrame
@@ -7767,18 +7715,6 @@ readFrameFrom: aStream
 		frameType = 1 ifTrue:[payload := String fromUtf8: payload asByteArray].
 		self handleMessage: payload type: frameType.
 		frameType := frameData := nil.
-	].
-! !
-
-!WebSocket07 methodsFor: 'running' stamp: 'ar 9/26/2011 12:40'!
-run
-	"Run the WebSocket's input process."
-
-	[[[stream isConnected] whileTrue:[
-		self readFrame.
-	]] on: Error do:[:ex| self handleError: ex]] ensure:[
-		[stream socket destroy] on: Error do:[:ex|].
-		self handleClose.
 	].
 ! !
 
@@ -7852,6 +7788,48 @@ xor: data with: mask
 	].
 ! !
 
+!WebSocket07 methodsFor: 'initialize' stamp: 'klub 6/13/2012 17:00'!
+initialize
+
+	super initialize.
+	closing := false.
+	masking := true. " 	http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-07#section-4.1 says:
+   ''Frames sent from the client to the server are masked to
+   avoid confusing network intermediaries, such as intercepting proxies.''"! !
+
+!WebSocket07 methodsFor: 'accessing' stamp: 'ar 9/27/2011 13:47'!
+masking
+	"If true, outgoing frames are masked."
+
+	^masking! !
+
+!WebSocket07 methodsFor: 'accessing' stamp: 'ar 9/27/2011 13:47'!
+masking: aBool
+	"If true, outgoing frames are masked."
+
+	masking := aBool! !
+
+!WebSocket07 methodsFor: 'private' stamp: 'jmv 9/5/2016 21:35:24'!
+nextNumber: n from: aStream
+	"Answer the next n bytes as a positive Integer or LargePositiveInteger."
+	| s |
+	s := 0.
+	1 to: n do: 
+		[:i | s := (s bitShift: 8) bitOr: aStream next numericValue].
+	^ s normalize! !
+
+!WebSocket07 methodsFor: 'running' stamp: 'ar 9/26/2011 12:40'!
+run
+	"Run the WebSocket's input process."
+
+	[[[stream isConnected] whileTrue:[
+		self readFrame.
+	]] on: Error do:[:ex| self handleError: ex]] ensure:[
+		[stream socket destroy] on: Error do:[:ex|].
+		self handleClose.
+	].
+! !
+
 !WebUtils class methodsFor: 'decoding' stamp: 'jmv 6/25/2017 19:16:15'!
 decodeMultipartForm: aStream boundary: boundary do: aBlock
 	"Parse the contents of a multipart/form-data submission.
@@ -7922,16 +7900,6 @@ decodeUrlEncodedForm: aString multipleValues: aBool
 	].
 	^fields! !
 
-!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/24/2017 13:59:29'!
-defaultProxyServer
-	"Answer the default proxy server to use."
-	^ currentProxyServer ! !
-
-!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/24/2017 14:00:05'!
-defaultProxyServer: aString
-	"Set the default proxy server to use."
-	currentProxyServer _ aString ! !
-
 !WebUtils class methodsFor: 'decoding' stamp: 'jmv 6/26/2017 19:54:45'!
 encodeMultipartForm: fieldMap boundary: boundary
 	"Encodes the fieldMap as multipart/form-data.
@@ -7978,6 +7946,39 @@ encodeUrlEncodedForm: fieldMap
 		] separatedBy:[s nextPutAll:'&'].
 	].! !
 
+!WebUtils class methodsFor: 'decoding' stamp: 'jmv 5/19/2015 21:52'!
+multipartBoundary
+	"Answer a string to be used as multpart boundary in posts"
+
+	^'----squeak-', Date today printString,'-', Time localMillisecondClock printString, '-webclient-----'.! !
+
+!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/24/2017 13:59:29'!
+defaultProxyServer
+	"Answer the default proxy server to use."
+	^ currentProxyServer ! !
+
+!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/24/2017 14:00:05'!
+defaultProxyServer: aString
+	"Set the default proxy server to use."
+	currentProxyServer _ aString ! !
+
+!WebUtils class methodsFor: 'proxy' stamp: 'DSG 12/4/2013 23:03'!
+proxyExceptionsDo: aBlock
+	"Evaluate aBlock with all registered proxy exceptions. 
+	Uses the information from HTTPSocket."
+
+	"HTTPSocket httpProxyExceptions do: aBlock."! !
+
+!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/27/2017 12:06:52'!
+proxyServerFor: serverName
+	"Answer the proxy server to use for the given server:port
+	Returns the proxy server:port to use or nil if no proxy is required."
+
+	| domain |
+	domain := serverName copyUpTo: $:.
+	self proxyExceptionsDo:[:pattern| (pattern match: domain) ifTrue:[^nil]].
+	^self defaultProxyServer! !
+
 !WebUtils class methodsFor: 'websockets' stamp: 'ar 7/20/2010 20:38'!
 extractWebSocketKey: field
 	"Decodes a WebSocket key:
@@ -8001,6 +8002,25 @@ extractWebSocketKey: field
 	].
 	^digits // spaces.
 ! !
+
+!WebUtils class methodsFor: 'websockets' stamp: 'ar 7/8/2010 18:59'!
+webSocketHandshake: key1 with: key2 with: data
+	"Do the actual WebSocket handshake computation"
+
+	| bytes |
+	bytes := ByteArray new: 16.
+	bytes longAt: 1 put: key1 bigEndian: true.
+	bytes longAt: 5 put: key2 bigEndian: true.
+	bytes replaceFrom: 9 to: 16 with: data.
+	^(self md5HashStream: bytes readStream) reversed! !
+
+!WebUtils class methodsFor: 'websockets' stamp: 'ar 9/26/2011 10:30'!
+webSocketHash07: key
+	"Do the actual WebSocket hash computation"
+
+	| uid |
+	uid := '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'.
+	^(ByteArray newFrom: (SecureHashAlgorithm new hashMessage: key, uid)) reversed base64Encoded! !
 
 !WebUtils class methodsFor: 'auth' stamp: 'jmv 6/25/2017 19:55:56'!
 handleAuth: aBlock
@@ -8040,6 +8060,108 @@ hmacSha1: message key: signKey
 		(key with: opad collect:[:b1 :b2| b1 bitXor: b2]), 
 		(self sha1Hash: (key with: ipad collect:[:b1 :b2| b1 bitXor: b2]), message)! !
 
+!WebUtils class methodsFor: 'oauth' stamp: 'jmv 6/25/2017 19:16:16'!
+oAuthSign: webRequest url: requestUrl extra: postFields using: params
+	"Sign the given webRequest using the set of oauth parameters provided"
+
+	| epoch timestamp nonce normalized baseString query signature key header extraKeys baseUrl |
+
+	"Allow providing an oauth_timestamp; HOWEVER this is only useful for
+	tests etc. For actual API calls the timestamp *must* match real-time closely
+	or else the request will be rejected".
+
+	timestamp := params at: 'oauth_timestamp' ifAbsent:[
+		"Timestamp is relative to Jan. 1st 1970 GMT"
+		epoch := DateAndTime year: 1970 day: 1 hour: 0 minute: 0 second: 0 
+			offset: (Duration seconds: 0).
+		(DateAndTime now asUTC - epoch) totalSeconds.
+	].
+
+	"Same for nonces (although nonces can be reused)"
+	nonce := params at: 'oauth_nonce' ifAbsent:[UUID new hex].
+
+	"Assemble the required parameters. Start with the (POST) body fields."
+	normalized := (postFields as: Dictionary) associations asOrderedCollection.
+
+	"If present, extract any (GET) fields from the URL"
+	(requestUrl copyAfter: $?) ifNotEmpty:[:fields|
+		self decodeUrlEncodedForm: fields do:[:fkey :fval| normalized add: fkey -> fval]].
+
+	"Keep the extra argument keys so we can exclude them below"
+	extraKeys := Set newFrom: (normalized collect:[:assoc| assoc key]).
+	normalized add:('oauth_nonce' -> nonce).
+	normalized add: ('oauth_timestamp' -> timestamp asString).
+	
+	normalized add: (params associationAt: 'oauth_consumer_key').
+	normalized add: (params associationAt: 'oauth_signature_method').
+	normalized add: (params associationAt: 'oauth_version').
+
+	(params includesKey: 'oauth_callback') ifTrue:[
+		normalized add: (params associationAt: 'oauth_callback').
+	].
+	(params includesKey: 'oauth_token') ifTrue:[
+		normalized add: (params associationAt: 'oauth_token').
+	].
+	(params includesKey: 'oauth_verifier') ifTrue:[
+		normalized add: (params associationAt: 'oauth_verifier').
+	].
+
+	normalized := normalized sort:[:a1 :a2| 
+		a1 key = a2 key 
+			ifTrue:[a1 value <= a2 value]
+			ifFalse:[a1 key <= a2 key]].
+
+	query := String streamContents:[:s|
+		normalized do:[:assoc|
+			s nextPutAll: assoc key.
+			s nextPutAll: '='.
+			s nextPutAll: assoc value encodeForHTTP.
+		] separatedBy:[s nextPutAll: '&'].
+	].
+
+	baseUrl := (requestUrl copyUpTo: $?) copyUpTo: $#.
+	baseString := webRequest method, 
+		'&', baseUrl encodeForHTTP, 
+		'&',  query encodeForHTTP.
+
+	key := (params at: 'oauth_consumer_secret'), 
+			'&', (params at: 'oauth_token_secret' ifAbsent:['']).
+	(params at: 'oauth_signature_method') caseOf: {
+		['HMAC-SHA1'] -> [
+			signature := (WebUtils hmacSha1: baseString key: key) base64Encoded
+		].
+	} otherwise:[self error: 'Unsupported signature method'].
+
+	header := String streamContents:[:s|
+		s nextPutAll: 'OAuth '.
+		"Even though we need to include the extra args in the computation,
+		they do NOT go into the OAuth header field."
+		normalized do:[:assoc|
+			(extraKeys includes: assoc key) 
+				ifFalse:[ s nextPutAll: assoc key, '="', assoc value encodeForHTTP, '",']].
+		s nextPutAll: 'oauth_signature="', signature encodeForHTTP, '"'.
+	].
+
+	webRequest headerAt: 'Authorization' put: header.! !
+
+!WebUtils class methodsFor: 'oauth' stamp: 'ar 8/23/2010 21:55'!
+oAuthSign: webRequest url: requestUrl using: params
+	"Sign the given webRequest using the set of oauth parameters provided"
+
+	^self oAuthSign: webRequest url: requestUrl extra: #() using: params! !
+
+!WebUtils class methodsFor: 'oauth' stamp: 'ar 8/12/2010 16:31'!
+sha1Hash: message
+	"Compute the SHA1 hash for the given message. Slightly different from 
+	SecureHashAlgorithm to produce fixed-length byte arrays."
+
+	| sha hash |
+	sha := SecureHashAlgorithm new hashMessage: message.
+	hash := ByteArray new: 20.
+	1 to: 20 do:[:i| hash at: i put: (sha digitAt: 21-i)].
+	^hash
+! !
+
 !WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:39'!
 jsonArray: anArray on: stream
 	"Encodes an array"
@@ -8050,25 +8172,6 @@ jsonArray: anArray on: stream
 		separatedBy:[stream nextPutAll:', '].
 	stream nextPut:$].
 ! !
-
-!WebUtils class methodsFor: 'json-decode' stamp: 'ar 2/10/2012 13:43'!
-jsonArrayFrom: stream
-	"Decodes a JSON [value, *] array from the stream"
-
-	| ch result |
-	(ch := stream next) = $[ ifFalse:[^self error: 'JSON Array expected'].
-	stream skipSeparators.
-	stream peek = $] ifTrue:[stream next. ^#()].
-	result := WriteStream on: (Array new: 10).
-	["Decode the next value"
-	stream skipSeparators.
-	result nextPut: (self jsonDecode: stream).
-	stream skipSeparators.
-	(ch := stream next) = $]] whileFalse:[
-		ch = $, ifFalse:[^self error: 'Comma expected'].
-	].
-
-	^result contents! !
 
 !WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:39'!
 jsonChar: aCharacter on: stream
@@ -8099,6 +8202,77 @@ jsonChar: aCharacter on: stream
 	stream nextPutAll:  
 		'\u', (((ascii bitAnd: 16rFFFF) printStringBase: 16) padded: #left to: 4 with: $0).
 ! !
+
+!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:41'!
+jsonEncode: anObject
+	"Encode the given object as JSON"
+
+	^String streamContents:[:s| self jsonObj: anObject on: s]! !
+
+!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:40'!
+jsonMap: aDictionary on: stream
+	"Encodes a dictionary"
+
+	stream nextPut: ${.
+	"Sorting keys ensures deterministic order"
+	aDictionary keys asArray sort do:[:key|
+		self jsonString: key on: stream.
+		stream nextPutAll:': '.
+		self jsonObj: (aDictionary at: key) on: stream.
+	] separatedBy:[stream nextPutAll: ', '].
+	stream nextPut: $}.! !
+
+!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:38'!
+jsonNumber: aNumber on: stream
+	"Encodes a number"
+
+	| value |
+	value := aNumber.
+	value isInteger ifFalse:[value := aNumber asFloat].
+	stream print: aNumber.
+! !
+
+!WebUtils class methodsFor: 'json-encode' stamp: 'jmv 6/26/2017 19:34:55'!
+jsonObj: anObject on: stream
+	"Encode a generic object"
+
+	anObject isString ifTrue:[^self jsonString: anObject on: stream].
+	anObject isNumber ifTrue:[^self jsonNumber: anObject on: stream].
+	anObject == nil ifTrue:[^stream nextPutAll: 'null'].
+	anObject == true ifTrue:[^stream nextPutAll: 'true'].
+	anObject == false ifTrue:[^stream nextPutAll: 'false'].
+	anObject isArray ifTrue:[^self jsonArray: anObject on: stream].
+	(anObject is: #Dictionary) ifTrue:[^self jsonMap: anObject on: stream].
+
+	self error: 'Cannot encode: ', anObject! !
+
+!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:39'!
+jsonString: aString on: stream
+	"Encodes a string"
+
+	stream nextPut: $".
+	aString do:[:ch| self jsonChar: ch on: stream].
+	stream nextPut: $".
+! !
+
+!WebUtils class methodsFor: 'json-decode' stamp: 'ar 2/10/2012 13:43'!
+jsonArrayFrom: stream
+	"Decodes a JSON [value, *] array from the stream"
+
+	| ch result |
+	(ch := stream next) = $[ ifFalse:[^self error: 'JSON Array expected'].
+	stream skipSeparators.
+	stream peek = $] ifTrue:[stream next. ^#()].
+	result := WriteStream on: (Array new: 10).
+	["Decode the next value"
+	stream skipSeparators.
+	result nextPut: (self jsonDecode: stream).
+	stream skipSeparators.
+	(ch := stream next) = $]] whileFalse:[
+		ch = $, ifFalse:[^self error: 'Comma expected'].
+	].
+
+	^result contents! !
 
 !WebUtils class methodsFor: 'json-decode' stamp: 'jmv 6/26/2017 19:52:56'!
 jsonCharFrom: stream on: writeStream
@@ -8136,12 +8310,6 @@ jsonDecode: stream
 	} otherwise:[self jsonNumberFrom: stream].
 ! !
 
-!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:41'!
-jsonEncode: anObject
-	"Encode the given object as JSON"
-
-	^String streamContents:[:s| self jsonObj: anObject on: s]! !
-
 !WebUtils class methodsFor: 'json-decode' stamp: 'ar 2/10/2012 13:43'!
 jsonFalseFrom: stream
 	"Decodes 'false' from aStream"
@@ -8150,19 +8318,6 @@ jsonFalseFrom: stream
 		and:[stream atEnd or:[stream peek isAlphaNumeric not]]) 
 			ifFalse:[^self error: 'Expected ''false'''].
 	^false! !
-
-!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:40'!
-jsonMap: aDictionary on: stream
-	"Encodes a dictionary"
-
-	stream nextPut: ${.
-	"Sorting keys ensures deterministic order"
-	aDictionary keys asArray sort do:[:key|
-		self jsonString: key on: stream.
-		stream nextPutAll:': '.
-		self jsonObj: (aDictionary at: key) on: stream.
-	] separatedBy:[stream nextPutAll: ', '].
-	stream nextPut: $}.! !
 
 !WebUtils class methodsFor: 'json-decode' stamp: 'ar 2/10/2012 13:45'!
 jsonMapFrom: stream
@@ -8196,16 +8351,6 @@ jsonNullFrom: stream
 		and:[stream atEnd or:[stream peek isAlphaNumeric not]]) 
 			ifFalse:[^self error: 'Expected ''null'''].
 	^nil! !
-
-!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:38'!
-jsonNumber: aNumber on: stream
-	"Encodes a number"
-
-	| value |
-	value := aNumber.
-	value isInteger ifFalse:[value := aNumber asFloat].
-	stream print: aNumber.
-! !
 
 !WebUtils class methodsFor: 'json-decode' stamp: 'ar 2/10/2012 13:44'!
 jsonNumberFrom: stream
@@ -8266,29 +8411,6 @@ jsonNumberFrom: stream
 		value := value * (10 raisedTo: exponent).
 	].
 	^value! !
-
-!WebUtils class methodsFor: 'json-encode' stamp: 'jmv 6/26/2017 19:34:55'!
-jsonObj: anObject on: stream
-	"Encode a generic object"
-
-	anObject isString ifTrue:[^self jsonString: anObject on: stream].
-	anObject isNumber ifTrue:[^self jsonNumber: anObject on: stream].
-	anObject == nil ifTrue:[^stream nextPutAll: 'null'].
-	anObject == true ifTrue:[^stream nextPutAll: 'true'].
-	anObject == false ifTrue:[^stream nextPutAll: 'false'].
-	anObject isArray ifTrue:[^self jsonArray: anObject on: stream].
-	(anObject is: #Dictionary) ifTrue:[^self jsonMap: anObject on: stream].
-
-	self error: 'Cannot encode: ', anObject! !
-
-!WebUtils class methodsFor: 'json-encode' stamp: 'ar 2/10/2012 13:39'!
-jsonString: aString on: stream
-	"Encodes a string"
-
-	stream nextPut: $".
-	aString do:[:ch| self jsonChar: ch on: stream].
-	stream nextPut: $".
-! !
 
 !WebUtils class methodsFor: 'json-decode' stamp: 'jmv 6/26/2017 19:49:10'!
 jsonStringFrom: stream
@@ -8383,6 +8505,24 @@ mcVersion
 		mc managersForClass: self do:[:wc|
 			wc ancestors ifNotEmpty:[:ancestry| version := ancestry first name]]].
 	^version ifNil:[''].! !
+
+!WebUtils class methodsFor: 'misc' stamp: 'ar 11/17/2011 10:16'!
+platformName
+	"Return the name of the platform we're running on."
+
+	^Smalltalk getSystemAttribute: 1001! !
+
+!WebUtils class methodsFor: 'misc' stamp: 'DSG 3/28/2015 19:59'!
+urlEncode: urlString
+	"For backwards compatibility only. Use 'urlString urlEncoded' if you can."
+
+	^urlString encodeForHTTP! !
+
+!WebUtils class methodsFor: 'misc' stamp: 'ar 11/17/2011 10:06'!
+vmVersion	
+	"Return a string identifying the interpreter version"
+
+	^Smalltalk getSystemAttribute: 1004! !
 
 !WebUtils class methodsFor: 'md5' stamp: 'ar 2/20/2010 12:45'!
 md5Digest: aStringOrByteArray
@@ -8522,170 +8662,6 @@ md5Transform: in hash: hash
 
 	^hash! !
 
-!WebUtils class methodsFor: 'decoding' stamp: 'jmv 5/19/2015 21:52'!
-multipartBoundary
-	"Answer a string to be used as multpart boundary in posts"
-
-	^'----squeak-', Date today printString,'-', Time localMillisecondClock printString, '-webclient-----'.! !
-
-!WebUtils class methodsFor: 'oauth' stamp: 'jmv 6/25/2017 19:16:16'!
-oAuthSign: webRequest url: requestUrl extra: postFields using: params
-	"Sign the given webRequest using the set of oauth parameters provided"
-
-	| epoch timestamp nonce normalized baseString query signature key header extraKeys baseUrl |
-
-	"Allow providing an oauth_timestamp; HOWEVER this is only useful for
-	tests etc. For actual API calls the timestamp *must* match real-time closely
-	or else the request will be rejected".
-
-	timestamp := params at: 'oauth_timestamp' ifAbsent:[
-		"Timestamp is relative to Jan. 1st 1970 GMT"
-		epoch := DateAndTime year: 1970 day: 1 hour: 0 minute: 0 second: 0 
-			offset: (Duration seconds: 0).
-		(DateAndTime now asUTC - epoch) totalSeconds.
-	].
-
-	"Same for nonces (although nonces can be reused)"
-	nonce := params at: 'oauth_nonce' ifAbsent:[UUID new hex].
-
-	"Assemble the required parameters. Start with the (POST) body fields."
-	normalized := (postFields as: Dictionary) associations asOrderedCollection.
-
-	"If present, extract any (GET) fields from the URL"
-	(requestUrl copyAfter: $?) ifNotEmpty:[:fields|
-		self decodeUrlEncodedForm: fields do:[:fkey :fval| normalized add: fkey -> fval]].
-
-	"Keep the extra argument keys so we can exclude them below"
-	extraKeys := Set newFrom: (normalized collect:[:assoc| assoc key]).
-	normalized add:('oauth_nonce' -> nonce).
-	normalized add: ('oauth_timestamp' -> timestamp asString).
-	
-	normalized add: (params associationAt: 'oauth_consumer_key').
-	normalized add: (params associationAt: 'oauth_signature_method').
-	normalized add: (params associationAt: 'oauth_version').
-
-	(params includesKey: 'oauth_callback') ifTrue:[
-		normalized add: (params associationAt: 'oauth_callback').
-	].
-	(params includesKey: 'oauth_token') ifTrue:[
-		normalized add: (params associationAt: 'oauth_token').
-	].
-	(params includesKey: 'oauth_verifier') ifTrue:[
-		normalized add: (params associationAt: 'oauth_verifier').
-	].
-
-	normalized := normalized sort:[:a1 :a2| 
-		a1 key = a2 key 
-			ifTrue:[a1 value <= a2 value]
-			ifFalse:[a1 key <= a2 key]].
-
-	query := String streamContents:[:s|
-		normalized do:[:assoc|
-			s nextPutAll: assoc key.
-			s nextPutAll: '='.
-			s nextPutAll: assoc value encodeForHTTP.
-		] separatedBy:[s nextPutAll: '&'].
-	].
-
-	baseUrl := (requestUrl copyUpTo: $?) copyUpTo: $#.
-	baseString := webRequest method, 
-		'&', baseUrl encodeForHTTP, 
-		'&',  query encodeForHTTP.
-
-	key := (params at: 'oauth_consumer_secret'), 
-			'&', (params at: 'oauth_token_secret' ifAbsent:['']).
-	(params at: 'oauth_signature_method') caseOf: {
-		['HMAC-SHA1'] -> [
-			signature := (WebUtils hmacSha1: baseString key: key) base64Encoded
-		].
-	} otherwise:[self error: 'Unsupported signature method'].
-
-	header := String streamContents:[:s|
-		s nextPutAll: 'OAuth '.
-		"Even though we need to include the extra args in the computation,
-		they do NOT go into the OAuth header field."
-		normalized do:[:assoc|
-			(extraKeys includes: assoc key) 
-				ifFalse:[ s nextPutAll: assoc key, '="', assoc value encodeForHTTP, '",']].
-		s nextPutAll: 'oauth_signature="', signature encodeForHTTP, '"'.
-	].
-
-	webRequest headerAt: 'Authorization' put: header.! !
-
-!WebUtils class methodsFor: 'oauth' stamp: 'ar 8/23/2010 21:55'!
-oAuthSign: webRequest url: requestUrl using: params
-	"Sign the given webRequest using the set of oauth parameters provided"
-
-	^self oAuthSign: webRequest url: requestUrl extra: #() using: params! !
-
-!WebUtils class methodsFor: 'auth utils' stamp: 'DSG 12/5/2013 17:20'!
-parseAuthParams: authHeader
-	"Parse the auth header to find authentication parameters"
-
-	| authParams stream key value|
-	authParams := Dictionary new.
-	stream := ReadStream on: authHeader.
-	authParams at: 'method' put: (stream upTo: Character space) asLowercase.
-	[stream skipSeparators.
-	stream atEnd] whileFalse:[
-		key := stream upTo: $=.
-		stream skipSeparators.
-		stream peek = $" 
-			ifTrue:[value := stream next; upTo: $". stream upTo: $,]
-			ifFalse:[value := stream upToAny: ' ,' asCharacterSet].
-		authParams at: key asLowercase put: value.
-	].
-	^authParams! !
-
-!WebUtils class methodsFor: 'misc' stamp: 'ar 11/17/2011 10:16'!
-platformName
-	"Return the name of the platform we're running on."
-
-	^Smalltalk getSystemAttribute: 1001! !
-
-!WebUtils class methodsFor: 'proxy' stamp: 'DSG 12/4/2013 23:03'!
-proxyExceptionsDo: aBlock
-	"Evaluate aBlock with all registered proxy exceptions. 
-	Uses the information from HTTPSocket."
-
-	"HTTPSocket httpProxyExceptions do: aBlock."! !
-
-!WebUtils class methodsFor: 'proxy' stamp: 'CK 11/27/2017 12:06:52'!
-proxyServerFor: serverName
-	"Answer the proxy server to use for the given server:port
-	Returns the proxy server:port to use or nil if no proxy is required."
-
-	| domain |
-	domain := serverName copyUpTo: $:.
-	self proxyExceptionsDo:[:pattern| (pattern match: domain) ifTrue:[^nil]].
-	^self defaultProxyServer! !
-
-!WebUtils class methodsFor: 'quoting' stamp: 'ar 3/31/2010 08:43'!
-quote: aString
-	"Quote the given string, escaping as necessary any embedded quotes"
-
-	^'"', (aString copyReplaceAll: '"' with: '\"'), '"'
-! !
-
-!WebUtils class methodsFor: 'headers' stamp: 'jmv 6/25/2017 19:36:55'!
-readHeadersFrom: aStream
-	"Parse http headers and answer a collection of key -> value pairs."
-
-	| headers nextLine existing |
-	headers := OrderedCollection new.
-	[nextLine := aStream upToAll: String crlfString.
-	nextLine isEmpty] whileFalse:[
-		nextLine first isSeparator ifTrue:["Continuation as per HTTP 1.1 spec"
-			existing := headers last.
-			existing value: (existing value, String space, nextLine withBlanksTrimmed).
-		] ifFalse:["Regular header"
-			headers add: 
-				(nextLine copyUpTo: $:) asLowercase ->
-					(nextLine copyAfter: $:) withBlanksTrimmed.
-		].
-	].
-	^headers! !
-
 !WebUtils class methodsFor: 'md5' stamp: 'ar 2/23/2010 09:28'!
 rotate: value by: amount
 	"Rotate value left by amount"
@@ -8695,18 +8671,6 @@ rotate: value by: amount
 	highMask := 16rFFFFFFFF - lowMask.
 	^((value bitAnd: lowMask) bitShift: amount) + 
 		((value bitAnd: highMask) bitShift: amount-32)! !
-
-!WebUtils class methodsFor: 'oauth' stamp: 'ar 8/12/2010 16:31'!
-sha1Hash: message
-	"Compute the SHA1 hash for the given message. Slightly different from 
-	SecureHashAlgorithm to produce fixed-length byte arrays."
-
-	| sha hash |
-	sha := SecureHashAlgorithm new hashMessage: message.
-	hash := ByteArray new: 20.
-	1 to: 20 do:[:i| hash at: i put: (sha digitAt: 21-i)].
-	^hash
-! !
 
 !WebUtils class methodsFor: 'md5' stamp: 'ar 2/23/2010 09:28'!
 step1: w x: x y: y z: z data: data add: add shift: s
@@ -8748,6 +8712,32 @@ step4: w x: x y: y z: z data: data add: add shift: s
 	result := self rotate: result by: s.
 	^result + x bitAnd: 16rFFFFFFFF! !
 
+!WebUtils class methodsFor: 'auth utils' stamp: 'DSG 12/5/2013 17:20'!
+parseAuthParams: authHeader
+	"Parse the auth header to find authentication parameters"
+
+	| authParams stream key value|
+	authParams := Dictionary new.
+	stream := ReadStream on: authHeader.
+	authParams at: 'method' put: (stream upTo: Character space) asLowercase.
+	[stream skipSeparators.
+	stream atEnd] whileFalse:[
+		key := stream upTo: $=.
+		stream skipSeparators.
+		stream peek = $" 
+			ifTrue:[value := stream next; upTo: $". stream upTo: $,]
+			ifFalse:[value := stream upToAny: ' ,' asCharacterSet].
+		authParams at: key asLowercase put: value.
+	].
+	^authParams! !
+
+!WebUtils class methodsFor: 'quoting' stamp: 'ar 3/31/2010 08:43'!
+quote: aString
+	"Quote the given string, escaping as necessary any embedded quotes"
+
+	^'"', (aString copyReplaceAll: '"' with: '\"'), '"'
+! !
+
 !WebUtils class methodsFor: 'quoting' stamp: 'ar 3/31/2010 08:45'!
 unquote: aString
 	"Unquote the given string, unescaping as necessary any embedded quotes"
@@ -8756,36 +8746,24 @@ unquote: aString
 	(aString endsWith: '"') ifFalse:[^aString].
 	^(aString copyReplaceAll: '\"' with: '"') allButFirst allButLast! !
 
-!WebUtils class methodsFor: 'misc' stamp: 'DSG 3/28/2015 19:59'!
-urlEncode: urlString
-	"For backwards compatibility only. Use 'urlString urlEncoded' if you can."
+!WebUtils class methodsFor: 'headers' stamp: 'jmv 6/25/2017 19:36:55'!
+readHeadersFrom: aStream
+	"Parse http headers and answer a collection of key -> value pairs."
 
-	^urlString encodeForHTTP! !
-
-!WebUtils class methodsFor: 'misc' stamp: 'ar 11/17/2011 10:06'!
-vmVersion	
-	"Return a string identifying the interpreter version"
-
-	^Smalltalk getSystemAttribute: 1004! !
-
-!WebUtils class methodsFor: 'websockets' stamp: 'ar 7/8/2010 18:59'!
-webSocketHandshake: key1 with: key2 with: data
-	"Do the actual WebSocket handshake computation"
-
-	| bytes |
-	bytes := ByteArray new: 16.
-	bytes longAt: 1 put: key1 bigEndian: true.
-	bytes longAt: 5 put: key2 bigEndian: true.
-	bytes replaceFrom: 9 to: 16 with: data.
-	^(self md5HashStream: bytes readStream) reversed! !
-
-!WebUtils class methodsFor: 'websockets' stamp: 'ar 9/26/2011 10:30'!
-webSocketHash07: key
-	"Do the actual WebSocket hash computation"
-
-	| uid |
-	uid := '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'.
-	^(ByteArray newFrom: (SecureHashAlgorithm new hashMessage: key, uid)) reversed base64Encoded! !
+	| headers nextLine existing |
+	headers := OrderedCollection new.
+	[nextLine := aStream upToAll: String crlfString.
+	nextLine isEmpty] whileFalse:[
+		nextLine first isSeparator ifTrue:["Continuation as per HTTP 1.1 spec"
+			existing := headers last.
+			existing value: (existing value, String space, nextLine withBlanksTrimmed).
+		] ifFalse:["Regular header"
+			headers add: 
+				(nextLine copyUpTo: $:) asLowercase ->
+					(nextLine copyAfter: $:) withBlanksTrimmed.
+		].
+	].
+	^headers! !
 
 !SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/18/2010 20:42'!
 accept
@@ -8811,11 +8789,121 @@ accept
 	].
 ! !
 
+!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/16/2010 23:10'!
+connect
+	"Convenience API. Perform an SSL client handshake. 
+	Raises an error if something goes wrong."
+
+	| inbuf outbuf count result |
+
+	inbuf := ByteArray new: 4096.
+	outbuf := ByteArray new: 4096.
+	count := 0.
+
+	"Begin the SSL handshake"
+	[result := self connect: inbuf from: 1 to: count into: outbuf.
+	result = 0] whileFalse:[
+		"Check for errors first"
+		result < -1 ifTrue:[^self error: 'SSL connect failed with code: ', result].
+
+		"If a token has been produced in the handshake, send it to the remote"
+		result > 0 ifTrue:[self writeData: outbuf count: result].
+
+		"Read more input and repeat"
+		count := self readDataInto: inbuf.
+	].! !
+
+!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/18/2010 14:18'!
+decrypt: data
+	"Convenience API. Decrypt incoming data and return the result.
+
+	Warning: This method may produce more or less results than expected
+	unless called with exactly one SSL/TLS frame."
+
+	| buf count |
+	buf := data class new: 4096.
+	count := self decrypt: data from: 1 to: data size into: buf.
+	count < 0 ifTrue:[self error: 'Decryption failed, code: ', count].
+	^buf copyFrom: 1 to: count! !
+
+!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/18/2010 14:18'!
+encrypt: data
+	"Convenience API. Encrypt incoming data and return the result."
+
+	| buf count |
+	buf := data class new: data size + 100.
+	count := self encrypt: data from: 1 to: data size into: buf.
+	count < 0 ifTrue:[self error: 'Decryption failed, code: ', count].
+	^buf copyFrom: 1 to: count! !
+
+!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/16/2010 23:04'!
+receiveData
+	"Convenience API. Receive data and decrypt it."
+
+	| inbuf outbuf count |
+	inbuf := String new: 4096.
+	outbuf := String new: 4096.
+
+	^String streamContents:[:s|
+		"Read the next input bytes"
+		count := self readDataInto: inbuf.
+		"Push the input bytes into the SSL"
+		count := self decrypt: inbuf from: 1 to: count into: outbuf.
+		"And keep draining as long as output is being produced"
+		[count > 0] whileTrue:[
+			s next: count putAll: outbuf.
+			count := self decrypt: inbuf from: 1 to: 0 into: outbuf.
+		].
+	].! !
+
+!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/16/2010 23:04'!
+sendData: inbuf
+	"Convenience API. Encrypt and send data"
+
+	| outbuf count |
+	outbuf := inbuf class new: inbuf size + 100.
+	count := self encrypt: inbuf from: 1 to: inbuf size into: outbuf.
+	^self writeData: outbuf count: count.! !
+
 !SqueakSSL methodsFor: 'operations' stamp: 'ar 7/16/2010 23:02'!
 accept: srcBuf from: start to: stop into: dstBuf
 	"Start or continue the server handshake using the given input token."
 
 	^self primitiveSSL: handle accept: srcBuf startingAt: start count: stop-start+1 into: dstBuf! !
+
+!SqueakSSL methodsFor: 'operations' stamp: 'eem 3/23/2016 16:55'!
+connect: srcBuf from: start to: stop into: dstBuf
+	"Start or continue the server handshake using the given input token."
+
+	| r |
+	r := self primitiveSSL: handle connect: srcBuf startingAt: start count: stop-start+1 into: dstBuf.
+	r <= 0 ifTrue:
+		[Processor yield].
+	^r! !
+
+!SqueakSSL methodsFor: 'operations' stamp: 'ar 7/16/2010 21:58'!
+decrypt: srcBuf from: start to: stop into: dstBuf
+	"Decrypt the input in srcBuf into the provided output buffer.
+
+	Clients are expected to adhere to the following rules:
+		* The size of dstBuf must be large enough for the largest encrypted packet.
+		* Clients must not call this method with a huge srcBuf (tens of kb of data)
+		* After having called this method with new input, clients must call it 
+		   with NO input until all data has been 'drained' for example:
+			count := squeakSSL decrypt: srcBuf into: dstBuf.
+			[count > 0] whileTrue:[
+				count := squeakSSL decrypt: #[] into: dstBuf.
+			].
+	"
+
+	^self primitiveSSL: handle decrypt: srcBuf startingAt: start count: stop-start+1 into: dstBuf! !
+
+!SqueakSSL methodsFor: 'operations' stamp: 'ar 7/16/2010 21:59'!
+encrypt: srcBuf from: start to: stop into: dstBuf
+	"Encrypt the input in srcBuf into the provided output buffer.
+	The output buffer must be large enough to include the framing information."
+
+	^self primitiveSSL: handle encrypt: srcBuf startingAt: start count: stop-start+1 into: dstBuf! !
 
 !SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/18/2010 21:31'!
 certName
@@ -8854,109 +8942,6 @@ certState
 	"
 	^self primitiveSSL: handle getIntProperty: 3! !
 
-!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/16/2010 23:10'!
-connect
-	"Convenience API. Perform an SSL client handshake. 
-	Raises an error if something goes wrong."
-
-	| inbuf outbuf count result |
-
-	inbuf := ByteArray new: 4096.
-	outbuf := ByteArray new: 4096.
-	count := 0.
-
-	"Begin the SSL handshake"
-	[result := self connect: inbuf from: 1 to: count into: outbuf.
-	result = 0] whileFalse:[
-		"Check for errors first"
-		result < -1 ifTrue:[^self error: 'SSL connect failed with code: ', result].
-
-		"If a token has been produced in the handshake, send it to the remote"
-		result > 0 ifTrue:[self writeData: outbuf count: result].
-
-		"Read more input and repeat"
-		count := self readDataInto: inbuf.
-	].! !
-
-!SqueakSSL methodsFor: 'operations' stamp: 'eem 3/23/2016 16:55'!
-connect: srcBuf from: start to: stop into: dstBuf
-	"Start or continue the server handshake using the given input token."
-
-	| r |
-	r := self primitiveSSL: handle connect: srcBuf startingAt: start count: stop-start+1 into: dstBuf.
-	r <= 0 ifTrue:
-		[Processor yield].
-	^r! !
-
-!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/18/2010 14:18'!
-decrypt: data
-	"Convenience API. Decrypt incoming data and return the result.
-
-	Warning: This method may produce more or less results than expected
-	unless called with exactly one SSL/TLS frame."
-
-	| buf count |
-	buf := data class new: 4096.
-	count := self decrypt: data from: 1 to: data size into: buf.
-	count < 0 ifTrue:[self error: 'Decryption failed, code: ', count].
-	^buf copyFrom: 1 to: count! !
-
-!SqueakSSL methodsFor: 'operations' stamp: 'ar 7/16/2010 21:58'!
-decrypt: srcBuf from: start to: stop into: dstBuf
-	"Decrypt the input in srcBuf into the provided output buffer.
-
-	Clients are expected to adhere to the following rules:
-		* The size of dstBuf must be large enough for the largest encrypted packet.
-		* Clients must not call this method with a huge srcBuf (tens of kb of data)
-		* After having called this method with new input, clients must call it 
-		   with NO input until all data has been 'drained' for example:
-			count := squeakSSL decrypt: srcBuf into: dstBuf.
-			[count > 0] whileTrue:[
-				count := squeakSSL decrypt: #[] into: dstBuf.
-			].
-	"
-
-	^self primitiveSSL: handle decrypt: srcBuf startingAt: start count: stop-start+1 into: dstBuf! !
-
-!SqueakSSL methodsFor: 'initialize' stamp: 'ar 7/16/2010 22:01'!
-destroy
-	"Destroys the underlying platform handle"
-
-	handle ifNotNil:[
-		self primitiveSSLDestroy: handle.
-		handle := nil.
-	].! !
-
-!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/18/2010 14:18'!
-encrypt: data
-	"Convenience API. Encrypt incoming data and return the result."
-
-	| buf count |
-	buf := data class new: data size + 100.
-	count := self encrypt: data from: 1 to: data size into: buf.
-	count < 0 ifTrue:[self error: 'Decryption failed, code: ', count].
-	^buf copyFrom: 1 to: count! !
-
-!SqueakSSL methodsFor: 'operations' stamp: 'ar 7/16/2010 21:59'!
-encrypt: srcBuf from: start to: stop into: dstBuf
-	"Encrypt the input in srcBuf into the provided output buffer.
-	The output buffer must be large enough to include the framing information."
-
-	^self primitiveSSL: handle encrypt: srcBuf startingAt: start count: stop-start+1 into: dstBuf! !
-
-!SqueakSSL methodsFor: 'initialize' stamp: 'ar 7/16/2010 23:10'!
-initialize
-	"Initialize the receiver"
-
-	handle := self primitiveSSLCreate.
-! !
-
-!SqueakSSL methodsFor: 'testing' stamp: 'ar 7/16/2010 22:37'!
-isConnected
-	"Returns true if the SSL handshake has been completed"
-
-	^self sslState = 3! !
-
 !SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/18/2010 21:26'!
 logLevel
 	"Returns the log level of the ssl instance"
@@ -8968,6 +8953,82 @@ logLevel: aNumber
 	"Sets the log level of the ssl instance"
 
 	^self primitiveSSL: handle setIntProperty: 1 toValue: aNumber! !
+
+!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/18/2010 21:31'!
+peerName
+	"Returns the certificate name of the remote peer.
+	The method only returns a name if the certificate has been verified."
+
+	^self primitiveSSL: handle getStringProperty: 0! !
+
+!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/18/2010 21:25'!
+pluginVersion
+	"Returns the version of the plugin"
+
+	^self primitiveSSL: handle getIntProperty: 0! !
+
+!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/15/2010 20:16'!
+readBlock
+	"The block used to read data where required. The block takes one argument,
+	the buffer to fill with data and is expected to return the number of bytes read."
+
+	^readBlock! !
+
+!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/15/2010 20:16'!
+readBlock: aBlock
+	"The block used to read data where required. The block takes one argument,
+	the buffer to fill with data and is expected to return the number of bytes read."
+
+	readBlock := aBlock! !
+
+!SqueakSSL methodsFor: 'accessing' stamp: 'ul 10/16/2014 10:35'!
+serverName: aString
+	"Sets the name to use with the Server Name Indication TLS extension. Which should be a valid FQDN. No WinSSL support yet."
+
+	^[ self primitiveSSL: handle setStringProperty: 2 toValue: aString ]
+		on: Error
+		do: [ "nothing" ]! !
+
+!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/18/2010 21:27'!
+sslState
+	"Returns the current state of the SSL connection:
+		0 - Unused.
+		1 - In accept handshake.
+		2 - In connect handshake.
+		3 - Connected.
+	"
+	^self primitiveSSL: handle getIntProperty: 2
+		! !
+
+!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/15/2010 20:17'!
+writeBlock
+	"The block used to write data where required. The block takes two arguments,
+	the buffer and the number of bytes to be written from the buffer."
+
+	^writeBlock! !
+
+!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/15/2010 20:17'!
+writeBlock: aBlock
+	"The block used to write data where required. The block takes two arguments,
+	the buffer and the number of bytes to be written from the buffer."
+
+	writeBlock := aBlock! !
+
+!SqueakSSL methodsFor: 'initialize' stamp: 'ar 7/16/2010 22:01'!
+destroy
+	"Destroys the underlying platform handle"
+
+	handle ifNotNil:[
+		self primitiveSSLDestroy: handle.
+		handle := nil.
+	].! !
+
+!SqueakSSL methodsFor: 'initialize' stamp: 'ar 7/16/2010 23:10'!
+initialize
+	"Initialize the receiver"
+
+	handle := self primitiveSSLCreate.
+! !
 
 !SqueakSSL methodsFor: 'initialize' stamp: 'ar 7/18/2010 20:37'!
 on: aSocket
@@ -8983,18 +9044,11 @@ on: aSocket
 		aSocket sendData: (outbuf copyFrom: 1 to: count).
 	].! !
 
-!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/18/2010 21:31'!
-peerName
-	"Returns the certificate name of the remote peer.
-	The method only returns a name if the certificate has been verified."
+!SqueakSSL methodsFor: 'testing' stamp: 'ar 7/16/2010 22:37'!
+isConnected
+	"Returns true if the SSL handshake has been completed"
 
-	^self primitiveSSL: handle getStringProperty: 0! !
-
-!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/18/2010 21:25'!
-pluginVersion
-	"Returns the version of the plugin"
-
-	^self primitiveSSL: handle getIntProperty: 0! !
+	^self sslState = 3! !
 
 !SqueakSSL methodsFor: 'primitives' stamp: 'ar 7/16/2010 21:57'!
 primitiveSSL: sslHandle accept: srcbuf startingAt: start count: length into: dstbuf
@@ -9080,20 +9134,6 @@ primitiveSSLDestroy: sslHandle
 	<primitive: 'primitiveDestroy' module: 'SqueakSSL'>
 	^self primitiveFailed! !
 
-!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/15/2010 20:16'!
-readBlock
-	"The block used to read data where required. The block takes one argument,
-	the buffer to fill with data and is expected to return the number of bytes read."
-
-	^readBlock! !
-
-!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/15/2010 20:16'!
-readBlock: aBlock
-	"The block used to read data where required. The block takes one argument,
-	the buffer to fill with data and is expected to return the number of bytes read."
-
-	readBlock := aBlock! !
-
 !SqueakSSL methodsFor: 'private' stamp: 'ar 7/15/2010 20:08'!
 readDataInto: aBuffer
 	"Private. Read actual data into the given buffer.
@@ -9101,73 +9141,11 @@ readDataInto: aBuffer
 
 	^readBlock value: aBuffer! !
 
-!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/16/2010 23:04'!
-receiveData
-	"Convenience API. Receive data and decrypt it."
-
-	| inbuf outbuf count |
-	inbuf := String new: 4096.
-	outbuf := String new: 4096.
-
-	^String streamContents:[:s|
-		"Read the next input bytes"
-		count := self readDataInto: inbuf.
-		"Push the input bytes into the SSL"
-		count := self decrypt: inbuf from: 1 to: count into: outbuf.
-		"And keep draining as long as output is being produced"
-		[count > 0] whileTrue:[
-			s next: count putAll: outbuf.
-			count := self decrypt: inbuf from: 1 to: 0 into: outbuf.
-		].
-	].! !
-
-!SqueakSSL methodsFor: 'convenience' stamp: 'ar 7/16/2010 23:04'!
-sendData: inbuf
-	"Convenience API. Encrypt and send data"
-
-	| outbuf count |
-	outbuf := inbuf class new: inbuf size + 100.
-	count := self encrypt: inbuf from: 1 to: inbuf size into: outbuf.
-	^self writeData: outbuf count: count.! !
-
-!SqueakSSL methodsFor: 'accessing' stamp: 'ul 10/16/2014 10:35'!
-serverName: aString
-	"Sets the name to use with the Server Name Indication TLS extension. Which should be a valid FQDN. No WinSSL support yet."
-
-	^[ self primitiveSSL: handle setStringProperty: 2 toValue: aString ]
-		on: Error
-		do: [ "nothing" ]! !
-
 !SqueakSSL methodsFor: 'private' stamp: 'ar 11/16/2011 16:31'!
 setStringProperty: index to: aString
 	"Private. Use with caution"
 
 	^self primitiveSSL: handle setStringProperty: index toValue: aString! !
-
-!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/18/2010 21:27'!
-sslState
-	"Returns the current state of the SSL connection:
-		0 - Unused.
-		1 - In accept handshake.
-		2 - In connect handshake.
-		3 - Connected.
-	"
-	^self primitiveSSL: handle getIntProperty: 2
-		! !
-
-!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/15/2010 20:17'!
-writeBlock
-	"The block used to write data where required. The block takes two arguments,
-	the buffer and the number of bytes to be written from the buffer."
-
-	^writeBlock! !
-
-!SqueakSSL methodsFor: 'accessing' stamp: 'ar 7/15/2010 20:17'!
-writeBlock: aBlock
-	"The block used to write data where required. The block takes two arguments,
-	the buffer and the number of bytes to be written from the buffer."
-
-	writeBlock := aBlock! !
 
 !SqueakSSL methodsFor: 'private' stamp: 'ar 7/15/2010 20:08'!
 writeData: aBuffer count: count
@@ -9210,6 +9188,12 @@ checkCert: certName
 		sslClient ifNotNil:[sslClient destroy].
 		sslServer ifNotNil:[sslServer destroy].
 	].! !
+
+!SqueakSSL class methodsFor: 'utilities' stamp: 'ar 11/17/2011 10:16'!
+platformName
+	"Return the name of the platform we're running on."
+
+	^Smalltalk getSystemAttribute: 1001! !
 
 !SqueakSSL class methodsFor: 'examples' stamp: 'ar 6/17/2012 14:58'!
 ensureSampleCert
@@ -9335,34 +9319,6 @@ google: query
 	] ensure:[ssl destroy].
 ! !
 
-!SqueakSSL class methodsFor: 'instance creation' stamp: 'ar 7/16/2010 22:59'!
-on: aSocket
-	"Convenience API. Create a SqueakSSL operating on a standard TCP socket.
-	Generally not very useful for real applications (it lacks error handling etc) 
-	but very helpful for debugging and other experiments."
-
-	^self new on: aSocket! !
-
-!SqueakSSL class methodsFor: 'utilities' stamp: 'ar 11/17/2011 10:16'!
-platformName
-	"Return the name of the platform we're running on."
-
-	^Smalltalk getSystemAttribute: 1001! !
-
-!SqueakSSL class methodsFor: 'instance creation' stamp: 'ar 6/17/2012 11:13'!
-secureSocket
-	"Answer the class to use as secure socket implementation.
-	Provided here so that users only need a dependency on SqueakSSL."
-
-	^SecureSocket! !
-
-!SqueakSSL class methodsFor: 'instance creation' stamp: 'ar 6/17/2012 11:25'!
-secureSocketStream
-	"Answer the class to use as secure socket stream implementation.
-	Provided here so that users only need a dependency on SqueakSSL."
-
-	^SecureSocketStream! !
-
 !SqueakSSL class methodsFor: 'examples' stamp: 'jmv 6/25/2017 21:31:39'!
 serverOn: port certName: certName
 	"An HTTPS server example. Fires up a listener at the given port such that
@@ -9413,5 +9369,58 @@ serverOn: port certName: certName
 		ssl destroy.
 		socket destroy.
 	].! !
+
+!SqueakSSL class methodsFor: 'instance creation' stamp: 'ar 7/16/2010 22:59'!
+on: aSocket
+	"Convenience API. Create a SqueakSSL operating on a standard TCP socket.
+	Generally not very useful for real applications (it lacks error handling etc) 
+	but very helpful for debugging and other experiments."
+
+	^self new on: aSocket! !
+
+!SqueakSSL class methodsFor: 'instance creation' stamp: 'ar 6/17/2012 11:13'!
+secureSocket
+	"Answer the class to use as secure socket implementation.
+	Provided here so that users only need a dependency on SqueakSSL."
+
+	^SecureSocket! !
+
+!SqueakSSL class methodsFor: 'instance creation' stamp: 'ar 6/17/2012 11:25'!
+secureSocketStream
+	"Answer the class to use as secure socket stream implementation.
+	Provided here so that users only need a dependency on SqueakSSL."
+
+	^SecureSocketStream! !
+
+!SmallInteger methodsFor: '*WebClient' stamp: 'jmv 9/19/2016 22:04:27'!
+numericValue
+	"Shouldn't be needed!!"! !
+
+!String methodsFor: '*WebClient' stamp: 'jmv 6/26/2017 19:36:20'!
+encodeForHTTP! !
+
+!String methodsFor: '*WebClient' stamp: 'jmv 9/5/2016 20:49:10'!
+unescapePercents
+	"change each %XY substring to the character with ASCII value XY in hex.  This is the opposite of #encodeForHTTP"
+	| ans c asciiVal pos oldPos specialChars |
+	ans _ WriteStream on: String new.
+	oldPos _ 1.
+	specialChars _ '+%' asCharacterSet.
+
+	[pos _ self indexOfAnyOf: specialChars startingAt: oldPos ifAbsent: [ 0 ]. pos > 0 ]
+	whileTrue: [
+		ans nextPutAll: (self copyFrom: oldPos to: pos - 1).
+		c _ self at: pos.
+		c = $+ ifTrue: [ans nextPut: $ ] ifFalse: [
+			(c = $% and: [pos + 2 <= self size]) ifTrue: [
+				asciiVal _ (self at: pos+1) asUppercase digitValue * 16 +
+					(self at: pos+2) asUppercase digitValue.
+				pos _ pos + 2.
+				asciiVal > 255 ifTrue: [^self].	"not really an escaped string"
+				ans nextPut: (Character numericValue: asciiVal)]
+			ifFalse: [ans nextPut: c]].
+		oldPos _ pos+1].
+	ans nextPutAll: (self copyFrom: oldPos to: self size).
+	^ ans contents! !
 WebClient initialize!
 WebMessage initialize!
