@@ -17,6 +17,10 @@ cd MyProject
 git clone --depth 1 https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
 ./Cuis-Smalltalk-Dev/clonePackageRepos.sh
 ```
+After that, you may periodically update all your repos from GitHub:
+```
+./Cuis-Smalltalk-Dev/pullAllRepos.sh
+```
 
 ## For 64 bits Linux running on AMD/Intel x64 hardware ##
 

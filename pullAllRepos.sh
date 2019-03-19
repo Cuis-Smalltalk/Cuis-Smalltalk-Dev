@@ -1,3 +1,4 @@
+cd Cuis-Smalltalk-Dev
 git pull
 cd ../AMQP
 git pull
