@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3670] on 18 March 2019 at 1:42:34 pm'!
-'Description Tests for code included in the Base Cuis image.'!
-!provides: 'BaseImageTests' 1 135!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3681] on 20 March 2019 at 7:48:33 am'!
+'Description nextPutWhen:, nextPutAll:when:, etc. protocol for WriteStream and Transcript'!
+!provides: 'BaseImageTests' 1 136!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -26,6 +26,8 @@ SystemOrganization addCategory: #'BaseImageTests-Tools-Code Differ'!
 SystemOrganization addCategory: #'BaseImageTests-Unicode'!
 SystemOrganization addCategory: #'BaseImageTests-Bugs'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Refactoring'!
+SystemOrganization addCategory: #'BaseImageTests-Collections-Streams'!
+SystemOrganization addCategory: #'BaseImageTests-System-Support'!
 
 
 !classDefinition: #MyResumableTestError category: #'BaseImageTests-Exceptions'!
@@ -1018,6 +1020,26 @@ RefactoringTest subclass: #SafelyRemoveClassTest
 SafelyRemoveClassTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #WriteStreamTest category: #'BaseImageTests-Collections-Streams'!
+TestCase subclass: #WriteStreamTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Streams'!
+!classDefinition: 'WriteStreamTest class' category: #'BaseImageTests-Collections-Streams'!
+WriteStreamTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TranscriptTest category: #'BaseImageTests-System-Support'!
+TestCase subclass: #TranscriptTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Support'!
+!classDefinition: 'TranscriptTest class' category: #'BaseImageTests-System-Support'!
+TranscriptTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #BecomeTestExperiment category: #'BaseImageTests-Kernel'!
 Object subclass: #BecomeTestExperiment
 	instanceVariableNames: 'a b'
@@ -1253,6 +1275,26 @@ Tests for MorphicTranslation!
 
 !TaskbarTest commentStamp: '<historical>' prior: 0!
 Tests for the Taskbar.!
+
+!WriteStreamTest commentStamp: '<historical>' prior: 0!
+Tests cases for Stream messages: 
+
+nextPutAll: when:
+nextPut: when: 
+print: when:.
+
+Made at Cuis Sprint #1
+!
+
+!TranscriptTest commentStamp: '<historical>' prior: 0!
+Tests cases for Stream messages: 
+
+nextPutAll: when:
+nextPut: when: 
+print: when:.
+
+Made at Cuis Sprint #1
+!
 
 !BecomeTestExperiment commentStamp: '<historical>' prior: 0!
 To be used by BecomeTest!
@@ -18438,6 +18480,293 @@ classToRemoveName
 	"I can not use the symbol directly because it would be a reference - Hernan"
 	^ 'ClassToRemove' asSymbol.
 	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:27:06'!
+testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream newLineTab: 2 when: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:28:04'!
+testNewLineTabWhenConditionIsTruePutsANewLineTabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream newLineTab: 2 when: true.
+	
+	self assert: (String streamContents: [ :s | s newLineTab: 2 ]) equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:20:47'!
+testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream newLineWhen: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:05'!
+testNewLineWhenConditionIsTruePutsANewLineInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream newLineWhen: true.
+	
+	self assert: Character newLineCharacter asString equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:13'!
+testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream nextPutAll: 'other' when: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:19'!
+testNextPutAllWhenConditionIsTruePutsCollectionInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream nextPutAll: 'other' when: true.
+	
+	self assert: 'other' equals: stream contents
+	
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:24'!
+testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream nextPut: $t when: false.
+	
+	self assert: stream contents isEmpty
+	
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:28'!
+testNextPutWhenConditionIsTruePutsObjectInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream nextPut: $t when: true.
+	
+	self assert: 't' equals: stream contents 
+	
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:06'!
+testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream print: Object when: false.
+	
+	self assert: stream contents isEmpty
+	
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:06:44'!
+testPrintWhenConditionIsTruePrintsObjectInStream
+
+	| stream |
+	
+	stream := WriteStream on: ''.
+	stream print: Object when: true.
+	
+	self assert: Object printString equals: stream contents! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:42:20'!
+testSpaceManyTimesWhenConditionIsFalseDoesNotPutASpaceInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream space: 2 when: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:43:01'!
+testSpaceManyTimesWhenConditionIsTruePutSpacesInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream space: 2 when: true.
+	
+	self assert: '  ' equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:06'!
+testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream spaceWhen: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:19:50'!
+testSpaceWhenConditionIsTruePutsASpaceInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream spaceWhen: true.
+	
+	self assert: ' ' equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:24:34'!
+testTabManyTimesWhenConditionIsFalseDoesNotPutATabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream tab: 2 when: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:25:46'!
+testTabManyTimesWhenConditionIsTruePutsTabsInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream tab: 2 when: true.
+	
+	self assert: (String streamContents: [ :s | s tab: 2 ]) equals: stream contents 
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:22:50'!
+testTabWhenConditionIsFalseDoesNotPutATabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream tabWhen: false.
+	
+	self assert: stream contents isEmpty
+	! !
+
+!WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:23:28'!
+testTabWhenConditionIsTruePutsATabInStream
+
+	| stream |
+
+	stream := WriteStream on: ''.
+	stream tabWhen: true.
+	
+	self assert: Character tab asString equals: stream contents 
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:29:18'!
+testNewLineWhenConditionIsFalseDoesNotPutANewLineInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript newLineWhen: false ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:38:57'!
+testNewLineWhenConditionIsTruePutsANewLineInStream
+
+	self assertTranscriptContentsAdded: '.' after: [ Transcript newLineWhen: true; nextPut: $. ]! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:09:29'!
+testNextPutAllWhenConditionIsFalseDoesNotPutCollectionInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPutAll: 'other' when: false ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:13:47'!
+testNextPutAllWhenConditionIsTruePutsCollectionInStream
+
+	self assertTranscriptContentsAdded: 'other' after: [ Transcript nextPutAll: 'other' when: true ]
+	
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:11:58'!
+testNextPutWhenConditionIsFalseDoesNotPutObjectInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript nextPut: $t when: false ]
+! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:15:05'!
+testNextPutWhenConditionIsTruePutsObjectInStream
+
+	self assertTranscriptContentsAdded: 't' after: [ Transcript nextPut: $t when: true ]
+	
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:12:44'!
+testPrintWhenConditionIsFalseDoesNotPrintObjectInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript print: Object when: false ]
+! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:15:34'!
+testPrintWhenConditionIsTruePrintsObjectInStream
+
+	self assertTranscriptContentsAdded: Object printString after: [ Transcript print: Object when: true ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:39:29'!
+testSpaceWhenConditionIsFalseDoesNotPutASpaceInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript spaceWhen: false ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:40:09'!
+testSpaceWhenConditionIsTruePutsASpaceInStream
+
+	self assertTranscriptContentsAdded: ' ' after: [ Transcript spaceWhen: true ]
+	! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:40:49'!
+testTabWhenConditionIsFalseDoesNotPutATabInStream
+
+	self assertTranscriptContentsDoesNotChangeAfter: [ Transcript tabWhen: false ]! !
+
+!TranscriptTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:41:35'!
+testTabWhenConditionIsTruePutsATabInStream
+
+	self assertTranscriptContentsAdded: Character tab asString after: [ Transcript tabWhen: true ]! !
+
+!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:14:26'!
+assertTranscriptContentsAdded: expectedAddedString after: aBlock
+	
+	| transcriptContentsBeforeBlockEvaluation |
+	
+	transcriptContentsBeforeBlockEvaluation := Transcript contents.
+	aBlock value.
+	
+	self assert: transcriptContentsBeforeBlockEvaluation, expectedAddedString equals: Transcript contents! !
+
+!TranscriptTest methodsFor: 'assertions' stamp: 'HAW 3/20/2019 07:15:48'!
+assertTranscriptContentsDoesNotChangeAfter: aBlock
+	
+	self assertTranscriptContentsAdded: '' after: aBlock! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
