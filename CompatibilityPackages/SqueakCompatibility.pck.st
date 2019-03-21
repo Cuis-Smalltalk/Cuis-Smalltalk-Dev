@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3253] on 15 January 2018 at 8:40:09 am'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 28!
+!provides: 'SqueakCompatibility' 1 29!
 !requires: 'Cuis-Base' 42 2658 nil!
 SystemOrganization addCategory: #SqueakCompatibility!
 
@@ -2219,14 +2219,6 @@ print: aNumber digits: numDigits
 
 	aNumber printOn: self base: 10 nDigits: numDigits ! !
 
-!WriteStream methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 14:59:03'!
-cr
-	"Append a lf character to the receiver.
-	Use this method when you specifically need a cr character.
-	In many cases, it is advisable to call #newLine"
-
-	self nextPut: Character cr! !
-
 !WriteStream methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 14:58'!
 crtab
 	"Append a return character, followed by anInteger tab characters, to the 
@@ -2241,14 +2233,6 @@ crtab: anInteger
 
 	self cr.
 	anInteger timesRepeat: [self tab]! !
-
-!WriteStream methodsFor: '*squeakCompatibility' stamp: 'jmv 12/23/2013 09:34'!
-lf
-	"Append a lf character to the receiver.
-	Use this method when you specifically need a lf character.
-	In many cases, it is advisable to call #newLine"
-
-	self nextPut: Character lf! !
 
 !WriteStream methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 14:59:34'!
 nl
@@ -2267,10 +2251,6 @@ environment
 	"Answer the environment of the current compilation context,
 	 be it in a class or global (e.g. a workspace)"
 	^Smalltalk "No environments in Cuis..."! !
-
-!Transcript class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:41'!
-cr
-	self newLine! !
 
 !Transcript class methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:04:14'!
 nl
