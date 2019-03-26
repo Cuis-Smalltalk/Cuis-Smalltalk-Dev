@@ -1,16 +1,10 @@
 # Best Practices in Cuis Smalltalk
 
-This document is supposed to shine some light on certain
-practices within Cuis which are supposed to be followed
-for various reasons. It tries to help to understand some
-not so obvious design decisions without linking to the
-cuis-dev mailinglist.
+This document is meant to shine some light on certain practices within Cuis which we recommend following for various reasons. It tries to help to understand some not so obvious design decisions without linking to the cuis-dev mailinglist.
 
 # Message Conventions
 
-This section deals with message sending, the format
-of certain messages and what message is supposed to be
-used when.
+This section deals with message sending, the format of certain messages and what message is supposed to be used when.
 
 ## Replace `#respondsTo:` with `#is:`
 
@@ -23,9 +17,7 @@ The message `#respondsTo:` which is used in code like
     ifTrue: [ foo saveAsmodel ].
 ```
 
-should be replaced by `#is:` which is derived from messages
-like `#isBag`, `#isDictionary`, `#isForm`, etc. A changed
-example would then look like this:
+should be replaced by `#is:` which is derived from messages like `#isBag`, `#isDictionary`, `#isForm`, etc. A changed example would then look like this:
 
 ```smalltalk
   | foo |
@@ -41,22 +33,20 @@ The reasoning for this is because:
    
 2. `#respondsTo:` and the `#isBag` are of the same form,
    they both receive a symbol and return true or false if
-   the object conforms in someway to the asked question
+   the object conforms in some way to the asked question
    in the argument. So they can be unified into `#is:`
    from that perspective.
    
-3. `#isBag`, etc. is normally used in the form that if
-   an object responds to `#isBag` then it it's probably
-   a bag and then it can be treated as such one.
-   So before `isBag` can be called, `respondsTo` needs
-   to be called. Objects used in this way are not uniform
-   anymore, so instead of `((obj respondsTo: #isFoo) and: [ obj isFoo]) ifTrue: [obj foo]`
-   you should just write `obj is: #fooish ifTrue: [obj foo]`
+3. `#isBag`, etc. require an implementation returning false
+   high enough in the class hierarchy (for example, at Collection or at Object).
+   This those general, abstract classes should be unaware of specific knowledge
+   of those down in the hierarchy. By default, `#is:` answers false to any unknown
+   value of the parameter.
    
 4. `#respondsTo:` goes up the class hierarchy when doing lookups,
    it looks into the selectors of the object, then goes up the class
-   hierarchy until a result is found. By using `#is:` the check
-   can be faster as a series of if expressions can be used earlier.
+   hierarchy until a result is found. At each level, an expensive dictionary lookup is needed.
+   By using `#is:` the check can be faster, because checks are for identity of symbols.
    
 5. `#is:` is more flexible. You can use it to ask arbitrary questions
    to the object. `obj is: Class. obj is: #Bag. obj is: 1.` and each
