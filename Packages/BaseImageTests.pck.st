@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3681] on 20 March 2019 at 7:48:33 am'!
-'Description nextPutWhen:, nextPutAll:when:, etc. protocol for WriteStream and Transcript'!
-!provides: 'BaseImageTests' 1 136!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3689] on 27 March 2019 at 10:26:07 am'!
+'Description Tests for functionality in the Cuis Smalltalk base image.'!
+!provides: 'BaseImageTests' 1 140!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -978,6 +978,16 @@ RefactoringTest subclass: #RenameClassTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'RenameClassTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RenameClassTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #RenameGlobalTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #RenameGlobalTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'RenameGlobalTest class' category: #'BaseImageTests-Tools-Refactoring'!
+RenameGlobalTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #RenameInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -2078,33 +2088,25 @@ testTimesTwoPowerGradualUnderflow
 				g := f timesTwoPower: exp.
 				self assert: (g timesTwoPower: Float fmin exponent - g exponent) = Float fmin]! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'nice 2/12/2015 02:52'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 3/26/2019 10:59:17'!
 testTimesTwoPowerOverflow
 	self assert: (Float fminNormalized timesTwoPower: Float emax - Float emin) equals: (2.0 raisedTo: Float emax).
+	self assert: (Float zero timesTwoPower: SmallInteger maxVal) equals: Float zero.
 	self assert: (Float zero timesTwoPower: SmallInteger maxVal squared) equals: Float zero.
-! !
+	self assert: (1.0  timesTwoPower: SmallInteger maxVal) equals: Float infinity.
+	self assert: (1.0  timesTwoPower: SmallInteger maxVal squared) equals: Float infinity.
+	self assert: (-1.0  timesTwoPower: SmallInteger maxVal) equals: Float negativeInfinity.
+	self assert: (-1.0  timesTwoPower: SmallInteger maxVal squared) equals: Float negativeInfinity.! !
 
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'nice 2/12/2015 02:52'!
+!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 3/26/2019 10:58:50'!
 testTimesTwoPowerUnderflow
 	self assert: ((2.0 raisedTo: Float emax) timesTwoPower: Float emin - Float emax) equals: Float fminNormalized.
 	self assert: (Float infinity timesTwoPower: SmallInteger minVal * SmallInteger maxVal) equals: Float infinity.
+	self assertIsPositiveZero: (1.0  timesTwoPower: SmallInteger maxVal negated).
+	self assertIsPositiveZero: (1.0  timesTwoPower: SmallInteger maxVal squared negated).
+	self assertIsNegativeZero: (-1.0  timesTwoPower: SmallInteger maxVal negated).
+	self assertIsNegativeZero: (-1.0  timesTwoPower: SmallInteger maxVal squared negated).
 ! !
-
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'nice 10/14/2011 21:43'!
-testZeroRaisedToNegativePower
-	"this is a test related to http://bugs.squeak.org/view.php?id=6781"
-	
-	self should: [0.0 raisedTo: -1] raise: ZeroDivide.
-	self should: [0.0 raisedTo: -1.0] raise: ZeroDivide.! !
-
-!FloatTest methodsFor: 'tests - arithmetic' stamp: 'jmv 10/8/2018 16:24:31'!
-testZeroes
-	self assert: -1.0 * 0.0 = 0.0.
-	self assert: (-1.0 * 0.0) sign =  -1.
-	self assert: 1.0 * -0.0 = 0.0.
-	self assert: (1.0 * -0.0) sign =  -1.
-	self assert: -1.0 * -0.0 = 0.0.
-	self assert: (-1.0 * -0.0) sign =  0.! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:56:51'!
 testArCosh
@@ -2112,9 +2114,9 @@ testArCosh
 	self deny: Float infinity arCosh isFinite.
 	self verify: 2.5 arCosh cosh isHyperbolicallyEqualTo: 2.5! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'sqr 12/15/2018 00:57:19'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 3/26/2019 11:23:12'!
 testArSinh
-	self assertIsPositiveZero: 0.0.
+	self assertIsPositiveZero: 0.0 arSinh.
 	self assertIsNegativeZero: Float negativeZero arSinh.
 	self deny: Float infinity arSinh isFinite.
 	self verify: 0.5 arSinh negated isHyperbolicallyEqualTo: 0.5 negated arSinh.
@@ -2315,13 +2317,14 @@ testSinh
 	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
 	self verify: 2.0 sinh negated isHyperbolicallyEqualTo: 2.0 negated sinh! !
 
-!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 2/21/2019 17:52:04'!
+!FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 3/26/2019 16:00:43'!
 testSqrt
 	self assert: Float nan sqrt isNaN.
 	self assert: Float infinity sqrt = Float infinity.
 	self assertIsPositiveZero: Float zero sqrt.
 	self assertIsNegativeZero: Float negativeZero sqrt.
-	self assert: Float fminNormalized sqrt squared = Float fminNormalized ! !
+	self assert: Float fminNormalized sqrt squared = Float fminNormalized .
+	self assert: Float fminDenormalized sqrt squared = Float fminDenormalized .! !
 
 !FloatTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 11/27/2018 11:03:49'!
 testSqrtNonPrimitive
@@ -2343,50 +2346,6 @@ testTanh
 	self assert: Float infinity tanh = 1.0.
 	self verify: 2.0 cosh squared - 2.0 sinh squared isHyperbolicallyEqualTo: 1.0.
 	self verify: 2.0 tanh negated isHyperbolicallyEqualTo: 2.0 negated tanh! !
-
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 9/1/2010 11:58'!
-testComparison
-				"In Cuis, it was decided to coerce operands to Float for comparison (if any of them was float),
-				in the classic ST-80 way"
-	| a b c |
-	
-	"Test equality when Float conversion exact"
-	self assert: 16r1FFFFFFFFFFFFF = 16r1FFFFFFFFFFFFF asFloat.
-	self assert: 16r1FFFFFFFFFFFFF = 16r1FFFFFFFFFFFFF asFloat asInteger.
-	
-	self assert: (((1 bitShift: 54)+1)/(1 bitShift: 54)) > 1.
-	self assert: (((1 bitShift: 54)+1)/(1 bitShift: 54)) = 1.0.			"Coerce to Float"
-	
-	self assert: (((1 bitShift: 54)-1)/(1 bitShift: 54)) < 1.
-	self assert: (((1 bitShift: 54)-1)/(1 bitShift: 54)) = 1.0.			"Coerce to Float"
-	
-	"Test exact vs inexact arithmetic"
-	(1 to: 100) do: [:i |
-		i isPowerOfTwo
-			ifTrue: [self assert: (1/i) = (1/i) asFloat]
-			ifFalse: [
-				"Coerce to Float"
-				self assert: (1/i) = (1/i) asFloat]].
-	
-	"Test overflow (compare to infinity)"
-	a := (11 raisedTo: 400) / 2.
-	b := (13 raisedTo: 400) / 2.
-	c := a asFloat.
-	self assert: ((a = c) & (b = c)).			"Coerce to Float"
-	self deny:  (a = b).
-	
-	"every integer is smaller than infinity"
-	self assert: a = Float infinity.			"Coerce to Float"
-	self assert: a > Float infinity negated.
-	
-	"Test underflow"
-	self deny: 1 / (11 raisedTo: 400) = 0.
-	self assert: 1 / (11 raisedTo: 400) = 0.0.		"Coerce to Float"
-	
-	"Test hash code"
-	self assert:
-		((Set new: 3) add: 3; add: 3.0; size) =
-		((Set new: 4) add: 3; add: 3.0; size).! !
 
 !FloatTest methodsFor: 'tests - comparing' stamp: 'nice 7/10/2009 22:27'!
 testComparisonWhenPrimitiveFails
@@ -2422,6 +2381,46 @@ testComparisonWithFraction
 	self assert: (1/2) = 0.5.
 	self assert: 0.1 = (1/10).
 	self assert: (1/10) = 0.1! !
+
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 3/26/2019 16:10:52'!
+testEqualityComparison
+				"In Cuis, it was decided to coerce operands to Float for comparison (if any of them was float),
+				in the classic ST-80 way"
+	| a b c |
+	
+	"Test equality when Float conversion exact"
+	self assert: 16r1FFFFFFFFFFFFF = 16r1FFFFFFFFFFFFF asFloat.
+	self assert: 16r1FFFFFFFFFFFFF = 16r1FFFFFFFFFFFFF asFloat asInteger.
+	
+	self assert: (((1 bitShift: 54)+1)/(1 bitShift: 54)) > 1.
+	self assert: (((1 bitShift: 54)+1)/(1 bitShift: 54)) = 1.0.			"Coerce to Float"
+	
+	self assert: (((1 bitShift: 54)-1)/(1 bitShift: 54)) < 1.
+	self assert: (((1 bitShift: 54)-1)/(1 bitShift: 54)) = 1.0.			"Coerce to Float"
+	
+	"Test exact vs inexact arithmetic"
+	(1 to: 100) do: [:i |
+		self assert: (1/i) = (1/i asFloat)].
+	
+	"Test overflow (compare to infinity)"
+	a := (11 raisedTo: 400) / 2.
+	b := (13 raisedTo: 400) / 2.
+	c := a asFloat.
+	self assert: ((a = c) & (b = c)).			"Coerce to Float"
+	self deny:  (a = b).
+	
+	"every integer is smaller than infinity"
+	self assert: a = Float infinity.			"Coerce to Float"
+	self assert: a > Float infinity negated.
+	
+	"Test underflow"
+	self deny: 1 / (11 raisedTo: 400) = 0.
+	self assert: 1 / (11 raisedTo: 400) = 0.0.		"Coerce to Float"
+	
+	"Test hash code"
+	self assert:
+		((Set new: 3) add: 3; add: 3.0; size) =
+		((Set new: 4) add: 3; add: 3.0; size).! !
 
 !FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 12/4/2018 12:05:21'!
 testEquals
@@ -3434,11 +3433,27 @@ testZero1
 	"The negative zero has a bit representation that is different from the bit representation of the positive zero. Nevertheless, both values are defined to be equal."
 ! !
 
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 10/14/2011 21:43'!
+testZeroRaisedToNegativePower
+	"this is a test related to http://bugs.squeak.org/view.php?id=6781"
+	
+	self should: [0.0 raisedTo: -1] raise: ZeroDivide.
+	self should: [0.0 raisedTo: -1.0] raise: ZeroDivide.! !
+
 !FloatTest methodsFor: 'tests - zero behavior' stamp: 'nice 3/23/2008 16:00'!
 testZeroSignificandAsInteger
 	"This is about http://bugs.squeak.org/view.php?id=6990"
 	
 	self assert: 0.0 significandAsInteger = 0! !
+
+!FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 10/8/2018 16:24:31'!
+testZeroes
+	self assert: -1.0 * 0.0 = 0.0.
+	self assert: (-1.0 * 0.0) sign =  -1.
+	self assert: 1.0 * -0.0 = 0.0.
+	self assert: (1.0 * -0.0) sign =  -1.
+	self assert: -1.0 * -0.0 = 0.0.
+	self assert: (-1.0 * -0.0) sign =  0.! !
 
 !FloatTest methodsFor: 'tests - zero behavior' stamp: 'jmv 12/12/2018 14:44:18'!
 testZeros
@@ -17274,6 +17289,241 @@ test19RenamesClassWhenMethodReferencesClassAndDoesNothing
 		referencingMethod := (Smalltalk classNamed: newClassName) compiledMethodAt: selector.
 		self assert: (referencingMethod hasLiteralThorough: newClassName).
 		self deny: (referencingMethod hasLiteralThorough: oldClassName)] ! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 17:53:53'!
+define: anOldName with: aGlobalValue toBeRenamedAs: aNewName while: aBlock
+
+	| oldNameAsSymbol newNameAsSymbol |
+	
+	oldNameAsSymbol := anOldName asSymbol.
+	newNameAsSymbol := aNewName asSymbol.
+	
+	self assert: (Smalltalk at: oldNameAsSymbol ifAbsent: [ nil ]) isNil.
+	self assert: (Smalltalk at: newNameAsSymbol ifAbsent: [ nil ]) isNil.
+	
+	[ 
+		Smalltalk at: oldNameAsSymbol put: aGlobalValue.
+		aBlock value: oldNameAsSymbol value: newNameAsSymbol value: aGlobalValue ] ensure: [
+			Smalltalk removeKey: oldNameAsSymbol ifAbsent: [].
+			Smalltalk removeKey: newNameAsSymbol ifAbsent: []].
+		! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:20:03'!
+test00GlobalCanNotBeClass
+
+	self 
+		assertCreation: [ RenameGlobal from: #Object to: 'NewObject__' asSymbol ]
+		failsWith: [ RenameGlobal globalCanNotBeClassErrorMessage]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:20:37'!
+test01NewNameHasToBeDifferentToOldOne
+
+	self 
+		define: 'OldNameToRename__' 
+		with: Object new 
+		toBeRenamedAs: 'OldNameToRename__' 
+		while: [ :oldName :newName :globalValue |
+			self 
+				assertCreation: [ RenameGlobal from: oldName to: newName ]
+				failsWith: [ RenameGlobal newNameEqualsOldNameErrorMessage]]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:26:40'!
+test02NewNameHasToBeASymbol
+
+	self withDefaultsDo: [ :oldName :newName :globalValue |
+		self 
+			assertCreation: [ RenameGlobal from: oldName to: newName asString ]
+			failsWith: [ NewGlobalPrecondition newNameMustBeSymbolErrorMessage]]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:27:23'!
+test03NewNameShouldNotBeAClass
+
+	| className |
+	
+	className := #Object.
+	
+	self withDefaultsDo: [ :oldName :newName :globalValue |
+		self 
+			assertCreation: [ RenameGlobal from: oldName to: className in: Smalltalk ]
+			failsWith: [ NewGlobalPrecondition errorMessageForAlreadyExistClassNamed: className ]]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:27:33'!
+test04NewNameShouldNotBeAGlobalVariable
+
+	| globalName |
+	
+	globalName := #Smalltalk.
+	
+	self withDefaultsDo: [ :oldName :newName :globalValue |
+		self 
+			assertCreation: [ RenameGlobal from: oldName to: globalName in: Smalltalk ]
+			failsWith: [ NewGlobalPrecondition errorMessageForAlreadyExistGlobalNamed: globalName ]]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:27:45'!
+test06OldNameIsRenamedToNewName
+
+	| rename |
+
+	self withDefaultsDo: [ :oldName :newName :globalValue |
+		rename := RenameGlobal from: oldName to: newName in: Smalltalk.
+		rename apply.
+
+		self assert: (Smalltalk at: oldName ifAbsent: [nil]) isNil.
+		self assert: (Smalltalk at: newName) equals: globalValue ].! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:27:58'!
+test07OldDirectReferencesAreRenamed
+
+	| rename classToRefactor referencingMethod selector |
+
+	self withDefaultsDo: [ :oldName :newName :globalValue |
+		classToRefactor := self createClassNamed: #AClassToRefactor.
+		selector := 'm1' asSymbol.
+		classToRefactor compile: selector, ' ^', oldName asString.
+
+		rename := RenameGlobal from: oldName to: newName in: Smalltalk.
+		rename apply.
+
+		referencingMethod := classToRefactor compiledMethodAt: selector.
+		self assert: (referencingMethod hasLiteralThorough: newName).
+		self deny: (referencingMethod hasLiteralThorough: oldName).
+		self assert: (classToRefactor new perform: selector) equals: globalValue ].
+		
+			
+	
+! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:28:09'!
+test08OldNameLiteralReferencesAreRenamed
+
+	| rename classToRefactor referencingMethod selector |
+
+	self withDefaultsDo: [ :oldName :newName :globalValue |
+		classToRefactor := self createClassNamed: #AClassToRefactor.
+		selector := 'm1' asSymbol.
+		classToRefactor compile: selector, ' ^#', oldName asString.
+
+		rename := RenameGlobal from: oldName to: newName in: Smalltalk.
+		rename apply.
+
+		referencingMethod := classToRefactor compiledMethodAt: selector.
+		self assert: (referencingMethod hasLiteralThorough: newName).
+		self deny: (referencingMethod hasLiteralThorough: oldName).
+		self assert: (classToRefactor new perform: selector) equals: newName ].
+		
+			! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:28:21'!
+test09NewNameHasToBeASymbol
+
+	self withDefaultsDo: [ :oldName :newName :globalValue |
+		self 
+			assertCreation: [ RenameGlobal from: oldName to: '' asSymbol ]
+			failsWith: [ NewGlobalPrecondition newNameCanNotBeEmptyErrorMessage]]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:28:30'!
+test10NewNameCanNotHaveSpaces
+
+	self withDefaultsDo: [ :oldName :newName :globalValue |
+		self 
+			assertCreation: [ RenameGlobal from: oldName to: 'With spaces' asSymbol ]
+			failsWith: [ NewGlobalPrecondition newNameCanNotHaveSeparatorsErrorMessage]]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 18:33:27'!
+test11ItDoesNotRenameReferencesToClassVariableWithSameName
+
+	| rename classWithClassVariable renamedReferences oldNameAsString |
+
+	oldNameAsString := 'OldNameToRename__'.
+	classWithClassVariable := self createClassNamed: 'ClassReferencingClassVar' asSymbol.
+	classWithClassVariable addClassVarName: oldNameAsString asSymbol.
+	classWithClassVariable compile: 'm1 ^', oldNameAsString.
+
+	self 
+		define: oldNameAsString 
+		with: Object new 
+		toBeRenamedAs: 'NewNameRenamed__' 
+		while: [ :oldName :newName :globalValue |
+
+			rename := RenameGlobal from: oldName to: newName.
+			renamedReferences := rename apply.
+	
+			self assert: renamedReferences isEmpty ]
+	
+	! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 18:33:34'!
+test12ItDoesNotRenameReferencesToClassVariableWithSameNameDefinedInAnySuperclass
+
+	| classWithClassVariable rename renamedReferences superClassOfClassWithClassVarReference oldNameAsString |
+
+	oldNameAsString := 'OldNameRenamed__'.
+
+	superClassOfClassWithClassVarReference := self createClassNamed: 'ClassReferencingClassVarSuperclass' asSymbol.
+	superClassOfClassWithClassVarReference addClassVarName: oldNameAsString asSymbol.
+	
+	classWithClassVariable := self createClassNamed: 'ClassReferencingClassVar' asSymbol subclassOf: superClassOfClassWithClassVarReference.
+	classWithClassVariable compile: 'm1 ^', oldNameAsString.
+
+	self 
+		define: oldNameAsString 
+		with: Object new 
+		toBeRenamedAs: 'NewNameRenamed__' 
+		while: [ :oldName :newName :globalValue |
+
+			rename := RenameGlobal from: oldName to: newName.
+			renamedReferences := rename apply.
+	
+			self assert: renamedReferences isEmpty ]
+	
+	
+	! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:29:03'!
+test13OldNameMustBeDefined
+	
+	self 
+		assertCreation: [ RenameGlobal from: 'AGlobal__' asSymbol to: 'AGlobal' asSymbol in: Smalltalk ]
+		failsWith: [ RenameGlobal errorMessageForGlobalNotDefined: 'AGlobal__' asSymbol ]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:34:06'!
+test14ItDoesNotRenameReferencesToClassVariableFromClassSideWithSameName
+
+	| rename classWithClassVariable renamedReferences oldNameAsString |
+
+	oldNameAsString := 'OldNameToRename__'.
+	classWithClassVariable := self createClassNamed: 'ClassReferencingClassVar' asSymbol.
+	classWithClassVariable addClassVarName: oldNameAsString asSymbol.
+	classWithClassVariable class compile: 'm1 ^', oldNameAsString.
+
+	self 
+		define: oldNameAsString 
+		with: Object new 
+		toBeRenamedAs: 'NewNameRenamed__' 
+		while: [ :oldName :newName :globalValue |
+
+			rename := RenameGlobal from: oldName to: newName.
+			renamedReferences := rename apply.
+	
+			self assert: renamedReferences isEmpty ]
+	
+	! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:49:43'!
+test15OldNameCanNotBeEmpty
+	
+	self 
+		assertCreation: [ RenameGlobal from: '' asSymbol to: 'AGlobal' asSymbol in: Smalltalk ]
+		failsWith: [ RenameGlobal oldNameCanNotBeEmptyErrorMessage ]! !
+
+!RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 19:26:58'!
+withDefaultsDo: aBlock
+
+	self 
+		define: 'OldNameToRename__' 
+		with: Object new 
+		toBeRenamedAs: 'NewNameToRename__' 
+		while: aBlock! !
 
 !RenameInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/11/2017 18:13:05'!
 classToRefactorName
