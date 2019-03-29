@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3689] on 27 March 2019 at 10:26:07 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3689] on 27 March 2019 at 3:12:35 pm'!
 'Description Tests for functionality in the Cuis Smalltalk base image.'!
-!provides: 'BaseImageTests' 1 140!
+!provides: 'BaseImageTests' 1 141!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -2504,7 +2504,7 @@ testLiteralEqualityOfZeroAndNegativeZero
 		assert: (Compiler evaluate: '1>2 ifTrue: [0.0] ifFalse: [-0.0]') hex = Float negativeZero hex
 		description: 'Float zero and negativeZero are not literally substituable'.! !
 
-!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 9/7/2010 12:12'!
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 3/27/2019 15:10:58'!
 testAsTrueFraction
 	"
 	self new testAsTrueFraction
@@ -2516,9 +2516,9 @@ testAsTrueFraction
 	self assert: x asTrueFraction asFloat = x.
 	x _ Float fminNormalized.
 	self assert: x asTrueFraction asFloat = x.
-	x _ 0.0 - Float fminDenormalized.
+	x _ 0.0 - Float fminNormalized.
 	self assert: x asTrueFraction asFloat = x.
-	x _ Float fminNormalized.
+	x _ Float fminDenormalized.
 	self assert: x asTrueFraction asFloat = x.
 	x _ 0.0 - Float fminDenormalized.
 	self assert: x asTrueFraction asFloat = x.
