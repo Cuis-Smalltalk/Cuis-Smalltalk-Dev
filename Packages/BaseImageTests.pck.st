@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3691] on 5 April 2019 at 5:39:43 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3693] on 5 April 2019 at 8:01:20 pm'!
 'Description Tests for functionality in the Cuis Smalltalk base image.'!
-!provides: 'BaseImageTests' 1 144!
+!provides: 'BaseImageTests' 1 145!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -1531,13 +1531,16 @@ testCreation2
 	self assert: (c imaginary = 5).
 	! !
 
-!ComplexTest methodsFor: 'tests - accessing' stamp: 'jmv 4/5/2019 09:12:38'!
+!ComplexTest methodsFor: 'tests - accessing' stamp: 'jmv 4/5/2019 19:56:05'!
 testAbs
 	
 	| c |
-	c := (6 - 6 i).
+	c _ (6 - 6 i).
 	self assert: c abs  = 72 sqrt.
-	! !
+	c _ 2.0e306 + 3.0e305 i.
+	self assert: c abs = c safeAbs.
+	c _ 2.0e-155 + 3.0e-155 i.
+	self assert: c abs = c safeAbs.! !
 
 !ComplexTest methodsFor: 'tests - accessing' stamp: 'jmv 4/5/2019 09:13:12'!
 testArg
@@ -3300,6 +3303,21 @@ testCopy
 	"Is the sign of zero preserved by the copy ?"
 	self assertIsPositiveZero: 0.0 copy.
 	self assertIsNegativeZero: Float negativeZero copy.! !
+
+!FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 4/5/2019 19:51:34'!
+testIsDenormalized
+	self deny: Float pi isDenormalized.
+	self deny: 0.0 isDenormalized.
+	self assert: 0.0 successor isDenormalized.
+	self assert: Float fmin isDenormalized.
+	self assert: Float fminNormalized predecessor isDenormalized.
+	self deny: Float fminNormalized isDenormalized.
+	self deny: Float pi negated isDenormalized.
+	self deny: -0.0 isDenormalized.
+	self assert: -0.0 predecessor isDenormalized.
+	self assert: Float fmin negated isDenormalized.
+	self assert: Float fminNormalized negated successor isDenormalized.
+	self deny: Float fminNormalized negated isDenormalized.! !
 
 !FloatTest methodsFor: 'tests - accessing parts' stamp: 'jmv 12/4/2018 14:10:06'!
 testPartBits
