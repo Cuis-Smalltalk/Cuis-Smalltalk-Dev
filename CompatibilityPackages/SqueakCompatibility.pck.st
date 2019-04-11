@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3253] on 15 January 2018 at 8:40:09 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 2:05:53 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 29!
+!provides: 'SqueakCompatibility' 1 30!
 !requires: 'Cuis-Base' 42 2658 nil!
 SystemOrganization addCategory: #SqueakCompatibility!
 
@@ -391,6 +391,46 @@ an entry in a directory; a reference to a directory.!
 
 !DirectoryEntryFile commentStamp: '<historical>' prior: 0!
 an entry in a directory; a reference to a file.!
+
+!FileDirectory class methodsFor: 'name utilities' stamp: 'jmv 4/19/2015 08:41'!
+startUp
+
+	Smalltalk openSourceFiles! !
+
+!FileDirectory class methodsFor: 'cacher state access' stamp: 'jmv 6/17/2015 11:05'!
+releaseClassCachedState
+
+	DirectoryClass _ nil.
+	ImageDirectory _ nil.
+	VMDirectory _ nil.
+	CurrentDirectory _ nil! !
+
+!FileDirectory class methodsFor: 'system start up' stamp: 'jmv 2/15/2008 00:45'!
+shutDown
+
+	Smalltalk closeSourceFiles.
+! !
+
+!FileDirectory methodsFor: 'printing' stamp: 'jm 12/4/97 19:41'!
+printOn: aStream 
+	"Refer to the comment in Object|printOn:."
+
+	aStream nextPutAll: self class name.
+	aStream nextPutAll: ' on '.
+	pathName printOn: aStream.
+! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:37'!
+name
+	"name of the entry"
+	^name! !
+
+!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 8/29/2007 17:44'!
+printOn: aStream 
+	super printOn: aStream.
+	aStream
+		space ;
+		nextPutAll: self name! !
 
 !KlattResonatorIndices class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 20:17'!
 initialize
@@ -1264,15 +1304,6 @@ setPathName: pathString
 	pathName _ pathString.
 ! !
 
-!FileDirectory methodsFor: 'printing' stamp: 'jm 12/4/97 19:41'!
-printOn: aStream 
-	"Refer to the comment in Object|printOn:."
-
-	aStream nextPutAll: self class name.
-	aStream nextPutAll: ' on '.
-	pathName printOn: aStream.
-! !
-
 !FileDirectory class methodsFor: 'private' stamp: 'jmv 4/19/2015 08:34'!
 activeDirectoryClass
 	"Return the concrete FileDirectory subclass for the platform on which we are currently running."
@@ -1410,11 +1441,6 @@ splitName: fullName to: pathAndNameBlock
 			localName _ fullName copyFrom: i + 1 to: fullName size].
 
 	^ pathAndNameBlock value: dirName value: localName! !
-
-!FileDirectory class methodsFor: 'name utilities' stamp: 'jmv 4/19/2015 08:41'!
-startUp
-
-	Smalltalk openSourceFiles! !
 
 !FileDirectory class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:09'!
 currentDirectory
@@ -1576,20 +1602,6 @@ lookInUsualPlaces: fileName
 		ifTrue: [^ dir fileNamed: fileName].
 
 	^ nil! !
-
-!FileDirectory class methodsFor: 'cacher state access' stamp: 'jmv 6/17/2015 11:05'!
-releaseClassCachedState
-
-	DirectoryClass _ nil.
-	ImageDirectory _ nil.
-	VMDirectory _ nil.
-	CurrentDirectory _ nil! !
-
-!FileDirectory class methodsFor: 'system start up' stamp: 'jmv 2/15/2008 00:45'!
-shutDown
-
-	Smalltalk closeSourceFiles.
-! !
 
 !AcornFileDirectory methodsFor: 'file name utilities' stamp: 'tpr 8/2/2003 19:34'!
 checkName: aFileName fixErrors: fixing
@@ -1952,18 +1964,6 @@ modificationTime
 	"time the entry was last modified"
 	^modificationTime! !
 
-!SqDirectoryEntry methodsFor: 'access' stamp: 'ls 7/15/1998 21:37'!
-name
-	"name of the entry"
-	^name! !
-
-!SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 8/29/2007 17:44'!
-printOn: aStream 
-	super printOn: aStream.
-	aStream
-		space ;
-		nextPutAll: self name! !
-
 !SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 1/25/2011 13:16'!
 size
 	"For API compatibility with byte objects (for streaming api)."
@@ -2218,6 +2218,15 @@ abstractMarkers
 print: aNumber digits: numDigits
 
 	aNumber printOn: self base: 10 nDigits: numDigits ! !
+
+!PositionableStream methodsFor: '*SqueakCompatibility-nonhomogeneous accessing'!
+nextNumber: n 
+	"Answer the next n bytes as a positive Integer or LargePositiveInteger."
+	| s |
+	s := 0.
+	1 to: n do: 
+		[:i | s := (s bitShift: 8) bitOr: self next asInteger].
+	^ s normalize! !
 
 !WriteStream methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 14:58'!
 crtab

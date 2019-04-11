@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 8 March 2018 at 11:35:06 am'!
 'Description Please enter a description for this package.'!
-!provides: 'ExtendedClipboard' 1 10!
+!provides: 'ExtendedClipboard' 1 11!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #ExtendedClipboard!
@@ -324,13 +324,13 @@ initialize
 	clipboard := [self createClipboard] on: Error do: [:ex | clipboard := 0]! !
 
 !ExtendedClipboardInterface methodsFor: 'system primitives' stamp: 'JSM 5/6/2006 16:32'!
-primAddClipboardData: clipboard data: data dataFormat: aFormat
+primAddClipboardData: aClipboard data: data dataFormat: aFormat
 
 	<primitive:'ioAddClipboardData' module: 'ClipboardExtendedPlugin'>
 	^ self primitiveFailed.! !
 
 !ExtendedClipboardInterface methodsFor: 'system primitives' stamp: 'JSM 5/6/2006 16:32'!
-primClearClipboard: clipboard
+primClearClipboard: aClipboard
 
 	<primitive:'ioClearClipboard' module: 'ClipboardExtendedPlugin'>
 	^ self primitiveFailed.
@@ -343,14 +343,14 @@ primCreateClipboard
 ! !
 
 !ExtendedClipboardInterface methodsFor: 'system primitives' stamp: 'JSM 5/6/2006 16:33'!
-primGetClipboardFormat: clipboard formatNumber: formatNumber
+primGetClipboardFormat: aClipboard formatNumber: formatNumber
 
 	<primitive:'ioGetClipboardFormat' module: 'ClipboardExtendedPlugin'>
 	^ self primitiveFailed.
 ! !
 
 !ExtendedClipboardInterface methodsFor: 'system primitives' stamp: 'JSM 5/6/2006 16:33'!
-primReadClipboardData: clipboard format: format
+primReadClipboardData: aClipboard format: format
 
 	<primitive:'ioReadClipboardData' module: 'ClipboardExtendedPlugin'>.
 	^ self primitiveFailed.

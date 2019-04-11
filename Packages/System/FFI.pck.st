@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3436] on 3 September 2018 at 9:11:25 am'!
 'Description Please enter a description for this package.'!
-!provides: 'FFI' 1 30!
+!provides: 'FFI' 1 31!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 
@@ -620,9 +620,9 @@ setExtent: extent depth: bitsPerPixel
 		isMSB: bitsPerPixel > 0.! !
 
 !ExternalForm methodsFor: 'initialization' stamp: 'jcg 1/29/2010 01:31'!
-setExtent: extent depth: bitsPerPixel bits: pointer
+setExtent: extent depth: bitsPerPixel bits: aPointer
 	self setExtent: extent depth: bitsPerPixel.
-	self setManualSurfacePointer: pointer.! !
+	self setManualSurfacePointer: aPointer.! !
 
 !ExternalForm methodsFor: 'initialization' stamp: 'jmv 12/22/2016 16:04:33'!
 setManualSurfacePointer: newPointer "ExternalStructure, ExternalAddress, or nil"
@@ -651,7 +651,7 @@ pointer
 	^pointer! !
 
 !ExternalForm methodsFor: 'primitives' stamp: 'jcg 1/30/2010 02:52'!
-primCreateManualSurfaceWidth: width height: height rowPitch: rowPitch depth: depth isMSB: isMSB
+primCreateManualSurfaceWidth: aWidth height: aHeight rowPitch: rowPitch depth: aDepth isMSB: isMSB
 	<primitive: 'primitiveCreateManualSurface' module: 'SqueakFFIPrims'>
 	self primitiveFailed
 ! !
@@ -663,7 +663,7 @@ primDestroyManualSurface: surfaceID
 ! !
 
 !ExternalForm methodsFor: 'primitives' stamp: 'jcg 1/30/2010 02:52'!
-primManualSurface: surfaceID setPointer: pointer
+primManualSurface: surfaceID setPointer: aPointer
 	"The 'surfaceID' is a handle returned by #primitiveCreateManualSurface from SurfacePlugin. The pointer is a 32-bit unsigned integer that SurfacePlugin casts to a void*."
 	<primitive: 'primitiveSetManualSurfacePointer' module: 'SqueakFFIPrims'>
 	self primitiveFailed
@@ -1521,14 +1521,14 @@ asPointerType
 		ifFalse:[^referencedType]! !
 
 !ExternalType methodsFor: 'converting' stamp: 'eem 2/16/2016 12:57'!
-asPointerType: pointerSize
+asPointerType: aPointerSize
 	"convert the receiver into a pointer type"
 	| type |
 	type := self asPointerType.
-	^type pointerSize = pointerSize
+	^type pointerSize = aPointerSize
 		ifTrue: [type]
 		ifFalse:
-			[type copy pointerSize: pointerSize; yourself]! !
+			[type copy pointerSize: aPointerSize; yourself]! !
 
 !ExternalType methodsFor: 'accessing' stamp: 'ar 12/2/1999 14:15'!
 atomicType

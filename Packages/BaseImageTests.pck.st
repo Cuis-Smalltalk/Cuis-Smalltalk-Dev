@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3693] on 5 April 2019 at 8:01:20 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3694] on 8 April 2019 at 12:45:07 pm'!
 'Description Tests for functionality in the Cuis Smalltalk base image.'!
-!provides: 'BaseImageTests' 1 145!
+!provides: 'BaseImageTests' 1 146!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -1275,7 +1275,7 @@ See class comment there.
 General system - wide image health tests.!
 
 !AffineTransformationTest commentStamp: '<historical>' prior: 0!
-Tests for MatrixTransform2x3!
+Tests for AffineTransformation!
 
 !MorphicLocationTest commentStamp: 'jmv 1/14/2015 14:32' prior: 0!
 Tests for composition of AffineTransformation and MorphicTranslation!

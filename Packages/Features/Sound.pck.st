@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3398] on 9 August 2018 at 11:35:17 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 2:02:54 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 19!
+!provides: 'Sound' 1 21!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
@@ -667,6 +667,200 @@ The idea is that as much sound playing as possible should go through this facade
 
 Two basic subclasses exist at the time of this writing, the BaseSoundSystem which represents the standard Squeak sound system, and the DummySoundSystem which is a dummy implementation that can be used when there is no sound card available, or when the base sound system isn't in the image, or when you simply don't want to use the available sound card.!
 
+!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:33'!
+startUp
+	"Check if the word order has changed from the last save."
+
+	| la |
+	la _ ShortIntegerArray classPool at: #LastSaveOrder.
+	((la at: 2) = 42 and: [(la at: 1) = 13]) 
+		ifTrue: [
+			self allInstancesDo: [ :each | 
+				BitBlt swapHalvesIn32BitWords: each ]]
+			"Reverse the two 16-bit halves."
+			"Another reversal happened automatically which reversed the bytes."! !
+
+!AbstractSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:55'!
+postCopy
+	"A sound should copy all of the state needed to play itself, allowing two copies of a sound to play at the same time. These semantics require a recursive copy but only down to the level of immutable data. For example, a SampledSound need not copy its sample buffer. Subclasses overriding this method should include a resend to super."
+
+	self copyEnvelopes! !
+
+!FMSound methodsFor: 'storing' stamp: 'jmv 3/13/2012 12:34'!
+storeOn: strm
+	| env |
+	strm nextPutAll: '(((FMSound';
+		nextPutAll: ' pitch: '; print: self pitch;
+		nextPutAll: ' dur: '; print: self duration;
+		nextPutAll: ' loudness: '; print: self loudness; nextPutAll: ')';
+		nextPutAll: ' modulation: '; print: self modulation;
+		nextPutAll: ' ratio: '; print: self ratio; nextPutAll: ')'.
+	1 to: envelopes size do:
+		[:i | env _ envelopes at: i.
+		strm newLine; nextPutAll: '    addEnvelope: '. env storeOn: strm.
+		i < envelopes size ifTrue: [strm nextPutAll: ';']].
+	strm  nextPutAll: ')'.
+! !
+
+!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 9/25/2000 12:06'!
+objectForDataStream: refStrm
+    "Answer an object to store on a data stream, a copy of myself whose SampleBuffers have been converted into ByteArrays."
+
+	refStrm replace: leftSamples with: leftSamples asByteArray.
+	refStrm replace: rightSamples with: rightSamples asByteArray.
+	"substitution will be made in DataStream nextPut:"
+	^ self
+! !
+
+!MixedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:57'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds! !
+
+!PluckedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:56'!
+postCopy
+
+	super postCopy.
+	self copyRing
+! !
+
+!RepeatingSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sound."
+
+	super postCopy.
+	self copySound
+! !
+
+!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sound."
+
+	super postCopy.
+	self copySound
+! !
+
+!SequentialSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
+! !
+
+!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
+postCopy
+	"Copy my component sounds."
+
+	super postCopy.
+	self copySounds
+! !
+
+!Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 17:03'!
+name
+
+	^ self updateSelector allButLast
+! !
+
+!Envelope methodsFor: 'storing' stamp: 'di 2/1/98 15:45'!
+storeOn: strm
+	strm nextPutAll: '((' , self class name;
+		nextPutAll: ' points: '; store: (points collect: [:p | p x @ (p y roundTo: 0.00001)]);
+		nextPutAll: ' loopStart: '; print: loopStartIndex;
+		nextPutAll: ' loopEnd: '; print: loopEndIndex; nextPutAll: ')';
+		nextPutAll: ' updateSelector: '; store: self updateSelector; nextPutAll: ';';
+		nextPutAll: ' scale: '; print: scale; nextPutAll: ')'.
+! !
+
+!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 1/14/1999 13:17'!
+name
+
+	^ 'random ', updateSelector
+! !
+
+!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 5/8/1998 18:48'!
+shutDown
+	"Stop player process, for example before snapshotting."
+
+	self stopPlayerProcess.
+	ReverbState _ nil.
+! !
+
+!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 7/11/97 12:17'!
+startUp
+	"Start up the player process."
+
+	SoundPlayer initialize.
+	SoundPlayer
+		startPlayerProcessBufferSize: (BufferMSecs * SamplingRate) // 1000
+		rate: SamplingRate
+		stereo: Stereo.
+! !
+
+!ControlChangeEvent methodsFor: 'printing' stamp: 'sma 6/1/2000 09:34'!
+printOn: aStream
+	aStream
+		nextPut: $(;
+		print: time;
+		nextPutAll: ': ctrl[';
+		print: control;
+		nextPutAll: ']=';
+		print: value;
+		nextPut: $)! !
+
+!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:59'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': '.
+	aStream nextPutAll: self keyName.
+	aStream space.
+	duration printOn: aStream.
+	aStream nextPut: $).
+! !
+
+!PitchBendEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 09:42'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': bend '.
+	bend printOn: aStream.
+	aStream nextPut: $).
+! !
+
+!ProgramChangeEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 08:28'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': prog '.
+	program printOn: aStream.
+	aStream nextPut: $).
+! !
+
+!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 9/10/1998 08:37'!
+printOn: aStream
+
+	aStream nextPut: $(.
+	time printOn: aStream.
+	aStream nextPutAll: ': tempo '.
+	((120.0 * (500000.0 / tempo)) roundTo: 0.01) printOn: aStream.
+	aStream nextPut: $).
+! !
+
+!SoundSystem class methodsFor: 'as yet unclassified' stamp: 'jmv 6/7/2013 22:05'!
+shutDown
+	SoundPlayer shutDown! !
+
+!SoundSystem methodsFor: 'misc' stamp: 'jmv 6/7/2013 21:58'!
+shutDown
+	SoundPlayer shutDown
+! !
+
 !SoundBuffer methodsFor: 'utilities' stamp: 'jm 8/15/1998 13:03'!
 asByteArray
 	"Answer a ByteArray containing my sample data serialized in most-significant byte first order."
@@ -1022,25 +1216,12 @@ initialize
 	"SoundBuffer initialize"
 	Smalltalk addToStartUpList: self! !
 
-!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:33'!
-startUp
-	"Check if the word order has changed from the last save."
-
-	| la |
-	la _ ShortIntegerArray classPool at: #LastSaveOrder.
-	((la at: 2) = 42 and: [(la at: 1) = 13]) 
-		ifTrue: [
-			self allInstancesDo: [ :each | 
-				BitBlt swapHalvesIn32BitWords: each ]]
-			"Reverse the two 16-bit halves."
-			"Another reversal happened automatically which reversed the bytes."! !
-
 !Sonogram methodsFor: 'all' stamp: 'jmv 12/16/2011 10:26'!
-extent: extent minVal: min maxVal: max scrollDelta: d
+extent: aPoint minVal: min maxVal: max scrollDelta: d
 	minVal _ min.
 	maxVal _ max.
 	scrollDelta _ d.
-	self morphExtent: extent.
+	self morphExtent: aPoint.
 
 " try following with scrolldelta = 1, 20, 200
 	| s data |
@@ -1241,14 +1422,15 @@ readCommonChunk: chunkSize
 		in skip: (chunkSize - 22)].  "skip the reminder of AIFF-C style chunk"
 ! !
 
-!AIFFFileReader methodsFor: 'private' stamp: 'jmv 2/29/2016 10:44'!
+!AIFFFileReader methodsFor: 'private' stamp: 'jmv 4/11/2019 14:01:46'!
 readExtendedFloat
 	"Read and answer an Apple extended-precision 80-bit floating point number from the input stream."
 	"Details: I could not find the specification for this format, so constants were determined empirically based on assumption of 1-bit sign, 15-bit exponent, 64-bit mantissa. This format does not seem to have an implicit one before the mantissa as some float formats do."
 
 	| signAndExp mantissa sign exp |
 	signAndExp _ in nextUnsignedInt16BigEndian: true.
-	mantissa _ in nextNumber: 8.  "scaled by (2 raisedTo: -64) below"
+	"scaled by (2 raisedTo: -64) below"
+	mantissa _ (in nextUnsignedInt32BigEndian: true) << 32 + (in nextUnsignedInt32BigEndian: true).
 	(signAndExp bitAnd: 16r8000) = 0
 		ifTrue: [sign _ 1.0]
 		ifFalse: [sign _ -1.0].
@@ -1742,12 +1924,6 @@ copyEnvelopes
 
 	envelopes _ envelopes collect: [:e | e copy target: self].
 ! !
-
-!AbstractSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:55'!
-postCopy
-	"A sound should copy all of the state needed to play itself, allowing two copies of a sound to play at the same time. These semantics require a recursive copy but only down to the level of immutable data. For example, a SampledSound need not copy its sample buffer. Subclasses overriding this method should include a resend to super."
-
-	self copyEnvelopes! !
 
 !AbstractSound methodsFor: 'copying' stamp: 'di 3/4/1999 21:29'!
 sounds
@@ -3690,22 +3866,6 @@ stopAfterMSecs: mSecs
 	count _ (mSecs * self samplingRate) // 1000.
 ! !
 
-!FMSound methodsFor: 'storing' stamp: 'jmv 3/13/2012 12:34'!
-storeOn: strm
-	| env |
-	strm nextPutAll: '(((FMSound';
-		nextPutAll: ' pitch: '; print: self pitch;
-		nextPutAll: ' dur: '; print: self duration;
-		nextPutAll: ' loudness: '; print: self loudness; nextPutAll: ')';
-		nextPutAll: ' modulation: '; print: self modulation;
-		nextPutAll: ' ratio: '; print: self ratio; nextPutAll: ')'.
-	1 to: envelopes size do:
-		[:i | env _ envelopes at: i.
-		strm newLine; nextPutAll: '    addEnvelope: '. env storeOn: strm.
-		i < envelopes size ifTrue: [strm nextPutAll: ';']].
-	strm  nextPutAll: ')'.
-! !
-
 !FMSound class methodsFor: 'instruments' stamp: 'jm 1/14/1999 12:00'!
 bass1
 	"FMSound bass1 play"
@@ -4367,16 +4527,6 @@ comeFullyUpOnReload: smartRefStream
 
 ! !
 
-!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 9/25/2000 12:06'!
-objectForDataStream: refStrm
-    "Answer an object to store on a data stream, a copy of myself whose SampleBuffers have been converted into ByteArrays."
-
-	refStrm replace: leftSamples with: leftSamples asByteArray.
-	refStrm replace: rightSamples with: rightSamples asByteArray.
-	"substitution will be made in DataStream nextPut:"
-	^ self
-! !
-
 !LoopedSampledSound methodsFor: 'other' stamp: 'jm 5/29/1999 18:56'!
 findStartPointAfter: index
 	"Answer the index of the last zero crossing sample before the given index."
@@ -4616,13 +4766,6 @@ copySounds
 	rightVols _ rightVols copy.
 ! !
 
-!MixedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:57'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds! !
-
 !MixedSound methodsFor: 'sound generation' stamp: 'jm 11/25/97 13:40'!
 doControl
 
@@ -4709,13 +4852,6 @@ copyRing
 	"Private!! Support for copying"
 
 	ring _ ring copy.
-! !
-
-!PluckedSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:56'!
-postCopy
-
-	super postCopy.
-	self copyRing
 ! !
 
 !PluckedSound methodsFor: 'accessing' stamp: 'jm 8/17/1998 14:07'!
@@ -4928,14 +5064,6 @@ copySound
 	"Private!! Support for copying. Copy my component sound."
 
 	sound _ sound copy.
-! !
-
-!RepeatingSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sound."
-
-	super postCopy.
-	self copySound
 ! !
 
 !RepeatingSound methodsFor: 'sound generation' stamp: 'jm 11/25/97 13:40'!
@@ -5160,14 +5288,6 @@ copySound
 	sound _ sound copy.
 	leftBuffer _ leftBuffer copy.
 	rightBuffer _ rightBuffer copy.
-! !
-
-!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sound."
-
-	super postCopy.
-	self copySound
 ! !
 
 !ReverbSound methodsFor: 'sound generation' stamp: 'jm 1/21/98 14:32'!
@@ -5989,14 +6109,6 @@ copySounds
 	sounds _ sounds collect: [:s | s copy].
 ! !
 
-!SequentialSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds
-! !
-
 !SequentialSound methodsFor: 'copying' stamp: 'jmv 8/5/2011 16:00'!
 transformSounds: tfmBlock
 	"Private!! Support for copying. Copy my component sounds."
@@ -6534,14 +6646,6 @@ copySounds
 	rightVols _ rightVols copy.
 	muted _ muted copy.
 	self reset.
-! !
-
-!ScorePlayer methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:58'!
-postCopy
-	"Copy my component sounds."
-
-	super postCopy.
-	self copySounds
 ! !
 
 !ScorePlayer methodsFor: 'operating' stamp: 'jm 1/30/98 14:03'!
@@ -7334,12 +7438,6 @@ loopStartIndex
 	^ loopStartIndex
 ! !
 
-!Envelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 17:03'!
-name
-
-	^ self updateSelector allButLast
-! !
-
 !Envelope methodsFor: 'accessing' stamp: 'jm 2/4/98 17:24'!
 points
 
@@ -7612,16 +7710,6 @@ valueAtMSecs: mSecs
 	^ currValue
 ! !
 
-!Envelope methodsFor: 'storing' stamp: 'di 2/1/98 15:45'!
-storeOn: strm
-	strm nextPutAll: '((' , self class name;
-		nextPutAll: ' points: '; store: (points collect: [:p | p x @ (p y roundTo: 0.00001)]);
-		nextPutAll: ' loopStart: '; print: loopStartIndex;
-		nextPutAll: ' loopEnd: '; print: loopEndIndex; nextPutAll: ')';
-		nextPutAll: ' updateSelector: '; store: self updateSelector; nextPutAll: ';';
-		nextPutAll: ' scale: '; print: scale; nextPutAll: ')'.
-! !
-
 !Envelope class methodsFor: 'instance creation' stamp: 'jm 11/26/97 09:14'!
 example
 	"Envelope example showOnDisplay"
@@ -7759,12 +7847,6 @@ duration
 !RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:25'!
 duration: seconds
 	"Do nothing."
-! !
-
-!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 1/14/1999 13:17'!
-name
-
-	^ 'random ', updateSelector
 ! !
 
 !RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:30'!
@@ -9761,25 +9843,6 @@ stopReverb
 	ReverbState _ nil.
 ! !
 
-!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 5/8/1998 18:48'!
-shutDown
-	"Stop player process, for example before snapshotting."
-
-	self stopPlayerProcess.
-	ReverbState _ nil.
-! !
-
-!SoundPlayer class methodsFor: 'snapshotting' stamp: 'jm 7/11/97 12:17'!
-startUp
-	"Start up the player process."
-
-	SoundPlayer initialize.
-	SoundPlayer
-		startPlayerProcessBufferSize: (BufferMSecs * SamplingRate) // 1000
-		rate: SamplingRate
-		stereo: Stereo.
-! !
-
 !SoundPlayer class methodsFor: 'snapshotting' stamp: 'ar 2/4/2001 17:59'!
 startUpWithSound: aSound
 	"Start up the player process."
@@ -10649,17 +10712,6 @@ outputOnMidiPort: aMidiPort
 		byte: value.
 ! !
 
-!ControlChangeEvent methodsFor: 'printing' stamp: 'sma 6/1/2000 09:34'!
-printOn: aStream
-	aStream
-		nextPut: $(;
-		print: time;
-		nextPutAll: ': ctrl[';
-		print: control;
-		nextPutAll: ']=';
-		print: value;
-		nextPut: $)! !
-
 !NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:02'!
 channel
 
@@ -10767,18 +10819,6 @@ keyName
 	^ pitchName, octave
 ! !
 
-!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:59'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': '.
-	aStream nextPutAll: self keyName.
-	aStream space.
-	duration printOn: aStream.
-	aStream nextPut: $).
-! !
-
 !PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
 bend
 
@@ -10825,16 +10865,6 @@ outputOnMidiPort: aMidiPort
 		channel: channel
 		byte: (bend bitAnd: 16r7F)
 		byte: (bend bitShift: -7).
-! !
-
-!PitchBendEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 09:42'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': bend '.
-	bend printOn: aStream.
-	aStream nextPut: $).
 ! !
 
 !ProgramChangeEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:47'!
@@ -10884,30 +10914,10 @@ outputOnMidiPort: aMidiPort
 		byte: program.
 ! !
 
-!ProgramChangeEvent methodsFor: 'printing' stamp: 'jm 9/10/1998 08:28'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': prog '.
-	program printOn: aStream.
-	aStream nextPut: $).
-! !
-
 !TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:10'!
 isTempoEvent
 
 	^ true
-! !
-
-!TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 9/10/1998 08:37'!
-printOn: aStream
-
-	aStream nextPut: $(.
-	time printOn: aStream.
-	aStream nextPutAll: ': tempo '.
-	((120.0 * (500000.0 / tempo)) roundTo: 0.01) printOn: aStream.
-	aStream nextPut: $).
 ! !
 
 !TempoEvent methodsFor: 'as yet unclassified' stamp: 'jm 12/30/97 10:09'!
@@ -12812,11 +12822,6 @@ randomBitsFromSoundInput: bitCount
 sampledSoundChoices
 	^ SampledSound soundNames! !
 
-!SoundSystem methodsFor: 'misc' stamp: 'jmv 6/7/2013 21:58'!
-shutDown
-	SoundPlayer shutDown
-! !
-
 !SoundSystem methodsFor: 'misc' stamp: 'jmv 8/9/2018 11:33:08'!
 soundNameFromUser
 	"Pop up a list of available sound names and answer the one the user chooses, or nil if no choice made"
@@ -12839,10 +12844,6 @@ default
 !SoundSystem class methodsFor: 'class initialization' stamp: 'jmv 6/7/2013 22:01'!
 initialize
 	Default _ self new! !
-
-!SoundSystem class methodsFor: 'as yet unclassified' stamp: 'jmv 6/7/2013 22:05'!
-shutDown
-	SoundPlayer shutDown! !
 
 !FileEntry methodsFor: '*Sound' stamp: 'jmv 7/24/2017 16:25:59'!
 wavContents

@@ -3833,15 +3833,15 @@ sendRequest: request contentBlock: contentBlock
 	^response! !
 
 !WebClient methodsFor: 'sending' stamp: 'ar 8/12/2010 21:37'!
-writeCookiesFor: request on: stream
+writeCookiesFor: request on: aStream
 	"Write the cookies for a particular request"
 
 	(cookies select:[:ck| (request acceptsCookie: ck from: self )]) ifNotEmpty:[:ckset|
-		stream nextPutAll: 'Cookie: '.
+		aStream nextPutAll: 'Cookie: '.
 		ckset 
-			do:[:ck| stream nextPutAll: ck name,'=', ck value]
-			separatedBy:[stream  nextPutAll:'; '].
-		stream crlf.
+			do:[:ck| aStream nextPutAll: ck name,'=', ck value]
+			separatedBy:[aStream  nextPutAll:'; '].
+		aStream crlf.
 	].
 ! !
 
