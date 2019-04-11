@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 2:02:54 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 3:36:06 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sound' 1 21!
+!provides: 'Sound' 1 22!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Sound-Synthesis'!
@@ -1155,6 +1155,11 @@ writeOnGZIPByteStream: aStream
 	
 	aStream nextPutAllWordArray: self! !
 
+!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 12/15/2014 21:51'!
+initialize
+	"SoundBuffer initialize"
+	Smalltalk addToStartUpList: self! !
+
 !SoundBuffer class methodsFor: 'instance creation' stamp: 'RAA 12/30/2000 18:20'!
 averageEvery: nSamples from: anotherBuffer upTo: inCount
 
@@ -1210,11 +1215,6 @@ newStereoSampleCount: anInteger
 
 	^ self basicNew: anInteger
 ! !
-
-!SoundBuffer class methodsFor: 'class initialization' stamp: 'jmv 12/15/2014 21:51'!
-initialize
-	"SoundBuffer initialize"
-	Smalltalk addToStartUpList: self! !
 
 !Sonogram methodsFor: 'all' stamp: 'jmv 12/16/2011 10:26'!
 extent: aPoint minVal: min maxVal: max scrollDelta: d
@@ -1661,6 +1661,19 @@ readFromStream: aBinaryStream mergeIfStereo: mergeFlag skipDataChunk: skipDataFl
 	self readFrom: aBinaryStream.
 ! !
 
+!AbstractSound methodsFor: 'copying' stamp: 'jm 12/17/97 22:22'!
+copyEnvelopes
+	"Private!! Support for copying. Copy my envelopes."
+
+	envelopes _ envelopes collect: [:e | e copy target: self].
+! !
+
+!AbstractSound methodsFor: 'copying' stamp: 'di 3/4/1999 21:29'!
+sounds
+	"Allows simple sounds to behave as, eg, sequential sounds"
+
+	^ Array with: self! !
+
 !AbstractSound methodsFor: 'composition'!
 + aSound
 	"Return the mix of the receiver and the argument sound."
@@ -1918,19 +1931,6 @@ samplingRate
 	^ SoundPlayer samplingRate
 ! !
 
-!AbstractSound methodsFor: 'copying' stamp: 'jm 12/17/97 22:22'!
-copyEnvelopes
-	"Private!! Support for copying. Copy my envelopes."
-
-	envelopes _ envelopes collect: [:e | e copy target: self].
-! !
-
-!AbstractSound methodsFor: 'copying' stamp: 'di 3/4/1999 21:29'!
-sounds
-	"Allows simple sounds to behave as, eg, sequential sounds"
-
-	^ Array with: self! !
-
 !AbstractSound methodsFor: 'sound generation' stamp: 'jm 8/17/1998 13:34'!
 doControl
 	"Update the control parameters of this sound using its envelopes, if any."
@@ -2140,7 +2140,7 @@ storeAIFFSamplesOn: aBinaryStream
 	self storeSampleCount: samplesToStore bigEndian: true on: aBinaryStream.
 ! !
 
-!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 2/29/2016 11:03'!
+!AbstractSound methodsFor: 'file i/o' stamp: 'jmv 4/11/2019 15:33:07'!
 storeExtendedFloat: aNumber on: aBinaryStream
 	"Store an Apple extended-precision 80-bit floating point number on the given stream."
 	"Details: I could not find the specification for this format, so constants were determined empirically based on assumption of 1-bit sign, 15-bit exponent, 64-bit mantissa. This format does not seem to have an implicit one before the mantissa as some float formats do."
@@ -2157,7 +2157,8 @@ storeExtendedFloat: aNumber on: aBinaryStream
 	isNeg ifTrue: [exp _ exp bitOr: 16r8000].  "set sign bit"
 	aBinaryStream nextPut: ((exp bitShift: -8) bitAnd: 16rFF).
 	aBinaryStream nextPut: (exp bitAnd: 16rFF).
-	aBinaryStream nextNumber: 8 put: mantissa! !
+	aBinaryStream nextUnsignedInt32Put: mantissa >> 32 bigEndian: true.
+	aBinaryStream nextUnsignedInt32Put: (mantissa bitAnd: 16rFFFFFFFF) bigEndian: true.! !
 
 !AbstractSound methodsFor: 'file i/o' stamp: 'jmv 7/17/2017 15:39:47'!
 storeSampleCount: samplesToStore bigEndian: bigEndianFlag on: aBinaryStream
@@ -4221,6 +4222,20 @@ default
 	^ snd setPitch: 440.0 dur: 1.0 loudness: 0.5
 ! !
 
+!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 4/8/1999 12:45'!
+comeFullyUpOnReload: smartRefStream
+	"Convert my sample buffers from ByteArrays into SampleBuffers after raw loading from a DataStream. Answer myself."
+
+	leftSamples == rightSamples
+		ifTrue: [
+			leftSamples _ SoundBuffer fromByteArray: self leftSamples.
+			rightSamples _ leftSamples]
+		ifFalse: [
+			leftSamples _ SoundBuffer fromByteArray: self leftSamples.
+			rightSamples _ SoundBuffer fromByteArray: self rightSamples].
+
+! !
+
 !LoopedSampledSound methodsFor: 'initialization' stamp: 'jm 10/14/1998 16:04'!
 addReleaseEnvelope
 	"Add a simple release envelope to this sound."
@@ -4513,20 +4528,6 @@ samples
 	^ leftSamples
 ! !
 
-!LoopedSampledSound methodsFor: 'disk i/o' stamp: 'tk 4/8/1999 12:45'!
-comeFullyUpOnReload: smartRefStream
-	"Convert my sample buffers from ByteArrays into SampleBuffers after raw loading from a DataStream. Answer myself."
-
-	leftSamples == rightSamples
-		ifTrue: [
-			leftSamples _ SoundBuffer fromByteArray: self leftSamples.
-			rightSamples _ leftSamples]
-		ifFalse: [
-			leftSamples _ SoundBuffer fromByteArray: self leftSamples.
-			rightSamples _ SoundBuffer fromByteArray: self rightSamples].
-
-! !
-
 !LoopedSampledSound methodsFor: 'other' stamp: 'jm 5/29/1999 18:56'!
 findStartPointAfter: index
 	"Answer the index of the last zero crossing sample before the given index."
@@ -4724,6 +4725,15 @@ initialize
 	LoopIndexFractionMask _ LoopIndexScaleFactor - 1.
 ! !
 
+!MixedSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:33'!
+copySounds
+	"Private!! Support for copying. Copy my component sounds and settings array."
+
+	sounds _ sounds collect: [:s | s copy].
+	leftVols _ leftVols copy.
+	rightVols _ rightVols copy.
+! !
+
 !MixedSound methodsFor: 'composition'!
 + aSound
 	"Return the mix of the receiver and the argument sound."
@@ -4755,15 +4765,6 @@ add: aSound pan: leftRightPan volume: volume
 	sounds _ sounds copyWith: aSound.
 	leftVols _ leftVols copyWith: ((ScaleFactor - pan) * vol) // ScaleFactor.
 	rightVols _ rightVols copyWith: (pan * vol) // ScaleFactor.
-! !
-
-!MixedSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:33'!
-copySounds
-	"Private!! Support for copying. Copy my component sounds and settings array."
-
-	sounds _ sounds collect: [:s | s copy].
-	leftVols _ leftVols copy.
-	rightVols _ rightVols copy.
 ! !
 
 !MixedSound methodsFor: 'sound generation' stamp: 'jm 11/25/97 13:40'!
@@ -5242,6 +5243,15 @@ pitch: p dur: d loudness: l
 	^ self new setDur: d
 ! !
 
+!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:53'!
+copySound
+	"Private!! Support for copying. Copy my component sound."
+
+	sound _ sound copy.
+	leftBuffer _ leftBuffer copy.
+	rightBuffer _ rightBuffer copy.
+! !
+
 !ReverbSound methodsFor: 'private' stamp: 'ar 2/3/2001 15:55'!
 applyReverbTo: aSoundBuffer startingAt: startIndex count: n
 
@@ -5279,15 +5289,6 @@ applyReverbTo: aSoundBuffer startingAt: startIndex count: n
 		rightBuffer at: bufferIndex put: out.
 
 		bufferIndex _ (bufferIndex \\ bufferSize) + 1].
-! !
-
-!ReverbSound methodsFor: 'copying' stamp: 'jmv 5/14/2015 09:53'!
-copySound
-	"Private!! Support for copying. Copy my component sound."
-
-	sound _ sound copy.
-	leftBuffer _ leftBuffer copy.
-	rightBuffer _ rightBuffer copy.
 ! !
 
 !ReverbSound methodsFor: 'sound generation' stamp: 'jm 1/21/98 14:32'!
@@ -6058,6 +6059,19 @@ readWaveChunk: chunkType inRIFF: stream
 	^ stream next: count  "return raw chunk data"
 ! !
 
+!SequentialSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:48'!
+copySounds
+	"Private!! Support for copying. Copy my component sounds."
+
+	sounds _ sounds collect: [:s | s copy].
+! !
+
+!SequentialSound methodsFor: 'copying' stamp: 'jmv 8/5/2011 16:00'!
+transformSounds: tfmBlock
+	"Private!! Support for copying. Copy my component sounds."
+
+	sounds _ sounds collect: tfmBlock! !
+
 !SequentialSound methodsFor: 'composition'!
 , aSound
 	"Return the concatenation of the receiver and the argument sound."
@@ -6101,19 +6115,6 @@ removeFirstCompleteSoundOrNil
 	sounds _ sounds copyFrom: 2 to: sounds size.
 	^firstSound
 ! !
-
-!SequentialSound methodsFor: 'copying' stamp: 'jm 12/15/97 22:48'!
-copySounds
-	"Private!! Support for copying. Copy my component sounds."
-
-	sounds _ sounds collect: [:s | s copy].
-! !
-
-!SequentialSound methodsFor: 'copying' stamp: 'jmv 8/5/2011 16:00'!
-transformSounds: tfmBlock
-	"Private!! Support for copying. Copy my component sounds."
-
-	sounds _ sounds collect: tfmBlock! !
 
 !SequentialSound methodsFor: 'sound generation' stamp: 'jm 11/25/97 13:41'!
 doControl
@@ -6535,6 +6536,17 @@ onFileNamed: fileName headerStart: anInteger
 	^answer
 ! !
 
+!ScorePlayer methodsFor: 'copying' stamp: 'jm 1/29/98 18:32'!
+copySounds
+	"Private!! Support for copying."
+
+	instruments _ instruments copy.
+	leftVols _ leftVols copy.
+	rightVols _ rightVols copy.
+	muted _ muted copy.
+	self reset.
+! !
+
 !ScorePlayer methodsFor: 'volume' stamp: 'jmv 12/30/2009 11:33'!
 adjustVolumeTo: vol overMSecs: mSecs
 	| normalizedVolume incr block |
@@ -6635,17 +6647,6 @@ turnOffActiveMIDINotesAt: scoreTick
 
 	someNoteEnded ifTrue: [
 		activeMIDINotes _ activeMIDINotes select: [:p | p first endTime > scoreTick]].
-! !
-
-!ScorePlayer methodsFor: 'copying' stamp: 'jm 1/29/98 18:32'!
-copySounds
-	"Private!! Support for copying."
-
-	instruments _ instruments copy.
-	leftVols _ leftVols copy.
-	rightVols _ rightVols copy.
-	muted _ muted copy.
-	self reset.
 ! !
 
 !ScorePlayer methodsFor: 'operating' stamp: 'jm 1/30/98 14:03'!
@@ -7788,6 +7789,22 @@ updateTargetAt: mSecs
 	^ false
 ! !
 
+!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:29'!
+duration
+
+	^ 1.0
+! !
+
+!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:25'!
+duration: seconds
+	"Do nothing."
+! !
+
+!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:30'!
+sustainEnd: seconds
+	"Do nothing."
+! !
+
 !RandomEnvelope methodsFor: 'accessing' stamp: 'jm 8/13/1998 18:18'!
 centerPitch: aNumber
 	"If this envelope controls pitch, set its scale to the given number. Otherwise, do nothing."
@@ -7836,22 +7853,6 @@ volume: aNumber
 	"If this envelope controls volume, set its scale to the given number. Otherwise, do nothing."
 
 	updateSelector = #volume: ifTrue: [self scale: aNumber].
-! !
-
-!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:29'!
-duration
-
-	^ 1.0
-! !
-
-!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:25'!
-duration: seconds
-	"Do nothing."
-! !
-
-!RandomEnvelope methodsFor: 'envelope compatibility' stamp: 'jm 8/13/1998 17:30'!
-sustainEnd: seconds
-	"Do nothing."
 ! !
 
 !RandomEnvelope methodsFor: 'initialization' stamp: 'jm 1/14/1999 13:15'!
@@ -9350,6 +9351,18 @@ initialize
 				lastEncodedNeg _ encoded]].
 ! !
 
+!SoundPlayer class methodsFor: 'snapshotting' stamp: 'ar 2/4/2001 17:59'!
+startUpWithSound: aSound
+	"Start up the player process."
+
+	SoundPlayer initialize.
+	SoundPlayer
+		startPlayerProcessBufferSize: (BufferMSecs * SamplingRate) // 1000
+		rate: SamplingRate
+		stereo: Stereo
+		sound: aSound.
+! !
+
 !SoundPlayer class methodsFor: 'primitive test' stamp: 'jm 9/13/97 20:01'!
 boinkPitch: p dur: d loudness: l waveTable: waveTable pan: pan
 	"Play a decaying note on the given stream using the given wave table. Used for testing only."
@@ -9841,18 +9854,6 @@ stopReverb
 
 	UseReverb _ false.
 	ReverbState _ nil.
-! !
-
-!SoundPlayer class methodsFor: 'snapshotting' stamp: 'ar 2/4/2001 17:59'!
-startUpWithSound: aSound
-	"Start up the player process."
-
-	SoundPlayer initialize.
-	SoundPlayer
-		startPlayerProcessBufferSize: (BufferMSecs * SamplingRate) // 1000
-		rate: SamplingRate
-		stereo: Stereo
-		sound: aSound.
 ! !
 
 !SoundRecorder methodsFor: 'private' stamp: 'di 2/17/1999 11:13'!
@@ -10712,6 +10713,16 @@ outputOnMidiPort: aMidiPort
 		byte: value.
 ! !
 
+!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:58'!
+keyName
+	"Return a note name for my pitch."
+
+	| pitchName octave |
+	pitchName _ #(c cs d ef e f fs g af a bf b) at: (midiKey \\ 12) + 1.
+	octave _ (#(-1 0 1 2 3 4 5 6 7 8 9) at: (midiKey // 12) + 1) printString.
+	^ pitchName, octave
+! !
+
 !NoteEvent methodsFor: 'accessing' stamp: 'jm 12/30/97 22:02'!
 channel
 
@@ -10807,16 +10818,6 @@ startNoteOnMidiPort: aMidiPort
 isNoteEvent
 
 	^ true
-! !
-
-!NoteEvent methodsFor: 'printing' stamp: 'jm 1/3/98 08:58'!
-keyName
-	"Return a note name for my pitch."
-
-	| pitchName octave |
-	pitchName _ #(c cs d ef e f fs g af a bf b) at: (midiKey \\ 12) + 1.
-	octave _ (#(-1 0 1 2 3 4 5 6 7 8 9) at: (midiKey // 12) + 1) printString.
-	^ pitchName, octave
 ! !
 
 !PitchBendEvent methodsFor: 'accessing' stamp: 'jm 9/10/1998 07:49'!
@@ -12744,47 +12745,6 @@ primitiveBeep
 	<primitive: 140>
 	self primitiveFailed! !
 
-!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
-beep
-	"There is sound support, so we use the default
-	sampled sound for a beep."
-
-	Preferences soundsEnabled ifTrue: [
-		SampledSound beep]! !
-
-!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
-playSampledSound: samples rate: rate
-
-	Preferences soundsEnabled ifTrue: [
-		(SampledSound samples: samples samplingRate: rate) play]! !
-
-!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
-playSoundNamed: soundName
-	"There is sound support, so we play the given sound."
-
-	Preferences soundsEnabled ifTrue: [
-		SampledSound playSoundNamed: soundName asString]! !
-
-!SoundSystem methodsFor: 'playing' stamp: 'pb 5/25/2016 01:12'!
-playSoundNamed: soundName ifAbsentReadFrom: aifFileName
-
-	Preferences soundsEnabled ifTrue: [
-		(SampledSound soundNames includes: soundName) ifFalse: [
-			(DirectoryEntry smalltalkImageDirectory // aifFileName) exists ifTrue: [
-				SampledSound
-					addLibrarySoundNamed: soundName
-					fromAIFFfileNamed: aifFileName]].
-		(SampledSound soundNames includes: soundName) ifTrue: [
-			SampledSound playSoundNamed: soundName]]! !
-
-!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
-playSoundNamedOrBeep: soundName
-	"There is sound support, so we play the given sound
-	instead of beeping."
-
-	Preferences soundsEnabled ifTrue: [
-		^self playSoundNamed: soundName]! !
-
 !SoundSystem methodsFor: 'misc' stamp: 'jmv 6/7/2013 21:58'!
 randomBitsFromSoundInput: bitCount
 	"Answer a positive integer with the given number of random bits of 'noise' from a sound input source. Typically, one would use a microphone or line input as the sound source, although many sound cards have enough thermal noise that you get random low-order sample bits even with no microphone connected. Only the least signficant bit of the samples is used. Since not all sound cards support 16-bits of sample resolution, we use the lowest bit that changes."
@@ -12835,6 +12795,47 @@ SoundService default soundNameFromUser
 !SoundSystem methodsFor: 'misc' stamp: 'jmv 6/7/2013 21:58'!
 soundNamed: soundName
 	^ SampledSound soundNamed: soundName! !
+
+!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
+beep
+	"There is sound support, so we use the default
+	sampled sound for a beep."
+
+	Preferences soundsEnabled ifTrue: [
+		SampledSound beep]! !
+
+!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
+playSampledSound: samples rate: rate
+
+	Preferences soundsEnabled ifTrue: [
+		(SampledSound samples: samples samplingRate: rate) play]! !
+
+!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
+playSoundNamed: soundName
+	"There is sound support, so we play the given sound."
+
+	Preferences soundsEnabled ifTrue: [
+		SampledSound playSoundNamed: soundName asString]! !
+
+!SoundSystem methodsFor: 'playing' stamp: 'pb 5/25/2016 01:12'!
+playSoundNamed: soundName ifAbsentReadFrom: aifFileName
+
+	Preferences soundsEnabled ifTrue: [
+		(SampledSound soundNames includes: soundName) ifFalse: [
+			(DirectoryEntry smalltalkImageDirectory // aifFileName) exists ifTrue: [
+				SampledSound
+					addLibrarySoundNamed: soundName
+					fromAIFFfileNamed: aifFileName]].
+		(SampledSound soundNames includes: soundName) ifTrue: [
+			SampledSound playSoundNamed: soundName]]! !
+
+!SoundSystem methodsFor: 'playing' stamp: 'jmv 6/7/2013 21:58'!
+playSoundNamedOrBeep: soundName
+	"There is sound support, so we play the given sound
+	instead of beeping."
+
+	Preferences soundsEnabled ifTrue: [
+		^self playSoundNamed: soundName]! !
 
 !SoundSystem class methodsFor: 'class initialization' stamp: 'jmv 6/7/2013 22:03'!
 default

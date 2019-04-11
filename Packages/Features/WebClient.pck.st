@@ -1,12 +1,12 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3668] on 18 March 2019 at 1:17:54 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 3:36:48 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 17!
-!requires: 'Identities-UUID' 1 7 nil!
-!requires: 'Cryptography-DigitalSignatures' 1 7 nil!
+!provides: 'WebClient' 1 18!
 !requires: 'Network-Kernel' 1 2 nil!
+!requires: 'Cryptography-DigitalSignatures' 1 7 nil!
+!requires: 'Identities-UUID' 1 7 nil!
 SystemOrganization addCategory: #'WebClient-Core'!
 SystemOrganization addCategory: #'WebClient-SqueakSSL-Core'!
 SystemOrganization addCategory: #'WebClient-Tests'!
@@ -4751,27 +4751,6 @@ webSocketTo: serverUrl protocol: protocol
 
 	^self webSocket00: serverUrl protocol: protocol! !
 
-!WebCookie methodsFor: 'comparing' stamp: 'ar 5/11/2010 08:58'!
-= aCookie
-	"Compare the receiver with aCookie"
-
-	^aCookie class == self class 
-		and:[aCookie name = self name
-		and:[aCookie domain = self domain
-		and:[aCookie path = self path]]].! !
-
-!WebCookie methodsFor: 'comparing' stamp: 'ar 5/11/2010 08:59'!
-hash
-	"Hash is re-implemented because #= is re-implemented"
-
-	^name hash + domain hash + path hash.! !
-
-!WebCookie methodsFor: 'converting' stamp: 'ar 2/20/2010 11:06'!
-asString
-	"Create the string representation for this cookie"
-
-	^String streamContents:[:s| self printOn: s].! !
-
 !WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
 domain
 	"Cookie domain"
@@ -4871,6 +4850,27 @@ version: aString
 
 	version := aString! !
 
+!WebCookie methodsFor: 'comparing' stamp: 'ar 5/11/2010 08:58'!
+= aCookie
+	"Compare the receiver with aCookie"
+
+	^aCookie class == self class 
+		and:[aCookie name = self name
+		and:[aCookie domain = self domain
+		and:[aCookie path = self path]]].! !
+
+!WebCookie methodsFor: 'comparing' stamp: 'ar 5/11/2010 08:59'!
+hash
+	"Hash is re-implemented because #= is re-implemented"
+
+	^name hash + domain hash + path hash.! !
+
+!WebCookie methodsFor: 'converting' stamp: 'ar 2/20/2010 11:06'!
+asString
+	"Create the string representation for this cookie"
+
+	^String streamContents:[:s| self printOn: s].! !
+
 !WebCookie methodsFor: 'initialize' stamp: 'ar 3/31/2010 08:40'!
 initialize
 	"Initializes the receiver"
@@ -4923,6 +4923,21 @@ isExpired
 	
 	expiry ifNil:[^false].
 	^expiry asUTC < DateAndTime now asUTC! !
+
+!WebMessage methodsFor: 'printing' stamp: 'DSG 5/24/2012 17:38'!
+writeHeadersOn: aStream
+	"Write the request"
+
+	self headersDo:[:key :value| aStream nextPutAll: key, ': ', value asString; nextPutAll: String crlfString].
+! !
+
+!WebMessage methodsFor: 'printing' stamp: 'DSG 5/24/2012 17:38'!
+writeOn: aStream
+	"Write the request"
+
+	self writeHeadersOn: aStream.
+	aStream nextPutAll: String crlfString.
+! !
 
 !WebMessage methodsFor: 'headers' stamp: 'ar 2/20/2010 16:31'!
 addHeader: key value: value
@@ -5247,21 +5262,6 @@ isPersistent
 
 	"Assume that later HTTP versions are compatible with 1.1"
 	^true! !
-
-!WebMessage methodsFor: 'printing' stamp: 'DSG 5/24/2012 17:38'!
-writeHeadersOn: aStream
-	"Write the request"
-
-	self headersDo:[:key :value| aStream nextPutAll: key, ': ', value asString; nextPutAll: String crlfString].
-! !
-
-!WebMessage methodsFor: 'printing' stamp: 'DSG 5/24/2012 17:38'!
-writeOn: aStream
-	"Write the request"
-
-	self writeHeadersOn: aStream.
-	aStream nextPutAll: String crlfString.
-! !
 
 !WebMessage class methodsFor: 'class initialization' stamp: 'ar 2/21/2010 09:55'!
 initialize
@@ -7277,6 +7277,36 @@ removeUrl: urlString ifAbsent: aBlock
 
 	^self registry removeKey: urlString ifAbsent: aBlock! !
 
+!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 11:41'!
+handle: selector arguments: argList
+
+	^self handle: selector arguments: argList ifAbsent:[nil]! !
+
+!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 11:41'!
+handle: selector arguments: argList ifAbsent: aBlock
+
+	^(handlers at: selector ifAbsent:[^aBlock value])
+		valueWithPossibleArgs: argList.! !
+
+!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 10:47'!
+handleClose
+	"Handle a connection close"
+
+	^self handle: 'close' arguments: (Array with: self)
+! !
+
+!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 10:46'!
+handleError: exception
+	"Handle an error"
+
+	^self handle: 'error' arguments: (Array with: exception with: self)! !
+
+!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 10:45'!
+handleMessage: msgData type: msgType
+	"Handle an incoming message of the given type"
+
+	self handle: 'message' arguments: (Array with: msgData with: msgType with: self)! !
+
 !WebSocket methodsFor: 'initialize' stamp: 'ar 9/26/2011 13:06'!
 close
 	"Request graceful close"
@@ -7332,36 +7362,6 @@ run
 	"Run the WebSocket's input process."
 
 	^self subclassResponsibility! !
-
-!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 11:41'!
-handle: selector arguments: argList
-
-	^self handle: selector arguments: argList ifAbsent:[nil]! !
-
-!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 11:41'!
-handle: selector arguments: argList ifAbsent: aBlock
-
-	^(handlers at: selector ifAbsent:[^aBlock value])
-		valueWithPossibleArgs: argList.! !
-
-!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 10:47'!
-handleClose
-	"Handle a connection close"
-
-	^self handle: 'close' arguments: (Array with: self)
-! !
-
-!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 10:46'!
-handleError: exception
-	"Handle an error"
-
-	^self handle: 'error' arguments: (Array with: exception with: self)! !
-
-!WebSocket methodsFor: 'private' stamp: 'ar 9/26/2011 10:45'!
-handleMessage: msgData type: msgType
-	"Handle an incoming message of the given type"
-
-	self handle: 'message' arguments: (Array with: msgData with: msgType with: self)! !
 
 !WebSocket methodsFor: 'read/write' stamp: 'ar 9/26/2011 10:42'!
 send: aString
@@ -7738,7 +7738,7 @@ send: data code: opcode final: isFinal
 
 	^self send: data code: opcode final: isFinal mask: self masking! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 2/26/2016 17:11'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 4/11/2019 15:34:42'!
 send: data code: opcode final: isFinal mask: doMask
 	"Sends unfragmented data using the given opcode"
 
@@ -7749,7 +7749,9 @@ send: data code: opcode final: isFinal mask: doMask
 		data size > 16rFFFF ifTrue:[
 			byte2 := 127.
 			xLength := ByteArray new: 8.
-			(WriteStream on: xLength) nextNumber: 8 put: data size.
+			(WriteStream on: xLength)
+				nextUnsignedInt32Put: data size >> 32 bigEndian: true;
+				nextUnsignedInt32Put: (data size bitAnd: 16rFFFFFFFF) bigEndian: true.
 		] ifFalse:[
 			byte2 := 126.
 			xLength := ByteArray new: 2.
