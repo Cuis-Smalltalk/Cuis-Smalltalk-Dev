@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3652] on 10 March 2019 at 3:10:14 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 12 April 2019 at 4:19:59 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 133!
+!provides: 'TerseGuide' 1 134!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -853,7 +853,7 @@ y _ x isLeapYear.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 16:42:23'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 4/12/2019 14:50:40'!
 debugging
 	"Debugging"
 	^
@@ -884,6 +884,10 @@ thisContext printStack: 10.			"alternative to ''self halt.'' showing n lines of 
 
 x doesNotUnderstand: (Message selector: #foo).  "flag that the message is not handled"
 
+"Writing to-do notes to yourself can be done as follows:"
+self flag: #someSymbol  "a reminder comment"
+"...where you choose #someSymbol to be something you will not forget (your initials?)."
+"Then, to retrieve all such messages, browse senders of #someSymbol using Cmd-n or the SmalltalkEditor menu."
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 16:52:18'!
