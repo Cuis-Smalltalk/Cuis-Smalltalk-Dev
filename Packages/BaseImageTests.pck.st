@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3694] on 8 April 2019 at 12:45:07 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3702] on 23 April 2019 at 10:32:12 am'!
 'Description Tests for functionality in the Cuis Smalltalk base image.'!
-!provides: 'BaseImageTests' 1 146!
+!provides: 'BaseImageTests' 1 148!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -480,6 +480,16 @@ TestCase subclass: #CollectionTest
 CollectionTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #DictionaryTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #DictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'DictionaryTest class' category: #'BaseImageTests-Collections'!
+DictionaryTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #IntervalTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #IntervalTest
 	instanceVariableNames: ''
@@ -558,6 +568,16 @@ TestCase subclass: #ArrayLiteralTest
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'ArrayLiteralTest class' category: #'BaseImageTests-Compiler'!
 ArrayLiteralTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ClassDefinitionNodeAnalyzerTest category: #'BaseImageTests-Compiler'!
+TestCase subclass: #ClassDefinitionNodeAnalyzerTest
+	instanceVariableNames: 'iv1'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'ClassDefinitionNodeAnalyzerTest class' category: #'BaseImageTests-Compiler'!
+ClassDefinitionNodeAnalyzerTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClosureCompilerTest category: #'BaseImageTests-Compiler'!
@@ -9755,6 +9775,14 @@ testAsCommaStringAndSeparatesWithCommaButLastOneWithAndWhenMoreThanTwoElements
 
 	self assert: #(1 2 3) asCommaStringAnd equals: '1, 2 and 3' ! !
 
+!DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
+testKeyNotFoundSignalTheRightMessage
+
+	self 
+		should: [ Dictionary new errorKeyNotFound ]
+		raise: Error
+		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:31'!
 testAt
 	"
@@ -10558,6 +10586,154 @@ testReservedIdentifiers
 testSymbols
 	self class compile: 'array ^ #(#nil #true #false #''nil'' #''true'' #''false'')'.
 	self assert: self array = {#nil. #true. #false. #nil. #true. #false}.! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:13'!
+test01isAtSuperclassWhenIndexIsInSuperclass
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self assert: (analyzer isAtSuperclass: 1).
+	self assert: (analyzer isAtSuperclass: self class superclass name size)! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:19'!
+test02isNotAtSuperclassWhenIndexIsOutsideSuperclass
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self deny: (analyzer isAtSuperclass: 0).
+	self deny: (analyzer isAtSuperclass: self class superclass name size + 1).
+	! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:25'!
+test03isAtClassNameWhenIndexIsInClassName
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self assert: (analyzer isAtClassName: (self class definition findString: self class name) - 1).
+	self assert: (analyzer isAtClassName: (self class definition findString: self class name) +  self class name size - 1).
+! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:29'!
+test04isNotAtClassNameWhenIndexIsOutsideClassName
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self deny: (analyzer isAtClassName: (self class definition findString: self class name) - 2).
+	self deny: (analyzer isAtClassName: (self class definition findString: self class name) +  self class name size).
+! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:35'!
+test05isAtInstanceVariablesWhenIndexIsInInstanceVariablesString
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self assert: (analyzer isAtInstanceVariables: (self class definition findString: 'iv1')).
+	self assert: (analyzer isAtInstanceVariables: (self class definition findString: 'iv1') + 2).
+! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:40'!
+test06isNotAtInstanceVariablesWhenIndexIsOutsideInstanceVariablesString
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self deny: (analyzer isAtInstanceVariables: (self class definition findString: '''iv1''')).
+	self deny: (analyzer isAtInstanceVariables: (self class definition findString: '''iv1''') + 4).
+	
+	! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:45'!
+test07CanAccessSuperclass
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self assert: self class superclass equals: analyzer superclass! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:50'!
+test08isAtCategoryWhenIndexIsInCategoryString
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self assert: (analyzer isAtCategory: (self class definition findString: self class category asString)).
+	self assert: (analyzer isAtCategory: (self class definition findString: self class category asString) + self class category size - 1).
+	
+	! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:07:55'!
+test09isNotAtCategoryWhenIndexIsOutsideCategoryString
+
+	| classDefinitionNode analyzer |
+	
+	classDefinitionNode := self thisClassDefinitionNode.
+	
+	analyzer := ClassDefinitionNodeAnalyzer for: classDefinitionNode.
+	
+	self deny: (analyzer isAtCategory: (self class definition findString: self class category asString) - 1).
+	self deny: (analyzer isAtCategory: (self class definition findString: self class category asString) + self class category size).
+	
+	! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:06:49'!
+test10InstanceVariablesIsTheSecondParameter
+
+	| subclassCreationSelectors |
+	
+	subclassCreationSelectors := Class organization listAtCategoryNamed: 'subclass creation'.
+	self assert: subclassCreationSelectors notEmpty.
+	
+	subclassCreationSelectors do: [ :aSubclassCreationSelector |
+		self 
+			assert: (aSubclassCreationSelector keywords at: ClassDefinitionNodeAnalyzer instanceVariableNamesPosition) 
+			equals: 'instanceVariableNames:' ]! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:06:49'!
+test11CategoryIsTheFifthParameter
+
+	| subclassCreationSelectors |
+	
+	subclassCreationSelectors := Class organization listAtCategoryNamed: 'subclass creation'.
+	self assert: subclassCreationSelectors notEmpty.
+	
+	subclassCreationSelectors do: [ :aSubclassCreationSelector |
+		self 
+			assert: (aSubclassCreationSelector keywords at: ClassDefinitionNodeAnalyzer categoryPosition) 
+			equals: 'category:' ]! !
+
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 18:16:08'!
+thisClassDefinitionNode
+	
+	 ^self class methodNodeFor: self class definition noPattern: true ! !
 
 !ClosureCompilerTest methodsFor: 'source' stamp: 'jmv 3/13/2012 11:29'!
 closureCases
@@ -12657,6 +12833,14 @@ testAllMesssagesLikeSet
 
 	self assert: subject isEquivalentToSet: copy.
 	self assert: copy isEquivalentToSet: controlGroup.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 4/4/2019 08:18:55'!
+testKeyNotFoundSignalTheRightMessage
+
+	self 
+		should: [ Trie new errorKeyNotFound ]
+		raise: Error
+		withMessageText: Dictionary keyNotFoundErrorDescription ! !
 
 !TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:30'!
 testPrefixIteration

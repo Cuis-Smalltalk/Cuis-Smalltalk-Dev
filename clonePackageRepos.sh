@@ -14,4 +14,3 @@ git clone https://github.com/Cuis-Smalltalk/Parsers.git
 git clone https://github.com/Cuis-Smalltalk/Machine-Learning.git
 git clone https://github.com/Cuis-Smalltalk/GeographicInformationSystems.git
 git clone https://github.com/Cuis-Smalltalk/EnhancedText.git
-git clone https://github.com/Cuis-Smalltalk/Morphic-Misc1.git

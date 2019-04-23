@@ -65,7 +65,3 @@ cd ../EnhancedText
 echo "==============================="
 pwd
 git status
-cd ../Morphic-Misc1
-echo "==============================="
-pwd
-git status
