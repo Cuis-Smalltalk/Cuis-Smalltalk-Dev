@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3702] on 23 April 2019 at 10:32:12 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3707] on 24 April 2019 at 4:27:07 pm'!
 'Description Tests for functionality in the Cuis Smalltalk base image.'!
-!provides: 'BaseImageTests' 1 148!
+!provides: 'BaseImageTests' 1 149!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -2703,6 +2703,50 @@ testIntegerAsFloat
 	self assert: 16r1FFFFFFFFFFFF0800 asFloat = 16r1FFFFFFFFFFFF0000 asFloat. "nearest even is lower"
 ! !
 
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 4/24/2019 11:56:51'!
+testMixedTypeArithmetic
+
+	| samples doubleOne |
+
+	samples := Array with: 1 with: 1 / 3 with: Float pi with: SmallInteger maxVal * 2 + 1 with: SmallInteger minVal * 2 - 1.
+	doubleOne := 1.0.
+	samples do: [ :sample |
+		self assert: sample + doubleOne isExactly: sample asFloat + doubleOne.
+		self assert: doubleOne + sample isExactly: doubleOne + sample asFloat.
+		self assert: sample - doubleOne isExactly: sample asFloat - doubleOne.
+		self assert: doubleOne - sample isExactly: doubleOne - sample asFloat.
+		self assert: sample * doubleOne isExactly: sample asFloat * doubleOne.
+		self assert: doubleOne * sample isExactly: doubleOne * sample asFloat.
+		self assert: sample / doubleOne isExactly: sample asFloat / doubleOne.
+		self assert: doubleOne / sample isExactly: doubleOne / sample asFloat.
+		self assert: sample \\ doubleOne isExactly: sample asFloat \\ doubleOne.
+		self assert: doubleOne \\ sample isExactly: doubleOne \\ sample asFloat.
+		self assert: (sample // doubleOne) = (sample asFloat // doubleOne).
+		self assert: (doubleOne // sample) = (doubleOne // sample asFloat).
+		].! !
+
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 4/24/2019 12:01:05'!
+testMixedTypeComparison
+
+	| samples doubleOne |
+
+	samples := Array with: 1 with: 1 / 3 with: Float pi with: SmallInteger maxVal * 2 + 1 with: SmallInteger minVal * 2 - 1.
+	doubleOne := 1.0.
+	samples do: [ :sample |
+		self assert: (sample = doubleOne) = (sample asFloat = doubleOne).
+		self assert: (doubleOne = sample) = (doubleOne = sample asFloat).
+		self assert: (sample ~= doubleOne) = (sample asFloat ~= doubleOne).
+		self assert: (doubleOne ~= sample) = (doubleOne ~= sample asFloat).
+		self assert: (sample < doubleOne) = (sample asFloat < doubleOne).
+		self assert: (doubleOne < sample) = (doubleOne < sample asFloat).
+		self assert: (sample <= doubleOne) = (sample asFloat <= doubleOne).
+		self assert: (doubleOne <= sample) = (doubleOne <= sample asFloat).
+		self assert: (sample > doubleOne) = (sample asFloat > doubleOne).
+		self assert: (doubleOne > sample) = (doubleOne > sample asFloat).
+		self assert: (sample >= doubleOne) = (sample asFloat >= doubleOne).
+		self assert: (doubleOne >= sample) = (doubleOne >= sample asFloat).
+		].! !
+
 !FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/9/2018 16:12:35'!
 testRoundHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
@@ -3580,7 +3624,7 @@ testNaN3
 	identitySet add: (item _ Float nan).
 	self assert: (identitySet includes: item).! !
 
-!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 4/4/2019 14:21:39'!
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 4/23/2019 18:20:18'!
 testNaN4
 	"FloatTest new testNaN4"
 
@@ -3589,7 +3633,7 @@ testNaN4
 	dict
 		at: Float nan
 		put: #NaN.
-	self deny: (dict includes: Float nan).! !
+	self deny: (dict includesKey: Float nan).! !
 
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 3/13/2012 12:34'!
 testNaNCompare
@@ -3811,6 +3855,18 @@ test32bitZeros
 	negativeZeroBits _ '10000000000000000000000000000000'.
 	self assert: (Float negativeZero asIEEE32BitWord printStringBase: 2 length: 32 padded: true) = negativeZeroBits.
 	self assertIsNegativeZero: (Float fromIEEE32Bit: (Integer readFrom: negativeZeroBits readStream base: 2)).! !
+
+!FloatTest methodsFor: 'helpers' stamp: 'jmv 4/24/2019 11:48:04'!
+assert: aFloatingPointNumber isExactly: otherFloatingPointNumber 
+
+    "Both aFloatingPointNumber and otherFloatingPointNumber must be instances
+    of our #classTested. Check that and fail if they aren't."
+
+    self assert: (aFloatingPointNumber class inheritsFrom: Float).
+    self assert: (otherFloatingPointNumber class inheritsFrom: Float).
+    self assert: aFloatingPointNumber = otherFloatingPointNumber.
+    self assert: otherFloatingPointNumber = aFloatingPointNumber.
+    self assert: aFloatingPointNumber hex = otherFloatingPointNumber hex! !
 
 !FloatTest methodsFor: 'helpers' stamp: 'jmv 2/28/2019 16:13:30'!
 assertIsNaNorFail: aFloatOrSymbol
