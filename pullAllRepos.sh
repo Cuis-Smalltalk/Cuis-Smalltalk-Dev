@@ -32,3 +32,5 @@ cd ../GeographicInformationSystems
 git pull
 cd ../EnhancedText
 git pull
+cd ../Learning-Cuis
+git pull

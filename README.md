@@ -69,16 +69,24 @@ The user interface enables you to access most of the code and conduct Smalltalk 
 ## Contributing to Cuis
 [(back to ToC)](#table-of-contents)
 
-Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev. The main meeting point for Cuis users and developers is the mail list http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org . You can broswse the archives for a glimpse of our discussions.
+Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev. The main meeting point for Cuis users and developers is the mail list https://lists.cuis.st/mailman/listinfo/cuis-dev. You can broswse the archives for a glimpse of our discussions. An older archive with pre-April-2019 messages can be found at http://cuis-smalltalk.org/pipermail/cuis-dev_cuis-smalltalk.org/.
 
-If you want to contribute code to the project, please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
+For the recommended way of handling your own projects based on Cuis, please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
 
-In any case, we also accept contributions as ChangeSet files in email. Any contribution must be under the MIT license.
+To contribute code to the base image, use the tools includede in Cuis, such as the ChangeSorter and the ChangeList to prepare ChangeSets and save them to file. Send the files as attachments to a message describing them to our mail list, so we all can review and discuss. We prefer this over git pull requests for changes to the base image. For changes to existing packages, or contribution of new packages, pull requests are OK.
 
-To contribute code, please use an image with all relevant packages already loaded, using updated versions, especially, of any affected packages. This will ensure we don't break them while we evolve Cuis.
-Here is a Smalltalk script to load all packages currently included:
+Please use an image with all relevant packages already loaded, using updated versions, especially, of any affected packages. This will ensure we don't break them while we evolve Cuis.
+
+Any contribution must be under the MIT license.
+
+Here is a Smalltalk script to load all packages currently included in this repo:
 ```
-Feature require: 'Core-Packages'
+Feature require: 'CorePackages'
+```
+
+If you have already cloned all the repos in the https://github.com/Cuis-Smalltalk organization (maybe running clonePackageRepos.sh), this will load all of them (except for OMeta, that is a bit special).
+```
+Feature require: 'AllPackages'
 ```
 
 Cuis is distributed subject to the MIT License. See the LICENSE file. Any contribution submitted for incorporation into or for distribution with Cuis shall be presumed subject to the same license.
