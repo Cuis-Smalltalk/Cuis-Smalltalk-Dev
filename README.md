@@ -69,7 +69,7 @@ The user interface enables you to access most of the code and conduct Smalltalk 
 ## Contributing to Cuis
 [(back to ToC)](#table-of-contents)
 
-Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev. The main meeting point for Cuis users and developers is the mail list http://cuis-smalltalk.org/mailman/listinfo/cuis-dev_cuis-smalltalk.org . You can broswse the archives for a glimpse of our discussions.
+Cuis is maintained on https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev. The main meeting point for Cuis users and developers is the mail list https://lists.cuis.st/mailman/listinfo/cuis-dev. You can broswse the archives for a glimpse of our discussions. An older archive with pre-April-2019 messages can be found at http://cuis-smalltalk.org/pipermail/cuis-dev_cuis-smalltalk.org/.
 
 For the recommended way of handling your own projects based on Cuis, please read [Code Management in Cuis](Documentation/CodeManagementInCuis.md), about developing packages for Cuis, and [Using Git and GitHub to host and manage Cuis code](Documentation/CuisAndGitHub.md). While Cuis should work equally well with any file-based DVCS, we encourage the use of Git and GitHub.
 
