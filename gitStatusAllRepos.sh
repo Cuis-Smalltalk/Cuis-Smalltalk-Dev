@@ -65,3 +65,8 @@ cd ../EnhancedText
 echo "==============================="
 pwd
 git status
+cd ../Learning-Cuis
+echo "==============================="
+pwd
+git status
+
