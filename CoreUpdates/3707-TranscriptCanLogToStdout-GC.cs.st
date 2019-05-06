@@ -144,7 +144,7 @@ getMenu
 Transcript initialize!
 !classDefinition: 'Transcript class' category: #'System-Support'!
 Transcript class
-	instanceVariableNames: 'bounds lastDisplayPosition showOnDisplay logToFile unfinishedEntry accessSemaphore lastIndex firstIndex entries logToStdout'!
+	instanceVariableNames: 'entries firstIndex lastIndex accessSemaphore unfinishedEntry logToFile showOnDisplay lastDisplayPosition bounds logToStdout '!
 "Postscript:
 To initialize Transcript logToStdout class variable"
 Transcript initialize.
