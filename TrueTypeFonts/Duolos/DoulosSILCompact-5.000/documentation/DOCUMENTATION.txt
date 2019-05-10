@@ -1,0 +1,17 @@
+DOCUMENTATION
+Doulos SIL
+========================
+
+
+This file describes the documentation file included with the Doulos SIL font
+family. This information should be distributed along with the Doulos SIL fonts
+and any derivative works.
+
+Primary documentation for the Doulos SIL font family is on the Doulos SIL
+website (http://scripts.sil.org/DoulosSILfont).
+
+The DoulosSIL-features.pdf file illustrates the use of OpenType and Graphite
+features.
+
+The DoulosSIL-features.odt file illustrates the use of OpenType and 
+Graphite features (source file for the pdf).
