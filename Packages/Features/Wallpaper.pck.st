@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3712] on 25 April 2019 at 12:05:56 pm'!
-'Description Please enter a description for this package'!
+'Description '!
 !provides: 'Wallpaper' 1 2!
 !requires: 'Graphics-Files-Additional' 1 22 nil!
 SystemOrganization addCategory: #Wallpaper!

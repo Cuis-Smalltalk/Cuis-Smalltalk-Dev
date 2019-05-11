@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3622] on 21 February 2019 at 5:18:35 pm'!
-'Description Please enter a description for this package'!
+'Description '!
 !provides: 'Tests-Collections-CompactArrays' 1 0!
 !requires: 'Collections-CompactArrays' 1 6 nil!
 SystemOrganization addCategory: #'Tests-Collections-CompactArrays'!

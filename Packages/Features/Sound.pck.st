@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 3:36:06 pm'!
-'Description Please enter a description for this package '!
+'Description '!
 !provides: 'Sound' 1 22!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Compression' 1 nil nil!

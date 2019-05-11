@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 9 March 2018 at 4:37:33 pm'!
-'Description Please enter a description for this package'!
+'Description '!
 !provides: 'OpenCL' 1 39!
 !requires: 'LinearAlgebra' 1 nil nil!
 !requires: 'ImageProcessing' 1 nil nil!

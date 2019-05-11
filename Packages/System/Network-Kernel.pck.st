@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3120] on 26 June 2017 at 6:41:20 pm'!
-'Description Please enter a description for this package '!
+'Description '!
 !provides: 'Network-Kernel' 1 4!
 !classDefinition: #InvalidSocketStatusException category: #'Network-Kernel'!
 Error subclass: #InvalidSocketStatusException

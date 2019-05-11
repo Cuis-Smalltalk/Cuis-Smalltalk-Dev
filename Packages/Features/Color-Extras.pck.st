@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3528] on 18 December 2018 at 12:53:47 pm'!
-'Description Please enter a description for this package'!
+'Description '!
 !provides: 'Color-Extras' 1 6!
 SystemOrganization addCategory: #'Color-Extras'!
 
