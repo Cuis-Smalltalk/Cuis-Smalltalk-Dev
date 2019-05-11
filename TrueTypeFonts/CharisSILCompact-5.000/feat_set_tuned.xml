@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE features_set SYSTEM "feat_set.dtd">
+<features_set version="1.0">
+	<feature name="Line spacing" value="Tight"/>
+</features_set>

@@ -1,0 +1,322 @@
+FONTLOG
+Charis SIL font family
+========================
+
+
+This file provides detailed information on the Charis SIL family of fonts.
+This information should be distributed along with the Charis SIL fonts and
+any derivative works.
+
+
+Basic Font Information
+----------------------
+
+Charis is similar to Bitstream Charter, one of the first fonts designed
+specifically for laser printers. It is highly readable and holds up well in
+less-than-ideal reproduction environments. It also has a full set of styles
+- regular, italic, bold, bold italic - and so is more useful in general
+publishing than Doulos SIL. Charis is a serif proportionally spaced font
+optimized for readability in long printed documents.
+
+The goal for this product was to provide a single Unicode-based font family
+that would contain a comprehensive inventory of glyphs needed for almost any
+Roman- or Cyrillic-based writing system, whether used for phonetic or
+orthographic needs. In addition, there is provision for other characters and
+symbols useful to linguists. This font makes use of state-of-the-art font
+technologies to support complex typographic issues, such as the need to
+position arbitrary combinations of base glyphs and diacritics optimally.
+
+Four fonts from this typeface family are included in this release:
+
+     * Charis SIL Regular
+     * Charis SIL Bold
+     * Charis SIL Italic
+     * Charis SIL Bold Italic
+
+The design of the basic character set of Charis SIL is similar (but not
+identical) to Bitstream Charter, designed by Matthew Carter. The following
+notice accompanied the Charter fonts:
+
+(c) Copyright 1989-1992, Bitstream Inc., Cambridge, MA.
+
+You are hereby granted permission under all Bitstream propriety rights to
+use, copy, modify, sublicense, sell, and redistribute the 4 Bitstream
+Charter (r) Type 1 outline fonts and the 4 Courier Type 1 outline fonts
+for any purpose and without restriction; provided, that this notice is left
+intact on all copies of such fonts and that Bitstream's trademark is
+acknowledged as shown below on all unmodified copies of the 4 Charter
+Type 1 fonts.
+
+BITSTREAM CHARTER is a registered trademark of Bitstream Inc.
+
+SIL International is the creator of the Charis SIL fonts, and is the owner
+of all proprietary rights therein.
+
+
+A Note Regarding the Open Font License and TypeTuner
+----------------------------------------------------
+
+The OFL prohibits the use of Reserved Font Names "Charis" and "SIL" in
+the name of any font that is derived from the Original Version of Charis
+SIL. However, SIL International (the Copyright Holder) grants through
+this separate written agreement the right to use the Reserved Font Names
+in any Modified Version of this font created by using TypeTuner as long
+as the feature information contained in the Original Version is used, 
+unmodified, as the source for TypeTuner feature information, and 
+"Charis SIL" is not the resulting font family name.
+
+TypeTuner-produced fonts created in this manner are still bound by the
+terms of the OFL. Specifically, the use of Reserved Font Names is
+prohibited when making derivatives of a TypeTuner-produced font. Anyone
+making a derivative of a TypeTuner font will need to find a different
+name. For example a TypeTuner-produced font may be named 
+"Charis SIL Literacy SomeFarAwayPlace" but a derivative of that font made 
+with other tools would not be allowed to use the "Charis" and "SIL" 
+Reserved Font Names and would have to be named something like "Grace Foo".
+
+
+ChangeLog
+---------
+(This should list both major and minor changes, most recent first.)
+
+07 Nov 2014 (SIL TypeTuner) Tuned version of Charis SIL version 5.000
+- Tuned and delivered by SIL TypeTuner 
+(http://scripts.sil.org/ttw/fonts2go.cgi).
+- See included xml file for details of feature changes.
+
+27 Oct 2014 (SIL NRSI team) Charis SIL version 5.000
+- Added Stylistic Sets to the font for OpenType support 
+	of previously Graphite-only features
+- Added Character Variants to the font for OpenType support 
+	of previously Graphite-only features
+- Added Serbian feature when Serbian language is turned on
+- Added hook D variant feature (for U+018A/U+0257)
+- Removed "Show deprecated PUA" feature
+- Removed "Romanian-style diacritics" feature 
+  (because glyphs are now encoded)
+- Removed "Diacritic selection" feature
+- Added U+039E, U+03BC, U+03C6 and U+03C9 in the Greek and Coptic block
+- Added U+0528..U+052F in the Cyrillic Supplement block
+- Added U+2041 in the General Punctuation block
+- Added U+2095..U+209C in the Superscripts and Subscripts block
+- Added U+20B6..U+20BD in the Currency Symbols block
+- Added U+210C, U+2113, U+2117, U+212D, U+2135, U+214F in the 
+  Letterlike Symbols block
+- Added U+2150..U+2152 and U+2189 in the Number Forms block
+- Added U+2226, U+2234..U+2235, U+2262, U+2282..U+2287 in the 
+  Mathematical Operators block
+- Added U+2640, U+2642, U+266D, U+266F in the Miscellaneous Symbols block
+- Added U+27E8..U+27E9 in the Miscellaneous Mathematical Symbols-A block
+- Added U+2C7E..U+2C7F in the Latin Extended-C block
+- Added U+2C88 in the Coptic block
+- Added U+2E00..U+2E0D, U+2E3A..U+2E3B in the Supplemental 
+  Punctuation block
+- Added U+A736..U+A73F, U+A742..U+A74D, U+A750..U+A787, U+A790..U+A7AD, 
+  U+A7B0..U+A7B1, U+A7F7..U+A7FA in the Latin Extended-D block. 
+  These were also added to relevant features.
+- Added U+A92E in the Kayah Li block (to support the Kayah Li language 
+  when using the Roman script)
+- Added U+AB64..U+AB65 in the Latin Extended-E block
+- Added U+1D40C, U+1D504..U+1D505, U+1D50A, U+1D50E..U+1D50F, U+1D514, 
+  U+1D516..U+1D517, U+1D519 in the Mathematical Alphanumeric Symbols block
+- Added PUA characters U+F26C (curl J) and U+F26D (left-hook b)
+- Characters in our PUA that were added to Unicode have had their 
+  codepoints updated:
+  F1AD>A7F9, F266>A78E, F26B>A78D, F32C>0526, F32D>0527, F17B>1DFD, F209>2C70
+- These PUA characters were deprecated (now white on black glyphs): 
+  U+F17B, U+F1AD, U+F209, U+F247, U+F248, U+F266, U+F26B, U+F32C, U+F32D
+- Deleted U+0149 as it is officially deprecated in Unicode
+- Added support for shorter macrons under narrow letters (i,l,r,t).
+  (This only works for Graphite or using precomposed characters in OpenType.)
+- Made it possible for saltillo characters (U+A78B and U+A78C) to "carry" 
+  diacritics
+- Improved design of U+A722..U+A725 and U+A78D
+- Refactored all cedilla positioning
+- Removal of unneeded duplicate glyphs (because of improvements in smart 
+  font code)
+- Bug fix in Graphite code to allow for simultaneous selection of Vietnamese 
+  alternates and Small Caps
+- Bug fix in Graphite code to allow for simultaneous selection of Ogonek 
+  alternates and Small Caps
+- Improved hinting
+- Significant size, position and metric changes made to Subscript and Superscript 
+  parentheses, plus, minus, equals.
+- Size of guillomets (U+00AB U+00BB U+2039 U+203A) modified to match the font. 
+  Metrics were not changed.
+- Arrowhead design of U+21A8 modified to match the other arrows
+- Placement of Ogonek revisited
+- Slight modification to positioning of U+0361 and U+035C in Italic and Bold Italic
+- Changed the strongly curved hooks on Cyrillic U+04C3..U+04C4, U+04C7..U+04C8, 
+  U+04FC..U+04FD, U+0512..U+0513 to be more consistent with other hooks
+- Modified Cyrillic italic versions of U+04AF, U+04B1, U+04B5, U+04BC, U+04BE, U+04D8
+- Modified design of U+A78D to be more curved and less squared
+- Changed postscript names for U+0218 and U+0219
+- Changed postscript names for U+2203, U+232A and U+2329
+- "Hide tone contour staves" feature now works with single tonebar
+- U+1DBF now follows weight and italic changes
+- Allowed combining marks to render properly with U+02D0
+
+10 Jun 2013 (SIL NRSI team) Charis SIL version 4.114
+- optimized Graphite code for faster processing of plain ASCII text
+
+1 Aug 2012 (SIL NRSI team) Charis SIL version 4.112
+- Changed Graphite feature identifiers from integers to 4-character 
+  alphanumeric tags (no other changes)
+  
+12 Sep 2011 (SIL NRSI team) Charis SIL version 4.110
+- Removed the VDMX table
+- Changed version number (using ttfsetver)
+
+25 Aug 2011 (SIL NRSI team) Charis SIL version 4.108
+- Double-encoded the SIL PUA characters which were added to Unicode 5.2 and 6.0
+  (using ttfremap)
+- Encoded 1D29 (using ttfremap)
+- Corrected problem with coverage tables (using ttfsortcover)
+- Changed version number (using ttfsetver)
+- Added device metric tables
+- Added an empty dsig table
+
+05 May 2009 (Alan Ward) Charis SIL version 4.106
+- TypeTuner (Silt) table changed so that line metrics from legacy fonts
+  can be imported
+
+20 Mar 2009 (SIL NRSI team) Charis SIL version 4.106
+- Added support for Unicode 5.1 Latin and Cyrillic additions
+- Other characters added: 0462, 0463, 0474, 0475, 0524, 0525, 20E5, 2203, 2204,
+  231C..U+231F, 2329, 232A, 239B..23AD, A722..U+A725
+- Added PUA characters F26B, F32C, F32D
+- Design changes: 002F, 00A1, 00BF, 02D0, 02ED, 02FF, 034B, 04A8, 04A9, 04BC,
+  04BD, 04BE, 04BF, 04E0, 04E1, 045F, 04AA, 04AB, F208, F209, 0358
+- Fixed attachment points on 1D68, 1D69, 1D6A, 04FA, 04FB, fi and fl ligatures
+- Fixed collision issues for Vietnamese glyphs 'with horn'
+- Fixed advance of t-caron
+- Feature modifications:
+    * new alternates added to feature ID 1033 and renamed from Small v-hook
+      alternate
+      to V-hook alternates
+    * new alternate U+2C65 LATIN SMALL LETTER A WITH STROKE added to
+      Literacy alternates feature
+    * default for Diacritic selection was changed from "on" to "off"
+      (by request of FieldWorks team)
+- Added new features:
+    * Small Caps
+    * Non-European caron alternates
+    * Capital B-hook alternate
+    * Show deprecated PUA
+- Slant italic bug fixed (dot on i was not disappearing with combining marks)
+- Removal of about 700 unused glyphs (including precomposed chao tone letters
+  which were no longer needed since these are now dynamically created)
+- Fixed issues: kern table error, usMaxContext and yMax errors
+- Several OpenType issues fixed
+- Graphite reordering bug fixed
+- Automated AAT build process
+- Changed OFL license to version 1.1
+  
+9 May 2008 (SIL NRSI team) Charis SIL version 4.104
+- Double-encoded the SIL PUA characters which were added to Unicode 5.1 
+  (using ttfremap)
+- Changed version number (using ttfsetver)
+
+16 Aug 2007 (SIL NRSI team) Charis SIL version 4.102
+- Modified the OpenType features so that InDesign's built-in small caps work
+
+31 Jan 2007 (SIL NRSI team) Charis SIL version 4.100
+- Added PUA character F26A
+- Added 2308, 2309
+- Removed Cyrillic italic alternates feature and added those 3 characters to the
+  slant italic specials feature
+- Fixed bug in nine-level tones (in PUA) feature
+- Made Chinantec tones larger, added 02C9 to this feature
+- Fixed bug in GSUB table to work in Pango
+
+15 Dec 2006 (SIL NRSI team)  Charis SIL version 4.0.04 beta 1 (Version 4.004)
+- Beta release (should not be distributed!)
+- Added support for Unicode 5 Latin and Cyrillic additions
+- Other new chars: 2053, 211F, 2123, 2423, FE20..FE23
+- Numerous new PUA characters
+- Deprecated some existing PUA chars now added to Unicode
+- New features:
+	- Open O alternate
+	- Chinantec tones
+	- Pitch contour tramlines
+	- Cyrillic italic alternates
+- Tone bars no longer limited to 3 sequences (OpenType)
+- Added glyphs for nine-level tones (in PUA)
+- Design changes to some Greek, Cyrillic, ogonek and modifier glyphs,
+  particularly in italic faces
+
+31 Jan 2006 (SIL NRSI team)  Charis SIL version 4.0.02 (Version 4.002)
+- First version released under the SIL Open Font License
+
+
+Information for Contributors
+----------------------------
+
+The release of Charis SIL version 4.0.02 (Version 4.002) (and any subsequent 
+versions) under the OFL license provides a means for people to modify the fonts
+to meet their needs and contribute to the project. For information on what
+you're allowed to change or modify, consult the OFL and OFL-FAQ.
+
+Anyone can make their own modified version of Charis SIL (using a different
+name), but SIL International will continue to maintain and develop the
+canonical version of the Charis SIL fonts. As the package maintainer, we
+welcome contributions. Here are some things to keep in mind:
+
+Format: We are open to contributions in various formats, but if you want to
+maximise the chances of us including your work, please make it available to
+us (via email or a URL) as either a FontLab database (preferred) or a
+PostScript Type 1 (or OT-CFF) font.
+
+Source files: We are not yet making the extended source files available, because
+our build system is rather complex and difficult to reproduce. We hope to 
+include an easier process in the future.
+
+Copyright attribution: If you submit something for inclusion in the main
+Charis SIL fonts, we will ask you to affirm that it is your original work,
+and ask you to assign the copyright of your work to SIL International. This
+is to ensure that future releases can be made under improved versions of the
+OFL without needing to track you down for further permission. This follows
+the same principle used by the FSF. Keep in mind that we are a
+not-for-profit organization committed to free/libre and open source
+software, and that any contributions incorporated in the fonts will always
+be available under the OFL or a similar license.
+
+Quality: Because we want to be able to guarantee a high level of quality for
+the primary Charis SIL fonts, we will review submissions carefully. Please
+don't be discouraged if we do not include a submission for this reason, or
+ask you to make specific revisions.
+
+Types of contributions: If you wish to make a contribution - a set of
+additional glyphs, scripts, code, etc. - please contact us before you do any
+work to see if it is a contribution we currently need. Every addition adds
+to the complexity of the project and needs to be carefully planned. This
+also avoids two people working on the same type of addition at the same time.
+
+Linux packages: Please contact the upstream maintainer of the various 
+packages - nicolas_spalinger@sil.org - if you want to help package or 
+maintain a package.
+
+When submissions will be included: We plan to revise the fonts when major 
+updates are needed (eg new versions of Unicode). If you wish to make 
+submissions, contact us on the timing. 
+
+Acknowledgements
+----------------
+(Here is where contributors can be acknowledged. If you make modifications
+be sure to add your name (N), email (E), web-address (W) and description
+(D). This list is sorted by last name in alphabetical order.)
+
+N: Walt Agee, Miriam Martin, Annie Olsen, Victor Gaultney, Lorna Priest,
+Alan Ward, Bob Hallissy, Martin Hosken, Sharon Correll, Jon Coblentz,
+Jonathan Kew
+E: http://scripts.sil.org/support
+W: http://scripts.sil.org/
+D: SIL designers and font engineers
+
+The Charis SIL project is maintained by SIL International.
+
+For more information please visit the Charis SIL page on SIL International's
+Computers and Writing systems website:
+http://scripts.sil.org/CharisSILfont
+
+Support through the website: http://scripts.sil.org/Support
