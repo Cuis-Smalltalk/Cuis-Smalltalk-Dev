@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3707] on 24 April 2019 at 4:27:07 pm'!
-'Description Tests for functionality in the Cuis Smalltalk base image.'!
-!provides: 'BaseImageTests' 1 149!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3745] on 15 May 2019 at 7:28:53 pm'!
+'Description Tests for new TestCase assertions'!
+!provides: 'BaseImageTests' 1 150!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
@@ -14601,6 +14601,126 @@ testShoulndFailErrorsWhenAnErrorIsSignaled
 testShoulndFailPassesWhenNoErrorIsSignaled
 
 	self shouldntFail: [ 1+2 ]! !
+
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:28'!
+testAssertChangesByPassesWhenActionChangesConditionByTheSpecifiedAmount
+
+	|aCollection|
+
+	aCollection := OrderedCollection new.
+	
+	self assert: [ aCollection add: 1; add: 2 ] changes: [ aCollection size ] by: 2! !
+
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:34:29'!
+testAssertChangesFromToPassesWhenActionChangesConditionFromAndToTheSpecifiedValues
+
+	|aCollection|
+
+	aCollection := OrderedCollection with: 1.
+	
+	self assert: [ aCollection add: 2 ] changes: [ aCollection size ] from: 1 to: 2! !
+
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:34'!
+testAssertChangesPassesWhenConditionIsAlteredByAction
+
+	|aCollection|
+
+	aCollection := OrderedCollection new.
+	
+	self assert: [ aCollection add: 1 ] changes: [ aCollection size ]! !
+
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:39'!
+testAssertDoeNotChangePassesWhenConditionIsNotAlteredByAction
+
+	|aCollection|
+
+	aCollection := OrderedCollection with: 1.
+	
+	self assert: [ aCollection sum ] doesNotChange: [ aCollection size ]! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 19:22:33'!
+testAssertIsNearToPassesForSameNumberDifferentToZero
+	
+	self assert: 1.5 isNearTo: 1.5! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 19:22:17'!
+testAssertIsNearToPassesWhenBothAreZero
+
+	self assert: 0.0 isNearTo: 0.0! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:36:02'!
+testAssertIsNearToPassesWithSameCalculatedNumber
+	
+	self assert: 0.3 isNearTo: 0.1 + 0.2! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:37:40'!
+testAssertIsNearToWithPrecisionPassesWhenDifferenceIsNegativeAndLessThanPrecision
+	
+	|precision newValue originalNumber |
+	
+	precision _ 0.1.
+	originalNumber _ 0.3.
+	newValue _ originalNumber - 0.01.
+	
+	self assert: originalNumber isNearTo: newValue withPrecision: precision! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:37:24'!
+testAssertIsNearToWithPrecisionPassesWhenDifferenceIsPositiveAndLessThanPrecision
+	
+	|precision newValue originalNumber |
+	
+	precision _ 0.1.
+	originalNumber _ 0.3.
+	newValue _ originalNumber + 0.01.
+	
+	self assert: originalNumber isNearTo: newValue withPrecision: precision! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:38:46'!
+testAssertIsNotNearWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
+	
+	|precision newValue originalNumber |
+	
+	precision _ 0.1.
+	originalNumber _ 0.3.
+	newValue _ originalNumber + precision + 0.001.
+	
+	self assert: originalNumber isNotNearTo: newValue withPrecision: precision! !
+
+!TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:49:51'!
+testAssertIncludesFailsWhenElementIsNotIncludedInCollection
+	
+	| collection anElement |
+	
+	anElement _ 1.
+	collection _ #().
+	
+	self should: [ self assert: collection includes: anElement ] 
+		 raise: TestResult failure
+		 withMessageText: collection asString, ' does not include ', anElement asString! !
+
+!TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:50:04'!
+testAssertIncludesShouldNotFailWhenElementIsInCollection
+	
+	| collection anElement |
+	
+	anElement _ 1.
+	collection _ Array with: anElement.
+	
+	self 
+		shouldnt: [ self assert: collection includes: anElement ] 
+		raise: TestResult failure! !
+
+!TestCaseTest methodsFor: 'should take less than' stamp: 'HAW 5/15/2019 19:08:22'!
+testShouldNotTakeMoreThanFailsWhenClosureTakesMoreThanTheLimit
+
+	self shouldFail: [ self should: [(Delay forMilliseconds: 5) wait ] notTakeMoreThan: 1 milliSeconds ]
+		! !
+
+!TestCaseTest methodsFor: 'should take less than' stamp: 'HAW 5/15/2019 19:07:04'!
+testShouldNotTakeMoreThanPassesWhenClosureTakesLessThanTheLimit
+
+	self shouldntFail: [ self should: [] notTakeMoreThan: 1 milliSeconds ]
+		! !
 
 !TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:11:43'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
