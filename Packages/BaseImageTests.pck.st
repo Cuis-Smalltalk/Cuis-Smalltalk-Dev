@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3748] on 18 May 2019 at 5:07:37 pm'!
-'Description OrderedCollection streamContents tests'!
-!provides: 'BaseImageTests' 1 151!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3748] on 18 May 2019 at 5:13:03 pm'!
+'Description Collection flatten tests'!
+!provides: 'BaseImageTests' 1 152!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1528,6 +1528,42 @@ testAsCommaStringAndSeparatesWithAndWhenTwoOneElements
 testAsCommaStringAndSeparatesWithCommaButLastOneWithAndWhenMoreThanTwoElements
 
 	self assert: #(1 2 3) asCommaStringAnd equals: '1, 2 and 3' ! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:08:43'!
+testItMaintainsTheSameCollectionSpecies
+
+	self assert: (OrderedCollection with: 1 with: 2) equals: (OrderedCollection with: 1 with: #(2)) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:31:15'!
+testWhenCollectionContainsASingleLevelOfElementsItReturnsTheSameCollection
+
+	self assert: #(1 2 3) equals: #(1 2 3) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:01:02'!
+testWhenCollectionContainsMoreThanTwoLevelsltReturnsTheElementsOfAllNestedCollections
+
+	self assert: #(1 2 3 4 5) equals: #(1 #(2 3) #(4 #(5))) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:22'!
+testWhenCollectionContainsStringCollectionsItDoesNotFlattenTheStrings
+
+	self assert: #('string1' 'string2' 'string3') equals: #('string1' #('string2' 'string3')) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:02:07'!
+testWhenCollectionContainsStringsItReturnsTheSameCollection
+
+	self assert: #('string1' 'string2' 'string3') equals: #('string1' 'string2' 'string3') flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:37'!
+testWhenCollectionContainsTwoLevelsOfElementsItReturnsTheElementsOfAllNestedCollections
+	
+	self assert: #(1 2 3) equals: #(#(1) #(2 3)) flatten
+	! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:24:15'!
+testWhenCollectionIsEmptyItReturnsTheSameCollection
+
+	self assert: #() equals: #() flatten! !
 
 !DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
 testKeyNotFoundSignalTheRightMessage
