@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3446] on 19 September 2018 at 8:39:19 am'!
-'Description Browse class comments for classes with names such as "Pluggable," "Morphic," "Text," or "Morph" which appear in a hierarchical list.'!
-!provides: 'ClassCommentBrowser' 1 37!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3727] on 11 May 2019 at 2:53:07 pm'!
+'Description List classes whose names include terms such as "Pluggable," "Morphic," "Text," or "Morph", search their class comments or open browsers on them.'!
+!provides: 'ClassCommentBrowser' 1 46!
 SystemOrganization addCategory: #ClassCommentBrowser!
 
 
@@ -14,6 +14,16 @@ AbstractHierarchicalList subclass: #CommentGuide
 CommentGuide class
 	instanceVariableNames: 'topics'!
 
+!classDefinition: #NotCommented category: #ClassCommentBrowser!
+ActiveModel subclass: #NotCommented
+	instanceVariableNames: 'classList bumList bumListIndex'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ClassCommentBrowser'!
+!classDefinition: 'NotCommented class' category: #ClassCommentBrowser!
+NotCommented class
+	instanceVariableNames: ''!
+
 !classDefinition: #CommentGuideListMorph category: #ClassCommentBrowser!
 HierarchicalListMorph subclass: #CommentGuideListMorph
 	instanceVariableNames: ''
@@ -26,12 +36,22 @@ CommentGuideListMorph class
 
 !classDefinition: #CommentGuideWindow category: #ClassCommentBrowser!
 SystemWindow subclass: #CommentGuideWindow
-	instanceVariableNames: 'listMorph textMorph'
+	instanceVariableNames: 'listMorph textMorph nwin hwin'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ClassCommentBrowser'!
 !classDefinition: 'CommentGuideWindow class' category: #ClassCommentBrowser!
 CommentGuideWindow class
+	instanceVariableNames: ''!
+
+!classDefinition: #NoCommentsWindow category: #ClassCommentBrowser!
+SystemWindow subclass: #NoCommentsWindow
+	instanceVariableNames: 'aList'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ClassCommentBrowser'!
+!classDefinition: 'NoCommentsWindow class' category: #ClassCommentBrowser!
+NoCommentsWindow class
 	instanceVariableNames: ''!
 
 !classDefinition: #CommentGuideWrapper category: #ClassCommentBrowser!
@@ -45,7 +65,7 @@ CommentGuideWrapper class
 	instanceVariableNames: ''!
 
 
-!CommentGuide commentStamp: 'dhn 1/28/2016 16:33' prior: 0!
+!CommentGuide commentStamp: 'dhn 5/11/2019 14:52:06' prior: 0!
 Class comments browser for Cuis
 
 To open, evaluate:
@@ -57,23 +77,29 @@ This class provides the model for browsing class comments based on class names w
 
 	Pluggable
 	Morphic
+	ST80
+	93
 	Debug
 	Text
 	Morph
-	CPU
 	
 The view for this model is CommentGuideWindow.!
+
+!NotCommented commentStamp: '<historical>' prior: 0!
+The model for view of classes without comments.!
 
 !CommentGuideListMorph commentStamp: 'dhn 6/15/2016 17:30' prior: 0!
 A list of terms and acronyms which occur in class names. Selection can be made by typed key, arrows, or clicks.
 
 This class enables access to the scroller, which is needed for selection by typed key.!
 
-!CommentGuideWindow commentStamp: 'dhn 1/28/2016 16:23' prior: 0!
-Show a window for browsing class comments based on class names which contain certain strings, such as:
+!CommentGuideWindow commentStamp: 'dhn 5/11/2019 14:50:00' prior: 0!
+Show a window for browsing class comments based on class names which contain terms such as:
 
 	Pluggable
 	Morphic
+	ST80
+	93
 	Debug
 	Text
 	Morph
@@ -101,6 +127,9 @@ In the outer list of categories, a pop-up menu enables:
 - searches over the names of all classes
 - searches over all class comments
 !
+
+!NoCommentsWindow commentStamp: '<historical>' prior: 0!
+A view for listing classes without comments.!
 
 !CommentGuideWrapper commentStamp: 'dhn 9/12/2015 12:35' prior: 0!
 Provide the wrapper for a list item in CommentGuideWindow.
@@ -283,6 +312,56 @@ tokenChars
 	"Answer the alphabet, capitalized, plus the digits"
 	^ ($A to: $Z), ($0 to: $9)! !
 
+!NotCommented methodsFor: 'operating' stamp: 'dhn 5/10/2019 21:08:59'!
+bumListIndex
+	"Answer the value of bumListIndex"
+	
+	bumListIndex ifNil: [bumListIndex _ 0].
+	^ bumListIndex! !
+
+!NotCommented methodsFor: 'operating' stamp: 'dhn 5/10/2019 21:11:02'!
+bumListIndex: anIndex
+	"Set the value of bumListIndex"
+	
+	bumListIndex _ anIndex.
+	self changed: #bumListIndex! !
+
+!NotCommented methodsFor: 'accessing' stamp: 'dhn 5/10/2019 21:34:40'!
+bumList
+	"Answer the list of classes"
+	
+	^ bumList! !
+
+!NotCommented methodsFor: 'accessing' stamp: 'dhn 5/10/2019 21:35:36'!
+bumList: aCollection
+	"Set the list of classes"
+	
+	bumList _ aCollection! !
+
+!NotCommented methodsFor: 'accessing' stamp: 'dhn 5/9/2019 21:12:37'!
+classList
+	"Answer the value of classList"
+
+	classList ifNil: [classList _ OrderedCollection new].
+	^ classList! !
+
+!NotCommented methodsFor: 'accessing' stamp: 'dhn 5/9/2019 21:07:40'!
+classList: anObject
+	"Set the value of classList"
+
+	classList _ anObject! !
+
+!NotCommented methodsFor: 'accessing' stamp: 'dhn 5/9/2019 21:43:01'!
+getList
+
+	^ self bumList! !
+
+!NotCommented methodsFor: 'initialization' stamp: 'dhn 5/10/2019 13:01:53'!
+initialize
+
+	bumList _ OrderedCollection new.
+	bumListIndex _ 0! !
+
 !CommentGuideListMorph methodsFor: 'events-processing' stamp: 'dhn 6/15/2016 16:56'!
 keySelection
 	"Scroll the hiearchical list based on a keystroke"
@@ -331,6 +410,39 @@ browseVersions
 			VersionsBrowserWindow 
 				browseCommentOf: (Smalltalk at: model getCurrentSelection item asSymbol)]! !
 
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/11/2019 14:06:50'!
+help
+	"Information on how to use Class Coment Browser"
+	
+	^ 'Two different pop-up menus appear, depending on whether there is a selection in the list or not.
+
+If no selection:
+	Search all class comments - which contain a string.
+	Search all class names - using a fragment or a full name.
+	Help... - show this page.
+	
+If selection (expanded or not):
+	Search comments - of a class or all classes in the selection.
+	Comment versions - open a version window for the class comment
+	Browse full - open a browser for the named class
+	Browse hierarchy - open a hierarchy browser for the named class
+	Browse protocol - open a protocol browser for the named class
+	Help... - show this page.
+
+Typing a character causes the list to scroll to the next entry which begins with that character. The same character can be repeated to cycle through that part of the list.
+
+This browser lists all the terms, acronyms, and numbers which appear in ''Smalltalk classNames''. It finds the complete class names containing these.
+'
+	
+	! !
+
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/11/2019 12:44:12'!
+openHelp
+	"Show help screen"
+	
+	hwin _ (TextModel new contents: self help; openLabel: 'Class Comment Guide Help')
+		morphExtent: 600@500! !
+
 !CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:19'!
 scrollToClass: aString
 	"Scroll to an entry for the class named aString"
@@ -351,13 +463,14 @@ scrollToClass: aString
 			setSelectedMorph: m2;
 			scrollSelectionIntoView]! !
 
-!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/19/2016 11:37'!
+!CommentGuideWindow methodsFor: 'browsing' stamp: 'dhn 5/9/2019 17:07:07'!
 showFind: aName
 	"Cause the class comment for aName to display; answer the comment"
 	| cmt |
 
 	cmt _ model commentOf: aName.
 	textMorph model actualContents: cmt.
+	self scrollToClass: aName.
 	^ cmt! !
 
 !CommentGuideWindow methodsFor: 'instance creation' stamp: 'dhn 6/16/2016 13:08'!
@@ -400,7 +513,7 @@ refreshListAfterDelay
 
 	self addAlarm: #refreshList after: 20 "milliseconds" ! !
 
-!CommentGuideWindow methodsFor: 'menu' stamp: 'jmv 5/13/2018 19:08:51'!
+!CommentGuideWindow methodsFor: 'menu' stamp: 'dhn 5/11/2019 12:10:21'!
 commentGuideMenu
 	"Show the popup menu"
 	
@@ -409,17 +522,18 @@ commentGuideMenu
 	model getCurrentSelection
 		ifNil: [
 			aMenu
-				add: 'search all class names'		action: #searchClassNames;
-				add: 'search all class comments'	action: #searchAllComments ]
+				add: 'Search all class comments'	action: #searchAllComments;
+				add: 'Search all class names'		action: #searchClassNames;
+				add: 'Classes without comments'	action: #noComment;
+				add: 'Help...'							action: #openHelp]
 		ifNotNil: [
 			aMenu
-				add: 'search comments'		action: #searchComment;
-				add: 'comment versions'	action: #browseVersions;
-				add: 'browse full'			action: #browseClass;
-				add: 'browse hierarchy'		action: #browseHierarchy;
-				add: 'browse protocol'		action: #browseFullProtocol.
-
-				].
+				add: 'Search comments'		action: #searchComment;
+				add: 'Comment versions'		action: #browseVersions;
+				add: 'Browse full'			action: #browseClass;
+				add: 'Browse hierarchy'		action: #browseHierarchy;
+				add: 'Browse protocol'		action: #browseFullProtocol;
+				add: 'Help...'					action: #openHelp].
 	^ aMenu! !
 
 !CommentGuideWindow methodsFor: 'initialization' stamp: 'dhn 9/24/2015 08:47'!
@@ -457,10 +571,24 @@ respondToKey: aChar
 	model indexOf: aChar.
 	listMorph keySelection! !
 
-!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/19/2016 11:26'!
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/11/2019 13:40:32'!
+noComment
+	"Search for classes with no comments"
+	| hits mod |
+	
+	hits _ Smalltalk allClasses select: [:eaClass | 
+		eaClass organization classComment size<10].
+	hits
+		ifEmpty: [listMorph flash]
+		ifNotEmpty: [
+			mod _ NotCommented new.
+			mod bumList: hits.
+			nwin _ (NoCommentsWindow open: mod label: 'Classes with no Comments') morphExtent: 400@600]! !
+
+!CommentGuideWindow methodsFor: 'searching' stamp: 'dhn 5/9/2019 16:53:44'!
 searchAllComments
 	"Search for a string in class comments of all classes"
-	| arg hits caption items n |
+	| arg hits caption menu |
 	
 	arg _ ''.
 	arg _ FillInTheBlankMorph request: 'Search All Class Comments for:'.
@@ -470,13 +598,13 @@ searchAllComments
 	hits 
 		ifEmpty: [listMorph flash]
 		ifNotEmpty: [
-			items _ String streamContents: [:s | hits do: [:i | s nextPutAll: i asString; newLine]].
-			n _ (PopUpMenu labels: items lines: nil)
-				startUpWithCaption: caption.
-			n > 0 ifTrue:[
-				self 
-					scrollToClass: (hits at: n);
-					showFind: (hits at: n) "show the comment of the selected class" ]].
+			(menu _ MenuMorph entitled: caption)
+				defaultTarget: self;
+				addStayUpIcons.
+				hits do: [:h | menu add: h target: self action: #showFind: argument: h].
+				menu 
+					openInWorld;
+					morphPosition: self morphPosition + (-70@50)].
 					
 	^ nil! !
 
@@ -543,11 +671,29 @@ searchIn: aCollection for: aString
 			ifTrue: [hits addLast: ea]].
 	^ hits! !
 
-!CommentGuideWindow class methodsFor: 'instance creation' stamp: 'dhn 9/24/2015 08:48'!
-how
-"
-	CommentGuide open.
-"! !
+!CommentGuideWindow methodsFor: 'open/close' stamp: 'dhn 5/11/2019 12:45:22'!
+closeBoxHit
+	"Close the window of classes with no comments and help window, if any"
+	
+	nwin ifNotNil: [nwin delete].
+	hwin ifNotNil: [hwin delete].
+	super closeBoxHit! !
+
+!NoCommentsWindow methodsFor: 'initialization' stamp: 'dhn 5/10/2019 21:31:05'!
+buildMorphicWindow
+	"Build the window for the list of classes without comments"
+	
+	aList _ (PluggableListMorph
+				model: model
+				listGetter: #bumList  "answers the list content"
+				indexGetter: #bumListIndex  "answers the selection made in the list"
+				indexSetter: #bumListIndex:  "sets the list index"
+				mainView: self
+				menuGetter: nil
+				keystrokeAction: nil)
+					name: 'The List'.
+	layoutMorph addMorphUseAll: aList
+! !
 
 !CommentGuideWrapper methodsFor: 'access' stamp: 'dhn 9/12/2015 11:31'!
 asString
