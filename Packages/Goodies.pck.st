@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3383] on 27 July 2018 at 9:01:05 pm'!
-'Description Please enter a description for this package'!
-!provides: 'Goodies' 1 8!
+'Description '!
+!provides: 'Goodies' 1 9!
 SystemOrganization addCategory: #'Goodies-AsyncFile'!
 SystemOrganization addCategory: #'Goodies-Collections'!
 SystemOrganization addCategory: #'Goodies-Tools-FileList'!

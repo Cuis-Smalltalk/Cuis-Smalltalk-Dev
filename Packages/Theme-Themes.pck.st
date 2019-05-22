@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3508] on 29 November 2018 at 12:40:22 pm'!
-'Description Please enter a description for this package '!
-!provides: 'Theme-Themes' 1 5!
+'Description '!
+!provides: 'Theme-Themes' 1 6!
 SystemOrganization addCategory: #'Theme-Themes'!
 
 

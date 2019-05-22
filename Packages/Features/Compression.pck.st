@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3567] on 8 January 2019 at 5:08:15 pm'!
-'Description Please enter a description for this package '!
-!provides: 'Compression' 1 22!
+'Description '!
+!provides: 'Compression' 1 23!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
