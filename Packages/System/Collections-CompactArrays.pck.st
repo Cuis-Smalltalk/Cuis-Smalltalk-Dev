@@ -1,6 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 28 July 2016 at 3:26:08 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3746] on 17 May 2019 at 9:02:05 am'!
 'Description Please enter a description for this package'!
-!provides: 'Collections-CompactArrays' 1 6!
+!provides: 'Collections-CompactArrays' 1 7!
+SystemOrganization addCategory: #'Collections-CompactArrays'!
+
+
 !classDefinition: #PointArray category: #'Collections-CompactArrays'!
 IntegerArray variableWordSubclass: #PointArray
 	instanceVariableNames: ''
@@ -71,11 +74,38 @@ ShortWordArrays store 16-bit unsigned Integer values, between 0 and 16rFFFF.!
 !ShortRunArray commentStamp: '<historical>' prior: 0!
 This class is run-length encoded representation of short integer (e.g., 16bit signed integer values)!
 
-!Collection methodsFor: '*Collections-CompactArrays' stamp: 'jmv 12/18/2015 15:01'!
-asPointArray
-	"Answer a PointArray whose elements are the elements of the receiver"
+!ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 12/18/2015 15:29'!
+initClassCachedState
+	"Check if the word order has changed from the last save"
 
-	^self as: PointArray! !
+	((LastSaveOrder at: 1) = 42 and:[(LastSaveOrder at: 2) = 13]) 
+		ifTrue:[^self]. "Okay"
+	((LastSaveOrder at: 2) = 42 and:[(LastSaveOrder at: 1) = 13]) 
+		ifTrue:[^self swapShortObjects]. "Reverse guys"
+	^self error:'This must never happen'! !
+
+!ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 12/18/2015 15:29'!
+initClassCachedState
+	"Check if the word order has changed from the last save"
+
+	((LastSaveOrder valueAtRun: 1) = 42 and:[(LastSaveOrder lengthAtRun: 1) = 3]) 
+		ifTrue:[^self]. "Okay"
+	((LastSaveOrder lengthAtRun: 1) = 42 and:[(LastSaveOrder valueAtRun: 1) = 3]) 
+		ifTrue:[^self swapRuns]. "Reverse guys"
+	^self error:'This must never happen'! !
+
+!ShortRunArray methodsFor: 'printing' stamp: 'ar 11/3/1998 17:41'!
+printOn: aStream
+	aStream nextPutAll: self class name; nextPutAll:' ( '.
+	self lengthsAndValuesDo:[:runLength :runValue |
+		aStream
+			nextPutAll:' (';
+			print: runLength;
+			space;
+			print: runValue;
+			nextPut:$).
+	].
+	aStream nextPutAll:' )'.! !
 
 !PointArray methodsFor: 'accessing' stamp: 'ar 11/2/1998 12:21'!
 at: index
@@ -88,6 +118,16 @@ at: index put: aPoint
 	super at: index * 2 - 1 put: aPoint x asInteger.
 	super at: index * 2 put: aPoint y asInteger.
 	^aPoint! !
+
+!PointArray methodsFor: 'accessing' stamp: 'jmv 5/16/2019 16:20:10'!
+at: index putX: aNumber
+	"Store the argument aPoint at the given index"
+	super at: index * 2 - 1 put: aNumber asInteger! !
+
+!PointArray methodsFor: 'accessing' stamp: 'jmv 5/16/2019 16:19:55'!
+at: index putY: aNumber
+	"Store the argument aPoint at the given index"
+	super at: index * 2 put: aNumber asInteger! !
 
 !PointArray methodsFor: 'accessing' stamp: 'ar 11/10/1998 19:41'!
 bounds
@@ -154,34 +194,9 @@ at: index putUnsigned: value
 	self at: index putSigned: primValue.
 	^value! !
 
-!ShortIntegerArray methodsFor: 'objects from disk' stamp: 'nk 3/7/2004 13:54'!
-bytesPerElement
-	^2! !
-
 !ShortIntegerArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 15:41'!
 defaultElement
 	^0! !
-
-!ShortIntegerArray methodsFor: 'objects from disk' stamp: 'jmv 2/15/2008 00:48'!
-restoreEndianness
-	"This word object was just read in from a stream.  It was stored in Big Endian (Mac) format.  Swap each pair of bytes (16-bit word), if the current machine is Little Endian.
-	Why is this the right thing to do?  We are using memory as a byteStream.  High and low bytes are reversed in each 16-bit word, but the stream of words ascends through memory.  Different from a Bitmap."
-
-	| hack blt |
-	Smalltalk isLittleEndian ifTrue: [
-		"The implementation is a hack, but fast for large ranges"
-		hack _ Form new hackBits: self.
-		blt _ (BitBlt toForm: hack) sourceForm: hack.
-		blt combinationRule: Form reverse.  "XOR"
-		blt sourceY: 0; destY: 0; height: hack height; width: 1.
-		blt sourceX: 0; destX: 1; copyBits.  "Exchange bytes 0 and 1"
-		blt sourceX: 1; destX: 0; copyBits.
-		blt sourceX: 0; destX: 1; copyBits.
-		blt sourceX: 2; destX: 3; copyBits.  "Exchange bytes 2 and 3"
-		blt sourceX: 3; destX: 2; copyBits.
-		blt sourceX: 2; destX: 3; copyBits
-	].
-! !
 
 !ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/27/2013 07:21'!
 signedAt: index
@@ -209,6 +224,31 @@ unsignedAt: index
 			"(primValue + 1) negated bitInvert16" ]
 		ifFalse: [ primValue ]! !
 
+!ShortIntegerArray methodsFor: 'objects from disk' stamp: 'nk 3/7/2004 13:54'!
+bytesPerElement
+	^2! !
+
+!ShortIntegerArray methodsFor: 'objects from disk' stamp: 'jmv 2/15/2008 00:48'!
+restoreEndianness
+	"This word object was just read in from a stream.  It was stored in Big Endian (Mac) format.  Swap each pair of bytes (16-bit word), if the current machine is Little Endian.
+	Why is this the right thing to do?  We are using memory as a byteStream.  High and low bytes are reversed in each 16-bit word, but the stream of words ascends through memory.  Different from a Bitmap."
+
+	| hack blt |
+	Smalltalk isLittleEndian ifTrue: [
+		"The implementation is a hack, but fast for large ranges"
+		hack _ Form new hackBits: self.
+		blt _ (BitBlt toForm: hack) sourceForm: hack.
+		blt combinationRule: Form reverse.  "XOR"
+		blt sourceY: 0; destY: 0; height: hack height; width: 1.
+		blt sourceX: 0; destX: 1; copyBits.  "Exchange bytes 0 and 1"
+		blt sourceX: 1; destX: 0; copyBits.
+		blt sourceX: 0; destX: 1; copyBits.
+		blt sourceX: 2; destX: 3; copyBits.  "Exchange bytes 2 and 3"
+		blt sourceX: 3; destX: 2; copyBits.
+		blt sourceX: 2; destX: 3; copyBits
+	].
+! !
+
 !ShortIntegerArray methodsFor: 'objects from disk' stamp: 'jmv 2/26/2016 17:08'!
 writeOn: aStream 
 
@@ -225,16 +265,6 @@ writeOn: aStream
 				nextPut: (w digitAt: 4);
 				nextPut: (w digitAt: 3) ]].! !
 
-!ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 12/18/2015 15:29'!
-initClassCachedState
-	"Check if the word order has changed from the last save"
-
-	((LastSaveOrder at: 1) = 42 and:[(LastSaveOrder at: 2) = 13]) 
-		ifTrue:[^self]. "Okay"
-	((LastSaveOrder at: 2) = 42 and:[(LastSaveOrder at: 1) = 13]) 
-		ifTrue:[^self swapShortObjects]. "Reverse guys"
-	^self error:'This must never happen'! !
-
 !ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 12/12/2014 16:56'!
 initialize
 	"
@@ -245,17 +275,17 @@ initialize
 	LastSaveOrder at: 1 put: 42.
 	LastSaveOrder at: 2 put: 13! !
 
+!ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:51'!
+swapShortObjects
+	self allSubInstancesDo: [ :inst |
+		BitBlt swapHalvesIn32BitWords: inst ]! !
+
 !ShortIntegerArray class methodsFor: 'instance creation' stamp: 'jmv 9/4/2015 13:09'!
 new: n
 	"Instances are always of even size. Only accept those."
 	n even ifFalse: [
 		self error: 'ShortIntegerArray>>#new: must be called with an even argument' ].
 	^ super new: n // 2! !
-
-!ShortIntegerArray class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:51'!
-swapShortObjects
-	self allSubInstancesDo: [ :inst |
-		BitBlt swapHalvesIn32BitWords: inst ]! !
 
 !ShortPointArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 15:43'!
 at: index
@@ -268,6 +298,16 @@ at: index put: aPoint
 	super at: index * 2 - 1 put: aPoint x asInteger.
 	super at: index * 2 put: aPoint y asInteger.
 	^aPoint! !
+
+!ShortPointArray methodsFor: 'accessing' stamp: 'jmv 5/16/2019 16:19:13'!
+at: index putX: aNumber
+	"Store the argument aPoint at the given index"
+	super at: index * 2 - 1 put: aNumber asInteger! !
+
+!ShortPointArray methodsFor: 'accessing' stamp: 'jmv 5/16/2019 16:19:06'!
+at: index putY: aNumber
+	"Store the argument aPoint at the given index"
+	super at: index * 2 put: aNumber asInteger! !
 
 !ShortPointArray methodsFor: 'accessing' stamp: 'ar 11/10/1998 19:41'!
 bounds
@@ -342,91 +382,15 @@ compressionRatio
 	^(self size asFloat * 0.5) "Would need only half of the amount in ShortIntegerArray"
 		/ (self runSize max: 1)! !
 
-!ShortRunArray methodsFor: 'enumerating' stamp: 'ar 11/3/1998 17:31'!
-do: aBlock
-	"Evaluate aBlock with all elements of the receiver"
-	self lengthsAndValuesDo:[:runLength :runValue|
-		"Use to:do: instead of timesRepeat: for compiler optimization"
-		1 to: runLength do:[:i|
-			aBlock value: runValue.
-		].
-	].! !
-
 !ShortRunArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 17:21'!
 lengthAtRun: index
 	"Return the length of the run starting at the given index"
 	^(self basicAt: index) bitShift: -16! !
 
-!ShortRunArray methodsFor: 'enumerating' stamp: 'ar 12/27/1999 13:44'!
-lengthsAndValuesDo: aBlock
-	"Evaluate aBlock with the length and value of each run in the receiver"
-	^self runsAndValuesDo: aBlock! !
-
-!ShortRunArray methodsFor: 'printing' stamp: 'ar 11/3/1998 17:41'!
-printOn: aStream
-	aStream nextPutAll: self class name; nextPutAll:' ( '.
-	self lengthsAndValuesDo:[:runLength :runValue |
-		aStream
-			nextPutAll:' (';
-			print: runLength;
-			space;
-			print: runValue;
-			nextPut:$).
-	].
-	aStream nextPutAll:' )'.! !
-
-!ShortRunArray methodsFor: 'objects from disk' stamp: 'jmv 2/15/2008 00:49'!
-restoreEndianness
-	"This word object was just read in from a stream.  It was stored in Big Endian (Mac) format.  Swap each pair of bytes (16-bit word), if the current machine is Little Endian.
-	Why is this the right thing to do?  We are using memory as a byteStream.  High and low bytes are reversed in each 16-bit word, but the stream of words ascends through memory.  Different from a Bitmap."
-
-	| w b1 b2 b3 b4 |
-	Smalltalk isLittleEndian ifTrue: [
-		1 to: self basicSize do: [:i |
-			w _ self basicAt: i.
-			b1 _ w digitAt: 1.
-			b2 _ w digitAt: 2.
-			b3 _ w digitAt: 3.
-			b4 _ w digitAt: 4.
-			w _ (b1 << 24) + (b2 << 16) + (b3 << 8) + b4.
-			self basicAt: i put: w.
-		]
-	].
-
-! !
-
 !ShortRunArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 17:28'!
 runSize
 	"Return the number of runs in the receiver"
 	^self basicSize! !
-
-!ShortRunArray methodsFor: 'enumerating' stamp: 'ar 12/27/1999 13:44'!
-runsAndValuesDo: aBlock
-	"Evaluate aBlock with the length and value of each run in the receiver"
-	| basicValue length value |
-	1 to: self basicSize do:[:i|
-		basicValue _ self basicAt: i.
-		length _ basicValue bitShift: -16.
-		value _ basicValue bitAnd: 16rFFFF.
-		value _ (value bitAnd: 16r7FFF) - (value bitAnd: 16r8000).
-		aBlock value: length value: value.
-	].! !
-
-!ShortRunArray methodsFor: 'private' stamp: 'ar 11/3/1998 21:02'!
-setRunAt: i toLength: runLength value: value
-	(value < -16r7FFF or:[value > 16r8000]) ifTrue:[^self errorImproperStore].
-	(runLength < 0 or:[runLength > 16rFFFF]) ifTrue:[^self errorImproperStore].
-	self basicAt: i put: (runLength bitShift: 16) + 
-		((value bitAnd: 16r7FFF) - (value bitAnd: -16r8000)).! !
-
-!ShortRunArray methodsFor: 'private' stamp: 'ar 11/3/1998 21:00'!
-setRuns: runArray values: valueArray
-	| runLength value |
-	1 to: runArray size do:[:i|
-		runLength _ runArray at: i.
-		value _ valueArray at: i.
-		self setRunAt: i toLength: runLength value: value.
-	].! !
 
 !ShortRunArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 17:28'!
 size
@@ -451,6 +415,33 @@ valueAtRun: index
 	uShort _ (self basicAt: index) bitAnd: 16rFFFF.
 	^(uShort bitAnd: 16r7FFF) - (uShort bitAnd: 16r8000)! !
 
+!ShortRunArray methodsFor: 'enumerating' stamp: 'ar 11/3/1998 17:31'!
+do: aBlock
+	"Evaluate aBlock with all elements of the receiver"
+	self lengthsAndValuesDo:[:runLength :runValue|
+		"Use to:do: instead of timesRepeat: for compiler optimization"
+		1 to: runLength do:[:i|
+			aBlock value: runValue.
+		].
+	].! !
+
+!ShortRunArray methodsFor: 'enumerating' stamp: 'ar 12/27/1999 13:44'!
+lengthsAndValuesDo: aBlock
+	"Evaluate aBlock with the length and value of each run in the receiver"
+	^self runsAndValuesDo: aBlock! !
+
+!ShortRunArray methodsFor: 'enumerating' stamp: 'ar 12/27/1999 13:44'!
+runsAndValuesDo: aBlock
+	"Evaluate aBlock with the length and value of each run in the receiver"
+	| basicValue length value |
+	1 to: self basicSize do:[:i|
+		basicValue _ self basicAt: i.
+		length _ basicValue bitShift: -16.
+		value _ basicValue bitAnd: 16rFFFF.
+		value _ (value bitAnd: 16r7FFF) - (value bitAnd: 16r8000).
+		aBlock value: length value: value.
+	].! !
+
 !ShortRunArray methodsFor: 'enumerating' stamp: 'ar 11/3/1998 21:05'!
 valuesCollect: aBlock
 	"Evaluate aBlock with each of the receiver's values as the argument. 
@@ -468,15 +459,41 @@ valuesCollect: aBlock
 valuesDo: aBlock
 	self lengthsAndValuesDo:[:runLength :runValue| aBlock value: runValue]! !
 
-!ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 12/18/2015 15:29'!
-initClassCachedState
-	"Check if the word order has changed from the last save"
+!ShortRunArray methodsFor: 'objects from disk' stamp: 'jmv 2/15/2008 00:49'!
+restoreEndianness
+	"This word object was just read in from a stream.  It was stored in Big Endian (Mac) format.  Swap each pair of bytes (16-bit word), if the current machine is Little Endian.
+	Why is this the right thing to do?  We are using memory as a byteStream.  High and low bytes are reversed in each 16-bit word, but the stream of words ascends through memory.  Different from a Bitmap."
 
-	((LastSaveOrder valueAtRun: 1) = 42 and:[(LastSaveOrder lengthAtRun: 1) = 3]) 
-		ifTrue:[^self]. "Okay"
-	((LastSaveOrder lengthAtRun: 1) = 42 and:[(LastSaveOrder valueAtRun: 1) = 3]) 
-		ifTrue:[^self swapRuns]. "Reverse guys"
-	^self error:'This must never happen'! !
+	| w b1 b2 b3 b4 |
+	Smalltalk isLittleEndian ifTrue: [
+		1 to: self basicSize do: [:i |
+			w _ self basicAt: i.
+			b1 _ w digitAt: 1.
+			b2 _ w digitAt: 2.
+			b3 _ w digitAt: 3.
+			b4 _ w digitAt: 4.
+			w _ (b1 << 24) + (b2 << 16) + (b3 << 8) + b4.
+			self basicAt: i put: w.
+		]
+	].
+
+! !
+
+!ShortRunArray methodsFor: 'private' stamp: 'ar 11/3/1998 21:02'!
+setRunAt: i toLength: runLength value: value
+	(value < -16r7FFF or:[value > 16r8000]) ifTrue:[^self errorImproperStore].
+	(runLength < 0 or:[runLength > 16rFFFF]) ifTrue:[^self errorImproperStore].
+	self basicAt: i put: (runLength bitShift: 16) + 
+		((value bitAnd: 16r7FFF) - (value bitAnd: -16r8000)).! !
+
+!ShortRunArray methodsFor: 'private' stamp: 'ar 11/3/1998 21:00'!
+setRuns: runArray values: valueArray
+	| runLength value |
+	1 to: runArray size do:[:i|
+		runLength _ runArray at: i.
+		value _ valueArray at: i.
+		self setRunAt: i toLength: runLength value: value.
+	].! !
 
 !ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 12/12/2014 16:56'!
 initialize
@@ -485,6 +502,11 @@ initialize
 	SystemDictionary initialize.
 	"
 	LastSaveOrder _ #(42 42 42) as: self! !
+
+!ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:52'!
+swapRuns
+	self allSubInstancesDo: [ :inst |
+		BitBlt swapHalvesIn32BitWords: inst ]! !
 
 !ShortRunArray class methodsFor: 'instance creation' stamp: 'ar 11/3/1998 17:12'!
 new: n
@@ -527,9 +549,10 @@ newFrom: aCollection
 runs: runCollection values: valueCollection
 	^(self basicNew: runCollection size) setRuns: runCollection values: valueCollection! !
 
-!ShortRunArray class methodsFor: 'class initialization' stamp: 'jmv 2/25/2016 10:52'!
-swapRuns
-	self allSubInstancesDo: [ :inst |
-		BitBlt swapHalvesIn32BitWords: inst ]! !
+!Collection methodsFor: '*Collections-CompactArrays' stamp: 'jmv 12/18/2015 15:01'!
+asPointArray
+	"Answer a PointArray whose elements are the elements of the receiver"
+
+	^self as: PointArray! !
 ShortIntegerArray initialize!
 ShortRunArray initialize!

@@ -1,7 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3707] on 24 April 2019 at 4:27:07 pm'!
-'Description Tests for functionality in the Cuis Smalltalk base image.'!
-!provides: 'BaseImageTests' 1 149!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3751] on 19 May 2019 at 5:39:45 pm'!
+'Description Formatting changes and recategorization ofr TemporaryToInstanceVariableTest'!
+!provides: 'BaseImageTests' 1 154!
 !requires: '__Refactoring-TestData__' 1 0 nil!
+SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Numbers'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Chronology'!
@@ -9,7 +10,6 @@ SystemOrganization addCategory: #'BaseImageTests-Kernel-Methods'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Processes'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel'!
 SystemOrganization addCategory: #'BaseImageTests-Collections-Arrayed'!
-SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Exceptions'!
 SystemOrganization addCategory: #'BaseImageTests-Compiler'!
 SystemOrganization addCategory: #'BaseImageTests-System-FileMan'!
@@ -58,6 +58,96 @@ Notification subclass: #MyTestNotification
 	category: 'BaseImageTests-Exceptions'!
 !classDefinition: 'MyTestNotification class' category: #'BaseImageTests-Exceptions'!
 MyTestNotification class
+	instanceVariableNames: ''!
+
+!classDefinition: #BinarySearchTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #BinarySearchTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'BinarySearchTest class' category: #'BaseImageTests-Collections'!
+BinarySearchTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CollectTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #CollectTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'CollectTest class' category: #'BaseImageTests-Collections'!
+CollectTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CollectionTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #CollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'CollectionTest class' category: #'BaseImageTests-Collections'!
+CollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DictionaryTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #DictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'DictionaryTest class' category: #'BaseImageTests-Collections'!
+DictionaryTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #IntervalTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #IntervalTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'IntervalTest class' category: #'BaseImageTests-Collections'!
+IntervalTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedCollectionTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #OrderedCollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'OrderedCollectionTest class' category: #'BaseImageTests-Collections'!
+OrderedCollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #OrderedDictionaryTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #OrderedDictionaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'OrderedDictionaryTest class' category: #'BaseImageTests-Collections'!
+OrderedDictionaryTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SequenceableCollectionTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #SequenceableCollectionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'SequenceableCollectionTest class' category: #'BaseImageTests-Collections'!
+SequenceableCollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #WeakIdentitySetTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #WeakIdentitySetTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'WeakIdentitySetTest class' category: #'BaseImageTests-Collections'!
+WeakIdentitySetTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BehaviorTest category: #'BaseImageTests-Kernel-Classes'!
@@ -448,86 +538,6 @@ TestCase subclass: #FloatArrayTest
 	category: 'BaseImageTests-Collections-Arrayed'!
 !classDefinition: 'FloatArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
 FloatArrayTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #BinarySearchTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #BinarySearchTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'BinarySearchTest class' category: #'BaseImageTests-Collections'!
-BinarySearchTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CollectTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #CollectTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'CollectTest class' category: #'BaseImageTests-Collections'!
-CollectTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CollectionTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #CollectionTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'CollectionTest class' category: #'BaseImageTests-Collections'!
-CollectionTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #DictionaryTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #DictionaryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'DictionaryTest class' category: #'BaseImageTests-Collections'!
-DictionaryTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #IntervalTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #IntervalTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'IntervalTest class' category: #'BaseImageTests-Collections'!
-IntervalTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #OrderedDictionaryTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #OrderedDictionaryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'OrderedDictionaryTest class' category: #'BaseImageTests-Collections'!
-OrderedDictionaryTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SequenceableCollectionTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #SequenceableCollectionTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'SequenceableCollectionTest class' category: #'BaseImageTests-Collections'!
-SequenceableCollectionTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #WeakIdentitySetTest category: #'BaseImageTests-Collections'!
-TestCase subclass: #WeakIdentitySetTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Collections'!
-!classDefinition: 'WeakIdentitySetTest class' category: #'BaseImageTests-Collections'!
-WeakIdentitySetTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionHandlingConditionTest category: #'BaseImageTests-Exceptions'!
@@ -1050,6 +1060,16 @@ RefactoringTest subclass: #SafelyRemoveClassTest
 SafelyRemoveClassTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #TemporaryToInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #TemporaryToInstanceVariableTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'TemporaryToInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring'!
+TemporaryToInstanceVariableTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #WriteStreamTest category: #'BaseImageTests-Collections-Streams'!
 TestCase subclass: #WriteStreamTest
 	instanceVariableNames: ''
@@ -1333,6 +1353,529 @@ To be used by BecomeTest!
 isResumable
 
 	^true! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+testquickFindFirst
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickFindFirst: [:one | one >= eachElement]) = eachIndex.
+			self assert: (collection quickFindFirst: [:one | one >= (eachElement - 0.5)]) = eachIndex
+		].
+	self assert: (collection quickFindFirst: [:one | one > 2101]) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
+testquickFindLast
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickFindLast: [:one | one <= eachElement]) = eachIndex.
+			self assert: (collection quickFindLast: [:one | one <= (eachElement + 0.5)]) = eachIndex
+		].
+	self assert: (collection quickFindLast: [:one | one < 0]) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:46'!
+testquickIndexOf
+
+	| collection |
+	collection := 1000 to: 2100.
+	collection withIndexDo:
+		[:eachElement :eachIndex |
+			self assert: (collection quickIndexOf: eachElement) = eachIndex
+		].
+	self assert: (collection quickIndexOf: 999) = 0.
+	self assert: (collection quickIndexOf: 2101) = 0! !
+
+!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 15:01'!
+testquickIndexOfWithSemistableOrder
+
+	| collection |
+	collection := SortedCollection
+		sortBlock: [:x :y | x key <= y key].
+	1 to: 1000 do: [:each | collection add: each -> each].
+	1 to: 50 do: [:each | collection add: 42 -> each].
+	self assert: (collection quickIndexOf: 42 -> 6) = 48! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+testIdentitySet
+	"
+	CollectTest  new testIdentitySet
+	"
+	| col result |
+	col _ #(1 2 3 1.0 2.0 3.0) asIdentitySet.
+	result _ col collect: [ :elem |  elem yourself ].
+	self assert: result class = IdentitySet.
+	self assert: result = #(1 2 3 1.0 2.0 3.0) asIdentitySet.
+	self assert: result = col! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 10:51'!
+testOrderedCollection
+	"
+	CollectTest  new testOrderedCollection
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asOrderedCollection.
+	result _ col collect: [ :elem |  elem * 2 ].
+	self assert: result class = OrderedCollection.
+	self assert: result = #(2 4 6 8 10) asOrderedCollection! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
+testSet
+	"
+	CollectTest  new testSet
+	"
+	| col result |
+	col _ #(1 2 3 1.0 2.0 3.0) asSet.
+	result _ col collect: [ :elem |  elem yourself ].
+	self assert: result class = Set.
+	self assert: result = #(1 2 3) asSet.
+	self assert: result = col! !
+
+!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:01'!
+testSortedCollection
+	"
+	CollectTest  new testSortedCollection
+	"
+	| col result |
+	col _ #(1 2 3 4 5) asSortedCollection: [ :a :b | a > b ].
+	result _ col collect: [ :elem |  elem * 2 ].
+	self assert: result class = OrderedCollection.
+	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
+
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:14:11'!
+testGroupByHavingSelectsTheResultOfGroupBy
+
+	| collectionToGroupBy groupedByEven |
+	
+	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
+	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ] having: [ :group | group size > 2 ].
+	
+	self assert: 1 equals: (groupedByEven size).	
+	self assert: (collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false) ! !
+
+!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:15:41'!
+testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
+
+	| collectionToGroupBy groupedByEven |
+	
+	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
+	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ].
+	
+	self assert: 2 equals: groupedByEven size.
+	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
+	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:15'!
+testAverageFailsWhenTheCollectionIsEmpty
+
+	self 
+		should: [ #() average: [ :each | each ] ]
+		raise: Error 
+		description: Collection emptyCollectionDescription! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:19'!
+testAverageIfEmptyCalculatesItAsUsualWhenTheCollectionIsNotEmpty
+
+	| someNumbers |
+	
+	someNumbers _ #(1 5).
+
+	self 
+		assert: (someNumbers average: [ :each | each ] ifEmpty: [ self fail ])
+		equals: someNumbers average! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:22'!
+testAverageIfEmptyEvaluatesEmptyBlockWhenTheCollectionIsEmpty
+
+	| emptyBlock |
+	
+	emptyBlock _ [ 0 ].
+
+	self 
+		assert: (#() average: [ :each | each asInteger ] ifEmpty: emptyBlock)
+		equals: emptyBlock value! !
+
+!CollectionTest methodsFor: 'average tests' stamp: 'RNG 9/22/2018 10:26:34'!
+testsAverageWorksWithABlock
+
+	self assert: ({ '1' . '2' . '3' } average: [ :each | each asInteger ]) equals: 2! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:08'!
+assertAsCommaSeparated: aCollection equals: expectedString 
+	
+	self 
+		assert: (String streamContents: [ :stream | aCollection asCommaSeparated: [ :elem | stream print: elem + 1] on: stream ])
+		equals: expectedString! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:31'!
+testAsCommaSeparatedOnWorksAsCommaStringAnd
+
+	self assertAsCommaSeparated: #() equals: ''. 
+	self assertAsCommaSeparated: #(1) equals: '2'.
+	self assertAsCommaSeparated: #(1 2) equals: '2 and 3'. 
+	self assertAsCommaSeparated: #(1 2 3) equals: '2, 3 and 4'.! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:51'!
+testAsCommaStringAndDoesNotAddAnythingWhenEmpty
+
+	self assert: #() asCommaStringAnd isEmpty ! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:59'!
+testAsCommaStringAndDoesNotAddAnythingWhenHasOneElement
+
+	self assert: #(1) asCommaStringAnd equals: '1' ! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:06'!
+testAsCommaStringAndSeparatesWithAndWhenTwoOneElements
+
+	self assert: #(1 2) asCommaStringAnd equals: '1 and 2' ! !
+
+!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:21'!
+testAsCommaStringAndSeparatesWithCommaButLastOneWithAndWhenMoreThanTwoElements
+
+	self assert: #(1 2 3) asCommaStringAnd equals: '1, 2 and 3' ! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:08:43'!
+testItMaintainsTheSameCollectionSpecies
+
+	self assert: (OrderedCollection with: 1 with: 2) equals: (OrderedCollection with: 1 with: #(2)) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:31:15'!
+testWhenCollectionContainsASingleLevelOfElementsItReturnsTheSameCollection
+
+	self assert: #(1 2 3) equals: #(1 2 3) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:01:02'!
+testWhenCollectionContainsMoreThanTwoLevelsltReturnsTheElementsOfAllNestedCollections
+
+	self assert: #(1 2 3 4 5) equals: #(1 #(2 3) #(4 #(5))) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:22'!
+testWhenCollectionContainsStringCollectionsItDoesNotFlattenTheStrings
+
+	self assert: #('string1' 'string2' 'string3') equals: #('string1' #('string2' 'string3')) flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:02:07'!
+testWhenCollectionContainsStringsItReturnsTheSameCollection
+
+	self assert: #('string1' 'string2' 'string3') equals: #('string1' 'string2' 'string3') flatten! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/16/2019 00:03:37'!
+testWhenCollectionContainsTwoLevelsOfElementsItReturnsTheElementsOfAllNestedCollections
+	
+	self assert: #(1 2 3) equals: #(#(1) #(2 3)) flatten
+	! !
+
+!CollectionTest methodsFor: 'flatten tests' stamp: 'GC 5/15/2019 23:24:15'!
+testWhenCollectionIsEmptyItReturnsTheSameCollection
+
+	self assert: #() equals: #() flatten! !
+
+!DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
+testKeyNotFoundSignalTheRightMessage
+
+	self 
+		should: [ Dictionary new errorKeyNotFound ]
+		raise: Error
+		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:31'!
+testAt
+	"
+	IntervalTest new testAt
+	"
+	self assert: (2 to: 5 by: 2) first = 2.
+	self assert: ((2 to: 5 by: 2) at: 1) = 2.
+	self assert: ((2 to: 5 by: 2) at: 2) = 4.
+	self assert: (2 to: 5 by: 2) last = 4.
+
+	self assert: (0 to: 2.4 by: 0.1) first = 0.
+	self assert: ((0 to: 2.4 by: 0.1) at: 1) = 0.
+	self assert: (((0 to: 2.4 by: 0.1) at: 2) isWithin: 1 floatsFrom: 0.1).
+	self assert: (((0 to: 2.4 by: 0.1) at: 3) isWithin: 1 floatsFrom: 0.2).
+	self assert: (((0 to: 2.4 by: 0.1) at: 23) isWithin: 1 floatsFrom: 2.2).
+	self assert: ((0 to: 2.4 by: 0.1) at: 24) = 2.3.
+	self assert: ((0 to: 2.4 by: 0.1) at: 25) = 2.4.
+	self assert: (0 to: 2.4 by: 0.1) last = 2.4.! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:59'!
+testFloatInterval
+	"
+	IntervalTest new testFloatInterval
+	"
+	
+	self assert: (0 to: 2.4 by: 0.1) size = 25.
+	self assert: (0 to: 2.4 by: 0.1) first = 0.
+	self assert: (0 to: 2.4 by: 0.1) last = 2.4.
+
+	2 to: 200 do: [ :n |
+		self assert: (0.0 to: 1.0 count: n) size = n.
+		self assert: (0.0 to: 1.0 count: n) first = 0.0.
+		self assert: ((0.0 to: 1.0 count: n) last isWithin: 1 floatsFrom: 1.0)].
+	2 to: 200 do: [ :n |
+		self assert: (1.0 to: 0.0 count: n) size = n.
+		self assert: (1.0 to: 0.0 count: n) first = 1.0.
+		self assert: ((1.0 to: 0.0 count: n) last isWithin: 1 floatsFrom: 0.0)].! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'HAW 3/17/2019 07:20:11'!
+testFloatToByDo
+	"
+	IntervalTest new testFloatToByDo
+	"
+	| interval toByDo |
+
+	"See comment at #to:by:do:"
+	self shouldFail: [
+		interval _ 0 to: 2.4 by: 0.1.
+		toByDo _ Array streamContents: [ :strm |
+			0 to: 2.4 by: 0.1 do: [ :each |
+				strm nextPut: each ]].
+		self assert: toByDo size = interval size.
+		1 to: toByDo size do: [ :i |
+			self assert: (toByDo at: i) = (interval at: i) ]]! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
+testIntegerInterval
+	"
+	IntervalTest new testIntegerInterval
+	"
+	| z |
+	self assert: (2 to: 5 by: 2) size = 2.
+	self assert: (2 to: 5 by: 2) last = 4.
+	z _ 0.
+	(2 to: 5 by: 2) do: [ :i | z _ i ].
+	self assert: z = 4! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:29'!
+testIntegerToByDo
+	"
+	IntervalTest new testIntegerToByDo
+	"
+	| interval toByDo |
+	interval _ 2 to: 5 by: 2.
+	toByDo _ Array streamContents: [ :strm |
+		2 to: 5 by: 2 do: [ :each |
+			strm nextPut: each ]].
+	self assert: toByDo size = interval size.
+	1 to: toByDo size do: [ :i |
+		self assert: (toByDo at: i) = (interval at: i) ]! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:01:20'!
+testStreamContentsWorksAsExpected
+
+	| contents |
+	
+	contents := OrderedCollection streamContents: [ :stream | stream nextPut: 1 ].
+	
+	self assert: (OrderedCollection with: 1) equals: contents! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:04:16'!
+testWriteStreamOnOrderedCollectionGrowsAsExpected
+
+	| contents |
+	
+	contents := OrderedCollection streamContents: [ :stream | 
+		1 to: 101 do: [ :aNumber | stream nextPut: aNumber ]].
+	
+	1 to: 101 do: [ :aNumber | self assert: aNumber equals: (contents at: aNumber) ]
+	! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
+testOrder
+	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+
+
+	"Test that order is correct even if different. Also test alternative way to add stuff to dict."
+	dict _ OrderedDictionary new.
+	data _ self sampleData reversed.
+	desiredOrder _ data collect: [ :pair | pair second ].
+	data do: [ :pair |
+		dict add: pair first -> pair second ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+	self assert: orderingByDo = desiredOrder.
+
+	aux _ dict select: [ :each | true ].
+	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingBySelect = desiredOrder.
+
+	aux _ dict collect: [ :each | each yourself ].
+	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
+	self assert: orderingByCollect = desiredOrder.
+! !
+
+!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
+testRemove
+	| data dict dataToRemove desiredOrder orderingByDo |
+
+	"Test that #do:, #select: and #collect: iterate in the correct order"
+	dict _ OrderedDictionary new.
+	data _ self sampleData.
+	dataToRemove _ self sampleData2.
+
+	data do: [ :pair |
+		dict at: pair first put: pair second ].
+	dataToRemove do: [ :pair |
+		dict removeKey: pair first ].
+
+	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
+
+	desiredOrder _ OrderedCollection new.
+	data do: [ :pair | desiredOrder add: pair second ].
+	dataToRemove do: [ :pair | desiredOrder remove: pair second ].
+	
+	self assert: orderingByDo = desiredOrder asArray.! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
+sampleData
+	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
+
+!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
+sampleData2
+	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:33:35'!
+testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: 1.
+	traversedElements := OrderedCollection new.
+	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ self fail ] ].
+
+	self assert: collectionToTraverse equals: traversedElements! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:38:06'!
+testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: 1 with: 2.
+	traversedElements := OrderedCollection new.
+
+	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ traversedElements add: $-] ].
+
+	self assert: (OrderedCollection with: 1 with: $- with: 2) equals: traversedElements! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:29:27'!
+testDoSeparatedByDoesNothingForEmptyCollection
+
+	self shouldntFail: [ #() do: [ :anElement | self fail ] separatedBy: [ self fail ] ]! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:36:00'!
+testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: $a.
+	traversedElements := OrderedCollection new.
+
+	self shouldntFail: [ collectionToTraverse withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ] separatedBy: [ self fail ] ].
+
+	self assert: 1 equals: traversedElements size.
+	self assert: $a->1 equals: traversedElements first! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:40:01'!
+testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
+
+	| collectionToTraverse traversedElements |
+
+	collectionToTraverse := OrderedCollection with: $a with: $b.
+	traversedElements := OrderedCollection new.
+
+	collectionToTraverse
+		withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ]
+		separatedBy: [ traversedElements add: $-].
+
+	self assert: 3 equals: traversedElements size.
+	self assert: $a->1 equals: traversedElements first.
+	self assert: $- equals: traversedElements second.
+	self assert: $b->2 equals: traversedElements third! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:30:18'!
+testWithIndexDoSeparatedByDoesNothingForEmptyCollection
+
+	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
+
+!WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
+test
+	"
+	(also tests WeakSet a bit)
+	WeakIdentitySetTest new test
+	"
+	| ary1 ary2 count w wi |
+	ary1 _ { 3@4 . 4@5 }.
+	ary2 _ { 13@4 . 14@5 }.
+	w _ WeakSet new.
+	w addAll: ary1.
+	wi _ WeakIdentitySet new.
+	wi addAll: ary2.
+	
+	self assert: w size = 2.
+	count _ 0.
+	w do: [ :each |
+		count _ count + 1.
+		self assert: each class == Point ].
+	self assert: count = 2.
+	self assert: (w includes: ary1 first).
+	self assert: (w includes: ary1 second).
+	self assert: (w includes: 3@4).
+	self assert: (w includes: 4@5).
+
+	self assert: wi size = 2.
+	count _ 0.
+	wi do: [ :each |
+		count _ count + 1.
+		self assert: each class == Point ].
+	self assert: count = 2.
+	self assert: (wi includes: ary2 first).
+	self assert: (wi includes: ary2 second).
+	self deny: (wi includes: 13@4).
+	self deny: (wi includes: 14@5).
+
+	"Now make one element in each disappear"
+	ary1 at: 1 put: 9.
+	ary2 at: 1 put: 99.
+	Smalltalk garbageCollect.
+
+	"A little weird, but yes, elements that disappeared are still counted, but NOT iterated!!"
+	self assert: w size = 2.
+	count _ 0.
+	w do: [ :each |
+		count _ count + 1 ].
+	self assert: count = 1.
+	self deny: (w includes: ary1 first).
+	self assert: (w includes: ary1 second).
+
+	self assert: wi size = 2. 	"A little weird, but yes, elements that disappeared are still counted"
+	count _ 0.
+	wi do: [ :each |
+		count _ count + 1 ].
+	self assert: count = 1.
+	self deny: (wi includes: ary2 first).
+	self assert: (wi includes: ary2 second).! !
 
 !BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HernanWilkinson 1/19/2017 20:32:36'!
 testAllSuperclassesUpToFailsWhenWantsToStopOnInvalidSuperclass
@@ -9646,473 +10189,6 @@ divideByScalarZero
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
-testquickFindFirst
-
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickFindFirst: [:one | one >= eachElement]) = eachIndex.
-			self assert: (collection quickFindFirst: [:one | one >= (eachElement - 0.5)]) = eachIndex
-		].
-	self assert: (collection quickFindFirst: [:one | one > 2101]) = 0! !
-
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:36'!
-testquickFindLast
-
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickFindLast: [:one | one <= eachElement]) = eachIndex.
-			self assert: (collection quickFindLast: [:one | one <= (eachElement + 0.5)]) = eachIndex
-		].
-	self assert: (collection quickFindLast: [:one | one < 0]) = 0! !
-
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 14:46'!
-testquickIndexOf
-
-	| collection |
-	collection := 1000 to: 2100.
-	collection withIndexDo:
-		[:eachElement :eachIndex |
-			self assert: (collection quickIndexOf: eachElement) = eachIndex
-		].
-	self assert: (collection quickIndexOf: 999) = 0.
-	self assert: (collection quickIndexOf: 2101) = 0! !
-
-!BinarySearchTest methodsFor: 'testing' stamp: 'sqr 5/25/2016 15:01'!
-testquickIndexOfWithSemistableOrder
-
-	| collection |
-	collection := SortedCollection
-		sortBlock: [:x :y | x key <= y key].
-	1 to: 1000 do: [:each | collection add: each -> each].
-	1 to: 50 do: [:each | collection add: 42 -> each].
-	self assert: (collection quickIndexOf: 42 -> 6) = 48! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
-testIdentitySet
-	"
-	CollectTest  new testIdentitySet
-	"
-	| col result |
-	col _ #(1 2 3 1.0 2.0 3.0) asIdentitySet.
-	result _ col collect: [ :elem |  elem yourself ].
-	self assert: result class = IdentitySet.
-	self assert: result = #(1 2 3 1.0 2.0 3.0) asIdentitySet.
-	self assert: result = col! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 10:51'!
-testOrderedCollection
-	"
-	CollectTest  new testOrderedCollection
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asOrderedCollection.
-	result _ col collect: [ :elem |  elem * 2 ].
-	self assert: result class = OrderedCollection.
-	self assert: result = #(2 4 6 8 10) asOrderedCollection! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:34'!
-testSet
-	"
-	CollectTest  new testSet
-	"
-	| col result |
-	col _ #(1 2 3 1.0 2.0 3.0) asSet.
-	result _ col collect: [ :elem |  elem yourself ].
-	self assert: result class = Set.
-	self assert: result = #(1 2 3) asSet.
-	self assert: result = col! !
-
-!CollectTest methodsFor: 'testing' stamp: 'jmv 11/30/2014 11:01'!
-testSortedCollection
-	"
-	CollectTest  new testSortedCollection
-	"
-	| col result |
-	col _ #(1 2 3 4 5) asSortedCollection: [ :a :b | a > b ].
-	result _ col collect: [ :elem |  elem * 2 ].
-	self assert: result class = OrderedCollection.
-	self assert: result = #(10 8 6 4 2) asOrderedCollection! !
-
-!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:14:11'!
-testGroupByHavingSelectsTheResultOfGroupBy
-
-	| collectionToGroupBy groupedByEven |
-	
-	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
-	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ] having: [ :group | group size > 2 ].
-	
-	self assert: 1 equals: (groupedByEven size).	
-	self assert: (collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false) ! !
-
-!CollectionTest methodsFor: 'groupBy tests' stamp: 'HAW 7/5/2018 15:15:41'!
-testGroupByReturnsADictionaryThatGroupsACollectionByThePluggableKey
-
-	| collectionToGroupBy groupedByEven |
-	
-	collectionToGroupBy := OrderedCollection with: 1 with: 2 with: 3 with: 4 with: 5.
-	groupedByEven := collectionToGroupBy groupBy: [ :anInteger | anInteger even ].
-	
-	self assert: 2 equals: groupedByEven size.
-	self assert: (collectionToGroupBy select: [ :anInteger | anInteger even ]) equals: (groupedByEven at: true).
-	self assert:(collectionToGroupBy select: [ :anInteger | anInteger odd ]) equals: (groupedByEven at: false).! !
-
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:15'!
-testAverageFailsWhenTheCollectionIsEmpty
-
-	self 
-		should: [ #() average: [ :each | each ] ]
-		raise: Error 
-		description: Collection emptyCollectionDescription! !
-
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:19'!
-testAverageIfEmptyCalculatesItAsUsualWhenTheCollectionIsNotEmpty
-
-	| someNumbers |
-	
-	someNumbers _ #(1 5).
-
-	self 
-		assert: (someNumbers average: [ :each | each ] ifEmpty: [ self fail ])
-		equals: someNumbers average! !
-
-!CollectionTest methodsFor: 'average tests' stamp: 'HAW 11/17/2018 11:45:22'!
-testAverageIfEmptyEvaluatesEmptyBlockWhenTheCollectionIsEmpty
-
-	| emptyBlock |
-	
-	emptyBlock _ [ 0 ].
-
-	self 
-		assert: (#() average: [ :each | each asInteger ] ifEmpty: emptyBlock)
-		equals: emptyBlock value! !
-
-!CollectionTest methodsFor: 'average tests' stamp: 'RNG 9/22/2018 10:26:34'!
-testsAverageWorksWithABlock
-
-	self assert: ({ '1' . '2' . '3' } average: [ :each | each asInteger ]) equals: 2! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:08'!
-assertAsCommaSeparated: aCollection equals: expectedString 
-	
-	self 
-		assert: (String streamContents: [ :stream | aCollection asCommaSeparated: [ :elem | stream print: elem + 1] on: stream ])
-		equals: expectedString! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:31'!
-testAsCommaSeparatedOnWorksAsCommaStringAnd
-
-	self assertAsCommaSeparated: #() equals: ''. 
-	self assertAsCommaSeparated: #(1) equals: '2'.
-	self assertAsCommaSeparated: #(1 2) equals: '2 and 3'. 
-	self assertAsCommaSeparated: #(1 2 3) equals: '2, 3 and 4'.! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:51'!
-testAsCommaStringAndDoesNotAddAnythingWhenEmpty
-
-	self assert: #() asCommaStringAnd isEmpty ! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:59'!
-testAsCommaStringAndDoesNotAddAnythingWhenHasOneElement
-
-	self assert: #(1) asCommaStringAnd equals: '1' ! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:06'!
-testAsCommaStringAndSeparatesWithAndWhenTwoOneElements
-
-	self assert: #(1 2) asCommaStringAnd equals: '1 and 2' ! !
-
-!CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:12:21'!
-testAsCommaStringAndSeparatesWithCommaButLastOneWithAndWhenMoreThanTwoElements
-
-	self assert: #(1 2 3) asCommaStringAnd equals: '1, 2 and 3' ! !
-
-!DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
-testKeyNotFoundSignalTheRightMessage
-
-	self 
-		should: [ Dictionary new errorKeyNotFound ]
-		raise: Error
-		withMessageText: Dictionary keyNotFoundErrorDescription ! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:31'!
-testAt
-	"
-	IntervalTest new testAt
-	"
-	self assert: (2 to: 5 by: 2) first = 2.
-	self assert: ((2 to: 5 by: 2) at: 1) = 2.
-	self assert: ((2 to: 5 by: 2) at: 2) = 4.
-	self assert: (2 to: 5 by: 2) last = 4.
-
-	self assert: (0 to: 2.4 by: 0.1) first = 0.
-	self assert: ((0 to: 2.4 by: 0.1) at: 1) = 0.
-	self assert: (((0 to: 2.4 by: 0.1) at: 2) isWithin: 1 floatsFrom: 0.1).
-	self assert: (((0 to: 2.4 by: 0.1) at: 3) isWithin: 1 floatsFrom: 0.2).
-	self assert: (((0 to: 2.4 by: 0.1) at: 23) isWithin: 1 floatsFrom: 2.2).
-	self assert: ((0 to: 2.4 by: 0.1) at: 24) = 2.3.
-	self assert: ((0 to: 2.4 by: 0.1) at: 25) = 2.4.
-	self assert: (0 to: 2.4 by: 0.1) last = 2.4.! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 12/18/2018 10:56:59'!
-testFloatInterval
-	"
-	IntervalTest new testFloatInterval
-	"
-	
-	self assert: (0 to: 2.4 by: 0.1) size = 25.
-	self assert: (0 to: 2.4 by: 0.1) first = 0.
-	self assert: (0 to: 2.4 by: 0.1) last = 2.4.
-
-	2 to: 200 do: [ :n |
-		self assert: (0.0 to: 1.0 count: n) size = n.
-		self assert: (0.0 to: 1.0 count: n) first = 0.0.
-		self assert: ((0.0 to: 1.0 count: n) last isWithin: 1 floatsFrom: 1.0)].
-	2 to: 200 do: [ :n |
-		self assert: (1.0 to: 0.0 count: n) size = n.
-		self assert: (1.0 to: 0.0 count: n) first = 1.0.
-		self assert: ((1.0 to: 0.0 count: n) last isWithin: 1 floatsFrom: 0.0)].! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'HAW 3/17/2019 07:20:11'!
-testFloatToByDo
-	"
-	IntervalTest new testFloatToByDo
-	"
-	| interval toByDo |
-
-	"See comment at #to:by:do:"
-	self shouldFail: [
-		interval _ 0 to: 2.4 by: 0.1.
-		toByDo _ Array streamContents: [ :strm |
-			0 to: 2.4 by: 0.1 do: [ :each |
-				strm nextPut: each ]].
-		self assert: toByDo size = interval size.
-		1 to: toByDo size do: [ :i |
-			self assert: (toByDo at: i) = (interval at: i) ]]! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
-testIntegerInterval
-	"
-	IntervalTest new testIntegerInterval
-	"
-	| z |
-	self assert: (2 to: 5 by: 2) size = 2.
-	self assert: (2 to: 5 by: 2) last = 4.
-	z _ 0.
-	(2 to: 5 by: 2) do: [ :i | z _ i ].
-	self assert: z = 4! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'jmv 4/27/2016 14:29'!
-testIntegerToByDo
-	"
-	IntervalTest new testIntegerToByDo
-	"
-	| interval toByDo |
-	interval _ 2 to: 5 by: 2.
-	toByDo _ Array streamContents: [ :strm |
-		2 to: 5 by: 2 do: [ :each |
-			strm nextPut: each ]].
-	self assert: toByDo size = interval size.
-	1 to: toByDo size do: [ :i |
-		self assert: (toByDo at: i) = (interval at: i) ]! !
-
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:36:59'!
-testOrder
-	| data dict orderingByCollect orderingByDo orderingBySelect aux desiredOrder |
-
-	"Test that #do:, #select: and #collect: iterate in the correct order"
-	dict _ OrderedDictionary new.
-	data _ self sampleData.
-	desiredOrder _ data collect: [ :pair | pair second ].
-	data do: [ :pair |
-		dict at: pair first put: pair second ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-	self assert: orderingByDo = desiredOrder.
-
-	aux _ dict select: [ :each | true ].
-	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingBySelect = desiredOrder.
-
-	aux _ dict collect: [ :each | each yourself ].
-	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingByCollect = desiredOrder.
-
-
-	"Test that order is correct even if different. Also test alternative way to add stuff to dict."
-	dict _ OrderedDictionary new.
-	data _ self sampleData reversed.
-	desiredOrder _ data collect: [ :pair | pair second ].
-	data do: [ :pair |
-		dict add: pair first -> pair second ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-	self assert: orderingByDo = desiredOrder.
-
-	aux _ dict select: [ :each | true ].
-	orderingBySelect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingBySelect = desiredOrder.
-
-	aux _ dict collect: [ :each | each yourself ].
-	orderingByCollect _ Array streamContents: [ :strm | aux do: [ :each | strm nextPut: each ]].
-	self assert: orderingByCollect = desiredOrder.
-! !
-
-!OrderedDictionaryTest methodsFor: 'tests' stamp: 'jmv 5/25/2018 10:41:04'!
-testRemove
-	| data dict dataToRemove desiredOrder orderingByDo |
-
-	"Test that #do:, #select: and #collect: iterate in the correct order"
-	dict _ OrderedDictionary new.
-	data _ self sampleData.
-	dataToRemove _ self sampleData2.
-
-	data do: [ :pair |
-		dict at: pair first put: pair second ].
-	dataToRemove do: [ :pair |
-		dict removeKey: pair first ].
-
-	orderingByDo _ Array streamContents: [ :strm | dict do: [ :each | strm nextPut: each ]].
-
-	desiredOrder _ OrderedCollection new.
-	data do: [ :pair | desiredOrder add: pair second ].
-	dataToRemove do: [ :pair | desiredOrder remove: pair second ].
-	
-	self assert: orderingByDo = desiredOrder asArray.! !
-
-!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:25'!
-sampleData
-	^ { {1. 'uno'}. {6. 'seis'}. {8. 'ocho'}. {7. 'siete'}. {2. 'dos'}. {3. 'tres'}. {4. 'cuatro'}. {5. 'cinco'}}! !
-
-!OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
-sampleData2
-	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:33:35'!
-testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
-
-	| collectionToTraverse traversedElements |
-
-	collectionToTraverse := OrderedCollection with: 1.
-	traversedElements := OrderedCollection new.
-	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ self fail ] ].
-
-	self assert: collectionToTraverse equals: traversedElements! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:38:06'!
-testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
-
-	| collectionToTraverse traversedElements |
-
-	collectionToTraverse := OrderedCollection with: 1 with: 2.
-	traversedElements := OrderedCollection new.
-
-	self shouldntFail: [ collectionToTraverse do: [ :anElement | traversedElements add: anElement ] separatedBy: [ traversedElements add: $-] ].
-
-	self assert: (OrderedCollection with: 1 with: $- with: 2) equals: traversedElements! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:29:27'!
-testDoSeparatedByDoesNothingForEmptyCollection
-
-	self shouldntFail: [ #() do: [ :anElement | self fail ] separatedBy: [ self fail ] ]! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:36:00'!
-testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
-
-	| collectionToTraverse traversedElements |
-
-	collectionToTraverse := OrderedCollection with: $a.
-	traversedElements := OrderedCollection new.
-
-	self shouldntFail: [ collectionToTraverse withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ] separatedBy: [ self fail ] ].
-
-	self assert: 1 equals: traversedElements size.
-	self assert: $a->1 equals: traversedElements first! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:40:01'!
-testWithIndexDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
-
-	| collectionToTraverse traversedElements |
-
-	collectionToTraverse := OrderedCollection with: $a with: $b.
-	traversedElements := OrderedCollection new.
-
-	collectionToTraverse
-		withIndexDo: [ :anElement :index | traversedElements add: anElement  -> index ]
-		separatedBy: [ traversedElements add: $-].
-
-	self assert: 3 equals: traversedElements size.
-	self assert: $a->1 equals: traversedElements first.
-	self assert: $- equals: traversedElements second.
-	self assert: $b->2 equals: traversedElements third! !
-
-!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:30:18'!
-testWithIndexDoSeparatedByDoesNothingForEmptyCollection
-
-	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
-
-!WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
-test
-	"
-	(also tests WeakSet a bit)
-	WeakIdentitySetTest new test
-	"
-	| ary1 ary2 count w wi |
-	ary1 _ { 3@4 . 4@5 }.
-	ary2 _ { 13@4 . 14@5 }.
-	w _ WeakSet new.
-	w addAll: ary1.
-	wi _ WeakIdentitySet new.
-	wi addAll: ary2.
-	
-	self assert: w size = 2.
-	count _ 0.
-	w do: [ :each |
-		count _ count + 1.
-		self assert: each class == Point ].
-	self assert: count = 2.
-	self assert: (w includes: ary1 first).
-	self assert: (w includes: ary1 second).
-	self assert: (w includes: 3@4).
-	self assert: (w includes: 4@5).
-
-	self assert: wi size = 2.
-	count _ 0.
-	wi do: [ :each |
-		count _ count + 1.
-		self assert: each class == Point ].
-	self assert: count = 2.
-	self assert: (wi includes: ary2 first).
-	self assert: (wi includes: ary2 second).
-	self deny: (wi includes: 13@4).
-	self deny: (wi includes: 14@5).
-
-	"Now make one element in each disappear"
-	ary1 at: 1 put: 9.
-	ary2 at: 1 put: 99.
-	Smalltalk garbageCollect.
-
-	"A little weird, but yes, elements that disappeared are still counted, but NOT iterated!!"
-	self assert: w size = 2.
-	count _ 0.
-	w do: [ :each |
-		count _ count + 1 ].
-	self assert: count = 1.
-	self deny: (w includes: ary1 first).
-	self assert: (w includes: ary1 second).
-
-	self assert: wi size = 2. 	"A little weird, but yes, elements that disappeared are still counted"
-	count _ 0.
-	wi do: [ :each |
-		count _ count + 1 ].
-	self assert: count = 1.
-	self deny: (wi includes: ary2 first).
-	self assert: (wi includes: ary2 second).! !
-
 !ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:50:30'!
 testBlockClosuresCanBeUsedAsHandlingCondition
 
@@ -14602,6 +14678,126 @@ testShoulndFailPassesWhenNoErrorIsSignaled
 
 	self shouldntFail: [ 1+2 ]! !
 
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:28'!
+testAssertChangesByPassesWhenActionChangesConditionByTheSpecifiedAmount
+
+	|aCollection|
+
+	aCollection := OrderedCollection new.
+	
+	self assert: [ aCollection add: 1; add: 2 ] changes: [ aCollection size ] by: 2! !
+
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:34:29'!
+testAssertChangesFromToPassesWhenActionChangesConditionFromAndToTheSpecifiedValues
+
+	|aCollection|
+
+	aCollection := OrderedCollection with: 1.
+	
+	self assert: [ aCollection add: 2 ] changes: [ aCollection size ] from: 1 to: 2! !
+
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:34'!
+testAssertChangesPassesWhenConditionIsAlteredByAction
+
+	|aCollection|
+
+	aCollection := OrderedCollection new.
+	
+	self assert: [ aCollection add: 1 ] changes: [ aCollection size ]! !
+
+!TestCaseTest methodsFor: 'changes' stamp: 'HAW 5/15/2019 18:33:39'!
+testAssertDoeNotChangePassesWhenConditionIsNotAlteredByAction
+
+	|aCollection|
+
+	aCollection := OrderedCollection with: 1.
+	
+	self assert: [ aCollection sum ] doesNotChange: [ aCollection size ]! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 19:22:33'!
+testAssertIsNearToPassesForSameNumberDifferentToZero
+	
+	self assert: 1.5 isNearTo: 1.5! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 19:22:17'!
+testAssertIsNearToPassesWhenBothAreZero
+
+	self assert: 0.0 isNearTo: 0.0! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:36:02'!
+testAssertIsNearToPassesWithSameCalculatedNumber
+	
+	self assert: 0.3 isNearTo: 0.1 + 0.2! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:37:40'!
+testAssertIsNearToWithPrecisionPassesWhenDifferenceIsNegativeAndLessThanPrecision
+	
+	|precision newValue originalNumber |
+	
+	precision _ 0.1.
+	originalNumber _ 0.3.
+	newValue _ originalNumber - 0.01.
+	
+	self assert: originalNumber isNearTo: newValue withPrecision: precision! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:37:24'!
+testAssertIsNearToWithPrecisionPassesWhenDifferenceIsPositiveAndLessThanPrecision
+	
+	|precision newValue originalNumber |
+	
+	precision _ 0.1.
+	originalNumber _ 0.3.
+	newValue _ originalNumber + 0.01.
+	
+	self assert: originalNumber isNearTo: newValue withPrecision: precision! !
+
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:38:46'!
+testAssertIsNotNearWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
+	
+	|precision newValue originalNumber |
+	
+	precision _ 0.1.
+	originalNumber _ 0.3.
+	newValue _ originalNumber + precision + 0.001.
+	
+	self assert: originalNumber isNotNearTo: newValue withPrecision: precision! !
+
+!TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:49:51'!
+testAssertIncludesFailsWhenElementIsNotIncludedInCollection
+	
+	| collection anElement |
+	
+	anElement _ 1.
+	collection _ #().
+	
+	self should: [ self assert: collection includes: anElement ] 
+		 raise: TestResult failure
+		 withMessageText: collection asString, ' does not include ', anElement asString! !
+
+!TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:50:04'!
+testAssertIncludesShouldNotFailWhenElementIsInCollection
+	
+	| collection anElement |
+	
+	anElement _ 1.
+	collection _ Array with: anElement.
+	
+	self 
+		shouldnt: [ self assert: collection includes: anElement ] 
+		raise: TestResult failure! !
+
+!TestCaseTest methodsFor: 'should take less than' stamp: 'HAW 5/15/2019 19:08:22'!
+testShouldNotTakeMoreThanFailsWhenClosureTakesMoreThanTheLimit
+
+	self shouldFail: [ self should: [(Delay forMilliseconds: 5) wait ] notTakeMoreThan: 1 milliSeconds ]
+		! !
+
+!TestCaseTest methodsFor: 'should take less than' stamp: 'HAW 5/15/2019 19:07:04'!
+testShouldNotTakeMoreThanPassesWhenClosureTakesLessThanTheLimit
+
+	self shouldntFail: [ self should: [] notTakeMoreThan: 1 milliSeconds ]
+		! !
+
 !TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:11:43'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
 
@@ -18968,6 +19164,207 @@ classToRemoveName
 	"I can not use the symbol directly because it would be a reference - Hernan"
 	^ 'ClassToRemove' asSymbol.
 	! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:32:08'!
+methodSourceCodeNamed: aSelector withTemporaryVariableDeclaration: aTemporaryVariableName
+
+	^aSelector, ' | ', aTemporaryVariableName, ' | '.! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:33:37'!
+test01ApplyChangesTemporaryVariableToInstanceVariable
+
+	| variableName classToRefactor messageName refactoring sourceText methodNode changedMethodNode |
+
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	messageName _ #m1.
+	variableName _ 'a'.
+	sourceText _ self methodSourceCodeNamed: messageName withTemporaryVariableDeclaration: variableName.
+	methodNode _ self compileMethodNodeIn: classToRefactor named: messageName sourceCode: sourceText.
+	
+	refactoring _ TemporaryToInstanceVariable named: variableName fromMethod: methodNode.
+	refactoring apply.
+	
+	self assert: (classToRefactor definesInstanceVariableNamed: variableName).
+	self assert: (classToRefactor canUnderstand: messageName).
+	
+	changedMethodNode _ self methodNodeIn: classToRefactor named: messageName.
+	self assert: 0 equals: changedMethodNode temporaries size.! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:34:33'!
+test02ApplyDoesntChangeRestOfSourceCode
+
+	| variableName classToRefactor messageName refactoring sourceText methodNode changedMethodNode restOfSourceCode |
+
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	messageName _ #m1.
+	variableName _ 'a'.
+	sourceText _ self methodSourceCodeNamed: messageName withTemporaryVariableDeclaration: variableName. 
+	restOfSourceCode _ variableName, ' := 2.
+	^', variableName.
+	sourceText _ sourceText, restOfSourceCode.
+	methodNode _ self compileMethodNodeIn: classToRefactor named: messageName sourceCode: sourceText.
+	
+	refactoring _ TemporaryToInstanceVariable named: variableName fromMethod: methodNode.
+	refactoring apply.
+	
+	changedMethodNode _ self methodNodeIn: classToRefactor named: messageName.
+	self assert: (changedMethodNode sourceText findString: restOfSourceCode :: > 0).! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:35:13'!
+test03TemporaryToChangeShouldExist
+
+	|  classToRefactor messageName methodNode sourceText |
+
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	messageName _ #m1.
+	sourceText _ messageName.
+	methodNode _ self compileMethodNodeIn: classToRefactor named: messageName sourceCode: sourceText.
+	
+	self 
+		should: [TemporaryToInstanceVariable named: 'a' fromMethod: methodNode]
+		raise: RefactoringError
+		withExceptionDo: [ :error |
+			self 
+				assert: TemporaryToInstanceVariable inexistentTemporaryErrorDescription 
+				equals: error messageText.
+			
+			self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: sourceText ].! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:35:53'!
+test04TemporaryShouldNotExistInOtherClassMethod
+
+	|  classToRefactor firstMessageName firstMethodNode firstSourceText variableName secondMessageName secondSourceText |
+
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	variableName _ 'a'.
+	firstMessageName _ #m1.
+	firstSourceText _ self 
+		methodSourceCodeNamed: firstMessageName 
+		withTemporaryVariableDeclaration: variableName.
+	firstMethodNode _ self 
+		compileMethodNodeIn: classToRefactor 
+		named: firstMessageName 
+		sourceCode: firstSourceText.
+	
+	secondMessageName _ #m2.
+	secondSourceText _ self 
+		methodSourceCodeNamed: secondMessageName 
+		withTemporaryVariableDeclaration: variableName.
+	classToRefactor compile: secondSourceText.
+	
+	self 
+		should: [TemporaryToInstanceVariable named: variableName fromMethod: firstMethodNode]
+		raise: RefactoringError
+		withExceptionDo: [ :error |
+			self 
+				assert: TemporaryToInstanceVariable temporaryExistsInOtherMethodsErrorDescription 
+				equals: error messageText.
+			
+			self assertMethodNamed: firstMessageName in: classToRefactor hasSourceEqualTo: firstSourceText.
+			self assertMethodNamed: secondMessageName in: classToRefactor hasSourceEqualTo: secondSourceText ].! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:36:28'!
+test05InstanceVariableShouldNotExistInSubclass
+
+	| classToRefactor messageName methodNode sourceText variableName subclassToRefactor |
+
+	variableName _ 'a'.
+	
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	subclassToRefactor _ self 
+		createClassNamed: #SubclassToRefactor
+		subclassOf: classToRefactor
+		instanceVariableNames: variableName
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: self classCategoryOfTestData.
+	
+	messageName _ #m1.
+	sourceText _ self 
+		methodSourceCodeNamed: messageName 
+		withTemporaryVariableDeclaration: variableName.
+	methodNode _ self 
+		compileMethodNodeIn: classToRefactor 
+		named: messageName 
+		sourceCode: sourceText.
+
+	self 
+		should: [TemporaryToInstanceVariable named: variableName fromMethod: methodNode]
+		raise: RefactoringError
+		withExceptionDo: [ :error |
+			self 
+				assert: TemporaryToInstanceVariable temporaryExistsAsInstVarInSubclassesErrorDescription 
+				equals: error messageText.
+			
+			self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: sourceText.
+			self assert: (subclassToRefactor instVarNames includes: variableName) ].! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:36:59'!
+test06TemporaryShouldNotExistInSubclassMethod
+
+	| classToRefactor firstMessageName firstMethodNode firstSourceText variableName secondMessageName secondSourceText subclassToRefactor |
+
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	subclassToRefactor _ self 
+		createClassNamed: #SubclassToRefactor
+		subclassOf: classToRefactor
+		instanceVariableNames: ''
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: self classCategoryOfTestData.
+	
+	variableName _ 'a'.
+	firstMessageName _ #m1.
+	firstSourceText _ self 
+		methodSourceCodeNamed: firstMessageName 
+		withTemporaryVariableDeclaration: variableName.
+	firstMethodNode _ self 
+		compileMethodNodeIn: classToRefactor 
+		named: firstMessageName 
+		sourceCode: firstSourceText.
+	
+	secondMessageName _ #m2.
+	secondSourceText _ self 
+		methodSourceCodeNamed: secondMessageName 
+		withTemporaryVariableDeclaration: variableName.
+	subclassToRefactor compile: secondSourceText.
+	
+	self 
+		should: [TemporaryToInstanceVariable named: variableName fromMethod: firstMethodNode]
+		raise: RefactoringError
+		withExceptionDo: [ :error |
+			self 
+				assert: TemporaryToInstanceVariable temporaryExistsInOtherMethodsErrorDescription 
+				equals: error messageText.
+			
+			self assertMethodNamed: firstMessageName in: classToRefactor hasSourceEqualTo: firstSourceText.
+			self assertMethodNamed: secondMessageName in: subclassToRefactor hasSourceEqualTo: secondSourceText ].! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 5/19/2019 17:29:33'!
+assertMethodNamed: aMethodName in: aClass hasSourceEqualTo: aSourceCode
+
+	| changedMethodNode |
+
+	changedMethodNode _ self methodNodeIn: aClass named: aMethodName.
+	self assert: aSourceCode equals: changedMethodNode sourceText.
+			! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 5/19/2019 17:29:44'!
+classToRefactorName
+
+	^ #ClassToChangeVariable.! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 5/19/2019 17:31:47'!
+compileMethodNodeIn: aClass named: aSelector sourceCode: sourceCode
+
+	aClass compile: sourceCode.
+
+	^self methodNodeIn: aClass named: aSelector.! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 5/19/2019 17:31:40'!
+methodNodeIn: aClass named: aSelector
+
+	^ aClass compiledMethodAt: aSelector :: methodNode.! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:27:06'!
 testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
