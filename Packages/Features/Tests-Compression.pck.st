@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3622] on 21 February 2019 at 5:17:32 pm'!
-'Description '!
+'Description Please enter a description for this package'!
 !provides: 'Tests-Compression' 1 0!
 !requires: 'Compression' 1 22 nil!
 SystemOrganization addCategory: #'Tests-Compression'!

@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3436] on 3 September 2018 at 9:11:25 am'!
-'Description '!
+'Description Please enter a description for this package.'!
 !provides: 'FFI' 1 31!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!

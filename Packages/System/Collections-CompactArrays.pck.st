@@ -1,5 +1,5 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2855] on 28 July 2016 at 3:26:08 pm'!
-'Description '!
+'Description Please enter a description for this package'!
 !provides: 'Collections-CompactArrays' 1 6!
 !classDefinition: #PointArray category: #'Collections-CompactArrays'!
 IntegerArray variableWordSubclass: #PointArray

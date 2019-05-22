@@ -1,5 +1,5 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3449] on 21 September 2018 at 5:03:40 pm'!
-'Description '!
+'Description Please enter a description for this package '!
 !provides: 'Graphics-Files-Additional' 1 22!
 !requires: 'Compression' 1 nil nil!
 SystemOrganization addCategory: #'Graphics-Files-Additional'!
