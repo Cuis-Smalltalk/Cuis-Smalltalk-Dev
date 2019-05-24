@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3751] on 19 May 2019 at 5:39:45 pm'!
-'Description Formatting changes and recategorization ofr TemporaryToInstanceVariableTest'!
-!provides: 'BaseImageTests' 1 154!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3764] on 24 May 2019 at 10:22:18 am'!
+'Description Changes due to rename form sourceRangeFor: to rangeForNode:ifAbsent:'!
+!provides: 'BaseImageTests' 1 155!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -16124,7 +16124,7 @@ test24AddingParameterToSendersTakeCaresOfSeparators
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 11/8/2018 15:29:28'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 5/24/2019 10:06:10'!
 test25IfNewParameterValueIsKeywordMessageSendAddParenthesisToItForUnaryMessages
 
 	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector newSelector senderMethod senderMethodNode senderSourceCode senderSourceRange |
@@ -16148,13 +16148,13 @@ test25IfNewParameterValueIsKeywordMessageSendAddParenthesisToItForUnaryMessages
 	self assert: (senderMethod sendsOrRefersTo: newSelector).
 	
 	senderMethodNode := senderMethod methodNode.
-	senderSourceRange := senderMethodNode encoder sourceRangeFor: senderMethodNode block statements first.
+	senderSourceRange := senderMethodNode encoder rangeForNode: senderMethodNode block statements first ifAbsent: [ self fail ].
 	senderSourceCode := senderMethodNode sourceText copyFrom: senderSourceRange first to: senderSourceRange last.
 	self assert: (senderSourceCode endsWith: '(',newParameterValue,')')
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 11/8/2018 15:29:34'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 5/24/2019 10:06:40'!
 test26IfNewParameterValueIsKeywordMessageSendAddParenthesisToItForKeywordMessages
 
 	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector newSelector senderMethod newSelectorAddedKeyword senderMethodNode senderSourceCode senderSourceRange |
@@ -16179,7 +16179,7 @@ test26IfNewParameterValueIsKeywordMessageSendAddParenthesisToItForKeywordMessage
 	self assert: (senderMethod sendsOrRefersTo: newSelector).
 	
 	senderMethodNode := senderMethod methodNode.
-	senderSourceRange := senderMethodNode encoder sourceRangeFor: senderMethodNode block statements first.
+	senderSourceRange := senderMethodNode encoder rangeForNode: senderMethodNode block statements first ifAbsent: [ self fail ].
 	senderSourceCode := senderMethodNode sourceText copyFrom: senderSourceRange first to: senderSourceRange last.
 	self assert: (senderSourceCode endsWith: '(',newParameterValue,')')
 	
@@ -16196,7 +16196,7 @@ test27NewParameterValueCanNotHaveMoreThanOneStatement
 	
 	! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 11/8/2018 15:29:39'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 5/24/2019 10:07:01'!
 test28WhenSenderLastParameterIsABlockAddedParameterIsNotAddedInsideTheBlock
 
 	| refactoring classToRefactor oldSelector newParameter newParameterValue senderSelector newSelector senderMethod newSelectorAddedKeyword senderMethodNode senderSourceCode senderSourceRange senderFirstParameterValue |
@@ -16222,7 +16222,7 @@ test28WhenSenderLastParameterIsABlockAddedParameterIsNotAddedInsideTheBlock
 	self assert: (senderMethod sendsOrRefersTo: newSelector).
 	
 	senderMethodNode := senderMethod methodNode.
-	senderSourceRange := senderMethodNode encoder sourceRangeFor: senderMethodNode block statements first arguments first closureCreationNode.
+	senderSourceRange := senderMethodNode encoder rangeForNode: senderMethodNode block statements first arguments first closureCreationNode ifAbsent: [ self fail ].
 	senderSourceCode := senderMethodNode sourceText copyFrom: senderSourceRange first to: senderSourceRange last.
 	self assert: senderFirstParameterValue equals: senderSourceCode
 	! !
@@ -16979,12 +16979,12 @@ test06NewSuperclassNameHasToBeASymbol
 		assertCreation: [ InsertSuperclass to: self class named: 'aString' ]
 		failsWith: [ NewClassPrecondition newNameMustBeSymbolErrorMessage ].! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:22:17'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 5/24/2019 10:09:41'!
 test07NewSuperclassNameHasToStartWithUppercaseLetter
 	
 	self
 		assertCreation: [ InsertSuperclass to: self class named: #_A ]
-		failsWith: [ NewClassPrecondition newNameMustStartWithUppercaseLetterErrorMessage ].! !
+		failsWith: [ NewClassPrecondition newNameMustStartWithRightLetterErrorMessage ].! !
 
 !InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:22:31'!
 test08WhenAppliedToMetaclassWorksAsWithClass
@@ -17436,12 +17436,12 @@ test02NewClassNameHasToBeASymbol
 		assertCreation: [ RenameClass from: self class to: 'aString' ]
 		failsWith: [ NewClassPrecondition newNameMustBeSymbolErrorMessage]! !
 
-!RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:36:37'!
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 5/24/2019 10:09:47'!
 test03NewClassNameHasToStartWithUppercaseLetter
 
 	self 
 		assertCreation: [ RenameClass from: self class to: #_A ]
-		failsWith: [ NewClassPrecondition newNameMustStartWithUppercaseLetterErrorMessage]! !
+		failsWith: [ NewClassPrecondition newNameMustStartWithRightLetterErrorMessage]! !
 
 !RenameClassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:33:08'!
 test04NewClassShouldNotExist
