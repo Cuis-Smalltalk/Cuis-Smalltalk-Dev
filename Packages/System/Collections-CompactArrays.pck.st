@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3746] on 17 May 2019 at 9:02:05 am'!
-'Description Please enter a description for this package'!
-!provides: 'Collections-CompactArrays' 1 7!
+'Description '!
+!provides: 'Collections-CompactArrays' 1 8!
 SystemOrganization addCategory: #'Collections-CompactArrays'!
 
 

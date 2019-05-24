@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3610] on 20 February 2019 at 12:15:33 am'!
-'Description Changed 2 float tests from (a=b) to ((a - b) < epsilon)'!
-!provides: 'FFITests' 1 13!
+'Description '!
+!provides: 'FFITests' 1 14!
 !requires: 'FFI' 1 30 nil!
 !requires: 'Cuis-Base' 50 3589 nil!
 SystemOrganization addCategory: #FFITests!

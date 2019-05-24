@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3397] on 8 August 2018 at 1:23:13 pm'!
-'Description Please enter a description for this package '!
-!provides: 'JSON' 1 18!
+'Description '!
+!provides: 'JSON' 1 19!
 SystemOrganization addCategory: #JSON!
 
 

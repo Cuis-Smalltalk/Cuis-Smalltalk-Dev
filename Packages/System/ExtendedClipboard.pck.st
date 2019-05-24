@@ -1,6 +1,6 @@
 'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 8 March 2018 at 11:35:06 am'!
-'Description Please enter a description for this package.'!
-!provides: 'ExtendedClipboard' 1 11!
+'Description '!
+!provides: 'ExtendedClipboard' 1 12!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: #ExtendedClipboard!
