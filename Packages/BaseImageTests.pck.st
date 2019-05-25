@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3764] on 24 May 2019 at 10:22:18 am'!
-'Description Changes due to rename form sourceRangeFor: to rangeForNode:ifAbsent:'!
-!provides: 'BaseImageTests' 1 155!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3766] on 25 May 2019 at 9:59:54 am'!
+'Description combinationsAtATime:do: tests'!
+!provides: 'BaseImageTests' 1 156!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1755,6 +1755,29 @@ sampleData
 !OrderedDictionaryTest methodsFor: 'aux' stamp: 'jmv 5/25/2018 10:16:35'!
 sampleData2
 	^ { {1. 'uno'}. {8. 'ocho'}. {3. 'tres'}}! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/25/2019 09:49:41'!
+testCombinationsAtATimeDoShouldEvaluateBlockWithEmptyCollection
+	
+	| combinationWasEmpty |
+	
+	combinationWasEmpty := false.
+	'ab' combinations: 0 atATimeDo: [ :combination | combinationWasEmpty := combination isEmpty ].
+	
+	self assert: combinationWasEmpty! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/25/2019 09:59:32'!
+testCombinationsAtATimeDoWorksAsExpected
+	
+	| combinations |
+	 
+	combinations := OrderedCollection new.
+	'abc' combinations: 2 atATimeDo: [ :combination | combinations add: combination copy].
+	
+	self assert: 3 equals: combinations size.
+	self assert: (combinations includes: #($a $b)).
+	self assert: (combinations includes: #($a $c)).
+	self assert: (combinations includes: #($b $c)).! !
 
 !SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:33:35'!
 testDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
