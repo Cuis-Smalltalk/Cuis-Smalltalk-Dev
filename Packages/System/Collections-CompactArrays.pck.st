@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3773] on 26 May 2019 at 5:25:07 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3773] on 26 May 2019 at 5:34:21 pm'!
 'Description '!
-!provides: 'Collections-CompactArrays' 1 9!
+!provides: 'Collections-CompactArrays' 1 10!
 SystemOrganization addCategory: #'Collections-CompactArrays'!
 
 
@@ -12,26 +12,6 @@ IntegerArray variableWordSubclass: #PointArray
 	category: 'Collections-CompactArrays'!
 !classDefinition: 'PointArray class' category: #'Collections-CompactArrays'!
 PointArray class
-	instanceVariableNames: ''!
-
-!classDefinition: #DoubleByteArray category: #'Collections-CompactArrays'!
-ArrayedCollection variableDoubleByteSubclass: #DoubleByteArray
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Collections-CompactArrays'!
-!classDefinition: 'DoubleByteArray class' category: #'Collections-CompactArrays'!
-DoubleByteArray class
-	instanceVariableNames: ''!
-
-!classDefinition: #DoubleWordArray category: #'Collections-CompactArrays'!
-ArrayedCollection variableDoubleWordSubclass: #DoubleWordArray
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Collections-CompactArrays'!
-!classDefinition: 'DoubleWordArray class' category: #'Collections-CompactArrays'!
-DoubleWordArray class
 	instanceVariableNames: ''!
 
 !classDefinition: #ShortIntegerArray category: #'Collections-CompactArrays'!
@@ -77,16 +57,6 @@ ShortRunArray class
 
 !PointArray commentStamp: '<historical>' prior: 0!
 This class stores 32bit Integer points in place. It is used to pass data efficiently to the primitive level during high-bandwidth 2D graphics operations.!
-
-!DoubleByteArray commentStamp: '<historical>' prior: 0!
-DoubleByteArrays store 16-bit unsigned Integer values, between 0 and 16rFFFF.
-
-Note: Only for Spur images. V3 images might use ShortWordArray instead.!
-
-!DoubleWordArray commentStamp: '<historical>' prior: 0!
-DoubleWordArrays store 64-bit unsigned Integer values, between 0 and 16rFFFFFFFFFFFFFFFF.
-
-Note: Only for Spur images.!
 
 !ShortIntegerArray commentStamp: '<historical>' prior: 0!
 ShortIntegerArray is an array for efficiently representing signed integers in the 16bit range, i.e. between -16r8000 and 16r7FFF.
@@ -182,56 +152,6 @@ size
 !PointArray class methodsFor: 'instance creation' stamp: 'ar 10/16/1998 00:04'!
 new: n
 	^super new: n*2! !
-
-!DoubleByteArray methodsFor: 'accessing' stamp: 'len 5/16/2019 06:26:16'!
-atAllPut: value
-	"Fill the receiver with the given value."
-	<primitive: 145>
-	super atAllPut: value! !
-
-!DoubleByteArray methodsFor: 'accessing' stamp: 'len 5/16/2019 06:16:29'!
-byteSize
-	^self size * 2! !
-
-!DoubleByteArray methodsFor: 'accessing' stamp: 'len 5/16/2019 06:18:48'!
-bytesPerElement
-	"Number of bytes in each item.  This multiplied by (self size)*8 gives the number of bits stored."
-	^ 2! !
-
-!DoubleByteArray methodsFor: 'accessing' stamp: 'len 5/16/2019 06:17:53'!
-defaultElement
-	^0! !
-
-!DoubleByteArray methodsFor: 'private' stamp: 'len 5/16/2019 06:21:22'!
-replaceFrom: start to: stop with: replacement startingAt: repStart 
-	"Primitive. This destructively replaces elements from start to stop in the receiver starting at index, repStart, in the collection, replacement. Answer the receiver. Range checks are performed in the primitive only. Optional. See Object documentation whatIsAPrimitive."
-	<primitive: 105>
-	super replaceFrom: start to: stop with: replacement startingAt: repStart! !
-
-!DoubleWordArray methodsFor: 'accessing' stamp: 'len 5/16/2019 06:26:24'!
-atAllPut: value
-	"Fill the receiver with the given value."
-	<primitive: 145>
-	super atAllPut: value! !
-
-!DoubleWordArray methodsFor: 'accessing' stamp: 'len 5/16/2019 06:16:45'!
-byteSize
-	^self size * 8! !
-
-!DoubleWordArray methodsFor: 'accessing' stamp: 'len 5/16/2019 06:19:05'!
-bytesPerElement
-	"Number of bytes in each item.  This multiplied by (self size)*8 gives the number of bits stored."
-	^ 8! !
-
-!DoubleWordArray methodsFor: 'accessing' stamp: 'len 5/16/2019 06:18:00'!
-defaultElement
-	^0! !
-
-!DoubleWordArray methodsFor: 'private' stamp: 'len 5/16/2019 06:21:40'!
-replaceFrom: start to: stop with: replacement startingAt: repStart 
-	"Primitive. This destructively replaces elements from start to stop in the receiver starting at index, repStart, in the collection, replacement. Answer the receiver. Range checks are performed in the primitive only. Optional. See Object documentation whatIsAPrimitive."
-	<primitive: 105>
-	super replaceFrom: start to: stop with: replacement startingAt: repStart! !
 
 !ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/27/2013 07:21'!
 at: index
