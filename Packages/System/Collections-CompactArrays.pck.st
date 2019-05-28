@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3746] on 17 May 2019 at 9:02:05 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3773] on 26 May 2019 at 5:34:21 pm'!
 'Description '!
-!provides: 'Collections-CompactArrays' 1 8!
+!provides: 'Collections-CompactArrays' 1 10!
 SystemOrganization addCategory: #'Collections-CompactArrays'!
 
 
