@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3766] on 25 May 2019 at 9:59:54 am'!
-'Description combinationsAtATime:do: tests'!
-!provides: 'BaseImageTests' 1 156!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3774] on 28 May 2019 at 4:41:40 pm'!
+'Description TemporaryToInstanceVariable more tests'!
+!provides: 'BaseImageTests' 1 157!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -19188,12 +19188,20 @@ classToRemoveName
 	^ 'ClassToRemove' asSymbol.
 	! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:32:08'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
 methodSourceCodeNamed: aSelector withTemporaryVariableDeclaration: aTemporaryVariableName
 
-	^aSelector, ' | ', aTemporaryVariableName, ' | '.! !
+	^aSelector, '| ', aTemporaryVariableName, ' |'.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:33:37'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:31:12'!
+methodSourceCodeNamed: aSelector withTemporaryVariableDeclarations: temporaryVariableNames
+	^String streamContents: [ :stream |
+		stream nextPutAll: aSelector, '| '.
+		temporaryVariableNames do: [ :temporaryVariableName |
+			stream nextPutAll: temporaryVariableName, ' ' ].	
+		stream nextPut: $|. ].! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
 test01ApplyChangesTemporaryVariableToInstanceVariable
 
 	| variableName classToRefactor messageName refactoring sourceText methodNode changedMethodNode |
@@ -19213,7 +19221,7 @@ test01ApplyChangesTemporaryVariableToInstanceVariable
 	changedMethodNode _ self methodNodeIn: classToRefactor named: messageName.
 	self assert: 0 equals: changedMethodNode temporaries size.! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:34:33'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
 test02ApplyDoesntChangeRestOfSourceCode
 
 	| variableName classToRefactor messageName refactoring sourceText methodNode changedMethodNode restOfSourceCode |
@@ -19253,7 +19261,7 @@ test03TemporaryToChangeShouldExist
 			
 			self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: sourceText ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:35:53'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
 test04TemporaryShouldNotExistInOtherClassMethod
 
 	|  classToRefactor firstMessageName firstMethodNode firstSourceText variableName secondMessageName secondSourceText |
@@ -19286,7 +19294,7 @@ test04TemporaryShouldNotExistInOtherClassMethod
 			self assertMethodNamed: firstMessageName in: classToRefactor hasSourceEqualTo: firstSourceText.
 			self assertMethodNamed: secondMessageName in: classToRefactor hasSourceEqualTo: secondSourceText ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:36:28'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
 test05InstanceVariableShouldNotExistInSubclass
 
 	| classToRefactor messageName methodNode sourceText variableName subclassToRefactor |
@@ -19322,7 +19330,7 @@ test05InstanceVariableShouldNotExistInSubclass
 			self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: sourceText.
 			self assert: (subclassToRefactor instVarNames includes: variableName) ].! !
 
-!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'HAW 5/19/2019 17:36:59'!
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
 test06TemporaryShouldNotExistInSubclassMethod
 
 	| classToRefactor firstMessageName firstMethodNode firstSourceText variableName secondMessageName secondSourceText subclassToRefactor |
@@ -19362,6 +19370,67 @@ test06TemporaryShouldNotExistInSubclassMethod
 			
 			self assertMethodNamed: firstMessageName in: classToRefactor hasSourceEqualTo: firstSourceText.
 			self assertMethodNamed: secondMessageName in: subclassToRefactor hasSourceEqualTo: secondSourceText ].! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:26:04'!
+test07RemovesPipesWhenRemovingLastTemporaryVariable
+
+	| variableName classToRefactor messageName refactoring sourceText methodNode |
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	messageName _ #m1.
+	variableName _ 'a'.
+	sourceText _ self methodSourceCodeNamed: messageName withTemporaryVariableDeclaration: variableName.
+	methodNode _ self compileMethodNodeIn: classToRefactor named: messageName sourceCode: sourceText.
+	
+	refactoring _ TemporaryToInstanceVariable named: variableName fromMethod: methodNode.
+	refactoring apply.
+	
+	self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: 'm1 '.! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/25/2019 00:30:25'!
+test08DoesntRemoveOtherVariables
+
+	| variableName classToRefactor messageName refactoring sourceText methodNode otherVariableName |
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	messageName _ #m1.
+	variableName _ 'a'.
+	otherVariableName _ 'b'.
+	sourceText _ self 
+		methodSourceCodeNamed: messageName 
+		withTemporaryVariableDeclarations: {variableName. otherVariableName}.
+	methodNode _ self compileMethodNodeIn: classToRefactor named: messageName sourceCode: sourceText.
+	
+	refactoring _ TemporaryToInstanceVariable named: variableName fromMethod: methodNode.
+	refactoring apply.
+	
+	self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: 'm1|  b |'.! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 5/28/2019 00:17:27'!
+test09TemporaryShouldNotExistInOtherBlockInSameMethod
+
+	| classToRefactor messageName methodNode sourceText variableName blockWithVariableString |
+
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	
+	variableName _ 'a'.
+	messageName _ #m1.
+	blockWithVariableString _ '[ | ', variableName, ' | ].'.
+	sourceText _ messageName, '
+	', blockWithVariableString, '
+	', blockWithVariableString.
+	methodNode _ self 
+		compileMethodNodeIn: classToRefactor 
+		named: messageName 
+		sourceCode: sourceText.
+	
+	self 
+		should: [ TemporaryToInstanceVariable named: variableName fromMethod: methodNode ]
+		raise: RefactoringError
+		withExceptionDo: [ :error |
+			self 
+				assert: TemporaryToInstanceVariable temporaryExistsInOtherBlockErrorDescription 
+				equals: error messageText.
+			
+			self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: sourceText. ].! !
 
 !TemporaryToInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 5/19/2019 17:29:33'!
 assertMethodNamed: aMethodName in: aClass hasSourceEqualTo: aSourceCode
