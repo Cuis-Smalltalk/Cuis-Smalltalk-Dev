@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3785] on 7 June 2019 at 9:30:06 am'!
-'Description More Random Tests'!
-!provides: 'BaseImageTests' 1 159!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3786] on 8 June 2019 at 6:30:17 pm'!
+'Description String withoutSeparators tests'!
+!provides: 'BaseImageTests' 1 160!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -9984,6 +9984,12 @@ testWithoutLeadingBlanks
 	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
 	self assert: '' withoutLeadingBlanks isEmpty
 ! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 6/8/2019 18:18:47'!
+testWithoutSeparators
+
+	self assert: 'abc' equals: 'abc' withoutSeparators.
+	self assert: 'abc' equals: ' a b c ' withoutSeparators! !
 
 !StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:32'!
 testWithoutTrailingBlanks
