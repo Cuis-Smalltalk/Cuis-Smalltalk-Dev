@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3777] on 29 May 2019 at 9:16:42 am'!
-'Description TemporaryToInstanceVariable even more tests'!
-!provides: 'BaseImageTests' 1 158!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3786] on 8 June 2019 at 6:30:17 pm'!
+'Description String withoutSeparators tests'!
+!provides: 'BaseImageTests' 1 160!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -8052,6 +8052,39 @@ testNext
 	self assert: max > 0.9999 description: 'The largest generated value should be greater than 0.9999.'.
 	self assert: min < 0.0001 description: 'The smallest generated value should be less than 0.0001.'! !
 
+!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 02:32:34'!
+testNextBits
+	"Test randomBits: returns integers in the correct range."
+	| random |
+	random _ self rng.
+	0 to: 10 do: [:n| 100 timesRepeat: [self assert: ((random nextBits: n) between: 0 and: 2^n - 1)]].
+	0 to: 100 do: [:n| self assert: ((random nextBits: n) between: 0 and: 2^n - 1)]! !
+
+!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 02:27:56'!
+testNextBitsInvalid
+	"Requesting a negative amount of random bits should raise an error."
+	| random |
+	random _ self rng.
+	self should: [random nextBits: -1] raise: Error.
+	self should: [random nextBits: -100] raise: Error! !
+
+!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 02:38:58'!
+testNextInteger
+	"Test nextInteger: returns integers in the correct range."
+	| random n |
+	random _ self rng.
+	1 to: 5 do: [:i| 100 timesRepeat: [self assert: ((random nextInteger: i) between: 1 and: i)]].
+	n _ 1<<1000.
+	self assert: ((random nextInteger: n) between: 1 and: n)! !
+
+!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 02:36:52'!
+testNextIntegerInvalid
+	| random |
+	random _ self rng.
+	self should: [random nextInteger: -1] raise: Error.
+	self should: [random nextInteger: -100] raise: Error.
+	self should: [random nextInteger: 0] raise: Error! !
+
 !RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:38'!
 testRandomLargeInteger1
 
@@ -8082,13 +8115,19 @@ testRandomLargeInteger2
 		].
 	self assert: ones - (nSamples * bitsPerRandom / 2) abs / 10 < nSamples "1% max deviation"! !
 
-!RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:05'!
-testSeed0
-
-	| random |
+!RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 03:13:26'!
+testSeedAndRepeatability
+	| random seed a b c |
 	random := self rng.
-	self should: [random seed: 0] raise: Error.
-	self assert: (10 atRandom: random) <= 10! !
+	seed _ ((1 << 100) negated to: 1 << 100) atRandom.
+	random seed: seed.
+	a _ random next.
+	b _ random next.
+	c _ random nextBits: 100.
+	random seed: seed.
+	self assert: random next = a.
+	self assert: random next = b.
+	self assert: (random nextBits: 100) = c! !
 
 !RandomTest methodsFor: 'tests' stamp: 'sqr 3/5/2016 18:17'!
 testSetAtRandom
@@ -8160,6 +8199,26 @@ testParkMillerInitialValues
 	samples _ 1 to: nSamples :: collect: [:each | random next].
 	self assert: (samples average - 0.5) abs < 0.1.
 	self assert: samples size * 10 > nSamples! !
+
+!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 03:25:04'!
+testParkMillerSeedCornerCases
+	"Test the insernal state of the Park-Miller generator is correctly set, including corner cases."
+	| random m |
+	m _ 2147483647.
+	{1. 2. (m-1) atRandom. m-1. m-2}
+		do: [:each|
+			random _ self rng seed: each.
+			self assert: (random instVarNamed: #seed) = each]! !
+
+!ParkMiller88RandomTest methodsFor: 'tests' stamp: 'len 6/7/2019 03:25:14'!
+testParkMillerSeedRange
+	"Test the insernal state of the Park-Miller generator is correctly set, even for arbitrary user-provided seeds."
+	| random m |
+	m _ 2147483647.
+	{1. 1000. 10000000000000000000000. -100. 0. -1. m. m-1. m-2. m+1}
+		do: [:each|
+			random _ self rng seed: each.
+			self assert: ((random instVarNamed: #seed) between: 1 and: m - 1)]! !
 
 !ParkMiller93RandomTest methodsFor: 'setup' stamp: 'sqr 3/5/2016 19:58'!
 rngClass
@@ -9925,6 +9984,12 @@ testWithoutLeadingBlanks
 	self assert: 'abc' equals: 'abc' withoutLeadingBlanks.
 	self assert: '' withoutLeadingBlanks isEmpty
 ! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 6/8/2019 18:18:47'!
+testWithoutSeparators
+
+	self assert: 'abc' equals: 'abc' withoutSeparators.
+	self assert: 'abc' equals: ' a b c ' withoutSeparators! !
 
 !StringTest methodsFor: 'testing' stamp: 'HAW 8/2/2018 20:35:32'!
 testWithoutTrailingBlanks
