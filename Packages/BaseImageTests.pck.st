@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3786] on 8 June 2019 at 6:30:17 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3788] on 10 June 2019 at 9:24:23 am'!
 'Description String withoutSeparators tests'!
-!provides: 'BaseImageTests' 1 160!
+!provides: 'BaseImageTests' 1 161!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -9756,24 +9756,24 @@ testAsUtf8
 	"
 	self assert: 'A¢¤' asUtf8 hex = '41C2A2E282AC'! !
 
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/14/2013 14:30'!
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 6/10/2019 09:23:03'!
 testAsUtf8WithNCRs
 	"
 	 StringTest new testAsUtf8WithNCRs
 	"
 	| stringWithDecimalNCRs stringWithHexNCRs utf8 |
-	utf8 _ ByteArray readHexFrom: ('CE BC 20 CE A9 20 CF 89 20 54 68 65 20 64 65 63 6F 6D 70 6F 73 69 74 69 6F 6E 20 6D 61 70 70 69 6E 67 20 69 73 20 3C EC B8 A0 2C 20 E1 86 B8 3E 2C 20 61 6E 64 20 6E 6F 74 20 3C E1 84 8E 2C 20 E1 85 B3 2C 20 31 31 42 38 3E 2E 0A 3C 70 3E 54 68 65 20 74 69 74 6C 65 20 73 61 79 73 20 E2 80 AB D7 A4 D7 A2 D7 99 D7 9C D7 95 D7 AA 20 D7 94 D7 91 D7 99 D7 A0 D7 90 D7 95 D7 9D 2C 20 57 33 43 E2 80 AC 20 69 6E 20 48 65 62 72 65 77 3C 2F 70 3E 0A 61 62 63 E0 A4 95 E0 A4 96 E0 A5 80 E5 9C 8B E9 9A 9B F0 90 8E 84 F0 90 8E 94 F0 90 8E 98' reject: [ :char  | char isSeparator ]).
+	utf8 _ ByteArray readHexFrom: ('CE BC 20 CE A8 20 CF 89 20 54 68 65 20 64 65 63 6F 6D 70 6F 73 69 74 69 6F 6E 20 6D 61 70 70 69 6E 67 20 69 73 20 3C EC B8 A0 2C 20 E1 86 B8 3E 2C 20 61 6E 64 20 6E 6F 74 20 3C E1 84 8E 2C 20 E1 85 B3 2C 20 31 31 42 38 3E 2E 0A 3C 70 3E 54 68 65 20 74 69 74 6C 65 20 73 61 79 73 20 E2 80 AB D7 A4 D7 A2 D7 99 D7 9C D7 95 D7 AA 20 D7 94 D7 91 D7 99 D7 A0 D7 90 D7 95 D7 9D 2C 20 57 33 43 E2 80 AC 20 69 6E 20 48 65 62 72 65 77 3C 2F 70 3E 0A 61 62 63 E0 A4 95 E0 A4 96 E0 A5 80 E5 9C 8B E9 9A 9B F0 90 8E 84 F0 90 8E 94 F0 90 8E 98' reject: [ :char  | char isSeparator ]).
 
 	stringWithDecimalNCRs _ String fromUtf8: utf8 hex: false trimLastNull: false.
 	stringWithHexNCRs _ String fromUtf8: utf8 hex: true trimLastNull: false.
 
-	self assert: stringWithDecimalNCRs = '&#956; &#937; &#969; The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
+	self assert: stringWithDecimalNCRs = '&#956; &#936; &#969; The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
 <p>The title says &#8235;&#1508;&#1506;&#1497;&#1500;&#1493;&#1514; &#1492;&#1489;&#1497;&#1504;&#1488;&#1493;&#1501;, W3C&#8236; in Hebrew</p>
 abc&#2325;&#2326;&#2368;&#22283;&#38555;&#66436;&#66452;&#66456;'.
 
 	self assert: (stringWithDecimalNCRs asUtf8: true) = utf8.
 
-	self assert: stringWithHexNCRs = '&#x03BC; &#x03A9; &#x03C9; The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
+	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; &#x03C9; The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
 <p>The title says &#x202B;&#x05E4;&#x05E2;&#x05D9;&#x05DC;&#x05D5;&#x05EA; &#x05D4;&#x05D1;&#x05D9;&#x05E0;&#x05D0;&#x05D5;&#x05DD;, W3C&#x202C; in Hebrew</p>
 abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
 

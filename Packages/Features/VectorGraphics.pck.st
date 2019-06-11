@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3781] on 3 June 2019 at 10:27:35 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3784] on 10 June 2019 at 11:07:07 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 74!
-!requires: 'YAXO' 1 nil nil!
+!provides: 'VectorGraphics' 1 76!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Color-Extras' 1 nil nil!
+!requires: 'YAXO' 1 nil nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
 SystemOrganization addCategory: #'VectorGraphics-SVG'!
@@ -2629,10 +2629,10 @@ windowFrame: aRectangle color: aColor radius: r border: morphStrokeWidth labelHe
 		self
 			roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh-d2 maxY: aRectangle bottom-d2 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'testing' stamp: 'jmv 5/30/2017 15:28:19'!
+!VectorCanvas methodsFor: 'testing' stamp: 'jmv 6/10/2019 10:45:02'!
 isCurrentMorphVisible
 	self flag: #jmvVer2. "Also #morphBoundsInWorld"
-self revisar. "por supuesto que no..."
+self revisar. "Of course not true. Do it right. But first, assess the need for this method at all!!"
 	^ true! !
 
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 10/14/2014 09:00'!
@@ -2670,14 +2670,14 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 4/4/2018 14:04:17'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 6/10/2019 11:06:59'!
 setForm: aForm
 	"
 	World extent: World extent
 	"
 	form _ aForm.
 	engine _ VectorEngine onForm: form.
-	self newClipRect: nil! !
+	self newClipRect: nil.! !
 
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 arrowOfDirection: aSymbol size: finalSizeInteger
