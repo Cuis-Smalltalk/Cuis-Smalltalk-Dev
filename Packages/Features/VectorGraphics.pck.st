@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3784] on 10 June 2019 at 11:07:07 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3792] on 11 June 2019 at 2:05:25 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 76!
+!provides: 'VectorGraphics' 1 77!
+!requires: 'YAXO' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 !requires: 'Color-Extras' 1 nil nil!
-!requires: 'YAXO' 1 nil nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
 SystemOrganization addCategory: #'VectorGraphics-SVG'!
@@ -5293,13 +5293,20 @@ on: points
 
 	^self new points: points! !
 
-!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 5/11/2019 18:26:56'!
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 6/11/2019 11:16:18'!
 at: aCharOrInteger
-	| codePoint answer |
-	codePoint _ aCharOrInteger isNumber ifTrue: [aCharOrInteger] ifFalse: [aCharOrInteger codePoint].
-	answer _ glyphTable at: codePoint + 1.
+	| codePoint answer fallbackGlyph |
+	fallbackGlyph _ glyphTable at: 1.
+	aCharOrInteger isNumber
+		ifTrue: [
+			answer _ glyphTable at: aCharOrInteger + 1 ]
+		ifFalse: [
+			codePoint _ aCharOrInteger codePointOfGlyphToUse.
+			answer _ glyphTable at: codePoint + 1.
+			answer == fallbackGlyph ifTrue: [
+				answer _ glyphTable at: aCharOrInteger codePoint + 1 ]].
 	"If not included, don't answer fallback but nil."
-	(codePoint ~= 0 and: [ answer == (glyphTable at: 1) ])
+	(answer == fallbackGlyph and: [codePoint ~= 0])
 		ifTrue: [ ^ nil ].
 	^ answer! !
 
