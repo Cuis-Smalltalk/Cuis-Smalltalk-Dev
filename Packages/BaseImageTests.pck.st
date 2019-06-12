@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3788] on 10 June 2019 at 9:24:23 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3804] on 12 June 2019 at 6:23:40 pm'!
 'Description String withoutSeparators tests'!
-!provides: 'BaseImageTests' 1 161!
+!provides: 'BaseImageTests' 1 162!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -448,6 +448,16 @@ TestCase subclass: #BooleanTest
 	category: 'BaseImageTests-Kernel'!
 !classDefinition: 'BooleanTest class' category: #'BaseImageTests-Kernel'!
 BooleanTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CharacterSetTest category: #'BaseImageTests-Kernel'!
+TestCase subclass: #CharacterSetTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel'!
+!classDefinition: 'CharacterSetTest class' category: #'BaseImageTests-Kernel'!
+CharacterSetTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #CharacterTest category: #'BaseImageTests-Kernel'!
@@ -1575,6 +1585,19 @@ testWhenCollectionIsEmptyItReturnsTheSameCollection
 
 	self assert: #() equals: #() flatten! !
 
+!CollectionTest methodsFor: 'misc tests' stamp: 'jmv 6/12/2019 18:22:57'!
+testSetEquality
+	self assert: Set new = IdentitySet new.
+	self assert: Set new hash = IdentitySet new hash.
+	self assert: Dictionary new = IdentityDictionary new.
+	self assert: Dictionary new hash = IdentityDictionary new hash.
+	self assert: Dictionary new = OrderedDictionary new.
+	self assert: Dictionary new hash = OrderedDictionary new hash.
+	self assert: IdentityDictionary new = OrderedDictionary new.
+	self assert: IdentityDictionary new hash = OrderedDictionary new hash.
+
+	self deny: Set new = Dictionary new! !
+
 !DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
 testKeyNotFoundSignalTheRightMessage
 
@@ -1637,6 +1660,30 @@ testFloatToByDo
 		self assert: toByDo size = interval size.
 		1 to: toByDo size do: [ :i |
 			self assert: (toByDo at: i) = (interval at: i) ]]! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:35:33'!
+testIncludesReturnsFalseForNotIncludedNumbers
+
+	| from1To10 |
+	
+	from1To10 := 1 to: 10.
+	self deny: (from1To10 includes: 0).
+	self deny: (from1To10 includes: 11)! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:33:46'!
+testIncludesReturnsFalseForObjectsThatAreNotNumbers
+
+	self deny: ((1 to: 10) includes: $a)! !
+
+!IntervalTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:35:09'!
+testIncludesReturnsTrueForIncludedNumbers
+
+	| from1To10 |
+	
+	from1To10 := 1 to: 10.
+	self assert: (from1To10 includes: 1).
+	self assert: (from1To10 includes: 5).
+	self assert: (from1To10 includes: 10).! !
 
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
 testIntegerInterval
@@ -9311,6 +9358,21 @@ evaluate: aBlock forCombinationOf: aNumberOfValues
 	self evaluate: aBlock collectingValuesInto: (Array new: aNumberOfValues) at: aNumberOfValues 
 	! !
 
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:08'!
+testIncludesReturnsFalseForCharacterNotIncluded
+
+	self deny: ((CharacterSet with: $a) includes: $b)! !
+
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:31:45'!
+testIncludesReturnsFalseForObjectsThatAreNotCharacters
+
+	self deny: ((CharacterSet with: $a) includes: 1)! !
+
+!CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:24'!
+testIncludesReturnsTrueForCharacterIncluded
+
+	self assert: ((CharacterSet with: $a) includes: $a)! !
+
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:08'!
 testCaseConversion
 	"
@@ -13053,6 +13115,24 @@ testAllMesssagesLikeSet
 
 	self assert: subject isEquivalentToSet: copy.
 	self assert: copy isEquivalentToSet: controlGroup.! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:28'!
+testIncludesReturnsFalseForObjectsThatAreNotString
+	
+	self deny: ((Trie with: 'hello') includes: 1)
+	! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:38:51'!
+testIncludesReturnsFalseForStringsNotIncluded
+	
+	self deny: ((Trie with: 'hello') includes: 'bye')
+	! !
+
+!TrieTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:39:09'!
+testIncludesReturnsTrueForIncludedStrings
+	
+	self assert: ((Trie with: 'hello') includes: 'hello')
+	! !
 
 !TrieTest methodsFor: 'testing' stamp: 'HAW 4/4/2019 08:18:55'!
 testKeyNotFoundSignalTheRightMessage
