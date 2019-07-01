@@ -60,7 +60,7 @@ Log out and log back in, or reboot the machine.
 ### Get and set up an appropriate VM ###
 ```
 cd MyProject
-curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/201901172323/squeak.cog.spur_macos64x64_201901172323.dmg
+curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_macos64x64_201901172323.dmg
 Open Finder on your folder
 Double click on the dmg file
 Drag Squeak.app to your folder
