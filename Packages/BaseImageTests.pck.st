@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3813] on 28 June 2019 at 10:51:42 am'!
+'From Cuis 5.0 [latest update: #3816] on 1 July 2019 at 4:39:30 pm'!
 'Description String withoutSeparators tests'!
-!provides: 'BaseImageTests' 1 166!
+!provides: 'BaseImageTests' 1 167!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -14421,23 +14421,23 @@ testAssertDoeNotChangePassesWhenConditionIsNotAlteredByAction
 	
 	self assert: [ aCollection sum ] doesNotChange: [ aCollection size ]! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 19:22:33'!
-testAssertIsNearToPassesForSameNumberDifferentToZero
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:01'!
+testAssertIsCloseToPassesForSameNumberDifferentToZero
 	
-	self assert: 1.5 isNearTo: 1.5! !
+	self assert: 1.5 isCloseTo: 1.5! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 19:22:17'!
-testAssertIsNearToPassesWhenBothAreZero
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:12'!
+testAssertIsCloseToPassesWhenBothAreZero
 
-	self assert: 0.0 isNearTo: 0.0! !
+	self assert: 0.0 isCloseTo: 0.0! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:36:02'!
-testAssertIsNearToPassesWithSameCalculatedNumber
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:18'!
+testAssertIsCloseToPassesWithSameCalculatedNumber
 	
-	self assert: 0.3 isNearTo: 0.1 + 0.2! !
+	self assert: 0.3 isCloseTo: 0.1 + 0.2! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:37:40'!
-testAssertIsNearToWithPrecisionPassesWhenDifferenceIsNegativeAndLessThanPrecision
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:24'!
+testAssertIsCloseToWithPrecisionPassesWhenDifferenceIsNegativeAndLessThanPrecision
 	
 	|precision newValue originalNumber |
 	
@@ -14445,10 +14445,10 @@ testAssertIsNearToWithPrecisionPassesWhenDifferenceIsNegativeAndLessThanPrecisio
 	originalNumber _ 0.3.
 	newValue _ originalNumber - 0.01.
 	
-	self assert: originalNumber isNearTo: newValue withPrecision: precision! !
+	self assert: originalNumber isCloseTo: newValue withPrecision: precision! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:37:24'!
-testAssertIsNearToWithPrecisionPassesWhenDifferenceIsPositiveAndLessThanPrecision
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:30'!
+testAssertIsCloseToWithPrecisionPassesWhenDifferenceIsPositiveAndLessThanPrecision
 	
 	|precision newValue originalNumber |
 	
@@ -14456,10 +14456,10 @@ testAssertIsNearToWithPrecisionPassesWhenDifferenceIsPositiveAndLessThanPrecisio
 	originalNumber _ 0.3.
 	newValue _ originalNumber + 0.01.
 	
-	self assert: originalNumber isNearTo: newValue withPrecision: precision! !
+	self assert: originalNumber isCloseTo: newValue withPrecision: precision! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:38:46'!
-testAssertIsNotNearWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:39'!
+testAssertIsNotCloseWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
 	
 	|precision newValue originalNumber |
 	
@@ -14467,7 +14467,7 @@ testAssertIsNotNearWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
 	originalNumber _ 0.3.
 	newValue _ originalNumber + precision + 0.001.
 	
-	self assert: originalNumber isNotNearTo: newValue withPrecision: precision! !
+	self assert: originalNumber isNotCloseTo: newValue withPrecision: precision! !
 
 !TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:49:51'!
 testAssertIncludesFailsWhenElementIsNotIncludedInCollection
