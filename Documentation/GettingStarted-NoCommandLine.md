@@ -16,7 +16,8 @@ What follows are instructions for setting up Cuis on Windows or Mac OS X without
 * Create a new folder in your machine using Mac Finder
 * download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip) to your folder
 * extract the contents of the zip file (double click on it)
-* download [`squeak.cog.spur_macos64x64_201807260206.dmg`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/201901172323/squeak.cog.spur_macos64x64_201901172323.dmg), saving it to your folder
+* download [`squeak.cog.spur_macos64x64_201807260206.dmg`](
+https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_macos64x64_201901172323.dmg), saving it to your folder
 * double click on the dmg file
 * Drag Squeak to your folder
 * drop the Cuis5.0-3795.image over the Squeak.app file
