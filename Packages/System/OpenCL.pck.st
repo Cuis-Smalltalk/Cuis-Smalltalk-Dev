@@ -1,9 +1,9 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 9 March 2018 at 4:37:33 pm'!
+'From Cuis 5.0 [latest update: #3817] on 1 July 2019 at 5:55:41 pm'!
 'Description '!
-!provides: 'OpenCL' 1 40!
-!requires: 'LinearAlgebra' 1 nil nil!
+!provides: 'OpenCL' 1 41!
 !requires: 'ImageProcessing' 1 nil nil!
 !requires: 'FFI' 1 nil nil!
+!requires: 'LinearAlgebra' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
 SystemOrganization addCategory: #'OpenCL-Examples'!
@@ -205,7 +205,7 @@ OpenCLDevice class
 !classDefinition: #OpenCLPlatform category: #OpenCL!
 OpenCLObject subclass: #OpenCLPlatform
 	instanceVariableNames: 'profile version name vendor extensions'
-	classVariableNames: ''
+	classVariableNames: 'PreferredDevice'
 	poolDictionaries: ''
 	category: 'OpenCL'!
 !classDefinition: 'OpenCLPlatform class' category: #OpenCL!
@@ -769,6 +769,87 @@ Responsibilities:
 	- primitive support to allow OpenCLEvent class>>waitForEvents: to block a single Squeak Process, rather than the main VM thread.  To do this, we need a separate native thread (maybe from a thread-pool?) that will signal a Squeak semaphore... the Process waiting for the primitive will block waiting for that semaphore to be signalled.  
 	
 	for blocking-waits on a command-queue that occur in a different native thread.  Probably make a subclass of command-queue whose instances register themselves with the plugin, and!
+
+!CLImageDescStruct methodsFor: 'printing' stamp: 'jmv 10/30/2015 12:53'!
+printOn: aStream
+	super printOn: aStream.
+	aStream
+		nextPut: $(;
+		nextPutAll: (self class image_type_String: self image_type);
+		nextPutAll: ' width:'; print: self image_width;
+		nextPutAll: ' height:'; print: self image_height;
+		nextPutAll: ' depth'; print: self image_depth;
+		nextPutAll: ' arraySize:'; print: self image_array_size;
+		nextPutAll: ' rowPitch:'; print: self image_row_pitch;
+		nextPutAll: ' slicePitch:'; print: self image_slice_pitch;
+		nextPutAll: ' mipLevels:'; print: self num_mip_levels;
+		nextPutAll: ' numSamples:'; print: self num_samples;
+		nextPutAll: ' buffer:'; print: self buffer;
+		nextPut: $)! !
+
+!CLImageFormatStruct methodsFor: 'printing' stamp: 'jmv 10/29/2015 15:11'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(.
+	aStream nextPutAll: (self class image_channel_order_String: self image_channel_order).
+	aStream space.
+	aStream nextPutAll: (self class image_channel_data_type_String: self image_channel_data_type).
+	aStream nextPut: $).! !
+
+!OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:46'!
+name
+	"Device name string."
+	^self stringProperty: CL_DEVICE_NAME! !
+
+!OpenCLDevice methodsFor: 'printing' stamp: 'pb 6/18/2019 02:00:37'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(; print: self name; nextPut:$)! !
+
+!OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
+name
+	^name! !
+
+!OpenCLImage2D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
+format
+	^format! !
+
+!OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
+format
+	^format! !
+
+!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 7/1/2019 17:54:48'!
+shutDown: quitting
+	"We assume that the image is being saved.  When it is restarted, we want the finalization-registry to be empty.  Otherwise, there is a race-condition where the finalization-process might run before the startup-list is processed, and we might crash because we try to free OpenCL objects whose handles are no longer valid.  Also see #startUp:."
+	self finalizationRegistry removeAll.
+	OpenCLPlatform preferredDevice: nil! !
+
+!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 8/20/2015 20:16'!
+startUp: resuming
+	"Behave differently depending on whether we are restarting a saved image, or are continuing without quitting."
+	resuming 
+		ifTrue:[
+			"Each time we restart the image, we flush the installed library so that 
+			 we are sure to use the proper library for the current platform."
+			ActiveSubclass := nil.
+			
+			"Any existing OpenCLObjects are invalid; mark them as such."
+			OpenCLRefCounter allInstancesDo:[:counter| counter invalidateOnStartUp].
+			OpenCLObject allSubInstancesDo: [:obj | obj invalidateOnStartUp].
+		]
+		ifFalse: [
+			"See #shutDown:... there we cleaned out our finalization registry to avoid a 
+			 crash-causing race-condition when restarting a saved image.  Now we put 
+			 all of the objects back, to ensure that they're finalized."
+			OpenCLRefCountedObject allSubInstancesDo: [:obj | obj registerForFinalization]
+		].! !
+
+!OpenCLRefCounter methodsFor: 'printing' stamp: 'jcg 1/15/2010 00:57'!
+printOn: aStream
+	aStream nextPutAll: '[ref-count: '.
+	refCount printOn: aStream.
+	aStream nextPut: $]
+! !
 
 !OpenCLConstants class methodsFor: 'code generation' stamp: 'jmv 12/23/2016 12:19:32'!
 clearConstantInitializers
@@ -1952,24 +2033,28 @@ testMapAndCopyImage
 	mapForm destroySurface.
 ! !
 
-!CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:40'!
+!CLBufferRegionStruct methodsFor: 'accessing'!
 origin
 	"This method was automatically generated. See CLBufferRegionStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 1! !
 
-!CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:40'!
+!CLBufferRegionStruct methodsFor: 'accessing'!
 origin: anObject
 	"This method was automatically generated. See CLBufferRegionStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 1 put: anObject! !
 
-!CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:40'!
+!CLBufferRegionStruct methodsFor: 'accessing'!
 size
 	"This method was automatically generated. See CLBufferRegionStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 9! !
 
-!CLBufferRegionStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:40'!
+!CLBufferRegionStruct methodsFor: 'accessing'!
 size: anObject
 	"This method was automatically generated. See CLBufferRegionStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 9 put: anObject! !
 
 !CLBufferRegionStruct class methodsFor: 'accessing' stamp: 'jmv 12/26/2016 15:10:41'!
@@ -1987,84 +2072,100 @@ initialize
 	"Different in 32 and 64 bits systems"
 	CLBufferRegionStruct defineFields! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 buffer
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongAt: 65! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 buffer: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongAt: 65 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_array_size
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 33! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_array_size: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 33 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_depth
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 25! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_depth: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 25 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_height
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 17! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_height: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 17 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_row_pitch
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 41! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_row_pitch: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 41 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_slice_pitch
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 49! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_slice_pitch: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 49 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_type
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 1! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_type: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 1 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_width
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongLongAt: 9! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 image_width: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongLongAt: 9 put: anObject! !
 
 !CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 10/29/2015 14:57'!
@@ -2079,42 +2180,29 @@ mem_object: aMemObjectId
 	In OpenCL 2.0, a union of 'buffer' and 'mem_object', both of type cl_mem"
 	handle unsignedLongAt: 37 put: aMemObjectId! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 num_mip_levels
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongAt: 57! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 num_mip_levels: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongAt: 57 put: anObject! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 num_samples
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	^handle unsignedLongAt: 61! !
 
-!CLImageDescStruct methodsFor: 'accessing' stamp: 'jmv 12/26/2016 17:03:15'!
+!CLImageDescStruct methodsFor: 'accessing'!
 num_samples: anObject
 	"This method was automatically generated. See CLImageDescStruct class>>fields."
+	<generated>
 	handle unsignedLongAt: 61 put: anObject! !
-
-!CLImageDescStruct methodsFor: 'printing' stamp: 'jmv 10/30/2015 12:53'!
-printOn: aStream
-	super printOn: aStream.
-	aStream
-		nextPut: $(;
-		nextPutAll: (self class image_type_String: self image_type);
-		nextPutAll: ' width:'; print: self image_width;
-		nextPutAll: ' height:'; print: self image_height;
-		nextPutAll: ' depth'; print: self image_depth;
-		nextPutAll: ' arraySize:'; print: self image_array_size;
-		nextPutAll: ' rowPitch:'; print: self image_row_pitch;
-		nextPutAll: ' slicePitch:'; print: self image_slice_pitch;
-		nextPutAll: ' mipLevels:'; print: self num_mip_levels;
-		nextPutAll: ' numSamples:'; print: self num_samples;
-		nextPutAll: ' buffer:'; print: self buffer;
-		nextPut: $)! !
 
 !CLImageDescStruct class methodsFor: 'accessing' stamp: 'jmv 12/26/2016 16:11:09'!
 fields
@@ -2177,15 +2265,6 @@ image_channel_order
 image_channel_order: anObject
 	"This method was automatically generated"
 	handle unsignedLongAt: 1 put: anObject! !
-
-!CLImageFormatStruct methodsFor: 'printing' stamp: 'jmv 10/29/2015 15:11'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut: $(.
-	aStream nextPutAll: (self class image_channel_order_String: self image_channel_order).
-	aStream space.
-	aStream nextPutAll: (self class image_channel_data_type_String: self image_channel_data_type).
-	aStream nextPut: $).! !
 
 !CLImageFormatStruct class methodsFor: 'instance creation' stamp: 'jmv 12/2/2015 12:39'!
 alpha8
@@ -2683,11 +2762,6 @@ minDataTypeAlignSize
 	"The smallest alignment in bytes which can be used for any data type."
 	^self uintProperty: CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE! !
 
-!OpenCLDevice methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:46'!
-name
-	"Device name string."
-	^self stringProperty: CL_DEVICE_NAME! !
-
 !OpenCLDevice methodsFor: 'accessing' stamp: 'jcg 1/13/2010 00:35'!
 platform
 	"The platform associated with this device (cached during initialization)."
@@ -2782,6 +2856,80 @@ OpenCL<space><major_version.minor_version><space><vendor-specific information>
 The major_version.minor_version value returned will be 1.0."
 	^self stringProperty: CL_DEVICE_VERSION! !
 
+!OpenCLDevice methodsFor: 'initialize' stamp: 'jcg 1/13/2010 00:33'!
+platform: anOpenCLPlatform
+	platform := anOpenCLPlatform! !
+
+!OpenCLDevice methodsFor: 'report' stamp: 'jmv 9/16/2015 17:09'!
+reportExtensionsOn: aStream
+	"
+	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
+	"
+	aStream nextPutAll: 'Extensions: '; newLine.
+	self extensions do: [ :extension | aStream nextPut: $	 ; nextPutAll: extension; newLine ]! !
+
+!OpenCLDevice methodsFor: 'report' stamp: 'jmv 9/16/2015 17:08'!
+reportGeneralOn: aStream
+	"
+	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
+	"
+
+	aStream nextPutAll: 'Device id: '.
+	id getHandle printOn: aStream.
+	aStream newLine.
+	aStream nextPutAll: 'Name: '; nextPutAll: self name; newLine.
+	aStream nextPutAll: 'Vendor: '; nextPutAll: self vendor; newLine.
+	aStream nextPutAll: 'DriverVersion: '; nextPutAll: self driverVersion printString; newLine.
+	aStream nextPutAll: 'MaxComputeUnits: '; nextPutAll: self maxComputeUnits printString; newLine.
+	aStream nextPutAll: 'Version: '; nextPutAll: self version; newLine.
+
+	aStream nextPutAll: 'AddressBits: '; nextPutAll: self addressBits printString; newLine.
+	aStream nextPutAll: 'CanExecuteKernel: '; nextPutAll: self canExecuteKernel printString; newLine.
+	aStream nextPutAll: 'CanExecuteNativeKernel: '; nextPutAll: self canExecuteNativeKernel printString; newLine.
+	aStream nextPutAll: 'CanQueueEnableProfiling: '; nextPutAll: self canQueueEnableProfiling printString; newLine.
+	aStream nextPutAll: 'CanQueueOutOfOrder: '; nextPutAll: self canQueueOutOfOrder printString; newLine.
+	aStream nextPutAll: 'GlobalMemCacheSize: '; nextPutAll: self globalMemCacheSize printStringAsBytes; newLine.
+	aStream nextPutAll: 'GlobalMemCacheType: '; nextPutAll: self globalMemCacheType printString; newLine.
+	aStream nextPutAll: 'GlobalMemCachelineSize: '; nextPutAll: self globalMemCachelineSize printString; newLine.
+	aStream nextPutAll: 'GlobalMemSize: '; nextPutAll: self globalMemSize printStringAsBytes; newLine.
+	aStream nextPutAll: 'HasImageSupport: '; nextPutAll: self hasImageSupport printString; newLine.
+	aStream nextPutAll: 'Image2dMaxHeight: '; nextPutAll: self image2dMaxHeight printString; newLine.
+	aStream nextPutAll: 'Image2dMaxWidth: '; nextPutAll: self image2dMaxWidth printString; newLine.
+	aStream nextPutAll: 'Image3dMaxDepth: '; nextPutAll: self image3dMaxDepth printString; newLine.
+	aStream nextPutAll: 'Image3dMaxHeight: '; nextPutAll: self image3dMaxHeight printString; newLine.
+	aStream nextPutAll: 'Image3dMaxWidth: '; nextPutAll: self image3dMaxWidth printString; newLine.
+	aStream nextPutAll: 'IsAvailable: '; nextPutAll: self isAvailable printString; newLine.
+	aStream nextPutAll: 'IsCompilerAvailable: '; nextPutAll: self isCompilerAvailable printString; newLine.
+	aStream nextPutAll: 'IsLittleEndian: '; nextPutAll: self isLittleEndian printString; newLine.
+	aStream nextPutAll: 'LocalMemSize: '; nextPutAll: self localMemSize printString; newLine.
+	aStream nextPutAll: 'LocalMemType: '; nextPutAll: self localMemType printString; newLine.
+	aStream nextPutAll: 'MaxClockFrequency: '; nextPutAll: self maxClockFrequency printString; newLine.
+	aStream nextPutAll: 'MaxConstantArgs: '; nextPutAll: self maxConstantArgs printString; newLine.
+	aStream nextPutAll: 'MaxConstantBufferSize: '; nextPutAll: self maxConstantBufferSize printStringAsBytes; newLine.
+	aStream nextPutAll: 'MaxMemAllocSize: '; nextPutAll: self maxMemAllocSize printStringAsBytes; newLine.
+	aStream nextPutAll: 'MaxParameterSize: '; nextPutAll: self maxParameterSize printString; newLine.
+	aStream nextPutAll: 'MaxReadImageArgs: '; nextPutAll: self maxReadImageArgs printString; newLine.
+	aStream nextPutAll: 'MaxSamplers: '; nextPutAll: self maxSamplers printString; newLine.
+	aStream nextPutAll: 'MaxWorkGroupSize: '; nextPutAll: self maxWorkGroupSize printString; newLine.
+	aStream nextPutAll: 'MaxWorkItemDimensions: '; nextPutAll: self maxWorkItemDimensions printString; newLine.
+	aStream nextPutAll: 'MaxWorkItemSizes: '; nextPutAll: self maxWorkItemSizes printString; newLine.
+	aStream nextPutAll: 'MaxWriteImageArgs: '; nextPutAll: self maxWriteImageArgs printString; newLine.
+	aStream nextPutAll: 'MemBaseAddrAlign: '; nextPutAll: self memBaseAddrAlign printString; newLine.
+	aStream nextPutAll: 'MinDataTypeAlignSize: '; nextPutAll: self minDataTypeAlignSize printString; newLine.
+	aStream nextPutAll: 'PreferredVectorWidthChar: '; nextPutAll: self preferredVectorWidthChar printString; newLine.
+	aStream nextPutAll: 'PreferredVectorWidthDouble: '; nextPutAll: self preferredVectorWidthDouble printString; newLine.
+	aStream nextPutAll: 'PreferredVectorWidthFloat: '; nextPutAll: self preferredVectorWidthFloat printString; newLine.
+	aStream nextPutAll: 'PreferredVectorWidthInt: '; nextPutAll: self preferredVectorWidthInt printString; newLine.
+	aStream nextPutAll: 'PreferredVectorWidthLong: '; nextPutAll: self preferredVectorWidthLong printString; newLine.
+	aStream nextPutAll: 'PreferredVectorWidthShort: '; nextPutAll: self preferredVectorWidthShort printString; newLine.
+	aStream nextPutAll: 'Profile: '; nextPutAll: self profile; newLine.
+	aStream nextPutAll: 'ProfilingTimerResolution: '; nextPutAll: self profilingTimerResolution printString; newLine.
+	aStream nextPutAll: 'QueueProperties: '; nextPutAll: self queueProperties printString; newLine.
+	aStream nextPutAll: 'SinglePrecisionConfig: '; nextPutAll: self singlePrecisionConfig printString; newLine.
+	aStream nextPutAll: 'SupportsErrorCorrection: '; nextPutAll: self supportsErrorCorrection printString; newLine.
+	aStream nextPutAll: 'Type: '; nextPutAll: self type printString; newLine.
+	aStream nextPutAll: 'VendorID: '; nextPutAll: self vendorID printString; newLine.! !
+
 !OpenCLDevice methodsFor: 'private' stamp: 'jcg 1/12/2010 00:22'!
 bitfieldProperty: property
 	"Get the specified property of type cl_bitfield (or a subtype)."
@@ -2867,80 +3015,6 @@ ulongProperty: property
 	^ ((buf unsignedLongAt: 5 bigEndian: isBigEndian) bitShift: 32) +
 		(buf unsignedLongAt: 1 bigEndian: isBigEndian)! !
 
-!OpenCLDevice methodsFor: 'initialize' stamp: 'jcg 1/13/2010 00:33'!
-platform: anOpenCLPlatform
-	platform := anOpenCLPlatform! !
-
-!OpenCLDevice methodsFor: 'report' stamp: 'jmv 9/16/2015 17:09'!
-reportExtensionsOn: aStream
-	"
-	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
-	"
-	aStream nextPutAll: 'Extensions: '; newLine.
-	self extensions do: [ :extension | aStream nextPut: $	 ; nextPutAll: extension; newLine ]! !
-
-!OpenCLDevice methodsFor: 'report' stamp: 'jmv 9/16/2015 17:08'!
-reportGeneralOn: aStream
-	"
-	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].
-	"
-
-	aStream nextPutAll: 'Device id: '.
-	id getHandle printOn: aStream.
-	aStream newLine.
-	aStream nextPutAll: 'Name: '; nextPutAll: self name; newLine.
-	aStream nextPutAll: 'Vendor: '; nextPutAll: self vendor; newLine.
-	aStream nextPutAll: 'DriverVersion: '; nextPutAll: self driverVersion printString; newLine.
-	aStream nextPutAll: 'MaxComputeUnits: '; nextPutAll: self maxComputeUnits printString; newLine.
-	aStream nextPutAll: 'Version: '; nextPutAll: self version; newLine.
-
-	aStream nextPutAll: 'AddressBits: '; nextPutAll: self addressBits printString; newLine.
-	aStream nextPutAll: 'CanExecuteKernel: '; nextPutAll: self canExecuteKernel printString; newLine.
-	aStream nextPutAll: 'CanExecuteNativeKernel: '; nextPutAll: self canExecuteNativeKernel printString; newLine.
-	aStream nextPutAll: 'CanQueueEnableProfiling: '; nextPutAll: self canQueueEnableProfiling printString; newLine.
-	aStream nextPutAll: 'CanQueueOutOfOrder: '; nextPutAll: self canQueueOutOfOrder printString; newLine.
-	aStream nextPutAll: 'GlobalMemCacheSize: '; nextPutAll: self globalMemCacheSize printStringAsBytes; newLine.
-	aStream nextPutAll: 'GlobalMemCacheType: '; nextPutAll: self globalMemCacheType printString; newLine.
-	aStream nextPutAll: 'GlobalMemCachelineSize: '; nextPutAll: self globalMemCachelineSize printString; newLine.
-	aStream nextPutAll: 'GlobalMemSize: '; nextPutAll: self globalMemSize printStringAsBytes; newLine.
-	aStream nextPutAll: 'HasImageSupport: '; nextPutAll: self hasImageSupport printString; newLine.
-	aStream nextPutAll: 'Image2dMaxHeight: '; nextPutAll: self image2dMaxHeight printString; newLine.
-	aStream nextPutAll: 'Image2dMaxWidth: '; nextPutAll: self image2dMaxWidth printString; newLine.
-	aStream nextPutAll: 'Image3dMaxDepth: '; nextPutAll: self image3dMaxDepth printString; newLine.
-	aStream nextPutAll: 'Image3dMaxHeight: '; nextPutAll: self image3dMaxHeight printString; newLine.
-	aStream nextPutAll: 'Image3dMaxWidth: '; nextPutAll: self image3dMaxWidth printString; newLine.
-	aStream nextPutAll: 'IsAvailable: '; nextPutAll: self isAvailable printString; newLine.
-	aStream nextPutAll: 'IsCompilerAvailable: '; nextPutAll: self isCompilerAvailable printString; newLine.
-	aStream nextPutAll: 'IsLittleEndian: '; nextPutAll: self isLittleEndian printString; newLine.
-	aStream nextPutAll: 'LocalMemSize: '; nextPutAll: self localMemSize printString; newLine.
-	aStream nextPutAll: 'LocalMemType: '; nextPutAll: self localMemType printString; newLine.
-	aStream nextPutAll: 'MaxClockFrequency: '; nextPutAll: self maxClockFrequency printString; newLine.
-	aStream nextPutAll: 'MaxConstantArgs: '; nextPutAll: self maxConstantArgs printString; newLine.
-	aStream nextPutAll: 'MaxConstantBufferSize: '; nextPutAll: self maxConstantBufferSize printStringAsBytes; newLine.
-	aStream nextPutAll: 'MaxMemAllocSize: '; nextPutAll: self maxMemAllocSize printStringAsBytes; newLine.
-	aStream nextPutAll: 'MaxParameterSize: '; nextPutAll: self maxParameterSize printString; newLine.
-	aStream nextPutAll: 'MaxReadImageArgs: '; nextPutAll: self maxReadImageArgs printString; newLine.
-	aStream nextPutAll: 'MaxSamplers: '; nextPutAll: self maxSamplers printString; newLine.
-	aStream nextPutAll: 'MaxWorkGroupSize: '; nextPutAll: self maxWorkGroupSize printString; newLine.
-	aStream nextPutAll: 'MaxWorkItemDimensions: '; nextPutAll: self maxWorkItemDimensions printString; newLine.
-	aStream nextPutAll: 'MaxWorkItemSizes: '; nextPutAll: self maxWorkItemSizes printString; newLine.
-	aStream nextPutAll: 'MaxWriteImageArgs: '; nextPutAll: self maxWriteImageArgs printString; newLine.
-	aStream nextPutAll: 'MemBaseAddrAlign: '; nextPutAll: self memBaseAddrAlign printString; newLine.
-	aStream nextPutAll: 'MinDataTypeAlignSize: '; nextPutAll: self minDataTypeAlignSize printString; newLine.
-	aStream nextPutAll: 'PreferredVectorWidthChar: '; nextPutAll: self preferredVectorWidthChar printString; newLine.
-	aStream nextPutAll: 'PreferredVectorWidthDouble: '; nextPutAll: self preferredVectorWidthDouble printString; newLine.
-	aStream nextPutAll: 'PreferredVectorWidthFloat: '; nextPutAll: self preferredVectorWidthFloat printString; newLine.
-	aStream nextPutAll: 'PreferredVectorWidthInt: '; nextPutAll: self preferredVectorWidthInt printString; newLine.
-	aStream nextPutAll: 'PreferredVectorWidthLong: '; nextPutAll: self preferredVectorWidthLong printString; newLine.
-	aStream nextPutAll: 'PreferredVectorWidthShort: '; nextPutAll: self preferredVectorWidthShort printString; newLine.
-	aStream nextPutAll: 'Profile: '; nextPutAll: self profile; newLine.
-	aStream nextPutAll: 'ProfilingTimerResolution: '; nextPutAll: self profilingTimerResolution printString; newLine.
-	aStream nextPutAll: 'QueueProperties: '; nextPutAll: self queueProperties printString; newLine.
-	aStream nextPutAll: 'SinglePrecisionConfig: '; nextPutAll: self singlePrecisionConfig printString; newLine.
-	aStream nextPutAll: 'SupportsErrorCorrection: '; nextPutAll: self supportsErrorCorrection printString; newLine.
-	aStream nextPutAll: 'Type: '; nextPutAll: self type printString; newLine.
-	aStream nextPutAll: 'VendorID: '; nextPutAll: self vendorID printString; newLine.! !
-
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jmv 9/9/2015 11:47'!
 allCPUs
 	^self allDevicesOfType: CL_DEVICE_TYPE_CPU! !
@@ -2986,10 +3060,6 @@ allGPUs
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
 extensions
 	^extensions! !
-
-!OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
-name
-	^name! !
 
 !OpenCLPlatform methodsFor: 'accessing' stamp: 'jcg 1/10/2010 02:22'!
 profile
@@ -3159,6 +3229,14 @@ shortReportAndQuit
 		platform shortReportOn: StdIOWriteStream stdout ].
 
 	Smalltalk snapshot: false andQuit: true embedded: false clearAllClassState: false! !
+
+!OpenCLPlatform class methodsFor: 'devices' stamp: 'pb 6/18/2019 01:55:43'!
+preferredDevice
+	^ PreferredDevice ifNil: [self someDevice]! !
+
+!OpenCLPlatform class methodsFor: 'devices' stamp: 'pb 6/18/2019 01:56:06'!
+preferredDevice: anOpenCLDevice
+	PreferredDevice := anOpenCLDevice ! !
 
 !OpenCLPlatform class methodsFor: 'devices' stamp: 'jmv 12/26/2016 10:55:33'!
 someDevice
@@ -4037,10 +4115,6 @@ extent
 	^width@height! !
 
 !OpenCLImage2D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
-format
-	^format! !
-
-!OpenCLImage2D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
 height
 	^height! !
 
@@ -4066,10 +4140,6 @@ context: anOpenCLContext format: fmt "a CLImageFormatStruct" width: w height: h 
 !OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
 depth
 	^depth! !
-
-!OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
-format
-	^format! !
 
 !OpenCLImage3D methodsFor: 'accessing' stamp: 'jcg 1/29/2010 02:18'!
 height
@@ -6798,31 +6868,6 @@ libraryForCurrentPlatform
 	"Answer the name of the OpenCL library on the current platform."
 	self error: 'Unknown platform'.
 	^nil! !
-
-!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 8/20/2015 13:07'!
-shutDown: quitting
-	"We assume that the image is being saved.  When it is restarted, we want the finalization-registry to be empty.  Otherwise, there is a race-condition where the finalization-process might run before the startup-list is processed, and we might crash because we try to free OpenCL objects whose handles are no longer valid.  Also see #startUp:."
-	self finalizationRegistry removeAll! !
-
-!OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 8/20/2015 20:16'!
-startUp: resuming
-	"Behave differently depending on whether we are restarting a saved image, or are continuing without quitting."
-	resuming 
-		ifTrue:[
-			"Each time we restart the image, we flush the installed library so that 
-			 we are sure to use the proper library for the current platform."
-			ActiveSubclass := nil.
-			
-			"Any existing OpenCLObjects are invalid; mark them as such."
-			OpenCLRefCounter allInstancesDo:[:counter| counter invalidateOnStartUp].
-			OpenCLObject allSubInstancesDo: [:obj | obj invalidateOnStartUp].
-		]
-		ifFalse: [
-			"See #shutDown:... there we cleaned out our finalization registry to avoid a 
-			 crash-causing race-condition when restarting a saved image.  Now we put 
-			 all of the objects back, to ensure that they're finalized."
-			OpenCLRefCountedObject allSubInstancesDo: [:obj | obj registerForFinalization]
-		].! !
 
 !OpenCLPrimitiveInterface class methodsFor: 'class initialization' stamp: 'jmv 5/17/2017 12:32:26'!
 subclassForCurrentPlatform
@@ -24544,13 +24589,6 @@ invalidateOnStartUp
 	refCount := 0.
 ! !
 
-!OpenCLRefCounter methodsFor: 'printing' stamp: 'jcg 1/15/2010 00:57'!
-printOn: aStream
-	aStream nextPutAll: '[ref-count: '.
-	refCount printOn: aStream.
-	aStream nextPut: $]
-! !
-
 !OpenCLRefCounter methodsFor: 'retain/release' stamp: 'jcg 1/15/2010 01:21'!
 release
 	"Decrement the ref-count."
@@ -24595,10 +24633,10 @@ destroy
 	].
 	! !
 
-!OpenCLExample methodsFor: 'initialize' stamp: 'jmv 12/26/2016 10:56:00'!
+!OpenCLExample methodsFor: 'initialize' stamp: 'jmv 7/1/2019 17:50:45'!
 initialize
 	self destroy. "reset to initial state"
-	device := OpenCLPlatform someDevice.
+	device := OpenCLPlatform preferredDevice.
 	context := OpenCLContext newForDevices: {device}.
 	queue := context commandQueueOn: device.
 	program := context programWithSource: self sourceCode.
@@ -26040,9 +26078,9 @@ example1
 	
 ! !
 
-!OpenCLFill256 methodsFor: 'initialize' stamp: 'jmv 12/26/2016 10:56:14'!
+!OpenCLFill256 methodsFor: 'initialize' stamp: 'jmv 7/1/2019 17:51:13'!
 initialize
-	device := OpenCLPlatform someDevice.
+	device := OpenCLPlatform preferredDevice.
 	context := OpenCLContext newForDevices: {device}.
 	queue := context commandQueueOn: device.
 	program := context programWithSource: self sourceCode.

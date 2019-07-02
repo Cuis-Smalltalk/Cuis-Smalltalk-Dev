@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3812] on 26 June 2019 at 2:51:15 pm'!
+'From Cuis 5.0 [latest update: #3816] on 1 July 2019 at 4:39:30 pm'!
 'Description String withoutSeparators tests'!
-!provides: 'BaseImageTests' 1 165!
+!provides: 'BaseImageTests' 1 167!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -6866,6 +6866,57 @@ test02readFromWithInvalidStringRaisesAnError
 	input := ReadStream on: 'hello'.
 
 	self should: [ Integer readFrom: input ] raise: Error description: 'At least one digit expected here'! !
+
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:23:39'!
+testGCDAndLCM
+	| a b c |
+	a _ (-20 to: 20) atRandom.
+	b _ (-20 to: 20) atRandom.
+	c _ (-20 to: 20) atRandom.
+	self assert: (a gcd: b) * (a lcm: b) = (a*b) abs.
+	self assert: (a gcd: (b lcm: c)) = ((a gcd: b) lcm: (a gcd: c)).
+	self assert: (a lcm: (b gcd: c)) = ((a lcm: b) gcd: (a lcm: c))! !
+
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:25:17'!
+testGCDExample
+	self assert: (120 gcd: 70) = 10! !
+
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:38:26'!
+testGCDProperties
+	| a b c |
+	a _ (-20 to: 20) atRandom.
+	b _ (-20 to: 20) atRandom.
+	c _ (-20 to: 20) atRandom.
+	self assert: a \\ (a gcd: b) = 0. "divides a"
+	self assert: b \\ (a gcd: b) = 0. "divides b"
+	self assert: (a gcd: b) = (a gcd: b) abs. "it is normalized to be >= 0"
+	self assert: (a gcd: b) = (b gcd: a). "commutative"
+	self assert: (a gcd: (b gcd: c)) = ((a gcd: b) gcd: c). "associative"
+	self assert: ((a gcd: 0) = a abs or: [a = 0]).
+	self assert: (0 gcd: 0) = 0.
+	self assert: (a + (b*c) gcd: b) = (a gcd: b).
+	self assert: (a*c gcd: b*c) = ((a gcd: b) * c abs)! !
+
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:50:25'!
+testLCMExample
+	self assert: (120 lcm: 70) = 840! !
+
+!IntegerTest methodsFor: 'gcd and lcm' stamp: 'len 6/27/2019 10:48:22'!
+testLCMProperties
+	| a b c |
+	a _ (-10 to: 10) atRandom.
+	b _ (-10 to: 10) atRandom.
+	c _ (-10 to: 10) atRandom.
+	self assert: (a = 0 or: [(a lcm: b) \\ a = 0]). "a divides it"
+	self assert: (b = 0 or: [(a lcm: b) \\ b = 0]). "b divides it"
+	"is is the smallest positive integer divisible by both a and b:"
+	self deny: ((a ~= 0 and: [b ~= 0]) and: [(1 to: (a lcm: b) abs - 1) anySatisfy: [:any| any \\ a = 0 and: [any \\ b = 0]]]).
+	self assert: (a lcm: b) = (a lcm: b) abs. "it is normalized to be >= 0"
+	self assert: (a lcm: b) = (b lcm: a). "commutative"
+	self assert: (a lcm: (b lcm: c)) = ((a lcm: b) lcm: c). "associative"
+	self assert: (a lcm: 0) = 0.
+	self assert: (0 lcm: a) = 0.
+	self assert: (0 lcm: 0) = 0! !
 
 !LargeNegativeIntegerTest methodsFor: 'tests' stamp: 'jmv 8/21/2016 20:04:13'!
 testCompactClassIndex
@@ -14370,23 +14421,23 @@ testAssertDoeNotChangePassesWhenConditionIsNotAlteredByAction
 	
 	self assert: [ aCollection sum ] doesNotChange: [ aCollection size ]! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 19:22:33'!
-testAssertIsNearToPassesForSameNumberDifferentToZero
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:01'!
+testAssertIsCloseToPassesForSameNumberDifferentToZero
 	
-	self assert: 1.5 isNearTo: 1.5! !
+	self assert: 1.5 isCloseTo: 1.5! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 19:22:17'!
-testAssertIsNearToPassesWhenBothAreZero
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:12'!
+testAssertIsCloseToPassesWhenBothAreZero
 
-	self assert: 0.0 isNearTo: 0.0! !
+	self assert: 0.0 isCloseTo: 0.0! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:36:02'!
-testAssertIsNearToPassesWithSameCalculatedNumber
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:18'!
+testAssertIsCloseToPassesWithSameCalculatedNumber
 	
-	self assert: 0.3 isNearTo: 0.1 + 0.2! !
+	self assert: 0.3 isCloseTo: 0.1 + 0.2! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:37:40'!
-testAssertIsNearToWithPrecisionPassesWhenDifferenceIsNegativeAndLessThanPrecision
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:24'!
+testAssertIsCloseToWithPrecisionPassesWhenDifferenceIsNegativeAndLessThanPrecision
 	
 	|precision newValue originalNumber |
 	
@@ -14394,10 +14445,10 @@ testAssertIsNearToWithPrecisionPassesWhenDifferenceIsNegativeAndLessThanPrecisio
 	originalNumber _ 0.3.
 	newValue _ originalNumber - 0.01.
 	
-	self assert: originalNumber isNearTo: newValue withPrecision: precision! !
+	self assert: originalNumber isCloseTo: newValue withPrecision: precision! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:37:24'!
-testAssertIsNearToWithPrecisionPassesWhenDifferenceIsPositiveAndLessThanPrecision
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:30'!
+testAssertIsCloseToWithPrecisionPassesWhenDifferenceIsPositiveAndLessThanPrecision
 	
 	|precision newValue originalNumber |
 	
@@ -14405,10 +14456,10 @@ testAssertIsNearToWithPrecisionPassesWhenDifferenceIsPositiveAndLessThanPrecisio
 	originalNumber _ 0.3.
 	newValue _ originalNumber + 0.01.
 	
-	self assert: originalNumber isNearTo: newValue withPrecision: precision! !
+	self assert: originalNumber isCloseTo: newValue withPrecision: precision! !
 
-!TestCaseTest methodsFor: 'assert is near to' stamp: 'HAW 5/15/2019 18:38:46'!
-testAssertIsNotNearWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
+!TestCaseTest methodsFor: 'assert is near to' stamp: 'jmv 7/1/2019 16:24:39'!
+testAssertIsNotCloseWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
 	
 	|precision newValue originalNumber |
 	
@@ -14416,7 +14467,7 @@ testAssertIsNotNearWithPrecisionPassesWhenDifferenceIsBiggerThanPrecision
 	originalNumber _ 0.3.
 	newValue _ originalNumber + precision + 0.001.
 	
-	self assert: originalNumber isNotNearTo: newValue withPrecision: precision! !
+	self assert: originalNumber isNotCloseTo: newValue withPrecision: precision! !
 
 !TestCaseTest methodsFor: 'includes' stamp: 'HAW 5/15/2019 18:49:51'!
 testAssertIncludesFailsWhenElementIsNotIncludedInCollection
