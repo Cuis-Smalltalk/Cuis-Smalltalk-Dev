@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3810] on 25 June 2019 at 6:54:34 pm'!
+'From Cuis 5.0 [latest update: #3817] on 2 July 2019 at 12:13:28 pm'!
 'Description '!
-!provides: 'Complex' 1 3!
+!provides: 'Complex' 1 5!
 SystemOrganization addCategory: #Complex!
 
 
@@ -90,13 +90,13 @@ Missing methods
 	Complex | mathematical functions | arcCos
 	Complex | mathematical functions | arcTan!
 
-!Complex methodsFor: 'printing' stamp: 'mk 10/27/2003 18:02'!
+!Complex methodsFor: 'printing' stamp: 'jmv 7/2/2019 08:43:23'!
 printOn: aStream
 	real printOn: aStream.
 	aStream nextPut: Character space.
-	0 <= imaginary
-		ifTrue: [aStream nextPut: $+]
-		ifFalse: [aStream nextPut: $-].
+	imaginary < 0
+		ifTrue: [aStream nextPut: $-]
+		ifFalse: [aStream nextPut: $+].
 	aStream nextPut: Character space.
 	imaginary abs printOn: aStream.
 	aStream nextPut: Character space.
@@ -162,10 +162,11 @@ real
 		real: real - aNumber real
 		imaginary: imaginary - aNumber imaginary.! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 4/8/2019 09:45:16'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 7/2/2019 09:17:45'!
 / aNumber
 	"Answer the result of dividing receiver by aNumber"
 	| c d newReal newImaginary s e f |
+	aNumber isZero ifTrue: [^ ZeroDivide new signalReceiver: self selector: #/ argument: aNumber].
 	aNumber isComplex
 		ifTrue: [
 			c _ aNumber real.
@@ -224,15 +225,12 @@ negated
 
 	^self class real: real negated imaginary: imaginary negated! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'md 7/22/2004 11:47'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 7/2/2019 09:05:11'!
 reciprocal
-	"Answer 1 divided by the receiver. Create an error notification if the 
-	receiver is 0."
-
-	self = 0
-		ifTrue: [^ (ZeroDivide dividend: self) signal]
-		ifFalse: [^1 / self]
-		! !
+	"Returns the reciprocal of self.
+	In case self is 0 the / signals ZeroDivide"
+	
+	^1 / self! !
 
 !Complex methodsFor: 'arithmetic' stamp: 'jmv 4/5/2019 19:37:44'!
 safeAbs
@@ -494,23 +492,23 @@ nthRoot: aPositiveInteger
 
 	^ Complex abs: (self abs nthRoot: aPositiveInteger) arg: self arg / aPositiveInteger! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 5/26/2018 22:24:56'!
-raisedTo: aNumber 
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 7/2/2019 11:39:10'!
+raisedTo: exponent 
 	"Answer the receiver raised to aNumber."
 
-	aNumber isInteger ifTrue: [
+	exponent isInteger ifTrue: [
 		"Do the special case of integer power"
-		^ self raisedToInteger: aNumber].
-	aNumber isFraction ifTrue: [
-		^ self raisedToFraction: aNumber].
+		^ self raisedToInteger: exponent].
+	exponent isFraction ifTrue: [
+		^ self raisedToFraction: exponent].
 	
-	0 = aNumber ifTrue: [^ self class one].	"Special case of exponent=0"
-	1 = aNumber ifTrue: [^ self].	"Special case of exponent=1"
+	0 = exponent ifTrue: [^ self class one].	"Special case of exponent=0"
+	1 = exponent ifTrue: [^ self].	"Special case of exponent=1"
 	0 = self ifTrue: [				"Special case of self = 0"
-		aNumber < 0
-			ifTrue: [^ (ZeroDivide dividend: self) signal]
+		exponent < 0
+			ifTrue: [^ (self raisedTo: exponent negated) reciprocal]
 			ifFalse: [^ self]].
-	^ (aNumber * self ln) exp		"Otherwise use logarithms"! !
+	^ (exponent * self ln) exp		"Otherwise use logarithms"! !
 
 !Complex methodsFor: 'mathematical functions' stamp: 'jmv 5/26/2018 22:20:24'!
 raisedToFraction: aFraction
@@ -606,6 +604,14 @@ tanh
 isComplex
 	^ true! !
 
+!Complex methodsFor: 'testing' stamp: 'jmv 7/2/2019 12:11:25'!
+isComplexNaN
+	^real isNaN or: [ imaginary isNaN ]! !
+
+!Complex methodsFor: 'testing' stamp: 'jmv 7/2/2019 08:22:50'!
+isFloatOrFloatComplex
+	^ real isFloatOrFloatComplex or: [ imaginary isFloatOrFloatComplex ]! !
+
 !Complex methodsFor: 'testing' stamp: 'jmv 5/20/2018 21:10:51'!
 isInfinite
 	^real isInfinite or: [ imaginary isInfinite ]! !
@@ -663,6 +669,14 @@ real: realPart imaginary: imaginaryPart
 !Complex class methodsFor: 'instance creation' stamp: 'nice 9/18/2008 22:50'!
 zero
 	^ self real: 0 imaginary: 0! !
+
+!Complex class methodsFor: 'constants' stamp: 'jmv 7/2/2019 10:13:02'!
+infinity
+	^ (1 + 1 i) * Float infinity! !
+
+!Complex class methodsFor: 'constants' stamp: 'jmv 7/2/2019 08:30:04'!
+nan
+	^ (1 + 1 i) * Float nan! !
 
 !Number methodsFor: '*Complex' stamp: 'jmv 5/20/2018 20:33:20'!
 asComplex

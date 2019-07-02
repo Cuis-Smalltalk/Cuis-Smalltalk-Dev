@@ -1,8 +1,8 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3808] on 22 June 2019 at 4:13:09 pm'!
+'From Cuis 5.0 [latest update: #3817] on 2 July 2019 at 12:13:44 pm'!
 'Description '!
-!provides: 'Tests-Complex' 1 2!
-!requires: 'Complex' 1 0 nil!
+!provides: 'Tests-Complex' 1 3!
 !requires: 'BaseImageTests' 1 0 nil!
+!requires: 'Complex' 1 0 nil!
 SystemOrganization addCategory: #'Tests-Complex'!
 
 
@@ -107,6 +107,100 @@ testComplexConjugate
 	cc := c complexConjugate.
 	self assert: cc real = c real.
 	self assert: cc imaginary = c imaginary negated.! !
+
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:07:10'!
+testDivideComplexByZero
+
+	self assert: 1 i / 0.0 = Complex infinity.
+	self assert: 1 i + 1 / 0.0 = Complex infinity.
+	self assert: 1 i / -0.0 = Complex infinity.
+	self assert: 1 i + 1 / -0.0 = Complex infinity.
+	self assert: 1 i / (Complex basicReal: 0.0 imaginary: 0.0) = Complex infinity.
+	self assert: 1 i / (Complex basicReal: 0.0 imaginary: -0.0) = Complex infinity.
+	self assert: 1 i / (Complex basicReal: -0.0 imaginary: 0.0) = Complex infinity.
+	self assert: 1 i / (Complex basicReal: -0.0 imaginary: -0.0) = Complex infinity.
+	self assert: 1 i + 1 / (Complex basicReal: 0.0 imaginary: 0.0) = Complex infinity.
+	self assert: 1 i + 1 / (Complex basicReal: 0.0 imaginary: -0.0) = Complex infinity.
+	self assert: 1 i + 1 / (Complex basicReal: -0.0 imaginary: 0.0) = Complex infinity.
+	self assert: 1 i + 1 / (Complex basicReal: -0.0 imaginary: -0.0) = Complex infinity.
+
+	self assert: -1  / (Complex basicReal: 0.0 imaginary: 0.0) = Float negativeInfinity.
+	self assert: -1  / (Complex basicReal: 0.0 imaginary: -0.0) = Float negativeInfinity.
+	self assert: -1  / (Complex basicReal: -0.0 imaginary: 0.0) = Float negativeInfinity.
+	self assert: -1  / (Complex basicReal: -0.0 imaginary: -0.0) = Float negativeInfinity.
+	self assert: -1.0  / (Complex basicReal: 0.0 imaginary: 0.0) = Float negativeInfinity.
+	self assert: -1.0  / (Complex basicReal: 0.0 imaginary: -0.0) = Float negativeInfinity.
+	self assert: -1.0  / (Complex basicReal: -0.0 imaginary: 0.0) = Float negativeInfinity.
+	self assert: -1.0  / (Complex basicReal: -0.0 imaginary: -0.0) = Float negativeInfinity.! !
+
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:12:20'!
+testDivideComplexZeroByZero
+
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / 0) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: -0.0) / 0) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / 0) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / 0) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / -0) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: -0.0) / -0) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / -0) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / -0) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / 0.0) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: -0.0) / 0.0) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / 0.0) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / 0.0) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / -0.0) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: -0.0) / -0.0) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / -0.0) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / -0.0) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / (Complex basicReal: 0.0 imaginary: 0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: -0.0) / (Complex basicReal: 0.0 imaginary: 0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / (Complex basicReal: 0.0 imaginary: 0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / (Complex basicReal: 0.0 imaginary: 0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / (Complex basicReal: 0.0 imaginary: -0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: -0.0) / (Complex basicReal: 0.0 imaginary: -0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / (Complex basicReal: 0.0 imaginary: -0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / (Complex basicReal: 0.0 imaginary: -0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / (Complex basicReal: -0.0 imaginary: 0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: -0.0) / (Complex basicReal: -0.0 imaginary: 0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / (Complex basicReal: -0.0 imaginary: 0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / (Complex basicReal: -0.0 imaginary: 0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) / (Complex basicReal: -0.0 imaginary: -0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: 0.0 imaginary: -0.0) / (Complex basicReal: -0.0 imaginary: -0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: 0.0) / (Complex basicReal: -0.0 imaginary: -0.0)) isComplexNaN.
+	self assert: ((Complex basicReal: -0.0 imaginary: -0.0) / (Complex basicReal: -0.0 imaginary: -0.0)) isComplexNaN.! !
+
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:05:24'!
+testDivideFloatByZero
+
+	self assert: 1  / (Complex basicReal: 0.0 imaginary: 0.0) = Float infinity.
+	self assert: 1  / (Complex basicReal: 0.0 imaginary: -0.0) = Float infinity.
+	self assert: 1  / (Complex basicReal: -0.0 imaginary: 0.0) = Float infinity.
+	self assert: 1  / (Complex basicReal: -0.0 imaginary: -0.0) = Float infinity.
+	self assert: 1.0  / (Complex basicReal: 0.0 imaginary: 0.0) = Float infinity.
+	self assert: 1.0  / (Complex basicReal: 0.0 imaginary: -0.0) = Float infinity.
+	self assert: 1.0  / (Complex basicReal: -0.0 imaginary: 0.0) = Float infinity.
+	self assert: 1.0  / (Complex basicReal: -0.0 imaginary: -0.0) = Float infinity.
+
+	self assert: -1  / (Complex basicReal: 0.0 imaginary: 0.0) = Float negativeInfinity.
+	self assert: -1  / (Complex basicReal: 0.0 imaginary: -0.0) = Float negativeInfinity.
+	self assert: -1  / (Complex basicReal: -0.0 imaginary: 0.0) = Float negativeInfinity.
+	self assert: -1  / (Complex basicReal: -0.0 imaginary: -0.0) = Float negativeInfinity.
+	self assert: -1.0  / (Complex basicReal: 0.0 imaginary: 0.0) = Float negativeInfinity.
+	self assert: -1.0  / (Complex basicReal: 0.0 imaginary: -0.0) = Float negativeInfinity.
+	self assert: -1.0  / (Complex basicReal: -0.0 imaginary: 0.0) = Float negativeInfinity.
+	self assert: -1.0  / (Complex basicReal: -0.0 imaginary: -0.0) = Float negativeInfinity.! !
+
+!ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 7/2/2019 12:07:43'!
+testDivideFloatZeroByZero
+
+	self assert: (0 / (Complex basicReal: 0.0 imaginary: 0.0)) isNaN.
+	self assert: (0 / (Complex basicReal: 0.0 imaginary: -0.0)) isNaN.
+	self assert: (0 / (Complex basicReal: -0.0 imaginary: 0.0)) isNaN.
+	self assert: (0 / (Complex basicReal: -0.0 imaginary: -0.0)) isNaN.
+	self assert: (0.0 / (Complex basicReal: 0.0 imaginary: 0.0)) isNaN.
+	self assert: (0.0 / (Complex basicReal: 0.0 imaginary: -0.0)) isNaN.
+	self assert: (0.0 / (Complex basicReal: -0.0 imaginary: 0.0)) isNaN.
+	self assert: (0.0 / (Complex basicReal: -0.0 imaginary: -0.0)) isNaN.! !
 
 !ComplexTest methodsFor: 'tests - arithmetic' stamp: 'jmv 4/5/2019 10:28:50'!
 testDivideLarge
@@ -254,6 +348,12 @@ testRaisedToInteger
 	c3 := (c * c * c).
 	self assert: (c3 = (c raisedToInteger: 3)).
 	self assert: (c3 reciprocal = (c raisedToInteger: -3)).! !
+
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 7/2/2019 12:00:13'!
+testRaisedToMinusOne
+	
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) raisedTo: -1) = Float infinity.
+	self assert: ((Complex basicReal: 0.0 imaginary: 0.0) raisedTo: -1.0) = Float infinity.! !
 
 !ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/18/2018 16:54:06'!
 testRaisedToOneFourth

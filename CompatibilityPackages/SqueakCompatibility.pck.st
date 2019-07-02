@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 2:05:53 pm'!
+'From Cuis 5.0 [latest update: #3817] on 2 July 2019 at 8:09:35 am'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 30!
+!provides: 'SqueakCompatibility' 1 31!
 !requires: 'Cuis-Base' 42 2658 nil!
 SystemOrganization addCategory: #SqueakCompatibility!
 
@@ -1304,37 +1304,6 @@ setPathName: pathString
 	pathName _ pathString.
 ! !
 
-!FileDirectory class methodsFor: 'private' stamp: 'jmv 4/19/2015 08:34'!
-activeDirectoryClass
-	"Return the concrete FileDirectory subclass for the platform on which we are currently running."
-
-	DirectoryClass ifNotNil: [ ^DirectoryClass ].
-	
-	FileDirectory allSubclasses do: [ :cls |
-		cls isActiveDirectoryClass ifTrue: [
-			DirectoryClass _ cls.
-			^ DirectoryClass ]].
-
-	"no responding subclass; use FileDirectory"
-	DirectoryClass _ FileDirectory.
-	^DirectoryClass! !
-
-!FileDirectory class methodsFor: 'private' stamp: 'TPR 5/10/1998 21:40'!
-isActiveDirectoryClass
-	"Does this class claim to be that properly active subclass of FileDirectory for this platform?
-	Default test is whether the primPathNameDelimiter matches the one for this class. Other tests are possible"
-
-	^self pathNameDelimiter = self primPathNameDelimiter
-! !
-
-!FileDirectory class methodsFor: 'private' stamp: 'ar 2/2/2001 15:09'!
-primPathNameDelimiter
-	"Return the path delimiter for the underlying platform's file system."
-
- 	<primitive: 'primitiveDirectoryDelimitor' module: 'FilePlugin'>
-	self primitiveFailed
-! !
-
 !FileDirectory class methodsFor: 'name utilities' stamp: 'jmv 6/17/2015 11:24'!
 baseNameFor: filename
 	"Return the given file name without its extension, if any. We have to remember that many (most?) OSs allow extension separators within directory names and so the leaf filename needs to be extracted, trimmed and rejoined. Yuck"
@@ -1441,6 +1410,37 @@ splitName: fullName to: pathAndNameBlock
 			localName _ fullName copyFrom: i + 1 to: fullName size].
 
 	^ pathAndNameBlock value: dirName value: localName! !
+
+!FileDirectory class methodsFor: 'private' stamp: 'jmv 4/19/2015 08:34'!
+activeDirectoryClass
+	"Return the concrete FileDirectory subclass for the platform on which we are currently running."
+
+	DirectoryClass ifNotNil: [ ^DirectoryClass ].
+	
+	FileDirectory allSubclasses do: [ :cls |
+		cls isActiveDirectoryClass ifTrue: [
+			DirectoryClass _ cls.
+			^ DirectoryClass ]].
+
+	"no responding subclass; use FileDirectory"
+	DirectoryClass _ FileDirectory.
+	^DirectoryClass! !
+
+!FileDirectory class methodsFor: 'private' stamp: 'TPR 5/10/1998 21:40'!
+isActiveDirectoryClass
+	"Does this class claim to be that properly active subclass of FileDirectory for this platform?
+	Default test is whether the primPathNameDelimiter matches the one for this class. Other tests are possible"
+
+	^self pathNameDelimiter = self primPathNameDelimiter
+! !
+
+!FileDirectory class methodsFor: 'private' stamp: 'ar 2/2/2001 15:09'!
+primPathNameDelimiter
+	"Return the path delimiter for the underlying platform's file system."
+
+ 	<primitive: 'primitiveDirectoryDelimitor' module: 'FilePlugin'>
+	self primitiveFailed
+! !
 
 !FileDirectory class methodsFor: 'instance creation' stamp: 'jmv 6/17/2015 11:09'!
 currentDirectory
@@ -1883,31 +1883,6 @@ pathNameDelimiter
 current
 	^Smalltalk! !
 
-!SqDirectoryEntry methodsFor: 'testing' stamp: 'jmv 5/27/2014 11:22'!
-= aDirectoryEntry 
-
-	"Any object is equal to itself"
-	self == aDirectoryEntry ifTrue: [ ^ true ].
-
-	"Answer whether I am equivalent in all of my file-system attributes."
-	self species == aDirectoryEntry species ifFalse: [ ^ false ].
-
-	^ self containingDirectory = aDirectoryEntry containingDirectory
-		and: [ self name = aDirectoryEntry name
-				and: [ self modificationTime = aDirectoryEntry modificationTime
-						and: [ self fileSize = aDirectoryEntry fileSize ]]]! !
-
-!SqDirectoryEntry methodsFor: 'testing' stamp: 'cmm 2/21/2011 21:50'!
-exists
-	^ (self containingDirectory
-		entryAt: self name
-		ifAbsent: [ nil ]) notNil! !
-
-!SqDirectoryEntry methodsFor: 'testing' stamp: 'cmm 2/18/2011 16:04'!
-hash
-	"Hashing on directory + name should be sufficient."
-	^ (self containingDirectory hash hashMultiply + self name hash) hashMultiply! !
-
 !SqDirectoryEntry methodsFor: 'access' stamp: 'cmm 10/30/2009 15:50'!
 baseName
 	^ FileDirectory baseNameFor: self name! !
@@ -1973,6 +1948,31 @@ size
 splitNameVersionExtension
 	" answer an array with the root name, version # and extension."
 	^directory splitNameVersionExtensionFor: self name! !
+
+!SqDirectoryEntry methodsFor: 'testing' stamp: 'jmv 5/27/2014 11:22'!
+= aDirectoryEntry 
+
+	"Any object is equal to itself"
+	self == aDirectoryEntry ifTrue: [ ^ true ].
+
+	"Answer whether I am equivalent in all of my file-system attributes."
+	self species == aDirectoryEntry species ifFalse: [ ^ false ].
+
+	^ self containingDirectory = aDirectoryEntry containingDirectory
+		and: [ self name = aDirectoryEntry name
+				and: [ self modificationTime = aDirectoryEntry modificationTime
+						and: [ self fileSize = aDirectoryEntry fileSize ]]]! !
+
+!SqDirectoryEntry methodsFor: 'testing' stamp: 'cmm 2/21/2011 21:50'!
+exists
+	^ (self containingDirectory
+		entryAt: self name
+		ifAbsent: [ nil ]) notNil! !
+
+!SqDirectoryEntry methodsFor: 'testing' stamp: 'cmm 2/18/2011 16:04'!
+hash
+	"Hashing on directory + name should be sufficient."
+	^ (self containingDirectory hash hashMultiply + self name hash) hashMultiply! !
 
 !SqDirectoryEntry methodsFor: 'private-initialization' stamp: 'cmm 9/12/2007 17:20'!
 setDirectory: aFileDirectoryOrServerDirectory name: name0  creationTime: creationTime0  modificationTime: modificationTime0 fileSize: fileSize0
@@ -2213,6 +2213,10 @@ markerOrNil
 !CompiledMethod class methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:17'!
 abstractMarkers
 	^ #(subclassResponsibility shouldNotImplement)! !
+
+!SystemDictionary methodsFor: '*squeakCompatibility' stamp: 'jmv 7/2/2019 08:08:30'!
+datedVersion
+	^ self version! !
 
 !Stream methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:02:52'!
 print: aNumber digits: numDigits
