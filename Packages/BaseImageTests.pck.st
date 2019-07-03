@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3817] on 2 July 2019 at 12:13:14 pm'!
+'From Cuis 5.0 [latest update: #3824] on 3 July 2019 at 10:08:03 am'!
 'Description String withoutSeparators tests'!
-!provides: 'BaseImageTests' 1 168!
+!provides: 'BaseImageTests' 1 169!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -11322,43 +11322,43 @@ testCopyNonLocalReturn
 		shouldnt: [self methodWithNonLocalReturn]
 		raise: Error! !
 
-!ClosureTests methodsFor: 'testing' stamp: 'jmv 5/26/2015 16:33'!
+!ClosureTests methodsFor: 'testing' stamp: 'jmv 7/3/2019 09:38:17'!
 testIsTrivialClosure
 	"
 	ClosureTests new testIsTrivialClosure
 	"
 	| tempVar |
 	tempVar _ 1.
-	self assert: [ 3 + 4 ] isTrivialClosure.
-	self assert: [ :a | a * 2 ] isTrivialClosure.
-	self assert: [ Smalltalk size ] isTrivialClosure.
-	self assert: [ ClosureTests selectors size ] isTrivialClosure.
-	self assert: [ :blockArg | blockArg printString ] isTrivialClosure.
-	self assert: [ | blockTemp | blockTemp printString ] isTrivialClosure.
-	self assert: [ | blockTemp | blockTemp _ 7 ] isTrivialClosure.
-	self assert: [ | c | c _ [ :a :b | a+b ]. c value: 3 value: 4 ] isTrivialClosure.
+	self assert: [ 3 + 4 ] isCleanClosure.
+	self assert: [ :a | a * 2 ] isCleanClosure.
+	self assert: [ Smalltalk size ] isCleanClosure.
+	self assert: [ ClosureTests selectors size ] isCleanClosure.
+	self assert: [ :blockArg | blockArg printString ] isCleanClosure.
+	self assert: [ | blockTemp | blockTemp printString ] isCleanClosure.
+	self assert: [ | blockTemp | blockTemp _ 7 ] isCleanClosure.
+	self assert: [ | c | c _ [ :a :b | a+b ]. c value: 3 value: 4 ] isCleanClosure.
 
-	self assert: [ | outerBlockTemp | [ outerBlockTemp printString ] ] isTrivialClosure.
-	self assert: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] ] isTrivialClosure.
-	self assert: [ | outerBlockTemp | [[ outerBlockTemp printString ]] ] isTrivialClosure.
-	self assert: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] ] isTrivialClosure.
-	self assert: [ [| outerBlockTemp | [ outerBlockTemp printString ]] ] isTrivialClosure.
-	self assert: [ [| outerBlockTemp | [ outerBlockTemp _ 7 ]] ] isTrivialClosure.
+	self assert: [ | outerBlockTemp | [ outerBlockTemp printString ] ] isCleanClosure.
+	self assert: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] ] isCleanClosure.
+	self assert: [ | outerBlockTemp | [[ outerBlockTemp printString ]] ] isCleanClosure.
+	self assert: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] ] isCleanClosure.
+	self assert: [ [| outerBlockTemp | [ outerBlockTemp printString ]] ] isCleanClosure.
+	self assert: [ [| outerBlockTemp | [ outerBlockTemp _ 7 ]] ] isCleanClosure.
 
-	self deny: [ | outerBlockTemp | [ outerBlockTemp printString ] isTrivialClosure ] value.
-	self deny: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] isTrivialClosure ] value.
-	self deny: [ | outerBlockTemp | [[ outerBlockTemp printString ]] isTrivialClosure ] value.
-	self deny: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] isTrivialClosure ] value.
+	self deny: [ | outerBlockTemp | [ outerBlockTemp printString ] isCleanClosure ] value.
+	self deny: [ | outerBlockTemp | [ outerBlockTemp _ 7 ] isCleanClosure ] value.
+	self deny: [ | outerBlockTemp | [[ outerBlockTemp printString ]] isCleanClosure ] value.
+	self deny: [ | outerBlockTemp | [[ outerBlockTemp _ 7 ]] isCleanClosure ] value.
 
-	self deny: [ tempVar + 1 ] isTrivialClosure.
-	self deny: [ tempVar _ 1 ] isTrivialClosure.
-	self deny: [ ivar + 1 ] isTrivialClosure.
-	self deny: [ ivar _ 1 ] isTrivialClosure.
-	self deny: [ ^ true ] isTrivialClosure.
-	self deny: [ self printString ] isTrivialClosure.
-	self deny: [ ^ self ] isTrivialClosure.
-	self deny: [ ClassVar + 1 ] isTrivialClosure.
-	self deny: [ ClassVar _ 1 ] isTrivialClosure! !
+	self deny: [ tempVar + 1 ] isCleanClosure.
+	self deny: [ tempVar _ 1 ] isCleanClosure.
+	self deny: [ ivar + 1 ] isCleanClosure.
+	self deny: [ ivar _ 1 ] isCleanClosure.
+	self deny: [ ^ true ] isCleanClosure.
+	self deny: [ self printString ] isCleanClosure.
+	self deny: [ ^ self ] isCleanClosure.
+	self deny: [ ClassVar + 1 ] isCleanClosure.
+	self deny: [ ClassVar _ 1 ] isCleanClosure! !
 
 !ClosureTests methodsFor: 'testing' stamp: 'lr 3/11/2009 17:36'!
 testMethodArgument
