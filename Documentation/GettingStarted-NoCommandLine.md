@@ -6,7 +6,7 @@ What follows are instructions for setting up Cuis on Windows or Mac OS X without
 * Create a new folder in your machine using Windows Explorer
 * download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip), saving it to that folder.
 * extract the contents of the zip file right there ("extract here")
-* download [`squeak.cog.spur_win32x86_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win32x86_201807260206.zip), saving it to yourFolder\Cuis-Smalltalk-Dev-master\ (the folder that was just created while extracting the first zip file).
+* download [`squeak.cog.spur_win32x86_201807260206.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_win32x86_201901172323.zip), saving it to yourFolder\Cuis-Smalltalk-Dev-master\ (the folder that was just created while extracting the first zip file).
 * extract the contents of the zip file right there ("extract here")
 * drop the Cuis5.0-3795-32.image over the Squeak.exe file. Alternatively, double click on the Squeak.exe file, and when prompted to select an image file, select Cuis5.0-3795-32.image.
 * If you get a message like "This publisher could not be verified. Are you sure you want to run this software?", then untag "Always ask before opening this file" (if present) and click [Run].
