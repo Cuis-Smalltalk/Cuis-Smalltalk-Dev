@@ -34,7 +34,7 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_linux64x64_201807260206.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux64x64_201901172323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
 ```
@@ -47,7 +47,6 @@ If you get this error message (you won't get it if you run Cuis as root or sudo)
 ```
 pthread_setschedparam failed: Operation not permitted
 ...
-https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
 ```
 Then you need to do this (just one time):
 ```
@@ -97,7 +96,7 @@ cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3795.image
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_linux32ARMv6_201807260206.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux32ARMv6_201901172323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
@@ -120,7 +119,7 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_linux32x86_201807260206.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux32x86_201901172323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxht ./cogspur
 ```
@@ -128,7 +127,7 @@ mv ./sqcogspurlinuxht ./cogspur
 ```
 cd MyProject
 rm -r stkspur
-wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.stack.spur_linux32ARMv6_201807260206.tar.gz
+wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.stack.spur_linux32ARMv6_201901172323.tar.gz
 tar -zxvf stkspur.tgz
 mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
