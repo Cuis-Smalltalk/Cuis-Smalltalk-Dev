@@ -34,20 +34,19 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_linux64x64_201807260206.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux64x64_201901172323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3795.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3826.image
 ```
 If you get this error message (you won't get it if you run Cuis as root or sudo):
 ```
 pthread_setschedparam failed: Operation not permitted
 ...
-https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/tag/r3732#linux
 ```
 Then you need to do this (just one time):
 ```
@@ -67,11 +66,11 @@ Drag Squeak.app to your folder
 ```
 
 ### Starting Cuis Smalltalk ###
-* drop the Cuis5.0-3795.image over the Squeak.app file
+* drop the Cuis5.0-3826.image over the Squeak.app file
 * If you get "Squeak is an app downloaded from the Internet. Are you sure you want to open it?", click on [Open]
 * Alternatively, you might:
 ```
-./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3795.image
+./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-3826.image
 ```
 
 ## For 64 bits Windows (Git Bash) ##
@@ -82,13 +81,13 @@ Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cu
 ```
 cd MyProject
 rm -r cogspur
-curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_win64x64_201807260206.zip
+curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_win64x64_201901172323.zip
 unzip cogspur.zip -d cogspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3795.image
+cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3826.image
 ```
 
 ## For Raspberry Pi Raspian ##
@@ -97,14 +96,14 @@ cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-3795.image
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_linux32ARMv6_201807260206.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux32ARMv6_201901172323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3795-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3826-32.image
 ```
 
 ## For Chromebooks ##
@@ -120,7 +119,7 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.cog.spur_linux32x86_201807260206.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux32x86_201901172323.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxht ./cogspur
 ```
@@ -128,21 +127,21 @@ mv ./sqcogspurlinuxht ./cogspur
 ```
 cd MyProject
 rm -r stkspur
-wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201807260206/squeak.stack.spur_linux32ARMv6_201807260206.tar.gz
+wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.stack.spur_linux32ARMv6_201901172323.tar.gz
 tar -zxvf stkspur.tgz
 mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3795-32.image
-stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3795-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3826-32.image
+stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-3826-32.image
 ```
 
 ## Troubleshooting ##
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", (1007290890 or some other absurd number) it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
-* If you can't find Cuis5.0-3795-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
+* If you can't find Cuis5.0-3826-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
 * If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available from http://opensmalltalk.org/
 * If you can't get Cuis to run on your system after trying the above instructions, send mail to the Cuis-Dev mail list. Please give enough detail of your system, what you tried, and any error messages you got.
 * To get the contents of this repository without using Git, you can do
