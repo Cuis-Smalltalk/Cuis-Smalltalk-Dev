@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3817] on 2 July 2019 at 12:13:28 pm'!
+'From Cuis 5.0 [latest update: #3830] on 2 August 2019 at 2:56:08 pm'!
 'Description '!
-!provides: 'Complex' 1 5!
+!provides: 'Complex' 1 6!
 SystemOrganization addCategory: #Complex!
 
 
@@ -133,7 +133,7 @@ phase
 real
 	^ real! !
 
-!Complex methodsFor: 'arithmetic' stamp: 'jmv 4/5/2019 09:48:03'!
+!Complex methodsFor: 'arithmetic' stamp: 'jmv 8/2/2019 12:13:14'!
 * aNumber
 	"Answer the result of multiplying the receiver by aNumber."
 	| c d newReal newImaginary |
@@ -141,8 +141,13 @@ real
 		ifTrue: [
 			c _ aNumber real.
 			d _ aNumber imaginary.
-			newReal _ (real * c) - (imaginary * d).
-			newImaginary _ (real * d) + (imaginary * c) ]
+			imaginary = 0 "For example, 1 * 2i, or more importantly 1 * Float infinity i"
+				ifTrue: [
+					newReal _ real * c.
+					newImaginary _ real * d ]
+				ifFalse: [
+					newReal _ (real * c) - (imaginary * d).
+					newImaginary _ (real * d) + (imaginary * c) ]]
 		ifFalse: [
 			newReal _ real * aNumber.
 			newImaginary _ imaginary * aNumber ].
@@ -424,22 +429,24 @@ arcTan
 		real: (real * 2 arcTan: 1 - r2) / 2
 		imaginary: ((r2 + (imaginary * 2) + 1) / (r2 - (imaginary * 2) + 1)) ln / 4! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 01:34'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 8/2/2019 10:47:50'!
 arcTan: denominator 
 	"Answer the  four quadrants arc tangent of receiver over denominator."
 
+	self isNaN ifTrue: [ ^Complex nan ].
+	denominator isNaN ifTrue: [ ^Complex nan ].
 	^denominator isZero 
-		ifTrue: 
-			[self isZero 
-				ifTrue: 
-					["shouldn't it be an error ? ^DomainError signal: '0 arcTan: 0'"
+		ifTrue: [
+			self isZero 
+				ifTrue: [
+					"shouldn't it be an error ? ^DomainError signal: '0 arcTan: 0'"
 					^self class real: 0 imaginary: 0]
-				ifFalse: 
-					[self class
+				ifFalse: [
+					self class
 						real: Float pi / (real copySignTo: 2)
 						imaginary: 0]]
-		ifFalse: 
-			[| res |
+		ifFalse: [
+			| res |
 			res := (self / denominator) arcTan.
 			denominator real < 0 ifTrue: [res := res + Float pi].
 			res real > Float pi 
@@ -492,51 +499,51 @@ nthRoot: aPositiveInteger
 
 	^ Complex abs: (self abs nthRoot: aPositiveInteger) arg: self arg / aPositiveInteger! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 7/2/2019 11:39:10'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 8/2/2019 10:44:13'!
 raisedTo: exponent 
 	"Answer the receiver raised to aNumber."
 
+	self isNaN ifTrue: [ ^Complex nan ].
 	exponent isInteger ifTrue: [
 		"Do the special case of integer power"
 		^ self raisedToInteger: exponent].
 	exponent isFraction ifTrue: [
 		^ self raisedToFraction: exponent].
 	
-	0 = exponent ifTrue: [^ self class one].	"Special case of exponent=0"
-	1 = exponent ifTrue: [^ self].	"Special case of exponent=1"
-	0 = self ifTrue: [				"Special case of self = 0"
-		exponent < 0
-			ifTrue: [^ (self raisedTo: exponent negated) reciprocal]
-			ifFalse: [^ self]].
-	^ (exponent * self ln) exp		"Otherwise use logarithms"! !
+	0.0 = exponent ifTrue: [^ self class one].	"Special case of exponent=0"
+	1.0 = exponent ifTrue: [^ self].					"Special case of exponent=1"
+	0 = self ifTrue: [									"Special case of self = 0"
+		exponent isNaN ifTrue: [ ^Complex nan ].
+		^exponent < 0
+			ifTrue: [(self raisedTo: exponent negated) reciprocal]
+			ifFalse: [self]].
+	^ (exponent * self ln) exp							"Otherwise use logarithms"! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 5/26/2018 22:20:24'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 8/2/2019 09:47:10'!
 raisedToFraction: aFraction
+	"Raise an exception if argument is not a Fraction"
 	^ (self nthRoot: aFraction denominator) raisedToInteger: aFraction numerator! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'nice 9/18/2008 22:47'!
-raisedToInteger: operand 
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 8/2/2019 11:47:34'!
+raisedToInteger: exponent 
 	"Answer the receiver raised to the power operand, an Integer."
+	
+	| bitProbe result |
 
-	"implementation note: this code is copied from Number.
-	This suggest that both Number and Complex should have an
-	ArithmeticValue common superclass like in Visualworks.
-	Or maybe should it be a Traits (a property of fields ?)"
+	self isNaN ifTrue: [ ^Complex nan ].
+	exponent = 0 ifTrue: [^ self class one].
+	exponent = 1 ifTrue: [^ self].
+	exponent negative ifTrue: [^ (self raisedToInteger: exponent negated) reciprocal].
 
-	| count result |
-	operand isInteger ifFalse: [^ ArithmeticError signal: 'parameter is not an Integer'].
-	operand = 0 ifTrue: [^ self class one].
-	operand = 1 ifTrue: [^ self].
-	operand < 0 ifTrue: [^ (self raisedToInteger: operand negated) reciprocal].
-	count := 1 bitShift: (operand-1) highBit.
-	result := self class one.
-	[count > 0]
-		whileTrue: 
-			[result := result * result.
-			(operand bitAnd: count)
-				= 0 ifFalse: [result := result * self].
-			count := count bitShift: -1].
-	^ result! !
+	bitProbe := 1 bitShift: exponent highBit - 1.
+ 	result := self class one.
+ 	[
+		(exponent bitAnd: bitProbe) = 0 ifFalse: [result := result * self].
+		bitProbe := bitProbe bitShift: -1.
+		bitProbe > 0 ]
+			whileTrue: [
+				result := result * result].
+	^result! !
 
 !Complex methodsFor: 'mathematical functions' stamp: 'nice 4/23/2011 00:54'!
 sin

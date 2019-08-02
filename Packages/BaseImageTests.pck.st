@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3824] on 3 July 2019 at 10:08:03 am'!
+'From Cuis 5.0 [latest update: #3830] on 2 August 2019 at 2:55:20 pm'!
 'Description String withoutSeparators tests'!
-!provides: 'BaseImageTests' 1 169!
+!provides: 'BaseImageTests' 1 170!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -3792,6 +3792,41 @@ testNaNCompare
 			self deny: (comp2 perform: op2 with: theNaN) description: warningMessage].
 		self assert: (theNaN ~= comp2) description: warningMessage.
 		self assert: (comp2 ~= theNaN) description: warningMessage].! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 8/1/2019 18:12:56'!
+testNaNPropagationBinary
+	"Any operation should propagate NaN"
+	| s a c |
+	s _ Set new.
+	s addAll: Number selectors.
+	s addAll: Float selectors.
+	s addAll: BoxedFloat64 selectors.
+	s addAll: SmallFloat64 selectors.
+	s _ s select: [ :sel | sel numArgs = 1 ].
+	s removeAll: #(#at: #basicAt: #ifNotZero: smoothIsAbsBelow:).
+	a _ s asArray sort.
+	a do: [ :sel |
+		{ 0. 0.0. 1/3. 1. 1.0. 2. 2.0. Float nan } do: [ :op1 |
+			{ 0. 0.0. 1/3. 1. 1.0. 2. 2.0. Float nan } do: [ :op2 |
+				op1 isNaN | op2 isNaN ifTrue: [
+					c _ [ op1 perform: sel with: op2 ] on: Error do: [ #error ].
+					self assert: (c isNumber not or: [c isNaN]) ]]]].! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 8/1/2019 18:39:54'!
+testNaNPropagationUnary
+	"Any operation should propagate NaN"
+	| s a c |
+	s _ Set new.
+	s addAll: Number selectors.
+	s addAll: Float selectors.
+	s addAll: BoxedFloat64 selectors.
+	s addAll: SmallFloat64 selectors.
+	s _ s select: [ :sel | sel numArgs = 0 ].
+	s removeAll: #(#asIEEE32BitWord #byteSize #hash #identityHash #mantissaBits #signBit #smoothStep #exponentBits #imaginary #exponent primTestExponent).
+	a _ s asArray sort.
+	a do: [ :sel |
+		c _ [ Float nan perform: sel ] on: Error do: [ #error ].
+		self assert: (c isNumber not or: [c isNaN]) ].! !
 
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'nice 3/14/2008 23:42'!
 testNaNisLiteral
