@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3830] on 2 August 2019 at 2:55:20 pm'!
-'Description String withoutSeparators tests'!
-!provides: 'BaseImageTests' 1 170!
+'From Cuis 5.0 [latest update: #3832] on 3 August 2019 at 9:30:27 am'!
+'Description Hierarchy Scope fix tests. #highegstClassImplementing:ifNone: tests'!
+!provides: 'BaseImageTests' 1 171!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1973,6 +1973,33 @@ testAllSuperclassesUpToStopsOnRightClass
 	self assert: (superclasses includes: Integer)
 	
 	! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:29:49'!
+testHighestClassImplementingReturnsReceiverWhenNoOtherSuperclassImplementsSelector
+
+	| higestClass |
+	
+	higestClass := OrderedCollection highestClassImplementing: #addFirst: ifNone: [ self fail ].
+	
+	self assert: OrderedCollection equals: higestClass 
+	! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:30:01'!
+testHighestClassImplementingReturnsTheTopSuperclassImplementingSelector
+
+	| higestClass |
+	
+	higestClass := OrderedCollection highestClassImplementing: #select: ifNone: [ self fail ].
+	
+	self assert: Collection equals: higestClass 
+	! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:29:55'!
+testHighestClassImplementingValuesIfNoneBlockWhenSelectorIsNotImplemented
+
+	OrderedCollection highestClassImplementing: #x ifNone: [ ^self  ].
+	
+	self fail! !
 
 !BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 2/10/2017 10:52:30'!
 testWithAllSuperclassesUpToIncludesReceiverClass
@@ -18575,6 +18602,23 @@ test31CanNotRenameFromKeywordOfOneParameterToBinary
 		should: [ RenameSelector from: oldSelector to: newSelector implementors: (Array with: classToRefactor>>oldSelector) senders: #() ]
 		raise: Error
 		withMessageText: (RenameSelector errorMessageForNewSelector: newSelector isNotOfSameTypeAs: oldSelector)! !
+
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/3/2019 09:02:58'!
+test32HierarchyScopeRenamesSelectorsFromSuperclassDefiningSelector
+	
+	| rename superclassToRefactor subclassToRefactor |
+	
+	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
+	subclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SubclassToRenameSelector subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
+
+	rename := RenameSelector from: oldSelector to: newSelector inHierarchyOf: classToRefactor.
+	rename apply.
+	
+	self assertWasRenamedInClassAndMeta: superclassToRefactor.
+	self assertWasRenamedInClassAndMeta: classToRefactor.
+	self assertWasRenamedInClassAndMeta: subclassToRefactor.
+	! !
 
 !RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 6/25/2017 21:53:44'!
 classToRefactorName
