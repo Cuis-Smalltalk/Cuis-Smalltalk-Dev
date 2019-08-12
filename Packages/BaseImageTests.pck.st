@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3824] on 3 July 2019 at 10:08:03 am'!
-'Description String withoutSeparators tests'!
-!provides: 'BaseImageTests' 1 169!
+'From Cuis 5.0 [latest update: #3835] on 5 August 2019 at 12:00:23 pm'!
+'Description Hierarchy Scope fix tests. #highegstClassImplementing:ifNone: tests'!
+!provides: 'BaseImageTests' 1 172!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -28,6 +28,9 @@ SystemOrganization addCategory: #'BaseImageTests-Bugs'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Refactoring'!
 SystemOrganization addCategory: #'BaseImageTests-Collections-Streams'!
 SystemOrganization addCategory: #'BaseImageTests-System-Support'!
+SystemOrganization addCategory: #'BaseImageTests-Graphics-Primitives'!
+SystemOrganization addCategory: #'BaseImageTests-Graphics-Display Objects'!
+SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 
 
 !classDefinition: #MyResumableTestError category: #'BaseImageTests-Exceptions'!
@@ -138,6 +141,16 @@ TestCase subclass: #SequenceableCollectionTest
 	category: 'BaseImageTests-Collections'!
 !classDefinition: 'SequenceableCollectionTest class' category: #'BaseImageTests-Collections'!
 SequenceableCollectionTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TextTest category: #'BaseImageTests-Collections'!
+TestCase subclass: #TextTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections'!
+!classDefinition: 'TextTest class' category: #'BaseImageTests-Collections'!
+TextTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #WeakIdentitySetTest category: #'BaseImageTests-Collections'!
@@ -348,6 +361,16 @@ TestCase subclass: #TimeTest
 	category: 'BaseImageTests-Kernel-Chronology'!
 !classDefinition: 'TimeTest class' category: #'BaseImageTests-Kernel-Chronology'!
 TimeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TimespanTest category: #'BaseImageTests-Kernel-Chronology'!
+TestCase subclass: #TimespanTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Chronology'!
+!classDefinition: 'TimespanTest class' category: #'BaseImageTests-Kernel-Chronology'!
+TimespanTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #WeekTest category: #'BaseImageTests-Kernel-Chronology'!
@@ -1090,6 +1113,56 @@ TestCase subclass: #TranscriptTest
 TranscriptTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #ColorTest category: #'BaseImageTests-Graphics-Primitives'!
+TestCase subclass: #ColorTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Primitives'!
+!classDefinition: 'ColorTest class' category: #'BaseImageTests-Graphics-Primitives'!
+ColorTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #RectangleTest category: #'BaseImageTests-Graphics-Primitives'!
+TestCase subclass: #RectangleTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Primitives'!
+!classDefinition: 'RectangleTest class' category: #'BaseImageTests-Graphics-Primitives'!
+RectangleTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ColorFormTest category: #'BaseImageTests-Graphics-Display Objects'!
+TestCase subclass: #ColorFormTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Display Objects'!
+!classDefinition: 'ColorFormTest class' category: #'BaseImageTests-Graphics-Display Objects'!
+ColorFormTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #GrayFormTest category: #'BaseImageTests-Graphics-Display Objects'!
+TestCase subclass: #GrayFormTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Graphics-Display Objects'!
+!classDefinition: 'GrayFormTest class' category: #'BaseImageTests-Graphics-Display Objects'!
+GrayFormTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #WeakMessageSendTest category: #'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #WeakMessageSendTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'WeakMessageSendTest class' category: #'BaseImageTests-Kernel-Objects'!
+WeakMessageSendTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #BecomeTestExperiment category: #'BaseImageTests-Kernel'!
 Object subclass: #BecomeTestExperiment
 	instanceVariableNames: 'a b'
@@ -1575,6 +1648,10 @@ testWhenCollectionIsEmptyItReturnsTheSameCollection
 
 	self assert: #() equals: #() flatten! !
 
+!CollectionTest methodsFor: 'misc tests' stamp: 'jpb 8/2/2019 23:18:50'!
+testIsCollection
+	self assert: (Bag new is: #Collection).! !
+
 !CollectionTest methodsFor: 'misc tests' stamp: 'jmv 6/12/2019 18:22:57'!
 testSetEquality
 	self assert: Set new = IdentitySet new.
@@ -1587,6 +1664,10 @@ testSetEquality
 	self assert: IdentityDictionary new hash = OrderedDictionary new hash.
 
 	self deny: Set new = Dictionary new! !
+
+!DictionaryTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:17:49'!
+testIsCollection
+	self assert: (Dictionary new is: #Collection)! !
 
 !DictionaryTest methodsFor: 'tests' stamp: 'HAW 4/4/2019 08:18:05'!
 testKeyNotFoundSignalTheRightMessage
@@ -1700,6 +1781,10 @@ testIntegerToByDo
 	self assert: toByDo size = interval size.
 	1 to: toByDo size do: [ :i |
 		self assert: (toByDo at: i) = (interval at: i) ]! !
+
+!OrderedCollectionTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:18:24'!
+testIsCollection
+	self assert: (OrderedCollection new is: #Collection).! !
 
 !OrderedCollectionTest methodsFor: 'tests' stamp: 'HAW 5/18/2019 17:01:20'!
 testStreamContentsWorksAsExpected
@@ -1879,6 +1964,10 @@ testWithIndexDoSeparatedByDoesNothingForEmptyCollection
 
 	self shouldntFail: [ #() withIndexDo: [ :anElement :index | self fail ] separatedBy: [ self fail ] ]! !
 
+!TextTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:40:53'!
+testIsText
+	self assert: (Text new is: #Text).! !
+
 !WeakIdentitySetTest methodsFor: 'testing' stamp: 'jmv 8/24/2012 08:24'!
 test
 	"
@@ -1973,6 +2062,33 @@ testAllSuperclassesUpToStopsOnRightClass
 	self assert: (superclasses includes: Integer)
 	
 	! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:29:49'!
+testHighestClassImplementingReturnsReceiverWhenNoOtherSuperclassImplementsSelector
+
+	| higestClass |
+	
+	higestClass := OrderedCollection highestClassImplementing: #addFirst: ifNone: [ self fail ].
+	
+	self assert: OrderedCollection equals: higestClass 
+	! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:30:01'!
+testHighestClassImplementingReturnsTheTopSuperclassImplementingSelector
+
+	| higestClass |
+	
+	higestClass := OrderedCollection highestClassImplementing: #select: ifNone: [ self fail ].
+	
+	self assert: Collection equals: higestClass 
+	! !
+
+!BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 8/3/2019 09:29:55'!
+testHighestClassImplementingValuesIfNoneBlockWhenSelectorIsNotImplemented
+
+	OrderedCollection highestClassImplementing: #x ifNone: [ ^self  ].
+	
+	self fail! !
 
 !BehaviorTest methodsFor: 'class hierarchy tests' stamp: 'HAW 2/10/2017 10:52:30'!
 testWithAllSuperclassesUpToIncludesReceiverClass
@@ -3793,6 +3909,41 @@ testNaNCompare
 		self assert: (theNaN ~= comp2) description: warningMessage.
 		self assert: (comp2 ~= theNaN) description: warningMessage].! !
 
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 8/1/2019 18:12:56'!
+testNaNPropagationBinary
+	"Any operation should propagate NaN"
+	| s a c |
+	s _ Set new.
+	s addAll: Number selectors.
+	s addAll: Float selectors.
+	s addAll: BoxedFloat64 selectors.
+	s addAll: SmallFloat64 selectors.
+	s _ s select: [ :sel | sel numArgs = 1 ].
+	s removeAll: #(#at: #basicAt: #ifNotZero: smoothIsAbsBelow:).
+	a _ s asArray sort.
+	a do: [ :sel |
+		{ 0. 0.0. 1/3. 1. 1.0. 2. 2.0. Float nan } do: [ :op1 |
+			{ 0. 0.0. 1/3. 1. 1.0. 2. 2.0. Float nan } do: [ :op2 |
+				op1 isNaN | op2 isNaN ifTrue: [
+					c _ [ op1 perform: sel with: op2 ] on: Error do: [ #error ].
+					self assert: (c isNumber not or: [c isNaN]) ]]]].! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 8/1/2019 18:39:54'!
+testNaNPropagationUnary
+	"Any operation should propagate NaN"
+	| s a c |
+	s _ Set new.
+	s addAll: Number selectors.
+	s addAll: Float selectors.
+	s addAll: BoxedFloat64 selectors.
+	s addAll: SmallFloat64 selectors.
+	s _ s select: [ :sel | sel numArgs = 0 ].
+	s removeAll: #(#asIEEE32BitWord #byteSize #hash #identityHash #mantissaBits #signBit #smoothStep #exponentBits #imaginary #exponent primTestExponent).
+	a _ s asArray sort.
+	a do: [ :sel |
+		c _ [ Float nan perform: sel ] on: Error do: [ #error ].
+		self assert: (c isNumber not or: [c isNaN]) ].! !
+
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'nice 3/14/2008 23:42'!
 testNaNisLiteral
 	self deny: Float nan isLiteral description: 'there is no literal representation of NaN'! !
@@ -4779,6 +4930,11 @@ testHash
 	a add: fraction1; add: fraction2.
 	self assert: a size = 2! !
 
+!FractionTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:20:34'!
+testIsType
+	self assert: ((1 / 2100) is: #Fraction).
+	self assert: ((1 / 2100) is: #Number).! !
+
 !FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 10/9/2018 16:12:18'!
 testRoundHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
@@ -5423,11 +5579,15 @@ testEven
 	self assert: (1073741824  even).
 	! !
 
-!IntegerTest methodsFor: 'tests - basic' stamp: 'sd 6/5/2005 08:45'!
+!IntegerTest methodsFor: 'tests - basic' stamp: 'jpb 8/2/2019 23:55:59'!
 testIsInteger
-
-	self assert: (0 isInteger).
-	! !
+  self assert: 0 isInteger.
+  self assert: (0 is: #Integer).
+	self assert: (1 is: #Integer).
+	self assert: (1 is: #Number).
+	
+	self assert: (10000 is: #Integer).
+	self assert: (10000 is: #Number).! !
 
 !IntegerTest methodsFor: 'tests - basic' stamp: 'md 4/15/2003 20:40'!
 testIsPowerOfTwo
@@ -7878,6 +8038,10 @@ testInvalidOperations
 	self should: [ DateAndTime tomorrow - Week current ] raise: Error.
 	self should: [ DateAndTime tomorrow - Date today ] raise: Error! !
 
+!DateAndTimeTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:33:37'!
+testIsDateAndTime
+	self assert: (DateAndTime now is: #DateAndTime).! !
+
 !DateAndTimeTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 19:19:21'!
 testLessDateAndTime
 
@@ -8059,6 +8223,10 @@ testSqueakInquiries
 	self assert: 
 		timewords = #('a second ago' '30 seconds ago' 'a minute ago' '2 minutes ago' 
 			'an hour ago' '2 hours ago' '16 hours ago' 'yesterday').! !
+
+!TimespanTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:42:40'!
+testIsTimespan
+	self assert: (Timespan current is: #Timespan).! !
 
 !WeekTest methodsFor: 'tests' stamp: 'jmv 5/13/2017 15:29:29'!
 testCreation
@@ -8927,6 +9095,11 @@ evaluate: aBlock forCombinationOf: aNumberOfValues
 	self evaluate: aBlock collectingValuesInto: (Array new: aNumberOfValues) at: aNumberOfValues 
 	! !
 
+!BooleanTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:13:00'!
+testIsBoolean
+	self assert: (true is: #Boolean).
+	self assert: (false is: #Boolean).! !
+
 !CharacterSetTest methodsFor: 'testing includes' stamp: 'HAW 6/12/2019 17:32:08'!
 testIncludesReturnsFalseForCharacterNotIncluded
 
@@ -8949,6 +9122,12 @@ testCaseConversion
 	"
 	self assert: ('año Comé tomá Camión' collect: [ :c | c asLowercase ]) = 'año comé tomá camión'.
 	self assert:('año Comé tomá Camión' collect: [ :c | c asUppercase ]) = 'AÑO COMÉ TOMÁ CAMIÓN'! !
+
+!CharacterTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:10:55'!
+testIsCharacter
+	self assert: ($a is: #Character).
+	self assert: ($X is: #Character).
+	self assert: (Character cr is: #Character).! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:05'!
 testSorting
@@ -9532,6 +9711,11 @@ testFirstNoBlankIndex
 	self assert: 2 equals: ' abc' firstNoBlankIndex.
 	self assert: 0 equals: '' firstNoBlankIndex ! !
 
+!StringTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:11:49'!
+testIsString
+	self assert: ('Hello World' is: #String).
+	self assert: ('' is: #String).! !
+
 !StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:10:05'!
 testLastNoBlankIndex
 
@@ -9675,6 +9859,21 @@ testInsertShiftingRightReplacesLastElementWhenInsertingAtLastIndex
 
 	self assert: (#(1 3 4 5) copy insert: 2 shiftingRightAt: 4) equals: #(1 3 4 2)! !
 
+!ArrayTest methodsFor: 'as yet unclassified' stamp: 'jpb 8/2/2019 22:59:46'!
+testIsArray
+	self assert: (#(1 2 3) is: #Array).
+	self assert: (#() is: #Array).! !
+
+!ArrayTest methodsFor: 'as yet unclassified' stamp: 'jpb 8/2/2019 23:09:00'!
+testIsCollection
+	self assert: (#(1 2 3) is: #Collection).
+	self assert: (#() is: #Collection).! !
+
+!FloatArray64Test methodsFor: 'Tests' stamp: 'jpb 8/2/2019 23:07:59'!
+testIsCollection
+	self assert: (#[1.0 2.0 3.141592 0.0] is: #Collection).
+	self assert: (#[-100.0 -100.0 -100.0 -200.0 ] is: #Collection).! !
+
 !FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:38:50'!
 testZeroArrayDividend
 
@@ -9791,6 +9990,11 @@ divideByScalarZero
 		divideBy: 0.0
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
+
+!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 8/5/2019 11:58:16'!
+testIsType
+	self assert: (#[1.2 2.4 3.6 ] is: #Collection).
+	self assert: (#[1.2 2.4 3.6] asFloatArray is: #FloatArray).! !
 
 !FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:31:37'!
 testZeroArrayDividend
@@ -10428,6 +10632,10 @@ testUnwindFromForeignProcess
 !ArrayLiteralTest methodsFor: 'running' stamp: 'avi 2/16/2004 21:09'!
 tearDown
 	self class removeSelector: #array! !
+
+!ArrayLiteralTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:05:08'!
+testIsArray
+	self assert: ({1. 2. 'hello'. #Number} is: #Array).! !
 
 !ArrayLiteralTest methodsFor: 'tests' stamp: 'avi 2/16/2004 21:08'!
 testReservedIdentifiers
@@ -14536,6 +14744,10 @@ testShouldNotTakeMoreThanPassesWhenClosureTakesLessThanTheLimit
 	self shouldntFail: [ self should: [] notTakeMoreThan: 1 milliSeconds ]
 		! !
 
+!TestCaseTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:47:26'!
+testIsTestCase
+	self assert: (TestCase new is: #TestCase).! !
+
 !TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:11:43'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
 
@@ -18541,6 +18753,23 @@ test31CanNotRenameFromKeywordOfOneParameterToBinary
 		raise: Error
 		withMessageText: (RenameSelector errorMessageForNewSelector: newSelector isNotOfSameTypeAs: oldSelector)! !
 
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/3/2019 09:02:58'!
+test32HierarchyScopeRenamesSelectorsFromSuperclassDefiningSelector
+	
+	| rename superclassToRefactor subclassToRefactor |
+	
+	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
+	subclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SubclassToRenameSelector subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
+
+	rename := RenameSelector from: oldSelector to: newSelector inHierarchyOf: classToRefactor.
+	rename apply.
+	
+	self assertWasRenamedInClassAndMeta: superclassToRefactor.
+	self assertWasRenamedInClassAndMeta: classToRefactor.
+	self assertWasRenamedInClassAndMeta: subclassToRefactor.
+	! !
+
 !RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 6/25/2017 21:53:44'!
 classToRefactorName
 
@@ -19197,6 +19426,10 @@ methodNodeIn: aClass named: aSelector
 
 	^ aClass compiledMethodAt: aSelector :: methodNode.! !
 
+!WriteStreamTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:49:13'!
+testIsStream
+	self assert: ((WriteStream on: '') is: #Stream).! !
+
 !WriteStreamTest methodsFor: 'tests' stamp: 'HAW 3/20/2019 07:27:06'!
 testNewLineTabWhenConditionIsFalseDoesNotPutANewLineTabInStream
 
@@ -19483,6 +19716,27 @@ assertTranscriptContentsAdded: expectedAddedString after: aBlock
 assertTranscriptContentsDoesNotChangeAfter: aBlock
 	
 	self assertTranscriptContentsAdded: '' after: aBlock! !
+
+!ColorTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:28:54'!
+testIsColor
+	self assert: (Color red is: #Color).
+	self assert: (Color random is: #Color).! !
+
+!RectangleTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:52:04'!
+testIsRectangle
+	self assert: (Rectangle new is: #Rectangle)! !
+
+!ColorFormTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:30:35'!
+testIsColorForm
+	self assert: (ColorForm new is: #ColorForm).! !
+
+!GrayFormTest methodsFor: 'as yet unclassified' stamp: 'jpb 8/2/2019 23:36:06'!
+testIsGrayForm
+	self assert: (GrayForm new is: #GrayForm)! !
+
+!WeakMessageSendTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:44:58'!
+testIsMessageSend
+	self assert: (WeakMessageSend new is: #MessageSend).! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
