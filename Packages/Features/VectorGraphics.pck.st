@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3826] on 14 July 2019 at 3:26:05 pm'!
+'From Cuis 5.0 [latest update: #3868] on 9 September 2019 at 9:33:29 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 81!
+!provides: 'VectorGraphics' 1 83!
 !requires: 'Color-Extras' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -4332,52 +4332,36 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 5/21/2019 10:47:47'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 9/9/2019 09:28:53'!
 formGlyphFor: aTTGlyph pixelSize: pixelSize
-	| toPixelsScale glyphOffsetFromFormLeft formWidth glyphOffsetFromFormTop formHeight scaledGlyphBoundsBottom scaledGlyphBoundsLeft scaledGlyphBoundsRight scaledGlyphBoundsTop leftPixelOffset unPixelDeMasParaAAjmvX unPixelDeMasParaAAjmvY offsetVerticalParaQueY0caigaEnHalfPixel topPixelOffset form canvas |
-	unPixelDeMasParaAAjmvX _ 1.
-	unPixelDeMasParaAAjmvY _ 1.
-	offsetVerticalParaQueY0caigaEnHalfPixel _ 0.5.
+	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas |
+
+	horizontalStrokesAtPixelCenter _ 0.5.
+	xtraSpaceForAntiAliasingAndRounding _ 2.
 	toPixelsScale _ pixelSize * 1.0 / self letterMTopSideBearing.
 
-	scaledGlyphBoundsLeft _ aTTGlyph boundsLeft * toPixelsScale.
-	scaledGlyphBoundsRight _ aTTGlyph boundsRight * toPixelsScale.
-	leftPixelOffset _ (scaledGlyphBoundsLeft - unPixelDeMasParaAAjmvX) floor. "If positive, pixels we save at the left. if negative, xtra pix needed"
-	"Offset desde el pixel mas a la izquierda del Form hasta el x=0.0 del glyph TrueType"
-	glyphOffsetFromFormLeft _ leftPixelOffset > 0
-		ifTrue: [ scaledGlyphBoundsLeft - leftPixelOffset ] "Draw glyph taking into account unneeded pixels shaved from the left"
-		ifFalse: [ leftPixelOffset ]. "Make glyph parts at the left of x=0 fint in the form: draw glyph this ammount to the right"
-	formWidth _ (scaledGlyphBoundsRight + unPixelDeMasParaAAjmvX - glyphOffsetFromFormLeft) ceiling.
-	"{scaledGlyphBoundsLeft. deltaXForDisplayingForm. glyphOffsetFromFormLeft} print."
-	
-	scaledGlyphBoundsTop _ aTTGlyph boundsBottom * toPixelsScale.
-	scaledGlyphBoundsBottom _ aTTGlyph boundsTop * toPixelsScale.
-	topPixelOffset _ (scaledGlyphBoundsTop + unPixelDeMasParaAAjmvY) ceiling. "Usually positive. Needed pixels above the baseline"
-	"Offset desde el pixel mas a la arriba del Form hasta el y=0.0 del glyph TrueType"
-	glyphOffsetFromFormTop _ topPixelOffset + offsetVerticalParaQueY0caigaEnHalfPixel.
-	"
-	glyphOffsetFromFormTop _ scaledGlyphBoundsTop - offsetVerticalParaQueY0caigaEnHalfPixel + unPixelDeMasParaAAjmvY.
-glyphOffsetFromFormTop _ glyphOffsetFromFormTop ceiling.
-	topPixelOffset _ glyphOffsetFromFormTop rounded."
-	formHeight _ (scaledGlyphBoundsBottom negated + unPixelDeMasParaAAjmvY + glyphOffsetFromFormTop) ceiling.
-	"
-	{scaledGlyphBoundsLeft. scaledGlyphBoundsRight. scaledGlyphBoundsTop. scaledGlyphBoundsBottom} print.
-	{deltaXForDisplayingForm. glyphOffsetFromFormLeft. formWidth. deltaYForDisplayingForm. glyphOffsetFromFormTop. formHeight } print.
-	"
+	"If positive, pixels we save at the left. if negative, xtra pix needed"
+	leftPixelOffset _ (aTTGlyph boundsLeft * toPixelsScale - xtraSpaceForAntiAliasingAndRounding) floor.
+	formWidth _ (aTTGlyph boundsRight - aTTGlyph boundsLeft) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*2).
+
+	"Usually positive. Needed pixels above the baseline"
+	topPixelOffset _ (aTTGlyph boundsBottom * toPixelsScale + xtraSpaceForAntiAliasingAndRounding) ceiling.
+	formHeight _ (aTTGlyph boundsBottom - aTTGlyph boundsTop) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*3).
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
-	
 	canvas _ VectorCanvas onForm: form.
-	canvas engine geometryTransformation: (AffineTransformation withRadians: 0 scale: toPixelsScale 
-		position: glyphOffsetFromFormLeft negated@glyphOffsetFromFormTop) withYAxisNegated.
+	canvas engine geometryTransformation: (AffineTransformation
+		withRadians: 0 scale: toPixelsScale 
+		position: leftPixelOffset negated@(topPixelOffset - horizontalStrokesAtPixelCenter))
+			withYAxisNegated.
 	canvas fillColor: Color black do: [
 		aTTGlyph drawGlyphOn: canvas ].
 	^FormGlyph
 		form: form
 		leftOffset: leftPixelOffset
 		topOffset: topPixelOffset
-		advanceWidth: (aTTGlyph advanceWidth * toPixelsScale)"ceiling" "Convertir a entero puede ayudar a que se vea mejor en BitBlt, pero el layout es distinto que en VectorGraphics..."! !
+		advanceWidth: (aTTGlyph advanceWidth * toPixelsScale)! !
 
 !TTFontDescription class methodsFor: 'instance creation' stamp: 'jmv 5/10/2019 09:42:44'!
 read: aDirectoryEntry
