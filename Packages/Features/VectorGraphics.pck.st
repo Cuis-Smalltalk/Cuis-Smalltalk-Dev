@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3868] on 9 September 2019 at 9:33:29 am'!
+'From Cuis 5.0 [latest update: #3869] on 9 September 2019 at 10:24:41 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 83!
+!provides: 'VectorGraphics' 1 84!
 !requires: 'Color-Extras' 1 nil nil!
 !requires: 'Collections-CompactArrays' 1 2 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -4332,12 +4332,12 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 9/9/2019 09:28:53'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 9/9/2019 10:21:19'!
 formGlyphFor: aTTGlyph pixelSize: pixelSize
 	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas |
 
 	horizontalStrokesAtPixelCenter _ 0.5.
-	xtraSpaceForAntiAliasingAndRounding _ 2.
+	xtraSpaceForAntiAliasingAndRounding _ 3.
 	toPixelsScale _ pixelSize * 1.0 / self letterMTopSideBearing.
 
 	"If positive, pixels we save at the left. if negative, xtra pix needed"
@@ -4346,7 +4346,7 @@ formGlyphFor: aTTGlyph pixelSize: pixelSize
 
 	"Usually positive. Needed pixels above the baseline"
 	topPixelOffset _ (aTTGlyph boundsBottom * toPixelsScale + xtraSpaceForAntiAliasingAndRounding) ceiling.
-	formHeight _ (aTTGlyph boundsBottom - aTTGlyph boundsTop) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*3).
+	formHeight _ (aTTGlyph boundsBottom - aTTGlyph boundsTop) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*2).
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
