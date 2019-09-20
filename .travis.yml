@@ -1,0 +1,16 @@
+language: minimal
+
+git:
+  depth: 1
+
+os:
+  - linux
+  - osx
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then .ContinuousIntegrationScripts/macos.sh ; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then .ContinuousIntegrationScripts/linux.sh ; fi
+
+script:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then .ContinuousIntegrationScripts/runTestsLinux.sh ; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then .ContinuousIntegrationScripts/runTestsmacos.sh ; fi
