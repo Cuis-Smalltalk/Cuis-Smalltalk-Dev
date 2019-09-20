@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3835] on 5 August 2019 at 12:00:23 pm'!
-'Description Hierarchy Scope fix tests. #highegstClassImplementing:ifNone: tests'!
-!provides: 'BaseImageTests' 1 172!
+'From Cuis 5.0 [latest update: #3866] on 20 September 2019 at 12:00:23 pm'!
+'Tests for the Base Image'!
+!provides: 'BaseImageTests' 1 173!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -9120,8 +9120,8 @@ testCaseConversion
 	"
 	self new testCaseConversion
 	"
-	self assert: ('aÒo ComÈ tom· CamiÛn' collect: [ :c | c asLowercase ]) = 'aÒo comÈ tom· camiÛn'.
-	self assert:('aÒo ComÈ tom· CamiÛn' collect: [ :c | c asUppercase ]) = 'A—O COM… TOM¡ CAMI”N'! !
+	self assert: ('a√±o Com√© tom√° Cami√≥n' collect: [ :c | c asLowercase ]) = 'a√±o com√© tom√° cami√≥n'.
+	self assert:('a√±o Com√© tom√° Cami√≥n' collect: [ :c | c asUppercase ]) = 'A√ëO COM√â TOM√Å CAMI√ìN'! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:10:55'!
 testIsCharacter
@@ -9134,14 +9134,14 @@ testSorting
 	"
 	self new testSorting
 	"
-	self assert: $a < $·.
-	self deny: $a < $¡.
-	self assert: $A < $·.
-	self assert: $A < $¡.
-	self assert: $· < $b.
-	self deny: $· < $B.
-	self assert: $¡ < $b.
-	self assert: $¡ < $B.! !
+	self assert: $a < $√°.
+	self deny: $a < $√Å.
+	self assert: $A < $√°.
+	self assert: $A < $√Å.
+	self assert: $√° < $b.
+	self deny: $√° < $B.
+	self assert: $√Å < $b.
+	self assert: $√Å < $B.! !
 
 !CharacterTest methodsFor: 'testing' stamp: 'jmv 10/6/2010 22:10'!
 testTestingMethods
@@ -9149,16 +9149,16 @@ testTestingMethods
 	self new testTestingMethods
 	"
 	self assert:
-		('aÒo ComÈ tom· CamiÛn' allSatisfy: [ :c |
+		('a√±o Com√© tom√° Cami√≥n' allSatisfy: [ :c |
 			c = $  or: [ c isLetter ]]).
 	self assert:
-		('aÒo comÈ tom· camiÛn' allSatisfy: [ :c |
+		('a√±o com√© tom√° cami√≥n' allSatisfy: [ :c |
 			c = $  or: [ c isLowercase ]]).
 	self assert:
-		('A—O COM… TOM¡ CAMI”N' allSatisfy: [ :c |
+		('A√ëO COM√â TOM√Å CAMI√ìN' allSatisfy: [ :c |
 			c = $  or: [ c isUppercase ]]).
 	self assert:
-		('Aa¿‡¡·¬‚√„ƒ‰≈ÂEe»Ë…È ÍÀÎIiÃÏÕÌŒÓœÔOo“Ú”Û‘Ù’ı÷ˆUuŸ˘⁄˙€˚‹¸' allSatisfy: [ :c |
+		('Aa√Ä√†√Å√°√Ç√¢√É√£√Ñ√§√Ö√•Ee√à√®√â√©√ä√™√ã√´Ii√å√¨√ç√≠√é√Æ√è√ØOo√í√≤√ì√≥√î√¥√ï√µ√ñ√∂Uu√ô√π√ö√∫√õ√ª√ú√º' allSatisfy: [ :c |
 			c isVowel ]).! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
@@ -9181,7 +9181,7 @@ testSomeLatinCharsFromUtf8
 	string _ String streamContents: [ :strm |
 		[bytes atEnd ] whileFalse: [
 			strm nextPut: (Character codePoint: (Character nextUnicodeCodePointFromUtf8: bytes )) ]].
-	self assert: string = '·ÂÊÒ∆•¸'! !
+	self assert: string = '√°√•√¶√±√Ü¬•√º'! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
 testSomeLatinCharsToUtf8
@@ -9189,7 +9189,7 @@ testSomeLatinCharsToUtf8
 	CharacterTest new testSomeLatinCharsToUtf8
 	"
 	| characters bytes |
-	characters _ '·ÂÊÒ∆•¸' readStream.
+	characters _ '√°√•√¶√±√Ü¬•√º' readStream.
 	bytes _ ByteArray streamContents: [ :strm |
 		[ characters atEnd ] whileFalse: [
 			Character
@@ -9564,7 +9564,7 @@ testAsUtf8
 	"
 	 StringTest new testAsUtf8
 	"
-	self assert: 'A¢§' asUtf8 hex = '41C2A2E282AC'! !
+	self assert: 'A¬¢¬§' asUtf8 hex = '41C2A2E282AC'! !
 
 !StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 6/10/2019 09:23:03'!
 testAsUtf8WithNCRs
@@ -9615,8 +9615,8 @@ testCaseConversion
 	"
 	self new testCaseConversion
 	"
-	self assert: ('aÒo ComÈ tom· CamiÛn' asLowercase) = 'aÒo comÈ tom· camiÛn'.
-	self assert: ('aÒo ComÈ tom· CamiÛn' asUppercase) = 'A—O COM… TOM¡ CAMI”N'! !
+	self assert: ('a√±o Com√© tom√° Cami√≥n' asLowercase) = 'a√±o com√© tom√° cami√≥n'.
+	self assert: ('a√±o Com√© tom√° Cami√≥n' asUppercase) = 'A√ëO COM√â TOM√Å CAMI√ìN'! !
 
 !StringTest methodsFor: 'testing' stamp: 'jmv 9/1/2009 14:12'!
 testEncompassParagraph1
@@ -9755,32 +9755,32 @@ testSorting
 self new testSorting
 "
 
-	self assert: 'a' < '·'.
-	self assert: ('a' < '¡') not.
-	self assert: 'A' < '·'.
-	self assert: 'A' < '¡'.
-	self assert: '·' < 'b'.
-	self assert: ('·' < 'B') not.
-	self assert: '¡' < 'b'.
-	self assert: '¡' < 'B'.
+	self assert: 'a' < '√°'.
+	self assert: ('a' < '√Å') not.
+	self assert: 'A' < '√°'.
+	self assert: 'A' < '√Å'.
+	self assert: '√°' < 'b'.
+	self assert: ('√°' < 'B') not.
+	self assert: '√Å' < 'b'.
+	self assert: '√Å' < 'B'.
 
-	self assert: ('a' caseSensitiveLessOrEqual: '·').
-	self deny: ('a' caseSensitiveLessOrEqual: '¡').
-	self assert: ('A' caseSensitiveLessOrEqual: '·').
-	self assert: ('A' caseSensitiveLessOrEqual: '¡').
-	self assert: ('·' caseSensitiveLessOrEqual: 'b').
-	self deny: ('·' caseSensitiveLessOrEqual: 'B').
-	self assert: ('¡' caseSensitiveLessOrEqual: 'b').
-	self assert: ('¡' caseSensitiveLessOrEqual: 'B').
+	self assert: ('a' caseSensitiveLessOrEqual: '√°').
+	self deny: ('a' caseSensitiveLessOrEqual: '√Å').
+	self assert: ('A' caseSensitiveLessOrEqual: '√°').
+	self assert: ('A' caseSensitiveLessOrEqual: '√Å').
+	self assert: ('√°' caseSensitiveLessOrEqual: 'b').
+	self deny: ('√°' caseSensitiveLessOrEqual: 'B').
+	self assert: ('√Å' caseSensitiveLessOrEqual: 'b').
+	self assert: ('√Å' caseSensitiveLessOrEqual: 'B').
 
-	self assert: ('a' caseInsensitiveLessOrEqual: '·').
-	self assert: ('a' caseInsensitiveLessOrEqual: '¡').
-	self assert: ('A' caseInsensitiveLessOrEqual: '·').
-	self assert: ('A' caseInsensitiveLessOrEqual: '¡').
-	self assert: ('·' caseInsensitiveLessOrEqual: 'b').
-	self assert: ('·' caseInsensitiveLessOrEqual: 'B').
-	self assert: ('¡' caseInsensitiveLessOrEqual: 'b').
-	self assert: ('¡' caseInsensitiveLessOrEqual: 'B').! !
+	self assert: ('a' caseInsensitiveLessOrEqual: '√°').
+	self assert: ('a' caseInsensitiveLessOrEqual: '√Å').
+	self assert: ('A' caseInsensitiveLessOrEqual: '√°').
+	self assert: ('A' caseInsensitiveLessOrEqual: '√Å').
+	self assert: ('√°' caseInsensitiveLessOrEqual: 'b').
+	self assert: ('√°' caseInsensitiveLessOrEqual: 'B').
+	self assert: ('√Å' caseInsensitiveLessOrEqual: 'b').
+	self assert: ('√Å' caseInsensitiveLessOrEqual: 'B').! !
 
 !StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:00:28'!
 testWithBlanksTrimmed
@@ -12949,12 +12949,12 @@ testPrefixIteration
 	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
 
-	subject add: 'Òand˙'.
-	controlGroup add: 'Òand˙'.
-	subject add: 'Òandues'.
-	controlGroup add: 'Òandues'.
-	subject add: '—AND⁄SES'.
-	controlGroup add: '—AND⁄SES'.
+	subject add: '√±and√∫'.
+	controlGroup add: '√±and√∫'.
+	subject add: '√±andues'.
+	controlGroup add: '√±andues'.
+	subject add: '√ëAND√öSES'.
+	controlGroup add: '√ëAND√öSES'.
 	
 	self assert: subject prefixSelection: '' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'c' isEquivalentToSet: controlGroup.
@@ -12962,12 +12962,12 @@ testPrefixIteration
 	self assert: subject prefixSelection: 'car' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'cat' isEquivalentToSet: controlGroup.
 	self assert: subject prefixSelection: 'cart' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Ò' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Òan' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Òandu' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: 'Òand˙' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: '—' isEquivalentToSet: controlGroup.
-	self assert: subject prefixSelection: '—AND⁄' isEquivalentToSet: controlGroup.! !
+	self assert: subject prefixSelection: '√±' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√±an' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√±andu' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√±and√∫' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√ë' isEquivalentToSet: controlGroup.
+	self assert: subject prefixSelection: '√ëAND√ö' isEquivalentToSet: controlGroup.! !
 
 !TrieTest methodsFor: 'testing' stamp: 'jmv 6/22/2011 12:50'!
 testPrefixIteration2
@@ -13127,16 +13127,16 @@ testSetProtocol
 	controlGroup add: 'cart'.
 	self assert: subject isEquivalentToSet: controlGroup.
 
-	subject add: 'Òand˙'.
-	controlGroup add: 'Òand˙'.
+	subject add: '√±and√∫'.
+	controlGroup add: '√±and√∫'.
 	self assert: subject isEquivalentToSet: controlGroup.
 
-	subject add: 'Òandu'.
-	controlGroup add: 'Òandu'.
+	subject add: '√±andu'.
+	controlGroup add: '√±andu'.
 	self assert: subject isEquivalentToSet: controlGroup.
 
-	subject add: '—AND⁄'.
-	controlGroup add: '—AND⁄'.
+	subject add: '√ëAND√ö'.
+	controlGroup add: '√ëAND√ö'.
 	self assert: subject isEquivalentToSet: controlGroup.! !
 
 !ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
@@ -14493,6 +14493,10 @@ testWidth
 	
 	self should: [ taskbar morphWidth = UISupervisor ui morphWidth ]! !
 
+!TestCaseTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:47:26'!
+testIsTestCase
+	self assert: (TestCase new is: #TestCase).! !
+
 !TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 07:31:39'!
 testShouldFailErrorsWhenNoErrorIsSignaled
 
@@ -15068,7 +15072,7 @@ test3ReadUtf8
      | content byteArray |
 	byteArray _ self class fileName asFileEntry binaryContents.
 	content := String fromUtf8: byteArray.
-	self assert: content = 'abc ‡Ë§ &#945;&#946;&#947;'! !
+	self assert: content = 'abc √†√®¬§ &#945;&#946;&#947;'! !
 
 !UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:06'!
 test4BackConversion
