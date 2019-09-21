@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3835] on 5 August 2019 at 12:00:23 pm'!
-'Description Hierarchy Scope fix tests. #highegstClassImplementing:ifNone: tests'!
-!provides: 'BaseImageTests' 1 172!
+'From Cuis 5.0 [latest update: #3883] on 20 September 2019 at 8:51:20 am'!
+'Description '!
+!provides: 'BaseImageTests' 1 174!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -14493,6 +14493,10 @@ testWidth
 	
 	self should: [ taskbar morphWidth = UISupervisor ui morphWidth ]! !
 
+!TestCaseTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:47:26'!
+testIsTestCase
+	self assert: (TestCase new is: #TestCase).! !
+
 !TestCaseTest methodsFor: 'exception testing tests' stamp: 'HAW 3/17/2019 07:31:39'!
 testShouldFailErrorsWhenNoErrorIsSignaled
 
@@ -14743,10 +14747,6 @@ testShouldNotTakeMoreThanPassesWhenClosureTakesLessThanTheLimit
 
 	self shouldntFail: [ self should: [] notTakeMoreThan: 1 milliSeconds ]
 		! !
-
-!TestCaseTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:47:26'!
-testIsTestCase
-	self assert: (TestCase new is: #TestCase).! !
 
 !TestSuiteTest methodsFor: 'assertions' stamp: 'HAW 2/10/2017 15:11:43'!
 assert: expectedTestSuite hasSameTestsAs: resultTestSuite
