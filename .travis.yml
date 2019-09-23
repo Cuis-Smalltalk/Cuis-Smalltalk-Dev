@@ -8,9 +8,8 @@ os:
   - osx
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then .ContinuousIntegrationScripts/macos.sh ; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then .ContinuousIntegrationScripts/linux.sh ; fi
+  - .ContinuousIntegrationScripts/installVm.sh
+  - .ContinuousIntegrationScripts/installUpdates.sh
 
 script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then .ContinuousIntegrationScripts/runTestsLinux.sh ; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then .ContinuousIntegrationScripts/runTestsmacos.sh ; fi
+  - .ContinuousIntegrationScripts/runTests.sh
