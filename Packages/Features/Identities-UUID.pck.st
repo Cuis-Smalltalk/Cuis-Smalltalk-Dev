@@ -1,7 +1,11 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2781] on 31 May 2016 at 12:06:44.61949 pm'!
+'From Cuis 5.0 [latest update: #3890] on 29 September 2019 at 1:36:11 pm'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Identities-UUID' 1 7!
+!provides: 'Identities-UUID' 1 8!
 !requires: 'Sound' 1 3 nil!
+SystemOrganization addCategory: #'Identities-UUID'!
+SystemOrganization addCategory: #'Identities-UUID-Tests'!
+
+
 !classDefinition: #UUID category: #'Identities-UUID'!
 ByteArray variableByteSubclass: #UUID
 	instanceVariableNames: ''
@@ -56,6 +60,16 @@ This class generates a pseudo-random UUID
 by John M McIntosh johnmci@smalltalkconsulting.com
 
 See http://www.webdav.org/specs/draft-leach-uuids-guids-01.txt!
+
+!UUID methodsFor: 'printing' stamp: 'JMM 10/9/2001 14:46'!
+printOn: aStream
+	aStream nextPutAll: 'an UUID('.
+	self asString printOn: aStream.
+	aStream nextPutAll: ')'! !
+
+!UUIDGenerator class methodsFor: 'class initialization' stamp: 'CdG 11/19/2002 21:07'!
+startUp
+	Default := nil! !
 
 !UUID methodsFor: 'comparing' stamp: 'jmv 6/17/2015 18:03'!
 < aMagnitude 
@@ -125,6 +139,15 @@ createStringStartingAt: index for: bytes
 		results nextPutAll: candidate].
 	^data asLowercase! !
 
+!UUID methodsFor: 'converting' stamp: 'ar 2/8/2004 12:16'!
+printHexAt: index to: aStream
+	| map v |
+	map := '0123456789abcdef'.
+	v := self at: index.
+	aStream nextPut: (map at: (v bitShift: -4) + 1). 
+	aStream nextPut: (map at: (v bitAnd: 15) + 1).
+! !
+
 !UUID methodsFor: 'initalize-release' stamp: 'ar 2/3/2002 19:42'!
 initialize
 	self primMakeUUID.! !
@@ -139,21 +162,6 @@ primMakeUUID
 	<primitive: 'primitiveMakeUUID' module: 'UUIDPlugin'>
 	UUIDGenerator default generateBytes: self forVersion: 4.! !
 
-!UUID methodsFor: 'converting' stamp: 'ar 2/8/2004 12:16'!
-printHexAt: index to: aStream
-	| map v |
-	map := '0123456789abcdef'.
-	v := self at: index.
-	aStream nextPut: (map at: (v bitShift: -4) + 1). 
-	aStream nextPut: (map at: (v bitAnd: 15) + 1).
-! !
-
-!UUID methodsFor: 'printing' stamp: 'JMM 10/9/2001 14:46'!
-printOn: aStream
-	aStream nextPutAll: 'an UUID('.
-	self asString printOn: aStream.
-	aStream nextPutAll: ')'! !
-
 !UUID methodsFor: 'printing' stamp: 'ar 2/8/2004 12:16'!
 printString
 	^self asString! !
@@ -166,15 +174,15 @@ fromString: aString
 	object asUUID: aString.
 	^object! !
 
-!UUID class methodsFor: 'instance creation' stamp: 'nk 7/30/2004 21:49'!
-new
-	^(self new: 16)! !
-
 !UUID class methodsFor: 'instance creation' stamp: 'nk 6/28/2004 16:10'!
 nilUUID
 	"Must call basicNew: here because I have a non-trivial initialize method."
 
 	^self basicNew: 16! !
+
+!UUID class methodsFor: 'instance creation' stamp: 'jmv 9/29/2019 12:55:03'!
+numElements
+	^16! !
 
 !UUIDPrimitivesTest methodsFor: 'tests' stamp: 'JMM 11/22/2001 17:14'!
 testCreation
@@ -326,6 +334,34 @@ generateFieldsVersion4
 	node := self generateRandomBitsOfLength: 48.
 	! !
 
+!UUIDGenerator methodsFor: 'instance creation' stamp: 'JMM 11/21/2001 14:30'!
+initialize
+	self setupRandom.
+	semaphoreForGenerator := Semaphore forMutualExclusion.
+	! !
+
+!UUIDGenerator methodsFor: 'instance creation' stamp: 'JMM 11/22/2001 23:12'!
+placeFields: aByteArray
+
+	aByteArray at: 1 put: ((timeLow bitShift: -24) bitAnd: 16rFF).
+	aByteArray at: 2 put: ((timeLow bitShift: -16) bitAnd: 16rFF).
+	aByteArray at: 3 put: ((timeLow bitShift: -8) bitAnd: 16rFF).
+	aByteArray at: 4 put: (timeLow bitAnd: 16rFF).
+	aByteArray at: 5 put: ((timeMid bitShift: -8) bitAnd: 16rFF).
+	aByteArray at: 6 put: (timeMid bitAnd: 16rFF).
+	aByteArray at: 7 put: ((timeHiAndVersion bitShift: -8) bitAnd: 16rFF).
+	aByteArray at: 8 put: (timeHiAndVersion bitAnd: 16rFF).
+	aByteArray at: 9 put: clockSeqHiAndReserved.
+	aByteArray at: 10 put: clockSeqLow.
+	0 to: 5 do: [:i |
+		aByteArray at: 11 + i put: ((node bitShift: (-8*i)) bitAnd: 16rFF)]
+! !
+
+!UUIDGenerator methodsFor: 'instance creation' stamp: 'CdG 11/19/2002 21:30'!
+setupRandom
+	randomCounter := 0.
+	randomGenerator := Random seed: self makeSeed.! !
+
 !UUIDGenerator methodsFor: 'generator' stamp: 'nice 12/26/2009 22:20'!
 generateOneOrZero
 	^self semaphoreForGenerator
@@ -347,12 +383,6 @@ generateRandomBitsOfLength: aNumberOfBits
 	(aNumberOfBits - 1)  timesRepeat:
 		[target := (target bitShift: 1)  bitOr: self generateOneOrZero].
 	^target! !
-
-!UUIDGenerator methodsFor: 'instance creation' stamp: 'JMM 11/21/2001 14:30'!
-initialize
-	self setupRandom.
-	semaphoreForGenerator := Semaphore forMutualExclusion.
-	! !
 
 !UUIDGenerator methodsFor: 'random seed' stamp: 'jmv 5/19/2015 23:34'!
 makeSeed
@@ -392,23 +422,6 @@ makeUnixSeed
 		on: Error
 		do: [ nil ]! !
 
-!UUIDGenerator methodsFor: 'instance creation' stamp: 'JMM 11/22/2001 23:12'!
-placeFields: aByteArray
-
-	aByteArray at: 1 put: ((timeLow bitShift: -24) bitAnd: 16rFF).
-	aByteArray at: 2 put: ((timeLow bitShift: -16) bitAnd: 16rFF).
-	aByteArray at: 3 put: ((timeLow bitShift: -8) bitAnd: 16rFF).
-	aByteArray at: 4 put: (timeLow bitAnd: 16rFF).
-	aByteArray at: 5 put: ((timeMid bitShift: -8) bitAnd: 16rFF).
-	aByteArray at: 6 put: (timeMid bitAnd: 16rFF).
-	aByteArray at: 7 put: ((timeHiAndVersion bitShift: -8) bitAnd: 16rFF).
-	aByteArray at: 8 put: (timeHiAndVersion bitAnd: 16rFF).
-	aByteArray at: 9 put: clockSeqHiAndReserved.
-	aByteArray at: 10 put: clockSeqLow.
-	0 to: 5 do: [:i |
-		aByteArray at: 11 + i put: ((node bitShift: (-8*i)) bitAnd: 16rFF)]
-! !
-
 !UUIDGenerator methodsFor: 'accessors and mutators' stamp: 'JMM 11/21/2001 14:28'!
 randomCounter
 	^randomCounter! !
@@ -437,11 +450,6 @@ semaphoreForGenerator: aSema
 	semaphoreForGenerator := aSema
 ! !
 
-!UUIDGenerator methodsFor: 'instance creation' stamp: 'CdG 11/19/2002 21:30'!
-setupRandom
-	randomCounter := 0.
-	randomGenerator := Random seed: self makeSeed.! !
-
 !UUIDGenerator class methodsFor: 'instance creation' stamp: 'JMM 11/22/2001 13:41'!
 default
 	Default ifNil: [self generateDefault].
@@ -454,8 +462,4 @@ generateDefault
 !UUIDGenerator class methodsFor: 'class initialization' stamp: 'CdG 11/19/2002 21:06'!
 initialize
 	Smalltalk addToStartUpList: self after: nil.! !
-
-!UUIDGenerator class methodsFor: 'class initialization' stamp: 'CdG 11/19/2002 21:07'!
-startUp
-	Default := nil! !
 UUIDGenerator initialize!

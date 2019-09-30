@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3883] on 20 September 2019 at 8:51:20 am'!
+'From Cuis 5.0 [latest update: #3888] on 29 September 2019 at 12:22:38 pm'!
 'Description '!
-!provides: 'BaseImageTests' 1 174!
+!provides: 'BaseImageTests' 1 175!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -621,6 +621,16 @@ TestCase subclass: #ClosureCompilerTest
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'ClosureCompilerTest class' category: #'BaseImageTests-Compiler'!
 ClosureCompilerTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ClosureSerializationTest category: #'BaseImageTests-Compiler'!
+TestCase subclass: #ClosureSerializationTest
+	instanceVariableNames: 'ivar'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'ClosureSerializationTest class' category: #'BaseImageTests-Compiler'!
+ClosureSerializationTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ClosureTests category: #'BaseImageTests-Compiler'!
@@ -11482,6 +11492,273 @@ methodWithVariousTemps
 	"Parser new
 		parse: (self class sourceCodeAt: #methodWithVariousTemps)
 		class: self class"! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample01
+	| blockClosure materialized |
+	blockClosure _ self bc01.
+	materialized _ blockClosure veryDeepCopy.
+	self assert: blockClosure value = materialized value.! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample02
+	| blockClosure materialized |
+	blockClosure _ self bc02.
+	materialized _ blockClosure veryDeepCopy.
+	self assert: blockClosure value = materialized value.! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample03
+	| blockClosure materialized |
+	blockClosure _ self bc03.
+	materialized _ blockClosure veryDeepCopy.
+	self assert: blockClosure value = materialized value.
+	self assert: blockClosure value = materialized value.
+	self assert: blockClosure value = materialized value.! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample04
+	| blockClosure materialized |
+	blockClosure _ self bc04.
+	materialized _ blockClosure veryDeepCopy.
+	self assert: blockClosure value = materialized value.! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample05
+	| blockClosure materialized |
+	blockClosure _ self bc05.
+	materialized _ blockClosure veryDeepCopy.
+	self assert: blockClosure value = materialized value.
+	self assert: blockClosure value = materialized value.
+	self assert: blockClosure value = materialized value.! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample06
+	| blockClosures materialized firstRun |
+
+	blockClosures _ self bc06.
+	firstRun _ blockClosures second value.
+	"If sibling closures are serialized separately, their relationship is lost in the copies."
+	materialized _ blockClosures collect: [ :each | each veryDeepCopy ].
+	self assert: blockClosures first value = materialized first value.
+	self assert: blockClosures second value = materialized second value.
+	self assert: blockClosures third value = materialized third value.
+	self assert: blockClosures first value = materialized first value.
+	self assert: firstRun = materialized second value.
+	self deny: blockClosures second value = materialized second value.
+
+	blockClosures _ self bc06.
+	"If sibling closures are serialized together, their relationship is kept in the copies."
+	materialized _ blockClosures veryDeepCopy.
+	self assert: blockClosures first value = materialized first value.
+	self assert: blockClosures second value = materialized second value.
+	self assert: blockClosures third value = materialized third value.
+	self assert: blockClosures first value = materialized first value.
+	self deny: firstRun = materialized second value.
+	self assert: blockClosures second value = materialized second value.! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample07
+	| blockClosures materialized |
+
+	blockClosures _ self bc07.
+	"If sibling closures are serialized separately, their relationship is lost in the copies."
+	materialized _ blockClosures collect: [ :each | each veryDeepCopy ].
+	self assert: blockClosures first value = materialized first value.
+	self assert: blockClosures second value = materialized second value.
+	self deny: blockClosures third value = materialized third value.
+	self assert: blockClosures second value = materialized second value.
+	self deny: blockClosures first value = materialized first value.
+	self deny: blockClosures third value = materialized third value.
+	self deny: blockClosures first value = materialized first value.
+
+	blockClosures _ self bc07.
+	"If sibling closures are serialized together, their relationship is kept in the copies."
+	materialized _ blockClosures veryDeepCopy.
+	self assert: blockClosures first value = materialized first value.
+	self assert: blockClosures second value = materialized second value.
+	self assert: blockClosures third value = materialized third value.
+	self assert: blockClosures second value = materialized second value.
+	self assert: blockClosures first value = materialized first value.
+	self assert: blockClosures third value = materialized third value.
+	self assert: blockClosures first value = materialized first value.! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample08
+	| blockClosures materialized |
+
+	blockClosures _ self bc08.
+	"If sibling closures are serialized separately, their relationship is lost in the copies."
+	materialized _ blockClosures collect: [ :each | each veryDeepCopy ].
+	self assert: blockClosures first value = materialized first value.
+	self assert: (blockClosures second value: 7) = (materialized second value: 7).
+	self assert: blockClosures third value = materialized third value.
+	self deny: (blockClosures second value: 7) = (materialized second value: 7).
+	self deny: (blockClosures fourth value: 2 value: 3) = (materialized fourth value: 2 value: 3).
+
+	blockClosures _ self bc08.
+	"If sibling closures are serialized together, their relationship is kept in the copies."
+	materialized _ blockClosures veryDeepCopy.
+	self assert: blockClosures first value = materialized first value.
+	self assert: (blockClosures second value: 7) = (materialized second value: 7).
+	self assert: blockClosures third value = materialized third value.
+	self assert: (blockClosures second value: 7) = (materialized second value: 7).
+	self assert: (blockClosures fourth value: 2 value: 3) = (materialized fourth value: 2 value: 3).! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample09
+	| blockClosures materialized |
+
+	blockClosures _ self bc09.
+	materialized _ blockClosures collect: [ :each | each veryDeepCopy ].
+
+	self assert: (blockClosures first value: $c) = (materialized first value: $c).
+	self assert: (blockClosures second value: $d value: #e) = (materialized second value: $d value: #e).
+	self assert: (blockClosures third value: $d value: $e) = (materialized third value: $d value: $e).! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample10
+	| blockClosure1 blockClosure2 blockClosure3 value materialized1 materialized2a materialized2b materialized3a materialized3b materialized3c |
+
+	blockClosure1 _ self bc10.
+	blockClosure2 _ blockClosure1 withFirstArg: 1.
+	blockClosure3 _ (blockClosure1 withFirstArg: 1) withFirstArg: 2.
+	value _ blockClosure1 value: 1 value: 2.
+	self assert: (blockClosure2 value: 2) = value.
+	self assert: blockClosure3 value = value.
+
+	materialized1 _ blockClosure1 veryDeepCopy.
+	materialized2a _ materialized1 withFirstArg: 1.
+	materialized2b _ blockClosure2 veryDeepCopy.
+	materialized3a _ (materialized1 withFirstArg: 1) withFirstArg: 2.
+	materialized3b _ materialized2b withFirstArg: 2.
+	materialized3c _ blockClosure3 veryDeepCopy.
+	self assert: (materialized1 value: 1 value: 2) = value.
+	self assert: (materialized2a value: 2) = value.
+	self assert: (materialized2b value: 2) = value.
+	self assert: materialized3a value = value.
+	self assert: materialized3b value = value.
+	self assert: materialized3c value = value.
+! !
+
+!ClosureSerializationTest methodsFor: 'testing' stamp: 'jmv 9/26/2019 23:19:41'!
+testSample11
+	| blockClosures materialized |
+
+	blockClosures _ self bc11.
+	"If sibling closures are serialized separately, their relationship is lost in the copies."
+	materialized _ blockClosures collect: [ :each | each veryDeepCopy ].
+	self assert: blockClosures first value = materialized first value.
+	self assert: blockClosures second value = materialized second value.
+	self deny: blockClosures first value = materialized first value.
+	self assert: blockClosures second value = materialized second value.
+	self deny: blockClosures first value = materialized first value.
+
+	blockClosures _ self bc11.
+	"If sibling closures are serialized together, their relationship is kept in the copies."
+	materialized _ blockClosures veryDeepCopy.
+	self assert: blockClosures first value = materialized first value.
+	self assert: blockClosures second value = materialized second value.
+	self assert: blockClosures first value = materialized first value.
+	self assert: blockClosures second value = materialized second value.
+	self assert: blockClosures first value = materialized first value.! !
+
+!ClosureSerializationTest methodsFor: 'aux' stamp: 'jmv 9/26/2019 23:19:41'!
+gimme5
+	^1+4! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc01
+	^[ self gimme5 ]! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc02
+	^[ ivar + 4 ]! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc03
+	^[ ivar _ ivar + 3 ]! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc04
+	| t |
+	t _ self gimme5.
+	^[ t * 2 ]! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc05
+	| t |
+	t _ self gimme5.
+	^[ t _ t * 2 ]! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc06
+	| u t |
+	u _ self gimme5 + 2.
+	t _ self gimme5.
+	^{[ u * 2 ]. [ t * 2 ].[t _ t*3]}.! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc07
+	| a b c d e f g |
+	a _ self gimme5 + 1.
+	b _ self gimme5 + 2.
+	c _ self gimme5 + 3.
+	d _ self gimme5 + 4.
+	e _ self gimme5 + 5.
+	f _ self gimme5 + 6.
+	g _ self gimme5 + 7.
+	^{[ a * 10 + b * 10 + c * 10 + d * 10 + e + f + g ]. [ a _ 7. a * 2 ].[ c _ 9. d _ d*10. a * 10 + b * 10 + c + d]}.! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc08
+
+	| u t |
+	u _ self gimme5 + 2.
+	t _ self gimme5.
+	^{
+		[ | x y z | x _ t. y _ x*0+2. z _ x * t. {u * 2. x. y. z} ].
+		[ :a | t * 2 + a ].
+		[|x y | t _ t*3. y _ t*2. {x. t. y}].
+		[:a :b | a * b * t ]
+	}.! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc09
+
+	| clo1 clo2 closure |
+	closure := (
+			([ :a |
+				[ :b |
+					clo1 := [ :c | {c. b. a.}]. 
+					clo2 := [ :d :e | {a. b. e. d.}]
+				]
+			]) value: $a
+		) value: 'b'.
+	^{ clo1. clo2. closure }! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc10
+
+	^ [ :a :b | a + b ]! !
+
+!ClosureSerializationTest methodsFor: 'sample closures' stamp: 'jmv 9/26/2019 23:19:41'!
+bc11
+	| a b c d e f g |
+	a _ self gimme5 + 1.
+	b _ self gimme5 + 2.
+	c _ self gimme5 + 3.
+	d _ self gimme5 + 4.
+	e _ self gimme5 + 5.
+	f _ self gimme5 + 6.
+	g _ self gimme5 + 7.
+	{ b. d. e. f } print.
+	^{[ g + a * 10 + a + a + g + c ]. [ b _ 7. c _ c * 2 ]}.! !
+
+!ClosureSerializationTest methodsFor: 'setUp/tearDown' stamp: 'jmv 9/26/2019 23:19:41'!
+setUp
+	ivar _ 7.
+	^ivar! !
 
 !ClosureTests methodsFor: 'utilities' stamp: 'lr 3/9/2009 16:48'!
 assertValues: anArray

@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3436] on 3 September 2018 at 9:11:25 am'!
+'From Cuis 5.0 [latest update: #3890] on 29 September 2019 at 1:34:51 pm'!
 'Description '!
-!provides: 'FFI' 1 32!
+!provides: 'FFI' 1 33!
 SystemOrganization addCategory: #'FFI-Pools'!
 SystemOrganization addCategory: #'FFI-Kernel'!
 
@@ -307,6 +307,136 @@ Note that all combinations of the flags FFIFlagPointer, FFIFlagAtomic, and FFIFl
 [Note: Other combinations may be allowed in the future]
 !
 
+!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/22/2016 15:30'!
+startUp: resuming
+	"If starting the image afresh all external addresses should be zero.
+	 In addition, if the word size has changed then external addresses shoiuld be resized.
+	 The two steps are combined for efficiency."
+	resuming ifTrue:
+		[| instances |
+		 instances := self allInstances.
+		 wordSize ~= Smalltalk wordSize
+			ifTrue: "Implement nulling by becomming all existing instances to new (and hence null) pointers of the right size."
+				[wordSize := Smalltalk wordSize.
+				 instances elementsForwardIdentityTo: (instances collect: [:ea| self basicNew: wordSize])]
+			ifFalse:
+				[instances do: [:addr| addr beNull]]]! !
+
+!ExternalAddress methodsFor: 'printing' stamp: 'jmv 1/9/2014 21:37'!
+printOn: aStream
+	"print this as a hex address ('@ 16rFFFFFFFF') to distinguish it from ByteArrays"
+
+	aStream nextPutAll: '@ '; nextPutAll: self asInteger hex8! !
+
+!ExternalObject class methodsFor: 'system startup' stamp: 'ar 11/28/1999 23:36'!
+startUp: resuming
+	"The system is coming up. If it is on a new platform, clear out the existing handles."
+	ExternalAddress startUp: resuming. "Make sure handles are invalid"
+	resuming ifTrue:[self installSubclasses].
+! !
+
+!ExternalFunction methodsFor: 'accessing' stamp: 'ar 11/17/1999 17:06'!
+name
+	^nil! !
+
+!ExternalFunction methodsFor: 'printing' stamp: 'eem 10/28/2009 17:10'!
+printOn: aStream
+	aStream
+		nextPut:$<;
+		nextPutAll: self callingConventionString; nextPutAll:': '.
+	{ 'threaded' } with: { FFICallFlagThreaded } do:
+		[:modifier :flag|
+		(flags anyMask: flag) ifTrue:
+			[aStream nextPutAll: modifier; space]].
+	aStream print: argTypes first; space.
+	self name == nil
+		ifTrue:[aStream nextPutAll:'(*) ']
+		ifFalse:[aStream print: self name asString; space].
+	aStream nextPut:$(.
+	2 to: argTypes size do:[:i|
+		aStream print: (argTypes at: i).
+		i < argTypes size ifTrue:[aStream space]].
+	aStream nextPut:$).
+	self module == nil ifFalse:[
+		aStream space; nextPutAll:'module: '; print: self module asString.
+	].
+	self errorCodeName == nil ifFalse:[
+		aStream space; nextPutAll:'error: '; nextPutAll: self errorCodeName.
+	].
+	aStream nextPut:$>! !
+
+!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'ar 11/17/1999 17:06'!
+name
+	^name! !
+
+!ExternalLibrary methodsFor: 'accessing' stamp: 'ar 11/17/1999 19:35'!
+name
+	^name! !
+
+!ExternalStructure class methodsFor: 'class management' stamp: 'ar 11/22/1999 10:10'!
+doneCompiling
+	"I have been recompiled. Update any types that reference me."
+	ExternalType noticeModificationOf: self.! !
+
+!ExternalStructure class methodsFor: 'class management' stamp: 'jmv 3/13/2012 12:34'!
+fileOutInitializerOn: aFileStream
+
+	super fileOutInitializerOn: aFileStream.
+	aFileStream newLine.
+	aFileStream newLine.
+	aFileStream nextChunkPut: self name , ' compileFields'.
+	aFileStream newLine.! !
+
+!ExternalStructure class methodsFor: 'class management' stamp: 'jmv 3/13/2012 12:34'!
+fileOutOn: aFileStream moveSource: moveSource toFile: fileIndex initializing: aBool
+
+	super fileOutOn: aFileStream
+		moveSource: moveSource
+		toFile: fileIndex
+		initializing: aBool.
+	(aBool and:[moveSource not]) ifTrue: [
+		aFileStream newLine.
+		aFileStream newLine.
+		aFileStream nextChunkPut: self name , ' compileFields'.
+		aFileStream newLine]! !
+
+!ExternalStructure class methodsFor: 'class management' stamp: 'sma 6/16/2000 22:12'!
+obsolete
+	"The receiver is becoming obsolete. 
+	NOTE: You if you remove the whole class category at once, you cannot
+	assume that the ExternalType class is still present."
+
+	Smalltalk at: #ExternalType ifPresent: [:class | class noticeRemovalOf: self].
+	^ super obsolete! !
+
+!ExternalStructure methodsFor: 'printing' stamp: 'jmv 8/31/2018 12:14:52'!
+longPrintOn: aStream 
+	"Append to the argument, aStream, the names and values of all the record's variables."
+	| fields |
+	fields := self class fields.
+	(fields isEmpty or: [fields first isNil])
+		ifTrue: [fields := #()]
+		ifFalse: [fields first isArray ifFalse: [fields := Array with: fields]].
+	fields do: [ :field |
+		field first ifNotNil:
+			[aStream nextPutAll: field first; nextPut: $:; space; tab.
+			(self perform: field first) printOn: aStream.
+			aStream newLine]].! !
+
+!ExternalType methodsFor: 'printing' stamp: 'ar 12/2/1999 17:02'!
+printOn: aStream
+	referentClass == nil
+		ifTrue:[aStream nextPutAll: (AtomicTypeNames at: self atomicType)]
+		ifFalse:[aStream nextPutAll: referentClass name].
+	self isPointerType ifTrue:[aStream nextPut: $*].! !
+
+!ExternalType methodsFor: 'printing' stamp: 'nice 5/21/2006 21:40'!
+storeOn: aStream
+	referentClass == nil
+		ifTrue:[aStream nextPutAll: ExternalType name; space; nextPutAll: (AtomicTypeNames at: self atomicType)]
+		ifFalse:[aStream nextPut: $(; nextPutAll: ExternalType name; space; nextPutAll: #structTypeNamed:; space;  store: referentClass name; nextPut: $)].
+	self isPointerType ifTrue: [aStream space; nextPutAll: #asPointer].! !
+
 !FFIConstants class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 18:54'!
 initialize
 	"FFIConstants initialize"
@@ -517,12 +647,6 @@ isNull
 	1 to: self size do:[:i| (self at: i) = 0 ifFalse:[^false]].
 	^true! !
 
-!ExternalAddress methodsFor: 'printing' stamp: 'jmv 1/9/2014 21:37'!
-printOn: aStream
-	"print this as a hex address ('@ 16rFFFFFFFF') to distinguish it from ByteArrays"
-
-	aStream nextPutAll: '@ '; nextPutAll: self asInteger hex8! !
-
 !ExternalAddress class methodsFor: 'instance creation' stamp: 'ar 11/28/1999 23:20'!
 allocate: byteSize
 	"Primitive. Allocate an object on the external heap."
@@ -545,11 +669,6 @@ loadSymbol: moduleSymbol module: module
 	<primitive: 'primitiveLoadSymbolFromModule' module: 'SqueakFFIPrims'>
 	^ self primitiveFailed! !
 
-!ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/16/2016 12:17'!
-new
-	"External addresses are either four or eight bytes long."
-	^super new: wordSize! !
-
 !ExternalAddress class methodsFor: 'instance creation' stamp: 'eem 2/22/2016 15:42'!
 new: n
 	"Only create ExternalAddresses of the right size."
@@ -557,24 +676,14 @@ new: n
 		ifTrue: [super new: n]
 		ifFalse: [self shouldNotImplement]! !
 
+!ExternalAddress class methodsFor: 'instance creation' stamp: 'jmv 9/29/2019 12:54:29'!
+numElements
+	"External addresses are either four or eight bytes long."
+	^ wordSize! !
+
 !ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/20/2016 17:29'!
 initialize
 	wordSize := Smalltalk wordSize! !
-
-!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/22/2016 15:30'!
-startUp: resuming
-	"If starting the image afresh all external addresses should be zero.
-	 In addition, if the word size has changed then external addresses shoiuld be resized.
-	 The two steps are combined for efficiency."
-	resuming ifTrue:
-		[| instances |
-		 instances := self allInstances.
-		 wordSize ~= Smalltalk wordSize
-			ifTrue: "Implement nulling by becomming all existing instances to new (and hence null) pointers of the right size."
-				[wordSize := Smalltalk wordSize.
-				 instances elementsForwardIdentityTo: (instances collect: [:ea| self basicNew: wordSize])]
-			ifFalse:
-				[instances do: [:addr| addr beNull]]]! !
 
 !ExternalAddress class methodsFor: 'accessing' stamp: 'eem 2/16/2016 12:34'!
 wordSize
@@ -708,13 +817,6 @@ installSubclasses
 	"Notify all the subclasses of ExternalObject that we are starting up on a new platform."
 	self withAllSubclassesDo:[:cls| cls install].! !
 
-!ExternalObject class methodsFor: 'system startup' stamp: 'ar 11/28/1999 23:36'!
-startUp: resuming
-	"The system is coming up. If it is on a new platform, clear out the existing handles."
-	ExternalAddress startUp: resuming. "Make sure handles are invalid"
-	resuming ifTrue:[self installSubclasses].
-! !
-
 !ExternalFunction methodsFor: 'accessing' stamp: 'ar 11/19/1999 19:13'!
 argTypes
 	^argTypes! !
@@ -731,41 +833,11 @@ flags
 module
 	^nil! !
 
-!ExternalFunction methodsFor: 'accessing' stamp: 'ar 11/17/1999 17:06'!
-name
-	^nil! !
-
 !ExternalFunction methodsFor: 'printing' stamp: 'ar 11/19/1999 16:35'!
 callingConventionString
 	(flags allMask: FFICallTypeApi) 
 		ifTrue:[^'apicall']
 		ifFalse:[^'cdecl']! !
-
-!ExternalFunction methodsFor: 'printing' stamp: 'eem 10/28/2009 17:10'!
-printOn: aStream
-	aStream
-		nextPut:$<;
-		nextPutAll: self callingConventionString; nextPutAll:': '.
-	{ 'threaded' } with: { FFICallFlagThreaded } do:
-		[:modifier :flag|
-		(flags anyMask: flag) ifTrue:
-			[aStream nextPutAll: modifier; space]].
-	aStream print: argTypes first; space.
-	self name == nil
-		ifTrue:[aStream nextPutAll:'(*) ']
-		ifFalse:[aStream print: self name asString; space].
-	aStream nextPut:$(.
-	2 to: argTypes size do:[:i|
-		aStream print: (argTypes at: i).
-		i < argTypes size ifTrue:[aStream space]].
-	aStream nextPut:$).
-	self module == nil ifFalse:[
-		aStream space; nextPutAll:'module: '; print: self module asString.
-	].
-	self errorCodeName == nil ifFalse:[
-		aStream space; nextPutAll:'error: '; nextPutAll: self errorCodeName.
-	].
-	aStream nextPut:$>! !
 
 !ExternalFunction methodsFor: 'initialization' stamp: 'ar 11/29/1999 00:35'!
 initialize
@@ -943,10 +1015,6 @@ errorCodeName
 module
 	^module! !
 
-!ExternalLibraryFunction methodsFor: 'accessing' stamp: 'ar 11/17/1999 17:06'!
-name
-	^name! !
-
 !ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 10/28/2009 17:07'!
 setErrorCodeName: aString
 	errorCodeName := aString! !
@@ -990,10 +1058,6 @@ initialize
 handle
 	^handle! !
 
-!ExternalLibrary methodsFor: 'accessing' stamp: 'ar 11/17/1999 19:35'!
-name
-	^name! !
-
 !ExternalLibrary class methodsFor: 'accessing' stamp: 'ar 11/17/1999 19:33'!
 moduleName
 	"Return the name of the module for this library"
@@ -1008,20 +1072,6 @@ free
 !ExternalStructure methodsFor: 'printing' stamp: 'eem 5/1/2018 15:18'!
 compositeName
 	^self class compositeName! !
-
-!ExternalStructure methodsFor: 'printing' stamp: 'jmv 8/31/2018 12:14:52'!
-longPrintOn: aStream 
-	"Append to the argument, aStream, the names and values of all the record's variables."
-	| fields |
-	fields := self class fields.
-	(fields isEmpty or: [fields first isNil])
-		ifTrue: [fields := #()]
-		ifFalse: [fields first isArray ifFalse: [fields := Array with: fields]].
-	fields do: [ :field |
-		field first ifNotNil:
-			[aStream nextPutAll: field first; nextPut: $:; space; tab.
-			(self perform: field first) printOn: aStream.
-			aStream newLine]].! !
 
 !ExternalStructure class methodsFor: 'field definition' stamp: 'ar 12/2/1999 14:31'!
 byteSize
@@ -1259,42 +1309,6 @@ typeNamesFromWhichIDepend
 	(f := self fields) isEmpty ifTrue: [^Set new].
 	f first isArray ifFalse: [^Set with: f second].
 	^(f collect: [:e | e second]) as: Set! !
-
-!ExternalStructure class methodsFor: 'class management' stamp: 'ar 11/22/1999 10:10'!
-doneCompiling
-	"I have been recompiled. Update any types that reference me."
-	ExternalType noticeModificationOf: self.! !
-
-!ExternalStructure class methodsFor: 'class management' stamp: 'jmv 3/13/2012 12:34'!
-fileOutInitializerOn: aFileStream
-
-	super fileOutInitializerOn: aFileStream.
-	aFileStream newLine.
-	aFileStream newLine.
-	aFileStream nextChunkPut: self name , ' compileFields'.
-	aFileStream newLine.! !
-
-!ExternalStructure class methodsFor: 'class management' stamp: 'jmv 3/13/2012 12:34'!
-fileOutOn: aFileStream moveSource: moveSource toFile: fileIndex initializing: aBool
-
-	super fileOutOn: aFileStream
-		moveSource: moveSource
-		toFile: fileIndex
-		initializing: aBool.
-	(aBool and:[moveSource not]) ifTrue: [
-		aFileStream newLine.
-		aFileStream newLine.
-		aFileStream nextChunkPut: self name , ' compileFields'.
-		aFileStream newLine]! !
-
-!ExternalStructure class methodsFor: 'class management' stamp: 'sma 6/16/2000 22:12'!
-obsolete
-	"The receiver is becoming obsolete. 
-	NOTE: You if you remove the whole class category at once, you cannot
-	assume that the ExternalType class is still present."
-
-	Smalltalk at: #ExternalType ifPresent: [:class | class noticeRemovalOf: self].
-	^ super obsolete! !
 
 !ExternalStructure class methodsFor: 'class management' stamp: 'ar 11/22/1999 04:12'!
 rename: aString
@@ -1734,13 +1748,6 @@ printAtomicType: spec on: aStream
 	(spec anyMask: FFIFlagPointer) ifTrue:
 		[aStream nextPut: $*]! !
 
-!ExternalType methodsFor: 'printing' stamp: 'ar 12/2/1999 17:02'!
-printOn: aStream
-	referentClass == nil
-		ifTrue:[aStream nextPutAll: (AtomicTypeNames at: self atomicType)]
-		ifFalse:[aStream nextPutAll: referentClass name].
-	self isPointerType ifTrue:[aStream nextPut: $*].! !
-
 !ExternalType methodsFor: 'printing' stamp: 'jmv 8/31/2018 14:35:20'!
 printStructureFieldStartingAt: initialSpecIndex withName: name inClass: structureClass on: aStream indent: indent
 	"Print the structure's field starting at initialSpecIndex and answer the index in compiledSpec of the subsequent type."
@@ -1812,13 +1819,6 @@ printTypedefOn: s
 		ifFalse:
 			[self printAtomicType: compiledSpec first on: s].
 	s nextPutAll: (referentClass ifNotNil: [referentClass name] ifNil: ['foo'])! !
-
-!ExternalType methodsFor: 'printing' stamp: 'nice 5/21/2006 21:40'!
-storeOn: aStream
-	referentClass == nil
-		ifTrue:[aStream nextPutAll: ExternalType name; space; nextPutAll: (AtomicTypeNames at: self atomicType)]
-		ifFalse:[aStream nextPut: $(; nextPutAll: ExternalType name; space; nextPutAll: #structTypeNamed:; space;  store: referentClass name; nextPut: $)].
-	self isPointerType ifTrue: [aStream space; nextPutAll: #asPointer].! !
 
 !ExternalType methodsFor: 'printing' stamp: 'eem 2/16/2016 10:05'!
 typedef
