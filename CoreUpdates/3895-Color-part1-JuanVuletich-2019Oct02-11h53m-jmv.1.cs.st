@@ -1,5 +1,22 @@
 'From Cuis 5.0 [latest update: #3894] on 2 October 2019 at 11:53:53 am'!
 
+!Color methodsFor: 'comparing' stamp: 'jmv 10/2/2019 20:37:24'!
+primitiveEqual: aColor 
+	| length |
+	<primitive: 'primitiveEqual' module: 'FloatArrayPlugin'>
+	aColor class == self class ifFalse: [^ false].
+	length _ self size.
+	length = aColor size ifFalse: [^ false].
+	1 to: self size do: [ :i |
+		(self basicAt: i) = (aColor basicAt: i) ifFalse: [^ false]].
+	^ true! !
+
+!Color methodsFor: 'comparing' stamp: 'jmv 10/2/2019 20:31:03'!
+= another 
+	self == another ifTrue: [ ^ true ].
+	self class == another class ifFalse: [ ^ false ].
+	^self primitiveEqual: another! !
+
 !Color methodsFor: 'private' stamp: 'jmv 10/2/2019 11:40:28'!
 slotAt: index
 	<primitive: 'primitiveAt' module: 'FloatArrayPlugin'>

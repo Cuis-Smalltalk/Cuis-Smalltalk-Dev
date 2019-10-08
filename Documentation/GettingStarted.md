@@ -11,6 +11,8 @@ If you want to contribute back to the community, you can do pull requests to thi
 ## For all systems: Create project folder and add Cuis Smalltalk ##
 
 Note: The '--depth 1' option avoids cloning all repo history (most likely you don't need it) and makes cloning the remo much faster, using less disk space.
+
+Note: If you are creating the main (or only) Cuis folder in your machine, you might prefer 'Cuis-Smalltalk' as the folder name instead of 'MyProject' or some specific project name.
 ```
 mkdir MyProject
 cd MyProject
