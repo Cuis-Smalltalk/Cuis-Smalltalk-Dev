@@ -1,8 +1,8 @@
 'From Cuis 5.0 [latest update: #3869] on 9 September 2019 at 10:24:41 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 84!
-!requires: 'Color-Extras' 1 nil nil!
-!requires: 'Collections-CompactArrays' 1 2 nil!
+!provides: 'VectorGraphics' 1 85!
+!requires: 'Color-Extras' 1 7 nil!
+!requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
 SystemOrganization addCategory: #'VectorGraphics-Experiments'!
