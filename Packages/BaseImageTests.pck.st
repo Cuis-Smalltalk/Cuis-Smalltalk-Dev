@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3914] on 11 October 2019 at 10:13:48 pm'!
+'From Cuis 5.0 [latest update: #3914] on 11 October 2019 at 10:23:53 pm'!
 'Description '!
-!provides: 'BaseImageTests' 1 176!
+!provides: 'BaseImageTests' 1 177!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -10791,7 +10791,7 @@ test09isNotAtCategoryWhenIndexIsOutsideCategoryString
 	
 	! !
 
-!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:06:49'!
+!ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 10/11/2019 16:51:32'!
 test10InstanceVariablesIsTheSecondParameter
 
 	| subclassCreationSelectors |
@@ -10801,7 +10801,7 @@ test10InstanceVariablesIsTheSecondParameter
 	
 	subclassCreationSelectors do: [ :aSubclassCreationSelector |
 		self 
-			assert: (aSubclassCreationSelector keywords at: ClassDefinitionNodeAnalyzer instanceVariableNamesPosition) 
+			assert: (aSubclassCreationSelector keywords at: ClassDefinitionNodeAnalyzer instanceVariableNamesPositionForClassDefinition ) 
 			equals: 'instanceVariableNames:' ]! !
 
 !ClassDefinitionNodeAnalyzerTest methodsFor: 'testing' stamp: 'HAW 4/17/2019 21:06:49'!
