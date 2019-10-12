@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3888] on 29 September 2019 at 12:22:38 pm'!
+'From Cuis 5.0 [latest update: #3914] on 11 October 2019 at 10:13:48 pm'!
 'Description '!
-!provides: 'BaseImageTests' 1 175!
+!provides: 'BaseImageTests' 1 176!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -2642,10 +2642,10 @@ testComparisonWithFraction
 	self assert: 0.1 = (1/10).
 	self assert: (1/10) = 0.1! !
 
-!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 3/26/2019 16:10:52'!
+!FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 8/29/2019 16:20:39'!
 testEqualityComparison
-				"In Cuis, it was decided to coerce operands to Float for comparison (if any of them was float),
-				in the classic ST-80 way"
+	"In Cuis, it was decided to coerce operands to Float for comparison (if any of them was float),
+	in the classic ST-80 way"
 	| a b c |
 	
 	"Test equality when Float conversion exact"
@@ -2680,7 +2680,22 @@ testEqualityComparison
 	"Test hash code"
 	self assert:
 		((Set new: 3) add: 3; add: 3.0; size) =
-		((Set new: 4) add: 3; add: 3.0; size).! !
+		((Set new: 4) add: 3; add: 3.0; size).
+
+
+	self assert: 9007199254740996 = 9007199254740996.0.
+	self assert: 9007199254740996001 / 1000 = 9007199254740996.0.
+	self assert: 90071992547409963 / 10 = 9007199254740996.0.
+	self assert: 90071992547409967 / 10 = 9007199254740996.0.
+	self assert: 9007199254740995 = 9007199254740996.0.
+	self deny: 9007199254740995 = 9007199254740994.0.
+
+	self assert: 9007199254740996.0 = 9007199254740996.
+	self assert: 9007199254740996.0 = (9007199254740996001 / 1000).
+	self assert: 9007199254740996.0 = (90071992547409963 / 10).
+	self assert: 9007199254740996.0 = (90071992547409967 / 10).
+	self assert: 9007199254740996.0 = 9007199254740995.
+	self deny: 9007199254740994.0 = 9007199254740995.! !
 
 !FloatTest methodsFor: 'tests - comparing' stamp: 'jmv 12/4/2018 12:05:21'!
 testEquals
@@ -4199,12 +4214,14 @@ testPrimArcTan
 	self verify: Float negativeInfinity primTestArcTan isTrigonometricallyEqualTo: Float pi / -2.
 	self assert: Float nan primTestArcTan isNaN! !
 
-!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 2/28/2019 15:31:14'!
+!FloatTest methodsFor: 'tests - primitives' stamp: 'jmv 10/11/2019 20:08:22'!
 testPrimDivideBy
 
 	self assert: (1.5 primTestDivideBy: 2.0) = 0.75.
 
-	self assert: (2.0 primTestDivideBy: 1) = 2.0.
+	Smalltalk doMixedArithmetic
+		ifTrue: [ self assert: (2.0 primTestDivideBy: 1) = 2.0 ]
+		ifFalse: [ self assert: (2.0 primTestDivideBy: 1) = #fail ].
 
 	self assert: (2.0 primTestDivideBy: 0) = #fail.
 	self assert: (2.0 primTestDivideBy: 0.0) = #fail.
