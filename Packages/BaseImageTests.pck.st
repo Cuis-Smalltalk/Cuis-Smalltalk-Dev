@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3923] on 15 October 2019 at 4:42:15 pm'!
+'From Cuis 5.0 [latest update: #3925] on 23 October 2019 at 11:16:49 am'!
 'Description '!
-!provides: 'BaseImageTests' 1 178!
+!provides: 'BaseImageTests' 1 179!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1161,6 +1161,16 @@ TestCase subclass: #GrayFormTest
 	category: 'BaseImageTests-Graphics-Display Objects'!
 !classDefinition: 'GrayFormTest class' category: #'BaseImageTests-Graphics-Display Objects'!
 GrayFormTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ObjectTest category: #'BaseImageTests-Kernel-Objects'!
+TestCase subclass: #ObjectTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Objects'!
+!classDefinition: 'ObjectTest class' category: #'BaseImageTests-Kernel-Objects'!
+ObjectTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #WeakMessageSendTest category: #'BaseImageTests-Kernel-Objects'!
@@ -20034,6 +20044,36 @@ testIsColorForm
 !GrayFormTest methodsFor: 'as yet unclassified' stamp: 'jpb 8/2/2019 23:36:06'!
 testIsGrayForm
 	self assert: (GrayForm new is: #GrayForm)! !
+
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:23:56'!
+testErrorSignalsTheRightException
+
+	| reason |
+	
+	reason :=  'something went wrong'.
+	self 
+		should: [ self error: reason ]
+		raise: Error
+		withMessageText: reason ! !
+
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:24:03'!
+testShouldNotHappenBecauseSignalsTheRightError
+
+	| reason |
+	
+	reason :=  'something went wrong'.
+	self 
+		should: [ self shouldNotHappenBecause: reason ]
+		raise: Error
+		withMessageText: self shouldNotHappenBecauseErrorMessage, reason ! !
+
+!ObjectTest methodsFor: 'error tests' stamp: 'HAW 10/23/2019 09:24:11'!
+testShouldNotHappenSignalsTheRightError
+
+	self 
+		should: [ self shouldNotHappen ]
+		raise: Error
+		withMessageText: self shouldNotHappenErrorMessage ! !
 
 !WeakMessageSendTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:44:58'!
 testIsMessageSend
