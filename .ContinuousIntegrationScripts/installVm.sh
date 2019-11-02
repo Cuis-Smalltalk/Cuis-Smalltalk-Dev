@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
-VM_VERSION="201901172323"
+VM_VERSION="201911012148"
 BASE_VM_DOWNLOAD_PATH="https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/$VM_VERSION"
 
 echo "Installing VM $VM_VERSION for $TRAVIS_OS_NAME"
