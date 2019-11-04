@@ -1,4 +1,4 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3811] on 26 June 2019 at 9:35:55 am'!
+'From Cuis 5.0 [latest update: #3866] on 2 November 2019 at 7:43:42 pm'!
 'Description Assessments is a replacement / reimplementation of the SUnit evaluation machinery, published under the MIT license (see below), with the following characteristics.
 
 * It provides all the functionality and features of SUnit and SUnit VM (including SUnit Based Validation and SUnit Benchmarks) natively.
@@ -143,7 +143,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '!
-!provides: 'Assessments' 2 34!
+!provides: 'Assessments' 2 35!
 SystemOrganization addCategory: #'Assessments-Framework-Exceptions'!
 SystemOrganization addCategory: #'Assessments-Tools'!
 SystemOrganization addCategory: #'Assessments-Tools-Support'!
@@ -2879,10 +2879,10 @@ buildMorphicStatusBar
 	answer disableEditing.
 	^answer! !
 
-!AssessmentsWindow methodsFor: 'actions' stamp: 'SqR 9/7/2015 16:59'!
+!AssessmentsWindow methodsFor: 'actions' stamp: 'sqr 11/2/2019 19:43:22'!
 cursorWaitWhile: aBlock
 
-	Cursor wait showWhile: [aBlock value]! !
+	Cursor waitCursor showWhile: [aBlock value]! !
 
 !AssessmentsWindow methodsFor: 'actions' stamp: 'SqR 9/7/2015 16:59'!
 refresh
@@ -3190,6 +3190,11 @@ windowLabel
 
 	^'Results Evaluator'! !
 
+!AssessmentsListItemWrapper methodsFor: 'printing' stamp: 'SqR 9/12/2015 11:56'!
+newDisplayString
+
+	^self item printString! !
+
 !AssessmentsListItemWrapper methodsFor: 'converting' stamp: 'SqR 9/7/2015 16:49'!
 asString
 
@@ -3233,11 +3238,6 @@ contents: aCollection
 displayString: aString
 
 	displayString := aString! !
-
-!AssessmentsListItemWrapper methodsFor: 'printing' stamp: 'SqR 9/12/2015 11:56'!
-newDisplayString
-
-	^self item printString! !
 
 !AssessmentAbstractResultUIListItem methodsFor: 'comparing' stamp: 'SqR 9/12/2015 11:54'!
 <= aListItem
@@ -4006,6 +4006,22 @@ assessment: anAssessment result: aResult
 		result: aResult;
 		yourself! !
 
+!AbstractCustomChecklist methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
+checkSelectorLookupRoot
+
+	^self! !
+
+!AbstractCustomChecklist methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
+prerequisites
+
+	^Array new! !
+
+!AbstractCustomChecklist methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
+usesClassBasedPrerequisites
+	"Custom checklists collect prerequisites by asking checks"
+
+	^true! !
+
 !AbstractCustomChecklist methodsFor: 'assessments' stamp: 'SqR 3/8/2015 18:10'!
 assessment
 
@@ -4033,22 +4049,6 @@ checkExecutionCount
 checksDo: aBlock
 
 	^self! !
-
-!AbstractCustomChecklist methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
-checkSelectorLookupRoot
-
-	^self! !
-
-!AbstractCustomChecklist methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
-prerequisites
-
-	^Array new! !
-
-!AbstractCustomChecklist methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
-usesClassBasedPrerequisites
-	"Custom checklists collect prerequisites by asking checks"
-
-	^true! !
 
 !AbstractCustomChecklist methodsFor: 'private' stamp: 'SqR 3/8/2015 18:10'!
 initialize
@@ -4813,6 +4813,11 @@ new
 
 	^self basicNew! !
 
+!AbstractPrerequisite methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
+prettyPrint
+
+	^'A prerequisite'! !
+
 !AbstractPrerequisite methodsFor: 'comparing' stamp: 'sqr 1/13/2016 21:51'!
 <= aPrerequisite
 	"For the dialects in which Set new = Set new evaluates to false"
@@ -4869,11 +4874,6 @@ failureNotification
 skipNotification
 
 	^CheckSkipNotification! !
-
-!AbstractPrerequisite methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
-prettyPrint
-
-	^'A prerequisite'! !
 
 !AbstractPrerequisite methodsFor: 'actions' stamp: 'SqR 3/8/2015 18:10'!
 start
@@ -5447,6 +5447,35 @@ initialize
 
 	^self! !
 
+!CheckRepository class methodsFor: 'selector lookup'!
+atSelector: aSelector
+
+	^self methodDictionary
+		at: aSelector
+		ifAbsent: [nil]! !
+
+!CheckRepository class methodsFor: 'selector lookup'!
+isKeywordSelector: aSelector
+
+	^aSelector notEmpty and: [aSelector last = $:]! !
+
+!CheckRepository class methodsFor: 'selector lookup'!
+isNotKeywordSelector: aSelector
+
+	^(self isKeywordSelector: aSelector) not! !
+
+!CheckRepository class methodsFor: 'selector lookup'!
+selector: aSelector beginsWith: aPrefix
+	"This should be SequenceableCollection>>beginsWith:"
+
+	aSelector size < aPrefix size ifTrue: [^false].
+	1 to: aPrefix size do:
+		[:eachIndex |
+			(aSelector at: eachIndex) = (aPrefix at: eachIndex)
+				ifFalse: [^false]
+		].
+	^true! !
+
 !CheckRepository class methodsFor: 'classification'!
 abstractHierarchyRoot
 	"The root of the current abstract hierarchy"
@@ -5576,35 +5605,6 @@ assessmentClass
 checkClass
 
 	^Check! !
-
-!CheckRepository class methodsFor: 'selector lookup'!
-atSelector: aSelector
-
-	^self methodDictionary
-		at: aSelector
-		ifAbsent: [nil]! !
-
-!CheckRepository class methodsFor: 'selector lookup'!
-isKeywordSelector: aSelector
-
-	^aSelector notEmpty and: [aSelector last = $:]! !
-
-!CheckRepository class methodsFor: 'selector lookup'!
-isNotKeywordSelector: aSelector
-
-	^(self isKeywordSelector: aSelector) not! !
-
-!CheckRepository class methodsFor: 'selector lookup'!
-selector: aSelector beginsWith: aPrefix
-	"This should be SequenceableCollection>>beginsWith:"
-
-	aSelector size < aPrefix size ifTrue: [^false].
-	1 to: aPrefix size do:
-		[:eachIndex |
-			(aSelector at: eachIndex) = (aPrefix at: eachIndex)
-				ifFalse: [^false]
-		].
-	^true! !
 
 !CheckRepository class methodsFor: 'check services'!
 checklistForClass: aClass
@@ -7897,6 +7897,65 @@ testCaseRoot
 
 	^AssessmentsClassResolver current sunitVMValidationTestCaseRoot! !
 
+!CheckRepositoryMetaclass methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
+atSelector: aSelector
+
+	^self classToImpersonate methodDictionary
+		at: aSelector
+		ifAbsent: [nil]! !
+
+!CheckRepositoryMetaclass methodsFor: 'browsing' stamp: 'SqR 9/7/2015 15:15'!
+classAndSelectorForBrowsingDo: aBlock
+
+	aBlock value: self classForBrowsing value: nil! !
+
+!CheckRepositoryMetaclass methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
+classToImpersonate
+
+	^classToImpersonate! !
+
+!CheckRepositoryMetaclass methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
+classToImpersonate: anObject
+
+	classToImpersonate := anObject! !
+
+!CheckRepositoryMetaclass methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
+subclasses: anObject
+
+	subclasses := anObject! !
+
+!CheckRepositoryMetaclass methodsFor: 'classification' stamp: 'SqR 3/8/2015 18:10'!
+isAbstract
+
+	^self classToImpersonate isAbstract! !
+
+!CheckRepositoryMetaclass methodsFor: 'classification' stamp: 'SqR 3/8/2015 18:10'!
+shouldInheritChecks
+
+	^self classToImpersonate shouldInheritChecks! !
+
+!CheckRepositoryMetaclass methodsFor: 'selector lookup' stamp: 'SqR 3/8/2015 18:10'!
+isKeywordSelector: aSelector
+
+	^aSelector notEmpty and: [aSelector last = $:]! !
+
+!CheckRepositoryMetaclass methodsFor: 'selector lookup' stamp: 'SqR 3/8/2015 18:10'!
+isNotKeywordSelector: aSelector
+
+	^(self isKeywordSelector: aSelector) not! !
+
+!CheckRepositoryMetaclass methodsFor: 'selector lookup' stamp: 'SqR 3/8/2015 18:10'!
+selector: aSelector beginsWith: aPrefix
+	"This should be SequenceableCollection>>beginsWith:"
+
+	aSelector size < aPrefix size ifTrue: [^false].
+	1 to: aPrefix size do:
+		[:eachIndex |
+			(aSelector at: eachIndex) = (aPrefix at: eachIndex)
+				ifFalse: [^false]
+		].
+	^true! !
+
 !CheckRepositoryMetaclass methodsFor: 'comparing' stamp: 'SqR 3/8/2015 18:10'!
 = anotherMetaclass
 
@@ -8000,13 +8059,6 @@ checkClass
 
 	^self classToImpersonate checkClass! !
 
-!CheckRepositoryMetaclass methodsFor: 'accessing' stamp: 'SqR 3/8/2015 18:10'!
-atSelector: aSelector
-
-	^self classToImpersonate methodDictionary
-		at: aSelector
-		ifAbsent: [nil]! !
-
 !CheckRepositoryMetaclass methodsFor: 'check services' stamp: 'SqR 3/8/2015 18:10'!
 checklistForClass: aClass
 
@@ -8065,58 +8117,6 @@ newCheckWithCheckSelector: aSelector
 	^self checkClass
 		checklist: self
 		checkSelector: aSelector! !
-
-!CheckRepositoryMetaclass methodsFor: 'browsing' stamp: 'SqR 9/7/2015 15:15'!
-classAndSelectorForBrowsingDo: aBlock
-
-	aBlock value: self classForBrowsing value: nil! !
-
-!CheckRepositoryMetaclass methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
-classToImpersonate
-
-	^classToImpersonate! !
-
-!CheckRepositoryMetaclass methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
-classToImpersonate: anObject
-
-	classToImpersonate := anObject! !
-
-!CheckRepositoryMetaclass methodsFor: 'private - accessing' stamp: 'SqR 3/8/2015 18:10'!
-subclasses: anObject
-
-	subclasses := anObject! !
-
-!CheckRepositoryMetaclass methodsFor: 'classification' stamp: 'SqR 3/8/2015 18:10'!
-isAbstract
-
-	^self classToImpersonate isAbstract! !
-
-!CheckRepositoryMetaclass methodsFor: 'classification' stamp: 'SqR 3/8/2015 18:10'!
-shouldInheritChecks
-
-	^self classToImpersonate shouldInheritChecks! !
-
-!CheckRepositoryMetaclass methodsFor: 'selector lookup' stamp: 'SqR 3/8/2015 18:10'!
-isKeywordSelector: aSelector
-
-	^aSelector notEmpty and: [aSelector last = $:]! !
-
-!CheckRepositoryMetaclass methodsFor: 'selector lookup' stamp: 'SqR 3/8/2015 18:10'!
-isNotKeywordSelector: aSelector
-
-	^(self isKeywordSelector: aSelector) not! !
-
-!CheckRepositoryMetaclass methodsFor: 'selector lookup' stamp: 'SqR 3/8/2015 18:10'!
-selector: aSelector beginsWith: aPrefix
-	"This should be SequenceableCollection>>beginsWith:"
-
-	aSelector size < aPrefix size ifTrue: [^false].
-	1 to: aPrefix size do:
-		[:eachIndex |
-			(aSelector at: eachIndex) = (aPrefix at: eachIndex)
-				ifFalse: [^false]
-		].
-	^true! !
 
 !CheckRepositoryMetaclass methodsFor: 'instance creation' stamp: 'SqR 3/8/2015 18:10'!
 new
@@ -8403,6 +8403,23 @@ subclassClass
 
 	^SUnitTooCheckRepositoryMetaclass! !
 
+!AbstractResult methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
+printPrettyPrintDetailsOn: aStream
+
+	aStream nextPutAll: ': '.
+	aStream nextPutAll: self prettyPrint! !
+
+!AbstractResult methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
+printResultDetailsOn: aStream
+
+	^self! !
+
+!AbstractResult methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
+summaryPrintOn: aStream
+
+	self printResultDetailsOn: aStream.
+	self printPrettyPrintDetailsOn: aStream! !
+
 !AbstractResult methodsFor: 'enumeration' stamp: 'SqR 3/8/2015 18:10'!
 checkDo: aBlock
 
@@ -8447,23 +8464,6 @@ initialize
 prettyPrint: anObject
 
 	prettyPrint := anObject! !
-
-!AbstractResult methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
-printPrettyPrintDetailsOn: aStream
-
-	aStream nextPutAll: ': '.
-	aStream nextPutAll: self prettyPrint! !
-
-!AbstractResult methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
-printResultDetailsOn: aStream
-
-	^self! !
-
-!AbstractResult methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
-summaryPrintOn: aStream
-
-	self printResultDetailsOn: aStream.
-	self printPrettyPrintDetailsOn: aStream! !
 
 !AbstractResult class methodsFor: 'instance creation' stamp: 'SqR 9/7/2015 17:17'!
 new
@@ -10487,6 +10487,16 @@ newActualReceiverForCheck: aCheck inTheContextOf: anEvaluationContext
 	answer originalObject: anEvaluationContext originalObjectToValidate.
 	^answer! !
 
+!ProtectedMessageSend methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
+printBrieflyOn: aStream
+
+	aStream nextPutAll: (self selector ifNil: ['[none]'])! !
+
+!ProtectedMessageSend methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
+receiverPrintString
+
+	^self receiver printString! !
+
 !ProtectedMessageSend methodsFor: 'comparison' stamp: 'SqR 3/8/2015 18:10'!
 = aMessageSend
 
@@ -10660,16 +10670,6 @@ newSUnitVMExecutionPolicy
 newSUnitVMValidationExecutionPolicy
 
 	^self sunitVMValidationExecutionPolicyClass new! !
-
-!ProtectedMessageSend methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
-printBrieflyOn: aStream
-
-	aStream nextPutAll: (self selector ifNil: ['[none]'])! !
-
-!ProtectedMessageSend methodsFor: 'printing' stamp: 'SqR 3/8/2015 18:10'!
-receiverPrintString
-
-	^self receiver printString! !
 
 !ProtectedMessageSend methodsFor: 'execution policy' stamp: 'SqR 3/8/2015 18:10'!
 useAssessmentsBenchmarkExecutionPolicy
