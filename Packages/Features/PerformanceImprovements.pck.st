@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3866] on 7 November 2019 at 2:00:10 pm'!
+'From Cuis 5.0 [latest update: #3948] on 7 November 2019 at 5:55:14 pm'!
 'Description '!
-!provides: 'PerformanceImprovements' 1 1!
+!provides: 'PerformanceImprovements' 1 2!
 
 
 
@@ -36,6 +36,20 @@ isPrime
 		self \\ (each+31) = 0 ifTrue: [^false]
 	].
 	^true! !
+
+!LargePositiveInteger methodsFor: '*performanceImprovements' stamp: 'sqr 11/2/2019 20:17:15'!
+timesRepeat: aBlock 
+	"Evaluate the argument, aBlock, the number of times represented by the 
+	receiver."
+
+	| toGo thisRound |
+	toGo := self.
+	[toGo > 0] whileTrue:
+		[
+			thisRound := toGo min: SmallInteger maxVal.
+			thisRound timesRepeat: aBlock.
+			toGo := toGo - thisRound
+		]! !
 
 !SmallInteger methodsFor: '*performanceImprovements' stamp: 'sqr 11/2/2019 20:45:34'!
 timesRepeat: aBlock 
