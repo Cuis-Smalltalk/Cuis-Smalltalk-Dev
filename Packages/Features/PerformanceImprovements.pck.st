@@ -1,10 +1,10 @@
 'From Cuis 5.0 [latest update: #3866] on 7 November 2019 at 2:00:10 pm'!
 'Description '!
-!provides: 'FasterAlternativeOverrides' 1 2!
+!provides: 'PerformanceImprovements' 1 1!
 
 
 
-!Integer methodsFor: '*fasterAlternativeOverrides' stamp: 'a s + sqr 10/11/2019 23:51:08'!
+!Integer methodsFor: '*performanceImprovements' stamp: 'a s + sqr 10/11/2019 23:51:08'!
 isPrime
 
 	self < 3 ifTrue: [^self = 2].
@@ -37,7 +37,7 @@ isPrime
 	].
 	^true! !
 
-!SmallInteger methodsFor: '*fasterAlternativeOverrides' stamp: 'sqr 11/2/2019 20:45:34'!
+!SmallInteger methodsFor: '*performanceImprovements' stamp: 'sqr 11/2/2019 20:45:34'!
 timesRepeat: aBlock 
 	"Evaluate the argument, aBlock, the number of times represented by the 
 	receiver."
