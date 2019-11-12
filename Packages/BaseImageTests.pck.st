@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3953] on 8 November 2019 at 6:03:47 pm'!
+'From Cuis 5.0 [latest update: #3958] on 12 November 2019 at 12:05:38 pm'!
 'Description '!
-!provides: 'BaseImageTests' 1 183!
+!provides: 'BaseImageTests' 1 184!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -35,1203 +35,1213 @@ SystemOrganization addCategory: #'BaseImageTests-Tools-Browser'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Changes'!
 
 
-!classDefinition: #MyResumableTestError category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MyResumableTestError category: #'BaseImageTests-Exceptions'!
 Error subclass: #MyResumableTestError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'MyResumableTestError class' category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MyResumableTestError class' category: #'BaseImageTests-Exceptions'!
 MyResumableTestError class
 	instanceVariableNames: ''!
 
-!classDefinition: #MyTestError category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MyTestError category: #'BaseImageTests-Exceptions'!
 Error subclass: #MyTestError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'MyTestError class' category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MyTestError class' category: #'BaseImageTests-Exceptions'!
 MyTestError class
 	instanceVariableNames: ''!
 
-!classDefinition: #MyTestNotification category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MyTestNotification category: #'BaseImageTests-Exceptions'!
 Notification subclass: #MyTestNotification
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'MyTestNotification class' category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MyTestNotification class' category: #'BaseImageTests-Exceptions'!
 MyTestNotification class
 	instanceVariableNames: ''!
 
-!classDefinition: #BinarySearchTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #BinarySearchTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #BinarySearchTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'BinarySearchTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'BinarySearchTest class' category: #'BaseImageTests-Collections'!
 BinarySearchTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CollectTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #CollectTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #CollectTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'CollectTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'CollectTest class' category: #'BaseImageTests-Collections'!
 CollectTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CollectionTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #CollectionTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #CollectionTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'CollectionTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'CollectionTest class' category: #'BaseImageTests-Collections'!
 CollectionTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DictionaryTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #DictionaryTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #DictionaryTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'DictionaryTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'DictionaryTest class' category: #'BaseImageTests-Collections'!
 DictionaryTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #IntervalTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #IntervalTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #IntervalTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'IntervalTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'IntervalTest class' category: #'BaseImageTests-Collections'!
 IntervalTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #OrderedCollectionTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #OrderedCollectionTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #OrderedCollectionTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'OrderedCollectionTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'OrderedCollectionTest class' category: #'BaseImageTests-Collections'!
 OrderedCollectionTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #OrderedDictionaryTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #OrderedDictionaryTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #OrderedDictionaryTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'OrderedDictionaryTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'OrderedDictionaryTest class' category: #'BaseImageTests-Collections'!
 OrderedDictionaryTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SequenceableCollectionTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SequenceableCollectionTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #SequenceableCollectionTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'SequenceableCollectionTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SequenceableCollectionTest class' category: #'BaseImageTests-Collections'!
 SequenceableCollectionTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TextTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TextTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #TextTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'TextTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TextTest class' category: #'BaseImageTests-Collections'!
 TextTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WeakIdentitySetTest category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #WeakIdentitySetTest category: #'BaseImageTests-Collections'!
 TestCase subclass: #WeakIdentitySetTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections'!
-!classDefinition: 'WeakIdentitySetTest class' category: #'BaseImageTests-Collections' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'WeakIdentitySetTest class' category: #'BaseImageTests-Collections'!
 WeakIdentitySetTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BehaviorTest category: #'BaseImageTests-Kernel-Classes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #BehaviorTest category: #'BaseImageTests-Kernel-Classes'!
 TestCase subclass: #BehaviorTest
 	instanceVariableNames: 'unreferenced referenced'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Classes'!
-!classDefinition: 'BehaviorTest class' category: #'BaseImageTests-Kernel-Classes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'BehaviorTest class' category: #'BaseImageTests-Kernel-Classes'!
 BehaviorTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BehaviorTestSubclass category: #'BaseImageTests-Kernel-Classes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #BehaviorTestSubclass category: #'BaseImageTests-Kernel-Classes'!
 BehaviorTest subclass: #BehaviorTestSubclass
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Classes'!
-!classDefinition: 'BehaviorTestSubclass class' category: #'BaseImageTests-Kernel-Classes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'BehaviorTestSubclass class' category: #'BaseImageTests-Kernel-Classes'!
 BehaviorTestSubclass class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClassTest category: #'BaseImageTests-Kernel-Classes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ClassTest category: #'BaseImageTests-Kernel-Classes'!
 TestCase subclass: #ClassTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Classes'!
-!classDefinition: 'ClassTest class' category: #'BaseImageTests-Kernel-Classes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ClassTest class' category: #'BaseImageTests-Kernel-Classes'!
 ClassTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #AbstractNumberTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #AbstractNumberTest category: #'BaseImageTests-Kernel-Numbers'!
 TestCase subclass: #AbstractNumberTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'AbstractNumberTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'AbstractNumberTest class' category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #FloatTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #FloatTest category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest subclass: #FloatTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'FloatTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'FloatTest class' category: #'BaseImageTests-Kernel-Numbers'!
 FloatTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #FractionTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #FractionTest category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest subclass: #FractionTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'FractionTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'FractionTest class' category: #'BaseImageTests-Kernel-Numbers'!
 FractionTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #IntegerDigitLogicTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #IntegerDigitLogicTest category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest subclass: #IntegerDigitLogicTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'IntegerDigitLogicTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'IntegerDigitLogicTest class' category: #'BaseImageTests-Kernel-Numbers'!
 IntegerDigitLogicTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #IntegerTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #IntegerTest category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest subclass: #IntegerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'IntegerTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'IntegerTest class' category: #'BaseImageTests-Kernel-Numbers'!
 IntegerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LargeNegativeIntegerTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #LargeNegativeIntegerTest category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest subclass: #LargeNegativeIntegerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'LargeNegativeIntegerTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'LargeNegativeIntegerTest class' category: #'BaseImageTests-Kernel-Numbers'!
 LargeNegativeIntegerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LargePositiveIntegerTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #LargePositiveIntegerTest category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest subclass: #LargePositiveIntegerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'LargePositiveIntegerTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'LargePositiveIntegerTest class' category: #'BaseImageTests-Kernel-Numbers'!
 LargePositiveIntegerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #NumberTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #NumberTest category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest subclass: #NumberTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'NumberTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'NumberTest class' category: #'BaseImageTests-Kernel-Numbers'!
 NumberTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SmallIntegerTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SmallIntegerTest category: #'BaseImageTests-Kernel-Numbers'!
 AbstractNumberTest subclass: #SmallIntegerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'SmallIntegerTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SmallIntegerTest class' category: #'BaseImageTests-Kernel-Numbers'!
 SmallIntegerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RandomTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RandomTest category: #'BaseImageTests-Kernel-Numbers'!
 TestCase subclass: #RandomTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'RandomTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RandomTest class' category: #'BaseImageTests-Kernel-Numbers'!
 RandomTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LaggedFibonacciRandomTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #LaggedFibonacciRandomTest category: #'BaseImageTests-Kernel-Numbers'!
 RandomTest subclass: #LaggedFibonacciRandomTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'LaggedFibonacciRandomTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'LaggedFibonacciRandomTest class' category: #'BaseImageTests-Kernel-Numbers'!
 LaggedFibonacciRandomTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ParkMiller88RandomTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ParkMiller88RandomTest category: #'BaseImageTests-Kernel-Numbers'!
 RandomTest subclass: #ParkMiller88RandomTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'ParkMiller88RandomTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ParkMiller88RandomTest class' category: #'BaseImageTests-Kernel-Numbers'!
 ParkMiller88RandomTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ParkMiller93RandomTest category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ParkMiller93RandomTest category: #'BaseImageTests-Kernel-Numbers'!
 RandomTest subclass: #ParkMiller93RandomTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Numbers'!
-!classDefinition: 'ParkMiller93RandomTest class' category: #'BaseImageTests-Kernel-Numbers' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ParkMiller93RandomTest class' category: #'BaseImageTests-Kernel-Numbers'!
 ParkMiller93RandomTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DateAndTimeTest category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #DateAndTimeTest category: #'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #DateAndTimeTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Chronology'!
-!classDefinition: 'DateAndTimeTest class' category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'DateAndTimeTest class' category: #'BaseImageTests-Kernel-Chronology'!
 DateAndTimeTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DateTest category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #DateTest category: #'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #DateTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Chronology'!
-!classDefinition: 'DateTest class' category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'DateTest class' category: #'BaseImageTests-Kernel-Chronology'!
 DateTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DurationTest category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #DurationTest category: #'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #DurationTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Chronology'!
-!classDefinition: 'DurationTest class' category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'DurationTest class' category: #'BaseImageTests-Kernel-Chronology'!
 DurationTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #MonthTest category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MonthTest category: #'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #MonthTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Chronology'!
-!classDefinition: 'MonthTest class' category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MonthTest class' category: #'BaseImageTests-Kernel-Chronology'!
 MonthTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TimeTest category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TimeTest category: #'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #TimeTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Chronology'!
-!classDefinition: 'TimeTest class' category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TimeTest class' category: #'BaseImageTests-Kernel-Chronology'!
 TimeTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TimespanTest category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TimespanTest category: #'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #TimespanTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Chronology'!
-!classDefinition: 'TimespanTest class' category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TimespanTest class' category: #'BaseImageTests-Kernel-Chronology'!
 TimespanTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WeekTest category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #WeekTest category: #'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #WeekTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Chronology'!
-!classDefinition: 'WeekTest class' category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'WeekTest class' category: #'BaseImageTests-Kernel-Chronology'!
 WeekTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #YearTest category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #YearTest category: #'BaseImageTests-Kernel-Chronology'!
 TestCase subclass: #YearTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Chronology'!
-!classDefinition: 'YearTest class' category: #'BaseImageTests-Kernel-Chronology' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'YearTest class' category: #'BaseImageTests-Kernel-Chronology'!
 YearTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompiledMethodTest category: #'BaseImageTests-Kernel-Methods' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #CompiledMethodTest category: #'BaseImageTests-Kernel-Methods'!
 TestCase subclass: #CompiledMethodTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Methods'!
-!classDefinition: 'CompiledMethodTest class' category: #'BaseImageTests-Kernel-Methods' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'CompiledMethodTest class' category: #'BaseImageTests-Kernel-Methods'!
 CompiledMethodTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DelayTest category: #'BaseImageTests-Kernel-Processes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #DelayTest category: #'BaseImageTests-Kernel-Processes'!
 TestCase subclass: #DelayTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Processes'!
-!classDefinition: 'DelayTest class' category: #'BaseImageTests-Kernel-Processes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'DelayTest class' category: #'BaseImageTests-Kernel-Processes'!
 DelayTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #MonitorTest category: #'BaseImageTests-Kernel-Processes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MonitorTest category: #'BaseImageTests-Kernel-Processes'!
 TestCase subclass: #MonitorTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Processes'!
-!classDefinition: 'MonitorTest class' category: #'BaseImageTests-Kernel-Processes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MonitorTest class' category: #'BaseImageTests-Kernel-Processes'!
 MonitorTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProcessTest category: #'BaseImageTests-Kernel-Processes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ProcessTest category: #'BaseImageTests-Kernel-Processes'!
 TestCase subclass: #ProcessTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Processes'!
-!classDefinition: 'ProcessTest class' category: #'BaseImageTests-Kernel-Processes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ProcessTest class' category: #'BaseImageTests-Kernel-Processes'!
 ProcessTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SemaphoreTest category: #'BaseImageTests-Kernel-Processes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SemaphoreTest category: #'BaseImageTests-Kernel-Processes'!
 TestCase subclass: #SemaphoreTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Processes'!
-!classDefinition: 'SemaphoreTest class' category: #'BaseImageTests-Kernel-Processes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SemaphoreTest class' category: #'BaseImageTests-Kernel-Processes'!
 SemaphoreTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BecomeTest category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #BecomeTest category: #'BaseImageTests-Kernel'!
 TestCase subclass: #BecomeTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'BecomeTest class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'BecomeTest class' category: #'BaseImageTests-Kernel'!
 BecomeTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BooleanTest category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #BooleanTest category: #'BaseImageTests-Kernel'!
 TestCase subclass: #BooleanTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'BooleanTest class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'BooleanTest class' category: #'BaseImageTests-Kernel'!
 BooleanTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CharacterSetTest category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #CharacterSetTest category: #'BaseImageTests-Kernel'!
 TestCase subclass: #CharacterSetTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'CharacterSetTest class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'CharacterSetTest class' category: #'BaseImageTests-Kernel'!
 CharacterSetTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CharacterTest category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #CharacterTest category: #'BaseImageTests-Kernel'!
 TestCase subclass: #CharacterTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'CharacterTest class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'CharacterTest class' category: #'BaseImageTests-Kernel'!
 CharacterTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #IfNotNilTests category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #IfNotNilTests category: #'BaseImageTests-Kernel'!
 TestCase subclass: #IfNotNilTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'IfNotNilTests class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'IfNotNilTests class' category: #'BaseImageTests-Kernel'!
 IfNotNilTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProcessorTest category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ProcessorTest category: #'BaseImageTests-Kernel'!
 TestCase subclass: #ProcessorTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'ProcessorTest class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ProcessorTest class' category: #'BaseImageTests-Kernel'!
 ProcessorTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SpecialSelectorsTest category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SpecialSelectorsTest category: #'BaseImageTests-Kernel'!
 TestCase subclass: #SpecialSelectorsTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'SpecialSelectorsTest class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SpecialSelectorsTest class' category: #'BaseImageTests-Kernel'!
 SpecialSelectorsTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #StrikeFontTest category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #StrikeFontTest category: #'BaseImageTests-Kernel'!
 TestCase subclass: #StrikeFontTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'StrikeFontTest class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'StrikeFontTest class' category: #'BaseImageTests-Kernel'!
 StrikeFontTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #StringTest category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #StringTest category: #'BaseImageTests-Kernel'!
 TestCase subclass: #StringTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'StringTest class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'StringTest class' category: #'BaseImageTests-Kernel'!
 StringTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ArrayTest category: #'BaseImageTests-Collections-Arrayed' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ArrayTest category: #'BaseImageTests-Collections-Arrayed'!
 TestCase subclass: #ArrayTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections-Arrayed'!
-!classDefinition: 'ArrayTest class' category: #'BaseImageTests-Collections-Arrayed' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
 ArrayTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #FloatArray64Test category: #'BaseImageTests-Collections-Arrayed' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #FloatArray64Test category: #'BaseImageTests-Collections-Arrayed'!
 TestCase subclass: #FloatArray64Test
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections-Arrayed'!
-!classDefinition: 'FloatArray64Test class' category: #'BaseImageTests-Collections-Arrayed' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'FloatArray64Test class' category: #'BaseImageTests-Collections-Arrayed'!
 FloatArray64Test class
 	instanceVariableNames: ''!
 
-!classDefinition: #FloatArrayTest category: #'BaseImageTests-Collections-Arrayed' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #FloatArrayTest category: #'BaseImageTests-Collections-Arrayed'!
 TestCase subclass: #FloatArrayTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections-Arrayed'!
-!classDefinition: 'FloatArrayTest class' category: #'BaseImageTests-Collections-Arrayed' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'FloatArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
 FloatArrayTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExceptionHandlingConditionTest category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ExceptionHandlingConditionTest category: #'BaseImageTests-Exceptions'!
 TestCase subclass: #ExceptionHandlingConditionTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'ExceptionHandlingConditionTest class' category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ExceptionHandlingConditionTest class' category: #'BaseImageTests-Exceptions'!
 ExceptionHandlingConditionTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExceptionTests category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ExceptionTests category: #'BaseImageTests-Exceptions'!
 TestCase subclass: #ExceptionTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'ExceptionTests class' category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ExceptionTests class' category: #'BaseImageTests-Exceptions'!
 ExceptionTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #ProcessTerminateBug category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ProcessTerminateBug category: #'BaseImageTests-Exceptions'!
 TestCase subclass: #ProcessTerminateBug
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'ProcessTerminateBug class' category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ProcessTerminateBug class' category: #'BaseImageTests-Exceptions'!
 ProcessTerminateBug class
 	instanceVariableNames: ''!
 
-!classDefinition: #ArrayLiteralTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ArrayLiteralTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #ArrayLiteralTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'ArrayLiteralTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ArrayLiteralTest class' category: #'BaseImageTests-Compiler'!
 ArrayLiteralTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClassDefinitionNodeAnalyzerTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ClassDefinitionNodeAnalyzerTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #ClassDefinitionNodeAnalyzerTest
 	instanceVariableNames: 'iv1'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'ClassDefinitionNodeAnalyzerTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ClassDefinitionNodeAnalyzerTest class' category: #'BaseImageTests-Compiler'!
 ClassDefinitionNodeAnalyzerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClosureCompilerTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ClosureCompilerTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #ClosureCompilerTest
 	instanceVariableNames: ''
 	classVariableNames: 'CmpRR CogRTLOpcodes Jump MoveCqR Nop'
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'ClosureCompilerTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ClosureCompilerTest class' category: #'BaseImageTests-Compiler'!
 ClosureCompilerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClosureSerializationTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ClosureSerializationTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #ClosureSerializationTest
 	instanceVariableNames: 'ivar'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'ClosureSerializationTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ClosureSerializationTest class' category: #'BaseImageTests-Compiler'!
 ClosureSerializationTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClosureTests category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ClosureTests category: #'BaseImageTests-Compiler'!
 TestCase subclass: #ClosureTests
 	instanceVariableNames: 'collection ivar'
 	classVariableNames: 'ClassVar'
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'ClosureTests class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ClosureTests class' category: #'BaseImageTests-Compiler'!
 ClosureTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompilerExceptionsTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #CompilerExceptionsTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #CompilerExceptionsTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'CompilerExceptionsTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'CompilerExceptionsTest class' category: #'BaseImageTests-Compiler'!
 CompilerExceptionsTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompilerTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #CompilerTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #CompilerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'CompilerTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'CompilerTest class' category: #'BaseImageTests-Compiler'!
 CompilerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ContextCompilationTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ContextCompilationTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #ContextCompilationTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'ContextCompilationTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ContextCompilationTest class' category: #'BaseImageTests-Compiler'!
 ContextCompilationTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DecompilerTests category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #DecompilerTests category: #'BaseImageTests-Compiler'!
 TestCase subclass: #DecompilerTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'DecompilerTests class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'DecompilerTests class' category: #'BaseImageTests-Compiler'!
 DecompilerTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #DecompilerTestFailuresCollector category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #DecompilerTestFailuresCollector category: #'BaseImageTests-Compiler'!
 DecompilerTests subclass: #DecompilerTestFailuresCollector
 	instanceVariableNames: 'failures'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'DecompilerTestFailuresCollector class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'DecompilerTestFailuresCollector class' category: #'BaseImageTests-Compiler'!
 DecompilerTestFailuresCollector class
 	instanceVariableNames: ''!
 
-!classDefinition: #MirrorPrimitiveTests category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MirrorPrimitiveTests category: #'BaseImageTests-Compiler'!
 TestCase subclass: #MirrorPrimitiveTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'MirrorPrimitiveTests class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MirrorPrimitiveTests class' category: #'BaseImageTests-Compiler'!
 MirrorPrimitiveTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrettyPrintingTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #PrettyPrintingTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #PrettyPrintingTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'PrettyPrintingTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'PrettyPrintingTest class' category: #'BaseImageTests-Compiler'!
 PrettyPrintingTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ScannerTest category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ScannerTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #ScannerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'ScannerTest class' category: #'BaseImageTests-Compiler' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ScannerTest class' category: #'BaseImageTests-Compiler'!
 ScannerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #FileIOAccessorTest category: #'BaseImageTests-System-FileMan' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #FileIOAccessorTest category: #'BaseImageTests-System-FileMan'!
 TestCase subclass: #FileIOAccessorTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System-FileMan'!
-!classDefinition: 'FileIOAccessorTest class' category: #'BaseImageTests-System-FileMan' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'FileIOAccessorTest class' category: #'BaseImageTests-System-FileMan'!
 FileIOAccessorTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #FileManTest category: #'BaseImageTests-System-FileMan' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #FileManTest category: #'BaseImageTests-System-FileMan'!
 TestCase subclass: #FileManTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System-FileMan'!
-!classDefinition: 'FileManTest class' category: #'BaseImageTests-System-FileMan' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'FileManTest class' category: #'BaseImageTests-System-FileMan'!
 FileManTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CuisSourceFileArrayTest category: #'BaseImageTests-System-Files' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #CuisSourceFileArrayTest category: #'BaseImageTests-System-Files'!
 TestCase subclass: #CuisSourceFileArrayTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System-Files'!
-!classDefinition: 'CuisSourceFileArrayTest class' category: #'BaseImageTests-System-Files' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'CuisSourceFileArrayTest class' category: #'BaseImageTests-System-Files'!
 CuisSourceFileArrayTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SystemConsistencyTest category: #'BaseImageTests-System' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SystemConsistencyTest category: #'BaseImageTests-System'!
 TestCase subclass: #SystemConsistencyTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System'!
-!classDefinition: 'SystemConsistencyTest class' category: #'BaseImageTests-System' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SystemConsistencyTest class' category: #'BaseImageTests-System'!
 SystemConsistencyTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SystemDictionaryTest category: #'BaseImageTests-System' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SystemDictionaryTest category: #'BaseImageTests-System'!
 TestCase subclass: #SystemDictionaryTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System'!
-!classDefinition: 'SystemDictionaryTest class' category: #'BaseImageTests-System' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SystemDictionaryTest class' category: #'BaseImageTests-System'!
 SystemDictionaryTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TrieTest category: #'BaseImageTests-System' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TrieTest category: #'BaseImageTests-System'!
 TestCase subclass: #TrieTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System'!
-!classDefinition: 'TrieTest class' category: #'BaseImageTests-System' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TrieTest class' category: #'BaseImageTests-System'!
 TrieTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ReferenceStreamTest category: #'BaseImageTests-System-Object Storage' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ReferenceStreamTest category: #'BaseImageTests-System-Object Storage'!
 TestCase subclass: #ReferenceStreamTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System-Object Storage'!
-!classDefinition: 'ReferenceStreamTest class' category: #'BaseImageTests-System-Object Storage' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ReferenceStreamTest class' category: #'BaseImageTests-System-Object Storage'!
 ReferenceStreamTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SmartRefStreamTest category: #'BaseImageTests-System-Object Storage' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SmartRefStreamTest category: #'BaseImageTests-System-Object Storage'!
 TestCase subclass: #SmartRefStreamTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System-Object Storage'!
-!classDefinition: 'SmartRefStreamTest class' category: #'BaseImageTests-System-Object Storage' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SmartRefStreamTest class' category: #'BaseImageTests-System-Object Storage'!
 SmartRefStreamTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BitBltTest category: #'BaseImageTests-Graphics Primitives' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #BitBltTest category: #'BaseImageTests-Graphics Primitives'!
 TestCase subclass: #BitBltTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Graphics Primitives'!
-!classDefinition: 'BitBltTest class' category: #'BaseImageTests-Graphics Primitives' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'BitBltTest class' category: #'BaseImageTests-Graphics Primitives'!
 BitBltTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #JpegTest category: #'BaseImageTests-Graphics' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #JpegTest category: #'BaseImageTests-Graphics'!
 TestCase subclass: #JpegTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Graphics'!
-!classDefinition: 'JpegTest class' category: #'BaseImageTests-Graphics' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'JpegTest class' category: #'BaseImageTests-Graphics'!
 JpegTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #AffineTransformationTest category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #AffineTransformationTest category: #'BaseImageTests-Morphic-Kernel'!
 TestCase subclass: #AffineTransformationTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Morphic-Kernel'!
-!classDefinition: 'AffineTransformationTest class' category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'AffineTransformationTest class' category: #'BaseImageTests-Morphic-Kernel'!
 AffineTransformationTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #LayoutMorphTest category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #LayoutMorphTest category: #'BaseImageTests-Morphic-Kernel'!
 TestCase subclass: #LayoutMorphTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Morphic-Kernel'!
-!classDefinition: 'LayoutMorphTest class' category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'LayoutMorphTest class' category: #'BaseImageTests-Morphic-Kernel'!
 LayoutMorphTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #MorphicLocationTest category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MorphicLocationTest category: #'BaseImageTests-Morphic-Kernel'!
 TestCase subclass: #MorphicLocationTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Morphic-Kernel'!
-!classDefinition: 'MorphicLocationTest class' category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MorphicLocationTest class' category: #'BaseImageTests-Morphic-Kernel'!
 MorphicLocationTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #MorphicTranslationTest category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MorphicTranslationTest category: #'BaseImageTests-Morphic-Kernel'!
 TestCase subclass: #MorphicTranslationTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Morphic-Kernel'!
-!classDefinition: 'MorphicTranslationTest class' category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MorphicTranslationTest class' category: #'BaseImageTests-Morphic-Kernel'!
 MorphicTranslationTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WorldTest category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #WorldTest category: #'BaseImageTests-Morphic-Kernel'!
 TestCase subclass: #WorldTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Morphic-Kernel'!
-!classDefinition: 'WorldTest class' category: #'BaseImageTests-Morphic-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'WorldTest class' category: #'BaseImageTests-Morphic-Kernel'!
 WorldTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SmalltalkCompleterTest category: #'BaseImageTests-Tools-Autocompletion' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SmalltalkCompleterTest category: #'BaseImageTests-Tools-Autocompletion'!
 TestCase subclass: #SmalltalkCompleterTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Autocompletion'!
-!classDefinition: 'SmalltalkCompleterTest class' category: #'BaseImageTests-Tools-Autocompletion' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SmalltalkCompleterTest class' category: #'BaseImageTests-Tools-Autocompletion'!
 SmalltalkCompleterTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TaskbarTest category: #'BaseImageTests-Tools-Taskbar' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TaskbarTest category: #'BaseImageTests-Tools-Taskbar'!
 TestCase subclass: #TaskbarTest
 	instanceVariableNames: 'taskbar needsDelete'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Taskbar'!
-!classDefinition: 'TaskbarTest class' category: #'BaseImageTests-Tools-Taskbar' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TaskbarTest class' category: #'BaseImageTests-Tools-Taskbar'!
 TaskbarTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestCaseTest category: #'BaseImageTests-Tools-Testing' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TestCaseTest category: #'BaseImageTests-Tools-Testing'!
 TestCase subclass: #TestCaseTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Testing'!
-!classDefinition: 'TestCaseTest class' category: #'BaseImageTests-Tools-Testing' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TestCaseTest class' category: #'BaseImageTests-Tools-Testing'!
 TestCaseTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestSuiteTest category: #'BaseImageTests-Tools-Testing' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TestSuiteTest category: #'BaseImageTests-Tools-Testing'!
 TestCase subclass: #TestSuiteTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Testing'!
-!classDefinition: 'TestSuiteTest class' category: #'BaseImageTests-Tools-Testing' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TestSuiteTest class' category: #'BaseImageTests-Tools-Testing'!
 TestSuiteTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DifferenceFinderTest category: #'BaseImageTests-Tools-Code Differ' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #DifferenceFinderTest category: #'BaseImageTests-Tools-Code Differ'!
 TestCase subclass: #DifferenceFinderTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Code Differ'!
-!classDefinition: 'DifferenceFinderTest class' category: #'BaseImageTests-Tools-Code Differ' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'DifferenceFinderTest class' category: #'BaseImageTests-Tools-Code Differ'!
 DifferenceFinderTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #UnicodeTest category: #'BaseImageTests-Unicode' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #UnicodeTest category: #'BaseImageTests-Unicode'!
 TestCase subclass: #UnicodeTest
 	instanceVariableNames: 'bytesOfExample1'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Unicode'!
-!classDefinition: 'UnicodeTest class' category: #'BaseImageTests-Unicode' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'UnicodeTest class' category: #'BaseImageTests-Unicode'!
 UnicodeTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestValueWithinFix category: #'BaseImageTests-Bugs' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TestValueWithinFix category: #'BaseImageTests-Bugs'!
 TestCase subclass: #TestValueWithinFix
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Bugs'!
-!classDefinition: 'TestValueWithinFix class' category: #'BaseImageTests-Bugs' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TestValueWithinFix class' category: #'BaseImageTests-Bugs'!
 TestValueWithinFix class
 	instanceVariableNames: ''!
 
-!classDefinition: #RefactoringTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RefactoringTest category: #'BaseImageTests-Tools-Refactoring'!
 TestCase subclass: #RefactoringTest
 	instanceVariableNames: 'classCategories setUpAssertionsPassed'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RefactoringTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RefactoringTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #AddInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #AddInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #AddInstanceVariableTest
 	instanceVariableNames: 'newVariable'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'AddInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'AddInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring'!
 AddInstanceVariableTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #AddParameterTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #AddParameterTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #AddParameterTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'AddParameterTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'AddParameterTest class' category: #'BaseImageTests-Tools-Refactoring'!
 AddParameterTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ChangeKeywordsSelectorOrderTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ChangeKeywordsSelectorOrderTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #ChangeKeywordsSelectorOrderTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'ChangeKeywordsSelectorOrderTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ChangeKeywordsSelectorOrderTest class' category: #'BaseImageTests-Tools-Refactoring'!
 ChangeKeywordsSelectorOrderTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtractToTemporaryTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ExtractToTemporaryTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #ExtractToTemporaryTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'ExtractToTemporaryTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ExtractToTemporaryTest class' category: #'BaseImageTests-Tools-Refactoring'!
 ExtractToTemporaryTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #InsertSuperclassTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #InsertSuperclassTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #InsertSuperclassTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'InsertSuperclassTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'InsertSuperclassTest class' category: #'BaseImageTests-Tools-Refactoring'!
 InsertSuperclassTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RemoveAllUnreferencedInstanceVariablesTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #PushUpMethodTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #PushUpMethodTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'PushUpMethodTest class' category: #'BaseImageTests-Tools-Refactoring'!
+PushUpMethodTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #RemoveAllUnreferencedInstanceVariablesTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #RemoveAllUnreferencedInstanceVariablesTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RemoveAllUnreferencedInstanceVariablesTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RemoveAllUnreferencedInstanceVariablesTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RemoveAllUnreferencedInstanceVariablesTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RemoveInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RemoveInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #RemoveInstanceVariableTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RemoveInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RemoveInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RemoveInstanceVariableTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RemoveParameterTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RemoveParameterTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #RemoveParameterTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RemoveParameterTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RemoveParameterTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RemoveParameterTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RenameClassTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RenameClassTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #RenameClassTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RenameClassTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RenameClassTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RenameClassTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RenameGlobalTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RenameGlobalTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #RenameGlobalTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RenameGlobalTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RenameGlobalTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RenameGlobalTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RenameInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RenameInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #RenameInstanceVariableTest
 	instanceVariableNames: 'oldVariable newVariable classToRefactor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RenameInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RenameInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RenameInstanceVariableTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RenameSelectorTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RenameSelectorTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #RenameSelectorTest
 	instanceVariableNames: 'oldSelector newSelector senderOfOldSelector classToRefactor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RenameSelectorTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RenameSelectorTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RenameSelectorTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RenameTemporaryTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RenameTemporaryTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #RenameTemporaryTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'RenameTemporaryTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RenameTemporaryTest class' category: #'BaseImageTests-Tools-Refactoring'!
 RenameTemporaryTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SafelyRemoveClassTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #SafelyRemoveClassTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #SafelyRemoveClassTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'SafelyRemoveClassTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'SafelyRemoveClassTest class' category: #'BaseImageTests-Tools-Refactoring'!
 SafelyRemoveClassTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TemporaryToInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TemporaryToInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #TemporaryToInstanceVariableTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'TemporaryToInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TemporaryToInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring'!
 TemporaryToInstanceVariableTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WriteStreamTest category: #'BaseImageTests-Collections-Streams' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #WriteStreamTest category: #'BaseImageTests-Collections-Streams'!
 TestCase subclass: #WriteStreamTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections-Streams'!
-!classDefinition: 'WriteStreamTest class' category: #'BaseImageTests-Collections-Streams' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'WriteStreamTest class' category: #'BaseImageTests-Collections-Streams'!
 WriteStreamTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #TranscriptTest category: #'BaseImageTests-System-Support' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #TranscriptTest category: #'BaseImageTests-System-Support'!
 TestCase subclass: #TranscriptTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-System-Support'!
-!classDefinition: 'TranscriptTest class' category: #'BaseImageTests-System-Support' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'TranscriptTest class' category: #'BaseImageTests-System-Support'!
 TranscriptTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ColorTest category: #'BaseImageTests-Graphics-Primitives' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ColorTest category: #'BaseImageTests-Graphics-Primitives'!
 TestCase subclass: #ColorTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Graphics-Primitives'!
-!classDefinition: 'ColorTest class' category: #'BaseImageTests-Graphics-Primitives' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ColorTest class' category: #'BaseImageTests-Graphics-Primitives'!
 ColorTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #RectangleTest category: #'BaseImageTests-Graphics-Primitives' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #RectangleTest category: #'BaseImageTests-Graphics-Primitives'!
 TestCase subclass: #RectangleTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Graphics-Primitives'!
-!classDefinition: 'RectangleTest class' category: #'BaseImageTests-Graphics-Primitives' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'RectangleTest class' category: #'BaseImageTests-Graphics-Primitives'!
 RectangleTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ColorFormTest category: #'BaseImageTests-Graphics-Display Objects' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ColorFormTest category: #'BaseImageTests-Graphics-Display Objects'!
 TestCase subclass: #ColorFormTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Graphics-Display Objects'!
-!classDefinition: 'ColorFormTest class' category: #'BaseImageTests-Graphics-Display Objects' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ColorFormTest class' category: #'BaseImageTests-Graphics-Display Objects'!
 ColorFormTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #GrayFormTest category: #'BaseImageTests-Graphics-Display Objects' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #GrayFormTest category: #'BaseImageTests-Graphics-Display Objects'!
 TestCase subclass: #GrayFormTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Graphics-Display Objects'!
-!classDefinition: 'GrayFormTest class' category: #'BaseImageTests-Graphics-Display Objects' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'GrayFormTest class' category: #'BaseImageTests-Graphics-Display Objects'!
 GrayFormTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ObjectTest category: #'BaseImageTests-Kernel-Objects' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ObjectTest category: #'BaseImageTests-Kernel-Objects'!
 TestCase subclass: #ObjectTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'ObjectTest class' category: #'BaseImageTests-Kernel-Objects' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ObjectTest class' category: #'BaseImageTests-Kernel-Objects'!
 ObjectTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #WeakMessageSendTest category: #'BaseImageTests-Kernel-Objects' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #WeakMessageSendTest category: #'BaseImageTests-Kernel-Objects'!
 TestCase subclass: #WeakMessageSendTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Objects'!
-!classDefinition: 'WeakMessageSendTest class' category: #'BaseImageTests-Kernel-Objects' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'WeakMessageSendTest class' category: #'BaseImageTests-Kernel-Objects'!
 WeakMessageSendTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #MethodReferenceTest category: #'BaseImageTests-Tools-Browser' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #MethodReferenceTest category: #'BaseImageTests-Tools-Browser'!
 TestCase subclass: #MethodReferenceTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Browser'!
-!classDefinition: 'MethodReferenceTest class' category: #'BaseImageTests-Tools-Browser' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'MethodReferenceTest class' category: #'BaseImageTests-Tools-Browser'!
 MethodReferenceTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ChangesTest category: #'BaseImageTests-Tools-Changes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ChangesTest category: #'BaseImageTests-Tools-Changes'!
 TestCase subclass: #ChangesTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Changes'!
-!classDefinition: 'ChangesTest class' category: #'BaseImageTests-Tools-Changes' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ChangesTest class' category: #'BaseImageTests-Tools-Changes'!
 ChangesTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #BecomeTestExperiment category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #BecomeTestExperiment category: #'BaseImageTests-Kernel'!
 Object subclass: #BecomeTestExperiment
 	instanceVariableNames: 'a b'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'BecomeTestExperiment class' category: #'BaseImageTests-Kernel' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'BecomeTestExperiment class' category: #'BaseImageTests-Kernel'!
 BecomeTestExperiment class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExceptionTester category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: #ExceptionTester category: #'BaseImageTests-Exceptions'!
 Object subclass: #ExceptionTester
 	instanceVariableNames: 'log suiteLog iterationsBeforeTimeout'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'ExceptionTester class' category: #'BaseImageTests-Exceptions' stamp: 'jmv 11/8/2019 18:03:47'!
+!classDefinition: 'ExceptionTester class' category: #'BaseImageTests-Exceptions'!
 ExceptionTester class
 	instanceVariableNames: ''!
 
@@ -17344,6 +17354,150 @@ test10NewSuperclassNameCanNotHaveSpaces
 	self
 		assertCreation: [ InsertSuperclass to: self class named: 'With spaces' asSymbol ]
 		failsWith: [ NewClassPrecondition newClassNameCanNotHaveSeparatorsErrorMessage ].! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:47'!
+test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector push |
+
+	selector := #newMethod.
+   
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector asString.
+           
+	push := PushUpMethod for: classToRefactor >> selector.
+	push apply.
+   
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).
+	
+	! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:51'!
+test02AMethodAccessesClassToRefactorInstVarCanNotBePushedUpToSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector newVariable |
+
+	newVariable := 'a'.	
+	selector := #newMethod.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass instanceVariableNames: newVariable.
+	classToRefactor compile: selector, '^ 1 + ', newVariable.
+
+	self
+		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
+		 failsWith: [ PushUpMethod errorMessageForMethodCannotAccessInstanceVariable ].
+	   
+	self deny: (classToRefactorSuperclass includesSelector: selector).
+	self assert: (classToRefactor includesSelector: selector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:54'!
+test03AMethodWritesClassToRefactorInstVarCanNotBePushedUpToSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector newVariable |
+
+	newVariable := 'a'.	
+	selector := #newMethod.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass instanceVariableNames: newVariable.
+	classToRefactor compile: selector, ' a = 1'.
+
+	self
+		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
+		 failsWith: [ PushUpMethod errorMessageForMethodCannotAccessInstanceVariable ].
+	   
+	self deny: (classToRefactorSuperclass includesSelector: selector).
+	self assert: (classToRefactor includesSelector: selector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:57'!
+test04AMethodWritesSuperClassInstVarShouldBePushedUpToSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector newVariable push |
+
+	newVariable := 'a'.	
+	selector := #newMethod.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass instanceVariableNames: newVariable.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector, ' a = 1'.	
+
+	push := PushUpMethod for: classToRefactor >> selector.
+	push apply.
+   
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:48:00'!
+test05AMethodAccessesSuperClassClassToRefactorInstVarShouldBePushedUpToSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector newVariable push |
+
+	newVariable := 'a'.	
+	selector := #newMethod.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass instanceVariableNames: newVariable.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector, '^ 1 + ', newVariable.
+
+	push := PushUpMethod for: classToRefactor >> selector.
+	push apply.
+	   
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:48:03'!
+test06AMethodAccessesSuperClassClassToRefactorInstVarShouldBePushedUpToSuperclass
+
+	| classToRefactorSuperclass classToRefactor selector newVariable push |
+
+	newVariable := 'a'.	
+	selector := #newMethod.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass instanceVariableNames: newVariable.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: selector, '^ 1 + ', newVariable.
+
+	push := PushUpMethod for: classToRefactor >> selector.
+	push apply.
+	   
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).! !
+
+!PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:48:05'!
+test07AMethodInClassToRefactorExistsInSuperClassShouldOverrideTheExistingSuperClassMethod
+	
+	| classToRefactor classToRefactorSuperclass newVariable selector superclassMethodContent |
+	
+	newVariable := 'a'.	
+	selector := #newMethod.
+	superclassMethodContent := selector, '
+	^ 2 + ', newVariable, '.'.
+	 
+	classToRefactorSuperclass := self createClassNamed: #Superclass instanceVariableNames: newVariable.
+	classToRefactorSuperclass compile: selector, '^ 1 + ', newVariable.
+
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperclass.
+	classToRefactor compile: superclassMethodContent.
+
+	self 
+		assertCreation: [ PushUpMethod for: classToRefactor >> selector ]
+		warnsWith: [ PushUpMethod warningMesssageForExistMethodToPushUpOnSuperClass ].
+		
+	self assert: (classToRefactorSuperclass includesSelector: selector).
+	self assert: (classToRefactor includesSelector: selector).! !
+
+!PushUpMethodTest methodsFor: 'class factory' stamp: 'MSC 11/12/2019 11:48:09'!
+classToRefactorName	
+
+	^#ClassToPushMethodUp! !
 
 !RemoveAllUnreferencedInstanceVariablesTest methodsFor: 'tests' stamp: 'HAW 8/2/2018 16:15:11'!
 test01NoVariableIsRemovedWhenClassHasNoInstanceVariable
