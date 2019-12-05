@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3958] on 12 November 2019 at 12:05:38 pm'!
-'Description '!
-!provides: 'BaseImageTests' 1 184!
+'From Cuis 5.0 [latest update: #3963] on 4 December 2019 at 11:29:09 am'!
+'Description Rename class log tests'!
+!provides: 'BaseImageTests' 1 185!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -20566,6 +20566,21 @@ test05ScanClassRemovalChange
 
 ! !
 
+!ChangesTest methodsFor: 'scan tests' stamp: 'EB 12/1/2019 15:20:22'!
+test06ScanClassRenameChange
+
+	| newClass classRenameChange newClassName |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClassName := 'NewClassName'.
+		newClass rename: newClassName.
+
+		classRenameChange := self scanChangesFromFile last.
+		
+		self assert: classRenameChange changeType equals: #doIt ]
+! !
+
 !ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:45'!
 test01AddingAClassShouldBeLogged
 	" Log format expected:
@@ -20667,6 +20682,22 @@ test05RemovingAClassShouldBeLogged
 				loggedDefinition := readStream upToEnd.
 				
 				self assert: definition,'!!' equals: loggedDefinition ]]! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'EB 12/1/2019 15:08:35'!
+test06RenamingAClassShouldBeLogged
+	" Log format expected:
+
+	Smalltalk renameClassNamed: #ClassName as: #NewClassName!!
+	"
+	| newClass newClassName |
+	
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClassName := 'NewClassName'.
+		newClass rename: newClassName.
+
+		self assertIsLoggedOnce: 
+				'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #', newClassName ]! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
