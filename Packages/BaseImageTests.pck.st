@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3963] on 4 December 2019 at 11:29:09 am'!
-'Description Rename class log tests'!
-!provides: 'BaseImageTests' 1 185!
+'From Cuis 5.0 [latest update: #3964] on 12 December 2019 at 3:25:00 pm'!
+'Description Move to inst/class side refactoring tests'!
+!provides: 'BaseImageTests' 1 186!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1013,6 +1013,16 @@ RefactoringTest subclass: #InsertSuperclassTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'InsertSuperclassTest class' category: #'BaseImageTests-Tools-Refactoring'!
 InsertSuperclassTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MoveToInstanceOrClassMethodTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #MoveToInstanceOrClassMethodTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'MoveToInstanceOrClassMethodTest class' category: #'BaseImageTests-Tools-Refactoring'!
+MoveToInstanceOrClassMethodTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #PushUpMethodTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -17354,6 +17364,95 @@ test10NewSuperclassNameCanNotHaveSpaces
 	self
 		assertCreation: [ InsertSuperclass to: self class named: 'With spaces' asSymbol ]
 		failsWith: [ NewClassPrecondition newClassNameCanNotHaveSeparatorsErrorMessage ].! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 18:08:54'!
+test01CannotMoveWhenReferencingInstanceVariables
+	
+	| classToRefactor selector referencedVariable |
+
+	selector := #newMethod.
+	referencedVariable := 'a'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: referencedVariable.
+	classToRefactor compile: selector asString,' ^', referencedVariable.
+	
+	self 
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor >> selector ]
+		failsWith: [ MoveToInstanceOrClassMethod referencingInstanceVariablesErrorMessage ]
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 18:43:15'!
+test02CannotMoveToClassWhenLocalVariableIsTheSameAsClassInstanceVariable
+	
+	| classToRefactor selector referencedVariable |
+
+	selector := #newMethod.
+	referencedVariable := 'a'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class addInstVarName: referencedVariable.
+	classToRefactor compile: selector asString, '|', referencedVariable, '|'.
+	
+	self 
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor >> selector ]
+		failsWith: [ MoveToInstanceOrClassMethod localVariableConflictsWithInstanceVariableErrorMessage ]
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:35:40'!
+test03CannotMoveToInstanceWhenLocalVariableIsTheSameAsClassInstanceVariable
+	
+	| classToRefactor selector referencedVariable |
+
+	selector := #newMethod.
+	referencedVariable := 'a'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor addInstVarName: referencedVariable.
+	classToRefactor class compile: selector asString, '|', referencedVariable, '|'.
+	
+	self 
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor class >> selector ]
+		failsWith: [ MoveToInstanceOrClassMethod localVariableConflictsWithInstanceVariableErrorMessage ]
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:44:00'!
+test04InstanceMethodIsMovedToClassMethod
+	
+	| classToRefactor selector moveMethod |
+
+	selector := #newMethod.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: selector asString.
+	
+	moveMethod := MoveToInstanceOrClassMethod for: classToRefactor >> selector.
+	moveMethod apply.
+	
+	self assert: (classToRefactor class includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:51:21'!
+test05ClassMethodIsMovedToInstanceMethod
+	
+	| classToRefactor selector moveMethod |
+
+	selector := #newMethod.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: selector asString.
+	
+	moveMethod := MoveToInstanceOrClassMethod for: classToRefactor class >> selector.
+	moveMethod apply.
+	
+	self assert: (classToRefactor includesSelector: selector).
+	self deny: (classToRefactor class includesSelector: selector).
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'class factory' stamp: 'LMY 12/8/2019 17:35:59'!
+classToRefactorName
+
+	^#ClassToMoveMethod! !
 
 !PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:47'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
