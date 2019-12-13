@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 12 April 2019 at 4:19:59 pm'!
+'From Cuis 5.0 [latest update: #3969] on 13 December 2019 at 1:09:03 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 134!
+!provides: 'TerseGuide' 1 135!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -74,7 +74,7 @@ addAdditionalTopicsTo: topicsList
 		topicsList at: each title put: each
 	].! !
 
-!TerseGuideHelp methodsFor: 'topics' stamp: 'dhn 10/6/2018 16:31:59'!
+!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 12/13/2019 12:47:09'!
 coreTopics
 	
 	^ `Dictionary new
@@ -128,6 +128,7 @@ coreTopics
 	at: 'Time' put: #time;
 	at: 'Transcript' put: #transcript;	
 	at: 'Trie' put: #trie;
+	at: 'Custom Browsers' put: #customBrowsers;
 	yourself`! !
 
 !TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 7/15/2018 01:31:23'!
@@ -778,6 +779,16 @@ x _ 3.99 storeString.		"convert object to string via storeOn:"
 x _ 15 printStringBase: 16.
 x _ 15 storeStringBase: 16.
 
+'! !
+
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'RNG 12/13/2019 13:07:13'!
+customBrowsers
+	"Custom Browsers"
+	^
+'"Open a window with all methods from a particular category"
+Smalltalk 
+	browseMessageList: (Smalltalk allMethodsInCategory: ''testing'')
+	name: ''Testing methods''
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 16:38:28'!
@@ -2225,7 +2236,7 @@ additionalTopics
 
 	^ TerseGuideTopic allSubclasses collect: [ :topicClass | topicClass new ]! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'dhn 10/6/2018 16:28:59'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 12/13/2019 12:46:06'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^ #(
@@ -2279,6 +2290,7 @@ pages
 		'Debugging'
 		'Miscellaneous'
 		'Primitives'
+		'Custom Browsers'
 	) , self additionalTopicTitles! !
 
 !TerseGuideWindow methodsFor: 'initialization' stamp: 'dhn 6/15/2016 19:03'!
