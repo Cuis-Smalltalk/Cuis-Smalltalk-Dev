@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3958] on 12 November 2019 at 12:05:38 pm'!
-'Description '!
-!provides: 'BaseImageTests' 1 184!
+'From Cuis 5.0 [latest update: #3964] on 12 December 2019 at 3:25:00 pm'!
+'Description Move to inst/class side refactoring tests'!
+!provides: 'BaseImageTests' 1 186!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1013,6 +1013,16 @@ RefactoringTest subclass: #InsertSuperclassTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'InsertSuperclassTest class' category: #'BaseImageTests-Tools-Refactoring'!
 InsertSuperclassTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #MoveToInstanceOrClassMethodTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #MoveToInstanceOrClassMethodTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'MoveToInstanceOrClassMethodTest class' category: #'BaseImageTests-Tools-Refactoring'!
+MoveToInstanceOrClassMethodTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #PushUpMethodTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -17355,6 +17365,95 @@ test10NewSuperclassNameCanNotHaveSpaces
 		assertCreation: [ InsertSuperclass to: self class named: 'With spaces' asSymbol ]
 		failsWith: [ NewClassPrecondition newClassNameCanNotHaveSeparatorsErrorMessage ].! !
 
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 18:08:54'!
+test01CannotMoveWhenReferencingInstanceVariables
+	
+	| classToRefactor selector referencedVariable |
+
+	selector := #newMethod.
+	referencedVariable := 'a'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: referencedVariable.
+	classToRefactor compile: selector asString,' ^', referencedVariable.
+	
+	self 
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor >> selector ]
+		failsWith: [ MoveToInstanceOrClassMethod referencingInstanceVariablesErrorMessage ]
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 18:43:15'!
+test02CannotMoveToClassWhenLocalVariableIsTheSameAsClassInstanceVariable
+	
+	| classToRefactor selector referencedVariable |
+
+	selector := #newMethod.
+	referencedVariable := 'a'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class addInstVarName: referencedVariable.
+	classToRefactor compile: selector asString, '|', referencedVariable, '|'.
+	
+	self 
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor >> selector ]
+		failsWith: [ MoveToInstanceOrClassMethod localVariableConflictsWithInstanceVariableErrorMessage ]
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:35:40'!
+test03CannotMoveToInstanceWhenLocalVariableIsTheSameAsClassInstanceVariable
+	
+	| classToRefactor selector referencedVariable |
+
+	selector := #newMethod.
+	referencedVariable := 'a'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor addInstVarName: referencedVariable.
+	classToRefactor class compile: selector asString, '|', referencedVariable, '|'.
+	
+	self 
+		assertCreation: [ MoveToInstanceOrClassMethod for: classToRefactor class >> selector ]
+		failsWith: [ MoveToInstanceOrClassMethod localVariableConflictsWithInstanceVariableErrorMessage ]
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:44:00'!
+test04InstanceMethodIsMovedToClassMethod
+	
+	| classToRefactor selector moveMethod |
+
+	selector := #newMethod.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: selector asString.
+	
+	moveMethod := MoveToInstanceOrClassMethod for: classToRefactor >> selector.
+	moveMethod apply.
+	
+	self assert: (classToRefactor class includesSelector: selector).
+	self deny: (classToRefactor includesSelector: selector).
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'tests' stamp: 'LMY 12/8/2019 23:51:21'!
+test05ClassMethodIsMovedToInstanceMethod
+	
+	| classToRefactor selector moveMethod |
+
+	selector := #newMethod.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor class compile: selector asString.
+	
+	moveMethod := MoveToInstanceOrClassMethod for: classToRefactor class >> selector.
+	moveMethod apply.
+	
+	self assert: (classToRefactor includesSelector: selector).
+	self deny: (classToRefactor class includesSelector: selector).
+! !
+
+!MoveToInstanceOrClassMethodTest methodsFor: 'class factory' stamp: 'LMY 12/8/2019 17:35:59'!
+classToRefactorName
+
+	^#ClassToMoveMethod! !
+
 !PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:47'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
 
@@ -20566,6 +20665,21 @@ test05ScanClassRemovalChange
 
 ! !
 
+!ChangesTest methodsFor: 'scan tests' stamp: 'EB 12/1/2019 15:20:22'!
+test06ScanClassRenameChange
+
+	| newClass classRenameChange newClassName |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClassName := 'NewClassName'.
+		newClass rename: newClassName.
+
+		classRenameChange := self scanChangesFromFile last.
+		
+		self assert: classRenameChange changeType equals: #doIt ]
+! !
+
 !ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:45'!
 test01AddingAClassShouldBeLogged
 	" Log format expected:
@@ -20667,6 +20781,22 @@ test05RemovingAClassShouldBeLogged
 				loggedDefinition := readStream upToEnd.
 				
 				self assert: definition,'!!' equals: loggedDefinition ]]! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'EB 12/1/2019 15:08:35'!
+test06RenamingAClassShouldBeLogged
+	" Log format expected:
+
+	Smalltalk renameClassNamed: #ClassName as: #NewClassName!!
+	"
+	| newClass newClassName |
+	
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClassName := 'NewClassName'.
+		newClass rename: newClassName.
+
+		self assertIsLoggedOnce: 
+				'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #', newClassName ]! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
