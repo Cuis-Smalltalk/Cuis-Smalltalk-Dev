@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3972] on 17 December 2019 at 11:17:39 am'!
-'Description Test for unused variables'!
-!provides: 'BaseImageTests' 1 188!
+'From Cuis 5.0 [latest update: #3976] on 17 December 2019 at 5:20:56 pm'!
+'Description Undeclared variables tests'!
+!provides: 'BaseImageTests' 1 189!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -15725,6 +15725,50 @@ text
 
 	^ sourceCode ! !
 
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:15:47'!
+testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [|var1| var1 := 1.goo := 1.^ goo + var1]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [|var1 goo | var1 := 1.goo := 1.^ goo + var1]' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:15:27'!
+testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle |var1| var1 := 1.goo := 1.^ goo + var1'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle |var1 goo | var1 := 1.goo := 1.^ goo + var1' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:18:11'!
+testAddsUndeclaredVariableInRightBlock
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [|goo| goo := 1. ^goo ]. [goo1:=1.^ goo1]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [|goo| goo := 1. ^goo ]. [ | goo1 |goo1:=1.^ goo1]' equals: sourceCode! !
+
 !CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:06:40'!
 testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
 
@@ -15806,8 +15850,38 @@ testRemovesVariableDefinitionWhenNoMoreUnusedTemporaries
 		
 	self assert: 'griffle ' equals: sourceCode.! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:08:46'!
-testUndeclaredVariableIsSignledForUndeclaredVariables
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:13:33'!
+testReusesBlockTempDeclarationWhenEmptyForUndeclaredVariable
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [ || goo := 1.^ goo ]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [ | goo | goo := 1.^ goo ]' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:12:52'!
+testReusesMethodTempDeclarationWhenEmptyForUndeclaredVariable
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle || goo := 1.^ goo'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareMethodTempAction ].
+		
+	self assert: 'griffle | goo | goo := 1.^ goo' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:12:34'!
+testUndeclaredVariableIsSignaledForUndeclaredVariables
 
 	| testClass |
 	
@@ -15873,6 +15947,10 @@ unusedVariableSource
 	^ 'griffle 
 		| goo |
 		^ nil'! !
+
+!CompilerExceptionsTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 12:11:30'!
+selectInvisiblyFrom: start to: stop 
+	! !
 
 !RefactoringTest methodsFor: 'assertions' stamp: 'HAW 6/1/2017 19:01:00'!
 assertCreation: aCreationBlock failsWith: aMessageTextCreator
