@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3976] on 17 December 2019 at 5:20:56 pm'!
-'Description Undeclared variables tests'!
-!provides: 'BaseImageTests' 1 189!
+'From Cuis 5.0 [latest update: #3978] on 17 December 2019 at 7:22:24 pm'!
+'Description RenameTemporary of same var name fix tests'!
+!provides: 'BaseImageTests' 1 190!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -16171,7 +16171,7 @@ test14NewVariableNameCanNotBeAReservedName
 			failsWith: [NewInstanceVariablePrecondition errorMessageForNewInstanceVariableCanNotBeAReservedName: aReservedName ]]
 		! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 11/8/2018 15:28:03'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test01AddingParameterToUnaryMessageAddsColonAndParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod |
@@ -16195,7 +16195,7 @@ test01AddingParameterToUnaryMessageAddsColonAndParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16206,7 +16206,7 @@ test01AddingParameterToUnaryMessageAddsColonAndParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:13'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test02AddingParameterToKeywordMessageAddsNewKeywordAndParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword |
@@ -16231,7 +16231,7 @@ test02AddingParameterToKeywordMessageAddsNewKeywordAndParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16242,7 +16242,7 @@ test02AddingParameterToKeywordMessageAddsNewKeywordAndParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:25'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test03AddingParameterToKeywordMessageMultipleSendsInSameMethodSameLiteral
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16268,7 +16268,7 @@ test03AddingParameterToKeywordMessageMultipleSendsInSameMethodSameLiteral
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16279,7 +16279,7 @@ test03AddingParameterToKeywordMessageMultipleSendsInSameMethodSameLiteral
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:34'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test04AddingParameterToKeywordMessageWithMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16305,7 +16305,7 @@ test04AddingParameterToKeywordMessageWithMessageSendAsLastFormalParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16316,7 +16316,7 @@ test04AddingParameterToKeywordMessageWithMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:50'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test05AddingParameterToKeywordMessageWithBinaryMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16342,7 +16342,7 @@ test05AddingParameterToKeywordMessageWithBinaryMessageSendAsLastFormalParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16353,7 +16353,7 @@ test05AddingParameterToKeywordMessageWithBinaryMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:59'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test06AddingParameterToKeywordMessageWithKeywordMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16379,7 +16379,7 @@ test06AddingParameterToKeywordMessageWithKeywordMessageSendAsLastFormalParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16390,7 +16390,7 @@ test06AddingParameterToKeywordMessageWithKeywordMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/16/2018 18:53:57'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test07AddingParameterToUnaryMessageChangesReferencesToSelector
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod |
@@ -16414,7 +16414,7 @@ test07AddingParameterToUnaryMessageChangesReferencesToSelector
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: 0 equals: (senderMethod indexOfLiteral: oldSelector).
@@ -16423,7 +16423,7 @@ test07AddingParameterToUnaryMessageChangesReferencesToSelector
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:34:17'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test08AddingParameterToKeywordMessageChangesReferencesToSelector
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16449,7 +16449,7 @@ test08AddingParameterToKeywordMessageChangesReferencesToSelector
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: 0 equals: (senderMethod indexOfLiteral: oldSelector).
@@ -17257,7 +17257,7 @@ test10SourceCodeToExtractHasToBeOneStatement
 		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
 		failsWith: [ ExtractToTemporary sourceCodeToExtractHasToBeOneStatementErrorMessage ]! !
 
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/6/2018 15:37:49'!
+!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 19:12:33'!
 test11WhenThereAreNoTemporariesExtractCreatesTemporariesAndAddsTemporaryNamedAsDefined
 
 	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode |
@@ -17269,10 +17269,10 @@ test11WhenThereAreNoTemporariesExtractCreatesTemporariesAndAddsTemporaryNamedAsD
 	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
 	newMethodNode := extract apply.
 	
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable)
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)
 	! !
 
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/4/2017 18:02:21'!
+!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 19:12:33'!
 test12WhenThereAreTemporariesExtractAddsTemporaryNamedAsDefined
 
 	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode |
@@ -17284,7 +17284,7 @@ test12WhenThereAreTemporariesExtractAddsTemporaryNamedAsDefined
 	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
 	newMethodNode := extract apply.
 	
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable)
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)
 	! !
 
 !ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/6/2018 15:38:19'!
@@ -19843,7 +19843,7 @@ test06FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [ RenameTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: superclassToRefactor ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 19:28:36'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test07RenameCreatesNewTemporaryVariableAndDeletesOldOne
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -19856,8 +19856,8 @@ test07RenameCreatesNewTemporaryVariableAndDeletesOldOne
 	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
 	newMethodNode := rename methodNodeAfterApply.
 	
-	self deny: (newMethodNode hasArgumentOrTemporary: oldVariable).
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable)! !
+	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)! !
 
 !RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 19:28:42'!
 test08RenameChangesReferencesFromOldVariableToNewVariable
@@ -19876,7 +19876,7 @@ test08RenameChangesReferencesFromOldVariableToNewVariable
 	self assert: newVariable equals: assigmentNode variable name.
 	self assert: newVariable equals: assigmentNode value arguments first name.! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 19:28:47'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test09RenamesArguments
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -19889,8 +19889,8 @@ test09RenamesArguments
 	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
 	newMethodNode := rename methodNodeAfterApply.
 	
-	self deny: (newMethodNode hasArgumentOrTemporary: oldVariable).
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable).
+	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable).
 	self assert: newVariable equals: newMethodNode block statements first expr name.! !
 
 !RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 6/25/2017 21:55:56'!
@@ -19907,7 +19907,7 @@ test10NewVariableNameCanNotBeDefinedAsBlockArgument
 		assertCreation: [RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [RenameTemporary  errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/14/2018 11:16:28'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test11RenamesBlockArguments
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -19920,14 +19920,14 @@ test11RenamesBlockArguments
 	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
 	newMethodNode := rename methodNodeAfterApply.
 	
-	self deny: (newMethodNode hasArgumentOrTemporary: oldVariable).
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable).
+	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable).
 	"asserts it renamed block argument - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first arguments first name.
 	"asserts it renamed reference to block argument - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first block statements first expr name! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/14/2018 11:18:03'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test12RenamesBlockTemporaries
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -19940,12 +19940,59 @@ test12RenamesBlockTemporaries
 	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
 	newMethodNode := rename methodNodeAfterApply.
 	
-	self deny: (newMethodNode hasArgumentOrTemporary: oldVariable).
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable).
+	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable).
 	"asserts it renamed block temporary - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first temporaries first name.
 	"asserts it renamed reference to block temporary - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first block statements first expr name! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+test13OldNodeMustBePartOfMethodNode
+
+	| methodNode oldVariable newVariable oldVariableNode |
+	
+	oldVariable := 'old'.
+	newVariable := 'new'.
+	
+	methodNode := self methodNodeOf: 'm1 | ', oldVariable, ' | '.
+	oldVariableNode := methodNode tempNodes anyOne.
+	
+	self 
+		assertCreation: [RenameTemporary fromOldVariableNode: oldVariableNode copy to: newVariable in: methodNode ]
+		failsWith: [RenameTemporary oldVariableNodeNotPartOfMethodNodeErrorDescription ]	! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+test14OldVariableNodeMustBeArgOrTempNode
+
+	| methodNode newVariable oldVariableNode |
+	
+	newVariable := 'new'.
+	
+	methodNode := self methodNodeOf: 'm1 self'.
+	oldVariableNode := methodNode block statements first.
+	
+	self 
+		assertCreation: [RenameTemporary fromOldVariableNode: oldVariableNode to: newVariable in: methodNode ]
+		failsWith: [RenameTemporary oldVariableNodeMustBeArgOrTempNodeErrorDescription ]	! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+test15RenameVariablesWithSameNameInDifferentBlocksCorrectly
+
+	| methodNode oldVariable newVariable oldVariableNode newMethodNode rename |
+	
+	oldVariable := 'old'.
+	newVariable := 'new'.
+	
+	methodNode := self methodNodeOf: 'm1 [|',oldVariable,'| ^',oldVariable, '].[|',oldVariable,'| ^',oldVariable, '].'.
+	oldVariableNode := methodNode block statements first temporaries first.
+	
+	rename := RenameTemporary fromOldVariableNode: oldVariableNode to: newVariable in: methodNode.
+	newMethodNode := rename methodNodeAfterApply.
+	
+	self 
+		assert: 'm1 [|',newVariable,'| ^',newVariable, '].[|',oldVariable,'| ^',oldVariable, '].'
+		equals: newMethodNode sourceText! !
 
 !SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:08'!
 test02ClassesWithNoReferencesAndNoSubclassesAreSafetelyRemoved
