@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3979] on 18 December 2019 at 4:08:28 pm'!
-'Description Remove class warns when references to its name tests'!
-!provides: 'BaseImageTests' 1 191!
+'From Cuis 5.0 [latest update: #3980] on 18 December 2019 at 6:39:36 pm'!
+'Description RenameInstanceVariable log change test'!
+!provides: 'BaseImageTests' 1 192!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -19156,6 +19156,24 @@ test19FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 	self 
 		assertCreation: [ RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor ]
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (subclass>>selector)) ].
+	! !
+
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 18:37:39'!
+test20ClassChangeIsAddedWhenRenamingAnInstanceVariable
+
+	| rename classChanges refactorClassChangeSet refactorClassChangeSets |
+
+	self createClassToRefactor.
+	refactorClassChangeSets := ChangeSet allChangeSetsWithClass: classToRefactor.
+	self assert: 1 = refactorClassChangeSets size description: 'Can not run the test because the class is in more than one changeset (or in none)'.
+	refactorClassChangeSet := refactorClassChangeSets anyOne.
+	refactorClassChangeSet removeClassChanges: classToRefactor.
+	
+	rename := RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor .
+	rename apply.
+	
+	classChanges := refactorClassChangeSet classChangeAt: classToRefactor name.
+	self assert: (classChanges includes: #change).
 	! !
 
 !RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 23:26:45'!
