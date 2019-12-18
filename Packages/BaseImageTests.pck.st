@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3978] on 17 December 2019 at 7:22:24 pm'!
-'Description RenameTemporary of same var name fix tests'!
-!provides: 'BaseImageTests' 1 190!
+'From Cuis 5.0 [latest update: #3979] on 18 December 2019 at 4:08:28 pm'!
+'Description Remove class warns when references to its name tests'!
+!provides: 'BaseImageTests' 1 191!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -15983,6 +15983,11 @@ refactoringWarning
 
 	^ Refactoring refactoringWarningClass - MessageNotUnderstood.! !
 
+!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 12/18/2019 16:02:50'!
+referencesRefactoringWarning
+
+	^ Refactoring referencesWarningClass - MessageNotUnderstood.! !
+
 !AddInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/11/2017 18:12:55'!
 classToRefactorName
 
@@ -20118,6 +20123,28 @@ test09CanRemoveIfReferencesToSubclassesAreInTheHierarchy
 	
 	self assert: classToRemove isObsolete.	
 	self assert: classToRemoveSubclass isObsolete.! !
+
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 16:04:18'!
+test10WarnWhenHasReferencesToName
+
+	| classToRemove classReferencing methodNameReferencingClass | 
+	
+	classToRemove := self createClassNamed: self classToRemoveName.
+	classReferencing := self createClassNamed: #ClassReferencingClassToRemove.
+	methodNameReferencingClass := #m1.
+	classReferencing compile: methodNameReferencingClass asString, ' ^#', classToRemove name asString.
+	
+	self
+		should: [ SafelyRemoveClass of: classToRemove ]
+		raise: self referencesRefactoringWarning 
+		withExceptionDo: [ :aWarning | | reference |
+			self 
+				assert: (SafelyRemoveClass warningMessageForReferencesToNames: (Array with: classToRemove))
+				equals: aWarning messageText.
+			self assert: 1 equals: aWarning numberOfReferences.
+			reference := aWarning anyReference.
+			self assert: classReferencing name equals: reference classSymbol.
+			self assert: methodNameReferencingClass equals: reference methodSymbol ]! !
 
 !SafelyRemoveClassTest methodsFor: 'test support' stamp: 'HAW 8/1/2018 15:48:56'!
 assertSubclassesReturnsACopy
