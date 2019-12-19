@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3969] on 14 December 2019 at 11:29:35 am'!
-'Description MoveMethod refactoring'!
-!provides: 'BaseImageTests' 1 187!
+'From Cuis 5.0 [latest update: #3981] on 18 December 2019 at 8:58:18 pm'!
+'Description Fix to do not log the changes of refactoring data '!
+!provides: 'BaseImageTests' 1 193!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -655,26 +655,6 @@ TestCase subclass: #ClosureTests
 ClosureTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompilerExceptionsTest category: #'BaseImageTests-Compiler'!
-TestCase subclass: #CompilerExceptionsTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'CompilerExceptionsTest class' category: #'BaseImageTests-Compiler'!
-CompilerExceptionsTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CompilerTest category: #'BaseImageTests-Compiler'!
-TestCase subclass: #CompilerTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'CompilerTest class' category: #'BaseImageTests-Compiler'!
-CompilerTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #ContextCompilationTest category: #'BaseImageTests-Compiler'!
 TestCase subclass: #ContextCompilationTest
 	instanceVariableNames: ''
@@ -955,9 +935,29 @@ TestCase subclass: #TestValueWithinFix
 TestValueWithinFix class
 	instanceVariableNames: ''!
 
-!classDefinition: #RefactoringTest category: #'BaseImageTests-Tools-Refactoring'!
-TestCase subclass: #RefactoringTest
+!classDefinition: #DynamicallyCodeCreationTest category: #'BaseImageTests-Tools-Refactoring'!
+TestCase subclass: #DynamicallyCodeCreationTest
 	instanceVariableNames: 'classCategories setUpAssertionsPassed'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'DynamicallyCodeCreationTest class' category: #'BaseImageTests-Tools-Refactoring'!
+DynamicallyCodeCreationTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #CompilerExceptionsTest category: #'BaseImageTests-Compiler'!
+DynamicallyCodeCreationTest subclass: #CompilerExceptionsTest
+	instanceVariableNames: 'sourceCode'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'CompilerExceptionsTest class' category: #'BaseImageTests-Compiler'!
+CompilerExceptionsTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #RefactoringTest category: #'BaseImageTests-Tools-Refactoring'!
+DynamicallyCodeCreationTest subclass: #RefactoringTest
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Refactoring'!
@@ -1145,6 +1145,16 @@ RefactoringTest subclass: #TemporaryToInstanceVariableTest
 TemporaryToInstanceVariableTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #ChangesTest category: #'BaseImageTests-Tools-Changes'!
+DynamicallyCodeCreationTest subclass: #ChangesTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Changes'!
+!classDefinition: 'ChangesTest class' category: #'BaseImageTests-Tools-Changes'!
+ChangesTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #WriteStreamTest category: #'BaseImageTests-Collections-Streams'!
 TestCase subclass: #WriteStreamTest
 	instanceVariableNames: ''
@@ -1235,16 +1245,6 @@ TestCase subclass: #MethodReferenceTest
 MethodReferenceTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ChangesTest category: #'BaseImageTests-Tools-Changes'!
-TestCase subclass: #ChangesTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Tools-Changes'!
-!classDefinition: 'ChangesTest class' category: #'BaseImageTests-Tools-Changes'!
-ChangesTest class
-	instanceVariableNames: ''!
-
 !classDefinition: #BecomeTestExperiment category: #'BaseImageTests-Kernel'!
 Object subclass: #BecomeTestExperiment
 	instanceVariableNames: 'a b'
@@ -1263,6 +1263,16 @@ Object subclass: #ExceptionTester
 	category: 'BaseImageTests-Exceptions'!
 !classDefinition: 'ExceptionTester class' category: #'BaseImageTests-Exceptions'!
 ExceptionTester class
+	instanceVariableNames: ''!
+
+!classDefinition: #RefactoringClassTestData category: #'BaseImageTests-Tools-Refactoring'!
+Object subclass: #RefactoringClassTestData
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'RefactoringClassTestData class' category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringClassTestData class
 	instanceVariableNames: ''!
 
 
@@ -1286,9 +1296,6 @@ Tests that common uses of #become: and related methods don't crash the system wh
 
 !SpecialSelectorsTest commentStamp: '<historical>' prior: 0!
 Tests for proper behavior of Special Selectors, for example #@!
-
-!CompilerTest commentStamp: 'nice 12/3/2007 22:15' prior: 0!
-CompilerTest is a holder for SUnit test of Compiler!
 
 !DecompilerTests commentStamp: 'sd 9/26/2004 13:24' prior: 0!
 Apparently the decompiler does not really work totally.
@@ -1503,6 +1510,11 @@ Made at Cuis Sprint #1
 
 !BecomeTestExperiment commentStamp: '<historical>' prior: 0!
 To be used by BecomeTest!
+
+!RefactoringClassTestData class methodsFor: 'compiling' stamp: 'HAW 12/18/2019 19:55:32'!
+wantsChangeSetLogging 
+
+	^false! !
 
 !MyResumableTestError methodsFor: 'exceptionDescription' stamp: 'tfei 6/13/1999 00:46'!
 isResumable
@@ -12103,63 +12115,6 @@ testWhileWithTempNotInlined
 	[ index < 5 ] whileTrue: block.
 	self assertValues: #(1 2 3 4 5)! !
 
-!CompilerExceptionsTest methodsFor: 'as yet unclassified' stamp: 'cwp 8/25/2009 20:27'!
-griffle | goo |! !
-
-!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:23'!
-selectFrom: start to: end 
-	! !
-
-!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:22'!
-selectionInterval
-	^ 1 to: 0! !
-
-!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:26'!
-text
-	^ self unusedVariableSource! !
-
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'cwp 8/25/2009 20:22'!
-testUndeclaredVariable
-	self 
-		should: 
-			[self class 
-				compile: 'griffle ^ goo'
-				notifying: self]
-		raise: UndeclaredVariable! !
-
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'cwp 8/25/2009 20:24'!
-testUndefinedVariable
-	self 
-		should: 
-			[self class 
-				compile: 'griffle | goo | ^ goo'
-				notifying: self]
-		raise: UndefinedVariable! !
-
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'cwp 8/25/2009 20:25'!
-testUnknownSelector
-	self 
-		should: 
-			[self class 
-				compile: 'griffle self reallyHopeThisIsntImplementedAnywhere'
-				notifying: self]
-		raise: UnknownSelector! !
-
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'cwp 8/25/2009 20:27'!
-testUnusedVariable
-	self 
-		should: 
-			[self class 
-				compile: self unusedVariableSource
-				notifying: self]
-		raise: UnusedVariable! !
-
-!CompilerExceptionsTest methodsFor: 'private' stamp: 'cwp 8/25/2009 20:28'!
-unusedVariableSource
-	^ 'griffle 
-		| goo |
-		^ nil'! !
-
 !ContextCompilationTest methodsFor: 'tests' stamp: 'eem 6/19/2008 10:11'!
 testVariablesAndOffsetsDo
 
@@ -15608,48 +15563,48 @@ valueWithinNonLocalReturn
 	[^self] valueWithin: 20 milliSeconds onTimeout:[].
 ! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 3/4/2019 14:52:37'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:27'!
 allClassCategoriesOfTestData
 
 	^Array with: self classCategoryOfTestData ! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 11/1/2019 15:34:32'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:31'!
 classCategoryOfTestData
 	
 	"I can not call it testDataClassCategory becuase it will be taken as test!! - Hernan"
 	
 	^self class classCategoryOfTestData! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 8/9/2018 14:14:21'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/18/2019 19:55:52'!
 createClassNamed: aName 
 
 	^self 
 		createClassNamed: aName asSymbol "Just in case it is a string... - Hernan"
-		subclassOf: Object 
+		subclassOf: RefactoringClassTestData 
 		instanceVariableNames: '' 
 		classVariableNames: ''
 		poolDictionaries: ''
 		category: self classCategoryOfTestData.
 ! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 22:13:15'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/18/2019 19:55:56'!
 createClassNamed: aName category: aCategory
 
 	^self 
 		createClassNamed: aName
-		subclassOf: Object 
+		subclassOf: RefactoringClassTestData 
 		instanceVariableNames: '' 
 		classVariableNames: ''
 		poolDictionaries: ''
 		category: aCategory 
 ! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 22:48:27'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/18/2019 19:56:00'!
 createClassNamed: aName instanceVariableNames: instanceVariables
 
 	^self 
 		createClassNamed: aName
-		subclassOf: Object 
+		subclassOf: RefactoringClassTestData 
 		instanceVariableNames: instanceVariables 
 		classVariableNames: ''
 		poolDictionaries: ''
@@ -15657,7 +15612,7 @@ createClassNamed: aName instanceVariableNames: instanceVariables
 
 ! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 22:48:30'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:49'!
 createClassNamed: aName subclassOf: superclass 
 
 	^self 
@@ -15669,7 +15624,7 @@ createClassNamed: aName subclassOf: superclass
 		category: self classCategoryOfTestData.
 ! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 21:50:32'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:53'!
 createClassNamed: aName subclassOf: superclass category: aCategory
 
 	^self 
@@ -15681,7 +15636,7 @@ createClassNamed: aName subclassOf: superclass category: aCategory
 		category: aCategory 
 ! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 22:48:34'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:31:58'!
 createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVariables
 
 	^self 
@@ -15693,7 +15648,7 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 		category: self classCategoryOfTestData.
 ! !
 
-!RefactoringTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 21:29:11'!
+!DynamicallyCodeCreationTest methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:32:28'!
 createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVariables classVariableNames: classVariables poolDictionaries: poolDictionaries category: category
 
 	self assert: (Smalltalk classNamed: aName) isNil description: 'Class ', aName, ' already exists'.
@@ -15708,7 +15663,7 @@ createClassNamed: aName subclassOf: superclass instanceVariableNames: instanceVa
 		category: category 
 ! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 5/28/2017 23:26:31'!
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:32:57'!
 assertAllClassCategoriesAreExpectedToBeRemoved
 
 	"I'm using a halt instead of assert or error becuase I want the programmer to see what class category 
@@ -15716,10 +15671,300 @@ assertAllClassCategoriesAreExpectedToBeRemoved
 	(classCategories difference: self allClassCategoriesOfTestData) notEmpty ifTrue: [ self halt: #allClassCategoriesOfTestData asString, ' is not implemented correctly' ]
 	! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 5/28/2017 22:57:42'!
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:33:05'!
 assertCanRunTest
 	
 	self assertNoTestDataClassCategoryExist.
+	! !
+
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:33:17'!
+assertNoTestDataClassCategoryExist
+
+	self allClassCategoriesOfTestData do: [ :aClassCategory | self denyExistsClassCategory: aClassCategory ]
+		! !
+
+!DynamicallyCodeCreationTest methodsFor: 'assertions' stamp: 'HAW 12/17/2019 10:33:26'!
+denyExistsClassCategory: aClassCategory
+		
+	self deny: (SystemOrganization hasCategory: aClassCategory) description: 'Can not run test because class category ', aClassCategory, ' already exists'! !
+
+!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 12/17/2019 10:33:36'!
+setUp
+
+	"If the authorInitials are not set, they will be asked - Hernan"
+	UISupervisor whenUIinSafeState: [ Utilities authorInitials ].
+	"Because I'm using the same system to create classes and removed them with its category at tearDown, I want to be sure 
+	I will not remove something I don't have too - Hernan"
+	setUpAssertionsPassed := false.
+	self assertCanRunTest.
+	setUpAssertionsPassed := true.
+	
+	classCategories := Set new.! !
+
+!DynamicallyCodeCreationTest methodsFor: 'setup/teardown' stamp: 'HAW 12/17/2019 10:33:41'!
+tearDown
+
+	setUpAssertionsPassed ifTrue: [
+		self assertAllClassCategoriesAreExpectedToBeRemoved.
+		SystemOrganization removeSystemCategories: classCategories.
+		"I commented this becuase it took too much time and the only ones runing these tests 
+		are the ones developing refactorings that know about creating/removing test data category - Hernan
+		Browser allInstancesDo: [:aBrowser | aBrowser changed: #systemCategoryList ]"]! !
+
+!DynamicallyCodeCreationTest class methodsFor: 'class factory' stamp: 'HAW 12/17/2019 10:34:07'!
+classCategoryOfTestData
+	
+	^ '__Refactoring-TestData__'! !
+
+!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 11:00:59'!
+correctFrom: start to: end with: aReplacement
+ 
+	| newSourceCode |
+	
+	newSourceCode := sourceCode first: start - 1.
+	newSourceCode := newSourceCode, aReplacement.
+	newSourceCode := newSourceCode, (sourceCode copyFrom: end + 1 to: sourceCode size).
+	
+	sourceCode := newSourceCode ! !
+
+!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:23'!
+selectFrom: start to: end 
+	! !
+
+!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:22'!
+selectionInterval
+	^ 1 to: 0! !
+
+!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 10:53:27'!
+text
+
+	^ sourceCode ! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:15:47'!
+testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [|var1| var1 := 1.goo := 1.^ goo + var1]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [|var1 goo | var1 := 1.goo := 1.^ goo + var1]' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:15:27'!
+testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle |var1| var1 := 1.goo := 1.^ goo + var1'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle |var1 goo | var1 := 1.goo := 1.^ goo + var1' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:18:11'!
+testAddsUndeclaredVariableInRightBlock
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [|goo| goo := 1. ^goo ]. [goo1:=1.^ goo1]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [|goo| goo := 1. ^goo ]. [ | goo1 |goo1:=1.^ goo1]' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:06:40'!
+testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
+
+	| testClass counter |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [ | goo | ]. [ | goo | ]'.
+	counter := 0.
+	[testClass compile: sourceCode notifying: self]
+		on: UnusedVariable
+		do: [ :unusedVariable |
+			self assert: 'goo' equals: unusedVariable name.
+			counter := counter + 1.
+			unusedVariable resume: counter = 1 ].
+		
+	self assert: 'griffle [  ]. [ | goo | ]' equals: sourceCode.! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:07:39'!
+testDoesNotRemoveUnusedVariableIfSaidSo
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle | goo |'.
+	
+	[testClass compile: sourceCode notifying: self]
+		on: UnusedVariable
+		do: [ :unusedVariable |
+			self assert: 'goo' equals: unusedVariable name.
+			unusedVariable resume: false ].
+		
+	self assert: 'griffle | goo |' equals: sourceCode.! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:12:44'!
+testKeepsVariableDefinitionWhenThereAreUsedTemporaries
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle | goo a | a := 1. ^a'.
+	
+	[testClass compile: sourceCode notifying: self]
+		on: UnusedVariable
+		do: [ :unusedVariable |
+			self assert: 'goo' equals: unusedVariable name.
+			unusedVariable resume: true ].
+		
+	self assert: 'griffle | a | a := 1. ^a' equals: sourceCode.! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:03:46'!
+testRemovesUnusedVariablesFromBlocks
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [ | goo | ]'.
+	
+	[testClass compile: sourceCode notifying: self]
+		on: UnusedVariable
+		do: [ :unusedVariable |
+			self assert: 'goo' equals: unusedVariable name.
+			unusedVariable resume: true ].
+		
+	self assert: 'griffle [  ]' equals: sourceCode.! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:01:28'!
+testRemovesVariableDefinitionWhenNoMoreUnusedTemporaries
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle | goo |'.
+	
+	[testClass compile: sourceCode notifying: self]
+		on: UnusedVariable
+		do: [ :unusedVariable |
+			self assert: 'goo' equals: unusedVariable name.
+			unusedVariable resume: true ].
+		
+	self assert: 'griffle ' equals: sourceCode.! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:13:33'!
+testReusesBlockTempDeclarationWhenEmptyForUndeclaredVariable
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [ || goo := 1.^ goo ]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [ | goo | goo := 1.^ goo ]' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:12:52'!
+testReusesMethodTempDeclarationWhenEmptyForUndeclaredVariable
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle || goo := 1.^ goo'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareMethodTempAction ].
+		
+	self assert: 'griffle | goo | goo := 1.^ goo' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:12:34'!
+testUndeclaredVariableIsSignaledForUndeclaredVariables
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	
+	self 
+		should:  [ testClass compile: 'griffle ^ goo' notifying: self ]
+		raise: UndeclaredVariable
+		withExceptionDo: [ :anUndeclaredVariable |
+			self assert: 'goo' equals: anUndeclaredVariable name ]! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:09:35'!
+testUndefinedVariableIsSignaledForVariablesDefinedButNotInitialized
+
+	| testClass |
+	
+	testClass := self createTestClass.
+
+	self 
+		should: [testClass compile: 'griffle | goo | ^ goo' notifying: self]
+		raise: UndefinedVariable
+		withExceptionDo: [ :anUndefinedVariable |
+			self assert: 'goo' equals: anUndefinedVariable name ]! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:10:53'!
+testUnknownSelectorIsSignalForMessagesSendNotImplemented
+
+	| testClass unknowSelector |
+	
+	testClass := self createTestClass.
+	unknowSelector := 'reallyHopeThisIsntImplementedAnywhere'.
+	
+	self 
+		should: [ testClass
+				compile: 'griffle self ', unknowSelector
+				notifying: self]
+		raise: UnknownSelector
+		withExceptionDo: [ :anUnknowSelector |
+			self assert: unknowSelector equals: anUnknowSelector name ]! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:11:49'!
+testUnusedVariableIsSignaledForUnusedVariables
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle | goo |'.
+	
+	self 
+		should: [testClass compile: sourceCode notifying: self]
+		raise: UnusedVariable
+		withExceptionDo: [ :unusedVariable |
+			self assert: 'goo' equals: unusedVariable name ]
+! !
+
+!CompilerExceptionsTest methodsFor: 'private' stamp: 'HAW 12/17/2019 10:38:10'!
+createTestClass
+	
+	^self createClassNamed: #CompilerTestDataClass__! !
+
+!CompilerExceptionsTest methodsFor: 'private' stamp: 'cwp 8/25/2009 20:28'!
+unusedVariableSource
+	^ 'griffle 
+		| goo |
+		^ nil'! !
+
+!CompilerExceptionsTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 12:11:30'!
+selectInvisiblyFrom: start to: stop 
 	! !
 
 !RefactoringTest methodsFor: 'assertions' stamp: 'HAW 6/1/2017 19:01:00'!
@@ -15738,17 +15983,6 @@ assertCreation: aCreationBlock warnsWith: aMessageTextCreator
 		raise: self refactoringWarning
 		withMessageText: aMessageTextCreator ! !
 
-!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 5/28/2017 23:07:36'!
-assertNoTestDataClassCategoryExist
-
-	self allClassCategoriesOfTestData do: [ :aClassCategory | self denyExistsClassCategory: aClassCategory ]
-		! !
-
-!RefactoringTest methodsFor: 'assertions' stamp: 'HAW 5/28/2017 23:09:29'!
-denyExistsClassCategory: aClassCategory
-		
-	self deny: (SystemOrganization hasCategory: aClassCategory) description: 'Can not run test because class category ', aClassCategory, ' already exists'! !
-
 !RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 8/17/2018 16:38:44'!
 canNotRefactorDueToReferencesRefactoringError
 	
@@ -15764,33 +15998,10 @@ refactoringWarning
 
 	^ Refactoring refactoringWarningClass - MessageNotUnderstood.! !
 
-!RefactoringTest methodsFor: 'setup/teardown' stamp: 'HAW 3/6/2019 15:35:30'!
-setUp
+!RefactoringTest methodsFor: 'exceptions' stamp: 'HAW 12/18/2019 16:02:50'!
+referencesRefactoringWarning
 
-	"If the authorInitials are not set, they will be asked - Hernan"
-	UISupervisor whenUIinSafeState: [ Utilities authorInitials ].
-	"Because I'm using the same system to create classes and removed them with its category at tearDown, I want to be sure 
-	I will not remove something I don't have too - Hernan"
-	setUpAssertionsPassed := false.
-	self assertCanRunTest.
-	setUpAssertionsPassed := true.
-	
-	classCategories := Set new.! !
-
-!RefactoringTest methodsFor: 'setup/teardown' stamp: 'HAW 3/4/2019 11:37:29'!
-tearDown
-
-	setUpAssertionsPassed ifTrue: [
-		self assertAllClassCategoriesAreExpectedToBeRemoved.
-		SystemOrganization removeSystemCategories: classCategories.
-		"I commented this becuase it took too much time and the only ones runing these tests 
-		are the ones developing refactorings that know about creating/removing test data category - Hernan
-		Browser allInstancesDo: [:aBrowser | aBrowser changed: #systemCategoryList ]"]! !
-
-!RefactoringTest class methodsFor: 'class factory' stamp: 'HAW 11/1/2019 15:35:13'!
-classCategoryOfTestData
-	
-	^ '__Refactoring-TestData__'! !
+	^ Refactoring referencesWarningClass - MessageNotUnderstood.! !
 
 !AddInstanceVariableTest methodsFor: 'class factory' stamp: 'HAW 6/11/2017 18:12:55'!
 classToRefactorName
@@ -15980,7 +16191,7 @@ test14NewVariableNameCanNotBeAReservedName
 			failsWith: [NewInstanceVariablePrecondition errorMessageForNewInstanceVariableCanNotBeAReservedName: aReservedName ]]
 		! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 11/8/2018 15:28:03'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test01AddingParameterToUnaryMessageAddsColonAndParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod |
@@ -16004,7 +16215,7 @@ test01AddingParameterToUnaryMessageAddsColonAndParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16015,7 +16226,7 @@ test01AddingParameterToUnaryMessageAddsColonAndParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:13'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test02AddingParameterToKeywordMessageAddsNewKeywordAndParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword |
@@ -16040,7 +16251,7 @@ test02AddingParameterToKeywordMessageAddsNewKeywordAndParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16051,7 +16262,7 @@ test02AddingParameterToKeywordMessageAddsNewKeywordAndParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:25'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test03AddingParameterToKeywordMessageMultipleSendsInSameMethodSameLiteral
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16077,7 +16288,7 @@ test03AddingParameterToKeywordMessageMultipleSendsInSameMethodSameLiteral
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16088,7 +16299,7 @@ test03AddingParameterToKeywordMessageMultipleSendsInSameMethodSameLiteral
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:34'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test04AddingParameterToKeywordMessageWithMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16114,7 +16325,7 @@ test04AddingParameterToKeywordMessageWithMessageSendAsLastFormalParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16125,7 +16336,7 @@ test04AddingParameterToKeywordMessageWithMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:50'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test05AddingParameterToKeywordMessageWithBinaryMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16151,7 +16362,7 @@ test05AddingParameterToKeywordMessageWithBinaryMessageSendAsLastFormalParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16162,7 +16373,7 @@ test05AddingParameterToKeywordMessageWithBinaryMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:33:59'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test06AddingParameterToKeywordMessageWithKeywordMessageSendAsLastFormalParameter
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16188,7 +16399,7 @@ test06AddingParameterToKeywordMessageWithKeywordMessageSendAsLastFormalParameter
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
@@ -16199,7 +16410,7 @@ test06AddingParameterToKeywordMessageWithKeywordMessageSendAsLastFormalParameter
 
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 8/16/2018 18:53:57'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test07AddingParameterToUnaryMessageChangesReferencesToSelector
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod |
@@ -16223,7 +16434,7 @@ test07AddingParameterToUnaryMessageChangesReferencesToSelector
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: 0 equals: (senderMethod indexOfLiteral: oldSelector).
@@ -16232,7 +16443,7 @@ test07AddingParameterToUnaryMessageChangesReferencesToSelector
 	
 ! !
 
-!AddParameterTest methodsFor: 'tests' stamp: 'HAW 1/7/2019 13:34:17'!
+!AddParameterTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test08AddingParameterToKeywordMessageChangesReferencesToSelector
 
 	| refactoring classToRefactor oldSelector newSelector newImplementorMethodNode newParameter newParameterValue senderSelector senderMethod newSelectorAddedKeyword collaboration |
@@ -16258,7 +16469,7 @@ test08AddingParameterToKeywordMessageChangesReferencesToSelector
 	self assert: (classToRefactor includesSelector: newSelector).
 	
 	newImplementorMethodNode :=  (classToRefactor>>newSelector) methodNode.
-	self assert: (newImplementorMethodNode hasArgumentOrTemporary: newParameter).
+	self assert: (newImplementorMethodNode hasArgumentOrTemporaryNamed: newParameter).
 	
 	senderMethod := classToRefactor compiledMethodAt: senderSelector.
 	self assert: 0 equals: (senderMethod indexOfLiteral: oldSelector).
@@ -17066,7 +17277,7 @@ test10SourceCodeToExtractHasToBeOneStatement
 		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
 		failsWith: [ ExtractToTemporary sourceCodeToExtractHasToBeOneStatementErrorMessage ]! !
 
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/6/2018 15:37:49'!
+!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 19:12:33'!
 test11WhenThereAreNoTemporariesExtractCreatesTemporariesAndAddsTemporaryNamedAsDefined
 
 	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode |
@@ -17078,10 +17289,10 @@ test11WhenThereAreNoTemporariesExtractCreatesTemporariesAndAddsTemporaryNamedAsD
 	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
 	newMethodNode := extract apply.
 	
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable)
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)
 	! !
 
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/4/2017 18:02:21'!
+!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 19:12:33'!
 test12WhenThereAreTemporariesExtractAddsTemporaryNamedAsDefined
 
 	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode |
@@ -17093,7 +17304,7 @@ test12WhenThereAreTemporariesExtractAddsTemporaryNamedAsDefined
 	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
 	newMethodNode := extract apply.
 	
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable)
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)
 	! !
 
 !ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/6/2018 15:38:19'!
@@ -17267,7 +17478,7 @@ test01ChangesTheSuperclassOfTheClassToRefactor
 	self assert: (newSuperclass subclasses includes: classToRefactor).
 	self assert: oldSuperclass equals: newSuperclass superclass.! !
 
-!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:29:50'!
+!InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:02:51'!
 test02ClassToRefactorStructureIsMaintained
 
 	| classToRefactor refactoring instanceVariables category classVariables poolDictionaries |
@@ -17280,7 +17491,7 @@ test02ClassToRefactorStructureIsMaintained
 	[ Smalltalk at: poolDictionaries asSymbol put: Dictionary new.
 	classToRefactor := self 
 		createClassNamed: #ClassToAddSuperclass
-		subclassOf: Object
+		subclassOf: RefactoringClassTestData 
 		instanceVariableNames: instanceVariables
 		classVariableNames: classVariables
 		poolDictionaries: poolDictionaries
@@ -18962,6 +19173,38 @@ test19FailsWhenNewVariableIsHiddenInAnyMethodOfAnySubclass
 		failsWith: [ NewInstanceVariablePrecondition errorMessageForNewVariable: newVariable willBeHiddenAtAll: (Array with: (subclass>>selector)) ].
 	! !
 
+!RenameInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:55:59'!
+test20ClassChangeIsAddedWhenRenamingAnInstanceVariable
+
+	| rename classChanges refactorClassChangeSet refactorClassChangeSets |
+
+	"I have to do this because on this case I want to keep track of the changes - Hernan"
+	[ classToRefactor := self 
+		createClassNamed: self classToRefactorName 
+		subclassOf: Object 
+		instanceVariableNames: oldVariable 
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: self classCategoryOfTestData.
+
+	refactorClassChangeSets := ChangeSet allChangeSetsWithClass: classToRefactor.
+	self assert: 1 = refactorClassChangeSets size description: 'Can not run the test because the class is in more than one changeset (or in none)'.
+	refactorClassChangeSet := refactorClassChangeSets anyOne.
+	refactorClassChangeSet removeClassChanges: classToRefactor.
+	
+	rename := RenameInstanceVariable from: oldVariable to: newVariable in: classToRefactor .
+	rename apply.
+	
+	classChanges := refactorClassChangeSet classChangeAt: classToRefactor name.
+	self assert: (classChanges includes: #change). ]
+		ensure: [ | package | 
+			classToRefactor class compile: 'wantsChangeSetLogging ^false'.
+			ChangeSet allChangeSets remove: refactorClassChangeSet.
+			package := CodePackage packageOfClass: classToRefactor ifNone: nil.
+			self assert: package notNil.
+			package hasUnsavedChanges: false ].
+	! !
+
 !RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 23:26:45'!
 allClassCategoriesOfTestData
 
@@ -18985,10 +19228,10 @@ classToRefactorName
 
 	^#ClassToRenameSelector! !
 
-!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/28/2017 22:48:43'!
+!RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 12/18/2019 20:32:41'!
 createClassToRefactor
 
-	classToRefactor := self createClassWithImplementorAndSenderNamed: self classToRefactorName subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderNamed: self classToRefactorName subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
 ! !
 
 !RenameSelectorTest methodsFor: 'class factory' stamp: 'HAW 5/25/2017 23:14:02'!
@@ -19235,12 +19478,12 @@ test14RenamesSymbolsEqualToOldSelector
 	self assert: (senderMethod sendsOrRefersTo: newSelector) 
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 12:03:55'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:34:01'!
 test15ScopeToRenameCanBeClassOnly
 	
 	| rename anotherClassSendingMessage |
 	
-	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
 	
 	anotherClassSendingMessage := self createClassNamed: #ClassToAvoidRenameSelector.
 	anotherClassSendingMessage compile: senderOfOldSelector asString , ' self ' , oldSelector asString.
@@ -19251,12 +19494,12 @@ test15ScopeToRenameCanBeClassOnly
 	self assertWasRenamedInClassAndMeta: classToRefactor.
 	self assertWasNotRenamedInClass: anotherClassSendingMessage ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 12:04:14'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:07:15'!
 test16ScopeToRenameCanBeHierarchyOnly
 	
 	| rename anotherClassSendingMessage superclassToRefactor subclassToRefactor |
 	
-	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
 	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
 	subclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SubclassToRenameSelector subclassOf: classToRefactor categorizedAd: self classCategoryOfTestData.
 
@@ -19271,13 +19514,13 @@ test16ScopeToRenameCanBeHierarchyOnly
 	self assertWasRenamedInClassAndMeta: subclassToRefactor.
 	self assertWasNotRenamedInClass: anotherClassSendingMessage ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 12:04:25'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:07:32'!
 test17ScopeToRenameCanBeCategoryOnly
 	
 	| rename anotherClassSendingMessage  anotherClassToRefactor |
 	
-	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: Object categorizedAd: self classCategoryOfTestData.
-	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotherclassToRenameSelector subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotherclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
 	
 	anotherClassSendingMessage := self createClassNamed: #ClassToAvoidRenameSelector category: self classCategoryOfTestDataToAvoid.
 	anotherClassSendingMessage compile: senderOfOldSelector asString , ' self ' , oldSelector asString.
@@ -19290,17 +19533,17 @@ test17ScopeToRenameCanBeCategoryOnly
 	self assertWasNotRenamedInClass: anotherClassSendingMessage
 		! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 12:04:47'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:07:49'!
 test18ScopeToRenameCanBeCategoriesAndHierarchyOnly
 	
 	| rename anotherClassSendingMessage superclassToRefactor subclassToRefactor anotherClassToRefactor classInOtherCategoryToRefactor |
 	
-	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: Object categorizedAd: self anotherClassCategoryOfTestData.
+	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self anotherClassCategoryOfTestData.
 	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
 	subclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SubclassToRenameSelector subclassOf: classToRefactor categorizedAd: self classCategoryOfTestData.
-	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotheclassToRenameSelector subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotheclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
 	classInOtherCategoryToRefactor := self 
-		createClassWithImplementorAndSenderInMetaTooNamed: #OtherCatClassToRenameSelector subclassOf: Object categorizedAd: self anotherClassCategoryOfTestData.
+		createClassWithImplementorAndSenderInMetaTooNamed: #OtherCatClassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self anotherClassCategoryOfTestData.
 	
 	anotherClassSendingMessage := self createClassNamed: #ClassToAvoidRenameSelector category: self classCategoryOfTestDataToAvoid.
 	anotherClassSendingMessage compile: senderOfOldSelector asString , ' self ' , oldSelector asString.
@@ -19315,13 +19558,13 @@ test18ScopeToRenameCanBeCategoriesAndHierarchyOnly
 	self assertWasRenamedInClassAndMeta: classInOtherCategoryToRefactor.
 	self assertWasNotRenamedInClass: anotherClassSendingMessage ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 12:10:33'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:08:00'!
 test19ScopeToRenameCanBeTheCompleteSystem
 	
 	| rename anotherClassToRefactor |
 	
-	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: Object categorizedAd: self classCategoryOfTestData.
-	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotherclassToRenameSelector subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
+	anotherClassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #AnotherclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
 
 	rename := RenameSelector from: oldSelector to: newSelector inSystem: Smalltalk.
 	"This is just to be sure that no more than the expected methods will be renamed because I'm using Smalltalk as system.
@@ -19533,12 +19776,12 @@ test31CanNotRenameFromKeywordOfOneParameterToBinary
 		raise: Error
 		withMessageText: (RenameSelector errorMessageForNewSelector: newSelector isNotOfSameTypeAs: oldSelector)! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/3/2019 09:02:58'!
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 20:08:36'!
 test32HierarchyScopeRenamesSelectorsFromSuperclassDefiningSelector
 	
 	| rename superclassToRefactor subclassToRefactor |
 	
-	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: Object categorizedAd: self classCategoryOfTestData.
+	superclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SuperclassToRenameSelector subclassOf: RefactoringClassTestData categorizedAd: self classCategoryOfTestData.
 	classToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
 	subclassToRefactor := self createClassWithImplementorAndSenderInMetaTooNamed: #SubclassToRenameSelector subclassOf: superclassToRefactor categorizedAd: self classCategoryOfTestData.
 
@@ -19652,7 +19895,7 @@ test06FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [ RenameTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: superclassToRefactor ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 19:28:36'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test07RenameCreatesNewTemporaryVariableAndDeletesOldOne
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -19665,8 +19908,8 @@ test07RenameCreatesNewTemporaryVariableAndDeletesOldOne
 	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
 	newMethodNode := rename methodNodeAfterApply.
 	
-	self deny: (newMethodNode hasArgumentOrTemporary: oldVariable).
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable)! !
+	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)! !
 
 !RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 19:28:42'!
 test08RenameChangesReferencesFromOldVariableToNewVariable
@@ -19685,7 +19928,7 @@ test08RenameChangesReferencesFromOldVariableToNewVariable
 	self assert: newVariable equals: assigmentNode variable name.
 	self assert: newVariable equals: assigmentNode value arguments first name.! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/9/2018 19:28:47'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test09RenamesArguments
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -19698,8 +19941,8 @@ test09RenamesArguments
 	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
 	newMethodNode := rename methodNodeAfterApply.
 	
-	self deny: (newMethodNode hasArgumentOrTemporary: oldVariable).
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable).
+	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable).
 	self assert: newVariable equals: newMethodNode block statements first expr name.! !
 
 !RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 6/25/2017 21:55:56'!
@@ -19716,7 +19959,7 @@ test10NewVariableNameCanNotBeDefinedAsBlockArgument
 		assertCreation: [RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [RenameTemporary  errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/14/2018 11:16:28'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test11RenamesBlockArguments
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -19729,14 +19972,14 @@ test11RenamesBlockArguments
 	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
 	newMethodNode := rename methodNodeAfterApply.
 	
-	self deny: (newMethodNode hasArgumentOrTemporary: oldVariable).
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable).
+	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable).
 	"asserts it renamed block argument - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first arguments first name.
 	"asserts it renamed reference to block argument - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first block statements first expr name! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 8/14/2018 11:18:03'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test12RenamesBlockTemporaries
 
 	| methodNode oldVariable newVariable rename newMethodNode |
@@ -19749,12 +19992,59 @@ test12RenamesBlockTemporaries
 	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
 	newMethodNode := rename methodNodeAfterApply.
 	
-	self deny: (newMethodNode hasArgumentOrTemporary: oldVariable).
-	self assert: (newMethodNode hasArgumentOrTemporary: newVariable).
+	self deny: (newMethodNode hasArgumentOrTemporaryNamed: oldVariable).
+	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable).
 	"asserts it renamed block temporary - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first temporaries first name.
 	"asserts it renamed reference to block temporary - Hernan"
 	self assert: newVariable equals: newMethodNode block statements first block statements first expr name! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+test13OldNodeMustBePartOfMethodNode
+
+	| methodNode oldVariable newVariable oldVariableNode |
+	
+	oldVariable := 'old'.
+	newVariable := 'new'.
+	
+	methodNode := self methodNodeOf: 'm1 | ', oldVariable, ' | '.
+	oldVariableNode := methodNode tempNodes anyOne.
+	
+	self 
+		assertCreation: [RenameTemporary fromOldVariableNode: oldVariableNode copy to: newVariable in: methodNode ]
+		failsWith: [RenameTemporary oldVariableNodeNotPartOfMethodNodeErrorDescription ]	! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+test14OldVariableNodeMustBeArgOrTempNode
+
+	| methodNode newVariable oldVariableNode |
+	
+	newVariable := 'new'.
+	
+	methodNode := self methodNodeOf: 'm1 self'.
+	oldVariableNode := methodNode block statements first.
+	
+	self 
+		assertCreation: [RenameTemporary fromOldVariableNode: oldVariableNode to: newVariable in: methodNode ]
+		failsWith: [RenameTemporary oldVariableNodeMustBeArgOrTempNodeErrorDescription ]	! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:15:28'!
+test15RenameVariablesWithSameNameInDifferentBlocksCorrectly
+
+	| methodNode oldVariable newVariable oldVariableNode newMethodNode rename |
+	
+	oldVariable := 'old'.
+	newVariable := 'new'.
+	
+	methodNode := self methodNodeOf: 'm1 [|',oldVariable,'| ^',oldVariable, '].[|',oldVariable,'| ^',oldVariable, '].'.
+	oldVariableNode := methodNode block statements first temporaries first.
+	
+	rename := RenameTemporary fromOldVariableNode: oldVariableNode to: newVariable in: methodNode.
+	newMethodNode := rename methodNodeAfterApply.
+	
+	self 
+		assert: 'm1 [|',newVariable,'| ^',newVariable, '].[|',oldVariable,'| ^',oldVariable, '].'
+		equals: newMethodNode sourceText! !
 
 !SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:08'!
 test02ClassesWithNoReferencesAndNoSubclassesAreSafetelyRemoved
@@ -19880,6 +20170,28 @@ test09CanRemoveIfReferencesToSubclassesAreInTheHierarchy
 	
 	self assert: classToRemove isObsolete.	
 	self assert: classToRemoveSubclass isObsolete.! !
+
+!SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 12/18/2019 16:04:18'!
+test10WarnWhenHasReferencesToName
+
+	| classToRemove classReferencing methodNameReferencingClass | 
+	
+	classToRemove := self createClassNamed: self classToRemoveName.
+	classReferencing := self createClassNamed: #ClassReferencingClassToRemove.
+	methodNameReferencingClass := #m1.
+	classReferencing compile: methodNameReferencingClass asString, ' ^#', classToRemove name asString.
+	
+	self
+		should: [ SafelyRemoveClass of: classToRemove ]
+		raise: self referencesRefactoringWarning 
+		withExceptionDo: [ :aWarning | | reference |
+			self 
+				assert: (SafelyRemoveClass warningMessageForReferencesToNames: (Array with: classToRemove))
+				equals: aWarning messageText.
+			self assert: 1 equals: aWarning numberOfReferences.
+			reference := aWarning anyReference.
+			self assert: classReferencing name equals: reference classSymbol.
+			self assert: methodNameReferencingClass equals: reference methodSymbol ]! !
 
 !SafelyRemoveClassTest methodsFor: 'test support' stamp: 'HAW 8/1/2018 15:48:56'!
 assertSubclassesReturnsACopy
@@ -20205,6 +20517,311 @@ compileMethodNodeIn: aClass named: aSelector sourceCode: sourceCode
 methodNodeIn: aClass named: aSelector
 
 	^ aClass compiledMethodAt: aSelector :: methodNode.! !
+
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:04:26'!
+assertIsLogged: aString times: stringCount and: aBlock
+
+	| logContent startPosition indexOfSubstring |
+
+	logContent := self userChangesForTestsFile textContents.
+ 
+	startPosition := 1.
+	stringCount <= 0
+		ifTrue: [ self deny: (logContent includesSubString: aString) ]
+		ifFalse:[
+			stringCount timesRepeat: [
+				indexOfSubstring := logContent findString: aString startingAt: startPosition.
+				self assert: indexOfSubstring > 0.
+				startPosition := indexOfSubstring + 1 ].
+			indexOfSubstring := logContent findString: aString startingAt: startPosition.
+			self assert: 0 equals: indexOfSubstring].
+		
+	aBlock value: logContent value: startPosition.
+	
+
+	! !
+
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:04'!
+assertIsLoggedOnce: aString
+
+	self assertIsLoggedOnce: aString and: [:logContents :nextPosition | ] ! !
+
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:02:33'!
+assertIsLoggedOnce: aString and: aBlock
+
+	self assertIsLogged: aString times: 1 and: aBlock! !
+
+!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:30'!
+assertIsLoggedTwice: aString
+
+	self assertIsLogged: aString times: 2 and: [:logContents :nextPosition | ] ! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:50'!
+changeUserChangesFileWhile: aBlock
+
+	^ Preferences use: self userChangesForTestsFileExtension asUserChangesFileNameExtensionWhile: aBlock ! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:57'!
+scanChangesFromFile
+
+	| fileStream changeList |
+
+	fileStream := Smalltalk defaultUserChangesName asFileEntry readStream.
+	changeList := ChangeList new scanFile: fileStream from: 0 to: fileStream size.
+
+	^ changeList changeList.
+! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:00'!
+userChangesForTestsFile
+
+	^self userChangesForTestsFileName asFileEntry! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:04'!
+userChangesForTestsFileExtension
+
+	^'.test.changes' ! !
+
+!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:07'!
+userChangesForTestsFileName
+
+	^(FileIOAccessor default baseNameFor: Smalltalk imageName), self userChangesForTestsFileExtension! !
+
+!ChangesTest methodsFor: 'setUp/tearDown' stamp: 'HAW 12/17/2019 10:36:27'!
+tearDown
+
+	self userChangesForTestsFile delete.
+	super tearDown ! !
+
+!ChangesTest methodsFor: 'test data' stamp: 'HAW 12/17/2019 10:37:01'!
+createTestDataClass
+
+	^ self createClassNamed: self testDataClassName 
+		! !
+
+!ChangesTest methodsFor: 'test data' stamp: 'HAW 11/1/2019 17:08:21'!
+testDataClassName
+
+	^ #LogChangesTestClass__! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:27'!
+test01ScanNewClassChange
+
+	| newClass newClassChange |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClassChange := self scanChangesFromFile last.
+
+		self assert: newClassChange changeType equals: #classDefinition.
+		self assert: newClassChange changeClass equals: newClass.
+		self deny: newClassChange stamp isNil.
+		self deny: newClassChange isTestClassChange.
+	] ! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:31'!
+test02ScanNewMethodChange
+
+	| newMethodChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass compile: 'm1 ^ 1' classified: 'a-category'.
+
+		newMethodChange := self scanChangesFromFile last.
+
+		self assert: newMethodChange changeType equals: #method.
+		self assert: newMethodChange methodSelector equals: #m1.
+		self assert: newMethodChange changeClass equals: newClass.
+		self assert: newMethodChange prior isNil.
+		self deny: newMethodChange stamp isNil ] ! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:34'!
+test03ScanMethodModifiedChange
+
+	| methodModifiedChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass compile: 'm1 ^ 1' classified: 'a-category'.
+		newClass compile: 'm1 ^ 2' classified: 'a-category'.
+
+		methodModifiedChange := self scanChangesFromFile last.
+
+		self assert: methodModifiedChange changeType equals: #method.
+		self assert: methodModifiedChange methodSelector equals: #m1.
+		self assert: methodModifiedChange changeClass equals: newClass.
+		self deny: methodModifiedChange prior isNil.
+		self deny: methodModifiedChange stamp isNil ]
+! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:37'!
+test04ScanMethodRemovalChange
+
+	| methodRemovalChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass compile: 'm1 ^ 1' classified: 'a-category'.
+		newClass removeSelector: #m1.
+
+		methodRemovalChange := self scanChangesFromFile last.
+
+		self assert: methodRemovalChange isMethodDeletion.
+		self assert: methodRemovalChange methodSelector equals: #m1.
+		self deny: methodRemovalChange stamp isNil ]
+! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:40'!
+test05ScanClassRemovalChange
+
+	| classRemovalChange newClass |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass removeFromSystem.
+
+		classRemovalChange := self scanChangesFromFile last.
+
+		self assert: classRemovalChange changeType equals: #classRemoval.
+		self assert: classRemovalChange changeClassName equals: self testDataClassName.
+		self assert: classRemovalChange isClassDeletion.
+		self deny: classRemovalChange stamp isNil ]
+
+! !
+
+!ChangesTest methodsFor: 'scan tests' stamp: 'EB 12/1/2019 15:20:22'!
+test06ScanClassRenameChange
+
+	| newClass classRenameChange newClassName |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClassName := 'NewClassName'.
+		newClass rename: newClassName.
+
+		classRenameChange := self scanChangesFromFile last.
+		
+		self assert: classRenameChange changeType equals: #doIt ]
+! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:45'!
+test01AddingAClassShouldBeLogged
+	" Log format expected:
+
+	!!classDefinition: #ClassName category: #'Category' stamp: changeStamp!!
+	Object subclass: #ClassName
+		instanceVariableNames: '...'
+		classVariableNames: '...'
+		poolDictionaries: '....'
+		category: 'Category'!!
+	"
+	| newClass |
+	
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+
+		self assertIsLoggedOnce: '!!classDefinition: #', self testDataClassName, ' category: #''', self classCategoryOfTestData,''' stamp:'.
+		self assertIsLoggedOnce: newClass definition ] ! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:48'!
+test02AddingANewMethodShouldBeLogged
+	" Log format expected:
+
+	!!Class methodsFor: 'category' stamp: 'author stamp'!!
+	methodSourceCode
+	"
+	| aClass |
+	
+	self changeUserChangesFileWhile: [
+		aClass := self createTestDataClass.
+		aClass compile: 'm1 ^ 1' classified: 'a-category'.
+
+		self assertIsLoggedOnce: '!!', self testDataClassName, ' methodsFor: ''a-category'' stamp:'.
+		self assertIsLoggedOnce: 'm1 ^ 1'] 
+! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:50'!
+test03ChangingAMethodShouldBeLogged
+	" Log format expected:
+
+	!!Class methodsFor: 'category' stamp: 'author stamp'!!
+	newMethodSourceCode
+	"
+	| aClass |
+	
+	self changeUserChangesFileWhile: [
+		aClass := self createTestDataClass.
+		aClass compile: 'm1 ^ 1' classified: 'a-category'.
+		aClass compile: 'm1 ^ 2' classified: 'a-category'.
+
+		self assertIsLoggedTwice: '!!', self testDataClassName , ' methodsFor: ''a-category'' stamp:'.
+		self assertIsLoggedOnce: 'prior: '.
+		self assertIsLoggedOnce: 'm1 ^ 2' ] ! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:53'!
+test04RemovingAMethodShouldBeLogged
+	" Log format expected:
+
+	!!methodRemoval: #ClassName selector stamp: changeStamp!!
+	methodSourceCode
+	"
+	| newClass methodSource readStream |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClass compile: 'm1 ^ 1' classified: 'a-category'.
+		newClass removeSelector: #m1.
+
+		self 
+			assertIsLoggedOnce: '!!methodRemoval: ',self testDataClassName, ' #m1 stamp:'
+			and: [ :logContents :nextPosition |
+				readStream := ReadStream on: logContents.
+		 		readStream position: nextPosition.
+				readStream nextLine.
+				methodSource := readStream nextLine.
+		
+				self assert: 'm1 ^ 1!!' equals: methodSource ]]! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:56'!
+test05RemovingAClassShouldBeLogged
+	" Log format expected:
+
+	!!classRemoval: #ClassName stamp: changeStamp!!
+	classDefinitionMessage
+	"
+	| newClass definition loggedDefinition readStream |
+
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		definition := newClass definition.
+		newClass removeFromSystem.
+
+		self 
+			assertIsLoggedOnce: '!!classRemoval: #', self testDataClassName, ' stamp:'
+			and: [ :logContents :nextPosition |
+				readStream := ReadStream on: logContents.
+		 		readStream position: nextPosition.
+				readStream nextLine.
+				loggedDefinition := readStream upToEnd.
+				
+				self assert: definition,'!!' equals: loggedDefinition ]]! !
+
+!ChangesTest methodsFor: 'log tests' stamp: 'EB 12/1/2019 15:08:35'!
+test06RenamingAClassShouldBeLogged
+	" Log format expected:
+
+	Smalltalk renameClassNamed: #ClassName as: #NewClassName!!
+	"
+	| newClass newClassName |
+	
+	self changeUserChangesFileWhile: [
+		newClass := self createTestDataClass.
+		newClassName := 'NewClassName'.
+		newClass rename: newClassName.
+
+		self assertIsLoggedOnce: 
+				'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #', newClassName ]! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:49:13'!
 testIsStream
@@ -20626,321 +21243,6 @@ testSourceCodeSignalExceptionIfMethodDoesNotExist
 		should: [ (MethodReference class: self class selector: #xx) sourceCode ]
 		raise: Error
 		withMessageText: Dictionary keyNotFoundErrorDescription ! !
-
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:04:26'!
-assertIsLogged: aString times: stringCount and: aBlock
-
-	| logContent startPosition indexOfSubstring |
-
-	logContent := self userChangesForTestsFile textContents.
- 
-	startPosition := 1.
-	stringCount <= 0
-		ifTrue: [ self deny: (logContent includesSubString: aString) ]
-		ifFalse:[
-			stringCount timesRepeat: [
-				indexOfSubstring := logContent findString: aString startingAt: startPosition.
-				self assert: indexOfSubstring > 0.
-				startPosition := indexOfSubstring + 1 ].
-			indexOfSubstring := logContent findString: aString startingAt: startPosition.
-			self assert: 0 equals: indexOfSubstring].
-		
-	aBlock value: logContent value: startPosition.
-	
-
-	! !
-
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:04'!
-assertIsLoggedOnce: aString
-
-	self assertIsLoggedOnce: aString and: [:logContents :nextPosition | ] ! !
-
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:02:33'!
-assertIsLoggedOnce: aString and: aBlock
-
-	self assertIsLogged: aString times: 1 and: aBlock! !
-
-!ChangesTest methodsFor: 'assertions' stamp: 'HAW 11/1/2019 17:03:30'!
-assertIsLoggedTwice: aString
-
-	self assertIsLogged: aString times: 2 and: [:logContents :nextPosition | ] ! !
-
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:50'!
-changeUserChangesFileWhile: aBlock
-
-	^ Preferences use: self userChangesForTestsFileExtension asUserChangesFileNameExtensionWhile: aBlock ! !
-
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:57'!
-scanChangesFromFile
-
-	| fileStream changeList |
-
-	fileStream := Smalltalk defaultUserChangesName asFileEntry readStream.
-	changeList := ChangeList new scanFile: fileStream from: 0 to: fileStream size.
-
-	^ changeList changeList.
-! !
-
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:00'!
-userChangesForTestsFile
-
-	^self userChangesForTestsFileName asFileEntry! !
-
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:04'!
-userChangesForTestsFileExtension
-
-	^'.test.changes' ! !
-
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:08:07'!
-userChangesForTestsFileName
-
-	^(FileIOAccessor default baseNameFor: Smalltalk imageName), self userChangesForTestsFileExtension! !
-
-!ChangesTest methodsFor: 'setUp/tearDown' stamp: 'HAW 11/1/2019 17:08:11'!
-tearDown
-
-	self userChangesForTestsFile delete.
-	SystemOrganization removeSystemCategory: self classCategoryOfTestData.
-	! !
-
-!ChangesTest methodsFor: 'test data' stamp: 'HAW 11/1/2019 17:08:15'!
-classCategoryOfTestData
-
-	^ RefactoringTest classCategoryOfTestData! !
-
-!ChangesTest methodsFor: 'test data' stamp: 'HAW 11/1/2019 17:08:18'!
-createTestDataClass.
-
-	^ Object 
-		subclass: self testDataClassName 
-		instanceVariableNames: '' 
-		classVariableNames: '' 
-		poolDictionaries: '' 
-		category: self classCategoryOfTestData.! !
-
-!ChangesTest methodsFor: 'test data' stamp: 'HAW 11/1/2019 17:08:21'!
-testDataClassName
-
-	^ #LogChangesTestClass__! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:27'!
-test01ScanNewClassChange
-
-	| newClass newClassChange |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClassChange := self scanChangesFromFile last.
-
-		self assert: newClassChange changeType equals: #classDefinition.
-		self assert: newClassChange changeClass equals: newClass.
-		self deny: newClassChange stamp isNil.
-		self deny: newClassChange isTestClassChange.
-	] ! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:31'!
-test02ScanNewMethodChange
-
-	| newMethodChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass compile: 'm1 ^ 1' classified: 'a-category'.
-
-		newMethodChange := self scanChangesFromFile last.
-
-		self assert: newMethodChange changeType equals: #method.
-		self assert: newMethodChange methodSelector equals: #m1.
-		self assert: newMethodChange changeClass equals: newClass.
-		self assert: newMethodChange prior isNil.
-		self deny: newMethodChange stamp isNil ] ! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:34'!
-test03ScanMethodModifiedChange
-
-	| methodModifiedChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass compile: 'm1 ^ 1' classified: 'a-category'.
-		newClass compile: 'm1 ^ 2' classified: 'a-category'.
-
-		methodModifiedChange := self scanChangesFromFile last.
-
-		self assert: methodModifiedChange changeType equals: #method.
-		self assert: methodModifiedChange methodSelector equals: #m1.
-		self assert: methodModifiedChange changeClass equals: newClass.
-		self deny: methodModifiedChange prior isNil.
-		self deny: methodModifiedChange stamp isNil ]
-! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:37'!
-test04ScanMethodRemovalChange
-
-	| methodRemovalChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass compile: 'm1 ^ 1' classified: 'a-category'.
-		newClass removeSelector: #m1.
-
-		methodRemovalChange := self scanChangesFromFile last.
-
-		self assert: methodRemovalChange isMethodDeletion.
-		self assert: methodRemovalChange methodSelector equals: #m1.
-		self deny: methodRemovalChange stamp isNil ]
-! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'HAW 11/1/2019 17:08:40'!
-test05ScanClassRemovalChange
-
-	| classRemovalChange newClass |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass removeFromSystem.
-
-		classRemovalChange := self scanChangesFromFile last.
-
-		self assert: classRemovalChange changeType equals: #classRemoval.
-		self assert: classRemovalChange changeClassName equals: self testDataClassName.
-		self assert: classRemovalChange isClassDeletion.
-		self deny: classRemovalChange stamp isNil ]
-
-! !
-
-!ChangesTest methodsFor: 'scan tests' stamp: 'EB 12/1/2019 15:20:22'!
-test06ScanClassRenameChange
-
-	| newClass classRenameChange newClassName |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClassName := 'NewClassName'.
-		newClass rename: newClassName.
-
-		classRenameChange := self scanChangesFromFile last.
-		
-		self assert: classRenameChange changeType equals: #doIt ]
-! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:45'!
-test01AddingAClassShouldBeLogged
-	" Log format expected:
-
-	!!classDefinition: #ClassName category: #'Category' stamp: changeStamp!!
-	Object subclass: #ClassName
-		instanceVariableNames: '...'
-		classVariableNames: '...'
-		poolDictionaries: '....'
-		category: 'Category'!!
-	"
-	| newClass |
-	
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-
-		self assertIsLoggedOnce: '!!classDefinition: #', self testDataClassName, ' category: #''', self classCategoryOfTestData,''' stamp:'.
-		self assertIsLoggedOnce: newClass definition ] ! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:48'!
-test02AddingANewMethodShouldBeLogged
-	" Log format expected:
-
-	!!Class methodsFor: 'category' stamp: 'author stamp'!!
-	methodSourceCode
-	"
-	| aClass |
-	
-	self changeUserChangesFileWhile: [
-		aClass := self createTestDataClass.
-		aClass compile: 'm1 ^ 1' classified: 'a-category'.
-
-		self assertIsLoggedOnce: '!!', self testDataClassName, ' methodsFor: ''a-category'' stamp:'.
-		self assertIsLoggedOnce: 'm1 ^ 1'] 
-! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:50'!
-test03ChangingAMethodShouldBeLogged
-	" Log format expected:
-
-	!!Class methodsFor: 'category' stamp: 'author stamp'!!
-	newMethodSourceCode
-	"
-	| aClass |
-	
-	self changeUserChangesFileWhile: [
-		aClass := self createTestDataClass.
-		aClass compile: 'm1 ^ 1' classified: 'a-category'.
-		aClass compile: 'm1 ^ 2' classified: 'a-category'.
-
-		self assertIsLoggedTwice: '!!', self testDataClassName , ' methodsFor: ''a-category'' stamp:'.
-		self assertIsLoggedOnce: 'prior: '.
-		self assertIsLoggedOnce: 'm1 ^ 2' ] ! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:53'!
-test04RemovingAMethodShouldBeLogged
-	" Log format expected:
-
-	!!methodRemoval: #ClassName selector stamp: changeStamp!!
-	methodSourceCode
-	"
-	| newClass methodSource readStream |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClass compile: 'm1 ^ 1' classified: 'a-category'.
-		newClass removeSelector: #m1.
-
-		self 
-			assertIsLoggedOnce: '!!methodRemoval: ',self testDataClassName, ' #m1 stamp:'
-			and: [ :logContents :nextPosition |
-				readStream := ReadStream on: logContents.
-		 		readStream position: nextPosition.
-				readStream nextLine.
-				methodSource := readStream nextLine.
-		
-				self assert: 'm1 ^ 1!!' equals: methodSource ]]! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:56'!
-test05RemovingAClassShouldBeLogged
-	" Log format expected:
-
-	!!classRemoval: #ClassName stamp: changeStamp!!
-	classDefinitionMessage
-	"
-	| newClass definition loggedDefinition readStream |
-
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		definition := newClass definition.
-		newClass removeFromSystem.
-
-		self 
-			assertIsLoggedOnce: '!!classRemoval: #', self testDataClassName, ' stamp:'
-			and: [ :logContents :nextPosition |
-				readStream := ReadStream on: logContents.
-		 		readStream position: nextPosition.
-				readStream nextLine.
-				loggedDefinition := readStream upToEnd.
-				
-				self assert: definition,'!!' equals: loggedDefinition ]]! !
-
-!ChangesTest methodsFor: 'log tests' stamp: 'EB 12/1/2019 15:08:35'!
-test06RenamingAClassShouldBeLogged
-	" Log format expected:
-
-	Smalltalk renameClassNamed: #ClassName as: #NewClassName!!
-	"
-	| newClass newClassName |
-	
-	self changeUserChangesFileWhile: [
-		newClass := self createTestDataClass.
-		newClassName := 'NewClassName'.
-		newClass rename: newClassName.
-
-		self assertIsLoggedOnce: 
-				'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #', newClassName ]! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
