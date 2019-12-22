@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3981] on 18 December 2019 at 8:58:18 pm'!
-'Description Fix to do not log the changes of refactoring data '!
-!provides: 'BaseImageTests' 1 193!
+'From Cuis 5.0 [latest update: #3983] on 22 December 2019 at 5:01:36 pm'!
+'Description Fix to adding two block temp vars'!
+!provides: 'BaseImageTests' 1 194!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -15740,6 +15740,22 @@ text
 
 	^ sourceCode ! !
 
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 12/20/2019 20:54:26'!
+testAddsMoreThanOneUndeclaredVariableCorrectlyInBlock
+	
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [ var1 := 1. goo := 1. ^goo + var1 ]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [ | goo var1 | var1 := 1. goo := 1. ^goo + var1 ]' equals: sourceCode
+! !
+
 !CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:15:47'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 
@@ -15754,6 +15770,21 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
 	self assert: 'griffle [|var1 goo | var1 := 1.goo := 1.^ goo + var1]' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 12/20/2019 20:55:29'!
+testAddsUndeclaredVariableCorrectlyInMethodAndInBlock
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle var1 := 1. [ goo := 1. ^goo + var1 ]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle | var1 |', String newLineString, 'var1 := 1. [ | goo | goo := 1. ^goo + var1 ]' equals: sourceCode! !
 
 !CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:15:27'!
 testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
