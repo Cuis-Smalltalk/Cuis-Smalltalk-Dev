@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3983] on 22 December 2019 at 5:01:36 pm'!
-'Description Fix to adding two block temp vars'!
-!provides: 'BaseImageTests' 1 194!
+'From Cuis 5.0 [latest update: #3984] on 22 December 2019 at 8:34:02 pm'!
+'Description Fix that allows to rename block temporaries with same name'!
+!provides: 'BaseImageTests' 1 195!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -20076,6 +20076,23 @@ test15RenameVariablesWithSameNameInDifferentBlocksCorrectly
 	self 
 		assert: 'm1 [|',newVariable,'| ^',newVariable, '].[|',oldVariable,'| ^',oldVariable, '].'
 		equals: newMethodNode sourceText! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/22/2019 20:23:23'!
+test16CantRenameVariableToANameAlreadyUsedInAnUpperBlock
+
+	| methodNode oldVariable newVariable oldVariableNode |
+	
+	oldVariable := 'old'.
+	newVariable := 'new'.
+	
+	methodNode := self methodNodeOf: 'm1 [|',newVariable,'| [|',oldVariable,'| ^', oldVariable,']. ^',newVariable,' ]'.
+	oldVariableNode := methodNode block statements first statements first temporaries first.
+	
+	self 
+		assertCreation: [RenameTemporary fromOldVariableNode: oldVariableNode to: newVariable in: methodNode ]
+		failsWith: [
+			RenameTemporary  errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]
+	! !
 
 !SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:08'!
 test02ClassesWithNoReferencesAndNoSubclassesAreSafetelyRemoved
