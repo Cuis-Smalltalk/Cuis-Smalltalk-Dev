@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3984] on 22 December 2019 at 8:34:02 pm'!
-'Description Fix that allows to rename block temporaries with same name'!
-!provides: 'BaseImageTests' 1 195!
+'From Cuis 5.0 [latest update: #3987] on 23 December 2019 at 8:59:48 am'!
+'Description TemporaryToInstanceVariableWithArgumentsFix'!
+!provides: 'BaseImageTests' 1 196!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -20539,6 +20539,44 @@ test10RemovesPipesWhenRemovingLastTemporaryInBlock
 	[   ].'.
 	
 	self assertMethodNamed: messageName in: classToRefactor hasSourceEqualTo: newSourceCode.! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 12/22/2019 18:18:26'!
+test11TemporaryShouldNotExistAsArgumentInOtherBlocksInSameMethod
+
+	| classToRefactor messageName methodNode sourceText variableName blockWithTempString blockWithArgumentString |
+
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	
+	variableName _ 'a'.
+	messageName _ #m1.
+	blockWithTempString _ '[ | ', variableName, ' | ].'.
+	blockWithArgumentString _ '[ :', variableName, ' | ].'.
+	sourceText _ messageName, ' ', blockWithTempString, ' ', blockWithArgumentString.
+	methodNode _ self
+		compileMethodNodeIn: classToRefactor 
+		named: messageName 
+		sourceCode: sourceText.
+		
+	self assertCreation: [ TemporaryToInstanceVariable named: variableName fromMethod: methodNode ]
+		failsWith: [ TemporaryToInstanceVariable temporaryExistsInOtherBlockErrorDescription ].
+! !
+
+!TemporaryToInstanceVariableTest methodsFor: 'testing' stamp: 'EB 12/22/2019 18:38:40'!
+test12CantExtractArgument
+
+	| classToRefactor methodNode sourceText |
+
+	classToRefactor _ self createClassNamed: self classToRefactorName.
+	
+	sourceText := 'm1: a'.
+	methodNode _ self
+		compileMethodNodeIn: classToRefactor 
+		named: #m1:
+		sourceCode: sourceText.
+		
+	self assertCreation: [ TemporaryToInstanceVariable named: 'a' fromMethod: methodNode ]
+		failsWith: [ TemporaryToInstanceVariable inexistentTemporaryErrorDescription ].
+! !
 
 !TemporaryToInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 5/19/2019 17:29:33'!
 assertMethodNamed: aMethodName in: aClass hasSourceEqualTo: aSourceCode
