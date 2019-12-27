@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3990] on 23 December 2019 at 11:14:37 am'!
-'Description ExtractMethod tests'!
-!provides: 'BaseImageTests' 1 197!
+'From Cuis 5.0 [latest update: #3997] on 26 December 2019 at 8:55:18 pm'!
+'Description PushUp and PushDown instance variables'!
+!provides: 'BaseImageTests' 1 198!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1035,6 +1035,16 @@ RefactoringTest subclass: #MoveToInstanceOrClassMethodTest
 MoveToInstanceOrClassMethodTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #PushDownInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #PushDownInstanceVariableTest
+	instanceVariableNames: 'classToRefactor instanceVariableToPushDown'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'PushDownInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring'!
+PushDownInstanceVariableTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #PushDownMethodTest category: #'BaseImageTests-Tools-Refactoring'!
 RefactoringTest subclass: #PushDownMethodTest
 	instanceVariableNames: ''
@@ -1043,6 +1053,16 @@ RefactoringTest subclass: #PushDownMethodTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'PushDownMethodTest class' category: #'BaseImageTests-Tools-Refactoring'!
 PushDownMethodTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #PushUpInstanceVariableTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #PushUpInstanceVariableTest
+	instanceVariableNames: 'classToRefactor instanceVariableToPushUp classToRefactorSuperClass'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'PushUpInstanceVariableTest class' category: #'BaseImageTests-Tools-Refactoring'!
+PushUpInstanceVariableTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #PushUpMethodTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -18160,6 +18180,74 @@ classToRefactorName
 
 	^#ClassToMoveMethod! !
 
+!PushDownInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 12/21/2019 09:49:48'!
+classToRefactorName
+	^#ClassToPushInstanceVariableDown.! !
+
+!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:13:23'!
+test01AnInstanceVariableDoesNotExistOnClassToFactorCannotBePushedDownToSubclasses
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	
+	self assertPushDownCreationFailsWith: PushDownInstanceVariable instanceVariableDoesNotExistOnClassToRefactor .
+	
+	self deny: (classToRefactor definesInstanceVariableNamed: instanceVariableToPushDown).
+	classToRefactor subclassesDo: [ :subClass |
+		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushDown).
+	].! !
+
+!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:10:51'!
+test02AnInstanceVariableThatIsAccessedOnClassToRefactorCannotBePushedDownToAllSubclasses
+
+	|  selector |
+	
+	selector := #newMethod.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: instanceVariableToPushDown.
+	classToRefactor compile: selector, '^ ', instanceVariableToPushDown.
+	
+	self createClassNamed: #SubclassWithoutInstVarOne subclassOf: classToRefactor.
+	self createClassNamed: #SubclassWithoutInstVarTwo subclassOf: classToRefactor.
+	
+	self assertPushDownCreationFailsWith: (PushDownInstanceVariable 
+		errorMessageForInstanceVariable: instanceVariableToPushDown 
+		isAccessedInMethodsOf: classToRefactor).
+	
+	self assert: (classToRefactor definesInstanceVariableNamed: instanceVariableToPushDown).
+	classToRefactor subclassesDo: [ :subClass |
+		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushDown)].! !
+
+!PushDownInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:49:31'!
+test03AnInstanceVariableThatIsNotAccessedOnClassToRefactorShouldBePushedDownToAllSubclasses
+
+	|  pushDown |
+	
+	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: instanceVariableToPushDown.
+	self createClassNamed: #SubclassWithoutInstVarOne subclassOf: classToRefactor.
+	self createClassNamed: #SubclassWithoutInstVarTwo subclassOf: classToRefactor.
+	
+	pushDown := PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor.
+	pushDown apply.
+	
+	self deny: (classToRefactor definesInstanceVariableNamed: instanceVariableToPushDown).
+	classToRefactor subclassesDo: [ :subClass |
+		self assert: (subClass definesInstanceVariableNamed: instanceVariableToPushDown).
+	].! !
+
+!PushDownInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 12/21/2019 22:01:42'!
+setUp
+
+	super setUp.
+	
+	instanceVariableToPushDown := 'a'.! !
+
+!PushDownInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 12/26/2019 19:41:11'!
+assertPushDownCreationFailsWith: aMessageTextCreator
+
+	self
+		assertCreation: [ PushDownInstanceVariable named: instanceVariableToPushDown from: classToRefactor. ]
+		failsWith: aMessageTextCreator ! !
+
 !PushDownMethodTest methodsFor: 'tests' stamp: 'fz 12/4/2019 14:09:00'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedDownToSubclasses
 
@@ -18293,6 +18381,85 @@ test06AMethodInClassToRefactorExistsInSubClassesShouldOverrideTheExistingSubClas
 classToRefactorName	
 
 	^#ClassToPushMethodDown! !
+
+!PushUpInstanceVariableTest methodsFor: 'class factory' stamp: 'MSC 12/15/2019 12:44:48'!
+classToRefactorName
+	^#ClassToPushInstanceVariableUp.! !
+
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:18:51'!
+test01AnInstanceVariableThatIsNotUsedOnClassToRefactorShouldBePushedUpToSuperclass
+
+	|  pushUp |
+	
+	classToRefactorSuperClass := self createClassNamed: #SuperclassWithoutInstVar.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperClass instanceVariableNames: instanceVariableToPushUp.
+
+	pushUp := PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor.
+	pushUp apply.
+	
+	self assert: (classToRefactorSuperClass definesInstanceVariableNamed: instanceVariableToPushUp).
+	classToRefactorSuperClass subclassesDo: [ :subClass |
+		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushUp)
+	].! !
+
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:18:52'!
+test02AnInstanceVariableOnMultipleSubclassesShouldBeRemovedFromAllSubclassesAndPushedUpToSuperClass
+
+	|  pushUp  |
+	
+	classToRefactorSuperClass := self createClassNamed: #SuperclassWithoutInstVar.
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperClass  instanceVariableNames: instanceVariableToPushUp.
+	self createClassNamed: #AnoterSubClassWithInstVar subclassOf: classToRefactorSuperClass instanceVariableNames: instanceVariableToPushUp.
+	
+	pushUp := PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor.
+	pushUp apply.
+	
+	self assert: (classToRefactorSuperClass definesInstanceVariableNamed: instanceVariableToPushUp).
+	classToRefactorSuperClass subclassesDo: [ :subClass |
+		self deny: (subClass definesInstanceVariableNamed: instanceVariableToPushUp)
+	].! !
+
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:13:23'!
+test03AnInstanceVariableDoesNotExistOnClassToRefactorCannotBePushedUp
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	
+	self assertPushUpCreationFailsWith: PushUpInstanceVariable instanceVariableDoesNotExistOnClassToRefactor.
+	
+	self deny: (classToRefactor definesInstanceVariableNamed: instanceVariableToPushUp).! !
+
+!PushUpInstanceVariableTest methodsFor: 'tests' stamp: 'HAW 12/26/2019 20:34:42'!
+test04AnInstanceVariableThatIsUsedOnSuperClassAsTemporaryVariableCannotBePushedUp
+
+	| selector |
+	
+	selector := #newMethod.
+	
+	classToRefactorSuperClass := self createClassNamed: #SuperclassWithVariableAsTemporaryVariable.
+	classToRefactorSuperClass compile: selector, '| ' , instanceVariableToPushUp , ' |'.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: classToRefactorSuperClass  instanceVariableNames: instanceVariableToPushUp.
+	
+	self assertPushUpCreationFailsWith: (PushUpInstanceVariable 
+		errorMessageForInstanceVariable: instanceVariableToPushUp 
+		isDefinedInMethodsOf: classToRefactorSuperClass).
+	
+	self deny: (classToRefactorSuperClass definesInstanceVariableNamed: instanceVariableToPushUp).
+	self assert: (classToRefactor definesInstanceVariableNamed: instanceVariableToPushUp).! !
+
+!PushUpInstanceVariableTest methodsFor: 'setup' stamp: 'MSC 12/21/2019 22:12:16'!
+setUp
+
+	super setUp.
+	
+	instanceVariableToPushUp := 'a'.! !
+
+!PushUpInstanceVariableTest methodsFor: 'assertions' stamp: 'HAW 12/26/2019 20:18:51'!
+assertPushUpCreationFailsWith: aMessageTextCreator
+
+	self
+		assertCreation: [ PushUpInstanceVariable named: instanceVariableToPushUp from: classToRefactor. ]
+		failsWith: aMessageTextCreator.! !
 
 !PushUpMethodTest methodsFor: 'tests' stamp: 'MSC 11/12/2019 11:47:47'!
 test01AnEmptyMethodOnClassToRefactorShouldBePushedUpToSuperclass
