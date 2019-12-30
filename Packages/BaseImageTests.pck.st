@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3997] on 26 December 2019 at 8:55:18 pm'!
-'Description PushUp and PushDown instance variables'!
-!provides: 'BaseImageTests' 1 198!
+'From Cuis 5.0 [latest update: #4000] on 30 December 2019 at 6:27:22 pm'!
+'Description RenameSelector can be applied without implementors'!
+!provides: 'BaseImageTests' 1 199!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -20008,13 +20008,11 @@ test05NewSelectorCanNotBeEmpty
 		failsWith: [ RenameSelector newSelectorCanNotBeEmptyErrorMessage ]
 ! !
 
-!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/15/2018 11:52:37'!
-test06ThereMustBeImplementorsToRename
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 12/30/2019 18:01:00'!
+test06CanRenameWithoutImplementors
 
-	self 
-		assertCreation: [ RenameSelector from: oldSelector to: newSelector implementors: #() senders: #() ]
-		failsWith: [ RenameSelector implementorsCanNotBeEmptyErrorMessage ]
-! !
+	self shouldntFail: [ RenameSelector from: oldSelector to: newSelector implementors: #() senders: #() ]
+		! !
 
 !RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 8/18/2018 15:48:43'!
 test07AllImplementorsMustImplementOldSelector
