@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4000] on 30 December 2019 at 6:27:22 pm'!
-'Description RenameSelector can be applied without implementors'!
-!provides: 'BaseImageTests' 1 199!
+'From Cuis 5.0 [latest update: #3997] on 2 January 2020 at 7:14:21 am'!
+'Description Refactoring and bug fixing on ChangeSelector refactorings'!
+!provides: 'BaseImageTests' 1 200!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -18717,26 +18717,28 @@ test03WhenAppliedRemovesInstanceVariable
 	
 	! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/2/2018 19:46:28'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/2/2020 06:58:49'!
 test01CanNotRemoveParameterFromUnaryMessages
 
 	self 
 		assertCreation: [ RemoveParameter 
+			atIndex: 1
 			named: 'aParameter' 
-			from: thisContext method 
-			implementors: {thisContext method} 
+			from: #m1
+			implementors: {} 
 			senders: {} ]
 		failsWith: [ RemoveParameter canNotRemoveParameterFromUnaryMessagesErrorMessage ]
 ! !
 
-!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 9/2/2018 19:46:43'!
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/2/2020 06:59:13'!
 test02CanNotRemoveParameterFromBinaryMessages
 
 	self 
 		assertCreation: [ RemoveParameter 
+			atIndex: 1
 			named: '+' asSymbol 
-			from: Number>>#+ 
-			implementors: {Number>>#+} 
+			from: #+ 
+			implementors: {} 
 			senders: {} ]
 		failsWith: [ RemoveParameter canNotRemoveParameterFromBinaryMessagesErrorMessage ]
 ! !
@@ -19009,6 +19011,57 @@ test13ParameterIsRemovedCorrecltyFromSendersWithMoreThanOneSend
 		self ', keywordToKeep, ' 4.')
 	
 	! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/1/2020 23:33:19'!
+test14CanNotRemoveParameterIndexLessThanOne
+
+	| parameterNotInMessage |
+	
+	parameterNotInMessage := 'otherParameter'.
+
+	self 
+		assertCreation: [ RemoveParameter 
+			atIndex: 0
+			named: parameterNotInMessage 
+			from: #m1:  
+			implementors: {} 
+			senders: {} ]
+		failsWith: [ RemoveParameter invalidParameterIndexErrorMessage ]
+! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/1/2020 23:36:16'!
+test15CanNotRemoveParameterIndexBiggerThanOldSelectorNumberOfKeywords
+
+	| parameterNotInMessage |
+	
+	parameterNotInMessage := 'otherParameter'.
+
+	self 
+		assertCreation: [ RemoveParameter 
+			atIndex: 2
+			named: parameterNotInMessage 
+			from: #m1:  
+			implementors: {} 
+			senders: {} ]
+		failsWith: [ RemoveParameter invalidParameterIndexErrorMessage ]
+! !
+
+!RemoveParameterTest methodsFor: 'tests' stamp: 'HAW 1/1/2020 23:38:57'!
+test16ParameterIndexMustBeInteger
+
+	| parameterNotInMessage |
+	
+	parameterNotInMessage := 'otherParameter'.
+
+	self 
+		assertCreation: [ RemoveParameter 
+			atIndex: 1.5
+			named: parameterNotInMessage 
+			from: #m1:m2: 
+			implementors: {} 
+			senders: {} ]
+		failsWith: [ RemoveParameter invalidParameterIndexErrorMessage ]
+! !
 
 !RemoveParameterTest methodsFor: 'class factory' stamp: 'HAW 9/1/2018 12:24:23'!
 classToRefactorName
@@ -21948,6 +22001,52 @@ testSourceCodeSignalExceptionIfMethodDoesNotExist
 		should: [ (MethodReference class: self class selector: #xx) sourceCode ]
 		raise: Error
 		withMessageText: Dictionary keyNotFoundErrorDescription ! !
+
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:46:58'!
+testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenActualClassIsNil
+
+	self 
+		assert: 1 
+		equals: ((MethodReference 
+			classSymbol: #X_Y_Z 
+			classIsMeta: false 
+			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])! !
+
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:47:05'!
+testCompiledMethodIfAbsentEvaluatesAbsentBlockWhenSelectorIsNotImplemented
+
+	self 
+		assert: 1 
+		equals: ((MethodReference 
+			classSymbol: self class name
+			classIsMeta: false 
+			methodSymbol: #xx) compiledMethodIfAbsent: [ 1])! !
+
+!MethodReferenceTest methodsFor: 'test compiled method' stamp: 'HAW 1/1/2020 19:47:13'!
+testCompiledMethodIfAbsentReturnsImplementedMethodWhenItExists
+
+	self 
+		assert: thisContext method 
+		equals: ((MethodReference 
+			classSymbol: self class name
+			classIsMeta: false 
+			methodSymbol: thisContext selector) compiledMethodIfAbsent: [ self fail ])! !
+
+!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:00'!
+testReferencesParameterAtReturnsFalseWhenInvalid
+
+	self deny: ((MethodReference 
+		classSymbol: #X_Y_Z 
+		classIsMeta: false 
+		methodSymbol: #xx) referencesParameterAt: 1)! !
+
+!MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:03'!
+testReferencesParameterAtReturnsTrueWhenTheParameterIsReferenced
+
+	self assert: ((MethodReference 
+		classSymbol: #MethodReference 
+		classIsMeta: false 
+		methodSymbol: #referencesParameterAt:) referencesParameterAt: 1)! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
