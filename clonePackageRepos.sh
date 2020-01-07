@@ -1,5 +1,4 @@
 #!/bin/bash
-cd Cuis-Smalltalk
 git clone https://github.com/Cuis-Smalltalk/AMQP.git
 git clone https://github.com/Cuis-Smalltalk/Calendars.git
 git clone https://github.com/Cuis-Smalltalk/CodeExamples.git

@@ -1,5 +1,4 @@
 #!/bin/bash
-cd Cuis-Smalltalk
 cd Cuis-Smalltalk-Dev
 pwd
 git status
