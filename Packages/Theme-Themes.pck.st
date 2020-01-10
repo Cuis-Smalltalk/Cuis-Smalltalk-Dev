@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3508] on 29 November 2018 at 12:40:22 pm'!
+'From Cuis 5.0 [latest update: #4012] on 9 January 2020 at 8:04:03 pm'!
 'Description '!
-!provides: 'Theme-Themes' 1 6!
+!provides: 'Theme-Themes' 1 7!
 SystemOrganization addCategory: #'Theme-Themes'!
 
 
@@ -676,10 +676,6 @@ useUniformColors
 !LightBluetheme methodsFor: 'other options' stamp: 'gsa 6/18/2014 09:27'!
 useWindowTitleGradient
 	^true! !
-
-!LightBluetheme methodsFor: 'widget colors' stamp: 'gsa 6/18/2014 14:09'!
-listSelectedRowText
-	^ Color white! !
 
 !LightBluetheme methodsFor: 'menu colors' stamp: 'gsa 6/18/2014 13:47'!
 menu
