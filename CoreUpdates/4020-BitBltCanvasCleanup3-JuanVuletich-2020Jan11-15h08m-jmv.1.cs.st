@@ -121,13 +121,6 @@ AbstractFont removeSelector: #on:displayString:from:to:at:color:!
 ('creation - anti aliased' bottomLeftCorner:height:gradientTop:gradientBottom: bottomLeftCorner:height:gradientTop:gradientBottom:borderWidth: bottomRightCorner:height:gradientTop:gradientBottom: bottomRightCorner:height:gradientTop:gradientBottom:borderWidth: topLeftCorner:height:gradientTop:gradientBottom: topRightCorner:height:gradientTop:gradientBottom:)
 !
 
-!classDefinition: #MorphicCanvas category: #'Morphic-Support'!
-Object subclass: #MorphicCanvas
-	instanceVariableNames: 'form clipLeft clipTop clipRight clipBottom transformations currentTransformation cti currentMorph drawingMorphStack engine'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic-Support'!
-
 !BitBltCanvas reorganize!
 ('drawing' line:to:width:color:)
 ('drawing-icons' drawButtonIconFromCurrentMorph)
@@ -147,5 +140,5 @@ Leave the line above, and replace the rest of this comment by a useful one.
 Executable statements should follow this comment, and should
 be separated by periods, with no exclamation points (!!).
 Be sure to put any further comments in double-quotes, like this one."
-BitBltCanvas allInstancesDo: [ :canvas | canvas instVarNamed: 'engine' put: (canvas instVarNamed: 'port') ]!
+BitBltCanvas allInstancesDo: [ :canvas | canvas resetEngine ]!
 
