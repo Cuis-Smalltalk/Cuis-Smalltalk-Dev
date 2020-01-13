@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3997] on 2 January 2020 at 7:14:21 am'!
+'From Cuis 5.0 [latest update: #4024] on 12 January 2020 at 9:41:54 pm'!
 'Description Refactoring and bug fixing on ChangeSelector refactorings'!
-!provides: 'BaseImageTests' 1 200!
+!provides: 'BaseImageTests' 1 201!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -17170,21 +17170,8 @@ assertClassHasDefined: aSelector withBody: newSourceCode inCategory: aCategory
 	self assertClassHasDefined: aSelector withBody: newSourceCode.
 	self assert: aCategory equals: (classToRefactor >> aSelector) category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 6/23/2019 18:21:38'!
-creationWithSelectorNamed: aSelectorName onInterval: anIntervalToExtract ofMethod: methodToExtractCodeFrom failsWith: aRefactoringErrorMessage
-
-	self
-		should: [
-			ExtractMethod
-				fromInterval: anIntervalToExtract
-				of: methodToExtractCodeFrom
-				to: (Message selector: aSelectorName)
-				categorizedAs: Categorizer default ]
-		raise: Error - MessageNotUnderstood
-		withMessageText: aRefactoringErrorMessage! !
-
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 9/28/2019 00:46:57'!
-extract: codeToExtract from: originalCode named: newMessage defines: newCode andUpdates: updatedCode
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 1/12/2020 21:08:55'!
+assertExtracting: codeToExtract from: originalCode named: newMessage defines: newCode andUpdates: updatedCode
 
 	| originalSelector category |
 	category _ #category.
@@ -17199,6 +17186,19 @@ extract: codeToExtract from: originalCode named: newMessage defines: newCode and
 	self
 		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newCode inCategory: category! !
+
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 6/23/2019 18:21:38'!
+creationWithSelectorNamed: aSelectorName onInterval: anIntervalToExtract ofMethod: methodToExtractCodeFrom failsWith: aRefactoringErrorMessage
+
+	self
+		should: [
+			ExtractMethod
+				fromInterval: anIntervalToExtract
+				of: methodToExtractCodeFrom
+				to: (Message selector: aSelectorName)
+				categorizedAs: Categorizer default ]
+		raise: Error - MessageNotUnderstood
+		withMessageText: aRefactoringErrorMessage! !
 
 !ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 9/28/2019 01:10:34'!
 tryingToExtract: someCode from: anExistingSourceCode failsWith: aRefactoringErrorMessage
@@ -17374,7 +17374,7 @@ test28ItIsNotPossibleToExtractALocalVariableInsideOfItsDeclaration
 		from: 'm1 | localVar | ^ #foo'
 		failsWith: ExtractMethod selectedCodeInvalidForExtractErrorMessage! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:42:11'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test09ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMethod
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17386,10 +17386,10 @@ test09ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMeth
 	updatedCode _ 'm1 ^ self m2'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2)
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:59:00'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test15ExtractingAListOfStatementsCreatesANewMethodWithoutReturn
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17402,10 +17402,10 @@ test15ExtractingAListOfStatementsCreatesANewMethodWithoutReturn
 	updatedCode _ 'm1 self m2'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2)
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:41:57'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test17AStringContainingTheReturnCharacterCanBeExtracted
 	"this is to make sure the return is found using AST logic, not by text"
 
@@ -17418,10 +17418,10 @@ test17AStringContainingTheReturnCharacterCanBeExtracted
 	updatedCode _ 'm1 ^ self m2'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2)
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:57:28'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test18ExtractingAListOfStatementsIncludingDotsRemovesThemAndContinuesWithMethodExtraction
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17439,10 +17439,10 @@ test18ExtractingAListOfStatementsIncludingDotsRemovesThemAndContinuesWithMethodE
 	self m2.'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2)
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:41:45'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test19ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtracted
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17454,10 +17454,10 @@ test19ASelectionContainingAdditionalParenthesesAtTheBeginningAndOrEndCanBeExtrac
 	updatedCode _ 'm1 ^ ((self m2))'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2)
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:50:25'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test20ASelectionContainingALocalVariableIsParameterizedOnTheExtractedMessage
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17469,10 +17469,10 @@ test20ASelectionContainingALocalVariableIsParameterizedOnTheExtractedMessage
 	updatedCode _ 'm1 | local | ^ self m2: local'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('local'))
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('local'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:41:34'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test21ASelectionContainingAdditionalParenthesesOnOneSideCanBeExtractedAndItIsNotTrimmed
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17484,10 +17484,10 @@ test21ASelectionContainingAdditionalParenthesesOnOneSideCanBeExtractedAndItIsNot
 	updatedCode _ 'm1 ^ self m2'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2)
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:53:25'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test22ItIsPossibleToExtractTheLastExpressionOfAMethod
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17499,10 +17499,10 @@ test22ItIsPossibleToExtractTheLastExpressionOfAMethod
 	updatedCode _ 'm1 | localVar | ^ self m2: localVar'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('localVar'))
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('localVar'))
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 00:41:18'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test26ItIsPossibleToExtractAnEntireBlockIncludingALocalAssignment
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17514,10 +17514,10 @@ test26ItIsPossibleToExtractAnEntireBlockIncludingALocalAssignment
 	updatedCode _ 'm1 ^ self m2'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2)
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 9/28/2019 01:19:37'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test27ItIsPossibleToExtractExpressionsWithOptimizedSelectors
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17529,10 +17529,10 @@ test27ItIsPossibleToExtractExpressionsWithOptimizedSelectors
 	updatedCode _ 'm1 ^ self m2'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2)
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 10/13/2019 18:25:35'!
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test29ExtractingABinaryExpressionToAKeywordMessageIntroducesParenthesesToNotBreakOriginalPrecedence
 
 	| codeToExtract newMethodCode originalCode updatedCode |
@@ -17544,18 +17544,28 @@ test29ExtractingABinaryExpressionToAKeywordMessageIntroducesParenthesesToNotBrea
 	updatedCode _ 'm1: arg ^ (self m2: arg) * 3'.
 
 	self
-		extract: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('arg'))
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2: arguments: #('arg'))
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:11:36'!
+test30ItIsPossibleToExtractAQuotedExpression
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '`3 + 4`'.
+	originalCode _ 'm1 ^ ' , codeToExtract.
+	newMethodCode _ 'm2
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1 ^ self m2'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
 !ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 5/12/2019 23:21:30'!
 compileMethodToExtractCodeFrom
 
 	classToRefactor compile: self sourceCodeOfMethodToExtractCodeFrom! !
-
-!ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 5/28/2019 00:30:11'!
-intervalToExtractFromMethod
-
-	^ self intervalOfCode: '4'! !
 
 !ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 5/12/2019 23:22:01'!
 methodToExtractCodeFrom
