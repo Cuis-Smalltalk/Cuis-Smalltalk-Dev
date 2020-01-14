@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3869] on 9 September 2019 at 10:24:41 am'!
+'From Cuis 5.0 [latest update: #4020] on 11 January 2020 at 3:32:42 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 85!
+!provides: 'VectorGraphics' 1 87!
 !requires: 'Color-Extras' 1 7 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -71,7 +71,7 @@ M3Exp03Morph class
 
 !classDefinition: #VectorCanvas category: #'VectorGraphics-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
-	instanceVariableNames: 'engine'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -599,18 +599,18 @@ widthOf: aCharacter
 	glyph _ self glyphAt: aCharacter.
 	^ glyph advanceWidth! !
 
-!TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 5/21/2019 10:56:54'!
-on: aGrafPort displayString: aString from: firstIndex to: lastIndex at: p color: color
+!TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 1/11/2020 15:31:51'!
+onBitBltCanvasEngine: engine displayString: aString from: firstIndex to: lastIndex at: p color: color
+	"Answer last affected pixel position.
+	Answer nil if nothing was done."
 
-	^ aGrafPort
+	^ engine
 		displayString: aString
 		from: firstIndex
 		to: lastIndex
 		at: p
 		trueTypeFont: self
-		color: color
-
-! !
+		color: color! !
 
 !TrueTypeFont methodsFor: 'testing' stamp: 'jmv 5/11/2019 17:10:59'!
 isBaseFont
@@ -5801,7 +5801,7 @@ externalizedWith: aMorphicLocation
 
 	^self! !
 
-!GrafPort methodsFor: '*VectorGraphics-TrueType' stamp: 'len 5/28/2019 15:20:31'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'len 5/28/2019 15:20:31'!
 basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer last affected pixel position"
 	| fdestX char glyph maxHeight ddy toPixelsScale |
@@ -5827,7 +5827,7 @@ basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFo
 	].
 	^ destX ceiling@(destY+maxHeight)! !
 
-!GrafPort methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/21/2019 10:56:45'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/21/2019 10:56:45'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont color: foregroundColor
 	"If required, do a second pass with new rule and colorMap.
 	Answer last affected pixel position
