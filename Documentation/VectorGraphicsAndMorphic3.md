@@ -37,7 +37,7 @@ SVGElementMorph examples.
 ```
 to see the SVG support, and the various examples I used.
 
-The high performance OpenCL implementation of the VectorGraphics engine is in the works. Maybe this is the year it will become usable enough to completely replace BitBltCanvas and BitBltCanvasEngine... You can see the commits that affect VectorGraphics.pck.st in GitHub, and see that I'm actually working on it. 
+The high performance OpenCL implementation of the VectorGraphics engine is work in progress. Maybe this is the year it will become usable enough to completely replace BitBltCanvas and BitBltCanvasEngine... You can see the commits that affect VectorGraphics.pck.st in GitHub to follow ongoing development. 
 
 Morphic 3 and Vector Graphics in Cuis are in active development, and all the code is available for you to experiment and play with it.
 
