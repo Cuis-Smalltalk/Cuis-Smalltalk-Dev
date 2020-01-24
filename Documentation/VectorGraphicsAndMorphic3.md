@@ -16,14 +16,16 @@ By default, Cuis still uses BitBltCanvas and BitBltEngine, and the only transfor
 
 But the Cuis repo includes VectorGraphics.pck.st. This includes VectorCanvas and VectorEngine. So, with an updated Cuis setup do:
 ```
-World / Preferences... / Load extra fonts    "This installs TrueType and VectorGraphics"
-World / Preferences... / Set font... / CMU Concrete "or any other but DejaVu (that is a Bitmap Font). DejaVu Sans is also ok"
-If you have any FileList open, close it, and open it again if you want (FileList is not updating all the panes to use the new default font).
+World / Preferences... / Load extra fonts
+World / Preferences... / Set font... / CMU Concrete
 ```
+If you have any FileList open, close it, and open it again if you want (FileList is not updating all the panes to use the new default font).
 
 Now all the text you see is done using instances of TrueTypeFont. All the glyphs were built using VectorGraphics. If you want to see the whole desktop as drawn by the VectorGraphics engine, evaluate:
 ```
-self runningWorld backgroundImage displayAt: 0@0. (VectorCanvas onForm: Display) fullDraw: self runningWorld. Display copy inspect.
+self runningWorld backgroundImage displayAt: 0@0.
+(VectorCanvas onForm: Display) fullDraw: self runningWorld.
+Display copy inspect.
 ```
 
 In addition to MorphicTranslation, VectorCanvas and VectorEngine can handle more general AffineTransformations. This means that each Morph can be scaled and / or rotated. All coordinates are FloatingPoint numbers. Rasterization is done with high quality, Signal Processing based Anti-Aliasing. You can, for example, rotate any Morph (including text) by 3 degrees, displace it 0.2 pixels, or zoom it by 5% without any loss of visual quality. See the comment for VectorCanvas. It includes a doIt you can run, to display your Morphic desktop using only VectorGraphics.
