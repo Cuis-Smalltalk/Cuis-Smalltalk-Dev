@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4026] on 19 January 2020 at 10:35:06 am'!
+'From Cuis 5.0 [latest update: #4030] on 26 January 2020 at 4:10:15 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 88!
+!provides: 'VectorGraphics' 1 89!
 !requires: 'Color-Extras' 1 7 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -21,7 +21,7 @@ PathCommandError class
 
 !classDefinition: #TrueTypeFont category: #'VectorGraphics-TrueType'!
 AbstractFont subclass: #TrueTypeFont
-	instanceVariableNames: 'ttFontDescription pointSize emphasis replacedGlyphs glyphForms family baseFont derivativeFonts'
+	instanceVariableNames: 'ttFontDescription pointSize emphasis glyphForms family baseFont derivativeFonts'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
@@ -414,11 +414,6 @@ Instance variables:
 	value <Integer>	The amount of kerning.
 	mask <Integer>	An efficient representation for the left and the right value.!
 
-!TrueTypeFont methodsFor: 'copying' stamp: 'jmv 5/11/2019 18:04:40'!
-postCopy
-	super postCopy.
-	replacedGlyphs _ replacedGlyphs copy! !
-
 !TrueTypeFont methodsFor: 'printing' stamp: 'KenD 5/13/2019 09:03:06'!
 printOn: aStream
 	aStream
@@ -488,13 +483,12 @@ baseFont: aStrikeFont
 	baseFont ifNotNil: [
 		derivativeFonts _ nil ]! !
 
-!TrueTypeFont methodsFor: 'initialization' stamp: 'jmv 5/11/2019 17:24:15'!
+!TrueTypeFont methodsFor: 'initialization' stamp: 'jmv 1/26/2020 09:53:13'!
 family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber
 	ttFontDescription _ aTTFontDescription.
 	emphasis _ aTTFontDescription emphasis.
 	pointSize _ aNumber.
 	glyphForms _ Array new: 256.
-	replacedGlyphs _ Dictionary new.
 	family _ aTrueTypeFontFamily.
 	baseFont _ nil.
 	derivativeFonts _ emphasis = 0 ifTrue: [Dictionary new].! !
@@ -587,6 +581,10 @@ isBold
 isItalic
 	^self emphasis allMask: 2! !
 
+!TrueTypeFont methodsFor: 'testing' stamp: 'jmv 1/26/2020 09:45:41'!
+isST80Glyphs
+	^emphasis allMask: 64! !
+
 !TrueTypeFont methodsFor: 'testing' stamp: 'jmv 5/13/2019 23:37:58'!
 isStruckThrough
 	^emphasis allMask: 8! !
@@ -622,23 +620,19 @@ glyphAt: aCharacter
 		glyphForms at: index put: formGlyph.
 		formGlyph ]! !
 
-!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 1/19/2020 10:00:14'!
+!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 1/26/2020 09:53:06'!
 ttGlyphAt: aCharacter
-	replacedGlyphs at: aCharacter ifPresent: [ :actualCharacter |
-		(ttFontDescription glyphForCharacter: actualCharacter) ifNotNil: [ :found | ^ found ]].
-	(ttFontDescription glyphForCharacter: aCharacter) ifNotNil: [ :found | ^ found ].
-	^ ttFontDescription glyphForCharacter: Character null! !
+	(ttFontDescription glyphForCharacter: aCharacter useST80Glyphs: self isST80Glyphs) ifNotNil: [ :found | ^ found ].
+	^ ttFontDescription glyphForCharacter: Character null useST80Glyphs: false! !
 
-!TrueTypeFont methodsFor: 'emphasis' stamp: 'jmv 5/21/2019 11:14:05'!
+!TrueTypeFont methodsFor: 'emphasis' stamp: 'jmv 1/26/2020 16:07:11'!
 addEmphasis: code
 	"Set the integer code for emphasis. See senders."
 
 	emphasis _ code.
-	(emphasis anyMask: 4+8) ifTrue: [
+	(emphasis anyMask: 4+8+64) ifTrue: [
 		"They need to be recreated"
-		glyphForms _ Array new: 256 ].
-	(emphasis allMask: 64) ifTrue: [
-		self perform: Preferences assignmentGlyphSelector ].! !
+		glyphForms _ Array new: 256 ].! !
 
 !TrueTypeFont methodsFor: 'emphasis' stamp: 'jmv 5/7/2019 08:45:26'!
 emphasis
@@ -720,23 +714,8 @@ StrikeFont allInstances do: [ :a | a reset ].
 ('Hi ', (Text string: 'there' attribute: TextEmphasis superscript), ' how ', (Text string: 'are' attribute: TextEmphasis subscript), ' you?') edit.
 "! !
 
-!TrueTypeFont methodsFor: 'swapping glyphs' stamp: 'jmv 5/11/2019 17:31:56'!
-useLeftArrow
-	replacedGlyphs at: $_ put: Character arrowLeft.
-	replacedGlyphs at: $^ put: Character arrowUp.! !
-
-!TrueTypeFont methodsFor: 'swapping glyphs' stamp: 'jmv 5/11/2019 17:32:07'!
-useRightArrow
-	replacedGlyphs at: $_ put: Character arrowRight.
-	replacedGlyphs at: $^ put: Character arrowUp.! !
-
 !TrueTypeFont methodsFor: 'swapping glyphs' stamp: 'jmv 5/11/2019 17:18:55'!
 useShortUnderscore! !
-
-!TrueTypeFont methodsFor: 'swapping glyphs' stamp: 'jmv 5/11/2019 17:32:45'!
-useUnderscore
-	replacedGlyphs removeKey: $_.
-	replacedGlyphs removeKey: $^.! !
 
 !TrueTypeFont class methodsFor: 'instance creation' stamp: 'jmv 5/7/2019 09:25:01'!
 family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber
@@ -4279,14 +4258,18 @@ first
 	^ self.
 ! !
 
-!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 1/19/2020 09:59:55'!
-glyphForCharacter: aCharacter
-	| codePoint answer |
-	codePoint _ aCharacter codePointOfGlyphToUse.
-	answer _ glyphsByCodePoint16 at: codePoint + 1.
-	answer == unknownGlyph ifTrue: [
-		answer _ glyphsByCodePoint16 at: aCharacter codePoint + 1 ].
-	^ answer! !
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 1/26/2020 16:06:47'!
+glyphForCharacter: aCharacter useST80Glyphs: aBoolean
+	| c |
+	aBoolean ifFalse: [
+		^ glyphsByIso8859s15 at: aCharacter numericValue + 1 ].
+	c _ aCharacter.
+self flag: #assignmentGlyphSelector.
+"podria ser una tabla alternativa y evitar el if...
+Especialmente cuando haya que inlinear en VectorEngine"
+	c = $_ ifTrue: [ c _ Character arrowLeft ]. "or right"
+	c = $^ ifTrue: [ c _ Character arrowUp ]. "or right"
+	^ glyphsByIso8859s15 at: c numericValue + 1! !
 
 !TTFontDescription methodsFor: 'information' stamp: 'ar 11/14/1998 23:48'!
 copyright
@@ -4334,10 +4317,10 @@ descent
 	"Descender of the font. Relative to unitsPerEm. Usually negative."
 	^descent! !
 
-!TTFontDescription methodsFor: 'properties' stamp: 'jmv 1/19/2020 10:00:04'!
+!TTFontDescription methodsFor: 'properties' stamp: 'jmv 1/26/2020 09:50:56'!
 letterMTopSideBearing
 	"This number is what needs to be scaled by i.e. 12 to render a 12 pixel font"
-	letterMTopSideBearing ifNil: [ letterMTopSideBearing _ (self glyphForCharacter: $M) topSideBearing ].
+	letterMTopSideBearing ifNil: [ letterMTopSideBearing _ (self glyphForCharacter: $M useST80Glyphs: false) topSideBearing ].
 	^letterMTopSideBearing! !
 
 !TTFontDescription methodsFor: 'properties' stamp: 'jmv 4/24/2019 20:23:51'!
@@ -4353,10 +4336,9 @@ lineSpacing
 unitsPerEm
 	^unitsPerEm! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 1/19/2020 09:53:17'!
-glyphsByCodePoint16: array16 glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: aGlyph
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 1/26/2020 08:58:20'!
+glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: aGlyph
 	"unknownGlyph should be used if blah blah blah"
-	glyphsByCodePoint16 _ array16.
 	glyphsByIso8859s15 _ array8.
 	glyphsByUtf8Bytes _ arrayUtf8.
 	unknownGlyph _ aGlyph! !
@@ -4480,23 +4462,29 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 1/18/2020 21:44:05'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 1/26/2020 16:08:59'!
 mapAndStoreGlyphsUsing: characterMap
 
-	| glyphsByIso5559s15 glyphsByUTF8 glyphsByUnicodeCodePoint ttfGlyphID unknownGlyph nullGlyph carriageReturnGlyph spaceGlyph mapSize |
+	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph carriageReturnGlyph spaceGlyph mapSize preferredCodePoint |
 	unknownGlyph _ glyphs first.
 	nullGlyph _ glyphs second.
 	carriageReturnGlyph _ glyphs third.
 	spaceGlyph _ glyphs fourth.
 	mapSize _ characterMap size.
-	glyphsByUnicodeCodePoint _ Array new: mapSize withAll: unknownGlyph.
 	glyphsByIso5559s15 _ Array new: 256.
 	glyphsByUTF8 _ Array new: 256.
 	0 to: mapSize - 1 do: [ :codePoint | | g array prevByte|
-		ttfGlyphID _ characterMap at: codePoint+1.
-		g _ glyphs at: ttfGlyphID+1 ifAbsent: [ unknownGlyph ].
+
+		preferredCodePoint _ codePoint.
+		codePoint = $- codePoint ifTrue: [ preferredCodePoint _ 16r2212 ]. "WIDE MINUS"
+		codePoint = $* codePoint ifTrue: [ preferredCodePoint _ 16r2217 ]. "CENTERED ASTERISK"
+		g _ glyphs at: (characterMap at: preferredCodePoint+1)+1 ifAbsent: [
+			glyphs at: (characterMap at: codePoint+1)+1 ifAbsent: [
+				unknownGlyph ]].
+
 		(Character iso8859s15CodeForUnicodeCodePoint: codePoint) ifNotNil: [ :iso8859s15 |
 			glyphsByIso5559s15 at: iso8859s15 + 1 put: g ].
+
 		array _ glyphsByUTF8.
 		prevByte _ nil.
 		Character
@@ -4508,14 +4496,13 @@ mapAndStoreGlyphsUsing: characterMap
 				]
 			withUtf8BytesOfUnicodeCodePoint: codePoint.
 			array at: prevByte+1 put: g.
-		glyphsByUnicodeCodePoint at: codePoint+1 put: g.
+
 	].
 	Character separators do: [ :s |
-		glyphsByUnicodeCodePoint at: s codePoint +1 put: spaceGlyph.
 		glyphsByIso5559s15 at: s codePoint +1 put: spaceGlyph.
 		glyphsByUTF8 at: s codePoint +1 put: spaceGlyph.
 	].
-	fontDescription glyphsByCodePoint16: glyphsByUnicodeCodePoint glyphsByIso8859s15: glyphsByIso5559s15 glyphsByUtf8Bytes: glyphsByUTF8 unknownGlyph: unknownGlyph! !
+	fontDescription glyphsByIso8859s15: glyphsByIso5559s15 glyphsByUtf8Bytes: glyphsByUTF8 unknownGlyph: unknownGlyph! !
 
 !TTFontReader methodsFor: 'processing' stamp: 'jmv 1/18/2020 15:32:49'!
 processCharacterMappingTable: entry
@@ -5260,6 +5247,10 @@ makePointsAbsolute
 	contours do: [ :contour | 
 		contourOrigin _ contour makePointsAbsolute: contourOrigin ]! !
 
+!TTGlyph methodsFor: 'private-initialization' stamp: 'jmv 1/18/2020 15:54:31'!
+replaceIndexesByComponentGlyphsIn: dummy
+	"NOP"! !
+
 !TTGlyph methodsFor: 'private-initialization' stamp: 'jmv 5/16/2019 21:21:51'!
 updateRightSideBearing
 	"Update the right side bearing value"
@@ -5272,10 +5263,6 @@ drawGlyphOn: aVectorCanvas
 		contour isEmpty ifFalse: [
 			contour initialMoveToCommand runOn: aVectorCanvas .
 			contour pathCommand runOn: aVectorCanvas ]].! !
-
-!TTGlyph methodsFor: 'as yet unclassified' stamp: 'jmv 1/18/2020 15:54:31'!
-replaceIndexesByComponentGlyphsIn: dummy
-	"NOP"! !
 
 !TTCompositeGlyph methodsFor: 'accessing' stamp: 'ar 11/2/1998 01:21'!
 addGlyph: aGlyph transformation: aMatrix
@@ -5302,14 +5289,14 @@ drawGlyphOn: aVectorCanvas
 		aVectorCanvas engine geometryTransformation: (initialGeometry composedWith: each key).
 		each value drawGlyphOn: aVectorCanvas ]! !
 
-!TTCompositeGlyph methodsFor: 'as yet unclassified' stamp: 'jmv 1/18/2020 15:54:09'!
-replaceIndexesByComponentGlyphsIn: anArray
-	glyphs _ glyphs collect: [ :assoc | assoc key -> (anArray at: assoc value) ]! !
-
-!TTCompositeGlyph methodsFor: 'as yet unclassified' stamp: 'jmv 1/18/2020 16:29:44'!
+!TTCompositeGlyph methodsFor: 'drawing' stamp: 'jmv 1/18/2020 16:29:44'!
 txAndContoursDo: aBlock
 	glyphs do: [ :assoc |
 		aBlock value: assoc key value: assoc value contours ]! !
+
+!TTCompositeGlyph methodsFor: 'private-initialization' stamp: 'jmv 1/18/2020 15:54:09'!
+replaceIndexesByComponentGlyphsIn: anArray
+	glyphs _ glyphs collect: [ :assoc | assoc key -> (anArray at: assoc value) ]! !
 
 !TTKernPair methodsFor: 'accessing'!
 left
