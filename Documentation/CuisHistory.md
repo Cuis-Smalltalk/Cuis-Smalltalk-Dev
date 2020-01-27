@@ -1,4 +1,4 @@
-# A short story of Cuis #
+# A short history of Cuis #
 
 The project is led by Juan Vuletich, who started it 15 years ago, after leading the development of an OS/2 specific VM for Squeak, and leading several Squeak projects. The focus has always been to develop a general purpose Smalltalk system that doesn't include application specific code by default, so it doesn't mandate extra burden on the developer. A friendly and enthusiastic community has formed around it, developing additional code packages and applications.
 
