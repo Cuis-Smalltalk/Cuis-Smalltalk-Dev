@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4024] on 12 January 2020 at 9:41:54 pm'!
+'From Cuis 5.0 [latest update: #4045] on 19 February 2020 at 1:00:02 pm'!
 'Description Refactoring and bug fixing on ChangeSelector refactorings'!
-!provides: 'BaseImageTests' 1 201!
+!provides: 'BaseImageTests' 1 202!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -15801,6 +15801,36 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 		
 	self assert: 'griffle [|var1 goo | var1 := 1.goo := 1.^ goo + var1]' equals: sourceCode! !
 
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 1/27/2020 00:10:26'!
+testAddsUndeclaredVariableCorrectlyInBlockWhenTheresAnArgumentAlready
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [ :var1 | goo := 1.^ goo + var1]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 1/27/2020 02:46:02'!
+testAddsUndeclaredVariableCorrectlyInBlockWhenTheresArgumentsAndTempDeclarationPipesWithNoTemps
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [ :var1 | | | goo := 1.^ goo + var1]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]' equals: sourceCode! !
+
 !CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 12/20/2019 20:55:29'!
 testAddsUndeclaredVariableCorrectlyInMethodAndInBlock
 
@@ -15844,6 +15874,21 @@ testAddsUndeclaredVariableInRightBlock
 			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
 		
 	self assert: 'griffle [|goo| goo := 1. ^goo ]. [ | goo1 |goo1:=1.^ goo1]' equals: sourceCode! !
+
+!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 1/27/2020 00:31:46'!
+testAddsUndeclaredVariableWithAnArgumentAndTempAlreadyInBlock
+
+	| testClass |
+	
+	testClass := self createTestClass.
+	sourceCode := 'griffle [ :var1 | | foo | foo := 2. goo := 1.^ goo + var1 + foo ]'.
+	
+	[ testClass compile: sourceCode notifying: self ]
+		on: UndeclaredVariable
+		do: [ :anUndeclaredVariable |
+			anUndeclaredVariable resume: anUndeclaredVariable declareBlockTempAction ].
+		
+	self assert: 'griffle [ :var1 | | foo goo | foo := 2. goo := 1.^ goo + var1 + foo ]' equals: sourceCode! !
 
 !CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:06:40'!
 testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
