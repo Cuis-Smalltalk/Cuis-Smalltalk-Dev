@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4030] on 26 January 2020 at 4:10:15 pm'!
+'From Cuis 5.0 [latest update: #4045] on 19 February 2020 at 6:00:41 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 89!
+!provides: 'VectorGraphics' 1 102!
 !requires: 'Color-Extras' 1 7 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -81,7 +81,7 @@ VectorCanvas class
 
 !classDefinition: #VectorEngine category: #'VectorGraphics-Kernel'!
 Object subclass: #VectorEngine
-	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth antiAliasingWidthScaledInverse subPixelDelta strokeWidth strokeWidthDilatedHalf strokeWidthDilatedHalfSquared strokeWidthErodedHalf strokeWidthErodedHalfSquared strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom mask edgeCountPerPixel blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom maskBoundsLeft maskBoundsTop maskBoundsRight maskBoundsBottom hopsPerPixel auxBitBlt firstX firstY currentX currentY trajectoryPoints prevYTruncated geometryTransformation lastClientX lastClientY lastControlX lastControlY'
+	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth antiAliasingWidthScaledInverse subPixelDelta strokeWidth strokeWidthDilatedHalf strokeWidthDilatedHalfSquared strokeWidthErodedHalf strokeWidthErodedHalfSquared openCLKernelWidth openCLKernelHeight strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom mask edgeCountPerPixel blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt firstX firstY currentX currentY prevYTruncated geometryTransformation lastClientX lastClientY lastControlX lastControlY jj ii pixY pixX z_pixelIndex z_alphaWord z_redAlpha z_greenAlpha z_blueAlpha z_previousRedAlpha z_previousGreenAlpha z_previousBlueAlpha'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -349,7 +349,9 @@ self allOwnersReverseDo: [ :m | c into: m ].
 c fullDraw: self.
 Display forceToScreen!
 
-!VectorEngine commentStamp: 'jmv 1/1/2018 12:40:28' prior: 0!
+!VectorEngine commentStamp: '<historical>' prior: 0!
+Aca es donde estoy trabajando. En las numeradas guardo snapshots.
+
 A Vector Graphics rasterizer for Morphic 3.
 Supports most SVG primitives.
 Gives exceptional quality.
@@ -620,10 +622,9 @@ glyphAt: aCharacter
 		glyphForms at: index put: formGlyph.
 		formGlyph ]! !
 
-!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 1/26/2020 09:53:06'!
+!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 2/18/2020 18:42:26'!
 ttGlyphAt: aCharacter
-	(ttFontDescription glyphForCharacter: aCharacter useST80Glyphs: self isST80Glyphs) ifNotNil: [ :found | ^ found ].
-	^ ttFontDescription glyphForCharacter: Character null useST80Glyphs: false! !
+	^ ttFontDescription glyphForCharacter: aCharacter useST80Glyphs: self isST80Glyphs! !
 
 !TrueTypeFont methodsFor: 'emphasis' stamp: 'jmv 1/26/2020 16:07:11'!
 addEmphasis: code
@@ -1676,7 +1677,7 @@ geometryTransformation
 geometryTransformation: aGeometryTransformation
 	geometryTransformation _ aGeometryTransformation! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 1/15/2020 14:27:14'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 2/10/2020 15:47:43'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -1692,11 +1693,15 @@ fillColor: aFillColor do: pathCommandsBlock
 	fillBlue _ (aFillColor blue * 255.0) rounded.
 	strokeAlpha _ nil. strokeRed _ nil. strokeGreen _ nil. strokeBlue _ nil.
 
-	self initializePath.
-	pathCommandsBlock valueWithPossibleArgument: self.
+	0 to: openCLKernelHeight do: [ :i |
+		0 to: openCLKernelWidth do: [ :j |
+			jj _ j. ii _ i.
+			self initializePath.
+			pathCommandsBlock valueWithPossibleArgument: self.
+			]].
 	self finishPath! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 1/15/2020 14:27:43'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 2/10/2020 15:46:02'!
 strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke."
 
@@ -1717,11 +1722,15 @@ strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	strokeGreen _ (aStrokeColor green * 255.0) rounded.
 	strokeBlue _ (aStrokeColor blue * 255.0) rounded.
 
-	self initializePath.
-	pathCommandsBlock valueWithPossibleArgument: self.
+	0 to: openCLKernelHeight do: [ :i |
+		0 to: openCLKernelWidth do: [ :j |
+			jj _ j. ii _ i.
+			self initializePath.
+			pathCommandsBlock valueWithPossibleArgument: self.
+			]].
 	self finishPath! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 1/15/2020 14:28:17'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 2/10/2020 15:48:09'!
 strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -1760,8 +1769,12 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	strokeGreen _ (aStrokeColor green * 255.0) rounded.
 	strokeBlue _ (aStrokeColor blue * 255.0) rounded.
 
-	self initializePath.
-	pathCommandsBlock valueWithPossibleArgument: self.
+	0 to: openCLKernelHeight do: [ :i |
+		0 to: openCLKernelWidth do: [ :j |
+			jj _ j. ii _ i.
+			self initializePath.
+			pathCommandsBlock valueWithPossibleArgument: self.
+			]].
 	self finishPath! !
 
 !VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 12/31/2017 16:46:16'!
@@ -2404,27 +2417,46 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 	].
 	self antiAliasingWidth: VectorEngine defaultAntiAliasingWidth! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/15/2020 14:16:42'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 16:56:09'!
 addPenPositionX: x y: y
 
 "
 Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
 "
 
-	trajectoryPoints add: x@y.
+	self updateMaskX: x y: y.
 
-	maskBoundsTop _ maskBoundsTop min: y.
-	maskBoundsBottom _ maskBoundsBottom max: y.
-	maskBoundsLeft _ maskBoundsLeft min: x.
-	maskBoundsRight _ maskBoundsRight max: x.
+	blendBoundsTop _ blendBoundsTop min: y.
+	blendBoundsBottom _ blendBoundsBottom max: y.
+	blendBoundsLeft _ blendBoundsLeft min: x.
+	blendBoundsRight _ blendBoundsRight max: x.
 
 	"Compute edges intersecting with this horizontal line, for fills."
 	doFill ifTrue: [
 		self updateEdgeCountAtX: x y: y ].! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/15/2020 13:35:38'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:31:00'!
+adjustPixX: x y: y
+	| adjusted |
+	adjusted _ false.
+	[y - pixY > (openCLKernelHeight/2)] whileTrue: [ pixY _ pixY + openCLKernelHeight+1. adjusted _ true].
+	[pixY - y > (openCLKernelHeight/2)] whileTrue: [ pixY _ pixY - openCLKernelHeight-1. adjusted _ true].
+	[x - pixX > (openCLKernelWidth/2)] whileTrue: [ pixX _ pixX + openCLKernelWidth+1. adjusted _ true].
+	[pixX - x > (openCLKernelWidth/2)] whileTrue: [ pixX _ pixX - openCLKernelWidth-1. adjusted _ true].
+	^ adjusted! !
+
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/9/2020 19:04:16'!
 finishPath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
+
+	blendBoundsTop _ (blendBoundsTop - strokeWidthDilatedHalf) truncated +1.
+	blendBoundsBottom _ (blendBoundsBottom + strokeWidthDilatedHalf) truncated.
+	blendBoundsLeft _ (blendBoundsLeft - strokeWidthDilatedHalf - subPixelDelta) truncated +1.
+	blendBoundsRight _ (blendBoundsRight + strokeWidthDilatedHalf + subPixelDelta) truncated.
+	blendBoundsTop < clipTop ifTrue: [ blendBoundsTop _ clipTop ].
+	blendBoundsBottom > clipBottom ifTrue: [ blendBoundsBottom _ clipBottom ].
+	blendBoundsLeft< clipLeft ifTrue: [ blendBoundsLeft _ clipLeft ].
+	blendBoundsRight > clipRight ifTrue: [ blendBoundsRight _ clipRight ].
 	
 	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
 	doFill ifTrue: [
@@ -2455,41 +2487,46 @@ finishPath
 
 	Display forceToScreen! !
 
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:30:08'!
+firstX: x y: y
+	pixY _ (x / (openCLKernelHeight+1)) truncated * (openCLKernelHeight+1) + ii.
+	pixX _ (y / (openCLKernelWidth+1)) truncated * (openCLKernelWidth+1) + jj.
+	self adjustPixX: x y: y.
+	self updateMaskReadWord.
+
+	firstX _ x.
+	firstY _ y.! !
+
 !VectorEngine methodsFor: 'private' stamp: 'jmv 12/30/2017 15:48:32'!
 initialize
 	geometryTransformation _ MorphicTranslation new. "Identity"! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/14/2020 10:05:38'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/10/2020 16:32:16'!
 initializePath
 
-	firstX _ 0.0.
-	firstY _ 0.0.
+	self firstX: 0 y: 0.
 	currentX _ 0.0.
 	currentY _ 0.0.
 	lastClientX _ 0.0.
 	lastClientY _ 0.0.
 	lastControlX _ lastClientX.
 	lastControlY _ lastClientY.
-	trajectoryPoints _ OrderedCollection new.
 	prevYTruncated _ nil.
-
-	maskBoundsTop _ targetHeight.				"drawable bottom. Will later be refined."
-	maskBoundsBottom _ 0.						"drawable top. Will later be refined."
-	maskBoundsLeft _ targetWidth.				"drawable right. Will later be refined."
-	maskBoundsRight _ 0.							"drawable left. Will later be refined."
 
 	blendBoundsTop _ targetHeight.			"drawable bottom. Will later be refined."
 	blendBoundsBottom _ 0.						"drawable top. Will later be refined."
 	blendBoundsLeft _ targetWidth.			"drawable right. Will later be refined."
 	blendBoundsRight _ 0.						"drawable left. Will later be refined."! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/15/2020 15:24:36'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/10/2020 16:48:14'!
 pvtStrokeWidth: aNumber
 	strokeWidth _ aNumber.
 	strokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
 	strokeWidthDilatedHalfSquared _ strokeWidthDilatedHalf * strokeWidthDilatedHalf.
 	strokeWidthErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	strokeWidthErodedHalfSquared _ strokeWidthErodedHalf * strokeWidthErodedHalf * strokeWidthErodedHalf sign! !
+	strokeWidthErodedHalfSquared _ strokeWidthErodedHalf * strokeWidthErodedHalf * strokeWidthErodedHalf sign.
+	openCLKernelWidth _ ((strokeWidthDilatedHalf + subPixelDelta) * 2) truncated + 1..
+	openCLKernelHeight _ (strokeWidthDilatedHalf * 2) truncated + 1.! !
 
 !VectorEngine methodsFor: 'private' stamp: 'jmv 12/16/2017 18:17:50'!
 resetMorphBounds
@@ -2608,164 +2645,85 @@ updateEdgeCountAtX: x y: y
 		].
 	prevYTruncated _ thisYTruncated! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/15/2020 14:37:20'!
-updateMask
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:52:02'!
+updateMaskReadWord
+	"Read alpha (transparency) mask."
+
+	((pixY between: clipTop and: clipBottom) and: [pixX between: clipLeft and: clipRight])
+		ifTrue: [
+			z_pixelIndex _ pixY * targetWidth +  pixX.
+			z_pixelIndex _ z_pixelIndex + 1.
+			z_alphaWord _ mask bytesAt: z_pixelIndex.
+			z_redAlpha _ z_alphaWord at: 3.
+			z_greenAlpha _ z_alphaWord at: 2.
+			z_blueAlpha _ z_alphaWord at: 1 ]
+		ifFalse: [
+			z_pixelIndex _ -1 ].
+	z_previousRedAlpha _ z_redAlpha.
+	z_previousGreenAlpha _ z_greenAlpha.
+	z_previousBlueAlpha _ z_blueAlpha! !
+
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:28:37'!
+updateMaskWriteWord
+	"Update alpha (transparency) mask using trajectoryPoints."
+
+	(z_previousRedAlpha ~= z_redAlpha or: [
+	z_previousGreenAlpha ~= z_greenAlpha or: [
+	z_previousBlueAlpha ~= z_blueAlpha ]]) ifTrue: [
+		z_alphaWord at: 3 put: z_redAlpha.
+		z_alphaWord at: 2 put: z_greenAlpha.
+		z_alphaWord at: 1 put: z_blueAlpha.
+		mask bytesAt: z_pixelIndex put: z_alphaWord ]! !
+
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:37:28'!
+updateMaskX: x y: y
 	"Apdate alpha (transparency) mask using trajectoryPoints."
+	| distanceToAxisSquared alpha dySquared dx dxSquared dy dxp |
 
-	maskBoundsTop _ (maskBoundsTop - strokeWidthDilatedHalf) truncated +1.
-	maskBoundsBottom _ (maskBoundsBottom + strokeWidthDilatedHalf) truncated.
-	maskBoundsLeft _ (maskBoundsLeft - strokeWidthDilatedHalf - subPixelDelta) truncated +1.
-	maskBoundsRight _ (maskBoundsRight + strokeWidthDilatedHalf + subPixelDelta) truncated.
-	maskBoundsTop < clipTop ifTrue: [ maskBoundsTop _ clipTop ].
-	maskBoundsBottom > clipBottom ifTrue: [ maskBoundsBottom _ clipBottom ].
-	maskBoundsLeft< clipLeft ifTrue: [ maskBoundsLeft _ clipLeft ].
-	maskBoundsRight > clipRight ifTrue: [ maskBoundsRight _ clipRight ].
+	(self adjustPixX: x y: y) ifTrue: [
+		self updateMaskWriteWord.
+		self updateMaskReadWord ].
 
-	"Paralelizar en displayX@displayY"
-	maskBoundsTop to: maskBoundsBottom do: [ :displayY |
-		maskBoundsLeft to: maskBoundsRight do: [ :displayX |
-			self updateMaskAtdisplayX: displayX displayY: displayY ]].
-	trajectoryPoints _ OrderedCollection new.
+	z_pixelIndex = -1 ifTrue: [ ^ self ].
 
-	"Include updated mask in area to blend."
-	blendBoundsTop _ blendBoundsTop min: maskBoundsTop.
-	blendBoundsBottom _ blendBoundsBottom max: maskBoundsBottom.
-	blendBoundsLeft _ blendBoundsLeft min: maskBoundsLeft.
-	blendBoundsRight _ blendBoundsRight max: maskBoundsRight.
-
-	maskBoundsTop _ targetHeight.				"drawable bottom. Will later be refined."
-	maskBoundsBottom _ 0.						"drawable top. Will later be refined."
-	maskBoundsLeft _ targetWidth.				"drawable right. Will later be refined."
-	maskBoundsRight _ 0.							"drawable left. Will later be refined."! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/15/2020 14:45:04'!
-updateMaskAtdisplayX: displayX displayY: displayY
-
-	"slight optimization possible when we doStroke = false ... perhaps implement:
-		-we know palpha is never 127
-		- we know distanceToEdge is always > strokeWidthErodedHalf.
-	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
-	
-	Use a separated method to be called when only fill
-	"
-
-	| distanceToAxisSquared alpha alphaWord dySquared dx dxSquared dy pixelIndex dxp blueAlpha greenAlpha redAlpha previousBlueAlpha previousGreenAlpha previousRedAlpha |
-
-	pixelIndex _ displayY * targetWidth +  displayX.
-	pixelIndex _ pixelIndex + 1.
-	alphaWord _ mask bytesAt: pixelIndex.
-	alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
-
-		redAlpha _ alphaWord at: 3.
-		greenAlpha _ alphaWord at: 2.
-		blueAlpha _ alphaWord at: 1.
-		
-		previousRedAlpha _ redAlpha.
-		previousGreenAlpha _ greenAlpha.
-		previousBlueAlpha _ blueAlpha.
-
-		trajectoryPoints do: [ :p |
-			dy _ displayY - p y.
-			dySquared _ dy * dy.
-			dx _ displayX - p x.
-			"Red"
-			dxp _ dx - subPixelDelta.
-			dxSquared _ dxp * dxp.
-			distanceToAxisSquared _ dxSquared + dySquared.
-			distanceToAxisSquared < strokeWidthDilatedHalfSquared
-				ifTrue: [
-					alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
-						ifTrue: [ 16r7F ]
-						ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-					alpha > redAlpha ifTrue: [
-						redAlpha _ alpha ]].
-			"Green"
-			dxSquared _ dx * dx.
-			distanceToAxisSquared _ dxSquared + dySquared.
-			distanceToAxisSquared < strokeWidthDilatedHalfSquared
-				ifTrue: [
-					alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
-						ifTrue: [ 16r7F ]
-						ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-					alpha > greenAlpha ifTrue: [
-						greenAlpha _ alpha ]].
-			"Blue"
-			dxp _ dx + subPixelDelta.
-			dxSquared _ dxp * dxp.
-			distanceToAxisSquared _ dxSquared + dySquared.
-			distanceToAxisSquared < strokeWidthDilatedHalfSquared
-				ifTrue: [
-					alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
-						ifTrue: [ 16r7F ]
-						ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-					alpha > blueAlpha ifTrue: [
-						blueAlpha _ alpha ]].	
-		].
-
-		(previousRedAlpha ~= redAlpha or: [
-		previousGreenAlpha ~= greenAlpha or: [
-		previousBlueAlpha ~= blueAlpha ]]) ifTrue: [
-			alphaWord at: 3 put: redAlpha.
-			alphaWord at: 2 put: greenAlpha.
-			alphaWord at: 1 put: blueAlpha.
-			mask bytesAt: pixelIndex put: alphaWord ]
-	]! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/15/2020 14:38:16'!
-updateMaskForXDistanceToAxis: distanceToAxisR g: distanceToAxisG b: distanceToAxisB displayX: displayX displayY: displayY
-	| alpha alphaWord pixelIndex |
-
-	pixelIndex _ displayY * targetWidth +  displayX.
-	pixelIndex _ pixelIndex + 1.
-	alphaWord _ mask bytesAt: pixelIndex.
-
+	"Minimizar"
+	dy _ pixY - y.
+	dySquared _ dy * dy.
+	dx _ pixX - x.
 	"Red"
-	distanceToAxisR < strokeWidthDilatedHalf
+	dxp _ dx - subPixelDelta.
+	dxSquared _ dxp * dxp.
+	distanceToAxisSquared _ dxSquared + dySquared.
+	distanceToAxisSquared < strokeWidthDilatedHalfSquared
 		ifTrue: [
-			alpha _ distanceToAxisR <= strokeWidthErodedHalf
+			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
 				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisR * antiAliasingWidthScaledInverse) rounded ].
-			alpha > (alphaWord at: 3) ifTrue: [
-				alphaWord at: 3 put: alpha ]].
+				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+			alpha > z_redAlpha ifTrue: [
+				z_redAlpha _ alpha ]].
 	"Green"
-	distanceToAxisG < strokeWidthDilatedHalf
+	dxSquared _ dx * dx.
+	distanceToAxisSquared _ dxSquared + dySquared.
+	distanceToAxisSquared < strokeWidthDilatedHalfSquared
 		ifTrue: [
-			alpha _ distanceToAxisG <= strokeWidthErodedHalf
+			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
 				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisG * antiAliasingWidthScaledInverse) rounded ].
-			alpha > (alphaWord at: 2) ifTrue: [
-				alphaWord at: 2 put: alpha ]].
+				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+			alpha > z_greenAlpha ifTrue: [
+				z_greenAlpha _ alpha ]].
 	"Blue"
-	distanceToAxisB < strokeWidthDilatedHalf
+	dxp _ dx + subPixelDelta.
+	dxSquared _ dxp * dxp.
+	distanceToAxisSquared _ dxSquared + dySquared.
+	distanceToAxisSquared < strokeWidthDilatedHalfSquared
 		ifTrue: [
-			alpha _ distanceToAxisB <= strokeWidthErodedHalf
+			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
 				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisB * antiAliasingWidthScaledInverse) rounded ].
-			alpha > (alphaWord at: 1) ifTrue: [
-				alphaWord at: 1 put: alpha ]].
-	mask bytesAt: pixelIndex put: alphaWord! !
+				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+			alpha > z_blueAlpha ifTrue: [
+				z_blueAlpha _ alpha ]].! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/15/2020 14:38:33'!
-updateMaskForYDistanceToAxis: distanceToAxis displayX: displayX displayY: displayY
-	| alpha alphaWord pixelIndex |
-
-	pixelIndex _ displayY * targetWidth +  displayX.
-	pixelIndex _ pixelIndex + 1.
-	alphaWord _ mask bytesAt: pixelIndex.
-	distanceToAxis < strokeWidthDilatedHalf
-		ifTrue: [
-			alpha _ distanceToAxis <= strokeWidthErodedHalf
-				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxis * antiAliasingWidthScaledInverse) rounded ].
-			alpha > (alphaWord at: 3) ifTrue: [
-				alphaWord at: 3 put: alpha ].
-			alpha > (alphaWord at: 2) ifTrue: [
-				alphaWord at: 2 put: alpha ].
-			alpha > (alphaWord at: 1) ifTrue: [
-				alphaWord at: 1 put: alpha ].
-			mask bytesAt: pixelIndex put: alphaWord ]! !
-
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/14/2020 10:53:41'!
+!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/19/2020 16:49:07'!
 basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngine onForm: Display)
@@ -2789,8 +2747,7 @@ Display forceToScreen.
 			"trajectory starts here. Eventually, #closePath should draw a line to here"
 			"Next point will be first in a new trajectory fragment"
 			prevYTruncated _ nil.
-			firstX _ x0.
-			firstY _ y0.
+			self firstX: x0 y: y0.
 			self addPenPositionX: x0 y: y0 ].
 	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
 	d _ sweepAngle / hops.
@@ -2805,7 +2762,7 @@ Display forceToScreen.
 	currentX _ x.
 	currentY _ y.
 
-	self updateMask! !
+	self updateMaskWriteWord.! !
 
 !VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 12/31/2017 16:42:44'!
 basicArcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
@@ -2908,7 +2865,7 @@ Display forceToScreen
 "
 	self basicLineToX: firstX y: firstY! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/14/2020 11:30:02'!
+!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/19/2020 16:49:10'!
 basicCubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -2958,39 +2915,9 @@ Display forceToScreen
 	currentX _ x3.
 	currentY _ y3.
 
-	self updateMask! !
+	self updateMaskWriteWord.! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/15/2020 14:35:59'!
-basicHorizontalLineToX: x2
-	| distanceToAxis |	
-
-	maskBoundsTop _ (currentY - strokeWidthDilatedHalf) truncated +1.
-	maskBoundsBottom _ (currentY + strokeWidthDilatedHalf) truncated.
-	maskBoundsLeft _ (currentX min: x2) truncated +1.
-	maskBoundsRight _ (currentX max: x2) truncated.
-	maskBoundsTop < clipTop ifTrue: [ maskBoundsTop _ clipTop ].
-	maskBoundsBottom > clipBottom ifTrue: [ maskBoundsBottom _ clipBottom ].
-	maskBoundsLeft< clipLeft ifTrue: [ maskBoundsLeft _ clipLeft ].
-	maskBoundsRight > clipRight ifTrue: [ maskBoundsRight _ clipRight ].
-
-	"Paralelizar en displayX@displayY"
-	maskBoundsTop to: maskBoundsBottom do: [ :displayY |
-		distanceToAxis _ (displayY - currentY) abs.
-		maskBoundsLeft to: maskBoundsRight do: [ :displayX |
-			self updateMaskForYDistanceToAxis: distanceToAxis displayX: displayX displayY: displayY ]].
-
-	"Include updated mask in area to blend."
-	blendBoundsTop _ blendBoundsTop min: maskBoundsTop.
-	blendBoundsBottom _ blendBoundsBottom max: maskBoundsBottom.
-	blendBoundsLeft _ blendBoundsLeft min: maskBoundsLeft.
-	blendBoundsRight _ blendBoundsRight max: maskBoundsRight.
-
-	maskBoundsTop _ targetHeight.				"drawable bottom. Will later be refined."
-	maskBoundsBottom _ 0.						"drawable top. Will later be refined."
-	maskBoundsLeft _ targetWidth.				"drawable right. Will later be refined."
-	maskBoundsRight _ 0.							"drawable left. Will later be refined."! !
-
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/16/2020 09:59:21'!
+!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/19/2020 16:49:13'!
 basicLineToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -3019,42 +2946,22 @@ Display forceToScreen
 	| dx dy hops incrementX incrementY x y |
 	dy _ y2 - currentY.
 	dx _ x2 - currentX.
-	dx * dy = 0.0
-		ifTrue: [
-			self addPenPositionX: currentX y: currentY.
-			self updateMask.
-			dy = 0.0  	"or else it means dx = 0.0"
-				ifTrue: [ self basicHorizontalLineToX: x2 ]
-				ifFalse: [ self basicVerticalLineToY: y2 ]]
-		ifFalse: [
-			maskBoundsTop _ maskBoundsTop min: currentY.
-			maskBoundsBottom _ maskBoundsBottom max: currentY.
-			maskBoundsLeft _ maskBoundsLeft min: currentX.
-			maskBoundsRight _ maskBoundsRight max: currentX.
-			x _ currentX.
-			y _ currentY.
-			hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
-			incrementX _ dx *1.0 / hops.
-			incrementY _ dy *1.0 / hops.
-			doFill
-				ifTrue: [
-					hops timesRepeat: [
-						trajectoryPoints add: x@y.
-						self updateEdgeCountAtX: x y: y.
-						x _ x + incrementX.
-						y _ y + incrementY ]]
-				ifFalse: [
-					hops timesRepeat: [
-						trajectoryPoints add: x@y.
-						x _ x + incrementX.
-						y _ y + incrementY ]]
-		].
+	"Optimizar. En todas las lineas, bounds. En verticales, mucho mas. En horiz, no EdgeCounts!! Ver 02"
+	x _ currentX.
+	y _ currentY.
+	hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
+	incrementX _ dx *1.0 / hops.
+	incrementY _ dy *1.0 / hops.
+	hops timesRepeat: [
+		self addPenPositionX: x y: y.
+		x _ x + incrementX.
+		y _ y + incrementY ].
 	currentX _ x2.
 	currentY _ y2.
 	self addPenPositionX: currentX y: currentY.
-	self updateMask! !
+	self updateMaskWriteWord.! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/12/2020 14:56:14'!
+!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/10/2020 15:57:37'!
 basicMoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -3074,12 +2981,11 @@ Display forceToScreen
 
 	"Next point will be first in a new trajectory fragment"
 	prevYTruncated _ nil.
-	firstX _ x.
-	firstY _ y.
+	self firstX: x y: y.
 	currentX _ x.
 	currentY _ y.! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/14/2020 11:30:14'!
+!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/19/2020 16:49:15'!
 basicQuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
 (VectorEngine onForm: Display)
@@ -3119,43 +3025,7 @@ Display forceToScreen
 	currentX _ x2.
 	currentY _ y2.
 
-	self updateMask! !
-
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/15/2020 14:36:53'!
-basicVerticalLineToY: y2
-	| distanceToAxisB distanceToAxisG distanceToAxisR |	
-
-	doFill ifTrue: [
-		currentY to: y2 by: (y2-currentY) sign do: [ :y |
-			self updateEdgeCountAtX: currentX y: y ]].
-
-	maskBoundsTop _ (currentY min: y2) truncated +1.
-	maskBoundsBottom _ (currentY max: y2) truncated.
-	maskBoundsLeft _ (currentX - strokeWidthDilatedHalf - subPixelDelta) truncated +1.
-	maskBoundsRight _ (currentX + strokeWidthDilatedHalf + subPixelDelta) truncated.
-	maskBoundsTop < clipTop ifTrue: [ maskBoundsTop _ clipTop ].
-	maskBoundsBottom > clipBottom ifTrue: [ maskBoundsBottom _ clipBottom ].
-	maskBoundsLeft< clipLeft ifTrue: [ maskBoundsLeft _ clipLeft ].
-	maskBoundsRight > clipRight ifTrue: [ maskBoundsRight _ clipRight ].
-
-	"Paralelizar en displayX@displayY"
-	maskBoundsLeft to: maskBoundsRight do: [ :displayX |
-		distanceToAxisR _ (displayX - subPixelDelta - currentX) abs.
-		distanceToAxisG _ (displayX - currentX) abs.
-		distanceToAxisB _ (displayX + subPixelDelta - currentX) abs.
-		maskBoundsTop to: maskBoundsBottom do: [ :displayY |
-			self updateMaskForXDistanceToAxis: distanceToAxisR g: distanceToAxisG b: distanceToAxisB displayX: displayX displayY: displayY ]].
-
-	"Include updated mask in area to blend."
-	blendBoundsTop _ blendBoundsTop min: maskBoundsTop.
-	blendBoundsBottom _ blendBoundsBottom max: maskBoundsBottom.
-	blendBoundsLeft _ blendBoundsLeft min: maskBoundsLeft.
-	blendBoundsRight _ blendBoundsRight max: maskBoundsRight.
-
-	maskBoundsTop _ targetHeight.				"drawable bottom. Will later be refined."
-	maskBoundsBottom _ 0.						"drawable top. Will later be refined."
-	maskBoundsLeft _ targetWidth.				"drawable right. Will later be refined."
-	maskBoundsRight _ 0.							"drawable left. Will later be refined."! !
+	self updateMaskWriteWord.! !
 
 !VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 1/14/2020 09:58:41'!
 blendFillOnly
@@ -4258,18 +4128,26 @@ first
 	^ self.
 ! !
 
-!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 1/26/2020 16:06:47'!
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 2/19/2020 17:20:50'!
 glyphForCharacter: aCharacter useST80Glyphs: aBoolean
-	| c |
-	aBoolean ifFalse: [
-		^ glyphsByIso8859s15 at: aCharacter numericValue + 1 ].
-	c _ aCharacter.
-self flag: #assignmentGlyphSelector.
-"podria ser una tabla alternativa y evitar el if...
-Especialmente cuando haya que inlinear en VectorEngine"
-	c = $_ ifTrue: [ c _ Character arrowLeft ]. "or right"
-	c = $^ ifTrue: [ c _ Character arrowUp ]. "or right"
-	^ glyphsByIso8859s15 at: c numericValue + 1! !
+	| i regularGlyph st80Glyph|
+
+	regularGlyph _ glyphsByIso8859s15 at: aCharacter numericValue + 1.
+	aBoolean ifFalse: [ ^ regularGlyph ].
+	
+	aCharacter = $_ ifTrue: [
+		i _ Preferences assignmentGlyphSelector = #useLeftArrow
+			ifTrue: [Character arrowLeft numericValue]
+			ifFalse: [Character arrowRight numericValue].
+		st80Glyph _ glyphsByIso8859s15 at: i + 1.
+		st80Glyph = unknownGlyph ifFalse: [ ^ st80Glyph ]].
+
+	aCharacter = $^ ifTrue: [
+		i _ Character arrowUp numericValue.
+		st80Glyph _ glyphsByIso8859s15 at: i + 1.
+		st80Glyph = unknownGlyph ifFalse: [ ^ st80Glyph ]].
+
+	^ regularGlyph! !
 
 !TTFontDescription methodsFor: 'information' stamp: 'ar 11/14/1998 23:48'!
 copyright
@@ -4462,7 +4340,7 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 1/26/2020 16:08:59'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 2/18/2020 18:51:19'!
 mapAndStoreGlyphsUsing: characterMap
 
 	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph carriageReturnGlyph spaceGlyph mapSize preferredCodePoint |
@@ -4478,9 +4356,9 @@ mapAndStoreGlyphsUsing: characterMap
 		preferredCodePoint _ codePoint.
 		codePoint = $- codePoint ifTrue: [ preferredCodePoint _ 16r2212 ]. "WIDE MINUS"
 		codePoint = $* codePoint ifTrue: [ preferredCodePoint _ 16r2217 ]. "CENTERED ASTERISK"
-		g _ glyphs at: (characterMap at: preferredCodePoint+1)+1 ifAbsent: [
-			glyphs at: (characterMap at: codePoint+1)+1 ifAbsent: [
-				unknownGlyph ]].
+		g _ glyphs at: (characterMap at: preferredCodePoint+1)+1 ifAbsent: [ unknownGlyph ].
+		g == unknownGlyph ifTrue: [
+			g _ glyphs at: (characterMap at: codePoint+1)+1 ifAbsent: [ unknownGlyph ]].
 
 		(Character iso8859s15CodeForUnicodeCodePoint: codePoint) ifNotNil: [ :iso8859s15 |
 			glyphsByIso5559s15 at: iso8859s15 + 1 put: g ].
