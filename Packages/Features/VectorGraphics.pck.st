@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4045] on 19 February 2020 at 6:00:41 pm'!
+'From Cuis 5.0 [latest update: #4045] on 20 February 2020 at 1:40:33 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 102!
+!provides: 'VectorGraphics' 1 103!
 !requires: 'Color-Extras' 1 7 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -1532,7 +1532,7 @@ initialize
 	"
 	" AffineTransformation doIntegerTransformations: false"! !
 
-!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 10/14/2014 22:57'!
+!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 2/20/2020 12:01:55'!
 textex1
 "Jugando con Paragraph"
 "
@@ -1542,7 +1542,7 @@ Ejemplos como e de displayString:from:to:at:font: son mas realistas y mejores
 "
 	| t para frame |
 	t _ Text
-		initialFont: (AbstractFont familyName: 'DejaVu' pointSize: 9)
+		initialFont: (AbstractFont familyName: 'DejaVu Sans' pointSize: 9)
 		stringOrText: 'Acá vamos a escribir un poquito de texto. Esto es una prueba del renderer de texto de Morphic 3. La idea es poder reemplazar al actual en todos los casos en que sea posible. Quizás para algún pointsize especial, como 9, sigamos usando StrikeFont si se alinean los planetas. Ñandú, agüita, çå½´®¥ïøßƒ©Ý²Þ¬­ç¦µ'.
 	frame _ 10@10 extent: 320@400.
 	para _ TextComposition new.
@@ -1568,7 +1568,7 @@ Ejemplos como e de displayString:from:to:at:font: son mas realistas y mejores
 		selectionColor: Color orange.
 	Display forceToScreen! !
 
-!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 12/11/2017 23:57:28'!
+!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 2/20/2020 11:52:35'!
 textex2
 "Jugando con Paragraph"
 "
@@ -1577,7 +1577,7 @@ self textex2
 	| t para frame |
 	
 	t _ Text
-		initialFont: (AbstractFont familyName: 'DejaVu' pointSize: 22)
+		initialFont: (AbstractFont familyName: 'DejaVu Sans' pointSize: 22)
 		stringOrText: (String streamContents: [ :strm | (32 to: 255) do: [ :i | strm nextPut: (Character numericValue: i)]]).
 	frame _ 10@10 extent: 320@400.
 	para _ TextComposition new.
@@ -1603,7 +1603,7 @@ self textex2
 		selectionColor: Color orange.
 	Display forceToScreen! !
 
-!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 10/9/2014 09:42'!
+!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 2/20/2020 12:01:59'!
 textex3
 "Jugando con Paragraph"
 "
@@ -1611,7 +1611,7 @@ self textex3
 "
 	| t para frame |
 	t _ Text
-		initialFont: (AbstractFont familyName: 'DejaVu' pointSize: 9)
+		initialFont: (AbstractFont familyName: 'DejaVu Sans' pointSize: 9)
 		stringOrText: 'Acá vamos a escribir un poquito de texto. Esto es una prueba del renderer de texto de Morphic 3. La idea es poder reemplazar al actual en todos los casos en que sea posible. Quizás para algún pointsize especial, como 9, sigamos usando StrikeFont si se alinean los planetas. Ñandú, agüita, çå½´®¥ïøßƒ©Ý²Þ¬­ç¦µ'.
 	frame _ 10@10 extent: 320@400.
 	para _ TextComposition new.
@@ -3955,10 +3955,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 8/16/2018 15:47:00'!
+!VectorEngine class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:29:38'!
 siemensStar
 	"
-	VectorEngine siemensStar display
+	self siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -3979,7 +3979,6 @@ siemensStar
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
@@ -4340,7 +4339,7 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 2/18/2020 18:51:19'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 2/20/2020 12:06:10'!
 mapAndStoreGlyphsUsing: characterMap
 
 	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph carriageReturnGlyph spaceGlyph mapSize preferredCodePoint |
@@ -4349,7 +4348,7 @@ mapAndStoreGlyphsUsing: characterMap
 	carriageReturnGlyph _ glyphs third.
 	spaceGlyph _ glyphs fourth.
 	mapSize _ characterMap size.
-	glyphsByIso5559s15 _ Array new: 256.
+	glyphsByIso5559s15 _ Array new: 256 withAll: unknownGlyph.
 	glyphsByUTF8 _ Array new: 256.
 	0 to: mapSize - 1 do: [ :codePoint | | g array prevByte|
 
@@ -5159,13 +5158,14 @@ initialize
 isComposite
 	^true! !
 
-!TTCompositeGlyph methodsFor: 'drawing' stamp: 'jmv 5/11/2019 16:59:35'!
+!TTCompositeGlyph methodsFor: 'drawing' stamp: 'jmv 2/20/2020 13:01:47'!
 drawGlyphOn: aVectorCanvas
 	| initialGeometry |
 	initialGeometry _ aVectorCanvas engine geometryTransformation.
 	glyphs do: [ :each |
 		aVectorCanvas engine geometryTransformation: (initialGeometry composedWith: each key).
-		each value drawGlyphOn: aVectorCanvas ]! !
+		each value drawGlyphOn: aVectorCanvas ].
+	aVectorCanvas engine geometryTransformation: initialGeometry.! !
 
 !TTCompositeGlyph methodsFor: 'drawing' stamp: 'jmv 1/18/2020 16:29:44'!
 txAndContoursDo: aBlock

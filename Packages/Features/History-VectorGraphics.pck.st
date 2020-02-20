@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4045] on 19 February 2020 at 6:00:48 pm'!
+'From Cuis 5.0 [latest update: #4045] on 20 February 2020 at 1:40:23 pm'!
 'Description '!
-!provides: 'History-VectorGraphics' 1 2!
+!provides: 'History-VectorGraphics' 1 3!
 SystemOrganization addCategory: #'History-VectorGraphics-Kernel'!
 
 
@@ -2691,10 +2691,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine01 class methodsFor: 'samples' stamp: 'jmv 2/9/2020 10:10:02'!
+!VectorEngine01 class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:29:47'!
 siemensStar
 	"
-	VectorEngine siemensStar display
+	self siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -2715,7 +2715,6 @@ siemensStar
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
@@ -5187,10 +5186,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine02 class methodsFor: 'samples' stamp: 'jmv 2/9/2020 10:10:16'!
+!VectorEngine02 class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:30:15'!
 siemensStar
 	"
-	VectorEngine siemensStar display
+	self siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -5211,7 +5210,6 @@ siemensStar
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
@@ -7724,10 +7722,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine03 class methodsFor: 'samples' stamp: 'jmv 2/9/2020 10:27:02'!
+!VectorEngine03 class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:30:22'!
 siemensStar
 	"
-	VectorEngine siemensStar display
+	self siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -7748,7 +7746,6 @@ siemensStar
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
@@ -10098,10 +10095,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine04 class methodsFor: 'samples' stamp: 'jmv 2/9/2020 19:09:50'!
+!VectorEngine04 class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:30:30'!
 siemensStar
 	"
-	VectorEngine siemensStar display
+	self siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -10122,7 +10119,6 @@ siemensStar
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
@@ -12470,10 +12466,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine05 class methodsFor: 'samples' stamp: 'jmv 2/9/2020 19:21:50'!
+!VectorEngine05 class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:30:38'!
 siemensStar
 	"
-	VectorEngine siemensStar display
+	self siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -12494,7 +12490,6 @@ siemensStar
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
@@ -14852,10 +14847,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine06 class methodsFor: 'samples' stamp: 'jmv 2/10/2020 16:35:44'!
+!VectorEngine06 class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:30:45'!
 siemensStar
 	"
-	VectorEngine siemensStar display
+	self siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -14876,7 +14871,6 @@ siemensStar
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
@@ -17216,10 +17210,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine07 class methodsFor: 'samples' stamp: 'jmv 2/19/2020 17:57:58'!
+!VectorEngine07 class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:30:52'!
 siemensStar
 	"
-	VectorEngine siemensStar display
+	self siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -17240,7 +17234,6 @@ siemensStar
 				lineToX: 1 y: 0;
 				lineToX: angle cos y: angle sin;
 				lineToX: 0 y: 0.
-		canvas engine geometryTransformation: canvas currentTransformation
 		].
 	].
 	^form! !
