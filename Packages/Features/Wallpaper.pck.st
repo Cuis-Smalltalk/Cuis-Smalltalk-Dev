@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3712] on 25 April 2019 at 12:05:56 pm'!
+'From Cuis 5.0 [latest update: #4048] on 26 February 2020 at 1:51:36 pm'!
 'Description '!
-!provides: 'Wallpaper' 1 3!
+!provides: 'Wallpaper' 1 4!
 !requires: 'Graphics-Files-Additional' 1 22 nil!
 SystemOrganization addCategory: #Wallpaper!
 
@@ -32,8 +32,8 @@ initializeWithWorld: aWorld
 changeTo: anImageFileEntry
 	world backgroundImageData: anImageFileEntry binaryContents.! !
 
-!WallpaperChanger class methodsFor: 'file list services' stamp: 'FJG 3/17/2019 16:56:22'!
-fileReaderServicesForFile: filename suffix: suffix
+!WallpaperChanger class methodsFor: 'file list services' stamp: 'pb 2/26/2020 13:50:58'!
+fileReaderServicesForFileEntry: aFileEntry suffix: suffix
 	(#('jpg' 'jpeg' 'png') includes: suffix)
 		ifTrue: [ ^ {self serviceToChangeWallpaper}  ]
 		ifFalse: [ ^#() ]! !
