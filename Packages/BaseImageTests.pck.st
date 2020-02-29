@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4045] on 19 February 2020 at 1:00:02 pm'!
-'Description Refactoring and bug fixing on ChangeSelector refactorings'!
-!provides: 'BaseImageTests' 1 202!
+'From Cuis 5.0 [latest update: #4047] on 29 February 2020 at 4:18:12 pm'!
+'Description Removed ExtractToTemporaryTest and refactor RenameTemporaryTest'!
+!provides: 'BaseImageTests' 1 203!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1003,16 +1003,6 @@ RefactoringTest subclass: #ExtractMethodTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'ExtractMethodTest class' category: #'BaseImageTests-Tools-Refactoring'!
 ExtractMethodTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ExtractToTemporaryTest category: #'BaseImageTests-Tools-Refactoring'!
-RefactoringTest subclass: #ExtractToTemporaryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Tools-Refactoring'!
-!classDefinition: 'ExtractToTemporaryTest class' category: #'BaseImageTests-Tools-Refactoring'!
-ExtractToTemporaryTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #InsertSuperclassTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -17656,373 +17646,6 @@ classToRefactorName
 
 	^ #ClassToExtractMethod! !
 
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/19/2017 05:41:39'!
-assertIsAssigment: aParseNode of: newVariable toLiteralValueOf: aValue
-
-	self assert: aParseNode isAssignmentNode.
-	self assert: aParseNode variable name equals: newVariable.
-	self assert: aParseNode value isLiteralNode.
-	self assert: aParseNode value literalValue equals: aValue! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/19/2017 05:45:03'!
-assertIsReturnSelf: aParseNode
-
-	self assert: aParseNode isReturnSelf ! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/26/2017 16:33:08'!
-classToRefactorName
-
-	^#ClassToExtractTemp! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/4/2017 18:42:13'!
-m1
-
-	| t1 |
-	
-	t1 := 1.
-	t1! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/26/2017 16:08:54'!
-methodNodeOf: aSourceCode
-
-	^self methodNodeOf: aSourceCode in: self class! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 9/11/2018 16:11:45'!
-methodNodeOf: aSourceCode in: aClass
-
-	^aClass methodNodeFor: aSourceCode ! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 9/11/2018 16:22:23'!
-test01NewVariableCanNotBeEmpty
-
-	| newVariable sourceCodeToExtract sourceCode intervalToExtract |
-	
-	newVariable := ''.
-	sourceCodeToExtract := '2'.
-	sourceCode := 'm1 | ', newVariable, ' | ', sourceCodeToExtract.
-	intervalToExtract := sourceCode intervalOfSubCollection: sourceCodeToExtract.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: sourceCode in: self class ]
-		failsWith: [ ExtractToTemporary newVariableCanNotBeEmptyErrorMessage ]
-		! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 9/11/2018 16:27:16'!
-test02NewVariableHasToBeValid
-
-	| newVariable sourceCodeToExtract sourceCode intervalToExtract |
-	
-	newVariable := 'a b'.
-	sourceCodeToExtract := '2'.
-	sourceCode := 'm1 | ', newVariable, ' | ', sourceCodeToExtract.
-	intervalToExtract := sourceCode intervalOfSubCollection: sourceCodeToExtract.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: sourceCode in: self class ]
-		failsWith: [ ExtractToTemporary errorMessageForInvalidTemporaryVariable: newVariable ]
-	! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 11/11/2018 14:10:22'!
-test03NewVariableNameCanNotBeDefinedInMethod
-
-	self shouldFail: [
-	| newVariable sourceCodeToExtract sourceCode intervalToExtract |
-	
-	newVariable := 'new'.
-	sourceCodeToExtract := '2'.
-	sourceCode := 'm1 | ', newVariable, ' | ', sourceCodeToExtract.
-	intervalToExtract := sourceCode intervalOfSubCollection: sourceCodeToExtract.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: sourceCode in: self class ]
-		failsWith: [ ExtractToTemporary errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: 1 ]
-	]	! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/7/2019 22:55:38'!
-test04FailsIfNewTemporaryIsEqualToInstanceVariableInClass
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor classToRefactor |
-	
-	newVariable := 'new'.
-	classToRefactor := self createClassNamed: self classToRefactorName instanceVariableNames: newVariable.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 1' in: classToRefactor.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: classToRefactor ]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/7/2019 22:55:58'!
-test05FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor classToRefactor superclassToRefactor |
-	
-	newVariable := 'new'.
-	superclassToRefactor := self createClassNamed: #ClassToRefactorSuperclass instanceVariableNames: newVariable.
-	classToRefactor := self createClassNamed: self classToRefactorName subclassOf: superclassToRefactor.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 1' in: classToRefactor.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: superclassToRefactor ]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/30/2017 06:40:11'!
-test06SourceCodeToExtractMustBePartOfMethodNodeToRefactor
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor |
-	
-	newVariable := 'new'.
-	sourceCodeToExtract := '3'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 1'.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageMethodNodeToRefactorDoesNotInclude: sourceCodeToExtract ]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/30/2017 06:40:23'!
-test07SourceCodeToExtractCanNotIncludeReturn
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor |
-	
-	newVariable := 'new'.
-	sourceCodeToExtract := '^1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 ^1'.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		failsWith: [ ExtractToTemporary sourceCodeToExtractCanNotIncludeReturnErrorMessage ]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/30/2017 06:40:33'!
-test08SourceCodeToExtractCanNotBeEmpty
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor |
-	
-	newVariable := 'new'.
-	sourceCodeToExtract := ' '.
-	methodNodeToRefactor := self methodNodeOf: 'm1 ^1'.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		failsWith: [ ExtractToTemporary sourceCodeToExtractCanNotBeEmptyErrorMessage]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/18/2017 17:29:54'!
-test09SourceCodeToExtractCanNotHaveSyntaxErrors
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor expectedSyntaxErrorMessage |
-	
-	newVariable := 'new'.
-	sourceCodeToExtract := '1+'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 1+2'.
-	 
-	[ Parser parse: sourceCodeToExtract class: self class noPattern: true.
-		self fail. ]
-		on: SyntaxErrorNotification 
-		do: [ :anError | expectedSyntaxErrorMessage :=  anError messageText].
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractHasSyntaxError: expectedSyntaxErrorMessage ]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 6/30/2017 06:40:51'!
-test10SourceCodeToExtractHasToBeOneStatement
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor |
-	
-	newVariable := 'new'.
-	sourceCodeToExtract := '1+2. 3+4'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 ', sourceCodeToExtract.
-	
-	self 
-		assertCreation: [ ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor ]
-		failsWith: [ ExtractToTemporary sourceCodeToExtractHasToBeOneStatementErrorMessage ]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 19:12:33'!
-test11WhenThereAreNoTemporariesExtractCreatesTemporariesAndAddsTemporaryNamedAsDefined
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 1'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)
-	! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 19:12:33'!
-test12WhenThereAreTemporariesExtractAddsTemporaryNamedAsDefined
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 | t2 | 1'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable)
-	! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 3/6/2018 15:38:19'!
-test13CodeToExtractIsAssignedToNewTemporaryBeforeCodeToExtract
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 1'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	self assert: newMethodNode block statements size > 1.
-	self assertIsAssigment: newMethodNode block statements first of: newVariable toLiteralValueOf: sourceCodeToExtract asNumber. 
-! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/19/2017 05:52:10'!
-test14ExtractOfLiteralAtTopBlockWorksAsExpected
-
-	"WorksAsExpected means: 1) extracted code is assign to new temporary 2) extracted code is replaced by temporary - Hernan"
-	
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode newMethodNodeStatements |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 1'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	newMethodNodeStatements := newMethodNode block statements.
-	self assert: newMethodNodeStatements size equals: 3.
-	self assertIsAssigment: newMethodNodeStatements first of: newVariable toLiteralValueOf: sourceCodeToExtract asNumber. 
-	self assert: newMethodNodeStatements second equals: extract newTemporary.
-	self assert: newMethodNodeStatements third isReturnSelf! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 11/11/2018 14:11:02'!
-test15
-
-	self shouldFail: [
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 ^1'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	self deny: (newMethodNode block statements includes: extract parseNodeToExtract).
-	self assert: newMethodNode block statements second equals: extract newTemporary ]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/19/2017 05:52:19'!
-test15ExtractOfMoreThanOneLiteralAtTopBlockWorksAsExpected
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode newMethodNodeStatements |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 1. 1.'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	newMethodNodeStatements := newMethodNode block statements.
-	self assert: newMethodNodeStatements size equals: 4.
-	self assertIsAssigment: newMethodNodeStatements first of: newVariable toLiteralValueOf: sourceCodeToExtract asNumber. 
-	self assert: newMethodNodeStatements second equals: extract newTemporary.
-	self assert: newMethodNodeStatements third equals: extract newTemporary.
-	self assert: newMethodNodeStatements fourth isReturnSelf! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/19/2017 06:08:02'!
-test16ExtractOfLiteralAtReturnAtTopBlockExpressionWorksAsExpected
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode newMethodNodeStatements |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 ^1'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	newMethodNodeStatements := newMethodNode block statements.
-	self assert: newMethodNodeStatements size equals: 2.
-	self assertIsAssigment: newMethodNodeStatements first of: newVariable toLiteralValueOf: sourceCodeToExtract asNumber. 
-	self assert: newMethodNodeStatements second isReturn.
-	self assert: newMethodNodeStatements second isVariableReference.
-	self assert: newMethodNodeStatements second expr name equals: newVariable.
-	! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 10/19/2017 06:17:38'!
-test17ExtractOfLiteralAtMessageSendAtTopBlockExpressionWorksAsExpected
-
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode newMethodNodeStatements |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 2+1'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	newMethodNodeStatements := newMethodNode block statements.
-	self assert: newMethodNodeStatements size equals: 3.
-	self assertIsAssigment: newMethodNodeStatements first of: newVariable toLiteralValueOf: sourceCodeToExtract asNumber. 
-	self assert: (newMethodNodeStatements second 
-		isMessage: #+ 
-		receiver: [ :receiver | receiver isLiteralNode and: [ receiver literalValue = 2 ]]
-		arguments: [ :collaborator | collaborator = extract newTemporary ]).
-	self assert: newMethodNodeStatements third isReturnSelf ! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 11/11/2018 14:10:36'!
-test18
-
-	self shouldFail: [
-		| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode newMethodNodeStatements |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '2+1'.
-	methodNodeToRefactor := self methodNodeOf: 'm1 2+1'.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	newMethodNodeStatements := newMethodNode block statements.
-	self assert: newMethodNodeStatements size equals: 3.
-	self assertIsAssigment: newMethodNodeStatements first of: newVariable toLiteralValueOf: sourceCodeToExtract asNumber. 
-	self assert: (newMethodNodeStatements second 
-		isMessage: #+ 
-		receiver: [ :receiver | receiver isLiteralNode and: [ receiver literalValue = 2 ]]
-		arguments: [ :collaborator | collaborator = extract newTemporary ]).
-	self assert: newMethodNodeStatements third isReturnSelf ]! !
-
-!ExtractToTemporaryTest methodsFor: 'as yet unclassified' stamp: 'HAW 11/11/2018 14:10:50'!
-test19
-
-	self shouldFail: [
-	| newVariable sourceCodeToExtract methodNodeToRefactor extract newMethodNode newMethodNodeStatements |
-	
-	newVariable := 't1'.
-	sourceCodeToExtract := '''hola'''.
-	methodNodeToRefactor := self methodNodeOf: 'm1 ''hola'''.
-	
-	extract := ExtractToTemporary named: newVariable with: sourceCodeToExtract  in: methodNodeToRefactor.
-	newMethodNode := extract apply.
-	
-	newMethodNodeStatements := newMethodNode block statements.
-	self assert: newMethodNodeStatements size equals: 3.
-	self assertIsAssigment: newMethodNodeStatements first of: newVariable toLiteralValueOf: sourceCodeToExtract asNumber. 
-	self assert: (newMethodNodeStatements second 
-		isMessage: #+ 
-		receiver: [ :receiver | receiver isLiteralNode and: [ receiver literalValue = 2 ]]
-		arguments: [ :collaborator | collaborator = extract newTemporary ]).
-	self assert: newMethodNodeStatements third isReturnSelf ]! !
-
 !InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:01:00'!
 test01ChangesTheSuperclassOfTheClassToRefactor
 
@@ -20580,7 +20203,7 @@ test01VariableToRenameHasToBeDefined
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
 		failsWith: [ RenameTemporary errorMessageForTemporaryVariable: oldVariable notDefinedIn: methodNode ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 6/25/2017 21:55:08'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:02:32'!
 test02NewVariableNameCanNotBeEmpty
 
 	| methodNode newVariable oldVariable |
@@ -20592,9 +20215,9 @@ test02NewVariableNameCanNotBeEmpty
 	
 	self 
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
-		failsWith: [ RenameTemporary newVariableCanNotBeEmptyErrorMessage ]! !
+		failsWith: [ NewTemporaryPrecondition errorMessageForEmptyTemporaryVariable ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 6/25/2017 21:55:17'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:06:33'!
 test03NewVariableHasToBeValid
 
 	| methodNode newVariable oldVariable |
@@ -20606,10 +20229,10 @@ test03NewVariableHasToBeValid
 	
 	self 
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
-		failsWith: [ RenameTemporary errorMessageForInvalidTemporaryVariable: newVariable ]
+		failsWith: [ NewTemporaryPrecondition errorMessageForInvalidTemporaryVariable: newVariable ]
 	! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 6/25/2017 21:55:22'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:07:12'!
 test04NewVariableNameCanNotBeDefinedInMethod
 
 	| methodNode oldVariable |
@@ -20620,9 +20243,9 @@ test04NewVariableNameCanNotBeDefinedInMethod
 	
 	self 
 		assertCreation: [RenameTemporary from: oldVariable to: oldVariable in: methodNode ]
-		failsWith: [RenameTemporary  errorMessageForNewTemporaryVariable: oldVariable isAlreadyDefinedIn: methodNode ]! !
+		failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariable: oldVariable isAlreadyDefinedIn: methodNode ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:56:31'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:07:23'!
 test05FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 
 	| methodNode oldVariable newVariable classToRefactor |
@@ -20635,9 +20258,9 @@ test05FailsIfNewTemporaryIsEqualToInstanceVariableInClass
 	
 	self 
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
-		failsWith: [ RenameTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: classToRefactor ]! !
+		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: classToRefactor ]! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 3/7/2019 22:56:45'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:07:38'!
 test06FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 
 	| methodNode oldVariable newVariable classToRefactor superclassToRefactor |
@@ -20651,7 +20274,7 @@ test06FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 	
 	self 
 		assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
-		failsWith: [ RenameTemporary errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: superclassToRefactor ]! !
+		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: superclassToRefactor ]! !
 
 !RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test07RenameCreatesNewTemporaryVariableAndDeletesOldOne
@@ -20703,7 +20326,7 @@ test09RenamesArguments
 	self assert: (newMethodNode hasArgumentOrTemporaryNamed: newVariable).
 	self assert: newVariable equals: newMethodNode block statements first expr name.! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 6/25/2017 21:55:56'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:07:53'!
 test10NewVariableNameCanNotBeDefinedAsBlockArgument
 
 	| methodNode oldVariable newVariable |
@@ -20715,7 +20338,7 @@ test10NewVariableNameCanNotBeDefinedAsBlockArgument
 	
 	self 
 		assertCreation: [RenameTemporary from: oldVariable to: newVariable in: methodNode ]
-		failsWith: [RenameTemporary  errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]! !
+		failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]! !
 
 !RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 19:12:33'!
 test11RenamesBlockArguments
@@ -20804,7 +20427,7 @@ test15RenameVariablesWithSameNameInDifferentBlocksCorrectly
 		assert: 'm1 [|',newVariable,'| ^',newVariable, '].[|',oldVariable,'| ^',oldVariable, '].'
 		equals: newMethodNode sourceText! !
 
-!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 12/22/2019 20:23:23'!
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 2/25/2020 00:08:04'!
 test16CantRenameVariableToANameAlreadyUsedInAnUpperBlock
 
 	| methodNode oldVariable newVariable oldVariableNode |
@@ -20818,7 +20441,7 @@ test16CantRenameVariableToANameAlreadyUsedInAnUpperBlock
 	self 
 		assertCreation: [RenameTemporary fromOldVariableNode: oldVariableNode to: newVariable in: methodNode ]
 		failsWith: [
-			RenameTemporary  errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]
+			NewTemporaryPrecondition errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]
 	! !
 
 !SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:08'!
