@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4047] on 29 February 2020 at 4:18:12 pm'!
-'Description Removed ExtractToTemporaryTest and refactor RenameTemporaryTest'!
-!provides: 'BaseImageTests' 1 203!
+'From Cuis 5.0 [latest update: #4051] on 29 February 2020 at 6:17:54 pm'!
+'Description ParserTest & RenameTemporaryTest new test for error in range when returning a var of one char'!
+!provides: 'BaseImageTests' 1 204!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -693,6 +693,16 @@ TestCase subclass: #MirrorPrimitiveTests
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'MirrorPrimitiveTests class' category: #'BaseImageTests-Compiler'!
 MirrorPrimitiveTests class
+	instanceVariableNames: ''!
+
+!classDefinition: #ParserTest category: #'BaseImageTests-Compiler'!
+TestCase subclass: #ParserTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'ParserTest class' category: #'BaseImageTests-Compiler'!
+ParserTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #PrettyPrintingTest category: #'BaseImageTests-Compiler'!
@@ -12556,6 +12566,25 @@ testMirrorSize
 	stackpAfter := thisContext stackPtr.
 	self assert: stackpBefore = stackpAfter. "Make sure primitives pop all their arguments"! !
 
+!ParserTest methodsFor: 'test' stamp: 'HAW 2/29/2020 18:09:57'!
+testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
+
+	| methodNode ranges |
+	
+	"See Parser>>#variable"
+	
+	methodNode := self class methodNodeFor: 'm1 |v| ^v'.
+	
+	ranges := methodNode rangeForNode: methodNode tempNodes first ifAbsent: [ self fail ].
+	
+	self assert: 2 equals: ranges size.
+	self assert: ranges includes: (5 to: 5).
+	self assert: ranges includes: (9 to: 9).
+	
+	
+	
+	! !
+
 !PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:39'!
 test1
 	"
@@ -20443,6 +20472,27 @@ test16CantRenameVariableToANameAlreadyUsedInAnUpperBlock
 		failsWith: [
 			NewTemporaryPrecondition errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodNode ]
 	! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'HAW 2/29/2020 18:09:43'!
+test17RenamesOneCharVariableAfterAReturnWithoutCharsAfterThatCorrectly
+
+	| methodNode oldVariable newVariable rename newSource |
+	
+	"This test is due to a fixed error in the parser. 
+	See ParserTest>>#testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat"
+	
+	oldVariable := 'o'.
+	newVariable := 'n'.
+
+	methodNode := self methodNodeOf: 'm1 |',oldVariable,'| ^',oldVariable.
+	
+	rename := RenameTemporary from: oldVariable to: newVariable in: methodNode.
+	newSource := rename apply.
+	
+	self 
+		assert: 'm1 |',newVariable,'| ^',newVariable
+		equals: newSource
+		! !
 
 !SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:08'!
 test02ClassesWithNoReferencesAndNoSubclassesAreSafetelyRemoved
