@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3567] on 8 January 2019 at 5:08:15 pm'!
+'From Cuis 5.0 [latest update: #4048] on 26 February 2020 at 1:51:33 pm'!
 'Description '!
-!provides: 'Compression' 1 23!
+!provides: 'Compression' 1 24!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -379,6 +379,24 @@ Their data comes from external file streams.!
 !ZipStringMember commentStamp: '<historical>' prior: 0!
 ZipStringMember instances are used to represent files that are going to be written to a ZipArchive.
 Their data comes from in-image strings, though.!
+
+!ZipEncoderNode methodsFor: 'printing' stamp: 'ar 12/26/1999 10:46'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut:$(;
+		nextPutAll:'value = '; print: value;
+		nextPutAll:', freq = '; print: frequency;
+		nextPutAll:', bitLength = '; print: bitLength;
+		nextPutAll:', code = '; print: code;
+		nextPutAll:', height = '; print: height; 
+	nextPut:$).! !
+
+!ArchiveMember methodsFor: 'printing' stamp: 'nk 12/20/2002 15:11'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(;
+		nextPutAll: self fileName;
+		nextPut: $)! !
 
 !GZipConstants class methodsFor: 'pool initialization' stamp: 'ar 5/18/2003 19:00'!
 gzipMagic
@@ -1330,25 +1348,25 @@ verifyCrc
 	stored = crc ifFalse: [ ^ self crcError: 'Wrong checksum (proceed to ignore)' ].
 	^stored! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 1/11/2013 12:52'!
-fileReaderServicesForFile: fullName suffix: suffix
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 2/26/2020 13:51:16'!
+fileReaderServicesForFileEntry: aFileEntry suffix: suffix
 	"FileList buttons that are serviced by us."
 
 	^suffix = 'gz'
 		ifTrue: [ {self serviceViewDecompress. self serviceDecompressToFile} ]
 		ifFalse: [ #() ]! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 7/17/2017 15:44:39'!
-saveContents: fullFileName
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 2/26/2020 13:44:01'!
+saveContents: aFileEntry
 	"Save the contents of a gzipped file"
-	| zipped buffer newName |
-	newName _ FileIOAccessor default baseNameFor: fullFileName.
-	newName asFileEntry writeStreamDo: [ :unzipped |
+	| zipped buffer newFile |
+	newFile := aFileEntry baseDirectory // aFileEntry baseName.
+	newFile writeStreamDo: [ :unzipped |
 		unzipped binary.
-		fullFileName asFileEntry readStreamDo: [ :zipContents |
+		aFileEntry readStreamDo: [ :zipContents |
 			zipped _ GZipReadStream on: zipContents.
 			buffer _ ByteArray new: 50000.
-			'Extracting ' , fullFileName
+			'Extracting ' , aFileEntry asString
 				displayProgressAt: Sensor mousePoint
 				from: 0
 				to: zipped sourceStream size
@@ -1357,7 +1375,7 @@ saveContents: fullFileName
 						whileFalse: [
 							barBlock value: zipped sourceStream position.
 							unzipped nextPutAll: (zipped nextInto: buffer) ]]]].
-	^ newName! !
+	^ newFile ! !
 
 !GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'HAW 1/2/2019 18:36:16'!
 serviceDecompressToFile
@@ -1379,11 +1397,11 @@ serviceViewDecompress
 		description: 'view decompressed'
 		icon: #findIcon! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 5/25/2016 01:50'!
-viewContents: fullFileName
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 2/26/2020 13:44:18'!
+viewContents: aFileEntry
 	"Open the decompressed contents of the .gz file with the given name.  This method is only required for the registering-file-list of Squeak 3.3a and beyond, but does no harm in an earlier system"
 
-	(fullFileName asFileEntry readStream ) ifNotNil: [ :aStream | 
+	(aFileEntry readStream ) ifNotNil: [ :aStream | 
 		aStream viewGZipContents]! !
 
 !ZLibReadStream methodsFor: 'initialization' stamp: 'ar 2/29/2004 03:31'!
@@ -2467,14 +2485,14 @@ writeHeader
 	encoder nextBits: 8 put: 0. "No OS type"
 ! !
 
-!GZipWriteStream class methodsFor: 'file list services' stamp: 'pb 5/25/2016 01:50'!
-compressFile: fileName
+!GZipWriteStream class methodsFor: 'file list services' stamp: 'pb 2/26/2020 13:44:48'!
+compressFile: aFileEntry
 	"Create a compressed file from the file of the given name"
 
-	(fileName asFileEntry readStream) compressFile! !
+	(aFileEntry readStream) compressFile! !
 
-!GZipWriteStream class methodsFor: 'file list services' stamp: 'jmv 1/11/2013 12:52'!
-fileReaderServicesForFile: fullName suffix: suffix
+!GZipWriteStream class methodsFor: 'file list services' stamp: 'pb 2/26/2020 13:51:06'!
+fileReaderServicesForFileEntry: aFileEntry suffix: suffix
 	"FileList buttons that are serviced by us."
 	"Don't offer to compress already-compressed files
 	sjc 3-May 2003-added jpeg extension"
@@ -2995,17 +3013,6 @@ rotateToHeight: maxHeight
 !ZipEncoderNode methodsFor: 'testing' stamp: 'ar 12/24/1999 23:17'!
 isLeaf
 	^left == nil! !
-
-!ZipEncoderNode methodsFor: 'printing' stamp: 'ar 12/26/1999 10:46'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut:$(;
-		nextPutAll:'value = '; print: value;
-		nextPutAll:', freq = '; print: frequency;
-		nextPutAll:', bitLength = '; print: bitLength;
-		nextPutAll:', code = '; print: code;
-		nextPutAll:', height = '; print: height; 
-	nextPut:$).! !
 
 !ZipEncoderNode class methodsFor: 'instance creation' stamp: 'ar 12/26/1999 10:47'!
 value: v frequency: f height: h
@@ -3588,8 +3595,8 @@ validSignatures
 		with: CentralDirectoryFileHeaderSignature
 		with: EndOfCentralDirectorySignature! !
 
-!ZipArchive class methodsFor: 'file list services' stamp: 'jmv 6/16/2013 19:46'!
-fileReaderServicesForFile: fullName suffix: suffix
+!ZipArchive class methodsFor: 'file list services' stamp: 'pb 2/26/2020 13:51:11'!
+fileReaderServicesForFileEntry: aFileEntry suffix: suffix
 	"FileList buttons that are swe know about."
 
 	suffix = 'mcz'
@@ -3648,13 +3655,6 @@ localFileName: aString
 	aString will be translated from local FS format into Unix format."
 
 	^fileName _ aString copyReplaceAll: '\' with: '/'.! !
-
-!ArchiveMember methodsFor: 'printing' stamp: 'nk 12/20/2002 15:11'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut: $(;
-		nextPutAll: self fileName;
-		nextPut: $)! !
 
 !ArchiveMember methodsFor: 'testing' stamp: 'nk 2/21/2001 19:43'!
 usesFileNamed: aFileName
