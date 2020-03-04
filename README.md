@@ -68,6 +68,8 @@ Additionally, there are many tutorials and references for Smalltalk in the web. 
 
 The user interface enables you to access most of the code and conduct Smalltalk experiments on your own. You can review its features at ["Quick Tour of the UI"](https://github.com/Cuis-Smalltalk/Learning-Cuis/blob/master/Quick-UI-Tour.md). 
 
+Visit the ["Cuis Smalltalk YouTube Channel"](https://www.youtube.com/playlist?list=PLbevs6Mp0MMMaR5gSYzJQXQ56OplFSCJk) 
+
 ## Contributing to Cuis
 [(back to ToC)](#table-of-contents)
 
