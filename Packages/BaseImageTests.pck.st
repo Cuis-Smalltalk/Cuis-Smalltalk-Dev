@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4051] on 29 February 2020 at 6:17:54 pm'!
-'Description ParserTest & RenameTemporaryTest new test for error in range when returning a var of one char'!
-!provides: 'BaseImageTests' 1 204!
+'From Cuis 5.0 [latest update: #4057] on 7 March 2020 at 6:55:32 pm'!
+'Description Avoid changing selectors when they do not belong to Smalltalk Compiler like OMeta2'!
+!provides: 'BaseImageTests' 1 205!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -19679,8 +19679,8 @@ assertWasNotRenamedInClass: aClass
 	self deny: (senderMethod sendsOrRefersTo: newSelector).
 	self assert: (senderMethod sendsOrRefersTo: oldSelector)! !
 
-!RenameSelectorTest methodsFor: 'assertions' stamp: 'HAW 3/7/2019 17:10:28'!
-assertWasRenamedInClassAndMeta: aClass
+!RenameSelectorTest methodsFor: 'assertions' stamp: 'HAW 3/7/2020 18:44:08'!
+assertWasRenamedInClass: aClass
 	
 	| senderMethod |
 	
@@ -19689,13 +19689,14 @@ assertWasRenamedInClassAndMeta: aClass
 	senderMethod := aClass compiledMethodAt: senderOfOldSelector.
 	self deny: (senderMethod sendsOrRefersTo: oldSelector).
 	self assert: (senderMethod sendsOrRefersTo: newSelector).
-	
-	self assert: (aClass class includesSelector: newSelector).
-	self deny: (aClass class includesSelector: oldSelector).
-	senderMethod := aClass class compiledMethodAt: senderOfOldSelector.
-	self deny: (senderMethod sendsOrRefersTo: oldSelector).
-	self assert: (senderMethod sendsOrRefersTo: newSelector).
 ! !
+
+!RenameSelectorTest methodsFor: 'assertions' stamp: 'HAW 3/7/2020 18:44:59'!
+assertWasRenamedInClassAndMeta: aClass
+	
+	self
+		assertWasRenamedInClass: aClass;
+		assertWasRenamedInClass: aClass class! !
 
 !RenameSelectorTest methodsFor: 'setup' stamp: 'HAW 5/28/2017 21:46:55'!
 setUp
@@ -20201,6 +20202,37 @@ test32HierarchyScopeRenamesSelectorsFromSuperclassDefiningSelector
 	self assertWasRenamedInClassAndMeta: superclassToRefactor.
 	self assertWasRenamedInClassAndMeta: classToRefactor.
 	self assertWasRenamedInClassAndMeta: subclassToRefactor.
+	! !
+
+!RenameSelectorTest methodsFor: 'tests' stamp: 'HAW 3/7/2020 18:48:46'!
+test33DoNotRenameSendersAndImplementorsWhoseCompilerClassIsDifferentToCompiler
+	
+	"Requested by Phil B. to avoid refactoring OMeta2 classes - Hernan"
+	
+	| rename anotherClassSendingMessage  |
+	
+	classToRefactor := self 
+		createClassWithImplementorAndSenderInMetaTooNamed: self classToRefactorName 
+		subclassOf: RefactoringClassTestData 
+		categorizedAd: self classCategoryOfTestData.
+	
+	anotherClassSendingMessage := self 
+		createClassWithImplementorAndSenderInMetaTooNamed: #ClassToAvoidRenameSelector 
+		subclassOf: RefactoringClassTestData 
+		categorizedAd: self classCategoryOfTestData.
+	
+	anotherClassSendingMessage class compile: 'compilerClass ^nil'.
+
+	rename := RenameSelector 
+		from: oldSelector 
+		to: newSelector 
+		inCategoryOf: classToRefactor 
+		organizedBy: SystemOrganization.
+	rename apply.
+
+	self assertWasRenamedInClassAndMeta: classToRefactor.
+	self assertWasNotRenamedInClass: anotherClassSendingMessage.
+	self assertWasRenamedInClass: anotherClassSendingMessage class.
 	! !
 
 !RenameTemporaryTest methodsFor: 'class factory' stamp: 'HAW 6/25/2017 21:53:44'!
