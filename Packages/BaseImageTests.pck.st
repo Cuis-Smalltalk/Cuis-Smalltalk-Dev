@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4057] on 7 March 2020 at 6:55:32 pm'!
+'From Cuis 5.0 [latest update: #4064] on 9 March 2020 at 1:59:31 pm'!
 'Description Avoid changing selectors when they do not belong to Smalltalk Compiler like OMeta2'!
-!provides: 'BaseImageTests' 1 205!
+!provides: 'BaseImageTests' 1 206!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -14532,7 +14532,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/28/2017 16:11:29'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 3/9/2020 13:56:55'!
 testLayout1
 	"
 	self new testLayout1
@@ -14589,9 +14589,9 @@ testLayout1
 	self assert: r1c5 morphHeight = 20.
 
 	self assert: row2 morphWidth = (pane morphWidth - 10).
-	self assert: r2c1 morphWidth = 216.
-	self assert: r2c2 morphWidth = (r2c1 morphWidth / 0.8 * 0.4) rounded.
-	self assert: r2c3 morphWidth = (r2c1 morphWidth / 0.8 * 0.2) rounded.
+	self assert: r2c1 morphWidth = 215.
+	self assert: r2c2 morphWidth = 108.
+	self assert: r2c3 morphWidth = 55.
 	self assert: r2c1 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c2 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c3 morphHeight = (row2 morphHeight - 10).
@@ -14601,13 +14601,13 @@ testLayout1
 	self assert: r3c2 morphWidth = (row3 morphWidth - 10 - 20 - 10 - 30 * 0.5) rounded.
 	self assert: r3c3 morphWidth = 30.
 	self assert: row3 morphHeight = 60.
-	self assert: r3c1 morphHeight = (row3 morphHeight - 10 * 0.8) rounded.
+	self assert: r3c1 morphHeight = 41.
 	self assert: r3c2 morphHeight = 40.
-	self assert: r3c3 morphHeight = (row3 morphHeight - 10).
+	self assert: r3c3 morphHeight = 50.
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/28/2017 16:11:24'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 3/9/2020 13:57:47'!
 testLayout2
 	"
 	self new testLayout2
@@ -14629,20 +14629,20 @@ testLayout2
 	UISupervisor ui doOneCycleNow.
 
 	self assert: row morphWidth = (pane morphWidth - 10).
-	self assert: row morphHeight = (pane morphHeight - 10 * 0.9) rounded.
+	self assert: row morphHeight = 266.
 	self assert: c1 morphBoundsInWorld bottom = (row morphBoundsInWorld bottom - 5) description: 'Should be at bottom'.
 	self assert: c1 morphWidth = 20.
-	self assert: c1 morphHeight = (row morphHeight - 10 * 0.8) rounded.
+	self assert: c1 morphHeight = 206.
 	self assert: c2 morphBoundsInWorld top = (row morphBoundsInWorld top + 5) description: 'Should be at top'.
 	self assert: c2 morphWidth = 256.
 	self assert: c2 morphHeight = 40.
 	self assert: ((c3 morphBoundsInWorld top - row morphBoundsInWorld top) - (row morphBoundsInWorld bottom - c3 morphBoundsInWorld bottom)) abs < 2 description: 'Should be centered'.
 	self assert: c3 morphWidth = 30.
-	self assert: c3 morphHeight = (c1 morphHeight / 0.8 * 0.7) rounded.
+	self assert: c3 morphHeight = 181.
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 12/28/2017 16:11:18'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 3/9/2020 13:58:53'!
 testLayout3
 	"
 	self new testLayout3
@@ -14676,7 +14676,7 @@ testLayout3
 	self assert: row morphHeight = 200.
 	self assert: innerRow morphBoundsInWorld left = (row morphBoundsInWorld left + 5).
 	self assert: (innerRow morphBoundsInWorld top - row morphBoundsInWorld top) = (row morphBoundsInWorld bottom - innerRow morphBoundsInWorld bottom) description: 'Should be centered'.
-	self assert: innerRow morphWidth = (pane morphWidth - 10 - 10 - 30 - 10 * 0.5) rounded.
+	self assert: innerRow morphWidth = 190.
 	self assert: innerRow morphHeight = 30.
 
 	self assert: i1 morphBoundsInWorld left = (innerRow morphBoundsInWorld left + 5).
@@ -14693,7 +14693,7 @@ testLayout3
 	self assert: i3 morphHeight = 10.
 
 	self assert: c2 morphBoundsInWorld top = (row morphBoundsInWorld top + 5) description: 'Should be at top'.
-	self assert: c2 morphWidth = (pane morphWidth - 10 - 10 - 30 - 10 * 0.5) rounded.
+	self assert: c2 morphWidth = 150.
 	self assert: c2 morphHeight = 40.
 	self assert: (c3 morphBoundsInWorld top - row morphBoundsInWorld top) = (row morphBoundsInWorld bottom - c3 morphBoundsInWorld bottom) description: 'Should be centered'.
 	self assert: c3 morphWidth = 30.
