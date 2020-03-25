@@ -1,8 +1,18 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3773] on 26 May 2019 at 5:34:21 pm'!
+'From Cuis 5.0 [latest update: #4048] on 28 February 2020 at 3:00:34 pm'!
 'Description '!
-!provides: 'Collections-CompactArrays' 1 10!
+!provides: 'Collections-CompactArrays' 1 11!
 SystemOrganization addCategory: #'Collections-CompactArrays'!
 
+
+!classDefinition: #FloatPointArray category: #'Collections-CompactArrays'!
+FloatArray variableWordSubclass: #FloatPointArray
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Collections-CompactArrays'!
+!classDefinition: 'FloatPointArray class' category: #'Collections-CompactArrays'!
+FloatPointArray class
+	instanceVariableNames: ''!
 
 !classDefinition: #PointArray category: #'Collections-CompactArrays'!
 IntegerArray variableWordSubclass: #PointArray
@@ -55,13 +65,18 @@ ShortRunArray class
 	instanceVariableNames: ''!
 
 
+!FloatPointArray commentStamp: '<historical>' prior: 0!
+This class stores points with 32 bit Floating point elements.
+
+{1@2. 3@4} as: FloatPointArray!
+
 !PointArray commentStamp: '<historical>' prior: 0!
 This class stores 32bit Integer points in place. It is used to pass data efficiently to the primitive level during high-bandwidth 2D graphics operations.!
 
 !ShortIntegerArray commentStamp: '<historical>' prior: 0!
 ShortIntegerArray is an array for efficiently representing signed integers in the 16bit range, i.e. between -16r8000 and 16r7FFF.
 
-Additionaly, using #at:putUnsigned: and #at:putSigned:, it supports unsigned 16 bits integers, between 0 and 16rFFFF. You can also alternatively ShortWordArray to store unsigned 16 bit integers with the usual #at: and #at:put: protocol.
+Additionaly, using #unsignedAt:put: and #signedAt:put:, it supports unsigned 16 bits integers, between 0 and 16rFFFF. You can also alternatively ShortWordArray to store unsigned 16 bit integers with the usual #at: and #at:put: protocol.
 
 Array size must be even, as two vales are stored in each word.!
 
@@ -107,16 +122,71 @@ printOn: aStream
 	].
 	aStream nextPutAll:' )'.! !
 
-!PointArray methodsFor: 'accessing' stamp: 'ar 11/2/1998 12:21'!
+!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:30'!
 at: index
 	"Return the element (e.g., point) at the given index"
-	^(super at: index * 2 - 1) @ (super at: index * 2)! !
+	^(self floatAt: index * 2 - 1) @ (self floatAt: index * 2)! !
 
-!PointArray methodsFor: 'accessing' stamp: 'ar 11/2/1998 12:21'!
+!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:49'!
 at: index put: aPoint
 	"Store the argument aPoint at the given index"
-	super at: index * 2 - 1 put: aPoint x asInteger.
-	super at: index * 2 put: aPoint y asInteger.
+	self floatAt: index * 2 - 1 put: aPoint x.
+	self floatAt: index * 2 put: aPoint y.
+	^aPoint! !
+
+!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:57'!
+at: index putX: aNumber
+	"Store the argument aPoint at the given index"
+	self floatAt: index * 2 - 1 put: aNumber! !
+
+!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:12:05'!
+at: index putY: aNumber
+	"Store the argument aPoint at the given index"
+	self floatAt: index * 2 put: aNumber! !
+
+!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:04:36'!
+bytesPerElement
+
+	^ 8! !
+
+!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:02:36'!
+defaultElement
+	"Return the default element of the receiver"
+	^`0.0@0.0`! !
+
+!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:12:17'!
+size
+	"Return the number of elements in the receiver"
+	^ super size // 2! !
+
+!FloatPointArray methodsFor: 'printing' stamp: 'jmv 2/28/2020 14:59:07'!
+printElementsOn: aStream
+	"FloatArray elements are answered as 64 bit Float, but are really 32 bit Float.
+	When printing, print them as 32 bit Float."
+	aStream nextPut: ${.
+	self do: [ :point |
+		point x printAsIEEE32BitPrecisionFloatOn: aStream base: 10.
+		aStream nextPut: $@.
+		point y printAsIEEE32BitPrecisionFloatOn: aStream base: 10.
+		aStream nextPut: $..
+		aStream space].
+	self isEmpty ifFalse: [aStream skip: -2].
+	aStream nextPut: $}! !
+
+!FloatPointArray class methodsFor: 'instance creation' stamp: 'jmv 2/28/2020 12:13:28'!
+new: n
+	^super new: n*2! !
+
+!PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:26:03'!
+at: index
+	"Return the element (e.g., point) at the given index"
+	^(self integerAt: index * 2 - 1) @ (self integerAt: index * 2)! !
+
+!PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:26:16'!
+at: index put: aPoint
+	"Store the argument aPoint at the given index"
+	self integerAt: index * 2 - 1 put: aPoint x asInteger.
+	self integerAt: index * 2 put: aPoint y asInteger.
 	^aPoint! !
 
 !PointArray methodsFor: 'accessing' stamp: 'jmv 5/16/2019 16:20:10'!
@@ -139,6 +209,11 @@ bounds
 	^min corner: max
 		! !
 
+!PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:04:33'!
+bytesPerElement
+
+	^ 8! !
+
 !PointArray methodsFor: 'accessing' stamp: 'ar 11/2/1998 12:19'!
 defaultElement
 	"Return the default element of the receiver"
@@ -159,40 +234,11 @@ at: index
 
 	^self signedAt: index! !
 
-!ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/27/2013 07:23'!
+!ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:31:26'!
 at: index put: value
 	"Store the given 16-bit signed integer at the given index in the receiver."
 
-	^self at: index putSigned: value! !
-
-!ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/27/2013 07:21'!
-at: index putSigned: value
-	"Store the given 16-bit signed integer at the given index in the receiver."
-
-	<primitive: 144>
-	index isInteger
-		ifTrue: [
-			(index >= 1 and: [index <= self size])
-				ifTrue: [self errorImproperStore]
-				ifFalse: [self errorSubscriptBounds: index]].
-	index isNumber ifTrue: [^ self at: index truncated put: value].
-	self errorNonIntegerIndex.
-! !
-
-!ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/28/2013 16:54'!
-at: index putUnsigned: value
-	"Store the given 16-bit unsigned integer at the given index in the receiver."
-
-	| primValue |
-	value < 0 ifTrue: [ self errorImproperStore ].
-	value > 16rFFFF ifTrue: [ self errorImproperStore ].
-	primValue _ value > 16r7FFF
-			ifTrue: [
-				value - 16r10000.		"Faster. No need for LargeInteger arithmetic"
-				"(value bitInvert16 + 1) negated" ]
-			ifFalse: [ value ].
-	self at: index putSigned: primValue.
-	^value! !
+	^self signedAt: index put: value! !
 
 !ShortIntegerArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 15:41'!
 defaultElement
@@ -205,6 +251,20 @@ signedAt: index
 	<primitive: 143>
 	index isInteger ifTrue: [self errorSubscriptBounds: index].
 	index isNumber ifTrue: [^ self at: index truncated].
+	self errorNonIntegerIndex.
+! !
+
+!ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:30:51'!
+signedAt: index put: value
+	"Store the given 16-bit signed integer at the given index in the receiver."
+
+	<primitive: 144>
+	index isInteger
+		ifTrue: [
+			(index >= 1 and: [index <= self size])
+				ifTrue: [self errorImproperStore]
+				ifFalse: [self errorSubscriptBounds: index]].
+	index isNumber ifTrue: [^ self at: index truncated put: value].
 	self errorNonIntegerIndex.
 ! !
 
@@ -223,6 +283,21 @@ unsignedAt: index
 			primValue + 16r10000.		"Faster. No need for LargeInteger arithmetic"
 			"(primValue + 1) negated bitInvert16" ]
 		ifFalse: [ primValue ]! !
+
+!ShortIntegerArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:33:29'!
+unsignedAt: index put: value
+	"Store the given 16-bit unsigned integer at the given index in the receiver."
+
+	| primValue |
+	value < 0 ifTrue: [ self errorImproperStore ].
+	value > 16rFFFF ifTrue: [ self errorImproperStore ].
+	primValue _ value > 16r7FFF
+			ifTrue: [
+				value - 16r10000.		"Faster. No need for LargeInteger arithmetic"
+				"(value bitInvert16 + 1) negated" ]
+			ifFalse: [ value ].
+	self signedAt: index put: primValue.
+	^value! !
 
 !ShortIntegerArray methodsFor: 'objects from disk' stamp: 'nk 3/7/2004 13:54'!
 bytesPerElement
@@ -287,27 +362,27 @@ new: n
 		self error: 'ShortIntegerArray>>#new: must be called with an even argument' ].
 	^ super new: n // 2! !
 
-!ShortPointArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 15:43'!
+!ShortPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:14:47'!
 at: index
 	"Return the element (e.g., point) at the given index"
-	^(super at: index * 2 - 1) @ (super at: index * 2)! !
+	^(self signedAt: index * 2 - 1) @ (self signedAt: index * 2)! !
 
-!ShortPointArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 15:43'!
+!ShortPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:31:56'!
 at: index put: aPoint
 	"Store the argument aPoint at the given index"
-	super at: index * 2 - 1 put: aPoint x asInteger.
-	super at: index * 2 put: aPoint y asInteger.
+	self signedAt: index * 2 - 1 put: aPoint x asInteger.
+	self signedAt: index * 2 put: aPoint y asInteger.
 	^aPoint! !
 
-!ShortPointArray methodsFor: 'accessing' stamp: 'jmv 5/16/2019 16:19:13'!
+!ShortPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:32:06'!
 at: index putX: aNumber
 	"Store the argument aPoint at the given index"
-	super at: index * 2 - 1 put: aNumber asInteger! !
+	self signedAt: index * 2 - 1 put: aNumber asInteger! !
 
-!ShortPointArray methodsFor: 'accessing' stamp: 'jmv 5/16/2019 16:19:06'!
+!ShortPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:32:13'!
 at: index putY: aNumber
 	"Store the argument aPoint at the given index"
-	super at: index * 2 put: aNumber asInteger! !
+	self signedAt: index * 2 put: aNumber asInteger! !
 
 !ShortPointArray methodsFor: 'accessing' stamp: 'ar 11/10/1998 19:41'!
 bounds
@@ -344,11 +419,11 @@ at: index
 
 	^self unsignedAt: index! !
 
-!ShortWordArray methodsFor: 'accessing' stamp: 'jmv 2/27/2013 07:23'!
+!ShortWordArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:33:43'!
 at: index put: value
 	"Store the given 16-bit unsigned integer at the given index in the receiver."
 
-	^self at: index putUnsigned: value! !
+	^self unsignedAt: index put: value! !
 
 !ShortRunArray methodsFor: 'accessing' stamp: 'ar 11/3/1998 17:26'!
 at: index

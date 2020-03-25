@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4045] on 20 February 2020 at 1:40:33 pm'!
+'From Cuis 5.0 [latest update: #4074] on 25 March 2020 at 6:41:04 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 103!
+!provides: 'VectorGraphics' 1 106!
 !requires: 'Color-Extras' 1 7 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -21,7 +21,7 @@ PathCommandError class
 
 !classDefinition: #TrueTypeFont category: #'VectorGraphics-TrueType'!
 AbstractFont subclass: #TrueTypeFont
-	instanceVariableNames: 'ttFontDescription pointSize emphasis glyphForms family baseFont derivativeFonts'
+	instanceVariableNames: 'ttFontDescription pointSize emphasis glyphForms glyphFormsByUtf8 family baseFont derivativeFonts'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
@@ -111,7 +111,7 @@ TTContourConstruction class
 
 !classDefinition: #TTFontDescription category: #'VectorGraphics-TrueType'!
 Object subclass: #TTFontDescription
-	instanceVariableNames: 'glyphsByCodePoint16 glyphsByIso8859s15 glyphsByUtf8Bytes kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing unknownGlyph'
+	instanceVariableNames: 'contourDataForIso8859s15 contourDataIndexesByIso8859s15 contourDataIndexesForSmalltalkGlyphs contourDataForUtf8 contourDataIndexesByUtf8 kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing'
 	classVariableNames: 'Descriptions'
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
@@ -121,7 +121,7 @@ TTFontDescription class
 
 !classDefinition: #TTFontReader category: #'VectorGraphics-TrueType'!
 Object subclass: #TTFontReader
-	instanceVariableNames: 'charMap glyphs nGlyphs kernPairs infoBar fontDescription'
+	instanceVariableNames: 'glyphs nGlyphs kernPairs fontDescription'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
@@ -372,24 +372,27 @@ Display forceToScreen.
 Display forceToScreen!
 
 !FormGlyph commentStamp: '<historical>' prior: 0!
+Needed only for BitBltCanvasEngine
+
 https://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html
 
-leftSideBearing, topSideBearing, advanceWidth are in (possibly fractional) pixels!
+leftSideBearing, topSideBearing, advanceWidth are in (possibly fractional) pixels.!
 
 !TTContourConstruction commentStamp: '<historical>' prior: 0!
 This class represents a temporary contour structure during the construction of a TTGlyph from a TrueType file.
 
 Instance variables:
-	points	<Array of: TTPoint>	The points defining this contour!
+	points				<ShortPointArray>	The points defining this contour
+	controlPointFlags	<BitArray (ByteArray with bit content)> Flags for each point!
 
 !TTFontDescription commentStamp: '<historical>' prior: 0!
-Holds a TrueType font in memory.  Is used by TTSampleStringMorph as its font.  
+Holds a TrueType font in memory.
 
 See
 https://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html!
 
 !TTFontReader commentStamp: '<historical>' prior: 0!
-TTFontReader constructs a TTFontDescription from a TrueType font (.ttf).!
+TTFontReader builds a TTFontDescription from a TrueType font file (.ttf).!
 
 !TTFontTableDirEntry commentStamp: '<historical>' prior: 0!
 This class represents an entry in a truetype font table directory. Used by TTFontReader only.!
@@ -398,14 +401,14 @@ This class represents an entry in a truetype font table directory. Used by TTFon
 This class represents a glyph of a TrueType font.
 
 Instance variables:
-	bounds			<Rectangle>	The receiver's bounds
-	contours		<Array of: PointArray> The compressed contours in the receiver
-	advanceWidth	<Integer>	advance width of the glyph
-	leftSideBearing	<Integer>	left side bearing
-	rightSideBearing <Integer>	right side bearing!
+	bounds					<Rectangle>	The receiver's bounds
+	contours					<Array of: TTContourConstruction>
+	advanceWidth			<Integer>	advance width of the glyph
+	leftSideBearing  		<Integer>	left side bearing
+	rightSideBearing  	<Integer>	right side bearing!
 
 !TTCompositeGlyph commentStamp: '<historical>' prior: 0!
-This class represents a composite TrueType glyph, e.g.one which contains many simple TTGlyphs.!
+This class represents a composite TrueType glyph, e.g. one which contains many simple TTGlyphs.!
 
 !TTKernPair commentStamp: '<historical>' prior: 0!
 A TTKernPair represents a TrueType kerning pair.
@@ -485,19 +488,27 @@ baseFont: aStrikeFont
 	baseFont ifNotNil: [
 		derivativeFonts _ nil ]! !
 
-!TrueTypeFont methodsFor: 'initialization' stamp: 'jmv 1/26/2020 09:53:13'!
+!TrueTypeFont methodsFor: 'initialization' stamp: 'jmv 3/22/2020 16:15:49'!
 family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber
 	ttFontDescription _ aTTFontDescription.
 	emphasis _ aTTFontDescription emphasis.
 	pointSize _ aNumber.
 	glyphForms _ Array new: 256.
+	glyphFormsByUtf8 _ Array new: 256.
 	family _ aTrueTypeFontFamily.
 	baseFont _ nil.
 	derivativeFonts _ emphasis = 0 ifTrue: [Dictionary new].! !
 
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 4/24/2019 20:36:59'!
+!TrueTypeFont methodsFor: 'initialization' stamp: 'jmv 3/21/2020 10:22:19'!
+resetAssignmentGlyph
+	"Uses ST80 glyphs:"
+	(emphasis anyMask: 64) ifTrue: [
+		"Re-cache glyphs that could have changed"
+		glyphForms at: $_ numericValue + 1 put: nil ].! !
+
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 3/2/2020 17:25:54'!
 ascent
-^ttFontDescription ascent * pointSize / ttFontDescription letterMTopSideBearing * 1.0! !
+	^ttFontDescription ascent * pointSize / ttFontDescription letterMTopSideBearing * 1.0! !
 
 !TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/7/2019 10:11:03'!
 baseFont
@@ -513,9 +524,9 @@ baseKern
 cachedFormDepth
 ^32! !
 
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 4/24/2019 20:36:44'!
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 3/2/2020 17:26:04'!
 descent
-^ttFontDescription descent negated * pointSize / ttFontDescription letterMTopSideBearing * 1.0! !
+	^ttFontDescription descent negated * pointSize / ttFontDescription letterMTopSideBearing * 1.0! !
 
 !TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/4/2019 15:26:55'!
 familyName
@@ -525,10 +536,9 @@ familyName
 fontDescription
 	^ ttFontDescription ! !
 
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/20/2019 09:51:32'!
-leftOffsetAt: aCharacter
-	self revisar. "Should not use cached FormGlyph. Better for VectorEngine."
-^(self glyphAt: aCharacter) leftOffset! !
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 3/2/2020 17:25:42'!
+lineGap
+	^ttFontDescription lineGap * pointSize / ttFontDescription letterMTopSideBearing * 1.0! !
 
 !TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 4/24/2019 20:27:24'!
 lineSpacing
@@ -545,18 +555,10 @@ scrollbarThickness
 "self forwarding: #pointSize printOneStack: true."
 	^pointSize! !
 
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/20/2019 09:51:27'!
-rightOffsetAt: aCharacter
-	self revisar. "Should not use cached FormGlyph. Better for VectorEngine."
-^(self glyphAt: aCharacter) rightOffset! !
-
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 1/19/2020 10:19:47'!
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 3/14/2020 23:31:51'!
 widthOf: aCharacter
 
-	| ttGlyph toPixelsScale |
-	ttGlyph _ self ttGlyphAt: aCharacter.
-	toPixelsScale _ pointSize * 1.0 / ttFontDescription letterMTopSideBearing.
-	^ttGlyph advanceWidth * toPixelsScale.! !
+	^ (ttFontDescription widthOf: aCharacter useST80Glyphs: self isST80Glyphs) * pointSize! !
 
 !TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 1/11/2020 15:31:51'!
 onBitBltCanvasEngine: engine displayString: aString from: firstIndex to: lastIndex at: p color: color
@@ -603,15 +605,15 @@ isSuperscript
 isUnderlined
 	^emphasis allMask: 4! !
 
-!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 5/21/2019 10:52:20'!
+!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 3/17/2020 22:59:51'!
 glyphAt: aCharacter
+	"Needed only for BitBltCanvasEngine"
 
 	| index |
 	index _ aCharacter numericValue + 1.
 	^ (glyphForms at: index) ifNil: [
-		| ttGlyph formGlyph |
-		ttGlyph _ self ttGlyphAt: aCharacter.
-		formGlyph _ (ttFontDescription formGlyphFor: ttGlyph pixelSize: pointSize)
+		| formGlyph |
+		formGlyph _ (ttFontDescription formGlyphFor: aCharacter useST80Glyphs: self isST80Glyphs pixelSize: pointSize)
 			ifNil: [#absentGlyph]
 			ifNotNil: [ :theGlyph |
 				(emphasis allMask: 4) ifTrue: [
@@ -622,9 +624,38 @@ glyphAt: aCharacter
 		glyphForms at: index put: formGlyph.
 		formGlyph ]! !
 
-!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 2/18/2020 18:42:26'!
-ttGlyphAt: aCharacter
-	^ ttFontDescription glyphForCharacter: aCharacter useST80Glyphs: self isST80Glyphs! !
+!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 3/22/2020 16:25:02'!
+glyphAtUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil
+	"Needed only for BitBltCanvasEngine"
+
+	| lastArray lastIndex |
+	lastArray _ glyphFormsByUtf8 .
+	lastIndex _ byte1 + 1.
+	byte2OrNil notNil ifTrue: [
+		(lastArray at: lastIndex) ifNil: [ lastArray at: lastIndex put: (Array new: 64) ].
+		lastArray _ lastArray at: lastIndex.
+		lastIndex _ (byte2OrNil bitAnd: 63) + 1.
+		byte3OrNil notNil ifTrue: [
+			(lastArray at: lastIndex) ifNil: [ lastArray at: lastIndex put: (Array new: 64) ].
+			lastArray _ lastArray at: lastIndex.
+			lastIndex _ (byte3OrNil bitAnd: 63) + 1.
+			byte4OrNil notNil ifTrue: [
+				(lastArray at: lastIndex) ifNil: [ lastArray at: lastIndex put: (Array new: 64) ].
+				lastArray _ lastArray at: lastIndex.
+				lastIndex _ (byte4OrNil bitAnd: 63) + 1 ]]].
+	^ (lastArray at: lastIndex) ifNil: [
+		| formGlyph |
+		formGlyph _ (ttFontDescription formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil
+								byte3: byte3OrNil byte4: byte4OrNil pixelSize: pointSize)
+			ifNil: [#absentGlyph]
+			ifNotNil: [ :theGlyph |
+				(emphasis allMask: 4) ifTrue: [
+					self makeUnderlinedGlyph: theGlyph ].
+				(emphasis allMask: 8) ifTrue: [
+					self makeStruckThroughGlyph: theGlyph ].
+				theGlyph].
+		lastArray at: lastIndex put: formGlyph.
+		formGlyph ]! !
 
 !TrueTypeFont methodsFor: 'emphasis' stamp: 'jmv 1/26/2020 16:07:11'!
 addEmphasis: code
@@ -721,6 +752,13 @@ useShortUnderscore! !
 !TrueTypeFont class methodsFor: 'instance creation' stamp: 'jmv 5/7/2019 09:25:01'!
 family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber
 	^ self new family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber! !
+
+!TrueTypeFont class methodsFor: 'initialization' stamp: 'jmv 3/21/2020 10:22:09'!
+assignmentGlyphSelectorPreferenceChanged
+	| selector |
+	selector _ Preferences assignmentGlyphSelector.
+	TTFontDescription allInstancesDo: [ :ttFontDescription | ttFontDescription perform: selector ].
+	self allInstancesDo: [ :each | each resetAssignmentGlyph ]! !
 
 !TrueTypeFontFamily methodsFor: 'initialization' stamp: 'jmv 5/7/2019 09:13:51'!
 addTTFontDescription: aTTFontDescription
@@ -1228,31 +1266,75 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				engine rel_QuadraticBezierSmoothToX: to x y: to y ]]! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/21/2019 11:01:45'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 3/18/2020 19:52:42'!
 drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
-
-	| font toPixelsScale loc |
-"	port colorMap: nil."
+	"
+| s c f |
+c _ VectorCanvas onForm: Display.
+c engine geometryTransformation: (AffineTransformation withRadians: 0.1).
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
+s _ 'Latin text in VectorGraphics'.
+c drawString:  s from: 1 to: s size at: 10@10 font: f color: Color black.
+Display forceToScreen
+	"
 	"Slight optimization when there's nothing to do."
 	"
 	port clipHeight = 0 ifTrue: [^self].
 	port clipWidth = 0 ifTrue: [^self].
 	"
-	"mhhhhhhhh. Creo que es mejor que venga un font siempre. Y uno de M3!!"
+	| font |
 	font _ fontOrNil ifNil: [ AbstractFont default ].
-	toPixelsScale _ font pointSize * 1.0 / font fontDescription letterMTopSideBearing.
-	loc _ AffineTransformation withScale: toPixelsScale.
-	loc _ currentTransformation composedWith: loc.
-	engine geometryTransformation: loc.
 	engine
 		displayString: aString
 		from: firstIndex
 		to: lastIndex
-		at: aPoint / toPixelsScale + (0@(font fontDescription ascent + font fontDescription lineGap))
-		trueTypeFont: font
+		at: aPoint + (0@(font ascent + font lineGap-1))
+		trueTypeFont: font fontDescription
+		useST80Glyphs: font isST80Glyphs
 		color: aColor
-		canvas: self.
-	engine geometryTransformation: currentTransformation.! !
+		scaleX: 1.0 * font pointSize
+		scaleY: -1.0 * font pointSize
+		
+	"The conversion from top of glyph (morphic canvas) to baseline (engine, TrueType) is done here.
+	The conversion from Y-increases-downwards (morphic canvas) to Y-increases-upwards (engine, TrueType) is done here.
+	
+	The scaling of internal TrueType integer points to FloatingPoint where[0.0...1.0] equals #letterMTopSideBearing is done in the engine.
+	It should actually be done in TrueType. No one else cares!!"! !
+
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 3/22/2020 23:46:21'!
+drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
+	"
+| c f |
+Preferences disable: #loadOnlyLatinGlyphData. 'And now load optional fonts'.
+c _ VectorCanvas onForm: Display.
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
+c drawString: 'Hola' at: 10@10 font: f color: Color random.
+c drawUtf8: #[208 176 208 177 208 178 208 179 208 180 208 181 209 145 208 182 208 183 208 184 208 185 208 186 208 187 208 188 208 189 208 190 209 143 209 142 209 141 209 140 209 139 209 138 209 137 209 136 209 135 209 134 209 133 209 132 209 131 209 130 209 129 209 128 208 191] at: 10@100 font: f color: Color random.
+c drawUtf8:  #[208 146 208 190 209 130 32 208 184 208 183 32 208 181 208 189 32 208 184 208 179 208 183 208 176 208 188 208 191 208 187 32 208 190 209 132 32 208 181 208 189 32 208 152 208 189 208 179 208 187 208 184 209 136 32 209 130 208 181 208 186 209 129 209 130 32 209 128 208 184 209 130 208 189 32 208 184 208 189 32 208 180 32 208 161 208 184 209 128 208 184 208 187 208 184 208 186 32 208 176 208 187 209 132 208 176 208 177 208 181 209 130 63]  at: 10@200 font: f color: Color random.
+c drawString: 'año' at: 10@300 font: f color: Color random.
+c drawUtf8:  #[97 195 177 111 ]  at: 10@400 font: f color: Color random.
+Display forceToScreen
+	"
+	"Slight optimization when there's nothing to do."
+	"
+	port clipHeight = 0 ifTrue: [^self].
+	port clipWidth = 0 ifTrue: [^self].
+	"
+	| font |
+	font _ aTrueTypeFont ifNil: [ AbstractFont default ].
+	engine
+		displayUtf8: aByteArray
+		at: aPoint + (0@font ascent + font lineGap-1)
+		trueTypeFont: font fontDescription
+		color: aColor
+		scaleX: 1.0 * font pointSize
+		scaleY: -1.0 * font pointSize
+		
+	"The conversion from top of glyph (morphic canvas) to baseline (engine, TrueType) is done here.
+	The conversion from Y-increases-downwards (morphic canvas) to Y-increases-upwards (engine, TrueType) is done here.
+	
+	The scaling of internal TrueType integer points to FloatingPoint where[0.0...1.0] equals #letterMTopSideBearing is done in the engine.
+	It should actually be done in TrueType. No one else cares!!"! !
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/30/2014 20:02'!
 drawButtonIconFromCurrentMorph
@@ -1677,7 +1759,7 @@ geometryTransformation
 geometryTransformation: aGeometryTransformation
 	geometryTransformation _ aGeometryTransformation! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 2/10/2020 15:47:43'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/2/2020 09:45:16'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -1693,15 +1775,15 @@ fillColor: aFillColor do: pathCommandsBlock
 	fillBlue _ (aFillColor blue * 255.0) rounded.
 	strokeAlpha _ nil. strokeRed _ nil. strokeGreen _ nil. strokeBlue _ nil.
 
-	0 to: openCLKernelHeight do: [ :i |
-		0 to: openCLKernelWidth do: [ :j |
+	0 to: openCLKernelHeight-1 do: [ :i |
+		0 to: openCLKernelWidth-1 do: [ :j |
 			jj _ j. ii _ i.
 			self initializePath.
 			pathCommandsBlock valueWithPossibleArgument: self.
 			]].
 	self finishPath! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 2/10/2020 15:46:02'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/2/2020 10:03:07'!
 strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke."
 
@@ -1722,15 +1804,15 @@ strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	strokeGreen _ (aStrokeColor green * 255.0) rounded.
 	strokeBlue _ (aStrokeColor blue * 255.0) rounded.
 
-	0 to: openCLKernelHeight do: [ :i |
-		0 to: openCLKernelWidth do: [ :j |
+	0 to: openCLKernelHeight-1 do: [ :i |
+		0 to: openCLKernelWidth-1 do: [ :j |
 			jj _ j. ii _ i.
 			self initializePath.
 			pathCommandsBlock valueWithPossibleArgument: self.
 			]].
 	self finishPath! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 2/10/2020 15:48:09'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/2/2020 09:43:59'!
 strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -1769,8 +1851,8 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	strokeGreen _ (aStrokeColor green * 255.0) rounded.
 	strokeBlue _ (aStrokeColor blue * 255.0) rounded.
 
-	0 to: openCLKernelHeight do: [ :i |
-		0 to: openCLKernelWidth do: [ :j |
+	0 to: openCLKernelHeight-1 do: [ :i |
+		0 to: openCLKernelWidth-1 do: [ :j |
 			jj _ j. ii _ i.
 			self initializePath.
 			pathCommandsBlock valueWithPossibleArgument: self.
@@ -2384,36 +2466,90 @@ Display forceToScreen
 		abs_QuadraticBezierToX: lastClientX + x2 y: lastClientY + y2
 		controlX: lastClientX + x1 y: lastClientY + y1! !
 
-!VectorEngine methodsFor: 'text' stamp: 'jmv 1/18/2020 16:32:39'!
-displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aFont color: aColor canvas: aCanvas
-	"geometryTransformation is already set to honor font pointSize
-	Use as little of aFont as possible!!"
-	| glyph destX destY loc |
+!VectorEngine methodsFor: 'text' stamp: 'jmv 3/18/2020 20:20:32'!
+displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scaleX: ssx scaleY: ssy
+	"ssx and ssy to honor font pointSize"
+	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers |
 
 	self antiAliasingWidth: VectorEngine antiAliasingWidthForOutlineFonts.
-	loc _ geometryTransformation.
+	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.
+	sx _ ssx * trueTypeScale.
+	sy _ ssy * trueTypeScale.
+	contourData _ aTTFontDescription contourDataForIso8859s15.
+	contourDataIndexes _ aTTFontDescription contourDataIndexesByIso8859s15ST80Glyphs: aBoolean.
 	self fillColor: aColor do: [
 		destY _ aPoint y.
 		destX _ aPoint x.
-		startIndex to: stopIndex do: [ :charIndex |
-			glyph _ aFont ttGlyphAt: (aString at: charIndex).
-			glyph isComposite
-				ifFalse: [
-					glyph contours do: [ :contour |
-						contour isEmpty ifFalse: [
-							geometryTransformation _ loc composedWith: (AffineTransformation withTranslation: destX@destY) withYAxisNegated.
-							contour initialMoveToCommand runOn: aCanvas .
-							contour pathCommand runOn: aCanvas ].
-					]]
-				ifTrue: [
-					glyph txAndContoursDo: [ :tx :contours |contours do: [ :contour |
-						contour isEmpty ifFalse: [
-							geometryTransformation _ (loc composedWith: (AffineTransformation withTranslation: destX@destY) withYAxisNegated) composedWith: tx.
-							contour initialMoveToCommand runOn: aCanvas .
-							contour pathCommand runOn: aCanvas ]]]
-					].
-			destX _ destX + glyph advanceWidth.
+		startIndex to: stopIndex do: [ :charIndex | | iso8859s15 i |
+			iso8859s15 _ (aString at: charIndex) iso8859s15Code.
+			i _ contourDataIndexes at: iso8859s15 + 1.
+			advanceWidth _ contourData at: i. i _ i + 1.
+			boundsLeft _ contourData at: i. i _ i + 1.
+			boundsRight _ contourData at: i. i _ i + 1.
+			boundsTop _ contourData at: i. i _ i + 1.
+			boundsBottom _ contourData at: i. i _ i + 1.
+			numContours _ (contourData at: i) asInteger. i _ i + 1.
+			numContours timesRepeat: [
+				numBeziers _ (contourData at: i) asInteger. i _ i + 1.
+				moveToX _ contourData at: i. i _ i + 1.
+				moveToY _ contourData at: i. i _ i + 1.
+				self abs_MoveToX: moveToX * sx + destX y: moveToY * sy + destY.
+				numBeziers timesRepeat: [
+					epX _ contourData at: i. i _ i + 1.
+					epY _ contourData at: i. i _ i + 1.
+					cpX _ contourData at: i. i _ i + 1.
+					cpY _ contourData at: i. i _ i + 1.
+					self rel_QuadraticBezierToX: epX * sx y: epY * sy controlX: cpX * sx y: cpY * sy
+					]
+				].
+			destX _ destX + (advanceWidth * sx).
 		]
+	].
+	self antiAliasingWidth: VectorEngine defaultAntiAliasingWidth! !
+
+!VectorEngine methodsFor: 'text' stamp: 'jmv 3/17/2020 21:06:12'!
+displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColor scaleX: ssx scaleY: ssy
+	"ssx and ssy to honor font pointSize"
+	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers baseIndex |
+
+	self antiAliasingWidth: VectorEngine antiAliasingWidthForOutlineFonts.
+	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.
+	sx _ ssx * trueTypeScale.
+	sy _ ssy * trueTypeScale.
+	contourData _ aTTFontDescription contourDataForUtf8.
+	contourDataIndexes _ aTTFontDescription contourDataIndexesByUtf8.
+	self fillColor: aColor do: [
+		destY _ aPoint y.
+		destX _ aPoint x.
+		baseIndex _ 0.
+		aByteArray do: [ :byte | | i |
+			i _ contourDataIndexes at: baseIndex + byte + 1.
+			i < 0
+				ifTrue: [ baseIndex _ i negated ]
+				ifFalse: [
+					advanceWidth _ contourData at: i. i _ i + 1.
+					boundsLeft _ contourData at: i. i _ i + 1.
+					boundsRight _ contourData at: i. i _ i + 1.
+					boundsTop _ contourData at: i. i _ i + 1.
+					boundsBottom _ contourData at: i. i _ i + 1.
+					numContours _ (contourData at: i) asInteger. i _ i + 1.
+					numContours timesRepeat: [
+						numBeziers _ (contourData at: i) asInteger. i _ i + 1.
+						moveToX _ contourData at: i. i _ i + 1.
+						moveToY _ contourData at: i. i _ i + 1.
+						self abs_MoveToX: moveToX * sx + destX y: moveToY * sy + destY.
+						numBeziers timesRepeat: [
+							epX _ contourData at: i. i _ i + 1.
+							epY _ contourData at: i. i _ i + 1.
+							cpX _ contourData at: i. i _ i + 1.
+							cpY _ contourData at: i. i _ i + 1.
+							self rel_QuadraticBezierToX: epX * sx y: epY * sy controlX: cpX * sx y: cpY * sy
+							]
+						].
+					destX _ destX + (advanceWidth * sx).
+					baseIndex _ 0.
+				]
+			]
 	].
 	self antiAliasingWidth: VectorEngine defaultAntiAliasingWidth! !
 
@@ -2435,19 +2571,26 @@ Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
 	doFill ifTrue: [
 		self updateEdgeCountAtX: x y: y ].! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:31:00'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 3/2/2020 09:56:17'!
 adjustPixX: x y: y
 	| adjusted |
 	adjusted _ false.
-	[y - pixY > (openCLKernelHeight/2)] whileTrue: [ pixY _ pixY + openCLKernelHeight+1. adjusted _ true].
-	[pixY - y > (openCLKernelHeight/2)] whileTrue: [ pixY _ pixY - openCLKernelHeight-1. adjusted _ true].
-	[x - pixX > (openCLKernelWidth/2)] whileTrue: [ pixX _ pixX + openCLKernelWidth+1. adjusted _ true].
-	[pixX - x > (openCLKernelWidth/2)] whileTrue: [ pixX _ pixX - openCLKernelWidth-1. adjusted _ true].
+	[y - pixY > (openCLKernelHeight/2)] whileTrue: [ pixY _ pixY + openCLKernelHeight. adjusted _ true].
+	[pixY - y > (openCLKernelHeight/2)] whileTrue: [ pixY _ pixY - openCLKernelHeight. adjusted _ true].
+	[x - pixX > (openCLKernelWidth/2)] whileTrue: [ pixX _ pixX + openCLKernelWidth. adjusted _ true].
+	[pixX - x > (openCLKernelWidth/2)] whileTrue: [ pixX _ pixX - openCLKernelWidth. adjusted _ true].
 	^ adjusted! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/9/2020 19:04:16'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 2/29/2020 18:07:54'!
 finishPath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
+	
+	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
+	doFill ifTrue: [
+		(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
+			"This is actually an error condition. If we are asked to fill, then the path should be closed.
+			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
+			self basicClosePath ]].
 
 	blendBoundsTop _ (blendBoundsTop - strokeWidthDilatedHalf) truncated +1.
 	blendBoundsBottom _ (blendBoundsBottom + strokeWidthDilatedHalf) truncated.
@@ -2457,13 +2600,6 @@ finishPath
 	blendBoundsBottom > clipBottom ifTrue: [ blendBoundsBottom _ clipBottom ].
 	blendBoundsLeft< clipLeft ifTrue: [ blendBoundsLeft _ clipLeft ].
 	blendBoundsRight > clipRight ifTrue: [ blendBoundsRight _ clipRight ].
-	
-	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
-	doFill ifTrue: [
-		(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
-			"This is actually an error condition. If we are asked to fill, then the path should be closed.
-			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
-			self basicClosePath ]].
 
 	doFill ifTrue: [
 		doStroke
@@ -2487,10 +2623,10 @@ finishPath
 
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:30:08'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 3/2/2020 09:48:15'!
 firstX: x y: y
-	pixY _ (x / (openCLKernelHeight+1)) truncated * (openCLKernelHeight+1) + ii.
-	pixX _ (y / (openCLKernelWidth+1)) truncated * (openCLKernelWidth+1) + jj.
+	pixY _ y // openCLKernelHeight * openCLKernelHeight + ii.
+	pixX _ x // openCLKernelWidth * openCLKernelWidth + jj.
 	self adjustPixX: x y: y.
 	self updateMaskReadWord.
 
@@ -2518,14 +2654,14 @@ initializePath
 	blendBoundsLeft _ targetWidth.			"drawable right. Will later be refined."
 	blendBoundsRight _ 0.						"drawable left. Will later be refined."! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/10/2020 16:48:14'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 3/2/2020 09:44:25'!
 pvtStrokeWidth: aNumber
 	strokeWidth _ aNumber.
 	strokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
 	strokeWidthDilatedHalfSquared _ strokeWidthDilatedHalf * strokeWidthDilatedHalf.
 	strokeWidthErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
 	strokeWidthErodedHalfSquared _ strokeWidthErodedHalf * strokeWidthErodedHalf * strokeWidthErodedHalf sign.
-	openCLKernelWidth _ ((strokeWidthDilatedHalf + subPixelDelta) * 2) truncated + 1..
+	openCLKernelWidth _ ((strokeWidthDilatedHalf + subPixelDelta) * 2) truncated + 1.
 	openCLKernelHeight _ (strokeWidthDilatedHalf * 2) truncated + 1.! !
 
 !VectorEngine methodsFor: 'private' stamp: 'jmv 12/16/2017 18:17:50'!
@@ -4057,96 +4193,142 @@ makePointsAbsolute: aPoint
 		points at: i put: t ].
 	^ t! !
 
-!TTContourConstruction methodsFor: 'enumerating' stamp: 'jmv 7/14/2019 14:24:30'!
-initialMoveToCommand
-
-	^ PathMoveToCommand new toPoint: points first! !
-
-!TTContourConstruction methodsFor: 'enumerating' stamp: 'jmv 4/22/2019 20:36:47'!
-isEmpty
-	^points size < 2! !
-
-!TTContourConstruction methodsFor: 'enumerating' stamp: 'jmv 7/14/2019 14:24:41'!
-pathCommand
-	"Answer SVG Path Commands of the receiver. This may either be straight line
-	segments or quadratic bezier curves. The decision is made upon the type flags
-	in TTPoint as follows:
+!TTContourConstruction methodsFor: 'enumerating' stamp: 'jmv 3/1/2020 18:12:36'!
+cuadraticBeziersDo: aBlock
+	"Iterate over Bezier curves of the receiver.
+	aBlock has two arguments: endPoint and controlPoint.
+	StartPoint is assumed to be previous endPoint, or points first for the first curve.
+	Contour parts may either be straight line segments or quadratic bezier curves.
+	The decision is made upon the type flags in controlPointFlags as follows:
 	a) Two subsequent #isEndPoint points define a straight segment
 	b) An #isEndPoint point followed by an #isControlPoint point followed 
 		by an #isEndPoint point defines a quadratic bezier segment
 	c)Two subsequent #isControlPoint points have an implicitely defined 
 		#isEndPoint point at half the distance between them"
-	| previousPoint firstEndPoint endPoints controlPoints |
+	| firstEndPoint pointIsControlPoint previousPoint previousPointWasControlPoint |
+	firstEndPoint _ points at: 1.
+	previousPoint _ firstEndPoint.
+	previousPointWasControlPoint _ controlPointFlags bitBooleanAt: 1.
+	2 to: points size do: [ :i | | point |
+		point _ points at: i.
+		pointIsControlPoint _ controlPointFlags bitBooleanAt: i.
+		pointIsControlPoint
+			ifTrue: [
+				previousPointWasControlPoint
+					ifTrue: [	"Quadratic Bezier"
+						aBlock value: point + previousPoint / 2.0 value: previousPoint ]]
+			ifFalse: [
+				previousPointWasControlPoint
+					ifTrue: [	"Quadratic Bezier"
+						aBlock value: point value: previousPoint ]
+					ifFalse: [	"Line segment"
+						aBlock value: point value: point ]].
+		previousPoint _ point.
+		previousPointWasControlPoint _ pointIsControlPoint.
+	].
+	(previousPoint = firstEndPoint) ifFalse: [
+		previousPointWasControlPoint
+			ifTrue: [
+				aBlock value: firstEndPoint value: previousPoint ]
+			ifFalse: [
+				aBlock value: firstEndPoint value: firstEndPoint ]]! !
+
+!TTContourConstruction methodsFor: 'enumerating' stamp: 'jmv 3/2/2020 13:16:44'!
+initialMoveToCommand: anAffineTransformationOrNil
+	"TrueType reasonably assumes Y coordinates increase upwards."
+
+	| p |
+	p _ points first.
+	anAffineTransformationOrNil notNil ifTrue: [
+		p _ anAffineTransformationOrNil transform: p ].
+	^ PathMoveToCommand new toRelativePoint: p! !
+
+!TTContourConstruction methodsFor: 'enumerating' stamp: 'jmv 4/22/2019 20:36:47'!
+isEmpty
+	^points size < 2! !
+
+!TTContourConstruction methodsFor: 'enumerating' stamp: 'jmv 3/2/2020 13:16:50'!
+pathCommand: anAffineTransformationOrNil
+	"TrueType reasonably assumes Y coordinates increase upwards."
+
+	| prevEndPoint endPoints controlPoints cp ep |
+	prevEndPoint _ points first.
+	anAffineTransformationOrNil notNil ifTrue: [
+		prevEndPoint _ anAffineTransformationOrNil transform: prevEndPoint ].
 	endPoints _ OrderedCollection new.
 	controlPoints _ OrderedCollection new.
-	previousPoint _ nil.
-	1 to: points size do: [ :i | | point |
-		point _ points at: i.
-		previousPoint
-			ifNil: [ firstEndPoint _ point ]
-			ifNotNil: [
-				(controlPointFlags bitBooleanAt: i)
-					ifTrue: [
-						(controlPointFlags bitBooleanAt: i-1)
-							ifTrue: [	"Quadratic Bezier"
-								controlPoints add: previousPoint.
-								endPoints add: point + previousPoint / 2.0 ]]
-					ifFalse: [
-						(controlPointFlags bitBooleanAt: i-1)
-							ifTrue: [	"Quadratic Bezier"
-								controlPoints add: previousPoint.
-								endPoints add: point ]
-							ifFalse: [	"Line segment"
-								controlPoints add: point.
-								endPoints add: point ]]].
-		previousPoint _ point.
-	].
-	(controlPointFlags bitBooleanAt: points size)
-		ifTrue: [
-			controlPoints add: previousPoint.
-			endPoints add: firstEndPoint.]
-		ifFalse: [
-			controlPoints add: firstEndPoint.
-			endPoints add: firstEndPoint.].
-	^ PathQuadraticCurveToCommand new toPoints: endPoints controlPoints: controlPoints
-	! !
+	self cuadraticBeziersDo: [ :endPoint :controlPoint |
+		ep _ endPoint.
+		cp _ controlPoint.
+		anAffineTransformationOrNil notNil ifTrue: [
+			ep _ anAffineTransformationOrNil transform: ep.
+			cp _ anAffineTransformationOrNil transform: cp ].
+		endPoints add: ep - prevEndPoint.
+		controlPoints add:  cp - prevEndPoint.
+		prevEndPoint _ ep ].
+	^ PathQuadraticCurveToCommand new toRelativePoints: endPoints controlPoints: controlPoints! !
+
+!TTContourConstruction methodsFor: 'primitive format' stamp: 'jmv 3/3/2020 09:46:06'!
+addContourDataTo: stream tx: aGeometryTransformationOrNil
+	| bezierCount firstPoint cp ep prevEndPoint cpr epr |
+	self isEmpty ifTrue: [
+		^self ].
+
+	bezierCount _ 0.
+	self cuadraticBeziersDo: [ :endPoint :controlPoint | bezierCount _ bezierCount + 1 ].
+	stream nextPut: bezierCount.
+
+	firstPoint _ points first.
+	aGeometryTransformationOrNil ifNotNil: [
+		firstPoint _ aGeometryTransformationOrNil transform: firstPoint ].
+	stream nextPut: firstPoint x; nextPut: firstPoint y.
+
+
+	prevEndPoint _ firstPoint.
+	self cuadraticBeziersDo: [ :endPoint :controlPoint |
+		ep _ endPoint.
+		cp _ controlPoint.
+		aGeometryTransformationOrNil notNil ifTrue: [
+			ep _ aGeometryTransformationOrNil transform: ep.
+			cp _ aGeometryTransformationOrNil transform: cp ].
+		epr _ ep - prevEndPoint.
+		cpr _ cp - prevEndPoint.
+		stream nextPut: epr x; nextPut: epr y.
+		stream nextPut: cpr x; nextPut: cpr y.
+		prevEndPoint _ ep ].! !
 
 !TTContourConstruction class methodsFor: 'instance creation'!
 on: points
 
 	^self new points: points! !
 
-!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 1/19/2020 09:56:55'!
-fallbackGlyph
-	"Answer the fallback glyph, to be used in place of missing glyphs."
-	^ unknownGlyph! !
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 3/13/2020 14:18:19'!
+contourDataForIso8859s15
+	^contourDataForIso8859s15! !
+
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 3/12/2020 12:45:59'!
+contourDataForUtf8
+	^contourDataForUtf8! !
+
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 3/4/2020 12:06:14'!
+contourDataIndexesByIso8859s15
+	^contourDataIndexesByIso8859s15! !
+
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 3/18/2020 20:19:27'!
+contourDataIndexesByIso8859s15ST80Glyphs: aBoolean
+	^ aBoolean
+		ifTrue: [contourDataIndexesForSmalltalkGlyphs]
+		ifFalse: [contourDataIndexesByIso8859s15]! !
+
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 3/12/2020 12:46:10'!
+contourDataIndexesByUtf8
+	^contourDataIndexesByUtf8 ! !
 
 !TTFontDescription methodsFor: 'accessing' stamp: 'yo 12/7/2007 10:33'!
 first
 
 	^ self.
 ! !
-
-!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 2/19/2020 17:20:50'!
-glyphForCharacter: aCharacter useST80Glyphs: aBoolean
-	| i regularGlyph st80Glyph|
-
-	regularGlyph _ glyphsByIso8859s15 at: aCharacter numericValue + 1.
-	aBoolean ifFalse: [ ^ regularGlyph ].
-	
-	aCharacter = $_ ifTrue: [
-		i _ Preferences assignmentGlyphSelector = #useLeftArrow
-			ifTrue: [Character arrowLeft numericValue]
-			ifFalse: [Character arrowRight numericValue].
-		st80Glyph _ glyphsByIso8859s15 at: i + 1.
-		st80Glyph = unknownGlyph ifFalse: [ ^ st80Glyph ]].
-
-	aCharacter = $^ ifTrue: [
-		i _ Character arrowUp numericValue.
-		st80Glyph _ glyphsByIso8859s15 at: i + 1.
-		st80Glyph = unknownGlyph ifFalse: [ ^ st80Glyph ]].
-
-	^ regularGlyph! !
 
 !TTFontDescription methodsFor: 'information' stamp: 'ar 11/14/1998 23:48'!
 copyright
@@ -4194,10 +4376,10 @@ descent
 	"Descender of the font. Relative to unitsPerEm. Usually negative."
 	^descent! !
 
-!TTFontDescription methodsFor: 'properties' stamp: 'jmv 1/26/2020 09:50:56'!
+!TTFontDescription methodsFor: 'properties' stamp: 'jmv 3/14/2020 23:23:22'!
 letterMTopSideBearing
 	"This number is what needs to be scaled by i.e. 12 to render a 12 pixel font"
-	letterMTopSideBearing ifNil: [ letterMTopSideBearing _ (self glyphForCharacter: $M useST80Glyphs: false) topSideBearing ].
+
 	^letterMTopSideBearing! !
 
 !TTFontDescription methodsFor: 'properties' stamp: 'jmv 4/24/2019 20:23:51'!
@@ -4213,12 +4395,50 @@ lineSpacing
 unitsPerEm
 	^unitsPerEm! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 1/26/2020 08:58:20'!
-glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: aGlyph
-	"unknownGlyph should be used if blah blah blah"
-	glyphsByIso8859s15 _ array8.
-	glyphsByUtf8Bytes _ arrayUtf8.
-	unknownGlyph _ aGlyph! !
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/13/2020 09:16:46'!
+appendGlyphDataTo: stream glyphsArray: glyphsArray indexes: indexes base: baseIndex
+		glyphsArray withIndexDo: [ :glyphOrArrayOrNil :index |
+			glyphOrArrayOrNil notNil ifTrue: [
+				glyphOrArrayOrNil isArray
+					ifTrue: [
+						| nextBaseIndex |
+						nextBaseIndex := indexes size - 128.
+						indexes addAll: (IntegerArray new: 64).
+						indexes at: baseIndex + index put: nextBaseIndex negated.
+						self appendGlyphDataTo: stream glyphsArray: glyphOrArrayOrNil indexes: indexes base: nextBaseIndex
+					]
+					ifFalse: [
+						indexes at: baseIndex + index put: stream position+1.
+						glyphOrArrayOrNil addContourDataTo: stream.
+					]
+				]]! !
+
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/18/2020 20:16:20'!
+glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknownGlyph
+
+	| mGlyph |
+	
+	mGlyph _ array8 at: $M numericValue + 1.
+	letterMTopSideBearing _ mGlyph topSideBearing.
+
+	contourDataIndexesByIso8859s15 _ IntegerArray new: array8 size.
+	contourDataForIso8859s15 _ FloatArray streamContents: [ :stream |
+		theUnknownGlyph addContourDataTo: stream. 	"First data is for unknownGlyph"
+		array8 withIndexDo: [ :ttGlyphOrNil :index |
+			ttGlyphOrNil notNil
+				ifTrue: [
+					contourDataIndexesByIso8859s15 at: index put: stream position+1.
+					ttGlyphOrNil addContourDataTo: stream ]
+				ifFalse: [ contourDataIndexesByIso8859s15 at: index put: 1]]].
+	self perform: Preferences assignmentGlyphSelector.
+
+	"This takes a significant amout of space, makes loading slower, and we're still not able to take full advantage of it."
+	Preferences loadOnlyLatinGlyphData ifFalse: [
+		contourDataIndexesByUtf8 _ (IntegerArray new: 256) as: OrderedCollection.
+		contourDataForUtf8 _ FloatArray streamContents: [ :stream |
+			theUnknownGlyph addContourDataTo: stream.		"First data is for unknownGlyph"
+			self appendGlyphDataTo: stream glyphsArray: arrayUtf8 indexes: contourDataIndexesByUtf8 base: 0 ].
+		contourDataIndexesByUtf8 _ contourDataIndexesByUtf8 as: IntegerArray]! !
 
 !TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 4/24/2019 20:12:58'!
 setAscent: asc descent: desc lineGap: lgap
@@ -4247,6 +4467,30 @@ setStrings: anArray
 	trademark := anArray at: 8.
 ! !
 
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/18/2020 20:33:17'!
+useLeftArrow
+	"When Smalltalk glyphs requested"
+	| arrowIndex |
+	contourDataIndexesForSmalltalkGlyphs _ contourDataIndexesByIso8859s15 copy.
+	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowLeft numericValue + 1.
+	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
+		contourDataIndexesForSmalltalkGlyphs at: $_ numericValue + 1 put: arrowIndex ].
+	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowUp numericValue + 1.
+	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
+		contourDataIndexesForSmalltalkGlyphs at: $^ numericValue + 1 put: arrowIndex ].! !
+
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/18/2020 20:33:12'!
+useRightArrow
+	"When Smalltalk glyphs requested"
+	| arrowIndex |
+	contourDataIndexesForSmalltalkGlyphs _ contourDataIndexesByIso8859s15 copy.
+	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowRight numericValue + 1.
+	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
+		contourDataIndexesForSmalltalkGlyphs at: $_ numericValue + 1 put: arrowIndex ].
+	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowUp numericValue + 1.
+	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
+		contourDataIndexesForSmalltalkGlyphs at: $^ numericValue + 1 put: arrowIndex ].! !
+
 !TTFontDescription methodsFor: 'testing' stamp: 'jmv 5/4/2019 14:28:56'!
 isBaseFont
 	^ self emphasis = 0! !
@@ -4262,36 +4506,109 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 9/9/2019 10:21:19'!
-formGlyphFor: aTTGlyph pixelSize: pixelSize
-	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas |
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 3/18/2020 20:24:43'!
+formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
+	"Needed only for BitBltCanvasEngine"
+	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
+
+	i _ (self contourDataIndexesByIso8859s15ST80Glyphs: aBoolean) at: aCharacter numericValue + 1.
+	advanceWidth _ contourDataForIso8859s15 at: i. i _ i + 1.
+	boundsLeft _ contourDataForIso8859s15 at: i. i _ i + 1.
+	boundsRight _ contourDataForIso8859s15 at: i. i _ i + 1.
+	boundsTop _ contourDataForIso8859s15 at: i. i _ i + 1.
+	boundsBottom _ contourDataForIso8859s15 at: i. i _ i + 1.
 
 	horizontalStrokesAtPixelCenter _ 0.5.
 	xtraSpaceForAntiAliasingAndRounding _ 3.
 	toPixelsScale _ pixelSize * 1.0 / self letterMTopSideBearing.
 
 	"If positive, pixels we save at the left. if negative, xtra pix needed"
-	leftPixelOffset _ (aTTGlyph boundsLeft * toPixelsScale - xtraSpaceForAntiAliasingAndRounding) floor.
-	formWidth _ (aTTGlyph boundsRight - aTTGlyph boundsLeft) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*2).
+	leftPixelOffset _ (boundsLeft * toPixelsScale - xtraSpaceForAntiAliasingAndRounding) floor.
+	formWidth _ (boundsRight - boundsLeft) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*2).
 
 	"Usually positive. Needed pixels above the baseline"
-	topPixelOffset _ (aTTGlyph boundsBottom * toPixelsScale + xtraSpaceForAntiAliasingAndRounding) ceiling.
-	formHeight _ (aTTGlyph boundsBottom - aTTGlyph boundsTop) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*2).
+	topPixelOffset _ (boundsBottom * toPixelsScale + xtraSpaceForAntiAliasingAndRounding) ceiling.
+	formHeight _ (boundsBottom - boundsTop) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*2).
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
 	canvas _ VectorCanvas onForm: form.
-	canvas engine geometryTransformation: (AffineTransformation
-		withRadians: 0 scale: toPixelsScale 
-		position: leftPixelOffset negated@(topPixelOffset - horizontalStrokesAtPixelCenter))
-			withYAxisNegated.
-	canvas fillColor: Color black do: [
-		aTTGlyph drawGlyphOn: canvas ].
+	canvas 
+		engine
+			displayString: aCharacter asString
+			from: 1
+			to: 1
+			at: leftPixelOffset negated@(topPixelOffset - horizontalStrokesAtPixelCenter)
+			trueTypeFont: self
+			useST80Glyphs: aBoolean
+			color: Color black
+			scaleX: 1.0 * pixelSize
+			scaleY: -1.0 * pixelSize.
 	^FormGlyph
 		form: form
 		leftOffset: leftPixelOffset
 		topOffset: topPixelOffset
-		advanceWidth: (aTTGlyph advanceWidth * toPixelsScale)! !
+		advanceWidth: (advanceWidth * toPixelsScale)! !
+
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 3/22/2020 16:41:22'!
+formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil pixelSize: pixelSize
+	"Needed only for BitBltCanvasEngine"
+	| utf8ByteArray toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
+
+	i _ contourDataIndexesByUtf8 at: byte1 + 1.
+	utf8ByteArray _ ByteArray with: byte1.
+	byte2OrNil notNil ifTrue: [
+		i _ contourDataIndexesByUtf8 at: i negated + byte2OrNil + 1.
+		utf8ByteArray _ ByteArray with: byte1 with: byte2OrNil.
+		byte3OrNil notNil ifTrue: [
+			i _ contourDataIndexesByUtf8 at: i negated + byte3OrNil + 1.
+			utf8ByteArray _ ByteArray with: byte1 with: byte2OrNil with: byte3OrNil.
+			byte4OrNil notNil ifTrue: [
+				i _ contourDataIndexesByUtf8 at: i negated + byte4OrNil + 1.
+				utf8ByteArray _ ByteArray with: byte1 with: byte2OrNil with: byte3OrNil with: byte4OrNil ]]].
+
+	advanceWidth _ contourDataForUtf8 at: i. i _ i + 1.
+	boundsLeft _ contourDataForUtf8 at: i. i _ i + 1.
+	boundsRight _ contourDataForUtf8 at: i. i _ i + 1.
+	boundsTop _ contourDataForUtf8 at: i. i _ i + 1.
+	boundsBottom _ contourDataForUtf8 at: i. i _ i + 1.
+
+	horizontalStrokesAtPixelCenter _ 0.5.
+	xtraSpaceForAntiAliasingAndRounding _ 3.
+	toPixelsScale _ pixelSize * 1.0 / self letterMTopSideBearing.
+
+	"If positive, pixels we save at the left. if negative, xtra pix needed"
+	leftPixelOffset _ (boundsLeft * toPixelsScale - xtraSpaceForAntiAliasingAndRounding) floor.
+	formWidth _ (boundsRight - boundsLeft) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*2).
+
+	"Usually positive. Needed pixels above the baseline"
+	topPixelOffset _ (boundsBottom * toPixelsScale + xtraSpaceForAntiAliasingAndRounding) ceiling.
+	formHeight _ (boundsBottom - boundsTop) * toPixelsScale + (xtraSpaceForAntiAliasingAndRounding*2).
+	
+	form _ Form extent: formWidth@formHeight depth: 32.
+	form fillColor: Color white.
+	canvas _ VectorCanvas onForm: form.
+	canvas 
+		engine
+			displayUtf8: utf8ByteArray
+			at: leftPixelOffset negated@(topPixelOffset - horizontalStrokesAtPixelCenter)
+			trueTypeFont: self
+			color: Color black
+			scaleX: 1.0 * pixelSize
+			scaleY: -1.0 * pixelSize.
+	^FormGlyph
+		form: form
+		leftOffset: leftPixelOffset
+		topOffset: topPixelOffset
+		advanceWidth: (advanceWidth * toPixelsScale)! !
+
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 3/18/2020 20:25:08'!
+widthOf: aCharacter useST80Glyphs: aBoolean
+
+	| i advanceWidth |
+	i _ (self contourDataIndexesByIso8859s15ST80Glyphs: aBoolean) at: aCharacter numericValue + 1.
+	advanceWidth _ contourDataForIso8859s15 at: i.
+	^ advanceWidth / letterMTopSideBearing! !
 
 !TTFontDescription class methodsFor: 'instance creation' stamp: 'jmv 1/18/2020 15:14:11'!
 read: aDirectoryEntry
@@ -4339,7 +4656,7 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 2/20/2020 12:06:10'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 3/18/2020 12:28:31'!
 mapAndStoreGlyphsUsing: characterMap
 
 	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph carriageReturnGlyph spaceGlyph mapSize preferredCodePoint |
@@ -4348,7 +4665,7 @@ mapAndStoreGlyphsUsing: characterMap
 	carriageReturnGlyph _ glyphs third.
 	spaceGlyph _ glyphs fourth.
 	mapSize _ characterMap size.
-	glyphsByIso5559s15 _ Array new: 256 withAll: unknownGlyph.
+	glyphsByIso5559s15 _ Array new: 256.
 	glyphsByUTF8 _ Array new: 256.
 	0 to: mapSize - 1 do: [ :codePoint | | g array prevByte|
 
@@ -4359,8 +4676,9 @@ mapAndStoreGlyphsUsing: characterMap
 		g == unknownGlyph ifTrue: [
 			g _ glyphs at: (characterMap at: codePoint+1)+1 ifAbsent: [ unknownGlyph ]].
 
-		(Character iso8859s15CodeForUnicodeCodePoint: codePoint) ifNotNil: [ :iso8859s15 |
-			glyphsByIso5559s15 at: iso8859s15 + 1 put: g ].
+		g == unknownGlyph ifFalse: [
+			(Character iso8859s15CodeForUnicodeCodePoint: codePoint) ifNotNil: [ :iso8859s15 |
+				glyphsByIso5559s15 at: iso8859s15 + 1 put: g ]].
 
 		array _ glyphsByUTF8.
 		prevByte _ nil.
@@ -4400,55 +4718,57 @@ processCharacterMappingTable: entry
 			^ self decodeCmapFmtTable: entry ]].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 1/18/2020 19:45:41'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 2/28/2020 18:23:06'!
 processCompositeGlyphFrom: entry
 	"Read a composite glyph from the font data."
-	| glyph flags glyphIndex hasInstr ofsX ofsY iLen a11 a12 a21 a22 m bb bl br bt |
+	| glyph flags glyphIndex hasInstructions ofsX ofsY iLen geometryTransformation bb bl br bt |
 	glyph _ TTCompositeGlyph new.
 	bl _ entry nextShort.
 	bt _ entry nextShort.
 	br _ entry nextShort.
 	bb _ entry nextShort.
 	glyph boundsLeft: bl boundsRight: br boundsTop: bt boundsBottom: bb.
-	a11 := a22 := 16r4000.	"1.0 in F2Dot14"
-	a21 := a12 := 0.		"0.0 in F2Dot14"
-	"Copy state"
-	hasInstr := false.
+	hasInstructions := false.
 	[
 		flags := entry nextUShort.
 		glyphIndex := entry nextUShort + 1.
-		(flags bitAnd: 1) = 1 ifTrue: [
+
+		(flags allMask: 1 "ARG_1_AND_2_ARE_WORDS") ifTrue: [
+			"'Hay Offset short x@y' print."
 			ofsX := entry nextShort.
 			ofsY := entry nextShort.
 		] ifFalse: [
+			"'Hay Offset byte x@y' print."
 			(ofsX := entry nextByte) > 127 ifTrue: [ofsX := ofsX - 256].
 			(ofsY := entry nextByte) > 127 ifTrue: [ofsY := ofsY - 256]].
-		((flags bitAnd: 2) = 2) ifFalse: [self halt].
-		(flags bitAnd: 8) = 8 ifTrue: [
-			a11 := a22 := entry nextShort].
-		(flags bitAnd: 64) = 64 ifTrue: [
-			a11 := entry nextShort.
-			a22 := entry nextShort].
-		(flags bitAnd: 128) = 128 ifTrue: [
+
+		(flags allMask: 2 "ARGS_ARE_XY_VALUES") ifFalse: [self halt]. "Unsupported"
+		"ROUND_XY_TO_GRID = 4. Ignored"
+		(flags anyMask: 8+64+128) ifFalse: [
+			geometryTransformation := MorphicTranslation withTranslation: ofsX@ofsY ].
+		(flags allMask: 8 "WE_HAVE_A_SCALE") ifTrue: [
+			geometryTransformation := AffineTransformation withScale: entry nextShort asFloat / 16r4000 ].
+		(flags allMask: 64 "WE_HAVE_AN_X_AND_Y_SCALE") ifTrue: [
+			geometryTransformation := AffineTransformation
+				withPointScale: (entry nextShort asFloat / 16r4000)@(entry nextShort asFloat / 16r4000)
+				position: ofsX@ofsY ].
+		(flags allMask: 128 "WE_HAVE_A_TWO_BY_TWO") ifTrue: [
 			"2x2 transformation"
-			a11 := entry nextShort.
-			a21 := entry nextShort.
-			a12 := entry nextShort.
-			a22 := entry nextShort].
-		m := AffineTransformation new.
-		"Convert entries from F2Dot14 to float"
-		m a11: (a11 asFloat / 16r4000).
-		m a12: (a12 asFloat / 16r4000).
-		m a21: (a21 asFloat / 16r4000).
-		m a22: (a22 asFloat / 16r4000).
-		m a13: ofsX.
-		m a23: ofsY.
-		glyph addGlyph: glyphIndex transformation: m.
-		hasInstr := hasInstr or: [ (flags bitAnd: 256) = 256].
+			geometryTransformation := AffineTransformation new
+				a11: entry nextShort asFloat / 16r4000;
+				a21: entry nextShort asFloat / 16r4000;
+				a12: entry nextShort asFloat / 16r4000;
+				a22: entry nextShort asFloat / 16r4000;
+				a13: ofsX;
+				a23: ofsY ].
+
+		glyph addGlyph: glyphIndex transformation: geometryTransformation.
+		hasInstructions := hasInstructions or: [ flags allMask: 256 "WE_HAVE_INSTRUCTIONS"].
 		"Continue as long as the MORE_COMPONENTS bit is set"
-		(flags bitAnd: 32) = 32
+		flags allMask: 32 "MORE_COMPONENTS"
 	] whileTrue.
-	hasInstr ifTrue: [
+	hasInstructions ifTrue: [
+		"Ignore them"
 		iLen _ entry nextUShort.
 		entry skip: iLen].
 	^glyph! !
@@ -4604,7 +4924,7 @@ processKerningSubTableType0: entry
 	^true
 ! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'topa 3/19/2015 01:34'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 2/28/2020 10:46:04'!
 processKerningTable: entry
 	"Extract the kerning information for pairs of glyphs."
 	| version  nTables covLow covHigh |
@@ -4619,7 +4939,7 @@ processKerningTable: entry
 	covLow := entry nextByte.
 
 	"Make sure the format is right (kerning table and format type 0)"
-	((covLow bitAnd: 2) = 2 or:[ covHigh ~= 0]) ifTrue:[^false].
+	((covLow allMask: 2) or: [ covHigh ~= 0]) ifTrue: [^false].
 	"Subtable"
 	^ self processKerningSubTableType0: entry.
 ! !
@@ -4824,7 +5144,7 @@ decodeCmapFmtTable: entry
 		^ cmap].
 	^ nil! !
 
-!TTFontReader methodsFor: 'private' stamp: 'ar 11/2/1998 01:33'!
+!TTFontReader methodsFor: 'private' stamp: 'jmv 2/28/2020 10:45:12'!
 getGlyphFlagsFrom: entry size: nPts
 	"Read in the flags for this glyph.  The outer loop gathers the flags that
 	are actually contained in the table.  If the repeat bit is set in a flag
@@ -4837,7 +5157,7 @@ getGlyphFlagsFrom: entry size: nPts
 	[index <= nPts] whileTrue:[
 		flagBits := entry nextByte.
 		flags at: index put: flagBits.
-		(flagBits bitAnd: 8) = 8 ifTrue:[
+		(flagBits allMask: 8) ifTrue:[
 			repCount := entry nextByte.
 			repCount timesRepeat:[
 				index := index + 1.
@@ -4845,8 +5165,8 @@ getGlyphFlagsFrom: entry size: nPts
 		index := index + 1].
 	^flags! !
 
-!TTFontReader methodsFor: 'private' stamp: 'jmv 5/16/2019 16:35:47'!
-readGlyphXCoords:entry glyph: glyph nContours: nContours flags: flags endPoints: endPts
+!TTFontReader methodsFor: 'private' stamp: 'jmv 2/28/2020 11:05:54'!
+readGlyphXCoords: entry glyph: glyph nContours: nContours flags: flags endPoints: endPts
 	"Read the x coordinates for the given glyph from the font file."
 	| startPoint endPoint flagBits xValue contour |
 	startPoint _ 1.
@@ -4863,24 +5183,24 @@ readGlyphXCoords:entry glyph: glyph nContours: nContours flags: flags endPoints:
 			"First we check to see if bit one is set.  This would indicate that
 			the corresponding coordinate data in the table is 1 byte long.
 			If the bit is not set, then the coordinate data is 2 bytes long."
-			xValue _ (flagBits bitAnd: 2) = 2
+			xValue _ (flagBits allMask: 2)
 				ifTrue: [ "one byte"
-					(flagBits bitAnd: 16)=16 
+					(flagBits allMask: 16)
 						ifTrue: [entry nextByte]
 						ifFalse: [entry nextByte negated].
 				] ifFalse: [ "two byte"
 					"If bit four is set, then this coordinate is the same as the
 					last one, so the relative offset (of zero) is stored.  If bit
 					is not set, then read in two bytes and store it as a signed value."
-					(flagBits bitAnd: 16) = 16
+					(flagBits allMask: 16)
 						ifTrue: [ 0 ]
 						ifFalse: [ entry nextShort ]].
 			contour points at: (j - startPoint + 1) putX: xValue.
 		].
 		startPoint _ endPoint + 1 ]! !
 
-!TTFontReader methodsFor: 'private' stamp: 'jmv 5/16/2019 16:32:24'!
-readGlyphYCoords:entry glyph: glyph nContours: nContours flags: flags endPoints: endPts
+!TTFontReader methodsFor: 'private' stamp: 'jmv 2/28/2020 11:05:57'!
+readGlyphYCoords: entry glyph: glyph nContours: nContours flags: flags endPoints: endPts
 	"Read the y coordinates for the given glyph from the font file."
 	| startPoint endPoint flagBits yValue contour |
 	startPoint _ 1.
@@ -4892,13 +5212,13 @@ readGlyphYCoords:entry glyph: glyph nContours: nContours flags: flags endPoints:
 		startPoint to: endPoint do: [ :j |
 			flagBits _ flags at: j.
 			"Check if this value one or two byte encoded"
-			yValue _ (flagBits bitAnd: 4) = 4
+			yValue _ (flagBits allMask: 4)
 				ifTrue: [ "one byte"
-					(flagBits bitAnd: 32)=32
+					(flagBits allMask: 32)
 						ifTrue: [entry nextByte]
 						ifFalse: [entry nextByte negated].
 				] ifFalse: [ "two byte"
-					(flagBits bitAnd: 32) = 32
+					(flagBits allMask: 32)
 						ifTrue: [ 0 ]
 						ifFalse: [ entry nextShort ]].
 			contour points at: (j - startPoint + 1) putY: yValue.
@@ -5057,6 +5377,10 @@ boundsTop
 	boundsBottom
 	"! !
 
+!TTGlyph methodsFor: 'accessing' stamp: 'jmv 3/3/2020 09:43:36'!
+contourCount
+	^contours count: [ :each | each isEmpty not ]! !
+
 !TTGlyph methodsFor: 'accessing'!
 contours
 	^contours! !
@@ -5134,16 +5458,46 @@ updateRightSideBearing
 	"@@: Is the following really correct?!!?!!"
 	rightSideBearing := advanceWidth - leftSideBearing - boundsRight + boundsLeft! !
 
-!TTGlyph methodsFor: 'drawing' stamp: 'jmv 5/11/2019 16:54:15'!
+!TTGlyph methodsFor: 'drawing' stamp: 'jmv 3/2/2020 12:52:41'!
 drawGlyphOn: aVectorCanvas
+	self drawGlyphOn: aVectorCanvas geometryTransformation: nil! !
+
+!TTGlyph methodsFor: 'drawing' stamp: 'jmv 3/2/2020 12:52:01'!
+drawGlyphOn: aVectorCanvas geometryTransformation: txOrNil
 	contours do: [ :contour |
 		contour isEmpty ifFalse: [
-			contour initialMoveToCommand runOn: aVectorCanvas .
-			contour pathCommand runOn: aVectorCanvas ]].! !
+			aVectorCanvas moveToX: 0 y: 0.
+			(contour initialMoveToCommand: txOrNil) runOn: aVectorCanvas .
+			(contour pathCommand: txOrNil) runOn: aVectorCanvas ]].! !
+
+!TTGlyph methodsFor: 'primitive format' stamp: 'jmv 3/14/2020 23:03:58'!
+addContourDataTo: stream
+	stream nextPut: self advanceWidth.
+	stream nextPut: self boundsLeft.
+	stream nextPut: self boundsRight.
+	stream nextPut: self boundsTop.
+	stream nextPut: self boundsBottom.
+	stream nextPut: self contourCount.
+	self addContourDataTo: stream tx: nil! !
+
+!TTGlyph methodsFor: 'primitive format' stamp: 'jmv 3/3/2020 09:46:30'!
+addContourDataTo: stream tx: aGeometryTransformationOrNil
+
+	contours do: [ :c | c addContourDataTo: stream tx: aGeometryTransformationOrNil ]! !
 
 !TTCompositeGlyph methodsFor: 'accessing' stamp: 'ar 11/2/1998 01:21'!
 addGlyph: aGlyph transformation: aMatrix
 	glyphs := glyphs copyWith: (aMatrix -> aGlyph)! !
+
+!TTCompositeGlyph methodsFor: 'accessing' stamp: 'jmv 3/3/2020 09:43:58'!
+contourCount
+	| glyph count |
+	count _ 0.
+	glyphs do: [ :txAndGlyph |
+		glyph _ txAndGlyph value.
+		count _ count + glyph contourCount.
+		].
+	^count! !
 
 !TTCompositeGlyph methodsFor: 'accessing' stamp: 'ar 11/2/1998 01:20'!
 glyphs
@@ -5158,14 +5512,10 @@ initialize
 isComposite
 	^true! !
 
-!TTCompositeGlyph methodsFor: 'drawing' stamp: 'jmv 2/20/2020 13:01:47'!
+!TTCompositeGlyph methodsFor: 'drawing' stamp: 'jmv 3/2/2020 12:52:20'!
 drawGlyphOn: aVectorCanvas
-	| initialGeometry |
-	initialGeometry _ aVectorCanvas engine geometryTransformation.
 	glyphs do: [ :each |
-		aVectorCanvas engine geometryTransformation: (initialGeometry composedWith: each key).
-		each value drawGlyphOn: aVectorCanvas ].
-	aVectorCanvas engine geometryTransformation: initialGeometry.! !
+		each value drawGlyphOn: aVectorCanvas geometryTransformation: each key ]! !
 
 !TTCompositeGlyph methodsFor: 'drawing' stamp: 'jmv 1/18/2020 16:29:44'!
 txAndContoursDo: aBlock
@@ -5175,6 +5525,16 @@ txAndContoursDo: aBlock
 !TTCompositeGlyph methodsFor: 'private-initialization' stamp: 'jmv 1/18/2020 15:54:09'!
 replaceIndexesByComponentGlyphsIn: anArray
 	glyphs _ glyphs collect: [ :assoc | assoc key -> (anArray at: assoc value) ]! !
+
+!TTCompositeGlyph methodsFor: 'primitive format' stamp: 'jmv 3/4/2020 11:29:26'!
+addContourDataTo: stream tx: aGeometryTransformationOrNil
+	| glyph tx |
+	glyphs do: [ :txAndGlyph |
+		tx _ txAndGlyph key.
+		aGeometryTransformationOrNil notNil ifTrue: [
+			tx _ aGeometryTransformationOrNil composedWith: tx ].
+		glyph _ txAndGlyph value.
+		glyph addContourDataTo: stream tx: tx ]! !
 
 !TTKernPair methodsFor: 'accessing'!
 left
@@ -5475,6 +5835,11 @@ toPoint: endPoint
 	coordinatesAreRelative _ false.
 	points _ {endPoint}! !
 
+!PathMoveToCommand methodsFor: 'building' stamp: 'jmv 3/2/2020 11:41:49'!
+toRelativePoint: endPoint
+	coordinatesAreRelative _ true.
+	points _ {endPoint}! !
+
 !PathMoveToCommand methodsFor: 'private' stamp: 'jmv 6/11/2010 14:34'!
 privatePointsDo: aBlock
 	"evaluate aBlock with the x and y coordinates for our defining points."
@@ -5510,6 +5875,12 @@ buildFrom: commandChar stream: aStream
 !PathQuadraticCurveToCommand methodsFor: 'building' stamp: 'jmv 4/9/2019 13:30:05'!
 toPoints: endPoints controlPoints: aControlPoints
 	coordinatesAreRelative _ false.
+	toPoints _ endPoints.
+	controlPoints _ aControlPoints! !
+
+!PathQuadraticCurveToCommand methodsFor: 'building' stamp: 'jmv 2/29/2020 18:01:39'!
+toRelativePoints: endPoints controlPoints: aControlPoints
+	coordinatesAreRelative _ true.
 	toPoints _ endPoints.
 	controlPoints _ aControlPoints! !
 
@@ -5562,10 +5933,10 @@ externalizedWith: aMorphicLocation
 
 	^self! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'len 5/28/2019 15:20:31'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/22/2020 23:24:00'!
 basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer last affected pixel position"
-	| fdestX char glyph maxHeight ddy toPixelsScale |
+	| fdestX char glyph maxHeight |
 
 	destY _ aPoint y.
 	fdestX _ aPoint x.
@@ -5574,11 +5945,12 @@ basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFo
 		char _ aString at: charIndex.
 		glyph _ aTrueTypeFont glyphAt: char.
 		destX _ (fdestX + glyph leftOffset) rounded.
-		self revisar.
-		ddy _ aTrueTypeFont fontDescription ascent + aTrueTypeFont fontDescription lineGap.
-		toPixelsScale _ aTrueTypeFont pointSize * 1.0 / aTrueTypeFont fontDescription letterMTopSideBearing.
-		destY _ aPoint y + (ddy * toPixelsScale) - glyph topOffset. 
-		aTrueTypeFont isSuperscript ifTrue: [destY _ destY - (aTrueTypeFont ascent*0.55)] ifFalse: [aTrueTypeFont isSubscript ifTrue: [destY _ destY + (aTrueTypeFont ascent*0.3)]].
+		destY _ aPoint y + aTrueTypeFont ascent + aTrueTypeFont lineGap-1 - glyph topOffset. 
+		aTrueTypeFont isSuperscript
+			ifTrue: [destY _ destY - (aTrueTypeFont ascent*0.55)]
+			ifFalse: [
+				aTrueTypeFont isSubscript
+					ifTrue: [destY _ destY + (aTrueTypeFont ascent*0.3)]].
 		sourceForm _ glyph form.
 		height _ sourceForm height.
 		width _ sourceForm width.
@@ -5586,6 +5958,34 @@ basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFo
 		fdestX _ fdestX + "width + aTrueTypeFont baseKern"glyph advanceWidth.
 		maxHeight _ maxHeight max: height.
 	].
+	^ destX ceiling@(destY+maxHeight)! !
+
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/22/2020 23:23:08'!
+basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont
+	"Answer last affected pixel position"
+	| fdestX glyph maxHeight utf8Stream |
+	destY _ aPoint y.
+	fdestX _ aPoint x.
+	maxHeight _ 0.
+	utf8Stream _ aByteArray readStream.
+	[ utf8Stream atEnd ] whileFalse: [
+		glyph _ Character
+			nextCodePointBytesFromUtf8: utf8Stream
+			into: [ :byte1 :byte2 :byte3 :byte4 |
+				aTrueTypeFont glyphAtUtf8Byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4 ].
+		destX _ (fdestX + glyph leftOffset) rounded.
+		destY _ aPoint y + aTrueTypeFont ascent + aTrueTypeFont lineGap-1 - glyph topOffset.
+		aTrueTypeFont isSuperscript
+			ifTrue: [destY _ destY - (aTrueTypeFont ascent*0.55)]
+			ifFalse: [
+				aTrueTypeFont isSubscript
+					ifTrue: [destY _ destY + (aTrueTypeFont ascent*0.3)]].
+		sourceForm _ glyph form.
+		height _ sourceForm height.
+		width _ sourceForm width.
+		self copyBits.
+		fdestX _ fdestX + "width + aTrueTypeFont baseKern"glyph advanceWidth.
+		maxHeight _ maxHeight max: height ].
 	^ destX ceiling@(destY+maxHeight)! !
 
 !BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/21/2019 10:56:45'!
@@ -5627,5 +6027,150 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 		self basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont.
 		combinationRule := prevRule ].
 	^answer! !
+
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/21/2020 19:15:23'!
+displayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont color: foregroundColor
+	"If required, do a second pass with new rule and colorMap.
+	Answer last affected pixel position
+	Answer nil if nothing was done
+	"
+
+	| answer prevRule secondPassMap sourceDepth destDepth |
+
+	"Slight optimization when there's nothing to do."
+	clipHeight = 0 ifTrue: [^nil].
+	clipWidth = 0 ifTrue: [^nil].
+
+	"self installStrikeFont: font foregroundColor: (foregroundColor alpha: 1)."
+	sourceForm _ nil. "Set it for each glyph"
+	sourceX _ 0.
+	sourceY _ 0.
+	height _ nil. "Set it for each glyph as sourceForm height".
+	self setRuleAndMapFor: 32 foregroundColor: (foregroundColor alpha: 1).
+
+	"If combinationRule is rgbMul, we might need the special two-pass technique for component alpha blending.
+	If not, do it simply"
+	combinationRule = 37 "rgbMul" ifFalse: [
+		^self basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont ].
+	
+	"We need to do a second pass. The colormap set is for use in the second pass."
+	secondPassMap _ colorMap.
+	sourceDepth _ aTrueTypeFont cachedFormDepth.
+	destDepth _ destForm depth.
+	colorMap _ sourceDepth ~= destDepth
+		ifTrue: [ Color cachedColormapFrom: sourceDepth to: destDepth ].
+	answer := self basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont.
+	colorMap := secondPassMap.
+	secondPassMap ifNotNil: [
+		prevRule := combinationRule.
+		combinationRule := 20. "rgbAdd"
+		self basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont.
+		combinationRule := prevRule ].
+	^answer! !
+
+!MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/22/2020 20:03:06'!
+drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
+	self subclassResponsibility! !
+
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/22/2020 23:46:12'!
+drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
+	"Answer last affected pixel position
+	Answer nil if nothing was done"
+	"
+| c f |
+Preferences disable: #loadOnlyLatinGlyphData. 'And now load optional fonts'.
+c _ BitBltCanvas onForm: Display.
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
+c drawString: 'Hola' at: 10@10 font: f color: Color random.
+c drawUtf8: #[208 176 208 177 208 178 208 179 208 180 208 181 209 145 208 182 208 183 208 184 208 185 208 186 208 187 208 188 208 189 208 190 209 143 209 142 209 141 209 140 209 139 209 138 209 137 209 136 209 135 209 134 209 133 209 132 209 131 209 130 209 129 209 128 208 191] at: 10@100 font: f color: Color random.
+c drawUtf8:  #[208 146 208 190 209 130 32 208 184 208 183 32 208 181 208 189 32 208 184 208 179 208 183 208 176 208 188 208 191 208 187 32 208 190 209 132 32 208 181 208 189 32 208 152 208 189 208 179 208 187 208 184 209 136 32 209 130 208 181 208 186 209 129 209 130 32 209 128 208 184 209 130 208 189 32 208 184 208 189 32 208 180 32 208 161 208 184 209 128 208 184 208 187 208 184 208 186 32 208 176 208 187 209 132 208 176 208 177 208 181 209 130 63]  at: 10@200 font: f color: Color random.
+c drawString: 'año' at: 10@300 font: f color: Color random.
+c drawUtf8:  #[97 195 177 111 ]  at: 10@400 font: f color: Color random.
+Display forceToScreen
+	"
+
+	| p font |
+
+	p _ (currentTransformation transform: aPoint) rounded.
+	engine colorMap: nil.
+	font _ aTrueTypeFont ifNil: [ AbstractFont default ].
+	^ engine
+		displayUtf8: aByteArray
+		at: p
+		trueTypeFont: font
+		color: aColor! !
+
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 3/25/2020 18:38:42'!
+exampleAll
+	"
+	BitBltCanvas exampleAll
+	"
+	self exampleCyrillic.
+	self exampleGreek.
+	self exampleArmenian.
+	self exampleGeorgian.
+	self exampleArabic.
+	self exampleHebrew.! !
+
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 3/25/2020 18:39:54'!
+exampleArabic
+"
+BitBltCanvas exampleArabic
+"
+| c f |
+c _ BitBltCanvas onForm: Display.
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+c drawUtf8:  #[217 131 217 132 32 216 163 217 136 216 179 216 185 32 216 167 217 132 216 170 217 134 216 167 216 178 217 132 217 138 32 217 129 216 181 217 132 44 32 217 133 216 185 32 216 185 217 133 217 132 217 138 216 169 32 216 167 217 132 216 180 216 177 217 130 217 138 32 216 167 217 134 216 170 216 168 216 167 217 135 32 217 138 217 131 217 134 44 32 216 185 217 132 32 216 168 216 173 217 130 32 216 171 217 133 217 145 216 169 32 217 136 216 173 217 132 217 129 216 167 216 164 217 135 216 167 46 32 217 133 216 185 32 216 182 216 177 216 168 32 216 175 217 129 217 145 216 169 32 216 180 216 177 216 179 216 169 32 216 167 217 132 216 181 217 129 216 173 216 167 216 170 44 32 217 133 216 179 216 164 217 136 217 132 217 138 216 169 32 216 167 217 132 216 177 216 168 217 138 216 185 216 140 32 217 132 216 168 217 136 217 132 217 134 216 175 216 167 216 140 32 217 136 216 170 217 133 32 217 130 216 175 46 32 216 174 216 183 217 145 216 169 32 217 132 217 133 216 173 216 167 217 131 217 133 32 217 136 216 181 217 132 32 217 129 217 138 44 32 217 136 217 129 217 134 217 132 217 134 216 175 216 167 32 216 167 217 132 216 165 217 134 216 178 216 167 217 132 32 216 167 217 132 217 133 216 170 216 167 216 174 217 133 216 169 32 216 185 217 134 32 216 173 217 138 216 171 46 32 216 167 217 132 217 137 32 217 135 216 167 217 133 216 180 32 216 167 217 132 217 138 216 167 216 168 216 167 217 134 32 217 132 217 133 46 32 216 170 216 183 217 136 217 138 216 177 32 217 129 217 135 216 177 216 179 216 170 32 217 132 217 133 32 217 129 216 185 217 132 46 32 216 175 217 134 217 136 32 216 167 217 132 216 185 216 179 217 131 216 177 217 138 32 217 136 217 133 216 183 216 167 217 132 216 168 216 169 32 216 168 217 132 44 32 217 133 217 132 217 138 217 136 217 134 32 217 136 216 168 216 167 216 179 216 170 216 171 217 134 216 167 216 161 32 217 133 216 185 32 216 175 217 136 217 134 44 32 217 133 217 134 32 217 133 217 131 217 134 32 216 165 216 168 217 145 216 167 217 134 32 216 167 217 132 216 172 217 134 217 136 216 168 217 138 46 32 216 168 217 128 32 217 133 216 167 216 176 216 167 32 216 163 217 136 216 177 216 167 217 130 217 135 217 133 32 216 173 217 138 216 171 44 32 217 131 216 167 217 134 32 216 170 217 133 32 216 179 216 167 216 168 217 130 32 217 133 217 131 217 145 217 134 32 216 167 217 132 216 179 217 138 216 161 44 32 216 163 216 179 216 177 32 217 129 217 135 216 177 216 179 216 170 32 216 167 217 132 216 179 216 167 216 175 216 179 32 216 167 217 132 216 165 216 173 216 170 217 129 216 167 216 184 32 217 136 46]  at: 10@170 font: f color: Color random. Display forceToScreen.! !
+
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 3/25/2020 18:39:40'!
+exampleArmenian
+"
+BitBltCanvas exampleArmenian
+"
+| c f |
+c _ BitBltCanvas onForm: Display.
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+c drawUtf8:  #[213 172 213 184 213 188 213 165 213 180 32 213 171 213 186 213 189 213 184 214 130 213 180 32 213 164 213 184 213 172 213 184 213 188 32 213 189 213 171 213 169 32 213 161 213 180 213 165 213 169 44 32 214 132 213 184 214 130 213 161 213 165 214 132 213 184 214 130 213 165 32 213 165 213 184 214 130 213 171 213 189 213 180 213 184 213 164 32 213 188 213 165 213 186 213 184 214 130 213 164 213 171 213 161 213 188 213 165 32 213 184 214 130 213 169 32 213 189 213 171 213 169 46 32 213 190 213 165 213 188 213 184 32 213 188 213 165 214 134 213 184 213 188 213 180 213 171 213 164 213 161 213 182 213 189 32 213 174 213 184 214 130 32 213 189 213 171 213 169 44 32 213 164 213 165 213 162 213 165 213 169 32 213 186 213 165 213 188 214 134 213 165 213 174 213 169 213 184 32 213 189 213 161 213 172 213 184 214 130 213 169 213 161 213 169 213 184 214 130 213 189 32 213 165 213 169 32 213 174 213 184 214 130 213 180 44 32 213 176 213 161 213 189 32 213 169 213 188 213 171 213 169 213 161 213 182 213 171 32 213 182 213 184 213 182 213 184 214 130 213 180 213 165 213 189 32 213 182 213 165 46 32 213 180 213 165 213 171 32 213 182 213 184 32 213 189 213 184 213 172 213 184 214 130 213 169 213 161 32 213 172 213 161 213 162 213 184 213 188 213 165 213 189 32 213 184 213 180 213 171 213 169 213 169 213 161 213 180 44 32 213 165 213 173 32 213 163 213 188 213 161 213 165 213 174 213 184 32 213 164 213 165 214 134 213 171 213 182 213 171 213 169 213 171 213 184 213 182 213 165 213 189 32 213 176 213 161 213 189 44 32 213 165 213 161 32 213 180 213 165 213 172 32 214 132 213 184 214 130 213 171 213 189 32 213 182 213 171 213 189 213 172 32 213 161 213 189 213 189 213 184 214 130 213 180 46 32 213 171 213 182 32 213 161 213 180 213 165 213 169 32 213 182 213 165 213 180 213 184 213 188 213 165 32 213 184 214 130 213 189 213 184 214 130 46 32 213 165 213 188 213 161 213 169 32 213 171 213 184 214 130 213 190 213 161 213 188 213 165 213 169 32 213 165 213 161 32 213 189 213 165 213 164 44 32 213 176 213 161 213 189 32 213 161 213 172 213 171 213 161 32 214 132 213 184 214 130 213 161 213 165 214 132 213 184 214 130 213 165 32 213 174 213 184 213 188 213 186 213 184 213 188 213 161 32 213 161 213 164 46 32 213 165 213 184 213 189 32 214 134 213 161 213 189 213 169 213 171 213 164 213 171 213 171 32 213 164 213 165 214 134 213 171 213 182 213 171 213 169 213 171 213 184 213 182 213 165 213 180 32 213 182 213 165 46]  at: 10@90 font: f color: Color random. Display forceToScreen.! !
+
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 3/25/2020 18:39:24'!
+exampleCyrillic
+"
+BitBltCanvas exampleCyrillic
+"
+| c f |
+c _ BitBltCanvas onForm: Display.
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+c drawUtf8:  #[208 155 208 190 209 128 208 181 208 188 32 208 184 208 191 209 129 209 131 208 188 32 208 180 208 190 208 187 208 190 209 128 32 209 129 208 184 209 130 32 208 176 208 188 208 181 209 130 44 32 208 180 208 181 208 177 208 181 209 130 32 209 129 208 176 208 187 209 131 209 130 208 176 208 189 208 180 208 184 32 208 188 208 181 208 184 32 208 181 208 184 46 32 208 144 208 189 32 209 133 208 184 209 129 32 208 179 209 128 208 176 208 181 209 134 208 181 32 209 131 209 130 208 176 208 188 209 131 209 128 32 208 180 208 190 208 187 208 190 209 128 209 131 208 188 44 32 208 187 208 190 209 128 208 181 208 188 32 208 191 209 128 208 184 208 189 209 134 208 184 208 191 208 181 209 129 32 208 188 208 190 208 187 208 181 209 129 209 130 208 184 208 176 208 181 32 208 180 209 131 208 190 32 208 184 208 189 46 32 208 149 208 184 32 208 188 208 190 208 178 208 181 209 130 32 208 189 208 190 209 129 209 130 209 128 208 190 32 208 190 208 191 209 130 208 184 208 190 208 189 32 208 189 208 176 208 188 44 32 208 181 208 190 209 129 32 208 181 208 191 208 184 209 134 209 131 209 128 208 184 32 208 190 208 188 208 184 209 130 209 130 208 176 208 189 209 130 209 131 209 128 32 209 131 209 130 46 32 208 163 209 130 32 208 188 209 131 208 189 208 181 209 128 208 181 32 208 187 208 176 208 177 208 190 209 128 208 181 32 208 184 208 189 209 130 208 181 208 187 208 187 208 181 208 179 208 181 208 177 208 176 209 130 32 209 131 209 129 209 131 44 32 208 181 208 176 32 209 129 208 181 208 180 32 208 180 208 181 208 177 208 181 209 130 32 208 187 209 131 208 191 209 130 208 176 209 130 209 131 208 188 44 32 208 178 208 184 208 180 208 184 209 130 32 208 184 208 187 208 187 209 131 208 180 32 208 184 209 131 208 180 208 184 209 134 208 190 32 209 143 209 131 208 190 32 209 131 209 130 46]   at: 10@10 font: f color: Color random. Display forceToScreen.! !
+
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 3/25/2020 18:36:15'!
+exampleGeorgian
+"
+BitBltCanvas exampleGeorgian
+"
+| c f |
+c _ BitBltCanvas onForm: Display.
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+c drawUtf8:  #[225 131 154 225 131 157 225 131 160 225 131 148 225 131 155 32 225 131 152 225 131 164 225 131 161 225 131 163 225 131 155 32 225 131 147 225 131 157 225 131 154 225 131 157 225 131 160 32 225 131 161 225 131 152 225 131 151 32 225 131 144 225 131 155 225 131 148 225 131 151 44 32 225 131 167 225 131 163 225 131 157 32 225 131 163 225 131 151 32 225 131 147 225 131 152 225 131 170 225 131 144 225 131 151 32 225 131 144 225 131 154 225 131 152 225 131 167 225 131 163 225 131 152 225 131 147 44 32 225 131 144 225 131 147 32 225 131 154 225 131 152 225 131 145 225 131 160 225 131 152 225 131 161 32 225 131 170 225 131 148 225 131 151 225 131 148 225 131 160 225 131 157 225 131 161 32 225 131 160 225 131 148 225 131 164 225 131 160 225 131 148 225 131 176 225 131 148 225 131 156 225 131 147 225 131 163 225 131 156 225 131 151 32 225 131 148 225 131 161 225 131 151 46 32 225 131 154 225 131 148 225 131 146 225 131 148 225 131 160 225 131 148 32 225 131 170 225 131 157 225 131 160 225 131 164 225 131 157 225 131 160 225 131 144 32 225 131 148 225 131 164 225 131 164 225 131 152 225 131 170 225 131 152 225 131 144 225 131 156 225 131 151 225 131 163 225 131 160 32 225 131 144 225 131 151 32 225 131 148 225 131 144 225 131 155 44 32 225 131 156 225 131 157 32 225 131 167 225 131 163 225 131 144 225 131 161 32 225 131 155 225 131 148 225 131 156 225 131 144 225 131 156 225 131 147 225 131 160 225 131 152 32 225 131 160 225 131 148 225 131 164 225 131 148 225 131 160 225 131 160 225 131 148 225 131 156 225 131 151 225 131 163 225 131 160 32 225 131 167 225 131 163 225 131 152 46 32 225 131 151 225 131 148 32 225 131 164 225 131 163 225 131 151 225 131 148 225 131 156 225 131 151 32 225 131 155 225 131 157 225 131 154 225 131 154 225 131 152 225 131 161 32 225 131 170 225 131 148 225 131 151 225 131 148 225 131 160 225 131 157 225 131 161 32 225 131 149 225 131 152 225 131 161 46 32 225 131 149 225 131 152 225 131 155 32 225 131 147 225 131 148 225 131 156 225 131 152 225 131 167 225 131 163 225 131 148 32 225 131 149 225 131 152 225 131 149 225 131 148 225 131 156 225 131 147 225 131 163 225 131 155 32 225 131 151 225 131 176 225 131 148 225 131 157 225 131 164 225 131 176 225 131 160 225 131 144 225 131 161 225 131 151 225 131 163 225 131 161 32 225 131 148 225 131 174 44 32 225 131 148 225 131 144 32 225 131 176 225 131 144 225 131 161 32 225 131 149 225 131 157 225 131 154 225 131 163 225 131 155 225 131 163 225 131 161 32 225 131 164 225 131 144 225 131 161 225 131 151 225 131 152 225 131 147 225 131 152 225 131 152 32 225 131 147 225 131 148 225 131 161 225 131 148 225 131 160 225 131 163 225 131 156 225 131 151 46 32 225 131 148 225 131 174 32 225 131 157 225 131 164 225 131 164 225 131 152 225 131 170 225 131 152 225 131 152 225 131 161 32 225 131 151 225 131 157 225 131 160 225 131 167 225 131 163 225 131 144 225 131 151 225 131 157 225 131 161 32 225 131 155 225 131 148 225 131 152 44 32 225 131 147 225 131 157 225 131 170 225 131 151 225 131 163 225 131 161 32 225 131 149 225 131 152 225 131 149 225 131 148 225 131 156 225 131 147 225 131 163 225 131 155 32 225 131 152 225 131 156 32 225 131 167 225 131 163 225 131 157 46 32 225 131 161 225 131 163 225 131 155 225 131 155 225 131 157 32 225 131 151 225 131 160 225 131 144 225 131 170 225 131 151 225 131 144 225 131 151 225 131 157 225 131 161 32 225 131 148 225 131 152 32 225 131 152 225 131 163 225 131 161 44 32 225 131 163 225 131 151 32 225 131 157 225 131 155 225 131 156 225 131 148 225 131 161 32 225 131 149 225 131 152 225 131 160 225 131 151 225 131 163 225 131 151 225 131 148 32 225 131 147 225 131 148 225 131 151 225 131 160 225 131 144 225 131 174 225 131 152 225 131 151 46]  at: 10@130 font: f color: Color random. Display forceToScreen.! !
+
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 3/25/2020 18:39:31'!
+exampleGreek
+"
+BitBltCanvas exampleGreek
+"
+| c f |
+c _ BitBltCanvas onForm: Display.
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+c drawUtf8:  #[206 155 206 191 207 129 206 181 206 188 32 206 185 207 128 207 131 206 184 206 188 32 206 180 206 191 206 187 206 191 207 129 32 207 131 206 185 207 132 32 206 177 206 188 206 181 207 132 44 32 206 188 206 191 206 180 206 191 32 118 206 181 206 189 206 185 206 177 206 188 32 118 206 185 206 180 206 181 207 129 206 181 207 129 32 206 185 206 189 32 99 206 184 206 188 44 32 206 181 206 190 32 206 177 206 184 207 132 206 181 206 188 32 206 188 206 177 206 187 206 185 207 131 32 206 191 207 134 207 134 206 181 206 189 206 180 206 185 207 132 32 206 181 207 131 207 132 46 32 206 153 206 180 32 207 132 206 191 206 187 206 187 206 185 207 132 32 207 131 206 184 207 131 99 206 185 207 128 206 185 207 132 32 207 131 206 177 206 187 206 184 207 132 206 177 207 132 206 184 207 131 32 113 206 184 206 185 44 32 99 206 184 32 113 206 184 206 177 206 189 206 180 206 191 32 207 128 207 129 206 191 207 128 207 129 206 185 206 177 206 181 32 206 185 206 188 207 128 206 181 207 129 206 180 206 185 206 181 207 132 32 118 206 181 206 187 44 32 206 188 206 181 206 177 32 206 181 207 132 32 206 181 207 129 207 129 206 181 206 188 32 206 179 206 187 206 191 207 129 206 185 206 177 207 132 206 184 207 129 46 32 206 149 206 190 206 181 207 129 99 206 185 32 206 180 206 181 207 134 206 185 206 189 206 185 207 132 206 185 206 191 206 189 206 181 206 188 32 206 188 206 181 206 187 32 206 181 206 177 46 32 206 149 206 190 32 207 131 206 181 206 177 32 206 181 206 187 206 185 207 132 32 206 180 206 185 207 131 207 131 206 181 206 189 207 132 206 185 206 181 207 132 44 32 206 188 206 177 206 187 206 185 207 131 32 207 132 207 129 206 185 207 132 206 177 206 189 206 185 32 118 206 185 207 131 32 206 185 206 180 46]  at: 10@50 font: f color: Color random. Display forceToScreen.! !
+
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 3/25/2020 18:40:00'!
+exampleHebrew
+"
+BitBltCanvas exampleHebrew
+"
+| c f |
+c _ BitBltCanvas onForm: Display.
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+c drawUtf8:  #[215 162 215 156 32 215 158 215 144 215 158 215 168 32 215 150 215 167 215 149 215 167 32 215 169 215 147 215 168 215 149 215 170 32 215 144 215 168 215 165 44 32 215 148 215 158 215 156 215 166 215 170 32 215 158 215 147 215 149 215 153 215 167 215 153 215 157 32 215 169 215 155 215 156 32 215 169 215 156 44 32 215 162 215 153 215 166 215 149 215 145 32 215 160 215 153 215 149 215 149 215 152 32 215 169 215 153 215 170 215 149 215 164 215 153 215 170 32 215 162 215 149 215 147 32 215 145 46 32 215 161 215 147 215 168 32 215 144 215 149 32 215 168 215 164 215 149 215 144 215 148 32 215 169 215 153 215 158 215 149 215 169 215 153 32 215 158 215 149 215 162 215 158 215 147 215 153 215 157 46 32 215 148 215 153 215 144 32 215 164 215 153 215 161 215 153 215 167 215 148 32 215 148 215 146 215 168 215 164 215 153 215 157 32 215 169 215 153 215 158 215 149 215 169 215 153 215 153 215 157 32 215 169 215 156 46 32 215 169 215 155 215 156 32 215 162 215 156 32 215 162 215 150 215 168 215 148 32 215 156 215 148 215 164 215 149 215 154 32 215 144 215 149 215 149 215 153 215 168 215 149 215 160 215 144 215 149 215 152 215 153 215 167 215 148 44 32 215 144 215 160 215 144 32 215 144 215 170 32 215 162 215 150 215 168 215 148 32 215 156 215 158 215 160 215 149 215 162 32 215 156 215 158 215 151 215 153 215 167 215 148 46]  at: 10@210 font: f color: Color random. Display forceToScreen.
+Display forceToScreen! !
 VectorCanvas initialize!
 TTFontDescription initialize!

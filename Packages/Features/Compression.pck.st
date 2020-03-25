@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4048] on 26 February 2020 at 1:51:33 pm'!
+'From Cuis 5.0 [latest update: #4074] on 25 March 2020 at 6:51:37 pm'!
 'Description '!
-!provides: 'Compression' 1 24!
+!provides: 'Compression' 1 25!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -4580,7 +4580,7 @@ serviceBrowseMCZCode
 			argumentGetter: [ :fileList |
 				fileList selectedFileEntry ]! !
 
-!ChangeList class methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:31'!
+!ChangeList class methodsFor: '*Compression' stamp: 'jmv 3/24/2020 11:14:52'!
 browseMCZContents: aFileEntry
 	"Browse the selected file."
 	|  unzipped changeList fullName packageFile pkName |
@@ -4611,7 +4611,7 @@ browseMCZContents: aFileEntry
 			text: 'method no longer in package: ', methodReference stringVersion ].
 	packageFile classesToRemove do: [ :clsName |
 		changeList
-			addItem: (ClassDeletionChangeRecord new clsName: clsName)
+			addItem: (ClassDeletionChangeRecord new className: clsName)
 			text: 'class no longer in package: ', clsName ].
 	changeList clearSelections.
 	ChangeListWindow open: changeList label: aFileEntry pathName! !
@@ -4750,22 +4750,15 @@ compressFile
 			self close ].
 	 ^zipped! !
 
-!CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'pb 5/25/2016 01:31'!
+!CodeFileBrowserWindow class methodsFor: '*Compression' stamp: 'jmv 3/24/2020 11:20:46'!
 browseMCZFile: aFileEntry
 
-	| codeFile organizer browser unzipped |
-	organizer _ SystemOrganizer defaultList: Array new.
+	| codeFile unzipped |
 	aFileEntry readStreamDo: [ :stream |
 		unzipped _ stream asUnZippedStream: 'snapshot/source.st'.
 		unzipped ascii.
 		codeFile _ (CodeFile new fullName: aFileEntry pathName; buildFrom: unzipped) ].
-	organizer 
-		classifyAll: codeFile classes keys 
-		under: codeFile name.
-	(browser _ CodeFileBrowser new)
-		systemOrganizer: organizer;
-		codeFile: codeFile.
-	CodeFileBrowserWindow open: browser label: nil! !
+	CodeFileBrowser browseCodeFileEntry: codeFile! !
 
 !CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 10/2/2015 16:55'!
 browseMCZCode: aFileEntry
