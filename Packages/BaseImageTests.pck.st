@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4064] on 9 March 2020 at 1:59:31 pm'!
-'Description Avoid changing selectors when they do not belong to Smalltalk Compiler like OMeta2'!
-!provides: 'BaseImageTests' 1 206!
+'From Cuis 5.0 [latest update: #4074] on 29 March 2020 at 5:08:15 pm'!
+'Description Add a test for the Extract Method refactoring: optimized selector case'!
+!provides: 'BaseImageTests' 1 207!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -17616,6 +17616,21 @@ test30ItIsPossibleToExtractAQuotedExpression
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '`3 + 4`'.
+	originalCode _ 'm1 ^ ' , codeToExtract.
+	newMethodCode _ 'm2
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1 ^ self m2'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 3/29/2020 16:50:16'!
+test31ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNotASimpleLiteral
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '2 factorial ifNotNil: [ #boo ]'.
 	originalCode _ 'm1 ^ ' , codeToExtract.
 	newMethodCode _ 'm2
 
