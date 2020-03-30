@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4064] on 9 March 2020 at 1:59:31 pm'!
-'Description Avoid changing selectors when they do not belong to Smalltalk Compiler like OMeta2'!
-!provides: 'BaseImageTests' 1 206!
+'From Cuis 5.0 [latest update: #4085] on 30 March 2020 at 3:21:21 pm'!
+'Description Temporary definition AST node tests'!
+!provides: 'BaseImageTests' 1 207!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -12584,6 +12584,44 @@ testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
 	
 	
 	! !
+
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:39:16'!
+testItGeneratesATempDeclarationNodeForEachTempInABlock
+
+	| methodNode blockNode tempsDeclarationNode allTempDeclarationNodes |
+	methodNode := self class methodNodeFor: 'm1 [ | a b c | 42 ]'.
+	blockNode := methodNode block statements first.
+	tempsDeclarationNode := blockNode temporariesDeclaration.
+	allTempDeclarationNodes := tempsDeclarationNode temporaryDeclarationNodes.
+	
+	self
+		assert: allTempDeclarationNodes size equals: 3;
+		assert: allTempDeclarationNodes first variableName equals: 'a';
+		assert: allTempDeclarationNodes second variableName equals: 'b';
+		assert: allTempDeclarationNodes third variableName equals: 'c'.! !
+
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:38:08'!
+testItGeneratesATempDeclarationNodeForEachTempInAMethod
+
+	| methodNode tempsDeclarationNode allTempDeclarationNodes |
+	methodNode := self class methodNodeFor: 'm1 | a b c | ^a + b + c'.
+	tempsDeclarationNode := methodNode temporariesDeclaration.
+	allTempDeclarationNodes := tempsDeclarationNode temporaryDeclarationNodes.
+	
+	self
+		assert: allTempDeclarationNodes size equals: 3;
+		assert: allTempDeclarationNodes first variableName equals: 'a';
+		assert: allTempDeclarationNodes second variableName equals: 'b';
+		assert: allTempDeclarationNodes third variableName equals: 'c'.! !
+
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:34:19'!
+testItGeneratesAnEmptyTempsDeclarationNodeForAMethodWithoutTemps
+
+	| methodNode tempsDeclarationNode |
+	methodNode := self class methodNodeFor: 'm1 ^42'.
+	tempsDeclarationNode := methodNode temporariesDeclaration.
+	
+	self assert: tempsDeclarationNode allDeclaredVariableNodes isEmpty.! !
 
 !PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:39'!
 test1
