@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4083] on 30 March 2020 at 4:10:59 pm'!
-'Description Revert tests of Temporary definition AST node tests'!
-!provides: 'BaseImageTests' 1 208!
+'From Cuis 5.0 [latest update: #4092] on 30 March 2020 at 5:39:41 pm'!
+'Description Temporary definition AST node tests + Add a test for the Extract Method refactoring: optimized selector case + test06ScanClassRenamedChange fix + Autocomplete tests'!
+!provides: 'BaseImageTests' 1 214!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -877,12 +877,22 @@ WorldTest class
 
 !classDefinition: #SmalltalkCompleterTest category: #'BaseImageTests-Tools-Autocompletion'!
 TestCase subclass: #SmalltalkCompleterTest
+	instanceVariableNames: 'instanceVariable1 classToBrowse selectorToBrowse'
+	classVariableNames: 'ClassVariableForTesting'
+	poolDictionaries: 'poolDictionaryForTesting'
+	category: 'BaseImageTests-Tools-Autocompletion'!
+!classDefinition: 'SmalltalkCompleterTest class' category: #'BaseImageTests-Tools-Autocompletion'!
+SmalltalkCompleterTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DynamicTypingSmalltalkCompleterTest category: #'BaseImageTests-Tools-Autocompletion'!
+SmalltalkCompleterTest subclass: #DynamicTypingSmalltalkCompleterTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Autocompletion'!
-!classDefinition: 'SmalltalkCompleterTest class' category: #'BaseImageTests-Tools-Autocompletion'!
-SmalltalkCompleterTest class
+!classDefinition: 'DynamicTypingSmalltalkCompleterTest class' category: #'BaseImageTests-Tools-Autocompletion'!
+DynamicTypingSmalltalkCompleterTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #TaskbarTest category: #'BaseImageTests-Tools-Taskbar'!
@@ -12585,6 +12595,44 @@ testRangesAreOkWhenReturningAVariableWithoutSpaceAfterThat
 	
 	! !
 
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:39:16'!
+testItGeneratesATempDeclarationNodeForEachTempInABlock
+
+	| methodNode blockNode tempsDeclarationNode allTempDeclarationNodes |
+	methodNode := self class methodNodeFor: 'm1 [ | a b c | 42 ]'.
+	blockNode := methodNode block statements first.
+	tempsDeclarationNode := blockNode temporariesDeclaration.
+	allTempDeclarationNodes := tempsDeclarationNode temporaryDeclarationNodes.
+	
+	self
+		assert: allTempDeclarationNodes size equals: 3;
+		assert: allTempDeclarationNodes first variableName equals: 'a';
+		assert: allTempDeclarationNodes second variableName equals: 'b';
+		assert: allTempDeclarationNodes third variableName equals: 'c'.! !
+
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:38:08'!
+testItGeneratesATempDeclarationNodeForEachTempInAMethod
+
+	| methodNode tempsDeclarationNode allTempDeclarationNodes |
+	methodNode := self class methodNodeFor: 'm1 | a b c | ^a + b + c'.
+	tempsDeclarationNode := methodNode temporariesDeclaration.
+	allTempDeclarationNodes := tempsDeclarationNode temporaryDeclarationNodes.
+	
+	self
+		assert: allTempDeclarationNodes size equals: 3;
+		assert: allTempDeclarationNodes first variableName equals: 'a';
+		assert: allTempDeclarationNodes second variableName equals: 'b';
+		assert: allTempDeclarationNodes third variableName equals: 'c'.! !
+
+!ParserTest methodsFor: 'temporary variables tests' stamp: 'RNG 3/13/2020 00:34:19'!
+testItGeneratesAnEmptyTempsDeclarationNodeForAMethodWithoutTemps
+
+	| methodNode tempsDeclarationNode |
+	methodNode := self class methodNodeFor: 'm1 ^42'.
+	tempsDeclarationNode := methodNode temporariesDeclaration.
+	
+	self assert: tempsDeclarationNode allDeclaredVariableNodes isEmpty.! !
+
 !PrettyPrintingTest methodsFor: 'testing' stamp: 'jmv 4/19/2014 17:39'!
 test1
 	"
@@ -14865,6 +14913,770 @@ testMessages
 	fromUCompleter _ Symbol allInstances select: [ :s |
 		SmalltalkCompleter isThereAnImplementorOf: s].
 	self assert: fromSmalltalk = fromUCompleter asSet! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test000_AutocompletesMessagesFor_GlobalVariables_WithSelectorsFromTheirClasses
+	
+	self
+		assertEntriesWhenBrowsing: 'SmalltalkCompleterTest '
+		areSelectorsOf: SmalltalkCompleterTest class.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + SmalltalkCompleterTest '
+		areUnaryAndBinarySelectorsOf: SmalltalkCompleterTest class.
+	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test001_AutocompletesMessagesFor_Self_WithSelectorsFromTheBrowsedClass
+	
+	self
+		assertEntriesWhenBrowsing: 'self '
+		areSelectorsOf: SmalltalkCompleterTest.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + self '
+		areUnaryAndBinarySelectorsOf: SmalltalkCompleterTest.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test002_AutocompletesMessagesFor_Super_WithSelectorsFromTheBrowsedClass
+	
+	self
+		assertEntriesWhenBrowsing: 'super '
+		areSelectorsOf: TestCase.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + super '
+		areUnaryAndBinarySelectorsOf: TestCase.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:38:00'!
+test003_AutocompletesMessagesFor_Super_WithSelectorsForUnknownClassesWhenTheBrowsedClassDoesNotHaveASuperclass
+	
+	self browseClass: ProtoObject.
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'super '.
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '1 + super '.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test004_AutocompletesMessagesFor_True_WithSelectorsFromTrue
+	
+	self
+		assertEntriesWhenBrowsing: 'true '
+		areSelectorsOf: True.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + true '
+		areUnaryAndBinarySelectorsOf: True.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test005_AutocompletesMessagesFor_False_WithSelectorsFromFalse
+	
+	self
+		assertEntriesWhenBrowsing: 'false '
+		areSelectorsOf: False.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + false '
+		areUnaryAndBinarySelectorsOf: False.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test006_AutocompletesMessagesFor_Nil_WithSelectorsFromUndefinedObject
+	
+	self
+		assertEntriesWhenBrowsing: 'nil '
+		areSelectorsOf: UndefinedObject.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + nil '
+		areUnaryAndBinarySelectorsOf: UndefinedObject.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:37:25'!
+test007_AutocompletesMessagesFor_Characters_WithSelectorsFromCharacter
+	
+	self
+		assertEntriesWhenBrowsing: '$a '
+		areSelectorsOf: Character.
+	
+	"Due to a (potential) parser bug, the binary message send range for this expression has type #$ instead of #binary,
+	 and thus it is not recognized as a binary message send. 
+	The following should've been self assertEntriesFor:areUnaryAndBinarySelectorsOf:.
+	NPM"
+	self
+		assertEntriesWhenBrowsing: '1 + $a '
+		areSelectorsOf: Character.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test008_AutocompletesMessagesFor_Numbers_WithSelectorsFromTheirClass
+	
+	self
+		assertEntriesWhenBrowsing: '1 '
+		areSelectorsOf: SmallInteger.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + 1 '
+		areUnaryAndBinarySelectorsOf: SmallInteger.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test009_AutocompletesMessagesFor_Strings_WithSelectorsFromString
+	
+	self
+		assertEntriesWhenBrowsing: '''a'' '
+		areSelectorsOf: String.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + ''a'' '
+		areUnaryAndBinarySelectorsOf: String.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:37:25'!
+test010_AutocompletesMessagesFor_Symbols_WithSelectorsFromSymbol
+	
+	self
+		assertEntriesWhenBrowsing: '#a '
+		areSelectorsOf: Symbol.
+		
+	"Due to a (potential) parser bug, the binary message send range for this expression has type #symbol instead of #binary,
+	 and thus it is not recognized as a binary message send. 
+	The following should've been self assertEntriesFor:areUnaryAndBinarySelectorsOf:.
+	NPM"
+	self
+		assertEntriesWhenBrowsing: '1 + #a '
+		areSelectorsOf: Symbol.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:37:25'!
+test011_AutocompletesMessagesFor_StringSymbol_WithSelectorsFromSymbol
+	
+	self
+		assertEntriesWhenBrowsing: '#''a'' '
+		areSelectorsOf: Symbol.
+	
+	"Due to a (potential) parser bug, the binary message send range for this expression has type #symbol instead of #binary,
+	 and thus it is not recognized as a binary message send. 
+	The following should've been self assertEntriesFor:areUnaryAndBinarySelectorsOf:.
+	NPM"
+	self
+		assertEntriesWhenBrowsing: '1 + #''a'' '
+		areSelectorsOf: Symbol.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:38:00'!
+test012_AutocompletesMessagesFor_InstanceVariables_WithSelectorsForUnknownClasses
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'instanceVariable1 '.
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '1 + instanceVariable1 '.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 19:44:13'!
+test013_AutocompletesMessagesFor_MethodArguments_WithSelectorsForUnknownClasses
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: 'm1: arg1 arg1 '.
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: 'm1: arg1 1 + arg1 '.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:38:00'!
+test014_AutocompletesMessagesFor_TemporaryVariables_WithSelectorsForUnknownClasses
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '|a| a '.
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '|a| 1 + a '.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:38:00'!
+test015_AutocompletesMessagesFor_BlockArguments_WithSelectorsForUnknownClasses
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '[ :a | a '.
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '[ :a | 1 + a '.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:38:00'!
+test016_AutocompletesMessagesFor_BlockTemporaryVariables_WithSelectorsForUnknownClasses
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '[ | a | a '.
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '[ | a | 1 + a '.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:34:08'!
+test017_AutocompletesMessagesFor_NilWorkspaceVariables_WithSelectorsForUnknownClasses
+	
+	self
+		assertEntriesAreSelectorsForUnknownClassesForWorkspaceWith: 'x '
+		binding: 'x'
+		to: nil.
+	
+	self
+		assertEntriesAreSelectorsForUnknownClassesForWorkspaceWith: '1 + x '
+		binding: 'x'
+		to: nil.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:53:41'!
+test017_AutocompletesMessagesFor_NonNilWorkspaceVariables_WithSelectorsFromTheirClasses
+	
+	self
+		assertEntriesForWorkspaceWith: 'x '
+		binding: 'x'
+		to: 1
+		areSelectorsOf: SmallInteger.
+		
+	self
+		assertEntriesForWorkspaceWith: '1 + x '
+		binding: 'x'
+		to: 1
+		areUnaryAndBinarySelectorsOf: SmallInteger.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test018_AutocompletesMessagesFor_ThisContext_WithSelectorsFromMethodContext
+	
+	self
+		assertEntriesWhenBrowsing: 'thisContext '
+		areSelectorsOf: MethodContext.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + thisContext '
+		areUnaryAndBinarySelectorsOf: MethodContext.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test019_AutocompletesMessagesFor_ClassVariables_WithSelectorsFromTheirClasses
+	
+	ClassVariableForTesting _ 1.
+		
+	self
+		assertEntriesWhenBrowsing: 'ClassVariableForTesting '
+		areSelectorsOf: SmallInteger.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + ClassVariableForTesting '
+		areUnaryAndBinarySelectorsOf: SmallInteger.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:51:28'!
+test020_AutocompletesMessagesFor_PoolConstants_WithSelectorsFromTheirClasses
+	
+	poolDictionaryForTesting at: #X put: 1.
+	
+	self
+		assertEntriesWhenBrowsing: 'X '
+		areSelectorsOf: SmallInteger.
+	
+	self
+		assertEntriesWhenBrowsing: '1 + X '
+		areUnaryAndBinarySelectorsOf: SmallInteger.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:37:25'!
+test021_AutocompletesMessagesFor_BlockEndings_WithSelectorsFromBlockClosure
+	
+	self
+		assertEntriesWhenBrowsing: '[] '
+		areSelectorsOf: BlockClosure.
+		
+	"Due to a (potential) parser bug, the binary message send range for this expression has type #blockStart instead of #binary,
+	 and thus it is not recognized as a binary message send. 
+	The following should've been self assertEntriesFor:areUnaryAndBinarySelectorsOf:.
+	NPM"
+	self
+		assertEntriesWhenBrowsing: '1 + [] '
+		areSelectorsOf: BlockClosure.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:37:25'!
+test022_AutocompletesMessagesFor_ArrayEnds_WithSelectorsFromArray
+	
+	self
+		assertEntriesWhenBrowsing: '#() '
+		areSelectorsOf: Array.
+		
+	"Due to a (potential) parser bug, the binary message send range for this expression has type #arrayStart instead of #binary,
+	 and thus it is not recognized as a binary message send. 
+	The following should've been self assertEntriesFor:areUnaryAndBinarySelectorsOf:.
+	NPM"
+	self
+		assertEntriesWhenBrowsing: '1 + #() '
+		areSelectorsOf: Array.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:37:25'!
+test023_AutocompletesMessagesFor_RightBraces_WithSelectorsFromArray
+	
+	self
+		assertEntriesWhenBrowsing: '{} '
+		areSelectorsOf: Array.
+		
+	"Due to a (potential) parser bug, the binary message send range for this expression has type #leftBrace instead of #binary,
+	 and thus it is not recognized as a binary message send. 
+	The following should've been self assertEntriesFor:areUnaryAndBinarySelectorsOf:.
+	NPM"
+	self
+		assertEntriesWhenBrowsing: '1 + {} '
+		areSelectorsOf: Array.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:18'!
+test023_DoesNotSupportAutocompletingMessagesFor_UnaryMessages
+	
+	self denyComputingEntriesIsSupportedWhenBrowsing: 'self class '.
+		
+	self denyComputingEntriesIsSupportedWhenBrowsing: '1 + self class '.	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:18'!
+test024_DoesNotSupportAutocompletingMessagesFor_RightParenthesis
+	
+	self denyComputingEntriesIsSupportedWhenBrowsing: '(1) '.
+		
+	self denyComputingEntriesIsSupportedWhenBrowsing: '1 + (1) '.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:38:00'!
+test025_AutocompletesMessagesFor_UnknownIdentifiers_WithSelectorsForUnknownClasses
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'Foo1234 '.
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'foo1234 '.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:18'!
+test026_DoesNotSupportAutocompletingMessagesFor_CascadeSeparators
+	
+	self denyComputingEntriesIsSupportedWhenBrowsing: 'self class; '.
+	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:54'!
+test027_AutocompletesEntriesFor_GlobalVariables_WithIdentifiersBegginingWithThem
+	
+	self
+		assertEntriesWhenBrowsing: 'SmalltalkCompleterTest'
+		areIdentifiersBeginningWith: 'SmalltalkCompleterTest'.
+	! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:54'!
+test028_AutocompletesEntriesFor_PoolConstants_WithIdentifiersBegginingWithThem
+	
+	poolDictionaryForTesting at: #X put: 1.
+	
+	self
+		assertEntriesWhenBrowsing: 'X'
+		areIdentifiersBeginningWith: 'X'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 19:56:46'!
+test029_AutocompletesEntriesFor_WorkspaceVariables_WithIdentifiersBegginingWithThem
+	
+	| completer |
+	completer := self
+		autocompleteEntriesForWorkspaceWith: 'x'
+		binding: 'x'
+		to: 1. 
+		
+	self
+		assertEntriesOf: completer
+		areIdentifiersBeginningWith: 'x'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:54'!
+test030_AutocompletesEntriesFor_ClassVariables_WithIdentifiersBegginingWithThem
+	
+	ClassVariableForTesting _ 1.
+	
+	self
+		assertEntriesWhenBrowsing: 'ClassVariableForTesting'
+		areIdentifiersBeginningWith: 'ClassVariableForTesting'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:54'!
+test031_AutocompletesEntriesFor_InstanceVariables_WithIdentifiersBegginingWithThem
+	
+	self
+		assertEntriesWhenBrowsing: 'instanceVariable1'
+		areIdentifiersBeginningWith: 'instanceVariable1'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 20:25:15'!
+test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem
+	
+	| completer |
+	completer := self autocompleteEntriesBrowsingMethodWith: 'm1: arg1 arg1'.
+	
+	self
+		assert: completer
+		analizedSelectorsFrom: nil
+		canShowDocumentation: false
+		detectedPossibleInvalidSelector: #()
+		suggested: (completer computeIdentifierEntriesBeginningWith: 'arg1').! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:54'!
+test033_AutocompletesEntriesFor_TemporaryVariables_WithIdentifiersBegginingWithThem
+	
+	self
+		assertEntriesWhenBrowsing: '|x| x'
+		areIdentifiersBeginningWith: 'x'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:47:05'!
+test034_AutocompletesEntriesFor_BlockArguments_WithIdentifiersBegginingWithThem
+	
+	self
+		assertEntriesWhenBrowsing: '[ :x| x'
+		areIdentifiersBeginningWith: 'x'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:46:57'!
+test035_AutocompletesEntriesFor_BlockTemporaryVariables_WithIdentifiersBegginingWithThem
+	
+	self
+		assertEntriesWhenBrowsing: '[ | x | x'
+		areIdentifiersBeginningWith: 'x'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:46:46'!
+test036_AutocompletesEntriesFor_IncompleteIdentifiers_WithIdentifiersBegginingWithThem
+
+	self
+		assertEntriesWhenBrowsing: 'Obj'
+		areIdentifiersBeginningWith: 'Obj'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:39:54'!
+test037_AutocompletesEntriesFor_ReservedNames_WithIdentifiersBegginingWithThem
+
+	self assertEntriesWhenBrowsing: 'self' areIdentifiersBeginningWith: 'self'.
+	self assertEntriesWhenBrowsing: 'super' areIdentifiersBeginningWith: 'super'.
+	self assertEntriesWhenBrowsing: 'true' areIdentifiersBeginningWith: 'true'.
+	self assertEntriesWhenBrowsing: 'false' areIdentifiersBeginningWith: 'false'.
+	self assertEntriesWhenBrowsing: 'nil' areIdentifiersBeginningWith: 'nil'.
+	self assertEntriesWhenBrowsing: 'thisContext' areIdentifiersBeginningWith: 'thisContext'.! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 19:15:44'!
+test038_DoesNotAutocompleteEntriesFor_UndefinedIdentifiers
+
+	| completer |
+	completer := self createCompleterForBrowsing: 'a'.
+	
+	completer computeEntries.
+	
+	self denyHasEntries: completer ! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:55:09'!
+test039_AutocompletesEntriesFor_BinaryMessages_WithIdentifiersBegginingWithThem
+
+	self
+		assertEntriesWhenBrowsing: '1 ~='
+		areSelectorsOf: SmallInteger
+		beginningWith: '~='! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:55:09'!
+test040_AutocompletesEntriesFor_IncompleteBinaryMessages_WithIdentifiersBegginingWithThem
+
+	self
+		assertEntriesWhenBrowsing: '1 ~'
+		areSelectorsOf: SmallInteger
+		beginningWith: '~'! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:55:09'!
+test041_AutocompletesEntriesFor_UnaryMessages_WithIdentifiersBegginingWithThem
+
+	self
+		assertEntriesWhenBrowsing: '1 not'
+		areSelectorsOf: SmallInteger
+		beginningWith: 'not'! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:55:09'!
+test042_AutocompletesEntriesFor_IncompleteUnaryMessages_WithIdentifiersBegginingWithThem
+
+	self
+		assertEntriesWhenBrowsing: '1 no'
+		areSelectorsOf: SmallInteger
+		beginningWith: 'no'! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 18:55:09'!
+test043_AutocompletesEntriesFor_KeywordMessages_WithIdentifiersBegginingWithThem
+
+	self
+		assertEntriesWhenBrowsing: '1 at:'
+		areSelectorsOf: SmallInteger
+		beginningWith: 'at:'! !
+
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 20:01:33'!
+test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem
+
+	self class compile: 'firstKeyword: a secondKeyword: b'.
+	
+	self
+		assertEntriesWhenBrowsing: 'self firstKeyword:'
+		areSelectorsOf: SmalltalkCompleterTest
+		beginningWith: 'firstKeyword:'.! !
+
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'NPM 3/18/2020 20:37:11'!
+completerClass
+
+	^ SmalltalkCompleter! !
+
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'NPM 3/18/2020 19:17:52'!
+createCompleterForBrowsing: sourceCode 
+	
+	| browser model |
+	browser := Browser new.
+	browser systemCategoryListIndex: (browser systemCategoryList indexOf: (classToBrowse category)).
+	browser classListIndex: (browser classList indexOf: classToBrowse name).
+	
+	model := (PluggableTextModel on: browser) actualContents: sourceCode.
+
+	^ self createCompleterWith: model.! !
+
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'NPM 3/18/2020 19:17:59'!
+createCompleterForWorkspaceWith: sourceCode binding: aVariableName to: aValue
+	
+	| model |
+	model := Workspace withText: sourceCode.
+	(model bindingOf: aVariableName) value: aValue.
+	
+	^ self createCompleterWith: model! !
+
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'NPM 3/18/2020 20:37:18'!
+createCompleterWith: aModel
+	
+	^ self completerClass new
+		setModel: aModel;
+		changePositionTo: aModel actualContents size! !
+
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 3/30/2020 17:29:17'!
+firstKeyword: a secondKeyword: b! !
+
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 3/30/2020 17:29:17'!
+m1: arg1 arg1! !
+
+!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:13:43'!
+autocompleteEntriesBrowsing: sourceCode
+	
+	| completer |
+	completer := self createCompleterForBrowsing: sourceCode.
+	
+	completer computeEntries.
+	
+	^ completer! !
+
+!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:39:19'!
+autocompleteEntriesBrowsingMethodWith: sourceCode 
+	
+	| completer selector |
+	selector := self class compile: sourceCode.
+	completer := self createCompleterForBrowsing: sourceCode.
+	completer textProviderOrModel selectedMessageName: selector.
+	
+	completer computeEntries.
+	
+	^ completer! !
+
+!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:07:19'!
+autocompleteEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValue 
+	
+	| completer |
+	completer := self
+		createCompleterForWorkspaceWith: sourceCode
+		binding: aVariableName
+		to: aValue.
+		
+	completer computeEntries.
+	
+	^ completer! !
+
+!SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 18:32:34'!
+browseClass: aClass 
+	
+	classToBrowse _ aClass.! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+assert: aCompleter analizedSelectorsFrom: classes canShowDocumentation: aBoolean detectedPossibleInvalidSelector: selectors suggested: entries 
+	
+	self assert: aCompleter selectorsClasses equals: classes.
+	self assert: aCompleter canShowSelectorDocumentation equals: aBoolean.
+	self assert: aCompleter possibleInvalidSelectors equals: selectors.
+	entries 
+		ifNil: [ self assert: aCompleter entries isNil ]
+		ifNotNil: [ self assert: (aCompleter entries hasEqualElements: entries) ]! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+assertEntriesAreSelectorsForUnknownClasses: aCompleter 
+	
+	| expectedEntries expectedPossibleInvalidSelectors |
+	expectedPossibleInvalidSelectors _ Set new.
+	expectedEntries _ aCompleter computeMessageEntriesForUnknowClassAddingPossibleInvalidSelectorsTo: expectedPossibleInvalidSelectors.
+	
+	self
+		assert: aCompleter
+		analizedSelectorsFrom: #()
+		canShowDocumentation: true
+		detectedPossibleInvalidSelector: expectedPossibleInvalidSelectors
+		suggested: expectedEntries! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:06:02'!
+assertEntriesAreSelectorsForUnknownClassesForWorkspaceWith: sourceCode binding: aVariableName to: aValue
+	
+	| completer |
+	completer := self
+		autocompleteEntriesForWorkspaceWith: sourceCode
+		binding: aVariableName
+		to: aValue.
+	
+	self assertEntriesAreSelectorsForUnknownClasses: completer.! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:07:53'!
+assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: sourceCode 
+	
+	| completer |
+	completer := self autocompleteEntriesBrowsing: sourceCode.
+	
+	self assertEntriesAreSelectorsForUnknownClasses: completer.! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:40:15'!
+assertEntriesAreSelectorsOfUnknownClassesWhenBrowsingMethodWith: sourceCode 
+	
+	| completer |
+	completer := self autocompleteEntriesBrowsingMethodWith: sourceCode.
+	
+	self assertEntriesAreSelectorsForUnknownClasses: completer.
+	
+	! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:08:09'!
+assertEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValue areSelectorsOf: aClass
+	
+	| completer |
+	completer := self
+		autocompleteEntriesForWorkspaceWith: sourceCode
+		binding: aVariableName
+		to: aValue.
+	
+	self
+		assertEntriesOf: completer
+		areAllSelectorsOf: aClass.! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:19:49'!
+assertEntriesForWorkspaceWith: sourceCode binding: aVariableName to: aValue areUnaryAndBinarySelectorsOf: aClass 
+	
+	| completer |
+	completer := self
+		autocompleteEntriesForWorkspaceWith: sourceCode
+		binding: aVariableName
+		to: aValue.
+	
+	self
+		assertEntriesOf: completer
+		areUnaryAndBinarySelectorsOf: aClass.! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/17/2020 18:27:01'!
+assertEntriesOf: aCompleter areAllSelectorsOf: aClass
+
+	self
+		assertEntriesOf: aCompleter
+		areAllSelectorsOf: aClass
+		beginningWith: ''! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+assertEntriesOf: aCompleter areAllSelectorsOf: aClass beginningWith: aPrefix
+
+	self
+		assert: aCompleter
+		analizedSelectorsFrom: {aClass}
+		canShowDocumentation: true
+		detectedPossibleInvalidSelector: #()
+		suggested: (aCompleter selectorsOf: aClass beginningWith: aPrefix).! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+assertEntriesOf: aCompleter areIdentifiersBeginningWith: aPrefix
+
+	self
+		assert: aCompleter
+		analizedSelectorsFrom: nil
+		canShowDocumentation: false
+		detectedPossibleInvalidSelector: #()
+		suggested: (aCompleter computeIdentifierEntriesBeginningWith: aPrefix)! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+assertEntriesOf: aCompleter areUnaryAndBinarySelectorsOf: aClass
+
+	self
+		assert: aCompleter
+		analizedSelectorsFrom: {aClass}
+		canShowDocumentation: true
+		detectedPossibleInvalidSelector: #()
+		suggested: (aCompleter unaryAndBinarySelectorsOf: aClass beginningWith: '').
+	! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 19:58:16'!
+assertEntriesWhenBrowsing: sourceCode areIdentifiersBeginningWith: aPrefix
+	
+	| completer |
+	completer := self autocompleteEntriesBrowsing: sourceCode.
+	
+	self
+		assertEntriesOf: completer
+		areIdentifiersBeginningWith: aPrefix.! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 18:55:09'!
+assertEntriesWhenBrowsing: sourceCode areSelectorsOf: aClass
+	
+	self
+		assertEntriesWhenBrowsing: sourceCode
+		areSelectorsOf: aClass
+		beginningWith: ''! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 18:58:41'!
+assertEntriesWhenBrowsing: sourceCode areSelectorsOf: aClass beginningWith: aPrefix
+	
+	self
+		assertEntriesOf: (self autocompleteEntriesBrowsing: sourceCode)
+		areAllSelectorsOf: aClass
+		beginningWith: aPrefix 
+	! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 18:59:22'!
+assertEntriesWhenBrowsing: sourceCode areUnaryAndBinarySelectorsOf: aClass
+	
+	self
+		assertEntriesOf: (self autocompleteEntriesBrowsing: sourceCode)
+		areUnaryAndBinarySelectorsOf: aClass.
+	
+	! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+denyComputingEntriesIsSupportedWhenBrowsing: sourceCode 
+	
+	| completer |
+	completer := self createCompleterForBrowsing: sourceCode.
+	
+	self
+		should: [ completer computeEntries ]
+		raise: Error.
+	self
+		assert: completer
+		analizedSelectorsFrom: nil
+		canShowDocumentation: true
+		detectedPossibleInvalidSelector: #()
+		suggested: nil.! !
+
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'NPM 3/18/2020 20:25:15'!
+denyHasEntries: aCompleter  
+
+	self
+		assert: aCompleter
+		analizedSelectorsFrom: nil
+		canShowDocumentation: nil
+		detectedPossibleInvalidSelector: #()
+		suggested: #()! !
+
+!SmalltalkCompleterTest methodsFor: 'setUp/tearDown' stamp: 'NPM 3/18/2020 18:32:49'!
+setUp
+
+	super setUp.
+	
+	self browseClass: SmalltalkCompleterTest.
+	
+! !
+
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'test objects' stamp: 'NPM 3/18/2020 20:37:33'!
+completerClass
+	
+	^ DynamicTypingSmalltalkCompleter! !
+
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 20:35:21'!
+test023_DoesNotSupportAutocompletingMessagesFor_UnaryMessages
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'self class '.
+		
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '1 + self class '.	! !
+
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 20:36:22'!
+test024_DoesNotSupportAutocompletingMessagesFor_RightParenthesis
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '(1) '.
+		
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: '1 + (1) '.! !
+
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'NPM 3/18/2020 20:36:25'!
+test026_DoesNotSupportAutocompletingMessagesFor_CascadeSeparators
+	
+	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'self class; '.
+	! !
 
 !TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/28/2017 16:13:47'!
 setUp
@@ -17616,6 +18428,21 @@ test30ItIsPossibleToExtractAQuotedExpression
 
 	| codeToExtract newMethodCode originalCode updatedCode |
 	codeToExtract _ '`3 + 4`'.
+	originalCode _ 'm1 ^ ' , codeToExtract.
+	newMethodCode _ 'm2
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1 ^ self m2'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 3/30/2020 16:16:37'!
+test31ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNotASimpleLiteral
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '2 factorial ifNotNil: [ #boo ]'.
 	originalCode _ 'm1 ^ ' , codeToExtract.
 	newMethodCode _ 'm2
 
@@ -21208,19 +22035,21 @@ test05ScanClassRemovalChange
 
 ! !
 
-!ChangesTest methodsFor: 'scan tests' stamp: 'EB 12/1/2019 15:20:22'!
-test06ScanClassRenameChange
+!ChangesTest methodsFor: 'scan tests' stamp: 'MGD 12/19/2019 19:37:24'!
+test06ScanClassRenamedChange
 
-	| newClass classRenameChange newClassName |
+	| classRenamedChange newClass |
 
 	self changeUserChangesFileWhile: [
 		newClass := self createTestDataClass.
-		newClassName := 'NewClassName'.
-		newClass rename: newClassName.
+		newClass rename: #NewTestClass__.
 
-		classRenameChange := self scanChangesFromFile last.
-		
-		self assert: classRenameChange changeType equals: #doIt ]
+		classRenamedChange := self scanChangesFromFile last.
+
+		self assert: classRenamedChange changeType equals: #classRenamed.
+		self assert: classRenamedChange changeClassName equals: self testDataClassName.
+		self assert: classRenamedChange newClassName equals: #NewTestClass__.
+		self deny: classRenamedChange stamp isNil. ]
 ! !
 
 !ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:45'!
@@ -21325,21 +22154,22 @@ test05RemovingAClassShouldBeLogged
 				
 				self assert: definition,'!!' equals: loggedDefinition ]]! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'EB 12/1/2019 15:08:35'!
+!ChangesTest methodsFor: 'log tests' stamp: 'MGD 3/30/2020 17:00:58'!
 test06RenamingAClassShouldBeLogged
 	" Log format expected:
 
-	Smalltalk renameClassNamed: #ClassName as: #NewClassName!!
+	!!classRenamed: #OldName as: #NewName stamp  stamp:!!
+	Smalltalk renameClassNamed: #OldName as: #NewName
 	"
-	| newClass newClassName |
-	
+	| newClass |
+
 	self changeUserChangesFileWhile: [
 		newClass := self createTestDataClass.
-		newClassName := 'NewClassName'.
-		newClass rename: newClassName.
+		newClass rename: #NewTestClass__.
 
-		self assertIsLoggedOnce: 
-				'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #', newClassName ]! !
+		self assertIsLoggedOnce: '!!classRenamed: #', self testDataClassName, ' as: #NewTestClass__ stamp:'.
+		self assertIsLoggedOnce: 'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #NewTestClass__'.
+	]! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:49:13'!
 testIsStream
