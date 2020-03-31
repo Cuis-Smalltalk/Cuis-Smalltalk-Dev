@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4092] on 30 March 2020 at 5:39:41 pm'!
+'From Cuis 5.0 [latest update: #4102] on 31 March 2020 at 7:41:16 pm'!
 'Description Temporary definition AST node tests + Add a test for the Extract Method refactoring: optimized selector case + test06ScanClassRenamedChange fix + Autocomplete tests'!
-!provides: 'BaseImageTests' 1 214!
+!provides: 'BaseImageTests' 1 215!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -18448,6 +18448,36 @@ test31ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNo
 
 	^ ' , codeToExtract.
 	updatedCode _ 'm1 ^ self m2'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 3/31/2020 19:21:51'!
+test32ItIsPossibleToExtractATemporaryDeclarationOfABlockIfItIsNotUsedOutsideOfSelectionInterval
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '| a | a _ 3 factorial'.
+	originalCode _ 'm1 ^ [ ' , codeToExtract , ' ]'.
+	newMethodCode _ 'm2
+
+	' , codeToExtract.
+	updatedCode _ 'm1 ^ [ self m2 ]'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 3/31/2020 19:22:18'!
+test33ItIsPossibleToExtractATemporaryDeclarationIfItIsNotUsedOutsideOfSelectionInterval
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '| a | a _ 3 factorial'.
+	originalCode _ 'm1 ' , codeToExtract.
+	newMethodCode _ 'm2
+
+	' , codeToExtract.
+	updatedCode _ 'm1 self m2'.
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
