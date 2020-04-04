@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4074] on 25 March 2020 at 6:51:37 pm'!
+'From Cuis 5.0 [latest update: #4106] on 4 April 2020 at 1:32:27 pm'!
 'Description '!
-!provides: 'Compression' 1 25!
+!provides: 'Compression' 1 26!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -4580,7 +4580,7 @@ serviceBrowseMCZCode
 			argumentGetter: [ :fileList |
 				fileList selectedFileEntry ]! !
 
-!ChangeList class methodsFor: '*Compression' stamp: 'jmv 3/24/2020 11:14:52'!
+!ChangeList class methodsFor: '*Compression' stamp: 'jmv 4/4/2020 12:59:40'!
 browseMCZContents: aFileEntry
 	"Browse the selected file."
 	|  unzipped changeList fullName packageFile pkName |
@@ -4598,7 +4598,8 @@ browseMCZContents: aFileEntry
 		unzipped ascii.
 		changeList _ self new scanFile: unzipped from: 0 to: unzipped size.
 		stream reset.
-		packageFile _ CodePackageFile
+		packageFile _ CodePackageFile new.
+		packageFile
 			buildFileStream: unzipped
 			packageName: pkName
 			fullName: fullName.
@@ -4766,19 +4767,21 @@ browseMCZCode: aFileEntry
 
 	CodeFileBrowserWindow browseMCZFile: aFileEntry! !
 
-!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 5/31/2016 11:15'!
+!CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 4/4/2020 12:57:16'!
 installMonticelloPackage: aFileEntry
 	
-	| fullName pkName unzip |
+	| fullName pkName unzip codePackageFile |
 	fullName _ aFileEntry pathName.
 	pkName _ CodePackageFile monticelloPackageNameFrom: fullName.
 	aFileEntry readStreamDo: [ :stream |
 		unzip _ stream asUnZippedStream: 'snapshot/source.st'.
 		unzip ascii.
-		CodePackageFile
-			installFileStream: unzip
+		codePackageFile _ CodePackageFile new.
+		codePackageFile
+			buildFileStream: unzip
 			packageName: pkName
-			fullName: fullName ]! !
+			fullName: fullName.
+		codePackageFile install ]! !
 
 !CodePackageFile class methodsFor: '*Compression' stamp: 'jmv 11/3/2016 11:38:49'!
 monticelloPackageNameFrom: fullName
