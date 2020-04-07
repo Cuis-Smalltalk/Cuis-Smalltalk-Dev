@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4107] on 7 April 2020 at 4:46:18 pm'!
-'Description Extract method with temp vars tests'!
-!provides: 'BaseImageTests' 1 215!
+'From Cuis 5.0 [latest update: #4107] on 7 April 2020 at 4:57:23 pm'!
+'Description Symbol tests'!
+!provides: 'BaseImageTests' 1 216!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -33,6 +33,7 @@ SystemOrganization addCategory: #'BaseImageTests-Graphics-Display Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Browser'!
 SystemOrganization addCategory: #'BaseImageTests-Tools-Changes'!
+SystemOrganization addCategory: #'BaseImageTests-Kernel-Text'!
 
 
 !classDefinition: #MyResumableTestError category: #'BaseImageTests-Exceptions'!
@@ -1283,6 +1284,16 @@ TestCase subclass: #MethodReferenceTest
 	category: 'BaseImageTests-Tools-Browser'!
 !classDefinition: 'MethodReferenceTest class' category: #'BaseImageTests-Tools-Browser'!
 MethodReferenceTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SymbolTest category: #'BaseImageTests-Kernel-Text'!
+TestCase subclass: #SymbolTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Text'!
+!classDefinition: 'SymbolTest class' category: #'BaseImageTests-Kernel-Text'!
+SymbolTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BecomeTestExperiment category: #'BaseImageTests-Kernel'!
@@ -15418,10 +15429,10 @@ createCompleterWith: aModel
 		setModel: aModel;
 		changePositionTo: aModel actualContents size! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem 4/7/2020 16:42:15'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem 4/7/2020 16:57:00'!
 firstKeyword: a secondKeyword: b! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem 4/7/2020 16:42:15'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem 4/7/2020 16:57:00'!
 m1: arg1 arg1! !
 
 !SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:13:43'!
@@ -22706,6 +22717,45 @@ testReferencesParameterAtReturnsTrueWhenTheParameterIsReferenced
 		classSymbol: #MethodReference 
 		classIsMeta: false 
 		methodSymbol: #referencesParameterAt:) referencesParameterAt: 1)! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:59:47'!
+testIsNotValidBinarySelectorIfItContainsACharacterNotAllowed
+
+	self deny: #'(' isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 20:01:07'!
+testIsNotValidKeywordSelectorIfItContainsSeparators
+
+	self deny: #'between: and:' isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:52:35'!
+testIsNotValidUnarySelectorIfItContainsCharactersUsedInBinarySelectors
+
+	self deny: #'a+b' isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:51:29'!
+testIsNotValidUnarySelectorIfItStartsWithALetterAndContainsSeparators
+
+	self deny: #'with spaces' isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:53:43'!
+testIsValidBinarySelectorIfItContainsAnAllowedCharacterOrSequenceOfCharacters
+
+	self
+		assert: #+ isValidSelector;
+		assert: #+-+ isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 20:00:35'!
+testIsValidKeywordSelectorIfItContainsKeywordsWithColons
+
+	self
+		assert: #includes: isValidSelector;
+		assert: #between:and: isValidSelector! !
+
+!SymbolTest methodsFor: 'tests - selector validation' stamp: 'RNG 3/29/2020 19:50:31'!
+testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
+
+	self assert: #t234 isValidSelector! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
