@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4092] on 30 March 2020 at 5:39:41 pm'!
-'Description Temporary definition AST node tests + Add a test for the Extract Method refactoring: optimized selector case + test06ScanClassRenamedChange fix + Autocomplete tests'!
-!provides: 'BaseImageTests' 1 214!
+'From Cuis 5.0 [latest update: #4107] on 7 April 2020 at 4:46:18 pm'!
+'Description Extract method with temp vars tests'!
+!provides: 'BaseImageTests' 1 215!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -15418,10 +15418,10 @@ createCompleterWith: aModel
 		setModel: aModel;
 		changePositionTo: aModel actualContents size! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 3/30/2020 17:29:17'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem 4/7/2020 16:42:15'!
 firstKeyword: a secondKeyword: b! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 3/30/2020 17:29:17'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem 4/7/2020 16:42:15'!
 m1: arg1 arg1! !
 
 !SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:13:43'!
@@ -18063,18 +18063,27 @@ assertExtracting: codeToExtract from: originalCode named: newMessage defines: ne
 		assertClassHasDefined: originalSelector withBody: updatedCode inCategory: category;
 		assertClassHasDefined: newMessage selector withBody: newCode inCategory: category! !
 
-!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 6/23/2019 18:21:38'!
-creationWithSelectorNamed: aSelectorName onInterval: anIntervalToExtract ofMethod: methodToExtractCodeFrom failsWith: aRefactoringErrorMessage
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 4/5/2020 22:55:03'!
+creationWithMessage: aMessage onInterval: anIntervalToExtract ofMethod: methodToExtractCodeFrom failsWith: aRefactoringErrorMessage
 
 	self
 		should: [
 			ExtractMethod
 				fromInterval: anIntervalToExtract
 				of: methodToExtractCodeFrom
-				to: (Message selector: aSelectorName)
+				to: aMessage
 				categorizedAs: Categorizer default ]
 		raise: Error - MessageNotUnderstood
 		withMessageText: aRefactoringErrorMessage! !
+
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 4/5/2020 22:56:14'!
+creationWithSelectorNamed: aSelectorName onInterval: anIntervalToExtract ofMethod: aMethodToRefactor failsWith: aRefactoringErrorMessage
+
+	self
+		creationWithMessage: (Message selector: aSelectorName)
+		onInterval: anIntervalToExtract
+		ofMethod: aMethodToRefactor
+		failsWith: aRefactoringErrorMessage! !
 
 !ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 9/28/2019 01:10:34'!
 tryingToExtract: someCode from: anExistingSourceCode failsWith: aRefactoringErrorMessage
@@ -18084,6 +18093,18 @@ tryingToExtract: someCode from: anExistingSourceCode failsWith: aRefactoringErro
 
 	self
 		creationWithSelectorNamed: #aValidSelector
+		onInterval: (self intervalOf: someCode locatedIn: anExistingSourceCode)
+		ofMethod: classToRefactor >> existingSelector
+		failsWith: aRefactoringErrorMessage! !
+
+!ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 4/5/2020 22:56:48'!
+tryingToExtract: someCode from: anExistingSourceCode using: aMessage failsWith: aRefactoringErrorMessage
+
+	| existingSelector |
+	existingSelector _ classToRefactor compile: anExistingSourceCode.
+
+	self
+		creationWithMessage: aMessage
 		onInterval: (self intervalOf: someCode locatedIn: anExistingSourceCode)
 		ofMethod: classToRefactor >> existingSelector
 		failsWith: aRefactoringErrorMessage! !
@@ -18249,6 +18270,24 @@ test28ItIsNotPossibleToExtractALocalVariableInsideOfItsDeclaration
 		tryingToExtract: 'localVar'
 		from: 'm1 | localVar | ^ #foo'
 		failsWith: ExtractMethod selectedCodeInvalidForExtractErrorMessage! !
+
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 4/5/2020 22:58:03'!
+test34TryingToExtractAMethodWithLessArgumentsThanNeededFails
+
+	self
+		tryingToExtract: 'localVar1 + localVar2 + 2'
+		from: 'm1 | localVar1 localVar2 | ^ localVar1 + localVar2 + 2'
+		using: (Message selector: #m1: arguments: #('localVar1'))
+		failsWith: ExtractMethod wrongNumberOrArgumentsGivenErrorMessage! !
+
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 4/5/2020 23:24:08'!
+test35TryingToExtractAMethodWithMoreArgumentsThanNeededFails
+
+	self
+		tryingToExtract: 'localVar1 + localVar2 + 2'
+		from: 'm1 | localVar1 localVar2 | ^ localVar1 + localVar2 + 2'
+		using: (Message selector: #m1:m2:m3: arguments: #('localVar1' 'localVar2' 'localVar3'))
+		failsWith: ExtractMethod wrongNumberOrArgumentsGivenErrorMessage! !
 
 !ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test09ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMethod
@@ -18448,6 +18487,36 @@ test31ItIsPossibleToExtractExpressionsWithOptimizedSelectorsWhereTheReceiverIsNo
 
 	^ ' , codeToExtract.
 	updatedCode _ 'm1 ^ self m2'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/5/2020 23:19:13'!
+test32ItIsPossibleToExtractATemporaryDeclarationOfABlockIfItIsNotUsedOutsideOfSelectionInterval
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '| a | a _ 3 factorial'.
+	originalCode _ 'm1 ^ [ ' , codeToExtract , ' ]'.
+	newMethodCode _ 'm2
+
+	' , codeToExtract.
+	updatedCode _ 'm1 ^ [ self m2 ]'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/5/2020 23:19:23'!
+test33ItIsPossibleToExtractATemporaryDeclarationIfItIsNotUsedOutsideOfSelectionInterval
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '| a | a _ 3 factorial'.
+	originalCode _ 'm1 ' , codeToExtract.
+	newMethodCode _ 'm2
+
+	' , codeToExtract.
+	updatedCode _ 'm1 self m2'.
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
