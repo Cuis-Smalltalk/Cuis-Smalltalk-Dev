@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4107] on 7 April 2020 at 4:57:23 pm'!
-'Description Symbol tests'!
-!provides: 'BaseImageTests' 1 216!
+'From Cuis 5.0 [latest update: #4106] on 9 April 2020 at 4:18:35 pm'!
+'Description isGetter/isSetter + allAccessTo: tests'!
+!provides: 'BaseImageTests' 1 217!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -408,7 +408,7 @@ YearTest class
 
 !classDefinition: #CompiledMethodTest category: #'BaseImageTests-Kernel-Methods'!
 TestCase subclass: #CompiledMethodTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'iv1 iv2'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Kernel-Methods'!
@@ -2246,6 +2246,26 @@ testWithAllSuperclassesUpToIncludesReceiverClass
 	self assert: SmallInteger equals: superclasses first.
 	self assert: Integer equals: superclasses second.
 	self assert: Number equals: superclasses third ! !
+
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 4/9/2020 16:17:36'!
+testAllAccessToInstVarReturnsAccessInSiblingsToo
+
+	| references |
+	
+	"Just in case the hierarchy changes... not much of a chance but... - Hernan"
+	self deny: (IdentitySet includesBehavior: Dictionary).
+	self deny: (Dictionary includesBehavior: IdentitySet).
+	self assert: (IdentitySet includesBehavior: Set).
+	self assert: (Dictionary includesBehavior: Set).
+	
+	references := IdentitySet allAccessesTo: 'array'.
+	
+	self assert: (references anySatisfy: [ :aReference | aReference methodClass = Dictionary ])! !
+
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 4/9/2020 16:17:49'!
+testAllAccessToIsEmptyForVariableNotDefinedInClass
+
+	self assert: (Object allAccessesTo: 'iv1') isEmpty! !
 
 !BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:42'!
 testAllUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
@@ -8535,7 +8555,7 @@ testIncluding
 	self assert: (Year including: '12 May 2017 ' asDate start) yearNumber = 2017.
 	self assert: (Year including: (Week including: '12 May 2017 ' asDate start)) yearNumber = 2017! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:03:52'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:03:52'!
 test01withPropertiesDoIfSelectorEvaluatesFirstBlockWhenMethodHasProperties
 
 	| thisMethod propertyName methodProperties |
@@ -8551,7 +8571,7 @@ test01withPropertiesDoIfSelectorEvaluatesFirstBlockWhenMethodHasProperties
 	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
 	self assert: (methodProperties at: propertyName)! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:04:31'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:04:31'!
 test02removePropertiesRestoresPenultimalLiteralToSelector
 
 	| thisMethod propertyName |
@@ -8564,7 +8584,7 @@ test02removePropertiesRestoresPenultimalLiteralToSelector
 	self assert: thisMethod penultimateLiteral equals: thisContext selector.
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:04:52'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:04:52'!
 test03removePropertiesKeepsSelectorIfMethodDoesNotHaveProperties
 
 	| thisMethod |
@@ -8577,7 +8597,7 @@ test03removePropertiesKeepsSelectorIfMethodDoesNotHaveProperties
 	self assert: thisMethod penultimateLiteral equals: thisContext selector.
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:05:22'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:05:22'!
 test04withPropertiesDoIfSelectorEvaluatesSecondBlockWhenMethodHasNoProperties
 
 	| thisMethod methodSelector |
@@ -8592,7 +8612,7 @@ test04withPropertiesDoIfSelectorEvaluatesSecondBlockWhenMethodHasNoProperties
 	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
 	self assert: methodSelector equals: thisContext selector! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:05:40'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:05:40'!
 test05hasLiteralSuchThatTravelsListeralsWhenMethodHasProperties
 
 	| thisMethod |
@@ -8604,7 +8624,7 @@ test05hasLiteralSuchThatTravelsListeralsWhenMethodHasProperties
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:05:54'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:05:54'!
 test06hasLiteralSuchThatTravelsListeralsWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -8616,7 +8636,7 @@ test06hasLiteralSuchThatTravelsListeralsWhenMethodHasNoProperties
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:06:51'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:06:51'!
 test0701withPropertiesDoReturnsNilIfMethodHasNoProperties
 
 	| thisMethod |
@@ -8626,7 +8646,7 @@ test0701withPropertiesDoReturnsNilIfMethodHasNoProperties
 
 	self assert: (thisMethod withPropertiesDo: [ :properties | self fail ]) isNil! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:07:21'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:07:21'!
 test07withPropertiesDoEvaluatesBlockOnlyWhenMethodHasProperties
 
 	| thisMethod propertyName methodProperties |
@@ -8640,7 +8660,7 @@ test07withPropertiesDoEvaluatesBlockOnlyWhenMethodHasProperties
 	"I don't assert inside the block because if no block is evaluated the test passes - Hernan"	
 	self assert: (methodProperties at: propertyName)! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:07:47'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:07:47'!
 test08hasLiteralThoroughReturnTrueWhenMethodHasPropertiesAndHasLiteral
 
 	| thisMethod |
@@ -8652,7 +8672,7 @@ test08hasLiteralThoroughReturnTrueWhenMethodHasPropertiesAndHasLiteral
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:08:08'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:08:08'!
 test09hasLiteralThoroughReturnFalseWhenMethodHasPropertiesAndHasNoLiteral
 
 	| thisMethod |
@@ -8664,7 +8684,7 @@ test09hasLiteralThoroughReturnFalseWhenMethodHasPropertiesAndHasNoLiteral
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:08:21'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:08:21'!
 test10hasLiteralThoroughReturnTrueWhenMethodHasNoPropertiesAndHasLiteral
 
 	| thisMethod |
@@ -8676,7 +8696,7 @@ test10hasLiteralThoroughReturnTrueWhenMethodHasNoPropertiesAndHasLiteral
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:08:34'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:08:34'!
 test11hasLiteralThoroughReturnFalseWhenMethodHasNoPropertiesAndHasNoLiteral
 
 	| thisMethod |
@@ -8688,7 +8708,7 @@ test11hasLiteralThoroughReturnFalseWhenMethodHasNoPropertiesAndHasNoLiteral
 	
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:08:51'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:08:51'!
 test12pragmaAtReturnsPragmaIfExist
 
 	<test>
@@ -8699,7 +8719,7 @@ test12pragmaAtReturnsPragmaIfExist
 	
 	self assert: (thisMethod pragmaAt: #test) key equals: #test! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:09:07'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:09:07'!
 test13pragmaAtReturnsNilIfPragmaDoesNotExist
 
 	| thisMethod |
@@ -8708,7 +8728,7 @@ test13pragmaAtReturnsNilIfPragmaDoesNotExist
 	
 	self assert: (thisMethod pragmaAt: #test) isNil! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:09:26'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:09:26'!
 test14pragmasReturnsCollectionOfMethodPragmas
 
 	<test>
@@ -8721,7 +8741,7 @@ test14pragmasReturnsCollectionOfMethodPragmas
 	self assert: pragmas size equals: 1.
 	self assert: pragmas first key equals: #test! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:09:49'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:09:49'!
 test15pragmasReturnsEmptyCollectionWhenMethodHasNoProperties
 
 	| thisMethod pragmas |
@@ -8732,7 +8752,7 @@ test15pragmasReturnsEmptyCollectionWhenMethodHasNoProperties
 	
 	self assert: pragmas isEmpty ! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:14:18'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:14:18'!
 test16propertiesReturnsAnNewAdditionalMethodStateWhenNoPropertiesHasBeenSet
 
 	| thisMethod properties |
@@ -8746,7 +8766,7 @@ test16propertiesReturnsAnNewAdditionalMethodStateWhenNoPropertiesHasBeenSet
 	self assert: properties selector equals: thisContext selector.
 	self deny: properties == thisMethod properties ! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:14:35'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:14:35'!
 test17propertiesReturnsTheAlreadySetAdditionalMethodStateWhenHasProperties
 
 	| propertyName thisMethod properties |
@@ -8760,7 +8780,7 @@ test17propertiesReturnsTheAlreadySetAdditionalMethodStateWhenHasProperties
 	self assert: properties selector equals: thisContext selector.
 	! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:17:28'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:17:28'!
 test18propertyKeysAndValuesDoIteratesOverProperties
 
 	| propertyName thisMethod properties |
@@ -8775,7 +8795,7 @@ test18propertyKeysAndValuesDoIteratesOverProperties
 	self assert: properties size equals: 1.
 	self assert: properties first equals: propertyName -> true! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 07:20:11'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 07:20:11'!
 test19propertyKeysAndValuesDoDoesNotEvaluateBlockWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -8785,7 +8805,7 @@ test19propertyKeysAndValuesDoDoesNotEvaluateBlockWhenMethodHasNoProperties
 	
 	thisMethod propertyKeysAndValuesDo: [ :key :value | self fail ]! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:58:44'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:58:44'!
 test20propertyValueAtReturnsPropertyValueWhenSetted
 
 	| propertyName propertyValue thisMethod |
@@ -8797,7 +8817,7 @@ test20propertyValueAtReturnsPropertyValueWhenSetted
 	
 	self assert: (thisMethod propertyValueAt: propertyName) equals: propertyValue ! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:56:20'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:56:20'!
 test21propertyValueAtReturnsNilWhenPropertyIsNotFound
 
 	| thisMethod |
@@ -8807,7 +8827,7 @@ test21propertyValueAtReturnsNilWhenPropertyIsNotFound
 	
 	self assert: (thisMethod propertyValueAt: #abc) isNil! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:55:00'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:55:00'!
 test22propertyValueAtReturnsNilWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -8817,7 +8837,7 @@ test22propertyValueAtReturnsNilWhenMethodHasNoProperties
 	
 	self assert: (thisMethod propertyValueAt: #testProperty) isNil! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:58:18'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:58:18'!
 test23propertyValueAtIfAbsetReturnsPropertyValueWhenFound
 
 	| propertyName propertyValue thisMethod |
@@ -8829,7 +8849,7 @@ test23propertyValueAtIfAbsetReturnsPropertyValueWhenFound
 	
 	self assert: (thisMethod propertyValueAt: propertyName ifAbsent: [ self fail ]) equals: propertyValue ! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/3/2019 16:59:33'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/3/2019 16:59:33'!
 test24propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenNotFound
 
 	| propertyName propertyValue thisMethod |
@@ -8841,7 +8861,7 @@ test24propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenNotFound
 	
 	self assert: (thisMethod propertyValueAt: #abc ifAbsent: [ propertyValue + 1]) equals: propertyValue + 1 ! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:39:17'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:39:17'!
 test25propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenMethodHasNoProperties
 
 	| thisMethod |
@@ -8851,7 +8871,7 @@ test25propertyValueAtIfAbsetEvaluatesIfAbsentBlockWhenMethodHasNoProperties
 	
 	self assert: (thisMethod propertyValueAt: #testProperty ifAbsent: [ 1 ]) equals: 1! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:44:05'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:44:05'!
 test26propertyValueAtPutCreatesPropertiesWithNewOne
 
 	| thisMethod testProperty propertyValue |
@@ -8865,7 +8885,7 @@ test26propertyValueAtPutCreatesPropertiesWithNewOne
 	self assert: propertyValue equals: 1.
 	self assert: (thisMethod propertyValueAt: testProperty) equals: 1! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:44:40'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:44:40'!
 test27propertyValueAtPutReplacesPropertyIfAlreadyExisted
 
 	| thisMethod testProperty propertyValue |
@@ -8878,7 +8898,7 @@ test27propertyValueAtPutReplacesPropertyIfAlreadyExisted
 	self assert: propertyValue equals: 2.
 	self assert: (thisMethod propertyValueAt: testProperty) equals: 2! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:45:06'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:45:06'!
 test28propertyValueAtPutAddsNewPropertyIfPropertiesExisted
 
 	| thisMethod testProperty1 testProperty2 propertyValue |
@@ -8893,7 +8913,7 @@ test28propertyValueAtPutAddsNewPropertyIfPropertiesExisted
 	self assert: (thisMethod propertyValueAt: testProperty1) equals: 1.
 	self assert: (thisMethod propertyValueAt: testProperty2) equals: 2! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:47:40'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:47:40'!
 test29selectorReturnsMethodSelectorWhenNoProperties
 
 	| thisMethod |
@@ -8903,7 +8923,7 @@ test29selectorReturnsMethodSelectorWhenNoProperties
 	
 	self assert: thisMethod selector equals: thisContext selector! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:48:40'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:48:40'!
 test30selectorReturnsMethodSelectorWhenHasProperties
 
 	| thisMethod |
@@ -8913,7 +8933,7 @@ test30selectorReturnsMethodSelectorWhenHasProperties
 	
 	self assert: thisMethod selector equals: thisContext selector! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:54:03'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:54:03'!
 test31SettingSelectorWhenHasNoProperties
 
 	| currentSelector thisMethod |
@@ -8925,7 +8945,7 @@ test31SettingSelectorWhenHasNoProperties
 	[ thisMethod selector: #test.
 	self assert: thisMethod selector equals: #test ] ensure: [ thisMethod selector: currentSelector ]! !
 
-!CompiledMethodTest methodsFor: 'as yet unclassified' stamp: 'HAW 1/7/2019 15:54:47'!
+!CompiledMethodTest methodsFor: 'tests - properties' stamp: 'HAW 1/7/2019 15:54:47'!
 test32SettingSelectorWhenHasProperties
 
 	| currentSelector thisMethod |
@@ -8936,6 +8956,106 @@ test32SettingSelectorWhenHasProperties
 	
 	[ thisMethod selector: #test.
 	self assert: thisMethod selector equals: #test ] ensure: [ thisMethod selector: currentSelector ]! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:41:19'!
+indexOfIv1
+	
+	^self class indexOfInstanceVariable: 'iv1'! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:44:50'!
+indexOfIv2
+	
+	^self class indexOfInstanceVariable: 'iv2'! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:40:38'!
+iv1
+
+	^iv1! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:46:19'!
+iv1: anObject
+
+	iv1 := anObject ! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 16:00:45'!
+iv1ReadWrite
+
+	iv1 := iv1 yourself! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:41:59'!
+iv1_notGetter
+
+	^iv1! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:46:58'!
+iv1_notSetter: anObject
+
+	iv1 := anObject ! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:45:13'!
+iv2
+
+	^iv2 yourself! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:48:08'!
+iv2: anObject
+
+	iv2 := 1! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:40:33'!
+test01isGetterWhenSameSelectorAsInstanceVariableAndOnlyReturnsThatVariable
+
+	self assert: (self class>>#iv1 isGetterOf: 'iv1' at: self indexOfIv1)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:42:29'!
+test02isNotGetterWhenDifferentSelectorAsInstanceVariable
+
+	self deny: (self class>>#iv1_notGetter isGetterOf: 'iv1' at: self indexOfIv1)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:44:13'!
+test03isNotGetterWhenSameSelectorAsInstanceVariableButDoesOtherThingBesidesReturningVariable
+
+	self deny: (self class>>#iv2 isGetterOf: 'iv2' at: self indexOfIv2)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:46:04'!
+test04isSetterWhenSameKeywordSelectorAsInstanceVariableAndOnlySetsTheVariable
+
+	self assert: (self class>>#iv1: isSetterOf: 'iv1' at: self indexOfIv1)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:46:52'!
+test05isNotSetterWhenDifferentKeywordSelectorAsInstanceVariable
+
+	self deny: (self class>>#iv1_notSetter: isSetterOf: 'iv1' at: self indexOfIv1)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:47:57'!
+test06isNotSetterWhenSameKeywordSelectorAsInstanceVariableButDoesNotAssignParameter
+
+	self deny: (self class>>#iv2: isSetterOf: 'iv2' at: self indexOfIv2)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:58:54'!
+test07AccessorDescriptionIsGetterForAGetter
+
+	self assert: 'getter' equals: (self class>>#iv1 accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:59:05'!
+test08AccessorDescriptionIsSetterForASetter
+
+	self assert: 'setter' equals: (self class>>#iv1: accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 15:59:34'!
+test09AccessorDescriptionIsReadForMethodThatReadsInstanceVariable
+
+	self assert: 'read' equals: (self class>>#iv1_notGetter accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 16:00:19'!
+test10AccessorDescriptionIsWriteForMethodThatWritesInstanceVariable
+
+	self assert: 'write' equals: (self class>>#iv1_notSetter: accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
+
+!CompiledMethodTest methodsFor: 'tests - accessors' stamp: 'HAW 4/9/2020 16:01:06'!
+test11AccessorDescriptionIsWriteReadForMethodThatWritesAndReadInstanceVariable
+
+	self assert: 'write/read' equals: (self class>>#iv1ReadWrite accessorDescriptionOf: 'iv1' at: self indexOfIv1)! !
 
 !DelayTest methodsFor: 'testing-limits' stamp: 'laza 9/5/2009 08:49'!
 testBounds
@@ -22701,6 +22821,26 @@ testCompiledMethodIfAbsentReturnsImplementedMethodWhenItExists
 			classSymbol: self class name
 			classIsMeta: false 
 			methodSymbol: thisContext selector) compiledMethodIfAbsent: [ self fail ])! !
+
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 4/9/2020 15:51:56'!
+test01DefaultStringVersionIsClassAndSelector
+
+	| stringVersion |
+	
+	stringVersion := (MethodReference method: thisContext method) stringVersion.
+	
+	self assert: self class name, ' ', thisContext selector equals: stringVersion! !
+
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 4/9/2020 15:53:25'!
+test02CanPrefixStringVersion
+
+	| methodReference prefix |
+	
+	prefix := 'a prefix'.
+	methodReference := MethodReference method: thisContext method.
+	methodReference prefixStringVersionWith: prefix.
+	
+	self assert: prefix,self class name, ' ', thisContext selector equals: methodReference stringVersion! !
 
 !MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:00'!
 testReferencesParameterAtReturnsFalseWhenInvalid
