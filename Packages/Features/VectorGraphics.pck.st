@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4102] on 1 April 2020 at 1:15:47 pm'!
+'From Cuis 5.0 [latest update: #4111] on 13 April 2020 at 6:39:58 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 108!
+!provides: 'VectorGraphics' 1 119!
 !requires: 'Color-Extras' 1 7 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -79,14 +79,34 @@ MorphicCanvas subclass: #VectorCanvas
 VectorCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngine category: #'VectorGraphics-Kernel'!
-Object subclass: #VectorEngine
-	instanceVariableNames: 'targetForm targetWidth targetHeight antiAliasingWidth antiAliasingWidthScaledInverse subPixelDelta strokeWidth strokeWidthDilatedHalf strokeWidthDilatedHalfSquared strokeWidthErodedHalf strokeWidthErodedHalfSquared openCLKernelWidth openCLKernelHeight strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorph currentOwnerIfClips morphAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom mask edgeCountPerPixel blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt firstX firstY currentX currentY prevYTruncated geometryTransformation lastClientX lastClientY lastControlX lastControlY jj ii pixY pixX z_pixelIndex z_alphaWord z_redAlpha z_greenAlpha z_blueAlpha z_previousRedAlpha z_previousGreenAlpha z_previousBlueAlpha'
+!classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
+Object subclass: #VectorEngineAbstract
+	instanceVariableNames: 'targetForm targetBits targetWidth antiAliasingWidth antiAliasingWidthScaledInverse subPixelDelta strokeWidth strokeWidthDilatedHalf strokeWidthDilatedHalfSquared strokeWidthErodedHalfSquared strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorphId clippingMorphId morphIdAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom mask edgeCountPerPixel blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt firstX firstY currentX currentY prevYTruncated geometryTransformation lastClientX lastClientY lastControlX lastControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngine class' category: #'VectorGraphics-Kernel'!
-VectorEngine class
+!classDefinition: 'VectorEngineAbstract class' category: #'VectorGraphics-Kernel'!
+VectorEngineAbstract class
+	instanceVariableNames: ''!
+
+!classDefinition: #VectorEngineBasic category: #'VectorGraphics-Kernel'!
+VectorEngineAbstract subclass: #VectorEngineBasic
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineBasic class' category: #'VectorGraphics-Kernel'!
+VectorEngineBasic class
+	instanceVariableNames: ''!
+
+!classDefinition: #VectorEngineParallelizable category: #'VectorGraphics-Kernel'!
+VectorEngineAbstract subclass: #VectorEngineParallelizable
+	instanceVariableNames: 'strokeKernelHeight strokeKernelWidth ii jj pixY pixX z_pixelIndex z_alphaWord z_redAlpha z_greenAlpha z_blueAlpha z_previousRedAlpha z_previousGreenAlpha z_previousBlueAlpha'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineParallelizable class' category: #'VectorGraphics-Kernel'!
+VectorEngineParallelizable class
 	instanceVariableNames: ''!
 
 !classDefinition: #FormGlyph category: #'VectorGraphics-TrueType'!
@@ -349,7 +369,7 @@ self allOwnersReverseDo: [ :m | c into: m ].
 c fullDraw: self.
 Display forceToScreen!
 
-!VectorEngine commentStamp: '<historical>' prior: 0!
+!VectorEngineAbstract commentStamp: '<historical>' prior: 0!
 Aca es donde estoy trabajando. En las numeradas guardo snapshots.
 
 A Vector Graphics rasterizer for Morphic 3.
@@ -1525,16 +1545,16 @@ isCurrentMorphVisible
 self revisar. "Of course not true. Do it right. But first, assess the need for this method at all!!"
 	^ true! !
 
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 4/4/2020 19:32:40'!
+clippingMorph: aMorph
+	engine clippingMorph: aMorph! !
+
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 1/14/2020 09:32:21'!
 clippingRectForCurrentMorph
 	"In targetForm coordinates.
 	Only valid _after_ drawing currentMorph."
 
 	^engine clippingRectForCurrentMorph! !
-
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 10/14/2014 16:17'!
-currentOwnerIfClips: currentMorphOwnerOrNil
-	engine currentOwnerIfClips: currentMorphOwnerOrNil! !
 
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/31/2017 13:22:48'!
 initializeWith: aForm origin: aPoint
@@ -1561,13 +1581,14 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 6/10/2019 11:06:59'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 4/12/2020 17:00:25'!
 setForm: aForm
 	"
 	World extent: World extent
 	"
+	aForm depth = 32  ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
 	form _ aForm.
-	engine _ VectorEngine onForm: form.
+	engine _ VectorEngineBasic onForm: form.
 	self newClipRect: nil.! !
 
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
@@ -1713,13 +1734,13 @@ self textex3
 		selectionColor: Color orange.
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'accessing' stamp: 'jmv 1/15/2020 14:30:16'!
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 1/15/2020 14:30:16'!
 antiAliasingWidth: aNumber
 
 	antiAliasingWidth _ aNumber.
 	antiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth! !
 
-!VectorEngine methodsFor: 'accessing' stamp: 'jmv 1/14/2020 09:31:35'!
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 1/14/2020 09:31:35'!
 clipRect: aRectangle 
 	"by convention, aRectangle includes left and top but does not include right and bottom.
 	We do draw clipRight and clipBottom but not beyond.
@@ -1730,30 +1751,26 @@ clipRect: aRectangle
 	clipRight _ aRectangle right - 1.
 	clipBottom _ aRectangle bottom - 1! !
 
-!VectorEngine methodsFor: 'accessing' stamp: 'jmv 1/14/2020 09:32:34'!
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 4/4/2020 19:37:02'!
+clippingMorph: aMorph
+	clippingMorphId _ aMorph ifNil: [0] ifNotNil: [aMorph morphId]! !
+
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 1/14/2020 09:32:34'!
 clippingRectForCurrentMorph
 	"In targetForm coordinates.
 	Only valid _after_ drawing currentMorph."
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom! !
 
-!VectorEngine methodsFor: 'accessing' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 4/4/2020 19:49:03'!
 currentMorph: aMorph
-	currentMorph _ aMorph! !
+	currentMorphId _ aMorph ifNil: [0] ifNotNil: [aMorph morphId]! !
 
-!VectorEngine methodsFor: 'accessing' stamp: 'jmv 12/16/2017 18:17:50'!
-currentOwnerIfClips: currentMorphOwnerOrNil
-	currentOwnerIfClips _ currentMorphOwnerOrNil! !
-
-!VectorEngine methodsFor: 'accessing' stamp: 'jmv 8/17/2018 15:42:34'!
-geometryTransformation
-	^geometryTransformation! !
-
-!VectorEngine methodsFor: 'accessing' stamp: 'jmv 12/31/2017 13:22:19'!
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 12/31/2017 13:22:19'!
 geometryTransformation: aGeometryTransformation
 	geometryTransformation _ aGeometryTransformation! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/2/2020 09:45:16'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/13/2020 16:26:33'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -1769,15 +1786,11 @@ fillColor: aFillColor do: pathCommandsBlock
 	fillBlue _ (aFillColor blue * 255.0) rounded.
 	strokeAlpha _ nil. strokeRed _ nil. strokeGreen _ nil. strokeBlue _ nil.
 
-	0 to: openCLKernelHeight-1 do: [ :i |
-		0 to: openCLKernelWidth-1 do: [ :j |
-			jj _ j. ii _ i.
-			self initializePath.
-			pathCommandsBlock valueWithPossibleArgument: self.
-			]].
+	self initializePath.
+	pathCommandsBlock valueWithPossibleArgument: self.
 	self finishPath! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/2/2020 10:03:07'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/13/2020 16:26:38'!
 strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke."
 
@@ -1798,15 +1811,11 @@ strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	strokeGreen _ (aStrokeColor green * 255.0) rounded.
 	strokeBlue _ (aStrokeColor blue * 255.0) rounded.
 
-	0 to: openCLKernelHeight-1 do: [ :i |
-		0 to: openCLKernelWidth-1 do: [ :j |
-			jj _ j. ii _ i.
-			self initializePath.
-			pathCommandsBlock valueWithPossibleArgument: self.
-			]].
+	self initializePath.
+	pathCommandsBlock valueWithPossibleArgument: self.
 	self finishPath! !
 
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/2/2020 09:43:59'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/13/2020 16:26:44'!
 strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -1845,15 +1854,11 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	strokeGreen _ (aStrokeColor green * 255.0) rounded.
 	strokeBlue _ (aStrokeColor blue * 255.0) rounded.
 
-	0 to: openCLKernelHeight-1 do: [ :i |
-		0 to: openCLKernelWidth-1 do: [ :j |
-			jj _ j. ii _ i.
-			self initializePath.
-			pathCommandsBlock valueWithPossibleArgument: self.
-			]].
+	self initializePath.
+	pathCommandsBlock valueWithPossibleArgument: self.
 	self finishPath! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 12/31/2017 16:46:16'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 12/31/2017 16:46:16'!
 abs_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngine onForm: Display)
@@ -1883,7 +1888,7 @@ Display forceToScreen
 	phi _ geometryTransformation radians + theta.
 	self basicArcToX: center x y: center y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:15'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:15'!
 abs_CircleCenterX: cx y: cy radius: mr
 "
 (VectorEngine onForm: Display)
@@ -1900,7 +1905,7 @@ Display forceToScreen
 		basicArcCenterX: center x centerY: center y radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
 		basicClosePath! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/4/2018 16:30:44'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/4/2018 16:30:44'!
 abs_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
@@ -1943,7 +1948,7 @@ Display forceToScreen
 	mirroredContolY _ lastClientY + (lastClientY - lastControlY).
 	self abs_CubicBezierToX: x3 y: y3 control1X: mirroredContolX y: mirroredContolY control2X: x2 y: y2! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:00:50'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:00:50'!
 abs_CubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -1975,7 +1980,7 @@ Display forceToScreen
 	lastControlX _ x2.
 	lastControlY _ y2! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:19'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:19'!
 abs_EllipseCenterX: cx y: cy radiusX: mrx radiusY: mry
 "
 (VectorEngine onForm: Display)
@@ -2001,7 +2006,7 @@ Display forceToScreen
 		basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float pi * 2;
 		basicClosePath! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:21'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:21'!
 abs_EllipseCenterX: cx y: cy radiusX: mrx radiusY: mry rotationAngle: theta
 "
 (VectorEngine onForm: Display)
@@ -2027,7 +2032,7 @@ Display forceToScreen
 		basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float pi * 2;
 		basicClosePath! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/14/2020 09:51:38'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/14/2020 09:51:38'!
 abs_EllipseCenterX: cx y: cy radiusX: mrx radiusY: mry rotationAngle: theta start: startAngle sweep: sweepAngle
 	"Currently draws a line from currentX@currentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
@@ -2058,7 +2063,7 @@ Display forceToScreen.
 	phi _ geometryTransformation radians + theta.
 	self basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: startAngle sweep:  sweepAngle! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 20:54:08'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 20:54:08'!
 abs_LineToX: x2
 "
 (VectorEngine onForm: Display)
@@ -2079,7 +2084,7 @@ Display forceToScreen
 "
 	self abs_LineToX: x2 y: lastClientY! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:02:04'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:02:04'!
 abs_LineToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2106,7 +2111,7 @@ Display forceToScreen
 	lastControlX _ lastClientX.
 	lastControlY _ lastClientY! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 20:52:47'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 20:52:47'!
 abs_LineToY: y2
 "
 (VectorEngine onForm: Display)
@@ -2127,7 +2132,7 @@ Display forceToScreen
 "
 	self abs_LineToX: lastClientX y: y2! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:02:08'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:02:08'!
 abs_MoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -2154,7 +2159,7 @@ Display forceToScreen
 	lastControlX _ lastClientX.
 	lastControlY _ lastClientY! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/4/2018 16:40:01'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/4/2018 16:40:01'!
 abs_QuadraticBezierSmoothToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2191,7 +2196,7 @@ Display forceToScreen
 	mirroredContolY _ lastClientY + (lastClientY - lastControlY).
 	self abs_QuadraticBezierToX: x2 y: y2 controlX: mirroredContolX y: mirroredContolY! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:00:58'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:00:58'!
 abs_QuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
 (VectorEngine onForm: Display)
@@ -2218,7 +2223,7 @@ Display forceToScreen
 	lastControlX _ x1.
 	lastControlY _ y1! !
 
-!VectorEngine methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:02:11'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/12/2020 19:12:37'!
 do_ClosePath
 	"abs/rel meaningless here"
 "
@@ -2235,13 +2240,15 @@ Display forceToScreen
 	| p2 |
 	self basicClosePath.
 
+	"currentX and currentY are in (float) targetForm pixel coordinates (i.e. engine basic coordinates). 
+	lastClientX, lastClientY, lastControlX, lastControlY are in client coordinates."
 	p2 _ geometryTransformation internalizePosition: currentX@currentY.
 	lastClientX _ p2 x.
 	lastClientY _ p2 y.
 	lastControlX _ lastClientX.
 	lastControlY _ lastClientY! !
 
-!VectorEngine methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:54:10'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:54:10'!
 rel_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngine onForm: Display)
@@ -2254,7 +2261,7 @@ rel_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: do
 "
 	self abs_ArcToX: lastClientX + cx y: lastClientY + cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorEngine methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:39'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:39'!
 rel_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
@@ -2298,7 +2305,7 @@ Display forceToScreen
 		abs_CubicBezierSmoothToX: lastClientX + x3 y: lastClientY + y3
 		control2X: lastClientX + x2 y: lastClientY + y2! !
 
-!VectorEngine methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:54:02'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:54:02'!
 rel_CubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -2336,7 +2343,7 @@ Display forceToScreen
 		control1X: lastClientX + x1 y: lastClientY + y1
 		control2X: lastClientX + x2 y: lastClientY + y2! !
 
-!VectorEngine methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:34'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:34'!
 rel_LineToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2366,7 +2373,7 @@ Display forceToScreen
 "
 	self abs_LineToX: lastClientX + x2 y: lastClientY + y2! !
 
-!VectorEngine methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:32'!
 rel_MoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -2396,7 +2403,7 @@ Display forceToScreen
 "
 	self abs_MoveToX: lastClientX + x y: lastClientY + y! !
 
-!VectorEngine methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/4/2018 16:47:43'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/4/2018 16:47:43'!
 rel_QuadraticBezierSmoothToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2431,7 +2438,7 @@ Display forceToScreen
 	self
 		abs_QuadraticBezierSmoothToX: lastClientX + x2 y: lastClientY + y2! !
 
-!VectorEngine methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:56'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:56'!
 rel_QuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
 (VectorEngine onForm: Display)
@@ -2460,12 +2467,12 @@ Display forceToScreen
 		abs_QuadraticBezierToX: lastClientX + x2 y: lastClientY + y2
 		controlX: lastClientX + x1 y: lastClientY + y1! !
 
-!VectorEngine methodsFor: 'text' stamp: 'jmv 3/18/2020 20:20:32'!
+!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 4/12/2020 16:59:51'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scaleX: ssx scaleY: ssy
 	"ssx and ssy to honor font pointSize"
 	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers |
 
-	self antiAliasingWidth: VectorEngine antiAliasingWidthForOutlineFonts.
+	self antiAliasingWidth: self class antiAliasingWidthForOutlineFonts.
 	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.
 	sx _ ssx * trueTypeScale.
 	sy _ ssy * trueTypeScale.
@@ -2499,14 +2506,14 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 			destX _ destX + (advanceWidth * sx).
 		]
 	].
-	self antiAliasingWidth: VectorEngine defaultAntiAliasingWidth! !
+	self antiAliasingWidth: self class defaultAntiAliasingWidth! !
 
-!VectorEngine methodsFor: 'text' stamp: 'jmv 3/17/2020 21:06:12'!
+!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 4/12/2020 17:02:47'!
 displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColor scaleX: ssx scaleY: ssy
 	"ssx and ssy to honor font pointSize"
 	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers baseIndex |
 
-	self antiAliasingWidth: VectorEngine antiAliasingWidthForOutlineFonts.
+	self antiAliasingWidth: self class antiAliasingWidthForOutlineFonts.
 	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.
 	sx _ ssx * trueTypeScale.
 	sy _ ssy * trueTypeScale.
@@ -2545,37 +2552,9 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColo
 				]
 			]
 	].
-	self antiAliasingWidth: VectorEngine defaultAntiAliasingWidth! !
+	self antiAliasingWidth: self class defaultAntiAliasingWidth! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 16:56:09'!
-addPenPositionX: x y: y
-
-"
-Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
-"
-
-	self updateMaskX: x y: y.
-
-	blendBoundsTop _ blendBoundsTop min: y.
-	blendBoundsBottom _ blendBoundsBottom max: y.
-	blendBoundsLeft _ blendBoundsLeft min: x.
-	blendBoundsRight _ blendBoundsRight max: x.
-
-	"Compute edges intersecting with this horizontal line, for fills."
-	doFill ifTrue: [
-		self updateEdgeCountAtX: x y: y ].! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 3/2/2020 09:56:17'!
-adjustPixX: x y: y
-	| adjusted |
-	adjusted _ false.
-	[y - pixY > (openCLKernelHeight/2)] whileTrue: [ pixY _ pixY + openCLKernelHeight. adjusted _ true].
-	[pixY - y > (openCLKernelHeight/2)] whileTrue: [ pixY _ pixY - openCLKernelHeight. adjusted _ true].
-	[x - pixX > (openCLKernelWidth/2)] whileTrue: [ pixX _ pixX + openCLKernelWidth. adjusted _ true].
-	[pixX - x > (openCLKernelWidth/2)] whileTrue: [ pixX _ pixX - openCLKernelWidth. adjusted _ true].
-	^ adjusted! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/29/2020 18:07:54'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/13/2020 17:39:30'!
 finishPath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
@@ -2617,24 +2596,17 @@ finishPath
 
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 3/2/2020 09:48:15'!
-firstX: x y: y
-	pixY _ y // openCLKernelHeight * openCLKernelHeight + ii.
-	pixX _ x // openCLKernelWidth * openCLKernelWidth + jj.
-	self adjustPixX: x y: y.
-	self updateMaskReadWord.
-
-	firstX _ x.
-	firstY _ y.! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 12/30/2017 15:48:32'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/4/2020 19:40:18'!
 initialize
-	geometryTransformation _ MorphicTranslation new. "Identity"! !
+	geometryTransformation _ MorphicTranslation new. "Identity"
+	clippingMorphId _ 0.
+	currentMorphId _ 0.! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/10/2020 16:32:16'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/12/2020 20:42:42'!
 initializePath
 
-	self firstX: 0 y: 0.
+	firstX _ 0.
+	firstY _ 0.
 	currentX _ 0.0.
 	currentY _ 0.0.
 	lastClientX _ 0.0.
@@ -2643,49 +2615,48 @@ initializePath
 	lastControlY _ lastClientY.
 	prevYTruncated _ nil.
 
-	blendBoundsTop _ targetHeight.			"drawable bottom. Will later be refined."
+	blendBoundsTop _ targetForm height.		"drawable bottom. Will later be refined."
 	blendBoundsBottom _ 0.						"drawable top. Will later be refined."
 	blendBoundsLeft _ targetWidth.			"drawable right. Will later be refined."
 	blendBoundsRight _ 0.						"drawable left. Will later be refined."! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 3/2/2020 09:44:25'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/12/2020 17:53:50'!
 pvtStrokeWidth: aNumber
+	| swErodedHalf |
 	strokeWidth _ aNumber.
 	strokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
 	strokeWidthDilatedHalfSquared _ strokeWidthDilatedHalf * strokeWidthDilatedHalf.
-	strokeWidthErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	strokeWidthErodedHalfSquared _ strokeWidthErodedHalf * strokeWidthErodedHalf * strokeWidthErodedHalf sign.
-	openCLKernelWidth _ ((strokeWidthDilatedHalf + subPixelDelta) * 2) truncated + 1.
-	openCLKernelHeight _ (strokeWidthDilatedHalf * 2) truncated + 1.! !
+	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
+	strokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/11/2020 19:07:10'!
 resetMorphBounds
 
-	morphBoundsTop _ targetHeight - 1.
+	morphBoundsTop _ targetForm height - 1.
 	morphBoundsBottom _ 0.
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/15/2020 15:13:02'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/12/2020 16:59:04'!
 setForm: aForm
 	"
 	World extent: World extent
 	"
 	| hack s |
 	targetForm _ aForm.
-	targetWidth _ aForm width.
-	targetHeight _ aForm height.
+	targetBits _ targetForm bits.
+	targetWidth _ targetForm width.
 	self resetMorphBounds.
-	self clipRect: (0@0 corner: targetWidth@targetHeight).
-	self antiAliasingWidth: VectorEngine defaultAntiAliasingWidth.
+	self clipRect: targetForm boundingBox.
+	self antiAliasingWidth: self class defaultAntiAliasingWidth.
 	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"
-	s _ aForm bits size.
+	s _ targetForm bits size.
 	(mask isNil or: [ mask size ~= s ])
 		ifTrue: [
 			mask _ WordArray new: s.
 			edgeCountPerPixel _ WordArray new: s.
-			morphAtPixel _ Array new: s.
-			hack _ Form extent: targetWidth@targetHeight depth: 32 bits: mask.
+			morphIdAtPixel _ WordArray new: s.
+			hack _ Form extent: targetForm extent depth: 32 bits: mask.
 			auxBitBlt _ BitBlt toForm: hack.
 			auxBitBlt fillBitmap: (Bitmap with: 16rFF000000).
 			auxBitBlt combinationRule: Form over ].
@@ -2696,164 +2667,10 @@ setForm: aForm
 	auxBitBlt copyBits.
 	auxBitBlt destForm bits: edgeCountPerPixel.
 	auxBitBlt copyBits.
-	morphAtPixel atAllPut: 0! !
+	auxBitBlt destForm bits: morphIdAtPixel.
+	auxBitBlt copyBits.! !
 
-!VectorEngine methodsFor: 'private' stamp: 'jmv 1/14/2020 10:51:47'!
-updateEdgeCountAtX: x y: y
-	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffest blueOffset |
-
-	thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom-1.
-	prevYTruncated ifNil: [ 
-		^ prevYTruncated _ thisYTruncated ].
-	thisYTruncated = prevYTruncated ifTrue: [
-		^ prevYTruncated _ thisYTruncated ].
-
-	thisYTruncated > prevYTruncated
-		ifTrue: [
-			pixelY _ thisYTruncated.
-			increment _ 1 ]
-		ifFalse: [
-			pixelY _ prevYTruncated.
-			increment _ -1 ].
-
-	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
-	The effect is the same, and we need to clean up less stuff afterwards.
-	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
-	pixelIndexBase _ pixelY * targetWidth + 1.
-	redOffset _ (x+subPixelDelta) truncated + 1 max: clipLeft.
-	greenOffest _ x truncated + 1 max: clipLeft.
-	blueOffset _ (x-subPixelDelta) truncated + 1 max: clipLeft.
-	redPixelIndex _ pixelIndexBase + redOffset.
-	greenPixelIndex _ pixelIndexBase + greenOffest.
-	bluePixelIndex _ pixelIndexBase + blueOffset.
-
-	"Three possible cases here: RGB in one word (pixel); RG in one, and G in another; R in one, GB in another"
-	redPixelIndex = bluePixelIndex
-		ifTrue: [						"First case: RGB in the same word"
-			redOffset <= clipRight ifTrue: [
-				countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
-				redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
-				countWord at: 3 put: redCount.
-				greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
-				countWord at: 2 put: greenCount.
-				blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
-				countWord at: 1 put: blueCount.
-				edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
-		]
-		ifFalse: [
-			redPixelIndex = greenPixelIndex
-				ifTrue: [				"Second case: RG in one word, B in following"
-					redOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
-						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
-						countWord at: 3 put: redCount.
-						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
-						countWord at: 2 put: greenCount.
-						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
-
-					blueOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
-						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
-						countWord at: 1 put: blueCount.
-						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
-				]
-				ifFalse: [			"Third case: R in one word, GB in the following"
-					redOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
-						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
-						countWord at: 3 put: redCount.
-						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
-
-					blueOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
-						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
-						countWord at: 2 put: greenCount.
-						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
-						countWord at: 1 put: blueCount.
-						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
-				]
-		].
-	prevYTruncated _ thisYTruncated! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:52:02'!
-updateMaskReadWord
-	"Read alpha (transparency) mask."
-
-	((pixY between: clipTop and: clipBottom) and: [pixX between: clipLeft and: clipRight])
-		ifTrue: [
-			z_pixelIndex _ pixY * targetWidth +  pixX.
-			z_pixelIndex _ z_pixelIndex + 1.
-			z_alphaWord _ mask bytesAt: z_pixelIndex.
-			z_redAlpha _ z_alphaWord at: 3.
-			z_greenAlpha _ z_alphaWord at: 2.
-			z_blueAlpha _ z_alphaWord at: 1 ]
-		ifFalse: [
-			z_pixelIndex _ -1 ].
-	z_previousRedAlpha _ z_redAlpha.
-	z_previousGreenAlpha _ z_greenAlpha.
-	z_previousBlueAlpha _ z_blueAlpha! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:28:37'!
-updateMaskWriteWord
-	"Update alpha (transparency) mask using trajectoryPoints."
-
-	(z_previousRedAlpha ~= z_redAlpha or: [
-	z_previousGreenAlpha ~= z_greenAlpha or: [
-	z_previousBlueAlpha ~= z_blueAlpha ]]) ifTrue: [
-		z_alphaWord at: 3 put: z_redAlpha.
-		z_alphaWord at: 2 put: z_greenAlpha.
-		z_alphaWord at: 1 put: z_blueAlpha.
-		mask bytesAt: z_pixelIndex put: z_alphaWord ]! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 2/19/2020 17:37:28'!
-updateMaskX: x y: y
-	"Apdate alpha (transparency) mask using trajectoryPoints."
-	| distanceToAxisSquared alpha dySquared dx dxSquared dy dxp |
-
-	(self adjustPixX: x y: y) ifTrue: [
-		self updateMaskWriteWord.
-		self updateMaskReadWord ].
-
-	z_pixelIndex = -1 ifTrue: [ ^ self ].
-
-	"Minimizar"
-	dy _ pixY - y.
-	dySquared _ dy * dy.
-	dx _ pixX - x.
-	"Red"
-	dxp _ dx - subPixelDelta.
-	dxSquared _ dxp * dxp.
-	distanceToAxisSquared _ dxSquared + dySquared.
-	distanceToAxisSquared < strokeWidthDilatedHalfSquared
-		ifTrue: [
-			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
-				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-			alpha > z_redAlpha ifTrue: [
-				z_redAlpha _ alpha ]].
-	"Green"
-	dxSquared _ dx * dx.
-	distanceToAxisSquared _ dxSquared + dySquared.
-	distanceToAxisSquared < strokeWidthDilatedHalfSquared
-		ifTrue: [
-			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
-				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-			alpha > z_greenAlpha ifTrue: [
-				z_greenAlpha _ alpha ]].
-	"Blue"
-	dxp _ dx + subPixelDelta.
-	dxSquared _ dxp * dxp.
-	distanceToAxisSquared _ dxSquared + dySquared.
-	distanceToAxisSquared < strokeWidthDilatedHalfSquared
-		ifTrue: [
-			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
-				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-			alpha > z_blueAlpha ifTrue: [
-				z_blueAlpha _ alpha ]].! !
-
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/19/2020 16:49:07'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/13/2020 15:56:53'!
 basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngine onForm: Display)
@@ -2861,8 +2678,8 @@ basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta sta
 		engine basicArcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen.
 "
-	| d hops angle thetaCos thetaSin xp yp x0 y0 x y |
-	
+	| d hops angle thetaCos thetaSin xp yp x0 y0 |
+
 	"Por supuesto probar tambien rx no igual a ry, y uno (o ambos) menor que el ancho de trazo..."
 	thetaCos _ theta cos.
 	thetaSin _ theta sin.
@@ -2872,29 +2689,26 @@ Display forceToScreen.
 	x0 _ thetaCos * xp - (thetaSin * yp) + cx.
 	y0 _ thetaSin * xp + (thetaCos * yp) + cy.
 	(startAngle ~= 0.0 or: [ sweepAngle ~= Float twoPi ])
-		ifTrue: [ self basicLineToX: x0 y: y0 ]	"Draw a line. There are cases where we want to join an arc. For example, window frames"
+		ifTrue: [ self basicLineToX: x0 y: y0 ] "If an arc (not whole circle/ellipse, join with a line, to ensure closed path. For example, window frames"
 		ifFalse: [
 			"trajectory starts here. Eventually, #closePath should draw a line to here"
 			"Next point will be first in a new trajectory fragment"
 			prevYTruncated _ nil.
-			self firstX: x0 y: y0.
-			self addPenPositionX: x0 y: y0 ].
+			firstX _ x0.
+			firstY _ y0 ].
+
 	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
 	d _ sweepAngle / hops.
-	hops timesRepeat: [
-		angle _ angle + d.
-		xp _ angle cos * rx.
-		yp _ angle sin * ry.
-		x _ thetaCos * xp - (thetaSin * yp) + cx.
-		y _ thetaSin * xp + (thetaCos * yp) + cy.
-		self addPenPositionX: x y: y ].
 
-	currentX _ x.
-	currentY _ y.
+	self primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d.
 
-	self updateMaskWriteWord.! !
+	angle _ startAngle + sweepAngle.
+	xp _ angle cos * rx.
+	yp _ angle sin * ry.
+	currentX _ thetaCos * xp - (thetaSin * yp) + cx.
+	currentY _ thetaSin * xp + (thetaCos * yp) + cy.! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 12/31/2017 16:42:44'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 12/31/2017 16:42:44'!
 basicArcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngine onForm: Display)
@@ -2982,7 +2796,7 @@ Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entr
 
 	self basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/1/2018 16:11:54'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/1/2018 16:11:54'!
 basicClosePath
 "
 (VectorEngine onForm: Display)
@@ -2995,7 +2809,7 @@ Display forceToScreen
 "
 	self basicLineToX: firstX y: firstY! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/19/2020 16:49:10'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/13/2020 16:09:06'!
 basicCubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -3018,36 +2832,17 @@ Display forceToScreen
 Display forceToScreen
 	"
 
-	| dx dy hops increment t x0 y0 oneLessT f2 f3 f1 f23 f4 x y |
-
+	| dx dy hops |
 	dx _ (x1-currentX) abs + (x2-x1) abs + (x3-x2) abs.
 	dy _ (y1-currentY) abs + (y2-y1) abs + (y3-y2) abs.
 	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
-	increment _ 1.0 / hops.
-	t _ 0.0.
-	"en muchos casos, secuencias de estos,  repetimos puntos, el ultimo de la curva anterior... pensar, etc"
-	x0 _ currentX.
-	y0 _ currentY.
-	self addPenPositionX: x0 y: y0.
-	hops-1 timesRepeat: [
-		t _ t + increment.
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT * oneLessT.
-		f23 _ 3 * oneLessT * t.
-		f2 _ f23 * oneLessT.
-		f3 _ f23 * t.
-		f4 _ t * t * t.
-		x _ (f1 * x0) + (f2 * x1) + (f3 * x2) + (f4 * x3).
-		y _ (f1 * y0) + (f2 * y1) + (f3 * y2) + (f4 * y3).
-		self addPenPositionX: x y: y ].
-	self addPenPositionX: x3 y: y3.
+
+	self primCubicBezierFromX: currentX y: currentY toX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2 hops: hops.
 
 	currentX _ x3.
-	currentY _ y3.
+	currentY _ y3.! !
 
-	self updateMaskWriteWord.! !
-
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/19/2020 16:49:13'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/13/2020 16:12:38'!
 basicLineToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -3073,25 +2868,20 @@ Display forceToScreen
 		engine abs_LineToX: 180 y: 30 ].
 Display forceToScreen
 "
-	| dx dy hops incrementX incrementY x y |
+	| dx dy hops incrementX incrementY |
 	dy _ y2 - currentY.
 	dx _ x2 - currentX.
 	"Optimizar. En todas las lineas, bounds. En verticales, mucho mas. En horiz, no EdgeCounts!! Ver 02"
-	x _ currentX.
-	y _ currentY.
 	hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
 	incrementX _ dx *1.0 / hops.
 	incrementY _ dy *1.0 / hops.
-	hops timesRepeat: [
-		self addPenPositionX: x y: y.
-		x _ x + incrementX.
-		y _ y + incrementY ].
-	currentX _ x2.
-	currentY _ y2.
-	self addPenPositionX: currentX y: currentY.
-	self updateMaskWriteWord.! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/10/2020 15:57:37'!
+	self primLineFromX: currentX y: currentY toX: x2 y: y2 hops: hops incrementX: incrementX incrementY: incrementY.
+
+	currentX _ x2.
+	currentY _ y2.! !
+
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/12/2020 20:23:30'!
 basicMoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -3111,11 +2901,12 @@ Display forceToScreen
 
 	"Next point will be first in a new trajectory fragment"
 	prevYTruncated _ nil.
-	self firstX: x y: y.
+	firstX _ x.
+	firstY _ y.
 	currentX _ x.
 	currentY _ y.! !
 
-!VectorEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 2/19/2020 16:49:15'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/13/2020 16:15:24'!
 basicQuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
 (VectorEngine onForm: Display)
@@ -3132,35 +2923,20 @@ Display forceToScreen
 		engine abs_QuadraticBezierToX: 60 y: 10 controlX: 15 y: 30 ].
 Display forceToScreen
 	"
-	| dx dy hops increment t x0 y0 oneLessT f1 f3 f2 x y |
+	| dx dy hops |
 	dx _ (x1-currentX) abs + (x2-x1) abs.
 	dy _ (y1-currentY) abs + (y2-y1) abs.
 	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
-	increment _ 1.0 / hops.
-	t _ 0.0.
-	x0 _ currentX.
-	y0 _ currentY.
-	self addPenPositionX: x0 y: y0.
-	hops-1 timesRepeat: [
-		t _ t + increment.
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT.
-		f2 _ 2* oneLessT * t.
-		f3 _ t * t.
-		x _ (f1 * x0) + (f2 * x1) + (f3 * x2).
-		y _ (f1 * y0) + (f2 * y1) + (f3 * y2).
-		self addPenPositionX: x y: y ].
-	self addPenPositionX: x2 y: y2.
+
+	self primQuadraticBezierFromX: currentX y: currentY toX: x2 y: y2 controlX: x1 y: y1 hops: hops.
 
 	currentX _ x2.
-	currentY _ y2.
+	currentY _ y2.! !
 
-	self updateMaskWriteWord.! !
-
-!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 1/14/2020 09:58:41'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/6/2020 14:52:09'!
 blendFillOnly
 
-	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex m |
+	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex id |
 
 	blendBoundsTop to: blendBoundsBottom do: [ :displayY |
 		redEdgesTotal _ 0.
@@ -3187,23 +2963,12 @@ blendFillOnly
 			isGreenInside _ greenEdgesTotal ~= 0.
 			isBlueInside _ blueEdgesTotal ~= 0.
 
-			(currentOwnerIfClips isNil or: [
-				m _ morphAtPixel at: pixelIndex.
-				m = currentOwnerIfClips or: [m = currentMorph]]) ifTrue: [
+			(clippingMorphId = 0 or: [
+			id _ morphIdAtPixel at: pixelIndex.
+			id = clippingMorphId or: [id = currentMorphId]]) ifTrue: [
 				self
 					blendFillOnlyAtX: displayX y: displayY pixelIndex: pixelIndex 
-					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
-				"-----------------------"
-				"y registrar el morph actual a este pixel!!, si es que lo pintamos... Mejorar. ver alpha."
-				"en realidad, si el alpha usado para el verde es relevante, mayor a 0.2, p.ej...
-				Ojo. Esto exige!! que los que contesten clipsSubmorphs, sean opacotes, sino...
-				Uh, usar isGreenInside hace que se clippe a la mitad interna del borde... Además, no se podrá agarrar un morph de la mitad externa del borde...
-				Se podria hacer que el blend conteste si estabamos adentro o no... Y simplemente usar eso...
-				"
-				"-----------------------"
-				isGreenInside ifTrue: [
-				"(auxAlphas at: pixelIndex) = 0 ifFalse: ["
-					morphAtPixel at: pixelIndex put: currentMorph ]].
+					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside ].
 			]].
 	auxBitBlt
 		destX: blendBoundsLeft destY: blendBoundsTop
@@ -3217,14 +2982,14 @@ blendFillOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:41'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/11/2020 19:30:31'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends fill over background. Despite method selector, there might be a very thin stroke of the same color as the fill. Handle this by adjusting antiAliasAlphas.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha fillAlphaToUse |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha fillAlphaToUse |
 
 	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
@@ -3238,23 +3003,9 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	isGreenInside ifTrue: [ antiAliasGreenAlpha _ 1.0 - antiAliasGreenAlpha ].
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
 	isBlueInside ifTrue: [ antiAliasBlueAlpha _ 1.0 - antiAliasBlueAlpha ].
-	
-	targetForm depth = 1  "We only support depths 32 and 1, right now"
-		ifTrue: [
-			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
-				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
-				"bits _ targetForm bits.
-				backgroundWord _ bits at: pixelIndex >> 5.
-				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
-				bits at: pixelIndex >> 5 put: backgroundWord."
-				"Esto es super ineficiente pero parece andar bien. Mejorar..."
-				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
-			].
-			^ self].
 
 	fillAlphaToUse _ fillAlpha / 255.0.
-	bits _ targetForm bits.
-	targetWord _ bits bytesAt: pixelIndex.
+	targetWord _ targetBits bytesAt: pixelIndex.
 
 	alpha _ antiAliasRedAlpha * fillAlphaToUse.
 	resultR _ alpha * fillRed + ((1.0 - alpha) * (targetWord at: 3)).
@@ -3268,12 +3019,15 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	resultB _ alpha * fillBlue + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
-	bits bytesAt: pixelIndex put: targetWord.! !
+	targetBits bytesAt: pixelIndex put: targetWord.
 
-!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 1/14/2020 09:58:41'!
+	antiAliasGreenAlpha > 0.5 ifTrue: [
+		morphIdAtPixel at: pixelIndex put: currentMorphId ].! !
+
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/6/2020 14:52:28'!
 blendStrokeAndFill
 
-	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex m |
+	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex id |
 
 	blendBoundsTop to: blendBoundsBottom do: [ :displayY |
 		redEdgesTotal _ 0.
@@ -3299,23 +3053,12 @@ blendStrokeAndFill
 			isRedInside _ redEdgesTotal ~= 0.
 			isGreenInside _ greenEdgesTotal ~= 0.
 			isBlueInside _ blueEdgesTotal ~= 0.
-			(currentOwnerIfClips isNil or: [
-				m _ morphAtPixel at: pixelIndex.
-				m = currentOwnerIfClips or: [m = currentMorph]]) ifTrue: [
+			(clippingMorphId = 0 or: [
+			id _ morphIdAtPixel at: pixelIndex.
+			id = clippingMorphId or: [id = currentMorphId]]) ifTrue: [
 				self
 					blendStrokeAndFillAtX: displayX y: displayY pixelIndex: pixelIndex 
-					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
-				"-----------------------"
-				"y registrar el morph actual a este pixel!!, si es que lo pintamos... Mejorar. ver alpha."
-				"en realidad, si el alpha usado para el verde es relevante, mayor a 0.2, p.ej...
-				Ojo. Esto exige!! que los que contesten clipsSubmorphs, sean opacotes, sino...
-				Uh, usar isGreenInside hace que se clippe a la mitad interna del borde... Además, no se podrá agarrar un morph de la mitad externa del borde...
-				Se podria hacer que el blend conteste si estabamos adentro o no... Y simplemente usar eso...
-				"
-				"-----------------------"
-				isGreenInside ifTrue: [
-				"(auxAlphas at: pixelIndex) = 0 ifFalse: ["
-					morphAtPixel at: pixelIndex put: currentMorph ]].
+					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside ].
 			]].
 	auxBitBlt
 		destX: blendBoundsLeft destY: blendBoundsTop
@@ -3329,14 +3072,14 @@ blendStrokeAndFill
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:31'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/11/2020 19:30:56'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent strokeAlphaToUse fillAlphaToUse |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent strokeAlphaToUse fillAlphaToUse |
 
 	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
@@ -3346,68 +3089,57 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 	antiAliasRedAlpha _ (antiAliasAlphasWord at: 3) / 127.0.
 	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
-	
-	targetForm depth = 1  "We only support depths 32 and 1, right now"
-		ifTrue: [
-			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
-				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
-				"bits _ targetForm bits.
-				backgroundWord _ bits at: pixelIndex >> 5.
-				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
-				bits at: pixelIndex >> 5 put: backgroundWord."
-				"Esto es super ineficiente pero parece andar bien. Mejorar..."
-				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
-			].
-			^ self].
 
 	strokeAlphaToUse _ strokeAlpha / 255.0.
 	fillAlphaToUse _ fillAlpha / 255.0.
-	bits _ targetForm bits.
-	targetWord _ bits bytesAt: pixelIndex.
+	targetWord _ targetBits bytesAt: pixelIndex.
 
 	isRedInside
-		ifFalse: [							"Blend stroke over background"
-			alpha _ antiAliasRedAlpha * strokeAlphaToUse.
-			foreComponent _ strokeRed ]
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
 			alpha _ antiAliasRedAlpha * strokeAlphaToUse + ((1-antiAliasRedAlpha) * fillAlphaToUse).
-			foreComponent _ antiAliasRedAlpha * strokeRed + ((1-antiAliasRedAlpha) * fillRed) ].
+			foreComponent _ antiAliasRedAlpha * strokeRed + ((1-antiAliasRedAlpha) * fillRed).
+			morphIdAtPixel at: pixelIndex put: currentMorphId ]
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasRedAlpha * strokeAlphaToUse.
+			foreComponent _ strokeRed.
+			antiAliasGreenAlpha > 0.5 ifTrue: [
+				morphIdAtPixel at: pixelIndex put: currentMorphId ] ].
 	resultR _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 3)).
 	targetWord at: 3 put: resultR rounded.
 
 	isGreenInside
-		ifFalse: [							"Blend stroke over background"
-			alpha _ antiAliasGreenAlpha * strokeAlphaToUse.
-			foreComponent _ strokeGreen ]
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
 			alpha _ antiAliasGreenAlpha * strokeAlphaToUse + ((1-antiAliasGreenAlpha) * fillAlphaToUse).
-			foreComponent _ antiAliasGreenAlpha * strokeGreen + ((1-antiAliasGreenAlpha) * fillGreen) ].
+			foreComponent _ antiAliasGreenAlpha * strokeGreen + ((1-antiAliasGreenAlpha) * fillGreen) ]
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasGreenAlpha * strokeAlphaToUse.
+			foreComponent _ strokeGreen ].
 	resultG _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 2)).
 	targetWord at: 2 put: resultG rounded.
 
 	isBlueInside
-		ifFalse: [							"Blend stroke over background"
-			alpha _ antiAliasBlueAlpha * strokeAlphaToUse.
-			foreComponent _ strokeBlue ]
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
 			alpha _ antiAliasBlueAlpha * strokeAlphaToUse + ((1-antiAliasBlueAlpha) * fillAlphaToUse).
-			foreComponent _ antiAliasBlueAlpha * strokeBlue + ((1-antiAliasBlueAlpha) * fillBlue) ].
+			foreComponent _ antiAliasBlueAlpha * strokeBlue + ((1-antiAliasBlueAlpha) * fillBlue) ]
+		ifFalse: [							"Blend stroke over background"
+			alpha _ antiAliasBlueAlpha * strokeAlphaToUse.
+			foreComponent _ strokeBlue ].
 	resultB _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
-	bits bytesAt: pixelIndex put: targetWord.! !
+	targetBits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 1/14/2020 09:58:41'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/6/2020 14:39:31'!
 blendStrokeOnly
 
-	| pixelIndex m |
+	| pixelIndex id |
 	blendBoundsTop to: blendBoundsBottom do: [ :displayY |
 		pixelIndex _ displayY * targetWidth +  blendBoundsLeft.
 		blendBoundsLeft to: blendBoundsRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
-				(currentOwnerIfClips isNil or: [
-				m _ morphAtPixel at: pixelIndex.
-				m = currentOwnerIfClips or: [m = currentMorph]]) ifTrue: [
+				(clippingMorphId = 0 or: [
+				id _ morphIdAtPixel at: pixelIndex.
+				id = clippingMorphId or: [id = currentMorphId]]) ifTrue: [
 					self blendStrokeOnlyAtX: displayX y: displayY pixelIndex: pixelIndex ]]].
 
 	auxBitBlt
@@ -3417,14 +3149,14 @@ blendStrokeOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngine methodsFor: 'private - blend with mask' stamp: 'jmv 12/22/2017 11:59:36'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/11/2020 19:31:20'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends stroke over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord bits resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha strokeAlphaToUse |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha strokeAlphaToUse |
 
 	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
@@ -3434,22 +3166,8 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
 
-	targetForm depth = 1  "We only support depths 32 and 1, right now"
-		ifTrue: [
-			antiAliasGreenAlpha > 0.5 ifTrue: [	"Take somewhat opaque pixels. Consider only green alpha"	"Ojo, habria que tomar el alpha del fill o border!!!!"	 "Color black pixelValueForDepth: 1"
-				"Atencion: Falla si el form no es potencia de 2 (anda bien 512x512). Ademas hardcodea que somos little endian. MEJORAR (y poner en el otro blend)"
-				"bits _ targetForm bits.
-				backgroundWord _ bits at: pixelIndex >> 5.
-				backgroundWord _ backgroundWord bitOr: 1 << (31-(pixelIndex bitAnd: 31)).
-				bits at: pixelIndex >> 5 put: backgroundWord."
-				"Esto es super ineficiente pero parece andar bien. Mejorar..."
-				targetForm pixelValueAt: (pixelIndex \\ targetWidth) @(pixelIndex // targetWidth) put: 1
-			].
-			^ self].
-
 	strokeAlphaToUse _ strokeAlpha / 255.0.
-	bits _ targetForm bits.
-	targetWord _ bits bytesAt: pixelIndex.
+	targetWord _ targetBits bytesAt: pixelIndex.
 
 	alpha _ antiAliasRedAlpha * strokeAlphaToUse.
 	resultR _ alpha * strokeRed + ((1.0 - alpha) * (targetWord at: 3)).
@@ -3463,12 +3181,15 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 	resultB _ alpha * strokeBlue + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
-	bits bytesAt: pixelIndex put: targetWord.! !
+	targetBits bytesAt: pixelIndex put: targetWord.
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:12:52'!
+	antiAliasGreenAlpha > 0.5 ifTrue: [
+		morphIdAtPixel at: pixelIndex put: currentMorphId ].! !
+
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 4/12/2020 17:01:35'!
 experLinesAndShapes
 	"
-	self experLinesAndShapes
+	VectorEngineBasic experLinesAndShapes
 	"
 	| engine y1 yy2 dy y2 |
 	engine _ self onForm: Display.
@@ -3479,7 +3200,7 @@ experLinesAndShapes
 			abs_LineToX: 15 y: 410; abs_LineToX: 10 y: 20;
 			do_ClosePath ].
 	Display forceToScreen.
-	engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+	engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
 			abs_MoveToX: 220 y: 10;
 			abs_LineToX: 410 y: 15; abs_LineToX: 220 y: 20;
@@ -3489,11 +3210,11 @@ experLinesAndShapes
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorEngine defaultAntiAliasingWidth * 2.
+	y2 _ self defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		"stroke con w > aaw"
-		yy2 _ y2 >= 1 ifTrue: [ VectorEngine defaultAntiAliasingWidth * 0.5 ] ifFalse: [0].
-		engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+		yy2 _ y2 >= 1 ifTrue: [ self defaultAntiAliasingWidth * 0.5 ] ifFalse: [0].
+		engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 431 y: y1+yy2; abs_LineToX: 530 y: y1+yy2+dy;
 				abs_LineToX: 530 y: y1+y2-yy2+dy; abs_LineToX: 431 y: y1+y2-yy2;
@@ -3528,24 +3249,24 @@ experLinesAndShapes
 				abs_MoveToX: y2*0.5+731 y: y2*0.5 + y1+dy+dy+dy; abs_LineToX: 830 y: y2 * 0.5 + y1  + dy + dy+dy+dy.
 			engine
 				abs_MoveToX: y2*0.5 + y1+dy+dy+dy y: y2*0.5+731; abs_LineToX: y2 * 0.5 + y1  + dy + dy+dy+dy y: 830 ].
-		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
 	].
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:12:56'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 4/12/2020 17:02:04'!
 experLinesAndShapes2
 	"
-	self experLinesAndShapes2
+	VectorEngineBasic experLinesAndShapes2
 	"
 	| engine y1 dy y2 |
 	engine _ self onForm: Display.
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorEngine defaultAntiAliasingWidth*4*2.
+	y2 _ self defaultAntiAliasingWidth*4*2.
 	15 timesRepeat: [
 		"Solo fill. w chico pero aun visible"
 		engine strokeWidth: 1.0 color: Color green fillColor: Color red do: [
@@ -3607,7 +3328,7 @@ experLinesAndShapes2
 				abs_MoveToX: y1+dy+dy+dy+dy+dy y: 631; abs_LineToX: y1+dy+dy+dy+dy+dy+dy y: 730;
 				abs_LineToX: y1+y2+dy+dy+dy+dy+dy+dy y: 730; abs_LineToX: y1+y2+dy+dy+dy+dy+dy y: 631;
 				do_ClosePath ].
-		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 print.
 		y2 _ y2 * 0.8.
@@ -3615,10 +3336,10 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:13:02'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 4/12/2020 17:02:56'!
 experLinesAndShapes3
 	"
-	self experLinesAndShapes3
+	VectorEngineBasic experLinesAndShapes3
 	"
 	| engine y1 dy y2 |
 	engine _ self onForm: Display.
@@ -3629,7 +3350,7 @@ experLinesAndShapes3
 			abs_LineToX: 15 y: 410; abs_LineToX: 10 y: 20;
 			do_ClosePath ].
 	Display forceToScreen.
-	engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+	engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
 			abs_MoveToX: 220 y: 10;
 			abs_LineToX: 410 y: 15; abs_LineToX: 220 y: 20;
@@ -3639,10 +3360,10 @@ experLinesAndShapes3
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorEngine defaultAntiAliasingWidth * 2.
+	y2 _ self defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		"stroke con w > aaw"
-		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*0.4 color: Color black fillColor: Color black do: [
+		engine strokeWidth: self defaultAntiAliasingWidth*0.4 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 431 y: y1; abs_LineToX: 530 y: y1+dy;
 				abs_LineToX: 530 y: y1+y2+dy; abs_LineToX: 431 y: y1+y2;
@@ -3652,7 +3373,7 @@ experLinesAndShapes3
 				abs_LineToX: y1+y2+dy y: 530; abs_LineToX: y1+y2 y: 431;
 				do_ClosePath ].
 		"Solo fill. w casi=0"
-		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*0.2 color: Color black fillColor: Color black do: [
+		engine strokeWidth: self defaultAntiAliasingWidth*0.2 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 531 y: y1+dy; abs_LineToX: 630 y: y1+dy+dy;
 				abs_LineToX: 630 y: y1+y2+dy+dy; abs_LineToX: 531 y: y1+y2+dy;
@@ -3662,7 +3383,7 @@ experLinesAndShapes3
 				abs_LineToX: y1+y2+dy+dy y: 630; abs_LineToX: y1+y2+dy y: 531;
 				do_ClosePath ].
 		"Solo fill. w =0"
-		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*0.0 color: Color black fillColor: Color black do: [
+		engine strokeWidth: self defaultAntiAliasingWidth*0.0 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 631 y: y1+dy+dy; abs_LineToX: 730 y: y1+dy+dy+dy;
 				abs_LineToX: 730 y: y1+y2+dy+dy+dy; abs_LineToX: 631 y: y1+y2+dy+dy;
@@ -3671,7 +3392,7 @@ experLinesAndShapes3
 				abs_MoveToX: y1+dy+dy y: 631; abs_LineToX: y1+dy+dy+dy y: 730;
 				abs_LineToX: y1+y2+dy+dy+dy y: 730; abs_LineToX: y1+y2+dy+dy y: 631;
 				do_ClosePath ].
-		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
 	].
@@ -3679,10 +3400,10 @@ experLinesAndShapes3
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:13:08'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 4/12/2020 17:01:50'!
 experLinesAndShapes4
 	"
-	self experLinesAndShapes4
+	VectorEngineBasic experLinesAndShapes4
 	"
 	| engine y1 dy y2 |
 	engine _ self onForm: Display.
@@ -3693,7 +3414,7 @@ experLinesAndShapes4
 			abs_LineToX: 15 y: 410; abs_LineToX: 10 y: 20;
 			do_ClosePath ].
 	Display forceToScreen.
-	engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+	engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
 			abs_MoveToX: 220 y: 10;
 			abs_LineToX: 410 y: 15; abs_LineToX: 220 y: 20;
@@ -3703,10 +3424,10 @@ experLinesAndShapes4
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorEngine defaultAntiAliasingWidth * 2.
+	y2 _ self defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		"stroke con w > aaw"
-		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*2 color: Color black fillColor: Color black do: [
+		engine strokeWidth: self defaultAntiAliasingWidth*2 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 431 y: y1; abs_LineToX: 530 y: y1+dy;
 				abs_LineToX: 530 y: y1+y2+dy; abs_LineToX: 431 y: y1+y2;
@@ -3716,7 +3437,7 @@ experLinesAndShapes4
 				abs_LineToX: y1+y2+dy y: 530; abs_LineToX: y1+y2 y: 431;
 				do_ClosePath ].
 		"Solo fill. w casi=0"
-		engine strokeWidth: VectorEngine defaultAntiAliasingWidth*1.5 color: Color black fillColor: Color black do: [
+		engine strokeWidth: self defaultAntiAliasingWidth*1.5 color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 531 y: y1+dy; abs_LineToX: 630 y: y1+dy+dy;
 				abs_LineToX: 630 y: y1+y2+dy+dy; abs_LineToX: 531 y: y1+y2+dy;
@@ -3726,7 +3447,7 @@ experLinesAndShapes4
 				abs_LineToX: y1+y2+dy+dy y: 630; abs_LineToX: y1+y2+dy y: 531;
 				do_ClosePath ].
 		"Solo fill. w =0"
-		engine strokeWidth: VectorEngine defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
+		engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 			engine
 				abs_MoveToX: 631 y: y1+dy+dy; abs_LineToX: 730 y: y1+dy+dy+dy;
 				abs_LineToX: 730 y: y1+y2+dy+dy+dy; abs_LineToX: 631 y: y1+y2+dy+dy;
@@ -3735,7 +3456,7 @@ experLinesAndShapes4
 				abs_MoveToX: y1+dy+dy y: 631; abs_LineToX: y1+dy+dy+dy y: 730;
 				abs_LineToX: y1+y2+dy+dy+dy y: 730; abs_LineToX: y1+y2+dy+dy y: 631;
 				do_ClosePath ].
-		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
 	].
@@ -3743,10 +3464,10 @@ experLinesAndShapes4
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 4/4/2018 15:12:44'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 4/12/2020 17:02:20'!
 experLinesAndShapesx
 	"
-	self experLinesAndShapesx
+	VectorEngineBasic experLinesAndShapesx
 	"
 	| engine y1 dy y2 |
 	engine _ self onForm: Display.
@@ -3760,7 +3481,7 @@ experLinesAndShapesx
 
 	y1 _ 10.
 	dy _ 3.
-	y2 _ VectorEngine defaultAntiAliasingWidth * 2.
+	y2 _ self defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		y2 print.
 		"Solo fill. w =0"
@@ -3773,14 +3494,14 @@ experLinesAndShapesx
 				abs_MoveToX: y1+dy+dy y: 431; abs_LineToX: y1+dy+dy+dy y: 530;
 				abs_LineToX: y1+y2+dy+dy+dy y: 530; abs_LineToX: y1+y2+dy+dy y: 431;
 				do_ClosePath ].
-		y1 _ y1 + y2 + VectorEngine defaultAntiAliasingWidth + 3.
+		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
 	].
 	
 	Display forceToScreen.! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 1/1/2018 16:23:28'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 1/1/2018 16:23:28'!
 experLinesAndShapesx2
 	"
 	self experLinesAndShapesx2
@@ -3804,18 +3525,18 @@ experLinesAndShapesx2
 	Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 7/14/2019 15:24:57'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 4/12/2020 17:02:30'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
-	VectorEngine experimentHopsPerPixel1
+	VectorEngineBasic experimentHopsPerPixel1
 	"
 	| d engine f1 f2 hops1 hops2 |
 	hops1 _ 200.
 	hops2 _ 8.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ VectorEngine onForm: f1.
+	engine _ self onForm: f1.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
@@ -3827,7 +3548,7 @@ experimentHopsPerPixel1
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ VectorEngine onForm: f2.
+	engine _ self onForm: f2.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
@@ -3845,11 +3566,11 @@ experimentHopsPerPixel1
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 7/14/2019 15:25:18'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 4/12/2020 17:03:19'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
-	VectorEngine experimentHopsPerPixel2
+	VectorEngineBasic experimentHopsPerPixel2
 	"
 	| d engine f1 f2 hops1 hops2 strokeWidth |
 	hops1 _ 200.
@@ -3869,7 +3590,7 @@ experimentHopsPerPixel2
 	hops2 _ 10.0 / strokeWidth + 1.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ VectorEngine onForm: f1.
+	engine _ self onForm: f1.
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
@@ -3881,7 +3602,7 @@ experimentHopsPerPixel2
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ VectorEngine onForm: f2.
+	engine _ self onForm: f2.
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
@@ -3899,18 +3620,18 @@ Feature require: 'LinearAlgebra'.
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 7/14/2019 15:24:49'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 4/12/2020 17:03:09'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
-	VectorEngine experimentHopsPerPixel3
+	VectorEngineBasic experimentHopsPerPixel3
 	"
 	| d engine f1 f2 hops1 hops2 |
 	hops1 _ 200.
 	hops2 _ 8.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ VectorEngine onForm: f1.
+	engine _ self onForm: f1.
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
@@ -3922,7 +3643,7 @@ experimentHopsPerPixel3
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ VectorEngine onForm: f2.
+	engine _ self onForm: f2.
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
@@ -3940,7 +3661,7 @@ experimentHopsPerPixel3
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:23:50'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:23:50'!
 experiment1
 	"
 	No perfecto aun, pero se puede empezar a comparar con
@@ -4001,7 +3722,7 @@ Display forceToScreen.
 	f writePNGfileNamed: 'pp17.png'
 "! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:23:54'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:23:54'!
 experiment2
 	"
 	self experiment2
@@ -4046,7 +3767,7 @@ delta _ nil.
 Display forceToScreen.
 ! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 12/31/2017 15:23:12'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 12/31/2017 15:23:12'!
 experiment3
 	"
 	self experiment3
@@ -4066,7 +3787,7 @@ experiment3
 	].
 Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:14:38'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:14:38'!
 experiment4
 	"
 	self experiment4
@@ -4085,7 +3806,7 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:29:38'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:29:38'!
 siemensStar
 	"
 	self siemensStar display
@@ -4113,22 +3834,573 @@ siemensStar
 	].
 	^form! !
 
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngineAbstract class methodsFor: 'instance creation' stamp: 'jmv 12/16/2017 18:17:50'!
 onForm: aForm
 
 	^ self new setForm: aForm! !
 
-!VectorEngine class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:07'!
+!VectorEngineAbstract class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:07'!
 antiAliasingWidthForOutlineFonts
 	^1.4! !
 
-!VectorEngine class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:10'!
+!VectorEngineAbstract class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:10'!
 antiAliasingWidthForStrokeFonts
 	^1.1! !
 
-!VectorEngine class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:13'!
+!VectorEngineAbstract class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:13'!
 defaultAntiAliasingWidth
 	^1.3. "default for graphics"! !
+
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/13/2020 16:44:45'!
+updateAlphasForX: x y: y
+
+	"slight optimization possible when we know width = 0... perhaps implement:
+		-we know palpha is never 127
+		- we know distanceToEdge is always > erodedHalfWidth.
+	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
+	Mas importante:
+		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
+	| distanceToAxisSquared alpha t b l r alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
+
+	"Compute affected rect. Honor clipRect"
+	t _ (y -strokeWidthDilatedHalf) truncated +1.
+	t < clipTop ifTrue: [ t _ clipTop ].
+	b _ (y +strokeWidthDilatedHalf) truncated.
+	b > clipBottom ifTrue: [ b _ clipBottom ].
+	l _ (x -strokeWidthDilatedHalf -subPixelDelta) truncated +1.
+	l < clipLeft ifTrue: [ l _ clipLeft ].
+	r _ (x +strokeWidthDilatedHalf +subPixelDelta) truncated.
+	r > clipRight ifTrue: [ r _ clipRight ].
+
+	t to: b do: [ :displayY |
+		pixelIndex _ displayY * targetWidth +  l.
+		l to: r do: [ :displayX |
+			pixelIndex _ pixelIndex + 1.
+			alphaWord _ mask bytesAt: pixelIndex.
+			alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
+				doUpdate _ false.
+				dy _ displayY - y.
+				dySquared _ dy * dy.
+				dx _ displayX - x.
+				"Red"
+				dxp _ dx - subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxisSquared _ dxSquared + dySquared.
+				distanceToAxisSquared < strokeWidthDilatedHalfSquared
+					ifTrue: [
+						alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+						alpha > (alphaWord at: 3) ifTrue: [
+							alphaWord at: 3 put: alpha.
+							doUpdate _ true ]].
+				"Green"
+				dxSquared _ dx * dx.
+				distanceToAxisSquared _ dxSquared + dySquared.
+				distanceToAxisSquared < strokeWidthDilatedHalfSquared
+					ifTrue: [
+						alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+						alpha > (alphaWord at: 2) ifTrue: [
+							alphaWord at: 2 put: alpha.
+							doUpdate _ true ]].
+				"Blue"
+				dxp _ dx + subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxisSquared _ dxSquared + dySquared.
+				distanceToAxisSquared < strokeWidthDilatedHalfSquared
+					ifTrue: [
+						alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+						alpha > (alphaWord at: 1) ifTrue: [
+							alphaWord at: 1 put: alpha.
+							doUpdate _ true ]].
+				doUpdate ifTrue: [
+					mask bytesAt: pixelIndex put: alphaWord ]]]]! !
+
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/12/2020 17:14:21'!
+updateEdgeCountAtX: x y: y
+	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffest blueOffset |
+
+	thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom-1.
+	prevYTruncated ifNil: [ 
+		^ prevYTruncated _ thisYTruncated ].
+	thisYTruncated = prevYTruncated ifTrue: [
+		^ prevYTruncated _ thisYTruncated ].
+
+	thisYTruncated > prevYTruncated
+		ifTrue: [
+			pixelY _ thisYTruncated.
+			increment _ 1 ]
+		ifFalse: [
+			pixelY _ prevYTruncated.
+			increment _ -1 ].
+
+	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
+	The effect is the same, and we need to clean up less stuff afterwards.
+	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
+	pixelIndexBase _ pixelY * targetWidth + 1.
+	redOffset _ (x+subPixelDelta) truncated + 1 max: clipLeft.
+	greenOffest _ x truncated + 1 max: clipLeft.
+	blueOffset _ (x-subPixelDelta) truncated + 1 max: clipLeft.
+	redPixelIndex _ pixelIndexBase + redOffset.
+	greenPixelIndex _ pixelIndexBase + greenOffest.
+	bluePixelIndex _ pixelIndexBase + blueOffset.
+
+	"Three possible cases here: RGB in one word (pixel); RG in one, and G in another; R in one, GB in another"
+	redPixelIndex = bluePixelIndex
+		ifTrue: [						"First case: RGB in the same word"
+			redOffset <= clipRight ifTrue: [
+				countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+				redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+				countWord at: 3 put: redCount.
+				greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+				countWord at: 2 put: greenCount.
+				blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+				countWord at: 1 put: blueCount.
+				edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+		]
+		ifFalse: [
+			redPixelIndex = greenPixelIndex
+				ifTrue: [				"Second case: RG in one word, B in following"
+					redOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+						countWord at: 3 put: redCount.
+						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+						countWord at: 2 put: greenCount.
+						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+
+					blueOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+						countWord at: 1 put: blueCount.
+						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+				]
+				ifFalse: [			"Third case: R in one word, GB in the following"
+					redOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+						countWord at: 3 put: redCount.
+						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+
+					blueOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+						countWord at: 2 put: greenCount.
+						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+						countWord at: 1 put: blueCount.
+						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+				]
+		].
+	prevYTruncated _ thisYTruncated! !
+
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/13/2020 16:51:44'!
+updateEdgesAndBoundsForX: x y: y
+
+"
+Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
+"
+
+	blendBoundsTop _ blendBoundsTop min: y.
+	blendBoundsBottom _ blendBoundsBottom max: y.
+	blendBoundsLeft _ blendBoundsLeft min: x.
+	blendBoundsRight _ blendBoundsRight max: x.
+
+	"Compute edges intersecting with this horizontal line, for fills."
+	doFill ifTrue: [
+		self updateEdgeCountAtX: x y: y ].! !
+
+!VectorEngineBasic methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:07:08'!
+primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
+
+	| angle xp yp x y |
+	angle _ startAngle.
+	hops+1 timesRepeat: [
+		xp _ angle cos * rx.
+		yp _ angle sin * ry.
+		x _ thetaCos * xp - (thetaSin * yp) + cx.
+		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		self updateAlphasForX: x y: y.
+		self updateEdgesAndBoundsForX: x y: y.
+		angle _ angle + d. ].! !
+
+!VectorEngineBasic methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:11:50'!
+primCubicBezierFromX: x0 y: y0 toX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2 hops: hops
+	| t oneLessT increment f2 f3 f1 f23 f4 x y |
+	increment _ 1.0 / hops.
+	t _ 0.0.
+	hops timesRepeat: [
+		oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT * oneLessT.
+		f23 _ 3 * oneLessT * t.
+		f2 _ f23 * oneLessT.
+		f3 _ f23 * t.
+		f4 _ t * t * t.
+		x _ (f1 * x0) + (f2 * x1) + (f3 * x2) + (f4 * x3).
+		y _ (f1 * y0) + (f2 * y1) + (f3 * y2) + (f4 * y3).
+		self updateAlphasForX: x y: y.
+		self updateEdgesAndBoundsForX: x y: y.
+		t _ t + increment. ].
+	self updateAlphasForX: x3 y: y3.
+	self updateEdgesAndBoundsForX: x3 y: y3.! !
+
+!VectorEngineBasic methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 17:34:27'!
+primLineFromX: x0 y: y0 toX: x2 y: y2 hops: hops incrementX: incrementX incrementY: incrementY
+
+	| x y |
+	x _ x0.
+	y _ y0.
+	hops timesRepeat: [
+		self updateAlphasForX: x y: y.
+		self updateEdgesAndBoundsForX: x y: y.
+		x _ x + incrementX.
+		y _ y + incrementY ].
+	self updateAlphasForX: x2 y: y2.
+	self updateEdgesAndBoundsForX: x2 y: y2.! !
+
+!VectorEngineBasic methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:16:03'!
+primQuadraticBezierFromX: x0 y: y0 toX: x2 y: y2 controlX: x1 y: y1 hops: hops
+	| t oneLessT increment f2 f3 f1 x y |
+	increment _ 1.0 / hops.
+	t _ 0.0.
+	hops timesRepeat: [
+		oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT.
+		f2 _ 2* oneLessT * t.
+		f3 _ t * t.
+		x _ (f1 * x0) + (f2 * x1) + (f3 * x2).
+		y _ (f1 * y0) + (f2 * y1) + (f3 * y2).
+		self updateAlphasForX: x y: y.
+		self updateEdgesAndBoundsForX: x y: y.
+		t _ t + increment. ].
+	self updateAlphasForX: x2 y: y2.
+	self updateEdgesAndBoundsForX: x2 y: y2.! !
+
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 17:53:03'!
+adjustPixX: x y: y
+	| adjusted |
+	adjusted _ false.
+	pixY = -1 ifTrue: [
+		pixY _ y // strokeKernelHeight * strokeKernelHeight + ii.
+		pixX _ x // strokeKernelWidth * strokeKernelWidth + jj.
+		adjusted _ true ].
+	[y - pixY > (strokeKernelHeight/2)] whileTrue: [ pixY _ pixY + strokeKernelHeight. adjusted _ true].
+	[pixY - y > (strokeKernelHeight/2)] whileTrue: [ pixY _ pixY - strokeKernelHeight. adjusted _ true].
+	[x - pixX > (strokeKernelWidth/2)] whileTrue: [ pixX _ pixX + strokeKernelWidth. adjusted _ true].
+	[pixX - x > (strokeKernelWidth/2)] whileTrue: [ pixX _ pixX - strokeKernelWidth. adjusted _ true].
+	^ adjusted! !
+
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 18:37:12'!
+pvtStrokeWidth: aNumber
+
+	super pvtStrokeWidth: aNumber.
+	strokeKernelWidth _ ((strokeWidthDilatedHalf + subPixelDelta) * 2) truncated + 1.
+	strokeKernelHeight _ (strokeWidthDilatedHalf * 2) truncated + 1.! !
+
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 18:29:14'!
+readAlphaWord
+	"Read alpha (transparency) mask."
+
+	((pixY between: clipTop and: clipBottom) and: [pixX between: clipLeft and: clipRight])
+		ifTrue: [
+			z_pixelIndex _ pixY * targetWidth +  pixX.
+			z_pixelIndex _ z_pixelIndex + 1.
+			z_alphaWord _ mask bytesAt: z_pixelIndex.
+			z_redAlpha _ z_alphaWord at: 3.
+			z_greenAlpha _ z_alphaWord at: 2.
+			z_blueAlpha _ z_alphaWord at: 1 ]
+		ifFalse: [
+			z_pixelIndex _ -1 ].
+	z_previousRedAlpha _ z_redAlpha.
+	z_previousGreenAlpha _ z_greenAlpha.
+	z_previousBlueAlpha _ z_blueAlpha! !
+
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 18:30:38'!
+updateAlphaWordForX: x y: y
+	"Apdate alpha (transparency) mask using trajectoryPoints."
+	| distanceToAxisSquared alpha dySquared dx dxSquared dy dxp |
+
+	z_pixelIndex = -1 ifTrue: [ ^ self ].
+
+	"Minimizar"
+	dy _ pixY - y.
+	dySquared _ dy * dy.
+	dx _ pixX - x.
+	"Red"
+	dxp _ dx - subPixelDelta.
+	dxSquared _ dxp * dxp.
+	distanceToAxisSquared _ dxSquared + dySquared.
+	distanceToAxisSquared < strokeWidthDilatedHalfSquared
+		ifTrue: [
+			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+				ifTrue: [ 16r7F ]
+				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+			alpha > z_redAlpha ifTrue: [
+				z_redAlpha _ alpha ]].
+	"Green"
+	dxSquared _ dx * dx.
+	distanceToAxisSquared _ dxSquared + dySquared.
+	distanceToAxisSquared < strokeWidthDilatedHalfSquared
+		ifTrue: [
+			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+				ifTrue: [ 16r7F ]
+				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+			alpha > z_greenAlpha ifTrue: [
+				z_greenAlpha _ alpha ]].
+	"Blue"
+	dxp _ dx + subPixelDelta.
+	dxSquared _ dxp * dxp.
+	distanceToAxisSquared _ dxSquared + dySquared.
+	distanceToAxisSquared < strokeWidthDilatedHalfSquared
+		ifTrue: [
+			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+				ifTrue: [ 16r7F ]
+				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+			alpha > z_blueAlpha ifTrue: [
+				z_blueAlpha _ alpha ]].! !
+
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/12/2020 17:16:40'!
+updateEdgeCountAtX: x y: y
+	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffest blueOffset |
+
+	thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom-1.
+	prevYTruncated ifNil: [ 
+		^ prevYTruncated _ thisYTruncated ].
+	thisYTruncated = prevYTruncated ifTrue: [
+		^ prevYTruncated _ thisYTruncated ].
+
+	thisYTruncated > prevYTruncated
+		ifTrue: [
+			pixelY _ thisYTruncated.
+			increment _ 1 ]
+		ifFalse: [
+			pixelY _ prevYTruncated.
+			increment _ -1 ].
+
+	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
+	The effect is the same, and we need to clean up less stuff afterwards.
+	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
+	pixelIndexBase _ pixelY * targetWidth + 1.
+	redOffset _ (x+subPixelDelta) truncated + 1 max: clipLeft.
+	greenOffest _ x truncated + 1 max: clipLeft.
+	blueOffset _ (x-subPixelDelta) truncated + 1 max: clipLeft.
+	redPixelIndex _ pixelIndexBase + redOffset.
+	greenPixelIndex _ pixelIndexBase + greenOffest.
+	bluePixelIndex _ pixelIndexBase + blueOffset.
+
+	"Three possible cases here: RGB in one word (pixel); RG in one, and G in another; R in one, GB in another"
+	redPixelIndex = bluePixelIndex
+		ifTrue: [						"First case: RGB in the same word"
+			redOffset <= clipRight ifTrue: [
+				countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+				redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+				countWord at: 3 put: redCount.
+				greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+				countWord at: 2 put: greenCount.
+				blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+				countWord at: 1 put: blueCount.
+				edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+		]
+		ifFalse: [
+			redPixelIndex = greenPixelIndex
+				ifTrue: [				"Second case: RG in one word, B in following"
+					redOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+						countWord at: 3 put: redCount.
+						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+						countWord at: 2 put: greenCount.
+						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+
+					blueOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+						countWord at: 1 put: blueCount.
+						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+				]
+				ifFalse: [			"Third case: R in one word, GB in the following"
+					redOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
+						countWord at: 3 put: redCount.
+						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+
+					blueOffset <= clipRight ifTrue: [
+						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
+						countWord at: 2 put: greenCount.
+						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
+						countWord at: 1 put: blueCount.
+						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+				]
+		].
+	prevYTruncated _ thisYTruncated! !
+
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 16:51:47'!
+updateEdgesAndBoundsForX: x y: y
+
+"
+Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
+"
+
+	(ii = 0 and: [ jj = 0 ]) ifTrue: [
+		blendBoundsTop _ blendBoundsTop min: y.
+		blendBoundsBottom _ blendBoundsBottom max: y.
+		blendBoundsLeft _ blendBoundsLeft min: x.
+		blendBoundsRight _ blendBoundsRight max: x.
+
+		"Compute edges intersecting with this horizontal line, for fills."
+		doFill ifTrue: [
+			self updateEdgeCountAtX: x y: y ].
+	]! !
+
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 18:28:17'!
+writeAlphaWord
+	"Update alpha (transparency) mask using trajectoryPoints."
+
+	(z_previousRedAlpha ~= z_redAlpha or: [
+	z_previousGreenAlpha ~= z_greenAlpha or: [
+	z_previousBlueAlpha ~= z_blueAlpha ]]) ifTrue: [
+		z_alphaWord at: 3 put: z_redAlpha.
+		z_alphaWord at: 2 put: z_greenAlpha.
+		z_alphaWord at: 1 put: z_blueAlpha.
+		mask bytesAt: z_pixelIndex put: z_alphaWord ]! !
+
+!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:30:48'!
+primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
+
+	| angle xp yp x y |
+	0 to: strokeKernelHeight-1 do: [ :i |
+		0 to: strokeKernelWidth-1 do: [ :j |
+			jj _ j. ii _ i.
+
+			"Load pixY and pixX. Adjust them. Don't write alpha word the first time."
+			pixY _ -1.
+			z_previousRedAlpha _ z_redAlpha.
+			z_previousGreenAlpha _ z_greenAlpha.
+			z_previousBlueAlpha _ z_blueAlpha.
+
+			angle _ startAngle.
+			hops+1 timesRepeat: [
+				xp _ angle cos * rx.
+				yp _ angle sin * ry.
+				x _ thetaCos * xp - (thetaSin * yp) + cx.
+				y _ thetaSin * xp + (thetaCos * yp) + cy.
+				(self adjustPixX: x y: y) ifTrue: [
+					self writeAlphaWord.
+					self readAlphaWord ].
+				self updateAlphaWordForX: x y: y.
+				self updateEdgesAndBoundsForX: x y: y.
+				angle _ angle + d. ].
+			self writeAlphaWord ]]! !
+
+!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:33:22'!
+primCubicBezierFromX: x0 y: y0 toX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2 hops: hops
+
+	| t oneLessT increment f2 f3 f1 f23 f4 x y |
+	0 to: strokeKernelHeight-1 do: [ :i |
+		0 to: strokeKernelWidth-1 do: [ :j |
+			jj _ j. ii _ i.
+
+			"Load pixY and pixX. Adjust them. Don't write alpha word the first time."
+			pixY _ -1.
+			z_previousRedAlpha _ z_redAlpha.
+			z_previousGreenAlpha _ z_greenAlpha.
+			z_previousBlueAlpha _ z_blueAlpha.
+
+			increment _ 1.0 / hops.
+			t _ 0.0.
+			hops timesRepeat: [
+				oneLessT _ 1.0 - t.
+				f1 _ oneLessT * oneLessT * oneLessT.
+				f23 _ 3 * oneLessT * t.
+				f2 _ f23 * oneLessT.
+				f3 _ f23 * t.
+				f4 _ t * t * t.
+				x _ (f1 * x0) + (f2 * x1) + (f3 * x2) + (f4 * x3).
+				y _ (f1 * y0) + (f2 * y1) + (f3 * y2) + (f4 * y3).
+				(self adjustPixX: x y: y) ifTrue: [
+					self writeAlphaWord.
+					self readAlphaWord ].
+				self updateAlphaWordForX: x y: y.
+				self updateEdgesAndBoundsForX: x y: y.
+				t _ t + increment. ].
+			(self adjustPixX: x3 y: y3) ifTrue: [
+				self writeAlphaWord.
+				self readAlphaWord ].
+			self updateAlphaWordForX: x3 y: y3.
+			self writeAlphaWord.
+			self updateEdgesAndBoundsForX: x3 y: y3. ]]! !
+
+!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:33:31'!
+primLineFromX: x0 y: y0 toX: x2 y: y2 hops: hops incrementX: incrementX incrementY: incrementY
+
+	| x y |
+	0 to: strokeKernelHeight-1 do: [ :i |
+		0 to: strokeKernelWidth-1 do: [ :j |
+			jj _ j. ii _ i.
+
+			"Load pixY and pixX. Adjust them. Don't write alpha word the first time."
+			pixY _ -1.
+			z_previousRedAlpha _ z_redAlpha.
+			z_previousGreenAlpha _ z_greenAlpha.
+			z_previousBlueAlpha _ z_blueAlpha.
+
+			x _ x0.
+			y _ y0.
+			hops timesRepeat: [
+				(self adjustPixX: x y: y) ifTrue: [
+					self writeAlphaWord.
+					self readAlphaWord ].
+				self updateAlphaWordForX: x y: y.
+				self updateEdgesAndBoundsForX: x y: y.
+				x _ x + incrementX.
+				y _ y + incrementY ].
+			(self adjustPixX: x2 y: y2) ifTrue: [
+				self writeAlphaWord.
+				self readAlphaWord ].
+			self updateAlphaWordForX: x2 y: y2.
+			self writeAlphaWord.
+			self updateEdgesAndBoundsForX: x2 y: y2. ]]! !
+
+!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:33:38'!
+primQuadraticBezierFromX: x0 y: y0 toX: x2 y: y2 controlX: x1 y: y1 hops: hops
+
+	| t oneLessT increment f2 f3 f1 x y |
+	0 to: strokeKernelHeight-1 do: [ :i |
+		0 to: strokeKernelWidth-1 do: [ :j |
+			jj _ j. ii _ i.
+
+			"Load pixY and pixX. Adjust them. Don't write alpha word the first time."
+			pixY _ -1.
+			z_previousRedAlpha _ z_redAlpha.
+			z_previousGreenAlpha _ z_greenAlpha.
+			z_previousBlueAlpha _ z_blueAlpha.
+
+			increment _ 1.0 / hops.
+			t _ 0.0.
+			hops timesRepeat: [
+				oneLessT _ 1.0 - t.
+				f1 _ oneLessT * oneLessT.
+				f2 _ 2* oneLessT * t.
+				f3 _ t * t.
+				x _ (f1 * x0) + (f2 * x1) + (f3 * x2).
+				y _ (f1 * y0) + (f2 * y1) + (f3 * y2).
+				(self adjustPixX: x y: y) ifTrue: [
+					self writeAlphaWord.
+					self readAlphaWord ].
+				self updateAlphaWordForX: x y: y.
+				self updateEdgesAndBoundsForX: x y: y.
+				t _ t + increment. ].
+			(self adjustPixX: x2 y: y2) ifTrue: [
+				self writeAlphaWord.
+				self readAlphaWord ].
+			self updateAlphaWordForX: x2 y: y2.
+			self writeAlphaWord.
+			self updateEdgesAndBoundsForX: x2 y: y2. ]]! !
 
 !FormGlyph methodsFor: 'initialization' stamp: 'jmv 5/13/2019 22:20:59'!
 form: aForm
