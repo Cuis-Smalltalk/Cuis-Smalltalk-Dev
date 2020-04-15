@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4111] on 13 April 2020 at 6:39:58 pm'!
+'From Cuis 5.0 [latest update: #4113] on 15 April 2020 at 5:52:43 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 119!
+!provides: 'VectorGraphics' 1 122!
 !requires: 'Color-Extras' 1 7 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -81,7 +81,7 @@ VectorCanvas class
 
 !classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
 Object subclass: #VectorEngineAbstract
-	instanceVariableNames: 'targetForm targetBits targetWidth antiAliasingWidth antiAliasingWidthScaledInverse subPixelDelta strokeWidth strokeWidthDilatedHalf strokeWidthDilatedHalfSquared strokeWidthErodedHalfSquared strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue doStroke doFill clipLeft clipTop clipRight clipBottom currentMorphId clippingMorphId morphIdAtPixel morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom mask edgeCountPerPixel blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt firstX firstY currentX currentY prevYTruncated geometryTransformation lastClientX lastClientY lastControlX lastControlY'
+	instanceVariableNames: 'targetForm targetBits targetWidth morphIdAtPixel alphaMask edgeCountPerPixel antiAliasingWidth subPixelDelta strokeWidth geometryTransformation doStroke doFill strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue currentMorphId clippingMorphId clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt pathFirstX pathFirstY pathCurrentX pathCurrentY prevYTruncated previousCallX previousCallY previousCallControlX previousCallControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -101,7 +101,7 @@ VectorEngineBasic class
 
 !classDefinition: #VectorEngineParallelizable category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineParallelizable
-	instanceVariableNames: 'strokeKernelHeight strokeKernelWidth ii jj pixY pixX z_pixelIndex z_alphaWord z_redAlpha z_greenAlpha z_blueAlpha z_previousRedAlpha z_previousGreenAlpha z_previousBlueAlpha'
+	instanceVariableNames: 'pathPrimitiveKernelHeight pathPrimitiveKernelWidth kernelI kernelJ pathPrimitivePixelY pathPrimitivePixelX pathPrimitivePixelIndex pathPrimitiveAlphaWord pathPrimitiveRedAlpha pathPrimitiveGreenAlpha pathPrimitiveBlueAlpha pathPrimitivePreviousRedAlpha pathPreviousGreenAlpha pathPreviousBlueAlpha'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -1734,11 +1734,11 @@ self textex3
 		selectionColor: Color orange.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 1/15/2020 14:30:16'!
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 4/15/2020 16:54:19'!
 antiAliasingWidth: aNumber
 
 	antiAliasingWidth _ aNumber.
-	antiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth! !
+	auxAntiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth! !
 
 !VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 1/14/2020 09:31:35'!
 clipRect: aRectangle 
@@ -1766,8 +1766,10 @@ clippingRectForCurrentMorph
 currentMorph: aMorph
 	currentMorphId _ aMorph ifNil: [0] ifNotNil: [aMorph morphId]! !
 
-!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 12/31/2017 13:22:19'!
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 4/15/2020 17:33:22'!
 geometryTransformation: aGeometryTransformation
+	"geometryTransformation is a GeometryTransformation that when applied to points in the public path protocol (i.e. Morph or domain coordinate system), it transform them into global, i.e. targetForm pixel coordinates. Therefore, the method used for converting client coordinates to actual pixel coordinates in the targetForm is #externalizePosition:, while the seldom used conversion from pixel coordinates to client coordinates is #internalizePosition:"
+
 	geometryTransformation _ aGeometryTransformation! !
 
 !VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/13/2020 16:26:33'!
@@ -1905,7 +1907,7 @@ Display forceToScreen
 		basicArcCenterX: center x centerY: center y radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
 		basicClosePath! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/4/2018 16:30:44'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
 abs_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
@@ -1944,11 +1946,11 @@ Display forceToScreen.
 Display forceToScreen
 	"
 	| mirroredContolX mirroredContolY |
-	mirroredContolX _ lastClientX + (lastClientX - lastControlX).
-	mirroredContolY _ lastClientY + (lastClientY - lastControlY).
+	mirroredContolX _ previousCallX + (previousCallX - previousCallControlX).
+	mirroredContolY _ previousCallY + (previousCallY - previousCallControlY).
 	self abs_CubicBezierToX: x3 y: y3 control1X: mirroredContolX y: mirroredContolY control2X: x2 y: y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:00:50'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
 abs_CubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -1975,10 +1977,10 @@ Display forceToScreen
 	p2 _ geometryTransformation externalizePosition: x2@y2.
 	p3 _ geometryTransformation externalizePosition: x3@y3.
 	self basicCubicBezierToX: p3 x y: p3 y control1X: p1 x y: p1 y control2X: p2 x y: p2 y.
-	lastClientX _ x3.
-	lastClientY _ y3.
-	lastControlX _ x2.
-	lastControlY _ y2! !
+	previousCallX _ x3.
+	previousCallY _ y3.
+	previousCallControlX _ x2.
+	previousCallControlY _ y2! !
 
 !VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:19'!
 abs_EllipseCenterX: cx y: cy radiusX: mrx radiusY: mry
@@ -2032,9 +2034,9 @@ Display forceToScreen
 		basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float pi * 2;
 		basicClosePath! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/14/2020 09:51:38'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:35:21'!
 abs_EllipseCenterX: cx y: cy radiusX: mrx radiusY: mry rotationAngle: theta start: startAngle sweep: sweepAngle
-	"Currently draws a line from currentX@currentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
+	"Currently draws a line from pathCurrentX@pathCurrentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
 	Implement desired behavior when clear."
 "
@@ -2063,7 +2065,7 @@ Display forceToScreen.
 	phi _ geometryTransformation radians + theta.
 	self basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: startAngle sweep:  sweepAngle! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 20:54:08'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
 abs_LineToX: x2
 "
 (VectorEngine onForm: Display)
@@ -2082,9 +2084,9 @@ Display forceToScreen
 		engine abs_LineToX: 60 y: 10 ].
 Display forceToScreen
 "
-	self abs_LineToX: x2 y: lastClientY! !
+	self abs_LineToX: x2 y: previousCallY! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:02:04'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
 abs_LineToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2106,12 +2108,12 @@ Display forceToScreen
 	| p2 |
 	p2 _ geometryTransformation externalizePosition: x2@y2.
 	self basicLineToX: p2 x y: p2 y.
-	lastClientX _ x2.
-	lastClientY _ y2.
-	lastControlX _ lastClientX.
-	lastControlY _ lastClientY! !
+	previousCallX _ x2.
+	previousCallY _ y2.
+	previousCallControlX _ previousCallX.
+	previousCallControlY _ previousCallY! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 20:52:47'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:24'!
 abs_LineToY: y2
 "
 (VectorEngine onForm: Display)
@@ -2130,9 +2132,9 @@ Display forceToScreen
 		engine abs_LineToX: 60 y: 10 ].
 Display forceToScreen
 "
-	self abs_LineToX: lastClientX y: y2! !
+	self abs_LineToX: previousCallX y: y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:02:08'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
 abs_MoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -2154,12 +2156,12 @@ Display forceToScreen
 	| p |
 	p _ geometryTransformation externalizePosition: x@y.
 	self basicMoveToX: p x y: p y.
-	lastClientX _ x.
-	lastClientY _ y.
-	lastControlX _ lastClientX.
-	lastControlY _ lastClientY! !
+	previousCallX _ x.
+	previousCallY _ y.
+	previousCallControlX _ previousCallX.
+	previousCallControlY _ previousCallY! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/4/2018 16:40:01'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
 abs_QuadraticBezierSmoothToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2192,11 +2194,11 @@ Display forceToScreen.
 Display forceToScreen
 "
 	| mirroredContolX mirroredContolY |
-	mirroredContolX _ lastClientX + (lastClientX - lastControlX).
-	mirroredContolY _ lastClientY + (lastClientY - lastControlY).
+	mirroredContolX _ previousCallX + (previousCallX - previousCallControlX).
+	mirroredContolY _ previousCallY + (previousCallY - previousCallControlY).
 	self abs_QuadraticBezierToX: x2 y: y2 controlX: mirroredContolX y: mirroredContolY! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 21:00:58'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
 abs_QuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
 (VectorEngine onForm: Display)
@@ -2218,12 +2220,12 @@ Display forceToScreen
 	p1 _ geometryTransformation externalizePosition: x1@y1.
 	p2 _ geometryTransformation externalizePosition: x2@y2.
 	self basicQuadraticBezierToX: p2 x y: p2 y controlX: p1 x y: p1 y.
-	lastClientX _ x2.
-	lastClientY _ y2.
-	lastControlX _ x1.
-	lastControlY _ y1! !
+	previousCallX _ x2.
+	previousCallY _ y2.
+	previousCallControlX _ x1.
+	previousCallControlY _ y1! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/12/2020 19:12:37'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:36:22'!
 do_ClosePath
 	"abs/rel meaningless here"
 "
@@ -2240,15 +2242,15 @@ Display forceToScreen
 	| p2 |
 	self basicClosePath.
 
-	"currentX and currentY are in (float) targetForm pixel coordinates (i.e. engine basic coordinates). 
-	lastClientX, lastClientY, lastControlX, lastControlY are in client coordinates."
-	p2 _ geometryTransformation internalizePosition: currentX@currentY.
-	lastClientX _ p2 x.
-	lastClientY _ p2 y.
-	lastControlX _ lastClientX.
-	lastControlY _ lastClientY! !
+	"pathCurrentX and pathCurrentY are in (float) targetForm pixel coordinates (i.e. engine basic coordinates). 
+	previousCallX, previousCallY, previousCallControlX, previousCallControlY are in client coordinates."
+	p2 _ geometryTransformation internalizePosition: pathCurrentX@pathCurrentY.
+	previousCallX _ p2 x.
+	previousCallY _ p2 y.
+	previousCallControlX _ previousCallX.
+	previousCallControlY _ previousCallY! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:54:10'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
 rel_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngine onForm: Display)
@@ -2259,9 +2261,9 @@ rel_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: do
 			rel_ArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false;
 			do_ClosePath ].
 "
-	self abs_ArcToX: lastClientX + cx y: lastClientY + cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
+	self abs_ArcToX: previousCallX + cx y: previousCallY + cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:39'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
 rel_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
@@ -2302,10 +2304,10 @@ Display forceToScreen
 	"
 
 	self
-		abs_CubicBezierSmoothToX: lastClientX + x3 y: lastClientY + y3
-		control2X: lastClientX + x2 y: lastClientY + y2! !
+		abs_CubicBezierSmoothToX: previousCallX + x3 y: previousCallY + y3
+		control2X: previousCallX + x2 y: previousCallY + y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:54:02'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
 rel_CubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -2339,11 +2341,11 @@ Display forceToScreen
 	"
 
 	self
-		abs_CubicBezierToX: lastClientX + x3 y: lastClientY + y3
-		control1X: lastClientX + x1 y: lastClientY + y1
-		control2X: lastClientX + x2 y: lastClientY + y2! !
+		abs_CubicBezierToX: previousCallX + x3 y: previousCallY + y3
+		control1X: previousCallX + x1 y: previousCallY + y1
+		control2X: previousCallX + x2 y: previousCallY + y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:34'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
 rel_LineToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2371,9 +2373,9 @@ Display forceToScreen
 		engine rel_LineToX: 60 y: 10 ].
 Display forceToScreen
 "
-	self abs_LineToX: lastClientX + x2 y: lastClientY + y2! !
+	self abs_LineToX: previousCallX + x2 y: previousCallY + y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
 rel_MoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -2401,9 +2403,9 @@ Display forceToScreen
 		engine rel_LineToX: 60 y: 10 ].
 Display forceToScreen
 "
-	self abs_MoveToX: lastClientX + x y: lastClientY + y! !
+	self abs_MoveToX: previousCallX + x y: previousCallY + y! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/4/2018 16:47:43'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
 rel_QuadraticBezierSmoothToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2436,9 +2438,9 @@ Display forceToScreen.
 Display forceToScreen
 "
 	self
-		abs_QuadraticBezierSmoothToX: lastClientX + x2 y: lastClientY + y2! !
+		abs_QuadraticBezierSmoothToX: previousCallX + x2 y: previousCallY + y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 1/1/2018 20:53:56'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
 rel_QuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
 (VectorEngine onForm: Display)
@@ -2464,8 +2466,8 @@ Display forceToScreen
 Display forceToScreen
 	"
 	self
-		abs_QuadraticBezierToX: lastClientX + x2 y: lastClientY + y2
-		controlX: lastClientX + x1 y: lastClientY + y1! !
+		abs_QuadraticBezierToX: previousCallX + x2 y: previousCallY + y2
+		controlX: previousCallX + x1 y: previousCallY + y1! !
 
 !VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 4/12/2020 16:59:51'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scaleX: ssx scaleY: ssy
@@ -2554,21 +2556,21 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColo
 	].
 	self antiAliasingWidth: self class defaultAntiAliasingWidth! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/13/2020 17:39:30'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 17:13:46'!
 finishPath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
 	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
 	doFill ifTrue: [
-		(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
+		(pathFirstX = pathCurrentX and: [ pathFirstY = pathCurrentY ]) ifFalse: [
 			"This is actually an error condition. If we are asked to fill, then the path should be closed.
 			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
 			self basicClosePath ]].
 
-	blendBoundsTop _ (blendBoundsTop - strokeWidthDilatedHalf) truncated +1.
-	blendBoundsBottom _ (blendBoundsBottom + strokeWidthDilatedHalf) truncated.
-	blendBoundsLeft _ (blendBoundsLeft - strokeWidthDilatedHalf - subPixelDelta) truncated +1.
-	blendBoundsRight _ (blendBoundsRight + strokeWidthDilatedHalf + subPixelDelta) truncated.
+	blendBoundsTop _ (blendBoundsTop - auxStrokeWidthDilatedHalf) truncated +1.
+	blendBoundsBottom _ (blendBoundsBottom + auxStrokeWidthDilatedHalf) truncated.
+	blendBoundsLeft _ (blendBoundsLeft - auxStrokeWidthDilatedHalf - subPixelDelta) truncated +1.
+	blendBoundsRight _ (blendBoundsRight + auxStrokeWidthDilatedHalf + subPixelDelta) truncated.
 	blendBoundsTop < clipTop ifTrue: [ blendBoundsTop _ clipTop ].
 	blendBoundsBottom > clipBottom ifTrue: [ blendBoundsBottom _ clipBottom ].
 	blendBoundsLeft< clipLeft ifTrue: [ blendBoundsLeft _ clipLeft ].
@@ -2585,14 +2587,14 @@ finishPath
 	morphBoundsLeft _ morphBoundsLeft min: blendBoundsLeft.
 	morphBoundsRight _ morphBoundsRight max: blendBoundsRight.
 
-	firstX _ 0.0.
-	firstY _ 0.0.
-	currentX _ 0.0.
-	currentY _ 0.0.
-	lastClientX _ 0.0.
-	lastClientY _ 0.0.
-	lastControlX _ lastClientX.
-	lastControlY _ lastClientY.
+	pathFirstX _ 0.0.
+	pathFirstY _ 0.0.
+	pathCurrentX _ 0.0.
+	pathCurrentY _ 0.0.
+	previousCallX _ 0.0.
+	previousCallY _ 0.0.
+	previousCallControlX _ previousCallX.
+	previousCallControlY _ previousCallY.
 
 	Display forceToScreen! !
 
@@ -2602,17 +2604,17 @@ initialize
 	clippingMorphId _ 0.
 	currentMorphId _ 0.! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/12/2020 20:42:42'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 17:13:46'!
 initializePath
 
-	firstX _ 0.
-	firstY _ 0.
-	currentX _ 0.0.
-	currentY _ 0.0.
-	lastClientX _ 0.0.
-	lastClientY _ 0.0.
-	lastControlX _ lastClientX.
-	lastControlY _ lastClientY.
+	pathFirstX _ 0.
+	pathFirstY _ 0.
+	pathCurrentX _ 0.0.
+	pathCurrentY _ 0.0.
+	previousCallX _ 0.0.
+	previousCallY _ 0.0.
+	previousCallControlX _ previousCallX.
+	previousCallControlY _ previousCallY.
 	prevYTruncated _ nil.
 
 	blendBoundsTop _ targetForm height.		"drawable bottom. Will later be refined."
@@ -2620,14 +2622,14 @@ initializePath
 	blendBoundsLeft _ targetWidth.			"drawable right. Will later be refined."
 	blendBoundsRight _ 0.						"drawable left. Will later be refined."! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/12/2020 17:53:50'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 16:53:42'!
 pvtStrokeWidth: aNumber
 	| swErodedHalf |
 	strokeWidth _ aNumber.
-	strokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
-	strokeWidthDilatedHalfSquared _ strokeWidthDilatedHalf * strokeWidthDilatedHalf.
+	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
+	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
 	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	strokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
+	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/11/2020 19:07:10'!
 resetMorphBounds
@@ -2637,7 +2639,7 @@ resetMorphBounds
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/12/2020 16:59:04'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 16:58:28'!
 setForm: aForm
 	"
 	World extent: World extent
@@ -2651,26 +2653,26 @@ setForm: aForm
 	self antiAliasingWidth: self class defaultAntiAliasingWidth.
 	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"
 	s _ targetForm bits size.
-	(mask isNil or: [ mask size ~= s ])
+	(alphaMask isNil or: [ alphaMask size ~= s ])
 		ifTrue: [
-			mask _ WordArray new: s.
+			alphaMask _ WordArray new: s.
 			edgeCountPerPixel _ WordArray new: s.
 			morphIdAtPixel _ WordArray new: s.
-			hack _ Form extent: targetForm extent depth: 32 bits: mask.
+			hack _ Form extent: targetForm extent depth: 32 bits: alphaMask.
 			auxBitBlt _ BitBlt toForm: hack.
 			auxBitBlt fillBitmap: (Bitmap with: 16rFF000000).
 			auxBitBlt combinationRule: Form over ].
 
 	"Perhaps this should be done in an ifCurtailed: block in case of Morphic drawing failure..."
 	auxBitBlt destRect: targetForm boundingBox.
-	auxBitBlt destForm bits: mask.
+	auxBitBlt destForm bits: alphaMask.
 	auxBitBlt copyBits.
 	auxBitBlt destForm bits: edgeCountPerPixel.
 	auxBitBlt copyBits.
 	auxBitBlt destForm bits: morphIdAtPixel.
 	auxBitBlt copyBits.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/13/2020 15:56:53'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
 basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngine onForm: Display)
@@ -2694,8 +2696,8 @@ Display forceToScreen.
 			"trajectory starts here. Eventually, #closePath should draw a line to here"
 			"Next point will be first in a new trajectory fragment"
 			prevYTruncated _ nil.
-			firstX _ x0.
-			firstY _ y0 ].
+			pathFirstX _ x0.
+			pathFirstY _ y0 ].
 
 	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
 	d _ sweepAngle / hops.
@@ -2705,10 +2707,10 @@ Display forceToScreen.
 	angle _ startAngle + sweepAngle.
 	xp _ angle cos * rx.
 	yp _ angle sin * ry.
-	currentX _ thetaCos * xp - (thetaSin * yp) + cx.
-	currentY _ thetaSin * xp + (thetaCos * yp) + cy.! !
+	pathCurrentX _ thetaCos * xp - (thetaSin * yp) + cx.
+	pathCurrentY _ thetaSin * xp + (thetaCos * yp) + cy.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 12/31/2017 16:42:44'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
 basicArcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngine onForm: Display)
@@ -2722,8 +2724,8 @@ Display forceToScreen
 "
 	"Calcular: cx, cy, rx, ry, phi, theta1, deltaTheta"
 	| x1 y1 cosPhi sinPhi x12hd y12hd x1p y1p rxSq rySq x1pSq y1pSq bigSqR bigSqRNumerator bigSqRDenominator sign cxp cyp cx cy theta1 theta2 deltaTheta scaleSq scale newRx newRy |
-	x1 _ currentX.
-	y1 _ currentY.
+	x1 _ pathCurrentX.
+	y1 _ pathCurrentY.
 	"Handle out of range parameters as requested by the w3 implementation notes"
 	(x2 = x1 and: [ y2 = y1 ]) ifTrue: [ ^self ].
 	(rx = 0.0 or: [ ry = 0.0 ]) ifTrue: [ ^self basicLineToX: x2 y: y2 ].
@@ -2796,7 +2798,7 @@ Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entr
 
 	self basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 1/1/2018 16:11:54'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:05:51'!
 basicClosePath
 "
 (VectorEngine onForm: Display)
@@ -2807,9 +2809,9 @@ basicClosePath
 			do_ClosePath ].
 Display forceToScreen
 "
-	self basicLineToX: firstX y: firstY! !
+	self basicLineToX: pathFirstX y: pathFirstY! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/13/2020 16:09:06'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
 basicCubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -2833,16 +2835,16 @@ Display forceToScreen
 	"
 
 	| dx dy hops |
-	dx _ (x1-currentX) abs + (x2-x1) abs + (x3-x2) abs.
-	dy _ (y1-currentY) abs + (y2-y1) abs + (y3-y2) abs.
+	dx _ (x1-pathCurrentX) abs + (x2-x1) abs + (x3-x2) abs.
+	dy _ (y1-pathCurrentY) abs + (y2-y1) abs + (y3-y2) abs.
 	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
 
-	self primCubicBezierFromX: currentX y: currentY toX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2 hops: hops.
+	self primCubicBezierFromX: pathCurrentX y: pathCurrentY toX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2 hops: hops.
 
-	currentX _ x3.
-	currentY _ y3.! !
+	pathCurrentX _ x3.
+	pathCurrentY _ y3.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/13/2020 16:12:38'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
 basicLineToX: x2 y: y2
 "
 (VectorEngine onForm: Display)
@@ -2869,19 +2871,19 @@ Display forceToScreen
 Display forceToScreen
 "
 	| dx dy hops incrementX incrementY |
-	dy _ y2 - currentY.
-	dx _ x2 - currentX.
+	dy _ y2 - pathCurrentY.
+	dx _ x2 - pathCurrentX.
 	"Optimizar. En todas las lineas, bounds. En verticales, mucho mas. En horiz, no EdgeCounts!! Ver 02"
 	hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
 	incrementX _ dx *1.0 / hops.
 	incrementY _ dy *1.0 / hops.
 
-	self primLineFromX: currentX y: currentY toX: x2 y: y2 hops: hops incrementX: incrementX incrementY: incrementY.
+	self primLineFromX: pathCurrentX y: pathCurrentY toX: x2 y: y2 hops: hops incrementX: incrementX incrementY: incrementY.
 
-	currentX _ x2.
-	currentY _ y2.! !
+	pathCurrentX _ x2.
+	pathCurrentY _ y2.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/12/2020 20:23:30'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
 basicMoveToX: x y: y
 "
 (VectorEngine onForm: Display)
@@ -2901,12 +2903,12 @@ Display forceToScreen
 
 	"Next point will be first in a new trajectory fragment"
 	prevYTruncated _ nil.
-	firstX _ x.
-	firstY _ y.
-	currentX _ x.
-	currentY _ y.! !
+	pathFirstX _ x.
+	pathFirstY _ y.
+	pathCurrentX _ x.
+	pathCurrentY _ y.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/13/2020 16:15:24'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
 basicQuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
 (VectorEngine onForm: Display)
@@ -2924,16 +2926,16 @@ Display forceToScreen
 Display forceToScreen
 	"
 	| dx dy hops |
-	dx _ (x1-currentX) abs + (x2-x1) abs.
-	dy _ (y1-currentY) abs + (y2-y1) abs.
+	dx _ (x1-pathCurrentX) abs + (x2-x1) abs.
+	dy _ (y1-pathCurrentY) abs + (y2-y1) abs.
 	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
 
-	self primQuadraticBezierFromX: currentX y: currentY toX: x2 y: y2 controlX: x1 y: y1 hops: hops.
+	self primQuadraticBezierFromX: pathCurrentX y: pathCurrentY toX: x2 y: y2 controlX: x1 y: y1 hops: hops.
 
-	currentX _ x2.
-	currentY _ y2.! !
+	pathCurrentX _ x2.
+	pathCurrentY _ y2.! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/6/2020 14:52:09'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
 blendFillOnly
 
 	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex id |
@@ -2973,7 +2975,7 @@ blendFillOnly
 	auxBitBlt
 		destX: blendBoundsLeft destY: blendBoundsTop
 		width: blendBoundsRight-blendBoundsLeft+1 height: blendBoundsBottom-blendBoundsTop+1.
-	auxBitBlt destForm bits: mask.
+	auxBitBlt destForm bits: alphaMask.
 	auxBitBlt copyBits.
 	auxBitBlt
 		destX: blendBoundsLeft destY: blendBoundsTop
@@ -2982,7 +2984,7 @@ blendFillOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/11/2020 19:30:31'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -2991,7 +2993,7 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 
 	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha fillAlphaToUse |
 
-	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
+	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
 		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
 			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
@@ -3024,7 +3026,7 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	antiAliasGreenAlpha > 0.5 ifTrue: [
 		morphIdAtPixel at: pixelIndex put: currentMorphId ].! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/6/2020 14:52:28'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
 blendStrokeAndFill
 
 	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex id |
@@ -3063,7 +3065,7 @@ blendStrokeAndFill
 	auxBitBlt
 		destX: blendBoundsLeft destY: blendBoundsTop
 		width: blendBoundsRight-blendBoundsLeft+1 height: blendBoundsBottom-blendBoundsTop+1.
-	auxBitBlt destForm bits: mask.
+	auxBitBlt destForm bits: alphaMask.
 	auxBitBlt copyBits.
 	auxBitBlt
 		destX: blendBoundsLeft destY: blendBoundsTop
@@ -3072,7 +3074,7 @@ blendStrokeAndFill
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/11/2020 19:30:56'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3081,7 +3083,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent strokeAlphaToUse fillAlphaToUse |
 
-	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
+	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
 		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
 			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
@@ -3129,7 +3131,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	targetBits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/6/2020 14:39:31'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
 blendStrokeOnly
 
 	| pixelIndex id |
@@ -3145,11 +3147,11 @@ blendStrokeOnly
 	auxBitBlt
 		destX: blendBoundsLeft destY: blendBoundsTop
 		width: blendBoundsRight-blendBoundsLeft+1 height: blendBoundsBottom-blendBoundsTop+1.
-	auxBitBlt destForm bits: mask.
+	auxBitBlt destForm bits: alphaMask.
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/11/2020 19:31:20'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3158,7 +3160,7 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha strokeAlphaToUse |
 
-	antiAliasAlphasWord _ mask bytesAt: pixelIndex.
+	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
 		^self].	"Optimization: We are completely transparent at this point. Do nothing."
 
@@ -3851,7 +3853,7 @@ antiAliasingWidthForStrokeFonts
 defaultAntiAliasingWidth
 	^1.3. "default for graphics"! !
 
-!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/13/2020 16:44:45'!
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/15/2020 16:58:28'!
 updateAlphasForX: x y: y
 
 	"slight optimization possible when we know width = 0... perhaps implement:
@@ -3863,20 +3865,20 @@ updateAlphasForX: x y: y
 	| distanceToAxisSquared alpha t b l r alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
 
 	"Compute affected rect. Honor clipRect"
-	t _ (y -strokeWidthDilatedHalf) truncated +1.
+	t _ (y -auxStrokeWidthDilatedHalf) truncated +1.
 	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y +strokeWidthDilatedHalf) truncated.
+	b _ (y +auxStrokeWidthDilatedHalf) truncated.
 	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x -strokeWidthDilatedHalf -subPixelDelta) truncated +1.
+	l _ (x -auxStrokeWidthDilatedHalf -subPixelDelta) truncated +1.
 	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x +strokeWidthDilatedHalf +subPixelDelta) truncated.
+	r _ (x +auxStrokeWidthDilatedHalf +subPixelDelta) truncated.
 	r > clipRight ifTrue: [ r _ clipRight ].
 
 	t to: b do: [ :displayY |
 		pixelIndex _ displayY * targetWidth +  l.
 		l to: r do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
-			alphaWord _ mask bytesAt: pixelIndex.
+			alphaWord _ alphaMask bytesAt: pixelIndex.
 			alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
 				doUpdate _ false.
 				dy _ displayY - y.
@@ -3886,22 +3888,22 @@ updateAlphasForX: x y: y
 				dxp _ dx - subPixelDelta.
 				dxSquared _ dxp * dxp.
 				distanceToAxisSquared _ dxSquared + dySquared.
-				distanceToAxisSquared < strokeWidthDilatedHalfSquared
+				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 					ifTrue: [
-						alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+						alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 							ifTrue: [ 16r7F ]
-							ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+							ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) rounded ].
 						alpha > (alphaWord at: 3) ifTrue: [
 							alphaWord at: 3 put: alpha.
 							doUpdate _ true ]].
 				"Green"
 				dxSquared _ dx * dx.
 				distanceToAxisSquared _ dxSquared + dySquared.
-				distanceToAxisSquared < strokeWidthDilatedHalfSquared
+				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 					ifTrue: [
-						alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+						alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 							ifTrue: [ 16r7F ]
-							ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+							ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) rounded ].
 						alpha > (alphaWord at: 2) ifTrue: [
 							alphaWord at: 2 put: alpha.
 							doUpdate _ true ]].
@@ -3909,16 +3911,16 @@ updateAlphasForX: x y: y
 				dxp _ dx + subPixelDelta.
 				dxSquared _ dxp * dxp.
 				distanceToAxisSquared _ dxSquared + dySquared.
-				distanceToAxisSquared < strokeWidthDilatedHalfSquared
+				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 					ifTrue: [
-						alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+						alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 							ifTrue: [ 16r7F ]
-							ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
+							ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) rounded ].
 						alpha > (alphaWord at: 1) ifTrue: [
 							alphaWord at: 1 put: alpha.
 							doUpdate _ true ]].
 				doUpdate ifTrue: [
-					mask bytesAt: pixelIndex put: alphaWord ]]]]! !
+					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
 !VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/12/2020 17:14:21'!
 updateEdgeCountAtX: x y: y
@@ -4079,88 +4081,88 @@ primQuadraticBezierFromX: x0 y: y0 toX: x2 y: y2 controlX: x1 y: y1 hops: hops
 	self updateAlphasForX: x2 y: y2.
 	self updateEdgesAndBoundsForX: x2 y: y2.! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 17:53:03'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/15/2020 17:52:13'!
 adjustPixX: x y: y
 	| adjusted |
 	adjusted _ false.
-	pixY = -1 ifTrue: [
-		pixY _ y // strokeKernelHeight * strokeKernelHeight + ii.
-		pixX _ x // strokeKernelWidth * strokeKernelWidth + jj.
+	pathPrimitivePixelY = -1 ifTrue: [
+		pathPrimitivePixelY _ y // pathPrimitiveKernelHeight * pathPrimitiveKernelHeight + kernelI.
+		pathPrimitivePixelX _ x // pathPrimitiveKernelWidth * pathPrimitiveKernelWidth + kernelJ.
 		adjusted _ true ].
-	[y - pixY > (strokeKernelHeight/2)] whileTrue: [ pixY _ pixY + strokeKernelHeight. adjusted _ true].
-	[pixY - y > (strokeKernelHeight/2)] whileTrue: [ pixY _ pixY - strokeKernelHeight. adjusted _ true].
-	[x - pixX > (strokeKernelWidth/2)] whileTrue: [ pixX _ pixX + strokeKernelWidth. adjusted _ true].
-	[pixX - x > (strokeKernelWidth/2)] whileTrue: [ pixX _ pixX - strokeKernelWidth. adjusted _ true].
+	[y - pathPrimitivePixelY > (pathPrimitiveKernelHeight/2)] whileTrue: [ pathPrimitivePixelY _ pathPrimitivePixelY + pathPrimitiveKernelHeight. adjusted _ true].
+	[pathPrimitivePixelY - y > (pathPrimitiveKernelHeight/2)] whileTrue: [ pathPrimitivePixelY _ pathPrimitivePixelY - pathPrimitiveKernelHeight. adjusted _ true].
+	[x - pathPrimitivePixelX > (pathPrimitiveKernelWidth/2)] whileTrue: [ pathPrimitivePixelX _ pathPrimitivePixelX + pathPrimitiveKernelWidth. adjusted _ true].
+	[pathPrimitivePixelX - x > (pathPrimitiveKernelWidth/2)] whileTrue: [ pathPrimitivePixelX _ pathPrimitivePixelX - pathPrimitiveKernelWidth. adjusted _ true].
 	^ adjusted! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 18:37:12'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/15/2020 17:50:38'!
 pvtStrokeWidth: aNumber
 
 	super pvtStrokeWidth: aNumber.
-	strokeKernelWidth _ ((strokeWidthDilatedHalf + subPixelDelta) * 2) truncated + 1.
-	strokeKernelHeight _ (strokeWidthDilatedHalf * 2) truncated + 1.! !
+	pathPrimitiveKernelWidth _ ((auxStrokeWidthDilatedHalf + subPixelDelta) * 2) truncated + 1.
+	pathPrimitiveKernelHeight _ (auxStrokeWidthDilatedHalf * 2) truncated + 1.! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 18:29:14'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/15/2020 17:51:13'!
 readAlphaWord
 	"Read alpha (transparency) mask."
 
-	((pixY between: clipTop and: clipBottom) and: [pixX between: clipLeft and: clipRight])
+	((pathPrimitivePixelY between: clipTop and: clipBottom) and: [pathPrimitivePixelX between: clipLeft and: clipRight])
 		ifTrue: [
-			z_pixelIndex _ pixY * targetWidth +  pixX.
-			z_pixelIndex _ z_pixelIndex + 1.
-			z_alphaWord _ mask bytesAt: z_pixelIndex.
-			z_redAlpha _ z_alphaWord at: 3.
-			z_greenAlpha _ z_alphaWord at: 2.
-			z_blueAlpha _ z_alphaWord at: 1 ]
+			pathPrimitivePixelIndex _ pathPrimitivePixelY * targetWidth +  pathPrimitivePixelX.
+			pathPrimitivePixelIndex _ pathPrimitivePixelIndex + 1.
+			pathPrimitiveAlphaWord _ alphaMask bytesAt: pathPrimitivePixelIndex.
+			pathPrimitiveRedAlpha _ pathPrimitiveAlphaWord at: 3.
+			pathPrimitiveGreenAlpha _ pathPrimitiveAlphaWord at: 2.
+			pathPrimitiveBlueAlpha _ pathPrimitiveAlphaWord at: 1 ]
 		ifFalse: [
-			z_pixelIndex _ -1 ].
-	z_previousRedAlpha _ z_redAlpha.
-	z_previousGreenAlpha _ z_greenAlpha.
-	z_previousBlueAlpha _ z_blueAlpha! !
+			pathPrimitivePixelIndex _ -1 ].
+	pathPrimitivePreviousRedAlpha _ pathPrimitiveRedAlpha.
+	pathPreviousGreenAlpha _ pathPrimitiveGreenAlpha.
+	pathPreviousBlueAlpha _ pathPrimitiveBlueAlpha! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 18:30:38'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/15/2020 17:51:13'!
 updateAlphaWordForX: x y: y
 	"Apdate alpha (transparency) mask using trajectoryPoints."
 	| distanceToAxisSquared alpha dySquared dx dxSquared dy dxp |
 
-	z_pixelIndex = -1 ifTrue: [ ^ self ].
+	pathPrimitivePixelIndex = -1 ifTrue: [ ^ self ].
 
 	"Minimizar"
-	dy _ pixY - y.
+	dy _ pathPrimitivePixelY - y.
 	dySquared _ dy * dy.
-	dx _ pixX - x.
+	dx _ pathPrimitivePixelX - x.
 	"Red"
 	dxp _ dx - subPixelDelta.
 	dxSquared _ dxp * dxp.
 	distanceToAxisSquared _ dxSquared + dySquared.
-	distanceToAxisSquared < strokeWidthDilatedHalfSquared
+	distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 		ifTrue: [
-			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+			alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-			alpha > z_redAlpha ifTrue: [
-				z_redAlpha _ alpha ]].
+				ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) rounded ].
+			alpha > pathPrimitiveRedAlpha ifTrue: [
+				pathPrimitiveRedAlpha _ alpha ]].
 	"Green"
 	dxSquared _ dx * dx.
 	distanceToAxisSquared _ dxSquared + dySquared.
-	distanceToAxisSquared < strokeWidthDilatedHalfSquared
+	distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 		ifTrue: [
-			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+			alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-			alpha > z_greenAlpha ifTrue: [
-				z_greenAlpha _ alpha ]].
+				ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) rounded ].
+			alpha > pathPrimitiveGreenAlpha ifTrue: [
+				pathPrimitiveGreenAlpha _ alpha ]].
 	"Blue"
 	dxp _ dx + subPixelDelta.
 	dxSquared _ dxp * dxp.
 	distanceToAxisSquared _ dxSquared + dySquared.
-	distanceToAxisSquared < strokeWidthDilatedHalfSquared
+	distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 		ifTrue: [
-			alpha _ distanceToAxisSquared <= strokeWidthErodedHalfSquared
+			alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 				ifTrue: [ 16r7F ]
-				ifFalse: [ (strokeWidthDilatedHalf - distanceToAxisSquared sqrt * antiAliasingWidthScaledInverse) rounded ].
-			alpha > z_blueAlpha ifTrue: [
-				z_blueAlpha _ alpha ]].! !
+				ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) rounded ].
+			alpha > pathPrimitiveBlueAlpha ifTrue: [
+				pathPrimitiveBlueAlpha _ alpha ]].! !
 
 !VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/12/2020 17:16:40'!
 updateEdgeCountAtX: x y: y
@@ -4239,14 +4241,14 @@ updateEdgeCountAtX: x y: y
 		].
 	prevYTruncated _ thisYTruncated! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 16:51:47'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/15/2020 17:52:13'!
 updateEdgesAndBoundsForX: x y: y
 
 "
 Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
 "
 
-	(ii = 0 and: [ jj = 0 ]) ifTrue: [
+	(kernelI = 0 and: [ kernelJ = 0 ]) ifTrue: [
 		blendBoundsTop _ blendBoundsTop min: y.
 		blendBoundsBottom _ blendBoundsBottom max: y.
 		blendBoundsLeft _ blendBoundsLeft min: x.
@@ -4257,31 +4259,31 @@ Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
 			self updateEdgeCountAtX: x y: y ].
 	]! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/13/2020 18:28:17'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/15/2020 17:49:53'!
 writeAlphaWord
 	"Update alpha (transparency) mask using trajectoryPoints."
 
-	(z_previousRedAlpha ~= z_redAlpha or: [
-	z_previousGreenAlpha ~= z_greenAlpha or: [
-	z_previousBlueAlpha ~= z_blueAlpha ]]) ifTrue: [
-		z_alphaWord at: 3 put: z_redAlpha.
-		z_alphaWord at: 2 put: z_greenAlpha.
-		z_alphaWord at: 1 put: z_blueAlpha.
-		mask bytesAt: z_pixelIndex put: z_alphaWord ]! !
+	(pathPrimitivePreviousRedAlpha ~= pathPrimitiveRedAlpha or: [
+	pathPreviousGreenAlpha ~= pathPrimitiveGreenAlpha or: [
+	pathPreviousBlueAlpha ~= pathPrimitiveBlueAlpha ]]) ifTrue: [
+		pathPrimitiveAlphaWord at: 3 put: pathPrimitiveRedAlpha.
+		pathPrimitiveAlphaWord at: 2 put: pathPrimitiveGreenAlpha.
+		pathPrimitiveAlphaWord at: 1 put: pathPrimitiveBlueAlpha.
+		alphaMask bytesAt: pathPrimitivePixelIndex put: pathPrimitiveAlphaWord ]! !
 
-!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:30:48'!
+!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/15/2020 17:52:13'!
 primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
 
 	| angle xp yp x y |
-	0 to: strokeKernelHeight-1 do: [ :i |
-		0 to: strokeKernelWidth-1 do: [ :j |
-			jj _ j. ii _ i.
+	0 to: pathPrimitiveKernelHeight-1 do: [ :i |
+		0 to: pathPrimitiveKernelWidth-1 do: [ :j |
+			kernelJ _ j. kernelI _ i.
 
 			"Load pixY and pixX. Adjust them. Don't write alpha word the first time."
-			pixY _ -1.
-			z_previousRedAlpha _ z_redAlpha.
-			z_previousGreenAlpha _ z_greenAlpha.
-			z_previousBlueAlpha _ z_blueAlpha.
+			pathPrimitivePixelY _ -1.
+			pathPrimitivePreviousRedAlpha _ pathPrimitiveRedAlpha.
+			pathPreviousGreenAlpha _ pathPrimitiveGreenAlpha.
+			pathPreviousBlueAlpha _ pathPrimitiveBlueAlpha.
 
 			angle _ startAngle.
 			hops+1 timesRepeat: [
@@ -4297,19 +4299,19 @@ primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotatio
 				angle _ angle + d. ].
 			self writeAlphaWord ]]! !
 
-!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:33:22'!
+!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/15/2020 17:52:13'!
 primCubicBezierFromX: x0 y: y0 toX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2 hops: hops
 
 	| t oneLessT increment f2 f3 f1 f23 f4 x y |
-	0 to: strokeKernelHeight-1 do: [ :i |
-		0 to: strokeKernelWidth-1 do: [ :j |
-			jj _ j. ii _ i.
+	0 to: pathPrimitiveKernelHeight-1 do: [ :i |
+		0 to: pathPrimitiveKernelWidth-1 do: [ :j |
+			kernelJ _ j. kernelI _ i.
 
 			"Load pixY and pixX. Adjust them. Don't write alpha word the first time."
-			pixY _ -1.
-			z_previousRedAlpha _ z_redAlpha.
-			z_previousGreenAlpha _ z_greenAlpha.
-			z_previousBlueAlpha _ z_blueAlpha.
+			pathPrimitivePixelY _ -1.
+			pathPrimitivePreviousRedAlpha _ pathPrimitiveRedAlpha.
+			pathPreviousGreenAlpha _ pathPrimitiveGreenAlpha.
+			pathPreviousBlueAlpha _ pathPrimitiveBlueAlpha.
 
 			increment _ 1.0 / hops.
 			t _ 0.0.
@@ -4335,19 +4337,19 @@ primCubicBezierFromX: x0 y: y0 toX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y
 			self writeAlphaWord.
 			self updateEdgesAndBoundsForX: x3 y: y3. ]]! !
 
-!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:33:31'!
+!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/15/2020 17:52:13'!
 primLineFromX: x0 y: y0 toX: x2 y: y2 hops: hops incrementX: incrementX incrementY: incrementY
 
 	| x y |
-	0 to: strokeKernelHeight-1 do: [ :i |
-		0 to: strokeKernelWidth-1 do: [ :j |
-			jj _ j. ii _ i.
+	0 to: pathPrimitiveKernelHeight-1 do: [ :i |
+		0 to: pathPrimitiveKernelWidth-1 do: [ :j |
+			kernelJ _ j. kernelI _ i.
 
 			"Load pixY and pixX. Adjust them. Don't write alpha word the first time."
-			pixY _ -1.
-			z_previousRedAlpha _ z_redAlpha.
-			z_previousGreenAlpha _ z_greenAlpha.
-			z_previousBlueAlpha _ z_blueAlpha.
+			pathPrimitivePixelY _ -1.
+			pathPrimitivePreviousRedAlpha _ pathPrimitiveRedAlpha.
+			pathPreviousGreenAlpha _ pathPrimitiveGreenAlpha.
+			pathPreviousBlueAlpha _ pathPrimitiveBlueAlpha.
 
 			x _ x0.
 			y _ y0.
@@ -4366,19 +4368,19 @@ primLineFromX: x0 y: y0 toX: x2 y: y2 hops: hops incrementX: incrementX incremen
 			self writeAlphaWord.
 			self updateEdgesAndBoundsForX: x2 y: y2. ]]! !
 
-!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:33:38'!
+!VectorEngineParallelizable methodsFor: 'primitive algorithms' stamp: 'jmv 4/15/2020 17:52:13'!
 primQuadraticBezierFromX: x0 y: y0 toX: x2 y: y2 controlX: x1 y: y1 hops: hops
 
 	| t oneLessT increment f2 f3 f1 x y |
-	0 to: strokeKernelHeight-1 do: [ :i |
-		0 to: strokeKernelWidth-1 do: [ :j |
-			jj _ j. ii _ i.
+	0 to: pathPrimitiveKernelHeight-1 do: [ :i |
+		0 to: pathPrimitiveKernelWidth-1 do: [ :j |
+			kernelJ _ j. kernelI _ i.
 
 			"Load pixY and pixX. Adjust them. Don't write alpha word the first time."
-			pixY _ -1.
-			z_previousRedAlpha _ z_redAlpha.
-			z_previousGreenAlpha _ z_greenAlpha.
-			z_previousBlueAlpha _ z_blueAlpha.
+			pathPrimitivePixelY _ -1.
+			pathPrimitivePreviousRedAlpha _ pathPrimitiveRedAlpha.
+			pathPreviousGreenAlpha _ pathPrimitiveGreenAlpha.
+			pathPreviousBlueAlpha _ pathPrimitiveBlueAlpha.
 
 			increment _ 1.0 / hops.
 			t _ 0.0.
