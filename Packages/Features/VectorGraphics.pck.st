@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4113] on 15 April 2020 at 5:52:43 pm'!
+'From Cuis 5.0 [latest update: #4112] on 16 April 2020 at 3:27:45 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 122!
+!provides: 'VectorGraphics' 1 123!
 !requires: 'Color-Extras' 1 7 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
@@ -370,23 +370,21 @@ c fullDraw: self.
 Display forceToScreen!
 
 !VectorEngineAbstract commentStamp: '<historical>' prior: 0!
-Aca es donde estoy trabajando. En las numeradas guardo snapshots.
-
 A Vector Graphics rasterizer for Morphic 3.
 Supports most SVG primitives.
 Gives exceptional quality.
 
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine abs_EllipseCenterX: 100 y: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen.
 
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black fillColor: Color red do: [ :engine |
 		engine abs_EllipseCenterX: 100 y: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen.
 
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	fillColor: Color red do: [ :engine |
 		engine abs_EllipseCenterX: 100 y: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen!
@@ -1860,17 +1858,17 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	pathCommandsBlock valueWithPossibleArgument: self.
 	self finishPath! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 12/31/2017 16:46:16'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:18:57'!
 abs_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
 			abs_ArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
 			abs_MoveToX: 100 y: 100;
 			abs_ArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.2 position: 200@100);
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
@@ -1890,10 +1888,10 @@ Display forceToScreen
 	phi _ geometryTransformation radians + theta.
 	self basicArcToX: center x y: center y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:15'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:19:15'!
 abs_CircleCenterX: cx y: cy radius: mr
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_CircleCenterX: 200 y: 150 radius: 80].
@@ -1907,14 +1905,14 @@ Display forceToScreen
 		basicArcCenterX: center x centerY: center y radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float pi * 2;
 		basicClosePath! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:19:52'!
 abs_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
 	Smooth squence of curves: use as control1 point, last used control2 point."
 "Check that behavior is correct!!"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic  onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :engine |
 		engine abs_CircleCenterX: 150 y: 300 radius: 10.
@@ -1923,7 +1921,7 @@ abs_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 		engine
 			abs_CubicBezierToX: 600 y: 100 control1X: 150 y: 300 control2X: 600 y: 400
 			].
-(VectorEngine onForm: Display)
+(VectorEngineBasic  onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :engine |
 		engine abs_CircleCenterX: 600 y: -200 radius: 10.
@@ -1935,7 +1933,7 @@ abs_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 Display forceToScreen.
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
@@ -1950,12 +1948,12 @@ Display forceToScreen
 	mirroredContolY _ previousCallY + (previousCallY - previousCallControlY).
 	self abs_CubicBezierToX: x3 y: y3 control1X: mirroredContolX y: mirroredContolY control2X: x2 y: y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:21:04'!
 abs_CubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -1963,7 +1961,7 @@ abs_CubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
 		engine
@@ -1982,14 +1980,14 @@ Display forceToScreen
 	previousCallControlX _ x2.
 	previousCallControlY _ y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:19'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:21:17'!
 abs_EllipseCenterX: cx y: cy radiusX: mrx radiusY: mry
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_EllipseCenterX: 200 y: 150 radiusX: 100 radiusY: 50].
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
@@ -2008,14 +2006,14 @@ Display forceToScreen
 		basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float pi * 2;
 		basicClosePath! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 1/1/2018 14:19:21'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:21:25'!
 abs_EllipseCenterX: cx y: cy radiusX: mrx radiusY: mry rotationAngle: theta
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_EllipseCenterX: 200 y: 150 radiusX: 100 radiusY: 50 rotationAngle: -0.5 ].
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
@@ -2034,22 +2032,22 @@ Display forceToScreen
 		basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float pi * 2;
 		basicClosePath! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:35:21'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:21:33'!
 abs_EllipseCenterX: cx y: cy radiusX: mrx radiusY: mry rotationAngle: theta start: startAngle sweep: sweepAngle
 	"Currently draws a line from pathCurrentX@pathCurrentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
 	Implement desired behavior when clear."
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_EllipseCenterX: 200 y: 150 radiusX: 100 radiusY: 50 rotationAngle: 0.0 start: 0.1 sweep: 6 ].
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.0 position: 200@100);
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_EllipseCenterX: 200 y: 150 radiusX: 100 radiusY: 50 rotationAngle: 0.0 start: 0.1 sweep: 6].
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_EllipseCenterX: 200 y: 350 radiusX: 100 radiusY: 50 rotationAngle: 0.5 start: 0.1 sweep: 6 ].
@@ -2065,10 +2063,10 @@ Display forceToScreen.
 	phi _ geometryTransformation radians + theta.
 	self basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: startAngle sweep:  sweepAngle! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:22:05'!
 abs_LineToX: x2
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2076,7 +2074,7 @@ abs_LineToX: x2
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
@@ -2086,10 +2084,10 @@ Display forceToScreen
 "
 	self abs_LineToX: x2 y: previousCallY! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:22:22'!
 abs_LineToX: x2 y: y2
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2097,7 +2095,7 @@ abs_LineToX: x2 y: y2
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
@@ -2113,10 +2111,10 @@ Display forceToScreen
 	previousCallControlX _ previousCallX.
 	previousCallControlY _ previousCallY! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:24'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:22:31'!
 abs_LineToY: y2
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2124,7 +2122,7 @@ abs_LineToY: y2
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
@@ -2134,10 +2132,10 @@ Display forceToScreen
 "
 	self abs_LineToX: previousCallX y: y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:22:50'!
 abs_MoveToX: x y: y
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2145,7 +2143,7 @@ abs_MoveToX: x y: y
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
@@ -2161,10 +2159,10 @@ Display forceToScreen
 	previousCallControlX _ previousCallX.
 	previousCallControlY _ previousCallY! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:23:01'!
 abs_QuadraticBezierSmoothToX: x2 y: y2
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :engine |
 		engine abs_CircleCenterX: 450 y: 300 radius: 10.
@@ -2172,7 +2170,7 @@ abs_QuadraticBezierSmoothToX: x2 y: y2
 		engine
 			abs_QuadraticBezierToX: 600 y: 100 controlX: 450 y: 300
 			].
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :engine |
 		engine abs_CircleCenterX: 750 y: -100 radius: 10.
@@ -2183,7 +2181,7 @@ abs_QuadraticBezierSmoothToX: x2 y: y2
 Display forceToScreen.
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
@@ -2198,10 +2196,10 @@ Display forceToScreen
 	mirroredContolY _ previousCallY + (previousCallY - previousCallControlY).
 	self abs_QuadraticBezierToX: x2 y: y2 controlX: mirroredContolX y: mirroredContolY! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:13:46'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:23:30'!
 abs_QuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 3.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2209,7 +2207,7 @@ abs_QuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 3 position: 200@100);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
@@ -2225,11 +2223,11 @@ Display forceToScreen
 	previousCallControlX _ x1.
 	previousCallControlY _ y1! !
 
-!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/15/2020 17:36:22'!
+!VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 4/16/2020 15:24:47'!
 do_ClosePath
 	"abs/rel meaningless here"
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2250,10 +2248,10 @@ Display forceToScreen
 	previousCallControlX _ previousCallX.
 	previousCallControlY _ previousCallY! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/16/2020 15:25:06'!
 rel_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2263,14 +2261,14 @@ rel_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: do
 "
 	self abs_ArcToX: previousCallX + cx y: previousCallY + cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/16/2020 15:25:27'!
 rel_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
 	Smooth squence of curves: use as control1 point, last used control2 point."
 "Check that behavior is correct!!"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
@@ -2281,7 +2279,7 @@ rel_CubicBezierSmoothToX: x3 y: y3 control2X: x2 y: y2
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
@@ -2292,7 +2290,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
@@ -2307,12 +2305,12 @@ Display forceToScreen
 		abs_CubicBezierSmoothToX: previousCallX + x3 y: previousCallY + y3
 		control2X: previousCallX + x2 y: previousCallY + y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/16/2020 15:26:00'!
 rel_CubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2324,7 +2322,7 @@ rel_CubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
 		engine
@@ -2345,10 +2343,10 @@ Display forceToScreen
 		control1X: previousCallX + x1 y: previousCallY + y1
 		control2X: previousCallX + x2 y: previousCallY + y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/16/2020 15:26:12'!
 rel_LineToX: x2 y: y2
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2360,7 +2358,7 @@ rel_LineToX: x2 y: y2
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
@@ -2375,10 +2373,10 @@ Display forceToScreen
 "
 	self abs_LineToX: previousCallX + x2 y: previousCallY + y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/16/2020 15:26:23'!
 rel_MoveToX: x y: y
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2390,7 +2388,7 @@ rel_MoveToX: x y: y
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
@@ -2405,10 +2403,10 @@ Display forceToScreen
 "
 	self abs_MoveToX: previousCallX + x y: previousCallY + y! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/16/2020 15:26:38'!
 rel_QuadraticBezierSmoothToX: x2 y: y2
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :engine |
 		engine abs_CircleCenterX: 550 y: 350 radius: 10.
@@ -2416,7 +2414,7 @@ rel_QuadraticBezierSmoothToX: x2 y: y2
 		engine
 			rel_QuadraticBezierToX: 600 y: 100 controlX: 450 y: 300
 			].
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :engine |
 		engine abs_CircleCenterX: 850 y: -50 radius: 10.
@@ -2427,7 +2425,7 @@ rel_QuadraticBezierSmoothToX: x2 y: y2
 Display forceToScreen.
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
@@ -2440,10 +2438,10 @@ Display forceToScreen
 	self
 		abs_QuadraticBezierSmoothToX: previousCallX + x2 y: previousCallY + y2! !
 
-!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/15/2020 17:13:32'!
+!VectorEngineAbstract methodsFor: 'paths - relative coordinates' stamp: 'jmv 4/16/2020 15:27:09'!
 rel_QuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 3.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2455,7 +2453,7 @@ rel_QuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 3 position: 200@100);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
@@ -2672,10 +2670,10 @@ setForm: aForm
 	auxBitBlt destForm bits: morphIdAtPixel.
 	auxBitBlt copyBits.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:23:37'!
 basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2.0 color: Color black fillColor: Color red do: [ :engine |
 		engine basicArcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen.
@@ -2710,10 +2708,10 @@ Display forceToScreen.
 	pathCurrentX _ thetaCos * xp - (thetaSin * yp) + cx.
 	pathCurrentY _ thetaSin * xp + (thetaCos * yp) + cy.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:23:42'!
 basicArcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			basicMoveToX: 100 y: 100;
@@ -2798,10 +2796,10 @@ Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entr
 
 	self basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:05:51'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:23:48'!
 basicClosePath
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black fillColor: Color red do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2811,12 +2809,12 @@ Display forceToScreen
 "
 	self basicLineToX: pathFirstX y: pathFirstY! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:23:55'!
 basicCubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2824,7 +2822,7 @@ basicCubicBezierToX: x3 y: y3 control1X: x1 y: y1 control2X: x2 y: y2
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine abs_MoveToX: 100 y: 50.
 		engine
@@ -2844,10 +2842,10 @@ Display forceToScreen
 	pathCurrentX _ x3.
 	pathCurrentY _ y3.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:24:09'!
 basicLineToX: x2 y: y2
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2855,7 +2853,7 @@ basicLineToX: x2 y: y2
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 25.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2863,7 +2861,7 @@ Display forceToScreen
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 30 y: 15.
 		engine abs_LineToX: 45 y: 90.
@@ -2883,10 +2881,10 @@ Display forceToScreen
 	pathCurrentX _ x2.
 	pathCurrentY _ y2.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:24:25'!
 basicMoveToX: x y: y
 "
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2908,10 +2906,10 @@ Display forceToScreen
 	pathCurrentX _ x.
 	pathCurrentY _ y.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/15/2020 17:06:07'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:24:34'!
 basicQuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			abs_MoveToX: 100 y: 100;
@@ -2919,7 +2917,7 @@ basicQuadraticBezierToX: x2 y: y2 controlX: x1 y: y1
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineBasic onForm: Display)
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine abs_MoveToX: 10 y: 5.
 		engine abs_QuadraticBezierToX: 60 y: 10 controlX: 15 y: 30 ].
