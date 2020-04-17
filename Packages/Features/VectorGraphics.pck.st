@@ -1,7 +1,6 @@
-'From Cuis 5.0 [latest update: #4112] on 16 April 2020 at 3:27:45 pm'!
+'From Cuis 5.0 [latest update: #4114] on 17 April 2020 at 10:06:32 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 123!
-!requires: 'Color-Extras' 1 7 nil!
+!provides: 'VectorGraphics' 1 124!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -2596,11 +2595,12 @@ finishPath
 
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/4/2020 19:40:18'!
-initialize
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/17/2020 09:47:28'!
+initializeOnForm: aForm
 	geometryTransformation _ MorphicTranslation new. "Identity"
 	clippingMorphId _ 0.
-	currentMorphId _ 0.! !
+	currentMorphId _ 0.
+	self pvtSetForm: aForm! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 17:13:46'!
 initializePath
@@ -2620,28 +2620,9 @@ initializePath
 	blendBoundsLeft _ targetWidth.			"drawable right. Will later be refined."
 	blendBoundsRight _ 0.						"drawable left. Will later be refined."! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 16:53:42'!
-pvtStrokeWidth: aNumber
-	| swErodedHalf |
-	strokeWidth _ aNumber.
-	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
-	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
-	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/17/2020 09:44:56'!
+pvtSetForm: aForm
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/11/2020 19:07:10'!
-resetMorphBounds
-
-	morphBoundsTop _ targetForm height - 1.
-	morphBoundsBottom _ 0.
-	morphBoundsLeft _ targetWidth - 1.
-	morphBoundsRight _ 0! !
-
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 16:58:28'!
-setForm: aForm
-	"
-	World extent: World extent
-	"
 	| hack s |
 	targetForm _ aForm.
 	targetBits _ targetForm bits.
@@ -2669,6 +2650,23 @@ setForm: aForm
 	auxBitBlt copyBits.
 	auxBitBlt destForm bits: morphIdAtPixel.
 	auxBitBlt copyBits.! !
+
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 16:53:42'!
+pvtStrokeWidth: aNumber
+	| swErodedHalf |
+	strokeWidth _ aNumber.
+	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
+	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
+	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
+	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
+
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/11/2020 19:07:10'!
+resetMorphBounds
+
+	morphBoundsTop _ targetForm height - 1.
+	morphBoundsBottom _ 0.
+	morphBoundsLeft _ targetWidth - 1.
+	morphBoundsRight _ 0! !
 
 !VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:23:37'!
 basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
@@ -3834,10 +3832,10 @@ siemensStar
 	].
 	^form! !
 
-!VectorEngineAbstract class methodsFor: 'instance creation' stamp: 'jmv 12/16/2017 18:17:50'!
+!VectorEngineAbstract class methodsFor: 'instance creation' stamp: 'jmv 4/17/2020 09:47:42'!
 onForm: aForm
 
-	^ self new setForm: aForm! !
+	^ self new initializeOnForm: aForm! !
 
 !VectorEngineAbstract class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:07'!
 antiAliasingWidthForOutlineFonts
