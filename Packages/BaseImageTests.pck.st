@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4114] on 17 April 2020 at 11:05:24 pm'!
-'Description Extract To Temporary tests'!
-!provides: 'BaseImageTests' 1 218!
+'From Cuis 5.0 [latest update: #4115] on 17 April 2020 at 11:17:35 pm'!
+'Description Extract cascade to method test'!
+!provides: 'BaseImageTests' 1 219!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -15559,10 +15559,10 @@ createCompleterWith: aModel
 		setModel: aModel;
 		changePositionTo: aModel actualContents size! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem 4/7/2020 16:57:00'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem 4/17/2020 23:16:28'!
 firstKeyword: a secondKeyword: b! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem 4/7/2020 16:57:00'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem 4/17/2020 23:16:28'!
 m1: arg1 arg1! !
 
 !SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:13:43'!
@@ -18658,6 +18658,21 @@ test33ItIsPossibleToExtractATemporaryDeclarationIfItIsNotUsedOutsideOfSelectionI
 
 	' , codeToExtract.
 	updatedCode _ 'm1 self m2'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/14/2020 20:52:00'!
+test36ItIsPossibleToExtractACascadeExpression
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '(3 + 2) factorial; yourself'.
+	originalCode _ 'm1 ^ ' , codeToExtract.
+	newMethodCode _ 'm2
+
+	^ ' , codeToExtract.
+	updatedCode _ 'm1 ^ self m2'.
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
