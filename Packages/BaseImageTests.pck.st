@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4106] on 9 April 2020 at 4:18:35 pm'!
-'Description isGetter/isSetter + allAccessTo: tests'!
-!provides: 'BaseImageTests' 1 217!
+'From Cuis 5.0 [latest update: #4114] on 17 April 2020 at 11:05:24 pm'!
+'Description Extract To Temporary tests'!
+!provides: 'BaseImageTests' 1 218!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1024,6 +1024,16 @@ RefactoringTest subclass: #ExtractMethodTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'ExtractMethodTest class' category: #'BaseImageTests-Tools-Refactoring'!
 ExtractMethodTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExtractToTemporaryTest category: #'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #ExtractToTemporaryTest
+	instanceVariableNames: 'classToRefactor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'ExtractToTemporaryTest class' category: #'BaseImageTests-Tools-Refactoring'!
+ExtractToTemporaryTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #InsertSuperclassTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -18702,6 +18712,341 @@ classToRefactorName
 
 	^ #ClassToExtractMethod! !
 
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 3/24/2020 22:42:02'!
+assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNamed: newVariable updatesTo: sourceCodeAfterRefactoring
+
+	self
+		assertExtracting: codeToExtract
+		from: sourceCodeOfMethodToRefactor
+		toVariableNamed: newVariable
+		updatesTo: sourceCodeAfterRefactoring
+		usingLeftArrowAssignment: true! !
+
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 3/24/2020 22:41:37'!
+assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNamed: newVariable updatesTo: sourceCodeAfterRefactoring usingLeftArrowAssignment: leftArrowAssignmentPreference
+
+	| intervalToExtract methodToRefactor |
+	classToRefactor compile: sourceCodeOfMethodToRefactor.
+	intervalToExtract _ self intervalOf: codeToExtract locatedIn: sourceCodeOfMethodToRefactor.
+	methodToRefactor _ classToRefactor >> #m1.
+
+	Preferences
+		withTemporaryValue: leftArrowAssignmentPreference
+		of: #leftArrowAssignmentsInGeneratedCode
+		do: [ (ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor) apply ].
+
+	self assert: sourceCodeAfterRefactoring equals: (classToRefactor >> #m1) sourceCode! !
+
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 2/24/2020 16:28:11'!
+intervalOf: aPieceOfSourceCode locatedIn: sourceCode
+
+	| interval |
+	interval _ sourceCode intervalOfSubCollection: aPieceOfSourceCode.
+	^ interval first to: interval last - 1! !
+
+!ExtractToTemporaryTest methodsFor: 'set up' stamp: 'RNG 3/24/2020 22:30:57'!
+setUp
+
+	super setUp.
+	classToRefactor _ self createClassNamed: self classToRefactorName! !
+
+!ExtractToTemporaryTest methodsFor: 'class factory' stamp: 'RNG 2/22/2020 21:20:46'!
+classToRefactorName
+
+	^ #ClassToDoExtractTemporary! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 2/25/2020 16:28:15'!
+test12ItIsPossibleToExtractASingleLiteralFromAMethodWithoutAnyTempsOrArguments
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	^ 42'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	| new |
+	new _ 42.
+	^ new'.
+
+	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 2/25/2020 16:32:52'!
+test13ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAlreadyOtherTemporary
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	| four |
+	four _ 4.
+	^ four + 2'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	| four two |
+	four _ 4.
+	two _ 2.
+	^ four + two'.
+
+	self assertExtracting: '2' from: sourceCode toVariableNamed: 'two' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 3/24/2020 18:04:28'!
+test14ItIsPossibleToExtractASingleExpressionFromAMethodThatHasAnEmptyTemporariesDeclaration
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	| |
+	^ 3 factorial'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	| f |
+	f _ 3 factorial.
+	^ f'.
+
+	self assertExtracting: '3 factorial' from: sourceCode toVariableNamed: 'f' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 3/24/2020 22:43:08'!
+test15ItIsPossibleToExtractCodeAndGenerateAssignmentUsingAnsiAssignmentStyle
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	^ 42'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	| new |
+	new := 42.
+	^ new'.
+
+	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring usingLeftArrowAssignment: false! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 3/24/2020 23:30:01'!
+test16ItIsPossibleToExtractASingleLiteralFromABlockWithoutAnyTempsOrArguments
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	^ [ self m2 ]'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	^ [ | new |
+	new _ self m2.
+	new ]'.
+
+	self assertExtracting: 'self m2' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 4/12/2020 23:32:37'!
+test19ItIsPossibleToExtractAnIntervalWithSomeExtraSpaces
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	^ 42'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	| new |
+	new _ 42.
+	^ new'.
+
+	self assertExtracting: ' 42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:05'!
+test01NewVariableCanNotBeEmpty
+
+	| newVariable sourceCodeToExtract sourceCode intervalToExtract |
+	newVariable _ ''.
+	sourceCodeToExtract _ '2'.
+	sourceCode _ 'm1 ^ 2'.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: (classToRefactor >> #m1) ]
+		failsWith: [ NewTemporaryPrecondition errorMessageForEmptyTemporaryVariable ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:01'!
+test02NewVariableHasToBeValid
+
+	| newVariable sourceCodeToExtract sourceCode intervalToExtract |
+	newVariable _ 'a b'.
+	sourceCodeToExtract _ '2'.
+	sourceCode _ 'm1 ^ ', sourceCodeToExtract.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: (classToRefactor >> #m1) ]
+		failsWith: [ NewTemporaryPrecondition errorMessageForInvalidTemporaryVariable: newVariable ]
+	! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:58'!
+test03NewVariableNameCanNotBeDefinedInMethod
+
+	| newVariable sourceCodeToExtract sourceCode intervalToExtract methodToRefactor |
+	newVariable _ 'new'.
+	sourceCodeToExtract _ '2'.
+	sourceCode _ 'm1 | ', newVariable, ' | ^ ', sourceCodeToExtract.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariable: newVariable isAlreadyDefinedIn: methodToRefactor methodNode ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/12/2020 20:20:41'!
+test04FailsIfNewTemporaryIsEqualToInstanceVariableInClass
+
+	| newVariable sourceCode sourceCodeToExtract methodToRefactor intervalToExtract |
+	newVariable _ 'new'.
+	classToRefactor addInstVarName: newVariable.
+	sourceCodeToExtract _ '78'.
+	sourceCode _ 'm1 ^ ', sourceCodeToExtract.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: classToRefactor ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/12/2020 20:20:50'!
+test05FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
+
+	| newVariable sourceCode sourceCodeToExtract methodToRefactor superclassToRefactor intervalToExtract |
+	newVariable _ 'new'.
+	superclassToRefactor _ self createClassNamed: #ClassToRefactorSuperclass instanceVariableNames: newVariable.
+	classToRefactor superclass: superclassToRefactor.
+	sourceCodeToExtract _ '78'.
+	sourceCode _ 'm1 ^ ', sourceCodeToExtract.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedAsInstanceVariableDefinedIn: superclassToRefactor ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:47'!
+test06SourceCodeToExtractCanNotIncludeReturn
+
+	| newVariable sourceCode sourceCodeToExtract  intervalToExtract methodToRefactor |
+	newVariable _ 'new'.
+	sourceCodeToExtract _ '^ 1'.
+	sourceCode _ 'm1 ', sourceCodeToExtract.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractCanNotIncludeReturn ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:44'!
+test07SourceCodeToExtractCanNotBeEmpty
+
+	| newVariable sourceCode sourceCodeToExtract intervalToExtract methodToRefactor |
+	newVariable _ 'new'.
+	sourceCodeToExtract _ ' '.
+	sourceCode _ 'm1 ^ 1'.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractCanNotBeEmpty]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:55'!
+test08SourceCodeToExtractCanNotHaveSyntaxErrors
+
+	| newVariable sourceCode sourceCodeToExtract intervalToExtract methodToRefactor expectedSyntaxErrorMessage |
+	newVariable _ 'new'.
+	sourceCodeToExtract _ '1 +'.
+	sourceCode _ 'm1 ^ 1 + 3'.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+	 
+	[ Parser parse: sourceCodeToExtract class: classToRefactor noPattern: true.
+		self fail. ]
+		on: SyntaxErrorNotification 
+		do: [ :anError | expectedSyntaxErrorMessage _ anError messageText].
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractHasSyntaxError: expectedSyntaxErrorMessage ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:40'!
+test09SourceCodeToExtractHasToBeOneStatement
+
+	| newVariable sourceCode sourceCodeToExtract intervalToExtract methodToRefactor |
+	newVariable _ 'new'.
+	sourceCodeToExtract _ '1+2. 3+4'.
+	sourceCode _ 'm1 ', sourceCodeToExtract.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+	
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractHasToBeOneStatement ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:27'!
+test10FailsIfIntervalToExtractIsBeforeMethodSourceCodeBoundaries
+
+	| newVariable sourceCode methodToRefactor |	
+	newVariable _ 'new'.
+	sourceCode _ 'm1 ^ 1'.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: (-1 to: 2) from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeSelectionOutOfBounds ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:22:19'!
+test11FailsIfIntervalToExtractIsAfterMethodSourceCodeBoundaries
+
+	| newVariable sourceCode methodToRefactor |	
+	newVariable _ 'new'.
+	sourceCode _ 'm1 ^ 1'.
+	classToRefactor compile: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: (sourceCode size - 1 to: sourceCode size + 2) from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeSelectionOutOfBounds ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/12/2020 20:14:29'!
+test17CannotExtractPartOfMethodDefinition
+
+	| newVariable sourceCode methodToRefactor intervalToExtract sourceCodeToExtract |	
+	newVariable _ 'new'.
+	sourceCode _ 'm1 ^ 1'.
+	classToRefactor compile: sourceCode.
+	sourceCodeToExtract _ 'm1'.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeIncludingAnInvalidExpression ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/12/2020 23:23:09'!
+test18CannotExtractPartOfMessageSend
+
+	| newVariable sourceCode methodToRefactor intervalToExtract sourceCodeToExtract |	
+	newVariable _ 'new'.
+	sourceCode _ 'm1 ^ self m2'.
+	classToRefactor compile: sourceCode.
+	sourceCodeToExtract _ 'm2'.
+	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	methodToRefactor _ classToRefactor >> #m1.
+
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeIncludingAnInvalidExpression ]! !
+
 !InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:01:00'!
 test01ChangesTheSuperclassOfTheClassToRefactor
 
@@ -23863,3 +24208,12 @@ primTestSubtract: aNumber
 primTestTruncated
 	<primitive: 551>
 	^ #fail! !
+
+!Preferences class methodsFor: '*BaseImageTests' stamp: 'RNG 3/24/2020 22:44:27'!
+withTemporaryValue: temporaryValue of: aPreferenceName do: aBlock
+	"Allows to execute a piece of code with a temporary value of the given preference. Useful for testing purposes."
+	
+	| currentValue |
+	currentValue := self perform: aPreferenceName.
+	self setPreference: aPreferenceName toValue: temporaryValue.
+	[ aBlock value ] ensure: [ self setPreference: aPreferenceName toValue: currentValue ]! !
