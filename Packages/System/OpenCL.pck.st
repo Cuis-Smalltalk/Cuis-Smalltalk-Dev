@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4114] on 17 April 2020 at 10:06:36 am'!
+'From Cuis 5.0 [latest update: #4117] on 20 April 2020 at 12:42:50 pm'!
 'Description '!
-!provides: 'OpenCL' 1 43!
+!provides: 'OpenCL' 1 44!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
@@ -3395,14 +3395,14 @@ externalStringFor: aString
 	addr unsignedByteAt: aString size + 1 put: 0.
 	^addr! !
 
-!OpenCLContext methodsFor: 'private' stamp: 'jmv 9/9/2015 12:27'!
+!OpenCLContext methodsFor: 'private' stamp: 'jmv 4/20/2020 12:30:18'!
 newBuffer: flags copyFrom: bytes
 	| mem result |
 	result := IntegerArray new: 1.
 	mem := OpenCLPrimitiveInterface current
 				clCreateBuffer__cl_context: id
 							cl_mem_flags: (flags+CL_MEM_COPY_HOST_PTR)
-							size_t: bytes size
+							size_t: bytes byteSize
 							void__ptr: bytes
 							cl_int__ptr: result.
 	result := result first.
@@ -26174,7 +26174,6 @@ asOpenCLArg
 asOpenCLArg
 	"Pass pointer to external memory (or potentially, a ByteArray) as an argument to a kernel or other function."
 	^self getHandle! !
-
 OpenCLConstants initialize!
 CLBufferRegionStruct initialize!
 CLImageDescStruct initialize!

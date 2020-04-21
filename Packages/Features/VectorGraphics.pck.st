@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4114] on 17 April 2020 at 10:06:32 am'!
+'From Cuis 5.0 [latest update: #4119] on 21 April 2020 at 2:13:19 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 124!
+!provides: 'VectorGraphics' 1 125!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -4939,14 +4939,14 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 3/18/2020 12:28:31'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 4/21/2020 14:07:14'!
 mapAndStoreGlyphsUsing: characterMap
-
-	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph carriageReturnGlyph spaceGlyph mapSize preferredCodePoint |
+	"
+	https://developer.apple.com/fonts/TrueType-Reference-Manual/RM07/appendixB.html
+	"
+	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph spaceGlyph mapSize preferredCodePoint |
 	unknownGlyph _ glyphs first.
 	nullGlyph _ glyphs second.
-	carriageReturnGlyph _ glyphs third.
-	spaceGlyph _ glyphs fourth.
 	mapSize _ characterMap size.
 	glyphsByIso5559s15 _ Array new: 256.
 	glyphsByUTF8 _ Array new: 256.
@@ -4974,6 +4974,8 @@ mapAndStoreGlyphsUsing: characterMap
 				]
 			withUtf8BytesOfUnicodeCodePoint: codePoint.
 			array at: prevByte+1 put: g.
+		codePoint = 32 ifTrue: [
+			spaceGlyph _ g ].
 
 	].
 	Character separators do: [ :s |
@@ -6223,6 +6225,18 @@ widthInTrueTypeFontDescription: aTTFontDescription useST80Glyphs: aBoolean
 	^aTTFontDescription widthOf: self useST80Glyphs: aBoolean! !
 
 !String methodsFor: '*vectorGraphics' stamp: 'jmv 4/1/2020 12:26:06'!
+displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p trueTypeFont: aTrueTypeFont color: color
+	"Double dispatch"
+
+	^ engine
+		displayString: self
+		from: startIndex
+		to: stopIndex
+		at: p
+		trueTypeFont: aTrueTypeFont
+		color: color! !
+
+!Text methodsFor: '*vectorGraphics' stamp: 'jmv 4/21/2020 13:13:17'!
 displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p trueTypeFont: aTrueTypeFont color: color
 	"Double dispatch"
 
