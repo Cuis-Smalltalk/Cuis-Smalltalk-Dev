@@ -16,7 +16,7 @@ Many additional packages are being developed by members of the Cuis community, a
 Some of the repos owner by community members, and including packages for Cuis are:
 (Note: Repos whose name starts with 'Cuis' are intended for Cuis Smalltalk)
 
-- https://github.com/Cuis-Smalltalk-Learning?tab=repositories
+- https://github.com/Cuis-Smalltalk/Learning-Cuis
 - https://github.com/KenDickey?tab=repositories
 - https://github.com/hhzl?tab=repositories
 - https://github.com/dtlewis290?tab=repositories
