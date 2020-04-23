@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4119] on 21 April 2020 at 2:13:19 pm'!
+'From Cuis 5.0 [latest update: #4112] on 22 April 2020 at 10:43:39 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 125!
+!provides: 'VectorGraphics' 1 126!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -818,6 +818,15 @@ pointSizes
 baseTTFontDescription: aTTFontDescription
 	^ self new baseTTFontDescription: aTTFontDescription! !
 
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'KenD 4/22/2020 14:29:05'!
+fileReaderServicesForFileEntry: filename suffix: suffix
+	"FileList buttons that read a TrueType font on contents."
+
+	(#( 'ttf' ) includes: suffix) ifTrue: [
+		^ { self serviceReadTTFont } ].
+
+	^#()! !
+
 !TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 5/7/2019 09:18:36'!
 read: aDirectoryEntry
 	"
@@ -838,6 +847,31 @@ read: aDirectoryEntry
 readAdditionalFonts
 
 	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'! !
+
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'KenD 4/22/2020 14:25:33'!
+readTrueTypeFontEntry: ttFontFileEntry
+
+	| ttFontDescription ttFontFamily |
+	ttFontDescription := TTFontReader readTTFFrom: ttFontFileEntry binaryContents.
+	ttFontFamily := FontFamily familyNamed: ttFontDescription familyName.
+	ttFontFamily
+		ifNil: [ FontFamily addFamily:  (self new baseTTFontDescription: ttFontDescription ) ]
+		ifNotNil: [ :fam | fam  at: ttFontDescription emphasis put: ttFontDescription].
+	
+	PopUpMenu inform: 'loaded font ', ttFontDescription familyName.! !
+
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'KenD 4/22/2020 13:52:56'!
+serviceReadTTFont
+	"Answer the service of reading a TrueType font"
+
+	^ (SimpleServiceEntry
+		provider: self 
+		label: 'load font'
+		selector: #readTrueTypeFontEntry:
+		description: 'load TrueType font'
+		buttonLabel: 'read font'
+		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
+		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
 !M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:34:45'!
 drawOn: aCanvas
