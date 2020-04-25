@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4115] on 17 April 2020 at 11:17:35 pm'!
+'From Cuis 5.0 [latest update: #4120] on 25 April 2020 at 12:13:13 pm'!
 'Description Extract cascade to method test'!
-!provides: 'BaseImageTests' 1 219!
+!provides: 'BaseImageTests' 1 220!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -10147,6 +10147,18 @@ testWithoutTrailingBlanks
 	self assert: 'abc' equals: 'abc' withoutTrailingBlanks.
 	self assert: '' withoutTrailingBlanks isEmpty
 ! !
+
+!StringTest methodsFor: 'tests - grammar' stamp: 'LC 4/25/2020 11:04:39'!
+testArticle
+	self
+		assert: 'euphemism' withArticle equals: 'a euphemism';
+		assert: 'European' withArticle equals: 'a European';
+		assert: 'Euclidean space' withArticle equals: 'a Euclidean space';
+		assert: 'university' withArticle equals: 'a university';
+		assert: 'anagram' withArticle equals: 'an anagram';
+		assert: 'apple' withArticle equals: 'an apple';
+		assert: 'Ukranian' withArticle equals: 'a Ukranian';
+		assert: 'Argentine' withArticle equals: 'an Argentine'! !
 
 !ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:41:00'!
 testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
