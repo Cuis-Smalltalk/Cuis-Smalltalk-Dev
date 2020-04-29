@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4117] on 20 April 2020 at 12:42:50 pm'!
+'From Cuis 5.0 [latest update: #4127] on 28 April 2020 at 4:05:28 pm'!
 'Description '!
-!provides: 'OpenCL' 1 44!
+!provides: 'OpenCL' 1 46!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
@@ -242,7 +242,7 @@ OpenCLContextObject class
 
 !classDefinition: #OpenCLBuffer category: #OpenCL!
 OpenCLContextObject subclass: #OpenCLBuffer
-	instanceVariableNames: 'byteSize'
+	instanceVariableNames: 'byteSize smalltalkObject'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
@@ -649,10 +649,10 @@ Encapsulates a CLContext, and provides convenience methods for accessing its pro
 !OpenCLContextObject commentStamp: 'jcg 2/12/2010 09:20' prior: 0!
 Represents an object that is associated with a particular OpenCL context.  When destroyed, the reference to the context is released.!
 
-!OpenCLBuffer commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
+!OpenCLBuffer commentStamp: '<historical>' prior: 0!
 Encapsulates a CLMem that has been allocated as a buffer (as opposed to an image), and provides convenience methods for accessing its properties.  See the "buffer creation" methods in OpenCLContext.  
 
-NOTE: we don't expose all of OpenCL's functionality for instantiating new buffers, in particular buffers allocated in host memory.!
+NOTE: we don't expose all of OpenCL's functionality for instantiating new buffers, in particular buffers allocated in host memory. But we do allow wrapping a Smalltalk object. For this, we pin the memory and unpin it on buffer destruction.!
 
 !OpenCLCommandQueue commentStamp: 'jcg 1/14/2010 01:57' prior: 0!
 Encapsulates a CLCommandQueue and provides convenience methods for accessing its properties.!
@@ -3216,6 +3216,39 @@ shortReportAndQuit
 
 	Smalltalk snapshot: false andQuit: true embedded: false clearAllClassState: false! !
 
+!OpenCLPlatform class methodsFor: 'devices' stamp: 'jmv 7/17/2019 14:33:04'!
+allCPUs
+	"Answer some device. If possible, answer some GPU. If none is available, answer some CPU.
+	If none is available, answer nil
+	OpenCLPlatform allCPUs
+	"
+	| platforms |
+	platforms := OpenCLPlatform allPlatforms.
+	^ Array streamContents: [ :strm |
+		platforms do: [ :platform | platform allCPUs do: [ :device | strm nextPut: device ]]]! !
+
+!OpenCLPlatform class methodsFor: 'devices' stamp: 'jmv 7/17/2019 14:11:23'!
+allDevices
+	"Answer some device. If possible, answer some GPU. If none is available, answer some CPU.
+	If none is available, answer nil
+	OpenCLPlatform someDevice
+	"
+	| platforms |
+	platforms := OpenCLPlatform allPlatforms.
+	^ Array streamContents: [ :strm |
+		platforms do: [ :platform | platform allDevices do: [ :device | strm nextPut: device ]]]! !
+
+!OpenCLPlatform class methodsFor: 'devices' stamp: 'jmv 7/17/2019 14:21:38'!
+allGPUs
+	"Answer some device. If possible, answer some GPU. If none is available, answer some CPU.
+	If none is available, answer nil
+	OpenCLPlatform someDevice
+	"
+	| platforms |
+	platforms := OpenCLPlatform allPlatforms.
+	^ Array streamContents: [ :strm |
+		platforms do: [ :platform | platform allGPUs do: [ :device | strm nextPut: device ]]]! !
+
 !OpenCLPlatform class methodsFor: 'devices' stamp: 'jmv 4/2/2020 17:39:40'!
 cpu
 	self allPlatforms do: [ :platform | platform allCPUs do: [ :cpu | ^ cpu ]].
@@ -3322,15 +3355,33 @@ readOnlyBufferOfSize: byteSize
 	"Create an OpenCLBuffer that is only readable."
 	^self newBuffer: CL_MEM_READ_ONLY ofSize: byteSize! !
 
+!OpenCLContext methodsFor: 'buffer creation' stamp: 'jmv 4/24/2020 17:50:22'!
+readOnlyBufferOn: bytes
+	"Create an OpenCLBuffer that is only readable. It will work directly on the contents of the 'bytes' argument.
+	The 'bytes' argument will be pinned as long as this buffer exists."
+	^self newBuffer: CL_MEM_READ_ONLY on: bytes! !
+
 !OpenCLContext methodsFor: 'buffer creation' stamp: 'jmv 9/9/2015 11:48'!
 readWriteBufferOfSize: byteSize
 	"Create an OpenCLBuffer that is both readable and writeable."
 	^self newBuffer: CL_MEM_READ_WRITE ofSize: byteSize! !
 
+!OpenCLContext methodsFor: 'buffer creation' stamp: 'jmv 4/24/2020 19:00:00'!
+readWriteBufferOn: bytes
+	"Create an OpenCLBuffer that is both readable and writable. It will work directly on the contents of the 'bytes' argument.
+	The 'bytes' argument will be pinned as long as this buffer exists."
+	^self newBuffer: CL_MEM_READ_WRITE on: bytes! !
+
 !OpenCLContext methodsFor: 'buffer creation' stamp: 'jmv 9/9/2015 11:45'!
 writeOnlyBufferOfSize: byteSize
 	"Create an OpenCLBuffer that is only writeable."
 	^self newBuffer: CL_MEM_WRITE_ONLY ofSize: byteSize! !
+
+!OpenCLContext methodsFor: 'buffer creation' stamp: 'jmv 4/24/2020 19:00:07'!
+writeOnlyBufferOn: bytes
+	"Create an OpenCLBuffer that is only readable. It will work directly on the contents of the 'bytes' argument.
+	The 'bytes' argument will be pinned as long as this buffer exists."
+	^self newBuffer: CL_MEM_WRITE_ONLY on: bytes! !
 
 !OpenCLContext methodsFor: 'deprecated in OpenCL 2.0' stamp: 'jmv 10/29/2015 15:40'!
 commandQueueOn: anOpenCLDevice
@@ -3395,7 +3446,7 @@ externalStringFor: aString
 	addr unsignedByteAt: aString size + 1 put: 0.
 	^addr! !
 
-!OpenCLContext methodsFor: 'private' stamp: 'jmv 4/20/2020 12:30:18'!
+!OpenCLContext methodsFor: 'private' stamp: 'jmv 4/24/2020 17:25:30'!
 newBuffer: flags copyFrom: bytes
 	| mem result |
 	result := IntegerArray new: 1.
@@ -3408,7 +3459,7 @@ newBuffer: flags copyFrom: bytes
 	result := result first.
 	OpenCLError check: result text: 'failed to create buffer'.
 	mem := OpenCLBuffer wrappingHandle: mem.
-	mem context: self byteSize: bytes size.
+	mem context: self byteSize: bytes byteSize.
 	^mem
 	
 	! !
@@ -3430,6 +3481,28 @@ newBuffer: flags ofSize: byteSize
 	^mem
 	
 	! !
+
+!OpenCLContext methodsFor: 'private' stamp: 'jmv 4/24/2020 17:42:02'!
+newBuffer: flags on: bytes
+	"Using a Smalltalk object from OpenCL requires pinning it.
+	You might unpit it when done."
+	| mem result mustPinUnpin |
+	mustPinUnpin _ bytes isPinned not.
+	mustPinUnpin ifTrue: [ bytes pin ].
+	result := IntegerArray new: 1.
+	mem := OpenCLPrimitiveInterface current
+				clCreateBuffer__cl_context: id
+							cl_mem_flags: (flags+CL_MEM_USE_HOST_PTR)
+							size_t: bytes byteSize
+							void__ptr: bytes
+							cl_int__ptr: result.
+	result := result first.
+	OpenCLError check: result text: 'failed to create buffer'.
+	mem := OpenCLBuffer wrappingHandle: mem.
+	mem context: self byteSize: bytes byteSize.
+	mustPinUnpin ifTrue: [
+		mem smalltalkObject: bytes].
+	^mem! !
 
 !OpenCLContext methodsFor: 'private' stamp: 'jcg 1/14/2010 00:17'!
 privateDestroy
@@ -3640,12 +3713,27 @@ byteSize
 	"Answer the size of memory allocated for this buffer, in bytes."
 	^byteSize! !
 
+!OpenCLBuffer methodsFor: 'accessing' stamp: 'jmv 4/24/2020 17:41:45'!
+smalltalkObject: bytes
+	smalltalkObject _ bytes! !
+
 !OpenCLBuffer methodsFor: 'initialize' stamp: 'jcg 1/14/2010 01:21'!
 context: anOpenCLContext byteSize: sz
 	"Set the context that this buffer was created for, and it's size in bytes."
 	context := anOpenCLContext.
 	byteSize := sz.
 ! !
+
+!OpenCLBuffer methodsFor: 'private' stamp: 'jmv 4/24/2020 17:45:12'!
+privateDestroy
+	"If we were created on a Smalltalk object, it was pinned if needed.
+	If so, unpin it, and don't reference it anymore so it can be collected.
+	
+	Note: Creating two different OpenCLBuffers on the same byte object is not supported wither by OpenCL or by this code"
+	super privateDestroy.
+	smalltalkObject notNil ifTrue: [
+		smalltalkObject unpin.
+		smalltalkObject  _ nil ].! !
 
 !OpenCLCommandQueue methodsFor: 'deprecated in OpenCL 1.2' stamp: 'jmv 10/29/2015 16:39'!
 barrier

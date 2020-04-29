@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4112] on 22 April 2020 at 10:43:39 pm'!
+'From Cuis 5.0 [latest update: #4127] on 28 April 2020 at 4:20:55 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 126!
+!provides: 'VectorGraphics' 1 130!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -80,7 +80,7 @@ VectorCanvas class
 
 !classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
 Object subclass: #VectorEngineAbstract
-	instanceVariableNames: 'targetForm targetBits targetWidth morphIdAtPixel alphaMask edgeCountPerPixel antiAliasingWidth subPixelDelta strokeWidth geometryTransformation doStroke doFill strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue currentMorphId clippingMorphId clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt pathFirstX pathFirstY pathCurrentX pathCurrentY prevYTruncated previousCallX previousCallY previousCallControlX previousCallControlY'
+	instanceVariableNames: 'targetForm targetWidth morphIdAtPixel alphaMask edgeCountPerPixel antiAliasingWidth subPixelDelta strokeWidth geometryTransformation doStroke doFill strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue currentMorphId clippingMorphId clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt pathFirstX pathFirstY pathCurrentX pathCurrentY prevYTruncated previousCallX previousCallY previousCallControlX previousCallControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -1612,7 +1612,7 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 4/12/2020 17:00:25'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 4/28/2020 16:20:50'!
 setForm: aForm
 	"
 	World extent: World extent
@@ -2654,12 +2654,11 @@ initializePath
 	blendBoundsLeft _ targetWidth.			"drawable right. Will later be refined."
 	blendBoundsRight _ 0.						"drawable left. Will later be refined."! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/17/2020 09:44:56'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/24/2020 17:55:27'!
 pvtSetForm: aForm
 
 	| hack s |
 	targetForm _ aForm.
-	targetBits _ targetForm bits.
 	targetWidth _ targetForm width.
 	self resetMorphBounds.
 	self clipRect: targetForm boundingBox.
@@ -3014,7 +3013,7 @@ blendFillOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/24/2020 17:54:57'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3037,7 +3036,7 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	isBlueInside ifTrue: [ antiAliasBlueAlpha _ 1.0 - antiAliasBlueAlpha ].
 
 	fillAlphaToUse _ fillAlpha / 255.0.
-	targetWord _ targetBits bytesAt: pixelIndex.
+	targetWord _ targetForm bits bytesAt: pixelIndex.
 
 	alpha _ antiAliasRedAlpha * fillAlphaToUse.
 	resultR _ alpha * fillRed + ((1.0 - alpha) * (targetWord at: 3)).
@@ -3051,7 +3050,7 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	resultB _ alpha * fillBlue + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
-	targetBits bytesAt: pixelIndex put: targetWord.
+	targetForm bits bytesAt: pixelIndex put: targetWord.
 
 	antiAliasGreenAlpha > 0.5 ifTrue: [
 		morphIdAtPixel at: pixelIndex put: currentMorphId ].! !
@@ -3104,7 +3103,7 @@ blendStrokeAndFill
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/24/2020 17:55:03'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3124,7 +3123,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	strokeAlphaToUse _ strokeAlpha / 255.0.
 	fillAlphaToUse _ fillAlpha / 255.0.
-	targetWord _ targetBits bytesAt: pixelIndex.
+	targetWord _ targetForm bits bytesAt: pixelIndex.
 
 	isRedInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
@@ -3159,7 +3158,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 	resultB _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
-	targetBits bytesAt: pixelIndex put: targetWord.! !
+	targetForm bits bytesAt: pixelIndex put: targetWord.! !
 
 !VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
 blendStrokeOnly
@@ -3181,7 +3180,7 @@ blendStrokeOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/24/2020 17:55:09'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3199,7 +3198,7 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
 
 	strokeAlphaToUse _ strokeAlpha / 255.0.
-	targetWord _ targetBits bytesAt: pixelIndex.
+	targetWord _ targetForm bits bytesAt: pixelIndex.
 
 	alpha _ antiAliasRedAlpha * strokeAlphaToUse.
 	resultR _ alpha * strokeRed + ((1.0 - alpha) * (targetWord at: 3)).
@@ -3213,7 +3212,7 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 	resultB _ alpha * strokeBlue + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
-	targetBits bytesAt: pixelIndex put: targetWord.
+	targetForm bits bytesAt: pixelIndex put: targetWord.
 
 	antiAliasGreenAlpha > 0.5 ifTrue: [
 		morphIdAtPixel at: pixelIndex put: currentMorphId ].! !
