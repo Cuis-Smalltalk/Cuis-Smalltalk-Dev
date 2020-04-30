@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4127] on 28 April 2020 at 4:05:28 pm'!
+'From Cuis 5.0 [latest update: #4127] on 30 April 2020 at 9:52:35 am'!
 'Description '!
-!provides: 'OpenCL' 1 46!
+!provides: 'OpenCL' 1 47!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
@@ -4591,6 +4591,16 @@ argAt: index putPointer: anOpenCLContextObject
 							size_t: Smalltalk wordSize 						"The size of the pointer. Number of bytes to be passed on the stack."
 							const__void__ptr: openCLArg.
 	OpenCLError check: result text: 'failed to set kernel argument ', index printString! !
+
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 4/29/2020 09:32:59'!
+argAt: index putUnsignedInt: aNumber
+	"To be used with arguments declared in OpenCL as int.
+	They are 32 bit unsigned integer.
+
+	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
+	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
+
+	^ self argAt: index putBytesOf: (WordArray with: aNumber)! !
 
 !OpenCLKernel methodsFor: 'accessing' stamp: 'jcg 2/15/2010 13:35'!
 context

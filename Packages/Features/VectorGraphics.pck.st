@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4127] on 28 April 2020 at 4:20:55 pm'!
+'From Cuis 5.0 [latest update: #4127] on 30 April 2020 at 9:52:17 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 130!
+!provides: 'VectorGraphics' 1 131!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -80,7 +80,7 @@ VectorCanvas class
 
 !classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
 Object subclass: #VectorEngineAbstract
-	instanceVariableNames: 'targetForm targetWidth morphIdAtPixel alphaMask edgeCountPerPixel antiAliasingWidth subPixelDelta strokeWidth geometryTransformation doStroke doFill strokeAlpha strokeRed strokeGreen strokeBlue fillAlpha fillRed fillGreen fillBlue currentMorphId clippingMorphId clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt pathFirstX pathFirstY pathCurrentX pathCurrentY prevYTruncated previousCallX previousCallY previousCallControlX previousCallControlY'
+	instanceVariableNames: 'targetForm targetWidth morphIdAtPixel alphaMask edgeCountPerPixel antiAliasingWidth subPixelDelta strokeWidth geometryTransformation strokeColor fillColor currentMorphId clippingMorphId clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared morphBoundsLeft morphBoundsRight morphBoundsTop morphBoundsBottom blendBoundsLeft blendBoundsTop blendBoundsRight blendBoundsBottom hopsPerPixel auxBitBlt pathFirstX pathFirstY pathCurrentX pathCurrentY prevYTruncated previousCallX previousCallY previousCallControlX previousCallControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -1803,52 +1803,40 @@ geometryTransformation: aGeometryTransformation
 
 	geometryTransformation _ aGeometryTransformation! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/13/2020 16:26:33'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/29/2020 22:30:20'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
-	doStroke _ false.
-	doFill _ true.
 	self pvtStrokeWidth: 0.0.
+	strokeColor _ nil.
+	fillColor _ aFillColor.
 	hopsPerPixel _ 8.										"See #experimentHopsPerPixel3"
-
-	"Done with stroke width. Now prepare colors."
-	fillAlpha _ (aFillColor alpha * 255.0) rounded.
-	fillRed _ (aFillColor red * 255.0) rounded.
-	fillGreen _ (aFillColor green * 255.0) rounded.
-	fillBlue _ (aFillColor blue * 255.0) rounded.
-	strokeAlpha _ nil. strokeRed _ nil. strokeGreen _ nil. strokeBlue _ nil.
-
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: self.
 	self finishPath! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/13/2020 16:26:38'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/29/2020 23:17:24'!
 strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke."
 
-	| strokeAlphaFactor aStrokeWidth |
-	doStroke _ true.
-	doFill _ false.
+	| aStrokeWidth |
 	aStrokeWidth _ geometryTransformation externalizeScalar: clientStrokeWidth.
-
-	"Strokes we want to show. They are not too thin, or maybe they are, but there's no fill. Make them wide enough to be properly sampled."
-	self pvtStrokeWidth: (aStrokeWidth max: antiAliasingWidth).
-	strokeAlphaFactor _ aStrokeWidth / strokeWidth.
+	aStrokeWidth < antiAliasingWidth
+		ifTrue: [
+			"If the requested stroke width is too thin, make them wide enough to be properly sampled."
+			self pvtStrokeWidth: antiAliasingWidth.
+			strokeColor _ aStrokeColor alpha: aStrokeColor alpha * aStrokeWidth / antiAliasingWidth ]
+		ifFalse: [
+			self pvtStrokeWidth: aStrokeWidth.
+			strokeColor _ aStrokeColor ].
+	fillColor _ nil.
 	hopsPerPixel _ 10.0 / strokeWidth + 1.		"See #experimentHopsPerPixel2"
-
-	"Done with stroke width. Now prepare colors."
-	fillAlpha _ nil. fillRed _ nil. fillGreen _ nil. fillBlue _ nil.
-	strokeAlpha _ (aStrokeColor alpha * 255.0 * strokeAlphaFactor) rounded.
-	strokeRed _ (aStrokeColor red * 255.0) rounded.
-	strokeGreen _ (aStrokeColor green * 255.0) rounded.
-	strokeBlue _ (aStrokeColor blue * 255.0) rounded.
 
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: self.
 	self finishPath! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/13/2020 16:26:44'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 4/29/2020 22:30:06'!
 strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -1867,25 +1855,15 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 		self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock.
 		^ self ].
 
-	doStroke _ true.
-	doFill _ true.
 	self pvtStrokeWidth: aStrokeWidth.
+	strokeColor _ aStrokeColor.
+	fillColor _ aFillColor.
 	aStrokeWidth < antiAliasingWidth
 		ifTrue: [
 			"Strokes are really thin, but strokeColor is same as fillColor, so there's no problem sampling them."
 			hopsPerPixel _ 8 ]								"See #experimentHopsPerPixel1"
 		ifFalse: [
 			hopsPerPixel _ 10.0 / strokeWidth + 1 max: 2 ].		"See #experimentHopsPerPixel2. Additionally, fills require at least 2."
-
-	"Done with stroke width. Now prepare colors."
-	fillAlpha _ (aFillColor alpha * 255.0) rounded.
-	fillRed _ (aFillColor red * 255.0) rounded.
-	fillGreen _ (aFillColor green * 255.0) rounded.
-	fillBlue _ (aFillColor blue * 255.0) rounded.
-	strokeAlpha _ (aStrokeColor alpha * 255.0) rounded.
-	strokeRed _ (aStrokeColor red * 255.0) rounded.
-	strokeGreen _ (aStrokeColor green * 255.0) rounded.
-	strokeBlue _ (aStrokeColor blue * 255.0) rounded.
 
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: self.
@@ -2587,12 +2565,12 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColo
 	].
 	self antiAliasingWidth: self class defaultAntiAliasingWidth! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 17:13:46'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/29/2020 22:39:00'!
 finishPath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
 	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
-	doFill ifTrue: [
+	fillColor notNil ifTrue: [
 		(pathFirstX = pathCurrentX and: [ pathFirstY = pathCurrentY ]) ifFalse: [
 			"This is actually an error condition. If we are asked to fill, then the path should be closed.
 			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
@@ -2607,12 +2585,12 @@ finishPath
 	blendBoundsLeft< clipLeft ifTrue: [ blendBoundsLeft _ clipLeft ].
 	blendBoundsRight > clipRight ifTrue: [ blendBoundsRight _ clipRight ].
 
-	doFill ifTrue: [
-		doStroke
+	fillColor notNil ifTrue: [
+		strokeColor notNil
 			ifTrue: [ self blendStrokeAndFill ]
 			ifFalse: [ self blendFillOnly ]]
 		ifFalse: [
-		self blendStrokeOnly ].
+			self blendStrokeOnly ].
 	morphBoundsTop _ morphBoundsTop min: blendBoundsTop.
 	morphBoundsBottom _ morphBoundsBottom max: blendBoundsBottom.
 	morphBoundsLeft _ morphBoundsLeft min: blendBoundsLeft.
@@ -2654,7 +2632,7 @@ initializePath
 	blendBoundsLeft _ targetWidth.			"drawable right. Will later be refined."
 	blendBoundsRight _ 0.						"drawable left. Will later be refined."! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/24/2020 17:55:27'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/30/2020 09:42:12'!
 pvtSetForm: aForm
 
 	| hack s |
@@ -2672,17 +2650,17 @@ pvtSetForm: aForm
 			morphIdAtPixel _ WordArray new: s.
 			hack _ Form extent: targetForm extent depth: 32 bits: alphaMask.
 			auxBitBlt _ BitBlt toForm: hack.
-			auxBitBlt fillBitmap: (Bitmap with: 16rFF000000).
-			auxBitBlt combinationRule: Form over ].
-
-	"Perhaps this should be done in an ifCurtailed: block in case of Morphic drawing failure..."
-	auxBitBlt destRect: targetForm boundingBox.
-	auxBitBlt destForm bits: alphaMask.
-	auxBitBlt copyBits.
-	auxBitBlt destForm bits: edgeCountPerPixel.
-	auxBitBlt copyBits.
-	auxBitBlt destForm bits: morphIdAtPixel.
-	auxBitBlt copyBits.! !
+			auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
+			auxBitBlt combinationRule: Form over.
+			auxBitBlt destRect: targetForm boundingBox. ]
+		ifFalse: [
+			auxBitBlt destRect: targetForm boundingBox.
+			auxBitBlt destForm bits: alphaMask.
+			auxBitBlt copyBits.
+			auxBitBlt destForm bits: edgeCountPerPixel.
+			auxBitBlt copyBits.
+			auxBitBlt destForm bits: morphIdAtPixel.
+			auxBitBlt copyBits ].! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 16:53:42'!
 pvtStrokeWidth: aNumber
@@ -2964,39 +2942,39 @@ Display forceToScreen
 	pathCurrentX _ x2.
 	pathCurrentY _ y2.! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/29/2020 10:20:12'!
 blendFillOnly
 
-	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex id |
+	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex morphAtThisPixelId |
 
 	blendBoundsTop to: blendBoundsBottom do: [ :displayY |
-		redEdgesTotal _ 0.
-		greenEdgesTotal _ 0.
-		blueEdgesTotal _ 0.
+		edgesUpToThisPixelR _ 0.
+		edgesUpToThisPixelG _ 0.
+		edgesUpToThisPixelB _ 0.
 		pixelIndex _ displayY * targetWidth +  blendBoundsLeft.
 		blendBoundsLeft to: blendBoundsRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 
-			edgesPerPixelWord _ edgeCountPerPixel bytesAt: pixelIndex.
-			redEdges _ edgesPerPixelWord at: 3.
-			greenEdges _ edgesPerPixelWord at: 2.
-			blueEdges _ edgesPerPixelWord at: 1.
+			edgesThisPixel _ edgeCountPerPixel bytesAt: pixelIndex.
+			edgesThisPixelR _ edgesThisPixel at: 3.
+			edgesThisPixelG _ edgesThisPixel at: 2.
+			edgesThisPixelB _ edgesThisPixel at: 1.
 
-			"Not needed in C or asm, use signed char, i.e. a type where 16rFF means -1 and not 255"
-			redEdges > 127 ifTrue: [ redEdges _ redEdges - 256 ].
-			greenEdges > 127 ifTrue: [ greenEdges _ greenEdges - 256 ].
-			blueEdges > 127 ifTrue: [ blueEdges _ blueEdges - 256 ].
+			"Not needed in C or OpenCL, use signed char, i.e. a type where 16rFF means -1 and not 255"
+			edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
+			edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
+			edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ].
 
-			redEdgesTotal _ redEdgesTotal + redEdges.
-			greenEdgesTotal _ greenEdgesTotal + greenEdges.
-			blueEdgesTotal _ blueEdgesTotal + blueEdges.
-			isRedInside _ redEdgesTotal ~= 0.
-			isGreenInside _ greenEdgesTotal ~= 0.
-			isBlueInside _ blueEdgesTotal ~= 0.
+			edgesUpToThisPixelR _ edgesUpToThisPixelR + edgesThisPixelR.
+			edgesUpToThisPixelG _ edgesUpToThisPixelG + edgesThisPixelG.
+			edgesUpToThisPixelB _ edgesUpToThisPixelB + edgesThisPixelB.
+			isRedInside _ edgesUpToThisPixelR ~= 0.
+			isGreenInside _ edgesUpToThisPixelG ~= 0.
+			isBlueInside _ edgesUpToThisPixelB ~= 0.
 
 			(clippingMorphId = 0 or: [
-			id _ morphIdAtPixel at: pixelIndex.
-			id = clippingMorphId or: [id = currentMorphId]]) ifTrue: [
+			morphAtThisPixelId _ morphIdAtPixel at: pixelIndex.
+			morphAtThisPixelId = clippingMorphId or: [morphAtThisPixelId = currentMorphId]]) ifTrue: [
 				self
 					blendFillOnlyAtX: displayX y: displayY pixelIndex: pixelIndex 
 					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside ].
@@ -3013,18 +2991,19 @@ blendFillOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/24/2020 17:54:57'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/29/2020 23:01:23'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends fill over background. Despite method selector, there might be a very thin stroke of the same color as the fill. Handle this by adjusting antiAliasAlphas.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha fillAlphaToUse |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha |
 
 	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
-	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
-		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
+
+	antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [	"Not in the stroke"
+		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [ 		"Not inside"
 			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
 
 	"In this method, antiAliasAlphas are not used to blend stroke, but fill. This means that in the inside of the shape, and away from the stroke, they must be 1.0 (not 0.0)."
@@ -3035,19 +3014,18 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
 	isBlueInside ifTrue: [ antiAliasBlueAlpha _ 1.0 - antiAliasBlueAlpha ].
 
-	fillAlphaToUse _ fillAlpha / 255.0.
 	targetWord _ targetForm bits bytesAt: pixelIndex.
 
-	alpha _ antiAliasRedAlpha * fillAlphaToUse.
-	resultR _ alpha * fillRed + ((1.0 - alpha) * (targetWord at: 3)).
+	alpha _ antiAliasRedAlpha * fillColor alpha.
+	resultR _ alpha * fillColor red * 255 + ((1.0 - alpha) * (targetWord at: 3)).
 	targetWord at: 3 put: resultR rounded.
 
-	alpha _ antiAliasGreenAlpha * fillAlphaToUse.
-	resultG _ alpha * fillGreen + ((1.0 - alpha) * (targetWord at: 2)).
+	alpha _ antiAliasGreenAlpha * fillColor alpha.
+	resultG _ alpha * fillColor green * 255 + ((1.0 - alpha) * (targetWord at: 2)).
 	targetWord at: 2 put: resultG rounded.
 
-	alpha _ antiAliasBlueAlpha * fillAlphaToUse.
-	resultB _ alpha * fillBlue + ((1.0 - alpha) * (targetWord at: 1)).
+	alpha _ antiAliasBlueAlpha * fillColor alpha.
+	resultB _ alpha * fillColor blue * 255 + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.
@@ -3055,38 +3033,39 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	antiAliasGreenAlpha > 0.5 ifTrue: [
 		morphIdAtPixel at: pixelIndex put: currentMorphId ].! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/29/2020 10:20:21'!
 blendStrokeAndFill
 
-	| redEdgesTotal greenEdgesTotal blueEdgesTotal redEdges greenEdges blueEdges isRedInside isGreenInside isBlueInside edgesPerPixelWord pixelIndex id |
+	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex morphAtThisPixelId |
 
 	blendBoundsTop to: blendBoundsBottom do: [ :displayY |
-		redEdgesTotal _ 0.
-		greenEdgesTotal _ 0.
-		blueEdgesTotal _ 0.
+		edgesUpToThisPixelR _ 0.
+		edgesUpToThisPixelG _ 0.
+		edgesUpToThisPixelB _ 0.
 		pixelIndex _ displayY * targetWidth +  blendBoundsLeft.
 		blendBoundsLeft to: blendBoundsRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 
-			edgesPerPixelWord _ edgeCountPerPixel bytesAt: pixelIndex.
-			redEdges _ edgesPerPixelWord at: 3.
-			greenEdges _ edgesPerPixelWord at: 2.
-			blueEdges _ edgesPerPixelWord at: 1.
+			edgesThisPixel _ edgeCountPerPixel bytesAt: pixelIndex.
+			edgesThisPixelR _ edgesThisPixel at: 3.
+			edgesThisPixelG _ edgesThisPixel at: 2.
+			edgesThisPixelB _ edgesThisPixel at: 1.
 
-			"Not needed in C or asm, use signed char, i.e. a type where 16rFF means -1 and not 255"
-			redEdges > 127 ifTrue: [ redEdges _ redEdges - 256 ].
-			greenEdges > 127 ifTrue: [ greenEdges _ greenEdges - 256 ].
-			blueEdges > 127 ifTrue: [ blueEdges _ blueEdges - 256 ].
+			"Not needed in C or OpenCL, use signed char, i.e. a type where 16rFF means -1 and not 255"
+			edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
+			edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
+			edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ].
 
-			redEdgesTotal _ redEdgesTotal + redEdges.
-			greenEdgesTotal _ greenEdgesTotal + greenEdges.
-			blueEdgesTotal _ blueEdgesTotal + blueEdges.
-			isRedInside _ redEdgesTotal ~= 0.
-			isGreenInside _ greenEdgesTotal ~= 0.
-			isBlueInside _ blueEdgesTotal ~= 0.
+			edgesUpToThisPixelR _ edgesUpToThisPixelR + edgesThisPixelR.
+			edgesUpToThisPixelG _ edgesUpToThisPixelG + edgesThisPixelG.
+			edgesUpToThisPixelB _ edgesUpToThisPixelB + edgesThisPixelB.
+			isRedInside _ edgesUpToThisPixelR ~= 0.
+			isGreenInside _ edgesUpToThisPixelG ~= 0.
+			isBlueInside _ edgesUpToThisPixelB ~= 0.
+
 			(clippingMorphId = 0 or: [
-			id _ morphIdAtPixel at: pixelIndex.
-			id = clippingMorphId or: [id = currentMorphId]]) ifTrue: [
+			morphAtThisPixelId _ morphIdAtPixel at: pixelIndex.
+			morphAtThisPixelId = clippingMorphId or: [morphAtThisPixelId = currentMorphId]]) ifTrue: [
 				self
 					blendStrokeAndFillAtX: displayX y: displayY pixelIndex: pixelIndex 
 					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside ].
@@ -3103,17 +3082,17 @@ blendStrokeAndFill
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/24/2020 17:55:03'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/29/2020 23:02:21'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent strokeAlphaToUse fillAlphaToUse |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent |
 
 	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
-	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
+	antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [
 		(isRedInside or: [  isGreenInside or: [ isBlueInside ]]) ifFalse: [
 			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
 
@@ -3121,18 +3100,16 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
 
-	strokeAlphaToUse _ strokeAlpha / 255.0.
-	fillAlphaToUse _ fillAlpha / 255.0.
 	targetWord _ targetForm bits bytesAt: pixelIndex.
 
 	isRedInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
-			alpha _ antiAliasRedAlpha * strokeAlphaToUse + ((1-antiAliasRedAlpha) * fillAlphaToUse).
-			foreComponent _ antiAliasRedAlpha * strokeRed + ((1-antiAliasRedAlpha) * fillRed).
+			alpha _ antiAliasRedAlpha * strokeColor alpha + ((1-antiAliasRedAlpha) * fillColor alpha).
+			foreComponent _ antiAliasRedAlpha * strokeColor red * 255 + ((1-antiAliasRedAlpha) * fillColor red * 255).
 			morphIdAtPixel at: pixelIndex put: currentMorphId ]
 		ifFalse: [							"Blend stroke over background"
-			alpha _ antiAliasRedAlpha * strokeAlphaToUse.
-			foreComponent _ strokeRed.
+			alpha _ antiAliasRedAlpha * strokeColor alpha.
+			foreComponent _ strokeColor red * 255.
 			antiAliasGreenAlpha > 0.5 ifTrue: [
 				morphIdAtPixel at: pixelIndex put: currentMorphId ] ].
 	resultR _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 3)).
@@ -3140,37 +3117,37 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	isGreenInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
-			alpha _ antiAliasGreenAlpha * strokeAlphaToUse + ((1-antiAliasGreenAlpha) * fillAlphaToUse).
-			foreComponent _ antiAliasGreenAlpha * strokeGreen + ((1-antiAliasGreenAlpha) * fillGreen) ]
+			alpha _ antiAliasGreenAlpha * strokeColor alpha + ((1-antiAliasGreenAlpha) * fillColor alpha).
+			foreComponent _ antiAliasGreenAlpha * strokeColor green * 255 + ((1-antiAliasGreenAlpha) * fillColor green * 255) ]
 		ifFalse: [							"Blend stroke over background"
-			alpha _ antiAliasGreenAlpha * strokeAlphaToUse.
-			foreComponent _ strokeGreen ].
+			alpha _ antiAliasGreenAlpha * strokeColor alpha.
+			foreComponent _ strokeColor green * 255 ].
 	resultG _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 2)).
 	targetWord at: 2 put: resultG rounded.
 
 	isBlueInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
-			alpha _ antiAliasBlueAlpha * strokeAlphaToUse + ((1-antiAliasBlueAlpha) * fillAlphaToUse).
-			foreComponent _ antiAliasBlueAlpha * strokeBlue + ((1-antiAliasBlueAlpha) * fillBlue) ]
+			alpha _ antiAliasBlueAlpha * strokeColor alpha + ((1-antiAliasBlueAlpha) * fillColor alpha).
+			foreComponent _ antiAliasBlueAlpha * strokeColor blue * 255 + ((1-antiAliasBlueAlpha) * fillColor blue * 255) ]
 		ifFalse: [							"Blend stroke over background"
-			alpha _ antiAliasBlueAlpha * strokeAlphaToUse.
-			foreComponent _ strokeBlue ].
+			alpha _ antiAliasBlueAlpha * strokeColor alpha.
+			foreComponent _ strokeColor blue * 255 ].
 	resultB _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/15/2020 16:58:28'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/29/2020 22:23:43'!
 blendStrokeOnly
 
-	| pixelIndex id |
+	| pixelIndex morphAtThisPixelId |
 	blendBoundsTop to: blendBoundsBottom do: [ :displayY |
 		pixelIndex _ displayY * targetWidth +  blendBoundsLeft.
 		blendBoundsLeft to: blendBoundsRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 				(clippingMorphId = 0 or: [
-				id _ morphIdAtPixel at: pixelIndex.
-				id = clippingMorphId or: [id = currentMorphId]]) ifTrue: [
+				morphAtThisPixelId _ morphIdAtPixel at: pixelIndex.
+				morphAtThisPixelId = clippingMorphId or: [morphAtThisPixelId = currentMorphId]]) ifTrue: [
 					self blendStrokeOnlyAtX: displayX y: displayY pixelIndex: pixelIndex ]]].
 
 	auxBitBlt
@@ -3180,36 +3157,35 @@ blendStrokeOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/24/2020 17:55:09'!
+!VectorEngineAbstract methodsFor: 'private - blend with mask' stamp: 'jmv 4/29/2020 23:02:39'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends stroke over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha strokeAlphaToUse |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha |
 
 	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
-	antiAliasAlphasWord = "16rFF000000" #[16r00 16r00 16r00 16rFF] ifTrue: [
+	antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [
 		^self].	"Optimization: We are completely transparent at this point. Do nothing."
 
 	antiAliasRedAlpha _ (antiAliasAlphasWord at: 3) / 127.0.
 	antiAliasGreenAlpha _ (antiAliasAlphasWord at: 2) / 127.0.
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
 
-	strokeAlphaToUse _ strokeAlpha / 255.0.
 	targetWord _ targetForm bits bytesAt: pixelIndex.
 
-	alpha _ antiAliasRedAlpha * strokeAlphaToUse.
-	resultR _ alpha * strokeRed + ((1.0 - alpha) * (targetWord at: 3)).
+	alpha _ antiAliasRedAlpha * strokeColor alpha.
+	resultR _ alpha * strokeColor red * 255 + ((1.0 - alpha) * (targetWord at: 3)).
 	targetWord at: 3 put: resultR rounded.
 
-	alpha _ antiAliasGreenAlpha * strokeAlphaToUse.
-	resultG _ alpha * strokeGreen + ((1.0 - alpha) * (targetWord at: 2)).
+	alpha _ antiAliasGreenAlpha * strokeColor alpha.
+	resultG _ alpha * strokeColor green * 255 + ((1.0 - alpha) * (targetWord at: 2)).
 	targetWord at: 2 put: resultG rounded.
 
-	alpha _ antiAliasBlueAlpha * strokeAlphaToUse.
-	resultB _ alpha * strokeBlue + ((1.0 - alpha) * (targetWord at: 1)).
+	alpha _ antiAliasBlueAlpha * strokeColor alpha.
+	resultB _ alpha * strokeColor blue * 255 + ((1.0 - alpha) * (targetWord at: 1)).
 	targetWord at: 1 put: resultB rounded.
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.
@@ -3882,7 +3858,7 @@ antiAliasingWidthForStrokeFonts
 defaultAntiAliasingWidth
 	^1.3. "default for graphics"! !
 
-!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/15/2020 16:58:28'!
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/29/2020 10:57:04'!
 updateAlphasForX: x y: y
 
 	"slight optimization possible when we know width = 0... perhaps implement:
@@ -3908,7 +3884,7 @@ updateAlphasForX: x y: y
 		l to: r do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 			alphaWord _ alphaMask bytesAt: pixelIndex.
-			alphaWord = "16rFF7F7F7F" #[16r7F 16r7F 16r7F 16rFF] ifFalse: [
+			alphaWord = "16r007F7F7F" #[16r7F 16r7F 16r7F 16r00] ifFalse: [
 				doUpdate _ false.
 				dy _ displayY - y.
 				dySquared _ dy * dy.
@@ -4028,7 +4004,7 @@ updateEdgeCountAtX: x y: y
 		].
 	prevYTruncated _ thisYTruncated! !
 
-!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/13/2020 16:51:44'!
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/29/2020 17:28:33'!
 updateEdgesAndBoundsForX: x y: y
 
 "
@@ -4041,7 +4017,7 @@ Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
 	blendBoundsRight _ blendBoundsRight max: x.
 
 	"Compute edges intersecting with this horizontal line, for fills."
-	doFill ifTrue: [
+	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: x y: y ].! !
 
 !VectorEngineBasic methodsFor: 'primitive algorithms' stamp: 'jmv 4/13/2020 18:07:08'!
@@ -4270,7 +4246,7 @@ updateEdgeCountAtX: x y: y
 		].
 	prevYTruncated _ thisYTruncated! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/15/2020 17:52:13'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/29/2020 17:28:35'!
 updateEdgesAndBoundsForX: x y: y
 
 "
@@ -4284,7 +4260,7 @@ Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
 		blendBoundsRight _ blendBoundsRight max: x.
 
 		"Compute edges intersecting with this horizontal line, for fills."
-		doFill ifTrue: [
+		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 	]! !
 
