@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4127] on 30 April 2020 at 9:52:17 am'!
+'From Cuis 5.0 [latest update: #4127] on 30 April 2020 at 10:57:50 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 131!
+!provides: 'VectorGraphics' 1 132!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -3927,9 +3927,9 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/12/2020 17:14:21'!
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/30/2020 10:57:01'!
 updateEdgeCountAtX: x y: y
-	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffest blueOffset |
+	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffset blueOffset |
 
 	thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom-1.
 	prevYTruncated ifNil: [ 
@@ -3950,10 +3950,10 @@ updateEdgeCountAtX: x y: y
 	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
 	pixelIndexBase _ pixelY * targetWidth + 1.
 	redOffset _ (x+subPixelDelta) truncated + 1 max: clipLeft.
-	greenOffest _ x truncated + 1 max: clipLeft.
+	greenOffset _ x truncated + 1 max: clipLeft.
 	blueOffset _ (x-subPixelDelta) truncated + 1 max: clipLeft.
 	redPixelIndex _ pixelIndexBase + redOffset.
-	greenPixelIndex _ pixelIndexBase + greenOffest.
+	greenPixelIndex _ pixelIndexBase + greenOffset.
 	bluePixelIndex _ pixelIndexBase + blueOffset.
 
 	"Three possible cases here: RGB in one word (pixel); RG in one, and G in another; R in one, GB in another"
@@ -4169,9 +4169,9 @@ updateAlphaWordForX: x y: y
 			alpha > pathPrimitiveBlueAlpha ifTrue: [
 				pathPrimitiveBlueAlpha _ alpha ]].! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/12/2020 17:16:40'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 4/30/2020 10:57:09'!
 updateEdgeCountAtX: x y: y
-	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffest blueOffset |
+	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffset blueOffset |
 
 	thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom-1.
 	prevYTruncated ifNil: [ 
@@ -4192,10 +4192,10 @@ updateEdgeCountAtX: x y: y
 	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
 	pixelIndexBase _ pixelY * targetWidth + 1.
 	redOffset _ (x+subPixelDelta) truncated + 1 max: clipLeft.
-	greenOffest _ x truncated + 1 max: clipLeft.
+	greenOffset _ x truncated + 1 max: clipLeft.
 	blueOffset _ (x-subPixelDelta) truncated + 1 max: clipLeft.
 	redPixelIndex _ pixelIndexBase + redOffset.
-	greenPixelIndex _ pixelIndexBase + greenOffest.
+	greenPixelIndex _ pixelIndexBase + greenOffset.
 	bluePixelIndex _ pixelIndexBase + blueOffset.
 
 	"Three possible cases here: RGB in one word (pixel); RG in one, and G in another; R in one, GB in another"
