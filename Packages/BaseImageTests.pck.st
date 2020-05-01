@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4120] on 25 April 2020 at 12:13:13 pm'!
-'Description Extract cascade to method test'!
-!provides: 'BaseImageTests' 1 220!
+'From Cuis 5.0 [latest update: #4127] on 1 May 2020 at 7:11:40 pm'!
+'Description ExtractToTemporary more tests'!
+!provides: 'BaseImageTests' 1 221!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -15571,10 +15571,10 @@ createCompleterWith: aModel
 		setModel: aModel;
 		changePositionTo: aModel actualContents size! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem 4/17/2020 23:16:28'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBegginingWithThem 5/1/2020 19:03:38'!
 firstKeyword: a secondKeyword: b! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem 4/17/2020 23:16:28'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'RunningTest-SmalltalkCompleterTest>>#test032_AutocompletesEntriesFor_MethodArguments_WithIdentifiersBegginingWithThem 5/1/2020 19:03:38'!
 m1: arg1 arg1! !
 
 !SmalltalkCompleterTest methodsFor: 'test support' stamp: 'NPM 3/18/2020 19:13:43'!
@@ -18690,6 +18690,21 @@ test36ItIsPossibleToExtractACascadeExpression
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 4/24/2020 20:32:48'!
+test37ItIsPossibleATempDeclarationAlongWithABlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '| temp | []'.
+	originalCode _ 'm1 ' , codeToExtract.
+	newMethodCode _ 'm2
+
+	' , codeToExtract.
+	updatedCode _ 'm1 self m2'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
 !ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 5/12/2019 23:21:30'!
 compileMethodToExtractCodeFrom
 
@@ -18875,6 +18890,36 @@ test19ItIsPossibleToExtractAnIntervalWithSomeExtraSpaces
 	^ new'.
 
 	self assertExtracting: ' 42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 4/24/2020 20:56:58'!
+test20ItIsPossibleToExtractAnEmptyBlock
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	^ []'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	| new |
+	new _ [].
+	^ new'.
+
+	self assertExtracting: '[]' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 4/25/2020 13:24:55'!
+test22ItIsPossibleToExtractACascadeExpression
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	^ 3 factorial; yourself'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	| new |
+	new _ 3 factorial; yourself.
+	^ new'.
+
+	self assertExtracting: '3 factorial; yourself' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:05'!
 test01NewVariableCanNotBeEmpty
@@ -19073,6 +19118,36 @@ test18CannotExtractPartOfMessageSend
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ ExtractToTemporary errorMessageForSourceCodeIncludingAnInvalidExpression ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/25/2020 13:24:21'!
+test21CannotExtractLeftSideOfAssignment
+
+	| newVariable sourceCode methodToRefactor intervalToExtract |
+	newVariable _ 'new'.
+	sourceCode _ 'm1 | existing | existing := 2'.
+	classToRefactor compile: sourceCode.
+	intervalToExtract _ 17 to: 24. "second occurrence of 'existing' variable "
+	methodToRefactor _ classToRefactor >> #m1.
+
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ ExtractToTemporary errorMessageForSourceCodeIncludingAnInvalidExpression ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/26/2020 15:23:20'!
+test23CannotUseAReservedNameAsTheNewTemporaryVariable
+
+	| intervalToExtract methodToRefactor newVariable sourceCode |
+
+	ClassBuilder reservedNames do: [ :reservedName |
+		newVariable := reservedName asString.
+		sourceCode := 'm1 ^ 2'.
+		classToRefactor compile: sourceCode.
+		intervalToExtract := self intervalOf: '2' locatedIn: sourceCode.
+		methodToRefactor := classToRefactor >> #m1.
+
+		self 
+			assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+			failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariableCanNotBeAReservedName: newVariable ] ]! !
 
 !InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:01:00'!
 test01ChangesTheSuperclassOfTheClassToRefactor
@@ -21924,6 +21999,21 @@ test17RenamesOneCharVariableAfterAReturnWithoutCharsAfterThatCorrectly
 		assert: 'm1 |',newVariable,'| ^',newVariable
 		equals: newSource
 		! !
+
+!RenameTemporaryTest methodsFor: 'tests' stamp: 'RNG 4/26/2020 15:19:20'!
+test18CantRenameVariableToAReservedName
+
+	| methodNode oldVariable newVariable |
+	
+	oldVariable := 'old'.
+	
+	ClassBuilder reservedNames do: [ :reservedName |
+		newVariable := reservedName asString.
+		methodNode := self methodNodeOf: 'm1 |' , oldVariable , '| ^ ' , oldVariable.
+
+		self 
+			assertCreation: [ RenameTemporary from: oldVariable to: newVariable in: methodNode ]
+			failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariableCanNotBeAReservedName: newVariable ] ]! !
 
 !SafelyRemoveClassTest methodsFor: 'tests' stamp: 'HAW 8/1/2018 16:43:08'!
 test02ClassesWithNoReferencesAndNoSubclassesAreSafetelyRemoved
