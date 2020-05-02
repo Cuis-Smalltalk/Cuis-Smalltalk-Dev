@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4127] on 1 May 2020 at 7:11:40 pm'!
-'Description ExtractToTemporary more tests'!
-!provides: 'BaseImageTests' 1 221!
+'From Cuis 5.0 [latest update: #4131] on 2 May 2020 at 12:55:07 pm'!
+'Description Interval includes: new tests'!
+!provides: 'BaseImageTests' 1 222!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -1887,30 +1887,6 @@ testFloatToByDo
 		1 to: toByDo size do: [ :i |
 			self assert: (toByDo at: i) = (interval at: i) ]]! !
 
-!IntervalTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:35:33'!
-testIncludesReturnsFalseForNotIncludedNumbers
-
-	| from1To10 |
-	
-	from1To10 := 1 to: 10.
-	self deny: (from1To10 includes: 0).
-	self deny: (from1To10 includes: 11)! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:33:46'!
-testIncludesReturnsFalseForObjectsThatAreNotNumbers
-
-	self deny: ((1 to: 10) includes: $a)! !
-
-!IntervalTest methodsFor: 'testing' stamp: 'HAW 6/12/2019 17:35:09'!
-testIncludesReturnsTrueForIncludedNumbers
-
-	| from1To10 |
-	
-	from1To10 := 1 to: 10.
-	self assert: (from1To10 includes: 1).
-	self assert: (from1To10 includes: 5).
-	self assert: (from1To10 includes: 10).! !
-
 !IntervalTest methodsFor: 'testing' stamp: 'jmv 3/27/2016 17:18'!
 testIntegerInterval
 	"
@@ -1936,6 +1912,133 @@ testIntegerToByDo
 	self assert: toByDo size = interval size.
 	1 to: toByDo size do: [ :i |
 		self assert: (toByDo at: i) = (interval at: i) ]! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:33'!
+testDoesNotIncludeNumbersOutsideTheInInterval
+
+	| from1To10 |
+	
+	from1To10 := 1 to: 10.
+	
+	self deny: (from1To10 includes: 0).
+	self deny: (from1To10 includes: 11)! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:35:03'!
+testDoesNotIncludeObjectsThatAreNotNumbers
+
+	self deny: ((1 to: 10) includes: $a)! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:53:40'!
+testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStep
+
+	| from1To10By2 |
+	
+	from1To10By2 := 1 to: 10 by: 2.
+	
+	self deny: (from1To10By2 includes: 0).
+	self deny: (from1To10By2 includes: 2).
+	self deny: (from1To10By2 includes: 6).
+	self deny: (from1To10By2 includes: 10).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:54:48'!
+testDoesNotIncludedNumbersThatAreInRangeButNotReachedByTheStepWithReversedIntervals
+
+	| from10To1ByMinus2 |
+	
+	from10To1ByMinus2 := 10 to: 1 by: -2.
+	
+	self deny: (from10To1ByMinus2 includes: 0).
+	self deny: (from10To1ByMinus2 includes: 1).
+	self deny: (from10To1ByMinus2 includes: 5).
+	self deny: (from10To1ByMinus2 includes: 9).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:03'!
+testIncludedNumbersRespectAStepDifferentToOne
+
+	| from1To10By2 |
+	
+	from1To10By2 := 1 to: 10 by: 2.
+	
+	self assert: (from1To10By2 includes: 1).
+	self assert: (from1To10By2 includes: 5).
+	self assert: (from1To10By2 includes: 9).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:55:55'!
+testIncludedNumbersRespectNegativeSteps
+
+	| from10To1ByMinus2 |
+	
+	from10To1ByMinus2 := 10 to: 1 by: -2.
+	
+	self assert: (from10To1ByMinus2 includes: 10).
+	self assert: (from10To1ByMinus2 includes: 6).
+	self assert: (from10To1ByMinus2 includes: 2).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:26'!
+testIncludesNumbersInsideTheInterval
+
+	| from1To10 |
+	
+	from1To10 := 1 to: 10.
+	
+	self assert: (from1To10 includes: 1).
+	self assert: (from1To10 includes: 5).
+	self assert: (from1To10 includes: 10).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:43:21'!
+testIncludesNumbersInsideTheIntervalEvenForReversedIntervals
+
+	| from10To1 |
+	
+	from10To1 := 10 to: 1 by: -1.
+	
+	self assert: (from10To1 includes: 1).
+	self assert: (from10To1 includes: 5).
+	self assert: (from10To1 includes: 10).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:01:44'!
+testIntervalWithOneNumberAndNegativeStepBiggerThanOneIncludeOnlyThatNumber
+
+	| from1To1ByMinus2 |
+	
+	from1To1ByMinus2 := 1 to: 1 by: -2.
+	
+	self assert: (from1To1ByMinus2 includes: 1).
+	self deny: (from1To1ByMinus2 includes: -1).
+	self deny: (from1To1ByMinus2 includes: 3).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:01:54'!
+testIntervalWithOneNumberAndNegativeStepIncludeOnlyThatNumber
+
+	| from1To1ByMinus1 |
+	
+	from1To1ByMinus1 := 1 to: 1 by: -1.
+	
+	self assert: (from1To1ByMinus1 includes: 1).
+	self deny: (from1To1ByMinus1 includes: 0).
+	self deny: (from1To1ByMinus1 includes: 2).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 12:00:46'!
+testIntervalWithOneNumberAndStepBiggerThanOneIncludesOnlyTheNumber
+
+	| from1To1By2 |
+	
+	from1To1By2 := 1 to: 1 by: 2.
+	
+	self assert: (from1To1By2 includes: 1).
+	self deny: (from1To1By2 includes: -1).
+	self deny: (from1To1By2 includes: 3).! !
+
+!IntervalTest methodsFor: 'test - includes' stamp: 'HAW 5/2/2020 11:59:06'!
+testIntervalWithOneNumberIncludesOnlyTheNumber
+
+	| from1To1 |
+	
+	from1To1 := 1 to: 1.
+	
+	self assert: (from1To1 includes: 1).
+	self deny: (from1To1 includes: 0).
+	self deny: (from1To1 includes: 2).! !
 
 !OrderedCollectionTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:18:24'!
 testIsCollection
