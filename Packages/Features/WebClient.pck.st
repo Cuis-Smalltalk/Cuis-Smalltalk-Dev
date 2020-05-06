@@ -1,12 +1,15 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3695] on 11 April 2019 at 3:36:48 pm'!
+'From Cuis 5.0 [latest update: #4132] on 6 May 2020 at 1:41:37 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
-	- WebClient-Tests-topa.48'!
-!provides: 'WebClient' 1 18!
+	- WebClient-Tests-topa.48
+- Hernan Wilkinson: 
+  - Added useDebugErrorHandler and debugErrorHandler to be able to debug a http request
+  - Changed exampleDoIt to support Smalltalk expresions in the URL using GET'!
+!provides: 'WebClient' 1 19!
 !requires: 'Network-Kernel' 1 2 nil!
-!requires: 'Cryptography-DigitalSignatures' 1 7 nil!
 !requires: 'Identities-UUID' 1 7 nil!
+!requires: 'Cryptography-DigitalSignatures' 1 7 nil!
 SystemOrganization addCategory: #'WebClient-Core'!
 SystemOrganization addCategory: #'WebClient-SqueakSSL-Core'!
 SystemOrganization addCategory: #'WebClient-Tests'!
@@ -6268,7 +6271,7 @@ dispatchRequest: request
 
 	^self dispatchRequest: request url: request url! !
 
-!WebServer methodsFor: 'handling' stamp: 'ar 7/28/2010 20:11'!
+!WebServer methodsFor: 'handling' stamp: 'HAW 5/6/2020 09:47:55'!
 dispatchRequest: request url: dispatchUrl
 	"Look up the handler for a given url and dispatch to it"
 
@@ -6307,11 +6310,11 @@ dispatchRequest: request url: dispatchUrl
 		].
 
 	^[self invokeAction: (action at: 2) request: request] 
-		on: Error do:[:ex|
+		on: Error 
+		do:[:ex|
 			errorHandler 
 				ifNil:[self handleError: ex request: request]
-				ifNotNil:[errorHandler value: ex value: request]
-		].
+				ifNotNil:[errorHandler value: ex value: request]].
 ! !
 
 !WebServer methodsFor: 'handling' stamp: 'ar 7/29/2010 18:46'!
@@ -6737,6 +6740,14 @@ vault: anObject
 
 	vault := anObject! !
 
+!WebServer methodsFor: 'errors' stamp: 'HAW 5/6/2020 12:06:30'!
+debugErrorHandler
+
+	^[:anException :aRequest | 
+		[nil handleSignal: anException ] 
+			on: UnhandledError 
+			do: [ :unhandledError | nil handleSignal: unhandledError ]]! !
+
 !WebServer methodsFor: 'errors' stamp: 'ar 2/20/2010 10:35'!
 errorReportFor: anError
 	"Provide a report for an error that's been caught during processing"
@@ -6822,6 +6833,11 @@ systemInfoOn: strm
 		10001 to: 10003 do: [ :i |
 			info := (Smalltalk getSystemAttribute: i) ifNil:[''].
 			info isEmpty ifFalse:[strm newLine; nextPutAll: info]]]! !
+
+!WebServer methodsFor: 'errors' stamp: 'HAW 5/6/2020 12:06:46'!
+useDebugErrorHandler
+
+	self errorHandler: self debugErrorHandler ! !
 
 !WebServer methodsFor: 'testing' stamp: 'ar 3/30/2010 22:09'!
 isRunning
@@ -7084,6 +7100,24 @@ browseRequest: request
 		] fork. 							"fork it"
 	]! !
 
+!WebServer class methodsFor: 'examples' stamp: 'HAW 5/6/2020 09:45:44'!
+doItFrom: req
+
+	| data result |
+	
+	req isPostRequest 
+		ifTrue:[
+			"We fetch all of the data instead of streaming it"
+			data := req content. ]
+		ifFalse: [ req isGetRequest 
+			ifTrue: [ data := req rawUrl unescapePercents allButFirst ]
+			ifFalse: [ ^req send404Response ]].
+		
+	"Compute the result"
+	result := [Compiler evaluate: data] on: Error do:[:ex| ex return: ex asString].
+	req send200Response: result asString 
+	! !
+
 !WebServer class methodsFor: 'examples' stamp: 'ar 2/23/2010 09:30'!
 exampleAuth		"WebServer exampleAuth"
 	"Simple example requiring basic auth"
@@ -7119,25 +7153,18 @@ exampleBrowse	"WebServer exampleBrowse"
 	server addService: '/' action:[:req| self browseRequest: req].
 ! !
 
-!WebServer class methodsFor: 'examples' stamp: 'ar 2/22/2010 05:41'!
+!WebServer class methodsFor: 'examples' stamp: 'HAW 5/6/2020 09:40:26'!
 exampleDoIt		"WebServer exampleDoIt"
 	"This example executes doIts from a POST request.
 	It's the simplest possible RPC interface to Squeak."
 
 	| server port |
+
 	port := 9999.
 	server := WebServer reset default.
 	server listenOn: port.
-	server addService: '/' action:[:req| 
-		| data result |
-		req isPostRequest ifTrue:[
-			"We fetch all of the data instead of streaming it"
-			data := req content.
-			"Compute the result"
-			result := [Compiler evaluate: data] on: Error do:[:ex| ex return: ex asString].
-			req send200Response: result asString 
-		] ifFalse:[req send404Response].
-	].
+	server addService: '/' action:[:req| self doItFrom: req ].
+		
 ! !
 
 !WebServer class methodsFor: 'examples' stamp: 'ar 7/29/2010 18:49'!
