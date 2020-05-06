@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3969] on 13 December 2019 at 1:09:03 pm'!
+'From Cuis 5.0 [latest update: #4133] on 6 May 2020 at 11:15:30 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 135!
+!provides: 'TerseGuide' 1 136!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -74,7 +74,7 @@ addAdditionalTopicsTo: topicsList
 		topicsList at: each title put: each
 	].! !
 
-!TerseGuideHelp methodsFor: 'topics' stamp: 'RNG 12/13/2019 12:47:09'!
+!TerseGuideHelp methodsFor: 'topics' stamp: 'jmv 5/6/2020 11:10:35'!
 coreTopics
 	
 	^ `Dictionary new
@@ -89,7 +89,6 @@ coreTopics
 	at: 'Canvas' put: #canvas;
 	at: 'Character' put: #character;
 	at: 'Coding' put: #coding;
-	at: 'Constants' put: #constants;
 	at: 'Colors' put: #colors;
 	at: 'Conditional Statements' put: #conditionalStatement;
 	at: 'Conversion' put: #conversion;
@@ -738,29 +737,6 @@ switch at: $A put: [Transcript show: ''Case A''; newLine].
 switch at: $B put: [Transcript show: ''Case B''; newLine].
 switch at: $C put: [Transcript show: ''Case C''; newLine].
 result _ (switch at: $B) value.
-
-'! !
-
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 16:33:15'!
-constants
-	"Constants"
-	^
-'| b x |
-b _ true.								"true constant"
-b _ false.								"false constant"
-x _ nil.									"nil object constant"
-x _ 1.									"integer constants"
-x _ 3.14.								"float constants"
-x _ 2e-2.								"fractional constants"
-x _ 16r0F.								"hex constant".
-x _ -1.									"negative constants"
-x _ ''Hello''.							"string constant"
-x _ ''I''''m here''.						"single quote escape"
-x _ $A.									"character constant"
-x _ $ .									"character constant (space)"
-x _ #aSymbol.							"symbol constants"
-x _ #(3 2 1).							"array constants"
-x _ #(''abc'' 2 $a).					"mixing of types allowed"
 
 '! !
 
@@ -1583,30 +1559,38 @@ x widthFor: available.
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 12:59:54'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 5/6/2020 11:14:41'!
 literals
 	"Literals"
 	^
-'| b x |
-b _ true.								"true pseudo-variable"
-b _ false.								"false pseudo-variable"
-x _ nil.									"nil object pseudo-variable"
-x _ 1.									"integer constant"
-x _ 3.14.								"float constant"
-x _ 2e-2.								"fractional constant"
-x _ 2.0e-2.								"float constant"
-x _ 7/8.									"fractional constant"
-x _ 16r0F.								"small integer constant".
-x _ 16rFFFFFFFF.						"large positive integer constant".
-x _ 16rFFFFFFFF negated.			"large negative integer constant".
-x _ -1.									"negative integer constant"
-x _ ''Hello''.							"string constant"
-x _ ''I''''m here''.						"single quote escape"
-x _ $A.									"character constant"
-x _ $ .									"character constant (space)"
-x _ #aSymbol.							"symbol constants"
-x _ #(3 2 1).							"array constant"
-x _ #(''abc'' 2 $a).					"mixing of types allowed"
+'"Literals are objects that are created when you compile a method. They are always available when the method is run, and the same instance is used each time. Remember that when a method is run, the source code, compiled to create it, is no longer used at all. This includes the source code for the literals. In the example below, the CompiledMethod will not have a string ''3.14'', but the Float object built after it.
+Note: It is considered bad practice to later modify them, as they would no longer match their source code."
+| b x |
+b _ true.									"true pseudo-variable"
+b _ false.									"false pseudo-variable"
+x _ nil.										"nil object pseudo-variable"
+x _ 1.										"SmallInteger literal"
+x _ 3.14.									"Float literal"
+x _ 2e-2.									"Fraction literal"
+x _ 2.0e-2.									"Float literal"
+x _ 7/8.										"Fraction literal"
+x _ 16r0F.									"SmallInteger literal".
+x _ 16rFFFFFFFF.							"LargePositiveInteger literal".
+x _ 16rFFFFFFFF negated.				"LargeNegativeInteger literal".
+x _ -1.										"negative SmallInteger literal"
+x _ ''Hello''.								"String literal"
+x _ ''I''''m here''.							"single quote escape"
+x _ $A.										"Character literal"
+x _ $ .										"Character literal (space)"
+x _ #aSymbol.								"Symbol literal"
+x _ #(3 2 1).								"Array literal"
+x _ #(''abc'' 2 $a).						"mixing of types allowed (all literal)"
+x _ #[3 2 1 0].							"ByteArray literal"
+x _ #[1.0 3.141592 6.02e23].			"Float64Array literal"
+
+x _ {''Hello'' size. Float pi. 1.0 arcTan }.    "Warning: NOT a literal. Created on each run"
+x _ `{''Hello'' size. Float pi. 1.0 arcTan }`.  "Backtick syntax. Anything can be a literal!!"
+x _ `{ 1. 3. 5. 7. 11. 13. 17} asSet`.          "A literal Set"
 
 '! !
 
@@ -1646,7 +1630,7 @@ Object withAllSubclasses size.		"get total number of class entries"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 17:49:51'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 5/1/2020 16:49:17'!
 methodCall
 	"Method Calls"
 	^
@@ -1673,11 +1657,26 @@ x _ 2 raisedTo: 10.						"keyword message"
 x _ 194 * 9.								"binary message"
 Transcript show: (194 * 9) printString; newLine.	"combination (chaining)"
 x _ 2 perform: #sqrt.					"indirect method invocation"
-Transcript									"cascading - send multiple messages to receiver"
-   show: ''hello '';
-   show: ''world'';
+Transcript									"cascading ; send multiple messages to first receiver"
+   show: ''hello '' ;
+   show: ''world'' ;
    newLine.
-x _ 3 + 2; * 100.							"result=300. Sends message to same receiver (3)"
+"Without semicolon cascading"
+x := RectangleLikeMorph new.
+x color: Color yellow.
+x openInWorld.
+"Using semicolon cascade -- we don''t need the variable, x"
+RectangleLikeMorph new
+	color: Color yellow; 
+	openInWorld.
+3 + 2; * 100.							"result=300. Sends message to same receiver (3)"
+"Parentheses are used for grouping.  In many cases parentheses can be replaced by ::"
+3 squared ; + 5.  " 8 -- semicolon -> cascade to _original_ receiver (3)"
+(3 squared) + 5. " 14 -- use parens to group"
+3 squared :: + 5. " 14 -- same but double-colon -> cascade to _result_ of expression at left (9)"
+"The double colon is useful in eliding parens from complex keyword expressions"
+(3 squared between: 2 squared and: 4 squared) ifTrue: [ #Great ] ifFalse: [ #Oops ].
+3 squared between: 2 squared and: 4 squared :: ifTrue: [ #Great ] ifFalse: [ #Oops ].
 
 '! !
 
@@ -2236,7 +2235,7 @@ additionalTopics
 
 	^ TerseGuideTopic allSubclasses collect: [ :topicClass | topicClass new ]! !
 
-!TerseGuideHelp class methodsFor: 'accessing' stamp: 'RNG 12/13/2019 12:46:06'!
+!TerseGuideHelp class methodsFor: 'accessing' stamp: 'jmv 5/6/2020 11:11:26'!
 pages
 	"Answer the topics, in order, for the window list pane"
 	^ #(
@@ -2245,7 +2244,6 @@ pages
 		'Transcript'
 		'Assignment'
 		'Literals'
-		'Constants'
 		'Booleans'
 		'Arithmetic'
 		'Bit-Wise'
