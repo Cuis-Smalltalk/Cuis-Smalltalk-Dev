@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4132] on 3 May 2020 at 2:10:20 am'!
+'From Cuis 5.0 [latest update: #4132] on 6 May 2020 at 11:45:47 pm'!
 'Description Autocomplete tests changed to support LiveTyping'!
-!provides: 'BaseImageTests' 1 225!
+!provides: 'BaseImageTests' 1 227!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -10341,6 +10341,24 @@ testAntepenultimateSignalsErrorWhenCollectionIsNotBigEnough
 		raise: Error
 		withMessageText: Collection collectionTooSmallDescription! !
 
+!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/4/2020 00:37:18'!
+testLastIfEmptyReturnsLastWhenExist
+
+	self assert: 1 equals: (#(1) lastIfEmpty: [ self fail ])! !
+
+!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/4/2020 00:38:24'!
+testLastIfEmptyValuesEmptyBlockWhenEmpty
+
+	self assert: 1 equals: (#() lastIfEmpty: [ 1 ])! !
+
+!ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/4/2020 00:43:47'!
+testLastSignalsErrorWhenEmpty
+
+	self
+		should: [ #() last ]
+		raise: Error
+		withMessageText: Collection emptyCollectionDescription! !
+
 !ArrayTest methodsFor: 'test - accessing' stamp: 'HAW 5/3/2020 00:37:15'!
 testPenultimateIfAbsentReturnsPenultimateIfExists
 
@@ -15346,8 +15364,8 @@ test011_AutocompletesMessagesFor_StringSymbol_WithSelectorsFromSymbol
 		assertEntriesWhenBrowsing: 'm1 1 < #''a'' '
 		areUnaryAndBinarySelectorsOf: Symbol.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/2/2020 22:02:07'!
-test012_AutocompletesMessagesFor_InstanceVariables_WithSelectorsForUnknownClasses
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:42:33'!
+test012_AutocompletesMessagesFor_InstanceVariables
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 instanceVariable1 '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 1 + instanceVariable1 '.! !
@@ -15477,15 +15495,15 @@ test023_AutocompletesMessagesFor_RightBraces_WithSelectorsFromArray
 		assertEntriesWhenBrowsing: 'm1 1 < {} '
 		areUnaryAndBinarySelectorsOf: Array.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 02:07:03'!
-test023_DoesNotSupportAutocompletingMessagesFor_UnaryMessages
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:43:31'!
+test023_AutocompletingMessagesFor_UnaryMessages
 	
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 self class '.
 		
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 1 < self class '.	! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 02:07:15'!
-test024_DoesNotSupportAutocompletingMessagesFor_RightParenthesis
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:44:50'!
+test024_AutocompletingMessagesFor_RightParenthesis
 	
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 (1) '.
 		
@@ -15497,8 +15515,8 @@ test025_AutocompletesMessagesFor_UnknownIdentifiers_WithSelectorsForUnknownClass
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 Foo1234 '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 foo1234 '.! !
 
-!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 02:07:37'!
-test026_DoesNotSupportAutocompletingMessagesFor_CascadeSeparators
+!SmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:45:10'!
+test026_AutocompletingMessagesFor_Cascade
 	
 	self denyComputingEntriesIsSupportedWhenBrowsing: 'm1 self class; '.
 	! !
@@ -15984,6 +16002,12 @@ denyHasEntries: aCompleter
 		detectedPossibleInvalidSelector: #()
 		suggested: #()! !
 
+!SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 20:24:54'!
+entriesToCompareFrom: aCollectionOfEntries
+
+	^(aCollectionOfEntries reject: [ :anEntry | 
+		anEntry beginsWith: AutoCompleterSelectorsCollector categoryEntryHeader ]) asSet! !
+
 !SmalltalkCompleterTest methodsFor: 'assertions' stamp: 'HAW 5/2/2020 20:10:35'!
 using: aCompleter addUnaryAndBinarySelectorsOf: aClass
 
@@ -15998,13 +16022,7 @@ setUp
 	
 ! !
 
-!SmalltalkCompleterTest methodsFor: 'as yet unclassified' stamp: 'HAW 5/2/2020 20:24:54'!
-entriesToCompareFrom: aCollectionOfEntries
-
-	^(aCollectionOfEntries reject: [ :anEntry | 
-		anEntry beginsWith: AutoCompleterSelectorsCollector categoryEntryHeader ]) asSet! !
-
-!SmalltalkCompleterTest methodsFor: 'as yet unclassified' stamp: 'HAW 5/2/2020 20:49:50'!
+!SmalltalkCompleterTest methodsFor: 'running' stamp: 'HAW 5/2/2020 20:49:50'!
 performTest
 
 	^SmalltalkCompleter changeEntriesLimitTo: SmallInteger maxVal during: [ super performTest ]! !
@@ -16014,20 +16032,20 @@ isAbstract
 
 	^true! !
 
-!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 02:06:18'!
-test023_DoesNotSupportAutocompletingMessagesFor_UnaryMessages
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:43:31'!
+test023_AutocompletingMessagesFor_UnaryMessages
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 self class '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 1 + self class '.	! !
 
-!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 02:06:36'!
-test024_DoesNotSupportAutocompletingMessagesFor_RightParenthesis
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:44:50'!
+test024_AutocompletingMessagesFor_RightParenthesis
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 (1) '.
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 1 < (1) '.! !
 
-!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/3/2020 02:07:28'!
-test026_DoesNotSupportAutocompletingMessagesFor_CascadeSeparators
+!DynamicTypingSmalltalkCompleterTest methodsFor: 'tests' stamp: 'HAW 5/6/2020 23:45:10'!
+test026_AutocompletingMessagesFor_Cascade
 	
 	self assertEntriesAreSelectorsOfUnknownClassesWhenBrowsing: 'm1 self class; '.
 	! !
