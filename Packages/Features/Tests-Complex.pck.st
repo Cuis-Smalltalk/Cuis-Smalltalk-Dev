@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3817] on 2 July 2019 at 12:13:44 pm'!
+'From Cuis 5.0 [latest update: #4140] on 8 May 2020 at 3:32:18 pm'!
 'Description '!
-!provides: 'Tests-Complex' 1 3!
+!provides: 'Tests-Complex' 1 4!
 !requires: 'BaseImageTests' 1 0 nil!
 !requires: 'Complex' 1 0 nil!
 SystemOrganization addCategory: #'Tests-Complex'!
@@ -17,7 +17,7 @@ ComplexTest class
 	instanceVariableNames: ''!
 
 
-!ComplexTest methodsFor: 'tests - creation' stamp: 'jmv 5/20/2018 20:59:02'!
+!ComplexTest methodsFor: 'tests - creation' stamp: 'jmv 5/6/2020 16:30:15'!
 testCreation
 	| c c1 c2 c3 |
 	c _ 1 + 2i.
@@ -38,10 +38,10 @@ testCreation
 
 	c2 _ Complex abs: 5 arg: 0.
 	self assert: c2 = 5.
-	self assert: c2 isFloat.
+	self assert: c2 isComplex.
 	c3 _ Complex abs: 5 arg: Float twoPi.
 	self assert: c3 = 5.
-	self assert: c2 isFloat.
+	self assert: c2 isComplex.
 
 	c2 _ Complex abs: 5.1 arg: 0.
 	self assert: c2 = 5.1.
@@ -281,15 +281,15 @@ testReciprocalError
 	self should: [c reciprocal] raise: ZeroDivide
 	! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/17/2018 19:09:11'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/6/2020 16:36:42'!
 testArcTan
 	| c |
 	c := (0.5 + 0 i).
-	self assert: c arcTan = c real arcTan.
+	self assert: (c arcTan real isWithin: 2 floatsFrom: c real arcTan).
 	#(-0.5 -2 -3 0 0.5 2 3) do: [ :real |
-	#(-0.5 -2 -3 0 0.5 2 3) do: [ :imag |
-		c := real + imag i.
-		self verify: c arcTan tan isTrigonometricallyEqualTo: c ]]! !
+		#(-0.5 -2 -3 0 0.5 2 3) do: [ :imag |
+			c := real + imag i.
+			self verify: c arcTan tan isTrigonometricallyEqualTo: c ]]! !
 
 !ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/17/2018 19:17:39'!
 testCos
@@ -514,11 +514,11 @@ testTan
 	c2 := c sin / c cos.
 	self verify: c2 isTrigonometricallyEqualTo: c tan.! !
 
-!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 12/17/2018 19:27:46'!
+!ComplexTest methodsFor: 'tests - mathematical functions' stamp: 'jmv 5/6/2020 16:37:53'!
 testTanh
 	| c c2 |
 	c := (2 + 0 i).
-	self assert: c tanh = c real tanh.
+	self assert: (c tanh real isWithin: 1 floatsFrom: c real tanh).
 	c := 2 + 3 i.
 	c2 := c sinh / c cosh.
 	self verify: c2 isHyperbolicallyEqualTo: c tanh.! !

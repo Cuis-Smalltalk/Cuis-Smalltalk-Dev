@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4127] on 30 April 2020 at 9:52:35 am'!
+'From Cuis 5.0 [latest update: #4140] on 9 May 2020 at 10:08:50 pm'!
 'Description '!
-!provides: 'OpenCL' 1 47!
+!provides: 'OpenCL' 1 48!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
@@ -4537,6 +4537,16 @@ argAt: index putDouble: aNumber
 	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
 
 	^ self argAt: index putBytesOf: aNumber asFloat! !
+
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 5/9/2020 11:47:57'!
+argAt: index putFloat2: aCollectionOfNumbers
+	"To be used with arguments declared in OpenCL as float2.
+	They are 2 32 bit floating point numbers together.
+
+	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
+	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
+
+	^ self argAt: index putBytesOf: (FloatArray new: 2 from: aCollectionOfNumbers)! !
 
 !OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:45'!
 argAt: index putFloat4: aCollectionOfNumbers

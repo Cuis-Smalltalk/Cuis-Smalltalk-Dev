@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #3830] on 2 August 2019 at 2:56:08 pm'!
+'From Cuis 5.0 [latest update: #4140] on 8 May 2020 at 3:32:04 pm'!
 'Description '!
-!provides: 'Complex' 1 6!
+!provides: 'Complex' 1 7!
 SystemOrganization addCategory: #Complex!
 
 
@@ -429,18 +429,18 @@ arcTan
 		real: (real * 2 arcTan: 1 - r2) / 2
 		imaginary: ((r2 + (imaginary * 2) + 1) / (r2 - (imaginary * 2) + 1)) ln / 4! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 8/2/2019 10:47:50'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 5/6/2020 16:42:19'!
 arcTan: denominator 
 	"Answer the  four quadrants arc tangent of receiver over denominator."
 
 	self isNaN ifTrue: [ ^Complex nan ].
 	denominator isNaN ifTrue: [ ^Complex nan ].
-	^denominator isZero 
+	^ denominator isZero 
 		ifTrue: [
 			self isZero 
 				ifTrue: [
 					"shouldn't it be an error ? ^DomainError signal: '0 arcTan: 0'"
-					^self class real: 0 imaginary: 0]
+					self class real: 0 imaginary: 0]
 				ifFalse: [
 					self class
 						real: Float pi / (real copySignTo: 2)
@@ -562,16 +562,15 @@ sinh
 		real: real sinh * imaginary cos
 		imaginary: real cosh * imaginary sin! !
 
-!Complex methodsFor: 'mathematical functions' stamp: 'jmv 6/22/2019 16:09:41'!
+!Complex methodsFor: 'mathematical functions' stamp: 'jmv 5/6/2020 16:51:58'!
 sqrt
 	"Return the square root of the receiver with a positive imaginary part."
 
-	| u v zero |
+	| u v |
 	imaginary = 0 ifTrue: [
-		zero _ (real + imaginary) class zero.
 		^real >= 0
-			ifTrue: [self class real: real sqrt imaginary: zero ]
-			ifFalse: [self class real: zero imaginary: real negated sqrt]].
+			ifTrue: [self class real: real sqrt imaginary: 0 ]
+			ifFalse: [self class real: 0 imaginary: real negated sqrt]].
 	v := (self abs - real / 2) sqrt.
 	u := imaginary / 2 / v.
 	^self class real: u imaginary: v! !
@@ -615,9 +614,11 @@ isComplex
 isComplexNaN
 	^real isNaN or: [ imaginary isNaN ]! !
 
-!Complex methodsFor: 'testing' stamp: 'jmv 7/2/2019 08:22:50'!
+!Complex methodsFor: 'testing' stamp: 'jmv 5/6/2020 16:44:07'!
 isFloatOrFloatComplex
-	^ real isFloatOrFloatComplex or: [ imaginary isFloatOrFloatComplex ]! !
+	"If imaginary part is Float, real will also be."
+
+	^ real isFloat! !
 
 !Complex methodsFor: 'testing' stamp: 'jmv 5/20/2018 21:10:51'!
 isInfinite
@@ -635,11 +636,18 @@ isNumber
 isZero
 	^ real isZero and: [imaginary isZero]! !
 
-!Complex methodsFor: 'private' stamp: 'jmv 5/20/2018 20:29:34'!
-setReal: aNumber1 imaginary: aNumber2
-	"Private - initialize the real and imaginary parts of a Complex"
-	real _ aNumber1.
-	imaginary _ aNumber2! !
+!Complex methodsFor: 'private' stamp: 'jmv 5/6/2020 16:25:56'!
+setReal: realPart imaginary: imaginaryPart
+	"Private - initialize the real and imaginary parts of a Complex.
+	If either the real part or the imaginary part is a Float, then both will be."
+
+	realPart isFloat | imaginaryPart isFloat
+		ifTrue: [
+			real _ realPart asFloat.
+			imaginary _ imaginaryPart asFloat ]
+		ifFalse: [
+			real _ realPart.
+			imaginary _ imaginaryPart ]! !
 
 !Complex class methodsFor: 'instance creation' stamp: 'jmv 5/20/2018 20:27:23'!
 abs: rho arg: theta
@@ -650,9 +658,10 @@ abs: rho arg: theta
 		real: rho * theta1 cos
 		imaginary: rho * theta1 sin! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'jmv 5/20/2018 20:32:34'!
+!Complex class methodsFor: 'instance creation' stamp: 'jmv 5/6/2020 16:51:21'!
 basicReal: realPart imaginary: imaginaryPart
-	"Answer a Complex even if imaginary part is zero. Usually you don't want this and just call #real:imaginary:"
+	"Answer a Complex even if imaginary part is zero.
+	Usually you might don't want to enforce this and just call #real:imaginary:"
 	^self basicNew setReal: realPart imaginary: imaginaryPart! !
 
 !Complex class methodsFor: 'instance creation' stamp: 'jmv 7/4/2018 17:03:13'!
@@ -667,11 +676,18 @@ new
 one
 	^ self real: 1 imaginary: 0! !
 
-!Complex class methodsFor: 'instance creation' stamp: 'jmv 5/20/2018 17:14:55'!
+!Complex class methodsFor: 'instance creation' stamp: 'jmv 5/6/2020 16:32:23'!
 real: realPart imaginary: imaginaryPart
-	^ imaginaryPart isZero
+
+	"This implementation allows reducing Complex to Integer or Fraction, avoiding instances of Complex where the imaginary part is zero. It is currently disabled."
+	"
+	^ (imaginaryPart isFloat not and: [ imaginaryPart isZero ])
 		ifTrue: [ realPart ]
-		ifFalse: [ self basicReal: realPart imaginary: imaginaryPart ]! !
+		ifFalse: [ self basicReal: realPart imaginary: imaginaryPart ]
+	"
+
+	"We allow for instances of Complex that actually just real numbers"
+	^ self basicReal: realPart imaginary: imaginaryPart! !
 
 !Complex class methodsFor: 'instance creation' stamp: 'nice 9/18/2008 22:50'!
 zero
