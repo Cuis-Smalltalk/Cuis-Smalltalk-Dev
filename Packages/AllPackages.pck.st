@@ -1,6 +1,6 @@
 'From Cuis 4.2 of 25 July 2013 [latest update: #2358] on 16 January 2017 at 12:09:03.493729 am'!
 'Description Load all packages included with Cuis and all packages in the Cuis GitGub organization'!
-!provides: 'AllPackages' 1 1!
+!provides: 'AllPackages' 1 2!
 !requires: 'CorePackages' 1 0 nil!
 !requires: 'OpenCL' 1 0 nil!
 !requires: 'Amqp' 1 0 nil!
@@ -32,7 +32,8 @@
 !requires: 'Dice' 1 0 nil!
 !requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !requires: 'Pen' 1 0 nil!
-!requires: 'Wheel' 1 0 nil!
+!requires: 'WheelMorph' 1 0 nil!
+!requires: 'WaitSpinner' 1 0 nil!
 !requires: 'Morphic-ColorEditor' 1 0 nil!
 !requires: 'Morph-MetaProperties' 1 0 nil!
 !requires: 'Morphic-Misc1' 1 0 nil!

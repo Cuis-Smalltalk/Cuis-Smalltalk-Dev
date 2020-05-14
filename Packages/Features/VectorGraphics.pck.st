@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4140] on 12 May 2020 at 11:00:31 pm'!
+'From Cuis 5.0 [latest update: #4140] on 14 May 2020 at 4:17:04 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 141!
+!provides: 'VectorGraphics' 1 142!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -80,7 +80,7 @@ VectorCanvas class
 
 !classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
 Object subclass: #VectorEngineAbstract
-	instanceVariableNames: 'targetForm targetWidth morphIdAtPixel alphaMask edgeCountPerPixel antiAliasingWidth subPixelDelta strokeWidth geometryTransformation currentMorphId clippingMorphId auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel auxBitBlt pathFirstX pathFirstY pathCurrentX pathCurrentY prevYTruncated previousCallX previousCallY previousCallControlX previousCallControlY'
+	instanceVariableNames: 'targetForm targetWidth antiAliasingWidth subPixelDelta strokeWidth geometryTransformation currentMorphId clippingMorphId auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel pathFirstX pathFirstY pathCurrentX pathCurrentY previousCallX previousCallY previousCallControlX previousCallControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -90,7 +90,7 @@ VectorEngineAbstract class
 
 !classDefinition: #VectorEngineSmalltalk category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineSmalltalk
-	instanceVariableNames: 'blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom'
+	instanceVariableNames: 'edgeCounts alphaMask morphIds auxBitBlt blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -2591,7 +2591,7 @@ initializeOnForm: aForm
 	currentMorphId _ 0.
 	self pvtSetForm: aForm! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/11/2020 22:48:11'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/14/2020 16:04:16'!
 initializePath
 
 	pathFirstX _ 0.
@@ -2602,37 +2602,21 @@ initializePath
 	previousCallY _ 0.0.
 	previousCallControlX _ previousCallX.
 	previousCallControlY _ previousCallY.
-	prevYTruncated _ nil.! !
+	self newTrajectoryFragment.! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/30/2020 09:42:12'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:34'!
+newTrajectoryFragment! !
+
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/14/2020 15:51:51'!
 pvtSetForm: aForm
 
-	| hack s |
+	
 	targetForm _ aForm.
 	targetWidth _ targetForm width.
 	self resetMorphBounds.
 	self clipRect: targetForm boundingBox.
 	self antiAliasingWidth: self class defaultAntiAliasingWidth.
-	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"
-	s _ targetForm bits size.
-	(alphaMask isNil or: [ alphaMask size ~= s ])
-		ifTrue: [
-			alphaMask _ WordArray new: s.
-			edgeCountPerPixel _ WordArray new: s.
-			morphIdAtPixel _ WordArray new: s.
-			hack _ Form extent: targetForm extent depth: 32 bits: alphaMask.
-			auxBitBlt _ BitBlt toForm: hack.
-			auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
-			auxBitBlt combinationRule: Form over.
-			auxBitBlt destRect: targetForm boundingBox. ]
-		ifFalse: [
-			auxBitBlt destRect: targetForm boundingBox.
-			auxBitBlt destForm bits: alphaMask.
-			auxBitBlt copyBits.
-			auxBitBlt destForm bits: edgeCountPerPixel.
-			auxBitBlt copyBits.
-			auxBitBlt destForm bits: morphIdAtPixel.
-			auxBitBlt copyBits ].! !
+	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 16:53:42'!
 pvtStrokeWidth: aNumber
@@ -2651,7 +2635,7 @@ resetMorphBounds
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:23:37'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/14/2020 16:03:57'!
 basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngineBasic onForm: Display)
@@ -2674,7 +2658,7 @@ Display forceToScreen.
 		ifFalse: [
 			"trajectory starts here. Eventually, #closePath should draw a line to here"
 			"Next point will be first in a new trajectory fragment"
-			prevYTruncated _ nil.
+			self newTrajectoryFragment.
 			pathFirstX _ x0.
 			pathFirstY _ y0 ].
 
@@ -2862,7 +2846,7 @@ Display forceToScreen
 	pathCurrentX _ xTo.
 	pathCurrentY _ yTo.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 4/16/2020 15:24:25'!
+!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/14/2020 16:04:07'!
 basicMoveToX: x y: y
 "
 (VectorEngineBasic onForm: Display)
@@ -2881,7 +2865,7 @@ Display forceToScreen
 	Eventually #closeTrajectory should draw a line to here"
 
 	"Next point will be first in a new trajectory fragment"
-	prevYTruncated _ nil.
+	self newTrajectoryFragment.
 	pathFirstX _ x.
 	pathFirstY _ y.
 	pathCurrentX _ x.
@@ -3641,15 +3625,45 @@ initializePath
 	blendRight _ 0.						"drawable left. Will later be refined."
 	blendBottom _ 0.						"drawable top. Will later be refined."! !
 
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:49'!
+newTrajectoryFragment
+
+	prevYTruncated _ nil.! !
+
 !VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 5/12/2020 21:03:40'!
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil! !
+
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 5/14/2020 16:10:51'!
+pvtSetForm: aForm
+
+	| hack s |
+	super pvtSetForm: aForm.
+	s _ targetForm bits size.
+	(alphaMask isNil or: [ alphaMask size ~= s ])
+		ifTrue: [
+			alphaMask _ WordArray new: s.
+			edgeCounts _ WordArray new: s.
+			morphIds _ WordArray new: s.
+			hack _ Form extent: targetForm extent depth: 32 bits: alphaMask.
+			auxBitBlt _ BitBlt toForm: hack.
+			auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
+			auxBitBlt combinationRule: Form over.
+			auxBitBlt destRect: targetForm boundingBox. ]
+		ifFalse: [
+			auxBitBlt destRect: targetForm boundingBox.
+			auxBitBlt destForm bits: alphaMask.
+			auxBitBlt copyBits.
+			auxBitBlt destForm bits: edgeCounts.
+			auxBitBlt copyBits.
+			auxBitBlt destForm bits: morphIds.
+			auxBitBlt copyBits ].! !
 
 !VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 5/12/2020 21:03:56'!
 pvtStrokeColor: aStrokeColorOrNil
 	strokeColor _ aStrokeColorOrNil! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/11/2020 23:25:22'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendFillOnly
 
 	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex morphAtThisPixelId |
@@ -3662,7 +3676,7 @@ blendFillOnly
 		blendLeft to: blendRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 
-			edgesThisPixel _ edgeCountPerPixel bytesAt: pixelIndex.
+			edgesThisPixel _ edgeCounts bytesAt: pixelIndex.
 			edgesThisPixelR _ edgesThisPixel at: 3.
 			edgesThisPixelG _ edgesThisPixel at: 2.
 			edgesThisPixelB _ edgesThisPixel at: 1.
@@ -3680,7 +3694,7 @@ blendFillOnly
 			isBlueInside _ edgesUpToThisPixelB ~= 0.
 
 			(clippingMorphId = 0 or: [
-			morphAtThisPixelId _ morphIdAtPixel at: pixelIndex.
+			morphAtThisPixelId _ morphIds at: pixelIndex.
 			morphAtThisPixelId = clippingMorphId or: [morphAtThisPixelId = currentMorphId]]) ifTrue: [
 				self
 					blendFillOnlyAtX: displayX y: displayY pixelIndex: pixelIndex 
@@ -3694,11 +3708,11 @@ blendFillOnly
 	auxBitBlt
 		destX: blendLeft destY: blendTop
 		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
-	auxBitBlt destForm bits: edgeCountPerPixel.
+	auxBitBlt destForm bits: edgeCounts.
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/12/2020 20:57:48'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3738,9 +3752,9 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	targetForm bits bytesAt: pixelIndex put: targetWord.
 
 	isGreenInside ifTrue: [
-		morphIdAtPixel at: pixelIndex put: currentMorphId ].! !
+		morphIds at: pixelIndex put: currentMorphId ].! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/11/2020 23:25:18'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendStrokeAndFill
 
 	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex morphAtThisPixelId |
@@ -3753,7 +3767,7 @@ blendStrokeAndFill
 		blendLeft to: blendRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 
-			edgesThisPixel _ edgeCountPerPixel bytesAt: pixelIndex.
+			edgesThisPixel _ edgeCounts bytesAt: pixelIndex.
 			edgesThisPixelR _ edgesThisPixel at: 3.
 			edgesThisPixelG _ edgesThisPixel at: 2.
 			edgesThisPixelB _ edgesThisPixel at: 1.
@@ -3771,7 +3785,7 @@ blendStrokeAndFill
 			isBlueInside _ edgesUpToThisPixelB ~= 0.
 
 			(clippingMorphId = 0 or: [
-			morphAtThisPixelId _ morphIdAtPixel at: pixelIndex.
+			morphAtThisPixelId _ morphIds at: pixelIndex.
 			morphAtThisPixelId = clippingMorphId or: [morphAtThisPixelId = currentMorphId]]) ifTrue: [
 				self
 					blendStrokeAndFillAtX: displayX y: displayY pixelIndex: pixelIndex 
@@ -3785,11 +3799,11 @@ blendStrokeAndFill
 	auxBitBlt
 		destX: blendLeft destY: blendTop
 		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
-	auxBitBlt destForm bits: edgeCountPerPixel.
+	auxBitBlt destForm bits: edgeCounts.
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/12/2020 20:58:18'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3823,12 +3837,12 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
 			alpha _ antiAliasGreenAlpha * strokeColor alpha + ((1-antiAliasGreenAlpha) * fillColor alpha).
 			foreComponent _ antiAliasGreenAlpha * strokeColor green * 255 + ((1-antiAliasGreenAlpha) * fillColor green * 255).
-			morphIdAtPixel at: pixelIndex put: currentMorphId ]
+			morphIds at: pixelIndex put: currentMorphId ]
 		ifFalse: [							"Blend stroke over background"
 			alpha _ antiAliasGreenAlpha * strokeColor alpha.
 			foreComponent _ strokeColor green * 255.
 			antiAliasGreenAlpha > 0.5 ifTrue: [
-				morphIdAtPixel at: pixelIndex put: currentMorphId ]. ].
+				morphIds at: pixelIndex put: currentMorphId ]. ].
 	resultG _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 2)).
 	targetWord at: 2 put: resultG rounded.
 
@@ -3844,7 +3858,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/11/2020 23:24:45'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendStrokeOnly
 
 	| pixelIndex morphAtThisPixelId |
@@ -3853,7 +3867,7 @@ blendStrokeOnly
 		blendLeft to: blendRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 				(clippingMorphId = 0 or: [
-				morphAtThisPixelId _ morphIdAtPixel at: pixelIndex.
+				morphAtThisPixelId _ morphIds at: pixelIndex.
 				morphAtThisPixelId = clippingMorphId or: [morphAtThisPixelId = currentMorphId]]) ifTrue: [
 					self blendStrokeOnlyAtX: displayX y: displayY pixelIndex: pixelIndex ]]].
 
@@ -3864,7 +3878,7 @@ blendStrokeOnly
 	auxBitBlt copyBits.
 	Display forceToScreen! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/12/2020 20:58:31'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -3898,7 +3912,7 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 	targetForm bits bytesAt: pixelIndex put: targetWord.
 
 	antiAliasGreenAlpha > 0.5 ifTrue: [
-		morphIdAtPixel at: pixelIndex put: currentMorphId ].! !
+		morphIds at: pixelIndex put: currentMorphId ].! !
 
 !VectorEngineBasic methodsFor: 'private' stamp: 'jmv 4/29/2020 10:57:04'!
 updateAlphasForX: x y: y
@@ -3969,7 +3983,7 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 5/1/2020 19:44:52'!
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 5/14/2020 16:10:12'!
 updateEdgeCountAtX: x y: y
 	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffset blueOffset |
 
@@ -4002,46 +4016,46 @@ updateEdgeCountAtX: x y: y
 	redPixelIndex = bluePixelIndex
 		ifTrue: [						"First case: RGB in the same word"
 			redOffset <= clipRight ifTrue: [
-				countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+				countWord _ edgeCounts bytesAt: redPixelIndex.
 				redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
 				countWord at: 3 put: redCount.
 				greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
 				countWord at: 2 put: greenCount.
 				blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
 				countWord at: 1 put: blueCount.
-				edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+				edgeCounts bytesAt: redPixelIndex put: countWord ].
 		]
 		ifFalse: [
 			redPixelIndex = greenPixelIndex
 				ifTrue: [				"Second case: RG in one word, B in previous"
 					redOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						countWord _ edgeCounts bytesAt: redPixelIndex.
 						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
 						countWord at: 3 put: redCount.
 						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
 						countWord at: 2 put: greenCount.
-						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+						edgeCounts bytesAt: redPixelIndex put: countWord ].
 
 					blueOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						countWord _ edgeCounts bytesAt: bluePixelIndex.
 						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
 						countWord at: 1 put: blueCount.
-						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+						edgeCounts bytesAt: bluePixelIndex put: countWord ].
 				]
 				ifFalse: [			"Third case: R in one word, GB in the previous"
 					redOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						countWord _ edgeCounts bytesAt: redPixelIndex.
 						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
 						countWord at: 3 put: redCount.
-						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+						edgeCounts bytesAt: redPixelIndex put: countWord ].
 
 					blueOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						countWord _ edgeCounts bytesAt: bluePixelIndex.
 						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
 						countWord at: 2 put: greenCount.
 						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
 						countWord at: 1 put: blueCount.
-						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+						edgeCounts bytesAt: bluePixelIndex put: countWord ].
 				]
 		].
 	prevYTruncated _ thisYTruncated! !
@@ -4222,7 +4236,7 @@ updateAlphaWordForX: x y: y
 			alpha > pkBlueAlpha ifTrue: [
 				pkBlueAlpha _ alpha ]].! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 5/1/2020 19:45:00'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 5/14/2020 16:10:12'!
 updateEdgeCountAtX: x y: y
 	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffset blueOffset |
 
@@ -4255,46 +4269,46 @@ updateEdgeCountAtX: x y: y
 	redPixelIndex = bluePixelIndex
 		ifTrue: [						"First case: RGB in the same word"
 			redOffset <= clipRight ifTrue: [
-				countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+				countWord _ edgeCounts bytesAt: redPixelIndex.
 				redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
 				countWord at: 3 put: redCount.
 				greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
 				countWord at: 2 put: greenCount.
 				blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
 				countWord at: 1 put: blueCount.
-				edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+				edgeCounts bytesAt: redPixelIndex put: countWord ].
 		]
 		ifFalse: [
 			redPixelIndex = greenPixelIndex
 				ifTrue: [				"Second case: RG in one word, B in previous"
 					redOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						countWord _ edgeCounts bytesAt: redPixelIndex.
 						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
 						countWord at: 3 put: redCount.
 						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
 						countWord at: 2 put: greenCount.
-						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+						edgeCounts bytesAt: redPixelIndex put: countWord ].
 
 					blueOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						countWord _ edgeCounts bytesAt: bluePixelIndex.
 						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
 						countWord at: 1 put: blueCount.
-						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+						edgeCounts bytesAt: bluePixelIndex put: countWord ].
 				]
 				ifFalse: [			"Third case: R in one word, GB in the previous"
 					redOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: redPixelIndex.
+						countWord _ edgeCounts bytesAt: redPixelIndex.
 						redCount _ (countWord at: 3) + increment bitAnd: 16rFF.
 						countWord at: 3 put: redCount.
-						edgeCountPerPixel bytesAt: redPixelIndex put: countWord ].
+						edgeCounts bytesAt: redPixelIndex put: countWord ].
 
 					blueOffset <= clipRight ifTrue: [
-						countWord _ edgeCountPerPixel bytesAt: bluePixelIndex.
+						countWord _ edgeCounts bytesAt: bluePixelIndex.
 						greenCount _ (countWord at: 2) + increment bitAnd: 16rFF.
 						countWord at: 2 put: greenCount.
 						blueCount _ (countWord at: 1) + increment bitAnd: 16rFF.
 						countWord at: 1 put: blueCount.
-						edgeCountPerPixel bytesAt: bluePixelIndex put: countWord ].
+						edgeCounts bytesAt: bluePixelIndex put: countWord ].
 				]
 		].
 	prevYTruncated _ thisYTruncated! !
