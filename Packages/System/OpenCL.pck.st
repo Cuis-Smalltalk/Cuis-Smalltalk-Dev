@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4140] on 9 May 2020 at 10:08:50 pm'!
+'From Cuis 5.0 [latest update: #4145] on 15 May 2020 at 3:07:44 pm'!
 'Description '!
-!provides: 'OpenCL' 1 48!
+!provides: 'OpenCL' 1 49!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
@@ -4095,6 +4095,11 @@ mapBuffer: buf block: shouldBlock flags: flags offset: offset size: sz waitOn: e
 		pointer: ptr.
 	^evt
 	! !
+
+!OpenCLCommandQueue methodsFor: 'mem mapping' stamp: 'jmv 5/15/2020 15:06:42'!
+mapBuffer: buf waitOn: events
+
+	^self mapBuffer: buf block: true flags: CL_MAP_WRITE + CL_MAP_READ offset: 0 size: buf byteSize waitOn: events! !
 
 !OpenCLCommandQueue methodsFor: 'mem mapping' stamp: 'jmv 12/26/2016 09:32:10'!
 mapImage: image block: shouldBlock flags: flags origin: origin region: region waitOn: events

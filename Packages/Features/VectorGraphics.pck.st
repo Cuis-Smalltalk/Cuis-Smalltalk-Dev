@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4140] on 14 May 2020 at 4:17:04 pm'!
+'From Cuis 5.0 [latest update: #4112] on 18 May 2020 at 2:26:39 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 142!
+!provides: 'VectorGraphics' 1 145!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -80,7 +80,7 @@ VectorCanvas class
 
 !classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
 Object subclass: #VectorEngineAbstract
-	instanceVariableNames: 'targetForm targetWidth antiAliasingWidth subPixelDelta strokeWidth geometryTransformation currentMorphId clippingMorphId auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel pathFirstX pathFirstY pathCurrentX pathCurrentY previousCallX previousCallY previousCallControlX previousCallControlY'
+	instanceVariableNames: 'targetForm targetWidth antiAliasingWidth subPixelDelta strokeWidth geometryTransformation currentMorphId clippingMorphId morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel pathFirstX pathFirstY pathCurrentX pathCurrentY previousCallX previousCallY previousCallControlX previousCallControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -90,7 +90,7 @@ VectorEngineAbstract class
 
 !classDefinition: #VectorEngineSmalltalk category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineSmalltalk
-	instanceVariableNames: 'edgeCounts alphaMask morphIds auxBitBlt blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated'
+	instanceVariableNames: 'edgeCounts alphaMask morphIds auxBitBlt blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -1791,11 +1791,10 @@ self textex3
 		selectionColor: Color orange.
 	Display forceToScreen! !
 
-!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 4/15/2020 16:54:19'!
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 5/15/2020 09:27:38'!
 antiAliasingWidth: aNumber
 
-	antiAliasingWidth _ aNumber.
-	auxAntiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth! !
+	antiAliasingWidth _ aNumber.! !
 
 !VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 4/4/2020 19:37:02'!
 clippingMorph: aMorph
@@ -2618,14 +2617,10 @@ pvtSetForm: aForm
 	self antiAliasingWidth: self class defaultAntiAliasingWidth.
 	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/15/2020 16:53:42'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/15/2020 09:27:20'!
 pvtStrokeWidth: aNumber
-	| swErodedHalf |
-	strokeWidth _ aNumber.
-	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
-	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
-	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
+
+	strokeWidth _ aNumber.! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/11/2020 19:07:10'!
 resetMorphBounds
@@ -3563,6 +3558,12 @@ antiAliasingWidthForStrokeFonts
 defaultAntiAliasingWidth
 	^1.3. "default for graphics"! !
 
+!VectorEngineSmalltalk methodsFor: 'accessing' stamp: 'jmv 5/15/2020 09:27:46'!
+antiAliasingWidth: aNumber
+
+	super antiAliasingWidth: aNumber.
+	auxAntiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth.! !
+
 !VectorEngineSmalltalk methodsFor: 'accessing' stamp: 'jmv 5/12/2020 21:19:38'!
 clipRect: aRectangle 
 	"by convention, aRectangle includes left and top but does not include right and bottom.
@@ -3663,7 +3664,17 @@ pvtSetForm: aForm
 pvtStrokeColor: aStrokeColorOrNil
 	strokeColor _ aStrokeColorOrNil! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 5/15/2020 09:26:59'!
+pvtStrokeWidth: aNumber
+
+	| swErodedHalf |
+	super pvtStrokeWidth: aNumber.
+	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
+	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
+	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
+	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
+
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/16/2020 20:38:03'!
 blendFillOnly
 
 	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex morphAtThisPixelId |
@@ -3709,8 +3720,7 @@ blendFillOnly
 		destX: blendLeft destY: blendTop
 		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
 	auxBitBlt destForm bits: edgeCounts.
-	auxBitBlt copyBits.
-	Display forceToScreen! !
+	auxBitBlt copyBits.! !
 
 !VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
@@ -3754,7 +3764,7 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	isGreenInside ifTrue: [
 		morphIds at: pixelIndex put: currentMorphId ].! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/16/2020 20:38:14'!
 blendStrokeAndFill
 
 	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex morphAtThisPixelId |
@@ -3800,8 +3810,7 @@ blendStrokeAndFill
 		destX: blendLeft destY: blendTop
 		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
 	auxBitBlt destForm bits: edgeCounts.
-	auxBitBlt copyBits.
-	Display forceToScreen! !
+	auxBitBlt copyBits.! !
 
 !VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
@@ -3858,7 +3867,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/16/2020 20:38:22'!
 blendStrokeOnly
 
 	| pixelIndex morphAtThisPixelId |
@@ -3875,8 +3884,7 @@ blendStrokeOnly
 		destX: blendLeft destY: blendTop
 		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
 	auxBitBlt destForm bits: alphaMask.
-	auxBitBlt copyBits.
-	Display forceToScreen! !
+	auxBitBlt copyBits.! !
 
 !VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
@@ -3983,7 +3991,7 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 5/14/2020 16:10:12'!
+!VectorEngineBasic methodsFor: 'private' stamp: 'jmv 5/16/2020 19:34:37'!
 updateEdgeCountAtX: x y: y
 	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffset blueOffset |
 
@@ -3991,7 +3999,7 @@ updateEdgeCountAtX: x y: y
 	prevYTruncated ifNil: [ 
 		^ prevYTruncated _ thisYTruncated ].
 	thisYTruncated = prevYTruncated ifTrue: [
-		^ prevYTruncated _ thisYTruncated ].
+		^ self].
 
 	thisYTruncated > prevYTruncated
 		ifTrue: [
@@ -4000,6 +4008,7 @@ updateEdgeCountAtX: x y: y
 		ifFalse: [
 			pixelY _ prevYTruncated.
 			increment _ -1 ].
+	prevYTruncated _ thisYTruncated.
 
 	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
 	The effect is the same, and we need to clean up less stuff afterwards.
@@ -4057,8 +4066,7 @@ updateEdgeCountAtX: x y: y
 						countWord at: 1 put: blueCount.
 						edgeCounts bytesAt: bluePixelIndex put: countWord ].
 				]
-		].
-	prevYTruncated _ thisYTruncated! !
+		].! !
 
 !VectorEngineBasic methodsFor: 'private' stamp: 'jmv 5/11/2020 22:52:50'!
 updateEdgesAndBoundsForX: x y: y
@@ -4192,7 +4200,7 @@ readAlphaWord
 	pkPrevGreenAlpha _ pkGreenAlpha.
 	pkPrevBlueAlpha _ pkBlueAlpha! !
 
-!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 5/9/2020 21:28:40'!
+!VectorEngineParallelizable methodsFor: 'private' stamp: 'jmv 5/15/2020 17:47:21'!
 updateAlphaWordForX: x y: y
 	"Apdate alpha (transparency) mask using trajectoryPoints."
 	| distanceToAxisSquared alpha dySquared dx dxSquared dy dxp |
