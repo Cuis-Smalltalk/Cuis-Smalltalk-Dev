@@ -10,9 +10,9 @@ Package files need to be simple text files. Cuis encoding for latin alphabet (IS
 
 Each GitHub repository has one set of users and permissions. Each GitHub repository has one state (Git commits repositories, not individual files). Branch and merges are done on the whole repository and not on individual files. Therefore, we need a separate GitHub repository for each project, i.e., for each package or set of closely related packages that are always loaded and maintained together as a whole.
 
-## Development process for External Packages
+## Using Git/GitHub to host External Packages
 
-This is the suggested procedure for developing external packages. Usually do this every day.
+There is a additional information on External Packages and how to use them at [Managing your code in Cuis](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/blob/master/Documentation/CodeManagementInCuis.md). Please take a look. What follows is the suggested procedure for using Git/GitHub to host external packages, and store their version history. Usually do this every day.
 
 * Start with a standard (i.e. fresh) Cuis image. Never save the image.
 
