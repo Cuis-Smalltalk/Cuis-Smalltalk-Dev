@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4156] on 21 May 2020 at 5:05:18 pm'!
+'From Cuis 5.0 [latest update: #4161] on 21 May 2020 at 7:54:56 pm'!
 'Description firstAvailable: and lastAvailable: tests'!
-!provides: 'BaseImageTests' 1 229!
+!provides: 'BaseImageTests' 1 230!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -15041,7 +15041,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 3/9/2020 13:56:55'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/21/2020 19:52:21'!
 testLayout1
 	"
 	self new testLayout1
@@ -15098,9 +15098,9 @@ testLayout1
 	self assert: r1c5 morphHeight = 20.
 
 	self assert: row2 morphWidth = (pane morphWidth - 10).
-	self assert: r2c1 morphWidth = 215.
+	self assert: r2c1 morphWidth = 216.
 	self assert: r2c2 morphWidth = 108.
-	self assert: r2c3 morphWidth = 55.
+	self assert: r2c3 morphWidth = 54.
 	self assert: r2c1 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c2 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c3 morphHeight = (row2 morphHeight - 10).
@@ -15116,7 +15116,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 3/9/2020 13:57:47'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/21/2020 19:53:37'!
 testLayout2
 	"
 	self new testLayout2
@@ -15138,20 +15138,20 @@ testLayout2
 	UISupervisor ui doOneCycleNow.
 
 	self assert: row morphWidth = (pane morphWidth - 10).
-	self assert: row morphHeight = 266.
+	self assert: row morphHeight = 261.
 	self assert: c1 morphBoundsInWorld bottom = (row morphBoundsInWorld bottom - 5) description: 'Should be at bottom'.
 	self assert: c1 morphWidth = 20.
-	self assert: c1 morphHeight = 206.
+	self assert: c1 morphHeight = 202.
 	self assert: c2 morphBoundsInWorld top = (row morphBoundsInWorld top + 5) description: 'Should be at top'.
 	self assert: c2 morphWidth = 256.
 	self assert: c2 morphHeight = 40.
 	self assert: ((c3 morphBoundsInWorld top - row morphBoundsInWorld top) - (row morphBoundsInWorld bottom - c3 morphBoundsInWorld bottom)) abs < 2 description: 'Should be centered'.
 	self assert: c3 morphWidth = 30.
-	self assert: c3 morphHeight = 181.
+	self assert: c3 morphHeight = 177.
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 3/9/2020 13:58:53'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/21/2020 19:54:26'!
 testLayout3
 	"
 	self new testLayout3
@@ -15185,7 +15185,7 @@ testLayout3
 	self assert: row morphHeight = 200.
 	self assert: innerRow morphBoundsInWorld left = (row morphBoundsInWorld left + 5).
 	self assert: (innerRow morphBoundsInWorld top - row morphBoundsInWorld top) = (row morphBoundsInWorld bottom - innerRow morphBoundsInWorld bottom) description: 'Should be centered'.
-	self assert: innerRow morphWidth = 190.
+	self assert: innerRow morphWidth = 170.
 	self assert: innerRow morphHeight = 30.
 
 	self assert: i1 morphBoundsInWorld left = (innerRow morphBoundsInWorld left + 5).
@@ -15202,7 +15202,7 @@ testLayout3
 	self assert: i3 morphHeight = 10.
 
 	self assert: c2 morphBoundsInWorld top = (row morphBoundsInWorld top + 5) description: 'Should be at top'.
-	self assert: c2 morphWidth = 150.
+	self assert: c2 morphWidth = 170.
 	self assert: c2 morphHeight = 40.
 	self assert: (c3 morphBoundsInWorld top - row morphBoundsInWorld top) = (row morphBoundsInWorld bottom - c3 morphBoundsInWorld bottom) description: 'Should be centered'.
 	self assert: c3 morphWidth = 30.
@@ -16801,7 +16801,7 @@ test2ReadWithOutBinary
 	content := self class fileName asFileEntry textContents.
 	self deny: content = bytesOfExample1! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:04'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/21/2020 19:50:04'!
 test3ReadUtf8
 	
 	"see UnicodeNotes.md"
@@ -16811,7 +16811,7 @@ test3ReadUtf8
      | content byteArray |
 	byteArray _ self class fileName asFileEntry binaryContents.
 	content := String fromUtf8: byteArray.
-	self assert: content = 'abc àè¤ &#945;&#946;&#947;'! !
+	self assert: content = 'abc àè¤ ˆ‰Š'! !
 
 !UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:06'!
 test4BackConversion
