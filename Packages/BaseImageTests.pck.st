@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4132] on 6 May 2020 at 11:45:47 pm'!
-'Description Autocomplete tests changed to support LiveTyping'!
-!provides: 'BaseImageTests' 1 227!
+'From Cuis 5.0 [latest update: #4155] on 21 May 2020 at 4:08:53 pm'!
+'Description SourceCodeRange changes'!
+!provides: 'BaseImageTests' 1 228!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -724,6 +724,16 @@ TestCase subclass: #ScannerTest
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'ScannerTest class' category: #'BaseImageTests-Compiler'!
 ScannerTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SourceCodeIntervalTest category: #'BaseImageTests-Compiler'!
+TestCase subclass: #SourceCodeIntervalTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'SourceCodeIntervalTest class' category: #'BaseImageTests-Compiler'!
+SourceCodeIntervalTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #FileIOAccessorTest category: #'BaseImageTests-System-FileMan'!
@@ -13100,6 +13110,107 @@ testLiteralSymbols
 			self assert: (Compiler evaluate: str asSymbol printString) = str asSymbol
 				description: 'in all case, a Symbol must be printed in an interpretable fashion']! !
 
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:02:35'!
+test01TryingToTrimAnAlreadyTrimmedIntervalThatRepresentsASmalltalkExpressionDoesNotChangeTheOriginalInterval
+	
+	| originalInterval trimmedInterval sourceCode |
+	sourceCode := '3+4'.
+	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
+	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
+
+	self assert: originalInterval equals: trimmedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:02:27'!
+test02StartingAndEndingSeparatorsAreTrimmed
+	
+	| originalInterval trimmedInterval sourceCode |
+	sourceCode := '	3+4 '.
+	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
+	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
+
+	self assert: (2 to: 4) asSourceCodeInterval equals: trimmedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:02:09'!
+test03StartingAndEndingDotsAreTrimmed
+	
+	| originalInterval trimmedInterval sourceCode |
+	sourceCode := '...3+4..'.
+	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
+	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
+
+	self assert: (4 to: 6) asSourceCodeInterval equals: trimmedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:01:42'!
+test04GroupsOfParenthesesAreTrimmed
+	
+	| originalInterval trimmedInterval sourceCode |
+	sourceCode := '((3+4))'.
+	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
+	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
+
+	self assert: (3 to: 5) asSourceCodeInterval equals: trimmedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - trimming' stamp: 'RNG 5/8/2020 21:01:13'!
+test05GroupsOfParenthesesIncludingSeparatorsAreTrimmed
+	
+	| originalInterval trimmedInterval sourceCode |
+	sourceCode := ' (	(3+4)
+	)'.
+	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
+	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
+
+	self assert: (5 to: 7) asSourceCodeInterval equals: trimmedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+test06AnIntervalThatDoesNotHaveCharactersToExpandRemainsTheSame
+
+	| sourceCode expandedInterval originalInterval |
+	sourceCode := '3+4 factorial'.
+	originalInterval := (1 to: sourceCode size) asSourceCodeInterval.
+	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
+
+	self assert: originalInterval equals: expandedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+test07AnIntervalEnclosedByParenthesesCanBeExpanded
+
+	| sourceCode expandedInterval originalInterval |
+	sourceCode := '(3+4 factorial)'.
+	originalInterval := (2 to: sourceCode size - 1) asSourceCodeInterval.
+	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
+
+	self assert: (1 to: sourceCode size) equals: expandedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+test08AnIntervalWithParenthesesOnJustOneSideCannotBeExpanded
+
+	| sourceCode expandedInterval originalInterval |
+	sourceCode := '3 + 4 factorial)'.
+	originalInterval := (1 to: sourceCode size - 1) asSourceCodeInterval.
+	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
+
+	self assert: originalInterval equals: expandedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+test09AnIntervalEnclosedByBackticksCanBeExpanded
+
+	| sourceCode expandedInterval originalInterval |
+	sourceCode := '`3 + 4 factorial`'.
+	originalInterval := (2 to: sourceCode size - 1) asSourceCodeInterval.
+	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
+
+	self assert: (1 to: sourceCode size) equals: expandedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
+test10AnIntervalEnclosedMultipleBackticksAndParenthesesCanBeExpanded
+
+	| sourceCode expandedInterval originalInterval |
+	sourceCode := '`((3 + 4 factorial))`'.
+	originalInterval := (4 to: sourceCode size - 3) asSourceCodeInterval.
+	expandedInterval := originalInterval expandToMatchExpressionOn: sourceCode.
+
+	self assert: (1 to: sourceCode size) equals: expandedInterval! !
+
 !FileIOAccessorTest methodsFor: 'private' stamp: 'jmv 5/31/2016 10:30'!
 defaultDirectoryPath
 	^DirectoryEntry currentDirectory pathName! !
@@ -18543,18 +18654,18 @@ test05NewUnarySelectorShouldNotStartWithASymbol
 		tryingToExtractWithSelectorNamed: #-
 		failsWith: ExtractMethodNewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 9/22/2019 22:30:00'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/8/2020 21:06:50'!
 test06IntervalToExtractIsNotBeforeMethodSourceCodeBoundaries
 
 	self
-		tryingToExtractOnInterval: (-1 to: 2)
+		tryingToExtractOnInterval: (-1 to: 2) asSourceCodeInterval
 		failsWith: ExtractMethod outOfBoundsSelectionErrorMessage! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 9/22/2019 22:30:00'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/8/2020 21:06:54'!
 test07IntervalToExtractIsNotAfterMethodSourceCodeBoundaries
 
 	self
-		tryingToExtractOnInterval: (1 to: self sourceCodeOfMethodToExtractCodeFrom size + 2)
+		tryingToExtractOnInterval: (1 to: self sourceCodeOfMethodToExtractCodeFrom size + 2) asSourceCodeInterval
 		failsWith: ExtractMethod outOfBoundsSelectionErrorMessage! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 9/28/2019 01:10:40'!
@@ -18597,7 +18708,7 @@ test13IntervalToExtractShouldBeAValidSmalltalkExpression
 		from: 'm1 ^ 3 + ((4))'
 		failsWith: ExtractMethod selectedCodeInvalidForExtractErrorMessage! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 9/28/2019 01:13:00'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/8/2020 21:14:01'!
 test14ItIsNotPossibleToExtractTheLeftSideOfAnAssignment
 
 	| firstOccurrence secondOccurrence intervalToExtract |
@@ -18607,7 +18718,7 @@ test14ItIsNotPossibleToExtractTheLeftSideOfAnAssignment
 		indexOfSubCollection: 'localVar' startingAt: firstOccurrence + 1.
 	intervalToExtract _ secondOccurrence toSelfPlus: 'localVar' size.
 	self
-		tryingToExtractOnInterval: intervalToExtract
+		tryingToExtractOnInterval: intervalToExtract asSourceCodeInterval
 		failsWith: ExtractMethod selectedCodeInvalidForExtractErrorMessage! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 9/28/2019 01:13:13'!
@@ -18618,11 +18729,11 @@ test16CanNotExtractPartOfALiteral
 		from: 'm1 ^ ''hey true'''
 		failsWith: ExtractMethod selectedCodeInvalidForExtractErrorMessage! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 9/22/2019 22:30:00'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/8/2020 21:14:52'!
 test23CanNotExtractWithAnInvalidInterval
 
 	self
-		tryingToExtractOnInterval: (10 to: 9)
+		tryingToExtractOnInterval: (10 to: 9) asSourceCodeInterval
 		failsWith: ExtractMethod noSelectionErrorMessage! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 9/28/2019 01:13:36'!
@@ -18929,6 +19040,21 @@ test37ItIsPossibleATempDeclarationAlongWithABlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 5/4/2020 20:08:01'!
+test38ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenThem
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	codeToExtract _ '(  (3 + 4))'.
+	originalCode _ 'm1 ^ ' , codeToExtract.
+	newMethodCode _ 'm2
+
+	^ 3 + 4'.
+	updatedCode _ 'm1 ^ (  (self m2))'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
 !ExtractMethodTest methodsFor: 'method and source code helpers' stamp: 'RNG 5/12/2019 23:21:30'!
 compileMethodToExtractCodeFrom
 
@@ -18959,12 +19085,12 @@ sourceCodeOfMethodToExtractCodeFrom
 	localVar := #($x $y $z) size and: [ (9) * 3 ].
 	^ localVar + ((4))'! !
 
-!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'RNG 9/27/2019 23:24:08'!
+!ExtractMethodTest methodsFor: 'refactoring helpers' stamp: 'RNG 5/8/2020 21:06:17'!
 intervalOf: aPieceOfSourceCode locatedIn: sourceCode
 
 	| interval |
 	interval _ sourceCode intervalOfSubCollection: aPieceOfSourceCode.
-	^ interval first to: interval last - 1! !
+	^ (interval first to: interval last - 1) asSourceCodeInterval! !
 
 !ExtractMethodTest methodsFor: 'set up' stamp: 'RNG 9/28/2019 01:16:48'!
 setUp
@@ -18988,27 +19114,29 @@ assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNam
 		updatesTo: sourceCodeAfterRefactoring
 		usingLeftArrowAssignment: true! !
 
-!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 3/24/2020 22:41:37'!
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 5/9/2020 15:10:44'!
 assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNamed: newVariable updatesTo: sourceCodeAfterRefactoring usingLeftArrowAssignment: leftArrowAssignmentPreference
 
-	| intervalToExtract methodToRefactor |
+	| intervalToExtract methodToRefactor actualSourceCodeAfterRefactoring applyRefactoring |
 	classToRefactor compile: sourceCodeOfMethodToRefactor.
 	intervalToExtract _ self intervalOf: codeToExtract locatedIn: sourceCodeOfMethodToRefactor.
 	methodToRefactor _ classToRefactor >> #m1.
 
+	applyRefactoring := [ actualSourceCodeAfterRefactoring := (ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor) apply ].
+	
 	Preferences
 		withTemporaryValue: leftArrowAssignmentPreference
 		of: #leftArrowAssignmentsInGeneratedCode
-		do: [ (ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor) apply ].
+		do: applyRefactoring.
 
-	self assert: sourceCodeAfterRefactoring equals: (classToRefactor >> #m1) sourceCode! !
+	self assert: sourceCodeAfterRefactoring equals: actualSourceCodeAfterRefactoring! !
 
-!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 2/24/2020 16:28:11'!
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 5/8/2020 21:06:24'!
 intervalOf: aPieceOfSourceCode locatedIn: sourceCode
 
 	| interval |
 	interval _ sourceCode intervalOfSubCollection: aPieceOfSourceCode.
-	^ interval first to: interval last - 1! !
+	^ (interval first to: interval last - 1) asSourceCodeInterval! !
 
 !ExtractToTemporaryTest methodsFor: 'set up' stamp: 'RNG 3/24/2020 22:30:57'!
 setUp
@@ -19085,7 +19213,7 @@ test15ItIsPossibleToExtractCodeAndGenerateAssignmentUsingAnsiAssignmentStyle
 
 	self assertExtracting: '42' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring usingLeftArrowAssignment: false! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 3/24/2020 23:30:01'!
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 5/4/2020 19:30:06'!
 test16ItIsPossibleToExtractASingleLiteralFromABlockWithoutAnyTempsOrArguments
 
 	| sourceCode sourceCodeAfterRefactoring |
@@ -19095,8 +19223,7 @@ test16ItIsPossibleToExtractASingleLiteralFromABlockWithoutAnyTempsOrArguments
 	sourceCodeAfterRefactoring _ 'm1
 
 	^ [ | new |
-	new _ self m2.
-	new ]'.
+	new _ self m2 ]'.
 
 	self assertExtracting: 'self m2' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
 
@@ -19144,6 +19271,20 @@ test22ItIsPossibleToExtractACascadeExpression
 	^ new'.
 
 	self assertExtracting: '3 factorial; yourself' from: sourceCode toVariableNamed: 'new' updatesTo: sourceCodeAfterRefactoring! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - successful' stamp: 'RNG 5/4/2020 19:11:34'!
+test24WhenExtractingAnEntireStatementItOnlyGeneratesTheVariableAssignment
+
+	| sourceCode sourceCodeAfterRefactoring |
+	sourceCode _ 'm1
+
+	self run'.
+	sourceCodeAfterRefactoring _ 'm1
+
+	| action |
+	action _ self run'.
+
+	self assertExtracting: 'self run' from: sourceCode toVariableNamed: 'action' updatesTo: sourceCodeAfterRefactoring! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:05'!
 test01NewVariableCanNotBeEmpty
@@ -19343,14 +19484,14 @@ test18CannotExtractPartOfMessageSend
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ ExtractToTemporary errorMessageForSourceCodeIncludingAnInvalidExpression ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/25/2020 13:24:21'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 5/8/2020 21:20:29'!
 test21CannotExtractLeftSideOfAssignment
 
 	| newVariable sourceCode methodToRefactor intervalToExtract |
 	newVariable _ 'new'.
 	sourceCode _ 'm1 | existing | existing := 2'.
 	classToRefactor compile: sourceCode.
-	intervalToExtract _ 17 to: 24. "second occurrence of 'existing' variable "
+	intervalToExtract _ (17 to: 24) asSourceCodeInterval. "second occurrence of 'existing' variable "
 	methodToRefactor _ classToRefactor >> #m1.
 
 	self 
