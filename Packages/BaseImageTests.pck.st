@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4155] on 21 May 2020 at 4:08:53 pm'!
-'Description SourceCodeRange changes'!
-!provides: 'BaseImageTests' 1 228!
+'From Cuis 5.0 [latest update: #4156] on 21 May 2020 at 5:05:18 pm'!
+'Description firstAvailable: and lastAvailable: tests'!
+!provides: 'BaseImageTests' 1 229!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -2196,6 +2196,36 @@ testDoSeparatedByDoesNotValueSeparatedBlockOnLastElement
 testDoSeparatedByDoesNothingForEmptyCollection
 
 	self shouldntFail: [ #() do: [ :anElement | self fail ] separatedBy: [ self fail ] ]! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:00:14'!
+testFirstAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
+
+	self assert: #(10 20 30) equals: (#(10 20 30) firstAvailable: 4)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:00:43'!
+testFirstAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
+
+	self assert: #(10 20 30) equals: (#(10 20 30) firstAvailable: 3)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 16:58:40'!
+testFirstAvailableReturnsTheFirstRequestedObjectsWhenTheyAreAvailable
+
+	self assert: #(10 20) equals: (#(10 20 30) firstAvailable: 2)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:03:20'!
+testLastAvailableReturnsAllObjectsWhenRequestedMoreThanTheSize
+
+	self assert: #(10 20 30) equals: (#(10 20 30) lastAvailable: 4)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:02:57'!
+testLastAvailableReturnsAllObjectsWhenRequestedTheReceiversSize
+
+	self assert: #(10 20 30) equals: (#(10 20 30) lastAvailable: 3)! !
+
+!SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 5/21/2020 17:02:27'!
+testLastAvailableReturnsTheLastRequestedObjectsWhenTheyAreAvailable
+
+	self assert: #(20 30) equals: (#(10 20 30) lastAvailable: 2)! !
 
 !SequenceableCollectionTest methodsFor: 'tests' stamp: 'HAW 3/17/2019 06:36:00'!
 testWithIndexDoSeparatedByDoesNotValueSeparatedBlockForCollectionsOfOneElement
