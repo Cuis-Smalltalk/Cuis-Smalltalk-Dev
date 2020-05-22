@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4161] on 21 May 2020 at 7:54:56 pm'!
+'From Cuis 5.0 [latest update: #4163] on 21 May 2020 at 11:14:34 pm'!
 'Description firstAvailable: and lastAvailable: tests'!
-!provides: 'BaseImageTests' 1 230!
+!provides: 'BaseImageTests' 1 231!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -4178,6 +4178,11 @@ testInfinity2
   	"All infinities are signed. Negative infinity is not equal to Infinity"
 ! !
 
+!FloatTest methodsFor: 'tests - infinity behavior' stamp: 'jmv 5/21/2020 22:51:06'!
+testInfinityTruncated
+	self assert: Float infinity truncated isInfinite.
+	self assert: Float negativeInfinity truncated isInfinite.! !
+
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'sd 6/5/2005 08:31'!
 testNaN1
    	"FloatTest new testNaN1"
@@ -4318,6 +4323,10 @@ testNaNPropagationUnary
 	a do: [ :sel |
 		c _ [ Float nan perform: sel ] on: Error do: [ #error ].
 		self assert: (c isNumber not or: [c isNaN]) ].! !
+
+!FloatTest methodsFor: 'tests - NaN behavior' stamp: 'jmv 5/21/2020 22:51:38'!
+testNaNTruncated
+	self assert: Float nan truncated isNaN.! !
 
 !FloatTest methodsFor: 'tests - NaN behavior' stamp: 'nice 3/14/2008 23:42'!
 testNaNisLiteral
