@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4181] on 25 May 2020 at 10:20:46 am'!
+'From Cuis 5.0 [latest update: #4183] on 25 May 2020 at 10:26:02 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 146!
+!provides: 'VectorGraphics' 1 147!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -786,12 +786,13 @@ StrikeFont allInstances do: [ :a | a reset ].
 !TrueTypeFont methodsFor: 'swapping glyphs' stamp: 'jmv 5/11/2019 17:18:55'!
 useShortUnderscore! !
 
-!TrueTypeFont methodsFor: 'as yet unclassified' stamp: 'len 5/25/2020 10:19:42'!
+!TrueTypeFont methodsFor: 'as yet unclassified' stamp: 'len 5/25/2020 10:25:39'!
 releaseCachedState
 	glyphForms atAllPut: nil.
 	glyphFormsByUtf8 atAllPut: nil.
-	derivativeFonts keysAndValuesDo: [ :anEmphasis :derivedFont |
-		derivedFont releaseCachedState  ]! !
+	derivativeFonts notNil ifTrue: [
+		derivativeFonts keysAndValuesDo: [ :anEmphasis :derivedFont |
+			derivedFont releaseCachedState  ]]! !
 
 !TrueTypeFont class methodsFor: 'instance creation' stamp: 'jmv 5/7/2019 09:25:01'!
 family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber
