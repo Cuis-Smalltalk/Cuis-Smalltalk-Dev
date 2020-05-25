@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4112] on 18 May 2020 at 2:26:39 pm'!
+'From Cuis 5.0 [latest update: #4181] on 25 May 2020 at 10:20:46 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 145!
+!provides: 'VectorGraphics' 1 146!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -785,6 +785,13 @@ StrikeFont allInstances do: [ :a | a reset ].
 
 !TrueTypeFont methodsFor: 'swapping glyphs' stamp: 'jmv 5/11/2019 17:18:55'!
 useShortUnderscore! !
+
+!TrueTypeFont methodsFor: 'as yet unclassified' stamp: 'len 5/25/2020 10:19:42'!
+releaseCachedState
+	glyphForms atAllPut: nil.
+	glyphFormsByUtf8 atAllPut: nil.
+	derivativeFonts keysAndValuesDo: [ :anEmphasis :derivedFont |
+		derivedFont releaseCachedState  ]! !
 
 !TrueTypeFont class methodsFor: 'instance creation' stamp: 'jmv 5/7/2019 09:25:01'!
 family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNumber
@@ -4829,6 +4836,19 @@ setStrings: anArray
 	postscriptName := anArray at: 7.
 	trademark := anArray at: 8.
 ! !
+
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'len 5/22/2020 20:06:56'!
+useAlwaysLeftArrow
+	"Not only when Smalltalk glyphs requested."
+	| arrowIndex |
+	contourDataIndexesForSmalltalkGlyphs _ contourDataIndexesByIso8859s15 copy.
+	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowLeft numericValue + 1.
+	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
+		contourDataIndexesByIso8859s15 at: $_ numericValue + 1 put: arrowIndex.
+		contourDataIndexesForSmalltalkGlyphs at: $_ numericValue + 1 put: arrowIndex ].
+	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowUp numericValue + 1.
+	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
+		contourDataIndexesForSmalltalkGlyphs at: $^ numericValue + 1 put: arrowIndex ].! !
 
 !TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/18/2020 20:33:17'!
 useLeftArrow
