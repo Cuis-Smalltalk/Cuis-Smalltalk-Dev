@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4145] on 18 May 2020 at 2:33:32 pm'!
+'From Cuis 5.0 [latest update: #4194] on 29 May 2020 at 4:32:26 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 137!
+!provides: 'TerseGuide' 1 138!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -192,6 +192,13 @@ window: anObject
 	"Set the value of window"
 
 	window _ anObject! !
+
+!TerseGuideHelp methodsFor: 'testing' stamp: 'jmv 5/29/2020 16:30:16'!
+styleByParagraphs
+	"Answer true if each paragraph should be styled independent of the others.
+	We want to allow mutil-paragraph comments, and we are careful for our contents to be valid Smalltalk."
+
+	^false! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 13:18:04'!
 anObject
