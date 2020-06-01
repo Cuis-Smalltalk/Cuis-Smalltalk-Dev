@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4186] on 25 May 2020 at 7:33:50 pm'!
-'Description ExtractMethod and ExtractToTemporary changes'!
-!provides: 'BaseImageTests' 1 232!
+'From Cuis 5.0 [latest update: #4196] on 1 June 2020 at 3:18:21 pm'!
+'Description asSourceCodeInterval test'!
+!provides: 'BaseImageTests' 1 233!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -13199,6 +13199,14 @@ test05GroupsOfParenthesesIncludingSeparatorsAreTrimmed
 	trimmedInterval := originalInterval trimToMatchExpressionOn: sourceCode.
 
 	self assert: (5 to: 7) asSourceCodeInterval equals: trimmedInterval! !
+
+!SourceCodeIntervalTest methodsFor: 'tests - equality' stamp: 'RNG 5/27/2020 23:59:37'!
+test11AsSourceCodeIntervalMessageDoesNotCreateANewSourceCodeIntervalInstance
+
+	| interval |
+	interval := (1 to: 10) asSourceCodeInterval.
+	
+	self assert: interval == interval asSourceCodeInterval! !
 
 !SourceCodeIntervalTest methodsFor: 'tests - expanding' stamp: 'RNG 5/9/2020 15:41:07'!
 test06AnIntervalThatDoesNotHaveCharactersToExpandRemainsTheSame
