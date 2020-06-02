@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4183] on 25 May 2020 at 10:26:02 am'!
+'From Cuis 5.0 [latest update: #4199] on 2 June 2020 at 4:50:47 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 147!
+!provides: 'VectorGraphics' 1 148!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -3730,14 +3730,14 @@ blendFillOnly
 	auxBitBlt destForm bits: edgeCounts.
 	auxBitBlt copyBits.! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 6/2/2020 16:44:36'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends fill over background. Despite method selector, there might be a very thin stroke of the same color as the fill. Handle this by adjusting antiAliasAlphas.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha unAlpha resultAlpha targetAlpha |
 
 	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
 
@@ -3754,18 +3754,32 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 	isBlueInside ifTrue: [ antiAliasBlueAlpha _ 1.0 - antiAliasBlueAlpha ].
 
 	targetWord _ targetForm bits bytesAt: pixelIndex.
+	targetAlpha _ (targetWord at: 4) / 255.0.
 
-	alpha _ antiAliasRedAlpha * fillColor alpha.
-	resultR _ alpha * fillColor red * 255 + ((1.0 - alpha) * (targetWord at: 3)).
-	targetWord at: 3 put: resultR rounded.
+	antiAliasRedAlpha = 0.0 ifFalse: [
+		alpha _ antiAliasRedAlpha * fillColor alpha.
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultR _ alpha * fillColor red * 255 + (unAlpha * (targetWord at: 3) * targetAlpha).
+		resultR _ resultR/resultAlpha.
+		targetWord at: 3 put: resultR rounded ].
 
-	alpha _ antiAliasGreenAlpha * fillColor alpha.
-	resultG _ alpha * fillColor green * 255 + ((1.0 - alpha) * (targetWord at: 2)).
-	targetWord at: 2 put: resultG rounded.
+	antiAliasGreenAlpha = 0.0 ifFalse: [
+		alpha _ antiAliasGreenAlpha * fillColor alpha.
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultG _ alpha * fillColor green * 255 + (unAlpha * (targetWord at: 2) * targetAlpha).
+		resultG _ resultG/resultAlpha.
+		targetWord at: 2 put: resultG rounded.
+		targetWord at: 4 put: (resultAlpha*255) rounded ].
 
-	alpha _ antiAliasBlueAlpha * fillColor alpha.
-	resultB _ alpha * fillColor blue * 255 + ((1.0 - alpha) * (targetWord at: 1)).
-	targetWord at: 1 put: resultB rounded.
+	antiAliasBlueAlpha = 0.0 ifFalse: [
+		alpha _ antiAliasBlueAlpha * fillColor alpha.
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultB _ alpha * fillColor blue * 255 + (unAlpha * (targetWord at: 1) * targetAlpha).
+		resultB _ resultB/resultAlpha.
+		targetWord at: 1 put: resultB rounded ].
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.
 
@@ -3820,14 +3834,14 @@ blendStrokeAndFill
 	auxBitBlt destForm bits: edgeCounts.
 	auxBitBlt copyBits.! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 6/2/2020 16:44:24'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha foreComponent |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha unAlpha foreComponent targetAlpha resultAlpha |
 
 	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [
@@ -3839,6 +3853,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
 
 	targetWord _ targetForm bits bytesAt: pixelIndex.
+	targetAlpha _ (targetWord at: 4) / 255.0.
 
 	isRedInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
@@ -3847,8 +3862,12 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 		ifFalse: [							"Blend stroke over background"
 			alpha _ antiAliasRedAlpha * strokeColor alpha.
 			foreComponent _ strokeColor red * 255 ].
-	resultR _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 3)).
-	targetWord at: 3 put: resultR rounded.
+	alpha = 0.0 ifFalse: [
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultR _ alpha * foreComponent + (unAlpha * (targetWord at: 3) * targetAlpha).
+		resultR _ resultR/resultAlpha.
+		targetWord at: 3 put: resultR rounded ].
 
 	isGreenInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
@@ -3860,8 +3879,13 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 			foreComponent _ strokeColor green * 255.
 			antiAliasGreenAlpha > 0.5 ifTrue: [
 				morphIds at: pixelIndex put: currentMorphId ]. ].
-	resultG _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 2)).
-	targetWord at: 2 put: resultG rounded.
+	alpha = 0.0 ifFalse: [
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultG _ alpha * foreComponent + (unAlpha * (targetWord at: 2) * targetAlpha).
+		resultG _ resultG/resultAlpha.
+		targetWord at: 2 put: resultG rounded.
+		targetWord at: 4 put: (resultAlpha*255) rounded ].
 
 	isBlueInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
@@ -3870,8 +3894,12 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 		ifFalse: [							"Blend stroke over background"
 			alpha _ antiAliasBlueAlpha * strokeColor alpha.
 			foreComponent _ strokeColor blue * 255 ].
-	resultB _ alpha * foreComponent + ((1.0 - alpha) * (targetWord at: 1)).
-	targetWord at: 1 put: resultB rounded.
+	alpha = 0.0 ifFalse: [
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultB _ alpha * foreComponent + (unAlpha * (targetWord at: 1) * targetAlpha).
+		resultB _ resultB/resultAlpha.
+		targetWord at: 1 put: resultB rounded ].
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.! !
 
@@ -3894,14 +3922,14 @@ blendStrokeOnly
 	auxBitBlt destForm bits: alphaMask.
 	auxBitBlt copyBits.! !
 
-!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 5/14/2020 16:10:51'!
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 6/2/2020 16:43:53'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends stroke over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha |
+	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlpha antiAliasGreenAlpha antiAliasBlueAlpha alpha unAlpha resultAlpha targetAlpha |
 
 	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
 	antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [
@@ -3912,18 +3940,32 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 	antiAliasBlueAlpha _ (antiAliasAlphasWord at: 1) / 127.0.
 
 	targetWord _ targetForm bits bytesAt: pixelIndex.
+	targetAlpha _ (targetWord at: 4) / 255.0.
 
-	alpha _ antiAliasRedAlpha * strokeColor alpha.
-	resultR _ alpha * strokeColor red * 255 + ((1.0 - alpha) * (targetWord at: 3)).
-	targetWord at: 3 put: resultR rounded.
+	antiAliasRedAlpha = 0.0 ifFalse: [
+		alpha _ antiAliasRedAlpha * strokeColor alpha.
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultR _ alpha * strokeColor red * 255 + (unAlpha * (targetWord at: 3) * targetAlpha).
+		resultR _ resultR/resultAlpha.
+		targetWord at: 3 put: resultR rounded ].
 
-	alpha _ antiAliasGreenAlpha * strokeColor alpha.
-	resultG _ alpha * strokeColor green * 255 + ((1.0 - alpha) * (targetWord at: 2)).
-	targetWord at: 2 put: resultG rounded.
+	antiAliasGreenAlpha = 0.0 ifFalse: [
+		alpha _ antiAliasGreenAlpha * strokeColor alpha.
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultG _ alpha * strokeColor green * 255 + (unAlpha * (targetWord at: 2) * targetAlpha).
+		resultG _ resultG/resultAlpha.
+		targetWord at: 2 put: resultG rounded.
+		targetWord at: 4 put: (resultAlpha*255) rounded ].
 
-	alpha _ antiAliasBlueAlpha * strokeColor alpha.
-	resultB _ alpha * strokeColor blue * 255 + ((1.0 - alpha) * (targetWord at: 1)).
-	targetWord at: 1 put: resultB rounded.
+	antiAliasBlueAlpha = 0.0 ifFalse: [
+		alpha _ antiAliasBlueAlpha * strokeColor alpha.
+		unAlpha _ 1.0 - alpha.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultB _ alpha * strokeColor blue * 255 + (unAlpha * (targetWord at: 1) * targetAlpha).
+		resultB _ resultB/resultAlpha.
+		targetWord at: 1 put: resultB rounded ].
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.
 
