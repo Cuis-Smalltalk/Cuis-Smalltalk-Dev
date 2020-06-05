@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4194] on 29 May 2020 at 4:32:26 pm'!
+'From Cuis 5.0 [latest update: #4207] on 4 June 2020 at 10:37:43 pm'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 138!
+!provides: 'TerseGuide' 1 139!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1386,177 +1386,80 @@ y.
 y.
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 17:21:45'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 6/2/2020 20:59:34'!
 layoutMorph
 	"Layout Morph"
 	^
-'| x area column row |
-x _ LayoutMorph new.		"this illustrates a mistake"
-area _ LayoutMorph newColumn name: #AREA.
-column _ LayoutMorph newColumn name: #COL.
-row _ LayoutMorph newRow name: #ROW.
+'| myLayout |
+myLayout _ LayoutMorph new.		"this illustrates a mistake"
 
-row addMorph: column layoutSpec: LayoutSpec useAll.
-	"Add a submorph, at the bottom or right, with aLayoutSpec"
+"A LayoutMorph places its submorphs in a horizontal Row or a vertical Column"
+myLayout _ LayoutMorph newColumn.
+myLayout _ LayoutMorph newRow color: Color cyan.
+myLayout openInWorld.
+myLayout morphExtent: (6 * myLayout morphExtent). "Make larger to hold submorphs"
 
-row addMorph: area proportionalHeight: 0.8.	"Convenience method. Add others as necessary."
+myLayout addAllMorphs: { EllipseMorph initializedInstance. ImageMorph initializedInstance. BorderedRectMorph initializedInstance. }.
 
-row addMorphUseAll: area.				"Convenience method. Add others as necessary."
+"When there is space left over, the submorphs can be shifted
+ along the layout axis.  This is the axisEdgeWeight, a number from
+ 0 to 1, which can also be specified by a symbol."
 
-row addMorphs: {column. area}.		"All morphs are made equal width"
+myLayout axisEdgeWeight: #rowRight.
+myLayout axisEdgeWeight: #center.
+myLayout axisEdgeWeight: #rowLeft.
 
-area beColumn.
+myLayout beColumn.
+myLayout direction." #vertical "
+myLayout axisEdgeWeight: #columnBottom.
+myLayout axisEdgeWeight: #center.
+myLayout axisEdgeWeight: #columnTop.
 
-area beRow.
+myLayout beRow.
+myLayout direction. " #horizontal "
 
-row defaultColor.
+myLayout separation: 10@20. "set the amount of separation for submorphs"	
+myLayout xSeparation.			"answer the x component of the specified separation"
+myLayout ySeparation.			"answer the y component of the specified separation"
+myLayout beColumn.
 
-area direction.
-
-column _ LayoutMorph initializedInstance.
-
-column _ LayoutMorph newColumn.
-
-row _ LayoutMorph newRow.
-
-row is: #Morph.
-
-row layoutBounds.		"Return the bounds for laying out children of the receiver"
-
-row layoutSubmorphs.	"Compute a new layout based on the given layout bounds."
-
-row padding: #right..
-	"This sets how extra space is used when doing layout. For example, a column might have extra , unneeded vertical space. #top means widgets are set close to the top, and extra space is at bottom. Conversely, #bottom means widgets are set close to the bottom, and extra space is at top. Valid values include #left and #right (for rows) and #center. Alternatively, any number between 0.0 and 1.0 might be used.
-	self new padding: #center
-	self new padding: 0.9
-	"
-
-area separation: 8@5.	"set the amount of separation for submorphs"
-
-area xSeparation.			"answer the x component of the specified separation"
-
-area ySeparation.			"answer the y component of the specified separation"
-
+"Submorphs may also have a LayoutSpec to specify proportion and offAxis placement"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/11/2020 17:36:14'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 6/3/2020 15:31:03'!
 layoutSpec
 	"Layout Specification"
 	^
-'| x y height width padding myLayout available |
-x _ LayoutSpec useAll.		"Use all available space"
-myLayout _ LayoutMorph newRow.	"define a layout for these specifications"
-height _ 85.
-width _ 120.
-padding _ 0.3.
-available _ Rectangle origin: 0@0 corner: 300@200. 
+'| layout ellipse ellipseLayout image interiorLayout rect |
+"A LayoutMorph places its submorphs alone the layout axis.
+ The submorphs may use a LayoutSpec to specify, for width and height,
+ a fixed or porportional extent, a minimum extent, an offAxisEdgeWeight."
 
-y _ LayoutSpec fixedExtent: 350@300.
-
-y _ LayoutSpec fixedHeight: height.
-	"the parameter is taken as the fixed height to use.
-	No proportional part."
-	
-y _ LayoutSpec fixedWidth: 100.	"Will use all available height"
-
-y _ LayoutSpec fixedWidth: 100 fixedHeight: 50.
-
-y _ LayoutSpec fixedWidth: 100 fixedHeight: 50 minorDirectionPadding: #bottom.
-
-y _ LayoutSpec fixedWidth: 150 proportionalHeight: 0.8.
-
-y _ LayoutSpec fixedWidth: 140 proportionalHeight: 0.75 minorDirectionPadding: #center.
-
-x fixedOrMorphHeight: height.
-	"the parameter is taken as the fixed height to use.
-	No proportional part."
-
-x fixedOrMorphWidth: width.
-	"the parameter is taken as the fixed width to use.
-	No proportional part."
-
-x fixedWidth: width.
-	"the parameter is taken as the fixed width to use.
-	No proportional part."
-
-x heightFor: available.
-	"If proportional is zero, answer stored fixed extent, or actual morph extent if undefined.
-	Otherwise, we do proportional layout, and the stored extent is a minimum extent.
-	If there is no minimum extent, it should be set to zero."
-
-x isProportionalHeight.
-
-x isProportionalWidth.
-
-y _ LayoutSpec keepMorphExtent.
-
-x minorDirectionPadding.
-
-x minorDirectionPadding: #top.
-	"This sets how padding is done in the secondary direction. For instance, if the owning morph is set in a row, the row will control horizontal layout. But if there is unused vertical space, it will be used according to this parameter. For instance, #top sets the owning morph at the top. Same for #bottom and #center. If the owner is contained in a column, #left, #center or #right should be used. Alternatively, any number between 0.0 and 1.0 can be used.
-	self new minorDirectionPadding: #center
-	self new minorDirectionPadding: 0.9
-	"
-
-x morph: myLayout.
-
-y _ LayoutSpec morphHeightFixedWidth: 90.
-
-y _ LayoutSpec morphHeightProportionalWidth: 0.4.
-
-y _ LayoutSpec morphWidthFixedHeight: 65.
-
-y _ LayoutSpec morphWidthProportionalHeight: 0.7.
-
-y _ LayoutSpec proportionalHeight: 0.8.
-
-y _ LayoutSpec proportionalWidth: 0.2.	"Will use all available height"
-
-y _ LayoutSpec proportionalWidth: 0.3 fixedHeight: 80.
-
-y _ LayoutSpec proportionalWidth: 0.3 fixedHeight: 80 minorDirectionPadding: #left.
-
-y _ LayoutSpec proportionalWidth: 0.25 proportionalHeight: 0.8.
-
-y _ LayoutSpec proportionalWidth: 0.2 proportionalHeight: 0.7 minorDirectionPadding: #top.
-
-y _ LayoutSpec useAll.		"Use all available space"
-
-x proportionalHeight: height.
-
-x proportionalHeight: height minimum: 90.
-	"Alternatives: same as in #proportionalWidth:minimum:, see comment there"
-
-x proportionalWidth: width.
-
-x proportionalWidth: width minimum: 150.
-	"Alternatives:
-		- proportionalWidth notNil, fixedWidth notNil	->	Use fraction of available space, take fixedWidth as minimum desired width
-		- proportionalWidth isNil, fixedWidth isNil	->	Use current morph width
-		- proportionalWidth isNil, fixedWidth notNil	->	Use fixedWidth
-		- proportionalWidth notNil, fixedWidth isNil	->	NOT VALID"
-
-x setProportionalHeight: height.
-	"Alternatives: same as in #proportionalWidth:minimum:, see comment there"
-
-x setProportionalWidth: width.
-	"Alternatives:
-		- proportionalWidth notNil, fixedWidth notNil	->	Use fraction of available space, take fixedWidth as minimum desired width
-		- proportionalWidth isNil, fixedWidth isNil		->	Use current morph width
-		- proportionalWidth isNil, fixedWidth notNil		->	Use fixedWidth
-		- proportionalWidth notNil, fixedWidth isNil		->	NOT VALID"
-
-x useMorphHeight.
-	"Do not attempt to layout height. Use current morph height if at all possible."
-
-x useMorphWidth.
-	"Do not attempt to layout width. Use current morph width if at all possible."
-
-x widthFor: available.
-	"If proportional is zero, answer stored fixed extent, or actual morph extent if undefined.
-	Otherwise, we do proportional layout, and the stored extent is a minimum extent.
-	If there is no minimum extent, it should be set to zero."
-
+"Some Morphs to use"
+ellipse _ EllipseMorph initializedInstance.
+rect _ BorderedRectMorph initializedInstance.
+image _ ImageMorph initializedInstance.
+ellipseLayout _ (LayoutSpec proportionalWidth: 0.3 fixedHeight: 60 offAxisEdgeWeight: #rowTop).
+ellipseLayout proportionalWidth: 0.5  minimum: 40.
+ellipse layoutSpec: ellipseLayout.
+rect layoutSpec: (LayoutSpec fixedWidth: 80 proportionalHeight: 0.6 offAxisEdgeWeight: #center).
+"Layouts can contain layouts"
+interiorLayout _ LayoutMorph newColumn.
+interiorLayout separation: 10@20.
+interiorLayout layoutSpec: (LayoutSpec proportionalWidth: 0.3 proportionalHeight: 60).
+interiorLayout addMorph: EllipseMorph initializedInstance.
+interiorLayout addAdjusterAndMorph: (RectangleLikeMorph new) proportionalWidth: 1.0.
+"A LayoutMorph to contain them"
+layout _ LayoutMorph newRow.
+layout addAllMorphs: { ellipse. image. interiorLayout. rect. }.
+layout openInWorld.
+"Make it bigger"
+layout morphExtent: (3 * layout morphExtent).
+"Make it colorful"
+interiorLayout color: Color cyan.
+layout color: Color green lighter lighter.
+"add handles; mouse grab lower-right yellow circle with tooltip Change Size."
+layout addHalo.
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 5/6/2020 11:14:41'!
