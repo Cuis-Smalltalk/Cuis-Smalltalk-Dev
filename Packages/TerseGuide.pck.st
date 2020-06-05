@@ -1431,7 +1431,7 @@ layoutSpec
 	"Layout Specification"
 	^
 '| layout ellipse ellipseLayout image interiorLayout rect |
-"A LayoutMorph places its submorphs alone the layout axis.
+"A LayoutMorph places its submorphs along the layout axis.
  The submorphs may use a LayoutSpec to specify, for width and height,
  a fixed or porportional extent, a minimum extent, an offAxisEdgeWeight."
 
