@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4196] on 1 June 2020 at 3:18:21 pm'!
+'From Cuis 5.0 [latest update: #4212] on 8 June 2020 at 11:51:22 am'!
 'Description asSourceCodeInterval test'!
-!provides: 'BaseImageTests' 1 233!
+!provides: 'BaseImageTests' 1 234!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -14987,14 +14987,14 @@ testComposition
 	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:11'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 6/8/2020 11:08:17'!
 testDisplayBounds
 	"
 	AffineTransformationTest new testDisplayBounds
 	"
 	self assert:
 		((AffineTransformation withRadians: 0.3) displayBoundsOfTransformOf: (10@10 extent: 20@30))
-			= (-2@13 corner: 26@47).
+			= (-3@12 corner: 26@48).
 
 	self assert: (AffineTransformation new displayBoundsOfTransformOf: (-2@ 2 extent: 10@10)) = (-2@2 corner: 8@12).
 	self assert: (AffineTransformation new displayBoundsOfTransformOf: (-12@ 12 extent: 10@10)) = (-12@12 corner: -2@22).
@@ -15058,7 +15058,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/21/2020 19:52:21'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 6/8/2020 11:13:14'!
 testLayout1
 	"
 	self new testLayout1
@@ -15101,13 +15101,11 @@ testLayout1
 	UISupervisor ui doOneCycleNow.
 
 	self assert: row1 morphWidth = (pane morphWidth - 10).
-	self assert: r1c1 morphWidth class == SmallInteger.
 	self assert: r1c1 morphWidth = 10.
-	self assert: r1c2 morphWidth = 200.
-	self assert: r1c3 morphWidth = (r1c2 morphWidth / 0.8 * 0.4) rounded.
-	self assert: r1c4 morphWidth = (r1c2 morphWidth / 0.8 * 0.15) rounded.
+	self assert: r1c2 morphWidth rounded = 200.
+	self assert: r1c3 morphWidth rounded = (r1c2 morphWidth / 0.8 * 0.4) rounded.
+	self assert: r1c4 morphWidth rounded = (r1c2 morphWidth / 0.8 * 0.15) rounded.
 	self assert: r1c5 morphWidth = 20.
-	self assert: r1c1 morphHeight class == SmallInteger.
 	self assert: r1c1 morphHeight = (row1 morphHeight - 10).
 	self assert: r1c2 morphHeight = (row1 morphHeight - 10).
 	self assert: r1c3 morphHeight = (row1 morphHeight - 10).
@@ -15115,9 +15113,9 @@ testLayout1
 	self assert: r1c5 morphHeight = 20.
 
 	self assert: row2 morphWidth = (pane morphWidth - 10).
-	self assert: r2c1 morphWidth = 216.
-	self assert: r2c2 morphWidth = 108.
-	self assert: r2c3 morphWidth = 54.
+	self assert: r2c1 morphWidth rounded = 216.
+	self assert: r2c2 morphWidth rounded = 108.
+	self assert: r2c3 morphWidth rounded = 54.
 	self assert: r2c1 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c2 morphHeight = (row2 morphHeight - 10).
 	self assert: r2c3 morphHeight = (row2 morphHeight - 10).
@@ -15127,13 +15125,13 @@ testLayout1
 	self assert: r3c2 morphWidth = (row3 morphWidth - 10 - 20 - 10 - 30 * 0.5) rounded.
 	self assert: r3c3 morphWidth = 30.
 	self assert: row3 morphHeight = 60.
-	self assert: r3c1 morphHeight = 41.
+	self assert: r3c1 morphHeight = 40.
 	self assert: r3c2 morphHeight = 40.
 	self assert: r3c3 morphHeight = 50.
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/21/2020 19:53:37'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 6/8/2020 11:13:45'!
 testLayout2
 	"
 	self new testLayout2
@@ -15145,11 +15143,11 @@ testLayout2
 	row
 		color: (Color h: 270 s: 0.2 v: 0.6);
 		addMorph: (c1 _ BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6))
-			layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8 minorDirectionPadding: #bottom);
+			layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8 offAxisEdgeWeight: #rowBottom);
 		addMorph: (c2 _ BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6))
-			layoutSpec: (LayoutSpec proportionalWidth: 0.8 fixedHeight: 40 minorDirectionPadding: #top);
+			layoutSpec: (LayoutSpec proportionalWidth: 0.8 fixedHeight: 40 offAxisEdgeWeight: #rowTop);
 		addMorph: (c3 _ BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6))
-			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 0.7 minorDirectionPadding: #center).
+			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 0.7 offAxisEdgeWeight: #center).
 	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 0.9).
 	pane openInWorld: PasteUpMorph someInstance; morphExtent: 400@300.
 	UISupervisor ui doOneCycleNow.
@@ -15158,17 +15156,17 @@ testLayout2
 	self assert: row morphHeight = 261.
 	self assert: c1 morphBoundsInWorld bottom = (row morphBoundsInWorld bottom - 5) description: 'Should be at bottom'.
 	self assert: c1 morphWidth = 20.
-	self assert: c1 morphHeight = 202.
+	self assert: c1 morphHeight = 200.8.
 	self assert: c2 morphBoundsInWorld top = (row morphBoundsInWorld top + 5) description: 'Should be at top'.
 	self assert: c2 morphWidth = 256.
 	self assert: c2 morphHeight = 40.
 	self assert: ((c3 morphBoundsInWorld top - row morphBoundsInWorld top) - (row morphBoundsInWorld bottom - c3 morphBoundsInWorld bottom)) abs < 2 description: 'Should be centered'.
 	self assert: c3 morphWidth = 30.
-	self assert: c3 morphHeight = 177.
+	self assert: c3 morphHeight rounded = 176.
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/21/2020 19:54:26'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 6/8/2020 11:14:16'!
 testLayout3
 	"
 	self new testLayout3
@@ -15188,9 +15186,9 @@ testLayout3
 	row
 		color: (Color h: 270 s: 0.2 v: 0.6);
 		addMorph: innerRow
-			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 30 minorDirectionPadding: #center);
+			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 30 offAxisEdgeWeight: #center);
 		addMorph: (c2 _ BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6))
-			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 40 minorDirectionPadding: #top);
+			layoutSpec: (LayoutSpec proportionalWidth: 0.5 fixedHeight: 40 offAxisEdgeWeight: #rowTop);
 		addMorph: (c3 _ BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 200).
