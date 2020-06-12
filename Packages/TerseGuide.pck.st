@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4207] on 4 June 2020 at 10:37:43 pm'!
+'From Cuis 5.0 [latest update: #4219] on 12 June 2020 at 11:41:15 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 139!
+!provides: 'TerseGuide' 1 140!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1154,39 +1154,19 @@ DirectoryEntry vmDirectory.							"answer the VM directory"
 
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 5/11/2020 20:35:15'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 6/11/2020 17:04:45'!
 font
 	"Fonts"
 	^
 '"
-Cuis fonts are strike fonts. 
+Cuis includes by default one StrikeFont, but can also use TrueType fonts.
 
-Add a font, Method 1.
-	- create the directory ''AdditionalFontData''  within the directory containing the image
-	- place the .bmp and .txt files for the strike font in the ''AdditionalFontData'' directory
-	- use StrikeFont install: ''<familyname>''
-"
-| w x y z str nam |
-
-x _ AbstractFont default.						"answer the default font"
-
-StrikeFont install: ''DejaVu Sans Mono''.	"install the font with the specified family name"
-
-AbstractFont familyNames     
-	detect: [:f | f = ''DejaVu Sans Mono''] ifNone: [^ AbstractFont default].
-	
-w _ AbstractFont familyName: ''DejaVu Sans Mono'' aroundPointSize: 10.
-	"answer DejaVu Sans Mono font if available; otherwise, answer the default font"
-nam _ ''DejaVu Sans Mono''.
-(StringMorph contents: ''Some text in "'', nam, ''" font.'' font: w) openInHand. "look at an example"
-
-"
-Add a font, Method 2.
+To add additional included fonts
 "
 
 FontFamily readAdditionalTrueTypeFonts.
 
-AbstractFont familyNames.				"list the installed fonts"
+FontFamily familyNames.				"list the installed fonts"
 
 ((StringMorph contents: ''Text in the selected font.'') changeFont) openInHand. "look at an example"
 "
@@ -1194,6 +1174,8 @@ The selection of currently installed fonts may be viewed from the text editor:
 
 World > Open... > Text Editor
 ...then use (Cmd-k) to see a list of installed fonts.
+
+To use any TrueTypeFont, just open the FileList, select any .ttf file, and click on [read font].
 "
 '! !
 

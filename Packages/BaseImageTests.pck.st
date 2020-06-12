@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4212] on 8 June 2020 at 11:51:22 am'!
+'From Cuis 5.0 [latest update: #4219] on 12 June 2020 at 11:42:02 am'!
 'Description asSourceCodeInterval test'!
-!provides: 'BaseImageTests' 1 234!
+!provides: 'BaseImageTests' 1 235!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -10000,14 +10000,14 @@ testCollectionAtSymbol
 testNumberAtSymbol
 	self assert: (1@2) class == Point! !
 
-!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 4/12/2011 10:01'!
+!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:30:55'!
 testBaseAndDerivedFont
 	"
 	StrikeFontTest new testBaseAndDerivedFont
 	"
 
 	| base italic italicItalic boldItalic italicBold boldItalic2 underlined underlinedItalic italicUnderlined struckThrough1 struckThrough2 |
-	base _ AbstractFont familyName: 'DejaVu' pointSize: 14.
+	base _ FontFamily defaultFamilyPointSize: 14.
 	self assert: base isBaseFont.
 	italic _ base italic.
 	self deny: italic isBaseFont.
@@ -10028,7 +10028,7 @@ testBaseAndDerivedFont
 	struckThrough2 _ base bold underlined italic struckThrough.
 	self assert: struckThrough1 == struckThrough2! !
 
-!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 8/25/2009 13:48'!
+!StrikeFontTest methodsFor: 'testing' stamp: 'jmv 6/11/2020 16:25:48'!
 testBaseAndDerivedFontSanity
 	"
 	StrikeFontTest new testBaseAndDerivedFontSanity
@@ -10039,10 +10039,10 @@ testBaseAndDerivedFontSanity
 			ifTrue: [
 				self assert: (f instVarNamed: 'baseFont') isNil.
 				self assert: f baseFont == f.
-				self assert: f derivativeFonts notNil ]
+				self assert: (f instVarNamed: 'derivativeFonts') notNil ]
 			ifFalse: [
 				self assert: f baseFont notNil.
-				self assert: f derivativeFonts isNil.
+				self assert: (f instVarNamed: 'derivativeFonts') isNil.
 				self assert: (f baseFont emphasized: f emphasis) == f ] ]! !
 
 !StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/8/2013 08:17'!

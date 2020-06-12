@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4213] on 8 June 2020 at 12:25:57 pm'!
+'From Cuis 5.0 [latest update: #4219] on 12 June 2020 at 12:00:02 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 154!
+!provides: 'VectorGraphics' 1 156!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -812,10 +812,6 @@ clearCache
 	emphasized do: [ :each |
 		self addTTFontDescription: each ]! !
 
-!TrueTypeFontFamily methodsFor: 'accessing' stamp: 'jmv 5/7/2019 09:23:52'!
-aroundPointSize: aNumber
-	^self atPointSize: aNumber! !
-
 !TrueTypeFontFamily methodsFor: 'accessing' stamp: 'jmv 5/7/2019 09:43:36'!
 atPointSize: aNumber
 	| baseFont |
@@ -1329,7 +1325,7 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				engine rel_QuadraticBezierSmoothToX: to x y: to y ]]! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/3/2020 22:48:30'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 6/11/2020 16:50:24'!
 drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
 	"
 | s c f |
@@ -1346,7 +1342,7 @@ Display forceToScreen
 	port clipWidth = 0 ifTrue: [^self].
 	"
 	| font |
-	font _ fontOrNil ifNil: [ AbstractFont default ].
+	font _ fontOrNil ifNil: [ FontFamily defaultFamilyAndPointSize ].
 	^engine
 		displayString: aString
 		from: firstIndex
@@ -1364,7 +1360,7 @@ Display forceToScreen
 	The scaling of internal TrueType integer points to FloatingPoint where[0.0...1.0] equals #letterMTopSideBearing is done in the engine.
 	It should actually be done in TrueType. No one else cares!!"! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 3/22/2020 23:46:21'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 6/11/2020 16:50:27'!
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
 	"
 | c f |
@@ -1384,7 +1380,7 @@ Display forceToScreen
 	port clipWidth = 0 ifTrue: [^self].
 	"
 	| font |
-	font _ aTrueTypeFont ifNil: [ AbstractFont default ].
+	font _ aTrueTypeFont ifNil: [ FontFamily defaultFamilyAndPointSize ].
 	engine
 		displayUtf8: aByteArray
 		at: aPoint + (0@font ascent + font lineGap-1)
@@ -1685,111 +1681,6 @@ initialize
 	0.1: b - r
 	"
 	" AffineTransformation doIntegerTransformations: false"! !
-
-!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 2/20/2020 12:01:55'!
-textex1
-"Jugando con Paragraph"
-"
-self textex1
-De cualquier manera, estos experimentos pavos deben desaparecer.
-Ejemplos como e de displayString:from:to:at:font: son mas realistas y mejores
-"
-	| t para frame |
-	t _ Text
-		initialFont: (AbstractFont familyName: 'DejaVu Sans' pointSize: 9)
-		stringOrText: 'Acá vamos a escribir un poquito de texto. Esto es una prueba del renderer de texto de Morphic 3. La idea es poder reemplazar al actual en todos los casos en que sea posible. Quizás para algún pointsize especial, como 9, sigamos usando StrikeFont si se alinean los planetas. Ñandú, agüita, çå½´®¥ïøßƒ©Ý²Þ¬­ç¦µ'.
-	frame _ 10@10 extent: 320@400.
-	para _ TextComposition new.
-	para
-		setModel: (TextModel withText: t);
-		extentForComposing: (320 @ 9999);
-		composeAll.
-	Display fill: (frame insetBy: -2) fillColor: Color black;
-			fill: frame fillColor: Color white.
-	frame _ 334@10 extent: 320@400.
-	Display fill: (frame insetBy: -2) fillColor: Color black;
-			fill: frame fillColor: Color white.
-	Display getCanvas
-		textComposition: para 
-		bounds: (324@0 extent: Display extent) 
-		color: Color black
-		selectionColor: Color orange.
-	(self onForm: Display)
-			into: self runningWorld;
-		textComposition: para 
-		bounds: (0@0 extent: Display extent) 
-		color: Color black
-		selectionColor: Color orange.
-	Display forceToScreen! !
-
-!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 2/20/2020 11:52:35'!
-textex2
-"Jugando con Paragraph"
-"
-self textex2
-"
-	| t para frame |
-	
-	t _ Text
-		initialFont: (AbstractFont familyName: 'DejaVu Sans' pointSize: 22)
-		stringOrText: (String streamContents: [ :strm | (32 to: 255) do: [ :i | strm nextPut: (Character numericValue: i)]]).
-	frame _ 10@10 extent: 320@400.
-	para _ TextComposition new.
-	para
-		setModel: (TextModel withText: t);
-		extentForComposing: (320 @ 9999);
-		composeAll.
-	Display fill: (frame insetBy: -2) fillColor: Color black;
-			fill: frame fillColor: Color white.
-	frame _ 334@10 extent: 320@400.
-	Display fill: (frame insetBy: -2) fillColor: Color black;
-			fill: frame fillColor: Color white.
-	Display getCanvas
-		textComposition: para 
-		bounds: (324@0 extent: Display extent) 
-		color: Color black
-		selectionColor: Color orange.
-	(self onForm: Display)
-			into: self runningWorld;
-		textComposition: para 
-		bounds: (0@0 extent: Display extent) 
-		color: Color black
-		selectionColor: Color orange.
-	Display forceToScreen! !
-
-!VectorCanvas class methodsFor: 'text experiments' stamp: 'jmv 2/20/2020 12:01:59'!
-textex3
-"Jugando con Paragraph"
-"
-self textex3
-"
-	| t para frame |
-	t _ Text
-		initialFont: (AbstractFont familyName: 'DejaVu Sans' pointSize: 9)
-		stringOrText: 'Acá vamos a escribir un poquito de texto. Esto es una prueba del renderer de texto de Morphic 3. La idea es poder reemplazar al actual en todos los casos en que sea posible. Quizás para algún pointsize especial, como 9, sigamos usando StrikeFont si se alinean los planetas. Ñandú, agüita, çå½´®¥ïøßƒ©Ý²Þ¬­ç¦µ'.
-	frame _ 10@10 extent: 320@400.
-	para _ TextComposition new.
-	para
-		setModel: (TextModel withText: t);
-		extentForComposing: (320 @ 9999);
-		composeAll.
-	Display fill: (frame insetBy: -2) fillColor: Color black;
-			fill: frame fillColor: Color white.
-	frame _ 334@10 extent: 320@400.
-	Display fill: (frame insetBy: -2) fillColor: Color black;
-			fill: frame fillColor: Color white.
-	Display getCanvas
-		textComposition: para 
-		bounds: (324@0 extent: Display extent) 
-		color: Color black
-		selectionColor: Color orange.
-	(self onForm: Display)
-		into: self runningWorld;
-		textComposition: para 
-		bounds: (0@0 extent: Display extent) 
-		color: Color black
-		selectionColor: Color orange.
-	Display forceToScreen! !
 
 !VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 5/15/2020 09:27:38'!
 antiAliasingWidth: aNumber
@@ -6682,7 +6573,7 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont color: foreground
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
 	self subclassResponsibility! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 4/1/2020 13:02:25'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 6/11/2020 16:44:37'!
 drawUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint font: aTrueTypeFont color: aColor
 	"Answer last affected pixel position
 	Answer nil if nothing was done"
@@ -6701,7 +6592,7 @@ Display forceToScreen
 
 	p _ (currentTransformation transform: aPoint) rounded.
 	engine colorMap: nil.
-	font _ aTrueTypeFont ifNil: [ AbstractFont default ].
+	font _ aTrueTypeFont ifNil: [ FontFamily defaultFamilyAndPointSize ].
 	^ engine
 		displayUtf32: anIntegerArray
 		from: startIndex
@@ -6710,7 +6601,7 @@ Display forceToScreen
 		trueTypeFont: font
 		color: aColor! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/22/2020 23:46:12'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 6/11/2020 16:44:46'!
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
 	"Answer last affected pixel position
 	Answer nil if nothing was done"
@@ -6731,7 +6622,7 @@ Display forceToScreen
 
 	p _ (currentTransformation transform: aPoint) rounded.
 	engine colorMap: nil.
-	font _ aTrueTypeFont ifNil: [ AbstractFont default ].
+	font _ aTrueTypeFont ifNil: [ FontFamily defaultFamilyAndPointSize ].
 	^ engine
 		displayUtf8: aByteArray
 		at: p
