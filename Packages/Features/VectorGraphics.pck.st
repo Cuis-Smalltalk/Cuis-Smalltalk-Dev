@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4219] on 16 June 2020 at 1:28:03 pm'!
+'From Cuis 5.0 [latest update: #4225] on 16 June 2020 at 8:16:55 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 157!
+!provides: 'VectorGraphics' 1 160!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -130,7 +130,7 @@ TTContourConstruction class
 
 !classDefinition: #TTFontDescription category: #'VectorGraphics-TrueType'!
 Object subclass: #TTFontDescription
-	instanceVariableNames: 'contourDataForIso8859s15 contourDataIndexesByIso8859s15 contourDataIndexesForSmalltalkGlyphs contourDataForUtf8 contourDataIndexesByUtf8 kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing'
+	instanceVariableNames: 'folderName contourDataForIso8859s15 contourDataIndexesByIso8859s15 contourDataIndexesForSmalltalkGlyphs contourDataForUtf8 contourDataIndexesByUtf8 kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing'
 	classVariableNames: 'Descriptions'
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
@@ -793,13 +793,13 @@ assignmentGlyphSelectorPreferenceChanged
 addTTFontDescription: aTTFontDescription
 	ttFontDescriptionsByEmphasis at: aTTFontDescription emphasis put: aTTFontDescription.! !
 
-!TrueTypeFontFamily methodsFor: 'initialization' stamp: 'jmv 5/7/2019 09:38:18'!
+!TrueTypeFontFamily methodsFor: 'initialization' stamp: 'jmv 6/16/2020 20:13:35'!
 baseTTFontDescription: aTTFontDescription
 	self assert: aTTFontDescription emphasis = 0.
 	familyName _ aTTFontDescription familyName.
 	baseFontBySizes _ Dictionary new.
 	baseTTFontDescription _ aTTFontDescription.
-	ttFontDescriptionsByEmphasis _ Dictionary new.! !
+	ttFontDescriptionsByEmphasis isNil ifTrue: [ ttFontDescriptionsByEmphasis _ Dictionary new ].! !
 
 !TrueTypeFontFamily methodsFor: 'initialization' stamp: 'jmv 5/7/2019 17:57:19'!
 clearCache
@@ -824,6 +824,10 @@ atPointSize: aNumber
 		baseFont addDerivativeFont: emphasizedFont ].
 	^ baseFont! !
 
+!TrueTypeFontFamily methodsFor: 'accessing' stamp: 'jmv 6/16/2020 18:33:55'!
+folderName
+	^baseTTFontDescription folderName! !
+
 !TrueTypeFontFamily methodsFor: 'accessing' stamp: 'jmv 5/7/2019 09:23:22'!
 pointSizes
 	^#(6 7 8 9 10 11 12 13 14 15 18 22 26 36 48 72)! !
@@ -841,28 +845,30 @@ fileReaderServicesForFileEntry: filename suffix: suffix
 
 	^#()! !
 
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 5/7/2019 09:18:36'!
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 6/14/2020 01:04:18'!
 read: aDirectoryEntry
 	"
 	TrueTypeFontFamily read: '/home/juan/Downloads/DejaVu2.37/dejavu-fonts-ttf-2.37/ttf/' asDirectoryEntry
 	"
 	| readFamilyNames |
 	readFamilyNames _ TTFontDescription read: aDirectoryEntry.
-	readFamilyNames do: [ :familyName | | ttDescriptions baseTTDescription family |
+	readFamilyNames do: [ :familyName |
+		| ttDescriptions baseTTDescription family |
 		ttDescriptions _ TTFontDescription withFamilyName: familyName.
 		baseTTDescription _ ttDescriptions at: 0.
 		family _ TrueTypeFontFamily baseTTFontDescription: baseTTDescription.
 		ttDescriptions do: [ :ttfDesc |
 			ttfDesc emphasis = 0 ifFalse: [
 				family addTTFontDescription: ttfDesc ]].
-		FontFamily addFamily: family ]! !
+		FontFamily addFamily: family ].
+	^readFamilyNames! !
 
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 5/10/2019 09:47:25'!
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 6/14/2020 01:02:48'!
 readAdditionalFonts
 
-	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'! !
+	^TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'! !
 
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 6/8/2020 08:16:27'!
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 6/16/2020 20:13:50'!
 readTrueTypeFontEntry: ttFontFileEntry
 
 	| ttFontDescription ttFontFamily |
@@ -870,7 +876,10 @@ readTrueTypeFontEntry: ttFontFileEntry
 	ttFontFamily := FontFamily familyNamed: ttFontDescription familyName.
 	ttFontFamily
 		ifNil: [ FontFamily addFamily: (self new baseTTFontDescription: ttFontDescription ) ]
-		ifNotNil: [ :fam | fam addTTFontDescription: ttFontDescription].
+		ifNotNil: [ :fam |
+			ttFontDescription emphasis = 0
+				ifTrue: [fam baseTTFontDescription: ttFontDescription]
+				ifFalse: [fam addTTFontDescription: ttFontDescription]].
 	
 	PopUpMenu inform: 'loaded font ', ttFontDescription familyName.! !
 
@@ -4697,6 +4706,14 @@ first
 	^ self.
 ! !
 
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 6/16/2020 18:33:27'!
+folderName
+	^folderName! !
+
+!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 6/16/2020 18:33:31'!
+folderName: aString
+	folderName _ aString! !
+
 !TTFontDescription methodsFor: 'information' stamp: 'ar 11/14/1998 23:48'!
 copyright
 	^copyright! !
@@ -5011,7 +5028,7 @@ widthOfCodePoint: aUnicodeCodePoint
 	advanceWidth _ contourDataForUtf8 at: i.
 	^ advanceWidth / letterMTopSideBearing! !
 
-!TTFontDescription class methodsFor: 'instance creation' stamp: 'jmv 1/18/2020 15:14:11'!
+!TTFontDescription class methodsFor: 'instance creation' stamp: 'jmv 6/16/2020 18:35:35'!
 read: aDirectoryEntry
 	"
 	TTFontDescription read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'
@@ -5022,6 +5039,7 @@ read: aDirectoryEntry
 	aDirectoryEntry
 		allFilesDo: [ :file | | ttf |
 			ttf _ TTFontReader readTTFFrom: file binaryContents.
+			ttf folderName: file parent name.
 			(Descriptions at: ttf familyName ifAbsentPut: [ Dictionary new]) at: ttf emphasis put: ttf.
 			readFamilyNames add: ttf familyName ]
 		matches: [ :file | '*.ttf' match: file name ].
@@ -6759,16 +6777,16 @@ c _ BitBltCanvas onForm: Display.
 utf32 _ #(76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46) asIntegerArray.
 c drawUtf32: utf32 from: 1 to: utf32 size at: 10@10 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
 
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 3/31/2020 16:08:14'!
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 6/16/2020 19:48:24'!
 unicodeExamples
 	"
 	Preferences disable: #loadOnlyLatinGlyphData.
-	FontFamily readAdditionalTrueTypeFonts. 
+	TTFontDescription allInstancesDo: [ :each | each folderName: nil ]. 'hacky'.
 	BitBltCanvas unicodeExamples
 	"
 	| f |
 	[ f class == TrueTypeFont ] whileFalse: [ 
-		f _ FontPicker promptUser atPointSize: 24 ].
+		f _ FontFamily promptUser atPointSize: 24 ].
 	self exampleLatin: f.
 	self exampleCyrillic: f.
 	self exampleGreek: f.
@@ -6778,16 +6796,16 @@ unicodeExamples
 	self exampleHebrew: f.
 	self exampleChinese: f.! !
 
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:58:14'!
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 6/16/2020 19:48:31'!
 unicodeUtf32Examples
 	"
 	Preferences disable: #loadOnlyLatinGlyphData.
-	FontFamily readAdditionalTrueTypeFonts. 
+	TTFontDescription allInstancesDo: [ :each | each folderName: nil ]. 'hacky'.
 	BitBltCanvas unicodeUtf32Examples
 	"
 	| f |
 	[ f class == TrueTypeFont ] whileFalse: [ 
-		f _ FontPicker promptUser atPointSize: 24 ].
+		f _ FontFamily promptUser atPointSize: 24 ].
 	self exampleUtf32Latin: f.
 	self exampleUtf32Cyrillic: f.
 	self exampleUtf32Greek: f.
