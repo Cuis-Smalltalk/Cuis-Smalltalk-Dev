@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4219] on 12 June 2020 at 12:00:02 pm'!
+'From Cuis 5.0 [latest update: #4219] on 16 June 2020 at 1:28:03 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 156!
+!provides: 'VectorGraphics' 1 157!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -3099,10 +3099,10 @@ experLinesAndShapesx
 	
 	Display forceToScreen.! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 1/1/2018 16:23:28'!
+!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'db 6/15/2020 14:02:01'!
 experLinesAndShapesx2
 	"
-	self experLinesAndShapesx2
+	VectorEngineSubPixel experLinesAndShapesx2
 	"
 	| engine y1 dy y2 |
 	engine _ self onForm: Display.
@@ -3259,13 +3259,13 @@ experimentHopsPerPixel3
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:23:50'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'db 6/15/2020 14:02:28'!
 experiment1
 	"
 	No perfecto aun, pero se puede empezar a comparar con
 	http://www.hpl.hp.com/research/mmsl/projects/graphics/antialiasing/figure21.htm
 	Ni que hablar que es mucho mas rapido...
-	self experiment1
+	VectorEngineSubPixel experiment1
 	"
 | engine h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 e f |
 engine _ self onForm: Display.
@@ -3320,10 +3320,10 @@ Display forceToScreen.
 	f writePNGfileNamed: 'pp17.png'
 "! !
 
-!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:23:54'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'db 6/15/2020 14:02:47'!
 experiment2
 	"
-	self experiment2
+	VectorEngineSubPixel experiment2
 	"
 | engine h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 |
 engine _ self onForm: Display.
@@ -3365,10 +3365,10 @@ delta _ nil.
 Display forceToScreen.
 ! !
 
-!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 12/31/2017 15:23:12'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'db 6/15/2020 14:02:58'!
 experiment3
 	"
-	self experiment3
+	VectorEngineSubPixel experiment3
 	"
 	| engine w r |
 	engine _ self onForm: Display.
@@ -3385,10 +3385,10 @@ experiment3
 	].
 Display forceToScreen! !
 
-!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 1/1/2018 16:14:38'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'db 6/15/2020 14:03:02'!
 experiment4
 	"
-	self experiment4
+	VectorEngineSubPixel experiment4
 	"
 	| engine w r |
 	engine _ self onForm: Display.
@@ -3404,10 +3404,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorEngineAbstract class methodsFor: 'samples' stamp: 'jmv 2/20/2020 12:29:38'!
+!VectorEngineAbstract class methodsFor: 'samples' stamp: 'db 6/15/2020 14:03:08'!
 siemensStar
 	"
-	self siemensStar display
+	VectorEngineSubPixel siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
