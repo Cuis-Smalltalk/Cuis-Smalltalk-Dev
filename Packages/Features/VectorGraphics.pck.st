@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4225] on 16 June 2020 at 8:16:55 pm'!
+'From Cuis 5.0 [latest update: #4226] on 17 June 2020 at 3:01:28 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 160!
+!provides: 'VectorGraphics' 1 161!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -2396,12 +2396,11 @@ Display forceToScreen
 		abs_QuadraticBezierToX: previousCallX + xTo y: previousCallY + yTo
 		controlX: previousCallX + xC y: previousCallY + yC.! !
 
-!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 5/3/2020 22:44:24'!
+!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 6/17/2020 14:33:29'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scaleX: ssx scaleY: ssy
 	"ssx and ssy to honor font pointSize"
 	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers |
 
-	self antiAliasingWidth: self class antiAliasingWidthForOutlineFonts.
 	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.
 	sx _ ssx * trueTypeScale.
 	sy _ ssy * trueTypeScale.
@@ -2435,15 +2434,13 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 			destX _ destX + (advanceWidth * sx).
 		]
 	].
-	self antiAliasingWidth: self class defaultAntiAliasingWidth.
 	^ destX ceiling@destY! !
 
-!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 4/12/2020 17:02:47'!
+!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 6/17/2020 14:33:41'!
 displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColor scaleX: ssx scaleY: ssy
 	"ssx and ssy to honor font pointSize"
 	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers baseIndex |
 
-	self antiAliasingWidth: self class antiAliasingWidthForOutlineFonts.
 	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.
 	sx _ ssx * trueTypeScale.
 	sy _ ssy * trueTypeScale.
@@ -2481,8 +2478,7 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColo
 					baseIndex _ 0.
 				]
 			]
-	].
-	self antiAliasingWidth: self class defaultAntiAliasingWidth! !
+	].! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/17/2020 09:47:28'!
 initializeOnForm: aForm
@@ -3441,22 +3437,14 @@ siemensStar
 	].
 	^form! !
 
+!VectorEngineAbstract class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:34:36'!
+defaultAntiAliasingWidth
+	^1.0! !
+
 !VectorEngineAbstract class methodsFor: 'instance creation' stamp: 'jmv 4/17/2020 09:47:42'!
 onForm: aForm
 
 	^ self new initializeOnForm: aForm! !
-
-!VectorEngineAbstract class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:07'!
-antiAliasingWidthForOutlineFonts
-	^1.4! !
-
-!VectorEngineAbstract class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:10'!
-antiAliasingWidthForStrokeFonts
-	^1.1! !
-
-!VectorEngineAbstract class methodsFor: 'accessing' stamp: 'jmv 4/4/2018 15:11:13'!
-defaultAntiAliasingWidth
-	^1.3. "default for graphics"! !
 
 !VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 6/6/2020 17:21:13'!
 antiAliasingWidth: aNumber
@@ -4094,6 +4082,10 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 	antiAliasGreenAlpha > 0.5 ifTrue: [
 		morphIds at: pixelIndex put: currentMorphId ].! !
 
+!VectorEngineSubPixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:34:51'!
+defaultAntiAliasingWidth
+	^1.4! !
+
 !VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 6/6/2020 17:37:09'!
 antiAliasingWidth: aNumber
 
@@ -4511,6 +4503,10 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	antiAliasAlpha > 0.5 ifTrue: [
 		morphIds at: pixelIndex put: currentMorphId ].! !
+
+!VectorEngineWholePixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:58:55'!
+defaultAntiAliasingWidth
+	^1.7! !
 
 !FormGlyph methodsFor: 'initialization' stamp: 'jmv 5/13/2019 22:20:59'!
 form: aForm
