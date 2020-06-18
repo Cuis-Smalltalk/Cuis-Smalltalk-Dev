@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4219] on 12 June 2020 at 11:42:02 am'!
-'Description asSourceCodeInterval test'!
-!provides: 'BaseImageTests' 1 235!
+'From Cuis 5.0 [latest update: #4226] on 18 June 2020 at 4:11:32 pm'!
+'Description can not reference self, super and thisContext inside backtick tests'!
+!provides: 'BaseImageTests' 1 236!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -976,14 +976,14 @@ TestCase subclass: #DynamicallyCodeCreationTest
 DynamicallyCodeCreationTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompilerExceptionsTest category: #'BaseImageTests-Compiler'!
-DynamicallyCodeCreationTest subclass: #CompilerExceptionsTest
+!classDefinition: #CompilerTest category: #'BaseImageTests-Compiler'!
+DynamicallyCodeCreationTest subclass: #CompilerTest
 	instanceVariableNames: 'sourceCode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Compiler'!
-!classDefinition: 'CompilerExceptionsTest class' category: #'BaseImageTests-Compiler'!
-CompilerExceptionsTest class
+!classDefinition: 'CompilerTest class' category: #'BaseImageTests-Compiler'!
+CompilerTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #RefactoringTest category: #'BaseImageTests-Tools-Refactoring'!
@@ -17110,7 +17110,7 @@ classCategoryOfTestData
 	
 	^ '__Refactoring-TestData__'! !
 
-!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 11:00:59'!
+!CompilerTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 11:00:59'!
 correctFrom: start to: end with: aReplacement
  
 	| newSourceCode |
@@ -17121,20 +17121,54 @@ correctFrom: start to: end with: aReplacement
 	
 	sourceCode := newSourceCode ! !
 
-!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:23'!
+!CompilerTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:23'!
 selectFrom: start to: end 
 	! !
 
-!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:22'!
+!CompilerTest methodsFor: 'emulating' stamp: 'HAW 6/18/2020 15:27:24'!
+selectInvisiblyFrom: start to: stop 
+! !
+
+!CompilerTest methodsFor: 'emulating' stamp: 'cwp 8/25/2009 20:22'!
 selectionInterval
 	^ 1 to: 0! !
 
-!CompilerExceptionsTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 10:53:27'!
+!CompilerTest methodsFor: 'emulating' stamp: 'HAW 12/17/2019 10:53:27'!
 text
 
 	^ sourceCode ! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 12/20/2019 20:54:26'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/18/2020 15:52:28'!
+testCanNotReferenceSelfInsideBackTick
+
+	self 
+		should: [ self class compile: 'm1 `self`' ]
+		raise: SyntaxErrorNotification 
+		withExceptionDo: [ :anError |
+			self assert: (anError messageText includesSubString: 
+				(Parser canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'self')) ]! !
+
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/18/2020 15:52:21'!
+testCanNotReferenceSuperInsideBackTick
+
+	self 
+		should: [ self class compile: 'm1 `super`' ]
+		raise: SyntaxErrorNotification 
+		withExceptionDo: [ :anError |
+			self assert: (anError messageText includesSubString: 
+				(Parser canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'super')) ]! !
+
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/18/2020 15:51:42'!
+testCanNotReferenceThisContextInsideBackTick
+
+	self 
+		should: [ self class compile: 'm1 `thisContext`' ]
+		raise: SyntaxErrorNotification 
+		withExceptionDo: [ :anError |
+			self assert: (anError messageText includesSubString: 
+				(Parser canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'thisContext')) ]! !
+
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 12/20/2019 20:54:26'!
 testAddsMoreThanOneUndeclaredVariableCorrectlyInBlock
 	
 	| testClass |
@@ -17150,7 +17184,7 @@ testAddsMoreThanOneUndeclaredVariableCorrectlyInBlock
 	self assert: 'griffle [ | goo var1 | var1 := 1. goo := 1. ^goo + var1 ]' equals: sourceCode
 ! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:15:47'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:15:47'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 
 	| testClass |
@@ -17165,7 +17199,7 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenNoSpaceBetweenLastOneAndPipe
 		
 	self assert: 'griffle [|var1 goo | var1 := 1.goo := 1.^ goo + var1]' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 1/27/2020 00:10:26'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 1/27/2020 00:10:26'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenTheresAnArgumentAlready
 
 	| testClass |
@@ -17180,7 +17214,7 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenTheresAnArgumentAlready
 		
 	self assert: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 1/27/2020 02:46:02'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 1/27/2020 02:46:02'!
 testAddsUndeclaredVariableCorrectlyInBlockWhenTheresArgumentsAndTempDeclarationPipesWithNoTemps
 
 	| testClass |
@@ -17195,7 +17229,7 @@ testAddsUndeclaredVariableCorrectlyInBlockWhenTheresArgumentsAndTempDeclarationP
 		
 	self assert: 'griffle [ :var1 | | goo | goo := 1.^ goo + var1]' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 12/20/2019 20:55:29'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 12/20/2019 20:55:29'!
 testAddsUndeclaredVariableCorrectlyInMethodAndInBlock
 
 	| testClass |
@@ -17210,7 +17244,7 @@ testAddsUndeclaredVariableCorrectlyInMethodAndInBlock
 		
 	self assert: 'griffle | var1 |', String newLineString, 'var1 := 1. [ | goo | goo := 1. ^goo + var1 ]' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:15:27'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:15:27'!
 testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
 
 	| testClass |
@@ -17225,7 +17259,7 @@ testAddsUndeclaredVariableCorrectlyInMethodWhenNoSpaceBetweenLastOneAndPipe
 		
 	self assert: 'griffle |var1 goo | var1 := 1.goo := 1.^ goo + var1' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:18:11'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:18:11'!
 testAddsUndeclaredVariableInRightBlock
 	| testClass |
 	
@@ -17239,7 +17273,7 @@ testAddsUndeclaredVariableInRightBlock
 		
 	self assert: 'griffle [|goo| goo := 1. ^goo ]. [ | goo1 |goo1:=1.^ goo1]' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'EB 1/27/2020 00:31:46'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 1/27/2020 00:31:46'!
 testAddsUndeclaredVariableWithAnArgumentAndTempAlreadyInBlock
 
 	| testClass |
@@ -17254,7 +17288,7 @@ testAddsUndeclaredVariableWithAnArgumentAndTempAlreadyInBlock
 		
 	self assert: 'griffle [ :var1 | | foo goo | foo := 2. goo := 1.^ goo + var1 + foo ]' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:06:40'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:06:40'!
 testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
 
 	| testClass counter |
@@ -17271,7 +17305,7 @@ testDoesNotConfusesVariablesWithSameNameOfDifferentBlocksWhenRemoving
 		
 	self assert: 'griffle [  ]. [ | goo | ]' equals: sourceCode.! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:07:39'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:07:39'!
 testDoesNotRemoveUnusedVariableIfSaidSo
 
 	| testClass |
@@ -17287,7 +17321,7 @@ testDoesNotRemoveUnusedVariableIfSaidSo
 		
 	self assert: 'griffle | goo |' equals: sourceCode.! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:12:44'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:12:44'!
 testKeepsVariableDefinitionWhenThereAreUsedTemporaries
 
 	| testClass |
@@ -17303,7 +17337,7 @@ testKeepsVariableDefinitionWhenThereAreUsedTemporaries
 		
 	self assert: 'griffle | a | a := 1. ^a' equals: sourceCode.! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:03:46'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:03:46'!
 testRemovesUnusedVariablesFromBlocks
 
 	| testClass |
@@ -17319,7 +17353,7 @@ testRemovesUnusedVariablesFromBlocks
 		
 	self assert: 'griffle [  ]' equals: sourceCode.! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:01:28'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:01:28'!
 testRemovesVariableDefinitionWhenNoMoreUnusedTemporaries
 
 	| testClass |
@@ -17335,7 +17369,7 @@ testRemovesVariableDefinitionWhenNoMoreUnusedTemporaries
 		
 	self assert: 'griffle ' equals: sourceCode.! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:13:33'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:13:33'!
 testReusesBlockTempDeclarationWhenEmptyForUndeclaredVariable
 
 	| testClass |
@@ -17350,7 +17384,7 @@ testReusesBlockTempDeclarationWhenEmptyForUndeclaredVariable
 		
 	self assert: 'griffle [ | goo | goo := 1.^ goo ]' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:12:52'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:12:52'!
 testReusesMethodTempDeclarationWhenEmptyForUndeclaredVariable
 
 	| testClass |
@@ -17365,7 +17399,7 @@ testReusesMethodTempDeclarationWhenEmptyForUndeclaredVariable
 		
 	self assert: 'griffle | goo | goo := 1.^ goo' equals: sourceCode! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 17:12:34'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 17:12:34'!
 testUndeclaredVariableIsSignaledForUndeclaredVariables
 
 	| testClass |
@@ -17378,7 +17412,7 @@ testUndeclaredVariableIsSignaledForUndeclaredVariables
 		withExceptionDo: [ :anUndeclaredVariable |
 			self assert: 'goo' equals: anUndeclaredVariable name ]! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:09:35'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:09:35'!
 testUndefinedVariableIsSignaledForVariablesDefinedButNotInitialized
 
 	| testClass |
@@ -17391,7 +17425,7 @@ testUndefinedVariableIsSignaledForVariablesDefinedButNotInitialized
 		withExceptionDo: [ :anUndefinedVariable |
 			self assert: 'goo' equals: anUndefinedVariable name ]! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:10:53'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:10:53'!
 testUnknownSelectorIsSignalForMessagesSendNotImplemented
 
 	| testClass unknowSelector |
@@ -17407,7 +17441,7 @@ testUnknownSelectorIsSignalForMessagesSendNotImplemented
 		withExceptionDo: [ :anUnknowSelector |
 			self assert: unknowSelector equals: anUnknowSelector name ]! !
 
-!CompilerExceptionsTest methodsFor: 'tests' stamp: 'HAW 12/17/2019 11:11:49'!
+!CompilerTest methodsFor: 'tests - exceptions' stamp: 'HAW 12/17/2019 11:11:49'!
 testUnusedVariableIsSignaledForUnusedVariables
 
 	| testClass |
@@ -17422,20 +17456,16 @@ testUnusedVariableIsSignaledForUnusedVariables
 			self assert: 'goo' equals: unusedVariable name ]
 ! !
 
-!CompilerExceptionsTest methodsFor: 'private' stamp: 'HAW 12/17/2019 10:38:10'!
+!CompilerTest methodsFor: 'private' stamp: 'HAW 12/17/2019 10:38:10'!
 createTestClass
 	
 	^self createClassNamed: #CompilerTestDataClass__! !
 
-!CompilerExceptionsTest methodsFor: 'private' stamp: 'cwp 8/25/2009 20:28'!
+!CompilerTest methodsFor: 'private' stamp: 'cwp 8/25/2009 20:28'!
 unusedVariableSource
 	^ 'griffle 
 		| goo |
 		^ nil'! !
-
-!CompilerExceptionsTest methodsFor: 'as yet unclassified' stamp: 'HAW 12/17/2019 12:11:30'!
-selectInvisiblyFrom: start to: stop 
-	! !
 
 !RefactoringTest methodsFor: 'assertions' stamp: 'HAW 6/1/2017 19:01:00'!
 assertCreation: aCreationBlock failsWith: aMessageTextCreator
