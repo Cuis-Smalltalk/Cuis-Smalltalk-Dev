@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4226] on 17 June 2020 at 3:01:28 pm'!
+'From Cuis 5.0 [latest update: #4229] on 18 June 2020 at 3:47:41 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 161!
+!provides: 'VectorGraphics' 1 162!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -868,20 +868,23 @@ readAdditionalFonts
 
 	^TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'! !
 
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 6/16/2020 20:13:50'!
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 6/18/2020 15:32:05'!
 readTrueTypeFontEntry: ttFontFileEntry
 
-	| ttFontDescription ttFontFamily |
+	| ttFontDescription familyName ttFontFamily |
 	ttFontDescription := TTFontReader readTTFFrom: ttFontFileEntry binaryContents.
-	ttFontFamily := FontFamily familyNamed: ttFontDescription familyName.
+	familyName := ttFontDescription familyName.
+	ttFontFamily := FontFamily familyNamed: familyName.
 	ttFontFamily
 		ifNil: [ FontFamily addFamily: (self new baseTTFontDescription: ttFontDescription ) ]
 		ifNotNil: [ :fam |
 			ttFontDescription emphasis = 0
 				ifTrue: [fam baseTTFontDescription: ttFontDescription]
-				ifFalse: [fam addTTFontDescription: ttFontDescription]].
-	
-	PopUpMenu inform: 'loaded font ', ttFontDescription familyName.! !
+				ifFalse: [fam addTTFontDescription: ttFontDescription].
+			fam clearCache ].
+	familyName = FontFamily defaultFamilyName ifTrue: [
+		Preferences setDefaultFont:	 familyName ].
+	PopUpMenu inform: 'loaded font ', familyName.! !
 
 !TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'KenD 4/22/2020 13:52:56'!
 serviceReadTTFont
