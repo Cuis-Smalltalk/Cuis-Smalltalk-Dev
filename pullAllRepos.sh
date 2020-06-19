@@ -21,6 +21,8 @@ cd ../firmata
 git pull
 cd ../Erudite
 git pull
+cd ../Cairo
+git pull
 cd ../VectorGraphics
 git pull
 cd ../StyledTextEditor
