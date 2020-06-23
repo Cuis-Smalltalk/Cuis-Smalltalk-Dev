@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4226] on 18 June 2020 at 4:11:32 pm'!
-'Description can not reference self, super and thisContext inside backtick tests'!
-!provides: 'BaseImageTests' 1 236!
+'From Cuis 5.0 [latest update: #4233] on 23 June 2020 at 4:35:45 pm'!
+'Description more backtick tests'!
+!provides: 'BaseImageTests' 1 237!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -17138,7 +17138,34 @@ text
 
 	^ sourceCode ! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/18/2020 15:52:28'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:44:13'!
+testCanNotDefineVarsInsideBackTick
+
+	self 
+		should: [ self class compile: 'm1 `|v1| v1 := 1`' ]
+		raise: SyntaxErrorNotification 
+		withExceptionDo: [ :anError |
+			self assert: (anError messageText includesSubString: 'expression expected') ]! !
+
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 16:08:17'!
+testCanNotHaveMoreThanOneExpressionInsideBackTick
+
+	self 
+		should: [ self class compile: 'm1 `1 factorial. 1 factorial`' ]
+		raise: SyntaxErrorNotification 
+		withExceptionDo: [ :anError |
+			self assert: (anError messageText includesSubString: 'backtick expected') ]! !
+
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 16:09:28'!
+testCanNotHaveReturnInsideBackTick
+
+	self 
+		should: [ self class compile: 'm1 `^10`' ]
+		raise: SyntaxErrorNotification 
+		withExceptionDo: [ :anError |
+			self assert: (anError messageText includesSubString: 'expression expected') ]! !
+
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:41:08'!
 testCanNotReferenceSelfInsideBackTick
 
 	self 
@@ -17146,9 +17173,9 @@ testCanNotReferenceSelfInsideBackTick
 		raise: SyntaxErrorNotification 
 		withExceptionDo: [ :anError |
 			self assert: (anError messageText includesSubString: 
-				(Parser canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'self')) ]! !
+				(BacktickNode canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'self')) ]! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/18/2020 15:52:21'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:41:13'!
 testCanNotReferenceSuperInsideBackTick
 
 	self 
@@ -17156,9 +17183,18 @@ testCanNotReferenceSuperInsideBackTick
 		raise: SyntaxErrorNotification 
 		withExceptionDo: [ :anError |
 			self assert: (anError messageText includesSubString: 
-				(Parser canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'super')) ]! !
+				(BacktickNode canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'super')) ]! !
 
-!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/18/2020 15:51:42'!
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:45:04'!
+testCanNotReferenceTempVarsInsideBackTick
+
+	self 
+		should: [ self class compile: 'm1 |v1| `v1 := 1`' ]
+		raise: SyntaxErrorNotification 
+		withExceptionDo: [ :anError |
+			self assert: (anError messageText includesSubString: 'Can not evaluate code') ]! !
+
+!CompilerTest methodsFor: 'test - backtick' stamp: 'HAW 6/23/2020 15:41:18'!
 testCanNotReferenceThisContextInsideBackTick
 
 	self 
@@ -17166,7 +17202,7 @@ testCanNotReferenceThisContextInsideBackTick
 		raise: SyntaxErrorNotification 
 		withExceptionDo: [ :anError |
 			self assert: (anError messageText includesSubString: 
-				(Parser canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'thisContext')) ]! !
+				(BacktickNode canNotReferencePseudoVarInsideBacktickErrorDescriptionFor: 'thisContext')) ]! !
 
 !CompilerTest methodsFor: 'tests - exceptions' stamp: 'EB 12/20/2019 20:54:26'!
 testAddsMoreThanOneUndeclaredVariableCorrectlyInBlock
