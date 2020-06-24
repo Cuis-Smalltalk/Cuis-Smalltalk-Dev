@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4233] on 23 June 2020 at 4:35:45 pm'!
+'From Cuis 5.0 [latest update: #4235] on 24 June 2020 at 3:56:04 pm'!
 'Description more backtick tests'!
-!provides: 'BaseImageTests' 1 237!
+!provides: 'BaseImageTests' 1 238!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -5820,6 +5820,17 @@ testBitReversal
 		printedThenReversed := (fixture printStringBase: 2 length: 64 padded: true) reversed.
 		reversedThenPrinted := (fixture bitReverse: 64) printStringBase: 2 length: 64 padded: true.
 		self assert: printedThenReversed = reversedThenPrinted ]! !
+
+!IntegerTest methodsFor: 'tests - bitLogic' stamp: 'jmv 6/24/2020 11:23:19'!
+testBitReversalCorrectClass
+	"This test was added due to a bug!!
+	The problem only happened in 64 bit systems running with jitted Cog VM."
+
+	| a b |
+	a _ 16r944F245FDBB2B06.
+	10 timesRepeat: [
+		b _ (a bitReverse: 64) bitReverse: 64.
+		self assert: a class = b class ]! !
 
 !IntegerTest methodsFor: 'tests - bitLogic' stamp: 'nice 7/8/2008 02:47'!
 testHighBit
