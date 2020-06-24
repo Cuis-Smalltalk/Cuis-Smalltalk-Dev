@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4229] on 18 June 2020 at 3:47:41 pm'!
+'From Cuis 5.0 [latest update: #4239] on 24 June 2020 at 4:13:03 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 162!
+!provides: 'VectorGraphics' 1 163!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -1499,9 +1499,13 @@ fillRectangle: aRectangle color: aColor borderWidth: morphStrokeWidth borderStyl
 			self lineToX: aRectangle right - d2 y: aRectangle top + d1 ]
 	]! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
-frameAndFillRectangle: r fillColor: fillColor borderWidth: borderWidth borderColor: borderColor
-	self halt! !
+!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 6/23/2020 12:22:22'!
+frameAndFillRectangle: aRectangle fillColor: aColor borderWidth: borderWidth borderColor: borderColor
+	"For BitBltCanvas protocol, aRectangle:
+	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
+
+	self strokeWidth: borderWidth color: borderColor fillColor: aColor do: [
+		self rectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 ]! !
 
 !VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/11/2017 20:57:09'!
 frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
@@ -3601,11 +3605,11 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/6/2020 17:24:52'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/23/2020 16:14:00'!
 updateEdgeCountAtX: x y: y
 	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffset blueOffset |
 
-	thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom-1.
+	thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom.
 	prevYTruncated ifNil: [ 
 		^ prevYTruncated _ thisYTruncated ].
 	thisYTruncated = prevYTruncated ifTrue: [
@@ -4210,7 +4214,7 @@ updateAlphasForX: x y: y
 						alpha > prevAlpha ifTrue: [
 							alphaMask at: pixelIndex put: alpha ]]]]]! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/6/2020 21:01:04'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/23/2020 16:15:38'!
 updateEdgesAndBoundsForX: x y: y
 
 	| thisYTruncated pixelY pixelIndex increment count pixelX |
@@ -4222,7 +4226,7 @@ updateEdgesAndBoundsForX: x y: y
 
 	"Compute edges intersecting with this horizontal line, for fills."
 	fillColor notNil ifTrue: [
-		thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom-1.
+		thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom.
 		prevYTruncated isNil
 			ifTrue: [ prevYTruncated _ thisYTruncated ]
 			ifFalse: [
