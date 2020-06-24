@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4106] on 4 April 2020 at 1:32:27 pm'!
+'From Cuis 5.0 [latest update: #4236] on 24 June 2020 at 4:08:04 pm'!
 'Description '!
-!provides: 'Compression' 1 26!
+!provides: 'Compression' 1 27!
 SystemOrganization addCategory: #'Compression-System'!
 SystemOrganization addCategory: #'Compression-Archives'!
 
@@ -1356,11 +1356,11 @@ fileReaderServicesForFileEntry: aFileEntry suffix: suffix
 		ifTrue: [ {self serviceViewDecompress. self serviceDecompressToFile} ]
 		ifFalse: [ #() ]! !
 
-!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'pb 2/26/2020 13:44:01'!
+!GZipReadStream class methodsFor: 'fileIn/Out' stamp: 'jmv 6/24/2020 16:07:05'!
 saveContents: aFileEntry
 	"Save the contents of a gzipped file"
 	| zipped buffer newFile |
-	newFile := aFileEntry baseDirectory // aFileEntry baseName.
+	newFile := aFileEntry parent // aFileEntry baseName.
 	newFile writeStreamDo: [ :unzipped |
 		unzipped binary.
 		aFileEntry readStreamDo: [ :zipContents |
