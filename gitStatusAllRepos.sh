@@ -42,6 +42,10 @@ cd ../Erudite
 echo "==============================="
 pwd
 git status -s
+cd ../Cairo
+echo "==============================="
+pwd
+git status -s
 cd ../VectorGraphics
 echo "==============================="
 pwd
