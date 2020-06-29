@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4239] on 24 June 2020 at 4:13:03 pm'!
+'From Cuis 5.0 [latest update: #4241] on 26 June 2020 at 3:48:07 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 163!
+!provides: 'VectorGraphics' 1 165!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -80,7 +80,7 @@ VectorCanvas class
 
 !classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
 Object subclass: #VectorEngineAbstract
-	instanceVariableNames: 'targetForm targetWidth antiAliasingWidth strokeWidth geometryTransformation currentMorphId clippingMorphId morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel pathFirstX pathFirstY pathCurrentX pathCurrentY previousCallX previousCallY previousCallControlX previousCallControlY'
+	instanceVariableNames: 'targetForm morphIds targetWidth antiAliasingWidth strokeWidth geometryTransformation currentMorphId clippingMorphId morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel pathFirstX pathFirstY pathCurrentX pathCurrentY previousCallX previousCallY previousCallControlX previousCallControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -90,7 +90,7 @@ VectorEngineAbstract class
 
 !classDefinition: #VectorEngineSubPixel category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineSubPixel
-	instanceVariableNames: 'edgeCounts alphaMask morphIds auxBitBlt blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared subPixelDelta'
+	instanceVariableNames: 'edgeCounts alphaMask blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared subPixelDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -100,7 +100,7 @@ VectorEngineSubPixel class
 
 !classDefinition: #VectorEngineWholePixel category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineWholePixel
-	instanceVariableNames: 'edgeCounts alphaMask morphIds blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared'
+	instanceVariableNames: 'edgeCounts alphaMask blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -2510,15 +2510,18 @@ initializePath
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:34'!
 newTrajectoryFragment! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 6/6/2020 17:41:23'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 6/26/2020 15:46:56'!
 pvtSetForm: aForm
 
 	
+	| s |
 	targetForm _ aForm.
 	targetWidth _ targetForm width.
 	self resetMorphBounds.
 	self clipRect: targetForm boundingBox.
-	self antiAliasingWidth: self class defaultAntiAliasingWidth.! !
+	self antiAliasingWidth: self class defaultAntiAliasingWidth.
+	s _ targetForm bits size.
+	morphIds _ WordArray new: s.! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/15/2020 09:27:20'!
 pvtStrokeWidth: aNumber
@@ -3758,31 +3761,15 @@ newTrajectoryFragment
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:41:28'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/26/2020 15:47:23'!
 pvtSetForm: aForm
 
-	| hack s |
+	| s |
 	super pvtSetForm: aForm.
-	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"
 	s _ targetForm bits size.
-	(alphaMask isNil or: [ alphaMask size ~= s ])
-		ifTrue: [
-			alphaMask _ WordArray new: s.
-			edgeCounts _ WordArray new: s.
-			morphIds _ WordArray new: s.
-			hack _ Form extent: targetForm extent depth: 32 bits: alphaMask.
-			auxBitBlt _ BitBlt toForm: hack.
-			auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
-			auxBitBlt combinationRule: Form over.
-			auxBitBlt destRect: targetForm boundingBox. ]
-		ifFalse: [
-			auxBitBlt destRect: targetForm boundingBox.
-			auxBitBlt destForm bits: alphaMask.
-			auxBitBlt copyBits.
-			auxBitBlt destForm bits: edgeCounts.
-			auxBitBlt copyBits.
-			auxBitBlt destForm bits: morphIds.
-			auxBitBlt copyBits ].! !
+	alphaMask _ WordArray new: s.
+	edgeCounts _ WordArray new: s.
+	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"! !
 
 !VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:21:13'!
 pvtStrokeColor: aStrokeColorOrNil
@@ -3798,7 +3785,7 @@ pvtStrokeWidth: aNumber
 	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
 	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/6/2020 17:21:13'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/26/2020 15:36:44'!
 blendFillOnly
 
 	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex morphAtThisPixelId |
@@ -3812,6 +3799,7 @@ blendFillOnly
 			pixelIndex _ pixelIndex + 1.
 
 			edgesThisPixel _ edgeCounts bytesAt: pixelIndex.
+			edgeCounts at: pixelIndex put: 0.
 			edgesThisPixelR _ edgesThisPixel at: 3.
 			edgesThisPixelG _ edgesThisPixel at: 2.
 			edgesThisPixelB _ edgesThisPixel at: 1.
@@ -3834,17 +3822,7 @@ blendFillOnly
 				self
 					blendFillOnlyAtX: displayX y: displayY pixelIndex: pixelIndex 
 					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside ].
-			]].
-	auxBitBlt
-		destX: blendLeft destY: blendTop
-		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
-	auxBitBlt destForm bits: alphaMask.
-	auxBitBlt copyBits.
-	auxBitBlt
-		destX: blendLeft destY: blendTop
-		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
-	auxBitBlt destForm bits: edgeCounts.
-	auxBitBlt copyBits.! !
+			alphaMask at: pixelIndex put: 0 ]].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/6/2020 21:39:40'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
@@ -3900,7 +3878,7 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/6/2020 17:21:13'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/26/2020 15:38:52'!
 blendStrokeAndFill
 
 	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex morphAtThisPixelId |
@@ -3914,6 +3892,7 @@ blendStrokeAndFill
 			pixelIndex _ pixelIndex + 1.
 
 			edgesThisPixel _ edgeCounts bytesAt: pixelIndex.
+			edgeCounts at: pixelIndex put: 0.
 			edgesThisPixelR _ edgesThisPixel at: 3.
 			edgesThisPixelG _ edgesThisPixel at: 2.
 			edgesThisPixelB _ edgesThisPixel at: 1.
@@ -3936,17 +3915,7 @@ blendStrokeAndFill
 				self
 					blendStrokeAndFillAtX: displayX y: displayY pixelIndex: pixelIndex 
 					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside ].
-			]].
-	auxBitBlt
-		destX: blendLeft destY: blendTop
-		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
-	auxBitBlt destForm bits: alphaMask.
-	auxBitBlt copyBits.
-	auxBitBlt
-		destX: blendLeft destY: blendTop
-		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
-	auxBitBlt destForm bits: edgeCounts.
-	auxBitBlt copyBits.! !
+			alphaMask at: pixelIndex put: 0 ]].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/7/2020 19:21:28'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
@@ -4019,7 +3988,7 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 	targetForm bits bytesAt: pixelIndex put: targetWord.! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/6/2020 17:21:13'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/26/2020 15:39:48'!
 blendStrokeOnly
 
 	| pixelIndex morphAtThisPixelId |
@@ -4027,16 +3996,11 @@ blendStrokeOnly
 		pixelIndex _ displayY * targetWidth +  blendLeft.
 		blendLeft to: blendRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
-				(clippingMorphId = 0 or: [
-				morphAtThisPixelId _ morphIds at: pixelIndex.
-				morphAtThisPixelId = clippingMorphId or: [morphAtThisPixelId = currentMorphId]]) ifTrue: [
-					self blendStrokeOnlyAtX: displayX y: displayY pixelIndex: pixelIndex ]]].
-
-	auxBitBlt
-		destX: blendLeft destY: blendTop
-		width: blendRight-blendLeft+1 height: blendBottom-blendTop+1.
-	auxBitBlt destForm bits: alphaMask.
-	auxBitBlt copyBits.! !
+			(clippingMorphId = 0 or: [
+			morphAtThisPixelId _ morphIds at: pixelIndex.
+			morphAtThisPixelId = clippingMorphId or: [morphAtThisPixelId = currentMorphId]]) ifTrue: [
+				self blendStrokeOnlyAtX: displayX y: displayY pixelIndex: pixelIndex ].
+			alphaMask at: pixelIndex put: 0 ]].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/6/2020 21:34:39'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
@@ -4304,15 +4268,14 @@ newTrajectoryFragment
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/8/2020 12:19:15'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/26/2020 15:47:06'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
 	s _ targetForm bits size.
 	alphaMask _ ByteArray new: s.
-	edgeCounts _ ByteArray new: s.
-	morphIds _ WordArray new: s.! !
+	edgeCounts _ ByteArray new: s.! !
 
 !VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:37:09'!
 pvtStrokeColor: aStrokeColorOrNil
