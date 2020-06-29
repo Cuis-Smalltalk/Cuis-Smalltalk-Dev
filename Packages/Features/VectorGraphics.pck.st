@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4241] on 26 June 2020 at 3:48:07 pm'!
+'From Cuis 5.0 [latest update: #4241] on 29 June 2020 at 12:20:29 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 165!
+!provides: 'VectorGraphics' 1 166!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -2510,18 +2510,15 @@ initializePath
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:34'!
 newTrajectoryFragment! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 6/26/2020 15:46:56'!
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 6/26/2020 16:11:12'!
 pvtSetForm: aForm
 
-	
-	| s |
 	targetForm _ aForm.
+	morphIds _ WordArray new: targetForm width * targetForm height.
 	targetWidth _ targetForm width.
 	self resetMorphBounds.
 	self clipRect: targetForm boundingBox.
-	self antiAliasingWidth: self class defaultAntiAliasingWidth.
-	s _ targetForm bits size.
-	morphIds _ WordArray new: s.! !
+	self antiAliasingWidth: self class defaultAntiAliasingWidth.! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/15/2020 09:27:20'!
 pvtStrokeWidth: aNumber
@@ -3761,12 +3758,12 @@ newTrajectoryFragment
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/26/2020 15:47:23'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/26/2020 16:11:50'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
-	s _ targetForm bits size.
+	s _ targetForm width * targetForm height.
 	alphaMask _ WordArray new: s.
 	edgeCounts _ WordArray new: s.
 	subPixelDelta _ 0.25. "Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"! !
@@ -4268,12 +4265,12 @@ newTrajectoryFragment
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/26/2020 15:47:06'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/26/2020 16:11:56'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
-	s _ targetForm bits size.
+	s _ targetForm width * targetForm height.
 	alphaMask _ ByteArray new: s.
 	edgeCounts _ ByteArray new: s.! !
 
