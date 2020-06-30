@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4235] on 24 June 2020 at 3:56:04 pm'!
-'Description more backtick tests'!
-!provides: 'BaseImageTests' 1 238!
+'From Cuis 5.0 [latest update: #4248] on 30 June 2020 at 10:15:21 am'!
+'Description More Behavior tests'!
+!provides: 'BaseImageTests' 1 239!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -2400,25 +2400,41 @@ testWithAllSuperclassesUpToIncludesReceiverClass
 	self assert: Integer equals: superclasses second.
 	self assert: Number equals: superclasses third ! !
 
-!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 4/9/2020 16:17:36'!
-testAllAccessToInstVarReturnsAccessInSiblingsToo
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 6/28/2020 11:57:28'!
+testAllAccessToInstVarReturnsAccessReceiversBranch
 
 	| references |
-	
+
 	"Just in case the hierarchy changes... not much of a chance but... - Hernan"
 	self deny: (IdentitySet includesBehavior: Dictionary).
 	self deny: (Dictionary includesBehavior: IdentitySet).
 	self assert: (IdentitySet includesBehavior: Set).
 	self assert: (Dictionary includesBehavior: Set).
-	
+	self assert: (IdentityDictionary includesBehavior: Dictionary).
+
 	references := IdentitySet allAccessesTo: 'array'.
-	
-	self assert: (references anySatisfy: [ :aReference | aReference methodClass = Dictionary ])! !
+
+	self assert: (references noneSatisfy: [ :aReference | aReference methodClass = IdentityDictionary ])! !
 
 !BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 4/9/2020 16:17:49'!
 testAllAccessToIsEmptyForVariableNotDefinedInClass
 
 	self assert: (Object allAccessesTo: 'iv1') isEmpty! !
+
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 6/28/2020 11:53:39'!
+testAllBroadAccessToReturnsAccessInAllHierarchy
+
+	| references |
+
+	"Just in case the hierarchy changes... not much of a chance but... - Hernan"
+	self deny: (IdentitySet includesBehavior: Dictionary).
+	self deny: (Dictionary includesBehavior: IdentitySet).
+	self assert: (IdentitySet includesBehavior: Set).
+	self assert: (Dictionary includesBehavior: Set).
+
+	references := IdentitySet allBroadAccessesTo: 'array'.
+
+	self assert: (references anySatisfy: [ :aReference | aReference methodClass = Dictionary ])! !
 
 !BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:42'!
 testAllUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
@@ -2443,6 +2459,13 @@ testIsInstanceVariableNamedReferencedInHierarchyLooksReferencesInHierarchy
 	self assert: (self class isInstanceVariableNamedReferencedInHierarchy: 'referenced').
 	self deny: (self class isInstanceVariableNamedReferencedInHierarchy: 'unreferenced').
 	! !
+
+!BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 6/28/2020 11:48:19'!
+testProtoObjectAllRegularInstVarNamesDoesNotFail
+
+	self
+		shouldnt: [ ProtoObject allRegularInstVarNames ]
+		raise: Error! !
 
 !BehaviorTest methodsFor: 'instance variables tests' stamp: 'HAW 8/2/2018 16:54:52'!
 testUnreferencedInstanceVariablesReturnsOnlyUnreferencedVariables
