@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4248] on 30 June 2020 at 10:15:21 am'!
-'Description More Behavior tests'!
-!provides: 'BaseImageTests' 1 239!
+'From Cuis 5.0 [latest update: #4253] on 9 July 2020 at 8:28:29 pm'!
+'Description Article test'!
+!provides: 'BaseImageTests' 1 240!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -10334,7 +10334,7 @@ testWithoutTrailingBlanks
 	self assert: '' withoutTrailingBlanks isEmpty
 ! !
 
-!StringTest methodsFor: 'tests - grammar' stamp: 'LC 4/25/2020 11:04:39'!
+!StringTest methodsFor: 'tests - grammar' stamp: 'LC 7/5/2020 16:47:10'!
 testArticle
 	self
 		assert: 'euphemism' withArticle equals: 'a euphemism';
@@ -10344,7 +10344,8 @@ testArticle
 		assert: 'anagram' withArticle equals: 'an anagram';
 		assert: 'apple' withArticle equals: 'an apple';
 		assert: 'Ukranian' withArticle equals: 'a Ukranian';
-		assert: 'Argentine' withArticle equals: 'an Argentine'! !
+		assert: 'Argentine' withArticle equals: 'an Argentine';
+		assert: 'user' withArticle equals: 'a user'! !
 
 !ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:41:00'!
 testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
