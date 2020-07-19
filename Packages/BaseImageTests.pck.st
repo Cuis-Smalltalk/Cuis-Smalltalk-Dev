@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4253] on 9 July 2020 at 8:28:29 pm'!
-'Description Article test'!
-!provides: 'BaseImageTests' 1 240!
+'From Cuis 5.0 [latest update: #4254] on 19 July 2020 at 7:41:42 pm'!
+'Description Changes to extract method and extract temporary tests by Nahuel'!
+!provides: 'BaseImageTests' 1 241!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -19125,43 +19125,43 @@ test38ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenT
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:03:10'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test01NewSelectorShouldNotBeEmpty
 
 	self
 		tryingToExtractWithSelectorNamed: #''
-		failsWith: [ ExtractMethodNewSelectorPrecondition newSelectorCanNotBeEmptyErrorMessage ]! !
+		failsWith: [ NewSelectorPrecondition newSelectorCanNotBeEmptyErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:03:15'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test02NewSelectorShouldNotContainSeparators
 
 	self
 		tryingToExtractWithSelectorNamed: #'my selector'
-		failsWith: [ ExtractMethodNewSelectorPrecondition newSelectorCanNotContainSeparatorsErrorMessage ]! !
+		failsWith: [ NewSelectorPrecondition newSelectorCanNotContainSeparatorsErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 01:05:35'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test03ExtractingToSelectorAlreadyDefinedInTheClassRaisesAWarning
 
 	self
 		tryingToExtractWithSelectorNamed: self selectorOfMethodToExtractCodeFrom
 		raisesWarning: [
-			ExtractMethodNewSelectorPrecondition
+			NewSelectorPrecondition
 				warningMessageFor: self selectorOfMethodToExtractCodeFrom
 				isAlreadyDefinedIn: classToRefactor ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:03:26'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test04NewSelectorShouldNotStartWithANumber
 
 	self
 		tryingToExtractWithSelectorNamed: #'2selector'
-		failsWith: [ ExtractMethodNewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
+		failsWith: [ NewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:03:32'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test05NewUnarySelectorShouldNotStartWithASymbol
 
 	self
 		tryingToExtractWithSelectorNamed: #-
-		failsWith: [ ExtractMethodNewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
+		failsWith: [ NewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:03:37'!
 test06IntervalToExtractIsNotBeforeMethodSourceCodeBoundaries
@@ -19253,12 +19253,12 @@ test24ItIsNotPossibleToExtractAnIntervalIncludingATemporaryAssignmentExpression
 		from: 'm1 | localVar | localVar _ 8'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractedTemporaryAssignmentWithoutItsDeclaration ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:04:40'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test25NewUnarySelectorShouldNotContainInvalidCharacters
 
 	self
 		tryingToExtractWithSelectorNamed: 'hola)' asSymbol
-		failsWith: [ ExtractMethodNewSelectorPrecondition invalidCharacterInsideNewSelectorErrorMessage ]! !
+		failsWith: [ NewSelectorPrecondition invalidCharacterInsideNewSelectorErrorMessage ]! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:30:44'!
 test28ItIsNotPossibleToExtractALocalVariableInsideOfItsDeclaration
@@ -19286,14 +19286,14 @@ test35TryingToExtractAMethodWithMoreArgumentsThanNeededFails
 		using: (Message selector: #m1:m2:m3: arguments: #('localVar1' 'localVar2' 'localVar3'))
 		failsWith: [ ExtractMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 01:12:13'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test39TryingToExtractToAMethodThatExistsInASuperclassRaisesAWarning
 
 	self
 		tryingToExtract: '42'
 		from: 'm1 ^ 42'
 		using: (Message selector: #yourself)
-		raisesWarning: [ ExtractMethodNewSelectorPrecondition warningMessageFor: #yourself isAlreadyDefinedIn: Object ]! !
+		raisesWarning: [ NewSelectorPrecondition warningMessageFor: #yourself isAlreadyDefinedIn: Object ]! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:37:19'!
 test40CanNotExtractTemporaryAssignmentWithDeclarationIfTheVariableIsUsedOutsideOfSelectionInterval
@@ -19302,6 +19302,15 @@ test40CanNotExtractTemporaryAssignmentWithDeclarationIfTheVariableIsUsedOutsideO
 		tryingToExtract: '|var| var _ 42.'
 		from: 'm1 |var| var _ 42. ^ var'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForTemporaryAssignmentWithUsagesOutsideOfSelectionInterval ]! !
+
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 15:35:08'!
+test41CannotExtractPartOfMethodSignature
+
+	self
+		tryingToExtract: 'arg'
+		from: 'm1: arg ^ self'
+		using: (Message selector: #m2: arguments: #('arg'))
+		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
 
 !ExtractToTemporaryTest methodsFor: 'class factory' stamp: 'RNG 2/22/2020 21:20:46'!
 classToRefactorName
@@ -19562,20 +19571,20 @@ test05FailsIfNewTemporaryIsEqualToInstanceVariableInAnySuperclass
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ NewTemporaryPrecondition errorMessageFor: newVariable canNotBeNamedDueToInstanceVariableDefinedIn: superclassToRefactor ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:47'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 17:10:14'!
 test06SourceCodeToExtractCanNotIncludeReturn
 
 	| newVariable sourceCode sourceCodeToExtract  intervalToExtract methodToRefactor |
-	newVariable _ 'new'.
-	sourceCodeToExtract _ '^ 1'.
-	sourceCode _ 'm1 ', sourceCodeToExtract.
-	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	newVariable := 'new'.
+	sourceCodeToExtract := '^ 1'.
+	sourceCode := 'm1 ', sourceCodeToExtract.
+	intervalToExtract := self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
 	classToRefactor compile: sourceCode.
-	methodToRefactor _ classToRefactor >> #m1.
+	methodToRefactor := classToRefactor >> #m1.
 	
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractCanNotIncludeReturn ]! !
+		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeIncludingAReturnStatement ]! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:44'!
 test07SourceCodeToExtractCanNotBeEmpty
@@ -19592,7 +19601,7 @@ test07SourceCodeToExtractCanNotBeEmpty
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractCanNotBeEmpty]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:13:55'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 16:53:38'!
 test08SourceCodeToExtractCanNotHaveSyntaxErrors
 
 	| newVariable sourceCode sourceCodeToExtract intervalToExtract methodToRefactor expectedSyntaxErrorMessage |
@@ -19610,22 +19619,22 @@ test08SourceCodeToExtractCanNotHaveSyntaxErrors
 	
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractHasSyntaxError: expectedSyntaxErrorMessage ]! !
+		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeToExtractHasSyntaxError: expectedSyntaxErrorMessage ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:40'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 16:18:15'!
 test09SourceCodeToExtractHasToBeOneStatement
 
 	| newVariable sourceCode sourceCodeToExtract intervalToExtract methodToRefactor |
-	newVariable _ 'new'.
-	sourceCodeToExtract _ '1+2. 3+4'.
-	sourceCode _ 'm1 ', sourceCodeToExtract.
-	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	newVariable := 'new'.
+	sourceCodeToExtract := '1+2. 3+4'.
+	sourceCode := 'm1 ', sourceCodeToExtract.
+	intervalToExtract := self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
 	classToRefactor compile: sourceCode.
-	methodToRefactor _ classToRefactor >> #m1.
+	methodToRefactor := classToRefactor >> #m1.
 	
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageForSourceCodeToExtractHasToBeOneStatement ]! !
+		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeToExtractHasToBeOneStatement ]! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 2/25/2020 15:12:27'!
 test10FailsIfIntervalToExtractIsBeforeMethodSourceCodeBoundaries
@@ -19653,49 +19662,49 @@ test11FailsIfIntervalToExtractIsAfterMethodSourceCodeBoundaries
 		assertCreation: [ ExtractToTemporary named: newVariable at: (sourceCode size - 1 to: sourceCode size + 2) from: methodToRefactor ]
 		failsWith: [ ExtractToTemporary errorMessageForSourceCodeSelectionOutOfBounds ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/12/2020 20:14:29'!
-test17CannotExtractPartOfMethodDefinition
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 18:47:52'!
+test17CannotExtractPartOfMethodName
 
 	| newVariable sourceCode methodToRefactor intervalToExtract sourceCodeToExtract |	
-	newVariable _ 'new'.
-	sourceCode _ 'm1 ^ 1'.
+	newVariable := 'new'.
+	sourceCode := 'm1 ^ 1'.
 	classToRefactor compile: sourceCode.
-	sourceCodeToExtract _ 'm1'.
-	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
-	methodToRefactor _ classToRefactor >> #m1.
+	sourceCodeToExtract := 'm1'.
+	intervalToExtract := self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	methodToRefactor := classToRefactor >> #m1.
 
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageForSourceCodeIncludingAnInvalidExpression ]! !
+		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/12/2020 23:23:09'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 16:20:08'!
 test18CannotExtractPartOfMessageSend
 
 	| newVariable sourceCode methodToRefactor intervalToExtract sourceCodeToExtract |	
-	newVariable _ 'new'.
-	sourceCode _ 'm1 ^ self m2'.
+	newVariable := 'new'.
+	sourceCode := 'm1 ^ self m2'.
 	classToRefactor compile: sourceCode.
-	sourceCodeToExtract _ 'm2'.
-	intervalToExtract _ self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
-	methodToRefactor _ classToRefactor >> #m1.
+	sourceCodeToExtract := 'm2'.
+	intervalToExtract := self intervalOf: sourceCodeToExtract locatedIn: sourceCode.
+	methodToRefactor := classToRefactor >> #m1.
 
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageForSourceCodeIncludingAnInvalidExpression ]! !
+		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 5/8/2020 21:20:29'!
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 16:20:48'!
 test21CannotExtractLeftSideOfAssignment
 
 	| newVariable sourceCode methodToRefactor intervalToExtract |
-	newVariable _ 'new'.
-	sourceCode _ 'm1 | existing | existing := 2'.
+	newVariable := 'new'.
+	sourceCode := 'm1 | existing | existing := 2'.
 	classToRefactor compile: sourceCode.
-	intervalToExtract _ (17 to: 24) asSourceCodeInterval. "second occurrence of 'existing' variable "
-	methodToRefactor _ classToRefactor >> #m1.
+	intervalToExtract := (17 to: 24) asSourceCodeInterval. "second occurrence of 'existing' variable "
+	methodToRefactor := classToRefactor >> #m1.
 
 	self 
 		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
-		failsWith: [ ExtractToTemporary errorMessageForSourceCodeIncludingAnInvalidExpression ]! !
+		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
 !ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 4/26/2020 15:23:20'!
 test23CannotUseAReservedNameAsTheNewTemporaryVariable
@@ -19712,6 +19721,20 @@ test23CannotUseAReservedNameAsTheNewTemporaryVariable
 		self 
 			assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
 			failsWith: [ NewTemporaryPrecondition errorMessageForNewTemporaryVariableCanNotBeAReservedName: newVariable ] ]! !
+
+!ExtractToTemporaryTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 18:48:18'!
+test25CannotExtractArgumentNamesFromMethodSignature
+
+	| intervalToExtract methodToRefactor newVariable sourceCode |
+	newVariable := 'new'.
+	sourceCode := 'm1: arg ^ self'.
+	classToRefactor compile: sourceCode.
+	intervalToExtract := self intervalOf: 'arg' locatedIn: sourceCode.
+	methodToRefactor := classToRefactor >> #m1:.
+
+	self 
+		assertCreation: [ ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor ]
+		failsWith: [ SourceCodeOfTemporaryToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
 
 !InsertSuperclassTest methodsFor: 'tests' stamp: 'HAW 8/13/2018 18:01:00'!
 test01ChangesTheSuperclassOfTheClassToRefactor
