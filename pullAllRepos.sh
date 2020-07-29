@@ -1,39 +1,19 @@
 #!/bin/bash
-cd Cuis-Smalltalk-Dev
+
+repositories="VectorGraphics EnhancedText Erudite StyledTextEditor Measures Calendars CodeExamples Games Morphic Cairo OSProcess Numerics GeographicInformationSystems Parsers Machine-Learning AMQP firmata Learning-Cuis TheCuisBook"
+
+echo -e "Pulling \e[7m =====Cuis-Smalltalk-Dev===== \e[0m"
 git pull
-cd ../AMQP
-git pull
-cd ../Calendars
-git pull
-cd ../CodeExamples
-git pull
-cd ../Games
-git pull
-cd ../Measures
-git pull
-cd ../OSProcess
-git pull
-cd ../Numerics
-git pull
-cd ../Morphic
-git pull
-cd ../firmata
-git pull
-cd ../Erudite
-git pull
-cd ../Cairo
-git pull
-cd ../VectorGraphics
-git pull
-cd ../StyledTextEditor
-git pull
-cd ../Parsers
-git pull
-cd ../Machine-Learning
-git pull
-cd ../GeographicInformationSystems
-git pull
-cd ../EnhancedText
-git pull
-cd ../Learning-Cuis
-git pull
+cd ..
+for repository in $repositories;
+do
+    if test -r $repository
+    then
+	echo -e "Pulling \e[7m -----$repository----- \e[0m..."
+	cd $repository
+	git pull
+	cd ..
+    else
+	echo "Repository $repository not cloned"
+    fi
+done
