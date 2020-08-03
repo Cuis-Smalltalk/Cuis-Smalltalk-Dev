@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4241] on 29 June 2020 at 12:20:29 pm'!
+'From Cuis 5.0 [latest update: #4329] on 3 August 2020 at 11:48:38 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 166!
+!provides: 'VectorGraphics' 1 167!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -38,6 +38,36 @@ FontFamily subclass: #TrueTypeFontFamily
 TrueTypeFontFamily class
 	instanceVariableNames: ''!
 
+!classDefinition: #EllipseMorph2 category: #'VectorGraphics-Experiments'!
+Morph subclass: #EllipseMorph2
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph2 class' category: #'VectorGraphics-Experiments'!
+EllipseMorph2 class
+	instanceVariableNames: ''!
+
+!classDefinition: #EllipseMorph3 category: #'VectorGraphics-Experiments'!
+Morph subclass: #EllipseMorph3
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph3 class' category: #'VectorGraphics-Experiments'!
+EllipseMorph3 class
+	instanceVariableNames: ''!
+
+!classDefinition: #EllipseMorph4 category: #'VectorGraphics-Experiments'!
+Morph subclass: #EllipseMorph4
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph4 class' category: #'VectorGraphics-Experiments'!
+EllipseMorph4 class
+	instanceVariableNames: ''!
+
 !classDefinition: #M3Exp01Morph category: #'VectorGraphics-Experiments'!
 Morph subclass: #M3Exp01Morph
 	instanceVariableNames: ''
@@ -68,9 +98,19 @@ Morph subclass: #M3Exp03Morph
 M3Exp03Morph class
 	instanceVariableNames: ''!
 
+!classDefinition: #HybridCanvas category: #'VectorGraphics-Kernel'!
+BitBltCanvas subclass: #HybridCanvas
+	instanceVariableNames: 'vectorCanvas'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Kernel'!
+!classDefinition: 'HybridCanvas class' category: #'VectorGraphics-Kernel'!
+HybridCanvas class
+	instanceVariableNames: ''!
+
 !classDefinition: #VectorCanvas category: #'VectorGraphics-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
-	instanceVariableNames: ''
+	instanceVariableNames: 'boundsFinderEngine'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -86,6 +126,16 @@ Object subclass: #VectorEngineAbstract
 	category: 'VectorGraphics-Kernel'!
 !classDefinition: 'VectorEngineAbstract class' category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract class
+	instanceVariableNames: ''!
+
+!classDefinition: #VectorEngineBoundsFinder category: #'VectorGraphics-Kernel'!
+VectorEngineAbstract subclass: #VectorEngineBoundsFinder
+	instanceVariableNames: 'auxStrokeWidthDilatedHalf'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineBoundsFinder class' category: #'VectorGraphics-Kernel'!
+VectorEngineBoundsFinder class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngineSubPixel category: #'VectorGraphics-Kernel'!
@@ -306,6 +356,31 @@ In Cuis what is usually called TrueType Font is represented by TTFontDescription
 
 TrueTypeFonts, being part of the traditional AbstractFont hierarchy, adds a specific pointSize, and is the object used in texts.!
 
+!EllipseMorph2 commentStamp: '<historical>' prior: 0!
+self runningWorld setCanvas: (HybridCanvas onForm: Display).
+self runningWorld setCanvas: (BitBltCanvas onForm: Display).
+self runningWorld canvas class.
+
+"Hide taskbar."
+
+EllipseMorph2 new openInWorld.
+EllipseMorph2 allInstancesDo: [ :a | a delete ]!
+
+!EllipseMorph3 commentStamp: '<historical>' prior: 0!
+"
+self runningWorld setCanvas: (HybridCanvas onForm: Display).
+"
+a _ EllipseMorph2 new openInWorld.
+b _ EllipseMorph3 new.
+c _ EllipseMorph4 new.
+a addMorph: b.
+b morphPosition: 100@0.
+a addMorph: c.
+c morphPosition: -100@0.
+"
+EllipseMorph2 allInstancesDo: [ :a | a delete ].
+"!
+
 !M3Exp01Morph commentStamp: 'jmv 12/11/2017 21:33:29' prior: 0!
 | m |
 m _ M3Exp01Morph new.
@@ -355,6 +430,12 @@ setClipRect: (40@40 extent: 100@100);
 fullDraw: m.
 Display forceToScreen.!
 
+!HybridCanvas commentStamp: '<historical>' prior: 0!
+A HybridCanvas works as a BitBltCanvas until faced with a situation that BitBlitCanvas can't handle. At that point, the vectorCanvas takes command.
+
+self runningWorld setCanvas: (HybridCanvas onForm: Display).
+self runningWorld canvas class!
+
 !VectorCanvas commentStamp: '<historical>' prior: 0!
 A canvas specially built for Morphic 3.
 
@@ -388,15 +469,12 @@ Display forceToScreen.
 		engine abs_EllipseCenterX: 100 y: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float pi * 2 ].
 Display forceToScreen!
 
+!VectorEngineBoundsFinder commentStamp: '<historical>' prior: 0!
+Morph Bounds Finder!
+
 !VectorEngineWholePixel commentStamp: '<historical>' prior: 0!
 Does only whole pixel anti aliasing. Appropriate for very high resolution displays.
-edgeCounts and alphaMask are single byte per pixel.
-morphIds is subsampled x 2.
-
-Matar el bitblt
-usar bytearray
-repasar nombres
-submuestrar morphsIds!
+edgeCounts and alphaMask are single byte per pixel.!
 
 !FormGlyph commentStamp: '<historical>' prior: 0!
 Needed only for BitBltCanvasEngine
@@ -899,6 +977,65 @@ serviceReadTTFont
 		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
+!EllipseMorph2 methodsFor: 'drawing' stamp: 'jmv 7/14/2020 22:06:01'!
+drawOn: aCanvas 
+
+	aCanvas ellipseCenterX: 0 y: 0 rx: 100 ry: 6 borderWidth: 6 borderColor: Color gray fillColor: Color black! !
+
+!EllipseMorph2 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 21:37:32'!
+step! !
+
+!EllipseMorph2 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 22:06:54'!
+stepAt: millisecondSinceLast
+	"See comment at #wantsSteps"
+	self rotateBy: Float twoPi / 60! !
+
+!EllipseMorph2 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 21:36:57'!
+wantsSteps
+	^true! !
+
+!EllipseMorph2 methodsFor: 'geometry' stamp: 'jmv 7/14/2020 22:18:25'!
+morphExtentInWorld: newExtent
+	"world coordinates
+	Ignored by morphs that are not resizeable"
+	self scaleBy: newExtent magnitude / (100*location scale)! !
+
+!EllipseMorph2 class methodsFor: 'new-morph participation' stamp: 'jmv 7/9/2020 16:50:50'!
+categoryInNewMorphMenu
+	^ 'Basic'! !
+
+!EllipseMorph3 methodsFor: 'drawing' stamp: 'jmv 7/27/2020 01:25:30'!
+drawOn: aCanvas
+	aCanvas ellipseCenterX: 0 y: 0 rx: 98 ry: 50 borderWidth: 3 borderColor: Color black fillColor: (Color r: 0.000 g: 0.000 b: 1.000).! !
+
+!EllipseMorph3 class methodsFor: 'new-morph participation' stamp: 'jmv 7/14/2020 21:52:15'!
+categoryInNewMorphMenu
+	^ 'Basic'! !
+
+!EllipseMorph4 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 22:39:27'!
+stepAt: millisecondSinceLast
+	"See comment at #wantsSteps"
+	self rotateBy: Float twoPi / -60! !
+
+!EllipseMorph4 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 22:41:36'!
+stepTime
+	"Answer the desired time between steps in milliseconds. This default implementation requests that the 'step' method be called once every second."
+
+	^ 10! !
+
+!EllipseMorph4 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 21:57:54'!
+wantsSteps
+	^true! !
+
+!EllipseMorph4 methodsFor: 'drawing' stamp: 'jmv 7/14/2020 22:06:29'!
+drawOn: aCanvas 
+
+	aCanvas ellipseCenterX: 0 y: 30 rx: 4 ry: 30 borderWidth: 3 borderColor: Color black fillColor: Color veryLightGray! !
+
+!EllipseMorph4 class methodsFor: 'new-morph participation' stamp: 'jmv 7/14/2020 21:56:44'!
+categoryInNewMorphMenu
+	^ 'Basic'! !
+
 !M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:34:45'!
 drawOn: aCanvas
 	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
@@ -934,12 +1071,6 @@ aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alp
 	aCanvas roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60 rx: 40 ry: 20 ]
 ! !
 
-!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 7/14/2014 14:28'!
-clipsLastSubmorph
-	"Drawing specific. If this property is set, clip the receiver's  
-	last submorph to the receiver's shape"
-	^ true! !
-
 !M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:08:39'!
 drawOn: aCanvas
 	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
@@ -947,6 +1078,13 @@ drawOn: aCanvas
 	aCanvas strokeWidth: 15 color: (Color green alpha: 0.8) fillColor: (Color red alpha: 0.6) do: [
 		aCanvas
 			roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60  rx: 40 ry: 20 ]! !
+
+!M3Exp02Morph methodsFor: 'geometry testing' stamp: 'jmv 7/18/2020 21:37:29'!
+clipsLastSubmorph
+	"Answer true if we clip the shape of our last submorph to ours.
+	Answer true only when clipping by the canvas is needed."
+
+	^ true! !
 
 !M3Exp03Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:25:49'!
 drawOn: aCanvas
@@ -986,6 +1124,95 @@ false ifTrue: [
 	aCanvas strokeWidth: 1 color: (Color red alpha: 0.7+0.3) do: [
 	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
 ]! !
+
+!HybridCanvas methodsFor: 'initialization' stamp: 'jmv 7/11/2020 00:07:15'!
+world: aPasteUpMorph
+	super world: aPasteUpMorph.
+	vectorCanvas world: aPasteUpMorph! !
+
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/11/2020 09:55:52'!
+canvasToUse
+
+	currentMorph requiresVectorCanvas ifTrue: [
+		^ vectorCanvas ].
+	^self.! !
+
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/11/2020 10:55:59'!
+clippingMorph: aMorph
+	super clippingMorph: aMorph.
+	vectorCanvas clippingMorph: aMorph! !
+
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/27/2020 01:24:38'!
+newClipRect: aRectangleOrNil
+	"This method is calledd when we are about to repair damaged rectangles.
+	This is a good point to ensure that morphIds in our vectorCanvas is cleared of any previously drawn morph.
+	This is not needed when using just a VectorCanvas. It is only needed in the HybridCanvas, where it might happen that those pixels will only contain only BitBltCanvas morphs."
+
+	| auxBitBlt hack |
+self flag: #jmvHacks.
+	self setClipRect: (aRectangleOrNil
+		ifNil: [ `0@0` corner: form extent ]
+		ifNotNil: [ aRectangleOrNil translatedBy: self canvasOrigin ]).
+
+	aRectangleOrNil notNil ifTrue: [
+		hack _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
+		auxBitBlt _ BitBlt toForm: hack.
+		auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
+		auxBitBlt combinationRule: Form over.
+		auxBitBlt destRect: aRectangleOrNil.
+		auxBitBlt copyBits
+		]! !
+
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/9/2020 16:06:02'!
+resetEngine
+	super resetEngine.
+	vectorCanvas _ VectorCanvas onForm: form.! !
+
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/11/2020 10:55:26'!
+setClipRect: aRectangle
+	super setClipRect: aRectangle.
+	vectorCanvas setClipRect: aRectangle! !
+
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/25/2020 08:26:28'!
+updatingMorphBoundsDo: aBlock
+
+	| prevEngine |
+	prevEngine _ engine.
+	[
+		engine _ nil.
+		vectorCanvas updatingMorphBoundsDo: aBlock
+	] ensure: [ engine _ prevEngine ]! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
+into: aMorph
+	super into: aMorph.
+	vectorCanvas into: aMorph! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/13/2020 16:51:29'!
+morph: aMorph isAtPoint: aPoint
+
+	^aMorph requiresVectorCanvas
+		ifTrue: [vectorCanvas morph: aMorph isAtPoint: aPoint]
+		ifFalse: [super morph: aMorph isAtPoint: aPoint]! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:59'!
+outOfMorph
+	super outOfMorph.
+	vectorCanvas outOfMorph! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/26/2020 20:25:44'!
+restorePatch: savedPatch
+	"Argument must previously be obtained by calling #savePatch:bounds:
+	Senders should not assume anything about the returned object, except that it will not be nil."
+
+	vectorCanvas restorePatch: savedPatch! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/26/2020 20:25:21'!
+savePatch: prevSavedPatch bounds: aRectangle
+	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
+	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
+
+	^ vectorCanvas savePatch: prevSavedPatch bounds: aRectangle! !
 
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
@@ -1600,22 +1827,19 @@ windowFrame: aRectangle color: aColor radius: r border: morphStrokeWidth labelHe
 		self
 			roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh-d2 maxY: aRectangle bottom-d2 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'testing' stamp: 'jmv 6/10/2019 10:45:02'!
-isCurrentMorphVisible
-	self flag: #jmvVer2. "Also #morphBoundsInWorld"
-self revisar. "Of course not true. Do it right. But first, assess the need for this method at all!!"
-	^ true! !
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/27/2020 10:24:44'!
+boundingRectOfCurrentMorphAfterDraw
+	"In targetForm coordinates.
+	Clipped to owner if appropriate.
+	Only valid _after_ drawing currentMorph."
+
+	^ clippingMorphDisplayBounds
+		ifNotNil: [ :ownerClips | engine morphBoundsAfterDraw intersect: ownerClips ]
+		ifNil: [ engine morphBoundsAfterDraw ]! !
 
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 4/4/2020 19:32:40'!
 clippingMorph: aMorph
 	engine clippingMorph: aMorph! !
-
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 1/14/2020 09:32:21'!
-clippingRectForCurrentMorph
-	"In targetForm coordinates.
-	Only valid _after_ drawing currentMorph."
-
-	^engine clippingRectForCurrentMorph! !
 
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/31/2017 13:22:48'!
 initializeWith: aForm origin: aPoint
@@ -1629,11 +1853,71 @@ into: aMorph
 	engine geometryTransformation: currentTransformation.
 	engine resetMorphBounds.! !
 
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/13/2020 16:52:13'!
+morph: aMorph isAtPoint: aPoint
+	^engine morph: aMorph isAtPoint: aPoint! !
+
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 8/16/2018 15:37:22'!
 outOfMorph
 	super outOfMorph.
 	engine currentMorph: currentMorph.
 	engine geometryTransformation: currentTransformation! !
+
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/27/2020 01:22:32'!
+restorePatch: savedPatch
+	"Argument must previously be obtained by calling #savePatch:bounds:
+	Senders should not assume anything about the returned object, except that it will not be nil."
+
+	| savedIdsPatch hack bb savedDisplayPatch |
+"	super restorePatch: savedPatch first."
+"aForm _ savedPatch first.
+	self image: aForm
+		at: aForm offset
+		sourceRect: aForm boundingBox."
+savedDisplayPatch _ savedPatch first.
+	bb _ BitBlt toForm: form.
+	bb sourceForm: savedDisplayPatch; combinationRule: Form over;
+		sourceX: 0; sourceY: 0;
+		destX: savedDisplayPatch offset x destY: savedDisplayPatch offset y width: savedDisplayPatch width height: savedDisplayPatch height;
+		copyBits.
+
+"Tanto el hack como el bb podrian guardarse."
+savedIdsPatch _ savedPatch second.
+	hack _ Form extent: form extent depth: 32 bits: (engine instVarNamed: 'morphIds').
+	bb _ BitBlt toForm: hack.
+	bb sourceForm: savedIdsPatch; combinationRule: Form over;
+		sourceX: 0; sourceY: 0;
+		destX: savedDisplayPatch offset x destY: savedDisplayPatch offset y width: savedDisplayPatch width height: savedDisplayPatch height;
+		width: savedIdsPatch width; height: savedIdsPatch height;
+		copyBits.! !
+
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/27/2020 14:54:29'!
+savePatch: prevSavedPatch bounds: aRectangle
+	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
+	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
+
+	| patchForm savedIdsPatch hack bb answer morphIds |
+self flag: #jmvHacks.
+	answer _ prevSavedPatch.
+	(answer is: #Array) ifFalse: [ answer _ Array new: 2 ].
+	patchForm _ super savePatch: answer first bounds: aRectangle.
+
+	patchForm == answer first
+		ifTrue: [ savedIdsPatch _ answer second ]
+		ifFalse: [
+			savedIdsPatch _ Form extent: aRectangle extent depth: 32.
+			answer at: 1 put: patchForm.
+			answer at: 2 put: savedIdsPatch ].
+
+morphIds _ engine instVarNamed: 'morphIds'.
+"Tanto el hack como el bb podrian guardarse."
+	hack _ Form extent: form extent depth: 32 bits: morphIds.
+	bb _ BitBlt toForm: savedIdsPatch.
+	bb sourceForm: hack; combinationRule: Form over;
+		sourceX: aRectangle left; sourceY: aRectangle top;
+		width: aRectangle width; height: aRectangle height;
+		copyBits.
+	^answer! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 6/8/2020 12:24:42'!
 doSubPixelAntiAliasing
@@ -1650,7 +1934,7 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 6/8/2020 12:24:51'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 7/24/2020 17:08:49'!
 setForm: aForm
 	"
 	World extent: World extent
@@ -1658,7 +1942,18 @@ setForm: aForm
 	aForm depth = 32  ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
 	form _ aForm.
 	engine _ VectorEngineWholePixel onForm: form.
+	boundsFinderEngine _ VectorEngineBoundsFinder onForm: form.
 	self newClipRect: nil.! !
+
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 7/24/2020 17:09:33'!
+updatingMorphBoundsDo: aBlock
+
+	| prevEngine |
+	prevEngine _ engine.
+	[
+		engine _ boundsFinderEngine.
+		aBlock value.
+	] ensure: [ engine _ prevEngine ]! !
 
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 arrowOfDirection: aSymbol size: finalSizeInteger
@@ -1707,13 +2002,6 @@ antiAliasingWidth: aNumber
 clippingMorph: aMorph
 	clippingMorphId _ aMorph ifNil: [0] ifNotNil: [aMorph morphId]! !
 
-!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 1/14/2020 09:32:34'!
-clippingRectForCurrentMorph
-	"In targetForm coordinates.
-	Only valid _after_ drawing currentMorph."
-
-	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom! !
-
 !VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 4/4/2020 19:49:03'!
 currentMorph: aMorph
 	currentMorphId _ aMorph ifNil: [0] ifNotNil: [aMorph morphId]! !
@@ -1723,6 +2011,14 @@ geometryTransformation: aGeometryTransformation
 	"geometryTransformation is a GeometryTransformation that when applied to points in the public path protocol (i.e. Morph or domain coordinate system), it transform them into global, i.e. targetForm pixel coordinates. Therefore, the method used for converting client coordinates to actual pixel coordinates in the targetForm is #externalizePosition:, while the seldom used conversion from pixel coordinates to client coordinates is #internalizePosition:"
 
 	geometryTransformation _ aGeometryTransformation! !
+
+!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 7/27/2020 10:24:19'!
+morphBoundsAfterDraw
+	"In targetForm coordinates.
+	Doesn't include any clipping rect (neither clip rect parameter to bound drawn area, nor possible clipping to owner shape or bounds).
+	Only valid _after_ drawing currentMorph."
+
+	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
 !VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 6/6/2020 21:20:34'!
 fillColor: aFillColor do: pathCommandsBlock
@@ -2796,6 +3092,13 @@ Display forceToScreen
 	pathCurrentX _ xTo.
 	pathCurrentY _ yTo.! !
 
+!VectorEngineAbstract methodsFor: 'morphic' stamp: 'jmv 7/13/2020 17:17:45'!
+morph: aMorph isAtPoint: aPoint
+	| index |
+	index _ aPoint y * targetWidth + aPoint x + 1.
+	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
+	^(morphIds at: index) = aMorph morphId! !
+
 !VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 6/6/2020 17:34:12'!
 experLinesAndShapes
 	"
@@ -3453,6 +3756,144 @@ onForm: aForm
 
 	^ self new initializeOnForm: aForm! !
 
+!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 7/24/2020 16:52:27'!
+clipRect: aRectangle! !
+
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 7/24/2020 16:41:45'!
+fillColor: aFillColor do: pathCommandsBlock
+	"Prepare parameters for drawing fill."
+
+	(aFillColor isNil or: [ aFillColor alpha = 0.0]) ifTrue: [ ^ self ].
+	self pvtStrokeWidth: 0.0.
+	hopsPerPixel _ 8.										"See #experimentHopsPerPixel3"
+	self initializePath.
+	pathCommandsBlock valueWithPossibleArgument: self.
+	self finishPath! !
+
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 7/24/2020 17:00:12'!
+strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
+	"Prepare parameters for drawing stroke."
+
+	| aStrokeWidth |
+	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self ].
+	clientStrokeWidth = 0.0 ifTrue: [ ^self ].
+	aStrokeWidth _ geometryTransformation externalizeScalar: clientStrokeWidth.
+	self pvtStrokeWidth: (aStrokeWidth max: antiAliasingWidth).
+	hopsPerPixel _ 10.0 / strokeWidth + 1.		"See #experimentHopsPerPixel2"
+	self initializePath.
+	pathCommandsBlock valueWithPossibleArgument: self.
+	self finishPath! !
+
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 7/24/2020 17:03:33'!
+strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
+	"Prepare parameters for drawing stroke, fill, or both."
+
+	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
+	clientStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
+	^ self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock! !
+
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 7/24/2020 16:35:39'!
+primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
+
+	| angle xp yp x y |
+	angle _ startAngle.
+	hops+1 timesRepeat: [
+		xp _ angle cos * rx.
+		yp _ angle sin * ry.
+		x _ thetaCos * xp - (thetaSin * yp) + cx.
+		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		self updateBoundsForX: x y: y.
+		angle _ angle + d. ].! !
+
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 7/24/2020 16:35:54'!
+primCubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops
+	| t oneLessT increment f2 f3 f1 f23 f4 x y |
+	t _ 0.0.
+	increment _ 1.0 / hops.
+	hops timesRepeat: [
+		oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT * oneLessT.
+		f23 _ 3 * oneLessT * t.
+		f2 _ f23 * oneLessT.
+		f3 _ f23 * t.
+		f4 _ t * t * t.
+		x _ (f1 * xFrom) + (f2 * xControl1) + (f3 * xControl2) + (f4 * xTo).
+		y _ (f1 * yFrom) + (f2 * yControl1) + (f3 * yControl2) + (f4 * yTo).
+		self updateBoundsForX: x y: y.
+		t _ t + increment. ].
+	self updateBoundsForX: xTo y: yTo.! !
+
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 7/24/2020 16:37:25'!
+primLineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY
+
+	self updateBoundsForX: xFrom y: yFrom.
+	self updateBoundsForX: xTo y: yTo.! !
+
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 7/24/2020 16:36:29'!
+primQuadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops
+	| t oneLessT increment f2 f3 f1 x y |
+	t _ 0.0.
+	increment _ 1.0 / hops.
+	hops timesRepeat: [
+		oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT.
+		f2 _ 2* oneLessT * t.
+		f3 _ t * t.
+		x _ (f1 * xFrom) + (f2 * xControl) + (f3 * xTo).
+		y _ (f1 * yFrom) + (f2 * yControl) + (f3 * yTo).
+		self updateBoundsForX: x y: y.
+		t _ t + increment. ].
+	self updateBoundsForX: xTo y: yTo.! !
+
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms - aux' stamp: 'jmv 7/24/2020 16:49:09'!
+updateBoundsForX: x y: y
+
+	morphBoundsLeft _ morphBoundsLeft min: x.
+	morphBoundsTop _ morphBoundsTop min: y.
+	morphBoundsRight _ morphBoundsRight max: x.
+	morphBoundsBottom _ morphBoundsBottom max: y.! !
+
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 7/24/2020 16:56:25'!
+finishPath
+	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
+
+	morphBoundsLeft _ (morphBoundsLeft - auxStrokeWidthDilatedHalf) truncated +1.
+	morphBoundsTop _ (morphBoundsTop - auxStrokeWidthDilatedHalf) truncated +1.
+	morphBoundsRight _ (morphBoundsRight + auxStrokeWidthDilatedHalf) truncated "+1". "Make room not just for updated mask, but also edges (hence, +1) NOT IN THIS CLASS"
+	morphBoundsBottom _ (morphBoundsBottom + auxStrokeWidthDilatedHalf) truncated.
+
+	"Most likely useless."
+	pathFirstX _ 0.0.
+	pathFirstY _ 0.0.
+	pathCurrentX _ 0.0.
+	pathCurrentY _ 0.0.
+	previousCallX _ 0.0.
+	previousCallY _ 0.0.
+	previousCallControlX _ previousCallX.
+	previousCallControlY _ previousCallY.! !
+
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 7/24/2020 17:14:59'!
+morph: aMorph isAtPoint: aPoint
+	self shouldNotHappen! !
+
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 7/24/2020 17:13:17'!
+pvtSetForm: aForm
+
+	targetForm _ aForm.
+	targetWidth _ targetForm width.
+	self resetMorphBounds.
+	self antiAliasingWidth: self class defaultAntiAliasingWidth.! !
+
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 7/24/2020 16:44:36'!
+pvtStrokeWidth: aNumber
+
+	super pvtStrokeWidth: aNumber.
+	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.! !
+
+!VectorEngineBoundsFinder class methodsFor: 'instance creation' stamp: 'jmv 7/24/2020 16:31:03'!
+defaultAntiAliasingWidth
+	^1.7! !
+
 !VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 6/6/2020 17:21:13'!
 antiAliasingWidth: aNumber
 
@@ -3605,11 +4046,13 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/23/2020 16:14:00'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 7/14/2020 09:57:29'!
 updateEdgeCountAtX: x y: y
 	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffset blueOffset |
 
-	thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom.
+	thisYTruncated _ y truncated .
+	(thisYTruncated between: clipTop-1 and: clipBottom) ifFalse: [
+		^ self ].
 	prevYTruncated ifNil: [ 
 		^ prevYTruncated _ thisYTruncated ].
 	thisYTruncated = prevYTruncated ifTrue: [
@@ -3698,7 +4141,7 @@ Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: x y: y ].! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:21:13'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 7/17/2020 17:47:41'!
 finishPath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
@@ -3713,6 +4156,13 @@ finishPath
 	blendTop _ (blendTop - auxStrokeWidthDilatedHalf) truncated +1.
 	blendRight _ (blendRight + auxStrokeWidthDilatedHalf + subPixelDelta) truncated +1. "Make room not just for updated mask, but also edges (hence, +1)"
 	blendBottom _ (blendBottom + auxStrokeWidthDilatedHalf) truncated.
+
+	"morphBounds is not affected by clipRect"
+	morphBoundsLeft _ morphBoundsLeft min: blendLeft.
+	morphBoundsTop _ morphBoundsTop min: blendTop.
+	morphBoundsRight _ morphBoundsRight max: blendRight.
+	morphBoundsBottom _ morphBoundsBottom max: blendBottom.
+
 	blendLeft< clipLeft ifTrue: [ blendLeft _ clipLeft ].
 	blendTop < clipTop ifTrue: [ blendTop _ clipTop ].
 	blendRight > clipRight ifTrue: [ blendRight _ clipRight ].
@@ -3725,10 +4175,6 @@ finishPath
 				ifFalse: [ self blendFillOnly ]]
 			ifFalse: [
 				self blendStrokeOnly ]].
-	morphBoundsLeft _ morphBoundsLeft min: blendLeft.
-	morphBoundsTop _ morphBoundsTop min: blendTop.
-	morphBoundsRight _ morphBoundsRight max: blendRight.
-	morphBoundsBottom _ morphBoundsBottom max: blendBottom.
 
 	pathFirstX _ 0.0.
 	pathFirstY _ 0.0.
@@ -4175,7 +4621,7 @@ updateAlphasForX: x y: y
 						alpha > prevAlpha ifTrue: [
 							alphaMask at: pixelIndex put: alpha ]]]]]! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/23/2020 16:15:38'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 7/14/2020 09:50:49'!
 updateEdgesAndBoundsForX: x y: y
 
 	| thisYTruncated pixelY pixelIndex increment count pixelX |
@@ -4187,25 +4633,27 @@ updateEdgesAndBoundsForX: x y: y
 
 	"Compute edges intersecting with this horizontal line, for fills."
 	fillColor notNil ifTrue: [
-		thisYTruncated _ (y truncated max: clipTop-1) min: clipBottom.
-		prevYTruncated isNil
-			ifTrue: [ prevYTruncated _ thisYTruncated ]
-			ifFalse: [
-				thisYTruncated = prevYTruncated ifFalse: [
-					"All edge count at the left of the clipRect are added there (at the left of the clipRect).
-					The effect is the same, and we need to clean up less stuff afterwards.
-					More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
-					pixelX _ x truncated + 1 max: clipLeft.
-					pixelX <= clipRight ifTrue: [
-						pixelY _ thisYTruncated max: prevYTruncated.
-						increment _ (thisYTruncated - prevYTruncated) sign.
+		thisYTruncated _ y truncated.
+		(thisYTruncated between: clipTop-1 and: clipBottom) ifTrue: [
+			prevYTruncated isNil
+				ifTrue: [ prevYTruncated _ thisYTruncated ]
+				ifFalse: [
+					thisYTruncated = prevYTruncated ifFalse: [
+						"All edge count at the left of the clipRect are added there (at the left of the clipRect).
+						The effect is the same, and we need to clean up less stuff afterwards.
+						More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
+						pixelX _ x truncated + 1 max: clipLeft.
+						pixelX <= clipRight ifTrue: [
+							pixelY _ thisYTruncated max: prevYTruncated.
+							increment _ (thisYTruncated - prevYTruncated) sign.
+							pixelIndex _ pixelY * targetWidth + pixelX +1.
+							count _ edgeCounts at: pixelIndex.
+							count _ count + increment bitAnd: 16rFF.
+							edgeCounts at: pixelIndex put: count ].
 						prevYTruncated _ thisYTruncated.
-						pixelIndex _ pixelY * targetWidth + pixelX +1.
-						count _ edgeCounts at: pixelIndex.
-						count _ count + increment bitAnd: 16rFF.
-						edgeCounts at: pixelIndex put: count ]]]].! !
+						]]]].! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:42:32'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 7/17/2020 17:47:46'!
 finishPath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
@@ -4220,6 +4668,13 @@ finishPath
 	blendTop _ (blendTop - auxStrokeWidthDilatedHalf) truncated +1.
 	blendRight _ (blendRight + auxStrokeWidthDilatedHalf) truncated +1. "Make room not just for updated mask, but also edges (hence, +1)"
 	blendBottom _ (blendBottom + auxStrokeWidthDilatedHalf) truncated.
+
+	"morphBounds is not affected by clipRect"
+	morphBoundsLeft _ morphBoundsLeft min: blendLeft.
+	morphBoundsTop _ morphBoundsTop min: blendTop.
+	morphBoundsRight _ morphBoundsRight max: blendRight.
+	morphBoundsBottom _ morphBoundsBottom max: blendBottom.
+
 	blendLeft< clipLeft ifTrue: [ blendLeft _ clipLeft ].
 	blendTop < clipTop ifTrue: [ blendTop _ clipTop ].
 	blendRight > clipRight ifTrue: [ blendRight _ clipRight ].
@@ -4232,10 +4687,6 @@ finishPath
 				ifFalse: [ self blendFillOnly ]]
 			ifFalse: [
 				self blendStrokeOnly ]].
-	morphBoundsLeft _ morphBoundsLeft min: blendLeft.
-	morphBoundsTop _ morphBoundsTop min: blendTop.
-	morphBoundsRight _ morphBoundsRight max: blendRight.
-	morphBoundsBottom _ morphBoundsBottom max: blendBottom.
 
 	pathFirstX _ 0.0.
 	pathFirstY _ 0.0.
@@ -6554,7 +7005,7 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont color: foreground
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
 	self subclassResponsibility! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 6/11/2020 16:44:37'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 7/21/2020 11:25:58'!
 drawUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint font: aTrueTypeFont color: aColor
 	"Answer last affected pixel position
 	Answer nil if nothing was done"
@@ -6571,6 +7022,9 @@ Display forceToScreen
 
 	| p font |
 
+
+	engine ifNil: [ ^nil ].
+
 	p _ (currentTransformation transform: aPoint) rounded.
 	engine colorMap: nil.
 	font _ aTrueTypeFont ifNil: [ FontFamily defaultFamilyAndPointSize ].
@@ -6582,7 +7036,7 @@ Display forceToScreen
 		trueTypeFont: font
 		color: aColor! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 6/11/2020 16:44:46'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 7/21/2020 11:26:27'!
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
 	"Answer last affected pixel position
 	Answer nil if nothing was done"
@@ -6600,6 +7054,8 @@ Display forceToScreen
 	"
 
 	| p font |
+
+	engine ifNil: [ ^nil ].
 
 	p _ (currentTransformation transform: aPoint) rounded.
 	engine colorMap: nil.
