@@ -1,11 +1,12 @@
-'From Cuis 5.0 [latest update: #4329] on 3 August 2020 at 11:48:38 am'!
+'From Cuis 5.0 [latest update: #4333] on 3 August 2020 at 9:40:18 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 167!
+!provides: 'VectorGraphics' 1 168!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
 SystemOrganization addCategory: #'VectorGraphics-Experiments'!
 SystemOrganization addCategory: #'VectorGraphics-PathCommands'!
+SystemOrganization addCategory: #'VectorGraphics-Examples'!
 
 
 !classDefinition: #PathCommandError category: #'VectorGraphics-PathCommands'!
@@ -96,6 +97,16 @@ Morph subclass: #M3Exp03Morph
 	category: 'VectorGraphics-Experiments'!
 !classDefinition: 'M3Exp03Morph class' category: #'VectorGraphics-Experiments'!
 M3Exp03Morph class
+	instanceVariableNames: ''!
+
+!classDefinition: #ClockMorph category: #'VectorGraphics-Examples'!
+Morph subclass: #ClockMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'ClockMorph class' category: #'VectorGraphics-Examples'!
+ClockMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #HybridCanvas category: #'VectorGraphics-Kernel'!
@@ -910,6 +921,10 @@ folderName
 pointSizes
 	^#(6 7 8 9 10 11 12 13 14 15 18 22 26 36 48 72)! !
 
+!TrueTypeFontFamily methodsFor: 'testing' stamp: 'jmv 8/3/2020 19:01:56'!
+isTrueTypeFontFamily
+	^true! !
+
 !TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 5/7/2019 09:01:43'!
 baseTTFontDescription: aTTFontDescription
 	^ self new baseTTFontDescription: aTTFontDescription! !
@@ -981,9 +996,6 @@ serviceReadTTFont
 drawOn: aCanvas 
 
 	aCanvas ellipseCenterX: 0 y: 0 rx: 100 ry: 6 borderWidth: 6 borderColor: Color gray fillColor: Color black! !
-
-!EllipseMorph2 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 21:37:32'!
-step! !
 
 !EllipseMorph2 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 22:06:54'!
 stepAt: millisecondSinceLast
@@ -1125,6 +1137,57 @@ false ifTrue: [
 	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
 ]! !
 
+!ClockMorph methodsFor: 'drawing' stamp: 'jmv 8/3/2020 18:49:18'!
+drawOn: aCanvas
+
+	| h m s time |
+	aCanvas
+		ellipseCenterX: 0 y: 0 rx: 100 ry: 100
+		borderWidth: 10 borderColor: `(Color fromHexString: '#a6e6e8') alpha: 0.7`
+		fillColor: `(Color fromHexString: '#d7e4e4') alpha: 0.9`.
+	time _ Time now.
+	h _ Point r: 50 degrees: time hour * 30 - 90.
+	m _ Point r: 75 degrees: time minute * 6 - 90.
+	s _ Point r: 85 degrees: time second * 6 - 90.
+	aCanvas strokeWidth: 10 color: `(Color black) alpha: 0.6` do: [
+		aCanvas moveToX: 0 y: 0.
+		aCanvas lineToX: h x y: h y.
+		aCanvas moveToX: 0 y: 0.
+		aCanvas lineToX: m x y: m y ].
+	aCanvas strokeWidth: 2 color: `(Color red) alpha: 0.8` do: [
+		aCanvas moveToX: 0 y: 0.
+		aCanvas lineToX: s x y: s y ].
+	aCanvas drawString: 'XII' at: -13 @ -90 font: nil color: `Color brown`.
+	aCanvas drawString: 'III' at: 66 @ -10 font: nil color: `Color brown`.
+	aCanvas drawString: 'IV' at: -11 @ 70 font: nil color: `Color brown`.
+	aCanvas drawString: 'IX' at: -90 @ -10 font: nil color: `Color brown`.
+	aCanvas strokeWidth: 1 color: `Color brown` do: [
+		aCanvas moveToX: -78 y: -45.
+		aCanvas lineToX: -70 y: -40.5.
+		aCanvas moveToX: -45 y: -78.
+		aCanvas lineToX: -40.5 y: -70.
+		aCanvas moveToX: 78 y: -45.
+		aCanvas lineToX: 70 y: -40.5.
+		aCanvas moveToX: 45 y: -78.
+		aCanvas lineToX: 40.5 y: -70.
+		aCanvas moveToX: -78 y: 45.
+		aCanvas lineToX: -70 y: 40.5.
+		aCanvas moveToX: -45 y: 78.
+		aCanvas lineToX: -40.5 y: 70.
+		aCanvas moveToX: 78 y: 45.
+		aCanvas lineToX: 70 y: 40.5.
+		aCanvas moveToX: 45 y: 78.
+		aCanvas lineToX: 40.5 y: 70.
+		 ].! !
+
+!ClockMorph methodsFor: 'stepping' stamp: 'jmv 8/3/2020 18:01:15'!
+step
+	self redrawNeeded! !
+
+!ClockMorph methodsFor: 'stepping' stamp: 'jmv 8/3/2020 18:01:06'!
+wantsSteps
+	^true! !
+
 !HybridCanvas methodsFor: 'initialization' stamp: 'jmv 7/11/2020 00:07:15'!
 world: aPasteUpMorph
 	super world: aPasteUpMorph.
@@ -1182,6 +1245,10 @@ updatingMorphBoundsDo: aBlock
 		engine _ nil.
 		vectorCanvas updatingMorphBoundsDo: aBlock
 	] ensure: [ engine _ prevEngine ]! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 8/3/2020 17:03:44'!
+canDraw: aMorph
+	^true! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
 into: aMorph
@@ -1564,7 +1631,7 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				engine rel_QuadraticBezierSmoothToX: to x y: to y ]]! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 6/11/2020 16:50:24'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 8/3/2020 19:04:13'!
 drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
 	"
 | s c f |
@@ -1581,17 +1648,20 @@ Display forceToScreen
 	port clipWidth = 0 ifTrue: [^self].
 	"
 	| font |
-	font _ fontOrNil ifNil: [ FontFamily defaultFamilyAndPointSize ].
-	^engine
-		displayString: aString
-		from: firstIndex
-		to: lastIndex
-		at: aPoint + (0@(font ascent + font lineGap-1))
-		trueTypeFont: font fontDescription
-		useST80Glyphs: font isST80Glyphs
-		color: aColor
-		scaleX: 1.0 * font pointSize
-		scaleY: -1.0 * font pointSize
+	font _ fontOrNil ifNil: [ FontFamily defaultOrTrueTypeFamilyAndPointSize ].
+	^font
+		ifNil: [ aPoint ] 
+		ifNotNil: [
+			engine
+				displayString: aString
+				from: firstIndex
+				to: lastIndex
+				at: aPoint + (0@(font ascent + font lineGap-1))
+				trueTypeFont: font fontDescription
+				useST80Glyphs: font isST80Glyphs
+				color: aColor
+				scaleX: 1.0 * font pointSize
+				scaleY: -1.0 * font pointSize ]
 		
 	"The conversion from top of glyph (morphic canvas) to baseline (engine, TrueType) is done here.
 	The conversion from Y-increases-downwards (morphic canvas) to Y-increases-upwards (engine, TrueType) is done here.
