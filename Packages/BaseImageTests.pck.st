@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4254] on 19 July 2020 at 7:41:42 pm'!
+'From Cuis 5.0 [latest update: #4343] on 6 August 2020 at 3:30:35 pm'!
 'Description Changes to extract method and extract temporary tests by Nahuel'!
-!provides: 'BaseImageTests' 1 241!
+!provides: 'BaseImageTests' 1 242!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -12587,7 +12587,7 @@ blockingClasses
 
 	^ #(CompiledMethod)! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 6/29/2014 19:59'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 8/6/2020 15:19:16'!
 checkDecompileMethod: oldMethod
 	
 	| cls selector oldMethodNode methodNode newMethod oldCodeString newCodeString |
@@ -12597,8 +12597,8 @@ checkDecompileMethod: oldMethod
 						decompile: selector
 						in: cls
 						method: oldMethod.
-	[oldMethodNode properties includesKey: #warning] whileTrue:
-		[oldMethodNode properties removeKey: #warning].
+	[oldMethodNode properties includesKey: #warning]
+		whileTrue: [oldMethodNode properties removeKey: #warning].
 	oldCodeString := oldMethodNode decompileString.
 	methodNode := [ Compiler new
 						compile: oldCodeString
@@ -12606,26 +12606,24 @@ checkDecompileMethod: oldMethod
 						notifying: nil
 						ifFail: nil]
 						on: SyntaxErrorNotification
-						do: [:ex|
-							ex errorMessage = 'Cannot store into' ifTrue:
-								[ex return: #badStore].
-							ex pass].
+						do: [ :ex |
+							ex errorMessage = 'Cannot store into'
+								ifTrue: [ex return: #badStore].
+							ex pass ].
 	"Ignore cannot store into block arg errors; they're not our issue."
-	methodNode ~~ #badStore ifTrue:
-		[newMethod := methodNode generate: #(0 0 0 0).
-		 newCodeString := (Decompiler new
+	methodNode ~~ #badStore ifTrue: [
+		newMethod := methodNode generate: #(0 0 0 0).
+		newCodeString := (Decompiler new
 							decompile: selector
 							in: cls
 							method: newMethod) decompileString.
-		 "(StringHolder new textContents:
-			(TextDiffBuilder buildDisplayPatchFrom: oldCodeString to: newCodeString))
-				openLabel: 'Decompilation Differences for ', cls name,'>>',selector"
-		 "(StringHolder new textContents:
-			(TextDiffBuilder buildDisplayPatchFrom: oldMethod abstractSymbolic to: newMethod abstractSymbolic))
-				openLabel: 'Bytecode Differences for ', cls name,'>>',selector"
-		 self assert: oldCodeString = newCodeString
+		"(DifferenceFinder displayPatchFrom: oldCodeString to: newCodeString tryWords: true)
+			editLabel: 'Decompilation Differences for ', cls name,'>>',selector."
+		"(DifferenceFinder displayPatchFrom: oldMethod abstractSymbolic to: newMethod abstractSymbolic tryWords: true)
+			editLabel: 'Bytecode Differences for ', cls name,'>>',selector."
+		self assert: oldCodeString = newCodeString
 			description: cls name asString, ' ', selector asString
-			resumable: true]! !
+			resumable: true ]! !
 
 !DecompilerTests methodsFor: 'utilities' stamp: 'jmv 5/27/2015 13:58'!
 decompileClassesSelect: aBlock
@@ -15166,7 +15164,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 6/8/2020 11:13:45'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 8/6/2020 14:18:58'!
 testLayout2
 	"
 	self new testLayout2
@@ -15189,19 +15187,19 @@ testLayout2
 
 	self assert: row morphWidth = (pane morphWidth - 10).
 	self assert: row morphHeight = 261.
-	self assert: c1 morphBoundsInWorld bottom = (row morphBoundsInWorld bottom - 5) description: 'Should be at bottom'.
+	self assert: c1 displayBounds bottom = (row displayBounds bottom - 5) description: 'Should be at bottom'.
 	self assert: c1 morphWidth = 20.
 	self assert: c1 morphHeight = 200.8.
-	self assert: c2 morphBoundsInWorld top = (row morphBoundsInWorld top + 5) description: 'Should be at top'.
+	self assert: c2 displayBounds top = (row displayBounds top + 5) description: 'Should be at top'.
 	self assert: c2 morphWidth = 256.
 	self assert: c2 morphHeight = 40.
-	self assert: ((c3 morphBoundsInWorld top - row morphBoundsInWorld top) - (row morphBoundsInWorld bottom - c3 morphBoundsInWorld bottom)) abs < 2 description: 'Should be centered'.
+	self assert: ((c3 displayBounds top - row displayBounds top) - (row displayBounds bottom - c3 displayBounds bottom)) abs < 2 description: 'Should be centered'.
 	self assert: c3 morphWidth = 30.
 	self assert: c3 morphHeight rounded = 176.
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 6/8/2020 11:14:16'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 8/6/2020 14:19:55'!
 testLayout3
 	"
 	self new testLayout3
@@ -15230,31 +15228,31 @@ testLayout3
 	pane openInWorld: PasteUpMorph someInstance; morphExtent: 400@300.
 	UISupervisor ui doOneCycleNow.
 
-	self assert: row morphBoundsInWorld left = (pane morphBoundsInWorld left + 5).
+	self assert: row displayBounds left = (pane displayBounds left + 5).
 	self assert: row morphWidth = (pane morphWidth - 10).
 	self assert: row morphHeight = 200.
-	self assert: innerRow morphBoundsInWorld left = (row morphBoundsInWorld left + 5).
-	self assert: (innerRow morphBoundsInWorld top - row morphBoundsInWorld top) = (row morphBoundsInWorld bottom - innerRow morphBoundsInWorld bottom) description: 'Should be centered'.
+	self assert: innerRow displayBounds left = (row displayBounds left + 5).
+	self assert: (innerRow displayBounds top - row displayBounds top) = (row displayBounds bottom - innerRow displayBounds bottom) description: 'Should be centered'.
 	self assert: innerRow morphWidth = 170.
 	self assert: innerRow morphHeight = 30.
 
-	self assert: i1 morphBoundsInWorld left = (innerRow morphBoundsInWorld left + 5).
-	self assert: (i1 morphBoundsInWorld top - innerRow morphBoundsInWorld top) = (innerRow morphBoundsInWorld bottom - i1 morphBoundsInWorld bottom) description: 'Should be centered'.
+	self assert: i1 displayBounds left = (innerRow displayBounds left + 5).
+	self assert: (i1 displayBounds top - innerRow displayBounds top) = (innerRow displayBounds bottom - i1 displayBounds bottom) description: 'Should be centered'.
 	self assert: i1 morphWidth = 10.
 	self assert: i1 morphHeight = 10.
-	self assert: i2 morphBoundsInWorld left = (innerRow morphBoundsInWorld left + 20).
-	self assert: (i2 morphBoundsInWorld top - innerRow morphBoundsInWorld top) = (innerRow morphBoundsInWorld bottom - i2 morphBoundsInWorld bottom) description: 'Should be centered'.
+	self assert: i2 displayBounds left = (innerRow displayBounds left + 20).
+	self assert: (i2 displayBounds top - innerRow displayBounds top) = (innerRow displayBounds bottom - i2 displayBounds bottom) description: 'Should be centered'.
 	self assert: i2 morphWidth = 10.
 	self assert: i2 morphHeight = 10.
-	self assert: i3 morphBoundsInWorld left = (innerRow morphBoundsInWorld left + 35).
-	self assert: (i3 morphBoundsInWorld top - innerRow morphBoundsInWorld top) = (innerRow morphBoundsInWorld bottom - i3 morphBoundsInWorld bottom) description: 'Should be centered'.
+	self assert: i3 displayBounds left = (innerRow displayBounds left + 35).
+	self assert: (i3 displayBounds top - innerRow displayBounds top) = (innerRow displayBounds bottom - i3 displayBounds bottom) description: 'Should be centered'.
 	self assert: i3 morphWidth = (innerRow morphWidth - 40).
 	self assert: i3 morphHeight = 10.
 
-	self assert: c2 morphBoundsInWorld top = (row morphBoundsInWorld top + 5) description: 'Should be at top'.
+	self assert: c2 displayBounds top = (row displayBounds top + 5) description: 'Should be at top'.
 	self assert: c2 morphWidth = 170.
 	self assert: c2 morphHeight = 40.
-	self assert: (c3 morphBoundsInWorld top - row morphBoundsInWorld top) = (row morphBoundsInWorld bottom - c3 morphBoundsInWorld bottom) description: 'Should be centered'.
+	self assert: (c3 displayBounds top - row displayBounds top) = (row displayBounds bottom - c3 displayBounds bottom) description: 'Should be centered'.
 	self assert: c3 morphWidth = 30.
 	self assert: c3 morphHeight = (row morphHeight - 10).
 
@@ -15376,33 +15374,7 @@ testTransform
 	self assert: ((MorphicTranslation withTranslation: -2) transform: (4@ 2)) = (2@0).
 	self assert: ((MorphicTranslation withTranslation: -4) transform: (2@ 2)) = (-2@-2)! !
 
-!WorldTest methodsFor: 'Running' stamp: 'jmv 7/11/2011 16:02'!
-testDamageRecorder
-	"
-	WorldTest new testDamageRecorder
-	"
-	| dr |
-	dr _ DamageRecorder new.
-	dr recordInvalidRect: (20@20 extent: 10@10).
-	dr recordInvalidRect: (30@20 extent: 10@10).
-	dr recordInvalidRect: (40@20 extent: 10@10).
-	dr recordInvalidRect: (50@20 extent: 10@10).
-	dr recordInvalidRect: (60@20 extent: 10@10).
-	dr recordInvalidRect: (70@20 extent: 10@10).
-	dr recordInvalidRect: (80@20 extent: 10@10).
-	dr recordInvalidRect: (90@20 extent: 10@10).
-	dr recordInvalidRect: (100@20 extent: 10@10).
-	dr recordInvalidRect: (110@20 extent: 10@10).
-	dr recordInvalidRect: (120@20 extent: 10@10).
-	dr recordInvalidRect: (130@20 extent: 10@10).
-	dr recordInvalidRect: (140@20 extent: 10@10).
-	dr recordInvalidRect: (150@20 extent: 10@10).
-	dr recordInvalidRect: (160@20 extent: 10@10).
-	self shouldnt: [ dr recordInvalidRect: (10@20 extent: 300@300) ] raise: Error.
-	(dr invalidRectsFullBounds: (10@10 extent: 10@10)) do: [ :r |
-		self deny: r isNil ]! !
-
-!WorldTest methodsFor: 'as yet unclassified' stamp: 'jmv 12/28/2017 16:11:35'!
+!WorldTest methodsFor: 'tests' stamp: 'jmv 12/28/2017 16:11:35'!
 testDoOneCycleWorksWithDeferredQueue
         "Ensure that nested doOneCycles don't break deferred UI messages"
         | finished |
@@ -16270,11 +16242,6 @@ testClassSingleton
 testHorizontalAlignment
 
 	self should: [ taskbar morphPositionInWorld x = 0 ]! !
-
-!TaskbarTest methodsFor: 'test cases' stamp: 'jmv 12/28/2017 16:12:08'!
-testVerticalAlignment
-	
-	self should: [ taskbar morphBoundsInWorld bottom = UISupervisor ui morphBoundsInWorld bottom ]! !
 
 !TaskbarTest methodsFor: 'test cases' stamp: 'jmv 12/28/2017 16:12:01'!
 testWidth
