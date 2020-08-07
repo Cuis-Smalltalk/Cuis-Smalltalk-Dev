@@ -1,4 +1,6 @@
 'From Cuis 5.0 [latest update: #4344] on 6 August 2020 at 7:39:03 pm'!
+"Make all ids notNil"
+Morph allSubInstances do: [ :m | (m instVarNamed: 'id') ifNil: [ m instVarNamed: 'id' put: 0 ]]!
 
 !Morph methodsFor: 'accessing' stamp: 'jmv 8/6/2020 19:37:15'!
 morphId
