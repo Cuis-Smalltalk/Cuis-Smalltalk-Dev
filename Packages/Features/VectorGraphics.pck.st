@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4333] on 3 August 2020 at 9:40:18 pm'!
+'From Cuis 5.0 [latest update: #4348] on 6 August 2020 at 10:21:26 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 168!
+!provides: 'VectorGraphics' 1 169!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -1205,27 +1205,6 @@ clippingMorph: aMorph
 	super clippingMorph: aMorph.
 	vectorCanvas clippingMorph: aMorph! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/27/2020 01:24:38'!
-newClipRect: aRectangleOrNil
-	"This method is calledd when we are about to repair damaged rectangles.
-	This is a good point to ensure that morphIds in our vectorCanvas is cleared of any previously drawn morph.
-	This is not needed when using just a VectorCanvas. It is only needed in the HybridCanvas, where it might happen that those pixels will only contain only BitBltCanvas morphs."
-
-	| auxBitBlt hack |
-self flag: #jmvHacks.
-	self setClipRect: (aRectangleOrNil
-		ifNil: [ `0@0` corner: form extent ]
-		ifNotNil: [ aRectangleOrNil translatedBy: self canvasOrigin ]).
-
-	aRectangleOrNil notNil ifTrue: [
-		hack _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
-		auxBitBlt _ BitBlt toForm: hack.
-		auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
-		auxBitBlt combinationRule: Form over.
-		auxBitBlt destRect: aRectangleOrNil.
-		auxBitBlt copyBits
-		]! !
-
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 7/9/2020 16:06:02'!
 resetEngine
 	super resetEngine.
@@ -1249,6 +1228,22 @@ updatingMorphBoundsDo: aBlock
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 8/3/2020 17:03:44'!
 canDraw: aMorph
 	^true! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 8/6/2020 19:58:48'!
+drawCurrentAndSubmorphs
+	| auxBitBlt hack r |
+	super drawCurrentAndSubmorphs.
+
+self flag: #jmvHacks.
+	"If we get here, we are drawing with BitBlt, not VectorCanvas.
+	Clear morphIds of pixels drawn for currentMorph"
+	r _ self boundingRectOfCurrentMorphAfterDraw.
+	hack _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
+	auxBitBlt _ BitBlt toForm: hack.
+	auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
+	auxBitBlt combinationRule: Form over.
+	auxBitBlt destRect: r.
+	auxBitBlt copyBits! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
 into: aMorph
@@ -1280,6 +1275,23 @@ savePatch: prevSavedPatch bounds: aRectangle
 	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
 
 	^ vectorCanvas savePatch: prevSavedPatch bounds: aRectangle! !
+
+!HybridCanvas methodsFor: 'morphic world' stamp: 'jmv 8/6/2020 22:10:11'!
+drawWorld: aPasteUpMorph rects: allDamage
+	"Draw allDamage rects for aPasteUpMorph"
+	
+	| auxBitBlt hack |
+	self flag: #jmvHacks.
+	hack _ Form extent: form extent depth: 32 bits: 		((self instVarNamed: 'vectorCanvas') engine instVarNamed: 'morphIds').
+	auxBitBlt _ BitBlt toForm: hack.
+	auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
+	auxBitBlt combinationRule: Form over.
+	allDamage do: [ :r |
+		aPasteUpMorph drawOn: (self newClipRect: r).	
+		auxBitBlt destRect: r.
+		auxBitBlt copyBits
+		].
+! !
 
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
@@ -1933,7 +1945,7 @@ outOfMorph
 	engine currentMorph: currentMorph.
 	engine geometryTransformation: currentTransformation! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/27/2020 01:22:32'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 8/6/2020 18:02:26'!
 restorePatch: savedPatch
 	"Argument must previously be obtained by calling #savePatch:bounds:
 	Senders should not assume anything about the returned object, except that it will not be nil."
@@ -1948,7 +1960,8 @@ savedDisplayPatch _ savedPatch first.
 	bb _ BitBlt toForm: form.
 	bb sourceForm: savedDisplayPatch; combinationRule: Form over;
 		sourceX: 0; sourceY: 0;
-		destX: savedDisplayPatch offset x destY: savedDisplayPatch offset y width: savedDisplayPatch width height: savedDisplayPatch height;
+		destX: savedDisplayPatch offset x destY: savedDisplayPatch offset y
+			width: savedDisplayPatch width height: savedDisplayPatch height;
 		copyBits.
 
 "Tanto el hack como el bb podrian guardarse."
@@ -1957,11 +1970,11 @@ savedIdsPatch _ savedPatch second.
 	bb _ BitBlt toForm: hack.
 	bb sourceForm: savedIdsPatch; combinationRule: Form over;
 		sourceX: 0; sourceY: 0;
-		destX: savedDisplayPatch offset x destY: savedDisplayPatch offset y width: savedDisplayPatch width height: savedDisplayPatch height;
-		width: savedIdsPatch width; height: savedIdsPatch height;
+		destX: savedIdsPatch offset x destY: savedIdsPatch offset y
+			width: savedIdsPatch width height: savedIdsPatch height;
 		copyBits.! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/27/2020 14:54:29'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 8/6/2020 20:16:37'!
 savePatch: prevSavedPatch bounds: aRectangle
 	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
 	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
@@ -1973,7 +1986,10 @@ self flag: #jmvHacks.
 	patchForm _ super savePatch: answer first bounds: aRectangle.
 
 	patchForm == answer first
-		ifTrue: [ savedIdsPatch _ answer second ]
+		ifTrue: [
+			savedIdsPatch _ answer second.
+			savedIdsPatch offset: 0@0.
+			]
 		ifFalse: [
 			savedIdsPatch _ Form extent: aRectangle extent depth: 32.
 			answer at: 1 put: patchForm.
@@ -1987,6 +2003,7 @@ morphIds _ engine instVarNamed: 'morphIds'.
 		sourceX: aRectangle left; sourceY: aRectangle top;
 		width: aRectangle width; height: aRectangle height;
 		copyBits.
+	savedIdsPatch offset: aRectangle topLeft.
 	^answer! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 6/8/2020 12:24:42'!
@@ -2090,7 +2107,7 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 6/6/2020 21:20:34'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:24:58'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -2101,10 +2118,16 @@ fillColor: aFillColor do: pathCommandsBlock
 	hopsPerPixel _ 8.										"See #experimentHopsPerPixel3"
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: self.
-	self finishPath! !
+	self finishPath: true! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 6/6/2020 21:20:20'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:27:50'!
 strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
+	"Prepare parameters for drawing stroke."
+
+	self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: false! !
+
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:27:04'!
+strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
 
 	| aStrokeWidth |
@@ -2124,9 +2147,9 @@ strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: self.
-	self finishPath! !
+	self finishPath: ensureClosePath! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 6/6/2020 21:19:43'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:28:44'!
 strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -2142,7 +2165,7 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	aStrokeWidth _ geometryTransformation externalizeScalar: clientStrokeWidth.
 	(aStrokeWidth < antiAliasingWidth and: [ aStrokeColor ~= aFillColor ]) ifTrue: [
 		self fillColor: aFillColor do: pathCommandsBlock.
-		self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock.
+		self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: true.
 		^ self ].
 
 	self pvtStrokeWidth: aStrokeWidth.
@@ -2157,7 +2180,7 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: self.
-	self finishPath! !
+	self finishPath: true! !
 
 !VectorEngineAbstract methodsFor: 'paths - absolute coordinates' stamp: 'jmv 6/6/2020 17:29:06'!
 abs_ArcToX: cx y: cy radiusX: mrx radiusY: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
@@ -3829,7 +3852,7 @@ onForm: aForm
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 7/24/2020 16:52:27'!
 clipRect: aRectangle! !
 
-!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 7/24/2020 16:41:45'!
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:25:26'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -3838,10 +3861,10 @@ fillColor: aFillColor do: pathCommandsBlock
 	hopsPerPixel _ 8.										"See #experimentHopsPerPixel3"
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: self.
-	self finishPath! !
+	self finishPath: true! !
 
-!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 7/24/2020 17:00:12'!
-strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:27:25'!
+strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
 
 	| aStrokeWidth |
@@ -3852,15 +3875,15 @@ strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	hopsPerPixel _ 10.0 / strokeWidth + 1.		"See #experimentHopsPerPixel2"
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: self.
-	self finishPath! !
+	self finishPath: ensureClosePath! !
 
-!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 7/24/2020 17:03:33'!
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:28:31'!
 strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
 	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
 	clientStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
-	^ self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock! !
+	^ self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: true! !
 
 !VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 7/24/2020 16:35:39'!
 primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
@@ -3923,8 +3946,8 @@ updateBoundsForX: x y: y
 	morphBoundsRight _ morphBoundsRight max: x.
 	morphBoundsBottom _ morphBoundsBottom max: y.! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 7/24/2020 16:56:25'!
-finishPath
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/6/2020 17:24:36'!
+finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 
 	morphBoundsLeft _ (morphBoundsLeft - auxStrokeWidthDilatedHalf) truncated +1.
@@ -3970,16 +3993,16 @@ antiAliasingWidth: aNumber
 	super antiAliasingWidth: aNumber.
 	auxAntiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth.! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 6/6/2020 17:21:13'!
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 8/6/2020 17:43:05'!
 clipRect: aRectangle 
 	"by convention, aRectangle includes left and top but does not include right and bottom.
 	We do draw clipRight and clipBottom but not beyond.
 	"
 	"In targetForm coordinates"
-	clipLeft _ aRectangle left asInteger.
-	clipTop _ aRectangle top asInteger.
-	clipRight _ aRectangle right asInteger - 1.
-	clipBottom _ aRectangle bottom asInteger - 1! !
+	clipLeft _ aRectangle left asInteger max: 0.
+	clipTop _ aRectangle top asInteger max: 0.
+	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
+	clipBottom _ (aRectangle bottom asInteger min: targetForm height) - 1! !
 
 !VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/6/2020 17:23:25'!
 primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
@@ -4211,12 +4234,12 @@ Inlinear en senders. Extraer afectar bounds si es posible (linea, circulo)
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: x y: y ].! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 7/17/2020 17:47:41'!
-finishPath
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 8/6/2020 17:30:19'!
+finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
 	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
-	fillColor notNil ifTrue: [
+	ensureClosePath ifTrue: [
 		(pathFirstX = pathCurrentX and: [ pathFirstY = pathCurrentY ]) ifFalse: [
 			"This is actually an error condition. If we are asked to fill, then the path should be closed.
 			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
@@ -4576,16 +4599,16 @@ antiAliasingWidth: aNumber
 	super antiAliasingWidth: aNumber.
 	auxAntiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth.! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 6/6/2020 17:37:09'!
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 8/6/2020 17:43:30'!
 clipRect: aRectangle 
 	"by convention, aRectangle includes left and top but does not include right and bottom.
 	We do draw clipRight and clipBottom but not beyond.
 	"
 	"In targetForm coordinates"
-	clipLeft _ aRectangle left asInteger.
-	clipTop _ aRectangle top asInteger.
-	clipRight _ aRectangle right asInteger - 1.
-	clipBottom _ aRectangle bottom asInteger - 1! !
+	clipLeft _ aRectangle left asInteger max: 0.
+	clipTop _ aRectangle top asInteger max: 0.
+	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
+	clipBottom _ (aRectangle bottom asInteger min: targetForm height) - 1! !
 
 !VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/6/2020 17:37:09'!
 primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
@@ -4723,12 +4746,12 @@ updateEdgesAndBoundsForX: x y: y
 						prevYTruncated _ thisYTruncated.
 						]]]].! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 7/17/2020 17:47:46'!
-finishPath
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 8/6/2020 17:30:26'!
+finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
 	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
-	fillColor notNil ifTrue: [
+	ensureClosePath ifTrue: [
 		(pathFirstX = pathCurrentX and: [ pathFirstY = pathCurrentY ]) ifFalse: [
 			"This is actually an error condition. If we are asked to fill, then the path should be closed.
 			This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
