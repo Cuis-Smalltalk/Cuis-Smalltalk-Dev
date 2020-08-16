@@ -23,6 +23,7 @@ You''ll need to re-start the image update to install later updates.') ifFalse: [
 		category: 'Morphic-Kernel'.
 	ClassBuilder beSilent: b.
 	UISupervisor spawnNewMorphicProcessFor: ui.
+	(Delay forSeconds: 1) wait.
 	ChangeSet installing: '4342-RemoveUnusedIvarFromHandMorph-JuanVuletich-2020Jul31-16h13m-jmv.001.cs.st' do: [].
 	cs _ ChangeSet changeSetForBaseSystem.
 	(cs name beginsWith: '4342') ifTrue: [
