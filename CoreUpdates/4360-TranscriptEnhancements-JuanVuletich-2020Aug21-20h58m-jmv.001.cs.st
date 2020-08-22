@@ -93,10 +93,6 @@ displayUnfinishedEntryOnCanvas: aCanvas
 releaseClassCachedState
 	displayCanvas _ nil! !
 
-!Transcript class methodsFor: 'system startup' stamp: 'jmv 8/21/2020 21:08:00'!
-releaseClassState
-	self initialize! !
-
 
 !Transcript class methodsFor: 'displaying' stamp: 'jmv 8/21/2020 20:13:23'!
 display
