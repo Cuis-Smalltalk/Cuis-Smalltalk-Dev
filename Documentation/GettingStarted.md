@@ -25,7 +25,7 @@ After that, you may periodically update all your repos from GitHub:
 ```
 Additionally, after doing your stuff, you can check what you need to commit to GitHub:
 ```
-./Cuis-Smalltalk-Dev/gitStatusAllRepos.sh
+./Cuis-Smalltalk-Dev/statusAllRepos.sh
 ```
 
 ## For 64 bits Linux running on AMD/Intel x64 hardware ##
