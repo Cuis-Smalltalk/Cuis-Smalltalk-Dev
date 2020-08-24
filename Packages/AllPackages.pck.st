@@ -57,6 +57,3 @@
 !requires: 'StyledTextNotebook' 1 0 nil!
 !requires: 'StyledTextWiki' 1 0 nil!
 !requires: 'VectorGraphics' 1 0 nil!
-!requires: 'Balloon' 1 0 nil!
-!requires: 'SqueakCompatibility' 1 0 nil!
-!requires: 'VMMaker' 1 0 nil!

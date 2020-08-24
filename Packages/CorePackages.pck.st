@@ -7,7 +7,6 @@
 !requires: 'Goodies' 1 0 nil!
 !requires: 'TerseGuide' 1 0 nil!
 !requires: 'Theme-Themes' 1 0 nil!
-!requires: 'Assessments' 1 0 nil!
 !requires: 'ClassCommentBrowser' 1 0 nil!
 !requires: 'SUnit XML reports' 1 0 nil!
 !requires: 'Color-Extras' 1 0 nil!
