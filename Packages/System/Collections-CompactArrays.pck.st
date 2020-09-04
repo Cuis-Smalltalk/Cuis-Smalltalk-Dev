@@ -1,17 +1,17 @@
-'From Cuis 5.0 [latest update: #4048] on 28 February 2020 at 3:00:34 pm'!
+'From Cuis 5.0 [latest update: #4370] on 4 September 2020 at 11:10:57 am'!
 'Description '!
-!provides: 'Collections-CompactArrays' 1 11!
+!provides: 'Collections-CompactArrays' 1 12!
 SystemOrganization addCategory: #'Collections-CompactArrays'!
 
 
-!classDefinition: #FloatPointArray category: #'Collections-CompactArrays'!
-FloatArray variableWordSubclass: #FloatPointArray
+!classDefinition: #Float32PointArray category: #'Collections-CompactArrays'!
+Float32Array variableWordSubclass: #Float32PointArray
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Collections-CompactArrays'!
-!classDefinition: 'FloatPointArray class' category: #'Collections-CompactArrays'!
-FloatPointArray class
+!classDefinition: 'Float32PointArray class' category: #'Collections-CompactArrays'!
+Float32PointArray class
 	instanceVariableNames: ''!
 
 !classDefinition: #PointArray category: #'Collections-CompactArrays'!
@@ -65,7 +65,7 @@ ShortRunArray class
 	instanceVariableNames: ''!
 
 
-!FloatPointArray commentStamp: '<historical>' prior: 0!
+!Float32PointArray commentStamp: '<historical>' prior: 0!
 This class stores points with 32 bit Floating point elements.
 
 {1@2. 3@4} as: FloatPointArray!
@@ -122,44 +122,44 @@ printOn: aStream
 	].
 	aStream nextPutAll:' )'.! !
 
-!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:30'!
+!Float32PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:30'!
 at: index
 	"Return the element (e.g., point) at the given index"
 	^(self floatAt: index * 2 - 1) @ (self floatAt: index * 2)! !
 
-!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:49'!
+!Float32PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:49'!
 at: index put: aPoint
 	"Store the argument aPoint at the given index"
 	self floatAt: index * 2 - 1 put: aPoint x.
 	self floatAt: index * 2 put: aPoint y.
 	^aPoint! !
 
-!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:57'!
+!Float32PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:11:57'!
 at: index putX: aNumber
 	"Store the argument aPoint at the given index"
 	self floatAt: index * 2 - 1 put: aNumber! !
 
-!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:12:05'!
+!Float32PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:12:05'!
 at: index putY: aNumber
 	"Store the argument aPoint at the given index"
 	self floatAt: index * 2 put: aNumber! !
 
-!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:04:36'!
+!Float32PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:04:36'!
 bytesPerElement
 
 	^ 8! !
 
-!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:02:36'!
+!Float32PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:02:36'!
 defaultElement
 	"Return the default element of the receiver"
 	^`0.0@0.0`! !
 
-!FloatPointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:12:17'!
+!Float32PointArray methodsFor: 'accessing' stamp: 'jmv 2/28/2020 12:12:17'!
 size
 	"Return the number of elements in the receiver"
 	^ super size // 2! !
 
-!FloatPointArray methodsFor: 'printing' stamp: 'jmv 2/28/2020 14:59:07'!
+!Float32PointArray methodsFor: 'printing' stamp: 'jmv 2/28/2020 14:59:07'!
 printElementsOn: aStream
 	"FloatArray elements are answered as 64 bit Float, but are really 32 bit Float.
 	When printing, print them as 32 bit Float."
@@ -173,7 +173,7 @@ printElementsOn: aStream
 	self isEmpty ifFalse: [aStream skip: -2].
 	aStream nextPut: $}! !
 
-!FloatPointArray class methodsFor: 'instance creation' stamp: 'jmv 2/28/2020 12:13:28'!
+!Float32PointArray class methodsFor: 'instance creation' stamp: 'jmv 2/28/2020 12:13:28'!
 new: n
 	^super new: n*2! !
 

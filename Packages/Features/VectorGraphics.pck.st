@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4348] on 6 August 2020 at 10:21:26 pm'!
+'From Cuis 5.0 [latest update: #4370] on 4 September 2020 at 11:14:15 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 169!
+!provides: 'VectorGraphics' 1 170!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: #'VectorGraphics-Kernel'!
 SystemOrganization addCategory: #'VectorGraphics-TrueType'!
@@ -5304,7 +5304,7 @@ appendGlyphDataTo: stream glyphsArray: glyphsArray indexes: indexes base: baseIn
 					]
 				]]! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/18/2020 20:16:20'!
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 9/3/2020 17:12:45'!
 glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknownGlyph
 
 	| mGlyph |
@@ -5313,7 +5313,7 @@ glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknown
 	letterMTopSideBearing _ mGlyph topSideBearing.
 
 	contourDataIndexesByIso8859s15 _ IntegerArray new: array8 size.
-	contourDataForIso8859s15 _ FloatArray streamContents: [ :stream |
+	contourDataForIso8859s15 _ Float32Array streamContents: [ :stream |
 		theUnknownGlyph addContourDataTo: stream. 	"First data is for unknownGlyph"
 		array8 withIndexDo: [ :ttGlyphOrNil :index |
 			ttGlyphOrNil notNil
@@ -5326,7 +5326,7 @@ glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknown
 	"This takes a significant amout of space, makes loading slower, and we're still not able to take full advantage of it."
 	Preferences loadOnlyLatinGlyphData ifFalse: [
 		contourDataIndexesByUtf8 _ (IntegerArray new: 256) as: OrderedCollection.
-		contourDataForUtf8 _ FloatArray streamContents: [ :stream |
+		contourDataForUtf8 _ Float32Array streamContents: [ :stream |
 			theUnknownGlyph addContourDataTo: stream.		"First data is for unknownGlyph"
 			self appendGlyphDataTo: stream glyphsArray: arrayUtf8 indexes: contourDataIndexesByUtf8 base: 0 ].
 		contourDataIndexesByUtf8 _ contourDataIndexesByUtf8 as: IntegerArray]! !

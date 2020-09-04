@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4343] on 6 August 2020 at 3:30:35 pm'!
+'From Cuis 5.0 [latest update: #4372] on 4 September 2020 at 11:41:20 am'!
 'Description Changes to extract method and extract temporary tests by Nahuel'!
-!provides: 'BaseImageTests' 1 242!
+!provides: 'BaseImageTests' 1 244!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: #'BaseImageTests-Collections'!
 SystemOrganization addCategory: #'BaseImageTests-Kernel-Classes'!
@@ -556,24 +556,24 @@ TestCase subclass: #ArrayTest
 ArrayTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #FloatArray64Test category: #'BaseImageTests-Collections-Arrayed'!
-TestCase subclass: #FloatArray64Test
+!classDefinition: #Float32ArrayTest category: #'BaseImageTests-Collections-Arrayed'!
+TestCase subclass: #Float32ArrayTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections-Arrayed'!
-!classDefinition: 'FloatArray64Test class' category: #'BaseImageTests-Collections-Arrayed'!
-FloatArray64Test class
+!classDefinition: 'Float32ArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
+Float32ArrayTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #FloatArrayTest category: #'BaseImageTests-Collections-Arrayed'!
-TestCase subclass: #FloatArrayTest
+!classDefinition: #Float64ArrayTest category: #'BaseImageTests-Collections-Arrayed'!
+TestCase subclass: #Float64ArrayTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Collections-Arrayed'!
-!classDefinition: 'FloatArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
-FloatArrayTest class
+!classDefinition: 'Float64ArrayTest class' category: #'BaseImageTests-Collections-Arrayed'!
+Float64ArrayTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExceptionHandlingConditionTest category: #'BaseImageTests-Exceptions'!
@@ -4378,7 +4378,7 @@ test32bitConversion
 	)
 		do: [ :originalWord | self assert: (Float fromIEEE32Bit: originalWord) asIEEE32BitWord = originalWord ]! !
 
-!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 12/1/2015 12:31'!
+!FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'jmv 9/3/2020 17:12:44'!
 test32bitConversion2
 	"This tests the rounding done when going from 64bit Float to 32bit Float
 	self new test32bitConversion2
@@ -4404,19 +4404,19 @@ test32bitConversion2
 	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
 	roundedByConversion _ Float fromIEEE32Bit: roundingTo32Border asIEEE32BitWord.
 	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
-	aux _ FloatArray new: 1. aux at: 1 put: roundingTo32Border. roundedByConversion _ aux at: 1.
+	aux _ Float32Array new: 1. aux at: 1 put: roundingTo32Border. roundedByConversion _ aux at: 1.
 	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
 
 	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
 	roundedByConversion _ Float fromIEEE32Bit: roundingBorderPrev asIEEE32BitWord.
 	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
-	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderPrev. roundedByConversion _ aux at: 1.
+	aux _ Float32Array new: 1. aux at: 1 put: roundingBorderPrev. roundedByConversion _ aux at: 1.
 	self assert: roundedByConversion mantissaPart hex = pi32Predecessor mantissaPart hex.
 
 	"Conversion to 32 bit gives appropriate 32 bit value, done #asIEEE32BitWord or done by FloatArray."
 	roundedByConversion _ Float fromIEEE32Bit: roundingBorderSuc asIEEE32BitWord.
 	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex.
-	aux _ FloatArray new: 1. aux at: 1 put: roundingBorderSuc. roundedByConversion _ aux at: 1.
+	aux _ Float32Array new: 1. aux at: 1 put: roundingBorderSuc. roundedByConversion _ aux at: 1.
 	self assert: roundedByConversion mantissaPart hex = pi32 mantissaPart hex! !
 
 !FloatTest methodsFor: 'tests - 32 bit Single Precision' stamp: 'nice 5/30/2006 02:34'!
@@ -10466,17 +10466,138 @@ testPenultimateSignalsErrorWhenCollectionIsNotBigEnough
 		raise: Error
 		withMessageText: Collection collectionTooSmallDescription! !
 
-!FloatArray64Test methodsFor: 'Tests' stamp: 'jpb 8/2/2019 23:07:59'!
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:55'!
+testIsType
+	self assert: (#[1.2 2.4 3.6 ] is: #Collection).
+	self assert: (#[1.2 2.4 3.6] asFloat32Array is: #Float32Array).! !
+
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:53'!
+testZeroArrayDividend
+
+	self assert: #[1.2 2.4 0.0 ] asFloat32Array / #[1.2 1.2 1.2 ] asFloat32Array = #[1.0 2.0 0.0 ] asFloat32Array ! !
+
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:40:16'!
+testZeroArrayDivisor
+
+	"Test implicit exception"
+	self should: [ #[1.2 2.4 3.6 ] asFloat32Array / #[1.0 1.0 0.0 ] asFloat32Array] raise: ZeroDivide.
+
+	"Test explicit alternative value"
+	self assert: (#[1.0 2.0 3.141592 0.0] asFloat32Array divideBy: #[1.0 1.0 0.0 0.0 ] asFloat32Array ifDivisorZero: -100 ifBothZero: -200) = 
+		#[1.0 2.0 -100.0 -200.0 ] asFloat32Array.
+
+	"Test explicit exceptions"
+	self should: [
+		#[1.0 2.0 3.141592] asFloat32Array
+			divideBy: #[1.0 1.0 0.0] 
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: ZeroDivide.
+	self should: [
+		#[0.0 2.0 3.141592] asFloat32Array
+			divideBy: #[0.0 1.0 1.0] 
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: DomainError.
+
+	"Test non local returns in blocks"
+	self assert: self divideByArrayOne = #[0.0 2.0 3.141592] asFloat32Array.
+	self assert: self divideByArrayZero = #divisionByZero.
+	self assert: self divideByArrayIndeterminate = #indeterminateResult.! !
+
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:33'!
+testZeroDividend
+
+	self assert: #[1.2 2.4 3.6 0.0 ] asFloat32Array / 1.2 = #[1.0 2.0 3.0 0.0 ] asFloat32Array ! !
+
+!Float32ArrayTest methodsFor: 'Tests' stamp: 'jmv 9/3/2020 18:39:30'!
+testZeroDivisor
+
+	"Test implicit exception"
+	self should: [ #[1.2 2.4 3.6 ] asFloat32Array / 0.0] raise: ZeroDivide.
+
+	"Test explicit alternative value"
+	self assert: (#[1.0 2.0 3.141592 0.0] asFloat32Array divideBy: 0.0 ifDivisorZero: -100 ifBothZero: -200) = 
+		#[-100.0 -100.0 -100.0 -200.0 ] asFloat32Array.
+
+	"Test explicit exceptions"
+	self should: [
+		#[1.0 2.0 3.141592] asFloat32Array
+			divideBy: 0.0
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: ZeroDivide.
+	self should: [
+		#[0.0 2.0 3.141592] asFloat32Array
+			divideBy: 0.0
+			ifDivisorZero: [ZeroDivide signal ]
+			ifBothZero: [DomainError signal ]]
+		raise: DomainError.
+
+	"Test non local returns in blocks"
+	self assert: self divideByScalarOne = #[0.0 2.0 3.141592] asFloat32Array.
+	self assert: self divideByScalarZero = #divisionByZero.
+	self assert: self divideByScalarIndeterminate = #indeterminateResult.! !
+
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:40:09'!
+divideByArrayIndeterminate
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] asFloat32Array
+		divideBy: #[0.0 2.0 3.141592] asFloat32Array
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:40:13'!
+divideByArrayOne
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] asFloat32Array
+		divideBy: #[1.0 1.0 1.0] asFloat32Array
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:40:03'!
+divideByArrayZero
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[1.0 2.0 3.141592] asFloat32Array
+		divideBy: #[0.0 2.0 3.141592] asFloat32Array
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:40:00'!
+divideByScalarIndeterminate
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] asFloat32Array
+		divideBy: 0.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:39:00'!
+divideByScalarOne
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[0.0 2.0 3.141592] asFloat32Array
+		divideBy: 1.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!Float32ArrayTest methodsFor: 'Aux' stamp: 'jmv 9/3/2020 18:39:02'!
+divideByScalarZero
+	"An example for testing. Uses a method to test behavior of non-local return."
+	^#[1.0 2.0 3.141592] asFloat32Array
+		divideBy: 0.0
+		ifDivisorZero: [^ #divisionByZero]
+		ifBothZero: [^ #indeterminateResult]! !
+
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jpb 8/2/2019 23:07:59'!
 testIsCollection
 	self assert: (#[1.0 2.0 3.141592 0.0] is: #Collection).
 	self assert: (#[-100.0 -100.0 -100.0 -200.0 ] is: #Collection).! !
 
-!FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:38:50'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:38:50'!
 testZeroArrayDividend
 
 	self assert: #[1.2 2.4 0.0 ] / #[1.2 1.2 1.2 ] = #[1.0 2.0 0.0 ] ! !
 
-!FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:51:49'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:51:49'!
 testZeroArrayDivisor
 
 	"Test implicit exception"
@@ -10505,12 +10626,12 @@ testZeroArrayDivisor
 	self assert: self divideByArrayZero = #divisionByZero.
 	self assert: self divideByArrayIndeterminate = #indeterminateResult.! !
 
-!FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:39:14'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:39:14'!
 testZeroDividend
 
 	self assert: #[1.2 2.4 3.6 0.0 ] / 1.2 = #[1.0 2.0 3.0 0.0 ] ! !
 
-!FloatArray64Test methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:53:42'!
+!Float64ArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:53:42'!
 testZeroDivisor
 
 	"Test implicit exception"
@@ -10540,7 +10661,7 @@ testZeroDivisor
 	self assert: self divideByScalarZero = #divisionByZero.
 	self assert: self divideByScalarIndeterminate = #indeterminateResult.! !
 
-!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:52:51'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:52:51'!
 divideByArrayIndeterminate
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592] copy
@@ -10548,7 +10669,7 @@ divideByArrayIndeterminate
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:52:56'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:52:56'!
 divideByArrayOne
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592] copy
@@ -10556,7 +10677,7 @@ divideByArrayOne
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:53:05'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:53:05'!
 divideByArrayZero
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[1.0 2.0 3.141592] copy
@@ -10564,7 +10685,7 @@ divideByArrayZero
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:35'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:35'!
 divideByScalarIndeterminate
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592]
@@ -10572,7 +10693,7 @@ divideByScalarIndeterminate
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:39'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:39'!
 divideByScalarOne
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[0.0 2.0 3.141592]
@@ -10580,7 +10701,7 @@ divideByScalarOne
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!FloatArray64Test methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:43'!
+!Float64ArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:38:43'!
 divideByScalarZero
 	"An example for testing. Uses a method to test behavior of non-local return."
 	^#[1.0 2.0 3.141592]
@@ -10588,126 +10709,12 @@ divideByScalarZero
 		ifDivisorZero: [^ #divisionByZero]
 		ifBothZero: [^ #indeterminateResult]! !
 
-!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 8/5/2019 11:58:16'!
-testIsType
-	self assert: (#[1.2 2.4 3.6 ] is: #Collection).
-	self assert: (#[1.2 2.4 3.6] asFloatArray is: #FloatArray).! !
-
-!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:31:37'!
-testZeroArrayDividend
-
-	self assert: #[1.2 2.4 0.0 ] asFloatArray / #[1.2 1.2 1.2 ] asFloatArray = #[1.0 2.0 0.0 ] asFloatArray ! !
-
-!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:36:58'!
-testZeroArrayDivisor
-
-	"Test implicit exception"
-	self should: [ #[1.2 2.4 3.6 ] asFloatArray / #[1.0 1.0 0.0 ] asFloatArray] raise: ZeroDivide.
-
-	"Test explicit alternative value"
-	self assert: (#[1.0 2.0 3.141592 0.0] asFloatArray divideBy: #[1.0 1.0 0.0 0.0 ] asFloatArray ifDivisorZero: -100 ifBothZero: -200) = 
-		#[1.0 2.0 -100.0 -200.0 ] asFloatArray.
-
-	"Test explicit exceptions"
-	self should: [
-		#[1.0 2.0 3.141592] asFloatArray
-			divideBy: #[1.0 1.0 0.0] 
-			ifDivisorZero: [ZeroDivide signal ]
-			ifBothZero: [DomainError signal ]]
-		raise: ZeroDivide.
-	self should: [
-		#[0.0 2.0 3.141592] asFloatArray
-			divideBy: #[0.0 1.0 1.0] 
-			ifDivisorZero: [ZeroDivide signal ]
-			ifBothZero: [DomainError signal ]]
-		raise: DomainError.
-
-	"Test non local returns in blocks"
-	self assert: self divideByArrayOne = #[0.0 2.0 3.141592] asFloatArray.
-	self assert: self divideByArrayZero = #divisionByZero.
-	self assert: self divideByArrayIndeterminate = #indeterminateResult.! !
-
-!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:12:18'!
-testZeroDividend
-
-	self assert: #[1.2 2.4 3.6 0.0 ] asFloatArray / 1.2 = #[1.0 2.0 3.0 0.0 ] asFloatArray ! !
-
-!FloatArrayTest methodsFor: 'Tests' stamp: 'jmv 7/9/2018 09:37:14'!
-testZeroDivisor
-
-	"Test implicit exception"
-	self should: [ #[1.2 2.4 3.6 ] asFloatArray / 0.0] raise: ZeroDivide.
-
-	"Test explicit alternative value"
-	self assert: (#[1.0 2.0 3.141592 0.0] asFloatArray divideBy: 0.0 ifDivisorZero: -100 ifBothZero: -200) = 
-		#[-100.0 -100.0 -100.0 -200.0 ] asFloatArray.
-
-	"Test explicit exceptions"
-	self should: [
-		#[1.0 2.0 3.141592] asFloatArray
-			divideBy: 0.0
-			ifDivisorZero: [ZeroDivide signal ]
-			ifBothZero: [DomainError signal ]]
-		raise: ZeroDivide.
-	self should: [
-		#[0.0 2.0 3.141592] asFloatArray
-			divideBy: 0.0
-			ifDivisorZero: [ZeroDivide signal ]
-			ifBothZero: [DomainError signal ]]
-		raise: DomainError.
-
-	"Test non local returns in blocks"
-	self assert: self divideByScalarOne = #[0.0 2.0 3.141592] asFloatArray.
-	self assert: self divideByScalarZero = #divisionByZero.
-	self assert: self divideByScalarIndeterminate = #indeterminateResult.! !
-
-!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:35:20'!
-divideByArrayIndeterminate
-	"An example for testing. Uses a method to test behavior of non-local return."
-	^#[0.0 2.0 3.141592] asFloatArray
-		divideBy: #[0.0 2.0 3.141592] asFloatArray
-		ifDivisorZero: [^ #divisionByZero]
-		ifBothZero: [^ #indeterminateResult]! !
-
-!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:35:48'!
-divideByArrayOne
-	"An example for testing. Uses a method to test behavior of non-local return."
-	^#[0.0 2.0 3.141592] asFloatArray
-		divideBy: #[1.0 1.0 1.0] asFloatArray
-		ifDivisorZero: [^ #divisionByZero]
-		ifBothZero: [^ #indeterminateResult]! !
-
-!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:36:13'!
-divideByArrayZero
-	"An example for testing. Uses a method to test behavior of non-local return."
-	^#[1.0 2.0 3.141592] asFloatArray
-		divideBy: #[0.0 2.0 3.141592] asFloatArray
-		ifDivisorZero: [^ #divisionByZero]
-		ifBothZero: [^ #indeterminateResult]! !
-
-!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:25:36'!
-divideByScalarIndeterminate
-	"An example for testing. Uses a method to test behavior of non-local return."
-	^#[0.0 2.0 3.141592] asFloatArray
-		divideBy: 0.0
-		ifDivisorZero: [^ #divisionByZero]
-		ifBothZero: [^ #indeterminateResult]! !
-
-!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:37:06'!
-divideByScalarOne
-	"An example for testing. Uses a method to test behavior of non-local return."
-	^#[0.0 2.0 3.141592] asFloatArray
-		divideBy: 1.0
-		ifDivisorZero: [^ #divisionByZero]
-		ifBothZero: [^ #indeterminateResult]! !
-
-!FloatArrayTest methodsFor: 'Aux' stamp: 'jmv 7/9/2018 09:25:45'!
-divideByScalarZero
-	"An example for testing. Uses a method to test behavior of non-local return."
-	^#[1.0 2.0 3.141592] asFloatArray
-		divideBy: 0.0
-		ifDivisorZero: [^ #divisionByZero]
-		ifBothZero: [^ #indeterminateResult]! !
+!Float64ArrayTest methodsFor: 'as yet unclassified' stamp: 'jmv 7/30/2020 21:58:18'!
+testSum
+	| a |
+	self assert: ({0.0. 1.0. Float pi. Float e} asFloat64Array + 1) = ({0.0+1. 1.0+1. Float pi+1. Float e+1} asFloat64Array).
+	a _ {0.0. 1.0. Float pi. Float e} asFloat64Array.
+	self assert: (a + a) = (a * 2 )! !
 
 !ExceptionHandlingConditionTest methodsFor: 'exception handling tests' stamp: 'HAW 3/29/2017 13:50:30'!
 testBlockClosuresCanBeUsedAsHandlingCondition

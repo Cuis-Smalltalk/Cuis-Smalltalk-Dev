@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4145] on 15 May 2020 at 3:07:44 pm'!
+'From Cuis 5.0 [latest update: #4370] on 4 September 2020 at 11:15:10 am'!
 'Description '!
-!provides: 'OpenCL' 1 49!
+!provides: 'OpenCL' 1 50!
 !requires: 'FFI' 1 nil nil!
 SystemOrganization addCategory: #'OpenCL-Constants'!
 SystemOrganization addCategory: #OpenCL!
@@ -4543,7 +4543,7 @@ argAt: index putDouble: aNumber
 
 	^ self argAt: index putBytesOf: aNumber asFloat! !
 
-!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 5/9/2020 11:47:57'!
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 9/3/2020 17:12:45'!
 argAt: index putFloat2: aCollectionOfNumbers
 	"To be used with arguments declared in OpenCL as float2.
 	They are 2 32 bit floating point numbers together.
@@ -4551,9 +4551,9 @@ argAt: index putFloat2: aCollectionOfNumbers
 	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
 	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
 
-	^ self argAt: index putBytesOf: (FloatArray new: 2 from: aCollectionOfNumbers)! !
+	^ self argAt: index putBytesOf: (Float32Array new: 2 from: aCollectionOfNumbers)! !
 
-!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:45'!
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 9/3/2020 17:12:45'!
 argAt: index putFloat4: aCollectionOfNumbers
 	"To be used with arguments declared in OpenCL as float4.
 	They are 4 32 bit floating point numbers together.
@@ -4561,9 +4561,9 @@ argAt: index putFloat4: aCollectionOfNumbers
 	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
 	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
 
-	^ self argAt: index putBytesOf: (FloatArray new: 4 from: aCollectionOfNumbers)! !
+	^ self argAt: index putBytesOf: (Float32Array new: 4 from: aCollectionOfNumbers)! !
 
-!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:45'!
+!OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 9/3/2020 17:12:44'!
 argAt: index putFloat: aNumber
 	"To be used with arguments declared in OpenCL as float.
 	They are 32 bit floating point.
@@ -4571,7 +4571,7 @@ argAt: index putFloat: aNumber
 	Argument to this method is a Smalltalk object. Argument passed to #argAt:putBytesOf: is also a Smalltalk object.
 	Given that bytes are copied right away, there's no problem with Garbage Collection moving or reclaiming them."
 
-	^ self argAt: index putBytesOf: (FloatArray with: aNumber asFloat)! !
+	^ self argAt: index putBytesOf: (Float32Array with: aNumber asFloat)! !
 
 !OpenCLKernel methodsFor: 'arguments' stamp: 'jmv 1/5/2016 11:46'!
 argAt: index putInt: aNumber
@@ -25468,7 +25468,7 @@ setupImages: extent
 	verticalKernel argAt: 2 putPointer: tempImage.
 	verticalKernel argAt: 3 putPointer: inputOutputImage! !
 
-!OpenCLBlur methodsFor: 'private' stamp: 'jmv 1/5/2016 11:55'!
+!OpenCLBlur methodsFor: 'private' stamp: 'jmv 9/3/2020 17:12:44'!
 setupWeightsForRadius: filterRadius
 	| sigma sum |
 	
@@ -25480,11 +25480,11 @@ setupWeightsForRadius: filterRadius
 
 	"If the radius is zero, there is no blurring."
 	filterRadius = 0 ifTrue: [
-		filterWeights := FloatArray with: 1.0.
+		filterWeights := Float32Array with: 1.0.
 		^self.
 	].
 	
-	filterWeights := FloatArray new: filterRadius + 1.
+	filterWeights := Float32Array new: filterRadius + 1.
 	sigma := filterRadius / 3.0.  "past 3 std-deviations, Gaussian is near-zero."
 	
 	"Compute unnormalized gaussian weights."
@@ -25572,7 +25572,7 @@ uploadDataToGPU: inputForm
 					pointer: inputForm
 					waitOn: lastEvent! !
 
-!OpenCLBlur methodsFor: 'initialize' stamp: 'jmv 1/5/2016 11:53'!
+!OpenCLBlur methodsFor: 'initialize' stamp: 'jmv 9/3/2020 17:12:44'!
 initialize
 
 	"Set up context, queue, program, kernels, etc."
@@ -25583,7 +25583,7 @@ initialize
 	verticalKernel := program createKernel: 'image_filter_vertical'.
 	
 	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
-	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
+	filterWeights := Float32Array new: 0.  "will be replaced when the blur-radius is set"
 	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
 	horizontalKernel argAt: 1 putPointer: filterWeightsBuffer.
 	verticalKernel argAt: 1 putPointer: filterWeightsBuffer! !
@@ -25729,7 +25729,7 @@ setupImages: extent
 	verticalKernel argAt: 2 putPointer: tempImage.
 	verticalKernel argAt: 3 putPointer: inputOutputImage! !
 
-!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 1/5/2016 11:59'!
+!OpenCLBlur12 methodsFor: 'private' stamp: 'jmv 9/3/2020 17:12:45'!
 setupWeightsForRadius: filterRadius
 	| sigma sum |
 	
@@ -25741,11 +25741,11 @@ setupWeightsForRadius: filterRadius
 
 	"If the radius is zero, there is no blurring."
 	filterRadius = 0 ifTrue: [
-		filterWeights := FloatArray with: 1.0.
+		filterWeights := Float32Array with: 1.0.
 		^self.
 	].
 	
-	filterWeights := FloatArray new: filterRadius + 1.
+	filterWeights := Float32Array new: filterRadius + 1.
 	sigma := filterRadius / 3.0.  "past 3 std-deviations, Gaussian is near-zero."
 	
 	"Compute unnormalized gaussian weights."
@@ -25833,7 +25833,7 @@ uploadDataToGPU: inputForm
 					pointer: inputForm
 					waitOn: lastEvent! !
 
-!OpenCLBlur12 methodsFor: 'initialize' stamp: 'jmv 1/5/2016 11:57'!
+!OpenCLBlur12 methodsFor: 'initialize' stamp: 'jmv 9/3/2020 17:12:44'!
 initialize
 
 	"Set up context, queue, program, kernels, etc."
@@ -25844,7 +25844,7 @@ initialize
 	verticalKernel := program createKernel: 'image_filter_vertical'.
 	
 	"Create a buffer for the filter weights, big enough for a blur-radius of 100 pixels."
-	filterWeights := FloatArray new: 0.  "will be replaced when the blur-radius is set"
+	filterWeights := Float32Array new: 0.  "will be replaced when the blur-radius is set"
 	filterWeightsBuffer := context readOnlyBufferOfSize: 101 * 4.
 	horizontalKernel argAt: 1 putPointer: filterWeightsBuffer.
 	verticalKernel argAt: 1 putPointer: filterWeightsBuffer! !
@@ -26001,7 +26001,7 @@ extent: newExtent
 	
 	self adjustOriginAndStepSize! !
 
-!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 1/5/2016 12:01'!
+!OpenCLJuliaSet methodsFor: 'initialize' stamp: 'jmv 9/3/2020 17:12:44'!
 initialize
 	"We take care so that you can call #initialize again and none of the existing settings will be lost."
 	| rememberedExtent |
@@ -26020,7 +26020,7 @@ initialize
 	
 		"Would be better to use ExternalData so that we don't have to block when uploading
 		 the parameters to the GPU, but I don't know how write 32-bit floats via the FFI."
-		params := FloatArray new: 7.
+		params := Float32Array new: 7.
 		params at: 5 put: 0.1.
 		params at: 6 put: 0.5.
 		params at: 7 put: 0.0.
