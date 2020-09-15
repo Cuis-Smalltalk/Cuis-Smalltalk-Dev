@@ -13,7 +13,7 @@ To load only some packages execute in a Workspace for example
 
 Many additional packages are being developed by members of the Cuis community, and stored in their own repo. Most of them are of very high quality, well maintained and really useful.
 
-Some of the repos owner by community members, and including packages for Cuis are:
+Some of the repos owned by community members, and including packages for Cuis are:
 (Note: Repos whose name starts with 'Cuis' are intended for Cuis Smalltalk)
 
 - https://github.com/Cuis-Smalltalk/Learning-Cuis
@@ -38,6 +38,7 @@ Some of the repos owner by community members, and including packages for Cuis ar
 - https://github.com/len/Mathematics
 - https://github.com/len/RayTracer
 - https://github.com/len/Cuis-Smalltalk-DWM
+- https://gitlab.com/klgcuisstuff/futures
 
 (if your repo with Cuis stuff is missing, please email the Cuis mail list)
 
