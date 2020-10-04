@@ -39,6 +39,7 @@ Some of the repos owned by community members, and including packages for Cuis ar
 - https://github.com/len/RayTracer
 - https://github.com/len/Cuis-Smalltalk-DWM
 - https://gitlab.com/klgcuisstuff/futures
+- https://github.com/Phantasus/Cuis-Smalltalk-CBOR
 
 (if your repo with Cuis stuff is missing, please email the Cuis mail list)
 
