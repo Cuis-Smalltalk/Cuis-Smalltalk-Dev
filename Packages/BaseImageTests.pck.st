@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4383] on 28 September 2020 at 11:52:26 am'!
+'From Cuis 5.0 [latest update: #4392] on 5 October 2020 at 11:42:45 am'!
 'Description ParseNodeEnumerator test and no blanks on categories '!
-!provides: 'BaseImageTests' 1 246!
+!provides: 'BaseImageTests' 1 247!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -23446,11 +23446,11 @@ test06ScanClassRenamedChange
 		self deny: classRenamedChange stamp isNil. ]
 ! !
 
-!ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:45'!
+!ChangesTest methodsFor: 'log tests' stamp: 'HAW 10/5/2020 11:33:10'!
 test01AddingAClassShouldBeLogged
 	" Log format expected:
 
-	!!classDefinition: #ClassName category: #'Category' stamp: changeStamp!!
+	!!classDefinition: #ClassName category: 'Category' stamp: changeStamp!!
 	Object subclass: #ClassName
 		instanceVariableNames: '...'
 		classVariableNames: '...'
@@ -23462,7 +23462,7 @@ test01AddingAClassShouldBeLogged
 	self changeUserChangesFileWhile: [
 		newClass := self createTestDataClass.
 
-		self assertIsLoggedOnce: '!!classDefinition: #', self testDataClassName, ' category: #''', self classCategoryOfTestData,''' stamp:'.
+		self assertIsLoggedOnce: '!!classDefinition: #', self testDataClassName, ' category: ''', self classCategoryOfTestData,''' stamp:'.
 		self assertIsLoggedOnce: newClass definition ] ! !
 
 !ChangesTest methodsFor: 'log tests' stamp: 'HAW 11/1/2019 17:08:48'!
