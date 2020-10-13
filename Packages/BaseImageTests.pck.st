@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4392] on 5 October 2020 at 11:42:45 am'!
+'From Cuis 5.0 [latest update: #4394] on 13 October 2020 at 10:48:33 am'!
 'Description ParseNodeEnumerator test and no blanks on categories '!
-!provides: 'BaseImageTests' 1 247!
+!provides: 'BaseImageTests' 1 248!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -34,6 +34,7 @@ SystemOrganization addCategory: 'BaseImageTests-Kernel-Objects'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Browser'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Changes'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Text'!
+SystemOrganization addCategory: 'BaseImageTests-Tools-Syntax Highlighting'!
 
 
 !classDefinition: #MyResumableTestError category: 'BaseImageTests-Exceptions'!
@@ -1344,6 +1345,16 @@ TestCase subclass: #SymbolTest
 	category: 'BaseImageTests-Kernel-Text'!
 !classDefinition: 'SymbolTest class' category: 'BaseImageTests-Kernel-Text'!
 SymbolTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SHST80RangeTypeTest category: 'BaseImageTests-Tools-Syntax Highlighting'!
+TestCase subclass: #SHST80RangeTypeTest
+	instanceVariableNames: ''
+	classVariableNames: 'ClassVar1'
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Syntax Highlighting'!
+!classDefinition: 'SHST80RangeTypeTest class' category: 'BaseImageTests-Tools-Syntax Highlighting'!
+SHST80RangeTypeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel'!
@@ -24090,6 +24101,203 @@ testIsValidKeywordSelectorIfItContainsKeywordsWithColons
 testIsValidUnarySelectorIfItStartsWithALetterAndDoesNotContainSeparators
 
 	self assert: #t234 isValidSelector! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:16:37'!
+test00MessagesForTestingAreImplemented
+
+	self assert: (self respondsTo: #_zz).
+	self assert: (self respondsTo: #!!).
+	! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:56:57'!
+test01TypeOfMessageSentToLiteralNumberAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '1'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:58:55'!
+test02TypeOfMessageSentToLiteralStringAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '''a'''! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:58:39'!
+test03TypeOfMessageSentToLiteralSymbolAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '#a'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:12'!
+test04TypeOfMessageSentToLiteralArrayAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '#(1)'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:23'!
+test05TypeOfMessageSentToLiteralBraceArrayAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '{1}'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:33'!
+test06TypeOfMessageSentToLiteralBlockAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '[1]'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:42'!
+test07TypeOfMessageSentToLiteralCharacterAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: '$a'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:51'!
+test08TypeOfMessageSentToLiteralNilAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'nil'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:59:59'!
+test09TypeOfMessageSentToLiteralTrueAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'true'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:08'!
+test10TypeOfMessageSentToLiteralFalseAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'false'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:23:39'!
+test11TypeOfMessageSentToSelfAreObtainedCorrectly
+
+	self 
+		assertTypeOfMessageSend: 'm1 self _zz'
+		is: #undefinedUnary
+		in: Object
+		receiverRange: [ :ranges | ranges penultimate ]
+		messageRange: [ :ranges | ranges last ].
+	self 
+		assertTypeOfMessageSend: 'm1 self size'
+		is: #unary
+		in: Object
+		receiverRange: [ :ranges | ranges penultimate ]
+		messageRange: [ :ranges | ranges last ].
+		
+	self 
+		assertTypeOfMessageSend: 'm1 self !! 2'
+		is: #undefinedBinary
+		in: Object
+		receiverRange: [ :ranges | ranges antepenultimate ]
+		messageRange: [ :ranges | ranges penultimate ].
+	self 
+		assertTypeOfMessageSend: 'm1 self = 2'
+		is: #binary
+		in: Object
+		receiverRange: [ :ranges | ranges antepenultimate ]
+		messageRange: [ :ranges | ranges penultimate ].! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:26'!
+test12TypeOfMessageSentToSuperAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'super'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:50:52'!
+test13TypesIsUndefinedForAnyMessageSendToSuperFromProtoObject
+
+	self 
+		assertTypeOfMessageSend: 'm1 super size'
+		is: #undefinedUnary
+		in: ProtoObject
+		receiverRange: [ :ranges | ranges penultimate ]
+		messageRange: [ :ranges | ranges last ].
+		
+	self 
+		assertTypeOfMessageSend: 'm1 super = 2'
+		is: #undefinedBinary
+		in: ProtoObject
+		receiverRange: [ :ranges | ranges antepenultimate ]
+		messageRange: [ :ranges | ranges penultimate ].! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:37'!
+test14TypeOfMessageSentToGlobalVarAreObtainedCorrectly
+
+	self assertTypesAreValidWhenMessageSendTo: 'Smalltalk'! !
+
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:24:04'!
+test15TypeOfMessageSentToClassVarAreObtainedCorrectly
+
+	ClassVar1 := 1.
+	self assertTypesAreValidWhenMessageSendTo: 'ClassVar1'! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:43'!
+assertTypeOfBinaryMessageSend: aSourceCode is: aExpectedType
+
+	self 
+		assertTypeOfMessageSend: aSourceCode 
+		is: aExpectedType 
+		receiverRange: [ :ranges | ranges antepenultimate ]
+		messageRange: [ :ranges | ranges penultimate ]
+! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:47'!
+assertTypeOfMessageSend: aSourceCode 
+	is: aExpectedType
+	in: aClassOrMetaClass 
+	receiverRange: aReceiverRangeBlock 
+	messageRange: aMessageRangeBlock
+
+	| parser ranges st80RangeType type |
+	
+	parser := SHParserST80 new.
+	ranges := parser
+		workspace: nil;
+		classOrMetaClass: aClassOrMetaClass ;
+		source: aSourceCode;
+		allSource: aSourceCode;
+		parse;
+		ranges.
+		
+	st80RangeType := SHST80RangeType for: aSourceCode in: aClassOrMetaClass.
+	st80RangeType lastRange: (aReceiverRangeBlock value: ranges).
+	type := st80RangeType ofCurrentRangeOrMessageSendIn: (aMessageRangeBlock value: ranges).
+	
+	self assert: aExpectedType equals: type
+	! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:23:51'!
+assertTypeOfMessageSend: aSourceCode 
+	is: aExpectedType 
+	receiverRange: aReceiverRangeBlock 
+	messageRange: aMessageRangeBlock
+
+	self 
+		assertTypeOfMessageSend: aSourceCode 
+		is: aExpectedType
+		in: self class
+		receiverRange: aReceiverRangeBlock 
+		messageRange: aMessageRangeBlock! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:52'!
+assertTypeOfUnaryMessageSend: aSourceCode is: aExpectedType
+
+	self 
+		assertTypeOfMessageSend: aSourceCode 
+		is: aExpectedType 
+		receiverRange: [ :ranges | ranges penultimate ]
+		messageRange: [ :ranges | ranges last ]
+! !
+
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:56'!
+assertTypesAreValidWhenMessageSendTo: aReceiverAsString
+
+	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' _zz' is: #undefinedUnary.
+	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' size' is: #unary.
+
+	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' !! 2' is: #undefinedBinary.
+	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' = 2' is: #binary
+	! !
+
+!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:40'!
+!! something
+
+	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
+
+!SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:50'!
+_zz
+
+	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
