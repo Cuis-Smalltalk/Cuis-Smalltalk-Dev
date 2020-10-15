@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4394] on 13 October 2020 at 10:48:33 am'!
 'Description ParseNodeEnumerator test and no blanks on categories '!
-!provides: 'BaseImageTests' 1 249!
+!provides: 'BaseImageTests' 1 250!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
