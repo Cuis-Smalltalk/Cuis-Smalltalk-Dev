@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4219] on 12 June 2020 at 11:41:15 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 140!
+!provides: 'TerseGuide' 1 141!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1168,7 +1168,7 @@ FontFamily readAdditionalTrueTypeFonts.
 
 FontFamily familyNames.				"list the installed fonts"
 
-((StringMorph contents: ''Text in the selected font.'') changeFont) openInHand. "look at an example"
+((LabelMorph contents: ''Text in the selected font.'') changeFont) openInHand. "look at an example"
 "
 The selection of currently installed fonts may be viewed from the text editor:
 
@@ -1196,7 +1196,7 @@ x _ Form extent: 22@18 depth: 8.
 	
 y _ x getCanvas.			"convert form to canvas (a BitBltCanvas)"
 
-EllipseMorph new drawOn: y; morphExtent: 300@200; openInWorld.
+WidgetMorph new drawOn: y; morphExtent: 300@200; openInWorld.
 	"Display a morph on a canvas"
 
 x _ Form fromUser.
@@ -1381,7 +1381,7 @@ myLayout _ LayoutMorph newRow color: Color cyan.
 myLayout openInWorld.
 myLayout morphExtent: (6 * myLayout morphExtent). "Make larger to hold submorphs"
 
-myLayout addAllMorphs: { EllipseMorph initializedInstance. ImageMorph initializedInstance. BorderedRectMorph initializedInstance. }.
+myLayout addAllMorphs: { WidgetMorph initializedInstance. ImageMorph initializedInstance. WidgetMorph initializedInstance. }.
 
 "When there is space left over, the submorphs can be shifted
  along the layout axis.  This is the axisEdgeWeight, a number from
@@ -1412,28 +1412,24 @@ myLayout beColumn.
 layoutSpec
 	"Layout Specification"
 	^
-'| layout ellipse ellipseLayout image interiorLayout rect |
+'| layout image interiorLayout rect |
 "A LayoutMorph places its submorphs along the layout axis.
  The submorphs may use a LayoutSpec to specify, for width and height,
  a fixed or porportional extent, a minimum extent, an offAxisEdgeWeight."
 
 "Some Morphs to use"
-ellipse _ EllipseMorph initializedInstance.
-rect _ BorderedRectMorph initializedInstance.
+rect _ WidgetMorph initializedInstance.
 image _ ImageMorph initializedInstance.
-ellipseLayout _ (LayoutSpec proportionalWidth: 0.3 fixedHeight: 60 offAxisEdgeWeight: #rowTop).
-ellipseLayout proportionalWidth: 0.5  minimum: 40.
-ellipse layoutSpec: ellipseLayout.
 rect layoutSpec: (LayoutSpec fixedWidth: 80 proportionalHeight: 0.6 offAxisEdgeWeight: #center).
 "Layouts can contain layouts"
 interiorLayout _ LayoutMorph newColumn.
 interiorLayout separation: 10@20.
 interiorLayout layoutSpec: (LayoutSpec proportionalWidth: 0.3 proportionalHeight: 60).
-interiorLayout addMorph: EllipseMorph initializedInstance.
-interiorLayout addAdjusterAndMorph: (RectangleLikeMorph new) proportionalWidth: 1.0.
+interiorLayout addMorph: WidgetMorph initializedInstance.
+interiorLayout addAdjusterAndMorph: (WidgetMorph new) proportionalWidth: 1.0.
 "A LayoutMorph to contain them"
 layout _ LayoutMorph newRow.
-layout addAllMorphs: { ellipse. image. interiorLayout. rect. }.
+layout addAllMorphs: { image. interiorLayout. rect. }.
 layout openInWorld.
 "Make it bigger"
 layout morphExtent: (3 * layout morphExtent).
@@ -1547,11 +1543,11 @@ Transcript									"cascading ; send multiple messages to first receiver"
    show: ''world'' ;
    newLine.
 "Without semicolon cascading"
-x := RectangleLikeMorph new.
+x := WidgetMorph new.
 x color: Color yellow.
 x openInWorld.
 "Using semicolon cascade -- we don''t need the variable, x"
-RectangleLikeMorph new
+WidgetMorph new
 	color: Color yellow; 
 	openInWorld.
 3 + 2; * 100.							"result=300. Sends message to same receiver (3)"

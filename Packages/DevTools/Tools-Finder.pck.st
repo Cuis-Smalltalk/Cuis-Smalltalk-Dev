@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4360] on 27 September 2020 at 9:04:42 pm'!
 'Description '!
-!provides: 'Tools-Finder' 1 44!
+!provides: 'Tools-Finder' 1 45!
 SystemOrganization addCategory: #'Tools-Finder-Model'!
 SystemOrganization addCategory: #'Tools-Finder-UI'!
 SystemOrganization addCategory: #'Tools-Finder-UI-Model'!
@@ -47,7 +47,7 @@ FinderSearchInnerTextMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #FinderSearchBar category: #'Tools-Finder-UI'!
-RectangleLikeMorph subclass: #FinderSearchBar
+WidgetMorph subclass: #FinderSearchBar
 	instanceVariableNames: 'layoutMorph searchBox changeHandler keyPressedHandler dateAndTimeOfLastKeyStroke timeToWaitBeforeNotifyingChanges'
 	classVariableNames: ''
 	poolDictionaries: ''
