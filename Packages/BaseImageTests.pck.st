@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4394] on 13 October 2020 at 10:48:33 am'!
-'Description ParseNodeEnumerator test and no blanks on categories '!
-!provides: 'BaseImageTests' 1 250!
+'From Cuis 5.0 [latest update: #4414] on 19 October 2020 at 4:14:33 pm'!
+'Description ReturnNodeTest tests'!
+!provides: 'BaseImageTests' 1 251!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -745,6 +745,16 @@ TestCase subclass: #PrettyPrintingTest
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'PrettyPrintingTest class' category: 'BaseImageTests-Compiler'!
 PrettyPrintingTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ReturnNodeTest category: 'BaseImageTests-Compiler'!
+TestCase subclass: #ReturnNodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Compiler'!
+!classDefinition: 'ReturnNodeTest class' category: 'BaseImageTests-Compiler'!
+ReturnNodeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ScannerTest category: 'BaseImageTests-Compiler'!
@@ -13355,6 +13365,60 @@ test6
 	prettyPrinted _ Compiler format: source in: PrettyPrintingTest notifying: nil.
 
 	self assert: source equals: prettyPrinted! !
+
+!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 10/19/2020 16:07:48'!
+test01isImplicitSelfReturnInReturnsTrueWithMethodWithOutAnySourceCode
+
+	| methodNode returnNode |
+	
+	methodNode := (self class >> #methodWithImplicitReturn) methodNode.
+	returnNode := methodNode block statements first.
+	
+	self assert: (returnNode isImplicitSelfReturnIn: methodNode)! !
+
+!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 10/19/2020 16:08:15'!
+test02isImplicitSelfReturnInReturnsTrueWithMethodReferencingSelf
+
+	| methodNode returnNode |
+	
+	methodNode := (self class >> #methodReferencingSelfWithImplicitReturn) methodNode.
+	returnNode := self returnNodeOf: methodNode.
+	
+	self assert: (returnNode isImplicitSelfReturnIn: methodNode)! !
+
+!ReturnNodeTest methodsFor: 'tests' stamp: 'HAW 10/19/2020 16:09:20'!
+test03isImplicitSelfReturnInReturnsFalseWithMethodReturningSelf
+
+	| methodNode returnNode |
+	
+	methodNode := (self class >> #methodWithoutImplicitReturn) methodNode.
+	returnNode := self returnNodeOf: methodNode.
+	
+	self deny: (returnNode isImplicitSelfReturnIn: methodNode)! !
+
+!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 10/19/2020 16:06:04'!
+methodReferencingSelfWithImplicitReturn
+
+	self yourself 
+	
+	! !
+
+!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 10/19/2020 16:00:38'!
+methodWithImplicitReturn
+	
+	! !
+
+!ReturnNodeTest methodsFor: 'test data' stamp: 'HAW 10/19/2020 16:08:38'!
+methodWithoutImplicitReturn
+	
+	^self! !
+
+!ReturnNodeTest methodsFor: 'test support' stamp: 'HAW 10/19/2020 16:03:45'!
+returnNodeOf: methodNode
+	
+	methodNode nodesDo: [:node | node isReturn ifTrue: [^node]].
+	
+	self error: 'No return node found'! !
 
 !ScannerTest methodsFor: 'testing' stamp: 'jmv 9/5/2016 20:48:53'!
 testLiteralSymbols
