@@ -1,68 +1,68 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3610] on 20 February 2019 at 12:15:33 am'!
+'From Cuis 5.0 [latest update: #4414] on 22 October 2020 at 3:50:30 pm'!
 'Description '!
-!provides: 'FFITests' 1 14!
-!requires: 'FFI' 1 30 nil!
+!provides: 'FFITests' 1 15!
 !requires: 'Cuis-Base' 50 3589 nil!
-SystemOrganization addCategory: #FFITests!
+!requires: 'FFI' 1 30 nil!
+SystemOrganization addCategory: 'FFITests'!
 
 
-!classDefinition: #FFIPluginTests category: #FFITests!
+!classDefinition: #FFIPluginTests category: 'FFITests'!
 TestCase subclass: #FFIPluginTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFITests'!
-!classDefinition: 'FFIPluginTests class' category: #FFITests!
+!classDefinition: 'FFIPluginTests class' category: 'FFITests'!
 FFIPluginTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFITestLibrary category: #FFITests!
+!classDefinition: #FFITestLibrary category: 'FFITests'!
 ExternalLibrary subclass: #FFITestLibrary
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFITests'!
-!classDefinition: 'FFITestLibrary class' category: #FFITests!
+!classDefinition: 'FFITestLibrary class' category: 'FFITests'!
 FFITestLibrary class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFISmallStruct1 category: #FFITests!
+!classDefinition: #FFISmallStruct1 category: 'FFITests'!
 ExternalStructure subclass: #FFISmallStruct1
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFITests'!
-!classDefinition: 'FFISmallStruct1 class' category: #FFITests!
+!classDefinition: 'FFISmallStruct1 class' category: 'FFITests'!
 FFISmallStruct1 class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFITestBiggerStruct category: #FFITests!
+!classDefinition: #FFITestBiggerStruct category: 'FFITests'!
 ExternalStructure subclass: #FFITestBiggerStruct
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFITests'!
-!classDefinition: 'FFITestBiggerStruct class' category: #FFITests!
+!classDefinition: 'FFITestBiggerStruct class' category: 'FFITests'!
 FFITestBiggerStruct class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFITestPoint2 category: #FFITests!
+!classDefinition: #FFITestPoint2 category: 'FFITests'!
 ExternalStructure subclass: #FFITestPoint2
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFITests'!
-!classDefinition: 'FFITestPoint2 class' category: #FFITests!
+!classDefinition: 'FFITestPoint2 class' category: 'FFITests'!
 FFITestPoint2 class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFITestPoint4 category: #FFITests!
+!classDefinition: #FFITestPoint4 category: 'FFITests'!
 ExternalStructure subclass: #FFITestPoint4
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFITests'!
-!classDefinition: 'FFITestPoint4 class' category: #FFITests!
+!classDefinition: 'FFITestPoint4 class' category: 'FFITests'!
 FFITestPoint4 class
 	instanceVariableNames: ''!
 
@@ -82,12 +82,12 @@ A class used for testing structures as arguments for the FFI.!
 !FFITestPoint4 commentStamp: 'ar 8/14/2006 23:06' prior: 0!
 A class used for testing structures as arguments for the FFI.!
 
-!FFIPluginTests methodsFor: 'external form tests' stamp: 'jmv 8/21/2013 17:30'!
+!FFIPluginTests methodsFor: 'external form tests' stamp: 'db 10/22/2020 01:37:34'!
 testBlitToAndFromExternalForm
 	"Ensure that we can blit to/from all 4 permutatations of Form and ExternalForm."
 	| source external1 external2 destination |
 	"Avoid translucency."
-	source := (Cursor wait asCursorForm asFormOfDepth: 1) asFormOfDepth: 32.
+	source := (Cursor waitCursor asCursorForm asFormOfDepth: 1) asFormOfDepth: 32.
 	destination := Form extent: source extent depth: 32.
 	external1 := ExternalForm extent: source extent depth: 32.
 	external1 allocateSpace.
