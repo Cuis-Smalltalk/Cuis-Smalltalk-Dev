@@ -1,148 +1,73 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3267] on 8 March 2018 at 11:35:06 am'!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:22:45 pm'!
 'Description '!
 !provides: 'ExtendedClipboard' 1 12!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
-SystemOrganization addCategory: #ExtendedClipboard!
-SystemOrganization addCategory: #'ExtendedClipboard-Win32'!
-SystemOrganization addCategory: #'ExtendedClipboard-tests'!
+SystemOrganization addCategory: 'ExtendedClipboard'!
+SystemOrganization addCategory: 'ExtendedClipboard-Win32'!
 
 
-!classDefinition: #ExtendedClipboardTest category: #'ExtendedClipboard-tests'!
-TestCase subclass: #ExtendedClipboardTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ExtendedClipboard-tests'!
-!classDefinition: 'ExtendedClipboardTest class' category: #'ExtendedClipboard-tests'!
-ExtendedClipboardTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #Win32Bitmap category: #'ExtendedClipboard-Win32'!
+!classDefinition: #Win32Bitmap category: 'ExtendedClipboard-Win32'!
 ExternalStructure subclass: #Win32Bitmap
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ExtendedClipboard-Win32'!
-!classDefinition: 'Win32Bitmap class' category: #'ExtendedClipboard-Win32'!
+!classDefinition: 'Win32Bitmap class' category: 'ExtendedClipboard-Win32'!
 Win32Bitmap class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardInterface category: #ExtendedClipboard!
+!classDefinition: #ExtendedClipboardInterface category: 'ExtendedClipboard'!
 Object subclass: #ExtendedClipboardInterface
 	instanceVariableNames: 'clipboard'
 	classVariableNames: 'Current WinClipboardTypes'
 	poolDictionaries: ''
 	category: 'ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardInterface class' category: #ExtendedClipboard!
+!classDefinition: 'ExtendedClipboardInterface class' category: 'ExtendedClipboard'!
 ExtendedClipboardInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardMacInterface category: #ExtendedClipboard!
+!classDefinition: #ExtendedClipboardMacInterface category: 'ExtendedClipboard'!
 ExtendedClipboardInterface subclass: #ExtendedClipboardMacInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardMacInterface class' category: #ExtendedClipboard!
+!classDefinition: 'ExtendedClipboardMacInterface class' category: 'ExtendedClipboard'!
 ExtendedClipboardMacInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardUnixInterface category: #ExtendedClipboard!
+!classDefinition: #ExtendedClipboardUnixInterface category: 'ExtendedClipboard'!
 ExtendedClipboardInterface subclass: #ExtendedClipboardUnixInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardUnixInterface class' category: #ExtendedClipboard!
+!classDefinition: 'ExtendedClipboardUnixInterface class' category: 'ExtendedClipboard'!
 ExtendedClipboardUnixInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExtendedClipboardWinInterface category: #ExtendedClipboard!
+!classDefinition: #ExtendedClipboardWinInterface category: 'ExtendedClipboard'!
 ExtendedClipboardInterface subclass: #ExtendedClipboardWinInterface
 	instanceVariableNames: 'lastSeenSequenceNr'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ExtendedClipboard'!
-!classDefinition: 'ExtendedClipboardWinInterface class' category: #ExtendedClipboard!
+!classDefinition: 'ExtendedClipboardWinInterface class' category: 'ExtendedClipboard'!
 ExtendedClipboardWinInterface class
 	instanceVariableNames: ''!
 
 
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
-testStar16BitToAndFromImageClipboard
-	"
-	ExtendedClipboardTest new testStar16BitToAndFromImageClipboard
-	"
-	| form form1 form2 |
-	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 16.
+!ExtendedClipboardInterface class methodsFor: 'system startup' stamp: 'JSM 5/6/2006 15:33'!
+shutDown: quitting
+! !
 
-	"This will use a refStreamed object"
-	Clipboard default storeObject: form.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
+!ExtendedClipboardInterface class methodsFor: 'system startup' stamp: 'JSM 5/6/2006 15:33'!
+startUp: resuming
+	"The image is either being newly started (resuming is true), or it's just been snapshotted"
 
-	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
-	ExtendedClipboardInterface current
-		clearClipboard;
-		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
-
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 4/2/2016 14:40'!
-testStar8BitToAndFromImageClipboard
-	"
-	ExtendedClipboardTest new testStar8BitToAndFromImageClipboard
-	"
-	| form form1 form2 |
-	self assert: Clipboard default extendedClipboardInterface canStore description: 'Extended Clipboard cant store'.
-
-	form _ (Display copy: (10@10 extent: 60@40)) asFormOfDepth: 8.
-
-	"This will use a refStreamed object"
-	Clipboard default storeObject: form.
-	form2 _ Clipboard default retrieveObject.
-	self assert: (form2 is: #Form).
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
-
-	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
-	ExtendedClipboardInterface current
-		clearClipboard;
-		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
-
-!ExtendedClipboardTest methodsFor: 'testing' stamp: 'jmv 7/14/2015 22:57'!
-testStarToAndFromImageClipboard
-	"
-	ExtendedClipboardTest new testStarToAndFromImageClipboard
-	"
-	| form form1 form2 |
-	form _ Display copy: (10@10 extent: 60@40).
-
-	"This will use a refStreamed object"
-	Clipboard default storeObject: form.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.
-
-	"This will also test storing and retrieving PNG data from platform Clipboard, and PNG conversion"
-	ExtendedClipboardInterface current
-		clearClipboard;
-		addClipboardData: (PNGReadWriter bytesFor: form)  dataFormat: 'public.png'.
-	form2 _ Clipboard default retrieveObject.
-	form1 _ form copy.
-	form1 addDeltasFrom: form2.
-	self assert: form1 primCountBits = 0 description: 'Form copyPasted from Clipboard appears to be bad.'.! !
+	Current := nil.
+	self current.! !
 
 !Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
 bmBits
@@ -403,17 +328,6 @@ initialize
 	Smalltalk
 		addToStartUpList: self after: nil;
 		addToShutDownList: self after: nil.! !
-
-!ExtendedClipboardInterface class methodsFor: 'system startup' stamp: 'JSM 5/6/2006 15:33'!
-shutDown: quitting
-! !
-
-!ExtendedClipboardInterface class methodsFor: 'system startup' stamp: 'JSM 5/6/2006 15:33'!
-startUp: resuming
-	"The image is either being newly started (resuming is true), or it's just been snapshotted"
-
-	Current := nil.
-	self current.! !
 
 !ExtendedClipboardMacInterface methodsFor: 'private' stamp: 'jmv 1/18/2011 15:56'!
 readPrimAvailableFormats
