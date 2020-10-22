@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:31:00 pm'!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:33:34 pm'!
 'Description Load all packages included with Cuis'!
-!provides: 'CorePackages' 1 21!
+!provides: 'CorePackages' 1 22!
 !requires: 'ClassCommentBrowser' 1 0 nil!
 !requires: 'XKCD-NamedColors' 1 0 nil!
 !requires: 'FFI' 1 0 nil!
@@ -25,6 +25,7 @@
 !requires: 'Sound' 1 0 nil!
 !requires: 'ExtendedClipboard' 1 0 nil!
 !requires: 'Tests-JSON' 1 0 nil!
+!requires: 'Tests-WebClient' 1 0 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 0 nil!
 !requires: 'Tests-YAXO' 1 0 nil!
 !requires: 'Tests-Compression' 1 0 nil!
