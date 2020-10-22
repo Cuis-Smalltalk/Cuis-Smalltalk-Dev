@@ -1,68 +1,67 @@
-'From Cuis 5.0 [latest update: #4414] on 22 October 2020 at 3:50:30 pm'!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:09:44 pm'!
 'Description '!
-!provides: 'FFITests' 1 15!
-!requires: 'Cuis-Base' 50 3589 nil!
-!requires: 'FFI' 1 30 nil!
-SystemOrganization addCategory: 'FFITests'!
+!provides: 'Tests-FFI' 1 0!
+!requires: 'FFI' 1 33 nil!
+SystemOrganization addCategory: 'Tests-FFI'!
 
 
-!classDefinition: #FFIPluginTests category: 'FFITests'!
+!classDefinition: #FFIPluginTests category: 'Tests-FFI'!
 TestCase subclass: #FFIPluginTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'FFITests'!
-!classDefinition: 'FFIPluginTests class' category: 'FFITests'!
+	category: 'Tests-FFI'!
+!classDefinition: 'FFIPluginTests class' category: 'Tests-FFI'!
 FFIPluginTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFITestLibrary category: 'FFITests'!
+!classDefinition: #FFITestLibrary category: 'Tests-FFI'!
 ExternalLibrary subclass: #FFITestLibrary
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'FFITests'!
-!classDefinition: 'FFITestLibrary class' category: 'FFITests'!
+	category: 'Tests-FFI'!
+!classDefinition: 'FFITestLibrary class' category: 'Tests-FFI'!
 FFITestLibrary class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFISmallStruct1 category: 'FFITests'!
+!classDefinition: #FFISmallStruct1 category: 'Tests-FFI'!
 ExternalStructure subclass: #FFISmallStruct1
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'FFITests'!
-!classDefinition: 'FFISmallStruct1 class' category: 'FFITests'!
+	category: 'Tests-FFI'!
+!classDefinition: 'FFISmallStruct1 class' category: 'Tests-FFI'!
 FFISmallStruct1 class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFITestBiggerStruct category: 'FFITests'!
+!classDefinition: #FFITestBiggerStruct category: 'Tests-FFI'!
 ExternalStructure subclass: #FFITestBiggerStruct
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'FFITests'!
-!classDefinition: 'FFITestBiggerStruct class' category: 'FFITests'!
+	category: 'Tests-FFI'!
+!classDefinition: 'FFITestBiggerStruct class' category: 'Tests-FFI'!
 FFITestBiggerStruct class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFITestPoint2 category: 'FFITests'!
+!classDefinition: #FFITestPoint2 category: 'Tests-FFI'!
 ExternalStructure subclass: #FFITestPoint2
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'FFITests'!
-!classDefinition: 'FFITestPoint2 class' category: 'FFITests'!
+	category: 'Tests-FFI'!
+!classDefinition: 'FFITestPoint2 class' category: 'Tests-FFI'!
 FFITestPoint2 class
 	instanceVariableNames: ''!
 
-!classDefinition: #FFITestPoint4 category: 'FFITests'!
+!classDefinition: #FFITestPoint4 category: 'Tests-FFI'!
 ExternalStructure subclass: #FFITestPoint4
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'FFITests'!
-!classDefinition: 'FFITestPoint4 class' category: 'FFITests'!
+	category: 'Tests-FFI'!
+!classDefinition: 'FFITestPoint4 class' category: 'Tests-FFI'!
 FFITestPoint4 class
 	instanceVariableNames: ''!
 
