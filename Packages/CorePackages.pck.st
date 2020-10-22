@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:27:45 pm'!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:31:00 pm'!
 'Description Load all packages included with Cuis'!
-!provides: 'CorePackages' 1 20!
+!provides: 'CorePackages' 1 21!
 !requires: 'ClassCommentBrowser' 1 0 nil!
 !requires: 'XKCD-NamedColors' 1 0 nil!
 !requires: 'FFI' 1 0 nil!
@@ -32,6 +32,7 @@
 !requires: 'Crayon-NamedColors' 1 0 nil!
 !requires: 'Collections-CompactArrays' 1 0 nil!
 !requires: 'Identities-UUID' 1 0 nil!
+!requires: 'Tests-Identities-UUID' 1 0 nil!
 !requires: 'BaseImageTests' 1 0 nil!
 !requires: 'Compression' 1 0 nil!
 !requires: 'Graphics-Files-Additional' 1 0 nil!
