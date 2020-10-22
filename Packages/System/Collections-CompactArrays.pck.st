@@ -1,66 +1,66 @@
-'From Cuis 5.0 [latest update: #4370] on 4 September 2020 at 11:10:57 am'!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 4:15:33 pm'!
 'Description '!
-!provides: 'Collections-CompactArrays' 1 12!
-SystemOrganization addCategory: #'Collections-CompactArrays'!
+!provides: 'Collections-CompactArrays' 1 13!
+SystemOrganization addCategory: 'Collections-CompactArrays'!
 
 
-!classDefinition: #Float32PointArray category: #'Collections-CompactArrays'!
+!classDefinition: #Float32PointArray category: 'Collections-CompactArrays'!
 Float32Array variableWordSubclass: #Float32PointArray
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Collections-CompactArrays'!
-!classDefinition: 'Float32PointArray class' category: #'Collections-CompactArrays'!
+!classDefinition: 'Float32PointArray class' category: 'Collections-CompactArrays'!
 Float32PointArray class
 	instanceVariableNames: ''!
 
-!classDefinition: #PointArray category: #'Collections-CompactArrays'!
+!classDefinition: #PointArray category: 'Collections-CompactArrays'!
 IntegerArray variableWordSubclass: #PointArray
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Collections-CompactArrays'!
-!classDefinition: 'PointArray class' category: #'Collections-CompactArrays'!
+!classDefinition: 'PointArray class' category: 'Collections-CompactArrays'!
 PointArray class
 	instanceVariableNames: ''!
 
-!classDefinition: #ShortIntegerArray category: #'Collections-CompactArrays'!
+!classDefinition: #ShortIntegerArray category: 'Collections-CompactArrays'!
 ArrayedCollection variableWordSubclass: #ShortIntegerArray
 	instanceVariableNames: ''
 	classVariableNames: 'LastSaveOrder'
 	poolDictionaries: ''
 	category: 'Collections-CompactArrays'!
-!classDefinition: 'ShortIntegerArray class' category: #'Collections-CompactArrays'!
+!classDefinition: 'ShortIntegerArray class' category: 'Collections-CompactArrays'!
 ShortIntegerArray class
 	instanceVariableNames: ''!
 
-!classDefinition: #ShortPointArray category: #'Collections-CompactArrays'!
+!classDefinition: #ShortPointArray category: 'Collections-CompactArrays'!
 ShortIntegerArray variableWordSubclass: #ShortPointArray
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Collections-CompactArrays'!
-!classDefinition: 'ShortPointArray class' category: #'Collections-CompactArrays'!
+!classDefinition: 'ShortPointArray class' category: 'Collections-CompactArrays'!
 ShortPointArray class
 	instanceVariableNames: ''!
 
-!classDefinition: #ShortWordArray category: #'Collections-CompactArrays'!
+!classDefinition: #ShortWordArray category: 'Collections-CompactArrays'!
 ShortIntegerArray variableWordSubclass: #ShortWordArray
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Collections-CompactArrays'!
-!classDefinition: 'ShortWordArray class' category: #'Collections-CompactArrays'!
+!classDefinition: 'ShortWordArray class' category: 'Collections-CompactArrays'!
 ShortWordArray class
 	instanceVariableNames: ''!
 
-!classDefinition: #ShortRunArray category: #'Collections-CompactArrays'!
+!classDefinition: #ShortRunArray category: 'Collections-CompactArrays'!
 ArrayedCollection variableWordSubclass: #ShortRunArray
 	instanceVariableNames: ''
 	classVariableNames: 'LastSaveOrder'
 	poolDictionaries: ''
 	category: 'Collections-CompactArrays'!
-!classDefinition: 'ShortRunArray class' category: #'Collections-CompactArrays'!
+!classDefinition: 'ShortRunArray class' category: 'Collections-CompactArrays'!
 ShortRunArray class
 	instanceVariableNames: ''!
 
@@ -68,7 +68,7 @@ ShortRunArray class
 !Float32PointArray commentStamp: '<historical>' prior: 0!
 This class stores points with 32 bit Floating point elements.
 
-{1@2. 3@4} as: FloatPointArray!
+{1@2. 3@4} as: Float32PointArray!
 
 !PointArray commentStamp: '<historical>' prior: 0!
 This class stores 32bit Integer points in place. It is used to pass data efficiently to the primitive level during high-bandwidth 2D graphics operations.!
