@@ -1,512 +1,501 @@
-'From Cuis 5.0 [latest update: #4370] on 4 September 2020 at 11:15:10 am'!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:18:46 pm'!
 'Description '!
 !provides: 'OpenCL' 1 50!
 !requires: 'FFI' 1 nil nil!
-SystemOrganization addCategory: #'OpenCL-Constants'!
-SystemOrganization addCategory: #OpenCL!
-SystemOrganization addCategory: #'OpenCL-Examples'!
-SystemOrganization addCategory: #'OpenCL-Tests'!
-SystemOrganization addCategory: #'OpenCL-FFI'!
-SystemOrganization addCategory: #'OpenCL-Plugin'!
+SystemOrganization addCategory: 'OpenCL-Constants'!
+SystemOrganization addCategory: 'OpenCL'!
+SystemOrganization addCategory: 'OpenCL-Examples'!
+SystemOrganization addCategory: 'OpenCL-FFI'!
+SystemOrganization addCategory: 'OpenCL-Plugin'!
 
 
-!classDefinition: #OpenCLConstants category: #'OpenCL-Constants'!
+!classDefinition: #OpenCLConstants category: 'OpenCL-Constants'!
 SharedPool subclass: #OpenCLConstants
 	instanceVariableNames: ''
 	classVariableNames: 'CL_A CL_ABGR CL_ADDRESS_CLAMP CL_ADDRESS_CLAMP_TO_EDGE CL_ADDRESS_MIRRORED_REPEAT CL_ADDRESS_NONE CL_ADDRESS_REPEAT CL_ARGB CL_BGRA CL_BLOCKING CL_BUFFER_CREATE_TYPE_REGION CL_BUILD_ERROR CL_BUILD_IN_PROGRESS CL_BUILD_NONE CL_BUILD_PROGRAM_FAILURE CL_BUILD_SUCCESS CL_COMMAND_ACQUIRE_GL_OBJECTS CL_COMMAND_BARRIER CL_COMMAND_COPY_BUFFER CL_COMMAND_COPY_BUFFER_RECT CL_COMMAND_COPY_BUFFER_TO_IMAGE CL_COMMAND_COPY_IMAGE CL_COMMAND_COPY_IMAGE_TO_BUFFER CL_COMMAND_FILL_BUFFER CL_COMMAND_FILL_IMAGE CL_COMMAND_MAP_BUFFER CL_COMMAND_MAP_IMAGE CL_COMMAND_MARKER CL_COMMAND_MIGRATE_MEM_OBJECTS CL_COMMAND_NATIVE_KERNEL CL_COMMAND_NDRANGE_KERNEL CL_COMMAND_READ_BUFFER CL_COMMAND_READ_BUFFER_RECT CL_COMMAND_READ_IMAGE CL_COMMAND_RELEASE_GL_OBJECTS CL_COMMAND_SVM_FREE CL_COMMAND_SVM_MAP CL_COMMAND_SVM_MEMCPY CL_COMMAND_SVM_MEMFILL CL_COMMAND_SVM_UNMAP CL_COMMAND_TASK CL_COMMAND_UNMAP_MEM_OBJECT CL_COMMAND_USER CL_COMMAND_WRITE_BUFFER CL_COMMAND_WRITE_BUFFER_RECT CL_COMMAND_WRITE_IMAGE CL_COMPILER_NOT_AVAILABLE CL_COMPILE_PROGRAM_FAILURE CL_COMPLETE CL_CONTEXT_DEVICES CL_CONTEXT_INTEROP_USER_SYNC CL_CONTEXT_NUM_DEVICES CL_CONTEXT_PLATFORM CL_CONTEXT_PROPERTIES CL_CONTEXT_REFERENCE_COUNT CL_DEPTH CL_DEPTH_STENCIL CL_DEVICE_ADDRESS_BITS CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE CL_DEVICE_AFFINITY_DOMAIN_L2_CACHE CL_DEVICE_AFFINITY_DOMAIN_L3_CACHE CL_DEVICE_AFFINITY_DOMAIN_L4_CACHE CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE CL_DEVICE_AFFINITY_DOMAIN_NUMA CL_DEVICE_AVAILABLE CL_DEVICE_BUILT_IN_KERNELS CL_DEVICE_COMPILER_AVAILABLE CL_DEVICE_DOUBLE_FP_CONFIG CL_DEVICE_ENDIAN_LITTLE CL_DEVICE_ERROR_CORRECTION_SUPPORT CL_DEVICE_EXECUTION_CAPABILITIES CL_DEVICE_EXTENSIONS CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE CL_DEVICE_GLOBAL_MEM_CACHE_SIZE CL_DEVICE_GLOBAL_MEM_CACHE_TYPE CL_DEVICE_GLOBAL_MEM_SIZE CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE CL_DEVICE_HOST_UNIFIED_MEMORY CL_DEVICE_IMAGE2D_MAX_HEIGHT CL_DEVICE_IMAGE2D_MAX_WIDTH CL_DEVICE_IMAGE3D_MAX_DEPTH CL_DEVICE_IMAGE3D_MAX_HEIGHT CL_DEVICE_IMAGE3D_MAX_WIDTH CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT CL_DEVICE_IMAGE_MAX_ARRAY_SIZE CL_DEVICE_IMAGE_MAX_BUFFER_SIZE CL_DEVICE_IMAGE_PITCH_ALIGNMENT CL_DEVICE_IMAGE_SUPPORT CL_DEVICE_LINKER_AVAILABLE CL_DEVICE_LOCAL_MEM_SIZE CL_DEVICE_LOCAL_MEM_TYPE CL_DEVICE_MAX_CLOCK_FREQUENCY CL_DEVICE_MAX_COMPUTE_UNITS CL_DEVICE_MAX_CONSTANT_ARGS CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE CL_DEVICE_MAX_MEM_ALLOC_SIZE CL_DEVICE_MAX_ON_DEVICE_EVENTS CL_DEVICE_MAX_ON_DEVICE_QUEUES CL_DEVICE_MAX_PARAMETER_SIZE CL_DEVICE_MAX_PIPE_ARGS CL_DEVICE_MAX_READ_IMAGE_ARGS CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS CL_DEVICE_MAX_SAMPLERS CL_DEVICE_MAX_WORK_GROUP_SIZE CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS CL_DEVICE_MAX_WORK_ITEM_SIZES CL_DEVICE_MAX_WRITE_IMAGE_ARGS CL_DEVICE_MEM_BASE_ADDR_ALIGN CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE CL_DEVICE_NAME CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF CL_DEVICE_NATIVE_VECTOR_WIDTH_INT CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT CL_DEVICE_NOT_AVAILABLE CL_DEVICE_NOT_FOUND CL_DEVICE_OPENCL_C_VERSION CL_DEVICE_PARENT_DEVICE CL_DEVICE_PARTITION_AFFINITY_DOMAIN CL_DEVICE_PARTITION_BY_AFFINITY_DOMAIN CL_DEVICE_PARTITION_BY_COUNTS CL_DEVICE_PARTITION_BY_COUNTS_LIST_END CL_DEVICE_PARTITION_EQUALLY CL_DEVICE_PARTITION_FAILED CL_DEVICE_PARTITION_MAX_SUB_DEVICES CL_DEVICE_PARTITION_PROPERTIES CL_DEVICE_PARTITION_TYPE CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS CL_DEVICE_PIPE_MAX_PACKET_SIZE CL_DEVICE_PLATFORM CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_INTEROP_USER_SYNC CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT CL_DEVICE_PRINTF_BUFFER_SIZE CL_DEVICE_PROFILE CL_DEVICE_PROFILING_TIMER_RESOLUTION CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES CL_DEVICE_QUEUE_ON_HOST_PROPERTIES CL_DEVICE_QUEUE_PROPERTIES CL_DEVICE_REFERENCE_COUNT CL_DEVICE_SINGLE_FP_CONFIG CL_DEVICE_SVM_ATOMICS CL_DEVICE_SVM_CAPABILITIES CL_DEVICE_SVM_COARSE_GRAIN_BUFFER CL_DEVICE_SVM_FINE_GRAIN_BUFFER CL_DEVICE_SVM_FINE_GRAIN_SYSTEM CL_DEVICE_TYPE CL_DEVICE_TYPE_ACCELERATOR CL_DEVICE_TYPE_ALL CL_DEVICE_TYPE_CPU CL_DEVICE_TYPE_CUSTOM CL_DEVICE_TYPE_DEFAULT CL_DEVICE_TYPE_GPU CL_DEVICE_VENDOR CL_DEVICE_VENDOR_ID CL_DEVICE_VERSION CL_DRIVER_VERSION CL_EVENT_COMMAND_EXECUTION_STATUS CL_EVENT_COMMAND_QUEUE CL_EVENT_COMMAND_TYPE CL_EVENT_CONTEXT CL_EVENT_REFERENCE_COUNT CL_EXEC_KERNEL CL_EXEC_NATIVE_KERNEL CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST CL_FALSE CL_FILTER_LINEAR CL_FILTER_NEAREST CL_FLOAT CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT CL_FP_DENORM CL_FP_FMA CL_FP_INF_NAN CL_FP_ROUND_TO_INF CL_FP_ROUND_TO_NEAREST CL_FP_ROUND_TO_ZERO CL_FP_SOFT_FLOAT CL_GLOBAL CL_HALF_FLOAT CL_IMAGE_ARRAY_SIZE CL_IMAGE_BUFFER CL_IMAGE_DEPTH CL_IMAGE_ELEMENT_SIZE CL_IMAGE_FORMAT CL_IMAGE_FORMAT_MISMATCH CL_IMAGE_FORMAT_NOT_SUPPORTED CL_IMAGE_HEIGHT CL_IMAGE_NUM_MIP_LEVELS CL_IMAGE_NUM_SAMPLES CL_IMAGE_ROW_PITCH CL_IMAGE_SLICE_PITCH CL_IMAGE_WIDTH CL_INTENSITY CL_INVALID_ARG_INDEX CL_INVALID_ARG_SIZE CL_INVALID_ARG_VALUE CL_INVALID_BINARY CL_INVALID_BUFFER_SIZE CL_INVALID_BUILD_OPTIONS CL_INVALID_COMMAND_QUEUE CL_INVALID_COMPILER_OPTIONS CL_INVALID_CONTEXT CL_INVALID_DEVICE CL_INVALID_DEVICE_PARTITION_COUNT CL_INVALID_DEVICE_QUEUE CL_INVALID_DEVICE_TYPE CL_INVALID_EVENT CL_INVALID_EVENT_WAIT_LIST CL_INVALID_GLOBAL_OFFSET CL_INVALID_GLOBAL_WORK_SIZE CL_INVALID_GL_OBJECT CL_INVALID_HOST_PTR CL_INVALID_IMAGE_DESCRIPTOR CL_INVALID_IMAGE_FORMAT_DESCRIPTOR CL_INVALID_IMAGE_SIZE CL_INVALID_KERNEL CL_INVALID_KERNEL_ARGS CL_INVALID_KERNEL_DEFINITION CL_INVALID_KERNEL_NAME CL_INVALID_LINKER_OPTIONS CL_INVALID_MEM_OBJECT CL_INVALID_MIP_LEVEL CL_INVALID_OPERATION CL_INVALID_PIPE_SIZE CL_INVALID_PLATFORM CL_INVALID_PROGRAM CL_INVALID_PROGRAM_EXECUTABLE CL_INVALID_PROPERTY CL_INVALID_QUEUE_PROPERTIES CL_INVALID_SAMPLER CL_INVALID_VALUE CL_INVALID_WORK_DIMENSION CL_INVALID_WORK_GROUP_SIZE CL_INVALID_WORK_ITEM_SIZE CL_KERNEL_ARG_ACCESS_NONE CL_KERNEL_ARG_ACCESS_QUALIFIER CL_KERNEL_ARG_ACCESS_READ_ONLY CL_KERNEL_ARG_ACCESS_READ_WRITE CL_KERNEL_ARG_ACCESS_WRITE_ONLY CL_KERNEL_ARG_ADDRESS_CONSTANT CL_KERNEL_ARG_ADDRESS_GLOBAL CL_KERNEL_ARG_ADDRESS_LOCAL CL_KERNEL_ARG_ADDRESS_PRIVATE CL_KERNEL_ARG_ADDRESS_QUALIFIER CL_KERNEL_ARG_INFO_NOT_AVAILABLE CL_KERNEL_ARG_NAME CL_KERNEL_ARG_TYPE_CONST CL_KERNEL_ARG_TYPE_NAME CL_KERNEL_ARG_TYPE_NONE CL_KERNEL_ARG_TYPE_PIPE CL_KERNEL_ARG_TYPE_QUALIFIER CL_KERNEL_ARG_TYPE_RESTRICT CL_KERNEL_ARG_TYPE_VOLATILE CL_KERNEL_ATTRIBUTES CL_KERNEL_COMPILE_WORK_GROUP_SIZE CL_KERNEL_CONTEXT CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM CL_KERNEL_EXEC_INFO_SVM_PTRS CL_KERNEL_FUNCTION_NAME CL_KERNEL_GLOBAL_WORK_SIZE CL_KERNEL_LOCAL_MEM_SIZE CL_KERNEL_NUM_ARGS CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE CL_KERNEL_PRIVATE_MEM_SIZE CL_KERNEL_PROGRAM CL_KERNEL_REFERENCE_COUNT CL_KERNEL_WORK_GROUP_SIZE CL_LINKER_NOT_AVAILABLE CL_LINK_PROGRAM_FAILURE CL_LOCAL CL_LUMINANCE CL_MAP_FAILURE CL_MAP_READ CL_MAP_WRITE CL_MAP_WRITE_INVALIDATE_REGION CL_MEM_ALLOC_HOST_PTR CL_MEM_ASSOCIATED_MEMOBJECT CL_MEM_CONTEXT CL_MEM_COPY_HOST_PTR CL_MEM_COPY_OVERLAP CL_MEM_FLAGS CL_MEM_HOST_NO_ACCESS CL_MEM_HOST_PTR CL_MEM_HOST_READ_ONLY CL_MEM_HOST_WRITE_ONLY CL_MEM_KERNEL_READ_AND_WRITE CL_MEM_MAP_COUNT CL_MEM_OBJECT_ALLOCATION_FAILURE CL_MEM_OBJECT_BUFFER CL_MEM_OBJECT_IMAGE1D CL_MEM_OBJECT_IMAGE1D_ARRAY CL_MEM_OBJECT_IMAGE1D_BUFFER CL_MEM_OBJECT_IMAGE2D CL_MEM_OBJECT_IMAGE2D_ARRAY CL_MEM_OBJECT_IMAGE3D CL_MEM_OBJECT_PIPE CL_MEM_OFFSET CL_MEM_READ_ONLY CL_MEM_READ_WRITE CL_MEM_REFERENCE_COUNT CL_MEM_SIZE CL_MEM_SVM_ATOMICS CL_MEM_SVM_FINE_GRAIN_BUFFER CL_MEM_TYPE CL_MEM_USES_SVM_POINTER CL_MEM_USE_HOST_PTR CL_MEM_WRITE_ONLY CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED CL_MIGRATE_MEM_OBJECT_HOST CL_MISALIGNED_SUB_BUFFER_OFFSET CL_NONE CL_NON_BLOCKING CL_OUT_OF_HOST_MEMORY CL_OUT_OF_RESOURCES CL_PIPE_MAX_PACKETS CL_PIPE_PACKET_SIZE CL_PLATFORM_EXTENSIONS CL_PLATFORM_NAME CL_PLATFORM_PROFILE CL_PLATFORM_VENDOR CL_PLATFORM_VERSION CL_PROFILING_COMMAND_COMPLETE CL_PROFILING_COMMAND_END CL_PROFILING_COMMAND_QUEUED CL_PROFILING_COMMAND_START CL_PROFILING_COMMAND_SUBMIT CL_PROFILING_INFO_NOT_AVAILABLE CL_PROGRAM_BINARIES CL_PROGRAM_BINARY_SIZES CL_PROGRAM_BINARY_TYPE CL_PROGRAM_BINARY_TYPE_COMPILED_OBJECT CL_PROGRAM_BINARY_TYPE_EXECUTABLE CL_PROGRAM_BINARY_TYPE_LIBRARY CL_PROGRAM_BINARY_TYPE_NONE CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE CL_PROGRAM_BUILD_LOG CL_PROGRAM_BUILD_OPTIONS CL_PROGRAM_BUILD_STATUS CL_PROGRAM_CONTEXT CL_PROGRAM_DEVICES CL_PROGRAM_KERNEL_NAMES CL_PROGRAM_NUM_DEVICES CL_PROGRAM_NUM_KERNELS CL_PROGRAM_REFERENCE_COUNT CL_PROGRAM_SOURCE CL_QUEUED CL_QUEUE_CONTEXT CL_QUEUE_DEVICE CL_QUEUE_ON_DEVICE CL_QUEUE_ON_DEVICE_DEFAULT CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE CL_QUEUE_PROFILING_ENABLE CL_QUEUE_PROPERTIES CL_QUEUE_REFERENCE_COUNT CL_QUEUE_SIZE CL_R CL_RA CL_READ_ONLY_CACHE CL_READ_WRITE_CACHE CL_RG CL_RGB CL_RGBA CL_RGBx CL_RGx CL_RUNNING CL_Rx CL_SAMPLER_ADDRESSING_MODE CL_SAMPLER_CONTEXT CL_SAMPLER_FILTER_MODE CL_SAMPLER_LOD_MAX CL_SAMPLER_LOD_MIN CL_SAMPLER_MIP_FILTER_MODE CL_SAMPLER_NORMALIZED_COORDS CL_SAMPLER_REFERENCE_COUNT CL_SIGNED_INT16 CL_SIGNED_INT32 CL_SIGNED_INT8 CL_SNORM_INT16 CL_SNORM_INT8 CL_SUBMITTED CL_SUCCESS CL_TRUE CL_UNORM_INT16 CL_UNORM_INT24 CL_UNORM_INT8 CL_UNORM_INT_101010 CL_UNORM_SHORT_555 CL_UNORM_SHORT_565 CL_UNSIGNED_INT16 CL_UNSIGNED_INT32 CL_UNSIGNED_INT8 CL_VERSION_1_0 CL_VERSION_1_1 CL_VERSION_1_2 CL_VERSION_2_0 CL_sBGRA CL_sRGB CL_sRGBA CL_sRGBx'
 	poolDictionaries: ''
 	category: 'OpenCL-Constants'!
-!classDefinition: 'OpenCLConstants class' category: #'OpenCL-Constants'!
+!classDefinition: 'OpenCLConstants class' category: 'OpenCL-Constants'!
 OpenCLConstants class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLError category: #OpenCL!
+!classDefinition: #OpenCLError category: 'OpenCL'!
 Error subclass: #OpenCLError
 	instanceVariableNames: 'errorCode'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLError class' category: #OpenCL!
+!classDefinition: 'OpenCLError class' category: 'OpenCL'!
 OpenCLError class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLJuliaSetMorph category: #'OpenCL-Examples'!
+!classDefinition: #OpenCLJuliaSetMorph category: 'OpenCL-Examples'!
 ImageMorph subclass: #OpenCLJuliaSetMorph
 	instanceVariableNames: 'julia'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLJuliaSetMorph class' category: #'OpenCL-Examples'!
+!classDefinition: 'OpenCLJuliaSetMorph class' category: 'OpenCL-Examples'!
 OpenCLJuliaSetMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLTest category: #'OpenCL-Tests'!
-TestCase subclass: #OpenCLTest
-	instanceVariableNames: 'context q1 q2'
-	classVariableNames: ''
-	poolDictionaries: 'OpenCLConstants'
-	category: 'OpenCL-Tests'!
-!classDefinition: 'OpenCLTest class' category: #'OpenCL-Tests'!
-OpenCLTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #CLBufferRegionStruct category: #'OpenCL-FFI'!
+!classDefinition: #CLBufferRegionStruct category: 'OpenCL-FFI'!
 ExternalStructure subclass: #CLBufferRegionStruct
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLBufferRegionStruct class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLBufferRegionStruct class' category: 'OpenCL-FFI'!
 CLBufferRegionStruct class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLImageDescStruct category: #'OpenCL-FFI'!
+!classDefinition: #CLImageDescStruct category: 'OpenCL-FFI'!
 ExternalStructure subclass: #CLImageDescStruct
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLImageDescStruct class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLImageDescStruct class' category: 'OpenCL-FFI'!
 CLImageDescStruct class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLImageFormatStruct category: #'OpenCL-FFI'!
+!classDefinition: #CLImageFormatStruct category: 'OpenCL-FFI'!
 ExternalStructure subclass: #CLImageFormatStruct
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLImageFormatStruct class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLImageFormatStruct class' category: 'OpenCL-FFI'!
 CLImageFormatStruct class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLOpaqueHandle category: #'OpenCL-FFI'!
+!classDefinition: #OpenCLOpaqueHandle category: 'OpenCL-FFI'!
 ExternalStructure subclass: #OpenCLOpaqueHandle
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'OpenCLOpaqueHandle class' category: #'OpenCL-FFI'!
+!classDefinition: 'OpenCLOpaqueHandle class' category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLCommandQueue category: #'OpenCL-FFI'!
+!classDefinition: #CLCommandQueue category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLCommandQueue
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLCommandQueue class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLCommandQueue class' category: 'OpenCL-FFI'!
 CLCommandQueue class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLContext category: #'OpenCL-FFI'!
+!classDefinition: #CLContext category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLContext
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLContext class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLContext class' category: 'OpenCL-FFI'!
 CLContext class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLDeviceID category: #'OpenCL-FFI'!
+!classDefinition: #CLDeviceID category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLDeviceID
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLDeviceID class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLDeviceID class' category: 'OpenCL-FFI'!
 CLDeviceID class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLEvent category: #'OpenCL-FFI'!
+!classDefinition: #CLEvent category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLEvent
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLEvent class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLEvent class' category: 'OpenCL-FFI'!
 CLEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLKernel category: #'OpenCL-FFI'!
+!classDefinition: #CLKernel category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLKernel
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLKernel class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLKernel class' category: 'OpenCL-FFI'!
 CLKernel class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLMem category: #'OpenCL-FFI'!
+!classDefinition: #CLMem category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLMem
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLMem class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLMem class' category: 'OpenCL-FFI'!
 CLMem class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLPlatformID category: #'OpenCL-FFI'!
+!classDefinition: #CLPlatformID category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLPlatformID
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLPlatformID class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLPlatformID class' category: 'OpenCL-FFI'!
 CLPlatformID class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLProgram category: #'OpenCL-FFI'!
+!classDefinition: #CLProgram category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLProgram
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLProgram class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLProgram class' category: 'OpenCL-FFI'!
 CLProgram class
 	instanceVariableNames: ''!
 
-!classDefinition: #CLSampler category: #'OpenCL-FFI'!
+!classDefinition: #CLSampler category: 'OpenCL-FFI'!
 OpenCLOpaqueHandle subclass: #CLSampler
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-FFI'!
-!classDefinition: 'CLSampler class' category: #'OpenCL-FFI'!
+!classDefinition: 'CLSampler class' category: 'OpenCL-FFI'!
 CLSampler class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLObject category: #OpenCL!
+!classDefinition: #OpenCLObject category: 'OpenCL'!
 Object subclass: #OpenCLObject
 	instanceVariableNames: 'id'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLObject class' category: #OpenCL!
+!classDefinition: 'OpenCLObject class' category: 'OpenCL'!
 OpenCLObject class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLDevice category: #OpenCL!
+!classDefinition: #OpenCLDevice category: 'OpenCL'!
 OpenCLObject subclass: #OpenCLDevice
 	instanceVariableNames: 'platform extensions'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLDevice class' category: #OpenCL!
+!classDefinition: 'OpenCLDevice class' category: 'OpenCL'!
 OpenCLDevice class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLPlatform category: #OpenCL!
+!classDefinition: #OpenCLPlatform category: 'OpenCL'!
 OpenCLObject subclass: #OpenCLPlatform
 	instanceVariableNames: 'profile version name vendor extensions'
 	classVariableNames: 'PreferredDevice'
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLPlatform class' category: #OpenCL!
+!classDefinition: 'OpenCLPlatform class' category: 'OpenCL'!
 OpenCLPlatform class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLRefCountedObject category: #OpenCL!
+!classDefinition: #OpenCLRefCountedObject category: 'OpenCL'!
 OpenCLObject subclass: #OpenCLRefCountedObject
 	instanceVariableNames: 'refCounter'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLRefCountedObject class' category: #OpenCL!
+!classDefinition: 'OpenCLRefCountedObject class' category: 'OpenCL'!
 OpenCLRefCountedObject class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLContext category: #OpenCL!
+!classDefinition: #OpenCLContext category: 'OpenCL'!
 OpenCLRefCountedObject subclass: #OpenCLContext
 	instanceVariableNames: 'devices'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLContext class' category: #OpenCL!
+!classDefinition: 'OpenCLContext class' category: 'OpenCL'!
 OpenCLContext class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLContextObject category: #OpenCL!
+!classDefinition: #OpenCLContextObject category: 'OpenCL'!
 OpenCLRefCountedObject subclass: #OpenCLContextObject
 	instanceVariableNames: 'context'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLContextObject class' category: #OpenCL!
+!classDefinition: 'OpenCLContextObject class' category: 'OpenCL'!
 OpenCLContextObject class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLBuffer category: #OpenCL!
+!classDefinition: #OpenCLBuffer category: 'OpenCL'!
 OpenCLContextObject subclass: #OpenCLBuffer
 	instanceVariableNames: 'byteSize smalltalkObject'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLBuffer class' category: #OpenCL!
+!classDefinition: 'OpenCLBuffer class' category: 'OpenCL'!
 OpenCLBuffer class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLCommandQueue category: #OpenCL!
+!classDefinition: #OpenCLCommandQueue category: 'OpenCL'!
 OpenCLContextObject subclass: #OpenCLCommandQueue
 	instanceVariableNames: 'device isInOrder isProfiling'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLCommandQueue class' category: #OpenCL!
+!classDefinition: 'OpenCLCommandQueue class' category: 'OpenCL'!
 OpenCLCommandQueue class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLImage2D category: #OpenCL!
+!classDefinition: #OpenCLImage2D category: 'OpenCL'!
 OpenCLContextObject subclass: #OpenCLImage2D
 	instanceVariableNames: 'format width height rowPitch'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLImage2D class' category: #OpenCL!
+!classDefinition: 'OpenCLImage2D class' category: 'OpenCL'!
 OpenCLImage2D class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLImage3D category: #OpenCL!
+!classDefinition: #OpenCLImage3D category: 'OpenCL'!
 OpenCLContextObject subclass: #OpenCLImage3D
 	instanceVariableNames: 'format width height depth rowPitch slicePitch'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLImage3D class' category: #OpenCL!
+!classDefinition: 'OpenCLImage3D class' category: 'OpenCL'!
 OpenCLImage3D class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLProgram category: #OpenCL!
+!classDefinition: #OpenCLProgram category: 'OpenCL'!
 OpenCLContextObject subclass: #OpenCLProgram
 	instanceVariableNames: 'sourceCode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLProgram class' category: #OpenCL!
+!classDefinition: 'OpenCLProgram class' category: 'OpenCL'!
 OpenCLProgram class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLSampler category: #OpenCL!
+!classDefinition: #OpenCLSampler category: 'OpenCL'!
 OpenCLContextObject subclass: #OpenCLSampler
 	instanceVariableNames: 'useNormalizedCoords addressingMode filterMode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLSampler class' category: #OpenCL!
+!classDefinition: 'OpenCLSampler class' category: 'OpenCL'!
 OpenCLSampler class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLEvent category: #OpenCL!
+!classDefinition: #OpenCLEvent category: 'OpenCL'!
 OpenCLRefCountedObject subclass: #OpenCLEvent
 	instanceVariableNames: 'commandQueue'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLEvent class' category: #OpenCL!
+!classDefinition: 'OpenCLEvent class' category: 'OpenCL'!
 OpenCLEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLMapEvent category: #OpenCL!
+!classDefinition: #OpenCLMapEvent category: 'OpenCL'!
 OpenCLEvent subclass: #OpenCLMapEvent
 	instanceVariableNames: 'pointer rowPitch slicePitch'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLMapEvent class' category: #OpenCL!
+!classDefinition: 'OpenCLMapEvent class' category: 'OpenCL'!
 OpenCLMapEvent class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLKernel category: #OpenCL!
+!classDefinition: #OpenCLKernel category: 'OpenCL'!
 OpenCLRefCountedObject subclass: #OpenCLKernel
 	instanceVariableNames: 'program'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLKernel class' category: #OpenCL!
+!classDefinition: 'OpenCLKernel class' category: 'OpenCL'!
 OpenCLKernel class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLPrimitiveInterface category: #OpenCL!
+!classDefinition: #OpenCLPrimitiveInterface category: 'OpenCL'!
 Object subclass: #OpenCLPrimitiveInterface
 	instanceVariableNames: ''
 	classVariableNames: 'ActiveSubclass FinalizationRegistry'
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLPrimitiveInterface class' category: #OpenCL!
+!classDefinition: 'OpenCLPrimitiveInterface class' category: 'OpenCL'!
 OpenCLPrimitiveInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCL64BitsPrimitiveInterface category: #OpenCL!
+!classDefinition: #OpenCL64BitsPrimitiveInterface category: 'OpenCL'!
 OpenCLPrimitiveInterface subclass: #OpenCL64BitsPrimitiveInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCL64BitsPrimitiveInterface class' category: #OpenCL!
+!classDefinition: 'OpenCL64BitsPrimitiveInterface class' category: 'OpenCL'!
 OpenCL64BitsPrimitiveInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLMacOSInterface category: #OpenCL!
+!classDefinition: #OpenCLMacOSInterface category: 'OpenCL'!
 OpenCL64BitsPrimitiveInterface subclass: #OpenCLMacOSInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLMacOSInterface class' category: #OpenCL!
+!classDefinition: 'OpenCLMacOSInterface class' category: 'OpenCL'!
 OpenCLMacOSInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLUnixInterface category: #OpenCL!
+!classDefinition: #OpenCLUnixInterface category: 'OpenCL'!
 OpenCL64BitsPrimitiveInterface subclass: #OpenCLUnixInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLUnixInterface class' category: #OpenCL!
+!classDefinition: 'OpenCLUnixInterface class' category: 'OpenCL'!
 OpenCLUnixInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLWindowsInterface category: #OpenCL!
+!classDefinition: #OpenCLWindowsInterface category: 'OpenCL'!
 OpenCL64BitsPrimitiveInterface subclass: #OpenCLWindowsInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLWindowsInterface class' category: #OpenCL!
+!classDefinition: 'OpenCLWindowsInterface class' category: 'OpenCL'!
 OpenCLWindowsInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLMacOS32BitsInterface category: #OpenCL!
+!classDefinition: #OpenCLMacOS32BitsInterface category: 'OpenCL'!
 OpenCLPrimitiveInterface subclass: #OpenCLMacOS32BitsInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLMacOS32BitsInterface class' category: #OpenCL!
+!classDefinition: 'OpenCLMacOS32BitsInterface class' category: 'OpenCL'!
 OpenCLMacOS32BitsInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLUnix32BitsInterface category: #OpenCL!
+!classDefinition: #OpenCLUnix32BitsInterface category: 'OpenCL'!
 OpenCLPrimitiveInterface subclass: #OpenCLUnix32BitsInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLUnix32BitsInterface class' category: #OpenCL!
+!classDefinition: 'OpenCLUnix32BitsInterface class' category: 'OpenCL'!
 OpenCLUnix32BitsInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLWindows32BitsInterface category: #OpenCL!
+!classDefinition: #OpenCLWindows32BitsInterface category: 'OpenCL'!
 OpenCLPrimitiveInterface subclass: #OpenCLWindows32BitsInterface
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLWindows32BitsInterface class' category: #OpenCL!
+!classDefinition: 'OpenCLWindows32BitsInterface class' category: 'OpenCL'!
 OpenCLWindows32BitsInterface class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLRefCounter category: #OpenCL!
+!classDefinition: #OpenCLRefCounter category: 'OpenCL'!
 Object subclass: #OpenCLRefCounter
 	instanceVariableNames: 'refCount id'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL'!
-!classDefinition: 'OpenCLRefCounter class' category: #OpenCL!
+!classDefinition: 'OpenCLRefCounter class' category: 'OpenCL'!
 OpenCLRefCounter class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLExample category: #'OpenCL-Examples'!
+!classDefinition: #OpenCLExample category: 'OpenCL-Examples'!
 Object subclass: #OpenCLExample
 	instanceVariableNames: 'device context queue program'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLExample class' category: #'OpenCL-Examples'!
+!classDefinition: 'OpenCLExample class' category: 'OpenCL-Examples'!
 OpenCLExample class
 	instanceVariableNames: ''!
 
-!classDefinition: #AppleCopyBenchmark category: #'OpenCL-Examples'!
+!classDefinition: #AppleCopyBenchmark category: 'OpenCL-Examples'!
 OpenCLExample subclass: #AppleCopyBenchmark
 	instanceVariableNames: 'kernel inputBuffer outputBuffer lastEvent outputMatrix'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-Examples'!
-!classDefinition: 'AppleCopyBenchmark class' category: #'OpenCL-Examples'!
+!classDefinition: 'AppleCopyBenchmark class' category: 'OpenCL-Examples'!
 AppleCopyBenchmark class
 	instanceVariableNames: ''!
 
-!classDefinition: #DeformationGridExample category: #'OpenCL-Examples'!
+!classDefinition: #DeformationGridExample category: 'OpenCL-Examples'!
 OpenCLExample subclass: #DeformationGridExample
 	instanceVariableNames: 'kernel input gridX gridY result resultExtent lastEvent outputImage'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-Examples'!
-!classDefinition: 'DeformationGridExample class' category: #'OpenCL-Examples'!
+!classDefinition: 'DeformationGridExample class' category: 'OpenCL-Examples'!
 DeformationGridExample class
 	instanceVariableNames: ''!
 
-!classDefinition: #NormalizedCoordinatesExperiment category: #'OpenCL-Examples'!
+!classDefinition: #NormalizedCoordinatesExperiment category: 'OpenCL-Examples'!
 OpenCLExample subclass: #NormalizedCoordinatesExperiment
 	instanceVariableNames: 'kernel originalFrame processedFrame lastEvent'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-Examples'!
-!classDefinition: 'NormalizedCoordinatesExperiment class' category: #'OpenCL-Examples'!
+!classDefinition: 'NormalizedCoordinatesExperiment class' category: 'OpenCL-Examples'!
 NormalizedCoordinatesExperiment class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLBlur category: #'OpenCL-Examples'!
+!classDefinition: #OpenCLBlur category: 'OpenCL-Examples'!
 OpenCLExample subclass: #OpenCLBlur
 	instanceVariableNames: 'horizontalKernel verticalKernel filterWeights filterWeightsBuffer imageExtent inputOutputImage tempImage lastEvent'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLBlur class' category: #'OpenCL-Examples'!
+!classDefinition: 'OpenCLBlur class' category: 'OpenCL-Examples'!
 OpenCLBlur class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLBlur12 category: #'OpenCL-Examples'!
+!classDefinition: #OpenCLBlur12 category: 'OpenCL-Examples'!
 OpenCLExample subclass: #OpenCLBlur12
 	instanceVariableNames: 'horizontalKernel verticalKernel filterWeights filterWeightsBuffer imageExtent inputOutputImage tempImage lastEvent'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLBlur12 class' category: #'OpenCL-Examples'!
+!classDefinition: 'OpenCLBlur12 class' category: 'OpenCL-Examples'!
 OpenCLBlur12 class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLJuliaSet category: #'OpenCL-Examples'!
+!classDefinition: #OpenCLJuliaSet category: 'OpenCL-Examples'!
 OpenCLExample subclass: #OpenCLJuliaSet
 	instanceVariableNames: 'extent iterations outputForm workImage toneMapForm toneMapImage kernel lastEvent params paramsDirty paramsBuffer scale origin'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLJuliaSet class' category: #'OpenCL-Examples'!
+!classDefinition: 'OpenCLJuliaSet class' category: 'OpenCL-Examples'!
 OpenCLJuliaSet class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLFill256 category: #'OpenCL-Examples'!
+!classDefinition: #OpenCLFill256 category: 'OpenCL-Examples'!
 Object subclass: #OpenCLFill256
 	instanceVariableNames: 'device context queue program kernel1d kernel2d lastEvent buffer'
 	classVariableNames: ''
 	poolDictionaries: 'OpenCLConstants'
 	category: 'OpenCL-Examples'!
-!classDefinition: 'OpenCLFill256 class' category: #'OpenCL-Examples'!
+!classDefinition: 'OpenCLFill256 class' category: 'OpenCL-Examples'!
 OpenCLFill256 class
 	instanceVariableNames: ''!
 
-!classDefinition: #OpenCLPlugin category: #'OpenCL-Plugin'!
+!classDefinition: #OpenCLPlugin category: 'OpenCL-Plugin'!
 Object subclass: #OpenCLPlugin
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'OpenCL-Plugin'!
-!classDefinition: 'OpenCLPlugin class' category: #'OpenCL-Plugin'!
+!classDefinition: 'OpenCLPlugin class' category: 'OpenCL-Plugin'!
 OpenCLPlugin class
 	instanceVariableNames: ''!
 
@@ -522,21 +511,6 @@ Error that knows how to look up a human-readable string corresponding to the Ope
 
 !OpenCLJuliaSetMorph commentStamp: '<historical>' prior: 0!
 OpenCLJuliaSetMorph new openInHand!
-
-!OpenCLTest commentStamp: '<historical>' prior: 0!
-Test and document usage of OpenCL framework.
-
-Things we still need to test:
-
-- test whether event is actually returned when attempt to enqueue a command fails (i.e. do we have to release the event).  This is about verifying the behavior that we expect from OpenCL implementations, to verify that the assumptions that we are making are safe.
-For example: 
-evt := [commandQueue someCommandThatWillFailToEnqueue] 
-		on: OpenCLError 
-		do: [:err | err resume].
-self should: [evt getHandle = #[0 0 0 0] ].
-
-Additionally, try:
-	OpenCLPlatform allPlatforms do: [ :platform | platform reportOn: Transcript ].!
 
 !CLBufferRegionStruct commentStamp: '<historical>' prior: 0!
 Similar to CLImageFormatStruct and CLImageDescStruct. For OpenCL's cl_buffer_region
@@ -1901,123 +1875,6 @@ useRainbowToneMap
 	"Generate a tone-map that cycles through the color-wheel.."
 	self initializeJuliaIfNecessary.
 	julia useRainbowToneMap! !
-
-!OpenCLTest methodsFor: 'running' stamp: 'jmv 1/31/2018 15:35:51'!
-setUp
-	| devices |
-	devices := OpenCLPlatform allPlatforms collect: [ :platform |
-		platform allGPUs, platform allCPUs ].
-	devices := devices concatenation.
-	context := OpenCLContext newForDevices: devices.
-	q1 := context commandQueueOn: devices first.
-	q2 := context commandQueueOn: devices first.! !
-
-!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/14/2010 23:10'!
-tearDown
-	q1 destroy.
-	q2 destroy.
-	context destroy.
-	! !
-
-!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/15/2010 00:07'!
-testCopyToAndFromBuffer
-	| bytes1 bytes2 buf |
-	
-	bytes1 := ByteArray new: 255.
-	bytes2 := ByteArray new: 255.
-	1 to: 255 do: [:i | bytes1 at: i put: i].
-	self shouldnt: [bytes1 = bytes2 "obviously"].
-	
-	"Create memory buffer to write to and read from."
-	buf := context bufferOfSize: 255.
-	
-	"We must block, since we're copying to/from ByteArrays that might move during GC.  Note that if we didn't block, the read-buffer would have to wait on the event from the write-buffer command."
-	q1 writeBuffer: buf block: true offset: 0 size: 255 pointer: bytes1 waitOn: nil.
-	q2 readBuffer: buf block: true offset: 0 size: 255 pointer: bytes2 waitOn: nil.
-	
-	"Now that we copied to the buffer and back, the two ByteArrays should be equivalent."
-	self should: [bytes1 = bytes2].
-	
-	"Free the OpenCL memory."
-	buf destroy.! !
-
-!OpenCLTest methodsFor: 'running' stamp: 'jcg 1/15/2010 01:56'!
-testFinalization
-	| buf refCounter |
-	buf := context bufferOfSize: 1000.
-	
-	"There's no accessor, because users never need to touch it."
-	refCounter := buf instVarNamed: 'refCounter'.
-	
-	self should: [refCounter count = 1].
-	buf := nil.
-	Smalltalk garbageCollectMost.
-	self should: [refCounter count = 0].
-! !
-
-!OpenCLTest methodsFor: 'running' stamp: 'jmv 1/31/2018 15:44:12'!
-testMapAndCopyImage
-	
-	| inputForm outputForm mapForm imageFormat image1 image2 ptr map1evt map2evt unmap1evt unmap2evt copyEvt |
-	
-	inputForm := (Form fromDisplay: (0@0 corner: 200@200)) asFormOfDepth: (Smalltalk isLittleEndian ifTrue: [ -32 ] ifFalse: [ 32 ]).
-	outputForm := Form extent: 200@200 nativeDepthFrom: 32.
-	mapForm := ExternalForm extent: 200@200 nativeDepthFrom: 32.
-	
-	imageFormat := CLImageFormatStruct rgba8888.
-	image1 := context 
-					newImage2D: CL_MEM_WRITE_ONLY
-					format: imageFormat
-					width: 200
-					height: 200
-					rowPitch: nil
-					hostPointer: nil.
-	image2 := context
-					newImage2D: CL_MEM_READ_ONLY
-					format: imageFormat
-					width: 200
-					height: 200
-					rowPitch: nil
-					hostPointer: nil.
-		
-	map1evt := q1 
-					mapImage: image1 
-					block: true 
-					flags: CL_MAP_WRITE 
-					origin: #(0 0 0) 
-					region: #(200 200 1) 
-					waitOn: nil.
-	ptr := map1evt pointer.
-	mapForm setManualSurfacePointer: ptr.
-	inputForm displayOn: mapForm.
-	mapForm setManualSurfacePointer: nil.
-	unmap1evt := q1 unmap: image1 pointer: ptr waitOn: map1evt.
-	
-	copyEvt := q2 
-					copyImage: image1 
-					origin: #(0 0 0) 
-					into: image2 
-					origin: #(0 0 0) 
-					region: #(200 200 1) 
-					waitOn: unmap1evt.
-
-	map2evt := q1 
-					mapImage: image2
-					block: true 
-					flags: CL_MAP_READ 
-					origin: #(0 0 0) 
-					region: #(200 200 1) 
-					waitOn: copyEvt.
-	ptr := map2evt pointer.
-	mapForm setManualSurfacePointer: ptr.
-	mapForm displayOn: outputForm.
-	mapForm setManualSurfacePointer: nil.
-	unmap2evt := q1 unmap: image2 pointer: ptr waitOn: map2evt.
-	
-	self should: [inputForm bits = outputForm bits].
-	
-	mapForm destroySurface.
-! !
 
 !CLBufferRegionStruct methodsFor: 'accessing'!
 origin

@@ -1,17 +1,17 @@
-'From Cuis 5.0 [latest update: #3826] on 12 July 2019 at 2:38:25 pm'!
-'Description Tests that verify the immutability behavior'!
-!provides: 'ImmutabilityTests' 1 1!
-!requires: 'Immutability' 1 1 nil!
-SystemOrganization addCategory: #ImmutabilityTests!
+'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:11:52 pm'!
+'Description '!
+!provides: 'Tests-Immutability' 1 0!
+!requires: 'Immutability' 1 2 nil!
+SystemOrganization addCategory: 'Tests-Immutability'!
 
 
-!classDefinition: #ImmutabilityTest category: #ImmutabilityTests!
+!classDefinition: #ImmutabilityTest category: 'Tests-Immutability'!
 TestCase subclass: #ImmutabilityTest
 	instanceVariableNames: 'instVar1'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'ImmutabilityTests'!
-!classDefinition: 'ImmutabilityTest class' category: #ImmutabilityTests!
+	category: 'Tests-Immutability'!
+!classDefinition: 'ImmutabilityTest class' category: 'Tests-Immutability'!
 ImmutabilityTest class
 	instanceVariableNames: ''!
 
