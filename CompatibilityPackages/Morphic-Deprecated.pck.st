@@ -1,11 +1,11 @@
-'From Cuis 5.0 [latest update: #4413] on 15 October 2020 at 12:26:40 pm'!
+'From Cuis 5.0 [latest update: #4425] on 24 October 2020 at 5:08:56 pm'!
 'Description '!
-!provides: 'Morphic-Deprecated' 1 1!
+!provides: 'Morphic-Deprecated' 1 2!
 SystemOrganization addCategory: 'Morphic-Deprecated'!
 
 
 !classDefinition: #RectangleLikeMorph category: 'Morphic-Deprecated'!
-Morph subclass: #RectangleLikeMorph
+MovableMorph subclass: #RectangleLikeMorph
 	instanceVariableNames: 'extent color'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -22,16 +22,6 @@ RectangleLikeMorph subclass: #BorderedRectMorph
 	category: 'Morphic-Deprecated'!
 !classDefinition: 'BorderedRectMorph class' category: 'Morphic-Deprecated'!
 BorderedRectMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #EllipseMorph category: 'Morphic-Deprecated'!
-BorderedRectMorph subclass: #EllipseMorph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic-Deprecated'!
-!classDefinition: 'EllipseMorph class' category: 'Morphic-Deprecated'!
-EllipseMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #StringMorph category: 'Morphic-Deprecated'!
@@ -66,11 +56,6 @@ BorderedRectMorph subclasses can use a variety of border styles: simple, inset, 
 
 BorderedRectMorph new borderColor: Color red; borderWidth: 10; openInWorld.
 BorderedRectMorph new borderColor: Color white; openInWorld!
-
-!EllipseMorph commentStamp: '<historical>' prior: 0!
-A round BorderedMorph. Supports borderWidth and borderColor. 
-
-EllipseMorph new borderWidth:10; borderColor: Color green; openInWorld.!
 
 !StringMorph commentStamp: '<historical>' prior: 0!
 StringMorph is a "lightweight" Morph to display a String. It supports only a single font, color, and emphasis combination. For multiple text styles, use TextModelMorph.
@@ -331,46 +316,12 @@ initialize
 is: aSymbol
 	^ aSymbol == #BorderedRectMorph or: [ super is: aSymbol ]! !
 
-!EllipseMorph methodsFor: 'drawing' stamp: 'jmv 4/9/2015 09:43'!
-drawOn: aCanvas 
+!StringMorph methodsFor: 'printing' stamp: 'efc 2/22/2003 21:35'!
+font: aFont 
+	"Set the font my text will use. The emphasis remains unchanged."
 
-	| rx ry |
-	self revisar. "The morph should be specified better!!"
-	rx _ extent x //2.
-	ry _ extent y // 2.
-	aCanvas ellipseCenterX: rx y: ry rx: rx ry: ry borderWidth: borderWidth borderColor: borderColor fillColor: color! !
-
-!EllipseMorph methodsFor: 'geometry testing' stamp: 'jmv 10/7/2009 23:21'!
-isOrthoRectangularMorph
-	^false! !
-
-!EllipseMorph methodsFor: 'geometry testing' stamp: 'pb 3/17/2020 13:36:07'!
-morphContainsPoint: aLocalPoint
-
-	| radius other delta xOverY |
-	(self morphLocalBounds containsPoint: aLocalPoint) ifFalse: [^ false].  "quick elimination"
-	extent > `1@1`
-		ifFalse: [^ true].  "Degenerate case -- code below fails by a bit"
-
-	radius _ extent y asFloat / 2.
-	other _ extent x asFloat / 2.
-	delta _ aLocalPoint - (other@radius).
-	xOverY _ extent x asFloat / extent y asFloat.
-	^ (delta x asFloat / xOverY) squared + delta y squared <= radius squared! !
-
-!EllipseMorph methodsFor: 'initialization' stamp: 'dgd 2/14/2003 22:37'!
-defaultBorderWidth
-	"answer the default border width for the receiver"
-	^ 1! !
-
-!EllipseMorph methodsFor: 'visual properties' stamp: 'jmv 3/10/2018 22:24:29'!
-defaultColor
-	"Return the default fill style for the receiver"
-	^ `Color yellow`! !
-
-!EllipseMorph class methodsFor: 'new-morph participation' stamp: 'pb 6/8/2017 23:50:14'!
-categoryInNewMorphMenu
-	^ 'Basic'! !
+	font _ aFont.
+	^ self font: font emphasis: emphasis! !
 
 !StringMorph methodsFor: 'accessing'!
 contents
@@ -493,13 +444,6 @@ changeFont
 	| newFont |
 	newFont _ AbstractFont fromUser: self fontToUse.
 	newFont ifNotNil:[self font: newFont].! !
-
-!StringMorph methodsFor: 'printing' stamp: 'efc 2/22/2003 21:35'!
-font: aFont 
-	"Set the font my text will use. The emphasis remains unchanged."
-
-	font _ aFont.
-	^ self font: font emphasis: emphasis! !
 
 !StringMorph methodsFor: 'geometry' stamp: 'jmv 3/12/2018 15:56:36'!
 fitContents

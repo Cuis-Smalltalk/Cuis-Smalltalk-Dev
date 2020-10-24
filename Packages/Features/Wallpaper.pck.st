@@ -1,23 +1,23 @@
-'From Cuis 5.0 [latest update: #4048] on 26 February 2020 at 1:51:36 pm'!
+'From Cuis 5.0 [latest update: #4425] on 24 October 2020 at 5:07:51 pm'!
 'Description '!
-!provides: 'Wallpaper' 1 4!
+!provides: 'Wallpaper' 1 5!
 !requires: 'Graphics-Files-Additional' 1 22 nil!
-SystemOrganization addCategory: #Wallpaper!
+SystemOrganization addCategory: 'Wallpaper'!
 
 
-!classDefinition: #WallpaperChanger category: #Wallpaper!
+!classDefinition: #WallpaperChanger category: 'Wallpaper'!
 Object subclass: #WallpaperChanger
 	instanceVariableNames: 'world'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Wallpaper'!
-!classDefinition: 'WallpaperChanger class' category: #Wallpaper!
+!classDefinition: 'WallpaperChanger class' category: 'Wallpaper'!
 WallpaperChanger class
 	instanceVariableNames: ''!
 
 
-!WallpaperChanger commentStamp: 'EB 4/24/2019 17:53:39' prior: 0!
-Changes the wallpaper of a given PasteUpMorph.
+!WallpaperChanger commentStamp: 'jmv 10/24/2020 16:54:40' prior: 0!
+Changes the wallpaper of a given WorldMorph.
 
 Example usage:
 

@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4414] on 19 October 2020 at 4:14:33 pm'!
+'From Cuis 5.0 [latest update: #4425] on 24 October 2020 at 5:06:52 pm'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 251!
+!provides: 'BaseImageTests' 1 252!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1275,16 +1275,6 @@ TestCase subclass: #TranscriptTest
 	category: 'BaseImageTests-System-Support'!
 !classDefinition: 'TranscriptTest class' category: 'BaseImageTests-System-Support'!
 TranscriptTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #ColorTest category: 'BaseImageTests-Graphics-Primitives'!
-TestCase subclass: #ColorTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Graphics-Primitives'!
-!classDefinition: 'ColorTest class' category: 'BaseImageTests-Graphics-Primitives'!
-ColorTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #RectangleTest category: 'BaseImageTests-Graphics-Primitives'!
@@ -15344,7 +15334,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 6/8/2020 11:13:14'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 16:52:18'!
 testLayout1
 	"
 	self new testLayout1
@@ -15383,7 +15373,7 @@ testLayout1
 		addMorph: (r3c3 _ WidgetMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row3 layoutSpec: (LayoutSpec fixedHeight: 60).
-	pane openInWorld: PasteUpMorph someInstance; morphExtent: 408@300.
+	pane openInWorld: UISupervisor ui; morphExtent: 408@300.
 	UISupervisor ui doOneCycleNow.
 
 	self assert: row1 morphWidth = (pane morphWidth - 10).
@@ -15417,7 +15407,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 8/6/2020 14:18:58'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 16:52:35'!
 testLayout2
 	"
 	self new testLayout2
@@ -15435,7 +15425,7 @@ testLayout2
 		addMorph: (c3 _ WidgetMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 0.7 offAxisEdgeWeight: #center).
 	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 0.9).
-	pane openInWorld: PasteUpMorph someInstance; morphExtent: 400@300.
+	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
 	UISupervisor ui doOneCycleNow.
 
 	self assert: row morphWidth = (pane morphWidth - 10).
@@ -15452,7 +15442,7 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 8/6/2020 14:19:55'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 16:52:42'!
 testLayout3
 	"
 	self new testLayout3
@@ -15478,7 +15468,7 @@ testLayout3
 		addMorph: (c3 _ WidgetMorph new color: (Color h: 150 s: 0.6 v: 0.6))
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 200).
-	pane openInWorld: PasteUpMorph someInstance; morphExtent: 400@300.
+	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
 	UISupervisor ui doOneCycleNow.
 
 	self assert: row displayBounds left = (pane displayBounds left + 5).
@@ -15627,13 +15617,13 @@ testTransform
 	self assert: ((MorphicTranslation withTranslation: -2) transform: (4@ 2)) = (2@0).
 	self assert: ((MorphicTranslation withTranslation: -4) transform: (2@ 2)) = (-2@-2)! !
 
-!WorldTest methodsFor: 'tests' stamp: 'jmv 12/28/2017 16:11:35'!
+!WorldTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 15:58:12'!
 testDoOneCycleWorksWithDeferredQueue
         "Ensure that nested doOneCycles don't break deferred UI messages"
         | finished |
         [
-                WorldState addDeferredUIMessage: [ UISupervisor ui doOneCycleNow ].
-                WorldState addDeferredUIMessage: nil "whatever".
+                UISupervisor whenUIinSafeState:[ UISupervisor ui doOneCycleNow ].
+                UISupervisor whenUIinSafeState: nil "whatever".
                 UISupervisor ui doOneCycleNow.
                 finished _ true.
         ] valueWithin: 1 seconds onTimeout: [finished _ false ].
@@ -16471,13 +16461,13 @@ isAbstract
 
 	^DynamicTypingSmalltalkCompleter isForCurrentTypeSystem not! !
 
-!TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/28/2017 16:13:47'!
+!TaskbarTest methodsFor: 'Running' stamp: 'jmv 10/24/2020 15:55:32'!
 setUp
 
 	needsDelete _ UISupervisor ui taskbar isNil.
 	taskbar _ UISupervisor ui hideTaskbar; showTaskbar; taskbar.
 	taskbar screenSizeChanged.
-	taskbar world instVarNamed: 'worldState' :: runStepMethods! !
+	taskbar world runStepMethods! !
 
 !TaskbarTest methodsFor: 'Running' stamp: 'jmv 12/28/2017 16:12:13'!
 tearDown
@@ -23930,11 +23920,6 @@ assertTranscriptContentsAdded: expectedAddedString after: aBlock
 assertTranscriptContentsDoesNotChangeAfter: aBlock
 	
 	self assertTranscriptContentsAdded: '' after: aBlock! !
-
-!ColorTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:28:54'!
-testIsColor
-	self assert: (Color red is: #Color).
-	self assert: (Color random is: #Color).! !
 
 !RectangleTest methodsFor: 'testing' stamp: 'jpb 8/2/2019 23:52:04'!
 testIsRectangle
