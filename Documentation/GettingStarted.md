@@ -1,6 +1,6 @@
 # Setting up and starting Cuis Smalltalk #
 
-Cuis Smalltalk is available in 64 bits and 32 bits variants. It also available in the 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them.
+Cuis Smalltalk is available in 64 bits and 32 bits variants. It also available in the 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them. 
 
 In general, we recommend using VMs from [OpenSmalltalk GitHub releases](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/latest). In addition, the [SqueakJS](https://squeak.js.org) JavaScript Squeak VM that can run in a web browser can run our -32 and our -v3 images.
 
