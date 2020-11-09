@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4425] on 24 October 2020 at 5:07:25 pm'!
+'From Cuis 5.0 [latest update: #4444] on 9 November 2020 at 3:38:27 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 171!
+!provides: 'VectorGraphics' 1 172!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-TrueType'!
@@ -1723,14 +1723,14 @@ drawUpIcon
 
 self drawCloseIcon! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/11/2017 21:15:33'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 21:15:33'!
 ellipseCenterX: mcx y: mcy rx: mrx ry: mry borderWidth: morphStrokeWidth borderColor: strokeColorOrGradient fillColor: fillColorOrGradient
 
 	
 	self strokeWidth: morphStrokeWidth color: strokeColorOrGradient fillColor: fillColorOrGradient do: [
 		self ellipseCenterX: mcx y: mcy rx: mrx ry: mry ]! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
 fillRectangle: aRectangle color: aColor
 	"For BitBltCanvas protocol, aRectangle:
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
@@ -1738,35 +1738,7 @@ fillRectangle: aRectangle color: aColor
 	self fillColor: aColor do: [
 		self rectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 ]! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/22/2017 12:24:56'!
-fillRectangle: aRectangle color: aColor borderWidth: morphStrokeWidth borderStyleSymbol: aSymbol baseColorForBorder: baseColorForBorder
-	"For BitBltCanvas protocol, aRectangle:
-	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
-	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
-
-	| brColor tlColor d1 d2 |
-	d1 _ morphStrokeWidth*0.5-0.5.
-	d2 _ morphStrokeWidth*0.5+0.5.
-	tlColor _ baseColorForBorder.
-	aSymbol == #raised ifTrue: [
-		tlColor _ baseColorForBorder quiteWhiter.
-		brColor _ baseColorForBorder quiteBlacker ].
-
-	aSymbol == #inset ifTrue: [
-		tlColor _ baseColorForBorder quiteBlacker.
-		brColor _ baseColorForBorder quiteWhiter ].
-
-	self strokeWidth: morphStrokeWidth color: tlColor fillColor: aColor do: [
-		self rectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle bottom-d2 ].
-
-	brColor ifNotNil: [
-		self strokeWidth: morphStrokeWidth color: brColor do: [
-			self moveToX: aRectangle left + d1 y: aRectangle bottom - d2.
-			self lineToX: aRectangle right - d2 y: aRectangle bottom - d2.
-			self lineToX: aRectangle right - d2 y: aRectangle top + d1 ]
-	]! !
-
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 6/23/2020 12:22:22'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/23/2020 12:22:22'!
 frameAndFillRectangle: aRectangle fillColor: aColor borderWidth: borderWidth borderColor: borderColor
 	"For BitBltCanvas protocol, aRectangle:
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
@@ -1774,7 +1746,7 @@ frameAndFillRectangle: aRectangle fillColor: aColor borderWidth: borderWidth bor
 	self strokeWidth: borderWidth color: borderColor fillColor: aColor do: [
 		self rectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 ]! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/11/2017 20:57:09'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 20:57:09'!
 frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
@@ -1786,32 +1758,60 @@ frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
 	self strokeWidth: borderWidth color: borderColor do: [
 		self rectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle bottom-d2 ]! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 10/9/2014 09:51'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 11/9/2020 15:24:57'!
+frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borderWidth: morphStrokeWidth
+	"For BitBltCanvas protocol, aRectangle:
+	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
+	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
+	"
+	(VectorCanvas onForm: Display)
+		frameRectangle: (10@10 extent: 300@200)
+		color: Color green
+		borderWidth: 10
+		borderStyleSymbol: #raised.
+	Display forceToScreen.
+	"
+
+	| d1 d2 |
+	d1 _ morphStrokeWidth*0.5-0.5.
+	d2 _ morphStrokeWidth*0.5+0.5.
+
+	self strokeWidth: morphStrokeWidth color: brColor do: [
+		self moveToX: aRectangle left + d1 y: aRectangle bottom - d2.
+		self lineToX: aRectangle right - d2 y: aRectangle bottom - d2.
+		self lineToX: aRectangle right - d2 y: aRectangle top + d1 ].
+
+	self strokeWidth: morphStrokeWidth color: tlColor do: [
+		self moveToX: aRectangle left + d1 y: aRectangle bottom - d2.
+		self lineToX: aRectangle left + d1 y: aRectangle top + d1.
+		self lineToX: aRectangle right - d2 y: aRectangle top + d1 ].! !
+
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/9/2014 09:51'!
 image: aForm at: aPoint
 "NO quiero usar imagenes en M3... ver como hacer... quizas meter un servicio en el canvas que en m2 use imagenes y en m3 no..."
 self flag: #jmvVer4.
 " 	self halt"
 "super image: aForm at: aPoint"! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 image: aForm multipliedBy: aColor at: aPoint
 "NO quiero usar imagenes en M3... ver como hacer... quizas meter un servicio en el canvas que en m2 use imagenes y en m3 no..."
 "no!!!!!!!!"
 "	self halt"
 super image: aForm multipliedBy: aColor at: aPoint! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/22/2017 12:20:56'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/22/2017 12:20:56'!
 line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
 
 	self strokeWidth: morphStrokeWidth color: aStrokeColor do: [
 		self moveToX: pt1 x y: pt1 y.
 		self lineToX: pt2 x y: pt2 y ]! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 reverseRectangleBorder: r borderWidth: borderWidth
 	self halt! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/11/2017 21:10:33'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 21:10:33'!
 roundRect: aRectangle color: aColor radius: r
 	"For BitBltCanvas protocol, aRectangle:
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
@@ -1819,25 +1819,25 @@ roundRect: aRectangle color: aColor radius: r
 		self
 			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 roundRect: displayRectangle color: aColor radius: r gradientTop: topFactor gradientBottom: bottomFactor gradientHeight: h
 	self halt! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 roundRect: aRectangle color: aColor radius: r gradientTop: topFactor gradientCenter: centerFactor gradientBottom: bottomFactor gradient1Height: h1
 	self halt! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 stencil: stencilForm at: aPoint color: aColor
 	self halt! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 textComposition: aTextComposition bounds: boundddsRect color: c selectionColor: sc
 "ojo que es un quad, o sea un rect en coordenadas del morph..."
 "	self halt"
 super textComposition: aTextComposition bounds: boundddsRect color: c selectionColor: sc! !
 
-!VectorCanvas methodsFor: 'drawing - FormCanvas protocol' stamp: 'jmv 12/16/2017 18:32:06'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/16/2017 18:32:06'!
 windowFrame: aRectangle color: aColor radius: r border: morphStrokeWidth labelHeight: lh gradientTop: topFactor gradientBottom: bottomFactor insideColor: insideColor
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
