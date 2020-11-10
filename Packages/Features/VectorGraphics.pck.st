@@ -1,352 +1,362 @@
-'From Cuis 5.0 [latest update: #4444] on 9 November 2020 at 3:38:27 pm'!
+'From Cuis 5.0 [latest update: #4446] on 10 November 2020 at 3:28:17 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 172!
+!provides: 'VectorGraphics' 1 174!
 !requires: 'Collections-CompactArrays' 1 10 nil!
-SystemOrganization addCategory: 'VectorGraphics-Kernel'!
-SystemOrganization addCategory: 'VectorGraphics-TrueType'!
-SystemOrganization addCategory: 'VectorGraphics-Experiments'!
-SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
-SystemOrganization addCategory: 'VectorGraphics-Examples'!
+SystemOrganization addCategory: #'VectorGraphics-Kernel'!
+SystemOrganization addCategory: #'VectorGraphics-PathCommands'!
+SystemOrganization addCategory: #'VectorGraphics-TrueType'!
+SystemOrganization addCategory: #'VectorGraphics-Experiments'!
+SystemOrganization addCategory: #'VectorGraphics-Examples'!
 
 
-!classDefinition: #PathCommandError category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathCommandError category: #'VectorGraphics-PathCommands'!
 Error subclass: #PathCommandError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCommandError class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCommandError class' category: #'VectorGraphics-PathCommands'!
 PathCommandError class
 	instanceVariableNames: ''!
 
-!classDefinition: #TrueTypeFont category: 'VectorGraphics-TrueType'!
+!classDefinition: #TrueTypeFont category: #'VectorGraphics-TrueType'!
 AbstractFont subclass: #TrueTypeFont
 	instanceVariableNames: 'ttFontDescription pointSize emphasis glyphForms glyphFormsByUtf8 family baseFont derivativeFonts'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TrueTypeFont class' category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TrueTypeFont class' category: #'VectorGraphics-TrueType'!
 TrueTypeFont class
 	instanceVariableNames: ''!
 
-!classDefinition: #TrueTypeFontFamily category: 'VectorGraphics-TrueType'!
+!classDefinition: #TrueTypeFontFamily category: #'VectorGraphics-TrueType'!
 FontFamily subclass: #TrueTypeFontFamily
 	instanceVariableNames: 'baseTTFontDescription ttFontDescriptionsByEmphasis'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TrueTypeFontFamily class' category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TrueTypeFontFamily class' category: #'VectorGraphics-TrueType'!
 TrueTypeFontFamily class
 	instanceVariableNames: ''!
 
-!classDefinition: #EllipseMorph3 category: 'VectorGraphics-Experiments'!
+!classDefinition: #EllipseMorph2 category: #'VectorGraphics-Experiments'!
+MovableMorph subclass: #EllipseMorph2
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph2 class' category: #'VectorGraphics-Experiments'!
+EllipseMorph2 class
+	instanceVariableNames: ''!
+
+!classDefinition: #EllipseMorph3 category: #'VectorGraphics-Experiments'!
 MovableMorph subclass: #EllipseMorph3
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'EllipseMorph3 class' category: 'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph3 class' category: #'VectorGraphics-Experiments'!
 EllipseMorph3 class
 	instanceVariableNames: ''!
 
-!classDefinition: #EllipseMorph4 category: 'VectorGraphics-Experiments'!
+!classDefinition: #EllipseMorph4 category: #'VectorGraphics-Experiments'!
 MovableMorph subclass: #EllipseMorph4
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'EllipseMorph4 class' category: 'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph4 class' category: #'VectorGraphics-Experiments'!
 EllipseMorph4 class
 	instanceVariableNames: ''!
 
-!classDefinition: #M3Exp01Morph category: 'VectorGraphics-Experiments'!
+!classDefinition: #M3Exp01Morph category: #'VectorGraphics-Experiments'!
 MovableMorph subclass: #M3Exp01Morph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp01Morph class' category: 'VectorGraphics-Experiments'!
+!classDefinition: 'M3Exp01Morph class' category: #'VectorGraphics-Experiments'!
 M3Exp01Morph class
 	instanceVariableNames: ''!
 
-!classDefinition: #M3Exp02Morph category: 'VectorGraphics-Experiments'!
+!classDefinition: #M3Exp02Morph category: #'VectorGraphics-Experiments'!
 MovableMorph subclass: #M3Exp02Morph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp02Morph class' category: 'VectorGraphics-Experiments'!
+!classDefinition: 'M3Exp02Morph class' category: #'VectorGraphics-Experiments'!
 M3Exp02Morph class
 	instanceVariableNames: ''!
 
-!classDefinition: #M3Exp03Morph category: 'VectorGraphics-Experiments'!
+!classDefinition: #M3Exp03Morph category: #'VectorGraphics-Experiments'!
 MovableMorph subclass: #M3Exp03Morph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp03Morph class' category: 'VectorGraphics-Experiments'!
+!classDefinition: 'M3Exp03Morph class' category: #'VectorGraphics-Experiments'!
 M3Exp03Morph class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClockMorph category: 'VectorGraphics-Examples'!
+!classDefinition: #ClockMorph category: #'VectorGraphics-Examples'!
 MovableMorph subclass: #ClockMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Examples'!
-!classDefinition: 'ClockMorph class' category: 'VectorGraphics-Examples'!
+!classDefinition: 'ClockMorph class' category: #'VectorGraphics-Examples'!
 ClockMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #HybridCanvas category: 'VectorGraphics-Kernel'!
+!classDefinition: #HybridCanvas category: #'VectorGraphics-Kernel'!
 BitBltCanvas subclass: #HybridCanvas
-	instanceVariableNames: 'vectorCanvas'
+	instanceVariableNames: 'vectorCanvas morphIDsForm'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'HybridCanvas class' category: 'VectorGraphics-Kernel'!
+!classDefinition: 'HybridCanvas class' category: #'VectorGraphics-Kernel'!
 HybridCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorCanvas category: 'VectorGraphics-Kernel'!
+!classDefinition: #VectorCanvas category: #'VectorGraphics-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
 	instanceVariableNames: 'boundsFinderEngine'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorCanvas class' category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorCanvas class' category: #'VectorGraphics-Kernel'!
 VectorCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineAbstract category: 'VectorGraphics-Kernel'!
+!classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
 Object subclass: #VectorEngineAbstract
 	instanceVariableNames: 'targetForm morphIds targetWidth antiAliasingWidth strokeWidth geometryTransformation currentMorphId clippingMorphId morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel pathFirstX pathFirstY pathCurrentX pathCurrentY previousCallX previousCallY previousCallControlX previousCallControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineAbstract class' category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineAbstract class' category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineBoundsFinder category: 'VectorGraphics-Kernel'!
+!classDefinition: #VectorEngineBoundsFinder category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineBoundsFinder
 	instanceVariableNames: 'auxStrokeWidthDilatedHalf'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineBoundsFinder class' category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineBoundsFinder class' category: #'VectorGraphics-Kernel'!
 VectorEngineBoundsFinder class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineSubPixel category: 'VectorGraphics-Kernel'!
+!classDefinition: #VectorEngineSubPixel category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineSubPixel
 	instanceVariableNames: 'edgeCounts alphaMask blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared subPixelDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineSubPixel class' category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineSubPixel class' category: #'VectorGraphics-Kernel'!
 VectorEngineSubPixel class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineWholePixel category: 'VectorGraphics-Kernel'!
+!classDefinition: #VectorEngineWholePixel category: #'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineWholePixel
 	instanceVariableNames: 'edgeCounts alphaMask blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineWholePixel class' category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineWholePixel class' category: #'VectorGraphics-Kernel'!
 VectorEngineWholePixel class
 	instanceVariableNames: ''!
 
-!classDefinition: #FormGlyph category: 'VectorGraphics-TrueType'!
-Object subclass: #FormGlyph
-	instanceVariableNames: 'form leftOffset topOffset advanceWidth'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'FormGlyph class' category: 'VectorGraphics-TrueType'!
-FormGlyph class
-	instanceVariableNames: ''!
-
-!classDefinition: #TTContourConstruction category: 'VectorGraphics-TrueType'!
-Object subclass: #TTContourConstruction
-	instanceVariableNames: 'points controlPointFlags'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTContourConstruction class' category: 'VectorGraphics-TrueType'!
-TTContourConstruction class
-	instanceVariableNames: ''!
-
-!classDefinition: #TTFontDescription category: 'VectorGraphics-TrueType'!
-Object subclass: #TTFontDescription
-	instanceVariableNames: 'folderName contourDataForIso8859s15 contourDataIndexesByIso8859s15 contourDataIndexesForSmalltalkGlyphs contourDataForUtf8 contourDataIndexesByUtf8 kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing'
-	classVariableNames: 'Descriptions'
-	poolDictionaries: ''
-	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTFontDescription class' category: 'VectorGraphics-TrueType'!
-TTFontDescription class
-	instanceVariableNames: ''!
-
-!classDefinition: #TTFontReader category: 'VectorGraphics-TrueType'!
-Object subclass: #TTFontReader
-	instanceVariableNames: 'glyphs nGlyphs kernPairs fontDescription'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTFontReader class' category: 'VectorGraphics-TrueType'!
-TTFontReader class
-	instanceVariableNames: ''!
-
-!classDefinition: #TTFontTableDirEntry category: 'VectorGraphics-TrueType'!
-Object subclass: #TTFontTableDirEntry
-	instanceVariableNames: 'tag fontData offset length checkSum'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTFontTableDirEntry class' category: 'VectorGraphics-TrueType'!
-TTFontTableDirEntry class
-	instanceVariableNames: ''!
-
-!classDefinition: #TTGlyph category: 'VectorGraphics-TrueType'!
-Object subclass: #TTGlyph
-	instanceVariableNames: 'boundsLeft boundsRight boundsTop boundsBottom contours advanceWidth leftSideBearing rightSideBearing'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTGlyph class' category: 'VectorGraphics-TrueType'!
-TTGlyph class
-	instanceVariableNames: ''!
-
-!classDefinition: #TTCompositeGlyph category: 'VectorGraphics-TrueType'!
-TTGlyph subclass: #TTCompositeGlyph
-	instanceVariableNames: 'glyphs'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTCompositeGlyph class' category: 'VectorGraphics-TrueType'!
-TTCompositeGlyph class
-	instanceVariableNames: ''!
-
-!classDefinition: #TTKernPair category: 'VectorGraphics-TrueType'!
-Object subclass: #TTKernPair
-	instanceVariableNames: 'left right value mask'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTKernPair class' category: 'VectorGraphics-TrueType'!
-TTKernPair class
-	instanceVariableNames: ''!
-
-!classDefinition: #PathCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathCommand category: #'VectorGraphics-PathCommands'!
 Object subclass: #PathCommand
 	instanceVariableNames: 'coordinatesAreRelative'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCommand class' category: #'VectorGraphics-PathCommands'!
 PathCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathArcCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathArcCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathArcCommand
 	instanceVariableNames: 'rs xAxisRotations toPoints doLargerArcs useIncreasingAngless'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathArcCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathArcCommand class' category: #'VectorGraphics-PathCommands'!
 PathArcCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathCloseCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathCloseCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathCloseCommand
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCloseCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCloseCommand class' category: #'VectorGraphics-PathCommands'!
 PathCloseCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathCurveToCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathCurveToCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathCurveToCommand
 	instanceVariableNames: 'toPoints control1Points control2Points'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCurveToCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCurveToCommand class' category: #'VectorGraphics-PathCommands'!
 PathCurveToCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathCurveToSmoothCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathCurveToSmoothCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathCurveToSmoothCommand
 	instanceVariableNames: 'toPoints control2Points'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCurveToSmoothCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCurveToSmoothCommand class' category: #'VectorGraphics-PathCommands'!
 PathCurveToSmoothCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathLineToCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathLineToCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathLineToCommand
 	instanceVariableNames: 'points'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathLineToCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathLineToCommand class' category: #'VectorGraphics-PathCommands'!
 PathLineToCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathLineToHCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathLineToHCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathLineToHCommand
 	instanceVariableNames: 'xs'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathLineToHCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathLineToHCommand class' category: #'VectorGraphics-PathCommands'!
 PathLineToHCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathLineToVCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathLineToVCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathLineToVCommand
 	instanceVariableNames: 'ys'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathLineToVCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathLineToVCommand class' category: #'VectorGraphics-PathCommands'!
 PathLineToVCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathMoveToCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathMoveToCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathMoveToCommand
 	instanceVariableNames: 'points'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathMoveToCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathMoveToCommand class' category: #'VectorGraphics-PathCommands'!
 PathMoveToCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathQuadraticCurveToCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathQuadraticCurveToCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathQuadraticCurveToCommand
 	instanceVariableNames: 'toPoints controlPoints'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathQuadraticCurveToCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathQuadraticCurveToCommand class' category: #'VectorGraphics-PathCommands'!
 PathQuadraticCurveToCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathQuadraticCurveToSmoothCommand category: 'VectorGraphics-PathCommands'!
+!classDefinition: #PathQuadraticCurveToSmoothCommand category: #'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathQuadraticCurveToSmoothCommand
 	instanceVariableNames: 'toPoints'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathQuadraticCurveToSmoothCommand class' category: 'VectorGraphics-PathCommands'!
+!classDefinition: 'PathQuadraticCurveToSmoothCommand class' category: #'VectorGraphics-PathCommands'!
 PathQuadraticCurveToSmoothCommand class
+	instanceVariableNames: ''!
+
+!classDefinition: #FormGlyph category: #'VectorGraphics-TrueType'!
+Object subclass: #FormGlyph
+	instanceVariableNames: 'form leftOffset topOffset advanceWidth'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-TrueType'!
+!classDefinition: 'FormGlyph class' category: #'VectorGraphics-TrueType'!
+FormGlyph class
+	instanceVariableNames: ''!
+
+!classDefinition: #TTContourConstruction category: #'VectorGraphics-TrueType'!
+Object subclass: #TTContourConstruction
+	instanceVariableNames: 'points controlPointFlags'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TTContourConstruction class' category: #'VectorGraphics-TrueType'!
+TTContourConstruction class
+	instanceVariableNames: ''!
+
+!classDefinition: #TTFontDescription category: #'VectorGraphics-TrueType'!
+Object subclass: #TTFontDescription
+	instanceVariableNames: 'folderName contourDataForIso8859s15 contourDataIndexesByIso8859s15 contourDataIndexesForSmalltalkGlyphs contourDataForUtf8 contourDataIndexesByUtf8 kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing'
+	classVariableNames: 'Descriptions'
+	poolDictionaries: ''
+	category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TTFontDescription class' category: #'VectorGraphics-TrueType'!
+TTFontDescription class
+	instanceVariableNames: ''!
+
+!classDefinition: #TTFontReader category: #'VectorGraphics-TrueType'!
+Object subclass: #TTFontReader
+	instanceVariableNames: 'glyphs nGlyphs kernPairs fontDescription'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TTFontReader class' category: #'VectorGraphics-TrueType'!
+TTFontReader class
+	instanceVariableNames: ''!
+
+!classDefinition: #TTFontTableDirEntry category: #'VectorGraphics-TrueType'!
+Object subclass: #TTFontTableDirEntry
+	instanceVariableNames: 'tag fontData offset length checkSum'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TTFontTableDirEntry class' category: #'VectorGraphics-TrueType'!
+TTFontTableDirEntry class
+	instanceVariableNames: ''!
+
+!classDefinition: #TTGlyph category: #'VectorGraphics-TrueType'!
+Object subclass: #TTGlyph
+	instanceVariableNames: 'boundsLeft boundsRight boundsTop boundsBottom contours advanceWidth leftSideBearing rightSideBearing'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TTGlyph class' category: #'VectorGraphics-TrueType'!
+TTGlyph class
+	instanceVariableNames: ''!
+
+!classDefinition: #TTCompositeGlyph category: #'VectorGraphics-TrueType'!
+TTGlyph subclass: #TTCompositeGlyph
+	instanceVariableNames: 'glyphs'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TTCompositeGlyph class' category: #'VectorGraphics-TrueType'!
+TTCompositeGlyph class
+	instanceVariableNames: ''!
+
+!classDefinition: #TTKernPair category: #'VectorGraphics-TrueType'!
+Object subclass: #TTKernPair
+	instanceVariableNames: 'left right value mask'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-TrueType'!
+!classDefinition: 'TTKernPair class' category: #'VectorGraphics-TrueType'!
+TTKernPair class
 	instanceVariableNames: ''!
 
 
@@ -356,6 +366,20 @@ TrueType fonts are the most widely used format for pixel independent vector Font
 In Cuis what is usually called TrueType Font is represented by TTFontDescription.
 
 TrueTypeFonts, being part of the traditional AbstractFont hierarchy, adds a specific pointSize, and is the object used in texts.!
+
+!EllipseMorph2 commentStamp: '<historical>' prior: 0!
+| a b c |
+
+a _ EllipseMorph2 new openInWorld.
+a morphPosition: 400@400.
+
+b _ EllipseMorph4 new.
+a addMorph: b.
+b morphPosition: 100@0.
+
+c _ EllipseMorph3 new.
+b addMorph: c.
+c morphPosition: 0@120.!
 
 !EllipseMorph3 commentStamp: '<historical>' prior: 0!
 "
@@ -372,14 +396,17 @@ c morphPosition: -100@0.
 EllipseMorph2 allInstancesDo: [ :a | a delete ].
 "!
 
-!M3Exp01Morph commentStamp: 'jmv 12/11/2017 21:33:29' prior: 0!
+!M3Exp01Morph commentStamp: '<historical>' prior: 0!
+"Just an experiment to exercise drawing operations."
 | m |
 m _ M3Exp01Morph new.
 m morphPosition: 15@30.
 (VectorCanvas onForm: Display) fullDraw: m.
 Display forceToScreen.!
 
-!M3Exp02Morph commentStamp: 'jmv 12/11/2017 21:37:40' prior: 0!
+!M3Exp02Morph commentStamp: '<historical>' prior: 0!
+"Just an experiment to exercise drawing operations."
+
 | m |
 m _ M3Exp02Morph new.
 m morphPosition: 50@30.
@@ -401,6 +428,8 @@ m morphPosition: 50@30.
 Display forceToScreen.!
 
 !M3Exp03Morph commentStamp: '<historical>' prior: 0!
+"Just an experiment to exercise drawing operations."
+
 | m |
 m _ M3Exp03Morph new.
 m morphPosition: 50@20.
@@ -972,9 +1001,17 @@ serviceReadTTFont
 		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!EllipseMorph3 methodsFor: 'drawing' stamp: 'jmv 7/27/2020 01:25:30'!
+!EllipseMorph2 methodsFor: 'drawing' stamp: 'jmv 11/10/2020 15:19:56'!
 drawOn: aCanvas
-	aCanvas ellipseCenterX: 0 y: 0 rx: 98 ry: 50 borderWidth: 3 borderColor: Color black fillColor: (Color r: 0.000 g: 0.000 b: 1.000).! !
+	aCanvas ellipseCenterX: 0 y: 0 rx: 98 ry: 10 borderWidth: 3 borderColor: Color black fillColor: (Color r: 0.000 g: 1.000 b: 1.000).! !
+
+!EllipseMorph2 class methodsFor: 'new-morph participation' stamp: 'jmv 11/10/2020 15:19:20'!
+categoryInNewMorphMenu
+	^ 'Basic'! !
+
+!EllipseMorph3 methodsFor: 'drawing' stamp: 'jmv 11/10/2020 15:20:23'!
+drawOn: aCanvas
+	aCanvas ellipseCenterX: 0 y: 0 rx: 98 ry: 30 borderWidth: 3 borderColor: Color black fillColor: (Color r: 0.000 g: 0.000 b: 1.000).! !
 
 !EllipseMorph3 class methodsFor: 'new-morph participation' stamp: 'jmv 7/14/2020 21:52:15'!
 categoryInNewMorphMenu
@@ -1171,6 +1208,11 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	vectorCanvas setClipRect: aRectangle! !
 
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/10/2020 12:00:57'!
+setForm: aForm
+	super setForm: aForm.
+	morphIDsForm _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').! !
+
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 7/25/2020 08:26:28'!
 updatingMorphBoundsDo: aBlock
 
@@ -1185,21 +1227,29 @@ updatingMorphBoundsDo: aBlock
 canDraw: aMorph
 	^true! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 8/6/2020 19:58:48'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 11/10/2020 12:01:27'!
 drawCurrentAndSubmorphs
-	| auxBitBlt hack r |
-	super drawCurrentAndSubmorphs.
-
-self flag: #jmvHacks.
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
-	r _ self boundingRectOfCurrentMorphAfterDraw.
-	hack _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
-	auxBitBlt _ BitBlt toForm: hack.
-	auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
-	auxBitBlt combinationRule: Form over.
-	auxBitBlt destRect: r.
-	auxBitBlt copyBits! !
+
+	self isCurrentMorphVisible ifTrue: [
+
+		currentMorph drawOn: self.
+		"Esto pone random en el id. Zafa, ponele."
+		engine instVarNamed: 'destForm' put: morphIDsForm.
+		currentMorph drawOn: self.
+		engine instVarNamed: 'destForm' put: form.
+
+		world notNil ifTrue: [					"Only if we are drawing the world"
+			currentMorph displayBounds: self boundingRectOfCurrentMorphAfterDraw ].
+		"Display submorphs back to front"
+		"coordinate system stack already set up for aMorph
+		('ivars transformations' and 'currentTransformation')"
+		currentMorph clippedSubmorph ifNotNil: [ :clipped |
+			self clippingByCurrentMorphDo: [ self fullDraw: clipped ]].
+		currentMorph unclippedSubmorphsReverseDo: [ :m |
+			self fullDraw: m ].
+	]! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
 into: aMorph
@@ -1232,24 +1282,20 @@ savePatch: prevSavedPatch bounds: aRectangle
 
 	^ vectorCanvas savePatch: prevSavedPatch bounds: aRectangle! !
 
-!HybridCanvas methodsFor: 'morphic world' stamp: 'jmv 10/24/2020 17:05:13'!
+!HybridCanvas methodsFor: 'morphic world' stamp: 'jmv 11/10/2020 12:02:01'!
 drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 	"Draw worldBackgroundDamage rects for aWorldMorph.
 	Do not include submorphs."
+	"If we get here, we are drawing with BitBlt, not VectorCanvas.
+	Clear morphIds of pixels drawn for currentMorph"
 
-	
-	| auxBitBlt hack |
-	self flag: #jmvHacks.
-	hack _ Form extent: form extent depth: 32 bits: 		((self instVarNamed: 'vectorCanvas') engine instVarNamed: 'morphIds').
-	auxBitBlt _ BitBlt toForm: hack.
-	auxBitBlt fillBitmap: (Bitmap with: 16r00000000).
-	auxBitBlt combinationRule: Form over.
 	worldBackgroundDamage do: [ :r |
-		aWorldMorph drawOn: (self newClipRect: r).	
-		auxBitBlt destRect: r.
-		auxBitBlt copyBits
-		].
-! !
+		self newClipRect: r.
+		aWorldMorph drawOn: self.
+		"Esto pone random en el id. Zafa, ponele."
+		engine instVarNamed: 'destForm' put: morphIDsForm.
+		aWorldMorph drawOn: self.
+		engine instVarNamed: 'destForm' put: form. ].! !
 
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
@@ -4977,6 +5023,363 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 defaultAntiAliasingWidth
 	^1.7! !
 
+!PathCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:15'!
+buildFrom: commandChar stream: aStream
+
+	coordinatesAreRelative _ commandChar isLowercase! !
+
+!PathCommand methodsFor: 'building' stamp: 'jmv 5/4/2010 06:16'!
+buildFromStream: aStream in: parentToBe
+
+	coordinatesAreRelative _ aStream next isLowercase! !
+
+!PathCommand methodsFor: 'as yet unclassified' stamp: 'jmv 5/6/2011 22:18'!
+coordinatesAreRelative
+^coordinatesAreRelative! !
+
+!PathCommand methodsFor: 'private' stamp: 'jmv 5/11/2010 10:05'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."
+
+	self subclassResponsibility! !
+
+!PathCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:09'!
+runOn: aCanvas
+
+	self subclassResponsibility! !
+
+!PathCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:03'!
+classFor: anSVGPathCommandName
+
+	self allSubclassesDo: [ :cls |
+		cls svgName = anSVGPathCommandName asUppercase
+			ifTrue: [ ^cls ] ].
+	^nil! !
+
+!PathCommand class methodsFor: 'instance creation' stamp: 'jmv 7/14/2019 14:30:24'!
+from: commandChar stream: aStream
+	| cls|
+	cls _ self classFor: commandChar.
+	cls ifNil: [
+		PathCommandError signal: ('Unhandled path command: 'copyWith: commandChar).
+		^nil ].
+	^cls new buildFrom: commandChar stream: aStream
+	! !
+
+!PathCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:03'!
+svgName
+	"Answer the name of the svg elements we can represent"
+
+	^self subclassResponsibility! !
+
+!PathArcCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 10:41'!
+buildFrom: commandChar stream: aStream
+
+	| rx ry xAxisRotation doLargerArc useIncreasingAngles x y |
+	super buildFrom: commandChar stream: aStream.
+	rs _ OrderedCollection new.
+	xAxisRotations _ OrderedCollection new.
+	toPoints _ OrderedCollection new.
+	doLargerArcs _ OrderedCollection new.
+	useIncreasingAngless _ OrderedCollection new.
+	[
+		rx _ aStream nextNumber.
+		ry _ aStream nextNumber.
+		xAxisRotation _ aStream nextNumber.
+		doLargerArc _ (aStream nextNumber = 0) not.
+		useIncreasingAngles _ (aStream nextNumber = 0) not.
+		x _ aStream nextNumber.
+		y _ aStream nextNumber.
+		y notNil ] whileTrue: [
+			rs add: rx@ry.
+			xAxisRotations add: xAxisRotation degreesToRadians.
+			doLargerArcs add: doLargerArc.
+			useIncreasingAngless add: useIncreasingAngles.
+			toPoints add: x@y ]! !
+
+!PathArcCommand methodsFor: 'private' stamp: 'jmv 6/15/2010 15:30'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."
+
+"si los puntos son relativos, tirar una excepcion...
+Y completar los que falten!!"
+self flag: #revisarM3.
+	toPoints do: aBlock! !
+
+!PathArcCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:07:26'!
+runOn: aCanvas
+
+	aCanvas multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless! !
+
+!PathArcCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
+svgName
+
+	^$A! !
+
+!PathCloseCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:10'!
+buildFrom: commandChar stream: aStream
+
+	super buildFrom: commandChar stream: aStream! !
+
+!PathCloseCommand methodsFor: 'private' stamp: 'jmv 5/11/2010 10:05'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."! !
+
+!PathCloseCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:07:07'!
+runOn: aCanvas
+
+	aCanvas closePath! !
+
+!PathCloseCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
+svgName
+
+	^$Z! !
+
+!PathCurveToCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 09:56'!
+buildFrom: commandChar stream: aStream
+
+	| x1 y1 x2 y2 x y |
+	super buildFrom: commandChar stream: aStream.
+	toPoints _ OrderedCollection new.
+	control1Points _ OrderedCollection new.
+	control2Points _ OrderedCollection new.
+	[
+		x1 _ aStream nextNumber.
+		y1 _ aStream nextNumber.
+		x2 _ aStream nextNumber.
+		y2 _ aStream nextNumber.
+		x _ aStream nextNumber.
+		y _ aStream nextNumber.
+		y notNil ] whileTrue: [
+			toPoints add: x@y.
+			control1Points add: x1@y1.
+			control2Points add: x2@y2 ]! !
+
+!PathCurveToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 09:57'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."
+
+	toPoints do: aBlock! !
+
+!PathCurveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:51'!
+runOn: aCanvas
+
+	aCanvas multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points! !
+
+!PathCurveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
+svgName
+
+	^$C! !
+
+!PathCurveToSmoothCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 09:59'!
+buildFrom: commandChar stream: aStream
+
+	| x2 y2 x y |
+	super buildFrom: commandChar stream: aStream.
+	toPoints _ OrderedCollection new.
+	control2Points _ OrderedCollection new.
+	[
+		x2 _ aStream nextNumber.
+		y2 _ aStream nextNumber.
+		x _ aStream nextNumber.
+		y _ aStream nextNumber.
+		y notNil ] whileTrue: [
+			toPoints add: x@y.
+			control2Points add: x2@y2 ]! !
+
+!PathCurveToSmoothCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:01'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."
+
+	toPoints do: aBlock! !
+
+!PathCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:33'!
+runOn: aCanvas
+
+	aCanvas multiCurveToSmooth: coordinatesAreRelative toPoints: toPoints control2Points: control2Points! !
+
+!PathCurveToSmoothCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
+svgName
+
+	^$S! !
+
+!PathLineToCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:33'!
+buildFrom: commandChar stream: aStream
+
+	| px py |
+	super buildFrom: commandChar stream: aStream.
+	points _ Array streamContents: [ :strm |
+		[px _ aStream nextNumber.
+		py _ aStream nextNumber.
+		py notNil ] whileTrue:
+			[ strm nextPut: px@py ]]! !
+
+!PathLineToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 09:32'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."
+	"Atencion: Si son relativas todo esto esta mal... Igual, lo que quiero es reimplementar todo"
+
+	points do: aBlock! !
+
+!PathLineToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:08'!
+runOn: aCanvas
+
+	aCanvas multiLineTo: coordinatesAreRelative points: points! !
+
+!PathLineToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
+svgName
+
+	^$L! !
+
+!PathLineToHCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:45'!
+buildFrom: commandChar stream: aStream
+
+	| px |
+	super buildFrom: commandChar stream: aStream.
+	xs _ Array streamContents: [ :strm |
+		[px _ aStream nextNumber.
+		px notNil ] whileTrue:
+			[ strm nextPut: px ]]! !
+
+!PathLineToHCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:04:56'!
+runOn: aCanvas
+
+	aCanvas multiLineTo: coordinatesAreRelative xs: xs! !
+
+!PathLineToHCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
+svgName
+
+	^$H! !
+
+!PathLineToVCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:45'!
+buildFrom: commandChar stream: aStream
+
+	| py |
+	super buildFrom: commandChar stream: aStream.
+	ys _ Array streamContents: [ :strm |
+		[py _ aStream nextNumber.
+		py notNil ] whileTrue:
+			[ strm nextPut: py ]]! !
+
+!PathLineToVCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:04:32'!
+runOn: aCanvas
+
+	aCanvas multiLineTo: coordinatesAreRelative ys: ys! !
+
+!PathLineToVCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
+svgName
+
+	^$V! !
+
+!PathMoveToCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:34'!
+buildFrom: commandChar stream: aStream
+
+	| px py |
+	super buildFrom: commandChar stream: aStream.
+	points _ Array streamContents: [ :strm |
+		[px _ aStream nextNumber.
+		py _ aStream nextNumber.
+		py notNil ] whileTrue:
+			[ strm nextPut: px@py ]]! !
+
+!PathMoveToCommand methodsFor: 'building' stamp: 'jmv 4/9/2019 13:36:26'!
+toPoint: endPoint
+	coordinatesAreRelative _ false.
+	points _ {endPoint}! !
+
+!PathMoveToCommand methodsFor: 'building' stamp: 'jmv 3/2/2020 11:41:49'!
+toRelativePoint: endPoint
+	coordinatesAreRelative _ true.
+	points _ {endPoint}! !
+
+!PathMoveToCommand methodsFor: 'private' stamp: 'jmv 6/11/2010 14:34'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."
+
+	points do: aBlock! !
+
+!PathMoveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:47'!
+runOn: aCanvas
+
+	aCanvas multiMoveTo: coordinatesAreRelative points: points! !
+
+!PathMoveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
+svgName
+
+	^$M! !
+
+!PathQuadraticCurveToCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 10:12'!
+buildFrom: commandChar stream: aStream
+
+	| x1 y1 x y |
+	super buildFrom: commandChar stream: aStream.
+	toPoints _ OrderedCollection new.
+	controlPoints _ OrderedCollection new.
+	[
+		x1 _ aStream nextNumber.
+		y1 _ aStream nextNumber.
+		x _ aStream nextNumber.
+		y _ aStream nextNumber.
+		y notNil ] whileTrue: [
+			toPoints add: x@y.
+			controlPoints add: x1@y1 ]! !
+
+!PathQuadraticCurveToCommand methodsFor: 'building' stamp: 'jmv 4/9/2019 13:30:05'!
+toPoints: endPoints controlPoints: aControlPoints
+	coordinatesAreRelative _ false.
+	toPoints _ endPoints.
+	controlPoints _ aControlPoints! !
+
+!PathQuadraticCurveToCommand methodsFor: 'building' stamp: 'jmv 2/29/2020 18:01:39'!
+toRelativePoints: endPoints controlPoints: aControlPoints
+	coordinatesAreRelative _ true.
+	toPoints _ endPoints.
+	controlPoints _ aControlPoints! !
+
+!PathQuadraticCurveToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:14'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."
+
+	toPoints do: aBlock! !
+
+!PathQuadraticCurveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:23'!
+runOn: aCanvas
+
+	aCanvas multiQuadraticCurveTo: coordinatesAreRelative toPoints: toPoints controlPoints: controlPoints! !
+
+!PathQuadraticCurveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
+svgName
+
+	^$Q! !
+
+!PathQuadraticCurveToSmoothCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 10:15'!
+buildFrom: commandChar stream: aStream
+
+	| x y |
+	super buildFrom: commandChar stream: aStream.
+	toPoints _ OrderedCollection new.
+	[
+		x _ aStream nextNumber.
+		y _ aStream nextNumber.
+		y notNil ] whileTrue: [
+			toPoints add: x@y]! !
+
+!PathQuadraticCurveToSmoothCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:17'!
+privatePointsDo: aBlock
+	"evaluate aBlock with the x and y coordinates for our defining points."
+
+	toPoints do: aBlock! !
+
+!PathQuadraticCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:02:58'!
+runOn: aCanvas
+
+	aCanvas multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints! !
+
+!PathQuadraticCurveToSmoothCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:09'!
+svgName
+
+	^$T! !
+
 !FormGlyph methodsFor: 'initialization' stamp: 'jmv 5/13/2019 22:20:59'!
 form: aForm
 	form _ aForm! !
@@ -6456,363 +6859,6 @@ value: aNumber
 !TTKernPair class methodsFor: 'accessing'!
 maskFor: left with: right
 	^(left bitShift: 12) + right! !
-
-!PathCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:15'!
-buildFrom: commandChar stream: aStream
-
-	coordinatesAreRelative _ commandChar isLowercase! !
-
-!PathCommand methodsFor: 'building' stamp: 'jmv 5/4/2010 06:16'!
-buildFromStream: aStream in: parentToBe
-
-	coordinatesAreRelative _ aStream next isLowercase! !
-
-!PathCommand methodsFor: 'as yet unclassified' stamp: 'jmv 5/6/2011 22:18'!
-coordinatesAreRelative
-^coordinatesAreRelative! !
-
-!PathCommand methodsFor: 'private' stamp: 'jmv 5/11/2010 10:05'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	self subclassResponsibility! !
-
-!PathCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:09'!
-runOn: aCanvas
-
-	self subclassResponsibility! !
-
-!PathCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:03'!
-classFor: anSVGPathCommandName
-
-	self allSubclassesDo: [ :cls |
-		cls svgName = anSVGPathCommandName asUppercase
-			ifTrue: [ ^cls ] ].
-	^nil! !
-
-!PathCommand class methodsFor: 'instance creation' stamp: 'jmv 7/14/2019 14:30:24'!
-from: commandChar stream: aStream
-	| cls|
-	cls _ self classFor: commandChar.
-	cls ifNil: [
-		PathCommandError signal: ('Unhandled path command: 'copyWith: commandChar).
-		^nil ].
-	^cls new buildFrom: commandChar stream: aStream
-	! !
-
-!PathCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:03'!
-svgName
-	"Answer the name of the svg elements we can represent"
-
-	^self subclassResponsibility! !
-
-!PathArcCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 10:41'!
-buildFrom: commandChar stream: aStream
-
-	| rx ry xAxisRotation doLargerArc useIncreasingAngles x y |
-	super buildFrom: commandChar stream: aStream.
-	rs _ OrderedCollection new.
-	xAxisRotations _ OrderedCollection new.
-	toPoints _ OrderedCollection new.
-	doLargerArcs _ OrderedCollection new.
-	useIncreasingAngless _ OrderedCollection new.
-	[
-		rx _ aStream nextNumber.
-		ry _ aStream nextNumber.
-		xAxisRotation _ aStream nextNumber.
-		doLargerArc _ (aStream nextNumber = 0) not.
-		useIncreasingAngles _ (aStream nextNumber = 0) not.
-		x _ aStream nextNumber.
-		y _ aStream nextNumber.
-		y notNil ] whileTrue: [
-			rs add: rx@ry.
-			xAxisRotations add: xAxisRotation degreesToRadians.
-			doLargerArcs add: doLargerArc.
-			useIncreasingAngless add: useIncreasingAngles.
-			toPoints add: x@y ]! !
-
-!PathArcCommand methodsFor: 'private' stamp: 'jmv 6/15/2010 15:30'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-"si los puntos son relativos, tirar una excepcion...
-Y completar los que falten!!"
-self flag: #revisarM3.
-	toPoints do: aBlock! !
-
-!PathArcCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:07:26'!
-runOn: aCanvas
-
-	aCanvas multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless! !
-
-!PathArcCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
-svgName
-
-	^$A! !
-
-!PathCloseCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:10'!
-buildFrom: commandChar stream: aStream
-
-	super buildFrom: commandChar stream: aStream! !
-
-!PathCloseCommand methodsFor: 'private' stamp: 'jmv 5/11/2010 10:05'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."! !
-
-!PathCloseCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:07:07'!
-runOn: aCanvas
-
-	aCanvas closePath! !
-
-!PathCloseCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
-svgName
-
-	^$Z! !
-
-!PathCurveToCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 09:56'!
-buildFrom: commandChar stream: aStream
-
-	| x1 y1 x2 y2 x y |
-	super buildFrom: commandChar stream: aStream.
-	toPoints _ OrderedCollection new.
-	control1Points _ OrderedCollection new.
-	control2Points _ OrderedCollection new.
-	[
-		x1 _ aStream nextNumber.
-		y1 _ aStream nextNumber.
-		x2 _ aStream nextNumber.
-		y2 _ aStream nextNumber.
-		x _ aStream nextNumber.
-		y _ aStream nextNumber.
-		y notNil ] whileTrue: [
-			toPoints add: x@y.
-			control1Points add: x1@y1.
-			control2Points add: x2@y2 ]! !
-
-!PathCurveToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 09:57'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	toPoints do: aBlock! !
-
-!PathCurveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:51'!
-runOn: aCanvas
-
-	aCanvas multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points! !
-
-!PathCurveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
-svgName
-
-	^$C! !
-
-!PathCurveToSmoothCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 09:59'!
-buildFrom: commandChar stream: aStream
-
-	| x2 y2 x y |
-	super buildFrom: commandChar stream: aStream.
-	toPoints _ OrderedCollection new.
-	control2Points _ OrderedCollection new.
-	[
-		x2 _ aStream nextNumber.
-		y2 _ aStream nextNumber.
-		x _ aStream nextNumber.
-		y _ aStream nextNumber.
-		y notNil ] whileTrue: [
-			toPoints add: x@y.
-			control2Points add: x2@y2 ]! !
-
-!PathCurveToSmoothCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:01'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	toPoints do: aBlock! !
-
-!PathCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:33'!
-runOn: aCanvas
-
-	aCanvas multiCurveToSmooth: coordinatesAreRelative toPoints: toPoints control2Points: control2Points! !
-
-!PathCurveToSmoothCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
-svgName
-
-	^$S! !
-
-!PathLineToCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:33'!
-buildFrom: commandChar stream: aStream
-
-	| px py |
-	super buildFrom: commandChar stream: aStream.
-	points _ Array streamContents: [ :strm |
-		[px _ aStream nextNumber.
-		py _ aStream nextNumber.
-		py notNil ] whileTrue:
-			[ strm nextPut: px@py ]]! !
-
-!PathLineToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 09:32'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-	"Atencion: Si son relativas todo esto esta mal... Igual, lo que quiero es reimplementar todo"
-
-	points do: aBlock! !
-
-!PathLineToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:08'!
-runOn: aCanvas
-
-	aCanvas multiLineTo: coordinatesAreRelative points: points! !
-
-!PathLineToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
-svgName
-
-	^$L! !
-
-!PathLineToHCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:45'!
-buildFrom: commandChar stream: aStream
-
-	| px |
-	super buildFrom: commandChar stream: aStream.
-	xs _ Array streamContents: [ :strm |
-		[px _ aStream nextNumber.
-		px notNil ] whileTrue:
-			[ strm nextPut: px ]]! !
-
-!PathLineToHCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:04:56'!
-runOn: aCanvas
-
-	aCanvas multiLineTo: coordinatesAreRelative xs: xs! !
-
-!PathLineToHCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
-svgName
-
-	^$H! !
-
-!PathLineToVCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:45'!
-buildFrom: commandChar stream: aStream
-
-	| py |
-	super buildFrom: commandChar stream: aStream.
-	ys _ Array streamContents: [ :strm |
-		[py _ aStream nextNumber.
-		py notNil ] whileTrue:
-			[ strm nextPut: py ]]! !
-
-!PathLineToVCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:04:32'!
-runOn: aCanvas
-
-	aCanvas multiLineTo: coordinatesAreRelative ys: ys! !
-
-!PathLineToVCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
-svgName
-
-	^$V! !
-
-!PathMoveToCommand methodsFor: 'building' stamp: 'jmv 6/11/2010 14:34'!
-buildFrom: commandChar stream: aStream
-
-	| px py |
-	super buildFrom: commandChar stream: aStream.
-	points _ Array streamContents: [ :strm |
-		[px _ aStream nextNumber.
-		py _ aStream nextNumber.
-		py notNil ] whileTrue:
-			[ strm nextPut: px@py ]]! !
-
-!PathMoveToCommand methodsFor: 'building' stamp: 'jmv 4/9/2019 13:36:26'!
-toPoint: endPoint
-	coordinatesAreRelative _ false.
-	points _ {endPoint}! !
-
-!PathMoveToCommand methodsFor: 'building' stamp: 'jmv 3/2/2020 11:41:49'!
-toRelativePoint: endPoint
-	coordinatesAreRelative _ true.
-	points _ {endPoint}! !
-
-!PathMoveToCommand methodsFor: 'private' stamp: 'jmv 6/11/2010 14:34'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	points do: aBlock! !
-
-!PathMoveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:47'!
-runOn: aCanvas
-
-	aCanvas multiMoveTo: coordinatesAreRelative points: points! !
-
-!PathMoveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
-svgName
-
-	^$M! !
-
-!PathQuadraticCurveToCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 10:12'!
-buildFrom: commandChar stream: aStream
-
-	| x1 y1 x y |
-	super buildFrom: commandChar stream: aStream.
-	toPoints _ OrderedCollection new.
-	controlPoints _ OrderedCollection new.
-	[
-		x1 _ aStream nextNumber.
-		y1 _ aStream nextNumber.
-		x _ aStream nextNumber.
-		y _ aStream nextNumber.
-		y notNil ] whileTrue: [
-			toPoints add: x@y.
-			controlPoints add: x1@y1 ]! !
-
-!PathQuadraticCurveToCommand methodsFor: 'building' stamp: 'jmv 4/9/2019 13:30:05'!
-toPoints: endPoints controlPoints: aControlPoints
-	coordinatesAreRelative _ false.
-	toPoints _ endPoints.
-	controlPoints _ aControlPoints! !
-
-!PathQuadraticCurveToCommand methodsFor: 'building' stamp: 'jmv 2/29/2020 18:01:39'!
-toRelativePoints: endPoints controlPoints: aControlPoints
-	coordinatesAreRelative _ true.
-	toPoints _ endPoints.
-	controlPoints _ aControlPoints! !
-
-!PathQuadraticCurveToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:14'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	toPoints do: aBlock! !
-
-!PathQuadraticCurveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:23'!
-runOn: aCanvas
-
-	aCanvas multiQuadraticCurveTo: coordinatesAreRelative toPoints: toPoints controlPoints: controlPoints! !
-
-!PathQuadraticCurveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
-svgName
-
-	^$Q! !
-
-!PathQuadraticCurveToSmoothCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 10:15'!
-buildFrom: commandChar stream: aStream
-
-	| x y |
-	super buildFrom: commandChar stream: aStream.
-	toPoints _ OrderedCollection new.
-	[
-		x _ aStream nextNumber.
-		y _ aStream nextNumber.
-		y notNil ] whileTrue: [
-			toPoints add: x@y]! !
-
-!PathQuadraticCurveToSmoothCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:17'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	toPoints do: aBlock! !
-
-!PathQuadraticCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:02:58'!
-runOn: aCanvas
-
-	aCanvas multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints! !
-
-!PathQuadraticCurveToSmoothCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:09'!
-svgName
-
-	^$T! !
 
 !Color methodsFor: '*VectorGraphics' stamp: 'jmv 1/21/2015 12:48'!
 externalizedWith: aMorphicLocation
