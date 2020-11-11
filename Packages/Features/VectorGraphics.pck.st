@@ -1,361 +1,361 @@
-'From Cuis 5.0 [latest update: #4446] on 10 November 2020 at 3:28:17 pm'!
+'From Cuis 5.0 [latest update: #4450] on 11 November 2020 at 2:15:16 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 174!
+!provides: 'VectorGraphics' 1 175!
 !requires: 'Collections-CompactArrays' 1 10 nil!
-SystemOrganization addCategory: #'VectorGraphics-Kernel'!
-SystemOrganization addCategory: #'VectorGraphics-PathCommands'!
-SystemOrganization addCategory: #'VectorGraphics-TrueType'!
-SystemOrganization addCategory: #'VectorGraphics-Experiments'!
-SystemOrganization addCategory: #'VectorGraphics-Examples'!
+SystemOrganization addCategory: 'VectorGraphics-Kernel'!
+SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
+SystemOrganization addCategory: 'VectorGraphics-TrueType'!
+SystemOrganization addCategory: 'VectorGraphics-Experiments'!
+SystemOrganization addCategory: 'VectorGraphics-Examples'!
 
 
-!classDefinition: #PathCommandError category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathCommandError category: 'VectorGraphics-PathCommands'!
 Error subclass: #PathCommandError
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCommandError class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCommandError class' category: 'VectorGraphics-PathCommands'!
 PathCommandError class
 	instanceVariableNames: ''!
 
-!classDefinition: #TrueTypeFont category: #'VectorGraphics-TrueType'!
+!classDefinition: #TrueTypeFont category: 'VectorGraphics-TrueType'!
 AbstractFont subclass: #TrueTypeFont
 	instanceVariableNames: 'ttFontDescription pointSize emphasis glyphForms glyphFormsByUtf8 family baseFont derivativeFonts'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TrueTypeFont class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TrueTypeFont class' category: 'VectorGraphics-TrueType'!
 TrueTypeFont class
 	instanceVariableNames: ''!
 
-!classDefinition: #TrueTypeFontFamily category: #'VectorGraphics-TrueType'!
+!classDefinition: #TrueTypeFontFamily category: 'VectorGraphics-TrueType'!
 FontFamily subclass: #TrueTypeFontFamily
 	instanceVariableNames: 'baseTTFontDescription ttFontDescriptionsByEmphasis'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TrueTypeFontFamily class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TrueTypeFontFamily class' category: 'VectorGraphics-TrueType'!
 TrueTypeFontFamily class
 	instanceVariableNames: ''!
 
-!classDefinition: #EllipseMorph2 category: #'VectorGraphics-Experiments'!
+!classDefinition: #EllipseMorph2 category: 'VectorGraphics-Experiments'!
 MovableMorph subclass: #EllipseMorph2
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'EllipseMorph2 class' category: #'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph2 class' category: 'VectorGraphics-Experiments'!
 EllipseMorph2 class
 	instanceVariableNames: ''!
 
-!classDefinition: #EllipseMorph3 category: #'VectorGraphics-Experiments'!
+!classDefinition: #EllipseMorph3 category: 'VectorGraphics-Experiments'!
 MovableMorph subclass: #EllipseMorph3
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'EllipseMorph3 class' category: #'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph3 class' category: 'VectorGraphics-Experiments'!
 EllipseMorph3 class
 	instanceVariableNames: ''!
 
-!classDefinition: #EllipseMorph4 category: #'VectorGraphics-Experiments'!
+!classDefinition: #EllipseMorph4 category: 'VectorGraphics-Experiments'!
 MovableMorph subclass: #EllipseMorph4
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'EllipseMorph4 class' category: #'VectorGraphics-Experiments'!
+!classDefinition: 'EllipseMorph4 class' category: 'VectorGraphics-Experiments'!
 EllipseMorph4 class
 	instanceVariableNames: ''!
 
-!classDefinition: #M3Exp01Morph category: #'VectorGraphics-Experiments'!
+!classDefinition: #M3Exp01Morph category: 'VectorGraphics-Experiments'!
 MovableMorph subclass: #M3Exp01Morph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp01Morph class' category: #'VectorGraphics-Experiments'!
+!classDefinition: 'M3Exp01Morph class' category: 'VectorGraphics-Experiments'!
 M3Exp01Morph class
 	instanceVariableNames: ''!
 
-!classDefinition: #M3Exp02Morph category: #'VectorGraphics-Experiments'!
+!classDefinition: #M3Exp02Morph category: 'VectorGraphics-Experiments'!
 MovableMorph subclass: #M3Exp02Morph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp02Morph class' category: #'VectorGraphics-Experiments'!
+!classDefinition: 'M3Exp02Morph class' category: 'VectorGraphics-Experiments'!
 M3Exp02Morph class
 	instanceVariableNames: ''!
 
-!classDefinition: #M3Exp03Morph category: #'VectorGraphics-Experiments'!
+!classDefinition: #M3Exp03Morph category: 'VectorGraphics-Experiments'!
 MovableMorph subclass: #M3Exp03Morph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp03Morph class' category: #'VectorGraphics-Experiments'!
+!classDefinition: 'M3Exp03Morph class' category: 'VectorGraphics-Experiments'!
 M3Exp03Morph class
 	instanceVariableNames: ''!
 
-!classDefinition: #ClockMorph category: #'VectorGraphics-Examples'!
+!classDefinition: #ClockMorph category: 'VectorGraphics-Examples'!
 MovableMorph subclass: #ClockMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Examples'!
-!classDefinition: 'ClockMorph class' category: #'VectorGraphics-Examples'!
+!classDefinition: 'ClockMorph class' category: 'VectorGraphics-Examples'!
 ClockMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #HybridCanvas category: #'VectorGraphics-Kernel'!
+!classDefinition: #HybridCanvas category: 'VectorGraphics-Kernel'!
 BitBltCanvas subclass: #HybridCanvas
 	instanceVariableNames: 'vectorCanvas morphIDsForm'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'HybridCanvas class' category: #'VectorGraphics-Kernel'!
+!classDefinition: 'HybridCanvas class' category: 'VectorGraphics-Kernel'!
 HybridCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorCanvas category: #'VectorGraphics-Kernel'!
+!classDefinition: #VectorCanvas category: 'VectorGraphics-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
 	instanceVariableNames: 'boundsFinderEngine'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorCanvas class' category: #'VectorGraphics-Kernel'!
+!classDefinition: 'VectorCanvas class' category: 'VectorGraphics-Kernel'!
 VectorCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineAbstract category: #'VectorGraphics-Kernel'!
+!classDefinition: #VectorEngineAbstract category: 'VectorGraphics-Kernel'!
 Object subclass: #VectorEngineAbstract
 	instanceVariableNames: 'targetForm morphIds targetWidth antiAliasingWidth strokeWidth geometryTransformation currentMorphId clippingMorphId morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel pathFirstX pathFirstY pathCurrentX pathCurrentY previousCallX previousCallY previousCallControlX previousCallControlY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineAbstract class' category: #'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineAbstract class' category: 'VectorGraphics-Kernel'!
 VectorEngineAbstract class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineBoundsFinder category: #'VectorGraphics-Kernel'!
+!classDefinition: #VectorEngineBoundsFinder category: 'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineBoundsFinder
 	instanceVariableNames: 'auxStrokeWidthDilatedHalf'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineBoundsFinder class' category: #'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineBoundsFinder class' category: 'VectorGraphics-Kernel'!
 VectorEngineBoundsFinder class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineSubPixel category: #'VectorGraphics-Kernel'!
+!classDefinition: #VectorEngineSubPixel category: 'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineSubPixel
 	instanceVariableNames: 'edgeCounts alphaMask blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared subPixelDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineSubPixel class' category: #'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineSubPixel class' category: 'VectorGraphics-Kernel'!
 VectorEngineSubPixel class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineWholePixel category: #'VectorGraphics-Kernel'!
+!classDefinition: #VectorEngineWholePixel category: 'VectorGraphics-Kernel'!
 VectorEngineAbstract subclass: #VectorEngineWholePixel
 	instanceVariableNames: 'edgeCounts alphaMask blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineWholePixel class' category: #'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineWholePixel class' category: 'VectorGraphics-Kernel'!
 VectorEngineWholePixel class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathCommand category: 'VectorGraphics-PathCommands'!
 Object subclass: #PathCommand
 	instanceVariableNames: 'coordinatesAreRelative'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCommand class' category: 'VectorGraphics-PathCommands'!
 PathCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathArcCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathArcCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathArcCommand
 	instanceVariableNames: 'rs xAxisRotations toPoints doLargerArcs useIncreasingAngless'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathArcCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathArcCommand class' category: 'VectorGraphics-PathCommands'!
 PathArcCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathCloseCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathCloseCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathCloseCommand
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCloseCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCloseCommand class' category: 'VectorGraphics-PathCommands'!
 PathCloseCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathCurveToCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathCurveToCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathCurveToCommand
 	instanceVariableNames: 'toPoints control1Points control2Points'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCurveToCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCurveToCommand class' category: 'VectorGraphics-PathCommands'!
 PathCurveToCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathCurveToSmoothCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathCurveToSmoothCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathCurveToSmoothCommand
 	instanceVariableNames: 'toPoints control2Points'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathCurveToSmoothCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathCurveToSmoothCommand class' category: 'VectorGraphics-PathCommands'!
 PathCurveToSmoothCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathLineToCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathLineToCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathLineToCommand
 	instanceVariableNames: 'points'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathLineToCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathLineToCommand class' category: 'VectorGraphics-PathCommands'!
 PathLineToCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathLineToHCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathLineToHCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathLineToHCommand
 	instanceVariableNames: 'xs'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathLineToHCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathLineToHCommand class' category: 'VectorGraphics-PathCommands'!
 PathLineToHCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathLineToVCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathLineToVCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathLineToVCommand
 	instanceVariableNames: 'ys'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathLineToVCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathLineToVCommand class' category: 'VectorGraphics-PathCommands'!
 PathLineToVCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathMoveToCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathMoveToCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathMoveToCommand
 	instanceVariableNames: 'points'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathMoveToCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathMoveToCommand class' category: 'VectorGraphics-PathCommands'!
 PathMoveToCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathQuadraticCurveToCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathQuadraticCurveToCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathQuadraticCurveToCommand
 	instanceVariableNames: 'toPoints controlPoints'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathQuadraticCurveToCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathQuadraticCurveToCommand class' category: 'VectorGraphics-PathCommands'!
 PathQuadraticCurveToCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #PathQuadraticCurveToSmoothCommand category: #'VectorGraphics-PathCommands'!
+!classDefinition: #PathQuadraticCurveToSmoothCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathQuadraticCurveToSmoothCommand
 	instanceVariableNames: 'toPoints'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
-!classDefinition: 'PathQuadraticCurveToSmoothCommand class' category: #'VectorGraphics-PathCommands'!
+!classDefinition: 'PathQuadraticCurveToSmoothCommand class' category: 'VectorGraphics-PathCommands'!
 PathQuadraticCurveToSmoothCommand class
 	instanceVariableNames: ''!
 
-!classDefinition: #FormGlyph category: #'VectorGraphics-TrueType'!
+!classDefinition: #FormGlyph category: 'VectorGraphics-TrueType'!
 Object subclass: #FormGlyph
 	instanceVariableNames: 'form leftOffset topOffset advanceWidth'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'FormGlyph class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'FormGlyph class' category: 'VectorGraphics-TrueType'!
 FormGlyph class
 	instanceVariableNames: ''!
 
-!classDefinition: #TTContourConstruction category: #'VectorGraphics-TrueType'!
+!classDefinition: #TTContourConstruction category: 'VectorGraphics-TrueType'!
 Object subclass: #TTContourConstruction
 	instanceVariableNames: 'points controlPointFlags'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTContourConstruction class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TTContourConstruction class' category: 'VectorGraphics-TrueType'!
 TTContourConstruction class
 	instanceVariableNames: ''!
 
-!classDefinition: #TTFontDescription category: #'VectorGraphics-TrueType'!
+!classDefinition: #TTFontDescription category: 'VectorGraphics-TrueType'!
 Object subclass: #TTFontDescription
 	instanceVariableNames: 'folderName contourDataForIso8859s15 contourDataIndexesByIso8859s15 contourDataIndexesForSmalltalkGlyphs contourDataForUtf8 contourDataIndexesByUtf8 kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing'
 	classVariableNames: 'Descriptions'
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTFontDescription class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TTFontDescription class' category: 'VectorGraphics-TrueType'!
 TTFontDescription class
 	instanceVariableNames: ''!
 
-!classDefinition: #TTFontReader category: #'VectorGraphics-TrueType'!
+!classDefinition: #TTFontReader category: 'VectorGraphics-TrueType'!
 Object subclass: #TTFontReader
 	instanceVariableNames: 'glyphs nGlyphs kernPairs fontDescription'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTFontReader class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TTFontReader class' category: 'VectorGraphics-TrueType'!
 TTFontReader class
 	instanceVariableNames: ''!
 
-!classDefinition: #TTFontTableDirEntry category: #'VectorGraphics-TrueType'!
+!classDefinition: #TTFontTableDirEntry category: 'VectorGraphics-TrueType'!
 Object subclass: #TTFontTableDirEntry
 	instanceVariableNames: 'tag fontData offset length checkSum'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTFontTableDirEntry class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TTFontTableDirEntry class' category: 'VectorGraphics-TrueType'!
 TTFontTableDirEntry class
 	instanceVariableNames: ''!
 
-!classDefinition: #TTGlyph category: #'VectorGraphics-TrueType'!
+!classDefinition: #TTGlyph category: 'VectorGraphics-TrueType'!
 Object subclass: #TTGlyph
 	instanceVariableNames: 'boundsLeft boundsRight boundsTop boundsBottom contours advanceWidth leftSideBearing rightSideBearing'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTGlyph class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TTGlyph class' category: 'VectorGraphics-TrueType'!
 TTGlyph class
 	instanceVariableNames: ''!
 
-!classDefinition: #TTCompositeGlyph category: #'VectorGraphics-TrueType'!
+!classDefinition: #TTCompositeGlyph category: 'VectorGraphics-TrueType'!
 TTGlyph subclass: #TTCompositeGlyph
 	instanceVariableNames: 'glyphs'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTCompositeGlyph class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TTCompositeGlyph class' category: 'VectorGraphics-TrueType'!
 TTCompositeGlyph class
 	instanceVariableNames: ''!
 
-!classDefinition: #TTKernPair category: #'VectorGraphics-TrueType'!
+!classDefinition: #TTKernPair category: 'VectorGraphics-TrueType'!
 Object subclass: #TTKernPair
 	instanceVariableNames: 'left right value mask'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
-!classDefinition: 'TTKernPair class' category: #'VectorGraphics-TrueType'!
+!classDefinition: 'TTKernPair class' category: 'VectorGraphics-TrueType'!
 TTKernPair class
 	instanceVariableNames: ''!
 
@@ -1198,20 +1198,20 @@ clippingMorph: aMorph
 	super clippingMorph: aMorph.
 	vectorCanvas clippingMorph: aMorph! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/9/2020 16:06:02'!
-resetEngine
-	super resetEngine.
-	vectorCanvas _ VectorCanvas onForm: form.! !
-
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 7/11/2020 10:55:26'!
 setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	vectorCanvas setClipRect: aRectangle! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/10/2020 12:00:57'!
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/11/2020 14:07:33'!
 setForm: aForm
-	super setForm: aForm.
-	morphIDsForm _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').! !
+	form _ aForm.
+	engine _ BitBltCanvasEngine toForm: form.
+	"Init BitBlt so that the first call to the 'primitiveDisplayString' primitive will not fail"
+	engine sourceX: 0; width: 0.
+	vectorCanvas _ VectorCanvas onForm: form.
+	morphIDsForm _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
+	self newClipRect: nil.! !
 
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 7/25/2020 08:26:28'!
 updatingMorphBoundsDo: aBlock
