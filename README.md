@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.svg?branch=master)](https://travis-ci.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev)
+[![Build Status](https://travis-ci.org/Cuis-Smalltalk/Cuis-Smalltalk-Dev.svg?branch=master)](https://travis-ci.org/Cuis-Smalltalk/Cuis-Smalltalk-Dev)
 
 # Table of Contents
 
