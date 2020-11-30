@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4460] on 17 November 2020 at 4:09:37 pm'!
+'From Cuis 5.0 [latest update: #4483] on 30 November 2020 at 3:33:22 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 176!
+!provides: 'VectorGraphics' 1 177!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -111,7 +111,7 @@ ClockMorph class
 
 !classDefinition: #HybridCanvas category: 'VectorGraphics-Kernel'!
 BitBltCanvas subclass: #HybridCanvas
-	instanceVariableNames: 'vectorCanvas morphIDsForm'
+	instanceVariableNames: 'vectorCanvas morphIDsForm drawingOnMorphIDs'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -1183,6 +1183,60 @@ step
 wantsSteps
 	^true! !
 
+!HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 11/30/2020 12:34:45'!
+image: aForm at: aPoint sourceRect: sourceRect
+	"Draw a translucent image using the best available way of representing translucency."
+	| p e |
+
+	engine ifNil: [ ^nil ].
+	drawingOnMorphIDs ifTrue: [
+		"We transform p but not e. This is on purpose. We want to affect exactly the same rect as super."
+		e _ sourceRect extent.
+		e > `0@0` ifFalse: [ ^self ].
+		p _ (currentTransformation transform: aPoint) rounded.
+		engine combinationRule: `Form paint`.
+		engine fillBitmap: `(Bitmap with: 0)`.
+		engine fillRect: (p extent: e).
+		^self ].
+
+	super image: aForm at: aPoint sourceRect: sourceRect! !
+
+!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 11/30/2020 12:34:32'!
+fillRectangle: aRectangle tilingWith: aForm multipliedBy: aColor
+	| rect |
+	engine ifNil: [ ^nil ].
+
+	drawingOnMorphIDs ifTrue: [
+		aRectangle area = 0 ifTrue: [ ^self ].
+		rect _ (currentTransformation externalizeRectangle: aRectangle) rounded.
+		engine combinationRule: `Form paint`.
+		engine fillBitmap: `(Bitmap with: 0)`.
+		engine fillRect: rect.
+		^self ].
+
+	super fillRectangle: aRectangle tilingWith: aForm multipliedBy: aColor! !
+
+!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 11/30/2020 12:10:02'!
+drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
+
+	drawingOnMorphIDs ifTrue: [
+		^nil ].
+	^super drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor! !
+
+!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 11/30/2020 12:12:22'!
+drawStringEmbossed: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
+
+	drawingOnMorphIDs ifTrue: [
+		^nil ].
+	^super drawStringEmbossed: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor! !
+
+!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 11/30/2020 12:12:26'!
+textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc
+
+	drawingOnMorphIDs ifTrue: [
+		^nil ].
+	^super textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc! !
+
 !HybridCanvas methodsFor: 'initialization' stamp: 'jmv 10/24/2020 16:04:17'!
 world: aWorldMorph
 	super world: aWorldMorph.
@@ -1200,12 +1254,24 @@ clipCurrentMorph: aBoolean
 	super clipCurrentMorph: aBoolean.
 	vectorCanvas clipCurrentMorph: aBoolean! !
 
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/30/2020 12:28:51'!
+onMorphIdsDo: aBlock
+	
+	"
+	QQQ _ DateAndTime now.
+	"
+	engine instVarNamed: 'destForm' put: morphIDsForm.
+	drawingOnMorphIDs _ true.
+	aBlock value.
+	engine instVarNamed: 'destForm' put: form.
+	drawingOnMorphIDs _ false.! !
+
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 7/11/2020 10:55:26'!
 setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	vectorCanvas setClipRect: aRectangle! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/11/2020 14:07:33'!
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/30/2020 10:30:45'!
 setForm: aForm
 	form _ aForm.
 	engine _ BitBltCanvasEngine toForm: form.
@@ -1213,7 +1279,19 @@ setForm: aForm
 	engine sourceX: 0; width: 0.
 	vectorCanvas _ VectorCanvas onForm: form.
 	morphIDsForm _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
+	drawingOnMorphIDs _ false.
 	self newClipRect: nil.! !
+
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/30/2020 12:34:51'!
+setPaintColor: aColor
+
+	drawingOnMorphIDs ifTrue: [
+		engine sourceForm: nil.
+		engine combinationRule: `Form paint`.
+		engine fillBitmap: `(Bitmap with: 0)`.
+		^self ].
+
+	super setPaintColor: aColor! !
 
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 7/25/2020 08:26:28'!
 updatingMorphBoundsDo: aBlock
@@ -1229,7 +1307,7 @@ updatingMorphBoundsDo: aBlock
 canDraw: aMorph
 	^true! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 11/16/2020 23:04:01'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 11/30/2020 12:35:22'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
@@ -1237,10 +1315,8 @@ drawCurrentAndSubmorphs
 	self isCurrentMorphVisible ifTrue: [
 
 		currentMorph drawOn: self.
-		"Esto pone random en el id. Zafa, ponele."
-		engine instVarNamed: 'destForm' put: morphIDsForm.
-		currentMorph drawOn: self.
-		engine instVarNamed: 'destForm' put: form.
+		self onMorphIdsDo: [
+			currentMorph drawOn: self ].
 
 		world notNil ifTrue: [					"Only if we are drawing the world"
 			currentMorph displayBounds: self boundingRectOfCurrentMorphAfterDraw ].
@@ -1281,7 +1357,7 @@ savePatch: prevSavedPatch bounds: aRectangle
 
 	^ vectorCanvas savePatch: prevSavedPatch bounds: aRectangle! !
 
-!HybridCanvas methodsFor: 'morphic world' stamp: 'jmv 11/10/2020 12:02:01'!
+!HybridCanvas methodsFor: 'morphic world' stamp: 'jmv 11/30/2020 12:35:28'!
 drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 	"Draw worldBackgroundDamage rects for aWorldMorph.
 	Do not include submorphs."
@@ -1291,10 +1367,8 @@ drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 	worldBackgroundDamage do: [ :r |
 		self newClipRect: r.
 		aWorldMorph drawOn: self.
-		"Esto pone random en el id. Zafa, ponele."
-		engine instVarNamed: 'destForm' put: morphIDsForm.
-		aWorldMorph drawOn: self.
-		engine instVarNamed: 'destForm' put: form. ].! !
+		self onMorphIdsDo: [
+			aWorldMorph drawOn: self ]].! !
 
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
@@ -4382,7 +4456,7 @@ blendFillOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 21:16:22'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:28:26'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -4424,37 +4498,39 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 					alphaR _ alphaR * clippingAntiAlias / 127.0.
 					alphaG _ alphaG * clippingAntiAlias / 127.0.
 					alphaB _ alphaB * clippingAntiAlias / 127.0 ]
-				ifFalse: [clippingAntiAlias _ 0]].
+				ifFalse: [
+					"Don't do any additional clipping or preparation for further clipping"
+					clippingAntiAlias _ 0]].
 
-	targetWord _ targetForm bits bytesAt: pixelIndex.
-	targetAlpha _ (targetWord at: 4) / 255.0.
+	alphaR + alphaG + alphaB = 0.0 ifFalse: [
+		targetWord _ targetForm bits bytesAt: pixelIndex.
+		targetAlpha _ (targetWord at: 4) / 255.0.
 
-	"These if are not really needed. just ignore them if we use simd instructions."
-	alphaR = 0.0 ifFalse: [
-		unAlphaR _ 1.0 - alphaR.
-		resultAlpha _ alphaR + (unAlphaR * targetAlpha).
-		resultR _ alphaR * fillColor red * 255 + (unAlphaR * (targetWord at: 3) * targetAlpha).
-		resultR _ resultR/resultAlpha.
-		targetWord at: 3 put: resultR rounded ].
+		"These if are not really needed. just ignore them if we use simd instructions."
+		alphaR = 0.0 ifFalse: [
+			unAlphaR _ 1.0 - alphaR.
+			resultAlpha _ alphaR + (unAlphaR * targetAlpha).
+			resultR _ alphaR * fillColor red * 255 + (unAlphaR * (targetWord at: 3) * targetAlpha).
+			resultR _ resultR/resultAlpha.
+			targetWord at: 3 put: resultR rounded ].
 
-	alphaG = 0.0 ifFalse: [
-		unAlphaG _ 1.0 - alphaG.
-		resultAlpha _ alphaG + (unAlphaG * targetAlpha).
-		resultG _ alphaG * fillColor green * 255 + (unAlphaG * (targetWord at: 2) * targetAlpha).
-		resultG _ resultG/resultAlpha.
-		targetWord at: 2 put: resultG rounded.
-		targetWord at: 4 put: (resultAlpha*255) rounded ].
+		alphaG = 0.0 ifFalse: [
+			unAlphaG _ 1.0 - alphaG.
+			resultAlpha _ alphaG + (unAlphaG * targetAlpha).
+			resultG _ alphaG * fillColor green * 255 + (unAlphaG * (targetWord at: 2) * targetAlpha).
+			resultG _ resultG/resultAlpha.
+			targetWord at: 2 put: resultG rounded.
+			targetWord at: 4 put: (resultAlpha*255) rounded ].
 
-	alphaB = 0.0 ifFalse: [
-		unAlphaB _ 1.0 - alphaB.
-		resultAlpha _ alphaB + (unAlphaB * targetAlpha).
-		resultB _ alphaB * fillColor blue * 255 + (unAlphaB * (targetWord at: 1) * targetAlpha).
-		resultB _ resultB/resultAlpha.
-		targetWord at: 1 put: resultB rounded ].
+		alphaB = 0.0 ifFalse: [
+			unAlphaB _ 1.0 - alphaB.
+			resultAlpha _ alphaB + (unAlphaB * targetAlpha).
+			resultB _ alphaB * fillColor blue * 255 + (unAlphaB * (targetWord at: 1) * targetAlpha).
+			resultB _ resultB/resultAlpha.
+			targetWord at: 1 put: resultB rounded ].
 
-	targetForm bits bytesAt: pixelIndex put: targetWord.
+		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-	antiAliasGreenAlphaBits = 0 ifFalse: [
 		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 21:02:31'!
@@ -4493,7 +4569,7 @@ blendStrokeAndFill
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 21:15:46'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:31:55'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -4541,8 +4617,11 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 127.
-			clippingAntiAlias _ isGreenInside ifTrue: [127] ifFalse: [clippingAntiAlias max: antiAliasGreenAlphaBits]]
+			isGreenInside
+				ifTrue: [clippingAntiAlias _ 127]
+				ifFalse: [
+					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 127.
+					clippingAntiAlias _ clippingAntiAlias max: antiAliasGreenAlphaBits]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
@@ -4551,35 +4630,37 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 					alphaR _ alphaR * clippingAntiAlias / 127.0.
 					alphaG _ alphaG * clippingAntiAlias / 127.0.
 					alphaB _ alphaB * clippingAntiAlias / 127.0 ]
-				ifFalse: [clippingAntiAlias _ 0]].
+				ifFalse: [
+					"Don't do any additional clipping or preparation for further clipping"
+					clippingAntiAlias _ 0]].
 
-	targetWord _ targetForm bits bytesAt: pixelIndex.
-	targetAlpha _ (targetWord at: 4) / 255.0.
+	alphaR + alphaG + alphaB = 0.0 ifFalse: [
+		targetWord _ targetForm bits bytesAt: pixelIndex.
+		targetAlpha _ (targetWord at: 4) / 255.0.
 
-	"These if are not really needed. just ignore them if we use simd instructions."
-	alphaR = 0.0 ifFalse: [
-		unAlphaR _ 1.0 - alphaR.
-		resultAlpha _ alphaR + (unAlphaR * targetAlpha).
-		resultR _ alphaR * foreR + (unAlphaR * (targetWord at: 3) * targetAlpha).
-		resultR _ resultR/resultAlpha.
-		targetWord at: 3 put: resultR rounded ].
-	alphaG = 0.0 ifFalse: [
-		unAlphaG _ 1.0 - alphaG.
-		resultAlpha _ alphaG + (unAlphaG * targetAlpha).
-		resultG _ alphaG * foreG + (unAlphaG * (targetWord at: 2) * targetAlpha).
-		resultG _ resultG/resultAlpha.
-		targetWord at: 2 put: resultG rounded.
-		targetWord at: 4 put: (resultAlpha*255) rounded ].
-	alphaB = 0.0 ifFalse: [
-		unAlphaB _ 1.0 - alphaB.
-		resultAlpha _ alphaB + (unAlphaB * targetAlpha).
-		resultB _ alphaB * foreB + (unAlphaB * (targetWord at: 1) * targetAlpha).
-		resultB _ resultB/resultAlpha.
-		targetWord at: 1 put: resultB rounded ].
+		"These if are not really needed. just ignore them if we use simd instructions."
+		alphaR = 0.0 ifFalse: [
+			unAlphaR _ 1.0 - alphaR.
+			resultAlpha _ alphaR + (unAlphaR * targetAlpha).
+			resultR _ alphaR * foreR + (unAlphaR * (targetWord at: 3) * targetAlpha).
+			resultR _ resultR/resultAlpha.
+			targetWord at: 3 put: resultR rounded ].
+		alphaG = 0.0 ifFalse: [
+			unAlphaG _ 1.0 - alphaG.
+			resultAlpha _ alphaG + (unAlphaG * targetAlpha).
+			resultG _ alphaG * foreG + (unAlphaG * (targetWord at: 2) * targetAlpha).
+			resultG _ resultG/resultAlpha.
+			targetWord at: 2 put: resultG rounded.
+			targetWord at: 4 put: (resultAlpha*255) rounded ].
+		alphaB = 0.0 ifFalse: [
+			unAlphaB _ 1.0 - alphaB.
+			resultAlpha _ alphaB + (unAlphaB * targetAlpha).
+			resultB _ alphaB * foreB + (unAlphaB * (targetWord at: 1) * targetAlpha).
+			resultB _ resultB/resultAlpha.
+			targetWord at: 1 put: resultB rounded ].
 
-	targetForm bits bytesAt: pixelIndex put: targetWord.
+		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-	antiAliasGreenAlphaBits = 0 ifFalse: [
 		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 18:07:27'!
@@ -4595,7 +4676,7 @@ blendStrokeOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 21:15:18'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:28:52'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -4631,37 +4712,39 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 					alphaR _ alphaR * clippingAntiAlias / 127.0.
 					alphaG _ alphaG * clippingAntiAlias / 127.0.
 					alphaB _ alphaB * clippingAntiAlias / 127.0 ]
-				ifFalse: [clippingAntiAlias _ 0]].
+				ifFalse: [
+					"Don't do any additional clipping or preparation for further clipping"
+					clippingAntiAlias _ 0]].
 
-	targetWord _ targetForm bits bytesAt: pixelIndex.
-	targetAlpha _ (targetWord at: 4) / 255.0.
+	alphaR + alphaG + alphaB = 0.0 ifFalse: [
+		targetWord _ targetForm bits bytesAt: pixelIndex.
+		targetAlpha _ (targetWord at: 4) / 255.0.
 
-	"These if are not really needed. just ignore them if we use simd instructions."
-	alphaR = 0.0 ifFalse: [
-		unAlphaR _ 1.0 - alphaR.
-		resultAlpha _ alphaR + (unAlphaR * targetAlpha).
-		resultR _ alphaR * strokeColor red * 255 + (unAlphaR * (targetWord at: 3) * targetAlpha).
-		resultR _ resultR/resultAlpha.
-		targetWord at: 3 put: resultR rounded ].
+		"These if are not really needed. just ignore them if we use simd instructions."
+		alphaR = 0.0 ifFalse: [
+			unAlphaR _ 1.0 - alphaR.
+			resultAlpha _ alphaR + (unAlphaR * targetAlpha).
+			resultR _ alphaR * strokeColor red * 255 + (unAlphaR * (targetWord at: 3) * targetAlpha).
+			resultR _ resultR/resultAlpha.
+			targetWord at: 3 put: resultR rounded ].
 
-	alphaG = 0.0 ifFalse: [
-		unAlphaG _ 1.0 - alphaG.
-		resultAlpha _ alphaG + (unAlphaG * targetAlpha).
-		resultG _ alphaG * strokeColor green * 255 + (unAlphaG * (targetWord at: 2) * targetAlpha).
-		resultG _ resultG/resultAlpha.
-		targetWord at: 2 put: resultG rounded.
-		targetWord at: 4 put: (resultAlpha*255) rounded ].
+		alphaG = 0.0 ifFalse: [
+			unAlphaG _ 1.0 - alphaG.
+			resultAlpha _ alphaG + (unAlphaG * targetAlpha).
+			resultG _ alphaG * strokeColor green * 255 + (unAlphaG * (targetWord at: 2) * targetAlpha).
+			resultG _ resultG/resultAlpha.
+			targetWord at: 2 put: resultG rounded.
+			targetWord at: 4 put: (resultAlpha*255) rounded ].
 
-	alphaB = 0.0 ifFalse: [
-		unAlphaB _ 1.0 - alphaB.
-		resultAlpha _ alphaB + (unAlphaB * targetAlpha).
-		resultB _ alphaB * strokeColor blue * 255 + (unAlphaB * (targetWord at: 1) * targetAlpha).
-		resultB _ resultB/resultAlpha.
-		targetWord at: 1 put: resultB rounded ].
+		alphaB = 0.0 ifFalse: [
+			unAlphaB _ 1.0 - alphaB.
+			resultAlpha _ alphaB + (unAlphaB * targetAlpha).
+			resultB _ alphaB * strokeColor blue * 255 + (unAlphaB * (targetWord at: 1) * targetAlpha).
+			resultB _ resultB/resultAlpha.
+			targetWord at: 1 put: resultB rounded ].
 
-	targetForm bits bytesAt: pixelIndex put: targetWord.
+		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-	antiAliasGreenAlphaBits = 0 ifFalse: [
 		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineSubPixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:34:51'!
@@ -4942,7 +5025,7 @@ blendFillOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 21:18:33'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:29:27'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex isInside: isInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -4973,29 +5056,32 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex isInside: isInside
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
 					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 127.
 					alpha _ alpha * clippingAntiAlias / 127.0 ]
-				ifFalse: [clippingAntiAlias _ 0]].
+				ifFalse: [
+					"Don't do any additional clipping or preparation for further clipping"
+					clippingAntiAlias _ 0]].
 
-	unAlpha _ 1.0 - alpha.
-	targetWord _ targetForm bits bytesAt: pixelIndex.
-	targetAlpha _ (targetWord at: 4) / 255.0.
-	resultAlpha _ alpha + (unAlpha * targetAlpha).
-	targetWord at: 4 put: (resultAlpha*255) rounded.
-	
-	resultR _ alpha * fillColor red * 255 + (unAlpha * (targetWord at: 3) * targetAlpha).
-	resultR _ resultR/resultAlpha.
-	targetWord at: 3 put: resultR rounded.
+	alpha = 0.0 ifFalse: [
+		unAlpha _ 1.0 - alpha.
+		targetWord _ targetForm bits bytesAt: pixelIndex.
+		targetAlpha _ (targetWord at: 4) / 255.0.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		targetWord at: 4 put: (resultAlpha*255) rounded.
+		
+		resultR _ alpha * fillColor red * 255 + (unAlpha * (targetWord at: 3) * targetAlpha).
+		resultR _ resultR/resultAlpha.
+		targetWord at: 3 put: resultR rounded.
 
-	resultG _ alpha * fillColor green * 255 + (unAlpha * (targetWord at: 2) * targetAlpha).
-	resultG _ resultG/resultAlpha.
-	targetWord at: 2 put: resultG rounded.
+		resultG _ alpha * fillColor green * 255 + (unAlpha * (targetWord at: 2) * targetAlpha).
+		resultG _ resultG/resultAlpha.
+		targetWord at: 2 put: resultG rounded.
 
-	resultB _ alpha * fillColor blue * 255 + (unAlpha * (targetWord at: 1) * targetAlpha).
-	resultB _ resultB/resultAlpha.
-	targetWord at: 1 put: resultB rounded.
+		resultB _ alpha * fillColor blue * 255 + (unAlpha * (targetWord at: 1) * targetAlpha).
+		resultB _ resultB/resultAlpha.
+		targetWord at: 1 put: resultB rounded.
 
-	targetForm bits bytesAt: pixelIndex put: targetWord.
+		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-	morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias.! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 18:08:12'!
 blendStrokeAndFill
@@ -5017,7 +5103,7 @@ blendStrokeAndFill
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 21:17:33'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:31:35'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex isInside: isInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -5047,37 +5133,43 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex isInside: isInside
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 127.
-			clippingAntiAlias _ isInside ifTrue: [127] ifFalse: [clippingAntiAlias max: antiAliasAlphaBits]]
+			isInside
+				ifTrue: [clippingAntiAlias _ 127]
+				ifFalse: [
+					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 127.
+					clippingAntiAlias _ clippingAntiAlias max: antiAliasAlphaBits]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
 					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 127.
 					alpha _ alpha * clippingAntiAlias / 127.0 ]
-				ifFalse: [clippingAntiAlias _ 0]].
+				ifFalse: [
+					"Don't do any additional clipping or preparation for further clipping"
+					clippingAntiAlias _ 0]].
 
-	unAlpha _ 1.0 - alpha.
-	targetWord _ targetForm bits bytesAt: pixelIndex.
-	targetAlpha _ (targetWord at: 4) / 255.0.
-	resultAlpha _ alpha + (unAlpha * targetAlpha).
-	targetWord at: 4 put: (resultAlpha*255) rounded.
+	alpha = 0.0 ifFalse: [
+		unAlpha _ 1.0 - alpha.
+		targetWord _ targetForm bits bytesAt: pixelIndex.
+		targetAlpha _ (targetWord at: 4) / 255.0.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		targetWord at: 4 put: (resultAlpha*255) rounded.
 
-	resultR _ alpha * foreR + (unAlpha * (targetWord at: 3) * targetAlpha).
-	resultR _ resultR/resultAlpha.
-	targetWord at: 3 put: resultR rounded.
+		resultR _ alpha * foreR + (unAlpha * (targetWord at: 3) * targetAlpha).
+		resultR _ resultR/resultAlpha.
+		targetWord at: 3 put: resultR rounded.
 
-	resultG _ alpha * foreG + (unAlpha * (targetWord at: 2) * targetAlpha).
-	resultG _ resultG/resultAlpha.
-	targetWord at: 2 put: resultG rounded.
+		resultG _ alpha * foreG + (unAlpha * (targetWord at: 2) * targetAlpha).
+		resultG _ resultG/resultAlpha.
+		targetWord at: 2 put: resultG rounded.
 
-	resultB _ alpha * foreB + (unAlpha * (targetWord at: 1) * targetAlpha).
-	resultB _ resultB/resultAlpha.
-	targetWord at: 1 put: resultB rounded.
+		resultB _ alpha * foreB + (unAlpha * (targetWord at: 1) * targetAlpha).
+		resultB _ resultB/resultAlpha.
+		targetWord at: 1 put: resultB rounded.
 
-	targetForm bits bytesAt: pixelIndex put: targetWord.
+		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-	morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias.! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 18:08:30'!
 blendStrokeOnly
@@ -5092,7 +5184,7 @@ blendStrokeOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 21:18:58'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:29:42'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -5119,30 +5211,33 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
 					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 127.
 					alpha _ alpha * clippingAntiAlias / 127.0 ]
-				ifFalse: [clippingAntiAlias _ 0]].
+				ifFalse: [
+					"Don't do any additional clipping or preparation for further clipping"
+					clippingAntiAlias _ 0]].
 
-	unAlpha _ 1.0 - alpha.
-	targetWord _ targetForm bits bytesAt: pixelIndex.
-	targetAlpha _ (targetWord at: 4) / 255.0.
-	resultAlpha _ alpha + (unAlpha * targetAlpha).
-	targetWord at: 4 put: (resultAlpha*255) rounded.
+	alpha = 0.0 ifFalse: [
+		unAlpha _ 1.0 - alpha.
+		targetWord _ targetForm bits bytesAt: pixelIndex.
+		targetAlpha _ (targetWord at: 4) / 255.0.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		targetWord at: 4 put: (resultAlpha*255) rounded.
 
-	resultR _ alpha * strokeColor red * 255 + (unAlpha * (targetWord at: 3) * targetAlpha).
-	resultR _ resultR/resultAlpha.
-	targetWord at: 3 put: resultR rounded.
+		resultR _ alpha * strokeColor red * 255 + (unAlpha * (targetWord at: 3) * targetAlpha).
+		resultR _ resultR/resultAlpha.
+		targetWord at: 3 put: resultR rounded.
 
-	resultG _ alpha * strokeColor green * 255 + (unAlpha * (targetWord at: 2) * targetAlpha).
-	resultG _ resultG/resultAlpha.
-	targetWord at: 2 put: resultG rounded.
+		resultG _ alpha * strokeColor green * 255 + (unAlpha * (targetWord at: 2) * targetAlpha).
+		resultG _ resultG/resultAlpha.
+		targetWord at: 2 put: resultG rounded.
 
-	resultAlpha _ alpha + (unAlpha * targetAlpha).
-	resultB _ alpha * strokeColor blue * 255 + (unAlpha * (targetWord at: 1) * targetAlpha).
-	resultB _ resultB/resultAlpha.
-	targetWord at: 1 put: resultB rounded.
+		resultAlpha _ alpha + (unAlpha * targetAlpha).
+		resultB _ alpha * strokeColor blue * 255 + (unAlpha * (targetWord at: 1) * targetAlpha).
+		resultB _ resultB/resultAlpha.
+		targetWord at: 1 put: resultB rounded.
 
-	targetForm bits bytesAt: pixelIndex put: targetWord.
+		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-	morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias.! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineWholePixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:58:55'!
 defaultAntiAliasingWidth
