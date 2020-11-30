@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4483] on 30 November 2020 at 3:33:22 pm'!
+'From Cuis 5.0 [latest update: #4483] on 30 November 2020 at 4:16:30 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 177!
+!provides: 'VectorGraphics' 1 178!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1183,7 +1183,7 @@ step
 wantsSteps
 	^true! !
 
-!HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 11/30/2020 12:34:45'!
+!HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 11/30/2020 16:12:07'!
 image: aForm at: aPoint sourceRect: sourceRect
 	"Draw a translucent image using the best available way of representing translucency."
 	| p e |
@@ -1194,14 +1194,13 @@ image: aForm at: aPoint sourceRect: sourceRect
 		e _ sourceRect extent.
 		e > `0@0` ifFalse: [ ^self ].
 		p _ (currentTransformation transform: aPoint) rounded.
-		engine combinationRule: `Form paint`.
-		engine fillBitmap: `(Bitmap with: 0)`.
+		engine combinationRule: 0.
 		engine fillRect: (p extent: e).
 		^self ].
 
 	super image: aForm at: aPoint sourceRect: sourceRect! !
 
-!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 11/30/2020 12:34:32'!
+!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 11/30/2020 16:12:00'!
 fillRectangle: aRectangle tilingWith: aForm multipliedBy: aColor
 	| rect |
 	engine ifNil: [ ^nil ].
@@ -1209,8 +1208,7 @@ fillRectangle: aRectangle tilingWith: aForm multipliedBy: aColor
 	drawingOnMorphIDs ifTrue: [
 		aRectangle area = 0 ifTrue: [ ^self ].
 		rect _ (currentTransformation externalizeRectangle: aRectangle) rounded.
-		engine combinationRule: `Form paint`.
-		engine fillBitmap: `(Bitmap with: 0)`.
+		engine combinationRule: 0.
 		engine fillRect: rect.
 		^self ].
 
@@ -1282,13 +1280,12 @@ setForm: aForm
 	drawingOnMorphIDs _ false.
 	self newClipRect: nil.! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/30/2020 12:34:51'!
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/30/2020 16:11:47'!
 setPaintColor: aColor
 
 	drawingOnMorphIDs ifTrue: [
 		engine sourceForm: nil.
-		engine combinationRule: `Form paint`.
-		engine fillBitmap: `(Bitmap with: 0)`.
+		engine combinationRule: 0.
 		^self ].
 
 	super setPaintColor: aColor! !
