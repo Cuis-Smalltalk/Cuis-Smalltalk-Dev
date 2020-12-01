@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4483] on 30 November 2020 at 4:16:30 pm'!
+'From Cuis 5.0 [latest update: #4483] on 1 December 2020 at 10:48:12 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 178!
+!provides: 'VectorGraphics' 1 179!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -4095,10 +4095,10 @@ clipRect: aRectangle
 	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
 	clipBottom _ (aRectangle bottom asInteger min: targetForm height) - 1! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 11/17/2020 10:03:17'!
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 12/1/2020 10:46:15'!
 currentMorph: aMorph
 	currentMorphId _ aMorph ifNil: [0] ifNotNil: [aMorph morphId].
-	currentClipsSubmorphs _ aMorph notNil and: [aMorph clipsSubmorphs]! !
+	currentClipsSubmorphs _ aMorph notNil and: [aMorph clipsSubmorphsReally].! !
 
 !VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/6/2020 17:23:25'!
 primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
@@ -4776,10 +4776,10 @@ clipRect: aRectangle
 	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
 	clipBottom _ (aRectangle bottom asInteger min: targetForm height) - 1! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 11/17/2020 15:15:06'!
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 12/1/2020 10:46:19'!
 currentMorph: aMorph
 	currentMorphId _ aMorph ifNil: [0] ifNotNil: [aMorph morphId].
-	currentClipsSubmorphs _ aMorph notNil and: [aMorph clipsSubmorphs]! !
+	currentClipsSubmorphs _ aMorph notNil and: [aMorph clipsSubmorphsReally].! !
 
 !VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/6/2020 17:37:09'!
 primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
