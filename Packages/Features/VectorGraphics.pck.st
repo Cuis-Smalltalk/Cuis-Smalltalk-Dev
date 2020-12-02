@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4483] on 1 December 2020 at 10:48:12 am'!
+'From Cuis 5.0 [latest update: #4484] on 2 December 2020 at 4:47:22 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 179!
+!provides: 'VectorGraphics' 1 180!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -39,36 +39,6 @@ FontFamily subclass: #TrueTypeFontFamily
 TrueTypeFontFamily class
 	instanceVariableNames: ''!
 
-!classDefinition: #EllipseMorph2 category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #EllipseMorph2
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'EllipseMorph2 class' category: 'VectorGraphics-Experiments'!
-EllipseMorph2 class
-	instanceVariableNames: ''!
-
-!classDefinition: #EllipseMorph3 category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #EllipseMorph3
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'EllipseMorph3 class' category: 'VectorGraphics-Experiments'!
-EllipseMorph3 class
-	instanceVariableNames: ''!
-
-!classDefinition: #EllipseMorph4 category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #EllipseMorph4
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'EllipseMorph4 class' category: 'VectorGraphics-Experiments'!
-EllipseMorph4 class
-	instanceVariableNames: ''!
-
 !classDefinition: #M3Exp01Morph category: 'VectorGraphics-Experiments'!
 MovableMorph subclass: #M3Exp01Morph
 	instanceVariableNames: ''
@@ -97,16 +67,6 @@ MovableMorph subclass: #M3Exp03Morph
 	category: 'VectorGraphics-Experiments'!
 !classDefinition: 'M3Exp03Morph class' category: 'VectorGraphics-Experiments'!
 M3Exp03Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #ClockMorph category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #ClockMorph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Examples'!
-!classDefinition: 'ClockMorph class' category: 'VectorGraphics-Examples'!
-ClockMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #HybridCanvas category: 'VectorGraphics-Kernel'!
@@ -366,35 +326,6 @@ TrueType fonts are the most widely used format for pixel independent vector Font
 In Cuis what is usually called TrueType Font is represented by TTFontDescription.
 
 TrueTypeFonts, being part of the traditional AbstractFont hierarchy, adds a specific pointSize, and is the object used in texts.!
-
-!EllipseMorph2 commentStamp: '<historical>' prior: 0!
-| a b c |
-
-a _ EllipseMorph2 new openInWorld.
-a morphPosition: 400@400.
-
-b _ EllipseMorph4 new.
-a addMorph: b.
-b morphPosition: 100@0.
-
-c _ EllipseMorph3 new.
-b addMorph: c.
-c morphPosition: 0@120.!
-
-!EllipseMorph3 commentStamp: '<historical>' prior: 0!
-"
-self runningWorld setCanvas: (HybridCanvas onForm: Display).
-"
-a _ EllipseMorph2 new openInWorld.
-b _ EllipseMorph3 new.
-c _ EllipseMorph4 new.
-a addMorph: b.
-b morphPosition: 100@0.
-a addMorph: c.
-c morphPosition: -100@0.
-"
-EllipseMorph2 allInstancesDo: [ :a | a delete ].
-"!
 
 !M3Exp01Morph commentStamp: '<historical>' prior: 0!
 "Just an experiment to exercise drawing operations."
@@ -1001,46 +932,6 @@ serviceReadTTFont
 		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!EllipseMorph2 methodsFor: 'drawing' stamp: 'jmv 11/10/2020 15:19:56'!
-drawOn: aCanvas
-	aCanvas ellipseCenterX: 0 y: 0 rx: 98 ry: 10 borderWidth: 3 borderColor: Color black fillColor: (Color r: 0.000 g: 1.000 b: 1.000).! !
-
-!EllipseMorph2 class methodsFor: 'new-morph participation' stamp: 'jmv 11/10/2020 15:19:20'!
-categoryInNewMorphMenu
-	^ 'Basic'! !
-
-!EllipseMorph3 methodsFor: 'drawing' stamp: 'jmv 11/10/2020 15:20:23'!
-drawOn: aCanvas
-	aCanvas ellipseCenterX: 0 y: 0 rx: 98 ry: 30 borderWidth: 3 borderColor: Color black fillColor: (Color r: 0.000 g: 0.000 b: 1.000).! !
-
-!EllipseMorph3 class methodsFor: 'new-morph participation' stamp: 'jmv 7/14/2020 21:52:15'!
-categoryInNewMorphMenu
-	^ 'Basic'! !
-
-!EllipseMorph4 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 22:39:27'!
-stepAt: millisecondSinceLast
-	"See comment at #wantsSteps"
-	self rotateBy: Float twoPi / -60! !
-
-!EllipseMorph4 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 22:41:36'!
-stepTime
-	"Answer the desired time between steps in milliseconds. This default implementation requests that the 'step' method be called once every second."
-
-	^ 10! !
-
-!EllipseMorph4 methodsFor: 'stepping' stamp: 'jmv 7/14/2020 21:57:54'!
-wantsSteps
-	^true! !
-
-!EllipseMorph4 methodsFor: 'drawing' stamp: 'jmv 7/14/2020 22:06:29'!
-drawOn: aCanvas 
-
-	aCanvas ellipseCenterX: 0 y: 30 rx: 4 ry: 30 borderWidth: 3 borderColor: Color black fillColor: Color veryLightGray! !
-
-!EllipseMorph4 class methodsFor: 'new-morph participation' stamp: 'jmv 7/14/2020 21:56:44'!
-categoryInNewMorphMenu
-	^ 'Basic'! !
-
 !M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:34:45'!
 drawOn: aCanvas
 	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
@@ -1131,57 +1022,6 @@ false ifTrue: [
 	aCanvas strokeWidth: 1 color: (Color red alpha: 0.7+0.3) do: [
 	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
 ]! !
-
-!ClockMorph methodsFor: 'drawing' stamp: 'jmv 8/3/2020 18:49:18'!
-drawOn: aCanvas
-
-	| h m s time |
-	aCanvas
-		ellipseCenterX: 0 y: 0 rx: 100 ry: 100
-		borderWidth: 10 borderColor: `(Color fromHexString: '#a6e6e8') alpha: 0.7`
-		fillColor: `(Color fromHexString: '#d7e4e4') alpha: 0.9`.
-	time _ Time now.
-	h _ Point r: 50 degrees: time hour * 30 - 90.
-	m _ Point r: 75 degrees: time minute * 6 - 90.
-	s _ Point r: 85 degrees: time second * 6 - 90.
-	aCanvas strokeWidth: 10 color: `(Color black) alpha: 0.6` do: [
-		aCanvas moveToX: 0 y: 0.
-		aCanvas lineToX: h x y: h y.
-		aCanvas moveToX: 0 y: 0.
-		aCanvas lineToX: m x y: m y ].
-	aCanvas strokeWidth: 2 color: `(Color red) alpha: 0.8` do: [
-		aCanvas moveToX: 0 y: 0.
-		aCanvas lineToX: s x y: s y ].
-	aCanvas drawString: 'XII' at: -13 @ -90 font: nil color: `Color brown`.
-	aCanvas drawString: 'III' at: 66 @ -10 font: nil color: `Color brown`.
-	aCanvas drawString: 'IV' at: -11 @ 70 font: nil color: `Color brown`.
-	aCanvas drawString: 'IX' at: -90 @ -10 font: nil color: `Color brown`.
-	aCanvas strokeWidth: 1 color: `Color brown` do: [
-		aCanvas moveToX: -78 y: -45.
-		aCanvas lineToX: -70 y: -40.5.
-		aCanvas moveToX: -45 y: -78.
-		aCanvas lineToX: -40.5 y: -70.
-		aCanvas moveToX: 78 y: -45.
-		aCanvas lineToX: 70 y: -40.5.
-		aCanvas moveToX: 45 y: -78.
-		aCanvas lineToX: 40.5 y: -70.
-		aCanvas moveToX: -78 y: 45.
-		aCanvas lineToX: -70 y: 40.5.
-		aCanvas moveToX: -45 y: 78.
-		aCanvas lineToX: -40.5 y: 70.
-		aCanvas moveToX: 78 y: 45.
-		aCanvas lineToX: 70 y: 40.5.
-		aCanvas moveToX: 45 y: 78.
-		aCanvas lineToX: 40.5 y: 70.
-		 ].! !
-
-!ClockMorph methodsFor: 'stepping' stamp: 'jmv 8/3/2020 18:01:15'!
-step
-	self redrawNeeded! !
-
-!ClockMorph methodsFor: 'stepping' stamp: 'jmv 8/3/2020 18:01:06'!
-wantsSteps
-	^true! !
 
 !HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 11/30/2020 16:12:07'!
 image: aForm at: aPoint sourceRect: sourceRect
@@ -1755,11 +1595,12 @@ Display forceToScreen
 	The scaling of internal TrueType integer points to FloatingPoint where[0.0...1.0] equals #letterMTopSideBearing is done in the engine.
 	It should actually be done in TrueType. No one else cares!!"! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 6/11/2020 16:50:27'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/2/2020 16:18:58'!
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
 	"
 | c f |
-Preferences disable: #loadOnlyLatinGlyphData. 'And now load optional fonts'.
+Preferences loadOnlyLatinGlyphData ifTrue: [
+	Preferences disable: #loadOnlyLatinGlyphData. TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf' ].
 c _ VectorCanvas onForm: Display.
 f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
 c drawString: 'Hola' at: 10@10 font: f color: Color random.
@@ -7319,13 +7160,14 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont color: foreground
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
 	self subclassResponsibility! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 7/21/2020 11:25:58'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 12/2/2020 16:18:44'!
 drawUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint font: aTrueTypeFont color: aColor
 	"Answer last affected pixel position
 	Answer nil if nothing was done"
 	"
 | c f utf32 |
-Preferences disable: #loadOnlyLatinGlyphData. 'And now load optional fonts'.
+Preferences loadOnlyLatinGlyphData ifTrue: [
+	Preferences disable: #loadOnlyLatinGlyphData. TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf' ].
 c _ BitBltCanvas onForm: Display.
 f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
 utf32 _ #(923 959 961 949 956 32 953 960 963 952 956 32 948 959 955 959 961 32 963 953 964 32 945 956 949 964 44 32 956 959 948 959 32 118 949 957 953 945 956 32 118 953 948 949 961 949 961 32 953 957 32 99 952 956 44 32 949 958 32 945 952 964 949 956 32 956 945 955 953 963 32 959 966 966 949 957 948 953 964 32 949 963 964 46 32 921 948 32 964 959 955 955 953 964 32 963 952 963 99 953 960 953 964 32 963 945 955 952 964 945 964 952 963 32 113 952 953 44 32 99 952 32 113 952 945 957 948 959 32 960 961 959 960 961 953 945 949 32 953 956 960 949 961 948 953 949 964 32 118 949 955 44 32 956 949 945 32 949 964 32 949 961 961 949 956 32 947 955 959 961 953 945 964 952 961 46 32 917 958 949 961 99 953 32 948 949 966 953 957 953 964 953 959 957 949 956 32 956 949 955 32 949 945 46 32 917 958 32 963 949 945 32 949 955 953 964 32 948 953 963 963 949 957 964 953 949 964 44 32 956 945 955 953 963 32 964 961 953 964 945 957 953 32 118 953 963 32 953 948 46) asIntegerArray.
@@ -7350,13 +7192,14 @@ Display forceToScreen
 		trueTypeFont: font
 		color: aColor! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 7/21/2020 11:26:27'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 12/2/2020 16:18:53'!
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
 	"Answer last affected pixel position
 	Answer nil if nothing was done"
 	"
 | c f |
-Preferences disable: #loadOnlyLatinGlyphData. 'And now load optional fonts'.
+Preferences loadOnlyLatinGlyphData ifTrue: [
+	Preferences disable: #loadOnlyLatinGlyphData. TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf' ].
 c _ BitBltCanvas onForm: Display.
 f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
 c drawString: 'Hola' at: 10@10 font: f color: Color random.
@@ -7510,16 +7353,20 @@ c _ BitBltCanvas onForm: Display.
 utf32 _ #(76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46) asIntegerArray.
 c drawUtf32: utf32 from: 1 to: utf32 size at: 10@10 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
 
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 6/16/2020 19:48:24'!
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 12/2/2020 16:45:54'!
 unicodeExamples
 	"
 	Preferences disable: #loadOnlyLatinGlyphData.
 	TTFontDescription allInstancesDo: [ :each | each folderName: nil ]. 'hacky'.
 	BitBltCanvas unicodeExamples
 	"
+	"Note: For Chinese text sample, you need HanWangMingMedium or other suitable Unicode TrueType font with Chinese glyphs."
 	| f |
-	[ f class == TrueTypeFont ] whileFalse: [ 
-		f _ FontFamily promptUser atPointSize: 24 ].
+	"[ f class == TrueTypeFont ] whileFalse: [ 
+		f _ FontFamily promptUser atPointSize: 24 ]."
+	(FontFamily familyName: 'DejaVu Sans' pointSize: 24) ifNil: [
+		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf' ].
+	f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
 	self exampleLatin: f.
 	self exampleCyrillic: f.
 	self exampleGreek: f.
@@ -7527,7 +7374,10 @@ unicodeExamples
 	self exampleGeorgian: f.
 	self exampleArabic: f.
 	self exampleHebrew: f.
-	self exampleChinese: f.! !
+	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNil: [
+		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry currentDirectory // 'wt002.ttf' ].
+	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNotNil: [ :ff |
+		self exampleChinese: ff ].! !
 
 !BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 6/16/2020 19:48:31'!
 unicodeUtf32Examples
