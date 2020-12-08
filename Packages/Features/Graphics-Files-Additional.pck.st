@@ -1,77 +1,77 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3449] on 21 September 2018 at 5:03:40 pm'!
+'From Cuis 5.0 [latest update: #4486] on 8 December 2020 at 4:37:02 pm'!
 'Description '!
-!provides: 'Graphics-Files-Additional' 1 23!
+!provides: 'Graphics-Files-Additional' 1 24!
 !requires: 'Compression' 1 nil nil!
-SystemOrganization addCategory: #'Graphics-Files-Additional'!
+SystemOrganization addCategory: 'Graphics-Files-Additional'!
 
 
-!classDefinition: #PNGReadWriter category: #'Graphics-Files-Additional'!
+!classDefinition: #PNGReadWriter category: 'Graphics-Files-Additional'!
 ImageReadWriter subclass: #PNGReadWriter
 	instanceVariableNames: 'chunk form width height depth backColor bitsPerChannel colorType interlaceMethod bitsPerPixel bytesPerScanline thisScanline prevScanline rowSize globalDataChunk unknownChunks palette transparentPixelValue filtersSeen cachedDecoderMap bigEndian auxBitBlt auxSource auxDest auxCMap'
-	classVariableNames: 'BPP BlockHeight BlockWidth Debugging StandardColors StandardSwizzleMaps'
+	classVariableNames: 'BPP BlockHeight BlockWidth Debugging StandardSwizzleMaps'
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'PNGReadWriter class' category: #'Graphics-Files-Additional'!
+!classDefinition: 'PNGReadWriter class' category: 'Graphics-Files-Additional'!
 PNGReadWriter class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFReadWriter category: #'Graphics-Files-Additional'!
+!classDefinition: #TIFFReadWriter category: 'Graphics-Files-Additional'!
 ImageReadWriter subclass: #TIFFReadWriter
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFReadWriter class' category: #'Graphics-Files-Additional'!
+!classDefinition: 'TIFFReadWriter class' category: 'Graphics-Files-Additional'!
 TIFFReadWriter class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFField category: #'Graphics-Files-Additional'!
+!classDefinition: #TIFFField category: 'Graphics-Files-Additional'!
 Object subclass: #TIFFField
 	instanceVariableNames: 'tag type values'
 	classVariableNames: 'DefaultFields SingleValuedTagSymbols TagSymbols ValueReaderSelectors'
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFField class' category: #'Graphics-Files-Additional'!
+!classDefinition: 'TIFFField class' category: 'Graphics-Files-Additional'!
 TIFFField class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFImageFileDirectory category: #'Graphics-Files-Additional'!
+!classDefinition: #TIFFImageFileDirectory category: 'Graphics-Files-Additional'!
 Object subclass: #TIFFImageFileDirectory
 	instanceVariableNames: 'fields'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFImageFileDirectory class' category: #'Graphics-Files-Additional'!
+!classDefinition: 'TIFFImageFileDirectory class' category: 'Graphics-Files-Additional'!
 TIFFImageFileDirectory class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFReader category: #'Graphics-Files-Additional'!
+!classDefinition: #TIFFReader category: 'Graphics-Files-Additional'!
 Object subclass: #TIFFReader
 	instanceVariableNames: 'stream structure'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFReader class' category: #'Graphics-Files-Additional'!
+!classDefinition: 'TIFFReader class' category: 'Graphics-Files-Additional'!
 TIFFReader class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFStream category: #'Graphics-Files-Additional'!
+!classDefinition: #TIFFStream category: 'Graphics-Files-Additional'!
 Object subclass: #TIFFStream
 	instanceVariableNames: 'stream bigEndian compressionType remainBitCount outCodes maxOutCodes outCount prefixTable suffixTable bitMask clearCode eoiCode freeCode codeSize maxCode finChar oldCode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFStream class' category: #'Graphics-Files-Additional'!
+!classDefinition: 'TIFFStream class' category: 'Graphics-Files-Additional'!
 TIFFStream class
 	instanceVariableNames: ''!
 
-!classDefinition: #TIFFStructure category: #'Graphics-Files-Additional'!
+!classDefinition: #TIFFStructure category: 'Graphics-Files-Additional'!
 Object subclass: #TIFFStructure
 	instanceVariableNames: 'imageFileDirectories'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Graphics-Files-Additional'!
-!classDefinition: 'TIFFStructure class' category: #'Graphics-Files-Additional'!
+!classDefinition: 'TIFFStructure class' category: 'Graphics-Files-Additional'!
 TIFFStructure class
 	instanceVariableNames: ''!
 
@@ -170,6 +170,12 @@ Structure:
 I hold the logical structure of the TIFF, but I do not preserve the physical structure (specific offsets) of the file I was parsed from (except for the offsets of the pixel data.)
 
 See TIFFReader (and future TIFFWriter) for more information about the structure into which I fit.!
+
+!TIFFField methodsFor: 'printing' stamp: 'mrm 7/31/2001 21:51'!
+printOn: aStream
+
+	super printOn: aStream.
+	values printOn: aStream.! !
 
 !PNGReadWriter methodsFor: 'pixel copies' stamp: 'DSM 3/26/2000 21:32'!
 copyPixels: y
@@ -755,7 +761,7 @@ debugging
 
 	^Debugging == true! !
 
-!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 5/13/2016 15:14'!
+!PNGReadWriter methodsFor: 'accessing' stamp: 'jmv 12/8/2020 16:33:59'!
 nextImage
 	bigEndian := Smalltalk isBigEndian.
 	filtersSeen _ Bag new.
@@ -770,9 +776,6 @@ nextImage
 	(depth = 8 and: [ palette isNil ]) ifTrue: [
 		form _ GrayForm extent: width@height
 	] ifFalse: [
-		palette ifNotNil: [ 		"Dump the palette if it's the same as our standard palette"
-			palette = (StandardColors copyFrom: 1 to: palette size) 
-				ifTrue: [palette := nil]].
 		(depth <= 8 and: [ palette notNil ]) ifTrue: [
 			form := ColorForm extent: width@height nativeDepthFrom: depth.
 			form colors: palette.
@@ -1067,15 +1070,16 @@ writeIHDRChunkOn: aStream
 	aStream nextPut: 0. "interlace method"
 ! !
 
-!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 1/12/2010 12:12'!
+!PNGReadWriter methodsFor: 'writing' stamp: 'jmv 12/8/2020 16:35:46'!
 writePLTEChunkOn: aStream
-	"Write the PLTE chunk"
+	"Write the PLTE chunk.
+	Ignore any form of translucency."
 	| r g b colors |
 	aStream nextPutAll: 'PLTE' asByteArray.
 	(form is: #ColorForm) 
 		ifTrue: [ colors := form colors]
 		ifFalse: [ colors := Color indexedColors copyFrom: 1 to: (1 bitShift: form depth)].
-	colors do:[:aColor|
+	colors do: [ :aColor |
 		r := (aColor red * 255) truncated.
 		g := (aColor green * 255) truncated.
 		b := (aColor blue * 255) truncated.
@@ -1481,7 +1485,7 @@ debugging: aBoolean
 
 	Debugging _ aBoolean! !
 
-!PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'ar 2/11/2004 00:55'!
+!PNGReadWriter class methodsFor: 'as yet unclassified' stamp: 'jmv 12/8/2020 16:34:09'!
 initialize
 	"
 	PNGReadWriter initialize
@@ -1498,13 +1502,6 @@ initialize
 
 	BlockHeight _ #(8 8 4 4 2 2 1).
 	BlockWidth _ #(8 4 4 2 2 1 1).
-
-	StandardColors := Color indexedColors collect:[:aColor|
-		Color 
-			r: (aColor red * 255) truncated / 255
-			g: (aColor green * 255) truncated / 255
-			b: (aColor blue * 255) truncated / 255.
-	].
 
 	StandardSwizzleMaps := Array new: 4.
 	#(1 2 4) do:[:i| StandardSwizzleMaps at: i put: (self computeSwizzleMapForDepth: i)].! !
@@ -1592,12 +1589,6 @@ tag: tagInteger type: typeInteger values: valueArray
 	tag _ tagInteger.
 	type _ typeInteger.
 	values _ valueArray.! !
-
-!TIFFField methodsFor: 'printing' stamp: 'mrm 7/31/2001 21:51'!
-printOn: aStream
-
-	super printOn: aStream.
-	values printOn: aStream.! !
 
 !TIFFField methodsFor: 'private-value reading' stamp: 'jmv 9/5/2016 16:57:57'!
 read: count charsFrom: aTIFFStream
