@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4484] on 2 December 2020 at 4:47:22 pm'!
+'From Cuis 5.0 [latest update: #4490] on 18 December 2020 at 4:13:18 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 180!
+!provides: 'VectorGraphics' 1 181!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -7353,20 +7353,20 @@ c _ BitBltCanvas onForm: Display.
 utf32 _ #(76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46) asIntegerArray.
 c drawUtf32: utf32 from: 1 to: utf32 size at: 10@10 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
 
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 12/2/2020 16:45:54'!
+!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 12/18/2020 16:12:10'!
 unicodeExamples
 	"
 	Preferences disable: #loadOnlyLatinGlyphData.
-	TTFontDescription allInstancesDo: [ :each | each folderName: nil ]. 'hacky'.
 	BitBltCanvas unicodeExamples
 	"
 	"Note: For Chinese text sample, you need HanWangMingMedium or other suitable Unicode TrueType font with Chinese glyphs."
 	| f |
 	"[ f class == TrueTypeFont ] whileFalse: [ 
 		f _ FontFamily promptUser atPointSize: 24 ]."
-	(FontFamily familyName: 'DejaVu Sans' pointSize: 24) ifNil: [
-		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf' ].
 	f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+	(f isNil or: [ f fontDescription contourDataForUtf8 isNil ]) ifTrue: [
+		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf'.
+		f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24. ].
 	self exampleLatin: f.
 	self exampleCyrillic: f.
 	self exampleGreek: f.
