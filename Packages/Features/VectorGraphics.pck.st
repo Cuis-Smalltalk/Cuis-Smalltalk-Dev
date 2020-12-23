@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4490] on 18 December 2020 at 4:13:18 pm'!
+'From Cuis 5.0 [latest update: #4500] on 23 December 2020 at 3:53:21 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 181!
+!provides: 'VectorGraphics' 1 182!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1061,6 +1061,20 @@ drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil co
 		^nil ].
 	^super drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor! !
 
+!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 12/21/2020 17:27:46'!
+drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: fontOrNil color: aColor
+
+	drawingOnMorphIDs ifTrue: [
+		^nil ].
+	^super drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: fontOrNil color: aColor! !
+
+!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 12/21/2020 17:42:05'!
+drawString: aString from: firstIndex to: lastIndex atWaist: aPoint font: fontOrNil color: aColor
+
+	drawingOnMorphIDs ifTrue: [
+		^nil ].
+	^super drawString: aString from: firstIndex to: lastIndex atWaist: aPoint font: fontOrNil color: aColor! !
+
 !HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 11/30/2020 12:12:22'!
 drawStringEmbossed: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
 
@@ -1144,11 +1158,12 @@ updatingMorphBoundsDo: aBlock
 canDraw: aMorph
 	^true! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 11/30/2020 12:35:22'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 12/23/2020 13:15:36'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
 
+	| b |
 	self isCurrentMorphVisible ifTrue: [
 
 		currentMorph drawOn: self.
@@ -1156,12 +1171,23 @@ drawCurrentAndSubmorphs
 			currentMorph drawOn: self ].
 
 		world notNil ifTrue: [					"Only if we are drawing the world"
+			currentMorph halo ifNotNil: [ b _ currentMorph morphLocalBounds ].
 			currentMorph displayBounds: self boundingRectOfCurrentMorphAfterDraw ].
 		"Display submorphs back to front"
 		"coordinate system stack already set up for aMorph
 		('ivars transformations' and 'currentTransformation')"
 		self clippingByCurrentMorphDo: [
-			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]]].! !
+			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]].
+		
+		currentMorph postDrawOn: self.
+		self onMorphIdsDo: [
+			currentMorph postDrawOn: self ].
+		b ifNotNil: [
+			self drawCoordinateSystem: b ].
+
+		world notNil ifTrue: [					"Only if we are drawing the world"
+			currentMorph displayBounds:
+				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ]].! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
 into: aMorph
@@ -1557,7 +1583,7 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				engine rel_QuadraticBezierSmoothToX: to x y: to y ]]! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 8/3/2020 19:04:13'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/21/2020 17:38:40'!
 drawString: aString from: firstIndex to: lastIndex at: aPoint font: fontOrNil color: aColor
 	"
 | s c f |
@@ -1565,7 +1591,8 @@ c _ VectorCanvas onForm: Display.
 c engine geometryTransformation: (AffineTransformation withRadians: 0.1).
 f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
 s _ 'Latin text in VectorGraphics'.
-c drawString:  s from: 1 to: s size at: 10@10 font: f color: Color black.
+c drawString:  s from: 1 to: s size at: 100@100 font: f color: Color black.
+c strokeWidth: 1 color: Color red do: [ c moveToX: 100 y: 100; lineToX: 1000 y: 100 ].
 Display forceToScreen
 	"
 	"Slight optimization when there's nothing to do."
@@ -1574,7 +1601,7 @@ Display forceToScreen
 	port clipWidth = 0 ifTrue: [^self].
 	"
 	| font |
-	font _ fontOrNil ifNil: [ FontFamily defaultOrTrueTypeFamilyAndPointSize ].
+	font _ self fontToUse: fontOrNil.
 	^font
 		ifNil: [ aPoint ] 
 		ifNotNil: [
@@ -1586,14 +1613,78 @@ Display forceToScreen
 				trueTypeFont: font fontDescription
 				useST80Glyphs: font isST80Glyphs
 				color: aColor
-				scaleX: 1.0 * font pointSize
-				scaleY: -1.0 * font pointSize ]
+				scale: font pointSize
+				preventMirroring: true ]
 		
-	"The conversion from top of glyph (morphic canvas) to baseline (engine, TrueType) is done here.
-	The conversion from Y-increases-downwards (morphic canvas) to Y-increases-upwards (engine, TrueType) is done here.
-	
-	The scaling of internal TrueType integer points to FloatingPoint where[0.0...1.0] equals #letterMTopSideBearing is done in the engine.
-	It should actually be done in TrueType. No one else cares!!"! !
+	"The conversion from top of glyph (morphic canvas) to baseline (engine, TrueType) is done here."! !
+
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/21/2020 17:39:25'!
+drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: fontOrNil color: aColor
+	"
+| s c f |
+c _ VectorCanvas onForm: Display.
+c engine geometryTransformation: (AffineTransformation withRadians: 0.1).
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
+s _ 'Latin text in VectorGraphics'.
+c drawString:  s from: 1 to: s size atBaseline: 100@100 font: f color: Color black.
+c strokeWidth: 1 color: Color red do: [ c moveToX: 100 y: 100; lineToX: 1000 y: 100 ].
+Display forceToScreen
+	"
+	"Slight optimization when there's nothing to do."
+	"
+	port clipHeight = 0 ifTrue: [^self].
+	port clipWidth = 0 ifTrue: [^self].
+	"
+	| font |
+	font _ self fontToUse: fontOrNil.
+	^font
+		ifNil: [ aPoint ] 
+		ifNotNil: [
+			engine
+				displayString: aString
+				from: firstIndex
+				to: lastIndex
+				at: aPoint
+				trueTypeFont: font fontDescription
+				useST80Glyphs: font isST80Glyphs
+				color: aColor
+				scale: font pointSize
+				preventMirroring: true ].! !
+
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/21/2020 17:43:39'!
+drawString: aString from: firstIndex to: lastIndex atWaist: aPoint font: fontOrNil color: aColor
+	"
+| s c f |
+c _ VectorCanvas onForm: Display.
+c engine geometryTransformation: (AffineTransformation withRadians: 0.1).
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
+s _ 'Latin text in VectorGraphics'.
+c drawString:  s from: 1 to: s size atWaist: 100@100 font: f color: Color black.
+c strokeWidth: 1 color: Color red do: [ c moveToX: 100 y: 100; lineToX: 1000 y: 100 ].
+Display forceToScreen
+	"
+	"Slight optimization when there's nothing to do."
+	"
+	port clipHeight = 0 ifTrue: [^self].
+	port clipWidth = 0 ifTrue: [^self].
+	"
+	| font |
+	font _ self fontToUse: fontOrNil.
+	^font
+		ifNil: [ aPoint ] 
+		ifNotNil: [
+			engine
+				displayString: aString
+				from: firstIndex
+				to: lastIndex
+				at: aPoint + (0@(font ascent / 3))
+				trueTypeFont: font fontDescription
+				useST80Glyphs: font isST80Glyphs
+				color: aColor
+				scale: font pointSize
+				preventMirroring: true ]
+		
+	"The conversion from top of glyph (morphic canvas) to baseline (engine, TrueType) is done here."! !
 
 !VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/2/2020 16:18:58'!
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
@@ -1845,6 +1936,30 @@ boundingRectOfCurrentMorphAfterDraw
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/23/2020 13:01:00'!
+drawCurrentAndSubmorphs
+	| r corners |
+	self isCurrentMorphVisible ifTrue: [
+		currentMorph drawOn: self.
+		world notNil ifTrue: [					"Only if we are drawing the world"
+			currentMorph halo ifNotNil: [
+				r _ engine morphBoundsAfterDraw.
+				r extent >= (200@200) ifFalse: [
+					r _ Rectangle center: r center extent: (r extent max: 200@200) ].
+				corners _ r corners collect: [ :pt |
+					currentTransformation inverseTransform: pt ]].
+			currentMorph displayBounds: self boundingRectOfCurrentMorphAfterDraw ].
+		"Display submorphs back to front"
+		"coordinate system stack already set up for aMorph
+		('ivars transformations' and 'currentTransformation')"
+		self clippingByCurrentMorphDo: [
+			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]].
+		currentMorph postDrawOn: self.
+		corners ifNotNil: [ self drawCoordinateSystem: corners ].
+		world notNil ifTrue: [					"Only if we are drawing the world"
+			currentMorph displayBounds:
+				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ]].! !
+
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/31/2017 13:22:48'!
 initializeWith: aForm origin: aPoint
 	super initializeWith: aForm origin: aPoint.
@@ -1861,11 +1976,12 @@ into: aMorph
 morph: aMorph isAtPoint: aPoint
 	^engine morph: aMorph isAtPoint: aPoint! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 8/16/2018 15:37:22'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/22/2020 14:55:18'!
 outOfMorph
 	super outOfMorph.
 	engine currentMorph: currentMorph.
-	engine geometryTransformation: currentTransformation! !
+	engine geometryTransformation: currentTransformation.
+	engine resetMorphBounds.! !
 
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 8/6/2020 18:02:26'!
 restorePatch: savedPatch
@@ -1936,6 +2052,12 @@ doSubPixelAntiAliasing
 	engine _ VectorEngineSubPixel onForm: form.
 	self newClipRect: nil.! !
 
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 12/21/2020 17:36:45'!
+fontToUse: fontOrNil
+	"Answer a suitable font, aFont if possible."
+
+	^fontOrNil ifNil: [ FontFamily defaultOrTrueTypeFamilyAndPointSize ].! !
+
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 1/14/2020 09:32:24'!
 setClipRect: aRectangle
 	"In targetForm coordinates"
@@ -1963,6 +2085,53 @@ updatingMorphBoundsDo: aBlock
 		engine _ boundsFinderEngine.
 		aBlock value.
 	] ensure: [ engine _ prevEngine ]! !
+
+!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 12/22/2020 15:54:44'!
+drawCoordinateSystem: corners
+	| c stepX stepY p1 p2 p3 p4 x0 x1 y0 y1 |
+	stepX _ 50.
+	stepY _ 20.
+	p1 _ corners first.
+	p2 _ corners second.
+	p3 _ corners third.
+	p4 _ corners fourth.
+
+	engine currentMorph: nil.
+
+	self fillColor: `Color lightGray alpha: 0.4` do: [
+		self
+			moveToX: p1 x y: p1 y;
+			lineToX: p2 x y: p2 y;
+			lineToX: p3 x y: p3 y;
+			lineToX: p4 x y: p4 y. ].
+
+	x0 _ x1 _ y0 _ y1 _ nil.
+	corners withPreviousCyclicDo: [ :pa :pb | | xx yy |
+		pa y sign = pb y sign ifFalse: [
+			xx _ pb x - pa x * (pa y / (pa y - pb y)) + pa x.
+			(x0 isNil or: [ xx < x0 ]) ifTrue: [ x0 _ xx ].
+			(x1 isNil or: [ xx > x1 ]) ifTrue: [ x1 _ xx ]].
+		pa x sign = pb x sign ifFalse: [
+			yy _ pb y - pa y * (pa x / (pa x - pb x)) + pa y.
+			(y0 isNil or: [ yy < y0 ]) ifTrue: [ y0 _ yy ].
+			(y1 isNil or: [ yy > y1 ]) ifTrue: [ y1 _ yy ]]].
+
+	c _ `Color white alpha: 0.6`.
+	self strokeWidth: 1 color: c do: [
+		self moveToX: x0 y: 0; lineToX: x1 y: 0.
+		self moveToX: 0 y: y0; lineToX: 0 y: y1. ].
+	
+	(x0 truncateTo: stepX) to: (x1 - stepX truncateTo: stepX) by: stepX do: [ :x |
+		self strokeWidth: 1 color: c do: [
+			self moveToX: x y: -5; lineToX: x y: 5 ].
+	   	self drawString: x printString atCenterX: x @ 5 font: nil color: c ].
+	  self drawString: 'x' atCenterX: x1 - 15 @ 0 font: nil color: c.
+
+	(y0 truncateTo: stepY) to: (y1 - stepY truncateTo: stepY) by: stepY do: [ :y |
+		self strokeWidth: 1 color: c do: [
+			self moveToX: -5 y: y; lineToX: 5 y: y ].
+	   	self drawString: y printString, ' ' atWaistRight: 0 @ y font: nil color: c ].
+	  self drawString: 'y' atWaistRight: 0 @ (y1 - 20) font: nil color: c.! !
 
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 arrowOfDirection: aSymbol size: finalSizeInteger
@@ -2706,14 +2875,17 @@ Display forceToScreen
 		abs_QuadraticBezierToX: previousCallX + xTo y: previousCallY + yTo
 		controlX: previousCallX + xC y: previousCallY + yC.! !
 
-!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 6/17/2020 14:33:29'!
-displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scaleX: ssx scaleY: ssy
-	"ssx and ssy to honor font pointSize"
-	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers |
+!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 12/23/2020 15:07:12'!
+displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
+	"TrueType assumes a Math like coordinate system (Y increasing upwards).
+	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
+	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
 
-	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.
-	sx _ ssx * trueTypeScale.
-	sy _ ssy * trueTypeScale.
+	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers |
+	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.	"Perhaps measures in TTFontDescription should be normalized"
+	sx _ scale * trueTypeScale.
+	sy _ scale * trueTypeScale.
+	(doPreventMirroring and: [ geometryTransformation doesMirror not ]) ifTrue: [ sy _ sy negated ].
 	contourData _ aTTFontDescription contourDataForIso8859s15.
 	contourDataIndexes _ aTTFontDescription contourDataIndexesByIso8859s15ST80Glyphs: aBoolean.
 	self fillColor: aColor do: [
@@ -4294,7 +4466,7 @@ blendFillOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:28:26'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 12/23/2020 15:20:12'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -4369,7 +4541,8 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIs
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
+		currentMorphId = 0 ifFalse: [
+			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 21:02:31'!
 blendStrokeAndFill
@@ -4407,7 +4580,7 @@ blendStrokeAndFill
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:31:55'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 12/23/2020 15:20:25'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -4499,7 +4672,8 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex redIsInside: isRedInside gr
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
+		currentMorphId = 0 ifFalse: [
+			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 18:07:27'!
 blendStrokeOnly
@@ -4514,7 +4688,7 @@ blendStrokeOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:28:52'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 12/23/2020 15:20:35'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -4583,7 +4757,8 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
+		currentMorphId = 0 ifFalse: [
+			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
 !VectorEngineSubPixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:34:51'!
 defaultAntiAliasingWidth
@@ -4863,7 +5038,7 @@ blendFillOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:29:27'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 12/23/2020 15:20:44'!
 blendFillOnlyAtX: x y: y pixelIndex: pixelIndex isInside: isInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -4919,7 +5094,8 @@ blendFillOnlyAtX: x y: y pixelIndex: pixelIndex isInside: isInside
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
+		currentMorphId = 0 ifFalse: [
+			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 18:08:12'!
 blendStrokeAndFill
@@ -4941,7 +5117,7 @@ blendStrokeAndFill
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:31:35'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 12/23/2020 15:20:56'!
 blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex isInside: isInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -5007,7 +5183,8 @@ blendStrokeAndFillAtX: x y: y pixelIndex: pixelIndex isInside: isInside
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
+		currentMorphId = 0 ifFalse: [
+			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/16/2020 18:08:30'!
 blendStrokeOnly
@@ -5022,7 +5199,7 @@ blendStrokeOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 11/30/2020 15:29:42'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 12/23/2020 15:21:03'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -5075,7 +5252,8 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
 
-		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
+		currentMorphId = 0 ifFalse: [
+			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
 !VectorEngineWholePixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:58:55'!
 defaultAntiAliasingWidth
@@ -5829,7 +6007,7 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 6/8/2020 12:25:17'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 12/17/2020 14:54:04'!
 formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	"Needed only for BitBltCanvasEngine"
 	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
@@ -5866,8 +6044,8 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 			trueTypeFont: self
 			useST80Glyphs: aBoolean
 			color: Color black
-			scaleX: 1.0 * pixelSize
-			scaleY: -1.0 * pixelSize.
+			scale: 1.0 * pixelSize
+			preventMirroring: true.
 	^FormGlyph
 		form: form
 		leftOffset: leftPixelOffset
