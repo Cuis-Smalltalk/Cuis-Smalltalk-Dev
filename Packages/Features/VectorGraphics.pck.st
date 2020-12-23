@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4500] on 23 December 2020 at 3:53:21 pm'!
+'From Cuis 5.0 [latest update: #4501] on 23 December 2020 at 4:49:18 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 182!
+!provides: 'VectorGraphics' 1 183!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -2086,7 +2086,7 @@ updatingMorphBoundsDo: aBlock
 		aBlock value.
 	] ensure: [ engine _ prevEngine ]! !
 
-!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 12/22/2020 15:54:44'!
+!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 12/23/2020 16:33:17'!
 drawCoordinateSystem: corners
 	| c stepX stepY p1 p2 p3 p4 x0 x1 y0 y1 |
 	stepX _ 50.
@@ -2115,6 +2115,11 @@ drawCoordinateSystem: corners
 			yy _ pb y - pa y * (pa x / (pa x - pb x)) + pa y.
 			(y0 isNil or: [ yy < y0 ]) ifTrue: [ y0 _ yy ].
 			(y1 isNil or: [ yy > y1 ]) ifTrue: [ y1 _ yy ]]].
+
+	x0 isNil ifTrue: [
+		x0 _ -100. x1 _ 500 ].
+	y0 isNil ifTrue: [
+		y0 _ -100. y1 _ 400 ].
 
 	c _ `Color white alpha: 0.6`.
 	self strokeWidth: 1 color: c do: [
