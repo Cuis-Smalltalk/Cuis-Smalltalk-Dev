@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4425] on 24 October 2020 at 5:06:52 pm'!
+'From Cuis 5.0 [latest update: #4506] on 29 December 2020 at 4:51:33 pm'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 252!
+!provides: 'BaseImageTests' 1 253!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -10362,6 +10362,15 @@ self assert: ('a
 b' encompassParagraph: (3 to: 3)) = (3 to: 3).
 self assert: ('a
 b' encompassParagraph: (4 to: 3)) = (3 to: 3).! !
+
+!StringTest methodsFor: 'testing' stamp: 'HAW 12/29/2020 13:29:16'!
+testFindSelector 
+
+	self assert: #printOn: equals: '"self printOn:' findSelector.
+	self assert: #printOn: equals: 'self printOn:"' findSelector.
+	self assert: #printOn: equals: '"self printOn:"' findSelector.
+	self assert: #printOn: equals: 'self printOn:' findSelector.
+! !
 
 !StringTest methodsFor: 'testing' stamp: 'HAW 8/3/2018 11:03:25'!
 testFirstNoBlankIndex
