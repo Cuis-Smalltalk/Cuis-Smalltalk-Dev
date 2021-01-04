@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4501] on 23 December 2020 at 4:49:18 pm'!
+'From Cuis 5.0 [latest update: #4511] on 4 January 2021 at 5:38:31 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 183!
+!provides: 'VectorGraphics' 1 184!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -67,6 +67,16 @@ MovableMorph subclass: #M3Exp03Morph
 	category: 'VectorGraphics-Experiments'!
 !classDefinition: 'M3Exp03Morph class' category: 'VectorGraphics-Experiments'!
 M3Exp03Morph class
+	instanceVariableNames: ''!
+
+!classDefinition: #M3Exp04Morph category: 'VectorGraphics-Experiments'!
+MovableMorph subclass: #M3Exp04Morph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Experiments'!
+!classDefinition: 'M3Exp04Morph class' category: 'VectorGraphics-Experiments'!
+M3Exp04Morph class
 	instanceVariableNames: ''!
 
 !classDefinition: #HybridCanvas category: 'VectorGraphics-Kernel'!
@@ -379,6 +389,14 @@ m morphPosition: 53@20+40.
 (VectorCanvas onForm: Display)
 setClipRect: (40@40 extent: 100@100);
 fullDraw: m.
+Display forceToScreen.!
+
+!M3Exp04Morph commentStamp: '<historical>' prior: 0!
+"Just an experiment to exercise drawing operations."
+| m |
+m _ M3Exp01Morph new.
+m morphPosition: 15@30.
+(VectorCanvas onForm: Display) fullDraw: m.
 Display forceToScreen.!
 
 !HybridCanvas commentStamp: '<historical>' prior: 0!
@@ -1023,6 +1041,19 @@ false ifTrue: [
 	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
 ]! !
 
+!M3Exp04Morph methodsFor: 'drawing' stamp: 'jmv 1/3/2021 12:11:47'!
+drawOn: aCanvas
+	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
+
+
+
+aCanvas image: ImageMorph defaultForm at: -10@ -10.
+
+aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alpha: 0.3) do: [
+	aCanvas roundRectangleMinX: -10 maxX: 75 minY: -10 maxY: 47 rx: 40 ry: 20 ].
+
+! !
+
 !HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 11/30/2020 16:12:07'!
 image: aForm at: aPoint sourceRect: sourceRect
 	"Draw a translucent image using the best available way of representing translucency."
@@ -1157,6 +1188,14 @@ updatingMorphBoundsDo: aBlock
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 8/3/2020 17:03:44'!
 canDraw: aMorph
 	^true! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 1/4/2021 17:22:17'!
+currentMorphDrawingFails
+
+	| c |
+	c _ self canvasToUse.
+	c == self ifFalse: [ ^c currentMorphDrawingFails ].
+	super currentMorphDrawingFails! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 12/23/2020 13:15:36'!
 drawCurrentAndSubmorphs
@@ -1841,12 +1880,27 @@ frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borde
 		self lineToX: aRectangle left + d1 y: aRectangle top + d1.
 		self lineToX: aRectangle right - d2 y: aRectangle top + d1 ].! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/9/2014 09:51'!
-image: aForm at: aPoint
-"NO quiero usar imagenes en M3... ver como hacer... quizas meter un servicio en el canvas que en m2 use imagenes y en m3 no..."
-self flag: #jmvVer4.
-" 	self halt"
-"super image: aForm at: aPoint"! !
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 1/3/2021 12:25:56'!
+image: srcForm at: aPoint
+	"Workaround using WarpBlt until properly implemented in VectorEngine"
+
+	| cellSize srcBox dstBox srcQuad |
+
+	"hack to affect morphIds in a reasonably way"
+	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color black alpha: 0.01`.
+
+	cellSize _ 4.
+	srcBox _ srcForm boundingBox.
+	dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
+	srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) floor ].
+	dstBox _ currentTransformation displayBoundsOfTransformOf: (srcBox translatedBy: aPoint).
+	(WarpBlt toForm: form)
+		clipRect: clipRect;
+		sourceForm: srcForm;
+		colorMap: (srcForm colormapIfNeededFor: form);
+		cellSize: cellSize;
+		combinationRule: Form blend;
+		copyQuad: srcQuad toRect: dstBox.! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 image: aForm multipliedBy: aColor at: aPoint
@@ -1854,6 +1908,31 @@ image: aForm multipliedBy: aColor at: aPoint
 "no!!!!!!!!"
 "	self halt"
 super image: aForm multipliedBy: aColor at: aPoint! !
+
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 1/4/2021 17:34:06'!
+imageUnrotated: srcForm at: aPoint
+	"Workaround using WarpBlt until properly implemented in VectorEngine.
+	Scale and position like #image:at:, but don't rotate srcForm:
+	Display it in its natural orientation."
+
+	| cellSize srcBox dstBox srcQuad |
+
+	"hack to affect morphIds in a reasonably way"
+	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color black alpha: 0.01`.
+
+	cellSize _ 4.
+	srcBox _ srcForm boundingBox.
+	dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
+	srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) floor ].
+	srcQuad _ (Rectangle encompassing: srcQuad) corners.
+	dstBox _ currentTransformation displayBoundsOfTransformOf: (srcBox translatedBy: aPoint).
+	(WarpBlt toForm: form)
+		clipRect: clipRect;
+		sourceForm: srcForm;
+		colorMap: (srcForm colormapIfNeededFor: form);
+		cellSize: cellSize;
+		combinationRule: Form blend;
+		copyQuad: srcQuad toRect: dstBox.! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/22/2017 12:20:56'!
 line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
