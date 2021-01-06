@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4506] on 29 December 2020 at 4:51:33 pm'!
+'From Cuis 5.0 [latest update: #4519] on 6 January 2021 at 12:01:55 pm'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 253!
+!provides: 'BaseImageTests' 1 254!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1778,10 +1778,10 @@ testAverageIfEmptyEvaluatesEmptyBlockWhenTheCollectionIsEmpty
 		assert: (#() average: [ :each | each asInteger ] ifEmpty: emptyBlock)
 		equals: emptyBlock value! !
 
-!CollectionTest methodsFor: 'average tests' stamp: 'RNG 9/22/2018 10:26:34'!
+!CollectionTest methodsFor: 'average tests' stamp: 'jmv 1/6/2021 11:57:27'!
 testsAverageWorksWithABlock
 
-	self assert: ({ '1' . '2' . '3' } average: [ :each | each asInteger ]) equals: 2! !
+	self assert: ({ '1' . '2' . '3' } average: [ :each | each asNumber ]) equals: 2! !
 
 !CollectionTest methodsFor: 'as comma separated tests' stamp: 'HAW 3/6/2019 15:11:08'!
 assertAsCommaSeparated: aCollection equals: expectedString 

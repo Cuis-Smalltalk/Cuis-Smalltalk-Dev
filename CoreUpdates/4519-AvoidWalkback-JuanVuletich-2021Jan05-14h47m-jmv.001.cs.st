@@ -13,6 +13,8 @@ be separated by periods, with no exclamation points (!!).
 Be sure to put any further comments in double-quotes, like this one."
 [
 	(Delay forSeconds: 1) wait.
-	SystemChangeNotifier uniqueInstance doSilently: [MorphicEvent removeSelector: #sentTo:localPosition:]
+	SystemChangeNotifier uniqueInstance doSilently: [
+		MorphicEvent removeSelector: #sentTo:localPosition:.
+		SmalltalkCompleter initialize]
 ] fork!
 
