@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4511] on 4 January 2021 at 5:38:31 pm'!
+'From Cuis 5.0 [latest update: #4520] on 6 January 2021 at 12:29:00 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 184!
+!provides: 'VectorGraphics' 1 185!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1909,7 +1909,7 @@ image: aForm multipliedBy: aColor at: aPoint
 "	self halt"
 super image: aForm multipliedBy: aColor at: aPoint! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 1/4/2021 17:34:06'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 1/6/2021 12:27:12'!
 imageUnrotated: srcForm at: aPoint
 	"Workaround using WarpBlt until properly implemented in VectorEngine.
 	Scale and position like #image:at:, but don't rotate srcForm:
@@ -1922,10 +1922,10 @@ imageUnrotated: srcForm at: aPoint
 
 	cellSize _ 4.
 	srcBox _ srcForm boundingBox.
-	dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
-	srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) floor ].
-	srcQuad _ (Rectangle encompassing: srcQuad) corners.
-	dstBox _ currentTransformation displayBoundsOfTransformOf: (srcBox translatedBy: aPoint).
+	srcQuad _ srcBox corners.
+	dstBox _ Rectangle
+		center: (currentTransformation transform: srcBox center + aPoint) rounded
+		extent: (currentTransformation externalizeScalar: srcBox extent) rounded.
 	(WarpBlt toForm: form)
 		clipRect: clipRect;
 		sourceForm: srcForm;
