@@ -1,16 +1,16 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3528] on 18 December 2018 at 12:53:47 pm'!
+'From Cuis 5.0 [latest update: #4520] on 8 January 2021 at 3:11:05 pm'!
 'Description '!
-!provides: 'Color-Extras' 1 7!
-SystemOrganization addCategory: #'Color-Extras'!
+!provides: 'Color-Extras' 1 8!
+SystemOrganization addCategory: 'Color-Extras'!
 
 
-!classDefinition: #ColorExtrasPackage category: #'Color-Extras'!
+!classDefinition: #ColorExtrasPackage category: 'Color-Extras'!
 CodePackage subclass: #ColorExtrasPackage
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Color-Extras'!
-!classDefinition: 'ColorExtrasPackage class' category: #'Color-Extras'!
+!classDefinition: 'ColorExtrasPackage class' category: 'Color-Extras'!
 ColorExtrasPackage class
 	instanceVariableNames: ''!
 
@@ -379,7 +379,7 @@ forestGreen
 
 	^ ColorNamesDict at: #forestGreen! !
 
-!Color class methodsFor: '*color-extras-instance creation' stamp: 'jmv 3/13/2018 15:09:09'!
+!Color class methodsFor: '*color-extras-instance creation' stamp: 'jmv 1/8/2021 13:07:21'!
 fromString: aString
 	"For HTML color spec: #FFCCAA. Also support named colors.
 	See http://www.w3schools.com/cssref/css_colors_legal.asp"
@@ -397,13 +397,13 @@ fromString: aString
 				values := (aString allButFirst: 4) allButLast findTokens: ','.
 				r  := (values first includes: $%)
 						ifTrue: [(values first asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values first asInteger min: 255 max: 0) / 255.0].
+						ifFalse: [(values first asNumber min: 255 max: 0) / 255.0].
 				g := (values second includes: $%)
 						ifTrue: [(values second asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values second asInteger min: 255 max: 0) / 255.0].
+						ifFalse: [(values second asNumber min: 255 max: 0) / 255.0].
 				b := (values third includes: $%)
 						ifTrue: [(values third asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values third asInteger min: 255 max: 0) / 255.0].
+						ifFalse: [(values third asNumber min: 255 max: 0) / 255.0].
 				^self r: r g: g b: b].
 
 	^self exactColorNamed: aString! !
