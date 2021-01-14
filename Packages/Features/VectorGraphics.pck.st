@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4520] on 6 January 2021 at 12:29:00 pm'!
+'From Cuis 5.0 [latest update: #4522] on 14 January 2021 at 6:08:41 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 185!
+!provides: 'VectorGraphics' 1 186!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1197,7 +1197,7 @@ currentMorphDrawingFails
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 12/23/2020 13:15:36'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 1/13/2021 11:11:53'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
@@ -1223,10 +1223,13 @@ drawCurrentAndSubmorphs
 			currentMorph postDrawOn: self ].
 		b ifNotNil: [
 			self drawCoordinateSystem: b ].
-
 		world notNil ifTrue: [					"Only if we are drawing the world"
 			currentMorph displayBounds:
-				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ]].! !
+				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ].
+
+		currentMorph isHighlighted ifTrue: [
+			self drawCurrentMorphHighlight ].
+	].! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
 into: aMorph
@@ -2015,7 +2018,7 @@ boundingRectOfCurrentMorphAfterDraw
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/23/2020 13:01:00'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 1/13/2021 11:57:17'!
 drawCurrentAndSubmorphs
 	| r corners |
 	self isCurrentMorphVisible ifTrue: [
@@ -2037,7 +2040,11 @@ drawCurrentAndSubmorphs
 		corners ifNotNil: [ self drawCoordinateSystem: corners ].
 		world notNil ifTrue: [					"Only if we are drawing the world"
 			currentMorph displayBounds:
-				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ]].! !
+				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ].
+
+		currentMorph isHighlighted ifTrue: [
+			self drawCurrentMorphHighlight ].
+	].! !
 
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 12/31/2017 13:22:48'!
 initializeWith: aForm origin: aPoint
@@ -2216,6 +2223,18 @@ drawCoordinateSystem: corners
 			self moveToX: -5 y: y; lineToX: 5 y: y ].
 	   	self drawString: y printString, ' ' atWaistRight: 0 @ y font: nil color: c ].
 	  self drawString: 'y' atWaistRight: 0 @ (y1 - 20) font: nil color: c.! !
+
+!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 1/13/2021 11:57:42'!
+drawCurrentMorphHighlight
+
+	currentMorph displayBounds ifNotNil: [ :r |
+		(BitBltCanvasEngine toForm: form)
+			combinationRule: Form blend;
+			fillColor: `Color black`;
+			frameRect: r borderWidth: 4;
+			fillColor: `Color pink alpha: 0.2`;
+			fillRect: (r insetBy: 4).
+	]! !
 
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 arrowOfDirection: aSymbol size: finalSizeInteger
@@ -5283,7 +5302,7 @@ blendStrokeOnly
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 12/23/2020 15:21:03'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 1/14/2021 18:04:43'!
 blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
@@ -5317,6 +5336,7 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 	alpha = 0.0 ifFalse: [
 		unAlpha _ 1.0 - alpha.
 		targetWord _ targetForm bits bytesAt: pixelIndex.
+
 		targetAlpha _ (targetWord at: 4) / 255.0.
 		resultAlpha _ alpha + (unAlpha * targetAlpha).
 		targetWord at: 4 put: (resultAlpha*255) rounded.
@@ -5329,7 +5349,6 @@ blendStrokeOnlyAtX: x y: y pixelIndex: pixelIndex
 		resultG _ resultG/resultAlpha.
 		targetWord at: 2 put: resultG rounded.
 
-		resultAlpha _ alpha + (unAlpha * targetAlpha).
 		resultB _ alpha * strokeColor blue * 255 + (unAlpha * (targetWord at: 1) * targetAlpha).
 		resultB _ resultB/resultAlpha.
 		targetWord at: 1 put: resultB rounded.
