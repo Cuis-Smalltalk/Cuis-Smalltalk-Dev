@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4526] on 18 January 2021 at 5:26:47 pm'!
+'From Cuis 5.0 [latest update: #4526] on 18 January 2021 at 5:32:29 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 187!
+!provides: 'VectorGraphics' 1 188!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -7436,6 +7436,19 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont color: foreground
 		self basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont.
 		combinationRule := prevRule ].
 	^answer! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'hlsf 1/18/2021 17:31:38'!
+addLabel: string font: font centeredAt: position rotationDegrees: angle
+	"Add a label top-centered at position and rotated of angle degrees"
+	| p label |
+	p _ position - (position normal * (font widthOfString: string asString) / 2).
+	label _ LabelMorph
+		contents: string
+		font: font.
+	label rotation: (90 - angle) degreesToRadians.
+	self addMorph: label.
+	label morphPosition: p.
+	^ label.! !
 
 !MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/22/2020 20:03:06'!
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
