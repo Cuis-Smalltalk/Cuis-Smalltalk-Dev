@@ -1,4 +1,4 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:49:13 pm'!
+'From Cuis 5.0 [latest update: #4526] on 18 January 2021 at 5:18:29 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
@@ -6,7 +6,7 @@
 - Hernan Wilkinson: 
   - Added useDebugErrorHandler and debugErrorHandler to be able to debug a http request
   - Changed exampleDoIt to support Smalltalk expresions in the URL using GET'!
-!provides: 'WebClient' 1 19!
+!provides: 'WebClient' 1 20!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -3018,11 +3018,11 @@ content: aString
 
 	content := aString.! !
 
-!WebMessage methodsFor: 'accessing' stamp: 'ar 2/23/2010 10:37'!
+!WebMessage methodsFor: 'accessing' stamp: 'tsl 1/18/2021 11:17:47'!
 contentLength
 	"Answers the numeric value of the Content-Length header, or nil if no header exist"
 
-	^(self headerAt: 'Content-Length' ifAbsent:[^nil]) asInteger! !
+	^(self headerAt: 'Content-Length' ifAbsent:[^nil]) asNumber! !
 
 !WebMessage methodsFor: 'accessing' stamp: 'ar 5/4/2010 21:04'!
 contentLength: aNumber
