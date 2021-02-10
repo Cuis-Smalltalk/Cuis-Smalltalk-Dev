@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4526] on 18 January 2021 at 5:32:29 pm'!
+'From Cuis 5.0 [latest update: #4531] on 10 February 2021 at 5:30:37 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 188!
+!provides: 'VectorGraphics' 1 189!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -7449,6 +7449,32 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	self addMorph: label.
 	label morphPosition: p.
 	^ label.! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 2/10/2021 17:26:14'!
+imageForm: depth
+	| auxCanvas p r  answer |
+
+	self requiresVectorCanvas ifFalse: [
+		auxCanvas _ MorphicCanvas depth: depth over: (self morphPosition extent: self morphExtent).
+		auxCanvas fullDraw: self.
+		^ auxCanvas form divideByAlpha ].
+
+	p _ self morphPosition.
+	auxCanvas _ VectorCanvas onForm: Display.
+	auxCanvas updatingMorphBoundsDo: [
+		auxCanvas into: self.
+		auxCanvas updateCurrentDisplayBounds.
+		auxCanvas outOfMorph ].
+	r _ self displayFullBounds.
+
+	self morphPosition: self morphPosition - r origin.
+	answer _ Form extent: r extent depth: 32.
+	(VectorCanvas onForm: answer) fullDraw: self.
+
+	self morphPosition: p.
+	owner notNil ifTrue: [
+		self redrawNeeded ].
+	^answer! !
 
 !MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/22/2020 20:03:06'!
 drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
