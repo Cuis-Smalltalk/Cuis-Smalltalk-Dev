@@ -1,5 +1,5 @@
 #!/bin/bash
-git clone https://github.com/Cuis-Smalltalk/VectorGraphics.git
+git clone https://github.com/Cuis-Smalltalk/SVG.git
 git clone https://github.com/Cuis-Smalltalk/EnhancedText.git
 git clone https://github.com/Cuis-Smalltalk/Erudite.git
 git clone https://github.com/Cuis-Smalltalk/StyledTextEditor.git
@@ -16,5 +16,6 @@ git clone https://github.com/Cuis-Smalltalk/Parsers.git
 git clone https://github.com/Cuis-Smalltalk/Machine-Learning.git
 git clone https://github.com/Cuis-Smalltalk/AMQP.git
 git clone https://github.com/Cuis-Smalltalk/firmata.git
+git clone https://github.com/Cuis-Smalltalk/VMMaker.git
 git clone https://github.com/Cuis-Smalltalk/Learning-Cuis.git
 git clone https://github.com/Cuis-Smalltalk/TheCuisBook.git
