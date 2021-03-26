@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4546] on 26 March 2021 at 12:19:10 pm'!
+'From Cuis 5.0 [latest update: #4547] on 26 March 2021 at 4:19:30 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 206!
+!provides: 'VectorGraphics' 1 207!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1206,7 +1206,7 @@ currentMorphDrawingFails
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 3/15/2021 16:31:48'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 3/26/2021 16:18:14'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
@@ -1236,7 +1236,8 @@ drawCurrentAndSubmorphs
 			self drawCurrentMorphHighlight ].
 		world notNil ifTrue: [
 			currentMorph halo ifNotNil: [
-				self drawCoordinateSystem: currentMorph morphLocalBounds ]].
+				Preferences halosShowCoordinateSystem ifTrue: [
+					self drawCoordinateSystem: currentMorph morphLocalBounds ]]].
 
 		world notNil ifTrue: [					"Only if we are drawing the world"
 			currentMorph displayBounds:
@@ -2541,7 +2542,7 @@ boundingRectOfCurrentMorphAfterDraw
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 3/15/2021 16:23:25'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 3/26/2021 16:17:53'!
 drawCurrentAndSubmorphs
 	| corners |
 	self isCurrentMorphVisible ifTrue: [
@@ -2564,9 +2565,10 @@ drawCurrentAndSubmorphs
 			self drawCurrentMorphHighlight ].
 		world notNil ifTrue: [
 			currentMorph halo ifNotNil: [
-				corners _ currentMorph displayFullBounds corners collect: [ :pt |
-					currentTransformation inverseTransform: pt ].
-				self drawCoordinateSystem: corners ]].
+				Preferences halosShowCoordinateSystem ifTrue: [
+					corners _ currentMorph displayFullBounds corners collect: [ :pt |
+						currentTransformation inverseTransform: pt ].
+					self drawCoordinateSystem: corners ]]].
 	
 		world notNil ifTrue: [					"Only if we are drawing the world"
 			currentMorph displayBounds:
