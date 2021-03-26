@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4538] on 22 March 2021 at 3:40:34 pm'!
+'From Cuis 5.0 [latest update: #4546] on 26 March 2021 at 12:19:10 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 201!
+!provides: 'VectorGraphics' 1 206!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -281,7 +281,7 @@ TTContourConstruction class
 
 !classDefinition: #TTFontDescription category: 'VectorGraphics-TrueType'!
 Object subclass: #TTFontDescription
-	instanceVariableNames: 'folderName contourDataForIso8859s15 contourDataIndexesByIso8859s15 contourDataIndexesForSmalltalkGlyphs contourDataForUtf8 contourDataIndexesByUtf8 kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing'
+	instanceVariableNames: 'folderName contourDataForIso8859s15 contourDataIndexesByIso8859s15 contourDataForUtf8 contourDataIndexesByUtf8 kernPairs copyright familyName fullName subfamilyName uniqueName versionName postscriptName trademark bounds unitsPerEm ascent descent lineGap letterMTopSideBearing'
 	classVariableNames: 'Descriptions'
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
@@ -432,7 +432,8 @@ Display forceToScreen!
 A Vector Graphics rasterizer for Morphic 3.
 Supports most SVG primitives.
 Gives exceptional quality.
-!
+
+Based on https://www.researchgate.net/publication/267152327_Prefiltering_Antialiasing_for_General_Vector_Graphics!
 
 !VectorEngineBoundsFinder commentStamp: '<historical>' prior: 0!
 Morph Bounds Finder!
@@ -639,9 +640,9 @@ widthOf: aCharacter
 
 	^ (aCharacter widthInTrueTypeFontDescription: ttFontDescription useST80Glyphs: self isST80Glyphs) * pointSize! !
 
-!TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 4/1/2020 12:27:51'!
+!TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 3/23/2021 13:03:33'!
 onBitBltCanvasEngine: engine displayString: aString from: startIndex to: stopIndex at: p color: color
-	"Answer last affected pixel position.
+	"Answer position to place next glyph.
 	Answer nil if nothing was done."
 
 	^aString displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p trueTypeFont: self color: color! !
@@ -697,7 +698,7 @@ glyphAt: aCharacter
 		glyphForms at: index put: formGlyph.
 		formGlyph ]! !
 
-!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 3/22/2020 16:25:02'!
+!TrueTypeFont methodsFor: 'glyph access' stamp: 'jmv 3/26/2021 10:40:47'!
 glyphAtUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil
 	"Needed only for BitBltCanvasEngine"
 
@@ -718,8 +719,11 @@ glyphAtUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil
 				lastIndex _ (byte4OrNil bitAnd: 63) + 1 ]]].
 	^ (lastArray at: lastIndex) ifNil: [
 		| formGlyph |
-		formGlyph _ (ttFontDescription formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil
-								byte3: byte3OrNil byte4: byte4OrNil pixelSize: pointSize)
+		formGlyph _ (ttFontDescription
+				formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil
+				byte3: byte3OrNil byte4: byte4OrNil
+				pixelSize: pointSize
+				useST80Glyphs: self isST80Glyphs)
 			ifNil: [#absentGlyph]
 			ifNotNil: [ :theGlyph |
 				(emphasis allMask: 4) ifTrue: [
@@ -1104,6 +1108,20 @@ drawStringEmbossed: aString from: firstIndex to: lastIndex at: aPoint font: font
 		^nil ].
 	^super drawStringEmbossed: aString from: firstIndex to: lastIndex at: aPoint font: font color: aColor! !
 
+!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 3/25/2021 16:30:58'!
+drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+
+	drawingOnMorphIDs ifTrue: [
+		^nil ].
+	^super drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
+
+!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 3/23/2021 15:50:48'!
+drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+
+	drawingOnMorphIDs ifTrue: [
+		^nil ].
+	^super drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
+
 !HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 11/30/2020 12:12:26'!
 textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc
 
@@ -1274,21 +1292,21 @@ drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 engine
 	^engine! !
 
-!VectorCanvas methodsFor: 'context and parameters for path' stamp: 'jmv 3/17/2021 10:15:59'!
+!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:59'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
 	self initializePath.
 	engine fillColor: aFillColor do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'context and parameters for path' stamp: 'jmv 3/18/2021 15:10:32'!
+!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/18/2021 15:10:32'!
 initializePath
 	"Perform any initialization needed before starting a Path"
 
 	firstX _ firstY _ Float nan.
 	currentX _ currentY _ lastControlX _ lastControlY _ 0.0.! !
 
-!VectorCanvas methodsFor: 'context and parameters for path' stamp: 'jmv 3/17/2021 10:15:38'!
+!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:38'!
 strokeWidth: morphStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 	"Gradients should be transformed with currentTransformation!!"
@@ -1299,7 +1317,7 @@ strokeWidth: morphStrokeWidth color: aStrokeColor do: pathCommandsBlock
 		color: aStrokeColor
 		do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'context and parameters for path' stamp: 'jmv 3/17/2021 10:15:50'!
+!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:50'!
 strokeWidth: morphStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 	"Gradients should be transformed with currentTransformation!!"
@@ -2214,8 +2232,9 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				self rel_QuadraticBezierSmoothToX: to x y: to y ]]! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 3/16/2021 14:51:35'!
-drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: font color: aColor
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 3/26/2021 10:37:27'!
+drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+	"Answer position to place next glyph"
 	"
 | s c f |
 c _ VectorCanvas onForm: Display.
@@ -2231,48 +2250,41 @@ Display forceToScreen
 		from: firstIndex
 		to: lastIndex
 		at: aPoint
-		trueTypeFont: font fontDescription
-		useST80Glyphs: font isST80Glyphs
+		trueTypeFont: aTrueTypeFont fontDescription
+		useST80Glyphs: aTrueTypeFont isST80Glyphs
 		color: aColor
-		scale: font pointSize
+		scale: aTrueTypeFont pointSize
 		geometryTransformation: currentTransformation
 		preventMirroring: true! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 12/2/2020 16:18:58'!
-drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
-	"
-| c f |
-Preferences loadOnlyLatinGlyphData ifTrue: [
-	Preferences disable: #loadOnlyLatinGlyphData. TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf' ].
-c _ VectorCanvas onForm: Display.
-f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
-c drawString: 'Hola' at: 10@10 font: f color: Color random.
-c drawUtf8: #[208 176 208 177 208 178 208 179 208 180 208 181 209 145 208 182 208 183 208 184 208 185 208 186 208 187 208 188 208 189 208 190 209 143 209 142 209 141 209 140 209 139 209 138 209 137 209 136 209 135 209 134 209 133 209 132 209 131 209 130 209 129 209 128 208 191] at: 10@100 font: f color: Color random.
-c drawUtf8:  #[208 146 208 190 209 130 32 208 184 208 183 32 208 181 208 189 32 208 184 208 179 208 183 208 176 208 188 208 191 208 187 32 208 190 209 132 32 208 181 208 189 32 208 152 208 189 208 179 208 187 208 184 209 136 32 209 130 208 181 208 186 209 129 209 130 32 209 128 208 184 209 130 208 189 32 208 184 208 189 32 208 180 32 208 161 208 184 209 128 208 184 208 187 208 184 208 186 32 208 176 208 187 209 132 208 176 208 177 208 181 209 130 63]  at: 10@200 font: f color: Color random.
-c drawString: 'año' at: 10@300 font: f color: Color random.
-c drawUtf8:  #[97 195 177 111 ]  at: 10@400 font: f color: Color random.
-Display forceToScreen
-	"
-	"Slight optimization when there's nothing to do."
-	"
-	port clipHeight = 0 ifTrue: [^self].
-	port clipWidth = 0 ifTrue: [^self].
-	"
-	| font |
-	font _ aTrueTypeFont ifNil: [ FontFamily defaultFamilyAndPointSize ].
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 3/26/2021 10:36:55'!
+drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+
+	engine
+		displayUtf32: aWordArray
+		from: startIndex to: stopIndex
+		at: aPoint
+		trueTypeFont: aTrueTypeFont fontDescription
+		useST80Glyphs: aTrueTypeFont isST80Glyphs
+		color: aColor
+		scale: aTrueTypeFont pointSize
+		geometryTransformation: currentTransformation
+		preventMirroring: true! !
+
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 3/26/2021 10:37:06'!
+drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+	"Answer position to place next glyph"
+
 	engine
 		displayUtf8: aByteArray
-		at: aPoint + (0@font ascent + font lineGap-1)
-		trueTypeFont: font fontDescription
+		fromByte: byteStartIndex toByte: byteStopIndex
+		at: aPoint
+		trueTypeFont: aTrueTypeFont fontDescription
+		useST80Glyphs: aTrueTypeFont isST80Glyphs
 		color: aColor
-		scaleX: 1.0 * font pointSize
-		scaleY: -1.0 * font pointSize
-		
-	"The conversion from top of glyph (morphic canvas) to baseline (engine, TrueType) is done here.
-	The conversion from Y-increases-downwards (morphic canvas) to Y-increases-upwards (engine, TrueType) is done here.
-	
-	The scaling of internal TrueType integer points to FloatingPoint where[0.0...1.0] equals #letterMTopSideBearing is done in the engine.
-	It should actually be done in TrueType. No one else cares!!"! !
+		scale: aTrueTypeFont pointSize
+		geometryTransformation: currentTransformation
+		preventMirroring: true! !
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/30/2014 20:02'!
 drawButtonIconFromCurrentMorph
@@ -2668,14 +2680,14 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 3/22/2021 15:29:57'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 3/26/2021 12:15:41'!
 setForm: aForm
 	"
 	World extent: World extent
 	"
 	aForm depth = 32  ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
 	form _ aForm.
-	engine _ VectorEngineWholePixel onForm: form.
+	engine _ VectorEngineSubPixelWithPlugin onForm: form.
 	engine canvas: self.
 	boundsFinderEngine _ VectorEngineBoundsFinder onForm: form.
 	boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
@@ -2705,17 +2717,18 @@ usePlugin
 	boundsFinderEngine subPixelDelta: engine subPixelDelta.								"So bounds found are exactly the same as engine would find."
 	self newClipRect: nil.! !
 
-!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 3/15/2021 15:05:42'!
+!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 3/26/2021 12:18:31'!
 drawCoordinateSystem: corners
 	| c stepX stepY x0 x1 y0 y1 |
 	stepX _ 50.
 	stepY _ 20.
 
 	engine currentMorph: nil.
-	self fillColor: `Color lightGray alpha: 0.4` do: [
+	self strokeWidth: 4 color: `Color lightGray alpha: 0.4` do: [
 		self moveToX: corners first x y: corners first y.
 		corners do: [ :p |
-			self lineToX: p x y: p y. ]].
+			self lineToX: p x y: p y. ].
+		self lineToX: corners first x y: corners first y].
 
 	x0 _ x1 _ y0 _ y1 _ 0.
 	corners do: [ :p |
@@ -2724,7 +2737,7 @@ drawCoordinateSystem: corners
 		y0 _ y0 min: p y.
 		y1 _ y1 max: p y.].
 
-	c _ `Color white alpha: 0.6`.
+	c _ `Color lightGray alpha: 0.6`.
 	self strokeWidth: 1 color: c do: [
 		self moveToX: x0 y: 0; lineToX: x1 y: 0.
 		self moveToX: 0 y: y0; lineToX: 0 y: y1. ].
@@ -2982,7 +2995,7 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/20/2021 21:09:40'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:32:10'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -2991,7 +3004,7 @@ fillColor: aFillColor do: pathCommandsBlock
 	self pvtStrokeColor: nil.
 	self pvtFillColor: aFillColor.
 	self pvtHopsPerPixel: 8.										"See #experimentHopsPerPixel3"
-	self doPath: pathCommandsBlock.! !
+	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
 !VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:27:50'!
 strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
@@ -2999,7 +3012,7 @@ strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 
 	self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: false! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/20/2021 21:09:51'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:32:30'!
 strokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
 
@@ -3016,9 +3029,9 @@ strokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureCloseP
 	self pvtFillColor: nil.
 	self pvtHopsPerPixel: 10 // strokeWidth + 1.		"See #experimentHopsPerPixel2"
 
-	self doPath: pathCommandsBlock.! !
+	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/20/2021 21:10:00'!
+!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:33:13'!
 strokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -3045,26 +3058,30 @@ strokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathComm
 		ifFalse: [
 			self pvtHopsPerPixel: (10 // strokeWidth + 1 max: 2) ].		"See #experimentHopsPerPixel2. Additionally, fills require at least 2."
 
-	self doPath: pathCommandsBlock.! !
+	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
-!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 3/16/2021 14:31:39'!
+!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 3/26/2021 10:03:35'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
 	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
 
-	| destX destY sx sy contourData contourDataIndexes trueTypeScale ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers cx cy x y cc pp |
+	| destX destY sx sy contourData contourDataIndexes trueTypeScale ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers x y cx cy transformedEndPoint transformedControlPoint contourStart |
 	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.	"Perhaps measures in TTFontDescription should be normalized"
 	sx _ scale * trueTypeScale.
 	sy _ scale * trueTypeScale.
 	(doPreventMirroring and: [ aMorphicTransformation doesMirror not ]) ifTrue: [ sy _ sy negated ].
 	contourData _ aTTFontDescription contourDataForIso8859s15.
-	contourDataIndexes _ aTTFontDescription contourDataIndexesByIso8859s15ST80Glyphs: aBoolean.
+	contourDataIndexes _ aTTFontDescription contourDataIndexesByIso8859s15.
 	self fillColor: aColor do: [
 		destX _ aPoint x.
 		destY _ aPoint y.
 		startIndex to: stopIndex do: [ :charIndex | | iso8859s15 i |
 			iso8859s15 _ (aString at: charIndex) iso8859s15Code.
+			aBoolean ifTrue: [
+				iso8859s15 = 95 ifTrue: [ iso8859s15 _ 28 ].												"If underscore, use left arrow"
+				iso8859s15 = 94 ifTrue: [ iso8859s15 _ 30 ].												"If caret, use up arrow"
+				].
 			i _ contourDataIndexes at: iso8859s15 + 1.
 			advanceWidth _ contourData at: i. i _ i + 1.
 			boundsLeft _ contourData at: i. i _ i + 1.
@@ -3078,8 +3095,9 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 				ttMoveToY _ contourData at: i. i _ i + 1.
 				x _ ttMoveToX * sx + destX.
 				y _ ttMoveToY * sy + destY.
-				pp _ aMorphicTransformation externalizePosition: x@y.
-				self basicMoveToX: pp x y: pp y.
+				transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
+				contourStart _ transformedEndPoint.
+				self basicMoveToX: contourStart x y: contourStart y.
 				numBeziers timesRepeat: [
 					ttEndX _ contourData at: i. i _ i + 1.
 					ttEndY _ contourData at: i. i _ i + 1.
@@ -3089,32 +3107,134 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 					cy _ ttControlY * sy + y.
 					x _ ttEndX * sx + x.
 					y _ ttEndY * sy + y.
-					cc _ aMorphicTransformation externalizePosition: cx@cy.
-					pp _ aMorphicTransformation externalizePosition: x@y.
-					self basicQuadraticBezierToX: pp x y: pp y controlX: cc x y: cc y
-					]
+					transformedControlPoint _ aMorphicTransformation externalizePosition: cx@cy.
+					transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
+					self basicQuadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
+					].
+				self basicLineToX: contourStart x y: contourStart y.
 				].
 			destX _ destX + (advanceWidth * sx).
 		]
 	].
 	^ destX ceiling@destY! !
 
-!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 3/16/2021 12:32:32'!
-displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColor scaleX: ssx scaleY: ssy
-	"ssx and ssy to honor font pointSize"
-	| destX destY sx sy contourData contourDataIndexes trueTypeScale cpX cpY epX epY moveToX moveToY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers baseIndex x y cx cy |
+!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 3/26/2021 10:45:39'!
+displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
+	"TrueType assumes a Math like coordinate system (Y increasing upwards).
+	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
+	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
 
-	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.
-	sx _ ssx * trueTypeScale.
-	sy _ ssy * trueTypeScale.
+	| destX destY sx sy contourData contourDataIndexes trueTypeScale ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers x y cx cy transformedEndPoint transformedControlPoint contourStart |
+	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.	"Perhaps measures in TTFontDescription should be normalized"
+	sx _ scale * trueTypeScale.
+	sy _ scale * trueTypeScale.
+	(doPreventMirroring and: [ aMorphicTransformation doesMirror not ]) ifTrue: [ sy _ sy negated ].
+	contourData _ aTTFontDescription contourDataForUtf8.
+	contourDataIndexes _ aTTFontDescription contourDataIndexesByUtf8.
+	self fillColor: aColor do: [
+		destY _ aPoint y.
+		destX _ aPoint x.
+		startIndex to: stopIndex do: [ :utf32Index | | utf32 utf8Byte1 uft8Byte2 utf8Byte3 utf8Byte4 i |
+			utf32 _ aWordArray at: utf32Index.
+			aBoolean ifTrue: [
+				utf32 = 95 ifTrue: [ utf32 _ 8592 ].												"If underscore, use left arrow"
+				utf32 = 94 ifTrue: [ utf32 _ 8593 ].												"If caret, use up arrow"
+				].
+			utf32 <= 16r7F
+				ifTrue: [
+					utf8Byte1 _ utf32.
+					i _ contourDataIndexes at: utf8Byte1 + 1.
+					]
+				ifFalse: [ utf32 <= 16r7FF
+				ifTrue: [
+					utf8Byte1 _ (utf32 bitShift: -6) bitOr: 2r11000000.
+					uft8Byte2 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+					i _ contourDataIndexes at: utf8Byte1 + 1.
+					i _ contourDataIndexes at: uft8Byte2 - i + 1.
+					]
+				ifFalse: [ utf32 <= 16rFFFF
+				ifTrue: [
+					utf8Byte1 _ (utf32 bitShift: -12) bitOr: 2r11100000.
+					uft8Byte2 _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+					utf8Byte3 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+					i _ contourDataIndexes at: utf8Byte1 + 1.
+					i _ contourDataIndexes at: uft8Byte2 - i + 1.
+					i _ contourDataIndexes at: utf8Byte3 - i + 1.
+					]
+				ifFalse: [
+					utf8Byte1 _ (utf32 bitShift: -18) bitOr: 2r11110000.
+					uft8Byte2 _ ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
+					utf8Byte3 _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+					utf8Byte4 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+					i _ contourDataIndexes at: utf8Byte1 + 1.
+					i _ contourDataIndexes at: uft8Byte2 - i + 1.
+					i _ contourDataIndexes at: utf8Byte3 - i + 1.
+					i _ contourDataIndexes at: utf8Byte4 - i + 1.
+					]]].
+			advanceWidth _ contourData at: i. i _ i + 1.
+			boundsLeft _ contourData at: i. i _ i + 1.
+			boundsRight _ contourData at: i. i _ i + 1.
+			boundsTop _ contourData at: i. i _ i + 1.
+			boundsBottom _ contourData at: i. i _ i + 1.
+			numContours _ (contourData at: i) asInteger. i _ i + 1.
+			numContours timesRepeat: [
+				numBeziers _ (contourData at: i) asInteger. i _ i + 1.
+				ttMoveToX _ contourData at: i. i _ i + 1.
+				ttMoveToY _ contourData at: i. i _ i + 1.
+				x _ ttMoveToX * sx + destX.
+				y _ ttMoveToY * sy + destY.
+				transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
+				contourStart _ transformedEndPoint.
+				self basicMoveToX: contourStart x y: contourStart y.
+				numBeziers timesRepeat: [
+					ttEndX _ contourData at: i. i _ i + 1.
+					ttEndY _ contourData at: i. i _ i + 1.
+					ttControlX _ contourData at: i. i _ i + 1.
+					ttControlY _ contourData at: i. i _ i + 1.
+					cx _ ttControlX * sx + x.
+					cy _ ttControlY * sy + y.
+					x _ ttEndX * sx + x.
+					y _ ttEndY * sy + y.
+					transformedControlPoint _ aMorphicTransformation externalizePosition: cx@cy.
+					transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
+					self basicQuadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
+					].
+				self basicLineToX: contourStart x y: contourStart y.
+				].
+			destX _ destX + (advanceWidth * sx).
+			]
+	].
+	^ destX ceiling@destY! !
+
+!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 3/26/2021 11:10:49'!
+displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
+	"TrueType assumes a Math like coordinate system (Y increasing upwards).
+	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
+	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
+
+	| destX destY sx sy contourData contourDataIndexes trueTypeScale ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth boundsLeft boundsRight boundsTop boundsBottom numContours numBeziers baseIndex x y cx cy transformedEndPoint transformedControlPoint contourStart |
+	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.	"Perhaps measures in TTFontDescription should be normalized"
+	sx _ scale * trueTypeScale.
+	sy _ scale * trueTypeScale.
+	(doPreventMirroring and: [ aMorphicTransformation doesMirror not ]) ifTrue: [ sy _ sy negated ].
 	contourData _ aTTFontDescription contourDataForUtf8.
 	contourDataIndexes _ aTTFontDescription contourDataIndexesByUtf8.
 	self fillColor: aColor do: [
 		destY _ aPoint y.
 		destX _ aPoint x.
 		baseIndex _ 0.
-		aByteArray do: [ :byte | | i |
+		byteStartIndex to: byteStopIndex do: [ :byteIndex | | byte i |
+			byte _ aByteArray at: byteIndex.
 			i _ contourDataIndexes at: baseIndex + byte + 1.
+			aBoolean ifTrue: [
+				byte = 95 ifTrue: [
+					i _ contourDataIndexes at: 226 + 1.
+					i _ contourDataIndexes at: 134 - i + 1.
+					i _ contourDataIndexes at: 144 - i + 1 ].
+				byte = 94 ifTrue: [ 
+					i _ contourDataIndexes at: 226 + 1.
+					i _ contourDataIndexes at: 134 - i + 1.
+					i _ contourDataIndexes at: 145 - i + 1 ]].
 			i < 0
 				ifTrue: [ baseIndex _ i negated ]
 				ifFalse: [
@@ -3126,36 +3246,42 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTTFontDescription color: aColo
 					numContours _ (contourData at: i) asInteger. i _ i + 1.
 					numContours timesRepeat: [
 						numBeziers _ (contourData at: i) asInteger. i _ i + 1.
-						moveToX _ contourData at: i. i _ i + 1.
-						moveToY _ contourData at: i. i _ i + 1.
-						x _ moveToX * sx + destX.
-						y _ moveToY * sy + destY.
-						self basicMoveToX: x y: y.
+						ttMoveToX _ contourData at: i. i _ i + 1.
+						ttMoveToY _ contourData at: i. i _ i + 1.
+						x _ ttMoveToX * sx + destX.
+						y _ ttMoveToY * sy + destY.
+						transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
+						contourStart _ transformedEndPoint.
+						self basicMoveToX: contourStart x y: contourStart y.
 						numBeziers timesRepeat: [
-							epX _ contourData at: i. i _ i + 1.
-							epY _ contourData at: i. i _ i + 1.
-							cpX _ contourData at: i. i _ i + 1.
-							cpY _ contourData at: i. i _ i + 1.
-							cx _ cpX * sx + x.
-							cy _ cpY * sy + y.
-							x _ epX * sx + x.
-							y _ epY * sy + y.
-							self basicQuadraticBezierToX: x y: y controlX: cx y: cy.
-							]
+							ttEndX _ contourData at: i. i _ i + 1.
+							ttEndY _ contourData at: i. i _ i + 1.
+							ttControlX _ contourData at: i. i _ i + 1.
+							ttControlY _ contourData at: i. i _ i + 1.
+							cx _ ttControlX * sx + x.
+							cy _ ttControlY * sy + y.
+							x _ ttEndX * sx + x.
+							y _ ttEndY * sy + y.
+							transformedControlPoint _ aMorphicTransformation externalizePosition: cx@cy.
+							transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
+							self basicQuadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
+							].
+						self basicLineToX: contourStart x y: contourStart y.
 						].
 					destX _ destX + (advanceWidth * sx).
 					baseIndex _ 0.
 				]
 			]
-	].! !
+	].
+	^ destX ceiling@destY! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 3/20/2021 21:10:59'!
-doPath: pathCommandsBlock
+!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:28'!
+doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Evaluate a sequence of path commands. Path parameters already set."
 
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: (canvas ifNil:[self]).
-	self finishPath: true! !
+	self finishPath: ensureClosePath! !
 
 !VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 3/16/2021 10:49:32'!
 initializeOnForm: aForm
@@ -4872,7 +4998,7 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		hops: hops
 		edgeCounts: edgeCounts alphaMask: alphaMask! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'text' stamp: 'jmv 3/19/2021 11:49:14'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:22:46'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -4884,7 +5010,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 	sy _ scale * trueTypeScale.
 	(doPreventMirroring and: [ aMorphicTransformation doesMirror not ]) ifTrue: [ sy _ sy negated ].
 	contourData _ aTTFontDescription contourDataForIso8859s15.
-	contourDataIndexes _ aTTFontDescription contourDataIndexesByIso8859s15ST80Glyphs: aBoolean.
+	contourDataIndexes _ aTTFontDescription contourDataIndexesByIso8859s15.
 	destX _ aPoint x.
 	destY _ aPoint y.
 	self
@@ -4900,20 +5026,91 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 			atx: destX/sx asFloat y: destY/sy asFloat
 			contourData: contourData
 			contourDataIndexes: contourDataIndexes
-			hopsPerPixel: "hopsPerPixel asInteger" 3
+			useST80Glyphs: aBoolean
+			hopsPerPixel: hopsPerPixel asInteger
 			edgeCounts: edgeCounts
 			alphaMask: alphaMask
 		].
 	^ (destX*sx) ceiling@destY! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/20/2021 21:11:34'!
-doPath: pathCommandsBlock
+!VectorEngineSubPixelWithPlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:23:05'!
+displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
+	"TrueType assumes a Math like coordinate system (Y increasing upwards).
+	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
+	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
+
+	| destX destY sx sy contourData contourDataIndexes trueTypeScale |
+	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.	"Perhaps measures in TTFontDescription should be normalized"
+	sx _ scale * trueTypeScale.
+	sy _ scale * trueTypeScale.
+	(doPreventMirroring and: [ aMorphicTransformation doesMirror not ]) ifTrue: [ sy _ sy negated ].
+	contourData _ aTTFontDescription contourDataForUtf8.
+	contourDataIndexes _ aTTFontDescription contourDataIndexesByUtf8.
+	destX _ aPoint x.
+	destY _ aPoint y.
+	self
+		primTextTxA11: aMorphicTransformation a11 * sx asFloat
+		txA12: aMorphicTransformation a12 * sy asFloat
+		txA13: aMorphicTransformation a13 asFloat
+		txA21: aMorphicTransformation a21 * sx asFloat
+		txA22: aMorphicTransformation a22 * sy asFloat
+		txA23: aMorphicTransformation a23 asFloat.
+	self fillColor: aColor do: [
+		destX _ self
+			primDisplayUtf32: aWordArray from: startIndex to: stopIndex
+			atx: destX/sx asFloat y: destY/sy asFloat
+			contourData: contourData
+			contourDataIndexes: contourDataIndexes
+			useST80Glyphs: aBoolean
+			hopsPerPixel: hopsPerPixel asInteger
+			edgeCounts: edgeCounts
+			alphaMask: alphaMask
+		].
+	^ (destX*sx) ceiling@destY! !
+
+!VectorEngineSubPixelWithPlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:23:09'!
+displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
+	"TrueType assumes a Math like coordinate system (Y increasing upwards).
+	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
+	If doPreventMirroring is true, ensure that glyphs don't look mirrored, by having a negative y scale."
+
+	| destX destY sx sy contourData contourDataIndexes trueTypeScale |
+	trueTypeScale _ 1.0 / aTTFontDescription letterMTopSideBearing.	"Perhaps measures in TTFontDescription should be normalized"
+	sx _ scale * trueTypeScale.
+	sy _ scale * trueTypeScale.
+	(doPreventMirroring and: [ aMorphicTransformation doesMirror not ]) ifTrue: [ sy _ sy negated ].
+	contourData _ aTTFontDescription contourDataForUtf8.
+	contourDataIndexes _ aTTFontDescription contourDataIndexesByUtf8.
+	destX _ aPoint x.
+	destY _ aPoint y.
+	self
+		primTextTxA11: aMorphicTransformation a11 * sx asFloat
+		txA12: aMorphicTransformation a12 * sy asFloat
+		txA13: aMorphicTransformation a13 asFloat
+		txA21: aMorphicTransformation a21 * sx asFloat
+		txA22: aMorphicTransformation a22 * sy asFloat
+		txA23: aMorphicTransformation a23 asFloat.
+	self fillColor: aColor do: [
+		destX _ self
+			primDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex 
+			atx: destX/sx asFloat y: destY/sy asFloat
+			contourData: contourData
+			contourDataIndexes: contourDataIndexes
+			useST80Glyphs: aBoolean
+			hopsPerPixel: hopsPerPixel asInteger
+			edgeCounts: edgeCounts
+			alphaMask: alphaMask
+		].
+	^ (destX*sx) ceiling@destY! !
+
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:45'!
+doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Evaluate a sequence of path commands. Path parameters already set."
 
 	PluginAccess critical: [
 		self initializePath.
 		pathCommandsBlock valueWithPossibleArgument: (canvas ifNil: [self]).
-		self finishPath: true ].! !
+		self finishPath: ensureClosePath ].! !
 
 !VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/18/2021 15:01:20'!
 finishPath: ensureClosePath
@@ -5072,9 +5269,21 @@ primCurrentMorphId: aNumber currentClipsSubmorphs: aBoolean
 
 	self primitiveFailed! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 3/19/2021 12:23:44'!
-primDisplayString: aString from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 3/26/2021 11:21:46'!
+primDisplayString: aString from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primDisplayString' module: 'VectorEnginePlugin'>
+
+	self primitiveFailed! !
+
+!VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 3/26/2021 11:21:51'!
+primDisplayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+	<primitive: 'primDisplayUtf32' module: 'VectorEnginePlugin'>
+
+	self primitiveFailed! !
+
+!VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 3/26/2021 11:21:56'!
+primDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+	<primitive: 'primDisplayUtf8' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
@@ -6236,12 +6445,6 @@ contourDataForUtf8
 contourDataIndexesByIso8859s15
 	^contourDataIndexesByIso8859s15! !
 
-!TTFontDescription methodsFor: 'accessing' stamp: 'jmv 3/18/2020 20:19:27'!
-contourDataIndexesByIso8859s15ST80Glyphs: aBoolean
-	^ aBoolean
-		ifTrue: [contourDataIndexesForSmalltalkGlyphs]
-		ifFalse: [contourDataIndexesByIso8859s15]! !
-
 !TTFontDescription methodsFor: 'accessing' stamp: 'jmv 3/12/2020 12:46:10'!
 contourDataIndexesByUtf8
 	^contourDataIndexesByUtf8 ! !
@@ -6397,42 +6600,18 @@ setStrings: anArray
 	trademark := anArray at: 8.
 ! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'len 5/22/2020 20:06:56'!
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/26/2021 10:10:38'!
 useAlwaysLeftArrow
 	"Not only when Smalltalk glyphs requested."
 	| arrowIndex |
-	contourDataIndexesForSmalltalkGlyphs _ contourDataIndexesByIso8859s15 copy.
 	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowLeft numericValue + 1.
 	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
-		contourDataIndexesByIso8859s15 at: $_ numericValue + 1 put: arrowIndex.
-		contourDataIndexesForSmalltalkGlyphs at: $_ numericValue + 1 put: arrowIndex ].
-	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowUp numericValue + 1.
-	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
-		contourDataIndexesForSmalltalkGlyphs at: $^ numericValue + 1 put: arrowIndex ].! !
+		contourDataIndexesByIso8859s15 at: $_ numericValue + 1 put: arrowIndex ].! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/18/2020 20:33:17'!
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/26/2021 10:10:06'!
 useLeftArrow
-	"When Smalltalk glyphs requested"
-	| arrowIndex |
-	contourDataIndexesForSmalltalkGlyphs _ contourDataIndexesByIso8859s15 copy.
-	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowLeft numericValue + 1.
-	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
-		contourDataIndexesForSmalltalkGlyphs at: $_ numericValue + 1 put: arrowIndex ].
-	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowUp numericValue + 1.
-	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
-		contourDataIndexesForSmalltalkGlyphs at: $^ numericValue + 1 put: arrowIndex ].! !
-
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/18/2020 20:33:12'!
-useRightArrow
-	"When Smalltalk glyphs requested"
-	| arrowIndex |
-	contourDataIndexesForSmalltalkGlyphs _ contourDataIndexesByIso8859s15 copy.
-	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowRight numericValue + 1.
-	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
-		contourDataIndexesForSmalltalkGlyphs at: $_ numericValue + 1 put: arrowIndex ].
-	arrowIndex _ contourDataIndexesByIso8859s15 at: Character arrowUp numericValue + 1.
-	arrowIndex = 1 ifFalse: [	"If font doesn't include the arrow, don't do substitution."
-		contourDataIndexesForSmalltalkGlyphs at: $^ numericValue + 1 put: arrowIndex ].! !
+	"When Smalltalk glyphs requested.
+	Nothing to do, here."! !
 
 !TTFontDescription methodsFor: 'testing' stamp: 'jmv 5/4/2019 14:28:56'!
 isBaseFont
@@ -6449,12 +6628,17 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 3/16/2021 12:51:33'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 3/26/2021 10:00:15'!
 formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	"Needed only for BitBltCanvasEngine"
-	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
+	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i iso8859s15Code |
 
-	i _ (self contourDataIndexesByIso8859s15ST80Glyphs: aBoolean) at: aCharacter numericValue + 1.
+	iso8859s15Code _ aCharacter iso8859s15Code.
+	(aBoolean and: [`{$_ . $^}` statePointsTo: aCharacter]) ifTrue: [
+		aCharacter = $_ ifTrue: [ iso8859s15Code _ Character arrowLeft iso8859s15Code ].
+		aCharacter = $^ ifTrue: [ iso8859s15Code _ Character arrowUp iso8859s15Code ]].
+	i _ contourDataIndexesByIso8859s15 at: iso8859s15Code + 1.
+	
 	advanceWidth _ contourDataForIso8859s15 at: i. i _ i + 1.
 	boundsLeft _ contourDataForIso8859s15 at: i. i _ i + 1.
 	boundsRight _ contourDataForIso8859s15 at: i. i _ i + 1.
@@ -6495,8 +6679,8 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale)! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 6/8/2020 12:25:24'!
-formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil pixelSize: pixelSize
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 3/26/2021 10:39:51'!
+formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil pixelSize: pixelSize useST80Glyphs: aBoolean
 	"Needed only for BitBltCanvasEngine"
 	| utf8ByteArray toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
 
@@ -6537,22 +6721,30 @@ formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrN
 	canvas 
 		engine
 			displayUtf8: utf8ByteArray
+			fromByte: 1
+			toByte: utf8ByteArray size
 			at: leftPixelOffset negated@(topPixelOffset - horizontalStrokesAtPixelCenter)
 			trueTypeFont: self
+			useST80Glyphs: aBoolean
 			color: Color black
-			scaleX: 1.0 * pixelSize
-			scaleY: -1.0 * pixelSize.
+			scale: 1.0 * pixelSize
+			geometryTransformation: canvas currentTransformation
+			preventMirroring: true.
 	^FormGlyph
 		form: form
 		leftOffset: leftPixelOffset
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale)! !
 
-!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 3/18/2020 20:25:08'!
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 3/26/2021 10:00:24'!
 widthOf: aCharacter useST80Glyphs: aBoolean
 
-	| i advanceWidth |
-	i _ (self contourDataIndexesByIso8859s15ST80Glyphs: aBoolean) at: aCharacter numericValue + 1.
+	| i iso8859s15Code advanceWidth |
+	iso8859s15Code _ aCharacter iso8859s15Code.
+	(aBoolean and: [`{$_ . $^}` statePointsTo: aCharacter]) ifTrue: [
+		aCharacter = $_ ifTrue: [ iso8859s15Code _ Character arrowLeft iso8859s15Code ].
+		aCharacter = $^ ifTrue: [ iso8859s15Code _ Character arrowUp iso8859s15Code ]].
+	i _ contourDataIndexesByIso8859s15 at: iso8859s15Code + 1.
 	advanceWidth _ contourDataForIso8859s15 at: i.
 	^ advanceWidth / letterMTopSideBearing! !
 
@@ -7574,9 +7766,9 @@ displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p trueTyp
 		trueTypeFont: aTrueTypeFont
 		color: color! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/22/2020 23:24:00'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/23/2021 13:02:54'!
 basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
-	"Answer last affected pixel position"
+	"Answer position to place next glyph"
 	| fdestX char glyph maxHeight |
 
 	destY _ aPoint y.
@@ -7601,15 +7793,15 @@ basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFo
 	].
 	^ destX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 4/1/2020 12:30:47'!
-basicDisplayUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
-	"Answer last affected pixel position"
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/25/2021 16:30:49'!
+basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
+	"Answer position to place next glyph"
 	| fdestX glyph maxHeight |
 	destY _ aPoint y.
 	fdestX _ aPoint x.
 	maxHeight _ 0.
 	startIndex to: stopIndex do: [ :i | | codePoint |
-		codePoint _ anIntegerArray at: i.
+		codePoint _ aWordArray at: i.
 		Character
 			evaluateOnce: [ :byte1 :byte2 :byte3 :byte4 |
 				glyph _ aTrueTypeFont glyphAtUtf8Byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4 ]
@@ -7629,14 +7821,14 @@ basicDisplayUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint true
 		maxHeight _ maxHeight max: height ].
 	^ destX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/22/2020 23:23:08'!
-basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont
-	"Answer last affected pixel position"
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/23/2021 15:14:27'!
+basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont
+	"Answer position to place next glyph"
 	| fdestX glyph maxHeight utf8Stream |
 	destY _ aPoint y.
 	fdestX _ aPoint x.
 	maxHeight _ 0.
-	utf8Stream _ aByteArray readStream.
+	utf8Stream _ ReadStream on: aByteArray from: byteStartIndex to: byteStopIndex.
 	[ utf8Stream atEnd ] whileFalse: [
 		glyph _ Character
 			nextCodePointBytesFromUtf8: utf8Stream
@@ -7657,10 +7849,10 @@ basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont
 		maxHeight _ maxHeight max: height ].
 	^ destX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/21/2019 10:56:45'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/23/2021 13:03:04'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont color: foregroundColor
 	"If required, do a second pass with new rule and colorMap.
-	Answer last affected pixel position
+	Answer position to place next glyph
 	Answer nil if nothing was done
 	"
 
@@ -7697,10 +7889,10 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 		combinationRule := prevRule ].
 	^answer! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 4/1/2020 12:31:45'!
-displayUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont color: foregroundColor
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/25/2021 16:30:39'!
+displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont color: foregroundColor
 	"If required, do a second pass with new rule and colorMap.
-	Answer last affected pixel position
+	Answer position to place next glyph
 	Answer nil if nothing was done
 	"
 
@@ -7720,7 +7912,7 @@ displayUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint trueTypeF
 	"If combinationRule is rgbMul, we might need the special two-pass technique for component alpha blending.
 	If not, do it simply"
 	combinationRule = 37 "rgbMul" ifFalse: [
-		^self basicDisplayUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont ].
+		^self basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont ].
 	
 	"We need to do a second pass. The colormap set is for use in the second pass."
 	secondPassMap _ colorMap.
@@ -7728,19 +7920,19 @@ displayUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint trueTypeF
 	destDepth _ destForm depth.
 	colorMap _ sourceDepth ~= destDepth
 		ifTrue: [ Color cachedColormapFrom: sourceDepth to: destDepth ].
-	answer := self basicDisplayUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont.
+	answer := self basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont.
 	colorMap := secondPassMap.
 	secondPassMap ifNotNil: [
 		prevRule := combinationRule.
 		combinationRule := 20. "rgbAdd"
-		self basicDisplayUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont.
+		self basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont.
 		combinationRule := prevRule ].
 	^answer! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/21/2020 19:15:23'!
-displayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont color: foregroundColor
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/23/2021 15:09:47'!
+displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont color: foregroundColor
 	"If required, do a second pass with new rule and colorMap.
-	Answer last affected pixel position
+	Answer position to place next glyph
 	Answer nil if nothing was done
 	"
 
@@ -7760,7 +7952,7 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont color: foreground
 	"If combinationRule is rgbMul, we might need the special two-pass technique for component alpha blending.
 	If not, do it simply"
 	combinationRule = 37 "rgbMul" ifFalse: [
-		^self basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont ].
+		^self basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont ].
 	
 	"We need to do a second pass. The colormap set is for use in the second pass."
 	secondPassMap _ colorMap.
@@ -7768,12 +7960,12 @@ displayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont color: foreground
 	destDepth _ destForm depth.
 	colorMap _ sourceDepth ~= destDepth
 		ifTrue: [ Color cachedColormapFrom: sourceDepth to: destDepth ].
-	answer := self basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont.
+	answer := self basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont.
 	colorMap := secondPassMap.
 	secondPassMap ifNotNil: [
 		prevRule := combinationRule.
 		combinationRule := 20. "rgbAdd"
-		self basicDisplayUtf8: aByteArray at: aPoint trueTypeFont: aTrueTypeFont.
+		self basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont.
 		combinationRule := prevRule ].
 	^answer! !
 
@@ -7816,239 +8008,39 @@ imageForm: depth
 		self redrawNeeded ].
 	^answer! !
 
-!MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/22/2020 20:03:06'!
-drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
+!MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:31:03'!
+drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+	"Answer position to place next glyph
+	Answer nil if nothing was done"
+
 	self subclassResponsibility! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 12/2/2020 16:18:44'!
-drawUtf32: anIntegerArray from: startIndex to: stopIndex at: aPoint font: aTrueTypeFont color: aColor
-	"Answer last affected pixel position
+!MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/23/2021 15:40:22'!
+drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+	"Answer position to place next glyph
 	Answer nil if nothing was done"
+
+	self subclassResponsibility! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 15:24:44'!
+demoUTF32Unicode
 	"
-| c f utf32 |
-Preferences loadOnlyLatinGlyphData ifTrue: [
-	Preferences disable: #loadOnlyLatinGlyphData. TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf' ].
-c _ BitBltCanvas onForm: Display.
-f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
-utf32 _ #(923 959 961 949 956 32 953 960 963 952 956 32 948 959 955 959 961 32 963 953 964 32 945 956 949 964 44 32 956 959 948 959 32 118 949 957 953 945 956 32 118 953 948 949 961 949 961 32 953 957 32 99 952 956 44 32 949 958 32 945 952 964 949 956 32 956 945 955 953 963 32 959 966 966 949 957 948 953 964 32 949 963 964 46 32 921 948 32 964 959 955 955 953 964 32 963 952 963 99 953 960 953 964 32 963 945 955 952 964 945 964 952 963 32 113 952 953 44 32 99 952 32 113 952 945 957 948 959 32 960 961 959 960 961 953 945 949 32 953 956 960 949 961 948 953 949 964 32 118 949 955 44 32 956 949 945 32 949 964 32 949 961 961 949 956 32 947 955 959 961 953 945 964 952 961 46 32 917 958 949 961 99 953 32 948 949 966 953 957 953 964 953 959 957 949 956 32 956 949 955 32 949 945 46 32 917 958 32 963 949 945 32 949 955 953 964 32 948 953 963 963 949 957 964 953 949 964 44 32 956 945 955 953 963 32 964 961 953 964 945 957 953 32 118 953 963 32 953 948 46) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@200 font: f color: Color random.
-c drawUtf8:  #[97 195 177 111 ]  at: 10@400 font: f color: Color random.
-Display forceToScreen
+	BitBltCanvas demoUTF32Unicode.							'Uses glyphs cached in Forms. Sample text is UTF-32.'.
+	VectorCanvas demoUTF32Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-32.'
 	"
-
-	| p font |
-
-
-	engine ifNil: [ ^nil ].
-
-	p _ (currentTransformation transform: aPoint) rounded.
-	engine colorMap: nil.
-	font _ aTrueTypeFont ifNil: [ FontFamily defaultFamilyAndPointSize ].
-	^ engine
-		displayUtf32: anIntegerArray
-		from: startIndex
-		to: stopIndex 
-		at: p
-		trueTypeFont: font
-		color: aColor! !
-
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 12/2/2020 16:18:53'!
-drawUtf8: aByteArray at: aPoint font: aTrueTypeFont color: aColor
-	"Answer last affected pixel position
-	Answer nil if nothing was done"
-	"
-| c f |
-Preferences loadOnlyLatinGlyphData ifTrue: [
-	Preferences disable: #loadOnlyLatinGlyphData. TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf' ].
-c _ BitBltCanvas onForm: Display.
-f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
-c drawString: 'Hola' at: 10@10 font: f color: Color random.
-c drawUtf8: #[208 176 208 177 208 178 208 179 208 180 208 181 209 145 208 182 208 183 208 184 208 185 208 186 208 187 208 188 208 189 208 190 209 143 209 142 209 141 209 140 209 139 209 138 209 137 209 136 209 135 209 134 209 133 209 132 209 131 209 130 209 129 209 128 208 191] at: 10@100 font: f color: Color random.
-c drawUtf8:  #[208 146 208 190 209 130 32 208 184 208 183 32 208 181 208 189 32 208 184 208 179 208 183 208 176 208 188 208 191 208 187 32 208 190 209 132 32 208 181 208 189 32 208 152 208 189 208 179 208 187 208 184 209 136 32 209 130 208 181 208 186 209 129 209 130 32 209 128 208 184 209 130 208 189 32 208 184 208 189 32 208 180 32 208 161 208 184 209 128 208 184 208 187 208 184 208 186 32 208 176 208 187 209 132 208 176 208 177 208 181 209 130 63]  at: 10@200 font: f color: Color random.
-c drawString: 'año' at: 10@300 font: f color: Color random.
-c drawUtf8:  #[97 195 177 111 ]  at: 10@400 font: f color: Color random.
-Display forceToScreen
-	"
-
-	| p font |
-
-	engine ifNil: [ ^nil ].
-
-	p _ (currentTransformation transform: aPoint) rounded.
-	engine colorMap: nil.
-	font _ aTrueTypeFont ifNil: [ FontFamily defaultFamilyAndPointSize ].
-	^ engine
-		displayUtf8: aByteArray
-		at: p
-		trueTypeFont: font
-		color: aColor! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:49:45'!
-exampleArabic: aTrueTypeFont
-
-| c utf8 |
-c _ BitBltCanvas onForm: Display.
-utf8 _  #[217 131 217 132 32 216 163 217 136 216 179 216 185 32 216 167 217 132 216 170 217 134 216 167 216 178 217 132 217 138 32 217 129 216 181 217 132 44 32 217 133 216 185 32 216 185 217 133 217 132 217 138 216 169 32 216 167 217 132 216 180 216 177 217 130 217 138 32 216 167 217 134 216 170 216 168 216 167 217 135 32 217 138 217 131 217 134 44 32 216 185 217 132 32 216 168 216 173 217 130 32 216 171 217 133 217 145 216 169 32 217 136 216 173 217 132 217 129 216 167 216 164 217 135 216 167 46 32 217 133 216 185 32 216 182 216 177 216 168 32 216 175 217 129 217 145 216 169 32 216 180 216 177 216 179 216 169 32 216 167 217 132 216 181 217 129 216 173 216 167 216 170 44 32 217 133 216 179 216 164 217 136 217 132 217 138 216 169 32 216 167 217 132 216 177 216 168 217 138 216 185 216 140 32 217 132 216 168 217 136 217 132 217 134 216 175 216 167 216 140 32 217 136 216 170 217 133 32 217 130 216 175 46 32 216 174 216 183 217 145 216 169 32 217 132 217 133 216 173 216 167 217 131 217 133 32 217 136 216 181 217 132 32 217 129 217 138 44 32 217 136 217 129 217 134 217 132 217 134 216 175 216 167 32 216 167 217 132 216 165 217 134 216 178 216 167 217 132 32 216 167 217 132 217 133 216 170 216 167 216 174 217 133 216 169 32 216 185 217 134 32 216 173 217 138 216 171 46 32 216 167 217 132 217 137 32 217 135 216 167 217 133 216 180 32 216 167 217 132 217 138 216 167 216 168 216 167 217 134 32 217 132 217 133 46 32 216 170 216 183 217 136 217 138 216 177 32 217 129 217 135 216 177 216 179 216 170 32 217 132 217 133 32 217 129 216 185 217 132 46 32 216 175 217 134 217 136 32 216 167 217 132 216 185 216 179 217 131 216 177 217 138 32 217 136 217 133 216 183 216 167 217 132 216 168 216 169 32 216 168 217 132 44 32 217 133 217 132 217 138 217 136 217 134 32 217 136 216 168 216 167 216 179 216 170 216 171 217 134 216 167 216 161 32 217 133 216 185 32 216 175 217 136 217 134 44 32 217 133 217 134 32 217 133 217 131 217 134 32 216 165 216 168 217 145 216 167 217 134 32 216 167 217 132 216 172 217 134 217 136 216 168 217 138 46 32 216 168 217 128 32 217 133 216 167 216 176 216 167 32 216 163 217 136 216 177 216 167 217 130 217 135 217 133 32 216 173 217 138 216 171 44 32 217 131 216 167 217 134 32 216 170 217 133 32 216 179 216 167 216 168 217 130 32 217 133 217 131 217 145 217 134 32 216 167 217 132 216 179 217 138 216 161 44 32 216 163 216 179 216 177 32 217 129 217 135 216 177 216 179 216 170 32 216 167 217 132 216 179 216 167 216 175 216 179 32 216 167 217 132 216 165 216 173 216 170 217 129 216 167 216 184 32 217 136 46].
-c drawUtf8: utf8 at: 10@210 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:50:06'!
-exampleArmenian: aTrueTypeFont
-
-| c utf8 |
-c _ BitBltCanvas onForm: Display.
-utf8 _  #[213 172 213 184 213 188 213 165 213 180 32 213 171 213 186 213 189 213 184 214 130 213 180 32 213 164 213 184 213 172 213 184 213 188 32 213 189 213 171 213 169 32 213 161 213 180 213 165 213 169 44 32 214 132 213 184 214 130 213 161 213 165 214 132 213 184 214 130 213 165 32 213 165 213 184 214 130 213 171 213 189 213 180 213 184 213 164 32 213 188 213 165 213 186 213 184 214 130 213 164 213 171 213 161 213 188 213 165 32 213 184 214 130 213 169 32 213 189 213 171 213 169 46 32 213 190 213 165 213 188 213 184 32 213 188 213 165 214 134 213 184 213 188 213 180 213 171 213 164 213 161 213 182 213 189 32 213 174 213 184 214 130 32 213 189 213 171 213 169 44 32 213 164 213 165 213 162 213 165 213 169 32 213 186 213 165 213 188 214 134 213 165 213 174 213 169 213 184 32 213 189 213 161 213 172 213 184 214 130 213 169 213 161 213 169 213 184 214 130 213 189 32 213 165 213 169 32 213 174 213 184 214 130 213 180 44 32 213 176 213 161 213 189 32 213 169 213 188 213 171 213 169 213 161 213 182 213 171 32 213 182 213 184 213 182 213 184 214 130 213 180 213 165 213 189 32 213 182 213 165 46 32 213 180 213 165 213 171 32 213 182 213 184 32 213 189 213 184 213 172 213 184 214 130 213 169 213 161 32 213 172 213 161 213 162 213 184 213 188 213 165 213 189 32 213 184 213 180 213 171 213 169 213 169 213 161 213 180 44 32 213 165 213 173 32 213 163 213 188 213 161 213 165 213 174 213 184 32 213 164 213 165 214 134 213 171 213 182 213 171 213 169 213 171 213 184 213 182 213 165 213 189 32 213 176 213 161 213 189 44 32 213 165 213 161 32 213 180 213 165 213 172 32 214 132 213 184 214 130 213 171 213 189 32 213 182 213 171 213 189 213 172 32 213 161 213 189 213 189 213 184 214 130 213 180 46 32 213 171 213 182 32 213 161 213 180 213 165 213 169 32 213 182 213 165 213 180 213 184 213 188 213 165 32 213 184 214 130 213 189 213 184 214 130 46 32 213 165 213 188 213 161 213 169 32 213 171 213 184 214 130 213 190 213 161 213 188 213 165 213 169 32 213 165 213 161 32 213 189 213 165 213 164 44 32 213 176 213 161 213 189 32 213 161 213 172 213 171 213 161 32 214 132 213 184 214 130 213 161 213 165 214 132 213 184 214 130 213 165 32 213 174 213 184 213 188 213 186 213 184 213 188 213 161 32 213 161 213 164 46 32 213 165 213 184 213 189 32 214 134 213 161 213 189 213 169 213 171 213 164 213 171 213 171 32 213 164 213 165 214 134 213 171 213 182 213 171 213 169 213 171 213 184 213 182 213 165 213 180 32 213 182 213 165 46].
-c drawUtf8: utf8  at: 10@130 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:50:23'!
-exampleChinese: aTrueTypeFont
-
-| c utf8 |
-c _ BitBltCanvas onForm: Display.
-utf8 _ #[233 159 179 229 138 155 233 164 168 229 136 134 233 167 191 229 155 163 230 152 147 229 142 154 229 165 189 230 149 151 231 132 188 233 150 139 229 186 183 229 134 134 227 128 130 230 149 133 229 176 143 229 162 151 233 157 162 230 150 135 230 169 139 232 187 162 229 149 143 233 150 128 228 188 154 231 142 132 233 150 139 229 142 187 230 137 128 230 173 163 230 131 179 232 169 177 230 157 165 227 128 130 229 185 180 228 186 161 229 166 187 229 173 152 232 186 171 230 143 144 233 128 159 228 186 172 229 186 171 230 153 130 228 184 188 230 177 186 232 131 189 227 128 130 229 143 184 229 174 159 229 134 133 229 177 164 232 179 170 229 143 163 232 178 162 230 177 130 229 133 172 233 157 153 230 179 129 229 136 182 229 188 149 230 153 130 229 157 135 233 171 152 230 150 176 227 128 130 231 162 186 230 156 159 230 149 176 233 155 134 230 156 168 232 172 155 230 173 162 230 178 191 229 130 153 233 129 142 229 155 189 232 179 188 230 168 170 229 150 156 229 136 183 229 186 183 230 136 144 229 175 186 227 128 130 232 168 152 229 136 134 229 143 130 229 145 188 229 179 182 229 155 189 232 170 160 230 168 169 229 155 158 230 173 163 229 185 180 232 187 141 230 167 152 228 187 138 229 132 170 230 150 135 231 166 129 229 144 166 227 128 130 230 149 180 230 130 163 232 182 163 231 164 190 230 152 142 230 164 156 231 149 170 230 158 156 230 142 168 231 178 149 228 184 150 230 156 172 229 176 143 231 132 161 231 167 176 231 148 186 227 128 130 230 138 149 230 160 188 229 140 187 229 190 140 228 187 187 231 179 187 232 187 162 230 148 191 230 157 161 232 169 177 230 142 178 230 156 136 231 144 131 227 128 130 230 130 148 233 133 184 232 166 139 229 164 169 229 134 153 229 164 137 229 143 130 233 153 184 229 155 155 229 144 141 229 140 150 232 139 151 229 141 136 230 178 187 233 154 155 228 189 143 232 166 135 228 184 184 230 149 153 231 149 140].
-c drawUtf8: utf8 at: 10@290 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:50:43'!
-exampleCyrillic: aTrueTypeFont
-
-| c utf8 |
-c _ BitBltCanvas onForm: Display.
-utf8 _ #[208 155 208 190 209 128 208 181 208 188 32 208 184 208 191 209 129 209 131 208 188 32 208 180 208 190 208 187 208 190 209 128 32 209 129 208 184 209 130 32 208 176 208 188 208 181 209 130 44 32 208 180 208 181 208 177 208 181 209 130 32 209 129 208 176 208 187 209 131 209 130 208 176 208 189 208 180 208 184 32 208 188 208 181 208 184 32 208 181 208 184 46 32 208 144 208 189 32 209 133 208 184 209 129 32 208 179 209 128 208 176 208 181 209 134 208 181 32 209 131 209 130 208 176 208 188 209 131 209 128 32 208 180 208 190 208 187 208 190 209 128 209 131 208 188 44 32 208 187 208 190 209 128 208 181 208 188 32 208 191 209 128 208 184 208 189 209 134 208 184 208 191 208 181 209 129 32 208 188 208 190 208 187 208 181 209 129 209 130 208 184 208 176 208 181 32 208 180 209 131 208 190 32 208 184 208 189 46 32 208 149 208 184 32 208 188 208 190 208 178 208 181 209 130 32 208 189 208 190 209 129 209 130 209 128 208 190 32 208 190 208 191 209 130 208 184 208 190 208 189 32 208 189 208 176 208 188 44 32 208 181 208 190 209 129 32 208 181 208 191 208 184 209 134 209 131 209 128 208 184 32 208 190 208 188 208 184 209 130 209 130 208 176 208 189 209 130 209 131 209 128 32 209 131 209 130 46 32 208 163 209 130 32 208 188 209 131 208 189 208 181 209 128 208 181 32 208 187 208 176 208 177 208 190 209 128 208 181 32 208 184 208 189 209 130 208 181 208 187 208 187 208 181 208 179 208 181 208 177 208 176 209 130 32 209 131 209 129 209 131 44 32 208 181 208 176 32 209 129 208 181 208 180 32 208 180 208 181 208 177 208 181 209 130 32 208 187 209 131 208 191 209 130 208 176 209 130 209 131 208 188 44 32 208 178 208 184 208 180 208 184 209 130 32 208 184 208 187 208 187 209 131 208 180 32 208 184 209 131 208 180 208 184 209 134 208 190 32 209 143 209 131 208 190 32 209 131 209 130 46].
-c drawUtf8: utf8 at: 10@50 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:50:59'!
-exampleGeorgian: aTrueTypeFont
-
-| c utf8 |
-c _ BitBltCanvas onForm: Display.
-utf8 _ #[225 131 154 225 131 157 225 131 160 225 131 148 225 131 155 32 225 131 152 225 131 164 225 131 161 225 131 163 225 131 155 32 225 131 147 225 131 157 225 131 154 225 131 157 225 131 160 32 225 131 161 225 131 152 225 131 151 32 225 131 144 225 131 155 225 131 148 225 131 151 44 32 225 131 167 225 131 163 225 131 157 32 225 131 163 225 131 151 32 225 131 147 225 131 152 225 131 170 225 131 144 225 131 151 32 225 131 144 225 131 154 225 131 152 225 131 167 225 131 163 225 131 152 225 131 147 44 32 225 131 144 225 131 147 32 225 131 154 225 131 152 225 131 145 225 131 160 225 131 152 225 131 161 32 225 131 170 225 131 148 225 131 151 225 131 148 225 131 160 225 131 157 225 131 161 32 225 131 160 225 131 148 225 131 164 225 131 160 225 131 148 225 131 176 225 131 148 225 131 156 225 131 147 225 131 163 225 131 156 225 131 151 32 225 131 148 225 131 161 225 131 151 46 32 225 131 154 225 131 148 225 131 146 225 131 148 225 131 160 225 131 148 32 225 131 170 225 131 157 225 131 160 225 131 164 225 131 157 225 131 160 225 131 144 32 225 131 148 225 131 164 225 131 164 225 131 152 225 131 170 225 131 152 225 131 144 225 131 156 225 131 151 225 131 163 225 131 160 32 225 131 144 225 131 151 32 225 131 148 225 131 144 225 131 155 44 32 225 131 156 225 131 157 32 225 131 167 225 131 163 225 131 144 225 131 161 32 225 131 155 225 131 148 225 131 156 225 131 144 225 131 156 225 131 147 225 131 160 225 131 152 32 225 131 160 225 131 148 225 131 164 225 131 148 225 131 160 225 131 160 225 131 148 225 131 156 225 131 151 225 131 163 225 131 160 32 225 131 167 225 131 163 225 131 152 46 32 225 131 151 225 131 148 32 225 131 164 225 131 163 225 131 151 225 131 148 225 131 156 225 131 151 32 225 131 155 225 131 157 225 131 154 225 131 154 225 131 152 225 131 161 32 225 131 170 225 131 148 225 131 151 225 131 148 225 131 160 225 131 157 225 131 161 32 225 131 149 225 131 152 225 131 161 46 32 225 131 149 225 131 152 225 131 155 32 225 131 147 225 131 148 225 131 156 225 131 152 225 131 167 225 131 163 225 131 148 32 225 131 149 225 131 152 225 131 149 225 131 148 225 131 156 225 131 147 225 131 163 225 131 155 32 225 131 151 225 131 176 225 131 148 225 131 157 225 131 164 225 131 176 225 131 160 225 131 144 225 131 161 225 131 151 225 131 163 225 131 161 32 225 131 148 225 131 174 44 32 225 131 148 225 131 144 32 225 131 176 225 131 144 225 131 161 32 225 131 149 225 131 157 225 131 154 225 131 163 225 131 155 225 131 163 225 131 161 32 225 131 164 225 131 144 225 131 161 225 131 151 225 131 152 225 131 147 225 131 152 225 131 152 32 225 131 147 225 131 148 225 131 161 225 131 148 225 131 160 225 131 163 225 131 156 225 131 151 46 32 225 131 148 225 131 174 32 225 131 157 225 131 164 225 131 164 225 131 152 225 131 170 225 131 152 225 131 152 225 131 161 32 225 131 151 225 131 157 225 131 160 225 131 167 225 131 163 225 131 144 225 131 151 225 131 157 225 131 161 32 225 131 155 225 131 148 225 131 152 44 32 225 131 147 225 131 157 225 131 170 225 131 151 225 131 163 225 131 161 32 225 131 149 225 131 152 225 131 149 225 131 148 225 131 156 225 131 147 225 131 163 225 131 155 32 225 131 152 225 131 156 32 225 131 167 225 131 163 225 131 157 46 32 225 131 161 225 131 163 225 131 155 225 131 155 225 131 157 32 225 131 151 225 131 160 225 131 144 225 131 170 225 131 151 225 131 144 225 131 151 225 131 157 225 131 161 32 225 131 148 225 131 152 32 225 131 152 225 131 163 225 131 161 44 32 225 131 163 225 131 151 32 225 131 157 225 131 155 225 131 156 225 131 148 225 131 161 32 225 131 149 225 131 152 225 131 160 225 131 151 225 131 163 225 131 151 225 131 148 32 225 131 147 225 131 148 225 131 151 225 131 160 225 131 144 225 131 174 225 131 152 225 131 151 46].
-c drawUtf8: utf8 at: 10@170 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:51:24'!
-exampleGreek: aTrueTypeFont
-
-| c utf8 |
-c _ BitBltCanvas onForm: Display.
-utf8 _ #[206 155 206 191 207 129 206 181 206 188 32 206 185 207 128 207 131 206 184 206 188 32 206 180 206 191 206 187 206 191 207 129 32 207 131 206 185 207 132 32 206 177 206 188 206 181 207 132 44 32 206 188 206 191 206 180 206 191 32 118 206 181 206 189 206 185 206 177 206 188 32 118 206 185 206 180 206 181 207 129 206 181 207 129 32 206 185 206 189 32 99 206 184 206 188 44 32 206 181 206 190 32 206 177 206 184 207 132 206 181 206 188 32 206 188 206 177 206 187 206 185 207 131 32 206 191 207 134 207 134 206 181 206 189 206 180 206 185 207 132 32 206 181 207 131 207 132 46 32 206 153 206 180 32 207 132 206 191 206 187 206 187 206 185 207 132 32 207 131 206 184 207 131 99 206 185 207 128 206 185 207 132 32 207 131 206 177 206 187 206 184 207 132 206 177 207 132 206 184 207 131 32 113 206 184 206 185 44 32 99 206 184 32 113 206 184 206 177 206 189 206 180 206 191 32 207 128 207 129 206 191 207 128 207 129 206 185 206 177 206 181 32 206 185 206 188 207 128 206 181 207 129 206 180 206 185 206 181 207 132 32 118 206 181 206 187 44 32 206 188 206 181 206 177 32 206 181 207 132 32 206 181 207 129 207 129 206 181 206 188 32 206 179 206 187 206 191 207 129 206 185 206 177 207 132 206 184 207 129 46 32 206 149 206 190 206 181 207 129 99 206 185 32 206 180 206 181 207 134 206 185 206 189 206 185 207 132 206 185 206 191 206 189 206 181 206 188 32 206 188 206 181 206 187 32 206 181 206 177 46 32 206 149 206 190 32 207 131 206 181 206 177 32 206 181 206 187 206 185 207 132 32 206 180 206 185 207 131 207 131 206 181 206 189 207 132 206 185 206 181 207 132 44 32 206 188 206 177 206 187 206 185 207 131 32 207 132 207 129 206 185 207 132 206 177 206 189 206 185 32 118 206 185 207 131 32 206 185 206 180 46].
-c drawUtf8: utf8 at: 10@90 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:51:40'!
-exampleHebrew: aTrueTypeFont
-
-| c utf8 |
-c _ BitBltCanvas onForm: Display.
-utf8 _ #[215 162 215 156 32 215 158 215 144 215 158 215 168 32 215 150 215 167 215 149 215 167 32 215 169 215 147 215 168 215 149 215 170 32 215 144 215 168 215 165 44 32 215 148 215 158 215 156 215 166 215 170 32 215 158 215 147 215 149 215 153 215 167 215 153 215 157 32 215 169 215 155 215 156 32 215 169 215 156 44 32 215 162 215 153 215 166 215 149 215 145 32 215 160 215 153 215 149 215 149 215 152 32 215 169 215 153 215 170 215 149 215 164 215 153 215 170 32 215 162 215 149 215 147 32 215 145 46 32 215 161 215 147 215 168 32 215 144 215 149 32 215 168 215 164 215 149 215 144 215 148 32 215 169 215 153 215 158 215 149 215 169 215 153 32 215 158 215 149 215 162 215 158 215 147 215 153 215 157 46 32 215 148 215 153 215 144 32 215 164 215 153 215 161 215 153 215 167 215 148 32 215 148 215 146 215 168 215 164 215 153 215 157 32 215 169 215 153 215 158 215 149 215 169 215 153 215 153 215 157 32 215 169 215 156 46 32 215 169 215 155 215 156 32 215 162 215 156 32 215 162 215 150 215 168 215 148 32 215 156 215 148 215 164 215 149 215 154 32 215 144 215 149 215 149 215 153 215 168 215 149 215 160 215 144 215 149 215 152 215 153 215 167 215 148 44 32 215 144 215 160 215 144 32 215 144 215 170 32 215 162 215 150 215 168 215 148 32 215 156 215 158 215 160 215 149 215 162 32 215 156 215 158 215 151 215 153 215 167 215 148 46].
-c drawUtf8: utf8 at: 10@250 font: aTrueTypeFont color: Color random. Display forceToScreen.
-Display forceToScreen! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:51:58'!
-exampleLatin: aTrueTypeFont
-
-| c utf8 |
-c _ BitBltCanvas onForm: Display.
-utf8 _ #[76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46].
-c drawUtf8: utf8 at: 10@10 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:57:30'!
-exampleUtf32Arabic: aTrueTypeFont
-
-| c utf32 |
-c _ BitBltCanvas onForm: Display.
-utf32 _ #(1603 1604 32 1571 1608 1587 1593 32 1575 1604 1578 1606 1575 1586 1604 1610 32 1601 1589 1604 44 32 1605 1593 32 1593 1605 1604 1610 1577 32 1575 1604 1588 1585 1602 1610 32 1575 1606 1578 1576 1575 1607 32 1610 1603 1606 44 32 1593 1604 32 1576 1581 1602 32 1579 1605 1617 1577 32 1608 1581 1604 1601 1575 1572 1607 1575 46 32 1605 1593 32 1590 1585 1576 32 1583 1601 1617 1577 32 1588 1585 1587 1577 32 1575 1604 1589 1601 1581 1575 1578 44 32 1605 1587 1572 1608 1604 1610 1577 32 1575 1604 1585 1576 1610 1593 1548 32 1604 1576 1608 1604 1606 1583 1575 1548 32 1608 1578 1605 32 1602 1583 46 32 1582 1591 1617 1577 32 1604 1605 1581 1575 1603 1605 32 1608 1589 1604 32 1601 1610 44 32 1608 1601 1606 1604 1606 1583 1575 32 1575 1604 1573 1606 1586 1575 1604 32 1575 1604 1605 1578 1575 1582 1605 1577 32 1593 1606 32 1581 1610 1579 46 32 1575 1604 1609 32 1607 1575 1605 1588 32 1575 1604 1610 1575 1576 1575 1606 32 1604 1605 46 32 1578 1591 1608 1610 1585 32 1601 1607 1585 1587 1578 32 1604 1605 32 1601 1593 1604 46 32 1583 1606 1608 32 1575 1604 1593 1587 1603 1585 1610 32 1608 1605 1591 1575 1604 1576 1577 32 1576 1604 44 32 1605 1604 1610 1608 1606 32 1608 1576 1575 1587 1578 1579 1606 1575 1569 32 1605 1593 32 1583 1608 1606 44 32 1605 1606 32 1605 1603 1606 32 1573 1576 1617 1575 1606 32 1575 1604 1580 1606 1608 1576 1610 46 32 1576 1600 32 1605 1575 1584 1575 32 1571 1608 1585 1575 1602 1607 1605 32 1581 1610 1579 44 32 1603 1575 1606 32 1578 1605 32 1587 1575 1576 1602 32 1605 1603 1617 1606 32 1575 1604 1587 1610 1569 44 32 1571 1587 1585 32 1601 1607 1585 1587 1578 32 1575 1604 1587 1575 1583 1587 32 1575 1604 1573 1581 1578 1601 1575 1592 32 1608 46) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@210 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:58:41'!
-exampleUtf32Armenian: aTrueTypeFont
-
-| c utf32 |
-c _ BitBltCanvas onForm: Display.
-utf32 _ #(1388 1400 1404 1381 1396 32 1387 1402 1405 1400 1410 1396 32 1380 1400 1388 1400 1404 32 1405 1387 1385 32 1377 1396 1381 1385 44 32 1412 1400 1410 1377 1381 1412 1400 1410 1381 32 1381 1400 1410 1387 1405 1396 1400 1380 32 1404 1381 1402 1400 1410 1380 1387 1377 1404 1381 32 1400 1410 1385 32 1405 1387 1385 46 32 1406 1381 1404 1400 32 1404 1381 1414 1400 1404 1396 1387 1380 1377 1398 1405 32 1390 1400 1410 32 1405 1387 1385 44 32 1380 1381 1378 1381 1385 32 1402 1381 1404 1414 1381 1390 1385 1400 32 1405 1377 1388 1400 1410 1385 1377 1385 1400 1410 1405 32 1381 1385 32 1390 1400 1410 1396 44 32 1392 1377 1405 32 1385 1404 1387 1385 1377 1398 1387 32 1398 1400 1398 1400 1410 1396 1381 1405 32 1398 1381 46 32 1396 1381 1387 32 1398 1400 32 1405 1400 1388 1400 1410 1385 1377 32 1388 1377 1378 1400 1404 1381 1405 32 1400 1396 1387 1385 1385 1377 1396 44 32 1381 1389 32 1379 1404 1377 1381 1390 1400 32 1380 1381 1414 1387 1398 1387 1385 1387 1400 1398 1381 1405 32 1392 1377 1405 44 32 1381 1377 32 1396 1381 1388 32 1412 1400 1410 1387 1405 32 1398 1387 1405 1388 32 1377 1405 1405 1400 1410 1396 46 32 1387 1398 32 1377 1396 1381 1385 32 1398 1381 1396 1400 1404 1381 32 1400 1410 1405 1400 1410 46 32 1381 1404 1377 1385 32 1387 1400 1410 1406 1377 1404 1381 1385 32 1381 1377 32 1405 1381 1380 44 32 1392 1377 1405 32 1377 1388 1387 1377 32 1412 1400 1410 1377 1381 1412 1400 1410 1381 32 1390 1400 1404 1402 1400 1404 1377 32 1377 1380 46 32 1381 1400 1405 32 1414 1377 1405 1385 1387 1380 1387 1387 32 1380 1381 1414 1387 1398 1387 1385 1387 1400 1398 1381 1396 32 1398 1381 46) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@130 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:58:46'!
-exampleUtf32Chinese: aTrueTypeFont
-
-| c utf32 |
-c _ BitBltCanvas onForm: Display.
-utf32 _ #(38899 21147 39208 20998 39423 22243 26131 21402 22909 25943 28988 38283 24247 20870 12290 25925 23567 22679 38754 25991 27211 36578 21839 38272 20250 29572 38283 21435 25152 27491 24819 35441 26469 12290 24180 20129 22971 23384 36523 25552 36895 20140 24235 26178 20028 27770 33021 12290 21496 23455 20869 23652 36074 21475 36002 27714 20844 38745 27841 21046 24341 26178 22343 39640 26032 12290 30906 26399 25968 38598 26408 35611 27490 27839 20633 36942 22269 36092 27178 21916 21047 24247 25104 23546 12290 35352 20998 21442 21628 23798 22269 35488 27177 22238 27491 24180 36557 27096 20170 20778 25991 31105 21542 12290 25972 24739 36259 31038 26126 26908 30058 26524 25512 31893 19990 26412 23567 28961 31216 30010 12290 25237 26684 21307 24460 20219 31995 36578 25919 26465 35441 25522 26376 29699 12290 24724 37240 35211 22825 20889 22793 21442 38520 22235 21517 21270 33495 21320 27835 38555 20303 35207 20024 25945 30028) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@290 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:58:49'!
-exampleUtf32Cyrillic: aTrueTypeFont
-
-| c utf32 |
-c _ BitBltCanvas onForm: Display.
-utf32 _ #(1051 1086 1088 1077 1084 32 1080 1087 1089 1091 1084 32 1076 1086 1083 1086 1088 32 1089 1080 1090 32 1072 1084 1077 1090 44 32 1076 1077 1073 1077 1090 32 1089 1072 1083 1091 1090 1072 1085 1076 1080 32 1084 1077 1080 32 1077 1080 46 32 1040 1085 32 1093 1080 1089 32 1075 1088 1072 1077 1094 1077 32 1091 1090 1072 1084 1091 1088 32 1076 1086 1083 1086 1088 1091 1084 44 32 1083 1086 1088 1077 1084 32 1087 1088 1080 1085 1094 1080 1087 1077 1089 32 1084 1086 1083 1077 1089 1090 1080 1072 1077 32 1076 1091 1086 32 1080 1085 46 32 1045 1080 32 1084 1086 1074 1077 1090 32 1085 1086 1089 1090 1088 1086 32 1086 1087 1090 1080 1086 1085 32 1085 1072 1084 44 32 1077 1086 1089 32 1077 1087 1080 1094 1091 1088 1080 32 1086 1084 1080 1090 1090 1072 1085 1090 1091 1088 32 1091 1090 46 32 1059 1090 32 1084 1091 1085 1077 1088 1077 32 1083 1072 1073 1086 1088 1077 32 1080 1085 1090 1077 1083 1083 1077 1075 1077 1073 1072 1090 32 1091 1089 1091 44 32 1077 1072 32 1089 1077 1076 32 1076 1077 1073 1077 1090 32 1083 1091 1087 1090 1072 1090 1091 1084 44 32 1074 1080 1076 1080 1090 32 1080 1083 1083 1091 1076 32 1080 1091 1076 1080 1094 1086 32 1103 1091 1086 32 1091 1090 46) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@50 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:58:53'!
-exampleUtf32Georgian: aTrueTypeFont
-
-| c utf32 |
-c _ BitBltCanvas onForm: Display.
-utf32 _ #(4314 4317 4320 4308 4315 32 4312 4324 4321 4323 4315 32 4307 4317 4314 4317 4320 32 4321 4312 4311 32 4304 4315 4308 4311 44 32 4327 4323 4317 32 4323 4311 32 4307 4312 4330 4304 4311 32 4304 4314 4312 4327 4323 4312 4307 44 32 4304 4307 32 4314 4312 4305 4320 4312 4321 32 4330 4308 4311 4308 4320 4317 4321 32 4320 4308 4324 4320 4308 4336 4308 4316 4307 4323 4316 4311 32 4308 4321 4311 46 32 4314 4308 4306 4308 4320 4308 32 4330 4317 4320 4324 4317 4320 4304 32 4308 4324 4324 4312 4330 4312 4304 4316 4311 4323 4320 32 4304 4311 32 4308 4304 4315 44 32 4316 4317 32 4327 4323 4304 4321 32 4315 4308 4316 4304 4316 4307 4320 4312 32 4320 4308 4324 4308 4320 4320 4308 4316 4311 4323 4320 32 4327 4323 4312 46 32 4311 4308 32 4324 4323 4311 4308 4316 4311 32 4315 4317 4314 4314 4312 4321 32 4330 4308 4311 4308 4320 4317 4321 32 4309 4312 4321 46 32 4309 4312 4315 32 4307 4308 4316 4312 4327 4323 4308 32 4309 4312 4309 4308 4316 4307 4323 4315 32 4311 4336 4308 4317 4324 4336 4320 4304 4321 4311 4323 4321 32 4308 4334 44 32 4308 4304 32 4336 4304 4321 32 4309 4317 4314 4323 4315 4323 4321 32 4324 4304 4321 4311 4312 4307 4312 4312 32 4307 4308 4321 4308 4320 4323 4316 4311 46 32 4308 4334 32 4317 4324 4324 4312 4330 4312 4312 4321 32 4311 4317 4320 4327 4323 4304 4311 4317 4321 32 4315 4308 4312 44 32 4307 4317 4330 4311 4323 4321 32 4309 4312 4309 4308 4316 4307 4323 4315 32 4312 4316 32 4327 4323 4317 46 32 4321 4323 4315 4315 4317 32 4311 4320 4304 4330 4311 4304 4311 4317 4321 32 4308 4312 32 4312 4323 4321 44 32 4323 4311 32 4317 4315 4316 4308 4321 32 4309 4312 4320 4311 4323 4311 4308 32 4307 4308 4311 4320 4304 4334 4312 4311 46) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@170 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:58:57'!
-exampleUtf32Greek: aTrueTypeFont
-
-| c utf32 |
-c _ BitBltCanvas onForm: Display.
-utf32 _ #(923 959 961 949 956 32 953 960 963 952 956 32 948 959 955 959 961 32 963 953 964 32 945 956 949 964 44 32 956 959 948 959 32 118 949 957 953 945 956 32 118 953 948 949 961 949 961 32 953 957 32 99 952 956 44 32 949 958 32 945 952 964 949 956 32 956 945 955 953 963 32 959 966 966 949 957 948 953 964 32 949 963 964 46 32 921 948 32 964 959 955 955 953 964 32 963 952 963 99 953 960 953 964 32 963 945 955 952 964 945 964 952 963 32 113 952 953 44 32 99 952 32 113 952 945 957 948 959 32 960 961 959 960 961 953 945 949 32 953 956 960 949 961 948 953 949 964 32 118 949 955 44 32 956 949 945 32 949 964 32 949 961 961 949 956 32 947 955 959 961 953 945 964 952 961 46 32 917 958 949 961 99 953 32 948 949 966 953 957 953 964 953 959 957 949 956 32 956 949 955 32 949 945 46 32 917 958 32 963 949 945 32 949 955 953 964 32 948 953 963 963 949 957 964 953 949 964 44 32 956 945 955 953 963 32 964 961 953 964 945 957 953 32 118 953 963 32 953 948 46) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@90 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:59:01'!
-exampleUtf32Hebrew: aTrueTypeFont
-
-| c utf32 |
-c _ BitBltCanvas onForm: Display.
-utf32 _ #(1506 1500 32 1502 1488 1502 1512 32 1494 1511 1493 1511 32 1513 1491 1512 1493 1514 32 1488 1512 1509 44 32 1492 1502 1500 1510 1514 32 1502 1491 1493 1497 1511 1497 1501 32 1513 1499 1500 32 1513 1500 44 32 1506 1497 1510 1493 1489 32 1504 1497 1493 1493 1496 32 1513 1497 1514 1493 1508 1497 1514 32 1506 1493 1491 32 1489 46 32 1505 1491 1512 32 1488 1493 32 1512 1508 1493 1488 1492 32 1513 1497 1502 1493 1513 1497 32 1502 1493 1506 1502 1491 1497 1501 46 32 1492 1497 1488 32 1508 1497 1505 1497 1511 1492 32 1492 1490 1512 1508 1497 1501 32 1513 1497 1502 1493 1513 1497 1497 1501 32 1513 1500 46 32 1513 1499 1500 32 1506 1500 32 1506 1494 1512 1492 32 1500 1492 1508 1493 1498 32 1488 1493 1493 1497 1512 1493 1504 1488 1493 1496 1497 1511 1492 44 32 1488 1504 1488 32 1488 1514 32 1506 1494 1512 1492 32 1500 1502 1504 1493 1506 32 1500 1502 1495 1497 1511 1492 46) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@250 font: aTrueTypeFont color: Color random. Display forceToScreen.
-Display forceToScreen! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 4/1/2020 12:59:04'!
-exampleUtf32Latin: aTrueTypeFont
-
-| c utf32 |
-c _ BitBltCanvas onForm: Display.
-utf32 _ #(76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46) asIntegerArray.
-c drawUtf32: utf32 from: 1 to: utf32 size at: 10@10 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 12/18/2020 16:12:10'!
-unicodeExamples
-	"
-	Preferences disable: #loadOnlyLatinGlyphData.
-	BitBltCanvas unicodeExamples
-	"
-	"Note: For Chinese text sample, you need HanWangMingMedium or other suitable Unicode TrueType font with Chinese glyphs."
-	| f |
-	"[ f class == TrueTypeFont ] whileFalse: [ 
-		f _ FontFamily promptUser atPointSize: 24 ]."
-	f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
-	(f isNil or: [ f fontDescription contourDataForUtf8 isNil ]) ifTrue: [
-		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf'.
-		f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24. ].
-	self exampleLatin: f.
-	self exampleCyrillic: f.
-	self exampleGreek: f.
-	self exampleArmenian: f.
-	self exampleGeorgian: f.
-	self exampleArabic: f.
-	self exampleHebrew: f.
-	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNil: [
-		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry currentDirectory // 'wt002.ttf' ].
-	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNotNil: [ :ff |
-		self exampleChinese: ff ].! !
-
-!BitBltCanvas class methodsFor: '*vectorGraphics-examples' stamp: 'jmv 6/16/2020 19:48:31'!
-unicodeUtf32Examples
-	"
+	| f askFont |
 	Preferences disable: #loadOnlyLatinGlyphData.
 	TTFontDescription allInstancesDo: [ :each | each folderName: nil ]. 'hacky'.
-	BitBltCanvas unicodeUtf32Examples
-	"
-	| f |
-	[ f class == TrueTypeFont ] whileFalse: [ 
-		f _ FontFamily promptUser atPointSize: 24 ].
+	askFont _ false.
+	askFont ifTrue: [
+		f _ nil.
+		[ f class == TrueTypeFont ] whileFalse: [ 
+			f _ FontFamily promptUser atPointSize: 24 ] ]
+	ifFalse: [
+		f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+		(f isNil or: [ f fontDescription contourDataForUtf8 isNil ]) ifTrue: [
+			TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf'.
+			f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24. ]].
 	self exampleUtf32Latin: f.
 	self exampleUtf32Cyrillic: f.
 	self exampleUtf32Greek: f.
@@ -8056,7 +8048,210 @@ unicodeUtf32Examples
 	self exampleUtf32Georgian: f.
 	self exampleUtf32Arabic: f.
 	self exampleUtf32Hebrew: f.
-	self exampleUtf32Chinese: f.! !
+	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNil: [
+		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry currentDirectory // 'wt002.ttf' ].
+	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNotNil: [ :ff |
+		self exampleUtf32Chinese: ff ].! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:49'!
+demoUTF8Unicode
+	"
+	BitBltCanvas demoUTF8Unicode.							'Uses glyphs cached in Forms. Sample text is UTF-8.'.
+	VectorCanvas demoUTF8Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-8.'
+	"
+	"Note: For Chinese text sample, you need HanWangMingMedium or other suitable Unicode TrueType font with Chinese glyphs."
+	| f askFont |
+	Preferences disable: #loadOnlyLatinGlyphData.
+	TTFontDescription allInstancesDo: [ :each | each folderName: nil ]. 'hacky'.
+	askFont _ false.
+	askFont ifTrue: [
+		f _ nil.
+		[ f class == TrueTypeFont ] whileFalse: [ 
+			f _ FontFamily promptUser atPointSize: 24 ] ]
+	ifFalse: [
+		f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24.
+		(f isNil or: [ f fontDescription contourDataForUtf8 isNil ]) ifTrue: [
+			TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf'.
+			f _ FontFamily familyName: 'DejaVu Sans' pointSize: 24. ]].
+	self exampleUtf8Latin: f.
+	self exampleUtf8Cyrillic: f.
+	self exampleUtf8Greek: f.
+	self exampleUtf8Armenian: f.
+	self exampleUtf8Georgian: f.
+	self exampleUtf8Arabic: f.
+	self exampleUtf8Hebrew: f.
+	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNil: [
+		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry currentDirectory // 'wt002.ttf' ].
+	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNotNil: [ :ff |
+		self exampleUtf8Chinese: ff ].! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 16:29:07'!
+exampleUtf32Arabic: aTrueTypeFont
+
+| c utf32 |
+c _ self onForm: Display.
+utf32 _ #(1603 1604 32 1571 1608 1587 1593 32 1575 1604 1578 1606 1575 1586 1604 1610 32 1601 1589 1604 44 32 1605 1593 32 1593 1605 1604 1610 1577 32 1575 1604 1588 1585 1602 1610 32 1575 1606 1578 1576 1575 1607 32 1610 1603 1606 44 32 1593 1604 32 1576 1581 1602 32 1579 1605 1617 1577 32 1608 1581 1604 1601 1575 1572 1607 1575 46 32 1605 1593 32 1590 1585 1576 32 1583 1601 1617 1577 32 1588 1585 1587 1577 32 1575 1604 1589 1601 1581 1575 1578 44 32 1605 1587 1572 1608 1604 1610 1577 32 1575 1604 1585 1576 1610 1593 1548 32 1604 1576 1608 1604 1606 1583 1575 1548 32 1608 1578 1605 32 1602 1583 46 32 1582 1591 1617 1577 32 1604 1605 1581 1575 1603 1605 32 1608 1589 1604 32 1601 1610 44 32 1608 1601 1606 1604 1606 1583 1575 32 1575 1604 1573 1606 1586 1575 1604 32 1575 1604 1605 1578 1575 1582 1605 1577 32 1593 1606 32 1581 1610 1579 46 32 1575 1604 1609 32 1607 1575 1605 1588 32 1575 1604 1610 1575 1576 1575 1606 32 1604 1605 46 32 1578 1591 1608 1610 1585 32 1601 1607 1585 1587 1578 32 1604 1605 32 1601 1593 1604 46 32 1583 1606 1608 32 1575 1604 1593 1587 1603 1585 1610 32 1608 1605 1591 1575 1604 1576 1577 32 1576 1604 44 32 1605 1604 1610 1608 1606 32 1608 1576 1575 1587 1578 1579 1606 1575 1569 32 1605 1593 32 1583 1608 1606 44 32 1605 1606 32 1605 1603 1606 32 1573 1576 1617 1575 1606 32 1575 1604 1580 1606 1608 1576 1610 46 32 1576 1600 32 1605 1575 1584 1575 32 1571 1608 1585 1575 1602 1607 1605 32 1581 1610 1579 44 32 1603 1575 1606 32 1578 1605 32 1587 1575 1576 1602 32 1605 1603 1617 1606 32 1575 1604 1587 1610 1569 44 32 1571 1587 1585 32 1601 1607 1585 1587 1578 32 1575 1604 1587 1575 1583 1587 32 1575 1604 1573 1581 1578 1601 1575 1592 32 1608 46) asWordArray.
+c drawUtf32: utf32 from: 1 to: utf32 size atBaseline: 10@240 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 16:29:27'!
+exampleUtf32Armenian: aTrueTypeFont
+
+| c utf32 |
+c _ self onForm: Display.
+utf32 _ #(1388 1400 1404 1381 1396 32 1387 1402 1405 1400 1410 1396 32 1380 1400 1388 1400 1404 32 1405 1387 1385 32 1377 1396 1381 1385 44 32 1412 1400 1410 1377 1381 1412 1400 1410 1381 32 1381 1400 1410 1387 1405 1396 1400 1380 32 1404 1381 1402 1400 1410 1380 1387 1377 1404 1381 32 1400 1410 1385 32 1405 1387 1385 46 32 1406 1381 1404 1400 32 1404 1381 1414 1400 1404 1396 1387 1380 1377 1398 1405 32 1390 1400 1410 32 1405 1387 1385 44 32 1380 1381 1378 1381 1385 32 1402 1381 1404 1414 1381 1390 1385 1400 32 1405 1377 1388 1400 1410 1385 1377 1385 1400 1410 1405 32 1381 1385 32 1390 1400 1410 1396 44 32 1392 1377 1405 32 1385 1404 1387 1385 1377 1398 1387 32 1398 1400 1398 1400 1410 1396 1381 1405 32 1398 1381 46 32 1396 1381 1387 32 1398 1400 32 1405 1400 1388 1400 1410 1385 1377 32 1388 1377 1378 1400 1404 1381 1405 32 1400 1396 1387 1385 1385 1377 1396 44 32 1381 1389 32 1379 1404 1377 1381 1390 1400 32 1380 1381 1414 1387 1398 1387 1385 1387 1400 1398 1381 1405 32 1392 1377 1405 44 32 1381 1377 32 1396 1381 1388 32 1412 1400 1410 1387 1405 32 1398 1387 1405 1388 32 1377 1405 1405 1400 1410 1396 46 32 1387 1398 32 1377 1396 1381 1385 32 1398 1381 1396 1400 1404 1381 32 1400 1410 1405 1400 1410 46 32 1381 1404 1377 1385 32 1387 1400 1410 1406 1377 1404 1381 1385 32 1381 1377 32 1405 1381 1380 44 32 1392 1377 1405 32 1377 1388 1387 1377 32 1412 1400 1410 1377 1381 1412 1400 1410 1381 32 1390 1400 1404 1402 1400 1404 1377 32 1377 1380 46 32 1381 1400 1405 32 1414 1377 1405 1385 1387 1380 1387 1387 32 1380 1381 1414 1387 1398 1387 1385 1387 1400 1398 1381 1396 32 1398 1381 46) asWordArray.
+c drawUtf32: utf32 from: 1 to: utf32 size atBaseline: 10@160 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 16:29:30'!
+exampleUtf32Chinese: aTrueTypeFont
+
+| c utf32 |
+c _ self onForm: Display.
+utf32 _ #(38899 21147 39208 20998 39423 22243 26131 21402 22909 25943 28988 38283 24247 20870 12290 25925 23567 22679 38754 25991 27211 36578 21839 38272 20250 29572 38283 21435 25152 27491 24819 35441 26469 12290 24180 20129 22971 23384 36523 25552 36895 20140 24235 26178 20028 27770 33021 12290 21496 23455 20869 23652 36074 21475 36002 27714 20844 38745 27841 21046 24341 26178 22343 39640 26032 12290 30906 26399 25968 38598 26408 35611 27490 27839 20633 36942 22269 36092 27178 21916 21047 24247 25104 23546 12290 35352 20998 21442 21628 23798 22269 35488 27177 22238 27491 24180 36557 27096 20170 20778 25991 31105 21542 12290 25972 24739 36259 31038 26126 26908 30058 26524 25512 31893 19990 26412 23567 28961 31216 30010 12290 25237 26684 21307 24460 20219 31995 36578 25919 26465 35441 25522 26376 29699 12290 24724 37240 35211 22825 20889 22793 21442 38520 22235 21517 21270 33495 21320 27835 38555 20303 35207 20024 25945 30028) asWordArray.
+c drawUtf32: utf32 from: 1 to: utf32 size atBaseline: 10@320 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 16:29:33'!
+exampleUtf32Cyrillic: aTrueTypeFont
+
+| c utf32 |
+c _ self onForm: Display.
+utf32 _ #(1051 1086 1088 1077 1084 32 1080 1087 1089 1091 1084 32 1076 1086 1083 1086 1088 32 1089 1080 1090 32 1072 1084 1077 1090 44 32 1076 1077 1073 1077 1090 32 1089 1072 1083 1091 1090 1072 1085 1076 1080 32 1084 1077 1080 32 1077 1080 46 32 1040 1085 32 1093 1080 1089 32 1075 1088 1072 1077 1094 1077 32 1091 1090 1072 1084 1091 1088 32 1076 1086 1083 1086 1088 1091 1084 44 32 1083 1086 1088 1077 1084 32 1087 1088 1080 1085 1094 1080 1087 1077 1089 32 1084 1086 1083 1077 1089 1090 1080 1072 1077 32 1076 1091 1086 32 1080 1085 46 32 1045 1080 32 1084 1086 1074 1077 1090 32 1085 1086 1089 1090 1088 1086 32 1086 1087 1090 1080 1086 1085 32 1085 1072 1084 44 32 1077 1086 1089 32 1077 1087 1080 1094 1091 1088 1080 32 1086 1084 1080 1090 1090 1072 1085 1090 1091 1088 32 1091 1090 46 32 1059 1090 32 1084 1091 1085 1077 1088 1077 32 1083 1072 1073 1086 1088 1077 32 1080 1085 1090 1077 1083 1083 1077 1075 1077 1073 1072 1090 32 1091 1089 1091 44 32 1077 1072 32 1089 1077 1076 32 1076 1077 1073 1077 1090 32 1083 1091 1087 1090 1072 1090 1091 1084 44 32 1074 1080 1076 1080 1090 32 1080 1083 1083 1091 1076 32 1080 1091 1076 1080 1094 1086 32 1103 1091 1086 32 1091 1090 46) asWordArray.
+c drawUtf32: utf32 from: 1 to: utf32 size atBaseline: 10@80 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 16:29:36'!
+exampleUtf32Georgian: aTrueTypeFont
+
+| c utf32 |
+c _ self onForm: Display.
+utf32 _ #(4314 4317 4320 4308 4315 32 4312 4324 4321 4323 4315 32 4307 4317 4314 4317 4320 32 4321 4312 4311 32 4304 4315 4308 4311 44 32 4327 4323 4317 32 4323 4311 32 4307 4312 4330 4304 4311 32 4304 4314 4312 4327 4323 4312 4307 44 32 4304 4307 32 4314 4312 4305 4320 4312 4321 32 4330 4308 4311 4308 4320 4317 4321 32 4320 4308 4324 4320 4308 4336 4308 4316 4307 4323 4316 4311 32 4308 4321 4311 46 32 4314 4308 4306 4308 4320 4308 32 4330 4317 4320 4324 4317 4320 4304 32 4308 4324 4324 4312 4330 4312 4304 4316 4311 4323 4320 32 4304 4311 32 4308 4304 4315 44 32 4316 4317 32 4327 4323 4304 4321 32 4315 4308 4316 4304 4316 4307 4320 4312 32 4320 4308 4324 4308 4320 4320 4308 4316 4311 4323 4320 32 4327 4323 4312 46 32 4311 4308 32 4324 4323 4311 4308 4316 4311 32 4315 4317 4314 4314 4312 4321 32 4330 4308 4311 4308 4320 4317 4321 32 4309 4312 4321 46 32 4309 4312 4315 32 4307 4308 4316 4312 4327 4323 4308 32 4309 4312 4309 4308 4316 4307 4323 4315 32 4311 4336 4308 4317 4324 4336 4320 4304 4321 4311 4323 4321 32 4308 4334 44 32 4308 4304 32 4336 4304 4321 32 4309 4317 4314 4323 4315 4323 4321 32 4324 4304 4321 4311 4312 4307 4312 4312 32 4307 4308 4321 4308 4320 4323 4316 4311 46 32 4308 4334 32 4317 4324 4324 4312 4330 4312 4312 4321 32 4311 4317 4320 4327 4323 4304 4311 4317 4321 32 4315 4308 4312 44 32 4307 4317 4330 4311 4323 4321 32 4309 4312 4309 4308 4316 4307 4323 4315 32 4312 4316 32 4327 4323 4317 46 32 4321 4323 4315 4315 4317 32 4311 4320 4304 4330 4311 4304 4311 4317 4321 32 4308 4312 32 4312 4323 4321 44 32 4323 4311 32 4317 4315 4316 4308 4321 32 4309 4312 4320 4311 4323 4311 4308 32 4307 4308 4311 4320 4304 4334 4312 4311 46) asWordArray.
+c drawUtf32: utf32 from: 1 to: utf32 size atBaseline: 10@200 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 16:29:39'!
+exampleUtf32Greek: aTrueTypeFont
+
+| c utf32 |
+c _ self onForm: Display.
+utf32 _ #(923 959 961 949 956 32 953 960 963 952 956 32 948 959 955 959 961 32 963 953 964 32 945 956 949 964 44 32 956 959 948 959 32 118 949 957 953 945 956 32 118 953 948 949 961 949 961 32 953 957 32 99 952 956 44 32 949 958 32 945 952 964 949 956 32 956 945 955 953 963 32 959 966 966 949 957 948 953 964 32 949 963 964 46 32 921 948 32 964 959 955 955 953 964 32 963 952 963 99 953 960 953 964 32 963 945 955 952 964 945 964 952 963 32 113 952 953 44 32 99 952 32 113 952 945 957 948 959 32 960 961 959 960 961 953 945 949 32 953 956 960 949 961 948 953 949 964 32 118 949 955 44 32 956 949 945 32 949 964 32 949 961 961 949 956 32 947 955 959 961 953 945 964 952 961 46 32 917 958 949 961 99 953 32 948 949 966 953 957 953 964 953 959 957 949 956 32 956 949 955 32 949 945 46 32 917 958 32 963 949 945 32 949 955 953 964 32 948 953 963 963 949 957 964 953 949 964 44 32 956 945 955 953 963 32 964 961 953 964 945 957 953 32 118 953 963 32 953 948 46) asWordArray.
+c drawUtf32: utf32 from: 1 to: utf32 size atBaseline: 10@120 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 16:29:41'!
+exampleUtf32Hebrew: aTrueTypeFont
+
+| c utf32 |
+c _ self onForm: Display.
+utf32 _ #(1506 1500 32 1502 1488 1502 1512 32 1494 1511 1493 1511 32 1513 1491 1512 1493 1514 32 1488 1512 1509 44 32 1492 1502 1500 1510 1514 32 1502 1491 1493 1497 1511 1497 1501 32 1513 1499 1500 32 1513 1500 44 32 1506 1497 1510 1493 1489 32 1504 1497 1493 1493 1496 32 1513 1497 1514 1493 1508 1497 1514 32 1506 1493 1491 32 1489 46 32 1505 1491 1512 32 1488 1493 32 1512 1508 1493 1488 1492 32 1513 1497 1502 1493 1513 1497 32 1502 1493 1506 1502 1491 1497 1501 46 32 1492 1497 1488 32 1508 1497 1505 1497 1511 1492 32 1492 1490 1512 1508 1497 1501 32 1513 1497 1502 1493 1513 1497 1497 1501 32 1513 1500 46 32 1513 1499 1500 32 1506 1500 32 1506 1494 1512 1492 32 1500 1492 1508 1493 1498 32 1488 1493 1493 1497 1512 1493 1504 1488 1493 1496 1497 1511 1492 44 32 1488 1504 1488 32 1488 1514 32 1506 1494 1512 1492 32 1500 1502 1504 1493 1506 32 1500 1502 1495 1497 1511 1492 46) asWordArray.
+c drawUtf32: utf32 from: 1 to: utf32 size atBaseline: 10@280 font: aTrueTypeFont color: Color random. Display forceToScreen.
+Display forceToScreen! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:11:55'!
+exampleUtf32Latin: aTrueTypeFont
+
+| c utf32 |
+c _ self onForm: Display.
+utf32 _ #(97 32 95 32 55 46 32 94 97 46 32 76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46) asWordArray.
+c drawUtf32: utf32 from: 1 to: utf32 size atBaseline: 10@40 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:35'!
+exampleUtf8Arabic: aTrueTypeFont
+
+| c utf8 |
+c _ self onForm: Display.
+utf8 _  #[217 131 217 132 32 216 163 217 136 216 179 216 185 32 216 167 217 132 216 170 217 134 216 167 216 178 217 132 217 138 32 217 129 216 181 217 132 44 32 217 133 216 185 32 216 185 217 133 217 132 217 138 216 169 32 216 167 217 132 216 180 216 177 217 130 217 138 32 216 167 217 134 216 170 216 168 216 167 217 135 32 217 138 217 131 217 134 44 32 216 185 217 132 32 216 168 216 173 217 130 32 216 171 217 133 217 145 216 169 32 217 136 216 173 217 132 217 129 216 167 216 164 217 135 216 167 46 32 217 133 216 185 32 216 182 216 177 216 168 32 216 175 217 129 217 145 216 169 32 216 180 216 177 216 179 216 169 32 216 167 217 132 216 181 217 129 216 173 216 167 216 170 44 32 217 133 216 179 216 164 217 136 217 132 217 138 216 169 32 216 167 217 132 216 177 216 168 217 138 216 185 216 140 32 217 132 216 168 217 136 217 132 217 134 216 175 216 167 216 140 32 217 136 216 170 217 133 32 217 130 216 175 46 32 216 174 216 183 217 145 216 169 32 217 132 217 133 216 173 216 167 217 131 217 133 32 217 136 216 181 217 132 32 217 129 217 138 44 32 217 136 217 129 217 134 217 132 217 134 216 175 216 167 32 216 167 217 132 216 165 217 134 216 178 216 167 217 132 32 216 167 217 132 217 133 216 170 216 167 216 174 217 133 216 169 32 216 185 217 134 32 216 173 217 138 216 171 46 32 216 167 217 132 217 137 32 217 135 216 167 217 133 216 180 32 216 167 217 132 217 138 216 167 216 168 216 167 217 134 32 217 132 217 133 46 32 216 170 216 183 217 136 217 138 216 177 32 217 129 217 135 216 177 216 179 216 170 32 217 132 217 133 32 217 129 216 185 217 132 46 32 216 175 217 134 217 136 32 216 167 217 132 216 185 216 179 217 131 216 177 217 138 32 217 136 217 133 216 183 216 167 217 132 216 168 216 169 32 216 168 217 132 44 32 217 133 217 132 217 138 217 136 217 134 32 217 136 216 168 216 167 216 179 216 170 216 171 217 134 216 167 216 161 32 217 133 216 185 32 216 175 217 136 217 134 44 32 217 133 217 134 32 217 133 217 131 217 134 32 216 165 216 168 217 145 216 167 217 134 32 216 167 217 132 216 172 217 134 217 136 216 168 217 138 46 32 216 168 217 128 32 217 133 216 167 216 176 216 167 32 216 163 217 136 216 177 216 167 217 130 217 135 217 133 32 216 173 217 138 216 171 44 32 217 131 216 167 217 134 32 216 170 217 133 32 216 179 216 167 216 168 217 130 32 217 133 217 131 217 145 217 134 32 216 167 217 132 216 179 217 138 216 161 44 32 216 163 216 179 216 177 32 217 129 217 135 216 177 216 179 216 170 32 216 167 217 132 216 179 216 167 216 175 216 179 32 216 167 217 132 216 165 216 173 216 170 217 129 216 167 216 184 32 217 136 46].
+c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@240 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:31'!
+exampleUtf8Armenian: aTrueTypeFont
+
+| c utf8 |
+c _ self onForm: Display.
+utf8 _  #[213 172 213 184 213 188 213 165 213 180 32 213 171 213 186 213 189 213 184 214 130 213 180 32 213 164 213 184 213 172 213 184 213 188 32 213 189 213 171 213 169 32 213 161 213 180 213 165 213 169 44 32 214 132 213 184 214 130 213 161 213 165 214 132 213 184 214 130 213 165 32 213 165 213 184 214 130 213 171 213 189 213 180 213 184 213 164 32 213 188 213 165 213 186 213 184 214 130 213 164 213 171 213 161 213 188 213 165 32 213 184 214 130 213 169 32 213 189 213 171 213 169 46 32 213 190 213 165 213 188 213 184 32 213 188 213 165 214 134 213 184 213 188 213 180 213 171 213 164 213 161 213 182 213 189 32 213 174 213 184 214 130 32 213 189 213 171 213 169 44 32 213 164 213 165 213 162 213 165 213 169 32 213 186 213 165 213 188 214 134 213 165 213 174 213 169 213 184 32 213 189 213 161 213 172 213 184 214 130 213 169 213 161 213 169 213 184 214 130 213 189 32 213 165 213 169 32 213 174 213 184 214 130 213 180 44 32 213 176 213 161 213 189 32 213 169 213 188 213 171 213 169 213 161 213 182 213 171 32 213 182 213 184 213 182 213 184 214 130 213 180 213 165 213 189 32 213 182 213 165 46 32 213 180 213 165 213 171 32 213 182 213 184 32 213 189 213 184 213 172 213 184 214 130 213 169 213 161 32 213 172 213 161 213 162 213 184 213 188 213 165 213 189 32 213 184 213 180 213 171 213 169 213 169 213 161 213 180 44 32 213 165 213 173 32 213 163 213 188 213 161 213 165 213 174 213 184 32 213 164 213 165 214 134 213 171 213 182 213 171 213 169 213 171 213 184 213 182 213 165 213 189 32 213 176 213 161 213 189 44 32 213 165 213 161 32 213 180 213 165 213 172 32 214 132 213 184 214 130 213 171 213 189 32 213 182 213 171 213 189 213 172 32 213 161 213 189 213 189 213 184 214 130 213 180 46 32 213 171 213 182 32 213 161 213 180 213 165 213 169 32 213 182 213 165 213 180 213 184 213 188 213 165 32 213 184 214 130 213 189 213 184 214 130 46 32 213 165 213 188 213 161 213 169 32 213 171 213 184 214 130 213 190 213 161 213 188 213 165 213 169 32 213 165 213 161 32 213 189 213 165 213 164 44 32 213 176 213 161 213 189 32 213 161 213 172 213 171 213 161 32 214 132 213 184 214 130 213 161 213 165 214 132 213 184 214 130 213 165 32 213 174 213 184 213 188 213 186 213 184 213 188 213 161 32 213 161 213 164 46 32 213 165 213 184 213 189 32 214 134 213 161 213 189 213 169 213 171 213 164 213 171 213 171 32 213 164 213 165 214 134 213 171 213 182 213 171 213 169 213 171 213 184 213 182 213 165 213 180 32 213 182 213 165 46].
+c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@160 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:27'!
+exampleUtf8Chinese: aTrueTypeFont
+
+| c utf8 |
+c _ self onForm: Display.
+utf8 _ #[233 159 179 229 138 155 233 164 168 229 136 134 233 167 191 229 155 163 230 152 147 229 142 154 229 165 189 230 149 151 231 132 188 233 150 139 229 186 183 229 134 134 227 128 130 230 149 133 229 176 143 229 162 151 233 157 162 230 150 135 230 169 139 232 187 162 229 149 143 233 150 128 228 188 154 231 142 132 233 150 139 229 142 187 230 137 128 230 173 163 230 131 179 232 169 177 230 157 165 227 128 130 229 185 180 228 186 161 229 166 187 229 173 152 232 186 171 230 143 144 233 128 159 228 186 172 229 186 171 230 153 130 228 184 188 230 177 186 232 131 189 227 128 130 229 143 184 229 174 159 229 134 133 229 177 164 232 179 170 229 143 163 232 178 162 230 177 130 229 133 172 233 157 153 230 179 129 229 136 182 229 188 149 230 153 130 229 157 135 233 171 152 230 150 176 227 128 130 231 162 186 230 156 159 230 149 176 233 155 134 230 156 168 232 172 155 230 173 162 230 178 191 229 130 153 233 129 142 229 155 189 232 179 188 230 168 170 229 150 156 229 136 183 229 186 183 230 136 144 229 175 186 227 128 130 232 168 152 229 136 134 229 143 130 229 145 188 229 179 182 229 155 189 232 170 160 230 168 169 229 155 158 230 173 163 229 185 180 232 187 141 230 167 152 228 187 138 229 132 170 230 150 135 231 166 129 229 144 166 227 128 130 230 149 180 230 130 163 232 182 163 231 164 190 230 152 142 230 164 156 231 149 170 230 158 156 230 142 168 231 178 149 228 184 150 230 156 172 229 176 143 231 132 161 231 167 176 231 148 186 227 128 130 230 138 149 230 160 188 229 140 187 229 190 140 228 187 187 231 179 187 232 187 162 230 148 191 230 157 161 232 169 177 230 142 178 230 156 136 231 144 131 227 128 130 230 130 148 233 133 184 232 166 139 229 164 169 229 134 153 229 164 137 229 143 130 233 153 184 229 155 155 229 144 141 229 140 150 232 139 151 229 141 136 230 178 187 233 154 155 228 189 143 232 166 135 228 184 184 230 149 153 231 149 140].
+c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@320 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:24'!
+exampleUtf8Cyrillic: aTrueTypeFont
+
+| c utf8 |
+c _ self onForm: Display.
+utf8 _ #[208 155 208 190 209 128 208 181 208 188 32 208 184 208 191 209 129 209 131 208 188 32 208 180 208 190 208 187 208 190 209 128 32 209 129 208 184 209 130 32 208 176 208 188 208 181 209 130 44 32 208 180 208 181 208 177 208 181 209 130 32 209 129 208 176 208 187 209 131 209 130 208 176 208 189 208 180 208 184 32 208 188 208 181 208 184 32 208 181 208 184 46 32 208 144 208 189 32 209 133 208 184 209 129 32 208 179 209 128 208 176 208 181 209 134 208 181 32 209 131 209 130 208 176 208 188 209 131 209 128 32 208 180 208 190 208 187 208 190 209 128 209 131 208 188 44 32 208 187 208 190 209 128 208 181 208 188 32 208 191 209 128 208 184 208 189 209 134 208 184 208 191 208 181 209 129 32 208 188 208 190 208 187 208 181 209 129 209 130 208 184 208 176 208 181 32 208 180 209 131 208 190 32 208 184 208 189 46 32 208 149 208 184 32 208 188 208 190 208 178 208 181 209 130 32 208 189 208 190 209 129 209 130 209 128 208 190 32 208 190 208 191 209 130 208 184 208 190 208 189 32 208 189 208 176 208 188 44 32 208 181 208 190 209 129 32 208 181 208 191 208 184 209 134 209 131 209 128 208 184 32 208 190 208 188 208 184 209 130 209 130 208 176 208 189 209 130 209 131 209 128 32 209 131 209 130 46 32 208 163 209 130 32 208 188 209 131 208 189 208 181 209 128 208 181 32 208 187 208 176 208 177 208 190 209 128 208 181 32 208 184 208 189 209 130 208 181 208 187 208 187 208 181 208 179 208 181 208 177 208 176 209 130 32 209 131 209 129 209 131 44 32 208 181 208 176 32 209 129 208 181 208 180 32 208 180 208 181 208 177 208 181 209 130 32 208 187 209 131 208 191 209 130 208 176 209 130 209 131 208 188 44 32 208 178 208 184 208 180 208 184 209 130 32 208 184 208 187 208 187 209 131 208 180 32 208 184 209 131 208 180 208 184 209 134 208 190 32 209 143 209 131 208 190 32 209 131 209 130 46].
+c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@80 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:20'!
+exampleUtf8Georgian: aTrueTypeFont
+
+| c utf8 |
+c _ self onForm: Display.
+utf8 _ #[225 131 154 225 131 157 225 131 160 225 131 148 225 131 155 32 225 131 152 225 131 164 225 131 161 225 131 163 225 131 155 32 225 131 147 225 131 157 225 131 154 225 131 157 225 131 160 32 225 131 161 225 131 152 225 131 151 32 225 131 144 225 131 155 225 131 148 225 131 151 44 32 225 131 167 225 131 163 225 131 157 32 225 131 163 225 131 151 32 225 131 147 225 131 152 225 131 170 225 131 144 225 131 151 32 225 131 144 225 131 154 225 131 152 225 131 167 225 131 163 225 131 152 225 131 147 44 32 225 131 144 225 131 147 32 225 131 154 225 131 152 225 131 145 225 131 160 225 131 152 225 131 161 32 225 131 170 225 131 148 225 131 151 225 131 148 225 131 160 225 131 157 225 131 161 32 225 131 160 225 131 148 225 131 164 225 131 160 225 131 148 225 131 176 225 131 148 225 131 156 225 131 147 225 131 163 225 131 156 225 131 151 32 225 131 148 225 131 161 225 131 151 46 32 225 131 154 225 131 148 225 131 146 225 131 148 225 131 160 225 131 148 32 225 131 170 225 131 157 225 131 160 225 131 164 225 131 157 225 131 160 225 131 144 32 225 131 148 225 131 164 225 131 164 225 131 152 225 131 170 225 131 152 225 131 144 225 131 156 225 131 151 225 131 163 225 131 160 32 225 131 144 225 131 151 32 225 131 148 225 131 144 225 131 155 44 32 225 131 156 225 131 157 32 225 131 167 225 131 163 225 131 144 225 131 161 32 225 131 155 225 131 148 225 131 156 225 131 144 225 131 156 225 131 147 225 131 160 225 131 152 32 225 131 160 225 131 148 225 131 164 225 131 148 225 131 160 225 131 160 225 131 148 225 131 156 225 131 151 225 131 163 225 131 160 32 225 131 167 225 131 163 225 131 152 46 32 225 131 151 225 131 148 32 225 131 164 225 131 163 225 131 151 225 131 148 225 131 156 225 131 151 32 225 131 155 225 131 157 225 131 154 225 131 154 225 131 152 225 131 161 32 225 131 170 225 131 148 225 131 151 225 131 148 225 131 160 225 131 157 225 131 161 32 225 131 149 225 131 152 225 131 161 46 32 225 131 149 225 131 152 225 131 155 32 225 131 147 225 131 148 225 131 156 225 131 152 225 131 167 225 131 163 225 131 148 32 225 131 149 225 131 152 225 131 149 225 131 148 225 131 156 225 131 147 225 131 163 225 131 155 32 225 131 151 225 131 176 225 131 148 225 131 157 225 131 164 225 131 176 225 131 160 225 131 144 225 131 161 225 131 151 225 131 163 225 131 161 32 225 131 148 225 131 174 44 32 225 131 148 225 131 144 32 225 131 176 225 131 144 225 131 161 32 225 131 149 225 131 157 225 131 154 225 131 163 225 131 155 225 131 163 225 131 161 32 225 131 164 225 131 144 225 131 161 225 131 151 225 131 152 225 131 147 225 131 152 225 131 152 32 225 131 147 225 131 148 225 131 161 225 131 148 225 131 160 225 131 163 225 131 156 225 131 151 46 32 225 131 148 225 131 174 32 225 131 157 225 131 164 225 131 164 225 131 152 225 131 170 225 131 152 225 131 152 225 131 161 32 225 131 151 225 131 157 225 131 160 225 131 167 225 131 163 225 131 144 225 131 151 225 131 157 225 131 161 32 225 131 155 225 131 148 225 131 152 44 32 225 131 147 225 131 157 225 131 170 225 131 151 225 131 163 225 131 161 32 225 131 149 225 131 152 225 131 149 225 131 148 225 131 156 225 131 147 225 131 163 225 131 155 32 225 131 152 225 131 156 32 225 131 167 225 131 163 225 131 157 46 32 225 131 161 225 131 163 225 131 155 225 131 155 225 131 157 32 225 131 151 225 131 160 225 131 144 225 131 170 225 131 151 225 131 144 225 131 151 225 131 157 225 131 161 32 225 131 148 225 131 152 32 225 131 152 225 131 163 225 131 161 44 32 225 131 163 225 131 151 32 225 131 157 225 131 155 225 131 156 225 131 148 225 131 161 32 225 131 149 225 131 152 225 131 160 225 131 151 225 131 163 225 131 151 225 131 148 32 225 131 147 225 131 148 225 131 151 225 131 160 225 131 144 225 131 174 225 131 152 225 131 151 46].
+c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@200 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:15'!
+exampleUtf8Greek: aTrueTypeFont
+
+| c utf8 |
+c _ self onForm: Display.
+utf8 _ #[206 155 206 191 207 129 206 181 206 188 32 206 185 207 128 207 131 206 184 206 188 32 206 180 206 191 206 187 206 191 207 129 32 207 131 206 185 207 132 32 206 177 206 188 206 181 207 132 44 32 206 188 206 191 206 180 206 191 32 118 206 181 206 189 206 185 206 177 206 188 32 118 206 185 206 180 206 181 207 129 206 181 207 129 32 206 185 206 189 32 99 206 184 206 188 44 32 206 181 206 190 32 206 177 206 184 207 132 206 181 206 188 32 206 188 206 177 206 187 206 185 207 131 32 206 191 207 134 207 134 206 181 206 189 206 180 206 185 207 132 32 206 181 207 131 207 132 46 32 206 153 206 180 32 207 132 206 191 206 187 206 187 206 185 207 132 32 207 131 206 184 207 131 99 206 185 207 128 206 185 207 132 32 207 131 206 177 206 187 206 184 207 132 206 177 207 132 206 184 207 131 32 113 206 184 206 185 44 32 99 206 184 32 113 206 184 206 177 206 189 206 180 206 191 32 207 128 207 129 206 191 207 128 207 129 206 185 206 177 206 181 32 206 185 206 188 207 128 206 181 207 129 206 180 206 185 206 181 207 132 32 118 206 181 206 187 44 32 206 188 206 181 206 177 32 206 181 207 132 32 206 181 207 129 207 129 206 181 206 188 32 206 179 206 187 206 191 207 129 206 185 206 177 207 132 206 184 207 129 46 32 206 149 206 190 206 181 207 129 99 206 185 32 206 180 206 181 207 134 206 185 206 189 206 185 207 132 206 185 206 191 206 189 206 181 206 188 32 206 188 206 181 206 187 32 206 181 206 177 46 32 206 149 206 190 32 207 131 206 181 206 177 32 206 181 206 187 206 185 207 132 32 206 180 206 185 207 131 207 131 206 181 206 189 207 132 206 185 206 181 207 132 44 32 206 188 206 177 206 187 206 185 207 131 32 207 132 207 129 206 185 207 132 206 177 206 189 206 185 32 118 206 185 207 131 32 206 185 206 180 46].
+c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@120 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:10'!
+exampleUtf8Hebrew: aTrueTypeFont
+
+| c utf8 |
+c _ self onForm: Display.
+utf8 _ #[215 162 215 156 32 215 158 215 144 215 158 215 168 32 215 150 215 167 215 149 215 167 32 215 169 215 147 215 168 215 149 215 170 32 215 144 215 168 215 165 44 32 215 148 215 158 215 156 215 166 215 170 32 215 158 215 147 215 149 215 153 215 167 215 153 215 157 32 215 169 215 155 215 156 32 215 169 215 156 44 32 215 162 215 153 215 166 215 149 215 145 32 215 160 215 153 215 149 215 149 215 152 32 215 169 215 153 215 170 215 149 215 164 215 153 215 170 32 215 162 215 149 215 147 32 215 145 46 32 215 161 215 147 215 168 32 215 144 215 149 32 215 168 215 164 215 149 215 144 215 148 32 215 169 215 153 215 158 215 149 215 169 215 153 32 215 158 215 149 215 162 215 158 215 147 215 153 215 157 46 32 215 148 215 153 215 144 32 215 164 215 153 215 161 215 153 215 167 215 148 32 215 148 215 146 215 168 215 164 215 153 215 157 32 215 169 215 153 215 158 215 149 215 169 215 153 215 153 215 157 32 215 169 215 156 46 32 215 169 215 155 215 156 32 215 162 215 156 32 215 162 215 150 215 168 215 148 32 215 156 215 148 215 164 215 149 215 154 32 215 144 215 149 215 149 215 153 215 168 215 149 215 160 215 144 215 149 215 152 215 153 215 167 215 148 44 32 215 144 215 160 215 144 32 215 144 215 170 32 215 162 215 150 215 168 215 148 32 215 156 215 158 215 160 215 149 215 162 32 215 156 215 158 215 151 215 153 215 167 215 148 46].
+c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@280 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:06'!
+exampleUtf8Latin: aTrueTypeFont
+
+| c utf8 |
+c _ self onForm: Display.
+utf8 _ #[97 32 95 32 55 46 32 94 97 46 32 76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46].
+c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@40 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
+
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:30:21'!
+drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+	"Answer position to place next glyph
+	Answer nil if nothing was done"
+	| p1 |
+
+	engine ifNil: [ ^nil ].
+
+	p1 _ currentTransformation transform: aPoint rounded.
+	p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
+	p1 _ p1 rounded.
+	engine colorMap: nil.
+	^ engine
+		displayUtf32: aWordArray
+		from: startIndex
+		to: stopIndex 
+		at: p1
+		trueTypeFont: aTrueTypeFont
+		color: aColor! !
+
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 15:15:25'!
+drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+	"Answer position to place next glyph
+	Answer nil if nothing was done"
+	| p1 |
+
+	engine ifNil: [ ^nil ].
+
+	p1 _ currentTransformation transform: aPoint rounded.
+	p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
+	p1 _ p1 rounded.
+	engine colorMap: nil.
+	^ engine
+		displayUtf8: aByteArray
+		fromByte: byteStartIndex toByte: byteStopIndex
+		at: p1
+		trueTypeFont: aTrueTypeFont
+		color: aColor! !
 VectorCanvas initialize!
 VectorEngineSubPixelWithPlugin initialize!
 TTFontDescription initialize!

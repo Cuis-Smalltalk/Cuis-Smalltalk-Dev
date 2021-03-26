@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4538] on 22 March 2021 at 3:46:56 pm'!
+'From Cuis 5.0 [latest update: #4546] on 26 March 2021 at 12:10:52 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 3!
+!provides: 'VectorEnginePlugin' 1 6!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -17,8 +17,9 @@ VectorEnginePlugin class
 	instanceVariableNames: ''!
 
 
-!VectorEnginePlugin commentStamp: '<historical>' prior: 0!
+!VectorEnginePlugin commentStamp: 'jmv 3/25/2021 12:56:08' prior: 0!
 "Currently, only with subpixel anti aliasing"
+Slang implementation of VectorEngineSubPixel. Based on https://www.researchgate.net/publication/267152327_Prefiltering_Antialiasing_for_General_Vector_Graphics
 VectorEnginePlugin translateInDirectory: DirectoryEntry currentDirectory doInlining: true!
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:35:21'!
@@ -528,13 +529,14 @@ updateEdgeCountAtX: x y: y
 				]
 		].! !
 
-!VectorEnginePlugin methodsFor: 'text' stamp: 'jmv 3/19/2021 11:45:29'!
-displayString: aString from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEnginePlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:27:42'!
+displayString: aString from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
 
-	| nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours numBeziers startX startY endX endY controlX controlY dx dy hops iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy hops iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayString'
-		parameters: #(String SmallInteger SmallInteger Float Float FloatArray IntegerArray SmallInteger WordArray WordArray).
+		parameters: #(String SmallInteger SmallInteger Float Float FloatArray IntegerArray Boolean SmallInteger WordArray WordArray).
+	self var: #answer type: 'double'.
 	self var: #nextGlyphX type: 'float'.
 	self var: #nextGlyphY type: 'float'.
 	self var: #ttMoveToX type: 'float'.
@@ -544,6 +546,8 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY contou
 	self var: #ttControlX type: 'float'.
 	self var: #ttControlY type: 'float'.
 	self var: #advanceWidth type: 'float'.
+	self var: #contourStartX type: 'float'.
+	self var: #contourStartY type: 'float'.
 	self var: #startX type: 'float'.
 	self var: #startY type: 'float'.
 	self var: #endX type: 'float'.
@@ -573,14 +577,16 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY contou
 	nextGlyphX _ destX.
 	nextGlyphY _ destY.
 	startIndex-1 to: stopIndex-1 do: [ :charIndex |
-		self cCode: '
-				iso8859s15 = aString[charIndex];
-				i = contourDataIndexes[iso8859s15];
-				i--;
-				'
+		self cCode:
+				'iso8859s15 = aString[charIndex];'
 			inSmalltalk: [
-				iso8859s15 _ (aString at: charIndex+1) iso8859s15Code.
-				i _ contourDataIndexes at: iso8859s15 + 1 ].
+				iso8859s15 _ (aString at: charIndex+1) iso8859s15Code. ].
+		aBoolean ifTrue: [
+			iso8859s15 = 95 ifTrue: [ iso8859s15 _ 28 ].												"If underscore, use left arrow"
+			iso8859s15 = 94 ifTrue: [ iso8859s15 _ 30 ].												"If caret, use up arrow"
+			].
+		i _ contourDataIndexes at: iso8859s15.
+		i _ i - 1.
 		advanceWidth _ contourData at: i. i _ i + 5.
 		numContours _ (contourData at: i) asInteger. i _ i + 1.
 		1 to: numContours do: [ :idx |
@@ -589,6 +595,8 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY contou
 			ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
 			startX _ (ttMoveToX * textTxA11) + (ttMoveToY * textTxA12) + textTxA13.
 			startY _ (ttMoveToX * textTxA21) + (ttMoveToY * textTxA22) + textTxA23.
+			contourStartX _ startX.
+			contourStartY _ startY.
 			self newTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
 				ttEndX _ contourData at: i. i _ i + 1.
@@ -633,10 +641,293 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY contou
 			].
 			self updateAlphasForX: endX y: endY.
 			self updateEdgeCountAtX: endX y: endY.
+			"Similar effect to ensureClosePath in #finishPath:,
+			but assume the TrueType definition is essentially right, and there might only be a rounding error.
+			So, don't draw a line, but just (possibly) correct edgeCounts"
+			self updateEdgeCountAtX: contourStartX y: contourStartY.
 		].
 		nextGlyphX _ nextGlyphX + advanceWidth.
 	].
-	^nextGlyphX asOop: Float! !
+	answer _ nextGlyphX.
+	^answer asOop: Float! !
+
+!VectorEnginePlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:27:27'!
+displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy hops utf32 utf8Byte1 uft8Byte2 utf8Byte3 utf8Byte4 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	self
+		primitive: 'primDisplayUtf32'
+		parameters: #(WordArray SmallInteger SmallInteger Float Float FloatArray IntegerArray Boolean SmallInteger WordArray WordArray).
+	self var: #answer type: 'double'.
+	self var: #nextGlyphX type: 'float'.
+	self var: #nextGlyphY type: 'float'.
+	self var: #ttMoveToX type: 'float'.
+	self var: #ttMoveToY type: 'float'.
+	self var: #ttEndX type: 'float'.
+	self var: #ttEndY type: 'float'.
+	self var: #ttControlX type: 'float'.
+	self var: #ttControlY type: 'float'.
+	self var: #advanceWidth type: 'float'.
+	self var: #contourStartX type: 'float'.
+	self var: #contourStartY type: 'float'.
+	self var: #startX type: 'float'.
+	self var: #startY type: 'float'.
+	self var: #endX type: 'float'.
+	self var: #endY type: 'float'.
+	self var: #controlX type: 'float'.
+	self var: #controlY type: 'float'.
+	self var: #dx type: 'float'.
+	self var: #dy type: 'float'.
+
+	self var: #t type: 'float'.
+	self var: #oneLessT type: 'float'.
+	self var: #increment type: 'float'.
+	self var: #f1 type: 'float'.
+	self var: #f2 type: 'float'.
+	self var: #f3 type: 'float'.
+	self var: #x type: 'float'.
+	self var: #y type: 'float'.
+	self var: #xMinEnd type: 'float'.
+	self var: #xMaxEnd type: 'float'.
+	self var: #yMinEnd type: 'float'.
+	self var: #yMaxEnd type: 'float'.
+
+	edgeCounts _ otherWordArray.
+	alphaMask _ anotherWordArray.
+
+	nextGlyphX _ destX.
+	nextGlyphY _ destY.
+	startIndex-1 to: stopIndex-1 do: [ :utf32Index |
+		utf32 _ aWordArray at: utf32Index.
+		aBoolean ifTrue: [
+			utf32 = 95 ifTrue: [ utf32 _ 8592 ].												"If underscore, use left arrow"
+			utf32 = 94 ifTrue: [ utf32 _ 8593 ].												"If caret, use up arrow"
+			].
+		utf32 <= 16r7F
+			ifTrue: [
+				utf8Byte1 _ utf32.
+				i _ contourDataIndexes at: utf8Byte1.
+				]
+			ifFalse: [ utf32 <= 16r7FF
+			ifTrue: [
+				utf8Byte1 _ (utf32 bitShift: -6) bitOr: 2r11000000.
+				uft8Byte2 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte1.
+				i _ contourDataIndexes at: uft8Byte2 - i.
+				]
+			ifFalse: [ utf32 <= 16rFFFF
+			ifTrue: [
+				utf8Byte1 _ (utf32 bitShift: -12) bitOr: 2r11100000.
+				uft8Byte2 _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				utf8Byte3 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte1.
+				i _ contourDataIndexes at: uft8Byte2 - i.
+				i _ contourDataIndexes at: utf8Byte3 - i.
+				]
+			ifFalse: [
+				utf8Byte1 _ (utf32 bitShift: -18) bitOr: 2r11110000.
+				uft8Byte2 _ ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
+				utf8Byte3 _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				utf8Byte4 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte1.
+				i _ contourDataIndexes at: uft8Byte2 - i.
+				i _ contourDataIndexes at: utf8Byte3 - i.
+				i _ contourDataIndexes at: utf8Byte4 - i.
+				]]].
+		i _ i - 1.
+		advanceWidth _ contourData at: i. i _ i + 5.
+		numContours _ (contourData at: i) asInteger. i _ i + 1.
+		1 to: numContours do: [ :idx |
+			numBeziers _ (contourData at: i) asInteger. i _ i + 1.
+			ttMoveToX _ (contourData at: i) + nextGlyphX. i _ i + 1.
+			ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
+			startX _ (ttMoveToX * textTxA11) + (ttMoveToY * textTxA12) + textTxA13.
+			startY _ (ttMoveToX * textTxA21) + (ttMoveToY * textTxA22) + textTxA23.
+			contourStartX _ startX.
+			contourStartY _ startY.
+			self newTrajectoryFragment.
+			1 to: numBeziers do: [ :idx2 |
+				ttEndX _ contourData at: i. i _ i + 1.
+				ttEndY _ contourData at: i. i _ i + 1.
+				ttControlX _ contourData at: i. i _ i + 1.
+				ttControlY _ contourData at: i. i _ i + 1.
+				endX _ (ttEndX * textTxA11) + (ttEndY * textTxA12) + startX.
+				endY _ (ttEndX * textTxA21) + (ttEndY * textTxA22) + startY.
+				controlX _ (ttControlX * textTxA11) + (ttControlY * textTxA12) + startX.
+				controlY _ (ttControlX * textTxA21) + (ttControlY * textTxA22) + startY.
+				self cCode: '
+					dx = fabs(controlX-startX) + fabs(endX-controlX);
+					dy = fabs(controlY-startY) + fabs(endY-controlY);'
+				inSmalltalk: [
+					dx _ (controlX-startX) abs + (endX-controlX) abs.
+					dy _ (controlY-startY) abs + (endY-controlY) abs ].
+				hops _ ((dx max: dy) * theHopsPerPixel) asInteger + 1.
+				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
+				xMinEnd _ startX min: endX.
+				xMaxEnd _ startX max: endX.
+				yMinEnd _ startY min: endY.
+				yMaxEnd _ startY max: endY.
+				spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
+				spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
+				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
+				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+				"Compute Quadratic Bezier Curve,"
+				t _ 0.0.
+				increment _ 1.0 / hops.
+				1 to: hops do: [ :h |
+					oneLessT _ 1.0 - t.
+					f1 _ oneLessT * oneLessT.
+					f2 _ 2.0 * oneLessT * t.
+					f3 _ t * t.
+					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					self updateAlphasForX: x y: y.
+					self updateEdgeCountAtX: x y: y.
+					t _ t + increment. ].
+				startX _ endX.
+				startY _ endY.	
+			].
+			self updateAlphasForX: endX y: endY.
+			self updateEdgeCountAtX: endX y: endY.
+			"Similar effect to ensureClosePath in #finishPath:,
+			but assume the TrueType definition is essentially right, and there might only be a rounding error.
+			So, don't draw a line, but just (possibly) correct edgeCounts"
+			self updateEdgeCountAtX: contourStartX y: contourStartY.
+		].
+		nextGlyphX _ nextGlyphX + advanceWidth.
+	].
+	answer _ nextGlyphX.
+	^answer asOop: Float! !
+
+!VectorEnginePlugin methodsFor: 'text' stamp: 'jmv 3/26/2021 11:27:12'!
+displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy hops baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	self
+		primitive: 'primDisplayUtf8'
+		parameters: #(ByteArray SmallInteger SmallInteger Float Float FloatArray IntegerArray Boolean SmallInteger WordArray WordArray).
+	self var: #answer type: 'double'.
+	self var: #nextGlyphX type: 'float'.
+	self var: #nextGlyphY type: 'float'.
+	self var: #ttMoveToX type: 'float'.
+	self var: #ttMoveToY type: 'float'.
+	self var: #ttEndX type: 'float'.
+	self var: #ttEndY type: 'float'.
+	self var: #ttControlX type: 'float'.
+	self var: #ttControlY type: 'float'.
+	self var: #advanceWidth type: 'float'.
+	self var: #contourStartX type: 'float'.
+	self var: #contourStartY type: 'float'.
+	self var: #startX type: 'float'.
+	self var: #startY type: 'float'.
+	self var: #endX type: 'float'.
+	self var: #endY type: 'float'.
+	self var: #controlX type: 'float'.
+	self var: #controlY type: 'float'.
+	self var: #dx type: 'float'.
+	self var: #dy type: 'float'.
+	self var: #byte type: 'uint8_t'.
+
+	self var: #t type: 'float'.
+	self var: #oneLessT type: 'float'.
+	self var: #increment type: 'float'.
+	self var: #f1 type: 'float'.
+	self var: #f2 type: 'float'.
+	self var: #f3 type: 'float'.
+	self var: #x type: 'float'.
+	self var: #y type: 'float'.
+	self var: #xMinEnd type: 'float'.
+	self var: #xMaxEnd type: 'float'.
+	self var: #yMinEnd type: 'float'.
+	self var: #yMaxEnd type: 'float'.
+
+	edgeCounts _ otherWordArray.
+	alphaMask _ anotherWordArray.
+
+	nextGlyphX _ destX.
+	nextGlyphY _ destY.
+	baseIndex _ 0.
+	byteStartIndex-1 to: byteStopIndex-1 do: [ :byteIndex |
+		byte _ aByteArray at: byteIndex.
+		i _ contourDataIndexes at: baseIndex + byte.
+		aBoolean ifTrue: [
+			byte = 95 ifTrue: [
+				i _ contourDataIndexes at: 226.
+				i _ contourDataIndexes at: 134 - i.
+				i _ contourDataIndexes at: 144 - i ].
+			byte = 94 ifTrue: [ 
+				i _ contourDataIndexes at: 226.
+				i _ contourDataIndexes at: 134 - i.
+				i _ contourDataIndexes at: 145 - i ]].
+		i < 0
+			ifTrue: [ baseIndex _ 0 - i ]
+			ifFalse: [
+				i _ i - 1.
+				advanceWidth _ contourData at: i. i _ i + 5.
+				numContours _ (contourData at: i) asInteger. i _ i + 1.
+				1 to: numContours do: [ :idx |
+					numBeziers _ (contourData at: i) asInteger. i _ i + 1.
+					ttMoveToX _ (contourData at: i) + nextGlyphX. i _ i + 1.
+					ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
+					startX _ (ttMoveToX * textTxA11) + (ttMoveToY * textTxA12) + textTxA13.
+					startY _ (ttMoveToX * textTxA21) + (ttMoveToY * textTxA22) + textTxA23.
+					contourStartX _ startX.
+					contourStartY _ startY.
+					self newTrajectoryFragment.
+					1 to: numBeziers do: [ :idx2 |
+						ttEndX _ contourData at: i. i _ i + 1.
+						ttEndY _ contourData at: i. i _ i + 1.
+						ttControlX _ contourData at: i. i _ i + 1.
+						ttControlY _ contourData at: i. i _ i + 1.
+						endX _ (ttEndX * textTxA11) + (ttEndY * textTxA12) + startX.
+						endY _ (ttEndX * textTxA21) + (ttEndY * textTxA22) + startY.
+						controlX _ (ttControlX * textTxA11) + (ttControlY * textTxA12) + startX.
+						controlY _ (ttControlX * textTxA21) + (ttControlY * textTxA22) + startY.
+						self cCode: '
+							dx = fabs(controlX-startX) + fabs(endX-controlX);
+							dy = fabs(controlY-startY) + fabs(endY-controlY);'
+						inSmalltalk: [
+							dx _ (controlX-startX) abs + (endX-controlX) abs.
+							dy _ (controlY-startY) abs + (endY-controlY) abs ].
+						hops _ ((dx max: dy) * theHopsPerPixel) asInteger + 1.
+						"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
+						xMinEnd _ startX min: endX.
+						xMaxEnd _ startX max: endX.
+						yMinEnd _ startY min: endY.
+						yMaxEnd _ startY max: endY.
+						spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
+						spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
+						spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
+						spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+						"Compute Quadratic Bezier Curve,"
+						t _ 0.0.
+						increment _ 1.0 / hops.
+						1 to: hops do: [ :h |
+							oneLessT _ 1.0 - t.
+							f1 _ oneLessT * oneLessT.
+							f2 _ 2.0 * oneLessT * t.
+							f3 _ t * t.
+							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							self updateAlphasForX: x y: y.
+							self updateEdgeCountAtX: x y: y.
+							t _ t + increment. ].
+						startX _ endX.
+						startY _ endY.	
+					].
+					self updateAlphasForX: endX y: endY.
+					self updateEdgeCountAtX: endX y: endY.
+					"Similar effect to ensureClosePath in #finishPath:,
+					but assume the TrueType definition is essentially right, and there might only be a rounding error.
+					So, don't draw a line, but just (possibly) correct edgeCounts"
+					self updateEdgeCountAtX: contourStartX y: contourStartY.
+				].
+				nextGlyphX _ nextGlyphX + advanceWidth.
+				baseIndex _ 0.
+			]
+	].
+	answer _ nextGlyphX.
+	^answer asOop: Float! !
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/19/2021 11:19:17'!
 blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
