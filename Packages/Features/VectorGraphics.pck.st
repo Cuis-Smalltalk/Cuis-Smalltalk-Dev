@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4547] on 26 March 2021 at 4:19:30 pm'!
+'From Cuis 5.0 [latest update: #4552] on 30 March 2021 at 3:48:28 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 207!
+!provides: 'VectorGraphics' 1 208!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -2682,14 +2682,14 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 3/26/2021 12:15:41'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 3/30/2021 15:46:56'!
 setForm: aForm
 	"
 	World extent: World extent
 	"
 	aForm depth = 32  ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
 	form _ aForm.
-	engine _ VectorEngineSubPixelWithPlugin onForm: form.
+	engine _ VectorEngineWholePixel onForm: form.
 	engine canvas: self.
 	boundsFinderEngine _ VectorEngineBoundsFinder onForm: form.
 	boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
