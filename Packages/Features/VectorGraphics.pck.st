@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4552] on 30 March 2021 at 3:48:28 pm'!
+'From Cuis 5.0 [latest update: #4561] on 7 April 2021 at 2:21:08 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 208!
+!provides: 'VectorGraphics' 1 209!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -4161,13 +4161,13 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+yControl) / 2.0).
 	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+yControl) / 2.0).! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/22/2021 11:11:55'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/6/2021 16:08:17'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 
-	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf - subPixelDelta) truncated +1.
-	blendTop _ (blendTop - auxStrokeWidthDilatedHalf) truncated +1.
-	blendRight _ (blendRight + auxStrokeWidthDilatedHalf + subPixelDelta) truncated +1. "+1 not strictly needed in BoundsFinder, but just answer same bounds as other engines."
+	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf - subPixelDelta + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	blendTop _ (blendTop - auxStrokeWidthDilatedHalf + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	blendRight _ (blendRight + auxStrokeWidthDilatedHalf + subPixelDelta) truncated + 1. 											"+1 not strictly needed in BoundsFinder, but just answer same bounds as other engines."
 	blendBottom _ (blendBottom + auxStrokeWidthDilatedHalf) truncated.
 
 	"morphBounds is not affected by clipRect"
@@ -4362,7 +4362,7 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: xTo y: yTo ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 3/11/2021 15:33:07'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/6/2021 16:02:40'!
 updateAlphasForX: x y: y
 
 	"slight optimization possible when we know width = 0... perhaps implement:
@@ -4374,13 +4374,13 @@ updateAlphasForX: x y: y
 	| distanceToAxisSquared alpha t b l r alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
 
 	"Compute affected rect. Honor clipRect"
-	t _ (y -auxStrokeWidthDilatedHalf) truncated +1.
+	t _ (y - auxStrokeWidthDilatedHalf + 1) truncated.													"(z+1) truncated works equally well than the more intuitive (z ceiling)"
 	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y +auxStrokeWidthDilatedHalf) truncated.
+	b _ (y + auxStrokeWidthDilatedHalf) truncated.
 	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x -auxStrokeWidthDilatedHalf -subPixelDelta) truncated +1.
+	l _ (x - auxStrokeWidthDilatedHalf - subPixelDelta + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
 	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x +auxStrokeWidthDilatedHalf +subPixelDelta) truncated.
+	r _ (x + auxStrokeWidthDilatedHalf + subPixelDelta) truncated.
 	r > clipRight ifTrue: [ r _ clipRight ].
 
 	t to: b do: [ :displayY |
@@ -4431,7 +4431,7 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 3/15/2021 12:13:57'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/6/2021 16:41:55'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills."
 
@@ -4458,9 +4458,9 @@ updateEdgeCountAtX: x y: y
 	The effect is the same, and we need to clean up less stuff afterwards.
 	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
 	pixelIndexBase _ pixelY * targetWidth.
-	redOffset _ (x+subPixelDelta) truncated + 1 max: clipLeft.
-	greenOffset _ x truncated + 1 max: clipLeft.
-	blueOffset _ (x-subPixelDelta) truncated + 1 max: clipLeft.
+	redOffset _ (x+subPixelDelta+1) truncated max: clipLeft.			"take the next red subpixel center to the right of x"
+	greenOffset _ (x+1) truncated max: clipLeft.											"take the next green subpixel center to the right of x"
+	blueOffset _ (x-subPixelDelta+1) truncated max: clipLeft.		"take the next blue subpixel center to the right of x"
 	redPixelIndex _ pixelIndexBase + redOffset +1.
 	greenPixelIndex _ pixelIndexBase + greenOffset +1.
 	bluePixelIndex _ pixelIndexBase + blueOffset +1.
@@ -4512,7 +4512,7 @@ updateEdgeCountAtX: x y: y
 				]
 		].! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 3/18/2021 15:01:12'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 4/6/2021 16:07:36'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
@@ -4524,9 +4524,9 @@ finishPath: ensureClosePath
 				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
 				self basicLineToX: firstX y: firstY ]]].
 
-	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf - subPixelDelta) truncated +1.
-	blendTop _ (blendTop - auxStrokeWidthDilatedHalf) truncated +1.
-	blendRight _ (blendRight + auxStrokeWidthDilatedHalf + subPixelDelta) truncated +1. "Make room not just for updated mask, but also edges (hence, +1)"
+	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf - subPixelDelta + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	blendTop _ (blendTop - auxStrokeWidthDilatedHalf + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	blendRight _ (blendRight + auxStrokeWidthDilatedHalf + subPixelDelta) truncated + 1. 								"Make room not just for updated mask, but also edges (hence, +1)"
 	blendBottom _ (blendBottom + auxStrokeWidthDilatedHalf) truncated.
 
 	"morphBounds is not affected by clipRect"
@@ -5530,7 +5530,7 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: xTo y: yTo ].! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 3/11/2021 15:47:39'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/6/2021 16:02:09'!
 updateAlphasForX: x y: y
 
 	"slight optimization possible when we know width = 0... perhaps implement:
@@ -5541,14 +5541,14 @@ updateAlphasForX: x y: y
 		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
 	| distanceToAxisSquared alpha t b l r prevAlpha dx dy pixelIndex |
 
-	"Compute affected rect. Honor clipRect"
-	t _ (y -auxStrokeWidthDilatedHalf) truncated +1.
+	"Compute affected rect. Honor clipRect."
+	t _ (y - auxStrokeWidthDilatedHalf + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
 	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y +auxStrokeWidthDilatedHalf) truncated.
+	b _ (y + auxStrokeWidthDilatedHalf) truncated.
 	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x -auxStrokeWidthDilatedHalf) truncated +1.
+	l _ (x - auxStrokeWidthDilatedHalf + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
 	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x +auxStrokeWidthDilatedHalf) truncated.
+	r _ (x + auxStrokeWidthDilatedHalf) truncated.
 	r > clipRight ifTrue: [ r _ clipRight ].
 
 	t to: b do: [ :displayY |
@@ -5568,7 +5568,7 @@ updateAlphasForX: x y: y
 						alpha > prevAlpha ifTrue: [
 							alphaMask at: pixelIndex put: alpha ]]]]]! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 3/15/2021 12:14:05'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/6/2021 16:52:04'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills."
 
@@ -5585,7 +5585,7 @@ updateEdgeCountAtX: x y: y
 	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
 	The effect is the same, and we need to clean up less stuff afterwards.
 	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
-	pixelX _ x truncated + 1 max: clipLeft.
+	pixelX _ (x+1) truncated max: clipLeft.										"take the next pixel center to the right of x"
 	pixelX <= clipRight ifTrue: [
 		pixelY _ thisYTruncated max: prevYTruncated.
 		increment _ (thisYTruncated - prevYTruncated) sign.
@@ -5595,7 +5595,7 @@ updateEdgeCountAtX: x y: y
 		edgeCounts at: pixelIndex put: count ].
 	prevYTruncated _ thisYTruncated.! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 3/18/2021 15:01:28'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 4/6/2021 16:07:47'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
@@ -5607,9 +5607,9 @@ finishPath: ensureClosePath
 				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
 				self basicLineToX: firstX y: firstY ]]].
 
-	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf) truncated +1.
-	blendTop _ (blendTop - auxStrokeWidthDilatedHalf) truncated +1.
-	blendRight _ (blendRight + auxStrokeWidthDilatedHalf) truncated +1. "Make room not just for updated mask, but also edges (hence, +1)"
+	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf + 1) truncated.														"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	blendTop _ (blendTop - auxStrokeWidthDilatedHalf + 1) truncated.														"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	blendRight _ (blendRight + auxStrokeWidthDilatedHalf) truncated + 1. 											"Make room not just for updated mask, but also edges (hence, +1)"
 	blendBottom _ (blendBottom + auxStrokeWidthDilatedHalf) truncated.
 
 	"morphBounds is not affected by clipRect"

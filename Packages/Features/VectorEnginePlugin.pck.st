@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4546] on 26 March 2021 at 12:10:52 pm'!
+'From Cuis 5.0 [latest update: #4561] on 7 April 2021 at 2:21:25 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 6!
+!provides: 'VectorEnginePlugin' 1 7!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -108,29 +108,32 @@ spanBottom
 
 	^(spanBottom + auxStrokeWidthDilatedHalf) asInteger asOop: SmallInteger.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:53:58'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 4/6/2021 16:13:04'!
 spanLeft
 	self
 		primitive: 'primSpanLeft'
 		parameters: #().
 
-	^(spanLeft - auxStrokeWidthDilatedHalf - subPixelDelta) asInteger +1 asOop: SmallInteger! !
+	"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
+	^(spanLeft - auxStrokeWidthDilatedHalf - subPixelDelta + 1) asInteger asOop: SmallInteger! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:54:03'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 4/6/2021 16:13:38'!
 spanRight
 	self
 		primitive: 'primSpanRight'
 		parameters: #().
 
-	^(spanRight + auxStrokeWidthDilatedHalf + subPixelDelta) asInteger +1 asOop: SmallInteger. "Make room not just for updated mask, but also edges (hence, +1)"! !
+	"Make room not just for updated mask, but also edges (hence, +1)"
+	^(spanRight + auxStrokeWidthDilatedHalf + subPixelDelta) asInteger +1 asOop: SmallInteger.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:54:06'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 4/6/2021 16:13:45'!
 spanTop
 	self
 		primitive: 'primSpanTop'
 		parameters: #().
 
-	^(spanTop - auxStrokeWidthDilatedHalf) asInteger +1 asOop: SmallInteger! !
+	"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
+	^(spanTop - auxStrokeWidthDilatedHalf + 1) asInteger asOop: SmallInteger! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:50'!
 strokeR: r g: g b: b a: a
@@ -350,7 +353,7 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: xTo y: yTo ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 3/19/2021 11:21:24'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 4/6/2021 16:16:47'!
 updateAlphasForX: x y: y
 
 	"slight optimization possible when we know width = 0... perhaps implement:
@@ -371,13 +374,13 @@ updateAlphasForX: x y: y
 	self var: #dxp type: 'float'.
 
 	"Compute affected rect. Honor clipRect"
-	t _ (y -auxStrokeWidthDilatedHalf) asInteger +1.
+	t _ (y - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
 	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y +auxStrokeWidthDilatedHalf) asInteger.
+	b _ (y + auxStrokeWidthDilatedHalf) asInteger.
 	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x -auxStrokeWidthDilatedHalf -subPixelDelta) asInteger +1.
+	l _ (x - auxStrokeWidthDilatedHalf - subPixelDelta + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
 	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x +auxStrokeWidthDilatedHalf +subPixelDelta) asInteger.
+	r _ (x + auxStrokeWidthDilatedHalf + subPixelDelta) asInteger.
 	r > clipRight ifTrue: [ r _ clipRight ].
 
 	t to: b do: [ :displayY |
@@ -440,7 +443,7 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask at: pixelIndex put: ((redAlpha bitOr: greenAlpha) bitOr: blueAlpha) ]]]]! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 3/19/2021 11:21:38'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 4/6/2021 17:22:01'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills."
 
@@ -475,9 +478,9 @@ updateEdgeCountAtX: x y: y
 	The effect is the same, and we need to clean up less stuff afterwards.
 	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
 	pixelIndexBase _ pixelY * targetWidth.
-	redOffset _ (x+subPixelDelta) asInteger + 1 max: clipLeft.
-	greenOffset _ x asInteger + 1 max: clipLeft.
-	blueOffset _ (x-subPixelDelta) asInteger + 1 max: clipLeft.
+	redOffset _ (x+subPixelDelta+1) asInteger max: clipLeft.						"take the next red subpixel center to the right of x"
+	greenOffset _ (x+1) asInteger max: clipLeft.											"take the next green  subpixel center to the right of x"
+	blueOffset _ (x-subPixelDelta+1) asInteger max: clipLeft.		"take the next blue subpixel center to the right of x"
 	redPixelIndex _ pixelIndexBase + redOffset.
 	greenPixelIndex _ pixelIndexBase + greenOffset.
 	bluePixelIndex _ pixelIndexBase + blueOffset.
