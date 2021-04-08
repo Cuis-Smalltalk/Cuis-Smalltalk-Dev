@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4561] on 7 April 2021 at 2:21:08 pm'!
+'From Cuis 5.0 [latest update: #4564] on 8 April 2021 at 7:24:31 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 209!
+!provides: 'VectorGraphics' 1 210!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1206,7 +1206,7 @@ currentMorphDrawingFails
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 3/26/2021 16:18:14'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 4/8/2021 15:30:23'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
@@ -1216,8 +1216,7 @@ drawCurrentAndSubmorphs
 		currentMorph drawOn: self.
 		self onMorphIdsDo: [
 			currentMorph drawOn: self ].
-		world notNil ifTrue: [					"Only if we are drawing the world"
-			currentMorph displayBounds: self boundingRectOfCurrentMorphAfterDraw ].
+		currentMorph displayBoundsSetFrom: self.
 
 		"Display submorphs back to front"
 		"coordinate system stack already set up for aMorph
@@ -1228,9 +1227,7 @@ drawCurrentAndSubmorphs
 		currentMorph postDrawOn: self.
 		self onMorphIdsDo: [
 			currentMorph postDrawOn: self ].
-		world notNil ifTrue: [					"Only if we are drawing the world"
-			currentMorph displayBounds:
-				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ].
+		currentMorph displayBoundsUpdateFrom: self.
 
 		currentMorph isHighlighted ifTrue: [
 			self drawCurrentMorphHighlight ].
@@ -1239,10 +1236,7 @@ drawCurrentAndSubmorphs
 				Preferences halosShowCoordinateSystem ifTrue: [
 					self drawCoordinateSystem: currentMorph morphLocalBounds ]]].
 
-		world notNil ifTrue: [					"Only if we are drawing the world"
-			currentMorph displayBounds:
-				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ].
-
+		currentMorph displayBoundsUpdateFrom: self.
 	].! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
@@ -2542,13 +2536,12 @@ boundingRectOfCurrentMorphAfterDraw
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 3/26/2021 16:17:53'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 4/8/2021 15:31:15'!
 drawCurrentAndSubmorphs
 	| corners |
 	self isCurrentMorphVisible ifTrue: [
 		currentMorph drawOn: self.
-		world notNil ifTrue: [					"Only if we are drawing the world"
-			currentMorph displayBounds: self boundingRectOfCurrentMorphAfterDraw ].
+		currentMorph displayBoundsSetFrom: self.
 
 		"Display submorphs back to front"
 		"coordinate system stack already set up for aMorph
@@ -2556,10 +2549,7 @@ drawCurrentAndSubmorphs
 		self clippingByCurrentMorphDo: [
 			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]].
 
-		currentMorph postDrawOn: self.
-		world notNil ifTrue: [					"Only if we are drawing the world"
-			currentMorph displayBounds:
-				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ].
+		currentMorph displayBoundsUpdateFrom: self.
 
 		currentMorph isHighlighted ifTrue: [
 			self drawCurrentMorphHighlight ].
@@ -2569,10 +2559,8 @@ drawCurrentAndSubmorphs
 					corners _ currentMorph displayFullBounds corners collect: [ :pt |
 						currentTransformation inverseTransform: pt ].
 					self drawCoordinateSystem: corners ]]].
-	
-		world notNil ifTrue: [					"Only if we are drawing the world"
-			currentMorph displayBounds:
-				(currentMorph displayBounds quickMerge: self boundingRectOfCurrentMorphAfterDraw) ].
+
+		currentMorph displayBoundsUpdateFrom: self.
 	].! !
 
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 3/16/2021 10:49:15'!
@@ -7984,30 +7972,56 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 2/10/2021 17:26:14'!
-imageForm: depth
-	| auxCanvas p r  answer |
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 4/8/2021 17:13:47'!
+findBounds
+	| auxCanvas answer |
 
 	self requiresVectorCanvas ifFalse: [
+		^self morphPosition extent: self morphExtent ].
+
+	auxCanvas _ VectorCanvas onForm: Display.
+	auxCanvas updatingMorphBoundsDo: [
+		answer _ auxCanvas updateDisplayBounds: self andMerge: nil ].
+
+	^answer! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 4/8/2021 19:23:18'!
+fitInto: aRectangle
+	"Scale and position ourselves in such way that our displayFullBounds are in aRectangle."
+
+	| currentBounds scale slackForAntiAliasing |
+
+	slackForAntiAliasing _ 2.
+	currentBounds _ self findBounds.
+	scale _ (aRectangle width-slackForAntiAliasing / (currentBounds width-slackForAntiAliasing))
+		min: (aRectangle height-slackForAntiAliasing / (currentBounds height-slackForAntiAliasing)).
+	scale _ scale asFloat.
+	self scaleBy: scale.
+
+	currentBounds _ self findBounds.
+	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 4/8/2021 17:20:16'!
+imageForm: depth
+	| wasVisible oldLocation bounds  answer |
+
+	self requiresVectorCanvas ifFalse: [
+		| auxCanvas |
 		auxCanvas _ MorphicCanvas depth: depth over: (self morphPosition extent: self morphExtent).
 		auxCanvas fullDraw: self.
 		^ auxCanvas form divideByAlpha ].
 
-	p _ self morphPosition.
-	auxCanvas _ VectorCanvas onForm: Display.
-	auxCanvas updatingMorphBoundsDo: [
-		auxCanvas into: self.
-		auxCanvas updateCurrentDisplayBounds.
-		auxCanvas outOfMorph ].
-	r _ self displayFullBounds.
-
-	self morphPosition: self morphPosition - r origin.
-	answer _ Form extent: r extent depth: 32.
+	wasVisible _ self visible.
+	oldLocation _ self location.
+	self location: (MorphicTranslation withTranslation: 0@0).
+	bounds _ self findBounds.
+	self location: (MorphicTranslation withTranslation: bounds origin negated).
+	answer _ Form extent: bounds extent depth: 32.
+answer fillColor: Color random.
 	(VectorCanvas onForm: answer) fullDraw: self.
 
-	self morphPosition: p.
-	owner notNil ifTrue: [
-		self redrawNeeded ].
+	self visible: wasVisible.
+	self location: oldLocation.
 	^answer! !
 
 !MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:31:03'!
