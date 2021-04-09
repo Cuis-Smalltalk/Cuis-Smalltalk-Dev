@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4564] on 8 April 2021 at 7:24:31 pm'!
+'From Cuis 5.0 [latest update: #4567] on 9 April 2021 at 2:46:26 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 210!
+!provides: 'VectorGraphics' 1 216!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -99,18 +99,18 @@ MorphicCanvas subclass: #VectorCanvas
 VectorCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorEngineAbstract category: 'VectorGraphics-Kernel'!
-Object subclass: #VectorEngineAbstract
-	instanceVariableNames: 'canvas targetForm morphIds targetWidth antiAliasingWidth strokeWidth currentMorphId currentClipsSubmorphs clipCurrentMorph morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel firstX firstY currentX currentY'
+!classDefinition: #VectorGraphicsEngine category: 'VectorGraphics-Kernel'!
+Object subclass: #VectorGraphicsEngine
+	instanceVariableNames: 'canvas targetForm morphIds targetWidth targetHeight antiAliasingWidth strokeWidth currentMorphId currentClipsSubmorphs clipCurrentMorph morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel firstX firstY currentX currentY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorEngineAbstract class' category: 'VectorGraphics-Kernel'!
-VectorEngineAbstract class
+!classDefinition: 'VectorGraphicsEngine class' category: 'VectorGraphics-Kernel'!
+VectorGraphicsEngine class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngineBoundsFinder category: 'VectorGraphics-Kernel'!
-VectorEngineAbstract subclass: #VectorEngineBoundsFinder
+VectorGraphicsEngine subclass: #VectorEngineBoundsFinder
 	instanceVariableNames: 'blendLeft blendTop blendRight blendBottom auxStrokeWidthDilatedHalf subPixelDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -120,7 +120,7 @@ VectorEngineBoundsFinder class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngineSubPixel category: 'VectorGraphics-Kernel'!
-VectorEngineAbstract subclass: #VectorEngineSubPixel
+VectorGraphicsEngine subclass: #VectorEngineSubPixel
 	instanceVariableNames: 'edgeCounts alphaMask blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared subPixelDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -130,7 +130,7 @@ VectorEngineSubPixel class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngineSubPixelWithPlugin category: 'VectorGraphics-Kernel'!
-VectorEngineAbstract subclass: #VectorEngineSubPixelWithPlugin
+VectorGraphicsEngine subclass: #VectorEngineSubPixelWithPlugin
 	instanceVariableNames: 'edgeCounts alphaMask strokeColor fillColor clipLeft clipTop clipRight clipBottom subPixelDelta'
 	classVariableNames: 'PluginAccess'
 	poolDictionaries: ''
@@ -140,7 +140,7 @@ VectorEngineSubPixelWithPlugin class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngineWholePixel category: 'VectorGraphics-Kernel'!
-VectorEngineAbstract subclass: #VectorEngineWholePixel
+VectorGraphicsEngine subclass: #VectorEngineWholePixel
 	instanceVariableNames: 'edgeCounts alphaMask blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -428,7 +428,7 @@ self allOwnersReverseDo: [ :m | c into: m ].
 c fullDraw: self.
 Display forceToScreen!
 
-!VectorEngineAbstract commentStamp: '<historical>' prior: 0!
+!VectorGraphicsEngine commentStamp: '<historical>' prior: 0!
 A Vector Graphics rasterizer for Morphic 3.
 Supports most SVG primitives.
 Gives exceptional quality.
@@ -1206,7 +1206,7 @@ currentMorphDrawingFails
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 4/8/2021 15:30:23'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 4/9/2021 14:11:29'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
@@ -1223,7 +1223,7 @@ drawCurrentAndSubmorphs
 		('ivars transformations' and 'currentTransformation')"
 		self clippingByCurrentMorphDo: [
 			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]].
-	
+
 		currentMorph postDrawOn: self.
 		self onMorphIdsDo: [
 			currentMorph postDrawOn: self ].
@@ -1282,6 +1282,15 @@ drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 		aWorldMorph drawOn: self.
 		self onMorphIdsDo: [
 			aWorldMorph drawOn: self ]].! !
+
+!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 4/9/2021 14:45:51'!
+initialize
+	| family folder |
+	folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
+	family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
+	UISupervisor whenUIinSafeState: [
+		Preferences setDefaultFont: family familyName.
+		MorphicCanvas activeSubclass: HybridCanvas ]! !
 
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
@@ -2536,7 +2545,7 @@ boundingRectOfCurrentMorphAfterDraw
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 4/8/2021 15:31:15'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 4/9/2021 14:11:34'!
 drawCurrentAndSubmorphs
 	| corners |
 	self isCurrentMorphVisible ifTrue: [
@@ -2549,6 +2558,7 @@ drawCurrentAndSubmorphs
 		self clippingByCurrentMorphDo: [
 			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]].
 
+		currentMorph postDrawOn: self.
 		currentMorph displayBoundsUpdateFrom: self.
 
 		currentMorph isHighlighted ifTrue: [
@@ -2639,17 +2649,17 @@ morphIds _ engine instVarNamed: 'morphIds'.
 		copyBits.
 	^answer! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 3/22/2021 15:33:08'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 4/9/2021 12:23:00'!
 doSubPixelAntiAliasing
 	"
-	(self runningWorld canvas instVarNamed: 'vectorCanvas') doSubPixelAntiAliasing
-	Instead of just whole pixel anti-aliasing.
+	Instead of just whole pixel anti-aliasing. Change engine only if current won't do.
 	"
-	engine _ VectorEngineSubPixel onForm: form.
-	engine canvas: self.
-	boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
-	boundsFinderEngine subPixelDelta: engine subPixelDelta.								"So bounds found are exactly the same as engine would find."
-	self newClipRect: nil.! !
+	engine doesSubPixelAntiAliasing ifFalse: [
+		engine _ VectorGraphicsEngine subPixelAntiAliasingOnForm: form.
+		engine canvas: self.
+		boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
+		boundsFinderEngine subPixelDelta: engine subPixelDelta.								"So bounds found are exactly the same as engine would find."
+		self newClipRect: nil ].! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 12/21/2020 17:36:45'!
 fontToUse: fontOrNil
@@ -2670,16 +2680,16 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 3/30/2021 15:46:56'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 4/9/2021 12:18:33'!
 setForm: aForm
 	"
 	World extent: World extent
 	"
 	aForm depth = 32  ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
 	form _ aForm.
-	engine _ VectorEngineWholePixel onForm: form.
+	engine _ VectorGraphicsEngine onForm: form.
 	engine canvas: self.
-	boundsFinderEngine _ VectorEngineBoundsFinder onForm: form.
+	boundsFinderEngine _ VectorGraphicsEngine boundsFinderFor: form.
 	boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
 	boundsFinderEngine subPixelDelta: engine subPixelDelta.								"So bounds found are exactly the same as engine would find."
 	boundsFinderEngine canvas: self.
@@ -2694,18 +2704,6 @@ updatingMorphBoundsDo: aBlock
 		engine _ boundsFinderEngine.
 		aBlock value.
 	] ensure: [ engine _ prevEngine ]! !
-
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 3/22/2021 15:32:58'!
-usePlugin
-	"
-	(self runningWorld canvas instVarNamed: 'vectorCanvas') usePlugin
-	Instead of just whole pixel anti-aliasing.
-	"
-	engine _ VectorEngineSubPixelWithPlugin onForm: form.
-	engine canvas: self.
-	boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
-	boundsFinderEngine subPixelDelta: engine subPixelDelta.								"So bounds found are exactly the same as engine would find."
-	self newClipRect: nil.! !
 
 !VectorCanvas methodsFor: 'drawing' stamp: 'jmv 3/26/2021 12:18:31'!
 drawCoordinateSystem: corners
@@ -2783,15 +2781,6 @@ buildArrowOfDirection: aSymbolDirection size: finalSizeInteger
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 steButtonForm: extent
 	self flag: #jmvVer2.! !
-
-!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 1/21/2015 08:41'!
-initialize
-	"
-	VectorCanvas initialize
-	0.33: r - b
-	0.1: b - r
-	"
-	" AffineTransformation doIntegerTransformations: false"! !
 
 !VectorCanvas class methodsFor: 'samples' stamp: 'jmv 3/16/2021 11:06:37'!
 experiment1
@@ -2966,17 +2955,17 @@ siemensStar
 	].
 	^form! !
 
-!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
+!VectorGraphicsEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
 antiAliasingWidth
 
 	^antiAliasingWidth! !
 
-!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 5/15/2020 09:27:38'!
+!VectorGraphicsEngine methodsFor: 'accessing' stamp: 'jmv 5/15/2020 09:27:38'!
 antiAliasingWidth: aNumber
 
 	antiAliasingWidth _ aNumber.! !
 
-!VectorEngineAbstract methodsFor: 'accessing' stamp: 'jmv 3/15/2021 16:12:48'!
+!VectorGraphicsEngine methodsFor: 'accessing' stamp: 'jmv 3/15/2021 16:12:48'!
 morphBoundsAfterDraw
 	"In targetForm coordinates.
 	Doesn't include any clipping rect (neither clip rect parameter to bound drawn area, nor possible clipping to owner shape or bounds).
@@ -2985,7 +2974,7 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:32:10'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:32:10'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -2996,13 +2985,13 @@ fillColor: aFillColor do: pathCommandsBlock
 	self pvtHopsPerPixel: 8.										"See #experimentHopsPerPixel3"
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:27:50'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 8/6/2020 17:27:50'!
 strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke."
 
 	self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: false! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:32:30'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:32:30'!
 strokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
 
@@ -3021,7 +3010,7 @@ strokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureCloseP
 
 	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
 
-!VectorEngineAbstract methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:33:13'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:33:13'!
 strokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -3050,7 +3039,7 @@ strokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathComm
 
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
-!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 3/26/2021 10:03:35'!
+!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 3/26/2021 10:03:35'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -3108,7 +3097,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 	].
 	^ destX ceiling@destY! !
 
-!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 3/26/2021 10:45:39'!
+!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 3/26/2021 10:45:39'!
 displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -3196,7 +3185,7 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 	].
 	^ destX ceiling@destY! !
 
-!VectorEngineAbstract methodsFor: 'text' stamp: 'jmv 3/26/2021 11:10:49'!
+!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 3/26/2021 11:10:49'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -3265,7 +3254,7 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 	].
 	^ destX ceiling@destY! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:28'!
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:28'!
 doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Evaluate a sequence of path commands. Path parameters already set."
 
@@ -3273,49 +3262,50 @@ doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	pathCommandsBlock valueWithPossibleArgument: (canvas ifNil:[self]).
 	self finishPath: ensureClosePath! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 3/16/2021 10:49:32'!
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 3/16/2021 10:49:32'!
 initializeOnForm: aForm
 	self currentMorph: nil.
 	self pvtSetForm: aForm! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 3/18/2021 15:10:50'!
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 3/18/2021 15:10:50'!
 initializePath
 
 	firstX _ firstY _ Float nan.
 	currentX _ currentY _ 0.0.
 	self newTrajectoryFragment.! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:34'!
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:34'!
 newTrajectoryFragment! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 3/5/2021 14:57:59'!
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 3/5/2021 14:57:59'!
 pvtHopsPerPixel: aNumber
 	hopsPerPixel _ aNumber! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 6/26/2020 16:11:12'!
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 4/9/2021 12:47:04'!
 pvtSetForm: aForm
 
 	targetForm _ aForm.
-	morphIds _ WordArray new: targetForm width * targetForm height.
 	targetWidth _ targetForm width.
+	targetHeight _ targetForm height.
+	morphIds _ WordArray new: targetWidth * targetHeight.
 	self resetMorphBounds.
 	self clipRect: targetForm boundingBox.
 	self antiAliasingWidth: self class defaultAntiAliasingWidth.! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 5/15/2020 09:27:20'!
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 5/15/2020 09:27:20'!
 pvtStrokeWidth: aNumber
 
 	strokeWidth _ aNumber.! !
 
-!VectorEngineAbstract methodsFor: 'private' stamp: 'jmv 4/11/2020 19:07:10'!
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 4/9/2021 12:13:16'!
 resetMorphBounds
 
-	morphBoundsTop _ targetForm height - 1.
+	morphBoundsTop _ targetHeight - 1.
 	morphBoundsBottom _ 0.
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/18/2021 15:19:42'!
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/18/2021 15:19:42'!
 basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngineSubPixel onForm: Display)
@@ -3350,7 +3340,7 @@ Display forceToScreen.
 	currentX _ thetaCos * xp - (thetaSin * yp) + cx.
 	currentY _ thetaSin * xp + (thetaCos * yp) + cy.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
 basicArcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngineSubPixel onForm: Display)
@@ -3438,7 +3428,7 @@ Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entr
 
 	self basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:33'!
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:33'!
 basicClosePath
 "
 (VectorEngineSubPixel onForm: Display)
@@ -3452,7 +3442,7 @@ Display forceToScreen
 
 	self basicLineToX: firstX y: firstY! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
 basicCubicBezierToX: xTo y: yTo control1X: xC1 y: yC1 control2X: xC2 y: yC2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -3485,7 +3475,7 @@ Display forceToScreen
 	currentX _ xTo.
 	currentY _ yTo.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
 basicLineToX: xTo y: yTo
 "
 (VectorEngineSubPixel onForm: Display)
@@ -3524,7 +3514,7 @@ Display forceToScreen
 	currentX _ xTo.
 	currentY _ yTo.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:33'!
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:33'!
 basicMoveToX: x y: y
 "
 (VectorEngineSubPixel onForm: Display)
@@ -3549,7 +3539,7 @@ Display forceToScreen
 	currentX _ x.
 	currentY _ y.! !
 
-!VectorEngineAbstract methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/18/2021 16:30:02'!
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/18/2021 16:30:02'!
 basicQuadraticBezierToX: xTo y: yTo controlX: xC y: yC
 	"
 (VectorEngineSubPixel onForm: Display)
@@ -3575,20 +3565,24 @@ Display forceToScreen
 	currentX _ xTo.
 	currentY _ yTo.! !
 
-!VectorEngineAbstract methodsFor: 'morphic' stamp: 'jmv 3/16/2021 09:55:37'!
+!VectorGraphicsEngine methodsFor: 'morphic' stamp: 'jmv 3/16/2021 09:55:37'!
 canvas: aMorphicCanvas
 	"Only needed if we are being called from a Canvas"
 
 	canvas _ aMorphicCanvas! !
 
-!VectorEngineAbstract methodsFor: 'morphic' stamp: 'jmv 11/17/2020 09:27:07'!
+!VectorGraphicsEngine methodsFor: 'morphic' stamp: 'jmv 11/17/2020 09:27:07'!
 morph: aMorph isAtPoint: aPoint
 	| index |
 	index _ aPoint y * targetWidth + aPoint x + 1.
 	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
 	^((morphIds at: index) >> 8) = aMorph morphId! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:10:24'!
+!VectorGraphicsEngine methodsFor: 'testing' stamp: 'jmv 4/9/2021 12:20:04'!
+doesSubPixelAntiAliasing
+	^false! !
+
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:10:24'!
 experLinesAndShapes
 	"
 	VectorEngineSubPixel experLinesAndShapes
@@ -3658,7 +3652,7 @@ experLinesAndShapes
 	
 	Display forceToScreen! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:11:44'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:11:44'!
 experLinesAndShapes2
 	"
 	VectorEngineSubPixel experLinesAndShapes2
@@ -3738,7 +3732,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:12:34'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:12:34'!
 experLinesAndShapes3
 	"
 	VectorEngineSubPixel experLinesAndShapes3
@@ -3802,7 +3796,7 @@ experLinesAndShapes3
 	Display forceToScreen.
 ! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:13:26'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:13:26'!
 experLinesAndShapes4
 	"
 	VectorEngineSubPixel experLinesAndShapes4
@@ -3866,7 +3860,7 @@ experLinesAndShapes4
 	Display forceToScreen.
 ! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:14:00'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:14:00'!
 experLinesAndShapesx
 	"
 	VectorEngineSubPixel experLinesAndShapesx
@@ -3903,7 +3897,7 @@ experLinesAndShapesx
 	
 	Display forceToScreen.! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:14:54'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:14:54'!
 experLinesAndShapesx2
 	"
 	VectorEngineSubPixel experLinesAndShapesx2
@@ -3927,7 +3921,7 @@ experLinesAndShapesx2
 	Display forceToScreen.
 ! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:15:25'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:15:25'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -3968,7 +3962,7 @@ experimentHopsPerPixel1
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:15:59'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:15:59'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -4022,7 +4016,7 @@ Feature require: 'LinearAlgebra'.
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngineAbstract class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:16:22'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:16:22'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -4063,14 +4057,30 @@ experimentHopsPerPixel3
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngineAbstract class methodsFor: 'instance creation' stamp: 'jmv 3/22/2021 14:59:34'!
+!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 4/9/2021 12:17:36'!
+boundsFinderFor: aForm
+
+	^ VectorEngineBoundsFinder new initializeOnForm: aForm! !
+
+!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 3/22/2021 14:59:34'!
 defaultAntiAliasingWidth
 	self subclassResponsibility! !
 
-!VectorEngineAbstract class methodsFor: 'instance creation' stamp: 'jmv 4/17/2020 09:47:42'!
+!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 4/9/2021 12:06:25'!
 onForm: aForm
 
-	^ self new initializeOnForm: aForm! !
+	^ (VectorEngineSubPixelWithPlugin isPluginAvailable
+		ifTrue: [VectorEngineSubPixelWithPlugin]
+		ifFalse: [VectorEngineWholePixel])
+			new initializeOnForm: aForm! !
+
+!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 4/9/2021 12:22:14'!
+subPixelAntiAliasingOnForm: aForm
+
+	^ (VectorEngineSubPixelWithPlugin isPluginAvailable
+		ifTrue: [VectorEngineSubPixelWithPlugin]
+		ifFalse: [VectorEngineSubPixel])
+			new initializeOnForm: aForm! !
 
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 11/17/2020 14:49:32'!
 clipCurrentMorph: aBoolean! !
@@ -4164,13 +4174,20 @@ finishPath: ensureClosePath
 	morphBoundsRight _ morphBoundsRight max: blendRight.
 	morphBoundsBottom _ morphBoundsBottom max: blendBottom.! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/22/2021 11:16:28'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/9/2021 12:15:53'!
+initializeOnForm: aForm
+	self currentMorph: nil.
+	targetWidth _ aForm width.
+	targetHeight _ aForm height.
+	self resetMorphBounds.! !
+
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/9/2021 12:10:28'!
 initializePath
 
 	super initializePath.
 
-	blendLeft _ targetWidth.			"drawable right. Will later be refined."
-	blendTop _ targetForm height.		"drawable bottom. Will later be refined."
+	blendLeft _ targetWidth.						"drawable right. Will later be refined."
+	blendTop _ targetHeight.						"drawable bottom. Will later be refined."
 	blendRight _ 0.						"drawable left. Will later be refined."
 	blendBottom _ 0.						"drawable top. Will later be refined."! !
 
@@ -4181,12 +4198,10 @@ morph: aMorph isAtPoint: aPoint
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/5/2021 15:14:42'!
 pvtFillColor: aColor! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/22/2021 15:16:27'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/9/2021 12:16:15'!
 pvtSetForm: aForm
 
-	targetForm _ aForm.
-	targetWidth _ targetForm width.
-	self resetMorphBounds.! !
+	self shouldNotImplement! !
 
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/5/2021 15:14:51'!
 pvtStrokeColor: aColor! !
@@ -4218,7 +4233,7 @@ clipCurrentMorph: aBoolean
 				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) >>8 << 8) ]]].
 	clipCurrentMorph _ aBoolean! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 8/6/2020 17:43:05'!
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 4/9/2021 12:45:12'!
 clipRect: aRectangle 
 	"by convention, aRectangle includes left and top but does not include right and bottom.
 	We do draw clipRight and clipBottom but not beyond.
@@ -4227,7 +4242,7 @@ clipRect: aRectangle
 	clipLeft _ aRectangle left asInteger max: 0.
 	clipTop _ aRectangle top asInteger max: 0.
 	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
-	clipBottom _ (aRectangle bottom asInteger min: targetForm height) - 1! !
+	clipBottom _ (aRectangle bottom asInteger min: targetHeight) - 1! !
 
 !VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 3/8/2021 10:33:46'!
 currentMorph: aMorph
@@ -4536,13 +4551,13 @@ finishPath: ensureClosePath
 			ifFalse: [
 				self blendStrokeOnly ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:21:13'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 4/9/2021 12:45:21'!
 initializePath
 
 	super initializePath.
 
-	blendLeft _ targetWidth.			"drawable right. Will later be refined."
-	blendTop _ targetForm height.		"drawable bottom. Will later be refined."
+	blendLeft _ targetWidth.						"drawable right. Will later be refined."
+	blendTop _ targetHeight.						"drawable bottom. Will later be refined."
 	blendRight _ 0.						"drawable left. Will later be refined."
 	blendBottom _ 0.						"drawable top. Will later be refined."! !
 
@@ -4555,12 +4570,12 @@ newTrajectoryFragment
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 3/22/2021 14:58:30'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 4/9/2021 12:45:57'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
-	s _ targetForm width * targetForm height.
+	s _ targetWidth * targetHeight.
 	alphaMask _ WordArray new: s.
 	edgeCounts _ WordArray new: s.
 	subPixelDelta _ self class defaultSubPixelDelta.! !
@@ -4905,6 +4920,10 @@ blendStrokeOnlyAt: pixelIndex
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
+!VectorEngineSubPixel methodsFor: 'testing' stamp: 'jmv 4/9/2021 12:20:14'!
+doesSubPixelAntiAliasing
+	^true! !
+
 !VectorEngineSubPixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:34:51'!
 defaultAntiAliasingWidth
 	^1.4! !
@@ -4918,7 +4937,7 @@ defaultSubPixelDelta
 clipCurrentMorph: aBoolean
 	clipCurrentMorph _ aBoolean.! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'accessing' stamp: 'jmv 3/19/2021 12:26:36'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'accessing' stamp: 'jmv 4/9/2021 12:46:06'!
 clipRect: aRectangle 
 	"by convention, aRectangle includes left and top but does not include right and bottom.
 	We do draw clipRight and clipBottom but not beyond.
@@ -4927,7 +4946,7 @@ clipRect: aRectangle
 	clipLeft _ aRectangle left asInteger max: 0.
 	clipTop _ aRectangle top asInteger max: 0.
 	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
-	clipBottom _ (aRectangle bottom asInteger min: targetForm height) - 1.! !
+	clipBottom _ (aRectangle bottom asInteger min: targetHeight) - 1.! !
 
 !VectorEngineSubPixelWithPlugin methodsFor: 'accessing' stamp: 'jmv 3/20/2021 20:47:33'!
 currentMorph: aMorph
@@ -5139,7 +5158,7 @@ finishPath: ensureClosePath
 			ifFalse: [
 				self primBlendStrokeOnlyLeft: spanLeft top: spanTop right: spanRight bottom: spanBottom targetBits: targetForm bits morphIds: morphIds alphaMask: alphaMask ]].! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/22/2021 14:35:28'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 4/9/2021 12:46:24'!
 initializePath
 
 	super initializePath.
@@ -5151,8 +5170,8 @@ initializePath
 		morphIds: morphIds
 		edgeCounts: edgeCounts
 		alphaMask: alphaMask
-		targetWidth: targetForm width
-		targetHeight: targetForm height.
+		targetWidth: targetWidth
+		targetHeight: targetHeight.
 	self primAntiAliasingWidth: antiAliasingWidth asFloat subPixelDelta: subPixelDelta asFloat.
 	self primClipLeft: clipLeft clipTop: clipTop clipRight: clipRight clipBottom: clipBottom.
 	self primCurrentMorphId: currentMorphId currentClipsSubmorphs: currentClipsSubmorphs.
@@ -5177,12 +5196,12 @@ pvtFillColor: aFillColorOrNil
 				a: aFillColorOrNil alpha]
 		ifFalse: [self primFillR: 0.0 g: 0.0 b: 0.0 a: 0.0]! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/22/2021 14:58:33'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 4/9/2021 12:46:37'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
-	s _ targetForm width * targetForm height.
+	s _ targetWidth * targetHeight.
 	alphaMask _ WordArray new: s.
 	edgeCounts _ WordArray new: s.
 	subPixelDelta _ self class defaultSubPixelDelta.! !
@@ -5355,6 +5374,10 @@ primTextTxA11: a11 txA12: a12 txA13: a13 txA21: a21 txA22: a22 txA23: a23
 
 	self primitiveFailed! !
 
+!VectorEngineSubPixelWithPlugin methodsFor: 'testing' stamp: 'jmv 4/9/2021 12:20:21'!
+doesSubPixelAntiAliasing
+	^true! !
+
 !VectorEngineSubPixelWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 3/4/2021 14:53:07'!
 defaultAntiAliasingWidth
 	^1.4! !
@@ -5364,9 +5387,20 @@ defaultSubPixelDelta
 
 	^0.25  			"Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"! !
 
+!VectorEngineSubPixelWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 4/9/2021 12:05:33'!
+isPluginAvailable
+
+	^ self primitiveTry ~~ #primitiveFailed! !
+
 !VectorEngineSubPixelWithPlugin class methodsFor: 'class initialization' stamp: 'jmv 3/20/2021 21:05:53'!
 initialize
 	PluginAccess _ Semaphore forMutualExclusion.! !
+
+!VectorEngineSubPixelWithPlugin class methodsFor: 'private' stamp: 'jmv 4/9/2021 12:05:08'!
+primitiveTry
+	<primitive: 'primSpanBottom' module: 'VectorEnginePlugin'>
+
+	^#primitiveFailed! !
 
 !VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 6/6/2020 17:37:09'!
 antiAliasingWidth: aNumber
@@ -5385,7 +5419,7 @@ clipCurrentMorph: aBoolean
 				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) >>8 << 8) ]]].
 	clipCurrentMorph _ aBoolean! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 8/6/2020 17:43:30'!
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 4/9/2021 12:48:54'!
 clipRect: aRectangle 
 	"by convention, aRectangle includes left and top but does not include right and bottom.
 	We do draw clipRight and clipBottom but not beyond.
@@ -5394,7 +5428,7 @@ clipRect: aRectangle
 	clipLeft _ aRectangle left asInteger max: 0.
 	clipTop _ aRectangle top asInteger max: 0.
 	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
-	clipBottom _ (aRectangle bottom asInteger min: targetForm height) - 1! !
+	clipBottom _ (aRectangle bottom asInteger min: targetHeight) - 1! !
 
 !VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 3/8/2021 10:34:06'!
 currentMorph: aMorph
@@ -5619,13 +5653,13 @@ finishPath: ensureClosePath
 			ifFalse: [
 				self blendStrokeOnly ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:37:09'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 4/9/2021 12:47:27'!
 initializePath
 
 	super initializePath.
 
-	blendLeft _ targetWidth.			"drawable right. Will later be refined."
-	blendTop _ targetForm height.		"drawable bottom. Will later be refined."
+	blendLeft _ targetWidth.						"drawable right. Will later be refined."
+	blendTop _ targetHeight.						"drawable bottom. Will later be refined."
 	blendRight _ 0.						"drawable left. Will later be refined."
 	blendBottom _ 0.						"drawable top. Will later be refined."! !
 
@@ -5638,12 +5672,12 @@ newTrajectoryFragment
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/26/2020 16:11:56'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 4/9/2021 12:47:16'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
-	s _ targetForm width * targetForm height.
+	s _ targetWidth * targetHeight.
 	alphaMask _ ByteArray new: s.
 	edgeCounts _ ByteArray new: s.! !
 
@@ -8268,6 +8302,6 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 		at: p1
 		trueTypeFont: aTrueTypeFont
 		color: aColor! !
-VectorCanvas initialize!
+HybridCanvas initialize!
 VectorEngineSubPixelWithPlugin initialize!
 TTFontDescription initialize!
