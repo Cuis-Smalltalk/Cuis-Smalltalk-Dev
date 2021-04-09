@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4567] on 9 April 2021 at 2:46:26 pm'!
+'From Cuis 5.0 [latest update: #4567] on 9 April 2021 at 4:39:16 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 216!
+!provides: 'VectorGraphics' 1 217!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1283,13 +1283,14 @@ drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 		self onMorphIdsDo: [
 			aWorldMorph drawOn: self ]].! !
 
-!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 4/9/2021 14:45:51'!
+!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 4/9/2021 16:38:20'!
 initialize
 	| family folder |
-	folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
-	family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
 	UISupervisor whenUIinSafeState: [
-		Preferences setDefaultFont: family familyName.
+		(FontFamily familyNamed: FontFamily defaultFamilyName) isTrueTypeFontFamily ifFalse: [
+			folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
+			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
+			Preferences setDefaultFont: family familyName ].
 		MorphicCanvas activeSubclass: HybridCanvas ]! !
 
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
