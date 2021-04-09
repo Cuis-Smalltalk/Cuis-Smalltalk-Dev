@@ -43,7 +43,7 @@ mv ./sqcogspur64linuxht ./cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-4526.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-4567.image
 ```
 If you get this error message (you won't get it if you run Cuis as root or sudo):
 ```
@@ -68,11 +68,11 @@ Drag Squeak.app to your folder
 ```
 
 ### Starting Cuis Smalltalk ###
-* drop the Cuis5.0-4526.image over the Squeak.app file
+* drop the Cuis5.0-4567.image over the Squeak.app file
 * If you get "Squeak is an app downloaded from the Internet. Are you sure you want to open it?", click on [Open]
 * Alternatively, you might:
 ```
-./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-4526.image
+./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis5.0-4567.image
 ```
 
 ## For 64 bits Windows (Git Bash) ##
@@ -89,7 +89,7 @@ unzip cogspur.zip -d cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-4526.image
+cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-4567.image
 ```
 
 ## For Raspberry Pi Raspian ##
@@ -105,7 +105,7 @@ mv ./sqcogspurlinuxhtRPi ./cogspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-4526-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-4567-32.image
 ```
 
 ## For Chromebooks ##
@@ -136,8 +136,8 @@ mv ./sqstkspurlinuxhtRPi ./stkspur
 
 ### Starting Cuis Smalltalk ###
 ```
-cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-4526-32.image
-stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-4526-32.image
+cogspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-4567-32.image
+stkspur/squeak Cuis-Smalltalk-Dev/Cuis5.0-4567-32.image
 ```
 
 ## Troubleshooting ##
