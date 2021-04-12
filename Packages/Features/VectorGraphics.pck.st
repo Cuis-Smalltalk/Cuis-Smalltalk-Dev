@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4567] on 9 April 2021 at 4:39:16 pm'!
+'From Cuis 5.0 [latest update: #4567] on 12 April 2021 at 11:38:14 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 217!
+!provides: 'VectorGraphics' 1 218!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -4585,7 +4585,7 @@ pvtSetForm: aForm
 pvtStrokeColor: aStrokeColorOrNil
 	strokeColor _ aStrokeColorOrNil! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:21:13'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 4/12/2021 11:18:28'!
 pvtStrokeWidth: aNumber
 
 	| swErodedHalf |
@@ -4593,7 +4593,7 @@ pvtStrokeWidth: aNumber
 	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
 	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
 	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
+	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs.! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 3/9/2021 12:39:59'!
 blendFillOnly
@@ -5686,7 +5686,7 @@ pvtSetForm: aForm
 pvtStrokeColor: aStrokeColorOrNil
 	strokeColor _ aStrokeColorOrNil! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:37:09'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 4/12/2021 11:18:46'!
 pvtStrokeWidth: aNumber
 
 	| swErodedHalf |
@@ -5694,7 +5694,7 @@ pvtStrokeWidth: aNumber
 	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
 	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
 	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf * swErodedHalf sign.! !
+	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs.! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 3/9/2021 13:10:09'!
 blendFillOnly

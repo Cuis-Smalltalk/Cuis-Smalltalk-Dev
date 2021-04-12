@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4561] on 7 April 2021 at 2:21:25 pm'!
+'From Cuis 5.0 [latest update: #4567] on 12 April 2021 at 11:38:38 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 7!
+!provides: 'VectorEnginePlugin' 1 8!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -146,7 +146,7 @@ strokeR: r g: g b: b a: a
 	strokeB _ b.
 	strokeA _ a.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/19/2021 11:21:04'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 4/12/2021 11:21:40'!
 strokeWidth: aNumber
 	| swErodedHalf |
 	self
@@ -158,8 +158,9 @@ strokeWidth: aNumber
 	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
 	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
 	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf.
-	swErodedHalf < 0.0 ifTrue: [ auxStrokeWidthErodedHalfSquared _ 0.0 - auxStrokeWidthErodedHalfSquared ]! !
+	self cCode: 
+			'auxStrokeWidthErodedHalfSquared = swErodedHalf * fabs(swErodedHalf);'
+		inSmalltalk: [ auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs ].! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:01:15'!
 targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray targetWidth: aNumber targetHeight: otherNumber
