@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4567] on 12 April 2021 at 11:38:38 am'!
+'From Cuis 5.0 [latest update: #4567] on 12 April 2021 at 5:07:19 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 8!
+!provides: 'VectorEnginePlugin' 1 9!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -32,7 +32,7 @@ antiAliasingWidth: aFloat subPixelDelta: otherFloat
 	auxAntiAliasingWidthScaledInverse _ 127.0 / aFloat.
 	subPixelDelta _ otherFloat.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:16'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 4/12/2021 16:37:50'!
 clipCurrentMorph: aBoolean morphIds: aWordArray
 	self
 		primitive: 'primClipCurrentMorph'
@@ -45,7 +45,7 @@ clipCurrentMorph: aBoolean morphIds: aWordArray
 			pixelIndex _ displayY * targetWidth +  clipLeft.
 			clipLeft to: clipRight do: [ :displayX |
 				pixelIndex _ pixelIndex + 1.
-				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) >>8 << 8) ]]].
+				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) bitAnd: 16rFFFFFF00) ]]].
 	clipCurrentMorph _ aBoolean! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:23'!
@@ -354,7 +354,7 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: xTo y: yTo ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 4/6/2021 16:16:47'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 4/12/2021 15:29:08'!
 updateAlphasForX: x y: y
 
 	"slight optimization possible when we know width = 0... perhaps implement:
@@ -366,7 +366,13 @@ updateAlphasForX: x y: y
 	| t b l r pixelIndex candidateAlpha alphaWord redAlpha greenAlpha blueAlpha doUpdate distanceToAxisSquared dy dySquared dx dxSquared dxp |
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
-	
+
+	self var: #candidateAlpha type: 'uint32_t'.
+	self var: #alphaWord type: 'uint32_t'.
+	self var: #redAlpha type: 'uint32_t'.
+	self var: #greenAlpha type: 'uint32_t'.
+	self var: #blueAlpha type: 'uint32_t'.
+
 	self var: #distanceToAxisSquared type: 'float'.
 	self var: #dy type: 'float'.
 	self var: #dySquared type: 'float'.
@@ -407,8 +413,12 @@ updateAlphasForX: x y: y
 							ifTrue: [
 								candidateAlpha _ 16r7F0000 ]
 							ifFalse: [
-								candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
-								candidateAlpha _ candidateAlpha bitShift: 16 ].
+								self cCode: '
+										candidateAlpha = (uint32_t)((auxStrokeWidthDilatedHalf - (sqrt(distanceToAxisSquared))) * auxAntiAliasingWidthScaledInverse);
+										candidateAlpha = candidateAlpha << 16;'
+									inSmalltalk: [
+										candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
+										candidateAlpha _ candidateAlpha bitShift: 16 ]].
 						candidateAlpha > redAlpha ifTrue: [
 							doUpdate _ true.
 							redAlpha _ candidateAlpha ]].
@@ -421,8 +431,12 @@ updateAlphasForX: x y: y
 							ifTrue: [
 								candidateAlpha _ 16r7F00 ]
 							ifFalse: [
-								candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
-								candidateAlpha _ candidateAlpha bitShift: 8 ].
+								self cCode: '
+										candidateAlpha = (uint32_t)((auxStrokeWidthDilatedHalf - (sqrt(distanceToAxisSquared))) * auxAntiAliasingWidthScaledInverse);
+										candidateAlpha = candidateAlpha << 8;'
+									inSmalltalk: [
+										candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
+										candidateAlpha _ candidateAlpha bitShift: 8 ]].
 						candidateAlpha > greenAlpha ifTrue: [
 							doUpdate _ true.
 							greenAlpha _ candidateAlpha ]].
@@ -436,15 +450,19 @@ updateAlphasForX: x y: y
 							ifTrue: [
 								candidateAlpha _ 16r7F ]
 							ifFalse: [
-								candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
+								self cCode: '
+										candidateAlpha = (uint32_t)((auxStrokeWidthDilatedHalf - (sqrt(distanceToAxisSquared))) * auxAntiAliasingWidthScaledInverse);'
+									inSmalltalk: [
+										candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger ].
 								].
 						candidateAlpha > blueAlpha ifTrue: [
 							doUpdate _ true.
 							blueAlpha _ candidateAlpha ]].
 				doUpdate ifTrue: [
-					alphaMask at: pixelIndex put: ((redAlpha bitOr: greenAlpha) bitOr: blueAlpha) ]]]]! !
+					alphaWord _ (redAlpha bitOr: greenAlpha) bitOr: blueAlpha.
+					alphaMask at: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 4/6/2021 17:22:01'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 4/12/2021 14:54:14'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills."
 
@@ -452,6 +470,14 @@ updateEdgeCountAtX: x y: y
 
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
+
+	self var: #countWord type: 'uint32_t'.
+	self var: #redCount type: 'uint32_t'.
+	self var: #greenCount type: 'uint32_t'.
+	self var: #blueCount type: 'uint32_t'.
+	self var: #redIncrement type: 'uint32_t'.
+	self var: #greenIncrement type: 'uint32_t'.
+	self var: #blueIncrement type: 'uint32_t'.
 
 	thisYTruncated _ y asInteger.	"truncated, both in C and Smalltalk"
 	thisYTruncated = prevYTruncated ifTrue: [
@@ -933,15 +959,31 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	answer _ nextGlyphX.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/19/2021 11:19:17'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 4/12/2021 16:32:54'!
 blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends stroke over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha clippingAntiAlias |
+	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha antiAliasGreenAlphaBitsShifted clippingAntiAliasBits clippingAntiAlias morphIdWord |
 
+	self var: #antiAliasAlphasWord type: 'uint32_t'.
+	self var: #antiAliasRedAlphaBits type: 'uint32_t'.
+	self var: #antiAliasGreenAlphaBits type: 'uint32_t'.
+	self var: #antiAliasBlueAlphaBits type: 'uint32_t'.
+
+	self var: #targetWord type: 'uint32_t'.
+	self var: #resultAlphaBits type: 'uint32_t'.
+	self var: #resultRBits type: 'uint32_t'.
+	self var: #resultGBits type: 'uint32_t'.
+	self var: #resultBBits type: 'uint32_t'.
+
+	self var: #morphIdWord type: 'uint32_t'.
+	self var: #antiAliasGreenAlphaBitsShifted type: 'uint32_t'.
+	self var: #clippingAntiAliasBits type: 'uint32_t'.
+
+	self var: #clippingAntiAlias type: 'float'.
 	self var: #resultR type: 'float'.
 	self var: #resultG type: 'float'.
 	self var: #resultB type: 'float'.
@@ -981,19 +1023,27 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 16r7F.
-			clippingAntiAlias _ clippingAntiAlias max: (antiAliasGreenAlphaBits bitShift: -8)]
+			morphIdWord _ morphIds at: pixelIndex.
+			clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+			self cCode: '
+					antiAliasGreenAlphaBitsShifted = antiAliasGreenAlphaBits >> 8;'
+				inSmalltalk: [
+					antiAliasGreenAlphaBitsShifted _ antiAliasGreenAlphaBits bitShift: -8 ].
+			antiAliasGreenAlphaBitsShifted > clippingAntiAliasBits ifTrue: [
+				clippingAntiAliasBits _ antiAliasGreenAlphaBitsShifted]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 16r7F.
-					alphaR _ alphaR * clippingAntiAlias * ( 1.0 / 127.0).
-					alphaG _ alphaG * clippingAntiAlias * ( 1.0 / 127.0).
-					alphaB _ alphaB * clippingAntiAlias * ( 1.0 / 127.0) ]
+					morphIdWord _ morphIds at: pixelIndex.
+					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias _ clippingAntiAliasBits * (1.0 / 127.0).
+					alphaR _ alphaR * clippingAntiAlias.
+					alphaG _ alphaG * clippingAntiAlias.
+					alphaB _ alphaB * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAlias _ 0]].
+					clippingAntiAliasBits _ 0]].
 
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
 		targetWord _ targetBits at: pixelIndex.
@@ -1007,37 +1057,57 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 		alphaR = 0.0 ifFalse: [
 			unAlphaR _ 1.0 - alphaR.
 			resultAlphaR _ alphaR + (unAlphaR * targetAlpha).
-			resultR _ alphaR * fillR * 255.0 + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
-			resultR _ resultR/resultAlphaR.
-			resultRBits _ (resultR+0.5) asInteger bitShift: 16 ].
+			self cCode: '
+					resultR = ((alphaR * fillR) * 255.0) + ((unAlphaR * (resultRBits >> 16)) * targetAlpha);
+					resultRBits = (uint32_t)(resultR  / resultAlphaR + 0.5) << 16;'
+				inSmalltalk: [
+					resultR _ alphaR * fillR * 255.0 + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
+					resultRBits _ (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
 
 		alphaG = 0.0 ifFalse: [
 			unAlphaG _ 1.0 - alphaG.
 			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
-			resultG _ alphaG * fillG * 255.0 + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
-			resultG _ resultG/resultAlphaG.
-			resultGBits _ (resultG+0.5) asInteger bitShift: 8.
-			resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ].
+			self cCode: '
+					resultG = ((alphaG * fillG) * 255.0) + ((unAlphaG * (resultGBits >> 8)) * targetAlpha);
+					resultGBits = (uint32_t)(resultG / resultAlphaG + 0.5) << 8;
+					resultAlphaBits = (uint32_t)(resultAlphaG * 255.0 + 0.5) << 24;'
+				inSmalltalk: [
+					resultG _ alphaG * fillG * 255.0 + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
+					resultGBits _ (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
+					resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
 
 		alphaB = 0.0 ifFalse: [
 			unAlphaB _ 1.0 - alphaB.
 			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
-			resultB _ alphaB * fillB * 255.0 + (unAlphaB * resultBBits * targetAlpha).
-			resultB _ resultB/resultAlphaB.
-			resultBBits _ (resultB+0.5) asInteger ].
+			self cCode: '
+					resultB = ((alphaB * fillB) * 255.0) + ((unAlphaB * resultBBits) * targetAlpha);
+					resultBBits = (uint32_t)(resultB / resultAlphaB + 0.5);'
+				inSmalltalk: [
+					resultB _ alphaB * fillB * 255.0 + (unAlphaB * resultBBits * targetAlpha).
+					resultBBits _ (resultB / resultAlphaB + 0.5) asInteger ]].
 
-		targetBits at: pixelIndex put: (((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits).
+		targetWord _ ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].
+			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIds at: pixelIndex put:  morphIdWord ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/11/2021 14:08:47'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 4/12/2021 16:47:53'!
 blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray
 	| pixelIndex edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixelWord edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside |
 	self
 		primitive: 'primBlendFillOnly'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger WordArray WordArray WordArray WordArray).
+
+	self var: #edgesThisPixelWord type: 'uint32_t'.
+	self var: #edgesThisPixelR type: 'uint8_t'.
+	self var: #edgesThisPixelG type: 'uint8_t'.
+	self var: #edgesThisPixelB type: 'uint8_t'.
+	self var: #edgesUpToThisPixelR type: 'uint8_t'.
+	self var: #edgesUpToThisPixelG type: 'uint8_t'.
+	self var: #edgesUpToThisPixelB type: 'uint8_t'.
 
 	targetBits _ aBitmap.
 	morphIds _ aWordArray.
@@ -1053,35 +1123,63 @@ blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWo
 
 			edgesThisPixelWord _ edgeCounts at: pixelIndex.
 			edgeCounts at: pixelIndex put: 0.
-			edgesThisPixelR _ (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
-			edgesThisPixelG _ (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
-			edgesThisPixelB _ edgesThisPixelWord bitAnd: 16rFF.
 
-			"Not needed in C or OpenCL, use signed char, i.e. a type where 16rFF means -1 and not 255"
-			edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
-			edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
-			edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ].
+			self cCode: '
+					edgesThisPixelR = (uint32_t) (edgesThisPixelWord & 0xFF0000) >> 16;
+					edgesThisPixelG = (uint32_t) (edgesThisPixelWord & 0xFF00) >> 8;
+					edgesThisPixelB = (uint32_t) (edgesThisPixelWord & 0xFF);'
+				inSmalltalk: [
+					edgesThisPixelR _ (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
+					edgesThisPixelG _ (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
+					edgesThisPixelB _ edgesThisPixelWord bitAnd: 16rFF.
+					"Not needed in C or OpenCL, just use a wraparound 8 bit type, such as signed char or unsigned char"
+					edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
+					edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
+					edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ]].
 
 			edgesUpToThisPixelR _ edgesUpToThisPixelR + edgesThisPixelR.
 			edgesUpToThisPixelG _ edgesUpToThisPixelG + edgesThisPixelG.
 			edgesUpToThisPixelB _ edgesUpToThisPixelB + edgesThisPixelB.
-			isRedInside _ edgesUpToThisPixelR ~= 0.
-			isGreenInside _ edgesUpToThisPixelG ~= 0.
-			isBlueInside _ edgesUpToThisPixelB ~= 0.
+
+			self cCode: '
+					isRedInside = edgesUpToThisPixelR;
+					isGreenInside = edgesUpToThisPixelG;
+					isBlueInside = edgesUpToThisPixelB;'
+				inSmalltalk: [
+					"In C, integers already behave like booleans"
+					isRedInside _ edgesUpToThisPixelR ~= 0.
+					isGreenInside _ edgesUpToThisPixelG ~= 0.
+					isBlueInside _ edgesUpToThisPixelB ~= 0 ].
 
 			self blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/19/2021 11:19:37'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 4/12/2021 17:00:42'!
 blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha foreR foreG foreB alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha clippingAntiAlias |
+	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha foreR foreG foreB alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha antiAliasGreenAlphaBitsShifted clippingAntiAliasBits clippingAntiAlias morphIdWord |
 
+	self var: #antiAliasAlphasWord type: 'uint32_t'.
+	self var: #antiAliasRedAlphaBits type: 'uint32_t'.
+	self var: #antiAliasGreenAlphaBits type: 'uint32_t'.
+	self var: #antiAliasBlueAlphaBits type: 'uint32_t'.
+
+	self var: #targetWord type: 'uint32_t'.
+	self var: #resultAlphaBits type: 'uint32_t'.
+	self var: #resultRBits type: 'uint32_t'.
+	self var: #resultGBits type: 'uint32_t'.
+	self var: #resultBBits type: 'uint32_t'.
+
+	self var: #antiAliasGreenAlphaBitsShifted type: 'uint32_t'.
+	self var: #morphIdWord type: 'uint32_t'.
+	self var: #clippingAntiAliasBits type: 'uint32_t'.
+
+	self var: #clippingAntiAlias type: 'float'.
 	self var: #resultR type: 'float'.
 	self var: #resultG type: 'float'.
 	self var: #resultB type: 'float'.
@@ -1142,21 +1240,29 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
 			isGreenInside
-				ifTrue: [clippingAntiAlias _ 16r7F]
+				ifTrue: [clippingAntiAliasBits _ 16r7F]
 				ifFalse: [
-					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 16r7F.
-					clippingAntiAlias _ clippingAntiAlias max: (antiAliasGreenAlphaBits bitShift: -8)]]
+					morphIdWord _ morphIds at: pixelIndex.
+					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+					self cCode: '
+							antiAliasGreenAlphaBitsShifted = antiAliasGreenAlphaBits >> 8;'
+						inSmalltalk: [
+							antiAliasGreenAlphaBitsShifted _ antiAliasGreenAlphaBits bitShift: -8 ].
+					antiAliasGreenAlphaBitsShifted > clippingAntiAliasBits ifTrue: [
+						clippingAntiAliasBits _ antiAliasGreenAlphaBitsShifted ]]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 16r7F.
-					alphaR _ alphaR * clippingAntiAlias * ( 1.0 / 127.0).
-					alphaG _ alphaG * clippingAntiAlias * ( 1.0 / 127.0).
-					alphaB _ alphaB * clippingAntiAlias * ( 1.0 / 127.0) ]
+					morphIdWord _ morphIds at: pixelIndex.
+					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias _ clippingAntiAliasBits * (1.0 / 127.0).
+					alphaR _ alphaR * clippingAntiAlias.
+					alphaG _ alphaG * clippingAntiAlias.
+					alphaB _ alphaB * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAlias _ 0]].
+					clippingAntiAliasBits _ 0]].
 
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
 		targetWord _ targetBits at: pixelIndex.
@@ -1170,37 +1276,57 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 		alphaR = 0.0 ifFalse: [
 			unAlphaR _ 1.0 - alphaR.
 			resultAlphaR _ alphaR + (unAlphaR * targetAlpha).
-			resultR _ alphaR * foreR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
-			resultR _ resultR/resultAlphaR.
-			resultRBits _ (resultR+0.5) asInteger bitShift: 16 ].
+			self cCode: '
+					resultR = (alphaR * foreR) + ((unAlphaR * (resultRBits >> 16)) * targetAlpha);
+					resultRBits = (uint32_t)(resultR  / resultAlphaR + 0.5) << 16;'
+				inSmalltalk: [
+					resultR _ alphaR * foreR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
+					resultRBits _ (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
 
 		alphaG = 0.0 ifFalse: [
 			unAlphaG _ 1.0 - alphaG.
 			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
-			resultG _ alphaG * foreG + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
-			resultG _ resultG/resultAlphaG.
-			resultGBits _ (resultG+0.5) asInteger bitShift: 8.
-			resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ].
+			self cCode: '
+					resultG = (alphaG * foreG) + ((unAlphaG * (resultGBits >> 8)) * targetAlpha);
+					resultGBits = (uint32_t)(resultG / resultAlphaG + 0.5) << 8;
+					resultAlphaBits = (uint32_t)(resultAlphaG * 255.0 + 0.5) << 24;'
+				inSmalltalk: [
+					resultG _ alphaG * foreG + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
+					resultGBits _ (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
+					resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
 
 		alphaB = 0.0 ifFalse: [
 			unAlphaB _ 1.0 - alphaB.
 			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
-			resultB _ alphaB * foreB + (unAlphaB * resultBBits * targetAlpha).
-			resultB _ resultB/resultAlphaB.
-			resultBBits _ (resultB+0.5) asInteger ].
+			self cCode: '
+					resultB = (alphaB * foreB) + ((unAlphaB * resultBBits) * targetAlpha);
+					resultBBits = (uint32_t)(resultB / resultAlphaB + 0.5);'
+				inSmalltalk: [
+					resultB _ alphaB * foreB + (unAlphaB * resultBBits * targetAlpha).
+					resultBBits _ (resultB / resultAlphaB + 0.5) asInteger ]].
 
-		targetBits at: pixelIndex put: (((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits).
+		targetWord _ ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].
+			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/11/2021 14:09:00'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 4/12/2021 16:48:03'!
 blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray
 	| pixelIndex edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixelWord edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside |
 	self
 		primitive: 'primBlendStrokeAndFill'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger WordArray WordArray WordArray WordArray).
+
+	self var: #edgesThisPixelWord type: 'uint32_t'.
+	self var: #edgesThisPixelR type: 'uint8_t'.
+	self var: #edgesThisPixelG type: 'uint8_t'.
+	self var: #edgesThisPixelB type: 'uint8_t'.
+	self var: #edgesUpToThisPixelR type: 'uint8_t'.
+	self var: #edgesUpToThisPixelG type: 'uint8_t'.
+	self var: #edgesUpToThisPixelB type: 'uint8_t'.
 
 	targetBits _ aBitmap.
 	morphIds _ aWordArray.
@@ -1216,35 +1342,63 @@ blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds
 
 			edgesThisPixelWord _ edgeCounts at: pixelIndex.
 			edgeCounts at: pixelIndex put: 0.
-			edgesThisPixelR _ (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
-			edgesThisPixelG _ (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
-			edgesThisPixelB _ edgesThisPixelWord bitAnd: 16rFF.
 
-			"Not needed in C or OpenCL, use signed char, i.e. a type where 16rFF means -1 and not 255"
-			edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
-			edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
-			edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ].
+			self cCode: '
+					edgesThisPixelR = (uint32_t) (edgesThisPixelWord & 0xFF0000) >> 16;
+					edgesThisPixelG = (uint32_t) (edgesThisPixelWord & 0xFF00) >> 8;
+					edgesThisPixelB = (uint32_t) (edgesThisPixelWord & 0xFF);'
+				inSmalltalk: [
+					edgesThisPixelR _ (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
+					edgesThisPixelG _ (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
+					edgesThisPixelB _ edgesThisPixelWord bitAnd: 16rFF.
+					"Not needed in C or OpenCL, just use a wraparound 8 bit type, such as signed char or unsigned char"
+					edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
+					edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
+					edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ]].
 
 			edgesUpToThisPixelR _ edgesUpToThisPixelR + edgesThisPixelR.
 			edgesUpToThisPixelG _ edgesUpToThisPixelG + edgesThisPixelG.
 			edgesUpToThisPixelB _ edgesUpToThisPixelB + edgesThisPixelB.
-			isRedInside _ edgesUpToThisPixelR ~= 0.
-			isGreenInside _ edgesUpToThisPixelG ~= 0.
-			isBlueInside _ edgesUpToThisPixelB ~= 0.
+
+			"In C, integers already behave like booleans"
+			self cCode: '
+					isRedInside = edgesUpToThisPixelR;
+					isGreenInside = edgesUpToThisPixelG;
+					isBlueInside = edgesUpToThisPixelB;'
+				inSmalltalk: [
+					isRedInside _ edgesUpToThisPixelR ~= 0.
+					isGreenInside _ edgesUpToThisPixelG ~= 0.
+					isBlueInside _ edgesUpToThisPixelB ~= 0 ].
 
 			self blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/19/2021 11:19:53'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 4/12/2021 16:34:40'!
 blendStrokeOnlyAt: pixelIndex
 
 	"targetForm only contains opaque colors. Assume its alpha is always one. Don't ask for it. Set it to one when writing.
 	Blends stroke over background.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha clippingAntiAlias |
+	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha antiAliasGreenAlphaBitsShifted clippingAntiAliasBits clippingAntiAlias morphIdWord |
 
+	self var: #antiAliasAlphasWord type: 'uint32_t'.
+	self var: #antiAliasRedAlphaBits type: 'uint32_t'.
+	self var: #antiAliasGreenAlphaBits type: 'uint32_t'.
+	self var: #antiAliasBlueAlphaBits type: 'uint32_t'.
+
+	self var: #targetWord type: 'uint32_t'.
+	self var: #resultAlphaBits type: 'uint32_t'.
+	self var: #resultRBits type: 'uint32_t'.
+	self var: #resultGBits type: 'uint32_t'.
+	self var: #resultBBits type: 'uint32_t'.
+
+	self var: #morphIdWord type: 'uint32_t'.
+	self var: #antiAliasGreenAlphaBitsShifted type: 'uint32_t'.
+	self var: #clippingAntiAliasBits type: 'uint32_t'.
+
+	self var: #clippingAntiAlias type: 'float'.
 	self var: #resultR type: 'float'.
 	self var: #resultG type: 'float'.
 	self var: #resultB type: 'float'.
@@ -1279,19 +1433,27 @@ blendStrokeOnlyAt: pixelIndex
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 16r7F.
-			clippingAntiAlias _ clippingAntiAlias max: (antiAliasGreenAlphaBits bitShift: -8)]
+			morphIdWord _ morphIds at: pixelIndex.
+			clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+			self cCode: '
+					antiAliasGreenAlphaBitsShifted = antiAliasGreenAlphaBits >> 8;'
+				inSmalltalk: [
+					antiAliasGreenAlphaBitsShifted _ antiAliasGreenAlphaBits bitShift: -8 ].
+			antiAliasGreenAlphaBitsShifted > clippingAntiAliasBits ifTrue: [
+				clippingAntiAliasBits _ antiAliasGreenAlphaBitsShifted]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					clippingAntiAlias _ (morphIds at: pixelIndex) bitAnd: 16r7F.
-					alphaR _ alphaR * clippingAntiAlias * ( 1.0 / 127.0).
-					alphaG _ alphaG * clippingAntiAlias * ( 1.0 / 127.0).
-					alphaB _ alphaB * clippingAntiAlias * ( 1.0 / 127.0) ]
+					morphIdWord _ morphIds at: pixelIndex.
+					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias _ clippingAntiAliasBits * (1.0 / 127.0).
+					alphaR _ alphaR * clippingAntiAlias.
+					alphaG _ alphaG * clippingAntiAlias.
+					alphaB _ alphaB * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAlias _ 0]].
+					clippingAntiAliasBits _ 0]].
 
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
 		targetWord _ targetBits at: pixelIndex.
@@ -1305,29 +1467,41 @@ blendStrokeOnlyAt: pixelIndex
 		alphaR = 0.0 ifFalse: [
 			unAlphaR _ 1.0 - alphaR.
 			resultAlphaR _ alphaR + (unAlphaR * targetAlpha).
-			resultR _ alphaR * strokeR * 255.0 + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
-			resultR _ resultR/resultAlphaR.
-			resultRBits _ (resultR+0.5) asInteger bitShift: 16 ].
+			self cCode: '
+					resultR = ((alphaR * strokeR) * 255.0) + ((unAlphaR * (resultRBits >> 16)) * targetAlpha);
+					resultRBits = (uint32_t)(resultR  / resultAlphaR + 0.5) << 16;'
+				inSmalltalk: [
+					resultR _ alphaR * strokeR * 255.0 + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
+					resultRBits _ (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
 
 		alphaG = 0.0 ifFalse: [
 			unAlphaG _ 1.0 - alphaG.
 			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
-			resultG _ alphaG * strokeG * 255.0 + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
-			resultG _ resultG/resultAlphaG.
-			resultGBits _ (resultG+0.5) asInteger bitShift: 8.
-			resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ].
+			self cCode: '
+					resultG = ((alphaG * strokeG) * 255.0) + ((unAlphaG * (resultGBits >> 8)) * targetAlpha);
+					resultGBits = (uint32_t)(resultG / resultAlphaG + 0.5) << 8;
+					resultAlphaBits = (uint32_t)(resultAlphaG * 255.0 + 0.5) << 24;'
+				inSmalltalk: [
+					resultG _ alphaG * strokeG * 255.0 + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
+					resultGBits _ (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
+					resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
 
 		alphaB = 0.0 ifFalse: [
 			unAlphaB _ 1.0 - alphaB.
 			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
-			resultB _ alphaB * strokeB * 255.0 + (unAlphaB * resultBBits * targetAlpha).
-			resultB _ resultB/resultAlphaB.
-			resultBBits _ (resultB+0.5) asInteger ].
+			self cCode: '
+					resultB = ((alphaB * strokeB) * 255.0) + ((unAlphaB * resultBBits) * targetAlpha);
+					resultBBits = (uint32_t)(resultB / resultAlphaB + 0.5);'
+				inSmalltalk: [
+					resultB _ alphaB * strokeB * 255.0 + (unAlphaB * resultBBits * targetAlpha).
+					resultBBits _ (resultB / resultAlphaB + 0.5) asInteger ]].
 
-		targetBits at: pixelIndex put: (((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits).
+		targetWord _ ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
+			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIds at: pixelIndex put:  morphIdWord ]].! !
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 3/11/2021 11:42:35'!
 blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray alphaMask: anotherWordArray
@@ -1348,7 +1522,7 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 
 			alphaMask at: pixelIndex put: 0 ]].! !
 
-!VectorEnginePlugin class methodsFor: 'translation' stamp: 'jmv 3/19/2021 14:00:35'!
+!VectorEnginePlugin class methodsFor: 'translation' stamp: 'jmv 4/12/2021 14:49:50'!
 declareCVarsIn: aCCodeGenerator
 
 
@@ -1357,5 +1531,6 @@ declareCVarsIn: aCCodeGenerator
 	aCCodeGenerator var: 'morphIds' type: 'uint32_t *'.
 	aCCodeGenerator var: 'edgeCounts' type: 'uint32_t *'.
 	aCCodeGenerator var: 'alphaMask' type: 'uint32_t *'.
+	aCCodeGenerator var: 'currentMorphId' type: 'uint32_t'.
 	#(antiAliasingWidth subPixelDelta strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA textTxA11 textTxA12 textTxA13 textTxA21 textTxA22 textTxA23 auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared spanLeft spanTop spanRight spanBottom) do: [ :varName |
 		aCCodeGenerator var: varName type: 'float' ].! !
