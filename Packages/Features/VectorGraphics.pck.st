@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4567] on 12 April 2021 at 11:38:14 am'!
+'From Cuis 5.0 [latest update: #4567] on 13 April 2021 at 4:34:39 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 218!
+!provides: 'VectorGraphics' 1 219!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -4435,9 +4435,16 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/6/2021 16:41:55'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/13/2021 16:33:48'!
 updateEdgeCountAtX: x y: y
-	"Compute edges intersecting with this horizontal line, for fills."
+	"Compute edges intersecting with this horizontal line, for fills.
+		
+	See https://en.wikipedia.org/wiki/Nonzero-rule .
+
+Where it says 'pick a ray in any direction', we pick an horizontal ray pointing to the left. This means that for any point (actually for every pixel) p1=(x1, y1), we record any crossings of y1, i.e. any sequence of path points (... pp1, pp2, .....) where the jump from pp1 to pp2 crosses y1, and pp1.x and pp2.x are at the left of x1. If the path is going up, it is clockwwise. If it is going down, it is counter clockwise.
+
+As an additional optimization, as we need to store for every pixel all the crossings to the left, what we actually store are the crossings at each pixel (i.e. within 1 pixel distance to the left). Then, when we use them, the algorithms iterates from left to right, and accumulates the counters from previous pixels.
+	"
 
 	| thisYTruncated pixelY pixelIndexBase redPixelIndex greenPixelIndex bluePixelIndex increment countWord redCount greenCount blueCount redOffset greenOffset blueOffset |
 
@@ -5591,9 +5598,16 @@ updateAlphasForX: x y: y
 						alpha > prevAlpha ifTrue: [
 							alphaMask at: pixelIndex put: alpha ]]]]]! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/6/2021 16:52:04'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/13/2021 16:33:52'!
 updateEdgeCountAtX: x y: y
-	"Compute edges intersecting with this horizontal line, for fills."
+	"Compute edges intersecting with this horizontal line, for fills.
+		
+	See https://en.wikipedia.org/wiki/Nonzero-rule .
+
+Where it says 'pick a ray in any direction', we pick an horizontal ray pointing to the left. This means that for any point (actually for every pixel) p1=(x1, y1), we record any crossings of y1, i.e. any sequence of path points (... pp1, pp2, .....) where the jump from pp1 to pp2 crosses y1, and pp1.x and pp2.x are at the left of x1. If the path is going up, it is clockwwise. If it is going down, it is counter clockwise.
+
+As an additional optimization, as we need to store for every pixel all the crossings to the left, what we actually store are the crossings at each pixel (i.e. within 1 pixel distance to the left). Then, when we use them, the algorithms iterates from left to right, and accumulates the counters from previous pixels.
+	"
 
 	| thisYTruncated pixelY pixelIndex increment count pixelX |
 
