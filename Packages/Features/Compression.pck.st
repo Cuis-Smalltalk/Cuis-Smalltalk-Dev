@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4567] on 10 April 2021 at 7:43:59 pm'!
+'From Cuis 5.0 [latest update: #4568] on 14 April 2021 at 1:10:50 pm'!
 'Description '!
-!provides: 'Compression' 1 28!
+!provides: 'Compression' 1 29!
 SystemOrganization addCategory: 'Compression-System'!
 SystemOrganization addCategory: 'Compression-Archives'!
 
@@ -3720,7 +3720,7 @@ rewindData
 			ifFalse: [ uncompressedSize ].
 ! !
 
-!ZipArchiveMember methodsFor: 'private' stamp: 'KLG 4/9/2021 21:22:18'!
+!ZipArchiveMember methodsFor: 'private' stamp: 'KLG 4/14/2021 17:14:13'!
 squeakToDosTime: secs
 	"Convert to MS-DOS time format
 	See: https://docs.microsoft.com/de-de/windows/win32/api/winbase/nf-winbase-dosdatetimetofiletime?redirectedfrom=MSDN
@@ -3728,7 +3728,10 @@ squeakToDosTime: secs
 
 	| dosTime dateTime |
 
-	dateTime _ Time dateAndTimeFromSeconds: secs secondsSinceSqueakEpoch.
+	dateTime _ Time dateAndTimeFromSeconds: 
+		(secs isInteger
+			ifFalse: [ secs secondsSinceSqueakEpoch ]
+			ifTrue: [ secs ]).
 	dosTime _ (dateTime second second) bitShift: -1.
 	dosTime _ dosTime bitOr: ((dateTime second minute) bitShift: 5).
 	dosTime _ dosTime bitOr: ((dateTime second hour) bitShift: 11).
