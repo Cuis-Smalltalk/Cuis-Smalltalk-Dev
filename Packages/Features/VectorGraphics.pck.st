@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4567] on 13 April 2021 at 4:34:39 pm'!
+'From Cuis 5.0 [latest update: #4569] on 18 April 2021 at 7:09:29 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 219!
+!provides: 'VectorGraphics' 1 220!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -5166,7 +5166,7 @@ finishPath: ensureClosePath
 			ifFalse: [
 				self primBlendStrokeOnlyLeft: spanLeft top: spanTop right: spanRight bottom: spanBottom targetBits: targetForm bits morphIds: morphIds alphaMask: alphaMask ]].! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 4/9/2021 12:46:24'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 4/18/2021 19:05:55'!
 initializePath
 
 	super initializePath.
@@ -5184,6 +5184,9 @@ initializePath
 	self primClipLeft: clipLeft clipTop: clipTop clipRight: clipRight clipBottom: clipBottom.
 	self primCurrentMorphId: currentMorphId currentClipsSubmorphs: currentClipsSubmorphs.
 	self primClipCurrentMorph: clipCurrentMorph morphIds: morphIds.
+	self primStrokeWidth: strokeWidth.
+	self primStrokeColor: strokeColor.
+	self primFillColor: fillColor.
 
 	self primInitializePath.! !
 
@@ -5192,17 +5195,10 @@ newTrajectoryFragment
 
 	self primNewTrajectoryFragment.! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/14/2021 15:02:36'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 4/18/2021 19:01:44'!
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil.
-	aFillColorOrNil notNil
-		ifTrue: [
-			self
-				primFillR: aFillColorOrNil red
-				g: aFillColorOrNil green
-				b: aFillColorOrNil blue
-				a: aFillColorOrNil alpha]
-		ifFalse: [self primFillR: 0.0 g: 0.0 b: 0.0 a: 0.0]! !
+	self primFillColor: fillColor.! !
 
 !VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 4/9/2021 12:46:37'!
 pvtSetForm: aForm
@@ -5214,23 +5210,16 @@ pvtSetForm: aForm
 	edgeCounts _ WordArray new: s.
 	subPixelDelta _ self class defaultSubPixelDelta.! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/14/2021 15:02:21'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 4/18/2021 18:59:25'!
 pvtStrokeColor: aStrokeColorOrNil
 	strokeColor _ aStrokeColorOrNil.
-	aStrokeColorOrNil notNil
-		ifTrue: [
-			self
-				primStrokeR: aStrokeColorOrNil red
-				g: aStrokeColorOrNil green
-				b: aStrokeColorOrNil blue
-				a: aStrokeColorOrNil alpha]
-		ifFalse: [self primStrokeR: 0.0 g: 0.0 b: 0.0 a: 0.0]! !
+	self primStrokeColor: strokeColor.! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/15/2021 10:21:55'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 4/18/2021 13:06:34'!
 pvtStrokeWidth: aNumber
 
-	super pvtStrokeWidth: aNumber.
-	self primStrokeWidth: aNumber asFloat! !
+	super pvtStrokeWidth: aNumber asFloat.
+	self primStrokeWidth: strokeWidth.! !
 
 !VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 3/22/2021 14:35:15'!
 primAntiAliasingWidth: aNumber subPixelDelta: otherFloat
@@ -5304,6 +5293,17 @@ primDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: 
 
 	self primitiveFailed! !
 
+!VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 4/18/2021 13:14:42'!
+primFillColor: aFillColorOrNil
+	aFillColorOrNil notNil
+		ifTrue: [
+			self
+				primFillR: aFillColorOrNil red
+				g: aFillColorOrNil green
+				b: aFillColorOrNil blue
+				a: aFillColorOrNil alpha]
+		ifFalse: [self primFillR: 0.0 g: 0.0 b: 0.0 a: 0.0].! !
+
 !VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 3/19/2021 12:23:48'!
 primFillR: r g: g b: b a: a
 	<primitive: 'primFillRGBA' module: 'VectorEnginePlugin'>
@@ -5357,6 +5357,17 @@ primSpanTop
 	<primitive: 'primSpanTop' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
+
+!VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 4/18/2021 13:08:23'!
+primStrokeColor: aStrokeColorOrNil
+	aStrokeColorOrNil notNil
+		ifTrue: [
+			self
+				primStrokeR: aStrokeColorOrNil red
+				g: aStrokeColorOrNil green
+				b: aStrokeColorOrNil blue
+				a: aStrokeColorOrNil alpha]
+		ifFalse: [self primStrokeR: 0.0 g: 0.0 b: 0.0 a: 0.0]! !
 
 !VectorEngineSubPixelWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 3/19/2021 12:24:25'!
 primStrokeR: r g: g b: b a: a
