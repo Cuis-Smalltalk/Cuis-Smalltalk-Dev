@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4519] on 6 January 2021 at 12:01:55 pm'!
+'From Cuis 5.0 [latest update: #4574] on 28 April 2021 at 2:58:15 pm'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 254!
+!provides: 'BaseImageTests' 1 255!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -24289,7 +24289,7 @@ assertTypeOfBinaryMessageSend: aSourceCode is: aExpectedType
 		messageRange: [ :ranges | ranges penultimate ]
 ! !
 
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:47'!
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'jmv 4/26/2021 19:40:38'!
 assertTypeOfMessageSend: aSourceCode 
 	is: aExpectedType
 	in: aClassOrMetaClass 
@@ -24303,7 +24303,6 @@ assertTypeOfMessageSend: aSourceCode
 		workspace: nil;
 		classOrMetaClass: aClassOrMetaClass ;
 		source: aSourceCode;
-		allSource: aSourceCode;
 		parse;
 		ranges.
 		
@@ -25332,3 +25331,8 @@ withTemporaryValue: temporaryValue of: aPreferenceName do: aBlock
 	currentValue := self perform: aPreferenceName.
 	self setPreference: aPreferenceName toValue: temporaryValue.
 	[ aBlock value ] ensure: [ self setPreference: aPreferenceName toValue: currentValue ]! !
+
+!SmalltalkCompleter methodsFor: '*BaseImageTests' stamp: 'NPM 3/17/2020 03:12:11'!
+changePositionTo: newPosition 
+	
+	position _ newPosition! !
