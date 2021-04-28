@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4569] on 18 April 2021 at 7:09:29 pm'!
+'From Cuis 5.0 [latest update: #4571] on 28 April 2021 at 11:20:49 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 220!
+!provides: 'VectorGraphics' 1 221!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -292,7 +292,7 @@ TTFontDescription class
 !classDefinition: #TTFontReader category: 'VectorGraphics-TrueType'!
 Object subclass: #TTFontReader
 	instanceVariableNames: 'glyphs nGlyphs kernPairs fontDescription'
-	classVariableNames: ''
+	classVariableNames: 'FallbackArrowGlyphs'
 	poolDictionaries: ''
 	category: 'VectorGraphics-TrueType'!
 !classDefinition: 'TTFontReader class' category: 'VectorGraphics-TrueType'!
@@ -6578,7 +6578,7 @@ lineSpacing
 unitsPerEm
 	^unitsPerEm! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 3/13/2020 09:16:46'!
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 4/28/2021 11:10:26'!
 appendGlyphDataTo: stream glyphsArray: glyphsArray indexes: indexes base: baseIndex
 		glyphsArray withIndexDo: [ :glyphOrArrayOrNil :index |
 			glyphOrArrayOrNil notNil ifTrue: [
@@ -6592,26 +6592,33 @@ appendGlyphDataTo: stream glyphsArray: glyphsArray indexes: indexes base: baseIn
 					]
 					ifFalse: [
 						indexes at: baseIndex + index put: stream position+1.
-						glyphOrArrayOrNil addContourDataTo: stream.
+						glyphOrArrayOrNil addGlyphDataTo: stream tx: nil.
 					]
 				]]! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 9/3/2020 17:12:45'!
-glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknownGlyph
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 4/28/2021 11:14:09'!
+glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknownGlyph scaleArrowGlyphs: arrowGlyphs
 
-	| mGlyph |
+	| mGlyph glyph tx |
 	
 	mGlyph _ array8 at: $M numericValue + 1.
 	letterMTopSideBearing _ mGlyph topSideBearing.
 
 	contourDataIndexesByIso8859s15 _ IntegerArray new: array8 size.
 	contourDataForIso8859s15 _ Float32Array streamContents: [ :stream |
-		theUnknownGlyph addContourDataTo: stream. 	"First data is for unknownGlyph"
+		theUnknownGlyph addGlyphDataTo: stream tx: nil. 	"First data is for unknownGlyph"
 		array8 withIndexDo: [ :ttGlyphOrNil :index |
 			ttGlyphOrNil notNil
 				ifTrue: [
+					ttGlyphOrNil isNumber
+						ifTrue: [
+							glyph _ arrowGlyphs at: ttGlyphOrNil.
+							tx _ AffineTransformation withScale: letterMTopSideBearing asFloat / arrowGlyphs second topSideBearing]
+						ifFalse: [ 
+							glyph _ ttGlyphOrNil.
+							tx _ nil ].
 					contourDataIndexesByIso8859s15 at: index put: stream position+1.
-					ttGlyphOrNil addContourDataTo: stream ]
+					glyph addGlyphDataTo: stream tx: tx ]
 				ifFalse: [ contourDataIndexesByIso8859s15 at: index put: 1]]].
 	self perform: Preferences assignmentGlyphSelector.
 
@@ -6619,7 +6626,7 @@ glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknown
 	Preferences loadOnlyLatinGlyphData ifFalse: [
 		contourDataIndexesByUtf8 _ (IntegerArray new: 256) as: OrderedCollection.
 		contourDataForUtf8 _ Float32Array streamContents: [ :stream |
-			theUnknownGlyph addContourDataTo: stream.		"First data is for unknownGlyph"
+			theUnknownGlyph addGlyphDataTo: stream tx: nil.		"First data is for unknownGlyph"
 			self appendGlyphDataTo: stream glyphsArray: arrayUtf8 indexes: contourDataIndexesByUtf8 base: 0 ].
 		contourDataIndexesByUtf8 _ contourDataIndexesByUtf8 as: IntegerArray]! !
 
@@ -6864,17 +6871,25 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 4/21/2020 14:07:14'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 4/28/2021 11:20:14'!
 mapAndStoreGlyphsUsing: characterMap
 	"
 	https://developer.apple.com/fonts/TrueType-Reference-Manual/RM07/appendixB.html
 	"
-	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph spaceGlyph mapSize preferredCodePoint |
+	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph spaceGlyph mapSize preferredCodePoint arrowGlyphIndexes |
 	unknownGlyph _ glyphs first.
 	nullGlyph _ glyphs second.
 	mapSize _ characterMap size.
 	glyphsByIso5559s15 _ Array new: 256.
 	glyphsByUTF8 _ Array new: 256.
+
+	"Store Unicode arrow glyphs for future use if appropriate,"
+	(FallbackArrowGlyphs isNil or: [fontDescription name = 'DejaVuSans']) ifTrue: [
+		mapSize > 8595 ifTrue: [								"Usually true. Just in case."
+			arrowGlyphIndexes _ #(8592 8593 8594 8595) collect: [ :codePoint | (characterMap at: codePoint+1)+1 ].
+				(arrowGlyphIndexes allSatisfy: [ :i | i > 1 ]) ifTrue: [
+					FallbackArrowGlyphs _ arrowGlyphIndexes collect: [ :i | glyphs at: i ]]]].
+
 	0 to: mapSize - 1 do: [ :codePoint | | g array prevByte|
 
 		preferredCodePoint _ codePoint.
@@ -6884,9 +6899,13 @@ mapAndStoreGlyphsUsing: characterMap
 		g == unknownGlyph ifTrue: [
 			g _ glyphs at: (characterMap at: codePoint+1)+1 ifAbsent: [ unknownGlyph ]].
 
-		g == unknownGlyph ifFalse: [
-			(Character iso8859s15CodeForUnicodeCodePoint: codePoint) ifNotNil: [ :iso8859s15 |
-				glyphsByIso5559s15 at: iso8859s15 + 1 put: g ]].
+		(Character iso8859s15CodeForUnicodeCodePoint: codePoint) ifNotNil: [ :iso8859s15 |
+			g == unknownGlyph
+				ifFalse: [
+					glyphsByIso5559s15 at: iso8859s15 + 1 put: g ]
+				ifTrue: [				"Tell that we need an alternative arrow glyph"
+					(FallbackArrowGlyphs notNil and: [ codePoint between: 8592 and: 8595 ]) ifTrue: [
+						glyphsByIso5559s15 at: iso8859s15 + 1 put: codePoint - 8591 ]]].
 
 		array _ glyphsByUTF8.
 		prevByte _ nil.
@@ -6907,7 +6926,9 @@ mapAndStoreGlyphsUsing: characterMap
 		glyphsByIso5559s15 at: s codePoint +1 put: spaceGlyph.
 		glyphsByUTF8 at: s codePoint +1 put: spaceGlyph.
 	].
-	fontDescription glyphsByIso8859s15: glyphsByIso5559s15 glyphsByUtf8Bytes: glyphsByUTF8 unknownGlyph: unknownGlyph! !
+	fontDescription
+		glyphsByIso8859s15: glyphsByIso5559s15 glyphsByUtf8Bytes: glyphsByUTF8
+		unknownGlyph: unknownGlyph scaleArrowGlyphs: FallbackArrowGlyphs! !
 
 !TTFontReader methodsFor: 'processing' stamp: 'jmv 1/18/2020 15:32:49'!
 processCharacterMappingTable: entry
@@ -7680,20 +7701,29 @@ drawGlyphOn: aVectorCanvas geometryTransformation: txOrNil
 			(contour initialMoveToCommand: txOrNil) runOn: aVectorCanvas .
 			(contour pathCommand: txOrNil) runOn: aVectorCanvas ]].! !
 
-!TTGlyph methodsFor: 'primitive format' stamp: 'jmv 3/14/2020 23:03:58'!
-addContourDataTo: stream
-	stream nextPut: self advanceWidth.
-	stream nextPut: self boundsLeft.
-	stream nextPut: self boundsRight.
-	stream nextPut: self boundsTop.
-	stream nextPut: self boundsBottom.
-	stream nextPut: self contourCount.
-	self addContourDataTo: stream tx: nil! !
-
 !TTGlyph methodsFor: 'primitive format' stamp: 'jmv 3/3/2020 09:46:30'!
 addContourDataTo: stream tx: aGeometryTransformationOrNil
 
 	contours do: [ :c | c addContourDataTo: stream tx: aGeometryTransformationOrNil ]! !
+
+!TTGlyph methodsFor: 'primitive format' stamp: 'jmv 4/28/2021 10:36:49'!
+addGlyphDataTo: stream tx: aGeometryTransformationOrNil
+	| aw rb tl |
+	aw _ self advanceWidth.
+	tl _ self boundsLeft@self boundsTop.
+	rb _ self boundsRight@self boundsBottom.
+	aGeometryTransformationOrNil ifNotNil: [
+		aw _ aGeometryTransformationOrNil externalizeScalar: aw.
+		tl _ aGeometryTransformationOrNil externalizePosition: tl.
+		rb _ aGeometryTransformationOrNil externalizePosition: rb.
+		].
+	stream nextPut: aw.
+	stream nextPut: tl x.
+	stream nextPut: rb x.
+	stream nextPut: tl y.
+	stream nextPut: rb y.
+	stream nextPut: self contourCount.
+	self addContourDataTo: stream tx: aGeometryTransformationOrNil! !
 
 !TTCompositeGlyph methodsFor: 'accessing' stamp: 'ar 11/2/1998 01:21'!
 addGlyph: aGlyph transformation: aMatrix
