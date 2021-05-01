@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4574] on 28 April 2021 at 2:58:15 pm'!
+'From Cuis 5.0 [latest update: #4579] on 30 April 2021 at 2:32:58 pm'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 255!
+!provides: 'BaseImageTests' 1 256!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -457,6 +457,26 @@ TestCase subclass: #MonitorTest
 MonitorTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #ProcessTerminateBug category: 'BaseImageTests-Kernel-Processes'!
+TestCase subclass: #ProcessTerminateBug
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Processes'!
+!classDefinition: 'ProcessTerminateBug class' category: 'BaseImageTests-Kernel-Processes'!
+ProcessTerminateBug class
+	instanceVariableNames: ''!
+
+!classDefinition: #ProcessTerminateUnwindNonLocalReturn category: 'BaseImageTests-Kernel-Processes'!
+TestCase subclass: #ProcessTerminateUnwindNonLocalReturn
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Processes'!
+!classDefinition: 'ProcessTerminateUnwindNonLocalReturn class' category: 'BaseImageTests-Kernel-Processes'!
+ProcessTerminateUnwindNonLocalReturn class
+	instanceVariableNames: ''!
+
 !classDefinition: #ProcessTest category: 'BaseImageTests-Kernel-Processes'!
 TestCase subclass: #ProcessTest
 	instanceVariableNames: ''
@@ -465,6 +485,16 @@ TestCase subclass: #ProcessTest
 	category: 'BaseImageTests-Kernel-Processes'!
 !classDefinition: 'ProcessTest class' category: 'BaseImageTests-Kernel-Processes'!
 ProcessTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ProcessorTest category: 'BaseImageTests-Kernel-Processes'!
+TestCase subclass: #ProcessorTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel-Processes'!
+!classDefinition: 'ProcessorTest class' category: 'BaseImageTests-Kernel-Processes'!
+ProcessorTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SemaphoreTest category: 'BaseImageTests-Kernel-Processes'!
@@ -525,16 +555,6 @@ TestCase subclass: #IfNotNilTests
 	category: 'BaseImageTests-Kernel'!
 !classDefinition: 'IfNotNilTests class' category: 'BaseImageTests-Kernel'!
 IfNotNilTests class
-	instanceVariableNames: ''!
-
-!classDefinition: #ProcessorTest category: 'BaseImageTests-Kernel'!
-TestCase subclass: #ProcessorTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Kernel'!
-!classDefinition: 'ProcessorTest class' category: 'BaseImageTests-Kernel'!
-ProcessorTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SpecialSelectorsTest category: 'BaseImageTests-Kernel'!
@@ -615,16 +635,6 @@ TestCase subclass: #ExceptionTests
 	category: 'BaseImageTests-Exceptions'!
 !classDefinition: 'ExceptionTests class' category: 'BaseImageTests-Exceptions'!
 ExceptionTests class
-	instanceVariableNames: ''!
-
-!classDefinition: #ProcessTerminateBug category: 'BaseImageTests-Exceptions'!
-TestCase subclass: #ProcessTerminateBug
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Exceptions'!
-!classDefinition: 'ProcessTerminateBug class' category: 'BaseImageTests-Exceptions'!
-ProcessTerminateBug class
 	instanceVariableNames: ''!
 
 !classDefinition: #ArrayLiteralTest category: 'BaseImageTests-Compiler'!
@@ -9544,6 +9554,2075 @@ testMonitorNotGainingUnwantedSignalsDuringUnwinding
 	process terminate.
 	self assert: 1 equals: ((monitor instVarNamed: #mutex) instVarNamed: #excessSignals)! !
 
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:15'!
+testSchedulerTermination
+	| process sema gotHere sema2 |
+	gotHere _ false.
+	sema _ Semaphore new.
+	sema2 _ Semaphore new.
+	process _ [
+		sema signal.
+		sema2 wait.
+		"will be suspended here"
+		gotHere _ true ] newProcess.
+	process priority: Processor activeProcess priority.
+	process name: 'testSchedulerTermination'.
+	process resume.
+	sema wait.
+	"until process gets scheduled"
+	process terminate.
+	sema2 signal.
+	Processor yield.
+	"will give process a chance to continue and horribly screw up"
+	self assert: gotHere not.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:12:51'!
+testTerminationDuringNestedUnwind1
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p x1 x2 x3 x4 |
+	x1 := x2 := x3 := x4 := false.
+	p := 
+		[
+			[
+				[ ] ensure: [
+					[Processor activeProcess suspend] ensure: [
+						x1 := true]. 
+					x2 := true]
+			] ensure: [
+				x3 := true].
+			x4 := true.
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	self deny: x1 | x2 | x3 | x4.
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: x1 & x2 & x3.
+	self deny: x4.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:12:59'!
+testTerminationDuringNestedUnwind2
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p x1 x2 x3 x4 |
+	x1 := x2 := x3 := x4 := false.
+	p := 
+		[
+			[
+				[ ] ensure: [
+					[ ] ensure: [
+						Processor activeProcess suspend. 
+						x1 := true]. 
+					x2 := true]
+			] ensure: [
+				x3 := true].
+			x4 := true.
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	self deny: x1 | x2 | x3 | x4.
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: x1 & x2 & x3.
+	self deny: x4.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:24'!
+testTerminationDuringNestedUnwind3
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p x1 x2 x3 x4 |
+	x1 := x2 := x3 := x4 := false.
+	p := 
+		[
+			[
+				[ ] ensure: [
+					[Processor yield] ensure: [
+						x1 := true]. 
+					x2 := true]
+			] ensure: [
+				x3 := true].
+			x4 := true.
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	self deny: x1 | x2 | x3 | x4.
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: x1 & x2 & x3.
+	self deny: x4.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:38'!
+testTerminationDuringNestedUnwind4
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p x1 x2 x3 x4 |
+	x1 := x2 := x3 := x4 := false.
+	p := 
+		[
+			[
+				[ ] ensure: [
+					[ ] ensure: [
+						Processor yield. 
+						x1 := true]. 
+					x2 := true]
+			] ensure: [
+				x3 := true].
+			x4 := true.
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	self deny: x1 | x2 | x3 | x4.
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: x1 & x2 & x3.
+	self deny: x4.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:42'!
+testTerminationDuringNestedUnwind5
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p x1 x2 x3 x4 |
+	x1 := x2 := x3 := x4 := false.
+	p := 
+		[
+			[
+				[ ] ensure: [
+					[Processor activeProcess terminate] ensure: [
+						x1 := true]. 
+					x2 := true]
+			] ensure: [
+				x3 := true].
+			x4 := true.
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	self deny: x1 | x2 | x3 | x4.
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: x1 & x2 & x3.
+	self deny: x4.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:47'!
+testTerminationDuringNestedUnwind6
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p x1 x2 x3 x4 |
+	x1 := x2 := x3 := x4 := false.
+	p := 
+		[
+			[
+				[ ] ensure: [
+					[ ] ensure: [
+						Processor activeProcess terminate.
+						x1 := true]. 
+					x2 := true]
+			] ensure: [
+				x3 := true].
+			x4 := true.
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	self deny: x1 | x2 | x3 | x4.
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: x1 & x2 & x3.
+	self deny: x4.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:52'!
+testTerminationDuringNestedUnwind7
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p x1 x2 x3 x4 semaphore |
+	x1 := x2 := x3 := x4 := false.
+	semaphore := Semaphore new.
+	p := 
+		[
+			[
+				[ ] ensure: [
+					[semaphore wait] ensure: [
+						x1 := true]. 
+					x2 := true]
+			] ensure: [
+				x3 := true].
+			x4 := true.
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	self deny: x1 | x2 | x3 | x4.
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: x1 & x2 & x3.
+	self deny: x4.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:56'!
+testTerminationDuringNestedUnwind8
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p x1 x2 x3 x4 semaphore |
+	x1 := x2 := x3 := x4 := false.
+	semaphore := Semaphore new.
+	p := 
+		[
+			[
+				[ ] ensure: [
+					[ ] ensure: [
+						semaphore wait.
+						x1 := true]. 
+					x2 := true]
+			] ensure: [
+				x3 := true].
+			x4 := true.
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	self deny: x1 | x2 | x3 | x4.
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: x1 & x2 & x3.
+	self deny: x4.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 11/4/2011 22:00'!
+testTerminationDuringUnwind
+	"An illustration of the issue of process termination during unwind.
+	This uses a well-behaved unwind block that we should allow to complete
+	if at all possible."
+	"
+	self new testTerminationDuringUnwind
+	"
+	| unwindStarted unwindFinished p |
+	unwindStarted := unwindFinished := false.
+	p := [[] ensure:[
+			unwindStarted := true.
+			Processor yield.
+			unwindFinished := true.
+		]] newProcess.
+	p resume.
+	self deny: unwindStarted.
+	Processor yield.
+	self assert: unwindStarted.
+	self deny: unwindFinished.
+	p terminate.
+	self assert: unwindFinished.! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:15'!
+testUnwindFromActiveProcess
+	| sema process |
+	sema := Semaphore forMutualExclusion.
+	self assert:(sema isSignaled).
+	process := [
+		sema critical:[
+			self deny: sema isSignaled.
+			Processor activeProcess terminate.
+		]
+	] newProcess.
+	process priority: Processor userInterruptPriority.
+	process name: 'testUnwindFromActiveProcess'.
+	process resume.
+	self assert: sema isSignaled! !
+
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:14'!
+testUnwindFromForeignProcess
+	| sema process |
+	sema := Semaphore forMutualExclusion.
+	self assert: sema isSignaled.
+	process := [
+		sema critical:[
+			self deny: sema isSignaled.
+			sema wait. "deadlock"
+		]
+	] newProcess.
+	process priority: Processor userInterruptPriority.
+	process name: 'testUnwindFromForeignProcess'.
+	process resume.
+	self deny: sema isSignaled.
+	"This is for illustration only - the BlockCannotReturn cannot 
+	be handled here (it's truncated already)"
+	self shouldnt: [process terminate] raise: BlockCannotReturn.
+	self assert: sema isSignaled! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:51:32'!
+test1AResume
+	"Resume suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux1A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	p resume.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a third & a fourth.
+	self deny: a second.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:07:16'!
+test1ATerminate
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux1A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a third.
+	self deny: a second | a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 12:54:13'!
+test1BResume
+	"Resume suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux1B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	p resume.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:07:21'!
+test1BTerminate
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux1B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:15:46'!
+test1CResume
+	"Resume suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux1C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	p resume.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:07:26'!
+test1CTerminate
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux1C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 10:40:29'!
+test1DResume
+	"Resume suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux1D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	p resume.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:07:29'!
+test1DTerminate
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux1D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 12:57:20'!
+test2AResume
+	"Resume suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux2A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	p resume.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a third & a fourth.
+	self deny: a second.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:07:33'!
+test2ATerminate
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux2A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a third.
+	self deny: a second | a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 12:57:35'!
+test2BResume
+	"Resume suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux2B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	p resume.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:07:42'!
+test2BTerminate
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux2B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:15:51'!
+test2CResume
+	"Resume suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux2C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	p resume.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:07:48'!
+test2CTerminate
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux2C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 10:46:06'!
+test2DResume
+	"Resume suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux2D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	p resume.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:07:52'!
+test2DTerminate
+	"Terminate suspended process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux2D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is suspended and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:10:14'!
+test3AResume
+	"Resume runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux3A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now let the process run and make sure all unwind blocks have finished"
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a third & a fourth.
+	self deny: a second.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:19:39'!
+test3ATerminate
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux3A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a third.
+	self deny: a second | a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:11:50'!
+test3BResume
+	"Resume runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux3B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now let the process run and make sure all unwind blocks have finished"
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:20:50'!
+test3BTerminate
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux3B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:15:55'!
+test3CResume
+	"Resume runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux3C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now let the process run and make sure all unwind blocks have finished"
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:19:55'!
+test3CTerminate
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux3C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:22:47'!
+test3DResume
+	"Resume runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux3D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now let the process run and make sure all unwind blocks have finished"
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:20:14'!
+test3DTerminate
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux3D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:10:19'!
+test4AResume
+	"Resume runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux4A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now let the process run and make sure all unwind blocks have finished"
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a third & a fourth.
+	self deny: a second.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:21:21'!
+test4ATerminate
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux4A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a third.
+	self deny: a second | a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:11:55'!
+test4BResume
+	"Resume runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux4B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now let the process run and make sure all unwind blocks have finished"
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:21:36'!
+test4BTerminate
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux4B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:15:59'!
+test4CResume
+	"Resume runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux4C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now let the process run and make sure all unwind blocks have finished"
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:21:49'!
+test4CTerminate
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux4C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:23:09'!
+test4DResume
+	"Resume runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux4D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now let the process run and make sure all unwind blocks have finished"
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:22:02'!
+test4DTerminate
+	"Terminate runnable process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux4D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is runnable and none of the unwind blocks has finished yet"
+	self assert: p isReady.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:31'!
+test5ATerminate
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux5A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: a first & a third.
+	self deny: a second | a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:28'!
+test5BTerminate
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux5B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:25'!
+test5CTerminate
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux5C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:20'!
+test5DTerminate
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux5D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:14'!
+test6ATerminate
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux6A: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: a first & a third.
+	self deny: a second | a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:10'!
+test6BTerminate
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux6B: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:04'!
+test6CTerminate
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux6C: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:31:55'!
+test6DTerminate
+	"Terminate active process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a |
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux6D: a
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p suspended itself and none of the unwind blocks has finished yet"
+	self assert: p isSuspended.
+	a noneSatisfy: [ :b | b ].
+	"now let the termination continue and make sure all unwind blocks have finished"
+	Processor yield.
+	Processor yield.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:10:27'!
+test7AResume
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux7A: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	semaphore signal.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a third & a fourth.
+	self deny: a second.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:24:57'!
+test7ATerminate
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux7A: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a third.
+	self deny: a second | a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:12:00'!
+test7BResume
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux7B: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	semaphore signal.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:25:11'!
+test7BTerminate
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux7B: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:16:03'!
+test7CResume
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux7C: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	semaphore signal.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:25:26'!
+test7CTerminate
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux7C: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:27:41'!
+test7DResume
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux7D: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	semaphore signal.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:25:40'!
+test7DTerminate
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux7D: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:10:34'!
+test8AResume
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux8A: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	semaphore signal.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a third & a fourth.
+	self deny: a second.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:25:59'!
+test8ATerminate
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux8A: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a third.
+	self deny: a second | a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:12:06'!
+test8BResume
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux8B: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	semaphore signal.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:26:12'!
+test8BTerminate
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux8B: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:16:07'!
+test8CResume
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux8C: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	semaphore signal.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:26:25'!
+test8CTerminate
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux8C: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:27:13'!
+test8DResume
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux8D: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now resume the process and make sure all unwind blocks have finished"
+	semaphore signal.
+	[ p isReady ] whileTrue: [ Processor yield ].
+	self assert: p isTerminated.
+	self assert: a first & a second & a third & a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 11:26:38'!
+test8DTerminate
+	"Terminate blocked process.
+	Test all nested unwind blocks are correctly unwound; 
+	all unwind blocks halfway 	through their execution should be completed."
+
+	| p a semaphore |
+	semaphore _ Semaphore new.	
+	a _ Array new: 4 withAll: false.
+	p := [
+			self aux8D: a semaphore: semaphore
+		] newProcess.
+	p resume.
+	Processor yield.
+	"make sure p is blocked and none of the unwind blocks has finished yet"
+	self assert: p isBlocked.
+	a noneSatisfy: [ :b | b ].
+	"now terminate the process and make sure all unwind blocks have finished"
+	p terminate.
+	self assert: p isTerminated.
+	self assert: a first & a second & a third.
+	self deny: a fourth.! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:52:16'!
+aux1A: anArray
+
+	[
+		self aux1Ainner: anArray.
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:51:53'!
+aux1Ainner: anArray
+
+
+		[ ] ensure: [
+			[Processor activeProcess suspend] ensure: [
+				^anArray at: 1 put: true].
+			anArray at: 2 put: true]
+! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:53:12'!
+aux1B: anArray
+
+	[
+		self aux1Binner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:53:00'!
+aux1Binner: anArray
+
+	[ ] ensure: [
+		[Processor activeProcess suspend] ensure: [
+			anArray at: 1 put: true].
+		^anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:11:22'!
+aux1C: anArray
+
+	[
+		[ ] ensure: [
+			[Processor activeProcess suspend] ensure: [
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		^anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:11:35'!
+aux1D: anArray
+
+	[
+		[ ] ensure: [
+			[Processor activeProcess suspend] ensure: [
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		anArray at: 3 put: true].
+	^anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:56:05'!
+aux2A: anArray
+
+	[
+		self aux2Ainner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:55:52'!
+aux2Ainner: anArray
+
+	[ ] ensure: [
+		[] ensure: [
+			Processor activeProcess suspend.
+			^anArray at: 1 put: true].
+		anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:56:36'!
+aux2B: anArray
+
+	[
+		self aux2Binner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:56:22'!
+aux2Binner: anArray
+
+	[ ] ensure: [
+		[] ensure: [
+			Processor activeProcess suspend.
+			anArray at: 1 put: true].
+		^anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:12:36'!
+aux2C: anArray
+
+	[
+		[ ] ensure: [
+			[] ensure: [
+				Processor activeProcess suspend.
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		^anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:12:44'!
+aux2D: anArray
+
+	[
+		[ ] ensure: [
+			[] ensure: [
+				Processor activeProcess suspend.
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		anArray at: 3 put: true].
+	^anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:59:48'!
+aux3A: anArray
+
+	[
+		self aux3Ainner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 12:59:43'!
+aux3Ainner: anArray
+
+	[ ] ensure: [
+		[Processor yield] ensure: [
+			^anArray at: 1 put: true].
+		anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:00:12'!
+aux3B: anArray
+
+	[
+		self aux3Binner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:00:05'!
+aux3Binner: anArray
+
+	[ ] ensure: [
+		[Processor yield] ensure: [
+			anArray at: 1 put: true].
+		^anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:14:09'!
+aux3C: anArray
+
+	[
+		[ ] ensure: [
+			[Processor yield] ensure: [
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		^anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:14:17'!
+aux3D: anArray
+
+	[
+		[ ] ensure: [
+			[Processor yield] ensure: [
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		anArray at: 3 put: true].
+	^anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:33:30'!
+aux4A: anArray
+
+	[
+		self aux4Ainner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:33:23'!
+aux4Ainner: anArray
+
+	[ ] ensure: [
+		[] ensure: [
+			Processor yield.
+			^anArray at: 1 put: true].
+		anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:34:00'!
+aux4B: anArray
+
+	[
+		self aux4Binner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:33:51'!
+aux4Binner: anArray
+
+	[ ] ensure: [
+		[] ensure: [
+			Processor yield.
+			anArray at: 1 put: true].
+		^anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:14:54'!
+aux4C: anArray
+
+	[
+		[ ] ensure: [
+			[] ensure: [
+				Processor yield.
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		^anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:15:03'!
+aux4D: anArray
+
+	[
+		[ ] ensure: [
+			[] ensure: [
+				Processor yield.
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		anArray at: 3 put: true].
+	^anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:34:41'!
+aux5A: anArray
+
+	[
+		self aux5Ainner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:34:35'!
+aux5Ainner: anArray
+
+	[ ] ensure: [
+		[Processor activeProcess terminate] ensure: [
+			^anArray at: 1 put: true].
+		anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:04'!
+aux5B: anArray
+
+	[
+		self aux5Binner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:34:57'!
+aux5Binner: anArray
+
+	[ ] ensure: [
+		[Processor activeProcess terminate] ensure: [
+			anArray at: 1 put: true].
+		^anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:16:05'!
+aux5C: anArray
+
+	[
+		[ ] ensure: [
+			[Processor activeProcess terminate] ensure: [
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		^anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:16:13'!
+aux5D: anArray
+
+	[
+		[ ] ensure: [
+			[Processor activeProcess terminate] ensure: [
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		anArray at: 3 put: true].
+	^anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:35'!
+aux6A: anArray
+
+	[
+		self aux6Ainner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:29'!
+aux6Ainner: anArray
+
+	[ ] ensure: [
+		[] ensure: [
+			Processor activeProcess terminate.
+			^anArray at: 1 put: true].
+		anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:58'!
+aux6B: anArray
+
+	[
+		self aux6Binner: anArray
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:35:52'!
+aux6Binner: anArray
+
+	[ ] ensure: [
+		[] ensure: [
+			Processor activeProcess terminate.
+			anArray at: 1 put: true].
+		^anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:16:48'!
+aux6C: anArray
+
+	[
+		[ ] ensure: [
+			[] ensure: [
+				Processor activeProcess terminate.
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		^anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 10:16:56'!
+aux6D: anArray
+
+	[
+		[ ] ensure: [
+			[] ensure: [
+				Processor activeProcess terminate.
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		anArray at: 3 put: true].
+	^anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:37:13'!
+aux7A: anArray semaphore: semaphore
+
+	[
+		self aux7Ainner: anArray semaphore: semaphore
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 13:37:07'!
+aux7Ainner: anArray semaphore: semaphore
+
+	[ ] ensure: [
+		[semaphore wait] ensure: [
+			^anArray at: 1 put: true].
+		anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:23:17'!
+aux7B: anArray semaphore: semaphore
+
+	[
+		self aux7Binner: anArray semaphore: semaphore
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:23:09'!
+aux7Binner: anArray semaphore: semaphore
+
+	[ ] ensure: [
+		[semaphore wait] ensure: [
+			anArray at: 1 put: true].
+		^anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 11:00:23'!
+aux7C: anArray semaphore: semaphore
+
+	[
+		[ ] ensure: [
+			[semaphore wait] ensure: [
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		^anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 11:00:28'!
+aux7D: anArray semaphore: semaphore
+
+	[
+		[ ] ensure: [
+			[semaphore wait] ensure: [
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		anArray at: 3 put: true].
+	^anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:24:12'!
+aux8A: anArray semaphore: semaphore
+
+	[
+		self aux8Ainner: anArray semaphore: semaphore
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:24:06'!
+aux8Ainner: anArray semaphore: semaphore
+
+	[ ] ensure: [
+		[] ensure: [
+			semaphore wait.
+			^anArray at: 1 put: true].
+		anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:24:33'!
+aux8B: anArray semaphore: semaphore
+
+	[
+		self aux8Binner: anArray semaphore: semaphore
+	] ensure: [
+		anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 14:24:28'!
+aux8Binner: anArray semaphore: semaphore
+
+	[ ] ensure: [
+		[] ensure: [
+			semaphore wait.
+			anArray at: 1 put: true].
+		^anArray at: 2 put: true]! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 11:00:50'!
+aux8C: anArray semaphore: semaphore
+
+	[
+		[ ] ensure: [
+			[] ensure: [
+				semaphore wait.
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		^anArray at: 3 put: true].
+	anArray at: 4 put: true! !
+
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'aux' stamp: 'jmv 4/29/2021 11:00:54'!
+aux8D: anArray semaphore: semaphore
+
+	[
+		[ ] ensure: [
+			[] ensure: [
+				semaphore wait.
+				anArray at: 1 put: true].
+			anArray at: 2 put: true]
+	] ensure: [
+		anArray at: 3 put: true].
+	^anArray at: 4 put: true! !
+
 !ProcessTest methodsFor: 'tests' stamp: 'jmv 11/4/2011 22:17'!
 testAtomicSuspend
 	"Test atomic suspend of foreign processes"
@@ -9556,6 +11635,273 @@ testAtomicSuspend
 	self shouldnt: [list := p suspendPrimitivelyOrFail] raise: Error.
 	self assert: list == sema.
 ! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 4/13/2021 14:03:54'!
+testTerminateInEnsure
+	"As shown in
+	Martin McClure's 'Threads, Critical Sections, and Termination' (Smalltalks 2019 conference)
+	https://youtu.be/AvM5YrjK9AE
+	at 23:17
+	self new testTerminateInEnsure
+	"
+	| process count random delay |
+	random _ Random new.
+	10 timesRepeat: [
+		process _ [
+			count _ 0.
+			[] ensure: [
+				10 timesRepeat: [
+					count _ count + 1.
+					1000000 timesRepeat: [12 factorial]].
+				count _ count + 1]
+			] newProcess.
+		process resumeAt: Processor activeProcess priority - 1.
+		delay _ (random next * 100) asInteger + 10. 									"avoid 0-ms delay"
+		(Delay forMilliseconds: delay) wait.
+		self assert: process isTerminated not.
+		process terminate.
+		process priority: Processor activeProcess priority + 1.
+		self
+			assert: process isTerminated;
+			assert: count equals: 11 ]! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jmv 4/13/2021 14:13:35'!
+testValueEnsured
+	"Based on #testTerminateInEnsure
+	Tweaked to raise likelihood of failure, besides testing #valueEnsured
+	self new testValueEnsured
+	"
+	| process count random delay |
+	random _ Random new.
+	100 timesRepeat: [
+		process _ [
+			count _ 0.
+			[
+				10 timesRepeat: [
+					count _ count + 1.
+					100000 timesRepeat: [12 factorial]].
+				count _ count + 1 ] valueEnsured
+			] newProcess.
+		process resumeAt: Processor activeProcess priority - 1.
+		delay _ (random next * 10) asInteger + 10. 									"avoid 0-ms delay"
+		(Delay forMilliseconds: delay) wait.
+		self assert: process isTerminated not.
+		process terminate.
+		process priority: Processor activeProcess priority + 1.
+		self
+			assert: process isTerminated;
+			assert: count equals: 11 ]! !
+
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
+testGrabProcessor
+	"
+	ProcessorTest new testGrabProcessor
+	"
+	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
+	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
+	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
+	consistentState _ true.
+	tries _ 50.
+	updates _ 0.
+	done _ false.
+	semaphore _ Semaphore new.
+	[
+		tries timesRepeat: [
+			semaphore wait.
+			[
+				consistentState _ false.
+				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
+				updates _ updates + 1.
+				consistentState _ true
+			] grabProcessor
+		].
+		done _ true
+	] forkAt: Processor activeProcess priority -1.
+
+	observations _ 0.
+	totalWait _ 0.
+	[ done ] whileFalse: [
+		semaphore signal.
+		waitStart _ Time localMillisecondClock.
+		(Delay forMilliseconds: 25) wait.
+		waited _ Time localMillisecondClock - waitStart.
+		totalWait _ totalWait + waited.
+		observations _ observations + 1.
+		self assert: consistentState description: 'The low priority process was preempted in inconsistent state!!'.
+	].
+
+	self
+		assert: updates = tries
+		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
+	self
+		assert: observations = tries
+		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
+	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
+	self
+		assert: (1.0 * totalWait / observations) < 60
+		description: 'The low priority process was not preempted at the end of #grabProcessor'! !
+
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
+testGrabProcessorOnlyForNoTimeout
+	"
+	ProcessorTest new testGrabProcessorOnlyForNoTimeout
+	"
+	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
+	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
+	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
+	consistentState _ true.
+	tries _ 50.
+	updates _ 0.
+	done _ false.
+	semaphore _ Semaphore new.
+	[
+		tries timesRepeat: [
+			semaphore wait.
+			[
+				consistentState _ false.
+				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
+				updates _ updates + 1.
+				consistentState _ true
+			] grabProcessorOnlyFor: 1000
+		].
+		done _ true
+	] forkAt: Processor activeProcess priority -1.
+
+	observations _ 0.
+	totalWait _ 0.
+	[ done ] whileFalse: [
+		semaphore signal.
+		waitStart _ Time localMillisecondClock.
+		(Delay forMilliseconds: 25) wait.
+		waited _ Time localMillisecondClock - waitStart.
+		totalWait _ totalWait + waited.
+		observations _ observations + 1.
+		self assert: consistentState description: 'The low priority process was preempted in inconsistent state!!'.
+	].
+
+	self
+		assert: (updates = tries)
+		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
+	self
+		assert: (observations = tries)
+		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
+	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
+	self
+		assert: (1.0 * totalWait / observations) <60
+		description: 'The low priority process was not preempted right after #grabProcessor'! !
+
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
+testGrabProcessorOnlyForTimeout
+	"
+	1 to: 40 do: [ :i | i print. ProcessorTest new testGrabProcessorOnlyForTimeout ]
+	"
+	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait consistentCount inconsistentCount |
+	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
+	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
+	consistentState _ true.
+	tries _ 50.
+	updates _ 0.
+	consistentCount _ 0.
+	inconsistentCount _ 0.
+	done _ false.
+	semaphore _ Semaphore new.
+	[
+		tries timesRepeat: [
+			semaphore wait.
+			[
+				consistentState _ false.
+				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
+				updates _ updates + 1.
+				consistentState _ true
+			] grabProcessorOnlyFor: 25 							"About half the time should preempt it before it finishes"
+		].
+		done _ true
+	] forkAt: Processor activeProcess priority -1.
+
+	observations _ 0.
+	totalWait _ 0.
+	[ done ] whileFalse: [
+		semaphore signal.
+		waitStart _ Time localMillisecondClock.
+		(Delay forMilliseconds: 15) wait.
+		waited _ Time localMillisecondClock - waitStart.
+		totalWait _ totalWait + waited.
+		observations _ observations + 1.
+		consistentState
+			ifTrue: [ consistentCount _ consistentCount + 1 ]
+			ifFalse: [ inconsistentCount _ inconsistentCount + 1 ].
+		"If it needs time to finish, at low priority, allow for it."
+		[ consistentState ] whileFalse: [ (Delay forMilliseconds: 2) wait ].
+	].
+
+	self
+		assert: updates = tries
+		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
+	self
+		assert: observations = tries
+		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
+	self
+		assert: (1.0 * totalWait / observations) < 40	"Mean value should be around 25"
+		description: 'The low priority process was not preempted after the tiemout'.
+	self
+		assert: consistentCount > 3
+		description: 'It seems the low priority process finished always before the timeout'.
+	self
+		assert: inconsistentCount > 5
+		description: 'It seems the low priority process was not preempted at the timeout'! !
+
+!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
+testValueUnpreemptively
+	"
+	ProcessorTest new testValueUnpreemptively
+	"
+	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
+	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
+	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
+	consistentState _ true.
+	tries _ 50.
+	updates _ 0.
+	done _ false.
+	semaphore _ Semaphore new.
+	[
+		tries timesRepeat: [
+			semaphore wait.
+			[
+				consistentState _ false.
+				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
+				updates _ updates + 1.
+				consistentState _ true
+			] valueUnpreemptively
+		].
+		done _ true
+	] forkAt: Processor activeProcess priority -1.
+
+	observations _ 0.
+	totalWait _ 0.
+	[ done ] whileFalse: [
+		semaphore signal.
+		waitStart _ Time localMillisecondClock.
+		(Delay forMilliseconds: 25) wait.
+		waited _ Time localMillisecondClock - waitStart.
+		totalWait _ totalWait + waited.
+		observations _ observations + 1.
+		self assert: consistentState description: 'The low priority process was preempted in inconsistent state!!'.
+	].
+
+	self
+		assert: updates = tries
+		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
+	self
+		assert: observations = tries
+		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
+	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
+	self
+		assert: (1.0 * totalWait / observations) < 60
+		description: 'The low priority process was not preempted at the end of #grabProcessor'! !
+
+!ProcessorTest methodsFor: 'private' stamp: 'jmv 9/22/2009 09:42'!
+wasteTime: iterations
+	iterations timesRepeat: [1.23 asString asNumber]! !
 
 !SemaphoreTest methodsFor: 'private' stamp: 'tlk 5/5/2006 13:26'!
 criticalError
@@ -9953,217 +12299,6 @@ testIfNotNilIfNil1ArgAsVar
 	block2 := [:a | a printString].
 	self assert: (5@4 ifNotNil: block2 ifNil: block1) = '5@4'.
 	self assert: (nil ifNotNil: block2 ifNil: block1) = #foo! !
-
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
-testGrabProcessor
-	"
-	ProcessorTest new testGrabProcessor
-	"
-	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
-	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
-	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
-	consistentState _ true.
-	tries _ 50.
-	updates _ 0.
-	done _ false.
-	semaphore _ Semaphore new.
-	[
-		tries timesRepeat: [
-			semaphore wait.
-			[
-				consistentState _ false.
-				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
-				updates _ updates + 1.
-				consistentState _ true
-			] grabProcessor
-		].
-		done _ true
-	] forkAt: Processor activeProcess priority -1.
-
-	observations _ 0.
-	totalWait _ 0.
-	[ done ] whileFalse: [
-		semaphore signal.
-		waitStart _ Time localMillisecondClock.
-		(Delay forMilliseconds: 25) wait.
-		waited _ Time localMillisecondClock - waitStart.
-		totalWait _ totalWait + waited.
-		observations _ observations + 1.
-		self assert: consistentState description: 'The low priority process was preempted in inconsistent state!!'.
-	].
-
-	self
-		assert: updates = tries
-		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
-	self
-		assert: observations = tries
-		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
-	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
-	self
-		assert: (1.0 * totalWait / observations) < 60
-		description: 'The low priority process was not preempted at the end of #grabProcessor'! !
-
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
-testGrabProcessorOnlyForNoTimeout
-	"
-	ProcessorTest new testGrabProcessorOnlyForNoTimeout
-	"
-	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
-	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
-	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
-	consistentState _ true.
-	tries _ 50.
-	updates _ 0.
-	done _ false.
-	semaphore _ Semaphore new.
-	[
-		tries timesRepeat: [
-			semaphore wait.
-			[
-				consistentState _ false.
-				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
-				updates _ updates + 1.
-				consistentState _ true
-			] grabProcessorOnlyFor: 1000
-		].
-		done _ true
-	] forkAt: Processor activeProcess priority -1.
-
-	observations _ 0.
-	totalWait _ 0.
-	[ done ] whileFalse: [
-		semaphore signal.
-		waitStart _ Time localMillisecondClock.
-		(Delay forMilliseconds: 25) wait.
-		waited _ Time localMillisecondClock - waitStart.
-		totalWait _ totalWait + waited.
-		observations _ observations + 1.
-		self assert: consistentState description: 'The low priority process was preempted in inconsistent state!!'.
-	].
-
-	self
-		assert: (updates = tries)
-		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
-	self
-		assert: (observations = tries)
-		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
-	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
-	self
-		assert: (1.0 * totalWait / observations) <60
-		description: 'The low priority process was not preempted right after #grabProcessor'! !
-
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
-testGrabProcessorOnlyForTimeout
-	"
-	1 to: 40 do: [ :i | i print. ProcessorTest new testGrabProcessorOnlyForTimeout ]
-	"
-	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait consistentCount inconsistentCount |
-	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
-	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
-	consistentState _ true.
-	tries _ 50.
-	updates _ 0.
-	consistentCount _ 0.
-	inconsistentCount _ 0.
-	done _ false.
-	semaphore _ Semaphore new.
-	[
-		tries timesRepeat: [
-			semaphore wait.
-			[
-				consistentState _ false.
-				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
-				updates _ updates + 1.
-				consistentState _ true
-			] grabProcessorOnlyFor: 25 							"About half the time should preempt it before it finishes"
-		].
-		done _ true
-	] forkAt: Processor activeProcess priority -1.
-
-	observations _ 0.
-	totalWait _ 0.
-	[ done ] whileFalse: [
-		semaphore signal.
-		waitStart _ Time localMillisecondClock.
-		(Delay forMilliseconds: 15) wait.
-		waited _ Time localMillisecondClock - waitStart.
-		totalWait _ totalWait + waited.
-		observations _ observations + 1.
-		consistentState
-			ifTrue: [ consistentCount _ consistentCount + 1 ]
-			ifFalse: [ inconsistentCount _ inconsistentCount + 1 ].
-		"If it needs time to finish, at low priority, allow for it."
-		[ consistentState ] whileFalse: [ (Delay forMilliseconds: 2) wait ].
-	].
-
-	self
-		assert: updates = tries
-		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
-	self
-		assert: observations = tries
-		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
-	self
-		assert: (1.0 * totalWait / observations) < 40	"Mean value should be around 25"
-		description: 'The low priority process was not preempted after the tiemout'.
-	self
-		assert: consistentCount > 3
-		description: 'It seems the low priority process finished always before the timeout'.
-	self
-		assert: inconsistentCount > 5
-		description: 'It seems the low priority process was not preempted at the timeout'! !
-
-!ProcessorTest methodsFor: 'as yet unclassified' stamp: 'jmv 4/17/2013 12:08'!
-testValueUnpreemptively
-	"
-	ProcessorTest new testValueUnpreemptively
-	"
-	| done consistentState tries updates observations timeForAThousand iterationsFor50MSecs semaphore waitStart waited totalWait |
-	timeForAThousand _ [ self wasteTime: 1000 ] timeToRun.
-	iterationsFor50MSecs _ 50 * 1000 // timeForAThousand.
-	consistentState _ true.
-	tries _ 50.
-	updates _ 0.
-	done _ false.
-	semaphore _ Semaphore new.
-	[
-		tries timesRepeat: [
-			semaphore wait.
-			[
-				consistentState _ false.
-				self wasteTime: iterationsFor50MSecs atRandom.	"process for some time between 0 and 50 mSecs"
-				updates _ updates + 1.
-				consistentState _ true
-			] valueUnpreemptively
-		].
-		done _ true
-	] forkAt: Processor activeProcess priority -1.
-
-	observations _ 0.
-	totalWait _ 0.
-	[ done ] whileFalse: [
-		semaphore signal.
-		waitStart _ Time localMillisecondClock.
-		(Delay forMilliseconds: 25) wait.
-		waited _ Time localMillisecondClock - waitStart.
-		totalWait _ totalWait + waited.
-		observations _ observations + 1.
-		self assert: consistentState description: 'The low priority process was preempted in inconsistent state!!'.
-	].
-
-	self
-		assert: updates = tries
-		description: 'Too few updates done. It seems as if the low priority process was not allowed to finish processing'.
-	self
-		assert: observations = tries
-		description: 'Too few observations done. It seems as if the low priority process was was never suspended'.
-	"Min observed value is 26. Mean seems to be around 32. Max observed value was 52"
-	self
-		assert: (1.0 * totalWait / observations) < 60
-		description: 'The low priority process was not preempted at the end of #grabProcessor'! !
-
-!ProcessorTest methodsFor: 'private' stamp: 'jmv 9/22/2009 09:42'!
-wasteTime: iterations
-	iterations timesRepeat: [1.23 asString asNumber]! !
 
 !SpecialSelectorsTest methodsFor: 'testing' stamp: 'jmv 6/5/2017 12:17:20'!
 testCollectionAtSymbol
@@ -11299,87 +13434,6 @@ testNoTimeout
 !ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:41'!
 testTimeoutWithZeroDuration
 	self assertSuccess: (ExceptionTester new runTest: #simpleTimeoutWithZeroDurationTest ) ! !
-
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:15'!
-testSchedulerTermination
-	| process sema gotHere sema2 |
-	gotHere _ false.
-	sema _ Semaphore new.
-	sema2 _ Semaphore new.
-	process _ [
-		sema signal.
-		sema2 wait.
-		"will be suspended here"
-		gotHere _ true ] newProcess.
-	process priority: Processor activeProcess priority.
-	process name: 'testSchedulerTermination'.
-	process resume.
-	sema wait.
-	"until process gets scheduled"
-	process terminate.
-	sema2 signal.
-	Processor yield.
-	"will give process a chance to continue and horribly screw up"
-	self assert: gotHere not.! !
-
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 11/4/2011 22:00'!
-testTerminationDuringUnwind
-	"An illustration of the issue of process termination during unwind.
-	This uses a well-behaved unwind block that we should allow to complete
-	if at all possible."
-	"
-	self new testTerminationDuringUnwind
-	"
-	| unwindStarted unwindFinished p |
-	unwindStarted := unwindFinished := false.
-	p := [[] ensure:[
-			unwindStarted := true.
-			Processor yield.
-			unwindFinished := true.
-		]] newProcess.
-	p resume.
-	self deny: unwindStarted.
-	Processor yield.
-	self assert: unwindStarted.
-	self deny: unwindFinished.
-	p terminate.
-	self assert: unwindFinished.! !
-
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:15'!
-testUnwindFromActiveProcess
-	| sema process |
-	sema := Semaphore forMutualExclusion.
-	self assert:(sema isSignaled).
-	process := [
-		sema critical:[
-			self deny: sema isSignaled.
-			Processor activeProcess terminate.
-		]
-	] newProcess.
-	process priority: Processor userInterruptPriority.
-	process name: 'testUnwindFromActiveProcess'.
-	process resume.
-	self assert: sema isSignaled! !
-
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:14'!
-testUnwindFromForeignProcess
-	| sema process |
-	sema := Semaphore forMutualExclusion.
-	self assert: sema isSignaled.
-	process := [
-		sema critical:[
-			self deny: sema isSignaled.
-			sema wait. "deadlock"
-		]
-	] newProcess.
-	process priority: Processor userInterruptPriority.
-	process name: 'testUnwindFromForeignProcess'.
-	process resume.
-	self deny: sema isSignaled.
-	"This is for illustration only - the BlockCannotReturn cannot 
-	be handled here (it's truncated already)"
-	self shouldnt: [process terminate] raise: BlockCannotReturn.
-	self assert: sema isSignaled! !
 
 !ArrayLiteralTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:05:08'!
 testIsArray
