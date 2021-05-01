@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4579] on 30 April 2021 at 2:32:58 pm'!
+'From Cuis 5.0 [latest update: #4581] on 1 May 2021 at 8:19:45 pm'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 256!
+!provides: 'BaseImageTests' 1 257!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -635,6 +635,16 @@ TestCase subclass: #ExceptionTests
 	category: 'BaseImageTests-Exceptions'!
 !classDefinition: 'ExceptionTests class' category: 'BaseImageTests-Exceptions'!
 ExceptionTests class
+	instanceVariableNames: ''!
+
+!classDefinition: #ProgressInitiationExceptionTest category: 'BaseImageTests-Exceptions'!
+TestCase subclass: #ProgressInitiationExceptionTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Exceptions'!
+!classDefinition: 'ProgressInitiationExceptionTest class' category: 'BaseImageTests-Exceptions'!
+ProgressInitiationExceptionTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ArrayLiteralTest category: 'BaseImageTests-Compiler'!
@@ -13434,6 +13444,103 @@ testNoTimeout
 !ExceptionTests methodsFor: 'testing' stamp: 'brp 10/21/2004 16:41'!
 testTimeoutWithZeroDuration
 	self assertSuccess: (ExceptionTester new runTest: #simpleTimeoutWithZeroDurationTest ) ! !
+
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:11:23'!
+test01
+	| countStorage |
+	countStorage _ {0}.
+	self
+		should: [ self sampleProgress: countStorage ]
+		raise: ZeroDivide.
+	self assert: countStorage first = 5.
+	! !
+
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:11:36'!
+test02
+	| countStorage |
+	countStorage _ {0}.
+	self
+		shouldnt: [
+			[self sampleProgress: countStorage]
+				on: ZeroDivide
+				do: [ :ex | ex resume]
+			]
+		raise: Error.
+	self assert: countStorage first = 10.
+	! !
+
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:12:24'!
+test03
+	| countStorage |
+	countStorage _ {0}.
+	self
+		should: [
+			[self sampleProgress: countStorage]
+				on: ProgressInitiationException
+				do: [ :ex | ex sendNotificationsTo: [ :min :max :curr | Transcript show: min printString, '  ', max printString, '  ', curr printString; newLine ]]
+			]
+		raise: Error.
+	self assert: countStorage first = 5.
+	! !
+
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:15:12'!
+test04
+	| countStorage |
+	countStorage _ {0}.
+	self
+		shouldnt: [
+			[
+				[self sampleProgress: countStorage]
+				on: ZeroDivide
+				do: [ :ex | ex resume]
+			]
+				on: ProgressInitiationException
+				do: [ :ex | ex sendNotificationsTo: [ :min :max :curr | Transcript show: min printString, '  ', max printString, '  ', curr printString; newLine ]]
+			]
+		raise: Error.
+	self assert: countStorage first = 10.
+	! !
+
+!ProgressInitiationExceptionTest methodsFor: 'testing' stamp: 'jmv 5/1/2021 20:15:48'!
+test05
+	| countStorage |
+	countStorage _ {0}.
+	self
+		shouldnt: [
+			[
+				[self sampleProgress: countStorage]
+				on: ProgressInitiationException
+				do: [ :ex | ex sendNotificationsTo: [ :min :max :curr | Transcript show: min printString, '  ', max printString, '  ', curr printString; newLine ]]
+			]
+				on: ZeroDivide
+				do: [ :ex | ex resume]
+			]
+		raise: Error.
+	self assert: countStorage first = 10.
+	! !
+
+!ProgressInitiationExceptionTest methodsFor: 'aux' stamp: 'jmv 5/1/2021 20:09:48'!
+sampleProgress: countStorage
+"
+self new sampleProgress: {0}
+"
+	| d |
+	d _ Delay forMilliseconds: 10.
+	^'Now here''s some Real Progress'
+		displayProgressAt: Sensor mousePoint
+		from: 0
+		to: 10
+		during: [ :barBlock |
+			1 to: 10 do: [ :x |
+				countStorage at: 1 put: countStorage first + 1.
+				barBlock value: x.
+				d wait.
+				x = 5 ifTrue: [1/0].	"just to make life interesting"
+			].
+			'done'
+		].
+
+! !
 
 !ArrayLiteralTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:05:08'!
 testIsArray
