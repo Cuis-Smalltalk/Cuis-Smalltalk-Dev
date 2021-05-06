@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4581] on 1 May 2021 at 8:19:45 pm'!
+'From Cuis 5.0 [latest update: #4567] on 6 May 2021 at 12:18:12 pm'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 257!
+!provides: 'BaseImageTests' 1 258!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -9832,7 +9832,7 @@ testTerminationDuringNestedUnwind8
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 11/4/2011 22:00'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 5/6/2021 12:17:31'!
 testTerminationDuringUnwind
 	"An illustration of the issue of process termination during unwind.
 	This uses a well-behaved unwind block that we should allow to complete
@@ -9848,12 +9848,12 @@ testTerminationDuringUnwind
 			unwindFinished := true.
 		]] newProcess.
 	p resume.
-	self deny: unwindStarted.
+	self deny: unwindStarted description: 'Expected unwind block not to have started yet, but it has!!'.
 	Processor yield.
-	self assert: unwindStarted.
-	self deny: unwindFinished.
+	self assert: unwindStarted description: 'Expected unwind block to have started by now, but it hasn''t!!'.
+	self deny: unwindFinished description: 'Expected unwind block not to have finished yet, but it has!!'.
 	p terminate.
-	self assert: unwindFinished.! !
+	self assert: unwindFinished description: 'Expected unwind block to have successfully finished by now, but it hasn''t!!'.! !
 
 !ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 10/8/2012 22:15'!
 testUnwindFromActiveProcess
