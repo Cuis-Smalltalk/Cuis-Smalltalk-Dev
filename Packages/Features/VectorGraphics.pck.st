@@ -1,12 +1,11 @@
-'From Cuis 5.0 [latest update: #4571] on 28 April 2021 at 11:20:49 am'!
+'From Cuis 5.0 [latest update: #4594] on 10 May 2021 at 4:31:19 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 221!
+!provides: 'VectorGraphics' 1 222!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
 SystemOrganization addCategory: 'VectorGraphics-TrueType'!
 SystemOrganization addCategory: 'VectorGraphics-Experiments'!
-SystemOrganization addCategory: 'VectorGraphics-Examples'!
 
 
 !classDefinition: #PathCommandError category: 'VectorGraphics-PathCommands'!
@@ -91,7 +90,7 @@ HybridCanvas class
 
 !classDefinition: #VectorCanvas category: 'VectorGraphics-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
-	instanceVariableNames: 'boundsFinderEngine firstX firstY currentX currentY lastControlX lastControlY'
+	instanceVariableNames: 'boundsFinderEngine firstPoint lastControlPoint currentPoint'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -959,18 +958,18 @@ serviceReadTTFont
 		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:34:45'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 5/10/2021 12:48:18'!
 drawOn: aCanvas
 	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
 
 
 aCanvas strokeWidth: 4 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
 	aCanvas
-		ellipseCenterX: 46 y: 46 rx: "24"16 ry: "12"16 ].
+		ellipseCenter: 46@46 radius: "24"16 @ "12"16 ].
 
 aCanvas strokeWidth: 18 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
 	aCanvas
-		ellipseCenterX: 46 y: 46 rx: "24"36 ry: "12"36 ].
+		ellipseCenter: 46@46 radius: "24"36 @ "12"36 ].
 
 aCanvas fillColor: Color black do: [
 	aCanvas
@@ -1304,12 +1303,13 @@ fillColor: aFillColor do: pathCommandsBlock
 	self initializePath.
 	engine fillColor: aFillColor do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/18/2021 15:10:32'!
+!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 5/10/2021 11:17:46'!
 initializePath
 	"Perform any initialization needed before starting a Path"
 
-	firstX _ firstY _ Float nan.
-	currentX _ currentY _ lastControlX _ lastControlY _ 0.0.! !
+	firstPoint _ nil.
+	currentPoint _ `0.0@0.0`.
+	lastControlPoint _ currentPoint.! !
 
 !VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:38'!
 strokeWidth: morphStrokeWidth color: aStrokeColor do: pathCommandsBlock
@@ -1334,86 +1334,82 @@ strokeWidth: morphStrokeWidth color: aStrokeColor fillColor: aFillColor do: path
 		fillColor: aFillColor
 		do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:24:13'!
-arcToX: cx y: cy rx: mrx ry: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 15:35:35'!
+arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color red do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			arcToX: 200 y: 200 rx: 200 ry: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
-			moveToX: 100 y: 100;
-			arcToX: 200 y: 200 rx: 200 ry: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
+			moveTo: 100@100;
+			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
+			moveTo: 100@100;
+			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.2 position: 200@100);
 	strokeWidth: 1.0 color: Color red do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			arcToX: 200 y: 200 rx: 200 ry: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
-			moveToX: 100 y: 100;
-			arcToX: 200 y: 200 rx: 200 ry: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
+			moveTo: 100@100;
+			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
+			moveTo: 100@100;
+			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
 Display forceToScreen
 "
 
-	| center dx dy phi rx ry |
-	center _ currentTransformation externalizePosition: cx@cy.
-	dx _ currentTransformation externalizeDelta: mrx@0.
-	dy _ currentTransformation externalizeDelta: 0@mry.
+	| center radiusPoint dx dy phi rx ry |
+	center _ currentTransformation externalizePosition: aPoint.
+	radiusPoint _ radiusPointOrNumber asPoint.
+	dx _ currentTransformation externalizeDelta: radiusPoint x@0.
+	dy _ currentTransformation externalizeDelta: 0@radiusPoint y.
 	rx _ dx r.
 	ry _ dy r.
 	phi _ currentTransformation radians + theta.
-	engine basicArcToX: center x y: center y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
+	engine arcToX: center x y: center y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/18/2021 15:19:25'!
-circleCenterX: cx y: cy radius: mr
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:46:02'!
+circleCenter: aPoint radius: mr
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			circleCenterX: 200 y: 150 radius: 80].
+			circleCenter: 200 @ 150 radius: 80].
 Display forceToScreen
 "
 
 	| center r |
-	center _ currentTransformation externalizePosition: cx@cy.
+	center _ currentTransformation externalizePosition: aPoint.
 	r _ currentTransformation externalizeScalar: mr.
-	engine basicArcCenterX: center x centerY: center y radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float twoPi.! !
+	engine arcCenterX: center x centerY: center y radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep:  Float twoPi.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/18/2021 14:59:18'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:57:08'!
 closePath
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			cubicBezierToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200;
-			cubicBezierToX: 300 y: 120 control1X: 310 y: 110 control2X: 200 y: 200;
+			moveTo: 100@100;
+			cubicBezierTo: 300@200 control1: 110@110 control2: 200@200;
+			cubicBezierTo: 300@120 control1: 310@110 control2: 200@200;
 			closePath;
-			lineToX: 150 y: 300 ].
+			lineTo: 150@300 ].
 Display forceToScreen
 "
 
-	firstX isNaN ifFalse: [
-		self lineToX: firstX y: firstY ].! !
+	firstPoint notNil ifTrue: [
+		self lineTo: firstPoint ].! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:13:52'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:41:11'!
 cubicBezier: points
 	"points must be of size 4
 	http://en.wikipedia.org/wiki/Bezier_curve"
 
-	| start control1 control2 end |
-	start _ points first.
-	control1 _ points second.
-	control2 _ points third.
-	end _ points fourth.
-	self moveToX: start x y: start y.
+	self moveTo: points first.
 	self
-		cubicBezierToX: end x y: end y
-		control1X: control1 x y: control1 y
-		control2X: control2 x y: control2 y! !
+		cubicBezierTo: points fourth
+		control1: points second
+		control2: points third! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/17/2021 09:49:29'!
-cubicBezierSmoothToX: xTo y: yTo control2X: xC y: yC
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:34:03'!
+cubicBezierSmoothTo: aPoint control2: controlPoint
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
 	Smooth squence of curves: use as control1 point, last used control2 point."
@@ -1422,20 +1418,20 @@ cubicBezierSmoothToX: xTo y: yTo control2X: xC y: yC
 (VectorCanvas  onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
-		canvas circleCenterX: 150 y: 300 radius: 10.
-		canvas circleCenterX: 600 y: 400 radius: 6.
-		canvas moveToX: 100 y: 50.
+		canvas circleCenter: 150@300 radius: 10.
+		canvas circleCenter: 600@400 radius: 6.
+		canvas moveTo: 100@50.
 		canvas
-			cubicBezierToX: 600 y: 100 control1X: 150 y: 300 control2X: 600 y: 400
+			cubicBezierTo: 600@100 control1: 150@300 control2: 600@400
 			].
 (VectorCanvas  onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
-		canvas circleCenterX: 600 y: -200 radius: 10.
-		canvas circleCenterX: 100 y: -100 radius: 6.
-		canvas moveToX: 600 y: 100.
+		canvas circleCenter: 600 @ -200 radius: 10.
+		canvas circleCenter: 100 @ -100 radius: 6.
+		canvas moveTo: 600 @ 100.
 		canvas
-			cubicBezierToX: 300 y: 100 control1X: 600 y: -200 control2X: 100 y: -100
+			cubicBezierTo: 300@100 control1: 600 @ -200 control2: 100 @ -100
 			].
 Display forceToScreen.
 	"
@@ -1443,105 +1439,102 @@ Display forceToScreen.
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			cubicBezierToX: 600 y: 100 control1X: 150 y: 300 control2X: 600 y: 400;
-			cubicBezierSmoothToX: 300 y: 100 control2X: 100 y: -100
+			cubicBezierTo: 600@100 control1: 150@300 control2: 600@400;
+			cubicBezierSmoothTo: 300@100 control2: 100 @ -100
 			].
 Display forceToScreen
 	"
-	| mirroredContolX mirroredContolY |
-	mirroredContolX _ currentX + (currentX - lastControlX).
-	mirroredContolY _ currentY + (currentY - lastControlY).
-	self cubicBezierToX: xTo y: yTo control1X: mirroredContolX y: mirroredContolY control2X: xC y: yC! !
+	| mirroredLastControlPoint |
+	mirroredLastControlPoint _ currentPoint + (currentPoint - lastControlPoint).
+	self cubicBezierTo: aPoint control1: mirroredLastControlPoint control2: controlPoint! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/17/2021 09:49:29'!
-cubicBezierToX: xTo y: yTo control1X: xC1 y: yC1 control2X: xC2 y: yC2
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 15:41:15'!
+cubicBezierTo: aPoint control1: control1Point control2: control2Point
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
 (VectorCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			cubicBezierToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200 ].
+			moveTo: 100@100;
+			cubicBezierTo: 300@200 control1: 110@110 control2: 200@200 ].
 Display forceToScreen
 	"
 	"
 (VectorCanvas onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			cubicBezierToX: 600 y: 100
-			control1X: 150 y: 300
-			control2X: 600 y: 400 ].
+			cubicBezierTo: 600@100
+			control1: 150@300
+			control2: 600@400 ].
 Display forceToScreen
 	"
 	| c1 c2 to |
-	c1 _ currentTransformation externalizePosition: xC1@yC1.
-	c2 _ currentTransformation externalizePosition: xC2@yC2.
-	to _ currentTransformation externalizePosition: xTo@yTo.
-	engine basicCubicBezierToX: to x y: to y control1X: c1 x y: c1 y control2X: c2 x y: c2 y.
-	currentX _ xTo.
-	currentY _ yTo.
-	lastControlX _ xC2.
-	lastControlY _ yC2! !
+	c1 _ currentTransformation externalizePosition: control1Point.
+	c2 _ currentTransformation externalizePosition: control2Point.
+	to _ currentTransformation externalizePosition: aPoint.
+	engine cubicBezierToX: to x y: to y control1X: c1 x y: c1 y control2X: c2 x y: c2 y.
+	currentPoint _ aPoint.
+	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:13:59'!
-curveToX: xTo y: yTo control1X: xC1 y: yC1 control2X: xC2 y: yC2
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:47:09'!
+curveTo: aPoint control1: control1Point control2: control2Point
 
-	self cubicBezierToX: xTo y: yTo control1X: xC1 y: yC1 control2X: xC2 y: yC2! !
+	self cubicBezierTo: aPoint control1: control1Point control2: control2Point! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/18/2021 14:53:45'!
-ellipseCenterX: cx y: cy rx: mrx ry: mry
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:46:08'!
+ellipseCenter: aPoint radius: radiusPoint
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			ellipseCenterX: 200 y: 150 rx: 100 ry: 50].
+			ellipseCenter: 200@150 radius: 100@50].
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			ellipseCenterX: 200 y: 150 rx: 100 ry: 50].
+			ellipseCenter: 200@150 radius: 100@50].
 Display forceToScreen
 "
 
 	| center dx dy phi rx ry |
-	center _ currentTransformation externalizePosition: cx@cy.
-	dx _ currentTransformation externalizeDelta: mrx@0.
-	dy _ currentTransformation externalizeDelta: 0@mry.
+	center _ currentTransformation externalizePosition: aPoint.
+	dx _ currentTransformation externalizeDelta: radiusPoint x@0.
+	dy _ currentTransformation externalizeDelta: 0@radiusPoint y.
 	rx _ dx r.
 	ry _ dy r.
 	phi _ currentTransformation radians.
-	engine basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float twoPi.! !
+	engine arcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float twoPi.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/18/2021 15:19:34'!
-ellipseCenterX: cx y: cy rx: mrx ry: mry rotationAngle: theta
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:46:13'!
+ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			ellipseCenterX: 200 y: 150 rx: 100 ry: 50 rotationAngle: -0.5 ].
+			ellipseCenter: 200@150 radius: 100@50 rotationAngle: -0.5 ].
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			ellipseCenterX: 200 y: 150 rx: 100 ry: 50 rotationAngle: -0.5 ].
+			ellipseCenter: 200@150 radius: 100@50 rotationAngle: -0.5 ].
 Display forceToScreen
 "
 
 	| center dx dy phi rx ry |
-	center _ currentTransformation externalizePosition: cx@cy.
-	dx _ currentTransformation externalizeDelta: mrx@0.
-	dy _ currentTransformation externalizeDelta: 0@mry.
+	center _ currentTransformation externalizePosition: aPoint.
+	dx _ currentTransformation externalizeDelta: radiusPoint x@0.
+	dy _ currentTransformation externalizeDelta: 0@radiusPoint y.
 	rx _ dx r.
 	ry _ dy r.
 	phi _ currentTransformation radians + theta.
-	engine basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float twoPi.! !
+	engine arcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep:  Float twoPi.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:20:15'!
-ellipseCenterX: cx y: cy rx: mrx ry: mry rotationAngle: theta start: startAngle sweep: sweepAngle
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:46:23'!
+ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 	"Currently draws a line from pathCurrentX@pathCurrentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
 	Implement desired behavior when clear."
@@ -1549,35 +1542,60 @@ ellipseCenterX: cx y: cy rx: mrx ry: mry rotationAngle: theta start: startAngle 
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			ellipseCenterX: 200 y: 150 rx: 100 ry: 50 rotationAngle: 0.0 start: 0.1 sweep: 6 ].
+			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6 ].
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.0 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			ellipseCenterX: 200 y: 150 rx: 100 ry: 50 rotationAngle: 0.0 start: 0.1 sweep: 6].
+			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6].
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			ellipseCenterX: 200 y: 350 rx: 100 ry: 50 rotationAngle: 0.5 start: 0.1 sweep: 6 ].
+			ellipseCenter: 200@350 radius: 100@50 rotationAngle: 0.5 start: 0.1 sweep: 6 ].
 Display forceToScreen.
 "
 
 	| center dx dy phi rx ry |
-	center _ currentTransformation externalizePosition: cx@cy.
-	dx _ currentTransformation externalizeDelta: mrx@0.
-	dy _ currentTransformation externalizeDelta: 0@mry.
+	center _ currentTransformation externalizePosition: aPoint.
+	dx _ currentTransformation externalizeDelta: radiusPoint x@0.
+	dy _ currentTransformation externalizeDelta: 0@radiusPoint y.
 	rx _ dx r.
 	ry _ dy r.
 	phi _ currentTransformation radians + theta.
-	engine basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: startAngle sweep:  sweepAngle! !
+	engine arcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: startAngle sweep:  sweepAngle! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/17/2021 09:49:05'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 15:42:28'!
+lineTo: aPoint
+"
+(VectorCanvas onForm: Display)
+	strokeWidth: 2.0 color: Color black do: [ :canvas |
+		canvas
+			moveTo: 100@100;
+			lineTo: 200@150 ].
+Display forceToScreen
+"
+"
+(VectorCanvas onForm: Display)
+	geometryTransformation: (AffineTransformation withScale: 10);
+	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
+		canvas moveTo: 10@5.
+		canvas lineTo: 15@30.
+		canvas lineTo: 60@10 ].
+Display forceToScreen
+"
+	| to |
+	to _ currentTransformation externalizePosition: aPoint.
+	engine lineToX: to x y: to y.
+	currentPoint _ aPoint.
+	lastControlPoint _ currentPoint.! !
+
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:57:44'!
 lineToX: xTo
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
+			moveTo: 100@100;
 			lineToX: 200 ].
 Display forceToScreen
 "
@@ -1585,47 +1603,20 @@ Display forceToScreen
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
+		canvas moveTo: 10@5.
 		canvas lineToX: 50.
-		canvas lineToX: 60 y: 10 ].
+		canvas lineTo: 60@10 ].
 Display forceToScreen
 "
-	self lineToX: xTo y: currentY! !
+	self lineTo: xTo @ currentPoint y! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/17/2021 09:49:29'!
-lineToX: xTo y: yTo
-"
-(VectorCanvas onForm: Display)
-	strokeWidth: 2.0 color: Color black do: [ :canvas |
-		canvas
-			moveToX: 100 y: 100;
-			lineToX: 200 y: 150 ].
-Display forceToScreen
-"
-"
-(VectorCanvas onForm: Display)
-	geometryTransformation: (AffineTransformation withScale: 10);
-	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas lineToX: 15 y: 30.
-		canvas lineToX: 60 y: 10 ].
-Display forceToScreen
-"
-	| to |
-	to _ currentTransformation externalizePosition: xTo@yTo.
-	engine basicLineToX: to x y: to y.
-	currentX _ xTo.
-	currentY _ yTo.
-	lastControlX _ currentX.
-	lastControlY _ currentY! !
-
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/17/2021 09:48:40'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:59:12'!
 lineToY: yTo
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
+			moveTo: 100@100;
 			lineToY: 200 ].
 Display forceToScreen
 "
@@ -1633,84 +1624,66 @@ Display forceToScreen
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
+		canvas moveTo: 10@5.
 		canvas lineToY: 50.
-		canvas lineToX: 60 y: 10 ].
+		canvas lineTo: 60@10 ].
 Display forceToScreen
 "
-	self lineToX: currentX y: yTo.! !
+	self lineTo: currentPoint x @ yTo.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/17/2021 10:00:05'!
-moveToX: x y: y
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 15:47:57'!
+moveTo: aPoint
 "
 (VectorCanvas onForm: Display)
-	strokeWidth: 1.0 color: Color black do: [ :canvas |
+	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			lineToX: 200 y: 150 ].
-Display forceToScreen
-"
-"
-(VectorCanvas onForm: Display)
-	geometryTransformation: (AffineTransformation withScale: 10);
-	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas lineToX: 15 y: 30.
-		canvas lineToX: 60 y: 10 ].
+			moveTo: 100@100;
+			lineTo: 200@150 ].
 Display forceToScreen
 "
 	| p |
-	p _ currentTransformation externalizePosition: x@y.
-	engine basicMoveToX: p x y: p y.
-	firstX _ x.
-	firstY _ y.
-	currentX _ x.
-	currentY _ y.
-	lastControlX _ currentX.
-	lastControlY _ currentY! !
+	p _ currentTransformation externalizePosition: aPoint.
+	engine moveToX: p x y: p y.
+	firstPoint _ aPoint.
+	currentPoint _ aPoint.
+	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:05:56'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:27:50'!
 polyLine: points
 
 	| p  |
 	p _ points first.
-	self moveToX: p x y: p y.
+	self moveTo: p.
 	2 to: points size do: [ :i |
 		p _ points at: i.	
-		self lineToX: p x y: p y ]! !
+		self lineTo: p]! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:55:12'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:58:30'!
 quadraticBezier: points
 	"points must be of size 3
 	http://en.wikipedia.org/wiki/Bezier_curve"
 
-	| start control end |
-	start _ points first.
-	control _ points second.
-	end _ points third.
-	self moveToX: start x y: start y.
-	self
-		quadraticBezierToX: end x y: end y
-		controlX: control x y: control y! !
+	self moveTo: points first.
+	self quadraticBezierTo: points third control: points second.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/17/2021 09:49:29'!
-quadraticBezierSmoothToX: xTo y: yTo
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:40:03'!
+quadraticBezierSmoothTo: aPoint
 "
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
-		canvas circleCenterX: 450 y: 300 radius: 10.
-		canvas moveToX: 100 y: 50.
+		canvas circleCenter: 450@300 radius: 10.
+		canvas moveTo: 100@50.
 		canvas
-			quadraticBezierToX: 600 y: 100 controlX: 450 y: 300
+			quadraticBezierTo: 600@100 control: 450@300
 			].
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
-		canvas circleCenterX: 750 y: -100 radius: 10.
-		canvas moveToX: 600 y: 100.
+		canvas circleCenter: 750 @ -100 radius: 10.
+		canvas moveTo: 600@100.
 		canvas
-			quadraticBezierToX: 300 y: 100 controlX: 750 y: -100
+			quadraticBezierTo: 300@100 control: 750 @ -100
 			].
 Display forceToScreen.
 "
@@ -1718,56 +1691,53 @@ Display forceToScreen.
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			quadraticBezierToX: 600 y: 100 controlX: 450 y: 300;
-			quadraticBezierSmoothToX: 300 y: 100
+			quadraticBezierTo: 600@100 control: 450@300;
+			quadraticBezierSmoothTo: 300@100
 			].
 Display forceToScreen
 "
-	| mirroredContolX mirroredContolY |
-	mirroredContolX _ currentX + (currentX - lastControlX).
-	mirroredContolY _ currentY + (currentY - lastControlY).
-	self quadraticBezierToX: xTo y: yTo controlX: mirroredContolX y: mirroredContolY! !
+	| mirroredLastControlPoint |
+	mirroredLastControlPoint _ currentPoint + (currentPoint - lastControlPoint).
+	self quadraticBezierTo: aPoint control: mirroredLastControlPoint! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/17/2021 09:49:29'!
-quadraticBezierToX: xTo y: yTo controlX: xC y: yC
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 15:51:45'!
+quadraticBezierTo: aPoint control: controlPoint
 	"
 (VectorCanvas onForm: Display)
 	strokeWidth: 3.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			quadraticBezierToX: 300 y: 200 controlX: 100 y: 210 ].
+			moveTo: 100@100;
+			quadraticBezierTo: 300@200 control: 100@210 ].
 Display forceToScreen
 	"
 	"
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 3 position: 200@100);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas quadraticBezierToX: 60 y: 10 controlX: 15 y: 30 ].
+		canvas moveTo: 10@5.
+		canvas quadraticBezierTo: 60@10 control: 15@30 ].
 Display forceToScreen
 	"
-	| c to |
-	c _ currentTransformation externalizePosition: xC@yC.
-	to _ currentTransformation externalizePosition: xTo@yTo.
-	engine basicQuadraticBezierToX: to x y: to y controlX: c x y: c y.
-	currentX _ xTo.
-	currentY _ yTo.
-	lastControlX _ xC.
-	lastControlY _ yC.! !
+	| to c |
+	to _ currentTransformation externalizePosition: aPoint.
+	c _ currentTransformation externalizePosition: controlPoint.
+	engine quadraticBezierToX: to x y: to y controlX: c x y: c y.
+	currentPoint _ aPoint.
+	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:06:02'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:28:30'!
 rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax
 
 	self
-		moveToX: xMin y: yMin;
-		lineToX: xMax y: yMin;
-		lineToX: xMax y: yMax;
-		lineToX: xMin y: yMax;
+		moveTo: xMin @ yMin;
+		lineTo: xMax @ yMin;
+		lineTo: xMax @ yMax;
+		lineTo: xMin @ yMax;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:55:26'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:27:49'!
 roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p5 p6 p7 p8 |
@@ -1793,17 +1763,17 @@ roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	useIncreasingAngles _ true.
 	"
 	self
-		moveToX: corner1 x y: corner1 y ;
-		lineToX: corner2 x y: corner2 y;
-		lineToX: p5 x y: p5 y;
+		moveTo: corner1;
+		lineTo: corner2;
+		lineTo: p5;
 "		arcToX: p6 x y: p6 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
-		quadraticBezierToX: p6 x y: p6 y controlX: corner3 x y: corner3 y;
-		lineToX: p7 x y: p7 y;
+		quadraticBezierTo: p6 control: corner3;
+		lineTo: p7;
 "		arcToX: p8 x y: p8 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
-		quadraticBezierToX: p8 x y: p8 y controlX: corner4 x y: corner4 y;
+		quadraticBezierTo: p8 control: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:55:36'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:28:03'!
 roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 p5 p6 p7 p8 |
@@ -1833,21 +1803,21 @@ roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	useIncreasingAngles _ true.
 	"
 	self
-		moveToX: p1 x y: p1 y ;
+		moveTo: p1;
 "		arcToX: p2 x y: p2 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
-		quadraticBezierToX: p2 x y: p2 y controlX: corner1 x y: corner1 y;
-		lineToX: p3 x y: p3 y;
+		quadraticBezierTo: p2 control: corner1;
+		lineTo: p3;
 "		arcToX: p4 x y: p4 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
-		quadraticBezierToX: p4 x y: p4 y controlX: corner2 x y: corner2 y;
-		lineToX: p5 x y: p5 y;
+		quadraticBezierTo: p4 control: corner2;
+		lineTo: p5;
 "		arcToX: p6 x y: p6 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
-		quadraticBezierToX: p6 x y: p6 y controlX: corner3 x y: corner3 y;
-		lineToX: p7 x y: p7 y;
+		quadraticBezierTo: p6 control: corner3;
+		lineTo: p7;
 "		arcToX: p8 x y: p8 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
-		quadraticBezierToX: p8 x y: p8 y controlX: corner4 x y: corner4 y;
+		quadraticBezierTo: p8 control: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 3/16/2021 11:55:49'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:28:10'!
 roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 |
@@ -1872,32 +1842,32 @@ roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	useIncreasingAngles _ true.
 	"
 	self
-		moveToX: p1 x y: p1 y ;
+		moveTo: p1;
 "		arcToX: p2 x y: p2 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
-		quadraticBezierToX: p2 x y: p2 y controlX: corner1 x y: corner1 y;
-		lineToX: p3 x y: p3 y;
+		quadraticBezierTo: p2 control: corner1;
+		lineTo: p3;
 "		arcToX: p4 x y: p4 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
-		quadraticBezierToX: p4 x y: p4 y controlX: corner2 x y: corner2 y;
-		lineToX: corner3 x y: corner3 y;
-		lineToX: corner4 x y: corner4 y;
+		quadraticBezierTo: p4 control: corner2;
+		lineTo: corner3;
+		lineTo: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 3/17/2021 09:49:05'!
-rel_ArcToX: cx y: cy rx: mrx ry: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:41:44'!
+rel_ArcTo: aPoint radius: radiusPointOrNumber  angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color red do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			arcToX: 200 y: 200 rx: 200 ry: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
-			rel_ArcToX: 200 y: 200 rx: 200 ry: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false;
+			moveTo: 100@100;
+			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
+			rel_ArcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: false;
 			closePath ].
 Display forceToScreen
 "
-	self arcToX: currentX + cx y: currentY + cy rx: mrx ry: mry angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
+	self arcTo: currentPoint + aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 3/17/2021 09:49:05'!
-rel_CubicBezierSmoothToX: xTo y: yTo control2X: xC y: yC
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:43:57'!
+rel_CubicBezierSmoothTo: aPoint control2: controlPoint
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
 	Smooth squence of curves: use as control1 point, last used control2 point."
@@ -1906,10 +1876,10 @@ rel_CubicBezierSmoothToX: xTo y: yTo control2X: xC y: yC
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			cubicBezierToX: 600 y: 100 control1X: 150 y: 300 control2X: 600 y: 400;
-			rel_CubicBezierToX: 300 y: 300 control1X: 0 y: 0 control2X: 100 y: 100
+			cubicBezierTo: 600@100 control1: 150@300 control2: 600@400;
+			rel_CubicBezierTo: 300@300 control1: 0@0 control2: 100@100
 			].
 Display forceToScreen
 	"
@@ -1917,10 +1887,10 @@ Display forceToScreen
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			cubicBezierToX: 600 y: 100 control1X: 150 y: 300 control2X: 600 y: 400;
-			rel_CubicBezierSmoothToX: 300 y: 300 control2X: 100 y: 100
+			cubicBezierTo: 600@100 control1: 150@300 control2: 600@400;
+			rel_CubicBezierSmoothTo: 300@300 control2: 100@100
 			].
 Display forceToScreen
 	"
@@ -1928,134 +1898,121 @@ Display forceToScreen
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			cubicBezierSmoothToX: 600 y: 100 control2X: 600 y: 400;
-			cubicBezierSmoothToX: 300 y: 300 control2X: 100 y: 100
+			cubicBezierSmoothTo: 600@100 control2: 600@400;
+			cubicBezierSmoothTo: 300@300 control2: 100@100
 			].
 Display forceToScreen
 	"
 
 	self
-		cubicBezierSmoothToX: currentX + xTo y: currentY + yTo
-		control2X: currentX + xC y: currentY + yC.! !
+		cubicBezierSmoothTo: currentPoint + aPoint
+		control2: currentPoint + controlPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 3/17/2021 09:49:05'!
-rel_CubicBezierToX: xTo y: yTo control1X: xC1 y: yC1 control2X: xC2 y: yC2
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:49:39'!
+rel_CubicBezierTo: aPoint control1: control1Point control2: control2Point
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
 (VectorCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			cubicBezierToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200 ];
+			moveTo: 100@100;
+			cubicBezierTo: 300@200 control1: 110@110 control2: 200@200 ];
 	strokeWidth: 1.0 color: Color red do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			rel_CubicBezierToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200 ].
+			moveTo: 100@100;
+			rel_CubicBezierTo: 300@200 control1: 110@110 control2: 200@200 ].
 Display forceToScreen
 	"
 	"
 (VectorCanvas onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			cubicBezierToX: 600 y: 100
-			control1X: 150 y: 300
-			control2X: 600 y: 400 ];
+			cubicBezierTo: 600@100
+			control1: 150@300
+			control2: 600@400 ];
 	strokeWidth: 10 color: (Color red alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			rel_CubicBezierToX: 600 y: 100
-			control1X: 150 y: 300
-			control2X: 600 y: 400 ].
+			rel_CubicBezierTo: 600@100
+			control1: 150@300
+			control2: 600@400 ].
 Display forceToScreen
 	"
 
 	self
-		cubicBezierToX: currentX + xTo y: currentY + yTo
-		control1X: currentX + xC1 y: currentY + yC1
-		control2X: currentX + xC2 y: currentY + yC2! !
+		cubicBezierTo: currentPoint+aPoint
+		control1: currentPoint+control1Point
+		control2: currentPoint+control2Point! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 3/17/2021 09:49:05'!
-rel_LineToX: xTo y: yTo
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:50:35'!
+rel_LineTo: aPoint
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			lineToX: 200 y: 150];
+			moveTo: 100@100;
+			lineTo: 200@150];
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			rel_LineToX: 200 y: 150].
+			moveTo: 100@100;
+			rel_LineTo: 200@150].
 Display forceToScreen
 "
 "
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas lineToX: 15 y: 30.
-		canvas lineToX: 60 y: 10 ];
+		canvas moveTo: 10@5.
+		canvas lineTo: 15@30.
+		canvas lineTo: 60@10 ];
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color red alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas rel_LineToX: 15 y: 30.
-		canvas rel_LineToX: 60 y: 10 ].
+		canvas moveTo: 10@5.
+		canvas rel_LineTo: 15@30.
+		canvas rel_LineTo: 60@10 ].
 Display forceToScreen
 "
-	self lineToX: currentX + xTo y: currentY + yTo! !
+	self lineTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 3/17/2021 09:49:05'!
-rel_MoveToX: x y: y
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:52:24'!
+rel_MoveTo: aPoint
 "
 (VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			lineToX: 200 y: 150];
+			moveTo: 100@100;
+			lineTo: 200@150];
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			rel_LineToX: 200 y: 150].
+			moveTo: 100@100;
+			rel_MoveTo: 10@20;
+			lineTo: 200@150].
 Display forceToScreen
 "
-"
-(VectorCanvas onForm: Display)
-	geometryTransformation: (AffineTransformation withScale: 10);
-	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas lineToX: 15 y: 30.
-		canvas lineToX: 60 y: 10 ];
-	geometryTransformation: (AffineTransformation withScale: 10);
-	strokeWidth: 2 color: (Color red alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas lineToX: 15 y: 30.
-		canvas lineToX: 60 y: 10 ].
-Display forceToScreen
-"
-	self moveToX: currentX + x y: currentY + y! !
+	self moveTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 3/17/2021 09:49:05'!
-rel_QuadraticBezierSmoothToX: xTo y: yTo
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:53:53'!
+rel_QuadraticBezierSmoothTo: aPoint
 "
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
-		canvas circleCenterX: 550 y: 350 radius: 10.
-		canvas moveToX: 100 y: 50.
+		canvas circleCenter: 550@350 radius: 10.
+		canvas moveTo: 100@50.
 		canvas
-			rel_QuadraticBezierToX: 600 y: 100 controlX: 450 y: 300
+			rel_QuadraticBezierTo: 600@100 control: 450@300
 			].
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
-		canvas circleCenterX: 850 y: -50 radius: 10.
-		canvas moveToX: 700 y: 150.
+		canvas circleCenter: 850 @ -50 radius: 10.
+		canvas moveTo: 700@150.
 		canvas
-			rel_QuadraticBezierToX: -300 y: -50 controlX: 150 y: -200
+			rel_QuadraticBezierTo: -300 @ -50 control: 150 @ -200
 			].
 Display forceToScreen.
 "
@@ -2063,46 +2020,46 @@ Display forceToScreen.
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
-		canvas moveToX: 100 y: 50.
+		canvas moveTo: 100@50.
 		canvas
-			rel_QuadraticBezierToX: 600 y: 100 controlX: 450 y: 300;
-			rel_QuadraticBezierSmoothToX: -300 y: -50
+			rel_QuadraticBezierTo: 600@100 control: 450@300;
+			rel_QuadraticBezierSmoothTo: -300 @ -50
 			].
 Display forceToScreen
 "
 	self
-		quadraticBezierSmoothToX: currentX + xTo y: currentY + yTo.! !
+		quadraticBezierSmoothTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 3/17/2021 09:49:05'!
-rel_QuadraticBezierToX: xTo y: yTo controlX: xC y: yC
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:55:08'!
+rel_QuadraticBezierTo: aPoint control: controlPoint
 	"
 (VectorCanvas onForm: Display)
 	strokeWidth: 3.0 color: Color black do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			quadraticBezierToX: 300 y: 200 controlX: 100 y: 210 ];
+			moveTo: 100@100;
+			quadraticBezierTo: 300@200 control: 100@210 ];
 	strokeWidth: 3.0 color: Color red do: [ :canvas |
 		canvas
-			moveToX: 100 y: 100;
-			rel_QuadraticBezierToX: 300 y: 200 controlX: 100 y: 210 ].
+			moveTo: 100@100;
+			rel_QuadraticBezierTo: 300@200 control: 100@210 ].
 Display forceToScreen
 	"
 	"
 (VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 3 position: 200@100);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas quadraticBezierToX: 60 y: 10 controlX: 15 y: 30 ];
+		canvas moveTo: 10@5.
+		canvas quadraticBezierTo: 60@10 control: 15@30 ];
 	strokeWidth: 2 color: (Color red alpha: 0.7) fillColor: (Color green alpha: 0.4) do: [ :canvas |
-		canvas moveToX: 10 y: 5.
-		canvas rel_QuadraticBezierToX: 60 y: 10 controlX: 15 y: 30 ].
+		canvas moveTo: 10@5.
+		canvas rel_QuadraticBezierTo: 60@10 control: 15@30 ].
 Display forceToScreen
 	"
 	self
-		quadraticBezierToX: currentX + xTo y: currentY + yTo
-		controlX: currentX + xC y: currentY + yC.! !
+		quadraticBezierTo: currentPoint + aPoint
+		control: currentPoint + controlPoint! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:22:32'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 13:29:41'!
 multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless
 
 	| to r |
@@ -2111,14 +2068,14 @@ multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints:
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				r _ rs at: i.
-				self arcToX: to x y: to y rx: r x ry: r y angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngless at: i) ]]
+				self arcTo: to radius: r angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngless at: i) ]]
 		ifTrue: [
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				r _ rs at: i.
-				self rel_ArcToX: to x y: to y rx: r x ry: r y angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngless at: i) ]]! !
+				self rel_ArcTo: to radius: r angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngless at: i) ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:14:03'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:49:58'!
 multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points
 
 	| c1 c2 to |
@@ -2128,15 +2085,15 @@ multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1
 				to _ toPoints at: i.
 				c1 _ control1Points at: i.
 				c2 _ control2Points at: i.
-				self cubicBezierToX: to x y: to y control1X: c1 x y: c1 y control2X: c2 x y: c2 y ]]
+				self cubicBezierTo: to  control1: c1 control2: c2 ]]
 		ifTrue: [
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				c1 _ control1Points at: i.
 				c2 _ control2Points at: i.
-				self rel_CubicBezierToX: to x y: to y control1X: c1 x y: c1 y control2X: c2 x y: c2 y ]]! !
+				self rel_CubicBezierTo: to control1: c1 control2: c2 ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:09:35'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:45:30'!
 multiCurveToSmooth: coordinatesAreRelative toPoints: toPoints control2Points: control2Points
 
 	| c2 to |
@@ -2145,28 +2102,25 @@ multiCurveToSmooth: coordinatesAreRelative toPoints: toPoints control2Points: co
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				c2 _ control2Points at: i.
-				self cubicBezierSmoothToX: to x y: to y control2X: c2 x y: c2 y ]]
+				self cubicBezierSmoothTo: to control2: c2 ]]
 		ifTrue: [
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				c2 _ control2Points at: i.
-				self rel_CubicBezierSmoothToX: to x y: to y control2X: c2 x y: c2 y ]]! !
+				self rel_CubicBezierSmoothTo: to control2: c2 ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:05:48'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:34:55'!
 multiLineTo: coordinatesAreRelative points: toPoints
 
-	| to |
 	coordinatesAreRelative
 		ifFalse: [
 			1 to: toPoints size do: [ :i |
-				to _ toPoints at: i.
-				self lineToX: to x y: to y ]]
+				self lineTo: (toPoints at: i) ]]
 		ifTrue: [
 			1 to: toPoints size do: [ :i |
-				to _ toPoints at: i.
-				self rel_LineToX: to x y: to y ]]! !
+				self rel_LineTo:(toPoints at: i) ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:50:38'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:35:18'!
 multiLineTo: coordinatesAreRelative xs: xs
 
 	coordinatesAreRelative
@@ -2175,9 +2129,9 @@ multiLineTo: coordinatesAreRelative xs: xs
 				self lineToX: x ]]
 		ifTrue: [
 			xs do: [ :x |
-				self rel_LineToX: x y: 0 ]]! !
+				self rel_LineTo: x @ 0 ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:52:48'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:35:26'!
 multiLineTo: coordinatesAreRelative ys: ys
 
 	coordinatesAreRelative
@@ -2186,9 +2140,9 @@ multiLineTo: coordinatesAreRelative ys: ys
 				self lineToY: y ]]
 		ifTrue: [
 			ys do: [ :y |
-				self rel_LineToX: 0 y: y ]]! !
+				self rel_LineTo: 0 @ y ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:05:52'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:27:37'!
 multiMoveTo: coordinatesAreRelative points: points
 
 	| isFirst |
@@ -2197,17 +2151,17 @@ multiMoveTo: coordinatesAreRelative points: points
 		ifFalse: [
 			points do: [ :p |
 				isFirst
-					ifTrue: [ self moveToX: p x y: p y ]
-					ifFalse: [ self lineToX: p x y: p y ].
+					ifTrue: [ self moveTo: p ]
+					ifFalse: [ self lineTo: p ].
 				isFirst _ false ]]
 		ifTrue: [
 			points do: [ :p |
 				isFirst
-					ifTrue: [ self rel_MoveToX: p x y: p y ]
-					ifFalse: [ self rel_LineToX: p x y: p y ].
+					ifTrue: [ self rel_MoveTo: p ]
+					ifFalse: [ self rel_LineTo: p ].
 				isFirst _ false ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:55:07'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 12:02:30'!
 multiQuadraticCurveTo: coordinatesAreRelative toPoints: toPoints controlPoints: controlPoints
 
 	| c to |
@@ -2216,14 +2170,14 @@ multiQuadraticCurveTo: coordinatesAreRelative toPoints: toPoints controlPoints: 
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				c _ controlPoints at: i.
-				self quadraticBezierToX: to x y: to y controlX: c x y: c y ]]
+				self quadraticBezierTo: to control: c ]]
 		ifTrue: [
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				c _ controlPoints at: i.
-				self rel_QuadraticBezierToX: to x y: to y controlX: c x y: c y ]]! !
+				self rel_QuadraticBezierTo: to control: c ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 3/16/2021 11:56:02'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 12:00:41'!
 multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 
 	| to |
@@ -2231,13 +2185,13 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 		ifFalse: [
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
-				self quadraticBezierSmoothToX: to x y: to y ]]
+				self quadraticBezierSmoothTo: to ]]
 		ifTrue: [
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
-				self rel_QuadraticBezierSmoothToX: to x y: to y ]]! !
+				self rel_QuadraticBezierSmoothTo: to ]]! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 3/26/2021 10:37:27'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/10/2021 13:58:33'!
 drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 	"
@@ -2247,7 +2201,7 @@ c geometryTransformation: (AffineTransformation withRadians: 0.1).
 f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
 s _ 'Latin text in VectorGraphics'.
 (c drawString:  s from: 1 to: s size atBaseline: 100@100 font: f color: Color black) print.
-c strokeWidth: 1 color: Color red do: [ c moveToX: 100 y: 100; lineToX: 1000 y: 100 ].
+c strokeWidth: 1 color: Color red do: [ c moveTo: 100@100; lineToX: 1000 y: 100 ].
 Display forceToScreen
 	"
 	^engine
@@ -2299,11 +2253,11 @@ drawButtonIconFromCurrentMorph
 		^true ].
 	^false! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 3/18/2021 15:03:15'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 5/10/2021 11:53:28'!
 drawCloseIcon
 
 self strokeWidth: 1.0 color: Color black fillColor: Color red do: [
-	self ellipseCenterX: 9 y:  9 rx: 6 ry: 6 ]
+	self ellipseCenter: 9@9 radius: 6@6 ]
 ! !
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 1/4/2018 09:06:50'!
@@ -2341,12 +2295,13 @@ drawUpIcon
 
 self drawCloseIcon! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 21:15:33'!
-ellipseCenterX: mcx y: mcy rx: mrx ry: mry borderWidth: morphStrokeWidth borderColor: strokeColorOrGradient fillColor: fillColorOrGradient
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:53:59'!
+ellipseCenter: center radius: radiusPointOrNumber borderWidth: morphStrokeWidth borderColor: strokeColor fillColor: fillColor
 
-	
-	self strokeWidth: morphStrokeWidth color: strokeColorOrGradient fillColor: fillColorOrGradient do: [
-		self ellipseCenterX: mcx y: mcy rx: mrx ry: mry ]! !
+	| radiusPoint |
+	radiusPoint _ radiusPointOrNumber asPoint.
+	self strokeWidth: morphStrokeWidth color: strokeColor fillColor: fillColor do: [
+		self ellipseCenter: center x radius: radiusPoint ]! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
 fillRectangle: aRectangle color: aColor
@@ -2383,7 +2338,7 @@ frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
 	self strokeWidth: borderWidth color: borderColor do: [
 		self rectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle bottom-d2 ]! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 11/9/2020 15:24:57'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:25:35'!
 frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borderWidth: morphStrokeWidth
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
@@ -2402,14 +2357,14 @@ frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borde
 	d2 _ morphStrokeWidth*0.5+0.5.
 
 	self strokeWidth: morphStrokeWidth color: brColor do: [
-		self moveToX: aRectangle left + d1 y: aRectangle bottom - d2.
-		self lineToX: aRectangle right - d2 y: aRectangle bottom - d2.
-		self lineToX: aRectangle right - d2 y: aRectangle top + d1 ].
+		self moveTo: (aRectangle left + d1) @ (aRectangle bottom - d2).
+		self lineTo: (aRectangle right - d2) @ (aRectangle bottom - d2).
+		self lineTo: (aRectangle right - d2) @ (aRectangle top + d1) ].
 
 	self strokeWidth: morphStrokeWidth color: tlColor do: [
-		self moveToX: aRectangle left + d1 y: aRectangle bottom - d2.
-		self lineToX: aRectangle left + d1 y: aRectangle top + d1.
-		self lineToX: aRectangle right - d2 y: aRectangle top + d1 ].! !
+		self moveTo: (aRectangle left + d1) @ (aRectangle bottom - d2).
+		self lineTo: (aRectangle left + d1) @ (aRectangle top + d1).
+		self lineTo: (aRectangle right - d2) @ (aRectangle top + d1) ].! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 1/3/2021 12:25:56'!
 image: srcForm at: aPoint
@@ -2465,12 +2420,12 @@ imageUnrotated: srcForm at: aPoint
 		combinationRule: Form blend;
 		copyQuad: srcQuad toRect: dstBox.! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/22/2017 12:20:56'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:25:57'!
 line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
 
 	self strokeWidth: morphStrokeWidth color: aStrokeColor do: [
-		self moveToX: pt1 x y: pt1 y.
-		self lineToX: pt2 x y: pt2 y ]! !
+		self moveTo: pt1.
+		self lineTo: pt2 ]! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 reverseRectangleBorder: r borderWidth: borderWidth
@@ -2706,7 +2661,7 @@ updatingMorphBoundsDo: aBlock
 		aBlock value.
 	] ensure: [ engine _ prevEngine ]! !
 
-!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 3/26/2021 12:18:31'!
+!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 5/10/2021 11:33:43'!
 drawCoordinateSystem: corners
 	| c stepX stepY x0 x1 y0 y1 |
 	stepX _ 50.
@@ -2714,10 +2669,9 @@ drawCoordinateSystem: corners
 
 	engine currentMorph: nil.
 	self strokeWidth: 4 color: `Color lightGray alpha: 0.4` do: [
-		self moveToX: corners first x y: corners first y.
-		corners do: [ :p |
-			self lineToX: p x y: p y. ].
-		self lineToX: corners first x y: corners first y].
+		self moveTo: corners first.
+		corners do: [ :p | self lineTo: p ].
+		self lineTo: corners first ].
 
 	x0 _ x1 _ y0 _ y1 _ 0.
 	corners do: [ :p |
@@ -2728,17 +2682,17 @@ drawCoordinateSystem: corners
 
 	c _ `Color lightGray alpha: 0.6`.
 	self strokeWidth: 1 color: c do: [
-		self moveToX: x0 y: 0; lineToX: x1 y: 0.
-		self moveToX: 0 y: y0; lineToX: 0 y: y1. ].
+		self moveTo: x0@0; lineTo: x1 @ 0.
+		self moveTo: 0@y0; lineTo: 0 @ y1. ].
 	(x0 truncateTo: stepX) to: (x1 - stepX truncateTo: stepX) by: stepX do: [ :x |
 		self strokeWidth: 1 color: c do: [
-			self moveToX: x y: -5; lineToX: x y: 5 ].
+			self moveTo: x @ -5; lineTo: x @ 5 ].
 	   	self drawString: x printString atCenterX: x @ 5 font: nil color: c ].
 	  self drawString: 'x' atCenterX: x1 - 15 @ 0 font: nil color: c.
 
 	(y0 truncateTo: stepY) to: (y1 - stepY truncateTo: stepY) by: stepY do: [ :y |
 		self strokeWidth: 1 color: c do: [
-			self moveToX: -5 y: y; lineToX: 5 y: y ].
+			self moveTo: -5 @ y; lineTo: 5 @ y ].
 	   	self drawString: y printString, ' ' atWaistRight: 0 @ y font: nil color: c ].
 	  self drawString: 'y' atWaistRight: 0 @ (y1 - 20) font: nil color: c.! !
 
@@ -2783,12 +2737,12 @@ buildArrowOfDirection: aSymbolDirection size: finalSizeInteger
 steButtonForm: extent
 	self flag: #jmvVer2.! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 3/16/2021 11:06:37'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 14:00:28'!
 experiment1
 	"
-	No perfecto aun, pero se puede empezar a comparar con
+	Not perfect, but can be compared with
 	http://www.hpl.hp.com/research/mmsl/projects/graphics/antialiasing/figure21.htm
-	Ni que hablar que es mucho mas rapido...
+	BTW, this is so much faster...
 	VectorCanvas experiment1
 	"
 | canvas h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 e f |
@@ -2829,10 +2783,10 @@ delta _ nil.
 "			color _ color alpha: 0.5."
 			canvas fillColor: color do: [
 				canvas
-					moveToX: x1 y: y;
-					lineToX: x2 y: y;
-					lineToX: x2p y: prevY;
-					lineToX: x1p y: prevY;
+					moveTo: x1 @ y;
+					lineTo: x2 @ y;
+					lineTo: x2p @ prevY;
+					lineTo: x1p @ prevY;
 					closePath ]
 			].
 		].
@@ -2844,7 +2798,7 @@ Display forceToScreen.
 	f writePNGfileNamed: 'pp17.png'
 "! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 3/16/2021 11:06:59'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 11:31:56'!
 experiment2
 	"
 	VectorCanvas experiment2
@@ -2877,10 +2831,10 @@ delta _ nil.
 "			color _ color alpha: 0.5."
 			canvas fillColor: color do: [
 				canvas
-					moveToX: x1 y: y;
-					lineToX: x2 y: y;
-					lineToX: x2p y: prevY;
-					lineToX: x1p y: prevY;
+					moveTo: x1 @ y;
+					lineTo: x2 @ y;
+					lineTo: x2p @ prevY;
+					lineTo: x1p @ prevY;
 					closePath ]
 			].
 		].
@@ -2889,7 +2843,7 @@ delta _ nil.
 Display forceToScreen.
 ! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 3/16/2021 11:08:52'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 11:38:36'!
 experiment3
 	"
 	VectorCanvas experiment3
@@ -2900,7 +2854,7 @@ experiment3
 	r _ 15.
 	100 timesRepeat: [
 		canvas strokeWidth: w color: Color black do: [
-			canvas circleCenterX: 300 y: 300 radius: r ].
+			canvas circleCenter: 300 @ 300 radius: r ].
 		r _ r + w.
 		w _ w * 0.8.
 		r _ r + w.
@@ -2909,7 +2863,7 @@ experiment3
 	].
 Display forceToScreen! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 3/16/2021 11:09:00'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 11:38:48'!
 experiment4
 	"
 	VectorCanvas experiment4
@@ -2923,12 +2877,12 @@ experiment4
 		w _ 20.0 / i.
 		r _ r + w.
 		canvas strokeWidth: w color: Color black do: [
-			canvas circleCenterX: 300 y: 300 radius: r ].
+			canvas circleCenter: 300 @ 300 radius: r ].
 	Display forceToScreen.
 	].
 Display forceToScreen! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 3/16/2021 10:38:36'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 11:32:17'!
 siemensStar
 	"
 	VectorCanvas siemensStar display
@@ -2948,10 +2902,10 @@ siemensStar
 		canvas geometryTransformation: location.
 		canvas fillColor: foreColor do: [
 			canvas
-				moveToX: 0 y: 0;
-				lineToX: 1 y: 0;
-				lineToX: angle cos y: angle sin;
-				lineToX: 0 y: 0.
+				moveTo: 0 @ 0;
+				lineTo: 1 @ 0;
+				lineTo: angle cos @ angle sin;
+				lineTo: 0 @ 0.
 		].
 	].
 	^form! !
@@ -3040,7 +2994,7 @@ strokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathComm
 
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
-!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 3/26/2021 10:03:35'!
+!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 5/10/2021 15:51:50'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -3077,7 +3031,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 				y _ ttMoveToY * sy + destY.
 				transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
 				contourStart _ transformedEndPoint.
-				self basicMoveToX: contourStart x y: contourStart y.
+				self moveToX: contourStart x y: contourStart y.
 				numBeziers timesRepeat: [
 					ttEndX _ contourData at: i. i _ i + 1.
 					ttEndY _ contourData at: i. i _ i + 1.
@@ -3089,16 +3043,16 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 					y _ ttEndY * sy + y.
 					transformedControlPoint _ aMorphicTransformation externalizePosition: cx@cy.
 					transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
-					self basicQuadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
+					self quadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
 					].
-				self basicLineToX: contourStart x y: contourStart y.
+				self lineToX: contourStart x y: contourStart y.
 				].
 			destX _ destX + (advanceWidth * sx).
 		]
 	].
 	^ destX ceiling@destY! !
 
-!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 3/26/2021 10:45:39'!
+!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 5/10/2021 15:52:03'!
 displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -3165,7 +3119,7 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 				y _ ttMoveToY * sy + destY.
 				transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
 				contourStart _ transformedEndPoint.
-				self basicMoveToX: contourStart x y: contourStart y.
+				self moveToX: contourStart x y: contourStart y.
 				numBeziers timesRepeat: [
 					ttEndX _ contourData at: i. i _ i + 1.
 					ttEndY _ contourData at: i. i _ i + 1.
@@ -3177,16 +3131,16 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 					y _ ttEndY * sy + y.
 					transformedControlPoint _ aMorphicTransformation externalizePosition: cx@cy.
 					transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
-					self basicQuadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
+					self quadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
 					].
-				self basicLineToX: contourStart x y: contourStart y.
+				self lineToX: contourStart x y: contourStart y.
 				].
 			destX _ destX + (advanceWidth * sx).
 			]
 	].
 	^ destX ceiling@destY! !
 
-!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 3/26/2021 11:10:49'!
+!VectorGraphicsEngine methodsFor: 'text' stamp: 'jmv 5/10/2021 15:52:13'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale geometryTransformation: aMorphicTransformation preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -3232,7 +3186,7 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 						y _ ttMoveToY * sy + destY.
 						transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
 						contourStart _ transformedEndPoint.
-						self basicMoveToX: contourStart x y: contourStart y.
+						self moveToX: contourStart x y: contourStart y.
 						numBeziers timesRepeat: [
 							ttEndX _ contourData at: i. i _ i + 1.
 							ttEndY _ contourData at: i. i _ i + 1.
@@ -3244,9 +3198,9 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 							y _ ttEndY * sy + y.
 							transformedControlPoint _ aMorphicTransformation externalizePosition: cx@cy.
 							transformedEndPoint _ aMorphicTransformation externalizePosition: x@y.
-							self basicQuadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
+							self quadraticBezierToX: transformedEndPoint x y: transformedEndPoint y controlX: transformedControlPoint x y: transformedControlPoint y
 							].
-						self basicLineToX: contourStart x y: contourStart y.
+						self lineToX: contourStart x y: contourStart y.
 						].
 					destX _ destX + (advanceWidth * sx).
 					baseIndex _ 0.
@@ -3306,17 +3260,15 @@ resetMorphBounds
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
 
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/18/2021 15:19:42'!
-basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/10/2021 15:42:44'!
+arcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2.0 color: Color black fillColor: Color red do: [ :engine |
-		engine basicArcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float twoPi ].
+		engine arcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float twoPi ].
 Display forceToScreen.
 "
 	| d hops angle thetaCos thetaSin xp yp x0 y0 |
-
-	"Por supuesto probar tambien rx no igual a ry, y uno (o ambos) menor que el ancho de trazo..."
 	thetaCos _ theta cos.
 	thetaSin _ theta sin.
 	angle _ startAngle.
@@ -3328,7 +3280,7 @@ Display forceToScreen.
 		ifTrue: [
 			"If an arc (not whole circle/ellipse), join with a line, to ensure closed path.
 			For example, for rounded rectangles."
-			self basicLineToX: x0 y: y0 ].
+			self lineToX: x0 y: y0 ].
 
 	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
 	d _ sweepAngle / hops.
@@ -3341,30 +3293,29 @@ Display forceToScreen.
 	currentX _ thetaCos * xp - (thetaSin * yp) + cx.
 	currentY _ thetaSin * xp + (thetaCos * yp) + cy.! !
 
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
-basicArcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/10/2021 15:50:25'!
+arcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
-			basicMoveToX: 100 y: 100;
-			basicArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
-			basicMoveToX: 100 y: 100;
-			basicArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
+			moveToX: 100 y: 100;
+			arcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
+			moveToX: 100 y: 100;
+			arcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
 Display forceToScreen
 "
-	"Calcular: cx, cy, rx, ry, phi, theta1, deltaTheta"
 	| x1 y1 cosPhi sinPhi x12hd y12hd x1p y1p rxSq rySq x1pSq y1pSq bigSqR bigSqRNumerator bigSqRDenominator sign cxp cyp cx cy theta1 theta2 deltaTheta scaleSq scale newRx newRy |
 	x1 _ currentX.
 	y1 _ currentY.
 	"Handle out of range parameters as requested by the w3 implementation notes"
 	(x2 = x1 and: [ y2 = y1 ]) ifTrue: [ ^self ].
-	(rx = 0.0 or: [ ry = 0.0 ]) ifTrue: [ ^self basicLineToX: x2 y: y2 ].
+	(rx = 0.0 or: [ ry = 0.0 ]) ifTrue: [ ^self lineToX: x2 y: y2 ].
 	rx < 0 ifTrue: [
-		^self basicArcToX: x2 y: y2 radiusX: 0.0 -rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
+		^self arcToX: x2 y: y2 radiusX: 0.0 -rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
 	ry < 0 ifTrue: [
-		^self basicArcToX: x2 y: y2 radiusX: rx radiusY: 0.0-ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
-	
+		^self arcToX: x2 y: y2 radiusX: rx radiusY: 0.0-ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
+
 	cosPhi _ phi cos.
 	sinPhi _ phi sin.
 	"step 1 in http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes"
@@ -3387,7 +3338,7 @@ Display forceToScreen
 		(newRx = rx or: [ newRy = ry ]) ifTrue: [		"This happens when scaleSq is so close to 1, that the multiplication rounds to the same numbers"
 			newRx _ scaleSq * rx.
 			newRy _ scaleSq * ry ].
-		^self basicArcToX: x2 y: y2 radiusX: newRx radiusY: newRy angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+		^self arcToX: x2 y: y2 radiusX: newRx radiusY: newRy angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 		].
 	bigSqRNumerator _ (rxSq * rySq) - (rxSq * y1pSq)-(rySq * x1pSq).
 	bigSqRDenominator _ (rxSq * y1pSq) + (rySq * x1pSq).
@@ -3399,20 +3350,8 @@ Display forceToScreen
 	"step 3"
 	cx _ (cosPhi * cxp) - (sinPhi * cyp) + ((x1+x2) * 0.5).
 	cy _ (sinPhi * cxp) + (cosPhi * cyp) + ((y1+y2) * 0.5).
-	
-"
-| u v a |
-Transcript clear.
-u _ 1@4. v _ 7@2.
-a _ ((u dotProduct: v) / (u r * v r) ) arcCos.
-a _ a * (((u x * v y) - (u y * v x)) sign).
-a print.
-(v theta - u theta) print.
-Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entre cero y 2pi...
-"
 
 	"step 4"
-	"Ojo signo del angulo y del eje y!!!!!!!!!!"
 	theta1 _ (((x1p - cxp) / rx) @ ((y1p - cyp) / ry)) theta.
 	theta2 _ (((0 - x1p - cxp) / rx) @ (( 0 -y1p - cyp) / ry)) theta.
 	deltaTheta _ theta2 - theta1.
@@ -3421,46 +3360,41 @@ Ojo al primitivizar. Para ellos, el theta va entre -pi y pi. Para Squeak va entr
 			ifTrue: [ deltaTheta _ deltaTheta - Float pi - Float pi ]
 			ifFalse: [ deltaTheta _ deltaTheta + Float pi + Float pi ]
 		].
-	"Y aca calcular como dar vuelta deltaTheta, ver."
 
+	self arcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
-	"Finalmente, estudiar la correccion de valores fuera de rango"
-	
-
-	self basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
-
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:33'!
-basicClosePath
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/10/2021 15:50:45'!
+closePath
 "
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black fillColor: Color red do: [ :engine |
 		engine
-			basicMoveToX: 100 y: 100;
-			basicArcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
-			basicClosePath ].
+			moveToX: 100 y: 100;
+			arcToX: 200 y: 200 radiusX: 200 radiusY: 100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
+			closePath ].
 Display forceToScreen
 "
 
-	self basicLineToX: firstX y: firstY! !
+	self lineToX: firstX y: firstY! !
 
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
-basicCubicBezierToX: xTo y: yTo control1X: xC1 y: yC1 control2X: xC2 y: yC2
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/10/2021 15:50:53'!
+cubicBezierToX: xTo y: yTo control1X: xC1 y: yC1 control2X: xC2 y: yC2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
-			basicMoveToX: 100 y: 100;
-			basicCubicBezierToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200 ].
+			moveToX: 100 y: 100;
+			cubicBezierToX: 300 y: 200 control1X: 110 y: 110 control2X: 200 y: 200 ].
 Display forceToScreen
 	"
 	"
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
-		engine basicMoveToX: 100 y: 50.
+		engine moveToX: 100 y: 50.
 		engine
-			basicCubicBezierToX: 600 y: 100
+			cubicBezierToX: 600 y: 100
 			control1X: 150 y: 300
 			control2X: 600 y: 400 ].
 Display forceToScreen
@@ -3476,30 +3410,30 @@ Display forceToScreen
 	currentX _ xTo.
 	currentY _ yTo.! !
 
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:15'!
-basicLineToX: xTo y: yTo
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/10/2021 15:51:05'!
+lineToX: xTo y: yTo
 "
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
-			basicMoveToX: 100 y: 100;
-			basicLineToX: 300 y: 150 ].
+			moveToX: 100 y: 100;
+			lineToX: 300 y: 150 ].
 Display forceToScreen
 "
 "
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 25.0 color: Color black do: [ :engine |
 		engine
-			basicMoveToX: 100 y: 100;
-			basicLineToX: 500 y: 200 ].
+			moveToX: 100 y: 100;
+			lineToX: 500 y: 200 ].
 Display forceToScreen
 "
 "
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
-		engine basicMoveToX: 30 y: 15.
-		engine basicLineToX: 45 y: 90.
-		engine basicLineToX: 180 y: 30 ].
+		engine moveToX: 30 y: 15.
+		engine lineToX: 45 y: 90.
+		engine lineToX: 180 y: 30 ].
 Display forceToScreen
 "
 	| dx dy hops incrementX incrementY |
@@ -3515,16 +3449,16 @@ Display forceToScreen
 	currentX _ xTo.
 	currentY _ yTo.! !
 
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/17/2021 09:50:33'!
-basicMoveToX: x y: y
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/10/2021 15:51:19'!
+moveToX: x y: y
 "
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
-			basicMoveToX: 100 y: 100;
-			basicLineToX: 200 y: 150;
-			basicMoveToX: 210 y: 150;
-			basicLineToX: 300 y: 200 ].
+			moveToX: 100 y: 100;
+			lineToX: 200 y: 150;
+			moveToX: 210 y: 150;
+			lineToX: 300 y: 200 ].
 Display forceToScreen
 "
 
@@ -3540,21 +3474,21 @@ Display forceToScreen
 	currentX _ x.
 	currentY _ y.! !
 
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 3/18/2021 16:30:02'!
-basicQuadraticBezierToX: xTo y: yTo controlX: xC y: yC
+!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/10/2021 15:52:35'!
+quadraticBezierToX: xTo y: yTo controlX: xC y: yC
 	"
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
-			basicMoveToX: 100 y: 100;
-			basicQuadraticBezierToX: 300 y: 200 controlX: 100 y: 210 ].
+			moveToX: 100 y: 100;
+			quadraticBezierToX: 300 y: 200 controlX: 100 y: 210 ].
 Display forceToScreen
 	"
 	"
 (VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
-		engine basicMoveToX: 10 y: 5.
-		engine basicQuadraticBezierToX: 60 y: 10 controlX: 15 y: 30 ].
+		engine moveToX: 10 y: 5.
+		engine quadraticBezierToX: 60 y: 10 controlX: 15 y: 30 ].
 Display forceToScreen
 	"
 	| dx dy hops |
@@ -3583,7 +3517,7 @@ morph: aMorph isAtPoint: aPoint
 doesSubPixelAntiAliasing
 	^false! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:10:24'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 15:59:26'!
 experLinesAndShapes
 	"
 	VectorEngineSubPixel experLinesAndShapes
@@ -3592,60 +3526,60 @@ experLinesAndShapes
 	engine _ self onForm: Display.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
-			basicMoveToX: 20 y: 10;
-			basicLineToX: 210 y: 15; basicLineToX: 20 y: 20;
-			basicLineToX: 15 y: 410; basicLineToX: 10 y: 20;
-			basicClosePath ].
+			moveToX: 20 y: 10;
+			lineToX: 210 y: 15; lineToX: 20 y: 20;
+			lineToX: 15 y: 410; lineToX: 10 y: 20;
+			closePath ].
 	Display forceToScreen.
 	engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
-			basicMoveToX: 220 y: 10;
-			basicLineToX: 410 y: 15; basicLineToX: 220 y: 20;
-			basicLineToX: 215 y: 410; basicLineToX: 210 y: 20;
-			basicClosePath ].
+			moveToX: 220 y: 10;
+			lineToX: 410 y: 15; lineToX: 220 y: 20;
+			lineToX: 215 y: 410; lineToX: 210 y: 20;
+			closePath ].
 	Display forceToScreen.
 
 	y1 _ 10.
 	dy _ 3.
 	y2 _ self defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
-		"stroke con w > aaw"
+		"stroke with w > aaw"
 		yy2 _ y2 >= 1 ifTrue: [ self defaultAntiAliasingWidth * 0.5 ] ifFalse: [0].
 		engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 431 y: y1+yy2; basicLineToX: 530 y: y1+yy2+dy;
-				basicLineToX: 530 y: y1+y2-yy2+dy; basicLineToX: 431 y: y1+y2-yy2;
-				basicClosePath.
+				moveToX: 431 y: y1+yy2; lineToX: 530 y: y1+yy2+dy;
+				lineToX: 530 y: y1+y2-yy2+dy; lineToX: 431 y: y1+y2-yy2;
+				closePath.
 			engine
-				basicMoveToX:  y1+yy2 y: 431; basicLineToX: y1+yy2+dy y: 530;
-				basicLineToX: y1+y2-yy2+dy y: 530; basicLineToX: y1+y2-yy2 y: 431;
-				basicClosePath ].
-		"Solo fill. w casi=0"
+				moveToX:  y1+yy2 y: 431; lineToX: y1+yy2+dy y: 530;
+				lineToX: y1+y2-yy2+dy y: 530; lineToX: y1+y2-yy2 y: 431;
+				closePath ].
+		"Stroke too narrow to be visible"
 		engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 531 y: y1+dy; basicLineToX: 630 y: y1+dy+dy;
-				basicLineToX: 630 y: y1+y2+dy+dy; basicLineToX: 531 y: y1+y2+dy;
-				basicClosePath.
+				moveToX: 531 y: y1+dy; lineToX: 630 y: y1+dy+dy;
+				lineToX: 630 y: y1+y2+dy+dy; lineToX: 531 y: y1+y2+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy y: 531; basicLineToX: y1+dy+dy y: 630;
-				basicLineToX: y1+y2+dy+dy y: 630; basicLineToX: y1+y2+dy y: 531;
-				basicClosePath ].
-		"Solo fill."
+				moveToX: y1+dy y: 531; lineToX: y1+dy+dy y: 630;
+				lineToX: y1+y2+dy+dy y: 630; lineToX: y1+y2+dy y: 531;
+				closePath ].
+		"Only fill."
 		engine fillColor: Color black do: [
 			engine
-				basicMoveToX: 631 y: y1+dy+dy; basicLineToX: 730 y: y1+dy+dy+dy;
-				basicLineToX: 730 y: y1+y2+dy+dy+dy; basicLineToX: 631 y: y1+y2+dy+dy;
-				basicClosePath.
+				moveToX: 631 y: y1+dy+dy; lineToX: 730 y: y1+dy+dy+dy;
+				lineToX: 730 y: y1+y2+dy+dy+dy; lineToX: 631 y: y1+y2+dy+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy+dy y: 631; basicLineToX: y1+dy+dy+dy y: 730;
-				basicLineToX: y1+y2+dy+dy+dy y: 730; basicLineToX: y1+y2+dy+dy y: 631;
-				basicClosePath ].
-		"solo stroke, no fill"
+				moveToX: y1+dy+dy y: 631; lineToX: y1+dy+dy+dy y: 730;
+				lineToX: y1+y2+dy+dy+dy y: 730; lineToX: y1+y2+dy+dy y: 631;
+				closePath ].
+		"Only stroke, no fill"
 		engine strokeWidth: y2 color: Color black do: [
 			engine
-				basicMoveToX: y2*0.5+731 y: y2*0.5 + y1+dy+dy+dy; basicLineToX: 830 y: y2 * 0.5 + y1  + dy + dy+dy+dy.
+				moveToX: y2*0.5+731 y: y2*0.5 + y1+dy+dy+dy; lineToX: 830 y: y2 * 0.5 + y1  + dy + dy+dy+dy.
 			engine
-				basicMoveToX: y2*0.5 + y1+dy+dy+dy y: y2*0.5+731; basicLineToX: y2 * 0.5 + y1  + dy + dy+dy+dy y: 830 ].
+				moveToX: y2*0.5 + y1+dy+dy+dy y: y2*0.5+731; lineToX: y2 * 0.5 + y1  + dy + dy+dy+dy y: 830 ].
 		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
@@ -3653,7 +3587,7 @@ experLinesAndShapes
 	
 	Display forceToScreen! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:11:44'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 15:58:33'!
 experLinesAndShapes2
 	"
 	VectorEngineSubPixel experLinesAndShapes2
@@ -3665,66 +3599,66 @@ experLinesAndShapes2
 	dy _ 3.
 	y2 _ self defaultAntiAliasingWidth*4*2.
 	15 timesRepeat: [
-		"Solo fill. w chico pero aun visible"
+		"stroke is narrow but visible"
 		engine strokeWidth: 1.0 color: Color green fillColor: Color red do: [
 			engine
-				basicMoveToX: 131 y: y1; basicLineToX: 230 y: y1+dy;
-				basicLineToX: 230 y: y1+y2+dy; basicLineToX: 131 y: y1+y2;
-				basicClosePath.
+				moveToX: 131 y: y1; lineToX: 230 y: y1+dy;
+				lineToX: 230 y: y1+y2+dy; lineToX: 131 y: y1+y2;
+				closePath.
 			engine
-				basicMoveToX: y1 y: 131; basicLineToX: y1+dy y: 230;
-				basicLineToX: y1+y2+dy y: 230; basicLineToX: y1+y2 y: 131;
-				basicClosePath ].
-		"Solo fill. w chico pero aun visible"
+				moveToX: y1 y: 131; lineToX: y1+dy y: 230;
+				lineToX: y1+y2+dy y: 230; lineToX: y1+y2 y: 131;
+				closePath ].
+		"stroke is narrow but visible"
 		engine strokeWidth: 0.8 color: Color green fillColor: Color red do: [
 			engine
-				basicMoveToX: 231 y: y1+dy; basicLineToX: 330 y: y1+dy+dy;
-				basicLineToX: 330 y: y1+y2+dy+dy; basicLineToX: 231 y: y1+y2+dy;
-				basicClosePath.
+				moveToX: 231 y: y1+dy; lineToX: 330 y: y1+dy+dy;
+				lineToX: 330 y: y1+y2+dy+dy; lineToX: 231 y: y1+y2+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy y: 231; basicLineToX: y1+dy+dy y: 330;
-				basicLineToX: y1+y2+dy+dy y: 330; basicLineToX: y1+y2+dy y: 231;
-				basicClosePath ].
-		"Solo fill. w chico pero aun visible"
+				moveToX: y1+dy y: 231; lineToX: y1+dy+dy y: 330;
+				lineToX: y1+y2+dy+dy y: 330; lineToX: y1+y2+dy y: 231;
+				closePath ].
+		"stroke is narrow but visible"
 		engine strokeWidth: 0.6 color: Color green fillColor: Color red do: [.
 			engine
-				basicMoveToX: 331 y: y1+dy+dy; basicLineToX: 430 y: y1+dy+dy+dy;
-				basicLineToX: 430 y: y1+y2+dy+dy+dy; basicLineToX: 331 y: y1+y2+dy+dy;
-				basicClosePath.
+				moveToX: 331 y: y1+dy+dy; lineToX: 430 y: y1+dy+dy+dy;
+				lineToX: 430 y: y1+y2+dy+dy+dy; lineToX: 331 y: y1+y2+dy+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy+dy y: 331; basicLineToX: y1+dy+dy+dy y: 430;
-				basicLineToX: y1+y2+dy+dy+dy y: 430; basicLineToX: y1+y2+dy+dy y: 331;
-				basicClosePath ].
-		"Solo fill. w chico pero aun visible"
+				moveToX: y1+dy+dy y: 331; lineToX: y1+dy+dy+dy y: 430;
+				lineToX: y1+y2+dy+dy+dy y: 430; lineToX: y1+y2+dy+dy y: 331;
+				closePath ].
+		"stroke is narrow but visible"
 		engine strokeWidth: 0.4 color: Color green fillColor: Color red do: [
 			engine
-				basicMoveToX: 431 y: y1+dy+dy+dy; basicLineToX: 530 y: y1+dy+dy+dy+dy;
-				basicLineToX: 530 y: y1+y2+dy+dy+dy+dy; basicLineToX: 431 y: y1+y2+dy+dy+dy;
-				basicClosePath.
+				moveToX: 431 y: y1+dy+dy+dy; lineToX: 530 y: y1+dy+dy+dy+dy;
+				lineToX: 530 y: y1+y2+dy+dy+dy+dy; lineToX: 431 y: y1+y2+dy+dy+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy+dy+dy y: 431; basicLineToX: y1+dy+dy+dy+dy y: 530;
-				basicLineToX: y1+y2+dy+dy+dy+dy y: 530; basicLineToX: y1+y2+dy+dy+dy y: 431;
-				basicClosePath ].
-		"Solo fill. w chico pero aun visible"
+				moveToX: y1+dy+dy+dy y: 431; lineToX: y1+dy+dy+dy+dy y: 530;
+				lineToX: y1+y2+dy+dy+dy+dy y: 530; lineToX: y1+y2+dy+dy+dy y: 431;
+				closePath ].
+		"stroke is narrow but visible"
 		engine strokeWidth: 0.2 color: Color green fillColor: Color red do: [
 			engine
-				basicMoveToX: 531 y: y1+dy+dy+dy+dy; basicLineToX: 630 y: y1+dy+dy+dy+dy+dy;
-				basicLineToX: 630 y: y1+y2+dy+dy+dy+dy+dy; basicLineToX: 531 y: y1+y2+dy+dy+dy+dy;
-				basicClosePath.
+				moveToX: 531 y: y1+dy+dy+dy+dy; lineToX: 630 y: y1+dy+dy+dy+dy+dy;
+				lineToX: 630 y: y1+y2+dy+dy+dy+dy+dy; lineToX: 531 y: y1+y2+dy+dy+dy+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy+dy+dy+dy y: 531; basicLineToX: y1+dy+dy+dy+dy+dy y: 630;
-				basicLineToX: y1+y2+dy+dy+dy+dy+dy y: 630; basicLineToX: y1+y2+dy+dy+dy+dy y: 531;
-				basicClosePath ].
-		"Solo fill. w chico. Preferimos ya usarlo para definir mejor el shape (se transparentaria demasiado)"
+				moveToX: y1+dy+dy+dy+dy y: 531; lineToX: y1+dy+dy+dy+dy+dy y: 630;
+				lineToX: y1+y2+dy+dy+dy+dy+dy y: 630; lineToX: y1+y2+dy+dy+dy+dy y: 531;
+				closePath ].
+		"stroke zero means no stroke"
 		engine strokeWidth: 0.0 color: Color green fillColor: Color red do: [
 			engine
-				basicMoveToX: 631 y: y1+dy+dy+dy+dy+dy; basicLineToX: 730 y: y1+dy+dy+dy+dy+dy+dy;
-				basicLineToX: 730 y: y1+y2+dy+dy+dy+dy+dy+dy; basicLineToX: 631 y: y1+y2+dy+dy+dy+dy+dy;
-				basicClosePath.
+				moveToX: 631 y: y1+dy+dy+dy+dy+dy; lineToX: 730 y: y1+dy+dy+dy+dy+dy+dy;
+				lineToX: 730 y: y1+y2+dy+dy+dy+dy+dy+dy; lineToX: 631 y: y1+y2+dy+dy+dy+dy+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy+dy+dy+dy+dy y: 631; basicLineToX: y1+dy+dy+dy+dy+dy+dy y: 730;
-				basicLineToX: y1+y2+dy+dy+dy+dy+dy+dy y: 730; basicLineToX: y1+y2+dy+dy+dy+dy+dy y: 631;
-				basicClosePath ].
+				moveToX: y1+dy+dy+dy+dy+dy y: 631; lineToX: y1+dy+dy+dy+dy+dy+dy y: 730;
+				lineToX: y1+y2+dy+dy+dy+dy+dy+dy y: 730; lineToX: y1+y2+dy+dy+dy+dy+dy y: 631;
+				closePath ].
 		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 print.
@@ -3733,7 +3667,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:12:34'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 16:00:30'!
 experLinesAndShapes3
 	"
 	VectorEngineSubPixel experLinesAndShapes3
@@ -3742,53 +3676,53 @@ experLinesAndShapes3
 	engine _ self onForm: Display.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
-			basicMoveToX: 20 y: 10;
-			basicLineToX: 210 y: 15; basicLineToX: 20 y: 20;
-			basicLineToX: 15 y: 410; basicLineToX: 10 y: 20;
-			basicClosePath ].
+			moveToX: 20 y: 10;
+			lineToX: 210 y: 15; lineToX: 20 y: 20;
+			lineToX: 15 y: 410; lineToX: 10 y: 20;
+			closePath ].
 	Display forceToScreen.
 	engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
-			basicMoveToX: 220 y: 10;
-			basicLineToX: 410 y: 15; basicLineToX: 220 y: 20;
-			basicLineToX: 215 y: 410; basicLineToX: 210 y: 20;
-			basicClosePath ].
+			moveToX: 220 y: 10;
+			lineToX: 410 y: 15; lineToX: 220 y: 20;
+			lineToX: 215 y: 410; lineToX: 210 y: 20;
+			closePath ].
 	Display forceToScreen.
 
 	y1 _ 10.
 	dy _ 3.
 	y2 _ self defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
-		"stroke con w > aaw"
+		"stroke wider than anti aliasing"
 		engine strokeWidth: self defaultAntiAliasingWidth*0.4 color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 431 y: y1; basicLineToX: 530 y: y1+dy;
-				basicLineToX: 530 y: y1+y2+dy; basicLineToX: 431 y: y1+y2;
-				basicClosePath.
+				moveToX: 431 y: y1; lineToX: 530 y: y1+dy;
+				lineToX: 530 y: y1+y2+dy; lineToX: 431 y: y1+y2;
+				closePath.
 			engine
-				basicMoveToX:  y1 y: 431; basicLineToX: y1+dy y: 530;
-				basicLineToX: y1+y2+dy y: 530; basicLineToX: y1+y2 y: 431;
-				basicClosePath ].
-		"Solo fill. w casi=0"
+				moveToX:  y1 y: 431; lineToX: y1+dy y: 530;
+				lineToX: y1+y2+dy y: 530; lineToX: y1+y2 y: 431;
+				closePath ].
+		"stroke much narrower than anti aliasing"
 		engine strokeWidth: self defaultAntiAliasingWidth*0.2 color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 531 y: y1+dy; basicLineToX: 630 y: y1+dy+dy;
-				basicLineToX: 630 y: y1+y2+dy+dy; basicLineToX: 531 y: y1+y2+dy;
-				basicClosePath.
+				moveToX: 531 y: y1+dy; lineToX: 630 y: y1+dy+dy;
+				lineToX: 630 y: y1+y2+dy+dy; lineToX: 531 y: y1+y2+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy y: 531; basicLineToX: y1+dy+dy y: 630;
-				basicLineToX: y1+y2+dy+dy y: 630; basicLineToX: y1+y2+dy y: 531;
-				basicClosePath ].
-		"Solo fill. w =0"
+				moveToX: y1+dy y: 531; lineToX: y1+dy+dy y: 630;
+				lineToX: y1+y2+dy+dy y: 630; lineToX: y1+y2+dy y: 531;
+				closePath ].
+		"Just fill fill. w =0"
 		engine strokeWidth: self defaultAntiAliasingWidth*0.0 color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 631 y: y1+dy+dy; basicLineToX: 730 y: y1+dy+dy+dy;
-				basicLineToX: 730 y: y1+y2+dy+dy+dy; basicLineToX: 631 y: y1+y2+dy+dy;
-				basicClosePath.
+				moveToX: 631 y: y1+dy+dy; lineToX: 730 y: y1+dy+dy+dy;
+				lineToX: 730 y: y1+y2+dy+dy+dy; lineToX: 631 y: y1+y2+dy+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy+dy y: 631; basicLineToX: y1+dy+dy+dy y: 730;
-				basicLineToX: y1+y2+dy+dy+dy y: 730; basicLineToX: y1+y2+dy+dy y: 631;
-				basicClosePath ].
+				moveToX: y1+dy+dy y: 631; lineToX: y1+dy+dy+dy y: 730;
+				lineToX: y1+y2+dy+dy+dy y: 730; lineToX: y1+y2+dy+dy y: 631;
+				closePath ].
 		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
@@ -3797,7 +3731,7 @@ experLinesAndShapes3
 	Display forceToScreen.
 ! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:13:26'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 16:02:00'!
 experLinesAndShapes4
 	"
 	VectorEngineSubPixel experLinesAndShapes4
@@ -3806,53 +3740,53 @@ experLinesAndShapes4
 	engine _ self onForm: Display.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
-			basicMoveToX: 20 y: 10;
-			basicLineToX: 210 y: 15; basicLineToX: 20 y: 20;
-			basicLineToX: 15 y: 410; basicLineToX: 10 y: 20;
-			basicClosePath ].
+			moveToX: 20 y: 10;
+			lineToX: 210 y: 15; lineToX: 20 y: 20;
+			lineToX: 15 y: 410; lineToX: 10 y: 20;
+			closePath ].
 	Display forceToScreen.
 	engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 		engine
-			basicMoveToX: 220 y: 10;
-			basicLineToX: 410 y: 15; basicLineToX: 220 y: 20;
-			basicLineToX: 215 y: 410; basicLineToX: 210 y: 20;
-			basicClosePath ].
+			moveToX: 220 y: 10;
+			lineToX: 410 y: 15; lineToX: 220 y: 20;
+			lineToX: 215 y: 410; lineToX: 210 y: 20;
+			closePath ].
 	Display forceToScreen.
 
 	y1 _ 10.
 	dy _ 3.
 	y2 _ self defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
-		"stroke con w > aaw"
+		"stroke is twice anti aliasing"
 		engine strokeWidth: self defaultAntiAliasingWidth*2 color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 431 y: y1; basicLineToX: 530 y: y1+dy;
-				basicLineToX: 530 y: y1+y2+dy; basicLineToX: 431 y: y1+y2;
-				basicClosePath.
+				moveToX: 431 y: y1; lineToX: 530 y: y1+dy;
+				lineToX: 530 y: y1+y2+dy; lineToX: 431 y: y1+y2;
+				closePath.
 			engine
-				basicMoveToX:  y1 y: 431; basicLineToX: y1+dy y: 530;
-				basicLineToX: y1+y2+dy y: 530; basicLineToX: y1+y2 y: 431;
-				basicClosePath ].
-		"Solo fill. w casi=0"
+				moveToX:  y1 y: 431; lineToX: y1+dy y: 530;
+				lineToX: y1+y2+dy y: 530; lineToX: y1+y2 y: 431;
+				closePath ].
+		"stroke wider than anti aliasing"
 		engine strokeWidth: self defaultAntiAliasingWidth*1.5 color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 531 y: y1+dy; basicLineToX: 630 y: y1+dy+dy;
-				basicLineToX: 630 y: y1+y2+dy+dy; basicLineToX: 531 y: y1+y2+dy;
-				basicClosePath.
+				moveToX: 531 y: y1+dy; lineToX: 630 y: y1+dy+dy;
+				lineToX: 630 y: y1+y2+dy+dy; lineToX: 531 y: y1+y2+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy y: 531; basicLineToX: y1+dy+dy y: 630;
-				basicLineToX: y1+y2+dy+dy y: 630; basicLineToX: y1+y2+dy y: 531;
-				basicClosePath ].
-		"Solo fill. w =0"
+				moveToX: y1+dy y: 531; lineToX: y1+dy+dy y: 630;
+				lineToX: y1+y2+dy+dy y: 630; lineToX: y1+y2+dy y: 531;
+				closePath ].
+		"stroke equals anti aliasing"
 		engine strokeWidth: self defaultAntiAliasingWidth color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 631 y: y1+dy+dy; basicLineToX: 730 y: y1+dy+dy+dy;
-				basicLineToX: 730 y: y1+y2+dy+dy+dy; basicLineToX: 631 y: y1+y2+dy+dy;
-				basicClosePath.
+				moveToX: 631 y: y1+dy+dy; lineToX: 730 y: y1+dy+dy+dy;
+				lineToX: 730 y: y1+y2+dy+dy+dy; lineToX: 631 y: y1+y2+dy+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy+dy y: 631; basicLineToX: y1+dy+dy+dy y: 730;
-				basicLineToX: y1+y2+dy+dy+dy y: 730; basicLineToX: y1+y2+dy+dy y: 631;
-				basicClosePath ].
+				moveToX: y1+dy+dy y: 631; lineToX: y1+dy+dy+dy y: 730;
+				lineToX: y1+y2+dy+dy+dy y: 730; lineToX: y1+y2+dy+dy y: 631;
+				closePath ].
 		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
@@ -3861,7 +3795,7 @@ experLinesAndShapes4
 	Display forceToScreen.
 ! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:14:00'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 16:02:40'!
 experLinesAndShapesx
 	"
 	VectorEngineSubPixel experLinesAndShapesx
@@ -3870,10 +3804,10 @@ experLinesAndShapesx
 	engine _ self onForm: Display.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
-			basicMoveToX: 20 y: 10;
-			basicLineToX: 210 y: 15; basicLineToX: 20 y: 20;
-			basicLineToX: 15 y: 410; basicLineToX: 10 y: 20;
-			basicClosePath ].
+			moveToX: 20 y: 10;
+			lineToX: 210 y: 15; lineToX: 20 y: 20;
+			lineToX: 15 y: 410; lineToX: 10 y: 20;
+			closePath ].
 	Display forceToScreen.
 
 	y1 _ 10.
@@ -3881,16 +3815,16 @@ experLinesAndShapesx
 	y2 _ self defaultAntiAliasingWidth * 2.
 	15 timesRepeat: [
 		y2 print.
-		"Solo fill. w =0"
+		"stroke zero. just fill."
 		engine strokeWidth: 0.0 color: Color black fillColor: Color black do: [
 			engine
-				basicMoveToX: 631 y: y1+dy+dy; basicLineToX: 730 y: y1+dy+dy+dy;
-				basicLineToX: 730 y: y1+y2+dy+dy+dy; basicLineToX: 631 y: y1+y2+dy+dy;
-				basicClosePath.
+				moveToX: 631 y: y1+dy+dy; lineToX: 730 y: y1+dy+dy+dy;
+				lineToX: 730 y: y1+y2+dy+dy+dy; lineToX: 631 y: y1+y2+dy+dy;
+				closePath.
 			engine
-				basicMoveToX: y1+dy+dy y: 431; basicLineToX: y1+dy+dy+dy y: 530;
-				basicLineToX: y1+y2+dy+dy+dy y: 530; basicLineToX: y1+y2+dy+dy y: 431;
-				basicClosePath ].
+				moveToX: y1+dy+dy y: 431; lineToX: y1+dy+dy+dy y: 530;
+				lineToX: y1+y2+dy+dy+dy y: 530; lineToX: y1+y2+dy+dy y: 431;
+				closePath ].
 		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
 		y2 _ y2 * 0.8.
@@ -3898,7 +3832,7 @@ experLinesAndShapesx
 	
 	Display forceToScreen.! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:14:54'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 16:03:05'!
 experLinesAndShapesx2
 	"
 	VectorEngineSubPixel experLinesAndShapesx2
@@ -3909,20 +3843,20 @@ experLinesAndShapesx2
 	dy _ 3.
 	y2 _ 0.1.
 	y2 print.
-	"Solo fill. w =0"
+	"just a thin stroke"
 	engine strokeWidth: 0.5 color: Color black fillColor: Color black do: [
 		engine
-			basicMoveToX: 10 y: y1+dy+dy; basicLineToX: 200 y: y1+dy+dy+dy;
-			basicLineToX: 200 y: y1+y2+dy+dy+dy; basicLineToX: 10 y: y1+y2+dy+dy;
-			basicClosePath.
+			moveToX: 10 y: y1+dy+dy; lineToX: 200 y: y1+dy+dy+dy;
+			lineToX: 200 y: y1+y2+dy+dy+dy; lineToX: 10 y: y1+y2+dy+dy;
+			closePath.
 		engine
-			basicMoveToX: y1+dy+dy y: 10; basicLineToX: y1+dy+dy+dy y: 200;
-			basicLineToX: y1+y2+dy+dy+dy y: 200; basicLineToX: y1+y2+dy+dy y: 10;
-			basicClosePath ].
+			moveToX: y1+dy+dy y: 10; lineToX: y1+dy+dy+dy y: 200;
+			lineToX: y1+y2+dy+dy+dy y: 200; lineToX: y1+y2+dy+dy y: 10;
+			closePath ].
 	Display forceToScreen.
 ! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:15:25'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 15:49:55'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -3937,10 +3871,10 @@ experimentHopsPerPixel1
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
-			basicMoveToX: 20 y: 10;
-			basicLineToX: 210 y: 15; basicLineToX: 20 y: 20;
-			basicLineToX: 15 y: 410; basicLineToX: 10 y: 20;
-			basicClosePath ].
+			moveToX: 20 y: 10;
+			lineToX: 210 y: 15; lineToX: 20 y: 20;
+			lineToX: 15 y: 410; lineToX: 10 y: 20;
+			closePath ].
 	f1 displayAt: 0@0.
 
 	f2 _ Form extent: 220@420 depth: 32.
@@ -3949,10 +3883,10 @@ experimentHopsPerPixel1
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
-			basicMoveToX: 20 y: 10;
-			basicLineToX: 210 y: 15; basicLineToX: 20 y: 20;
-			basicLineToX: 15 y: 410; basicLineToX: 10 y: 20;
-			basicClosePath ].
+			moveToX: 20 y: 10;
+			lineToX: 210 y: 15; lineToX: 20 y: 20;
+			lineToX: 15 y: 410; lineToX: 10 y: 20;
+			closePath ].
 	f2 displayAt: 220@0.
 
 	Feature require: 'LinearAlgebra'.
@@ -3963,7 +3897,7 @@ experimentHopsPerPixel1
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:15:59'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 15:50:00'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -3991,10 +3925,10 @@ experimentHopsPerPixel2
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
-			basicMoveToX: 40 y: 30;
-			basicLineToX: 190 y: 135; basicLineToX: 40 y: 40;
-			basicLineToX: 135 y: 390; basicLineToX: 30 y: 40;
-			basicClosePath ].
+			moveToX: 40 y: 30;
+			lineToX: 190 y: 135; lineToX: 40 y: 40;
+			lineToX: 135 y: 390; lineToX: 30 y: 40;
+			closePath ].
 	f1 displayAt: 0@0.
 
 	f2 _ Form extent: 220@420 depth: 32.
@@ -4003,10 +3937,10 @@ experimentHopsPerPixel2
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
-			basicMoveToX: 40 y: 30;
-			basicLineToX: 190 y: 135; basicLineToX: 40 y: 40;
-			basicLineToX: 135 y: 390; basicLineToX: 30 y: 40;
-			basicClosePath ].
+			moveToX: 40 y: 30;
+			lineToX: 190 y: 135; lineToX: 40 y: 40;
+			lineToX: 135 y: 390; lineToX: 30 y: 40;
+			closePath ].
 	f2 displayAt: 220@0.
 
 Feature require: 'LinearAlgebra'.
@@ -4017,7 +3951,7 @@ Feature require: 'LinearAlgebra'.
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 3/16/2021 12:16:22'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/10/2021 15:50:05'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -4032,10 +3966,10 @@ experimentHopsPerPixel3
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
-			basicMoveToX: 20 y: 10;
-			basicLineToX: 210 y: 15; basicLineToX: 20 y: 20;
-			basicLineToX: 15 y: 410; basicLineToX: 10 y: 20;
-			basicClosePath ].
+			moveToX: 20 y: 10;
+			lineToX: 210 y: 15; lineToX: 20 y: 20;
+			lineToX: 15 y: 410; lineToX: 10 y: 20;
+			closePath ].
 	f1 displayAt: 0@0.
 
 	f2 _ Form extent: 220@420 depth: 32.
@@ -4044,10 +3978,10 @@ experimentHopsPerPixel3
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
-			basicMoveToX: 20 y: 10;
-			basicLineToX: 210 y: 15; basicLineToX: 20 y: 20;
-			basicLineToX: 15 y: 410; basicLineToX: 10 y: 20;
-			basicClosePath ].
+			moveToX: 20 y: 10;
+			lineToX: 210 y: 15; lineToX: 20 y: 20;
+			lineToX: 15 y: 410; lineToX: 10 y: 20;
+			closePath ].
 	f2 displayAt: 220@0.
 
 	Feature require: 'LinearAlgebra'.
@@ -4523,7 +4457,7 @@ As an additional optimization, as we need to store for every pixel all the cross
 				]
 		].! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 4/6/2021 16:07:36'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 5/10/2021 15:42:32'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
@@ -4533,7 +4467,7 @@ finishPath: ensureClosePath
 			(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
 				"This is actually an error condition. If we are asked to fill, then the path should be closed.
 				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
-				self basicLineToX: firstX y: firstY ]]].
+				self lineToX: firstX y: firstY ]]].
 
 	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf - subPixelDelta + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
 	blendTop _ (blendTop - auxStrokeWidthDilatedHalf + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
@@ -5120,16 +5054,17 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 		].
 	^ (destX*sx) ceiling@destY! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:45'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 5/10/2021 15:26:39'!
 doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Evaluate a sequence of path commands. Path parameters already set."
 
+	PluginAccess releaseIfOwnerNotReadyToRun.
 	PluginAccess critical: [
 		self initializePath.
 		pathCommandsBlock valueWithPossibleArgument: (canvas ifNil: [self]).
 		self finishPath: ensureClosePath ].! !
 
-!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 3/18/2021 15:01:20'!
+!VectorEngineSubPixelWithPlugin methodsFor: 'private' stamp: 'jmv 5/10/2021 15:42:36'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	| spanLeft spanTop spanRight spanBottom |
@@ -5140,7 +5075,7 @@ finishPath: ensureClosePath
 			(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
 				"This is actually an error condition. If we are asked to fill, then the path should be closed.
 				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
-				self basicLineToX: firstX y: firstY ]]].
+				self lineToX: firstX y: firstY ]]].
 
 	spanLeft _ self primSpanLeft.
 	spanTop _ self primSpanTop.
@@ -5411,9 +5346,9 @@ isPluginAvailable
 
 	^ self primitiveTry ~~ #primitiveFailed! !
 
-!VectorEngineSubPixelWithPlugin class methodsFor: 'class initialization' stamp: 'jmv 3/20/2021 21:05:53'!
+!VectorEngineSubPixelWithPlugin class methodsFor: 'class initialization' stamp: 'jmv 5/10/2021 13:21:12'!
 initialize
-	PluginAccess _ Semaphore forMutualExclusion.! !
+	PluginAccess _ Mutex new.! !
 
 !VectorEngineSubPixelWithPlugin class methodsFor: 'private' stamp: 'jmv 4/9/2021 12:05:08'!
 primitiveTry
@@ -5643,7 +5578,7 @@ As an additional optimization, as we need to store for every pixel all the cross
 		edgeCounts at: pixelIndex put: count ].
 	prevYTruncated _ thisYTruncated.! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 4/6/2021 16:07:47'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 5/10/2021 15:42:40'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	
@@ -5653,7 +5588,7 @@ finishPath: ensureClosePath
 			(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
 				"This is actually an error condition. If we are asked to fill, then the path should be closed.
 				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
-				self basicLineToX: firstX y: firstY ]]].
+				self lineToX: firstX y: firstY ]]].
 
 	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf + 1) truncated.														"(z+1) truncated works equally well than the more intuitive (z ceiling)"
 	blendTop _ (blendTop - auxStrokeWidthDilatedHalf + 1) truncated.														"(z+1) truncated works equally well than the more intuitive (z ceiling)"
@@ -7693,11 +7628,11 @@ updateRightSideBearing
 drawGlyphOn: aVectorCanvas
 	self drawGlyphOn: aVectorCanvas geometryTransformation: nil! !
 
-!TTGlyph methodsFor: 'drawing' stamp: 'jmv 3/2/2020 12:52:01'!
+!TTGlyph methodsFor: 'drawing' stamp: 'jmv 5/10/2021 12:49:00'!
 drawGlyphOn: aVectorCanvas geometryTransformation: txOrNil
 	contours do: [ :contour |
 		contour isEmpty ifFalse: [
-			aVectorCanvas moveToX: 0 y: 0.
+			aVectorCanvas moveTo: `0.0@0.0`.
 			(contour initialMoveToCommand: txOrNil) runOn: aVectorCanvas .
 			(contour pathCommand: txOrNil) runOn: aVectorCanvas ]].! !
 
