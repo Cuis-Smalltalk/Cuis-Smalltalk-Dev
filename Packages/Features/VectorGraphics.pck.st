@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4605] on 18 May 2021 at 5:49:39 pm'!
+'From Cuis 5.0 [latest update: #4607] on 21 May 2021 at 11:17:12 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 231!
+!provides: 'VectorGraphics' 1 232!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -3124,7 +3124,7 @@ Display forceToScreen
 	r _ geometryTransformation externalizeScalar: mr.
 	self basicArcCenterX: center x centerY: center y radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep: Float twoPi.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/13/2021 15:04:26'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/21/2021 10:08:02'!
 cubicBezierTo: toPoint control1: controlPoint1 control2: controlPoint2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -3144,6 +3144,16 @@ Display forceToScreen
 			cubicBezierTo: 600@100
 			control1: 150@300
 			control2: 600@400 ].
+Display forceToScreen
+	"
+	"
+(VectorGraphicsEngine onForm: Display)
+	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
+		engine moveTo: 100@100.
+		engine
+			cubicBezierTo: 150@400
+			control1: 600@400
+			control2: -150@300 ].
 Display forceToScreen
 	"
 
