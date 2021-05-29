@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4607] on 21 May 2021 at 11:17:12 am'!
+'From Cuis 5.0 [latest update: #4618] on 29 May 2021 at 5:01:55 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 232!
+!provides: 'VectorGraphics' 1 234!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -453,7 +453,7 @@ self runningWorld setCanvas: (HybridCanvas onForm: Display).
 self runningWorld canvas class!
 
 !VectorCanvas commentStamp: '<historical>' prior: 0!
-A canvas specially built for Morphic 3.
+A VectorGraphics canvas specially built for Morphic.
 
 self runningWorld backgroundImage displayAt: 0@0. (VectorCanvas onForm: Display) fullDraw: self runningWorld. Display copy inspect.
 Display writePNGfileNamed: 'm3z.png'
@@ -466,7 +466,7 @@ c fullDraw: self.
 Display forceToScreen!
 
 !VectorGraphicsEngine commentStamp: '<historical>' prior: 0!
-A Vector Graphics rasterizer for Morphic 3.
+A Vector Graphics rasterizer for Morphic.
 Supports most SVG primitives.
 Gives exceptional quality.
 
@@ -1229,8 +1229,8 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	vectorCanvas setClipRect: aRectangle! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/30/2020 10:30:45'!
-setForm: aForm
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 5/28/2021 10:03:54'!
+setForm: aForm preferSubPixelAntiAliasing: aBoolean
 	form _ aForm.
 	engine _ BitBltCanvasEngine toForm: form.
 	"Init BitBlt so that the first call to the 'primitiveDisplayString' primitive will not fail"
@@ -1272,7 +1272,7 @@ currentMorphDrawingFails
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 4/9/2021 14:11:29'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 5/26/2021 09:30:26'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
@@ -1296,13 +1296,7 @@ drawCurrentAndSubmorphs
 		currentMorph displayBoundsUpdateFrom: self.
 
 		currentMorph isHighlighted ifTrue: [
-			self drawCurrentMorphHighlight ].
-		world notNil ifTrue: [
-			currentMorph halo ifNotNil: [
-				Preferences halosShowCoordinateSystem ifTrue: [
-					self drawCoordinateSystem: currentMorph morphLocalBounds ]]].
-
-		currentMorph displayBoundsUpdateFrom: self.
+			self drawHighlight: currentMorph ].
 	].! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
@@ -1349,7 +1343,7 @@ drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 		self onMorphIdsDo: [
 			aWorldMorph drawOn: self ]].! !
 
-!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 4/9/2021 16:38:20'!
+!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 5/29/2021 16:59:35'!
 initialize
 	| family folder |
 	UISupervisor whenUIinSafeState: [
@@ -1362,6 +1356,14 @@ initialize
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
 	^engine! !
+
+!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 5/12/2021 11:12:34'!
+geometryTransformation: aGeometryTransformation
+	"Only used for testing. Usually, transformations are handled as we traverse the Morphs tree."
+
+	currentTransformation _ aGeometryTransformation.
+	engine geometryTransformation: aGeometryTransformation.
+	boundsFinderEngine geometryTransformation: aGeometryTransformation.! !
 
 !VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:59'!
 fillColor: aFillColor do: pathCommandsBlock
@@ -2435,12 +2437,9 @@ image: srcForm at: aPoint
 		combinationRule: Form blend;
 		copyQuad: srcQuad toRect: dstBox.! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/26/2021 11:45:15'!
 image: aForm multipliedBy: aColor at: aPoint
-"NO quiero usar imagenes en M3... ver como hacer... quizas meter un servicio en el canvas que en m2 use imagenes y en m3 no..."
-"no!!!!!!!!"
-"	self halt"
-super image: aForm multipliedBy: aColor at: aPoint! !
+	self image: aForm at: aPoint! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 1/18/2021 17:26:20'!
 imageUnrotated: srcForm at: aPoint
@@ -2473,10 +2472,6 @@ line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
 	self strokeWidth: morphStrokeWidth color: aStrokeColor do: [
 		self moveTo: pt1.
 		self lineTo: pt2 ]! !
-
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
-reverseRectangleBorder: r borderWidth: borderWidth
-	self halt! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 21:10:33'!
 roundRect: aRectangle color: aColor radius: r
@@ -2528,6 +2523,52 @@ windowFrame: aRectangle color: aColor radius: r border: morphStrokeWidth labelHe
 		self
 			roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh-d2 maxY: aRectangle bottom-d2 rx: r ry: r ]! !
 
+!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 5/26/2021 11:27:13'!
+frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
+	"
+	(VectorCanvas onForm: Display)
+		frameAndFillGlobalRect: (10@10 extent: 300@200)
+		fillColor: Color yellow
+		borderWidth: 20
+		color: Color green.
+	Display forceToScreen
+	"
+	(BitBltCanvasEngine toForm: form)
+		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: borderColor;
+		frameRect: rect borderWidth: borderWidth;
+		combinationRule: (fillColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: fillColor;
+		fillRect: (rect insetBy: borderWidth).! !
+
+!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 5/26/2021 10:24:41'!
+frameGlobalRect: rect borderWidth: borderWidth color: borderColor
+	"
+	(VectorCanvas onForm: Display)
+		frameGlobalRect: (10@10 extent: 300@200)
+		borderWidth: 20
+		color: Color green.
+	Display forceToScreen
+	"
+	(BitBltCanvasEngine toForm: form)
+		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: borderColor;
+		frameRect: rect borderWidth: borderWidth.! !
+
+!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 5/26/2021 12:12:56'!
+frameReverseGlobalRect: rect borderWidth: borderWidth
+	"
+	(VectorCanvas onForm: Display)
+		frameReverseGlobalRect: (10@10 extent: 300@200)
+		borderWidth: 20.
+	Display forceToScreen
+	"
+	(BitBltCanvasEngine toForm: form)
+		sourceForm: nil;
+		fillColor: `Color gray`;
+		combinationRule: Form reverse;
+		frameRect: rect borderWidth: borderWidth! !
+
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 5/16/2021 10:40:37'!
 boundingRectOfCurrentMorphAfterDraw
 	"In targetForm coordinates.
@@ -2545,9 +2586,9 @@ boundingRectOfCurrentMorphAfterDraw
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 4/9/2021 14:11:34'!
+!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 5/26/2021 09:30:40'!
 drawCurrentAndSubmorphs
-	| corners |
+	
 	self isCurrentMorphVisible ifTrue: [
 		currentMorph drawOn: self.
 		currentMorph displayBoundsSetFrom: self.
@@ -2562,15 +2603,7 @@ drawCurrentAndSubmorphs
 		currentMorph displayBoundsUpdateFrom: self.
 
 		currentMorph isHighlighted ifTrue: [
-			self drawCurrentMorphHighlight ].
-		world notNil ifTrue: [
-			currentMorph halo ifNotNil: [
-				Preferences halosShowCoordinateSystem ifTrue: [
-					corners _ currentMorph displayFullBounds corners collect: [ :pt |
-						currentTransformation inverseTransform: pt ].
-					self drawCoordinateSystem: corners ]]].
-
-		currentMorph displayBoundsUpdateFrom: self.
+			self drawHighlight: currentMorph ].
 	].! !
 
 !VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 5/12/2021 16:16:54'!
@@ -2661,31 +2694,11 @@ morphIds _ engine instVarNamed: 'morphIds'.
 		copyBits.
 	^answer! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 4/9/2021 12:23:00'!
-doSubPixelAntiAliasing
-	"
-	Instead of just whole pixel anti-aliasing. Change engine only if current won't do.
-	"
-	engine doesSubPixelAntiAliasing ifFalse: [
-		engine _ VectorGraphicsEngine subPixelAntiAliasingOnForm: form.
-		engine canvas: self.
-		boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
-		boundsFinderEngine subPixelDelta: engine subPixelDelta.								"So bounds found are exactly the same as engine would find."
-		self newClipRect: nil ].! !
-
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 12/21/2020 17:36:45'!
 fontToUse: fontOrNil
 	"Answer a suitable font, aFont if possible."
 
 	^fontOrNil ifNil: [ FontFamily defaultOrTrueTypeFamilyAndPointSize ].! !
-
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 5/12/2021 11:12:34'!
-geometryTransformation: aGeometryTransformation
-	"Only used for testing. Usually, transformations are handled as we traverse the Morphs tree."
-
-	currentTransformation _ aGeometryTransformation.
-	engine geometryTransformation: aGeometryTransformation.
-	boundsFinderEngine geometryTransformation: aGeometryTransformation.! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 1/14/2020 09:32:24'!
 setClipRect: aRectangle
@@ -2694,14 +2707,16 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 5/18/2021 10:09:15'!
-setForm: aForm
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 5/28/2021 10:04:45'!
+setForm: aForm preferSubPixelAntiAliasing: aBoolean
 	"
 	World extent: World extent
 	"
 	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
 	form _ aForm.
-	engine _ VectorGraphicsEngine onForm: form.
+	engine _ aBoolean
+		ifTrue: [VectorGraphicsEngine subPixelAntiAliasingOnForm: form]
+		ifFalse: [VectorGraphicsEngine onForm: form].
 	engine canvas: self.
 	boundsFinderEngine _ VectorGraphicsEngine boundsFinderFor: form.
 	boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
@@ -2719,57 +2734,10 @@ updatingMorphBoundsDo: aBlock
 		aBlock value.
 	] ensure: [ engine _ prevEngine ]! !
 
-!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 5/18/2021 10:10:04'!
-drawCoordinateSystem: corners
-	| c stepX stepY x0 x1 y0 y1 |
-	stepX _ 50.
-	stepY _ 20.
+!VectorCanvas methodsFor: 'initialization' stamp: 'jmv 5/28/2021 10:05:39'!
+initializeWith: aForm origin: aPoint preferSubPixelAntiAliasing: aBoolean
 
-	engine currentMorph: nil.
-	self strokeWidth: 4 color: `Color lightGray alpha: 0.4` do: [
-		self moveTo: corners first.
-		corners do: [ :p | self lineTo: p ].
-		self lineTo: corners first ].
-
-	x0 _ x1 _ y0 _ y1 _ 0.
-	corners do: [ :p |
-		x0 _ x0 min: p x.
-		x1 _ x1 max: p x.
-		y0 _ y0 min: p y.
-		y1 _ y1 max: p y.].
-
-	c _ `Color lightGray alpha: 0.6`.
-	self strokeWidth: 1 color: c do: [
-		self moveTo: x0@0; lineTo: x1 @ 0.
-		self moveTo: 0@y0; lineTo: 0 @ y1. ].
-	(x0 truncateTo: stepX) to: (x1 - stepX truncateTo: stepX) by: stepX do: [ :x |
-		self strokeWidth: 1 color: c do: [
-			self moveTo: x @ -5; lineTo: x @ 5 ].
-	 	self drawString: x printString atCenterX: x @ 5 font: nil color: c ].
-	self drawString: 'x' atCenterX: x1 - 15 @ 0 font: nil color: c.
-
-	(y0 truncateTo: stepY) to: (y1 - stepY truncateTo: stepY) by: stepY do: [ :y |
-		self strokeWidth: 1 color: c do: [
-			self moveTo: -5 @ y; lineTo: 5 @ y ].
-		self drawString: y printString, ' ' atWaistRight: 0 @ y font: nil color: c ].
-	self drawString: 'y' atWaistRight: 0 @ (y1 - 20) font: nil color: c.! !
-
-!VectorCanvas methodsFor: 'drawing' stamp: 'jmv 1/13/2021 11:57:42'!
-drawCurrentMorphHighlight
-
-	currentMorph displayBounds ifNotNil: [ :r |
-		(BitBltCanvasEngine toForm: form)
-			combinationRule: Form blend;
-			fillColor: `Color black`;
-			frameRect: r borderWidth: 4;
-			fillColor: `Color pink alpha: 0.2`;
-			fillRect: (r insetBy: 4).
-	]! !
-
-!VectorCanvas methodsFor: 'initialization' stamp: 'jmv 5/12/2021 16:16:48'!
-initializeWith: aForm origin: aPoint
-
-	super initializeWith: aForm origin: aPoint.
+	super initializeWith: aForm origin: aPoint preferSubPixelAntiAliasing: aBoolean.
 	engine geometryTransformation: currentTransformation.
 	boundsFinderEngine geometryTransformation: currentTransformation.! !
 
@@ -2999,7 +2967,7 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/18/2021 10:05:40'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/27/2021 11:57:53'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
 
@@ -3014,11 +2982,11 @@ basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureC
 			self pvtStrokeWidth: aStrokeWidth.
 			self pvtStrokeColor: aStrokeColor ].
 	self pvtFillColor: nil.
-	self pvtHopsPerPixel: 10 // strokeWidth + 1.		"See #experimentHopsPerPixel2"
+	self pvtHopsPerPixel: 3.									"See #experimentHopsPerPixel2"
 
 	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:38:58'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/27/2021 11:57:05'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -3041,13 +3009,13 @@ basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	aStrokeWidth < antiAliasingWidth
 		ifTrue: [
 			"Strokes are really thin, but strokeColor is same as fillColor, so there's no problem sampling them."
-			self pvtHopsPerPixel: 8 ]								"See #experimentHopsPerPixel1"
+			self pvtHopsPerPixel: 3 ]								"See #experimentHopsPerPixel1"
 		ifFalse: [
-			self pvtHopsPerPixel: (10 // strokeWidth + 1 max: 2) ].		"See #experimentHopsPerPixel2. Additionally, fills require at least 2."
+			self pvtHopsPerPixel: 3 ].								"See #experimentHopsPerPixel2."
 
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 3/25/2021 19:32:10'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/26/2021 17:48:43'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -3055,7 +3023,7 @@ fillColor: aFillColor do: pathCommandsBlock
 	self pvtStrokeWidth: 0.0.
 	self pvtStrokeColor: nil.
 	self pvtFillColor: aFillColor.
-	self pvtHopsPerPixel: 8.										"See #experimentHopsPerPixel3"
+	self pvtHopsPerPixel: 3.										"See #experimentHopsPerPixel3"
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
 !VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:45:04'!
@@ -3078,8 +3046,51 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 		fillColor: aFillColor
 		do: pathCommandsBlock! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/13/2021 15:03:47'!
-arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 19:19:20'!
+arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
+"
+(VectorGraphicsEngine onForm: Display)
+	strokeWidth: 2.0 color: Color black fillColor: Color red do: [ :engine |
+		engine arcCenter: 100@100 radius: 80@40 rotationAngle: -0.2 start: 0 sweep: Float twoPi ].
+Display forceToScreen.
+"
+	| d hops angle thetaCos thetaSin xp yp x0 y0 center ttheta tthetaCos tthetaSin dx dy rx ry |
+	thetaCos _ theta cos.
+	thetaSin _ theta sin.
+	angle _ startAngle.
+	xp _ angle cos * radiusPoint x.
+	yp _ angle sin * radiusPoint y.
+	x0 _ thetaCos * xp - (thetaSin * yp) + aPoint x.
+	y0 _ thetaSin * xp + (thetaCos * yp) + aPoint y.
+	(sweepAngle ~= Float twoPi and: [firstX isNaN not])
+		ifTrue: [
+			"If an arc (not whole circle/ellipse), join with a line, to ensure closed path.
+			For example, for rounded rectangles."
+			self lineFromX: currentX y: currentY toX: x0 y: y0.
+			currentX _ x0.
+			currentY _ y0 ].
+
+	"For consistency with other path operations (lines, beziers, path sequences and TrueType text), conversion and computation of hops could be pushed down."
+	dx _ geometryTransformation externalizeDelta: radiusPoint x@0.
+	dy _ geometryTransformation externalizeDelta: 0@radiusPoint y.
+	rx _ dx r.
+	ry _ dy r.
+	hops _ ((rx max: ry) * sweepAngle abs * hopsPerPixel) truncated + 1.
+	d _ sweepAngle / hops.
+	center _ geometryTransformation externalizePosition: aPoint.
+	ttheta _ theta + geometryTransformation radians.
+	tthetaCos _ ttheta cos.
+	tthetaSin _ ttheta sin.
+	self arcCenterX: center x centerY: center y radiusX: rx radiusY: ry start: startAngle rotationCos: tthetaCos rotationSin: tthetaSin hops: hops angleDelta: d.
+
+	angle _ startAngle + sweepAngle.
+	xp _ angle cos * radiusPoint x.
+	yp _ angle sin * radiusPoint y.
+	currentX _ thetaCos * xp - (thetaSin * yp) + aPoint x.
+	currentY _ thetaSin * xp + (thetaCos * yp) + aPoint y.! !
+
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 19:08:30'!
+arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorGraphicsEngine onForm: Display)
 	strokeWidth: 1.0 color: Color red do: [ :engine |
@@ -3098,18 +3109,74 @@ arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLarge
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
 Display forceToScreen
 "
-
-	| center radiusPoint dx dy phi rx ry |
-	center _ geometryTransformation externalizePosition: aPoint.
+	| x1 y1 x2 y2 radiusPoint rx ry cosPhi sinPhi x12hd y12hd x1p y1p rxSq rySq x1pSq y1pSq bigSqR bigSqRNumerator bigSqRDenominator sign cxp cyp cx cy theta1 theta2 deltaTheta scaleSq scale newRx newRy |
+	x1 _ currentX.
+	y1 _ currentY.
+	x2 _ aPoint x.
+	y2 _ aPoint y.
 	radiusPoint _ radiusPointOrNumber asPoint.
-	dx _ geometryTransformation externalizeDelta: radiusPoint x@0.
-	dy _ geometryTransformation externalizeDelta: 0@radiusPoint y.
-	rx _ dx r.
-	ry _ dy r.
-	phi _ geometryTransformation radians + theta.
-	self basicArcToX: center x y: center y radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
+	rx _ radiusPoint x.
+	ry _ radiusPoint y.
+	"Handle out of range parameters as requested by the w3 implementation notes"
+	(x2 = x1 and: [ y2 = y1 ]) ifTrue: [ ^self ].
+	(rx = 0.0 or: [ ry = 0.0 ]) ifTrue: [
+		self lineFromX: currentX y: currentY toX: x2 y: y2.
+		currentX _ x2.
+		currentY _ y2.
+		^self ].
+	rx < 0 ifTrue: [
+		^self arcTo: aPoint radius: 0.0 -rx @ ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
+	ry < 0 ifTrue: [
+		^self arcTo: aPoint radius: rx @ (0.0-ry) angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/18/2021 10:05:37'!
+	cosPhi _ phi cos.
+	sinPhi _ phi sin.
+	"step 1 in http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes"
+	x12hd _ (x1-x2) * 0.5.
+	y12hd _ (y1-y2) * 0.5.
+	x1p _ (cosPhi * x12hd) + (sinPhi * y12hd).
+	y1p _ (cosPhi * y12hd) - (sinPhi * x12hd).
+
+	"step 2"
+	rxSq _ rx * rx.
+	rySq _ ry * ry.
+	x1pSq _ x1p * x1p.
+	y1pSq _ y1p * y1p.
+	"ensure radii are large enough"
+	scaleSq _ (x1pSq / rxSq) + (y1pSq / rySq).
+	scaleSq > 1 ifTrue: [
+		scale _ scaleSq sqrt.
+		newRx _ scale * rx.
+		newRy _ scale * ry.
+		(newRx = rx or: [ newRy = ry ]) ifTrue: [		"This happens when scaleSq is so close to 1, that the multiplication rounds to the same numbers"
+			newRx _ scaleSq * rx.
+			newRy _ scaleSq * ry ].
+		^self arcTo: aPoint radius: newRx @ newRy angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
+		].
+	bigSqRNumerator _ (rxSq * rySq) - (rxSq * y1pSq)-(rySq * x1pSq).
+	bigSqRDenominator _ (rxSq * y1pSq) + (rySq * x1pSq).
+	sign _ doLargerArc = useIncreasingAngles ifTrue: [ -1 ] ifFalse: [ 1 ].
+	bigSqR _ (bigSqRNumerator / bigSqRDenominator max: 0.0) sqrt * sign.		"This only can be < 0.0 because of rounding errors. Take 0.0 in such cases."
+	cxp _ bigSqR * rx * y1p / ry.
+	cyp _ 0.0 - (bigSqR * ry * x1p / rx).
+
+	"step 3"
+	cx _ (cosPhi * cxp) - (sinPhi * cyp) + ((x1+x2) * 0.5).
+	cy _ (sinPhi * cxp) + (cosPhi * cyp) + ((y1+y2) * 0.5).
+
+	"step 4"
+	theta1 _ (((x1p - cxp) / rx) @ ((y1p - cyp) / ry)) theta.
+	theta2 _ (((0 - x1p - cxp) / rx) @ (( 0 -y1p - cyp) / ry)) theta.
+	deltaTheta _ theta2 - theta1.
+	useIncreasingAngles = (deltaTheta > 0) ifFalse: [
+		deltaTheta > 0
+			ifTrue: [ deltaTheta _ deltaTheta - Float pi - Float pi ]
+			ifFalse: [ deltaTheta _ deltaTheta + Float pi + Float pi ]
+		].
+
+	self arcCenter: cx@cy radius: rx@ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
+
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 18:44:33'!
 circleCenter: aPoint radius: mr
 "
 (VectorGraphicsEngine onForm: Display)
@@ -3119,12 +3186,9 @@ circleCenter: aPoint radius: mr
 Display forceToScreen
 "
 
-	| center r |
-	center _ geometryTransformation externalizePosition: aPoint.
-	r _ geometryTransformation externalizeScalar: mr.
-	self basicArcCenterX: center x centerY: center y radiusX: r radiusY: r rotationAngle: 0.0 start: 0.0 sweep: Float twoPi.! !
+	self arcCenter: aPoint radius: mr@mr rotationAngle: 0.0 start: 0.0 sweep: Float twoPi.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/21/2021 10:08:02'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 17:05:48'!
 cubicBezierTo: toPoint control1: controlPoint1 control2: controlPoint2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -3152,25 +3216,46 @@ Display forceToScreen
 		engine moveTo: 100@100.
 		engine
 			cubicBezierTo: 150@400
+			control1: 500@400
+			control2: -150@300 ].
+Display forceToScreen
+	"
+	"
+(VectorGraphicsEngine onForm: Display)
+	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
+		engine moveTo: 100@100.
+		engine
+			cubicBezierTo: 150@400
 			control1: 600@400
 			control2: -150@300 ].
 Display forceToScreen
 	"
+	"
+(VectorGraphicsEngine onForm: Display)
+	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
+		engine moveTo: 100@100.
+		engine
+			cubicBezierTo: 400@150
+			control1: 400@4600
+			control2: 300 @ -15].
+Display forceToScreen
+	"
+	"
+(VectorGraphicsEngine onForm: Display)
+	strokeWidth: 3 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
+		engine moveTo: 100@100.
+		engine
+			cubicBezierTo: 120@1000
+			control1: 140@200
+			control2: 130@1400].
+Display forceToScreen
+	"
 
-	| p xTo yTo xC1 yC1 xC2 yC2 dx dy hops |
-	p _ geometryTransformation externalizePosition: toPoint. xTo _ p x. yTo _ p y.
-	p _ geometryTransformation externalizePosition: controlPoint1. xC1 _ p x. yC1 _ p y.
-	p _ geometryTransformation externalizePosition: controlPoint2. xC2 _ p x. yC2 _ p y.
-	dx _ (xC1-currentX) abs + (xC2-xC1) abs + (xTo-xC2) abs.
-	dy _ (yC1-currentY) abs + (yC2-yC1) abs + (yTo-yC2) abs.
-	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
+	self cubicBezierFromX: currentX y: currentY toX: toPoint x y: toPoint y control1X: controlPoint1 x y: controlPoint1 y control2X: controlPoint2 x y: controlPoint2 y.
+	currentX _ toPoint x.
+	currentY _ toPoint y.! !
 
-	self cubicBezierFromX: currentX y: currentY toX: xTo y: yTo control1X: xC1 y: yC1 control2X: xC2 y: yC2 hops: hops.
-
-	currentX _ xTo.
-	currentY _ yTo.! !
-
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/18/2021 10:05:34'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 18:44:38'!
 ellipseCenter: aPoint radius: radiusPoint
 "
 (VectorGraphicsEngine onForm: Display)
@@ -3185,16 +3270,9 @@ ellipseCenter: aPoint radius: radiusPoint
 Display forceToScreen
 "
 
-	| center dx dy phi rx ry |
-	center _ geometryTransformation externalizePosition: aPoint.
-	dx _ geometryTransformation externalizeDelta: radiusPoint x@0.
-	dy _ geometryTransformation externalizeDelta: 0@radiusPoint y.
-	rx _ dx r.
-	ry _ dy r.
-	phi _ geometryTransformation radians.
-	self basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep: Float twoPi.! !
+	self arcCenter: aPoint radius: radiusPoint rotationAngle: 0.0 start: 0.0 sweep: Float twoPi.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/18/2021 10:05:50'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 18:44:43'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta
 "
 (VectorGraphicsEngine onForm: Display)
@@ -3209,16 +3287,9 @@ ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta
 Display forceToScreen
 "
 
-	| center dx dy phi rx ry |
-	center _ geometryTransformation externalizePosition: aPoint.
-	dx _ geometryTransformation externalizeDelta: radiusPoint x@0.
-	dy _ geometryTransformation externalizeDelta: 0@radiusPoint y.
-	rx _ dx r.
-	ry _ dy r.
-	phi _ geometryTransformation radians + theta.
-	self basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: 0.0 sweep: Float twoPi.! !
+	self arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: 0.0 sweep: Float twoPi.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/18/2021 10:05:27'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 18:44:48'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 	"Currently draws a line from pathCurrentX@pathCurrentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
@@ -3240,16 +3311,9 @@ ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle
 Display forceToScreen.
 "
 
-	| center dx dy phi rx ry |
-	center _ geometryTransformation externalizePosition: aPoint.
-	dx _ geometryTransformation externalizeDelta: radiusPoint x@0.
-	dy _ geometryTransformation externalizeDelta: 0@radiusPoint y.
-	rx _ dx r.
-	ry _ dy r.
-	phi _ geometryTransformation radians + theta.
-	self basicArcCenterX: center x centerY: center y radiusX: rx radiusY: ry rotationAngle: phi start: startAngle sweep: sweepAngle! !
+	self arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/13/2021 15:05:06'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 16:36:07'!
 lineTo: aPoint
 "
 (VectorGraphicsEngine onForm: Display)
@@ -3270,16 +3334,16 @@ Display forceToScreen
 "
 (VectorGraphicsEngine onForm: Display)
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
-		engine moveTo: 30@15.
-		engine lineTo: 45@90.
-		engine lineTo: 180@30 ].
+		engine moveTo: 30@115.
+		engine lineTo: 45@190.
+		engine lineTo: 180@130 ].
 Display forceToScreen
 "
-	| p xTo yTo |
-	p _ geometryTransformation externalizePosition: aPoint. xTo _ p x. yTo _ p y.
-	self basicLineToX: xTo y: yTo.! !
+	self lineFromX: currentX y: currentY toX: aPoint x y: aPoint y.
+	currentX _ aPoint x.
+	currentY _ aPoint y.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/13/2021 15:05:17'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 16:37:46'!
 lineToFirstPoint
 "
 (VectorGraphicsEngine onForm: Display)
@@ -3291,9 +3355,11 @@ lineToFirstPoint
 Display forceToScreen
 "
 
-	self basicLineToX: firstX y: firstY! !
+	self lineFromX: currentX y: currentY toX: firstX y: firstY.
+	currentX _ firstX.
+	currentY _ firstY.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/13/2021 15:05:22'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 17:03:08'!
 moveTo: aPoint
 "
 (VectorGraphicsEngine onForm: Display)
@@ -3308,43 +3374,51 @@ Display forceToScreen
 	"A discontinuity in the trajectory"
 	"We are starting a new trajectory, or at a discontinuity in trajectory.
 	Eventually #closeTrajectory should draw a line to here"
-	| p x y |
 
 	"Next point will be first in a new trajectory fragment"
 	self newTrajectoryFragment.
-	p _ geometryTransformation externalizePosition: aPoint. x _ p x. y _ p y.
-	firstX _ x.
-	firstY _ y.
-	currentX _ x.
-	currentY _ y.! !
+	firstX _ aPoint x.
+	firstY _ aPoint y.
+	currentX _ firstX.
+	currentY _ firstY.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/13/2021 15:05:35'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 16:56:53'!
 quadraticBezierTo: toPoint control: controlPoint
 	"
 (VectorGraphicsEngine onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
-			quadraticBezierTo: 300@200 control: 100@210 ].
+			quadraticBezierTo: 120@130 control: 120@110 ].
 Display forceToScreen
 	"
 	"
 (VectorGraphicsEngine onForm: Display)
-	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
-		engine moveTo: 10@5.
-		engine quadraticBezierTo: 60@10 control: 15@30 ].
+	strokeWidth: 1.0 color: Color black do: [ :engine |
+		engine
+			moveTo: 100@100;
+			quadraticBezierTo: 120@130 control: 1300@110 ].
 Display forceToScreen
 	"
-	| p xTo yTo xC yC dx dy hops |
-	p _ geometryTransformation externalizePosition: toPoint. xTo _ p x. yTo _ p y.
-	p _ geometryTransformation externalizePosition: controlPoint. xC _ p x. yC _ p y.
-	dx _ (xC-currentX) abs + (xTo-xC) abs.
-	dy _ (yC-currentY) abs + (yTo-yC) abs.
-	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
-	self quadraticBezierFromX: currentX y: currentY toX: xTo y: yTo controlX: xC y: yC hops: hops.
-
-	currentX _ xTo.
-	currentY _ yTo.! !
+	"
+(VectorGraphicsEngine onForm: Display)
+	strokeWidth: 3.0 color: Color black fillColor: Color red do: [ :engine |
+		engine
+			moveTo: 100@270;
+			quadraticBezierTo: 200@130 control: 110@600 ].
+Display forceToScreen
+	"
+	"
+(VectorGraphicsEngine onForm: Display)
+	strokeWidth: 3.0 color: Color black fillColor: Color red do: [ :engine |
+		engine
+			moveTo: 100@550;
+			quadraticBezierTo: 200@130 control: 110@600 ].
+Display forceToScreen
+	"
+	self quadraticBezierFromX: currentX y: currentY toX: toPoint x y: toPoint y controlX: controlPoint x y: controlPoint y.
+	currentX _ toPoint x.
+	currentY _ toPoint y.! !
 
 !VectorGraphicsEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:14'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
@@ -3624,10 +3698,6 @@ morph: aMorph isAtPoint: aPoint
 	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
 	^((morphIds at: index) >> 8) = aMorph morphId! !
 
-!VectorGraphicsEngine methodsFor: 'testing' stamp: 'jmv 4/9/2021 12:20:04'!
-doesSubPixelAntiAliasing
-	^false! !
-
 !VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:28'!
 doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Evaluate a sequence of path commands. Path parameters already set."
@@ -3679,116 +3749,6 @@ resetMorphBounds
 	morphBoundsBottom _ 0.
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
-
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/13/2021 15:04:02'!
-basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: theta start: startAngle sweep: sweepAngle
-"
-(VectorGraphicsEngine onForm: Display)
-	strokeWidth: 2.0 color: Color black fillColor: Color red do: [ :engine |
-		engine basicArcCenterX: 100 centerY: 100 radiusX: 80 radiusY: 40 rotationAngle: -0.2 start: 0 sweep: Float twoPi ].
-Display forceToScreen.
-"
-	| d hops angle thetaCos thetaSin xp yp x0 y0 |
-	thetaCos _ theta cos.
-	thetaSin _ theta sin.
-	angle _ startAngle.
-	xp _ angle cos * rx.
-	yp _ angle sin * ry.
-	x0 _ thetaCos * xp - (thetaSin * yp) + cx.
-	y0 _ thetaSin * xp + (thetaCos * yp) + cy.
-	(sweepAngle ~= Float twoPi and: [firstX isNaN not])
-		ifTrue: [
-			"If an arc (not whole circle/ellipse), join with a line, to ensure closed path.
-			For example, for rounded rectangles."
-			self basicLineToX: x0 y: y0 ].
-
-	hops _ ((rx+ry * 4 * sweepAngle abs / (2*Float pi)) * hopsPerPixel) truncated + 1.
-	d _ sweepAngle / hops.
-
-	self arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d.
-
-	angle _ startAngle + sweepAngle.
-	xp _ angle cos * rx.
-	yp _ angle sin * ry.
-	currentX _ thetaCos * xp - (thetaSin * yp) + cx.
-	currentY _ thetaSin * xp + (thetaCos * yp) + cy.! !
-
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/12/2021 15:06:21'!
-basicArcToX: x2 y: y2 radiusX: rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
-	| x1 y1 cosPhi sinPhi x12hd y12hd x1p y1p rxSq rySq x1pSq y1pSq bigSqR bigSqRNumerator bigSqRDenominator sign cxp cyp cx cy theta1 theta2 deltaTheta scaleSq scale newRx newRy |
-	x1 _ currentX.
-	y1 _ currentY.
-	"Handle out of range parameters as requested by the w3 implementation notes"
-	(x2 = x1 and: [ y2 = y1 ]) ifTrue: [ ^self ].
-	(rx = 0.0 or: [ ry = 0.0 ]) ifTrue: [ ^self basicLineToX: x2 y: y2 ].
-	rx < 0 ifTrue: [
-		^self basicArcToX: x2 y: y2 radiusX: 0.0 -rx radiusY: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
-	ry < 0 ifTrue: [
-		^self basicArcToX: x2 y: y2 radiusX: rx radiusY: 0.0-ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles ].
-
-	cosPhi _ phi cos.
-	sinPhi _ phi sin.
-	"step 1 in http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes"
-	x12hd _ (x1-x2) * 0.5.
-	y12hd _ (y1-y2) * 0.5.
-	x1p _ (cosPhi * x12hd) + (sinPhi * y12hd).
-	y1p _ (cosPhi * y12hd) - (sinPhi * x12hd).
-
-	"step 2"
-	rxSq _ rx * rx.
-	rySq _ ry * ry.
-	x1pSq _ x1p * x1p.
-	y1pSq _ y1p * y1p.
-	"ensure radii are large enough"
-	scaleSq _ (x1pSq / rxSq) + (y1pSq / rySq).
-	scaleSq > 1 ifTrue: [
-		scale _ scaleSq sqrt.
-		newRx _ scale * rx.
-		newRy _ scale * ry.
-		(newRx = rx or: [ newRy = ry ]) ifTrue: [		"This happens when scaleSq is so close to 1, that the multiplication rounds to the same numbers"
-			newRx _ scaleSq * rx.
-			newRy _ scaleSq * ry ].
-		^self basicArcToX: x2 y: y2 radiusX: newRx radiusY: newRy angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
-		].
-	bigSqRNumerator _ (rxSq * rySq) - (rxSq * y1pSq)-(rySq * x1pSq).
-	bigSqRDenominator _ (rxSq * y1pSq) + (rySq * x1pSq).
-	sign _ doLargerArc = useIncreasingAngles ifTrue: [ -1 ] ifFalse: [ 1 ].
-	bigSqR _ (bigSqRNumerator / bigSqRDenominator max: 0.0) sqrt * sign.		"This only can be < 0.0 because of rounding errors. Take 0.0 in such cases."
-	cxp _ bigSqR * rx * y1p / ry.
-	cyp _ 0.0 - (bigSqR * ry * x1p / rx).
-
-	"step 3"
-	cx _ (cosPhi * cxp) - (sinPhi * cyp) + ((x1+x2) * 0.5).
-	cy _ (sinPhi * cxp) + (cosPhi * cyp) + ((y1+y2) * 0.5).
-
-	"step 4"
-	theta1 _ (((x1p - cxp) / rx) @ ((y1p - cyp) / ry)) theta.
-	theta2 _ (((0 - x1p - cxp) / rx) @ (( 0 -y1p - cyp) / ry)) theta.
-	deltaTheta _ theta2 - theta1.
-	useIncreasingAngles = (deltaTheta > 0) ifFalse: [
-		deltaTheta > 0
-			ifTrue: [ deltaTheta _ deltaTheta - Float pi - Float pi ]
-			ifFalse: [ deltaTheta _ deltaTheta + Float pi + Float pi ]
-		].
-
-	self basicArcCenterX: cx centerY: cy radiusX: rx radiusY: ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
-
-!VectorGraphicsEngine methodsFor: 'private - paths - pixel coordinates' stamp: 'jmv 5/12/2021 22:56:54'!
-basicLineToX: xTo y: yTo
-
-	| dx dy hops incrementX incrementY |
-	dx _ xTo - currentX.
-	dy _ yTo - currentY.
-	self revisar.
-	"Optimize vertical and horizontal lines (including edgeCounts for horizontals)"
-	hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
-	incrementX _ dx *1.0 / hops.
-	incrementY _ dy *1.0 / hops.
-
-	self lineFromX: currentX y: currentY toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY.
-
-	currentX _ xTo.
-	currentY _ yTo.! !
 
 !VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/18/2021 10:05:22'!
 experLinesAndShapes
@@ -3940,7 +3900,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/12/2021 14:45:14'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/27/2021 11:47:27'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -3948,7 +3908,7 @@ experimentHopsPerPixel1
 	"
 	| d engine f1 f2 hops1 hops2 |
 	hops1 _ 200.
-	hops2 _ 8.
+	hops2 _ 3.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
 	engine _ self onForm: f1.
@@ -3981,7 +3941,7 @@ experimentHopsPerPixel1
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/12/2021 14:45:30'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/27/2021 11:59:35'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -3990,28 +3950,17 @@ experimentHopsPerPixel2
 	| d engine f1 f2 hops1 hops2 strokeWidth |
 	hops1 _ 200.
 	hops1 _ 20.
-	"
-	strokeWidth -> hops2
-	1.3 -> 8
-	1.5 -> 6
-	2 -> 4
-	4 -> 3
-	6 -> 2
-	16 -> 1
-	Maybe 10 / strokeWidth + 1 is ok?
-	"
-	strokeWidth _ 16*2.
-	hops2 _ 8*0+1.
-	hops2 _ 10.0 / strokeWidth + 1.
+	hops2 _ 3.
+	strokeWidth _ 1.4.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
 	engine _ self onForm: f1.
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops1.
 		engine
-			moveTo: 40@30;
-			lineTo: 190@135; lineTo: 40 @40;
-			lineTo: 135@390; lineTo: 30@40;
+			moveTo: 50@30;
+			lineTo: 190@135; lineTo: 50 @50;
+			lineTo: 135@390; lineTo: 30@50;
 			lineToFirstPoint ].
 	f1 displayAt: 0@0.
 
@@ -4021,9 +3970,9 @@ experimentHopsPerPixel2
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hopsPerPixel' put: hops2.
 		engine
-			moveTo: 40@30;
-			lineTo: 190@135; lineTo: 40@40;
-			lineTo: 135@390; lineTo: 30@40;
+			moveTo: 50@30;
+			lineTo: 190@135; lineTo: 50@50;
+			lineTo: 135@390; lineTo: 30@50;
 			lineToFirstPoint ].
 	f2 displayAt: 220@0.
 
@@ -4035,7 +3984,7 @@ Feature require: 'LinearAlgebra'.
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/12/2021 14:45:43'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/27/2021 11:46:07'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -4043,7 +3992,7 @@ experimentHopsPerPixel3
 	"
 	| d engine f1 f2 hops1 hops2 |
 	hops1 _ 200.
-	hops2 _ 8.
+	hops2 _ 3.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
 	engine _ self onForm: f1.
@@ -4150,41 +4099,56 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos
 				blendBottom _ blendBottom max: y.
 				angle _ angle + d. ]].! !
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 3/22/2021 11:12:51'!
-cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:04:36'!
+cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 
-	| xMinEnd xMaxEnd yMinEnd yMaxEnd |
-	xMinEnd _ xFrom min: xTo.
-	xMaxEnd _ xFrom max: xTo.
-	yMinEnd _ yFrom min: yTo.
-	yMaxEnd _ yFrom max: yTo.
-	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((xControl1 min: xControl2)*0.75)).
-	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((xControl1 max: xControl2)*0.75)).
-	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((yControl1 min: yControl2)*0.75)).
-	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((yControl1 max: yControl2)*0.75)).! !
+	| p txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 xMinEnd xMaxEnd yMinEnd yMaxEnd |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+	p _ geometryTransformation externalizePosition: xControl1@yControl1. txControl1 _ p x. tyControl1 _ p y.
+	p _ geometryTransformation externalizePosition: xControl2@yControl2. txControl2 _ p x. tyControl2 _ p y.
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 3/22/2021 11:15:54'!
-lineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY
+	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
+	xMinEnd _ txFrom min: txTo.
+	xMaxEnd _ txFrom max: txTo.
+	yMinEnd _ tyFrom min: tyTo.
+	yMaxEnd _ tyFrom max: tyTo.
+	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
+	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
+	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
+	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).! !
 
-	blendLeft _ blendLeft min: (xFrom min: xTo).
-	blendRight _ blendRight max: (xFrom max: xTo).
-	blendTop _ blendTop min: (yFrom min: yTo).
-	blendBottom _ blendBottom max: (yFrom max: yTo).! !
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:01:56'!
+lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 3/22/2021 11:13:27'!
-quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops
+	| p txFrom tyFrom txTo tyTo |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+
+	blendLeft _ blendLeft min: (txFrom min: txTo).
+	blendRight _ blendRight max: (txFrom max: txTo).
+	blendTop _ blendTop min: (tyFrom min: tyTo).
+	blendBottom _ blendBottom max: (tyFrom max: tyTo).! !
+
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:00'!
+quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 
-	| xMinEnd xMaxEnd yMinEnd yMaxEnd |
-	xMinEnd _ xFrom min: xTo.
-	xMaxEnd _ xFrom max: xTo.
-	yMinEnd _ yFrom min: yTo.
-	yMaxEnd _ yFrom max: yTo.
-	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+xControl) / 2.0).
-	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+xControl) / 2.0).
-	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+yControl) / 2.0).
-	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+yControl) / 2.0).! !
+	| p txFrom tyFrom txTo tyTo txControl tyControl xMinEnd xMaxEnd yMinEnd yMaxEnd |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+	p _ geometryTransformation externalizePosition: xControl@yControl. txControl _ p x. tyControl _ p y.
+
+	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
+	xMinEnd _ txFrom min: txTo.
+	xMaxEnd _ txFrom max: txTo.
+	yMinEnd _ tyFrom min: tyTo.
+	yMaxEnd _ tyFrom max: tyTo.
+	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
+	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
+	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
+	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).! !
 
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/6/2021 16:08:17'!
 finishPath: ensureClosePath
@@ -4306,19 +4270,28 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos
 			self updateEdgeCountAtX: x y: y ].
 		angle _ angle + d. ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 3/18/2021 16:14:07'!
-cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops
-	| xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:04:09'!
+cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
+
+	| p txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+	p _ geometryTransformation externalizePosition: xControl1@yControl1. txControl1 _ p x. tyControl1 _ p y.
+	p _ geometryTransformation externalizePosition: xControl2@yControl2. txControl2 _ p x. tyControl2 _ p y.
+	"Factors found by trial and error. Seems to honor hopsPerPixel in the worst case."
+	dx _ ((txControl1-txFrom) abs max: (txTo-txControl2) abs)*3 max: (txControl2-txControl1) abs*1.5.
+	dy _ ((tyControl1-tyFrom) abs max: (tyTo-tyControl2) abs)*3 max: (tyControl2-tyControl1) abs*1.5.
+	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ xFrom min: xTo.
-	xMaxEnd _ xFrom max: xTo.
-	yMinEnd _ yFrom min: yTo.
-	yMaxEnd _ yFrom max: yTo.
-	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((xControl1 min: xControl2)*0.75)).
-	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((xControl1 max: xControl2)*0.75)).
-	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((yControl1 min: yControl2)*0.75)).
-	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((yControl1 max: yControl2)*0.75)).
+	xMinEnd _ txFrom min: txTo.
+	xMaxEnd _ txFrom max: txTo.
+	yMinEnd _ tyFrom min: tyTo.
+	yMaxEnd _ tyFrom max: tyTo.
+	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
+	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
+	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
+	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
 
 	t _ 0.0.
 	increment _ 1.0 / hops.
@@ -4329,51 +4302,66 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 		f2 _ f23 * oneLessT.
 		f3 _ f23 * t.
 		f4 _ t * t * t.
-		x _ (f1 * xFrom) + (f2 * xControl1) + (f3 * xControl2) + (f4 * xTo).
-		y _ (f1 * yFrom) + (f2 * yControl1) + (f3 * yControl2) + (f4 * yTo).
+		x _ (f1 * txFrom) + (f2 * txControl1) + (f3 * txControl2) + (f4 * txTo).
+		y _ (f1 * tyFrom) + (f2 * tyControl1) + (f3 * tyControl2) + (f4 * tyTo).
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 		t _ t + increment. ].
-	self updateAlphasForX: xTo y: yTo.
+	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: xTo y: yTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 3/16/2021 13:50:06'!
-lineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:15'!
+lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
-	| x y |	
+	| p txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+	dx _ txTo - txFrom.
+	dy _ tyTo - tyFrom.
+	hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
+	incrementX _ dx *1.0 / hops.
+	incrementY _ dy *1.0 / hops.
 
-	blendLeft _ blendLeft min: (xFrom min: xTo).
-	blendRight _ blendRight max: (xFrom max: xTo).
-	blendTop _ blendTop min: (yFrom min: yTo).
-	blendBottom _ blendBottom max: (yFrom max: yTo).
+	blendLeft _ blendLeft min: (txFrom min: txTo).
+	blendRight _ blendRight max: (txFrom max: txTo).
+	blendTop _ blendTop min: (tyFrom min: tyTo).
+	blendBottom _ blendBottom max: (tyFrom max: tyTo).
 
-	x _ xFrom.
-	y _ yFrom.
+	x _ txFrom.
+	y _ tyFrom.
 	hops timesRepeat: [
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 		x _ x + incrementX.
 		y _ y + incrementY ].
-	self updateAlphasForX: xTo y: yTo.
+	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: xTo y: yTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 3/18/2021 16:14:13'!
-quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops
-	| xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y |
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:37'!
+quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
+
+	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+	p _ geometryTransformation externalizePosition: xControl@yControl. txControl _ p x. tyControl _ p y.
+	"Honor hopsPerPixel in the worst case."
+	dx _ (txControl-txFrom) abs max: (txTo-txControl) abs.
+	dy _ (tyControl-tyFrom) abs max: (tyTo-tyControl) abs.
+	hops _ ((dx max: dy) * hopsPerPixel * 2) truncated + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ xFrom min: xTo.
-	xMaxEnd _ xFrom max: xTo.
-	yMinEnd _ yFrom min: yTo.
-	yMaxEnd _ yFrom max: yTo.
-	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+xControl) / 2.0).
-	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+xControl) / 2.0).
-	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+yControl) / 2.0).
-	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+yControl) / 2.0).
+	xMinEnd _ txFrom min: txTo.
+	xMaxEnd _ txFrom max: txTo.
+	yMinEnd _ tyFrom min: tyTo.
+	yMaxEnd _ tyFrom max: tyTo.
+	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
+	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
+	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
+	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
 	t _ 0.0.
 	increment _ 1.0 / hops.
@@ -4382,15 +4370,15 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		f1 _ oneLessT * oneLessT.
 		f2 _ 2.0 * oneLessT * t.
 		f3 _ t * t.
-		x _ (f1 * xFrom) + (f2 * xControl) + (f3 * xTo).
-		y _ (f1 * yFrom) + (f2 * yControl) + (f3 * yTo).
+		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 		t _ t + increment. ].
-	self updateAlphasForX: xTo y: yTo.
+	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: xTo y: yTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
 !VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 5/18/2021 10:06:38'!
 updateAlphasForX: x y: y
@@ -4952,10 +4940,6 @@ blendStrokeOnlyAt: pixelIndex
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineSubPixel methodsFor: 'testing' stamp: 'jmv 4/9/2021 12:20:14'!
-doesSubPixelAntiAliasing
-	^true! !
-
 !VectorEngineSubPixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:34:51'!
 defaultAntiAliasingWidth
 	^1.4! !
@@ -5029,19 +5013,28 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos
 			self updateEdgeCountAtX: x y: y ].
 		angle _ angle + d. ].! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 3/18/2021 16:14:19'!
-cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops
-	| xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:04:01'!
+cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
+
+	| p txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+	p _ geometryTransformation externalizePosition: xControl1@yControl1. txControl1 _ p x. tyControl1 _ p y.
+	p _ geometryTransformation externalizePosition: xControl2@yControl2. txControl2 _ p x. tyControl2 _ p y.
+	"Factors found by trial and error. Seems to honor hopsPerPixel in the worst case."
+	dx _ ((txControl1-txFrom) abs max: (txTo-txControl2) abs)*3 max: (txControl2-txControl1) abs*1.5.
+	dy _ ((tyControl1-tyFrom) abs max: (tyTo-tyControl2) abs)*3 max: (tyControl2-tyControl1) abs*1.5.
+	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ xFrom min: xTo.
-	xMaxEnd _ xFrom max: xTo.
-	yMinEnd _ yFrom min: yTo.
-	yMaxEnd _ yFrom max: yTo.
-	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((xControl1 min: xControl2)*0.75)).
-	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((xControl1 max: xControl2)*0.75)).
-	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((yControl1 min: yControl2)*0.75)).
-	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((yControl1 max: yControl2)*0.75)).
+	xMinEnd _ txFrom min: txTo.
+	xMaxEnd _ txFrom max: txTo.
+	yMinEnd _ tyFrom min: tyTo.
+	yMaxEnd _ tyFrom max: tyTo.
+	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
+	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
+	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
+	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
 
 	t _ 0.0.
 	increment _ 1.0 / hops.
@@ -5052,51 +5045,66 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 		f2 _ f23 * oneLessT.
 		f3 _ f23 * t.
 		f4 _ t * t * t.
-		x _ (f1 * xFrom) + (f2 * xControl1) + (f3 * xControl2) + (f4 * xTo).
-		y _ (f1 * yFrom) + (f2 * yControl1) + (f3 * yControl2) + (f4 * yTo).
+		x _ (f1 * txFrom) + (f2 * txControl1) + (f3 * txControl2) + (f4 * txTo).
+		y _ (f1 * tyFrom) + (f2 * tyControl1) + (f3 * tyControl2) + (f4 * tyTo).
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 		t _ t + increment. ].
-	self updateAlphasForX: xTo y: yTo.
+	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: xTo y: yTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 3/16/2021 13:50:15'!
-lineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:21'!
+lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
-	| x y |
+	| p txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+	dx _ txTo - txFrom.
+	dy _ tyTo - tyFrom.
+	hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
+	incrementX _ dx *1.0 / hops.
+	incrementY _ dy *1.0 / hops.
 
-	blendLeft _ blendLeft min: (xFrom min: xTo).
-	blendRight _ blendRight max: (xFrom max: xTo).
-	blendTop _ blendTop min: (yFrom min: yTo).
-	blendBottom _ blendBottom max: (yFrom max: yTo).
+	blendLeft _ blendLeft min: (txFrom min: txTo).
+	blendRight _ blendRight max: (txFrom max: txTo).
+	blendTop _ blendTop min: (tyFrom min: tyTo).
+	blendBottom _ blendBottom max: (tyFrom max: tyTo).
 
-	x _ xFrom.
-	y _ yFrom.
+	x _ txFrom.
+	y _ tyFrom.
 	hops timesRepeat: [
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 		x _ x + incrementX.
 		y _ y + incrementY ].
-	self updateAlphasForX: xTo y: yTo.
+	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: xTo y: yTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 3/18/2021 16:14:24'!
-quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops
-	| xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y |
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:41'!
+quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
+
+	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y |
+	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
+	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
+	p _ geometryTransformation externalizePosition: xControl@yControl. txControl _ p x. tyControl _ p y.
+	"Honor hopsPerPixel in the worst case."
+	dx _ (txControl-txFrom) abs max: (txTo-txControl) abs.
+	dy _ (tyControl-tyFrom) abs max: (tyTo-tyControl) abs.
+	hops _ ((dx max: dy) * hopsPerPixel * 2) truncated + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ xFrom min: xTo.
-	xMaxEnd _ xFrom max: xTo.
-	yMinEnd _ yFrom min: yTo.
-	yMaxEnd _ yFrom max: yTo.
-	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+xControl) / 2.0).
-	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+xControl) / 2.0).
-	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+yControl) / 2.0).
-	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+yControl) / 2.0).
+	xMinEnd _ txFrom min: txTo.
+	xMaxEnd _ txFrom max: txTo.
+	yMinEnd _ tyFrom min: tyTo.
+	yMaxEnd _ tyFrom max: tyTo.
+	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
+	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
+	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
+	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
 	t _ 0.0.
 	increment _ 1.0 / hops.
@@ -5105,15 +5113,15 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		f1 _ oneLessT * oneLessT.
 		f2 _ 2.0 * oneLessT * t.
 		f3 _ t * t.
-		x _ (f1 * xFrom) + (f2 * xControl) + (f3 * xTo).
-		y _ (f1 * yFrom) + (f2 * yControl) + (f3 * yTo).
+		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 		t _ t + increment. ].
-	self updateAlphasForX: xTo y: yTo.
+	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: xTo y: yTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
 !VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 5/18/2021 10:05:58'!
 updateAlphasForX: x y: y
@@ -5546,38 +5554,34 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos
 		angleDelta: d asFloat
 		edgeCounts: edgeCounts alphaMask: alphaMask! !
 
-!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/18/2021 12:25:12'!
-cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops
+!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/28/2021 15:41:27'!
+cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	self
 		primCubicBezierFromX: xFrom asFloat y: yFrom asFloat
 		toX: xTo asFloat y: yTo asFloat
 		control1X: xControl1 asFloat y: yControl1 asFloat
 		control2X: xControl2 asFloat y: yControl2 asFloat
-		hops: hops
 		edgeCounts: edgeCounts alphaMask: alphaMask! !
 
-!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/18/2021 12:25:12'!
-lineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY
+!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/28/2021 16:18:18'!
+lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	self
 		primLineFromX: xFrom asFloat y: yFrom asFloat
 		toX: xTo asFloat y: yTo asFloat
-		hops: hops
-		incrementX: incrementX asFloat incrementY: incrementY asFloat
 		edgeCounts: edgeCounts alphaMask: alphaMask! !
 
-!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/18/2021 12:25:12'!
-quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops
+!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/28/2021 16:06:37'!
+quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
 	self
 		primQuadraticBezierFromX: xFrom asFloat y: yFrom asFloat
 		toX: xTo asFloat y: yTo asFloat
 		controlX: xControl asFloat y: yControl asFloat
-		hops: hops
 		edgeCounts: edgeCounts alphaMask: alphaMask! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/18/2021 12:25:12'!
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:50:44'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -5600,13 +5604,12 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 			contourData: contourData
 			contourDataIndexes: contourDataIndexes
 			useST80Glyphs: aBoolean
-			hopsPerPixel: hopsPerPixel asInteger
 			edgeCounts: edgeCounts
 			alphaMask: alphaMask
 		].
 	^ nextGlyphX @ nextGlyphY! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/18/2021 12:25:12'!
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:50:21'!
 displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -5629,13 +5632,12 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 			contourData: contourData
 			contourDataIndexes: contourDataIndexes
 			useST80Glyphs: aBoolean
-			hopsPerPixel: hopsPerPixel asInteger
 			edgeCounts: edgeCounts
 			alphaMask: alphaMask
 		].
 	^ nextGlyphX @ nextGlyphY! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/18/2021 12:25:12'!
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:51:02'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -5658,19 +5660,17 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 			contourData: contourData
 			contourDataIndexes: contourDataIndexes
 			useST80Glyphs: aBoolean
-			hopsPerPixel: hopsPerPixel asInteger
 			edgeCounts: edgeCounts
 			alphaMask: alphaMask
 		].
 	^ nextGlyphX @ nextGlyphY! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/18/2021 12:25:12'!
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:49:58'!
 pathSequence: aFloat32Array
 
 	self
 		primPathSequence: aFloat32Array asFloat32Array
 		size: aFloat32Array size
-		hopsPerPixel: hopsPerPixel asInteger
 		edgeCounts: edgeCounts
 		alphaMask: alphaMask! !
 
@@ -5721,7 +5721,7 @@ finishPath: ensureClosePath
 			ifFalse: [
 				self primBlendStrokeOnlyLeft: spanLeft top: spanTop right: spanRight bottom: spanBottom targetBits: targetForm bits morphIds: morphIds alphaMask: alphaMask ]].! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 5/18/2021 12:25:12'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 5/28/2021 15:38:39'!
 initializePath
 
 	super initializePath.
@@ -5735,7 +5735,7 @@ initializePath
 		alphaMask: alphaMask
 		targetWidth: targetWidth
 		targetHeight: targetHeight.
-	self primAntiAliasingWidth: antiAliasingWidth asFloat subPixelDelta: subPixelDelta asFloat.
+	self primAntiAliasingWidth: antiAliasingWidth asFloat subPixelDelta: subPixelDelta asFloat hopsPerPixel: hopsPerPixel asFloat.
 	self primClipLeft: clipLeft clipTop: clipTop clipRight: clipRight clipBottom: clipBottom.
 	self primCurrentMorphId: currentMorphId currentClipsSubmorphs: currentClipsSubmorphs.
 	self primClipCurrentMorph: clipCurrentMorph morphIds: morphIds.
@@ -5773,9 +5773,9 @@ pvtStrokeWidth: aNumber
 	super pvtStrokeWidth: aNumber asFloat.
 	self primStrokeWidth: strokeWidth.! !
 
-!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 12:25:12'!
-primAntiAliasingWidth: aNumber subPixelDelta: otherFloat
-	<primitive: 'primAntiAliasingWidthsubPixelDelta' module: 'VectorEnginePlugin'>
+!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 5/28/2021 15:38:11'!
+primAntiAliasingWidth: aNumber subPixelDelta: otherFloat hopsPerPixel: anotherFloat
+	<primitive: 'primAntiAliasingWidthsubPixelDeltaHopsPerPixel' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
@@ -5879,7 +5879,7 @@ primStrokeWidth: aNumber
 
 	self primitiveFailed! !
 
-!VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 12:51:38'!
+!VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 5/29/2021 16:59:17'!
 isPluginAvailable
 	"
 	VectorEngineWithPlugin isPluginAvailable
@@ -5892,7 +5892,7 @@ isPluginAvailable
 	"
 	| pluginApiVersion |
 	pluginApiVersion _ self pluginApiVersion.
-	^ pluginApiVersion between: 1 and: 99! !
+	^ pluginApiVersion between: 3 and: 99! !
 
 !VectorEngineWithPlugin class methodsFor: 'class initialization' stamp: 'jmv 5/18/2021 12:25:12'!
 initialize
@@ -5937,44 +5937,44 @@ primBlendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphId
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 12:36:21'!
-primCubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/28/2021 15:40:54'!
+primCubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primCubicBezier' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:34:33'!
-primDisplayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/29/2021 16:50:32'!
+primDisplayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primDisplayString' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:34:59'!
-primDisplayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/29/2021 16:50:11'!
+primDisplayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primDisplayUtf32' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:35:28'!
-primDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/29/2021 16:50:53'!
+primDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primDisplayUtf8' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:36:27'!
-primLineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/28/2021 16:16:31'!
+primLineFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primLine' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:37:11'!
-primPathSequence: aFloat32Array size: s hopsPerPixel: theHopsPerPixel edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/29/2021 16:49:46'!
+primPathSequence: aFloat32Array size: s edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primPathSequence' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:37:50'!
-primQuadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/28/2021 16:05:20'!
+primQuadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primQuadraticBezier' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
@@ -5984,10 +5984,6 @@ primTargetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMas
 	<primitive: 'primSetTarget' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
-
-!VectorEngineWithPluginSubPixel methodsFor: 'testing' stamp: 'jmv 5/18/2021 11:41:34'!
-doesSubPixelAntiAliasing
-	^true! !
 
 !VectorEngineWithPluginSubPixel methodsFor: 'private' stamp: 'jmv 5/18/2021 11:43:25'!
 pvtSetForm: aForm
@@ -6032,44 +6028,44 @@ primBlendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphId
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:33:29'!
-primCubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 hops: hops edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/28/2021 15:40:48'!
+primCubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherByteArray alphaMask: anotherByteArray
 	<primitive: 'primCubicBezierWP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:34:29'!
-primDisplayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/29/2021 16:50:37'!
+primDisplayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 	<primitive: 'primDisplayStringWP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:34:55'!
-primDisplayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/29/2021 16:50:16'!
+primDisplayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 	<primitive: 'primDisplayUtf32WP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:35:27'!
-primDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean hopsPerPixel: theHopsPerPixel edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/29/2021 16:50:57'!
+primDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 	<primitive: 'primDisplayUtf8WP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:37:20'!
-primLineFromX: xFrom y: yFrom toX: xTo y: yTo hops: hops incrementX: incrementX incrementY: incrementY edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/28/2021 16:16:37'!
+primLineFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherByteArray alphaMask: anotherByteArray
 	<primitive: 'primLineWP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:37:07'!
-primPathSequence: aFloat32Array size: s hopsPerPixel: theHopsPerPixel edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/29/2021 16:49:52'!
+primPathSequence: aFloat32Array size: s edgeCounts: otherByteArray alphaMask: anotherByteArray
 	<primitive: 'primPathSequenceWP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:37:49'!
-primQuadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl hops: hops edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/28/2021 16:05:41'!
+primQuadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primQuadraticBezierWP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
@@ -6079,10 +6075,6 @@ primTargetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMas
 	<primitive: 'primSetTargetWP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
-
-!VectorEngineWithPluginWholePixel methodsFor: 'testing' stamp: 'jmv 5/18/2021 11:41:38'!
-doesSubPixelAntiAliasing
-	^false! !
 
 !VectorEngineWithPluginWholePixel methodsFor: 'private' stamp: 'jmv 5/18/2021 11:43:23'!
 pvtSetForm: aForm
@@ -6823,7 +6815,7 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 5/12/2021 14:03:59'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 5/28/2021 14:12:17'!
 formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	"Needed only for BitBltCanvasEngine"
 	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i iso8859s15Code |
@@ -6854,8 +6846,7 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
-	canvas _ VectorCanvas onForm: form.
-	canvas doSubPixelAntiAliasing.
+	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: form.
 	canvas 
 		engine
 			displayString: aCharacter asString
@@ -6873,7 +6864,7 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale)! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 5/12/2021 14:07:47'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 5/28/2021 14:12:29'!
 formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil pixelSize: pixelSize useST80Glyphs: aBoolean
 	"Needed only for BitBltCanvasEngine"
 	| utf8ByteArray toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
@@ -6910,8 +6901,7 @@ formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrN
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
-	canvas _ VectorCanvas onForm: form.
-	canvas doSubPixelAntiAliasing.
+	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: form.
 	canvas 
 		engine
 			displayUtf8: utf8ByteArray
