@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4618] on 29 May 2021 at 5:01:55 pm'!
+'From Cuis 5.0 [latest update: #4621] on 31 May 2021 at 7:49:36 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 234!
+!provides: 'VectorGraphics' 1 236!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1343,7 +1343,7 @@ drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 		self onMorphIdsDo: [
 			aWorldMorph drawOn: self ]].! !
 
-!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 5/29/2021 16:59:35'!
+!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 5/31/2021 19:48:59'!
 initialize
 	| family folder |
 	UISupervisor whenUIinSafeState: [
@@ -1351,7 +1351,7 @@ initialize
 			folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
 			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
 			Preferences setDefaultFont: family familyName ].
-		MorphicCanvas activeSubclass: HybridCanvas ]! !
+		MorphicCanvas activeSubclass: HybridCanvas ].! !
 
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
@@ -3046,7 +3046,7 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 		fillColor: aFillColor
 		do: pathCommandsBlock! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 19:19:20'!
+!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/31/2021 19:18:54'!
 arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorGraphicsEngine onForm: Display)
@@ -3054,7 +3054,7 @@ arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle swe
 		engine arcCenter: 100@100 radius: 80@40 rotationAngle: -0.2 start: 0 sweep: Float twoPi ].
 Display forceToScreen.
 "
-	| d hops angle thetaCos thetaSin xp yp x0 y0 center ttheta tthetaCos tthetaSin dx dy rx ry |
+	| angle thetaCos thetaSin xp yp x0 y0 ttheta tthetaCos tthetaSin |
 	thetaCos _ theta cos.
 	thetaSin _ theta sin.
 	angle _ startAngle.
@@ -3070,18 +3070,10 @@ Display forceToScreen.
 			currentX _ x0.
 			currentY _ y0 ].
 
-	"For consistency with other path operations (lines, beziers, path sequences and TrueType text), conversion and computation of hops could be pushed down."
-	dx _ geometryTransformation externalizeDelta: radiusPoint x@0.
-	dy _ geometryTransformation externalizeDelta: 0@radiusPoint y.
-	rx _ dx r.
-	ry _ dy r.
-	hops _ ((rx max: ry) * sweepAngle abs * hopsPerPixel) truncated + 1.
-	d _ sweepAngle / hops.
-	center _ geometryTransformation externalizePosition: aPoint.
 	ttheta _ theta + geometryTransformation radians.
 	tthetaCos _ ttheta cos.
 	tthetaSin _ ttheta sin.
-	self arcCenterX: center x centerY: center y radiusX: rx radiusY: ry start: startAngle rotationCos: tthetaCos rotationSin: tthetaSin hops: hops angleDelta: d.
+	self arcCenterX: aPoint x centerY: aPoint y radiusX: radiusPoint x radiusY: radiusPoint y start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin.
 
 	angle _ startAngle + sweepAngle.
 	xp _ angle cos * radiusPoint x.
@@ -4075,24 +4067,33 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	clientStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
 	^ self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock! !
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 3/22/2021 11:31:36'!
-arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 5/31/2021 19:13:23'!
+arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
-	| angle xp yp x y |
-	(rx = ry and: [
+	| dx dy trx try tcx tcy center angle xp yp x y d hops |
+	dx _ geometryTransformation externalizeDelta: rx@0.
+	dy _ geometryTransformation externalizeDelta: 0@ry.
+	trx _ dx r.
+	try _ dy r.
+	hops _ ((trx max: try) * sweepAngle abs * hopsPerPixel) truncated + 1.
+	d _ sweepAngle / hops.
+	center _ geometryTransformation externalizePosition: cx@cy.
+	tcx _ center x.
+	tcy _ center y.
+	(trx = try and: [
 		d * hops > 6.28]) ifTrue: [ 						"If a circle, not an ellipse, and a complete circle, or pretty close"
-			blendLeft _ blendLeft min: cx - rx.
-			blendRight _ blendRight max: cx + rx.
-			blendTop _ blendTop min: cy - rx.
-			blendBottom _ blendBottom max: cy + rx ]
+			blendLeft _ blendLeft min: tcx - trx.
+			blendRight _ blendRight max: tcx + trx.
+			blendTop _ blendTop min: tcy - trx.
+			blendBottom _ blendBottom max: tcy + trx ]
 
 		ifFalse: [						"Else go the more expensive way"
 			angle _ startAngle.
 			hops+1 timesRepeat: [
-				xp _ angle cos * rx.
-				yp _ angle sin * ry.
-				x _ thetaCos * xp - (thetaSin * yp) + cx.
-				y _ thetaSin * xp + (thetaCos * yp) + cy.
+				xp _ angle cos * trx.
+				yp _ angle sin * try.
+				x _ thetaCos * xp - (thetaSin * yp) + tcx.
+				y _ thetaSin * xp + (thetaCos * yp) + tcy.
 				blendLeft _ blendLeft min: x.
 				blendRight _ blendRight max: x.
 				blendTop _ blendTop min: y.
@@ -4251,16 +4252,25 @@ currentMorph: aMorph
 subPixelDelta
 	^subPixelDelta! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 3/16/2021 13:48:32'!
-arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/31/2021 19:15:06'!
+arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
-	| angle xp yp x y |
+	| dx dy trx try tcx tcy center angle xp yp x y d hops |
+	dx _ geometryTransformation externalizeDelta: rx@0.
+	dy _ geometryTransformation externalizeDelta: 0@ry.
+	trx _ dx r.
+	try _ dy r.
+	hops _ ((trx max: try) * sweepAngle abs * hopsPerPixel) truncated + 1.
+	d _ sweepAngle / hops.
+	center _ geometryTransformation externalizePosition: cx@cy.
+	tcx _ center x.
+	tcy _ center y.
 	angle _ startAngle.
 	hops+1 timesRepeat: [
-		xp _ angle cos * rx.
-		yp _ angle sin * ry.
-		x _ thetaCos * xp - (thetaSin * yp) + cx.
-		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		xp _ angle cos * trx.
+		yp _ angle sin * try.
+		x _ thetaCos * xp - (thetaSin * yp) + tcx.
+		y _ thetaSin * xp + (thetaCos * yp) + tcy.
 		blendLeft _ blendLeft min: x.
 		blendTop _ blendTop min: y.
 		blendRight _ blendRight max: x.
@@ -4994,16 +5004,25 @@ subPixelDelta
 	"No subpixel stuff in this class"
 	^0.0! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 3/16/2021 13:48:44'!
-arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/31/2021 19:15:38'!
+arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
-	| angle xp yp x y |
+	| dx dy trx try tcx tcy center angle xp yp x y d hops |
+	dx _ geometryTransformation externalizeDelta: rx@0.
+	dy _ geometryTransformation externalizeDelta: 0@ry.
+	trx _ dx r.
+	try _ dy r.
+	hops _ ((trx max: try) * sweepAngle abs * hopsPerPixel) truncated + 1.
+	d _ sweepAngle / hops.
+	center _ geometryTransformation externalizePosition: cx@cy.
+	tcx _ center x.
+	tcy _ center y.
 	angle _ startAngle.
 	hops+1 timesRepeat: [
-		xp _ angle cos * rx.
-		yp _ angle sin * ry.
-		x _ thetaCos * xp - (thetaSin * yp) + cx.
-		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		xp _ angle cos * trx.
+		yp _ angle sin * try.
+		x _ thetaCos * xp - (thetaSin * yp) + tcx.
+		y _ thetaSin * xp + (thetaCos * yp) + tcy.
 		blendLeft _ blendLeft min: x.
 		blendTop _ blendTop min: y.
 		blendRight _ blendRight max: x.
@@ -5542,16 +5561,15 @@ subPixelDelta
 	"Might be 0.0 if not doing sub pixel anti-aliasing (i.e. for WholePixel AA)"
 	^subPixelDelta! !
 
-!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/18/2021 12:25:12'!
-arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d
+!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/31/2021 19:03:47'!
+arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	self
 		primArcCenterX: cx asFloat centerY: cy asFloat
 		radiusX: rx asFloat radiusY: ry asFloat
 		start: startAngle asFloat
+		sweep: sweepAngle asFloat
 		rotationCos: thetaCos asFloat rotationSin: thetaSin asFloat
-		hops: hops
-		angleDelta: d asFloat
 		edgeCounts: edgeCounts alphaMask: alphaMask! !
 
 !VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 5/28/2021 15:41:27'!
@@ -5913,8 +5931,8 @@ pluginApiVersion
 
 	^ 0! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:30:13'!
-primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 5/31/2021 19:04:20'!
+primArcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray
 	<primitive: 'primArc' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
@@ -6004,8 +6022,8 @@ defaultSubPixelDelta
 
 	^0.25  			"Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 11:30:11'!
-primArcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEngineWithPluginWholePixel methodsFor: 'plugin calls' stamp: 'jmv 5/31/2021 18:58:29'!
+primArcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherByteArray alphaMask: anotherByteArray
 	<primitive: 'primArcWP' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !

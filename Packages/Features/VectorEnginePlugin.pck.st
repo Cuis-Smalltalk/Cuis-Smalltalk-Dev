@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4618] on 29 May 2021 at 5:02:13 pm'!
+'From Cuis 5.0 [latest update: #4621] on 31 May 2021 at 7:37:12 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 18!
+!provides: 'VectorEnginePlugin' 1 19!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -223,28 +223,44 @@ targetBits: aBitmap morphIds: aWordArray edgeCountsWP: otherByteArray alphaMaskW
 	targetWidth _ aNumber.
 	targetHeight _ otherNumber.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/13/2021 16:32:11'!
-arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/31/2021 19:26:41'!
+arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray
 
-	| angle xp yp x y |
+	| tcx tcy trx try scale hops d angle xp yp x y |
 	self
 		primitive: 'primArc'
-		parameters: #(Float Float Float Float Float Float Float SmallInteger Float WordArray WordArray).
+		parameters: #(Float Float Float Float Float Float Float Float WordArray WordArray).
 
+	self var: #tcx type: 'float'.
+	self var: #tcy type: 'float'.
+	self var: #trx type: 'float'.
+	self var: #try type: 'float'.
+	self var: #scale type: 'float'.
 	self var: #angle type: 'float'.
 	self var: #xp type: 'float'.
 	self var: #yp type: 'float'.
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
+	self var: #hops type: 'int'.
+	self var: #d type: 'float'.
+
+	tcx _ (centerX * txA11) + (centerY * txA12) + txA13.
+	tcy _ (centerX * txA21) + (centerY * txA22) + txA23.
+	self cCode: 'scale = sqrt(txA11*txA11 + txA21*txA21);'
+		inSmalltalk: [scale _ (txA11 squared + txA21 squared) sqrt].
+	trx _ radiusPointX * scale.
+	try _ radiusPointY * scale.
+	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) * hopsPerPixel) asInteger + 1.
+	d _ sweepAngle / hops.
 
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
 	angle _ startAngle.
 	1 to: hops+1 do: [ :h |
-		xp _ angle cos * rx.
-		yp _ angle sin * ry.
-		x _ thetaCos * xp - (thetaSin * yp) + cx.
-		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		xp _ angle cos * trx.
+		yp _ angle sin * try.
+		x _ tthetaCos * xp - (tthetaSin * yp) + tcx.
+		y _ tthetaSin * xp + (tthetaCos * yp) + tcy.
 		spanLeft _ spanLeft min: x.
 		spanTop _ spanTop min: y.
 		spanRight _ spanRight max: x.
@@ -1800,28 +1816,44 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/18/2021 10:59:38'!
-arcWPCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle rotationCos: thetaCos rotationSin: thetaSin hops: hops angleDelta: d edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/31/2021 19:26:55'!
+arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherByteArray alphaMask: anotherByteArray
 
-	| angle xp yp x y |
+	| tcx tcy trx try scale hops d angle xp yp x y |
 	self
 		primitive: 'primArcWP'
-		parameters: #(Float Float Float Float Float Float Float SmallInteger Float ByteArray ByteArray).
+		parameters: #(Float Float Float Float Float Float Float Float ByteArray ByteArray).
 
+	self var: #tcx type: 'float'.
+	self var: #tcy type: 'float'.
+	self var: #trx type: 'float'.
+	self var: #try type: 'float'.
+	self var: #scale type: 'float'.
 	self var: #angle type: 'float'.
 	self var: #xp type: 'float'.
 	self var: #yp type: 'float'.
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
+	self var: #hops type: 'int'.
+	self var: #d type: 'float'.
+
+	tcx _ (centerX * txA11) + (centerY * txA12) + txA13.
+	tcy _ (centerX * txA21) + (centerY * txA22) + txA23.
+	self cCode: 'scale = sqrt(txA11*txA11 + txA21*txA21);'
+		inSmalltalk: [scale _ (txA11 squared + txA21 squared) sqrt].
+	trx _ radiusPointX * scale.
+	try _ radiusPointY * scale.
+	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) * hopsPerPixel) asInteger + 1.
+	d _ sweepAngle / hops.
 
 	edgeCountsWP _ otherByteArray.
 	alphaMaskWP _ anotherByteArray.
 	angle _ startAngle.
 	1 to: hops+1 do: [ :h |
-		xp _ angle cos * rx.
-		yp _ angle sin * ry.
-		x _ thetaCos * xp - (thetaSin * yp) + cx.
-		y _ thetaSin * xp + (thetaCos * yp) + cy.
+		xp _ angle cos * trx.
+		yp _ angle sin * try.
+		x _ tthetaCos * xp - (tthetaSin * yp) + tcx.
+		y _ tthetaSin * xp + (tthetaCos * yp) + tcy.
 		spanLeft _ spanLeft min: x.
 		spanTop _ spanTop min: y.
 		spanRight _ spanRight max: x.
