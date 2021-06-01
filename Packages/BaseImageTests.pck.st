@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4567] on 6 May 2021 at 12:18:12 pm'!
+'From Cuis 5.0 [latest update: #4622] on 1 June 2021 at 2:00:28 pm'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 258!
+!provides: 'BaseImageTests' 1 259!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -14953,18 +14953,19 @@ decompileClassesSelect: aBlock
 		 cls selectorsAndMethodsDo: [ :selector :meth |
 				self checkDecompileMethod: meth ]]! !
 
-!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 9/24/2020 17:21:21'!
+!DecompilerTests methodsFor: 'utilities' stamp: 'jmv 6/1/2021 14:00:00'!
 withFixedTempNumbering: aString
 	| k code newCode tempStart startAt |
 	code _ aString.
-	k _ 1.
-	startAt _ 1.
-	[tempStart _ code findString: 'temp' startingAt: startAt. tempStart > 0] whileTrue: [ | end |
-		end _ tempStart. [end <= code size and: [(code at: end) tokenish]] whileTrue: [end _ end + 1]. end _ end-1.
-		newCode _ code  copyReplaceTokens: (code copyFrom: tempStart to: end) with: 'tenq', k printString.
-		code = newCode ifTrue: [startAt _ tempStart + 1].
-		code _ newCode.
-		k _ k + 1 ].
+	`{'argm'. 'temp'}` with: `{'arg'. 'tmp'}` do: [ :a :b |
+		k _ 1.
+		startAt _ 1.
+		[tempStart _ code findString: a startingAt: startAt. tempStart > 0] whileTrue: [ | end |
+			end _ tempStart. [end <= code size and: [(code at: end) tokenish]] whileTrue: [end _ end + 1]. end _ end-1.
+			newCode _ code  copyReplaceTokens: (code copyFrom: tempStart to: end) with: b, k printString.
+			code = newCode ifTrue: [startAt _ tempStart + 1].
+			code _ newCode.
+			k _ k + 1 ]].
 	^code! !
 
 !DecompilerTests methodsFor: 'tests' stamp: 'eem 9/23/2008 11:16'!
