@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4621] on 31 May 2021 at 7:49:36 pm'!
+'From Cuis 5.0 [latest update: #4625] on 2 June 2021 at 9:21:22 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 236!
+!provides: 'VectorGraphics' 1 237!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -677,12 +677,18 @@ widthOf: aCharacter
 
 	^ (aCharacter widthInTrueTypeFontDescription: ttFontDescription useST80Glyphs: self isST80Glyphs) * pointSize! !
 
-!TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 3/23/2021 13:03:33'!
+!TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 6/2/2021 09:17:31'!
 onBitBltCanvasEngine: engine displayString: aString from: startIndex to: stopIndex at: p color: color
 	"Answer position to place next glyph.
 	Answer nil if nothing was done."
 
-	^aString displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p trueTypeFont: self color: color! !
+	^ engine
+		displayString: aString
+		from: startIndex
+		to: stopIndex
+		at: p
+		trueTypeFont: self
+		color: color! !
 
 !TrueTypeFont methodsFor: 'testing' stamp: 'jmv 5/11/2019 17:10:59'!
 isBaseFont
@@ -7965,30 +7971,6 @@ widthInTrueTypeFontDescription: aTTFontDescription useST80Glyphs: aBoolean
 	"Double dispatch"
 
 	^aTTFontDescription widthOf: self useST80Glyphs: aBoolean! !
-
-!String methodsFor: '*vectorGraphics' stamp: 'jmv 4/1/2020 12:26:06'!
-displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p trueTypeFont: aTrueTypeFont color: color
-	"Double dispatch"
-
-	^ engine
-		displayString: self
-		from: startIndex
-		to: stopIndex
-		at: p
-		trueTypeFont: aTrueTypeFont
-		color: color! !
-
-!Text methodsFor: '*vectorGraphics' stamp: 'jmv 4/21/2020 13:13:17'!
-displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p trueTypeFont: aTrueTypeFont color: color
-	"Double dispatch"
-
-	^ engine
-		displayString: self
-		from: startIndex
-		to: stopIndex
-		at: p
-		trueTypeFont: aTrueTypeFont
-		color: color! !
 
 !BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/18/2021 17:47:41'!
 basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
