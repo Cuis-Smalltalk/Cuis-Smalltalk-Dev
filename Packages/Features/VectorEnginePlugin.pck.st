@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4621] on 31 May 2021 at 7:37:12 pm'!
+'From Cuis 5.0 [latest update: #4625] on 2 June 2021 at 11:10:33 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 19!
+!provides: 'VectorEnginePlugin' 1 20!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -874,7 +874,7 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:33:50'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/2/2021 11:03:50'!
 displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops utf32 utf8Byte1 uft8Byte2 utf8Byte3 utf8Byte4 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
@@ -925,8 +925,8 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	txA21 _ txA21 * sx.
 	txA22 _ txA22 * sy.
 
-	nextGlyphX _ destX.
-	nextGlyphY _ destY.
+	nextGlyphX _ destX / sx.
+	nextGlyphY _ destY / sy.
 	startIndex-1 to: stopIndex-1 do: [ :utf32Index |
 		utf32 _ aWordArray at: utf32Index.
 		aBoolean ifTrue: [
@@ -1039,7 +1039,7 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:34:05'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/2/2021 11:03:55'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
@@ -1091,8 +1091,8 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	txA21 _ txA21 * sx.
 	txA22 _ txA22 * sy.
 
-	nextGlyphX _ destX.
-	nextGlyphY _ destY.
+	nextGlyphX _ destX / sx.
+	nextGlyphY _ destY / sy.
 	baseIndex _ 0.
 	byteStartIndex-1 to: byteStopIndex-1 do: [ :byteIndex |
 		byte _ aByteArray at: byteIndex.
@@ -2411,7 +2411,7 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 5/29/2021 16:32:07'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/2/2021 11:04:12'!
 displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops utf32 utf8Byte1 uft8Byte2 utf8Byte3 utf8Byte4 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
@@ -2462,8 +2462,8 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	txA21 _ txA21 * sx.
 	txA22 _ txA22 * sy.
 
-	nextGlyphX _ destX.
-	nextGlyphY _ destY.
+	nextGlyphX _ destX / sx.
+	nextGlyphY _ destY / sy.
 	startIndex-1 to: stopIndex-1 do: [ :utf32Index |
 		utf32 _ aWordArray at: utf32Index.
 		aBoolean ifTrue: [
@@ -2576,7 +2576,7 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 5/29/2021 16:32:34'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/2/2021 11:04:17'!
 displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
@@ -2628,8 +2628,8 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 	txA21 _ txA21 * sx.
 	txA22 _ txA22 * sy.
 
-	nextGlyphX _ destX.
-	nextGlyphY _ destY.
+	nextGlyphX _ destX / sx.
+	nextGlyphY _ destY / sy.
 	baseIndex _ 0.
 	byteStartIndex-1 to: byteStopIndex-1 do: [ :byteIndex |
 		byte _ aByteArray at: byteIndex.
