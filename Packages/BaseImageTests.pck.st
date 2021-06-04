@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4622] on 1 June 2021 at 2:26:36 pm'!
+'From Cuis 5.0 [latest update: #4628] on 4 June 2021 at 10:12:32 am'!
 'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 260!
+!provides: 'BaseImageTests' 1 261!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -9586,6 +9586,35 @@ testSchedulerTermination
 	"will give process a chance to continue and horribly screw up"
 	self assert: gotHere not.! !
 
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jar 5/23/2021 18:56:29'!
+testTerminateEnsureAsTopContext
+	"Test #ensure unwind block is executed even when #ensure context is on stack's top."
+
+	| p1 p2 p3 x1 x2 x3 |
+	x1 _ x2 _ x3 _ false.
+	
+	"p1 is at the beginning of the ensure block; the unwind block hasn't run yet"
+	p1 _ [[] ensure: [x1 _ x1 not]] newProcess.
+	[[:ctx | ctx isUnwindContext and: [(ctx tempAt: 2) isNil]] value: p1 suspendedContext] whileFalse: [p1 step].
+
+	"p2 has already set complete to true (tempAt: 2) but the unwind block hasn't run yet"
+	p2 _ [[] ensure: [x2 _ x2 not]] newProcess.
+	[[:ctx | ctx isUnwindContext and: [(ctx tempAt: 2) notNil]] value: p2 suspendedContext] whileFalse: [p2 step].
+
+	"p3 has already set complete to true AND the unwind block has run already run;
+	we have to verify the unwind block is not executed again during termination"
+	p3 _ [[] ensure: [x3 _ x3 not]] newProcess.
+	[[:ctx | ctx isUnwindContext and: [ctx willReturn]] value: p3 suspendedContext] whileFalse: [p3 step].
+
+	"make sure all processes are running and only the p3's unwind block has finished"
+	self deny: p1 isTerminated | p2 isTerminated | p3 isTerminated.
+	self deny: x1 | x2.
+	self assert: x3. "p3 has already run its unwind block; we test it won't run it again"
+	"terminate all processes and verify all unwind blocks have finished correctly"
+	p1 terminate. p2 terminate. p3 terminate.
+	self assert: p1 isTerminated & p2 isTerminated & p3 isTerminated.
+	self assert: x1 & x2 & x3! !
+
 !ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:12:51'!
 testTerminationDuringNestedUnwind1
 	"Terminate suspended process.
@@ -11674,6 +11703,26 @@ testTerminateInEnsure
 		self
 			assert: process isTerminated;
 			assert: count equals: 11 ]! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 5/25/2021 09:06:02'!
+testTerminateInTerminate
+	"Terminating a terminator process should unwind both the terminator and its terminatee process"
+	
+	| terminator terminatee unwound |
+	unwound _ false.
+	terminatee _ [[Processor activeProcess suspend] ensure: [unwound _ true]] newProcess.
+	terminator _ [terminatee terminate] newProcess.
+	terminatee resume. Processor yield.
+	self assert: terminatee isSuspended.
+	self assert: terminator isSuspended.
+	"run terminator and stop inside #terminate, e.g. before executing #suspend in #terminate" 
+	[[:ctx | ctx selectorToSendOrSelf = #isUnwindContext] value: terminator suspendedContext] 
+		whileFalse: [terminator step]. 
+	self assert: terminator isSuspended.
+	terminator terminate.
+	self assert: terminatee isTerminated. 
+	self assert: terminator isTerminated. 
+	self assert: unwound! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jmv 4/13/2021 14:13:35'!
 testValueEnsured
