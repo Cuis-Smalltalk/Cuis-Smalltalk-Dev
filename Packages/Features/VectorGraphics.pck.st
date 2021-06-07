@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4625] on 2 June 2021 at 9:21:22 am'!
+'From Cuis 5.0 [latest update: #4633] on 7 June 2021 at 7:14:08 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 237!
+!provides: 'VectorGraphics' 1 238!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1212,11 +1212,6 @@ canvasToUse
 	currentMorph requiresVectorCanvas ifTrue: [
 		^ vectorCanvas ].
 	^self.! !
-
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/17/2020 14:51:02'!
-clipCurrentMorph: aBoolean
-	super clipCurrentMorph: aBoolean.
-	vectorCanvas clipCurrentMorph: aBoolean! !
 
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 11/30/2020 12:28:51'!
 onMorphIdsDo: aBlock
