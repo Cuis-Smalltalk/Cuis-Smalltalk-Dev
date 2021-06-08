@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4633] on 7 June 2021 at 7:14:08 pm'!
+'From Cuis 5.0 [latest update: #4635] on 8 June 2021 at 12:41:57 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 238!
+!provides: 'VectorGraphics' 1 239!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -2968,17 +2968,33 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/27/2021 11:57:53'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/8/2021 12:40:26'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
 
+	| sharper apparentWeight |
 	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self ].
 	aStrokeWidth = 0.0 ifTrue: [ ^self ].
 	aStrokeWidth < antiAliasingWidth
 		ifTrue: [
-			"If the requested stroke width is too thin, make them wide enough to be properly sampled."
-			self pvtStrokeWidth: antiAliasingWidth.
-			self pvtStrokeColor: (aStrokeColor alpha: aStrokeColor alpha * aStrokeWidth / antiAliasingWidth) ]
+			"There are two possible strategies when requested stroke width is narrower than anti aliasing filter.
+			To more effectively avoid aliasing, set sharper to false.
+			To draw sharper thin lines, at the price of very little extra aliasing in them, set sharper to true.
+			This could be turned into a Preference."
+			sharper _ true.
+			sharper ifTrue: [
+				"If the requested stroke width is used, filter will be clipped, resulting in an incorrect weight for the stroke."
+				apparentWeight _ ((aStrokeWidth squared / antiAliasingWidth) + (2.0 * aStrokeWidth) + antiAliasingWidth) / 4.0.
+				"{'(sharper)desired weight'. aStrokeWidth. 'but would get'. apparentWeight. 'correction'. aStrokeWidth / apparentWeight} print."
+				self pvtStrokeWidth: aStrokeWidth.
+				self pvtStrokeColor: (aStrokeColor alpha: aStrokeColor alpha * aStrokeWidth / apparentWeight)]
+			ifFalse: [
+				"If the requested stroke width is too thin, make them wide enough to be properly sampled."
+				"{'(wider)desired weight'. aStrokeWidth. 'but would get'. antiAliasingWidth. 'correction'. aStrokeWidth / antiAliasingWidth} print."
+				self pvtStrokeWidth: antiAliasingWidth.
+				self pvtStrokeColor: (aStrokeColor alpha: aStrokeColor alpha * aStrokeWidth / antiAliasingWidth) 
+			]
+			]
 		ifFalse: [
 			self pvtStrokeWidth: aStrokeWidth.
 			self pvtStrokeColor: aStrokeColor ].
@@ -3743,10 +3759,11 @@ resetMorphBounds
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/18/2021 10:05:22'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/8/2021 12:28:54'!
 experLinesAndShapes
 	"
-	VectorEngineSubPixel experLinesAndShapes
+Display fill: (0@0 corner: 120@1200) fillColor: Color white.
+	VectorEngineWholePixel experLinesAndShapes
 	"
 	| engine y1 yy2 dy y2 |
 	engine _ self onForm: Display.
@@ -3808,6 +3825,7 @@ experLinesAndShapes
 				moveTo: y2*0.5 + y1+dy+dy+dy@(y2*0.5+731); lineTo: y2 * 0.5 + y1 + dy + dy+dy+dy @ 830 ].
 		y1 _ y1 + y2 + self defaultAntiAliasingWidth + 3.
 		Display forceToScreen.
+		y2 print.
 		y2 _ y2 * 0.8.
 	].
 	
