@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4625] on 2 June 2021 at 11:10:33 am'!
+'From Cuis 5.0 [latest update: #4636] on 14 June 2021 at 11:35:51 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 20!
+!provides: 'VectorEnginePlugin' 1 21!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -8,7 +8,7 @@ SystemOrganization addCategory: 'VectorEnginePlugin'!
 
 !classDefinition: #VectorEnginePlugin category: 'VectorEnginePlugin'!
 SmartSyntaxInterpreterPlugin subclass: #VectorEnginePlugin
-	instanceVariableNames: 'targetBits morphIds edgeCounts edgeCountsWP alphaMask alphaMaskWP targetWidth targetHeight antiAliasingWidth subPixelDelta hopsPerPixel strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA txA11 txA12 txA13 txA21 txA22 txA23 currentMorphId currentClipsSubmorphs clipCurrentMorph clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared prevYTruncated spanLeft spanTop spanRight spanBottom'
+	instanceVariableNames: 'targetBits morphIds edgeCounts edgeCountsWP alphaMask alphaMaskWP targetWidth targetHeight antiAliasingWidth subPixelDelta hop strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA txA11 txA12 txA13 txA21 txA22 txA23 currentMorphId currentClipsSubmorphs clipCurrentMorph clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared prevYTruncated spanLeft spanTop spanRight spanBottom'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorEnginePlugin'!
@@ -22,16 +22,16 @@ Slang implementation of VectorGraphicsEngine. Based on https://www.researchgate.
 
 VectorEnginePlugin translateInDirectory: DirectoryEntry currentDirectory doInlining: true!
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 5/28/2021 14:53:24'!
-antiAliasingWidth: aFloat subPixelDelta: otherFloat hopsPerPixel: anotherFloat
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 6/11/2021 12:05:12'!
+antiAliasingWidth: aFloat subPixelDelta: otherFloat hopLength: anotherFloat
 	self
-		primitive: 'primAntiAliasingWidthsubPixelDeltaHopsPerPixel'
+		primitive: 'primAntiAliasingWidthsubPixelDeltaHopLength'
 		parameters: #(Float Float Float).
 
 	antiAliasingWidth _ aFloat.
 	auxAntiAliasingWidthScaledInverse _ 127.0 / aFloat.
 	subPixelDelta _ otherFloat.
-	hopsPerPixel _ anotherFloat! !
+	hop _ anotherFloat! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 10:07:15'!
 clipCurrentMorph: aBoolean morphIds: aWordArray
@@ -114,7 +114,7 @@ newTrajectoryFragment
 
 	prevYTruncated _ 16r7FFFFFFF.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 5/29/2021 16:59:00'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 6/12/2021 11:32:31'!
 pluginApiVersion
 	"
 	VectorEngineWithPlugin isPluginAvailable
@@ -129,7 +129,7 @@ pluginApiVersion
 		primitive: 'pluginApiVersion'
 		parameters: #().
 
-	^ 3 asOop: SmallInteger.! !
+	^ 4 asOop: SmallInteger.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:53:54'!
 spanBottom
@@ -223,7 +223,7 @@ targetBits: aBitmap morphIds: aWordArray edgeCountsWP: otherByteArray alphaMaskW
 	targetWidth _ aNumber.
 	targetHeight _ otherNumber.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/31/2021 19:26:41'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 6/11/2021 12:02:29'!
 arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray
 
 	| tcx tcy trx try scale hops d angle xp yp x y |
@@ -250,7 +250,7 @@ arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY
 		inSmalltalk: [scale _ (txA11 squared + txA21 squared) sqrt].
 	trx _ radiusPointX * scale.
 	try _ radiusPointY * scale.
-	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) * hopsPerPixel) asInteger + 1.
+	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 1.
 	d _ sweepAngle / hops.
 
 	edgeCounts _ otherWordArray.
@@ -293,7 +293,7 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherWordArray alphaMask: 
 	alphaMask _ anotherWordArray.
 	self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/28/2021 19:28:18'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 6/11/2021 12:03:52'!
 pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy dx2 dy2 dx3 dy3 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
@@ -360,7 +360,7 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 		dy3 _ (tyControl2-tyControl1) abs ].
 	dx _ (dx max: dx2) * 3 max: dx3 * 1.5.
 	dy _ (dy max: dy2) * 3 max: dy3 * 1.5.
-	hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
+	hops _ ((dx max: dy) / hop) asInteger + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ txFrom min: txTo.
@@ -391,7 +391,7 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/28/2021 20:50:14'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 6/11/2021 12:04:05'!
 pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	| txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
@@ -425,7 +425,7 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	inSmalltalk: [
 		dx _ dx abs.
 		dy _ dy abs ].
-	hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
+	hops _ ((dx max: dy) / hop) asInteger + 1.
 	incrementX _ incrementX / hops.
 	incrementY _ incrementY / hops.
 
@@ -446,10 +446,10 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/28/2021 19:28:38'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 6/12/2021 09:48:38'!
 pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
-	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 length xMinEnd xMaxEnd yMinEnd yMaxEnd t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
 	self var: #xFrom type: 'float'.
 	self var: #yFrom type: 'float'.
 	self var: #xTo type: 'float'.
@@ -466,8 +466,11 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 	self var: #dy type: 'float'.
 	self var: #dx2 type: 'float'.
 	self var: #dy2 type: 'float'.
-	self var: #hops type: 'int'.
+	self var: #length type: 'float'.
 
+	self var: #t0 type: 'float'.
+	self var: #x0 type: 'float'.
+	self var: #y0 type: 'float'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -481,6 +484,12 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
+	"If control point is bogus, just draw a line"
+	(xControl = xTo and: [ yControl = yTo ]) ifTrue: [
+		^self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+	(xControl = xFrom and: [ yControl = yFrom ]) ifTrue: [
+		^self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+
 	txFrom _ (xFrom * txA11) + (yFrom * txA12) + txA13.
 	tyFrom _ (xFrom * txA21) + (yFrom * txA22) + txA23.
 	txTo _ (xTo * txA11) + (yTo * txA12) + txA13.
@@ -488,18 +497,23 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 	txControl _ (xControl * txA11) + (yControl * txA12) + txA13.
 	tyControl _ (xControl * txA21) + (yControl * txA22) + txA23.
 	self cCode: '
-		dx = fabs(txControl-txFrom);
-		dx2 = fabs(txTo-txControl);
-		dy = fabs(tyControl-tyFrom);
-		dy2 = fabs(tyTo-tyControl);'
+		dx = fabs(txTo-txFrom);
+		dx2 = fabs(txControl-txFrom);
+		dy = fabs(tyTo-tyFrom);
+		dy2 = fabs(tyControl-tyFrom);'
 	inSmalltalk: [
-		dx _ (txControl-txFrom) abs.
-		dx2 _ (txTo-txControl) abs.
-		dy _ (tyControl-tyFrom) abs.
-		dy2 _ (tyTo-tyControl) abs ].
-	dx _ dx max: dx2.
-	dy _ dy max: dy2.
-	hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
+		dx _ (txTo-txFrom) abs.
+		dx2 _ (txControl-txFrom) abs.
+		dy _ (tyTo-tyFrom) abs.
+		dy2 _ (tyControl-tyFrom) abs.].
+
+	"If almost a vertical line, just draw a line. (Ignoring control point)"
+	(dx < 1.0 and: [dx2 < 1.0]) ifTrue: [
+		^self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+
+	"If almost an horizontal line, just draw a line. (Ignoring control point)"
+	(dy < 1.0 and: [dy2 < 1.0]) ifTrue: [
+		^self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ txFrom min: txTo.
@@ -511,19 +525,45 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 	spanTop _ spanTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
 	spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
+	"Case t = 0.0"
+	x _ txFrom.
+	y _ tyFrom.
+	self updateAlphasForX: x y: y.
+	fillA = 0.0 ifFalse: [
+		self updateEdgeCountAtX: x y: y ].
+
+	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+	increment _ 0.2.
+	"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+	In these cases, a larger initial estimation avoids the problem."
+	(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+		increment _ 0.5 ].
 	t _ 0.0.
-	increment _ 1.0 / hops.
-	1 to: hops do: [ :h |
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT.
-		f2 _ 2.0 * oneLessT * t.
-		f3 _ t * t.
+	[
+		t0 _ t. x0 _ x. y0 _ y.
+		"Compute next point"
+		t _ t0 + increment. oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
 		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		dx _ x-x0.
+		dy _ y-y0.
+		"Now adjust the increment to aim at the required hop length, and recompute next point."
+		self cCode: '
+			length = sqrt(dx*dx + dy*dy);'
+			inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+		increment _ increment / length * hop.
+		t _ t0 + increment. oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		t < 1.0 ]
+	whileTrue: [
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
-			self updateEdgeCountAtX: x y: y ].
-		t _ t + increment. ].
+			self updateEdgeCountAtX: x y: y ]].
+
+	"Case t= 1.0"
 	self updateAlphasForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
@@ -735,10 +775,10 @@ updateEdgeCountAtX: x y: y
 				]
 		].! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:33:32'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/12/2021 14:11:05'!
 displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayString'
 		parameters: #(String SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean WordArray WordArray).
@@ -763,10 +803,12 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 	self var: #controlY type: 'float'.
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
-	self var: #dx2 type: 'float'.
-	self var: #dy2 type: 'float'.
 	self var: #iso8859s15 type: 'uint8_t'.
 
+	self var: #length type: 'float'.
+	self var: #t0 type: 'float'.
+	self var: #x0 type: 'float'.
+	self var: #y0 type: 'float'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -820,19 +862,6 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 				endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
 				controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
 				controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
-				self cCode: '
-					dx = fabs(controlX-startX);
-					dx2 = fabs(endX-controlX);
-					dy = fabs(controlY-startY);
-					dy2 = fabs(endY-controlY);'
-				inSmalltalk: [
-					dx _ (controlX-startX) abs.
-					dx2 _ (endX-controlX) abs.
-					dy _ (controlY-startY) abs.
-					dy2 _ (endY-controlY) abs ].
-				dx _ dx max: dx2.
-				dy _ dy max: dy2.
-				hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
 				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 				xMinEnd _ startX min: endX.
 				xMaxEnd _ startX max: endX.
@@ -843,18 +872,44 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
 				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 				"Compute Quadratic Bezier Curve,"
+				"Case t = 0.0"
+				x _ startX.
+				y _ startY.
+				self updateAlphasForX: x y: y.
+				self updateEdgeCountAtX: x y: y.
+				"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+				increment _ 0.2.
+				"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+				In these cases, a larger initial estimation avoids the problem."
+				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
+				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
+				(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+					increment _ 0.5 ].
 				t _ 0.0.
-				increment _ 1.0 / hops.
-				1 to: hops do: [ :h |
-					oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT.
-					f2 _ 2.0 * oneLessT * t.
-					f3 _ t * t.
+				[
+					t0 _ t. x0 _ x. y0 _ y.
+					"Compute next point"
+					t _ t0 + increment. oneLessT _ 1.0 - t.
+					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					dx _ x-x0.
+					dy _ y-y0.
+					"Now adjust the increment to aim at the required hop length, and recompute next point."
+					self cCode: '
+						length = sqrt(dx*dx + dy*dy);'
+						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+					increment _ increment / length * hop.
+					t _ t0 + increment. oneLessT _ 1.0 - t.
+					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					t < 1.0 ]
+				whileTrue: [
 					self updateAlphasForX: x y: y.
-					self updateEdgeCountAtX: x y: y.
-					t _ t + increment. ].
+					self updateEdgeCountAtX: x y: y ].
+				"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
+				This means that the end point is only added for the last fragment of the contour, and not for each one of them."
 				startX _ endX.
 				startY _ endY.	
 			].
@@ -862,7 +917,8 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 			self updateEdgeCountAtX: endX y: endY.
 			"Similar effect to ensureClosePath in #finishPath:,
 			but assume the TrueType definition is essentially right, and there might only be a rounding error.
-			So, don't draw a line, but just (possibly) correct edgeCounts"
+			So, don't draw a line, but just (possibly) correct edgeCounts. The possibility of rounding error is most likely zero.
+			Anyway, this is cheap."
 			self updateEdgeCountAtX: contourStartX y: contourStartY.
 		].
 		nextGlyphX _ nextGlyphX + advanceWidth.
@@ -874,10 +930,10 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/2/2021 11:03:50'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/12/2021 20:05:50'!
 displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops utf32 utf8Byte1 uft8Byte2 utf8Byte3 utf8Byte4 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy utf32 utf8Byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayUtf32'
 		parameters: #(WordArray SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean WordArray WordArray).
@@ -902,9 +958,11 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	self var: #controlY type: 'float'.
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
-	self var: #dx2 type: 'float'.
-	self var: #dy2 type: 'float'.
 
+	self var: #length type: 'float'.
+	self var: #t0 type: 'float'.
+	self var: #x0 type: 'float'.
+	self var: #y0 type: 'float'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -935,35 +993,31 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 			].
 		utf32 <= 16r7F
 			ifTrue: [
-				utf8Byte1 _ utf32.
-				i _ contourDataIndexes at: utf8Byte1.
-				]
+				utf8Byte _ utf32.
+				i _ contourDataIndexes at: utf8Byte ]
 			ifFalse: [ utf32 <= 16r7FF
 			ifTrue: [
-				utf8Byte1 _ (utf32 bitShift: -6) bitOr: 2r11000000.
-				uft8Byte2 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte1.
-				i _ contourDataIndexes at: uft8Byte2 - i.
-				]
+				utf8Byte _ (utf32 bitShift: -6) bitOr: 2r11000000.
+				i _ contourDataIndexes at: utf8Byte.
+				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i ]
 			ifFalse: [ utf32 <= 16rFFFF
 			ifTrue: [
-				utf8Byte1 _ (utf32 bitShift: -12) bitOr: 2r11100000.
-				uft8Byte2 _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
-				utf8Byte3 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte1.
-				i _ contourDataIndexes at: uft8Byte2 - i.
-				i _ contourDataIndexes at: utf8Byte3 - i.
-				]
+				utf8Byte _ (utf32 bitShift: -12) bitOr: 2r11100000.
+				i _ contourDataIndexes at: utf8Byte.
+				utf8Byte _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i.
+				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i ]
 			ifFalse: [
-				utf8Byte1 _ (utf32 bitShift: -18) bitOr: 2r11110000.
-				uft8Byte2 _ ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
-				utf8Byte3 _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
-				utf8Byte4 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte1.
-				i _ contourDataIndexes at: uft8Byte2 - i.
-				i _ contourDataIndexes at: utf8Byte3 - i.
-				i _ contourDataIndexes at: utf8Byte4 - i.
-				]]].
+				utf8Byte _ (utf32 bitShift: -18) bitOr: 2r11110000.
+				i _ contourDataIndexes at: utf8Byte.
+				utf8Byte _ ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i.
+				utf8Byte _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i.
+				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i ]]].
 		i _ i - 1.
 		advanceWidth _ contourData at: i. i _ i + 5.
 		numContours _ (contourData at: i) asInteger. i _ i + 1.
@@ -985,19 +1039,6 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 				endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
 				controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
 				controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
-				self cCode: '
-					dx = fabs(controlX-startX);
-					dx2 = fabs(endX-controlX);
-					dy = fabs(controlY-startY);
-					dy2 = fabs(endY-controlY);'
-				inSmalltalk: [
-					dx _ (controlX-startX) abs.
-					dx2 _ (endX-controlX) abs.
-					dy _ (controlY-startY) abs.
-					dy2 _ (endY-controlY) abs ].
-				dx _ dx max: dx2.
-				dy _ dy max: dy2.
-				hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
 				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 				xMinEnd _ startX min: endX.
 				xMaxEnd _ startX max: endX.
@@ -1008,18 +1049,46 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
 				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 				"Compute Quadratic Bezier Curve,"
+				"Case t = 0.0"
+				x _ startX.
+				y _ startY.
+				self updateAlphasForX: x y: y.
+				self updateEdgeCountAtX: x y: y.
+				"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+				increment _ 0.2.
+				"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+				In these cases, a larger initial estimation avoids the problem."
+				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
+				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
+				(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+					increment _ 0.5 ].
 				t _ 0.0.
-				increment _ 1.0 / hops.
-				1 to: hops do: [ :h |
-					oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT.
-					f2 _ 2.0 * oneLessT * t.
-					f3 _ t * t.
+				[
+					t0 _ t. x0 _ x. y0 _ y.
+					"Compute next point. Only C version to avoid hitting a limit in Smalltalk compiler."
+					self cCode: '
+						t = t0 + increment; oneLessT = 1.0 - t;
+						f1 = oneLessT * oneLessT; f2 = 2.0 * oneLessT * t; f3 = t * t;
+						x = (f1 * startX) + (f2 * controlX) + (f3 * endX);
+						y = (f1 * startY) + (f2 * controlY) + (f3 * endY);'
+						inSmalltalk: [].
+					dx _ x-x0.
+					dy _ y-y0.
+					"Now adjust the increment to aim at the required hop length, and recompute next point."
+					self cCode: '
+						length = sqrt(dx*dx + dy*dy);'
+						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+					increment _ increment / length * hop.
+					t _ t0 + increment. oneLessT _ 1.0 - t.
+					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					t < 1.0 ]
+				whileTrue: [
 					self updateAlphasForX: x y: y.
-					self updateEdgeCountAtX: x y: y.
-					t _ t + increment. ].
+					self updateEdgeCountAtX: x y: y. ].
+				"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
+				This means that the end point is only added for the last fragment of the contour, and not for each one of them."
 				startX _ endX.
 				startY _ endY.	
 			].
@@ -1027,7 +1096,8 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 			self updateEdgeCountAtX: endX y: endY.
 			"Similar effect to ensureClosePath in #finishPath:,
 			but assume the TrueType definition is essentially right, and there might only be a rounding error.
-			So, don't draw a line, but just (possibly) correct edgeCounts"
+			So, don't draw a line, but just (possibly) correct edgeCounts. The possibility of rounding error is most likely zero.
+			Anyway, this is cheap."
 			self updateEdgeCountAtX: contourStartX y: contourStartY.
 		].
 		nextGlyphX _ nextGlyphX + advanceWidth.
@@ -1039,10 +1109,10 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/2/2021 11:03:55'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/12/2021 20:11:12'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayUtf8'
 		parameters: #(ByteArray SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean WordArray WordArray).
@@ -1067,10 +1137,12 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	self var: #controlY type: 'float'.
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
-	self var: #dx2 type: 'float'.
-	self var: #dy2 type: 'float'.
 	self var: #byte type: 'uint8_t'.
 
+	self var: #length type: 'float'.
+	self var: #t0 type: 'float'.
+	self var: #x0 type: 'float'.
+	self var: #y0 type: 'float'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -1130,19 +1202,6 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 						endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
 						controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
 						controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
-						self cCode: '
-							dx = fabs(controlX-startX);
-							dx2 = fabs(endX-controlX);
-							dy = fabs(controlY-startY);
-							dy2 = fabs(endY-controlY);'
-						inSmalltalk: [
-							dx _ (controlX-startX) abs.
-							dx2 _ (endX-controlX) abs.
-							dy _ (controlY-startY) abs.
-							dy2 _ (endY-controlY) abs ].
-						dx _ dx max: dx2.
-						dy _ dy max: dy2.
-						hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
 						"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 						xMinEnd _ startX min: endX.
 						xMaxEnd _ startX max: endX.
@@ -1152,19 +1211,45 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 						spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
 						spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
 						spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+						"Case t = 0.0"
+						x _ startX.
+						y _ startY.
+						self updateAlphasForX: x y: y.
+						self updateEdgeCountAtX: x y: y.
+						"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+						increment _ 0.2.
+						"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+						In these cases, a larger initial estimation avoids the problem."
+						self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
+						inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
+						(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+							increment _ 0.5 ].
 						"Compute Quadratic Bezier Curve,"
 						t _ 0.0.
-						increment _ 1.0 / hops.
-						1 to: hops do: [ :h |
-							oneLessT _ 1.0 - t.
-							f1 _ oneLessT * oneLessT.
-							f2 _ 2.0 * oneLessT * t.
-							f3 _ t * t.
+						[
+							t0 _ t. x0 _ x. y0 _ y.
+							"Compute next point"
+							t _ t0 + increment. oneLessT _ 1.0 - t.
+							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							dx _ x-x0.
+							dy _ y-y0.
+							"Now adjust the increment to aim at the required hop length, and recompute next point."
+							self cCode: '
+								length = sqrt(dx*dx + dy*dy);'
+								inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+							increment _ increment / length * hop.
+							t _ t0 + increment. oneLessT _ 1.0 - t.
+							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							t < 1.0 ]
+						whileTrue: [
 							self updateAlphasForX: x y: y.
-							self updateEdgeCountAtX: x y: y.
-							t _ t + increment. ].
+							self updateEdgeCountAtX: x y: y ].
+						"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
+						This means that the end point is only added for the last fragment of the contour, and not for each one of them."
 						startX _ endX.
 						startY _ endY.	
 					].
@@ -1172,7 +1257,8 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 					self updateEdgeCountAtX: endX y: endY.
 					"Similar effect to ensureClosePath in #finishPath:,
 					but assume the TrueType definition is essentially right, and there might only be a rounding error.
-					So, don't draw a line, but just (possibly) correct edgeCounts"
+					So, don't draw a line, but just (possibly) correct edgeCounts. The possibility of rounding error is most likely zero.
+					Anyway, this is cheap."
 					self updateEdgeCountAtX: contourStartX y: contourStartY.
 				].
 				nextGlyphX _ nextGlyphX + advanceWidth.
@@ -1816,7 +1902,7 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/31/2021 19:26:55'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/11/2021 12:02:35'!
 arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherByteArray alphaMask: anotherByteArray
 
 	| tcx tcy trx try scale hops d angle xp yp x y |
@@ -1843,7 +1929,7 @@ arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPoin
 		inSmalltalk: [scale _ (txA11 squared + txA21 squared) sqrt].
 	trx _ radiusPointX * scale.
 	try _ radiusPointY * scale.
-	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) * hopsPerPixel) asInteger + 1.
+	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 1.
 	d _ sweepAngle / hops.
 
 	edgeCountsWP _ otherByteArray.
@@ -1886,7 +1972,7 @@ lineWPFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherByteArray alphaMask
 	alphaMaskWP _ anotherByteArray.
 	self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/28/2021 19:25:21'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/11/2021 12:03:57'!
 pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy dx2 dy2 dx3 dy3 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
@@ -1953,7 +2039,7 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 		dy3 _ (tyControl2-tyControl1) abs ].
 	dx _ (dx max: dx2) * 3 max: dx3 * 1.5.
 	dy _ (dy max: dy2) * 3 max: dy3 * 1.5.
-	hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
+	hops _ ((dx max: dy) / hop) asInteger + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ txFrom min: txTo.
@@ -1984,7 +2070,7 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: txTo y: tyTo ].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/28/2021 20:50:40'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/11/2021 12:04:10'!
 pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	| txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
@@ -2018,7 +2104,7 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 	inSmalltalk: [
 		dx _ dx abs.
 		dy _ dy abs ].
-	hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
+	hops _ ((dx max: dy) / hop) asInteger + 1.
 	incrementX _ incrementX / hops.
 	incrementY _ incrementY / hops.
 
@@ -2039,10 +2125,10 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: txTo y: tyTo ].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/28/2021 19:25:56'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/12/2021 09:48:32'!
 pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
-	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 length xMinEnd xMaxEnd yMinEnd yMaxEnd t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
 	self var: #xFrom type: 'float'.
 	self var: #yFrom type: 'float'.
 	self var: #xTo type: 'float'.
@@ -2059,8 +2145,11 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 	self var: #dy type: 'float'.
 	self var: #dx2 type: 'float'.
 	self var: #dy2 type: 'float'.
-	self var: #hops type: 'int'.
+	self var: #length type: 'float'.
 
+	self var: #t0 type: 'float'.
+	self var: #x0 type: 'float'.
+	self var: #y0 type: 'float'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -2074,6 +2163,12 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
+	"If control point is bogus, just draw a line"
+	(xControl = xTo and: [ yControl = yTo ]) ifTrue: [
+		^self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo ].
+	(xControl = xFrom and: [ yControl = yFrom ]) ifTrue: [
+		^self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo ].
+
 	txFrom _ (xFrom * txA11) + (yFrom * txA12) + txA13.
 	tyFrom _ (xFrom * txA21) + (yFrom * txA22) + txA23.
 	txTo _ (xTo * txA11) + (yTo * txA12) + txA13.
@@ -2081,18 +2176,23 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 	txControl _ (xControl * txA11) + (yControl * txA12) + txA13.
 	tyControl _ (xControl * txA21) + (yControl * txA22) + txA23.
 	self cCode: '
-		dx = fabs(txControl-txFrom);
-		dx2 = fabs(txTo-txControl);
-		dy = fabs(tyControl-tyFrom);
-		dy2 = fabs(tyTo-tyControl);'
+		dx = fabs(txTo-txFrom);
+		dx2 = fabs(txControl-txFrom);
+		dy = fabs(tyTo-tyFrom);
+		dy2 = fabs(tyControl-tyFrom);'
 	inSmalltalk: [
-		dx _ (txControl-txFrom) abs.
-		dx2 _ (txTo-txControl) abs.
-		dy _ (tyControl-tyFrom) abs.
-		dy2 _ (tyTo-tyControl) abs ].
-	dx _ dx max: dx2.
-	dy _ dy max: dy2.
-	hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
+		dx _ (txTo-txFrom) abs.
+		dx2 _ (txControl-txFrom) abs.
+		dy _ (tyTo-tyFrom) abs.
+		dy2 _ (tyControl-tyFrom) abs.].
+
+	"If almost a vertical line, just draw a line. (Ignoring control point)"
+	(dx < 1.0 and: [dx2 < 1.0]) ifTrue: [
+		^self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo ].
+
+	"If almost an horizontal line, just draw a line. (Ignoring control point)"
+	(dy < 1.0 and: [dy2 < 1.0]) ifTrue: [
+		^self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo ].
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ txFrom min: txTo.
@@ -2104,19 +2204,45 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 	spanTop _ spanTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
 	spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
+	"Case t = 0.0"
+	x _ txFrom.
+	y _ tyFrom.
+	self updateAlphasWPForX: x y: y.
+	fillA = 0.0 ifFalse: [
+		self updateEdgeCountWPAtX: x y: y ].
+
+	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+	increment _ 0.2.
+	"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+	In these cases, a larger initial estimation avoids the problem."
+	(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+		increment _ 0.5 ].
 	t _ 0.0.
-	increment _ 1.0 / hops.
-	1 to: hops do: [ :h |
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT.
-		f2 _ 2.0 * oneLessT * t.
-		f3 _ t * t.
+	[
+		t0 _ t. x0 _ x. y0 _ y.
+		"Compute next point"
+		t _ t0 + increment. oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
 		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		dx _ x-x0.
+		dy _ y-y0.
+		"Now adjust the increment to aim at the required hop length, and recompute next point."
+		self cCode: '
+			length = sqrt(dx*dx + dy*dy);'
+			inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+		increment _ increment / length * hop.
+		t _ t0 + increment. oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		t < 1.0 ]
+	whileTrue: [
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
-			self updateEdgeCountWPAtX: x y: y ].
-		t _ t + increment. ].
+			self updateEdgeCountWPAtX: x y: y ]].
+
+	"Case t= 1.0"
 	self updateAlphasWPForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: txTo y: tyTo ].! !
@@ -2182,13 +2308,12 @@ updateAlphasWPForX: x y: y
 						candidateAlpha > alphaByte ifTrue: [
 							alphaMaskWP at: pixelIndex put: candidateAlpha ]]]]]! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/18/2021 17:56:29'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/12/2021 20:31:41'!
 updateAlphasWPZeroStrokeForX: x y: y
 
-	"slight optimization possible when we know width = 0... perhaps implement:
+	"slight optimization possible when we know width = 0:
 		- we know candidateAlpha is never 127
-		- we know distanceToEdge is always > erodedHalfWidth.
-	In smalltalk, performance increase 1.5%. Perhaps in c/asm it is more than that..."
+		- we know distanceToEdge is always > erodedHalfWidth."
 	| t b l r pixelIndex candidateAlpha alphaByte distanceToAxisSquared dy dySquared dx |
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
@@ -2272,10 +2397,10 @@ updateEdgeCountWPAtX: x y: y
 		count _ count + increment.
 		edgeCountsWP at: pixelIndex put: count ].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 5/29/2021 16:31:38'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/12/2021 20:28:49'!
 displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayStringWP'
 		parameters: #(String SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean ByteArray ByteArray).
@@ -2300,10 +2425,12 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 	self var: #controlY type: 'float'.
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
-	self var: #dx2 type: 'float'.
-	self var: #dy2 type: 'float'.
 	self var: #iso8859s15 type: 'uint8_t'.
 
+	self var: #length type: 'float'.
+	self var: #t0 type: 'float'.
+	self var: #x0 type: 'float'.
+	self var: #y0 type: 'float'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -2357,19 +2484,6 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 				endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
 				controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
 				controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
-				self cCode: '
-					dx = fabs(controlX-startX);
-					dx2 = fabs(endX-controlX);
-					dy = fabs(controlY-startY);
-					dy2 = fabs(endY-controlY);'
-				inSmalltalk: [
-					dx _ (controlX-startX) abs.
-					dx2 _ (endX-controlX) abs.
-					dy _ (controlY-startY) abs.
-					dy2 _ (endY-controlY) abs ].
-				dx _ dx max: dx2.
-				dy _ dy max: dy2.
-				hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
 				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 				xMinEnd _ startX min: endX.
 				xMaxEnd _ startX max: endX.
@@ -2380,18 +2494,44 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
 				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 				"Compute Quadratic Bezier Curve,"
+				"Case t = 0.0"
+				x _ startX.
+				y _ startY.
+				self updateAlphasWPZeroStrokeForX: x y: y.
+				self updateEdgeCountWPAtX: x y: y.
+				"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+				increment _ 0.2.
+				"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+				In these cases, a larger initial estimation avoids the problem."
+				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
+				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
+				(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+					increment _ 0.5 ].
 				t _ 0.0.
-				increment _ 1.0 / hops.
-				1 to: hops do: [ :h |
-					oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT.
-					f2 _ 2.0 * oneLessT * t.
-					f3 _ t * t.
+				[
+					t0 _ t. x0 _ x. y0 _ y.
+					"Compute next point"
+					t _ t0 + increment. oneLessT _ 1.0 - t.
+					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					dx _ x-x0.
+					dy _ y-y0.
+					"Now adjust the increment to aim at the required hop length, and recompute next point."
+					self cCode: '
+						length = sqrt(dx*dx + dy*dy);'
+						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+					increment _ increment / length * hop.
+					t _ t0 + increment. oneLessT _ 1.0 - t.
+					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					t < 1.0 ]
+				whileTrue: [
 					self updateAlphasWPZeroStrokeForX: x y: y.
-					self updateEdgeCountWPAtX: x y: y.
-					t _ t + increment. ].
+					self updateEdgeCountWPAtX: x y: y ].
+				"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
+				This means that the end point is only added for the last fragment of the contour, and not for each one of them."
 				startX _ endX.
 				startY _ endY.	
 			].
@@ -2399,7 +2539,8 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 			self updateEdgeCountWPAtX: endX y: endY.
 			"Similar effect to ensureClosePath in #finishPath:,
 			but assume the TrueType definition is essentially right, and there might only be a rounding error.
-			So, don't draw a line, but just (possibly) correct edgeCountsWP"
+			So, don't draw a line, but just (possibly) correct edgeCountsWP. The possibility of rounding error is most likely zero.
+			Anyway, this is cheap."
 			self updateEdgeCountWPAtX: contourStartX y: contourStartY.
 		].
 		nextGlyphX _ nextGlyphX + advanceWidth.
@@ -2411,10 +2552,10 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/2/2021 11:04:12'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/12/2021 20:28:53'!
 displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops utf32 utf8Byte1 uft8Byte2 utf8Byte3 utf8Byte4 i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy utf32 utf8Byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayUtf32WP'
 		parameters: #(WordArray SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean ByteArray ByteArray).
@@ -2439,9 +2580,11 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	self var: #controlY type: 'float'.
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
-	self var: #dx2 type: 'float'.
-	self var: #dy2 type: 'float'.
 
+	self var: #length type: 'float'.
+	self var: #t0 type: 'float'.
+	self var: #x0 type: 'float'.
+	self var: #y0 type: 'float'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -2472,35 +2615,31 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 			].
 		utf32 <= 16r7F
 			ifTrue: [
-				utf8Byte1 _ utf32.
-				i _ contourDataIndexes at: utf8Byte1.
-				]
+				utf8Byte _ utf32.
+				i _ contourDataIndexes at: utf8Byte ]
 			ifFalse: [ utf32 <= 16r7FF
 			ifTrue: [
-				utf8Byte1 _ (utf32 bitShift: -6) bitOr: 2r11000000.
-				uft8Byte2 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte1.
-				i _ contourDataIndexes at: uft8Byte2 - i.
-				]
+				utf8Byte _ (utf32 bitShift: -6) bitOr: 2r11000000.
+				i _ contourDataIndexes at: utf8Byte.
+				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i ]
 			ifFalse: [ utf32 <= 16rFFFF
 			ifTrue: [
-				utf8Byte1 _ (utf32 bitShift: -12) bitOr: 2r11100000.
-				uft8Byte2 _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
-				utf8Byte3 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte1.
-				i _ contourDataIndexes at: uft8Byte2 - i.
-				i _ contourDataIndexes at: utf8Byte3 - i.
-				]
+				utf8Byte _ (utf32 bitShift: -12) bitOr: 2r11100000.
+				i _ contourDataIndexes at: utf8Byte.
+				utf8Byte _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i.
+				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i ]
 			ifFalse: [
-				utf8Byte1 _ (utf32 bitShift: -18) bitOr: 2r11110000.
-				uft8Byte2 _ ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
-				utf8Byte3 _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
-				utf8Byte4 _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte1.
-				i _ contourDataIndexes at: uft8Byte2 - i.
-				i _ contourDataIndexes at: utf8Byte3 - i.
-				i _ contourDataIndexes at: utf8Byte4 - i.
-				]]].
+				utf8Byte _ (utf32 bitShift: -18) bitOr: 2r11110000.
+				i _ contourDataIndexes at: utf8Byte.
+				utf8Byte _ ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i.
+				utf8Byte _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i.
+				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i _ contourDataIndexes at: utf8Byte - i ]]].
 		i _ i - 1.
 		advanceWidth _ contourData at: i. i _ i + 5.
 		numContours _ (contourData at: i) asInteger. i _ i + 1.
@@ -2522,19 +2661,6 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 				endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
 				controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
 				controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
-				self cCode: '
-					dx = fabs(controlX-startX);
-					dx2 = fabs(endX-controlX);
-					dy = fabs(controlY-startY);
-					dy2 = fabs(endY-controlY);'
-				inSmalltalk: [
-					dx _ (controlX-startX) abs.
-					dx2 _ (endX-controlX) abs.
-					dy _ (controlY-startY) abs.
-					dy2 _ (endY-controlY) abs ].
-				dx _ dx max: dx2.
-				dy _ dy max: dy2.
-				hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
 				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 				xMinEnd _ startX min: endX.
 				xMaxEnd _ startX max: endX.
@@ -2545,18 +2671,46 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
 				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 				"Compute Quadratic Bezier Curve,"
+				"Case t = 0.0"
+				x _ startX.
+				y _ startY.
+				self updateAlphasWPZeroStrokeForX: x y: y.
+				self updateEdgeCountWPAtX: x y: y.
+				"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+				increment _ 0.2.
+				"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+				In these cases, a larger initial estimation avoids the problem."
+				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
+				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
+				(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+					increment _ 0.5 ].
 				t _ 0.0.
-				increment _ 1.0 / hops.
-				1 to: hops do: [ :h |
-					oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT.
-					f2 _ 2.0 * oneLessT * t.
-					f3 _ t * t.
+				[
+					t0 _ t. x0 _ x. y0 _ y.
+					"Compute next point. Only C version to avoid hitting a limit in Smalltalk compiler."
+					self cCode: '
+						t = t0 + increment; oneLessT = 1.0 - t;
+						f1 = oneLessT * oneLessT; f2 = 2.0 * oneLessT * t; f3 = t * t;
+						x = (f1 * startX) + (f2 * controlX) + (f3 * endX);
+						y = (f1 * startY) + (f2 * controlY) + (f3 * endY);'
+						inSmalltalk: [].
+					dx _ x-x0.
+					dy _ y-y0.
+					"Now adjust the increment to aim at the required hop length, and recompute next point."
+					self cCode: '
+						length = sqrt(dx*dx + dy*dy);'
+						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+					increment _ increment / length * hop.
+					t _ t0 + increment. oneLessT _ 1.0 - t.
+					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					t < 1.0 ]
+				whileTrue: [
 					self updateAlphasWPZeroStrokeForX: x y: y.
-					self updateEdgeCountWPAtX: x y: y.
-					t _ t + increment. ].
+					self updateEdgeCountWPAtX: x y: y. ].
+				"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
+				This means that the end point is only added for the last fragment of the contour, and not for each one of them."
 				startX _ endX.
 				startY _ endY.	
 			].
@@ -2564,7 +2718,8 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 			self updateEdgeCountWPAtX: endX y: endY.
 			"Similar effect to ensureClosePath in #finishPath:,
 			but assume the TrueType definition is essentially right, and there might only be a rounding error.
-			So, don't draw a line, but just (possibly) correct edgeCountsWP"
+			So, don't draw a line, but just (possibly) correct edgeCountsWP. The possibility of rounding error is most likely zero.
+			Anyway, this is cheap."
 			self updateEdgeCountWPAtX: contourStartX y: contourStartY.
 		].
 		nextGlyphX _ nextGlyphX + advanceWidth.
@@ -2576,10 +2731,10 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/2/2021 11:04:17'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/12/2021 20:28:58'!
 displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy dx2 dy2 hops baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
 	self
 		primitive: 'primDisplayUtf8WP'
 		parameters: #(ByteArray SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean ByteArray ByteArray).
@@ -2604,10 +2759,12 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 	self var: #controlY type: 'float'.
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
-	self var: #dx2 type: 'float'.
-	self var: #dy2 type: 'float'.
 	self var: #byte type: 'uint8_t'.
 
+	self var: #length type: 'float'.
+	self var: #t0 type: 'float'.
+	self var: #x0 type: 'float'.
+	self var: #y0 type: 'float'.
 	self var: #t type: 'float'.
 	self var: #oneLessT type: 'float'.
 	self var: #increment type: 'float'.
@@ -2667,19 +2824,6 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 						endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
 						controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
 						controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
-						self cCode: '
-							dx = fabs(controlX-startX);
-							dx2 = fabs(endX-controlX);
-							dy = fabs(controlY-startY);
-							dy2 = fabs(endY-controlY);'
-						inSmalltalk: [
-							dx _ (controlX-startX) abs.
-							dx2 _ (endX-controlX) abs.
-							dy _ (controlY-startY) abs.
-							dy2 _ (endY-controlY) abs ].
-						dx _ dx max: dx2.
-						dy _ dy max: dy2.
-						hops _ ((dx max: dy) * hopsPerPixel) asInteger + 1.
 						"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 						xMinEnd _ startX min: endX.
 						xMaxEnd _ startX max: endX.
@@ -2689,19 +2833,45 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 						spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
 						spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
 						spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+						"Case t = 0.0"
+						x _ startX.
+						y _ startY.
+						self updateAlphasWPZeroStrokeForX: x y: y.
+						self updateEdgeCountWPAtX: x y: y.
+						"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+						increment _ 0.2.
+						"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+						In these cases, a larger initial estimation avoids the problem."
+						self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
+						inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
+						(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+							increment _ 0.5 ].
 						"Compute Quadratic Bezier Curve,"
 						t _ 0.0.
-						increment _ 1.0 / hops.
-						1 to: hops do: [ :h |
-							oneLessT _ 1.0 - t.
-							f1 _ oneLessT * oneLessT.
-							f2 _ 2.0 * oneLessT * t.
-							f3 _ t * t.
+						[
+							t0 _ t. x0 _ x. y0 _ y.
+							"Compute next point"
+							t _ t0 + increment. oneLessT _ 1.0 - t.
+							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							dx _ x-x0.
+							dy _ y-y0.
+							"Now adjust the increment to aim at the required hop length, and recompute next point."
+							self cCode: '
+								length = sqrt(dx*dx + dy*dy);'
+								inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+							increment _ increment / length * hop.
+							t _ t0 + increment. oneLessT _ 1.0 - t.
+							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							t < 1.0 ]
+						whileTrue: [
 							self updateAlphasWPZeroStrokeForX: x y: y.
-							self updateEdgeCountWPAtX: x y: y.
-							t _ t + increment. ].
+							self updateEdgeCountWPAtX: x y: y ].
+						"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
+						This means that the end point is only added for the last fragment of the contour, and not for each one of them."
 						startX _ endX.
 						startY _ endY.	
 					].
@@ -2709,7 +2879,8 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 					self updateEdgeCountWPAtX: endX y: endY.
 					"Similar effect to ensureClosePath in #finishPath:,
 					but assume the TrueType definition is essentially right, and there might only be a rounding error.
-					So, don't draw a line, but just (possibly) correct edgeCountsWP"
+					So, don't draw a line, but just (possibly) correct edgeCountsWP. The possibility of rounding error is most likely zero.
+					Anyway, this is cheap."
 					self updateEdgeCountWPAtX: contourStartX y: contourStartY.
 				].
 				nextGlyphX _ nextGlyphX + advanceWidth.
@@ -3210,7 +3381,7 @@ blendStrokeOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphId
 				alphaMaskWP at: pixelIndex put: 0.
 				self blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]].! !
 
-!VectorEnginePlugin class methodsFor: 'translation' stamp: 'jmv 5/28/2021 14:55:11'!
+!VectorEnginePlugin class methodsFor: 'translation' stamp: 'jmv 6/11/2021 12:06:15'!
 declareCVarsIn: aCCodeGenerator
 
 
@@ -3222,5 +3393,5 @@ declareCVarsIn: aCCodeGenerator
 	aCCodeGenerator var: 'alphaMask' type: 'uint32_t *'.
 	aCCodeGenerator var: 'alphaMaskWP' type: 'uint8_t *'.
 	aCCodeGenerator var: 'currentMorphId' type: 'uint32_t'.
-	#(antiAliasingWidth subPixelDelta hopsPerPixel strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA txA11 txA12 txA13 txA21 txA22 txA23 auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared spanLeft spanTop spanRight spanBottom) do: [ :varName |
+	#(antiAliasingWidth subPixelDelta hop strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA txA11 txA12 txA13 txA21 txA22 txA23 auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared spanLeft spanTop spanRight spanBottom) do: [ :varName |
 		aCCodeGenerator var: varName type: 'float' ].! !

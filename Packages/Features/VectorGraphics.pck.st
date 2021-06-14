@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4635] on 8 June 2021 at 12:41:57 pm'!
+'From Cuis 5.0 [latest update: #4636] on 14 June 2021 at 11:35:46 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 239!
+!provides: 'VectorGraphics' 1 241!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -110,7 +110,7 @@ VectorCanvas class
 
 !classDefinition: #VectorGraphicsEngine category: 'VectorGraphics-Kernel'!
 Object subclass: #VectorGraphicsEngine
-	instanceVariableNames: 'canvas targetForm morphIds targetWidth targetHeight antiAliasingWidth geometryTransformation strokeWidth currentMorphId currentClipsSubmorphs clipCurrentMorph morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hopsPerPixel firstX firstY currentX currentY'
+	instanceVariableNames: 'canvas targetForm morphIds targetWidth targetHeight antiAliasingWidth geometryTransformation strokeWidth currentMorphId currentClipsSubmorphs clipCurrentMorph morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hop firstX firstY currentX currentY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -2345,13 +2345,13 @@ drawUpIcon
 
 self drawCloseIcon! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:53:59'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/13/2021 18:06:10'!
 ellipseCenter: center radius: radiusPointOrNumber borderWidth: morphStrokeWidth borderColor: strokeColor fillColor: fillColor
 
 	| radiusPoint |
 	radiusPoint _ radiusPointOrNumber asPoint.
 	self strokeWidth: morphStrokeWidth color: strokeColor fillColor: fillColor do: [
-		self ellipseCenter: center x radius: radiusPoint ]! !
+		self ellipseCenter: center radius: radiusPoint ]! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
 fillRectangle: aRectangle color: aColor
@@ -2968,7 +2968,7 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/8/2021 12:40:26'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:14'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
 
@@ -2999,11 +2999,11 @@ basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureC
 			self pvtStrokeWidth: aStrokeWidth.
 			self pvtStrokeColor: aStrokeColor ].
 	self pvtFillColor: nil.
-	self pvtHopsPerPixel: 3.									"See #experimentHopsPerPixel2"
+	self pvtHopLength: 0.5.									"See #experimentHopsPerPixel2"
 
 	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/27/2021 11:57:05'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:32'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -3026,13 +3026,13 @@ basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	aStrokeWidth < antiAliasingWidth
 		ifTrue: [
 			"Strokes are really thin, but strokeColor is same as fillColor, so there's no problem sampling them."
-			self pvtHopsPerPixel: 3 ]								"See #experimentHopsPerPixel1"
+			self pvtHopLength: 0.5 ]								"See #experimentHopsPerPixel1"
 		ifFalse: [
-			self pvtHopsPerPixel: 3 ].								"See #experimentHopsPerPixel2."
+			self pvtHopLength: 0.5 ].								"See #experimentHopsPerPixel2."
 
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/26/2021 17:48:43'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:45'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -3040,7 +3040,7 @@ fillColor: aFillColor do: pathCommandsBlock
 	self pvtStrokeWidth: 0.0.
 	self pvtStrokeColor: nil.
 	self pvtFillColor: aFillColor.
-	self pvtHopsPerPixel: 3.										"See #experimentHopsPerPixel3"
+	self pvtHopLength: 0.5.										"See #experimentHopsPerPixel3"
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
 !VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:45:04'!
@@ -3731,9 +3731,9 @@ initializePath
 !VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:34'!
 newTrajectoryFragment! !
 
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 3/5/2021 14:57:59'!
-pvtHopsPerPixel: aNumber
-	hopsPerPixel _ aNumber! !
+!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 6/11/2021 11:57:00'!
+pvtHopLength: aFloat
+	hop _ aFloat! !
 
 !VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 4/9/2021 12:47:04'!
 pvtSetForm: aForm
@@ -3911,7 +3911,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/27/2021 11:47:27'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:07:55'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -3924,7 +3924,7 @@ experimentHopsPerPixel1
 	f1 fillColor: Color white.
 	engine _ self onForm: f1.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
-		engine instVarNamed: 'hopsPerPixel' put: hops1.
+		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
 			moveTo: 20@10;
 			lineTo: 210@15; lineTo: 20@20;
@@ -3936,7 +3936,7 @@ experimentHopsPerPixel1
 	f2 fillColor: Color white.
 	engine _ self onForm: f2.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
-		engine instVarNamed: 'hopsPerPixel' put: hops2.
+		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
 			moveTo: 20@10;
 			lineTo: 210@15; lineTo: 20@20;
@@ -3952,7 +3952,7 @@ experimentHopsPerPixel1
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/27/2021 11:59:35'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:08:05'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -3967,7 +3967,7 @@ experimentHopsPerPixel2
 	f1 fillColor: Color white.
 	engine _ self onForm: f1.
 	engine strokeWidth: strokeWidth color: Color black do: [
-		engine instVarNamed: 'hopsPerPixel' put: hops1.
+		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
 			moveTo: 50@30;
 			lineTo: 190@135; lineTo: 50 @50;
@@ -3979,7 +3979,7 @@ experimentHopsPerPixel2
 	f2 fillColor: Color white.
 	engine _ self onForm: f2.
 	engine strokeWidth: strokeWidth color: Color black do: [
-		engine instVarNamed: 'hopsPerPixel' put: hops2.
+		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
 			moveTo: 50@30;
 			lineTo: 190@135; lineTo: 50@50;
@@ -3995,7 +3995,7 @@ Feature require: 'LinearAlgebra'.
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/27/2021 11:46:07'!
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:08:11'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -4008,7 +4008,7 @@ experimentHopsPerPixel3
 	f1 fillColor: Color white.
 	engine _ self onForm: f1.
 	engine fillColor: Color black do: [
-		engine instVarNamed: 'hopsPerPixel' put: hops1.
+		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
 			moveTo: 20@10;
 			lineTo: 210@15; lineTo: 20@20;
@@ -4020,7 +4020,7 @@ experimentHopsPerPixel3
 	f2 fillColor: Color white.
 	engine _ self onForm: f2.
 	engine fillColor: Color black do: [
-		engine instVarNamed: 'hopsPerPixel' put: hops2.
+		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
 			moveTo: 20@10;
 			lineTo: 210@15; lineTo: 20@20;
@@ -4045,7 +4045,7 @@ boundsFinderFor: aForm
 defaultAntiAliasingWidth
 	self subclassResponsibility! !
 
-!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 16:35:11'!
+!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 6/12/2021 09:58:48'!
 onForm: aForm
 	"On a non-abstract class, answer an instance of receiver.
 	On an abstract class, pick a subclass."
@@ -4061,7 +4061,7 @@ onForm: aForm
 		ifFalse: [VectorEngineWholePixel])
 			new initializeOnForm: aForm! !
 
-!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 12:44:54'!
+!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 6/12/2021 09:58:54'!
 subPixelAntiAliasingOnForm: aForm
 
 	^ (VectorEngineWithPlugin isPluginAvailable
@@ -4086,7 +4086,7 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	clientStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
 	^ self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock! !
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 5/31/2021 19:13:23'!
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 6/11/2021 11:58:59'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -4094,7 +4094,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 	dy _ geometryTransformation externalizeDelta: 0@ry.
 	trx _ dx r.
 	try _ dy r.
-	hops _ ((trx max: try) * sweepAngle abs * hopsPerPixel) truncated + 1.
+	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 1.
 	d _ sweepAngle / hops.
 	center _ geometryTransformation externalizePosition: cx@cy.
 	tcx _ center x.
@@ -4271,7 +4271,7 @@ currentMorph: aMorph
 subPixelDelta
 	^subPixelDelta! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/31/2021 19:15:06'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/11/2021 11:59:12'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -4279,7 +4279,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 	dy _ geometryTransformation externalizeDelta: 0@ry.
 	trx _ dx r.
 	try _ dy r.
-	hops _ ((trx max: try) * sweepAngle abs * hopsPerPixel) truncated + 1.
+	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 1.
 	d _ sweepAngle / hops.
 	center _ geometryTransformation externalizePosition: cx@cy.
 	tcx _ center x.
@@ -4299,7 +4299,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 			self updateEdgeCountAtX: x y: y ].
 		angle _ angle + d. ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:04:09'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/11/2021 11:59:21'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| p txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
@@ -4310,7 +4310,7 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	"Factors found by trial and error. Seems to honor hopsPerPixel in the worst case."
 	dx _ ((txControl1-txFrom) abs max: (txTo-txControl2) abs)*3 max: (txControl2-txControl1) abs*1.5.
 	dy _ ((tyControl1-tyFrom) abs max: (tyTo-tyControl2) abs)*3 max: (tyControl2-tyControl1) abs*1.5.
-	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
+	hops _ ((dx max: dy) / hop) truncated + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ txFrom min: txTo.
@@ -4341,7 +4341,7 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:15'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/11/2021 11:59:28'!
 lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	| p txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
@@ -4349,7 +4349,7 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
 	dx _ txTo - txFrom.
 	dy _ tyTo - tyFrom.
-	hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
+	hops _ ((dx abs max: dy abs) / hop) truncated + 1.
 	incrementX _ dx *1.0 / hops.
 	incrementY _ dy *1.0 / hops.
 
@@ -4370,17 +4370,33 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:37'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/12/2021 09:44:53'!
 quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
-	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y |
+	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y t0 x0 y0 |
+
+	"If control point is bogus, just draw a line"
+	(xControl = xTo and: [ yControl = yTo ]) ifTrue: [
+		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+	(xControl = xFrom and: [ yControl = yFrom ]) ifTrue: [
+		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+
 	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
 	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
 	p _ geometryTransformation externalizePosition: xControl@yControl. txControl _ p x. tyControl _ p y.
-	"Honor hopsPerPixel in the worst case."
-	dx _ (txControl-txFrom) abs max: (txTo-txControl) abs.
-	dy _ (tyControl-tyFrom) abs max: (tyTo-tyControl) abs.
-	hops _ ((dx max: dy) * hopsPerPixel * 2) truncated + 1.
+
+	dx _ (txTo-txFrom) abs.
+	dx2 _ (txControl-txFrom) abs.
+	dy _ (tyTo-tyFrom) abs.
+	dy2 _ (tyControl-tyFrom) abs.
+
+	"If almost a vertical line, just draw a line. (Ignoring control point)"
+	(dx < 1.0 and: [dx2 < 1.0]) ifTrue: [
+		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+
+	"If almost an horizontal line, just draw a line. (Ignoring control point)"
+	(dy < 1.0 and: [dy2 < 1.0]) ifTrue: [
+		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ txFrom min: txTo.
@@ -4392,32 +4408,46 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
 	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
+	"Case t = 0.0"
+	x _ txFrom.
+	y _ tyFrom.
+	self updateAlphasForX: x y: y.
+	fillColor notNil ifTrue: [
+		self updateEdgeCountAtX: x y: y ].
+
+	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+	increment _ 0.2.
+	"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+	In these cases, a larger initial estimation avoids the problem."
+	(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+		increment _ 0.5 ].
 	t _ 0.0.
-	increment _ 1.0 / hops.
-	hops timesRepeat: [
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT.
-		f2 _ 2.0 * oneLessT * t.
-		f3 _ t * t.
+	[
+		t0 _ t. x0 _ x. y0 _ y.
+		"Compute next point"
+		t _ t0 + increment. oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
 		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		"Now adjust the increment to aim at the required hop length, and recompute next point."
+		increment _ increment / ((x-x0)@(y-y0)) r * hop.
+		t _ t0 + increment. oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		t < 1.0 ]
+	whileTrue: [
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
-			self updateEdgeCountAtX: x y: y ].
-		t _ t + increment. ].
+			self updateEdgeCountAtX: x y: y ]].
+
+	"Case t= 1.0"
 	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 5/18/2021 10:06:38'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/12/2021 20:31:30'!
 updateAlphasForX: x y: y
-
-	"slight optimization possible when we know width = 0... perhaps implement:
-		-we know palpha is never 127
-		- we know distanceToEdge is always > erodedHalfWidth.
-	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
-	Mas importante:
-		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
 	| distanceToAxisSquared alpha t b l r alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
 
 	"Compute affected rect. Honor clipRect"
@@ -5023,7 +5053,7 @@ subPixelDelta
 	"No subpixel stuff in this class"
 	^0.0! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/31/2021 19:15:38'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/11/2021 11:59:39'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -5031,7 +5061,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 	dy _ geometryTransformation externalizeDelta: 0@ry.
 	trx _ dx r.
 	try _ dy r.
-	hops _ ((trx max: try) * sweepAngle abs * hopsPerPixel) truncated + 1.
+	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 1.
 	d _ sweepAngle / hops.
 	center _ geometryTransformation externalizePosition: cx@cy.
 	tcx _ center x.
@@ -5051,7 +5081,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 			self updateEdgeCountAtX: x y: y ].
 		angle _ angle + d. ].! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:04:01'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/11/2021 11:59:44'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| p txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
@@ -5062,7 +5092,7 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	"Factors found by trial and error. Seems to honor hopsPerPixel in the worst case."
 	dx _ ((txControl1-txFrom) abs max: (txTo-txControl2) abs)*3 max: (txControl2-txControl1) abs*1.5.
 	dy _ ((tyControl1-tyFrom) abs max: (tyTo-tyControl2) abs)*3 max: (tyControl2-tyControl1) abs*1.5.
-	hops _ ((dx max: dy) * hopsPerPixel) truncated + 1.
+	hops _ ((dx max: dy) / hop) truncated + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ txFrom min: txTo.
@@ -5093,7 +5123,7 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:21'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/11/2021 11:59:51'!
 lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	| p txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
@@ -5101,7 +5131,7 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
 	dx _ txTo - txFrom.
 	dy _ tyTo - tyFrom.
-	hops _ ((dx abs max: dy abs) * hopsPerPixel) truncated + 1.
+	hops _ ((dx abs max: dy abs) / hop) truncated + 1.
 	incrementX _ dx *1.0 / hops.
 	incrementY _ dy *1.0 / hops.
 
@@ -5122,17 +5152,33 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:41'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 6/12/2021 09:44:44'!
 quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
-	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y |
+	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y t0 x0 y0 |
+
+	"If control point is bogus, just draw a line"
+	(xControl = xTo and: [ yControl = yTo ]) ifTrue: [
+		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+	(xControl = xFrom and: [ yControl = yFrom ]) ifTrue: [
+		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+
 	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
 	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
 	p _ geometryTransformation externalizePosition: xControl@yControl. txControl _ p x. tyControl _ p y.
-	"Honor hopsPerPixel in the worst case."
-	dx _ (txControl-txFrom) abs max: (txTo-txControl) abs.
-	dy _ (tyControl-tyFrom) abs max: (tyTo-tyControl) abs.
-	hops _ ((dx max: dy) * hopsPerPixel * 2) truncated + 1.
+
+	dx _ (txTo-txFrom) abs.
+	dx2 _ (txControl-txFrom) abs.
+	dy _ (tyTo-tyFrom) abs.
+	dy2 _ (tyControl-tyFrom) abs.
+
+	"If almost a vertical line, just draw a line. (Ignoring control point)"
+	(dx < 1.0 and: [dx2 < 1.0]) ifTrue: [
+		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
+
+	"If almost an horizontal line, just draw a line. (Ignoring control point)"
+	(dy < 1.0 and: [dy2 < 1.0]) ifTrue: [
+		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 	xMinEnd _ txFrom min: txTo.
@@ -5144,32 +5190,46 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
 	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
+	"Case t = 0.0"
+	x _ txFrom.
+	y _ tyFrom.
+	self updateAlphasForX: x y: y.
+	fillColor notNil ifTrue: [
+		self updateEdgeCountAtX: x y: y ].
+
+	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
+	increment _ 0.2.
+	"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
+	In these cases, a larger initial estimation avoids the problem."
+	(dy < 2.0 and: [dx < 2.0]) ifTrue: [
+		increment _ 0.5 ].
 	t _ 0.0.
-	increment _ 1.0 / hops.
-	hops timesRepeat: [
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT.
-		f2 _ 2.0 * oneLessT * t.
-		f3 _ t * t.
+	[
+		t0 _ t. x0 _ x. y0 _ y.
+		"Compute next point"
+		t _ t0 + increment. oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
 		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		"Now adjust the increment to aim at the required hop length, and recompute next point."
+		increment _ increment / ((x-x0)@(y-y0)) r * hop.
+		t _ t0 + increment. oneLessT _ 1.0 - t.
+		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		t < 1.0 ]
+	whileTrue: [
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
-			self updateEdgeCountAtX: x y: y ].
-		t _ t + increment. ].
+			self updateEdgeCountAtX: x y: y ]].
+
+	"Case t= 1.0"
 	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: txTo y: tyTo ].! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 5/18/2021 10:05:58'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/12/2021 20:31:24'!
 updateAlphasForX: x y: y
-
-	"slight optimization possible when we know width = 0... perhaps implement:
-		-we know palpha is never 127
-		- we know distanceToEdge is always > erodedHalfWidth.
-	In smalltalk, performance icrease 1.5%. Perhaps in c/asm it is more than that...
-	Mas importante:
-		Cuando width es medio grande, entonces dibujar la bolita rellena de entrada es importante... en los casos en que no necesito calcular la distancia"
 	| distanceToAxisSquared alpha t b l r prevAlpha dx dy pixelIndex |
 
 	"Compute affected rect. Honor clipRect."
@@ -5758,7 +5818,7 @@ finishPath: ensureClosePath
 			ifFalse: [
 				self primBlendStrokeOnlyLeft: spanLeft top: spanTop right: spanRight bottom: spanBottom targetBits: targetForm bits morphIds: morphIds alphaMask: alphaMask ]].! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 5/28/2021 15:38:39'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 6/11/2021 12:05:47'!
 initializePath
 
 	super initializePath.
@@ -5772,7 +5832,7 @@ initializePath
 		alphaMask: alphaMask
 		targetWidth: targetWidth
 		targetHeight: targetHeight.
-	self primAntiAliasingWidth: antiAliasingWidth asFloat subPixelDelta: subPixelDelta asFloat hopsPerPixel: hopsPerPixel asFloat.
+	self primAntiAliasingWidth: antiAliasingWidth asFloat subPixelDelta: subPixelDelta asFloat hopLength: hop asFloat.
 	self primClipLeft: clipLeft clipTop: clipTop clipRight: clipRight clipBottom: clipBottom.
 	self primCurrentMorphId: currentMorphId currentClipsSubmorphs: currentClipsSubmorphs.
 	self primClipCurrentMorph: clipCurrentMorph morphIds: morphIds.
@@ -5810,9 +5870,9 @@ pvtStrokeWidth: aNumber
 	super pvtStrokeWidth: aNumber asFloat.
 	self primStrokeWidth: strokeWidth.! !
 
-!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 5/28/2021 15:38:11'!
-primAntiAliasingWidth: aNumber subPixelDelta: otherFloat hopsPerPixel: anotherFloat
-	<primitive: 'primAntiAliasingWidthsubPixelDeltaHopsPerPixel' module: 'VectorEnginePlugin'>
+!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 6/11/2021 12:05:33'!
+primAntiAliasingWidth: aNumber subPixelDelta: otherFloat hopLength: anotherFloat
+	<primitive: 'primAntiAliasingWidthsubPixelDeltaHopLength' module: 'VectorEnginePlugin'>
 
 	self primitiveFailed! !
 
@@ -5916,7 +5976,7 @@ primStrokeWidth: aNumber
 
 	self primitiveFailed! !
 
-!VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 5/29/2021 16:59:17'!
+!VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 6/12/2021 11:32:56'!
 isPluginAvailable
 	"
 	VectorEngineWithPlugin isPluginAvailable
@@ -5929,7 +5989,7 @@ isPluginAvailable
 	"
 	| pluginApiVersion |
 	pluginApiVersion _ self pluginApiVersion.
-	^ pluginApiVersion between: 3 and: 99! !
+	^ pluginApiVersion between: 4 and: 99! !
 
 !VectorEngineWithPlugin class methodsFor: 'class initialization' stamp: 'jmv 5/18/2021 12:25:12'!
 initialize
@@ -6616,7 +6676,7 @@ quadraticBeziersDo: aBlock
 			ifFalse: [
 				aBlock value: firstEndPoint value: firstEndPoint ]]! !
 
-!TTContourConstruction methodsFor: 'primitive format' stamp: 'jmv 5/10/2020 11:08:11'!
+!TTContourConstruction methodsFor: 'primitive format' stamp: 'jmv 6/14/2021 10:18:57'!
 addContourDataTo: stream tx: aGeometryTransformationOrNil
 	| bezierCount firstPoint cp ep prevEndPoint cpr epr |
 	self isEmpty ifTrue: [
@@ -6641,9 +6701,16 @@ addContourDataTo: stream tx: aGeometryTransformationOrNil
 			cp _ aGeometryTransformationOrNil transform: cp ].
 		epr _ ep - prevEndPoint.
 		cpr _ cp - prevEndPoint.
-		stream nextPut: epr x; nextPut: epr y.
-		stream nextPut: cpr x; nextPut: cpr y.
-		prevEndPoint _ ep ].! !
+		"Make control point distict from start and end points for the benefit of VectorEnginePlugin"
+		(cpr = `0.0@0.0` or: [ cpr = epr ]) ifTrue: [
+			cpr _ epr * 0.5 ].
+		"If control point still equals start, it means all three points are the same. Skip this null Bezier.
+		This is important. Rasterization code uses hop length for normalization, and this case would
+		result in a division by zero, possibly crashing the system."
+		cpr = `0.0@0.0` ifFalse: [
+			stream nextPut: epr x; nextPut: epr y.
+			stream nextPut: cpr x; nextPut: cpr y.
+			prevEndPoint _ ep ]].! !
 
 !TTContourConstruction class methodsFor: 'instance creation'!
 on: points
