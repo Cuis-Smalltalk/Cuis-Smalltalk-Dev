@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4636] on 14 June 2021 at 11:35:46 am'!
+'From Cuis 5.0 [latest update: #4638] on 17 June 2021 at 1:08:02 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 241!
+!provides: 'VectorGraphics' 1 242!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -5976,20 +5976,15 @@ primStrokeWidth: aNumber
 
 	self primitiveFailed! !
 
-!VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 6/12/2021 11:32:56'!
+!VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 6/17/2021 11:21:28'!
 isPluginAvailable
 	"
 	VectorEngineWithPlugin isPluginAvailable
-	Semantic version numbering in a single SmallInteger:
-	Version numbers 1 to 99 are backwards compatible. When incompatibility is needed. jump straight to 101.
-	Version numbers 101 to 199 are backwards compatible. When incompatibility is needed. jump straight to 201.
-	And so.
-	Note: this is Api version, not package version. If no Api change, Api version doesn't change, regardless of changes in the Plugin or Smalltalk code.
-	See #pluginApiVersion (in this class, and in VectorEnginePlugin)
+	Check if services provided by VM plugin match this class requirements.
 	"
 	| pluginApiVersion |
 	pluginApiVersion _ self pluginApiVersion.
-	^ pluginApiVersion between: 4 and: 99! !
+	^ pluginApiVersion = 4! !
 
 !VectorEngineWithPlugin class methodsFor: 'class initialization' stamp: 'jmv 5/18/2021 12:25:12'!
 initialize
