@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4638] on 17 June 2021 at 1:08:02 pm'!
+'From Cuis 5.0 [latest update: #4640] on 18 June 2021 at 5:04:14 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 242!
+!provides: 'VectorGraphics' 1 243!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -190,7 +190,7 @@ PathCommand class
 
 !classDefinition: #PathArcCommand category: 'VectorGraphics-PathCommands'!
 PathCommand subclass: #PathArcCommand
-	instanceVariableNames: 'rs xAxisRotations toPoints doLargerArcs useIncreasingAngless'
+	instanceVariableNames: 'rs xAxisRotations toPoints doLargerArcs useIncreasingAngles'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-PathCommands'!
@@ -1404,7 +1404,7 @@ strokeWidth: strokeWidth color: aStrokeColor fillColor: aFillColor do: pathComma
 		fillColor: aFillColor
 		do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 14:59:38'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 6/17/2021 19:46:27'!
 arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorCanvas onForm: Display)
@@ -1425,7 +1425,8 @@ arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLarge
 Display forceToScreen
 "
 
-	engine arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
+	engine arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles.
+	currentPoint _ aPoint.! !
 
 !VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 15:07:36'!
 circleCenter: aPoint radius: mr
@@ -2085,8 +2086,8 @@ Display forceToScreen
 		quadraticBezierTo: currentPoint + aPoint
 		control: currentPoint + controlPoint! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 13:29:41'!
-multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 6/18/2021 11:56:58'!
+multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngles: useIncreasingAngles
 
 	| to r |
 	coordinatesAreRelative
@@ -2094,12 +2095,12 @@ multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints:
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				r _ rs at: i.
-				self arcTo: to radius: r angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngless at: i) ]]
+				self arcTo: to radius: r angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngles at: i) ]]
 		ifTrue: [
 			1 to: toPoints size do: [ :i |
 				to _ toPoints at: i.
 				r _ rs at: i.
-				self rel_ArcTo: to radius: r angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngless at: i) ]]! !
+				self rel_ArcTo: to radius: r angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngles at: i) ]]! !
 
 !VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/18/2021 10:09:24'!
 multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points
@@ -3003,13 +3004,13 @@ basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureC
 
 	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:32'!
+!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/17/2021 17:29:48'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
 	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
 	aStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
-	(aFillColor isNil or: [ aFillColor alpha = 0.0]) ifTrue: [ ^ self strokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ].
+	(aFillColor isNil or: [ aFillColor alpha = 0.0]) ifTrue: [ ^ self basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: false ].
 
 	"If stroke is thinner than antiAliasingWidth, we need to make it wider and less opaque.
 	But this requires doing fill first and the blending stroke over it, or else fill gets eroded by widened stroke.
@@ -4266,6 +4267,10 @@ currentMorph: aMorph
 		ifNotNil: [
 			currentMorphId _ aMorph morphId.
 			currentClipsSubmorphs _ aMorph clipsSubmorphsReally ].! !
+
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 6/18/2021 15:28:29'!
+disableSubPixelSampling
+	subPixelDelta _ 0.0! !
 
 !VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:30:40'!
 subPixelDelta
@@ -5635,6 +5640,10 @@ currentMorph: aMorph
 			currentMorphId _ aMorph morphId.
 			currentClipsSubmorphs _ aMorph clipsSubmorphsReally ].! !
 
+!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 6/18/2021 15:28:21'!
+disableSubPixelSampling
+	subPixelDelta _ 0.0! !
+
 !VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 12:46:23'!
 subPixelDelta
 	"Might be 0.0 if not doing sub pixel anti-aliasing (i.e. for WholePixel AA)"
@@ -6192,16 +6201,6 @@ buildFromStream: aStream in: parentToBe
 
 	coordinatesAreRelative _ aStream next isLowercase! !
 
-!PathCommand methodsFor: 'as yet unclassified' stamp: 'jmv 5/6/2011 22:18'!
-coordinatesAreRelative
-^coordinatesAreRelative! !
-
-!PathCommand methodsFor: 'private' stamp: 'jmv 5/11/2010 10:05'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	self subclassResponsibility! !
-
 !PathCommand methodsFor: 'drawing' stamp: 'jmv 11/9/2012 17:09'!
 runOn: aCanvas
 
@@ -6231,44 +6230,35 @@ svgName
 
 	^self subclassResponsibility! !
 
-!PathArcCommand methodsFor: 'building' stamp: 'jmv 6/14/2010 10:41'!
+!PathArcCommand methodsFor: 'building' stamp: 'jmv 6/18/2021 11:55:45'!
 buildFrom: commandChar stream: aStream
 
-	| rx ry xAxisRotation doLargerArc useIncreasingAngles x y |
+	| rx ry xAxisRotation doLargerArc useIncreasingAngle x y |
 	super buildFrom: commandChar stream: aStream.
 	rs _ OrderedCollection new.
 	xAxisRotations _ OrderedCollection new.
 	toPoints _ OrderedCollection new.
 	doLargerArcs _ OrderedCollection new.
-	useIncreasingAngless _ OrderedCollection new.
+	useIncreasingAngles _ OrderedCollection new.
 	[
 		rx _ aStream nextNumber.
 		ry _ aStream nextNumber.
 		xAxisRotation _ aStream nextNumber.
 		doLargerArc _ (aStream nextNumber = 0) not.
-		useIncreasingAngles _ (aStream nextNumber = 0) not.
+		useIncreasingAngle _ (aStream nextNumber = 0) not.
 		x _ aStream nextNumber.
 		y _ aStream nextNumber.
 		y notNil ] whileTrue: [
 			rs add: rx@ry.
 			xAxisRotations add: xAxisRotation degreesToRadians.
 			doLargerArcs add: doLargerArc.
-			useIncreasingAngless add: useIncreasingAngles.
+			useIncreasingAngles add: useIncreasingAngle.
 			toPoints add: x@y ]! !
 
-!PathArcCommand methodsFor: 'private' stamp: 'jmv 6/15/2010 15:30'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-"si los puntos son relativos, tirar una excepcion...
-Y completar los que falten!!"
-self flag: #revisarM3.
-	toPoints do: aBlock! !
-
-!PathArcCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:07:26'!
+!PathArcCommand methodsFor: 'drawing' stamp: 'jmv 6/18/2021 11:57:04'!
 runOn: aCanvas
 
-	aCanvas multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngless: useIncreasingAngless! !
+	aCanvas multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngles: useIncreasingAngles! !
 
 !PathArcCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:07'!
 svgName
@@ -6279,10 +6269,6 @@ svgName
 buildFrom: commandChar stream: aStream
 
 	super buildFrom: commandChar stream: aStream! !
-
-!PathCloseCommand methodsFor: 'private' stamp: 'jmv 5/11/2010 10:05'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."! !
 
 !PathCloseCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:07:07'!
 runOn: aCanvas
@@ -6314,12 +6300,6 @@ buildFrom: commandChar stream: aStream
 			control1Points add: x1@y1.
 			control2Points add: x2@y2 ]! !
 
-!PathCurveToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 09:57'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	toPoints do: aBlock! !
-
 !PathCurveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:51'!
 runOn: aCanvas
 
@@ -6346,12 +6326,6 @@ buildFrom: commandChar stream: aStream
 			toPoints add: x@y.
 			control2Points add: x2@y2 ]! !
 
-!PathCurveToSmoothCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:01'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	toPoints do: aBlock! !
-
 !PathCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:33'!
 runOn: aCanvas
 
@@ -6372,13 +6346,6 @@ buildFrom: commandChar stream: aStream
 		py _ aStream nextNumber.
 		py notNil ] whileTrue:
 			[ strm nextPut: px@py ]]! !
-
-!PathLineToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 09:32'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-	"Atencion: Si son relativas todo esto esta mal... Igual, lo que quiero es reimplementar todo"
-
-	points do: aBlock! !
 
 !PathLineToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:05:08'!
 runOn: aCanvas
@@ -6451,12 +6418,6 @@ toRelativePoint: endPoint
 	coordinatesAreRelative _ true.
 	points _ {endPoint}! !
 
-!PathMoveToCommand methodsFor: 'private' stamp: 'jmv 6/11/2010 14:34'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	points do: aBlock! !
-
 !PathMoveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:47'!
 runOn: aCanvas
 
@@ -6495,12 +6456,6 @@ toRelativePoints: endPoints controlPoints: aControlPoints
 	toPoints _ endPoints.
 	controlPoints _ aControlPoints! !
 
-!PathQuadraticCurveToCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:14'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	toPoints do: aBlock! !
-
 !PathQuadraticCurveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:23'!
 runOn: aCanvas
 
@@ -6522,12 +6477,6 @@ buildFrom: commandChar stream: aStream
 		y _ aStream nextNumber.
 		y notNil ] whileTrue: [
 			toPoints add: x@y]! !
-
-!PathQuadraticCurveToSmoothCommand methodsFor: 'private' stamp: 'jmv 6/14/2010 10:17'!
-privatePointsDo: aBlock
-	"evaluate aBlock with the x and y coordinates for our defining points."
-
-	toPoints do: aBlock! !
 
 !PathQuadraticCurveToSmoothCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:02:58'!
 runOn: aCanvas
@@ -8274,27 +8223,41 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 5/15/2021 20:47:47'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 6/18/2021 15:37:58'!
 findBounds
-	| auxCanvas |
+	"Find and answer full bounds in whatever owner.
+	These might not equal #displayFullBounds at all!!"
+	| w c answer prevOwner prevDisplayBounds |
 
 	self requiresVectorCanvas ifFalse: [
 		^self morphPosition extent: self morphExtent ].
 
-	auxCanvas _ VectorCanvas onForm: Display.
-	auxCanvas updatingMorphBoundsDo: [
-		auxCanvas fullUpdateBounds: self ].
+	w _ WorldMorph new.
+	w setCanvas.
+	c _ w canvas.
+	"Hack owner so #displayBoundsSetFrom: will update privateDisplayBounds"
+	prevOwner _ owner.
+	prevDisplayBounds _ privateDisplayBounds.
+	owner _ w.
+	c updatingMorphBoundsDo: [
+		c fullUpdateBounds: self ].
+	answer _ self displayFullBounds.
+	"Reset owner and privateDisplayBounds so no one finds out what we've just done!!"
+	owner _ prevOwner.
+	privateDisplayBounds _ prevDisplayBounds.
+	^answer! !
 
-	^self displayFullBounds! !
-
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 4/8/2021 19:23:18'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 6/18/2021 16:03:54'!
 fitInto: aRectangle
 	"Scale and position ourselves in such way that our displayFullBounds are in aRectangle."
 
 	| currentBounds scale slackForAntiAliasing |
 
-	slackForAntiAliasing _ 2.
 	currentBounds _ self findBounds.
+	currentBounds extent >= `10@10` ifFalse: [
+		self scaleBy: 10.
+		^self fitInto: aRectangle ].
+	slackForAntiAliasing _ 2.
 	scale _ (aRectangle width-slackForAntiAliasing / (currentBounds width-slackForAntiAliasing))
 		min: (aRectangle height-slackForAntiAliasing / (currentBounds height-slackForAntiAliasing)).
 	scale _ scale asFloat.
@@ -8303,9 +8266,9 @@ fitInto: aRectangle
 	currentBounds _ self findBounds.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 4/8/2021 17:20:16'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 6/18/2021 15:35:06'!
 imageForm: depth
-	| wasVisible oldLocation bounds  answer |
+	| wasVisible oldLocation bounds  answer canvas |
 
 	self requiresVectorCanvas ifFalse: [
 		| auxCanvas |
@@ -8319,12 +8282,17 @@ imageForm: depth
 	bounds _ self findBounds.
 	self location: (MorphicTranslation withTranslation: bounds origin negated).
 	answer _ Form extent: bounds extent depth: 32.
-answer fillColor: Color random.
-	(VectorCanvas onForm: answer) fullDraw: self.
-
+	"Ask for a Canvas with subpixels so it can also handle translucent target"
+	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
+	"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
+	canvas engine disableSubPixelSampling.
+	depth = 32 ifFalse: [
+		"Only 32 bpp can hold translucent anti aliasing over transparent background"
+		answer fillColor: Color veryLightGray ].
+	canvas fullDraw: self.
 	self visible: wasVisible.
 	self location: oldLocation.
-	^answer! !
+	^answer asFormOfDepth: depth! !
 
 !MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:31:03'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
