@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4636] on 14 June 2021 at 11:35:51 am'!
+'From Cuis 5.0 [latest update: #4648] on 28 June 2021 at 6:42:56 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 21!
+!provides: 'VectorEnginePlugin' 1 22!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -1338,10 +1338,9 @@ pathSequence: aFloat32Array size: size edgeCounts: otherWordArray alphaMask: ano
 				]}
 		otherwise: [ ^self "failure"]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 5/27/2021 14:45:03'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:03'!
 blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
-
-	"Blends fill over background. Target translucency computed correctly.
+	"Blends fill color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha antiAliasGreenAlphaBitsShifted clippingAntiAliasBits clippingAntiAlias morphIdWord |
@@ -1467,8 +1466,10 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 5/27/2021 18:50:59'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:07'!
 blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray
+	"Blends fill color over background. Target translucency computed correctly.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 	| pixelIndex edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixelWord edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside antiAliasAlphasWord |
 	self
 		primitive: 'primBlendFillOnly'
@@ -1535,10 +1536,10 @@ blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWo
 					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 					antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 5/27/2021 18:38:48'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:19:51'!
 blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
-
-	"Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
+	"Blends stroke color and fill color over background.
+	Do an appropriate (anti aliased) gradient between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
@@ -1688,8 +1689,12 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 5/27/2021 18:51:10'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:19:45'!
 blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray
+	"Blends stroke color and fill color over background.
+	Do an appropriate (anti aliased) gradient between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
+	Target translucency computed correctly.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 	| pixelIndex edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixelWord edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside antiAliasAlphasWord |
 	self
 		primitive: 'primBlendStrokeAndFill'
@@ -1757,10 +1762,9 @@ blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds
 					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 					antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 5/27/2021 14:32:10'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:30'!
 blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
-
-	"Blends stroke over background. Target translucency computed correctly.
+	"Blends stroke color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits resultAlphaBits antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlphaR resultAlphaG resultAlphaB targetAlpha antiAliasGreenAlphaBitsShifted clippingAntiAliasBits clippingAntiAlias morphIdWord |
@@ -1881,8 +1885,10 @@ blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
 			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 5/27/2021 14:32:22'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:34'!
 blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray alphaMask: anotherWordArray
+	"Blends stroke color over background. Target translucency computed correctly.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 	| pixelIndex antiAliasAlphasWord |
 	self
 		primitive: 'primBlendStrokeOnly'
@@ -2960,10 +2966,11 @@ pathSequenceWP: aFloat32Array size: size edgeCounts: otherByteArray alphaMask: a
 				]}
 		otherwise: [ ^self "failure"]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 5/27/2021 14:55:41'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:18:38'!
 blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
-
-	"Blends fill over background. Target translucency computed correctly.
+	"Blends fill color over background.
+	WP: Whole pixel anti aliasing.
+	OT: Target ignored on input and set to opaque on output.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits antiAliasAlpha alpha unAlpha clippingAntiAliasBits clippingAntiAlias morphIdWord |
@@ -3034,11 +3041,14 @@ blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 
 		currentMorphId = 0 ifFalse: [
 			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
-			morphIds at: pixelIndex put: morphIdWord ]].
-! !
+			morphIds at: pixelIndex put: morphIdWord ]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 5/27/2021 19:19:37'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:18:43'!
 blendFillOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMask: anotherByteArray
+	"Blends fill color over background.
+	WP: Whole pixel anti aliasing.
+	OT: Target ignored on input and set to opaque on output.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 	| pixelIndex edgesUpToThisPixel edgesThisPixel antiAliasAlphaBits |
 	self
 		primitive: 'primBlendFillOnlyWPOT'
@@ -3076,11 +3086,12 @@ blendFillOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds:
 						alphaMaskWP at: pixelIndex put: 0.
 						self blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 5/27/2021 19:04:05'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:18:56'!
 blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
-	"Inside the shape: Do gradient between stroke and fill. Blend the result over background"
-	"Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
-	Target translucency computed correctly.
+	"Inside the shape: Do an appropriate (anti aliased) gradient between stoke color and fill color (or pick just stroke or just fill).
+	Blend this over background.
+	WP: Whole pixel anti aliasing.
+	OT: Target ignored on input and set to opaque on output.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits antiAliasAlpha antiAliasUnAlpha foreR foreG foreB alpha unAlpha clippingAntiAliasBits clippingAntiAlias morphIdWord |
@@ -3161,11 +3172,11 @@ blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBit
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 5/27/2021 19:08:32'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:19:03'!
 blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
-	"Outside the shape, but still in the stroke: Blend stroke over background"
-	"Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
-	Target translucency computed correctly.
+	"Outside the shape, but still in the stroke: Blend stroke color over background.
+	WP: Whole pixel anti aliasing.
+	OT: Target ignored on input and set to opaque on output.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits antiAliasAlpha foreR foreG foreB alpha unAlpha clippingAntiAliasBits clippingAntiAlias morphIdWord |
@@ -3246,8 +3257,13 @@ blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBi
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 5/27/2021 19:12:30'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:19:16'!
 blendStrokeAndFillWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMask: anotherByteArray
+	"Blends stroke color and fill color over background.
+	Do an appropriate (anti aliased) gradient between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
+	WP: Whole pixel anti aliasing.
+	OT: Target ignored on input and set to opaque on output.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 	| pixelIndex edgesUpToThisPixel edgesThisPixel antiAliasAlphaBits |
 	self
 		primitive: 'primBlendStrokeAndFillWPOT'
@@ -3283,10 +3299,11 @@ blendStrokeAndFillWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morp
 						alphaMaskWP at: pixelIndex put: 0.
 						antiAliasAlphaBits = 0 ifFalse: [self blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits]]]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 5/27/2021 14:36:01'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:19:21'!
 blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
-
-	"Blends stroke over background. Target translucency computed correctly.
+	"Blends stroke color over background.
+	WP: Whole pixel anti aliasing.
+	OT: Target ignored on input and set to opaque on output.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| targetWord resultR resultG resultB resultRBits resultGBits resultBBits antiAliasAlpha alpha unAlpha clippingAntiAliasBits clippingAntiAlias morphIdWord |
@@ -3360,8 +3377,12 @@ blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 5/27/2021 14:37:34'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:19:26'!
 blendStrokeOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray alphaMask: anotherByteArray
+	"Blends stroke color over background.
+	WP: Whole pixel anti aliasing.
+	OT: Target ignored on input and set to opaque on output.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 	| pixelIndex antiAliasAlphaBits |
 	self
 		primitive: 'primBlendStrokeOnlyWPOT'
