@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4640] on 18 June 2021 at 5:04:14 pm'!
+'From Cuis 5.0 [latest update: #4651] on 29 June 2021 at 5:31:43 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 243!
+!provides: 'VectorGraphics' 1 244!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -4680,10 +4680,13 @@ pvtStrokeWidth: aNumber
 	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
 	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs.! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:07:00'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:41:37'!
 blendFillOnly
+	"Blends fill color over background. Target translucency computed correctly.
+	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex |
+	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex antiAliasAlphasWord |
 	blendTop to: blendBottom do: [ :displayY |
 		edgesUpToThisPixelR _ 0.
 		edgesUpToThisPixelG _ 0.
@@ -4710,23 +4713,23 @@ blendFillOnly
 			isGreenInside _ edgesUpToThisPixelG ~= 0.
 			isBlueInside _ edgesUpToThisPixelB ~= 0.
 
-			self blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
+			antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
+			antiAliasAlphasWord ~= "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [
+				alphaMask at: pixelIndex put: 0 ].
+			(antiAliasAlphasWord ~= "16r00000000" #[16r00 16r00 16r00 16r00] or: [
+				isRedInside or: [ isGreenInside or: [ isBlueInside ]]]) ifTrue: [
+					"At least one subpixel inside the shape, or in the anti aliasing area"
+					self blendFillOnlyAt: pixelIndex
+						redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
+						antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-			alphaMask at: pixelIndex put: 0 ]].! !
-
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:57'!
-blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
-
-	"Blends fill over background. Target translucency computed correctly.
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:32:06'!
+blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
+	"Blends fill color over background. Target translucency computed correctly.
+	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlpha targetAlpha clippingAntiAlias |
-
-	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
-
-	antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [	"Not in the stroke"
-		(isRedInside or: [ isGreenInside or: [ isBlueInside ]]) ifFalse: [ 		"Not inside"
-			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
+	| targetWord resultR resultG resultB antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlpha targetAlpha clippingAntiAlias |
 
 	"In this method, antiAliasAlphas are not used to blend stroke, but fill. This means that in the inside of the shape, and away from the stroke, they must be 1.0 (not 0.0)."
 	antiAliasRedAlphaBits _ antiAliasAlphasWord at: 3.
@@ -4791,10 +4794,14 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:53'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:40:37'!
 blendStrokeAndFill
+	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
+	Target translucency computed correctly.
+	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex |
+	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex antiAliasAlphasWord |
 	blendTop to: blendBottom do: [ :displayY |
 		edgesUpToThisPixelR _ 0.
 		edgesUpToThisPixelG _ 0.
@@ -4821,23 +4828,24 @@ blendStrokeAndFill
 			isGreenInside _ edgesUpToThisPixelG ~= 0.
 			isBlueInside _ edgesUpToThisPixelB ~= 0.
 
-			self blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside.
+			antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
+			antiAliasAlphasWord ~= "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [
+				alphaMask at: pixelIndex put: 0 ].
+			(antiAliasAlphasWord ~= "16r00000000" #[16r00 16r00 16r00 16r00] or: [
+				isRedInside or: [ isGreenInside or: [ isBlueInside ]]]) ifTrue: [
+					"At least one subpixel in the stroke or inside the shape"
+					self blendStrokeAndFillAt: pixelIndex
+						redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
+						antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-			alphaMask at: pixelIndex put: 0 ]].! !
-
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:50'!
-blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
-
-	"Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:27:49'!
+blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
+	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
+	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB foreR foreG foreB targetAlpha resultAlpha clippingAntiAlias |
-
-	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
-	antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [
-		(isRedInside or: [ isGreenInside or: [ isBlueInside ]]) ifFalse: [
-			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
+	| targetWord resultR resultG resultB antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB foreR foreG foreB targetAlpha resultAlpha clippingAntiAlias |
 
 	antiAliasRedAlphaBits _ antiAliasAlphasWord at: 3.
 	antiAliasGreenAlphaBits _ antiAliasAlphasWord at: 2.
@@ -4920,30 +4928,30 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:45'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:39:05'!
 blendStrokeOnly
+	"Blends stroke color over background. Target translucency computed correctly.
+	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| pixelIndex |
+	| pixelIndex antiAliasAlphasWord |
 	blendTop to: blendBottom do: [ :displayY |
 		pixelIndex _ displayY * targetWidth + blendLeft.
 		blendLeft to: blendRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
+			antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
+			"At least one subpixel in the stroke."
+			antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifFalse: [
+				alphaMask at: pixelIndex put: 0.
+				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-			self blendStrokeOnlyAt: pixelIndex.
-
-			alphaMask at: pixelIndex put: 0 ]].! !
-
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/17/2021 13:49:45'!
-blendStrokeOnlyAt: pixelIndex
-
-	"Blends stroke over background. Target translucency computed correctly.
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:24:39'!
+blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
+	"Blends stroke color over background. Target translucency computed correctly.
+	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphasWord antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlpha targetAlpha clippingAntiAlias |
-
-	antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
-	antiAliasAlphasWord = "16r00000000" #[16r00 16r00 16r00 16r00] ifTrue: [
-		^self].	"Optimization: We are completely transparent at this point. Do nothing."
+	| targetWord resultR resultG resultB antiAliasRedAlphaBits antiAliasRedAlpha antiAliasGreenAlphaBits antiAliasGreenAlpha antiAliasBlueAlphaBits antiAliasBlueAlpha alphaR alphaG alphaB unAlphaR unAlphaG unAlphaB resultAlpha targetAlpha clippingAntiAlias |
 
 	antiAliasRedAlphaBits _ antiAliasAlphasWord at: 3.
 	antiAliasGreenAlphaBits _ antiAliasAlphasWord at: 2.
@@ -5376,40 +5384,41 @@ pvtStrokeWidth: aNumber
 	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
 	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs.! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:22'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:18:55'!
 blendFillOnly
+	"Blends fill color over background. Target translucency computed correctly.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| edgesUpToThisPixel edgesThisPixel pixelIndex |
+	| edgesUpToThisPixel edgesThisPixel pixelIndex antiAliasAlphaBits |
 	blendTop to: blendBottom do: [ :displayY |
 		edgesUpToThisPixel _ 0.
 		pixelIndex _ displayY * targetWidth + blendLeft.
 		blendLeft to: blendRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 			edgesThisPixel _ edgeCounts at: pixelIndex.
-			edgeCounts at: pixelIndex put: 0.
-			"Not needed in C or OpenCL, use signed char, i.e. a type where 16rFF means -1 and not 255"
-			edgesThisPixel > 127 ifTrue: [ edgesThisPixel _ edgesThisPixel - 256 ].
-			edgesUpToThisPixel _ edgesUpToThisPixel + edgesThisPixel.
+			edgesThisPixel = 0 ifFalse: [
+				edgeCounts at: pixelIndex put: 0.
+				"Not needed in C or OpenCL, just use a wraparound 8 bit type, such uint8_t"
+				edgesThisPixel > 127 ifTrue: [ edgesThisPixel _ edgesThisPixel - 256 ].
+				edgesUpToThisPixel _ edgesUpToThisPixel + edgesThisPixel ].
+			antiAliasAlphaBits _ alphaMask at: pixelIndex.
+			edgesUpToThisPixel = 0
+				ifFalse: [				"Inside the shape"
+					antiAliasAlphaBits = 0 ifFalse: [ alphaMask at: pixelIndex put: 0 ].
+					antiAliasAlphaBits _ 127 - antiAliasAlphaBits.
+					self blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
+					]
+				ifTrue: [				"Still in the anti aliasing area, but outside the shape, strictly speaking."
+					antiAliasAlphaBits = 0 ifFalse: [
+						alphaMask at: pixelIndex put: 0.
+						self blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]]].! !
 
-			self blendFillOnlyAt: pixelIndex isInside: edgesUpToThisPixel ~= 0.
-
-			alphaMask at: pixelIndex put: 0 ]].! !
-
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/17/2021 13:58:09'!
-blendFillOnlyAt: pixelIndex isInside: isInside
-
-	"Blends fill over background. Target translucency computed correctly.
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:08:32'!
+blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
+	"Blends fill color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| resultR resultG resultB antiAliasAlphaBits antiAliasAlpha alpha unAlpha resultAlpha targetWord targetAlpha clippingAntiAlias |
-	antiAliasAlphaBits _ alphaMask at: pixelIndex.
-	antiAliasAlphaBits = 16r00 ifTrue: [	"Not in the stroke"
-		isInside ifFalse: [ 		"Not inside"
-			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
-
-	"In this method, antiAliasAlphas are not used to blend stroke, but fill. This means that in the inside of the shape, and away from the stroke, they must be 1.0 (not 0.0)."
-	isInside ifTrue: [
-		antiAliasAlphaBits _ 127 - antiAliasAlphaBits ].
+	| resultR resultG resultB antiAliasAlpha alpha unAlpha resultAlpha targetWord targetAlpha clippingAntiAlias |
 
 	antiAliasAlpha _ antiAliasAlphaBits / 127.0.
 	alpha _ antiAliasAlpha * fillColor alpha.
@@ -5453,37 +5462,42 @@ blendFillOnlyAt: pixelIndex isInside: isInside
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:19'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:44:02'!
 blendStrokeAndFill
+	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
+	Target translucency computed correctly.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| edgesUpToThisPixel edgesThisPixel pixelIndex |
+	| edgesUpToThisPixel edgesThisPixel pixelIndex antiAliasAlphaBits |
 	blendTop to: blendBottom do: [ :displayY |
 		edgesUpToThisPixel _ 0.
 		pixelIndex _ displayY * targetWidth + blendLeft.
 		blendLeft to: blendRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 			edgesThisPixel _ edgeCounts at: pixelIndex.
-			edgeCounts at: pixelIndex put: 0.
-			"Not needed in C or OpenCL, use signed char, i.e. a type where 16rFF means -1 and not 255"
-			edgesThisPixel > 127 ifTrue: [ edgesThisPixel _ edgesThisPixel - 256 ].
-			edgesUpToThisPixel _ edgesUpToThisPixel + edgesThisPixel.
+			edgesThisPixel = 0 ifFalse: [
+				edgeCounts at: pixelIndex put: 0.
+				"Not needed in C or OpenCL, just use a wraparound 8 bit type, such uint8_t"
+				edgesThisPixel > 127 ifTrue: [ edgesThisPixel _ edgesThisPixel - 256 ].
+				edgesUpToThisPixel _ edgesUpToThisPixel + edgesThisPixel ].
+			antiAliasAlphaBits _ alphaMask at: pixelIndex.
+			edgesUpToThisPixel = 0
+				ifFalse: [				"Inside the shape"
+					antiAliasAlphaBits = 0 ifFalse: [ alphaMask at: pixelIndex put: 0 ].
+					self blendStrokeAndFillAt: pixelIndex isInside: true antiAliasAlphaByte: antiAliasAlphaBits ]
+				ifTrue: [				"Still in the stroke, but outside the shape, strictly speaking."
+					antiAliasAlphaBits = 0 ifFalse: [
+						alphaMask at: pixelIndex put: 0.
+						antiAliasAlphaBits = 0 ifFalse: [
+							self blendStrokeAndFillAt: pixelIndex isInside: false antiAliasAlphaByte: antiAliasAlphaBits ]]]]].! !
 
-			self blendStrokeAndFillAt: pixelIndex isInside: edgesUpToThisPixel ~= 0.
-
-			alphaMask at: pixelIndex put: 0 ]].! !
-
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:16'!
-blendStrokeAndFillAt: pixelIndex isInside: isInside
-
-	"Do an appropriate (anti aliased) mix between stoke and fill (or pick just stroke or just fill). Blend this over background.
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:03:23'!
+blendStrokeAndFillAt: pixelIndex isInside: isInside antiAliasAlphaByte: antiAliasAlphaBits
+	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphaBits antiAliasAlpha alpha unAlpha foreR foreG foreB targetAlpha resultAlpha clippingAntiAlias |
-	antiAliasAlphaBits _ alphaMask at: pixelIndex.
-	antiAliasAlphaBits = 16r00 ifTrue: [
-		isInside ifFalse: [
-			^self]].	"Optimization: We are completely transparent at this point. Do nothing."
+	| targetWord resultR resultG resultB antiAliasAlpha alpha unAlpha foreR foreG foreB targetAlpha resultAlpha clippingAntiAlias |
 
 	antiAliasAlpha _ antiAliasAlphaBits / 127.0.
 
@@ -5541,32 +5555,28 @@ blendStrokeAndFillAt: pixelIndex isInside: isInside
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:13'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:37:59'!
 blendStrokeOnly
+	"Blends stroke color over background. Target translucency computed correctly.
+	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| pixelIndex |
+	| pixelIndex antiAliasAlphaBits |
 	blendTop to: blendBottom do: [ :displayY |
 		pixelIndex _ displayY * targetWidth + blendLeft.
 		blendLeft to: blendRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
+			antiAliasAlphaBits _ alphaMask at: pixelIndex.
+			antiAliasAlphaBits = 16r00 ifFalse: [										"In the stroke"
+				alphaMask at: pixelIndex put: 0.
+				self blendStrokeOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]].! !
 
-			self blendStrokeOnlyAt: pixelIndex.
-
-			alphaMask at: pixelIndex put: 0 ]].! !
-
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 5/18/2021 10:06:06'!
-blendStrokeOnlyAt: pixelIndex
-
-	"Blends stroke over background. Target translucency computed correctly.
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 14:59:25'!
+blendStrokeOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
+	"Blends stroke color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
-	| targetWord resultR resultG resultB antiAliasAlphaBits antiAliasAlpha alpha unAlpha resultAlpha targetAlpha clippingAntiAlias |
-	antiAliasAlphaBits _ alphaMask at: pixelIndex.
-	antiAliasAlphaBits = 16r00 ifTrue: [
-		^self].	"Optimization: We are completely transparent at this point. Do nothing."
-
+	| targetWord resultR resultG resultB antiAliasAlpha alpha unAlpha resultAlpha targetAlpha clippingAntiAlias |
 	antiAliasAlpha _ antiAliasAlphaBits / 127.0.
-
 	alpha _ antiAliasAlpha * strokeColor alpha.
 
 	currentClipsSubmorphs

@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4648] on 28 June 2021 at 6:42:56 pm'!
+'From Cuis 5.0 [latest update: #4651] on 29 June 2021 at 5:31:39 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 22!
+!provides: 'VectorEnginePlugin' 1 23!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -3043,7 +3043,7 @@ blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:18:43'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/29/2021 15:16:15'!
 blendFillOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMask: anotherByteArray
 	"Blends fill color over background.
 	WP: Whole pixel anti aliasing.
@@ -3076,12 +3076,12 @@ blendFillOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds:
 				edgesUpToThisPixel _ edgesUpToThisPixel + edgesThisPixel ].
 			antiAliasAlphaBits _ alphaMaskWP at: pixelIndex.
 			edgesUpToThisPixel = 0
-				ifFalse: [
+				ifFalse: [				"Inside the shape"
 					antiAliasAlphaBits = 16r00 ifFalse: [ alphaMaskWP at: pixelIndex put: 0 ].
 					antiAliasAlphaBits _ 16r7F - antiAliasAlphaBits.
 					self blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 					]
-				ifTrue: [
+				ifTrue: [				"Still in the anti aliasing area, but outside the shape, strictly speaking."
 					antiAliasAlphaBits = 16r00 ifFalse: [
 						alphaMaskWP at: pixelIndex put: 0.
 						self blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]]].! !
@@ -3257,7 +3257,7 @@ blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBi
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:19:16'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/29/2021 15:37:21'!
 blendStrokeAndFillWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMask: anotherByteArray
 	"Blends stroke color and fill color over background.
 	Do an appropriate (anti aliased) gradient between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
@@ -3291,10 +3291,10 @@ blendStrokeAndFillWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morp
 				edgesUpToThisPixel _ edgesUpToThisPixel + edgesThisPixel ].
 			antiAliasAlphaBits _ alphaMaskWP at: pixelIndex.
 			edgesUpToThisPixel = 0
-				ifFalse: [
+				ifFalse: [				"Inside the shape"
 					antiAliasAlphaBits = 16r00 ifFalse: [ alphaMaskWP at: pixelIndex put: 0 ].
 					self blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits]
-				ifTrue: [
+				ifTrue: [				"Still in the stroke, but outside the shape, strictly speaking."
 					antiAliasAlphaBits = 16r00 ifFalse: [
 						alphaMaskWP at: pixelIndex put: 0.
 						antiAliasAlphaBits = 0 ifFalse: [self blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits]]]]].! !
@@ -3377,7 +3377,7 @@ blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:19:26'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/29/2021 15:38:07'!
 blendStrokeOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray alphaMask: anotherByteArray
 	"Blends stroke color over background.
 	WP: Whole pixel anti aliasing.
@@ -3398,7 +3398,7 @@ blendStrokeOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphId
 		l to: r do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 			antiAliasAlphaBits _ alphaMaskWP at: pixelIndex.
-			antiAliasAlphaBits = 16r00 ifFalse: [
+			antiAliasAlphaBits = 16r00 ifFalse: [										"In the stroke"
 				alphaMaskWP at: pixelIndex put: 0.
 				self blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]].! !
 
