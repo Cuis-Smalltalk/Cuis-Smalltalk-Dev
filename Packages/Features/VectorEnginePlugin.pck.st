@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4651] on 29 June 2021 at 5:31:39 pm'!
+'From Cuis 5.0 [latest update: #4655] on 5 July 2021 at 5:50:22 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 23!
+!provides: 'VectorEnginePlugin' 1 24!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -8,7 +8,7 @@ SystemOrganization addCategory: 'VectorEnginePlugin'!
 
 !classDefinition: #VectorEnginePlugin category: 'VectorEnginePlugin'!
 SmartSyntaxInterpreterPlugin subclass: #VectorEnginePlugin
-	instanceVariableNames: 'targetBits morphIds edgeCounts edgeCountsWP alphaMask alphaMaskWP targetWidth targetHeight antiAliasingWidth subPixelDelta hop strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA txA11 txA12 txA13 txA21 txA22 txA23 currentMorphId currentClipsSubmorphs clipCurrentMorph clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared prevYTruncated spanLeft spanTop spanRight spanBottom'
+	instanceVariableNames: 'targetBits morphIds edgeCounts edgeCountsWP alphaMask alphaMaskWP contour targetWidth targetHeight antiAliasingWidth subPixelDelta hop strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA txA11 txA12 txA13 txA21 txA22 txA23 currentMorphId currentClipsSubmorphs clipCurrentMorph clipLeft clipTop clipRight clipBottom auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared spanLeft spanTop spanRight spanBottom prevYTruncated prevYRounded leftAtThisY rightAtThisY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorEnginePlugin'!
@@ -95,7 +95,7 @@ geometryTxA11: a11 a12: a12 a13: a13 a21: a21 a22: a22 a23: a23
 	txA22 _ a22.
 	txA23 _ a23.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/9/2021 15:10:08'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 16:11:13'!
 initializePath
 	self
 		primitive: 'primInitializePath'
@@ -104,7 +104,8 @@ initializePath
 	spanLeft _ targetWidth.						"drawable right. Will later be refined."
 	spanTop _ targetHeight.						"drawable bottom. Will later be refined."
 	spanRight _ 0.						"drawable left. Will later be refined."
-	spanBottom _ 0.						"drawable top. Will later be refined."! !
+	spanBottom _ 0.						"drawable top. Will later be refined."
+	prevYRounded _ 16r7FFFFFFF.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/5/2021 16:27:16'!
 newTrajectoryFragment
@@ -114,7 +115,7 @@ newTrajectoryFragment
 
 	prevYTruncated _ 16r7FFFFFFF.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 6/12/2021 11:32:31'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:13:44'!
 pluginApiVersion
 	"
 	VectorEngineWithPlugin isPluginAvailable
@@ -129,7 +130,19 @@ pluginApiVersion
 		primitive: 'pluginApiVersion'
 		parameters: #().
 
-	^ 4 asOop: SmallInteger.! !
+	^ 5 asOop: SmallInteger.! !
+
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:01:18'!
+resetContourTop: t bottom: b
+	self
+		primitive: 'primResetContour'
+		parameters: #(SmallInteger SmallInteger).
+
+	leftAtThisY _ targetWidth.
+	rightAtThisY _ 0.
+	t to: b do: [ :y |
+		contour at: y * 2 put: targetWidth.
+		contour at: y * 2 + 1 put: 0 ].! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/10/2021 10:53:54'!
 spanBottom
@@ -193,43 +206,45 @@ strokeWidth: aNumber
 			'auxStrokeWidthErodedHalfSquared = swErodedHalf * fabs(swErodedHalf);'
 		inSmalltalk: [ auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs ].! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:01:15'!
-targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray targetWidth: aNumber targetHeight: otherNumber
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:04:09'!
+targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array targetWidth: aNumber targetHeight: otherNumber
 	"All arrays could be pinned instead of passing them every time!!"
 
 	self
 		primitive: 'primSetTarget'
-		parameters: #(WordArray WordArray WordArray WordArray SmallInteger SmallInteger).
+		parameters: #(WordArray WordArray WordArray WordArray Float32Array SmallInteger SmallInteger).
 
 	targetBits _ aBitmap.
 	morphIds _ aWordArray.
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
+	contour _ aFloat32Array.
 	targetWidth _ aNumber.
 	targetHeight _ otherNumber.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 10:19:01'!
-targetBits: aBitmap morphIds: aWordArray edgeCountsWP: otherByteArray alphaMaskWP: anotherByteArray targetWidth: aNumber targetHeight: otherNumber
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:04:14'!
+targetBits: aBitmap morphIds: aWordArray edgeCountsWP: otherByteArray alphaMaskWP: anotherByteArray contour: aFloat32Array targetWidth: aNumber targetHeight: otherNumber
 	"All arrays could be pinned instead of passing them every time!!"
 
 	self
 		primitive: 'primSetTargetWP'
-		parameters: #(WordArray WordArray ByteArray ByteArray SmallInteger SmallInteger).
+		parameters: #(WordArray WordArray ByteArray ByteArray Float32Array SmallInteger SmallInteger).
 
 	targetBits _ aBitmap.
 	morphIds _ aWordArray.
 	edgeCountsWP _ otherByteArray.
 	alphaMaskWP _ anotherByteArray.
+	contour _ aFloat32Array.
 	targetWidth _ aNumber.
 	targetHeight _ otherNumber.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 6/11/2021 12:02:29'!
-arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:24:04'!
+arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
 
 	| tcx tcy trx try scale hops d angle xp yp x y |
 	self
 		primitive: 'primArc'
-		parameters: #(Float Float Float Float Float Float Float Float WordArray WordArray).
+		parameters: #(Float Float Float Float Float Float Float Float WordArray WordArray Float32Array).
 
 	self var: #tcx type: 'float'.
 	self var: #tcy type: 'float'.
@@ -255,6 +270,7 @@ arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY
 
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
+	contour _ aFloat32Array.
 	angle _ startAngle.
 	1 to: hops+1 do: [ :h |
 		xp _ angle cos * trx.
@@ -268,32 +284,35 @@ arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
+		self updateContourForX: x y: y.
 		angle _ angle + d. ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/28/2021 15:36:27'!
-cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 15:54:16'!
+cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
 
 	self
 		primitive: 'primCubicBezier'
-		parameters: #(Float Float Float Float Float Float Float Float WordArray WordArray).
+		parameters: #(Float Float Float Float Float Float Float Float WordArray WordArray Float32Array).
 
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
+	contour _ aFloat32Array.
 
 	self pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/28/2021 15:05:32'!
-lineFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 15:57:23'!
+lineFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
 
 	self
 		primitive: 'primLine'
-		parameters: #(Float Float Float Float WordArray WordArray).
+		parameters: #(Float Float Float Float WordArray WordArray Float32Array).
 
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
+	contour _ aFloat32Array.
 	self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 6/11/2021 12:03:52'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:27:08'!
 pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy dx2 dy2 dx3 dy3 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
@@ -386,12 +405,14 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
+		self updateContourForX: x y: y.
 		t _ t + increment. ].
 	self updateAlphasForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
-		self updateEdgeCountAtX: txTo y: tyTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].
+	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 6/11/2021 12:04:05'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:29:12'!
 pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	| txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
@@ -440,13 +461,15 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
+		self updateContourForX: x y: y.
 		x _ x + incrementX.
 		y _ y + incrementY ].
 	self updateAlphasForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
-		self updateEdgeCountAtX: txTo y: tyTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].
+	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 6/12/2021 09:48:38'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:31:37'!
 pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
 	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 length xMinEnd xMaxEnd yMinEnd yMaxEnd t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
@@ -531,6 +554,7 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 	self updateAlphasForX: x y: y.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: x y: y ].
+	self updateContourForX: x y: y.
 
 	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
 	increment _ 0.2.
@@ -561,22 +585,25 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 	whileTrue: [
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
-			self updateEdgeCountAtX: x y: y ]].
+			self updateEdgeCountAtX: x y: y ].
+		self updateContourForX: x y: y ].
 
 	"Case t= 1.0"
 	self updateAlphasForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
-		self updateEdgeCountAtX: txTo y: tyTo ].! !
+		self updateEdgeCountAtX: txTo y: tyTo ].
+	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/28/2021 15:26:02'!
-quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 15:59:47'!
+quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
 
 	self
 		primitive: 'primQuadraticBezier'
-		parameters: #(Float Float Float Float Float Float WordArray WordArray).
+		parameters: #(Float Float Float Float Float Float WordArray WordArray Float32Array).
 
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
+	contour _ aFloat32Array.
 	self pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl.! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/18/2021 10:53:25'!
@@ -677,6 +704,39 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaWord _ (redAlpha bitOr: greenAlpha) bitOr: blueAlpha.
 					alphaMask at: pixelIndex put: alphaWord ]]]]! !
+
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:22:38'!
+updateContourForX: x y: y
+	"The Contour of the current morph is the pixel area affected, 	but without holes.
+	For each y line where a pixel is affected, record the leftmost and rightmost affected pixels.
+	Note: Only includes pen trajectory, but not stroke width."
+
+	| thisYRounded |
+
+	self var: #x type: 'float'.
+	self var: #y type: 'float'.
+
+	thisYRounded _ (y + 0.5) asInteger.
+	(thisYRounded between: 0 and: targetHeight-1) ifTrue: [
+		thisYRounded = prevYRounded ifFalse: [
+			prevYRounded = 16r7FFFFFFF ifFalse: [
+				contour at: prevYRounded * 2 put: leftAtThisY.
+				contour at: prevYRounded * 2 + 1 put: rightAtThisY ].
+			leftAtThisY _ contour at: thisYRounded * 2.
+			rightAtThisY _ contour at: thisYRounded * 2 + 1.
+			prevYRounded _ thisYRounded ].
+		leftAtThisY _ leftAtThisY min: x.
+		rightAtThisY _ rightAtThisY max: x ].! !
+
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:42:59'!
+updateContourLastLine
+	self
+		primitive: 'primUpdateContourLastLine'
+		parameters: #().
+
+	prevYRounded = 16r7FFFFFFF ifFalse: [
+		contour at: prevYRounded * 2 put: leftAtThisY.
+		contour at: prevYRounded * 2 + 1 put: rightAtThisY ].! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/18/2021 10:07:05'!
 updateEdgeCountAtX: x y: y
@@ -1272,13 +1332,13 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:30:09'!
-pathSequence: aFloat32Array size: size edgeCounts: otherWordArray alphaMask: anotherWordArray
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/5/2021 16:33:31'!
+pathSequence: aFloat32Array size: size edgeCounts: otherWordArray alphaMask: anotherWordArray contour: otherFloat32Array
 
 	| i commandType startX startY endX endY control1X control1Y control2X control2Y |
 	self
 		primitive: 'primPathSequence'
-		parameters: #(Float32Array SmallInteger WordArray WordArray).
+		parameters: #(Float32Array SmallInteger WordArray WordArray Float32Array).
 
 	self var: #startX type: 'float'.
 	self var: #startY type: 'float'.
@@ -1291,6 +1351,7 @@ pathSequence: aFloat32Array size: size edgeCounts: otherWordArray alphaMask: ano
 
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
+	contour _ otherFloat32Array.
 	i _ 0.
 	[ i < size ] whileTrue: [
 		commandType _ (aFloat32Array at: i) asInteger. i _ i + 1.
@@ -1908,13 +1969,13 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/11/2021 12:02:35'!
-arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:24:06'!
+arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherByteArray alphaMask: anotherByteArray contour: aFloat32Array
 
 	| tcx tcy trx try scale hops d angle xp yp x y |
 	self
 		primitive: 'primArcWP'
-		parameters: #(Float Float Float Float Float Float Float Float ByteArray ByteArray).
+		parameters: #(Float Float Float Float Float Float Float Float ByteArray ByteArray Float32Array).
 
 	self var: #tcx type: 'float'.
 	self var: #tcy type: 'float'.
@@ -1940,6 +2001,7 @@ arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPoin
 
 	edgeCountsWP _ otherByteArray.
 	alphaMaskWP _ anotherByteArray.
+	contour _ aFloat32Array.
 	angle _ startAngle.
 	1 to: hops+1 do: [ :h |
 		xp _ angle cos * trx.
@@ -1953,32 +2015,35 @@ arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPoin
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
+		self updateContourForX: x y: y.
 		angle _ angle + d. ].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/28/2021 15:35:46'!
-cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 15:54:18'!
+cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherByteArray alphaMask: anotherByteArray contour: aFloat32Array
 
 	self
 		primitive: 'primCubicBezierWP'
-		parameters: #(Float Float Float Float Float Float Float Float ByteArray ByteArray).
+		parameters: #(Float Float Float Float Float Float Float Float ByteArray ByteArray Float32Array).
 
 	edgeCountsWP _ otherByteArray.
 	alphaMaskWP _ anotherByteArray.
+	contour _ aFloat32Array.
 
 	self pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/28/2021 15:05:36'!
-lineWPFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 15:57:23'!
+lineWPFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherByteArray alphaMask: anotherByteArray contour: aFloat32Array
 
 	self
 		primitive: 'primLineWP'
-		parameters: #(Float Float Float Float ByteArray ByteArray).
+		parameters: #(Float Float Float Float ByteArray ByteArray Float32Array).
 
 	edgeCountsWP _ otherByteArray.
 	alphaMaskWP _ anotherByteArray.
+	contour _ aFloat32Array.
 	self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/11/2021 12:03:57'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:27:12'!
 pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy dx2 dy2 dx3 dy3 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
@@ -2071,12 +2136,14 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
+		self updateContourForX: x y: y.
 		t _ t + increment. ].
 	self updateAlphasWPForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
-		self updateEdgeCountWPAtX: txTo y: tyTo ].! !
+		self updateEdgeCountWPAtX: txTo y: tyTo ].
+	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/11/2021 12:04:10'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:29:10'!
 pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	| txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
@@ -2125,13 +2192,15 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
+		self updateContourForX: x y: y.
 		x _ x + incrementX.
 		y _ y + incrementY ].
 	self updateAlphasWPForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
-		self updateEdgeCountWPAtX: txTo y: tyTo ].! !
+		self updateEdgeCountWPAtX: txTo y: tyTo ].
+	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 6/12/2021 09:48:32'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:31:40'!
 pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
 	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 length xMinEnd xMaxEnd yMinEnd yMaxEnd t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
@@ -2216,6 +2285,7 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 	self updateAlphasWPForX: x y: y.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: x y: y ].
+	self updateContourForX: x y: y.
 
 	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
 	increment _ 0.2.
@@ -2246,22 +2316,25 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 	whileTrue: [
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
-			self updateEdgeCountWPAtX: x y: y ]].
+			self updateEdgeCountWPAtX: x y: y ].
+		self updateContourForX: x y: y ].
 
 	"Case t= 1.0"
 	self updateAlphasWPForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
-		self updateEdgeCountWPAtX: txTo y: tyTo ].! !
+		self updateEdgeCountWPAtX: txTo y: tyTo ].
+	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/28/2021 15:25:31'!
-quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 15:59:48'!
+quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl edgeCounts: otherByteArray alphaMask: anotherByteArray contour: aFloat32Array
 
 	self
 		primitive: 'primQuadraticBezierWP'
-		parameters: #(Float Float Float Float Float Float ByteArray ByteArray).
+		parameters: #(Float Float Float Float Float Float ByteArray ByteArray Float32Array).
 
 	edgeCountsWP _ otherByteArray.
 	alphaMaskWP _ anotherByteArray.
+	contour _ aFloat32Array.
 	self pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl.! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/18/2021 17:55:56'!
@@ -2900,13 +2973,13 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 5/29/2021 16:30:40'!
-pathSequenceWP: aFloat32Array size: size edgeCounts: otherByteArray alphaMask: anotherByteArray
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 7/5/2021 16:33:04'!
+pathSequenceWP: aFloat32Array size: size edgeCounts: otherByteArray alphaMask: anotherByteArray contour: otherFloat32Array
 
 	| i commandType startX startY endX endY control1X control1Y control2X control2Y |
 	self
 		primitive: 'primPathSequenceWP'
-		parameters: #(Float32Array SmallInteger ByteArray ByteArray).
+		parameters: #(Float32Array SmallInteger ByteArray ByteArray Float32Array).
 
 	self var: #startX type: 'float'.
 	self var: #startY type: 'float'.
@@ -2919,6 +2992,7 @@ pathSequenceWP: aFloat32Array size: size edgeCounts: otherByteArray alphaMask: a
 
 	edgeCountsWP _ otherByteArray.
 	alphaMaskWP _ anotherByteArray.
+	contour _ otherFloat32Array.
 	i _ 0.
 	[ i < size ] whileTrue: [
 		commandType _ (aFloat32Array at: i) asInteger. i _ i + 1.
@@ -3402,7 +3476,7 @@ blendStrokeOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphId
 				alphaMaskWP at: pixelIndex put: 0.
 				self blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]].! !
 
-!VectorEnginePlugin class methodsFor: 'translation' stamp: 'jmv 6/11/2021 12:06:15'!
+!VectorEnginePlugin class methodsFor: 'translation' stamp: 'jmv 7/5/2021 16:21:10'!
 declareCVarsIn: aCCodeGenerator
 
 
@@ -3413,6 +3487,7 @@ declareCVarsIn: aCCodeGenerator
 	aCCodeGenerator var: 'edgeCountsWP' type: 'uint8_t *'.
 	aCCodeGenerator var: 'alphaMask' type: 'uint32_t *'.
 	aCCodeGenerator var: 'alphaMaskWP' type: 'uint8_t *'.
+	aCCodeGenerator var: 'contour' type: 'float *'.
 	aCCodeGenerator var: 'currentMorphId' type: 'uint32_t'.
-	#(antiAliasingWidth subPixelDelta hop strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA txA11 txA12 txA13 txA21 txA22 txA23 auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared spanLeft spanTop spanRight spanBottom) do: [ :varName |
+	#(antiAliasingWidth subPixelDelta hop strokeWidth strokeR strokeG strokeB strokeA fillR fillG fillB fillA txA11 txA12 txA13 txA21 txA22 txA23 auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared spanLeft spanTop spanRight spanBottom leftAtThisY rightAtThisY) do: [ :varName |
 		aCCodeGenerator var: varName type: 'float' ].! !
