@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4655] on 5 July 2021 at 5:50:19 pm'!
+'From Cuis 5.0 [latest update: #4658] on 7 July 2021 at 4:20:19 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 247!
+!provides: 'VectorGraphics' 1 248!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -40,7 +40,7 @@ TrueTypeFontFamily class
 
 !classDefinition: #M3Exp01Morph category: 'VectorGraphics-Experiments'!
 MovableMorph subclass: #M3Exp01Morph
-	instanceVariableNames: ''
+	instanceVariableNames: 'color'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Experiments'!
@@ -1016,21 +1016,22 @@ serviceReadTTFont
 		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/5/2021 17:49:31'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/7/2021 15:01:20'!
 drawContour
 "experimental"
 | x0 x1 c |
-(self valueOfProperty: #contour) ifNotNil: [ :contour |
+(self valueOfProperty: #contour) ifNotNil: [ :contour | | contourTop |
+	contourTop _ privateDisplayBounds top max: 0.
 	1 to: contour size // 2 do: [ :y |
 		x0 _ contour at: y*2-1.
 		x1 _ contour at: y*2.
 		x0 to: x1 do: [ :x |
-			c _ Display colorAt: x@((privateDisplayBounds top max: 0)+y-1).
+			c _ Display colorAt: x@(contourTop+y-1).
 			c _ c alphaMixed: 0.4 with: Color pink. 
-			Display colorAt: x@((privateDisplayBounds top max: 0)+y-1) put: c ]]].
+			Display colorAt: x@(contourTop+y-1) put: c ]]].
 Display forceToScreen! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 5/13/2021 18:46:28'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/7/2021 16:00:38'!
 drawOn: aCanvas
 	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
 
@@ -1046,37 +1047,68 @@ drawOn: aCanvas
 					] asFloat32Array`
 		].
 
-	aCanvas strokeWidth: 3 color: Color black do: [
+	aCanvas strokeWidth: 3 color: color do: [
 		aCanvas
 				pathSequence: `#[
-					0.0 21.0 19.0
-					2.0 30.0 24.0 23.0 23.0
-					2.0 39.0 19.0 37.0 23.0
-					0.0 25.0 11.0
-					1.0 25.0 13.0
-					0.0 35.0 11.0
-					1.0 35.0 13.0
+					0.0 22.0 19.0
+					2.0 30.0 24.0 24.0 24.0
+					2.0 38.0 19.0 36.0 24.0
+					0.0 25.0 10.0
+					1.0 25.0 12.0
+					0.0 35.0 10.0
+					1.0 35.0 12.0
 					] asFloat32Array`
 		].! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/5/2021 10:31:21'!
-knowsContour
-	^true! !
-
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/5/2021 14:08:03'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/7/2021 16:01:07'!
 postDrawOn: aCanvas
 	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
 
-	true ifTrue: [ ^super postDrawOn: aCanvas ].
+	true not ifTrue: [ ^super postDrawOn: aCanvas ].
 
-	aCanvas strokeWidth: 3 color: Color black do: [
+	aCanvas strokeWidth: 3 color: color do: [
 		aCanvas
 				pathSequence: `#[
-					0.0 50.0 -10.0
-					1.0 35.0 7.0
+					0.0 50.0 -5.0
+					1.0 30.0 5.0
 					] asFloat32Array`
 		].
 	^true! !
+
+!M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 7/7/2021 16:16:18'!
+containsGlobalPoint: worldPoint
+	"just for experimenting with contour"
+	"
+	true ifTrue: [ ^super containsGlobalPoint: worldPoint ].
+	"
+	^self isCloserThan: 10 toPoint: worldPoint! !
+
+!M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 7/7/2021 12:00:10'!
+knowsContour
+	"for experimenting with this feature."
+	^true! !
+
+!M3Exp01Morph methodsFor: 'updating' stamp: 'jmv 7/7/2021 16:13:03'!
+redrawNeeded
+	"for experimenting with collision detection"
+	self isOwnedByHand ifTrue: [
+		self world ifNotNil: [ :w |
+			w submorphsDo: [ :m |
+				(self collides: m) ifTrue: [
+					m print.
+					m class == self class ifTrue: [
+						m colorize ]]]]].
+	^super redrawNeeded! !
+
+!M3Exp01Morph methodsFor: 'initialization' stamp: 'jmv 7/7/2021 16:01:43'!
+colorize
+	color _ Color random.
+	self redrawNeeded.! !
+
+!M3Exp01Morph methodsFor: 'initialization' stamp: 'jmv 7/7/2021 16:00:01'!
+initialize
+	super initialize.
+	self colorize! !
 
 !M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:08:39'!
 drawOn: aCanvas
@@ -4373,14 +4405,14 @@ morphContourAfterDrawInto: contourArray
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/5/2021 16:14:49'!
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/7/2021 15:00:03'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph."
 
-	| answer i requiredSize oldContourDelta y0 y1 |
+	| answer i ii requiredSize oldContourDelta y0 y1 |
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
 	y1 _ (morphBoundsBottom max: oldBottom) min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -4390,21 +4422,23 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		oldContourDelta _ (oldTop - y0) * 2.
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
+	ii _ 1-oldContourDelta.
 	y0 to: y1 do: [ :y | | x0 x1 | 
 		x0 _ targetWidth.
 		x1 _ 0.
 		(y between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
 			x0 _ x0 min: (contour at: y * 2 + 1) rounded.
 			x1 _ x1 max: (contour at: y * 2 + 2) rounded ].
-		(y between: oldTop and: oldBottom) ifTrue: [
-			x0 _ x0 min: (oldContour at: i-oldContourDelta) rounded.
-			x1 _ x1 max: (oldContour at: i+1-oldContourDelta) rounded ].
+		(ii between: 1 and: oldContour size-1) ifTrue: [
+			x0 _ x0 min: (oldContour at: ii) rounded.
+			x1 _ x1 max: (oldContour at: ii+1) rounded ].
 		answer at: i put: x0.
 		answer at: i+1 put: x1.
-		i _ i + 2 ].
-	i to: answer size by: 2 do: [ :ii |
-		answer at: ii put: targetWidth.
-		answer at: ii+1 put: 0 ].
+		i _ i + 2.
+		ii _ ii + 2 ].
+	i to: answer size by: 2 do: [ :iii |
+		answer at: iii put: targetWidth.
+		answer at: iii+1 put: 0 ].
 	^answer! !
 
 !VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:30:40'!
@@ -5273,14 +5307,14 @@ morphContourAfterDrawInto: contourArray
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/5/2021 13:57:04'!
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/7/2021 15:00:00'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph."
 
-	| answer i requiredSize oldContourDelta y0 y1 |
+	| answer i ii requiredSize oldContourDelta y0 y1 |
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
 	y1 _ (morphBoundsBottom max: oldBottom) min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -5290,21 +5324,23 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		oldContourDelta _ (oldTop - y0) * 2.
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
+	ii _ 1-oldContourDelta.
 	y0 to: y1 do: [ :y | | x0 x1 | 
 		x0 _ targetWidth.
 		x1 _ 0.
 		(y between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
 			x0 _ x0 min: (contour at: y * 2 + 1) rounded.
 			x1 _ x1 max: (contour at: y * 2 + 2) rounded ].
-		(y between: oldTop and: oldBottom) ifTrue: [
-			x0 _ x0 min: (oldContour at: i-oldContourDelta) rounded.
-			x1 _ x1 max: (oldContour at: i+1-oldContourDelta) rounded ].
+		(ii between: 1 and: oldContour size-1) ifTrue: [
+			x0 _ x0 min: (oldContour at: ii) rounded.
+			x1 _ x1 max: (oldContour at: ii+1) rounded ].
 		answer at: i put: x0.
 		answer at: i+1 put: x1.
-		i _ i + 2 ].
-	i to: answer size by: 2 do: [ :ii |
-		answer at: ii put: targetWidth.
-		answer at: ii+1 put: 0 ].
+		i _ i + 2.
+		ii _ ii + 2 ].
+	i to: answer size by: 2 do: [ :iii |
+		answer at: iii put: targetWidth.
+		answer at: iii+1 put: 0 ].
 	^answer! !
 
 !VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:31:28'!
@@ -5977,14 +6013,14 @@ morphContourAfterDrawInto: contourArray
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 16:15:45'!
+!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/7/2021 14:45:32'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph."
 
-	| answer i requiredSize oldContourDelta y0 y1 |
+	| answer i ii requiredSize oldContourDelta y0 y1 |
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
 	y1 _ (morphBoundsBottom max: oldBottom) min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -5994,21 +6030,23 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		oldContourDelta _ (oldTop - y0) * 2.
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
+	ii _ 1-oldContourDelta.
 	y0 to: y1 do: [ :y | | x0 x1 | 
 		x0 _ targetWidth.
 		x1 _ 0.
 		(y between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
 			x0 _ x0 min: (contour at: y * 2 + 1) rounded.
 			x1 _ x1 max: (contour at: y * 2 + 2) rounded ].
-		(y between: oldTop and: oldBottom) ifTrue: [
-			x0 _ x0 min: (oldContour at: i-oldContourDelta) rounded.
-			x1 _ x1 max: (oldContour at: i+1-oldContourDelta) rounded ].
+		(ii between: 1 and: oldContour size-1) ifTrue: [
+			x0 _ x0 min: (oldContour at: ii) rounded.
+			x1 _ x1 max: (oldContour at: ii+1) rounded ].
 		answer at: i put: x0.
 		answer at: i+1 put: x1.
-		i _ i + 2 ].
-	i to: answer size by: 2 do: [ :ii |
-		answer at: ii put: targetWidth.
-		answer at: ii+1 put: 0 ].
+		i _ i + 2.
+		ii _ ii + 2 ].
+	i to: answer size by: 2 do: [ :iii |
+		answer at: iii put: targetWidth.
+		answer at: iii+1 put: 0 ].
 	^answer! !
 
 !VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 12:46:23'!
