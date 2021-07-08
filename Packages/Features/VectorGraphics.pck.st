@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4658] on 7 July 2021 at 4:20:19 pm'!
+'From Cuis 5.0 [latest update: #4660] on 8 July 2021 at 4:31:22 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 248!
+!provides: 'VectorGraphics' 1 249!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1016,7 +1016,7 @@ serviceReadTTFont
 		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/7/2021 15:01:20'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/8/2021 11:11:45'!
 drawContour
 "experimental"
 | x0 x1 c |
@@ -1027,7 +1027,7 @@ drawContour
 		x1 _ contour at: y*2.
 		x0 to: x1 do: [ :x |
 			c _ Display colorAt: x@(contourTop+y-1).
-			c _ c alphaMixed: 0.4 with: Color pink. 
+			c _ c alphaMixed: 0.7 with: Color pink. 
 			Display colorAt: x@(contourTop+y-1) put: c ]]].
 Display forceToScreen! !
 
@@ -4380,15 +4380,20 @@ currentMorph: aMorph
 disableSubPixelSampling
 	subPixelDelta _ 0.0! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/5/2021 16:14:41'!
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:27:34'!
 morphContourAfterDrawInto: contourArray
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
+	Use argument if appropriate, or answer a new array if not.
+	Dilates contour by the last used strokeWIdth. A future improvement must be,
+	when building the contour in the engine, for each point recorded, also record
+	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i requiredSize y0 y1 |
+	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ morphBoundsTop max: 0.
 	y1 _ morphBoundsBottom min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -4396,23 +4401,36 @@ morphContourAfterDrawInto: contourArray
 	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
-	y0 to: y1 do: [ :y |
-		answer at: i put: (contour at: y * 2 + 1) rounded.
-		answer at: i+1 put: (contour at: y * 2 + 2) rounded.
+	y0 to: y1 do: [ :y | | x0 x1 |
+		x0 _ targetWidth.
+		x1 _ 0.
+		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
+			(y + dy between: y0 and: y1) ifTrue: [
+				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
+				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
+				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded.
+		]].
+		answer at: i put: x0.
+		answer at: i+1 put: x1.
 		i _ i + 2 ].
 	i to: answer size by: 2 do: [ :ii |
 		answer at: ii put: targetWidth.
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/7/2021 15:00:03'!
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:28:08'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph."
+	Only valid _after_ drawing currentMorph.
+	Dilates contour by the last used strokeWIdth. A future improvement must be,
+	when building the contour in the engine, for each point recorded, also record
+	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i ii requiredSize oldContourDelta y0 y1 |
+	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared |
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
 	y1 _ (morphBoundsBottom max: oldBottom) min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -4423,15 +4441,18 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
 	ii _ 1-oldContourDelta.
-	y0 to: y1 do: [ :y | | x0 x1 | 
-		x0 _ targetWidth.
-		x1 _ 0.
-		(y between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
-			x0 _ x0 min: (contour at: y * 2 + 1) rounded.
-			x1 _ x1 max: (contour at: y * 2 + 2) rounded ].
+	y0 to: y1 do: [ :y | | x0 x1 |
 		(ii between: 1 and: oldContour size-1) ifTrue: [
-			x0 _ x0 min: (oldContour at: ii) rounded.
-			x1 _ x1 max: (oldContour at: ii+1) rounded ].
+			x0 _ oldContour at: ii.
+			x1 _ oldContour at: ii+1 ]
+		ifFalse: [
+			x0 _ targetWidth.
+			x1 _ 0 ].
+		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
+			(y+dy between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
+				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
+				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
+				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded ]].
 		answer at: i put: x0.
 		answer at: i+1 put: x1.
 		i _ i + 2.
@@ -5282,15 +5303,20 @@ currentMorph: aMorph
 			currentMorphId _ aMorph morphId.
 			currentClipsSubmorphs _ aMorph clipsSubmorphsReally ].! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/5/2021 11:53:43'!
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:27:38'!
 morphContourAfterDrawInto: contourArray
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
+	Use argument if appropriate, or answer a new array if not.
+	Dilates contour by the last used strokeWIdth. A future improvement must be,
+	when building the contour in the engine, for each point recorded, also record
+	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i requiredSize y0 y1 |
+	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ morphBoundsTop max: 0.
 	y1 _ morphBoundsBottom min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -5298,23 +5324,36 @@ morphContourAfterDrawInto: contourArray
 	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
-	y0 to: y1 do: [ :y |
-		answer at: i put: (contour at: y * 2 + 1) rounded.
-		answer at: i+1 put: (contour at: y * 2 + 2) rounded.
+	y0 to: y1 do: [ :y | | x0 x1 |
+		x0 _ targetWidth.
+		x1 _ 0.
+		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
+			(y + dy between: y0 and: y1) ifTrue: [
+				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
+				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
+				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded.
+		]].
+		answer at: i put: x0.
+		answer at: i+1 put: x1.
 		i _ i + 2 ].
 	i to: answer size by: 2 do: [ :ii |
 		answer at: ii put: targetWidth.
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/7/2021 15:00:00'!
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:28:11'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph."
+	Only valid _after_ drawing currentMorph.
+	Dilates contour by the last used strokeWIdth. A future improvement must be,
+	when building the contour in the engine, for each point recorded, also record
+	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i ii requiredSize oldContourDelta y0 y1 |
+	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared |
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
 	y1 _ (morphBoundsBottom max: oldBottom) min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -5325,15 +5364,18 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
 	ii _ 1-oldContourDelta.
-	y0 to: y1 do: [ :y | | x0 x1 | 
-		x0 _ targetWidth.
-		x1 _ 0.
-		(y between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
-			x0 _ x0 min: (contour at: y * 2 + 1) rounded.
-			x1 _ x1 max: (contour at: y * 2 + 2) rounded ].
+	y0 to: y1 do: [ :y | | x0 x1 |
 		(ii between: 1 and: oldContour size-1) ifTrue: [
-			x0 _ x0 min: (oldContour at: ii) rounded.
-			x1 _ x1 max: (oldContour at: ii+1) rounded ].
+			x0 _ oldContour at: ii.
+			x1 _ oldContour at: ii+1 ]
+		ifFalse: [
+			x0 _ targetWidth.
+			x1 _ 0 ].
+		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
+			(y+dy between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
+				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
+				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
+				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded ]].
 		answer at: i put: x0.
 		answer at: i+1 put: x1.
 		i _ i + 2.
@@ -5988,15 +6030,20 @@ currentMorph: aMorph
 disableSubPixelSampling
 	subPixelDelta _ 0.0! !
 
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 16:15:28'!
+!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:27:40'!
 morphContourAfterDrawInto: contourArray
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
+	Use argument if appropriate, or answer a new array if not.
+	Dilates contour by the last used strokeWIdth. A future improvement must be,
+	when building the contour in the engine, for each point recorded, also record
+	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i requiredSize y0 y1 |
+	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ morphBoundsTop max: 0.
 	y1 _ morphBoundsBottom min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -6004,23 +6051,36 @@ morphContourAfterDrawInto: contourArray
 	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
-	y0 to: y1 do: [ :y |
-		answer at: i put: (contour at: y * 2 + 1) rounded.
-		answer at: i+1 put: (contour at: y * 2 + 2) rounded.
+	y0 to: y1 do: [ :y | | x0 x1 |
+		x0 _ targetWidth.
+		x1 _ 0.
+		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
+			(y + dy between: y0 and: y1) ifTrue: [
+				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
+				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
+				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded.
+		]].
+		answer at: i put: x0.
+		answer at: i+1 put: x1.
 		i _ i + 2 ].
 	i to: answer size by: 2 do: [ :ii |
 		answer at: ii put: targetWidth.
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/7/2021 14:45:32'!
+!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:28:15'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph."
+	Only valid _after_ drawing currentMorph.
+	Dilates contour by the last used strokeWIdth. A future improvement must be,
+	when building the contour in the engine, for each point recorded, also record
+	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i ii requiredSize oldContourDelta y0 y1 |
+	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared |
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
 	y1 _ (morphBoundsBottom max: oldBottom) min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
@@ -6031,15 +6091,18 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
 	ii _ 1-oldContourDelta.
-	y0 to: y1 do: [ :y | | x0 x1 | 
-		x0 _ targetWidth.
-		x1 _ 0.
-		(y between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
-			x0 _ x0 min: (contour at: y * 2 + 1) rounded.
-			x1 _ x1 max: (contour at: y * 2 + 2) rounded ].
+	y0 to: y1 do: [ :y | | x0 x1 |
 		(ii between: 1 and: oldContour size-1) ifTrue: [
-			x0 _ x0 min: (oldContour at: ii) rounded.
-			x1 _ x1 max: (oldContour at: ii+1) rounded ].
+			x0 _ oldContour at: ii.
+			x1 _ oldContour at: ii+1 ]
+		ifFalse: [
+			x0 _ targetWidth.
+			x1 _ 0 ].
+		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
+			(y+dy between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
+				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
+				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
+				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded ]].
 		answer at: i put: x0.
 		answer at: i+1 put: x1.
 		i _ i + 2.
