@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4661] on 13 July 2021 at 10:06:33 am'!
+'From Cuis 5.0 [latest update: #4662] on 13 July 2021 at 11:33:21 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 250!
+!provides: 'VectorGraphics' 1 251!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -8798,15 +8798,12 @@ imageForm: depth
 	self location: oldLocation.
 	^answer asFormOfDepth: depth! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/1/2021 12:27:31'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/13/2021 11:30:24'!
 imageForm: extent depth: depth
 	| wasVisible oldLocation bounds  answer canvas scale |
 
 	self requiresVectorCanvas ifFalse: [
-		| auxCanvas |
-		auxCanvas _ MorphicCanvas depth: depth over: (self morphPosition extent: (self morphExtent min: extent)).
-		auxCanvas fullDraw: self.
-		^ auxCanvas form divideByAlpha ].
+		^(self imageForm: depth) magnifyTo: extent ].
 
 	wasVisible _ self visible.
 	oldLocation _ self location.
@@ -8825,7 +8822,7 @@ imageForm: extent depth: depth
 	canvas fullDraw: self.
 	self visible: wasVisible.
 	self location: oldLocation.
-	^answer asFormOfDepth: depth! !
+	^answer asFormOfDepth: depth.! !
 
 !MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:31:03'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
