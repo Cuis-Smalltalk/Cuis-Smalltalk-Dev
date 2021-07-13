@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4660] on 8 July 2021 at 4:31:22 pm'!
+'From Cuis 5.0 [latest update: #4661] on 13 July 2021 at 10:06:33 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 249!
+!provides: 'VectorGraphics' 1 250!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1016,9 +1016,9 @@ serviceReadTTFont
 		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/8/2021 11:11:45'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/12/2021 16:06:37'!
 drawContour
-"experimental"
+"Only for experimentation!!"
 | x0 x1 c |
 (self valueOfProperty: #contour) ifNotNil: [ :contour | | contourTop |
 	contourTop _ privateDisplayBounds top max: 0.
@@ -1083,8 +1083,8 @@ containsGlobalPoint: worldPoint
 	"
 	^self isCloserThan: 10 toPoint: worldPoint! !
 
-!M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 7/7/2021 12:00:10'!
-knowsContour
+!M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 7/13/2021 09:58:23'!
+wantsContour
 	"for experimenting with this feature."
 	^true! !
 
@@ -4380,7 +4380,7 @@ currentMorph: aMorph
 disableSubPixelSampling
 	subPixelDelta _ 0.0! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:27:34'!
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/12/2021 20:19:49'!
 morphContourAfterDrawInto: contourArray
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -4392,14 +4392,15 @@ morphContourAfterDrawInto: contourArray
 	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
 	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
-	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
-	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ morphBoundsTop max: 0.
 	y1 _ morphBoundsBottom min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
+	requiredSize < 0 ifTrue: [ ^nil ].
 	answer _ contourArray.
 	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
 		answer _ IntegerArray new: requiredSize ].
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	i _ 1.
 	y0 to: y1 do: [ :y | | x0 x1 |
 		x0 _ targetWidth.
@@ -5303,7 +5304,7 @@ currentMorph: aMorph
 			currentMorphId _ aMorph morphId.
 			currentClipsSubmorphs _ aMorph clipsSubmorphsReally ].! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:27:38'!
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/12/2021 20:19:57'!
 morphContourAfterDrawInto: contourArray
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -5315,14 +5316,15 @@ morphContourAfterDrawInto: contourArray
 	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
 	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
-	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
-	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ morphBoundsTop max: 0.
 	y1 _ morphBoundsBottom min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
+	requiredSize < 0 ifTrue: [ ^nil ].
 	answer _ contourArray.
 	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
 		answer _ IntegerArray new: requiredSize ].
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	i _ 1.
 	y0 to: y1 do: [ :y | | x0 x1 |
 		x0 _ targetWidth.
@@ -6030,7 +6032,7 @@ currentMorph: aMorph
 disableSubPixelSampling
 	subPixelDelta _ 0.0! !
 
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:27:40'!
+!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/12/2021 20:20:03'!
 morphContourAfterDrawInto: contourArray
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -6042,14 +6044,15 @@ morphContourAfterDrawInto: contourArray
 	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
 	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
-	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
-	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ morphBoundsTop max: 0.
 	y1 _ morphBoundsBottom min: targetHeight -1.
 	requiredSize _ (y1 - y0 + 1) *  2.
+	requiredSize < 0 ifTrue: [ ^nil ].
 	answer _ contourArray.
 	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
 		answer _ IntegerArray new: requiredSize ].
+	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
+	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	i _ 1.
 	y0 to: y1 do: [ :y | | x0 x1 |
 		x0 _ targetWidth.
