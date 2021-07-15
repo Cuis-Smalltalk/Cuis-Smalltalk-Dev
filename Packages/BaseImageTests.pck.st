@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4628] on 4 June 2021 at 10:12:32 am'!
-'Description ReturnNodeTest tests'!
-!provides: 'BaseImageTests' 1 261!
+'From Cuis 5.0 [latest update: #4665] on 15 July 2021 at 10:47:59 am'!
+'Description Debugger tests & fixes on SHST80RangeTypeTest'!
+!provides: 'BaseImageTests' 1 263!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -35,6 +35,7 @@ SystemOrganization addCategory: 'BaseImageTests-Tools-Browser'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Changes'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Text'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Syntax Highlighting'!
+SystemOrganization addCategory: 'BaseImageTests-Tools-Debugger'!
 
 
 !classDefinition: #MyResumableTestError category: 'BaseImageTests-Exceptions'!
@@ -1375,6 +1376,16 @@ TestCase subclass: #SHST80RangeTypeTest
 	category: 'BaseImageTests-Tools-Syntax Highlighting'!
 !classDefinition: 'SHST80RangeTypeTest class' category: 'BaseImageTests-Tools-Syntax Highlighting'!
 SHST80RangeTypeTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #DebugerTest category: 'BaseImageTests-Tools-Debugger'!
+TestCase subclass: #DebugerTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Debugger'!
+!classDefinition: 'DebugerTest class' category: 'BaseImageTests-Tools-Debugger'!
+DebugerTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel'!
@@ -26428,7 +26439,7 @@ test10TypeOfMessageSentToLiteralFalseAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: 'false'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:23:39'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 7/15/2021 10:47:18'!
 test11TypeOfMessageSentToSelfAreObtainedCorrectly
 
 	self 
@@ -26444,12 +26455,14 @@ test11TypeOfMessageSentToSelfAreObtainedCorrectly
 		receiverRange: [ :ranges | ranges penultimate ]
 		messageRange: [ :ranges | ranges last ].
 		
+	"Binary messages have been disabled - Hernan
 	self 
 		assertTypeOfMessageSend: 'm1 self !! 2'
 		is: #undefinedBinary
 		in: Object
 		receiverRange: [ :ranges | ranges antepenultimate ]
-		messageRange: [ :ranges | ranges penultimate ].
+		messageRange: [ :ranges | ranges penultimate ]."
+		
 	self 
 		assertTypeOfMessageSend: 'm1 self = 2'
 		is: #binary
@@ -26462,7 +26475,7 @@ test12TypeOfMessageSentToSuperAreObtainedCorrectly
 
 	self assertTypesAreValidWhenMessageSendTo: 'super'! !
 
-!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 11:50:52'!
+!SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 7/15/2021 10:47:00'!
 test13TypesIsUndefinedForAnyMessageSendToSuperFromProtoObject
 
 	self 
@@ -26472,12 +26485,13 @@ test13TypesIsUndefinedForAnyMessageSendToSuperFromProtoObject
 		receiverRange: [ :ranges | ranges penultimate ]
 		messageRange: [ :ranges | ranges last ].
 		
+	"binaryMessages have been disabled - Hernan
 	self 
 		assertTypeOfMessageSend: 'm1 super = 2'
 		is: #undefinedBinary
 		in: ProtoObject
 		receiverRange: [ :ranges | ranges antepenultimate ]
-		messageRange: [ :ranges | ranges penultimate ].! !
+		messageRange: [ :ranges | ranges penultimate ]."! !
 
 !SHST80RangeTypeTest methodsFor: 'tests' stamp: 'HAW 10/5/2020 12:00:37'!
 test14TypeOfMessageSentToGlobalVarAreObtainedCorrectly
@@ -26547,15 +26561,16 @@ assertTypeOfUnaryMessageSend: aSourceCode is: aExpectedType
 		messageRange: [ :ranges | ranges last ]
 ! !
 
-!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 10/5/2020 12:02:56'!
+!SHST80RangeTypeTest methodsFor: 'assertions' stamp: 'HAW 7/15/2021 10:45:30'!
 assertTypesAreValidWhenMessageSendTo: aReceiverAsString
 
 	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' _zz' is: #undefinedUnary.
 	self assertTypeOfUnaryMessageSend: 'm1 ', aReceiverAsString, ' size' is: #unary.
 
+	" binary messages has beed disabled by now - Hernan
 	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' !! 2' is: #undefinedBinary.
 	self assertTypeOfBinaryMessageSend: 'm1 ', aReceiverAsString, ' = 2' is: #binary
-	! !
+	"! !
 
 !SHST80RangeTypeTest methodsFor: 'messages for testing' stamp: 'HAW 10/5/2020 12:15:40'!
 !! something
@@ -26566,6 +26581,45 @@ assertTypesAreValidWhenMessageSendTo: aReceiverAsString
 _zz
 
 	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
+
+!DebugerTest methodsFor: 'tests - method categories' stamp: 'HAW 7/15/2021 10:24:04'!
+testCategoriesAreAddedSortedByAndSeparatedByClass
+
+	| debugger categories lines objectCategories protoObjectCategories |
+	
+	objectCategories := Object methodCategoriesAsSortedCollection.
+	protoObjectCategories := ProtoObject methodCategoriesAsSortedCollection removeAllFoundIn: objectCategories; yourself.
+	
+	"Test pre-conditions. May seem unnecesary but they are not if we take time into account - Hernan"
+	self assert: ProtoObject equals: Object superclass.
+	self assert: nil equals: ProtoObject superclass.
+	self assert: objectCategories notEmpty.
+	self assert: protoObjectCategories notEmpty.
+	
+	debugger := Debugger new.
+	categories := OrderedCollection new.
+	lines := OrderedCollection new.
+	
+	debugger addCategoriesOf: Object to: categories separatingWith: lines.
+	
+	self assert: (categories copyFrom: 1 to: objectCategories size) asArray equals: objectCategories asArray.
+	self assert: 1 equals: lines size.
+	self assert: objectCategories size equals: lines first.
+	self assert: (categories copyFrom: objectCategories size + 1 to: categories size) asArray equals: protoObjectCategories asArray.
+	! !
+
+!DebugerTest methodsFor: 'tests - method categories' stamp: 'HAW 7/15/2021 10:27:07'!
+testMetaclassCategoriesIncludesInstanceCreation
+
+	| debugger categories lines |
+	
+	debugger := Debugger new.
+	categories := OrderedCollection new.
+	lines := OrderedCollection new.
+	
+	debugger addCategoriesOf: ProtoObject class to: categories separatingWith: lines.
+	
+	self assert: Categorizer instanceCreation equals: categories first ! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
