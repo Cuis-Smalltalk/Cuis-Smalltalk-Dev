@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4662] on 13 July 2021 at 11:33:21 am'!
+'From Cuis 5.0 [latest update: #4673] on 16 July 2021 at 6:46:34 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 251!
+!provides: 'VectorGraphics' 1 252!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -8727,7 +8727,7 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 6/18/2021 15:37:58'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/16/2021 17:32:12'!
 findBounds
 	"Find and answer full bounds in whatever owner.
 	These might not equal #displayFullBounds at all!!"
@@ -8736,8 +8736,13 @@ findBounds
 	self requiresVectorCanvas ifFalse: [
 		^self morphPosition extent: self morphExtent ].
 
-	w _ WorldMorph new.
-	w setCanvas.
+	owner isWorldMorph ifTrue: [
+		w _ owner ]
+	ifFalse: [
+		w _ UISupervisor ui.
+		w ifNil: [
+			w _ WorldMorph new.
+			w setCanvas ]].
 	c _ w canvas.
 	"Hack owner so #displayBoundsSetFrom: will update privateDisplayBounds"
 	prevOwner _ owner.
@@ -8747,8 +8752,9 @@ findBounds
 		c fullUpdateBounds: self ].
 	answer _ self displayFullBounds.
 	"Reset owner and privateDisplayBounds so no one finds out what we've just done!!"
-	owner _ prevOwner.
-	privateDisplayBounds _ prevDisplayBounds.
+	prevOwner == owner ifFalse: [
+		owner _ prevOwner.
+		privateDisplayBounds _ prevDisplayBounds ].
 	^answer! !
 
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 6/18/2021 16:03:54'!
@@ -8770,56 +8776,40 @@ fitInto: aRectangle
 	currentBounds _ self findBounds.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 6/18/2021 15:35:06'!
-imageForm: depth
-	| wasVisible oldLocation bounds  answer canvas |
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/16/2021 17:36:09'!
+imageForm: extentOrNil depth: depth
+	| wasVisible oldLocation bounds extent answer auxCanvas |
 
 	self requiresVectorCanvas ifFalse: [
-		| auxCanvas |
-		auxCanvas _ MorphicCanvas depth: depth over: (self morphPosition extent: self morphExtent).
+		extent _ self morphExtent.
+		extentOrNil ifNotNil: [ extent _ extent min: extentOrNil * 4 ].
+		auxCanvas _ BitBltCanvas depth: depth over: (self morphPosition floor extent: extent ceiling).
 		auxCanvas fullDraw: self.
-		^ auxCanvas form divideByAlpha ].
+		answer _ auxCanvas form divideByAlpha.
+		extentOrNil ifNotNil: [ answer _ answer magnifyTo: extent ].
+		^answer ].
 
 	wasVisible _ self visible.
 	oldLocation _ self location.
 	self location: (MorphicTranslation withTranslation: 0@0).
 	bounds _ self findBounds.
-	self location: (MorphicTranslation withTranslation: bounds origin negated).
-	answer _ Form extent: bounds extent depth: 32.
-	"Ask for a Canvas with subpixels so it can also handle translucent target"
-	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
-	"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
-	canvas engine disableSubPixelSampling.
-	depth = 32 ifFalse: [
-		"Only 32 bpp can hold translucent anti aliasing over transparent background"
-		answer fillColor: Color veryLightGray ].
-	canvas fullDraw: self.
-	self visible: wasVisible.
-	self location: oldLocation.
-	^answer asFormOfDepth: depth! !
-
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/13/2021 11:30:24'!
-imageForm: extent depth: depth
-	| wasVisible oldLocation bounds  answer canvas scale |
-
-	self requiresVectorCanvas ifFalse: [
-		^(self imageForm: depth) magnifyTo: extent ].
-
-	wasVisible _ self visible.
-	oldLocation _ self location.
-	self location: (MorphicTranslation withTranslation: 0@0).
-	bounds _ self findBounds.
-	scale _ extent x asFloat / bounds width min: extent y asFloat / bounds height.
-	self location: (AffineTransformation withScale: scale position: bounds origin negated +1 * scale ).
+	extentOrNil
+		ifNotNil: [ | scale |
+			extent _ extentOrNil.
+			scale _ extent x asFloat / bounds width min: extent y asFloat / bounds height.
+			self location: (AffineTransformation withScale: scale position: bounds origin negated +1 * scale ) ]
+		ifNil: [
+			extent _ bounds extent.
+			self location: (MorphicTranslation withTranslation: bounds origin negated) ].
 	answer _ Form extent: extent depth: 32.
 	"Ask for a Canvas with subpixels so it can also handle translucent target"
-	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
+	auxCanvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
 	"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
-	canvas engine disableSubPixelSampling.
+	auxCanvas engine disableSubPixelSampling.
 	depth = 32 ifFalse: [
 		"Only 32 bpp can hold translucent anti aliasing over transparent background"
 		answer fillColor: Color veryLightGray ].
-	canvas fullDraw: self.
+	auxCanvas fullDraw: self.
 	self visible: wasVisible.
 	self location: oldLocation.
 	^answer asFormOfDepth: depth.! !
