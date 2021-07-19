@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4673] on 16 July 2021 at 6:46:34 pm'!
+'From Cuis 5.0 [latest update: #4683] on 19 July 2021 at 5:54:09 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 252!
+!provides: 'VectorGraphics' 1 253!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1003,7 +1003,7 @@ readTrueTypeFontEntry: ttFontFileEntry
 		Preferences setDefaultFont:	 familyName ].
 	PopUpMenu inform: 'loaded font ', familyName.! !
 
-!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'KenD 4/22/2020 13:52:56'!
+!TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 7/18/2021 20:39:48'!
 serviceReadTTFont
 	"Answer the service of reading a TrueType font"
 
@@ -1013,7 +1013,7 @@ serviceReadTTFont
 		selector: #readTrueTypeFontEntry:
 		description: 'load TrueType font'
 		buttonLabel: 'read font'
-		icon: ((Theme content from: 'Theme' get: {'16x16'. 'mimetypes'}) at: 'font-x-generic.png')
+		icon: #fontIcon
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
 !M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/12/2021 16:06:37'!
@@ -1031,19 +1031,19 @@ drawContour
 			Display colorAt: x@(contourTop+y-1) put: c ]]].
 Display forceToScreen! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/7/2021 16:00:38'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/18/2021 14:13:34'!
 drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
+	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target.
+	See #circleApproximationExamples"
 
 	aCanvas strokeWidth: 3 color: `Color gray alpha: 0.5` fillColor: `Color lightGreen alpha: 0.3` do: [
 		aCanvas
 				pathSequence: `#[
 					0.0 15.0 15.0
-					3.0 30.0 30.0 15.0 24.0 21.0 30.0
-					3.0 45.0 15.0 40.0 29.0 45.0 24.0
-					3.0 30.0 0.0 45.0 6.0 39.0 0.0
-					3.0 15.0 15.0 21.0 0.0 15.0 6.0
+					3.0 30.0 30.0 15.0 23.3 21.7 30.0
+					3.0 45.0 15.0 38.3 30.0 45.0 23.3
+					3.0 30.0 0.0 45.0 6.7 38.3 0.0
+					3.0 15.0 15.0 21.7 0.0 15.0 6.7
 					] asFloat32Array`
 		].
 
@@ -1051,8 +1051,8 @@ drawOn: aCanvas
 		aCanvas
 				pathSequence: `#[
 					0.0 22.0 19.0
-					2.0 30.0 24.0 24.0 24.0
-					2.0 38.0 19.0 36.0 24.0
+					2.0 30.0 24.0 24.5 24.0
+					2.0 38.0 19.0 35.5 24.0
 					0.0 25.0 10.0
 					1.0 25.0 12.0
 					0.0 35.0 10.0
@@ -2297,26 +2297,28 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				self rel_QuadraticBezierSmoothTo: to ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/13/2021 17:17:18'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 7/18/2021 14:06:56'!
 pathSequence: aFloat32Array
 	"
+	'Circle approximation by bezier curves
+	https://spencermortensen.com/articles/bezier-circle/'.
 	(VectorCanvas onForm: Display)
 		geometryTransformation: (AffineTransformation withScale: 14 position: 100@100);
 		strokeWidth: 3 color: Color random do: [ :engine |
 			engine
 				pathSequence: `#[
 					0.0 15.0 15.0
-					3.0 30.0 30.0 15.0 24.0 21.0 30.0
-					3.0 45.0 15.0 40.0 29.0 45.0 24.0
-					3.0 30.0 0.0 45.0 6.0 39.0 0.0
-					3.0 15.0 15.0 21.0 0.0 15.0 6.0
-					0.0 21.0 19.0
-					2.0 30.0 24.0 23.0 23.0
-					2.0 39.0 19.0 37.0 23.0
-					0.0 25.0 11.0
-					1.0 25.0 13.0
-					0.0 35.0 11.0
-					1.0 35.0 13.0
+					3.0 30.0 30.0 15.0 23.3 21.7 30.0
+					3.0 45.0 15.0 38.3 30.0 45.0 23.3
+					3.0 30.0 0.0 45.0 6.7 38.3 0.0
+					3.0 15.0 15.0 21.7 0.0 15.0 6.7
+					0.0 22.0 19.0
+					2.0 30.0 24.0 24.5 24.0
+					2.0 38.0 19.0 35.5 24.0
+					0.0 25.0 10.0
+					1.0 25.0 12.0
+					0.0 35.0 10.0
+					1.0 35.0 12.0
 					] asFloat32Array`
 				].
 	Display forceToScreen
@@ -2375,55 +2377,151 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/30/2014 20:02'!
-drawButtonIconFromCurrentMorph
-
-	currentMorph iconName ifNotNil: [ :selector |
-		self perform: selector.
-		^true ].
-	^false! !
-
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 5/10/2021 11:53:28'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:34'!
 drawCloseIcon
+	| c |
+	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
+		ifFalse: [`Color r: 0.996 g: 0.329 b: 0.329`]
+		ifTrue: [`(Color r: 0.996 g: 0.329 b: 0.329) * 0.85`].
+	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
+		self pathSequence: `#[
+			0 1 10
+			2 10 19 2 18
+			2 19 10 18 18
+			2 10 1 18 2
+			2 1 10 2 2
+			] asFloat32Array` ].
+	currentMorph mouseIsOver ifTrue: [
+		self strokeWidth: 2 color: `Color black` do: [
+			self pathSequence: `#[
+				0 6 14
+				1 14 6
+				0 6 6
+				1 14 14
+				] asFloat32Array` ]].! !
 
-self strokeWidth: 1.0 color: Color black fillColor: Color red do: [
-	self ellipseCenter: 9@9 radius: 6@6 ]
-! !
-
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 1/4/2018 09:06:50'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:38'!
 drawCollapseIcon
+	| c |
+	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
+		ifFalse: [`Color r: 0.988 g: 0.557 b: 0.102`]
+		ifTrue: [`(Color r: 0.988 g: 0.557 b: 0.102) * 0.85`].
+	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
+		self pathSequence: `#[
+			0 1 10
+			2 10 19 2 18
+			2 19 10 18 18
+			2 10 1 18 2
+			2 1 10 2 2
+			] asFloat32Array` ].
+	currentMorph mouseIsOver ifTrue: [
+		self strokeWidth: 2 color: `Color black` do: [
+			self pathSequence: `#[
+				0 5 10
+				1 15 10
+				] asFloat32Array` ]].! !
 
-self drawCloseIcon! !
-
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 1/4/2018 09:06:55'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:45'!
 drawDownIcon
+	| c |
+	c _ currentMorph isPressed
+		ifFalse: [`Color darkGray`]
+		ifTrue: [`Color veryDarkGray`].
+	self strokeWidth: 2.5 color: c do: [
+		self pathSequence: `#[
+			0 4 7
+			1 9 13
+			1 14 7
+			] asFloat32Array`
+		].! !
 
-self drawCloseIcon! !
-
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 1/4/2018 09:06:59'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:50'!
 drawExpandIcon
+	| c |
+	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
+		ifFalse: [`Color r: 0.337 g: 0.604 b: 0.161`]
+		ifTrue: [`(Color r: 0.337 g: 0.604 b: 0.161) * 0.85`].
+	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
+		self pathSequence: `#[
+			0 1 10
+			2 10 19 2 18
+			2 19 10 18 18
+			2 10 1 18 2
+			2 1 10 2 2
+			] asFloat32Array` ].
+	currentMorph mouseIsOver ifTrue: [
+		self strokeWidth: 2 color: `Color black` do: [
+			self pathSequence: `#[
+				0 5 10
+				1 15 10
+				0 10 5
+				1 10 15
+				] asFloat32Array` ]].! !
 
-self drawCloseIcon! !
-
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 1/4/2018 09:07:03'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:56'!
 drawLeftIcon
+	| c |
+	c _ currentMorph isPressed
+		ifFalse: [`Color darkGray`]
+		ifTrue: [`Color veryDarkGray`].
+	self strokeWidth: 2.5 color: c do: [
+		self pathSequence: `#[
+			0 12 4
+			1 6 9
+			1 12 14
+			] asFloat32Array`
+		].! !
 
-self drawCloseIcon! !
-
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 1/4/2018 09:07:08'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:29:02'!
 drawMenuIcon
+	| c |
+	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
+		ifFalse: [`Color r: 0.212 g: 0.439 b: 0.784`]
+		ifTrue: [`(Color r: 0.212 g: 0.439 b: 0.784) * 0.85`].
+	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
+		self pathSequence: `#[
+			0 1 10
+			2 10 19 2 18
+			2 19 10 18 18
+			2 10 1 18 2
+			2 1 10 2 2
+			] asFloat32Array` ].
+	currentMorph mouseIsOver ifTrue: [
+		self fillColor: `Color black` do: [
+			self pathSequence: `#[
+				0 4 8
+				1 16 8
+				1 10 16
+				1 4 8
+				] asFloat32Array` ]].! !
 
-self drawCloseIcon! !
-
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 1/4/2018 09:07:16'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:29:07'!
 drawRightIcon
+	| c |
+	c _ currentMorph isPressed
+		ifFalse: [`Color darkGray`]
+		ifTrue: [`Color veryDarkGray`].
+	self strokeWidth: 2.5 color: c do: [
+		self pathSequence: `#[
+			0 7 4
+			1 13 9
+			1 7 14
+			] asFloat32Array`
+		].! !
 
-self drawCloseIcon! !
-
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 1/4/2018 09:07:20'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:29:12'!
 drawUpIcon
-
-self drawCloseIcon! !
+	| c |
+	c _ currentMorph isPressed
+		ifFalse: [`Color darkGray`]
+		ifTrue: [`Color veryDarkGray`].
+	self strokeWidth: 2.5 color: c do: [
+		self pathSequence: `#[
+			0 4 12
+			1 9 6
+			1 14 12
+			] asFloat32Array`
+		].! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/13/2021 18:06:10'!
 ellipseCenter: center radius: radiusPointOrNumber borderWidth: morphStrokeWidth borderColor: strokeColor fillColor: fillColor
@@ -2801,6 +2899,23 @@ fontToUse: fontOrNil
 	"Answer a suitable font, aFont if possible."
 
 	^fontOrNil ifNil: [ FontFamily defaultOrTrueTypeFamilyAndPointSize ].! !
+
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 7/19/2021 15:10:53'!
+pvtDrawButtonFaceForm: aForm
+	"We assume that we are drawing a PluggableButtonMorph,
+	or some morph that conforms the required protocol.
+	Answer true if we were able to draw it."
+
+	| color |
+	color _ currentMorph isPressed
+		ifTrue: [ `Color gray: 0.75` ]
+		ifFalse: [
+			currentMorph mouseIsOver
+				ifTrue: [ `Color gray: 0.75` ]
+				ifFalse: [ `Color white` ]].
+	self
+		image: aForm
+		at: (currentMorph morphExtent - aForm extent //2).! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 1/14/2020 09:32:24'!
 setClipRect: aRectangle
@@ -3859,6 +3974,42 @@ resetMorphBounds
 	morphBoundsBottom _ 0.
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
+
+!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 7/18/2021 14:10:55'!
+circleApproximationExamples
+"
+self circleApproximationExamples
+https://spencermortensen.com/articles/bezier-circle/"
+| c cx cy d e r |
+cx _ 250.
+cy _ 250.
+r _ 200.
+c _ 0.085 * r.
+d _ 0.5 * r.
+e _ 0.552 * r.
+(VectorGraphicsEngine onForm: Display)
+	strokeWidth: 5.0 color: Color red do: [ :engine |
+		engine
+			circleCenter: cx @ cy radius: r].
+(VectorGraphicsEngine onForm: Display)												"Quadratic, coarse and better approximations"
+	strokeWidth: 1.0 color: Color white do: [ :engine |
+		engine
+			moveTo: cx @ (cy + r);
+			quadraticBezierTo: cx - r @ cy control: (cx - r) @ (cy + r);
+			moveTo: cx @ (cy + r);
+			quadraticBezierTo: cx - r @ cy control: (cx - r + c) @ (cy + r - c) ].
+(VectorGraphicsEngine onForm: Display)												"Cubic, coarse approximation"
+	strokeWidth: 1.0 color: Color green do: [ :engine |
+		engine
+			moveTo: cx @ (cy + r);
+			cubicBezierTo: cx - r @ cy control1: (cx - d) @ (cy + r) control2: (cx - r) @ (cy + d) ].
+(VectorGraphicsEngine onForm: Display)												"Cubic, good approximation"
+	strokeWidth: 1.0 color: Color black do: [ :engine |
+		engine
+			moveTo: cx @ (cy + r);
+			cubicBezierTo: cx - r @ cy control1: (cx - e) @ (cy + r) control2: (cx - r) @ (cy + e) ].
+Display forceToScreen
+! !
 
 !VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/8/2021 12:28:54'!
 experLinesAndShapes
@@ -8776,17 +8927,17 @@ fitInto: aRectangle
 	currentBounds _ self findBounds.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/16/2021 17:36:09'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/19/2021 14:52:32'!
 imageForm: extentOrNil depth: depth
 	| wasVisible oldLocation bounds extent answer auxCanvas |
 
 	self requiresVectorCanvas ifFalse: [
 		extent _ self morphExtent.
 		extentOrNil ifNotNil: [ extent _ extent min: extentOrNil * 4 ].
-		auxCanvas _ BitBltCanvas depth: depth over: (self morphPosition floor extent: extent ceiling).
+		auxCanvas _ MorphicCanvas depth: depth over: (self morphPosition floor extent: extent ceiling).
 		auxCanvas fullDraw: self.
 		answer _ auxCanvas form divideByAlpha.
-		extentOrNil ifNotNil: [ answer _ answer magnifyTo: extent ].
+		extentOrNil ifNotNil: [ answer _ answer magnifyTo: extentOrNil ].
 		^answer ].
 
 	wasVisible _ self visible.
