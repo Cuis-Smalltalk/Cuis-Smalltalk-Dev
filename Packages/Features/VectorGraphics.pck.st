@@ -1,6 +1,7 @@
-'From Cuis 5.0 [latest update: #4683] on 19 July 2021 at 5:54:09 pm'!
+'From Cuis 5.0 [latest update: #4686] on 20 July 2021 at 2:04:49 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 253!
+!provides: 'VectorGraphics' 1 255!
+!requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1843,7 +1844,7 @@ rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax
 		lineTo: xMin @ yMax;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:27:49'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:22:50'!
 roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p5 p6 p7 p8 |
@@ -1861,25 +1862,16 @@ roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	p6 _ corner3 - dx.
 	p7 _ corner4 + dx.
 	p8 _ corner4 - dy.
-	"
-	rx _ dx r.
-	ry _ dy r.
-	phi _ dx theta.
-	doLargerArc _ false.
-	useIncreasingAngles _ true.
-	"
 	self
 		moveTo: corner1;
 		lineTo: corner2;
 		lineTo: p5;
-"		arcToX: p6 x y: p6 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
 		quadraticBezierTo: p6 control: corner3;
 		lineTo: p7;
-"		arcToX: p8 x y: p8 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
 		quadraticBezierTo: p8 control: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:28:03'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:23:09'!
 roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 p5 p6 p7 p8 |
@@ -1901,29 +1893,18 @@ roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	p6 _ corner3 - dx.
 	p7 _ corner4 + dx.
 	p8 _ corner4 - dy.
-	"
-	rx _ dx r.
-	ry _ dy r.
-	phi _ dx theta.
-	doLargerArc _ false.
-	useIncreasingAngles _ true.
-	"
 	self
 		moveTo: p1;
-"		arcToX: p2 x y: p2 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
 		quadraticBezierTo: p2 control: corner1;
 		lineTo: p3;
-"		arcToX: p4 x y: p4 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
 		quadraticBezierTo: p4 control: corner2;
 		lineTo: p5;
-"		arcToX: p6 x y: p6 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
 		quadraticBezierTo: p6 control: corner3;
 		lineTo: p7;
-"		arcToX: p8 x y: p8 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
 		quadraticBezierTo: p8 control: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 14:28:10'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:23:21'!
 roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 |
@@ -1940,19 +1921,10 @@ roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 	p2 _ corner1 + dx.
 	p3 _ corner2 - dx.
 	p4 _ corner2 + dy.
-	"
-	rx _ dx r.
-	ry _ dy r.
-	phi _ dx theta.
-	doLargerArc _ false.
-	useIncreasingAngles _ true.
-	"
 	self
 		moveTo: p1;
-"		arcToX: p2 x y: p2 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
 		quadraticBezierTo: p2 control: corner1;
 		lineTo: p3;
-"		arcToX: p4 x y: p4 y rx: rx ry: ry angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles;"
 		quadraticBezierTo: p4 control: corner2;
 		lineTo: corner3;
 		lineTo: corner4;
@@ -2523,6 +2495,117 @@ drawUpIcon
 			] asFloat32Array`
 		].! !
 
+!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:04:31'!
+drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor: insideColor labelHeight: labelHeight
+	"For BitBltCanvas protocol, aRectangle:
+	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
+	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
+	"
+	Display getCanvas windowFrame: (10@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
+	VectorCanvas onForm: Display :: into: self runningWorld; windowFrame: (210@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
+	Display forceToScreen
+	"
+	"
+	| hbw |
+	self strokeWidth: morphStrokeWidth color: aColor fillColor: insideColor do: [
+		self roundRectangleMinX: aRectangle left maxX: aRectangle right minY: aRectangle top maxY: aRectangle bottom rx: r ry: r ].
+	hbw _ morphStrokeWidth *0.5.
+	self fillColor: aColor do: [
+		self rectangleMinX: aRectangle left+hbw maxX: aRectangle right-hbw minY: aRectangle top+hbw maxY: aRectangle top + lh-hbw ].
+	"
+
+	| d1 d2 lh r |
+	d1 _ borderWidth*0.5-0.5.
+	d2 _ borderWidth*0.5+0.5.
+	lh _ labelHeight + borderWidth.
+	r _ Theme current roundedWindowRadius.
+
+	self strokeWidth: borderWidth color: borderColor fillColor: borderColor do: [
+		self 
+			roundTopRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle top+lh-d2 rx: r ry: r ].
+	self strokeWidth: borderWidth color: borderColor fillColor: insideColor do: [
+		self
+			roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh-d2 maxY: aRectangle bottom-d2 rx: r ry: r ]! !
+
+!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:01:52'!
+roundBottomLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
+
+	| d1 d2 r corner p1 p2 p3 p4 |
+	d1 _ borderWidth*0.5-0.5.
+	d2 _ borderWidth*0.5+0.5.
+	r _ Theme current roundedWindowRadius.
+	corner _ (rectOriginX + d1)@(rectOriginY + l - d2).
+	p1 _ corner - (0@l).
+	p2 _ corner - (0@r).
+	p3 _ corner + (r@0).
+	p4 _ corner + (l@0).
+	self strokeWidth: borderWidth color: borderColor do: [
+		self
+			moveTo: p1;
+			lineTo: p2;
+			quadraticBezierTo: p3 control: corner;
+			lineTo: p4 ].! !
+
+!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:04:24'!
+roundBottomRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
+
+	| d2 r corner p1 p2 p3 p4 |
+	d2 _ borderWidth*0.5+0.5.
+	r _ Theme current roundedWindowRadius.
+	corner _ (rectOriginX + l - d2)@(rectOriginY + l - d2).
+	p1 _ corner - (l@0).
+	p2 _ corner - (r@0).
+	p3 _ corner - (0@r).
+	p4 _ corner - (0@l).
+	self strokeWidth: borderWidth color: borderColor do: [
+		self
+			moveTo: p1;
+			lineTo: p2;
+			quadraticBezierTo: p3 control: corner;
+			lineTo: p4 ].! !
+
+!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:22:59'!
+roundEdge: aRectangle color: aColor
+
+	self fillRectangle: aRectangle color: aColor! !
+
+!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:50:30'!
+roundTopLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
+
+	| d1 r corner p1 p2 p3 p4 |
+	d1 _ borderWidth*0.5-0.5.
+	r _ Theme current roundedWindowRadius.
+	corner _ rectOriginX@rectOriginY + d1.
+	p1 _ corner + (0@l).
+	p2 _ corner + (0@r).
+	p3 _ corner + (r@0).
+	p4 _ corner + (l@0).
+	self strokeWidth: borderWidth color: borderColor do: [
+		self
+			moveTo: p1;
+			lineTo: p2;
+			quadraticBezierTo: p3 control: corner;
+			lineTo: p4 ].! !
+
+!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:55:27'!
+roundTopRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
+
+	| d1 d2 r corner p1 p2 p3 p4 |
+	d1 _ borderWidth*0.5-0.5.
+	d2 _ borderWidth*0.5+0.5.
+	r _ Theme current roundedWindowRadius.
+	corner _ (rectOriginX + l - d2)@(rectOriginY + d1).
+	p1 _ corner - (l@0).
+	p2 _ corner - (r@0).
+	p3 _ corner + (0@r).
+	p4 _ corner + (0@l).
+	self strokeWidth: borderWidth color: borderColor do: [
+		self
+			moveTo: p1;
+			lineTo: p2;
+			quadraticBezierTo: p3 control: corner;
+			lineTo: p4 ].! !
+
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/13/2021 18:06:10'!
 ellipseCenter: center radius: radiusPointOrNumber borderWidth: morphStrokeWidth borderColor: strokeColor fillColor: fillColor
 
@@ -2661,46 +2744,8 @@ roundRect: aRectangle color: aColor radius: r
 			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
-roundRect: displayRectangle color: aColor radius: r gradientTop: topFactor gradientBottom: bottomFactor gradientHeight: h
-	self halt! !
-
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
-roundRect: aRectangle color: aColor radius: r gradientTop: topFactor gradientCenter: centerFactor gradientBottom: bottomFactor gradient1Height: h1
-	self halt! !
-
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
 stencil: stencilForm at: aPoint color: aColor
 	self halt! !
-
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/18/2021 10:09:11'!
-windowFrame: aRectangle color: aColor radius: r border: morphStrokeWidth labelHeight: lh gradientTop: topFactor gradientBottom: bottomFactor insideColor: insideColor
-	"For BitBltCanvas protocol, aRectangle:
-	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
-	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
-	"
-	Display getCanvas windowFrame: (10@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
-	VectorCanvas onForm: Display :: into: self runningWorld; windowFrame: (210@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
-	Display forceToScreen
-	"
-	"
-	| hbw |
-	self strokeWidth: morphStrokeWidth color: aColor fillColor: insideColor do: [
-		self roundRectangleMinX: aRectangle left maxX: aRectangle right minY: aRectangle top maxY: aRectangle bottom rx: r ry: r ].
-	hbw _ morphStrokeWidth *0.5.
-	self fillColor: aColor do: [
-		self rectangleMinX: aRectangle left+hbw maxX: aRectangle right-hbw minY: aRectangle top+hbw maxY: aRectangle top + lh-hbw ].
-	"
-
-	| d1 d2 |
-	d1 _ morphStrokeWidth*0.5-0.5.
-	d2 _ morphStrokeWidth*0.5+0.5.
-
-	self strokeWidth: morphStrokeWidth color: aColor fillColor: aColor do: [
-		self 
-			roundTopRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle top+lh-d2 rx: r ry: r ].
-	self strokeWidth: morphStrokeWidth color: aColor fillColor: insideColor do: [
-		self
-			roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh-d2 maxY: aRectangle bottom-d2 rx: r ry: r ]! !
 
 !VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 5/26/2021 11:27:13'!
 frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
