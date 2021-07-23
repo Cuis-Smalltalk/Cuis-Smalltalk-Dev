@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4686] on 20 July 2021 at 2:04:49 pm'!
+'From Cuis 5.0 [latest update: #4690] on 23 July 2021 at 6:47:06 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 255!
+!provides: 'VectorGraphics' 1 256!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -4391,7 +4391,7 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	clientStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
 	^ self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock! !
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 6/11/2021 11:58:59'!
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 20:26:08'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -4399,7 +4399,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 	dy _ geometryTransformation externalizeDelta: 0@ry.
 	trx _ dx r.
 	try _ dy r.
-	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 1.
+	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 2.
 	d _ sweepAngle / hops.
 	center _ geometryTransformation externalizePosition: cx@cy.
 	tcx _ center x.
@@ -4413,7 +4413,8 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 
 		ifFalse: [						"Else go the more expensive way"
 			angle _ startAngle.
-			hops+1 timesRepeat: [
+			hops _ hops+1.
+			hops timesRepeat: [
 				xp _ angle cos * trx.
 				yp _ angle sin * try.
 				x _ thetaCos * xp - (thetaSin * yp) + tcx.
@@ -4663,7 +4664,7 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 subPixelDelta
 	^subPixelDelta! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/5/2021 16:24:20'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 20:27:00'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -4671,13 +4672,14 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 	dy _ geometryTransformation externalizeDelta: 0@ry.
 	trx _ dx r.
 	try _ dy r.
-	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 1.
+	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 2.
 	d _ sweepAngle / hops.
 	center _ geometryTransformation externalizePosition: cx@cy.
 	tcx _ center x.
 	tcy _ center y.
 	angle _ startAngle.
-	hops+1 timesRepeat: [
+	hops _ hops+1.
+	hops timesRepeat: [
 		xp _ angle cos * trx.
 		yp _ angle sin * try.
 		x _ thetaCos * xp - (thetaSin * yp) + tcx.
@@ -4767,10 +4769,10 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/5/2021 16:31:27'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 23:10:38'!
 quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
-	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y t0 x0 y0 |
+	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y t0 x0 y0 length correction |
 
 	"If control point is bogus, just draw a line"
 	(xControl = xTo and: [ yControl = yTo ]) ifTrue: [
@@ -4813,12 +4815,8 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		self updateEdgeCountAtX: x y: y ].
 	self updateContourForX: x y: y.
 
-	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-	increment _ 0.2.
-	"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-	In these cases, a larger initial estimation avoids the problem."
-	(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-		increment _ 0.5 ].
+	"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
+	increment _ 0.5 / (dx max: dy) min: 0.5.
 	t _ 0.0.
 	[
 		t0 _ t. x0 _ x. y0 _ y.
@@ -4828,11 +4826,17 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
 		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
 		"Now adjust the increment to aim at the required hop length, and recompute next point."
-		increment _ increment / ((x-x0)@(y-y0)) r * hop.
-		t _ t0 + increment. oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		length _ ((x-x0)@(y-y0)) r.
+		correction _ hop / length.
+		[
+			increment _ increment * correction.
+			t _ t0 + increment. oneLessT _ 1.0 - t.
+			f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+			x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+			y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+			length _ ((x-x0)@(y-y0)) r.
+			correction _ hop / length.
+			correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 		t < 1.0 ]
 	whileTrue: [
 		self updateAlphasForX: x y: y.
@@ -5588,7 +5592,7 @@ subPixelDelta
 	"No subpixel stuff in this class"
 	^0.0! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/5/2021 16:24:26'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 20:26:39'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -5596,13 +5600,14 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 	dy _ geometryTransformation externalizeDelta: 0@ry.
 	trx _ dx r.
 	try _ dy r.
-	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 1.
+	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 2.
 	d _ sweepAngle / hops.
 	center _ geometryTransformation externalizePosition: cx@cy.
 	tcx _ center x.
 	tcy _ center y.
 	angle _ startAngle.
-	hops+1 timesRepeat: [
+	hops _ hops+1.
+	hops timesRepeat: [
 		xp _ angle cos * trx.
 		yp _ angle sin * try.
 		x _ thetaCos * xp - (thetaSin * yp) + tcx.
@@ -5692,10 +5697,10 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/5/2021 16:31:34'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 23:12:27'!
 quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
-	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y t0 x0 y0 |
+	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y t0 x0 y0 length correction |
 
 	"If control point is bogus, just draw a line"
 	(xControl = xTo and: [ yControl = yTo ]) ifTrue: [
@@ -5738,12 +5743,8 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		self updateEdgeCountAtX: x y: y ].
 	self updateContourForX: x y: y.
 
-	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-	increment _ 0.2.
-	"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-	In these cases, a larger initial estimation avoids the problem."
-	(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-		increment _ 0.5 ].
+	"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
+	increment _ 0.5 / (dx max: dy) min: 0.5.
 	t _ 0.0.
 	[
 		t0 _ t. x0 _ x. y0 _ y.
@@ -5753,11 +5754,17 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
 		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
 		"Now adjust the increment to aim at the required hop length, and recompute next point."
-		increment _ increment / ((x-x0)@(y-y0)) r * hop.
-		t _ t0 + increment. oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		length _ ((x-x0)@(y-y0)) r.
+		correction _ hop / length.
+		[
+			increment _ increment * correction.
+			t _ t0 + increment. oneLessT _ 1.0 - t.
+			f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+			x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+			y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+			length _ ((x-x0)@(y-y0)) r.
+			correction _ hop / length.
+			correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 		t < 1.0 ]
 	whileTrue: [
 		self updateAlphasForX: x y: y.

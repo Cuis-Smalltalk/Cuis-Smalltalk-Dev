@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4655] on 5 July 2021 at 5:50:22 pm'!
+'From Cuis 5.0 [latest update: #4690] on 23 July 2021 at 6:47:58 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 24!
+!provides: 'VectorEnginePlugin' 1 25!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -238,7 +238,7 @@ targetBits: aBitmap morphIds: aWordArray edgeCountsWP: otherByteArray alphaMaskW
 	targetWidth _ aNumber.
 	targetHeight _ otherNumber.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:24:04'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/22/2021 20:28:39'!
 arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
 
 	| tcx tcy trx try scale hops d angle xp yp x y |
@@ -265,14 +265,15 @@ arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY
 		inSmalltalk: [scale _ (txA11 squared + txA21 squared) sqrt].
 	trx _ radiusPointX * scale.
 	try _ radiusPointY * scale.
-	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 1.
+	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 2.
 	d _ sweepAngle / hops.
 
 	edgeCounts _ otherWordArray.
 	alphaMask _ anotherWordArray.
 	contour _ aFloat32Array.
 	angle _ startAngle.
-	1 to: hops+1 do: [ :h |
+	hops _ hops+1.
+	1 to: hops do: [ :h |
 		xp _ angle cos * trx.
 		yp _ angle sin * try.
 		x _ tthetaCos * xp - (tthetaSin * yp) + tcx.
@@ -469,10 +470,10 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:31:37'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/22/2021 23:22:55'!
 pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
-	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 length xMinEnd xMaxEnd yMinEnd yMaxEnd t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
+	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 length xMinEnd xMaxEnd yMinEnd yMaxEnd t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
 	self var: #xFrom type: 'float'.
 	self var: #yFrom type: 'float'.
 	self var: #xTo type: 'float'.
@@ -490,6 +491,7 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 	self var: #dx2 type: 'float'.
 	self var: #dy2 type: 'float'.
 	self var: #length type: 'float'.
+	self var: #correction type: 'float'.
 
 	self var: #t0 type: 'float'.
 	self var: #x0 type: 'float'.
@@ -556,12 +558,8 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 		self updateEdgeCountAtX: x y: y ].
 	self updateContourForX: x y: y.
 
-	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-	increment _ 0.2.
-	"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-	In these cases, a larger initial estimation avoids the problem."
-	(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-		increment _ 0.5 ].
+	"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
+	increment _ 0.5 / (dx max: dy) min: 0.5.
 	t _ 0.0.
 	[
 		t0 _ t. x0 _ x. y0 _ y.
@@ -570,17 +568,24 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
 		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
-		dx _ x-x0.
-		dy _ y-y0.
 		"Now adjust the increment to aim at the required hop length, and recompute next point."
+		dx _ x-x0. dy _ y-y0.
 		self cCode: '
 			length = sqrt(dx*dx + dy*dy);'
 			inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-		increment _ increment / length * hop.
-		t _ t0 + increment. oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		correction _ hop / length.
+		[
+			increment _ increment / length * hop.
+			t _ t0 + increment. oneLessT _ 1.0 - t.
+			f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+			x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+			y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+			dx _ x-x0. dy _ y-y0.
+			self cCode: '
+				length = sqrt(dx*dx + dy*dy);'
+				inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+			correction _ hop / length.
+			correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 		t < 1.0 ]
 	whileTrue: [
 		self updateAlphasForX: x y: y.
@@ -835,10 +840,10 @@ updateEdgeCountAtX: x y: y
 				]
 		].! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/12/2021 14:11:05'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/22/2021 23:25:33'!
 displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
 	self
 		primitive: 'primDisplayString'
 		parameters: #(String SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean WordArray WordArray).
@@ -866,6 +871,7 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 	self var: #iso8859s15 type: 'uint8_t'.
 
 	self var: #length type: 'float'.
+	self var: #correction type: 'float'.
 	self var: #t0 type: 'float'.
 	self var: #x0 type: 'float'.
 	self var: #y0 type: 'float'.
@@ -937,14 +943,10 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 				y _ startY.
 				self updateAlphasForX: x y: y.
 				self updateEdgeCountAtX: x y: y.
-				"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-				increment _ 0.2.
-				"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-				In these cases, a larger initial estimation avoids the problem."
+				"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
 				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-				(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-					increment _ 0.5 ].
+				increment _ 0.5 / (dx max: dy) min: 0.5.
 				t _ 0.0.
 				[
 					t0 _ t. x0 _ x. y0 _ y.
@@ -953,17 +955,24 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-					dx _ x-x0.
-					dy _ y-y0.
 					"Now adjust the increment to aim at the required hop length, and recompute next point."
+					dx _ x-x0. dy _ y-y0.
 					self cCode: '
 						length = sqrt(dx*dx + dy*dy);'
 						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-					increment _ increment / length * hop.
-					t _ t0 + increment. oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					correction _ hop / length.
+					[
+						increment _ increment / length * hop.
+						t _ t0 + increment. oneLessT _ 1.0 - t.
+						f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+						x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+						y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+						dx _ x-x0. dy _ y-y0.
+						self cCode: '
+							length = sqrt(dx*dx + dy*dy);'
+							inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+						correction _ hop / length.
+						correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 					t < 1.0 ]
 				whileTrue: [
 					self updateAlphasForX: x y: y.
@@ -990,10 +999,10 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/12/2021 20:05:50'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/22/2021 23:29:19'!
 displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy utf32 utf8Byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy utf32 utf8Byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
 	self
 		primitive: 'primDisplayUtf32'
 		parameters: #(WordArray SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean WordArray WordArray).
@@ -1020,6 +1029,7 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	self var: #dy type: 'float'.
 
 	self var: #length type: 'float'.
+	self var: #correction type: 'float'.
 	self var: #t0 type: 'float'.
 	self var: #x0 type: 'float'.
 	self var: #y0 type: 'float'.
@@ -1114,14 +1124,10 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 				y _ startY.
 				self updateAlphasForX: x y: y.
 				self updateEdgeCountAtX: x y: y.
-				"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-				increment _ 0.2.
-				"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-				In these cases, a larger initial estimation avoids the problem."
+				"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
 				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-				(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-					increment _ 0.5 ].
+				increment _ 0.5 / (dx max: dy) min: 0.5.
 				t _ 0.0.
 				[
 					t0 _ t. x0 _ x. y0 _ y.
@@ -1130,19 +1136,24 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 						t = t0 + increment; oneLessT = 1.0 - t;
 						f1 = oneLessT * oneLessT; f2 = 2.0 * oneLessT * t; f3 = t * t;
 						x = (f1 * startX) + (f2 * controlX) + (f3 * endX);
-						y = (f1 * startY) + (f2 * controlY) + (f3 * endY);'
-						inSmalltalk: [].
-					dx _ x-x0.
-					dy _ y-y0.
-					"Now adjust the increment to aim at the required hop length, and recompute next point."
-					self cCode: '
+						y = (f1 * startY) + (f2 * controlY) + (f3 * endY);
+						dx = x-x0; dy = y-y0;
 						length = sqrt(dx*dx + dy*dy);'
 						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-					increment _ increment / length * hop.
-					t _ t0 + increment. oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					correction _ hop / length.
+					"Now adjust the increment to aim at the required hop length, and recompute next point."
+					[
+						increment _ increment / length * hop.
+						t _ t0 + increment. oneLessT _ 1.0 - t.
+						f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+						x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+						y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+						dx _ x-x0. dy _ y-y0.
+						self cCode: '
+							length = sqrt(dx*dx + dy*dy);'
+							inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+						correction _ hop / length.
+						correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 					t < 1.0 ]
 				whileTrue: [
 					self updateAlphasForX: x y: y.
@@ -1169,10 +1180,10 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 6/12/2021 20:11:12'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/22/2021 23:28:26'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
 	self
 		primitive: 'primDisplayUtf8'
 		parameters: #(ByteArray SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean WordArray WordArray).
@@ -1200,6 +1211,7 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	self var: #byte type: 'uint8_t'.
 
 	self var: #length type: 'float'.
+	self var: #correction type: 'float'.
 	self var: #t0 type: 'float'.
 	self var: #x0 type: 'float'.
 	self var: #y0 type: 'float'.
@@ -1276,14 +1288,10 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 						y _ startY.
 						self updateAlphasForX: x y: y.
 						self updateEdgeCountAtX: x y: y.
-						"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-						increment _ 0.2.
-						"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-						In these cases, a larger initial estimation avoids the problem."
+						"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 						self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
 						inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-						(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-							increment _ 0.5 ].
+						increment _ 0.5 / (dx max: dy) min: 0.5.
 						"Compute Quadratic Bezier Curve,"
 						t _ 0.0.
 						[
@@ -1293,17 +1301,24 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-							dx _ x-x0.
-							dy _ y-y0.
 							"Now adjust the increment to aim at the required hop length, and recompute next point."
+							dx _ x-x0. dy _ y-y0.
 							self cCode: '
 								length = sqrt(dx*dx + dy*dy);'
 								inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-							increment _ increment / length * hop.
-							t _ t0 + increment. oneLessT _ 1.0 - t.
-							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							correction _ hop / length.
+							[
+								increment _ increment / length * hop.
+								t _ t0 + increment. oneLessT _ 1.0 - t.
+								f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+								x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+								y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+								dx _ x-x0. dy _ y-y0.
+								self cCode: '
+									length = sqrt(dx*dx + dy*dy);'
+									inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+								correction _ hop / length.
+								correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 							t < 1.0 ]
 						whileTrue: [
 							self updateAlphasForX: x y: y.
@@ -1969,7 +1984,7 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:24:06'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/22/2021 20:28:30'!
 arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherByteArray alphaMask: anotherByteArray contour: aFloat32Array
 
 	| tcx tcy trx try scale hops d angle xp yp x y |
@@ -1996,14 +2011,15 @@ arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPoin
 		inSmalltalk: [scale _ (txA11 squared + txA21 squared) sqrt].
 	trx _ radiusPointX * scale.
 	try _ radiusPointY * scale.
-	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 1.
+	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 2.
 	d _ sweepAngle / hops.
 
 	edgeCountsWP _ otherByteArray.
 	alphaMaskWP _ anotherByteArray.
 	contour _ aFloat32Array.
 	angle _ startAngle.
-	1 to: hops+1 do: [ :h |
+	hops _ hops+1.
+	1 to: hops do: [ :h |
 		xp _ angle cos * trx.
 		yp _ angle sin * try.
 		x _ tthetaCos * xp - (tthetaSin * yp) + tcx.
@@ -2200,10 +2216,10 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 		self updateEdgeCountWPAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:31:40'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/22/2021 23:24:13'!
 pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
-	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 length xMinEnd xMaxEnd yMinEnd yMaxEnd t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
+	| txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 length xMinEnd xMaxEnd yMinEnd yMaxEnd t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
 	self var: #xFrom type: 'float'.
 	self var: #yFrom type: 'float'.
 	self var: #xTo type: 'float'.
@@ -2221,6 +2237,7 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 	self var: #dx2 type: 'float'.
 	self var: #dy2 type: 'float'.
 	self var: #length type: 'float'.
+	self var: #correction type: 'float'.
 
 	self var: #t0 type: 'float'.
 	self var: #x0 type: 'float'.
@@ -2287,12 +2304,8 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 		self updateEdgeCountWPAtX: x y: y ].
 	self updateContourForX: x y: y.
 
-	"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-	increment _ 0.2.
-	"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-	In these cases, a larger initial estimation avoids the problem."
-	(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-		increment _ 0.5 ].
+	"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
+	increment _ 0.5 / (dx max: dy) min: 0.5.
 	t _ 0.0.
 	[
 		t0 _ t. x0 _ x. y0 _ y.
@@ -2301,17 +2314,24 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
 		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
-		dx _ x-x0.
-		dy _ y-y0.
 		"Now adjust the increment to aim at the required hop length, and recompute next point."
+		dx _ x-x0. dy _ y-y0.
 		self cCode: '
 			length = sqrt(dx*dx + dy*dy);'
 			inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-		increment _ increment / length * hop.
-		t _ t0 + increment. oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		correction _ hop / length.
+		[
+			increment _ increment / length * hop.
+			t _ t0 + increment. oneLessT _ 1.0 - t.
+			f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+			x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+			y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+			dx _ x-x0. dy _ y-y0.
+			self cCode: '
+				length = sqrt(dx*dx + dy*dy);'
+				inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+			correction _ hop / length.
+			correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 		t < 1.0 ]
 	whileTrue: [
 		self updateAlphasWPForX: x y: y.
@@ -2476,10 +2496,10 @@ updateEdgeCountWPAtX: x y: y
 		count _ count + increment.
 		edgeCountsWP at: pixelIndex put: count ].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/12/2021 20:28:49'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 7/22/2021 23:26:25'!
 displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
 	self
 		primitive: 'primDisplayStringWP'
 		parameters: #(String SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean ByteArray ByteArray).
@@ -2507,6 +2527,7 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 	self var: #iso8859s15 type: 'uint8_t'.
 
 	self var: #length type: 'float'.
+	self var: #correction type: 'float'.
 	self var: #t0 type: 'float'.
 	self var: #x0 type: 'float'.
 	self var: #y0 type: 'float'.
@@ -2578,14 +2599,10 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 				y _ startY.
 				self updateAlphasWPZeroStrokeForX: x y: y.
 				self updateEdgeCountWPAtX: x y: y.
-				"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-				increment _ 0.2.
-				"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-				In these cases, a larger initial estimation avoids the problem."
+				"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
 				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-				(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-					increment _ 0.5 ].
+				increment _ 0.5 / (dx max: dy) min: 0.5.
 				t _ 0.0.
 				[
 					t0 _ t. x0 _ x. y0 _ y.
@@ -2594,17 +2611,24 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-					dx _ x-x0.
-					dy _ y-y0.
 					"Now adjust the increment to aim at the required hop length, and recompute next point."
+					dx _ x-x0. dy _ y-y0.
 					self cCode: '
 						length = sqrt(dx*dx + dy*dy);'
 						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-					increment _ increment / length * hop.
-					t _ t0 + increment. oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					correction _ hop / length.
+					[
+						increment _ increment / length * hop.
+						t _ t0 + increment. oneLessT _ 1.0 - t.
+						f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+						x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+						y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+						dx _ x-x0. dy _ y-y0.
+						self cCode: '
+							length = sqrt(dx*dx + dy*dy);'
+							inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+						correction _ hop / length.
+						correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 					t < 1.0 ]
 				whileTrue: [
 					self updateAlphasWPZeroStrokeForX: x y: y.
@@ -2631,10 +2655,10 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/12/2021 20:28:53'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 7/22/2021 23:30:41'!
 displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy utf32 utf8Byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy utf32 utf8Byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
 	self
 		primitive: 'primDisplayUtf32WP'
 		parameters: #(WordArray SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean ByteArray ByteArray).
@@ -2661,6 +2685,7 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	self var: #dy type: 'float'.
 
 	self var: #length type: 'float'.
+	self var: #correction type: 'float'.
 	self var: #t0 type: 'float'.
 	self var: #x0 type: 'float'.
 	self var: #y0 type: 'float'.
@@ -2755,14 +2780,10 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 				y _ startY.
 				self updateAlphasWPZeroStrokeForX: x y: y.
 				self updateEdgeCountWPAtX: x y: y.
-				"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-				increment _ 0.2.
-				"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-				In these cases, a larger initial estimation avoids the problem."
+				"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
 				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-				(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-					increment _ 0.5 ].
+				increment _ 0.5 / (dx max: dy) min: 0.5.
 				t _ 0.0.
 				[
 					t0 _ t. x0 _ x. y0 _ y.
@@ -2771,19 +2792,24 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 						t = t0 + increment; oneLessT = 1.0 - t;
 						f1 = oneLessT * oneLessT; f2 = 2.0 * oneLessT * t; f3 = t * t;
 						x = (f1 * startX) + (f2 * controlX) + (f3 * endX);
-						y = (f1 * startY) + (f2 * controlY) + (f3 * endY);'
-						inSmalltalk: [].
-					dx _ x-x0.
-					dy _ y-y0.
-					"Now adjust the increment to aim at the required hop length, and recompute next point."
-					self cCode: '
+						y = (f1 * startY) + (f2 * controlY) + (f3 * endY);
+						dx = x-x0; dy = y-y0;
 						length = sqrt(dx*dx + dy*dy);'
 						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-					increment _ increment / length * hop.
-					t _ t0 + increment. oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					correction _ hop / length.
+					"Now adjust the increment to aim at the required hop length, and recompute next point."
+					[
+						increment _ increment / length * hop.
+						t _ t0 + increment. oneLessT _ 1.0 - t.
+						f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+						x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+						y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+						dx _ x-x0. dy _ y-y0.
+						self cCode: '
+							length = sqrt(dx*dx + dy*dy);'
+							inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+						correction _ hop / length.
+						correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 					t < 1.0 ]
 				whileTrue: [
 					self updateAlphasWPZeroStrokeForX: x y: y.
@@ -2810,10 +2836,10 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 6/12/2021 20:28:58'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 7/22/2021 23:27:29'!
 displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
-	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y |
+	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
 	self
 		primitive: 'primDisplayUtf8WP'
 		parameters: #(ByteArray SmallInteger SmallInteger Float Float Float Float Float32Array IntegerArray Boolean ByteArray ByteArray).
@@ -2841,6 +2867,7 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 	self var: #byte type: 'uint8_t'.
 
 	self var: #length type: 'float'.
+	self var: #correction type: 'float'.
 	self var: #t0 type: 'float'.
 	self var: #x0 type: 'float'.
 	self var: #y0 type: 'float'.
@@ -2917,14 +2944,10 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 						y _ startY.
 						self updateAlphasWPZeroStrokeForX: x y: y.
 						self updateEdgeCountWPAtX: x y: y.
-						"Will be corrected for all hops. This, being close to pointFrom, is a good initial guess for first corrected hop."
-						increment _ 0.2.
-						"But if curve is very small, there is risk of not iterating even once, completely missing a pixel, and breaking fills.
-						In these cases, a larger initial estimation avoids the problem."
+						"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 						self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
 						inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-						(dy < 2.0 and: [dx < 2.0]) ifTrue: [
-							increment _ 0.5 ].
+						increment _ 0.5 / (dx max: dy) min: 0.5.
 						"Compute Quadratic Bezier Curve,"
 						t _ 0.0.
 						[
@@ -2934,17 +2957,24 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
 							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
 							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-							dx _ x-x0.
-							dy _ y-y0.
 							"Now adjust the increment to aim at the required hop length, and recompute next point."
+							dx _ x-x0. dy _ y-y0.
 							self cCode: '
 								length = sqrt(dx*dx + dy*dy);'
 								inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-							increment _ increment / length * hop.
-							t _ t0 + increment. oneLessT _ 1.0 - t.
-							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							correction _ hop / length.
+							[
+								increment _ increment / length * hop.
+								t _ t0 + increment. oneLessT _ 1.0 - t.
+								f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
+								x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
+								y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+								dx _ x-x0. dy _ y-y0.
+								self cCode: '
+									length = sqrt(dx*dx + dy*dy);'
+									inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
+								correction _ hop / length.
+								correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 							t < 1.0 ]
 						whileTrue: [
 							self updateAlphasWPZeroStrokeForX: x y: y.
