@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4690] on 23 July 2021 at 6:47:58 am'!
+'From Cuis 5.0 [latest update: #4709] on 28 July 2021 at 11:55:27 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 25!
+!provides: 'VectorEnginePlugin' 1 26!
 !requires: 'VectorGraphics' 1 200 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -107,13 +107,18 @@ initializePath
 	spanBottom _ 0.						"drawable top. Will later be refined."
 	prevYRounded _ 16r7FFFFFFF.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/5/2021 16:27:16'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 7/27/2021 16:40:35'!
+initializeTrajectoryFragment
+
+	prevYTruncated _ 16r7FFFFFFF.! !
+
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 7/27/2021 16:41:01'!
 newTrajectoryFragment
 	self
 		primitive: 'primNewTrajectoryFragment'
 		parameters: #().
 
-	prevYTruncated _ 16r7FFFFFFF.! !
+	^ self initializeTrajectoryFragment.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:13:44'!
 pluginApiVersion
@@ -840,7 +845,7 @@ updateEdgeCountAtX: x y: y
 				]
 		].! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/22/2021 23:25:33'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'dtl 7/27/2021 16:41:33'!
 displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
@@ -918,7 +923,7 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 			startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
 			contourStartX _ startX.
 			contourStartY _ startY.
-			self newTrajectoryFragment.
+			self initializeTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
 				ttEndX _ contourData at: i. i _ i + 1.
 				ttEndY _ contourData at: i. i _ i + 1.
@@ -999,7 +1004,7 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/22/2021 23:29:19'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'dtl 7/27/2021 16:41:42'!
 displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy utf32 utf8Byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
@@ -1099,7 +1104,7 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 			startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
 			contourStartX _ startX.
 			contourStartY _ startY.
-			self newTrajectoryFragment.
+			self initializeTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
 				ttEndX _ contourData at: i. i _ i + 1.
 				ttEndY _ contourData at: i. i _ i + 1.
@@ -1180,7 +1185,7 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/22/2021 23:28:26'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'dtl 7/27/2021 16:41:51'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherWordArray alphaMask: anotherWordArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
@@ -1264,7 +1269,7 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 					startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
 					contourStartX _ startX.
 					contourStartY _ startY.
-					self newTrajectoryFragment.
+					self initializeTrajectoryFragment.
 					1 to: numBeziers do: [ :idx2 |
 						ttEndX _ contourData at: i. i _ i + 1.
 						ttEndY _ contourData at: i. i _ i + 1.
@@ -1347,7 +1352,7 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/5/2021 16:33:31'!
+!VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'dtl 7/27/2021 16:41:59'!
 pathSequence: aFloat32Array size: size edgeCounts: otherWordArray alphaMask: anotherWordArray contour: otherFloat32Array
 
 	| i commandType startX startY endX endY control1X control1Y control2X control2Y |
@@ -1375,7 +1380,7 @@ pathSequence: aFloat32Array size: size edgeCounts: otherWordArray alphaMask: ano
 				i+1 < size ifFalse: [ ^self "failure" ].
 				startX _ aFloat32Array at: i. i _ i + 1.
 				startY _ aFloat32Array at: i. i _ i + 1.
-				self newTrajectoryFragment.
+				self initializeTrajectoryFragment.
 				].
 			[1] -> [
 				i+1 < size ifFalse: [ ^self "failure" ].
@@ -2496,7 +2501,7 @@ updateEdgeCountWPAtX: x y: y
 		count _ count + increment.
 		edgeCountsWP at: pixelIndex put: count ].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 7/22/2021 23:26:25'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'dtl 7/27/2021 16:41:37'!
 displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy iso8859s15 i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
@@ -2574,7 +2579,7 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 			startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
 			contourStartX _ startX.
 			contourStartY _ startY.
-			self newTrajectoryFragment.
+			self initializeTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
 				ttEndX _ contourData at: i. i _ i + 1.
 				ttEndY _ contourData at: i. i _ i + 1.
@@ -2655,7 +2660,7 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 7/22/2021 23:30:41'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'dtl 7/27/2021 16:41:46'!
 displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy utf32 utf8Byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
@@ -2755,7 +2760,7 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 			startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
 			contourStartX _ startX.
 			contourStartY _ startY.
-			self newTrajectoryFragment.
+			self initializeTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
 				ttEndX _ contourData at: i. i _ i + 1.
 				ttEndY _ contourData at: i. i _ i + 1.
@@ -2836,7 +2841,7 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 7/22/2021 23:27:29'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'dtl 7/27/2021 16:41:54'!
 displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: destX y: destY scalex: sx y: sy contourData: contourData contourDataIndexes: contourDataIndexes useST80Glyphs: aBoolean edgeCounts: otherByteArray alphaMask: anotherByteArray
 
 	| answer nextGlyphX nextGlyphY ttMoveToX ttMoveToY ttEndX ttEndY ttControlX ttControlY advanceWidth numContours contourStartX contourStartY numBeziers startX startY endX endY controlX controlY dx dy baseIndex byte i xMinEnd xMaxEnd yMinEnd yMaxEnd length t0 x0 y0 t oneLessT increment f1 f2 f3 x y correction |
@@ -2920,7 +2925,7 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 					startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
 					contourStartX _ startX.
 					contourStartY _ startY.
-					self newTrajectoryFragment.
+					self initializeTrajectoryFragment.
 					1 to: numBeziers do: [ :idx2 |
 						ttEndX _ contourData at: i. i _ i + 1.
 						ttEndY _ contourData at: i. i _ i + 1.
@@ -3003,7 +3008,7 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 	answer _ nextGlyphX * sx.
 	^answer asOop: Float! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'jmv 7/5/2021 16:33:04'!
+!VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'dtl 7/27/2021 16:42:07'!
 pathSequenceWP: aFloat32Array size: size edgeCounts: otherByteArray alphaMask: anotherByteArray contour: otherFloat32Array
 
 	| i commandType startX startY endX endY control1X control1Y control2X control2Y |
@@ -3031,7 +3036,7 @@ pathSequenceWP: aFloat32Array size: size edgeCounts: otherByteArray alphaMask: a
 				i+1 < size ifFalse: [ ^self "failure" ].
 				startX _ aFloat32Array at: i. i _ i + 1.
 				startY _ aFloat32Array at: i. i _ i + 1.
-				self newTrajectoryFragment.
+				self initializeTrajectoryFragment.
 				].
 			[1] -> [
 				i+1 < size ifFalse: [ ^self "failure" ].
