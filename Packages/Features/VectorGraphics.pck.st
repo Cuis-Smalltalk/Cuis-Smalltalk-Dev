@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4690] on 23 July 2021 at 6:47:06 am'!
+'From Cuis 5.0 [latest update: #4720] on 30 July 2021 at 5:57:42 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 256!
+!provides: 'VectorGraphics' 1 259!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -87,6 +87,16 @@ MovableMorph subclass: #M3Exp05Morph
 	category: 'VectorGraphics-Experiments'!
 !classDefinition: 'M3Exp05Morph class' category: 'VectorGraphics-Experiments'!
 M3Exp05Morph class
+	instanceVariableNames: ''!
+
+!classDefinition: #M3Exp06Morph category: 'VectorGraphics-Experiments'!
+MovableMorph subclass: #M3Exp06Morph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Experiments'!
+!classDefinition: 'M3Exp06Morph class' category: 'VectorGraphics-Experiments'!
+M3Exp06Morph class
 	instanceVariableNames: ''!
 
 !classDefinition: #HybridCanvas category: 'VectorGraphics-Kernel'!
@@ -1215,6 +1225,14 @@ aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alp
 	aCanvas roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60 rx: 40 ry: 20 ]
 ! !
 
+!M3Exp06Morph methodsFor: 'drawing' stamp: 'jmv 7/29/2021 12:02:17'!
+drawOn: aCanvas
+
+	aCanvas drawHandLarge.
+	"
+	aCanvas drawHandSmall.
+	"! !
+
 !HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 11/30/2020 16:12:07'!
 image: aForm at: aPoint sourceRect: sourceRect
 	"Draw a translucent image using the best available way of representing translucency."
@@ -1353,6 +1371,11 @@ currentMorphDrawingFails
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
 
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:20:48'!
+displayBoundsForHand: aHand
+
+	^vectorCanvas displayBoundsForHand: aHand! !
+
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 14:04:30'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
@@ -1379,6 +1402,11 @@ drawCurrentAndSubmorphs
 		currentMorph isHighlighted ifTrue: [
 			self drawHighlight: currentMorph ].
 	].! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:18:28'!
+drawHand
+
+	vectorCanvas drawHand! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:45'!
 into: aMorph
@@ -2430,6 +2458,77 @@ drawExpandIcon
 				1 10 15
 				] asFloat32Array` ]].! !
 
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 12:00:21'!
+drawHandLarge
+
+	self strokeWidth: 2.2 color: `Color black` fillColor: `Color white` do: [ :canvas |
+		canvas pathSequence:
+			`#[
+				0.0    10.97    35.70
+				1.0    -3.17    26.78
+				2.0    -7.18    20.17    -8.01    23.69
+				2.0    -3.16    18.50    -6.55    18.00
+				1.0    4.84    20.92
+				1.0    5.97    23.63
+				1.0    -2.81    2.44
+				2.0    -1.35    -3.26    -4.61    -1.91
+				2.0    3.71    -0.26    1.91    -4.61
+				1.0    9.56    13.87
+				1.0    6.41    6.26
+				1.0    9.67    4.91
+				2.0    13.20    7.27    11.85    4.01
+				1.0    15.45    12.70
+				1.0    12.75    6.18
+				1.0    16.01    4.83
+				2.0    19.53    7.19    18.18    3.93
+				1.0    21.33    11.54
+				1.0    19.08    6.10
+				1.0    22.34    4.75
+				2.0    25.87    7.11    24.52    3.85
+				1.0    27.67    11.46
+				1.0    30.82    19.07
+				2.0    30.79    34.36    33.52    25.59
+				1.0    17.74    39.77
+				2.0    11.42    36.78    14.48    41.12
+				1.0    10.97    35.70
+			] asFloat32Array` ].
+! !
+
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 12:01:08'!
+drawHandSmall
+
+	self strokeWidth: 1.1 color: `Color black` fillColor: `Color white` do: [ :canvas |
+		canvas pathSequence:
+			`#[
+				0.0    5.33    17.34
+				1.0    -1.54    13.01
+				2.0    -3.49    9.79    -3.89    11.51
+				2.0    -1.54    8.99    -3.18    8.74
+				1.0    2.35    10.16
+				1.0    2.90    11.48
+				1.0    -1.37    1.18
+				2.0    -0.66    -1.58    -2.24    -0.93
+				2.0    1.80    -0.13    0.93    -2.24
+				1.0    4.65    6.74
+				1.0    3.11    3.04
+				1.0    4.70    2.38
+				2.0    6.41    3.53    5.75    1.95
+				1.0    7.50    6.17
+				1.0    6.19    3.00
+				1.0    7.78    2.35
+				2.0    9.49    3.49    8.83    1.91
+				1.0    10.36    5.60
+				1.0    9.27    2.96
+				1.0    10.85    2.31
+				2.0    12.56    3.45    11.91    1.87
+				1.0    13.44    5.57
+				1.0    14.97    9.26
+				2.0    14.95    16.69    16.28    12.43
+				1.0    8.62    19.31
+				2.0    5.55    17.87    7.04    19.97
+				1.0    5.33    17.34
+			] asFloat32Array` ].! !
+
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:56'!
 drawLeftIcon
 	| c |
@@ -2446,6 +2545,30 @@ drawLeftIcon
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:29:02'!
 drawMenuIcon
+	| c |
+	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
+		ifFalse: [`Color r: 0.212 g: 0.439 b: 0.784`]
+		ifTrue: [`(Color r: 0.212 g: 0.439 b: 0.784) * 0.85`].
+	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
+		self pathSequence: `#[
+			0 1 10
+			2 10 19 2 18
+			2 19 10 18 18
+			2 10 1 18 2
+			2 1 10 2 2
+			] asFloat32Array` ].
+	currentMorph mouseIsOver ifTrue: [
+		self fillColor: `Color black` do: [
+			self pathSequence: `#[
+				0 4 8
+				1 16 8
+				1 10 16
+				1 4 8
+				] asFloat32Array` ]].! !
+
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 18:31:27'!
+drawPushPinIcon
+	"For Menu stay-up button"
 	| c |
 	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
 		ifFalse: [`Color r: 0.212 g: 0.439 b: 0.784`]
@@ -2743,10 +2866,6 @@ roundRect: aRectangle color: aColor radius: r
 		self
 			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 9/30/2014 20:03'!
-stencil: stencilForm at: aPoint color: aColor
-	self halt! !
-
 !VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 5/26/2021 11:27:13'!
 frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
 	"
@@ -2793,7 +2912,7 @@ frameReverseGlobalRect: rect borderWidth: borderWidth
 		combinationRule: Form reverse;
 		frameRect: rect borderWidth: borderWidth! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 5/16/2021 10:40:37'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 5/16/2021 10:40:37'!
 boundingRectOfCurrentMorphAfterDraw
 	"In targetForm coordinates.
 	Clipped to owner if appropriate.
@@ -2806,11 +2925,11 @@ boundingRectOfCurrentMorphAfterDraw
 		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
 		ifNil: [ boundingRect ]! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 11/17/2020 14:50:49'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 11/17/2020 14:50:49'!
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/5/2021 10:09:27'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 10:09:27'!
 contourOfCurrentMorphAfterDrawInto: anArray
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -2820,7 +2939,7 @@ contourOfCurrentMorphAfterDrawInto: anArray
 
 	^engine morphContourAfterDrawInto: anArray! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/5/2021 11:55:51'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 11:55:51'!
 contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -2831,7 +2950,15 @@ contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBotto
 	anArray ifNil: [ ^engine morphContourAfterDrawInto: nil ].
 	^engine morphContourAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/5/2021 14:04:51'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:49'!
+displayBoundsForHand: aHand
+	"See #drawHand."
+
+	^self drawsHandLarge
+		ifTrue: [aHand morphPosition-`9@5` extent: `45@48`]
+		ifFalse: [aHand morphPosition-`4@3` extent: `21@24`].! !
+
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 14:04:51'!
 drawCurrentAndSubmorphs
 	
 	self isCurrentMorphVisible ifTrue: [
@@ -2851,7 +2978,19 @@ drawCurrentAndSubmorphs
 			self drawHighlight: currentMorph ].
 	].! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 5/12/2021 16:16:54'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:10'!
+drawHand
+
+	self drawsHandLarge
+		ifTrue: [self drawHandLarge]
+		ifFalse: [self drawHandSmall].! !
+
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:58'!
+drawsHandLarge
+
+	^true! !
+
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 5/12/2021 16:16:54'!
 into: aMorph
 	super into: aMorph.
 	engine
@@ -2863,11 +3002,11 @@ into: aMorph
 		resetMorphBounds;
 		geometryTransformation: currentTransformation.! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 7/13/2020 16:52:13'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/13/2020 16:52:13'!
 morph: aMorph isAtPoint: aPoint
 	^engine morph: aMorph isAtPoint: aPoint! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 5/12/2021 16:17:02'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 5/12/2021 16:17:02'!
 outOfMorph
 	super outOfMorph.
 	engine
@@ -2879,7 +3018,7 @@ outOfMorph
 		resetMorphBounds;
 		geometryTransformation: currentTransformation.! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 3/21/2021 17:30:08'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 3/21/2021 17:30:08'!
 restorePatch: savedPatch bounds: savedBounds
 	"Argument must previously be obtained by calling #savePatch:bounds:
 	Senders should not assume anything about the returned object, except that it will not be nil."
@@ -2908,7 +3047,7 @@ savedIdsPatch _ savedPatch second.
 			width: savedBounds width height: savedBounds height;
 		copyBits.! !
 
-!VectorCanvas methodsFor: 'Morphic support' stamp: 'jmv 3/21/2021 17:33:44'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 3/21/2021 17:33:44'!
 savePatch: prevSavedPatch bounds: aRectangle
 	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
 	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
@@ -2938,6 +3077,19 @@ morphIds _ engine instVarNamed: 'morphIds'.
 		width: aRectangle width; height: aRectangle height;
 		copyBits.
 	^answer! !
+
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 7/30/2021 17:10:50'!
+boundingRectOfCurrentMorphFromLocalBounds
+	"In targetForm coordinates.
+	Clipped to owner if appropriate."
+
+	| boundingRect |
+	boundingRect _ currentTransformation displayBoundsOfTransformOf: currentMorph morphLocalBounds.
+	^ clippingMorphDisplayBounds
+		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
+		ifNil: [
+			"Compensate for possible slight leakage of anti aliasing."
+			boundingRect outsetBy: 1]! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 12/21/2020 17:36:45'!
 fontToUse: fontOrNil
@@ -3007,16 +3159,6 @@ initializeWith: aForm origin: aPoint preferSubPixelAntiAliasing: aBoolean
 arrowOfDirection: aSymbol size: finalSizeInteger
 	self flag: #jmvVer2.! !
 
-!VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
-arrowWithGradientOfDirection: aSymbol
-	"
-	(VectorCanvas arrowWithGradientOfDirection: #up) display.
-	(VectorCanvas arrowWithGradientOfDirection: #down) display.
-	(VectorCanvas arrowWithGradientOfDirection: #left) display.
-	(VectorCanvas arrowWithGradientOfDirection: #right) display.
-	"
-	self flag: #jmvVer2.! !
-
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 5/18/2021 10:09:02'!
 buildArrowOfDirection: aSymbolDirection size: finalSizeInteger
 	"PRIVATE - create an arrow with aSymbolDirectionDirection,
@@ -3026,10 +3168,6 @@ buildArrowOfDirection: aSymbolDirection size: finalSizeInteger
 	 (self buildArrowOfDirection: #down size: 120) display
 	 (self buildArrowOfDirection: #up size: 120) display
 	"
-	self flag: #jmvVer2.! !
-
-!VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
-steButtonForm: extent
 	self flag: #jmvVer2.! !
 
 !VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/18/2021 10:08:54'!
@@ -8930,7 +9068,7 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/16/2021 17:32:12'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/30/2021 11:39:20'!
 findBounds
 	"Find and answer full bounds in whatever owner.
 	These might not equal #displayFullBounds at all!!"
@@ -8952,7 +9090,7 @@ findBounds
 	prevDisplayBounds _ privateDisplayBounds.
 	owner _ w.
 	c updatingMorphBoundsDo: [
-		c fullUpdateBounds: self ].
+		c fullUpdateProtrudingBounds: self ].
 	answer _ self displayFullBounds.
 	"Reset owner and privateDisplayBounds so no one finds out what we've just done!!"
 	prevOwner == owner ifFalse: [
