@@ -1,4 +1,4 @@
-'From Cuis 5.0 [latest update: #4526] on 18 January 2021 at 5:18:29 pm'!
+'From Cuis 5.0 [latest update: #4689] on 31 July 2021 at 11:34:02 am'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
@@ -6,7 +6,7 @@
 - Hernan Wilkinson: 
   - Added useDebugErrorHandler and debugErrorHandler to be able to debug a http request
   - Changed exampleDoIt to support Smalltalk expresions in the URL using GET'!
-!provides: 'WebClient' 1 20!
+!provides: 'WebClient' 1 21!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -6395,15 +6395,11 @@ logRequest: request response: response on: streamOrFilename
 			streamOrFilename nextPutAll: entry; newLine.
 			streamOrFilename flush ]! !
 
-!WebUtils class methodsFor: 'misc' stamp: 'ar 7/21/2010 00:09'!
+!WebUtils class methodsFor: 'misc' stamp: 'NM 7/31/2021 11:29:19'!
 mcVersion
-	"Answers the Monticello version of WebServer's MC package"
-
-	| version |
-	Smalltalk at: #MCWorkingCopy ifPresent:[:mc|
-		mc managersForClass: self do:[:wc|
-			wc ancestors ifNotEmpty:[:ancestry| version := ancestry first name]]].
-	^version ifNil:[''].! !
+	"Answers the Monticello version of WebServer's MC package. 
+	Since Monticello was replaced by Git returns a fake popular number: 42"
+	^ '42' ! !
 
 !WebUtils class methodsFor: 'misc' stamp: 'ar 11/17/2011 10:16'!
 platformName
