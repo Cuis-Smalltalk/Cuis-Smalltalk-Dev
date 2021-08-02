@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4720] on 30 July 2021 at 5:57:42 pm'!
+'From Cuis 5.0 [latest update: #4728] on 2 August 2021 at 3:25:44 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 259!
+!provides: 'VectorGraphics' 1 260!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -2458,6 +2458,17 @@ drawExpandIcon
 				1 10 15
 				] asFloat32Array` ]].! !
 
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/2/2021 14:35:41'!
+drawExpandedAt: aPoint
+	"For Tree View (IndentingListItemMorph)"
+
+	self fillColor: `Color gray` do: [
+		self moveTo: aPoint.
+		self rel_MoveTo: `0 @ -4`;
+			rel_LineTo: `5@10`;
+			rel_LineTo: `5 @ -10`;
+			rel_LineTo: `-10 @ 0` ].! !
+
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 12:00:21'!
 drawHandLarge
 
@@ -2565,6 +2576,17 @@ drawMenuIcon
 				1 10 16
 				1 4 8
 				] asFloat32Array` ]].! !
+
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/2/2021 14:52:28'!
+drawNotExpandedAt: aPoint
+	"For Tree View (IndentingListItemMorph)"
+
+	self fillColor: `Color gray` do: [
+		self moveTo: aPoint.
+		self rel_MoveTo: `2@ -5`;
+			rel_LineTo: `10@5`;
+			rel_LineTo: `-10 @ 5`;
+			rel_LineTo: `0 @ -10` ].! !
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 18:31:27'!
 drawPushPinIcon
