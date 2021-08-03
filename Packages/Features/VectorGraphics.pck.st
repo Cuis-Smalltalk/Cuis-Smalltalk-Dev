@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4728] on 2 August 2021 at 3:25:44 pm'!
+'From Cuis 5.0 [latest update: #4730] on 2 August 2021 at 10:45:18 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 260!
+!provides: 'VectorGraphics' 1 261!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -4776,7 +4776,7 @@ morphContourAfterDrawInto: contourArray
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:28:08'!
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 8/2/2021 22:37:50'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -4786,7 +4786,7 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	when building the contour in the engine, for each point recorded, also record
 	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared |
+	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared mbb mbt |
 	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
 	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
@@ -4799,6 +4799,8 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
 	ii _ 1-oldContourDelta.
+	mbt _ morphBoundsTop max: 0.
+	mbb _ morphBoundsBottom min: targetHeight -1.
 	y0 to: y1 do: [ :y | | x0 x1 |
 		(ii between: 1 and: oldContour size-1) ifTrue: [
 			x0 _ oldContour at: ii.
@@ -4807,7 +4809,7 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 			x0 _ targetWidth.
 			x1 _ 0 ].
 		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
-			(y+dy between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
+			(y+dy between: mbt and: mbb) ifTrue: [
 				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
 				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
 				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded ]].
@@ -5703,7 +5705,7 @@ morphContourAfterDrawInto: contourArray
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:28:11'!
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 8/2/2021 22:37:45'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -5713,7 +5715,7 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	when building the contour in the engine, for each point recorded, also record
 	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared |
+	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared mbb mbt |
 	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
 	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
@@ -5726,6 +5728,8 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
 	ii _ 1-oldContourDelta.
+	mbt _ morphBoundsTop max: 0.
+	mbb _ morphBoundsBottom min: targetHeight -1.
 	y0 to: y1 do: [ :y | | x0 x1 |
 		(ii between: 1 and: oldContour size-1) ifTrue: [
 			x0 _ oldContour at: ii.
@@ -5734,7 +5738,7 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 			x0 _ targetWidth.
 			x1 _ 0 ].
 		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
-			(y+dy between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
+			(y+dy between: mbt and: mbb) ifTrue: [
 				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
 				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
 				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded ]].
@@ -6434,7 +6438,7 @@ morphContourAfterDrawInto: contourArray
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/8/2021 16:28:15'!
+!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 8/2/2021 22:37:34'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -6444,7 +6448,7 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	when building the contour in the engine, for each point recorded, also record
 	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
 
-	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared |
+	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared mbb mbt |
 	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
 	strokeHalfSquared _ (strokeWidth / 2.0) squared.
 	y0 _ (morphBoundsTop min: oldTop) max: 0.
@@ -6457,6 +6461,8 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 		answer _ IntegerArray new: requiredSize ].
 	i _ 1.
 	ii _ 1-oldContourDelta.
+	mbt _ morphBoundsTop max: 0.
+	mbb _ morphBoundsBottom min: targetHeight -1.
 	y0 to: y1 do: [ :y | | x0 x1 |
 		(ii between: 1 and: oldContour size-1) ifTrue: [
 			x0 _ oldContour at: ii.
@@ -6465,7 +6471,7 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 			x0 _ targetWidth.
 			x1 _ 0 ].
 		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
-			(y+dy between: morphBoundsTop and: morphBoundsBottom) ifTrue: [
+			(y+dy between: mbt and: mbb) ifTrue: [
 				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
 				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
 				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded ]].
@@ -9090,7 +9096,7 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/30/2021 11:39:20'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/2/2021 21:13:47'!
 findBounds
 	"Find and answer full bounds in whatever owner.
 	These might not equal #displayFullBounds at all!!"
@@ -9099,7 +9105,7 @@ findBounds
 	self requiresVectorCanvas ifFalse: [
 		^self morphPosition extent: self morphExtent ].
 
-	owner isWorldMorph ifTrue: [
+	(owner notNil and: [owner isWorldMorph]) ifTrue: [
 		w _ owner ]
 	ifFalse: [
 		w _ UISupervisor ui.
