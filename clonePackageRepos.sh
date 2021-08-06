@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ..
 git clone https://github.com/Cuis-Smalltalk/SVG.git
 git clone https://github.com/Cuis-Smalltalk/EnhancedText.git
 git clone https://github.com/Cuis-Smalltalk/Erudite.git
