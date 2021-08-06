@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4730] on 2 August 2021 at 10:45:18 pm'!
+'From Cuis 5.0 [latest update: #4737] on 5 August 2021 at 12:52:58 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 261!
+!provides: 'VectorGraphics' 1 264!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1027,12 +1027,12 @@ serviceReadTTFont
 		icon: #fontIcon
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/12/2021 16:06:37'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 8/4/2021 17:08:05'!
 drawContour
 "Only for experimentation!!"
 | x0 x1 c |
 (self valueOfProperty: #contour) ifNotNil: [ :contour | | contourTop |
-	contourTop _ privateDisplayBounds top max: 0.
+	contourTop _ self valueOfProperty: #contourY0.
 	1 to: contour size // 2 do: [ :y |
 		x0 _ contour at: y*2-1.
 		x1 _ contour at: y*2.
@@ -2951,26 +2951,26 @@ boundingRectOfCurrentMorphAfterDraw
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 10:09:27'!
-contourOfCurrentMorphAfterDrawInto: anArray
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/4/2021 16:54:53'!
+contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph.
 	Use argument if appropriate, or answer a new array if not"
 
-	^engine morphContourAfterDrawInto: anArray! !
+	^engine morphContourAfterDrawInto: anArray into: aBlock! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 11:55:51'!
-contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/4/2021 16:54:50'!
+contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph.
 	Use argument if appropriate, or answer a new array if not"
 
-	anArray ifNil: [ ^engine morphContourAfterDrawInto: nil ].
-	^engine morphContourAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom! !
+	anArray ifNil: [ ^engine morphContourAfterDrawInto: nil into: aBlock ].
+	^engine morphContourAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock! !
 
 !VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:49'!
 displayBoundsForHand: aHand
@@ -3100,10 +3100,11 @@ morphIds _ engine instVarNamed: 'morphIds'.
 		copyBits.
 	^answer! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 7/30/2021 17:10:50'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 8/5/2021 12:20:01'!
 boundingRectOfCurrentMorphFromLocalBounds
 	"In targetForm coordinates.
-	Clipped to owner if appropriate."
+	Clipped to owner if appropriate.
+	Only valid for morphs where #morphLocalBounds is known"
 
 	| boundingRect |
 	boundingRect _ currentTransformation displayBoundsOfTransformOf: currentMorph morphLocalBounds.
@@ -4535,12 +4536,12 @@ clipRect: aRectangle! !
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 11/17/2020 10:04:59'!
 currentMorph: aMorph! !
 
-!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 7/5/2021 10:08:28'!
-morphContourAfterDrawInto: anArray
+!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:07'!
+morphContourAfterDrawInto: anArray into: aBlock
 	^nil! !
 
-!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 7/5/2021 11:55:27'!
-morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
+!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:23'!
+morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
 	^nil! !
 
 !VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 3/5/2021 15:20:36'!
@@ -4737,8 +4738,8 @@ currentMorph: aMorph
 disableSubPixelSampling
 	subPixelDelta _ 0.0! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 7/12/2021 20:19:49'!
-morphContourAfterDrawInto: contourArray
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:10'!
+morphContourAfterDrawInto: contourArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
@@ -4776,8 +4777,8 @@ morphContourAfterDrawInto: contourArray
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 8/2/2021 22:37:50'!
-morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:26'!
+morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
@@ -5666,8 +5667,8 @@ currentMorph: aMorph
 			currentMorphId _ aMorph morphId.
 			currentClipsSubmorphs _ aMorph clipsSubmorphsReally ].! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 7/12/2021 20:19:57'!
-morphContourAfterDrawInto: contourArray
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:16'!
+morphContourAfterDrawInto: contourArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
@@ -5705,8 +5706,8 @@ morphContourAfterDrawInto: contourArray
 		answer at: ii+1 put: 0 ].
 	^answer! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 8/2/2021 22:37:45'!
-morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
+!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:29'!
+morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
@@ -6399,8 +6400,8 @@ currentMorph: aMorph
 disableSubPixelSampling
 	subPixelDelta _ 0.0! !
 
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 7/12/2021 20:20:03'!
-morphContourAfterDrawInto: contourArray
+!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:59:18'!
+morphContourAfterDrawInto: contourArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
@@ -6436,10 +6437,11 @@ morphContourAfterDrawInto: contourArray
 	i to: answer size by: 2 do: [ :ii |
 		answer at: ii put: targetWidth.
 		answer at: ii+1 put: 0 ].
+	aBlock value: answer value: y0 value: y1.
 	^answer! !
 
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 8/2/2021 22:37:34'!
-morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
+!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:59:25'!
+morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
@@ -6482,6 +6484,7 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom
 	i to: answer size by: 2 do: [ :iii |
 		answer at: iii put: targetWidth.
 		answer at: iii+1 put: 0 ].
+	aBlock value: answer value: y0 value: y1.
 	^answer! !
 
 !VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 12:46:23'!
@@ -8858,11 +8861,6 @@ value: aNumber
 maskFor: left with: right
 	^(left bitShift: 12) + right! !
 
-!Color methodsFor: '*VectorGraphics' stamp: 'jmv 1/21/2015 12:48'!
-externalizedWith: aMorphicLocation
-
-	^self! !
-
 !Character methodsFor: '*vectorGraphics' stamp: 'jmv 4/1/2020 11:45:59'!
 widthInTrueTypeFontDescription: aTTFontDescription useST80Glyphs: aBoolean
 	"Double dispatch"
@@ -9096,14 +9094,15 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/2/2021 21:13:47'!
-findBounds
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/5/2021 11:57:09'!
+findFullBoundsInOwner
 	"Find and answer full bounds in whatever owner.
 	These might not equal #displayFullBounds at all!!"
-	| w c answer prevOwner prevDisplayBounds |
 
+	| w c answer prevOwner |
 	self requiresVectorCanvas ifFalse: [
-		^self morphPosition extent: self morphExtent ].
+		"#morphExtent exists, and it is also valid in owner, because #requiresVectorCanvas is false."
+		^(self morphPosition extent: self morphExtent) encompassingIntegerRectangle ].
 
 	(owner notNil and: [owner isWorldMorph]) ifTrue: [
 		w _ owner ]
@@ -9115,24 +9114,25 @@ findBounds
 	c _ w canvas.
 	"Hack owner so #displayBoundsSetFrom: will update privateDisplayBounds"
 	prevOwner _ owner.
-	prevDisplayBounds _ privateDisplayBounds.
 	owner _ w.
 	c updatingMorphBoundsDo: [
 		c fullUpdateProtrudingBounds: self ].
 	answer _ self displayFullBounds.
-	"Reset owner and privateDisplayBounds so no one finds out what we've just done!!"
+	"Reset owner and privateDisplayBounds (if needed) so no one finds out what we've just done!!"
 	prevOwner == owner ifFalse: [
 		owner _ prevOwner.
-		privateDisplayBounds _ prevDisplayBounds ].
+		self world = w ifTrue: [
+			c updatingMorphBoundsDo: [
+				c fullUpdateProtrudingBounds: self ]]].
 	^answer! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 6/18/2021 16:03:54'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/5/2021 09:52:22'!
 fitInto: aRectangle
-	"Scale and position ourselves in such way that our displayFullBounds are in aRectangle."
+	"Scale and position ourselves in such way that our #findFullBoundsInOwner are in aRectangle."
 
 	| currentBounds scale slackForAntiAliasing |
 
-	currentBounds _ self findBounds.
+	currentBounds _ self findFullBoundsInOwner.
 	currentBounds extent >= `10@10` ifFalse: [
 		self scaleBy: 10.
 		^self fitInto: aRectangle ].
@@ -9142,14 +9142,16 @@ fitInto: aRectangle
 	scale _ scale asFloat.
 	self scaleBy: scale.
 
-	currentBounds _ self findBounds.
+	currentBounds _ self findFullBoundsInOwner.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 7/19/2021 14:52:32'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/5/2021 11:57:39'!
 imageForm: extentOrNil depth: depth
-	| wasVisible oldLocation bounds extent answer auxCanvas |
+	"Scale as needed. Draw unrotated."
 
-	self requiresVectorCanvas ifFalse: [
+	| wasVisible oldLocation bounds extent answer auxCanvas |
+	self requiresVectorCanvas ifFalse: [	
+		"#morphExtent exists because #requiresVectorCanvas is false."
 		extent _ self morphExtent.
 		extentOrNil ifNotNil: [ extent _ extent min: extentOrNil * 4 ].
 		auxCanvas _ MorphicCanvas depth: depth over: (self morphPosition floor extent: extent ceiling).
@@ -9158,10 +9160,11 @@ imageForm: extentOrNil depth: depth
 		extentOrNil ifNotNil: [ answer _ answer magnifyTo: extentOrNil ].
 		^answer ].
 
+	"Position and scale us in order to fill required extent, but disregard any rotation."
 	wasVisible _ self visible.
 	oldLocation _ self location.
 	self location: (MorphicTranslation withTranslation: 0@0).
-	bounds _ self findBounds.
+	bounds _ self findFullBoundsInOwner.
 	extentOrNil
 		ifNotNil: [ | scale |
 			extent _ extentOrNil.
