@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4737] on 5 August 2021 at 12:52:58 pm'!
+'From Cuis 5.0 [latest update: #4749] on 10 August 2021 at 2:10:37 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 264!
+!provides: 'VectorGraphics' 1 266!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -119,19 +119,19 @@ MorphicCanvas subclass: #VectorCanvas
 VectorCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorGraphicsEngine category: 'VectorGraphics-Kernel'!
-Object subclass: #VectorGraphicsEngine
-	instanceVariableNames: 'canvas targetForm morphIds targetWidth targetHeight antiAliasingWidth geometryTransformation strokeWidth currentMorphId currentClipsSubmorphs clipCurrentMorph morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hop firstX firstY currentX currentY'
+!classDefinition: #VectorEngine category: 'VectorGraphics-Kernel'!
+Object subclass: #VectorEngine
+	instanceVariableNames: 'canvas antiAliasingWidth geometryTransformation strokeWidth morphBoundsLeft morphBoundsTop morphBoundsRight morphBoundsBottom hop firstX firstY currentX currentY'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorGraphicsEngine class' category: 'VectorGraphics-Kernel'!
-VectorGraphicsEngine class
+!classDefinition: 'VectorEngine class' category: 'VectorGraphics-Kernel'!
+VectorEngine class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngineBoundsFinder category: 'VectorGraphics-Kernel'!
-VectorGraphicsEngine subclass: #VectorEngineBoundsFinder
-	instanceVariableNames: 'blendLeft blendTop blendRight blendBottom auxStrokeWidthDilatedHalf subPixelDelta'
+VectorEngine subclass: #VectorEngineBoundsFinder
+	instanceVariableNames: 'spanLeft spanTop spanRight spanBottom swDilatedHalf subPixelDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -139,9 +139,29 @@ VectorGraphicsEngine subclass: #VectorEngineBoundsFinder
 VectorEngineBoundsFinder class
 	instanceVariableNames: ''!
 
+!classDefinition: #VectorEngineDrawer category: 'VectorGraphics-Kernel'!
+VectorEngine subclass: #VectorEngineDrawer
+	instanceVariableNames: 'targetForm targetWidth targetHeight morphIds edgeCounts alphaMask contour strokeColor fillColor clipLeft clipTop clipRight clipBottom currentMorphId currentClipsSubmorphs clipCurrentMorph'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineDrawer class' category: 'VectorGraphics-Kernel'!
+VectorEngineDrawer class
+	instanceVariableNames: ''!
+
+!classDefinition: #VectorEngineSmalltalk category: 'VectorGraphics-Kernel'!
+VectorEngineDrawer subclass: #VectorEngineSmalltalk
+	instanceVariableNames: 'spanLeft spanTop spanRight spanBottom prevYTruncated prevYRounded leftAtThisY rightAtThisY aawScaledInverse swDilatedHalf swDilatedHalfSquared swErodedHalfSquared'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorEngineSmalltalk class' category: 'VectorGraphics-Kernel'!
+VectorEngineSmalltalk class
+	instanceVariableNames: ''!
+
 !classDefinition: #VectorEngineSubPixel category: 'VectorGraphics-Kernel'!
-VectorGraphicsEngine subclass: #VectorEngineSubPixel
-	instanceVariableNames: 'edgeCounts alphaMask contour blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated prevYRounded leftAtThisY rightAtThisY auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared subPixelDelta'
+VectorEngineSmalltalk subclass: #VectorEngineSubPixel
+	instanceVariableNames: 'subPixelDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -150,8 +170,8 @@ VectorEngineSubPixel class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngineWholePixel category: 'VectorGraphics-Kernel'!
-VectorGraphicsEngine subclass: #VectorEngineWholePixel
-	instanceVariableNames: 'edgeCounts alphaMask contour blendLeft blendTop blendRight blendBottom strokeColor fillColor clipLeft clipTop clipRight clipBottom prevYTruncated prevYRounded leftAtThisY rightAtThisY auxAntiAliasingWidthScaledInverse auxStrokeWidthDilatedHalf auxStrokeWidthDilatedHalfSquared auxStrokeWidthErodedHalfSquared'
+VectorEngineSmalltalk subclass: #VectorEngineWholePixel
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -160,8 +180,8 @@ VectorEngineWholePixel class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngineWithPlugin category: 'VectorGraphics-Kernel'!
-VectorGraphicsEngine subclass: #VectorEngineWithPlugin
-	instanceVariableNames: 'edgeCounts alphaMask contour strokeColor fillColor clipLeft clipTop clipRight clipBottom subPixelDelta'
+VectorEngineDrawer subclass: #VectorEngineWithPlugin
+	instanceVariableNames: ''
 	classVariableNames: 'PluginAccess'
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -171,7 +191,7 @@ VectorEngineWithPlugin class
 
 !classDefinition: #VectorEngineWithPluginSubPixel category: 'VectorGraphics-Kernel'!
 VectorEngineWithPlugin subclass: #VectorEngineWithPluginSubPixel
-	instanceVariableNames: ''
+	instanceVariableNames: 'subPixelDelta'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -476,7 +496,7 @@ self allOwnersReverseDo: [ :m | c into: m ].
 c fullDraw: self.
 Display forceToScreen!
 
-!VectorGraphicsEngine commentStamp: '<historical>' prior: 0!
+!VectorEngine commentStamp: '<historical>' prior: 0!
 A Vector Graphics rasterizer for Morphic.
 Supports most SVG primitives.
 Gives exceptional quality.
@@ -3144,7 +3164,7 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 5/28/2021 10:04:45'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 8/10/2021 14:06:14'!
 setForm: aForm preferSubPixelAntiAliasing: aBoolean
 	"
 	World extent: World extent
@@ -3152,10 +3172,10 @@ setForm: aForm preferSubPixelAntiAliasing: aBoolean
 	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
 	form _ aForm.
 	engine _ aBoolean
-		ifTrue: [VectorGraphicsEngine subPixelAntiAliasingOnForm: form]
-		ifFalse: [VectorGraphicsEngine onForm: form].
+		ifTrue: [VectorEngine subPixelAntiAliasingOnForm: form]
+		ifFalse: [VectorEngine onForm: form].
 	engine canvas: self.
-	boundsFinderEngine _ VectorGraphicsEngine boundsFinderFor: form.
+	boundsFinderEngine _ VectorEngine boundsFinderFor: form.
 	boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
 	boundsFinderEngine subPixelDelta: engine subPixelDelta.								"So bounds found are exactly the same as engine would find."
 	boundsFinderEngine canvas: self.
@@ -3366,22 +3386,26 @@ siemensStar
 	].
 	^form! !
 
-!VectorGraphicsEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
+!VectorEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
 antiAliasingWidth
 
 	^antiAliasingWidth! !
 
-!VectorGraphicsEngine methodsFor: 'accessing' stamp: 'jmv 5/15/2020 09:27:38'!
+!VectorEngine methodsFor: 'accessing' stamp: 'jmv 5/15/2020 09:27:38'!
 antiAliasingWidth: aNumber
 
 	antiAliasingWidth _ aNumber.! !
 
-!VectorGraphicsEngine methodsFor: 'accessing' stamp: 'jmv 5/12/2021 11:07:01'!
+!VectorEngine methodsFor: 'accessing' stamp: 'jmv 8/8/2021 23:22:47'!
+clipCurrentMorph: aBoolean
+	"To be redefined as needed"! !
+
+!VectorEngine methodsFor: 'accessing' stamp: 'jmv 5/12/2021 11:07:01'!
 geometryTransformation: aGeometryTransformation
 
 	geometryTransformation _ aGeometryTransformation.! !
 
-!VectorGraphicsEngine methodsFor: 'accessing' stamp: 'jmv 7/5/2021 10:09:41'!
+!VectorEngine methodsFor: 'accessing' stamp: 'jmv 7/5/2021 10:09:41'!
 morphBoundsAfterDraw
 	"In targetForm coordinates.
 	Doesn't account for any clipping rect (neither clip rect parameter to bound drawn area, nor possible clipping to owner shape or bounds).
@@ -3390,7 +3414,7 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:14'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:14'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
 
@@ -3425,7 +3449,7 @@ basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureC
 
 	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/17/2021 17:29:48'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/17/2021 17:29:48'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -3454,7 +3478,7 @@ basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:45'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:45'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing fill."
 
@@ -3465,7 +3489,7 @@ fillColor: aFillColor do: pathCommandsBlock
 	self pvtHopLength: 0.5.										"See #experimentHopsPerPixel3"
 	self doPath: pathCommandsBlock ensureClosePath: true.! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:45:04'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:45:04'!
 strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke."
 
@@ -3475,7 +3499,7 @@ strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
 		do: pathCommandsBlock
 		ensureClosePath: false! !
 
-!VectorGraphicsEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:46:55'!
+!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:46:55'!
 strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
@@ -3485,10 +3509,10 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 		fillColor: aFillColor
 		do: pathCommandsBlock! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/31/2021 19:18:54'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:06:47'!
 arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 2.0 color: Color black fillColor: Color red do: [ :engine |
 		engine arcCenter: 100@100 radius: 80@40 rotationAngle: -0.2 start: 0 sweep: Float twoPi ].
 Display forceToScreen.
@@ -3520,17 +3544,17 @@ Display forceToScreen.
 	currentX _ thetaCos * xp - (thetaSin * yp) + aPoint x.
 	currentY _ thetaSin * xp + (thetaCos * yp) + aPoint y.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 19:08:30'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:07:09'!
 arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 1.0 color: Color red do: [ :engine |
 		engine
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.2 position: 200@100);
 	strokeWidth: 1.0 color: Color red do: [ :engine |
 		engine
@@ -3607,10 +3631,10 @@ Display forceToScreen
 
 	self arcCenter: cx@cy radius: rx@ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 18:44:33'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:07:19'!
 circleCenter: aPoint radius: mr
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			circleCenter: 200 @ 150 radius: 80].
@@ -3619,12 +3643,12 @@ Display forceToScreen
 
 	self arcCenter: aPoint radius: mr@mr rotationAngle: 0.0 start: 0.0 sweep: Float twoPi.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 17:05:48'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:07:38'!
 cubicBezierTo: toPoint control1: controlPoint1 control2: controlPoint2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -3632,7 +3656,7 @@ cubicBezierTo: toPoint control1: controlPoint1 control2: controlPoint2
 Display forceToScreen
 	"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@50.
 		engine
@@ -3642,7 +3666,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@100.
 		engine
@@ -3652,7 +3676,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@100.
 		engine
@@ -3662,7 +3686,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@100.
 		engine
@@ -3672,7 +3696,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 3 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@100.
 		engine
@@ -3686,14 +3710,14 @@ Display forceToScreen
 	currentX _ toPoint x.
 	currentY _ toPoint y.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 18:44:38'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:07:54'!
 ellipseCenter: aPoint radius: radiusPoint
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@150 radius: 100@50].
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
@@ -3703,14 +3727,14 @@ Display forceToScreen
 
 	self arcCenter: aPoint radius: radiusPoint rotationAngle: 0.0 start: 0.0 sweep: Float twoPi.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 18:44:43'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:01'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: -0.5 ].
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
@@ -3720,22 +3744,22 @@ Display forceToScreen
 
 	self arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: 0.0 sweep: Float twoPi.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 18:44:48'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:11'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 	"Currently draws a line from pathCurrentX@pathCurrentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
 	Implement desired behavior when clear."
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6 ].
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.0 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6].
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@350 radius: 100@50 rotationAngle: 0.5 start: 0.1 sweep: 6 ].
@@ -3744,10 +3768,10 @@ Display forceToScreen.
 
 	self arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 16:36:07'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:20'!
 lineTo: aPoint
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -3755,7 +3779,7 @@ lineTo: aPoint
 Display forceToScreen
 "
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 25.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -3763,7 +3787,7 @@ Display forceToScreen
 Display forceToScreen
 "
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine moveTo: 30@115.
 		engine lineTo: 45@190.
@@ -3774,10 +3798,10 @@ Display forceToScreen
 	currentX _ aPoint x.
 	currentY _ aPoint y.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 16:37:46'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:32'!
 lineToFirstPoint
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 1.0 color: Color black fillColor: Color red do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -3790,10 +3814,10 @@ Display forceToScreen
 	currentX _ firstX.
 	currentY _ firstY.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 17:03:08'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:41'!
 moveTo: aPoint
 "
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -3813,10 +3837,10 @@ Display forceToScreen
 	currentX _ firstX.
 	currentY _ firstY.! !
 
-!VectorGraphicsEngine methodsFor: 'paths' stamp: 'jmv 5/28/2021 16:56:53'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:09:35'!
 quadraticBezierTo: toPoint control: controlPoint
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -3824,7 +3848,7 @@ quadraticBezierTo: toPoint control: controlPoint
 Display forceToScreen
 	"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -3832,7 +3856,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 3.0 color: Color black fillColor: Color red do: [ :engine |
 		engine
 			moveTo: 100@270;
@@ -3840,7 +3864,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 3.0 color: Color black fillColor: Color red do: [ :engine |
 		engine
 			moveTo: 100@550;
@@ -3851,7 +3875,7 @@ Display forceToScreen
 	currentX _ toPoint x.
 	currentY _ toPoint y.! !
 
-!VectorGraphicsEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:14'!
+!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:14'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -3906,7 +3930,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 	].
 	^ nextGlyphX@nextGlyphY! !
 
-!VectorGraphicsEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:23'!
+!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:23'!
 displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -3991,7 +4015,7 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 	].
 	^ nextGlyphX@nextGlyphY! !
 
-!VectorGraphicsEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:31'!
+!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 14:31:31'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -4057,10 +4081,10 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 	].
 	^ nextGlyphX@nextGlyphY! !
 
-!VectorGraphicsEngine methodsFor: 'text and multi paths' stamp: 'jmv 5/13/2021 17:17:07'!
+!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 14:09:11'!
 pathSequence: aFloat32Array
 	"
-	(VectorGraphicsEngine onForm: Display)
+	(VectorEngine onForm: Display)
 		geometryTransformation: (AffineTransformation withScale: 14 position: 100@100);
 		strokeWidth: 3 color: Color black do: [ :engine |
 			engine
@@ -4116,20 +4140,21 @@ pathSequence: aFloat32Array
 				self cubicBezierTo: p1x@p1y control1: p2x@p2y control2: p3x@p3y ]}
 		otherwise: [ ^self "failure"]].! !
 
-!VectorGraphicsEngine methodsFor: 'morphic' stamp: 'jmv 3/16/2021 09:55:37'!
+!VectorEngine methodsFor: 'morphic' stamp: 'jmv 3/16/2021 09:55:37'!
 canvas: aMorphicCanvas
 	"Only needed if we are being called from a Canvas"
 
 	canvas _ aMorphicCanvas! !
 
-!VectorGraphicsEngine methodsFor: 'morphic' stamp: 'jmv 11/17/2020 09:27:07'!
+!VectorEngine methodsFor: 'morphic' stamp: 'jmv 8/8/2021 20:21:50'!
 morph: aMorph isAtPoint: aPoint
-	| index |
-	index _ aPoint y * targetWidth + aPoint x + 1.
-	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
-	^((morphIds at: index) >> 8) = aMorph morphId! !
+	self subclassResponsibility ! !
 
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:28'!
+!VectorEngine methodsFor: 'morphic' stamp: 'jmv 8/8/2021 20:21:07'!
+pvtSetForm: aForm
+	self subclassResponsibility! !
+
+!VectorEngine methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:28'!
 doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Evaluate a sequence of path commands. Path parameters already set."
 
@@ -4137,51 +4162,32 @@ doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	pathCommandsBlock valueWithPossibleArgument: (canvas ifNil:[self]).
 	self finishPath: ensureClosePath! !
 
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 5/12/2021 11:30:10'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 5/12/2021 11:30:10'!
 initializeOnForm: aForm
 	self currentMorph: nil.
 	self pvtSetForm: aForm.
 	geometryTransformation _ GeometryTransformation identity ! !
 
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 3/18/2021 15:10:50'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 3/18/2021 15:10:50'!
 initializePath
 
 	firstX _ firstY _ Float nan.
 	currentX _ currentY _ 0.0.
 	self newTrajectoryFragment.! !
 
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:34'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 5/14/2020 16:03:34'!
 newTrajectoryFragment! !
 
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 6/11/2021 11:57:00'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 6/11/2021 11:57:00'!
 pvtHopLength: aFloat
 	hop _ aFloat! !
 
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 4/9/2021 12:47:04'!
-pvtSetForm: aForm
-
-	targetForm _ aForm.
-	targetWidth _ targetForm width.
-	targetHeight _ targetForm height.
-	morphIds _ WordArray new: targetWidth * targetHeight.
-	self resetMorphBounds.
-	self clipRect: targetForm boundingBox.
-	self antiAliasingWidth: self class defaultAntiAliasingWidth.! !
-
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 5/15/2020 09:27:20'!
+!VectorEngine methodsFor: 'private' stamp: 'jmv 5/15/2020 09:27:20'!
 pvtStrokeWidth: aNumber
 
 	strokeWidth _ aNumber.! !
 
-!VectorGraphicsEngine methodsFor: 'private' stamp: 'jmv 4/9/2021 12:13:16'!
-resetMorphBounds
-
-	morphBoundsTop _ targetHeight - 1.
-	morphBoundsBottom _ 0.
-	morphBoundsLeft _ targetWidth - 1.
-	morphBoundsRight _ 0! !
-
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 7/18/2021 14:10:55'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/10/2021 14:06:14'!
 circleApproximationExamples
 "
 self circleApproximationExamples
@@ -4193,23 +4199,23 @@ r _ 200.
 c _ 0.085 * r.
 d _ 0.5 * r.
 e _ 0.552 * r.
-(VectorGraphicsEngine onForm: Display)
+(VectorEngine onForm: Display)
 	strokeWidth: 5.0 color: Color red do: [ :engine |
 		engine
 			circleCenter: cx @ cy radius: r].
-(VectorGraphicsEngine onForm: Display)												"Quadratic, coarse and better approximations"
+(VectorEngine onForm: Display)												"Quadratic, coarse and better approximations"
 	strokeWidth: 1.0 color: Color white do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
 			quadraticBezierTo: cx - r @ cy control: (cx - r) @ (cy + r);
 			moveTo: cx @ (cy + r);
 			quadraticBezierTo: cx - r @ cy control: (cx - r + c) @ (cy + r - c) ].
-(VectorGraphicsEngine onForm: Display)												"Cubic, coarse approximation"
+(VectorEngine onForm: Display)												"Cubic, coarse approximation"
 	strokeWidth: 1.0 color: Color green do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
 			cubicBezierTo: cx - r @ cy control1: (cx - d) @ (cy + r) control2: (cx - r) @ (cy + d) ].
-(VectorGraphicsEngine onForm: Display)												"Cubic, good approximation"
+(VectorEngine onForm: Display)												"Cubic, good approximation"
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
@@ -4217,7 +4223,7 @@ e _ 0.552 * r.
 Display forceToScreen
 ! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/8/2021 12:28:54'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 6/8/2021 12:28:54'!
 experLinesAndShapes
 	"
 Display fill: (0@0 corner: 120@1200) fillColor: Color white.
@@ -4289,7 +4295,7 @@ Display fill: (0@0 corner: 120@1200) fillColor: Color white.
 	
 	Display forceToScreen! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 5/12/2021 14:44:57'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 5/12/2021 14:44:57'!
 experLinesAndShapes2
 	"
 	VectorEngineSubPixel experLinesAndShapes2
@@ -4369,7 +4375,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:07:55'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:07:55'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -4410,7 +4416,7 @@ experimentHopsPerPixel1
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:08:05'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:08:05'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -4453,7 +4459,7 @@ Feature require: 'LinearAlgebra'.
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:08:11'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:08:11'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -4494,21 +4500,21 @@ experimentHopsPerPixel3
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 4/9/2021 12:17:36'!
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 4/9/2021 12:17:36'!
 boundsFinderFor: aForm
 
 	^ VectorEngineBoundsFinder new initializeOnForm: aForm! !
 
-!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 3/22/2021 14:59:34'!
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 3/22/2021 14:59:34'!
 defaultAntiAliasingWidth
 	self subclassResponsibility! !
 
-!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 6/12/2021 09:58:48'!
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/10/2021 14:06:14'!
 onForm: aForm
 	"On a non-abstract class, answer an instance of receiver.
 	On an abstract class, pick a subclass."
 
-	(self == VectorGraphicsEngine) | (self == VectorEngineWithPlugin)
+	(self == VectorEngine) | (self == VectorEngineWithPlugin)
 		ifFalse: [ ^self new initializeOnForm: aForm ].
 
 	^ (VectorEngineWithPlugin isPluginAvailable
@@ -4519,16 +4525,13 @@ onForm: aForm
 		ifFalse: [VectorEngineWholePixel])
 			new initializeOnForm: aForm! !
 
-!VectorGraphicsEngine class methodsFor: 'instance creation' stamp: 'jmv 6/12/2021 09:58:54'!
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 6/12/2021 09:58:54'!
 subPixelAntiAliasingOnForm: aForm
 
 	^ (VectorEngineWithPlugin isPluginAvailable
 		ifTrue: [VectorEngineWithPluginSubPixel]
 		ifFalse: [VectorEngineSubPixel])
 			new initializeOnForm: aForm! !
-
-!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 11/17/2020 14:49:32'!
-clipCurrentMorph: aBoolean! !
 
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 7/24/2020 16:52:27'!
 clipRect: aRectangle! !
@@ -4552,7 +4555,7 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 	clientStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
 	^ self strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock! !
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 20:26:08'!
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 8/8/2021 22:26:44'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -4567,10 +4570,10 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 	tcy _ center y.
 	(trx = try and: [
 		d * hops > 6.28]) ifTrue: [ 						"If a circle, not an ellipse, and a complete circle, or pretty close"
-			blendLeft _ blendLeft min: tcx - trx.
-			blendRight _ blendRight max: tcx + trx.
-			blendTop _ blendTop min: tcy - trx.
-			blendBottom _ blendBottom max: tcy + trx ]
+			spanLeft _ spanLeft min: tcx - trx.
+			spanRight _ spanRight max: tcx + trx.
+			spanTop _ spanTop min: tcy - trx.
+			spanBottom _ spanBottom max: tcy + trx ]
 
 		ifFalse: [						"Else go the more expensive way"
 			angle _ startAngle.
@@ -4580,13 +4583,13 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 				yp _ angle sin * try.
 				x _ thetaCos * xp - (thetaSin * yp) + tcx.
 				y _ thetaSin * xp + (thetaCos * yp) + tcy.
-				blendLeft _ blendLeft min: x.
-				blendRight _ blendRight max: x.
-				blendTop _ blendTop min: y.
-				blendBottom _ blendBottom max: y.
+				spanLeft _ spanLeft min: x.
+				spanRight _ spanRight max: x.
+				spanTop _ spanTop min: y.
+				spanBottom _ spanBottom max: y.
 				angle _ angle + d. ]].! !
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:04:36'!
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 8/8/2021 22:26:44'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 
@@ -4601,24 +4604,24 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	xMaxEnd _ txFrom max: txTo.
 	yMinEnd _ tyFrom min: tyTo.
 	yMaxEnd _ tyFrom max: tyTo.
-	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
-	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
-	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
-	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).! !
+	spanLeft _ spanLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
+	spanRight _ spanRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
+	spanTop _ spanTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
+	spanBottom _ spanBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).! !
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:01:56'!
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 8/8/2021 22:26:44'!
 lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	| p txFrom tyFrom txTo tyTo |
 	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
 	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
 
-	blendLeft _ blendLeft min: (txFrom min: txTo).
-	blendRight _ blendRight max: (txFrom max: txTo).
-	blendTop _ blendTop min: (tyFrom min: tyTo).
-	blendBottom _ blendBottom max: (tyFrom max: tyTo).! !
+	spanLeft _ spanLeft min: (txFrom min: txTo).
+	spanRight _ spanRight max: (txFrom max: txTo).
+	spanTop _ spanTop min: (tyFrom min: tyTo).
+	spanBottom _ spanBottom max: (tyFrom max: tyTo).! !
 
-!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 5/29/2021 16:03:00'!
+!VectorEngineBoundsFinder methodsFor: 'primitive algorithms' stamp: 'jmv 8/8/2021 22:26:44'!
 quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
 
@@ -4632,42 +4635,40 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	xMaxEnd _ txFrom max: txTo.
 	yMinEnd _ tyFrom min: tyTo.
 	yMaxEnd _ tyFrom max: tyTo.
-	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
-	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
-	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
-	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).! !
+	spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
+	spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
+	spanTop _ spanTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
+	spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/6/2021 16:08:17'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/10/2021 12:03:57'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 
-	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf - subPixelDelta + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
-	blendTop _ (blendTop - auxStrokeWidthDilatedHalf + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
-	blendRight _ (blendRight + auxStrokeWidthDilatedHalf + subPixelDelta) truncated + 1. 											"+1 not strictly needed in BoundsFinder, but just answer same bounds as other engines."
-	blendBottom _ (blendBottom + auxStrokeWidthDilatedHalf) truncated.
+	spanLeft _ (spanLeft - swDilatedHalf - subPixelDelta + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	spanTop _ (spanTop - swDilatedHalf + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	spanRight _ (spanRight + swDilatedHalf + subPixelDelta) truncated + 1. 											"+1 not strictly needed in BoundsFinder, but just answer same bounds as other engines."
+	spanBottom _ (spanBottom + swDilatedHalf) truncated.
 
 	"morphBounds is not affected by clipRect"
-	morphBoundsLeft _ morphBoundsLeft min: blendLeft.
-	morphBoundsTop _ morphBoundsTop min: blendTop.
-	morphBoundsRight _ morphBoundsRight max: blendRight.
-	morphBoundsBottom _ morphBoundsBottom max: blendBottom.! !
+	morphBoundsLeft _ morphBoundsLeft min: spanLeft.
+	morphBoundsTop _ morphBoundsTop min: spanTop.
+	morphBoundsRight _ morphBoundsRight max: spanRight.
+	morphBoundsBottom _ morphBoundsBottom max: spanBottom.! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/9/2021 12:15:53'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/8/2021 21:05:50'!
 initializeOnForm: aForm
 	self currentMorph: nil.
-	targetWidth _ aForm width.
-	targetHeight _ aForm height.
 	self resetMorphBounds.! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/9/2021 12:10:28'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/8/2021 22:26:44'!
 initializePath
 
 	super initializePath.
 
-	blendLeft _ targetWidth.						"drawable right. Will later be refined."
-	blendTop _ targetHeight.						"drawable bottom. Will later be refined."
-	blendRight _ 0.						"drawable left. Will later be refined."
-	blendBottom _ 0.						"drawable top. Will later be refined."! !
+	spanTop _ 16r7FFFFFFF.						"drawable bottom. Will later be refined."
+	spanBottom _ 0.						"drawable top. Will later be refined."
+	spanLeft _ 16r7FFFFFFF.						"drawable right. Will later be refined."
+	spanRight _ 0.						"drawable left. Will later be refined."! !
 
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 7/24/2020 17:14:59'!
 morph: aMorph isAtPoint: aPoint
@@ -4684,34 +4685,29 @@ pvtSetForm: aForm
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/5/2021 15:14:51'!
 pvtStrokeColor: aColor! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 7/24/2020 16:44:36'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/10/2021 12:03:57'!
 pvtStrokeWidth: aNumber
 
 	super pvtStrokeWidth: aNumber.
-	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.! !
+	swDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.! !
+
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/8/2021 21:04:17'!
+resetMorphBounds
+
+	morphBoundsTop _ 16r7FFFFFFF.
+	morphBoundsBottom _ 0.
+	morphBoundsLeft _ 16r7FFFFFFF.
+	morphBoundsRight _ 0! !
 
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/22/2021 11:19:05'!
 subPixelDelta: aNumber
 	subPixelDelta _ aNumber! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:53:23'!
-antiAliasingWidth: aNumber
-
-	super antiAliasingWidth: aNumber.
-	auxAntiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth.! !
-
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 5/18/2021 10:06:41'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:07:18'!
 clipCurrentMorph: aBoolean
-	(clipCurrentMorph and: [ aBoolean not ]) ifTrue: [
-		| pixelIndex |
-		clipTop to: clipBottom do: [ :displayY |
-			pixelIndex _ displayY * targetWidth + clipLeft.
-			clipLeft to: clipRight do: [ :displayX |
-				pixelIndex _ pixelIndex + 1.
-				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) >>8 << 8) ]]].
-	clipCurrentMorph _ aBoolean! !
+	clipCurrentMorph _ aBoolean.! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 4/9/2021 12:45:12'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:07:01'!
 clipRect: aRectangle 
 	"by convention, aRectangle includes left and top but does not include right and bottom.
 	We do draw clipRight and clipBottom but not beyond.
@@ -4722,7 +4718,7 @@ clipRect: aRectangle
 	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
 	clipBottom _ (aRectangle bottom asInteger min: targetHeight) - 1! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 3/8/2021 10:33:46'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:07:18'!
 currentMorph: aMorph
 	aMorph
 		ifNil: [
@@ -4734,11 +4730,12 @@ currentMorph: aMorph
 			currentMorphId _ aMorph morphId.
 			currentClipsSubmorphs _ aMorph clipsSubmorphsReally ].! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 6/18/2021 15:28:29'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/8/2021 23:24:12'!
 disableSubPixelSampling
-	subPixelDelta _ 0.0! !
+	"NOP here.
+	To be redefined if needed"! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:10'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:06:26'!
 morphContourAfterDrawInto: contourArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -4775,9 +4772,10 @@ morphContourAfterDrawInto: contourArray into: aBlock
 	i to: answer size by: 2 do: [ :ii |
 		answer at: ii put: targetWidth.
 		answer at: ii+1 put: 0 ].
+	aBlock value: answer value: y0 value: y1.
 	^answer! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:26'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:06:26'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -4821,13 +4819,63 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into
 	i to: answer size by: 2 do: [ :iii |
 		answer at: iii put: targetWidth.
 		answer at: iii+1 put: 0 ].
+	aBlock value: answer value: y0 value: y1.
 	^answer! !
 
-!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:30:40'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/8/2021 23:24:28'!
 subPixelDelta
-	^subPixelDelta! !
+	"To be redefined if needed"
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 20:27:00'!
+	^0.0! !
+
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/10/2021 12:05:53'!
+morph: aMorph isAtPoint: aPoint
+	| index |
+	index _ aPoint y * targetWidth + aPoint x + 1.
+	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
+	^((morphIds at: index) >> 8) = aMorph morphId! !
+
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:26'!
+pvtSetForm: aForm
+
+	targetForm _ aForm.
+	targetWidth _ targetForm width.
+	targetHeight _ targetForm height.
+	morphIds _ WordArray new: targetWidth * targetHeight.
+	contour _ Float32Array new: targetHeight * 2.
+	0 to: targetHeight-1 do: [ :y |
+		contour at: y * 2 + 1 put: targetWidth.
+		contour at: y * 2 + 2 put: 0 ].
+	self resetMorphBounds.
+	self clipRect: targetForm boundingBox.
+	self antiAliasingWidth: self class defaultAntiAliasingWidth.! !
+
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/10/2021 12:05:47'!
+resetMorphBounds
+
+	morphBoundsTop _ targetHeight - 1.
+	morphBoundsBottom _ 0.
+	morphBoundsLeft _ targetWidth - 1.
+	morphBoundsRight _ 0! !
+
+!VectorEngineSmalltalk methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:04:36'!
+antiAliasingWidth: aNumber
+
+	super antiAliasingWidth: aNumber.
+	aawScaledInverse _ 127.0 / antiAliasingWidth.! !
+
+!VectorEngineSmalltalk methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:07:18'!
+clipCurrentMorph: aBoolean
+	(clipCurrentMorph and: [ aBoolean not ]) ifTrue: [
+		| pixelIndex |
+		clipTop to: clipBottom do: [ :displayY |
+			pixelIndex _ displayY * targetWidth + clipLeft.
+			clipLeft to: clipRight do: [ :displayX |
+				pixelIndex _ pixelIndex + 1.
+				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) >>8 << 8) ]]].
+	clipCurrentMorph _ aBoolean! !
+
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 8/10/2021 12:06:37'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -4847,17 +4895,17 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 		yp _ angle sin * try.
 		x _ thetaCos * xp - (thetaSin * yp) + tcx.
 		y _ thetaSin * xp + (thetaCos * yp) + tcy.
-		blendLeft _ blendLeft min: x.
-		blendTop _ blendTop min: y.
-		blendRight _ blendRight max: x.
-		blendBottom _ blendBottom max: y.
+		spanLeft _ spanLeft min: x.
+		spanTop _ spanTop min: y.
+		spanRight _ spanRight max: x.
+		spanBottom _ spanBottom max: y.
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 		self updateContourForX: x y: y.
 		angle _ angle + d. ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/5/2021 16:27:35'!
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 8/10/2021 12:06:37'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| p txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
@@ -4875,10 +4923,10 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 	xMaxEnd _ txFrom max: txTo.
 	yMinEnd _ tyFrom min: tyTo.
 	yMaxEnd _ tyFrom max: tyTo.
-	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
-	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
-	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
-	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
+	spanLeft _ spanLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
+	spanRight _ spanRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
+	spanTop _ spanTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
+	spanBottom _ spanBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
 
 	t _ 0.0.
 	increment _ 1.0 / hops.
@@ -4901,7 +4949,7 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/5/2021 16:29:04'!
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 8/10/2021 12:06:37'!
 lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	| p txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
@@ -4913,10 +4961,10 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	incrementX _ dx *1.0 / hops.
 	incrementY _ dy *1.0 / hops.
 
-	blendLeft _ blendLeft min: (txFrom min: txTo).
-	blendRight _ blendRight max: (txFrom max: txTo).
-	blendTop _ blendTop min: (tyFrom min: tyTo).
-	blendBottom _ blendBottom max: (tyFrom max: tyTo).
+	spanLeft _ spanLeft min: (txFrom min: txTo).
+	spanRight _ spanRight max: (txFrom max: txTo).
+	spanTop _ spanTop min: (tyFrom min: tyTo).
+	spanBottom _ spanBottom max: (tyFrom max: tyTo).
 
 	x _ txFrom.
 	y _ tyFrom.
@@ -4932,7 +4980,7 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 23:10:38'!
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 8/10/2021 12:06:37'!
 quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
 	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y t0 x0 y0 length correction |
@@ -4965,10 +5013,10 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 	xMaxEnd _ txFrom max: txTo.
 	yMinEnd _ tyFrom min: tyTo.
 	yMaxEnd _ tyFrom max: tyTo.
-	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
-	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
-	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
-	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
+	spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
+	spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
+	spanTop _ spanTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
+	spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
 	"Case t = 0.0"
 	x _ txFrom.
@@ -5013,69 +5061,7 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/12/2021 20:31:30'!
-updateAlphasForX: x y: y
-	| distanceToAxisSquared alpha t b l r alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
-
-	"Compute affected rect. Honor clipRect"
-	t _ (y - auxStrokeWidthDilatedHalf + 1) truncated.													"(z+1) truncated works equally well than the more intuitive (z ceiling)"
-	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y + auxStrokeWidthDilatedHalf) truncated.
-	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x - auxStrokeWidthDilatedHalf - subPixelDelta + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
-	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x + auxStrokeWidthDilatedHalf + subPixelDelta) truncated.
-	r > clipRight ifTrue: [ r _ clipRight ].
-
-	t to: b do: [ :displayY |
-		pixelIndex _ displayY * targetWidth + l.
-		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			alphaWord _ alphaMask bytesAt: pixelIndex.
-			alphaWord = "16r007F7F7F" #[16r7F 16r7F 16r7F 16r00] ifFalse: [
-				doUpdate _ false.
-				dy _ displayY - y.
-				dySquared _ dy * dy.
-				dx _ displayX - x.
-				"Red"
-				dxp _ dx - subPixelDelta.
-				dxSquared _ dxp * dxp.
-				distanceToAxisSquared _ dxSquared + dySquared.
-				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
-					ifTrue: [
-						alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) truncated ].
-						alpha > (alphaWord at: 3) ifTrue: [
-							alphaWord at: 3 put: alpha.
-							doUpdate _ true ]].
-				"Green"
-				dxSquared _ dx * dx.
-				distanceToAxisSquared _ dxSquared + dySquared.
-				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
-					ifTrue: [
-						alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) truncated ].
-						alpha > (alphaWord at: 2) ifTrue: [
-							alphaWord at: 2 put: alpha.
-							doUpdate _ true ]].
-				"Blue"
-				dxp _ dx + subPixelDelta.
-				dxSquared _ dxp * dxp.
-				distanceToAxisSquared _ dxSquared + dySquared.
-				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
-					ifTrue: [
-						alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
-							ifTrue: [ 16r7F ]
-							ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) truncated ].
-						alpha > (alphaWord at: 1) ifTrue: [
-							alphaWord at: 1 put: alpha.
-							doUpdate _ true ]].
-				doUpdate ifTrue: [
-					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
-
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 7/5/2021 16:23:16'!
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/10/2021 12:07:46'!
 updateContourForX: x y: y
 	"The Contour of the current morph is the pixel area affected, 	but without holes.
 	For each y line where a pixel is affected, record the leftmost and rightmost affected pixels.
@@ -5094,7 +5080,182 @@ updateContourForX: x y: y
 		leftAtThisY _ leftAtThisY min: x.
 		rightAtThisY _ rightAtThisY max: x ].! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/13/2021 16:33:48'!
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:01'!
+finishPath: ensureClosePath
+	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
+	
+	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
+	ensureClosePath ifTrue: [
+		firstX isNaN ifFalse: [
+			(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
+				"This is actually an error condition. If we are asked to fill, then the path should be closed.
+				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
+				self lineToFirstPoint ]]].
+	self updateContourLastLine.
+
+	spanLeft _ (spanLeft - swDilatedHalf - self subPixelDelta + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	spanTop _ (spanTop - swDilatedHalf + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	spanRight _ (spanRight + swDilatedHalf + self subPixelDelta) truncated + 1. 								"Make room not just for updated mask, but also edges (hence, +1)"
+	spanBottom _ (spanBottom + swDilatedHalf) truncated.
+
+	"morphBounds is not affected by clipRect"
+	morphBoundsLeft _ morphBoundsLeft min: spanLeft.
+	morphBoundsTop _ morphBoundsTop min: spanTop.
+	morphBoundsRight _ morphBoundsRight max: spanRight.
+	morphBoundsBottom _ morphBoundsBottom max: spanBottom.
+
+	spanLeft< clipLeft ifTrue: [ spanLeft _ clipLeft ].
+	spanTop < clipTop ifTrue: [ spanTop _ clipTop ].
+	spanRight > clipRight ifTrue: [ spanRight _ clipRight ].
+	spanBottom > clipBottom ifTrue: [ spanBottom _ clipBottom ].
+
+	(spanRight >= spanLeft and: [ spanBottom >= spanTop ]) ifTrue: [
+		fillColor notNil ifTrue: [
+			strokeColor notNil
+				ifTrue: [ self blendStrokeAndFill ]
+				ifFalse: [ self blendFillOnly ]]
+			ifFalse: [
+				self blendStrokeOnly ]].! !
+
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:34'!
+initializePath
+
+	super initializePath.
+
+	spanTop _ targetHeight.						"drawable bottom. Will later be refined."
+	spanBottom _ 0.						"drawable top. Will later be refined."
+	spanLeft _ targetWidth.						"drawable right. Will later be refined."
+	spanRight _ 0.						"drawable left. Will later be refined."
+	prevYRounded _ 16r7FFFFFFF.! !
+
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:28'!
+newTrajectoryFragment
+
+	prevYTruncated _ 16r7FFFFFFF.! !
+
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:37'!
+pvtFillColor: aFillColorOrNil
+	fillColor _ aFillColorOrNil! !
+
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:31'!
+pvtStrokeColor: aStrokeColorOrNil
+	strokeColor _ aStrokeColorOrNil! !
+
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:05:07'!
+pvtStrokeWidth: aNumber
+
+	| swErodedHalf |
+	super pvtStrokeWidth: aNumber.
+	swDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
+	swDilatedHalfSquared _ swDilatedHalf * swDilatedHalf.
+	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
+	swErodedHalfSquared _ swErodedHalf * swErodedHalf abs.! !
+
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:46'!
+resetMorphBounds
+
+	leftAtThisY _ targetWidth.
+	rightAtThisY _ 0.
+	"Clear any possible contour."
+	morphBoundsTop ifNotNil: [
+		(morphBoundsTop max: 0) to: (morphBoundsBottom min: targetHeight -1) do: [ :y |
+			contour at: y * 2 + 1 put: targetWidth.
+			contour at: y * 2 + 2 put: 0 ]].
+	super resetMorphBounds.! !
+
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:46'!
+updateContourLastLine
+
+	prevYRounded = 16r7FFFFFFF ifFalse: [
+		contour at: prevYRounded * 2 + 1 put: leftAtThisY.
+		contour at: prevYRounded * 2 + 2 put: rightAtThisY ].! !
+
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 8/8/2021 23:12:07'!
+blendFillOnly
+
+	self subclassResponsibility.! !
+
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 8/8/2021 23:12:02'!
+blendStrokeAndFill
+
+	self subclassResponsibility.! !
+
+!VectorEngineSmalltalk methodsFor: 'private - blend with mask' stamp: 'jmv 8/8/2021 23:12:12'!
+blendStrokeOnly
+
+	self subclassResponsibility.! !
+
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 6/18/2021 15:28:29'!
+disableSubPixelSampling
+	subPixelDelta _ 0.0! !
+
+!VectorEngineSubPixel methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:30:40'!
+subPixelDelta
+	^subPixelDelta! !
+
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/10/2021 12:07:01'!
+updateAlphasForX: x y: y
+	| distanceToAxisSquared alpha t b l r alphaWord doUpdate dySquared dx dxSquared dy pixelIndex dxp |
+
+	"Compute affected rect. Honor clipRect"
+	t _ (y - swDilatedHalf + 1) truncated.													"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	t < clipTop ifTrue: [ t _ clipTop ].
+	b _ (y + swDilatedHalf) truncated.
+	b > clipBottom ifTrue: [ b _ clipBottom ].
+	l _ (x - swDilatedHalf - subPixelDelta + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	l < clipLeft ifTrue: [ l _ clipLeft ].
+	r _ (x + swDilatedHalf + subPixelDelta) truncated.
+	r > clipRight ifTrue: [ r _ clipRight ].
+
+	t to: b do: [ :displayY |
+		pixelIndex _ displayY * targetWidth + l.
+		l to: r do: [ :displayX |
+			pixelIndex _ pixelIndex + 1.
+			alphaWord _ alphaMask bytesAt: pixelIndex.
+			alphaWord = "16r007F7F7F" #[16r7F 16r7F 16r7F 16r00] ifFalse: [
+				doUpdate _ false.
+				dy _ displayY - y.
+				dySquared _ dy * dy.
+				dx _ displayX - x.
+				"Red"
+				dxp _ dx - subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxisSquared _ dxSquared + dySquared.
+				distanceToAxisSquared < swDilatedHalfSquared
+					ifTrue: [
+						alpha _ distanceToAxisSquared <= swErodedHalfSquared
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (swDilatedHalf - distanceToAxisSquared sqrt * aawScaledInverse) truncated ].
+						alpha > (alphaWord at: 3) ifTrue: [
+							alphaWord at: 3 put: alpha.
+							doUpdate _ true ]].
+				"Green"
+				dxSquared _ dx * dx.
+				distanceToAxisSquared _ dxSquared + dySquared.
+				distanceToAxisSquared < swDilatedHalfSquared
+					ifTrue: [
+						alpha _ distanceToAxisSquared <= swErodedHalfSquared
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (swDilatedHalf - distanceToAxisSquared sqrt * aawScaledInverse) truncated ].
+						alpha > (alphaWord at: 2) ifTrue: [
+							alphaWord at: 2 put: alpha.
+							doUpdate _ true ]].
+				"Blue"
+				dxp _ dx + subPixelDelta.
+				dxSquared _ dxp * dxp.
+				distanceToAxisSquared _ dxSquared + dySquared.
+				distanceToAxisSquared < swDilatedHalfSquared
+					ifTrue: [
+						alpha _ distanceToAxisSquared <= swErodedHalfSquared
+							ifTrue: [ 16r7F ]
+							ifFalse: [ (swDilatedHalf - distanceToAxisSquared sqrt * aawScaledInverse) truncated ].
+						alpha > (alphaWord at: 1) ifTrue: [
+							alphaWord at: 1 put: alpha.
+							doUpdate _ true ]].
+				doUpdate ifTrue: [
+					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
+
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/10/2021 12:07:28'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills.
 		
@@ -5182,64 +5343,7 @@ As an additional optimization, as we need to store for every pixel all the cross
 				]
 		].! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 7/5/2021 16:44:18'!
-finishPath: ensureClosePath
-	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
-	
-	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
-	ensureClosePath ifTrue: [
-		firstX isNaN ifFalse: [
-			(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
-				"This is actually an error condition. If we are asked to fill, then the path should be closed.
-				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
-				self lineToFirstPoint ]]].
-	self updateContourLastLine.
-
-	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf - subPixelDelta + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
-	blendTop _ (blendTop - auxStrokeWidthDilatedHalf + 1) truncated.																	"(z+1) truncated works equally well than the more intuitive (z ceiling)"
-	blendRight _ (blendRight + auxStrokeWidthDilatedHalf + subPixelDelta) truncated + 1. 								"Make room not just for updated mask, but also edges (hence, +1)"
-	blendBottom _ (blendBottom + auxStrokeWidthDilatedHalf) truncated.
-
-	"morphBounds is not affected by clipRect"
-	morphBoundsLeft _ morphBoundsLeft min: blendLeft.
-	morphBoundsTop _ morphBoundsTop min: blendTop.
-	morphBoundsRight _ morphBoundsRight max: blendRight.
-	morphBoundsBottom _ morphBoundsBottom max: blendBottom.
-
-	blendLeft< clipLeft ifTrue: [ blendLeft _ clipLeft ].
-	blendTop < clipTop ifTrue: [ blendTop _ clipTop ].
-	blendRight > clipRight ifTrue: [ blendRight _ clipRight ].
-	blendBottom > clipBottom ifTrue: [ blendBottom _ clipBottom ].
-
-	(blendRight >= blendLeft and: [ blendBottom >= blendTop ]) ifTrue: [
-		fillColor notNil ifTrue: [
-			strokeColor notNil
-				ifTrue: [ self blendStrokeAndFill ]
-				ifFalse: [ self blendFillOnly ]]
-			ifFalse: [
-				self blendStrokeOnly ]].! !
-
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 7/5/2021 16:09:37'!
-initializePath
-
-	super initializePath.
-
-	blendLeft _ targetWidth.						"drawable right. Will later be refined."
-	blendTop _ targetHeight.						"drawable bottom. Will later be refined."
-	blendRight _ 0.						"drawable left. Will later be refined."
-	blendBottom _ 0.						"drawable top. Will later be refined."
-	prevYRounded _ 16r7FFFFFFF.! !
-
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 3/5/2021 16:25:46'!
-newTrajectoryFragment
-
-	prevYTruncated _ 16r7FFFFFFF.! !
-
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:21:13'!
-pvtFillColor: aFillColorOrNil
-	fillColor _ aFillColorOrNil! !
-
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 7/5/2021 15:46:32'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:05'!
 pvtSetForm: aForm
 
 	| s |
@@ -5247,58 +5351,21 @@ pvtSetForm: aForm
 	s _ targetWidth * targetHeight.
 	alphaMask _ WordArray new: s.
 	edgeCounts _ WordArray new: s.
-	contour _ Float32Array new: targetHeight * 2.
-	0 to: targetHeight-1 do: [ :y |
-		contour at: y * 2 + 1 put: targetWidth.
-		contour at: y * 2 + 2 put: 0 ].
 	subPixelDelta _ self class defaultSubPixelDelta.! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:21:13'!
-pvtStrokeColor: aStrokeColorOrNil
-	strokeColor _ aStrokeColorOrNil! !
-
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 4/12/2021 11:18:28'!
-pvtStrokeWidth: aNumber
-
-	| swErodedHalf |
-	super pvtStrokeWidth: aNumber.
-	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
-	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
-	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs.! !
-
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 7/5/2021 16:47:28'!
-resetMorphBounds
-
-	leftAtThisY _ targetWidth.
-	rightAtThisY _ 0.
-	"Clear any possible contour."
-	morphBoundsTop ifNotNil: [
-		(morphBoundsTop max: 0) to: (morphBoundsBottom min: targetHeight -1) do: [ :y |
-			contour at: y * 2 + 1 put: targetWidth.
-			contour at: y * 2 + 2 put: 0 ]].
-	super resetMorphBounds.! !
-
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 7/5/2021 16:39:16'!
-updateContourLastLine
-
-	prevYRounded = 16r7FFFFFFF ifFalse: [
-		contour at: prevYRounded * 2 + 1 put: leftAtThisY.
-		contour at: prevYRounded * 2 + 2 put: rightAtThisY ].! !
-
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:41:37'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendFillOnly
 	"Blends fill color over background. Target translucency computed correctly.
 	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex antiAliasAlphasWord |
-	blendTop to: blendBottom do: [ :displayY |
+	spanTop to: spanBottom do: [ :displayY |
 		edgesUpToThisPixelR _ 0.
 		edgesUpToThisPixelG _ 0.
 		edgesUpToThisPixelB _ 0.
-		pixelIndex _ displayY * targetWidth + blendLeft.
-		blendLeft to: blendRight do: [ :displayX |
+		pixelIndex _ displayY * targetWidth + spanLeft.
+		spanLeft to: spanRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 
 			edgesThisPixel _ edgeCounts bytesAt: pixelIndex.
@@ -5329,7 +5396,7 @@ blendFillOnly
 						redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 						antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:32:06'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
 blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
 	"Blends fill color over background. Target translucency computed correctly.
 	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
@@ -5400,7 +5467,7 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:40:37'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendStrokeAndFill
 	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
@@ -5408,12 +5475,12 @@ blendStrokeAndFill
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| edgesUpToThisPixelR edgesUpToThisPixelG edgesUpToThisPixelB edgesThisPixel edgesThisPixelR edgesThisPixelG edgesThisPixelB isRedInside isGreenInside isBlueInside pixelIndex antiAliasAlphasWord |
-	blendTop to: blendBottom do: [ :displayY |
+	spanTop to: spanBottom do: [ :displayY |
 		edgesUpToThisPixelR _ 0.
 		edgesUpToThisPixelG _ 0.
 		edgesUpToThisPixelB _ 0.
-		pixelIndex _ displayY * targetWidth + blendLeft.
-		blendLeft to: blendRight do: [ :displayX |
+		pixelIndex _ displayY * targetWidth + spanLeft.
+		spanLeft to: spanRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 
 			edgesThisPixel _ edgeCounts bytesAt: pixelIndex.
@@ -5444,7 +5511,7 @@ blendStrokeAndFill
 						redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 						antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:27:49'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
 blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
 	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
@@ -5534,16 +5601,16 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:39:05'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendStrokeOnly
 	"Blends stroke color over background. Target translucency computed correctly.
 	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| pixelIndex antiAliasAlphasWord |
-	blendTop to: blendBottom do: [ :displayY |
-		pixelIndex _ displayY * targetWidth + blendLeft.
-		blendLeft to: blendRight do: [ :displayX |
+	spanTop to: spanBottom do: [ :displayY |
+		pixelIndex _ displayY * targetWidth + spanLeft.
+		spanLeft to: spanRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 			antiAliasAlphasWord _ alphaMask bytesAt: pixelIndex.
 			"At least one subpixel in the stroke."
@@ -5551,7 +5618,7 @@ blendStrokeOnly
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:24:39'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
 blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
 	"Blends stroke color over background. Target translucency computed correctly.
 	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
@@ -5627,334 +5694,18 @@ defaultSubPixelDelta
 
 	^0.25			"Values closer to 0.333 might produce a bit of coloring on some displays. Used to be 0.28"! !
 
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 6/6/2020 17:37:09'!
-antiAliasingWidth: aNumber
-
-	super antiAliasingWidth: aNumber.
-	auxAntiAliasingWidthScaledInverse _ 127.0 / antiAliasingWidth.! !
-
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 5/18/2021 10:06:02'!
-clipCurrentMorph: aBoolean
-	(clipCurrentMorph and: [ aBoolean not ]) ifTrue: [
-		| pixelIndex |
-		clipTop to: clipBottom do: [ :displayY |
-			pixelIndex _ displayY * targetWidth + clipLeft.
-			clipLeft to: clipRight do: [ :displayX |
-				pixelIndex _ pixelIndex + 1.
-				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) >>8 << 8) ]]].
-	clipCurrentMorph _ aBoolean! !
-
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 4/9/2021 12:48:54'!
-clipRect: aRectangle 
-	"by convention, aRectangle includes left and top but does not include right and bottom.
-	We do draw clipRight and clipBottom but not beyond.
-	"
-	"In targetForm coordinates"
-	clipLeft _ aRectangle left asInteger max: 0.
-	clipTop _ aRectangle top asInteger max: 0.
-	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
-	clipBottom _ (aRectangle bottom asInteger min: targetHeight) - 1! !
-
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 3/8/2021 10:34:06'!
-currentMorph: aMorph
-	aMorph
-		ifNil: [
-			currentMorphId _ 0.
-			currentClipsSubmorphs _ false.
-			clipCurrentMorph _ false. 							"Essentially for initialization"
-			]
-		ifNotNil: [
-			currentMorphId _ aMorph morphId.
-			currentClipsSubmorphs _ aMorph clipsSubmorphsReally ].! !
-
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:16'!
-morphContourAfterDrawInto: contourArray into: aBlock
-	"In targetForm coordinates.
-	Doesn't account for any clipping at all.
-	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not.
-	Dilates contour by the last used strokeWIdth. A future improvement must be,
-	when building the contour in the engine, for each point recorded, also record
-	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
-
-	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
-	y0 _ morphBoundsTop max: 0.
-	y1 _ morphBoundsBottom min: targetHeight -1.
-	requiredSize _ (y1 - y0 + 1) *  2.
-	requiredSize < 0 ifTrue: [ ^nil ].
-	answer _ contourArray.
-	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
-		answer _ IntegerArray new: requiredSize ].
-	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
-	strokeHalfSquared _ (strokeWidth / 2.0) squared.
-	i _ 1.
-	y0 to: y1 do: [ :y | | x0 x1 |
-		x0 _ targetWidth.
-		x1 _ 0.
-		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
-			(y + dy between: y0 and: y1) ifTrue: [
-				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
-				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
-				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded.
-		]].
-		answer at: i put: x0.
-		answer at: i+1 put: x1.
-		i _ i + 2 ].
-	i to: answer size by: 2 do: [ :ii |
-		answer at: ii put: targetWidth.
-		answer at: ii+1 put: 0 ].
-	^answer! !
-
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:29'!
-morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
-	"In targetForm coordinates.
-	Doesn't account for any clipping at all.
-	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph.
-	Dilates contour by the last used strokeWIdth. A future improvement must be,
-	when building the contour in the engine, for each point recorded, also record
-	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
-
-	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared mbb mbt |
-	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
-	strokeHalfSquared _ (strokeWidth / 2.0) squared.
-	y0 _ (morphBoundsTop min: oldTop) max: 0.
-	y1 _ (morphBoundsBottom max: oldBottom) min: targetHeight -1.
-	requiredSize _ (y1 - y0 + 1) *  2.
-	answer _ oldContour.
-	oldContourDelta _ 0.
-	(answer size < requiredSize or: [y0 < oldTop] ) ifTrue: [
-		oldContourDelta _ (oldTop - y0) * 2.
-		answer _ IntegerArray new: requiredSize ].
-	i _ 1.
-	ii _ 1-oldContourDelta.
-	mbt _ morphBoundsTop max: 0.
-	mbb _ morphBoundsBottom min: targetHeight -1.
-	y0 to: y1 do: [ :y | | x0 x1 |
-		(ii between: 1 and: oldContour size-1) ifTrue: [
-			x0 _ oldContour at: ii.
-			x1 _ oldContour at: ii+1 ]
-		ifFalse: [
-			x0 _ targetWidth.
-			x1 _ 0 ].
-		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
-			(y+dy between: mbt and: mbb) ifTrue: [
-				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
-				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
-				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded ]].
-		answer at: i put: x0.
-		answer at: i+1 put: x1.
-		i _ i + 2.
-		ii _ ii + 2 ].
-	i to: answer size by: 2 do: [ :iii |
-		answer at: iii put: targetWidth.
-		answer at: iii+1 put: 0 ].
-	^answer! !
-
-!VectorEngineWholePixel methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:31:28'!
-subPixelDelta
-	"No subpixel stuff in this class"
-	^0.0! !
-
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 20:26:39'!
-arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
-
-	| dx dy trx try tcx tcy center angle xp yp x y d hops |
-	dx _ geometryTransformation externalizeDelta: rx@0.
-	dy _ geometryTransformation externalizeDelta: 0@ry.
-	trx _ dx r.
-	try _ dy r.
-	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 2.
-	d _ sweepAngle / hops.
-	center _ geometryTransformation externalizePosition: cx@cy.
-	tcx _ center x.
-	tcy _ center y.
-	angle _ startAngle.
-	hops _ hops+1.
-	hops timesRepeat: [
-		xp _ angle cos * trx.
-		yp _ angle sin * try.
-		x _ thetaCos * xp - (thetaSin * yp) + tcx.
-		y _ thetaSin * xp + (thetaCos * yp) + tcy.
-		blendLeft _ blendLeft min: x.
-		blendTop _ blendTop min: y.
-		blendRight _ blendRight max: x.
-		blendBottom _ blendBottom max: y.
-		self updateAlphasForX: x y: y.
-		fillColor notNil ifTrue: [
-			self updateEdgeCountAtX: x y: y ].
-		self updateContourForX: x y: y.
-		angle _ angle + d. ].! !
-
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/5/2021 16:27:20'!
-cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
-
-	| p txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
-	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
-	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
-	p _ geometryTransformation externalizePosition: xControl1@yControl1. txControl1 _ p x. tyControl1 _ p y.
-	p _ geometryTransformation externalizePosition: xControl2@yControl2. txControl2 _ p x. tyControl2 _ p y.
-	"Factors found by trial and error. Seems to honor hopsPerPixel in the worst case."
-	dx _ ((txControl1-txFrom) abs max: (txTo-txControl2) abs)*3 max: (txControl2-txControl1) abs*1.5.
-	dy _ ((tyControl1-tyFrom) abs max: (tyTo-tyControl2) abs)*3 max: (tyControl2-tyControl1) abs*1.5.
-	hops _ ((dx max: dy) / hop) truncated + 1.
-
-	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ txFrom min: txTo.
-	xMaxEnd _ txFrom max: txTo.
-	yMinEnd _ tyFrom min: tyTo.
-	yMaxEnd _ tyFrom max: tyTo.
-	blendLeft _ blendLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
-	blendRight _ blendRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
-	blendTop _ blendTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
-	blendBottom _ blendBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
-
-	t _ 0.0.
-	increment _ 1.0 / hops.
-	hops timesRepeat: [
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT * oneLessT.
-		f23 _ 3.0 * oneLessT * t.
-		f2 _ f23 * oneLessT.
-		f3 _ f23 * t.
-		f4 _ t * t * t.
-		x _ (f1 * txFrom) + (f2 * txControl1) + (f3 * txControl2) + (f4 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl1) + (f3 * tyControl2) + (f4 * tyTo).
-		self updateAlphasForX: x y: y.
-		fillColor notNil ifTrue: [
-			self updateEdgeCountAtX: x y: y ].
-		self updateContourForX: x y: y.
-		t _ t + increment. ].
-	self updateAlphasForX: txTo y: tyTo.
-	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: txTo y: tyTo ].
-	self updateContourForX: txTo y: tyTo.! !
-
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/5/2021 16:28:59'!
-lineFromX: xFrom y: yFrom toX: xTo y: yTo
-
-	| p txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
-	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
-	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
-	dx _ txTo - txFrom.
-	dy _ tyTo - tyFrom.
-	hops _ ((dx abs max: dy abs) / hop) truncated + 1.
-	incrementX _ dx *1.0 / hops.
-	incrementY _ dy *1.0 / hops.
-
-	blendLeft _ blendLeft min: (txFrom min: txTo).
-	blendRight _ blendRight max: (txFrom max: txTo).
-	blendTop _ blendTop min: (tyFrom min: tyTo).
-	blendBottom _ blendBottom max: (tyFrom max: tyTo).
-
-	x _ txFrom.
-	y _ tyFrom.
-	hops timesRepeat: [
-		self updateAlphasForX: x y: y.
-		fillColor notNil ifTrue: [
-			self updateEdgeCountAtX: x y: y ].
-		self updateContourForX: x y: y.
-		x _ x + incrementX.
-		y _ y + incrementY ].
-	self updateAlphasForX: txTo y: tyTo.
-	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: txTo y: tyTo ].
-	self updateContourForX: txTo y: tyTo.! !
-
-!VectorEngineWholePixel methodsFor: 'primitive algorithms' stamp: 'jmv 7/22/2021 23:12:27'!
-quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
-
-	| p txFrom tyFrom txTo tyTo txControl tyControl dx dy dx2 dy2 xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 x y t0 x0 y0 length correction |
-
-	"If control point is bogus, just draw a line"
-	(xControl = xTo and: [ yControl = yTo ]) ifTrue: [
-		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
-	(xControl = xFrom and: [ yControl = yFrom ]) ifTrue: [
-		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
-
-	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
-	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
-	p _ geometryTransformation externalizePosition: xControl@yControl. txControl _ p x. tyControl _ p y.
-
-	dx _ (txTo-txFrom) abs.
-	dx2 _ (txControl-txFrom) abs.
-	dy _ (tyTo-tyFrom) abs.
-	dy2 _ (tyControl-tyFrom) abs.
-
-	"If almost a vertical line, just draw a line. (Ignoring control point)"
-	(dx < 1.0 and: [dx2 < 1.0]) ifTrue: [
-		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
-
-	"If almost an horizontal line, just draw a line. (Ignoring control point)"
-	(dy < 1.0 and: [dy2 < 1.0]) ifTrue: [
-		^self lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
-
-	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ txFrom min: txTo.
-	xMaxEnd _ txFrom max: txTo.
-	yMinEnd _ tyFrom min: tyTo.
-	yMaxEnd _ tyFrom max: tyTo.
-	blendLeft _ blendLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
-	blendRight _ blendRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
-	blendTop _ blendTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
-	blendBottom _ blendBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
-
-	"Case t = 0.0"
-	x _ txFrom.
-	y _ tyFrom.
-	self updateAlphasForX: x y: y.
-	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: x y: y ].
-	self updateContourForX: x y: y.
-
-	"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
-	increment _ 0.5 / (dx max: dy) min: 0.5.
-	t _ 0.0.
-	[
-		t0 _ t. x0 _ x. y0 _ y.
-		"Compute next point"
-		t _ t0 + increment. oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
-		"Now adjust the increment to aim at the required hop length, and recompute next point."
-		length _ ((x-x0)@(y-y0)) r.
-		correction _ hop / length.
-		[
-			increment _ increment * correction.
-			t _ t0 + increment. oneLessT _ 1.0 - t.
-			f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-			x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-			y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
-			length _ ((x-x0)@(y-y0)) r.
-			correction _ hop / length.
-			correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
-		t < 1.0 ]
-	whileTrue: [
-		self updateAlphasForX: x y: y.
-		fillColor notNil ifTrue: [
-			self updateEdgeCountAtX: x y: y ].
-		self updateContourForX: x y: y ].
-
-	"Case t= 1.0"
-	self updateAlphasForX: txTo y: tyTo.
-	fillColor notNil ifTrue: [
-		self updateEdgeCountAtX: txTo y: tyTo ].
-	self updateContourForX: txTo y: tyTo.! !
-
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 6/12/2021 20:31:24'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/10/2021 12:07:01'!
 updateAlphasForX: x y: y
 	| distanceToAxisSquared alpha t b l r prevAlpha dx dy pixelIndex |
 
 	"Compute affected rect. Honor clipRect."
-	t _ (y - auxStrokeWidthDilatedHalf + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	t _ (y - swDilatedHalf + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
 	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y + auxStrokeWidthDilatedHalf) truncated.
+	b _ (y + swDilatedHalf) truncated.
 	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x - auxStrokeWidthDilatedHalf + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
+	l _ (x - swDilatedHalf + 1) truncated.												"(z+1) truncated works equally well than the more intuitive (z ceiling)"
 	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x + auxStrokeWidthDilatedHalf) truncated.
+	r _ (x + swDilatedHalf) truncated.
 	r > clipRight ifTrue: [ r _ clipRight ].
 
 	t to: b do: [ :displayY |
@@ -5966,34 +5717,15 @@ updateAlphasForX: x y: y
 			prevAlpha = 16r7F ifFalse: [
 				dx _ displayX - x.
 				distanceToAxisSquared _ (dx*dx) + (dy*dy).
-				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
+				distanceToAxisSquared < swDilatedHalfSquared
 					ifTrue: [
-						alpha _ distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
+						alpha _ distanceToAxisSquared <= swErodedHalfSquared
 							ifTrue: [ 16r7F ]
-							ifFalse: [ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) truncated ].
+							ifFalse: [ (swDilatedHalf - distanceToAxisSquared sqrt * aawScaledInverse) truncated ].
 						alpha > prevAlpha ifTrue: [
 							alphaMask at: pixelIndex put: alpha ]]]]]! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 7/5/2021 10:04:50'!
-updateContourForX: x y: y
-	"The Contour of the current morph is the pixel area affected, 	but without holes.
-	For each y line where a pixel is affected, record the leftmost and rightmost affected pixels.
-	Note: Only includes pen trajectory, but not stroke width."
-
-	| thisYRounded |
-	thisYRounded _ y rounded.
-	(thisYRounded between: 0 and: targetHeight-1) ifTrue: [
-		thisYRounded = prevYRounded ifFalse: [
-			prevYRounded = 16r7FFFFFFF ifFalse: [
-				contour at: prevYRounded * 2 + 1 put: leftAtThisY.
-				contour at: prevYRounded * 2 + 2 put: rightAtThisY ].
-			leftAtThisY _ contour at: thisYRounded * 2 + 1.
-			rightAtThisY _ contour at: thisYRounded * 2 + 2.
-			prevYRounded _ thisYRounded ].
-		leftAtThisY _ leftAtThisY min: x.
-		rightAtThisY _ rightAtThisY max: x ].! !
-
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 4/13/2021 16:33:52'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/10/2021 12:07:28'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills.
 		
@@ -6027,119 +5759,25 @@ As an additional optimization, as we need to store for every pixel all the cross
 		edgeCounts at: pixelIndex put: count ].
 	prevYTruncated _ thisYTruncated.! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 7/5/2021 16:44:15'!
-finishPath: ensureClosePath
-	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
-	
-	"If we are doing a fill, and caller forgot to close the trajectory, then do it anyway."
-	ensureClosePath ifTrue: [
-		firstX isNaN ifFalse: [
-			(firstX = currentX and: [ firstY = currentY ]) ifFalse: [
-				"This is actually an error condition. If we are asked to fill, then the path should be closed.
-				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
-				self lineToFirstPoint ]]].
-	self updateContourLastLine.
-
-	blendLeft _ (blendLeft - auxStrokeWidthDilatedHalf + 1) truncated.														"(z+1) truncated works equally well than the more intuitive (z ceiling)"
-	blendTop _ (blendTop - auxStrokeWidthDilatedHalf + 1) truncated.														"(z+1) truncated works equally well than the more intuitive (z ceiling)"
-	blendRight _ (blendRight + auxStrokeWidthDilatedHalf) truncated + 1. 											"Make room not just for updated mask, but also edges (hence, +1)"
-	blendBottom _ (blendBottom + auxStrokeWidthDilatedHalf) truncated.
-
-	"morphBounds is not affected by clipRect"
-	morphBoundsLeft _ morphBoundsLeft min: blendLeft.
-	morphBoundsTop _ morphBoundsTop min: blendTop.
-	morphBoundsRight _ morphBoundsRight max: blendRight.
-	morphBoundsBottom _ morphBoundsBottom max: blendBottom.
-
-	blendLeft< clipLeft ifTrue: [ blendLeft _ clipLeft ].
-	blendTop < clipTop ifTrue: [ blendTop _ clipTop ].
-	blendRight > clipRight ifTrue: [ blendRight _ clipRight ].
-	blendBottom > clipBottom ifTrue: [ blendBottom _ clipBottom ].
-
-	(blendRight >= blendLeft and: [ blendBottom >= blendTop ]) ifTrue: [
-		fillColor notNil ifTrue: [
-			strokeColor notNil
-				ifTrue: [ self blendStrokeAndFill ]
-				ifFalse: [ self blendFillOnly ]]
-			ifFalse: [
-				self blendStrokeOnly ]].! !
-
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 7/5/2021 16:09:46'!
-initializePath
-
-	super initializePath.
-
-	blendLeft _ targetWidth.						"drawable right. Will later be refined."
-	blendTop _ targetHeight.						"drawable bottom. Will later be refined."
-	blendRight _ 0.						"drawable left. Will later be refined."
-	blendBottom _ 0.						"drawable top. Will later be refined."
-	prevYRounded _ 16r7FFFFFFF.! !
-
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 3/5/2021 16:26:17'!
-newTrajectoryFragment
-
-	prevYTruncated _ 16r7FFFFFFF.! !
-
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:37:09'!
-pvtFillColor: aFillColorOrNil
-	fillColor _ aFillColorOrNil! !
-
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 7/5/2021 15:46:28'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:05'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
 	s _ targetWidth * targetHeight.
 	alphaMask _ ByteArray new: s.
-	edgeCounts _ ByteArray new: s.
-	contour _ Float32Array new: targetHeight * 2.
-	0 to: targetHeight-1 do: [ :y |
-		contour at: y * 2 + 1 put: targetWidth.
-		contour at: y * 2 + 2 put: 0 ].! !
+	edgeCounts _ ByteArray new: s.! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 6/6/2020 17:37:09'!
-pvtStrokeColor: aStrokeColorOrNil
-	strokeColor _ aStrokeColorOrNil! !
-
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 4/12/2021 11:18:46'!
-pvtStrokeWidth: aNumber
-
-	| swErodedHalf |
-	super pvtStrokeWidth: aNumber.
-	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
-	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
-	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
-	auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs.! !
-
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 7/5/2021 16:47:40'!
-resetMorphBounds
-
-	leftAtThisY _ targetWidth.
-	rightAtThisY _ 0.
-	"Clear any possible contour."
-	morphBoundsTop ifNotNil: [
-		(morphBoundsTop max: 0) to: (morphBoundsBottom min: targetHeight -1) do: [ :y |
-			contour at: y * 2 + 1 put: targetWidth.
-			contour at: y * 2 + 2 put: 0 ]].
-	super resetMorphBounds.! !
-
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 7/5/2021 10:03:18'!
-updateContourLastLine
-
-	prevYRounded = 16r7FFFFFFF ifFalse: [
-		contour at: prevYRounded * 2 + 1 put: leftAtThisY.
-		contour at: prevYRounded * 2 + 2 put: rightAtThisY ].! !
-
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:18:55'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendFillOnly
 	"Blends fill color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| edgesUpToThisPixel edgesThisPixel pixelIndex antiAliasAlphaBits |
-	blendTop to: blendBottom do: [ :displayY |
+	spanTop to: spanBottom do: [ :displayY |
 		edgesUpToThisPixel _ 0.
-		pixelIndex _ displayY * targetWidth + blendLeft.
-		blendLeft to: blendRight do: [ :displayX |
+		pixelIndex _ displayY * targetWidth + spanLeft.
+		spanLeft to: spanRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 			edgesThisPixel _ edgeCounts at: pixelIndex.
 			edgesThisPixel = 0 ifFalse: [
@@ -6159,7 +5797,7 @@ blendFillOnly
 						alphaMask at: pixelIndex put: 0.
 						self blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:08:32'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
 blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	"Blends fill color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
@@ -6208,17 +5846,17 @@ blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:44:02'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendStrokeAndFill
 	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| edgesUpToThisPixel edgesThisPixel pixelIndex antiAliasAlphaBits |
-	blendTop to: blendBottom do: [ :displayY |
+	spanTop to: spanBottom do: [ :displayY |
 		edgesUpToThisPixel _ 0.
-		pixelIndex _ displayY * targetWidth + blendLeft.
-		blendLeft to: blendRight do: [ :displayX |
+		pixelIndex _ displayY * targetWidth + spanLeft.
+		spanLeft to: spanRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 			edgesThisPixel _ edgeCounts at: pixelIndex.
 			edgesThisPixel = 0 ifFalse: [
@@ -6237,7 +5875,7 @@ blendStrokeAndFill
 						antiAliasAlphaBits = 0 ifFalse: [
 							self blendStrokeAndFillAt: pixelIndex isInside: false antiAliasAlphaByte: antiAliasAlphaBits ]]]]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:03:23'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
 blendStrokeAndFillAt: pixelIndex isInside: isInside antiAliasAlphaByte: antiAliasAlphaBits
 	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
@@ -6301,22 +5939,22 @@ blendStrokeAndFillAt: pixelIndex isInside: isInside antiAliasAlphaByte: antiAlia
 		currentMorphId = 0 ifFalse: [
 			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 15:37:59'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendStrokeOnly
 	"Blends stroke color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
 
 	| pixelIndex antiAliasAlphaBits |
-	blendTop to: blendBottom do: [ :displayY |
-		pixelIndex _ displayY * targetWidth + blendLeft.
-		blendLeft to: blendRight do: [ :displayX |
+	spanTop to: spanBottom do: [ :displayY |
+		pixelIndex _ displayY * targetWidth + spanLeft.
+		spanLeft to: spanRight do: [ :displayX |
 			pixelIndex _ pixelIndex + 1.
 			antiAliasAlphaBits _ alphaMask at: pixelIndex.
 			antiAliasAlphaBits = 16r00 ifFalse: [										"In the stroke"
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 6/29/2021 14:59:25'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
 blendStrokeOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	"Blends stroke color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
@@ -6369,130 +6007,7 @@ blendStrokeOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 defaultAntiAliasingWidth
 	^1.6! !
 
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 12:25:12'!
-clipCurrentMorph: aBoolean
-	clipCurrentMorph _ aBoolean.! !
-
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 12:25:12'!
-clipRect: aRectangle 
-	"by convention, aRectangle includes left and top but does not include right and bottom.
-	We do draw clipRight and clipBottom but not beyond.
-	"
-	"In targetForm coordinates"
-	clipLeft _ aRectangle left asInteger max: 0.
-	clipTop _ aRectangle top asInteger max: 0.
-	clipRight _ (aRectangle right asInteger min: targetWidth) - 1.
-	clipBottom _ (aRectangle bottom asInteger min: targetHeight) - 1.! !
-
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 12:25:12'!
-currentMorph: aMorph
-	aMorph
-		ifNil: [
-			currentMorphId _ 0.
-			currentClipsSubmorphs _ false.
-			clipCurrentMorph _ false. 							"Essentially for initialization"
-			]
-		ifNotNil: [
-			currentMorphId _ aMorph morphId.
-			currentClipsSubmorphs _ aMorph clipsSubmorphsReally ].! !
-
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 6/18/2021 15:28:21'!
-disableSubPixelSampling
-	subPixelDelta _ 0.0! !
-
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:59:18'!
-morphContourAfterDrawInto: contourArray into: aBlock
-	"In targetForm coordinates.
-	Doesn't account for any clipping at all.
-	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not.
-	Dilates contour by the last used strokeWIdth. A future improvement must be,
-	when building the contour in the engine, for each point recorded, also record
-	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
-
-	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
-	y0 _ morphBoundsTop max: 0.
-	y1 _ morphBoundsBottom min: targetHeight -1.
-	requiredSize _ (y1 - y0 + 1) *  2.
-	requiredSize < 0 ifTrue: [ ^nil ].
-	answer _ contourArray.
-	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
-		answer _ IntegerArray new: requiredSize ].
-	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
-	strokeHalfSquared _ (strokeWidth / 2.0) squared.
-	i _ 1.
-	y0 to: y1 do: [ :y | | x0 x1 |
-		x0 _ targetWidth.
-		x1 _ 0.
-		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
-			(y + dy between: y0 and: y1) ifTrue: [
-				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
-				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
-				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded.
-		]].
-		answer at: i put: x0.
-		answer at: i+1 put: x1.
-		i _ i + 2 ].
-	i to: answer size by: 2 do: [ :ii |
-		answer at: ii put: targetWidth.
-		answer at: ii+1 put: 0 ].
-	aBlock value: answer value: y0 value: y1.
-	^answer! !
-
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:59:25'!
-morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
-	"In targetForm coordinates.
-	Doesn't account for any clipping at all.
-	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph.
-	Dilates contour by the last used strokeWIdth. A future improvement must be,
-	when building the contour in the engine, for each point recorded, also record
-	the amout it must be dilated by, i.e. the current strokeWidth at that moment."
-
-	| answer i ii requiredSize oldContourDelta y0 y1 dilationHalfHeight strokeHalfSquared mbb mbt |
-	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
-	strokeHalfSquared _ (strokeWidth / 2.0) squared.
-	y0 _ (morphBoundsTop min: oldTop) max: 0.
-	y1 _ (morphBoundsBottom max: oldBottom) min: targetHeight -1.
-	requiredSize _ (y1 - y0 + 1) *  2.
-	answer _ oldContour.
-	oldContourDelta _ 0.
-	(answer size < requiredSize or: [y0 < oldTop] ) ifTrue: [
-		oldContourDelta _ (oldTop - y0) * 2.
-		answer _ IntegerArray new: requiredSize ].
-	i _ 1.
-	ii _ 1-oldContourDelta.
-	mbt _ morphBoundsTop max: 0.
-	mbb _ morphBoundsBottom min: targetHeight -1.
-	y0 to: y1 do: [ :y | | x0 x1 |
-		(ii between: 1 and: oldContour size-1) ifTrue: [
-			x0 _ oldContour at: ii.
-			x1 _ oldContour at: ii+1 ]
-		ifFalse: [
-			x0 _ targetWidth.
-			x1 _ 0 ].
-		dilationHalfHeight negated to: dilationHalfHeight do: [ :dy | | dx |
-			(y+dy between: mbt and: mbb) ifTrue: [
-				dx _ (strokeHalfSquared - dy squared max: 0) sqrt.
-				x0 _ x0 min: ((contour at: y+dy * 2 + 1) - dx) rounded.
-				x1 _ x1 max: ((contour at: y+dy * 2 + 2) + dx) rounded ]].
-		answer at: i put: x0.
-		answer at: i+1 put: x1.
-		i _ i + 2.
-		ii _ ii + 2 ].
-	i to: answer size by: 2 do: [ :iii |
-		answer at: iii put: targetWidth.
-		answer at: iii+1 put: 0 ].
-	aBlock value: answer value: y0 value: y1.
-	^answer! !
-
-!VectorEngineWithPlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 12:46:23'!
-subPixelDelta
-	"Might be 0.0 if not doing sub pixel anti-aliasing (i.e. for WholePixel AA)"
-	^subPixelDelta! !
-
-!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 7/5/2021 15:55:28'!
+!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 8/10/2021 12:06:26'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	self
@@ -6503,7 +6018,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 		rotationCos: thetaCos asFloat rotationSin: thetaSin asFloat
 		edgeCounts: edgeCounts alphaMask: alphaMask contour: contour! !
 
-!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 7/5/2021 15:56:35'!
+!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 8/10/2021 12:06:26'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	self
@@ -6513,7 +6028,7 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 		control2X: xControl2 asFloat y: yControl2 asFloat
 		edgeCounts: edgeCounts alphaMask: alphaMask contour: contour! !
 
-!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 7/5/2021 15:58:25'!
+!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 8/10/2021 12:06:26'!
 lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
 	self
@@ -6521,7 +6036,7 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo
 		toX: xTo asFloat y: yTo asFloat
 		edgeCounts: edgeCounts alphaMask: alphaMask contour: contour! !
 
-!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 7/5/2021 16:01:27'!
+!VectorEngineWithPlugin methodsFor: 'path algorithms' stamp: 'jmv 8/10/2021 12:06:26'!
 quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl
 
 	self
@@ -6530,7 +6045,7 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		controlX: xControl asFloat y: yControl asFloat
 		edgeCounts: edgeCounts alphaMask: alphaMask contour: contour! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:50:44'!
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 12:06:05'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -6558,7 +6073,7 @@ displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: a
 		].
 	^ nextGlyphX @ nextGlyphY! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:50:21'!
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 12:06:05'!
 displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -6586,7 +6101,7 @@ displayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont:
 		].
 	^ nextGlyphX @ nextGlyphY! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 5/29/2021 16:51:02'!
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 12:06:05'!
 displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTTFontDescription useST80Glyphs: aBoolean color: aColor scale: scale preventMirroring: doPreventMirroring
 	"TrueType assumes a Math like coordinate system (Y increasing upwards).
 	But Display and Form Y coordinates in Cuis increase downwards, as it is done in most computer hardware and software.
@@ -6614,7 +6129,7 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 		].
 	^ nextGlyphX @ nextGlyphY! !
 
-!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 7/5/2021 16:34:26'!
+!VectorEngineWithPlugin methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 12:06:26'!
 pathSequence: aFloat32Array
 
 	self
@@ -6634,7 +6149,7 @@ doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 		pathCommandsBlock valueWithPossibleArgument: (canvas ifNil: [self]).
 		self finishPath: ensureClosePath ].! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 7/5/2021 16:44:07'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:01'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	| spanLeft spanTop spanRight spanBottom |
@@ -6672,7 +6187,7 @@ finishPath: ensureClosePath
 			ifFalse: [
 				self primBlendStrokeOnlyLeft: spanLeft top: spanTop right: spanRight bottom: spanBottom targetBits: targetForm bits morphIds: morphIds alphaMask: alphaMask ]].! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 7/5/2021 16:07:42'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:18'!
 initializePath
 
 	super initializePath.
@@ -6687,7 +6202,10 @@ initializePath
 		contour: contour
 		targetWidth: targetWidth
 		targetHeight: targetHeight.
-	self primAntiAliasingWidth: antiAliasingWidth asFloat subPixelDelta: subPixelDelta asFloat hopLength: hop asFloat.
+	self
+		primAntiAliasingWidth: antiAliasingWidth asFloat
+		subPixelDelta: self subPixelDelta asFloat
+		hopLength: hop asFloat.
 	self primClipLeft: clipLeft clipTop: clipTop clipRight: clipRight clipBottom: clipBottom.
 	self primCurrentMorphId: currentMorphId currentClipsSubmorphs: currentClipsSubmorphs.
 	self primClipCurrentMorph: clipCurrentMorph morphIds: morphIds.
@@ -6709,12 +6227,12 @@ newTrajectoryFragment
 
 	self primNewTrajectoryFragment.! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 5/18/2021 12:25:12'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:37'!
 pvtFillColor: aFillColorOrNil
 	fillColor _ aFillColorOrNil.
 	self primFillColor: fillColor.! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 5/18/2021 12:25:12'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:31'!
 pvtStrokeColor: aStrokeColorOrNil
 	strokeColor _ aStrokeColorOrNil.
 	self primStrokeColor: strokeColor.! !
@@ -6725,7 +6243,7 @@ pvtStrokeWidth: aNumber
 	super pvtStrokeWidth: aNumber asFloat.
 	self primStrokeWidth: strokeWidth.! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 7/5/2021 17:00:08'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/10/2021 12:05:47'!
 resetMorphBounds
 
 	"Clear any possible contour."
@@ -6882,6 +6400,15 @@ pluginApiVersion
 
 	^ 0! !
 
+!VectorEngineWithPluginSubPixel methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:08:00'!
+disableSubPixelSampling
+	subPixelDelta _ 0.0! !
+
+!VectorEngineWithPluginSubPixel methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:08:00'!
+subPixelDelta
+
+	^subPixelDelta! !
+
 !VectorEngineWithPluginSubPixel methodsFor: 'plugin calls' stamp: 'jmv 7/5/2021 15:55:01'!
 primArcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
 	<primitive: 'primArc' module: 'VectorEnginePlugin'>
@@ -6954,18 +6481,14 @@ primTargetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMas
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'private' stamp: 'jmv 7/5/2021 15:46:42'!
+!VectorEngineWithPluginSubPixel methodsFor: 'private' stamp: 'jmv 8/10/2021 12:08:00'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
 	s _ targetWidth * targetHeight.
-	edgeCounts _ WordArray new: s.
 	alphaMask _ WordArray new: s.
-	contour _ Float32Array new: targetHeight * 2.
-	0 to: targetHeight-1 do: [ :y |
-		contour at: y * 2 + 1 put: targetWidth.
-		contour at: y * 2 + 2 put: 0 ].
+	edgeCounts _ WordArray new: s.
 	subPixelDelta _ self class defaultSubPixelDelta.! !
 
 !VectorEngineWithPluginSubPixel class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 11:44:04'!
@@ -7049,19 +6572,14 @@ primTargetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMas
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'private' stamp: 'jmv 7/5/2021 15:46:46'!
+!VectorEngineWithPluginWholePixel methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:05'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
 	s _ targetWidth * targetHeight.
-	edgeCounts _ ByteArray new: s.
 	alphaMask _ ByteArray new: s.
-	contour _ Float32Array new: targetHeight * 2.
-	0 to: targetHeight-1 do: [ :y |
-		contour at: y * 2 + 1 put: targetWidth.
-		contour at: y * 2 + 2 put: 0 ].
-	subPixelDelta _ 0.0.! !
+	edgeCounts _ ByteArray new: s.! !
 
 !VectorEngineWithPluginWholePixel class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 11:44:58'!
 defaultAntiAliasingWidth
