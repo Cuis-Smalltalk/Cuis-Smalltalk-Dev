@@ -1,7 +1,7 @@
-'From Cuis 5.0 [latest update: #4709] on 28 July 2021 at 11:55:27 am'!
+'From Cuis 5.0 [latest update: #4755] on 15 Augunt 2021 at 6:17:27 pm'!
 'Description '!
 !provides: 'VectorEnginePlugin' 1 26!
-!requires: 'VectorGraphics' 1 200 nil!
+!requires: 'VectorGraphics' 1 201 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
 
@@ -28,10 +28,10 @@ antiAliasingWidth: aFloat subPixelDelta: otherFloat hopLength: anotherFloat
 		primitive: 'primAntiAliasingWidthsubPixelDeltaHopLength'
 		parameters: #(Float Float Float).
 
-	antiAliasingWidth _ aFloat.
-	auxAntiAliasingWidthScaledInverse _ 127.0 / aFloat.
-	subPixelDelta _ otherFloat.
-	hop _ anotherFloat! !
+	antiAliasingWidth := aFloat.
+	auxAntiAliasingWidthScaledInverse := 127.0 / aFloat.
+	subPixelDelta := otherFloat.
+	hop := anotherFloat! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 10:07:15'!
 clipCurrentMorph: aBoolean morphIds: aWordArray
@@ -39,15 +39,15 @@ clipCurrentMorph: aBoolean morphIds: aWordArray
 		primitive: 'primClipCurrentMorph'
 		parameters: #(Boolean WordArray).
 
-	morphIds _ aWordArray.
+	morphIds := aWordArray.
 	(clipCurrentMorph and: [ aBoolean not ]) ifTrue: [
 		| pixelIndex |
 		clipTop to: clipBottom do: [ :displayY |
-			pixelIndex _ displayY * targetWidth + clipLeft.
+			pixelIndex := displayY * targetWidth + clipLeft.
 			clipLeft to: clipRight do: [ :displayX |
-				pixelIndex _ pixelIndex + 1.
+				pixelIndex := pixelIndex + 1.
 				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) bitAnd: 16rFFFFFF00) ]]].
-	clipCurrentMorph _ aBoolean! !
+	clipCurrentMorph := aBoolean! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:23'!
 clipLeft: l clipTop: t clipRight: r clipBottom: b
@@ -55,10 +55,10 @@ clipLeft: l clipTop: t clipRight: r clipBottom: b
 		primitive: 'primClipLeftclipTopclipRightclipBottom'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger).
 
-	clipLeft _ l.
-	clipTop _ t.
-	clipRight _ r.
-	clipBottom _ b! !
+	clipLeft := l.
+	clipTop := t.
+	clipRight := r.
+	clipBottom := b! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:29'!
 currentMorphId: aNumber currentClipsSubmorphs: aBoolean
@@ -67,9 +67,9 @@ currentMorphId: aNumber currentClipsSubmorphs: aBoolean
 		primitive: 'primCurrentMorphIdcurrentClipsSubmorphs'
 		parameters: #(SmallInteger Boolean).
 
-	currentMorphId _ aNumber.
-	currentMorphId = 0 ifTrue: [ clipCurrentMorph _ false ].												"Essentially for initialization"
-	currentClipsSubmorphs _ aBoolean.! !
+	currentMorphId := aNumber.
+	currentMorphId = 0 ifTrue: [ clipCurrentMorph := false ].												"Essentially for initialization"
+	currentClipsSubmorphs := aBoolean.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 5/17/2021 16:29:46'!
 fillR: r g: g b: b a: a
@@ -77,10 +77,10 @@ fillR: r g: g b: b a: a
 		primitive: 'primFillRGBA'
 		parameters: #(Float Float Float Float).
 
-	fillR _ r * 255.0.
-	fillG _ g * 255.0.
-	fillB _ b * 255.0.
-	fillA _ a.! !
+	fillR := r * 255.0.
+	fillG := g * 255.0.
+	fillB := b * 255.0.
+	fillA := a.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 5/13/2021 11:46:17'!
 geometryTxA11: a11 a12: a12 a13: a13 a21: a21 a22: a22 a23: a23
@@ -88,12 +88,12 @@ geometryTxA11: a11 a12: a12 a13: a13 a21: a21 a22: a22 a23: a23
 		primitive: 'primGeometryTxSet'
 		parameters: #(Float Float Float Float Float Float).
 
-	txA11 _ a11.
-	txA12 _ a12.
-	txA13 _ a13.
-	txA21 _ a21.
-	txA22 _ a22.
-	txA23 _ a23.! !
+	txA11 := a11.
+	txA12 := a12.
+	txA13 := a13.
+	txA21 := a21.
+	txA22 := a22.
+	txA23 := a23.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 16:11:13'!
 initializePath
@@ -101,16 +101,16 @@ initializePath
 		primitive: 'primInitializePath'
 		parameters: #().
 
-	spanLeft _ targetWidth.						"drawable right. Will later be refined."
-	spanTop _ targetHeight.						"drawable bottom. Will later be refined."
-	spanRight _ 0.						"drawable left. Will later be refined."
-	spanBottom _ 0.						"drawable top. Will later be refined."
-	prevYRounded _ 16r7FFFFFFF.! !
+	spanLeft := targetWidth.						"drawable right. Will later be refined."
+	spanTop := targetHeight.						"drawable bottom. Will later be refined."
+	spanRight := 0.						"drawable left. Will later be refined."
+	spanBottom := 0.						"drawable top. Will later be refined."
+	prevYRounded := 16r7FFFFFFF.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 7/27/2021 16:40:35'!
 initializeTrajectoryFragment
 
-	prevYTruncated _ 16r7FFFFFFF.! !
+	prevYTruncated := 16r7FFFFFFF.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'dtl 7/27/2021 16:41:01'!
 newTrajectoryFragment
@@ -143,8 +143,8 @@ resetContourTop: t bottom: b
 		primitive: 'primResetContour'
 		parameters: #(SmallInteger SmallInteger).
 
-	leftAtThisY _ targetWidth.
-	rightAtThisY _ 0.
+	leftAtThisY := targetWidth.
+	rightAtThisY := 0.
 	t to: b do: [ :y |
 		contour at: y * 2 put: targetWidth.
 		contour at: y * 2 + 1 put: 0 ].! !
@@ -190,10 +190,10 @@ strokeR: r g: g b: b a: a
 		primitive: 'primStrokeRGBA'
 		parameters: #(Float Float Float Float).
 
-	strokeR _ r * 255.0.
-	strokeG _ g * 255.0.
-	strokeB _ b * 255.0.
-	strokeA _ a.! !
+	strokeR := r * 255.0.
+	strokeG := g * 255.0.
+	strokeB := b * 255.0.
+	strokeA := a.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 4/12/2021 11:21:40'!
 strokeWidth: aNumber
@@ -203,13 +203,13 @@ strokeWidth: aNumber
 		parameters: #(Float).
 	self var: #swErodedHalf type: 'float'.
 
-	strokeWidth _ aNumber.
-	auxStrokeWidthDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.
-	auxStrokeWidthDilatedHalfSquared _ auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
-	swErodedHalf _ strokeWidth - antiAliasingWidth * 0.5.
+	strokeWidth := aNumber.
+	auxStrokeWidthDilatedHalf := strokeWidth + antiAliasingWidth * 0.5.
+	auxStrokeWidthDilatedHalfSquared := auxStrokeWidthDilatedHalf * auxStrokeWidthDilatedHalf.
+	swErodedHalf := strokeWidth - antiAliasingWidth * 0.5.
 	self cCode: 
 			'auxStrokeWidthErodedHalfSquared = swErodedHalf * fabs(swErodedHalf);'
-		inSmalltalk: [ auxStrokeWidthErodedHalfSquared _ swErodedHalf * swErodedHalf abs ].! !
+		inSmalltalk: [ auxStrokeWidthErodedHalfSquared := swErodedHalf * swErodedHalf abs ].! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:04:09'!
 targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array targetWidth: aNumber targetHeight: otherNumber
@@ -219,13 +219,13 @@ targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: a
 		primitive: 'primSetTarget'
 		parameters: #(WordArray WordArray WordArray WordArray Float32Array SmallInteger SmallInteger).
 
-	targetBits _ aBitmap.
-	morphIds _ aWordArray.
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	contour _ aFloat32Array.
-	targetWidth _ aNumber.
-	targetHeight _ otherNumber.! !
+	targetBits := aBitmap.
+	morphIds := aWordArray.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	contour := aFloat32Array.
+	targetWidth := aNumber.
+	targetHeight := otherNumber.! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:04:14'!
 targetBits: aBitmap morphIds: aWordArray edgeCountsWP: otherByteArray alphaMaskWP: anotherByteArray contour: aFloat32Array targetWidth: aNumber targetHeight: otherNumber
@@ -235,13 +235,13 @@ targetBits: aBitmap morphIds: aWordArray edgeCountsWP: otherByteArray alphaMaskW
 		primitive: 'primSetTargetWP'
 		parameters: #(WordArray WordArray ByteArray ByteArray Float32Array SmallInteger SmallInteger).
 
-	targetBits _ aBitmap.
-	morphIds _ aWordArray.
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	contour _ aFloat32Array.
-	targetWidth _ aNumber.
-	targetHeight _ otherNumber.! !
+	targetBits := aBitmap.
+	morphIds := aWordArray.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	contour := aFloat32Array.
+	targetWidth := aNumber.
+	targetHeight := otherNumber.! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/22/2021 20:28:39'!
 arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
@@ -264,34 +264,34 @@ arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY
 	self var: #hops type: 'int'.
 	self var: #d type: 'float'.
 
-	tcx _ (centerX * txA11) + (centerY * txA12) + txA13.
-	tcy _ (centerX * txA21) + (centerY * txA22) + txA23.
+	tcx := (centerX * txA11) + (centerY * txA12) + txA13.
+	tcy := (centerX * txA21) + (centerY * txA22) + txA23.
 	self cCode: 'scale = sqrt(txA11*txA11 + txA21*txA21);'
-		inSmalltalk: [scale _ (txA11 squared + txA21 squared) sqrt].
-	trx _ radiusPointX * scale.
-	try _ radiusPointY * scale.
-	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 2.
-	d _ sweepAngle / hops.
+		inSmalltalk: [scale := (txA11 squared + txA21 squared) sqrt].
+	trx := radiusPointX * scale.
+	try := radiusPointY * scale.
+	hops := ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 2.
+	d := sweepAngle / hops.
 
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	contour _ aFloat32Array.
-	angle _ startAngle.
-	hops _ hops+1.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	contour := aFloat32Array.
+	angle := startAngle.
+	hops := hops+1.
 	1 to: hops do: [ :h |
-		xp _ angle cos * trx.
-		yp _ angle sin * try.
-		x _ tthetaCos * xp - (tthetaSin * yp) + tcx.
-		y _ tthetaSin * xp + (tthetaCos * yp) + tcy.
-		spanLeft _ spanLeft min: x.
-		spanTop _ spanTop min: y.
-		spanRight _ spanRight max: x.
-		spanBottom _ spanBottom max: y.
+		xp := angle cos * trx.
+		yp := angle sin * try.
+		x := tthetaCos * xp - (tthetaSin * yp) + tcx.
+		y := tthetaSin * xp + (tthetaCos * yp) + tcy.
+		spanLeft := spanLeft min: x.
+		spanTop := spanTop min: y.
+		spanRight := spanRight max: x.
+		spanBottom := spanBottom max: y.
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
 		self updateContourForX: x y: y.
-		angle _ angle + d. ].! !
+		angle := angle + d. ].! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 15:54:16'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
@@ -300,9 +300,9 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 		primitive: 'primCubicBezier'
 		parameters: #(Float Float Float Float Float Float Float Float WordArray WordArray Float32Array).
 
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	contour _ aFloat32Array.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	contour := aFloat32Array.
 
 	self pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2! !
 
@@ -313,9 +313,9 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherWordArray alphaMask: 
 		primitive: 'primLine'
 		parameters: #(Float Float Float Float WordArray WordArray Float32Array).
 
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	contour _ aFloat32Array.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	contour := aFloat32Array.
 	self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:27:08'!
@@ -361,14 +361,14 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
-	txFrom _ (xFrom * txA11) + (yFrom * txA12) + txA13.
-	tyFrom _ (xFrom * txA21) + (yFrom * txA22) + txA23.
-	txTo _ (xTo * txA11) + (yTo * txA12) + txA13.
-	tyTo _ (xTo * txA21) + (yTo * txA22) + txA23.
-	txControl1 _ (xControl1 * txA11) + (yControl1 * txA12) + txA13.
-	tyControl1 _ (xControl1 * txA21) + (yControl1 * txA22) + txA23.
-	txControl2 _ (xControl2 * txA11) + (yControl2 * txA12) + txA13.
-	tyControl2 _ (xControl2 * txA21) + (yControl2 * txA22) + txA23.
+	txFrom := (xFrom * txA11) + (yFrom * txA12) + txA13.
+	tyFrom := (xFrom * txA21) + (yFrom * txA22) + txA23.
+	txTo := (xTo * txA11) + (yTo * txA12) + txA13.
+	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
+	txControl1 := (xControl1 * txA11) + (yControl1 * txA12) + txA13.
+	tyControl1 := (xControl1 * txA21) + (yControl1 * txA22) + txA23.
+	txControl2 := (xControl2 * txA11) + (yControl2 * txA12) + txA13.
+	tyControl2 := (xControl2 * txA21) + (yControl2 * txA22) + txA23.
 	self cCode: '
 		dx = fabs(txControl1-txFrom);
 		dx2 = fabs(txTo-txControl2);
@@ -377,42 +377,42 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 		dy2 = fabs(tyTo-tyControl2);
 		dy3 = fabs(tyControl2-tyControl1);'
 	inSmalltalk: [
-		dx _ (txControl1-txFrom) abs.
-		dx2 _ (txTo-txControl2) abs.
-		dx3 _ (txControl2-txControl1) abs.
-		dy _ (tyControl1-tyFrom) abs.
-		dy2 _ (tyTo-tyControl2) abs.
-		dy3 _ (tyControl2-tyControl1) abs ].
-	dx _ (dx max: dx2) * 3 max: dx3 * 1.5.
-	dy _ (dy max: dy2) * 3 max: dy3 * 1.5.
-	hops _ ((dx max: dy) / hop) asInteger + 1.
+		dx := (txControl1-txFrom) abs.
+		dx2 := (txTo-txControl2) abs.
+		dx3 := (txControl2-txControl1) abs.
+		dy := (tyControl1-tyFrom) abs.
+		dy2 := (tyTo-tyControl2) abs.
+		dy3 := (tyControl2-tyControl1) abs ].
+	dx := (dx max: dx2) * 3 max: dx3 * 1.5.
+	dy := (dy max: dy2) * 3 max: dy3 * 1.5.
+	hops := ((dx max: dy) / hop) asInteger + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ txFrom min: txTo.
-	xMaxEnd _ txFrom max: txTo.
-	yMinEnd _ tyFrom min: tyTo.
-	yMaxEnd _ tyFrom max: tyTo.
-	spanLeft _ spanLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
-	spanRight _ spanRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
-	spanTop _ spanTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
-	spanBottom _ spanBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
+	xMinEnd := txFrom min: txTo.
+	xMaxEnd := txFrom max: txTo.
+	yMinEnd := tyFrom min: tyTo.
+	yMaxEnd := tyFrom max: tyTo.
+	spanLeft := spanLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
+	spanRight := spanRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
+	spanTop := spanTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
+	spanBottom := spanBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
 
-	t _ 0.0.
-	increment _ 1.0 / hops.
+	t := 0.0.
+	increment := 1.0 / hops.
 	1 to: hops do: [ :h |
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT * oneLessT.
-		f23 _ 3.0 * oneLessT * t.
-		f2 _ f23 * oneLessT.
-		f3 _ f23 * t.
-		f4 _ t * t * t.
-		x _ (f1 * txFrom) + (f2 * txControl1) + (f3 * txControl2) + (f4 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl1) + (f3 * tyControl2) + (f4 * tyTo).
+		oneLessT := 1.0 - t.
+		f1 := oneLessT * oneLessT * oneLessT.
+		f23 := 3.0 * oneLessT * t.
+		f2 := f23 * oneLessT.
+		f3 := f23 * t.
+		f4 := t * t * t.
+		x := (f1 * txFrom) + (f2 * txControl1) + (f3 * txControl2) + (f4 * txTo).
+		y := (f1 * tyFrom) + (f2 * tyControl1) + (f3 * tyControl2) + (f4 * tyTo).
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
 		self updateContourForX: x y: y.
-		t _ t + increment. ].
+		t := t + increment. ].
 	self updateAlphasForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: txTo y: tyTo ].
@@ -438,38 +438,38 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
 
-	txFrom _ (xFrom * txA11) + (yFrom * txA12) + txA13.
-	tyFrom _ (xFrom * txA21) + (yFrom * txA22) + txA23.
-	txTo _ (xTo * txA11) + (yTo * txA12) + txA13.
-	tyTo _ (xTo * txA21) + (yTo * txA22) + txA23.
-	dx _ txTo-txFrom.
-	dy _ tyTo-tyFrom.
-	incrementX _ dx.
-	incrementY _ dy.
+	txFrom := (xFrom * txA11) + (yFrom * txA12) + txA13.
+	tyFrom := (xFrom * txA21) + (yFrom * txA22) + txA23.
+	txTo := (xTo * txA11) + (yTo * txA12) + txA13.
+	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
+	dx := txTo-txFrom.
+	dy := tyTo-tyFrom.
+	incrementX := dx.
+	incrementY := dy.
 	self cCode: '
 		dx = fabs(dx);
 		dy = fabs(dy);'
 	inSmalltalk: [
-		dx _ dx abs.
-		dy _ dy abs ].
-	hops _ ((dx max: dy) / hop) asInteger + 1.
-	incrementX _ incrementX / hops.
-	incrementY _ incrementY / hops.
+		dx := dx abs.
+		dy := dy abs ].
+	hops := ((dx max: dy) / hop) asInteger + 1.
+	incrementX := incrementX / hops.
+	incrementY := incrementY / hops.
 
-	spanLeft _ spanLeft min: (txFrom min: txTo).
-	spanRight _ spanRight max: (txFrom max: txTo).
-	spanTop _ spanTop min: (tyFrom min: tyTo).
-	spanBottom _ spanBottom max: (tyFrom max: tyTo).
+	spanLeft := spanLeft min: (txFrom min: txTo).
+	spanRight := spanRight max: (txFrom max: txTo).
+	spanTop := spanTop min: (tyFrom min: tyTo).
+	spanBottom := spanBottom max: (tyFrom max: tyTo).
 
-	x _ txFrom.
-	y _ tyFrom.
+	x := txFrom.
+	y := tyFrom.
 	1 to: hops do: [ :h |
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
 		self updateContourForX: x y: y.
-		x _ x + incrementX.
-		y _ y + incrementY ].
+		x := x + incrementX.
+		y := y + incrementY ].
 	self updateAlphasForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: txTo y: tyTo ].
@@ -520,22 +520,22 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 	(xControl = xFrom and: [ yControl = yFrom ]) ifTrue: [
 		^self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
 
-	txFrom _ (xFrom * txA11) + (yFrom * txA12) + txA13.
-	tyFrom _ (xFrom * txA21) + (yFrom * txA22) + txA23.
-	txTo _ (xTo * txA11) + (yTo * txA12) + txA13.
-	tyTo _ (xTo * txA21) + (yTo * txA22) + txA23.
-	txControl _ (xControl * txA11) + (yControl * txA12) + txA13.
-	tyControl _ (xControl * txA21) + (yControl * txA22) + txA23.
+	txFrom := (xFrom * txA11) + (yFrom * txA12) + txA13.
+	tyFrom := (xFrom * txA21) + (yFrom * txA22) + txA23.
+	txTo := (xTo * txA11) + (yTo * txA12) + txA13.
+	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
+	txControl := (xControl * txA11) + (yControl * txA12) + txA13.
+	tyControl := (xControl * txA21) + (yControl * txA22) + txA23.
 	self cCode: '
 		dx = fabs(txTo-txFrom);
 		dx2 = fabs(txControl-txFrom);
 		dy = fabs(tyTo-tyFrom);
 		dy2 = fabs(tyControl-tyFrom);'
 	inSmalltalk: [
-		dx _ (txTo-txFrom) abs.
-		dx2 _ (txControl-txFrom) abs.
-		dy _ (tyTo-tyFrom) abs.
-		dy2 _ (tyControl-tyFrom) abs.].
+		dx := (txTo-txFrom) abs.
+		dx2 := (txControl-txFrom) abs.
+		dy := (tyTo-tyFrom) abs.
+		dy2 := (tyControl-tyFrom) abs.].
 
 	"If almost a vertical line, just draw a line. (Ignoring control point)"
 	(dx < 1.0 and: [dx2 < 1.0]) ifTrue: [
@@ -546,50 +546,50 @@ pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: y
 		^self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo ].
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ txFrom min: txTo.
-	xMaxEnd _ txFrom max: txTo.
-	yMinEnd _ tyFrom min: tyTo.
-	yMaxEnd _ tyFrom max: tyTo.
-	spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
-	spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
-	spanTop _ spanTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
-	spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
+	xMinEnd := txFrom min: txTo.
+	xMaxEnd := txFrom max: txTo.
+	yMinEnd := tyFrom min: tyTo.
+	yMaxEnd := tyFrom max: tyTo.
+	spanLeft := spanLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
+	spanRight := spanRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
+	spanTop := spanTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
+	spanBottom := spanBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
 	"Case t = 0.0"
-	x _ txFrom.
-	y _ tyFrom.
+	x := txFrom.
+	y := tyFrom.
 	self updateAlphasForX: x y: y.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: x y: y ].
 	self updateContourForX: x y: y.
 
 	"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
-	increment _ 0.5 / (dx max: dy) min: 0.5.
-	t _ 0.0.
+	increment := 0.5 / (dx max: dy) min: 0.5.
+	t := 0.0.
 	[
-		t0 _ t. x0 _ x. y0 _ y.
+		t0 := t. x0 := x. y0 := y.
 		"Compute next point"
-		t _ t0 + increment. oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		t := t0 + increment. oneLessT := 1.0 - t.
+		f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+		x := (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+		y := (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
 		"Now adjust the increment to aim at the required hop length, and recompute next point."
-		dx _ x-x0. dy _ y-y0.
+		dx := x-x0. dy := y-y0.
 		self cCode: '
 			length = sqrt(dx*dx + dy*dy);'
-			inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-		correction _ hop / length.
+			inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+		correction := hop / length.
 		[
-			increment _ increment / length * hop.
-			t _ t0 + increment. oneLessT _ 1.0 - t.
-			f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-			x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-			y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
-			dx _ x-x0. dy _ y-y0.
+			increment := increment / length * hop.
+			t := t0 + increment. oneLessT := 1.0 - t.
+			f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+			x := (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+			y := (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+			dx := x-x0. dy := y-y0.
 			self cCode: '
 				length = sqrt(dx*dx + dy*dy);'
-				inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-			correction _ hop / length.
+				inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+			correction := hop / length.
 			correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 		t < 1.0 ]
 	whileTrue: [
@@ -611,9 +611,9 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		primitive: 'primQuadraticBezier'
 		parameters: #(Float Float Float Float Float Float WordArray WordArray Float32Array).
 
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	contour _ aFloat32Array.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	contour := aFloat32Array.
 	self pvt_quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl.! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 5/18/2021 10:53:25'!
@@ -637,82 +637,82 @@ updateAlphasForX: x y: y
 	self var: #dxp type: 'float'.
 
 	"Compute affected rect. Honor clipRect"
-	t _ (y - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
-	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y + auxStrokeWidthDilatedHalf) asInteger.
-	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x - auxStrokeWidthDilatedHalf - subPixelDelta + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
-	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x + auxStrokeWidthDilatedHalf + subPixelDelta) asInteger.
-	r > clipRight ifTrue: [ r _ clipRight ].
+	t := (y - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
+	t < clipTop ifTrue: [ t := clipTop ].
+	b := (y + auxStrokeWidthDilatedHalf) asInteger.
+	b > clipBottom ifTrue: [ b := clipBottom ].
+	l := (x - auxStrokeWidthDilatedHalf - subPixelDelta + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
+	l < clipLeft ifTrue: [ l := clipLeft ].
+	r := (x + auxStrokeWidthDilatedHalf + subPixelDelta) asInteger.
+	r > clipRight ifTrue: [ r := clipRight ].
 
 	t to: b do: [ :displayY |
-		pixelIndex _ displayY * targetWidth + l -1.
-		dy _ displayY - y.
-		dySquared _ dy * dy.
+		pixelIndex := displayY * targetWidth + l -1.
+		dy := displayY - y.
+		dySquared := dy * dy.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			alphaWord _ alphaMask at: pixelIndex.
+			pixelIndex := pixelIndex + 1.
+			alphaWord := alphaMask at: pixelIndex.
 			alphaWord = 16r007F7F7F ifFalse: [
-				redAlpha _ alphaWord bitAnd: 16r7F0000.
-				greenAlpha _ alphaWord bitAnd: 16r7F00.
-				blueAlpha _ alphaWord bitAnd: 16r7F.
-				doUpdate _ false.
-				dx _ displayX - x.
+				redAlpha := alphaWord bitAnd: 16r7F0000.
+				greenAlpha := alphaWord bitAnd: 16r7F00.
+				blueAlpha := alphaWord bitAnd: 16r7F.
+				doUpdate := false.
+				dx := displayX - x.
 				"Red"
-				dxp _ dx - subPixelDelta.
-				distanceToAxisSquared _ dxp * dxp + dySquared.
+				dxp := dx - subPixelDelta.
+				distanceToAxisSquared := dxp * dxp + dySquared.
 				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 					ifTrue: [
 						distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 							ifTrue: [
-								candidateAlpha _ 16r7F0000 ]
+								candidateAlpha := 16r7F0000 ]
 							ifFalse: [
 								self cCode: '
 										candidateAlpha = (uint32_t)((auxStrokeWidthDilatedHalf - (sqrt(distanceToAxisSquared))) * auxAntiAliasingWidthScaledInverse);
 										candidateAlpha = candidateAlpha << 16;'
 									inSmalltalk: [
-										candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
-										candidateAlpha _ candidateAlpha bitShift: 16 ]].
+										candidateAlpha := (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
+										candidateAlpha := candidateAlpha bitShift: 16 ]].
 						candidateAlpha > redAlpha ifTrue: [
-							doUpdate _ true.
-							redAlpha _ candidateAlpha ]].
+							doUpdate := true.
+							redAlpha := candidateAlpha ]].
 				"Green"
-				distanceToAxisSquared _ dx * dx + dySquared.
+				distanceToAxisSquared := dx * dx + dySquared.
 				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 					ifTrue: [
 						distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 							ifTrue: [
-								candidateAlpha _ 16r7F00 ]
+								candidateAlpha := 16r7F00 ]
 							ifFalse: [
 								self cCode: '
 										candidateAlpha = (uint32_t)((auxStrokeWidthDilatedHalf - (sqrt(distanceToAxisSquared))) * auxAntiAliasingWidthScaledInverse);
 										candidateAlpha = candidateAlpha << 8;'
 									inSmalltalk: [
-										candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
-										candidateAlpha _ candidateAlpha bitShift: 8 ]].
+										candidateAlpha := (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger.
+										candidateAlpha := candidateAlpha bitShift: 8 ]].
 						candidateAlpha > greenAlpha ifTrue: [
-							doUpdate _ true.
-							greenAlpha _ candidateAlpha ]].
+							doUpdate := true.
+							greenAlpha := candidateAlpha ]].
 				"Blue"
-				dxp _ dx + subPixelDelta.
-				distanceToAxisSquared _ dxp * dxp + dySquared.
+				dxp := dx + subPixelDelta.
+				distanceToAxisSquared := dxp * dxp + dySquared.
 				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 					ifTrue: [
 						distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 							ifTrue: [
-								candidateAlpha _ 16r7F ]
+								candidateAlpha := 16r7F ]
 							ifFalse: [
 								self cCode: '
 										candidateAlpha = (uint32_t)((auxStrokeWidthDilatedHalf - (sqrt(distanceToAxisSquared))) * auxAntiAliasingWidthScaledInverse);'
 									inSmalltalk: [
-										candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger ].
+										candidateAlpha := (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger ].
 								].
 						candidateAlpha > blueAlpha ifTrue: [
-							doUpdate _ true.
-							blueAlpha _ candidateAlpha ]].
+							doUpdate := true.
+							blueAlpha := candidateAlpha ]].
 				doUpdate ifTrue: [
-					alphaWord _ (redAlpha bitOr: greenAlpha) bitOr: blueAlpha.
+					alphaWord := (redAlpha bitOr: greenAlpha) bitOr: blueAlpha.
 					alphaMask at: pixelIndex put: alphaWord ]]]]! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:22:38'!
@@ -726,17 +726,17 @@ updateContourForX: x y: y
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
 
-	thisYRounded _ (y + 0.5) asInteger.
+	thisYRounded := (y + 0.5) asInteger.
 	(thisYRounded between: 0 and: targetHeight-1) ifTrue: [
 		thisYRounded = prevYRounded ifFalse: [
 			prevYRounded = 16r7FFFFFFF ifFalse: [
 				contour at: prevYRounded * 2 put: leftAtThisY.
 				contour at: prevYRounded * 2 + 1 put: rightAtThisY ].
-			leftAtThisY _ contour at: thisYRounded * 2.
-			rightAtThisY _ contour at: thisYRounded * 2 + 1.
-			prevYRounded _ thisYRounded ].
-		leftAtThisY _ leftAtThisY min: x.
-		rightAtThisY _ rightAtThisY max: x ].! !
+			leftAtThisY := contour at: thisYRounded * 2.
+			rightAtThisY := contour at: thisYRounded * 2 + 1.
+			prevYRounded := thisYRounded ].
+		leftAtThisY := leftAtThisY min: x.
+		rightAtThisY := rightAtThisY max: x ].! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:42:59'!
 updateContourLastLine
@@ -765,82 +765,82 @@ updateEdgeCountAtX: x y: y
 	self var: #greenIncrement type: 'uint32_t'.
 	self var: #blueIncrement type: 'uint32_t'.
 
-	thisYTruncated _ y asInteger.	"truncated, both in C and Smalltalk"
+	thisYTruncated := y asInteger.	"truncated, both in C and Smalltalk"
 	thisYTruncated = prevYTruncated ifTrue: [
 		^ 0].
 	(thisYTruncated between: clipTop-1 and: clipBottom) ifFalse: [
 		^ 0 ].
 	prevYTruncated = 16r7FFFFFFF ifTrue: [ 
-		prevYTruncated _ thisYTruncated.
+		prevYTruncated := thisYTruncated.
 		^ 0 ].
 
 	thisYTruncated > prevYTruncated
 		ifTrue: [
-			pixelY _ thisYTruncated.
-			redIncrement _ 16r010000.
-			greenIncrement _ 16r0100.
-			blueIncrement _ 16r01 ]
+			pixelY := thisYTruncated.
+			redIncrement := 16r010000.
+			greenIncrement := 16r0100.
+			blueIncrement := 16r01 ]
 		ifFalse: [
-			pixelY _ prevYTruncated.
-			redIncrement _ 16rFF0000.
-			greenIncrement _ 16rFF00.
-			blueIncrement _ 16rFF ].
-	prevYTruncated _ thisYTruncated.
+			pixelY := prevYTruncated.
+			redIncrement := 16rFF0000.
+			greenIncrement := 16rFF00.
+			blueIncrement := 16rFF ].
+	prevYTruncated := thisYTruncated.
 
 	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
 	The effect is the same, and we need to clean up less stuff afterwards.
 	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
-	pixelIndexBase _ pixelY * targetWidth.
-	redOffset _ (x+subPixelDelta+1) asInteger max: clipLeft.						"take the next red subpixel center to the right of x"
-	greenOffset _ (x+1) asInteger max: clipLeft.											"take the next green subpixel center to the right of x"
-	blueOffset _ (x-subPixelDelta+1) asInteger max: clipLeft.		"take the next blue subpixel center to the right of x"
-	redPixelIndex _ pixelIndexBase + redOffset.
-	greenPixelIndex _ pixelIndexBase + greenOffset.
-	bluePixelIndex _ pixelIndexBase + blueOffset.
+	pixelIndexBase := pixelY * targetWidth.
+	redOffset := (x+subPixelDelta+1) asInteger max: clipLeft.						"take the next red subpixel center to the right of x"
+	greenOffset := (x+1) asInteger max: clipLeft.											"take the next green subpixel center to the right of x"
+	blueOffset := (x-subPixelDelta+1) asInteger max: clipLeft.		"take the next blue subpixel center to the right of x"
+	redPixelIndex := pixelIndexBase + redOffset.
+	greenPixelIndex := pixelIndexBase + greenOffset.
+	bluePixelIndex := pixelIndexBase + blueOffset.
 
 	"Three possible cases here: RGB in one word (pixel); RG in one, and G in another; R in one, GB in another"
 	redPixelIndex = bluePixelIndex
 		ifTrue: [						"First case: RGB in the same word"
 			redOffset <= clipRight ifTrue: [
-				countWord _ edgeCounts at: redPixelIndex.
-				redCount _ (countWord + redIncrement) bitAnd: 16rFF0000.
-				greenCount _ (countWord + greenIncrement) bitAnd: 16rFF00.
-				blueCount _ (countWord + blueIncrement) bitAnd: 16rFF.
-				countWord _ (redCount bitOr: greenCount) bitOr: blueCount.
+				countWord := edgeCounts at: redPixelIndex.
+				redCount := (countWord + redIncrement) bitAnd: 16rFF0000.
+				greenCount := (countWord + greenIncrement) bitAnd: 16rFF00.
+				blueCount := (countWord + blueIncrement) bitAnd: 16rFF.
+				countWord := (redCount bitOr: greenCount) bitOr: blueCount.
 				edgeCounts at: redPixelIndex put: countWord ].
 		]
 		ifFalse: [
 			redPixelIndex = greenPixelIndex
 				ifTrue: [				"Second case: RG in one word, B in previous"
 					redOffset <= clipRight ifTrue: [
-						countWord _ edgeCounts at: redPixelIndex.
-						redCount _ (countWord + redIncrement) bitAnd: 16rFF0000.
-						greenCount _ (countWord + greenIncrement) bitAnd: 16rFF00.
-						rest _ countWord bitAnd: 16rFF.
-						countWord _ (redCount bitOr: greenCount) bitOr: rest.
+						countWord := edgeCounts at: redPixelIndex.
+						redCount := (countWord + redIncrement) bitAnd: 16rFF0000.
+						greenCount := (countWord + greenIncrement) bitAnd: 16rFF00.
+						rest := countWord bitAnd: 16rFF.
+						countWord := (redCount bitOr: greenCount) bitOr: rest.
 						edgeCounts at: redPixelIndex put: countWord ].
 
 					blueOffset <= clipRight ifTrue: [
-						countWord _ edgeCounts at: bluePixelIndex.
-						rest _ countWord bitAnd: 16rFFFF00.
-						blueCount _ (countWord + blueIncrement) bitAnd: 16rFF.
-						countWord _ rest bitOr: blueCount.
+						countWord := edgeCounts at: bluePixelIndex.
+						rest := countWord bitAnd: 16rFFFF00.
+						blueCount := (countWord + blueIncrement) bitAnd: 16rFF.
+						countWord := rest bitOr: blueCount.
 						edgeCounts at: bluePixelIndex put: countWord ].
 				]
 				ifFalse: [			"Third case: R in one word, GB in the previous"
 					redOffset <= clipRight ifTrue: [
-						countWord _ edgeCounts at: redPixelIndex.
-						redCount _ (countWord + redIncrement) bitAnd: 16rFF0000.
-						rest _ countWord bitAnd: 16rFFFF.
-						countWord _ redCount bitOr: rest.
+						countWord := edgeCounts at: redPixelIndex.
+						redCount := (countWord + redIncrement) bitAnd: 16rFF0000.
+						rest := countWord bitAnd: 16rFFFF.
+						countWord := redCount bitOr: rest.
 						edgeCounts at: redPixelIndex put: countWord ].
 
 					blueOffset <= clipRight ifTrue: [
-						countWord _ edgeCounts at: bluePixelIndex.
-						rest _ countWord bitAnd: 16rFF0000.
-						greenCount _ (countWord + greenIncrement) bitAnd: 16rFF00.
-						blueCount _ (countWord + blueIncrement) bitAnd: 16rFF.
-						countWord _ (rest bitOr: greenCount) bitOr: blueCount.
+						countWord := edgeCounts at: bluePixelIndex.
+						rest := countWord bitAnd: 16rFF0000.
+						greenCount := (countWord + greenIncrement) bitAnd: 16rFF00.
+						blueCount := (countWord + blueIncrement) bitAnd: 16rFF.
+						countWord := (rest bitOr: greenCount) bitOr: blueCount.
 						edgeCounts at: bluePixelIndex put: countWord ].
 				]
 		].! !
@@ -893,90 +893,90 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	txA11 _ txA11 * sx.
-	txA12 _ txA12 * sy.
-	txA21 _ txA21 * sx.
-	txA22 _ txA22 * sy.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	txA11 := txA11 * sx.
+	txA12 := txA12 * sy.
+	txA21 := txA21 * sx.
+	txA22 := txA22 * sy.
 
-	nextGlyphX _ destX / sx.
-	nextGlyphY _ destY / sy.
+	nextGlyphX := destX / sx.
+	nextGlyphY := destY / sy.
 	startIndex-1 to: stopIndex-1 do: [ :charIndex |
 		self cCode:
 				'iso8859s15 = aString[charIndex];'
 			inSmalltalk: [
-				iso8859s15 _ (aString at: charIndex+1) iso8859s15Code. ].
+				iso8859s15 := (aString at: charIndex+1) iso8859s15Code. ].
 		aBoolean ifTrue: [
-			iso8859s15 = 95 ifTrue: [ iso8859s15 _ 28 ].												"If underscore, use left arrow"
-			iso8859s15 = 94 ifTrue: [ iso8859s15 _ 30 ].												"If caret, use up arrow"
+			iso8859s15 = 95 ifTrue: [ iso8859s15 := 28 ].												"If underscore, use left arrow"
+			iso8859s15 = 94 ifTrue: [ iso8859s15 := 30 ].												"If caret, use up arrow"
 			].
-		i _ contourDataIndexes at: iso8859s15.
-		i _ i - 1.
-		advanceWidth _ contourData at: i. i _ i + 5.
-		numContours _ (contourData at: i) asInteger. i _ i + 1.
+		i := contourDataIndexes at: iso8859s15.
+		i := i - 1.
+		advanceWidth := contourData at: i. i := i + 5.
+		numContours := (contourData at: i) asInteger. i := i + 1.
 		1 to: numContours do: [ :idx |
-			numBeziers _ (contourData at: i) asInteger. i _ i + 1.
-			ttMoveToX _ (contourData at: i) + nextGlyphX. i _ i + 1.
-			ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
-			startX _ (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
-			startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
-			contourStartX _ startX.
-			contourStartY _ startY.
+			numBeziers := (contourData at: i) asInteger. i := i + 1.
+			ttMoveToX := (contourData at: i) + nextGlyphX. i := i + 1.
+			ttMoveToY := (contourData at: i) + nextGlyphY. i := i + 1.
+			startX := (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
+			startY := (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
+			contourStartX := startX.
+			contourStartY := startY.
 			self initializeTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
-				ttEndX _ contourData at: i. i _ i + 1.
-				ttEndY _ contourData at: i. i _ i + 1.
-				ttControlX _ contourData at: i. i _ i + 1.
-				ttControlY _ contourData at: i. i _ i + 1.
-				endX _ (ttEndX * txA11) + (ttEndY * txA12) + startX.
-				endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
-				controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
-				controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
+				ttEndX := contourData at: i. i := i + 1.
+				ttEndY := contourData at: i. i := i + 1.
+				ttControlX := contourData at: i. i := i + 1.
+				ttControlY := contourData at: i. i := i + 1.
+				endX := (ttEndX * txA11) + (ttEndY * txA12) + startX.
+				endY := (ttEndX * txA21) + (ttEndY * txA22) + startY.
+				controlX := (ttControlX * txA11) + (ttControlY * txA12) + startX.
+				controlY := (ttControlX * txA21) + (ttControlY * txA22) + startY.
 				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-				xMinEnd _ startX min: endX.
-				xMaxEnd _ startX max: endX.
-				yMinEnd _ startY min: endY.
-				yMaxEnd _ startY max: endY.
-				spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
-				spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
-				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
-				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+				xMinEnd := startX min: endX.
+				xMaxEnd := startX max: endX.
+				yMinEnd := startY min: endY.
+				yMaxEnd := startY max: endY.
+				spanLeft := spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
+				spanRight := spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
+				spanTop := spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
+				spanBottom := spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 				"Compute Quadratic Bezier Curve,"
 				"Case t = 0.0"
-				x _ startX.
-				y _ startY.
+				x := startX.
+				y := startY.
 				self updateAlphasForX: x y: y.
 				self updateEdgeCountAtX: x y: y.
 				"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
-				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-				increment _ 0.5 / (dx max: dy) min: 0.5.
-				t _ 0.0.
+				inSmalltalk: [ dx := (endX-startX) abs. dy := (endY-startY) abs ].
+				increment := 0.5 / (dx max: dy) min: 0.5.
+				t := 0.0.
 				[
-					t0 _ t. x0 _ x. y0 _ y.
+					t0 := t. x0 := x. y0 := y.
 					"Compute next point"
-					t _ t0 + increment. oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					t := t0 + increment. oneLessT := 1.0 - t.
+					f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+					x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+					y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
 					"Now adjust the increment to aim at the required hop length, and recompute next point."
-					dx _ x-x0. dy _ y-y0.
+					dx := x-x0. dy := y-y0.
 					self cCode: '
 						length = sqrt(dx*dx + dy*dy);'
-						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-					correction _ hop / length.
+						inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+					correction := hop / length.
 					[
-						increment _ increment / length * hop.
-						t _ t0 + increment. oneLessT _ 1.0 - t.
-						f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-						x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-						y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-						dx _ x-x0. dy _ y-y0.
+						increment := increment / length * hop.
+						t := t0 + increment. oneLessT := 1.0 - t.
+						f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+						x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+						y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
+						dx := x-x0. dy := y-y0.
 						self cCode: '
 							length = sqrt(dx*dx + dy*dy);'
-							inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-						correction _ hop / length.
+							inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+						correction := hop / length.
 						correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 					t < 1.0 ]
 				whileTrue: [
@@ -984,8 +984,8 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 					self updateEdgeCountAtX: x y: y ].
 				"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
 				This means that the end point is only added for the last fragment of the contour, and not for each one of them."
-				startX _ endX.
-				startY _ endY.	
+				startX := endX.
+				startY := endY.	
 			].
 			self updateAlphasForX: endX y: endY.
 			self updateEdgeCountAtX: endX y: endY.
@@ -995,13 +995,13 @@ displayString: aString from: startIndex to: stopIndex atx: destX y: destY scalex
 			Anyway, this is cheap."
 			self updateEdgeCountAtX: contourStartX y: contourStartY.
 		].
-		nextGlyphX _ nextGlyphX + advanceWidth.
+		nextGlyphX := nextGlyphX + advanceWidth.
 	].
-	txA11 _ txA11 / sx.
-	txA12 _ txA12 / sy.
-	txA21 _ txA21 / sx.
-	txA22 _ txA22 / sy.
-	answer _ nextGlyphX * sx.
+	txA11 := txA11 / sx.
+	txA12 := txA12 / sy.
+	txA21 := txA21 / sx.
+	txA22 := txA22 / sy.
+	answer := nextGlyphX * sx.
 	^answer asOop: Float! !
 
 !VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'dtl 7/27/2021 16:41:42'!
@@ -1051,91 +1051,91 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	txA11 _ txA11 * sx.
-	txA12 _ txA12 * sy.
-	txA21 _ txA21 * sx.
-	txA22 _ txA22 * sy.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	txA11 := txA11 * sx.
+	txA12 := txA12 * sy.
+	txA21 := txA21 * sx.
+	txA22 := txA22 * sy.
 
-	nextGlyphX _ destX / sx.
-	nextGlyphY _ destY / sy.
+	nextGlyphX := destX / sx.
+	nextGlyphY := destY / sy.
 	startIndex-1 to: stopIndex-1 do: [ :utf32Index |
-		utf32 _ aWordArray at: utf32Index.
+		utf32 := aWordArray at: utf32Index.
 		aBoolean ifTrue: [
-			utf32 = 95 ifTrue: [ utf32 _ 8592 ].												"If underscore, use left arrow"
-			utf32 = 94 ifTrue: [ utf32 _ 8593 ].												"If caret, use up arrow"
+			utf32 = 95 ifTrue: [ utf32 := 8592 ].												"If underscore, use left arrow"
+			utf32 = 94 ifTrue: [ utf32 := 8593 ].												"If caret, use up arrow"
 			].
 		utf32 <= 16r7F
 			ifTrue: [
-				utf8Byte _ utf32.
-				i _ contourDataIndexes at: utf8Byte ]
+				utf8Byte := utf32.
+				i := contourDataIndexes at: utf8Byte ]
 			ifFalse: [ utf32 <= 16r7FF
 			ifTrue: [
-				utf8Byte _ (utf32 bitShift: -6) bitOr: 2r11000000.
-				i _ contourDataIndexes at: utf8Byte.
-				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i ]
+				utf8Byte := (utf32 bitShift: -6) bitOr: 2r11000000.
+				i := contourDataIndexes at: utf8Byte.
+				utf8Byte := (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i ]
 			ifFalse: [ utf32 <= 16rFFFF
 			ifTrue: [
-				utf8Byte _ (utf32 bitShift: -12) bitOr: 2r11100000.
-				i _ contourDataIndexes at: utf8Byte.
-				utf8Byte _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i.
-				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i ]
+				utf8Byte := (utf32 bitShift: -12) bitOr: 2r11100000.
+				i := contourDataIndexes at: utf8Byte.
+				utf8Byte := ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i.
+				utf8Byte := (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i ]
 			ifFalse: [
-				utf8Byte _ (utf32 bitShift: -18) bitOr: 2r11110000.
-				i _ contourDataIndexes at: utf8Byte.
-				utf8Byte _ ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i.
-				utf8Byte _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i.
-				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i ]]].
-		i _ i - 1.
-		advanceWidth _ contourData at: i. i _ i + 5.
-		numContours _ (contourData at: i) asInteger. i _ i + 1.
+				utf8Byte := (utf32 bitShift: -18) bitOr: 2r11110000.
+				i := contourDataIndexes at: utf8Byte.
+				utf8Byte := ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i.
+				utf8Byte := ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i.
+				utf8Byte := (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i ]]].
+		i := i - 1.
+		advanceWidth := contourData at: i. i := i + 5.
+		numContours := (contourData at: i) asInteger. i := i + 1.
 		1 to: numContours do: [ :idx |
-			numBeziers _ (contourData at: i) asInteger. i _ i + 1.
-			ttMoveToX _ (contourData at: i) + nextGlyphX. i _ i + 1.
-			ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
-			startX _ (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
-			startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
-			contourStartX _ startX.
-			contourStartY _ startY.
+			numBeziers := (contourData at: i) asInteger. i := i + 1.
+			ttMoveToX := (contourData at: i) + nextGlyphX. i := i + 1.
+			ttMoveToY := (contourData at: i) + nextGlyphY. i := i + 1.
+			startX := (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
+			startY := (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
+			contourStartX := startX.
+			contourStartY := startY.
 			self initializeTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
-				ttEndX _ contourData at: i. i _ i + 1.
-				ttEndY _ contourData at: i. i _ i + 1.
-				ttControlX _ contourData at: i. i _ i + 1.
-				ttControlY _ contourData at: i. i _ i + 1.
-				endX _ (ttEndX * txA11) + (ttEndY * txA12) + startX.
-				endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
-				controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
-				controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
+				ttEndX := contourData at: i. i := i + 1.
+				ttEndY := contourData at: i. i := i + 1.
+				ttControlX := contourData at: i. i := i + 1.
+				ttControlY := contourData at: i. i := i + 1.
+				endX := (ttEndX * txA11) + (ttEndY * txA12) + startX.
+				endY := (ttEndX * txA21) + (ttEndY * txA22) + startY.
+				controlX := (ttControlX * txA11) + (ttControlY * txA12) + startX.
+				controlY := (ttControlX * txA21) + (ttControlY * txA22) + startY.
 				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-				xMinEnd _ startX min: endX.
-				xMaxEnd _ startX max: endX.
-				yMinEnd _ startY min: endY.
-				yMaxEnd _ startY max: endY.
-				spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
-				spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
-				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
-				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+				xMinEnd := startX min: endX.
+				xMaxEnd := startX max: endX.
+				yMinEnd := startY min: endY.
+				yMaxEnd := startY max: endY.
+				spanLeft := spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
+				spanRight := spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
+				spanTop := spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
+				spanBottom := spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 				"Compute Quadratic Bezier Curve,"
 				"Case t = 0.0"
-				x _ startX.
-				y _ startY.
+				x := startX.
+				y := startY.
 				self updateAlphasForX: x y: y.
 				self updateEdgeCountAtX: x y: y.
 				"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
-				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-				increment _ 0.5 / (dx max: dy) min: 0.5.
-				t _ 0.0.
+				inSmalltalk: [ dx := (endX-startX) abs. dy := (endY-startY) abs ].
+				increment := 0.5 / (dx max: dy) min: 0.5.
+				t := 0.0.
 				[
-					t0 _ t. x0 _ x. y0 _ y.
+					t0 := t. x0 := x. y0 := y.
 					"Compute next point. Only C version to avoid hitting a limit in Smalltalk compiler."
 					self cCode: '
 						t = t0 + increment; oneLessT = 1.0 - t;
@@ -1144,20 +1144,20 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 						y = (f1 * startY) + (f2 * controlY) + (f3 * endY);
 						dx = x-x0; dy = y-y0;
 						length = sqrt(dx*dx + dy*dy);'
-						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-					correction _ hop / length.
+						inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+					correction := hop / length.
 					"Now adjust the increment to aim at the required hop length, and recompute next point."
 					[
-						increment _ increment / length * hop.
-						t _ t0 + increment. oneLessT _ 1.0 - t.
-						f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-						x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-						y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-						dx _ x-x0. dy _ y-y0.
+						increment := increment / length * hop.
+						t := t0 + increment. oneLessT := 1.0 - t.
+						f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+						x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+						y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
+						dx := x-x0. dy := y-y0.
 						self cCode: '
 							length = sqrt(dx*dx + dy*dy);'
-							inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-						correction _ hop / length.
+							inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+						correction := hop / length.
 						correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 					t < 1.0 ]
 				whileTrue: [
@@ -1165,8 +1165,8 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 					self updateEdgeCountAtX: x y: y. ].
 				"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
 				This means that the end point is only added for the last fragment of the contour, and not for each one of them."
-				startX _ endX.
-				startY _ endY.	
+				startX := endX.
+				startY := endY.	
 			].
 			self updateAlphasForX: endX y: endY.
 			self updateEdgeCountAtX: endX y: endY.
@@ -1176,13 +1176,13 @@ displayUtf32: aWordArray from: startIndex to: stopIndex atx: destX y: destY scal
 			Anyway, this is cheap."
 			self updateEdgeCountAtX: contourStartX y: contourStartY.
 		].
-		nextGlyphX _ nextGlyphX + advanceWidth.
+		nextGlyphX := nextGlyphX + advanceWidth.
 	].
-	txA11 _ txA11 / sx.
-	txA12 _ txA12 / sy.
-	txA21 _ txA21 / sx.
-	txA22 _ txA22 / sy.
-	answer _ nextGlyphX * sx.
+	txA11 := txA11 / sx.
+	txA12 := txA12 / sy.
+	txA21 := txA21 / sx.
+	txA22 := txA22 / sy.
+	answer := nextGlyphX * sx.
 	^answer asOop: Float! !
 
 !VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'dtl 7/27/2021 16:41:51'!
@@ -1233,96 +1233,96 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	txA11 _ txA11 * sx.
-	txA12 _ txA12 * sy.
-	txA21 _ txA21 * sx.
-	txA22 _ txA22 * sy.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	txA11 := txA11 * sx.
+	txA12 := txA12 * sy.
+	txA21 := txA21 * sx.
+	txA22 := txA22 * sy.
 
-	nextGlyphX _ destX / sx.
-	nextGlyphY _ destY / sy.
-	baseIndex _ 0.
+	nextGlyphX := destX / sx.
+	nextGlyphY := destY / sy.
+	baseIndex := 0.
 	byteStartIndex-1 to: byteStopIndex-1 do: [ :byteIndex |
-		byte _ aByteArray at: byteIndex.
-		i _ contourDataIndexes at: baseIndex + byte.
+		byte := aByteArray at: byteIndex.
+		i := contourDataIndexes at: baseIndex + byte.
 		aBoolean ifTrue: [
 			byte = 95 ifTrue: [
-				i _ contourDataIndexes at: 226.
-				i _ contourDataIndexes at: 134 - i.
-				i _ contourDataIndexes at: 144 - i ].
+				i := contourDataIndexes at: 226.
+				i := contourDataIndexes at: 134 - i.
+				i := contourDataIndexes at: 144 - i ].
 			byte = 94 ifTrue: [ 
-				i _ contourDataIndexes at: 226.
-				i _ contourDataIndexes at: 134 - i.
-				i _ contourDataIndexes at: 145 - i ]].
+				i := contourDataIndexes at: 226.
+				i := contourDataIndexes at: 134 - i.
+				i := contourDataIndexes at: 145 - i ]].
 		i < 0
-			ifTrue: [ baseIndex _ 0 - i ]
+			ifTrue: [ baseIndex := 0 - i ]
 			ifFalse: [
-				i _ i - 1.
-				advanceWidth _ contourData at: i. i _ i + 5.
-				numContours _ (contourData at: i) asInteger. i _ i + 1.
+				i := i - 1.
+				advanceWidth := contourData at: i. i := i + 5.
+				numContours := (contourData at: i) asInteger. i := i + 1.
 				1 to: numContours do: [ :idx |
-					numBeziers _ (contourData at: i) asInteger. i _ i + 1.
-					ttMoveToX _ (contourData at: i) + nextGlyphX. i _ i + 1.
-					ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
-					startX _ (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
-					startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
-					contourStartX _ startX.
-					contourStartY _ startY.
+					numBeziers := (contourData at: i) asInteger. i := i + 1.
+					ttMoveToX := (contourData at: i) + nextGlyphX. i := i + 1.
+					ttMoveToY := (contourData at: i) + nextGlyphY. i := i + 1.
+					startX := (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
+					startY := (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
+					contourStartX := startX.
+					contourStartY := startY.
 					self initializeTrajectoryFragment.
 					1 to: numBeziers do: [ :idx2 |
-						ttEndX _ contourData at: i. i _ i + 1.
-						ttEndY _ contourData at: i. i _ i + 1.
-						ttControlX _ contourData at: i. i _ i + 1.
-						ttControlY _ contourData at: i. i _ i + 1.
-						endX _ (ttEndX * txA11) + (ttEndY * txA12) + startX.
-						endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
-						controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
-						controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
+						ttEndX := contourData at: i. i := i + 1.
+						ttEndY := contourData at: i. i := i + 1.
+						ttControlX := contourData at: i. i := i + 1.
+						ttControlY := contourData at: i. i := i + 1.
+						endX := (ttEndX * txA11) + (ttEndY * txA12) + startX.
+						endY := (ttEndX * txA21) + (ttEndY * txA22) + startY.
+						controlX := (ttControlX * txA11) + (ttControlY * txA12) + startX.
+						controlY := (ttControlX * txA21) + (ttControlY * txA22) + startY.
 						"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-						xMinEnd _ startX min: endX.
-						xMaxEnd _ startX max: endX.
-						yMinEnd _ startY min: endY.
-						yMaxEnd _ startY max: endY.
-						spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
-						spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
-						spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
-						spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+						xMinEnd := startX min: endX.
+						xMaxEnd := startX max: endX.
+						yMinEnd := startY min: endY.
+						yMaxEnd := startY max: endY.
+						spanLeft := spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
+						spanRight := spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
+						spanTop := spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
+						spanBottom := spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 						"Case t = 0.0"
-						x _ startX.
-						y _ startY.
+						x := startX.
+						y := startY.
 						self updateAlphasForX: x y: y.
 						self updateEdgeCountAtX: x y: y.
 						"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 						self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
-						inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-						increment _ 0.5 / (dx max: dy) min: 0.5.
+						inSmalltalk: [ dx := (endX-startX) abs. dy := (endY-startY) abs ].
+						increment := 0.5 / (dx max: dy) min: 0.5.
 						"Compute Quadratic Bezier Curve,"
-						t _ 0.0.
+						t := 0.0.
 						[
-							t0 _ t. x0 _ x. y0 _ y.
+							t0 := t. x0 := x. y0 := y.
 							"Compute next point"
-							t _ t0 + increment. oneLessT _ 1.0 - t.
-							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							t := t0 + increment. oneLessT := 1.0 - t.
+							f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+							x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+							y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
 							"Now adjust the increment to aim at the required hop length, and recompute next point."
-							dx _ x-x0. dy _ y-y0.
+							dx := x-x0. dy := y-y0.
 							self cCode: '
 								length = sqrt(dx*dx + dy*dy);'
-								inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-							correction _ hop / length.
+								inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+							correction := hop / length.
 							[
-								increment _ increment / length * hop.
-								t _ t0 + increment. oneLessT _ 1.0 - t.
-								f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-								x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-								y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-								dx _ x-x0. dy _ y-y0.
+								increment := increment / length * hop.
+								t := t0 + increment. oneLessT := 1.0 - t.
+								f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+								x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+								y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
+								dx := x-x0. dy := y-y0.
 								self cCode: '
 									length = sqrt(dx*dx + dy*dy);'
-									inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-								correction _ hop / length.
+									inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+								correction := hop / length.
 								correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 							t < 1.0 ]
 						whileTrue: [
@@ -1330,8 +1330,8 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 							self updateEdgeCountAtX: x y: y ].
 						"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
 						This means that the end point is only added for the last fragment of the contour, and not for each one of them."
-						startX _ endX.
-						startY _ endY.	
+						startX := endX.
+						startY := endY.	
 					].
 					self updateAlphasForX: endX y: endY.
 					self updateEdgeCountAtX: endX y: endY.
@@ -1341,15 +1341,15 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: dest
 					Anyway, this is cheap."
 					self updateEdgeCountAtX: contourStartX y: contourStartY.
 				].
-				nextGlyphX _ nextGlyphX + advanceWidth.
-				baseIndex _ 0.
+				nextGlyphX := nextGlyphX + advanceWidth.
+				baseIndex := 0.
 			]
 	].
-	txA11 _ txA11 / sx.
-	txA12 _ txA12 / sy.
-	txA21 _ txA21 / sx.
-	txA22 _ txA22 / sy.
-	answer _ nextGlyphX * sx.
+	txA11 := txA11 / sx.
+	txA12 := txA12 / sy.
+	txA21 := txA21 / sx.
+	txA22 := txA22 / sy.
+	answer := nextGlyphX * sx.
 	^answer asOop: Float! !
 
 !VectorEnginePlugin methodsFor: 'text and multi paths' stamp: 'dtl 7/27/2021 16:41:59'!
@@ -1369,53 +1369,53 @@ pathSequence: aFloat32Array size: size edgeCounts: otherWordArray alphaMask: ano
 	self var: #control2X type: 'float'.
 	self var: #control2Y type: 'float'.
 
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
-	contour _ otherFloat32Array.
-	i _ 0.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
+	contour := otherFloat32Array.
+	i := 0.
 	[ i < size ] whileTrue: [
-		commandType _ (aFloat32Array at: i) asInteger. i _ i + 1.
+		commandType := (aFloat32Array at: i) asInteger. i := i + 1.
 		commandType caseOf: {
 			[0] -> [
 				i+1 < size ifFalse: [ ^self "failure" ].
-				startX _ aFloat32Array at: i. i _ i + 1.
-				startY _ aFloat32Array at: i. i _ i + 1.
+				startX := aFloat32Array at: i. i := i + 1.
+				startY := aFloat32Array at: i. i := i + 1.
 				self initializeTrajectoryFragment.
 				].
 			[1] -> [
 				i+1 < size ifFalse: [ ^self "failure" ].
-				endX _ aFloat32Array at: i. i _ i + 1.
-				endY _ aFloat32Array at: i. i _ i + 1.
+				endX := aFloat32Array at: i. i := i + 1.
+				endY := aFloat32Array at: i. i := i + 1.
 				self pvt_lineFromX: startX y: startY toX: endX y: endY.
-				startX _ endX.
-				startY _ endY.
+				startX := endX.
+				startY := endY.
 				].
 			[2] -> [
 				i+3 < size ifFalse: [ ^self "failure" ].
-				endX _ aFloat32Array at: i. i _ i + 1.
-				endY _ aFloat32Array at: i. i _ i + 1.
-				control1X _ aFloat32Array at: i. i _ i + 1.
-				control1Y _ aFloat32Array at: i. i _ i + 1.
+				endX := aFloat32Array at: i. i := i + 1.
+				endY := aFloat32Array at: i. i := i + 1.
+				control1X := aFloat32Array at: i. i := i + 1.
+				control1Y := aFloat32Array at: i. i := i + 1.
 				self pvt_quadraticBezierFromX: startX y: startY
 					toX: endX y: endY
 					controlX: control1X y: control1Y.
-				startX _ endX.
-				startY _ endY.
+				startX := endX.
+				startY := endY.
 				].
 			[3] -> [
 				i+5 < size ifFalse: [ ^self "failure" ].
-				endX _ aFloat32Array at: i. i _ i + 1.
-				endY _ aFloat32Array at: i. i _ i + 1.
-				control1X _ aFloat32Array at: i. i _ i + 1.
-				control1Y _ aFloat32Array at: i. i _ i + 1.
-				control2X _ aFloat32Array at: i. i _ i + 1.
-				control2Y _ aFloat32Array at: i. i _ i + 1.
+				endX := aFloat32Array at: i. i := i + 1.
+				endY := aFloat32Array at: i. i := i + 1.
+				control1X := aFloat32Array at: i. i := i + 1.
+				control1Y := aFloat32Array at: i. i := i + 1.
+				control2X := aFloat32Array at: i. i := i + 1.
+				control2Y := aFloat32Array at: i. i := i + 1.
 				self pvt_cubicBezierFromX: startX y: startY
 					toX: endX y: endY
 					control1X: control1X y: control1Y
 					control2X: control2X y: control2Y.
-				startX _ endX.
-				startY _ endY.
+				startX := endX.
+				startY := endY.
 				]}
 		otherwise: [ ^self "failure"]].! !
 
@@ -1460,90 +1460,90 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 	self var: #targetAlpha type: 'float'.
 
 	"In this method, antiAliasAlphas are not used to blend stroke, but fill. This means that in the inside of the shape, and away from the stroke, they must be 1.0 (not 0.0)."
-	antiAliasRedAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F0000.
-	antiAliasGreenAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F00.
-	antiAliasBlueAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F.
-	isRedInside ifTrue: [ antiAliasRedAlphaBits _ 16r7F0000 - antiAliasRedAlphaBits ].
-	isGreenInside ifTrue: [ antiAliasGreenAlphaBits _ 16r7F00 - antiAliasGreenAlphaBits ].
-	isBlueInside ifTrue: [ antiAliasBlueAlphaBits _ 16r7F - antiAliasBlueAlphaBits ].
-	antiAliasRedAlpha _ antiAliasRedAlphaBits * (1.0 / (127.0 * 256 * 256)).
-	antiAliasGreenAlpha _ antiAliasGreenAlphaBits * (1.0 / (127.0 * 256)).
-	antiAliasBlueAlpha _ antiAliasBlueAlphaBits * (1.0 / 127.0).
-	alphaR _ antiAliasRedAlpha * fillA.
-	alphaG _ antiAliasGreenAlpha * fillA.
-	alphaB _ antiAliasBlueAlpha * fillA.
+	antiAliasRedAlphaBits := antiAliasAlphasWord bitAnd: 16r7F0000.
+	antiAliasGreenAlphaBits := antiAliasAlphasWord bitAnd: 16r7F00.
+	antiAliasBlueAlphaBits := antiAliasAlphasWord bitAnd: 16r7F.
+	isRedInside ifTrue: [ antiAliasRedAlphaBits := 16r7F0000 - antiAliasRedAlphaBits ].
+	isGreenInside ifTrue: [ antiAliasGreenAlphaBits := 16r7F00 - antiAliasGreenAlphaBits ].
+	isBlueInside ifTrue: [ antiAliasBlueAlphaBits := 16r7F - antiAliasBlueAlphaBits ].
+	antiAliasRedAlpha := antiAliasRedAlphaBits * (1.0 / (127.0 * 256 * 256)).
+	antiAliasGreenAlpha := antiAliasGreenAlphaBits * (1.0 / (127.0 * 256)).
+	antiAliasBlueAlpha := antiAliasBlueAlphaBits * (1.0 / 127.0).
+	alphaR := antiAliasRedAlpha * fillA.
+	alphaG := antiAliasGreenAlpha * fillA.
+	alphaB := antiAliasBlueAlpha * fillA.
 
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			morphIdWord _ morphIds at: pixelIndex.
-			clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+			morphIdWord := morphIds at: pixelIndex.
+			clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
 			self cCode: '
 					antiAliasGreenAlphaBitsShifted = antiAliasGreenAlphaBits >> 8;'
 				inSmalltalk: [
-					antiAliasGreenAlphaBitsShifted _ antiAliasGreenAlphaBits bitShift: -8 ].
+					antiAliasGreenAlphaBitsShifted := antiAliasGreenAlphaBits bitShift: -8 ].
 			antiAliasGreenAlphaBitsShifted > clippingAntiAliasBits ifTrue: [
-				clippingAntiAliasBits _ antiAliasGreenAlphaBitsShifted]]
+				clippingAntiAliasBits := antiAliasGreenAlphaBitsShifted]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					morphIdWord _ morphIds at: pixelIndex.
-					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
-					clippingAntiAlias _ clippingAntiAliasBits * (1.0 / 127.0).
-					alphaR _ alphaR * clippingAntiAlias.
-					alphaG _ alphaG * clippingAntiAlias.
-					alphaB _ alphaB * clippingAntiAlias ]
+					morphIdWord := morphIds at: pixelIndex.
+					clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias := clippingAntiAliasBits * (1.0 / 127.0).
+					alphaR := alphaR * clippingAntiAlias.
+					alphaG := alphaG * clippingAntiAlias.
+					alphaB := alphaB * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAliasBits _ 0]].
+					clippingAntiAliasBits := 0]].
 
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
-		targetWord _ targetBits at: pixelIndex.
-		resultAlphaBits _ targetWord bitAnd: 16rFF000000.
-		resultRBits _ targetWord bitAnd: 16rFF0000.
-		resultGBits _ targetWord bitAnd: 16rFF00.
-		resultBBits _ targetWord bitAnd: 16rFF.
-		targetAlpha _ resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
+		targetWord := targetBits at: pixelIndex.
+		resultAlphaBits := targetWord bitAnd: 16rFF000000.
+		resultRBits := targetWord bitAnd: 16rFF0000.
+		resultGBits := targetWord bitAnd: 16rFF00.
+		resultBBits := targetWord bitAnd: 16rFF.
+		targetAlpha := resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
 
 		"These if are not really needed. just ignore them if we use simd instructions."
 		alphaR = 0.0 ifFalse: [
-			unAlphaR _ 1.0 - alphaR.
-			resultAlphaR _ alphaR + (unAlphaR * targetAlpha).
+			unAlphaR := 1.0 - alphaR.
+			resultAlphaR := alphaR + (unAlphaR * targetAlpha).
 			self cCode: '
 					resultR = (alphaR * fillR) + ((unAlphaR * (resultRBits >> 16)) * targetAlpha);
 					resultRBits = (uint32_t)(resultR / resultAlphaR + 0.5) << 16;'
 				inSmalltalk: [
-					resultR _ alphaR * fillR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
-					resultRBits _ (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
+					resultR := alphaR * fillR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
+					resultRBits := (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
 
 		alphaG = 0.0 ifFalse: [
-			unAlphaG _ 1.0 - alphaG.
-			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
+			unAlphaG := 1.0 - alphaG.
+			resultAlphaG := alphaG + (unAlphaG * targetAlpha).
 			self cCode: '
 					resultG = (alphaG * fillG) + ((unAlphaG * (resultGBits >> 8)) * targetAlpha);
 					resultGBits = (uint32_t)(resultG / resultAlphaG + 0.5) << 8;
 					resultAlphaBits = (uint32_t)(resultAlphaG * 255.0 + 0.5) << 24;'
 				inSmalltalk: [
-					resultG _ alphaG * fillG + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
-					resultGBits _ (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
-					resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
+					resultG := alphaG * fillG + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
+					resultGBits := (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
+					resultAlphaBits := (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
 
 		alphaB = 0.0 ifFalse: [
-			unAlphaB _ 1.0 - alphaB.
-			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
+			unAlphaB := 1.0 - alphaB.
+			resultAlphaB := alphaB + (unAlphaB * targetAlpha).
 			self cCode: '
 					resultB = (alphaB * fillB) + ((unAlphaB * resultBBits) * targetAlpha);
 					resultBBits = (uint32_t)(resultB / resultAlphaB + 0.5);'
 				inSmalltalk: [
-					resultB _ alphaB * fillB + (unAlphaB * resultBBits * targetAlpha).
-					resultBBits _ (resultB / resultAlphaB + 0.5) asInteger ]].
+					resultB := alphaB * fillB + (unAlphaB * resultBBits * targetAlpha).
+					resultBBits := (resultB / resultAlphaB + 0.5) asInteger ]].
 
-		targetWord _ ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetWord := ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
@@ -1565,19 +1565,19 @@ blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWo
 	self var: #edgesUpToThisPixelB type: 'uint8_t'.
 	self var: #antiAliasAlphasWord type: 'uint32_t'.
 
-	targetBits _ aBitmap.
-	morphIds _ aWordArray.
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
+	targetBits := aBitmap.
+	morphIds := aWordArray.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
 	t to: b do: [ :displayY |
-		edgesUpToThisPixelR _ 0.
-		edgesUpToThisPixelG _ 0.
-		edgesUpToThisPixelB _ 0.
-		pixelIndex _ displayY * targetWidth + l - 1.
+		edgesUpToThisPixelR := 0.
+		edgesUpToThisPixelG := 0.
+		edgesUpToThisPixelB := 0.
+		pixelIndex := displayY * targetWidth + l - 1.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
+			pixelIndex := pixelIndex + 1.
 
-			edgesThisPixelWord _ edgeCounts at: pixelIndex.
+			edgesThisPixelWord := edgeCounts at: pixelIndex.
 			edgesThisPixelWord = 0 ifFalse: [
 				edgeCounts at: pixelIndex put: 0 ].
 
@@ -1586,17 +1586,17 @@ blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWo
 					edgesThisPixelG = (uint32_t) (edgesThisPixelWord & 0xFF00) >> 8;
 					edgesThisPixelB = (uint32_t) (edgesThisPixelWord & 0xFF);'
 				inSmalltalk: [
-					edgesThisPixelR _ (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
-					edgesThisPixelG _ (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
-					edgesThisPixelB _ edgesThisPixelWord bitAnd: 16rFF.
+					edgesThisPixelR := (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
+					edgesThisPixelG := (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
+					edgesThisPixelB := edgesThisPixelWord bitAnd: 16rFF.
 					"Not needed in C or OpenCL, just use a wraparound 8 bit type, such uint8_t"
-					edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
-					edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
-					edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ]].
+					edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR := edgesThisPixelR - 256 ].
+					edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG := edgesThisPixelG - 256 ].
+					edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB := edgesThisPixelB - 256 ]].
 
-			edgesUpToThisPixelR _ edgesUpToThisPixelR + edgesThisPixelR.
-			edgesUpToThisPixelG _ edgesUpToThisPixelG + edgesThisPixelG.
-			edgesUpToThisPixelB _ edgesUpToThisPixelB + edgesThisPixelB.
+			edgesUpToThisPixelR := edgesUpToThisPixelR + edgesThisPixelR.
+			edgesUpToThisPixelG := edgesUpToThisPixelG + edgesThisPixelG.
+			edgesUpToThisPixelB := edgesUpToThisPixelB + edgesThisPixelB.
 
 			"In C, integers already behave like booleans"
 			self cCode: '
@@ -1604,11 +1604,11 @@ blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWo
 					isGreenInside = edgesUpToThisPixelG;
 					isBlueInside = edgesUpToThisPixelB;'
 				inSmalltalk: [
-					isRedInside _ edgesUpToThisPixelR ~= 0.
-					isGreenInside _ edgesUpToThisPixelG ~= 0.
-					isBlueInside _ edgesUpToThisPixelB ~= 0 ].
+					isRedInside := edgesUpToThisPixelR ~= 0.
+					isGreenInside := edgesUpToThisPixelG ~= 0.
+					isBlueInside := edgesUpToThisPixelB ~= 0 ].
 
-			antiAliasAlphasWord _ alphaMask at: pixelIndex.
+			antiAliasAlphasWord := alphaMask at: pixelIndex.
 			antiAliasAlphasWord ~= 16r00000000 ifTrue: [
 				alphaMask at: pixelIndex put: 0 ].
 			(antiAliasAlphasWord ~= 16r00000000 or: [
@@ -1662,111 +1662,111 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 	self var: #resultAlphaB type: 'float'.
 	self var: #targetAlpha type: 'float'.
 
-	antiAliasRedAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F0000.
-	antiAliasGreenAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F00.
-	antiAliasBlueAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F.
-	antiAliasRedAlpha _ antiAliasRedAlphaBits * (1.0 / (127.0 * 256 * 256)).
-	antiAliasGreenAlpha _ antiAliasGreenAlphaBits * (1.0 / (127.0 * 256)).
-	antiAliasBlueAlpha _ antiAliasBlueAlphaBits * (1.0 / 127.0).
+	antiAliasRedAlphaBits := antiAliasAlphasWord bitAnd: 16r7F0000.
+	antiAliasGreenAlphaBits := antiAliasAlphasWord bitAnd: 16r7F00.
+	antiAliasBlueAlphaBits := antiAliasAlphasWord bitAnd: 16r7F.
+	antiAliasRedAlpha := antiAliasRedAlphaBits * (1.0 / (127.0 * 256 * 256)).
+	antiAliasGreenAlpha := antiAliasGreenAlphaBits * (1.0 / (127.0 * 256)).
+	antiAliasBlueAlpha := antiAliasBlueAlphaBits * (1.0 / 127.0).
 
 	isRedInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
-			alphaR _ antiAliasRedAlpha * strokeA + ((1.0-antiAliasRedAlpha) * fillA).
-			foreR _ antiAliasRedAlpha * strokeR + ((1.0-antiAliasRedAlpha) * fillR) ]
+			alphaR := antiAliasRedAlpha * strokeA + ((1.0-antiAliasRedAlpha) * fillA).
+			foreR := antiAliasRedAlpha * strokeR + ((1.0-antiAliasRedAlpha) * fillR) ]
 		ifFalse: [							"Blend stroke over background"
-			alphaR _ antiAliasRedAlpha * strokeA.
-			foreR _ strokeR ].
+			alphaR := antiAliasRedAlpha * strokeA.
+			foreR := strokeR ].
 
 	isGreenInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
-			alphaG _ antiAliasGreenAlpha * strokeA + ((1.0-antiAliasGreenAlpha) * fillA).
-			foreG _ antiAliasGreenAlpha * strokeG + ((1.0-antiAliasGreenAlpha) * fillG) ]
+			alphaG := antiAliasGreenAlpha * strokeA + ((1.0-antiAliasGreenAlpha) * fillA).
+			foreG := antiAliasGreenAlpha * strokeG + ((1.0-antiAliasGreenAlpha) * fillG) ]
 		ifFalse: [							"Blend stroke over background"
-			alphaG _ antiAliasGreenAlpha * strokeA.
-			foreG _ strokeG ].
+			alphaG := antiAliasGreenAlpha * strokeA.
+			foreG := strokeG ].
 
 	isBlueInside
 		ifTrue: [ 							"Do gradient between stroke and fill. Blend the result over background"
-			alphaB _ antiAliasBlueAlpha * strokeA + ((1.0-antiAliasBlueAlpha) * fillA).
-			foreB _ antiAliasBlueAlpha * strokeB + ((1.0-antiAliasBlueAlpha) * fillB) ]
+			alphaB := antiAliasBlueAlpha * strokeA + ((1.0-antiAliasBlueAlpha) * fillA).
+			foreB := antiAliasBlueAlpha * strokeB + ((1.0-antiAliasBlueAlpha) * fillB) ]
 		ifFalse: [							"Blend stroke over background"
-			alphaB _ antiAliasBlueAlpha * strokeA.
-			foreB _ strokeB ].
+			alphaB := antiAliasBlueAlpha * strokeA.
+			foreB := strokeB ].
 
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
 			isGreenInside
-				ifTrue: [clippingAntiAliasBits _ 16r7F]
+				ifTrue: [clippingAntiAliasBits := 16r7F]
 				ifFalse: [
-					morphIdWord _ morphIds at: pixelIndex.
-					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+					morphIdWord := morphIds at: pixelIndex.
+					clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
 					self cCode: '
 							antiAliasGreenAlphaBitsShifted = antiAliasGreenAlphaBits >> 8;'
 						inSmalltalk: [
-							antiAliasGreenAlphaBitsShifted _ antiAliasGreenAlphaBits bitShift: -8 ].
+							antiAliasGreenAlphaBitsShifted := antiAliasGreenAlphaBits bitShift: -8 ].
 					antiAliasGreenAlphaBitsShifted > clippingAntiAliasBits ifTrue: [
-						clippingAntiAliasBits _ antiAliasGreenAlphaBitsShifted ]]]
+						clippingAntiAliasBits := antiAliasGreenAlphaBitsShifted ]]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					morphIdWord _ morphIds at: pixelIndex.
-					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
-					clippingAntiAlias _ clippingAntiAliasBits * (1.0 / 127.0).
-					alphaR _ alphaR * clippingAntiAlias.
-					alphaG _ alphaG * clippingAntiAlias.
-					alphaB _ alphaB * clippingAntiAlias ]
+					morphIdWord := morphIds at: pixelIndex.
+					clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias := clippingAntiAliasBits * (1.0 / 127.0).
+					alphaR := alphaR * clippingAntiAlias.
+					alphaG := alphaG * clippingAntiAlias.
+					alphaB := alphaB * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAliasBits _ 0]].
+					clippingAntiAliasBits := 0]].
 
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
-		targetWord _ targetBits at: pixelIndex.
-		resultAlphaBits _ targetWord bitAnd: 16rFF000000.
-		resultRBits _ targetWord bitAnd: 16rFF0000.
-		resultGBits _ targetWord bitAnd: 16rFF00.
-		resultBBits _ targetWord bitAnd: 16rFF.
-		targetAlpha _ resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
+		targetWord := targetBits at: pixelIndex.
+		resultAlphaBits := targetWord bitAnd: 16rFF000000.
+		resultRBits := targetWord bitAnd: 16rFF0000.
+		resultGBits := targetWord bitAnd: 16rFF00.
+		resultBBits := targetWord bitAnd: 16rFF.
+		targetAlpha := resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
 
 		"These if are not really needed. just ignore them if we use simd instructions."
 		alphaR = 0.0 ifFalse: [
-			unAlphaR _ 1.0 - alphaR.
-			resultAlphaR _ alphaR + (unAlphaR * targetAlpha).
+			unAlphaR := 1.0 - alphaR.
+			resultAlphaR := alphaR + (unAlphaR * targetAlpha).
 			self cCode: '
 					resultR = (alphaR * foreR) + ((unAlphaR * (resultRBits >> 16)) * targetAlpha);
 					resultRBits = (uint32_t)(resultR / resultAlphaR + 0.5) << 16;'
 				inSmalltalk: [
-					resultR _ alphaR * foreR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
-					resultRBits _ (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
+					resultR := alphaR * foreR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
+					resultRBits := (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
 
 		alphaG = 0.0 ifFalse: [
-			unAlphaG _ 1.0 - alphaG.
-			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
+			unAlphaG := 1.0 - alphaG.
+			resultAlphaG := alphaG + (unAlphaG * targetAlpha).
 			self cCode: '
 					resultG = (alphaG * foreG) + ((unAlphaG * (resultGBits >> 8)) * targetAlpha);
 					resultGBits = (uint32_t)(resultG / resultAlphaG + 0.5) << 8;
 					resultAlphaBits = (uint32_t)(resultAlphaG * 255.0 + 0.5) << 24;'
 				inSmalltalk: [
-					resultG _ alphaG * foreG + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
-					resultGBits _ (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
-					resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
+					resultG := alphaG * foreG + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
+					resultGBits := (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
+					resultAlphaBits := (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
 
 		alphaB = 0.0 ifFalse: [
-			unAlphaB _ 1.0 - alphaB.
-			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
+			unAlphaB := 1.0 - alphaB.
+			resultAlphaB := alphaB + (unAlphaB * targetAlpha).
 			self cCode: '
 					resultB = (alphaB * foreB) + ((unAlphaB * resultBBits) * targetAlpha);
 					resultBBits = (uint32_t)(resultB / resultAlphaB + 0.5);'
 				inSmalltalk: [
-					resultB _ alphaB * foreB + (unAlphaB * resultBBits * targetAlpha).
-					resultBBits _ (resultB / resultAlphaB + 0.5) asInteger ]].
+					resultB := alphaB * foreB + (unAlphaB * resultBBits * targetAlpha).
+					resultBBits := (resultB / resultAlphaB + 0.5) asInteger ]].
 
-		targetWord _ ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetWord := ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
@@ -1790,19 +1790,19 @@ blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds
 	self var: #edgesUpToThisPixelB type: 'uint8_t'.
 	self var: #antiAliasAlphasWord type: 'uint32_t'.
 
-	targetBits _ aBitmap.
-	morphIds _ aWordArray.
-	edgeCounts _ otherWordArray.
-	alphaMask _ anotherWordArray.
+	targetBits := aBitmap.
+	morphIds := aWordArray.
+	edgeCounts := otherWordArray.
+	alphaMask := anotherWordArray.
 	t to: b do: [ :displayY |
-		edgesUpToThisPixelR _ 0.
-		edgesUpToThisPixelG _ 0.
-		edgesUpToThisPixelB _ 0.
-		pixelIndex _ displayY * targetWidth + l - 1.
+		edgesUpToThisPixelR := 0.
+		edgesUpToThisPixelG := 0.
+		edgesUpToThisPixelB := 0.
+		pixelIndex := displayY * targetWidth + l - 1.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
+			pixelIndex := pixelIndex + 1.
 
-			edgesThisPixelWord _ edgeCounts at: pixelIndex.
+			edgesThisPixelWord := edgeCounts at: pixelIndex.
 			edgesThisPixelWord = 0 ifFalse: [
 				edgeCounts at: pixelIndex put: 0 ].
 
@@ -1811,17 +1811,17 @@ blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds
 					edgesThisPixelG = (uint32_t) (edgesThisPixelWord & 0xFF00) >> 8;
 					edgesThisPixelB = (uint32_t) (edgesThisPixelWord & 0xFF);'
 				inSmalltalk: [
-					edgesThisPixelR _ (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
-					edgesThisPixelG _ (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
-					edgesThisPixelB _ edgesThisPixelWord bitAnd: 16rFF.
+					edgesThisPixelR := (edgesThisPixelWord bitAnd: 16rFF0000) bitShift: -16.
+					edgesThisPixelG := (edgesThisPixelWord bitAnd: 16rFF00)bitShift: -8.
+					edgesThisPixelB := edgesThisPixelWord bitAnd: 16rFF.
 					"Not needed in C or OpenCL, just use a wraparound 8 bit type, such uint8_t"
-					edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR _ edgesThisPixelR - 256 ].
-					edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG _ edgesThisPixelG - 256 ].
-					edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB _ edgesThisPixelB - 256 ]].
+					edgesThisPixelR > 127 ifTrue: [ edgesThisPixelR := edgesThisPixelR - 256 ].
+					edgesThisPixelG > 127 ifTrue: [ edgesThisPixelG := edgesThisPixelG - 256 ].
+					edgesThisPixelB > 127 ifTrue: [ edgesThisPixelB := edgesThisPixelB - 256 ]].
 
-			edgesUpToThisPixelR _ edgesUpToThisPixelR + edgesThisPixelR.
-			edgesUpToThisPixelG _ edgesUpToThisPixelG + edgesThisPixelG.
-			edgesUpToThisPixelB _ edgesUpToThisPixelB + edgesThisPixelB.
+			edgesUpToThisPixelR := edgesUpToThisPixelR + edgesThisPixelR.
+			edgesUpToThisPixelG := edgesUpToThisPixelG + edgesThisPixelG.
+			edgesUpToThisPixelB := edgesUpToThisPixelB + edgesThisPixelB.
 
 			"In C, integers already behave like booleans"
 			self cCode: '
@@ -1829,12 +1829,12 @@ blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds
 					isGreenInside = edgesUpToThisPixelG;
 					isBlueInside = edgesUpToThisPixelB;'
 				inSmalltalk: [
-					isRedInside _ edgesUpToThisPixelR ~= 0.
-					isGreenInside _ edgesUpToThisPixelG ~= 0.
-					isBlueInside _ edgesUpToThisPixelB ~= 0 ].
+					isRedInside := edgesUpToThisPixelR ~= 0.
+					isGreenInside := edgesUpToThisPixelG ~= 0.
+					isBlueInside := edgesUpToThisPixelB ~= 0 ].
 
 
-			antiAliasAlphasWord _ alphaMask at: pixelIndex.
+			antiAliasAlphasWord := alphaMask at: pixelIndex.
 			antiAliasAlphasWord ~= 16r00000000 ifTrue: [
 				alphaMask at: pixelIndex put: 0 ].
 			(antiAliasAlphasWord ~= 16r00000000 or: [
@@ -1883,87 +1883,87 @@ blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
 	self var: #resultAlphaB type: 'float'.
 	self var: #targetAlpha type: 'float'.
 
-	antiAliasRedAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F0000.
-	antiAliasGreenAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F00.
-	antiAliasBlueAlphaBits _ antiAliasAlphasWord bitAnd: 16r7F.
-	antiAliasRedAlpha _ antiAliasRedAlphaBits * (1.0 / (127.0 * 256 * 256)).
-	antiAliasGreenAlpha _ antiAliasGreenAlphaBits * (1.0 / (127.0 * 256)).
-	antiAliasBlueAlpha _ antiAliasBlueAlphaBits * (1.0 / 127.0).
-	alphaR _ antiAliasRedAlpha * strokeA.
-	alphaG _ antiAliasGreenAlpha * strokeA.
-	alphaB _ antiAliasBlueAlpha * strokeA.
+	antiAliasRedAlphaBits := antiAliasAlphasWord bitAnd: 16r7F0000.
+	antiAliasGreenAlphaBits := antiAliasAlphasWord bitAnd: 16r7F00.
+	antiAliasBlueAlphaBits := antiAliasAlphasWord bitAnd: 16r7F.
+	antiAliasRedAlpha := antiAliasRedAlphaBits * (1.0 / (127.0 * 256 * 256)).
+	antiAliasGreenAlpha := antiAliasGreenAlphaBits * (1.0 / (127.0 * 256)).
+	antiAliasBlueAlpha := antiAliasBlueAlphaBits * (1.0 / 127.0).
+	alphaR := antiAliasRedAlpha * strokeA.
+	alphaG := antiAliasGreenAlpha * strokeA.
+	alphaB := antiAliasBlueAlpha * strokeA.
 
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			morphIdWord _ morphIds at: pixelIndex.
-			clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+			morphIdWord := morphIds at: pixelIndex.
+			clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
 			self cCode: '
 					antiAliasGreenAlphaBitsShifted = antiAliasGreenAlphaBits >> 8;'
 				inSmalltalk: [
-					antiAliasGreenAlphaBitsShifted _ antiAliasGreenAlphaBits bitShift: -8 ].
+					antiAliasGreenAlphaBitsShifted := antiAliasGreenAlphaBits bitShift: -8 ].
 			antiAliasGreenAlphaBitsShifted > clippingAntiAliasBits ifTrue: [
-				clippingAntiAliasBits _ antiAliasGreenAlphaBitsShifted]]
+				clippingAntiAliasBits := antiAliasGreenAlphaBitsShifted]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					morphIdWord _ morphIds at: pixelIndex.
-					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
-					clippingAntiAlias _ clippingAntiAliasBits * (1.0 / 127.0).
-					alphaR _ alphaR * clippingAntiAlias.
-					alphaG _ alphaG * clippingAntiAlias.
-					alphaB _ alphaB * clippingAntiAlias ]
+					morphIdWord := morphIds at: pixelIndex.
+					clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias := clippingAntiAliasBits * (1.0 / 127.0).
+					alphaR := alphaR * clippingAntiAlias.
+					alphaG := alphaG * clippingAntiAlias.
+					alphaB := alphaB * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAliasBits _ 0]].
+					clippingAntiAliasBits := 0]].
 
 	alphaR + alphaG + alphaB = 0.0 ifFalse: [
-		targetWord _ targetBits at: pixelIndex.
-		resultAlphaBits _ targetWord bitAnd: 16rFF000000.
-		resultRBits _ targetWord bitAnd: 16rFF0000.
-		resultGBits _ targetWord bitAnd: 16rFF00.
-		resultBBits _ targetWord bitAnd: 16rFF.
-		targetAlpha _ resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
+		targetWord := targetBits at: pixelIndex.
+		resultAlphaBits := targetWord bitAnd: 16rFF000000.
+		resultRBits := targetWord bitAnd: 16rFF0000.
+		resultGBits := targetWord bitAnd: 16rFF00.
+		resultBBits := targetWord bitAnd: 16rFF.
+		targetAlpha := resultAlphaBits * ( 1.0 / (255.0 * 256 * 256 * 256)).
 
 		"These if are not really needed. just ignore them if we use simd instructions."
 		alphaR = 0.0 ifFalse: [
-			unAlphaR _ 1.0 - alphaR.
-			resultAlphaR _ alphaR + (unAlphaR * targetAlpha).
+			unAlphaR := 1.0 - alphaR.
+			resultAlphaR := alphaR + (unAlphaR * targetAlpha).
 			self cCode: '
 					resultR = (alphaR * strokeR) + ((unAlphaR * (resultRBits >> 16)) * targetAlpha);
 					resultRBits = (uint32_t)(resultR / resultAlphaR + 0.5) << 16;'
 				inSmalltalk: [
-					resultR _ alphaR * strokeR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
-					resultRBits _ (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
+					resultR := alphaR * strokeR + (unAlphaR * (resultRBits bitShift: -16) * targetAlpha).
+					resultRBits := (resultR / resultAlphaR + 0.5) asInteger bitShift: 16 ]].
 
 		alphaG = 0.0 ifFalse: [
-			unAlphaG _ 1.0 - alphaG.
-			resultAlphaG _ alphaG + (unAlphaG * targetAlpha).
+			unAlphaG := 1.0 - alphaG.
+			resultAlphaG := alphaG + (unAlphaG * targetAlpha).
 			self cCode: '
 					resultG = (alphaG * strokeG) + ((unAlphaG * (resultGBits >> 8)) * targetAlpha);
 					resultGBits = (uint32_t)(resultG / resultAlphaG + 0.5) << 8;
 					resultAlphaBits = (uint32_t)(resultAlphaG * 255.0 + 0.5) << 24;'
 				inSmalltalk: [
-					resultG _ alphaG * strokeG + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
-					resultGBits _ (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
-					resultAlphaBits _ (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
+					resultG := alphaG * strokeG + (unAlphaG * (resultGBits bitShift: -8) * targetAlpha).
+					resultGBits := (resultG / resultAlphaG + 0.5) asInteger bitShift: 8.
+					resultAlphaBits := (resultAlphaG * 255.0 + 0.5) asInteger bitShift: 24 ]].
 
 		alphaB = 0.0 ifFalse: [
-			unAlphaB _ 1.0 - alphaB.
-			resultAlphaB _ alphaB + (unAlphaB * targetAlpha).
+			unAlphaB := 1.0 - alphaB.
+			resultAlphaB := alphaB + (unAlphaB * targetAlpha).
 			self cCode: '
 					resultB = (alphaB * strokeB) + ((unAlphaB * resultBBits) * targetAlpha);
 					resultBBits = (uint32_t)(resultB / resultAlphaB + 0.5);'
 				inSmalltalk: [
-					resultB _ alphaB * strokeB + (unAlphaB * resultBBits * targetAlpha).
-					resultBBits _ (resultB / resultAlphaB + 0.5) asInteger ]].
+					resultB := alphaB * strokeB + (unAlphaB * resultBBits * targetAlpha).
+					resultBBits := (resultB / resultAlphaB + 0.5) asInteger ]].
 
-		targetWord _ ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetWord := ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].! !
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:34'!
@@ -1977,14 +1977,14 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 
 	self var: #antiAliasAlphasWord type: 'uint32_t'.
 
-	targetBits _ aBitmap.
-	morphIds _ aWordArray.
-	alphaMask _ anotherWordArray.
+	targetBits := aBitmap.
+	morphIds := aWordArray.
+	alphaMask := anotherWordArray.
 	t to: b do: [ :displayY |
-		pixelIndex _ displayY * targetWidth + l - 1.
+		pixelIndex := displayY * targetWidth + l - 1.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			antiAliasAlphasWord _ alphaMask at: pixelIndex.
+			pixelIndex := pixelIndex + 1.
+			antiAliasAlphasWord := alphaMask at: pixelIndex.
 			antiAliasAlphasWord = 16r00000000 ifFalse: [
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
@@ -2010,34 +2010,34 @@ arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPoin
 	self var: #hops type: 'int'.
 	self var: #d type: 'float'.
 
-	tcx _ (centerX * txA11) + (centerY * txA12) + txA13.
-	tcy _ (centerX * txA21) + (centerY * txA22) + txA23.
+	tcx := (centerX * txA11) + (centerY * txA12) + txA13.
+	tcy := (centerX * txA21) + (centerY * txA22) + txA23.
 	self cCode: 'scale = sqrt(txA11*txA11 + txA21*txA21);'
-		inSmalltalk: [scale _ (txA11 squared + txA21 squared) sqrt].
-	trx _ radiusPointX * scale.
-	try _ radiusPointY * scale.
-	hops _ ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 2.
-	d _ sweepAngle / hops.
+		inSmalltalk: [scale := (txA11 squared + txA21 squared) sqrt].
+	trx := radiusPointX * scale.
+	try := radiusPointY * scale.
+	hops := ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 2.
+	d := sweepAngle / hops.
 
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	contour _ aFloat32Array.
-	angle _ startAngle.
-	hops _ hops+1.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	contour := aFloat32Array.
+	angle := startAngle.
+	hops := hops+1.
 	1 to: hops do: [ :h |
-		xp _ angle cos * trx.
-		yp _ angle sin * try.
-		x _ tthetaCos * xp - (tthetaSin * yp) + tcx.
-		y _ tthetaSin * xp + (tthetaCos * yp) + tcy.
-		spanLeft _ spanLeft min: x.
-		spanTop _ spanTop min: y.
-		spanRight _ spanRight max: x.
-		spanBottom _ spanBottom max: y.
+		xp := angle cos * trx.
+		yp := angle sin * try.
+		x := tthetaCos * xp - (tthetaSin * yp) + tcx.
+		y := tthetaSin * xp + (tthetaCos * yp) + tcy.
+		spanLeft := spanLeft min: x.
+		spanTop := spanTop min: y.
+		spanRight := spanRight max: x.
+		spanBottom := spanBottom max: y.
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
 		self updateContourForX: x y: y.
-		angle _ angle + d. ].! !
+		angle := angle + d. ].! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 15:54:18'!
 cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherByteArray alphaMask: anotherByteArray contour: aFloat32Array
@@ -2046,9 +2046,9 @@ cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCont
 		primitive: 'primCubicBezierWP'
 		parameters: #(Float Float Float Float Float Float Float Float ByteArray ByteArray Float32Array).
 
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	contour _ aFloat32Array.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	contour := aFloat32Array.
 
 	self pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2! !
 
@@ -2059,9 +2059,9 @@ lineWPFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherByteArray alphaMask
 		primitive: 'primLineWP'
 		parameters: #(Float Float Float Float ByteArray ByteArray Float32Array).
 
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	contour _ aFloat32Array.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	contour := aFloat32Array.
 	self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:27:12'!
@@ -2107,14 +2107,14 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
-	txFrom _ (xFrom * txA11) + (yFrom * txA12) + txA13.
-	tyFrom _ (xFrom * txA21) + (yFrom * txA22) + txA23.
-	txTo _ (xTo * txA11) + (yTo * txA12) + txA13.
-	tyTo _ (xTo * txA21) + (yTo * txA22) + txA23.
-	txControl1 _ (xControl1 * txA11) + (yControl1 * txA12) + txA13.
-	tyControl1 _ (xControl1 * txA21) + (yControl1 * txA22) + txA23.
-	txControl2 _ (xControl2 * txA11) + (yControl2 * txA12) + txA13.
-	tyControl2 _ (xControl2 * txA21) + (yControl2 * txA22) + txA23.
+	txFrom := (xFrom * txA11) + (yFrom * txA12) + txA13.
+	tyFrom := (xFrom * txA21) + (yFrom * txA22) + txA23.
+	txTo := (xTo * txA11) + (yTo * txA12) + txA13.
+	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
+	txControl1 := (xControl1 * txA11) + (yControl1 * txA12) + txA13.
+	tyControl1 := (xControl1 * txA21) + (yControl1 * txA22) + txA23.
+	txControl2 := (xControl2 * txA11) + (yControl2 * txA12) + txA13.
+	tyControl2 := (xControl2 * txA21) + (yControl2 * txA22) + txA23.
 	self cCode: '
 		dx = fabs(txControl1-txFrom);
 		dx2 = fabs(txTo-txControl2);
@@ -2123,42 +2123,42 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 		dy2 = fabs(tyTo-tyControl2);
 		dy3 = fabs(tyControl2-tyControl1);'
 	inSmalltalk: [
-		dx _ (txControl1-txFrom) abs.
-		dx2 _ (txTo-txControl2) abs.
-		dx3 _ (txControl2-txControl1) abs.
-		dy _ (tyControl1-tyFrom) abs.
-		dy2 _ (tyTo-tyControl2) abs.
-		dy3 _ (tyControl2-tyControl1) abs ].
-	dx _ (dx max: dx2) * 3 max: dx3 * 1.5.
-	dy _ (dy max: dy2) * 3 max: dy3 * 1.5.
-	hops _ ((dx max: dy) / hop) asInteger + 1.
+		dx := (txControl1-txFrom) abs.
+		dx2 := (txTo-txControl2) abs.
+		dx3 := (txControl2-txControl1) abs.
+		dy := (tyControl1-tyFrom) abs.
+		dy2 := (tyTo-tyControl2) abs.
+		dy3 := (tyControl2-tyControl1) abs ].
+	dx := (dx max: dx2) * 3 max: dx3 * 1.5.
+	dy := (dy max: dy2) * 3 max: dy3 * 1.5.
+	hops := ((dx max: dy) / hop) asInteger + 1.
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ txFrom min: txTo.
-	xMaxEnd _ txFrom max: txTo.
-	yMinEnd _ tyFrom min: tyTo.
-	yMaxEnd _ tyFrom max: tyTo.
-	spanLeft _ spanLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
-	spanRight _ spanRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
-	spanTop _ spanTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
-	spanBottom _ spanBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
+	xMinEnd := txFrom min: txTo.
+	xMaxEnd := txFrom max: txTo.
+	yMinEnd := tyFrom min: tyTo.
+	yMaxEnd := tyFrom max: tyTo.
+	spanLeft := spanLeft min: (xMinEnd min: xMinEnd*0.25 + ((txControl1 min: txControl2)*0.75)).
+	spanRight := spanRight max: (xMaxEnd max: xMaxEnd*0.25 + ((txControl1 max: txControl2)*0.75)).
+	spanTop := spanTop min: (yMinEnd min: yMinEnd*0.25 + ((tyControl1 min: tyControl2)*0.75)).
+	spanBottom := spanBottom max: (yMaxEnd max: yMaxEnd*0.25 + ((tyControl1 max: tyControl2)*0.75)).
 
-	t _ 0.0.
-	increment _ 1.0 / hops.
+	t := 0.0.
+	increment := 1.0 / hops.
 	1 to: hops do: [ :h |
-		oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT * oneLessT.
-		f23 _ 3.0 * oneLessT * t.
-		f2 _ f23 * oneLessT.
-		f3 _ f23 * t.
-		f4 _ t * t * t.
-		x _ (f1 * txFrom) + (f2 * txControl1) + (f3 * txControl2) + (f4 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl1) + (f3 * tyControl2) + (f4 * tyTo).
+		oneLessT := 1.0 - t.
+		f1 := oneLessT * oneLessT * oneLessT.
+		f23 := 3.0 * oneLessT * t.
+		f2 := f23 * oneLessT.
+		f3 := f23 * t.
+		f4 := t * t * t.
+		x := (f1 * txFrom) + (f2 * txControl1) + (f3 * txControl2) + (f4 * txTo).
+		y := (f1 * tyFrom) + (f2 * tyControl1) + (f3 * tyControl2) + (f4 * tyTo).
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
 		self updateContourForX: x y: y.
-		t _ t + increment. ].
+		t := t + increment. ].
 	self updateAlphasWPForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: txTo y: tyTo ].
@@ -2184,38 +2184,38 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
 
-	txFrom _ (xFrom * txA11) + (yFrom * txA12) + txA13.
-	tyFrom _ (xFrom * txA21) + (yFrom * txA22) + txA23.
-	txTo _ (xTo * txA11) + (yTo * txA12) + txA13.
-	tyTo _ (xTo * txA21) + (yTo * txA22) + txA23.
-	dx _ txTo-txFrom.
-	dy _ tyTo-tyFrom.
-	incrementX _ dx.
-	incrementY _ dy.
+	txFrom := (xFrom * txA11) + (yFrom * txA12) + txA13.
+	tyFrom := (xFrom * txA21) + (yFrom * txA22) + txA23.
+	txTo := (xTo * txA11) + (yTo * txA12) + txA13.
+	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
+	dx := txTo-txFrom.
+	dy := tyTo-tyFrom.
+	incrementX := dx.
+	incrementY := dy.
 	self cCode: '
 		dx = fabs(dx);
 		dy = fabs(dy);'
 	inSmalltalk: [
-		dx _ dx abs.
-		dy _ dy abs ].
-	hops _ ((dx max: dy) / hop) asInteger + 1.
-	incrementX _ incrementX / hops.
-	incrementY _ incrementY / hops.
+		dx := dx abs.
+		dy := dy abs ].
+	hops := ((dx max: dy) / hop) asInteger + 1.
+	incrementX := incrementX / hops.
+	incrementY := incrementY / hops.
 
-	spanLeft _ spanLeft min: (txFrom min: txTo).
-	spanRight _ spanRight max: (txFrom max: txTo).
-	spanTop _ spanTop min: (tyFrom min: tyTo).
-	spanBottom _ spanBottom max: (tyFrom max: tyTo).
+	spanLeft := spanLeft min: (txFrom min: txTo).
+	spanRight := spanRight max: (txFrom max: txTo).
+	spanTop := spanTop min: (tyFrom min: tyTo).
+	spanBottom := spanBottom max: (tyFrom max: tyTo).
 
-	x _ txFrom.
-	y _ tyFrom.
+	x := txFrom.
+	y := tyFrom.
 	1 to: hops do: [ :h |
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
 		self updateContourForX: x y: y.
-		x _ x + incrementX.
-		y _ y + incrementY ].
+		x := x + incrementX.
+		y := y + incrementY ].
 	self updateAlphasWPForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: txTo y: tyTo ].
@@ -2266,22 +2266,22 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 	(xControl = xFrom and: [ yControl = yFrom ]) ifTrue: [
 		^self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo ].
 
-	txFrom _ (xFrom * txA11) + (yFrom * txA12) + txA13.
-	tyFrom _ (xFrom * txA21) + (yFrom * txA22) + txA23.
-	txTo _ (xTo * txA11) + (yTo * txA12) + txA13.
-	tyTo _ (xTo * txA21) + (yTo * txA22) + txA23.
-	txControl _ (xControl * txA11) + (yControl * txA12) + txA13.
-	tyControl _ (xControl * txA21) + (yControl * txA22) + txA23.
+	txFrom := (xFrom * txA11) + (yFrom * txA12) + txA13.
+	tyFrom := (xFrom * txA21) + (yFrom * txA22) + txA23.
+	txTo := (xTo * txA11) + (yTo * txA12) + txA13.
+	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
+	txControl := (xControl * txA11) + (yControl * txA12) + txA13.
+	tyControl := (xControl * txA21) + (yControl * txA22) + txA23.
 	self cCode: '
 		dx = fabs(txTo-txFrom);
 		dx2 = fabs(txControl-txFrom);
 		dy = fabs(tyTo-tyFrom);
 		dy2 = fabs(tyControl-tyFrom);'
 	inSmalltalk: [
-		dx _ (txTo-txFrom) abs.
-		dx2 _ (txControl-txFrom) abs.
-		dy _ (tyTo-tyFrom) abs.
-		dy2 _ (tyControl-tyFrom) abs.].
+		dx := (txTo-txFrom) abs.
+		dx2 := (txControl-txFrom) abs.
+		dy := (tyTo-tyFrom) abs.
+		dy2 := (tyControl-tyFrom) abs.].
 
 	"If almost a vertical line, just draw a line. (Ignoring control point)"
 	(dx < 1.0 and: [dx2 < 1.0]) ifTrue: [
@@ -2292,50 +2292,50 @@ pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y:
 		^self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo ].
 
 	"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-	xMinEnd _ txFrom min: txTo.
-	xMaxEnd _ txFrom max: txTo.
-	yMinEnd _ tyFrom min: tyTo.
-	yMaxEnd _ tyFrom max: tyTo.
-	spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
-	spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
-	spanTop _ spanTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
-	spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
+	xMinEnd := txFrom min: txTo.
+	xMaxEnd := txFrom max: txTo.
+	yMinEnd := tyFrom min: tyTo.
+	yMaxEnd := tyFrom max: tyTo.
+	spanLeft := spanLeft min: (xMinEnd min: (xMinEnd+txControl) / 2.0).
+	spanRight := spanRight max: (xMaxEnd max: (xMaxEnd+txControl) / 2.0).
+	spanTop := spanTop min: (yMinEnd min: (yMinEnd+tyControl) / 2.0).
+	spanBottom := spanBottom max: (yMaxEnd max: (yMaxEnd+tyControl) / 2.0).
 
 	"Case t = 0.0"
-	x _ txFrom.
-	y _ tyFrom.
+	x := txFrom.
+	y := tyFrom.
 	self updateAlphasWPForX: x y: y.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: x y: y ].
 	self updateContourForX: x y: y.
 
 	"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
-	increment _ 0.5 / (dx max: dy) min: 0.5.
-	t _ 0.0.
+	increment := 0.5 / (dx max: dy) min: 0.5.
+	t := 0.0.
 	[
-		t0 _ t. x0 _ x. y0 _ y.
+		t0 := t. x0 := x. y0 := y.
 		"Compute next point"
-		t _ t0 + increment. oneLessT _ 1.0 - t.
-		f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-		x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-		y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+		t := t0 + increment. oneLessT := 1.0 - t.
+		f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+		x := (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+		y := (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
 		"Now adjust the increment to aim at the required hop length, and recompute next point."
-		dx _ x-x0. dy _ y-y0.
+		dx := x-x0. dy := y-y0.
 		self cCode: '
 			length = sqrt(dx*dx + dy*dy);'
-			inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-		correction _ hop / length.
+			inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+		correction := hop / length.
 		[
-			increment _ increment / length * hop.
-			t _ t0 + increment. oneLessT _ 1.0 - t.
-			f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-			x _ (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
-			y _ (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
-			dx _ x-x0. dy _ y-y0.
+			increment := increment / length * hop.
+			t := t0 + increment. oneLessT := 1.0 - t.
+			f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+			x := (f1 * txFrom) + (f2 * txControl) + (f3 * txTo).
+			y := (f1 * tyFrom) + (f2 * tyControl) + (f3 * tyTo).
+			dx := x-x0. dy := y-y0.
 			self cCode: '
 				length = sqrt(dx*dx + dy*dy);'
-				inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-			correction _ hop / length.
+				inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+			correction := hop / length.
 			correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 		t < 1.0 ]
 	whileTrue: [
@@ -2357,9 +2357,9 @@ quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCo
 		primitive: 'primQuadraticBezierWP'
 		parameters: #(Float Float Float Float Float Float ByteArray ByteArray Float32Array).
 
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	contour _ aFloat32Array.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	contour := aFloat32Array.
 	self pvt_quadraticBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yControl.! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 5/18/2021 17:55:56'!
@@ -2379,36 +2379,36 @@ updateAlphasWPForX: x y: y
 	self var: #dxSquared type: 'float'.
 
 	"Compute affected rect. Honor clipRect"
-	t _ (y - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
-	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y + auxStrokeWidthDilatedHalf) asInteger.
-	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
-	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x + auxStrokeWidthDilatedHalf) asInteger.
-	r > clipRight ifTrue: [ r _ clipRight ].
+	t := (y - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
+	t < clipTop ifTrue: [ t := clipTop ].
+	b := (y + auxStrokeWidthDilatedHalf) asInteger.
+	b > clipBottom ifTrue: [ b := clipBottom ].
+	l := (x - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
+	l < clipLeft ifTrue: [ l := clipLeft ].
+	r := (x + auxStrokeWidthDilatedHalf) asInteger.
+	r > clipRight ifTrue: [ r := clipRight ].
 
 	t to: b do: [ :displayY |
-		pixelIndex _ displayY * targetWidth + l -1.
-		dy _ displayY - y.
-		dySquared _ dy * dy.
+		pixelIndex := displayY * targetWidth + l -1.
+		dy := displayY - y.
+		dySquared := dy * dy.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			alphaByte _ alphaMaskWP at: pixelIndex.
+			pixelIndex := pixelIndex + 1.
+			alphaByte := alphaMaskWP at: pixelIndex.
 			alphaByte = 16r7F ifFalse: [
-				dx _ displayX - x.
-				dxSquared _ dx * dx.
-				distanceToAxisSquared _ dxSquared + dySquared.
+				dx := displayX - x.
+				dxSquared := dx * dx.
+				distanceToAxisSquared := dxSquared + dySquared.
 				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 					ifTrue: [
 						distanceToAxisSquared <= auxStrokeWidthErodedHalfSquared
 							ifTrue: [
-								candidateAlpha _ 16r7F ]
+								candidateAlpha := 16r7F ]
 							ifFalse: [
 								self cCode: '
 										candidateAlpha = (uint8_t)((auxStrokeWidthDilatedHalf - (sqrt(distanceToAxisSquared))) * auxAntiAliasingWidthScaledInverse);'
 									inSmalltalk: [
-										candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger ]].
+										candidateAlpha := (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger ]].
 						candidateAlpha > alphaByte ifTrue: [
 							alphaMaskWP at: pixelIndex put: candidateAlpha ]]]]]! !
 
@@ -2432,31 +2432,31 @@ updateAlphasWPZeroStrokeForX: x y: y
 	self var: #dxSquared type: 'float'.
 
 	"Compute affected rect. Honor clipRect"
-	t _ (y - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
-	t < clipTop ifTrue: [ t _ clipTop ].
-	b _ (y + auxStrokeWidthDilatedHalf) asInteger.
-	b > clipBottom ifTrue: [ b _ clipBottom ].
-	l _ (x - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
-	l < clipLeft ifTrue: [ l _ clipLeft ].
-	r _ (x + auxStrokeWidthDilatedHalf) asInteger.
-	r > clipRight ifTrue: [ r _ clipRight ].
+	t := (y - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
+	t < clipTop ifTrue: [ t := clipTop ].
+	b := (y + auxStrokeWidthDilatedHalf) asInteger.
+	b > clipBottom ifTrue: [ b := clipBottom ].
+	l := (x - auxStrokeWidthDilatedHalf + 1) asInteger.														"(int(z+1)) works equally well than the more intuitive but slower (int(ceil(z))"
+	l < clipLeft ifTrue: [ l := clipLeft ].
+	r := (x + auxStrokeWidthDilatedHalf) asInteger.
+	r > clipRight ifTrue: [ r := clipRight ].
 
 	t to: b do: [ :displayY |
-		pixelIndex _ displayY * targetWidth + l -1.
-		dy _ displayY - y.
-		dySquared _ dy * dy.
+		pixelIndex := displayY * targetWidth + l -1.
+		dy := displayY - y.
+		dySquared := dy * dy.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			alphaByte _ alphaMaskWP at: pixelIndex.
+			pixelIndex := pixelIndex + 1.
+			alphaByte := alphaMaskWP at: pixelIndex.
 			alphaByte = 16r7F ifFalse: [
-				dx _ displayX - x.
-				distanceToAxisSquared _ dx * dx + dySquared.
+				dx := displayX - x.
+				distanceToAxisSquared := dx * dx + dySquared.
 				distanceToAxisSquared < auxStrokeWidthDilatedHalfSquared
 					ifTrue: [
 						self cCode: '
 								candidateAlpha = (uint8_t)((auxStrokeWidthDilatedHalf - (sqrt(distanceToAxisSquared))) * auxAntiAliasingWidthScaledInverse);'
 							inSmalltalk: [
-								candidateAlpha _ (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger ].
+								candidateAlpha := (auxStrokeWidthDilatedHalf - distanceToAxisSquared sqrt * auxAntiAliasingWidthScaledInverse) asInteger ].
 						candidateAlpha > alphaByte ifTrue: [
 							alphaMaskWP at: pixelIndex put: candidateAlpha ]]]]]! !
 
@@ -2472,33 +2472,33 @@ updateEdgeCountWPAtX: x y: y
 	self var: #count type: 'uint8_t'.
 	self var: #increment type: 'uint8_t'.
 
-	thisYTruncated _ y asInteger.	"truncated, both in C and Smalltalk"
+	thisYTruncated := y asInteger.	"truncated, both in C and Smalltalk"
 	thisYTruncated = prevYTruncated ifTrue: [
 		^ 0].
 	(thisYTruncated between: clipTop-1 and: clipBottom) ifFalse: [
 		^ 0 ].
 	prevYTruncated = 16r7FFFFFFF ifTrue: [ 
-		prevYTruncated _ thisYTruncated.
+		prevYTruncated := thisYTruncated.
 		^ 0 ].
 
 	thisYTruncated > prevYTruncated
 		ifTrue: [
-			pixelY _ thisYTruncated.
-			increment _ 16r01 ]
+			pixelY := thisYTruncated.
+			increment := 16r01 ]
 		ifFalse: [
-			pixelY _ prevYTruncated.
-			increment _ 16rFF ].
-	prevYTruncated _ thisYTruncated.
+			pixelY := prevYTruncated.
+			increment := 16rFF ].
+	prevYTruncated := thisYTruncated.
 
 	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
 	The effect is the same, and we need to clean up less stuff afterwards.
 	More important, it avoids trying to acess pixels outside our form, i.e. invalid array acesses."
-	pixelOffset _ (x+1) asInteger max: clipLeft.											"take the next pixel center to the right of x"
+	pixelOffset := (x+1) asInteger max: clipLeft.											"take the next pixel center to the right of x"
 
 	pixelOffset <= clipRight ifTrue: [
-		pixelIndex _ pixelY * targetWidth + pixelOffset.
-		count _ edgeCountsWP at: pixelIndex.
-		count _ count + increment.
+		pixelIndex := pixelY * targetWidth + pixelOffset.
+		count := edgeCountsWP at: pixelIndex.
+		count := count + increment.
 		edgeCountsWP at: pixelIndex put: count ].! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'dtl 7/27/2021 16:41:37'!
@@ -2549,90 +2549,90 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	txA11 _ txA11 * sx.
-	txA12 _ txA12 * sy.
-	txA21 _ txA21 * sx.
-	txA22 _ txA22 * sy.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	txA11 := txA11 * sx.
+	txA12 := txA12 * sy.
+	txA21 := txA21 * sx.
+	txA22 := txA22 * sy.
 
-	nextGlyphX _ destX / sx.
-	nextGlyphY _ destY / sy.
+	nextGlyphX := destX / sx.
+	nextGlyphY := destY / sy.
 	startIndex-1 to: stopIndex-1 do: [ :charIndex |
 		self cCode:
 				'iso8859s15 = aString[charIndex];'
 			inSmalltalk: [
-				iso8859s15 _ (aString at: charIndex+1) iso8859s15Code. ].
+				iso8859s15 := (aString at: charIndex+1) iso8859s15Code. ].
 		aBoolean ifTrue: [
-			iso8859s15 = 95 ifTrue: [ iso8859s15 _ 28 ].												"If underscore, use left arrow"
-			iso8859s15 = 94 ifTrue: [ iso8859s15 _ 30 ].												"If caret, use up arrow"
+			iso8859s15 = 95 ifTrue: [ iso8859s15 := 28 ].												"If underscore, use left arrow"
+			iso8859s15 = 94 ifTrue: [ iso8859s15 := 30 ].												"If caret, use up arrow"
 			].
-		i _ contourDataIndexes at: iso8859s15.
-		i _ i - 1.
-		advanceWidth _ contourData at: i. i _ i + 5.
-		numContours _ (contourData at: i) asInteger. i _ i + 1.
+		i := contourDataIndexes at: iso8859s15.
+		i := i - 1.
+		advanceWidth := contourData at: i. i := i + 5.
+		numContours := (contourData at: i) asInteger. i := i + 1.
 		1 to: numContours do: [ :idx |
-			numBeziers _ (contourData at: i) asInteger. i _ i + 1.
-			ttMoveToX _ (contourData at: i) + nextGlyphX. i _ i + 1.
-			ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
-			startX _ (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
-			startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
-			contourStartX _ startX.
-			contourStartY _ startY.
+			numBeziers := (contourData at: i) asInteger. i := i + 1.
+			ttMoveToX := (contourData at: i) + nextGlyphX. i := i + 1.
+			ttMoveToY := (contourData at: i) + nextGlyphY. i := i + 1.
+			startX := (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
+			startY := (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
+			contourStartX := startX.
+			contourStartY := startY.
 			self initializeTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
-				ttEndX _ contourData at: i. i _ i + 1.
-				ttEndY _ contourData at: i. i _ i + 1.
-				ttControlX _ contourData at: i. i _ i + 1.
-				ttControlY _ contourData at: i. i _ i + 1.
-				endX _ (ttEndX * txA11) + (ttEndY * txA12) + startX.
-				endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
-				controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
-				controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
+				ttEndX := contourData at: i. i := i + 1.
+				ttEndY := contourData at: i. i := i + 1.
+				ttControlX := contourData at: i. i := i + 1.
+				ttControlY := contourData at: i. i := i + 1.
+				endX := (ttEndX * txA11) + (ttEndY * txA12) + startX.
+				endY := (ttEndX * txA21) + (ttEndY * txA22) + startY.
+				controlX := (ttControlX * txA11) + (ttControlY * txA12) + startX.
+				controlY := (ttControlX * txA21) + (ttControlY * txA22) + startY.
 				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-				xMinEnd _ startX min: endX.
-				xMaxEnd _ startX max: endX.
-				yMinEnd _ startY min: endY.
-				yMaxEnd _ startY max: endY.
-				spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
-				spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
-				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
-				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+				xMinEnd := startX min: endX.
+				xMaxEnd := startX max: endX.
+				yMinEnd := startY min: endY.
+				yMaxEnd := startY max: endY.
+				spanLeft := spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
+				spanRight := spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
+				spanTop := spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
+				spanBottom := spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 				"Compute Quadratic Bezier Curve,"
 				"Case t = 0.0"
-				x _ startX.
-				y _ startY.
+				x := startX.
+				y := startY.
 				self updateAlphasWPZeroStrokeForX: x y: y.
 				self updateEdgeCountWPAtX: x y: y.
 				"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
-				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-				increment _ 0.5 / (dx max: dy) min: 0.5.
-				t _ 0.0.
+				inSmalltalk: [ dx := (endX-startX) abs. dy := (endY-startY) abs ].
+				increment := 0.5 / (dx max: dy) min: 0.5.
+				t := 0.0.
 				[
-					t0 _ t. x0 _ x. y0 _ y.
+					t0 := t. x0 := x. y0 := y.
 					"Compute next point"
-					t _ t0 + increment. oneLessT _ 1.0 - t.
-					f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-					x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-					y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+					t := t0 + increment. oneLessT := 1.0 - t.
+					f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+					x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+					y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
 					"Now adjust the increment to aim at the required hop length, and recompute next point."
-					dx _ x-x0. dy _ y-y0.
+					dx := x-x0. dy := y-y0.
 					self cCode: '
 						length = sqrt(dx*dx + dy*dy);'
-						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-					correction _ hop / length.
+						inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+					correction := hop / length.
 					[
-						increment _ increment / length * hop.
-						t _ t0 + increment. oneLessT _ 1.0 - t.
-						f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-						x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-						y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-						dx _ x-x0. dy _ y-y0.
+						increment := increment / length * hop.
+						t := t0 + increment. oneLessT := 1.0 - t.
+						f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+						x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+						y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
+						dx := x-x0. dy := y-y0.
 						self cCode: '
 							length = sqrt(dx*dx + dy*dy);'
-							inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-						correction _ hop / length.
+							inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+						correction := hop / length.
 						correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 					t < 1.0 ]
 				whileTrue: [
@@ -2640,8 +2640,8 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 					self updateEdgeCountWPAtX: x y: y ].
 				"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
 				This means that the end point is only added for the last fragment of the contour, and not for each one of them."
-				startX _ endX.
-				startY _ endY.	
+				startX := endX.
+				startY := endY.	
 			].
 			self updateAlphasWPZeroStrokeForX: endX y: endY.
 			self updateEdgeCountWPAtX: endX y: endY.
@@ -2651,13 +2651,13 @@ displayStringWP: aString from: startIndex to: stopIndex atx: destX y: destY scal
 			Anyway, this is cheap."
 			self updateEdgeCountWPAtX: contourStartX y: contourStartY.
 		].
-		nextGlyphX _ nextGlyphX + advanceWidth.
+		nextGlyphX := nextGlyphX + advanceWidth.
 	].
-	txA11 _ txA11 / sx.
-	txA12 _ txA12 / sy.
-	txA21 _ txA21 / sx.
-	txA22 _ txA22 / sy.
-	answer _ nextGlyphX * sx.
+	txA11 := txA11 / sx.
+	txA12 := txA12 / sy.
+	txA21 := txA21 / sx.
+	txA22 := txA22 / sy.
+	answer := nextGlyphX * sx.
 	^answer asOop: Float! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'dtl 7/27/2021 16:41:46'!
@@ -2707,91 +2707,91 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	txA11 _ txA11 * sx.
-	txA12 _ txA12 * sy.
-	txA21 _ txA21 * sx.
-	txA22 _ txA22 * sy.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	txA11 := txA11 * sx.
+	txA12 := txA12 * sy.
+	txA21 := txA21 * sx.
+	txA22 := txA22 * sy.
 
-	nextGlyphX _ destX / sx.
-	nextGlyphY _ destY / sy.
+	nextGlyphX := destX / sx.
+	nextGlyphY := destY / sy.
 	startIndex-1 to: stopIndex-1 do: [ :utf32Index |
-		utf32 _ aWordArray at: utf32Index.
+		utf32 := aWordArray at: utf32Index.
 		aBoolean ifTrue: [
-			utf32 = 95 ifTrue: [ utf32 _ 8592 ].												"If underscore, use left arrow"
-			utf32 = 94 ifTrue: [ utf32 _ 8593 ].												"If caret, use up arrow"
+			utf32 = 95 ifTrue: [ utf32 := 8592 ].												"If underscore, use left arrow"
+			utf32 = 94 ifTrue: [ utf32 := 8593 ].												"If caret, use up arrow"
 			].
 		utf32 <= 16r7F
 			ifTrue: [
-				utf8Byte _ utf32.
-				i _ contourDataIndexes at: utf8Byte ]
+				utf8Byte := utf32.
+				i := contourDataIndexes at: utf8Byte ]
 			ifFalse: [ utf32 <= 16r7FF
 			ifTrue: [
-				utf8Byte _ (utf32 bitShift: -6) bitOr: 2r11000000.
-				i _ contourDataIndexes at: utf8Byte.
-				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i ]
+				utf8Byte := (utf32 bitShift: -6) bitOr: 2r11000000.
+				i := contourDataIndexes at: utf8Byte.
+				utf8Byte := (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i ]
 			ifFalse: [ utf32 <= 16rFFFF
 			ifTrue: [
-				utf8Byte _ (utf32 bitShift: -12) bitOr: 2r11100000.
-				i _ contourDataIndexes at: utf8Byte.
-				utf8Byte _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i.
-				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i ]
+				utf8Byte := (utf32 bitShift: -12) bitOr: 2r11100000.
+				i := contourDataIndexes at: utf8Byte.
+				utf8Byte := ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i.
+				utf8Byte := (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i ]
 			ifFalse: [
-				utf8Byte _ (utf32 bitShift: -18) bitOr: 2r11110000.
-				i _ contourDataIndexes at: utf8Byte.
-				utf8Byte _ ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i.
-				utf8Byte _ ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i.
-				utf8Byte _ (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
-				i _ contourDataIndexes at: utf8Byte - i ]]].
-		i _ i - 1.
-		advanceWidth _ contourData at: i. i _ i + 5.
-		numContours _ (contourData at: i) asInteger. i _ i + 1.
+				utf8Byte := (utf32 bitShift: -18) bitOr: 2r11110000.
+				i := contourDataIndexes at: utf8Byte.
+				utf8Byte := ((utf32 bitShift: -12) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i.
+				utf8Byte := ((utf32 bitShift: -6) bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i.
+				utf8Byte := (utf32 bitAnd: 2r00111111) bitOr: 2r10000000.
+				i := contourDataIndexes at: utf8Byte - i ]]].
+		i := i - 1.
+		advanceWidth := contourData at: i. i := i + 5.
+		numContours := (contourData at: i) asInteger. i := i + 1.
 		1 to: numContours do: [ :idx |
-			numBeziers _ (contourData at: i) asInteger. i _ i + 1.
-			ttMoveToX _ (contourData at: i) + nextGlyphX. i _ i + 1.
-			ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
-			startX _ (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
-			startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
-			contourStartX _ startX.
-			contourStartY _ startY.
+			numBeziers := (contourData at: i) asInteger. i := i + 1.
+			ttMoveToX := (contourData at: i) + nextGlyphX. i := i + 1.
+			ttMoveToY := (contourData at: i) + nextGlyphY. i := i + 1.
+			startX := (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
+			startY := (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
+			contourStartX := startX.
+			contourStartY := startY.
 			self initializeTrajectoryFragment.
 			1 to: numBeziers do: [ :idx2 |
-				ttEndX _ contourData at: i. i _ i + 1.
-				ttEndY _ contourData at: i. i _ i + 1.
-				ttControlX _ contourData at: i. i _ i + 1.
-				ttControlY _ contourData at: i. i _ i + 1.
-				endX _ (ttEndX * txA11) + (ttEndY * txA12) + startX.
-				endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
-				controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
-				controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
+				ttEndX := contourData at: i. i := i + 1.
+				ttEndY := contourData at: i. i := i + 1.
+				ttControlX := contourData at: i. i := i + 1.
+				ttControlY := contourData at: i. i := i + 1.
+				endX := (ttEndX * txA11) + (ttEndY * txA12) + startX.
+				endY := (ttEndX * txA21) + (ttEndY * txA22) + startY.
+				controlX := (ttControlX * txA11) + (ttControlY * txA12) + startX.
+				controlY := (ttControlX * txA21) + (ttControlY * txA22) + startY.
 				"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-				xMinEnd _ startX min: endX.
-				xMaxEnd _ startX max: endX.
-				yMinEnd _ startY min: endY.
-				yMaxEnd _ startY max: endY.
-				spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
-				spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
-				spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
-				spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+				xMinEnd := startX min: endX.
+				xMaxEnd := startX max: endX.
+				yMinEnd := startY min: endY.
+				yMaxEnd := startY max: endY.
+				spanLeft := spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
+				spanRight := spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
+				spanTop := spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
+				spanBottom := spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 				"Compute Quadratic Bezier Curve,"
 				"Case t = 0.0"
-				x _ startX.
-				y _ startY.
+				x := startX.
+				y := startY.
 				self updateAlphasWPZeroStrokeForX: x y: y.
 				self updateEdgeCountWPAtX: x y: y.
 				"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 				self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
-				inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-				increment _ 0.5 / (dx max: dy) min: 0.5.
-				t _ 0.0.
+				inSmalltalk: [ dx := (endX-startX) abs. dy := (endY-startY) abs ].
+				increment := 0.5 / (dx max: dy) min: 0.5.
+				t := 0.0.
 				[
-					t0 _ t. x0 _ x. y0 _ y.
+					t0 := t. x0 := x. y0 := y.
 					"Compute next point. Only C version to avoid hitting a limit in Smalltalk compiler."
 					self cCode: '
 						t = t0 + increment; oneLessT = 1.0 - t;
@@ -2800,20 +2800,20 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 						y = (f1 * startY) + (f2 * controlY) + (f3 * endY);
 						dx = x-x0; dy = y-y0;
 						length = sqrt(dx*dx + dy*dy);'
-						inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-					correction _ hop / length.
+						inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+					correction := hop / length.
 					"Now adjust the increment to aim at the required hop length, and recompute next point."
 					[
-						increment _ increment / length * hop.
-						t _ t0 + increment. oneLessT _ 1.0 - t.
-						f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-						x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-						y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-						dx _ x-x0. dy _ y-y0.
+						increment := increment / length * hop.
+						t := t0 + increment. oneLessT := 1.0 - t.
+						f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+						x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+						y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
+						dx := x-x0. dy := y-y0.
 						self cCode: '
 							length = sqrt(dx*dx + dy*dy);'
-							inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-						correction _ hop / length.
+							inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+						correction := hop / length.
 						correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 					t < 1.0 ]
 				whileTrue: [
@@ -2821,8 +2821,8 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 					self updateEdgeCountWPAtX: x y: y. ].
 				"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
 				This means that the end point is only added for the last fragment of the contour, and not for each one of them."
-				startX _ endX.
-				startY _ endY.	
+				startX := endX.
+				startY := endY.	
 			].
 			self updateAlphasWPZeroStrokeForX: endX y: endY.
 			self updateEdgeCountWPAtX: endX y: endY.
@@ -2832,13 +2832,13 @@ displayUtf32WP: aWordArray from: startIndex to: stopIndex atx: destX y: destY sc
 			Anyway, this is cheap."
 			self updateEdgeCountWPAtX: contourStartX y: contourStartY.
 		].
-		nextGlyphX _ nextGlyphX + advanceWidth.
+		nextGlyphX := nextGlyphX + advanceWidth.
 	].
-	txA11 _ txA11 / sx.
-	txA12 _ txA12 / sy.
-	txA21 _ txA21 / sx.
-	txA22 _ txA22 / sy.
-	answer _ nextGlyphX * sx.
+	txA11 := txA11 / sx.
+	txA12 := txA12 / sy.
+	txA21 := txA21 / sx.
+	txA22 := txA22 / sy.
+	answer := nextGlyphX * sx.
 	^answer asOop: Float! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'dtl 7/27/2021 16:41:54'!
@@ -2889,96 +2889,96 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 	self var: #yMinEnd type: 'float'.
 	self var: #yMaxEnd type: 'float'.
 
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	txA11 _ txA11 * sx.
-	txA12 _ txA12 * sy.
-	txA21 _ txA21 * sx.
-	txA22 _ txA22 * sy.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	txA11 := txA11 * sx.
+	txA12 := txA12 * sy.
+	txA21 := txA21 * sx.
+	txA22 := txA22 * sy.
 
-	nextGlyphX _ destX / sx.
-	nextGlyphY _ destY / sy.
-	baseIndex _ 0.
+	nextGlyphX := destX / sx.
+	nextGlyphY := destY / sy.
+	baseIndex := 0.
 	byteStartIndex-1 to: byteStopIndex-1 do: [ :byteIndex |
-		byte _ aByteArray at: byteIndex.
-		i _ contourDataIndexes at: baseIndex + byte.
+		byte := aByteArray at: byteIndex.
+		i := contourDataIndexes at: baseIndex + byte.
 		aBoolean ifTrue: [
 			byte = 95 ifTrue: [
-				i _ contourDataIndexes at: 226.
-				i _ contourDataIndexes at: 134 - i.
-				i _ contourDataIndexes at: 144 - i ].
+				i := contourDataIndexes at: 226.
+				i := contourDataIndexes at: 134 - i.
+				i := contourDataIndexes at: 144 - i ].
 			byte = 94 ifTrue: [ 
-				i _ contourDataIndexes at: 226.
-				i _ contourDataIndexes at: 134 - i.
-				i _ contourDataIndexes at: 145 - i ]].
+				i := contourDataIndexes at: 226.
+				i := contourDataIndexes at: 134 - i.
+				i := contourDataIndexes at: 145 - i ]].
 		i < 0
-			ifTrue: [ baseIndex _ 0 - i ]
+			ifTrue: [ baseIndex := 0 - i ]
 			ifFalse: [
-				i _ i - 1.
-				advanceWidth _ contourData at: i. i _ i + 5.
-				numContours _ (contourData at: i) asInteger. i _ i + 1.
+				i := i - 1.
+				advanceWidth := contourData at: i. i := i + 5.
+				numContours := (contourData at: i) asInteger. i := i + 1.
 				1 to: numContours do: [ :idx |
-					numBeziers _ (contourData at: i) asInteger. i _ i + 1.
-					ttMoveToX _ (contourData at: i) + nextGlyphX. i _ i + 1.
-					ttMoveToY _ (contourData at: i) + nextGlyphY. i _ i + 1.
-					startX _ (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
-					startY _ (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
-					contourStartX _ startX.
-					contourStartY _ startY.
+					numBeziers := (contourData at: i) asInteger. i := i + 1.
+					ttMoveToX := (contourData at: i) + nextGlyphX. i := i + 1.
+					ttMoveToY := (contourData at: i) + nextGlyphY. i := i + 1.
+					startX := (ttMoveToX * txA11) + (ttMoveToY * txA12) + txA13.
+					startY := (ttMoveToX * txA21) + (ttMoveToY * txA22) + txA23.
+					contourStartX := startX.
+					contourStartY := startY.
 					self initializeTrajectoryFragment.
 					1 to: numBeziers do: [ :idx2 |
-						ttEndX _ contourData at: i. i _ i + 1.
-						ttEndY _ contourData at: i. i _ i + 1.
-						ttControlX _ contourData at: i. i _ i + 1.
-						ttControlY _ contourData at: i. i _ i + 1.
-						endX _ (ttEndX * txA11) + (ttEndY * txA12) + startX.
-						endY _ (ttEndX * txA21) + (ttEndY * txA22) + startY.
-						controlX _ (ttControlX * txA11) + (ttControlY * txA12) + startX.
-						controlY _ (ttControlX * txA21) + (ttControlY * txA22) + startY.
+						ttEndX := contourData at: i. i := i + 1.
+						ttEndY := contourData at: i. i := i + 1.
+						ttControlX := contourData at: i. i := i + 1.
+						ttControlY := contourData at: i. i := i + 1.
+						endX := (ttEndX * txA11) + (ttEndY * txA12) + startX.
+						endY := (ttEndX * txA21) + (ttEndY * txA22) + startY.
+						controlX := (ttControlX * txA11) + (ttControlY * txA12) + startX.
+						controlY := (ttControlX * txA21) + (ttControlY * txA22) + startY.
 						"This computed span of the Bezier curve is a bit pessimistic (larger than strict bounds), but safe."
-						xMinEnd _ startX min: endX.
-						xMaxEnd _ startX max: endX.
-						yMinEnd _ startY min: endY.
-						yMaxEnd _ startY max: endY.
-						spanLeft _ spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
-						spanRight _ spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
-						spanTop _ spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
-						spanBottom _ spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
+						xMinEnd := startX min: endX.
+						xMaxEnd := startX max: endX.
+						yMinEnd := startY min: endY.
+						yMaxEnd := startY max: endY.
+						spanLeft := spanLeft min: (xMinEnd min: (xMinEnd+controlX) / 2.0).
+						spanRight := spanRight max: (xMaxEnd max: (xMaxEnd+controlX) / 2.0).
+						spanTop := spanTop min: (yMinEnd min: (yMinEnd+controlY) / 2.0).
+						spanBottom := spanBottom max: (yMaxEnd max: (yMaxEnd+controlY) / 2.0).
 						"Case t = 0.0"
-						x _ startX.
-						y _ startY.
+						x := startX.
+						y := startY.
 						self updateAlphasWPZeroStrokeForX: x y: y.
 						self updateEdgeCountWPAtX: x y: y.
 						"Will be corrected for each hop. This, being close to pointFrom, is a good initial guess for first correction."
 						self cCode: 'dx = fabs(endX-startX); dy = fabs(endY-startY);'
-						inSmalltalk: [ dx _ (endX-startX) abs. dy _ (endY-startY) abs ].
-						increment _ 0.5 / (dx max: dy) min: 0.5.
+						inSmalltalk: [ dx := (endX-startX) abs. dy := (endY-startY) abs ].
+						increment := 0.5 / (dx max: dy) min: 0.5.
 						"Compute Quadratic Bezier Curve,"
-						t _ 0.0.
+						t := 0.0.
 						[
-							t0 _ t. x0 _ x. y0 _ y.
+							t0 := t. x0 := x. y0 := y.
 							"Compute next point"
-							t _ t0 + increment. oneLessT _ 1.0 - t.
-							f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-							x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-							y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
+							t := t0 + increment. oneLessT := 1.0 - t.
+							f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+							x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+							y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
 							"Now adjust the increment to aim at the required hop length, and recompute next point."
-							dx _ x-x0. dy _ y-y0.
+							dx := x-x0. dy := y-y0.
 							self cCode: '
 								length = sqrt(dx*dx + dy*dy);'
-								inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-							correction _ hop / length.
+								inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+							correction := hop / length.
 							[
-								increment _ increment / length * hop.
-								t _ t0 + increment. oneLessT _ 1.0 - t.
-								f1 _ oneLessT * oneLessT. f2 _ 2.0 * oneLessT * t. f3 _ t * t.
-								x _ (f1 * startX) + (f2 * controlX) + (f3 * endX).
-								y _ (f1 * startY) + (f2 * controlY) + (f3 * endY).
-								dx _ x-x0. dy _ y-y0.
+								increment := increment / length * hop.
+								t := t0 + increment. oneLessT := 1.0 - t.
+								f1 := oneLessT * oneLessT. f2 := 2.0 * oneLessT * t. f3 := t * t.
+								x := (f1 * startX) + (f2 * controlX) + (f3 * endX).
+								y := (f1 * startY) + (f2 * controlY) + (f3 * endY).
+								dx := x-x0. dy := y-y0.
 								self cCode: '
 									length = sqrt(dx*dx + dy*dy);'
-									inSmalltalk: [ length _ ((dx*dx) + (dy*dy)) sqrt ].
-								correction _ hop / length.
+									inSmalltalk: [ length := ((dx*dx) + (dy*dy)) sqrt ].
+								correction := hop / length.
 								correction < 1.0]  whileTrue.		   "Keep adjusting if hop would be too big"
 							t < 1.0 ]
 						whileTrue: [
@@ -2986,8 +2986,8 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 							self updateEdgeCountWPAtX: x y: y ].
 						"Note: For TrueType font definitions, we assume that all contour fragments start exactly where the previous ends.
 						This means that the end point is only added for the last fragment of the contour, and not for each one of them."
-						startX _ endX.
-						startY _ endY.	
+						startX := endX.
+						startY := endY.	
 					].
 					self updateAlphasWPZeroStrokeForX: endX y: endY.
 					self updateEdgeCountWPAtX: endX y: endY.
@@ -2997,15 +2997,15 @@ displayUtf8WP: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atx: de
 					Anyway, this is cheap."
 					self updateEdgeCountWPAtX: contourStartX y: contourStartY.
 				].
-				nextGlyphX _ nextGlyphX + advanceWidth.
-				baseIndex _ 0.
+				nextGlyphX := nextGlyphX + advanceWidth.
+				baseIndex := 0.
 			]
 	].
-	txA11 _ txA11 / sx.
-	txA12 _ txA12 / sy.
-	txA21 _ txA21 / sx.
-	txA22 _ txA22 / sy.
-	answer _ nextGlyphX * sx.
+	txA11 := txA11 / sx.
+	txA12 := txA12 / sy.
+	txA21 := txA21 / sx.
+	txA22 := txA22 / sy.
+	answer := nextGlyphX * sx.
 	^answer asOop: Float! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - text and multi paths' stamp: 'dtl 7/27/2021 16:42:07'!
@@ -3025,53 +3025,53 @@ pathSequenceWP: aFloat32Array size: size edgeCounts: otherByteArray alphaMask: a
 	self var: #control2X type: 'float'.
 	self var: #control2Y type: 'float'.
 
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
-	contour _ otherFloat32Array.
-	i _ 0.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
+	contour := otherFloat32Array.
+	i := 0.
 	[ i < size ] whileTrue: [
-		commandType _ (aFloat32Array at: i) asInteger. i _ i + 1.
+		commandType := (aFloat32Array at: i) asInteger. i := i + 1.
 		commandType caseOf: {
 			[0] -> [
 				i+1 < size ifFalse: [ ^self "failure" ].
-				startX _ aFloat32Array at: i. i _ i + 1.
-				startY _ aFloat32Array at: i. i _ i + 1.
+				startX := aFloat32Array at: i. i := i + 1.
+				startY := aFloat32Array at: i. i := i + 1.
 				self initializeTrajectoryFragment.
 				].
 			[1] -> [
 				i+1 < size ifFalse: [ ^self "failure" ].
-				endX _ aFloat32Array at: i. i _ i + 1.
-				endY _ aFloat32Array at: i. i _ i + 1.
+				endX := aFloat32Array at: i. i := i + 1.
+				endY := aFloat32Array at: i. i := i + 1.
 				self pvt_lineWPFromX: startX y: startY toX: endX y: endY.
-				startX _ endX.
-				startY _ endY.
+				startX := endX.
+				startY := endY.
 				].
 			[2] -> [
 				i+3 < size ifFalse: [ ^self "failure" ].
-				endX _ aFloat32Array at: i. i _ i + 1.
-				endY _ aFloat32Array at: i. i _ i + 1.
-				control1X _ aFloat32Array at: i. i _ i + 1.
-				control1Y _ aFloat32Array at: i. i _ i + 1.
+				endX := aFloat32Array at: i. i := i + 1.
+				endY := aFloat32Array at: i. i := i + 1.
+				control1X := aFloat32Array at: i. i := i + 1.
+				control1Y := aFloat32Array at: i. i := i + 1.
 				self pvt_quadraticBezierWPFromX: startX y: startY
 					toX: endX y: endY
 					controlX: control1X y: control1Y.
-				startX _ endX.
-				startY _ endY.
+				startX := endX.
+				startY := endY.
 				].
 			[3] -> [
 				i+5 < size ifFalse: [ ^self "failure" ].
-				endX _ aFloat32Array at: i. i _ i + 1.
-				endY _ aFloat32Array at: i. i _ i + 1.
-				control1X _ aFloat32Array at: i. i _ i + 1.
-				control1Y _ aFloat32Array at: i. i _ i + 1.
-				control2X _ aFloat32Array at: i. i _ i + 1.
-				control2Y _ aFloat32Array at: i. i _ i + 1.
+				endX := aFloat32Array at: i. i := i + 1.
+				endY := aFloat32Array at: i. i := i + 1.
+				control1X := aFloat32Array at: i. i := i + 1.
+				control1Y := aFloat32Array at: i. i := i + 1.
+				control2X := aFloat32Array at: i. i := i + 1.
+				control2Y := aFloat32Array at: i. i := i + 1.
 				self pvt_cubicBezierWPFromX: startX y: startY
 					toX: endX y: endY
 					control1X: control1X y: control1Y
 					control2X: control2X y: control2Y.
-				startX _ endX.
-				startY _ endY.
+				startX := endX.
+				startY := endY.
 				]}
 		otherwise: [ ^self "failure"]].! !
 
@@ -3102,34 +3102,34 @@ blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	self var: #alpha type: 'float'.
 	self var: #unAlpha type: 'float'.
 
-	antiAliasAlpha _ antiAliasAlphaBits * 0.007874.								"1.0/127.0"
-	alpha _ antiAliasAlpha * fillA.
+	antiAliasAlpha := antiAliasAlphaBits * 0.007874.								"1.0/127.0"
+	alpha := antiAliasAlpha * fillA.
 
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			morphIdWord _ morphIds at: pixelIndex.
-			clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+			morphIdWord := morphIds at: pixelIndex.
+			clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
 			antiAliasAlphaBits > clippingAntiAliasBits ifTrue: [
-				clippingAntiAliasBits _ antiAliasAlphaBits]]
+				clippingAntiAliasBits := antiAliasAlphaBits]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					morphIdWord _ morphIds at: pixelIndex.
-					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
-					clippingAntiAlias _ clippingAntiAliasBits * 0.007874.								"1.0/127.0"
-					alpha _ alpha * clippingAntiAlias ]
+					morphIdWord := morphIds at: pixelIndex.
+					clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias := clippingAntiAliasBits * 0.007874.								"1.0/127.0"
+					alpha := alpha * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAliasBits _ 0]].
+					clippingAntiAliasBits := 0]].
 
 	alpha = 0.0 ifFalse: [
-		targetWord _ targetBits at: pixelIndex.
-		resultRBits _ targetWord bitAnd: 16rFF0000.
-		resultGBits _ targetWord bitAnd: 16rFF00.
-		resultBBits _ targetWord bitAnd: 16rFF.
-		unAlpha _ 1.0 - alpha.
+		targetWord := targetBits at: pixelIndex.
+		resultRBits := targetWord bitAnd: 16rFF0000.
+		resultGBits := targetWord bitAnd: 16rFF00.
+		resultBBits := targetWord bitAnd: 16rFF.
+		unAlpha := 1.0 - alpha.
 		self cCode: '
 				resultR = (alpha * fillR) + (unAlpha * (resultRBits >> 16));
 				resultRBits = (uint32_t)(resultR + 0.5) << 16;
@@ -3138,18 +3138,18 @@ blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 				resultB = (alpha * fillB) + (unAlpha * resultBBits);
 				resultBBits = (uint32_t)(resultB + 0.5);'
 			inSmalltalk: [
-				resultR _ alpha * fillR + (unAlpha * (resultRBits bitShift: -16)).
-				resultRBits _ (resultR + 0.5) asInteger bitShift: 16.
-				resultG _ alpha * fillG + (unAlpha * (resultGBits bitShift: -8)).
-				resultGBits _ (resultG + 0.5) asInteger bitShift: 8.
-				resultB _ alpha * fillB + (unAlpha * resultBBits).
-				resultBBits _ (resultB + 0.5) asInteger ].
+				resultR := alpha * fillR + (unAlpha * (resultRBits bitShift: -16)).
+				resultRBits := (resultR + 0.5) asInteger bitShift: 16.
+				resultG := alpha * fillG + (unAlpha * (resultGBits bitShift: -8)).
+				resultGBits := (resultG + 0.5) asInteger bitShift: 8.
+				resultB := alpha * fillB + (unAlpha * resultBBits).
+				resultBBits := (resultB + 0.5) asInteger ].
 
-		targetWord _ ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/29/2021 15:16:15'!
@@ -3167,27 +3167,27 @@ blendFillOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds:
 	self var: #edgesUpToThisPixel type: 'uint8_t'.
 	self var: #antiAliasAlphaBits type: 'uint8_t'.
 
-	targetBits _ aBitmap.
-	morphIds _ aWordArray.
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
+	targetBits := aBitmap.
+	morphIds := aWordArray.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
 	t to: b do: [ :displayY |
-		edgesUpToThisPixel _ 0.
-		pixelIndex _ displayY * targetWidth + l - 1.
+		edgesUpToThisPixel := 0.
+		pixelIndex := displayY * targetWidth + l - 1.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			edgesThisPixel _ edgeCountsWP at: pixelIndex.
+			pixelIndex := pixelIndex + 1.
+			edgesThisPixel := edgeCountsWP at: pixelIndex.
 			edgesThisPixel = 0 ifFalse: [
 				edgeCountsWP at: pixelIndex put: 0.
 				self cCode: '' inSmalltalk: [
 					"Not needed in C or OpenCL, just use a wraparound 8 bit type, such uint8_t"
-					edgesThisPixel > 127 ifTrue: [ edgesThisPixel _ edgesThisPixel - 256 ]].
-				edgesUpToThisPixel _ edgesUpToThisPixel + edgesThisPixel ].
-			antiAliasAlphaBits _ alphaMaskWP at: pixelIndex.
+					edgesThisPixel > 127 ifTrue: [ edgesThisPixel := edgesThisPixel - 256 ]].
+				edgesUpToThisPixel := edgesUpToThisPixel + edgesThisPixel ].
+			antiAliasAlphaBits := alphaMaskWP at: pixelIndex.
 			edgesUpToThisPixel = 0
 				ifFalse: [				"Inside the shape"
 					antiAliasAlphaBits = 16r00 ifFalse: [ alphaMaskWP at: pixelIndex put: 0 ].
-					antiAliasAlphaBits _ 16r7F - antiAliasAlphaBits.
+					antiAliasAlphaBits := 16r7F - antiAliasAlphaBits.
 					self blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 					]
 				ifTrue: [				"Still in the anti aliasing area, but outside the shape, strictly speaking."
@@ -3227,37 +3227,37 @@ blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBit
 	self var: #alpha type: 'float'.
 	self var: #unAlpha type: 'float'.
 
-	antiAliasAlpha _ antiAliasAlphaBits * 0.007874.								"1.0/127.0"
-	antiAliasUnAlpha _ 1.0 - antiAliasAlpha.
+	antiAliasAlpha := antiAliasAlphaBits * 0.007874.								"1.0/127.0"
+	antiAliasUnAlpha := 1.0 - antiAliasAlpha.
 	"We are inside the shape"
-	alpha _ antiAliasAlpha * strokeA + (antiAliasUnAlpha * fillA).
-	foreR _ antiAliasAlpha * strokeR + (antiAliasUnAlpha * fillR).
-	foreG _ antiAliasAlpha * strokeG + (antiAliasUnAlpha * fillG).
-	foreB _ antiAliasAlpha * strokeB + (antiAliasUnAlpha * fillB).
+	alpha := antiAliasAlpha * strokeA + (antiAliasUnAlpha * fillA).
+	foreR := antiAliasAlpha * strokeR + (antiAliasUnAlpha * fillR).
+	foreG := antiAliasAlpha * strokeG + (antiAliasUnAlpha * fillG).
+	foreB := antiAliasAlpha * strokeB + (antiAliasUnAlpha * fillB).
 
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
 			"We are inside the shape"
-			clippingAntiAliasBits _ 16r7F ]
+			clippingAntiAliasBits := 16r7F ]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					morphIdWord _ morphIds at: pixelIndex.
-					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
-					clippingAntiAlias _ clippingAntiAliasBits * 0.007874.								"1.0/127.0"
-					alpha _ alpha * clippingAntiAlias ]
+					morphIdWord := morphIds at: pixelIndex.
+					clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias := clippingAntiAliasBits * 0.007874.								"1.0/127.0"
+					alpha := alpha * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAliasBits _ 0]].
+					clippingAntiAliasBits := 0]].
 
 	alpha = 0.0 ifFalse: [
-		targetWord _ targetBits at: pixelIndex.
-		resultRBits _ targetWord bitAnd: 16rFF0000.
-		resultGBits _ targetWord bitAnd: 16rFF00.
-		resultBBits _ targetWord bitAnd: 16rFF.
-		unAlpha _ 1.0 - alpha.
+		targetWord := targetBits at: pixelIndex.
+		resultRBits := targetWord bitAnd: 16rFF0000.
+		resultGBits := targetWord bitAnd: 16rFF00.
+		resultBBits := targetWord bitAnd: 16rFF.
+		unAlpha := 1.0 - alpha.
 		self cCode: '
 				resultR = (alpha * foreR) + (unAlpha * (resultRBits >> 16));
 				resultRBits = (uint32_t)(resultR + 0.5) << 16;
@@ -3266,18 +3266,18 @@ blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBit
 				resultB = (alpha * foreB) + (unAlpha * resultBBits);
 				resultBBits = (uint32_t)(resultB + 0.5);'
 			inSmalltalk: [
-				resultR _ alpha * foreR + (unAlpha * (resultRBits bitShift: -16)).
-				resultRBits _ (resultR + 0.5) asInteger bitShift: 16.
-				resultG _ alpha * foreG + (unAlpha * (resultGBits bitShift: -8)).
-				resultGBits _ (resultG + 0.5) asInteger bitShift: 8.
-				resultB _ alpha * foreB + (unAlpha * resultBBits).
-				resultBBits _ (resultB + 0.5) asInteger ].
+				resultR := alpha * foreR + (unAlpha * (resultRBits bitShift: -16)).
+				resultRBits := (resultR + 0.5) asInteger bitShift: 16.
+				resultG := alpha * foreG + (unAlpha * (resultGBits bitShift: -8)).
+				resultGBits := (resultG + 0.5) asInteger bitShift: 8.
+				resultB := alpha * foreB + (unAlpha * resultBBits).
+				resultBBits := (resultB + 0.5) asInteger ].
 
-		targetWord _ ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
@@ -3311,38 +3311,38 @@ blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBi
 	self var: #alpha type: 'float'.
 	self var: #unAlpha type: 'float'.
 
-	antiAliasAlpha _ antiAliasAlphaBits * 0.007874.								"1.0/127.0"
+	antiAliasAlpha := antiAliasAlphaBits * 0.007874.								"1.0/127.0"
 	"In the stroke, outside the shape"
-	alpha _ antiAliasAlpha * strokeA.
-	foreR _ strokeR.
-	foreG _ strokeG.
-	foreB _ strokeB.
+	alpha := antiAliasAlpha * strokeA.
+	foreR := strokeR.
+	foreG := strokeG.
+	foreB := strokeB.
 
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			morphIdWord _ morphIds at: pixelIndex.
-			clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+			morphIdWord := morphIds at: pixelIndex.
+			clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
 			antiAliasAlphaBits > clippingAntiAliasBits ifTrue: [
-				clippingAntiAliasBits _ antiAliasAlphaBits ]]
+				clippingAntiAliasBits := antiAliasAlphaBits ]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					morphIdWord _ morphIds at: pixelIndex.
-					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
-					clippingAntiAlias _ clippingAntiAliasBits * 0.007874.								"1.0/127.0"
-					alpha _ alpha * clippingAntiAlias ]
+					morphIdWord := morphIds at: pixelIndex.
+					clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias := clippingAntiAliasBits * 0.007874.								"1.0/127.0"
+					alpha := alpha * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAliasBits _ 0]].
+					clippingAntiAliasBits := 0]].
 
 	alpha = 0.0 ifFalse: [
-		targetWord _ targetBits at: pixelIndex.
-		resultRBits _ targetWord bitAnd: 16rFF0000.
-		resultGBits _ targetWord bitAnd: 16rFF00.
-		resultBBits _ targetWord bitAnd: 16rFF.
-		unAlpha _ 1.0 - alpha.
+		targetWord := targetBits at: pixelIndex.
+		resultRBits := targetWord bitAnd: 16rFF0000.
+		resultGBits := targetWord bitAnd: 16rFF00.
+		resultBBits := targetWord bitAnd: 16rFF.
+		unAlpha := 1.0 - alpha.
 		self cCode: '
 				resultR = (alpha * foreR) + (unAlpha * (resultRBits >> 16));
 				resultRBits = (uint32_t)(resultR + 0.5) << 16;
@@ -3351,18 +3351,18 @@ blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBi
 				resultB = (alpha * foreB) + (unAlpha * resultBBits);
 				resultBBits = (uint32_t)(resultB + 0.5);'
 			inSmalltalk: [
-				resultR _ alpha * foreR + (unAlpha * (resultRBits bitShift: -16)).
-				resultRBits _ (resultR + 0.5) asInteger bitShift: 16.
-				resultG _ alpha * foreG + (unAlpha * (resultGBits bitShift: -8)).
-				resultGBits _ (resultG + 0.5) asInteger bitShift: 8.
-				resultB _ alpha * foreB + (unAlpha * resultBBits).
-				resultBBits _ (resultB + 0.5) asInteger ].
+				resultR := alpha * foreR + (unAlpha * (resultRBits bitShift: -16)).
+				resultRBits := (resultR + 0.5) asInteger bitShift: 16.
+				resultG := alpha * foreG + (unAlpha * (resultGBits bitShift: -8)).
+				resultGBits := (resultG + 0.5) asInteger bitShift: 8.
+				resultB := alpha * foreB + (unAlpha * resultBBits).
+				resultBBits := (resultB + 0.5) asInteger ].
 
-		targetWord _ ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].
 ! !
 
@@ -3382,23 +3382,23 @@ blendStrokeAndFillWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morp
 	self var: #edgesUpToThisPixel type: 'uint8_t'.
 	self var: #antiAliasAlphaBits type: 'uint8_t'.
 
-	targetBits _ aBitmap.
-	morphIds _ aWordArray.
-	edgeCountsWP _ otherByteArray.
-	alphaMaskWP _ anotherByteArray.
+	targetBits := aBitmap.
+	morphIds := aWordArray.
+	edgeCountsWP := otherByteArray.
+	alphaMaskWP := anotherByteArray.
 	t to: b do: [ :displayY |
-		edgesUpToThisPixel _ 0.
-		pixelIndex _ displayY * targetWidth + l - 1.
+		edgesUpToThisPixel := 0.
+		pixelIndex := displayY * targetWidth + l - 1.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			edgesThisPixel _ edgeCountsWP at: pixelIndex.
+			pixelIndex := pixelIndex + 1.
+			edgesThisPixel := edgeCountsWP at: pixelIndex.
 			edgesThisPixel = 0 ifFalse: [
 				edgeCountsWP at: pixelIndex put: 0.
 				self cCode: '' inSmalltalk: [
 					"Not needed in C or OpenCL, just use a wraparound 8 bit type, such uint8_t"
-					edgesThisPixel > 127 ifTrue: [ edgesThisPixel _ edgesThisPixel - 256 ]].
-				edgesUpToThisPixel _ edgesUpToThisPixel + edgesThisPixel ].
-			antiAliasAlphaBits _ alphaMaskWP at: pixelIndex.
+					edgesThisPixel > 127 ifTrue: [ edgesThisPixel := edgesThisPixel - 256 ]].
+				edgesUpToThisPixel := edgesUpToThisPixel + edgesThisPixel ].
+			antiAliasAlphaBits := alphaMaskWP at: pixelIndex.
 			edgesUpToThisPixel = 0
 				ifFalse: [				"Inside the shape"
 					antiAliasAlphaBits = 16r00 ifFalse: [ alphaMaskWP at: pixelIndex put: 0 ].
@@ -3435,34 +3435,34 @@ blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	self var: #alpha type: 'float'.
 	self var: #unAlpha type: 'float'.
 
-	antiAliasAlpha _ antiAliasAlphaBits * 0.007874.								"1.0/127.0"
-	alpha _ antiAliasAlpha * strokeA.
+	antiAliasAlpha := antiAliasAlphaBits * 0.007874.								"1.0/127.0"
+	alpha := antiAliasAlpha * strokeA.
 
 	currentClipsSubmorphs
 		ifTrue: [
 			"Don't clip us, but do clip submorphs"
-			morphIdWord _ morphIds at: pixelIndex.
-			clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
+			morphIdWord := morphIds at: pixelIndex.
+			clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
 			antiAliasAlphaBits > clippingAntiAliasBits ifTrue: [
-				clippingAntiAliasBits _ antiAliasAlphaBits]]
+				clippingAntiAliasBits := antiAliasAlphaBits]]
 		ifFalse: [
 			clipCurrentMorph
 				ifTrue: [
 					"Clip ourselves to the border anti aliasing of the morph we are clipping at. Keep it for further use."
-					morphIdWord _ morphIds at: pixelIndex.
-					clippingAntiAliasBits _ morphIdWord bitAnd: 16r7F.
-					clippingAntiAlias _ clippingAntiAliasBits * 0.007874.								"1.0/127.0"
-					alpha _ alpha * clippingAntiAlias ]
+					morphIdWord := morphIds at: pixelIndex.
+					clippingAntiAliasBits := morphIdWord bitAnd: 16r7F.
+					clippingAntiAlias := clippingAntiAliasBits * 0.007874.								"1.0/127.0"
+					alpha := alpha * clippingAntiAlias ]
 				ifFalse: [
 					"Don't do any additional clipping or preparation for further clipping"
-					clippingAntiAliasBits _ 0]].
+					clippingAntiAliasBits := 0]].
 
 	alpha = 0.0 ifFalse: [
-		targetWord _ targetBits at: pixelIndex.
-		resultRBits _ targetWord bitAnd: 16rFF0000.
-		resultGBits _ targetWord bitAnd: 16rFF00.
-		resultBBits _ targetWord bitAnd: 16rFF.
-		unAlpha _ 1.0 - alpha.
+		targetWord := targetBits at: pixelIndex.
+		resultRBits := targetWord bitAnd: 16rFF0000.
+		resultGBits := targetWord bitAnd: 16rFF00.
+		resultBBits := targetWord bitAnd: 16rFF.
+		unAlpha := 1.0 - alpha.
 		self cCode: '
 				resultR = (alpha * strokeR) + (unAlpha * (resultRBits >> 16));
 				resultRBits = (uint32_t)(resultR + 0.5) << 16;
@@ -3471,19 +3471,19 @@ blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 				resultB = (alpha * strokeB) + (unAlpha * resultBBits);
 				resultBBits = (uint32_t)(resultB + 0.5);'
 			inSmalltalk: [
-				resultR _ alpha * strokeR + (unAlpha * (resultRBits bitShift: -16)).
-				resultRBits _ (resultR + 0.5) asInteger bitShift: 16.
-				resultG _ alpha * strokeG + (unAlpha * (resultGBits bitShift: -8)).
-				resultGBits _ (resultG + 0.5) asInteger bitShift: 8.
-				resultB _ alpha * strokeB + (unAlpha * resultBBits).
-				resultBBits _ (resultB + 0.5) asInteger ].
+				resultR := alpha * strokeR + (unAlpha * (resultRBits bitShift: -16)).
+				resultRBits := (resultR + 0.5) asInteger bitShift: 16.
+				resultG := alpha * strokeG + (unAlpha * (resultGBits bitShift: -8)).
+				resultGBits := (resultG + 0.5) asInteger bitShift: 8.
+				resultB := alpha * strokeB + (unAlpha * resultBBits).
+				resultBBits := (resultB + 0.5) asInteger ].
 
 
-		targetWord _ ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		targetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
 
 		currentMorphId = 0 ifFalse: [
-			morphIdWord _ currentMorphId<<8 + clippingAntiAliasBits.
+			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
 			morphIds at: pixelIndex put: morphIdWord ]].! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/29/2021 15:38:07'!
@@ -3499,14 +3499,14 @@ blendStrokeOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphId
 
 	self var: #antiAliasAlphaBits type: 'uint8_t'.
 
-	targetBits _ aBitmap.
-	morphIds _ aWordArray.
-	alphaMaskWP _ anotherByteArray.
+	targetBits := aBitmap.
+	morphIds := aWordArray.
+	alphaMaskWP := anotherByteArray.
 	t to: b do: [ :displayY |
-		pixelIndex _ displayY * targetWidth + l - 1.
+		pixelIndex := displayY * targetWidth + l - 1.
 		l to: r do: [ :displayX |
-			pixelIndex _ pixelIndex + 1.
-			antiAliasAlphaBits _ alphaMaskWP at: pixelIndex.
+			pixelIndex := pixelIndex + 1.
+			antiAliasAlphaBits := alphaMaskWP at: pixelIndex.
 			antiAliasAlphaBits = 16r00 ifFalse: [										"In the stroke"
 				alphaMaskWP at: pixelIndex put: 0.
 				self blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]].! !
