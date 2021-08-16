@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4425] on 24 October 2020 at 5:08:56 pm'!
+'From Cuis 5.0 [latest update: #4758] on 16 August 2021 at 11:47:15 am'!
 'Description '!
-!provides: 'Morphic-Deprecated' 1 2!
+!provides: 'Morphic-Deprecated' 1 3!
 SystemOrganization addCategory: 'Morphic-Deprecated'!
 
 
@@ -12,16 +12,6 @@ MovableMorph subclass: #RectangleLikeMorph
 	category: 'Morphic-Deprecated'!
 !classDefinition: 'RectangleLikeMorph class' category: 'Morphic-Deprecated'!
 RectangleLikeMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #BorderedRectMorph category: 'Morphic-Deprecated'!
-RectangleLikeMorph subclass: #BorderedRectMorph
-	instanceVariableNames: 'borderWidth borderColor'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic-Deprecated'!
-!classDefinition: 'BorderedRectMorph class' category: 'Morphic-Deprecated'!
-BorderedRectMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #StringMorph category: 'Morphic-Deprecated'!
@@ -47,15 +37,6 @@ UpdatingStringMorph class
 
 !RectangleLikeMorph commentStamp: '<historical>' prior: 0!
 Hierarchy for morphs that are rectangle like, and that occupy an area that can be specified as a Rectangle. This means that, besides being of rectangular shape, sides are aligned with local coordinate axes. Including rectangles with rounded corners and such. The idea is that the 'extent' ivar is all that's needed to establish our dimensions and shape. Subclasses can add things like 'roundedCornerRadious' or such.!
-
-!BorderedRectMorph commentStamp: '<historical>' prior: 0!
-BorderedRectMorph introduce borders to RectangleLikeMorph. Borders have the instanceVariables borderWidth and borderColor.
-
-BorderedRectMorph subclasses can use a variety of border styles: simple, inset, raised
-
-
-BorderedRectMorph new borderColor: Color red; borderWidth: 10; openInWorld.
-BorderedRectMorph new borderColor: Color white; openInWorld!
 
 !StringMorph commentStamp: '<historical>' prior: 0!
 StringMorph is a "lightweight" Morph to display a String. It supports only a single font, color, and emphasis combination. For multiple text styles, use TextModelMorph.
@@ -165,6 +146,11 @@ morphHeight: aNumber
 
 	self morphExtent: extent x@aNumber! !
 
+!RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 8/16/2021 11:45:32'!
+morphLocalBounds
+
+	^`0@0` extent: extent.! !
+
 !RectangleLikeMorph methodsFor: 'geometry' stamp: 'jmv 7/23/2020 15:53:07'!
 morphPosition: newPos extent: newExtent
 	"Change the position of this morph. Argument is in owner's coordinates."
@@ -262,59 +248,6 @@ layoutSpec: aLayoutSpec
 !RectangleLikeMorph class methodsFor: 'new-morph participation' stamp: 'pb 6/8/2017 23:47:05'!
 categoryInNewMorphMenu
 	^ 'Kernel'! !
-
-!BorderedRectMorph methodsFor: 'accessing' stamp: 'jmv 8/21/2012 16:12'!
-borderColor
-	^ borderColor! !
-
-!BorderedRectMorph methodsFor: 'accessing' stamp: 'jmv 8/21/2012 16:12'!
-borderColor: aColor
-	borderColor = aColor ifFalse: [
-		borderColor _ aColor.
-		self redrawNeeded]! !
-
-!BorderedRectMorph methodsFor: 'accessing' stamp: 'gsa 12/28/2013 15:25'!
-borderWidth
-	^ borderWidth! !
-
-!BorderedRectMorph methodsFor: 'accessing' stamp: 'jmv 7/30/2014 09:24'!
-borderWidth: anInteger
-	borderWidth = anInteger ifFalse: [
-		borderWidth _ anInteger max: 0.
-		self redrawNeeded ]! !
-
-!BorderedRectMorph methodsFor: 'drawing' stamp: 'jmv 12/20/2014 14:58'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-	"If you redefine this method in a subclass, please take a look at the comment at #isOpaqueMorph"
-	aCanvas
-		fillRectangle: self morphLocalBounds
-		color: color
-		borderWidth: borderWidth
-		borderStyleSymbol: #simple
-		baseColorForBorder: borderColor! !
-
-!BorderedRectMorph methodsFor: 'initialization' stamp: 'jmv 3/10/2018 21:45:32'!
-defaultBorderColor
-	"answer the default border color/fill style for the receiver"
-	^ `Color gray`! !
-
-!BorderedRectMorph methodsFor: 'initialization' stamp: 'jmv 8/21/2012 16:12'!
-defaultBorderWidth
-	"answer the default border width for the receiver"
-	^ 2! !
-
-!BorderedRectMorph methodsFor: 'initialization' stamp: 'jmv 8/21/2012 22:45'!
-initialize
-	"initialize the state of the receiver"
-	super initialize.
-	"initialize the receiver state related to border"
-	borderColor _ self defaultBorderColor.
-	borderWidth _ self defaultBorderWidth! !
-
-!BorderedRectMorph methodsFor: 'testing' stamp: 'jmv 3/17/2013 22:54'!
-is: aSymbol
-	^ aSymbol == #BorderedRectMorph or: [ super is: aSymbol ]! !
 
 !StringMorph methodsFor: 'printing' stamp: 'efc 2/22/2003 21:35'!
 font: aFont 

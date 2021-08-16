@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4749] on 10 August 2021 at 2:10:37 pm'!
+'From Cuis 5.0 [latest update: #4757] on 16 August 2021 at 11:36:13 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 266!
+!provides: 'VectorGraphics' 1 270!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -111,12 +111,32 @@ HybridCanvas class
 
 !classDefinition: #VectorCanvas category: 'VectorGraphics-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
-	instanceVariableNames: 'boundsFinderEngine firstPoint lastControlPoint currentPoint'
+	instanceVariableNames: 'firstPoint lastControlPoint currentPoint'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
 !classDefinition: 'VectorCanvas class' category: 'VectorGraphics-Kernel'!
 VectorCanvas class
+	instanceVariableNames: ''!
+
+!classDefinition: #BoundsFinderCanvas category: 'VectorGraphics-Kernel'!
+VectorCanvas subclass: #BoundsFinderCanvas
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Kernel'!
+!classDefinition: 'BoundsFinderCanvas class' category: 'VectorGraphics-Kernel'!
+BoundsFinderCanvas class
+	instanceVariableNames: ''!
+
+!classDefinition: #VectorDrawingCanvas category: 'VectorGraphics-Kernel'!
+VectorCanvas subclass: #VectorDrawingCanvas
+	instanceVariableNames: 'boundsFinderCanvas'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Kernel'!
+!classDefinition: 'VectorDrawingCanvas class' category: 'VectorGraphics-Kernel'!
+VectorDrawingCanvas class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngine category: 'VectorGraphics-Kernel'!
@@ -514,12 +534,12 @@ Variables edgeCounts and alphaMask are 4 bytes per pixel (3 actually used).!
 Does only whole pixel antialiasing. Appropriate for very high resolution displays, or slower systems where the extra computational load of VectorEngineSubPixel is not affordable.
 Variables edgeCounts and alphaMask are single byte per pixel.!
 
-!VectorEngineWithPlugin commentStamp: '<historical>' prior: 0!
+!VectorEngineWithPlugin commentStamp: 'jmv 8/12/2021 16:16:59' prior: 0!
 "Just an experiment to exercise drawing operations."
 | m |
 m _ M3Exp01Morph new.
 m morphPosition: 15@30.
-(VectorCanvas onForm: Display) inspect; fullDraw: m.
+(VectorDrawingCanvas onForm: Display) inspect; fullDraw: m.
 Display forceToScreen.
 "Not sure if fallback code should use a pluginSmalltalkCode ivar, calling the VectorEnginePlugin in smalltalk, or duplicate that code here for fallback code (this would be better if those start to diverge because of optimizations)"!
 
@@ -1253,12 +1273,15 @@ drawOn: aCanvas
 	aCanvas drawHandSmall.
 	"! !
 
-!HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 11/30/2020 16:12:07'!
+!HybridCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:35:56'!
+boundsFinderCanvas
+	^vectorCanvas boundsFinderCanvas! !
+
+!HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 8/12/2021 16:32:44'!
 image: aForm at: aPoint sourceRect: sourceRect
 	"Draw a translucent image using the best available way of representing translucency."
 	| p e |
 
-	engine ifNil: [ ^nil ].
 	drawingOnMorphIDs ifTrue: [
 		"We transform p but not e. This is on purpose. We want to affect exactly the same rect as super."
 		e _ sourceRect extent.
@@ -1270,10 +1293,9 @@ image: aForm at: aPoint sourceRect: sourceRect
 
 	super image: aForm at: aPoint sourceRect: sourceRect! !
 
-!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 11/30/2020 16:12:00'!
+!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 8/12/2021 16:32:39'!
 fillRectangle: aRectangle tilingWith: aForm multipliedBy: aColor
 	| rect |
-	engine ifNil: [ ^nil ].
 
 	drawingOnMorphIDs ifTrue: [
 		aRectangle area = 0 ifTrue: [ ^self ].
@@ -1348,13 +1370,13 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	vectorCanvas setClipRect: aRectangle! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 5/28/2021 10:03:54'!
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 09:45:10'!
 setForm: aForm preferSubPixelAntiAliasing: aBoolean
 	form _ aForm.
 	engine _ BitBltCanvasEngine toForm: form.
 	"Init BitBlt so that the first call to the 'primitiveDisplayString' primitive will not fail"
 	engine sourceX: 0; width: 0.
-	vectorCanvas _ VectorCanvas onForm: form.
+	vectorCanvas _ VectorDrawingCanvas onForm: form.
 	morphIDsForm _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
 	drawingOnMorphIDs _ false.
 	self newClipRect: nil.! !
@@ -1369,16 +1391,6 @@ setPaintColor: aColor
 
 	super setPaintColor: aColor! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/25/2020 08:26:28'!
-updatingMorphBoundsDo: aBlock
-
-	| prevEngine |
-	prevEngine _ engine.
-	[
-		engine _ nil.
-		vectorCanvas updatingMorphBoundsDo: aBlock
-	] ensure: [ engine _ prevEngine ]! !
-
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 8/3/2020 17:03:44'!
 canDraw: aMorph
 	^true! !
@@ -1390,11 +1402,6 @@ currentMorphDrawingFails
 	c _ self canvasToUse.
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
-
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:20:48'!
-displayBoundsForHand: aHand
-
-	^vectorCanvas displayBoundsForHand: aHand! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 14:04:30'!
 drawCurrentAndSubmorphs
@@ -1486,13 +1493,12 @@ initialize
 engine
 	^engine! !
 
-!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 5/12/2021 11:12:34'!
+!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:31:49'!
 geometryTransformation: aGeometryTransformation
 	"Only used for testing. Usually, transformations are handled as we traverse the Morphs tree."
 
 	currentTransformation _ aGeometryTransformation.
-	engine geometryTransformation: aGeometryTransformation.
-	boundsFinderEngine geometryTransformation: aGeometryTransformation.! !
+	engine geometryTransformation: aGeometryTransformation.! !
 
 !VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:59'!
 fillColor: aFillColor do: pathCommandsBlock
@@ -1532,17 +1538,17 @@ strokeWidth: strokeWidth color: aStrokeColor fillColor: aFillColor do: pathComma
 		fillColor: aFillColor
 		do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 6/17/2021 19:46:27'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:04'!
 arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color red do: [ :canvas |
 		canvas
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.2 position: 200@100);
 	strokeWidth: 1.0 color: Color red do: [ :canvas |
 		canvas
@@ -1556,10 +1562,10 @@ Display forceToScreen
 	engine arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles.
 	currentPoint _ aPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 15:07:36'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:09'!
 circleCenter: aPoint radius: mr
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			circleCenter: 200 @ 150 radius: 80].
@@ -1568,10 +1574,10 @@ Display forceToScreen
 
 	engine circleCenter: aPoint radius: mr! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:57:08'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:15'!
 closePath
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1596,14 +1602,14 @@ cubicBezier: points
 		control1: points second
 		control2: points third! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/18/2021 10:12:49'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:24'!
 cubicBezierSmoothTo: aPoint control2: controlPoint
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
 	Smooth squence of curves: use as control1 point, last used control2 point."
 "Check that behavior is correct!!"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 150@300 radius: 10.
@@ -1612,7 +1618,7 @@ cubicBezierSmoothTo: aPoint control2: controlPoint
 		canvas
 			cubicBezierTo: 600@100 control1: 150@300 control2: 600@400
 			].
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 600 @ -200 radius: 10.
@@ -1624,7 +1630,7 @@ cubicBezierSmoothTo: aPoint control2: controlPoint
 Display forceToScreen.
 	"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -1638,12 +1644,12 @@ Display forceToScreen
 	mirroredLastControlPoint _ currentPoint + (currentPoint - lastControlPoint).
 	self cubicBezierTo: aPoint control1: mirroredLastControlPoint control2: controlPoint! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 14:54:27'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:47'!
 cubicBezierTo: aPoint control1: controlPoint1 control2: controlPoint2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1651,7 +1657,7 @@ cubicBezierTo: aPoint control1: controlPoint1 control2: controlPoint2
 Display forceToScreen
 	"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
 		canvas
@@ -1669,14 +1675,14 @@ curveTo: aPoint control1: control1Point control2: control2Point
 
 	self cubicBezierTo: aPoint control1: control1Point control2: control2Point! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 15:09:09'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:04'!
 ellipseCenter: aPoint radius: radiusPoint
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@150 radius: 100@50].
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
@@ -1685,14 +1691,14 @@ Display forceToScreen
 "
 	engine ellipseCenter: aPoint radius: radiusPoint ! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 15:12:10'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:16'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: -0.5 ].
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
@@ -1702,22 +1708,22 @@ Display forceToScreen
 
 	engine ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 15:12:42'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:25'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 	"Currently draws a line from pathCurrentX@pathCurrentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
 	Implement desired behavior when clear."
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6 ].
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.0 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6].
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@350 radius: 100@50 rotationAngle: 0.5 start: 0.1 sweep: 6 ].
@@ -1726,10 +1732,10 @@ Display forceToScreen.
 
 	engine ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 14:46:41'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:37'!
 lineTo: aPoint
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1737,7 +1743,7 @@ lineTo: aPoint
 Display forceToScreen
 "
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -1749,10 +1755,10 @@ Display forceToScreen
 	currentPoint _ aPoint.
 	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:57:44'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:46'!
 lineToX: xTo
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1760,7 +1766,7 @@ lineToX: xTo
 Display forceToScreen
 "
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -1770,10 +1776,10 @@ Display forceToScreen
 "
 	self lineTo: xTo @ currentPoint y! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:59:12'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:58'!
 lineToY: yTo
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1781,7 +1787,7 @@ lineToY: yTo
 Display forceToScreen
 "
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -1791,10 +1797,10 @@ Display forceToScreen
 "
 	self lineTo: currentPoint x @ yTo.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 14:17:33'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:14:12'!
 moveTo: aPoint
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1824,10 +1830,10 @@ quadraticBezier: points
 	self moveTo: points first.
 	self quadraticBezierTo: points third control: points second.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 13:40:03'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:14:27'!
 quadraticBezierSmoothTo: aPoint
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 450@300 radius: 10.
@@ -1835,7 +1841,7 @@ quadraticBezierSmoothTo: aPoint
 		canvas
 			quadraticBezierTo: 600@100 control: 450@300
 			].
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 750 @ -100 radius: 10.
@@ -1846,7 +1852,7 @@ quadraticBezierSmoothTo: aPoint
 Display forceToScreen.
 "
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -1860,10 +1866,10 @@ Display forceToScreen
 	mirroredLastControlPoint _ currentPoint + (currentPoint - lastControlPoint).
 	self quadraticBezierTo: aPoint control: mirroredLastControlPoint! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/12/2021 14:51:02'!
+!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:14:35'!
 quadraticBezierTo: aPoint control: controlPoint
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 3.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1871,7 +1877,7 @@ quadraticBezierTo: aPoint control: controlPoint
 Display forceToScreen
 	"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 3 position: 200@100);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -1978,11 +1984,11 @@ roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 		lineTo: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/18/2021 10:09:18'!
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:14:53'!
 rel_ArcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorCanvas onForm: Display)
-	strokeWidth: 1.0 color: Color red do: [ :canvas |
+(VectorDrawingCanvas onForm: Display)
+	strokeWidth: 5.0 color: Color red do: [ :canvas |
 		canvas
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
@@ -1992,14 +1998,14 @@ Display forceToScreen
 "
 	self arcTo: currentPoint + aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:43:57'!
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:15:05'!
 rel_CubicBezierSmoothTo: aPoint control2: controlPoint
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
 	Smooth squence of curves: use as control1 point, last used control2 point."
 "Check that behavior is correct!!"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2010,7 +2016,7 @@ rel_CubicBezierSmoothTo: aPoint control2: controlPoint
 Display forceToScreen
 	"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2021,7 +2027,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2036,12 +2042,12 @@ Display forceToScreen
 		cubicBezierSmoothTo: currentPoint + aPoint
 		control2: currentPoint + controlPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:49:39'!
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:15:44'!
 rel_CubicBezierTo: aPoint control1: control1Point control2: control2Point
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2053,7 +2059,7 @@ rel_CubicBezierTo: aPoint control1: control1Point control2: control2Point
 Display forceToScreen
 	"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
 		canvas
@@ -2074,10 +2080,10 @@ Display forceToScreen
 		control1: currentPoint+control1Point
 		control2: currentPoint+control2Point! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:50:35'!
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:16:02'!
 rel_LineTo: aPoint
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2089,7 +2095,7 @@ rel_LineTo: aPoint
 Display forceToScreen
 "
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -2104,10 +2110,10 @@ Display forceToScreen
 "
 	self lineTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:52:24'!
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:16:09'!
 rel_MoveTo: aPoint
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2121,10 +2127,10 @@ Display forceToScreen
 "
 	self moveTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:53:53'!
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:16:19'!
 rel_QuadraticBezierSmoothTo: aPoint
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 550@350 radius: 10.
@@ -2132,7 +2138,7 @@ rel_QuadraticBezierSmoothTo: aPoint
 		canvas
 			rel_QuadraticBezierTo: 600@100 control: 450@300
 			].
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 850 @ -50 radius: 10.
@@ -2143,7 +2149,7 @@ rel_QuadraticBezierSmoothTo: aPoint
 Display forceToScreen.
 "
 "
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2156,10 +2162,10 @@ Display forceToScreen
 	self
 		quadraticBezierSmoothTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 5/10/2021 13:55:08'!
+!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:16:27'!
 rel_QuadraticBezierTo: aPoint control: controlPoint
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	strokeWidth: 3.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2171,7 +2177,7 @@ rel_QuadraticBezierTo: aPoint control: controlPoint
 Display forceToScreen
 	"
 	"
-(VectorCanvas onForm: Display)
+(VectorDrawingCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 3 position: 200@100);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -2317,12 +2323,12 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				self rel_QuadraticBezierSmoothTo: to ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 7/18/2021 14:06:56'!
+!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 8/12/2021 16:14:17'!
 pathSequence: aFloat32Array
 	"
 	'Circle approximation by bezier curves
 	https://spencermortensen.com/articles/bezier-circle/'.
-	(VectorCanvas onForm: Display)
+	(VectorDrawingCanvas onForm: Display)
 		geometryTransformation: (AffineTransformation withScale: 14 position: 100@100);
 		strokeWidth: 3 color: Color random do: [ :engine |
 			engine
@@ -2345,12 +2351,12 @@ pathSequence: aFloat32Array
 	"
 	engine pathSequence: aFloat32Array! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/18/2021 10:09:28'!
+!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 8/12/2021 16:12:58'!
 drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 	"
 | s c f |
-c _ VectorCanvas onForm: Display.
+c _ VectorDrawingCanvas onForm: Display.
 c geometryTransformation: (AffineTransformation withRadians: 0.1).
 f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
 s _ 'Latin text in VectorGraphics'.
@@ -2660,14 +2666,14 @@ drawUpIcon
 			] asFloat32Array`
 		].! !
 
-!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:04:31'!
+!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 8/12/2021 16:12:39'!
 drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor: insideColor labelHeight: labelHeight
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
 	"
 	Display getCanvas windowFrame: (10@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
-	VectorCanvas onForm: Display :: into: self runningWorld; windowFrame: (210@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
+	VectorDrawingCanvas onForm: Display :: drawRoundedFrame: (210@10 extent: 200@100) border: 5 color: Color red insideColor: Color green labelHeight: 25.
 	Display forceToScreen
 	"
 	"
@@ -2814,13 +2820,13 @@ frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
 	self strokeWidth: borderWidth color: borderColor do: [
 		self rectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle bottom-d2 ]! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:25:35'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/12/2021 16:13:31'!
 frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borderWidth: morphStrokeWidth
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
 	"
-	(VectorCanvas onForm: Display)
+	(VectorDrawingCanvas onForm: Display)
 		frameRectangle: (10@10 extent: 300@200)
 		color: Color green
 		borderWidth: 10
@@ -2842,57 +2848,6 @@ frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borde
 		self lineTo: (aRectangle left + d1) @ (aRectangle top + d1).
 		self lineTo: (aRectangle right - d2) @ (aRectangle top + d1) ].! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 1/3/2021 12:25:56'!
-image: srcForm at: aPoint
-	"Workaround using WarpBlt until properly implemented in VectorEngine"
-
-	| cellSize srcBox dstBox srcQuad |
-
-	"hack to affect morphIds in a reasonably way"
-	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color black alpha: 0.01`.
-
-	cellSize _ 4.
-	srcBox _ srcForm boundingBox.
-	dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
-	srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) floor ].
-	dstBox _ currentTransformation displayBoundsOfTransformOf: (srcBox translatedBy: aPoint).
-	(WarpBlt toForm: form)
-		clipRect: clipRect;
-		sourceForm: srcForm;
-		colorMap: (srcForm colormapIfNeededFor: form);
-		cellSize: cellSize;
-		combinationRule: Form blend;
-		copyQuad: srcQuad toRect: dstBox.! !
-
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/26/2021 11:45:15'!
-image: aForm multipliedBy: aColor at: aPoint
-	self image: aForm at: aPoint! !
-
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 1/18/2021 17:26:20'!
-imageUnrotated: srcForm at: aPoint
-	"Workaround using WarpBlt until properly implemented in VectorEngine.
-	Scale and position like #image:at:, but don't rotate srcForm:
-	Display it in its natural orientation."
-
-	| cellSize srcBox dstBox srcQuad |
-
-	"hack to affect morphIds in a reasonably way"
-	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color black alpha: 0.01`.
-
-	cellSize _ 4.
-	srcBox _ srcForm boundingBox.
-	srcQuad _ srcBox corners.
-	dstBox _ Rectangle
-		center: (currentTransformation transform: srcBox center + aPoint) rounded
-		extent: (srcBox extent * currentTransformation scale) rounded.
-	(WarpBlt toForm: form)
-		clipRect: clipRect;
-		sourceForm: srcForm;
-		colorMap: (srcForm colormapIfNeededFor: form);
-		cellSize: cellSize;
-		combinationRule: Form blend;
-		copyQuad: srcQuad toRect: dstBox.! !
-
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:25:57'!
 line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
 
@@ -2908,52 +2863,6 @@ roundRect: aRectangle color: aColor radius: r
 		self
 			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 5/26/2021 11:27:13'!
-frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
-	"
-	(VectorCanvas onForm: Display)
-		frameAndFillGlobalRect: (10@10 extent: 300@200)
-		fillColor: Color yellow
-		borderWidth: 20
-		color: Color green.
-	Display forceToScreen
-	"
-	(BitBltCanvasEngine toForm: form)
-		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
-		fillColor: borderColor;
-		frameRect: rect borderWidth: borderWidth;
-		combinationRule: (fillColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
-		fillColor: fillColor;
-		fillRect: (rect insetBy: borderWidth).! !
-
-!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 5/26/2021 10:24:41'!
-frameGlobalRect: rect borderWidth: borderWidth color: borderColor
-	"
-	(VectorCanvas onForm: Display)
-		frameGlobalRect: (10@10 extent: 300@200)
-		borderWidth: 20
-		color: Color green.
-	Display forceToScreen
-	"
-	(BitBltCanvasEngine toForm: form)
-		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
-		fillColor: borderColor;
-		frameRect: rect borderWidth: borderWidth.! !
-
-!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 5/26/2021 12:12:56'!
-frameReverseGlobalRect: rect borderWidth: borderWidth
-	"
-	(VectorCanvas onForm: Display)
-		frameReverseGlobalRect: (10@10 extent: 300@200)
-		borderWidth: 20.
-	Display forceToScreen
-	"
-	(BitBltCanvasEngine toForm: form)
-		sourceForm: nil;
-		fillColor: `Color gray`;
-		combinationRule: Form reverse;
-		frameRect: rect borderWidth: borderWidth! !
-
 !VectorCanvas methodsFor: 'morphic' stamp: 'jmv 5/16/2021 10:40:37'!
 boundingRectOfCurrentMorphAfterDraw
 	"In targetForm coordinates.
@@ -2966,39 +2875,6 @@ boundingRectOfCurrentMorphAfterDraw
 	^ clippingMorphDisplayBounds
 		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
 		ifNil: [ boundingRect ]! !
-
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 11/17/2020 14:50:49'!
-clipCurrentMorph: aBoolean
-	engine clipCurrentMorph: aBoolean! !
-
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/4/2021 16:54:53'!
-contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
-	"In targetForm coordinates.
-	Doesn't account for any clipping at all.
-	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
-
-	^engine morphContourAfterDrawInto: anArray into: aBlock! !
-
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/4/2021 16:54:50'!
-contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
-	"In targetForm coordinates.
-	Doesn't account for any clipping at all.
-	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
-
-	anArray ifNil: [ ^engine morphContourAfterDrawInto: nil into: aBlock ].
-	^engine morphContourAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock! !
-
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:49'!
-displayBoundsForHand: aHand
-	"See #drawHand."
-
-	^self drawsHandLarge
-		ifTrue: [aHand morphPosition-`9@5` extent: `45@48`]
-		ifFalse: [aHand morphPosition-`4@3` extent: `21@24`].! !
 
 !VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 14:04:51'!
 drawCurrentAndSubmorphs
@@ -3032,171 +2908,27 @@ drawsHandLarge
 
 	^true! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 5/12/2021 16:16:54'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 10:31:08'!
 into: aMorph
 	super into: aMorph.
 	engine
 		currentMorph: currentMorph;
 		resetMorphBounds;
-		geometryTransformation: currentTransformation.
-	boundsFinderEngine
-		currentMorph: currentMorph;
-		resetMorphBounds;
 		geometryTransformation: currentTransformation.! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/13/2020 16:52:13'!
-morph: aMorph isAtPoint: aPoint
-	^engine morph: aMorph isAtPoint: aPoint! !
-
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 5/12/2021 16:17:02'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 10:30:46'!
 outOfMorph
 	super outOfMorph.
 	engine
 		currentMorph: currentMorph;
 		resetMorphBounds;
-		geometryTransformation: currentTransformation.
-	boundsFinderEngine
-		currentMorph: currentMorph;
-		resetMorphBounds;
 		geometryTransformation: currentTransformation.! !
-
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 3/21/2021 17:30:08'!
-restorePatch: savedPatch bounds: savedBounds
-	"Argument must previously be obtained by calling #savePatch:bounds:
-	Senders should not assume anything about the returned object, except that it will not be nil."
-
-	| savedIdsPatch hack bb savedDisplayPatch |
-"	super restorePatch: savedPatch first."
-"aForm _ savedPatch first.
-	self image: aForm
-		at: aForm offset
-		sourceRect: aForm boundingBox."
-savedDisplayPatch _ savedPatch first.
-	bb _ BitBlt toForm: form.
-	bb sourceForm: savedDisplayPatch; combinationRule: Form over;
-		sourceX: 0; sourceY: 0;
-		destX: savedBounds origin x destY: savedBounds origin y
-			width: savedBounds width height: savedBounds height;
-		copyBits.
-
-"Tanto el hack como el bb podrian guardarse."
-savedIdsPatch _ savedPatch second.
-	hack _ Form extent: form extent depth: 32 bits: (engine instVarNamed: 'morphIds').
-	bb _ BitBlt toForm: hack.
-	bb sourceForm: savedIdsPatch; combinationRule: Form over;
-		sourceX: 0; sourceY: 0;
-		destX: savedBounds origin x destY: savedBounds origin y
-			width: savedBounds width height: savedBounds height;
-		copyBits.! !
-
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 3/21/2021 17:33:44'!
-savePatch: prevSavedPatch bounds: aRectangle
-	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
-	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
-
-	| patchForm savedIdsPatch hack bb answer morphIds |
-self flag: #jmvHacks.
-	answer _ prevSavedPatch.
-	(answer is: #Array) ifFalse: [ answer _ Array new: 2 ].
-	patchForm _ super savePatch: answer first bounds: aRectangle.
-
-	patchForm == answer first
-		ifTrue: [
-			savedIdsPatch _ answer second.
-			savedIdsPatch offset: 0@0.
-			]
-		ifFalse: [
-			savedIdsPatch _ Form extent: patchForm extent depth: 32.
-			answer at: 1 put: patchForm.
-			answer at: 2 put: savedIdsPatch ].
-
-morphIds _ engine instVarNamed: 'morphIds'.
-"Tanto el hack como el bb podrian guardarse."
-	hack _ Form extent: form extent depth: 32 bits: morphIds.
-	bb _ BitBlt toForm: savedIdsPatch.
-	bb sourceForm: hack; combinationRule: Form over;
-		sourceX: aRectangle left; sourceY: aRectangle top;
-		width: aRectangle width; height: aRectangle height;
-		copyBits.
-	^answer! !
-
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 8/5/2021 12:20:01'!
-boundingRectOfCurrentMorphFromLocalBounds
-	"In targetForm coordinates.
-	Clipped to owner if appropriate.
-	Only valid for morphs where #morphLocalBounds is known"
-
-	| boundingRect |
-	boundingRect _ currentTransformation displayBoundsOfTransformOf: currentMorph morphLocalBounds.
-	^ clippingMorphDisplayBounds
-		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
-		ifNil: [
-			"Compensate for possible slight leakage of anti aliasing."
-			boundingRect outsetBy: 1]! !
 
 !VectorCanvas methodsFor: 'private' stamp: 'jmv 12/21/2020 17:36:45'!
 fontToUse: fontOrNil
 	"Answer a suitable font, aFont if possible."
 
 	^fontOrNil ifNil: [ FontFamily defaultOrTrueTypeFamilyAndPointSize ].! !
-
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 7/19/2021 15:10:53'!
-pvtDrawButtonFaceForm: aForm
-	"We assume that we are drawing a PluggableButtonMorph,
-	or some morph that conforms the required protocol.
-	Answer true if we were able to draw it."
-
-	| color |
-	color _ currentMorph isPressed
-		ifTrue: [ `Color gray: 0.75` ]
-		ifFalse: [
-			currentMorph mouseIsOver
-				ifTrue: [ `Color gray: 0.75` ]
-				ifFalse: [ `Color white` ]].
-	self
-		image: aForm
-		at: (currentMorph morphExtent - aForm extent //2).! !
-
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 1/14/2020 09:32:24'!
-setClipRect: aRectangle
-	"In targetForm coordinates"
-
-	super setClipRect: aRectangle.
-	engine clipRect: aRectangle! !
-
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 8/10/2021 14:06:14'!
-setForm: aForm preferSubPixelAntiAliasing: aBoolean
-	"
-	World extent: World extent
-	"
-	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
-	form _ aForm.
-	engine _ aBoolean
-		ifTrue: [VectorEngine subPixelAntiAliasingOnForm: form]
-		ifFalse: [VectorEngine onForm: form].
-	engine canvas: self.
-	boundsFinderEngine _ VectorEngine boundsFinderFor: form.
-	boundsFinderEngine antiAliasingWidth: engine antiAliasingWidth.
-	boundsFinderEngine subPixelDelta: engine subPixelDelta.								"So bounds found are exactly the same as engine would find."
-	boundsFinderEngine canvas: self.
-	self newClipRect: nil.! !
-
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 7/24/2020 17:09:33'!
-updatingMorphBoundsDo: aBlock
-
-	| prevEngine |
-	prevEngine _ engine.
-	[
-		engine _ boundsFinderEngine.
-		aBlock value.
-	] ensure: [ engine _ prevEngine ]! !
-
-!VectorCanvas methodsFor: 'initialization' stamp: 'jmv 5/28/2021 10:05:39'!
-initializeWith: aForm origin: aPoint preferSubPixelAntiAliasing: aBoolean
-
-	super initializeWith: aForm origin: aPoint preferSubPixelAntiAliasing: aBoolean.
-	engine geometryTransformation: currentTransformation.
-	boundsFinderEngine geometryTransformation: currentTransformation.! !
 
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 arrowOfDirection: aSymbol size: finalSizeInteger
@@ -3358,10 +3090,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 11:32:17'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/12/2021 09:47:37'!
 siemensStar
 	"
-	VectorCanvas siemensStar display
+	VectorDrawingCanvas siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -3372,7 +3104,7 @@ siemensStar
 	foreColor _ `Color gray: 200/255`.
 	form _ Form extent: extent asPoint depth: 32.
 	form fillColor: backColor.
-	canvas _ VectorCanvas onForm: form.
+	canvas _ VectorDrawingCanvas onForm: form.
 	1 to: count do: [ :i |
 		location _ AffineTransformation withRadians: i * angle * 2+0.02 scale: extent*0.45 position: extent-1/2.0 + offsetFromCenter.
 		canvas geometryTransformation: location.
@@ -3385,6 +3117,479 @@ siemensStar
 		].
 	].
 	^form! !
+
+!BoundsFinderCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 15:35:20'!
+frameGlobalRect: rect borderWidth: borderWidth color: borderColor! !
+
+!BoundsFinderCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/12/2021 15:52:34'!
+image: srcForm at: aPoint
+
+	"Compute bounds"
+	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color black`.! !
+
+!BoundsFinderCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/12/2021 15:53:59'!
+imageUnrotated: srcForm at: aPoint
+
+	"Compute bounds"
+	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color black`.! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:56:02'!
+clipCurrentMorph: aBoolean! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:57:27'!
+contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
+	"In targetForm coordinates.
+	Doesn't account for any clipping at all.
+	Doesn't include any protruding submorphs.
+	Only valid _after_ drawing currentMorph.
+	Use argument if appropriate, or answer a new array if not"
+
+	^nil! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:59:12'!
+contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
+	"In targetForm coordinates.
+	Doesn't account for any clipping at all.
+	Doesn't include any protruding submorphs.
+	Only valid _after_ drawing currentMorph.
+	Use argument if appropriate, or answer a new array if not"
+
+	^nil! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:48:16'!
+displayBoundsForHand: aHand
+	"See #drawHand."
+
+	^self drawsHandLarge
+		ifTrue: [aHand morphPosition-`9@5` extent: `45@48`]
+		ifFalse: [aHand morphPosition-`4@3` extent: `21@24`].! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:33:41'!
+drawCurrentAsOutline! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:34:11'!
+drawHighlight: aMorph! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:03:45'!
+fullAddCurrentRect: addCurrentBounds submorphs: trySubmorphs to: aDamageRecorder
+
+	| invalidateOwns |
+	invalidateOwns _ false.
+	addCurrentBounds ifTrue: [
+		currentMorph needsRedraw: false.
+		self updateCurrentBounds.
+		invalidateOwns _ true ].
+	trySubmorphs ifTrue: [
+		(currentMorph submorphsMightProtrude and: [currentMorph clipsSubmorphsReally not])
+			ifTrue: [
+				currentMorph submorphNeedsRedraw: false.
+				currentMorph submorphsReverseDo: [ :m |
+					self fullAddRedrawRect: m to: aDamageRecorder ]]
+			ifFalse: [
+				currentMorph fullRedrawNotNeeded.
+				invalidateOwns _ true ]].
+	invalidateOwns ifTrue: [
+		aDamageRecorder recordInvalidRect: currentMorph displayBounds for: currentMorph ]! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:07:07'!
+fullAddRedrawRect: aMorph to: aDamageRecorder
+	| addCurrentBounds trySubmorphs |
+	aMorph visible ifTrue: [
+		addCurrentBounds _ aMorph isRedrawNeeded.
+		trySubmorphs _ aMorph isSubmorphRedrawNeeded.
+		(trySubmorphs or: [addCurrentBounds]) ifTrue: [
+			self into: aMorph.
+			self
+				fullAddCurrentRect: addCurrentBounds
+				submorphs: trySubmorphs
+				to: aDamageRecorder.
+			self outOfMorph
+		]]! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/13/2021 17:06:43'!
+fullUpdateCurrentProtrudingBounds
+	"Recursively update display bounds, for currentMorph and all submorphs,
+	but only for those whose bounds may go outside owner bounds."
+
+	currentMorph knowsOwnLocalBounds
+		ifTrue: [currentMorph displayBoundsSetFrom: self]
+		ifFalse: [
+			currentMorph isKnownFailing
+				ifTrue: [
+					self drawCurrentAsError ]
+				ifFalse: [
+					"In these cases, #drawOn: is required to find bounds.
+					#displayBoundsSetFrom: will use the bounds found by us in these case.
+					See #displayBoundsSetFrom:"
+					currentMorph
+						drawOn: self;
+						displayBoundsSetFrom: self.
+					(currentMorph postDrawOn: self) ifTrue: [
+						currentMorph displayBoundsUpdateFrom: self ].
+					(currentMorph submorphsMightProtrude and: [currentMorph clipsSubmorphsReally not]) ifTrue: [
+						currentMorph submorphsDo: [ :m |
+							self fullUpdateProtrudingBounds: m ]]]].! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:11:00'!
+fullUpdateProtrudingBounds: aMorph
+	"Recursively update display bounds, for aMorph and all submorphs,
+	but only for those whose bounds may go outside owner bounds."
+	
+	aMorph visible ifTrue: [
+		self into: aMorph.
+		self fullUpdateCurrentProtrudingBounds.
+		self outOfMorph ].! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:16:01'!
+updateBoundsIn: aWorldMorph addDamageTo: aDamageRecorder
+
+	aWorldMorph submorphsDo: [ :morph |
+		self fullAddRedrawRect: morph to: aDamageRecorder ].
+	self updateHandsDisplayBounds: aWorldMorph.! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/13/2021 17:15:33'!
+updateCurrentBounds
+	"Update display bounds, for currentMorph only."
+
+	currentMorph knowsOwnLocalBounds
+		ifTrue: [currentMorph displayBoundsSetFrom: self]
+		ifFalse: [
+			currentMorph isKnownFailing
+				ifTrue: [
+					self drawCurrentAsError ]
+				ifFalse: [
+					"In these cases, #drawOn: is required to find bounds.
+					#displayBoundsSetFrom: will use the bounds found by us in these case.
+					See #displayBoundsSetFrom:"
+					currentMorph
+						drawOn: self;
+						displayBoundsSetFrom: self.
+					(currentMorph postDrawOn: self) ifTrue: [
+						currentMorph displayBoundsUpdateFrom: self ]].]! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:16:09'!
+updateHandsDisplayBounds: aWorldMorph
+	"Update displayBounds for carried morphs if never set.
+	Useful for new morph, that are created and attached to the hand."
+	
+	aWorldMorph handsDo: [ :hand |
+		hand hasSubmorphs ifTrue: [
+			self into: hand.
+			hand submorphsDo: [ :morph |
+				morph displayBounds ifNil: [
+					self fullUpdateProtrudingBounds: morph ]].
+			self outOfMorph ]].! !
+
+!BoundsFinderCanvas methodsFor: 'testing' stamp: 'jmv 8/12/2021 14:47:56'!
+isBoundsFinderCanvas
+	^true! !
+
+!BoundsFinderCanvas methodsFor: 'initialization' stamp: 'jmv 8/11/2021 14:30:58'!
+initialize
+	engine _ VectorEngineBoundsFinder new.
+	engine canvas: self.
+	clippingMorphDisplayBounds _ nil.! !
+
+!BoundsFinderCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 10:57:42'!
+initializeWithOrigin: aPoint
+
+	super initializeWithOrigin: aPoint.
+	engine geometryTransformation: currentTransformation.! !
+
+!BoundsFinderCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 10:17:04'!
+setForm: aForm preferSubPixelAntiAliasing: aBoolean
+
+	engine _ VectorEngineBoundsFinder new.
+	clippingMorphDisplayBounds _ nil.! !
+
+!VectorDrawingCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:34:48'!
+boundsFinderCanvas
+	^boundsFinderCanvas! !
+
+!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 16:16:37'!
+frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
+	"
+	(VectorDrawingCanvas onForm: Display)
+		frameAndFillGlobalRect: (10@10 extent: 300@200)
+		fillColor: Color yellow
+		borderWidth: 20
+		color: Color green.
+	Display forceToScreen
+	"
+	(BitBltCanvasEngine toForm: form)
+		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: borderColor;
+		frameRect: rect borderWidth: borderWidth;
+		combinationRule: (fillColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: fillColor;
+		fillRect: (rect insetBy: borderWidth).! !
+
+!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 16:08:09'!
+frameGlobalRect: rect borderWidth: borderWidth color: borderColor
+	"
+	(VectorDrawingCanvas onForm: Display)
+		frameGlobalRect: (10@10 extent: 300@200)
+		borderWidth: 20
+		color: Color green.
+	Display forceToScreen
+	"
+	(BitBltCanvasEngine toForm: form)
+		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: borderColor;
+		frameRect: rect borderWidth: borderWidth.! !
+
+!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 16:16:46'!
+frameReverseGlobalRect: rect borderWidth: borderWidth
+	"
+	(VectorDrawingCanvas onForm: Display)
+		frameReverseGlobalRect: (10@10 extent: 300@200)
+		borderWidth: 20.
+	Display forceToScreen
+	"
+	(BitBltCanvasEngine toForm: form)
+		sourceForm: nil;
+		fillColor: `Color gray`;
+		combinationRule: Form reverse;
+		frameRect: rect borderWidth: borderWidth! !
+
+!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/15/2021 10:42:40'!
+image: srcForm at: aPoint
+	"Workaround using WarpBlt until properly implemented in VectorEngine"
+
+	
+
+	"hack to affect morphIds in a reasonably way
+	Use BitBlt on morphIDs if code below uses bitblt!!
+	If no plugin, maybe use warblt for both (if warpblt needed)"
+	| bb p |
+	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: Color random.
+"asi, pinto Display tambien. Y eso está mal. Primero, porque es caro. Segundo, porque el Form puede tener translucencia, y se pong banana abajo!!
+Simplemente usar el mismo blt sobre morphIds
+Ver el hack de HybridCanvas>>setForm:preferSubPixelAntiAliasing:
+Hay que hacer algo parecido.
+No sé si guardar ese form hackeado feo...
+En Hybrid me permití hacer esas cosas feas.
+Acá, ya el código debería quedar limpio.
+Así que hay que pensar algo mejor. El problema es:
+Un VectorC o HybridC va a usar BitBlt sobre su target. Necesita hacer lo mismo sobre morphIDs, que esta oculto adentro del engine. Tiene sentido que el engine guarde el Form hackeado sobre morphIDs, y lo devuela para ser usado en el canvas, cuando el canvas esquiva los servicios del engine?
+Ojo. Sigue siendo el canvas el que decide esquivar al engine. O sea, que drawingOnMorphIDs sigue en el canvas.
+
+Quizas, en vez de intercambiar el form, hackearlo para cambiar sobre que bits actua. En ese caso, el BitBltEngine ni se entera. Y en este método, uso la misma instancia de bitblt
+
+Solo necesito agregar un accessor a la ivar morphIds del VectorEngine.
+"
+
+	currentTransformation isPureTranslation
+ifTrue: [
+	p _ (currentTransformation transform: aPoint) rounded.
+	bb _ BitBlt toForm: form.
+	bb colorMap: (srcForm colormapIfNeededFor: form); fillColor: nil.
+bb clipRect: clipRect.
+
+
+	"
+	bb image: srcForm at: p sourceRect: srcForm boundingBox rule: `Form blend`.
+	"
+
+
+	bb sourceForm: srcForm; combinationRule: `Form blend`;
+		sourceX: 0; sourceY: 0;
+		destX: p x destY: p y
+			width: srcForm width height: srcForm height;
+		copyBits.
+
+
+
+	""
+	"
+	ver correccion alpha channel... o no. no lo se. Ver:
+	image:at:sourceRect:
+	"
+]
+ifFalse: [ | cellSize dstBox srcBox srcQuad |
+
+"ENTENDER clipRect en WarpBlt!!!!!!!!!!"
+	cellSize _ 4.
+	srcBox _ srcForm boundingBox.
+	dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
+	srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) floor ].
+	dstBox _ currentTransformation displayBoundsOfTransformOf: (srcBox translatedBy: aPoint).
+	(WarpBlt toForm: form)
+		clipRect: clipRect;
+		sourceForm: srcForm;
+		colorMap: (srcForm colormapIfNeededFor: form);
+		cellSize: cellSize;
+		combinationRule: Form blend;
+		copyQuad: srcQuad toRect: dstBox.
+]! !
+
+!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/15/2021 10:29:57'!
+imageUnrotated: srcForm at: aPoint
+	"Workaround using WarpBlt until properly implemented in VectorEngine.
+	Scale and position like #image:at:, but don't rotate srcForm:
+	Display it in its natural orientation."
+"La diferencia es el calculo de srcQuad y dstBox.
+Cuando el otro este estabilizado, hacer este a imagen y semejanza. O borrarlo, si no hace falta. No me acuerdo para qué estaba!!"
+	| cellSize srcBox dstBox srcQuad |
+
+	"hack to affect morphIds in a reasonably way"
+	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color black alpha: 0.01`.
+
+	cellSize _ 4.
+	srcBox _ srcForm boundingBox.
+	srcQuad _ srcBox corners.
+	dstBox _ Rectangle
+		center: (currentTransformation transform: srcBox center + aPoint) rounded
+		extent: (srcBox extent * currentTransformation scale) rounded.
+	(WarpBlt toForm: form)
+		clipRect: clipRect;
+		sourceForm: srcForm;
+		colorMap: (srcForm colormapIfNeededFor: form);
+		cellSize: cellSize;
+		combinationRule: Form blend;
+		copyQuad: srcQuad toRect: dstBox.! !
+
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:55:58'!
+clipCurrentMorph: aBoolean
+	engine clipCurrentMorph: aBoolean! !
+
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:57:08'!
+contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
+	"In targetForm coordinates.
+	Doesn't account for any clipping at all.
+	Doesn't include any protruding submorphs.
+	Only valid _after_ drawing currentMorph.
+	Use argument if appropriate, or answer a new array if not"
+
+	^engine morphContourAfterDrawInto: anArray into: aBlock! !
+
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:58:46'!
+contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
+	"In targetForm coordinates.
+	Doesn't account for any clipping at all.
+	Doesn't include any protruding submorphs.
+	Only valid _after_ drawing currentMorph.
+	Use argument if appropriate, or answer a new array if not"
+
+	anArray ifNil: [ ^engine morphContourAfterDrawInto: nil into: aBlock ].
+	^engine morphContourAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock! !
+
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 16:01:43'!
+morph: aMorph isAtPoint: aPoint
+	^engine morph: aMorph isAtPoint: aPoint! !
+
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 16:02:57'!
+restorePatch: savedPatch bounds: savedBounds
+	"Argument must previously be obtained by calling #savePatch:bounds:
+	Senders should not assume anything about the returned object, except that it will not be nil."
+
+	| savedIdsPatch hack bb savedDisplayPatch |
+"	super restorePatch: savedPatch first."
+"aForm _ savedPatch first.
+	self image: aForm
+		at: aForm offset
+		sourceRect: aForm boundingBox."
+savedDisplayPatch _ savedPatch first.
+	bb _ BitBlt toForm: form.
+	bb sourceForm: savedDisplayPatch; combinationRule: Form over;
+		sourceX: 0; sourceY: 0;
+		destX: savedBounds origin x destY: savedBounds origin y
+			width: savedBounds width height: savedBounds height;
+		copyBits.
+
+"Tanto el hack como el bb podrian guardarse."
+savedIdsPatch _ savedPatch second.
+	hack _ Form extent: form extent depth: 32 bits: (engine instVarNamed: 'morphIds').
+	bb _ BitBlt toForm: hack.
+	bb sourceForm: savedIdsPatch; combinationRule: Form over;
+		sourceX: 0; sourceY: 0;
+		destX: savedBounds origin x destY: savedBounds origin y
+			width: savedBounds width height: savedBounds height;
+		copyBits.! !
+
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 16:03:16'!
+savePatch: prevSavedPatch bounds: aRectangle
+	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
+	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
+
+	| patchForm savedIdsPatch hack bb answer morphIds |
+self flag: #jmvHacks.
+	answer _ prevSavedPatch.
+	(answer is: #Array) ifFalse: [ answer _ Array new: 2 ].
+	patchForm _ super savePatch: answer first bounds: aRectangle.
+
+	patchForm == answer first
+		ifTrue: [
+			savedIdsPatch _ answer second.
+			savedIdsPatch offset: 0@0.
+			]
+		ifFalse: [
+			savedIdsPatch _ Form extent: patchForm extent depth: 32.
+			answer at: 1 put: patchForm.
+			answer at: 2 put: savedIdsPatch ].
+
+morphIds _ engine instVarNamed: 'morphIds'.
+"Tanto el hack como el bb podrian guardarse."
+	hack _ Form extent: form extent depth: 32 bits: morphIds.
+	bb _ BitBlt toForm: savedIdsPatch.
+	bb sourceForm: hack; combinationRule: Form over;
+		sourceX: aRectangle left; sourceY: aRectangle top;
+		width: aRectangle width; height: aRectangle height;
+		copyBits.
+	^answer! !
+
+!VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 16:05:57'!
+pvtDrawButtonFaceForm: aForm
+	"We assume that we are drawing a PluggableButtonMorph,
+	or some morph that conforms the required protocol.
+	Answer true if we were able to draw it."
+
+	| color |
+	color _ currentMorph isPressed
+		ifTrue: [ `Color gray: 0.75` ]
+		ifFalse: [
+			currentMorph mouseIsOver
+				ifTrue: [ `Color gray: 0.75` ]
+				ifFalse: [ `Color white` ]].
+	self
+		image: aForm
+		at: (currentMorph morphExtent - aForm extent //2).! !
+
+!VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 16:07:27'!
+setClipRect: aRectangle
+	"In targetForm coordinates"
+
+	super setClipRect: aRectangle.
+	engine clipRect: aRectangle! !
+
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 15:18:19'!
+initializeWithOrigin: aPoint
+
+	super initializeWithOrigin: aPoint.
+	engine geometryTransformation: currentTransformation.
+
+	boundsFinderCanvas _ BoundsFinderCanvas new initializeWithOrigin: aPoint.
+	"So bounds found are exactly the same as our engine would find."
+	boundsFinderCanvas engine antiAliasingWidth: engine antiAliasingWidth.
+	boundsFinderCanvas engine subPixelDelta: engine subPixelDelta.! !
+
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 15:18:41'!
+setForm: aForm preferSubPixelAntiAliasing: aBoolean
+	"
+	World extent: World extent
+	"
+	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
+	form _ aForm.
+	engine _ aBoolean
+		ifTrue: [VectorEngine subPixelAntiAliasingOnForm: form]
+		ifFalse: [VectorEngine onForm: form].
+	engine canvas: self.
+	self newClipRect: nil.! !
+
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 15:26:50'!
+world: aWorldMorph
+	super world: aWorldMorph.
+	boundsFinderCanvas world: aWorldMorph! !
 
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
 antiAliasingWidth
@@ -3413,101 +3618,6 @@ morphBoundsAfterDraw
 	Only valid _after_ drawing currentMorph."
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
-
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:14'!
-basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
-	"Prepare parameters for drawing stroke."
-
-	| sharper apparentWeight |
-	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self ].
-	aStrokeWidth = 0.0 ifTrue: [ ^self ].
-	aStrokeWidth < antiAliasingWidth
-		ifTrue: [
-			"There are two possible strategies when requested stroke width is narrower than anti aliasing filter.
-			To more effectively avoid aliasing, set sharper to false.
-			To draw sharper thin lines, at the price of very little extra aliasing in them, set sharper to true.
-			This could be turned into a Preference."
-			sharper _ true.
-			sharper ifTrue: [
-				"If the requested stroke width is used, filter will be clipped, resulting in an incorrect weight for the stroke."
-				apparentWeight _ ((aStrokeWidth squared / antiAliasingWidth) + (2.0 * aStrokeWidth) + antiAliasingWidth) / 4.0.
-				"{'(sharper)desired weight'. aStrokeWidth. 'but would get'. apparentWeight. 'correction'. aStrokeWidth / apparentWeight} print."
-				self pvtStrokeWidth: aStrokeWidth.
-				self pvtStrokeColor: (aStrokeColor alpha: aStrokeColor alpha * aStrokeWidth / apparentWeight)]
-			ifFalse: [
-				"If the requested stroke width is too thin, make them wide enough to be properly sampled."
-				"{'(wider)desired weight'. aStrokeWidth. 'but would get'. antiAliasingWidth. 'correction'. aStrokeWidth / antiAliasingWidth} print."
-				self pvtStrokeWidth: antiAliasingWidth.
-				self pvtStrokeColor: (aStrokeColor alpha: aStrokeColor alpha * aStrokeWidth / antiAliasingWidth) 
-			]
-			]
-		ifFalse: [
-			self pvtStrokeWidth: aStrokeWidth.
-			self pvtStrokeColor: aStrokeColor ].
-	self pvtFillColor: nil.
-	self pvtHopLength: 0.5.									"See #experimentHopsPerPixel2"
-
-	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
-
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/17/2021 17:29:48'!
-basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
-	"Prepare parameters for drawing stroke, fill, or both."
-
-	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
-	aStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
-	(aFillColor isNil or: [ aFillColor alpha = 0.0]) ifTrue: [ ^ self basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: false ].
-
-	"If stroke is thinner than antiAliasingWidth, we need to make it wider and less opaque.
-	But this requires doing fill first and the blending stroke over it, or else fill gets eroded by widened stroke.
-	(this is only relevant if fill ~= stroke~)"
-	(aStrokeWidth < antiAliasingWidth and: [ aStrokeColor ~= aFillColor ]) ifTrue: [
-		self fillColor: aFillColor do: pathCommandsBlock.
-		canvas ifNotNil: [ canvas initializePath ].
-		self basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: true.
-		^ self ].
-
-	self pvtStrokeWidth: aStrokeWidth.
-	self pvtStrokeColor: aStrokeColor.
-	self pvtFillColor: aFillColor.
-	aStrokeWidth < antiAliasingWidth
-		ifTrue: [
-			"Strokes are really thin, but strokeColor is same as fillColor, so there's no problem sampling them."
-			self pvtHopLength: 0.5 ]								"See #experimentHopsPerPixel1"
-		ifFalse: [
-			self pvtHopLength: 0.5 ].								"See #experimentHopsPerPixel2."
-
-	self doPath: pathCommandsBlock ensureClosePath: true.! !
-
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 6/11/2021 11:57:45'!
-fillColor: aFillColor do: pathCommandsBlock
-	"Prepare parameters for drawing fill."
-
-	(aFillColor isNil or: [ aFillColor alpha = 0.0]) ifTrue: [ ^ self ].
-	self pvtStrokeWidth: 0.0.
-	self pvtStrokeColor: nil.
-	self pvtFillColor: aFillColor.
-	self pvtHopLength: 0.5.										"See #experimentHopsPerPixel3"
-	self doPath: pathCommandsBlock ensureClosePath: true.! !
-
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:45:04'!
-strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
-	"Prepare parameters for drawing stroke."
-
-	self
-		basicStrokeWidth: (geometryTransformation externalizeScalar: clientStrokeWidth)
-		color: aStrokeColor
-		do: pathCommandsBlock
-		ensureClosePath: false! !
-
-!VectorEngine methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:46:55'!
-strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
-	"Prepare parameters for drawing stroke, fill, or both."
-
-	self
-		basicStrokeWidth: (geometryTransformation externalizeScalar: clientStrokeWidth)
-		color: aStrokeColor
-		fillColor: aFillColor
-		do: pathCommandsBlock! !
 
 !VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:06:47'!
 arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
@@ -4146,14 +4256,6 @@ canvas: aMorphicCanvas
 
 	canvas _ aMorphicCanvas! !
 
-!VectorEngine methodsFor: 'morphic' stamp: 'jmv 8/8/2021 20:21:50'!
-morph: aMorph isAtPoint: aPoint
-	self subclassResponsibility ! !
-
-!VectorEngine methodsFor: 'morphic' stamp: 'jmv 8/8/2021 20:21:07'!
-pvtSetForm: aForm
-	self subclassResponsibility! !
-
 !VectorEngine methodsFor: 'private' stamp: 'jmv 3/25/2021 19:31:28'!
 doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Evaluate a sequence of path commands. Path parameters already set."
@@ -4161,12 +4263,6 @@ doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 	self initializePath.
 	pathCommandsBlock valueWithPossibleArgument: (canvas ifNil:[self]).
 	self finishPath: ensureClosePath! !
-
-!VectorEngine methodsFor: 'private' stamp: 'jmv 5/12/2021 11:30:10'!
-initializeOnForm: aForm
-	self currentMorph: nil.
-	self pvtSetForm: aForm.
-	geometryTransformation _ GeometryTransformation identity ! !
 
 !VectorEngine methodsFor: 'private' stamp: 'jmv 3/18/2021 15:10:50'!
 initializePath
@@ -4500,22 +4596,17 @@ experimentHopsPerPixel3
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 4/9/2021 12:17:36'!
-boundsFinderFor: aForm
-
-	^ VectorEngineBoundsFinder new initializeOnForm: aForm! !
-
 !VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 3/22/2021 14:59:34'!
 defaultAntiAliasingWidth
 	self subclassResponsibility! !
 
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/10/2021 14:06:14'!
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/11/2021 19:30:47'!
 onForm: aForm
 	"On a non-abstract class, answer an instance of receiver.
 	On an abstract class, pick a subclass."
 
-	(self == VectorEngine) | (self == VectorEngineWithPlugin)
-		ifFalse: [ ^self new initializeOnForm: aForm ].
+	subclasses isEmpty ifTrue: [
+		^self new initializeOnForm: aForm ].
 
 	^ (VectorEngineWithPlugin isPluginAvailable
 		ifTrue: [
@@ -4533,9 +4624,6 @@ subPixelAntiAliasingOnForm: aForm
 		ifFalse: [VectorEngineSubPixel])
 			new initializeOnForm: aForm! !
 
-!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 7/24/2020 16:52:27'!
-clipRect: aRectangle! !
-
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 11/17/2020 10:04:59'!
 currentMorph: aMorph! !
 
@@ -4546,6 +4634,35 @@ morphContourAfterDrawInto: anArray into: aBlock
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:23'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
 	^nil! !
+
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 12:01:10'!
+basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
+	"Prepare parameters for drawing stroke."
+
+	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self ].
+	aStrokeWidth = 0.0 ifTrue: [ ^self ].
+	self pvtStrokeWidth: (aStrokeWidth max: antiAliasingWidth).
+	self pvtHopLength: 0.5.
+	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
+
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 11:53:03'!
+fillColor: aFillColor do: pathCommandsBlock
+	"Prepare parameters for drawing fill."
+
+	(aFillColor isNil or: [ aFillColor alpha = 0.0]) ifTrue: [ ^ self ].
+	self pvtStrokeWidth: 0.0.
+	self pvtHopLength: 0.5.										"See #experimentHopsPerPixel3"
+	self doPath: pathCommandsBlock ensureClosePath: true.! !
+
+!VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 11:54:46'!
+strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
+	"Prepare parameters for drawing stroke."
+
+	self
+		basicStrokeWidth: (geometryTransformation externalizeScalar: clientStrokeWidth)
+		color: aStrokeColor
+		do: pathCommandsBlock
+		ensureClosePath: false! !
 
 !VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 3/5/2021 15:20:36'!
 strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
@@ -4655,11 +4772,6 @@ finishPath: ensureClosePath
 	morphBoundsRight _ morphBoundsRight max: spanRight.
 	morphBoundsBottom _ morphBoundsBottom max: spanBottom.! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/8/2021 21:05:50'!
-initializeOnForm: aForm
-	self currentMorph: nil.
-	self resetMorphBounds.! !
-
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/8/2021 22:26:44'!
 initializePath
 
@@ -4669,21 +4781,6 @@ initializePath
 	spanBottom _ 0.						"drawable top. Will later be refined."
 	spanLeft _ 16r7FFFFFFF.						"drawable right. Will later be refined."
 	spanRight _ 0.						"drawable left. Will later be refined."! !
-
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 7/24/2020 17:14:59'!
-morph: aMorph isAtPoint: aPoint
-	self shouldNotHappen! !
-
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/5/2021 15:14:42'!
-pvtFillColor: aColor! !
-
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 4/9/2021 12:16:15'!
-pvtSetForm: aForm
-
-	self shouldNotImplement! !
-
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/5/2021 15:14:51'!
-pvtStrokeColor: aColor! !
 
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/10/2021 12:03:57'!
 pvtStrokeWidth: aNumber
@@ -4702,6 +4799,10 @@ resetMorphBounds
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/22/2021 11:19:05'!
 subPixelDelta: aNumber
 	subPixelDelta _ aNumber! !
+
+!VectorEngineBoundsFinder methodsFor: 'initialization' stamp: 'jmv 8/11/2021 20:04:04'!
+initialize
+	self resetMorphBounds.! !
 
 !VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:07:18'!
 clipCurrentMorph: aBoolean
@@ -4828,6 +4929,11 @@ subPixelDelta
 
 	^0.0! !
 
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/11/2021 20:04:10'!
+initializeOnForm: aForm
+	self currentMorph: nil.
+	self pvtSetForm: aForm.! !
+
 !VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/10/2021 12:05:53'!
 morph: aMorph isAtPoint: aPoint
 	| index |
@@ -4857,6 +4963,100 @@ resetMorphBounds
 	morphBoundsBottom _ 0.
 	morphBoundsLeft _ targetWidth - 1.
 	morphBoundsRight _ 0! !
+
+!VectorEngineDrawer methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 11:58:30'!
+basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
+	"Prepare parameters for drawing stroke."
+
+	| sharper apparentWeight |
+	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self ].
+	aStrokeWidth = 0.0 ifTrue: [ ^self ].
+	aStrokeWidth < antiAliasingWidth
+		ifTrue: [
+			"There are two possible strategies when requested stroke width is narrower than anti aliasing filter.
+			To more effectively avoid aliasing, set sharper to false.
+			To draw sharper thin lines, at the price of very little extra aliasing in them, set sharper to true.
+			This could be turned into a Preference."
+			sharper _ true.
+			sharper ifTrue: [
+				"If the requested stroke width is used, filter will be clipped, resulting in an incorrect weight for the stroke."
+				apparentWeight _ ((aStrokeWidth squared / antiAliasingWidth) + (2.0 * aStrokeWidth) + antiAliasingWidth) / 4.0.
+				"{'(sharper)desired weight'. aStrokeWidth. 'but would get'. apparentWeight. 'correction'. aStrokeWidth / apparentWeight} print."
+				self pvtStrokeWidth: aStrokeWidth.
+				self pvtStrokeColor: (aStrokeColor alpha: aStrokeColor alpha * aStrokeWidth / apparentWeight)]
+			ifFalse: [
+				"If the requested stroke width is too thin, make them wide enough to be properly sampled."
+				"{'(wider)desired weight'. aStrokeWidth. 'but would get'. antiAliasingWidth. 'correction'. aStrokeWidth / antiAliasingWidth} print."
+				self pvtStrokeWidth: antiAliasingWidth.
+				self pvtStrokeColor: (aStrokeColor alpha: aStrokeColor alpha * aStrokeWidth / antiAliasingWidth)]
+			]
+		ifFalse: [
+			self pvtStrokeWidth: aStrokeWidth.
+			self pvtStrokeColor: aStrokeColor ].
+	self pvtFillColor: nil.
+	self pvtHopLength: 0.5.									"See #experimentHopsPerPixel2"
+
+	self doPath: pathCommandsBlock ensureClosePath: ensureClosePath.! !
+
+!VectorEngineDrawer methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 11:48:50'!
+basicStrokeWidth: aStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
+	"Prepare parameters for drawing stroke, fill, or both."
+
+	(aStrokeColor isNil or: [ aStrokeColor alpha = 0.0]) ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
+	aStrokeWidth = 0.0 ifTrue: [ ^ self fillColor: aFillColor do: pathCommandsBlock ].
+	(aFillColor isNil or: [ aFillColor alpha = 0.0]) ifTrue: [ ^ self basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: false ].
+
+	"If stroke is thinner than antiAliasingWidth, we need to make it wider and less opaque.
+	But this requires doing fill first and the blending stroke over it, or else fill gets eroded by widened stroke.
+	(this is only relevant if fill ~= stroke~)"
+	(aStrokeWidth < antiAliasingWidth and: [ aStrokeColor ~= aFillColor ]) ifTrue: [
+		self fillColor: aFillColor do: pathCommandsBlock.
+		canvas ifNotNil: [ canvas initializePath ].
+		self basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: true.
+		^ self ].
+
+	self pvtStrokeWidth: aStrokeWidth.
+	self pvtStrokeColor: aStrokeColor.
+	self pvtFillColor: aFillColor.
+	aStrokeWidth < antiAliasingWidth
+		ifTrue: [
+			"Strokes are really thin, but strokeColor is same as fillColor, so there's no problem sampling them."
+			self pvtHopLength: 0.5 ]								"See #experimentHopsPerPixel1"
+		ifFalse: [
+			self pvtHopLength: 0.5 ].								"See #experimentHopsPerPixel2."
+
+	self doPath: pathCommandsBlock ensureClosePath: true.! !
+
+!VectorEngineDrawer methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 11:48:55'!
+fillColor: aFillColor do: pathCommandsBlock
+	"Prepare parameters for drawing fill."
+
+	(aFillColor isNil or: [ aFillColor alpha = 0.0]) ifTrue: [ ^ self ].
+	self pvtStrokeWidth: 0.0.
+	self pvtStrokeColor: nil.
+	self pvtFillColor: aFillColor.
+	self pvtHopLength: 0.5.										"See #experimentHopsPerPixel3"
+	self doPath: pathCommandsBlock ensureClosePath: true.! !
+
+!VectorEngineDrawer methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 11:52:14'!
+strokeWidth: clientStrokeWidth color: aStrokeColor do: pathCommandsBlock
+	"Prepare parameters for drawing stroke."
+
+	self
+		basicStrokeWidth: (geometryTransformation externalizeScalar: clientStrokeWidth)
+		color: aStrokeColor
+		do: pathCommandsBlock
+		ensureClosePath: false! !
+
+!VectorEngineDrawer methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 11:52:20'!
+strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
+	"Prepare parameters for drawing stroke, fill, or both."
+
+	self
+		basicStrokeWidth: (geometryTransformation externalizeScalar: clientStrokeWidth)
+		color: aStrokeColor
+		fillColor: aFillColor
+		do: pathCommandsBlock! !
 
 !VectorEngineSmalltalk methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:04:36'!
 antiAliasingWidth: aNumber
@@ -7257,7 +7457,7 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 5/28/2021 14:12:17'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 8/12/2021 09:47:00'!
 formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	"Needed only for BitBltCanvasEngine"
 	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i iso8859s15Code |
@@ -7288,7 +7488,7 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
-	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: form.
+	canvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: form.
 	canvas 
 		engine
 			displayString: aCharacter asString
@@ -7306,7 +7506,7 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale)! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 5/28/2021 14:12:29'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 8/12/2021 09:47:07'!
 formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil pixelSize: pixelSize useST80Glyphs: aBoolean
 	"Needed only for BitBltCanvasEngine"
 	| utf8ByteArray toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
@@ -7343,7 +7543,7 @@ formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrN
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
-	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: form.
+	canvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: form.
 	canvas 
 		engine
 			displayUtf8: utf8ByteArray
@@ -8612,7 +8812,7 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/5/2021 11:57:09'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/12/2021 11:43:31'!
 findFullBoundsInOwner
 	"Find and answer full bounds in whatever owner.
 	These might not equal #displayFullBounds at all!!"
@@ -8629,19 +8829,17 @@ findFullBoundsInOwner
 		w ifNil: [
 			w _ WorldMorph new.
 			w setCanvas ]].
-	c _ w canvas.
+	c _ w canvas boundsFinderCanvas.
 	"Hack owner so #displayBoundsSetFrom: will update privateDisplayBounds"
 	prevOwner _ owner.
 	owner _ w.
-	c updatingMorphBoundsDo: [
-		c fullUpdateProtrudingBounds: self ].
+	c fullUpdateProtrudingBounds: self.
 	answer _ self displayFullBounds.
 	"Reset owner and privateDisplayBounds (if needed) so no one finds out what we've just done!!"
 	prevOwner == owner ifFalse: [
 		owner _ prevOwner.
 		self world = w ifTrue: [
-			c updatingMorphBoundsDo: [
-				c fullUpdateProtrudingBounds: self ]]].
+			c fullUpdateProtrudingBounds: self ]].
 	^answer! !
 
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/5/2021 09:52:22'!
@@ -8663,7 +8861,7 @@ fitInto: aRectangle
 	currentBounds _ self findFullBoundsInOwner.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/5/2021 11:57:39'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/12/2021 09:46:14'!
 imageForm: extentOrNil depth: depth
 	"Scale as needed. Draw unrotated."
 
@@ -8693,7 +8891,7 @@ imageForm: extentOrNil depth: depth
 			self location: (MorphicTranslation withTranslation: bounds origin negated) ].
 	answer _ Form extent: extent depth: 32.
 	"Ask for a Canvas with subpixels so it can also handle translucent target"
-	auxCanvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
+	auxCanvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: answer.
 	"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
 	auxCanvas engine disableSubPixelSampling.
 	depth = 32 ifFalse: [
@@ -8910,14 +9108,11 @@ c _ self onForm: Display.
 utf8 _ #[97 32 95 32 55 46 32 94 97 46 32 76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46].
 c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@40 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:30:21'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 8/12/2021 16:25:39'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph
 	Answer nil if nothing was done"
 	| p1 |
-
-	engine ifNil: [ ^nil ].
-
 	p1 _ currentTransformation transform: aPoint rounded.
 	p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
 	p1 _ p1 rounded.
@@ -8930,14 +9125,11 @@ drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aT
 		trueTypeFont: aTrueTypeFont
 		color: aColor! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 15:15:25'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 8/12/2021 16:25:44'!
 drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph
 	Answer nil if nothing was done"
 	| p1 |
-
-	engine ifNil: [ ^nil ].
-
 	p1 _ currentTransformation transform: aPoint rounded.
 	p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
 	p1 _ p1 rounded.
