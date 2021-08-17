@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4757] on 16 August 2021 at 11:36:13 am'!
+'From Cuis 5.0 [latest update: #4760] on 17 August 2021 at 10:36:33 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 270!
+!provides: 'VectorGraphics' 1 271!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1353,17 +1353,14 @@ canvasToUse
 		^ vectorCanvas ].
 	^self.! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 11/30/2020 12:28:51'!
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 8/16/2021 16:32:08'!
 onMorphIdsDo: aBlock
-	
-	"
-	QQQ _ DateAndTime now.
-	"
+
 	engine instVarNamed: 'destForm' put: morphIDsForm.
 	drawingOnMorphIDs _ true.
-	aBlock value.
-	engine instVarNamed: 'destForm' put: form.
-	drawingOnMorphIDs _ false.! !
+	aBlock ensure: [
+		engine instVarNamed: 'destForm' put: form.
+		drawingOnMorphIDs _ false ].! !
 
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 7/11/2020 10:55:26'!
 setClipRect: aRectangle
@@ -1499,6 +1496,10 @@ geometryTransformation: aGeometryTransformation
 
 	currentTransformation _ aGeometryTransformation.
 	engine geometryTransformation: aGeometryTransformation.! !
+
+!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 8/16/2021 15:34:57'!
+morphIds
+	^engine morphIds! !
 
 !VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:59'!
 fillColor: aFillColor do: pathCommandsBlock
@@ -3352,88 +3353,94 @@ frameReverseGlobalRect: rect borderWidth: borderWidth
 		combinationRule: Form reverse;
 		frameRect: rect borderWidth: borderWidth! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/15/2021 10:42:40'!
+!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/17/2021 10:22:00'!
 image: srcForm at: aPoint
-	"Workaround using WarpBlt until properly implemented in VectorEngine"
+	"Workaround using WarpBlt until properly implemented in VectorEngine.
+	 (WarpBlt might not give desired result, i.e. a properly filtered and resamples image)
 
-	
+	In the general case, use WarpBlt to apply currentTransformation.
+	Prior to that, set morphIds for affected pixels, and update bounds in engine.
+	This is expensive!!
 
-	"hack to affect morphIds in a reasonably way
-	Use BitBlt on morphIDs if code below uses bitblt!!
-	If no plugin, maybe use warblt for both (if warpblt needed)"
-	| bb p |
-	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: Color random.
-"asi, pinto Display tambien. Y eso está mal. Primero, porque es caro. Segundo, porque el Form puede tener translucencia, y se pong banana abajo!!
-Simplemente usar el mismo blt sobre morphIds
-Ver el hack de HybridCanvas>>setForm:preferSubPixelAntiAliasing:
-Hay que hacer algo parecido.
-No sé si guardar ese form hackeado feo...
-En Hybrid me permití hacer esas cosas feas.
-Acá, ya el código debería quedar limpio.
-Así que hay que pensar algo mejor. El problema es:
-Un VectorC o HybridC va a usar BitBlt sobre su target. Necesita hacer lo mismo sobre morphIDs, que esta oculto adentro del engine. Tiene sentido que el engine guarde el Form hackeado sobre morphIDs, y lo devuela para ser usado en el canvas, cuando el canvas esquiva los servicios del engine?
-Ojo. Sigue siendo el canvas el que decide esquivar al engine. O sea, que drawingOnMorphIDs sigue en el canvas.
+	If No scaling and no rotation, use BitBlt instead (way faster). This is useful, for instance, for halo handles.
+	We expect to replace them with vector graphics icons, anyway.
 
-Quizas, en vez de intercambiar el form, hackearlo para cambiar sobre que bits actua. En ese caso, el BitBltEngine ni se entera. Y en este método, uso la misma instancia de bitblt
+	But if drawing the world background, finding bounds is not needed. Use two BitBlts then:
+	One to paint pixels, and a second one to set morphIds.
+	In this way, performance is same as in HybridCanvas, and not too different from BitBltCanvas.
+	This is especially important, the default World background is a Form!!"
 
-Solo necesito agregar un accessor a la ivar morphIds del VectorEngine.
-"
+	| bb p bits |
 
+	"Special case for our world:
+	- No bounds needed
+	- currentTransformation is identity: No translation, no rotation, no scaling.
+	BitBlt is enough, but we need tow of them!!"
+	currentMorph == world ifTrue: [
+		p _ (currentTransformation transform: aPoint) rounded.
+		bb _ BitBlt toForm: form.
+		bb
+			sourceForm: srcForm; fillColor: nil; combinationRule: Form blend;
+			colorMap: (srcForm colormapIfNeededFor: form);
+			clipRect: clipRect;
+			sourceX: 0; sourceY: 0;
+			destX: p x destY: p y width: srcForm width height: srcForm height;
+			copyBits.
+		bits _ form bits.
+		[
+			form bits: engine morphIds.
+			bb
+				sourceForm: nil;
+				fillBitmap: (Bitmap with: (currentMorph morphId << 8 + 255));
+				combinationRule: `Form over`;
+				colorMap: nil;
+				copyBits.
+		] ensure: [ form bits: bits ].
+		^self ].
+
+	"Otherwise, we need to compute bounds. While we are at it, set morphID for affected pixels."
+	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color gray alpha: 0.01`.
 	currentTransformation isPureTranslation
-ifTrue: [
-	p _ (currentTransformation transform: aPoint) rounded.
-	bb _ BitBlt toForm: form.
-	bb colorMap: (srcForm colormapIfNeededFor: form); fillColor: nil.
-bb clipRect: clipRect.
+		ifTrue: [
+			p _ (currentTransformation transform: aPoint) rounded.
+			bb _ BitBlt toForm: form.
+			bb
+				sourceForm: srcForm; fillColor: nil; combinationRule: Form blend;
+				colorMap: (srcForm colormapIfNeededFor: form);
+				clipRect: clipRect;
+				sourceX: 0; sourceY: 0;
+				destX: p x destY: p y width: srcForm width height: srcForm height;
+				copyBits ]
+		ifFalse: [
+			| cellSize dstBox srcBox srcQuad |
+			cellSize _ 4.
+			srcBox _ srcForm boundingBox.
+			dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
+			srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) rounded ].
+			dstBox _ currentTransformation displayBoundsOfTransformOf: (srcBox translatedBy: aPoint-0.5).
+			bb _ WarpBlt toForm: form.
+			bb
+				sourceForm: srcForm; combinationRule: Form blend;
+				colorMap: (srcForm colormapIfNeededFor: form);
+				clipRect: clipRect;
+				cellSize: cellSize;
+				copyQuad: srcQuad toRect: dstBox ].! !
 
-
-	"
-	bb image: srcForm at: p sourceRect: srcForm boundingBox rule: `Form blend`.
-	"
-
-
-	bb sourceForm: srcForm; combinationRule: `Form blend`;
-		sourceX: 0; sourceY: 0;
-		destX: p x destY: p y
-			width: srcForm width height: srcForm height;
-		copyBits.
-
-
-
-	""
-	"
-	ver correccion alpha channel... o no. no lo se. Ver:
-	image:at:sourceRect:
-	"
-]
-ifFalse: [ | cellSize dstBox srcBox srcQuad |
-
-"ENTENDER clipRect en WarpBlt!!!!!!!!!!"
-	cellSize _ 4.
-	srcBox _ srcForm boundingBox.
-	dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
-	srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) floor ].
-	dstBox _ currentTransformation displayBoundsOfTransformOf: (srcBox translatedBy: aPoint).
-	(WarpBlt toForm: form)
-		clipRect: clipRect;
-		sourceForm: srcForm;
-		colorMap: (srcForm colormapIfNeededFor: form);
-		cellSize: cellSize;
-		combinationRule: Form blend;
-		copyQuad: srcQuad toRect: dstBox.
-]! !
-
-!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/15/2021 10:29:57'!
+!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/17/2021 10:24:17'!
 imageUnrotated: srcForm at: aPoint
 	"Workaround using WarpBlt until properly implemented in VectorEngine.
 	Scale and position like #image:at:, but don't rotate srcForm:
 	Display it in its natural orientation."
-"La diferencia es el calculo de srcQuad y dstBox.
-Cuando el otro este estabilizado, hacer este a imagen y semejanza. O borrarlo, si no hace falta. No me acuerdo para qué estaba!!"
-	| cellSize srcBox dstBox srcQuad |
 
-	"hack to affect morphIds in a reasonably way"
-	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color black alpha: 0.01`.
+	| cellSize srcBox dstBox srcQuad bb |
+
+	"If no rotation or scaling, BitBlt is enough. But there's no need to repeat the code:
+	If no rotation, 'unrotated' is the same as 'defaultlyRotated'."
+	currentTransformation isPureTranslation ifTrue: [
+		^self image: srcForm at: aPoint ].
+
+	"Compute bounds, set morphIds for affected pixels."
+	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color gray alpha: 0.01`.
 
 	cellSize _ 4.
 	srcBox _ srcForm boundingBox.
@@ -3441,13 +3448,14 @@ Cuando el otro este estabilizado, hacer este a imagen y semejanza. O borrarlo, s
 	dstBox _ Rectangle
 		center: (currentTransformation transform: srcBox center + aPoint) rounded
 		extent: (srcBox extent * currentTransformation scale) rounded.
-	(WarpBlt toForm: form)
-		clipRect: clipRect;
-		sourceForm: srcForm;
+	bb _ WarpBlt toForm: form.
+	bb
+		sourceForm: srcForm; combinationRule: Form blend;
 		colorMap: (srcForm colormapIfNeededFor: form);
+		clipRect: clipRect;
 		cellSize: cellSize;
-		combinationRule: Form blend;
-		copyQuad: srcQuad toRect: dstBox.! !
+		copyQuad: srcQuad toRect: dstBox.
+! !
 
 !VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:55:58'!
 clipCurrentMorph: aBoolean
@@ -3478,64 +3486,69 @@ contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBotto
 morph: aMorph isAtPoint: aPoint
 	^engine morph: aMorph isAtPoint: aPoint! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 16:02:57'!
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/16/2021 15:53:41'!
 restorePatch: savedPatch bounds: savedBounds
 	"Argument must previously be obtained by calling #savePatch:bounds:
 	Senders should not assume anything about the returned object, except that it will not be nil."
 
-	| savedIdsPatch hack bb savedDisplayPatch |
-"	super restorePatch: savedPatch first."
-"aForm _ savedPatch first.
-	self image: aForm
-		at: aForm offset
-		sourceRect: aForm boundingBox."
-savedDisplayPatch _ savedPatch first.
+	| bb bits |
 	bb _ BitBlt toForm: form.
-	bb sourceForm: savedDisplayPatch; combinationRule: Form over;
+	bb
+		combinationRule: Form over;
 		sourceX: 0; sourceY: 0;
 		destX: savedBounds origin x destY: savedBounds origin y
-			width: savedBounds width height: savedBounds height;
+			width: savedBounds width height: savedBounds height.
+	bb sourceForm: savedPatch first;
 		copyBits.
+	bits _ form bits.
+	[
+		form bits: engine morphIds.
+		bb sourceForm: savedPatch second;
+			copyBits.
+	] ensure: [ form bits: bits ].! !
 
-"Tanto el hack como el bb podrian guardarse."
-savedIdsPatch _ savedPatch second.
-	hack _ Form extent: form extent depth: 32 bits: (engine instVarNamed: 'morphIds').
-	bb _ BitBlt toForm: hack.
-	bb sourceForm: savedIdsPatch; combinationRule: Form over;
-		sourceX: 0; sourceY: 0;
-		destX: savedBounds origin x destY: savedBounds origin y
-			width: savedBounds width height: savedBounds height;
-		copyBits.! !
-
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 16:03:16'!
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/16/2021 16:04:03'!
 savePatch: prevSavedPatch bounds: aRectangle
 	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
 	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
 
-	| patchForm savedIdsPatch hack bb answer morphIds |
+	| patchForm prevExtent extent savedIdsPatch bb answer bits |
 self flag: #jmvHacks.
 	answer _ prevSavedPatch.
 	(answer is: #Array) ifFalse: [ answer _ Array new: 2 ].
-	patchForm _ super savePatch: answer first bounds: aRectangle.
 
-	patchForm == answer first
-		ifTrue: [
-			savedIdsPatch _ answer second.
-			savedIdsPatch offset: 0@0.
-			]
-		ifFalse: [
-			savedIdsPatch _ Form extent: patchForm extent depth: 32.
-			answer at: 1 put: patchForm.
-			answer at: 2 put: savedIdsPatch ].
+	prevExtent _ 0@0.
+	((answer first is: #Form) and: [
+		prevExtent _ answer first extent.
+		prevExtent >= aRectangle extent]) 
+			ifTrue: [
+				patchForm _ answer first.
+				patchForm offset: 0@0.
+				savedIdsPatch _ answer second.
+				savedIdsPatch offset: 0@0 ]
+			ifFalse: [
+				"allocate new patch form if needed"
+				extent _ aRectangle extent max: prevExtent.
+				extent _ (extent x // 64 + 2 * 64) @ (extent y + 64).						"Make it slightly larger, and even width."
+				patchForm _ Form extent: extent depth: form depth.
+				savedIdsPatch _ Form extent: extent depth: 32.
+				answer at: 1 put: patchForm.
+				answer at: 2 put: savedIdsPatch ].
 
-morphIds _ engine instVarNamed: 'morphIds'.
-"Tanto el hack como el bb podrian guardarse."
-	hack _ Form extent: form extent depth: 32 bits: morphIds.
-	bb _ BitBlt toForm: savedIdsPatch.
-	bb sourceForm: hack; combinationRule: Form over;
+	bb _ BitBlt new.
+	bb sourceForm: form;
+		combinationRule: Form over;
 		sourceX: aRectangle left; sourceY: aRectangle top;
-		width: aRectangle width; height: aRectangle height;
+		width: aRectangle width; height: aRectangle height.
+	bb setDestForm: patchForm;
 		copyBits.
+	bits _ form bits.
+	[
+		form bits: engine morphIds.
+		bb setDestForm: savedIdsPatch;
+			copyBits.
+	] ensure: [ form bits: bits ].
+
 	^answer! !
 
 !VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 16:05:57'!
@@ -4922,6 +4935,10 @@ morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into
 		answer at: iii+1 put: 0 ].
 	aBlock value: answer value: y0 value: y1.
 	^answer! !
+
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/16/2021 15:34:41'!
+morphIds
+	^morphIds! !
 
 !VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/8/2021 23:24:28'!
 subPixelDelta
