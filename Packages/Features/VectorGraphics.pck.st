@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4760] on 17 August 2021 at 10:36:33 am'!
+'From Cuis 5.0 [latest update: #4762] on 17 August 2021 at 4:10:45 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 271!
+!provides: 'VectorGraphics' 1 272!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1082,12 +1082,12 @@ drawContour
 			Display colorAt: x@(contourTop+y-1) put: c ]]].
 Display forceToScreen! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/18/2021 14:13:34'!
+!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 8/17/2021 15:18:18'!
 drawOn: aCanvas
 	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target.
 	See #circleApproximationExamples"
 
-	aCanvas strokeWidth: 3 color: `Color gray alpha: 0.5` fillColor: `Color lightGreen alpha: 0.3` do: [
+	aCanvas strokeWidth: 3 color: `Color gray alpha: 0.5` fillColor: `Color lightGreen alpha: 0.0` do: [
 		aCanvas
 				pathSequence: `#[
 					0.0 15.0 15.0
@@ -1126,20 +1126,22 @@ postDrawOn: aCanvas
 		].
 	^true! !
 
-!M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 7/7/2021 16:16:18'!
+!M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 8/17/2021 16:09:08'!
 containsGlobalPoint: worldPoint
 	"just for experimenting with contour"
 	"
 	true ifTrue: [ ^super containsGlobalPoint: worldPoint ].
+	""
+	^self isCloserThan: 10 toPoint: worldPoint
 	"
-	^self isCloserThan: 10 toPoint: worldPoint! !
+	^self coversAnyPointCloserThan: 10 toPoint: worldPoint! !
 
 !M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 7/13/2021 09:58:23'!
 wantsContour
 	"for experimenting with this feature."
 	^true! !
 
-!M3Exp01Morph methodsFor: 'updating' stamp: 'jmv 7/7/2021 16:13:03'!
+!M3Exp01Morph methodsFor: 'updating' stamp: 'jmv 8/17/2021 16:08:49'!
 redrawNeeded
 	"for experimenting with collision detection"
 	self isOwnedByHand ifTrue: [
@@ -1367,8 +1369,10 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	vectorCanvas setClipRect: aRectangle! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 09:45:10'!
-setForm: aForm preferSubPixelAntiAliasing: aBoolean
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 8/17/2021 14:43:28'!
+setForm: aForm subPixelAntiAliasing: aBooleanOrNil
+	"nil means use default kind of anti aliasing"
+
 	form _ aForm.
 	engine _ BitBltCanvasEngine toForm: form.
 	"Init BitBlt so that the first call to the 'primitiveDisplayString' primitive will not fail"
@@ -3297,8 +3301,9 @@ initializeWithOrigin: aPoint
 	super initializeWithOrigin: aPoint.
 	engine geometryTransformation: currentTransformation.! !
 
-!BoundsFinderCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 10:17:04'!
-setForm: aForm preferSubPixelAntiAliasing: aBoolean
+!BoundsFinderCanvas methodsFor: 'initialization' stamp: 'jmv 8/17/2021 14:43:31'!
+setForm: aForm subPixelAntiAliasing: aBooleanOrNil
+	"nil means use default kind of anti aliasing"
 
 	engine _ VectorEngineBoundsFinder new.
 	clippingMorphDisplayBounds _ nil.! !
@@ -3586,16 +3591,19 @@ initializeWithOrigin: aPoint
 	boundsFinderCanvas engine antiAliasingWidth: engine antiAliasingWidth.
 	boundsFinderCanvas engine subPixelDelta: engine subPixelDelta.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 15:18:41'!
-setForm: aForm preferSubPixelAntiAliasing: aBoolean
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/17/2021 14:43:24'!
+setForm: aForm subPixelAntiAliasing: aBooleanOrNil
+	"nil means use default kind of anti aliasing"
 	"
-	World extent: World extent
+	self runningWorld setCanvas
 	"
 	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
 	form _ aForm.
-	engine _ aBoolean
-		ifTrue: [VectorEngine subPixelAntiAliasingOnForm: form]
-		ifFalse: [VectorEngine onForm: form].
+	engine _ aBooleanOrNil
+		ifNil: [VectorEngine onForm: form]
+		ifNotNil: [ :aBoolean | aBoolean
+			ifTrue: [VectorEngine subPixelAntiAliasingOnForm: form]
+			ifFalse: [VectorEngine wholePixelAntiAliasingOnForm: form]].
 	engine canvas: self.
 	self newClipRect: nil.! !
 
@@ -4635,6 +4643,14 @@ subPixelAntiAliasingOnForm: aForm
 	^ (VectorEngineWithPlugin isPluginAvailable
 		ifTrue: [VectorEngineWithPluginSubPixel]
 		ifFalse: [VectorEngineSubPixel])
+			new initializeOnForm: aForm! !
+
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/17/2021 14:38:29'!
+wholePixelAntiAliasingOnForm: aForm
+
+	^ (VectorEngineWithPlugin isPluginAvailable
+		ifTrue: [VectorEngineWithPlugin]
+		ifFalse: [VectorEngineWholePixel])
 			new initializeOnForm: aForm! !
 
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 11/17/2020 10:04:59'!
@@ -8829,6 +8845,46 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/17/2021 16:05:04'!
+coversAnyPointCloserThan: aNumber toPoint: aPoint
+	"Answer true if our closest point to aPoint is less than aNumber pixels away.
+	In target surface (i.e. Display) coordinates.
+	See #shadow.
+	Remember to do
+	self removeProperty: #shadow.
+	when appropriate!! (i.e. when we change in such a way to make the shadow invalid)"
+
+	| center radiusSquared |
+	privateDisplayBounds ifNil: [
+		^false ].
+	center _ privateDisplayBounds center.
+	"Quick checks: If not even within aNumber distance to display bounds, fail"
+	(center y - aPoint y) abs < (privateDisplayBounds height  // 2 + aNumber) ifFalse: [
+		^false ].
+	(center x - aPoint x) abs < (privateDisplayBounds width // 2 + aNumber) ifFalse: [
+		^false ].
+	"Precise check with shadow"
+	(self coversGlobalPoint: aPoint) ifTrue: [ ^true ].
+	radiusSquared _ aNumber squared.
+	aNumber negated to: aNumber do: [ :dy |
+		aNumber negated to: aNumber do: [ :dx |
+			dx squared + dy squared <= radiusSquared ifTrue: [
+				(self coversGlobalPoint: aPoint + (dx@dy)) ifTrue: [ ^true ]]]].
+	^false.! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/17/2021 16:04:51'!
+coversGlobalPoint: worldPoint
+	"Answer true if pixel worldPoint is covered by us, even if we are not visible a it because of some
+	other morph above us also covers it.
+	See #shadow.
+	Remember to do
+	self removeProperty: #shadow.
+	when appropriate!! (i.e. when we change in such a way to make the shadow invalid)"
+
+	self visible ifTrue: [
+		^(self shadow pixelValueAt: worldPoint - self displayBounds topLeft) = 0 ].
+	^ false! !
+
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/12/2021 11:43:31'!
 findFullBoundsInOwner
 	"Find and answer full bounds in whatever owner.
@@ -8878,7 +8934,7 @@ fitInto: aRectangle
 	currentBounds _ self findFullBoundsInOwner.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/12/2021 09:46:14'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/17/2021 15:12:04'!
 imageForm: extentOrNil depth: depth
 	"Scale as needed. Draw unrotated."
 
@@ -8896,28 +8952,78 @@ imageForm: extentOrNil depth: depth
 	"Position and scale us in order to fill required extent, but disregard any rotation."
 	wasVisible _ self visible.
 	oldLocation _ self location.
-	self location: (MorphicTranslation withTranslation: 0@0).
-	bounds _ self findFullBoundsInOwner.
-	extentOrNil
-		ifNotNil: [ | scale |
-			extent _ extentOrNil.
-			scale _ extent x asFloat / bounds width min: extent y asFloat / bounds height.
-			self location: (AffineTransformation withScale: scale position: bounds origin negated +1 * scale ) ]
-		ifNil: [
-			extent _ bounds extent.
-			self location: (MorphicTranslation withTranslation: bounds origin negated) ].
-	answer _ Form extent: extent depth: 32.
-	"Ask for a Canvas with subpixels so it can also handle translucent target"
-	auxCanvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: answer.
-	"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
-	auxCanvas engine disableSubPixelSampling.
-	depth = 32 ifFalse: [
-		"Only 32 bpp can hold translucent anti aliasing over transparent background"
-		answer fillColor: Color veryLightGray ].
-	auxCanvas fullDraw: self.
-	self visible: wasVisible.
-	self location: oldLocation.
+	[
+		self location: (MorphicTranslation withTranslation: 0@0).
+		bounds _ self findFullBoundsInOwner.
+		extentOrNil
+			ifNotNil: [ | scale |
+				extent _ extentOrNil.
+				scale _ extent x asFloat / bounds width min: extent y asFloat / bounds height.
+				self location: (AffineTransformation withScale: scale position: bounds origin negated +1 * scale ) ]
+			ifNil: [
+				extent _ bounds extent.
+				self location: (MorphicTranslation withTranslation: bounds origin negated) ].
+		answer _ Form extent: extent depth: 32.
+		"Ask for a Canvas with subpixels so it can also handle translucent target"
+		auxCanvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: answer.
+		"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
+		auxCanvas engine disableSubPixelSampling.
+		depth = 32 ifFalse: [
+			"Only 32 bpp can hold translucent anti aliasing over transparent background"
+			answer fillColor: Color veryLightGray ].
+		self visible: true.
+		auxCanvas fullDraw: self.
+	] ensure: [
+		self visible: wasVisible.
+		self location: oldLocation ].
 	^answer asFormOfDepth: depth.! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/17/2021 16:04:19'!
+shadow
+	"Answer an 1bpp Form with our shadow:
+	Query with #pixelValueAt:
+	Pixels drawn by us are 0. Pixels not drawn by us are 1.
+	Remember to do
+	self removeProperty: #shadow.
+	when appropriate!! (i.e. when we change in such a way to make the shadow invalid)"
+
+	| wasVisible oldLocation bounds extent answer auxCanvas |
+
+	(self valueOfProperty: #shadow) ifNotNil: [ :shadow |
+		^shadow ].
+
+	"Position and scale us in order to fill required extent, but disregard any rotation."
+	wasVisible _ self visible.
+	oldLocation _ self location.
+	bounds _ self findFullBoundsInOwner.
+	extent _ bounds extent.
+	[
+		self location: ((MorphicTranslation withTranslation: bounds origin negated) composedWith: oldLocation).
+		answer _ Form extent: extent depth: 32.
+		"Ask for a Canvas with subpixels so it can also handle translucent target"
+		auxCanvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: answer.
+		"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
+		auxCanvas engine disableSubPixelSampling.
+		self visible: true.
+		auxCanvas fullDraw: self.
+	] ensure: [
+		self visible: wasVisible.
+		self location: oldLocation ].
+	^self setProperty: #shadow toValue: ((answer asGrayForm: 1) asFormOfDepth: 1).! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/17/2021 15:42:03'!
+showShadow
+	"Just to play with #shadow from an inspector. Not to be called from code.
+	Remember to do
+	self removeProperty: #shadow.
+	when appropriate!!"
+	| r |
+	r _ self displayBounds.
+	r top to: r bottom-1 do: [ :y |
+		Display forceToScreen.
+		r left to: r right-1 do: [ :x |
+			(self coversGlobalPoint: x@y) ifTrue: [
+				Display colorAt: x@y put: Color red ]]].! !
 
 !MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:31:03'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
