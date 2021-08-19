@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4763] on 18 August 2021 at 12:01:06 pm'!
+'From Cuis 5.0 [latest update: #4769] on 19 August 2021 at 10:47:43 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 273!
+!provides: 'VectorGraphics' 1 274!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -8845,7 +8845,7 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/18/2021 11:51:38'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/19/2021 10:44:11'!
 bitMask
 	"Answer an 1bpp Form with our bitMask:
 	Query with #pixelValueAt:
@@ -8873,16 +8873,18 @@ bitMask
 		auxCanvas fullDraw: self.
 	] ensure: [
 		self privateFlagAt: 3 put: prevNotVisibleFlag ].
-	^self setProperty: #bitMask toValue: ((answer asGrayForm: 1) asFormOfDepth: 1).! !
+	^self setProperty: #bitMask toValue:
+		"Reverse it so we get bit=1 for affected pixels."
+		((answer asGrayForm: 1) asFormOfDepth: 1) reverse.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/17/2021 16:05:04'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/19/2021 10:30:20'!
 coversAnyPointCloserThan: aNumber toPoint: aPoint
 	"Answer true if our closest point to aPoint is less than aNumber pixels away.
 	In target surface (i.e. Display) coordinates.
-	See #shadow.
+	See #bitMask.
 	Remember to do
-	self removeProperty: #shadow.
-	when appropriate!! (i.e. when we change in such a way to make the shadow invalid)"
+	self removeProperty: #bitMask.
+	when appropriate!! (i.e. when we change in such a way to make the bitMask invalid)"
 
 	| center radiusSquared |
 	privateDisplayBounds ifNil: [
@@ -8893,7 +8895,7 @@ coversAnyPointCloserThan: aNumber toPoint: aPoint
 		^false ].
 	(center x - aPoint x) abs < (privateDisplayBounds width // 2 + aNumber) ifFalse: [
 		^false ].
-	"Precise check with shadow"
+	"Precise check with bitMask"
 	(self coversGlobalPoint: aPoint) ifTrue: [ ^true ].
 	radiusSquared _ aNumber squared.
 	aNumber negated to: aNumber do: [ :dy |
@@ -8902,17 +8904,17 @@ coversAnyPointCloserThan: aNumber toPoint: aPoint
 				(self coversGlobalPoint: aPoint + (dx@dy)) ifTrue: [ ^true ]]]].
 	^false.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/18/2021 11:35:27'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/19/2021 10:28:45'!
 coversGlobalPoint: worldPoint
 	"Answer true if pixel worldPoint is covered by us, even if we are not visible a it because of some
 	other morph above us also covers it.
-	See #shadow.
+	See #bitMask.
 	Remember to do
-	self removeProperty: #shadow.
-	when appropriate!! (i.e. when we change in such a way to make the shadow invalid)"
+	self removeProperty: #bitMask.
+	when appropriate!! (i.e. when we change in such a way to make the bitMask invalid)"
 
 	self visible ifTrue: [
-		^(self bitMask pixelValueAt: worldPoint - self displayBounds topLeft) = 0 ].
+		^(self bitMask pixelValueAt: worldPoint - self displayBounds topLeft) = 1 ].
 	^ false! !
 
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/18/2021 11:11:33'!
