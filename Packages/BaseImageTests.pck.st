@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4665] on 15 July 2021 at 10:47:59 am'!
-'Description Debugger tests & fixes on SHST80RangeTypeTest'!
-!provides: 'BaseImageTests' 1 263!
+'From Cuis 5.0 [latest update: #4768] on 19 August 2021 at 3:35:05 pm'!
+'Description Fixed DebuggerTest and MethodReferenceTest'!
+!provides: 'BaseImageTests' 1 264!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1378,14 +1378,14 @@ TestCase subclass: #SHST80RangeTypeTest
 SHST80RangeTypeTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #DebugerTest category: 'BaseImageTests-Tools-Debugger'!
-TestCase subclass: #DebugerTest
+!classDefinition: #DebuggerTest category: 'BaseImageTests-Tools-Debugger'!
+TestCase subclass: #DebuggerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'BaseImageTests-Tools-Debugger'!
-!classDefinition: 'DebugerTest class' category: 'BaseImageTests-Tools-Debugger'!
-DebugerTest class
+!classDefinition: 'DebuggerTest class' category: 'BaseImageTests-Tools-Debugger'!
+DebuggerTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #BecomeTestExperiment category: 'BaseImageTests-Kernel'!
@@ -26316,7 +26316,7 @@ test01DefaultStringVersionIsClassAndSelector
 	
 	self assert: self class name, ' ', thisContext selector equals: stringVersion! !
 
-!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 4/9/2020 15:53:25'!
+!MethodReferenceTest methodsFor: 'test string version' stamp: 'HAW 8/19/2021 15:05:13'!
 test02CanPrefixStringVersion
 
 	| methodReference prefix |
@@ -26325,7 +26325,7 @@ test02CanPrefixStringVersion
 	methodReference := MethodReference method: thisContext method.
 	methodReference prefixStringVersionWith: prefix.
 	
-	self assert: prefix,self class name, ' ', thisContext selector equals: methodReference stringVersion! !
+	self assert: '[',prefix,'] - ',self class name, ' ', thisContext selector equals: methodReference stringVersion! !
 
 !MethodReferenceTest methodsFor: 'test testing' stamp: 'HAW 1/2/2020 06:49:00'!
 testReferencesParameterAtReturnsFalseWhenInvalid
@@ -26582,10 +26582,10 @@ _zz
 
 	"Do not remove this method because it exists for its name to have implementors - Hernan"! !
 
-!DebugerTest methodsFor: 'tests - method categories' stamp: 'HAW 7/15/2021 10:24:04'!
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'HAW 8/19/2021 15:31:36'!
 testCategoriesAreAddedSortedByAndSeparatedByClass
 
-	| debugger categories lines objectCategories protoObjectCategories |
+	| objectCategories protoObjectCategories categoriesPrompter |
 	
 	objectCategories := Object methodCategoriesAsSortedCollection.
 	protoObjectCategories := ProtoObject methodCategoriesAsSortedCollection removeAllFoundIn: objectCategories; yourself.
@@ -26596,30 +26596,22 @@ testCategoriesAreAddedSortedByAndSeparatedByClass
 	self assert: objectCategories notEmpty.
 	self assert: protoObjectCategories notEmpty.
 	
-	debugger := Debugger new.
-	categories := OrderedCollection new.
-	lines := OrderedCollection new.
+	categoriesPrompter := MethodCategoriesPrompter staringFrom: Object rejectingFirst: false.
 	
-	debugger addCategoriesOf: Object to: categories separatingWith: lines.
-	
-	self assert: (categories copyFrom: 1 to: objectCategories size) asArray equals: objectCategories asArray.
-	self assert: 1 equals: lines size.
-	self assert: objectCategories size equals: lines first.
-	self assert: (categories copyFrom: objectCategories size + 1 to: categories size) asArray equals: protoObjectCategories asArray.
+	self assert: 2 equals: categoriesPrompter lines size.
+	self assert: 1 equals: categoriesPrompter lines first.
+	self assert: (categoriesPrompter categories copyFrom: 2 to: categoriesPrompter lines second) asArray equals: objectCategories asArray.
+	self assert: (categoriesPrompter categories copyFrom: categoriesPrompter lines second + 1 to: categoriesPrompter categories size) asArray equals: protoObjectCategories asArray.
 	! !
 
-!DebugerTest methodsFor: 'tests - method categories' stamp: 'HAW 7/15/2021 10:27:07'!
+!DebuggerTest methodsFor: 'tests - method categories' stamp: 'HAW 8/19/2021 15:33:48'!
 testMetaclassCategoriesIncludesInstanceCreation
 
-	| debugger categories lines |
+	| categoriesPrompter |
+
+	categoriesPrompter := MethodCategoriesPrompter staringFrom: ProtoObject class rejectingFirst: false.
 	
-	debugger := Debugger new.
-	categories := OrderedCollection new.
-	lines := OrderedCollection new.
-	
-	debugger addCategoriesOf: ProtoObject class to: categories separatingWith: lines.
-	
-	self assert: Categorizer instanceCreation equals: categories first ! !
+	self assert: Categorizer instanceCreation equals: categoriesPrompter categories second ! !
 
 !BecomeTestExperiment methodsFor: 'as yet unclassified' stamp: 'jmv 1/11/2019 12:21:36'!
 initialize
