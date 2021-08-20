@@ -36,7 +36,7 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux64x64_201901172323.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_linux64x64_202003021730.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
 ```
@@ -61,7 +61,7 @@ Log out and log back in, or reboot the machine.
 ### Get and set up an appropriate VM ###
 ```
 cd MyProject
-curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_macos64x64_201901172323.dmg
+curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_macos64x64_202003021730.dmg
 Open Finder on your folder
 Double click on the dmg file
 Drag Squeak.app to your folder
@@ -83,7 +83,7 @@ Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cu
 ```
 cd MyProject
 rm -r cogspur
-curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_win64x64_201901172323.zip
+curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_win64x64_202003021730.zip
 unzip cogspur.zip -d cogspur
 ```
 
@@ -98,7 +98,7 @@ cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis5.0-4738.image
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux32ARMv6_201901172323.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_linux32ARMv6_202003021730.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
@@ -121,7 +121,7 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.cog.spur_linux32x86_201901172323.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_linux32x86_202003021730.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxht ./cogspur
 ```
@@ -129,7 +129,7 @@ mv ./sqcogspurlinuxht ./cogspur
 ```
 cd MyProject
 rm -r stkspur
-wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/201901172323/squeak.stack.spur_linux32ARMv6_201901172323.tar.gz
+wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.stack.spur_linux32ARMv6_202003021730.tar.gz
 tar -zxvf stkspur.tgz
 mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
