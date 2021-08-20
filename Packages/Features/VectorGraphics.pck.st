@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4769] on 19 August 2021 at 10:47:43 am'!
+'From Cuis 5.0 [latest update: #4779] on 20 August 2021 at 12:35:39 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 274!
+!provides: 'VectorGraphics' 1 275!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1479,6 +1479,58 @@ drawWorldBackground: aWorldMorph rects: worldBackgroundDamage
 		aWorldMorph drawOn: self.
 		self onMorphIdsDo: [
 			aWorldMorph drawOn: self ]].! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 14:52:18'!
+drawCloseIcon
+	vectorCanvas  drawCloseIcon! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 14:52:45'!
+drawCollapseIcon
+	vectorCanvas  drawCollapseIcon! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 14:53:03'!
+drawDownIcon
+	vectorCanvas  drawDownIcon! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 14:53:20'!
+drawExpandIcon
+	vectorCanvas  drawExpandIcon! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 14:53:33'!
+drawLeftIcon
+	vectorCanvas  drawLeftIcon! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 14:53:44'!
+drawMenuIcon
+	vectorCanvas  drawMenuIcon! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 15:01:48'!
+drawPushPinIcon
+	vectorCanvas  drawPushPinIcon! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 14:54:32'!
+drawRightIcon
+	vectorCanvas  drawRightIcon! !
+
+!HybridCanvas methodsFor: 'drawing-icons' stamp: 'jmv 8/19/2021 14:54:44'!
+drawUpIcon
+	vectorCanvas  drawUpIcon! !
+
+!HybridCanvas methodsFor: 'drawing-windows' stamp: 'jmv 8/19/2021 15:00:13'!
+drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor: insideColor labelHeight: labelHeight
+	"Title area is not inside window borders"
+	| bottomFactor topFactor |
+			topFactor _ 1.
+			bottomFactor _ 1.
+	self
+		windowFrame: aRectangle
+		color: borderColor
+		radius: Theme current roundedWindowRadius
+		border: borderWidth
+		labelHeight: labelHeight + borderWidth
+		gradientTop: topFactor
+		gradientBottom: bottomFactor
+		insideColor: insideColor! !
 
 !HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 5/31/2021 19:48:59'!
 initialize
@@ -4974,7 +5026,7 @@ morph: aMorph isAtPoint: aPoint
 	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
 	^((morphIds at: index) >> 8) = aMorph morphId! !
 
-!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:26'!
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:28'!
 pvtSetForm: aForm
 
 	targetForm _ aForm.
@@ -4982,6 +5034,9 @@ pvtSetForm: aForm
 	targetHeight _ targetForm height.
 	morphIds _ WordArray new: targetWidth * targetHeight.
 	contour _ Float32Array new: targetHeight * 2.
+	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
+		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
+		morphIds pin. contour pin ].
 	0 to: targetHeight-1 do: [ :y |
 		contour at: y * 2 + 1 put: targetWidth.
 		contour at: y * 2 + 2 put: 0 ].
@@ -5576,14 +5631,17 @@ As an additional optimization, as we need to store for every pixel all the cross
 				]
 		].! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:05'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:32'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
 	s _ targetWidth * targetHeight.
-	alphaMask _ WordArray new: s.
 	edgeCounts _ WordArray new: s.
+	alphaMask _ WordArray new: s.
+	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
+		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
+		edgeCounts pin. alphaMask pin ].
 	subPixelDelta _ self class defaultSubPixelDelta.! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
@@ -5992,14 +6050,17 @@ As an additional optimization, as we need to store for every pixel all the cross
 		edgeCounts at: pixelIndex put: count ].
 	prevYTruncated _ thisYTruncated.! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:05'!
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:36'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
 	s _ targetWidth * targetHeight.
+	edgeCounts _ ByteArray new: s.
 	alphaMask _ ByteArray new: s.
-	edgeCounts _ ByteArray new: s.! !
+	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
+		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
+		edgeCounts pin. alphaMask pin ].! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendFillOnly
@@ -6714,14 +6775,17 @@ primTargetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMas
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'private' stamp: 'jmv 8/10/2021 12:08:00'!
+!VectorEngineWithPluginSubPixel methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:41'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
 	s _ targetWidth * targetHeight.
-	alphaMask _ WordArray new: s.
 	edgeCounts _ WordArray new: s.
+	alphaMask _ WordArray new: s.
+	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
+		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
+		edgeCounts pin. alphaMask pin ].
 	subPixelDelta _ self class defaultSubPixelDelta.! !
 
 !VectorEngineWithPluginSubPixel class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 11:44:04'!
@@ -6805,14 +6869,17 @@ primTargetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMas
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:05'!
+!VectorEngineWithPluginWholePixel methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:45'!
 pvtSetForm: aForm
 
 	| s |
 	super pvtSetForm: aForm.
 	s _ targetWidth * targetHeight.
+	edgeCounts _ ByteArray new: s.
 	alphaMask _ ByteArray new: s.
-	edgeCounts _ ByteArray new: s.! !
+	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
+		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
+		edgeCounts pin. alphaMask pin ].! !
 
 !VectorEngineWithPluginWholePixel class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 11:44:58'!
 defaultAntiAliasingWidth
