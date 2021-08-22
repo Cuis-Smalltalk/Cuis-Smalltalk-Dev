@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4755] on 15 Augunt 2021 at 6:17:27 pm'!
+'From Cuis 5.0 [latest update: #4789] on 22 August 2021 at 4:33:51 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 26!
+!provides: 'VectorEnginePlugin' 1 27!
 !requires: 'VectorGraphics' 1 201 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -120,14 +120,11 @@ newTrajectoryFragment
 
 	^ self initializeTrajectoryFragment.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:13:44'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 8/22/2021 16:11:57'!
 pluginApiVersion
 	"
 	VectorEngineWithPlugin isPluginAvailable
-	Semantic version numbering in a single SmallInteger:
-	Version numbers 1 to 99 are backwards compatible. When incompatibility is needed. jump straight to 101.
-	Version numbers 101 to 199 are backwards compatible. When incompatibility is needed. jump straight to 201.
-	And so.
+	API version is a SmallInteger.
 	Note: this is Api version, not package version. If no Api change, Api version doesn't change, regardless of changes in the Plugin or Smalltalk code.
 	See senders and implementors.
 	"
@@ -135,14 +132,15 @@ pluginApiVersion
 		primitive: 'pluginApiVersion'
 		parameters: #().
 
-	^ 5 asOop: SmallInteger.! !
+	^ 6 asOop: SmallInteger.! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 7/5/2021 17:01:18'!
-resetContourTop: t bottom: b
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 8/22/2021 16:09:48'!
+resetContourTop: t bottom: b contour: aFloat32Array
 	self
-		primitive: 'primResetContour'
-		parameters: #(SmallInteger SmallInteger).
+		primitive: 'primReset2Contour'
+		parameters: #(SmallInteger SmallInteger Float32Array).
 
+	contour := aFloat32Array.
 	leftAtThisY := targetWidth.
 	rightAtThisY := 0.
 	t to: b do: [ :y |
@@ -738,12 +736,13 @@ updateContourForX: x y: y
 		leftAtThisY := leftAtThisY min: x.
 		rightAtThisY := rightAtThisY max: x ].! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:42:59'!
-updateContourLastLine
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 8/22/2021 16:09:52'!
+updateContourLastLine: aFloat32Array
 	self
-		primitive: 'primUpdateContourLastLine'
-		parameters: #().
+		primitive: 'primUpdate2ContourLastLine'
+		parameters: #(Float32Array).
 
+	contour := aFloat32Array.
 	prevYRounded = 16r7FFFFFFF ifFalse: [
 		contour at: prevYRounded * 2 put: leftAtThisY.
 		contour at: prevYRounded * 2 + 1 put: rightAtThisY ].! !

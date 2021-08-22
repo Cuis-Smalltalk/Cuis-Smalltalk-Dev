@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4779] on 20 August 2021 at 12:35:39 pm'!
+'From Cuis 5.0 [latest update: #4789] on 22 August 2021 at 4:33:54 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 275!
+!provides: 'VectorGraphics' 1 276!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -6443,7 +6443,7 @@ doPath: pathCommandsBlock ensureClosePath: ensureClosePath
 		pathCommandsBlock valueWithPossibleArgument: (canvas ifNil: [self]).
 		self finishPath: ensureClosePath ].! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:01'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/22/2021 15:31:21'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
 	| spanLeft spanTop spanRight spanBottom |
@@ -6455,7 +6455,7 @@ finishPath: ensureClosePath
 				"This is actually an error condition. If we are asked to fill, then the path should be closed.
 				This is a workaround. If width > 0.0, we'll be adding a visible edge to the path."
 				self lineToFirstPoint ]]].
-	self primUpdateContourLastLine.
+	self primUpdateContourLastLine: contour.
 
 	spanLeft _ self primSpanLeft.
 	spanTop _ self primSpanTop.
@@ -6537,14 +6537,15 @@ pvtStrokeWidth: aNumber
 	super pvtStrokeWidth: aNumber asFloat.
 	self primStrokeWidth: strokeWidth.! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/10/2021 12:05:47'!
+!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/22/2021 15:28:54'!
 resetMorphBounds
 
 	"Clear any possible contour."
 	morphBoundsTop ifNotNil: [
 		self
 			primResetContourTop: (morphBoundsTop max: 0)
-			bottom: (morphBoundsBottom min: targetHeight -1) ].
+			bottom: (morphBoundsBottom min: targetHeight -1)
+			contour: contour ].
 	super resetMorphBounds.! !
 
 !VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 6/11/2021 12:05:33'!
@@ -6606,11 +6607,31 @@ primNewTrajectoryFragment
 
 	self primitiveFailed! !
 
-!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 7/5/2021 16:58:22'!
+!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 8/22/2021 16:25:58'!
 primResetContourTop: t bottom: b
+	"Only for compatibility with VMs including plugin API v5"
 	<primitive: 'primResetContour' module: 'VectorEnginePlugin'>
 
-	self primitiveFailed! !
+	self primitiveFailed.
+	self flag: #VEPapi5.		"Eventually delete this method"! !
+
+!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 8/22/2021 16:27:01'!
+primResetContourTop: t bottom: b contour: aFloat32Array
+	<primitive: 'primReset2Contour' module: 'VectorEnginePlugin'>
+	"
+	self primitiveFailed.
+	"
+	self flag: #VEPapi5.		"Eventually delete this part, and just call primitiveFailed"
+	"In case of primitive failure, assume it is because plugin is API version 5 and not 6."
+	self
+		primTargetBits: targetForm bits
+		morphIds: morphIds
+		edgeCounts: edgeCounts
+		alphaMask: alphaMask
+		contour: contour
+		targetWidth: targetWidth
+		targetHeight: targetHeight.
+	self primResetContourTop: t bottom: b! !
 
 !VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 5/18/2021 12:25:12'!
 primSpanBottom
@@ -6659,13 +6680,33 @@ primStrokeWidth: aNumber
 
 	self primitiveFailed! !
 
-!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 7/5/2021 16:43:08'!
+!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 8/22/2021 16:25:51'!
 primUpdateContourLastLine
+	"Only for compatibility with VMs including plugin API v5"
 	<primitive: 'primUpdateContourLastLine' module: 'VectorEnginePlugin'>
 
-	self primitiveFailed! !
+	self primitiveFailed.
+	self flag: #VEPapi5.		"Eventually delete this method"! !
 
-!VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 7/1/2021 11:38:32'!
+!VectorEngineWithPlugin methodsFor: 'plugin calls' stamp: 'jmv 8/22/2021 16:26:44'!
+primUpdateContourLastLine: aFloat32Array
+	<primitive: 'primUpdate2ContourLastLine' module: 'VectorEnginePlugin'>
+	"
+	self primitiveFailed.
+	"
+	self flag: #VEPapi5.		"Eventually delete this part, and just call primitiveFailed"
+	"In case of primitive failure, assume it is because plugin is API version 5 and not 6."
+	self
+		primTargetBits: targetForm bits
+		morphIds: morphIds
+		edgeCounts: edgeCounts
+		alphaMask: alphaMask
+		contour: contour
+		targetWidth: targetWidth
+		targetHeight: targetHeight.
+	self primUpdateContourLastLine! !
+
+!VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 8/22/2021 16:27:30'!
 isPluginAvailable
 	"
 	VectorEngineWithPlugin isPluginAvailable
@@ -6673,7 +6714,8 @@ isPluginAvailable
 	"
 	| pluginApiVersion |
 	pluginApiVersion _ self pluginApiVersion.
-	^ pluginApiVersion = 5! !
+	self flag: #VEPapi5.		"Eventually accept only v6"
+	^ pluginApiVersion = 5 or: [ pluginApiVersion = 6 ]! !
 
 !VectorEngineWithPlugin class methodsFor: 'class initialization' stamp: 'jmv 5/18/2021 12:25:12'!
 initialize
