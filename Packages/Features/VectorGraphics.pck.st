@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4789] on 22 August 2021 at 4:33:54 pm'!
+'From Cuis 5.0 [latest update: #4799] on 23 August 2021 at 7:43:12 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 276!
+!provides: 'VectorGraphics' 1 277!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -2933,10 +2933,11 @@ boundingRectOfCurrentMorphAfterDraw
 		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
 		ifNil: [ boundingRect ]! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 14:04:51'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/23/2021 14:17:48'!
 drawCurrentAndSubmorphs
 	
 	self isCurrentMorphVisible ifTrue: [
+
 		currentMorph drawOn: self.
 		currentMorph displayBoundsSetFrom: self.
 
@@ -3227,39 +3228,26 @@ drawCurrentAsOutline! !
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:34:11'!
 drawHighlight: aMorph! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:03:45'!
-fullAddCurrentRect: addCurrentBounds submorphs: trySubmorphs to: aDamageRecorder
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/23/2021 14:19:05'!
+fullAddCurrentMorphTo: aDamageRecorder
 
-	| invalidateOwns |
-	invalidateOwns _ false.
-	addCurrentBounds ifTrue: [
+	currentMorph isRedrawNeeded ifTrue: [
 		currentMorph needsRedraw: false.
 		self updateCurrentBounds.
-		invalidateOwns _ true ].
-	trySubmorphs ifTrue: [
-		(currentMorph submorphsMightProtrude and: [currentMorph clipsSubmorphsReally not])
-			ifTrue: [
-				currentMorph submorphNeedsRedraw: false.
-				currentMorph submorphsReverseDo: [ :m |
-					self fullAddRedrawRect: m to: aDamageRecorder ]]
-			ifFalse: [
-				currentMorph fullRedrawNotNeeded.
-				invalidateOwns _ true ]].
-	invalidateOwns ifTrue: [
-		aDamageRecorder recordInvalidRect: currentMorph displayBounds for: currentMorph ]! !
+		aDamageRecorder recordInvalidRect: currentMorph displayBounds for: currentMorph ].
+	currentMorph isSubmorphRedrawNeeded ifTrue: [
+		currentMorph submorphNeedsRedraw: false.
+		self clippingByCurrentMorphDo: [
+			currentMorph submorphsReverseDo: [ :m |
+				self fullAddRedrawRect: m to: aDamageRecorder ]]].! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:07:07'!
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/23/2021 11:21:40'!
 fullAddRedrawRect: aMorph to: aDamageRecorder
-	| addCurrentBounds trySubmorphs |
+	
 	aMorph visible ifTrue: [
-		addCurrentBounds _ aMorph isRedrawNeeded.
-		trySubmorphs _ aMorph isSubmorphRedrawNeeded.
-		(trySubmorphs or: [addCurrentBounds]) ifTrue: [
+		(aMorph isRedrawNeeded or: [aMorph isSubmorphRedrawNeeded]) ifTrue: [
 			self into: aMorph.
-			self
-				fullAddCurrentRect: addCurrentBounds
-				submorphs: trySubmorphs
-				to: aDamageRecorder.
+			self fullAddCurrentMorphTo: aDamageRecorder.
 			self outOfMorph
 		]]! !
 
@@ -3625,12 +3613,14 @@ pvtDrawButtonFaceForm: aForm
 		image: aForm
 		at: (currentMorph morphExtent - aForm extent //2).! !
 
-!VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 16:07:27'!
+!VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 8/23/2021 14:31:35'!
 setClipRect: aRectangle
 	"In targetForm coordinates"
 
 	super setClipRect: aRectangle.
-	engine clipRect: aRectangle! !
+	engine clipRect: aRectangle.
+	boundsFinderCanvas ifNotNil: [
+		boundsFinderCanvas setClipRect: aRectangle ].! !
 
 !VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/18/2021 11:42:58'!
 initializeWithTranslation: aPoint
@@ -9026,16 +9016,15 @@ coversGlobalPoint: worldPoint
 		^(self bitMask pixelValueAt: worldPoint - self displayBounds topLeft) = 1 ].
 	^ false! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/18/2021 11:11:33'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/23/2021 14:00:38'!
 findFullBoundsInOwner
 	"Find and answer full bounds in whatever owner.
-	These might not equal #displayFullBounds at all!!"
+	These might not equal #displayFullBounds at all!!
+	Subclasses that (re)define #requiresVectorCanvas and #morphExtent should redefine this methods.
+	See inheritance.
+	This implementations is part of VectorGraphics.pck.st"
 
 	| prevNotVisibleFlag w c answer prevOwner |
-	self requiresVectorCanvas ifFalse: [
-		"#morphExtent exists, and it is also valid in owner, because #requiresVectorCanvas is false."
-		^(self morphPosition extent: self morphExtent) encompassingIntegerRectangle ].
-
 	(owner notNil and: [owner isWorldMorph]) ifTrue: [
 		w _ owner ]
 	ifFalse: [
