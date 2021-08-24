@@ -1,12 +1,12 @@
-'From Cuis 5.0 [latest update: #4738] on 16 August 2021 at 12:05:39 pm'!
-'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham and Juan Vuletich.
+'From Cuis 5.0 [latest update: #4804] on 24 August 2021 at 2:46:24 pm'!
+'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
 	- WebClient-Tests-topa.48
 - Hernan Wilkinson: 
   - Added useDebugErrorHandler and debugErrorHandler to be able to debug a http request
   - Changed exampleDoIt to support Smalltalk expresions in the URL using GET'!
-!provides: 'WebClient' 1 21!
+!provides: 'WebClient' 1 22!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -1377,13 +1377,13 @@ serverName
 
 	^server copyUpTo: $:! !
 
-!WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 19:21'!
+!WebClient methodsFor: 'accessing' stamp: 'NM 8/23/2021 16:36:46'!
 serverPort
 	"Returns the port of the server:port description"
 
 	^(server copyAfter: $:) 
 		ifEmpty:[self defaultPort]
-		ifNotEmpty:[:portString| portString asInteger].
+		ifNotEmpty:[:portString| portString asNumber].
 ! !
 
 !WebClient methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:12'!
