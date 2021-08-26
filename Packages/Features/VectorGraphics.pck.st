@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4799] on 23 August 2021 at 7:43:12 pm'!
+'From Cuis 5.0 [latest update: #4810] on 26 August 2021 at 5:06:30 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 277!
+!provides: 'VectorGraphics' 1 278!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -112,7 +112,7 @@ HybridCanvas class
 !classDefinition: #VectorCanvas category: 'VectorGraphics-Kernel'!
 MorphicCanvas subclass: #VectorCanvas
 	instanceVariableNames: 'firstPoint lastControlPoint currentPoint'
-	classVariableNames: ''
+	classVariableNames: 'IconPathData'
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
 !classDefinition: 'VectorCanvas class' category: 'VectorGraphics-Kernel'!
@@ -2460,86 +2460,63 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:34'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 16:48:44'!
 drawCloseIcon
-	| c |
+
+	| c size |
 	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
 		ifFalse: [`Color r: 0.996 g: 0.329 b: 0.329`]
 		ifTrue: [`(Color r: 0.996 g: 0.329 b: 0.329) * 0.85`].
-	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
-		self pathSequence: `#[
-			0 1 10
-			2 10 19 2 18
-			2 19 10 18 18
-			2 10 1 18 2
-			2 1 10 2 2
-			] asFloat32Array` ].
-	currentMorph mouseIsOver ifTrue: [
-		self strokeWidth: 2 color: `Color black` do: [
-			self pathSequence: `#[
-				0 6 14
-				1 14 6
-				0 6 6
-				1 14 14
-				] asFloat32Array` ]].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:38'!
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/30.0 color: `Color gray` fillColor: c do: [
+		self pathSequence: (self class windowButtonPathData: size) ].
+
+	currentMorph mouseIsOver ifTrue: [
+		self strokeWidth: (size/10.0 max: 1.0) color: `Color black` do: [
+			self pathSequence: (self class windowButtonClosePathData: size) ]].! !
+
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 16:53:11'!
 drawCollapseIcon
-	| c |
+
+	| c size |
 	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
 		ifFalse: [`Color r: 0.988 g: 0.557 b: 0.102`]
 		ifTrue: [`(Color r: 0.988 g: 0.557 b: 0.102) * 0.85`].
-	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
-		self pathSequence: `#[
-			0 1 10
-			2 10 19 2 18
-			2 19 10 18 18
-			2 10 1 18 2
-			2 1 10 2 2
-			] asFloat32Array` ].
-	currentMorph mouseIsOver ifTrue: [
-		self strokeWidth: 2 color: `Color black` do: [
-			self pathSequence: `#[
-				0 5 10
-				1 15 10
-				] asFloat32Array` ]].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:45'!
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/30.0 color: `Color gray` fillColor: c do: [
+		self pathSequence: (self class windowButtonPathData: size) ].
+
+	currentMorph mouseIsOver ifTrue: [
+		self strokeWidth: (size/10.0 max: 1.0) color: `Color black` do: [
+			self pathSequence: (self class windowButtonCollapsePathData: size) ]].! !
+
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:23:01'!
 drawDownIcon
-	| c |
+	| c size |
 	c _ currentMorph isPressed
 		ifFalse: [`Color darkGray`]
 		ifTrue: [`Color veryDarkGray`].
-	self strokeWidth: 2.5 color: c do: [
-		self pathSequence: `#[
-			0 4 7
-			1 9 13
-			1 14 7
-			] asFloat32Array`
-		].! !
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/7.2 color: c do: [
+		self pathSequence: (self class scrollDownPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:50'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 16:53:16'!
 drawExpandIcon
-	| c |
+
+	| c size |
 	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
 		ifFalse: [`Color r: 0.337 g: 0.604 b: 0.161`]
 		ifTrue: [`(Color r: 0.337 g: 0.604 b: 0.161) * 0.85`].
-	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
-		self pathSequence: `#[
-			0 1 10
-			2 10 19 2 18
-			2 19 10 18 18
-			2 10 1 18 2
-			2 1 10 2 2
-			] asFloat32Array` ].
+
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/30.0 color: `Color gray` fillColor: c do: [
+		self pathSequence: (self class windowButtonPathData: size) ].
+
 	currentMorph mouseIsOver ifTrue: [
-		self strokeWidth: 2 color: `Color black` do: [
-			self pathSequence: `#[
-				0 5 10
-				1 15 10
-				0 10 5
-				1 10 15
-				] asFloat32Array` ]].! !
+		self strokeWidth: (size/10.0 max: 1.0) color: `Color black` do: [
+			self pathSequence: (self class windowButtonExpandPathData: size) ]].! !
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/2/2021 14:35:41'!
 drawExpandedAt: aPoint
@@ -2623,42 +2600,31 @@ drawHandSmall
 				1.0    5.33    17.34
 			] asFloat32Array` ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:28:56'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:07'!
 drawLeftIcon
-	| c |
+	| c size |
 	c _ currentMorph isPressed
 		ifFalse: [`Color darkGray`]
 		ifTrue: [`Color veryDarkGray`].
-	self strokeWidth: 2.5 color: c do: [
-		self pathSequence: `#[
-			0 12 4
-			1 6 9
-			1 12 14
-			] asFloat32Array`
-		].! !
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/7.2 color: c do: [
+		self pathSequence: (self class scrollLeftPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:29:02'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 16:53:21'!
 drawMenuIcon
-	| c |
+
+	| c size |
 	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
 		ifFalse: [`Color r: 0.212 g: 0.439 b: 0.784`]
 		ifTrue: [`(Color r: 0.212 g: 0.439 b: 0.784) * 0.85`].
-	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
-		self pathSequence: `#[
-			0 1 10
-			2 10 19 2 18
-			2 19 10 18 18
-			2 10 1 18 2
-			2 1 10 2 2
-			] asFloat32Array` ].
+
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/30.0 color: `Color gray` fillColor: c do: [
+		self pathSequence: (self class windowButtonPathData: size) ].
+
 	currentMorph mouseIsOver ifTrue: [
 		self fillColor: `Color black` do: [
-			self pathSequence: `#[
-				0 4 8
-				1 16 8
-				1 10 16
-				1 4 8
-				] asFloat32Array` ]].! !
+			self pathSequence: (self class windowButtonMenuPathData: size) ]].! !
 
 !VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/2/2021 14:52:28'!
 drawNotExpandedAt: aPoint
@@ -2671,57 +2637,36 @@ drawNotExpandedAt: aPoint
 			rel_LineTo: `-10 @ 5`;
 			rel_LineTo: `0 @ -10` ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 18:31:27'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 16:44:04'!
 drawPushPinIcon
 	"For Menu stay-up button"
-	| c |
-	c _ (currentMorph isPressed or: [ currentMorph mouseIsOver ])
-		ifFalse: [`Color r: 0.212 g: 0.439 b: 0.784`]
-		ifTrue: [`(Color r: 0.212 g: 0.439 b: 0.784) * 0.85`].
-	self strokeWidth: 0.5 color: `Color gray` fillColor: c do: [
-		self pathSequence: `#[
-			0 1 10
-			2 10 19 2 18
-			2 19 10 18 18
-			2 10 1 18 2
-			2 1 10 2 2
-			] asFloat32Array` ].
-	currentMorph mouseIsOver ifTrue: [
-		self fillColor: `Color black` do: [
-			self pathSequence: `#[
-				0 4 8
-				1 16 8
-				1 10 16
-				1 4 8
-				] asFloat32Array` ]].! !
+	| c size |
+	c _ currentMorph isPressed
+		ifFalse: [`(Color r: 0.996 g: 0.329 b: 0.329) * 0.95`]
+		ifTrue: [`(Color r: 0.996 g: 0.329 b: 0.329) * 0.7`].
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/30.0 color: `Color darkGray` fillColor: c do: [
+		self pathSequence: (self class pushPinIconData: size) ]! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:29:07'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:16'!
 drawRightIcon
-	| c |
+	| c size |
 	c _ currentMorph isPressed
 		ifFalse: [`Color darkGray`]
 		ifTrue: [`Color veryDarkGray`].
-	self strokeWidth: 2.5 color: c do: [
-		self pathSequence: `#[
-			0 7 4
-			1 13 9
-			1 7 14
-			] asFloat32Array`
-		].! !
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/7.2 color: c do: [
+		self pathSequence: (self class scrollRightPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/19/2021 15:29:12'!
+!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:30'!
 drawUpIcon
-	| c |
+	| c size |
 	c _ currentMorph isPressed
 		ifFalse: [`Color darkGray`]
 		ifTrue: [`Color veryDarkGray`].
-	self strokeWidth: 2.5 color: c do: [
-		self pathSequence: `#[
-			0 4 12
-			1 9 6
-			1 14 12
-			] asFloat32Array`
-		].! !
+	size _ currentMorph morphWidth.
+	self strokeWidth: size/7.2 color: c do: [
+		self pathSequence: (self class scrollUpPathData: size) ].! !
 
 !VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 8/12/2021 16:12:39'!
 drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor: insideColor labelHeight: labelHeight
@@ -3175,6 +3120,155 @@ siemensStar
 		].
 	].
 	^form! !
+
+!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 8/26/2021 16:22:54'!
+guiSizePreferenceChanged
+	"Some preference related to size of gui elements may have changed."
+	IconPathData removeAll.! !
+
+!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 8/26/2021 11:26:56'!
+initialize
+	"
+	VectorCanvas initialize
+	"
+	IconPathData _ Dictionary new.! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:36'!
+pushPinIconData: aSize
+	| scale |
+	^IconPathData at: #pushPinIcon ifAbsentPut: [
+		scale _ aSize / 19.0.
+		self scalePathData: `#[
+			0 0 21
+			1 10 13
+			1 15 18
+			1 14 13
+			1 21 6
+			1 15 0
+			1 8 7
+			1 3 6
+			1 8 11
+			1 0 21
+		] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:26'!
+scrollDownPathData: aSize
+	| scale |
+	^IconPathData at: #scrollDown ifAbsentPut: [
+		scale _ aSize / 18.0.
+		self scalePathData: `#[
+			0 4 7
+			1 9 13
+			1 14 7
+		] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:37'!
+scrollLeftPathData: aSize
+	| scale |
+	^IconPathData at: #scrollLeft ifAbsentPut: [
+		scale _ aSize / 18.0.
+		self scalePathData: `#[
+			0 12 4
+			1 6 9
+			1 12 14
+		] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:43'!
+scrollRightPathData: aSize
+	| scale |
+	^IconPathData at: #scrollRight ifAbsentPut: [
+		scale _ aSize / 18.0.
+		self scalePathData: `#[
+			0 7 4
+			1 13 9
+			1 7 14
+			] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:48'!
+scrollUpPathData: aSize
+	| scale |
+	^IconPathData at: #scrollUp ifAbsentPut: [
+		scale _ aSize / 18.0.
+		self scalePathData: `#[
+			0 4 12
+			1 9 6
+			1 14 12
+			] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:31'!
+windowButtonClosePathData: aSize
+	| scale |
+	^IconPathData at: #windowButtonClose ifAbsentPut: [
+		scale _ aSize / 22.0.
+		self scalePathData: `#[
+			0 6 14
+			1 14 6
+			0 6 6
+			1 14 14
+		] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:27'!
+windowButtonCollapsePathData: aSize
+	| scale |
+	^IconPathData at: #windowButtonCollapse ifAbsentPut: [
+		scale _ aSize / 22.0.
+		self scalePathData: `#[
+			0 5 10
+			1 15 10
+		] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:21'!
+windowButtonExpandPathData: aSize
+	| scale |
+	^IconPathData at: #windowButtonExpand ifAbsentPut: [
+		scale _ aSize / 22.0.
+		self scalePathData: `#[
+			0 5 10
+			1 15 10
+			0 10 5
+			1 10 15
+		] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:16'!
+windowButtonMenuPathData: aSize
+	| scale |
+	^IconPathData at: #windowButtonMenu ifAbsentPut: [
+		scale _ aSize / 22.0.
+		self scalePathData: `#[
+			0 4 8
+			1 16 8
+			1 10 16
+			1 4 8
+		] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:11'!
+windowButtonPathData: aSize
+	| scale |
+	^IconPathData at: #windowButton ifAbsentPut: [
+		scale _ aSize / 22.0.
+		self scalePathData: `#[
+			0 1 10
+			2 10 19 2 18
+			2 19 10 18 18
+			2 10 1 18 2
+			2 1 10 2 2
+		] asFloat32Array` scale: scale ].! !
+
+!VectorCanvas class methodsFor: 'private' stamp: 'jmv 8/26/2021 11:17:52'!
+scalePathData: aFloat32Array scale: scale
+	"aFloatArray is a #pathSequence: argument. It encodes a sequence of path commands in a Float32Array.
+	See #pathSequence:"
+
+	| kind scaledPathData | 
+	scaledPathData _ Float32Array streamContents: [ :scaledStrm | | unscaledStrm |
+		unscaledStrm _ aFloat32Array readStream.
+		[ unscaledStrm atEnd ] whileFalse: [
+			kind _ unscaledStrm next.
+			scaledStrm nextPut: kind.
+			(kind asInteger *2 max: 2) timesRepeat: [
+				scaledStrm nextPut: unscaledStrm next * scale ]]
+		].
+	^scaledPathData.! !
 
 !BoundsFinderCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 15:35:20'!
 frameGlobalRect: rect borderWidth: borderWidth color: borderColor! !
@@ -9365,5 +9459,6 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 		trueTypeFont: aTrueTypeFont
 		color: aColor! !
 HybridCanvas initialize!
+VectorCanvas initialize!
 VectorEngineWithPlugin initialize!
 TTFontDescription initialize!
