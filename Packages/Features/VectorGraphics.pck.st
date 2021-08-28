@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4810] on 26 August 2021 at 5:06:30 pm'!
+'From Cuis 5.0 [latest update: #4811] on 27 August 2021 at 7:58:29 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 278!
+!provides: 'VectorGraphics' 1 281!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -202,7 +202,7 @@ VectorEngineWholePixel class
 !classDefinition: #VectorEngineWithPlugin category: 'VectorGraphics-Kernel'!
 VectorEngineDrawer subclass: #VectorEngineWithPlugin
 	instanceVariableNames: ''
-	classVariableNames: 'PluginAccess'
+	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
 !classDefinition: 'VectorEngineWithPlugin class' category: 'VectorGraphics-Kernel'!
@@ -1392,6 +1392,20 @@ setPaintColor: aColor
 
 	super setPaintColor: aColor! !
 
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 8/27/2021 17:37:48'!
+setPluginAndForm: aForm
+
+	form _ aForm.
+	engine _ BitBltCanvasEngine toForm: form.
+	"Init BitBlt so that the first call to the 'primitiveDisplayString' primitive will not fail"
+	engine sourceX: 0; width: 0.
+	vectorCanvas _ VectorDrawingCanvas  basicNew
+		setPluginAndForm: form;
+		initializeWithTranslation: `0@0`.
+	morphIDsForm _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
+	drawingOnMorphIDs _ false.
+	self newClipRect: nil.! !
+
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 8/3/2020 17:03:44'!
 canDraw: aMorph
 	^true! !
@@ -1430,6 +1444,11 @@ drawCurrentAndSubmorphs
 		currentMorph isHighlighted ifTrue: [
 			self drawHighlight: currentMorph ].
 	].! !
+
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 8/27/2021 19:50:41'!
+drawCurrentAsError
+
+	vectorCanvas drawCurrentAsError! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:18:28'!
 drawHand
@@ -1531,6 +1550,10 @@ drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor:
 		gradientTop: topFactor
 		gradientBottom: bottomFactor
 		insideColor: insideColor! !
+
+!HybridCanvas methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:04:24'!
+usesVectorEnginePlugin
+	^vectorCanvas usesVectorEnginePlugin! !
 
 !HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 5/31/2021 19:48:59'!
 initialize
@@ -2948,13 +2971,13 @@ buildArrowOfDirection: aSymbolDirection size: finalSizeInteger
 	"
 	self flag: #jmvVer2.! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/18/2021 10:08:54'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/27/2021 16:38:38'!
 experiment1
 	"
 	Not perfect, but can be compared with
 	http://www.hpl.hp.com/research/mmsl/projects/graphics/antialiasing/figure21.htm
 	BTW, this is so much faster...
-	VectorCanvas experiment1
+	VectorDrawingCanvas experiment1
 	"
 | canvas h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 e f |
 canvas _ self onForm: Display.
@@ -3009,10 +3032,10 @@ Display forceToScreen.
 	f writePNGfileNamed: 'pp17.png'
 "! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 11:31:56'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/27/2021 16:38:53'!
 experiment2
 	"
-	VectorCanvas experiment2
+	VectorDrawingCanvas experiment2
 	"
 | canvas h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 |
 canvas _ self onForm: Display.
@@ -3054,10 +3077,10 @@ delta _ nil.
 Display forceToScreen.
 ! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 11:38:36'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/27/2021 16:39:27'!
 experiment3
 	"
-	VectorCanvas experiment3
+	VectorDrawingCanvas experiment3
 	"
 	| canvas w r |
 	canvas _ self onForm: Display.
@@ -3074,10 +3097,10 @@ experiment3
 	].
 Display forceToScreen! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 5/10/2021 11:38:48'!
+!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/27/2021 16:39:44'!
 experiment4
 	"
-	VectorCanvas experiment4
+	VectorDrawingCanvas experiment4
 	"
 	| canvas w r |
 	canvas _ self onForm: Display.
@@ -3442,6 +3465,12 @@ setForm: aForm subPixelAntiAliasing: aBooleanOrNil
 	engine _ VectorEngineBoundsFinder new.
 	clippingMorphDisplayBounds _ nil.! !
 
+!BoundsFinderCanvas methodsFor: 'initialization' stamp: 'jmv 8/27/2021 17:17:12'!
+setPluginAndForm: aForm
+
+	engine _ VectorEngineBoundsFinder new.
+	clippingMorphDisplayBounds _ nil.! !
+
 !VectorDrawingCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:34:48'!
 boundsFinderCanvas
 	^boundsFinderCanvas! !
@@ -3621,6 +3650,24 @@ contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBotto
 	anArray ifNil: [ ^engine morphContourAfterDrawInto: nil into: aBlock ].
 	^engine morphContourAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock! !
 
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/27/2021 19:55:39'!
+drawCurrentAsError
+	"The morph (or one of its submorphs) had an error in its drawing method."
+	| r w |
+	r _ currentMorph morphLocalBoundsForError.
+	w _ r extent > `50@50`
+		ifTrue: [ 6 ]
+		ifFalse: [ 2 ].
+	r _ r insetBy: w/2.
+	self
+		frameAndFillRectangle: r
+		fillColor: `Color red`
+		borderWidth: w
+		borderColor: `Color yellow`.
+	self line: r topLeft-0.5 to: r bottomRight-0.5 width: w color: `Color yellow`.
+	self line: r topRight-0.5 to: r bottomLeft-0.5 width: w color: `Color yellow`.	
+	currentMorph displayBoundsSetFrom: self.! !
+
 !VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 16:01:43'!
 morph: aMorph isAtPoint: aPoint
 	^engine morph: aMorph isAtPoint: aPoint! !
@@ -3727,19 +3774,30 @@ initializeWithTranslation: aPoint
 	boundsFinderCanvas engine antiAliasingWidth: engine antiAliasingWidth.
 	boundsFinderCanvas engine subPixelDelta: engine subPixelDelta.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/17/2021 14:43:24'!
-setForm: aForm subPixelAntiAliasing: aBooleanOrNil
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/27/2021 17:08:10'!
+setForm: aForm subPixelAntiAliasing: aBoolean
 	"nil means use default kind of anti aliasing"
 	"
 	self runningWorld setCanvas
 	"
-	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit destination' ].
+	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit target' ].
 	form _ aForm.
-	engine _ aBooleanOrNil
-		ifNil: [VectorEngine onForm: form]
-		ifNotNil: [ :aBoolean | aBoolean
-			ifTrue: [VectorEngine subPixelAntiAliasingOnForm: form]
-			ifFalse: [VectorEngine wholePixelAntiAliasingOnForm: form]].
+	engine _ aBoolean
+		ifTrue: [VectorEngineSubPixel new initializeOnForm: form]
+		ifFalse: [VectorEngineWholePixel new initializeOnForm: form].
+	engine canvas: self.
+	self newClipRect: nil.! !
+
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/27/2021 17:13:23'!
+setPluginAndForm: aForm
+	"Note: Only one instance should use VectorEnginePlugin at a time:
+	the plugin holds numeric parameters that are not passed again on every call."
+	"
+	self runningWorld setCanvas
+	"
+	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit target' ].
+	form _ aForm.
+	engine _ VectorEngine withPluginOnForm: form.
 	engine canvas: self.
 	self newClipRect: nil.! !
 
@@ -3747,6 +3805,10 @@ setForm: aForm subPixelAntiAliasing: aBooleanOrNil
 world: aWorldMorph
 	super world: aWorldMorph.
 	boundsFinderCanvas world: aWorldMorph! !
+
+!VectorDrawingCanvas methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:04:50'!
+usesVectorEnginePlugin
+	^engine usesVectorEnginePlugin! !
 
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
 antiAliasingWidth
@@ -4440,7 +4502,7 @@ pvtStrokeWidth: aNumber
 
 	strokeWidth _ aNumber.! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/10/2021 14:06:14'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:54:50'!
 circleApproximationExamples
 "
 self circleApproximationExamples
@@ -4452,23 +4514,23 @@ r _ 200.
 c _ 0.085 * r.
 d _ 0.5 * r.
 e _ 0.552 * r.
-(VectorEngine onForm: Display)
+(VectorEngineWholePixel new initializeOnForm: Display)
 	strokeWidth: 5.0 color: Color red do: [ :engine |
 		engine
 			circleCenter: cx @ cy radius: r].
-(VectorEngine onForm: Display)												"Quadratic, coarse and better approximations"
+(VectorEngineWholePixel new initializeOnForm: Display)												"Quadratic, coarse and better approximations"
 	strokeWidth: 1.0 color: Color white do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
 			quadraticBezierTo: cx - r @ cy control: (cx - r) @ (cy + r);
 			moveTo: cx @ (cy + r);
 			quadraticBezierTo: cx - r @ cy control: (cx - r + c) @ (cy + r - c) ].
-(VectorEngine onForm: Display)												"Cubic, coarse approximation"
+(VectorEngineWholePixel new initializeOnForm: Display)												"Cubic, coarse approximation"
 	strokeWidth: 1.0 color: Color green do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
 			cubicBezierTo: cx - r @ cy control1: (cx - d) @ (cy + r) control2: (cx - r) @ (cy + d) ].
-(VectorEngine onForm: Display)												"Cubic, good approximation"
+(VectorEngineWholePixel new initializeOnForm: Display)												"Cubic, good approximation"
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
@@ -4476,14 +4538,14 @@ e _ 0.552 * r.
 Display forceToScreen
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 6/8/2021 12:28:54'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:35:53'!
 experLinesAndShapes
 	"
 Display fill: (0@0 corner: 120@1200) fillColor: Color white.
 	VectorEngineWholePixel experLinesAndShapes
 	"
 	| engine y1 yy2 dy y2 |
-	engine _ self onForm: Display.
+	engine _ self new initializeOnForm: Display.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
 			moveTo: 20@10;
@@ -4548,13 +4610,13 @@ Display fill: (0@0 corner: 120@1200) fillColor: Color white.
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 5/12/2021 14:44:57'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:34:26'!
 experLinesAndShapes2
 	"
 	VectorEngineSubPixel experLinesAndShapes2
 	"
 	| engine y1 dy y2 |
-	engine _ self onForm: Display.
+	engine _ self new initializeOnForm: Display.
 
 	y1 _ 10.
 	dy _ 3.
@@ -4628,7 +4690,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:07:55'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:35:26'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -4639,7 +4701,7 @@ experimentHopsPerPixel1
 	hops2 _ 3.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ self onForm: f1.
+	engine _ self new initializeOnForm: f1.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
@@ -4651,7 +4713,7 @@ experimentHopsPerPixel1
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ self onForm: f2.
+	engine _ self new initializeOnForm: f2.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
@@ -4669,7 +4731,7 @@ experimentHopsPerPixel1
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:08:05'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:37:19'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -4682,7 +4744,7 @@ experimentHopsPerPixel2
 	strokeWidth _ 1.4.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ self onForm: f1.
+	engine _ self new initializeOnForm: f1.
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
@@ -4694,7 +4756,7 @@ experimentHopsPerPixel2
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ self onForm: f2.
+	engine _ self new initializeOnForm: f2.
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
@@ -4712,7 +4774,7 @@ Feature require: 'LinearAlgebra'.
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 6/11/2021 12:08:11'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:37:32'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -4723,7 +4785,7 @@ experimentHopsPerPixel3
 	hops2 _ 3.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ self onForm: f1.
+	engine _ self new initializeOnForm: f1.
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
@@ -4735,7 +4797,7 @@ experimentHopsPerPixel3
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ self onForm: f2.
+	engine _ self new initializeOnForm: f2.
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
@@ -4757,35 +4819,17 @@ experimentHopsPerPixel3
 defaultAntiAliasingWidth
 	self subclassResponsibility! !
 
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/11/2021 19:30:47'!
-onForm: aForm
-	"On a non-abstract class, answer an instance of receiver.
-	On an abstract class, pick a subclass."
-
-	subclasses isEmpty ifTrue: [
-		^self new initializeOnForm: aForm ].
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/27/2021 17:11:23'!
+withPluginOnForm: aForm
+	"Use the VectorEnginePlugin if available.
+	Note: Only one instance should use it at a time:
+	the plugin holds numeric parameters that are not passed again on every call."
 
 	^ (VectorEngineWithPlugin isPluginAvailable
 		ifTrue: [
 			Display width > 1920  			"Assume high resolution implies high DPI"
 				ifTrue: [VectorEngineWithPluginWholePixel]
 				ifFalse: [VectorEngineWithPluginSubPixel]]
-		ifFalse: [VectorEngineWholePixel])
-			new initializeOnForm: aForm! !
-
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 6/12/2021 09:58:54'!
-subPixelAntiAliasingOnForm: aForm
-
-	^ (VectorEngineWithPlugin isPluginAvailable
-		ifTrue: [VectorEngineWithPluginSubPixel]
-		ifFalse: [VectorEngineSubPixel])
-			new initializeOnForm: aForm! !
-
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/17/2021 14:38:29'!
-wholePixelAntiAliasingOnForm: aForm
-
-	^ (VectorEngineWithPlugin isPluginAvailable
-		ifTrue: [VectorEngineWithPlugin]
 		ifFalse: [VectorEngineWholePixel])
 			new initializeOnForm: aForm! !
 
@@ -5110,7 +5154,7 @@ morph: aMorph isAtPoint: aPoint
 	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
 	^((morphIds at: index) >> 8) = aMorph morphId! !
 
-!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:28'!
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/27/2021 10:52:48'!
 pvtSetForm: aForm
 
 	targetForm _ aForm.
@@ -5126,7 +5170,8 @@ pvtSetForm: aForm
 		contour at: y * 2 + 2 put: 0 ].
 	self resetMorphBounds.
 	self clipRect: targetForm boundingBox.
-	self antiAliasingWidth: self class defaultAntiAliasingWidth.! !
+	self antiAliasingWidth: self class defaultAntiAliasingWidth.
+	geometryTransformation _ MorphicTranslation identity.! !
 
 !VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/10/2021 12:05:47'!
 resetMorphBounds
@@ -5229,6 +5274,10 @@ strokeWidth: clientStrokeWidth color: aStrokeColor fillColor: aFillColor do: pat
 		color: aStrokeColor
 		fillColor: aFillColor
 		do: pathCommandsBlock! !
+
+!VectorEngineDrawer methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:05:35'!
+usesVectorEnginePlugin
+	^false! !
 
 !VectorEngineSmalltalk methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:04:36'!
 antiAliasingWidth: aNumber
@@ -6517,16 +6566,6 @@ pathSequence: aFloat32Array
 		alphaMask: alphaMask
 		contour: contour! !
 
-!VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 5/18/2021 12:25:12'!
-doPath: pathCommandsBlock ensureClosePath: ensureClosePath
-	"Evaluate a sequence of path commands. Path parameters already set."
-
-	PluginAccess releaseIfOwnerNotReadyToRun.
-	PluginAccess critical: [
-		self initializePath.
-		pathCommandsBlock valueWithPossibleArgument: (canvas ifNil: [self]).
-		self finishPath: ensureClosePath ].! !
-
 !VectorEngineWithPlugin methodsFor: 'private' stamp: 'jmv 8/22/2021 15:31:21'!
 finishPath: ensureClosePath
 	"Blend stroke and/or fill over background, according to the just computed pen alphas (distance from pixel to center of stroke)"
@@ -6790,6 +6829,10 @@ primUpdateContourLastLine: aFloat32Array
 		targetHeight: targetHeight.
 	self primUpdateContourLastLine! !
 
+!VectorEngineWithPlugin methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:05:47'!
+usesVectorEnginePlugin
+	^true! !
+
 !VectorEngineWithPlugin class methodsFor: 'instance creation' stamp: 'jmv 8/22/2021 16:27:30'!
 isPluginAvailable
 	"
@@ -6800,10 +6843,6 @@ isPluginAvailable
 	pluginApiVersion _ self pluginApiVersion.
 	self flag: #VEPapi5.		"Eventually accept only v6"
 	^ pluginApiVersion = 5 or: [ pluginApiVersion = 6 ]! !
-
-!VectorEngineWithPlugin class methodsFor: 'class initialization' stamp: 'jmv 5/18/2021 12:25:12'!
-initialize
-	PluginAccess _ Mutex new.! !
 
 !VectorEngineWithPlugin class methodsFor: 'private' stamp: 'jmv 5/18/2021 12:51:46'!
 pluginApiVersion
@@ -9110,7 +9149,7 @@ coversGlobalPoint: worldPoint
 		^(self bitMask pixelValueAt: worldPoint - self displayBounds topLeft) = 1 ].
 	^ false! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/23/2021 14:00:38'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/27/2021 17:40:04'!
 findFullBoundsInOwner
 	"Find and answer full bounds in whatever owner.
 	These might not equal #displayFullBounds at all!!
@@ -9122,10 +9161,7 @@ findFullBoundsInOwner
 	(owner notNil and: [owner isWorldMorph]) ifTrue: [
 		w _ owner ]
 	ifFalse: [
-		w _ UISupervisor ui.
-		w ifNil: [
-			w _ WorldMorph new.
-			w setCanvas ]].
+		w _ UISupervisor ui ].
 	c _ w canvas boundsFinderCanvas.
 	"Hack owner so #displayBoundsSetFrom: will update privateDisplayBounds"
 	prevOwner _ owner.
@@ -9460,5 +9496,4 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 		color: aColor! !
 HybridCanvas initialize!
 VectorCanvas initialize!
-VectorEngineWithPlugin initialize!
 TTFontDescription initialize!
