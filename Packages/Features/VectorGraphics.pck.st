@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4811] on 27 August 2021 at 7:58:29 pm'!
+'From Cuis 5.0 [latest update: #4815] on 29 August 2021 at 7:16:35 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 281!
+!provides: 'VectorGraphics' 1 282!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -4818,6 +4818,12 @@ experimentHopsPerPixel3
 !VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 3/22/2021 14:59:34'!
 defaultAntiAliasingWidth
 	self subclassResponsibility! !
+
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/29/2021 19:14:04'!
+onForm: aForm
+
+	^ VectorEngineWholePixel
+		new initializeOnForm: aForm.! !
 
 !VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/27/2021 17:11:23'!
 withPluginOnForm: aForm
