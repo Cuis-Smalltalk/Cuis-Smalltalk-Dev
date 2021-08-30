@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4815] on 29 August 2021 at 7:16:35 pm'!
+'From Cuis 5.0 [latest update: #4820] on 30 August 2021 at 4:38:58 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 282!
+!provides: 'VectorGraphics' 1 284!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3264,17 +3264,17 @@ windowButtonMenuPathData: aSize
 			1 4 8
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:11'!
+!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/30/2021 12:02:52'!
 windowButtonPathData: aSize
 	| scale |
 	^IconPathData at: #windowButton ifAbsentPut: [
 		scale _ aSize / 22.0.
 		self scalePathData: `#[
-			0 1 10
-			2 10 19 2 18
-			2 19 10 18 18
-			2 10 1 18 2
-			2 1 10 2 2
+			0.0 1 10
+			2    10 19 1.5 18.5
+			2    19 10 18.5 18.5
+			2    10 1 18.5 1.5
+			2    1 10 1.5 1.5
 		] asFloat32Array` scale: scale ].! !
 
 !VectorCanvas class methodsFor: 'private' stamp: 'jmv 8/26/2021 11:17:52'!
@@ -4987,14 +4987,14 @@ finishPath: ensureClosePath
 	morphBoundsRight _ morphBoundsRight max: spanRight.
 	morphBoundsBottom _ morphBoundsBottom max: spanBottom.! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/8/2021 22:26:44'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/30/2021 16:35:33'!
 initializePath
 
 	super initializePath.
 
-	spanTop _ 16r7FFFFFFF.						"drawable bottom. Will later be refined."
+	spanTop _ 16r3FFFFFFF.						"drawable bottom. Will later be refined."
 	spanBottom _ 0.						"drawable top. Will later be refined."
-	spanLeft _ 16r7FFFFFFF.						"drawable right. Will later be refined."
+	spanLeft _ 16r3FFFFFFF.						"drawable right. Will later be refined."
 	spanRight _ 0.						"drawable left. Will later be refined."! !
 
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/10/2021 12:03:57'!
@@ -5003,12 +5003,12 @@ pvtStrokeWidth: aNumber
 	super pvtStrokeWidth: aNumber.
 	swDilatedHalf _ strokeWidth + antiAliasingWidth * 0.5.! !
 
-!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/8/2021 21:04:17'!
+!VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 8/30/2021 16:35:36'!
 resetMorphBounds
 
-	morphBoundsTop _ 16r7FFFFFFF.
+	morphBoundsTop _ 16r3FFFFFFF.
 	morphBoundsBottom _ 0.
-	morphBoundsLeft _ 16r7FFFFFFF.
+	morphBoundsLeft _ 16r3FFFFFFF.
 	morphBoundsRight _ 0! !
 
 !VectorEngineBoundsFinder methodsFor: 'private' stamp: 'jmv 3/22/2021 11:19:05'!
@@ -5488,7 +5488,7 @@ quadraticBezierFromX: xFrom y: yFrom toX: xTo y: yTo controlX: xControl y: yCont
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEngineSmalltalk methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/10/2021 12:07:46'!
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/30/2021 16:35:46'!
 updateContourForX: x y: y
 	"The Contour of the current morph is the pixel area affected, 	but without holes.
 	For each y line where a pixel is affected, record the leftmost and rightmost affected pixels.
@@ -5498,7 +5498,7 @@ updateContourForX: x y: y
 	thisYRounded _ y rounded.
 	(thisYRounded between: 0 and: targetHeight-1) ifTrue: [
 		thisYRounded = prevYRounded ifFalse: [
-			prevYRounded = 16r7FFFFFFF ifFalse: [
+			prevYRounded = 16r3FFFFFFF ifFalse: [
 				contour at: prevYRounded * 2 + 1 put: leftAtThisY.
 				contour at: prevYRounded * 2 + 2 put: rightAtThisY ].
 			leftAtThisY _ contour at: thisYRounded * 2 + 1.
@@ -5544,7 +5544,7 @@ finishPath: ensureClosePath
 			ifFalse: [
 				self blendStrokeOnly ]].! !
 
-!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:34'!
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/30/2021 16:35:40'!
 initializePath
 
 	super initializePath.
@@ -5553,12 +5553,12 @@ initializePath
 	spanBottom _ 0.						"drawable top. Will later be refined."
 	spanLeft _ targetWidth.						"drawable right. Will later be refined."
 	spanRight _ 0.						"drawable left. Will later be refined."
-	prevYRounded _ 16r7FFFFFFF.! !
+	prevYRounded _ 16r3FFFFFFF.! !
 
-!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:28'!
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/30/2021 16:35:43'!
 newTrajectoryFragment
 
-	prevYTruncated _ 16r7FFFFFFF.! !
+	prevYTruncated _ 16r3FFFFFFF.! !
 
 !VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:06:37'!
 pvtFillColor: aFillColorOrNil
@@ -5590,10 +5590,10 @@ resetMorphBounds
 			contour at: y * 2 + 2 put: 0 ]].
 	super resetMorphBounds.! !
 
-!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/10/2021 12:07:46'!
+!VectorEngineSmalltalk methodsFor: 'private' stamp: 'jmv 8/30/2021 16:35:49'!
 updateContourLastLine
 
-	prevYRounded = 16r7FFFFFFF ifFalse: [
+	prevYRounded = 16r3FFFFFFF ifFalse: [
 		contour at: prevYRounded * 2 + 1 put: leftAtThisY.
 		contour at: prevYRounded * 2 + 2 put: rightAtThisY ].! !
 
@@ -5682,7 +5682,7 @@ updateAlphasForX: x y: y
 				doUpdate ifTrue: [
 					alphaMask bytesAt: pixelIndex put: alphaWord ]]]]! !
 
-!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/10/2021 12:07:28'!
+!VectorEngineSubPixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/30/2021 16:35:51'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills.
 		
@@ -5700,7 +5700,7 @@ As an additional optimization, as we need to store for every pixel all the cross
 		^ self].
 	(thisYTruncated between: clipTop-1 and: clipBottom) ifFalse: [
 		^ self ].
-	prevYTruncated = 16r7FFFFFFF ifTrue: [ 
+	prevYTruncated = 16r3FFFFFFF ifTrue: [ 
 		^ prevYTruncated _ thisYTruncated ].
 
 	thisYTruncated > prevYTruncated
@@ -6155,7 +6155,7 @@ updateAlphasForX: x y: y
 						alpha > prevAlpha ifTrue: [
 							alphaMask at: pixelIndex put: alpha ]]]]]! !
 
-!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/10/2021 12:07:28'!
+!VectorEngineWholePixel methodsFor: 'primitive algorithms - aux' stamp: 'jmv 8/30/2021 16:35:55'!
 updateEdgeCountAtX: x y: y
 	"Compute edges intersecting with this horizontal line, for fills.
 		
@@ -6173,7 +6173,7 @@ As an additional optimization, as we need to store for every pixel all the cross
 		^ self].
 	(thisYTruncated between: clipTop-1 and: clipBottom) ifFalse: [
 		^ self ].
-	prevYTruncated = 16r7FFFFFFF ifTrue: [ 
+	prevYTruncated = 16r3FFFFFFF ifTrue: [ 
 		^ prevYTruncated _ thisYTruncated ].
 
 	"All edge count at the left of the clipRect are added there (at the left of the clipRect).
@@ -9276,11 +9276,11 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 
 	self subclassResponsibility! !
 
-!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/25/2021 15:24:44'!
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 8/27/2021 14:45:08'!
 demoUTF32Unicode
 	"
 	BitBltCanvas demoUTF32Unicode.							'Uses glyphs cached in Forms. Sample text is UTF-32.'.
-	VectorCanvas demoUTF32Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-32.'
+	VectorDrawingCanvas demoUTF32Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-32.'
 	"
 	| f askFont |
 	Preferences disable: #loadOnlyLatinGlyphData.
@@ -9307,11 +9307,11 @@ demoUTF32Unicode
 	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNotNil: [ :ff |
 		self exampleUtf32Chinese: ff ].! !
 
-!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 3/26/2021 11:13:49'!
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 8/27/2021 14:45:20'!
 demoUTF8Unicode
 	"
 	BitBltCanvas demoUTF8Unicode.							'Uses glyphs cached in Forms. Sample text is UTF-8.'.
-	VectorCanvas demoUTF8Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-8.'
+	VectorDrawingCanvas demoUTF8Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-8.'
 	"
 	"Note: For Chinese text sample, you need HanWangMingMedium or other suitable Unicode TrueType font with Chinese glyphs."
 	| f askFont |
