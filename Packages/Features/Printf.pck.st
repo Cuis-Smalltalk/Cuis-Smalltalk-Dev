@@ -1,107 +1,107 @@
-'From Cuis 5.0 [latest update: #4738] on 20 August 2021 at 2:49:39 pm'!
+'From Cuis 5.0 [latest update: #4815] on 30 August 2021 at 6:56:24 pm'!
 'Description '!
-!provides: 'Printf' 1 9!
-SystemOrganization addCategory: 'Printf'!
+!provides: 'Printf' 1 10!
+SystemOrganization addCategory: #Printf!
 
 
-!classDefinition: #PrintfFormatStringTest category: 'Printf'!
-TestCase subclass: #PrintfFormatStringTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Printf'!
-!classDefinition: 'PrintfFormatStringTest class' category: 'Printf'!
-PrintfFormatStringTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #Printf category: 'Printf'!
+!classDefinition: #Printf category: #Printf!
 Object subclass: #Printf
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'Printf class' category: 'Printf'!
+!classDefinition: 'Printf class' category: #Printf!
 Printf class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfFormatDescriptor category: #Printf!
 Object subclass: #PrintfFormatDescriptor
 	instanceVariableNames: 'flush width precision'
 	classVariableNames: 'Flags Operators'
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfFormatDescriptor class' category: #Printf!
 PrintfFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfCharacterFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfCharacterFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfCharacterFormatDescriptor
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfCharacterFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfCharacterFormatDescriptor class' category: #Printf!
 PrintfCharacterFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfNumberFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfNumberFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfNumberFormatDescriptor
 	instanceVariableNames: 'operator padding radix space'
 	classVariableNames: 'Base Cased Radix'
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfNumberFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfNumberFormatDescriptor class' category: #Printf!
 PrintfNumberFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfFloatFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfFloatFormatDescriptor category: #Printf!
 PrintfNumberFormatDescriptor subclass: #PrintfFloatFormatDescriptor
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfFloatFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfFloatFormatDescriptor class' category: #Printf!
 PrintfFloatFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfNumberHolderDescriptor category: 'Printf'!
+!classDefinition: #PrintfNumberHolderDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfNumberHolderDescriptor
 	instanceVariableNames: 'value'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfNumberHolderDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfNumberHolderDescriptor class' category: #Printf!
 PrintfNumberHolderDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfStringFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintfStringFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfStringFormatDescriptor
 	instanceVariableNames: 'widthDescriptor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfStringFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintfStringFormatDescriptor class' category: #Printf!
 PrintfStringFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintStringFormatDescriptor category: 'Printf'!
+!classDefinition: #PrintStringFormatDescriptor category: #Printf!
 PrintfStringFormatDescriptor subclass: #PrintStringFormatDescriptor
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintStringFormatDescriptor class' category: 'Printf'!
+!classDefinition: 'PrintStringFormatDescriptor class' category: #Printf!
 PrintStringFormatDescriptor class
 	instanceVariableNames: ''!
 
-!classDefinition: #PrintfFormatString category: 'Printf'!
+!classDefinition: #PrintfFormatString category: #Printf!
 Object subclass: #PrintfFormatString
 	instanceVariableNames: 'format string outputStream'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Printf'!
-!classDefinition: 'PrintfFormatString class' category: 'Printf'!
+!classDefinition: 'PrintfFormatString class' category: #Printf!
 PrintfFormatString class
+	instanceVariableNames: ''!
+
+!classDefinition: #PrintfFormatStringTest category: #Printf!
+TestCase subclass: #PrintfFormatStringTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Printf'!
+!classDefinition: 'PrintfFormatStringTest class' category: #Printf!
+PrintfFormatStringTest class
 	instanceVariableNames: ''!
 
 
@@ -143,98 +143,19 @@ printOn: aStream
 	aStream nextPut: $p
 	! !
 
-!PrintfFormatString methodsFor: 'initialize-release' stamp: 'NM 8/16/2021 14:43:33'!
+!PrintfFormatString methodsFor: 'initialize-release' stamp: 'NM 8/30/2021 18:32:22'!
 setFormat: aString
 	| formatStream |
 	"copy actual formatstrings to format"
 	"copy any nonformating text to string"
 	outputStream := (String new: 20) writeStream.
-	formatStream := ((aString copyReplaceAll: '\n' with: (String with: Character cr))
+	formatStream := ((aString copyReplaceAll: '\n' with: (String with: Character newLineCharacter))
 		copyReplaceAll: '\t'
 		with: (String with: Character tab)) readStream.
 	self collectFormatDescriptorsAndStrings: formatStream
 	! !
 
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:47:37'!
-testFprintf
-	| stream expected |
-	stream := String new writeStream.
-	expected := 'Here is a long string "hello world" and the same shortened "hello w       " with left flush.\The new line has a number "42.0"\and a 0-padded limited precision one "0000042.12345".' withCRs.
-	self assert: expected size equals: (stream f: 'Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e"
-and a 0-padded limited precision one "%013.5e".'
-		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567)).
-	self assert: expected equals: stream contents
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:47:49'!
-testManyArguments
-
-	self assert: 'Here is a long string "hello world" and the same shortened "hello w       " with left flush.
-The new line has a number "42.0" and a 0-padded limited precision one "0000042.12345".' equals: ('Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e" and a 0-padded limited precision one "%013.5e".'
-		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567))
-		! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:00'!
-testOneExponent
-
-	self assert: 'Here is a number "42.0".' equals: ('Here is a number "%e".' printf: 42.0).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:09'!
-testOneExponentAndOneInteger
-
-	self assert: 'Here is a float "42.0" and an integer "42".' equals: ('Here is a float "%e" and an integer "%d".' printf: #(42.0 42)).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:18'!
-testOneExponentWithLength
-
-	self assert: 'Here is a string "0000042.12345".' equals: ('Here is a string "%013.5e".' printf: 42.1234567).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:26'!
-testOneInteger
-
-	self assert: 'Here is a number "42".' equals: ('Here is a number "%d".' printf: 42).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:37'!
-testOneIntegerWithLength
-
-	self assert: 'Here is a string "0000042".' equals: ('Here is a string "%07.7d".' printf: 42).
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:47'!
-testOnePrintPointer
-
-	self assert: 'Here is a pointer "0x12345678".' equals: ('Here is a pointer "%p".' printf: 16r12345678)
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:57'!
-testOnePrintString
-
-	self assert: 'Here is a point "3@4".' equals: ('Here is a point "%P".' printf: 3@4)
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:08'!
-testOneString
-
-	self assert: 'Here is a string "hello world".' equals: ('Here is a string "%s".' printf: 'hello world')
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:19'!
-testOneStringWithLength
-
-	self assert:  'Here is a string "hello world" and another shortened "hello w       ".' equals: ('Here is a string "%s" and another shortened "%-14.7s".' printf: #('hello world' 'hello world'))
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:28'!
-testReturnValue
-
-	self assert: 6+8 equals: ((PrintfFormatString new setFormat: 'hello %ld') printf: {12345678})
-	! !
-
-!Printf methodsFor: 'documentation' stamp: 'NM 8/20/2021 14:33:23'!
+!Printf methodsFor: 'documentation' stamp: 'NM 8/30/2021 18:56:05'!
 history
 	^ nil 
 "
@@ -244,6 +165,10 @@ It was taken from the Squeak release: Printf-eem.12.mcz.
 
 At the moment of porting the package has 12 tests. 7 Pass, 5 give errors. 
 The same outcome apply in Squeak as in Cuis. 
+
+On date 30-Aug-2021 [NM] has made a few changes. Now all tests are green.
+To make 2 test pass [NM] has to convert '\n' to NewLines instead of CR as it 
+was set in 2 tests. 
 
 Extracted from: http://www.squeaksource.com/Printf.html 
 ------
@@ -386,9 +311,9 @@ precision: anInteger
 setOperator: char
 ! !
 
-!PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 8/16/2021 14:12:50'!
+!PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 8/30/2021 17:38:20'!
 stringLength
-	^precision ifNotNil: [0]
+	^precision ifNil: [0]
 	! !
 
 !PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 8/16/2021 14:12:59'!
@@ -796,6 +721,85 @@ examples
 	self inform: ('Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e" and a 0-padded limited precision one "%013.5e".'
 		printf: ((Array with: 'long' with: 'hello world' with: 'hello world' with: 42.0) copyWith: 42.1234567)).
 		! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/30/2021 18:39:08'!
+testFprintf
+	| stream expected |
+	stream := String new writeStream.
+	expected := 'Here is a long string "hello world" and the same shortened "hello w       " with left flush.\The new line has a number "42.0"\and a 0-padded limited precision one "0000042.12345".' withNewLines.
+	self assert: expected size equals: (stream f: 'Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e"
+and a 0-padded limited precision one "%013.5e".'
+		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567)).
+	self assert: expected equals: stream contents
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:47:49'!
+testManyArguments
+
+	self assert: 'Here is a long string "hello world" and the same shortened "hello w       " with left flush.
+The new line has a number "42.0" and a 0-padded limited precision one "0000042.12345".' equals: ('Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e" and a 0-padded limited precision one "%013.5e".'
+		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567))
+		! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:00'!
+testOneExponent
+
+	self assert: 'Here is a number "42.0".' equals: ('Here is a number "%e".' printf: 42.0).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:09'!
+testOneExponentAndOneInteger
+
+	self assert: 'Here is a float "42.0" and an integer "42".' equals: ('Here is a float "%e" and an integer "%d".' printf: #(42.0 42)).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:18'!
+testOneExponentWithLength
+
+	self assert: 'Here is a string "0000042.12345".' equals: ('Here is a string "%013.5e".' printf: 42.1234567).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:26'!
+testOneInteger
+
+	self assert: 'Here is a number "42".' equals: ('Here is a number "%d".' printf: 42).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:37'!
+testOneIntegerWithLength
+
+	self assert: 'Here is a string "0000042".' equals: ('Here is a string "%07.7d".' printf: 42).
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:47'!
+testOnePrintPointer
+
+	self assert: 'Here is a pointer "0x12345678".' equals: ('Here is a pointer "%p".' printf: 16r12345678)
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:48:57'!
+testOnePrintString
+
+	self assert: 'Here is a point "3@4".' equals: ('Here is a point "%P".' printf: 3@4)
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:08'!
+testOneString
+
+	self assert: 'Here is a string "hello world".' equals: ('Here is a string "%s".' printf: 'hello world')
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:19'!
+testOneStringWithLength
+
+	self assert:  'Here is a string "hello world" and another shortened "hello w       ".' equals: ('Here is a string "%s" and another shortened "%-14.7s".' printf: #('hello world' 'hello world'))
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:49:28'!
+testReturnValue
+
+	self assert: 6+8 equals: ((PrintfFormatString new setFormat: 'hello %ld') printf: {12345678})
+	! !
 
 !Object methodsFor: '*Printf' stamp: 'NM 8/16/2021 15:08:36'!
 asArgumentArrayForFormatString
