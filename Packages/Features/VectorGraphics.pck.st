@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4820] on 30 August 2021 at 4:38:58 pm'!
+'From Cuis 5.0 [latest update: #4820] on 30 August 2021 at 5:47:03 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 284!
+!provides: 'VectorGraphics' 1 285!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3338,12 +3338,6 @@ displayBoundsForHand: aHand
 	^self drawsHandLarge
 		ifTrue: [aHand morphPosition-`9@5` extent: `45@48`]
 		ifFalse: [aHand morphPosition-`4@3` extent: `21@24`].! !
-
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:33:41'!
-drawCurrentAsOutline! !
-
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:34:11'!
-drawHighlight: aMorph! !
 
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/23/2021 14:19:05'!
 fullAddCurrentMorphTo: aDamageRecorder
