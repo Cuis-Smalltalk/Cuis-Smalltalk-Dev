@@ -1,12 +1,13 @@
-'From Cuis 5.0 [latest update: #4820] on 30 August 2021 at 5:47:03 pm'!
+'From Cuis 5.0 [latest update: #4829] on 1 September 2021 at 4:31:12 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 285!
+!provides: 'VectorGraphics' 1 287!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
 SystemOrganization addCategory: 'VectorGraphics-TrueType'!
 SystemOrganization addCategory: 'VectorGraphics-Experiments'!
+SystemOrganization addCategory: 'VectorGraphics-Examples'!
 
 
 !classDefinition: #PathCommandError category: 'VectorGraphics-PathCommands'!
@@ -97,6 +98,56 @@ MovableMorph subclass: #M3Exp06Morph
 	category: 'VectorGraphics-Experiments'!
 !classDefinition: 'M3Exp06Morph class' category: 'VectorGraphics-Experiments'!
 M3Exp06Morph class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample01Star category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample01Star
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample01Star class' category: 'VectorGraphics-Examples'!
+Sample01Star class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample02Bezier category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample02Bezier
+	instanceVariableNames: 'aStart aEnd aControlPoint bStart bEnd bControlPoint1 bControlPoint2'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample02Bezier class' category: 'VectorGraphics-Examples'!
+Sample02Bezier class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample03Smiley category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample03Smiley
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample03Smiley class' category: 'VectorGraphics-Examples'!
+Sample03Smiley class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample04Pacman category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample04Pacman
+	instanceVariableNames: 'color'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample04Pacman class' category: 'VectorGraphics-Examples'!
+Sample04Pacman class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample05UnicodeText category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample05UnicodeText
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample05UnicodeText class' category: 'VectorGraphics-Examples'!
+Sample05UnicodeText class
 	instanceVariableNames: ''!
 
 !classDefinition: #HybridCanvas category: 'VectorGraphics-Kernel'!
@@ -496,6 +547,60 @@ m _ M3Exp01Morph new.
 m morphPosition: 15@30.
 (VectorCanvas onForm: Display) fullDraw: m.
 Display forceToScreen.!
+
+!Sample01Star commentStamp: '<historical>' prior: 0!
+This class is a very simple Morph. It shows how to build your own Morph, and some of the features the framework provides.
+This morph only includes one method: #drawOn: , that specifies the morph appareance.
+
+You don't need to write any additional code, and yet this morph can:
+- Be drawn with high quality, anti-aliased vector graphics, including translucency
+- Be picked by the Hand (click and drag) only when you touch it, regardless of complex geometry
+- Show the coordinate system in which it is drawn (open the halo with the middle mouse button)
+- Be scaled and rotated (use the zoom or rotate halo handle)
+- Be copied, explored, inspected, and browsed (use the appropriate halo handle)
+- Be embedded in other morphs, and hold embedded morphs (use the menu halo handle)
+
+Evaluate:
+Sample01Star new openInWorld!
+
+!Sample02Bezier commentStamp: '<historical>' prior: 0!
+This class will help you familiarize with Bezier curves.
+See also class comment at Sample01Star.
+
+Each instance has random control points.
+
+Evaluate:
+20 timesRepeat: [Sample02Bezier new openInWorld].
+
+Now have a Sample04Pacman at hand, and let it eat these!!!
+
+!Sample03Smiley commentStamp: '<historical>' prior: 0!
+This class shows how to use the #pathSequence drawing operation, that can represent many drawing operations in one compact literal, and draw them at once.
+See also class comment at Sample01Star.
+
+0.0		x	y									Move pen to position x@y
+1.0		x	y									Draw a line to position x@y
+2.0		toX	toY	controlX		controlY						Draw a Quadratic Bezier Curve
+3.0		toX	toY	control1X	control1Y			control2X	control2Y			Draw a Cubic Bezier Curve
+
+Evaluate:
+Sample03Smiley new openInWorld!
+
+!Sample04Pacman commentStamp: '<historical>' prior: 0!
+This class shows how to use the #contour feature to detect if a morph touches another.
+See also class comment at Sample01Star.
+
+Beware!! This Pacman will try to eat anything!! Except their own kind. They are not cannibals!! Instead, they are happy when they meet.
+
+Evaluate:
+5 timesRepeat: [Sample04Pacman new openInWorld ]!
+
+!Sample05UnicodeText commentStamp: '<historical>' prior: 0!
+This morph show Unicode Text, as static labels.
+See also class comment at Sample01Star.
+
+Evaluate:
+Sample05UnicodeText new openInWorld!
 
 !HybridCanvas commentStamp: '<historical>' prior: 0!
 A HybridCanvas works as a BitBltCanvas until faced with a situation that BitBlitCanvas can't handle. At that point, the vectorCanvas takes command.
@@ -1274,6 +1379,175 @@ drawOn: aCanvas
 	"
 	aCanvas drawHandSmall.
 	"! !
+
+!Sample01Star methodsFor: 'drawing' stamp: 'jmv 8/27/2021 12:15:01'!
+drawOn: aCanvas
+	"A 5 point star.
+	Feel free to experiment with this code.
+	The worst thing that could happen is that your morph breaks. That will only mean extra fun!!
+	Sample01Star new openInHand
+	"
+
+	aCanvas strokeWidth: 12 color: Color lightOrange do: [
+		aCanvas
+				moveTo: (Point rho: 100 theta: (0-90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: (360/5*2-90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: (360/5*4-90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: (360/5*6-90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: (360/5*8-90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: -90 degreesToRadians).
+		].! !
+
+!Sample02Bezier methodsFor: 'initialization' stamp: 'jmv 9/1/2021 16:21:44'!
+initialize
+	super initialize.
+	aStart _ 500 atRandom @ 500 atRandom.
+	aEnd _ 500 atRandom @ 500 atRandom.
+	aControlPoint _ 500 atRandom @ 500 atRandom.
+	bStart _ 500 atRandom @ 500 atRandom.
+	bEnd _ 500 atRandom @ 500 atRandom.
+	bControlPoint1 _ 500 atRandom @ 500 atRandom.
+	bControlPoint2 _ 500 atRandom @ 500 atRandom.! !
+
+!Sample02Bezier methodsFor: 'drawing' stamp: 'jmv 9/1/2021 16:20:48'!
+drawOn: aCanvas
+	"Two Bezier curves. A Quadratic one (with start, end and a single control point), and a Cubic one (with start, end, and two control points)
+	Sample02Bezier new openInHand
+	"
+
+	aCanvas strokeWidth: 10 color: Color green do: [
+		aCanvas
+				moveTo: aStart;
+				quadraticBezierTo: aEnd control: aControlPoint ].
+	aCanvas strokeWidth: 2 color: Color green * 0.5 do: [
+		aCanvas
+				moveTo: aStart;
+				lineTo: aControlPoint;
+				lineTo: aEnd ].
+
+	aCanvas strokeWidth: 10 color: Color red do: [
+		aCanvas
+				moveTo: bStart;
+				cubicBezierTo: bEnd control1: bControlPoint1 control2: bControlPoint2 ].
+	aCanvas strokeWidth: 2 color: Color red * 0.5 do: [
+		aCanvas
+				moveTo: bStart;
+				lineTo: bControlPoint1;
+				lineTo: bControlPoint2;
+				lineTo: bEnd ].! !
+
+!Sample03Smiley methodsFor: 'drawing' stamp: 'jmv 8/27/2021 12:01:35'!
+drawOn: aCanvas
+	"Example of the #pathSequence drawing operation, that can represent many drawing operations
+			in one compact literal, and draw them at once.
+	0.0		x	y									Move pen to position x@y
+	1.0		x	y									Draw a line to position x@y
+	2.0		toX	toY	controlX		controlY						Draw a Quadratic Bezier Curve
+	3.0		toX	toY	control1X	control1Y			control2X	control2Y			Draw a Cubic Bezier Curve
+	See #circleApproximationExamples
+	Sample03Smiley new openInHand
+	"
+
+	aCanvas strokeWidth: 30 color: `Color darkGray alpha: 0.8` fillColor: `Color lightGreen alpha: 0.7` do: [
+		aCanvas
+				pathSequence: `#[
+					0.0  150.0  150.0
+					3.0  300.0  300.0  150.0  233.0  217.0  300.0
+					3.0  450.0  150.0  380.3  300.0  450.0  233.0
+					3.0  300.0  0.0      450.0  67.0    383.0  0.0
+					3.0  150.0  150.0  210.7  0.0      150.0  67.0
+					] asFloat32Array`
+		].
+
+	aCanvas strokeWidth: 30 color: `Color darkGray` do: [
+		aCanvas
+				pathSequence: `#[
+					0.0 220.0 190.0
+					2.0 300.0 240.0 245.0 240.0
+					2.0 380.0 190.0 355.0 240.0
+					0.0 250.0 100.0
+					1.0 250.0 120.0
+					0.0 350.0 100.0
+					1.0 350.0 120.0
+					] asFloat32Array`
+		].! !
+
+!Sample04Pacman methodsFor: 'initialization' stamp: 'jmv 8/27/2021 12:28:49'!
+initialize
+
+	super initialize.
+	color _ Color yellow! !
+
+!Sample04Pacman methodsFor: 'drawing' stamp: 'jmv 8/27/2021 14:35:58'!
+drawOn: aCanvas
+
+	aCanvas fillColor: color do: [
+		aCanvas circleCenter: 30@ -60 radius: 15.
+		aCanvas
+			moveTo: 0@0;
+			lineTo: 100@ -50;
+			arcTo: 100@ 50 radius: 110 angleOfXAxis: 0 largeFlag: true sweepFlag: false;
+			lineTo: 0@0.
+		].! !
+
+!Sample04Pacman methodsFor: 'geometry testing' stamp: 'jmv 8/27/2021 14:07:53'!
+wantsContour
+	"Because we want precise #collides:"
+
+	^true! !
+
+!Sample04Pacman methodsFor: 'updating' stamp: 'jmv 8/27/2021 14:07:15'!
+colorize
+	color _ Color random.
+	self redrawNeeded.! !
+
+!Sample04Pacman methodsFor: 'updating' stamp: 'jmv 8/27/2021 14:13:43'!
+redrawNeeded
+	"for experimenting with collision detection"
+	self isOwnedByHand ifTrue: [
+		self world ifNotNil: [ :w |
+			w submorphsDo: [ :m |
+				(self collides: m) ifTrue: [
+					m class == self class
+						ifTrue: [ m colorize ]
+						ifFalse: [ m delete ]]]]].
+
+	^super redrawNeeded! !
+
+!Sample05UnicodeText methodsFor: 'drawing' stamp: 'jmv 8/27/2021 20:17:57'!
+drawOn: aCanvas
+
+	| f greek latin arabic armenian cyrillic georgian hebrew chinese |
+	f _ FontFamily defaultFamilyPointSize: 36.
+	greek _ #(923 959 961 949 956 32 953 960 963 952 956 32 948 959 955 959 961 32 963 953 964 32 945 956 949 964 44 32 956 959 948 959) asWordArray.
+	latin _ #(76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111) asWordArray.
+	arabic _ #(1603 1604 32 1571 1608 1587 1593 32 1575 1604 1578 1606 1575 1586 1604 1610 32 1601 1589 1604 44 32 1605 1593 32 1593 1605 1604 1610 1577) asWordArray.
+	armenian _ #(1388 1400 1404 1381 1396 32 1387 1402 1405 1400 1410 1396 32 1380 1400 1388 1400 1404 32 1405 1387 1385 32 1377 1396 1381 1385 44) asWordArray.
+	cyrillic _ #(1051 1086 1088 1077 1084 32 1080 1087 1089 1091 1084 32 1076 1086 1083 1086 1088 32 1089 1080 1090 32 1072 1084 1077 1090 44 32 1076 1077 1073 1077 1090) asWordArray.
+	georgian _ #(4314 4317 4320 4308 4315 32 4312 4324 4321 4323 4315 32 4307 4317 4314 4317 4320 32 4321 4312 4311 32 4304 4315 4308 4311 44 32 4327 4323 4317) asWordArray.
+	hebrew _ #(1506 1500 32 1502 1488 1502 1512 32 1494 1511 1493 1511 32 1513 1491 1512 1493 1514 32 1488 1512 1509 44 32 1492 1502 1500 1510 1514 32 1502 1491 1493 1497 1511 1497 1501) asWordArray.
+	aCanvas drawUtf32: greek from: 1 to: greek size atBaseline: 0@0 font: f color: Color black.
+	aCanvas drawUtf32: latin from: 1 to: latin size atBaseline: 0@50 font: f color: Color black.
+	aCanvas drawUtf32: cyrillic from: 1 to: cyrillic size atBaseline: 0@100 font: f color: Color black.
+	aCanvas drawUtf32: arabic from: 1 to: arabic size atBaseline: 0@150 font: f color: Color black.
+	aCanvas drawUtf32: armenian from: 1 to: armenian size atBaseline: 0@200 font: f color: Color black.
+	aCanvas drawUtf32: georgian from: 1 to: georgian size atBaseline: 0@250 font: f color: Color black.
+	aCanvas drawUtf32: hebrew from: 1 to: hebrew size atBaseline: 0@300 font: f color: Color black.
+	f _ FontFamily familyName: 'HanWangMingMedium' pointSize: 36.
+	chinese _ #(38899 21147 39208 20998 39423 22243 26131 21402 22909 25943 28988 38283 24247 20870 12290 25925 23567) asWordArray.
+	aCanvas drawUtf32: chinese from: 1 to: chinese size atBaseline: 0@350 font: f color: Color black.! !
+
+!Sample05UnicodeText methodsFor: 'initialization' stamp: 'jmv 8/31/2021 17:44:02'!
+initialize
+	| fileEntry |
+	super initialize.
+	Preferences loadOnlyLatinGlyphData ifTrue: [
+		Preferences disable: #loadOnlyLatinGlyphData.
+		TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'DejaVu' / 'DejaVuSans' // 'DejaVuSans.ttf'. ].
+	(FontFamily familyName: 'HanWangMingMedium' pointSize: 36) ifNil: [
+		fileEntry _ DirectoryEntry currentDirectory // 'wt002.ttf'.
+		fileEntry exists ifTrue: [
+			TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry currentDirectory // 'wt002.ttf' ]].! !
 
 !HybridCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:35:56'!
 boundsFinderCanvas
@@ -2888,19 +3162,6 @@ roundRect: aRectangle color: aColor radius: r
 		self
 			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 5/16/2021 10:40:37'!
-boundingRectOfCurrentMorphAfterDraw
-	"In targetForm coordinates.
-	Clipped to owner if appropriate.
-	Only valid _after_ drawing currentMorph.
-	In VectorCanvas we support clipping by any shape, not just rectangles. Then, this rectangle is used only as an optimization of the area to be redrawn."
-
-	| boundingRect |
-	boundingRect _ engine morphBoundsAfterDraw.
-	^ clippingMorphDisplayBounds
-		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
-		ifNil: [ boundingRect ]! !
-
 !VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/23/2021 14:17:48'!
 drawCurrentAndSubmorphs
 	
@@ -2955,6 +3216,27 @@ fontToUse: fontOrNil
 	"Answer a suitable font, aFont if possible."
 
 	^fontOrNil ifNil: [ FontFamily defaultOrTrueTypeFamilyAndPointSize ].! !
+
+!VectorCanvas methodsFor: 'morphic world' stamp: 'jmv 9/1/2021 15:36:04'!
+boundingRectOfCurrentMorphAfterDraw
+	"In targetForm coordinates.
+	Clipped to owner if appropriate.
+	Only valid _after_ drawing currentMorph.
+	In VectorCanvas we support clipping by any shape, not just rectangles. Then, this rectangle is used only as an optimization of the area to be redrawn."
+
+	| boundingRect |
+	"A good optimization in many cases.
+	But for morphs where #drawOn: might not be able to find bounds (InnerTextMorph and LayoutMorph,
+	for example) this is essential."
+	currentMorph knowsOwnLocalBounds ifTrue: [
+		^super boundingRectOfCurrentMorphAfterDraw ].
+
+	"Use the bounds bound by the engine during #drawOn.
+	This method must therefore be called after calling #drawOn:."
+	boundingRect _ engine morphBoundsAfterDraw.
+	^ clippingMorphDisplayBounds
+		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
+		ifNil: [ boundingRect ]! !
 
 !VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 arrowOfDirection: aSymbol size: finalSizeInteger
@@ -3311,16 +3593,6 @@ imageUnrotated: srcForm at: aPoint
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:56:02'!
 clipCurrentMorph: aBoolean! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:57:27'!
-contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
-	"In targetForm coordinates.
-	Doesn't account for any clipping at all.
-	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
-
-	^nil! !
-
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:59:12'!
 contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
@@ -3623,17 +3895,17 @@ imageUnrotated: srcForm at: aPoint
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:57:08'!
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 9/1/2021 11:25:09'!
 contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
+	Use argument if appropriate, or use a new array if not."
 
-	^engine morphContourAfterDrawInto: anArray into: aBlock! !
+	engine morphContourAfterDrawInto: anArray into: aBlock.! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:58:46'!
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 9/1/2021 11:22:28'!
 contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -3641,8 +3913,11 @@ contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBotto
 	Only valid _after_ drawing currentMorph.
 	Use argument if appropriate, or answer a new array if not"
 
-	anArray ifNil: [ ^engine morphContourAfterDrawInto: nil into: aBlock ].
-	^engine morphContourAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock! !
+	anArray
+		ifNil: [ engine morphContourAfterDrawInto: nil into: aBlock ]
+		ifNotNil: [
+			engine morphContourAfterDrawUpdate: anArray 
+				oldTop: oldTop oldBottom: oldBottom into: aBlock ].! !
 
 !VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/27/2021 19:55:39'!
 drawCurrentAsError
@@ -4836,14 +5111,6 @@ withPluginOnForm: aForm
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 11/17/2020 10:04:59'!
 currentMorph: aMorph! !
 
-!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:07'!
-morphContourAfterDrawInto: anArray into: aBlock
-	^nil! !
-
-!VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 8/4/2021 16:57:23'!
-morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
-	^nil! !
-
 !VectorEngineBoundsFinder methodsFor: 'stroke & fill' stamp: 'jmv 8/11/2021 12:01:10'!
 basicStrokeWidth: aStrokeWidth color: aStrokeColor do: pathCommandsBlock ensureClosePath: ensureClosePath
 	"Prepare parameters for drawing stroke."
@@ -5045,7 +5312,7 @@ disableSubPixelSampling
 	"NOP here.
 	To be redefined if needed"! !
 
-!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:06:26'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 9/1/2021 11:22:43'!
 morphContourAfterDrawInto: contourArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -5082,8 +5349,7 @@ morphContourAfterDrawInto: contourArray into: aBlock
 	i to: answer size by: 2 do: [ :ii |
 		answer at: ii put: targetWidth.
 		answer at: ii+1 put: 0 ].
-	aBlock value: answer value: y0 value: y1.
-	^answer! !
+	aBlock value: answer value: y0 value: y1.! !
 
 !VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 8/10/2021 12:06:26'!
 morphContourAfterDrawUpdate: oldContour oldTop: oldTop oldBottom: oldBottom into: aBlock
