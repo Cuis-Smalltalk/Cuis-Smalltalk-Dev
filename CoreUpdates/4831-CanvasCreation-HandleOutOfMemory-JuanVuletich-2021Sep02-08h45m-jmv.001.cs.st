@@ -9,7 +9,7 @@ getMainCanvas
 	answer _ [ MorphicCanvas withVectorEnginePluginOnForm: self ]
 				on: OutOfMemory
 				do: [
-					'Not enough memory to run VectorEngine. Use BitBltCanvas instead.' print.
+					'Not enough memory to run VectorEngine. Using BitBltCanvas instead.' print.
 					MorphicCanvas activeSubclass: BitBltCanvas.
 					MorphicCanvas withVectorEnginePluginOnForm: self ].
 	^answer! !
