@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4829] on 1 September 2021 at 4:31:12 pm'!
+'From Cuis 5.0 [latest update: #4831] on 2 September 2021 at 9:13:06 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 287!
+!provides: 'VectorGraphics' 1 288!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3731,11 +3731,10 @@ setForm: aForm subPixelAntiAliasing: aBooleanOrNil
 	engine _ VectorEngineBoundsFinder new.
 	clippingMorphDisplayBounds _ nil.! !
 
-!BoundsFinderCanvas methodsFor: 'initialization' stamp: 'jmv 8/27/2021 17:17:12'!
+!BoundsFinderCanvas methodsFor: 'initialization' stamp: 'jmv 9/1/2021 18:16:58'!
 setPluginAndForm: aForm
 
-	engine _ VectorEngineBoundsFinder new.
-	clippingMorphDisplayBounds _ nil.! !
+	self setForm: aForm subPixelAntiAliasing: nil.! !
 
 !VectorDrawingCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:34:48'!
 boundsFinderCanvas
@@ -4043,7 +4042,7 @@ initializeWithTranslation: aPoint
 	boundsFinderCanvas engine antiAliasingWidth: engine antiAliasingWidth.
 	boundsFinderCanvas engine subPixelDelta: engine subPixelDelta.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/27/2021 17:08:10'!
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 9/2/2021 08:38:01'!
 setForm: aForm subPixelAntiAliasing: aBoolean
 	"nil means use default kind of anti aliasing"
 	"
@@ -4051,9 +4050,10 @@ setForm: aForm subPixelAntiAliasing: aBoolean
 	"
 	aForm depth = 32 ifFalse: [ self error: 'VectorCanvas can only work on 32 bit target' ].
 	form _ aForm.
-	engine _ aBoolean
-		ifTrue: [VectorEngineSubPixel new initializeOnForm: form]
-		ifFalse: [VectorEngineWholePixel new initializeOnForm: form].
+	engine _ (aBoolean
+		ifTrue: [VectorEngineSubPixel]
+		ifFalse: [VectorEngineWholePixel])
+			onForm: aForm.
 	engine canvas: self.
 	self newClipRect: nil.! !
 
@@ -4771,7 +4771,7 @@ pvtStrokeWidth: aNumber
 
 	strokeWidth _ aNumber.! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:54:50'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 9/1/2021 19:42:55'!
 circleApproximationExamples
 "
 self circleApproximationExamples
@@ -4783,23 +4783,23 @@ r _ 200.
 c _ 0.085 * r.
 d _ 0.5 * r.
 e _ 0.552 * r.
-(VectorEngineWholePixel new initializeOnForm: Display)
+(VectorEngineWholePixel onForm: Display)
 	strokeWidth: 5.0 color: Color red do: [ :engine |
 		engine
 			circleCenter: cx @ cy radius: r].
-(VectorEngineWholePixel new initializeOnForm: Display)												"Quadratic, coarse and better approximations"
+(VectorEngineWholePixel onForm: Display)												"Quadratic, coarse and better approximations"
 	strokeWidth: 1.0 color: Color white do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
 			quadraticBezierTo: cx - r @ cy control: (cx - r) @ (cy + r);
 			moveTo: cx @ (cy + r);
 			quadraticBezierTo: cx - r @ cy control: (cx - r + c) @ (cy + r - c) ].
-(VectorEngineWholePixel new initializeOnForm: Display)												"Cubic, coarse approximation"
+(VectorEngineWholePixel onForm: Display)												"Cubic, coarse approximation"
 	strokeWidth: 1.0 color: Color green do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
 			cubicBezierTo: cx - r @ cy control1: (cx - d) @ (cy + r) control2: (cx - r) @ (cy + d) ].
-(VectorEngineWholePixel new initializeOnForm: Display)												"Cubic, good approximation"
+(VectorEngineWholePixel onForm: Display)												"Cubic, good approximation"
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: cx @ (cy + r);
@@ -4807,14 +4807,14 @@ e _ 0.552 * r.
 Display forceToScreen
 ! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:35:53'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 9/1/2021 19:46:32'!
 experLinesAndShapes
 	"
 Display fill: (0@0 corner: 120@1200) fillColor: Color white.
 	VectorEngineWholePixel experLinesAndShapes
 	"
 	| engine y1 yy2 dy y2 |
-	engine _ self new initializeOnForm: Display.
+	engine _ self onForm: Display.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine
 			moveTo: 20@10;
@@ -4879,13 +4879,13 @@ Display fill: (0@0 corner: 120@1200) fillColor: Color white.
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:34:26'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 9/1/2021 19:46:37'!
 experLinesAndShapes2
 	"
 	VectorEngineSubPixel experLinesAndShapes2
 	"
 	| engine y1 dy y2 |
-	engine _ self new initializeOnForm: Display.
+	engine _ self onForm: Display.
 
 	y1 _ 10.
 	dy _ 3.
@@ -4959,7 +4959,7 @@ experLinesAndShapes2
 	
 	Display forceToScreen! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:35:26'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 9/1/2021 19:47:11'!
 experimentHopsPerPixel1
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 1: Very thin stroke, the same color as fill
@@ -4970,7 +4970,7 @@ experimentHopsPerPixel1
 	hops2 _ 3.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ self new initializeOnForm: f1.
+	engine _ self onForm: f1.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
@@ -4982,7 +4982,7 @@ experimentHopsPerPixel1
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ self new initializeOnForm: f2.
+	engine _ self onForm: f2.
 	engine strokeWidth: 0.001 color: Color black fillColor: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
@@ -5000,7 +5000,7 @@ experimentHopsPerPixel1
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:37:19'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 9/1/2021 19:46:56'!
 experimentHopsPerPixel2
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 2: Stroke of various widths, no fill
@@ -5013,7 +5013,7 @@ experimentHopsPerPixel2
 	strokeWidth _ 1.4.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ self new initializeOnForm: f1.
+	engine _ self onForm: f1.
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
@@ -5025,7 +5025,7 @@ experimentHopsPerPixel2
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ self new initializeOnForm: f2.
+	engine _ self onForm: f2.
 	engine strokeWidth: strokeWidth color: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
@@ -5043,7 +5043,7 @@ Feature require: 'LinearAlgebra'.
 		(d asFormMin: 0 max: 1) displayAt: 660@0.
 		{d elements min * 255. d elements max * 255. 'diff entre'. hops1. hops2} print ]! !
 
-!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 8/27/2021 16:37:32'!
+!VectorEngine class methodsFor: 'experiments' stamp: 'jmv 9/1/2021 19:47:01'!
 experimentHopsPerPixel3
 	"Play with this to learn about the effect of hopsPerPixel
 	Experiment 3: No stroke, just fill
@@ -5054,7 +5054,7 @@ experimentHopsPerPixel3
 	hops2 _ 3.
 	f1 _ Form extent: 220@420 depth: 32.
 	f1 fillColor: Color white.
-	engine _ self new initializeOnForm: f1.
+	engine _ self onForm: f1.
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops1.
 		engine
@@ -5066,7 +5066,7 @@ experimentHopsPerPixel3
 
 	f2 _ Form extent: 220@420 depth: 32.
 	f2 fillColor: Color white.
-	engine _ self new initializeOnForm: f2.
+	engine _ self onForm: f2.
 	engine fillColor: Color black do: [
 		engine instVarNamed: 'hop' put: 1.0 / hops2.
 		engine
@@ -5088,13 +5088,12 @@ experimentHopsPerPixel3
 defaultAntiAliasingWidth
 	self subclassResponsibility! !
 
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/29/2021 19:14:04'!
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 9/2/2021 08:35:43'!
 onForm: aForm
 
-	^ VectorEngineWholePixel
-		new initializeOnForm: aForm.! !
+	^ self new initializeOnForm: aForm.! !
 
-!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 8/27/2021 17:11:23'!
+!VectorEngine class methodsFor: 'instance creation' stamp: 'jmv 9/2/2021 08:38:32'!
 withPluginOnForm: aForm
 	"Use the VectorEnginePlugin if available.
 	Note: Only one instance should use it at a time:
@@ -5106,7 +5105,7 @@ withPluginOnForm: aForm
 				ifTrue: [VectorEngineWithPluginWholePixel]
 				ifFalse: [VectorEngineWithPluginSubPixel]]
 		ifFalse: [VectorEngineWholePixel])
-			new initializeOnForm: aForm! !
+			onForm: aForm! !
 
 !VectorEngineBoundsFinder methodsFor: 'accessing' stamp: 'jmv 11/17/2020 10:04:59'!
 currentMorph: aMorph! !
