@@ -1,12 +1,11 @@
-'From Cuis 5.0 [latest update: #4831] on 2 September 2021 at 9:13:06 am'!
+'From Cuis 5.0 [latest update: #4832] on 2 September 2021 at 5:44:10 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 288!
+!provides: 'VectorGraphics' 1 291!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
 SystemOrganization addCategory: 'VectorGraphics-TrueType'!
-SystemOrganization addCategory: 'VectorGraphics-Experiments'!
 SystemOrganization addCategory: 'VectorGraphics-Examples'!
 
 
@@ -38,66 +37,6 @@ FontFamily subclass: #TrueTypeFontFamily
 	category: 'VectorGraphics-TrueType'!
 !classDefinition: 'TrueTypeFontFamily class' category: 'VectorGraphics-TrueType'!
 TrueTypeFontFamily class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp01Morph category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #M3Exp01Morph
-	instanceVariableNames: 'color'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp01Morph class' category: 'VectorGraphics-Experiments'!
-M3Exp01Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp02Morph category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #M3Exp02Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp02Morph class' category: 'VectorGraphics-Experiments'!
-M3Exp02Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp03Morph category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #M3Exp03Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp03Morph class' category: 'VectorGraphics-Experiments'!
-M3Exp03Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp04Morph category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #M3Exp04Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp04Morph class' category: 'VectorGraphics-Experiments'!
-M3Exp04Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp05Morph category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #M3Exp05Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp05Morph class' category: 'VectorGraphics-Experiments'!
-M3Exp05Morph class
-	instanceVariableNames: ''!
-
-!classDefinition: #M3Exp06Morph category: 'VectorGraphics-Experiments'!
-MovableMorph subclass: #M3Exp06Morph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'VectorGraphics-Experiments'!
-!classDefinition: 'M3Exp06Morph class' category: 'VectorGraphics-Experiments'!
-M3Exp06Morph class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample01Star category: 'VectorGraphics-Examples'!
@@ -148,6 +87,76 @@ MovableMorph subclass: #Sample05UnicodeText
 	category: 'VectorGraphics-Examples'!
 !classDefinition: 'Sample05UnicodeText class' category: 'VectorGraphics-Examples'!
 Sample05UnicodeText class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample06EasyToGrab category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample06EasyToGrab
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample06EasyToGrab class' category: 'VectorGraphics-Examples'!
+Sample06EasyToGrab class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample07Clipping category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample07Clipping
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample07Clipping class' category: 'VectorGraphics-Examples'!
+Sample07Clipping class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample08Form category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample08Form
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample08Form class' category: 'VectorGraphics-Examples'!
+Sample08Form class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample09Clock category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample09Clock
+	instanceVariableNames: 'hourHand minuteHand secondHand'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample09Clock class' category: 'VectorGraphics-Examples'!
+Sample09Clock class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample09ClockHourHand category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample09ClockHourHand
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample09ClockHourHand class' category: 'VectorGraphics-Examples'!
+Sample09ClockHourHand class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample09ClockMinuteHand category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample09ClockMinuteHand
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample09ClockMinuteHand class' category: 'VectorGraphics-Examples'!
+Sample09ClockMinuteHand class
+	instanceVariableNames: ''!
+
+!classDefinition: #Sample09ClockSecondHand category: 'VectorGraphics-Examples'!
+MovableMorph subclass: #Sample09ClockSecondHand
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'VectorGraphics-Examples'!
+!classDefinition: 'Sample09ClockSecondHand class' category: 'VectorGraphics-Examples'!
+Sample09ClockSecondHand class
 	instanceVariableNames: ''!
 
 !classDefinition: #HybridCanvas category: 'VectorGraphics-Kernel'!
@@ -478,76 +487,6 @@ In Cuis what is usually called TrueType Font is represented by TTFontDescription
 
 TrueTypeFonts, being part of the traditional AbstractFont hierarchy, adds a specific pointSize, and is the object used in texts.!
 
-!M3Exp01Morph commentStamp: '<historical>' prior: 0!
-"Just an experiment to exercise drawing operations."
-| m |
-m _ M3Exp01Morph new.
-m morphPosition: 15@30.
-(VectorCanvas onForm: Display) fullDraw: m.
-Display forceToScreen.!
-
-!M3Exp02Morph commentStamp: '<historical>' prior: 0!
-"Just an experiment to exercise drawing operations."
-
-| m |
-m _ M3Exp02Morph new.
-m morphPosition: 50@30.
-(VectorCanvas onForm: Display) fullDraw: m.
-Display forceToScreen
-
-| m |
-m _ M3Exp02Morph new.
-m morphPosition: 50@30.
-m addMorph: M3Exp03Morph new.
-(VectorCanvas onForm: Display) fullDraw: m.
-Display forceToScreen.
-
-| m |
-m _ M3Exp02Morph new.
-m addMorph: M3Exp03Morph new.
-m morphPosition: 50@30.
-(VectorCanvas onForm: Display) fullDraw: m.
-Display forceToScreen.!
-
-!M3Exp03Morph commentStamp: '<historical>' prior: 0!
-"Just an experiment to exercise drawing operations."
-
-| m |
-m _ M3Exp03Morph new.
-m morphPosition: 50@20.
-(VectorCanvas onForm: Display) fullDraw: m.
-Display forceToScreen.
-
-| m |
-m _ M3Exp03Morph new.
-m morphPosition: 53@20+40.
-(VectorCanvas onForm: Display) fullDraw: m.
-Display forceToScreen.
-
-| m |
-m _ M3Exp03Morph new.
-m morphPosition: 53@20+40.
-(VectorCanvas onForm: Display)
-setClipRect: (40@40 extent: 100@100);
-fullDraw: m.
-Display forceToScreen.!
-
-!M3Exp04Morph commentStamp: '<historical>' prior: 0!
-"Just an experiment to exercise drawing operations."
-| m |
-m _ M3Exp01Morph new.
-m morphPosition: 15@30.
-(VectorCanvas onForm: Display) fullDraw: m.
-Display forceToScreen.!
-
-!M3Exp05Morph commentStamp: '<historical>' prior: 0!
-"Just an experiment to exercise drawing operations."
-| m |
-m _ M3Exp01Morph new.
-m morphPosition: 15@30.
-(VectorCanvas onForm: Display) fullDraw: m.
-Display forceToScreen.!
-
 !Sample01Star commentStamp: '<historical>' prior: 0!
 This class is a very simple Morph. It shows how to build your own Morph, and some of the features the framework provides.
 This morph only includes one method: #drawOn: , that specifies the morph appareance.
@@ -559,9 +498,14 @@ You don't need to write any additional code, and yet this morph can:
 - Be scaled and rotated (use the zoom or rotate halo handle)
 - Be copied, explored, inspected, and browsed (use the appropriate halo handle)
 - Be embedded in other morphs, and hold embedded morphs (use the menu halo handle)
+- Be embedded in text (see below)
 
 Evaluate:
-Sample01Star new openInWorld!
+Sample01Star new openInWorld
+
+Or try
+Sample01Star new copyToClipboard
+and then paste into the About Cuis text, or any text editor. See how you can still use the halo to scale and rotate. See how the morph is moved around as you edit the text.!
 
 !Sample02Bezier commentStamp: '<historical>' prior: 0!
 This class will help you familiarize with Bezier curves.
@@ -599,8 +543,47 @@ Evaluate:
 This morph show Unicode Text, as static labels.
 See also class comment at Sample01Star.
 
+Note: Loads font(s) including all glyphs and not just latin. Might use a lot of memory.
+
 Evaluate:
 Sample05UnicodeText new openInWorld!
+
+!Sample06EasyToGrab commentStamp: '<historical>' prior: 0!
+This morph uses the #bitMask feature to make it easy to grab although it draws very thin lines. See #containsGlobalPoint: and play with it.
+See also class comment at Sample01Star.
+
+Evaluate:
+Sample06EasyToGrab new openInWorld!
+
+!Sample07Clipping commentStamp: '<historical>' prior: 0!
+This morph shows clipping to arbitrary shapes.
+See also class comment at Sample01Star.
+
+Evaluate:
+Sample07Clipping new openInWorld!
+
+!Sample08Form commentStamp: '<historical>' prior: 0!
+This morph shows image rotating and scaling. Currently using WarpBlt. On top, some Vector Graphics.
+See also class comment at Sample01Star.
+
+Evaluate:
+Sample08Form new openInWorld!
+
+!Sample09Clock commentStamp: '<historical>' prior: 0!
+A more sophisticated morph, showing stepping and submorphs.
+See also class comment at Sample01Star.
+
+Evaluate:
+Sample09Clock new openInWorld!
+
+!Sample09ClockHourHand commentStamp: '<historical>' prior: 0!
+Sample09Clock new openInWorld!
+
+!Sample09ClockMinuteHand commentStamp: '<historical>' prior: 0!
+Sample09Clock new openInWorld!
+
+!Sample09ClockSecondHand commentStamp: '<historical>' prior: 0!
+Sample09Clock new openInWorld!
 
 !HybridCanvas commentStamp: '<historical>' prior: 0!
 A HybridCanvas works as a BitBltCanvas until faced with a situation that BitBlitCanvas can't handle. At that point, the vectorCanvas takes command.
@@ -1172,214 +1155,6 @@ serviceReadTTFont
 		icon: #fontIcon
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 8/4/2021 17:08:05'!
-drawContour
-"Only for experimentation!!"
-| x0 x1 c |
-(self valueOfProperty: #contour) ifNotNil: [ :contour | | contourTop |
-	contourTop _ self valueOfProperty: #contourY0.
-	1 to: contour size // 2 do: [ :y |
-		x0 _ contour at: y*2-1.
-		x1 _ contour at: y*2.
-		x0 to: x1 do: [ :x |
-			c _ Display colorAt: x@(contourTop+y-1).
-			c _ c alphaMixed: 0.7 with: Color pink. 
-			Display colorAt: x@(contourTop+y-1) put: c ]]].
-Display forceToScreen! !
-
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 8/17/2021 15:18:18'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target.
-	See #circleApproximationExamples"
-
-	aCanvas strokeWidth: 3 color: `Color gray alpha: 0.5` fillColor: `Color lightGreen alpha: 0.0` do: [
-		aCanvas
-				pathSequence: `#[
-					0.0 15.0 15.0
-					3.0 30.0 30.0 15.0 23.3 21.7 30.0
-					3.0 45.0 15.0 38.3 30.0 45.0 23.3
-					3.0 30.0 0.0 45.0 6.7 38.3 0.0
-					3.0 15.0 15.0 21.7 0.0 15.0 6.7
-					] asFloat32Array`
-		].
-
-	aCanvas strokeWidth: 3 color: color do: [
-		aCanvas
-				pathSequence: `#[
-					0.0 22.0 19.0
-					2.0 30.0 24.0 24.5 24.0
-					2.0 38.0 19.0 35.5 24.0
-					0.0 25.0 10.0
-					1.0 25.0 12.0
-					0.0 35.0 10.0
-					1.0 35.0 12.0
-					] asFloat32Array`
-		].! !
-
-!M3Exp01Morph methodsFor: 'drawing' stamp: 'jmv 7/7/2021 16:01:07'!
-postDrawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-	true not ifTrue: [ ^super postDrawOn: aCanvas ].
-
-	aCanvas strokeWidth: 3 color: color do: [
-		aCanvas
-				pathSequence: `#[
-					0.0 50.0 -5.0
-					1.0 30.0 5.0
-					] asFloat32Array`
-		].
-	^true! !
-
-!M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 8/17/2021 16:09:08'!
-containsGlobalPoint: worldPoint
-	"just for experimenting with contour"
-	"
-	true ifTrue: [ ^super containsGlobalPoint: worldPoint ].
-	""
-	^self isCloserThan: 10 toPoint: worldPoint
-	"
-	^self coversAnyPointCloserThan: 10 toPoint: worldPoint! !
-
-!M3Exp01Morph methodsFor: 'geometry testing' stamp: 'jmv 7/13/2021 09:58:23'!
-wantsContour
-	"for experimenting with this feature."
-	^true! !
-
-!M3Exp01Morph methodsFor: 'updating' stamp: 'jmv 8/17/2021 16:08:49'!
-redrawNeeded
-	"for experimenting with collision detection"
-	self isOwnedByHand ifTrue: [
-		self world ifNotNil: [ :w |
-			w submorphsDo: [ :m |
-				(self collides: m) ifTrue: [
-					m print.
-					m class == self class ifTrue: [
-						m colorize ]]]]].
-	^super redrawNeeded! !
-
-!M3Exp01Morph methodsFor: 'initialization' stamp: 'jmv 7/7/2021 16:01:43'!
-colorize
-	color _ Color random.
-	self redrawNeeded.! !
-
-!M3Exp01Morph methodsFor: 'initialization' stamp: 'jmv 7/7/2021 16:00:01'!
-initialize
-	super initialize.
-	self colorize! !
-
-!M3Exp02Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:08:39'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-	aCanvas strokeWidth: 15 color: (Color green alpha: 0.8) fillColor: (Color red alpha: 0.6) do: [
-		aCanvas
-			roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60  rx: 40 ry: 20 ]! !
-
-!M3Exp02Morph methodsFor: 'geometry testing' stamp: 'jmv 11/16/2020 22:41:10'!
-clipsSubmorphs
-	"Answer true if we clip the shape of our submorphs to our own.
-	Answer true only when clipping by the canvas is needed.
-	Morphs that can guarantee that submorphs don't protrude and answer false to 
-	#submorphsMightProtrude should answer false for better performance"
-
-	^ true! !
-
-!M3Exp03Morph methodsFor: 'drawing' stamp: 'jmv 12/11/2017 21:25:49'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-true ifTrue: [
-	aCanvas fillColor: (Color black alpha: 0.5) do: [
-	aCanvas
-		polyLine: {-10@32. 120@-30. 
-"		60@20. 120@20. 120@10. 150@50. 120@70. 120@30. 80@30."
-"		60@90. -50@32"
-		60@90. -60@80. -60@20. -50@70. -10@32
-		}
- ]].
-false ifTrue: [
-	aCanvas fillColor: Color black do: [
-	aCanvas
-		polyLine: {60@32. 30@50. 45@20. 60@32}
-]].
-
-false ifTrue: [
-	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
-].
-
-false ifTrue: [
-	aCanvas strokeWidth: 1 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
-]! !
-
-!M3Exp04Morph methodsFor: 'drawing' stamp: 'jmv 1/3/2021 12:11:47'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-
-
-aCanvas image: ImageMorph defaultForm at: -10@ -10.
-
-aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alpha: 0.3) do: [
-	aCanvas roundRectangleMinX: -10 maxX: 75 minY: -10 maxY: 47 rx: 40 ry: 20 ].
-
-! !
-
-!M3Exp05Morph methodsFor: 'drawing' stamp: 'jmv 5/13/2021 17:14:31'!
-drawOn: aCanvas
-	"A canvas is already set with a proper transformation from our coordinates to those of the Canvas target."
-
-
-aCanvas strokeWidth: 4 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
-	aCanvas
-		ellipseCenter: 46@46 radius: "24"16 @ "12"16 ].
-
-aCanvas strokeWidth: 18 color: (Color black "green alpha: 0.6") fillColor: (Color yellow alpha: 0.4) do: [
-	aCanvas
-		ellipseCenter: 46@46 radius: "24"36 @ "12"36 ].
-
-aCanvas fillColor: Color black do: [
-	aCanvas
-		polyLine: {15@32. 30@50. 45@20. 15@32} * 2.
-	aCanvas
-		polyLine: {60@32. 30@50. 45@20. 60@32} * 2 ].
-
-aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@40. 60@10} ].
-
-aCanvas strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [
-	aCanvas cubicBezier: {10@5. 15@30. 60@60. 60@10} ].
-
-aCanvas strokeWidth: 1.5 color: (Color red alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 15@30 . 60@10 } ].
-
-aCanvas strokeWidth: 1 color: (Color green alpha: 0.7+0.3) do: [
-	aCanvas quadraticBezier: { 10@5 . 60@60 . 60@10 } ].
-
-aCanvas strokeWidth: 5 color: (Color green alpha: 0.6) fillColor: (Color red alpha: 0.3) do: [
-	aCanvas roundRectangleMinX: -10 maxX: 80 minY: -10 maxY: 60 rx: 40 ry: 20 ]
-! !
-
-!M3Exp06Morph methodsFor: 'drawing' stamp: 'jmv 7/29/2021 12:02:17'!
-drawOn: aCanvas
-
-	aCanvas drawHandLarge.
-	"
-	aCanvas drawHandSmall.
-	"! !
-
 !Sample01Star methodsFor: 'drawing' stamp: 'jmv 8/27/2021 12:15:01'!
 drawOn: aCanvas
 	"A 5 point star.
@@ -1501,9 +1276,10 @@ colorize
 	color _ Color random.
 	self redrawNeeded.! !
 
-!Sample04Pacman methodsFor: 'updating' stamp: 'jmv 8/27/2021 14:13:43'!
+!Sample04Pacman methodsFor: 'updating' stamp: 'jmv 9/2/2021 16:59:16'!
 redrawNeeded
 	"for experimenting with collision detection"
+
 	self isOwnedByHand ifTrue: [
 		self world ifNotNil: [ :w |
 			w submorphsDo: [ :m |
@@ -1548,6 +1324,128 @@ initialize
 		fileEntry _ DirectoryEntry currentDirectory // 'wt002.ttf'.
 		fileEntry exists ifTrue: [
 			TrueTypeFontFamily readTrueTypeFontEntry: DirectoryEntry currentDirectory // 'wt002.ttf' ]].! !
+
+!Sample06EasyToGrab methodsFor: 'drawing' stamp: 'jmv 9/2/2021 16:45:31'!
+drawOn: aCanvas
+
+	aCanvas strokeWidth: 1 color: Color black do: [
+		aCanvas
+			moveTo: 0@0;
+			lineTo: 200@200;
+			lineTo: -200@200;
+			closePath ].! !
+
+!Sample06EasyToGrab methodsFor: 'geometry testing' stamp: 'jmv 9/2/2021 16:47:19'!
+containsGlobalPoint: worldPoint
+	"Allow grabbing if close enough."
+
+	^self coversAnyPointCloserThan: 10 toPoint: worldPoint! !
+
+!Sample07Clipping methodsFor: 'geometry testing' stamp: 'jmv 9/2/2021 16:52:16'!
+clipsSubmorphs
+
+	^ true! !
+
+!Sample07Clipping methodsFor: 'initialization' stamp: 'jmv 9/2/2021 16:53:09'!
+initialize
+
+	super initialize.
+	self addMorph: Sample01Star new.! !
+
+!Sample07Clipping methodsFor: 'drawing' stamp: 'jmv 9/2/2021 16:55:26'!
+drawOn: aCanvas
+
+	aCanvas strokeWidth: 15 color: (Color green alpha: 0.8) fillColor: (Color red alpha: 0.6) do: [
+		aCanvas
+			roundRectangleMinX: -10 maxX: 220 minY: -10 maxY: 120  rx: 120 ry: 50 ]! !
+
+!Sample08Form methodsFor: 'drawing' stamp: 'jmv 9/2/2021 17:20:56'!
+drawOn: aCanvas
+
+	aCanvas image: ImageMorph defaultForm at: -10@ -10.
+
+	aCanvas strokeWidth: 4 color: (Color green alpha: 0.6) do: [
+		aCanvas
+			ellipseCenter: 36@60 radius: 8 @ 8 ].
+
+	aCanvas strokeWidth: 10 color: (Color black alpha: 0.2) fillColor: (Color yellow alpha: 0.4) do: [
+		aCanvas
+			ellipseCenter: 36@60 radius: 24 @ 24 ].
+! !
+
+!Sample09Clock methodsFor: 'initialization' stamp: 'jmv 9/2/2021 17:40:09'!
+initialize
+
+	super initialize.
+	self addMorph: (hourHand _ Sample09ClockHourHand new).
+	self addMorph: (minuteHand _ Sample09ClockMinuteHand new).
+	self addMorph: (secondHand _ Sample09ClockSecondHand new).
+
+	(FontFamily familyName: 'Alex Brush' pointSize: 16) ifNil: [
+		TrueTypeFontFamily readTrueTypeFontEntry:
+			DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'AlexBrush' // 'AlexBrush-Regular.ttf' ]! !
+
+!Sample09Clock methodsFor: 'drawing' stamp: 'jmv 9/2/2021 17:31:02'!
+drawOn: aCanvas
+
+	| f |
+	aCanvas
+		strokeWidth: 10 color: Color lightCyan
+		fillColor: Color veryVeryLightGray do: [ :canvas |
+			canvas circleCenter:  0@0 radius: 100 ].
+	aCanvas drawString: 'XII' at: -13 @ -90 font: nil color: Color brown.
+	aCanvas drawString: 'III' at: 66 @ -10 font: nil color: Color brown.
+	aCanvas drawString: 'VI' at: -11 @ 70 font: nil color: Color brown.
+	aCanvas drawString: 'IX' at: -90 @ -10 font: nil color: Color brown.
+	
+	f _ FontFamily familyName: 'Alex Brush' pointSize: 16.
+	aCanvas drawString: 'Jacquier' atCenterX: 0@ -60 font: f color: Color black.
+	f _ FontFamily familyName: 'Alex Brush' pointSize: 8.
+	aCanvas drawString: 'pour la Minorie' atCenterX: 0@40 font: f color: Color black.! !
+
+!Sample09Clock methodsFor: 'stepping' stamp: 'jmv 9/2/2021 17:35:39'!
+step
+
+	| time |
+	time _ Time now.
+	hourHand rotationDegrees: time hour * 30.
+	minuteHand rotationDegrees: time minute * 6.
+	secondHand rotationDegrees: time second * 6.! !
+
+!Sample09Clock methodsFor: 'stepping' stamp: 'jmv 9/2/2021 17:35:52'!
+wantsSteps
+
+	^ true! !
+
+!Sample09ClockHourHand methodsFor: 'drawing' stamp: 'jmv 9/2/2021 17:33:33'!
+drawOn: aCanvas
+
+	aCanvas fillColor: (Color black alpha: 0.6) do: [
+		aCanvas
+			moveTo: 0 @ 10;
+			lineTo: -5 @ 0;
+			lineTo: 0 @ -50;
+			lineTo: 5 @ 0;
+			lineTo: 0 @ 10 ].! !
+
+!Sample09ClockMinuteHand methodsFor: 'drawing' stamp: 'jmv 9/2/2021 17:32:59'!
+drawOn: aCanvas
+
+	aCanvas fillColor: (Color black alpha: 0.6) do: [
+		aCanvas
+			moveTo: 0 @ 8;
+			lineTo: -4 @ 0;
+			lineTo: 0 @ -82;
+			lineTo: 4 @ 0;
+			lineTo: 0 @ 8 ].! !
+
+!Sample09ClockSecondHand methodsFor: 'drawing' stamp: 'jmv 9/2/2021 17:32:20'!
+drawOn: aCanvas
+
+	aCanvas strokeWidth: 3.5 color: Color red do: [
+		aCanvas
+			moveTo: 0 @ 0;
+			lineTo: 0 @ -85 ].! !
 
 !HybridCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:35:56'!
 boundsFinderCanvas
