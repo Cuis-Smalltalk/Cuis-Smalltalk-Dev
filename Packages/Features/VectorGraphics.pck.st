@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4832] on 2 September 2021 at 5:44:10 pm'!
+'From Cuis 5.0 [latest update: #4834] on 3 September 2021 at 2:49:54 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 291!
+!provides: 'VectorGraphics' 1 292!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -5305,6 +5305,10 @@ subPixelDelta
 
 	^0.0! !
 
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/3/2021 14:23:06'!
+auxPixelDataClass
+	^self subclassResponsibility! !
+
 !VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/11/2021 20:04:10'!
 initializeOnForm: aForm
 	self currentMorph: nil.
@@ -5317,17 +5321,21 @@ morph: aMorph isAtPoint: aPoint
 	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
 	^((morphIds at: index) >> 8) = aMorph morphId! !
 
-!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/27/2021 10:52:48'!
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/3/2021 14:26:16'!
 pvtSetForm: aForm
 
+	| s |
 	targetForm _ aForm.
 	targetWidth _ targetForm width.
 	targetHeight _ targetForm height.
-	morphIds _ WordArray new: targetWidth * targetHeight.
+	s _ targetWidth * targetHeight.
+	morphIds _ WordArray new: s.
+	edgeCounts _ self auxPixelDataClass new: s.
+	alphaMask _ self auxPixelDataClass new: s.
 	contour _ Float32Array new: targetHeight * 2.
 	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
 		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
-		morphIds pin. contour pin ].
+		morphIds pin. edgeCounts pin. alphaMask pin. contour pin ].
 	0 to: targetHeight-1 do: [ :y |
 		contour at: y * 2 + 1 put: targetWidth.
 		contour at: y * 2 + 2 put: 0 ].
@@ -5927,17 +5935,16 @@ As an additional optimization, as we need to store for every pixel all the cross
 				]
 		].! !
 
-!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:32'!
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 9/3/2021 14:23:38'!
+auxPixelDataClass
+	"Because we hold data for subpixels"
+
+	^WordArray! !
+
+!VectorEngineSubPixel methodsFor: 'private' stamp: 'jmv 9/3/2021 14:27:10'!
 pvtSetForm: aForm
 
-	| s |
 	super pvtSetForm: aForm.
-	s _ targetWidth * targetHeight.
-	edgeCounts _ WordArray new: s.
-	alphaMask _ WordArray new: s.
-	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
-		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
-		edgeCounts pin. alphaMask pin ].
 	subPixelDelta _ self class defaultSubPixelDelta.! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
@@ -6346,17 +6353,11 @@ As an additional optimization, as we need to store for every pixel all the cross
 		edgeCounts at: pixelIndex put: count ].
 	prevYTruncated _ thisYTruncated.! !
 
-!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:36'!
-pvtSetForm: aForm
+!VectorEngineWholePixel methodsFor: 'private' stamp: 'jmv 9/3/2021 14:24:15'!
+auxPixelDataClass
+	"Because we hold data for whole pixels"
 
-	| s |
-	super pvtSetForm: aForm.
-	s _ targetWidth * targetHeight.
-	edgeCounts _ ByteArray new: s.
-	alphaMask _ ByteArray new: s.
-	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
-		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
-		edgeCounts pin. alphaMask pin ].! !
+	^ByteArray! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendFillOnly
@@ -7103,17 +7104,16 @@ primTargetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMas
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginSubPixel methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:41'!
+!VectorEngineWithPluginSubPixel methodsFor: 'private' stamp: 'jmv 9/3/2021 14:23:45'!
+auxPixelDataClass
+	"Because we hold data for subpixels"
+
+	^WordArray! !
+
+!VectorEngineWithPluginSubPixel methodsFor: 'private' stamp: 'jmv 9/3/2021 14:27:21'!
 pvtSetForm: aForm
 
-	| s |
 	super pvtSetForm: aForm.
-	s _ targetWidth * targetHeight.
-	edgeCounts _ WordArray new: s.
-	alphaMask _ WordArray new: s.
-	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
-		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
-		edgeCounts pin. alphaMask pin ].
 	subPixelDelta _ self class defaultSubPixelDelta.! !
 
 !VectorEngineWithPluginSubPixel class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 11:44:04'!
@@ -7197,17 +7197,11 @@ primTargetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMas
 
 	self primitiveFailed! !
 
-!VectorEngineWithPluginWholePixel methodsFor: 'private' stamp: 'jmv 8/20/2021 12:25:45'!
-pvtSetForm: aForm
+!VectorEngineWithPluginWholePixel methodsFor: 'private' stamp: 'jmv 9/3/2021 14:24:08'!
+auxPixelDataClass
+	"Because we hold data for whole pixels"
 
-	| s |
-	super pvtSetForm: aForm.
-	s _ targetWidth * targetHeight.
-	edgeCounts _ ByteArray new: s.
-	alphaMask _ ByteArray new: s.
-	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
-		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
-		edgeCounts pin. alphaMask pin ].! !
+	^ByteArray! !
 
 !VectorEngineWithPluginWholePixel class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 11:44:58'!
 defaultAntiAliasingWidth
