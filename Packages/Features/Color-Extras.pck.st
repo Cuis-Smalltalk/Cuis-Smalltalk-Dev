@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4520] on 8 January 2021 at 3:11:05 pm'!
+'From Cuis 5.0 [latest update: #4843] on 6 September 2021 at 12:54:40 pm'!
 'Description '!
-!provides: 'Color-Extras' 1 8!
+!provides: 'Color-Extras' 1 9!
 SystemOrganization addCategory: 'Color-Extras'!
 
 
@@ -379,7 +379,7 @@ forestGreen
 
 	^ ColorNamesDict at: #forestGreen! !
 
-!Color class methodsFor: '*color-extras-instance creation' stamp: 'jmv 1/8/2021 13:07:21'!
+!Color class methodsFor: '*color-extras-instance creation' stamp: 'jmv 9/6/2021 11:38:53'!
 fromString: aString
 	"For HTML color spec: #FFCCAA. Also support named colors.
 	See http://www.w3schools.com/cssref/css_colors_legal.asp"
@@ -396,14 +396,14 @@ fromString: aString
 		ifTrue: [|values r g b|
 				values := (aString allButFirst: 4) allButLast findTokens: ','.
 				r  := (values first includes: $%)
-						ifTrue: [(values first asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values first asNumber min: 255 max: 0) / 255.0].
+						ifTrue: [(values first findPositiveInteger min: 100 max: 0) / 100.0]
+						ifFalse: [(values first findPositiveInteger min: 255 max: 0) / 255.0].
 				g := (values second includes: $%)
-						ifTrue: [(values second asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values second asNumber min: 255 max: 0) / 255.0].
+						ifTrue: [(values second findPositiveInteger min: 100 max: 0) / 100.0]
+						ifFalse: [(values second findPositiveInteger min: 255 max: 0) / 255.0].
 				b := (values third includes: $%)
-						ifTrue: [(values third asNumber min: 100 max: 0) / 100.0]
-						ifFalse: [(values third asNumber min: 255 max: 0) / 255.0].
+						ifTrue: [(values third findPositiveInteger min: 100 max: 0) / 100.0]
+						ifFalse: [(values third findPositiveInteger min: 255 max: 0) / 255.0].
 				^self r: r g: g b: b].
 
 	^self exactColorNamed: aString! !

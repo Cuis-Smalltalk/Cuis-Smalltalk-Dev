@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4837] on 5 September 2021 at 2:57:43 pm'!
+'From Cuis 5.0 [latest update: #4843] on 6 September 2021 at 12:55:30 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 294!
+!provides: 'VectorGraphics' 1 295!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1515,16 +1515,25 @@ textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc
 		^nil ].
 	^super textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc! !
 
+!HybridCanvas methodsFor: 'initialization' stamp: 'jmv 9/6/2021 11:22:58'!
+resetCanvas
+	"To be called in case of possible inconsistency due to an exception during drawing.
+	See #displayWorldSafely"
+
+	super resetCanvas.
+	vectorCanvas resetCanvas.! !
+
 !HybridCanvas methodsFor: 'initialization' stamp: 'jmv 10/24/2020 16:04:17'!
 world: aWorldMorph
 	super world: aWorldMorph.
 	vectorCanvas world: aWorldMorph! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 7/11/2020 09:55:52'!
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 9/6/2021 11:16:05'!
 canvasToUse
 
-	currentMorph requiresVectorCanvas ifTrue: [
-		^ vectorCanvas ].
+	currentMorph ifNotNil: [
+		currentMorph requiresVectorCanvas ifTrue: [
+			^ vectorCanvas ]].
 	^self.! !
 
 !HybridCanvas methodsFor: 'private' stamp: 'jmv 8/16/2021 16:32:08'!

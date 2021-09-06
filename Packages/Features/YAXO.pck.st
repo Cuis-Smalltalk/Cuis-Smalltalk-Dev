@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4503] on 29 December 2020 at 2:48:16 pm'!
+'From Cuis 5.0 [latest update: #4843] on 6 September 2021 at 12:53:51 pm'!
 'Description '!
-!provides: 'YAXO' 1 17!
+!provides: 'YAXO' 1 18!
 SystemOrganization addCategory: 'YAXO'!
 
 
@@ -279,6 +279,26 @@ comment: aString
 	self stream nextPutAll: aString.
 	self endComment! !
 
+!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 1/17/2002 15:25'!
+name: aString
+	name _ aString asSymbol! !
+
+!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 12/8/2000 17:22'!
+ndata
+	^ndata! !
+
+!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 12/8/2000 17:22'!
+ndata: aString
+	ndata _ aString! !
+
+!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 11/16/2000 10:54'!
+value
+	^value! !
+
+!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 11/16/2000 10:55'!
+value: aString
+	value _ aString! !
+
 !DTDEntityDeclaration methodsFor: 'behaviors' stamp: 'mir 1/15/2002 11:29'!
 bypass
 	"Return my reference as is."
@@ -302,26 +322,6 @@ includedInLiteral
 reference
 	"Return my reference as is."
 	^self class leadIn , self name , ';'! !
-
-!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 1/17/2002 15:25'!
-name: aString
-	name _ aString asSymbol! !
-
-!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 12/8/2000 17:22'!
-ndata
-	^ndata! !
-
-!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 12/8/2000 17:22'!
-ndata: aString
-	ndata _ aString! !
-
-!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 11/16/2000 10:54'!
-value
-	^value! !
-
-!DTDEntityDeclaration methodsFor: 'accessing' stamp: 'mir 11/16/2000 10:55'!
-value: aString
-	value _ aString! !
 
 !DTDEntityDeclaration methodsFor: 'invocation' stamp: 'mir 11/16/2000 21:23'!
 registerIn: aParser
@@ -402,6 +402,26 @@ initialize
 leadIn
 	^'%'! !
 
+!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:53'!
+endEntity: entityName
+	"This call corresponds to the Java SAX ext call
+	endEntity(java.lang.String name)."! !
+
+!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:53'!
+startCData
+	"This call corresponds to the Java SAX ext call
+	startCData()."! !
+
+!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:54'!
+startDTD: declName publicID: publicID systemID: systemID
+	"This call corresponds to the Java SAX ext call
+	startDTD(java.lang.String name, java.lang.String publicId, java.lang.String systemId)."! !
+
+!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:54'!
+startEntity: entityName
+	"This call corresponds to the Java SAX ext call
+	startEntity(java.lang.String name)."! !
+
 !SAXHandler methodsFor: 'content' stamp: 'mir 1/8/2002 18:27'!
 characters: aString
 	"This call corresponds to the Java SAX call
@@ -476,26 +496,6 @@ startPrefixMapping: prefix uri: uri
 	"This call corresonds to the Java SAX call
 	startPrefixMapping(java.lang.String prefix, java.lang.String uri)."! !
 
-!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:53'!
-endEntity: entityName
-	"This call corresponds to the Java SAX ext call
-	endEntity(java.lang.String name)."! !
-
-!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:53'!
-startCData
-	"This call corresponds to the Java SAX ext call
-	startCData()."! !
-
-!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:54'!
-startDTD: declName publicID: publicID systemID: systemID
-	"This call corresponds to the Java SAX ext call
-	startDTD(java.lang.String name, java.lang.String publicId, java.lang.String systemId)."! !
-
-!SAXHandler methodsFor: 'lexical' stamp: 'mir 8/11/2000 18:54'!
-startEntity: entityName
-	"This call corresponds to the Java SAX ext call
-	startEntity(java.lang.String name)."! !
-
 !SAXHandler methodsFor: 'accessing' stamp: 'mir 11/30/2000 18:12'!
 document
 	^document! !
@@ -560,6 +560,15 @@ parseDocumentFrom: aStream
 	parser startDocument.
 	parser parseDocument.
 	^parser! !
+
+!SAXHandler class methodsFor: 'instance creation' stamp: 'jmv 9/6/2021 12:12:22'!
+parseDocumentFromFile: aFileEntry readIntoMemory: readIntoMemory
+
+	^aFileEntry readStreamDo: [ :stream |
+		self parseDocumentFrom: 
+			(readIntoMemory
+				ifTrue: [ stream contentsOfEntireFile readStream ]
+				ifFalse: [ stream ])]! !
 
 !SAXHandler class methodsFor: 'instance creation' stamp: 'mir 1/8/2002 15:55'!
 parseDocumentFromFileNamed: fileName
@@ -827,6 +836,10 @@ validateAttributes: attributeList
 				(attributeList includesKey: alias , ':' , localName)
 					ifTrue: [self parseError: 'Attributes ' , attrName , ' and ' , alias , ':' , localName , ' are aliased to namespace ' , (self namespaceURIOf: namespace) ]]]]! !
 
+!XMLNode methodsFor: 'printing' stamp: 'mir 1/17/2002 15:45'!
+printXMLOn: writer
+	self subclassResponsibility! !
+
 !XMLNode methodsFor: 'accessing' stamp: 'mir 1/8/2002 18:44'!
 addContent: contentString
 	SAXParseException signal: 'Illegal string data.'! !
@@ -913,10 +926,6 @@ isTag
 !XMLNode methodsFor: 'testing' stamp: 'mir 1/17/2002 15:26'!
 isText
 	^false! !
-
-!XMLNode methodsFor: 'printing' stamp: 'mir 1/17/2002 15:45'!
-printXMLOn: writer
-	self subclassResponsibility! !
 
 !XMLNodeWithElements methodsFor: 'accessing' stamp: 'mir 3/6/2002 11:01'!
 addElement: element
@@ -1025,18 +1034,6 @@ printXMLOn: writer
 	version ifNotNil: [writer xmlDeclaration: self version encoding: self encoding].
 	super printXMLOn: writer! !
 
-!XMLElement methodsFor: 'initialization' stamp: 'mir 8/14/2000 17:58'!
-addContent: contentString
-	self contents add: contentString! !
-
-!XMLElement methodsFor: 'initialization' stamp: 'mir 1/17/2002 15:24'!
-name: aString
-	name _ aString asSymbol! !
-
-!XMLElement methodsFor: 'initialization' stamp: 'mir 3/7/2000 16:43'!
-setAttributes: newAttributes
-	attributes _ newAttributes! !
-
 !XMLElement methodsFor: 'accessing' stamp: 'mir 1/18/2001 16:55'!
 attributeAt: attributeName
 	^self attributeAt: attributeName ifAbsent: [nil]! !
@@ -1084,6 +1081,18 @@ valueFor: aSymbol
 !XMLElement methodsFor: 'accessing' stamp: 'mir 1/17/2002 15:28'!
 valueFor: aSymbol ifAbsent: aBlock 
 	^self attributes at: aSymbol ifAbsent: aBlock! !
+
+!XMLElement methodsFor: 'initialization' stamp: 'mir 8/14/2000 17:58'!
+addContent: contentString
+	self contents add: contentString! !
+
+!XMLElement methodsFor: 'initialization' stamp: 'mir 1/17/2002 15:24'!
+name: aString
+	name _ aString asSymbol! !
+
+!XMLElement methodsFor: 'initialization' stamp: 'mir 3/7/2000 16:43'!
+setAttributes: newAttributes
+	attributes _ newAttributes! !
 
 !XMLElement methodsFor: 'enumerating' stamp: 'jmv 4/26/2010 15:19'!
 attributesNamesDo: aBlock
