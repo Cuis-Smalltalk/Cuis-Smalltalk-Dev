@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4843] on 6 September 2021 at 12:55:30 pm'!
+'From Cuis 5.0 [latest update: #4848] on 7 September 2021 at 11:07:42 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 295!
+!provides: 'VectorGraphics' 1 296!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3965,6 +3965,15 @@ initializeWithTranslation: aPoint
 	boundsFinderCanvas engine antiAliasingWidth: engine antiAliasingWidth.
 	boundsFinderCanvas engine subPixelDelta: engine subPixelDelta.! !
 
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 9/7/2021 09:53:54'!
+resetCanvas
+	"To be called in case of possible inconsistency due to an exception during drawing.
+	See #displayWorldSafely"
+
+	super resetCanvas.
+	boundsFinderCanvas resetCanvas.
+	engine clearArrays.! !
+
 !VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 9/2/2021 08:38:01'!
 setForm: aForm subPixelAntiAliasing: aBoolean
 	"nil means use default kind of anti aliasing"
@@ -5333,6 +5342,15 @@ subPixelDelta
 !VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/3/2021 14:23:06'!
 auxPixelDataClass
 	^self subclassResponsibility! !
+
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/7/2021 09:53:47'!
+clearArrays
+	morphIds atAllPut: 0.
+	edgeCounts atAllPut: 0.
+	alphaMask atAllPut: 0.
+	0 to: targetHeight-1 do: [ :y |
+		contour at: y * 2 + 1 put: targetWidth.
+		contour at: y * 2 + 2 put: 0 ].! !
 
 !VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/11/2021 20:04:10'!
 initializeOnForm: aForm

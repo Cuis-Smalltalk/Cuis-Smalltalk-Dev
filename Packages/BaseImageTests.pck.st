@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4768] on 19 August 2021 at 3:35:05 pm'!
+'From Cuis 5.0 [latest update: #4853] on 7 September 2021 at 12:11:15 pm'!
 'Description Fixed DebuggerTest and MethodReferenceTest'!
-!provides: 'BaseImageTests' 1 264!
+!provides: 'BaseImageTests' 1 265!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1046,6 +1046,16 @@ DynamicallyCodeCreationTest subclass: #CompilerTest
 	category: 'BaseImageTests-Compiler'!
 !classDefinition: 'CompilerTest class' category: 'BaseImageTests-Compiler'!
 CompilerTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExtractMethodFinderTest category: 'BaseImageTests-Tools-Refactoring'!
+DynamicallyCodeCreationTest subclass: #ExtractMethodFinderTest
+	instanceVariableNames: 'classToRefactor'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'ExtractMethodFinderTest class' category: 'BaseImageTests-Tools-Refactoring'!
+ExtractMethodFinderTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #RefactoringTest category: 'BaseImageTests-Tools-Refactoring'!
@@ -19979,6 +19989,188 @@ unusedVariableSource
 		| goo |
 		^ nil'! !
 
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:02:42'!
+test01FindsSelectionOnSourceMethod
+
+	| sourceMethodName finder methodsToExtractFrom sourceMethod |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
+	finder value.
+	
+	self assert: finder hasOneReplacement.
+	methodsToExtractFrom := finder replacements.
+	
+	self assert: 1 equals: methodsToExtractFrom size.
+	self assert: (4 to: 5) equals: methodsToExtractFrom first intervalToExtract.
+	self assert: sourceMethod equals: methodsToExtractFrom first methodToExtractFrom.! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:02:49'!
+test02FindsRepetitionsAfterSelection
+
+	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10. 10'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
+	finder value.
+	
+	self deny: finder hasOneReplacement.
+	methodsToExtractFrom := finder replacements.
+	
+	self assert: 2 equals: methodsToExtractFrom size.
+	replacement := methodsToExtractFrom first.
+	self assert: (4 to: 5) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+	
+	replacement := methodsToExtractFrom second.
+	self assert: (8 to: 9) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:02:58'!
+test03FindsRepetitionsBeforeSelection
+
+	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10. 10'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: (8 to: 9) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
+	finder value.
+	
+	self deny: finder hasOneReplacement.
+	methodsToExtractFrom := finder replacements.
+	
+	self assert: 2 equals: methodsToExtractFrom size.
+	replacement := methodsToExtractFrom first.
+	self assert: (4 to: 5) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+	
+	replacement := methodsToExtractFrom second.
+	self assert: (8 to: 9) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+	! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:03:07'!
+test04DoesNotIncludeComments
+
+	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10. "10"'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
+	finder value.
+	
+	self assert: finder hasOneReplacement.
+	methodsToExtractFrom := finder replacements.
+	
+	self assert: 1 equals: methodsToExtractFrom size.
+	replacement := methodsToExtractFrom first.
+	self assert: (4 to: 5) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+	
+	! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:03:14'!
+test05DoesNotIncludeNotExtractableSourceCode
+
+	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10. 100'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
+	finder value.
+	
+	self assert: finder hasOneReplacement.
+	methodsToExtractFrom := finder replacements.
+	
+	self assert: 1 equals: methodsToExtractFrom size.
+	replacement := methodsToExtractFrom first.
+	self assert: (4 to: 5) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:03:21'!
+test06FindsRepetitionsInOtherClassMethods
+
+	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10'.
+	classToRefactor compile: 'm1b 100+10'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
+	finder value.
+	
+	self deny: finder hasOneReplacement.
+	methodsToExtractFrom := finder replacements.
+	
+	self assert: 2 equals: methodsToExtractFrom size.
+	replacement := methodsToExtractFrom first.
+	self assert: (4 to: 5) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+	
+	replacement := methodsToExtractFrom second.
+	self assert: (9 to: 10) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: (classToRefactor >> #m1b) asMethodReference).
+	
+	! !
+
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:03:27'!
+test07FindsRepetitionsInSubclassesMethods
+
+	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement subclassToRefactor |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10. 10'.
+	classToRefactor compile: 'm1b 100+10'.
+	subclassToRefactor := self createClassNamed: self subclassToRefactorName subclassOf: classToRefactor.
+	subclassToRefactor compile: 'm3 10'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: (4 to: 5) asSourceCodeInterval at: sourceMethod to: (Message selector: #m2). 
+	finder value.
+	
+	self deny: finder hasOneReplacement.
+	methodsToExtractFrom := finder replacements.
+	
+	self assert: 4 equals: methodsToExtractFrom size.
+	replacement := methodsToExtractFrom first.
+	self assert: (4 to: 5) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+	
+	replacement := methodsToExtractFrom second.
+	self assert: (8 to: 9) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: sourceMethod).
+	
+	replacement := methodsToExtractFrom third.
+	self assert: (9 to: 10) equals: replacement intervalToExtract.
+	self assert: (replacement isOf: (classToRefactor >> #m1b) asMethodReference).
+	
+	replacement := methodsToExtractFrom fourth.
+	self assert: (4 to: 5) equals: replacement intervalToExtract.
+	self assert:(replacement isOf: (subclassToRefactor >> #m3) asMethodReference)
+	! !
+
+!ExtractMethodFinderTest methodsFor: 'setup/teardown' stamp: 'HAW 9/2/2021 18:02:12'!
+setUp
+
+	super setUp.
+	classToRefactor := self createClassNamed: self classToRefactorName! !
+
+!ExtractMethodFinderTest methodsFor: 'class names' stamp: 'HAW 9/2/2021 16:54:18'!
+classToRefactorName
+	
+	^#ClassToExtractMethod! !
+
+!ExtractMethodFinderTest methodsFor: 'class names' stamp: 'HAW 9/4/2021 20:53:12'!
+subclassToRefactorName
+	
+	^#SubclassToExtractMethod! !
+
 !RefactoringTest methodsFor: 'assertions' stamp: 'HAW 6/1/2017 19:01:00'!
 assertCreation: aCreationBlock failsWith: aMessageTextCreator
 
@@ -21281,12 +21473,12 @@ intervalOf: aPieceOfSourceCode locatedIn: sourceCode
 	interval _ sourceCode intervalOfSubCollection: aPieceOfSourceCode.
 	^ (interval first to: interval last - 1) asSourceCodeInterval! !
 
-!ExtractMethodTest methodsFor: 'set up' stamp: 'RNG 9/28/2019 01:16:48'!
+!ExtractMethodTest methodsFor: 'set up' stamp: 'HAW 8/28/2021 17:39:00'!
 setUp
 
 	super setUp.
 	classToRefactor _ self createClassNamed: self classToRefactorName.
-	self compileMethodToExtractCodeFrom.! !
+	! !
 
 !ExtractMethodTest methodsFor: 'tests - successful' stamp: 'RNG 1/12/2020 21:08:55'!
 test09ExtractingALiteralCreatesANewMethodAndChangesExistingCodeToCallThatNewMethod
@@ -21580,9 +21772,10 @@ test02NewSelectorShouldNotContainSeparators
 		tryingToExtractWithSelectorNamed: #'my selector'
 		failsWith: [ NewSelectorPrecondition newSelectorCanNotContainSeparatorsErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 8/28/2021 17:40:41'!
 test03ExtractingToSelectorAlreadyDefinedInTheClassRaisesAWarning
 
+	self compileMethodToExtractCodeFrom.
 	self
 		tryingToExtractWithSelectorNamed: self selectorOfMethodToExtractCodeFrom
 		raisesWarning: [
@@ -21604,19 +21797,21 @@ test05NewUnarySelectorShouldNotStartWithASymbol
 		tryingToExtractWithSelectorNamed: #-
 		failsWith: [ NewSelectorPrecondition invalidStartingCharacterOfNewSelectorErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:03:37'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:25:24'!
 test06IntervalToExtractIsNotBeforeMethodSourceCodeBoundaries
 
+	self compileMethodToExtractCodeFrom.
 	self
 		tryingToExtractOnInterval: (-1 to: 2) asSourceCodeInterval
-		failsWith: [ ExtractMethod outOfBoundsSelectionErrorMessage ]! !
+		failsWith: [ ExtractMethodNewMethod outOfBoundsSelectionErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:03:45'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:25:40'!
 test07IntervalToExtractIsNotAfterMethodSourceCodeBoundaries
 
+	self compileMethodToExtractCodeFrom.
 	self
 		tryingToExtractOnInterval: (1 to: self sourceCodeOfMethodToExtractCodeFrom size + 2) asSourceCodeInterval
-		failsWith: [ ExtractMethod outOfBoundsSelectionErrorMessage ]! !
+		failsWith: [ ExtractMethodNewMethod outOfBoundsSelectionErrorMessage ]! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 21:51:01'!
 test08IntervalToExtractShouldNotContainAReturnExpression
@@ -21658,10 +21853,12 @@ test13IntervalToExtractShouldBeAValidSmalltalkExpression
 		from: 'm1 ^ 3 + ((4))'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 22:15:26'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 8/28/2021 17:41:13'!
 test14ItIsNotPossibleToExtractTheLeftSideOfAnAssignment
 
 	| firstOccurrence secondOccurrence intervalToExtract |
+	
+	self compileMethodToExtractCodeFrom.
 	firstOccurrence := self sourceCodeOfMethodToExtractCodeFrom
 		indexOfSubCollection: 'localVar' startingAt: 1.
 	secondOccurrence := self sourceCodeOfMethodToExtractCodeFrom
@@ -21679,12 +21876,13 @@ test16CanNotExtractPartOfALiteral
 		from: 'm1 ^ ''hey true'''
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForSourceCodeContainingInvalidExpression ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:04:30'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:26:00'!
 test23CanNotExtractWithAnInvalidInterval
 
+	self compileMethodToExtractCodeFrom.
 	self
 		tryingToExtractOnInterval: (10 to: 9) asSourceCodeInterval
-		failsWith: [ ExtractMethod noSelectionErrorMessage ]! !
+		failsWith: [ ExtractMethodNewMethod noSelectionErrorMessage ]! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/25/2020 00:26:46'!
 test24ItIsNotPossibleToExtractAnIntervalIncludingATemporaryAssignmentExpression
@@ -21709,23 +21907,23 @@ test28ItIsNotPossibleToExtractALocalVariableInsideOfItsDeclaration
 		from: 'm1 | localVar | ^ #foo'
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingTemporaryVariablesDefinition ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:02:48'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:26:21'!
 test34TryingToExtractAMethodWithLessArgumentsThanNeededFails
 
 	self
 		tryingToExtract: 'localVar1 + localVar2 + 2'
 		from: 'm1 | localVar1 localVar2 | ^ localVar1 + localVar2 + 2'
 		using: (Message selector: #m1: arguments: #('localVar1'))
-		failsWith: [ ExtractMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
+		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
-!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 5/24/2020 20:02:52'!
+!ExtractMethodTest methodsFor: 'tests - validations' stamp: 'HAW 9/4/2021 21:26:39'!
 test35TryingToExtractAMethodWithMoreArgumentsThanNeededFails
 
 	self
 		tryingToExtract: 'localVar1 + localVar2 + 2'
 		from: 'm1 | localVar1 localVar2 | ^ localVar1 + localVar2 + 2'
 		using: (Message selector: #m1:m2:m3: arguments: #('localVar1' 'localVar2' 'localVar3'))
-		failsWith: [ ExtractMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
+		failsWith: [ ExtractMethodNewMethod wrongNumberOfArgumentsGivenErrorMessage ]! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test39TryingToExtractToAMethodThatExistsInASuperclassRaisesAWarning
@@ -21752,6 +21950,64 @@ test41CannotExtractPartOfMethodSignature
 		from: 'm1: arg ^ self'
 		using: (Message selector: #m2: arguments: #('arg'))
 		failsWith: [ SourceCodeOfMethodToBeExtractedPrecondition errorMessageForExtractingPartOfMethodSignature ]! !
+
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 9/5/2021 07:13:44'!
+test42ExtractsManyRepetitionsOnSameMethod
+
+	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10. 10'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	intervalToExtract := (4 to: 5) asSourceCodeInterval.
+	newMessage := Message selector: #m2.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: intervalToExtract at: sourceMethod to: newMessage. 
+	finder value.
+	
+	extractMethod := ExtractMethod 
+		newDefinition: (ExtractMethodNewMethod 
+			fromInterval: intervalToExtract 
+			of: sourceMethod 
+			to: newMessage 
+			categorizedAs: #something)
+		replacements: finder replacements.
+		
+	extractMethod apply.
+	
+	self assert: 
+ 'm2
+
+	^ 10' equals: (classToRefactor >> #m2) sourceCode.
+	self assert: 'm1 self m2. self m2' equals: (classToRefactor >> #m1) sourceCode.
+	! !
+
+!ExtractMethodTest methodsFor: 'tests - many repetitions' stamp: 'HAW 9/5/2021 07:13:44'!
+test43ExtractsRepetitionsOnMoreThanOneMethod
+
+	| sourceMethodName finder sourceMethod extractMethod intervalToExtract newMessage |
+	
+	sourceMethodName := classToRefactor compile: 'm1 10'.
+	classToRefactor compile: 'm1b 100+10'.
+	
+	sourceMethod := (classToRefactor >> sourceMethodName) asMethodReference.
+	intervalToExtract := (4 to: 5) asSourceCodeInterval.
+	newMessage := Message selector: #m2.
+	finder := ExtractMethodReplacementsFinder ofCodeIn: intervalToExtract at: sourceMethod to: newMessage. 
+	finder value.
+	
+	extractMethod := ExtractMethod 
+		newDefinition: (ExtractMethodNewMethod 
+			fromInterval: intervalToExtract 
+			of: sourceMethod 
+			to: newMessage 
+			categorizedAs: #something)
+		replacements: finder replacements.
+		
+	extractMethod apply.
+	
+	self assert: 'm1 self m2' equals: (classToRefactor >> #m1) sourceCode.
+	self assert: 'm1b 100+self m2' equals: (classToRefactor >> #m1b) sourceCode.
+	! !
 
 !ExtractToTemporaryTest methodsFor: 'class factory' stamp: 'RNG 2/22/2020 21:20:46'!
 classToRefactorName
