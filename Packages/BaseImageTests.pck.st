@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4853] on 7 September 2021 at 12:11:15 pm'!
+'From Cuis 5.0 [latest update: #4855] on 10 September 2021 at 10:48:01 am'!
 'Description Fixed DebuggerTest and MethodReferenceTest'!
-!provides: 'BaseImageTests' 1 265!
+!provides: 'BaseImageTests' 1 266!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -20094,7 +20094,7 @@ test05DoesNotIncludeNotExtractableSourceCode
 	self assert: (4 to: 5) equals: replacement intervalToExtract.
 	self assert: (replacement isOf: sourceMethod).! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:03:21'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/8/2021 21:34:35'!
 test06FindsRepetitionsInOtherClassMethods
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement |
@@ -20110,17 +20110,15 @@ test06FindsRepetitionsInOtherClassMethods
 	methodsToExtractFrom := finder replacements.
 	
 	self assert: 2 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
+	replacement := methodsToExtractFrom detect: [ :aReplacement | aReplacement isOf: sourceMethod ].
 	self assert: (4 to: 5) equals: replacement intervalToExtract.
-	self assert: (replacement isOf: sourceMethod).
 	
-	replacement := methodsToExtractFrom second.
+	replacement := methodsToExtractFrom detect: [ :aReplacement | aReplacement isOf: (classToRefactor >> #m1b) asMethodReference ].
 	self assert: (9 to: 10) equals: replacement intervalToExtract.
-	self assert: (replacement isOf: (classToRefactor >> #m1b) asMethodReference).
 	
 	! !
 
-!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/5/2021 22:03:27'!
+!ExtractMethodFinderTest methodsFor: 'tests' stamp: 'HAW 9/8/2021 21:36:53'!
 test07FindsRepetitionsInSubclassesMethods
 
 	| sourceMethodName finder methodsToExtractFrom sourceMethod replacement subclassToRefactor |
@@ -20138,19 +20136,16 @@ test07FindsRepetitionsInSubclassesMethods
 	methodsToExtractFrom := finder replacements.
 	
 	self assert: 4 equals: methodsToExtractFrom size.
-	replacement := methodsToExtractFrom first.
+	replacement := (methodsToExtractFrom select: [ :aReplacement | aReplacement isOf: sourceMethod ]) first.
 	self assert: (4 to: 5) equals: replacement intervalToExtract.
-	self assert: (replacement isOf: sourceMethod).
 	
-	replacement := methodsToExtractFrom second.
+	replacement := (methodsToExtractFrom select: [ :aReplacement | aReplacement isOf: sourceMethod ]) second.
 	self assert: (8 to: 9) equals: replacement intervalToExtract.
-	self assert: (replacement isOf: sourceMethod).
 	
-	replacement := methodsToExtractFrom third.
+	replacement := methodsToExtractFrom detect: [ :aReplacement | aReplacement isOf: (classToRefactor >> #m1b) asMethodReference ].
 	self assert: (9 to: 10) equals: replacement intervalToExtract.
-	self assert: (replacement isOf: (classToRefactor >> #m1b) asMethodReference).
 	
-	replacement := methodsToExtractFrom fourth.
+	replacement := methodsToExtractFrom detect: [ :aReplacement | aReplacement isOf: (subclassToRefactor >> #m3) asMethodReference ].
 	self assert: (4 to: 5) equals: replacement intervalToExtract.
 	self assert:(replacement isOf: (subclassToRefactor >> #m3) asMethodReference)
 	! !
