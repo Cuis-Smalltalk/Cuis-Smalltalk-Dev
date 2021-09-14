@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4854] on 9 September 2021 at 3:08:27 pm'!
+'From Cuis 5.0 [latest update: #4858] on 14 September 2021 at 4:00:23 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 297!
+!provides: 'VectorGraphics' 1 298!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -9409,36 +9409,37 @@ fitInto: aRectangle
 	currentBounds _ self findFullBoundsInOwner.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/18/2021 10:22:03'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/18/2021 11:36:46'!
+showBitMask
+	"Just to play with #bitMask from an inspector. Not to be called from code."
+	| r |
+	r _ self displayBounds.
+	r top to: r bottom-1 do: [ :y |
+		Display forceToScreen.
+		r left to: r right-1 do: [ :x |
+			(self coversGlobalPoint: x@y) ifTrue: [
+				Display colorAt: x@y put: Color red ]]].! !
+
+!MovableMorph methodsFor: '*vectorGraphics' stamp: 'jmv 9/13/2021 17:31:56'!
 imageForm: extentOrNil depth: depth
 	"Scale as needed. Draw unrotated."
 
 	| prevNotVisibleFlag oldLocation bounds extent answer auxCanvas |
-	self requiresVectorCanvas ifFalse: [	
-		"#morphExtent exists because #requiresVectorCanvas is false."
-		extent _ self morphExtent.
-		extentOrNil ifNotNil: [ extent _ extent min: extentOrNil * 4 ].
-		auxCanvas _ MorphicCanvas depth: depth over: (self morphPosition floor extent: extent ceiling).
-		auxCanvas fullDraw: self.
-		answer _ auxCanvas form divideByAlpha.
-		extentOrNil ifNotNil: [ answer _ answer magnifyTo: extentOrNil ].
-		^answer ].
-
 	"Position and scale us in order to fill required extent, but disregard any rotation.
 	Do it without triggering any invalidation at all."
 	prevNotVisibleFlag _ self privateFlagAt: 3.
 	oldLocation _ self location.
 	[
-		self privateLocation: (MorphicTranslation withTranslation: 0@0).
+		location _ MorphicTranslation withTranslation: 0@0.
 		bounds _ self findFullBoundsInOwner.
 		extentOrNil
 			ifNotNil: [ | scale |
 				extent _ extentOrNil.
 				scale _ extent x asFloat / bounds width min: extent y asFloat / bounds height.
-				self privateLocation: (AffineTransformation withScale: scale position: bounds origin negated +1 * scale ) ]
+				location _ AffineTransformation withScale: scale position: bounds origin negated +1 * scale ]
 			ifNil: [
 				extent _ bounds extent.
-				self privateLocation: (MorphicTranslation withTranslation: bounds origin negated) ].
+				location _ MorphicTranslation withTranslation: bounds origin negated ].
 		answer _ Form extent: extent depth: 32.
 		"Ask for a Canvas with subpixels so it can also handle translucent target"
 		auxCanvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: answer.
@@ -9451,19 +9452,8 @@ imageForm: extentOrNil depth: depth
 		auxCanvas fullDraw: self.
 	] ensure: [
 		self privateFlagAt: 3 put: prevNotVisibleFlag.
-		self privateLocation: oldLocation ].
+		location _ oldLocation ].
 	^answer asFormOfDepth: depth.! !
-
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/18/2021 11:36:46'!
-showBitMask
-	"Just to play with #bitMask from an inspector. Not to be called from code."
-	| r |
-	r _ self displayBounds.
-	r top to: r bottom-1 do: [ :y |
-		Display forceToScreen.
-		r left to: r right-1 do: [ :x |
-			(self coversGlobalPoint: x@y) ifTrue: [
-				Display colorAt: x@y put: Color red ]]].! !
 
 !MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:31:03'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
