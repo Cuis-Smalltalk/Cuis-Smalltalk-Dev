@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4858] on 14 September 2021 at 4:00:23 pm'!
+'From Cuis 5.0 [latest update: #4862] on 15 September 2021 at 3:32:18 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 298!
+!provides: 'VectorGraphics' 1 299!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1155,7 +1155,7 @@ serviceReadTTFont
 		icon: #fontIcon
 		) argumentGetter: [ :fileList | fileList selectedFileEntry ]! !
 
-!Sample01Star methodsFor: 'drawing' stamp: 'jmv 8/27/2021 12:15:01'!
+!Sample01Star methodsFor: 'drawing' stamp: 'jmv 9/14/2021 18:38:15'!
 drawOn: aCanvas
 	"A 5 point star.
 	Feel free to experiment with this code.
@@ -1165,13 +1165,30 @@ drawOn: aCanvas
 
 	aCanvas strokeWidth: 12 color: Color lightOrange do: [
 		aCanvas
-				moveTo: (Point rho: 100 theta: (0-90) degreesToRadians);
-				lineTo: (Point rho: 100 theta: (360/5*2-90) degreesToRadians);
-				lineTo: (Point rho: 100 theta: (360/5*4-90) degreesToRadians);
-				lineTo: (Point rho: 100 theta: (360/5*6-90) degreesToRadians);
-				lineTo: (Point rho: 100 theta: (360/5*8-90) degreesToRadians);
-				lineTo: (Point rho: 100 theta: -90 degreesToRadians).
+				moveTo: (Point rho: 100 theta: 90 degreesToRadians);
+				lineTo: (Point rho: 100 theta: (360/5*2+90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: (360/5*4+90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: (360/5*6+90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: (360/5*8+90) degreesToRadians);
+				lineTo: (Point rho: 100 theta: 90 degreesToRadians).
 		].! !
+
+!Sample01Star methodsFor: 'geometry testing' stamp: 'jmv 9/14/2021 19:07:06'!
+yAxisPointsUp
+	"By default, most morphs assume the usual convention in 2d computer graphics:
+	- x points to the right (i.e. increasing x values move from left to right)
+	- y points down (i.e. increasing y values move from top to bottom)
+	Subclasses wanting to follow the standard math convention, making increasing y values move upwards
+	should redefine this method to answer true."
+
+	^true! !
+
+!Sample01Star methodsFor: 'geometry' stamp: 'jmv 9/14/2021 19:06:41'!
+rotationCenter
+	"Smooth rotation around the origin.
+	(Optional. See what happens if you delete this method)"
+
+	^0@0! !
 
 !Sample02Bezier methodsFor: 'initialization' stamp: 'jmv 9/1/2021 16:21:44'!
 initialize
@@ -1210,6 +1227,16 @@ drawOn: aCanvas
 				lineTo: bControlPoint1;
 				lineTo: bControlPoint2;
 				lineTo: bEnd ].! !
+
+!Sample02Bezier methodsFor: 'geometry testing' stamp: 'jmv 9/14/2021 19:07:14'!
+yAxisPointsUp
+	"By default, most morphs assume the usual convention in 2d computer graphics:
+	- x points to the right (i.e. increasing x values move from left to right)
+	- y points down (i.e. increasing y values move from top to bottom)
+	Subclasses wanting to follow the standard math convention, making increasing y values move upwards
+	should redefine this method to answer true."
+
+	^true! !
 
 !Sample03Smiley methodsFor: 'drawing' stamp: 'jmv 8/27/2021 12:01:35'!
 drawOn: aCanvas
@@ -1253,11 +1280,11 @@ initialize
 	super initialize.
 	color _ Color yellow! !
 
-!Sample04Pacman methodsFor: 'drawing' stamp: 'jmv 8/27/2021 14:35:58'!
+!Sample04Pacman methodsFor: 'drawing' stamp: 'jmv 9/15/2021 15:21:15'!
 drawOn: aCanvas
 
 	aCanvas fillColor: color do: [
-		aCanvas circleCenter: 30@ -60 radius: 15.
+		aCanvas circleCenter: 30@60 radius: 15.
 		aCanvas
 			moveTo: 0@0;
 			lineTo: 100@ -50;
@@ -1268,6 +1295,16 @@ drawOn: aCanvas
 !Sample04Pacman methodsFor: 'geometry testing' stamp: 'jmv 8/27/2021 14:07:53'!
 wantsContour
 	"Because we want precise #collides:"
+
+	^true! !
+
+!Sample04Pacman methodsFor: 'geometry testing' stamp: 'jmv 9/14/2021 19:08:46'!
+yAxisPointsUp
+	"By default, most morphs assume the usual convention in 2d computer graphics:
+	- x points to the right (i.e. increasing x values move from left to right)
+	- y points down (i.e. increasing y values move from top to bottom)
+	Subclasses wanting to follow the standard math convention, making increasing y values move upwards
+	should redefine this method to answer true."
 
 	^true! !
 
@@ -1385,7 +1422,7 @@ initialize
 		TrueTypeFontFamily readTrueTypeFontEntry:
 			DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'AlexBrush' // 'AlexBrush-Regular.ttf' ]! !
 
-!Sample09Clock methodsFor: 'drawing' stamp: 'jmv 9/2/2021 17:31:02'!
+!Sample09Clock methodsFor: 'drawing' stamp: 'jmv 9/15/2021 15:27:51'!
 drawOn: aCanvas
 
 	| f |
@@ -1393,29 +1430,39 @@ drawOn: aCanvas
 		strokeWidth: 10 color: Color lightCyan
 		fillColor: Color veryVeryLightGray do: [ :canvas |
 			canvas circleCenter:  0@0 radius: 100 ].
-	aCanvas drawString: 'XII' at: -13 @ -90 font: nil color: Color brown.
-	aCanvas drawString: 'III' at: 66 @ -10 font: nil color: Color brown.
-	aCanvas drawString: 'VI' at: -11 @ 70 font: nil color: Color brown.
-	aCanvas drawString: 'IX' at: -90 @ -10 font: nil color: Color brown.
+	aCanvas drawString: 'XII' at: -13 @ 58 font: nil color: Color brown.
+	aCanvas drawString: 'III' at: 72 @ -23 font: nil color: Color brown.
+	aCanvas drawString: 'VI' at: -8 @ -105 font: nil color: Color brown.
+	aCanvas drawString: 'IX' at: -90 @ -23 font: nil color: Color brown.
 	
 	f _ FontFamily familyName: 'Alex Brush' pointSize: 16.
-	aCanvas drawString: 'Jacquier' atCenterX: 0@ -60 font: f color: Color black.
+	aCanvas drawString: 'Jacquier' atCenterX: 0@ 18 font: f color: Color black.
 	f _ FontFamily familyName: 'Alex Brush' pointSize: 8.
-	aCanvas drawString: 'pour la Minorie' atCenterX: 0@40 font: f color: Color black.! !
+	aCanvas drawString: 'pour la Minorie' atCenterX: 0@ -60 font: f color: Color black.! !
 
-!Sample09Clock methodsFor: 'stepping' stamp: 'jmv 9/2/2021 17:35:39'!
+!Sample09Clock methodsFor: 'stepping' stamp: 'jmv 9/15/2021 09:51:55'!
 step
 
 	| time |
 	time _ Time now.
-	hourHand rotationDegrees: time hour * 30.
-	minuteHand rotationDegrees: time minute * 6.
-	secondHand rotationDegrees: time second * 6.! !
+	hourHand rotationDegrees: time hour * -30 + (time minute * -0.5).
+	minuteHand rotationDegrees: time minute * -6.
+	secondHand rotationDegrees: time second * -6.! !
 
 !Sample09Clock methodsFor: 'stepping' stamp: 'jmv 9/2/2021 17:35:52'!
 wantsSteps
 
 	^ true! !
+
+!Sample09Clock methodsFor: 'geometry testing' stamp: 'jmv 9/15/2021 09:56:32'!
+yAxisPointsUp
+	"By default, most morphs assume the usual convention in 2d computer graphics:
+	- x points to the right (i.e. increasing x values move from left to right)
+	- y points down (i.e. increasing y values move from top to bottom)
+	Subclasses wanting to follow the standard math convention, making increasing y values move upwards
+	should redefine this method to answer true."
+
+	^true! !
 
 !Sample09ClockHourHand methodsFor: 'drawing' stamp: 'jmv 9/2/2021 17:33:33'!
 drawOn: aCanvas
@@ -4048,7 +4095,7 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:06:47'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 9/15/2021 15:20:51'!
 arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 "
 (VectorEngine onForm: Display)
@@ -4075,15 +4122,29 @@ Display forceToScreen.
 	ttheta _ theta + geometryTransformation radians.
 	tthetaCos _ ttheta cos.
 	tthetaSin _ ttheta sin.
-	self arcCenterX: aPoint x centerY: aPoint y radiusX: radiusPoint x radiusY: radiusPoint y start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin.
+	geometryTransformation doesMirror
+		ifTrue: [
+			self arcCenterX: aPoint x centerY: aPoint y radiusX: radiusPoint x radiusY: radiusPoint y
+				start: startAngle+sweepAngle sweep: sweepAngle negated rotationCos: tthetaCos rotationSin: tthetaSin ]
+		ifFalse: [
+			self arcCenterX: aPoint x centerY: aPoint y radiusX: radiusPoint x radiusY: radiusPoint y
+				start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin ].
 
 	angle _ startAngle + sweepAngle.
 	xp _ angle cos * radiusPoint x.
 	yp _ angle sin * radiusPoint y.
 	currentX _ thetaCos * xp - (thetaSin * yp) + aPoint x.
-	currentY _ thetaSin * xp + (thetaCos * yp) + aPoint y.! !
+	currentY _ thetaSin * xp + (thetaCos * yp) + aPoint y.
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:07:09'!
+	sweepAngle = Float twoPi
+		ifTrue: [
+			"If we were asked for a full circle/ellipse, ensure we end exactly at the same point we started,
+			even if there is some rounding error."
+			self lineFromX: currentX y: currentY toX: x0 y: y0.
+			currentX _ x0.
+			currentY _ y0 ].! !
+
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 9/15/2021 09:24:27'!
 arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
 (VectorEngine onForm: Display)
@@ -4125,7 +4186,7 @@ Display forceToScreen
 
 	cosPhi _ phi cos.
 	sinPhi _ phi sin.
-	"step 1 in http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes"
+	"step 1 in `B.2. Elliptical arc parameter conversion` at http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes"
 	x12hd _ (x1-x2) * 0.5.
 	y12hd _ (y1-y2) * 0.5.
 	x1p _ (cosPhi * x12hd) + (sinPhi * y12hd).
@@ -5519,7 +5580,7 @@ clipCurrentMorph: aBoolean
 				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) >>8 << 8) ]]].
 	clipCurrentMorph _ aBoolean! !
 
-!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 8/10/2021 12:06:37'!
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 9/15/2021 14:47:40'!
 arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: sweepAngle rotationCos: thetaCos rotationSin: thetaSin
 
 	| dx dy trx try tcx tcy center angle xp yp x y d hops |
@@ -5528,13 +5589,12 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 	trx _ dx r.
 	try _ dy r.
 	hops _ ((trx max: try) * sweepAngle abs / hop) truncated + 2.
-	d _ sweepAngle / hops.
+	d _ hops asFloat.
 	center _ geometryTransformation externalizePosition: cx@cy.
 	tcx _ center x.
 	tcy _ center y.
-	angle _ startAngle.
-	hops _ hops+1.
-	hops timesRepeat: [
+	0 to: hops do: [ :h |
+		angle _ h / d * sweepAngle + startAngle.
 		xp _ angle cos * trx.
 		yp _ angle sin * try.
 		x _ thetaCos * xp - (thetaSin * yp) + tcx.
@@ -5546,8 +5606,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
-		self updateContourForX: x y: y.
-		angle _ angle + d. ].! !
+		self updateContourForX: x y: y. ].! !
 
 !VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 8/10/2021 12:06:37'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2

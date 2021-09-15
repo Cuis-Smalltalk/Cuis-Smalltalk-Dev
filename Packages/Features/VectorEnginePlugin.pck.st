@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4789] on 22 August 2021 at 4:33:51 pm'!
+'From Cuis 5.0 [latest update: #4862] on 15 September 2021 at 3:32:09 pm'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 27!
+!provides: 'VectorEnginePlugin' 1 28!
 !requires: 'VectorGraphics' 1 201 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -241,7 +241,7 @@ targetBits: aBitmap morphIds: aWordArray edgeCountsWP: otherByteArray alphaMaskW
 	targetWidth := aNumber.
 	targetHeight := otherNumber.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/22/2021 20:28:39'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 9/15/2021 15:09:43'!
 arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
 
 	| tcx tcy trx try scale hops d angle xp yp x y |
@@ -269,14 +269,14 @@ arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY
 	trx := radiusPointX * scale.
 	try := radiusPointY * scale.
 	hops := ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 2.
-	d := sweepAngle / hops.
+	d := hops.
 
 	edgeCounts := otherWordArray.
 	alphaMask := anotherWordArray.
 	contour := aFloat32Array.
-	angle := startAngle.
-	hops := hops+1.
-	1 to: hops do: [ :h |
+	0 to: hops do: [ :h |
+		self cCode: 'angle = ((float)h / d) * sweepAngle + startAngle;'
+			inSmalltalk: [angle := h / d * sweepAngle + startAngle ].
 		xp := angle cos * trx.
 		yp := angle sin * try.
 		x := tthetaCos * xp - (tthetaSin * yp) + tcx.
@@ -288,8 +288,7 @@ arcCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
-		self updateContourForX: x y: y.
-		angle := angle + d. ].! !
+		self updateContourForX: x y: y. ].! !
 
 !VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 15:54:16'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherWordArray alphaMask: anotherWordArray contour: aFloat32Array
@@ -1988,7 +1987,7 @@ blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: a
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/22/2021 20:28:30'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 9/15/2021 15:09:50'!
 arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPointY start: startAngle sweep: sweepAngle rotationCos: tthetaCos rotationSin: tthetaSin edgeCounts: otherByteArray alphaMask: anotherByteArray contour: aFloat32Array
 
 	| tcx tcy trx try scale hops d angle xp yp x y |
@@ -2016,14 +2015,14 @@ arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPoin
 	trx := radiusPointX * scale.
 	try := radiusPointY * scale.
 	hops := ((trx max: try) * (self cCode: 'fabs(sweepAngle)' inSmalltalk: [sweepAngle abs]) / hop) asInteger + 2.
-	d := sweepAngle / hops.
+	d := hops.
 
 	edgeCountsWP := otherByteArray.
 	alphaMaskWP := anotherByteArray.
 	contour := aFloat32Array.
-	angle := startAngle.
-	hops := hops+1.
-	1 to: hops do: [ :h |
+	0 to: hops do: [ :h |
+		self cCode: 'angle = ((float)h / d) * sweepAngle + startAngle;'
+			inSmalltalk: [angle := h / d * sweepAngle + startAngle ].
 		xp := angle cos * trx.
 		yp := angle sin * try.
 		x := tthetaCos * xp - (tthetaSin * yp) + tcx.
@@ -2035,8 +2034,7 @@ arcWPCenterX: centerX centerY: centerY radiusX: radiusPointX radiusY: radiusPoin
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
-		self updateContourForX: x y: y.
-		angle := angle + d. ].! !
+		self updateContourForX: x y: y. ].! !
 
 !VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 15:54:18'!
 cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2 edgeCounts: otherByteArray alphaMask: anotherByteArray contour: aFloat32Array
