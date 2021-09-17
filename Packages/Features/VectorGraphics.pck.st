@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4862] on 15 September 2021 at 3:32:18 pm'!
+'From Cuis 5.0 [latest update: #4868] on 17 September 2021 at 11:50:40 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 299!
+!provides: 'VectorGraphics' 1 300!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -5434,7 +5434,7 @@ morph: aMorph isAtPoint: aPoint
 	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
 	^((morphIds at: index) >> 8) = aMorph morphId! !
 
-!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/3/2021 14:26:16'!
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/17/2021 10:21:11'!
 pvtSetForm: aForm
 
 	| s |
@@ -5447,6 +5447,7 @@ pvtSetForm: aForm
 	alphaMask _ self auxPixelDataClass new: s.
 	contour _ Float32Array new: targetHeight * 2.
 	(aForm == Display and: [	Smalltalk isSpur]) ifTrue: [
+		Smalltalk primitiveGarbageCollect.
 		"Display bits is pinned by the VM. Pinning these large arrays should relieve some burden on the GC."
 		morphIds pin. edgeCounts pin. alphaMask pin. contour pin ].
 	0 to: targetHeight-1 do: [ :y |
