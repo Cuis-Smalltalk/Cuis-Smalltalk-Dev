@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4568] on 14 April 2021 at 1:10:50 pm'!
+'From Cuis 5.0 [latest update: #4871] on 21 September 2021 at 3:24:03 pm'!
 'Description '!
-!provides: 'Compression' 1 29!
+!provides: 'Compression' 1 30!
 SystemOrganization addCategory: 'Compression-System'!
 SystemOrganization addCategory: 'Compression-Archives'!
 
@@ -4110,7 +4110,7 @@ extractInDirectory: aDirectoryEntry
 	self extractToFileNamed: self localFileName inDirectory: aDirectoryEntry
 ! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 11/3/2016 11:52:24'!
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'NM 9/21/2021 15:23:04'!
 extractInDirectory: aDirectory overwrite: overwriteAll
 	"Extract this entry into the given directory. Answer #okay, #failed, #abort, or #retryWithOverwrite."
 	| path fileDir file index localName |
@@ -4118,7 +4118,8 @@ extractInDirectory: aDirectory overwrite: overwriteAll
 	localName := path last.
 	fileDir := path allButLast inject: aDirectory into:[:base :part| base / part].
 	fileDir assureExistence.
-	file := [fileDir privateNewFile: localName] on: FileExistsException do:[:ex| ex return: nil].
+	"file := [fileDir privateNewFile: localName] on: FileExistsException do:[:ex| ex return: nil]."
+	file := [FileIOAccessor new privateNewFile: (aDirectory /  (self fileName))] on: FileExistsException do:[:ex| ex return: nil].
 	file ifNil:[
 		overwriteAll ifFalse:[
 			[index := (PopUpMenu labelArray:{
@@ -4166,13 +4167,13 @@ extractToFileNamed: aFileName
 
 	self extractToFileNamed: aFileName inDirectory: DirectoryEntry currentDirectory! !
 
-!ZipArchiveMember methodsFor: 'extraction' stamp: 'jmv 5/31/2016 11:24'!
+!ZipArchiveMember methodsFor: 'extraction' stamp: 'NM 9/21/2021 15:23:13'!
 extractToFileNamed: aLocalFileName inDirectory: aDirectoryEntry
 
 	self isEncrypted ifTrue: [ ^self error: 'encryption unsupported' ].
 	self isDirectory
 		ifFalse: [
-			aDirectoryEntry / aLocalFileName forceWriteStreamDo: [ :stream |
+			(aDirectoryEntry / aLocalFileName) forceWriteStreamDo: [ :stream |
 				self extractTo: stream ] ]
 		ifTrue: [
 			(aDirectoryEntry / aLocalFileName) asDirectoryEntry assureExistence ]! !
@@ -4824,9 +4825,9 @@ serviceInstallMonticelloPackage
 		buttonLabel: 'install package'
 		icon: #saveIcon)
 			argumentGetter: [ :fileList | fileList selectedFileEntry ] ! !
-InflateStream initialize!
-FastInflateStream initialize!
-ZipWriteStream initialize!
 GZipConstants initialize!
 ZipConstants initialize!
 ZipFileConstants initialize!
+InflateStream initialize!
+FastInflateStream initialize!
+ZipWriteStream initialize!
