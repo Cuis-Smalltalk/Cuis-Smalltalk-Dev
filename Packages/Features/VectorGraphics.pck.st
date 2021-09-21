@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4868] on 17 September 2021 at 11:50:40 am'!
+'From Cuis 5.0 [latest update: #4870] on 21 September 2021 at 10:33:27 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 300!
+!provides: 'VectorGraphics' 1 302!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -487,9 +487,9 @@ In Cuis what is usually called TrueType Font is represented by TTFontDescription
 
 TrueTypeFonts, being part of the traditional AbstractFont hierarchy, adds a specific pointSize, and is the object used in texts.!
 
-!Sample01Star commentStamp: '<historical>' prior: 0!
+!Sample01Star commentStamp: 'jmv 9/21/2021 10:09:51' prior: 0!
 This class is a very simple Morph. It shows how to build your own Morph, and some of the features the framework provides.
-This morph only includes one method: #drawOn: , that specifies the morph appareance.
+This morph includes one important method: #drawOn: , that specifies the morph appareance.
 
 You don't need to write any additional code, and yet this morph can:
 - Be drawn with high quality, anti-aliased vector graphics, including translucency
@@ -500,6 +500,9 @@ You don't need to write any additional code, and yet this morph can:
 - Be embedded in other morphs, and hold embedded morphs (use the menu halo handle)
 - Be embedded in text (see below)
 
+This class also includes #yAxisPointsUp. By default, like in most computer software, Y axis points down. By it is nicer to think of it increasing upwards, like in Math. This method allows for that, meaning a nicer #drawOn:.
+Additionally, #rotationCenter is not really required, but it helps the star rotate neatly. See what happens if you delete it, and rotate the star.
+
 Evaluate:
 Sample01Star new openInWorld
 
@@ -507,16 +510,16 @@ Or try
 Sample01Star new copyToClipboard
 and then paste into the About Cuis text, or any text editor. See how you can still use the halo to scale and rotate. See how the morph is moved around as you edit the text.!
 
-!Sample02Bezier commentStamp: '<historical>' prior: 0!
+!Sample02Bezier commentStamp: 'jmv 9/21/2021 10:12:11' prior: 0!
 This class will help you familiarize with Bezier curves.
 See also class comment at Sample01Star.
 
-Each instance has random control points.
+Each instance has random control points. There is very little code, so you can understand it all easily.
 
 Evaluate:
 20 timesRepeat: [Sample02Bezier new openInWorld].
 
-Now have a Sample04Pacman at hand, and let it eat these!!!
+Now have a Sample04Pacman at hand, and let it eat all these!!!
 
 !Sample03Smiley commentStamp: '<historical>' prior: 0!
 This class shows how to use the #pathSequence drawing operation, that can represent many drawing operations in one compact literal, and draw them at once.
@@ -531,32 +534,35 @@ Evaluate:
 Sample03Smiley new openInWorld!
 
 !Sample04Pacman commentStamp: '<historical>' prior: 0!
-This class shows how to use the #contour feature to detect if a morph touches another.
+This class shows how to use the #contour and #collides: features to detect if a morph touches another.
 See also class comment at Sample01Star.
 
-Beware!! This Pacman will try to eat anything!! Except their own kind. They are not cannibals!! Instead, they are happy when they meet.
+Beware!! This Pacman will try to eat anything!! Except their own kind. They are not cannibals!! Instead, they get happy when they meet.
 
 Evaluate:
 5 timesRepeat: [Sample04Pacman new openInWorld ]!
 
 !Sample05UnicodeText commentStamp: '<historical>' prior: 0!
-This morph show Unicode Text, as static labels.
+This morph show Unicode Text, as static labels. See that you can zoom and rotate at any scale and angle. Few text libraries can do that!!
+Note that to drag the morph, or open a halo on it, you must hit an actual stroke of some letter or glyph with the mouse.
+
 See also class comment at Sample01Star.
 
-Note: Loads font(s) including all glyphs and not just latin. Might use a lot of memory.
+Note: Loads font(s) including all glyphs and not just latin. Might use quite a bit of memory.
 
 Evaluate:
 Sample05UnicodeText new openInWorld!
 
 !Sample06EasyToGrab commentStamp: '<historical>' prior: 0!
-This morph uses the #bitMask feature to make it easy to grab although it draws very thin lines. See #containsGlobalPoint: and play with it.
+This morph uses the #coversPixel: and #bitMask features to make it easy to grab although it is made of very thin lines. See #ownsOrCoversPixel: and play with it.
 See also class comment at Sample01Star.
 
 Evaluate:
 Sample06EasyToGrab new openInWorld!
 
 !Sample07Clipping commentStamp: '<historical>' prior: 0!
-This morph shows clipping to arbitrary shapes.
+This morph shows clipping to arbitrary shapes. You can get a halo on the star and play with it (move, rotate, resize), and see how clipping works.
+
 See also class comment at Sample01Star.
 
 Evaluate:
@@ -564,13 +570,15 @@ Sample07Clipping new openInWorld!
 
 !Sample08Form commentStamp: '<historical>' prior: 0!
 This morph shows image rotating and scaling. Currently using WarpBlt. On top, some Vector Graphics.
+
 See also class comment at Sample01Star.
 
 Evaluate:
 Sample08Form new openInWorld!
 
 !Sample09Clock commentStamp: '<historical>' prior: 0!
-A more sophisticated morph, showing stepping and submorphs.
+A more sophisticated morph, showing stepping and submorphs. See how little code is needed for a good deal of functionality!!
+
 See also class comment at Sample01Star.
 
 Evaluate:
@@ -1372,11 +1380,12 @@ drawOn: aCanvas
 			lineTo: -200@200;
 			closePath ].! !
 
-!Sample06EasyToGrab methodsFor: 'geometry testing' stamp: 'jmv 9/2/2021 16:47:19'!
-containsGlobalPoint: worldPoint
-	"Allow grabbing if close enough."
+!Sample06EasyToGrab methodsFor: 'geometry testing' stamp: 'jmv 9/21/2021 08:51:07'!
+ownsOrCoversPixel: worldPoint
+	"Allow grabbing if close enough.
+	See other implementors."
 
-	^self coversAnyPointCloserThan: 10 toPoint: worldPoint! !
+	^ self visible and: [self coversAnyPixelCloserThan: 20 to: worldPoint].! !
 
 !Sample07Clipping methodsFor: 'geometry testing' stamp: 'jmv 9/2/2021 16:52:16'!
 clipsSubmorphs
@@ -1688,12 +1697,10 @@ into: aMorph
 	super into: aMorph.
 	vectorCanvas into: aMorph! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/13/2020 16:51:29'!
-morph: aMorph isAtPoint: aPoint
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 9/20/2021 12:08:20'!
+morphIdAt: aPoint
 
-	^aMorph requiresVectorCanvas
-		ifTrue: [vectorCanvas morph: aMorph isAtPoint: aPoint]
-		ifFalse: [super morph: aMorph isAtPoint: aPoint]! !
+	^ vectorCanvas morphIdAt: aPoint! !
 
 !HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/9/2020 16:36:59'!
 outOfMorph
@@ -3915,9 +3922,9 @@ drawCurrentAsError
 	self line: r topRight-0.5 to: r bottomLeft-0.5 width: w color: `Color yellow`.	
 	currentMorph displayBoundsSetFrom: self.! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 16:01:43'!
-morph: aMorph isAtPoint: aPoint
-	^engine morph: aMorph isAtPoint: aPoint! !
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 9/20/2021 12:07:54'!
+morphIdAt: aPoint
+	^engine morphIdAt: aPoint.! !
 
 !VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/16/2021 15:53:41'!
 restorePatch: savedPatch bounds: savedBounds
@@ -5427,12 +5434,12 @@ initializeOnForm: aForm
 	self currentMorph: nil.
 	self pvtSetForm: aForm.! !
 
-!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 8/10/2021 12:05:53'!
-morph: aMorph isAtPoint: aPoint
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/20/2021 12:06:54'!
+morphIdAt: aPoint
 	| index |
 	index _ aPoint y * targetWidth + aPoint x + 1.
-	(index between: 1 and: morphIds size) ifFalse: [ ^false ].
-	^((morphIds at: index) >> 8) = aMorph morphId! !
+	(index between: 1 and: morphIds size) ifFalse: [ ^0 ].
+	^(morphIds at: index) >> 8! !
 
 !VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/17/2021 10:21:11'!
 pvtSetForm: aForm
@@ -9378,46 +9385,6 @@ bitMask
 		"Reverse it so we get bit=1 for affected pixels."
 		((answer asGrayForm: 1) asFormOfDepth: 1) reverse.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/19/2021 10:30:20'!
-coversAnyPointCloserThan: aNumber toPoint: aPoint
-	"Answer true if our closest point to aPoint is less than aNumber pixels away.
-	In target surface (i.e. Display) coordinates.
-	See #bitMask.
-	Remember to do
-	self removeProperty: #bitMask.
-	when appropriate!! (i.e. when we change in such a way to make the bitMask invalid)"
-
-	| center radiusSquared |
-	privateDisplayBounds ifNil: [
-		^false ].
-	center _ privateDisplayBounds center.
-	"Quick checks: If not even within aNumber distance to display bounds, fail"
-	(center y - aPoint y) abs < (privateDisplayBounds height  // 2 + aNumber) ifFalse: [
-		^false ].
-	(center x - aPoint x) abs < (privateDisplayBounds width // 2 + aNumber) ifFalse: [
-		^false ].
-	"Precise check with bitMask"
-	(self coversGlobalPoint: aPoint) ifTrue: [ ^true ].
-	radiusSquared _ aNumber squared.
-	aNumber negated to: aNumber do: [ :dy |
-		aNumber negated to: aNumber do: [ :dx |
-			dx squared + dy squared <= radiusSquared ifTrue: [
-				(self coversGlobalPoint: aPoint + (dx@dy)) ifTrue: [ ^true ]]]].
-	^false.! !
-
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/19/2021 10:28:45'!
-coversGlobalPoint: worldPoint
-	"Answer true if pixel worldPoint is covered by us, even if we are not visible a it because of some
-	other morph above us also covers it.
-	See #bitMask.
-	Remember to do
-	self removeProperty: #bitMask.
-	when appropriate!! (i.e. when we change in such a way to make the bitMask invalid)"
-
-	self visible ifTrue: [
-		^(self bitMask pixelValueAt: worldPoint - self displayBounds topLeft) = 1 ].
-	^ false! !
-
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/27/2021 17:40:04'!
 findFullBoundsInOwner
 	"Find and answer full bounds in whatever owner.
@@ -9469,18 +9436,18 @@ fitInto: aRectangle
 	currentBounds _ self findFullBoundsInOwner.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/18/2021 11:36:46'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 9/21/2021 09:02:16'!
 showBitMask
 	"Just to play with #bitMask from an inspector. Not to be called from code."
 	| r |
-	r _ self displayBounds.
+	r _ self displayFullBounds.
 	r top to: r bottom-1 do: [ :y |
 		Display forceToScreen.
 		r left to: r right-1 do: [ :x |
-			(self coversGlobalPoint: x@y) ifTrue: [
+			(self coversPixel: x@y) ifTrue: [
 				Display colorAt: x@y put: Color red ]]].! !
 
-!MovableMorph methodsFor: '*vectorGraphics' stamp: 'jmv 9/13/2021 17:31:56'!
+!MovableMorph methodsFor: '*vectorGraphics' stamp: 'jmv 9/21/2021 10:29:49'!
 imageForm: extentOrNil depth: depth
 	"Scale as needed. Draw unrotated."
 
@@ -9491,6 +9458,7 @@ imageForm: extentOrNil depth: depth
 	oldLocation _ self location.
 	[
 		location _ MorphicTranslation withTranslation: 0@0.
+		location _ location invertingYAxis: self yAxisPointsUp.
 		bounds _ self findFullBoundsInOwner.
 		extentOrNil
 			ifNotNil: [ | scale |
@@ -9500,6 +9468,7 @@ imageForm: extentOrNil depth: depth
 			ifNil: [
 				extent _ bounds extent.
 				location _ MorphicTranslation withTranslation: bounds origin negated ].
+		location _ location invertingYAxis: self yAxisPointsUp.
 		answer _ Form extent: extent depth: 32.
 		"Ask for a Canvas with subpixels so it can also handle translucent target"
 		auxCanvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: answer.
