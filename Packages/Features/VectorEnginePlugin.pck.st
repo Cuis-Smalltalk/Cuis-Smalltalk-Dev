@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4862] on 15 September 2021 at 3:32:09 pm'!
+'From Cuis 5.0 [latest update: #4871] on 22 September 2021 at 9:45:02 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 28!
+!provides: 'VectorEnginePlugin' 1 29!
 !requires: 'VectorGraphics' 1 201 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -33,7 +33,7 @@ antiAliasingWidth: aFloat subPixelDelta: otherFloat hopLength: anotherFloat
 	subPixelDelta := otherFloat.
 	hop := anotherFloat! !
 
-!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 5/18/2021 10:07:15'!
+!VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 9/21/2021 20:07:36'!
 clipCurrentMorph: aBoolean morphIds: aWordArray
 	self
 		primitive: 'primClipCurrentMorph'
@@ -45,8 +45,8 @@ clipCurrentMorph: aBoolean morphIds: aWordArray
 		clipTop to: clipBottom do: [ :displayY |
 			pixelIndex := displayY * targetWidth + clipLeft.
 			clipLeft to: clipRight do: [ :displayX |
-				pixelIndex := pixelIndex + 1.
-				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) bitAnd: 16rFFFFFF00) ]]].
+				morphIds at: pixelIndex put: ((morphIds at: pixelIndex) bitAnd: 16rFFFFFF00).
+				pixelIndex := pixelIndex + 1 ]]].
 	clipCurrentMorph := aBoolean! !
 
 !VectorEnginePlugin methodsFor: 'accessing' stamp: 'jmv 3/11/2021 11:00:23'!

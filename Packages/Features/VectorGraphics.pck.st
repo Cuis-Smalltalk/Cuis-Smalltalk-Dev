@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4870] on 21 September 2021 at 10:33:27 am'!
+'From Cuis 5.0 [latest update: #4871] on 22 September 2021 at 9:44:17 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 302!
+!provides: 'VectorGraphics' 1 303!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -5441,7 +5441,7 @@ morphIdAt: aPoint
 	(index between: 1 and: morphIds size) ifFalse: [ ^0 ].
 	^(morphIds at: index) >> 8! !
 
-!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/17/2021 10:21:11'!
+!VectorEngineDrawer methodsFor: 'private' stamp: 'jmv 9/21/2021 20:11:21'!
 pvtSetForm: aForm
 
 	| s |
@@ -5449,7 +5449,10 @@ pvtSetForm: aForm
 	targetWidth _ targetForm width.
 	targetHeight _ targetForm height.
 	s _ targetWidth * targetHeight.
-	morphIds _ WordArray new: s.
+
+	self flag: #VEPapi5.		"Eventually remove the +1. Needed for VEPapi=5 and 6 (for plugins older than Sept-21-2021, and version less than 1.29)"
+	morphIds _ WordArray new: s+1.
+
 	edgeCounts _ self auxPixelDataClass new: s.
 	alphaMask _ self auxPixelDataClass new: s.
 	contour _ Float32Array new: targetHeight * 2.
