@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4881] on 23 September 2021 at 12:24:43 pm'!
+'From Cuis 5.0 [latest update: #4882] on 23 September 2021 at 6:13:28 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 304!
+!provides: 'VectorGraphics' 1 305!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -8185,12 +8185,12 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 4/28/2021 11:20:14'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 9/23/2021 18:10:55'!
 mapAndStoreGlyphsUsing: characterMap
 	"
 	https://developer.apple.com/fonts/TrueType-Reference-Manual/RM07/appendixB.html
 	"
-	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph spaceGlyph mapSize preferredCodePoint arrowGlyphIndexes |
+	| glyphsByIso5559s15 glyphsByUTF8 unknownGlyph nullGlyph spaceGlyph mapSize preferredCodePoint arrowGlyphIndexes carriageReturn |
 	unknownGlyph _ glyphs first.
 	nullGlyph _ glyphs second.
 	mapSize _ characterMap size.
@@ -8199,10 +8199,15 @@ mapAndStoreGlyphsUsing: characterMap
 
 	"Store Unicode arrow glyphs for future use if appropriate,"
 	(FallbackArrowGlyphs isNil or: [fontDescription name = 'DejaVuSans']) ifTrue: [
-		mapSize > 8595 ifTrue: [								"Usually true. Just in case."
-			arrowGlyphIndexes _ #(8592 8593 8594 8595) collect: [ :codePoint | (characterMap at: codePoint+1)+1 ].
+		mapSize > 8617 ifTrue: [								"Usually true. Just in case."
+			arrowGlyphIndexes _ #(8592 8593 8594 8595 8617) collect: [ :codePoint | (characterMap at: codePoint+1)+1 ].
 				(arrowGlyphIndexes allSatisfy: [ :i | i > 1 ]) ifTrue: [
 					FallbackArrowGlyphs _ arrowGlyphIndexes collect: [ :i | glyphs at: i ]]]].
+	mapSize > 8617
+		ifTrue: [
+			carriageReturn _ glyphs at: (characterMap at: 8617+1)+1.
+			carriageReturn == unknownGlyph ifTrue: [ carriageReturn _ FallbackArrowGlyphs at: 5 ]]
+		ifFalse: [ carriageReturn _ FallbackArrowGlyphs at: 5 ].
 
 	0 to: mapSize - 1 do: [ :codePoint | | g array prevByte|
 
@@ -8240,6 +8245,8 @@ mapAndStoreGlyphsUsing: characterMap
 		glyphsByIso5559s15 at: s codePoint +1 put: spaceGlyph.
 		glyphsByUTF8 at: s codePoint +1 put: spaceGlyph.
 	].
+	glyphsByIso5559s15 at: 13 +1 put: carriageReturn.
+	glyphsByUTF8 at: 13 +1 put: carriageReturn.
 	fontDescription
 		glyphsByIso8859s15: glyphsByIso5559s15 glyphsByUtf8Bytes: glyphsByUTF8
 		unknownGlyph: unknownGlyph scaleArrowGlyphs: FallbackArrowGlyphs! !
