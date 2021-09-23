@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4855] on 10 September 2021 at 10:48:01 am'!
+'From Cuis 5.0 [latest update: #4878] on 22 September 2021 at 9:26:23 pm'!
 'Description Fixed DebuggerTest and MethodReferenceTest'!
-!provides: 'BaseImageTests' 1 266!
+!provides: 'BaseImageTests' 1 267!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1096,6 +1096,16 @@ RefactoringTest subclass: #ChangeKeywordsSelectorOrderTest
 	category: 'BaseImageTests-Tools-Refactoring'!
 !classDefinition: 'ChangeKeywordsSelectorOrderTest class' category: 'BaseImageTests-Tools-Refactoring'!
 ChangeKeywordsSelectorOrderTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ExtractAsParameterTest category: 'BaseImageTests-Tools-Refactoring'!
+RefactoringTest subclass: #ExtractAsParameterTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Tools-Refactoring'!
+!classDefinition: 'ExtractAsParameterTest class' category: 'BaseImageTests-Tools-Refactoring'!
+ExtractAsParameterTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ExtractMethodTest category: 'BaseImageTests-Tools-Refactoring'!
@@ -21295,6 +21305,453 @@ selectorAndParametersFor: aKeywordSelector
 			separatedBy: [  stream space ]]
 				! !
 
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 16:02:51'!
+assertCanExtractAsParameter: toExtract
+
+	self assertCanExtractFrom: toExtract size: toExtract size introducing: toExtract! !
+
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 15:11:43'!
+assertCanExtractFrom: sourceCode interval: interval introducing: toIntroduced 
+
+	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod |
+	
+	oldSelector := 'm1' asSymbol.
+	newSelector := (oldSelector, ':') asSymbol.
+	newParameter := 'newParam'.
+	senderSelector := 'sender_m1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' ', sourceCode.
+	classToRefactor compile: senderSelector asString, ' self ', oldSelector asString.
+	
+	refactoring := ExtractAsParameter 
+		named: newParameter 
+		extractedFrom: interval + 3
+		at: classToRefactor>>oldSelector  
+		implementors: {classToRefactor>>oldSelector} 
+		senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+	
+	self deny: (classToRefactor includesSelector: oldSelector).
+	self assert: (classToRefactor includesSelector: newSelector).
+	
+	newImplementorSourceCode :=  (classToRefactor>>newSelector) sourceCode.
+	self assert: newSelector, ' ', newParameter, ' ', (sourceCode first: interval first - 1), newParameter, (sourceCode last: sourceCode size - interval last) equals: newImplementorSourceCode.
+	
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: senderSelector asString, ' self ', newSelector asString, ' ', toIntroduced equals: senderMethod sourceCode! !
+
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 11:51:22'!
+assertCanExtractFrom: sourceCode size: toExtractSize introducing: toIntroduced 
+
+	self assertCanExtractFrom: sourceCode interval: (1 to: toExtractSize) introducing: toIntroduced ! !
+
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 16:03:34'!
+assertCannotExtractAsParameter: newParameterValue withErrorMessage: anErrorMessage
+
+	| classToRefactor oldSelector  |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' ', newParameterValue.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFrom: (4 to: 3+newParameterValue size) 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: anErrorMessage ! !
+
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 16:06:03'!
+assertCannotExtractInvalidNodeAsParameter: newParameterValue
+
+	self 
+		assertCannotExtractAsParameter: newParameterValue 
+		withErrorMessage: ExtractAsParameter errorMessageForInvalidExpressionToExtractAsParameter! !
+
+!ExtractAsParameterTest methodsFor: 'assertions' stamp: 'HAW 9/22/2021 16:05:39'!
+assertCannotExtractInvalidSelectionAsParameter: newParameterValue
+
+	self 
+		assertCannotExtractAsParameter: newParameterValue 
+		withErrorMessage: ExtractAsParameter errorMessageForInvalidSelection ! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:07:02'!
+test01CanExtractLiterals
+
+	self assertCanExtractAsParameter: '1'
+! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:07:26'!
+test02CannotExtract_self
+
+	self assertCannotExtractInvalidNodeAsParameter: 'self'.
+	
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:08:15'!
+test03CannotExtract_super
+
+	self assertCannotExtractInvalidNodeAsParameter: 'super'.
+	
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:09:04'!
+test04CannotExtract_thisContext
+
+	self assertCannotExtractInvalidNodeAsParameter: 'thisContext'.
+	
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:08:57'!
+test05CanExtractMessageSendToLiteralWithLiterals
+
+	self assertCanExtractAsParameter: '1 + 1'.
+	
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:09:15'!
+test06CanExtract_true
+
+	self assertCanExtractAsParameter: 'true'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:09:30'!
+test07CannotExtract_comment
+
+	self assertCannotExtractInvalidSelectionAsParameter: '"comment"'.
+	
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:09:52'!
+test08CanExtractSelectionWithSeparators
+
+	self assertCanExtractFrom: ' 10 ' size: 4 introducing: '10'
+	
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:10:22'!
+test09RemovesTrailingDotsFromSelection
+
+	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod toExtract |
+	
+	oldSelector := 'm1' asSymbol.
+	newSelector := (oldSelector, ':') asSymbol.
+	newParameter := 'newParam'.
+	senderSelector := 'sender_m1' asSymbol.
+	toExtract := '1.'.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' ', toExtract, ' self printString'.
+	classToRefactor compile: senderSelector asString, ' self ', oldSelector asString.
+	
+	refactoring := ExtractAsParameter 
+		named: newParameter 
+		extractedFrom: (4 to: 5) 
+		at: classToRefactor>>oldSelector  
+		implementors: {classToRefactor>>oldSelector} 
+		senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+	
+	self deny: (classToRefactor includesSelector: oldSelector).
+	self assert: (classToRefactor includesSelector: newSelector).
+	
+	newImplementorSourceCode :=  (classToRefactor>>newSelector) sourceCode.
+	self assert: newSelector, ' ', newParameter, ' ', newParameter, '. self printString' equals: newImplementorSourceCode.
+	
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: senderSelector asString, ' self ', newSelector asString, ' 1' equals: senderMethod sourceCode! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:10:35'!
+test10CanExtractWithParenthesis
+
+	self assertCanExtractFrom: '(1)' size: 3 introducing: '1' 
+	
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:10:45'!
+test11CanExtract_symbol
+
+	self assertCanExtractAsParameter: '#assert:'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:10:55'!
+test12CanExtract_false
+
+	self assertCanExtractAsParameter: 'false'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:11:03'!
+test13CanExtract_nil
+
+	self assertCanExtractAsParameter: 'nil'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:11:34'!
+test14CanExtactFromKeywordSelector
+
+	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod toExtract newKeyword |
+	
+	oldSelector := 'm1:' asSymbol.
+	newKeyword := 'm2:' asSymbol.
+	newSelector := (oldSelector, newKeyword) asSymbol.
+	newParameter := 'newParam'.
+	senderSelector := 'sender_m1' asSymbol.
+	toExtract := '1.'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector, ' p1 ', toExtract, ' self printString'.
+	classToRefactor compile: senderSelector, ' self ', oldSelector, ' #x '.
+	
+	refactoring := ExtractAsParameter 
+		named: newParameter 
+		extractedFrom: (8 to: 9) 
+		at: 2
+		newKeyword: newKeyword
+		at: classToRefactor>>oldSelector  
+		implementors: {classToRefactor>>oldSelector} 
+		senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+	
+	self deny: (classToRefactor includesSelector: oldSelector).
+	self assert: (classToRefactor includesSelector: newSelector).
+	
+	newImplementorSourceCode :=  (classToRefactor>>newSelector) sourceCode.
+	self assert: oldSelector, ' p1 ', newKeyword, ' ', newParameter, '  ', newParameter, '. self printString' equals: newImplementorSourceCode.
+	
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: senderSelector, ' self ', oldSelector, ' #x ', newKeyword, ' 1 ' equals: senderMethod sourceCode! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:12:01'!
+test15CanExtractMessageSendToLiteral
+
+	| refactoring classToRefactor oldSelector newSelector newImplementorSourceCode newParameter senderSelector senderMethod toExtract |
+	
+	oldSelector := 'm1' asSymbol.
+	newSelector := (oldSelector, ':') asSymbol.
+	newParameter := 'newParam'.
+	senderSelector := 'sender_m1' asSymbol.
+	toExtract := '10 factorial'.
+
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector, ' ', toExtract.
+	classToRefactor compile: senderSelector, ' self ', oldSelector.
+	
+	refactoring := ExtractAsParameter 
+		named: newParameter 
+		extractedFrom: (4 to: 15) 
+		at: classToRefactor>>oldSelector  
+		implementors: {classToRefactor>>oldSelector} 
+		senders: {classToRefactor>>senderSelector}.
+	refactoring apply.
+	
+	self deny: (classToRefactor includesSelector: oldSelector).
+	self assert: (classToRefactor includesSelector: newSelector).
+	
+	newImplementorSourceCode :=  (classToRefactor>>newSelector) sourceCode.
+	self assert: newSelector, ' ', newParameter, ' ', newParameter equals: newImplementorSourceCode.
+	
+	senderMethod := classToRefactor compiledMethodAt: senderSelector.
+	self assert: senderSelector, ' self ', newSelector, ' ', toExtract equals: senderMethod sourceCode! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:12:21'!
+test16CannotExtractMessageSendWithInvalidNode
+
+	self assertCannotExtractInvalidNodeAsParameter: '10 + self'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:12:38'!
+test17CannotExtractMessageSendToInvalidNode
+
+	self assertCannotExtractInvalidNodeAsParameter: 'self + 10'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:12:59'!
+test18CanExtractManyMessageSends
+
+	self assertCanExtractAsParameter: '10 + 10 + 10'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:13:19'!
+test19CannotExtractManyMessageSendsWithInvalidNode
+
+	self assertCannotExtractInvalidNodeAsParameter: '10 + 10 + self'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:13:38'!
+test20CanExtractPartOfAValidExpression
+
+	self assertCanExtractFrom: '10 + 10' size: 2 introducing: '10'
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:13:48'!
+test21CanExtractABlock
+
+	self assertCanExtractAsParameter: '[10]'
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:14:01'!
+test22CannotExtractBlockWithInvalidNode
+
+	self assertCannotExtractInvalidNodeAsParameter: '[self]'
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:14:17'!
+test23CannotExtractBlockWithMessageSendWithInvalidNode
+
+	self assertCannotExtractInvalidNodeAsParameter: '[1 + self]'
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:14:34'!
+test24CanExtractBlockWithManyExpressions
+
+	self assertCanExtractAsParameter: '[1 + 1. 2 + 2]'
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:14:44'!
+test25CanExtractBlockWithParameters
+
+	self assertCanExtractAsParameter: '[:p1 | 1 + p1]'
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:15:06'!
+test26CannotExtractBlockThatReferencesMethodVariable
+
+	| classToRefactor oldSelector  |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' | var1 | [ 1 + var1 ]'.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFrom: (13 to: 24) 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: ExtractAsParameter errorMessageForInvalidExpressionToExtractAsParameter 
+
+! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:15:23'!
+test27CanExtractBlockWithParameterAndLocalVariable
+
+	self assertCanExtractAsParameter: '[:p1 | | v1 | v1 := 1. v1 + p1]'
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:16:13'!
+test28CanExtractBlockEvaluation
+
+	| toExtract |
+	
+	toExtract := '[:p1 | p1] value: 1'.
+	self assertCanExtractFrom: toExtract size: toExtract size introducing: '(', toExtract ,')'
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:16:32'!
+test29CannotExtractInvalidInterval
+
+	| classToRefactor oldSelector  |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFrom: (2 to: 1) 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: ExtractMethodNewMethod noSelectionErrorMessage ! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:16:45'!
+test30CannotExtractIntervalOutOfBounds
+
+	| classToRefactor oldSelector  |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFrom: (2 to: 20) 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: ExtractMethodNewMethod outOfBoundsSelectionErrorMessage ! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:17:03'!
+test31CannotExtractIfOriginalMethodIsNotInImplementors
+
+	| classToRefactor oldSelector  |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' 1'.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFrom: (4 to: 4) 
+			at: classToRefactor>>oldSelector  
+			implementors: {} 
+			senders: {} ]
+		failsWith: ExtractAsParameter errorMessageForOrigialMethodMustBeInImplementorsToChange! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 16:21:15'!
+test32CannotExtractMoreThanOneExpression
+
+	self assertCannotExtractInvalidSelectionAsParameter: '1+1. 2+2' ! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 19:54:04'!
+test33WhenAddingToUnaryMessageSelectorMustBeUnary
+	
+	| classToRefactor oldSelector  |
+	
+	oldSelector := 'm1:' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' p1 1'.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFrom: (8 to: 8) 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: AddParameter selectorMustBeUnaryErrorMessage ! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/22/2021 19:54:11'!
+test34WhenAddingToKeywordMessageSelectorMustBeKeyword
+	
+	| classToRefactor oldSelector  |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' 1'.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFrom: (4 to: 4) 
+			at: 1
+			newKeyword: #m2:
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: AddParameter selectorMustBeKeywordErrorMessage ! !
+
+!ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 9/8/2021 22:00:32'!
+classToRefactorName
+	
+	^#ClassToIntroduceParameter! !
+
 !ExtractMethodTest methodsFor: 'assertions' stamp: 'RNG 9/28/2019 00:49:10'!
 assertClassHasDefined: aSelector withBody: newSourceCode
 
@@ -21748,6 +22205,24 @@ test38ItIsPossibleToExtractCodeThatContainsMultipleParenthesisWithSpacesBetweenT
 
 	^ 3 + 4'.
 	updatedCode _ 'm1 ^ (  (self m2))'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 9/22/2021 15:01:48'!
+test44CanExtractManyStatementsInsideABlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract _ 'self m1.
+	self m2'.
+	originalCode _ 'm1 true ifTrue: [' , codeToExtract, ']'.
+	newMethodCode _ 'm2
+
+	self m1.
+	self m2'.
+	updatedCode _ 'm1 true ifTrue: [self m2]'.
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
