@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4871] on 22 September 2021 at 9:44:17 am'!
+'From Cuis 5.0 [latest update: #4881] on 23 September 2021 at 12:24:43 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 303!
+!provides: 'VectorGraphics' 1 304!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -510,14 +510,14 @@ Or try
 Sample01Star new copyToClipboard
 and then paste into the About Cuis text, or any text editor. See how you can still use the halo to scale and rotate. See how the morph is moved around as you edit the text.!
 
-!Sample02Bezier commentStamp: 'jmv 9/21/2021 10:12:11' prior: 0!
+!Sample02Bezier commentStamp: '<historical>' prior: 0!
 This class will help you familiarize with Bezier curves.
 See also class comment at Sample01Star.
 
 Each instance has random control points. There is very little code, so you can understand it all easily.
 
 Evaluate:
-20 timesRepeat: [Sample02Bezier new openInWorld].
+10 timesRepeat: [Sample02Bezier new openInWorld].
 
 Now have a Sample04Pacman at hand, and let it eat all these!!!
 
@@ -1335,7 +1335,7 @@ redrawNeeded
 
 	^super redrawNeeded! !
 
-!Sample05UnicodeText methodsFor: 'drawing' stamp: 'jmv 8/27/2021 20:17:57'!
+!Sample05UnicodeText methodsFor: 'drawing' stamp: 'jmv 9/23/2021 12:24:14'!
 drawOn: aCanvas
 
 	| f greek latin arabic armenian cyrillic georgian hebrew chinese |
@@ -1354,9 +1354,11 @@ drawOn: aCanvas
 	aCanvas drawUtf32: armenian from: 1 to: armenian size atBaseline: 0@200 font: f color: Color black.
 	aCanvas drawUtf32: georgian from: 1 to: georgian size atBaseline: 0@250 font: f color: Color black.
 	aCanvas drawUtf32: hebrew from: 1 to: hebrew size atBaseline: 0@300 font: f color: Color black.
+	"This font is not included with Cuis, but it is freely available on the Web."
 	f _ FontFamily familyName: 'HanWangMingMedium' pointSize: 36.
-	chinese _ #(38899 21147 39208 20998 39423 22243 26131 21402 22909 25943 28988 38283 24247 20870 12290 25925 23567) asWordArray.
-	aCanvas drawUtf32: chinese from: 1 to: chinese size atBaseline: 0@350 font: f color: Color black.! !
+	f ifNotNil: [
+		chinese _ #(38899 21147 39208 20998 39423 22243 26131 21402 22909 25943 28988 38283 24247 20870 12290 25925 23567) asWordArray.
+		aCanvas drawUtf32: chinese from: 1 to: chinese size atBaseline: 0@350 font: f color: Color black ].! !
 
 !Sample05UnicodeText methodsFor: 'initialization' stamp: 'jmv 8/31/2021 17:44:02'!
 initialize
