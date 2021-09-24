@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4882] on 23 September 2021 at 6:13:28 pm'!
+'From Cuis 5.0 [latest update: #4882] on 24 September 2021 at 10:20:09 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 305!
+!provides: 'VectorGraphics' 1 306!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1088,9 +1088,9 @@ atPointSize: aNumber
 folderName
 	^baseTTFontDescription folderName! !
 
-!TrueTypeFontFamily methodsFor: 'accessing' stamp: 'jmv 5/7/2019 09:23:22'!
+!TrueTypeFontFamily methodsFor: 'accessing' stamp: 'jmv 9/24/2021 10:09:50'!
 pointSizes
-	^#(6 7 8 9 10 11 12 13 14 15 18 22 26 36 48 72)! !
+	^#(6 7 8 9 10 11 12 13 14 15 18 22 26 36 48 72 96 144)! !
 
 !TrueTypeFontFamily methodsFor: 'testing' stamp: 'jmv 8/3/2020 19:01:56'!
 isTrueTypeFontFamily
@@ -1792,14 +1792,15 @@ drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor:
 usesVectorEnginePlugin
 	^vectorCanvas usesVectorEnginePlugin! !
 
-!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 5/31/2021 19:48:59'!
+!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 9/24/2021 10:05:35'!
 initialize
 	| family folder |
 	UISupervisor whenUIinSafeState: [
 		(FontFamily familyNamed: FontFamily defaultFamilyName) isTrueTypeFontFamily ifFalse: [
 			folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
 			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
-			Preferences setDefaultFont: family familyName ].
+			Preferences setDefaultFont: family familyName.
+			FontFamily enableTrueTypeFontsOnly ].
 		MorphicCanvas activeSubclass: HybridCanvas ].! !
 
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
