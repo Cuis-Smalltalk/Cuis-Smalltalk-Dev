@@ -1,0 +1,19 @@
+name: Run tests
+'on':
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  Build:
+    runs-on: '${{ matrix.os }}'
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - run: .ContinuousIntegrationScripts/installVm.sh
+      - run: .ContinuousIntegrationScripts/installUpdates.sh
+      - run: .ContinuousIntegrationScripts/runTests.sh

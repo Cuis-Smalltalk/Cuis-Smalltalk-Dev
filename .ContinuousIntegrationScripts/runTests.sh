@@ -13,9 +13,9 @@ runTestsOnMacOS() {
   /Applications/Squeak.app/Contents/MacOS/Squeak -headless "$IMAGE_FILE" -s "$RUN_TESTS_SCRIPT_FILEPATH"
 }
 
-case $TRAVIS_OS_NAME in
-  "linux")
+case $RUNNER_OS in
+  "Linux")
     runTestsOnLinux ;;
-  "osx")
+  "macOS")
     runTestsOnMacOS ;;
 esac
