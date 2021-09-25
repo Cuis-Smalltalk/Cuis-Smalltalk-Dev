@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4878] on 22 September 2021 at 9:26:23 pm'!
-'Description Fixed DebuggerTest and MethodReferenceTest'!
-!provides: 'BaseImageTests' 1 267!
+'From Cuis 5.0 [latest update: #4886] on 24 September 2021 at 9:16:58 pm'!
+'Description ExtractAsParameterTest '!
+!provides: 'BaseImageTests' 1 268!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -21746,6 +21746,210 @@ test34WhenAddingToKeywordMessageSelectorMustBeKeyword
 			implementors: {classToRefactor>>oldSelector} 
 			senders: {} ]
 		failsWith: AddParameter selectorMustBeKeywordErrorMessage ! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:19:43'!
+test35CanExtractManyIntervals
+	
+	| classToRefactor oldSelector  refactoring |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' 10 + 10'.
+	
+	refactoring := ExtractAsParameter 
+		named: 'newParam' 
+		extractedFromAll: { (4 to: 5). (9 to: 10) } 
+		at: classToRefactor>>oldSelector  
+		implementors: {classToRefactor>>oldSelector} 
+		senders: {}.
+		
+	refactoring apply.
+	
+	self assert: 'm1: newParam newParam + newParam' equals: (classToRefactor >> #m1:) sourceCode
+		! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:20:26'!
+test36CannotExtractIfAnyIntervalIsNotValid
+	
+	| classToRefactor oldSelector |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' 10 + self'.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFromAll: { (4 to: 5). (9 to: 12) } 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: ExtractAsParameter errorMessageForInvalidExpressionToExtractAsParameter 
+		
+	
+		! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:20:36'!
+test37CannotExtractIfSourceToExtractAreNotEqualInAllIntervals
+	
+	| classToRefactor oldSelector |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' 10 + 11'.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFromAll: { (4 to: 5). (9 to: 10) } 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: ExtractAsParameter errorMessageNotAllExpressionsToExtractAreEqual
+		
+	
+		! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:20:55'!
+test38CanExtractManyBlocksIfAreEqual
+	
+	| classToRefactor oldSelector  refactoring |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' [10] + [10]'.
+	
+	refactoring := ExtractAsParameter 
+		named: 'newParam' 
+		extractedFromAll: { (4 to: 7). (11 to: 14) } 
+		at: classToRefactor>>oldSelector  
+		implementors: {classToRefactor>>oldSelector} 
+		senders: {}.
+		
+	refactoring apply.
+	
+	self assert: 'm1: newParam newParam + newParam' equals: (classToRefactor >> #m1:) sourceCode
+		! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:21:22'!
+test39CanExtractManyBlocksIfSourceCodeNotEqualButSameAst
+	
+	| classToRefactor oldSelector  refactoring |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' [10] + [ 10 ]'.
+	
+	refactoring := ExtractAsParameter 
+		named: 'newParam' 
+		extractedFromAll: { (4 to: 7). (11 to: 16) } 
+		at: classToRefactor>>oldSelector  
+		implementors: {classToRefactor>>oldSelector} 
+		senders: {}.
+		
+	refactoring apply.
+	
+	self assert: 'm1: newParam newParam + newParam' equals: (classToRefactor >> #m1:) sourceCode
+		! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 18:21:48'!
+test40CannotExtractWithoutIntervals
+	
+	| classToRefactor oldSelector |
+	
+	oldSelector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: oldSelector asString, ' 10 + 11'.
+	
+	self
+		assertCreation: [ ExtractAsParameter 
+			named: 'newParam' 
+			extractedFromAll: {} 
+			at: classToRefactor>>oldSelector  
+			implementors: {classToRefactor>>oldSelector} 
+			senders: {} ]
+		failsWith: ExtractAsParameter errorMessageForNoExpressionToExtract
+		
+	
+		! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:32:04'!
+test41DetectsAllRangesForLiteral
+	
+	| classToRefactor selector intervals |
+	
+	selector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: selector, ' 10 + 10'.
+	
+	intervals := ExtractAsParameter intervalsForEquivalentExpressionIn: classToRefactor >> selector at: (4 to: 5).
+
+	self assert: { (4 to: 5). (9 to: 10) } equals: intervals asArray.! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:32:28'!
+test42DoesNotMixesRangesForDifferentLiterals
+	
+	| classToRefactor selector intervals |
+	
+	selector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: selector, ' 10 + 100'.
+	
+	intervals := ExtractAsParameter intervalsForEquivalentExpressionIn: classToRefactor >> selector at: (4 to: 5).
+
+	self assert: { (4 to: 5) } equals: intervals asArray.! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:32:48'!
+test43DetectsRangesForEquivalentBlocks
+	
+	| classToRefactor selector intervals |
+	
+	selector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: selector, ' [10] + [ 10 ]'.
+	
+	intervals := ExtractAsParameter intervalsForEquivalentExpressionIn: classToRefactor >> selector at: (4 to: 7).
+
+	self assert: { (4 to: 7). (11 to: 16) } equals: intervals asArray.! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:33:01'!
+test44DetectsRangesForEquivalentMessageSends
+	
+	| classToRefactor selector intervals |
+	
+	selector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: selector, ' 10 factorial + 10    factorial'.
+	
+	intervals := ExtractAsParameter intervalsForEquivalentExpressionIn: classToRefactor >> selector at: (4 to: 15).
+
+	self assert: { (4 to: 15). (19 to: 33) } equals: intervals asArray.! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 9/24/2021 20:34:32'!
+test45DoesNotDetectEquiallySemanticBlocks
+	
+	| classToRefactor selector intervals |
+	
+	"This is something to improve - Hernan"
+	
+	selector := 'm1' asSymbol.
+	
+	classToRefactor := self createClassNamed: self classToRefactorName.
+	classToRefactor compile: selector, ' [:p1 | 1 ] + [:p2 | 1]'.
+	
+	intervals := ExtractAsParameter intervalsForEquivalentExpressionIn: classToRefactor >> selector at: (4 to: 13).
+
+	self assert: { (4 to: 13) } equals: intervals asArray.! !
 
 !ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 9/8/2021 22:00:32'!
 classToRefactorName
