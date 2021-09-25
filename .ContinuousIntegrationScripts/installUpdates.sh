@@ -19,9 +19,9 @@ installUpdatesMacOS() {
   /Applications/Squeak.app/Contents/MacOS/Squeak -headless "$IMAGE_FILE" -d "$INSTALL_UPDATES_SCRIPT"
 }
 
-case $TRAVIS_OS_NAME in
-  "linux")
+case $RUNNER_OS in
+  "Linux")
     installUpdatesLinux ;;
-  "osx")
+  "macOS")
     installUpdatesMacOS ;;
 esac

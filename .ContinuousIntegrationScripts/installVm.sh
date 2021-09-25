@@ -4,9 +4,11 @@ set -euo pipefail
 VM_VERSION="201911012148"
 BASE_VM_DOWNLOAD_PATH="https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/$VM_VERSION"
 
-echo "Installing VM $VM_VERSION for $TRAVIS_OS_NAME"
+echo "Installing VM $VM_VERSION for $RUNNER_OS"
 
 installVmLinux() {
+  sudo apt-get install pulseaudio
+
   VM_FILENAME="squeak.cog.spur_linux64x64_$VM_VERSION"
 
   wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
@@ -23,9 +25,9 @@ installVmMacOS() {
   sudo cp -rf Squeak.app /Applications
 }
 
-case $TRAVIS_OS_NAME in
-  "linux")
+case $RUNNER_OS in
+  "Linux")
     installVmLinux ;;
-  "osx")
+  "macOS")
     installVmMacOS ;;
 esac
