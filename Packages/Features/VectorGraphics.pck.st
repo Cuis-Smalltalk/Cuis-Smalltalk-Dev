@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4882] on 24 September 2021 at 10:20:09 am'!
+'From Cuis 5.0 [latest update: #4890] on 27 September 2021 at 5:26:01 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 306!
+!provides: 'VectorGraphics' 1 307!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1572,6 +1572,12 @@ textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc
 	drawingOnMorphIDs ifTrue: [
 		^nil ].
 	^super textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc! !
+
+!HybridCanvas methodsFor: 'initialization' stamp: 'jmv 9/27/2021 17:20:10'!
+initializeWithTranslation: aPoint
+
+	super initializeWithTranslation: aPoint.
+	vectorCanvas initializeWithTranslation: aPoint.! !
 
 !HybridCanvas methodsFor: 'initialization' stamp: 'jmv 9/6/2021 11:22:58'!
 resetCanvas
