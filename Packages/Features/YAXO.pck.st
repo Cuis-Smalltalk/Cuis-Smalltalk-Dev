@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4843] on 6 September 2021 at 12:53:51 pm'!
+'From Cuis 5.0 [latest update: #4894] on 28 September 2021 at 5:03:58 pm'!
 'Description '!
-!provides: 'YAXO' 1 18!
+!provides: 'YAXO' 1 19!
 SystemOrganization addCategory: 'YAXO'!
 
 
@@ -1429,7 +1429,7 @@ unpeek
 			self stream skip: -1.
 			peekChar _ nil]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 6/7/2018 11:48:21'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:52:14'!
 checkAndExpandReference: parsingContext
 	| referenceString nextChar |
 	nextChar _ self peek.
@@ -1438,12 +1438,8 @@ checkAndExpandReference: parsingContext
 	nextChar == $&
 		ifTrue: [
 			self next.
-			self peek == $#
-				ifTrue: [
-					"Disabled. Keep Numeric Character References verbatim."
-					false ifTrue: [^self pushStream: (ReadStream on: self nextCharReference asString)].
-					self pushStream: (ReadStream on: '&').
-					^ self ].
+			self peek == $# ifTrue: [
+				^self pushStream: (ReadStream on: self nextCharReference asString)].
 			referenceString _ self nextLiteral.
 			self next == $;
 				ifFalse: [self errorExpected: ';'].
@@ -1485,7 +1481,7 @@ nextAttributeInto: attributes namespaces: namespaces
 			ifFalse: [namespaces at: attrName put: attrValue]]
 		ifFalse: [attributes at: attrName put: attrValue]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 6/24/2009 12:56'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:53:46'!
 nextAttributeValue
 	| delimiterChar attributeValueStream nextChar nextPeek referenceString entity entityValue c |
 	delimiterChar _ self next.
@@ -1510,7 +1506,7 @@ nextAttributeValue
 								"self errorExpected: ';'" "Just ignore errors. consider badformed xml as a simple literal string"
 								attributeValueStream
 									nextPut: nextChar;
-									nextPutAll: referenceString;	"si anda, es de casualidad"
+									nextPutAll: referenceString;	"mhhhhh"
 									nextPut: c.
 								nextChar _ nil
 								]
@@ -1531,7 +1527,10 @@ nextAttributeValue
 		nextPeek == delimiterChar
 	]
 		whileFalse: [
-			nextChar ifNotNil: [attributeValueStream nextPut: nextChar]].
+			nextChar ifNotNil: [
+				nextChar isString
+					ifFalse: [attributeValueStream nextPut: nextChar]
+					ifTrue: [attributeValueStream nextPutAll: nextChar]]].
 	^self fastStreamStringContents: attributeValueStream
 "	^attributeValueStream contents"! !
 
@@ -1573,10 +1572,10 @@ nextCDataOrConditional
 	self errorExpected: 'CData or declaration'
 ! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 12/29/2020 14:47:38'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:39:57'!
 nextCharReference
-	"Note: Should not be used inside attribute values. Leave them verbatim.
-	For uses elsewhere, I really don't know. (jmv)"
+	"See http://en.wikipedia.org/wiki/Numeric_character_reference
+	Note: If the NCR can not be represented as a Cuis Character, answer a String with an NCR."
 	| base asciiCodeOrCodePoint |
 
 	self next == $#
@@ -1588,10 +1587,11 @@ nextCharReference
 		ifFalse: [10].
 
 	asciiCodeOrCodePoint _ [self readNumberBase: base] on: Error do: [:ex | self errorExpected: 'Number.'].
-	(self next) == $;
+	self next == $;
 		ifFalse: [self errorExpected: '";"'].
 
-	^Character codePoint: asciiCodeOrCodePoint trySimilar: true! !
+	^(Character codePoint: asciiCodeOrCodePoint trySimilar: true) ifNil: [
+		String streamContents: [ :strm | String addUnicodeCodePoint: asciiCodeOrCodePoint to: strm hex: (base=16) ]].! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 11/28/2000 17:54'!
 nextComment
@@ -1625,7 +1625,7 @@ nextEntity
 		ifTrue: [self nextNode]
 		ifFalse: [self nextPCData]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 1/17/2002 18:14'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:54:29'!
 nextEntityValue
 	| delimiterChar entityValueStream nextChar nextPeek referenceString entity entityValue |
 	delimiterChar _ self next.
@@ -1662,7 +1662,10 @@ nextEntityValue
 				ifFalse: [self next]].
 	nextPeek == delimiterChar]
 		whileFalse: [
-			nextChar ifNotNil: [entityValueStream nextPut: nextChar]].
+			nextChar ifNotNil: [
+				nextChar isString
+					ifFalse: [entityValueStream nextPut: nextChar]
+					ifTrue: [entityValueStream nextPutAll: nextChar]]].
 	^entityValueStream contents! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 6/28/2001 16:38'!
@@ -1676,7 +1679,7 @@ nextIncludeSection: parseSection
 		ifTrue: [
 			self pushStream: (ReadStream on: section)]! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 6/7/2018 11:43:40'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:55:03'!
 nextLiteral
 	| resultStream nextChar resultString |
 	resultStream _ (String new: 10) writeStream.
@@ -1690,7 +1693,7 @@ nextLiteral
 				ifTrue: [
 					nextChar _ self next.
 					self peek == $#
-						ifTrue: [resultStream nextPut: self nextCharReference]
+						ifTrue: [resultStream nextPutAll: self nextCharReference asString]
 						ifFalse: [^resultStream contents]]
 				ifFalse: [
 					resultStream nextPut: self next]]
@@ -1730,7 +1733,7 @@ nextNode
 	nextChar == $? ifTrue: [^self nextPI].
 	^self nextTag! !
 
-!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 6/7/2018 11:52:30'!
+!XMLTokenizer methodsFor: 'tokenizing' stamp: 'jmv 9/27/2021 15:50:20'!
 nextPCData
 	| resultStream nextChar referenceString entity entityValue nextPeek p |
 	resultStream _ (String new: 10) writeStream.
@@ -1751,10 +1754,8 @@ nextPCData
 			self next.
 			self peek == $#
 				ifTrue: [
-					"Disabled. Keep Numeric Character References verbatim."
-					false ifTrue: [
-						nextPeek _ nil.
-						nextChar _ self nextCharReference]]
+					nextPeek _ nil.
+					nextChar _ self nextCharReference]
 				ifFalse: [
 					referenceString _ self nextLiteral.
 					self next == $;
@@ -1775,7 +1776,10 @@ nextPCData
 		ifFalse: [nextPeek == $< ifFalse: [self next]].
 	nextPeek == $<]
 		whileFalse: [
-			nextChar ifNotNil: [resultStream nextPut: nextChar]].
+			nextChar ifNotNil: [
+				nextChar isString
+					ifFalse: [resultStream nextPut: nextChar]
+					ifTrue: [resultStream nextPutAll: nextChar]]].
 	self handlePCData: resultStream contents! !
 
 !XMLTokenizer methodsFor: 'tokenizing' stamp: 'mir 1/17/2002 13:00'!
