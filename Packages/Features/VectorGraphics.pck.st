@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4890] on 27 September 2021 at 5:26:01 pm'!
+'From Cuis 5.0 [latest update: #4893] on 28 September 2021 at 4:32:37 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 307!
+!provides: 'VectorGraphics' 1 308!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -9436,24 +9436,21 @@ findFullBoundsInOwner
 	self privateFlagAt: 3 put: prevNotVisibleFlag.
 	^answer! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/5/2021 09:52:22'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 9/28/2021 16:20:14'!
 fitInto: aRectangle
-	"Scale and position ourselves in such way that our #findFullBoundsInOwner are in aRectangle."
+	"Scale and position ourselves in such way that our #findFullBoundsInOwner are in aRectangle.
+	WidgetMorph, KernelMorph, and maybe others will not scale, but resize, changing the actual extent."
 
 	| currentBounds scale slackForAntiAliasing |
-
 	currentBounds _ self findFullBoundsInOwner.
-	currentBounds extent >= `10@10` ifFalse: [
-		self scaleBy: 10.
-		^self fitInto: aRectangle ].
-	slackForAntiAliasing _ 2.
+	slackForAntiAliasing _ 0.
 	scale _ (aRectangle width-slackForAntiAliasing / (currentBounds width-slackForAntiAliasing))
 		min: (aRectangle height-slackForAntiAliasing / (currentBounds height-slackForAntiAliasing)).
 	scale _ scale asFloat.
 	self scaleBy: scale.
 
 	currentBounds _ self findFullBoundsInOwner.
-	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2)! !
+	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2).! !
 
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 9/21/2021 09:02:16'!
 showBitMask
@@ -9502,6 +9499,54 @@ imageForm: extentOrNil depth: depth
 		self privateFlagAt: 3 put: prevNotVisibleFlag.
 		location _ oldLocation ].
 	^answer asFormOfDepth: depth.! !
+
+!LayoutMorph class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 9/28/2021 16:24:36'!
+example101VG
+"
+	self example101VG
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example1.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (Sample09Clock new name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 100); 
+	addMorph: (Sample01Star new name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (Sample03Smiley new name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (WidgetMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addMorph: (Sample03Smiley new name: #E)
+		layoutSpec: (LayoutSpec fixedWidth: 200 fixedHeight: 200).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color lightRed;
+	addMorph: (Sample02Bezier new name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (Sample02Bezier new  name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (Sample02Bezier new  name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (WidgetMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (WidgetMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (WidgetMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
 
 !MorphicCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 3/25/2021 16:31:03'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
