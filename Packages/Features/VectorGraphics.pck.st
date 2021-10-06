@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4893] on 28 September 2021 at 4:32:37 pm'!
+'From Cuis 5.0 [latest update: #4899] on 6 October 2021 at 4:58:45 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 308!
+!provides: 'VectorGraphics' 1 310!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3589,13 +3589,13 @@ contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBotto
 
 	^nil! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:48:16'!
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 10/4/2021 16:55:34'!
 displayBoundsForHand: aHand
 	"See #drawHand."
 
 	^self drawsHandLarge
-		ifTrue: [aHand morphPosition-`9@5` extent: `45@48`]
-		ifFalse: [aHand morphPosition-`4@3` extent: `21@24`].! !
+		ifTrue: [aHand morphPosition asIntegerPoint-`9@5` extent: `45@48`]
+		ifFalse: [aHand morphPosition asIntegerPoint-`4@3` extent: `21@24`].! !
 
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/23/2021 14:19:05'!
 fullAddCurrentMorphTo: aDamageRecorder
@@ -3654,14 +3654,14 @@ fullUpdateProtrudingBounds: aMorph
 		self fullUpdateCurrentProtrudingBounds.
 		self outOfMorph ].! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 9/9/2021 14:02:15'!
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 10/4/2021 17:52:27'!
 updateBoundsIn: aWorldMorph addDamageTo: aDamageRecorder
 
 	aWorldMorph haloMorphsDo: [ :halo |
 		(halo target isRedrawNeeded or: [halo target isSubmorphRedrawNeeded]) ifTrue: [
 			"Invalidation of halos requires this specific sequence:"
 			halo redrawNeeded.												"invalidate old halo bounds"
-			self fullAddRedrawRect: halo target to: aDamageRecorder. 								"recompute & invalidate target bounds"
+			"self fullAddRedrawRect: halo target to: aDamageRecorder." 								"recompute & invalidate target bounds"
 			self fullAddRedrawRect: halo to: aDamageRecorder ]].												"recompute & invalidate halo bounds"
 	"bogus iteration on halos and targets below is harmless:
 		Both now marked as neither #isRedrawNeeded nor #isSubmorphRedrawNeeded."
@@ -4111,10 +4111,10 @@ morphBoundsAfterDraw
 
 	^morphBoundsLeft @ morphBoundsTop corner: morphBoundsRight @ morphBoundsBottom + 1! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 9/15/2021 15:20:51'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:13:26'!
 arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2.0 color: Color black fillColor: Color red do: [ :engine |
 		engine arcCenter: 100@100 radius: 80@40 rotationAngle: -0.2 start: 0 sweep: Float twoPi ].
 Display forceToScreen.
@@ -4160,17 +4160,17 @@ Display forceToScreen.
 			currentX _ x0.
 			currentY _ y0 ].! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 9/15/2021 09:24:27'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:13:54'!
 arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: phi largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color red do: [ :engine |
 		engine
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.2 position: 200@100);
 	strokeWidth: 1.0 color: Color red do: [ :engine |
 		engine
@@ -4247,10 +4247,10 @@ Display forceToScreen
 
 	self arcCenter: cx@cy radius: rx@ry rotationAngle: phi start: theta1 sweep: deltaTheta! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:07:19'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:14:03'!
 circleCenter: aPoint radius: mr
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			circleCenter: 200 @ 150 radius: 80].
@@ -4259,12 +4259,12 @@ Display forceToScreen
 
 	self arcCenter: aPoint radius: mr@mr rotationAngle: 0.0 start: 0.0 sweep: Float twoPi.! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:07:38'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:14:33'!
 cubicBezierTo: toPoint control1: controlPoint1 control2: controlPoint2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -4272,7 +4272,7 @@ cubicBezierTo: toPoint control1: controlPoint1 control2: controlPoint2
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@50.
 		engine
@@ -4282,7 +4282,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@100.
 		engine
@@ -4292,7 +4292,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@100.
 		engine
@@ -4302,7 +4302,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@100.
 		engine
@@ -4312,7 +4312,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 3 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :engine |
 		engine moveTo: 100@100.
 		engine
@@ -4326,14 +4326,14 @@ Display forceToScreen
 	currentX _ toPoint x.
 	currentY _ toPoint y.! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:07:54'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:15:17'!
 ellipseCenter: aPoint radius: radiusPoint
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@150 radius: 100@50].
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
@@ -4343,14 +4343,14 @@ Display forceToScreen
 
 	self arcCenter: aPoint radius: radiusPoint rotationAngle: 0.0 start: 0.0 sweep: Float twoPi.! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:01'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:15:24'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: -0.5 ].
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
@@ -4360,22 +4360,22 @@ Display forceToScreen
 
 	self arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: 0.0 sweep: Float twoPi.! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:11'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:15:36'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 	"Currently draws a line from pathCurrentX@pathCurrentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
 	Implement desired behavior when clear."
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6 ].
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.0 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6].
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :engine |
 		engine
 			ellipseCenter: 200@350 radius: 100@50 rotationAngle: 0.5 start: 0.1 sweep: 6 ].
@@ -4384,10 +4384,10 @@ Display forceToScreen.
 
 	self arcCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:20'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:15:50'!
 lineTo: aPoint
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -4395,7 +4395,7 @@ lineTo: aPoint
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 25.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -4403,7 +4403,7 @@ Display forceToScreen
 Display forceToScreen
 "
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :engine |
 		engine moveTo: 30@115.
 		engine lineTo: 45@190.
@@ -4414,10 +4414,10 @@ Display forceToScreen
 	currentX _ aPoint x.
 	currentY _ aPoint y.! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:32'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:16:02'!
 lineToFirstPoint
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black fillColor: Color red do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -4430,10 +4430,10 @@ Display forceToScreen
 	currentX _ firstX.
 	currentY _ firstY.! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:08:41'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:16:10'!
 moveTo: aPoint
 "
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -4453,10 +4453,10 @@ Display forceToScreen
 	currentX _ firstX.
 	currentY _ firstY.! !
 
-!VectorEngine methodsFor: 'paths' stamp: 'jmv 8/10/2021 14:09:35'!
+!VectorEngine methodsFor: 'paths' stamp: 'jmv 10/6/2021 16:16:58'!
 quadraticBezierTo: toPoint control: controlPoint
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -4464,7 +4464,7 @@ quadraticBezierTo: toPoint control: controlPoint
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :engine |
 		engine
 			moveTo: 100@100;
@@ -4472,7 +4472,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 3.0 color: Color black fillColor: Color red do: [ :engine |
 		engine
 			moveTo: 100@270;
@@ -4480,7 +4480,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorEngine onForm: Display)
+(VectorEngineSubPixel onForm: Display)
 	strokeWidth: 3.0 color: Color black fillColor: Color red do: [ :engine |
 		engine
 			moveTo: 100@550;
@@ -4697,10 +4697,10 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 	].
 	^ nextGlyphX@nextGlyphY! !
 
-!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 8/10/2021 14:09:11'!
+!VectorEngine methodsFor: 'text and multi paths' stamp: 'jmv 10/6/2021 16:16:19'!
 pathSequence: aFloat32Array
 	"
-	(VectorEngine onForm: Display)
+	(VectorEngineSubPixel onForm: Display)
 		geometryTransformation: (AffineTransformation withScale: 14 position: 100@100);
 		strokeWidth: 3 color: Color black do: [ :engine |
 			engine
@@ -6121,7 +6121,7 @@ blendFillOnly
 						redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 						antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 9/30/2021 12:09:20'!
 blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
 	"Blends fill color over background. Target translucency computed correctly.
 	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
@@ -6188,9 +6188,7 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 			targetWord at: 1 put: resultB rounded ].
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendStrokeAndFill
@@ -6236,7 +6234,7 @@ blendStrokeAndFill
 						redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 						antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 9/30/2021 12:10:44'!
 blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
 	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
@@ -6322,9 +6320,7 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 			targetWord at: 1 put: resultB rounded ].
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendStrokeOnly
@@ -6343,7 +6339,7 @@ blendStrokeOnly
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
+!VectorEngineSubPixel methodsFor: 'private - blend with mask' stamp: 'jmv 9/30/2021 12:11:29'!
 blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
 	"Blends stroke color over background. Target translucency computed correctly.
 	Sub pixel anti aliasing means each R, G, B subpixel might use a different anti aliasing alpha.
@@ -6406,9 +6402,7 @@ blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
 			targetWord at: 1 put: resultB rounded ].
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineSubPixel class methodsFor: 'instance creation' stamp: 'jmv 6/17/2020 14:34:51'!
 defaultAntiAliasingWidth
@@ -6519,7 +6513,7 @@ blendFillOnly
 						alphaMask at: pixelIndex put: 0.
 						self blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 9/30/2021 12:11:38'!
 blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	"Blends fill color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
@@ -6564,9 +6558,7 @@ blendFillOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 		targetWord at: 1 put: resultB rounded.
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendStrokeAndFill
@@ -6597,7 +6589,7 @@ blendStrokeAndFill
 						antiAliasAlphaBits = 0 ifFalse: [
 							self blendStrokeAndFillAt: pixelIndex isInside: false antiAliasAlphaByte: antiAliasAlphaBits ]]]]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 9/30/2021 12:11:47'!
 blendStrokeAndFillAt: pixelIndex isInside: isInside antiAliasAlphaByte: antiAliasAlphaBits
 	"Do an appropriate (anti aliased) mix between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	Target translucency computed correctly.
@@ -6657,9 +6649,7 @@ blendStrokeAndFillAt: pixelIndex isInside: isInside antiAliasAlphaByte: antiAlia
 		targetWord at: 1 put: resultB rounded.
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:06:05'!
 blendStrokeOnly
@@ -6676,7 +6666,7 @@ blendStrokeOnly
 				alphaMask at: pixelIndex put: 0.
 				self blendStrokeOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]].! !
 
-!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 8/10/2021 12:07:18'!
+!VectorEngineWholePixel methodsFor: 'private - blend with mask' stamp: 'jmv 9/30/2021 12:11:56'!
 blendStrokeOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	"Blends stroke color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
@@ -6721,9 +6711,7 @@ blendStrokeOnlyAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 		targetWord at: 1 put: resultB rounded.
 
 		targetForm bits bytesAt: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ]].! !
+		morphIds at: pixelIndex put: currentMorphId<<8 + clippingAntiAlias ].! !
 
 !VectorEngineWholePixel class methodsFor: 'instance creation' stamp: 'jmv 5/18/2021 12:40:20'!
 defaultAntiAliasingWidth
