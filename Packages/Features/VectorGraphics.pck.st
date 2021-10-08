@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4899] on 6 October 2021 at 4:58:45 pm'!
+'From Cuis 5.0 [latest update: #4903] on 8 October 2021 at 9:28:05 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 310!
+!provides: 'VectorGraphics' 1 311!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -191,7 +191,7 @@ BoundsFinderCanvas class
 
 !classDefinition: #VectorDrawingCanvas category: 'VectorGraphics-Kernel'!
 VectorCanvas subclass: #VectorDrawingCanvas
-	instanceVariableNames: 'boundsFinderCanvas'
+	instanceVariableNames: 'boundsFinderCanvas auxBitBltEngine'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
@@ -607,7 +607,7 @@ Display writePNGfileNamed: 'm3z.png'
 
 On any Morph:
 | c |
-c _ VectorCanvas onForm: Display.
+c _ VectorDrawingCanvas onForm: Display.
 self allOwnersReverseDo: [ :m | c into: m ].
 c fullDraw: self.
 Display forceToScreen!
@@ -1663,12 +1663,12 @@ currentMorphDrawingFails
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/5/2021 14:04:30'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:15'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
 
-	self isCurrentMorphVisible ifTrue: [
+	currentMorph visible ifTrue: [
 
 		currentMorph drawOn: self.
 		self onMorphIdsDo: [
@@ -1715,16 +1715,15 @@ outOfMorph
 	super outOfMorph.
 	vectorCanvas outOfMorph! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 3/21/2021 12:59:37'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 15:41:44'!
 restorePatch: savedPatch bounds: savedBounds
-	"Argument must previously be obtained by calling #savePatch:bounds:
-	Senders should not assume anything about the returned object, except that it will not be nil."
+	"Argument must previously be obtained by calling #savePatch:bounds:"
 
 	vectorCanvas restorePatch: savedPatch bounds: savedBounds! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 7/26/2020 20:25:21'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 15:42:20'!
 savePatch: prevSavedPatch bounds: aRectangle
-	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
+	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:bounds:"
 	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
 
 	^ vectorCanvas savePatch: prevSavedPatch bounds: aRectangle! !
@@ -3148,10 +3147,10 @@ roundRect: aRectangle color: aColor radius: r
 		self
 			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/23/2021 14:17:48'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:19'!
 drawCurrentAndSubmorphs
 	
-	self isCurrentMorphVisible ifTrue: [
+	currentMorph visible ifTrue: [
 
 		currentMorph drawOn: self.
 		currentMorph displayBoundsSetFrom: self.
@@ -3654,17 +3653,16 @@ fullUpdateProtrudingBounds: aMorph
 		self fullUpdateCurrentProtrudingBounds.
 		self outOfMorph ].! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 10/4/2021 17:52:27'!
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 12:24:06'!
 updateBoundsIn: aWorldMorph addDamageTo: aDamageRecorder
 
 	aWorldMorph haloMorphsDo: [ :halo |
 		(halo target isRedrawNeeded or: [halo target isSubmorphRedrawNeeded]) ifTrue: [
 			"Invalidation of halos requires this specific sequence:"
 			halo redrawNeeded.												"invalidate old halo bounds"
-			"self fullAddRedrawRect: halo target to: aDamageRecorder." 								"recompute & invalidate target bounds"
 			self fullAddRedrawRect: halo to: aDamageRecorder ]].												"recompute & invalidate halo bounds"
-	"bogus iteration on halos and targets below is harmless:
-		Both now marked as neither #isRedrawNeeded nor #isSubmorphRedrawNeeded."
+	"bogus iteration on halos below is harmless:
+		It is now marked as neither #isRedrawNeeded nor #isSubmorphRedrawNeeded."
 
 	aWorldMorph submorphsDo: [ :morph |
 		self fullAddRedrawRect: morph to: aDamageRecorder ].
@@ -3735,7 +3733,7 @@ setPluginAndForm: aForm
 boundsFinderCanvas
 	^boundsFinderCanvas! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 16:16:37'!
+!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/7/2021 16:58:12'!
 frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
 	"
 	(VectorDrawingCanvas onForm: Display)
@@ -3745,7 +3743,7 @@ frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color
 		color: Color green.
 	Display forceToScreen
 	"
-	(BitBltCanvasEngine toForm: form)
+	auxBitBltEngine
 		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
 		fillColor: borderColor;
 		frameRect: rect borderWidth: borderWidth;
@@ -3753,21 +3751,21 @@ frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color
 		fillColor: fillColor;
 		fillRect: (rect insetBy: borderWidth).! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 16:08:09'!
+!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/7/2021 16:58:17'!
 frameGlobalRect: rect borderWidth: borderWidth color: borderColor
 	"
 	(VectorDrawingCanvas onForm: Display)
 		frameGlobalRect: (10@10 extent: 300@200)
 		borderWidth: 20
-		color: Color green.
+		color: Color red.
 	Display forceToScreen
 	"
-	(BitBltCanvasEngine toForm: form)
+	auxBitBltEngine
 		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
 		fillColor: borderColor;
 		frameRect: rect borderWidth: borderWidth.! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 16:16:46'!
+!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/7/2021 16:58:21'!
 frameReverseGlobalRect: rect borderWidth: borderWidth
 	"
 	(VectorDrawingCanvas onForm: Display)
@@ -3775,13 +3773,13 @@ frameReverseGlobalRect: rect borderWidth: borderWidth
 		borderWidth: 20.
 	Display forceToScreen
 	"
-	(BitBltCanvasEngine toForm: form)
+	auxBitBltEngine
 		sourceForm: nil;
 		fillColor: `Color gray`;
 		combinationRule: Form reverse;
 		frameRect: rect borderWidth: borderWidth! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/17/2021 10:22:00'!
+!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/7/2021 16:58:50'!
 image: srcForm at: aPoint
 	"Workaround using WarpBlt until properly implemented in VectorEngine.
 	 (WarpBlt might not give desired result, i.e. a properly filtered and resamples image)
@@ -3798,7 +3796,7 @@ image: srcForm at: aPoint
 	In this way, performance is same as in HybridCanvas, and not too different from BitBltCanvas.
 	This is especially important, the default World background is a Form!!"
 
-	| bb p bits |
+	| p bits |
 
 	"Special case for our world:
 	- No bounds needed
@@ -3806,8 +3804,7 @@ image: srcForm at: aPoint
 	BitBlt is enough, but we need tow of them!!"
 	currentMorph == world ifTrue: [
 		p _ (currentTransformation transform: aPoint) rounded.
-		bb _ BitBlt toForm: form.
-		bb
+		auxBitBltEngine
 			sourceForm: srcForm; fillColor: nil; combinationRule: Form blend;
 			colorMap: (srcForm colormapIfNeededFor: form);
 			clipRect: clipRect;
@@ -3817,7 +3814,7 @@ image: srcForm at: aPoint
 		bits _ form bits.
 		[
 			form bits: engine morphIds.
-			bb
+			auxBitBltEngine
 				sourceForm: nil;
 				fillBitmap: (Bitmap with: (currentMorph morphId << 8 + 255));
 				combinationRule: `Form over`;
@@ -3831,8 +3828,7 @@ image: srcForm at: aPoint
 	currentTransformation isPureTranslation
 		ifTrue: [
 			p _ (currentTransformation transform: aPoint) rounded.
-			bb _ BitBlt toForm: form.
-			bb
+			auxBitBltEngine
 				sourceForm: srcForm; fillColor: nil; combinationRule: Form blend;
 				colorMap: (srcForm colormapIfNeededFor: form);
 				clipRect: clipRect;
@@ -3840,7 +3836,7 @@ image: srcForm at: aPoint
 				destX: p x destY: p y width: srcForm width height: srcForm height;
 				copyBits ]
 		ifFalse: [
-			| cellSize dstBox srcBox srcQuad |
+			| bb cellSize dstBox srcBox srcQuad |
 			cellSize _ 4.
 			srcBox _ srcForm boundingBox.
 			dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
@@ -3935,10 +3931,9 @@ drawCurrentAsError
 morphIdAt: aPoint
 	^engine morphIdAt: aPoint.! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/16/2021 15:53:41'!
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 15:41:49'!
 restorePatch: savedPatch bounds: savedBounds
-	"Argument must previously be obtained by calling #savePatch:bounds:
-	Senders should not assume anything about the returned object, except that it will not be nil."
+	"Argument must previously be obtained by calling #savePatch:bounds:"
 
 	| bb bits |
 	bb _ BitBlt toForm: form.
@@ -3956,13 +3951,12 @@ restorePatch: savedPatch bounds: savedBounds
 			copyBits.
 	] ensure: [ form bits: bits ].! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/16/2021 16:04:03'!
+!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:55'!
 savePatch: prevSavedPatch bounds: aRectangle
-	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:"
+	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:bounds:"
 	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
 
 	| patchForm prevExtent extent savedIdsPatch bb answer bits |
-self flag: #jmvHacks.
 	answer _ prevSavedPatch.
 	(answer is: #Array) ifFalse: [ answer _ Array new: 2 ].
 
@@ -4017,12 +4011,14 @@ pvtDrawButtonFaceForm: aForm
 		image: aForm
 		at: (currentMorph morphExtent - aForm extent //2).! !
 
-!VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 8/23/2021 14:31:35'!
+!VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 10/7/2021 17:36:57'!
 setClipRect: aRectangle
 	"In targetForm coordinates"
 
 	super setClipRect: aRectangle.
 	engine clipRect: aRectangle.
+	auxBitBltEngine _ BitBltCanvasEngine toForm: form.
+	auxBitBltEngine clipRect: aRectangle.
 	boundsFinderCanvas ifNotNil: [
 		boundsFinderCanvas setClipRect: aRectangle ].! !
 
@@ -4046,7 +4042,7 @@ resetCanvas
 	boundsFinderCanvas resetCanvas.
 	engine clearArrays.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 9/2/2021 08:38:01'!
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 10/7/2021 16:50:53'!
 setForm: aForm subPixelAntiAliasing: aBoolean
 	"nil means use default kind of anti aliasing"
 	"
@@ -4059,9 +4055,10 @@ setForm: aForm subPixelAntiAliasing: aBoolean
 		ifFalse: [VectorEngineWholePixel])
 			onForm: aForm.
 	engine canvas: self.
+	auxBitBltEngine _ BitBltCanvasEngine toForm: form.
 	self newClipRect: nil.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/27/2021 17:13:23'!
+!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 10/7/2021 16:51:02'!
 setPluginAndForm: aForm
 	"Note: Only one instance should use VectorEnginePlugin at a time:
 	the plugin holds numeric parameters that are not passed again on every call."
@@ -4072,6 +4069,7 @@ setPluginAndForm: aForm
 	form _ aForm.
 	engine _ VectorEngine withPluginOnForm: form.
 	engine canvas: self.
+	auxBitBltEngine _ BitBltCanvasEngine toForm: form.
 	self newClipRect: nil.! !
 
 !VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 15:26:50'!
@@ -4082,6 +4080,39 @@ world: aWorldMorph
 !VectorDrawingCanvas methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:04:50'!
 usesVectorEnginePlugin
 	^engine usesVectorEnginePlugin! !
+
+!VectorDrawingCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/7/2021 16:58:07'!
+drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+	"Answer position to place next glyph"
+	"
+| s c f |
+c _ VectorDrawingCanvas onForm: Display.
+c geometryTransformation: (AffineTransformation withRadians: 0.1).
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
+s _ 'Latin text in VectorGraphics'.
+(c drawString: s from: 1 to: s size atBaseline: 100@100 font: f color: Color black) print.
+c strokeWidth: 1 color: Color red do: [ c moveTo: 100@100; lineTo: 1000@100 ].
+Display forceToScreen
+	"
+	| p1 |
+	"Don't waste any time if NOP"
+	lastIndex = 0 ifTrue: [
+		^nil ].
+
+	currentTransformation isPureTranslation ifTrue: [
+		Preferences cacheTrueTypeGlyphs ifTrue: [
+			p1 _ currentTransformation transform: aPoint rounded.
+			p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
+			p1 _ p1 rounded.
+			^ auxBitBltEngine
+				displayString: aString
+				from: firstIndex
+				to: lastIndex
+				at: p1
+				trueTypeFont: aTrueTypeFont
+				color: aColor ]].
+
+	^super drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
 
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
 antiAliasingWidth
