@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4904] on 8 October 2021 at 9:50:46 am'!
+'From Cuis 5.0 [latest update: #4906] on 8 October 2021 at 10:07:51 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 312!
+!provides: 'VectorGraphics' 1 313!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1796,17 +1796,6 @@ drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor:
 !HybridCanvas methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:04:24'!
 usesVectorEnginePlugin
 	^vectorCanvas usesVectorEnginePlugin! !
-
-!HybridCanvas class methodsFor: 'class initialization' stamp: 'jmv 9/24/2021 10:05:35'!
-initialize
-	| family folder |
-	UISupervisor whenUIinSafeState: [
-		(FontFamily familyNamed: FontFamily defaultFamilyName) isTrueTypeFontFamily ifFalse: [
-			folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
-			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
-			Preferences setDefaultFont: family familyName.
-			FontFamily enableTrueTypeFontsOnly ].
-		MorphicCanvas activeSubclass: HybridCanvas ].! !
 
 !AbstractVectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
@@ -4113,6 +4102,17 @@ Display forceToScreen
 				color: aColor ]].
 
 	^super drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
+
+!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 10/8/2021 10:04:52'!
+initialize
+	| family folder |
+	UISupervisor whenUIinSafeState: [
+		(FontFamily familyNamed: FontFamily defaultFamilyName) isTrueTypeFontFamily ifFalse: [
+			folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
+			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
+			Preferences setDefaultFont: family familyName.
+			FontFamily enableTrueTypeFontsOnly ].
+		MorphicCanvas activeSubclass: VectorCanvas ].! !
 
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
 antiAliasingWidth
@@ -9805,6 +9805,6 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 		at: p1
 		trueTypeFont: aTrueTypeFont
 		color: aColor! !
-HybridCanvas initialize!
 AbstractVectorCanvas initialize!
+VectorCanvas initialize!
 TTFontDescription initialize!
