@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4903] on 8 October 2021 at 9:28:05 am'!
+'From Cuis 5.0 [latest update: #4904] on 8 October 2021 at 9:50:46 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 311!
+!provides: 'VectorGraphics' 1 312!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -169,18 +169,18 @@ BitBltCanvas subclass: #HybridCanvas
 HybridCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorCanvas category: 'VectorGraphics-Kernel'!
-MorphicCanvas subclass: #VectorCanvas
+!classDefinition: #AbstractVectorCanvas category: 'VectorGraphics-Kernel'!
+MorphicCanvas subclass: #AbstractVectorCanvas
 	instanceVariableNames: 'firstPoint lastControlPoint currentPoint'
 	classVariableNames: 'IconPathData'
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorCanvas class' category: 'VectorGraphics-Kernel'!
-VectorCanvas class
+!classDefinition: 'AbstractVectorCanvas class' category: 'VectorGraphics-Kernel'!
+AbstractVectorCanvas class
 	instanceVariableNames: ''!
 
 !classDefinition: #BoundsFinderCanvas category: 'VectorGraphics-Kernel'!
-VectorCanvas subclass: #BoundsFinderCanvas
+AbstractVectorCanvas subclass: #BoundsFinderCanvas
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -189,14 +189,14 @@ VectorCanvas subclass: #BoundsFinderCanvas
 BoundsFinderCanvas class
 	instanceVariableNames: ''!
 
-!classDefinition: #VectorDrawingCanvas category: 'VectorGraphics-Kernel'!
-VectorCanvas subclass: #VectorDrawingCanvas
+!classDefinition: #VectorCanvas category: 'VectorGraphics-Kernel'!
+AbstractVectorCanvas subclass: #VectorCanvas
 	instanceVariableNames: 'boundsFinderCanvas auxBitBltEngine'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'VectorGraphics-Kernel'!
-!classDefinition: 'VectorDrawingCanvas class' category: 'VectorGraphics-Kernel'!
-VectorDrawingCanvas class
+!classDefinition: 'VectorCanvas class' category: 'VectorGraphics-Kernel'!
+VectorCanvas class
 	instanceVariableNames: ''!
 
 !classDefinition: #VectorEngine category: 'VectorGraphics-Kernel'!
@@ -599,7 +599,7 @@ A HybridCanvas works as a BitBltCanvas until faced with a situation that BitBlit
 self runningWorld setCanvas: (HybridCanvas onForm: Display).
 self runningWorld canvas class!
 
-!VectorCanvas commentStamp: '<historical>' prior: 0!
+!AbstractVectorCanvas commentStamp: 'jmv 10/8/2021 09:46:48' prior: 0!
 A VectorGraphics canvas specially built for Morphic.
 
 self runningWorld backgroundImage displayAt: 0@0. (VectorCanvas onForm: Display) fullDraw: self runningWorld. Display copy inspect.
@@ -607,7 +607,7 @@ Display writePNGfileNamed: 'm3z.png'
 
 On any Morph:
 | c |
-c _ VectorDrawingCanvas onForm: Display.
+c _ VectorCanvas onForm: Display.
 self allOwnersReverseDo: [ :m | c into: m ].
 c fullDraw: self.
 Display forceToScreen!
@@ -630,12 +630,12 @@ Variables edgeCounts and alphaMask are 4 bytes per pixel (3 actually used).!
 Does only whole pixel antialiasing. Appropriate for very high resolution displays, or slower systems where the extra computational load of VectorEngineSubPixel is not affordable.
 Variables edgeCounts and alphaMask are single byte per pixel.!
 
-!VectorEngineWithPlugin commentStamp: 'jmv 8/12/2021 16:16:59' prior: 0!
+!VectorEngineWithPlugin commentStamp: 'jmv 10/8/2021 09:49:07' prior: 0!
 "Just an experiment to exercise drawing operations."
 | m |
 m _ M3Exp01Morph new.
 m morphPosition: 15@30.
-(VectorDrawingCanvas onForm: Display) inspect; fullDraw: m.
+(VectorCanvas onForm: Display) inspect; fullDraw: m.
 Display forceToScreen.
 "Not sure if fallback code should use a pluginSmalltalkCode ivar, calling the VectorEnginePlugin in smalltalk, or duplicate that code here for fallback code (this would be better if those start to diverge because of optimizations)"!
 
@@ -1614,7 +1614,7 @@ setClipRect: aRectangle
 	super setClipRect: aRectangle.
 	vectorCanvas setClipRect: aRectangle! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 8/17/2021 14:43:28'!
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 10/8/2021 09:46:00'!
 setForm: aForm subPixelAntiAliasing: aBooleanOrNil
 	"nil means use default kind of anti aliasing"
 
@@ -1622,7 +1622,7 @@ setForm: aForm subPixelAntiAliasing: aBooleanOrNil
 	engine _ BitBltCanvasEngine toForm: form.
 	"Init BitBlt so that the first call to the 'primitiveDisplayString' primitive will not fail"
 	engine sourceX: 0; width: 0.
-	vectorCanvas _ VectorDrawingCanvas onForm: form.
+	vectorCanvas _ VectorCanvas onForm: form.
 	morphIDsForm _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
 	drawingOnMorphIDs _ false.
 	self newClipRect: nil.! !
@@ -1637,14 +1637,14 @@ setPaintColor: aColor
 
 	super setPaintColor: aColor! !
 
-!HybridCanvas methodsFor: 'private' stamp: 'jmv 8/27/2021 17:37:48'!
+!HybridCanvas methodsFor: 'private' stamp: 'jmv 10/8/2021 09:46:00'!
 setPluginAndForm: aForm
 
 	form _ aForm.
 	engine _ BitBltCanvasEngine toForm: form.
 	"Init BitBlt so that the first call to the 'primitiveDisplayString' primitive will not fail"
 	engine sourceX: 0; width: 0.
-	vectorCanvas _ VectorDrawingCanvas  basicNew
+	vectorCanvas _ VectorCanvas  basicNew
 		setPluginAndForm: form;
 		initializeWithTranslation: `0@0`.
 	morphIDsForm _ Form extent: form extent depth: 32 bits: (vectorCanvas engine instVarNamed: 'morphIds').
@@ -1808,29 +1808,29 @@ initialize
 			FontFamily enableTrueTypeFontsOnly ].
 		MorphicCanvas activeSubclass: HybridCanvas ].! !
 
-!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
+!AbstractVectorCanvas methodsFor: 'accessing' stamp: 'jmv 10/14/2014 11:02'!
 engine
 	^engine! !
 
-!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:31:49'!
+!AbstractVectorCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:31:49'!
 geometryTransformation: aGeometryTransformation
 	"Only used for testing. Usually, transformations are handled as we traverse the Morphs tree."
 
 	currentTransformation _ aGeometryTransformation.
 	engine geometryTransformation: aGeometryTransformation.! !
 
-!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 8/16/2021 15:34:57'!
+!AbstractVectorCanvas methodsFor: 'accessing' stamp: 'jmv 8/16/2021 15:34:57'!
 morphIds
 	^engine morphIds! !
 
-!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:59'!
+!AbstractVectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 3/17/2021 10:15:59'!
 fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 
 	self initializePath.
 	engine fillColor: aFillColor do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 5/10/2021 11:17:46'!
+!AbstractVectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 5/10/2021 11:17:46'!
 initializePath
 	"Perform any initialization needed before starting a Path"
 
@@ -1838,7 +1838,7 @@ initializePath
 	currentPoint _ `0.0@0.0`.
 	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:45:37'!
+!AbstractVectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:45:37'!
 strokeWidth: strokeWidth color: aStrokeColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 	"Gradients should be transformed with currentTransformation!!"
@@ -1849,7 +1849,7 @@ strokeWidth: strokeWidth color: aStrokeColor do: pathCommandsBlock
 		color: aStrokeColor
 		do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:47:24'!
+!AbstractVectorCanvas methodsFor: 'stroke & fill' stamp: 'jmv 5/12/2021 15:47:24'!
 strokeWidth: strokeWidth color: aStrokeColor fillColor: aFillColor do: pathCommandsBlock
 	"Prepare parameters for drawing stroke, fill, or both."
 	"Gradients should be transformed with currentTransformation!!"
@@ -1861,17 +1861,17 @@ strokeWidth: strokeWidth color: aStrokeColor fillColor: aFillColor do: pathComma
 		fillColor: aFillColor
 		do: pathCommandsBlock.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:04'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:13'!
 arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color red do: [ :canvas |
 		canvas
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: true;
 			moveTo: 100@100;
 			arcTo: 200@200 radius: 200@100 angleOfXAxis: 0 largeFlag: true sweepFlag: false ].
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.2 position: 200@100);
 	strokeWidth: 1.0 color: Color red do: [ :canvas |
 		canvas
@@ -1885,10 +1885,10 @@ Display forceToScreen
 	engine arcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles.
 	currentPoint _ aPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:09'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:46:54'!
 circleCenter: aPoint radius: mr
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			circleCenter: 200 @ 150 radius: 80].
@@ -1897,10 +1897,10 @@ Display forceToScreen
 
 	engine circleCenter: aPoint radius: mr! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:15'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:46:57'!
 closePath
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1914,7 +1914,7 @@ Display forceToScreen
 	firstPoint notNil ifTrue: [
 		self lineTo: firstPoint ].! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:41:11'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:41:11'!
 cubicBezier: points
 	"points must be of size 4
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -1925,14 +1925,14 @@ cubicBezier: points
 		control1: points second
 		control2: points third! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:24'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:49:13'!
 cubicBezierSmoothTo: aPoint control2: controlPoint
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
 	Smooth squence of curves: use as control1 point, last used control2 point."
 "Check that behavior is correct!!"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 150@300 radius: 10.
@@ -1941,7 +1941,7 @@ cubicBezierSmoothTo: aPoint control2: controlPoint
 		canvas
 			cubicBezierTo: 600@100 control1: 150@300 control2: 600@400
 			].
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 600 @ -200 radius: 10.
@@ -1953,7 +1953,7 @@ cubicBezierSmoothTo: aPoint control2: controlPoint
 Display forceToScreen.
 	"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -1967,12 +1967,12 @@ Display forceToScreen
 	mirroredLastControlPoint _ currentPoint + (currentPoint - lastControlPoint).
 	self cubicBezierTo: aPoint control1: mirroredLastControlPoint control2: controlPoint! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:09:47'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:18'!
 cubicBezierTo: aPoint control1: controlPoint1 control2: controlPoint2
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -1980,7 +1980,7 @@ cubicBezierTo: aPoint control1: controlPoint1 control2: controlPoint2
 Display forceToScreen
 	"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
 		canvas
@@ -1993,19 +1993,19 @@ Display forceToScreen
 	currentPoint _ aPoint.
 	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:47:09'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:47:09'!
 curveTo: aPoint control1: control1Point control2: control2Point
 
 	self cubicBezierTo: aPoint control1: control1Point control2: control2Point! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:04'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:20'!
 ellipseCenter: aPoint radius: radiusPoint
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@150 radius: 100@50].
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
@@ -2014,14 +2014,14 @@ Display forceToScreen
 "
 	engine ellipseCenter: aPoint radius: radiusPoint ! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:16'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:22'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: -0.5 ].
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 1.2 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
@@ -2031,22 +2031,22 @@ Display forceToScreen
 
 	engine ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:25'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:49:15'!
 ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle
 	"Currently draws a line from pathCurrentX@pathCurrentY to start (if startAngle ~= 0.0 or sweepAngle ~= Float twoPi).
 	This could be useful for proper fills. But might not be what is desired in some cases.
 	Implement desired behavior when clear."
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6 ].
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0.5 scale: 1.0 position: 200@100);
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@150 radius: 100@50 rotationAngle: 0.0 start: 0.1 sweep: 6].
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			ellipseCenter: 200@350 radius: 100@50 rotationAngle: 0.5 start: 0.1 sweep: 6 ].
@@ -2055,10 +2055,10 @@ Display forceToScreen.
 
 	engine ellipseCenter: aPoint radius: radiusPoint rotationAngle: theta start: startAngle sweep: sweepAngle! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:37'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:26'!
 lineTo: aPoint
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2066,7 +2066,7 @@ lineTo: aPoint
 Display forceToScreen
 "
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -2078,10 +2078,10 @@ Display forceToScreen
 	currentPoint _ aPoint.
 	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:46'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:28'!
 lineToX: xTo
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color red do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2089,7 +2089,7 @@ lineToX: xTo
 Display forceToScreen
 "
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -2099,10 +2099,10 @@ Display forceToScreen
 "
 	self lineTo: xTo @ currentPoint y! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:13:58'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:30'!
 lineToY: yTo
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2110,7 +2110,7 @@ lineToY: yTo
 Display forceToScreen
 "
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -2120,10 +2120,10 @@ Display forceToScreen
 "
 	self lineTo: currentPoint x @ yTo.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:14:12'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:47:40'!
 moveTo: aPoint
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2135,7 +2135,7 @@ Display forceToScreen
 	currentPoint _ aPoint.
 	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/18/2021 10:09:21'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 5/18/2021 10:09:21'!
 polyLine: points
 
 	| p |
@@ -2145,7 +2145,7 @@ polyLine: points
 		p _ points at: i.	
 		self lineTo: p]! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:58:30'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:58:30'!
 quadraticBezier: points
 	"points must be of size 3
 	http://en.wikipedia.org/wiki/Bezier_curve"
@@ -2153,10 +2153,10 @@ quadraticBezier: points
 	self moveTo: points first.
 	self quadraticBezierTo: points third control: points second.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:14:27'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:34'!
 quadraticBezierSmoothTo: aPoint
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 450@300 radius: 10.
@@ -2164,7 +2164,7 @@ quadraticBezierSmoothTo: aPoint
 		canvas
 			quadraticBezierTo: 600@100 control: 450@300
 			].
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 750 @ -100 radius: 10.
@@ -2175,7 +2175,7 @@ quadraticBezierSmoothTo: aPoint
 Display forceToScreen.
 "
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2189,10 +2189,10 @@ Display forceToScreen
 	mirroredLastControlPoint _ currentPoint + (currentPoint - lastControlPoint).
 	self quadraticBezierTo: aPoint control: mirroredLastControlPoint! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 8/12/2021 16:14:35'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 10/8/2021 09:48:35'!
 quadraticBezierTo: aPoint control: controlPoint
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 3.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2200,7 +2200,7 @@ quadraticBezierTo: aPoint control: controlPoint
 Display forceToScreen
 	"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 3 position: 200@100);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -2211,7 +2211,7 @@ Display forceToScreen
 	currentPoint _ aPoint.
 	lastControlPoint _ currentPoint.! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:28:30'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:28:30'!
 rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax
 
 	self
@@ -2221,7 +2221,7 @@ rectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax
 		lineTo: xMin @ yMax;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:22:50'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:22:50'!
 roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p5 p6 p7 p8 |
@@ -2248,7 +2248,7 @@ roundBottomRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 		quadraticBezierTo: p8 control: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:23:09'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:23:09'!
 roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 p5 p6 p7 p8 |
@@ -2281,7 +2281,7 @@ roundRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 		quadraticBezierTo: p8 control: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:23:21'!
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 7/20/2021 10:23:21'!
 roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 
 	| corner1 corner2 corner3 corner4 dx dy p1 p2 p3 p4 |
@@ -2307,10 +2307,10 @@ roundTopRectangleMinX: xMin maxX: xMax minY: yMin maxY: yMax rx: mrx ry: mry
 		lineTo: corner4;
 		closePath! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:14:53'!
+!AbstractVectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 10/8/2021 09:47:49'!
 rel_ArcTo: aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 5.0 color: Color red do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2321,14 +2321,14 @@ Display forceToScreen
 "
 	self arcTo: currentPoint + aPoint radius: radiusPointOrNumber angleOfXAxis: theta largeFlag: doLargerArc sweepFlag: useIncreasingAngles! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:15:05'!
+!AbstractVectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 10/8/2021 09:49:17'!
 rel_CubicBezierSmoothTo: aPoint control2: controlPoint
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve
 	Smooth squence of curves: use as control1 point, last used control2 point."
 "Check that behavior is correct!!"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2339,7 +2339,7 @@ rel_CubicBezierSmoothTo: aPoint control2: controlPoint
 Display forceToScreen
 	"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2350,7 +2350,7 @@ Display forceToScreen
 Display forceToScreen
 	"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 0.2 position: 200@100);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2365,12 +2365,12 @@ Display forceToScreen
 		cubicBezierSmoothTo: currentPoint + aPoint
 		control2: currentPoint + controlPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:15:44'!
+!AbstractVectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 10/8/2021 09:48:39'!
 rel_CubicBezierTo: aPoint control1: control1Point control2: control2Point
 	"Cubic Bezier
 	http://en.wikipedia.org/wiki/Bezier_curve"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 1.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2382,7 +2382,7 @@ rel_CubicBezierTo: aPoint control1: control1Point control2: control2Point
 Display forceToScreen
 	"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
 		canvas
@@ -2403,10 +2403,10 @@ Display forceToScreen
 		control1: currentPoint+control1Point
 		control2: currentPoint+control2Point! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:16:02'!
+!AbstractVectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 10/8/2021 09:48:43'!
 rel_LineTo: aPoint
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2418,7 +2418,7 @@ rel_LineTo: aPoint
 Display forceToScreen
 "
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withScale: 10);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -2433,10 +2433,10 @@ Display forceToScreen
 "
 	self lineTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:16:09'!
+!AbstractVectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 10/8/2021 09:47:56'!
 rel_MoveTo: aPoint
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 2.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2450,10 +2450,10 @@ Display forceToScreen
 "
 	self moveTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:16:19'!
+!AbstractVectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 10/8/2021 09:49:19'!
 rel_QuadraticBezierSmoothTo: aPoint
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color green alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 550@350 radius: 10.
@@ -2461,7 +2461,7 @@ rel_QuadraticBezierSmoothTo: aPoint
 		canvas
 			rel_QuadraticBezierTo: 600@100 control: 450@300
 			].
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color red alpha: 0.7) do: [ :canvas |
 		canvas circleCenter: 850 @ -50 radius: 10.
@@ -2472,7 +2472,7 @@ rel_QuadraticBezierSmoothTo: aPoint
 Display forceToScreen.
 "
 "
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 0 scale: 1.0 position: 100@300);
 	strokeWidth: 10 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.8) do: [ :canvas |
 		canvas moveTo: 100@50.
@@ -2485,10 +2485,10 @@ Display forceToScreen
 	self
 		quadraticBezierSmoothTo: currentPoint + aPoint! !
 
-!VectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 8/12/2021 16:16:27'!
+!AbstractVectorCanvas methodsFor: 'paths - relative coordinates' stamp: 'jmv 10/8/2021 09:48:48'!
 rel_QuadraticBezierTo: aPoint control: controlPoint
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	strokeWidth: 3.0 color: Color black do: [ :canvas |
 		canvas
 			moveTo: 100@100;
@@ -2500,7 +2500,7 @@ rel_QuadraticBezierTo: aPoint control: controlPoint
 Display forceToScreen
 	"
 	"
-(VectorDrawingCanvas onForm: Display)
+(VectorCanvas onForm: Display)
 	geometryTransformation: (AffineTransformation withRadians: 1 scale: 3 position: 200@100);
 	strokeWidth: 2 color: (Color black alpha: 0.7) fillColor: (Color orange alpha: 0.4) do: [ :canvas |
 		canvas moveTo: 10@5.
@@ -2514,7 +2514,7 @@ Display forceToScreen
 		quadraticBezierTo: currentPoint + aPoint
 		control: currentPoint + controlPoint! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 6/18/2021 11:56:58'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 6/18/2021 11:56:58'!
 multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints: toPoints doLargerArcs: doLargerArcs useIncreasingAngles: useIncreasingAngles
 
 	| to r |
@@ -2530,7 +2530,7 @@ multiArc: coordinatesAreRelative rs: rs xAxisRotations: xAxisRotations toPoints:
 				r _ rs at: i.
 				self rel_ArcTo: to radius: r angleOfXAxis: (xAxisRotations at: i) largeFlag: (doLargerArcs at: i) sweepFlag: (useIncreasingAngles at: i) ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/18/2021 10:09:24'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/18/2021 10:09:24'!
 multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1Points control2Points: control2Points
 
 	| c1 c2 to |
@@ -2548,7 +2548,7 @@ multiCurveTo: coordinatesAreRelative toPoints: toPoints control1Points: control1
 				c2 _ control2Points at: i.
 				self rel_CubicBezierTo: to control1: c1 control2: c2 ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:45:30'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:45:30'!
 multiCurveToSmooth: coordinatesAreRelative toPoints: toPoints control2Points: control2Points
 
 	| c2 to |
@@ -2564,7 +2564,7 @@ multiCurveToSmooth: coordinatesAreRelative toPoints: toPoints control2Points: co
 				c2 _ control2Points at: i.
 				self rel_CubicBezierSmoothTo: to control2: c2 ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:34:55'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:34:55'!
 multiLineTo: coordinatesAreRelative points: toPoints
 
 	coordinatesAreRelative
@@ -2575,7 +2575,7 @@ multiLineTo: coordinatesAreRelative points: toPoints
 			1 to: toPoints size do: [ :i |
 				self rel_LineTo:(toPoints at: i) ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:35:18'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:35:18'!
 multiLineTo: coordinatesAreRelative xs: xs
 
 	coordinatesAreRelative
@@ -2586,7 +2586,7 @@ multiLineTo: coordinatesAreRelative xs: xs
 			xs do: [ :x |
 				self rel_LineTo: x @ 0 ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:35:26'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:35:26'!
 multiLineTo: coordinatesAreRelative ys: ys
 
 	coordinatesAreRelative
@@ -2597,7 +2597,7 @@ multiLineTo: coordinatesAreRelative ys: ys
 			ys do: [ :y |
 				self rel_LineTo: 0 @ y ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:27:37'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 11:27:37'!
 multiMoveTo: coordinatesAreRelative points: points
 
 	| isFirst |
@@ -2616,7 +2616,7 @@ multiMoveTo: coordinatesAreRelative points: points
 					ifFalse: [ self rel_LineTo: p ].
 				isFirst _ false ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 12:02:30'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 12:02:30'!
 multiQuadraticCurveTo: coordinatesAreRelative toPoints: toPoints controlPoints: controlPoints
 
 	| c to |
@@ -2632,7 +2632,7 @@ multiQuadraticCurveTo: coordinatesAreRelative toPoints: toPoints controlPoints: 
 				c _ controlPoints at: i.
 				self rel_QuadraticBezierTo: to control: c ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 12:00:41'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 5/10/2021 12:00:41'!
 multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 
 	| to |
@@ -2646,12 +2646,12 @@ multiQuadraticCurveToSmooth: coordinatesAreRelative toPoints: toPoints
 				to _ toPoints at: i.
 				self rel_QuadraticBezierSmoothTo: to ]]! !
 
-!VectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 8/12/2021 16:14:17'!
+!AbstractVectorCanvas methodsFor: 'paths - sequences' stamp: 'jmv 10/8/2021 09:47:42'!
 pathSequence: aFloat32Array
 	"
 	'Circle approximation by bezier curves
 	https://spencermortensen.com/articles/bezier-circle/'.
-	(VectorDrawingCanvas onForm: Display)
+	(VectorCanvas onForm: Display)
 		geometryTransformation: (AffineTransformation withScale: 14 position: 100@100);
 		strokeWidth: 3 color: Color random do: [ :engine |
 			engine
@@ -2674,12 +2674,12 @@ pathSequence: aFloat32Array
 	"
 	engine pathSequence: aFloat32Array! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 8/12/2021 16:12:58'!
+!AbstractVectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 10/8/2021 09:47:06'!
 drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 	"
 | s c f |
-c _ VectorDrawingCanvas onForm: Display.
+c _ VectorCanvas onForm: Display.
 c geometryTransformation: (AffineTransformation withRadians: 0.1).
 f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
 s _ 'Latin text in VectorGraphics'.
@@ -2698,7 +2698,7 @@ Display forceToScreen
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/12/2021 14:08:53'!
+!AbstractVectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/12/2021 14:08:53'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 
@@ -2712,7 +2712,7 @@ drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aT
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true! !
 
-!VectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/12/2021 14:08:26'!
+!AbstractVectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/12/2021 14:08:26'!
 drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 
@@ -2726,7 +2726,7 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 		scale: aTrueTypeFont pointSize
 		preventMirroring: true! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:39:31'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:39:31'!
 drawCloseIcon
 
 	| c s size |
@@ -2745,7 +2745,7 @@ drawCloseIcon
 	self strokeWidth: (size/10.0 max: 1.0) color: s do: [
 		self pathSequence: (self class windowButtonClosePathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:43:27'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:43:27'!
 drawCollapseIcon
 
 	| c s size |
@@ -2764,7 +2764,7 @@ drawCollapseIcon
 	self strokeWidth: (size/10.0 max: 1.0) color: s do: [
 		self pathSequence: (self class windowButtonCollapsePathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:23:01'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:23:01'!
 drawDownIcon
 	| c size |
 	c _ currentMorph isPressed
@@ -2774,7 +2774,7 @@ drawDownIcon
 	self strokeWidth: size/7.2 color: c do: [
 		self pathSequence: (self class scrollDownPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:43:53'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:43:53'!
 drawExpandIcon
 
 	| c s size |
@@ -2793,7 +2793,7 @@ drawExpandIcon
 	self strokeWidth: (size/10.0 max: 1.0) color: s do: [
 		self pathSequence: (self class windowButtonExpandPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/2/2021 14:35:41'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/2/2021 14:35:41'!
 drawExpandedAt: aPoint
 	"For Tree View (IndentingListItemMorph)"
 
@@ -2804,7 +2804,7 @@ drawExpandedAt: aPoint
 			rel_LineTo: `5 @ -10`;
 			rel_LineTo: `-10 @ 0` ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 12:00:21'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 12:00:21'!
 drawHandLarge
 
 	self strokeWidth: 2.2 color: `Color black` fillColor: `Color white` do: [ :canvas |
@@ -2840,7 +2840,7 @@ drawHandLarge
 			] asFloat32Array` ].
 ! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 12:01:08'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 7/29/2021 12:01:08'!
 drawHandSmall
 
 	self strokeWidth: 1.1 color: `Color black` fillColor: `Color white` do: [ :canvas |
@@ -2875,7 +2875,7 @@ drawHandSmall
 				1.0    5.33    17.34
 			] asFloat32Array` ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:07'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:07'!
 drawLeftIcon
 	| c size |
 	c _ currentMorph isPressed
@@ -2885,7 +2885,7 @@ drawLeftIcon
 	self strokeWidth: size/7.2 color: c do: [
 		self pathSequence: (self class scrollLeftPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:42:50'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:42:50'!
 drawMenuIcon
 
 	| c s size |
@@ -2904,7 +2904,7 @@ drawMenuIcon
 	self fillColor: s do: [
 		self pathSequence: (self class windowButtonMenuPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/2/2021 14:52:28'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/2/2021 14:52:28'!
 drawNotExpandedAt: aPoint
 	"For Tree View (IndentingListItemMorph)"
 
@@ -2915,7 +2915,7 @@ drawNotExpandedAt: aPoint
 			rel_LineTo: `-10 @ 5`;
 			rel_LineTo: `0 @ -10` ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:47:36'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 9/5/2021 14:47:36'!
 drawPushPinIcon
 	"For Menu stay-up button"
 	| c s size |
@@ -2930,7 +2930,7 @@ drawPushPinIcon
 	self strokeWidth: size/30.0 color: s fillColor: c do: [
 		self pathSequence: (self class pushPinIconData: size) ]! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:16'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:16'!
 drawRightIcon
 	| c size |
 	c _ currentMorph isPressed
@@ -2940,7 +2940,7 @@ drawRightIcon
 	self strokeWidth: size/7.2 color: c do: [
 		self pathSequence: (self class scrollRightPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:30'!
+!AbstractVectorCanvas methodsFor: 'drawing - icons' stamp: 'jmv 8/26/2021 12:25:30'!
 drawUpIcon
 	| c size |
 	c _ currentMorph isPressed
@@ -2950,14 +2950,14 @@ drawUpIcon
 	self strokeWidth: size/7.2 color: c do: [
 		self pathSequence: (self class scrollUpPathData: size) ].! !
 
-!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 8/12/2021 16:12:39'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 10/8/2021 09:47:04'!
 drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor: insideColor labelHeight: labelHeight
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
 	"
 	Display getCanvas windowFrame: (10@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
-	VectorDrawingCanvas onForm: Display :: drawRoundedFrame: (210@10 extent: 200@100) border: 5 color: Color red insideColor: Color green labelHeight: 25.
+	VectorCanvas onForm: Display :: drawRoundedFrame: (210@10 extent: 200@100) border: 5 color: Color red insideColor: Color green labelHeight: 25.
 	Display forceToScreen
 	"
 	"
@@ -2982,7 +2982,7 @@ drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor:
 		self
 			roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh-d2 maxY: aRectangle bottom-d2 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:01:52'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:01:52'!
 roundBottomLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
 
 	| d1 d2 r corner p1 p2 p3 p4 |
@@ -3001,7 +3001,7 @@ roundBottomLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth
 			quadraticBezierTo: p3 control: corner;
 			lineTo: p4 ].! !
 
-!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:04:24'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:04:24'!
 roundBottomRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
 
 	| d2 r corner p1 p2 p3 p4 |
@@ -3019,12 +3019,12 @@ roundBottomRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidt
 			quadraticBezierTo: p3 control: corner;
 			lineTo: p4 ].! !
 
-!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:22:59'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:22:59'!
 roundEdge: aRectangle color: aColor
 
 	self fillRectangle: aRectangle color: aColor! !
 
-!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:50:30'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:50:30'!
 roundTopLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
 
 	| d1 r corner p1 p2 p3 p4 |
@@ -3042,7 +3042,7 @@ roundTopLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth co
 			quadraticBezierTo: p3 control: corner;
 			lineTo: p4 ].! !
 
-!VectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:55:27'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:55:27'!
 roundTopRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
 
 	| d1 d2 r corner p1 p2 p3 p4 |
@@ -3061,7 +3061,7 @@ roundTopRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidth c
 			quadraticBezierTo: p3 control: corner;
 			lineTo: p4 ].! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/13/2021 18:06:10'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/13/2021 18:06:10'!
 ellipseCenter: center radius: radiusPointOrNumber borderWidth: morphStrokeWidth borderColor: strokeColor fillColor: fillColor
 
 	| radiusPoint |
@@ -3069,7 +3069,7 @@ ellipseCenter: center radius: radiusPointOrNumber borderWidth: morphStrokeWidth 
 	self strokeWidth: morphStrokeWidth color: strokeColor fillColor: fillColor do: [
 		self ellipseCenter: center radius: radiusPoint ]! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
 fillRectangle: aRectangle color: aColor
 	"For BitBltCanvas protocol, aRectangle:
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
@@ -3077,14 +3077,14 @@ fillRectangle: aRectangle color: aColor
 	self fillColor: aColor do: [
 		self rectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 ]! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 11/17/2020 09:37:10'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 11/17/2020 09:37:10'!
 fillRectangle: aRectangle color: aColor borderWidth: borderWidth borderStyleSymbol: aSymbol baseColorForBorder: baseColorForBorder
 	aSymbol = #simple ifTrue: [
 		^ self frameAndFillRectangle: aRectangle fillColor: aColor borderWidth: borderWidth borderColor: baseColorForBorder ].
 	
 	super fillRectangle: aRectangle color: aColor borderWidth: borderWidth borderStyleSymbol: aSymbol baseColorForBorder: baseColorForBorder! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/23/2020 12:22:22'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/23/2020 12:22:22'!
 frameAndFillRectangle: aRectangle fillColor: aColor borderWidth: borderWidth borderColor: borderColor
 	"For BitBltCanvas protocol, aRectangle:
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
@@ -3092,7 +3092,7 @@ frameAndFillRectangle: aRectangle fillColor: aColor borderWidth: borderWidth bor
 	self strokeWidth: borderWidth color: borderColor fillColor: aColor do: [
 		self rectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 ]! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 20:57:09'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 20:57:09'!
 frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
@@ -3104,13 +3104,13 @@ frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
 	self strokeWidth: borderWidth color: borderColor do: [
 		self rectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle bottom-d2 ]! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/12/2021 16:13:31'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/8/2021 09:47:32'!
 frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borderWidth: morphStrokeWidth
 	"For BitBltCanvas protocol, aRectangle:
 	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
 	"
-	(VectorDrawingCanvas onForm: Display)
+	(VectorCanvas onForm: Display)
 		frameRectangle: (10@10 extent: 300@200)
 		color: Color green
 		borderWidth: 10
@@ -3132,14 +3132,14 @@ frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borde
 		self lineTo: (aRectangle left + d1) @ (aRectangle top + d1).
 		self lineTo: (aRectangle right - d2) @ (aRectangle top + d1) ].! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:25:57'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:25:57'!
 line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
 
 	self strokeWidth: morphStrokeWidth color: aStrokeColor do: [
 		self moveTo: pt1.
 		self lineTo: pt2 ]! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 21:10:33'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 21:10:33'!
 roundRect: aRectangle color: aColor radius: r
 	"For BitBltCanvas protocol, aRectangle:
 	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
@@ -3147,7 +3147,7 @@ roundRect: aRectangle color: aColor radius: r
 		self
 			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:19'!
+!AbstractVectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:19'!
 drawCurrentAndSubmorphs
 	
 	currentMorph visible ifTrue: [
@@ -3168,19 +3168,19 @@ drawCurrentAndSubmorphs
 			self drawHighlight: currentMorph ].
 	].! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:10'!
+!AbstractVectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:10'!
 drawHand
 
 	self drawsHandLarge
 		ifTrue: [self drawHandLarge]
 		ifFalse: [self drawHandSmall].! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:58'!
+!AbstractVectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:58'!
 drawsHandLarge
 
 	^true! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 10:31:08'!
+!AbstractVectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 10:31:08'!
 into: aMorph
 	super into: aMorph.
 	engine
@@ -3188,7 +3188,7 @@ into: aMorph
 		resetMorphBounds;
 		geometryTransformation: currentTransformation.! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 10:30:46'!
+!AbstractVectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 10:30:46'!
 outOfMorph
 	super outOfMorph.
 	engine
@@ -3196,13 +3196,13 @@ outOfMorph
 		resetMorphBounds;
 		geometryTransformation: currentTransformation.! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 12/21/2020 17:36:45'!
+!AbstractVectorCanvas methodsFor: 'private' stamp: 'jmv 12/21/2020 17:36:45'!
 fontToUse: fontOrNil
 	"Answer a suitable font, aFont if possible."
 
 	^fontOrNil ifNil: [ FontFamily defaultOrTrueTypeFamilyAndPointSize ].! !
 
-!VectorCanvas methodsFor: 'morphic world' stamp: 'jmv 9/1/2021 15:36:04'!
+!AbstractVectorCanvas methodsFor: 'morphic world' stamp: 'jmv 9/1/2021 15:36:04'!
 boundingRectOfCurrentMorphAfterDraw
 	"In targetForm coordinates.
 	Clipped to owner if appropriate.
@@ -3223,11 +3223,11 @@ boundingRectOfCurrentMorphAfterDraw
 		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
 		ifNil: [ boundingRect ]! !
 
-!VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
+!AbstractVectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
 arrowOfDirection: aSymbol size: finalSizeInteger
 	self flag: #jmvVer2.! !
 
-!VectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 5/18/2021 10:09:02'!
+!AbstractVectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 5/18/2021 10:09:02'!
 buildArrowOfDirection: aSymbolDirection size: finalSizeInteger
 	"PRIVATE - create an arrow with aSymbolDirectionDirection,
 	finalSizeInteger and aColor
@@ -3238,13 +3238,13 @@ buildArrowOfDirection: aSymbolDirection size: finalSizeInteger
 	"
 	self flag: #jmvVer2.! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/27/2021 16:38:38'!
+!AbstractVectorCanvas class methodsFor: 'samples' stamp: 'jmv 10/8/2021 09:47:19'!
 experiment1
 	"
 	Not perfect, but can be compared with
 	http://www.hpl.hp.com/research/mmsl/projects/graphics/antialiasing/figure21.htm
 	BTW, this is so much faster...
-	VectorDrawingCanvas experiment1
+	VectorCanvas experiment1
 	"
 | canvas h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 e f |
 canvas _ self onForm: Display.
@@ -3299,10 +3299,10 @@ Display forceToScreen.
 	f writePNGfileNamed: 'pp17.png'
 "! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/27/2021 16:38:53'!
+!AbstractVectorCanvas class methodsFor: 'samples' stamp: 'jmv 10/8/2021 09:47:21'!
 experiment2
 	"
-	VectorDrawingCanvas experiment2
+	VectorCanvas experiment2
 	"
 | canvas h bottom centerX w0 hf y delta prevDelta prevY color x1p x2p x1 x2 |
 canvas _ self onForm: Display.
@@ -3344,10 +3344,10 @@ delta _ nil.
 Display forceToScreen.
 ! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/27/2021 16:39:27'!
+!AbstractVectorCanvas class methodsFor: 'samples' stamp: 'jmv 10/8/2021 09:47:23'!
 experiment3
 	"
-	VectorDrawingCanvas experiment3
+	VectorCanvas experiment3
 	"
 	| canvas w r |
 	canvas _ self onForm: Display.
@@ -3364,10 +3364,10 @@ experiment3
 	].
 Display forceToScreen! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/27/2021 16:39:44'!
+!AbstractVectorCanvas class methodsFor: 'samples' stamp: 'jmv 10/8/2021 09:47:25'!
 experiment4
 	"
-	VectorDrawingCanvas experiment4
+	VectorCanvas experiment4
 	"
 	| canvas w r |
 	canvas _ self onForm: Display.
@@ -3383,10 +3383,10 @@ experiment4
 	].
 Display forceToScreen! !
 
-!VectorCanvas class methodsFor: 'samples' stamp: 'jmv 8/12/2021 09:47:37'!
+!AbstractVectorCanvas class methodsFor: 'samples' stamp: 'jmv 10/8/2021 09:48:02'!
 siemensStar
 	"
-	VectorDrawingCanvas siemensStar display
+	VectorCanvas siemensStar display
 	"
 	| angle backColor canvas count extent foreColor form location offsetFromCenter |
 	count _ 32.
@@ -3397,7 +3397,7 @@ siemensStar
 	foreColor _ `Color gray: 200/255`.
 	form _ Form extent: extent asPoint depth: 32.
 	form fillColor: backColor.
-	canvas _ VectorDrawingCanvas onForm: form.
+	canvas _ VectorCanvas onForm: form.
 	1 to: count do: [ :i |
 		location _ AffineTransformation withRadians: i * angle * 2+0.02 scale: extent*0.45 position: extent-1/2.0 + offsetFromCenter.
 		canvas geometryTransformation: location.
@@ -3411,19 +3411,19 @@ siemensStar
 	].
 	^form! !
 
-!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 8/26/2021 16:22:54'!
+!AbstractVectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 8/26/2021 16:22:54'!
 guiSizePreferenceChanged
 	"Some preference related to size of gui elements may have changed."
 	IconPathData removeAll.! !
 
-!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 8/26/2021 11:26:56'!
+!AbstractVectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 10/8/2021 09:45:19'!
 initialize
 	"
-	VectorCanvas initialize
+	AbstractVectorCanvas initialize
 	"
 	IconPathData _ Dictionary new.! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:36'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:36'!
 pushPinIconData: aSize
 	| scale |
 	^IconPathData at: #pushPinIcon ifAbsentPut: [
@@ -3441,7 +3441,7 @@ pushPinIconData: aSize
 			1 0 21
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:26'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:26'!
 scrollDownPathData: aSize
 	| scale |
 	^IconPathData at: #scrollDown ifAbsentPut: [
@@ -3452,7 +3452,7 @@ scrollDownPathData: aSize
 			1 14 7
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:37'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:37'!
 scrollLeftPathData: aSize
 	| scale |
 	^IconPathData at: #scrollLeft ifAbsentPut: [
@@ -3463,7 +3463,7 @@ scrollLeftPathData: aSize
 			1 12 14
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:43'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:43'!
 scrollRightPathData: aSize
 	| scale |
 	^IconPathData at: #scrollRight ifAbsentPut: [
@@ -3474,7 +3474,7 @@ scrollRightPathData: aSize
 			1 7 14
 			] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:48'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:23:48'!
 scrollUpPathData: aSize
 	| scale |
 	^IconPathData at: #scrollUp ifAbsentPut: [
@@ -3485,7 +3485,7 @@ scrollUpPathData: aSize
 			1 14 12
 			] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:31'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:31'!
 windowButtonClosePathData: aSize
 	| scale |
 	^IconPathData at: #windowButtonClose ifAbsentPut: [
@@ -3497,7 +3497,7 @@ windowButtonClosePathData: aSize
 			1 14 14
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:27'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:27'!
 windowButtonCollapsePathData: aSize
 	| scale |
 	^IconPathData at: #windowButtonCollapse ifAbsentPut: [
@@ -3507,7 +3507,7 @@ windowButtonCollapsePathData: aSize
 			1 15 10
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:21'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:21'!
 windowButtonExpandPathData: aSize
 	| scale |
 	^IconPathData at: #windowButtonExpand ifAbsentPut: [
@@ -3519,7 +3519,7 @@ windowButtonExpandPathData: aSize
 			1 10 15
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:16'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 8/26/2021 12:15:16'!
 windowButtonMenuPathData: aSize
 	| scale |
 	^IconPathData at: #windowButtonMenu ifAbsentPut: [
@@ -3531,7 +3531,7 @@ windowButtonMenuPathData: aSize
 			1 4 8
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 9/5/2021 14:52:27'!
+!AbstractVectorCanvas class methodsFor: 'literal path data' stamp: 'jmv 9/5/2021 14:52:27'!
 windowButtonPathData: aSize
 	| scale |
 	^IconPathData at: #windowButton ifAbsentPut: [
@@ -3544,7 +3544,7 @@ windowButtonPathData: aSize
 			2    0 10 0.5 0.5
 		] asFloat32Array` scale: scale ].! !
 
-!VectorCanvas class methodsFor: 'private' stamp: 'jmv 8/26/2021 11:17:52'!
+!AbstractVectorCanvas class methodsFor: 'private' stamp: 'jmv 8/26/2021 11:17:52'!
 scalePathData: aFloat32Array scale: scale
 	"aFloatArray is a #pathSequence: argument. It encodes a sequence of path commands in a Float32Array.
 	See #pathSequence:"
@@ -3729,14 +3729,14 @@ setPluginAndForm: aForm
 
 	self setForm: aForm subPixelAntiAliasing: nil.! !
 
-!VectorDrawingCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:34:48'!
+!VectorCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:34:48'!
 boundsFinderCanvas
 	^boundsFinderCanvas! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/7/2021 16:58:12'!
+!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/8/2021 09:48:55'!
 frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
 	"
-	(VectorDrawingCanvas onForm: Display)
+	(VectorCanvas onForm: Display)
 		frameAndFillGlobalRect: (10@10 extent: 300@200)
 		fillColor: Color yellow
 		borderWidth: 20
@@ -3751,10 +3751,10 @@ frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color
 		fillColor: fillColor;
 		fillRect: (rect insetBy: borderWidth).! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/7/2021 16:58:17'!
+!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/8/2021 09:48:59'!
 frameGlobalRect: rect borderWidth: borderWidth color: borderColor
 	"
-	(VectorDrawingCanvas onForm: Display)
+	(VectorCanvas onForm: Display)
 		frameGlobalRect: (10@10 extent: 300@200)
 		borderWidth: 20
 		color: Color red.
@@ -3765,10 +3765,10 @@ frameGlobalRect: rect borderWidth: borderWidth color: borderColor
 		fillColor: borderColor;
 		frameRect: rect borderWidth: borderWidth.! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/7/2021 16:58:21'!
+!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/8/2021 09:49:04'!
 frameReverseGlobalRect: rect borderWidth: borderWidth
 	"
-	(VectorDrawingCanvas onForm: Display)
+	(VectorCanvas onForm: Display)
 		frameReverseGlobalRect: (10@10 extent: 300@200)
 		borderWidth: 20.
 	Display forceToScreen
@@ -3779,7 +3779,7 @@ frameReverseGlobalRect: rect borderWidth: borderWidth
 		combinationRule: Form reverse;
 		frameRect: rect borderWidth: borderWidth! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/7/2021 16:58:50'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/7/2021 16:58:50'!
 image: srcForm at: aPoint
 	"Workaround using WarpBlt until properly implemented in VectorEngine.
 	 (WarpBlt might not give desired result, i.e. a properly filtered and resamples image)
@@ -3850,7 +3850,7 @@ image: srcForm at: aPoint
 				cellSize: cellSize;
 				copyQuad: srcQuad toRect: dstBox ].! !
 
-!VectorDrawingCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/17/2021 10:24:17'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/17/2021 10:24:17'!
 imageUnrotated: srcForm at: aPoint
 	"Workaround using WarpBlt until properly implemented in VectorEngine.
 	Scale and position like #image:at:, but don't rotate srcForm:
@@ -3881,11 +3881,11 @@ imageUnrotated: srcForm at: aPoint
 		copyQuad: srcQuad toRect: dstBox.
 ! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:55:58'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:55:58'!
 clipCurrentMorph: aBoolean
 	engine clipCurrentMorph: aBoolean! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 9/1/2021 11:25:09'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 9/1/2021 11:25:09'!
 contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -3895,7 +3895,7 @@ contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
 
 	engine morphContourAfterDrawInto: anArray into: aBlock.! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 9/1/2021 11:22:28'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 9/1/2021 11:22:28'!
 contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -3909,7 +3909,7 @@ contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBotto
 			engine morphContourAfterDrawUpdate: anArray 
 				oldTop: oldTop oldBottom: oldBottom into: aBlock ].! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 8/27/2021 19:55:39'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/27/2021 19:55:39'!
 drawCurrentAsError
 	"The morph (or one of its submorphs) had an error in its drawing method."
 	| r w |
@@ -3927,11 +3927,11 @@ drawCurrentAsError
 	self line: r topRight-0.5 to: r bottomLeft-0.5 width: w color: `Color yellow`.	
 	currentMorph displayBoundsSetFrom: self.! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 9/20/2021 12:07:54'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 9/20/2021 12:07:54'!
 morphIdAt: aPoint
 	^engine morphIdAt: aPoint.! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 15:41:49'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 15:41:49'!
 restorePatch: savedPatch bounds: savedBounds
 	"Argument must previously be obtained by calling #savePatch:bounds:"
 
@@ -3951,7 +3951,7 @@ restorePatch: savedPatch bounds: savedBounds
 			copyBits.
 	] ensure: [ form bits: bits ].! !
 
-!VectorDrawingCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:55'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:55'!
 savePatch: prevSavedPatch bounds: aRectangle
 	"Senders don't need to know any details of what is answered, but just store it for further calls, and calls to restorePatch:bounds:"
 	"Details: The previously used patch Form is recycled when possible to reduce the burden on storage management."
@@ -3994,7 +3994,7 @@ savePatch: prevSavedPatch bounds: aRectangle
 
 	^answer! !
 
-!VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 16:05:57'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 16:05:57'!
 pvtDrawButtonFaceForm: aForm
 	"We assume that we are drawing a PluggableButtonMorph,
 	or some morph that conforms the required protocol.
@@ -4011,7 +4011,7 @@ pvtDrawButtonFaceForm: aForm
 		image: aForm
 		at: (currentMorph morphExtent - aForm extent //2).! !
 
-!VectorDrawingCanvas methodsFor: 'private' stamp: 'jmv 10/7/2021 17:36:57'!
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 10/7/2021 17:36:57'!
 setClipRect: aRectangle
 	"In targetForm coordinates"
 
@@ -4022,7 +4022,7 @@ setClipRect: aRectangle
 	boundsFinderCanvas ifNotNil: [
 		boundsFinderCanvas setClipRect: aRectangle ].! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/18/2021 11:42:58'!
+!VectorCanvas methodsFor: 'initialization' stamp: 'jmv 8/18/2021 11:42:58'!
 initializeWithTranslation: aPoint
 
 	super initializeWithTranslation: aPoint.
@@ -4033,7 +4033,7 @@ initializeWithTranslation: aPoint
 	boundsFinderCanvas engine antiAliasingWidth: engine antiAliasingWidth.
 	boundsFinderCanvas engine subPixelDelta: engine subPixelDelta.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 9/7/2021 09:53:54'!
+!VectorCanvas methodsFor: 'initialization' stamp: 'jmv 9/7/2021 09:53:54'!
 resetCanvas
 	"To be called in case of possible inconsistency due to an exception during drawing.
 	See #displayWorldSafely"
@@ -4042,7 +4042,7 @@ resetCanvas
 	boundsFinderCanvas resetCanvas.
 	engine clearArrays.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 10/7/2021 16:50:53'!
+!VectorCanvas methodsFor: 'initialization' stamp: 'jmv 10/7/2021 16:50:53'!
 setForm: aForm subPixelAntiAliasing: aBoolean
 	"nil means use default kind of anti aliasing"
 	"
@@ -4058,7 +4058,7 @@ setForm: aForm subPixelAntiAliasing: aBoolean
 	auxBitBltEngine _ BitBltCanvasEngine toForm: form.
 	self newClipRect: nil.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 10/7/2021 16:51:02'!
+!VectorCanvas methodsFor: 'initialization' stamp: 'jmv 10/7/2021 16:51:02'!
 setPluginAndForm: aForm
 	"Note: Only one instance should use VectorEnginePlugin at a time:
 	the plugin holds numeric parameters that are not passed again on every call."
@@ -4072,21 +4072,21 @@ setPluginAndForm: aForm
 	auxBitBltEngine _ BitBltCanvasEngine toForm: form.
 	self newClipRect: nil.! !
 
-!VectorDrawingCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 15:26:50'!
+!VectorCanvas methodsFor: 'initialization' stamp: 'jmv 8/12/2021 15:26:50'!
 world: aWorldMorph
 	super world: aWorldMorph.
 	boundsFinderCanvas world: aWorldMorph! !
 
-!VectorDrawingCanvas methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:04:50'!
+!VectorCanvas methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:04:50'!
 usesVectorEnginePlugin
 	^engine usesVectorEnginePlugin! !
 
-!VectorDrawingCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/7/2021 16:58:07'!
+!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/8/2021 09:48:50'!
 drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 	"
 | s c f |
-c _ VectorDrawingCanvas onForm: Display.
+c _ VectorCanvas onForm: Display.
 c geometryTransformation: (AffineTransformation withRadians: 0.1).
 f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
 s _ 'Latin text in VectorGraphics'.
@@ -8029,7 +8029,7 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 8/12/2021 09:47:00'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 10/8/2021 09:46:00'!
 formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	"Needed only for BitBltCanvasEngine"
 	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i iso8859s15Code |
@@ -8060,7 +8060,7 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
-	canvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: form.
+	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: form.
 	canvas 
 		engine
 			displayString: aCharacter asString
@@ -8078,7 +8078,7 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale)! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 8/12/2021 09:47:07'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 10/8/2021 09:46:00'!
 formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrNil pixelSize: pixelSize useST80Glyphs: aBoolean
 	"Needed only for BitBltCanvasEngine"
 	| utf8ByteArray toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i |
@@ -8115,7 +8115,7 @@ formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrN
 	
 	form _ Form extent: formWidth@formHeight depth: 32.
 	form fillColor: Color white.
-	canvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: form.
+	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: form.
 	canvas 
 		engine
 			displayUtf8: utf8ByteArray
@@ -9391,7 +9391,7 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/19/2021 10:44:11'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/8/2021 09:46:00'!
 bitMask
 	"Answer an 1bpp Form with our bitMask:
 	Query with #pixelValueAt:
@@ -9412,7 +9412,7 @@ bitMask
 	[
 		answer _ Form extent: bounds extent depth: 32.
 		"Ask for a Canvas with subpixels so it can also handle translucent target"
-		auxCanvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: answer translation: bounds origin negated.
+		auxCanvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer translation: bounds origin negated.
 		"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
 		auxCanvas engine disableSubPixelSampling.
 		self privateFlagAt: 3 put: false.
@@ -9482,7 +9482,7 @@ showBitMask
 			(self coversPixel: x@y) ifTrue: [
 				Display colorAt: x@y put: Color red ]]].! !
 
-!MovableMorph methodsFor: '*vectorGraphics' stamp: 'jmv 9/21/2021 10:29:49'!
+!MovableMorph methodsFor: '*vectorGraphics' stamp: 'jmv 10/8/2021 09:46:00'!
 imageForm: extentOrNil depth: depth
 	"Scale as needed. Draw unrotated."
 
@@ -9506,7 +9506,7 @@ imageForm: extentOrNil depth: depth
 		location _ location invertingYAxis: self yAxisPointsUp.
 		answer _ Form extent: extent depth: 32.
 		"Ask for a Canvas with subpixels so it can also handle translucent target"
-		auxCanvas _ VectorDrawingCanvas onFormWithSubPixelAntiAliasing: answer.
+		auxCanvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
 		"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
 		auxCanvas engine disableSubPixelSampling.
 		depth = 32 ifFalse: [
@@ -9581,11 +9581,11 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 
 	self subclassResponsibility! !
 
-!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 8/27/2021 14:45:08'!
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 10/8/2021 09:46:42'!
 demoUTF32Unicode
 	"
 	BitBltCanvas demoUTF32Unicode.							'Uses glyphs cached in Forms. Sample text is UTF-32.'.
-	VectorDrawingCanvas demoUTF32Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-32.'
+	VectorCanvas demoUTF32Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-32.'
 	"
 	| f askFont |
 	Preferences disable: #loadOnlyLatinGlyphData.
@@ -9612,11 +9612,11 @@ demoUTF32Unicode
 	(FontFamily familyName: 'HanWangMingMedium' pointSize: 24) ifNotNil: [ :ff |
 		self exampleUtf32Chinese: ff ].! !
 
-!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 8/27/2021 14:45:20'!
+!MorphicCanvas class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 10/8/2021 09:46:45'!
 demoUTF8Unicode
 	"
 	BitBltCanvas demoUTF8Unicode.							'Uses glyphs cached in Forms. Sample text is UTF-8.'.
-	VectorDrawingCanvas demoUTF8Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-8.'
+	VectorCanvas demoUTF8Unicode.							'Draws glyphs each time, using VectorEngine. Sample text is UTF-8.'
 	"
 	"Note: For Chinese text sample, you need HanWangMingMedium or other suitable Unicode TrueType font with Chinese glyphs."
 	| f askFont |
@@ -9806,5 +9806,5 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 		trueTypeFont: aTrueTypeFont
 		color: aColor! !
 HybridCanvas initialize!
-VectorCanvas initialize!
+AbstractVectorCanvas initialize!
 TTFontDescription initialize!
