@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4906] on 8 October 2021 at 10:07:51 am'!
+'From Cuis 5.0 [latest update: #4919] on 13 October 2021 at 2:21:36 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 313!
+!provides: 'VectorGraphics' 1 317!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -2939,13 +2939,10 @@ drawUpIcon
 	self strokeWidth: size/7.2 color: c do: [
 		self pathSequence: (self class scrollUpPathData: size) ].! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 10/8/2021 09:47:04'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 10/12/2021 14:41:01'!
 drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor: insideColor labelHeight: labelHeight
-	"For BitBltCanvas protocol, aRectangle:
-	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
-	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
 	"
-	Display getCanvas windowFrame: (10@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
+	BitBltCanvas onForm: Display ::  windowFrame: (10@10 extent: 200@100) color: Color red radius: 10 border: 5 labelHeight: 25 gradientTop: 1.0 gradientBottom: 0.5 insideColor: Color green.
 	VectorCanvas onForm: Display :: drawRoundedFrame: (210@10 extent: 200@100) border: 5 color: Color red insideColor: Color green labelHeight: 25.
 	Display forceToScreen
 	"
@@ -2958,25 +2955,24 @@ drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor:
 		self rectangleMinX: aRectangle left+hbw maxX: aRectangle right-hbw minY: aRectangle top+hbw maxY: aRectangle top + lh-hbw ].
 	"
 
-	| d1 d2 lh r |
-	d1 _ borderWidth*0.5-0.5.
-	d2 _ borderWidth*0.5+0.5.
+	| d lh r |
+	d _ borderWidth*0.5.
 	lh _ labelHeight + borderWidth.
 	r _ Theme current roundedWindowRadius.
 
 	self strokeWidth: borderWidth color: borderColor fillColor: borderColor do: [
 		self 
-			roundTopRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle top+lh-d2 rx: r ry: r ].
+			roundTopRectangleMinX: aRectangle left+d maxX: aRectangle right-d minY: aRectangle top+d maxY: aRectangle top+lh-d rx: r ry: r ].
 	self strokeWidth: borderWidth color: borderColor fillColor: insideColor do: [
 		self
-			roundBottomRectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+lh-d2 maxY: aRectangle bottom-d2 rx: r ry: r ]! !
+			roundBottomRectangleMinX: aRectangle left+d maxX: aRectangle right-d minY: aRectangle top+lh-d maxY: aRectangle bottom-d rx: r ry: r ]! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:01:52'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 10/11/2021 09:28:51'!
 roundBottomLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
 
 	| d1 d2 r corner p1 p2 p3 p4 |
-	d1 _ borderWidth*0.5-0.5.
-	d2 _ borderWidth*0.5+0.5.
+	d1 _ borderWidth*0.5.
+	d2 _ borderWidth*0.5.
 	r _ Theme current roundedWindowRadius.
 	corner _ (rectOriginX + d1)@(rectOriginY + l - d2).
 	p1 _ corner - (0@l).
@@ -2990,11 +2986,11 @@ roundBottomLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth
 			quadraticBezierTo: p3 control: corner;
 			lineTo: p4 ].! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:04:24'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 10/11/2021 09:28:56'!
 roundBottomRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
 
 	| d2 r corner p1 p2 p3 p4 |
-	d2 _ borderWidth*0.5+0.5.
+	d2 _ borderWidth*0.5.
 	r _ Theme current roundedWindowRadius.
 	corner _ (rectOriginX + l - d2)@(rectOriginY + l - d2).
 	p1 _ corner - (l@0).
@@ -3008,16 +3004,19 @@ roundBottomRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidt
 			quadraticBezierTo: p3 control: corner;
 			lineTo: p4 ].! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 11:22:59'!
-roundEdge: aRectangle color: aColor
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 10/11/2021 18:38:11'!
+roundEdge: aRectangle border: borderWidth color: borderColor
 
-	self fillRectangle: aRectangle color: aColor! !
+	self strokeWidth: borderWidth color: borderColor do: [
+		self
+			moveTo: aRectangle origin;
+			lineTo: aRectangle corner ].! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:50:30'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 10/11/2021 09:29:02'!
 roundTopLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
 
 	| d1 r corner p1 p2 p3 p4 |
-	d1 _ borderWidth*0.5-0.5.
+	d1 _ borderWidth*0.5.
 	r _ Theme current roundedWindowRadius.
 	corner _ rectOriginX@rectOriginY + d1.
 	p1 _ corner + (0@l).
@@ -3031,12 +3030,12 @@ roundTopLeftCornerX: rectOriginX y: rectOriginY length: l border: borderWidth co
 			quadraticBezierTo: p3 control: corner;
 			lineTo: p4 ].! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 7/20/2021 10:55:27'!
+!AbstractVectorCanvas methodsFor: 'drawing - windows' stamp: 'jmv 10/11/2021 09:29:09'!
 roundTopRightCornerX: rectOriginX y: rectOriginY length: l border: borderWidth color: borderColor
 
 	| d1 d2 r corner p1 p2 p3 p4 |
-	d1 _ borderWidth*0.5-0.5.
-	d2 _ borderWidth*0.5+0.5.
+	d1 _ borderWidth*0.5.
+	d2 _ borderWidth*0.5.
 	r _ Theme current roundedWindowRadius.
 	corner _ (rectOriginX + l - d2)@(rectOriginY + d1).
 	p1 _ corner - (l@0).
@@ -3058,13 +3057,13 @@ ellipseCenter: center radius: radiusPointOrNumber borderWidth: morphStrokeWidth 
 	self strokeWidth: morphStrokeWidth color: strokeColor fillColor: fillColor do: [
 		self ellipseCenter: center radius: radiusPoint ]! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/10/2017 22:59:51'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/12/2021 14:34:35'!
 fillRectangle: aRectangle color: aColor
-	"For BitBltCanvas protocol, aRectangle:
-	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
 
 	self fillColor: aColor do: [
-		self rectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 ]! !
+		self
+			rectangleMinX: aRectangle left maxX: aRectangle right
+			minY: aRectangle top maxY: aRectangle bottom ].! !
 
 !AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 11/17/2020 09:37:10'!
 fillRectangle: aRectangle color: aColor borderWidth: borderWidth borderStyleSymbol: aSymbol baseColorForBorder: baseColorForBorder
@@ -3073,31 +3072,26 @@ fillRectangle: aRectangle color: aColor borderWidth: borderWidth borderStyleSymb
 	
 	super fillRectangle: aRectangle color: aColor borderWidth: borderWidth borderStyleSymbol: aSymbol baseColorForBorder: baseColorForBorder! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 6/23/2020 12:22:22'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/12/2021 14:35:18'!
 frameAndFillRectangle: aRectangle fillColor: aColor borderWidth: borderWidth borderColor: borderColor
-	"For BitBltCanvas protocol, aRectangle:
-	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
-
+	| d |
+	d _ borderWidth * 0.5.
 	self strokeWidth: borderWidth color: borderColor fillColor: aColor do: [
-		self rectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 ]! !
+		self
+			rectangleMinX: aRectangle left+d maxX: aRectangle right-d
+			minY: aRectangle top+d maxY: aRectangle bottom-d ]! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 20:57:09'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/12/2021 14:33:48'!
 frameRectangle: aRectangle borderWidth: borderWidth color: borderColor
-	"For BitBltCanvas protocol, aRectangle:
-	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
-	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
-	| d1 d2 |
-	d1 _ borderWidth*0.5-0.5.
-	d2 _ borderWidth*0.5+0.5.
-
+	| d |
+	d _ borderWidth*0.5.
 	self strokeWidth: borderWidth color: borderColor do: [
-		self rectangleMinX: aRectangle left+d1 maxX: aRectangle right-d2 minY: aRectangle top+d1 maxY: aRectangle bottom-d2 ]! !
+		self
+			rectangleMinX: aRectangle left+d maxX: aRectangle right-d
+			minY: aRectangle top+d maxY: aRectangle bottom-d ]! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/8/2021 09:47:32'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/12/2021 14:35:41'!
 frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borderWidth: morphStrokeWidth
-	"For BitBltCanvas protocol, aRectangle:
-	- means the bounding rectangle of the affected pixels, not the rectangle followed by the tip
-	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
 	"
 	(VectorCanvas onForm: Display)
 		frameRectangle: (10@10 extent: 300@200)
@@ -3107,19 +3101,17 @@ frameRectangle: aRectangle topLeftColor: tlColor bottomRightColor: brColor borde
 	Display forceToScreen.
 	"
 
-	| d1 d2 |
-	d1 _ morphStrokeWidth*0.5-0.5.
-	d2 _ morphStrokeWidth*0.5+0.5.
-
+	| d |
+	d _ morphStrokeWidth*0.5.
 	self strokeWidth: morphStrokeWidth color: brColor do: [
-		self moveTo: (aRectangle left + d1) @ (aRectangle bottom - d2).
-		self lineTo: (aRectangle right - d2) @ (aRectangle bottom - d2).
-		self lineTo: (aRectangle right - d2) @ (aRectangle top + d1) ].
+		self moveTo: (aRectangle left + d) @ (aRectangle bottom - d).
+		self lineTo: (aRectangle right - d) @ (aRectangle bottom - d).
+		self lineTo: (aRectangle right - d) @ (aRectangle top + d) ].
 
 	self strokeWidth: morphStrokeWidth color: tlColor do: [
-		self moveTo: (aRectangle left + d1) @ (aRectangle bottom - d2).
-		self lineTo: (aRectangle left + d1) @ (aRectangle top + d1).
-		self lineTo: (aRectangle right - d2) @ (aRectangle top + d1) ].! !
+		self moveTo: (aRectangle left + d) @ (aRectangle bottom - d).
+		self lineTo: (aRectangle left + d) @ (aRectangle top + d).
+		self lineTo: (aRectangle right - d) @ (aRectangle top + d) ].! !
 
 !AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 5/10/2021 11:25:57'!
 line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
@@ -3128,13 +3120,13 @@ line: pt1 to: pt2 width: morphStrokeWidth color: aStrokeColor
 		self moveTo: pt1.
 		self lineTo: pt2 ]! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 12/11/2017 21:10:33'!
+!AbstractVectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/12/2021 14:36:14'!
 roundRect: aRectangle color: aColor radius: r
-	"For BitBltCanvas protocol, aRectangle:
-	- uses Squeak / Smalltalk-80 convention: do include topLeft, but don't include bottomRight. (too pixel oriented for M3 taste)"
+
 	self fillColor: aColor do: [
 		self
-			roundRectangleMinX: aRectangle left-0.5 maxX: aRectangle right-0.5 minY: aRectangle top-0.5 maxY: aRectangle bottom-0.5 rx: r ry: r ]! !
+			roundRectangleMinX: aRectangle left maxX: aRectangle right
+			minY: aRectangle top maxY: aRectangle bottom rx: r ry: r ]! !
 
 !AbstractVectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:19'!
 drawCurrentAndSubmorphs
@@ -3898,7 +3890,7 @@ contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBotto
 			engine morphContourAfterDrawUpdate: anArray 
 				oldTop: oldTop oldBottom: oldBottom into: aBlock ].! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 8/27/2021 19:55:39'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/12/2021 19:07:44'!
 drawCurrentAsError
 	"The morph (or one of its submorphs) had an error in its drawing method."
 	| r w |
@@ -3906,14 +3898,14 @@ drawCurrentAsError
 	w _ r extent > `50@50`
 		ifTrue: [ 6 ]
 		ifFalse: [ 2 ].
-	r _ r insetBy: w/2.
 	self
 		frameAndFillRectangle: r
 		fillColor: `Color red`
 		borderWidth: w
 		borderColor: `Color yellow`.
-	self line: r topLeft-0.5 to: r bottomRight-0.5 width: w color: `Color yellow`.
-	self line: r topRight-0.5 to: r bottomLeft-0.5 width: w color: `Color yellow`.	
+	r _ r insetBy: w.
+	self line: r topLeft to: r bottomRight width: w color: `Color yellow`.
+	self line: r topRight to: r bottomLeft width: w color: `Color yellow`.	
 	currentMorph displayBoundsSetFrom: self.! !
 
 !VectorCanvas methodsFor: 'morphic' stamp: 'jmv 9/20/2021 12:07:54'!
@@ -5659,7 +5651,7 @@ arcCenterX: cx centerY: cy radiusX: rx radiusY: ry start: startAngle sweep: swee
 			self updateEdgeCountAtX: x y: y ].
 		self updateContourForX: x y: y. ].! !
 
-!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 8/10/2021 12:06:37'!
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 10/12/2021 09:59:10'!
 cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| p txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f2 f3 f1 f23 f4 x y |
@@ -5684,7 +5676,7 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 
 	t _ 0.0.
 	increment _ 1.0 / hops.
-	hops timesRepeat: [
+	[ t < 1.0 ] whileTrue: [
 		oneLessT _ 1.0 - t.
 		f1 _ oneLessT * oneLessT * oneLessT.
 		f23 _ 3.0 * oneLessT * t.
@@ -5703,32 +5695,32 @@ cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yContro
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 8/10/2021 12:06:37'!
+!VectorEngineSmalltalk methodsFor: 'primitive algorithms' stamp: 'jmv 10/12/2021 10:16:19'!
 lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
-	| p txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
+	| p txFrom tyFrom txTo tyTo dx dy hops t oneLessT increment x y |
 	p _ geometryTransformation externalizePosition: xFrom@yFrom. txFrom _ p x. tyFrom _ p y.
 	p _ geometryTransformation externalizePosition: xTo@yTo. txTo _ p x. tyTo _ p y.
-	dx _ txTo - txFrom.
-	dy _ tyTo - tyFrom.
-	hops _ ((dx abs max: dy abs) / hop) truncated + 1.
-	incrementX _ dx *1.0 / hops.
-	incrementY _ dy *1.0 / hops.
+	dx _ (txTo - txFrom) abs.
+	dy _ (tyTo - tyFrom) abs.
+	hops _ ((dx max: dy) / hop) truncated + 1.
 
 	spanLeft _ spanLeft min: (txFrom min: txTo).
 	spanRight _ spanRight max: (txFrom max: txTo).
 	spanTop _ spanTop min: (tyFrom min: tyTo).
 	spanBottom _ spanBottom max: (tyFrom max: tyTo).
 
-	x _ txFrom.
-	y _ tyFrom.
-	hops timesRepeat: [
+	t _ 0.0.
+	increment _ 1.0 / hops.
+	[ t < 1.0 ] whileTrue: [
+		oneLessT _ 1.0 - t.
+		x _ (oneLessT * txFrom) + (t * txTo).
+		y _ (oneLessT * tyFrom) + (t * tyTo).
 		self updateAlphasForX: x y: y.
 		fillColor notNil ifTrue: [
 			self updateEdgeCountAtX: x y: y ].
 		self updateContourForX: x y: y.
-		x _ x + incrementX.
-		y _ y + incrementY ].
+		t _ t + increment. ].
 	self updateAlphasForX: txTo y: tyTo.
 	fillColor notNil ifTrue: [
 		self updateEdgeCountAtX: txTo y: tyTo ].

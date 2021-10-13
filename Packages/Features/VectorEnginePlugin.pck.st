@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4895] on 6 October 2021 at 4:10:05 pm'!
+'From Cuis 5.0 [latest update: #4911] on 12 October 2021 at 10:46:22 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 30!
+!provides: 'VectorEnginePlugin' 1 31!
 !requires: 'VectorGraphics' 1 201 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -315,7 +315,7 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherWordArray alphaMask: 
 	contour := aFloat32Array.
 	self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:27:08'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 10/12/2021 09:58:38'!
 pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy dx2 dy2 dx3 dy3 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
@@ -396,7 +396,7 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 
 	t := 0.0.
 	increment := 1.0 / hops.
-	1 to: hops do: [ :h |
+	[ t < 1.0 ] whileTrue: [
 		oneLessT := 1.0 - t.
 		f1 := oneLessT * oneLessT * oneLessT.
 		f23 := 3.0 * oneLessT * t.
@@ -415,10 +415,10 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:29:12'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 10/12/2021 10:18:55'!
 pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
-	| txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
+	| txFrom tyFrom txTo tyTo dx dy hops t oneLessT increment x y |
 	self var: #xFrom type: 'float'.
 	self var: #yFrom type: 'float'.
 	self var: #xTo type: 'float'.
@@ -430,8 +430,10 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
 	self var: #hops type: 'int'.
-	self var: #incrementX type: 'float'.
-	self var: #incrementY type: 'float'.
+
+	self var: #t type: 'float'.
+	self var: #oneLessT type: 'float'.
+	self var: #increment type: 'float'.
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
 
@@ -441,8 +443,6 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
 	dx := txTo-txFrom.
 	dy := tyTo-tyFrom.
-	incrementX := dx.
-	incrementY := dy.
 	self cCode: '
 		dx = fabs(dx);
 		dy = fabs(dy);'
@@ -450,23 +450,23 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 		dx := dx abs.
 		dy := dy abs ].
 	hops := ((dx max: dy) / hop) asInteger + 1.
-	incrementX := incrementX / hops.
-	incrementY := incrementY / hops.
 
 	spanLeft := spanLeft min: (txFrom min: txTo).
 	spanRight := spanRight max: (txFrom max: txTo).
 	spanTop := spanTop min: (tyFrom min: tyTo).
 	spanBottom := spanBottom max: (tyFrom max: tyTo).
 
-	x := txFrom.
-	y := tyFrom.
-	1 to: hops do: [ :h |
+	t := 0.0.
+	increment := 1.0 / hops.
+	[ t < 1.0 ] whileTrue: [
+		oneLessT := 1.0 - t.
+		x := (oneLessT * txFrom) + (t * txTo).
+		y := (oneLessT * tyFrom) + (t * tyTo).
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
 		self updateContourForX: x y: y.
-		x := x + incrementX.
-		y := y + incrementY ].
+		t := t + increment. ].
 	self updateAlphasForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: txTo y: tyTo ].
@@ -2053,7 +2053,7 @@ lineWPFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherByteArray alphaMask
 	contour := aFloat32Array.
 	self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:27:12'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 10/12/2021 09:57:51'!
 pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy dx2 dy2 dx3 dy3 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
@@ -2134,7 +2134,7 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 
 	t := 0.0.
 	increment := 1.0 / hops.
-	1 to: hops do: [ :h |
+	[ t < 1.0 ] whileTrue: [
 		oneLessT := 1.0 - t.
 		f1 := oneLessT * oneLessT * oneLessT.
 		f23 := 3.0 * oneLessT * t.
@@ -2153,10 +2153,10 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 		self updateEdgeCountWPAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:29:10'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 10/12/2021 10:15:26'!
 pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 
-	| txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
+	| txFrom tyFrom txTo tyTo dx dy hops t oneLessT increment x y |
 	self var: #xFrom type: 'float'.
 	self var: #yFrom type: 'float'.
 	self var: #xTo type: 'float'.
@@ -2168,8 +2168,10 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
 	self var: #hops type: 'int'.
-	self var: #incrementX type: 'float'.
-	self var: #incrementY type: 'float'.
+
+	self var: #t type: 'float'.
+	self var: #oneLessT type: 'float'.
+	self var: #increment type: 'float'.
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
 
@@ -2179,8 +2181,6 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
 	dx := txTo-txFrom.
 	dy := tyTo-tyFrom.
-	incrementX := dx.
-	incrementY := dy.
 	self cCode: '
 		dx = fabs(dx);
 		dy = fabs(dy);'
@@ -2188,23 +2188,23 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 		dx := dx abs.
 		dy := dy abs ].
 	hops := ((dx max: dy) / hop) asInteger + 1.
-	incrementX := incrementX / hops.
-	incrementY := incrementY / hops.
 
 	spanLeft := spanLeft min: (txFrom min: txTo).
 	spanRight := spanRight max: (txFrom max: txTo).
 	spanTop := spanTop min: (tyFrom min: tyTo).
 	spanBottom := spanBottom max: (tyFrom max: tyTo).
 
-	x := txFrom.
-	y := tyFrom.
-	1 to: hops do: [ :h |
+	t := 0.0.
+	increment := 1.0 / hops.
+	[ t < 1.0 ] whileTrue: [
+		oneLessT := 1.0 - t.
+		x := (oneLessT * txFrom) + (t * txTo).
+		y := (oneLessT * tyFrom) + (t * tyTo).
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
 		self updateContourForX: x y: y.
-		x := x + incrementX.
-		y := y + incrementY ].
+		t := t + increment. ].
 	self updateAlphasWPForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: txTo y: tyTo ].
