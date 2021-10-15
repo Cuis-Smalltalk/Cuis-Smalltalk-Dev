@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4919] on 13 October 2021 at 2:21:36 pm'!
+'From Cuis 5.0 [latest update: #4929] on 15 October 2021 at 4:17:06 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 317!
+!provides: 'VectorGraphics' 1 318!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -4095,7 +4095,7 @@ Display forceToScreen
 
 	^super drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
 
-!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 10/8/2021 10:04:52'!
+!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 10/15/2021 16:16:28'!
 initialize
 	| family folder |
 	UISupervisor whenUIinSafeState: [
@@ -4104,7 +4104,10 @@ initialize
 			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
 			Preferences setDefaultFont: family familyName.
 			FontFamily enableTrueTypeFontsOnly ].
-		MorphicCanvas activeSubclass: VectorCanvas ].! !
+		MorphicCanvas activeSubclass: 
+			(VectorEngineWithPlugin isPluginAvailable
+				ifTrue: [ VectorCanvas ]
+				ifFalse: [ HybridCanvas ]) ].! !
 
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
 antiAliasingWidth
