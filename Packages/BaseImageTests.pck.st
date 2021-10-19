@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4886] on 24 September 2021 at 9:16:58 pm'!
+'From Cuis 5.0 [latest update: #4935] on 19 October 2021 at 10:13:55 am'!
 'Description ExtractAsParameterTest '!
-!provides: 'BaseImageTests' 1 268!
+!provides: 'BaseImageTests' 1 269!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -22430,6 +22430,26 @@ test44CanExtractManyStatementsInsideABlock
 
 	self
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
+		defines: newMethodCode andUpdates: updatedCode! !
+
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/18/2021 18:42:26'!
+test45CanExtractCodeWithMoreThanOneBlockAndABlockAtTheEndInsideAnotherBlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract _ 'true ifTrue: [ self m1 ].
+	true ifTrue: [ self m2 ].'.
+	originalCode _ 'm1 [true] whileTrue: [ ' , codeToExtract, '
+	self m3]'.
+	newMethodCode _ 'm4
+
+	true ifTrue: [ self m1 ].
+	true ifTrue: [ self m2 ]'.
+	updatedCode _ 'm1 [true] whileTrue: [ self m4.
+	self m3]'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m4)
 		defines: newMethodCode andUpdates: updatedCode! !
 
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
