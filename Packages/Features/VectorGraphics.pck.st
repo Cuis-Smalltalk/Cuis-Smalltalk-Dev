@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4929] on 15 October 2021 at 4:17:06 pm'!
+'From Cuis 5.0 [latest update: #4938] on 22 October 2021 at 2:39:57 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 318!
+!provides: 'VectorGraphics' 1 319!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1525,13 +1525,13 @@ image: aForm at: aPoint sourceRect: sourceRect
 
 	super image: aForm at: aPoint sourceRect: sourceRect! !
 
-!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 8/12/2021 16:32:39'!
+!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 10/22/2021 12:40:57'!
 fillRectangle: aRectangle tilingWith: aForm multipliedBy: aColor
 	| rect |
 
 	drawingOnMorphIDs ifTrue: [
 		aRectangle area = 0 ifTrue: [ ^self ].
-		rect _ (currentTransformation externalizeRectangle: aRectangle) rounded.
+		rect _ (currentTransformation externalBoundingRectOf: aRectangle) rounded.
 		engine combinationRule: 0.
 		engine fillRect: rect.
 		^self ].
@@ -3760,7 +3760,7 @@ frameReverseGlobalRect: rect borderWidth: borderWidth
 		combinationRule: Form reverse;
 		frameRect: rect borderWidth: borderWidth! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/7/2021 16:58:50'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/22/2021 12:38:20'!
 image: srcForm at: aPoint
 	"Workaround using WarpBlt until properly implemented in VectorEngine.
 	 (WarpBlt might not give desired result, i.e. a properly filtered and resamples image)
@@ -3820,9 +3820,11 @@ image: srcForm at: aPoint
 			| bb cellSize dstBox srcBox srcQuad |
 			cellSize _ 4.
 			srcBox _ srcForm boundingBox.
-			dstBox _ currentTransformation displayBoundsOfTransformOf: srcBox.
+			dstBox _ (currentTransformation externalBoundingRectOf: srcBox)
+				encompassingIntegerRectangle.
 			srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) rounded ].
-			dstBox _ currentTransformation displayBoundsOfTransformOf: (srcBox translatedBy: aPoint-0.5).
+			dstBox _ (currentTransformation externalBoundingRectOf: (srcBox translatedBy: aPoint-0.5))
+				encompassingIntegerRectangle.
 			bb _ WarpBlt toForm: form.
 			bb
 				sourceForm: srcForm; combinationRule: Form blend;
