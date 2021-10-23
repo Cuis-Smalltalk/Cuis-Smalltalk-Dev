@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4938] on 22 October 2021 at 2:39:57 pm'!
+'From Cuis 5.0 [latest update: #4940] on 23 October 2021 at 9:32:39 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 319!
+!provides: 'VectorGraphics' 1 320!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -4064,7 +4064,7 @@ world: aWorldMorph
 usesVectorEnginePlugin
 	^engine usesVectorEnginePlugin! !
 
-!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/8/2021 09:48:50'!
+!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/23/2021 09:10:48'!
 drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 	"
@@ -4077,7 +4077,7 @@ s _ 'Latin text in VectorGraphics'.
 c strokeWidth: 1 color: Color red do: [ c moveTo: 100@100; lineTo: 1000@100 ].
 Display forceToScreen
 	"
-	| p1 |
+	| p1 answer |
 	"Don't waste any time if NOP"
 	lastIndex = 0 ifTrue: [
 		^nil ].
@@ -4087,13 +4087,17 @@ Display forceToScreen
 			p1 _ currentTransformation transform: aPoint rounded.
 			p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
 			p1 _ p1 rounded.
-			^ auxBitBltEngine
+			answer _ auxBitBltEngine
 				displayString: aString
 				from: firstIndex
 				to: lastIndex
 				at: p1
 				trueTypeFont: aTrueTypeFont
-				color: aColor ]].
+				color: aColor.
+			answer ifNotNil: [
+				engine updateMorphBoundsLeft: p1 x top: p1 y
+					right: answer x bottom: answer y ].
+			^answer ]].
 
 	^super drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
 
@@ -4816,6 +4820,15 @@ pvtHopLength: aFloat
 pvtStrokeWidth: aNumber
 
 	strokeWidth _ aNumber.! !
+
+!VectorEngine methodsFor: 'private' stamp: 'jmv 10/23/2021 08:54:31'!
+updateMorphBoundsLeft: l top: t right: r bottom: b
+	"For internal framework use only"
+
+	morphBoundsLeft _ morphBoundsLeft min: l.
+	morphBoundsTop _ morphBoundsTop min: t.
+	morphBoundsRight _ morphBoundsRight max: r.
+	morphBoundsBottom _ morphBoundsBottom max: b.! !
 
 !VectorEngine class methodsFor: 'experiments' stamp: 'jmv 9/1/2021 19:42:55'!
 circleApproximationExamples
@@ -9161,7 +9174,7 @@ widthInTrueTypeFontDescription: aTTFontDescription useST80Glyphs: aBoolean
 
 	^aTTFontDescription widthOf: self useST80Glyphs: aBoolean! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/18/2021 17:47:41'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/23/2021 09:23:58'!
 basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
 	| fdestX char glyph maxHeight ascent lineGap |
@@ -9187,11 +9200,10 @@ basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFo
 		width _ sourceForm width.
 		self copyBits.
 		fdestX _ fdestX + "width + aTrueTypeFont baseKern"glyph advanceWidth.
-		maxHeight _ maxHeight max: height.
-	].
-	^ destX@(destY+maxHeight)! !
+		maxHeight _ maxHeight max: height ].
+	^ fdestX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/18/2021 17:47:36'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/23/2021 09:23:40'!
 basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
 	| fdestX glyph maxHeight ascent lineGap |
@@ -9221,9 +9233,9 @@ basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueType
 		self copyBits.
 		fdestX _ fdestX + "width + aTrueTypeFont baseKern"glyph advanceWidth.
 		maxHeight _ maxHeight max: height ].
-	^ destX@(destY+maxHeight)! !
+	^ fdestX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/18/2021 17:47:31'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/23/2021 09:23:50'!
 basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
 	| fdestX glyph maxHeight utf8Stream ascent lineGap |
@@ -9253,7 +9265,7 @@ basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: 
 		self copyBits.
 		fdestX _ fdestX + "width + aTrueTypeFont baseKern"glyph advanceWidth.
 		maxHeight _ maxHeight max: height ].
-	^ destX@(destY+maxHeight)! !
+	^ fdestX ceiling@(destY+maxHeight)! !
 
 !BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/23/2021 13:03:04'!
 displayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont color: foregroundColor
