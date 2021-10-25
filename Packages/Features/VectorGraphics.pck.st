@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4945] on 25 October 2021 at 4:56:49 pm'!
+'From Cuis 5.0 [latest update: #4945] on 25 October 2021 at 6:54:31 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 321!
+!provides: 'VectorGraphics' 1 322!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -9479,6 +9479,39 @@ fitInto: aRectangle
 
 	currentBounds _ self findFullBoundsInOwner.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2).! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/25/2021 18:53:31'!
+imageForm: extentOrNil depth: depth
+	"Scale as needed. Draw unrotated."
+
+	| prevNotVisibleFlag bounds extent location answer auxCanvas |
+	"Position and scale us in order to fill required extent, but disregard any rotation.
+	Do it without triggering any invalidation at all."
+	prevNotVisibleFlag _ self privateFlagAt: 3.
+	[
+		bounds _ self findFullBoundsInOwner.
+		extentOrNil
+			ifNotNil: [ | scale |
+				extent _ extentOrNil.
+				scale _ extent x asFloat / bounds width min: extent y asFloat / bounds height.
+				location _ AffineTransformation withScale: scale position: bounds origin negated +1 * scale ]
+			ifNil: [
+				extent _ bounds extent.
+				location _ MorphicTranslation withTranslation: bounds origin negated ].
+		answer _ Form extent: extent depth: 32.
+		"Ask for a Canvas with subpixels so it can also handle translucent target"
+		auxCanvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
+		auxCanvas geometryTransformation: location.
+		"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
+		auxCanvas engine disableSubPixelSampling.
+		depth = 32 ifFalse: [
+			"Only 32 bpp can hold translucent anti aliasing over transparent background"
+			answer fillColor: Color veryLightGray ].
+		self privateFlagAt: 3 put: false.
+		auxCanvas fullDraw: self.
+	] ensure: [
+		self privateFlagAt: 3 put: prevNotVisibleFlag ].
+	^answer asFormOfDepth: depth.! !
 
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 9/21/2021 09:02:16'!
 showBitMask
