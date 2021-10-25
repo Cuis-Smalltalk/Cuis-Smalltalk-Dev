@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4940] on 23 October 2021 at 9:32:39 am'!
+'From Cuis 5.0 [latest update: #4945] on 25 October 2021 at 4:56:49 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 320!
+!provides: 'VectorGraphics' 1 321!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3669,7 +3669,7 @@ updateCurrentBounds
 					(currentMorph postDrawOn: self) ifTrue: [
 						currentMorph displayBoundsUpdateFrom: self ]].]! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:16:09'!
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 10/25/2021 16:40:23'!
 updateHandsDisplayBounds: aWorldMorph
 	"Update displayBounds for carried morphs if never set.
 	Useful for new morph, that are created and attached to the hand."
@@ -3678,7 +3678,7 @@ updateHandsDisplayBounds: aWorldMorph
 		hand hasSubmorphs ifTrue: [
 			self into: hand.
 			hand submorphsDo: [ :morph |
-				morph displayBounds ifNil: [
+				morph basicDisplayBounds ifNil: [
 					self fullUpdateProtrudingBounds: morph ]].
 			self outOfMorph ]].! !
 
