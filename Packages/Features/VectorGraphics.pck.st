@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4945] on 25 October 2021 at 6:54:31 pm'!
+'From Cuis 5.0 [latest update: #4950] on 28 October 2021 at 11:08:35 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 322!
+!provides: 'VectorGraphics' 1 323!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -9432,13 +9432,14 @@ bitMask
 		"Reverse it so we get bit=1 for affected pixels."
 		((answer asGrayForm: 1) asFormOfDepth: 1) reverse.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 8/27/2021 17:40:04'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/26/2021 18:41:38'!
 findFullBoundsInOwner
 	"Find and answer full bounds in whatever owner.
 	These might not equal #displayFullBounds at all!!
 	Subclasses that (re)define #requiresVectorCanvas and #morphExtent should redefine this methods.
 	See inheritance.
-	This implementations is part of VectorGraphics.pck.st"
+	This implementations is part of VectorGraphics.pck.st
+	Note: Answers an integer rectangle"
 
 	| prevNotVisibleFlag w c answer prevOwner |
 	(owner notNil and: [owner isWorldMorph]) ifTrue: [
