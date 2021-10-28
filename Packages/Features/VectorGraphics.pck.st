@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4951] on 28 October 2021 at 11:25:18 am'!
+'From Cuis 5.0 [latest update: #4954] on 28 October 2021 at 2:43:06 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 324!
+!provides: 'VectorGraphics' 1 325!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -554,7 +554,7 @@ Evaluate:
 Sample05UnicodeText new openInWorld!
 
 !Sample06EasyToGrab commentStamp: '<historical>' prior: 0!
-This morph uses the #coversPixel: and #bitMask features to make it easy to grab although it is made of very thin lines. See #ownsOrCoversPixel: and play with it.
+This morph uses the #coversPixel: and #bitMask features to make it easy to grab although it is made of very thin lines. See #includesPixel: and play with it.
 See also class comment at Sample01Star.
 
 Evaluate:
@@ -1382,8 +1382,8 @@ drawOn: aCanvas
 			lineTo: -200@200;
 			closePath ].! !
 
-!Sample06EasyToGrab methodsFor: 'geometry testing' stamp: 'jmv 9/21/2021 08:51:07'!
-ownsOrCoversPixel: worldPoint
+!Sample06EasyToGrab methodsFor: 'geometry testing' stamp: 'jmv 10/28/2021 11:56:04'!
+includesPixel: worldPoint
 	"Allow grabbing if close enough.
 	See other implementors."
 
