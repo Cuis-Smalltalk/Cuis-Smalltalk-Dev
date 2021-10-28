@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4950] on 28 October 2021 at 11:08:35 am'!
+'From Cuis 5.0 [latest update: #4951] on 28 October 2021 at 11:25:18 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 323!
+!provides: 'VectorGraphics' 1 324!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1792,6 +1792,10 @@ drawRoundedFrame: aRectangle border: borderWidth color: borderColor insideColor:
 		gradientTop: topFactor
 		gradientBottom: bottomFactor
 		insideColor: insideColor! !
+
+!HybridCanvas methodsFor: 'testing' stamp: 'jmv 10/27/2021 16:10:11'!
+canDoVectorGraphics
+	^true! !
 
 !HybridCanvas methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:04:24'!
 usesVectorEnginePlugin
@@ -4059,6 +4063,10 @@ setPluginAndForm: aForm
 world: aWorldMorph
 	super world: aWorldMorph.
 	boundsFinderCanvas world: aWorldMorph! !
+
+!VectorCanvas methodsFor: 'testing' stamp: 'jmv 10/27/2021 16:10:18'!
+canDoVectorGraphics
+	^true! !
 
 !VectorCanvas methodsFor: 'testing' stamp: 'jmv 8/27/2021 16:04:50'!
 usesVectorEnginePlugin
@@ -9432,7 +9440,7 @@ bitMask
 		"Reverse it so we get bit=1 for affected pixels."
 		((answer asGrayForm: 1) asFormOfDepth: 1) reverse.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/26/2021 18:41:38'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/28/2021 11:18:24'!
 findFullBoundsInOwner
 	"Find and answer full bounds in whatever owner.
 	These might not equal #displayFullBounds at all!!
@@ -9446,7 +9454,7 @@ findFullBoundsInOwner
 		w _ owner ]
 	ifFalse: [
 		w _ UISupervisor ui ].
-	c _ w canvas boundsFinderCanvas.
+	c _ w boundsFinderCanvas.
 	"Hack owner so #displayBoundsSetFrom: will update privateDisplayBounds"
 	prevOwner _ owner.
 	owner _ w.
