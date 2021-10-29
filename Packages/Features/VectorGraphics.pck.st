@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4954] on 28 October 2021 at 2:43:06 pm'!
+'From Cuis 5.0 [latest update: #4955] on 29 October 2021 at 11:37:15 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 325!
+!provides: 'VectorGraphics' 1 326!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1509,7 +1509,7 @@ drawOn: aCanvas
 boundsFinderCanvas
 	^vectorCanvas boundsFinderCanvas! !
 
-!HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 8/12/2021 16:32:44'!
+!HybridCanvas methodsFor: 'drawing-images' stamp: 'jmv 10/29/2021 10:54:36'!
 image: aForm at: aPoint sourceRect: sourceRect
 	"Draw a translucent image using the best available way of representing translucency."
 	| p e |
@@ -1518,20 +1518,20 @@ image: aForm at: aPoint sourceRect: sourceRect
 		"We transform p but not e. This is on purpose. We want to affect exactly the same rect as super."
 		e _ sourceRect extent.
 		e > `0@0` ifFalse: [ ^self ].
-		p _ (currentTransformation transform: aPoint) rounded.
+		p _ (currentTransformation transform: aPoint) roundedHAFZ.
 		engine combinationRule: 0.
 		engine fillRect: (p extent: e).
 		^self ].
 
 	super image: aForm at: aPoint sourceRect: sourceRect! !
 
-!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 10/22/2021 12:40:57'!
+!HybridCanvas methodsFor: 'drawing-rectangles' stamp: 'jmv 10/29/2021 10:54:34'!
 fillRectangle: aRectangle tilingWith: aForm multipliedBy: aColor
 	| rect |
 
 	drawingOnMorphIDs ifTrue: [
 		aRectangle area = 0 ifTrue: [ ^self ].
-		rect _ (currentTransformation externalBoundingRectOf: aRectangle) rounded.
+		rect _ (currentTransformation externalBoundingRectOf: aRectangle) roundedHAFZ.
 		engine combinationRule: 0.
 		engine fillRect: rect.
 		^self ].
@@ -3764,7 +3764,7 @@ frameReverseGlobalRect: rect borderWidth: borderWidth
 		combinationRule: Form reverse;
 		frameRect: rect borderWidth: borderWidth! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/22/2021 12:38:20'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/29/2021 10:54:55'!
 image: srcForm at: aPoint
 	"Workaround using WarpBlt until properly implemented in VectorEngine.
 	 (WarpBlt might not give desired result, i.e. a properly filtered and resamples image)
@@ -3788,7 +3788,7 @@ image: srcForm at: aPoint
 	- currentTransformation is identity: No translation, no rotation, no scaling.
 	BitBlt is enough, but we need tow of them!!"
 	currentMorph == world ifTrue: [
-		p _ (currentTransformation transform: aPoint) rounded.
+		p _ (currentTransformation transform: aPoint) roundedHAFZ.
 		auxBitBltEngine
 			sourceForm: srcForm; fillColor: nil; combinationRule: Form blend;
 			colorMap: (srcForm colormapIfNeededFor: form);
@@ -3812,7 +3812,7 @@ image: srcForm at: aPoint
 	self fillRectangle: (srcForm boundingBox translatedBy: aPoint) color: `Color gray alpha: 0.01`.
 	currentTransformation isPureTranslation
 		ifTrue: [
-			p _ (currentTransformation transform: aPoint) rounded.
+			p _ (currentTransformation transform: aPoint) roundedHAFZ.
 			auxBitBltEngine
 				sourceForm: srcForm; fillColor: nil; combinationRule: Form blend;
 				colorMap: (srcForm colormapIfNeededFor: form);
@@ -3826,7 +3826,7 @@ image: srcForm at: aPoint
 			srcBox _ srcForm boundingBox.
 			dstBox _ (currentTransformation externalBoundingRectOf: srcBox)
 				encompassingIntegerRectangle.
-			srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) rounded ].
+			srcQuad _ dstBox corners collect: [ :pt | (currentTransformation inverseTransform: pt) roundedHAFZ ].
 			dstBox _ (currentTransformation externalBoundingRectOf: (srcBox translatedBy: aPoint-0.5))
 				encompassingIntegerRectangle.
 			bb _ WarpBlt toForm: form.
@@ -3837,7 +3837,7 @@ image: srcForm at: aPoint
 				cellSize: cellSize;
 				copyQuad: srcQuad toRect: dstBox ].! !
 
-!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/17/2021 10:24:17'!
+!VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/29/2021 10:54:49'!
 imageUnrotated: srcForm at: aPoint
 	"Workaround using WarpBlt until properly implemented in VectorEngine.
 	Scale and position like #image:at:, but don't rotate srcForm:
@@ -3857,8 +3857,8 @@ imageUnrotated: srcForm at: aPoint
 	srcBox _ srcForm boundingBox.
 	srcQuad _ srcBox corners.
 	dstBox _ Rectangle
-		center: (currentTransformation transform: srcBox center + aPoint) rounded
-		extent: (srcBox extent * currentTransformation scale) rounded.
+		center: (currentTransformation transform: srcBox center + aPoint) roundedHAFZ
+		extent: (srcBox extent * currentTransformation scale) roundedHAFZ.
 	bb _ WarpBlt toForm: form.
 	bb
 		sourceForm: srcForm; combinationRule: Form blend;
@@ -4072,7 +4072,7 @@ canDoVectorGraphics
 usesVectorEnginePlugin
 	^engine usesVectorEnginePlugin! !
 
-!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/23/2021 09:10:48'!
+!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/29/2021 10:54:41'!
 drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 	"
@@ -4092,9 +4092,9 @@ Display forceToScreen
 
 	currentTransformation isPureTranslation ifTrue: [
 		Preferences cacheTrueTypeGlyphs ifTrue: [
-			p1 _ currentTransformation transform: aPoint rounded.
+			p1 _ currentTransformation transform: aPoint roundedHAFZ.
 			p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
-			p1 _ p1 rounded.
+			p1 _ p1 roundedHAFZ.
 			answer _ auxBitBltEngine
 				displayString: aString
 				from: firstIndex
@@ -9182,7 +9182,7 @@ widthInTrueTypeFontDescription: aTTFontDescription useST80Glyphs: aBoolean
 
 	^aTTFontDescription widthOf: self useST80Glyphs: aBoolean! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/23/2021 09:23:58'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/29/2021 10:52:48'!
 basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
 	| fdestX char glyph maxHeight ascent lineGap |
@@ -9195,14 +9195,14 @@ basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFo
 	startIndex to: stopIndex do: [ :charIndex |
 		char _ aString at: charIndex.
 		glyph _ aTrueTypeFont glyphAt: char.
-		destX _ (fdestX + glyph leftOffset) rounded.
+		destX _ (fdestX + glyph leftOffset) roundedHAFZ.
 		destY _ aPoint y + ascent + lineGap-1 - glyph topOffset. 
 		aTrueTypeFont isSuperscript
 			ifTrue: [destY _ destY - (ascent*0.55)]
 			ifFalse: [
 				aTrueTypeFont isSubscript
 					ifTrue: [destY _ destY + (ascent*0.3)]].
-		destY _ destY rounded.
+		destY _ destY roundedHAFZ.
 		sourceForm _ glyph form.
 		height _ sourceForm height.
 		width _ sourceForm width.
@@ -9211,7 +9211,7 @@ basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFo
 		maxHeight _ maxHeight max: height ].
 	^ fdestX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/23/2021 09:23:40'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/29/2021 10:52:53'!
 basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
 	| fdestX glyph maxHeight ascent lineGap |
@@ -9227,14 +9227,14 @@ basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueType
 			evaluateOnce: [ :byte1 :byte2 :byte3 :byte4 |
 				glyph _ aTrueTypeFont glyphAtUtf8Byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4 ]
 			withUtf8BytesOfUnicodeCodePoint: codePoint.
-		destX _ (fdestX + glyph leftOffset) rounded.
+		destX _ (fdestX + glyph leftOffset) roundedHAFZ.
 		destY _ aPoint y + ascent + lineGap-1 - glyph topOffset.
 		aTrueTypeFont isSuperscript
 			ifTrue: [destY _ destY - (ascent*0.55)]
 			ifFalse: [
 				aTrueTypeFont isSubscript
 					ifTrue: [destY _ destY + (ascent*0.3)]].
-		destY _ destY rounded.
+		destY _ destY roundedHAFZ.
 		sourceForm _ glyph form.
 		height _ sourceForm height.
 		width _ sourceForm width.
@@ -9243,7 +9243,7 @@ basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueType
 		maxHeight _ maxHeight max: height ].
 	^ fdestX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/23/2021 09:23:50'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/29/2021 10:53:03'!
 basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
 	| fdestX glyph maxHeight utf8Stream ascent lineGap |
@@ -9259,14 +9259,14 @@ basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: 
 			nextCodePointBytesFromUtf8: utf8Stream
 			into: [ :byte1 :byte2 :byte3 :byte4 |
 				aTrueTypeFont glyphAtUtf8Byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4 ].
-		destX _ (fdestX + glyph leftOffset) rounded.
+		destX _ (fdestX + glyph leftOffset) roundedHAFZ.
 		destY _ aPoint y + ascent + lineGap-1 - glyph topOffset.
 		aTrueTypeFont isSuperscript
 			ifTrue: [destY _ destY - (ascent*0.55)]
 			ifFalse: [
 				aTrueTypeFont isSubscript
 					ifTrue: [destY _ destY + (ascent*0.3)]].
-		destY _ destY rounded.
+		destY _ destY roundedHAFZ.
 		sourceForm _ glyph form.
 		height _ sourceForm height.
 		width _ sourceForm width.
@@ -9824,14 +9824,14 @@ c _ self onForm: Display.
 utf8 _ #[97 32 95 32 55 46 32 94 97 46 32 76 111 114 101 109 32 105 112 115 117 109 32 100 111 108 111 114 32 115 105 116 32 97 109 101 116 44 32 112 111 112 117 108 111 32 108 97 116 105 110 101 32 97 108 105 113 117 105 100 32 112 114 111 32 110 111 44 32 115 101 100 32 116 101 32 103 114 97 101 99 111 32 112 101 114 99 105 112 105 116 32 97 100 105 112 105 115 99 105 110 103 46 32 68 101 102 105 110 105 101 98 97 115 32 100 105 115 115 101 110 116 105 97 115 32 109 101 97 32 105 110 44 32 118 101 108 32 110 117 108 108 97 32 116 111 108 108 105 116 32 101 120 46 32 65 108 105 113 117 105 112 32 112 101 114 115 101 113 117 101 114 105 115 32 101 108 111 113 117 101 110 116 105 97 109 32 104 105 115 32 101 116 46 32 67 117 32 100 105 97 109 32 110 111 118 117 109 32 97 110 105 109 97 108 32 118 105 120 44 32 110 97 109 32 101 116 32 112 114 111 98 97 116 117 115 32 116 114 97 99 116 97 116 111 115 32 100 101 116 101 114 114 117 105 115 115 101 116 46 32 80 101 114 99 105 112 105 116 32 101 102 102 105 99 105 97 110 116 117 114 32 112 114 105 32 101 120 44 32 105 100 32 97 110 105 109 97 108 32 100 101 98 105 116 105 115 32 118 117 108 112 117 116 97 116 101 32 101 111 115 44 32 97 100 32 105 117 115 32 112 111 115 115 101 32 101 114 114 111 114 32 112 111 112 117 108 111 46].
 c drawUtf8: utf8 fromByte: 1 toByte: utf8 size atBaseline: 10@40 font: aTrueTypeFont color: Color random. Display forceToScreen.! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 8/12/2021 16:25:39'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 10/29/2021 10:53:44'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph
 	Answer nil if nothing was done"
 	| p1 |
-	p1 _ currentTransformation transform: aPoint rounded.
+	p1 _ currentTransformation transform: aPoint roundedHAFZ.
 	p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
-	p1 _ p1 rounded.
+	p1 _ p1 roundedHAFZ.
 	engine colorMap: nil.
 	^ engine
 		displayUtf32: aWordArray
@@ -9841,14 +9841,14 @@ drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aT
 		trueTypeFont: aTrueTypeFont
 		color: aColor! !
 
-!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 8/12/2021 16:25:44'!
+!BitBltCanvas methodsFor: '*vectorGraphics-drawing-text' stamp: 'jmv 10/29/2021 10:53:49'!
 drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph
 	Answer nil if nothing was done"
 	| p1 |
-	p1 _ currentTransformation transform: aPoint rounded.
+	p1 _ currentTransformation transform: aPoint roundedHAFZ.
 	p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
-	p1 _ p1 rounded.
+	p1 _ p1 roundedHAFZ.
 	engine colorMap: nil.
 	^ engine
 		displayUtf8: aByteArray

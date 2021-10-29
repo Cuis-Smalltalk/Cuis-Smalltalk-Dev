@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4948] on 26 October 2021 at 3:40:57 pm'!
+'From Cuis 5.0 [latest update: #4955] on 29 October 2021 at 11:27:49 am'!
 'Description ExtractAsParameterTest '!
-!provides: 'BaseImageTests' 1 270!
+!provides: 'BaseImageTests' 1 271!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -3594,6 +3594,16 @@ testMixedTypeComparison
 		self assert: (doubleOne >= sample) = (doubleOne >= sample asFloat).
 		].! !
 
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/29/2021 11:12:28'!
+testRoundHalfAwayFromZero
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero"
+	self assert: 0.5 roundedHAFZ = 1.
+	self assert: 1.5 roundedHAFZ = 2.
+	self assert: -0.5 roundedHAFZ = -1.
+	self assert: -1.5 roundedHAFZ = -2.
+	self assert: (((0.0 to: 5.0 by: 0.25) collect: [ :f | f roundedHAFZ ]) = #(0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5) ).
+	self assert: (((-0.0 to: -5.0 by: -0.25) collect: [ :f | f roundedHAFZ ]) = #(0 0 -1 -1 -1 -1 -2 -2 -2 -2 -3 -3 -3 -3 -4 -4 -4 -4 -5 -5 -5) )! !
+
 !FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/9/2018 16:12:35'!
 testRoundHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
@@ -5563,6 +5573,16 @@ testHash
 testIsType
 	self assert: ((1 / 2100) is: #Fraction).
 	self assert: ((1 / 2100) is: #Number).! !
+
+!FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 10/29/2021 11:13:20'!
+testRoundHalfAwayFromZero
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero"
+	self assert: (1/2) roundedHAFZ = 1.
+	self assert: (3/2) roundedHAFZ = 2.
+	self assert: (-1/2) roundedHAFZ = -1.
+	self assert: (-3/2) roundedHAFZ = -2.
+	self assert: (((0 to: 5 by: 1/4) collect: [ :f | f roundedHAFZ ]) = #(0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5) ).
+	self assert: (((0 to: -5 by: -1/4) collect: [ :f | f roundedHAFZ ]) = #(0 0 -1 -1 -1 -1 -2 -2 -2 -2 -3 -3 -3 -3 -4 -4 -4 -4 -5 -5 -5) ).! !
 
 !FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 10/9/2018 16:12:18'!
 testRoundHalfToEven
