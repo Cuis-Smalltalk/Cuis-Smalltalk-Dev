@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4956] on 29 October 2021 at 12:30:36 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 328!
+!provides: 'VectorGraphics' 1 329!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -9439,39 +9439,6 @@ bitMask
 	^self setProperty: #bitMask toValue:
 		"Reverse it so we get bit=1 for affected pixels."
 		((answer asGrayForm: 1) asFormOfDepth: 1) reverse.! !
-
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/28/2021 11:18:24'!
-findFullBoundsInOwner
-	"Find and answer full bounds in whatever owner.
-	These might not equal #displayFullBounds at all!!
-	Subclasses that (re)define #requiresVectorCanvas and #morphExtent should redefine this methods.
-	See inheritance.
-	This implementations is part of VectorGraphics.pck.st
-	Note: Answers an integer rectangle"
-
-	| prevNotVisibleFlag w c answer prevOwner |
-	(owner notNil and: [owner isWorldMorph]) ifTrue: [
-		w _ owner ]
-	ifFalse: [
-		w _ UISupervisor ui ].
-	c _ w boundsFinderCanvas.
-	"Hack owner so #displayBoundsSetFrom: will update privateDisplayBounds"
-	prevOwner _ owner.
-	owner _ w.
-	prevNotVisibleFlag _ self privateFlagAt: 3.
-	self privateFlagAt: 3 put: false.
-	c fullUpdateProtrudingBounds: self.
-	answer _ self displayFullBounds.
-	"Reset owner and privateDisplayBounds (if needed) so no one finds out what we've just done!!"
-	prevOwner == owner ifFalse: [
-		owner _ prevOwner.
-		self world = w ifTrue: [
-			self privateFlagAt: 3 put: false.
-			self allOwnersReverseDo: [ :m | c into: m ].
-			c fullUpdateProtrudingBounds: self.
-			self allOwnersDo: [ :m | c outOfMorph ]]].
-	self privateFlagAt: 3 put: prevNotVisibleFlag.
-	^answer! !
 
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 9/28/2021 16:20:14'!
 fitInto: aRectangle
