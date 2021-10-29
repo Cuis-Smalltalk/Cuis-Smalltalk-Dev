@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4955] on 29 October 2021 at 11:37:15 am'!
+'From Cuis 5.0 [latest update: #4956] on 29 October 2021 at 12:30:36 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 326!
+!provides: 'VectorGraphics' 1 328!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -9489,11 +9489,12 @@ fitInto: aRectangle
 	currentBounds _ self findFullBoundsInOwner.
 	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2).! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/25/2021 18:53:31'!
-imageForm: extentOrNil depth: depth
-	"Scale as needed. Draw unrotated."
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/29/2021 12:29:16'!
+imageFormVG: extentOrNil depth: depth
+	"Draw using a VectorCanvas
+	Scale as needed. Draw unrotated."
 
-	| prevNotVisibleFlag bounds extent location answer auxCanvas |
+	| prevNotVisibleFlag bounds extent fauxLocation answer auxCanvas |
 	"Position and scale us in order to fill required extent, but disregard any rotation.
 	Do it without triggering any invalidation at all."
 	prevNotVisibleFlag _ self privateFlagAt: 3.
@@ -9503,14 +9504,14 @@ imageForm: extentOrNil depth: depth
 			ifNotNil: [ | scale |
 				extent _ extentOrNil.
 				scale _ extent x asFloat / bounds width min: extent y asFloat / bounds height.
-				location _ AffineTransformation withScale: scale position: bounds origin negated +1 * scale ]
+				fauxLocation _ AffineTransformation withScale: scale position: bounds origin negated +1 * scale ]
 			ifNil: [
 				extent _ bounds extent.
-				location _ MorphicTranslation withTranslation: bounds origin negated ].
+				fauxLocation _ MorphicTranslation withTranslation: bounds origin negated ].
 		answer _ Form extent: extent depth: 32.
 		"Ask for a Canvas with subpixels so it can also handle translucent target"
 		auxCanvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
-		auxCanvas geometryTransformation: location.
+		auxCanvas geometryTransformation: fauxLocation.
 		"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
 		auxCanvas engine disableSubPixelSampling.
 		depth = 32 ifFalse: [
@@ -9532,43 +9533,6 @@ showBitMask
 		r left to: r right-1 do: [ :x |
 			(self coversPixel: x@y) ifTrue: [
 				Display colorAt: x@y put: Color red ]]].! !
-
-!MovableMorph methodsFor: '*vectorGraphics' stamp: 'jmv 10/8/2021 09:46:00'!
-imageForm: extentOrNil depth: depth
-	"Scale as needed. Draw unrotated."
-
-	| prevNotVisibleFlag oldLocation bounds extent answer auxCanvas |
-	"Position and scale us in order to fill required extent, but disregard any rotation.
-	Do it without triggering any invalidation at all."
-	prevNotVisibleFlag _ self privateFlagAt: 3.
-	oldLocation _ self location.
-	[
-		location _ MorphicTranslation withTranslation: 0@0.
-		location _ location invertingYAxis: self yAxisPointsUp.
-		bounds _ self findFullBoundsInOwner.
-		extentOrNil
-			ifNotNil: [ | scale |
-				extent _ extentOrNil.
-				scale _ extent x asFloat / bounds width min: extent y asFloat / bounds height.
-				location _ AffineTransformation withScale: scale position: bounds origin negated +1 * scale ]
-			ifNil: [
-				extent _ bounds extent.
-				location _ MorphicTranslation withTranslation: bounds origin negated ].
-		location _ location invertingYAxis: self yAxisPointsUp.
-		answer _ Form extent: extent depth: 32.
-		"Ask for a Canvas with subpixels so it can also handle translucent target"
-		auxCanvas _ VectorCanvas onFormWithSubPixelAntiAliasing: answer.
-		"But disable subpixel anti aliasing, as we are answering a Form, and therefore can't assume a Display geometry."
-		auxCanvas engine disableSubPixelSampling.
-		depth = 32 ifFalse: [
-			"Only 32 bpp can hold translucent anti aliasing over transparent background"
-			answer fillColor: Color veryLightGray ].
-		self privateFlagAt: 3 put: false.
-		auxCanvas fullDraw: self.
-	] ensure: [
-		self privateFlagAt: 3 put: prevNotVisibleFlag.
-		location _ oldLocation ].
-	^answer asFormOfDepth: depth.! !
 
 !LayoutMorph class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 9/28/2021 16:24:36'!
 example101VG
