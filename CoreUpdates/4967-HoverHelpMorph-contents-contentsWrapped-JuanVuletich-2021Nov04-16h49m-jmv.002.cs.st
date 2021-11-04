@@ -1,11 +1,4 @@
 'From Cuis 5.0 [latest update: #4965] on 4 November 2021 at 5:14:49 pm'!
-!classDefinition: #HoverHelpMorph category: 'Morphic-Composite Widgets'!
-WidgetMorph subclass: #HoverHelpMorph
-	instanceVariableNames: 'contents textComposition wrapFlag '
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic-Composite Widgets'!
-
 !HoverHelpMorph methodsFor: 'accessing' stamp: 'jmv 11/4/2021 17:11:01'!
 contents: aString wrappedTo: wordWrapWidthOrNil
 	"If wordWrapWidthOrNil is nil, don't do wordwrap, and make the morph as wide as needed"
@@ -58,10 +51,3 @@ contents: aString
 	"
 
 	^self new contents: aString! !
-
-!classDefinition: #HoverHelpMorph category: 'Morphic-Composite Widgets'!
-WidgetMorph subclass: #HoverHelpMorph
-	instanceVariableNames: 'contents wrapFlag textComposition'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic-Composite Widgets'!
