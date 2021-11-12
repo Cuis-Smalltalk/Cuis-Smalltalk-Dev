@@ -1,369 +1,369 @@
-'From Cuis 5.0 [latest update: #4928] on 17 October 2021 at 3:23:56 pm'!
+'From Cuis 5.0 [latest update: #4972] on 9 November 2021 at 6:22:14 pm'!
 'Description Various code used in Squeak which is not in Cuis.'!
-!provides: 'SqueakCompatibility' 1 32!
+!provides: 'SqueakCompatibility' 1 33!
 !requires: 'Cuis-Base' 42 2658 nil!
-SystemOrganization addCategory: #SqueakCompatibility!
+SystemOrganization addCategory: 'SqueakCompatibility'!
 
 
-!classDefinition: #KlattResonatorIndices category: #SqueakCompatibility!
+!classDefinition: #KlattResonatorIndices category: 'SqueakCompatibility'!
 SharedPool subclass: #KlattResonatorIndices
 	instanceVariableNames: ''
 	classVariableNames: 'R1c R1vp R2c R2fp R2vp R3c R3fp R3vp R4c R4fp R4vp R5c R5fp R6c R6fp R7c R8c Rnpc Rnpp Rnz Rout Rtpc Rtpp Rtz'
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'KlattResonatorIndices class' category: #SqueakCompatibility!
+!classDefinition: 'KlattResonatorIndices class' category: 'SqueakCompatibility'!
 KlattResonatorIndices class
 	instanceVariableNames: ''!
 
-!classDefinition: #ByteString category: #SqueakCompatibility!
-String variableByteSubclass: #ByteString
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'ByteString class' category: #SqueakCompatibility!
-ByteString class
-	instanceVariableNames: ''!
-
-!classDefinition: #MultiByteFileStream category: #SqueakCompatibility!
-StandardFileStream subclass: #MultiByteFileStream
-	instanceVariableNames: 'lineEndConvention'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'MultiByteFileStream class' category: #SqueakCompatibility!
-MultiByteFileStream class
-	instanceVariableNames: ''!
-
-!classDefinition: #CrLfFileStream category: #SqueakCompatibility!
-MultiByteFileStream subclass: #CrLfFileStream
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'CrLfFileStream class' category: #SqueakCompatibility!
-CrLfFileStream class
-	instanceVariableNames: ''!
-
-!classDefinition: #InvalidDirectoryError category: #SqueakCompatibility!
-Error subclass: #InvalidDirectoryError
-	instanceVariableNames: 'pathName'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'InvalidDirectoryError class' category: #SqueakCompatibility!
-InvalidDirectoryError class
-	instanceVariableNames: ''!
-
-!classDefinition: #ProvideAnswerNotification category: #SqueakCompatibility!
-Notification subclass: #ProvideAnswerNotification
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'ProvideAnswerNotification class' category: #SqueakCompatibility!
-ProvideAnswerNotification class
-	instanceVariableNames: ''!
-
-!classDefinition: #TimeStamp category: #SqueakCompatibility!
-DateAndTime subclass: #TimeStamp
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TimeStamp class' category: #SqueakCompatibility!
-TimeStamp class
-	instanceVariableNames: ''!
-
-!classDefinition: #Model category: #SqueakCompatibility!
-ActiveModel subclass: #Model
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'Model class' category: #SqueakCompatibility!
-Model class
-	instanceVariableNames: ''!
-
-!classDefinition: #StringHolder category: #SqueakCompatibility!
+!classDefinition: #StringHolder category: 'SqueakCompatibility'!
 TextModel subclass: #StringHolder
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'StringHolder class' category: #SqueakCompatibility!
+!classDefinition: 'StringHolder class' category: 'SqueakCompatibility'!
 StringHolder class
 	instanceVariableNames: ''!
 
-!classDefinition: #FileDirectory category: #SqueakCompatibility!
-Object subclass: #FileDirectory
+!classDefinition: #Model category: 'SqueakCompatibility'!
+ActiveModel subclass: #Model
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'Model class' category: 'SqueakCompatibility'!
+Model class
+	instanceVariableNames: ''!
+
+!classDefinition: #TimeStamp category: 'SqueakCompatibility'!
+DateAndTime subclass: #TimeStamp
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TimeStamp class' category: 'SqueakCompatibility'!
+TimeStamp class
+	instanceVariableNames: ''!
+
+!classDefinition: #ByteString category: 'SqueakCompatibility'!
+String variableByteSubclass: #ByteString
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'ByteString class' category: 'SqueakCompatibility'!
+ByteString class
+	instanceVariableNames: ''!
+
+!classDefinition: #MultiByteFileStream category: 'SqueakCompatibility'!
+StandardFileStream subclass: #MultiByteFileStream
+	instanceVariableNames: 'lineEndConvention'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'MultiByteFileStream class' category: 'SqueakCompatibility'!
+MultiByteFileStream class
+	instanceVariableNames: ''!
+
+!classDefinition: #CrLfFileStream category: 'SqueakCompatibility'!
+MultiByteFileStream subclass: #CrLfFileStream
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'CrLfFileStream class' category: 'SqueakCompatibility'!
+CrLfFileStream class
+	instanceVariableNames: ''!
+
+!classDefinition: #InvalidDirectoryError category: 'SqueakCompatibility'!
+Error subclass: #InvalidDirectoryError
 	instanceVariableNames: 'pathName'
-	classVariableNames: 'CurrentDirectory DirectoryClass ImageDirectory VMDirectory'
+	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'FileDirectory class' category: #SqueakCompatibility!
-FileDirectory class
+!classDefinition: 'InvalidDirectoryError class' category: 'SqueakCompatibility'!
+InvalidDirectoryError class
 	instanceVariableNames: ''!
 
-!classDefinition: #AcornFileDirectory category: #SqueakCompatibility!
-FileDirectory subclass: #AcornFileDirectory
+!classDefinition: #ProvideAnswerNotification category: 'SqueakCompatibility'!
+Notification subclass: #ProvideAnswerNotification
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'AcornFileDirectory class' category: #SqueakCompatibility!
-AcornFileDirectory class
+!classDefinition: 'ProvideAnswerNotification class' category: 'SqueakCompatibility'!
+ProvideAnswerNotification class
 	instanceVariableNames: ''!
 
-!classDefinition: #DosFileDirectory category: #SqueakCompatibility!
-FileDirectory subclass: #DosFileDirectory
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'DosFileDirectory class' category: #SqueakCompatibility!
-DosFileDirectory class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnixFileDirectory category: #SqueakCompatibility!
-FileDirectory subclass: #UnixFileDirectory
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'UnixFileDirectory class' category: #SqueakCompatibility!
-UnixFileDirectory class
-	instanceVariableNames: ''!
-
-!classDefinition: #SmalltalkImage category: #SqueakCompatibility!
-Object subclass: #SmalltalkImage
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'SmalltalkImage class' category: #SqueakCompatibility!
-SmalltalkImage class
-	instanceVariableNames: ''!
-
-!classDefinition: #SqDirectoryEntry category: #SqueakCompatibility!
-Object subclass: #SqDirectoryEntry
-	instanceVariableNames: 'directory name creationTime modificationTime fileSize'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'SqDirectoryEntry class' category: #SqueakCompatibility!
-SqDirectoryEntry class
-	instanceVariableNames: ''!
-
-!classDefinition: #DirectoryEntryDirectory category: #SqueakCompatibility!
-SqDirectoryEntry subclass: #DirectoryEntryDirectory
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'DirectoryEntryDirectory class' category: #SqueakCompatibility!
-DirectoryEntryDirectory class
-	instanceVariableNames: ''!
-
-!classDefinition: #DirectoryEntryFile category: #SqueakCompatibility!
-SqDirectoryEntry subclass: #DirectoryEntryFile
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'DirectoryEntryFile class' category: #SqueakCompatibility!
-DirectoryEntryFile class
-	instanceVariableNames: ''!
-
-!classDefinition: #UnsupportedInCuis category: #SqueakCompatibility!
-Object subclass: #UnsupportedInCuis
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'UnsupportedInCuis class' category: #SqueakCompatibility!
-UnsupportedInCuis class
-	instanceVariableNames: ''!
-
-!classDefinition: #AlignmentMorph category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #AlignmentMorph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'AlignmentMorph class' category: #SqueakCompatibility!
-AlignmentMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #BorderStyle category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #BorderStyle
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'BorderStyle class' category: #SqueakCompatibility!
-BorderStyle class
-	instanceVariableNames: ''!
-
-!classDefinition: #ComponentInstance category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #ComponentInstance
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'ComponentInstance class' category: #SqueakCompatibility!
-ComponentInstance class
-	instanceVariableNames: ''!
-
-!classDefinition: #LayoutFrame category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #LayoutFrame
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'LayoutFrame class' category: #SqueakCompatibility!
-LayoutFrame class
-	instanceVariableNames: ''!
-
-!classDefinition: #MCWorkingCopy category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #MCWorkingCopy
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'MCWorkingCopy class' category: #SqueakCompatibility!
-MCWorkingCopy class
-	instanceVariableNames: ''!
-
-!classDefinition: #PackageOrganizer category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #PackageOrganizer
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'PackageOrganizer class' category: #SqueakCompatibility!
-PackageOrganizer class
-	instanceVariableNames: ''!
-
-!classDefinition: #PluggableTextMorph category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #PluggableTextMorph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'PluggableTextMorph class' category: #SqueakCompatibility!
-PluggableTextMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #ProportionalLayout category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #ProportionalLayout
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'ProportionalLayout class' category: #SqueakCompatibility!
-ProportionalLayout class
-	instanceVariableNames: ''!
-
-!classDefinition: #SimpleButtonMorph category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #SimpleButtonMorph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'SimpleButtonMorph class' category: #SqueakCompatibility!
-SimpleButtonMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #TableLayout category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #TableLayout
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TableLayout class' category: #SqueakCompatibility!
-TableLayout class
-	instanceVariableNames: ''!
-
-!classDefinition: #TextMorph category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #TextMorph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TextMorph class' category: #SqueakCompatibility!
-TextMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #TextStyle category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #TextStyle
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TextStyle class' category: #SqueakCompatibility!
-TextStyle class
-	instanceVariableNames: ''!
-
-!classDefinition: #TranscriptStream category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #TranscriptStream
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TranscriptStream class' category: #SqueakCompatibility!
-TranscriptStream class
-	instanceVariableNames: ''!
-
-!classDefinition: #TransferMorph category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #TransferMorph
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'TransferMorph class' category: #SqueakCompatibility!
-TransferMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #UIManager category: #SqueakCompatibility!
-UnsupportedInCuis subclass: #UIManager
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'SqueakCompatibility'!
-!classDefinition: 'UIManager class' category: #SqueakCompatibility!
-UIManager class
-	instanceVariableNames: ''!
-
-!classDefinition: #ClassTestCase category: #SqueakCompatibility!
+!classDefinition: #ClassTestCase category: 'SqueakCompatibility'!
 TestCase subclass: #ClassTestCase
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'ClassTestCase class' category: #SqueakCompatibility!
+!classDefinition: 'ClassTestCase class' category: 'SqueakCompatibility'!
 ClassTestCase class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestObjectsAsMethods category: #SqueakCompatibility!
+!classDefinition: #TestObjectsAsMethods category: 'SqueakCompatibility'!
 TestCase subclass: #TestObjectsAsMethods
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'SqueakCompatibility'!
-!classDefinition: 'TestObjectsAsMethods class' category: #SqueakCompatibility!
+!classDefinition: 'TestObjectsAsMethods class' category: 'SqueakCompatibility'!
 TestObjectsAsMethods class
 	instanceVariableNames: ''!
 
+!classDefinition: #FileDirectory category: 'SqueakCompatibility'!
+Object subclass: #FileDirectory
+	instanceVariableNames: 'pathName'
+	classVariableNames: 'CurrentDirectory DirectoryClass ImageDirectory VMDirectory'
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'FileDirectory class' category: 'SqueakCompatibility'!
+FileDirectory class
+	instanceVariableNames: ''!
+
+!classDefinition: #AcornFileDirectory category: 'SqueakCompatibility'!
+FileDirectory subclass: #AcornFileDirectory
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'AcornFileDirectory class' category: 'SqueakCompatibility'!
+AcornFileDirectory class
+	instanceVariableNames: ''!
+
+!classDefinition: #DosFileDirectory category: 'SqueakCompatibility'!
+FileDirectory subclass: #DosFileDirectory
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'DosFileDirectory class' category: 'SqueakCompatibility'!
+DosFileDirectory class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnixFileDirectory category: 'SqueakCompatibility'!
+FileDirectory subclass: #UnixFileDirectory
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'UnixFileDirectory class' category: 'SqueakCompatibility'!
+UnixFileDirectory class
+	instanceVariableNames: ''!
+
+!classDefinition: #SmalltalkImage category: 'SqueakCompatibility'!
+Object subclass: #SmalltalkImage
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'SmalltalkImage class' category: 'SqueakCompatibility'!
+SmalltalkImage class
+	instanceVariableNames: ''!
+
+!classDefinition: #SqDirectoryEntry category: 'SqueakCompatibility'!
+Object subclass: #SqDirectoryEntry
+	instanceVariableNames: 'directory name creationTime modificationTime fileSize'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'SqDirectoryEntry class' category: 'SqueakCompatibility'!
+SqDirectoryEntry class
+	instanceVariableNames: ''!
+
+!classDefinition: #DirectoryEntryDirectory category: 'SqueakCompatibility'!
+SqDirectoryEntry subclass: #DirectoryEntryDirectory
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'DirectoryEntryDirectory class' category: 'SqueakCompatibility'!
+DirectoryEntryDirectory class
+	instanceVariableNames: ''!
+
+!classDefinition: #DirectoryEntryFile category: 'SqueakCompatibility'!
+SqDirectoryEntry subclass: #DirectoryEntryFile
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'DirectoryEntryFile class' category: 'SqueakCompatibility'!
+DirectoryEntryFile class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnsupportedInCuis category: 'SqueakCompatibility'!
+Object subclass: #UnsupportedInCuis
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'UnsupportedInCuis class' category: 'SqueakCompatibility'!
+UnsupportedInCuis class
+	instanceVariableNames: ''!
+
+!classDefinition: #AlignmentMorph category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #AlignmentMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'AlignmentMorph class' category: 'SqueakCompatibility'!
+AlignmentMorph class
+	instanceVariableNames: ''!
+
+!classDefinition: #BorderStyle category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #BorderStyle
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'BorderStyle class' category: 'SqueakCompatibility'!
+BorderStyle class
+	instanceVariableNames: ''!
+
+!classDefinition: #ComponentInstance category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #ComponentInstance
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'ComponentInstance class' category: 'SqueakCompatibility'!
+ComponentInstance class
+	instanceVariableNames: ''!
+
+!classDefinition: #LayoutFrame category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #LayoutFrame
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'LayoutFrame class' category: 'SqueakCompatibility'!
+LayoutFrame class
+	instanceVariableNames: ''!
+
+!classDefinition: #MCWorkingCopy category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #MCWorkingCopy
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'MCWorkingCopy class' category: 'SqueakCompatibility'!
+MCWorkingCopy class
+	instanceVariableNames: ''!
+
+!classDefinition: #PackageOrganizer category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #PackageOrganizer
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'PackageOrganizer class' category: 'SqueakCompatibility'!
+PackageOrganizer class
+	instanceVariableNames: ''!
+
+!classDefinition: #PluggableTextMorph category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #PluggableTextMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'PluggableTextMorph class' category: 'SqueakCompatibility'!
+PluggableTextMorph class
+	instanceVariableNames: ''!
+
+!classDefinition: #ProportionalLayout category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #ProportionalLayout
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'ProportionalLayout class' category: 'SqueakCompatibility'!
+ProportionalLayout class
+	instanceVariableNames: ''!
+
+!classDefinition: #SimpleButtonMorph category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #SimpleButtonMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'SimpleButtonMorph class' category: 'SqueakCompatibility'!
+SimpleButtonMorph class
+	instanceVariableNames: ''!
+
+!classDefinition: #TableLayout category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #TableLayout
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TableLayout class' category: 'SqueakCompatibility'!
+TableLayout class
+	instanceVariableNames: ''!
+
+!classDefinition: #TextMorph category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #TextMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TextMorph class' category: 'SqueakCompatibility'!
+TextMorph class
+	instanceVariableNames: ''!
+
+!classDefinition: #TextStyle category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #TextStyle
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TextStyle class' category: 'SqueakCompatibility'!
+TextStyle class
+	instanceVariableNames: ''!
+
+!classDefinition: #TranscriptStream category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #TranscriptStream
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TranscriptStream class' category: 'SqueakCompatibility'!
+TranscriptStream class
+	instanceVariableNames: ''!
+
+!classDefinition: #TransferMorph category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #TransferMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'TransferMorph class' category: 'SqueakCompatibility'!
+TransferMorph class
+	instanceVariableNames: ''!
+
+!classDefinition: #UIManager category: 'SqueakCompatibility'!
+UnsupportedInCuis subclass: #UIManager
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SqueakCompatibility'!
+!classDefinition: 'UIManager class' category: 'SqueakCompatibility'!
+UIManager class
+	instanceVariableNames: ''!
+
+
+!Model commentStamp: '<historical>' prior: 0!
+Compatibility. Prefer ActiveModel.!
 
 !MultiByteFileStream commentStamp: 'jmv 5/8/2015 15:03' prior: 0!
 Not really a MultiByteXXX. Accept #lineEndConvention and honor it, on Write. On Read, do no conversions.!
 
 !CrLfFileStream commentStamp: '<historical>' prior: 0!
 Do line ending conversion on write. By default, write files with host platform convention.!
-
-!Model commentStamp: '<historical>' prior: 0!
-Compatibility. Prefer ActiveModel.!
 
 !FileDirectory commentStamp: '<historical>' prior: 0!
 A FileDirectory represents a folder or directory in the underlying platform's file system. It carries a fully-qualified path name for the directory it represents, and can enumerate the files and directories within that directory.
@@ -2012,53 +2012,118 @@ ifNotNilDo: ifNotNilBlock
 isCharacter
 	^false! !
 
+!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
+environment
+	"Necessary to support disjoint class hierarchies."
+
+	^Smalltalk		"No environments in Cuis..."! !
+
+!Behavior methodsFor: '*squeakCompatibility' stamp: 'jmv 11/1/2011 23:15'!
+environment
+	"Return the environment in which the receiver is visible"
+	^Smalltalk! !
+
+!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:08:16'!
+printOn: aStream base: base digitCount: numDigits
+
+	self isNaN ifTrue: [aStream nextPutAll: 'NaN'. ^ self]. "check for NaN before sign"
+	self > 0.0
+		ifTrue: [self absPrintOn: aStream base: base digitCount: numDigits]
+		ifFalse:
+			[self sign = -1
+				ifTrue: [aStream nextPutAll: '-'].
+			self = 0.0
+				ifTrue: [aStream nextPutAll: '0.0'. ^ self]
+				ifFalse: [self negated absPrintOn: aStream base: base digitCount: numDigits]]! !
+
+!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:24:25'!
+printOn: aStream base: base nDigits: numDigits
+
+	self printOn: aStream base: base digitCount: numDigits! !
+
+!Time class methodsFor: '*squeakCompatibility' stamp: 'jmv 11/9/2021 18:17:03'!
+totalSeconds
+	^self localSecondClock ! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:29'!
+asInteger
+	"Answer the value of the receiver."
+
+	^self numericValue! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:26'!
+asUnicode
+	"Answer the unicode encoding of the receiver"
+	"self leadingChar = 0 ifTrue: [^ self asInteger].
+	^self encodedCharSet charsetClass convertToUnicode: self charCode"
+	^self asInteger! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 11/27/2017 11:04:11'!
+between: min and: max 
+	"Answer whether the receiver is less than or equal to the argument, max, 
+	and greater than or equal to the argument, min."
+
+	^self numericValue >= min numericValue and: [self numericValue <= max numericValue]! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:12'!
+isCharacter
+	^true! !
+
+!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:11'!
+value
+	^self numericValue! !
+
+!Character class methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:26:47'!
+value: anInteger
+	"Answer the Character whose value is anInteger."
+
+	^ self numericValue: anInteger! !
+
+!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
+cull: firstArg
+	"Activate the receiver, with one or zero arguments."
+	
+	numArgs >= 1 ifTrue: [ ^self value: firstArg ].
+	^self value! !
+
+!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
+cull: firstArg cull: secondArg
+	"Activate the receiver, with two or less arguments."
+	
+	numArgs >= 2 ifTrue: [ ^self value: firstArg value: secondArg ].	
+	numArgs = 1 ifTrue: [ ^self value: firstArg ].
+	^self value! !
+
+!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
+cull: firstArg cull: secondArg cull: thirdArg
+	"Activate the receiver, with three or less arguments."
+	
+	numArgs >= 2 ifTrue: [ 
+		numArgs >= 3 ifTrue: [ ^self value: firstArg value: secondArg value: thirdArg ].
+		^self value: firstArg value: secondArg ].
+	numArgs = 1 ifTrue: [ ^self value: firstArg ].
+	^self value! !
+
+!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
+cull: firstArg cull: secondArg cull: thirdArg cull: fourthArg
+	"Activate the receiver, with four or less arguments."
+	
+	numArgs >= 3 ifTrue: [
+		numArgs >= 4 ifTrue: [
+			^self value: firstArg value: secondArg value: thirdArg value: fourthArg ].
+		^self value: firstArg value: secondArg value: thirdArg ].
+	numArgs = 2 ifTrue: [ ^self value: firstArg value: secondArg ].	
+	numArgs = 1 ifTrue: [ ^self value: firstArg ].
+	^self value! !
+
+!InputSensor methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:47'!
+cursorPoint
+	^self mousePoint! !
+
 !SequenceableCollection methodsFor: '*squeakCompatibility' stamp: 'jmv 4/2/2016 23:18'!
 doWithIndex: elementAndIndexBlock
 	"Old style. Prefer #withIndexDo:"
 	self withIndexDo: elementAndIndexBlock! !
-
-!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
-isAbstract
-	| marker |
-	marker := self markerOrNil.
-	^ marker notNil and: [self class abstractMarkers includes: marker].! !
-
-!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'al 2/13/2006 17:44'!
-markerOrNil
-	"If I am a marker method, answer the symbol used to mark me.  Otherwise
-	answer nil.
-
-	What is a marker method?  It is method with body like 
-		'self subclassResponsibility' or '^ self subclassResponsibility' 
-	used to indicate ('mark') a special property.
-
-	Marker methods compile to bytecode like:
-
-		9 <70> self
-		10 <D0> send: <literal 1>
-		11 <87> pop
-		12 <78> returnSelf
-
-	for the first form, or 
-
-		9 <70> self
-		10 <D0> send: <literal 1>
-		11 <7C> returnTop
-
-	for the second form."
-
-	| e |
-	((e := self endPC) = 19 or: [e = 20]) ifFalse: [^ nil].
-	(self numLiterals = 3) ifFalse:[^ nil].
-	(self at: 17) =  16r70 ifFalse:[^ nil].		"push self"
-	(self at: 18) = 16rD0 ifFalse:[^ nil].		"send <literal 1>"
-	"If we reach this point, we have a marker method that sends self <literal 1>"
-	^ self literalAt: 1
-! !
-
-!CompiledMethod class methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:17'!
-abstractMarkers
-	^ #(subclassResponsibility shouldNotImplement)! !
 
 !String methodsFor: '*squeakCompatibility' stamp: 'NM 10/17/2021 15:14:08'!
 asInteger 
@@ -2139,6 +2204,49 @@ lf
 value: anObject 
 	^anObject perform: self.! !
 
+!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:18'!
+isAbstract
+	| marker |
+	marker := self markerOrNil.
+	^ marker notNil and: [self class abstractMarkers includes: marker].! !
+
+!CompiledMethod methodsFor: '*squeakCompatibility' stamp: 'al 2/13/2006 17:44'!
+markerOrNil
+	"If I am a marker method, answer the symbol used to mark me.  Otherwise
+	answer nil.
+
+	What is a marker method?  It is method with body like 
+		'self subclassResponsibility' or '^ self subclassResponsibility' 
+	used to indicate ('mark') a special property.
+
+	Marker methods compile to bytecode like:
+
+		9 <70> self
+		10 <D0> send: <literal 1>
+		11 <87> pop
+		12 <78> returnSelf
+
+	for the first form, or 
+
+		9 <70> self
+		10 <D0> send: <literal 1>
+		11 <7C> returnTop
+
+	for the second form."
+
+	| e |
+	((e := self endPC) = 19 or: [e = 20]) ifFalse: [^ nil].
+	(self numLiterals = 3) ifFalse:[^ nil].
+	(self at: 17) =  16r70 ifFalse:[^ nil].		"push self"
+	(self at: 18) = 16rD0 ifFalse:[^ nil].		"send <literal 1>"
+	"If we reach this point, we have a marker method that sends self <literal 1>"
+	^ self literalAt: 1
+! !
+
+!CompiledMethod class methodsFor: '*squeakCompatibility' stamp: 'NS 12/12/2003 15:17'!
+abstractMarkers
+	^ #(subclassResponsibility shouldNotImplement)! !
+
 !SystemDictionary methodsFor: '*squeakCompatibility' stamp: 'jmv 7/2/2019 08:08:30'!
 datedVersion
 	^ self version! !
@@ -2189,114 +2297,6 @@ environment
 	"Answer the environment of the current compilation context,
 	 be it in a class or global (e.g. a workspace)"
 	^Smalltalk "No environments in Cuis..."! !
-
-!Behavior methodsFor: '*squeakCompatibility' stamp: 'jmv 11/1/2011 23:15'!
-environment
-	"Return the environment in which the receiver is visible"
-	^Smalltalk! !
-
-!Time class methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 10:52'!
-totalSeconds
-	^self primLocalSecondsClock ! !
-
-!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:08:16'!
-printOn: aStream base: base digitCount: numDigits
-
-	self isNaN ifTrue: [aStream nextPutAll: 'NaN'. ^ self]. "check for NaN before sign"
-	self > 0.0
-		ifTrue: [self absPrintOn: aStream base: base digitCount: numDigits]
-		ifFalse:
-			[self sign = -1
-				ifTrue: [aStream nextPutAll: '-'].
-			self = 0.0
-				ifTrue: [aStream nextPutAll: '0.0'. ^ self]
-				ifFalse: [self negated absPrintOn: aStream base: base digitCount: numDigits]]! !
-
-!Float methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:24:25'!
-printOn: aStream base: base nDigits: numDigits
-
-	self printOn: aStream base: base digitCount: numDigits! !
-
-!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
-cull: firstArg
-	"Activate the receiver, with one or zero arguments."
-	
-	numArgs >= 1 ifTrue: [ ^self value: firstArg ].
-	^self value! !
-
-!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
-cull: firstArg cull: secondArg
-	"Activate the receiver, with two or less arguments."
-	
-	numArgs >= 2 ifTrue: [ ^self value: firstArg value: secondArg ].	
-	numArgs = 1 ifTrue: [ ^self value: firstArg ].
-	^self value! !
-
-!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
-cull: firstArg cull: secondArg cull: thirdArg
-	"Activate the receiver, with three or less arguments."
-	
-	numArgs >= 2 ifTrue: [ 
-		numArgs >= 3 ifTrue: [ ^self value: firstArg value: secondArg value: thirdArg ].
-		^self value: firstArg value: secondArg ].
-	numArgs = 1 ifTrue: [ ^self value: firstArg ].
-	^self value! !
-
-!BlockClosure methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:29'!
-cull: firstArg cull: secondArg cull: thirdArg cull: fourthArg
-	"Activate the receiver, with four or less arguments."
-	
-	numArgs >= 3 ifTrue: [
-		numArgs >= 4 ifTrue: [
-			^self value: firstArg value: secondArg value: thirdArg value: fourthArg ].
-		^self value: firstArg value: secondArg value: thirdArg ].
-	numArgs = 2 ifTrue: [ ^self value: firstArg value: secondArg ].	
-	numArgs = 1 ifTrue: [ ^self value: firstArg ].
-	^self value! !
-
-!UndefinedObject methodsFor: '*squeakCompatibility' stamp: 'jmv 3/1/2010 09:59'!
-environment
-	"Necessary to support disjoint class hierarchies."
-
-	^Smalltalk		"No environments in Cuis..."! !
-
-!InputSensor methodsFor: '*squeakCompatibility' stamp: 'jmv 5/8/2015 12:47'!
-cursorPoint
-	^self mousePoint! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:29'!
-asInteger
-	"Answer the value of the receiver."
-
-	^self numericValue! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'bp 11/29/2014 17:26'!
-asUnicode
-	"Answer the unicode encoding of the receiver"
-	"self leadingChar = 0 ifTrue: [^ self asInteger].
-	^self encodedCharSet charsetClass convertToUnicode: self charCode"
-	^self asInteger! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 11/27/2017 11:04:11'!
-between: min and: max 
-	"Answer whether the receiver is less than or equal to the argument, max, 
-	and greater than or equal to the argument, min."
-
-	^self numericValue >= min numericValue and: [self numericValue <= max numericValue]! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 5/14/2015 11:12'!
-isCharacter
-	^true! !
-
-!Character methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:27:11'!
-value
-	^self numericValue! !
-
-!Character class methodsFor: '*squeakCompatibility' stamp: 'jmv 9/6/2016 10:26:47'!
-value: anInteger
-	"Answer the Character whose value is anInteger."
-
-	^ self numericValue: anInteger! !
 
 !Transcript class methodsFor: '*squeakCompatibility' stamp: 'KenD 8/26/2016 15:04:14'!
 nl

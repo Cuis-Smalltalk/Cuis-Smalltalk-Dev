@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:30:12 pm'!
+'From Cuis 5.0 [latest update: #4972] on 9 November 2021 at 6:22:00 pm'!
 'Description Code was filed out from Squeak 4.5 and ported to Cuis with few changes by David Graham.'!
-!provides: 'Identities-UUID' 1 8!
+!provides: 'Identities-UUID' 1 9!
 !requires: 'Sound' 1 3 nil!
 SystemOrganization addCategory: 'Identities-UUID'!
 
@@ -230,7 +230,7 @@ generateRandomBitsOfLength: aNumberOfBits
 		[target := (target bitShift: 1)  bitOr: self generateOneOrZero].
 	^target! !
 
-!UUIDGenerator methodsFor: 'random seed' stamp: 'jmv 5/19/2015 23:34'!
+!UUIDGenerator methodsFor: 'random seed' stamp: 'jmv 11/9/2021 18:16:32'!
 makeSeed
 	"Try various methods of getting good seeds"
 	| seed |
@@ -243,7 +243,7 @@ makeSeed
 	
 	"default"
 	[seed := (Time millisecondClockValue bitAnd: 16r3FFFFFFF) bitXor: self hash.
-	seed := seed bitXor: (Time primLocalSecondsClock bitAnd: 16r3FFFFFFF).
+	seed := seed bitXor: (Time localSecondClock bitAnd: 16r3FFFFFFF).
 	seed = 0] whileTrue: ["Try again if ever get a seed = 0"].
 
 	^seed
