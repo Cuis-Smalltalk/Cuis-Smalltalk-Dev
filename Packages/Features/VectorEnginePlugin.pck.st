@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4871] on 22 September 2021 at 9:45:02 am'!
+'From Cuis 5.0 [latest update: #4911] on 12 October 2021 at 10:46:22 am'!
 'Description '!
-!provides: 'VectorEnginePlugin' 1 29!
+!provides: 'VectorEnginePlugin' 1 31!
 !requires: 'VectorGraphics' 1 201 nil!
 !requires: 'VMMaker' 1 7 nil!
 SystemOrganization addCategory: 'VectorEnginePlugin'!
@@ -315,7 +315,7 @@ lineFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherWordArray alphaMask: 
 	contour := aFloat32Array.
 	self pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:27:08'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 10/12/2021 09:58:38'!
 pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy dx2 dy2 dx3 dy3 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
@@ -396,7 +396,7 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 
 	t := 0.0.
 	increment := 1.0 / hops.
-	1 to: hops do: [ :h |
+	[ t < 1.0 ] whileTrue: [
 		oneLessT := 1.0 - t.
 		f1 := oneLessT * oneLessT * oneLessT.
 		f23 := 3.0 * oneLessT * t.
@@ -415,10 +415,10 @@ pvt_cubicBezierFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yCo
 		self updateEdgeCountAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 7/5/2021 16:29:12'!
+!VectorEnginePlugin methodsFor: 'paths algorithms' stamp: 'jmv 10/12/2021 10:18:55'!
 pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 
-	| txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
+	| txFrom tyFrom txTo tyTo dx dy hops t oneLessT increment x y |
 	self var: #xFrom type: 'float'.
 	self var: #yFrom type: 'float'.
 	self var: #xTo type: 'float'.
@@ -430,8 +430,10 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
 	self var: #hops type: 'int'.
-	self var: #incrementX type: 'float'.
-	self var: #incrementY type: 'float'.
+
+	self var: #t type: 'float'.
+	self var: #oneLessT type: 'float'.
+	self var: #increment type: 'float'.
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
 
@@ -441,8 +443,6 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
 	dx := txTo-txFrom.
 	dy := tyTo-tyFrom.
-	incrementX := dx.
-	incrementY := dy.
 	self cCode: '
 		dx = fabs(dx);
 		dy = fabs(dy);'
@@ -450,23 +450,23 @@ pvt_lineFromX: xFrom y: yFrom toX: xTo y: yTo
 		dx := dx abs.
 		dy := dy abs ].
 	hops := ((dx max: dy) / hop) asInteger + 1.
-	incrementX := incrementX / hops.
-	incrementY := incrementY / hops.
 
 	spanLeft := spanLeft min: (txFrom min: txTo).
 	spanRight := spanRight max: (txFrom max: txTo).
 	spanTop := spanTop min: (tyFrom min: tyTo).
 	spanBottom := spanBottom max: (tyFrom max: tyTo).
 
-	x := txFrom.
-	y := tyFrom.
-	1 to: hops do: [ :h |
+	t := 0.0.
+	increment := 1.0 / hops.
+	[ t < 1.0 ] whileTrue: [
+		oneLessT := 1.0 - t.
+		x := (oneLessT * txFrom) + (t * txTo).
+		y := (oneLessT * tyFrom) + (t * tyTo).
 		self updateAlphasForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountAtX: x y: y ].
 		self updateContourForX: x y: y.
-		x := x + incrementX.
-		y := y + incrementY ].
+		t := t + increment. ].
 	self updateAlphasForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountAtX: txTo y: tyTo ].
@@ -1417,7 +1417,7 @@ pathSequence: aFloat32Array size: size edgeCounts: otherWordArray alphaMask: ano
 				]}
 		otherwise: [ ^self "failure"]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:03'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 9/30/2021 12:12:09'!
 blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
 	"Blends fill color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
@@ -1539,11 +1539,8 @@ blendFillOnlyAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInsid
 
 		targetWord := ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
-			morphIds at: pixelIndex put: morphIdWord ]].
-! !
+		morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
+		morphIds at: pixelIndex put: morphIdWord ].! !
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:07'!
 blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray
@@ -1615,7 +1612,7 @@ blendFillOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWo
 					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 					antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:19:51'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 9/30/2021 12:12:34'!
 blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside antiAliasAlphasWord: antiAliasAlphasWord
 	"Blends stroke color and fill color over background.
 	Do an appropriate (anti aliased) gradient between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
@@ -1762,11 +1759,8 @@ blendStrokeAndFillAt: pixelIndex redIsInside: isRedInside greenIsInside: isGreen
 
 		targetWord := ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
-			morphIds at: pixelIndex put: morphIdWord ]].
-! !
+		morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
+		morphIds at: pixelIndex put: morphIdWord ].! !
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:19:45'!
 blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherWordArray alphaMask: anotherWordArray
@@ -1841,7 +1835,7 @@ blendStrokeAndFillLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds
 					redIsInside: isRedInside greenIsInside: isGreenInside blueIsInside: isBlueInside
 					antiAliasAlphasWord: antiAliasAlphasWord ]]].! !
 
-!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:30'!
+!VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 9/30/2021 12:13:12'!
 blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
 	"Blends stroke color over background. Target translucency computed correctly.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
@@ -1959,10 +1953,8 @@ blendStrokeOnlyAt: pixelIndex antiAliasAlphasWord: antiAliasAlphasWord
 
 		targetWord := ((resultAlphaBits bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
-
-		currentMorphId = 0 ifFalse: [
-			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
-			morphIds at: pixelIndex put: morphIdWord ]].! !
+		morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
+		morphIds at: pixelIndex put: morphIdWord ].! !
 
 !VectorEnginePlugin methodsFor: 'blend stroke and fill colors' stamp: 'jmv 6/28/2021 17:18:34'!
 blendStrokeOnlyLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray alphaMask: anotherWordArray
@@ -2061,7 +2053,7 @@ lineWPFromX: xFrom y: yFrom toX: xTo y: yTo edgeCounts: otherByteArray alphaMask
 	contour := aFloat32Array.
 	self pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:27:12'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 10/12/2021 09:57:51'!
 pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: yControl1 control2X: xControl2 y: yControl2
 
 	| txFrom tyFrom txTo tyTo txControl1 tyControl1 txControl2 tyControl2 dx dy dx2 dy2 dx3 dy3 hops xMinEnd xMaxEnd yMinEnd yMaxEnd t oneLessT increment f1 f23 f2 f3 f4 x y |
@@ -2142,7 +2134,7 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 
 	t := 0.0.
 	increment := 1.0 / hops.
-	1 to: hops do: [ :h |
+	[ t < 1.0 ] whileTrue: [
 		oneLessT := 1.0 - t.
 		f1 := oneLessT * oneLessT * oneLessT.
 		f23 := 3.0 * oneLessT * t.
@@ -2161,10 +2153,10 @@ pvt_cubicBezierWPFromX: xFrom y: yFrom toX: xTo y: yTo control1X: xControl1 y: y
 		self updateEdgeCountWPAtX: txTo y: tyTo ].
 	self updateContourForX: txTo y: tyTo.! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 7/5/2021 16:29:10'!
+!VectorEnginePlugin methodsFor: 'whole pixel - path algorithms' stamp: 'jmv 10/12/2021 10:15:26'!
 pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 
-	| txFrom tyFrom txTo tyTo dx dy hops incrementX incrementY x y |
+	| txFrom tyFrom txTo tyTo dx dy hops t oneLessT increment x y |
 	self var: #xFrom type: 'float'.
 	self var: #yFrom type: 'float'.
 	self var: #xTo type: 'float'.
@@ -2176,8 +2168,10 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 	self var: #dx type: 'float'.
 	self var: #dy type: 'float'.
 	self var: #hops type: 'int'.
-	self var: #incrementX type: 'float'.
-	self var: #incrementY type: 'float'.
+
+	self var: #t type: 'float'.
+	self var: #oneLessT type: 'float'.
+	self var: #increment type: 'float'.
 	self var: #x type: 'float'.
 	self var: #y type: 'float'.
 
@@ -2187,8 +2181,6 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 	tyTo := (xTo * txA21) + (yTo * txA22) + txA23.
 	dx := txTo-txFrom.
 	dy := tyTo-tyFrom.
-	incrementX := dx.
-	incrementY := dy.
 	self cCode: '
 		dx = fabs(dx);
 		dy = fabs(dy);'
@@ -2196,23 +2188,23 @@ pvt_lineWPFromX: xFrom y: yFrom toX: xTo y: yTo
 		dx := dx abs.
 		dy := dy abs ].
 	hops := ((dx max: dy) / hop) asInteger + 1.
-	incrementX := incrementX / hops.
-	incrementY := incrementY / hops.
 
 	spanLeft := spanLeft min: (txFrom min: txTo).
 	spanRight := spanRight max: (txFrom max: txTo).
 	spanTop := spanTop min: (tyFrom min: tyTo).
 	spanBottom := spanBottom max: (tyFrom max: tyTo).
 
-	x := txFrom.
-	y := tyFrom.
-	1 to: hops do: [ :h |
+	t := 0.0.
+	increment := 1.0 / hops.
+	[ t < 1.0 ] whileTrue: [
+		oneLessT := 1.0 - t.
+		x := (oneLessT * txFrom) + (t * txTo).
+		y := (oneLessT * tyFrom) + (t * tyTo).
 		self updateAlphasWPForX: x y: y.
 		fillA = 0.0 ifFalse: [
 			self updateEdgeCountWPAtX: x y: y ].
 		self updateContourForX: x y: y.
-		x := x + incrementX.
-		y := y + incrementY ].
+		t := t + increment. ].
 	self updateAlphasWPForX: txTo y: tyTo.
 	fillA = 0.0 ifFalse: [
 		self updateEdgeCountWPAtX: txTo y: tyTo ].
@@ -3072,7 +3064,7 @@ pathSequenceWP: aFloat32Array size: size edgeCounts: otherByteArray alphaMask: a
 				]}
 		otherwise: [ ^self "failure"]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:18:38'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 9/30/2021 12:12:21'!
 blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	"Blends fill color over background.
 	WP: Whole pixel anti aliasing.
@@ -3144,18 +3136,16 @@ blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 
 		targetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
+		morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
+		morphIds at: pixelIndex put: morphIdWord ].! !
 
-		currentMorphId = 0 ifFalse: [
-			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
-			morphIds at: pixelIndex put: morphIdWord ]].! !
-
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/29/2021 15:16:15'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 9/30/2021 14:12:37'!
 blendFillOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMask: anotherByteArray
 	"Blends fill color over background.
 	WP: Whole pixel anti aliasing.
 	OT: Target ignored on input and set to opaque on output.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
-	| pixelIndex edgesUpToThisPixel edgesThisPixel antiAliasAlphaBits |
+	| pixelIndex edgesUpToThisPixel edgesThisPixel antiAliasAlphaBits optimizedOpaqueTargetWord resultRBits resultGBits resultBBits optimizedOpaqueMorphIdWord |
 	self
 		primitive: 'primBlendFillOnlyWPOT'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger WordArray WordArray ByteArray ByteArray).
@@ -3163,11 +3153,31 @@ blendFillOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds:
 	self var: #edgesThisPixel type: 'uint8_t'.
 	self var: #edgesUpToThisPixel type: 'uint8_t'.
 	self var: #antiAliasAlphaBits type: 'uint8_t'.
+	self var: #optimizedOpaqueTargetWord type: 'uint32_t'.
+	self var: #resultRBits type: 'uint32_t'.
+	self var: #resultGBits type: 'uint32_t'.
+	self var: #resultBBits type: 'uint32_t'.
+	self var: #optimizedOpaqueMorphIdWord type: 'uint32_t'.
 
 	targetBits := aBitmap.
 	morphIds := aWordArray.
 	edgeCountsWP := otherByteArray.
 	alphaMaskWP := anotherByteArray.
+	"Optimize most common case: Fully opaque fill color, inside fill, away from stroke (no anti aliasing), no clipping at this point."
+	optimizedOpaqueTargetWord := 0.
+	fillA = 1.0 ifTrue: [
+		self cCode: '
+			resultRBits = (uint32_t)(fillR + 0.5) << 16;
+			resultGBits = (uint32_t)(fillG + 0.5) << 8;
+			resultBBits = (uint32_t)(fillB + 0.5);'
+		inSmalltalk: [
+			resultRBits := (fillR + 0.5) asInteger bitShift: 16.
+			resultGBits := (fillG + 0.5) asInteger bitShift: 8.
+			resultBBits := (fillB + 0.5) asInteger ].
+		optimizedOpaqueTargetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		(clipCurrentMorph or: [currentClipsSubmorphs])
+			ifTrue: [ optimizedOpaqueMorphIdWord := currentMorphId<<8 + 16r7F ]
+			ifFalse: [ optimizedOpaqueMorphIdWord := currentMorphId<<8 ]].
 	t to: b do: [ :displayY |
 		edgesUpToThisPixel := 0.
 		pixelIndex := displayY * targetWidth + l - 1.
@@ -3183,16 +3193,22 @@ blendFillOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds:
 			antiAliasAlphaBits := alphaMaskWP at: pixelIndex.
 			edgesUpToThisPixel = 0
 				ifFalse: [				"Inside the shape"
-					antiAliasAlphaBits = 16r00 ifFalse: [ alphaMaskWP at: pixelIndex put: 0 ].
-					antiAliasAlphaBits := 16r7F - antiAliasAlphaBits.
-					self blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
-					]
+					(optimizedOpaqueTargetWord ~= 0 and: [
+						antiAliasAlphaBits = 16r00 and: [
+							clipCurrentMorph not or: [ ((morphIds at: pixelIndex) bitAnd: 16r7F) = 16r7F]]])
+						ifTrue: [     		"Optimize most common case: Fully opaque fill color, inside fill, away from stroke (no anti aliasing), no clipping at this point."
+							targetBits at: pixelIndex put: optimizedOpaqueTargetWord.
+							morphIds at: pixelIndex put: optimizedOpaqueMorphIdWord ]
+						ifFalse: [
+							antiAliasAlphaBits = 16r00 ifFalse: [ alphaMaskWP at: pixelIndex put: 0 ].
+							antiAliasAlphaBits := 16r7F - antiAliasAlphaBits.
+							self blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]
 				ifTrue: [				"Still in the anti aliasing area, but outside the shape, strictly speaking."
 					antiAliasAlphaBits = 16r00 ifFalse: [
 						alphaMaskWP at: pixelIndex put: 0.
 						self blendFillOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:18:56'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 9/30/2021 12:12:48'!
 blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	"Inside the shape: Do an appropriate (anti aliased) gradient between stoke color and fill color (or pick just stroke or just fill).
 	Blend this over background.
@@ -3272,13 +3288,10 @@ blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBit
 
 		targetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
+		morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
+		morphIds at: pixelIndex put: morphIdWord ].! !
 
-		currentMorphId = 0 ifFalse: [
-			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
-			morphIds at: pixelIndex put: morphIdWord ]].
-! !
-
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:19:03'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 9/30/2021 12:13:01'!
 blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	"Outside the shape, but still in the stroke: Blend stroke color over background.
 	WP: Whole pixel anti aliasing.
@@ -3357,20 +3370,17 @@ blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBi
 
 		targetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
+		morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
+		morphIds at: pixelIndex put: morphIdWord ].! !
 
-		currentMorphId = 0 ifFalse: [
-			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
-			morphIds at: pixelIndex put: morphIdWord ]].
-! !
-
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/29/2021 15:37:21'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 9/30/2021 14:12:48'!
 blendStrokeAndFillWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray edgeCounts: otherByteArray alphaMask: anotherByteArray
 	"Blends stroke color and fill color over background.
 	Do an appropriate (anti aliased) gradient between stoke color and fill color (or pick just stroke or just fill). Blend this over background.
 	WP: Whole pixel anti aliasing.
 	OT: Target ignored on input and set to opaque on output.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
-	| pixelIndex edgesUpToThisPixel edgesThisPixel antiAliasAlphaBits |
+	| pixelIndex edgesUpToThisPixel edgesThisPixel antiAliasAlphaBits optimizedOpaqueTargetWord resultRBits resultGBits resultBBits optimizedOpaqueMorphIdWord |
 	self
 		primitive: 'primBlendStrokeAndFillWPOT'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger WordArray WordArray ByteArray ByteArray).
@@ -3378,11 +3388,31 @@ blendStrokeAndFillWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morp
 	self var: #edgesThisPixel type: 'uint8_t'.
 	self var: #edgesUpToThisPixel type: 'uint8_t'.
 	self var: #antiAliasAlphaBits type: 'uint8_t'.
+	self var: #optimizedOpaqueTargetWord type: 'uint32_t'.
+	self var: #resultRBits type: 'uint32_t'.
+	self var: #resultGBits type: 'uint32_t'.
+	self var: #resultBBits type: 'uint32_t'.
+	self var: #optimizedOpaqueMorphIdWord type: 'uint32_t'.
 
 	targetBits := aBitmap.
 	morphIds := aWordArray.
 	edgeCountsWP := otherByteArray.
 	alphaMaskWP := anotherByteArray.
+	"Optimize most common case: Fully opaque fill color, inside fill, away from stroke (no anti aliasing), no clipping at this point."
+	optimizedOpaqueTargetWord := 0.
+	fillA = 1.0 ifTrue: [
+		self cCode: '
+			resultRBits = (uint32_t)(fillR + 0.5) << 16;
+			resultGBits = (uint32_t)(fillG + 0.5) << 8;
+			resultBBits = (uint32_t)(fillB + 0.5);'
+		inSmalltalk: [
+			resultRBits := (fillR + 0.5) asInteger bitShift: 16.
+			resultGBits := (fillG + 0.5) asInteger bitShift: 8.
+			resultBBits := (fillB + 0.5) asInteger ].
+		optimizedOpaqueTargetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		(clipCurrentMorph or: [currentClipsSubmorphs])
+			ifTrue: [ optimizedOpaqueMorphIdWord := currentMorphId<<8 + 16r7F ]
+			ifFalse: [ optimizedOpaqueMorphIdWord := currentMorphId<<8 ]].
 	t to: b do: [ :displayY |
 		edgesUpToThisPixel := 0.
 		pixelIndex := displayY * targetWidth + l - 1.
@@ -3398,14 +3428,22 @@ blendStrokeAndFillWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morp
 			antiAliasAlphaBits := alphaMaskWP at: pixelIndex.
 			edgesUpToThisPixel = 0
 				ifFalse: [				"Inside the shape"
-					antiAliasAlphaBits = 16r00 ifFalse: [ alphaMaskWP at: pixelIndex put: 0 ].
-					self blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits]
+
+					(optimizedOpaqueTargetWord ~= 0 and: [
+						antiAliasAlphaBits = 16r00 and: [
+							clipCurrentMorph not or: [ ((morphIds at: pixelIndex) bitAnd: 16r7F) = 16r7F]]])
+						ifTrue: [     		"Optimize most common case: Fully opaque fill color, inside fill, away from stroke (no anti aliasing), no clipping at this point."
+							targetBits at: pixelIndex put: optimizedOpaqueTargetWord.
+							morphIds at: pixelIndex put: optimizedOpaqueMorphIdWord ]
+						ifFalse: [
+							antiAliasAlphaBits = 16r00 ifFalse: [ alphaMaskWP at: pixelIndex put: 0 ].
+							self blendStrokeAndFillInsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]
 				ifTrue: [				"Still in the stroke, but outside the shape, strictly speaking."
 					antiAliasAlphaBits = 16r00 ifFalse: [
 						alphaMaskWP at: pixelIndex put: 0.
 						antiAliasAlphaBits = 0 ifFalse: [self blendStrokeAndFillOutsideWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits]]]]].! !
 
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/28/2021 17:19:21'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 9/30/2021 12:13:22'!
 blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 	"Blends stroke color over background.
 	WP: Whole pixel anti aliasing.
@@ -3478,35 +3516,60 @@ blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits
 
 		targetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
 		targetBits at: pixelIndex put: targetWord.
+		morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
+		morphIds at: pixelIndex put: morphIdWord ].! !
 
-		currentMorphId = 0 ifFalse: [
-			morphIdWord := currentMorphId<<8 + clippingAntiAliasBits.
-			morphIds at: pixelIndex put: morphIdWord ]].! !
-
-!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 6/29/2021 15:38:07'!
+!VectorEnginePlugin methodsFor: 'whole pixel - blend stroke and fill' stamp: 'jmv 9/30/2021 14:26:56'!
 blendStrokeOnlyWPOTLeft: l top: t right: r bottom: b targetBits: aBitmap morphIds: aWordArray alphaMask: anotherByteArray
 	"Blends stroke color over background.
 	WP: Whole pixel anti aliasing.
 	OT: Target ignored on input and set to opaque on output.
 	For blending, alphas are in [0 .. 1.0] and R, G, B color components are in [0 .. 255]"
-	| pixelIndex antiAliasAlphaBits |
+	| pixelIndex antiAliasAlphaBits optimizedOpaqueTargetWord resultRBits resultGBits resultBBits optimizedOpaqueMorphIdWord |
 	self
 		primitive: 'primBlendStrokeOnlyWPOT'
 		parameters: #(SmallInteger SmallInteger SmallInteger SmallInteger WordArray WordArray ByteArray).
 
 	self var: #antiAliasAlphaBits type: 'uint8_t'.
+	self var: #optimizedOpaqueTargetWord type: 'uint32_t'.
+	self var: #resultRBits type: 'uint32_t'.
+	self var: #resultGBits type: 'uint32_t'.
+	self var: #resultBBits type: 'uint32_t'.
+	self var: #optimizedOpaqueMorphIdWord type: 'uint32_t'.
 
 	targetBits := aBitmap.
 	morphIds := aWordArray.
 	alphaMaskWP := anotherByteArray.
+	"Optimize inner part of a wide stroke: Fully opaque stroke color, inside stroke, away from stroke border (no anti aliasing), no clipping at this point."
+	optimizedOpaqueTargetWord := 0.
+	fillA = 1.0 ifTrue: [
+		self cCode: '
+			resultRBits = (uint32_t)(fillR + 0.5) << 16;
+			resultGBits = (uint32_t)(fillG + 0.5) << 8;
+			resultBBits = (uint32_t)(fillB + 0.5);'
+		inSmalltalk: [
+			resultRBits := (fillR + 0.5) asInteger bitShift: 16.
+			resultGBits := (fillG + 0.5) asInteger bitShift: 8.
+			resultBBits := (fillB + 0.5) asInteger ].
+		optimizedOpaqueTargetWord := ((16rFF000000 bitOr: resultRBits) bitOr: resultGBits) bitOr: resultBBits.
+		(clipCurrentMorph or: [currentClipsSubmorphs])
+			ifTrue: [ optimizedOpaqueMorphIdWord := currentMorphId<<8 + 16r7F ]
+			ifFalse: [ optimizedOpaqueMorphIdWord := currentMorphId<<8 ]].
 	t to: b do: [ :displayY |
 		pixelIndex := displayY * targetWidth + l - 1.
 		l to: r do: [ :displayX |
 			pixelIndex := pixelIndex + 1.
 			antiAliasAlphaBits := alphaMaskWP at: pixelIndex.
-			antiAliasAlphaBits = 16r00 ifFalse: [										"In the stroke"
-				alphaMaskWP at: pixelIndex put: 0.
-				self blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]].! !
+			(optimizedOpaqueTargetWord ~= 0 and: [
+				antiAliasAlphaBits = 16r7F and: [
+					clipCurrentMorph not or: [ ((morphIds at: pixelIndex) bitAnd: 16r7F) = 16r7F]]])
+				ifTrue: [     		"Optimize inner part of a wide stroke: Fully opaque stroke color, inside stroke, away from stroke border (no anti aliasing), no clipping at this point."
+					targetBits at: pixelIndex put: optimizedOpaqueTargetWord.
+					morphIds at: pixelIndex put: optimizedOpaqueMorphIdWord ]
+				ifFalse: [
+					antiAliasAlphaBits = 16r00 ifFalse: [										"In the stroke"
+						alphaMaskWP at: pixelIndex put: 0.
+						self blendStrokeOnlyWPOTAt: pixelIndex antiAliasAlphaByte: antiAliasAlphaBits ]]]].! !
 
 !VectorEnginePlugin class methodsFor: 'translation' stamp: 'jmv 7/5/2021 16:21:10'!
 declareCVarsIn: aCCodeGenerator

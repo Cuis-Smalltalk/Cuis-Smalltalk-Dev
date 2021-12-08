@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4886] on 24 September 2021 at 9:16:58 pm'!
+'From Cuis 5.0 [latest update: #4955] on 29 October 2021 at 11:27:49 am'!
 'Description ExtractAsParameterTest '!
-!provides: 'BaseImageTests' 1 268!
+!provides: 'BaseImageTests' 1 271!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -828,6 +828,16 @@ TestCase subclass: #CuisSourceFileArrayTest
 CuisSourceFileArrayTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #StandardFileStreamTest category: 'BaseImageTests-System-Files'!
+TestCase subclass: #StandardFileStreamTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System-Files'!
+!classDefinition: 'StandardFileStreamTest class' category: 'BaseImageTests-System-Files'!
+StandardFileStreamTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #SystemConsistencyTest category: 'BaseImageTests-System'!
 TestCase subclass: #SystemConsistencyTest
 	instanceVariableNames: ''
@@ -1296,6 +1306,26 @@ DynamicallyCodeCreationTest subclass: #ChangesTest
 	category: 'BaseImageTests-Tools-Changes'!
 !classDefinition: 'ChangesTest class' category: 'BaseImageTests-Tools-Changes'!
 ChangesTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ReadStreamTest category: 'BaseImageTests-Collections-Streams'!
+TestCase subclass: #ReadStreamTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Streams'!
+!classDefinition: 'ReadStreamTest class' category: 'BaseImageTests-Collections-Streams'!
+ReadStreamTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #ReadWriteStreamTest category: 'BaseImageTests-Collections-Streams'!
+TestCase subclass: #ReadWriteStreamTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Collections-Streams'!
+!classDefinition: 'ReadWriteStreamTest class' category: 'BaseImageTests-Collections-Streams'!
+ReadWriteStreamTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #WriteStreamTest category: 'BaseImageTests-Collections-Streams'!
@@ -3564,6 +3594,16 @@ testMixedTypeComparison
 		self assert: (doubleOne >= sample) = (doubleOne >= sample asFloat).
 		].! !
 
+!FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/29/2021 11:12:28'!
+testRoundHalfAwayFromZero
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero"
+	self assert: 0.5 roundedHAFZ = 1.
+	self assert: 1.5 roundedHAFZ = 2.
+	self assert: -0.5 roundedHAFZ = -1.
+	self assert: -1.5 roundedHAFZ = -2.
+	self assert: (((0.0 to: 5.0 by: 0.25) collect: [ :f | f roundedHAFZ ]) = #(0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5) ).
+	self assert: (((-0.0 to: -5.0 by: -0.25) collect: [ :f | f roundedHAFZ ]) = #(0 0 -1 -1 -1 -1 -2 -2 -2 -2 -3 -3 -3 -3 -4 -4 -4 -4 -5 -5 -5) )! !
+
 !FloatTest methodsFor: 'tests - conversion and rounding' stamp: 'jmv 10/9/2018 16:12:35'!
 testRoundHalfToEven
 	"See https://en.wikipedia.org/wiki/Rounding#Round_half_to_even"
@@ -5533,6 +5573,16 @@ testHash
 testIsType
 	self assert: ((1 / 2100) is: #Fraction).
 	self assert: ((1 / 2100) is: #Number).! !
+
+!FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 10/29/2021 11:13:20'!
+testRoundHalfAwayFromZero
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero"
+	self assert: (1/2) roundedHAFZ = 1.
+	self assert: (3/2) roundedHAFZ = 2.
+	self assert: (-1/2) roundedHAFZ = -1.
+	self assert: (-3/2) roundedHAFZ = -2.
+	self assert: (((0 to: 5 by: 1/4) collect: [ :f | f roundedHAFZ ]) = #(0 0 1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5) ).
+	self assert: (((0 to: -5 by: -1/4) collect: [ :f | f roundedHAFZ ]) = #(0 0 -1 -1 -1 -1 -2 -2 -2 -2 -3 -3 -3 -3 -4 -4 -4 -4 -5 -5 -5) ).! !
 
 !FractionTest methodsFor: 'tests - rounding' stamp: 'jmv 10/9/2018 16:12:18'!
 testRoundHalfToEven
@@ -16237,6 +16287,264 @@ testSourcesFileAddressRange
 
 ! !
 
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:15:22'!
+testUpTo1ShortRecords
+	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
+	Delimiter is considered a separator (and therefore not required for the last chunk)."
+	|path fs|
+	path _ 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+	path asFileEntry fileContents: 'record-1Xrecord-2Xrecord-incomplete'. 
+	fs _ path asFileEntry readStream . 
+	self assert:  ((fs upTo: $X) =  'record-1').
+	self assert:  ((fs upTo: $X) =  'record-2').
+	self assert:  ((fs upTo: $X) =  'record-incomplete').
+	self assert:  ((fs upTo: $X) =  '').
+	". the stream has been all consumed" 
+	self assert:  (fs position = 35). 
+	fs close . 
+	path asFileEntry delete.
+
+	! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:14:45'!
+testUpTo2IncompleteRecords
+	"
+	. This test stresses the motivation for introducing upTo:delimiterIsTerminator:
+	. if two separate processes are reading and writing records into the same file 
+	upTo can potentially create a bit a of a mess by reading in half records and complete records.
+	. please compare to the equivalent testUpToTerminatorX to see what is probably the behaviour your are looking for 
+	"
+	|path fs|
+	path _ 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+	" a process starts to write data into a file but it does not end cleanly the writing "
+	path asFileEntry fileContents: 'record-1Xrec'. 
+	fs _ path asFileEntry readStream . 
+	" upTo reads 'record-1' and the second time reads half a token "
+	self assert:  ((fs upTo: $X) =  'record-1').
+	self assert:  ((fs upTo: $X) =  'rec').
+	". the writing process comes back online and terminates its record writing "
+	path asFileEntry appendContents: 'ord-2Xrecord-3X'.
+	". upTo reads  an half token and then a complete one  "
+	self assert:  ((fs upTo: $X) =  'ord-2').
+	self assert:  ((fs upTo: $X) =  'record-3').
+	". when there is nothing more to read upTo returns the empty string " 
+	self assert:  ((fs upTo: $X) =  '').
+	fs close .
+	path asFileEntry delete.
+
+	! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:01:55'!
+testUpTo3LongUnterminatedRecord
+    "Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
+    | path longString fs read |
+    path := 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+    longString _ ((1 to: 100) inject: '' into: [ :prev :each | prev, 'A lot of stuff, needs over 2000 chars!! ']).
+    path asFileEntry fileContents: longString . 
+    fs := path asFileEntry readStream.
+    read := fs upTo: $X.
+    self assert: (read =  longString ).
+    fs close.
+    path asFileEntry delete.! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:02'!
+testUpTo4LongUnterminatedRecord
+    "Big chunk, not delimiter found, expected return all the chunk  "
+    | path fs read |
+    path := 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+    fs _ path asFileEntry forceWriteStream .
+    1 to: 5000 do: [ :i  | 
+	(i < 3000) ifTrue: [ fs nextPut: $a ].
+	(i >= 3000) ifTrue: [ fs nextPut: $b ]. 
+	].
+    fs close. 
+    fs := path asFileEntry readStream.
+    read := fs upTo: $X.
+    self assert: (read size = 5000).     
+    fs close.
+    path asFileEntry delete.! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:08'!
+testUpTo5TerminatedAndUnterminatedLongRecords
+    "Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time the second block up to EOF.  "
+    | path fs read |
+    path := 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+    fs _ path asFileEntry forceWriteStream .
+    1 to: 6000 do: [ :i  | 
+	(i < 3000) ifTrue: [ fs nextPut: $a ].
+	(i = 3000) ifTrue: [ fs nextPut: $X ]. 
+	(i > 3000) ifTrue: [ fs nextPut: $b ]. 
+	].
+    fs close. 
+    fs := path asFileEntry readStream.
+    " first scan, the delimiter is found but not printed.  "
+    read := fs upTo: $X.
+    self assert: (read size =  2999).    
+    self assert: ((read at: 1) = $a).  
+    " second scan. the delimiter is not found, all second chunk is returned  "
+    read := fs upTo: $X. 
+    self assert: (read size = 3000).    
+    self assert: (read at: 1) = $b.    
+    fs close.
+    path asFileEntry delete.! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:13'!
+testUpTo6TerminatedLongRecords
+    "Two big chunks, one delimiter in the middle, one at the end. expected to return 
+      two big chunks in two read, delimiters excluded.  "
+    | path fs read |
+    path := 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+    fs _ path asFileEntry forceWriteStream .
+    1 to: 6000 do: [ :i  | 
+	(i < 3000) ifTrue: [ fs nextPut: $a ].
+	(i = 3000) ifTrue: [ fs nextPut: $X ]. 
+	((Interval from: 3001 to: 5999) includes: i) ifTrue: [ fs nextPut: $b ]. 
+	(i = 6000) ifTrue: [ fs nextPut: $X ] .
+	].
+    fs close. 
+    fs := path asFileEntry readStream.
+    " first scan, delimiter is found, return all the block delimiter excluded "
+    read := fs upTo: $X.
+    self assert: (read size =  2999).    
+    self assert: ((read at: 1) = $a).   
+    " second scan, return chunk, delimiter excluded.  "
+    read := fs upTo: $X. 
+    self assert: (read size = 2999).
+    self assert: ((read at: 1) = $b).      
+    fs close.
+    path asFileEntry delete.! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:17:41'!
+testUpToTerminator1ShortRecords
+	"
+	. Read a file stream up to 'delim' in a strict way. 
+	. If delim is found returns everything up to the first occurrence of 'delim' included.
+	. if delim is not found returns nil and set the FileStream position where it was before
+	the call was made. This ensures if another process writes into the file another delim
+	limited token we will fully read it on next upTo call.
+	This means Delimiter is a Terminator: a chunk is only considered well formed if it ends with it.
+	"
+	|path fs|
+	path _ 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+	path asFileEntry fileContents: 'record-1Xrecord-2Xrecord-incomplete'. 
+	fs _ path asFileEntry readStream . 
+	self assert:  ((fs upTo: $X delimiterIsTerminator: true) =  'record-1X').
+	self assert:  ((fs upTo: $X delimiterIsTerminator: true) =  'record-2X').
+	self assert:  ((fs upTo: $X delimiterIsTerminator: true) =  nil).
+	". we are not at the end of the stream, but just after the last delim was found.
+	we are ready to receive other delim limitated tokens. if they get written.
+	"
+	self assert:  (fs position = 18).
+	fs close . 
+	path asFileEntry delete .
+	! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:18:12'!
+testUpToTerminator2IncompleteRecords
+	"
+	. This test stresses the motivation for introducing upTo:delimiterIsTerminator: 
+	. if two separate processes are reading and writing records into the same file 
+	upTo:delimiterIsTerminator:true will not loose any token and will never return half written tokens.
+	"
+	|path fs|
+	path _ 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+	" a process starts to write data into a file but it does not end cleanly the writing "
+	path asFileEntry fileContents: 'record-1Xrec'. 
+	fs _ path asFileEntry readStream . 
+	" upTo:strict reads upto what it can find and ignores the rest "
+	self assert:  ((fs upTo: $X delimiterIsTerminator: true) =  'record-1X').
+	self assert:  ((fs upTo: $X delimiterIsTerminator: true) =  nil).
+	". the writing process comes back online and terminates its record writing "
+	path asFileEntry appendContents: 'ord-2Xrecord-3X'.
+	". upTo:strict is ready and reads just completed tokens and brand new ones.  "
+	self assert:  ((fs upTo: $X delimiterIsTerminator: true) =  'record-2X').
+	self assert:  ((fs upTo: $X delimiterIsTerminator: true) =  'record-3X').
+	self assert:  ((fs upTo: $X delimiterIsTerminator: true) =  nil).
+	fs close .
+	path asFileEntry delete.
+
+	! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'jmv 10/25/2021 10:12:02'!
+testUpToTerminator3LongUnterminatedRecord
+    "Long input, no delimiter found, expected to return nil. "
+    | path fs read |
+    path := 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+    path asFileEntry fileContents: ((1 to: 100) inject: '' into: [ :prev :each | prev, 'A lot of stuff, needs over 2000 chars!! ']).
+    fs := path asFileEntry readStream.
+    read := fs upTo: $X delimiterIsTerminator: true.
+    self assert: (read =  nil).
+    fs close.
+    path asFileEntry delete.! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'jmv 10/25/2021 10:12:08'!
+testUpToTerminator4LongUnterminatedRecord
+    "Big chunk, not delimiter found, expected return nil  "
+    | path fs read |
+    path := 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+    fs _ path asFileEntry forceWriteStream .
+    1 to: 5000 do: [ :i  | 
+	(i < 3000) ifTrue: [ fs nextPut: $a ].
+	(i >= 3000) ifTrue: [ fs nextPut: $b ]. 
+	].
+    fs close. 
+    fs := path asFileEntry readStream.
+    read := fs upTo: $X delimiterIsTerminator: true.
+    self assert: (read =  nil).     
+    fs close.
+    path asFileEntry delete.! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'jmv 10/25/2021 10:12:14'!
+testUpToTerminator5TerminatedAndUnterminatedLongRecords
+    "Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time nil.  "
+    | path fs read |
+    path := 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+    fs _ path asFileEntry forceWriteStream .
+    1 to: 6000 do: [ :i  | 
+	(i < 3000) ifTrue: [ fs nextPut: $a ].
+	(i = 3000) ifTrue: [ fs nextPut: $X ]. 
+	(i > 3000) ifTrue: [ fs nextPut: $b ]. 
+	].
+    fs close. 
+    fs := path asFileEntry readStream.
+    " first scan, delimiter is found, return all the block delimiter included "
+    read := fs upTo: $X delimiterIsTerminator: true.
+    self assert: (read size =  3000).    
+    self assert: ((read at: 1) = $a).   
+    " second scan, delimiter not found, returns nil  "
+    read := fs upTo: $X delimiterIsTerminator: true.
+    self assert: (read = nil).    
+    fs close.
+    path asFileEntry delete.! !
+
+!StandardFileStreamTest methodsFor: 'tests' stamp: 'jmv 10/25/2021 10:12:22'!
+testUpToTerminator6TerminatedLongRecords
+    "Two big chunks, one delimiter in the middle, one at the end expected to return 
+      two big chunks in two read, delimiters included.  "
+    | path fs read |
+    path := 'test-{1}.txt' format: {(Float pi * 10e10) floor. } .
+    fs _ path asFileEntry forceWriteStream .
+    1 to: 6000 do: [ :i  | 
+	(i < 3000) ifTrue: [ fs nextPut: $a ].
+	(i = 3000) ifTrue: [ fs nextPut: $X ]. 
+	((Interval from: 3001 to: 5999) includes: i) ifTrue: [ fs nextPut: $b ]. 
+	(i = 6000) ifTrue: [ fs nextPut: $X ] .
+	].
+    fs close. 
+    fs := path asFileEntry readStream.
+    " first scan, delimiter is found, return all the block delimiter included "
+    read := fs upTo: $X delimiterIsTerminator: true.
+    self assert: (read size =  3000).    
+    self assert: ((read at: 1) = $a).   
+    " second scan, delimiter found, return chunk, delimiter included   "
+    read := fs upTo: $X delimiterIsTerminator: true.
+    self assert: (read size = 3000).
+    self assert: ((read at: 1) = $b).      
+    fs close.
+    path asFileEntry delete.! !
+
 !SystemConsistencyTest methodsFor: 'testing' stamp: 'jmv 5/7/2012 09:35'!
 testMethodsWithUnboundGlobals
 	"
@@ -22432,6 +22740,26 @@ test44CanExtractManyStatementsInsideABlock
 		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m2)
 		defines: newMethodCode andUpdates: updatedCode! !
 
+!ExtractMethodTest methodsFor: 'tests - successful' stamp: 'HAW 10/18/2021 18:42:26'!
+test45CanExtractCodeWithMoreThanOneBlockAndABlockAtTheEndInsideAnotherBlock
+
+	| codeToExtract newMethodCode originalCode updatedCode |
+	
+	codeToExtract _ 'true ifTrue: [ self m1 ].
+	true ifTrue: [ self m2 ].'.
+	originalCode _ 'm1 [true] whileTrue: [ ' , codeToExtract, '
+	self m3]'.
+	newMethodCode _ 'm4
+
+	true ifTrue: [ self m1 ].
+	true ifTrue: [ self m2 ]'.
+	updatedCode _ 'm1 [true] whileTrue: [ self m4.
+	self m3]'.
+
+	self
+		assertExtracting: codeToExtract from: originalCode named: (Message selector: #m4)
+		defines: newMethodCode andUpdates: updatedCode! !
+
 !ExtractMethodTest methodsFor: 'tests - validations' stamp: 'RNG 7/12/2020 19:13:15'!
 test01NewSelectorShouldNotBeEmpty
 
@@ -26790,6 +27118,406 @@ test06RenamingAClassShouldBeLogged
 		self assertIsLoggedOnce: '!!classRenamed: #', self testDataClassName, ' as: #NewTestClass__ stamp:'.
 		self assertIsLoggedOnce: 'Smalltalk renameClassNamed: #', self testDataClassName, ' as: #NewTestClass__'.
 	]! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:21:47'!
+testUpTo1ShortRecords
+	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
+	Delimiter is considered a separator (and therefore not required for the last chunk)."
+	| stream |
+	stream _ ReadStream on: 'record-1Xrecord-2Xrecord-incomplete'. 
+	self assert:  ((stream upTo: $X) =  'record-1').
+	self assert:  ((stream upTo: $X) =  'record-2').
+	self assert:  ((stream upTo: $X) =  'record-incomplete').
+	self assert:  ((stream upTo: $X) =  '').
+	". the stream has been all consumed" 
+	self assert:  (stream position = 35). ! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:55:33'!
+testUpTo3LongUnterminatedRecord
+	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
+	| longString stream read |
+	longString _ (1 to: 100)
+		inject: ''
+		into: [ :prev :each |
+			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
+	stream _ ReadStream on: longString.
+	read _ stream upTo: $X.
+	self assert: read = longString.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:54:11'!
+testUpTo4LongUnterminatedRecord
+	"Big chunk, not delimiter found, expected return all the chunk  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 5000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadStream on: stuff.
+	read _ stream upTo: $X.
+	self assert: read size = 5000.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:58:48'!
+testUpTo5TerminatedAndUnterminatedLongRecords
+	"Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time the second block up to EOF.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				i > 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadStream on: stuff.
+	" first scan, the delimiter is found but not printed.  "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $a.
+	" second scan. the delimiter is not found, all second chunk is returned  "
+	read _ stream upTo: $X.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $b.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 10:59:51'!
+testUpTo6TerminatedLongRecords
+	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
+      two big chunks in two read, delimiters excluded.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				((Interval
+					from: 3001
+					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
+				i = 6000 ifTrue: [ strm nextPut: $X ]]].
+	stream _ ReadStream on: stuff.
+	" first scan, delimiter is found, return all the block delimiter excluded "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $a.
+	" second scan, return chunk, delimiter excluded.  "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $b.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:00:52'!
+testUpToTerminator1ShortRecords
+	"
+	. Read a file stream up to 'delim' in a strict way. 
+	. If delim is found returns everything up to the first occurrence of 'delim' included.
+	. if delim is not found returns nil and set the FileStream position where it was before
+	the call was made. This ensures if another process writes into the file another delim
+	limited token we will fully read it on next upTo call.
+	This means Delimiter is a Terminator: a chunk is only considered well formed if it ends with it.
+	"
+	| stream |
+	stream _ ReadStream on: 'record-1Xrecord-2Xrecord-incomplete'. 
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-1X').
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-2X').
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  nil).
+	". we are not at the end of the stream, but just after the last delim was found.
+	we are ready to receive other delim limitated tokens. if they get written.
+	"
+	self assert:  (stream position = 18).! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:01:38'!
+testUpToTerminator3LongUnterminatedRecord
+	"Long input, no delimiter found, expected to return nil. "
+	| longString stream read |
+	longString _ (1 to: 100)
+		inject: ''
+		into: [ :prev :each |
+			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
+	stream _ ReadStream on: longString.
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:04'!
+testUpToTerminator4LongUnterminatedRecord
+	"Big chunk, not delimiter found, expected return nil  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 5000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadStream on: stuff.
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:02:36'!
+testUpToTerminator5TerminatedAndUnterminatedLongRecords
+	"Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time nil.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				i > 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadStream on: stuff.
+	" first scan, delimiter is found, return all the block delimiter included "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $a.
+	" second scan, delimiter not found, returns nil  "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:03:06'!
+testUpToTerminator6TerminatedLongRecords
+	"Two big chunks, one delimiter in the middle, one at the end expected to return 
+      two big chunks in two read, delimiters included.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				((Interval
+					from: 3001
+					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
+				i = 6000 ifTrue: [ strm nextPut: $X ]]].
+	stream _ ReadStream on: stuff.
+	" first scan, delimiter is found, return all the block delimiter included "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $a.
+	" second scan, delimiter found, return chunk, delimiter included   "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $b.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:06:39'!
+testUpTo1ShortRecords
+	". this test ensures the upTo: delim method behaves as specified by the ANSI standard:
+	Delimiter is considered a separator (and therefore not required for the last chunk)."
+	| stream |
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: 'record-1Xrecord-2Xrecord-incomplete'.
+	stream position: 0.
+	self assert:  ((stream upTo: $X) =  'record-1').
+	self assert:  ((stream upTo: $X) =  'record-2').
+	self assert:  ((stream upTo: $X) =  'record-incomplete').
+	self assert:  ((stream upTo: $X) =  '').
+	". the stream has been all consumed" 
+	self assert:  (stream position = 35). ! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:07:32'!
+testUpTo3LongUnterminatedRecord
+	"Long input, no delimiter found, expected to return all the data chunk up to the end of file. "
+	| longString stream read |
+	longString _ (1 to: 100)
+		inject: ''
+		into: [ :prev :each |
+			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: longString.
+	stream position: 0.
+	read _ stream upTo: $X.
+	self assert: read = longString.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:12'!
+testUpTo4LongUnterminatedRecord
+	"Big chunk, not delimiter found, expected return all the chunk  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 5000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	read _ stream upTo: $X.
+	self assert: read size = 5000.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:41'!
+testUpTo5TerminatedAndUnterminatedLongRecords
+	"Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time the second block up to EOF.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				i > 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	" first scan, the delimiter is found but not printed.  "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $a.
+	" second scan. the delimiter is not found, all second chunk is returned  "
+	read _ stream upTo: $X.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $b.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:08:54'!
+testUpTo6TerminatedLongRecords
+	"Two big chunks, one delimiter in the middle, one at the end. expected to return 
+      two big chunks in two read, delimiters excluded.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				((Interval
+					from: 3001
+					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
+				i = 6000 ifTrue: [ strm nextPut: $X ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	" first scan, delimiter is found, return all the block delimiter excluded "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $a.
+	" second scan, return chunk, delimiter excluded.  "
+	read _ stream upTo: $X.
+	self assert: read size = 2999.
+	self assert: (read at: 1) = $b.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:12:06'!
+testUpToTerminator1ShortRecords
+	"
+	. Read a file stream up to 'delim' in a strict way. 
+	. If delim is found returns everything up to the first occurrence of 'delim' included.
+	. if delim is not found returns nil and set the FileStream position where it was before
+	the call was made. This ensures if another process writes into the file another delim
+	limited token we will fully read it on next upTo call.
+	This means Delimiter is a Terminator: a chunk is only considered well formed if it ends with it.
+	"
+	| stream |
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: 'record-1Xrecord-2Xrecord-incomplete'.
+	stream position: 0.
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-1X').
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  'record-2X').
+	self assert:  ((stream upTo: $X delimiterIsTerminator: true) =  nil).
+	". we are not at the end of the stream, but just after the last delim was found.
+	we are ready to receive other delim limitated tokens. if they get written.
+	"
+	self assert:  (stream position = 18).! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:12:49'!
+testUpToTerminator3LongUnterminatedRecord
+	"Long input, no delimiter found, expected to return nil. "
+	| longString stream read |
+	longString _ (1 to: 100)
+		inject: ''
+		into: [ :prev :each |
+			prev , 'A lot of stuff, needs over 2000 chars!! ' ].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: longString.
+	stream position: 0.
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:03'!
+testUpToTerminator4LongUnterminatedRecord
+	"Big chunk, not delimiter found, expected return nil  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 5000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i >= 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:18'!
+testUpToTerminator5TerminatedAndUnterminatedLongRecords
+	"Two big chunks, one delimiter in the middle, expected to return 
+      the first time a big chunk, the second time nil.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				i > 3000 ifTrue: [ strm nextPut: $b ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	" first scan, delimiter is found, return all the block delimiter included "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $a.
+	" second scan, delimiter not found, returns nil  "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read = nil.! !
+
+!ReadWriteStreamTest methodsFor: 'tests' stamp: 'NM 10/25/2021 11:13:33'!
+testUpToTerminator6TerminatedLongRecords
+	"Two big chunks, one delimiter in the middle, one at the end expected to return 
+      two big chunks in two read, delimiters included.  "
+	| stuff stream read |
+	stuff _ String streamContents: [ :strm |
+		1
+			to: 6000
+			do: [ :i |
+				i < 3000 ifTrue: [ strm nextPut: $a ].
+				i = 3000 ifTrue: [ strm nextPut: $X ].
+				((Interval
+					from: 3001
+					to: 5999) includes: i) ifTrue: [ strm nextPut: $b ].
+				i = 6000 ifTrue: [ strm nextPut: $X ]]].
+	stream _ ReadWriteStream on: ''. 
+	stream nextPutAll: stuff.
+	stream position: 0.
+	" first scan, delimiter is found, return all the block delimiter included "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $a.
+	" second scan, delimiter found, return chunk, delimiter included   "
+	read _ stream
+		upTo: $X
+		delimiterIsTerminator: true.
+	self assert: read size = 3000.
+	self assert: (read at: 1) = $b.! !
 
 !WriteStreamTest methodsFor: 'tests' stamp: 'jpb 8/2/2019 23:49:13'!
 testIsStream
