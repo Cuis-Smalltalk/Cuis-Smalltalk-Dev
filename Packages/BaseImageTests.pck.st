@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4955] on 29 October 2021 at 11:27:49 am'!
+'From Cuis 5.0 [latest update: #4998] on 9 December 2021 at 12:03:12 pm'!
 'Description ExtractAsParameterTest '!
-!provides: 'BaseImageTests' 1 271!
+!provides: 'BaseImageTests' 1 272!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -17822,24 +17822,31 @@ testComposition
 	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 6/8/2020 11:08:17'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 12/9/2021 11:23:02'!
 testDisplayBounds
 	"
 	AffineTransformationTest new testDisplayBounds
 	"
-	self assert:
-		((AffineTransformation withRadians: 0.3) displayBoundsOfTransformOf: (10@10 extent: 20@30))
-			= (-3@12 corner: 26@48).
-
-	self assert: (AffineTransformation new displayBoundsOfTransformOf: (-2@ 2 extent: 10@10)) = (-2@2 corner: 8@12).
-	self assert: (AffineTransformation new displayBoundsOfTransformOf: (-12@ 12 extent: 10@10)) = (-12@12 corner: -2@22).
-	self assert: ((AffineTransformation withTranslation: 2)  displayBoundsOfTransformOf: (-4@ 2  extent: 10@10)) = (-2@4 corner: 8@14).
-	self assert: ((AffineTransformation withTranslation: -4)  displayBoundsOfTransformOf: (2@ 2  extent: 10@10)) = (-2@-2 corner: 8@8).
-	self assert: ((AffineTransformation withTranslation: 2)  displayBoundsOfTransformOf: (-14@ 2  extent: 10@10)) = (-12@4 corner: -2@14).
-	self assert: ((AffineTransformation withTranslation: 4)  displayBoundsOfTransformOf: (-12@ 2  extent: 10@10)) = (-8@6 corner: 2@16).
-	self assert: ((AffineTransformation withTranslation: -4)  displayBoundsOfTransformOf: (12@ 2  extent: 10@10)) = (8@-2 corner: 18@8).
-	self assert: ((AffineTransformation withTranslation: -2)  displayBoundsOfTransformOf: (4@ 2  extent: 10@10)) = (2@0 corner: 12@10).
-	self assert: ((AffineTransformation withTranslation: 4)  displayBoundsOfTransformOf: (-2@ 2  extent: 10@10)) = (2@6 corner: 12@16).! !
+	self assert: ((AffineTransformation withRadians: 0.3) externalBoundingRectOf: (10@10 extent: 20@30))
+			encompassingIntegerRectangle = (-3@12 corner: 26@48).
+	self assert: (AffineTransformation new externalBoundingRectOf: (-2@ 2 extent: 10@10))
+		encompassingIntegerRectangle = (-2@2 corner: 8@12).
+	self assert: (AffineTransformation new externalBoundingRectOf: (-12@ 12 extent: 10@10))
+		encompassingIntegerRectangle = (-12@12 corner: -2@22).
+	self assert: ((AffineTransformation withTranslation: 2) externalBoundingRectOf: (-4@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (-2@4 corner: 8@14).
+	self assert: ((AffineTransformation withTranslation: -4) externalBoundingRectOf: (2@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (-2@-2 corner: 8@8).
+	self assert: ((AffineTransformation withTranslation: 2) externalBoundingRectOf: (-14@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (-12@4 corner: -2@14).
+	self assert: ((AffineTransformation withTranslation: 4) externalBoundingRectOf: (-12@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (-8@6 corner: 2@16).
+	self assert: ((AffineTransformation withTranslation: -4) externalBoundingRectOf: (12@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (8@-2 corner: 18@8).
+	self assert: ((AffineTransformation withTranslation: -2) externalBoundingRectOf: (4@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (2@0 corner: 12@10).
+	self assert: ((AffineTransformation withTranslation: 4) externalBoundingRectOf: (-2@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (2@6 corner: 12@16).! !
 
 !AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/21/2015 13:05'!
 testFloatInverseTransform
@@ -18120,21 +18127,30 @@ testComposition
 	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:19'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 12/9/2021 11:23:27'!
 testDisplayBounds
 	"
 	MorphicTranslationTest new testDisplayBounds
 	"
 
-	self assert: (MorphicTranslation new displayBoundsOfTransformOf: (-2@ 2 extent: 10@10)) = (-2@2 corner: 8@12).
-	self assert: (MorphicTranslation new displayBoundsOfTransformOf: (-12@ 12 extent: 10@10)) = (-12@12 corner: -2@22).
-	self assert: ((MorphicTranslation withTranslation: 2)  displayBoundsOfTransformOf: (-4@ 2  extent: 10@10)) = (-2@4 corner: 8@14).
-	self assert: ((MorphicTranslation withTranslation: -4)  displayBoundsOfTransformOf: (2@ 2  extent: 10@10)) = (-2@-2 corner: 8@8).
-	self assert: ((MorphicTranslation withTranslation: 2)  displayBoundsOfTransformOf: (-14@ 2  extent: 10@10)) = (-12@4 corner: -2@14).
-	self assert: ((MorphicTranslation withTranslation: 4)  displayBoundsOfTransformOf: (-12@ 2  extent: 10@10)) = (-8@6 corner: 2@16).
-	self assert: ((MorphicTranslation withTranslation: -4)  displayBoundsOfTransformOf: (12@ 2  extent: 10@10)) = (8@-2 corner: 18@8).
-	self assert: ((MorphicTranslation withTranslation: -2)  displayBoundsOfTransformOf: (4@ 2  extent: 10@10)) = (2@0 corner: 12@10).
-	self assert: ((MorphicTranslation withTranslation: 4)  displayBoundsOfTransformOf: (-2@ 2  extent: 10@10)) = (2@6 corner: 12@16).! !
+	self assert: (MorphicTranslation new externalBoundingRectOf: (-2@ 2 extent: 10@10))
+		encompassingIntegerRectangle = (-2@2 corner: 8@12).
+	self assert: (MorphicTranslation new externalBoundingRectOf: (-12@ 12 extent: 10@10))
+		encompassingIntegerRectangle = (-12@12 corner: -2@22).
+	self assert: ((MorphicTranslation withTranslation: 2)  externalBoundingRectOf: (-4@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (-2@4 corner: 8@14).
+	self assert: ((MorphicTranslation withTranslation: -4)  externalBoundingRectOf: (2@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (-2@-2 corner: 8@8).
+	self assert: ((MorphicTranslation withTranslation: 2)  externalBoundingRectOf: (-14@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (-12@4 corner: -2@14).
+	self assert: ((MorphicTranslation withTranslation: 4)  externalBoundingRectOf: (-12@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (-8@6 corner: 2@16).
+	self assert: ((MorphicTranslation withTranslation: -4)  externalBoundingRectOf: (12@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (8@-2 corner: 18@8).
+	self assert: ((MorphicTranslation withTranslation: -2)  externalBoundingRectOf: (4@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (2@0 corner: 12@10).
+	self assert: ((MorphicTranslation withTranslation: 4)  externalBoundingRectOf: (-2@ 2  extent: 10@10))
+		encompassingIntegerRectangle = (2@6 corner: 12@16).! !
 
 !MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:21'!
 testInverseTransform
