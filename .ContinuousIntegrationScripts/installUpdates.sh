@@ -8,11 +8,11 @@ INSTALL_UPDATES_SCRIPT="\
   Utilities classPool at: #AuthorName put: 'TravisCI'.
   Utilities classPool at: #AuthorInitials put: 'TCI'.
   ChangeSet installNewUpdates.\
-  Smalltalk snapshot: true andQuit: true clearAllClassState: false.\
+  Smalltalk saveAndQuit.\
 "
 
 installUpdatesLinux() {
-  ./sqcogspur64linuxht/bin/squeak -vm-display-null "$IMAGE_FILE" -d "$INSTALL_UPDATES_SCRIPT"
+  /home/runner/work/Cuis-Smalltalk-Dev/Cuis-Smalltalk-Dev/sqcogspur64linux/bin/squeak -vm-display-null "$IMAGE_FILE" -d "$INSTALL_UPDATES_SCRIPT"
 }
 
 installUpdatesMacOS() {

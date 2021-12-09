@@ -7,13 +7,13 @@ BASE_VM_DOWNLOAD_PATH="https://github.com/OpenSmalltalk/opensmalltalk-vm/release
 echo "Installing VM $VM_VERSION for $RUNNER_OS"
 
 installVmLinux() {
+  sudo apt-get update
   sudo apt-get install pulseaudio
-
-  VM_FILENAME="squeak.cog.spur_linux64x64_$VM_VERSION"
+  VM_FILENAME="squeak.cog.spur_linux64x64_itimer_$VM_VERSION"
 
   wget "$BASE_VM_DOWNLOAD_PATH/$VM_FILENAME.tar.gz"
   tar -xvzf "$VM_FILENAME.tar.gz"
-  sqcogspur64linuxht/bin/squeak --version
+  sqcogspur64linux/bin/squeak --version
 }
 
 installVmMacOS() {
