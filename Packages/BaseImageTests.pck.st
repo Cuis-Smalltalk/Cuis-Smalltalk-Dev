@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4998] on 9 December 2021 at 12:03:12 pm'!
+'From Cuis 5.0 [latest update: #4999] on 11 December 2021 at 4:49:54 pm'!
 'Description ExtractAsParameterTest '!
-!provides: 'BaseImageTests' 1 272!
+!provides: 'BaseImageTests' 1 273!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -22274,6 +22274,42 @@ test45DoesNotDetectEquiallySemanticBlocks
 	intervals := ExtractAsParameter intervalsForEquivalentExpressionIn: classToRefactor >> selector at: (4 to: 13).
 
 	self assert: { (4 to: 13) } equals: intervals asArray.! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 11:44:09'!
+test46CanExtractMessageSendToClassWithValidParameters
+
+	| toExtract |
+	
+	toExtract := 'Array with: 1'.
+	
+	self assertCanExtractFrom: toExtract size: toExtract size introducing: '(', toExtract, ')'
+	
+	! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 11:44:47'!
+test47CanExtractEmptyBraceArray
+
+	self assertCanExtractAsParameter: '{}'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 11:46:33'!
+test48CanExtractBraceArrayWithExtractableElements
+
+	self assertCanExtractAsParameter: '{1. {}. Array with: 1}'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 11:49:29'!
+test49CannotExtractBraceArrayWithNoExtractableElements
+
+	self assertCannotExtractInvalidNodeAsParameter: '{1. self m2 }'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 12:05:47'!
+test50CanExtractReferenceToGlobal
+
+	self assertCanExtractAsParameter: 'Smalltalk'! !
+
+!ExtractAsParameterTest methodsFor: 'tests' stamp: 'HAW 12/6/2021 12:05:01'!
+test51CannotExtractNotExistingGlobalReference
+
+	self assertCannotExtractInvalidNodeAsParameter: '__Smalltalk__'! !
 
 !ExtractAsParameterTest methodsFor: 'class factory' stamp: 'HAW 9/8/2021 22:00:32'!
 classToRefactorName
