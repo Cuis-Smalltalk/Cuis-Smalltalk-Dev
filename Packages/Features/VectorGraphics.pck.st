@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4956] on 29 October 2021 at 12:30:36 pm'!
+'From Cuis 5.0 [latest update: #5001] on 16 December 2021 at 12:16:11 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 329!
+!provides: 'VectorGraphics' 1 330!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -1906,6 +1906,36 @@ Display forceToScreen
 
 	firstPoint notNil ifTrue: [
 		self lineTo: firstPoint ].! !
+
+!AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 12/16/2021 12:12:24'!
+closePathAndMoveBack
+	"Close the current path, but don't change the current position"
+"
+(VectorCanvas onForm: Display)
+	strokeWidth: 12.0 color: Color black do: [ :canvas |
+		canvas
+			moveTo: 100@100;
+			cubicBezierTo: 300@200 control1: 110@110 control2: 200@200;
+			cubicBezierTo: 300@120 control1: 310@110 control2: 200@200;
+			closePath;
+			lineTo: 150@300 ].
+(VectorCanvas onForm: Display)
+	strokeWidth: 3.0 color: Color red do: [ :canvas |
+		canvas
+			moveTo: 100@100;
+			cubicBezierTo: 300@200 control1: 110@110 control2: 200@200;
+			cubicBezierTo: 300@120 control1: 310@110 control2: 200@200;
+			closePathAndMoveBack;
+			lineTo: 150@300 ].
+Display forceToScreen
+
+"
+
+	| cp |
+	(firstPoint notNil and: [ firstPoint ~= currentPoint]) ifTrue: [
+		cp _ currentPoint.
+		self lineTo: firstPoint.
+		self moveTo: cp ].! !
 
 !AbstractVectorCanvas methodsFor: 'paths' stamp: 'jmv 5/10/2021 11:41:11'!
 cubicBezier: points
@@ -7602,9 +7632,10 @@ toRelativePoint: endPoint
 	coordinatesAreRelative _ true.
 	points _ {endPoint}! !
 
-!PathMoveToCommand methodsFor: 'drawing' stamp: 'jmv 12/22/2017 13:03:47'!
+!PathMoveToCommand methodsFor: 'drawing' stamp: 'jmv 12/16/2021 12:04:19'!
 runOn: aCanvas
 
+	aCanvas closePathAndMoveBack.
 	aCanvas multiMoveTo: coordinatesAreRelative points: points! !
 
 !PathMoveToCommand class methodsFor: 'instance creation' stamp: 'jmv 5/4/2010 06:08'!
