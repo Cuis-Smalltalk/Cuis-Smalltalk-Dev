@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #5001] on 16 December 2021 at 12:16:11 pm'!
+'From Cuis 5.0 [latest update: #5003] on 17 December 2021 at 11:37:34 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 330!
+!provides: 'VectorGraphics' 1 331!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -791,12 +791,6 @@ ascent
 !TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/7/2019 10:11:03'!
 baseFont
 	^ baseFont ifNil: [self]! !
-
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/21/2019 11:01:04'!
-baseKern
-	"self forwarding: #baseKern printOneStack: true."
-	self revisar.
-^0 "uh?"! !
 
 !TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 4/22/2019 13:29:21'!
 cachedFormDepth
@@ -3237,21 +3231,6 @@ boundingRectOfCurrentMorphAfterDraw
 	^ clippingMorphDisplayBounds
 		ifNotNil: [ :ownerClips | boundingRect intersect: ownerClips ]
 		ifNil: [ boundingRect ]! !
-
-!AbstractVectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 10/9/2014 23:04'!
-arrowOfDirection: aSymbol size: finalSizeInteger
-	self flag: #jmvVer2.! !
-
-!AbstractVectorCanvas class methodsFor: 'BitBltCanvas protocol' stamp: 'jmv 5/18/2021 10:09:02'!
-buildArrowOfDirection: aSymbolDirection size: finalSizeInteger
-	"PRIVATE - create an arrow with aSymbolDirectionDirection,
-	finalSizeInteger and aColor
-	 
-	aSymbolDirectionDirection = #up, #down. #left or #right
-	 (self buildArrowOfDirection: #down size: 120) display
-	 (self buildArrowOfDirection: #up size: 120) display
-	"
-	self flag: #jmvVer2.! !
 
 !AbstractVectorCanvas class methodsFor: 'samples' stamp: 'jmv 10/8/2021 09:47:19'!
 experiment1
@@ -9471,22 +9450,6 @@ bitMask
 		"Reverse it so we get bit=1 for affected pixels."
 		((answer asGrayForm: 1) asFormOfDepth: 1) reverse.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 9/28/2021 16:20:14'!
-fitInto: aRectangle
-	"Scale and position ourselves in such way that our #findFullBoundsInOwner are in aRectangle.
-	WidgetMorph, KernelMorph, and maybe others will not scale, but resize, changing the actual extent."
-
-	| currentBounds scale slackForAntiAliasing |
-	currentBounds _ self findFullBoundsInOwner.
-	slackForAntiAliasing _ 0.
-	scale _ (aRectangle width-slackForAntiAliasing / (currentBounds width-slackForAntiAliasing))
-		min: (aRectangle height-slackForAntiAliasing / (currentBounds height-slackForAntiAliasing)).
-	scale _ scale asFloat.
-	self scaleBy: scale.
-
-	currentBounds _ self findFullBoundsInOwner.
-	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2).! !
-
 !Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/29/2021 12:29:16'!
 imageFormVG: extentOrNil depth: depth
 	"Draw using a VectorCanvas
@@ -9531,6 +9494,22 @@ showBitMask
 		r left to: r right-1 do: [ :x |
 			(self coversPixel: x@y) ifTrue: [
 				Display colorAt: x@y put: Color red ]]].! !
+
+!MovableMorph methodsFor: '*vectorGraphics' stamp: 'jmv 12/17/2021 10:11:34'!
+fitInto: aRectangle
+	"Scale and position ourselves in such way that our #findFullBoundsInOwner are in aRectangle.
+	WidgetMorph, KernelMorph, and maybe others will not scale, but resize, changing the actual extent."
+
+	| currentBounds scale slackForAntiAliasing |
+	currentBounds _ self findFullBoundsInOwner.
+	slackForAntiAliasing _ 0.
+	scale _ (aRectangle width-slackForAntiAliasing / (currentBounds width-slackForAntiAliasing))
+		min: (aRectangle height-slackForAntiAliasing / (currentBounds height-slackForAntiAliasing)).
+	scale _ scale asFloat.
+	self scaleBy: scale.
+
+	currentBounds _ self findFullBoundsInOwner.
+	self morphPosition: aRectangle origin - (currentBounds origin - self morphPosition) + (aRectangle extent - currentBounds extent // 2).! !
 
 !LayoutMorph class methodsFor: '*VectorGraphics-examples' stamp: 'jmv 9/28/2021 16:24:36'!
 example101VG
