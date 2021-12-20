@@ -17,15 +17,18 @@ Note: If you are creating the main (or only) Cuis folder in your machine, you mi
 mkdir MyProject
 cd MyProject
 git clone --depth 1 https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev.git
-./Cuis-Smalltalk-Dev/clonePackageRepos.sh
+cd Cuis-Smalltalk-Dev
+./clonePackageRepos.sh
 ```
 After that, you may periodically update all your repos from GitHub:
 ```
-./Cuis-Smalltalk-Dev/pullAllRepos.sh
+cd MyProject/Cuis-Smalltalk-Dev
+./pullAllRepos.sh
 ```
 Additionally, after doing your stuff, you can check what you need to commit to GitHub:
 ```
-./Cuis-Smalltalk-Dev/statusAllRepos.sh
+cd MyProject/Cuis-Smalltalk-Dev
+./statusAllRepos.sh
 ```
 
 ## For 64 bits Linux running on AMD/Intel x64 hardware ##
