@@ -67,7 +67,7 @@ cd MyProject
 curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_macos64x64_202003021730.dmg
 Open Finder on your folder
 Double click on the dmg file
-Drag Squeak.app to your folder
+Drag Squeak.app to your MyProject folder
 ```
 
 ### Starting Cuis Smalltalk ###
