@@ -54,6 +54,12 @@ Even though the scanner does not actually convert the source into a sequence of 
 ````
 As an exercise, use this method to scan various code fragments. They do not have to be valid Smalltalk code: as we mentioned, the Scanner does not analyze the structure of the input.  Anything that looks like a word scans as a token of type #word, be it a reference to a local variable foo, a global variable Foo, a message selector in an expression "self foo", or a literal object reference like nil, true, or false. Only later compilation stages figure out the actual meaning and translation of these words.
 
+**Cuis example**. How to scan a String.
+````smalltalk
+s _ Scanner new. 
+s scanTokens: '1 + 2'.                      "=> #(1 #+ 2) "
+````
+
 ## Parsing
 
 The parser is implemented as class Parser in both VisualWorks and Squeak. It is a hand-coded recursive descent parser (we will see what it means in one of the examples), easy to understand and modify. It uses Scanner to read tokens of the program being compiled, one by one as they are needed. An unusual implementation feature is that Parser is a subclass of Scanner! Whatever the reason for this design decision was, it apparently originates in Smalltalk-80 since VisualWorks and Squeak share it.
@@ -87,6 +93,20 @@ If the error encountered is fatal and compilation should be aborted, the compile
 Together, the notifier and ifFail block form an exception handling framework of sorts. The compiler and its protocol predate any of the existing Smalltalk exception frameworks by more than a decade, this must be the reason for not using a "real" one.
 
 If no errors occur, the message returns with the root node of the parse tree of the source code. The tree is built of instances of subclasses of ProgramNode (VisualWorks) or ParseNode (Squeak). In VisualWorks, all of these classes are categorized under System-Compiler-Program Objects.
+
+**Cuis example**. How to parse a code String snippet.
+````Smalltalk
+p _ Parser new.
+". explore the output of this message send (Cltr+Shift+i, in Linux) "
+p parse:  (ReadStream on: '1 + 2 * 3')  
+	class:  UndefinedObject 
+	category:  nil
+	noPattern: true
+	doIt:  false
+	context: nil  
+	notifying: nil 
+	ifFail: [^ nil].
+````
 
 ## The Smalltalk Machine
 
@@ -172,6 +192,9 @@ Both in Squeak and in VisualWorks, when you select a method in a browser holding
 In Squeak, there is a menu item Show Bytecodes in the code view menu. Selecting it shows the method's bytecodes instead of the source.
 
 In VisualWorks with ProgrammingHacks loaded, there is an inspect item on the utilities menu of the method list view. Selecting that item opens an inspector on the selected CompiledMethod. A compiled method inspector can show the method's bytecodes.
+
+**In Cuis**. Visit a method with the *Browser*, RightClick the method name and select *inspect CompiledMethod*. An *inspector* window 
+will show up, on the left pane select *all bytecodes*.
 
 Granted, this is hardly direct access. Could we rig the system to show the bytecodes when a method is selected with the Control key does, like decompiled code is displayed when the Shift key is down? Yes, we could.  Surprisingly, the check for Shift is in the CompiledMethod's (CompiledCode's, actually) method getSourceForUserIfNone: rather than in the browser. The first line of the method invokes the decompilation block when Shift is down. A single additional line:
 ````Smalltalk
