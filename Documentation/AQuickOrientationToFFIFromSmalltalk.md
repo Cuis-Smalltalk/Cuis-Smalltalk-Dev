@@ -28,7 +28,7 @@ Now, this is not a C programming guide.  Getting to write code in C well takes t
 
     You must get your head around how the C world works.
 
-It doesn't matter that you don't like it, it doesn't matter that you think it's wrong and so forth.  It doesn't even matter that some proponents of C may agree with you on this.  It's there and you want to use it, so obey the rules, and thus learn the rules.  Now, C has a large number of rules, and is also much more fragile than Smalltalk in many ways.  This means you will have to exercise much, but like much more care than you normally do in the image.  Above all, repeat with me:
+It doesn't matter that you don't like it, it doesn't matter that you think it's wrong and so forth.  It doesn't even matter that some proponents of C may agree with you on this.  The functionality is there and you want to use it, so obey the rules, and thus learn the rules.  Now, C has a large number of rules, and is also much more fragile than Smalltalk in many ways.  This means you will have to exercise much, but like much more care than you normally do in the image.  Above all, repeat with me:
 
     Code works only when you can prove it has to work.
 
@@ -194,6 +194,3 @@ A typical complaint about FFI mechanisms is that they are slow.  Any claims of p
 ## 7.  Conclusion.
 
 So, what have we learned here?  That the primary function of an FFI is to allow you to interface to C functionality that is given in terms of actual functions you can call, without the cost associated with using a C compiler.  One way or another, interfacing with C code means you are now a virtual machine engineer, so there are lots of things to take into consideration to satisfy the prime directive of having code that works because you can justify that it should.  This means there are a lot of things that cannot be interfaced via an FFI because of macros and other C language characteristics, or because of particular API behavior.  Of course, remember the things discussed here are just some of the factors in play.  Moreover, we also saw what happens when undefined behavior is present, and why the virtual machine should be an outstanding example of following the rules.  Finally, there is some advice for how to deal with the unexpected in terms of bug reports and how to best characterize what constitutes a fix.
-
-
-Andres. 
