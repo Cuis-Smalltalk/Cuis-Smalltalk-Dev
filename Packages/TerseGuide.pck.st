@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #4219] on 12 June 2020 at 11:41:15 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 141!
+!provides: 'TerseGuide' 1 142!
 SystemOrganization addCategory: #TerseGuide!
 
 
@@ -1196,7 +1196,7 @@ x _ Form extent: 22@18 depth: 8.
 	
 y _ x getCanvas.			"convert form to canvas (a BitBltCanvas)"
 
-WidgetMorph new drawOn: y; morphExtent: 300@200; openInWorld.
+BoxedMorph new drawOn: y; morphExtent: 300@200; openInWorld.
 	"Display a morph on a canvas"
 
 x _ Form fromUser.
@@ -1381,7 +1381,7 @@ myLayout _ LayoutMorph newRow color: Color cyan.
 myLayout openInWorld.
 myLayout morphExtent: (6 * myLayout morphExtent). "Make larger to hold submorphs"
 
-myLayout addAllMorphs: { WidgetMorph initializedInstance. ImageMorph initializedInstance. WidgetMorph initializedInstance. }.
+myLayout addAllMorphs: { BoxedMorph initializedInstance. ImageMorph initializedInstance. BoxedMorph initializedInstance. }.
 
 "When there is space left over, the submorphs can be shifted
  along the layout axis.  This is the axisEdgeWeight, a number from
@@ -1418,15 +1418,15 @@ layoutSpec
  a fixed or porportional extent, a minimum extent, an offAxisEdgeWeight."
 
 "Some Morphs to use"
-rect _ WidgetMorph initializedInstance.
+rect _ BoxedMorph initializedInstance.
 image _ ImageMorph initializedInstance.
 rect layoutSpec: (LayoutSpec fixedWidth: 80 proportionalHeight: 0.6 offAxisEdgeWeight: #center).
 "Layouts can contain layouts"
 interiorLayout _ LayoutMorph newColumn.
 interiorLayout separation: 10@20.
 interiorLayout layoutSpec: (LayoutSpec proportionalWidth: 0.3 proportionalHeight: 60).
-interiorLayout addMorph: WidgetMorph initializedInstance.
-interiorLayout addAdjusterAndMorph: (WidgetMorph new) proportionalWidth: 1.0.
+interiorLayout addMorph: BoxedMorph initializedInstance.
+interiorLayout addAdjusterAndMorph: (BoxedMorph new) proportionalWidth: 1.0.
 "A LayoutMorph to contain them"
 layout _ LayoutMorph newRow.
 layout addAllMorphs: { image. interiorLayout. rect. }.
@@ -1543,11 +1543,11 @@ Transcript									"cascading ; send multiple messages to first receiver"
    show: ''world'' ;
    newLine.
 "Without semicolon cascading"
-x := WidgetMorph new.
+x := BoxedMorph new.
 x color: Color yellow.
 x openInWorld.
 "Using semicolon cascade -- we don''t need the variable, x"
-WidgetMorph new
+BoxedMorph new
 	color: Color yellow; 
 	openInWorld.
 3 + 2; * 100.							"result=300. Sends message to same receiver (3)"

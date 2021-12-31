@@ -1,6 +1,6 @@
 'From Cuis 5.0 [latest update: #5003] on 17 December 2021 at 11:37:34 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 331!
+!provides: 'VectorGraphics' 1 332!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -40,7 +40,7 @@ TrueTypeFontFamily class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample01Star category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample01Star
+PlacedMorph subclass: #Sample01Star
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -50,7 +50,7 @@ Sample01Star class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample02Bezier category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample02Bezier
+PlacedMorph subclass: #Sample02Bezier
 	instanceVariableNames: 'aStart aEnd aControlPoint bStart bEnd bControlPoint1 bControlPoint2'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -60,7 +60,7 @@ Sample02Bezier class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample03Smiley category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample03Smiley
+PlacedMorph subclass: #Sample03Smiley
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -70,7 +70,7 @@ Sample03Smiley class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample04Pacman category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample04Pacman
+PlacedMorph subclass: #Sample04Pacman
 	instanceVariableNames: 'color'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -80,7 +80,7 @@ Sample04Pacman class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample05UnicodeText category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample05UnicodeText
+PlacedMorph subclass: #Sample05UnicodeText
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -90,7 +90,7 @@ Sample05UnicodeText class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample06EasyToGrab category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample06EasyToGrab
+PlacedMorph subclass: #Sample06EasyToGrab
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -100,7 +100,7 @@ Sample06EasyToGrab class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample07Clipping category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample07Clipping
+PlacedMorph subclass: #Sample07Clipping
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -110,7 +110,7 @@ Sample07Clipping class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample08Form category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample08Form
+PlacedMorph subclass: #Sample08Form
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -120,7 +120,7 @@ Sample08Form class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample09Clock category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample09Clock
+PlacedMorph subclass: #Sample09Clock
 	instanceVariableNames: 'hourHand minuteHand secondHand'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -130,7 +130,7 @@ Sample09Clock class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample09ClockHourHand category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample09ClockHourHand
+PlacedMorph subclass: #Sample09ClockHourHand
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -140,7 +140,7 @@ Sample09ClockHourHand class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample09ClockMinuteHand category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample09ClockMinuteHand
+PlacedMorph subclass: #Sample09ClockMinuteHand
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -150,7 +150,7 @@ Sample09ClockMinuteHand class
 	instanceVariableNames: ''!
 
 !classDefinition: #Sample09ClockSecondHand category: 'VectorGraphics-Examples'!
-MovableMorph subclass: #Sample09ClockSecondHand
+PlacedMorph subclass: #Sample09ClockSecondHand
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -9495,10 +9495,10 @@ showBitMask
 			(self coversPixel: x@y) ifTrue: [
 				Display colorAt: x@y put: Color red ]]].! !
 
-!MovableMorph methodsFor: '*vectorGraphics' stamp: 'jmv 12/17/2021 10:11:34'!
+!PlacedMorph methodsFor: '*vectorGraphics' stamp: 'jmv 12/17/2021 10:11:34'!
 fitInto: aRectangle
 	"Scale and position ourselves in such way that our #findFullBoundsInOwner are in aRectangle.
-	WidgetMorph, KernelMorph, and maybe others will not scale, but resize, changing the actual extent."
+	BoxedMorph, and maybe others will not scale, but resize, changing the actual extent."
 
 	| currentBounds scale slackForAntiAliasing |
 	currentBounds _ self findFullBoundsInOwner.
@@ -9529,7 +9529,7 @@ row
 		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
 	addMorph: (Sample03Smiley new name: #C)
 		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
-	addMorph: (WidgetMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+	addMorph: (BoxedMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
 		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
 	addMorph: (Sample03Smiley new name: #E)
 		layoutSpec: (LayoutSpec fixedWidth: 200 fixedHeight: 200).
@@ -9549,11 +9549,11 @@ pane addMorph: row layoutSpec: LayoutSpec useAll.
 row _ (LayoutMorph newRow separation: 5) name: #Row3.
 row
 	color: Color red;
-	addMorph: (WidgetMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+	addMorph: (BoxedMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
 		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
-	addMorph: (WidgetMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+	addMorph: (BoxedMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
 		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
-	addMorph: (WidgetMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+	addMorph: (BoxedMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
 		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
 pane morphPosition: 150@130 extent: 400@300.

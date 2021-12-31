@@ -1,11 +1,11 @@
 'From Cuis 5.0 [latest update: #4758] on 16 August 2021 at 11:47:15 am'!
 'Description '!
-!provides: 'Morphic-Deprecated' 1 3!
+!provides: 'Morphic-Deprecated' 1 4!
 SystemOrganization addCategory: 'Morphic-Deprecated'!
 
 
 !classDefinition: #RectangleLikeMorph category: 'Morphic-Deprecated'!
-MovableMorph subclass: #RectangleLikeMorph
+PlacedMorph subclass: #RectangleLikeMorph
 	instanceVariableNames: 'extent color'
 	classVariableNames: ''
 	poolDictionaries: ''
