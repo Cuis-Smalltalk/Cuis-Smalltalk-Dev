@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-IMAGE_FILE="$(ls | grep 'Cuis5.0-[0-9]\+.image')"
+IMAGE_FILE="$(ls | grep 'Cuis6.0-[0-9]\+.image')"
 
 INSTALL_UPDATES_SCRIPT="\
   Utilities classPool at: #AuthorName put: 'TravisCI'.
