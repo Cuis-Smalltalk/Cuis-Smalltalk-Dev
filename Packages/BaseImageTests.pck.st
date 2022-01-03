@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4999] on 11 December 2021 at 4:49:54 pm'!
+'From Cuis 6.0 [latest update: #5031] on 3 January 2022 at 11:31:01 am'!
 'Description ExtractAsParameterTest '!
-!provides: 'BaseImageTests' 1 274!
+!provides: 'BaseImageTests' 1 275!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -24888,6 +24888,29 @@ test19RenamesClassWhenMethodReferencesClassAndDoesNothing
 		referencingMethod := (Smalltalk classNamed: newClassName) compiledMethodAt: selector.
 		self assert: (referencingMethod hasLiteralThorough: newClassName).
 		self deny: (referencingMethod hasLiteralThorough: oldClassName)] ! !
+
+!RenameClassTest methodsFor: 'tests' stamp: 'HAW 12/30/2021 16:31:36'!
+test20ItDoesNotRenameReferencesToClassVariableWithSameNameAndReferencedInClassMethod
+
+	| classWithClassVariable oldClassName classToRefactor newClassName rename renamedReferences |
+
+	oldClassName :=  'OldClassTest15' asSymbol.
+	newClassName := 'NewClassTest15' asSymbol.
+	"First I create a class var with the same name as the class to rename and a reference to it - Hernan"
+	classWithClassVariable := self createClassNamed: 'ClassReferencingClassVar' asSymbol.
+	classWithClassVariable addClassVarName: oldClassName.
+	classWithClassVariable class compile: 'm1 ^', oldClassName.
+
+	classToRefactor := self createClassNamed: oldClassName.
+
+	rename := RenameClass from: classToRefactor to: newClassName.
+	renamedReferences := rename apply.
+	
+	self assert: renamedReferences isEmpty.
+	self assert: (classWithClassVariable definesClassVariableNamedInHierarchy: oldClassName)
+	
+	
+	! !
 
 !RenameGlobalTest methodsFor: 'tests' stamp: 'HAW 3/26/2019 17:53:53'!
 define: anOldName with: aGlobalValue toBeRenamedAs: aNewName while: aBlock
