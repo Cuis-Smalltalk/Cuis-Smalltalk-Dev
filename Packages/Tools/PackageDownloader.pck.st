@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5035] on 3 January 2022 at 9:52:34 pm'!
+'From Cuis 6.0 [latest update: #5035] on 3 January 2022 at 10:18:13 pm'!
 'Description Tool for downloading Cuis packages from the internet.'!
-!provides: 'PackageDownloader' 1 35!
+!provides: 'PackageDownloader' 1 37!
 !requires: 'WebClient' 1 22 nil!
 !requires: 'JSON' 1 19 nil!
 SystemOrganization addCategory: 'PackageDownloader'!
@@ -229,11 +229,11 @@ downloadDirectory
 
 	^ downloadDirectory ifNil: [self class defaultDownloadDirectory ]! !
 
-!PackageDownloader methodsFor: 'accessing' stamp: 'MM 11/25/2021 22:23:50'!
+!PackageDownloader methodsFor: 'accessing' stamp: 'MM 1/3/2022 22:18:06'!
 jsonPackagesFile
 
 	^ (CodePackage named: 'PackageDownloader' createIfAbsent: false registerIfNew: false)
-		packageDirectory // 'packages.json'! !
+		packageDirectory / 'PackageDownloader' // 'packages.json'! !
 
 !PackageDownloader methodsFor: 'accessing' stamp: 'MM 11/25/2021 21:16:11'!
 packageList
@@ -326,15 +326,14 @@ isPackageLocallyAvailable: packageName
 		detect: [:package | package packageName = packageName]
 		ifNone: [nil]) isNil not! !
 
-!PackageDownloader methodsFor: 'packages-update' stamp: 'MM 1/3/2022 21:51:56'!
+!PackageDownloader methodsFor: 'packages-update' stamp: 'MM 1/3/2022 22:14:15'!
 loadPackageList
 
 	packageList _ OrderedCollection new.
 	
-	self jsonPackagesFile exists ifFalse: [
-		self updatePackageList ].	
-	
-	self jsonPackagesFile exists ifTrue: [self collectPackagesFromJsonFile: self jsonPackagesFile].
+	self jsonPackagesFile exists 
+		ifFalse: [self updatePackageList] 
+		ifTrue: [self collectPackagesFromJsonFile: self jsonPackagesFile].
 	
 	packageList sort: [:p1 :p2 | p1 packageName < p2 packageName].
 	
