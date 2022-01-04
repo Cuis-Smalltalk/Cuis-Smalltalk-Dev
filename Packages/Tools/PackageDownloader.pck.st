@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5035] on 3 January 2022 at 10:18:13 pm'!
+'From Cuis 6.0 [latest update: #5036] on 3 January 2022 at 10:38:50 pm'!
 'Description Tool for downloading Cuis packages from the internet.'!
-!provides: 'PackageDownloader' 1 37!
+!provides: 'PackageDownloader' 1 39!
 !requires: 'WebClient' 1 22 nil!
 !requires: 'JSON' 1 19 nil!
 SystemOrganization addCategory: 'PackageDownloader'!
@@ -467,11 +467,11 @@ downloadUrl: url into: aFileEntry
 	Transcript show: 'Downloading ', url, ' ... '; newLine.
 	aFileEntry fileContents: (WebClient httpGet: url) content! !
 
-!PackageDownloader class methodsFor: 'as yet unclassified' stamp: 'MM 12/27/2021 19:53:48'!
+!PackageDownloader class methodsFor: 'as yet unclassified' stamp: 'MM 1/3/2022 22:37:33'!
 defaultDownloadDirectory
 
 	^ ((CodePackage named: 'PackageDownloader' createIfAbsent: false registerIfNew: false)
-		packageDirectory / 'download')
+		packageDirectory / 'PackageDownloader' / 'download')
 			assureExistence ;
 			yourself! !
 
