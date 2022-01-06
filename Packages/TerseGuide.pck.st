@@ -700,15 +700,15 @@ arr _ #((0.0 0.0 0.0) (0.0 0.0 1.0) (0.0 1.0 0.0) (0.0 1.0 1.0) (1.0 0.0 0.0) (1
 (arr collect: [:a | Color colorFrom: a]) explore.
 
 "In the parent directory which contains Cuis-Smalltalk-Dev* do the following:
-	''git clone https://github.com/KenDickey/Cuis-Smalltalk-ColorEditor''
-	''git clone https://github.com/KenDickey/Cuis-Smalltalk-NamedColors''
-	''git clone https://github.com/KenDickey/Cuis-Smalltalk-Morphic-Misc1''
+	''git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-UI''
 
 then, do the following:
 "
-Feature require: #''Morphic-ColorEditor''.	"load the ColorEditor feature and its dependencies"
+Feature require: #''Color-Edit-Panel''. "Color Editor feature and its dependencies"
 
-"From the menu ''World>New morph...>ColorEditor'' select ColorEditorPanel or ColorPallet"
+"From the menu 
+      ''World>New morph...>Kernel>A-Dra'' 
+select ColorEditorPanel"
 '! !
 
 !TerseGuideHelp class methodsFor: 'pages' stamp: 'dhn 10/6/2018 16:27:14'!
