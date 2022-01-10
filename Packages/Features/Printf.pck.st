@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4815] on 30 August 2021 at 6:56:24 pm'!
+'From Cuis 6.0 [latest update: #5041] on 9 January 2022 at 12:31:05 am'!
 'Description '!
-!provides: 'Printf' 1 10!
+!provides: 'Printf' 1 15!
 SystemOrganization addCategory: #Printf!
 
 
@@ -36,7 +36,7 @@ PrintfCharacterFormatDescriptor class
 
 !classDefinition: #PrintfNumberFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfNumberFormatDescriptor
-	instanceVariableNames: 'operator padding radix space'
+	instanceVariableNames: 'operator padding radix space thousandSeparate thousandSeparator'
 	classVariableNames: 'Base Cased Radix'
 	poolDictionaries: ''
 	category: 'Printf'!
@@ -118,9 +118,10 @@ printOn: aStream
 	aStream nextPut: $c
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:33:00'!
+!PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 1/9/2022 00:30:06'!
 printOn: aStream
 	super printOn: aStream.
+	thousandSeparate ifTrue: [ aStream nextPut: $' ]. 
 	padding == $0 ifTrue: [aStream nextPut: $0].
 	radix ifTrue: [aStream nextPut: $#].
 	space ifTrue: [aStream nextPut: $ ].
@@ -235,6 +236,16 @@ rightFlush
 !PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:12:08'!
 space
 	^ (PrintfNumberFormatDescriptor newFrom: self) space
+	! !
+
+!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/8/2022 23:41:24'!
+thousandSeparate
+	^ (PrintfNumberFormatDescriptor newFrom: self) thousandSeparate 
+	! !
+
+!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/8/2022 23:41:36'!
+thousandSeparator
+	^ (PrintfNumberFormatDescriptor newFrom: self) thousandSeparator 
 	! !
 
 !PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:13:20'!
@@ -368,7 +379,7 @@ scanFrom: stream
 	
 	! !
 
-!PrintfFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 8/16/2021 14:19:11'!
+!PrintfFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/8/2022 23:42:18'!
 initialize
 	"PrintfFormatDescriptor initialize"
 	Operators := Dictionary new.
@@ -385,7 +396,11 @@ initialize
 	Flags at: $+ put: #rightFlush.
 	Flags at: $  put: #space.
 	Flags at: $# put: #radix.
-	Flags at: $0 put: #zero
+	Flags at: $0 put: #zero.
+	Flags at: $' put: #thousandSeparate
+	
+	
+	
 	! !
 
 !PrintfCharacterFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:23:00'!
@@ -455,18 +470,24 @@ space
 	space := true
 	! !
 
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/9/2022 00:23:13'!
+thousandSeparate
+	thousandSeparate := true.! !
+
 !PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:34:26'!
 zero
 	padding := $0
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'initialize-release' stamp: 'NM 8/16/2021 14:32:32'!
+!PrintfNumberFormatDescriptor methodsFor: 'initialize-release' stamp: 'NM 1/8/2022 23:39:38'!
 initialize
 	super initialize.
 	padding := $ .
 	radix := false.
-	space := false
-	! !
+	space := false.
+	thousandSeparate := false .
+	" . TODO temporary value, we should by default set $, if decimal separator is $. and viceversa. "
+	thousandSeparator := $, .! !
 
 !PrintfNumberFormatDescriptor class methodsFor: 'instance creation' stamp: 'NM 8/16/2021 14:35:16'!
 newFrom: desc
