@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 9 January 2022 at 12:31:05 am'!
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 4:29:48 pm'!
 'Description '!
-!provides: 'Printf' 1 15!
+!provides: 'Printf' 1 19!
 SystemOrganization addCategory: #Printf!
 
 
@@ -118,10 +118,11 @@ printOn: aStream
 	aStream nextPut: $c
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 1/9/2022 00:30:06'!
+!PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 1/15/2022 15:26:57'!
 printOn: aStream
+	Transcript log: '---> called NumFormDescriptor >> printOn: '.
 	super printOn: aStream.
-	thousandSeparate ifTrue: [ aStream nextPut: $' ]. 
+	thousandSeparate ifTrue: [ aStream nextPut: $_ ]. 
 	padding == $0 ifTrue: [aStream nextPut: $0].
 	radix ifTrue: [aStream nextPut: $#].
 	space ifTrue: [aStream nextPut: $ ].
@@ -238,14 +239,9 @@ space
 	^ (PrintfNumberFormatDescriptor newFrom: self) space
 	! !
 
-!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/8/2022 23:41:24'!
+!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 15:12:59'!
 thousandSeparate
-	^ (PrintfNumberFormatDescriptor newFrom: self) thousandSeparate 
-	! !
-
-!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/8/2022 23:41:36'!
-thousandSeparator
-	^ (PrintfNumberFormatDescriptor newFrom: self) thousandSeparator 
+	^ (PrintfNumberFormatDescriptor newFrom: self) thousandSeparate
 	! !
 
 !PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:13:20'!
@@ -379,7 +375,7 @@ scanFrom: stream
 	
 	! !
 
-!PrintfFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/8/2022 23:42:18'!
+!PrintfFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 14:49:18'!
 initialize
 	"PrintfFormatDescriptor initialize"
 	Operators := Dictionary new.
@@ -397,7 +393,7 @@ initialize
 	Flags at: $  put: #space.
 	Flags at: $# put: #radix.
 	Flags at: $0 put: #zero.
-	Flags at: $' put: #thousandSeparate
+	Flags at: $_ put: #thousandSeparate
 	
 	
 	
@@ -440,14 +436,35 @@ stringLength
 		ifFalse: [precision]
 		! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:33:47'!
+!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 16:29:11'!
+addThousandSeparator: numberString
+	". receives in input an integer numberString e.g. '12345'
+	. returns in output a thousand separated string e.g. '12_345' 
+	. '_' is the value lf 'thousandSeparator' 
+	. if 'base' is not is not 10 returns just numberString, since a separation by 3 digits blocks
+	 would not mean what 'thousand' says; and print a warning in the Transcript'. 
+	"
+	(self base ~= 10) ifTrue:  [ 
+		Transcript log: 'Error. Printf. thousand separation is not defined for non base 10 numbers.' . 
+		^ numberString . 
+		].
+	". if we arrived here the base is 10 " 
+	^ numberString asNumber printStringWithCommas :: 
+				copyReplaceAll: ',' with: (thousandSeparator asString)
+	
+	! !
+
+!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 16:28:30'!
 applyOperator: object 
 	"Character and Number are the only valid classes"
 
 	| number string |
 	object ifNil: [^'-'].
 	number := object asInteger.
+	
 	string := number printStringBase: self base.
+	". apply thousand separation, if reasonable "
+	thousandSeparate ifTrue: [ string _ self addThousandSeparator: string ] . 
 	(radix or: [operator == $p]) ifTrue: [string := self radixString , string].
 	(Cased includes: operator) ifTrue:
 		[string := operator isLowercase
@@ -470,8 +487,9 @@ space
 	space := true
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/9/2022 00:23:13'!
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 15:15:58'!
 thousandSeparate
+	Transcript log: '--> Called thousandSeparate '. 
 	thousandSeparate := true.! !
 
 !PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:34:26'!
@@ -479,7 +497,7 @@ zero
 	padding := $0
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'initialize-release' stamp: 'NM 1/8/2022 23:39:38'!
+!PrintfNumberFormatDescriptor methodsFor: 'initialize-release' stamp: 'NM 1/15/2022 14:47:54'!
 initialize
 	super initialize.
 	padding := $ .
@@ -487,7 +505,7 @@ initialize
 	space := false.
 	thousandSeparate := false .
 	" . TODO temporary value, we should by default set $, if decimal separator is $. and viceversa. "
-	thousandSeparator := $, .! !
+	thousandSeparator := $_ .! !
 
 !PrintfNumberFormatDescriptor class methodsFor: 'instance creation' stamp: 'NM 8/16/2021 14:35:16'!
 newFrom: desc
