@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 10:33:57 pm'!
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 11:03:41 pm'!
 'Description '!
-!provides: 'Printf' 1 29!
+!provides: 'Printf' 1 32!
 SystemOrganization addCategory: #Printf!
 
 
@@ -36,8 +36,8 @@ PrintfCharacterFormatDescriptor class
 
 !classDefinition: #PrintfNumberFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfNumberFormatDescriptor
-	instanceVariableNames: 'operator padding radix space thousandSeparate thousandSeparator'
-	classVariableNames: 'Base Cased Radix'
+	instanceVariableNames: 'operator padding radix space thousandSeparate'
+	classVariableNames: 'Base Cased DecimalSeparator Radix ThousandSeparator'
 	poolDictionaries: ''
 	category: 'Printf'!
 !classDefinition: 'PrintfNumberFormatDescriptor class' category: #Printf!
@@ -510,14 +510,9 @@ thousandSeparate: aBoolean
 	thousandSeparate _ aBoolean .
 ! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:21:01'!
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 22:51:02'!
 thousandSeparator
-	^ thousandSeparator
-	! !
-
-!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:20:47'!
-thousandSeparator: aCharacter
-	thousandSeparator _ aCharacter .
+	^ self class getThousandSeparator 
 	! !
 
 !PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:34:26'!
@@ -543,7 +538,17 @@ newFrom: desc
 	^ (super newFrom: desc) setPadding: desc padding
 	! !
 
-!PrintfNumberFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 8/16/2021 14:35:00'!
+!PrintfNumberFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 22:50:07'!
+getDecimalSeparator
+	^ DecimalSeparator  
+	! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 22:50:26'!
+getThousandSeparator
+	^ ThousandSeparator  
+	! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 22:47:01'!
 initialize
 	"PrintfNumberFormatDescriptor initialize"
 	Base := Dictionary newFromPairs: #(	$d 10
@@ -560,7 +565,20 @@ initialize
 											$x '0x'
 											$X '0X').
 
-	Cased := 'AaEeFfGgXx'
+	Cased := 'AaEeFfGgXx' . 
+	
+	DecimalSeparator _ $.  .
+	ThousandSeparator _ $_ . 
+	
+	! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 22:47:19'!
+setDecimalSeparatorTo: aCharacter
+	DecimalSeparator _ aCharacter . ! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 22:42:25'!
+setThousandSeparatorTo: aCharacter
+	ThousandSeparator _ aCharacter . 
 	! !
 
 !PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 22:13:24'!
