@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 9:50:28 pm'!
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 10:26:57 pm'!
 'Description '!
-!provides: 'Printf' 1 26!
+!provides: 'Printf' 1 28!
 SystemOrganization addCategory: #Printf!
 
 
@@ -563,11 +563,33 @@ initialize
 	Cased := 'AaEeFfGgXx'
 	! !
 
-!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 18:48:55'!
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 22:13:24'!
+addThousandSeparator: numberString
+	". receives in input an integer numberString e.g. '12345.1233123'
+	. returns in output a thousand separated string e.g. '12_345.1233123' 
+	. '_' is the value lf 'thousandSeparator' 
+	. if 'base' is not is not 10 returns just 'numberString', since a separation by 3 digits blocks
+	 would not mean what 'thousand' says; in that case also print a warning in the Transcript'. 
+	"
+	|integerPart decimalPart tokens |
+	". TODO. CHECK. we suppose the base is 10 for floats " 
+	"(self base ~= 10) ifTrue:  [ 
+		Transcript log: 'Error. Printf. thousand separation is not defined for non base 10 numbers.' . 
+		^ numberString . 
+		]."
+	". if we arrived here the base is 10 " 
+	tokens _ numberString findTokens: '.' . 
+	integerPart _ tokens first.
+	decimalPart _ tokens second. 
+	^ (integerPart asNumber printStringWithCommas :: 
+				copyReplaceAll: ',' with: (thousandSeparator asString) ), 
+				'.' , decimalPart . 
+	! !
+
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 22:09:09'!
 applyOperator: object 
 	"Number is the only valid class"
-
-	| string |
+	| string out |
 	string := self zeroPaddedStringOfBase: (('aA' includes: operator)
 												ifTrue: [16]
 												ifFalse: [10])
@@ -581,13 +603,19 @@ applyOperator: object
 					ifFalse: [string asUppercase]].
 	(space and: [object asFloat >= 0]) ifTrue:
 		[string := ' ' , string].
+	out _ (width ~= 0 and: [string size > width])
+			ifTrue: [String new: width withAll: $*]
+			ifFalse: [string].
+	" . add thousand separators, if needed " 
 	Transcript show: 'DBG --- applyOperator for FLoat numbers '.
-	" self halt. " 
-	thousandSeparate ifTrue: [Transcript show: 'DBG --- thousand sep is ON'] 
+	thousandSeparate 
+		ifTrue: [
+			Transcript show: 'DBG --- thousand sep is ON'.
+			out _ self addThousandSeparator: out. 
+			] 
 		ifFalse: [Transcript show: 'DBG --- thousand sep is OFF'] . 
-	^(width ~= 0 and: [string size > width])
-		ifTrue: [String new: width withAll: $*]
-		ifFalse: [string]
+	^ out 		
+			
 		! !
 
 !PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 21:49:03'!
@@ -835,6 +863,17 @@ test101_LargeFloat
 	self assert: ('%.2f' printf: {12345678.1}) = '12345678.10'.  ". gives wrongly 1.23"
 
 	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 22:26:12'!
+test102_FloatsWithThousandSeparator
+       ". Testing the print of floating points with thousand separator "
+	self assert: (('%_0.2f' printf: {1234}) = '1_234.00' ) .
+	self assert: (('%_0.2f' printf: {1234.1}) = '1_234.10' ) .
+	self assert: (('%_0.2f' printf: {1234.12}) = '1_234.12' ) .
+	self assert: (('%_0.2f' printf: {1234.123}) = '1_234.12' ) .
+	". digit limiting is by trucation "
+	self assert: (('%_0.2f' printf: {1234.123}) = '1_234.12' ) .
+	self assert: (('%_0.2f' printf: {1234.127}) = '1_234.12' ) .! !
 
 !PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/30/2021 18:39:08'!
 testFprintf
