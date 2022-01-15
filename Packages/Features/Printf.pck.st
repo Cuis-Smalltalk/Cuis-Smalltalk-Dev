@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 5:25:08 pm'!
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 5:27:12 pm'!
 'Description '!
-!provides: 'Printf' 1 21!
+!provides: 'Printf' 1 22!
 SystemOrganization addCategory: #Printf!
 
 
@@ -787,13 +787,6 @@ test101_LargeFloat
 
 	! !
 
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:11:35'!
-testBigFloat
-	^ nil 
-      
-	
-	! !
-
 !PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/30/2021 18:39:08'!
 testFprintf
 	| stream expected |
@@ -803,17 +796,6 @@ testFprintf
 and a 0-padded limited precision one "%013.5e".'
 		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567)).
 	self assert: expected equals: stream contents
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:12:50'!
-testLargeFloat101
-       ". small numbers are ignored "
-	self assert: (('%_d' printf: {123}) = '123' ) .
-	self assert: (('%_d' printf: {1234}) = '1_234' ) .
-	self assert: (('%_d' printf: {12345678}) = '12_345_678' ) .
-	". very large numbers must be ok "
-	self assert: (('%_d' printf: {123456789123456789}) = '123_456_789_123_456_789' ) .   
-	
 	! !
 
 !PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:47:49'!
