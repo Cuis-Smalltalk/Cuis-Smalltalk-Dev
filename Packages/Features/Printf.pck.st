@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 5:27:12 pm'!
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 9:50:28 pm'!
 'Description '!
-!provides: 'Printf' 1 22!
+!provides: 'Printf' 1 26!
 SystemOrganization addCategory: #Printf!
 
 
@@ -219,6 +219,14 @@ printWidthOn: aStream
 	precision ifNotNil: [aStream nextPut: $.. precision printOn: aStream]
 	! !
 
+!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:54:31'!
+doThousandSeparate
+	|out| 
+	out _ (PrintfNumberFormatDescriptor newFrom: self) .
+	out thousandSeparate: true.
+	^ out 
+	! !
+
 !PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:07:52'!
 leftFlush
 	flush := #leftFlush
@@ -239,14 +247,14 @@ space
 	^ (PrintfNumberFormatDescriptor newFrom: self) space
 	! !
 
-!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 15:12:59'!
-thousandSeparate
-	^ (PrintfNumberFormatDescriptor newFrom: self) thousandSeparate
-	! !
-
-!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:13:20'!
+!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 18:43:55'!
 zero
-	^ (PrintfNumberFormatDescriptor newFrom: self) zero
+	|out| 
+	(self class = PrintfNumberFormatDescriptor) 
+	ifTrue: [ out _ self zero ] 
+	ifFalse: [ out _ (PrintfNumberFormatDescriptor newFrom: self) zero ].
+	^ out 
+	" ^ (PrintfNumberFormatDescriptor newFrom: self) zero "
 	! !
 
 !PrintfFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:07:00'!
@@ -291,11 +299,17 @@ stopIndexOfCopyReplaceWithStringSize: anInteger
 flush
 	^ flush! !
 
-!PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 8/16/2021 14:08:31'!
+!PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 1/15/2022 19:51:34'!
 operator: char
 	| myself |
 	myself := (Smalltalk at: (Operators at: char)) newFrom: self.
 	myself setOperator: char.
+	". case of the floating point with thousand separator, not good here, just a start " 
+	((self class = PrintfNumberFormatDescriptor) and:
+	 (myself class = PrintfFloatFormatDescriptor )) ifTrue: [
+		Transcript show: 'DBG --- Transforming a float with thousand sep ' . 
+		" myself thousandSeparator: (self thousandSeparator) "
+		].
 	^ myself
 	! !
 
@@ -375,7 +389,7 @@ scanFrom: stream
 	
 	! !
 
-!PrintfFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 14:49:18'!
+!PrintfFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 19:53:06'!
 initialize
 	"PrintfFormatDescriptor initialize"
 	Operators := Dictionary new.
@@ -393,7 +407,7 @@ initialize
 	Flags at: $  put: #space.
 	Flags at: $# put: #radix.
 	Flags at: $0 put: #zero.
-	Flags at: $_ put: #thousandSeparate
+	Flags at: $_ put: #doThousandSeparate
 	
 	
 	
@@ -487,17 +501,31 @@ space
 	space := true
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 15:15:58'!
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:55:07'!
 thousandSeparate
-	Transcript log: '--> Called thousandSeparate '. 
-	thousandSeparate := true.! !
+	^ thousandSeparate  ! !
+
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:55:15'!
+thousandSeparate: aBoolean
+	thousandSeparate _ aBoolean .
+! !
+
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:21:01'!
+thousandSeparator
+	^ thousandSeparator
+	! !
+
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:20:47'!
+thousandSeparator: aCharacter
+	thousandSeparator _ aCharacter .
+	! !
 
 !PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:34:26'!
 zero
 	padding := $0
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'initialize-release' stamp: 'NM 1/15/2022 14:47:54'!
+!PrintfNumberFormatDescriptor methodsFor: 'initialize-release' stamp: 'NM 1/15/2022 18:47:47'!
 initialize
 	super initialize.
 	padding := $ .
@@ -505,7 +533,9 @@ initialize
 	space := false.
 	thousandSeparate := false .
 	" . TODO temporary value, we should by default set $, if decimal separator is $. and viceversa. "
-	thousandSeparator := $_ .! !
+	thousandSeparator := $_ .
+	". to permit print in the debugger " 
+	operator _ $? . ! !
 
 !PrintfNumberFormatDescriptor class methodsFor: 'instance creation' stamp: 'NM 8/16/2021 14:35:16'!
 newFrom: desc
@@ -533,7 +563,7 @@ initialize
 	Cased := 'AaEeFfGgXx'
 	! !
 
-!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:37:04'!
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 18:48:55'!
 applyOperator: object 
 	"Number is the only valid class"
 
@@ -551,10 +581,22 @@ applyOperator: object
 					ifFalse: [string asUppercase]].
 	(space and: [object asFloat >= 0]) ifTrue:
 		[string := ' ' , string].
+	Transcript show: 'DBG --- applyOperator for FLoat numbers '.
+	" self halt. " 
+	thousandSeparate ifTrue: [Transcript show: 'DBG --- thousand sep is ON'] 
+		ifFalse: [Transcript show: 'DBG --- thousand sep is OFF'] . 
 	^(width ~= 0 and: [string size > width])
 		ifTrue: [String new: width withAll: $*]
 		ifFalse: [string]
 		! !
+
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 21:49:03'!
+initializeThousandSeparatorFrom: descriptor 
+	(descriptor class = PrintfNumberFormatDescriptor) ifTrue: [
+		thousandSeparator _ (descriptor thousandSeparator ).
+		thousandSeparate  _ (descriptor thousandSeparate ).
+		].
+	^ self ! !
 
 !PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:37:28'!
 zeroPaddedStringOfBase: base forFloat: aFloat 
@@ -578,6 +620,13 @@ precision
 !PrintfFloatFormatDescriptor methodsFor: 'private' stamp: 'NM 8/16/2021 14:36:49'!
 stringLength
 	^ width
+	! !
+
+!PrintfFloatFormatDescriptor class methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 21:49:42'!
+newFrom: descriptor
+	descriptor class == self ifTrue: [^ descriptor].
+	^ ((super newFrom: descriptor) setPadding: descriptor padding) initializeThousandSeparatorFrom: descriptor 
+
 	! !
 
 !PrintfNumberHolderDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:38:35'!
