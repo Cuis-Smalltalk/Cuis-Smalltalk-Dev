@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 5:10:18 pm'!
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 5:25:08 pm'!
 'Description '!
-!provides: 'Printf' 1 20!
+!provides: 'Printf' 1 21!
 SystemOrganization addCategory: #Printf!
 
 
@@ -761,6 +761,39 @@ examples
 		printf: ((Array with: 'long' with: 'hello world' with: 'hello world' with: 42.0) copyWith: 42.1234567)).
 		! !
 
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:22:03'!
+test100_ThousandSeparator
+       ". small numbers are ignored "
+	self assert: (('%_d' printf: {123}) = '123' ) .
+	self assert: (('%_d' printf: {1234}) = '1_234' ) .
+	self assert: (('%_d' printf: {12345678}) = '12_345_678' ) .
+	". very large numbers must be ok "
+	self assert: (('%_d' printf: {123456789123456789}) = '123_456_789_123_456_789' ) .   
+	
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:24:52'!
+test101_LargeFloat
+       ". this test was added to remember there is an ugly bug here "
+	self assert: ('%.2f' printf: {1.1}) = '1.10' .  
+	self assert: ('%.2f' printf: {12.1}) = '12.10' .  
+	self assert: ('%.2f' printf: {123.1}) = '123.10' . 
+       self assert: ('%.2f' printf: {1234.1}) = '1234.10' .	  
+	self assert: ('%.2f' printf: {12345.1}) = '12345.10' . 
+	self assert: ('%.2f' printf: {123456.1}) = '123456.10' .  
+	". from here on it is broken " 
+	self assert: ('%.2f' printf: {1234567.1}) = '1234567.10'.     ". gives wrongly 1.23"
+	self assert: ('%.2f' printf: {12345678.1}) = '12345678.10'.  ". gives wrongly 1.23"
+
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:11:35'!
+testBigFloat
+	^ nil 
+      
+	
+	! !
+
 !PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/30/2021 18:39:08'!
 testFprintf
 	| stream expected |
@@ -770,6 +803,17 @@ testFprintf
 and a 0-padded limited precision one "%013.5e".'
 		printf: #('long' 'hello world' 'hello world' 42.0 42.1234567)).
 	self assert: expected equals: stream contents
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:12:50'!
+testLargeFloat101
+       ". small numbers are ignored "
+	self assert: (('%_d' printf: {123}) = '123' ) .
+	self assert: (('%_d' printf: {1234}) = '1_234' ) .
+	self assert: (('%_d' printf: {12345678}) = '12_345_678' ) .
+	". very large numbers must be ok "
+	self assert: (('%_d' printf: {123456789123456789}) = '123_456_789_123_456_789' ) .   
+	
 	! !
 
 !PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/16/2021 14:47:49'!
@@ -838,17 +882,6 @@ testOneStringWithLength
 testReturnValue
 
 	self assert: 6+8 equals: ((PrintfFormatString new setFormat: 'hello %ld') printf: {12345678})
-	! !
-
-!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:02:07'!
-testThousandSeparator
-       ". small numbers are ignored "
-	self assert: (('%_d' printf: {123}) = '123' ) .
-	self assert: (('%_d' printf: {1234}) = '1_234' ) .
-	self assert: (('%_d' printf: {12345678}) = '12_345_678' ) .
-	". very large numbers must be ok "
-	self assert: (('%_d' printf: {123456789123456789}) = '123_456_789_123_456_789' ) .   
-	
 	! !
 
 !Object methodsFor: '*Printf' stamp: 'NM 8/16/2021 15:08:36'!
