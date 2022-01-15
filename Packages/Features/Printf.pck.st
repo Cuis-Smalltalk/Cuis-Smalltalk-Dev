@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 10:26:57 pm'!
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 10:33:57 pm'!
 'Description '!
-!provides: 'Printf' 1 28!
+!provides: 'Printf' 1 29!
 SystemOrganization addCategory: #Printf!
 
 
@@ -299,7 +299,7 @@ stopIndexOfCopyReplaceWithStringSize: anInteger
 flush
 	^ flush! !
 
-!PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 1/15/2022 19:51:34'!
+!PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 1/15/2022 22:33:18'!
 operator: char
 	| myself |
 	myself := (Smalltalk at: (Operators at: char)) newFrom: self.
@@ -307,7 +307,7 @@ operator: char
 	". case of the floating point with thousand separator, not good here, just a start " 
 	((self class = PrintfNumberFormatDescriptor) and:
 	 (myself class = PrintfFloatFormatDescriptor )) ifTrue: [
-		Transcript show: 'DBG --- Transforming a float with thousand sep ' . 
+		"Transcript show: 'DBG --- Transforming a float with thousand sep ' . "
 		" myself thousandSeparator: (self thousandSeparator) "
 		].
 	^ myself
@@ -586,7 +586,7 @@ addThousandSeparator: numberString
 				'.' , decimalPart . 
 	! !
 
-!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 22:09:09'!
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 22:31:19'!
 applyOperator: object 
 	"Number is the only valid class"
 	| string out |
@@ -607,13 +607,15 @@ applyOperator: object
 			ifTrue: [String new: width withAll: $*]
 			ifFalse: [string].
 	" . add thousand separators, if needed " 
-	Transcript show: 'DBG --- applyOperator for FLoat numbers '.
+	"Transcript show: 'DBG --- applyOperator for FLoat numbers '. "
 	thousandSeparate 
 		ifTrue: [
-			Transcript show: 'DBG --- thousand sep is ON'.
+			"Transcript show: 'DBG --- thousand sep is ON'. "
 			out _ self addThousandSeparator: out. 
 			] 
-		ifFalse: [Transcript show: 'DBG --- thousand sep is OFF'] . 
+		ifFalse: [
+			"Transcript show: 'DBG --- thousand sep is OFF' "
+			] . 
 	^ out 		
 			
 		! !
