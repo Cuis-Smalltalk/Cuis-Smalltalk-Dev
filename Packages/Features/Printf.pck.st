@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 4:29:48 pm'!
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 5:10:18 pm'!
 'Description '!
-!provides: 'Printf' 1 19!
+!provides: 'Printf' 1 20!
 SystemOrganization addCategory: #Printf!
 
 
@@ -436,13 +436,13 @@ stringLength
 		ifFalse: [precision]
 		! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 16:29:11'!
+!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 16:45:49'!
 addThousandSeparator: numberString
 	". receives in input an integer numberString e.g. '12345'
 	. returns in output a thousand separated string e.g. '12_345' 
 	. '_' is the value lf 'thousandSeparator' 
-	. if 'base' is not is not 10 returns just numberString, since a separation by 3 digits blocks
-	 would not mean what 'thousand' says; and print a warning in the Transcript'. 
+	. if 'base' is not is not 10 returns just 'numberString', since a separation by 3 digits blocks
+	 would not mean what 'thousand' says; in that case also print a warning in the Transcript'. 
 	"
 	(self base ~= 10) ifTrue:  [ 
 		Transcript log: 'Error. Printf. thousand separation is not defined for non base 10 numbers.' . 
@@ -838,6 +838,17 @@ testOneStringWithLength
 testReturnValue
 
 	self assert: 6+8 equals: ((PrintfFormatString new setFormat: 'hello %ld') printf: {12345678})
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:02:07'!
+testThousandSeparator
+       ". small numbers are ignored "
+	self assert: (('%_d' printf: {123}) = '123' ) .
+	self assert: (('%_d' printf: {1234}) = '1_234' ) .
+	self assert: (('%_d' printf: {12345678}) = '12_345_678' ) .
+	". very large numbers must be ok "
+	self assert: (('%_d' printf: {123456789123456789}) = '123_456_789_123_456_789' ) .   
+	
 	! !
 
 !Object methodsFor: '*Printf' stamp: 'NM 8/16/2021 15:08:36'!
