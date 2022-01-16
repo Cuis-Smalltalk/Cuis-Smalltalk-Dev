@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5041] on 16 January 2022 at 12:30:02 am'!
+'From Cuis 6.0 [latest update: #5041] on 16 January 2022 at 1:01:33 am'!
 'Description '!
-!provides: 'Printf' 1 38!
+!provides: 'Printf' 1 39!
 SystemOrganization addCategory: #Printf!
 
 
@@ -156,6 +156,58 @@ setFormat: aString
 		with: (String with: Character tab)) readStream.
 	self collectFormatDescriptorsAndStrings: formatStream
 	! !
+
+!Printf methodsFor: 'documentation' stamp: 'NM 1/16/2022 00:42:53'!
+changeLog
+	^ nil 
+"
+
+==== [NM] on 16-jan-2022 =========================
+. Added new test, started numbering of new tests. Easier to reference them, Easier to 
+follow them when studying a new package. PLEASE, keep numbering the test progressively
+if you add more. 
+
+. added support for prettyprintinf float numbers, that is, with thousand separator and decimal
+separator. These can be also set by the user, making the work locale independent. 
+Please see tests 100, 102, 103.
+
+. discovered bug, exposed in test 101, still to be corrected. it relates to the printing of large numbers. 
+
+. added the method 'hackMe' , to contain some minimal documentation about how to add stuff
+to this package. 
+
+=======================================
+"! !
+
+!Printf methodsFor: 'documentation' stamp: 'NM 1/16/2022 00:59:35'!
+hackIt
+	^ nil 
+"
+
+====== [NM] on  16-Jan-2022 =============================
+
+. This package is not so easy to understand, when i started i underestimated the complexity.
+
+. Suppose you are adding a new function character 'z', the first thing you need to get working is
+ the third line, the others are examples. 
+PrintfFormatDescriptor scanFrom: (ReadStream on: 'd'). 
+PrintfFormatDescriptor scanFrom: (ReadStream on: '-s'). 
+PrintfFormatDescriptor scanFrom: (ReadStream on: 'z'). 
+
+. The recognized charactes (%d, %s, %f ... ) and flags are defined in: 
+PrintfFormatDescriptor class >> initialize 
+
+. Who does the number printinting are, for example:
+PrintfNumberFormatDescription >> applyOperator: anObject. 
+  [ the anObject here is for example: 123 ]
+PrintfFloatFormatDescription >> applyOperator: anObject.
+[ the anObject here is for example: 123.123 ] 
+
+
+
+=====================================================
+
+"! !
 
 !Printf methodsFor: 'documentation' stamp: 'NM 8/30/2021 18:56:05'!
 history
