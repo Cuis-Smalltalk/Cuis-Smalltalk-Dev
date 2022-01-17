@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4815] on 30 August 2021 at 6:56:24 pm'!
+'From Cuis 6.0 [latest update: #5041] on 16 January 2022 at 1:01:33 am'!
 'Description '!
-!provides: 'Printf' 1 10!
+!provides: 'Printf' 1 39!
 SystemOrganization addCategory: #Printf!
 
 
@@ -36,8 +36,8 @@ PrintfCharacterFormatDescriptor class
 
 !classDefinition: #PrintfNumberFormatDescriptor category: #Printf!
 PrintfFormatDescriptor subclass: #PrintfNumberFormatDescriptor
-	instanceVariableNames: 'operator padding radix space'
-	classVariableNames: 'Base Cased Radix'
+	instanceVariableNames: 'operator padding radix space thousandSeparate'
+	classVariableNames: 'Base Cased DecimalSeparator Radix ThousandSeparator UserDecimalSeparator UserThousandSeparator'
 	poolDictionaries: ''
 	category: 'Printf'!
 !classDefinition: 'PrintfNumberFormatDescriptor class' category: #Printf!
@@ -118,9 +118,11 @@ printOn: aStream
 	aStream nextPut: $c
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 8/16/2021 14:33:00'!
+!PrintfNumberFormatDescriptor methodsFor: 'printing' stamp: 'NM 1/15/2022 15:26:57'!
 printOn: aStream
+	Transcript log: '---> called NumFormDescriptor >> printOn: '.
 	super printOn: aStream.
+	thousandSeparate ifTrue: [ aStream nextPut: $_ ]. 
 	padding == $0 ifTrue: [aStream nextPut: $0].
 	radix ifTrue: [aStream nextPut: $#].
 	space ifTrue: [aStream nextPut: $ ].
@@ -154,6 +156,58 @@ setFormat: aString
 		with: (String with: Character tab)) readStream.
 	self collectFormatDescriptorsAndStrings: formatStream
 	! !
+
+!Printf methodsFor: 'documentation' stamp: 'NM 1/16/2022 00:42:53'!
+changeLog
+	^ nil 
+"
+
+==== [NM] on 16-jan-2022 =========================
+. Added new test, started numbering of new tests. Easier to reference them, Easier to 
+follow them when studying a new package. PLEASE, keep numbering the test progressively
+if you add more. 
+
+. added support for prettyprintinf float numbers, that is, with thousand separator and decimal
+separator. These can be also set by the user, making the work locale independent. 
+Please see tests 100, 102, 103.
+
+. discovered bug, exposed in test 101, still to be corrected. it relates to the printing of large numbers. 
+
+. added the method 'hackMe' , to contain some minimal documentation about how to add stuff
+to this package. 
+
+=======================================
+"! !
+
+!Printf methodsFor: 'documentation' stamp: 'NM 1/16/2022 00:59:35'!
+hackIt
+	^ nil 
+"
+
+====== [NM] on  16-Jan-2022 =============================
+
+. This package is not so easy to understand, when i started i underestimated the complexity.
+
+. Suppose you are adding a new function character 'z', the first thing you need to get working is
+ the third line, the others are examples. 
+PrintfFormatDescriptor scanFrom: (ReadStream on: 'd'). 
+PrintfFormatDescriptor scanFrom: (ReadStream on: '-s'). 
+PrintfFormatDescriptor scanFrom: (ReadStream on: 'z'). 
+
+. The recognized charactes (%d, %s, %f ... ) and flags are defined in: 
+PrintfFormatDescriptor class >> initialize 
+
+. Who does the number printinting are, for example:
+PrintfNumberFormatDescription >> applyOperator: anObject. 
+  [ the anObject here is for example: 123 ]
+PrintfFloatFormatDescription >> applyOperator: anObject.
+[ the anObject here is for example: 123.123 ] 
+
+
+
+=====================================================
+
+"! !
 
 !Printf methodsFor: 'documentation' stamp: 'NM 8/30/2021 18:56:05'!
 history
@@ -217,6 +271,14 @@ printWidthOn: aStream
 	precision ifNotNil: [aStream nextPut: $.. precision printOn: aStream]
 	! !
 
+!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:54:31'!
+doThousandSeparate
+	|out| 
+	out _ (PrintfNumberFormatDescriptor newFrom: self) .
+	out thousandSeparate: true.
+	^ out 
+	! !
+
 !PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:07:52'!
 leftFlush
 	flush := #leftFlush
@@ -237,9 +299,14 @@ space
 	^ (PrintfNumberFormatDescriptor newFrom: self) space
 	! !
 
-!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:13:20'!
+!PrintfFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 18:43:55'!
 zero
-	^ (PrintfNumberFormatDescriptor newFrom: self) zero
+	|out| 
+	(self class = PrintfNumberFormatDescriptor) 
+	ifTrue: [ out _ self zero ] 
+	ifFalse: [ out _ (PrintfNumberFormatDescriptor newFrom: self) zero ].
+	^ out 
+	" ^ (PrintfNumberFormatDescriptor newFrom: self) zero "
 	! !
 
 !PrintfFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:07:00'!
@@ -284,11 +351,17 @@ stopIndexOfCopyReplaceWithStringSize: anInteger
 flush
 	^ flush! !
 
-!PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 8/16/2021 14:08:31'!
+!PrintfFormatDescriptor methodsFor: 'private' stamp: 'NM 1/15/2022 22:33:18'!
 operator: char
 	| myself |
 	myself := (Smalltalk at: (Operators at: char)) newFrom: self.
 	myself setOperator: char.
+	". case of the floating point with thousand separator, not good here, just a start " 
+	((self class = PrintfNumberFormatDescriptor) and:
+	 (myself class = PrintfFloatFormatDescriptor )) ifTrue: [
+		"Transcript show: 'DBG --- Transforming a float with thousand sep ' . "
+		" myself thousandSeparator: (self thousandSeparator) "
+		].
 	^ myself
 	! !
 
@@ -368,7 +441,7 @@ scanFrom: stream
 	
 	! !
 
-!PrintfFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 8/16/2021 14:19:11'!
+!PrintfFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 19:53:06'!
 initialize
 	"PrintfFormatDescriptor initialize"
 	Operators := Dictionary new.
@@ -385,7 +458,11 @@ initialize
 	Flags at: $+ put: #rightFlush.
 	Flags at: $  put: #space.
 	Flags at: $# put: #radix.
-	Flags at: $0 put: #zero
+	Flags at: $0 put: #zero.
+	Flags at: $_ put: #doThousandSeparate
+	
+	
+	
 	! !
 
 !PrintfCharacterFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:23:00'!
@@ -425,14 +502,36 @@ stringLength
 		ifFalse: [precision]
 		! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:33:47'!
+!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/16/2022 00:02:07'!
+addThousandSeparator: numberString
+	". receives in input an integer numberString e.g. '12345'
+	. returns in output a thousand separated string e.g. '12_345' 
+	. '_' is the value lf 'thousandSeparator' 
+	. if 'base' is not is not 10 returns just 'numberString', since a separation by 3 digits blocks
+	 would not mean what 'thousand' says; in that case also print a warning in the Transcript'. 
+	"
+	(self base ~= 10) ifTrue:  [ 
+		Transcript log: 'Error. Printf. thousand separation is not defined for non base 10 numbers.' . 
+		^ numberString . 
+		].
+	". if we arrived here the base is 10 " 
+	^ self formatWithUserPreferences: ( 
+		(numberString asNumber printStringWithCommas) 
+			copyReplaceAll: ',' with: (self thousandSeparator asString) ) 
+ 	
+	! !
+
+!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 16:28:30'!
 applyOperator: object 
 	"Character and Number are the only valid classes"
 
 	| number string |
 	object ifNil: [^'-'].
 	number := object asInteger.
+	
 	string := number printStringBase: self base.
+	". apply thousand separation, if reasonable "
+	thousandSeparate ifTrue: [ string _ self addThousandSeparator: string ] . 
 	(radix or: [operator == $p]) ifTrue: [string := self radixString , string].
 	(Cased includes: operator) ifTrue:
 		[string := operator isLowercase
@@ -445,6 +544,28 @@ applyOperator: object
 		ifFalse: [string]
 		! !
 
+!PrintfNumberFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/16/2022 00:14:50'!
+formatWithUserPreferences: numString
+	". numString is a string representing a number of the kind: 123_456.123.
+	. according to the values in the class variables UserDecimalSeparator and UserThousandSeparator
+	 a string like the following is returned, for example: 123.456,123, which would be appropriate 
+	 for a user in Italy.  
+	" 
+	|userDec userThou tmp|
+	userDec _ self class getUserDecimalSeparator . 
+	userThou _ self class getUserThousandSeparator .
+	". if there aren't user preferences set, then quit and use the default form string. "  
+	((userDec isNil) and: (userThou isNil)) ifTrue: [ ^ numString ].
+	". if any of the user preferences is undefined set it to the default valued " 
+	(userDec isNil) ifTrue: [userDec _ self class getDecimalSeparator ].
+	(userThou isNil) ifTrue: [userThou _ self class getThousandSeparator  ] . 
+	". do the change and return the new formatted string " 
+	tmp _ numString copyReplaceAll: '_' with: 'THO' . 
+	tmp _ tmp copyReplaceAll: '.' with: 'DEC'. 
+	tmp _ tmp copyReplaceAll: 'DEC' with: (userDec asString) . 
+	tmp _ tmp copyReplaceAll: 'THO' with: (userThou asString) . 
+	^ tmp 	! !
+
 !PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:34:07'!
 radix
 	radix := true
@@ -455,18 +576,36 @@ space
 	space := true
 	! !
 
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:55:07'!
+thousandSeparate
+	^ thousandSeparate  ! !
+
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 19:55:15'!
+thousandSeparate: aBoolean
+	thousandSeparate _ aBoolean .
+! !
+
+!PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 1/15/2022 22:51:02'!
+thousandSeparator
+	^ self class getThousandSeparator 
+	! !
+
 !PrintfNumberFormatDescriptor methodsFor: 'scanning' stamp: 'NM 8/16/2021 14:34:26'!
 zero
 	padding := $0
 	! !
 
-!PrintfNumberFormatDescriptor methodsFor: 'initialize-release' stamp: 'NM 8/16/2021 14:32:32'!
+!PrintfNumberFormatDescriptor methodsFor: 'initialize-release' stamp: 'NM 1/15/2022 18:47:47'!
 initialize
 	super initialize.
 	padding := $ .
 	radix := false.
-	space := false
-	! !
+	space := false.
+	thousandSeparate := false .
+	" . TODO temporary value, we should by default set $, if decimal separator is $. and viceversa. "
+	thousandSeparator := $_ .
+	". to permit print in the debugger " 
+	operator _ $? . ! !
 
 !PrintfNumberFormatDescriptor class methodsFor: 'instance creation' stamp: 'NM 8/16/2021 14:35:16'!
 newFrom: desc
@@ -474,7 +613,36 @@ newFrom: desc
 	^ (super newFrom: desc) setPadding: desc padding
 	! !
 
-!PrintfNumberFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 8/16/2021 14:35:00'!
+!PrintfNumberFormatDescriptor class methodsFor: 'settings' stamp: 'NM 1/15/2022 22:50:07'!
+getDecimalSeparator
+	^ DecimalSeparator  
+	! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'settings' stamp: 'NM 1/15/2022 22:50:26'!
+getThousandSeparator
+	^ ThousandSeparator  
+	! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'settings' stamp: 'NM 1/15/2022 23:18:19'!
+getUserDecimalSeparator
+	^ UserDecimalSeparator  
+	! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'settings' stamp: 'NM 1/15/2022 23:18:27'!
+getUserThousandSeparator
+	^ UserThousandSeparator  
+	! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'settings' stamp: 'NM 1/16/2022 00:06:50'!
+setUserDecimalSeparatorTo: aCharacter
+	UserDecimalSeparator _ aCharacter . ! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'settings' stamp: 'NM 1/16/2022 00:06:56'!
+setUserThousandSeparatorTo: aCharacter
+	UserThousandSeparator _ aCharacter . 
+	! !
+
+!PrintfNumberFormatDescriptor class methodsFor: 'class initialization' stamp: 'NM 1/15/2022 23:17:57'!
 initialize
 	"PrintfNumberFormatDescriptor initialize"
 	Base := Dictionary newFromPairs: #(	$d 10
@@ -491,14 +659,48 @@ initialize
 											$x '0x'
 											$X '0X').
 
-	Cased := 'AaEeFfGgXx'
+	Cased := 'AaEeFfGgXx' . 
+	
+	". default values, don't modify these, test code use them.  "
+	DecimalSeparator _ $.  .
+	ThousandSeparator _ $_ . 
+	". user modifiable values, for example to print numerics in agreement with some locale
+	 . if these values are 'nil' they are ignored. If only one is 'nil' the other is taken from the default values above. 
+	 " 
+	UserDecimalSeparator _ nil. 
+	UserThousandSeparator _ nil. 
+	
 	! !
 
-!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:37:04'!
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 23:52:47'!
+addThousandSeparator: numberString
+	". receives in input an integer numberString e.g. '12345.1233123'
+	. returns in output a thousand separated string e.g. '12_345.1233123' 
+	. '_' is the value lf 'thousandSeparator' 
+	. if 'base' is not is not 10 returns just 'numberString', since a separation by 3 digits blocks
+	 would not mean what 'thousand' says; in that case also print a warning in the Transcript'. 
+	"
+	|integerPart decimalPart tokens out |
+	". TODO. CHECK. we suppose the base is 10 for floats " 
+	"(self base ~= 10) ifTrue:  [ 
+		Transcript log: 'Error. Printf. thousand separation is not defined for non base 10 numbers.' . 
+		^ numberString . 
+		]."
+	". if we arrived here the base is 10 " 
+	tokens _ numberString findTokens: '.' . 
+	integerPart _ tokens first.
+	decimalPart _ tokens second. 
+	". build the default thousand separated numeric string "
+	out _ (integerPart asNumber printStringWithCommas :: 
+		copyReplaceAll: ',' with: (self thousandSeparator asString) ), '.' , decimalPart .
+	". apply user preferences regarding who are thousand and decimal separators "
+	^ self formatWithUserPreferences: out . 	
+	! !
+
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 22:31:19'!
 applyOperator: object 
 	"Number is the only valid class"
-
-	| string |
+	| string out |
 	string := self zeroPaddedStringOfBase: (('aA' includes: operator)
 												ifTrue: [16]
 												ifFalse: [10])
@@ -512,10 +714,29 @@ applyOperator: object
 					ifFalse: [string asUppercase]].
 	(space and: [object asFloat >= 0]) ifTrue:
 		[string := ' ' , string].
-	^(width ~= 0 and: [string size > width])
-		ifTrue: [String new: width withAll: $*]
-		ifFalse: [string]
+	out _ (width ~= 0 and: [string size > width])
+			ifTrue: [String new: width withAll: $*]
+			ifFalse: [string].
+	" . add thousand separators, if needed " 
+	"Transcript show: 'DBG --- applyOperator for FLoat numbers '. "
+	thousandSeparate 
+		ifTrue: [
+			"Transcript show: 'DBG --- thousand sep is ON'. "
+			out _ self addThousandSeparator: out. 
+			] 
+		ifFalse: [
+			"Transcript show: 'DBG --- thousand sep is OFF' "
+			] . 
+	^ out 		
+			
 		! !
+
+!PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 1/15/2022 23:10:12'!
+initializeThousandSeparatorFrom: descriptor 
+	(descriptor class = PrintfNumberFormatDescriptor) ifTrue: [
+		thousandSeparate  _ (descriptor thousandSeparate ).
+		].
+	^ self ! !
 
 !PrintfFloatFormatDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:37:28'!
 zeroPaddedStringOfBase: base forFloat: aFloat 
@@ -539,6 +760,13 @@ precision
 !PrintfFloatFormatDescriptor methodsFor: 'private' stamp: 'NM 8/16/2021 14:36:49'!
 stringLength
 	^ width
+	! !
+
+!PrintfFloatFormatDescriptor class methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 21:49:42'!
+newFrom: descriptor
+	descriptor class == self ifTrue: [^ descriptor].
+	^ ((super newFrom: descriptor) setPadding: descriptor padding) initializeThousandSeparatorFrom: descriptor 
+
 	! !
 
 !PrintfNumberHolderDescriptor methodsFor: 'rendering' stamp: 'NM 8/16/2021 14:38:35'!
@@ -721,6 +949,63 @@ examples
 	self inform: ('Here is a %s string "%s" and the same shortened "%-14.7s" with left flush.\nThe new line has a number "%e" and a 0-padded limited precision one "%013.5e".'
 		printf: ((Array with: 'long' with: 'hello world' with: 'hello world' with: 42.0) copyWith: 42.1234567)).
 		! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:22:03'!
+test100_ThousandSeparator
+       ". small numbers are ignored "
+	self assert: (('%_d' printf: {123}) = '123' ) .
+	self assert: (('%_d' printf: {1234}) = '1_234' ) .
+	self assert: (('%_d' printf: {12345678}) = '12_345_678' ) .
+	". very large numbers must be ok "
+	self assert: (('%_d' printf: {123456789123456789}) = '123_456_789_123_456_789' ) .   
+	
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 17:24:52'!
+test101_LargeFloat
+       ". this test was added to remember there is an ugly bug here "
+	self assert: ('%.2f' printf: {1.1}) = '1.10' .  
+	self assert: ('%.2f' printf: {12.1}) = '12.10' .  
+	self assert: ('%.2f' printf: {123.1}) = '123.10' . 
+       self assert: ('%.2f' printf: {1234.1}) = '1234.10' .	  
+	self assert: ('%.2f' printf: {12345.1}) = '12345.10' . 
+	self assert: ('%.2f' printf: {123456.1}) = '123456.10' .  
+	". from here on it is broken " 
+	self assert: ('%.2f' printf: {1234567.1}) = '1234567.10'.     ". gives wrongly 1.23"
+	self assert: ('%.2f' printf: {12345678.1}) = '12345678.10'.  ". gives wrongly 1.23"
+
+	! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/15/2022 22:26:12'!
+test102_FloatsWithThousandSeparator
+       ". Testing the print of floating points with thousand separator "
+	self assert: (('%_0.2f' printf: {1234}) = '1_234.00' ) .
+	self assert: (('%_0.2f' printf: {1234.1}) = '1_234.10' ) .
+	self assert: (('%_0.2f' printf: {1234.12}) = '1_234.12' ) .
+	self assert: (('%_0.2f' printf: {1234.123}) = '1_234.12' ) .
+	". digit limiting is by trucation "
+	self assert: (('%_0.2f' printf: {1234.123}) = '1_234.12' ) .
+	self assert: (('%_0.2f' printf: {1234.127}) = '1_234.12' ) .! !
+
+!PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 1/16/2022 00:24:24'!
+test103_UserDefinedThousandAndDecimals
+       ". If the user set nothing number are formatted like this "
+	self assert: (('%_0.2f' printf: {1234.567}) = '1_234.56'  ). 
+	". the underscore may not be liked but it can be userful to re-parse the number,
+	  Perl, Ruby, and recently Python recognize '123_123.12' numbers literals 
+	. here we format the number in the US standard way.
+	"
+	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: $, .
+	self assert: (('%_0.2f' printf: {1234.567}) = '1,234.56'  ).
+	". now let's print the number in the way it is considered 'normal' in Italy, for example " 
+	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: $. .
+	PrintfNumberFormatDescriptor setUserDecimalSeparatorTo: $, .
+	self assert: (('%_0.2f' printf: {1234.567}) = '1.234,56'  ).
+	". and let's put back the default configuaration, since the other test expect that " 
+	PrintfNumberFormatDescriptor setUserThousandSeparatorTo: nil .
+	PrintfNumberFormatDescriptor setUserDecimalSeparatorTo: nil .
+	self assert: (('%_0.2f' printf: {1234.567}) = '1_234.56'  ). 
+	! !
 
 !PrintfFormatStringTest methodsFor: 'as yet unclassified' stamp: 'NM 8/30/2021 18:39:08'!
 testFprintf
