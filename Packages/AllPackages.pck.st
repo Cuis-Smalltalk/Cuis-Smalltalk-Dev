@@ -30,13 +30,7 @@
 !requires: 'Avatar' 1 0 nil!
 !requires: 'BouncingAtoms' 1 0 nil!
 !requires: 'Dice' 1 0 nil!
-!requires: 'Morphic-Widgets-Extras' 1 0 nil!
 !requires: 'Pen' 1 0 nil!
-!requires: 'WheelMorph' 1 0 nil!
-!requires: 'WaitSpinner' 1 0 nil!
-!requires: 'Morphic-ColorEditor' 1 0 nil!
-!requires: 'Morph-MetaProperties' 1 0 nil!
-!requires: 'Morphic-Misc1' 1 0 nil!
 !requires: 'ImageProcessing' 1 0 nil!
 !requires: 'LinearAlgebra' 1 0 nil!
 !requires: 'Math 3D' 1 0 nil!
@@ -57,3 +51,5 @@
 !requires: 'StyledTextNotebook' 1 0 nil!
 !requires: 'StyledTextWiki' 1 0 nil!
 !requires: 'VectorGraphics' 1 0 nil!
+!requires: 'UI-Components' 1 0 nil!
+!requires: 'UI-Tools' 1 0 nil!

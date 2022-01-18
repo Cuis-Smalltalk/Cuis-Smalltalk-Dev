@@ -10,6 +10,7 @@ git clone https://github.com/Cuis-Smalltalk/CodeExamples.git
 git clone https://github.com/Cuis-Smalltalk/Games.git
 git clone https://github.com/Cuis-Smalltalk/Morphic.git
 git clone https://github.com/Cuis-Smalltalk/Cairo.git
+git clone https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-UI.git
 git clone https://github.com/Cuis-Smalltalk/OSProcess.git
 git clone https://github.com/Cuis-Smalltalk/Numerics.git
 git clone https://github.com/Cuis-Smalltalk/GeographicInformationSystems.git
