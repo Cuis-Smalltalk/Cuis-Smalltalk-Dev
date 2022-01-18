@@ -1,36 +1,36 @@
-'From Cuis 5.0 [latest update: #4219] on 12 June 2020 at 11:41:15 am'!
+'From Cuis 6.0 [latest update: #5044] on 18 January 2022 at 9:43:48 am'!
 'Description Add ability to dynamically add topic pages from other sources.'!
-!provides: 'TerseGuide' 1 142!
-SystemOrganization addCategory: #TerseGuide!
+!provides: 'TerseGuide' 1 143!
+SystemOrganization addCategory: 'TerseGuide'!
 
 
-!classDefinition: #TerseGuideHelp category: #TerseGuide!
+!classDefinition: #TerseGuideHelp category: 'TerseGuide'!
 Workspace subclass: #TerseGuideHelp
 	instanceVariableNames: 'topics topicListIndex selectedTopic topicList window textPane'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
-!classDefinition: 'TerseGuideHelp class' category: #TerseGuide!
+!classDefinition: 'TerseGuideHelp class' category: 'TerseGuide'!
 TerseGuideHelp class
 	instanceVariableNames: 'topics'!
 
-!classDefinition: #TerseGuideWindow category: #TerseGuide!
+!classDefinition: #TerseGuideWindow category: 'TerseGuide'!
 WorkspaceWindow subclass: #TerseGuideWindow
 	instanceVariableNames: 'textModelM list1'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
-!classDefinition: 'TerseGuideWindow class' category: #TerseGuide!
+!classDefinition: 'TerseGuideWindow class' category: 'TerseGuide'!
 TerseGuideWindow class
 	instanceVariableNames: ''!
 
-!classDefinition: #TerseGuideTopic category: #TerseGuide!
+!classDefinition: #TerseGuideTopic category: 'TerseGuide'!
 Object subclass: #TerseGuideTopic
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerseGuide'!
-!classDefinition: 'TerseGuideTopic class' category: #TerseGuide!
+!classDefinition: 'TerseGuideTopic class' category: 'TerseGuide'!
 TerseGuideTopic class
 	instanceVariableNames: ''!
 
@@ -1408,7 +1408,7 @@ myLayout beColumn.
 "Submorphs may also have a LayoutSpec to specify proportion and offAxis placement"
 '! !
 
-!TerseGuideHelp class methodsFor: 'pages' stamp: 'KenD 6/3/2020 15:31:03'!
+!TerseGuideHelp class methodsFor: 'pages' stamp: 'jmv 1/18/2022 09:38:18'!
 layoutSpec
 	"Layout Specification"
 	^
@@ -1424,7 +1424,7 @@ rect layoutSpec: (LayoutSpec fixedWidth: 80 proportionalHeight: 0.6 offAxisEdgeW
 "Layouts can contain layouts"
 interiorLayout _ LayoutMorph newColumn.
 interiorLayout separation: 10@20.
-interiorLayout layoutSpec: (LayoutSpec proportionalWidth: 0.3 proportionalHeight: 60).
+interiorLayout layoutSpec: (LayoutSpec proportionalWidth: 0.3 proportionalHeight: 0.8).
 interiorLayout addMorph: BoxedMorph initializedInstance.
 interiorLayout addAdjusterAndMorph: (BoxedMorph new) proportionalWidth: 1.0.
 "A LayoutMorph to contain them"
