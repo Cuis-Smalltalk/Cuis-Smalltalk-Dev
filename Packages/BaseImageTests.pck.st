@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5031] on 3 January 2022 at 11:31:01 am'!
+'From Cuis 6.0 [latest update: #5050] on 27 January 2022 at 3:13:26 pm'!
 'Description ExtractAsParameterTest '!
-!provides: 'BaseImageTests' 1 275!
+!provides: 'BaseImageTests' 1 276!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -9818,7 +9818,7 @@ testTerminationDuringNestedUnwind4
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:42'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jar 1/17/2022 18:29:13'!
 testTerminationDuringNestedUnwind5
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -9838,17 +9838,13 @@ testTerminationDuringNestedUnwind5
 			x4 := true.
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	self deny: x1 | x2 | x3 | x4.
-	"now let the termination continue and make sure all unwind blocks have finished"
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: x1 & x2 & x3.
 	self deny: x4.! !
 
-!ProcessTerminateBug methodsFor: 'tests' stamp: 'jmv 4/28/2021 16:33:47'!
+!ProcessTerminateBug methodsFor: 'tests' stamp: 'jar 1/17/2022 18:29:20'!
 testTerminationDuringNestedUnwind6
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -9869,11 +9865,7 @@ testTerminationDuringNestedUnwind6
 			x4 := true.
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	self deny: x1 | x2 | x3 | x4.
-	"now let the termination continue and make sure all unwind blocks have finished"
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: x1 & x2 & x3.
@@ -10705,7 +10697,7 @@ test4DTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:31'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:06'!
 test5ATerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10717,18 +10709,13 @@ test5ATerminate
 			self aux5A: a
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	a noneSatisfy: [ :b | b ].
-	"now let the termination continue and make sure all unwind blocks have finished"
-	Processor yield.
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a third.
 	self deny: a second | a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:28'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:22'!
 test5BTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10740,18 +10727,13 @@ test5BTerminate
 			self aux5B: a
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	a noneSatisfy: [ :b | b ].
-	"now let the termination continue and make sure all unwind blocks have finished"
-	Processor yield.
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:25'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:36'!
 test5CTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10763,18 +10745,13 @@ test5CTerminate
 			self aux5C: a
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	a noneSatisfy: [ :b | b ].
-	"now let the termination continue and make sure all unwind blocks have finished"
-	Processor yield.
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:20'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:43'!
 test5DTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10786,18 +10763,13 @@ test5DTerminate
 			self aux5D: a
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	a noneSatisfy: [ :b | b ].
-	"now let the termination continue and make sure all unwind blocks have finished"
-	Processor yield.
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:14'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:52'!
 test6ATerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10809,18 +10781,13 @@ test6ATerminate
 			self aux6A: a
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	a noneSatisfy: [ :b | b ].
-	"now let the termination continue and make sure all unwind blocks have finished"
-	Processor yield.
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a third.
 	self deny: a second | a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:10'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:27:00'!
 test6BTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10832,18 +10799,13 @@ test6BTerminate
 			self aux6B: a
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	a noneSatisfy: [ :b | b ].
-	"now let the termination continue and make sure all unwind blocks have finished"
-	Processor yield.
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:32:04'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:27:06'!
 test6CTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10855,18 +10817,13 @@ test6CTerminate
 			self aux6C: a
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	a noneSatisfy: [ :b | b ].
-	"now let the termination continue and make sure all unwind blocks have finished"
-	Processor yield.
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 4/29/2021 13:31:55'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:27:12'!
 test6DTerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10878,12 +10835,7 @@ test6DTerminate
 			self aux6D: a
 		] newProcess.
 	p resume.
-	Processor yield.
-	"make sure p suspended itself and none of the unwind blocks has finished yet"
-	self assert: p isSuspended.
-	a noneSatisfy: [ :b | b ].
-	"now let the termination continue and make sure all unwind blocks have finished"
-	Processor yield.
+	"now let the process run and make sure all unwind blocks have finished"
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a second & a third.
@@ -11785,7 +11737,7 @@ testTerminateInEnsure
 			assert: process isTerminated;
 			assert: count equals: 11 ]! !
 
-!ProcessTest methodsFor: 'tests' stamp: 'jar 5/25/2021 09:06:02'!
+!ProcessTest methodsFor: 'tests' stamp: 'jar 1/17/2022 18:02:13'!
 testTerminateInTerminate
 	"Terminating a terminator process should unwind both the terminator and its terminatee process"
 	
@@ -11797,7 +11749,7 @@ testTerminateInTerminate
 	self assert: terminatee isSuspended.
 	self assert: terminator isSuspended.
 	"run terminator and stop inside #terminate, e.g. before executing #suspend in #terminate" 
-	[[:ctx | ctx selectorToSendOrSelf = #isUnwindContext] value: terminator suspendedContext] 
+	[[:ctx | ctx selectorToSendOrSelf = #suspend] value: terminator suspendedContext] 
 		whileFalse: [terminator step]. 
 	self assert: terminator isSuspended.
 	terminator terminate.
