@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5050] on 27 January 2022 at 3:13:26 pm'!
-'Description ExtractAsParameterTest '!
-!provides: 'BaseImageTests' 1 276!
+'From Cuis 6.0 [latest update: #5053] on 27 January 2022 at 7:34:06 pm'!
+'Description Autocomplete tests fixed'!
+!provides: 'BaseImageTests' 1 277!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -18610,12 +18610,12 @@ test044_AutocompletesEntriesFor_IncompleteKeywordMessages_WithIdentifiersBeggini
 		areSelectorsOf: SmalltalkCompleterTest
 		beginningWith: 'firstKeyword:'.! !
 
-!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 5/2/2020 18:15:41'!
+!SmalltalkCompleterTest methodsFor: 'test objects' stamp: 'HAW 1/27/2022 19:32:18'!
 createCompleterForBrowsing: sourceCode 
 	
 	| browser model |
 	browser := Browser new.
-	browser systemCategoryListIndex: (browser systemCategoryList indexOf: (classToBrowse category)).
+	browser setSelectedSystemCategoryTreeItem: (SystemCategoryWrapper with: classToBrowse category name: classToBrowse category model: browser).
 	browser classListIndex: (browser classList indexOf: classToBrowse name).
 	
 	model := (PluggableTextModel on: browser) actualContents: sourceCode.
