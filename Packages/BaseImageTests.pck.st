@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5053] on 27 January 2022 at 7:34:06 pm'!
+'From Cuis 6.0 [latest update: #5053] on 27 January 2022 at 8:58:48 pm'!
 'Description Autocomplete tests fixed'!
-!provides: 'BaseImageTests' 1 277!
+!provides: 'BaseImageTests' 1 278!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12452,7 +12452,7 @@ testAsUtf8
 	"
 	self assert: 'Aвд' asUtf8 hex = '41C2A2E282AC'! !
 
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 6/10/2019 09:23:03'!
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 1/27/2022 20:56:28'!
 testAsUtf8WithNCRs
 	"
 	 StringTest new testAsUtf8WithNCRs
@@ -12463,13 +12463,13 @@ testAsUtf8WithNCRs
 	stringWithDecimalNCRs _ String fromUtf8: utf8 hex: false trimLastNull: false.
 	stringWithHexNCRs _ String fromUtf8: utf8 hex: true trimLastNull: false.
 
-	self assert: stringWithDecimalNCRs = '&#956; &#936; &#969; The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
+	self assert: stringWithDecimalNCRs =  '&#956; &#936; Ш The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
 <p>The title says &#8235;&#1508;&#1506;&#1497;&#1500;&#1493;&#1514; &#1492;&#1489;&#1497;&#1504;&#1488;&#1493;&#1501;, W3C&#8236; in Hebrew</p>
 abc&#2325;&#2326;&#2368;&#22283;&#38555;&#66436;&#66452;&#66456;'.
 
 	self assert: (stringWithDecimalNCRs asUtf8: true) = utf8.
 
-	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; &#x03C9; The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
+	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; Ш The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
 <p>The title says &#x202B;&#x05E4;&#x05E2;&#x05D9;&#x05DC;&#x05D5;&#x05EA; &#x05D4;&#x05D1;&#x05D9;&#x05E0;&#x05D0;&#x05D5;&#x05DD;, W3C&#x202C; in Hebrew</p>
 abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
 
