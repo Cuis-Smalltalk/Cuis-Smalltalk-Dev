@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5043] on 17 January 2022 at 1:11:13 pm'!
+'From Cuis 6.0 [latest update: #5053] on 31 January 2022 at 1:58:43 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 333!
+!provides: 'VectorGraphics' 1 334!
 !requires: 'Cuis-Base' 50 4686 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3592,16 +3592,8 @@ fullUpdateProtrudingBounds: aMorph
 		self fullUpdateCurrentProtrudingBounds.
 		self outOfMorph ].! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 12:24:06'!
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'len 1/31/2022 13:56:05'!
 updateBoundsIn: aWorldMorph addDamageTo: aDamageRecorder
-
-	aWorldMorph haloMorphsDo: [ :halo |
-		(halo target isRedrawNeeded or: [halo target isSubmorphRedrawNeeded]) ifTrue: [
-			"Invalidation of halos requires this specific sequence:"
-			halo redrawNeeded.												"invalidate old halo bounds"
-			self fullAddRedrawRect: halo to: aDamageRecorder ]].												"recompute & invalidate halo bounds"
-	"bogus iteration on halos below is harmless:
-		It is now marked as neither #isRedrawNeeded nor #isSubmorphRedrawNeeded."
 
 	aWorldMorph submorphsDo: [ :morph |
 		self fullAddRedrawRect: morph to: aDamageRecorder ].
