@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5053] on 27 January 2022 at 8:58:48 pm'!
-'Description Autocomplete tests fixed'!
-!provides: 'BaseImageTests' 1 278!
+'From Cuis 6.0 [latest update: #5057] on 1 February 2022 at 5:55:34 pm'!
+'Description Fix to assertRenamesToWithoutBlanks:'!
+!provides: 'BaseImageTests' 1 279!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -2636,7 +2636,7 @@ assertClassifiesWithoutBlanks: aCategoryWithBlanks
 	self assert: (categorizer categoryOfElement: 1) equals: aCategoryWithBlanks withBlanksTrimmed 
 	! !
 
-!CategorizerTest methodsFor: 'assertions' stamp: 'HAW 9/24/2020 19:49:53'!
+!CategorizerTest methodsFor: 'assertions' stamp: 'HAW 2/1/2022 17:55:04'!
 assertRenamesToWithoutBlanks: aCategoryWithBlanks
 
 	| categorizer categoryToRename |
@@ -2645,7 +2645,7 @@ assertRenamesToWithoutBlanks: aCategoryWithBlanks
 	
 	categoryToRename := 'someCategory'.
 	categorizer classify: 1 under: categoryToRename suppressIfDefault: false.
-	categorizer renameCategory: categoryToRename toBe: aCategoryWithBlanks.
+	categorizer renameCategory: categoryToRename to: aCategoryWithBlanks.
 	
 	self assert: (categorizer categories includes: aCategoryWithBlanks withBlanksTrimmed).
 	self deny: (categorizer categories includes: aCategoryWithBlanks).
