@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5057] on 1 February 2022 at 5:55:34 pm'!
+'From Cuis 6.0 [latest update: #5058] on 2 February 2022 at 7:23:49 pm'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 279!
+!provides: 'BaseImageTests' 1 280!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -11707,6 +11707,20 @@ testAtomicSuspend
 	self shouldnt: [list := p suspendPrimitivelyOrFail] raise: Error.
 	self assert: list == sema.
 ! !
+
+!ProcessTest methodsFor: 'tests' stamp: 'jar 2/1/2022 20:33:44'!
+testProcessFaithfulTermination
+	"When terminating a process, unwind blocks should be evaluated as if they were executed by the process being terminated."
+
+	| process |
+	[
+		[process _ Processor activeProcess.
+		Processor activeProcess suspend] ensure: [
+			self assert: process = Processor activeProcess]	
+	] fork.
+	Processor yield.
+	process terminate.
+	self assert: process isTerminated! !
 
 !ProcessTest methodsFor: 'tests' stamp: 'jmv 4/13/2021 14:03:54'!
 testTerminateInEnsure
