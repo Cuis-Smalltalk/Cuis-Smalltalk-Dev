@@ -214,7 +214,7 @@ populatePackage: aPackageSpec from: aCodePackage
 	"Populate a PackageSpec from aCodePackage."
 	
 	aPackageSpec packageName: aCodePackage packageName;
-		description: aCodePackage packageDescription;
+		description: aCodePackage description;
 		requires: aCodePackage requires;
 		provides: aCodePackage provides.
 	
