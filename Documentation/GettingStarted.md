@@ -39,7 +39,7 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_linux64x64_202003021730.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_linux64x64.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
 ```
@@ -64,7 +64,7 @@ Log out and log back in, or reboot the machine.
 ### Get and set up an appropriate VM ###
 ```
 cd MyProject
-curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_macos64x64_202003021730.dmg
+curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_macos64x64.dmg
 Open Finder on your folder
 Double click on the dmg file
 Drag Squeak.app to your MyProject folder
@@ -86,7 +86,7 @@ Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cu
 ```
 cd MyProject
 rm -r cogspur
-curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_win64x64_202003021730.zip
+curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_win64x64.zip
 unzip cogspur.zip -d cogspur
 ```
 
@@ -101,7 +101,7 @@ cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis6.0-5069.image
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_linux32ARMv6_202003021730.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_linux32ARMv6.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
@@ -124,7 +124,7 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.cog.spur_linux32x86_202003021730.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_linux32x86.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxht ./cogspur
 ```
@@ -132,7 +132,7 @@ mv ./sqcogspurlinuxht ./cogspur
 ```
 cd MyProject
 rm -r stkspur
-wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202003021730/squeak.stack.spur_linux32ARMv6_202003021730.tar.gz
+wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.stack.spur_linux32ARMv6.tar.gz
 tar -zxvf stkspur.tgz
 mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
@@ -147,7 +147,7 @@ stkspur/squeak Cuis-Smalltalk-Dev/Cuis6.0-5069-32.image
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 68021).", (68021 or some other reasonable number) it means you image and VM are mismatched. For example, one of them is Spur and the other is pre-Spur, or one of them is 32 bits and the other is 64 bits.
 * If when starting the image you get error messages like "This interpreter (vers. 6505) cannot read image file (vers. 1007290890).", (1007290890 or some other absurd number) it means your git installation is breaking the files. It is usually best to configure git not to do any conversion on files.
 * If you can't find Cuis6.0-5069-32.image, then this document is outdated. Use the Cuis spur image with the latest update number available.
-* If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the the Squeak Cog Spur VM for your platform with the latest Date and Time available from http://opensmalltalk.org/
+* If you can't find the Squeak Cog Spur VM specified, then this document is outdated. Use the latest available Squeak Cog Spur VM for your platform from https://github.com/OpenSmalltalk/opensmalltalk-vm/releases
 * If you can't get Cuis to run on your system after trying the above instructions, send mail to the Cuis-Dev mail list. Please give enough detail of your system, what you tried, and any error messages you got.
 * To get the contents of this repository without using Git, you can do
 ```
