@@ -1,7 +1,7 @@
-'From Cuis 6.0 [latest update: #5053] on 31 January 2022 at 1:58:43 pm'!
+'From Cuis 6.0 [latest update: #5067] on 21 February 2022 at 12:17:47 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 334!
-!requires: 'Cuis-Base' 50 4686 nil!
+!provides: 'VectorGraphics' 1 336!
+!requires: 'Cuis-Base' 60 5056 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -4033,19 +4033,22 @@ Display forceToScreen
 
 	^super drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
 
-!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 10/15/2021 16:16:28'!
+!VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 2/21/2022 12:17:18'!
 initialize
 	| family folder |
+	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [
+		Feature require: 'VectorEngineInSmalltalk' ].
 	UISupervisor whenUIinSafeState: [
 		(FontFamily familyNamed: FontFamily defaultFamilyName) isTrueTypeFontFamily ifFalse: [
 			folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
 			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
 			Preferences setDefaultFont: family familyName.
 			FontFamily enableTrueTypeFontsOnly ].
-		MorphicCanvas activeSubclass: 
-			(VectorEngineWithPlugin isPluginAvailable
-				ifTrue: [ VectorCanvas ]
-				ifFalse: [ HybridCanvas ]) ].! !
+		(VectorEngineWithPlugin isPluginAvailable
+			ifTrue: [ MorphicCanvas activeSubclass: VectorCanvas ]
+			ifFalse: [
+				'VectorEnginePlugin (VM plugin) is not available. HybridCanvas will be activated.' print.
+				MorphicCanvas activeSubclass: HybridCanvas ]) ].! !
 
 !VectorEngine methodsFor: 'accessing' stamp: 'jmv 3/22/2021 14:42:49'!
 antiAliasingWidth
