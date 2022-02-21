@@ -1,0 +1,3594 @@
+'From Cuis 6.0 [latest update: #5031] on 31 December 2021 at 3:19:41 pm'!
+
+
+----QUIT----(31 December 2021 15:19:47) Cuis6.0-5031.image priorSource: 0!
+
+----STARTUP---- (21 February 2022 14:50:15) as C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\Cuis6.0-5031.image!
+
+
+'From Cuis 5.0 [latest update: #5007] on 30 December 2021 at 4:36:42 pm'!
+!RenameClass methodsFor: 'applying - private' stamp: 'HAW 12/30/2021 16:28:15' prior: 16926919!
+references: aMethodReference classVarNamed: aName
+
+	^(aMethodReference actualClass theNonMetaClass definesClassVariableNamedInHierarchy: aName) 
+		or: [ aMethodReference actualClass theMetaClass definesClassVariableNamedInHierarchy: aName ]! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5032-RenameClassFix-HernanWilkinson-2021Dec27-16h23m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5032] on 3 January 2022 at 8:33:41 pm'!
+
+SystemWindow subclass: #PackageInstallerWindow
+	instanceVariableNames: 'filterString filterInput currentIndex'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Packages'!
+
+!classDefinition: #PackageInstallerWindow category: #'Tools-Packages' stamp: 'Install-5033-PackageInstaller-MarianoMontone-2022Jan03-21h00m-MM.001.cs.st 2/21/2022 14:50:20'!
+SystemWindow subclass: #PackageInstallerWindow
+	instanceVariableNames: 'filterString filterInput currentIndex'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Packages'!
+!PackageInstallerWindow commentStamp: '<historical>' prior: 0!
+I'm a tool for listing locally available Cuis packages and installing them.!
+
+Object subclass: #PackageInstaller
+	instanceVariableNames: 'packageList'
+	classVariableNames: 'PackageList'
+	poolDictionaries: ''
+	category: 'Tools-Packages'!
+
+!classDefinition: #PackageInstaller category: #'Tools-Packages' stamp: 'Install-5033-PackageInstaller-MarianoMontone-2022Jan03-21h00m-MM.001.cs.st 2/21/2022 14:50:20'!
+Object subclass: #PackageInstaller
+	instanceVariableNames: 'packageList'
+	classVariableNames: 'PackageList'
+	poolDictionaries: ''
+	category: 'Tools-Packages'!
+!PackageInstaller commentStamp: '<historical>' prior: 0!
+                  I'm the model of PackageInstallerWindow.!
+!PackageInstallerWindow methodsFor: 'GUI building' stamp: 'MM 11/25/2021 15:21:52'!
+  buildActionsBar
+
+	| actionsBar | 
+	
+	actionsBar _ LayoutMorph newRow.
+	
+	actionsBar addMorph:
+		(PluggableButtonMorph 
+				model: self 
+				action: #installPackage
+				label: 'Install package').
+	actionsBar addMorph:
+		(PluggableButtonMorph
+				model: self
+				action: #updatePackageList
+				label: 'Update package list').
+	
+	actionsBar addMorph: (LabelMorph contents: 'Search: ').
+	
+	filterInput _ TextModelMorph textProvider: self textGetter: #filterString textSetter: #filterString:.
+	filterInput acceptOnCR: true;
+		askBeforeDiscardingEdits: false.
+	actionsBar addMorph: filterInput layoutSpec: (LayoutSpec fixedHeight: 30).
+	
+	^ actionsBar! !
+!PackageInstallerWindow methodsFor: 'GUI building' stamp: 'MM 11/25/2021 13:56:23'!
+    buildDetailPane
+	^ TextModelMorph textProvider:  self textGetter: #packageDescription! !
+!PackageInstallerWindow methodsFor: 'GUI building' stamp: 'MM 11/25/2021 15:23:37'!
+                   buildMorphicWindow
+
+	|layout|
+		
+	layout _ LayoutMorph newRow.
+	layout addMorph: self buildPackageListMorph layoutSpec: (LayoutSpec proportionalWidth: 0.5).
+	layout addAdjusterAndMorph: self buildDetailPane layoutSpec: (LayoutSpec proportionalWidth: 0.5).
+	self addMorph: layout layoutSpec: (LayoutSpec proportionalWidth: 1).
+	self addMorph: self buildActionsBar layoutSpec: (LayoutSpec new fixedHeight: 30; proportionalWidth: 1; yourself). 
+	! !
+!PackageInstallerWindow methodsFor: 'GUI building' stamp: 'MM 11/25/2021 15:29:21'!
+             buildPackageListMorph
+	
+	^ PluggableListMorph model: self listGetter: #packageListNames indexGetter: #currentIndex indexSetter: #currentIndex:.! !
+!PackageInstallerWindow methodsFor: 'GUI building' stamp: 'MM 12/27/2021 20:33:57' overrides: 16959063!
+     windowColor
+	^ Color fromHexString: '#88e6d8'! !
+!PackageInstallerWindow methodsFor: 'initialization' stamp: 'MM 11/25/2021 15:18:18' overrides: 16959340!
+     initialize
+	super initialize.
+	filterString _ ''.! !
+!PackageInstallerWindow methodsFor: 'actions' stamp: 'MM 11/25/2021 19:26:26'!
+                            installPackage
+	self selectedPackage ifNotNil: [:package | 
+		(FeatureRequirement name: package packageName)
+		pathName: package fullName;
+		satisfyRequirementsAndInstall]! !
+!PackageInstallerWindow methodsFor: 'actions' stamp: 'MM 11/25/2021 14:04:10'!
+  open
+	self buildMorphicWindow.
+	labelString _ 'Package Installer'.
+	self openInWorld! !
+!PackageInstallerWindow methodsFor: 'actions' stamp: 'MM 11/25/2021 15:30:07'!
+                         updatePackageList
+
+	model updatePackageList.
+	self changed: #packageListNames! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 15:17:00'!
+                              currentIndex
+	^ currentIndex ifNil: [0]! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 15:17:08'!
+    currentIndex: index
+	currentIndex _ index.
+	self changed: #acceptedContents! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 13:43:45'!
+filterInput
+	"Answer the value of filterInput"
+
+	^ filterInput! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 13:43:45'!
+             filterInput: anObject
+	"Set the value of filterInput"
+
+	filterInput _ anObject! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 13:43:45'!
+                             filterString
+	"Answer the value of filterString"
+
+	^ filterString! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 16:53:16'!
+          filterString: aString
+	"Set the value of filterString"
+
+	filterString _ aString.
+	filterInput hasUnacceptedEdits: false.
+	self currentIndex: nil.
+	self changed: #packageListNames! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 16:18:21'!
+                         filteredPackageList
+
+	| packageList |
+	
+	packageList _ model packageList.
+	
+	^ filterString isEmpty
+		ifTrue: [packageList]
+		ifFalse: [packageList select: [:package | package packageName includesSubstring: filterString caseSensitive: false]]! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 14:18:16'!
+                         getFilter
+	^ [:str :el | el printString includesSubstring: str caseSensitive: false]! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 13:43:45' overrides: 16911717!
+   model
+	"Answer the value of model"
+
+	^ model! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 13:43:45' overrides: 16911747!
+           model: anObject
+	"Set the value of model"
+
+	model _ anObject! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 19:19:54'!
+               packageDescription
+
+	|package|
+	
+	package _ self selectedPackage.
+	
+	package ifNil: [^''].
+	
+	^ String streamContents: [:s | 
+		s nextPutAll: package packageName;
+			newLine.
+		60 timesRepeat: [	s nextPut: $-].
+		s newLine; newLine.
+		
+		package packageDescription ifNotEmpty: [:description |
+			s nextPutAll: description;
+				newLine;
+				newLine].
+		
+		s nextPutAll: package description]! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 16:12:17'!
+      packageListNames
+
+	^ self filteredPackageList collect: [:package | package packageName].
+	
+	! !
+!PackageInstallerWindow methodsFor: 'accessing' stamp: 'MM 11/25/2021 16:10:59'!
+               selectedPackage
+	currentIndex ifNil: [^nil].
+	currentIndex isZero ifTrue: [^nil].
+	^ self filteredPackageList at: currentIndex.! !
+!PackageInstallerWindow class methodsFor: 'as yet unclassified' stamp: 'MM 11/25/2021 15:11:25'!
+                            open
+
+	^ self open: PackageInstaller new label: 'Package Installer'! !
+!PackageInstallerWindow class methodsFor: 'as yet unclassified' stamp: 'MM 11/25/2021 17:15:50'!
+                        worldMenuForOpenGroup
+	^ `{{
+			#itemGroup 		-> 		20.
+			#itemOrder 		-> 		10.
+			#label 			->	'Package Installer'.
+			#object 			-> 	PackageInstallerWindow.
+			#selector 		-> 		#open.
+			#icon 			-> 		#packageIcon.
+			#balloonText 	-> 		'A tool for installing local Cuis packages.'.
+		} asDictionary}`! !
+!PackageInstaller methodsFor: 'accessing' stamp: 'MM 11/25/2021 15:12:28'!
+   addPackage: aPackageSpec
+
+	packageList add: aPackageSpec! !
+!PackageInstaller methodsFor: 'accessing' stamp: 'MM 11/25/2021 14:24:04'!
+                         packageList
+	"Answer the value of packageList"
+
+	^ packageList! !
+!PackageInstaller methodsFor: 'actions' stamp: 'MM 11/25/2021 19:16:55'!
+                     collectPackagesFromDirectory: aDirectory
+
+	"Create a collection of PackageSpec with package files found in aDirectory."
+	
+	|packageFiles|
+	
+	packageFiles _ aDirectory fileNamesMatching: '*.pck.st'.
+		
+	packageFiles do: [:packageFile | | codePackage |
+		codePackage _ CodePackageFile onFileEntry: (aDirectory // packageFile).
+		self addPackage: codePackage]! !
+!PackageInstaller methodsFor: 'actions' stamp: 'MM 11/25/2021 14:39:54'!
+               collectPackagesFromDisk
+
+	"Collect PackageSpec with package files found in Cuis packages directories."
+	
+	self placesToLookForPackagesDo: [:aDirectory | 
+		self collectPackagesFromDirectory: aDirectory]! !
+!PackageInstaller methodsFor: 'actions' stamp: 'MM 11/25/2021 14:40:18'!
+         placesToLookForPackagesDo: aBlock
+
+	| base packagesDirectory |
+
+	"Look in Cuis image folder and reasonable subfolders"
+	base _ DirectoryEntry smalltalkImageDirectory.
+	aBlock value: base.
+	packagesDirectory _ base / 'Packages'.
+	aBlock value: packagesDirectory.
+	packagesDirectory allRegularDirectoriesDo: aBlock.
+	base regularDirectoriesDo: [ :child |
+		child = packagesDirectory ifFalse: [
+			aBlock value: child.
+			child allRegularDirectoriesDo: aBlock]].
+	
+	"Look in parent directory and reasonable subfolders. 
+	Useful when image is stored in a subdirectory of the main app directory.
+	This could be the case when the package comes from a 'main' git repo, and image is copied from gitHub.
+	First try directories including the word Cuis in the name. Then try others."
+	base parent regularDirectoriesDo: [ :dir |
+		dir ~= base ifTrue: [
+			('*Cuis*' match: dir name)
+				ifTrue: [aBlock value: dir. dir allRegularDirectoriesDo: aBlock]]].
+	base parent regularDirectoriesDo: [ :dir |
+		dir ~= base ifTrue: [
+			('*Cuis*' match: dir name)
+				ifFalse: [aBlock value: dir. dir allRegularDirectoriesDo: aBlock]]].
+
+	"Also look in host OS current directory"
+	(base ~= DirectoryEntry currentDirectory and: [base parent ~= DirectoryEntry currentDirectory])
+		ifTrue: [
+			base _ DirectoryEntry currentDirectory.
+			base allRegularDirectoriesDo: aBlock ]! !
+!PackageInstaller methodsFor: 'actions' stamp: 'MM 1/1/2022 18:39:02'!
+               updatePackageList
+	
+	(PopUpMenu confirm: 'I need to scan for packages. This takes some time. Continue?')
+		ifFalse: [^ OrderedCollection new].
+	packageList _ OrderedCollection new.
+	self collectPackagesFromDisk.
+	packageList sort: [:p1 :p2 | p1 packageName < p2 packageName].
+	PackageList _ packageList.
+	self changed: #packageList.
+	^ packageList! !
+!PackageInstaller methodsFor: 'initialization' stamp: 'MM 11/25/2021 16:15:28' overrides: 16920235!
+                             initialize
+	packageList _ PackageList ifNil: [self updatePackageList]! !
+!CodePackageFile methodsFor: '*PackageInstaller' stamp: 'MM 11/19/2021 14:30:09'!
+     packageDescription
+	^ description! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5033-PackageInstaller-MarianoMontone-2022Jan03-21h00m-MM.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5032] on 3 January 2022 at 8:33:44 pm'!
+
+SystemWindow subclass: #PackageInstallerWindow
+	instanceVariableNames: 'filterString filterInput currentIndex'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Packages'!
+
+!classDefinition: #PackageInstallerWindow category: #'Tools-Packages' stamp: 'Install-5034-PackageInstallerCategory-MarianoMontone-2022Jan03-21h32m-MM.001.cs.st 2/21/2022 14:50:20'!
+SystemWindow subclass: #PackageInstallerWindow
+	instanceVariableNames: 'filterString filterInput currentIndex'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Packages'!
+
+Object subclass: #PackageInstaller
+	instanceVariableNames: 'packageList'
+	classVariableNames: 'PackageList'
+	poolDictionaries: ''
+	category: 'Tools-Packages'!
+
+!classDefinition: #PackageInstaller category: #'Tools-Packages' stamp: 'Install-5034-PackageInstallerCategory-MarianoMontone-2022Jan03-21h32m-MM.001.cs.st 2/21/2022 14:50:20'!
+Object subclass: #PackageInstaller
+	instanceVariableNames: 'packageList'
+	classVariableNames: 'PackageList'
+	poolDictionaries: ''
+	category: 'Tools-Packages'!
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5034-PackageInstallerCategory-MarianoMontone-2022Jan03-21h32m-MM.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5032] on 3 January 2022 at 9:19:11 pm'!
+!TheWorldMenu methodsFor: 'menu' stamp: 'MM 1/3/2022 21:10:34'!
+     openPackageDownloader
+	"In PackageDownloader.pck"
+	Smalltalk at: #PackageDownloaderWindow ifAbsent: [ 
+		(PopUpMenu 
+		confirm: 'The Package Downloader is not loaded', String newLineString, 'Would you like me to load it for you now?')
+		ifTrue: [Feature require: #'PackageDownloader'] 
+	].
+	Smalltalk at: #PackageDownloaderWindow ifPresent: [ :cls | ^cls open ].
+	self inform: 'Please install optional package PackageDownloader.pck.st', String newLineString, 'Feature require: #''PackageDownloader'' '! !
+!TheWorldMenu class methodsFor: 'menu building' stamp: 'MM 1/3/2022 21:17:30'!
+                        worldMenuForOpenGroup
+	^ `{{
+			#itemGroup 		-> 		20.
+			#itemOrder 		-> 		10.
+			#label 			->	'Package Downloader'.
+			#selector 		-> 		#openPackageDownloader.
+			#icon 			-> 		#packageIcon.
+			#balloonText 	-> 		'A tool for downloading Cuis packages from the internet.'.
+		} asDictionary}`! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5035-PackageDownloaderMenu-MarianoMontone-2022Jan03-22h10m-MM.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5035] on 3 January 2022 at 10:31:34 pm'!
+!Theme methodsFor: 'tool colors' stamp: 'MM 1/3/2022 22:29:24'!
+          packageDownloader
+	^ self useUniformColors
+		ifTrue: [ self defaultWindowColor ]
+		ifFalse: [ `Color fromHexString: '#d0e973'` ]! !
+!Theme methodsFor: 'tool colors' stamp: 'MM 1/3/2022 22:30:22'!
+                            packageInstaller
+	^ self useUniformColors
+		ifTrue: [ self defaultWindowColor ]
+		ifFalse: [ `Color fromHexString: '#88e6d8'` ]! !
+!PackageInstallerWindow methodsFor: 'GUI building' stamp: 'MM 1/3/2022 22:30:37' prior: 50331774 overrides: 16959063!
+       windowColor
+	^ Theme current packageInstaller! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5036-PackageToolsWindowsColors-MarianoMontone-2022Jan03-22h29m-MM.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5032] on 4 January 2022 at 5:06:18 pm'!
+!DebuggerMethodMap methodsFor: 'private' stamp: 'HAW 1/4/2022 17:04:37'!
+                    privateTempAt: index in: aContext startpcsToBlockExtents: theContextsStartpcsToBlockExtents ifXtraBindings: xtraBindingsBlock ifNot: notXtraBindingBlock
+
+	| nameRefPair namesAndRefs |
+	
+	namesAndRefs _ self 
+		privateTempRefsForContext: aContext
+		startpcsToBlockExtents: theContextsStartpcsToBlockExtents.
+		
+	^index <= namesAndRefs size
+		ifTrue: [
+			nameRefPair _ namesAndRefs
+				at: index
+				ifAbsent: [ aContext errorSubscriptBounds: index ].
+			notXtraBindingBlock value: nameRefPair last ]
+		ifFalse: [ xtraBindingsBlock value: (aContext method xtraBindings at: index - namesAndRefs size) ]! !
+!DebuggerMethodMap methodsFor: 'private' stamp: 'HAW 1/4/2022 17:04:45' prior: 16839255!
+           privateTempAt: index in: aContext put: aValue startpcsToBlockExtents: theContextsStartpcsToBlockExtents
+	
+	^self 
+		privateTempAt: index 
+		in: aContext 
+		startpcsToBlockExtents: theContextsStartpcsToBlockExtents 
+		ifXtraBindings: [ :xtraBinding | xtraBinding value: aValue ]
+		ifNot: [ :ref | self privateDereference: ref in: aContext put: aValue ]
+		! !
+!DebuggerMethodMap methodsFor: 'private' stamp: 'HAW 1/4/2022 17:05:12' prior: 16839270!
+ privateTempAt: index in: aContext startpcsToBlockExtents: theContextsStartpcsToBlockExtents
+
+	^self 
+		privateTempAt: index 
+		in: aContext 
+		startpcsToBlockExtents: theContextsStartpcsToBlockExtents 
+		ifXtraBindings: [ :xtraBinding | xtraBinding value ] 
+		ifNot: [ :ref | self privateDereference: ref in: aContext ]! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5037-DebuggerMethodMapFix-HernanWilkinson-2022Jan04-17h04m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5032] on 4 January 2022 at 6:08:45 pm'!
+
+TextProvider subclass: #Inspector
+	instanceVariableNames: 'acceptedContentsCache object selectionIndex context bindings '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Inspector'!
+
+!classDefinition: #Inspector category: #'Tools-Inspector' stamp: 'Install-5038-InspectorScriptAreaBehavesLikeWorkspace-HernanWilkinson-2022Jan04-17h06m-HAW.001.cs.st 2/21/2022 14:50:20'!
+TextProvider subclass: #Inspector
+	instanceVariableNames: 'acceptedContentsCache object selectionIndex context bindings'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Inspector'!
+!PluggableTextModel methodsFor: 'binding' stamp: 'HAW 1/4/2022 18:02:38' overrides: 16901683!
+        bindingOf: aString
+
+	^textProvider bindingOf: aString! !
+!Inspector methodsFor: 'shout styling' stamp: 'HAW 1/4/2022 18:06:01'!
+hasBindingThatBeginsWith: aString 
+
+	| beginsWithBlock |
+	
+	beginsWithBlock := [ :varName | varName beginsWith: aString ].
+	
+	^(self objectClass allInstVarNames anySatisfy: beginsWithBlock) or: [ bindings keys anySatisfy: beginsWithBlock ]! !
+!Inspector methodsFor: 'shout styling' stamp: 'HAW 1/4/2022 17:35:55'!
+      initializeBindings
+	
+	bindings _ Dictionary new.
+	self changed: #actualContents.
+! !
+!Inspector methodsFor: 'binding' stamp: 'HAW 1/4/2022 18:02:01' overrides: 16901683!
+                      bindingOf: aString
+	
+	(bindings includesKey: aString) ifFalse: [
+		aString first isUppercase
+			ifTrue: [^nil]
+			ifFalse: [bindings at: aString put: nil]].
+		
+	^bindings associationAt: aString! !
+!Inspector methodsFor: 'initialization' stamp: 'HAW 1/4/2022 17:36:05' prior: 16871917 overrides: 16920235!
+               initialize
+
+	super initialize.
+	acceptedContentsCache _ ''.
+	selectionIndex := 0.
+	self initializeEvents.
+	self initializeBindings ! !
+!Inspector methodsFor: 'shout styling' stamp: 'HAW 1/4/2022 17:32:23' prior: 16872088!
+  bindingNamesDo: aBlock
+
+	self objectClass allInstVarNames do: aBlock.
+	bindings keysDo: aBlock! !
+!Inspector methodsFor: 'shout styling' stamp: 'HAW 1/4/2022 17:33:50' prior: 16872093!
+       hasBindingOf: aString
+	^ (self objectClass allInstVarNames includes: aString) or: [ 	bindings includesKey: aString ]! !
+
+TextProvider subclass: #Inspector
+	instanceVariableNames: 'acceptedContentsCache object selectionIndex context bindings'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Inspector'!
+
+!classDefinition: #Inspector category: #'Tools-Inspector' stamp: 'Install-5038-InspectorScriptAreaBehavesLikeWorkspace-HernanWilkinson-2022Jan04-17h06m-HAW.001.cs.st 2/21/2022 14:50:20'!
+TextProvider subclass: #Inspector
+	instanceVariableNames: 'acceptedContentsCache object selectionIndex context bindings'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Inspector'!
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5038-InspectorScriptAreaBehavesLikeWorkspace-HernanWilkinson-2022Jan04-17h06m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5038] on 5 January 2022 at 1:18:45 pm'!
+!PlacedMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:20:00'!
+      categoryInNewMorphMenu
+	^ 'Vector Graphics'! !
+!ProgressMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:46:33' overrides: 16895515!
+  initializedInstance
+	| progress |
+	progress _ ProgressMorph label: 'Test progress' subLabel: 'this is the subheading'.
+	[
+		100 timesRepeat: [
+			(Delay forMilliseconds: 30) wait.
+			progress incrDone: 0.01 ].
+		progress delete] fork.
+	^progress! !
+!HaloHandleMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:22:20' overrides: 16895531!
+                      includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+
+	^ false! !
+!HaloMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:22:38' overrides: 16895531!
+            includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+
+	^ false! !
+!DraggingGuideMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:23:37' overrides: 16895531!
+   includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+
+	^ false! !
+!TextParagraphMorph class methodsFor: 'instance creation' stamp: 'jmv 1/5/2022 12:30:08' overrides: 16895515!
+         initializedInstance
+
+	^self contents:
+'I am a read-only text paragraph.
+I can hold several lines of text.
+Even with ', ' text ' bold, 'styles.' italic, '
+Try resizing me with the Halo.'! !
+!FillInTheBlankMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:37:37' overrides: 16895531!
+              includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+
+	^ false! !
+!ProgressBarMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:39:28' overrides: 16895531!
+     includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+
+	^ false! !
+!MenuLineMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:25:48' overrides: 16895531!
+        includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+
+	^ false! !
+!MenuMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:25:58' overrides: 16895531!
+            includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+
+	^ false! !
+!BoxedMorph class methodsFor: 'new-morph participation' stamp: 'jmv 1/5/2022 12:09:00' prior: 16794540 overrides: 50332277!
+                           categoryInNewMorphMenu
+	^ 'Basic'! !
+!TheWorldMenu methodsFor: 'private' stamp: 'jmv 1/5/2022 12:53:09' prior: 16970485!
+       pvtAlphaSplitListDepth
+	"Split factor.  A higher number results in fewer items in each submenu"
+	^ 3! !
+
+ProgressBarMorph class removeSelector: #categoryInNewMorphMenu!
+
+!methodRemoval: ProgressBarMorph class #categoryInNewMorphMenu stamp: 'Install-5039-NewMorph-menu-reorganization-JuanVuletich-2022Jan05-13h15m-jmv.001.cs.st 2/21/2022 14:50:20'!
+categoryInNewMorphMenu
+	^ 'Widgets'!
+
+FillInTheBlankMorph class removeSelector: #categoryInNewMorphMenu!
+
+!methodRemoval: FillInTheBlankMorph class #categoryInNewMorphMenu stamp: 'Install-5039-NewMorph-menu-reorganization-JuanVuletich-2022Jan05-13h15m-jmv.001.cs.st 2/21/2022 14:50:20'!
+categoryInNewMorphMenu
+	^ 'Widgets'!
+
+HaloMorph class removeSelector: #categoryInNewMorphMenu!
+
+!methodRemoval: HaloMorph class #categoryInNewMorphMenu stamp: 'Install-5039-NewMorph-menu-reorganization-JuanVuletich-2022Jan05-13h15m-jmv.001.cs.st 2/21/2022 14:50:20'!
+categoryInNewMorphMenu
+	^ 'Halos'!
+
+HaloHandleMorph class removeSelector: #categoryInNewMorphMenu!
+
+!methodRemoval: HaloHandleMorph class #categoryInNewMorphMenu stamp: 'Install-5039-NewMorph-menu-reorganization-JuanVuletich-2022Jan05-13h15m-jmv.001.cs.st 2/21/2022 14:50:20'!
+categoryInNewMorphMenu
+	^ 'Halos'!
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5039-NewMorph-menu-reorganization-JuanVuletich-2022Jan05-13h15m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5038] on 5 January 2022 at 1:19:05 pm'!
+!HandMorph methodsFor: 'grabbing/dropping' stamp: 'jmv 1/5/2022 13:11:47' prior: 16866271!
+                   grabMorph: aMorph moveUnderHand: moveUnderHand
+	"Grab the given morph (i.e., add it to this hand and remove it from its current owner).
+	If moveUnderHand is requested or it seems neccesary anyway, move the grabbed morph under the hand."
+
+	| grabbed positionInHandCoordinates tx bounds |
+	self releaseMouseFocus.	"Break focus"
+	grabbed _ aMorph.
+	aMorph owner ifNotNil: [ :o | grabbed _ o aboutToGrab: aMorph ].
+	grabbed ifNil: [ ^ self ].
+	grabbed _ grabbed aboutToBeGrabbedBy: self.
+	grabbed ifNil: [ ^ self ].
+	self hideHardwareCursor.
+	self redrawNeeded.
+
+	moveUnderHand ifTrue: [
+		bounds _ nil.
+		grabbed isInWorld ifTrue: [
+			bounds _ (grabbed displayBounds ifNil: [grabbed fullBoundsInOwner ])
+				translatedBy: grabbed morphPositionInWorld negated ].
+		bounds ifNil: [ bounds _ grabbed fullBoundsInOwner ].
+		positionInHandCoordinates _ (bounds center + bounds bottomRight //2) negated.
+		self grabMorph: grabbed delta: positionInHandCoordinates.
+		^self ].
+
+	positionInHandCoordinates _ (grabbed isInWorld ifTrue: [grabbed] ifFalse: [aMorph])
+		morphPositionInWorld - self morphPositionInWorld.
+
+	tx _ GeometryTransformation identity.
+	(grabbed isInWorld ifTrue: [grabbed] ifFalse: [aMorph]) withAllOwnersDo: [ :o |
+		tx _ o location composedWith: tx ].
+	self withAllOwnersReverseDo: [ :o |
+		tx _ o location inverseTransformation composedWith: tx ].
+	self grabMorph: grabbed delta: positionInHandCoordinates.
+
+	grabbed location: tx.! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5040-Hand-grabMorph-fix-JuanVuletich-2022Jan05-13h18m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5040] on 5 January 2022 at 4:26:32 pm'!
+!Text methodsFor: 'attributes' stamp: 'jmv 1/5/2022 16:13:27' prior: 16964281!
+hasAnyParagraphAttribute
+	"Return false if there are no paragraph attributes"
+
+	^runs values anySatisfy: [ :emphArray | emphArray anySatisfy: [ :attr | attr isParagraphAttribute ]]! !
+!TextParagraphMorph methodsFor: 'accessing' stamp: 'jmv 1/5/2022 14:07:55' prior: 16969463!
+            contents: aStringOrText
+	textComposition textComposed ~= aStringOrText ifTrue: [
+		textComposition	
+			initialize;
+			setModel: (TextModel withText: aStringOrText);
+			extentForComposing: self extentForComposing;
+			composeAll.
+		extent _ textComposition usedExtent + (4 * borderWidth).
+		self redrawNeeded ]! !
+!TextParagraphMorph methodsFor: 'initialization' stamp: 'jmv 1/5/2022 14:10:00' prior: 16969478 overrides: 16794195!
+                   initialize
+	super initialize.
+	extent _ `1250@1140`.
+	textComposition _ TextComposition new.
+	textComposition
+		setModel: (TextModel withText: '');
+		extentForComposing: self extentForComposing;
+		composeAll.! !
+!TextParagraphMorph methodsFor: 'private' stamp: 'jmv 1/5/2022 16:19:56' prior: 16969533!
+                  fit
+	"Adjust my height to fit the text."
+
+	| newExtent oldExtent |
+	(owner is: #ScrollPane) ifFalse: [
+		^self ].
+	newExtent _ extent x
+		@ (textComposition usedHeight + (4 * borderWidth)
+			max: FontFamily defaultLineSpacing + 2).
+	extent = newExtent ifFalse: [
+		oldExtent _ extent.
+		extent _ newExtent.
+		self extentChanged: oldExtent.
+		owner ifNotNil: [ owner someSubmorphPositionOrExtentChanged ].
+		self redrawNeeded ].! !
+!TextComposition methodsFor: 'access' stamp: 'jmv 1/5/2022 16:19:07' prior: 16965514!
+                           usedExtent
+	"If there is any justified, rightFlush or centered text, assume all available width has been used."
+
+	^ self usedWidth @ self usedHeight! !
+!TextComposition methodsFor: 'access' stamp: 'jmv 1/5/2022 16:18:54' prior: 16965522!
+                  usedWidth
+	"If there is any justified, rightFlush or centered text, assume all available width has been used."
+
+	^ maxRightX! !
+!TextComposition methodsFor: 'composition' stamp: 'jmv 1/5/2022 16:18:59' prior: 16965537!
+     composeLinesFrom: start to: stop delta: delta into: lineColl priorLines: priorLines atY: startingY 
+	"While the section from start to stop has changed, composition may ripple all the way to the end of the text.  However in a rectangular container, if we ever find a line beginning with the same character as before (ie corresponding to delta in the old lines), then we can just copy the old lines from there to the end of the container, with adjusted indices and y-values"
+
+	| newResult composer |
+	composer _ TextComposer new.
+	editor ifNotNil: [
+		composer editor: editor ].
+	newResult _ composer
+				composeLinesFrom: start
+				to: stop
+				delta: delta
+				into: lineColl
+				priorLines: priorLines
+				atY: startingY
+				text: model actualContents
+				extentForComposing: extentForComposing.
+	lines _ newResult first asArray.
+
+	"If there is any justified, rightFlush or centered text, assume all available width has been used."
+	model actualContents hasAnyParagraphAttribute ifTrue: [ ^extentForComposing x ].
+
+	^newResult second "right border of recomposed lines (bounded by extentForComposing x)"! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5041-TextParagraphMorph-fix-JuanVuletich-2022Jan05-16h24m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5041] on 15 January 2022 at 9:08:32 pm'!
+!Mutex methodsFor: 'mutual exclusion' stamp: 'jmv 1/15/2022 21:06:47'!
+                       critical: aBlock onReentry: reentryBlock
+	"Evaluate aBlock protected by the receiver.
+	This method allows using the receiver either as a reentrant or non-reentrant Mutex.
+	See https://en.wikipedia.org/wiki/Reentrant_mutex
+
+	| m |
+	m := Mutex new.
+	m critical: [ 1 print. m critical: [ 2 print ] onReentry: ['Reentry attempt!!' print]. 3 print ]. 'Done'.
+	"
+
+	| activeProcess |
+	activeProcess _ Processor activeProcess.
+	activeProcess == owner ifTrue: [^reentryBlock value].
+	^semaphore critical: [
+		owner _ activeProcess.
+		aBlock ensure: [owner _ nil]].! !
+!Mutex methodsFor: 'mutual exclusion' stamp: 'jmv 1/15/2022 21:05:12'!
+          criticalNonReentrant: aBlock
+	"Evaluate aBlock protected by the receiver.
+	Provides non-reentrant mutex behavior: Raise an error if attempted to reenter from same process.
+	See https://en.wikipedia.org/wiki/Reentrant_mutex
+
+	| m |
+	m := Mutex new.
+	m criticalNonReentrant: [ 1 print. m criticalNonReentrant: [ 2 print ]. 3 print ]. 'Done'.
+	"
+
+	^self critical: aBlock onReentry: [ self error: 'Mutex reentry attempted' ]! !
+!Mutex methodsFor: 'mutual exclusion' stamp: 'jmv 1/15/2022 21:04:14' prior: 16898828!
+ critical: aBlock
+	"Evaluate aBlock protected by the receiver.
+	Provides reentrant mutex behavior: Allow reentry from the same process.
+	See https://en.wikipedia.org/wiki/Reentrant_mutex
+
+	| m |
+	m := Mutex new.
+	m critical: [ 1 print. m critical: [ 2 print ]. 3 print ]. 'Done'.
+	"
+
+	^self critical: aBlock onReentry: aBlock! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5042-Mutex-AllowNonReentrantMutexes-JuanVuletich-2022Jan15-20h58m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5041] on 16 January 2022 at 12:34:46 pm'!
+!MessageSet methodsFor: 'message list' stamp: 'jmv 1/16/2022 12:33:04' prior: 16886389!
+        sortByClassHierarchy
+	"Sort the message-list by class / selector. List classes in hierarchical order."
+	
+	| aClass bClass classes classesAndPositions i |
+
+	classes _ Set new.
+	messageList do: [ :methodReference |
+		methodReference actualClass ifNotNil: [ :actualClass | classes add: actualClass ]].
+	classesAndPositions _ Dictionary new.
+	i _ 1.
+	Smalltalk hierarchySorted: classes do: [ :each |
+		classesAndPositions at: each put: i.
+		i _ i + 1 ].
+	
+	messageList _ messageList sort: [ :a :b |
+		(a classSymbol = b classSymbol and: [ b classIsMeta = b classIsMeta ])
+			ifTrue: [
+				a methodSymbol == #Comment
+					ifTrue: [ true ]
+					ifFalse: [
+						b methodSymbol == #Comment
+							ifTrue: [ false ]
+							ifFalse: [ a methodSymbol < b methodSymbol ]]]
+			ifFalse: [
+				aClass _ a actualClass.
+				bClass _ b actualClass.
+				aClass isNil == bClass isNil
+					ifTrue: [
+						aClass isNil
+							ifTrue: [a classSymbol < b classSymbol]
+							ifFalse: [(classesAndPositions at: aClass) < (classesAndPositions at: bClass)]]
+					ifFalse: [aClass isNil]]].
+	messageList do: [ :each | | d |
+		d _ (each actualClass theNonMetaClass allSuperclasses select: [ :c |
+			classesAndPositions includesKey: c ]) size.
+		each prefixStringVersionWith: (
+			String streamContents: [ :strm |
+				d timesRepeat: [ strm nextPutAll: ' ---'].
+				strm nextPut: Character space ]) ].
+	self changed: #messageList.! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5043-Better-SortByClassHierarchy-JuanVuletich-2022Jan15-21h08m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5043] on 17 January 2022 at 1:01:55 pm'!
+!DisplayScreen methodsFor: 'accessing' stamp: 'jmv 1/17/2022 13:00:17' prior: 16844376!
+                       getMainCanvas
+	"Return a Canvas that can be used to draw onto the receiver.
+	Being the sole 'main' canvas means a priviledge: Can use VectorEnginePlugin if available."
+
+	| answer |
+	answer _ [ MorphicCanvas onForm: self ]
+				on: OutOfMemory
+				do: [
+					'Not enough memory to run VectorEngine. Using BitBltCanvas instead.' print.
+					MorphicCanvas activeSubclass: BitBltCanvas.
+					MorphicCanvas onForm: self ].
+	^answer! !
+!FontFamily class methodsFor: 'file read write' stamp: 'jmv 1/17/2022 12:01:11' prior: 16860354!
+                  readAdditionalTrueTypeFonts
+	Feature require: 'VectorGraphics'.
+	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [
+		Feature require: 'VectorEngineInSmalltalk' ].
+	UISupervisor whenUIinSafeState: [
+		Smalltalk at: #TrueTypeFontFamily ifPresent: [ :cls | cls readAdditionalFonts ]]! !
+!FontFamily class methodsFor: 'ui' stamp: 'jmv 1/17/2022 12:01:06' prior: 16860413!
+                             promptUserAndSetDefault
+	"Present a menu of available font families, and if one is chosen, change to it.
+	FontFamily promptUserAndSetDefault
+	"
+	| selectedNameOrDirectory fontFamily |
+	selectedNameOrDirectory _ self promptUserFolders.
+	selectedNameOrDirectory isNil ifTrue: [ ^nil ].
+	(FontFamily familyNamed: selectedNameOrDirectory)
+		ifNotNil: [ :it | ^Preferences setDefaultFont: it familyName ].
+	Feature require: 'VectorGraphics'.
+	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [
+		Feature require: 'VectorEngineInSmalltalk' ].
+	UISupervisor whenUIinSafeState: [
+		fontFamily _ FontFamily availableFamilies values
+			detect: [ :any | any folderName = selectedNameOrDirectory name ]
+			ifNone: [
+				FontFamily familyNamed: ((Smalltalk at: #TrueTypeFontFamily) read: selectedNameOrDirectory) anyOne ].
+		Preferences setDefaultFont: fontFamily familyName ]! !
+!Morph methodsFor: 'private' stamp: 'jmv 1/17/2022 12:02:09' prior: 16895209!
+                             privateAddAllMorphs: aCollection atIndex: index
+	"Private. Add aCollection of morphs to the receiver"
+	| myWorld itsWorld otherSubmorphs |
+	myWorld _ self world.
+	otherSubmorphs _ submorphs copyWithoutAll: aCollection.
+	(index between: 0 and: otherSubmorphs size)
+		ifFalse: [^ self error: 'index out of range'].
+	index = 0
+		ifTrue:[	submorphs _ aCollection asArray, otherSubmorphs]
+		ifFalse:[	index = otherSubmorphs size
+			ifTrue:[	submorphs _ otherSubmorphs, aCollection]
+			ifFalse:[	submorphs _ otherSubmorphs copyReplaceFrom: index + 1 to: index with: aCollection ]].
+	aCollection do: [:m | | itsOwner |
+		itsOwner _ m owner.
+		itsOwner ifNotNil: [
+			itsWorld _ m world.
+			(itsWorld == myWorld) ifFalse: [
+				itsWorld ifNotNil: [m redrawNeeded]].
+			(itsOwner ~~ self) ifTrue: [
+				m owner privateRemove: m.
+				m owner removedMorph: m ]].
+		m privateOwner: self.
+		myWorld ifNotNil: [m redrawNeeded].
+		(myWorld == itsWorld) ifFalse: [m intoWorld: myWorld].
+		itsOwner == self ifFalse: [
+			self addedMorph: m.
+			m noteNewOwner: self ].
+	].
+	self privateArrangeWantsToBeOnTop.
+	self someSubmorphPositionOrExtentChanged! !
+!Morph methodsFor: 'private' stamp: 'jmv 1/17/2022 12:02:35' prior: 16895264!
+  privateAddMorph: aMorph atIndex: index position: aPointOrNil
+
+	| oldIndex myWorld itsWorld oldOwner |
+	((index >= 1) and: [index <= (submorphs size + 1)])
+		ifFalse: [^ self error: 'index out of range'].
+	myWorld _ self world.
+	oldOwner _ aMorph owner.
+	(oldOwner == self and: [(oldIndex _ submorphs indexOf: aMorph) > 0]) ifTrue: [
+		"aMorph's position changes within in the submorph chain"
+		oldIndex < index ifTrue:[
+			"moving aMorph to back"
+			submorphs replaceFrom: oldIndex to: index-2 with: submorphs startingAt: oldIndex+1.
+			submorphs at: index-1 put: aMorph.
+		] ifFalse:[
+			"moving aMorph to front"
+			oldIndex-1 to: index by: -1 do:[:i|
+				submorphs at: i+1 put: (submorphs at: i)].
+			submorphs at: index put: aMorph.
+		].
+		aPointOrNil ifNotNil: [aMorph privatePosition: aPointOrNil].
+	] ifFalse: [
+		"adding a new morph"
+		oldOwner ifNotNil: [
+			itsWorld _ aMorph world.
+			itsWorld ifNotNil: [aMorph invalidateBounds].
+			oldOwner privateRemove: aMorph.
+			oldOwner removedMorph: aMorph.
+		].
+		aMorph privateOwner: self.
+		submorphs _ submorphs copyReplaceFrom: index to: index-1 with: (Array with: aMorph).
+		aPointOrNil ifNotNil: [aMorph privatePosition: aPointOrNil].
+		(itsWorld == myWorld) ifFalse: [aMorph intoWorld: myWorld].
+	].
+	myWorld ifNotNil: [
+		index = 1
+			ifTrue: [aMorph redrawNeeded ]
+			ifFalse: [aMorph invalidateBounds]].
+	self privateArrangeWantsToBeOnTop.
+	self someSubmorphPositionOrExtentChanged.
+	oldOwner == self ifFalse: [
+		self addedMorph: aMorph.
+		aMorph noteNewOwner: self ]! !
+
+BitBltCanvas removeSelector: #canDraw:!
+
+!methodRemoval: BitBltCanvas #canDraw: stamp: 'Install-5044-Separate-VectorEngine-SmalltalkImplementation-JuanVuletich-2022Jan17-12h41m-jmv.001.cs.st 2/21/2022 14:50:20'!
+canDraw: aMorph
+	^aMorph requiresVectorCanvas not!
+
+BitBltCanvas removeSelector: #setPluginAndForm:!
+
+!methodRemoval: BitBltCanvas #setPluginAndForm: stamp: 'Install-5044-Separate-VectorEngine-SmalltalkImplementation-JuanVuletich-2022Jan17-12h41m-jmv.001.cs.st 2/21/2022 14:50:20'!
+setPluginAndForm: aForm
+	"No VectorEnginePlugin in BitBltCanvas."
+
+	self setForm: aForm subPixelAntiAliasing: nil.!
+
+MorphicCanvas class removeSelector: #withVectorEnginePluginOnForm:!
+
+!methodRemoval: MorphicCanvas class #withVectorEnginePluginOnForm: stamp: 'Install-5044-Separate-VectorEngine-SmalltalkImplementation-JuanVuletich-2022Jan17-12h41m-jmv.001.cs.st 2/21/2022 14:50:20'!
+withVectorEnginePluginOnForm: aForm
+	"Note: Only one instance using VectorEnginePlugin should be acive at a time:
+	the plugin holds numeric parameters that are not passed again on every call."
+
+	^ self subclassToUse basicNew
+		setPluginAndForm: aForm;
+		initializeWithTranslation: `0@0`.!
+
+MorphicCanvas removeSelector: #canDraw:!
+
+!methodRemoval: MorphicCanvas #canDraw: stamp: 'Install-5044-Separate-VectorEngine-SmalltalkImplementation-JuanVuletich-2022Jan17-12h41m-jmv.001.cs.st 2/21/2022 14:50:20'!
+canDraw: aMorph
+	^true!
+
+WorldMorph removeSelector: #canHandle:!
+
+!methodRemoval: WorldMorph #canHandle: stamp: 'Install-5044-Separate-VectorEngine-SmalltalkImplementation-JuanVuletich-2022Jan17-12h41m-jmv.001.cs.st 2/21/2022 14:50:20'!
+canHandle: aMorph
+
+	^ canvas canDraw: aMorph!
+
+Morph removeSelector: #canAdd:!
+
+!methodRemoval: Morph #canAdd: stamp: 'Install-5044-Separate-VectorEngine-SmalltalkImplementation-JuanVuletich-2022Jan17-12h41m-jmv.001.cs.st 2/21/2022 14:50:20'!
+canAdd: aMorph
+	self world ifNotNil: [ :w |
+		^w canHandle: aMorph ].
+	^true!
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5044-Separate-VectorEngine-SmalltalkImplementation-JuanVuletich-2022Jan17-12h41m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5044] on 18 January 2022 at 3:53:57 pm'!
+!ContextVariablesInspector methodsFor: 'shout styling' stamp: 'jmv 1/18/2022 15:53:28' prior: 16834092 overrides: 50332238!
+         bindingNamesDo: aBlock
+	self fieldList do: aBlock! !
+!ContextVariablesInspector methodsFor: 'shout styling' stamp: 'jmv 1/18/2022 15:53:22' prior: 16834097 overrides: 50332244!
+               hasBindingOf: aString
+	^ self fieldList includes: aString! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5045-ContextVariablesInspector-fix-JuanVuletich-2022Jan18-15h41m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5045] on 25 January 2022 at 9:34:42 am'!
+!Character class methodsFor: 'class initialization' stamp: 'len 12/28/2021 12:09:45' prior: 16808458!
+       greekLowercaseLetters
+	"Answer the lowercase greek letters included in our font within the ASCII range.
+	These are considered lowercase letters and can be used as identifiers (variable names, keyword or unary messages, etc)."
+	^ 'àâäãåçéèµò'! !
+!Character class methodsFor: 'class initialization' stamp: 'len 12/28/2021 12:09:40' prior: 16808469!
+     greekUppercaseLetters
+	"Answer the uppercase greek letters included in our font within the ASCII range.
+	These are considered uppercase letters and can be used as identifiers (variable names, keyword or unary messages, etc)."
+	^ 'ñó'! !
+!Character class methodsFor: 'class initialization' stamp: 'len 1/9/2022 07:55:43' prior: 16808581!
+               initializeUnicodeCodePoints
+	"
+	Character initializeUnicodeCodePoints
+	String streamContents: [ :strm | 28 to: 255 do: [ :i | strm nextPut: (Character numericValue: i) ]]
+	"
+
+	"Initialize the table of Unicode code points"
+	UnicodeCodePoints _ Array new: 256.
+	0 to: 255 do: [ :code |
+		UnicodeCodePoints at: code + 1 put: code ].
+
+	"Arrows"
+	UnicodeCodePoints at: 28+1 put: 8592.		"left arrow"
+	UnicodeCodePoints at: 29+1 put: 8594.		"right arrow"
+	UnicodeCodePoints at: 30+1 put: 8593.		"up arrow"
+	UnicodeCodePoints at: 31+1 put: 8595.		"down arrow"
+	
+	"The following codes are different in ISO 8859-15 from those in ISO 8859-1,
+	so the character code is not equal to the Unicode code point"
+	UnicodeCodePoints at: 16rA4+1 put: 16r20AC.		"euro sign"
+	UnicodeCodePoints at: 16rA6+1 put: 16r160.		"latin capital letter S with caron"
+	UnicodeCodePoints at: 16rA8+1 put: 16r161.		"latin small letter s with caron"
+	UnicodeCodePoints at: 16rB4+1 put: 16r17D.		"latin capital letter Z with caron"
+	UnicodeCodePoints at: 16rB8+1 put: 16r17E.		"latin small letter z with caron"
+	UnicodeCodePoints at: 16rBC+1 put: 16r152.		"latin capital ligature OE"
+	UnicodeCodePoints at: 16rBD+1 put: 16r153.		"latin small ligature oe"
+	UnicodeCodePoints at: 16rBE+1 put: 16r178.		"latin capital letter Y with diaeresis"
+
+	"Mathematical symbols (see Character>>#namedCharactersTable)"
+	UnicodeCodePoints at: 16r80+1 put: 16r221E.		"infinity"
+	UnicodeCodePoints at: 16r81+1 put: 16r2135.		"aleph"
+	UnicodeCodePoints at: 16r82+1 put: 16r2115.		"blackboard bold N"
+	UnicodeCodePoints at: 16r83+1 put: 16r2124.		"blackboard bold Z"
+	UnicodeCodePoints at: 16r84+1 put: 16r211A.		"blackboard bold Q"
+	UnicodeCodePoints at: 16r85+1 put: 16r211D.		"blackboard bold R"
+	UnicodeCodePoints at: 16r86+1 put: 16r2102.		"blackboard bold C"
+	UnicodeCodePoints at: 16r87+1 put: 16r2119.		"blackboard bold P"
+	UnicodeCodePoints at: 16r88+1 put: 16r03B1.		"alpha"
+	UnicodeCodePoints at: 16r89+1 put: 16r03B2.		"beta"
+	UnicodeCodePoints at: 16r8A+1 put: 16r03B3.		"gamma"
+	UnicodeCodePoints at: 16r8B+1 put: 16r03B4.		"delta"
+	UnicodeCodePoints at: 16r8C+1 put: 16r03B5.		"epsilon"
+	UnicodeCodePoints at: 16r8D+1 put: 16r03BB.		"lambda"
+	UnicodeCodePoints at: 16r8E+1 put: 16r03C0.		"pi"
+	UnicodeCodePoints at: 16r8F+1 put: 16r03B6.		"zeta"
+	UnicodeCodePoints at: 16r90+1 put: 16r2295.		"oplus"
+	UnicodeCodePoints at: 16r91+1 put: 16r2297.		"otimes"
+	UnicodeCodePoints at: 16r92+1 put: 16r2218.		"circ"
+	UnicodeCodePoints at: 16r93+1 put: 16r2293.		"prod"
+	UnicodeCodePoints at: 16r94+1 put: 16r2294.		"coprod"
+	UnicodeCodePoints at: 16r95+1 put: 16r22A5.		"perp"
+	UnicodeCodePoints at: 16r96+1 put: 16r0394.		"Delta"
+	UnicodeCodePoints at: 16r97+1 put: 16r0393.		"Gamma"
+	UnicodeCodePoints at: 16r98+1 put: 16r03C9.		"omega"
+	UnicodeCodePoints at: 16r99+1 put: 16r21A0.		"SURJECTIVE ARROW"
+	UnicodeCodePoints at: 16r9A+1 put: 16r21A3.		"INJECTIVE ARROW"
+	UnicodeCodePoints at: 16r9B+1 put: 16r2194.		"BIJECTIVE ARROW"
+	UnicodeCodePoints at: 16r9C+1 put: 16r21AA.		"INCLUSION ARROW"
+	UnicodeCodePoints at: 16r9D+1 put: 16r21A6.		"MAPPING ARROW"
+	UnicodeCodePoints at: 16r9E+1 put: 16r2202.		"partial differential"
+	UnicodeCodePoints at: 16r9F+1 put: 16r221A.		"sqrt"! !
+!Character class methodsFor: 'constants' stamp: 'len 1/8/2022 10:53:19' prior: 16808990!
+        namedCharactersTable
+	"Table of named characters that we can enter in an editor using \name.
+	Please keep the names short and try to follow the naming convention used in LaTeX."
+	^ #((left $) (right $) (up $) (down $) (oplus $ê) (otimes $ë) (times $◊) (div $˜) #(circ $í) (cdot $∑) (prod $ì) (coprod $î) (perp $ï) (alpha $à) (beta $â) (gamma $ä) (delta $ã) (epsilon $å) (lambda $ç) (mu $µ) (pi $é) (zeta $è) (Delta $ñ) (Gamma $ó) (omega $ò) (N $Ç) (Z $É) (Q $Ñ) (R $Ö) (C $Ü) (P $á) (infty $Ä) (aleph $Å) (sqrt $ü) (partial $û) (deg $∞))! !
+!SmalltalkEditor methodsFor: 'do-its' stamp: 'len 8/20/2021 16:00:03' prior: 16939514!
+        printIt
+	"Treat the current text selection as an expression; evaluate it. Insert the 
+	description of the result of evaluation after the selection and then make 
+	this description the new text selection."
+	| rpt |
+	self
+		evaluateSelectionAndDo: [ :result |
+			rpt _ model fullPrintIt
+				ifTrue: [result printText]
+				ifFalse: [result printTextLimitedTo: 10000].
+			rpt _ rpt copyReplaceAll: Character lf asString with: Character lf asString, ' '.
+			self afterSelectionInsertAndSelect: 
+				((' ', rpt, ' ') initialFontFrom: emphasisHere)]
+		ifFail: [ morph flash ]
+		profiled: false.! !
+
+Character initializeUnicodeCodePoints!
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5046-MathSymbolsUpdate-LucianoEstebanNotarfrancesco-2022Jan25-09h34m-len.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5046] on 25 January 2022 at 10:15:45 am'!
+!HierarchicalListMorph methodsFor: 'events' stamp: 'len 1/25/2022 10:15:18' prior: 16867333 overrides: 16892166!
+                             doubleClick: aMouseButtonEvent localPosition: localEventPosition
+	doubleClickSelector ifNotNil: [^ self model perform: doubleClickSelector].
+	selectedMorph ifNotNil: [self toggleExpandedState: selectedMorph]! !
+!HierarchicalListMorph methodsFor: 'events' stamp: 'len 1/25/2022 10:14:08' prior: 16867364 overrides: 16911850!
+                            mouseButton1Down: aMouseButtonEvent localPosition: localEventPosition
+
+	| itemMorph |
+	aMouseButtonEvent hand newKeyboardFocus: self.
+	itemMorph _ self itemFromPoint: localEventPosition.
+	itemMorph ifNil: [ ^super mouseButton1Down: aMouseButtonEvent localPosition: localEventPosition ].
+	self highlightedMorph: itemMorph.
+	(itemMorph inToggleArea: (itemMorph internalize: (scroller internalize: localEventPosition)))
+		ifTrue: [ ^self toggleExpandedState: itemMorph event: aMouseButtonEvent ]. 
+	aMouseButtonEvent hand 
+		waitForClicksOrDragOrSimulatedMouseButton2: self 
+		event: aMouseButtonEvent 
+		clkSel: #click:localPosition:
+		clkNHalf: nil
+		dblClkSel: #doubleClick:localPosition:
+		dblClkNHalfSel: nil
+		tripleClkSel: nil! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5047-DoubleClickToggleExpand-LucianoEstebanNotarfrancesco-2022Jan25-09h53m-len.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5047] on 26 January 2022 at 4:33:58 pm'!
+!HierarchicalListMorph methodsFor: 'events' stamp: 'jmv 1/26/2022 16:31:14' prior: 50333101 overrides: 16892166!
+                 doubleClick: aMouseButtonEvent localPosition: localEventPosition
+	doubleClickSelector ifNotNil: [^ self model perform: doubleClickSelector].
+	selectedMorph ifNotNil: [
+		self toggleExpandedState: selectedMorph.
+		self scrollSelectionIntoView ]! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5048-DoubleClickExpand-scrollSelectionIntoView-JuanVuletich-2022Jan26-16h31m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5048] on 26 January 2022 at 4:50:38 pm'!
+!Object methodsFor: 'system primitives' stamp: 'jmv 1/26/2022 16:49:44' prior: 16903084!
+              becomeForward: otherObject 
+	"Primitive. All variables in the entire system that used to point
+	to the receiver now point to the argument.
+	Fails if either argument is a SmallInteger.
+
+	Please see comment at #elementsForwardIdentityTo:
+	"
+
+	| newMethod oldMethod selector |
+	self class == otherObject class ifFalse: [
+		Processor 
+			processesDo: [ :p | ] withStackFramestDo: [ :process :context |
+				self == context receiver ifTrue: [
+					selector _ context method selector.
+					oldMethod _ self class lookupSelector: selector.
+					newMethod _ otherObject class lookupSelector: selector.
+					oldMethod = newMethod ifFalse: [
+						MethodInCallStackToBecomeInvalid
+							signal: self class name, ' has some instance running #', selector, '. This CompiledMethod would become invalid. #becomeForward: aborted.' ]]]
+			runningProcessSearchStart: thisContext sender.
+		].
+	{ self } elementsForwardIdentityTo: { otherObject }! !
+!Object methodsFor: 'system primitives' stamp: 'jmv 1/26/2022 16:50:06' prior: 16903114!
+     becomeForward: otherObject copyHash: copyHash
+	"Primitive. All variables in the entire system that used to point to the receiver now point to the argument.
+	If copyHash is true, the argument's identity hash bits will be set to those of the receiver.
+	Fails if either argument is a SmallInteger.
+
+	Please see comment at #elementsForwardIdentityTo:copyHash:
+	"
+
+	| newMethod oldMethod selector |
+	self class == otherObject class ifFalse: [
+		Processor 
+			processesDo: [ :p | ] withStackFramestDo: [ :proces :context |
+				self == context receiver ifTrue: [
+					selector _ context method selector.
+					oldMethod _ self class lookupSelector: selector.
+					newMethod _ otherObject class lookupSelector: selector.
+					oldMethod = newMethod ifFalse: [
+						MethodInCallStackToBecomeInvalid
+							signal: self class name, ' has some instance running #', selector, '. This CompiledMethod would become invalid. #becomeForward:copyHash: aborted.' ]]]
+			runningProcessSearchStart: thisContext sender.
+		].
+	{ self }
+		elementsForwardIdentityTo: { otherObject }
+		copyHash: copyHash! !
+!Array methodsFor: 'converting' stamp: 'jmv 1/26/2022 16:48:48' prior: 16780806!
+                      elementsForwardIdentityTo: otherArray
+	"This primitive performs a bulk mutation, causing all pointers to the elements of the
+	 receiver to be replaced by pointers to the corresponding elements of otherArray.
+
+	 The identityHashes remain with the pointers in us rather than with the objects so that
+	 the objects in the receiver should still be properly indexed in any existing hashed
+	 structures after the mutation.
+
+	Warning: This means that the identityHash of objects in otherArray will change. This
+	is most likely a problem if those objects are already in any identityHashed collection!!
+	See #elementsForwardIdentityTo:copyHash:.
+	They should be #rehash 'ed.
+
+	Additionally, any hashed (not identityHashed) collection with elements in the receiver
+	will most likely break if the #hash message gives now a different answer!!
+	They should be #rehash 'ed.
+
+	Warning. This is a dangerous operation and it could lead to a crash if some object in
+	receiver or argument is receiver of a method currently in execution.
+	See #anyReceiverInStackIn: See senders."
+
+	<primitive: 72 error: ec>
+	ec == #'bad receiver' ifTrue:
+		[^self error: 'receiver must be of class Array'].
+	ec == #'bad argument' ifTrue:
+		[^self error: (otherArray class == Array
+						ifTrue: ['arg must be of class Array']
+						ifFalse: ['receiver and argument must have the same size'])].
+	ec == #'inappropriate operation' ifTrue:
+		[^self error: 'can''t become immediates such as SmallIntegers or Characters'].
+	ec == #'no modification' ifTrue:
+		[^self error: 'can''t become immutable objects'].
+	ec == #'object is pinned' ifTrue:
+		[^self error: 'can''t become pinned objects'].
+	ec == #'insufficient object memory' ifTrue:
+		[self error: 'The virtual machine is out-of-date.  Please upgrade.'].
+	self primitiveFailed! !
+!Array methodsFor: 'converting' stamp: 'jmv 1/26/2022 16:47:28' prior: 16780851!
+              elementsForwardIdentityTo: otherArray copyHash: copyHash
+	"This primitive performs a bulk mutation, causing all pointers to the elements of the
+	 receiver to be replaced by pointers to the corresponding elements of otherArray.
+
+	 If copyHash is true, the identityHashes remain with the pointers in rather than with the
+	 objects so that the objects in the receiver should still be properly indexed in any
+	 existing hashed structures after the mutation.	
+	Warning: This means that the identityHash of objects in otherArray will change. This
+	is most likely a problem if those objects are already in any identityHashed collection!!
+
+	If copyHash is false, then the hashes of the objects in otherArray remain unchanged.
+	If you know what you're doing this may indeed be what you want.
+	Warning: This means that any identityHashed collection with elements in otherArray
+	will not be broken, but any identityHashed collection with elements in self will be!!
+	They should be #rehash 'ed.
+
+	Additionally, any hashed (not identityHashed) collection with elements in the receiver
+	will most likely break if the #hash message gives now a different answer!!
+	They should be #rehash 'ed.
+
+	Warning. This is a dangerous operation and it could lead to a crash if some object in
+	receiver or argument is receiver of a method currently in execution.
+	See #anyReceiverInStackIn: See senders."
+
+	<primitive: 249 error: ec>
+	ec == #'bad receiver' ifTrue:
+		[^self error: 'receiver must be of class Array'].
+	ec == #'bad argument' ifTrue:
+		[^self error: (otherArray class == Array
+						ifTrue: ['arg must be of class Array']
+						ifFalse: ['receiver and argument must have the same size'])].
+	ec == #'inappropriate operation' ifTrue:
+		[^self error: 'can''t become immediates such as SmallIntegers or Characters'].
+	ec == #'no modification' ifTrue:
+		[^self error: 'can''t become immutable objects'].
+	ec == #'object is pinned' ifTrue:
+		[^self error: 'can''t become pinned objects'].
+	self primitiveFailed! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5049-become-betterComments-JuanVuletich-2022Jan26-16h41m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5038] on 18 January 2022 at 7:34:47 pm'!
+!ContextPart methodsFor: 'private-exceptions' stamp: 'jar 1/18/2022 18:57:25'!
+                         runUntilReturnFrom: aContext
+	"Run the receiver (which must be a stack top context) until aContext returns. Avoid a context that cannot return. 
+	Note: to avoid infinite recursion of MNU error inside unwind blocks, implement e.g. a wrapper around the message 
+	sentTo: receiver in #doesNotUnderstand:. Note: This method was meant to be used exclusively by #unwindTo."
+
+	| here unwindBottom newTop |
+	here _ thisContext.
+	"Avoid a context that cannot return (see Note 1 below)"
+	unwindBottom _ (self findContextSuchThat: [:ctx | ctx selector = #cannotReturn:]) ifNil: [aContext].
+	newTop _ aContext sender.
+	"Insert ensure context under unwindBottom in self's stack (see Note 2 below)"
+	unwindBottom insertSender: (self class contextEnsure: [here jump]).
+	self jump.  "Control jumps to top (see Note 2 below)"
+	"Control resumes here once the above inserted ensure block is executed"
+	^newTop  "Return the new top context (see Note 3 below)"
+
+	"Note 1: returning from #cannotReturn's sender would crash the VM so we install a guard ensure context right 
+	above it and after returning here the unwind will continue safely. Try running and debugging this example 
+	(avoid Proceeding the BCR error though; it may indeed crash the image):
+	[[[] ensure: [^2]] ensure: [^42]] fork"
+
+	"Note 2: the receiver is run by jumping directly to it (the active process abandons thisContext and executes 
+	the receiver on its own stack; the receiver is its top context). However, before jumping to top we insert an ensure 
+	block under unwindBottom context that will execute a jump back to thisContext when evaluated. The inserted 
+	guard ensure context is removed once control jumps back to thisContext."
+
+	"Note 3: it doesn't matter newTop is not a proper stack top context because #unwindTo will only use it as a starting 
+	point in the search for the next unwind context and the computation will never return here. Cf. the pattern in 
+	#runUntilErrorOrReturnFrom:: removing the inserted ensure context by stepping until popped when executing 
+	non-local returns is not applicable here and would fail tests testTerminateInNestedEnsureWithReturn1 through 4."
+! !
+!ContextPart methodsFor: 'private-exceptions' stamp: 'jar 1/18/2022 18:55:12' prior: 16833502!
+                               unwindTo: aContext
+
+	| top ctxt outerMost |
+	"If the receiver represents a block already halfways through an unwind, complete that unwind block
+	first; if there are multiple such nested unwind blocks, try to complete the outer-most one; all nested 
+	unwind blocks will be completed in the process; see tests in UnwindTest, testTerminationDuringUnwind. 
+	Note: Halfway-through blocks have already set the complete variable (tempAt: 2) in their defining
+	#ensure:/#ifCurtailed contexts from nil to true; we'll search for the bottom-most one.
+	Note: #findNextUnwindContextUpTo: starts searching from the receiver's sender so we must check 
+	whether the receiver itself is an unwind context as well; see testTerminateEnsureAsStackTop."
+	ctxt _ top _ self.
+	ctxt isUnwindContext ifFalse: [ctxt _ ctxt findNextUnwindContextUpTo: aContext].
+	[ctxt isNil] whileFalse: [
+		(ctxt tempAt:2) ifNotNil: [
+			outerMost _ ctxt].
+		ctxt _ ctxt findNextUnwindContextUpTo: aContext].
+	outerMost ifNotNil: [top _ (top runUntilReturnFrom: outerMost) sender].
+
+	"By now no halfway-through unwind blocks are on the stack. Create a new top context for each 
+	pending unwind block (tempAt: 1) and execute it on the unwind block's stack to execute non-local 
+	returns correctly. Cf. the unwind pattern in #resume:through:. In #unwindTo, using #value instead of 
+	#runUntilReturnFrom: would lead to an incorrect evaluation of non-local returns on the wrong stack. 
+	Note: top points to the former outerMost sender now, i.e. to the next unexplored context."
+	ctxt _ top.
+	ctxt isUnwindContext ifFalse: [ctxt _ ctxt findNextUnwindContextUpTo: aContext].
+	[ctxt isNil] whileFalse: [
+		(ctxt tempAt: 2) ifNil: [
+			ctxt tempAt: 2 put: true.
+			top _ (ctxt tempAt: 1) asContextWithSender: ctxt.
+			top runUntilReturnFrom: top].
+		ctxt _ ctxt findNextUnwindContextUpTo: aContext]
+! !
+!Process methodsFor: 'changing process state' stamp: 'jar 1/18/2022 19:30:02' prior: 16917643!
+     terminate 
+	"Stop the process that the receiver represents forever. Unwind to execute pending ensure: and
+	 ifCurtailed: blocks before terminating; allow all unwind blocks to run; if they are currently in
+	 progress, let them finish. If the process is in the middle of a #critical: section, release it properly."
+	
+	"If terminating the active process, create a parallel stack and run unwinds from there;
+	 if terminating a suspended process, create a parallel stack for the process being terminated
+	 and resume the suspended process to complete its termination from the parallel stack. Use
+	 a priority higher than the active priority to make the process that invoked the termination
+	 wait for its completion."
+
+	"If terminating a suspended process (including runnable or blocked), always suspend the 
+	 terminating process first so it doesn't accidentally get woken up. Equally important is the
+	 side effect of the suspension; for pre-2022 VMs #suspend returns a list the process was
+	 previously waiting on; figure out if we are terminating the process while waiting in
+	 Semaphore>>critical:. In this case, pop the suspendedContext so that we leave the ensure:
+	 block inside Semaphore>>critical: without signaling the semaphore.
+	 Execute termination wrapped in #valueEnsured to ensure it completes even if the 
+	 terminator process itself gets terminated before it's finished; see testTerminateInTerminate."
+
+	| top |
+	self isActiveProcess ifTrue: [
+		top _ thisContext.
+		^[top unwindTo: nil. self suspend] asContext jump].
+
+	[	| oldList |
+		suspendedContext isContext ifFalse: [^self].
+		oldList _ self suspend.
+		(oldList class == Semaphore and:[
+			suspendedContext method == (Semaphore compiledMethodAt: #critical:)]) ifTrue: [
+				suspendedContext _ suspendedContext home	].
+		top _ suspendedContext.
+		suspendedContext _ [top unwindTo: nil. self suspend] asContext.
+		self priority: Processor activePriority + 1; resume
+	] valueEnsured! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5050-terminate-NewImplementation-JaromirMatas-2022Jan18-19h00m-jar.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5050] on 27 January 2022 at 3:10:23 pm'!
+!Process methodsFor: 'test support' stamp: 'jar 6/1/2021 11:57:00'!
+      terminateFromForkedProcess
+	"Stop the process that the receiver represents forever. Unwind to execute pending ensure:/ifCurtailed: blocks before terminating.
+	Process termination and exception handling in border cases has been the subject of a deep overhaul in the first months of 2021, by Jaromir Matas.
+	See, for instance
+		https://lists.cuis.st/mailman/archives/cuis-dev/2021-May/003171.html
+		https://lists.cuis.st/mailman/archives/cuis-dev/2021-June/003187.html
+	You can also look for other related mail threads in the Cuis mail list.
+	Many new tests were added to BaseImageTests.pck.st
+	Thank you Jaromir for this important contribution!!
+	Note: This implementation was replaced by a new one, also from Jaromir, on January, 2022. This new implementation
+	instead of using a separate process, use a separate, cloned stack, from the same process.
+	We are keeping the 2021 approach, terminating from a new, forked process, in this method,
+	just in case it proves useful too."
+
+	| ctxt unwindBlock oldList outerMost top newTop |
+	self isRunning ifTrue: [
+		"If terminating the active process, suspend it first and terminate it as a suspended process."
+		[self terminate] fork.
+		^self suspend].
+
+	[ "run the whole termination wrapped in #valueEnsured to ensure unwind is completed 	even if 
+	the process terminating another process gets terminated - see #testTerminateInTerminate"
+	"Always suspend the process first so it doesn't accidentally get woken up"
+	oldList _ self suspend.
+	suspendedContext ifNil: [^self]. "self is already terminated"
+	"Figure out if we are terminating the process while waiting in Semaphore>>critical:
+	In this case, pop the suspendedContext so that we leave the ensure: block inside
+	Semaphore>>critical: without signaling the semaphore."
+	(oldList class == Semaphore and:[
+		suspendedContext method == (Semaphore compiledMethodAt: #critical:)]) ifTrue: [
+			suspendedContext _ suspendedContext home.
+	].
+
+	top _ suspendedContext.
+	suspendedContext _ nil. "disable this process while running its stack in active process below"
+	"If terminating a process halfways through an unwind, try to complete that unwind block first;
+	if there are multiple such nested unwind blocks, try to complete the outer-most one; nested 
+	unwind blocks will be completed in the process. Halfway-through blocks have already set the 
+	complete variable (tempAt: 2) in their defining #ensure:/#ifCurtailed contexts from nil to true.
+	Note: #findNextUnwindContextUpTo: starts searching from the receiver's sender but the receiver 
+	itself may be an unwind context."
+	ctxt _ top.
+	ctxt isUnwindContext ifFalse: [ctxt _ ctxt findNextUnwindContextUpTo: nil].
+	[ctxt isNil] whileFalse: [
+		(ctxt tempAt:2) ifNotNil: [
+			outerMost _ ctxt].
+		ctxt _ ctxt findNextUnwindContextUpTo: nil].
+	outerMost ifNotNil: [newTop _ self complete: top to: outerMost].
+
+	"By now no halfway-through unwind blocks are on the stack. Create a new top context for each 
+	pending unwind block (tempAt: 1) and execute it on the unwind block's stack. 
+	Note: using #value instead of #complete:to: would lead to incorrect evaluation of non-local returns.
+	Note: newTop sender points to the former outerMost sender, i.e. the next unexplored context."
+	ctxt _ newTop ifNil: [top] ifNotNil: [newTop sender].
+	ctxt isUnwindContext ifFalse: [ctxt _ ctxt findNextUnwindContextUpTo: nil].
+	[ctxt isNil] whileFalse: [
+		(ctxt tempAt: 2) ifNil: [
+			ctxt tempAt: 2 put: true.
+			unwindBlock _ ctxt tempAt: 1.
+			top _ unwindBlock asContextWithSender: ctxt.
+			self complete: top to: top].
+		ctxt _ ctxt findNextUnwindContextUpTo: nil]
+	] valueEnsured! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5051-terminateFromForkedProcess-JaromirMatas-2022Jan27-15h09m-jar.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5049] on 27 January 2022 at 11:53:45 am'!
+!ClassBuilder methodsFor: 'class definition' stamp: 'jmv 1/27/2022 11:36:54'!
+                        recompileSingleRecursion: force from: oldClass to: newClass
+	"Based on #recompile:from:to:mutate:
+	Older behavior of that method (before January 2022) did a single BFS on the hierarchy tree,
+	creating new classes when traveling downwards, and migrating instances before returning upwards.
+	This was changed to build the entire hierarchy, then validate with #canUpdateFrom: and only keep
+	the new classes, and migrate instances if #canUpdateFrom: answered true.
+	This breaks when recompiling the instance side of the Behavior hierarchy (Behavior, ClassDescription,
+	Class and Metaclass).
+	This method, appropriate for these classes does a single recursion, i.e. the pre-2022 behavior.
+	It uses a more restrictive check for existing instances: It will not allow recompilation if any instance is
+	executing any method, regardless of it being affected by the reshaping of the class or not. For this
+	reason, for other classes, we prefer the more careful check done by #canUpdateFrom:
+	
+	See senders."
+
+	(newClass == oldClass and: [force not]) ifTrue:[
+		^newClass].
+
+	currentClassIndex _ 0.
+	maxClassIndex _ oldClass withAllSubclasses size.
+
+	(oldClass == newClass) ifTrue: [
+		"Recompile from newClass without mutating"
+		self informUserDuring: [
+			newClass withAllSubclassesDo: [ :cl |
+				self showProgressFor: cl.
+				cl compileAll ]].
+		^newClass].
+
+	"Recompile oldClass to newClass"
+	self informUserDuring: [
+		self mutate: oldClass to: newClass.
+	].
+	^oldClass "now mutated to newClass"! !
+!ClassBuilder methodsFor: 'class mutation' stamp: 'eem 6/11/2008 16:47'!
+ mutate: oldClass to: newClass
+	"Mutate the old class and subclasses into newClass and subclasses.
+	Note: This method is slightly different from: #mutate:toSuper: since
+	here we are at the root of reshaping and have two distinct roots."
+
+	self showProgressFor: oldClass.
+	"Convert the subclasses"
+	oldClass subclasses do:[:oldSubclass| | newSubclass |
+		newSubclass := self reshapeClass: oldSubclass toSuper: newClass.
+		self mutate: oldSubclass to: newSubclass.
+	].
+	"And any obsolete ones"
+	oldClass obsoleteSubclasses do:[:oldSubclass| | newSubclass |
+		oldSubclass ifNotNil:[
+			newSubclass := self reshapeClass: oldSubclass toSuper: newClass.
+			self mutate: oldSubclass to: newSubclass.
+		].
+	].
+	self update: oldClass to: newClass.
+	^newClass! !
+!ProcessorScheduler methodsFor: 'services' stamp: 'jmv 1/27/2022 11:08:03'!
+    anyReceiverInStackInstanceOfClassIn: anArray
+	"Iterate over all methods currently in execution. Answer true if in any of them 'self class' an element of argument"
+	"
+	Processor anyReceiverInStackInstanceOfClassIn: { WorldMorph }
+	Processor anyReceiverInStackInstanceOfClassIn: { Text }
+	"
+	self
+		processesDo: [ :p | ]
+		withStackFramestDo: [ :p :c |
+			(anArray statePointsTo: c receiver class)
+				ifTrue: [ ^ true ]]
+		runningProcessSearchStart: nil.
+	^ false! !
+!ClassBuilder methodsFor: 'class definition' stamp: 'jmv 1/27/2022 11:48:17' prior: 16811187!
+                name: className subclassOf: newSuper type: type instanceVariableNames: instVarString classVariableNames: classVarString poolDictionaries: poolString category: category unsafe: unsafe
+	"Define a new class.
+	If unsafe is true do not run any validation checks.
+	This facility is provided to implement important system changes."
+	
+	| oldClass newClass organization instVars classVars force needNew oldCategory copyOfOldClass newCategory behaviorClasses |
+	
+	instVars _ Scanner new scanFieldNames: instVarString.
+	classVars _ (Scanner new scanFieldNames: classVarString) collect: [:x | x asSymbol].
+
+	"Validate the proposed name"
+	unsafe ifFalse:[(self validateClassName: className) ifFalse:[^nil]].
+	oldClass _ Smalltalk at: className ifAbsent: nil.
+	oldClass isBehavior 
+		ifFalse:[oldClass _ nil]. "Already checked in #validateClassName:"
+	copyOfOldClass _ oldClass copy.
+
+	unsafe ifFalse:[
+		"Run validation checks so we know that we have a good chance for recompilation"
+		(self validateSuperclass: newSuper forSubclass: oldClass) ifFalse:[^nil].
+		(self validateInstvars: instVars from: oldClass forSuper: newSuper) ifFalse:[^nil].
+		(self validateClassvars: classVars from: oldClass forSuper: newSuper) ifFalse:[^nil].
+		(self validateSubclassFormat: type from: oldClass forSuper: newSuper extra: instVars size) ifFalse:[^nil]].
+
+	"See if we need a new subclass"
+	needNew _ self needsSubclassOf: newSuper type: type instanceVariables: instVars from: oldClass.
+	needNew ifNil: [^nil]. "some error"
+
+	(needNew and:[unsafe not]) ifTrue:[
+		"Make sure we don't redefine any dangerous classes"
+		(self tooDangerousClasses includes: oldClass name) ifTrue:[
+			self error: oldClass name, ' cannot be changed'.
+		].
+		"Check if the receiver should not be redefined"
+		(oldClass notNil and:[oldClass shouldNotBeRedefined]) ifTrue:[
+			self notify: oldClass name asText allBold, 
+						' should not be redefined!! \Proceed to store over it.' withNewLines]].
+
+	needNew ifTrue:[
+		"Create the new class"
+		newClass _ self 
+			newSubclassOf: newSuper 
+			type: type 
+			instanceVariables: instVars
+			from: oldClass.
+		newClass ifNil: [ ^nil]. "Some error"
+		newClass setName: className.
+	] ifFalse:[
+		"Reuse the old class"
+		newClass _ oldClass.
+	].
+
+	"Install the class variables and pool dictionaries... "
+	force _ (newClass declare: classVarString) | (newClass sharing: poolString).
+
+	"... classify ..."
+	newCategory _ category withBlanksTrimmed.
+	organization _ Smalltalk organization.
+	oldClass ifNotNil: [oldCategory := (organization categoryOfElement: oldClass name) asSymbol].
+	organization classify: newClass name under: newCategory.
+
+	"... recompile ..."
+	(oldClass notNil and: [oldClass includesBehavior: Behavior])
+		ifTrue: [
+			"This is only true for Behavior, ClassDescription, Class and Metaclass. Special treatment."
+			unsafe ifFalse: [
+				behaviorClasses _ (oldClass withAllSubclasses select: [ :c | c isMeta not ]) asArray.
+				(Processor anyReceiverInStackInstanceOfClassIn: behaviorClasses) ifTrue: [
+					self error: oldClass name,' has some subInstance running some CompiledMethod.'.
+					^nil ]].
+			"Please see comment at this method"
+			newClass _ self recompileSingleRecursion: force from: oldClass to: newClass ]
+		ifFalse: [
+			"Other classes"
+			newClass _ self recompile: force from: oldClass to: newClass mutate: false ].
+	newClass isNil ifTrue: [ ^nil ].
+
+	"... export if not yet done ..."
+	(Smalltalk at: newClass name ifAbsent: nil) == newClass ifFalse:[
+		[Smalltalk at: newClass name put: newClass]
+			on: AttemptToWriteReadOnlyGlobal do:[:ex| ex resume: true].
+		Smalltalk flushClassNameCache.
+	].
+
+	self doneCompiling: newClass.
+	
+	"... notify interested clients ..."
+	oldClass ifNil: [
+		SystemChangeNotifier uniqueInstance classAdded: newClass inCategory: newCategory.
+		^ newClass].
+	SystemChangeNotifier uniqueInstance classDefinitionChangedFrom: copyOfOldClass to: newClass.
+	newCategory ~= oldCategory 
+		ifTrue: [SystemChangeNotifier uniqueInstance classRecategorized: newClass from: oldCategory to: newCategory ].
+	^newClass! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5052-SpecialRecompilationForBehaviorInstanceSide-JuanVuletich-2022Jan27-11h52m-jmv.002.cs.st----!
+
+'From Cuis 6.0 [latest update: #5049] on 27 January 2022 at 1:38:52 pm'!
+
+ListItemWrapper subclass: #SystemCategoryWrapper
+	instanceVariableNames: 'itemName'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Browser'!
+
+!classDefinition: #SystemCategoryWrapper category: #'Tools-Browser' stamp: 'Install-5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st 2/21/2022 14:50:20'!
+ListItemWrapper subclass: #SystemCategoryWrapper
+	instanceVariableNames: 'itemName'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Tools-Browser'!
+!Browser methodsFor: 'system category list' stamp: 'len 1/25/2022 08:19:55'!
+      selectedSystemCategory
+	"Answer the name of the selected system category or nil."
+
+	^selectedSystemCategory! !
+!Browser methodsFor: 'system category list' stamp: 'len 1/25/2022 08:48:29'!
+    setSelectedSystemCategory: aString
+	"Set the selected system category and update all other selections to be deselected."
+	selectedSystemCategory _ aString.
+	selectedClassName _ nil.
+	selectedMessageCategory _ nil.
+	selectedMessage _ nil.
+	self editSelection: (aString isNil ifTrue: [#none] ifFalse: [#newClass]).
+	metaClassIndicated _ false.
+	self setClassOrganizer.
+	self changed: #selectedSystemCategory.
+	self changed: #classList.
+	self changed: #messageCategoryList.
+	self changed: #messageList.
+	self changed: #relabel.
+	self changed: #instanceMessagesIndicated.
+	self changed: #classCommentIndicated.
+	self changed: #classMessagesIndicated.
+	self acceptedContentsChanged! !
+!Browser methodsFor: 'system category list' stamp: 'len 1/27/2022 13:19:44'!
+           setSelectedSystemCategoryTreeItem: aSystemCategoryWrapper
+	aSystemCategoryWrapper ifNotNil: [self setSelectedSystemCategory: aSystemCategoryWrapper withoutListWrapper]! !
+!Browser methodsFor: 'system category list' stamp: 'len 1/27/2022 13:12:19'!
+        systemCategoryRoots
+	"Answer the roots of the forest of system categories."
+	| subcategories roots name |
+	subcategories _ Dictionary new.
+	self systemCategoryList do: [:each|
+		name _ (each findTokens: '-') first.
+		(subcategories at: name ifAbsentPut: [OrderedCollection new]) add: each].
+	roots _ OrderedCollection new.
+	self systemCategoryList do: [:each|
+		name _ (each findTokens: '-') first.
+		(roots includes: name) ifFalse:
+			[(subcategories at: name) size > 1 ifTrue: [roots add: name] ifFalse: [roots add: (subcategories at: name) first]]].
+	^ roots collect: [:each| SystemCategoryWrapper with: each name: each model: self]! !
+!HierarchicalListMorph methodsFor: 'accessing' stamp: 'len 6/7/2020 05:36:17'!
+                  roots
+	"Answer the root items. These are instances of IndentingListItemMorph and submorphs of the scroller."
+	| list |
+	list _ self getList collect: [:each| each withoutListWrapper].
+	^ scroller submorphs select: [:each| list includes: each withoutListWrapper]! !
+!BrowserWindow methodsFor: 'GUI building' stamp: 'len 1/27/2022 13:13:34'!
+             buildMorphicSystemCategoryList
+	^(HierarchicalListMorph
+		model: model
+		listGetter: #systemCategoryRoots
+		indexGetter: #selectedSystemCategory
+		indexSetter: #setSelectedSystemCategoryTreeItem:
+		mainView: self
+		menuGetter: #systemCategoryMenu
+		keystrokeAction: #systemCatListKey:from:)
+			autoDeselect: true;
+			autoExpand: true;
+			yourself! !
+!ListItemWrapper methodsFor: 'as yet unclassified' stamp: 'len 6/7/2020 05:02:26'!
+               isAncestorOf: anObject
+	^ false! !
+!ListItemWrapper methodsFor: 'as yet unclassified' stamp: 'len 6/6/2020 16:29:09' overrides: 16902975!
+                      printOn: aStream
+	aStream nextPutAll: self asString! !
+!SystemCategoryWrapper methodsFor: 'accessing' stamp: 'len 1/27/2022 13:33:52' overrides: 16881049!
+     contents
+	| prefix subcategories |
+	(item includes: $-) ifTrue: [^ #()].
+	prefix _ item, '-'.
+	subcategories _ OrderedCollection new.
+	model systemCategoryList do: [:each|
+		(each beginsWith: prefix)
+			ifTrue: [subcategories add: (each copyFrom: prefix size + 1 to: each size)]].
+	^ subcategories collect: [:each| self class with: prefix, each name: each model: model]! !
+!SystemCategoryWrapper methodsFor: 'testing' stamp: 'len 6/6/2020 12:48:40' overrides: 16881045!
+          canBeDragged
+	^ false! !
+!SystemCategoryWrapper methodsFor: 'testing' stamp: 'len 1/26/2022 07:00:37' overrides: 50334027!
+     isAncestorOf: aString
+	^ (item includes: $-) not and: [aString beginsWith: item, '-']! !
+!SystemCategoryWrapper methodsFor: 'private' stamp: 'len 6/6/2020 12:46:34'!
+                          setItem: anObject name: aString model: aModel
+	item _ anObject.
+	model _ aModel.
+	itemName _ aString! !
+!SystemCategoryWrapper methodsFor: 'converting' stamp: 'len 6/6/2020 16:28:40' overrides: 16881037!
+                    asString
+	^ itemName! !
+!SystemCategoryWrapper class methodsFor: 'instance creation' stamp: 'len 6/6/2020 12:46:06'!
+           with: anObject name: aString model: aModel
+	^ self new  setItem: anObject name: aString model: aModel! !
+!Browser methodsFor: 'annotation' stamp: 'len 1/25/2022 08:20:16' prior: 16795128 overrides: 16820468!
+                annotation
+	"Provide a line of content for an annotation pane, representing information about the method associated with the selected class and selector in the receiver."
+
+	|  aSelector aClass |
+	(aClass _ self selectedClassOrMetaClass)
+		ifNil: [
+			self selectedSystemCategory ifNotNil: [ :sysCat |
+				^self annotationForSystemCategory: sysCat ].
+			^ ''].
+	self editSelection == #editComment
+		ifTrue: [^ self annotationForSelector: #Comment ofClass: aClass].
+	self isEditingExistingClass 
+		ifTrue: [^ self annotationForSelector: #Definition ofClass: aClass].
+	(aSelector _ self selectedMessageName)
+		ifNil: [^ ''].
+	^ self annotationForSelector: aSelector ofClass: aClass! !
+!Browser methodsFor: 'class functions' stamp: 'len 1/27/2022 13:12:42' prior: 16795273!
+                              defineClass: defString notifying: aRequestor  
+	"The receiver's textual content is a request to define a new class. The
+	source code is defString. If any errors occur in compilation, notify
+	aRequestor."
+	| oldClass class newClassName defTokens keywdIx |
+	oldClass _ self selectedClassOrMetaClass.
+	defTokens _ defString findTokens: Character separators.
+	keywdIx _ defTokens findFirst: [ :x | x beginsWith: 'category' ].
+	keywdIx _ defTokens findFirst: [ :x | '*subclass*' match: x ].
+	newClassName _ (defTokens at: keywdIx+1) copyWithoutAll: '#()'.
+	((oldClass isNil or: [ oldClass theNonMetaClass name asString ~= newClassName ])
+		and: [ Smalltalk includesKey: newClassName asSymbol ]) ifTrue: [
+			"Attempting to define new class over existing one when
+				not looking at the original one in this browser..."
+			(self confirm: (newClassName bold , ' is an existing class in this system.
+Redefining it might cause serious problems.
+Is this really what you want to do?'))
+				ifFalse: [ ^ false ]].
+	"ar 8/29/1999: Use oldClass superclass for defining oldClass
+	since oldClass superclass knows the definerClass of oldClass."
+	oldClass ifNotNil: [ oldClass _ oldClass superclass ].
+	class _ Compiler
+				evaluate: defString
+				notifying: aRequestor
+				logged: true.
+	(class isKindOf: Behavior)
+		ifTrue: [
+				self changed: #systemCategoryRoots.
+				self changed: #classList.
+				self changed: #clearUserEdits.
+				self setClass: class selector: nil.
+				"self clearUserEditFlag; editClass."
+				^ true ]
+		ifFalse: [ ^ false ]! !
+!Browser methodsFor: 'class list' stamp: 'len 1/27/2022 13:28:49' prior: 16795505!
+              defaultClassList
+	"Answer an array of the class names of the selected category. Answer an 
+	empty array if no selection exists."
+
+	| answer prefix |
+	selectedSystemCategory ifNil: [^ #()].
+	answer _ systemOrganizer listAtCategoryNamed: selectedSystemCategory.
+	prefix _ selectedSystemCategory, '-'.
+	systemOrganizer categories do: [:each| (each beginsWith: prefix) ifTrue: [answer _ answer, (systemOrganizer listAtCategoryNamed: each)]].
+	^ answer! !
+!Browser methodsFor: 'class list' stamp: 'len 1/25/2022 08:44:48' prior: 16795595!
+          recent
+	"Let the user select from a list of recently visited classes.  11/96 stp.
+	 12/96 di:  use class name, not classes themselves.
+	 : dont fall into debugger in empty case"
+
+	| className class recentList |
+	recentList _ self class recentClasses select: [:n | Smalltalk includesKey: n].
+	recentList size = 0 ifTrue: [^ Smalltalk beep].
+	className _ (SelectionMenu selections: recentList) startUpMenu.
+	className ifNil: [^ self].
+	class _ Smalltalk at: className.
+	self setSelectedSystemCategory: class category.
+	self selectClass: class! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:12:26' prior: 16796311!
+                              addSystemCategory
+	"Prompt for a new category name and add it before the
+	current selection, or at the end if no current selection"
+	
+	| newName |
+	newName _ self newSystemCategoryNameIfNone: [ ^self ].	
+	systemOrganizer
+		addCategory: newName
+		before: selectedSystemCategory.
+	self setSelectedSystemCategory: newName.
+	self changed: #systemCategoryRoots! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:12:30' prior: 16796329!
+                       alphabetizeSystemCategories
+	systemOrganizer sortCategories.
+	self setSelectedSystemCategory: nil.
+	self changed: #systemCategoryRoots! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:12:36' prior: 16796359!
+                    changeSystemCategories: aString 
+	"Update the class categories by parsing the argument aString."
+
+	systemOrganizer changeFromString: aString.
+	self changed: #systemCategoryRoots.
+	^ true! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/25/2022 08:41:44' prior: 16796368!
+editSystemCategories
+	"Retrieve the description of the class categories of the system organizer."
+
+	self setSelectedSystemCategory: nil.
+	self editSelection: #editSystemCategories.
+	self changed: #editSystemCategories.
+	self acceptedContentsChanged! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:12:48' prior: 16796390!
+  moveAllToOtherSystemCategory
+	"If a class category is selected, prompt user for category to move to,
+	create a Confirmer so the user can verify that all the classes in current category
+ 	should be moved to the selected category."
+	| newSystemCategory |
+	selectedSystemCategory ifNil: [ ^ self ].
+	newSystemCategory _ Smalltalk systemCategoryFromUserWithPrompt: 'Move classes to System Category...'.
+	(newSystemCategory notNil and: [
+		self classList size > 0 and: [ self confirm: 'Are you sure you want to
+move classes from ' , selectedSystemCategory , ' 
+to ' , newSystemCategory , '?' ]]) ifTrue: [
+		"Safer this way (#classList will be a collection of strings with spaces and who knows what in the future.  So let's just get the classes we need directly)"
+		(SystemOrganization classesAt: selectedSystemCategory) do: [ :eaClass |
+			eaClass category: newSystemCategory ].
+		self changed: #systemCategoryRoots ].! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:12:53' prior: 16796422!
+        moveSystemCategoryBottom
+	selectedSystemCategory ifNil: [^ self].
+	systemOrganizer moveCategoryBottom: selectedSystemCategory.
+	self changed: #systemCategoryRoots! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:12:58' prior: 16796431!
+                        moveSystemCategoryDown
+	selectedSystemCategory ifNil: [^ self].
+	systemOrganizer moveCategoryDown: selectedSystemCategory.
+	self changed: #systemCategoryRoots! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:13:03' prior: 16796440!
+                            moveSystemCategoryTop
+	selectedSystemCategory ifNil: [^ self].
+	systemOrganizer moveCategoryTop: selectedSystemCategory.
+	self changed: #systemCategoryRoots! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:13:07' prior: 16796449!
+                              moveSystemCategoryUp
+	selectedSystemCategory ifNil: [^ self].
+	systemOrganizer moveCategoryUp: selectedSystemCategory.
+	self changed: #systemCategoryRoots! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:13:13' prior: 16796493!
+removeSystemCategory
+	"If a class category is selected, create a Confirmer so the user can 
+	verify that the currently selected class category and all of its classes
+ 	should be removed from the system. If so, remove it."
+
+	selectedSystemCategory ifNil: [^ self].
+	(self classList size = 0
+		or: [self confirm: 'Are you sure you want to
+remove this system category 
+and all its classes?'])
+		ifTrue: [
+			systemOrganizer removeSystemCategory: selectedSystemCategory.
+			self setSelectedSystemCategory: nil.
+			self changed: #systemCategoryRoots ]! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:13:21' prior: 16796513!
+                        renameSystemCategory
+	"Prompt for a new category name and add it before the
+	current selection, or at the end if no current selection
+	
+	21-Mar-2012 jmv Note: This is not recorded appropriately in change sets.
+	The easiest solution is to trigger #classRecategorized for all classes in the category.
+	But this is not a real solution, as the resulting changeset would not do a rename,
+	but create a new category (that would go to the bottom) with all the classes.
+	
+	In the meantime, disable the menu entry. This is not so important after all.
+	"
+	| oldName newName |
+	selectedSystemCategory ifNil: [ ^ self].  "no selection"
+	oldName _ selectedSystemCategory.
+	newName _ self
+		request: 'New category name?'
+		initialAnswer: oldName
+		verifying: [:aString| aString notEmpty and: [aString ~= oldName]]
+		do: [:aString|
+			newName _ aString asSymbol.
+			systemOrganizer
+				renameCategory: oldName
+				toBe: newName.
+			self setSelectedSystemCategory: newName.
+			self changed: #systemCategoryRoots]! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/25/2022 08:46:41' prior: 16796549!
+                      systemCategoryBrowser
+	"Create a new system category browser with initial textual 
+	contents set to aString."
+
+	| newBrowser |
+	selectedSystemCategory
+		ifNotNil: [
+			newBrowser _ Browser new.
+			newBrowser setSelectedSystemCategory: self selectedSystemCategory.
+			newBrowser setClass: self selectedClassOrMetaClass selector: self selectedMessageName.
+			^newBrowser].
+	^nil! !
+!Browser methodsFor: 'system category functions' stamp: 'len 1/27/2022 13:13:26' prior: 16796564!
+  updateSystemCategories
+	"The class categories were changed in another browser. The receiver must 
+	reorganize its lists based on these changes."
+
+	self changed: #systemCategoryRoots! !
+!Browser methodsFor: 'initialization' stamp: 'len 1/25/2022 08:45:06' prior: 16796701!
+                setClass: aBehavior selector: aSymbol
+	"Set the state of a new, uninitialized Browser."
+
+	| isMeta aClass messageCatIndex |
+	aBehavior ifNil: [^ self].
+	aBehavior isMeta
+		ifTrue: [
+			isMeta _ true.
+			aClass _ aBehavior soleInstance]
+		ifFalse: [
+			isMeta _ false.
+			aClass _ aBehavior].
+	self setSelectedSystemCategory: aClass category.
+	self selectClass: aClass.
+	self metaClassIndicated: isMeta.
+	aSymbol ifNil: [^ self].
+	messageCatIndex _ aBehavior organization numberOfCategoryOfElement: aSymbol.
+	self messageCategoryListIndex: (messageCatIndex > 0
+		ifTrue: [messageCatIndex + 1]
+		ifFalse: [0]).
+	messageCatIndex = 0 ifTrue: [^ self].
+	self messageListIndex: (
+		(aBehavior organization listAtCategoryNumber: messageCatIndex)
+			indexOf: aSymbol).! !
+!HierarchyBrowser methodsFor: 'initialization' stamp: 'len 1/27/2022 13:17:22' prior: 16867924 overrides: 16795422!
+                classListIndex: newIndex
+	"Cause system organization to reflect appropriate category"
+
+	| newClassName index |
+
+	(classList isInBounds: newIndex) ifTrue: [
+		newClassName _ (classList at: newIndex) withoutLeadingBlanks.
+		selectedSystemCategory _ systemOrganizer categoryOfElement: newClassName].
+	index _ super classListIndex: newIndex.
+	self changed: #systemCategorySingleton.
+	^ index! !
+!Categorizer methodsFor: 'accessing' stamp: 'len 1/27/2022 13:37:32' prior: 16800846!
+   listAtCategoryNamed: categoryName
+	"Answer the array of elements associated with the name, categoryName."
+
+	^ self listAtCategoryNumber: (categoryArray indexOf: categoryName ifAbsent: [^ #()])! !
+!InnerHierarchicalListMorph methodsFor: 'drawing' stamp: 'jmv 8/2/2021 14:45:19' prior: 16869615!
+                          drawLineToggleToTextFor: anIndentingListItemMorph on: aCanvas lineColor: lineColor hasToggle: hasToggle
+	"If I am not the only item in my container, draw the line between:
+		- my left edge
+		- and my text left edge"
+
+	| aMorphCenter hLineY hLineLeft rect right |
+	anIndentingListItemMorph isSoleItem ifTrue: [ ^ self ].
+	hasToggle ifFalse: [
+		rect _ anIndentingListItemMorph toggleRectangle.
+		aMorphCenter _ anIndentingListItemMorph externalize: rect center.
+		right _ (anIndentingListItemMorph externalize: rect rightCenter) x.
+		hLineY _ aMorphCenter y.
+		hLineLeft _ aMorphCenter x - 1.
+		aCanvas
+			line: hLineLeft @ hLineY
+			to: right @ hLineY
+			width: 1
+			color: lineColor ]! !
+!InnerHierarchicalListMorph methodsFor: 'drawing' stamp: 'len 1/23/2022 11:48:29' prior: 16869640!
+            drawLinesFor: anIndentingListItemMorph on: aCanvas lineColor: lineColor 
+	anIndentingListItemMorph indentLevel > 0 ifTrue: [
+		| hasToggle |
+		hasToggle _ anIndentingListItemMorph hasToggle.
+	
+		"Draw line from toggle to text"
+		self
+			drawLineToggleToTextFor: anIndentingListItemMorph
+			on: aCanvas
+			lineColor: lineColor
+			hasToggle: hasToggle.
+
+		"Draw the line from toggle to the nextSibling's toggle"
+		anIndentingListItemMorph nextSibling ifNotNil: [
+			self
+				drawLinesToNextSiblingFor: anIndentingListItemMorph
+				on: aCanvas
+				lineColor: lineColor
+				hasToggle: hasToggle ]].
+
+	"If it have children and am expanded, draw a line to its first child"
+	(anIndentingListItemMorph firstChild notNil and: [
+			anIndentingListItemMorph isExpanded ]) ifTrue: [
+		self
+			drawLinesToFirstChildFor: anIndentingListItemMorph
+			on: aCanvas
+			lineColor: lineColor]! !
+!InnerHierarchicalListMorph methodsFor: 'drawing' stamp: 'jmv 7/18/2014 09:30' prior: 16869668!
+                     drawLinesOn: aCanvas 
+	| lColor bottomY topY tx clipRect |
+	lColor _ Theme current line.
+	tx _ aCanvas currentTransformation.
+	clipRect _ aCanvas clipRect.
+	topY _ (tx internalizePosition: clipRect topLeft) y min: (tx internalizePosition: clipRect topRight) y.
+	bottomY _ (tx internalizePosition: clipRect bottomLeft) y max: (tx internalizePosition: clipRect bottomRight) y.
+	self submorphs do: [ :submorph | 
+		(submorph isExpanded or: [
+			(submorph morphPosition y between: topY and: bottomY) or: [
+				submorph nextSibling notNil and: [
+					submorph nextSibling morphPosition y between: topY and: bottomY ] ] ])
+		ifTrue: [
+			self
+				drawLinesFor: submorph
+				on: aCanvas
+				lineColor: lColor ]]
+	! !
+!InnerHierarchicalListMorph methodsFor: 'drawing' stamp: 'jmv 9/20/2012 21:49' prior: 16869693!
+                          drawLinesToFirstChildFor: anIndentingListItemMorph on: aCanvas lineColor: lineColor
+	"Draw line from me to next sibling"
+
+	| vLineX vLineTop vLineBottom childCenter firstChild |
+	"child in the drawn tree. it is acually our submorph"
+	firstChild _ anIndentingListItemMorph firstChild.
+	childCenter _ firstChild externalize: firstChild toggleRectangle center.
+	vLineX _ childCenter x - 1.
+	vLineTop _ (anIndentingListItemMorph
+		externalize: anIndentingListItemMorph morphExtent) y.
+	firstChild hasToggle
+		ifTrue: [ vLineBottom _ childCenter y - 7 ]
+		ifFalse: [ vLineBottom _ childCenter y ].
+	aCanvas
+		line: vLineX @ vLineTop
+		to: vLineX @vLineBottom
+		width: 1
+		color: lineColor! !
+!HierarchicalListMorph methodsFor: 'commands' stamp: 'len 6/7/2020 05:36:50' prior: 16867270!
+                   expandAllAsPer: aBlock
+
+	scroller submorphs isEmpty ifTrue: [^self].
+	self roots do: [:each| each beFullyExpandedAsPer: aBlock].
+	scroller adjustExtent.
+	self setScrollDeltas! !
+!HierarchicalListMorph methodsFor: 'selection' stamp: 'len 6/7/2020 05:31:21' prior: 16867700!
+               privateVisualSelection: item
+	"Called internally to set a new selection.
+	Does not update model"
+	| index |
+	item isNil ifTrue: [^ self privateVisualSelectionIndex: 0].
+	index _ self indexForItem: item.
+	index > 0 ifFalse:
+		[self expandAllAsPer: [:each| each complexContents isAncestorOf: item withoutListWrapper].
+		index _ self indexForItem: item].
+	self privateVisualSelectionIndex: index! !
+!BrowserWindow methodsFor: 'GUI building' stamp: 'len 1/27/2022 13:08:33' prior: 16797091!
+                         buildMorphicWindow
+	"Create a pluggable version of all the morphs for a Browser in Morphic"
+
+	| upperPanes messageCatList messageList systemCatList classList |
+
+	systemCatList _ self buildMorphicSystemCategoryList.
+	classList _ self buildMorphicClassList.
+	messageCatList _ self buildMorphicMessageCatList.
+	messageList _ self buildMorphicMessageList.
+	
+"	systemCatList rightSibling: classList."
+	classList leftSibling: systemCatList rightSibling: messageCatList.
+	messageCatList leftSibling: classList rightSibling: messageList.
+	messageList leftSibling: messageCatList.
+	
+	classList makeItemsDraggable.
+"	systemCatList 
+		acceptDropsFrom: classList 
+		performing: #categorizeUnderCategoryAt:class:
+		whenOutsideList: #categorizeUnderNewCategoryClass:.
+"		
+	messageList makeItemsDraggable.
+	messageCatList 
+		acceptDropsFrom: messageList 
+		performing: #categorizeUnderCategoryAt:selector: 
+		whenOutsideList: #categorizeUnderNewCategorySelector:.
+	
+	upperPanes _ LayoutMorph newRow.
+	upperPanes
+		addMorph: systemCatList proportionalWidth: 0.2;
+		addAdjusterAndMorph: (self buildMorphicClassColumnWith: classList) proportionalWidth: 0.2;
+		addAdjusterAndMorph: messageCatList proportionalWidth: 0.2;
+		addAdjusterAndMorph: messageList proportionalWidth: 0.4.
+
+	self layoutMorph
+		addMorph: upperPanes proportionalHeight: 0.3;
+		addAdjusterAndMorph: self buildLowerPanes proportionalHeight: 0.7.
+
+	model changed: #editSelection! !
+!BrowserWindow methodsFor: 'menu commands' stamp: 'len 1/25/2022 08:21:41' prior: 16797329!
+            openSystemCategoryBrowser
+	"Create and schedule a new system category browser with initial textual
+	contents set to aString."
+
+	model systemCategoryBrowser ifNotNil: [ :newBrowser |
+		newBrowser selectedSystemCategory ifNotNil: [ :category |
+			BrowserWindow
+				openNoSysCat: newBrowser
+				label: 'Classes in category ', category ]]! !
+!BrowserWindow methodsFor: 'updating' stamp: 'len 1/25/2022 08:20:58' prior: 16797373 overrides: 16821953!
+   classAdded: addedClass
+
+	self model selectedSystemCategory = addedClass category 
+		ifTrue: [ self model changed: #classList ]! !
+!BrowserWindow methodsFor: 'updating' stamp: 'len 1/25/2022 08:21:31' prior: 16797380 overrides: 16821960!
+                   classRenamed: aClass from: oldClassName to: newClassName inCategory: aCategoryName
+
+	| currentSelectedClass |
+	
+	self canDiscardEdits ifTrue: [
+		self model selectedSystemCategory = aCategoryName ifTrue: [
+			currentSelectedClass := self model selectedClass.
+			currentSelectedClass ifNil: [ 
+				self model originalSelectedClassName = oldClassName ifTrue: [ 
+					currentSelectedClass := aClass ]].
+			
+		 	self model changed: #classList.
+			self model selectClass: currentSelectedClass ]]! !
+!BrowserWindow methodsFor: 'commands' stamp: 'len 1/25/2022 08:45:23' prior: 16797559!
+                           findClass
+
+	| scopedClassNames |
+	
+	scopedClassNames _ model potentialClassNames asOrderedCollection.
+	
+	self class 
+		findClassFrom: scopedClassNames 
+		ifFound: [:foundClass |
+			model setSelectedSystemCategory: foundClass category.
+			model selectClass: foundClass ]! !
+!CodeFileBrowserWindow methodsFor: 'GUI building' stamp: 'len 1/25/2022 09:07:08' prior: 16818367 overrides: 50334569!
+                        buildMorphicWindow
+	"Create a pluggable version of all the views for a Browser, using Morphic widgets."
+
+	| sysCatList msgCatList upperPanes clsLayout clsList msgList |
+	model setSelectedSystemCategory: model systemCategoryList first.
+	sysCatList _ PluggableListMorph
+			model: model 
+			listGetter: #systemCategorySingleton
+			indexGetter: #indexIsOne 
+			indexSetter: #indexIsOne:
+			mainView: self
+			menuGetter: #codeFileListMenu
+			keystrokeAction: #codeFileListKey:from:.
+	sysCatList hideScrollBarsIndefinitely.
+	
+	msgCatList _ PluggableListMorph
+			model: model 
+			listGetter: #messageCategoryList
+			indexGetter: #messageCategoryListIndex 
+			indexSetter: #messageCategoryListIndex:
+			mainView: self
+			menuGetter: #messageCategoryMenu
+			keystrokeAction: nil.
+
+	clsList := self buildMorphicClassList.
+	clsLayout := self buildMorphicClassColumnWith: clsList.
+	msgList := self buildMorphicMessageList.
+	sysCatList rightSibling: clsList.
+	clsList leftSibling: sysCatList rightSibling: msgCatList.
+	msgCatList leftSibling: clsList rightSibling: msgList.
+	msgList leftSibling: msgCatList.
+
+	upperPanes _ LayoutMorph newRow.
+	upperPanes
+		addMorph: clsLayout proportionalWidth: 0.3;
+		addAdjusterAndMorph: msgCatList proportionalWidth: 0.3;
+		addAdjusterAndMorph: msgList proportionalWidth: 0.4.
+
+	self layoutMorph
+		addMorph: sysCatList fixedHeight: Preferences standardCodeFont lineSpacing + 10;
+		addAdjusterAndMorph: upperPanes proportionalHeight: 0.3;
+		addAdjusterAndMorph: self buildLowerPanes proportionalHeight: 0.7.
+	model changed: #editSelection! !
+!CodeFileBrowserWindow methodsFor: 'commands' stamp: 'len 1/25/2022 09:08:23' prior: 16818655 overrides: 50334658!
+                findClass
+	| pattern foundClass classNames index foundCodeFile |
+	self okToChange ifFalse: [^ self flash].
+	self request: 'Class name?' do: [:aString|
+		aString isEmpty ifFalse:
+			[pattern _ aString asLowercase.
+			classNames _ Set new.
+			classNames addAll: model caseCodeSource classDictionary keys.
+			classNames _ classNames asArray select: 
+				[:n | (n asLowercase indexOfSubCollection: pattern startingAt: 1) > 0].
+			classNames isEmpty ifFalse:
+				[index _ classNames size = 1
+					ifTrue: [1]
+					ifFalse: [(PopUpMenu labelArray: classNames lines: #()) startUpMenu].
+				index = 0 ifFalse:
+					[foundCodeFile _ nil.
+					foundClass _ nil.
+					(model caseCodeSource classDictionary includesKey: (classNames at: index))
+						ifTrue:
+							[foundClass _ model caseCodeSource classDictionary at: (classNames at: index).
+							foundCodeFile _ model caseCodeSource].
+					foundClass ifNotNil:
+						[model setSelectedSystemCategory: foundCodeFile name asSymbol.
+						model classListIndex: (model classList indexOf: foundClass name)]]]]]! !
+
+BrowserWindow removeSelector: #buildMorphicSystemCatList!
+
+!methodRemoval: BrowserWindow #buildMorphicSystemCatList stamp: 'Install-5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st 2/21/2022 14:50:20'!
+buildMorphicSystemCatList
+
+	^PluggableListMorph
+		model: model
+		listGetter: #systemCategoryList
+		indexGetter: #systemCategoryListIndex
+		indexSetter: #systemCategoryListIndex:
+		mainView: self
+		menuGetter: #systemCategoryMenu
+		keystrokeAction: #systemCatListKey:from:!
+
+BrowserWindow removeSelector: #buildMorphicSystemCategoryTree!
+
+Browser removeSelector: #systemCategoryTree!
+
+Browser removeSelector: #systemCategoryListIndex:!
+
+!methodRemoval: Browser #systemCategoryListIndex: stamp: 'Install-5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st 2/21/2022 14:50:20'!
+systemCategoryListIndex: anInteger
+	"Set the selected system category index to be anInteger. Update all other 
+	selections to be deselected."
+	
+	| index systemCategoryList |
+	
+	systemCategoryList _ self systemCategoryList.
+	index _ systemCategoryList ifInBounds: anInteger ifNot: 0.
+	
+	selectedSystemCategory _ index = 0 ifFalse: [ systemCategoryList at: index ].
+	selectedClassName _ nil.
+	selectedMessageCategory _ nil.
+	selectedMessage _ nil.
+	self editSelection: ( index = 0 ifTrue: [#none] ifFalse: [#newClass]).
+	metaClassIndicated _ false.
+	self setClassOrganizer.
+	self changed: #systemCategorySelectionChanged.
+	self changed: #systemCategoryListIndex.	"update my selection"
+	self changed: #classList.
+	self changed: #messageCategoryList.
+	self changed: #messageList.
+	self changed: #relabel.
+	self changed: #instanceMessagesIndicated.
+	self changed: #classCommentIndicated.
+	self changed: #classMessagesIndicated.
+	self acceptedContentsChanged!
+
+Browser removeSelector: #selectedSystemCategoryName!
+
+!methodRemoval: Browser #selectedSystemCategoryName stamp: 'Install-5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st 2/21/2022 14:50:20'!
+selectedSystemCategoryName
+	"Answer the name of the selected system category or nil."
+
+	^selectedSystemCategory!
+
+Browser removeSelector: #systemCategoryListIndex!
+
+!methodRemoval: Browser #systemCategoryListIndex stamp: 'Install-5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st 2/21/2022 14:50:20'!
+systemCategoryListIndex
+	"Answer the index of the selected class category."
+
+	systemOrganizer ifNil: [ ^0 ].
+	selectedSystemCategory ifNil: [ ^0 ].
+	^self systemCategoryList indexOf: selectedSystemCategory!
+
+Browser removeSelector: #categorizeUnderNewCategoryClass:!
+
+!methodRemoval: Browser #categorizeUnderNewCategoryClass: stamp: 'Install-5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st 2/21/2022 14:50:20'!
+categorizeUnderNewCategoryClass: aClassName
+
+	| newCategory |
+	
+	newCategory _ self newSystemCategoryNameIfNone: [ ^self ].
+	
+	systemOrganizer
+		addCategory: newCategory;
+		classify: aClassName withBlanksTrimmed asSymbol under: newCategory.
+		
+	self changed: #systemCategoryList.
+	self changed: #classList.!
+
+Browser removeSelector: #categorizeUnderCategoryAt:class:!
+
+!methodRemoval: Browser #categorizeUnderCategoryAt:class: stamp: 'Install-5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st 2/21/2022 14:50:20'!
+categorizeUnderCategoryAt: aSystemCategoryIndex class: aClassName 
+
+	systemOrganizer classify: aClassName withBlanksTrimmed asSymbol under: (self systemCategoryList at: aSystemCategoryIndex).
+	self changed: #classList!
+
+Browser removeSelector: #selectCategoryForClass:!
+
+!methodRemoval: Browser #selectCategoryForClass: stamp: 'Install-5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st 2/21/2022 14:50:20'!
+selectCategoryForClass: theClass
+
+	self systemCategoryListIndex: (self systemCategoryList indexOf: theClass category)
+!
+
+SystemOrganization
+        renameCategory: #'Theme-Core' toBe: #'Graphics-Themes';
+        renameCategory: #'System-TextAttributes' toBe: #'System-Text-Attributes';
+        renameCategory: #'System-FileMan-Core' toBe: #'System-File System';
+        renameCategory: #'Exceptions Kernel' toBe: #'Exceptions-Kernel';
+        renameCategory: #'Exceptions Extensions' toBe: #'Exceptions-Extensions'!
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5053-HierarchicalSystemCategories-LucianoEstebanNotarfrancesco-2022Jan27-13h04m-len.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5053] on 31 January 2022 at 1:40:48 pm'!
+!Browser methodsFor: 'class list' stamp: 'len 1/28/2022 16:21:42' prior: 50334156!
+            defaultClassList
+	"Answer an array of the class names of the selected category. Answer an 
+	empty array if no selection exists."
+	| answer |
+	selectedSystemCategory ifNil: [^ #()].
+	answer _ systemOrganizer listAtCategoryNamed: selectedSystemCategory.
+	"If it's a top category, include the classes of all its subcategories:"
+	(selectedSystemCategory includes: $-) ifFalse:
+		[| prefix |
+		prefix _ selectedSystemCategory, '-'.
+		systemOrganizer categories do: [:each| (each beginsWith: prefix) ifTrue: [answer _ answer, (systemOrganizer listAtCategoryNamed: each)]]].
+	^ answer! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5054-HierarchicalSystemCategories-fix-LucianoEstebanNotarfrancesco-2022Jan31-13h40m-len.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5053] on 31 January 2022 at 1:48:30 pm'!
+!MethodReference methodsFor: 'setting' stamp: 'len 1/30/2022 05:52:06'!
+          indentLevel: anInteger
+	self removeStringVersionPrefix.
+	stringVersion _ (String streamContents: [:aStream| anInteger timesRepeat: [aStream nextPutAll: '    ']]), stringVersion! !
+!MessageSet methodsFor: 'message list' stamp: 'len 1/30/2022 05:51:23' prior: 50332629!
+                    sortByClassHierarchy
+	"Sort the message-list by class / selector. List classes in hierarchical order."
+	
+	| aClass bClass classes classesAndPositions i |
+
+	classes _ Set new.
+	messageList do: [ :methodReference |
+		methodReference actualClass ifNotNil: [ :actualClass | classes add: actualClass ]].
+	classesAndPositions _ Dictionary new.
+	i _ 1.
+	Smalltalk hierarchySorted: classes do: [ :each |
+		classesAndPositions at: each put: i.
+		i _ i + 1 ].
+	
+	messageList _ messageList sort: [ :a :b |
+		(a classSymbol = b classSymbol and: [ b classIsMeta = b classIsMeta ])
+			ifTrue: [
+				a methodSymbol == #Comment
+					ifTrue: [ true ]
+					ifFalse: [
+						b methodSymbol == #Comment
+							ifTrue: [ false ]
+							ifFalse: [ a methodSymbol < b methodSymbol ]]]
+			ifFalse: [
+				aClass _ a actualClass.
+				bClass _ b actualClass.
+				aClass isNil == bClass isNil
+					ifTrue: [
+						aClass isNil
+							ifTrue: [a classSymbol < b classSymbol]
+							ifFalse: [(classesAndPositions at: aClass) < (classesAndPositions at: bClass)]]
+					ifFalse: [aClass isNil]]].
+	messageList do: [ :each |
+		each indentLevel:
+			(each actualClass theNonMetaClass allSuperclasses select: [ :c |
+				classesAndPositions includesKey: c ]) size ].
+	self changed: #messageList.! !
+!MethodReference methodsFor: 'setting' stamp: 'len 1/30/2022 05:49:54' prior: 16890498!
+                          removeStringVersionPrefix
+	| i prefixCoda |
+	prefixCoda _ '] - '.
+	i _ stringVersion findString: prefixCoda.
+	i = 0 ifFalse: [stringVersion _ stringVersion copyFrom: i + prefixCoda size to: stringVersion size].
+	stringVersion _ stringVersion withoutLeadingBlanks! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5055-MessageSet-indenting-useSpaces-LucianoEstebanNotarfrancesco-2022Jan31-13h40m-len.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5053] on 31 January 2022 at 1:56:49 pm'!
+!BitBltBoundsFinderCanvas methodsFor: 'morphic' stamp: 'len 1/31/2022 13:55:54' prior: 16789013!
+              updateBoundsIn: aWorldMorph addDamageTo: aDamageRecorder
+
+	aWorldMorph submorphsDo: [ :morph |
+		self fullAddRedrawRect: morph to: aDamageRecorder ].
+	self updateHandsDisplayBounds: aWorldMorph.! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5056-FixSlowdownWhenUsingHalos-JuanVuletich-2022Jan31-13h49m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5056] on 1 February 2022 at 7:53:06 pm'!
+!Categorizer methodsFor: 'accessing' stamp: 'len 2/1/2022 19:45:05'!
+   renameCategory: oldCatString to: newCatString
+	"Rename a category. No action if new name already exists, or if old name does not exist."
+	
+	| index newCategory |
+	
+	newCategory _ newCatString withBlanksTrimmed.
+	"new name exists, so no action"
+	(categoryArray indexOf: newCategory) > 0 ifTrue: [^ self].
+	
+	"old name not found, so no action"
+	(index _ categoryArray indexOf: oldCatString) = 0 ifTrue: [^ self].	
+	
+	"need to change identity so smart list update will notice the change"
+	categoryArray _ categoryArray copy.  
+	categoryArray at: index put: newCategory! !
+!ClassOrganizer methodsFor: 'accessing' stamp: 'len 2/1/2022 19:46:01' overrides: 50335022!
+           renameCategory: oldCatString to: newCatString
+
+	| newCategory oldElementsBefore oldElementsAfter |
+	
+	newCategory _ newCatString withBlanksTrimmed.
+	oldElementsBefore _ self listAtCategoryNamed: oldCatString.
+	SystemChangeNotifier uniqueInstance doSilently: [
+		super renameCategory: oldCatString to: newCatString].
+	
+	oldElementsAfter _ (self listAtCategoryNamed: oldCatString) asSet.
+	oldElementsBefore do: [:each | (oldElementsAfter includes: each)
+		ifFalse: [self notifyOfChangedSelector: each from: oldCatString to: newCategory]].
+	
+	self notifyOfChangedCategoryFrom: oldCatString to: newCategory.! !
+!Browser methodsFor: 'message category functions' stamp: 'len 2/1/2022 19:45:44' prior: 16795873!
+                               renameCategory
+	"Prompt for a new category name and add it before the
+	current selection, or at the end if no current selection"
+	| oldIndex oldName newName |
+	selectedClassName ifNil: [^ self].
+	selectedMessageCategory ifNil: [ ^self ].
+	oldIndex _ self messageCategoryListIndex.
+	oldName _ self selectedMessageCategoryName.
+	newName _ self
+		request: 'New category name?'
+		initialAnswer: oldName
+		verifying: [:aString| aString notEmpty and: [aString ~= oldName]]
+		do: [:aString|
+			newName _ aString asSymbol.
+			self classOrMetaClassOrganizer
+				renameCategory: oldName
+				to: newName.
+			self classListIndex: self classListIndex.
+			self messageCategoryListIndex: oldIndex.
+			self changed: #messageCategoryList]! !
+!Browser methodsFor: 'system category functions' stamp: 'len 2/1/2022 19:35:19' prior: 50334304!
+          removeSystemCategory
+	"If a class category is selected, create a Confirmer so the user can 
+	verify that the currently selected class category and all of its classes
+ 	should be removed from the system. If so, remove it."
+
+	selectedSystemCategory ifNil: [^ self].
+	(self classList size = 0
+		or: [self confirm: 'Are you sure you want to
+remove this system category 
+and all its classes?'])
+		ifTrue: [
+			"Remove subcategories:"
+			systemOrganizer removeCategoriesMatching: selectedSystemCategory, '-*'.
+			"Then remove the top category (it doesn't do anything if it doesn't exist):"
+			systemOrganizer removeSystemCategory: selectedSystemCategory.
+			self setSelectedSystemCategory: nil.
+			self changed: #systemCategoryRoots ]! !
+!Browser methodsFor: 'system category functions' stamp: 'len 2/1/2022 19:45:55' prior: 50334325!
+   renameSystemCategory
+	"Prompt for a new category name and add it before the
+	current selection, or at the end if no current selection
+	
+	21-Mar-2012 jmv Note: This is not recorded appropriately in change sets.
+	The easiest solution is to trigger #classRecategorized for all classes in the category.
+	But this is not a real solution, as the resulting changeset would not do a rename,
+	but create a new category (that would go to the bottom) with all the classes.
+	
+	In the meantime, disable the menu entry. This is not so important after all.
+	"
+	| oldName newName |
+	selectedSystemCategory ifNil: [^ self].  "no selection"
+	oldName _ selectedSystemCategory.
+	newName _ self
+		request: 'New category name?'
+		initialAnswer: oldName
+		verifying: [:aString| aString notEmpty and: [aString ~= oldName]]
+		do: [:aString|
+			newName _ aString asSymbol.
+			"If it's a top category, rename subcategories first:"
+			(oldName includes: $-) ifFalse:
+				[(systemOrganizer categoriesMatching: oldName, '-*')
+					do: [:each| systemOrganizer renameCategory: each to: newName, (each allButFirst: oldName size)]].
+			systemOrganizer renameCategory: oldName to: newName.
+			self setSelectedSystemCategory: newName.
+			self changed: #systemCategoryRoots]! !
+!SystemCategoryWrapper methodsFor: 'accessing' stamp: 'len 2/1/2022 19:50:41' prior: 50334037 overrides: 16881049!
+                    contents
+	| prefix subcategories |
+	(item includes: $-) ifTrue: [^ #()].
+	prefix _ item, '-'.
+	subcategories _ OrderedCollection new.
+	model systemCategoryList do: [:each|
+		(each beginsWith: prefix)
+			ifTrue: [subcategories add: (each allButFirst: prefix size)]].
+	^ subcategories collect: [:each| self class with: prefix, each name: each model: model]! !
+
+ClassOrganizer removeSelector: #renameCategory:toBe:!
+
+!methodRemoval: ClassOrganizer #renameCategory:toBe: stamp: 'Install-5057-FixRenameAndRemoveSystemCategory-LucianoEstebanNotarfrancesco-2022Feb01-19h20m-len.001.cs.st 2/21/2022 14:50:20'!
+renameCategory: oldCatString toBe: newCatString
+
+	| newCategory oldElementsBefore oldElementsAfter |
+	
+	newCategory _ newCatString withBlanksTrimmed.
+	oldElementsBefore _ self listAtCategoryNamed: oldCatString.
+	SystemChangeNotifier uniqueInstance doSilently: [
+		super renameCategory: oldCatString toBe: newCatString].
+	
+	oldElementsAfter _ (self listAtCategoryNamed: oldCatString) asSet.
+	oldElementsBefore do: [:each | (oldElementsAfter includes: each)
+		ifFalse: [self notifyOfChangedSelector: each from: oldCatString to: newCategory]].
+	
+	self notifyOfChangedCategoryFrom: oldCatString to: newCategory.!
+
+Categorizer removeSelector: #renameCategory:toBe:!
+
+!methodRemoval: Categorizer #renameCategory:toBe: stamp: 'Install-5057-FixRenameAndRemoveSystemCategory-LucianoEstebanNotarfrancesco-2022Feb01-19h20m-len.001.cs.st 2/21/2022 14:50:20'!
+renameCategory: oldCatString toBe: newCatString
+	"Rename a category. No action if new name already exists, or if old name does not exist."
+	
+	| index newCategory |
+	
+	newCategory _ newCatString withBlanksTrimmed.
+	"new name exists, so no action"
+	(categoryArray indexOf: newCategory) > 0 ifTrue: [^ self].
+	
+	"old name not found, so no action"
+	(index _ categoryArray indexOf: oldCatString) = 0 ifTrue: [^ self].	
+	
+	"need to change identity so smart list update will notice the change"
+	categoryArray _ categoryArray copy.  
+	categoryArray at: index put: newCategory!
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5057-FixRenameAndRemoveSystemCategory-LucianoEstebanNotarfrancesco-2022Feb01-19h20m-len.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5057] on 2 February 2022 at 5:03:04 pm'!
+!Process class methodsFor: 'documentation' stamp: 'jmv 2/2/2022 17:02:55' prior: 16917849!
+                          terminateExamples
+"
+This is the contents of the examples posted by Jaromir to exercise his worn on process termination and exceptions.
+It was posted to the Cuis mail list at https://lists.cuis.st/mailman/archives/cuis-dev/2021-May/003171.html
+(or maybe, it is a later version of edition of it if this comment is not up to date!!)
+
+Thanks Jaromir for this great contribution!!
+
+Workspace new
+		contents: Process terminateExamples;
+		openLabel: 'Jaromir Mata''s Process - terminate examples Cuis'.
+"
+^
+
+
+'"Process - Cuis terminate examples
+Some examples to illustrate the termination bugs and test the proposed rewrite of #terminate
+=========================================="
+"terminate suspended:"
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[Processor activeProcess suspend] ensure: [
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield.
+p terminate.
+Transcript show: p isTerminated printString
+
+"prints x1 x2 x3"
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[ ] ensure: [
+				Processor activeProcess suspend. 
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield.
+p terminate.
+Transcript show: p isTerminated printString
+
+"prints x1 x2 x3"
+
+".......................................
+terminate runnable:"
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[Processor yield] ensure: [
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield.
+p terminate.
+Transcript show: p isTerminated printString
+
+"prints x1 x2 x3"
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[ ] ensure: [
+				Processor yield. 
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield.
+p terminate.
+Transcript show: p isTerminated printString
+
+"prints x1 x2 x3"
+".......................................
+terminate blocked:"
+
+| p s |
+s := Semaphore new.
+p := [
+	[
+		[ ] ensure: [
+			[s wait] ensure: [
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield.
+p terminate.
+Transcript show: p isTerminated printString
+
+"prints x1 x2 x3"
+
+
+| p s |
+s := Semaphore new.
+p := [
+	[
+		[ ] ensure: [
+			[ ] ensure: [
+				s wait. 
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield.
+p terminate.
+Transcript show: p isTerminated printString
+
+"prints x1 x2 x3"
+
+".......................................
+terminate active:"
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[Processor activeProcess terminate] ensure: [
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+"Two yields necessary: terminate active is a two-step procedure"
+Processor yield. Processor yield.
+Transcript show: p isTerminated printString
+
+"prints x1 x2 x3"
+
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[ ] ensure: [
+				Processor activeProcess terminate. 
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+"Two yields necessary: terminate active is a two-step procedure"
+Processor yield. Processor yield.
+Transcript show: p isTerminated printString
+
+"prints x1 x2 x3"
+
+
+
+"==========================================
+unhandled error:
+Termination happens when the user hits Abandon on the Debugger window."
+"cf.: prints x1 x2 x3 x4 when hit Proceed"
+
+[
+	[ ] ensure: [
+		[self error: ''unwind test''] ensure: [
+			Transcript show: ''x1'']. 
+		Transcript show: ''x2'']
+] ensure: [
+	Transcript show: ''x3''].
+Transcript show: ''x4''
+
+"prints x1 x2 x3"
+
+
+[
+	[ ] ensure: [
+		[ ] ensure: [
+			self error: ''unwind test''.
+			Transcript show: ''x1'']. 
+		Transcript show: ''x2'']
+] ensure: [
+	Transcript show: ''x3''].
+Transcript show: ''x4''
+
+"prints x1 x2 x3"
+
+"........................
+nested unhandled errors:"
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[self error: ''unwind test outer''] ensure: [
+				self error: ''unwind test inner''.
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield.
+"prints x1 x2 x3"
+
+
+"triple nested errors:"
+
+[self error: ''outer error''] ensure: [
+    [self error: ''middle error''] ensure: [
+        [self error: ''inner error''] ensure: [
+            Transcript show: ''x1''].
+        Transcript show: ''x2''].
+    Transcript show: ''x3''].
+Transcript show: ''x4''
+"prints x1 x2 x3"
+"same result when wrapped in fork"
+
+
+[] ensure: [
+[self error: ''outer error''] ensure: [
+    [self error: ''middle error''] ensure: [
+        [self error: ''inner error''] ensure: [
+            Transcript show: ''x1''].
+        Transcript show: ''x2''].
+    Transcript show: ''x3''].
+Transcript show: ''x4'']
+"prints x1 x2 x3 x4"
+"same result when wrapped in fork"
+
+
+
+"=========================================
+error and non-local return combined:"
+
+"Termination happens when the user hits Abandon on the Debugger window."
+
+"........................
+non-local return inside inner-most halfway thru unwind block:"
+
+[
+	[ ] ensure: [
+		[self error: ''unwind test''] ensure: [
+			^Transcript show: ''x1'']. 
+		Transcript show: ''x2'']
+] ensure: [
+	Transcript show: ''x3''].
+Transcript show: ''x4''
+
+"prints x1 x3"
+
+
+[
+	[ ] ensure: [
+		[ ] ensure: [
+			self error: ''unwind test''. 
+			^Transcript show: ''x1'']. 
+		Transcript show: ''x2'']
+] ensure: [
+	Transcript show: ''x3''].
+Transcript show: ''x4''
+
+"prints x1 x3"
+
+"........................
+non-local return inside outer-most halfway thru unwind block:"
+
+[
+	[ ] ensure: [
+		[self error: ''unwind test''] ensure: [
+			Transcript show: ''x1'']. 
+		^Transcript show: ''x2'']
+] ensure: [
+	Transcript show: ''x3''].
+Transcript show: ''x4''
+
+"prints x1 x2 x3"
+
+
+[
+	[ ] ensure: [
+		[ ] ensure: [
+			self error: ''unwind test''. 
+			Transcript show: ''x1'']. 
+		^Transcript show: ''x2'']
+] ensure: [
+	Transcript show: ''x3''].
+Transcript show: ''x4''
+
+
+"prints x1 x2 x3"
+
+
+"one more level..."
+[
+	[
+		[ ] ensure: [
+			[ ] ensure: [
+				self error: ''unwind test''. 
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		^Transcript show: ''x3'']
+] ensure: [
+	Transcript show: ''x4'']
+
+"prints x1 x2 x3 x4 (even if wrapped in #fork)"
+
+
+
+".............................
+non-local return outside halfway thru unwind blocks:"
+
+[
+	[ ] ensure: [
+		[self error: ''unwind test''] ensure: [
+			Transcript show: ''x1'']. 
+		Transcript show: ''x2'']
+] ensure: [
+	^Transcript show: ''x3''].
+Transcript show: ''x4''
+
+"prints x1 x2 x3"
+
+
+[
+	[ ] ensure: [
+		[ ] ensure: [
+			self error: ''unwind test''. 
+			Transcript show: ''x1'']. 
+		Transcript show: ''x2'']
+] ensure: [
+	^Transcript show: ''x3''].
+Transcript show: ''x4''
+
+
+"prints x1 x2 x3"
+
+
+"============================================================
+For comparison only:"
+
+"The tests presented here are not affected by the new #terminate.
+(A) an unhandled error unwind in the preceding examples followed the new termination logic completing all unwind blocks halfway through their execution
+(B) a handled error unwind follows the traditional ''direct'' unwind path using simpler semantics - it doesn''t complete unwind blocks halfway through their execution"
+
+".........................................
+handled error:"
+
+
+[
+	[
+		[ ] ensure: [
+			[self error: ''unwind test''] ensure: [
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3'']
+] on: Error do: [].
+Transcript show: ''x4''
+
+"prints x1 x3 x4, skips x2"
+
+[
+	[
+		[ ] ensure: [
+			[] ensure: [
+				self error: ''unwind test''.
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3'']
+] on: Error do: [].
+Transcript show: ''x4''
+
+"prints x3 x4, skips x1 x2"
+
+"............................................
+nested handled errors:"
+
+| p |
+p := [
+	[
+		[
+			[ ] ensure: [
+				[self error: ''unwind test outer''] ensure: [
+					self error: ''unwind test inner''.
+					Transcript show: ''x1'']. 
+				Transcript show: ''x2'']
+		] ensure: [
+			Transcript show: ''x3'']
+	] on: Error do: [].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield. Processor yield.
+
+"prints x3 x4, skips x1 x2"
+
+
+
+"............................................
+non-local return:"
+
+"Similarly a simple non-local return execution follows a ''direct'' unwind path logic in #resume[:through:] using simpler semantics."
+
+[
+	[ ] ensure: [
+		[^1] ensure: [
+			Transcript show: ''x1'']. 
+		Transcript show: ''x2'']
+] ensure: [
+	Transcript show: ''x3''].
+Transcript show: ''x4''
+
+"prints x1 x3, skips x2"
+
+
+[
+	[ ] ensure: [
+		[] ensure: [
+			^Transcript show: ''x1'']. 
+		Transcript show: ''x2'']
+] ensure: [
+	Transcript show: ''x3''].
+Transcript show: ''x4''
+
+"prints x1 x3, skips x2"
+
+
+
+"==========================================
+Crazies:"
+
+"These tests explore new #teminate behavior under more extreme circumstances.
+Unwind after active process termination"
+
+[ ] ensure: [
+	[Processor activeProcess terminate] ensure: [Transcript show: ''x1'']. 
+	Transcript show: ''x2''
+	]
+"prints x1 x2 and terminates UI - recoverable via Alt+. or cmd+."
+
+
+"Unwind after active process suspension during termination:"
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[Processor activeProcess suspend] ensure: [
+				Processor activeProcess suspend. 
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3'']
+] newProcess.
+p resume.
+Processor yield.
+p terminate
+"suspends UI and prints x1 x2 x3 after Alt+. recovery"
+
+
+"Unwind after double active process termination:"
+
+| p |
+p := [
+	[
+		[ ] ensure: [
+			[Processor activeProcess terminate] ensure: [
+				Processor activeProcess terminate. 
+				Transcript show: ''x1'']. 
+			Transcript show: ''x2'']
+	] ensure: [
+		Transcript show: ''x3''].
+	Transcript show: ''x4''
+] newProcess.
+p resume.
+Processor yield. Processor yield. Processor yield. Processor yield.
+Transcript show: p isTerminated printString
+"lets UI live and prints x1 x2 x3"
+
+
+| p |
+p := [
+	[] ensure: [ 
+		Processor activeProcess terminate. Transcript show: ''x1''. 
+		Processor activeProcess terminate. Transcript show: ''x2'']. 
+] newProcess.
+p resume.
+Processor yield. Processor yield. Processor yield. Processor yield.
+Transcript show: p isTerminated printString
+"lets current UI live and prints x1 x2"
+
+
+| p ap |
+p := [
+	[ ap := Processor activeProcess. ap terminate. Transcript show: ''x1'' ] 
+		ensure: [ ap terminate. Transcript show: ''x2'' ]. 
+] newProcess.
+p resume.
+Processor yield. Processor yield. Processor yield.
+Transcript show: p isTerminated printString
+"lets current UI live and prints x2"
+
+
+| p |
+p := [
+	[ Processor activeProcess terminate ] 
+		ensure: [ Processor activeProcess terminate ]. 
+] newProcess.
+p resume.
+Processor yield. Processor yield. Processor yield. 
+Transcript show: p isTerminated printString
+"answers true, no error"
+
+
+
+"Unwind after active process termination combined with non-local return:"
+
+| p |
+p := [
+	[] ensure: [ 
+		Processor activeProcess terminate. Transcript show: ''x1''. 
+		true ifTrue: [^2]. 
+		Processor activeProcess terminate. Transcript show: ''x2'']
+] newProcess.
+p resume.
+Processor yield. Processor yield. 
+Transcript show: p isTerminated printString
+"prints x1 and correctly raises BlockCannotReturn error"
+
+
+"Unwind after BlockCannotReturn error:"
+
+| p a |
+
+a := Array new: 4 withAll: false.
+p := [
+         [
+        	[ ] ensure: [
+        			[Processor activeProcess suspend] ensure: [
+            			^a at: 1 put: true].
+        			a at: 2 put: true]
+		] ensure: [a at: 3 put: true].
+		a at: 4 put: true
+    ] newProcess.
+p resume.
+Processor yield.
+"make sure p is suspended and none of the unwind blocks has finished yet"
+self assert: p isSuspended.
+a noneSatisfy: [ :b | b ].
+"now terminate the process and make sure all unwind blocks have finished"
+p terminate.
+self assert: p isTerminated.
+self assert: a first & a third.
+self assert: (a second | a fourth) not.
+"--->   #(true false true false) ...OK"
+
+
+"Triple nested active process terminate:"
+
+[	x := ''''.
+	[Processor activeProcess terminate] ensure: [
+	    [Processor activeProcess terminate] ensure: [
+	        [Processor activeProcess terminate] ensure: [
+	            x:=x,''3''].
+	        x:=x,''2''].
+	    x:=x,''1''].
+	x:=x,''0''
+] fork
+x
+"---> ''321'' ...OK"
+
+"Same as before but without fork:"
+
+x := ''''.
+[Processor activeProcess terminate] ensure: [
+    [Processor activeProcess terminate] ensure: [
+        [Processor activeProcess terminate] ensure: [
+            x:=x,''3''].
+        x:=x,''2''].
+    x:=x,''1''].
+x:=x,''0''
+x
+"terminates UI and answers ---> ''321'' after Alt+. recovery"
+"(Squeak crashes irrecoverably)"
+
+
+"Triple nested active process terminate:"
+
+p := 
+[	x := ''''.
+	[] ensure: [
+		[Processor activeProcess suspend] ensure: [
+		    [Processor activeProcess suspend] ensure: [
+		        [Processor activeProcess suspend] ensure: [
+		            x:=x,''3''].
+		        x:=x,''2''].
+		    x:=x,''1''].
+		x:=x,''0'']
+] newProcess resume.
+Processor yield.
+p terminate
+x   
+"Cuis suspends UI repeatedly but answers ---> ''3210'' after repeated Alt+. recovery
+Squeak answers ---> ''3210'' without suspending UI - why the difference?
+Without fork Squeak suspends UI just once but Cuis 3 times, both answer x correctly"
+
+
+"These behave as expected and won''t crash the image even after proceeding the BlockCannotReturn error:"
+
+[^2] fork
+
+[[self error: ''error''] ensure: [^2]] fork
+
+"do-it:"
+"Both statements need to be executed separately in a Workspace"
+a := [true ifTrue: [^ 1] yourself]
+[a value] on: BlockCannotReturn do: [:ex | ex resume]
+
+"do-it:"
+"Both statements need to be executed separately in a Workspace"
+a := [true ifTrue: [^ 1]. 2]
+a value
+
+"These will deal with MessageNotUnderstood correctly and won''t crash the image or loop infinitely"
+
+[] ensure: [self gotcha. Transcript show: ''0'']
+
+[] ensure: [[self gotcha] ensure: [self halt. Transcript show: ''0'']]
+
+[self error: ''error''] ensure: [[self gotcha] ensure: [Transcript show: ''0'']]
+
+[self error: ''error''] ensure: [self gotcha. Transcript show: ''0'']
+
+"This one freezes UI after Halt -> Proceed but recoverable via Alt+."
+[[] ensure: [[self gotcha] ensure: [self halt. Transcript show: ''0'']]] fork.
+
+
+
+"===============
+Some additional unsorted examples:"
+
+"This example should show both ZeroDivide and MessageNotUnderstood errors"
+
+x1 := x2 := x3 := nil.
+p:=[
+		[
+			[ ] ensure: [ "halfway through completion when suspended"
+				[ ] ensure: [ "halfway through completion when suspended"
+					Processor activeProcess suspend. 
+					x1 := (2 / 0  "error!!") > 0]. 
+				x2 := true]
+		] ensure: [ "not started yet when suspended"
+			x3 := true]
+] newProcess resume.
+Processor yield.
+p terminate
+{x1 . x2 . x3} --->  #(MessageNotUnderstood: ZeroDivide>>> true true) 
+
+
+'! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5058-terminateExamples-fixFormat-JuanVuletich-2022Feb02-16h52m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5058] on 2 February 2022 at 7:20:43 pm'!
+!UISupervisor class methodsFor: 'gui process' stamp: 'jmv 2/2/2022 19:18:58'!
+                               newUIProcessIfNeeded
+	"Answer is not nil only if a new process was created."
+
+	UIProcess ifNotNil: [ :oldUIProcess |
+		oldUIProcess isTerminated ifTrue: [
+			oldUIProcess 	animatedUI ifNotNil: [ :guiRootObject |
+				self spawnNewMorphicProcessFor: guiRootObject.
+				^UIProcess ]]].
+	^nil! !
+!SystemDictionary methodsFor: 'miscellaneous' stamp: 'jmv 2/2/2022 17:15:10' prior: 16953292!
+                              handleUserInterrupt
+	| p |
+	"Shift can only be detected on the Mac, due to likely buggy kestroke reporting..."
+	p _ UISupervisor newUIProcessIfNeeded.
+	p ifNil: [
+		p _ Sensor shiftPressed | Preferences cmdDotInterruptTakesStatistics
+			ifTrue: [Utilities reportCPUandRAM]
+			ifFalse: [Utilities processTakingMostCPU]].
+	Preferences cmdDotEnabled ifTrue: [
+		"The background process can't be interrupted, or Cuis will likely crash."
+		p == Processor backgroundProcess ifTrue: [
+			'Can not interrupt backgroundProcess' print.
+			^self ].
+		(p name beginsWith: '[system]') ifTrue: [
+			 ('Process {', p printString, '} is critical for system stability. Can not interrupt it.') print.
+			^self ].
+		[
+			EventSensor install.
+			p isTerminated
+				ifTrue: [ ('Process {', p printString, '} isTerminated. Can not interrupt it.') print ]
+				ifFalse: [ UISupervisor userInterrupt: p ]] fork
+		]! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5059-UserInterruptCreatesUIProcessIfNone-JuanVuletich-2022Feb02-19h15m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5059] on 4 February 2022 at 5:00:17 pm'!
+!SystemOrganizer methodsFor: 'categories' stamp: 'len 2/4/2022 05:52:38'!
+                             allClassesAt: aCategoryName
+	"Same as >>classesAt: but if aCategoryName is a top category it includes all classes in subcategories."
+	^ (self fullListAtCategoryNamed: aCategoryName) collect: [:aClassName | Smalltalk classNamed: aClassName]! !
+!SystemOrganizer methodsFor: 'categories' stamp: 'len 2/4/2022 04:47:04' overrides: 16801145!
+               classesAt: aCategoryName
+	^ (self listAtCategoryNamed: aCategoryName) collect: [:aClassName | Smalltalk classNamed: aClassName]! !
+!SystemOrganizer methodsFor: 'categories' stamp: 'len 2/4/2022 05:44:37'!
+                   fullListAtCategoryNamed: aCategoryName
+	"Same as >>listAtCategoryNamed: but include subcategories if aCategoryName is a top category."
+	| answer |
+	answer _ self listAtCategoryNamed: aCategoryName.
+	"If it's a top category, include the classes of all its subcategories:"
+	(aCategoryName includes: $-) ifFalse:
+		[| prefix |
+		prefix _ aCategoryName, '-'.
+		self categories do: [:each| (each beginsWith: prefix) ifTrue: [answer _ answer, (self listAtCategoryNamed: each)]]].
+	^ answer! !
+!SystemOrganizer methodsFor: 'categories' stamp: 'HAW 2/4/2022 16:54:25' overrides: 16801152!
+                           testCaseClassesAt: aCategoryName
+
+	^(self classesAt: aCategoryName) select: [ :aClass | aClass is: #TestCaseClass ]! !
+!Browser methodsFor: 'class list' stamp: 'len 2/4/2022 05:45:07' prior: 50334905!
+                       defaultClassList
+	"Answer an array of the class names of the selected category. Answer an 
+	empty array if no selection exists."
+	selectedSystemCategory ifNil: [^ #()].
+	^ systemOrganizer fullListAtCategoryNamed: selectedSystemCategory! !
+!SystemOrganizer methodsFor: 'source code management' stamp: 'HAW 10/13/2021 09:31:11' prior: 16958859!
+         classMethodCountOf: category
+
+	^  (self classesAt: category) sum: [ :cl | cl class selectors size ] ifEmpty: 0.! !
+!SystemOrganizer methodsFor: 'source code management' stamp: 'HAW 10/13/2021 09:31:23' prior: 16958866!
+     instanceMethodCountOf: category
+
+	^ (self classesAt: category) sum: [ :cl | cl selectors size ] ifEmpty: 0.! !
+!SystemOrganizer methodsFor: 'source code management' stamp: 'HAW 10/13/2021 09:31:30' prior: 16958873!
+         linesOfCodeOf: category
+"
+SystemOrganization linesOfCodeOf: #'System-Files'
+"
+	"An approximate measure of lines of.
+	Includes comments, but excludes blank lines."
+
+	^ (self classesAt: category) sum: [ :cl | cl linesOfCode ] ifEmpty: 0.! !
+!TestSuite class methodsFor: 'instance creation' stamp: 'HAW 2/4/2022 16:59:36' prior: 16963311!
+                forSystemCategoryNamed: aCategoryName  using: aSystemOrganizer
+
+	| testCaseClasses |
+
+	testCaseClasses _ aSystemOrganizer testCaseClassesAt: aCategoryName.
+
+	^ testCaseClasses isEmpty 
+		ifTrue: [ self forClasses: (aSystemOrganizer allClassesAt: aCategoryName) named: aCategoryName, ' infered tests' ]
+		ifFalse: [ self forTestCaseClasses: testCaseClasses named: aCategoryName, ' tests' ]
+		
+! !
+
+Categorizer removeSelector: #testCaseClassesAt:!
+
+!methodRemoval: Categorizer #testCaseClassesAt: stamp: 'Install-5060-FixRunningTestsOnTopSystemCategories-LucianoEstebanNotarfrancesco+HernanWilkinson-2022Feb04-16h47m-HAW.001.cs.st 2/21/2022 14:50:20'!
+testCaseClassesAt: aCategoryName
+
+	^(self classesAt: aCategoryName) select: [ :aClass | aClass is: #TestCaseClass ]!
+
+Categorizer removeSelector: #classesAt:!
+
+!methodRemoval: Categorizer #classesAt: stamp: 'Install-5060-FixRunningTestsOnTopSystemCategories-LucianoEstebanNotarfrancesco+HernanWilkinson-2022Feb04-16h47m-HAW.001.cs.st 2/21/2022 14:50:20'!
+classesAt: aCategoryName
+
+	^(self listAtCategoryNamed: aCategoryName) collect: [:aClassName | Smalltalk classNamed: aClassName ]
+		!
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5060-FixRunningTestsOnTopSystemCategories-LucianoEstebanNotarfrancesco+HernanWilkinson-2022Feb04-16h47m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5060] on 4 February 2022 at 6:11:13 pm'!
+!TestSuite class methodsFor: 'instance creation' stamp: 'HAW 2/4/2022 16:59:36' prior: 50335854!
+                forSystemCategoryNamed: aCategoryName  using: aSystemOrganizer
+
+	| testCaseClasses |
+
+	testCaseClasses _ aSystemOrganizer testCaseClassesAt: aCategoryName.
+
+	^ testCaseClasses isEmpty 
+		ifTrue: [ self forClasses: (aSystemOrganizer allClassesAt: aCategoryName) named: aCategoryName, ' infered tests' ]
+		ifFalse: [ self forTestCaseClasses: testCaseClasses named: aCategoryName, ' tests' ]
+		
+! !
+!TestSuite class methodsFor: 'instance creation - private' stamp: 'HAW 2/4/2022 18:06:52' prior: 16963350!
+         forClasses: classes named: aName
+
+	| testMethods suite classTests tests testPrintString |
+	
+	"I don't want repeated tests. TestCase does not redefine #= so instead of redefining it and use a Set
+	I decided to keep the related tests methods in a different set and decide to add it or note base on that
+	- Hernan"
+	
+	testMethods := Set new.
+	tests := OrderedCollection new.
+	
+	classes do: [ :aClass |
+		classTests := (self forClass: aClass) tests.
+		classTests do: [ :aTest | 
+				testPrintString := aTest printString.
+				(testMethods includes: testPrintString) ifFalse: [ 
+					testMethods add: testPrintString.
+					tests add: aTest ]]].
+		
+	suite := self named: aName.
+	suite addTests: tests.
+	
+	^suite
+		
+! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5061-FindingTests-HernanWilkinson-2022Feb04-17h03m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5061] on 4 February 2022 at 6:35:06 pm'!
+!SmalltalkEditor methodsFor: 'tdd' stamp: 'HAW 2/4/2022 18:33:36' prior: 16940776!
+                             testSuiteForCategoryOf: aClass
+
+	^TestSuite forSystemCategoryNamed: self codeProvider selectedSystemCategory using: SystemOrganization 
+! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5062-cmd+yFixWhenOnTopSystemCategory-HernanWilkinson-2022Feb04-18h33m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5062] on 7 February 2022 at 11:18:53 am'!
+!Browser methodsFor: 'self-updating' stamp: 'len 2/5/2022 05:17:22' overrides: 16821313!
+                               updateIfNeeded
+	super updateIfNeeded.
+	self changed: #systemCategoryRoots! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5063-updateSystemCategoriesWhenLoadingPackage-LucianoEstebanNotarfrancesco-2022Feb07-11h17m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5062] on 7 February 2022 at 11:23:53 am'!
+!BrowserWindow methodsFor: 'GUI building' stamp: 'len 2/4/2022 04:23:29' prior: 50334569!
+       buildMorphicWindow
+	"Create a pluggable version of all the morphs for a Browser in Morphic"
+
+	| upperPanes messageCatList messageList systemCatList classList |
+
+	systemCatList _ self buildMorphicSystemCategoryList.
+	classList _ self buildMorphicClassList.
+	messageCatList _ self buildMorphicMessageCatList.
+	messageList _ self buildMorphicMessageList.
+	
+	classList rightSibling: messageCatList.
+	messageCatList leftSibling: classList rightSibling: messageList.
+	messageList leftSibling: messageCatList.
+	
+"	classList makeItemsDraggable.
+	systemCatList 
+		acceptDropsFrom: classList 
+		performing: #categorizeUnderCategoryAt:class:
+		whenOutsideList: #categorizeUnderNewCategoryClass:.
+"		
+	messageList makeItemsDraggable.
+	messageCatList 
+		acceptDropsFrom: messageList 
+		performing: #categorizeUnderCategoryAt:selector: 
+		whenOutsideList: #categorizeUnderNewCategorySelector:.
+	
+	upperPanes _ LayoutMorph newRow.
+	upperPanes
+		addMorph: systemCatList proportionalWidth: 0.2;
+		addAdjusterAndMorph: (self buildMorphicClassColumnWith: classList) proportionalWidth: 0.2;
+		addAdjusterAndMorph: messageCatList proportionalWidth: 0.2;
+		addAdjusterAndMorph: messageList proportionalWidth: 0.4.
+
+	self layoutMorph
+		addMorph: upperPanes proportionalHeight: 0.3;
+		addAdjusterAndMorph: self buildLowerPanes proportionalHeight: 0.7.
+
+	model changed: #editSelection! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5064-BrowserWindowDNUFix-LucianoEstebanNotarfrancesco-2022Feb07-11h18m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5064] on 8 February 2022 at 9:29:26 am'!
+!WorldMorph methodsFor: 'world menu' stamp: 'MM 2/8/2022 09:25:39' prior: 16982796!
+                             findAWindowSatisfying: qualifyingBlock orMakeOneUsing: makeBlock
+	"Locate a window satisfying a block, open it, and bring it to the front.  Create one if necessary, by using the makeBlock"
+	| aWindow |
+	submorphs do: [ :aMorph |
+		(((aWindow _ aMorph) is: #SystemWindow) and: [ qualifyingBlock value: aWindow ]) ifTrue: [
+			aWindow isCollapsed ifTrue: [ aWindow expand ].
+			aWindow activateAndForceLabelToShow.
+			^ aWindow ]].
+	"None found, so create one"
+	^ makeBlock value.! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5065-ReturnFoundWindows-MarianoMontone-2022Feb08-09h25m-MM.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5065] on 8 February 2022 at 2:36:26 pm'!
+!CodePackageFile methodsFor: 'accessing' stamp: 'HAW 2/8/2022 14:35:17' prior: 16819729 overrides: 16817357!
+     description
+	^String streamContents: [ :s |
+		s nextPutAll: 'Code Package File: '.
+		s nextPutAll: self fullName; newLine; newLine.
+		s nextPutAll: 'Provides: '.
+		self provides printDetailsOn: s.
+		s newLine.
+		self requires ifNotEmpty: [ :requirements | 
+			s nextPutAll: 'Requires: '.
+			(requirements sorted: [:a :b | a name < b name]) do: [ :req |
+				s newLine; space.
+				req printDetailsOn: s ].
+			s newLine ].
+		s newLine.
+		sourceSystem isEmpty ifFalse:[
+			s nextPutAll: sourceSystem; newLine; newLine ]
+	]! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5066-CodePackageFile description-HernanWilkinson-2022Feb08-14h27m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5062] on 9 February 2022 at 11:02:38 am'!
+!TheWorldMenu class methodsFor: 'help menu' stamp: 'HAW 2/9/2022 11:00:10'!
+                  helpMenuOptions
+	
+	^ `{
+			{
+				#itemGroup 	-> 		10.
+				#itemOrder 		-> 		10.
+				#label 			-> 		'About this System...'.
+				#object 			-> 		Smalltalk.
+				#selector 		-> 		#aboutThisSystem.
+				#icon 			->			#helpIcon.
+				#balloonText 	-> 		'current version information.'
+			} asDictionary.
+			{
+				#itemGroup 	-> 		10.
+				#itemOrder 		-> 		20.
+				#label 			-> 		'Terse Guide to Cuis'.
+				#selector 		-> 		#openTerseGuide.
+				#icon 			->			#helpIcon.
+				#balloonText 	-> 		'explore Cuis Smalltalk'
+			} asDictionary.
+			{
+				#itemGroup 	-> 		10.
+				#itemOrder 		-> 		30.
+				#label 			-> 		'Class Comment Browser'.
+				#selector 		-> 		#openCommentGuide.
+				#icon 			->			#helpIcon.
+				#balloonText 	-> 		'search & explore Cuis Class Comments'
+			} asDictionary.
+			{
+				#itemGroup 	-> 		10.
+				#itemOrder 		-> 		40.
+				#label 			-> 		'Code management in Cuis'.
+				#object 			-> 		Utilities.
+				#selector 		-> 		#openCodeManagementInCuis.
+				#icon 			->			#helpIcon.
+				#balloonText 	-> 		'Features are kept in Packages.'
+			} asDictionary.
+			{
+				#itemGroup 	-> 		10.
+				#itemOrder 		-> 		50.
+				#label 			-> 		'Using GitHub to host Cuis packages'.
+				#object 			-> 		Utilities.
+				#selector 		-> 		#openCuisAndGitHub.
+				#icon 			->			#helpIcon.
+				#balloonText 	-> 		'GitHub usage pattern.'
+			} asDictionary.
+			{
+				#itemGroup 	-> 		20.
+				#itemOrder 		-> 		10.
+				#label 			-> 		'Editor keyboard shortcuts'.
+				#object 			-> 		SmalltalkEditor.
+				#selector 		-> 		#openHelp.
+				#icon 			-> 		#keyboardShortcutsIcon.
+				#balloonText 	-> 		'summary of keyboard shortcuts in editors for Smalltalk code.'
+			} asDictionary.
+			{
+				#itemGroup 	-> 		20.
+				#itemOrder 		-> 		20.
+				#label 			-> 		'Useful Expressions'.
+				#object 			-> 		Utilities.
+				#selector 		-> 		#openUsefulExpressions.
+				#icon 			-> 		#chatIcon.
+				#balloonText 	-> 		'a window full of useful expressions.'
+			} asDictionary.
+			{
+				#itemGroup 	-> 		30.
+				#itemOrder 		-> 		10.
+				#label 			-> 		'VM Statistics'.
+				#selector 		-> 		#vmStatistics.
+				#icon 			-> 		#systemMonitorIcon.
+				#balloonText 	-> 		'obtain some intriguing data about the vm.'
+			} asDictionary.
+			{
+				#itemGroup 	-> 		30.
+				#itemOrder 		-> 		20.
+				#label 			-> 		'Space Left'.
+				#selector 		-> 		#garbageCollect.
+				#icon 			-> 		#removableMediaIcon.
+				#balloonText 	-> 		'perform a full garbage-collection and report how many bytes of space remain in the image.'
+			} asDictionary.
+		}`! !
+!TheWorldMenu methodsFor: 'construction' stamp: 'HAW 2/9/2022 11:00:35' prior: 16970015!
+                              helpMenu
+	"Build the help menu for the world."
+
+	^ DynamicMenuBuilder buildTitled: 'Help...' targeting: self collectingMenuOptionsWith: #helpMenuOptions.
+! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5067-HelpMenuMadeDynamic-HernanWilkinson-2022Feb09-10h50m-HAW.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5067] on 21 February 2022 at 12:19:35 pm'!
+!Feature class methodsFor: 'convenience' stamp: 'jmv 2/21/2022 12:04:19' prior: 16853099!
+                       require: featureNameOrFilename
+	"
+	Answer whether the request is fulfilled.
+	Feature require: 'StyledTextInstaller'
+	Feature require: 'Sound'
+	Feature require: 'Tests'
+	"
+	| req ext fileEntry |
+	ext _ '.pck.st'.
+	((featureNameOrFilename endsWith: ext) and: [
+				fileEntry _ featureNameOrFilename asFileEntry.
+				fileEntry exists ])
+		ifTrue: [
+			req _ FeatureRequirement name: (fileEntry name withoutSuffix: ext).
+			req pathName: fileEntry pathName.
+			]
+		ifFalse: [ req _ FeatureRequirement name: featureNameOrFilename ].
+	req isAlreadySatisfied ifFalse: [
+		req require ].
+	^req isAlreadySatisfied! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5068-require-answerSuccess-JuanVuletich-2022Feb21-12h18m-jmv.001.cs.st----!
+
+'From Cuis 6.0 [latest update: #5067] on 21 February 2022 at 12:25:58 pm'!
+!FontFamily class methodsFor: 'file read write' stamp: 'jmv 2/21/2022 12:21:16' prior: 50332701!
+               readAdditionalTrueTypeFonts
+	(Feature require: 'VectorGraphics') ifTrue: [
+		(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [
+			Feature require: 'VectorEngineInSmalltalk' ].
+		UISupervisor whenUIinSafeState: [
+			Smalltalk at: #TrueTypeFontFamily ifPresent: [ :cls | cls readAdditionalFonts ]]].! !
+!FontFamily class methodsFor: 'ui' stamp: 'jmv 2/21/2022 12:22:03' prior: 50332714!
+            promptUserAndSetDefault
+	"Present a menu of available font families, and if one is chosen, change to it.
+	FontFamily promptUserAndSetDefault
+	"
+	| selectedNameOrDirectory fontFamily |
+	selectedNameOrDirectory _ self promptUserFolders.
+	selectedNameOrDirectory isNil ifTrue: [ ^nil ].
+	(FontFamily familyNamed: selectedNameOrDirectory)
+		ifNotNil: [ :it | ^Preferences setDefaultFont: it familyName ].
+	(Feature require: 'VectorGraphics') ifTrue: [
+		(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [
+			Feature require: 'VectorEngineInSmalltalk' ].
+		UISupervisor whenUIinSafeState: [
+			fontFamily _ FontFamily availableFamilies values
+				detect: [ :any | any folderName = selectedNameOrDirectory name ]
+				ifNone: [
+					FontFamily familyNamed: ((Smalltalk at: #TrueTypeFontFamily) read: selectedNameOrDirectory) anyOne ].
+			Preferences setDefaultFont: fontFamily familyName ]].! !
+
+----End fileIn of C:\Users\Juan Vuletich\Cuis-Smalltalk\Cuis-Smalltalk-Dev\CoreUpdates\5069-GracefulVectorGraphicsLoadFailure-JuanVuletich-2022Feb21-12h19m-jmv.001.cs.st----!
+
+----QUIT----(21 February 2022 14:50:27) Cuis6.0-5069.image priorSource: 74!
