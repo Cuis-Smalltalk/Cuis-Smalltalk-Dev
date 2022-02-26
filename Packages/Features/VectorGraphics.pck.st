@@ -1,7 +1,7 @@
-'From Cuis 6.0 [latest update: #5067] on 21 February 2022 at 12:17:47 pm'!
+'From Cuis 6.0 [latest update: #5090] on 26 February 2022 at 11:55:39 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 336!
-!requires: 'Cuis-Base' 60 5056 nil!
+!provides: 'VectorGraphics' 1 337!
+!requires: 'Cuis-Base' 60 5090 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1339,12 +1339,19 @@ drawOn: aCanvas
 			lineTo: -200@200;
 			closePath ].! !
 
-!Sample06EasyToGrab methodsFor: 'geometry testing' stamp: 'jmv 10/28/2021 11:56:04'!
+!Sample06EasyToGrab methodsFor: 'geometry testing' stamp: 'jmv 2/24/2022 15:32:33'!
 includesPixel: worldPoint
 	"Allow grabbing if close enough.
-	See other implementors."
+	See other implementors.
+	This is an example of the use of #coversAnyPixelCloserThan:to:
+	Usually, you'd prefer something like (better if super call is actually inlined):
+	-10 to: 10 do: [ :dy |
+		-10 to: 10 do: [ :dx |
+			(super includesPixel: worldPoint + (dx@dy)) ifTrue: [ ^true ]]].
+	^false
+	"
 
-	^ self visible and: [self coversAnyPixelCloserThan: 20 to: worldPoint].! !
+	^ self visible and: [self coversAnyPixelCloserThan: 10 to: worldPoint].! !
 
 !Sample07Clipping methodsFor: 'geometry testing' stamp: 'jmv 9/2/2021 16:52:16'!
 clipsSubmorphs
@@ -1602,7 +1609,7 @@ currentMorphDrawingFails
 	c == self ifFalse: [ ^c currentMorphDrawingFails ].
 	super currentMorphDrawingFails! !
 
-!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:15'!
+!HybridCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 11:05:26'!
 drawCurrentAndSubmorphs
 	"If we get here, we are drawing with BitBlt, not VectorCanvas.
 	Clear morphIds of pixels drawn for currentMorph"
@@ -1612,7 +1619,8 @@ drawCurrentAndSubmorphs
 		currentMorph drawOn: self.
 		self onMorphIdsDo: [
 			currentMorph drawOn: self ].
-		currentMorph displayBoundsSetFrom: self.
+		self displayBoundsSetOnCurrentMorph.
+		self contourClearOnCurrentMorph.
 
 		"Display submorphs back to front"
 		"coordinate system stack already set up for aMorph
@@ -1623,7 +1631,7 @@ drawCurrentAndSubmorphs
 		(currentMorph postDrawOn: self) ifTrue: [
 			self onMorphIdsDo: [
 				currentMorph postDrawOn: self ].
-			currentMorph displayBoundsUpdateFrom: self ].
+			self displayBoundsUpdateOnCurrentMorph ].
 
 		currentMorph isHighlighted ifTrue: [
 			self drawHighlight: currentMorph ].
@@ -3101,27 +3109,6 @@ roundRect: aRectangle color: aColor radius: r
 			roundRectangleMinX: aRectangle left maxX: aRectangle right
 			minY: aRectangle top maxY: aRectangle bottom rx: r ry: r ]! !
 
-!AbstractVectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/7/2021 16:37:19'!
-drawCurrentAndSubmorphs
-	
-	currentMorph visible ifTrue: [
-
-		currentMorph drawOn: self.
-		currentMorph displayBoundsSetFrom: self.
-
-		"Display submorphs back to front"
-		"coordinate system stack already set up for aMorph
-		('ivars transformations' and 'currentTransformation')"
-		self clippingByCurrentMorphDo: [
-			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]].
-
-		(currentMorph postDrawOn: self) ifTrue: [
-			currentMorph displayBoundsUpdateFrom: self ].
-
-		currentMorph isHighlighted ifTrue: [
-			self drawHighlight: currentMorph ].
-	].! !
-
 !AbstractVectorCanvas methodsFor: 'morphic' stamp: 'jmv 7/29/2021 12:44:10'!
 drawHand
 
@@ -3517,16 +3504,6 @@ imageUnrotated: srcForm at: aPoint
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:56:02'!
 clipCurrentMorph: aBoolean! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/12/2021 15:59:12'!
-contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
-	"In targetForm coordinates.
-	Doesn't account for any clipping at all.
-	Doesn't include any protruding submorphs.
-	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
-
-	^nil! !
-
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 10/4/2021 16:55:34'!
 displayBoundsForHand: aHand
 	"See #drawHand."
@@ -3534,6 +3511,27 @@ displayBoundsForHand: aHand
 	^self drawsHandLarge
 		ifTrue: [aHand morphPosition asIntegerPoint-`9@5` extent: `45@48`]
 		ifFalse: [aHand morphPosition asIntegerPoint-`4@3` extent: `21@24`].! !
+
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 10:43:30'!
+drawCurrentAndSubmorphs
+	
+	currentMorph visible ifTrue: [
+
+		currentMorph drawOn: self.
+		self displayBoundsSetOnCurrentMorph.
+
+		"Display submorphs back to front"
+		"coordinate system stack already set up for aMorph
+		('ivars transformations' and 'currentTransformation')"
+		self clippingByCurrentMorphDo: [
+			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]].
+
+		(currentMorph postDrawOn: self) ifTrue: [
+			self displayBoundsUpdateOnCurrentMorph ].
+
+		currentMorph isHighlighted ifTrue: [
+			self drawHighlight: currentMorph ].
+	].! !
 
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/23/2021 14:19:05'!
 fullAddCurrentMorphTo: aDamageRecorder
@@ -3558,13 +3556,13 @@ fullAddRedrawRect: aMorph to: aDamageRecorder
 			self outOfMorph
 		]]! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/13/2021 17:06:43'!
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 10:43:37'!
 fullUpdateCurrentProtrudingBounds
 	"Recursively update display bounds, for currentMorph and all submorphs,
 	but only for those whose bounds may go outside owner bounds."
 
 	currentMorph knowsOwnLocalBounds
-		ifTrue: [currentMorph displayBoundsSetFrom: self]
+		ifTrue: [self displayBoundsSetOnCurrentMorph]
 		ifFalse: [
 			currentMorph isKnownFailing
 				ifTrue: [
@@ -3573,11 +3571,10 @@ fullUpdateCurrentProtrudingBounds
 					"In these cases, #drawOn: is required to find bounds.
 					#displayBoundsSetFrom: will use the bounds found by us in these case.
 					See #displayBoundsSetFrom:"
-					currentMorph
-						drawOn: self;
-						displayBoundsSetFrom: self.
+					currentMorph drawOn: self.
+					self displayBoundsSetOnCurrentMorph.
 					(currentMorph postDrawOn: self) ifTrue: [
-						currentMorph displayBoundsUpdateFrom: self ].
+						self displayBoundsUpdateOnCurrentMorph ].
 					(currentMorph submorphsMightProtrude and: [currentMorph clipsSubmorphsReally not]) ifTrue: [
 						currentMorph submorphsDo: [ :m |
 							self fullUpdateProtrudingBounds: m ]]]].! !
@@ -3599,12 +3596,12 @@ updateBoundsIn: aWorldMorph addDamageTo: aDamageRecorder
 		self fullAddRedrawRect: morph to: aDamageRecorder ].
 	self updateHandsDisplayBounds: aWorldMorph.! !
 
-!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 8/13/2021 17:15:33'!
+!BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 10:44:10'!
 updateCurrentBounds
 	"Update display bounds, for currentMorph only."
 
 	currentMorph knowsOwnLocalBounds
-		ifTrue: [currentMorph displayBoundsSetFrom: self]
+		ifTrue: [self displayBoundsSetOnCurrentMorph]
 		ifFalse: [
 			currentMorph isKnownFailing
 				ifTrue: [
@@ -3613,11 +3610,10 @@ updateCurrentBounds
 					"In these cases, #drawOn: is required to find bounds.
 					#displayBoundsSetFrom: will use the bounds found by us in these case.
 					See #displayBoundsSetFrom:"
-					currentMorph
-						drawOn: self;
-						displayBoundsSetFrom: self.
+					currentMorph drawOn: self.
+					self displayBoundsSetOnCurrentMorph.
 					(currentMorph postDrawOn: self) ifTrue: [
-						currentMorph displayBoundsUpdateFrom: self ]].]! !
+						self displayBoundsUpdateOnCurrentMorph ]].]! !
 
 !BoundsFinderCanvas methodsFor: 'morphic' stamp: 'jmv 10/25/2021 16:40:23'!
 updateHandsDisplayBounds: aWorldMorph
@@ -3823,13 +3819,13 @@ contourOfCurrentMorphAfterDrawInto: anArray into: aBlock
 
 	engine morphContourAfterDrawInto: anArray into: aBlock.! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 9/1/2021 11:22:28'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 09:33:25'!
 contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBottom into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
 	Doesn't include any protruding submorphs.
 	Only valid _after_ drawing currentMorph.
-	Use argument if appropriate, or answer a new array if not"
+	Use argument if appropriate, or a new array if not."
 
 	anArray
 		ifNil: [ engine morphContourAfterDrawInto: nil into: aBlock ]
@@ -3837,7 +3833,85 @@ contourOfCurrentMorphAfterDrawUpdate: anArray oldTop: oldTop oldBottom: oldBotto
 			engine morphContourAfterDrawUpdate: anArray 
 				oldTop: oldTop oldBottom: oldBottom into: aBlock ].! !
 
-!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 10/12/2021 19:07:44'!
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 11:05:18'!
+contourSetOnCurrentMorph
+	"Set contour. To be called immediately after drawing currentMorph."
+
+	currentMorph canvas ifNotNil: [ :c |
+		c canvasToUse == self ifTrue: [
+			currentMorph wantsContour
+				ifTrue: [
+					self
+						contourOfCurrentMorphAfterDrawInto: (currentMorph valueOfProperty: #contour) 
+						into: [ :contourArray :contourY0 :contourY1 |
+							currentMorph setProperty: #contour toValue: contourArray.
+							currentMorph setProperty: #contourY0 toValue: contourY0.
+							currentMorph setProperty: #contourY1 toValue: contourY1 ]]
+				ifFalse: [
+					self contourClearOnCurrentMorph ]]].! !
+
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 12:08:43'!
+contourUpdateOnAllOwners
+	"Update contour on all owners of currentMorph.
+	To also include the effect of #postDrawOn: and submorphs."
+
+	currentMorph canvas ifNotNil: [ :c |
+		c canvasToUse = self ifTrue: [
+			1 to: cti-1 do: [ :i |
+				(drawingMorphStack at: i) ifNotNil: [ :m |
+					m wantsContour ifTrue: [
+						self
+							contourOfCurrentMorphAfterDrawUpdate: (m valueOfProperty: #contour)
+							oldTop: (m valueOfProperty: #contourY0)
+							oldBottom: (m valueOfProperty: #contourY1)
+							into: [ :contourArray :contourY0 :contourY1 |
+								m setProperty: #contour toValue: contourArray.
+								m setProperty: #contourY0 toValue: contourY0.
+								m setProperty: #contourY1 toValue: contourY1 ]]]]]].! !
+
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 12:07:51'!
+contourUpdateOnCurrentMorph
+	"Update contour. To also include the effect of #postDrawOn: and submorphs."
+
+	currentMorph canvas ifNotNil: [ :c |
+		c canvasToUse == self ifTrue: [
+			currentMorph wantsContour
+				ifTrue: [
+					self
+						contourOfCurrentMorphAfterDrawUpdate: (currentMorph valueOfProperty: #contour)
+						oldTop: (currentMorph valueOfProperty: #contourY0)
+						oldBottom: (currentMorph valueOfProperty: #contourY1)
+						into: [ :contourArray :contourY0 :contourY1 |
+							currentMorph setProperty: #contour toValue: contourArray.
+							currentMorph setProperty: #contourY0 toValue: contourY0.
+							currentMorph setProperty: #contourY1 toValue: contourY1 ]]]].! !
+
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 12:08:57'!
+drawCurrentAndSubmorphs
+	
+	currentMorph visible ifTrue: [
+
+		currentMorph drawOn: self.
+		self displayBoundsSetOnCurrentMorph.
+		self contourSetOnCurrentMorph.
+		self contourUpdateOnAllOwners.
+
+		"Display submorphs back to front"
+		"coordinate system stack already set up for aMorph
+		('ivars transformations' and 'currentTransformation')"
+		self clippingByCurrentMorphDo: [
+			currentMorph submorphsReverseDo: [ :m | self fullDraw: m ]].
+
+		(currentMorph postDrawOn: self) ifTrue: [
+			self displayBoundsUpdateOnCurrentMorph.
+			self contourUpdateOnCurrentMorph.
+			self contourUpdateOnAllOwners ].
+
+		currentMorph isHighlighted ifTrue: [
+			self drawHighlight: currentMorph ].
+	].! !
+
+!VectorCanvas methodsFor: 'morphic' stamp: 'jmv 2/25/2022 10:49:16'!
 drawCurrentAsError
 	"The morph (or one of its submorphs) had an error in its drawing method."
 	| r w |
@@ -3853,7 +3927,8 @@ drawCurrentAsError
 	r _ r insetBy: w.
 	self line: r topLeft to: r bottomRight width: w color: `Color yellow`.
 	self line: r topRight to: r bottomLeft width: w color: `Color yellow`.	
-	currentMorph displayBoundsSetFrom: self.! !
+	self displayBoundsSetOnCurrentMorph.
+	self contourSetOnCurrentMorph.! !
 
 !VectorCanvas methodsFor: 'morphic' stamp: 'jmv 9/20/2021 12:07:54'!
 morphIdAt: aPoint
@@ -5307,7 +5382,7 @@ disableSubPixelSampling
 	"NOP here.
 	To be redefined if needed"! !
 
-!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 9/1/2021 11:22:43'!
+!VectorEngineDrawer methodsFor: 'accessing' stamp: 'jmv 2/25/2022 12:27:40'!
 morphContourAfterDrawInto: contourArray into: aBlock
 	"In targetForm coordinates.
 	Doesn't account for any clipping at all.
@@ -5321,10 +5396,9 @@ morphContourAfterDrawInto: contourArray into: aBlock
 	| answer i requiredSize y0 y1 dilationHalfHeight strokeHalfSquared |
 	y0 _ morphBoundsTop max: 0.
 	y1 _ morphBoundsBottom min: targetHeight -1.
-	requiredSize _ (y1 - y0 + 1) *  2.
-	requiredSize < 0 ifTrue: [ ^nil ].
+	requiredSize _ (y1 - y0 + 1) *  2 max: 0.
 	answer _ contourArray.
-	(answer isNil or: [ answer size < requiredSize ]) ifTrue: [
+	(answer isNil or: [ requiredSize > answer size ]) ifTrue: [
 		answer _ IntegerArray new: requiredSize ].
 	dilationHalfHeight _ (strokeWidth / 2.0) rounded.
 	strokeHalfSquared _ (strokeWidth / 2.0) squared.
@@ -8227,14 +8301,14 @@ addLabel: string font: font centeredAt: position rotationDegrees: angle
 	label morphPosition: p.
 	^ label.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 10/8/2021 09:46:00'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 2/24/2022 15:11:49'!
 bitMask
-	"Answer an 1bpp Form with our bitMask:
+	"Answer an 1bpp Form with our bitMask.
+	Include all pixels drawn by any morph in our submorphs tree.
 	Query with #pixelValueAt:
-	Pixels drawn by us are 0. Pixels not drawn by us are 1.
-	Remember to do
-	self removeProperty: #bitMask.
-	when appropriate!! (i.e. when we change in such a way to make the bitMask invalid)"
+	Pixels drawn by us (or any submorph) are 0. Pixels not drawn by us (or any submorph) are 1.
+	Remember to do `self removeProperty: #bitMask1  when appropriate!!
+	(i.e. when we change in such a way to make the bitMask invalid)"
 
 	| prevNotVisibleFlag bounds answer auxCanvas |
 
@@ -8293,16 +8367,37 @@ imageFormVG: extentOrNil depth: depth
 		self privateFlagAt: 3 put: prevNotVisibleFlag ].
 	^answer asFormOfDepth: depth.! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 9/21/2021 09:02:16'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 2/24/2022 15:42:01'!
 showBitMask
 	"Just to play with #bitMask from an inspector. Not to be called from code."
 	| r |
+	self flag: #bitMask.						"So this method is shown in senders of #bitMask"
 	r _ self displayFullBounds.
 	r top to: r bottom-1 do: [ :y |
-		Display forceToScreen.
 		r left to: r right-1 do: [ :x |
 			(self coversPixel: x@y) ifTrue: [
-				Display colorAt: x@y put: Color red ]]].! !
+				Display colorAt: x@y put: Color random ]]].
+	Display forceToScreen! !
+
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 2/26/2022 11:54:39'!
+showContour
+	"Just to play with #contour from an inspector. Not to be called from code."
+	
+	(self valueOfProperty: #contour) ifNotNil: [ :contourArray | | contourTop contourBottom  x0 x1 |
+		contourTop _ self valueOfProperty: #contourY0.
+		contourBottom _ self valueOfProperty: #contourY1.
+		contourTop to: contourBottom do: [ :y |
+			x0 _ contourArray at: (y - contourTop) * 2 + 1.
+			x1 _ contourArray at: (y - contourTop) * 2 + 2.
+			Display colorAt: x0+1@y put: `Color black`.
+			Display colorAt: x0+2@y put: `Color black`.
+			Display colorAt: x1-2@y put: `Color black`.
+			Display colorAt: x1-1@y put: `Color black`.
+			Display colorAt: x0@y put: `Color lightGreen`.
+			Display colorAt: x1@y put: `Color white`.
+		].
+		Display forceToScreen.
+	].! !
 
 !PlacedMorph methodsFor: '*vectorGraphics' stamp: 'jmv 12/17/2021 10:11:34'!
 fitInto: aRectangle
