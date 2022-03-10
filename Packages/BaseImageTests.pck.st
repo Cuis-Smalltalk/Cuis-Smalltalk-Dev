@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5058] on 2 February 2022 at 7:23:49 pm'!
+'From Cuis 6.0 [latest update: #5093] on 10 March 2022 at 11:42:44 am'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 280!
+!provides: 'BaseImageTests' 1 281!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -19275,11 +19275,10 @@ testAssertIncludesShouldNotFailWhenElementIsInCollection
 		shouldnt: [ self assert: collection includes: anElement ] 
 		raise: TestResult failure! !
 
-!TestCaseTest methodsFor: 'should take less than' stamp: 'HAW 5/15/2019 19:08:22'!
+!TestCaseTest methodsFor: 'should take less than' stamp: 'jmv 3/10/2022 11:42:41'!
 testShouldNotTakeMoreThanFailsWhenClosureTakesMoreThanTheLimit
 
-	self shouldFail: [ self should: [(Delay forMilliseconds: 5) wait ] notTakeMoreThan: 1 milliSeconds ]
-		! !
+	self shouldFail: [ self should: [(Delay forMilliseconds: 50) wait ] notTakeMoreThan: 10 milliSeconds ]! !
 
 !TestCaseTest methodsFor: 'should take less than' stamp: 'HAW 5/15/2019 19:07:04'!
 testShouldNotTakeMoreThanPassesWhenClosureTakesLessThanTheLimit
