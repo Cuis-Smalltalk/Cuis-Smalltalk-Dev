@@ -1,7 +1,7 @@
-'From Cuis 6.0 [latest update: #5090] on 26 February 2022 at 11:55:39 am'!
+'From Cuis 6.0 [latest update: #5096] on 26 March 2022 at 5:18:45 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 337!
-!requires: 'Cuis-Base' 60 5090 nil!
+!provides: 'VectorGraphics' 1 338!
+!requires: 'Cuis-Base' 60 5096 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -1516,6 +1516,13 @@ drawStringEmbossed: aString from: firstIndex to: lastIndex at: aPoint font: font
 		^nil ].
 	^super drawStringEmbossed: aString from: firstIndex to: lastIndex at: aPoint font: font color: aColor! !
 
+!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 3/26/2022 17:15:20'!
+drawTextComposition: aTextComposition at: drawingPosition extent: anExtent color: c selectionColor: sc avoidOverhang: strict
+
+	drawingOnMorphIDs ifTrue: [
+		^nil ].
+	^super drawTextComposition: aTextComposition at: drawingPosition extent: anExtent color: c selectionColor: sc avoidOverhang: strict! !
+
 !HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 3/25/2021 16:30:58'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 
@@ -1529,13 +1536,6 @@ drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: 
 	drawingOnMorphIDs ifTrue: [
 		^nil ].
 	^super drawUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
-
-!HybridCanvas methodsFor: 'drawing-text' stamp: 'jmv 11/30/2020 12:12:26'!
-textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc
-
-	drawingOnMorphIDs ifTrue: [
-		^nil ].
-	^super textComposition: aTextComposition bounds: boundsRect color: c selectionColor: sc! !
 
 !HybridCanvas methodsFor: 'initialization' stamp: 'jmv 9/27/2021 17:20:10'!
 initializeWithTranslation: aPoint
