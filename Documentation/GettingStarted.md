@@ -75,7 +75,7 @@ Drag Squeak.app to your MyProject folder
 * If you get "Squeak is an app downloaded from the Internet. Are you sure you want to open it?", click on [Open]
 * Alternatively, you might:
 ```
-./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev-master/Cuis6.0-5069.image
+./Squeak.app/Contents/MacOS/Squeak Cuis-Smalltalk-Dev/Cuis6.0-5069.image
 ```
 
 ## For 64 bits Windows (Git Bash) ##
