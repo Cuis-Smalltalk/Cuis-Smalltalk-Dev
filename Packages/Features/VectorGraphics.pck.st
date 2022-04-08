@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5096] on 26 March 2022 at 5:18:45 pm'!
+'From Cuis 6.0 [latest update: #5103] on 8 April 2022 at 10:36:27 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 338!
+!provides: 'VectorGraphics' 1 339!
 !requires: 'Cuis-Base' 60 5096 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -3486,9 +3486,6 @@ scalePathData: aFloat32Array scale: scale
 		].
 	^scaledPathData.! !
 
-!BoundsFinderCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 8/12/2021 15:35:20'!
-frameGlobalRect: rect borderWidth: borderWidth color: borderColor! !
-
 !BoundsFinderCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 8/12/2021 15:52:34'!
 image: srcForm at: aPoint
 
@@ -3651,55 +3648,49 @@ setForm: aForm subPixelAntiAliasing: aBooleanOrNil
 	engine _ VectorEngineBoundsFinder new.
 	clippingMorphDisplayBounds _ nil.! !
 
+!BoundsFinderCanvas methodsFor: 'private-framework' stamp: 'jmv 4/8/2022 10:25:05'!
+privateFrameGlobalRect: rect borderWidth: borderWidth color: borderColor! !
+
 !VectorCanvas methodsFor: 'accessing' stamp: 'jmv 8/12/2021 10:34:48'!
 boundsFinderCanvas
 	^boundsFinderCanvas! !
 
-!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/8/2021 09:48:55'!
-frameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
+!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/29/2021 10:54:41'!
+drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
+	"Answer position to place next glyph"
 	"
-	(VectorCanvas onForm: Display)
-		frameAndFillGlobalRect: (10@10 extent: 300@200)
-		fillColor: Color yellow
-		borderWidth: 20
-		color: Color green.
-	Display forceToScreen
+| s c f |
+c _ VectorCanvas onForm: Display.
+c geometryTransformation: (AffineTransformation withRadians: 0.1).
+f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
+s _ 'Latin text in VectorGraphics'.
+(c drawString: s from: 1 to: s size atBaseline: 100@100 font: f color: Color black) print.
+c strokeWidth: 1 color: Color red do: [ c moveTo: 100@100; lineTo: 1000@100 ].
+Display forceToScreen
 	"
-	auxBitBltEngine
-		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
-		fillColor: borderColor;
-		frameRect: rect borderWidth: borderWidth;
-		combinationRule: (fillColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
-		fillColor: fillColor;
-		fillRect: (rect insetBy: borderWidth).! !
+	| p1 answer |
+	"Don't waste any time if NOP"
+	lastIndex = 0 ifTrue: [
+		^nil ].
 
-!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/8/2021 09:48:59'!
-frameGlobalRect: rect borderWidth: borderWidth color: borderColor
-	"
-	(VectorCanvas onForm: Display)
-		frameGlobalRect: (10@10 extent: 300@200)
-		borderWidth: 20
-		color: Color red.
-	Display forceToScreen
-	"
-	auxBitBltEngine
-		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
-		fillColor: borderColor;
-		frameRect: rect borderWidth: borderWidth.! !
+	currentTransformation isPureTranslation ifTrue: [
+		Preferences cacheTrueTypeGlyphs ifTrue: [
+			p1 _ currentTransformation transform: aPoint roundedHAFZ.
+			p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
+			p1 _ p1 roundedHAFZ.
+			answer _ auxBitBltEngine
+				displayString: aString
+				from: firstIndex
+				to: lastIndex
+				at: p1
+				trueTypeFont: aTrueTypeFont
+				color: aColor.
+			answer ifNotNil: [
+				engine updateMorphBoundsLeft: p1 x top: p1 y
+					right: answer x bottom: answer y ].
+			^answer ]].
 
-!VectorCanvas methodsFor: 'drawing - Global Coordinates' stamp: 'jmv 10/8/2021 09:49:04'!
-frameReverseGlobalRect: rect borderWidth: borderWidth
-	"
-	(VectorCanvas onForm: Display)
-		frameReverseGlobalRect: (10@10 extent: 300@200)
-		borderWidth: 20.
-	Display forceToScreen
-	"
-	auxBitBltEngine
-		sourceForm: nil;
-		fillColor: `Color gray`;
-		combinationRule: Form reverse;
-		frameRect: rect borderWidth: borderWidth! !
+	^super drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
 
 !VectorCanvas methodsFor: 'drawing - MorphicCanvas protocol' stamp: 'jmv 10/29/2021 10:54:55'!
 image: srcForm at: aPoint
@@ -3997,34 +3988,6 @@ savePatch: prevSavedPatch bounds: aRectangle
 
 	^answer! !
 
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 16:05:57'!
-pvtDrawButtonFaceForm: aForm
-	"We assume that we are drawing a PluggableButtonMorph,
-	or some morph that conforms the required protocol.
-	Answer true if we were able to draw it."
-
-	| color |
-	color _ currentMorph isPressed
-		ifTrue: [ `Color gray: 0.75` ]
-		ifFalse: [
-			currentMorph mouseIsOver
-				ifTrue: [ `Color gray: 0.75` ]
-				ifFalse: [ `Color white` ]].
-	self
-		image: aForm
-		at: (currentMorph morphExtent - aForm extent //2).! !
-
-!VectorCanvas methodsFor: 'private' stamp: 'jmv 10/7/2021 17:36:57'!
-setClipRect: aRectangle
-	"In targetForm coordinates"
-
-	super setClipRect: aRectangle.
-	engine clipRect: aRectangle.
-	auxBitBltEngine _ BitBltCanvasEngine toForm: form.
-	auxBitBltEngine clipRect: aRectangle.
-	boundsFinderCanvas ifNotNil: [
-		boundsFinderCanvas setClipRect: aRectangle ].! !
-
 !VectorCanvas methodsFor: 'initialization' stamp: 'jmv 8/18/2021 11:42:58'!
 initializeWithTranslation: aPoint
 
@@ -4071,42 +4034,79 @@ canDoVectorGraphics
 usesVectorEnginePlugin
 	^engine usesVectorEnginePlugin! !
 
-!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/29/2021 10:54:41'!
-drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
-	"Answer position to place next glyph"
-	"
-| s c f |
-c _ VectorCanvas onForm: Display.
-c geometryTransformation: (AffineTransformation withRadians: 0.1).
-f _ FontFamily familyName: 'DejaVu Sans' pointSize: 72.
-s _ 'Latin text in VectorGraphics'.
-(c drawString: s from: 1 to: s size atBaseline: 100@100 font: f color: Color black) print.
-c strokeWidth: 1 color: Color red do: [ c moveTo: 100@100; lineTo: 1000@100 ].
-Display forceToScreen
-	"
-	| p1 answer |
-	"Don't waste any time if NOP"
-	lastIndex = 0 ifTrue: [
-		^nil ].
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 8/12/2021 16:05:57'!
+pvtDrawButtonFaceForm: aForm
+	"We assume that we are drawing a PluggableButtonMorph,
+	or some morph that conforms the required protocol.
+	Answer true if we were able to draw it."
 
-	currentTransformation isPureTranslation ifTrue: [
-		Preferences cacheTrueTypeGlyphs ifTrue: [
-			p1 _ currentTransformation transform: aPoint roundedHAFZ.
-			p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
-			p1 _ p1 roundedHAFZ.
-			answer _ auxBitBltEngine
-				displayString: aString
-				from: firstIndex
-				to: lastIndex
-				at: p1
-				trueTypeFont: aTrueTypeFont
-				color: aColor.
-			answer ifNotNil: [
-				engine updateMorphBoundsLeft: p1 x top: p1 y
-					right: answer x bottom: answer y ].
-			^answer ]].
+	| color |
+	color _ currentMorph isPressed
+		ifTrue: [ `Color gray: 0.75` ]
+		ifFalse: [
+			currentMorph mouseIsOver
+				ifTrue: [ `Color gray: 0.75` ]
+				ifFalse: [ `Color white` ]].
+	self
+		image: aForm
+		at: (currentMorph morphExtent - aForm extent //2).! !
 
-	^super drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor! !
+!VectorCanvas methodsFor: 'private' stamp: 'jmv 10/7/2021 17:36:57'!
+setClipRect: aRectangle
+	"In targetForm coordinates"
+
+	super setClipRect: aRectangle.
+	engine clipRect: aRectangle.
+	auxBitBltEngine _ BitBltCanvasEngine toForm: form.
+	auxBitBltEngine clipRect: aRectangle.
+	boundsFinderCanvas ifNotNil: [
+		boundsFinderCanvas setClipRect: aRectangle ].! !
+
+!VectorCanvas methodsFor: 'private-framework' stamp: 'jmv 4/8/2022 10:23:38'!
+privateFrameAndFillGlobalRect: rect fillColor: fillColor borderWidth: borderWidth color: borderColor
+	"
+	(VectorCanvas onForm: Display)
+		privateFrameAndFillGlobalRect: (10@10 extent: 300@200)
+		fillColor: Color yellow
+		borderWidth: 20
+		color: Color green.
+	Display forceToScreen
+	"
+	auxBitBltEngine
+		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: borderColor;
+		frameRect: rect borderWidth: borderWidth;
+		combinationRule: (fillColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: fillColor;
+		fillRect: (rect insetBy: borderWidth).! !
+
+!VectorCanvas methodsFor: 'private-framework' stamp: 'jmv 4/8/2022 10:23:56'!
+privateFrameGlobalRect: rect borderWidth: borderWidth color: borderColor
+	"
+	(VectorCanvas onForm: Display)
+		privateFrameGlobalRect: (10@10 extent: 300@200)
+		borderWidth: 20
+		color: Color red.
+	Display forceToScreen
+	"
+	auxBitBltEngine
+		combinationRule: (borderColor isOpaque ifTrue: [Form paint] ifFalse: [Form blend]);
+		fillColor: borderColor;
+		frameRect: rect borderWidth: borderWidth.! !
+
+!VectorCanvas methodsFor: 'private-framework' stamp: 'jmv 4/8/2022 10:24:14'!
+privateFrameReverseGlobalRect: rect borderWidth: borderWidth
+	"
+	(VectorCanvas onForm: Display)
+		privateFrameReverseGlobalRect: (10@10 extent: 300@200)
+		borderWidth: 20.
+	Display forceToScreen
+	"
+	auxBitBltEngine
+		sourceForm: nil;
+		fillColor: `Color gray`;
+		combinationRule: Form reverse;
+		frameRect: rect borderWidth: borderWidth! !
 
 !VectorCanvas class methodsFor: 'class initialization' stamp: 'jmv 2/21/2022 12:17:18'!
 initialize
