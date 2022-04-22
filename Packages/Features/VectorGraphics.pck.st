@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5103] on 8 April 2022 at 10:36:27 am'!
+'From Cuis 6.0 [latest update: #5110] on 22 April 2022 at 11:19:25 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 339!
+!provides: 'VectorGraphics' 1 340!
 !requires: 'Cuis-Base' 60 5096 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -6940,7 +6940,7 @@ emphasis
 	('*Italic*' match: subfamilyName) ifTrue: [ emphasis := emphasis bitOr: 2 ].
 	^ emphasis! !
 
-!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 10/8/2021 09:46:00'!
+!TTFontDescription methodsFor: 'conversion' stamp: 'jmv 4/21/2022 13:36:45'!
 formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	"Needed only for BitBltCanvasEngine"
 	| toPixelsScale formWidth formHeight leftPixelOffset topPixelOffset xtraSpaceForAntiAliasingAndRounding horizontalStrokesAtPixelCenter form canvas advanceWidth boundsBottom boundsLeft boundsRight boundsTop i iso8859s15Code |
@@ -6974,7 +6974,7 @@ formGlyphFor: aCharacter useST80Glyphs: aBoolean pixelSize: pixelSize
 	canvas _ VectorCanvas onFormWithSubPixelAntiAliasing: form.
 	canvas 
 		engine
-			displayString: aCharacter asString
+			displayString: (String with: aCharacter)
 			from: 1
 			to: 1
 			at: leftPixelOffset negated@(topPixelOffset - horizontalStrokesAtPixelCenter)
@@ -8288,11 +8288,11 @@ displayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoin
 		combinationRule := prevRule ].
 	^answer! !
 
-!Morph methodsFor: '*vectorGraphics' stamp: 'hlsf 1/18/2021 17:31:38'!
+!Morph methodsFor: '*vectorGraphics' stamp: 'jmv 4/21/2022 14:07:32'!
 addLabel: string font: font centeredAt: position rotationDegrees: angle
 	"Add a label top-centered at position and rotated of angle degrees"
 	| p label |
-	p _ position - (position normal * (font widthOfString: string asString) / 2).
+	p _ position - (position normal * (font widthOfString: string asPlainString) / 2).
 	label _ LabelMorph
 		contents: string
 		font: font.

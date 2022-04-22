@@ -1,117 +1,117 @@
-'From Cuis 5.0 [latest update: #3890] on 29 September 2019 at 1:34:51 pm'!
+'From Cuis 6.0 [latest update: #5110] on 22 April 2022 at 11:20:27 am'!
 'Description '!
-!provides: 'FFI' 1 33!
-SystemOrganization addCategory: #'FFI-Pools'!
-SystemOrganization addCategory: #'FFI-Kernel'!
+!provides: 'FFI' 1 34!
+SystemOrganization addCategory: 'FFI-Pools'!
+SystemOrganization addCategory: 'FFI-Kernel'!
 
 
-!classDefinition: #FFIConstants category: #'FFI-Pools'!
+!classDefinition: #FFIConstants category: 'FFI-Pools'!
 SharedPool subclass: #FFIConstants
 	instanceVariableNames: ''
 	classVariableNames: 'FFIAtomicTypeMask FFIAtomicTypeShift FFICallFlagThreaded FFICallTypeApi FFICallTypeCDecl FFICallTypesMask FFIErrorAddressNotFound FFIErrorAttemptToPassVoid FFIErrorBadAddress FFIErrorBadArg FFIErrorBadArgs FFIErrorBadAtomicType FFIErrorBadExternalFunction FFIErrorBadExternalLibrary FFIErrorBadReturn FFIErrorCallFrameTooBig FFIErrorCallType FFIErrorCoercionFailed FFIErrorGenericError FFIErrorIntAsPointer FFIErrorInvalidPointer FFIErrorModuleNotFound FFIErrorNoModule FFIErrorNotFunction FFIErrorStructSize FFIErrorWrongType FFIFlagAtomic FFIFlagPointer FFIFlagStructure FFINoCalloutAvailable FFIStructSizeMask FFITypeBool FFITypeDoubleFloat FFITypeSignedByte FFITypeSignedChar FFITypeSignedInt FFITypeSignedLongLong FFITypeSignedShort FFITypeSingleFloat FFITypeUnsignedByte FFITypeUnsignedChar FFITypeUnsignedInt FFITypeUnsignedLongLong FFITypeUnsignedShort FFITypeVoid'
 	poolDictionaries: ''
 	category: 'FFI-Pools'!
-!classDefinition: 'FFIConstants class' category: #'FFI-Pools'!
+!classDefinition: 'FFIConstants class' category: 'FFI-Pools'!
 FFIConstants class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExternalAddress category: #'FFI-Kernel'!
+!classDefinition: #ExternalAddress category: 'FFI-Kernel'!
 ByteArray variableByteSubclass: #ExternalAddress
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalAddress class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalAddress class' category: 'FFI-Kernel'!
 ExternalAddress class
 	instanceVariableNames: 'wordSize'!
 
-!classDefinition: #ExternalForm category: #'FFI-Kernel'!
+!classDefinition: #ExternalForm category: 'FFI-Kernel'!
 Form subclass: #ExternalForm
 	instanceVariableNames: 'pointer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalForm class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalForm class' category: 'FFI-Kernel'!
 ExternalForm class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExternalObject category: #'FFI-Kernel'!
+!classDefinition: #ExternalObject category: 'FFI-Kernel'!
 Object subclass: #ExternalObject
 	instanceVariableNames: 'handle'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalObject class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalObject class' category: 'FFI-Kernel'!
 ExternalObject class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExternalFunction category: #'FFI-Kernel'!
+!classDefinition: #ExternalFunction category: 'FFI-Kernel'!
 ExternalObject subclass: #ExternalFunction
 	instanceVariableNames: 'flags argTypes'
 	classVariableNames: 'FFIErrorMessages'
 	poolDictionaries: 'FFIConstants'
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalFunction class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalFunction class' category: 'FFI-Kernel'!
 ExternalFunction class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExternalLibraryFunction category: #'FFI-Kernel'!
+!classDefinition: #ExternalLibraryFunction category: 'FFI-Kernel'!
 ExternalFunction subclass: #ExternalLibraryFunction
 	instanceVariableNames: 'name module errorCodeName'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalLibraryFunction class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalLibraryFunction class' category: 'FFI-Kernel'!
 ExternalLibraryFunction class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExternalLibrary category: #'FFI-Kernel'!
+!classDefinition: #ExternalLibrary category: 'FFI-Kernel'!
 ExternalObject subclass: #ExternalLibrary
 	instanceVariableNames: 'name'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalLibrary class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalLibrary class' category: 'FFI-Kernel'!
 ExternalLibrary class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExternalStructure category: #'FFI-Kernel'!
+!classDefinition: #ExternalStructure category: 'FFI-Kernel'!
 ExternalObject subclass: #ExternalStructure
 	instanceVariableNames: ''
 	classVariableNames: 'PreviousPlatform'
 	poolDictionaries: 'FFIConstants'
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalStructure class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalStructure class' category: 'FFI-Kernel'!
 ExternalStructure class
 	instanceVariableNames: 'compiledSpec'!
 
-!classDefinition: #ExternalData category: #'FFI-Kernel'!
+!classDefinition: #ExternalData category: 'FFI-Kernel'!
 ExternalStructure subclass: #ExternalData
 	instanceVariableNames: 'type'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalData class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalData class' category: 'FFI-Kernel'!
 ExternalData class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExternalUnion category: #'FFI-Kernel'!
+!classDefinition: #ExternalUnion category: 'FFI-Kernel'!
 ExternalStructure subclass: #ExternalUnion
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalUnion class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalUnion class' category: 'FFI-Kernel'!
 ExternalUnion class
 	instanceVariableNames: ''!
 
-!classDefinition: #ExternalType category: #'FFI-Kernel'!
+!classDefinition: #ExternalType category: 'FFI-Kernel'!
 Object subclass: #ExternalType
 	instanceVariableNames: 'compiledSpec referentClass referencedType pointerSize'
 	classVariableNames: 'AtomicSelectors AtomicTypeNames AtomicTypes StructTypes'
 	poolDictionaries: 'FFIConstants'
 	category: 'FFI-Kernel'!
-!classDefinition: 'ExternalType class' category: #'FFI-Kernel'!
+!classDefinition: 'ExternalType class' category: 'FFI-Kernel'!
 ExternalType class
 	instanceVariableNames: ''!
 
@@ -339,7 +339,7 @@ startUp: resuming
 name
 	^nil! !
 
-!ExternalFunction methodsFor: 'printing' stamp: 'eem 10/28/2009 17:10'!
+!ExternalFunction methodsFor: 'printing' stamp: 'jmv 4/21/2022 15:10:38'!
 printOn: aStream
 	aStream
 		nextPut:$<;
@@ -351,14 +351,14 @@ printOn: aStream
 	aStream print: argTypes first; space.
 	self name == nil
 		ifTrue:[aStream nextPutAll:'(*) ']
-		ifFalse:[aStream print: self name asString; space].
+		ifFalse:[aStream print: self name asPlainString; space].
 	aStream nextPut:$(.
 	2 to: argTypes size do:[:i|
 		aStream print: (argTypes at: i).
 		i < argTypes size ifTrue:[aStream space]].
 	aStream nextPut:$).
 	self module == nil ifFalse:[
-		aStream space; nextPutAll:'module: '; print: self module asString.
+		aStream space; nextPutAll:'module: '; print: self module asPlainString.
 	].
 	self errorCodeName == nil ifFalse:[
 		aStream space; nextPutAll:'error: '; nextPutAll: self errorCodeName.
@@ -647,6 +647,10 @@ isNull
 	1 to: self size do:[:i| (self at: i) = 0 ifFalse:[^false]].
 	^true! !
 
+!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/20/2016 17:29'!
+initialize
+	wordSize := Smalltalk wordSize! !
+
 !ExternalAddress class methodsFor: 'instance creation' stamp: 'ar 11/28/1999 23:20'!
 allocate: byteSize
 	"Primitive. Allocate an object on the external heap."
@@ -680,10 +684,6 @@ new: n
 numElements
 	"External addresses are either four or eight bytes long."
 	^ wordSize! !
-
-!ExternalAddress class methodsFor: 'class initialization' stamp: 'eem 2/20/2016 17:29'!
-initialize
-	wordSize := Smalltalk wordSize! !
 
 !ExternalAddress class methodsFor: 'accessing' stamp: 'eem 2/16/2016 12:34'!
 wordSize
@@ -798,12 +798,6 @@ isNull
 	"Answer true if the receiver currently is a NULL pointer"
 	^handle == nil or:[handle isNull]! !
 
-!ExternalObject class methodsFor: 'class initialization' stamp: 'ar 11/19/1999 22:37'!
-initialize
-	"ExternalObject initialize"
-"	Smalltalk addToStartUpList: self after: ShortRunArray."
-	Smalltalk addToStartUpList: self.! !
-
 !ExternalObject class methodsFor: 'system startup' stamp: 'ar 11/28/1999 23:37'!
 install
 	"Notify all instances of the receiver that we're coming up on a new platform.
@@ -816,6 +810,12 @@ install
 installSubclasses
 	"Notify all the subclasses of ExternalObject that we are starting up on a new platform."
 	self withAllSubclassesDo:[:cls| cls install].! !
+
+!ExternalObject class methodsFor: 'class initialization' stamp: 'ar 11/19/1999 22:37'!
+initialize
+	"ExternalObject initialize"
+"	Smalltalk addToStartUpList: self after: ShortRunArray."
+	Smalltalk addToStartUpList: self.! !
 
 !ExternalFunction methodsFor: 'accessing' stamp: 'ar 11/19/1999 19:13'!
 argTypes
@@ -998,15 +998,6 @@ unload
 	Smalltalk specialObjectsArray from: 44 to: 48 put: nil.
 ! !
 
-!ExternalLibraryFunction methodsFor: 'comparing' stamp: 'eem 10/28/2009 17:07'!
-analogousCodeTo: anObject
-	^(anObject isKindOf: ExternalLibraryFunction)
-	and: [flags = anObject flags
-	and: [argTypes = anObject argTypes
-	and: [name = anObject name
-	and: [module = anObject module
-	and: [errorCodeName = anObject errorCodeName]]]]]! !
-
 !ExternalLibraryFunction methodsFor: 'accessing' stamp: 'eem 10/28/2009 17:07'!
 errorCodeName
 	^errorCodeName! !
@@ -1024,6 +1015,15 @@ setModule: aString
 	"Private. Hack the module"
 	module := aString.! !
 
+!ExternalLibraryFunction methodsFor: 'comparing' stamp: 'eem 10/28/2009 17:07'!
+analogousCodeTo: anObject
+	^(anObject isKindOf: ExternalLibraryFunction)
+	and: [flags = anObject flags
+	and: [argTypes = anObject argTypes
+	and: [name = anObject name
+	and: [module = anObject module
+	and: [errorCodeName = anObject errorCodeName]]]]]! !
+
 !ExternalLibraryFunction methodsFor: 'private' stamp: 'ar 11/19/1999 19:12'!
 name: aName module: aModule flags: anInteger argTypes: argTypeArray
 
@@ -1040,6 +1040,10 @@ name: aName module: aModule callType: callType returnType: retType argumentTypes
 		flags: callType
 		argTypes: (Array with: retType), argTypes! !
 
+!ExternalLibrary methodsFor: 'accessing' stamp: 'ar 11/17/1999 19:35'!
+handle
+	^handle! !
+
 !ExternalLibrary methodsFor: 'initialization' stamp: 'ar 12/8/1999 21:49'!
 forceLoading
 	"Primitive. Force loading the given library.
@@ -1054,14 +1058,14 @@ initialize
 	name := self class moduleName.
 	handle := ExternalAddress new.! !
 
-!ExternalLibrary methodsFor: 'accessing' stamp: 'ar 11/17/1999 19:35'!
-handle
-	^handle! !
-
 !ExternalLibrary class methodsFor: 'accessing' stamp: 'ar 11/17/1999 19:33'!
 moduleName
 	"Return the name of the module for this library"
 	^nil! !
+
+!ExternalStructure methodsFor: 'printing' stamp: 'eem 5/1/2018 15:18'!
+compositeName
+	^self class compositeName! !
 
 !ExternalStructure methodsFor: 'release' stamp: 'ar 11/28/1999 23:21'!
 free
@@ -1069,9 +1073,12 @@ free
 	(handle ~~ nil and:[handle isExternalAddress]) ifTrue:[handle free].
 	handle := nil.! !
 
-!ExternalStructure methodsFor: 'printing' stamp: 'eem 5/1/2018 15:18'!
-compositeName
-	^self class compositeName! !
+!ExternalStructure class methodsFor: 'class management' stamp: 'ar 11/22/1999 04:12'!
+rename: aString
+	| oldName |
+	oldName := name.
+	super rename: aString.
+	oldName = name ifFalse:[ExternalType noticeRenamingOf: self from: oldName to: name].! !
 
 !ExternalStructure class methodsFor: 'field definition' stamp: 'ar 12/2/1999 14:31'!
 byteSize
@@ -1310,13 +1317,6 @@ typeNamesFromWhichIDepend
 	f first isArray ifFalse: [^Set with: f second].
 	^(f collect: [:e | e second]) as: Set! !
 
-!ExternalStructure class methodsFor: 'class management' stamp: 'ar 11/22/1999 04:12'!
-rename: aString
-	| oldName |
-	oldName := name.
-	super rename: aString.
-	oldName = name ifFalse:[ExternalType noticeRenamingOf: self from: oldName to: name].! !
-
 !ExternalStructure class methodsFor: 'instance creation' stamp: 'ar 12/1/1999 15:58'!
 externalNew
 	"Create an instance of the receiver on the external heap"
@@ -1519,6 +1519,93 @@ compileFields: specArray withAccessors: aSymbol
 !ExternalUnion class methodsFor: 'converting' stamp: 'eem 5/1/2018 15:18'!
 compositeName
 	^'union'! !
+
+!ExternalType methodsFor: 'printing' stamp: 'eem 2/16/2016 10:29'!
+printAtomicType: spec on: aStream
+	self assert: (spec anyMask: FFIFlagAtomic).
+	aStream nextPutAll: (#(	'void' 'unsigned char' 'unsigned char' 'signed char'
+							'unsigned short' 'short' 'unsigned long' 'long'
+							'unsigned long long' 'long long' 'char' 'signed char'
+							'float' 'double') at: ((spec bitAnd: FFIAtomicTypeMask) bitShift: FFIAtomicTypeShift negated) + 1).
+	aStream space.
+	(spec anyMask: FFIFlagPointer) ifTrue:
+		[aStream nextPut: $*]! !
+
+!ExternalType methodsFor: 'printing' stamp: 'jmv 8/31/2018 14:35:20'!
+printStructureFieldStartingAt: initialSpecIndex withName: name inClass: structureClass on: aStream indent: indent
+	"Print the structure's field starting at initialSpecIndex and answer the index in compiledSpec of the subsequent type."
+	| spec subStructureClassBinding |
+	aStream tab: indent.
+	spec := compiledSpec at: initialSpecIndex.
+	(spec anyMask: FFIFlagAtomic) ifTrue:
+		[self printAtomicType: spec on: aStream.
+		 aStream nextPutAll: (name ifNotNil: [name] ifNil: ['foo']).
+		 ^initialSpecIndex + 1].
+	 subStructureClassBinding := (structureClass >> name) literals detect:
+									[:l| l isVariableBinding and: [l value inheritsFrom: ExternalStructure]].
+	(spec bitClear: FFIStructSizeMask) = FFIFlagStructure ifTrue:
+		[| next |
+		 next := initialSpecIndex + 1.
+		 aStream
+			nextPutAll: subStructureClassBinding value compositeName;
+			nextPutAll: ' {'.
+		 subStructureClassBinding value fields withIndexDo:
+			[:tuple :i|
+			aStream newLine.
+			next := self printStructureFieldStartingAt: next
+						withName: tuple first
+						inClass: subStructureClassBinding value
+						on: aStream
+						indent: indent + 1.
+			aStream nextPut: $;].
+		 aStream newLine; tab: indent; nextPut: $}.
+		 name ifNotNil: [aStream space; nextPutAll: name].
+		 self assert: (next - 1 = compiledSpec size or: [(compiledSpec at: next) = FFIFlagStructure]).
+		 ^next <= compiledSpec size ifTrue: [next + 1] ifFalse: [next]].
+	self assert: (spec anyMask: FFIFlagPointer).
+
+
+self halt.
+	(subStructureClassBinding value isKindOf: ExternalUnion)
+			ifTrue: [aStream nextPutAll: 'union ']
+			ifFalse: [aStream nextPutAll: 'struct '].
+"	aStream nextPutAll: subStructureClassBinding value compositeName."
+
+
+
+
+	aStream nextPutAll: subStructureClassBinding value name; nextPutAll: ' *'; nextPutAll: name.
+	^initialSpecIndex + 1! !
+
+!ExternalType methodsFor: 'printing' stamp: 'jmv 8/31/2018 12:48:49'!
+printTypedefOn: s
+	s nextPutAll: 'typedef '.
+	(referentClass notNil
+	 and: [(compiledSpec first bitClear: FFIStructSizeMask) = FFIFlagStructure])
+		ifTrue:
+			[| next |
+			 next := 2.
+			 s
+				nextPutAll: referentClass compositeName;
+				nextPutAll: ' {'.
+			 referentClass fields withIndexDo:
+				[:tuple :i|
+				s newLine.
+				next := self printStructureFieldStartingAt: next
+							withName: tuple first
+							inClass: referentClass
+							on: s
+							indent: 1.
+				s nextPut: $;].
+			 s newLine; nextPutAll: '} '.
+			 self assert: (next - 1 = compiledSpec size or: [(compiledSpec at: next) = FFIFlagStructure])]
+		ifFalse:
+			[self printAtomicType: compiledSpec first on: s].
+	s nextPutAll: (referentClass ifNotNil: [referentClass name] ifNil: ['foo'])! !
+
+!ExternalType methodsFor: 'printing' stamp: 'eem 2/16/2016 10:05'!
+typedef
+	^String streamContents: [:s| self printTypedefOn: s]! !
 
 !ExternalType methodsFor: 'converting' stamp: 'ar 12/2/1999 16:41'!
 asNonPointerType
@@ -1736,93 +1823,6 @@ isUnsigned
 isVoid
 	"Return true if the receiver describes a plain 'void' type"
 	^self isAtomic and:[self atomicType = 0]! !
-
-!ExternalType methodsFor: 'printing' stamp: 'eem 2/16/2016 10:29'!
-printAtomicType: spec on: aStream
-	self assert: (spec anyMask: FFIFlagAtomic).
-	aStream nextPutAll: (#(	'void' 'unsigned char' 'unsigned char' 'signed char'
-							'unsigned short' 'short' 'unsigned long' 'long'
-							'unsigned long long' 'long long' 'char' 'signed char'
-							'float' 'double') at: ((spec bitAnd: FFIAtomicTypeMask) bitShift: FFIAtomicTypeShift negated) + 1).
-	aStream space.
-	(spec anyMask: FFIFlagPointer) ifTrue:
-		[aStream nextPut: $*]! !
-
-!ExternalType methodsFor: 'printing' stamp: 'jmv 8/31/2018 14:35:20'!
-printStructureFieldStartingAt: initialSpecIndex withName: name inClass: structureClass on: aStream indent: indent
-	"Print the structure's field starting at initialSpecIndex and answer the index in compiledSpec of the subsequent type."
-	| spec subStructureClassBinding |
-	aStream tab: indent.
-	spec := compiledSpec at: initialSpecIndex.
-	(spec anyMask: FFIFlagAtomic) ifTrue:
-		[self printAtomicType: spec on: aStream.
-		 aStream nextPutAll: (name ifNotNil: [name] ifNil: ['foo']).
-		 ^initialSpecIndex + 1].
-	 subStructureClassBinding := (structureClass >> name) literals detect:
-									[:l| l isVariableBinding and: [l value inheritsFrom: ExternalStructure]].
-	(spec bitClear: FFIStructSizeMask) = FFIFlagStructure ifTrue:
-		[| next |
-		 next := initialSpecIndex + 1.
-		 aStream
-			nextPutAll: subStructureClassBinding value compositeName;
-			nextPutAll: ' {'.
-		 subStructureClassBinding value fields withIndexDo:
-			[:tuple :i|
-			aStream newLine.
-			next := self printStructureFieldStartingAt: next
-						withName: tuple first
-						inClass: subStructureClassBinding value
-						on: aStream
-						indent: indent + 1.
-			aStream nextPut: $;].
-		 aStream newLine; tab: indent; nextPut: $}.
-		 name ifNotNil: [aStream space; nextPutAll: name].
-		 self assert: (next - 1 = compiledSpec size or: [(compiledSpec at: next) = FFIFlagStructure]).
-		 ^next <= compiledSpec size ifTrue: [next + 1] ifFalse: [next]].
-	self assert: (spec anyMask: FFIFlagPointer).
-
-
-self halt.
-	(subStructureClassBinding value isKindOf: ExternalUnion)
-			ifTrue: [aStream nextPutAll: 'union ']
-			ifFalse: [aStream nextPutAll: 'struct '].
-"	aStream nextPutAll: subStructureClassBinding value compositeName."
-
-
-
-
-	aStream nextPutAll: subStructureClassBinding value name; nextPutAll: ' *'; nextPutAll: name.
-	^initialSpecIndex + 1! !
-
-!ExternalType methodsFor: 'printing' stamp: 'jmv 8/31/2018 12:48:49'!
-printTypedefOn: s
-	s nextPutAll: 'typedef '.
-	(referentClass notNil
-	 and: [(compiledSpec first bitClear: FFIStructSizeMask) = FFIFlagStructure])
-		ifTrue:
-			[| next |
-			 next := 2.
-			 s
-				nextPutAll: referentClass compositeName;
-				nextPutAll: ' {'.
-			 referentClass fields withIndexDo:
-				[:tuple :i|
-				s newLine.
-				next := self printStructureFieldStartingAt: next
-							withName: tuple first
-							inClass: referentClass
-							on: s
-							indent: 1.
-				s nextPut: $;].
-			 s newLine; nextPutAll: '} '.
-			 self assert: (next - 1 = compiledSpec size or: [(compiledSpec at: next) = FFIFlagStructure])]
-		ifFalse:
-			[self printAtomicType: compiledSpec first on: s].
-	s nextPutAll: (referentClass ifNotNil: [referentClass name] ifNil: ['foo'])! !
-
-!ExternalType methodsFor: 'printing' stamp: 'eem 2/16/2016 10:05'!
-typedef
-	^String streamContents: [:s| self printTypedefOn: s]! !
 
 !ExternalType class methodsFor: 'private' stamp: 'jmv 12/26/2016 17:09:18'!
 atomicTypeNamed: aString
@@ -2467,8 +2467,8 @@ voidAt: byteOffset
 voidAt: byteOffset put: value
 	"no accessors for void"
 	^self shouldNotImplement! !
-ExternalAddress initialize!
 FFIConstants initialize!
+ExternalAddress initialize!
 ExternalObject initialize!
 ExternalFunction initialize!
 ExternalStructure initialize!
