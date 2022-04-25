@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5110] on 22 April 2022 at 11:19:25 am'!
+'From Cuis 6.0 [latest update: #5114] on 25 April 2022 at 11:13:53 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 340!
+!provides: 'VectorGraphics' 1 341!
 !requires: 'Cuis-Base' 60 5096 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -790,10 +790,10 @@ scrollbarThickness
 "self forwarding: #pointSize printOneStack: true."
 	^pointSize! !
 
-!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 4/1/2020 11:47:08'!
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 3/13/2022 19:03:59'!
 widthOf: aCharacter
 
-	^ (aCharacter widthInTrueTypeFontDescription: ttFontDescription useST80Glyphs: self isST80Glyphs) * pointSize! !
+	^ (ttFontDescription widthOf: aCharacter useST80Glyphs: self isST80Glyphs) * pointSize! !
 
 !TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 6/2/2021 09:17:31'!
 onBitBltCanvasEngine: engine displayString: aString from: startIndex to: stopIndex at: p color: color
@@ -8068,12 +8068,6 @@ value: aNumber
 !TTKernPair class methodsFor: 'accessing'!
 maskFor: left with: right
 	^(left bitShift: 12) + right! !
-
-!Character methodsFor: '*vectorGraphics' stamp: 'jmv 4/1/2020 11:45:59'!
-widthInTrueTypeFontDescription: aTTFontDescription useST80Glyphs: aBoolean
-	"Double dispatch"
-
-	^aTTFontDescription widthOf: self useST80Glyphs: aBoolean! !
 
 !BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/29/2021 10:52:48'!
 basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
