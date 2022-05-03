@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5093] on 10 March 2022 at 11:42:44 am'!
+'From Cuis 6.0 [latest update: #5135] on 3 May 2022 at 5:15:10 pm'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 281!
+!provides: 'BaseImageTests' 1 282!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -1703,11 +1703,6 @@ Made at Cuis Sprint #1
 
 !BecomeTestExperiment commentStamp: '<historical>' prior: 0!
 To be used by BecomeTest!
-
-!RefactoringClassTestData class methodsFor: 'compiling' stamp: 'HAW 12/18/2019 19:55:32'!
-wantsChangeSetLogging 
-
-	^false! !
 
 !MyResumableTestError methodsFor: 'exceptionDescription' stamp: 'tfei 6/13/1999 00:46'!
 isResumable
@@ -12282,16 +12277,23 @@ testFromUtf8
 	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'E282AC')) hex = '16r20AC'.
 	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'F0A4ADA2')) hex = '16r24B62'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/5/2016 20:48:25'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/3/2022 17:13:14'!
 testSomeLatinCharsFromUtf8
 	"
 	CharacterTest new testSomeLatinCharsFromUtf8
 	"
 	| bytes string |
-	bytes _ (ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC') readStream.
-	string _ String streamContents: [ :strm |
-		[bytes atEnd ] whileFalse: [
-			strm nextPut: (Character codePoint: (Character nextUnicodeCodePointFromUtf8: bytes )) ]].
+	bytes _ ByteArray readHexFrom: 'C3A1C3A5C3A6C3B1C386C2A5C3BC'.
+	string _ String streamContents: [ :strm | | s byteIndex n |
+		s _ bytes size.
+		byteIndex _ 1.
+		[  byteIndex <= s ] whileTrue: [
+			n _ Character utfBytesAndCodePointAt: byteIndex in: bytes
+				into: nil
+				into: [ :codePoint |
+					strm nextPut: (Character codePoint: codePoint) ].
+			byteIndex _ byteIndex + n
+		]].
 	self assert: string = 'áåæñÆ¥ü'! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 9/4/2016 13:11:55'!
@@ -28989,6 +28991,11 @@ runTest: aSelector
 		ifTrue: [self logTestResult: 'succeeded']
 		ifFalse: [self logTestResult: 'failed' ].
 ! !
+
+!RefactoringClassTestData class methodsFor: 'compiling' stamp: 'HAW 12/18/2019 19:55:32'!
+wantsChangeSetLogging 
+
+	^false! !
 
 !BoxedFloat64 methodsFor: '*BaseImageTests-Kernel-Numbers' stamp: 'jmv 2/25/2019 17:20:54'!
 primTestAdd: aNumber

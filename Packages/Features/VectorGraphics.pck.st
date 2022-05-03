@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5114] on 25 April 2022 at 11:13:53 am'!
+'From Cuis 6.0 [latest update: #5135] on 3 May 2022 at 5:09:21 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 341!
+!provides: 'VectorGraphics' 1 342!
 !requires: 'Cuis-Base' 60 5096 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -681,43 +681,6 @@ objectForDataStream: refStrm
 		selector: #familyName:pointSize:
 		args: (Array with: self familyName with: self pointSize)! !
 
-!FormGlyph methodsFor: 'copying' stamp: 'jmv 5/11/2019 21:32:14'!
-postCopy
-	form _ form copy! !
-
-!TTContourConstruction methodsFor: 'printing'!
-printOn: aStream
-
-	aStream
-		nextPutAll: self class name;
-		nextPut:$(;
-		print: points size;
-		"space;
-		print: self type;"
-		nextPut:$)! !
-
-!TTFontDescription methodsFor: 'accessing' stamp: 'yo 11/30/2002 22:38'!
-name
-
-	^ self familyName copyWithout: Character space.
-! !
-
-!TTFontDescription methodsFor: 'printing' stamp: 'jmv 5/4/2019 14:34:47'!
-printOn: aStream
-	super printOn: aStream.
-	aStream nextPut: $(.
-	fullName printOn: aStream.
-	aStream nextPut:$).! !
-
-!TTGlyph methodsFor: 'printing' stamp: 'tk 9/13/1999 09:54'!
-printOn: aStream
-
-	aStream
-		nextPutAll: self class name;
-		nextPut:$(;
-		print: (contours ifNil: [0] ifNotNil: [contours size]);
-		nextPut:$).! !
-
 !TrueTypeFont methodsFor: 'initialization' stamp: 'jmv 5/7/2019 09:43:20'!
 addDerivativeFont: aTrueTypeFont
 	derivativeFonts at: aTrueTypeFont emphasis put: aTrueTypeFont! !
@@ -795,18 +758,12 @@ widthOf: aCharacter
 
 	^ (ttFontDescription widthOf: aCharacter useST80Glyphs: self isST80Glyphs) * pointSize! !
 
-!TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 6/2/2021 09:17:31'!
+!TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 5/2/2022 16:41:54'!
 onBitBltCanvasEngine: engine displayString: aString from: startIndex to: stopIndex at: p color: color
 	"Answer position to place next glyph.
 	Answer nil if nothing was done."
 
-	^ engine
-		displayString: aString
-		from: startIndex
-		to: stopIndex
-		at: p
-		trueTypeFont: self
-		color: color! !
+	^aString displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: self color: color! !
 
 !TrueTypeFont methodsFor: 'testing' stamp: 'jmv 5/11/2019 17:10:59'!
 isBaseFont
@@ -2644,7 +2601,7 @@ pathSequence: aFloat32Array
 	"
 	engine pathSequence: aFloat32Array! !
 
-!AbstractVectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 10/8/2021 09:47:06'!
+!AbstractVectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/2/2022 16:46:56'!
 drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 	"
@@ -2657,16 +2614,8 @@ s _ 'Latin text in VectorGraphics'.
 c strokeWidth: 1 color: Color red do: [ c moveTo: 100@100; lineTo: 1000@100 ].
 Display forceToScreen
 	"
-	^engine
-		displayString: aString
-		from: firstIndex
-		to: lastIndex
-		at: aPoint
-		trueTypeFont: aTrueTypeFont fontDescription
-		useST80Glyphs: aTrueTypeFont isST80Glyphs
-		color: aColor
-		scale: aTrueTypeFont pointSize
-		preventMirroring: true! !
+	^ aString displayOnVectorEngine: engine from: firstIndex to: lastIndex
+		at: aPoint font: aTrueTypeFont color: aColor.! !
 
 !AbstractVectorCanvas methodsFor: 'drawing - text' stamp: 'jmv 5/12/2021 14:08:53'!
 drawUtf32: aWordArray from: startIndex to: stopIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
@@ -3655,7 +3604,7 @@ privateFrameGlobalRect: rect borderWidth: borderWidth color: borderColor! !
 boundsFinderCanvas
 	^boundsFinderCanvas! !
 
-!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 10/29/2021 10:54:41'!
+!VectorCanvas methodsFor: 'drawing-text' stamp: 'jmv 5/2/2022 16:45:43'!
 drawString: aString from: firstIndex to: lastIndex atBaseline: aPoint font: aTrueTypeFont color: aColor
 	"Answer position to place next glyph"
 	"
@@ -3678,13 +3627,8 @@ Display forceToScreen
 			p1 _ currentTransformation transform: aPoint roundedHAFZ.
 			p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
 			p1 _ p1 roundedHAFZ.
-			answer _ auxBitBltEngine
-				displayString: aString
-				from: firstIndex
-				to: lastIndex
-				at: p1
-				trueTypeFont: aTrueTypeFont
-				color: aColor.
+			answer _ aString displayOnBitBltCanvasEngine: auxBitBltEngine
+				from: firstIndex to: lastIndex at: p1 font: aTrueTypeFont color: aColor.
 			answer ifNotNil: [
 				engine updateMorphBoundsLeft: p1 x top: p1 y
 					right: answer x bottom: answer y ].
@@ -6565,6 +6509,10 @@ svgName
 
 	^$T! !
 
+!FormGlyph methodsFor: 'copying' stamp: 'jmv 5/11/2019 21:32:14'!
+postCopy
+	form _ form copy! !
+
 !FormGlyph methodsFor: 'initialization' stamp: 'jmv 5/13/2019 22:20:59'!
 form: aForm
 	form _ aForm! !
@@ -6599,6 +6547,17 @@ topOffset
 !FormGlyph class methodsFor: 'instance creation' stamp: 'jmv 4/17/2019 11:03:33'!
 form: aForm leftOffset: aNumber topOffset: otherNumber advanceWidth: deltaX
 	^ self new form: aForm leftOffset: aNumber topOffset: otherNumber advanceWidth: deltaX! !
+
+!TTContourConstruction methodsFor: 'printing'!
+printOn: aStream
+
+	aStream
+		nextPutAll: self class name;
+		nextPut:$(;
+		print: points size;
+		"space;
+		print: self type;"
+		nextPut:$)! !
 
 !TTContourConstruction methodsFor: 'accessing' stamp: 'jmv 5/16/2019 16:35:20'!
 controlPointFlags
@@ -6767,6 +6726,19 @@ folderName
 !TTFontDescription methodsFor: 'accessing' stamp: 'jmv 6/16/2020 18:33:31'!
 folderName: aString
 	folderName _ aString! !
+
+!TTFontDescription methodsFor: 'accessing' stamp: 'yo 11/30/2002 22:38'!
+name
+
+	^ self familyName copyWithout: Character space.
+! !
+
+!TTFontDescription methodsFor: 'printing' stamp: 'jmv 5/4/2019 14:34:47'!
+printOn: aStream
+	super printOn: aStream.
+	aStream nextPut: $(.
+	fullName printOn: aStream.
+	aStream nextPut:$).! !
 
 !TTFontDescription methodsFor: 'information' stamp: 'ar 11/14/1998 23:48'!
 copyright
@@ -7056,11 +7028,10 @@ widthOf: aCharacter useST80Glyphs: aBoolean
 	advanceWidth _ contourDataForIso8859s15 at: i.
 	^ advanceWidth / letterMTopSideBearing! !
 
-!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 4/1/2020 12:06:13'!
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/3/2022 17:08:10'!
 widthOfCodePoint: aUnicodeCodePoint
 
 	| i advanceWidth |
-	i _ contourDataIndexesByUtf8 at: aUnicodeCodePoint + 1.
 	Character
 		evaluateOnce: [ :byte1 :byte2OrNil :byte3OrNil :byte4OrNil |
 
@@ -7815,6 +7786,15 @@ on: fontData at: index
 
 	^self new on: fontData at: index! !
 
+!TTGlyph methodsFor: 'printing' stamp: 'tk 9/13/1999 09:54'!
+printOn: aStream
+
+	aStream
+		nextPutAll: self class name;
+		nextPut:$(;
+		print: (contours ifNil: [0] ifNotNil: [contours size]);
+		nextPut:$).! !
+
 !TTGlyph methodsFor: 'accessing'!
 advanceWidth
 	^advanceWidth! !
@@ -8069,6 +8049,32 @@ value: aNumber
 maskFor: left with: right
 	^(left bitShift: 12) + right! !
 
+!String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/2/2022 17:00:10'!
+displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
+	"Double Dispatch"
+
+	^ engine
+		displayString: self
+		from: startIndex
+		to: stopIndex
+		at: p
+		trueTypeFont: aTrueTypeFont
+		color: color.! !
+
+!String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/2/2022 17:00:16'!
+displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
+	"Double Dispatch"
+	^ engine 
+		displayString: self
+		from: startIndex
+		to: stopIndex
+		at: p
+		trueTypeFont: aTrueTypeFont fontDescription
+		useST80Glyphs: aTrueTypeFont isST80Glyphs
+		color: color
+		scale: aTrueTypeFont pointSize
+		preventMirroring: true.! !
+
 !BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/29/2021 10:52:48'!
 basicDisplayString: aString from: startIndex to: stopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
@@ -8130,22 +8136,22 @@ basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueType
 		maxHeight _ maxHeight max: height ].
 	^ fdestX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 10/29/2021 10:53:03'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/3/2022 16:03:48'!
 basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
-	| fdestX glyph maxHeight utf8Stream ascent lineGap |
 
+	| fdestX glyph maxHeight byteIndex n ascent lineGap |
 	ascent _ aTrueTypeFont ascent.		  "expensive"
 	lineGap _ aTrueTypeFont lineGap."expensive"
 	destY _ aPoint y.
 	fdestX _ aPoint x.
 	maxHeight _ 0.
-	utf8Stream _ ReadStream on: aByteArray from: byteStartIndex to: byteStopIndex.
-	[ utf8Stream atEnd ] whileFalse: [
-		glyph _ Character
-			nextCodePointBytesFromUtf8: utf8Stream
+	byteIndex _ byteStartIndex.
+	[  byteIndex <= byteStopIndex ] whileTrue: [
+		n _ Character utfBytesAndCodePointAt: byteIndex in: aByteArray
 			into: [ :byte1 :byte2 :byte3 :byte4 |
-				aTrueTypeFont glyphAtUtf8Byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4 ].
+				glyph _ aTrueTypeFont glyphAtUtf8Byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4 ] 
+			into: nil.
 		destX _ (fdestX + glyph leftOffset) roundedHAFZ.
 		destY _ aPoint y + ascent + lineGap-1 - glyph topOffset.
 		aTrueTypeFont isSuperscript
@@ -8159,7 +8165,9 @@ basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: 
 		width _ sourceForm width.
 		self copyBits.
 		fdestX _ fdestX + "width + aTrueTypeFont baseKern"glyph advanceWidth.
-		maxHeight _ maxHeight max: height ].
+		maxHeight _ maxHeight max: height.
+		byteIndex _ byteIndex + n
+	].
 	^ fdestX ceiling@(destY+maxHeight)! !
 
 !BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 3/23/2021 13:03:04'!
