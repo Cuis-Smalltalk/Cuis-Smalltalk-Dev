@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5135] on 3 May 2022 at 5:15:10 pm'!
+'From Cuis 6.0 [latest update: #5135] on 5 May 2022 at 9:35:07 am'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 282!
+!provides: 'BaseImageTests' 1 283!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12277,7 +12277,7 @@ testFromUtf8
 	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'E282AC')) hex = '16r20AC'.
 	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'F0A4ADA2')) hex = '16r24B62'! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/3/2022 17:13:14'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/5/2022 09:34:34'!
 testSomeLatinCharsFromUtf8
 	"
 	CharacterTest new testSomeLatinCharsFromUtf8
@@ -12288,7 +12288,7 @@ testSomeLatinCharsFromUtf8
 		s _ bytes size.
 		byteIndex _ 1.
 		[  byteIndex <= s ] whileTrue: [
-			n _ Character utfBytesAndCodePointAt: byteIndex in: bytes
+			n _ Character utf8BytesAndCodePointAt: byteIndex in: bytes
 				into: nil
 				into: [ :codePoint |
 					strm nextPut: (Character codePoint: codePoint) ].
