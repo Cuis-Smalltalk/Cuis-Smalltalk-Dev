@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5135] on 3 May 2022 at 5:09:21 pm'!
+'From Cuis 6.0 [latest update: #5136] on 5 May 2022 at 12:22:11 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 342!
+!provides: 'VectorGraphics' 1 343!
 !requires: 'Cuis-Base' 60 5096 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -757,6 +757,19 @@ scrollbarThickness
 widthOf: aCharacter
 
 	^ (ttFontDescription widthOf: aCharacter useST80Glyphs: self isST80Glyphs) * pointSize! !
+
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/5/2022 12:04:37'!
+widthOfCodePoint: aNumber
+
+	^ (ttFontDescription widthOfCodePoint: aNumber useST80Glyphs: self isST80Glyphs) * pointSize! !
+
+!TrueTypeFont methodsFor: 'accessing' stamp: 'jmv 5/5/2022 11:41:15'!
+widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil
+
+	^ (ttFontDescription
+		widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil
+		useST80Glyphs: self isST80Glyphs)
+			* pointSize! !
 
 !TrueTypeFont methodsFor: 'displaying' stamp: 'jmv 5/2/2022 16:41:54'!
 onBitBltCanvasEngine: engine displayString: aString from: startIndex to: stopIndex at: p color: color
@@ -7016,35 +7029,56 @@ formGlyphForUtf8Byte1: byte1 byte2: byte2OrNil byte3: byte3OrNil byte4: byte4OrN
 		topOffset: topPixelOffset
 		advanceWidth: (advanceWidth * toPixelsScale)! !
 
-!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 3/26/2021 10:00:24'!
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/4/2022 12:42:10'!
 widthOf: aCharacter useST80Glyphs: aBoolean
+	"Double dispatch"
+
+	^aCharacter widthIn: self useST80Glyphs: aBoolean.! !
+
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/4/2022 12:35:25'!
+widthOfCharacter: aCharacter useST80Glyphs: aBoolean
 
 	| i iso8859s15Code advanceWidth |
 	iso8859s15Code _ aCharacter iso8859s15Code.
-	(aBoolean and: [`{$_ . $^}` statePointsTo: aCharacter]) ifTrue: [
-		aCharacter = $_ ifTrue: [ iso8859s15Code _ Character arrowLeft iso8859s15Code ].
-		aCharacter = $^ ifTrue: [ iso8859s15Code _ Character arrowUp iso8859s15Code ]].
+	aBoolean ifTrue: [
+		iso8859s15Code = `$_ numericValue` ifTrue: [ iso8859s15Code _ `Character arrowLeft iso8859s15Code`].
+		iso8859s15Code = `$^ numericValue` ifTrue: [ iso8859s15Code _ `Character arrowUp iso8859s15Code` ]].
 	i _ contourDataIndexesByIso8859s15 at: iso8859s15Code + 1.
 	advanceWidth _ contourDataForIso8859s15 at: i.
 	^ advanceWidth / letterMTopSideBearing! !
 
-!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/3/2022 17:08:10'!
-widthOfCodePoint: aUnicodeCodePoint
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/5/2022 12:07:41'!
+widthOfCodePoint: aNumber useST80Glyphs: aBoolean
 
-	| i advanceWidth |
 	Character
 		evaluateOnce: [ :byte1 :byte2OrNil :byte3OrNil :byte4OrNil |
+			^self widthOfUtf8Byte1: byte1 b2: byte2OrNil b3: byte3OrNil b4: byte4OrNil useST80Glyphs: aBoolean ]
+		withUtf8BytesOfUnicodeCodePoint: aNumber.! !
 
-			i _ contourDataIndexesByUtf8 at: byte1 + 1.
-			byte2OrNil notNil ifTrue: [
-				i _ contourDataIndexesByUtf8 at: i negated + byte2OrNil + 1.
-				byte3OrNil notNil ifTrue: [
-					i _ contourDataIndexesByUtf8 at: i negated + byte3OrNil + 1.
-					byte4OrNil notNil ifTrue: [
-						i _ contourDataIndexesByUtf8 at: i negated + byte4OrNil + 1 ]]]]
-		withUtf8BytesOfUnicodeCodePoint: aUnicodeCodePoint.
+!TTFontDescription methodsFor: 'glyph properties' stamp: 'jmv 5/5/2022 11:39:34'!
+widthOfUtf8Byte1: aByte1 b2: aByte2OrNil b3: aByte3OrNil b4: aByte4OrNil useST80Glyphs: aBoolean
+
+	| byte1 byte2 byte3 byte4 i advanceWidth |
+	byte1 _ aByte1.
+	byte2 _ aByte2OrNil.
+	byte3 _ aByte3OrNil.
+	byte4 _ aByte4OrNil.
+	aBoolean ifTrue: [ "Assumes that $_ and $^are ASCII, and use just one byte"
+		byte1 = `$_ codePoint` ifTrue: [
+			"(String with: Character arrowLeft) asUtf8"
+			byte1 _ 226. byte2 _ 134. byte3 _ 144 ].
+		byte1 = `$^ codePoint` ifTrue: [
+			"(String with: Character arrowUp) asUtf8"
+			byte1 _ 226. byte2 _ 134. byte3 _ 145 ]].
+	i _ contourDataIndexesByUtf8 at: byte1 + 1.
+	byte2 notNil ifTrue: [
+		i _ contourDataIndexesByUtf8 at: i negated + byte2 + 1.
+		byte3 notNil ifTrue: [
+			i _ contourDataIndexesByUtf8 at: i negated + byte3 + 1.
+			byte4 notNil ifTrue: [
+				i _ contourDataIndexesByUtf8 at: i negated + byte4 + 1 ]]].
 	advanceWidth _ contourDataForUtf8 at: i.
-	^ advanceWidth / letterMTopSideBearing! !
+	^ advanceWidth / letterMTopSideBearing.! !
 
 !TTFontDescription class methodsFor: 'instance creation' stamp: 'jmv 6/16/2020 18:35:35'!
 read: aDirectoryEntry
@@ -8049,6 +8083,12 @@ value: aNumber
 maskFor: left with: right
 	^(left bitShift: 12) + right! !
 
+!Character methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/4/2022 12:45:53'!
+widthIn: aTTFontDescription useST80Glyphs: aBoolean
+	"Double dispatch"
+
+	^ aTTFontDescription widthOfCharacter: self useST80Glyphs: aBoolean! !
+
 !String methodsFor: '*VectorGraphics-displaying' stamp: 'jmv 5/2/2022 17:00:10'!
 displayOnBitBltCanvasEngine: engine from: startIndex to: stopIndex at: p font: aTrueTypeFont color: color
 	"Double Dispatch"
@@ -8136,7 +8176,7 @@ basicDisplayUtf32: aWordArray from: startIndex to: stopIndex at: aPoint trueType
 		maxHeight _ maxHeight max: height ].
 	^ fdestX ceiling@(destY+maxHeight)! !
 
-!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/3/2022 16:03:48'!
+!BitBltCanvasEngine methodsFor: '*VectorGraphics-TrueType' stamp: 'jmv 5/5/2022 11:16:25'!
 basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: aPoint trueTypeFont: aTrueTypeFont
 	"Answer position to place next glyph"
 
@@ -8148,7 +8188,7 @@ basicDisplayUtf8: aByteArray fromByte: byteStartIndex toByte: byteStopIndex at: 
 	maxHeight _ 0.
 	byteIndex _ byteStartIndex.
 	[  byteIndex <= byteStopIndex ] whileTrue: [
-		n _ Character utfBytesAndCodePointAt: byteIndex in: aByteArray
+		n _ Character utf8BytesAndCodePointAt: byteIndex in: aByteArray
 			into: [ :byte1 :byte2 :byte3 :byte4 |
 				glyph _ aTrueTypeFont glyphAtUtf8Byte1: byte1 byte2: byte2 byte3: byte3 byte4: byte4 ] 
 			into: nil.
