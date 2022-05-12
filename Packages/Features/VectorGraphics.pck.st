@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5147] on 12 May 2022 at 10:48:49 am'!
+'From Cuis 6.0 [latest update: #5148] on 12 May 2022 at 2:54:26 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 348!
+!provides: 'VectorGraphics' 1 349!
 !requires: 'Cuis-Base' 60 5096 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -7053,7 +7053,7 @@ getTableDirEntry: tagString from: fontData offset: offset
 		pos := pos+16].
 	^nil! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'jmv 9/23/2021 18:10:55'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 5/12/2022 14:47:22'!
 mapAndStoreGlyphsUsing: characterMap
 	"
 	https://developer.apple.com/fonts/TrueType-Reference-Manual/RM07/appendixB.html
@@ -7080,8 +7080,8 @@ mapAndStoreGlyphsUsing: characterMap
 	0 to: mapSize - 1 do: [ :codePoint | | g array prevByte|
 
 		preferredCodePoint _ codePoint.
-		codePoint = $- codePoint ifTrue: [ preferredCodePoint _ 16r2212 ]. "WIDE MINUS"
-		codePoint = $* codePoint ifTrue: [ preferredCodePoint _ 16r2217 ]. "CENTERED ASTERISK"
+		(codePoint = $- codePoint and: [mapSize > 16r2212]) ifTrue: [ preferredCodePoint _ 16r2212 ]. "WIDE MINUS"
+		(codePoint = $* codePoint and: [mapSize > 16r2217]) ifTrue: [ preferredCodePoint _ 16r2217 ]. "CENTERED ASTERISK"
 		g _ glyphs at: (characterMap at: preferredCodePoint+1)+1 ifAbsent: [ unknownGlyph ].
 		g == unknownGlyph ifTrue: [
 			g _ glyphs at: (characterMap at: codePoint+1)+1 ifAbsent: [ unknownGlyph ]].
@@ -7619,7 +7619,7 @@ self halt.
 "
 	^ cmap! !
 
-!TTFontReader methodsFor: 'private' stamp: 'jmv 5/8/2022 21:46:05'!
+!TTFontReader methodsFor: 'private' stamp: 'DF 5/12/2022 17:18:37'!
 decodeCmapFmtTableFormat4: entry
 	"segment mapping to deltavalues"
 
@@ -7636,6 +7636,8 @@ decodeCmapFmtTableFormat4: entry
 	1 to: segCount do: [ :i | (segments at: i) at: 3 put: entry nextShort ]. "idDelta"
 	offset := entry offset.
 	1 to: segCount do: [ :i | (segments at: i) at: 4 put: entry nextUShort ]. "idRangeOffset"
+	"do not process the end-of-search segment"
+	segments _ segments reject:[:each | (each at:1) = 0xFFFF and:[(each at:2) = 0xFFFF] ].
 	entryCount := segments inject: 0 into: [ :max :seg | max max: seg second ].
 	cmap := WordArray new: entryCount+1.
 	segments withIndexDo: [ :seg :si | | code |
