@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5145] on 11 May 2022 at 10:36:34 am'!
+'From Cuis 6.0 [latest update: #5147] on 12 May 2022 at 10:48:49 am'!
 'Description '!
-!provides: 'VectorGraphics' 1 345!
+!provides: 'VectorGraphics' 1 348!
 !requires: 'Cuis-Base' 60 5096 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -997,6 +997,12 @@ folderName
 !TrueTypeFontFamily methodsFor: 'accessing' stamp: 'jmv 9/24/2021 10:09:50'!
 pointSizes
 	^#(6 7 8 9 10 11 12 13 14 15 18 22 26 36 48 72 96 144)! !
+
+!TrueTypeFontFamily methodsFor: 'testing' stamp: 'jmv 5/12/2022 10:36:10'!
+includesAscii
+	"Answer true if we include the basic ASCII characters.
+	If not, we are not suitable, for instance, for displaying Smalltalk code."
+	^baseTTFontDescription includesAscii! !
 
 !TrueTypeFontFamily methodsFor: 'testing' stamp: 'jmv 8/3/2020 19:01:56'!
 isTrueTypeFontFamily
@@ -6719,27 +6725,28 @@ lineSpacing
 unitsPerEm
 	^unitsPerEm! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 5/9/2022 12:16:33'!
-appendGlyphDataTo: stream glyphsArray: glyphsArray indexes: indexes base: baseIndex	 bar: aProgressBarOrNil
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 5/12/2022 09:31:45'!
+appendGlyphDataTo: stream glyphsArray: glyphsArray indexes: indexes base: baseIndex	 bar: aProgressBarOrNil unknown: theUnknownGlyph
 
 		glyphsArray withIndexDo: [ :glyphOrArrayOrNil :index |
 			aProgressBarOrNil ifNotNil: [ :bar | bar value: index ].
-			glyphOrArrayOrNil notNil ifTrue: [
-				glyphOrArrayOrNil isArray
-					ifTrue: [
-						| nextBaseIndex |
-						nextBaseIndex := indexes size - 128.
-						indexes addAll: (IntegerArray new: 64).
-						indexes at: baseIndex + index put: nextBaseIndex negated.
-						self appendGlyphDataTo: stream glyphsArray: glyphOrArrayOrNil indexes: indexes base: nextBaseIndex bar: nil
-					]
+			glyphOrArrayOrNil ifNotNil: [
+				glyphOrArrayOrNil == theUnknownGlyph
+					ifTrue: [ indexes at: baseIndex + index put: 1 ]
 					ifFalse: [
-						indexes at: baseIndex + index put: stream position+1.
-						glyphOrArrayOrNil addGlyphDataTo: stream tx: nil.
-					]
-				]].! !
+						glyphOrArrayOrNil isArray
+							ifTrue: [
+								| nextBaseIndex |
+								nextBaseIndex := indexes size - 128.
+								indexes addAll: (IntegerArray new: 64).
+								indexes at: baseIndex + index put: nextBaseIndex negated.
+								self appendGlyphDataTo: stream glyphsArray: glyphOrArrayOrNil indexes: indexes
+									base: nextBaseIndex bar: nil unknown: theUnknownGlyph ]
+							ifFalse: [
+								indexes at: baseIndex + index put: stream position+1.
+								glyphOrArrayOrNil addGlyphDataTo: stream tx: nil ]]]].! !
 
-!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 5/9/2022 14:40:18'!
+!TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 5/12/2022 09:46:33'!
 glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknownGlyph scaleArrowGlyphs: arrowGlyphs
 
 	| mGlyph glyph tx |
@@ -6751,21 +6758,19 @@ glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknown
 	contourDataForIso8859s15 _ Float32Array streamContents: [ :stream |
 		theUnknownGlyph addGlyphDataTo: stream tx: nil. 	"First data is for unknownGlyph"
 		array8 withIndexDo: [ :ttGlyphOrNil :index |
-			ttGlyphOrNil notNil
-				ifTrue: [
-					ttGlyphOrNil isNumber
-						ifTrue: [
-							glyph _ arrowGlyphs at: ttGlyphOrNil.
-							tx _ AffineTransformation withScale: letterMTopSideBearing asFloat / arrowGlyphs second topSideBearing]
-						ifFalse: [ 
-							glyph _ ttGlyphOrNil.
-							tx _ nil ].
+			(ttGlyphOrNil isNil or: [ttGlyphOrNil == theUnknownGlyph])
+				ifTrue: [ contourDataIndexesByIso8859s15 at: index put: 1]
+				ifFalse: [
+					glyph _ ttGlyphOrNil.
+					tx _ nil.
+					ttGlyphOrNil isNumber ifTrue: [
+						glyph _ arrowGlyphs at: ttGlyphOrNil.
+						tx _ AffineTransformation withScale: letterMTopSideBearing asFloat / arrowGlyphs second topSideBearing].
 					contourDataIndexesByIso8859s15 at: index put: stream position+1.
-					glyph addGlyphDataTo: stream tx: tx ]
-				ifFalse: [ contourDataIndexesByIso8859s15 at: index put: 1]]].
+					glyph addGlyphDataTo: stream tx: tx ]]].
 	self perform: Preferences assignmentGlyphSelector.
 
-	"This takes a significant amout of space, makes loading slower, and we're still not able to take full advantage of it."
+	"This takes a significant amout of space."
 	Preferences loadOnlyLatinGlyphData ifFalse: [
 		contourDataIndexesByUtf8 _ (IntegerArray new: 256) as: OrderedCollection.
 		contourDataForUtf8 _ Float32Array streamContents: [ :stream |
@@ -6775,8 +6780,9 @@ glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknown
 				from: 1 
 				to: arrayUtf8 size 
 				during: [ :bar |
-					self appendGlyphDataTo: stream glyphsArray: arrayUtf8 indexes: contourDataIndexesByUtf8 base: 0 bar: bar ]].
-		contourDataIndexesByUtf8 _ contourDataIndexesByUtf8 as: IntegerArray]! !
+					self appendGlyphDataTo: stream glyphsArray: arrayUtf8 indexes: contourDataIndexesByUtf8
+						base: 0 bar: bar unknown: theUnknownGlyph ]].
+		contourDataIndexesByUtf8 _ contourDataIndexesByUtf8 as: IntegerArray].! !
 
 !TTFontDescription methodsFor: 'private-initialization' stamp: 'jmv 4/24/2019 20:12:58'!
 setAscent: asc descent: desc lineGap: lgap
@@ -6817,6 +6823,13 @@ useAlwaysLeftArrow
 useLeftArrow
 	"When Smalltalk glyphs requested.
 	Nothing to do, here."! !
+
+!TTFontDescription methodsFor: 'testing' stamp: 'jmv 5/12/2022 10:34:30'!
+includesAscii
+	"Answer true if we include the basic ASCII characters.
+	If not, we are not suitable, for instance, for displaying Smalltalk code."
+
+	^(33 to: 127) allSatisfy: [ :i | (contourDataIndexesByUtf8  at: i) > 1 ].! !
 
 !TTFontDescription methodsFor: 'testing' stamp: 'jmv 5/4/2019 14:28:56'!
 isBaseFont
@@ -8158,18 +8171,16 @@ displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTy
 		preventMirroring: true
 ! !
 
-!Utf32String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/11/2022 10:30:28'!
+!Utf32String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/12/2022 10:21:19'!
 demoAncientEgyptian
 	"
 	Utf32String demoAncientEgyptian.
 	"
-	| utf32 |
+	| utf32 fontFamily |
 	utf32 _ #(77824 78200 78400 78894 77840 77841 77842 32 78064 78065 78066 78067 78068 78069 78070 32 77952 32 78200 78201 78202 78203 32 78205 32 78206 78207 32 78432 78433 78434 78435 78436 32 78258 77943 78820 78751 77824 77904 78821 78016 78358 78641 78163 78747 78193 77844 78358 78641 78163 78747 78283 78283 78799 77904 78861 77963 78580 77981 78747 78569 78420 78506 78811 78580 78880 78143 77963 78799 78615 77825 78647 77981 78799 78829 78811 78334 78799 78163 78193 77824 77904 78826 78016 78626 78626 78358 78358 78811) asWordArray.
 
-	(FontFamily familyName: 'Noto Sans EgyptHiero' pointSize: 60) ifNil: [
-		TrueTypeFontFamily readTrueTypeFontEntry:
-			DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'NotoEgyptianHieroglyphs' // 'NotoSansEgyptianHieroglyphs-Regular.ttf' ].
-	(Text string: (Utf32String withWords: utf32) attribute: (TextFontFamilyAndSize familyName: 'Noto Sans EgyptHiero' pointSize: 60))
+	fontFamily _ FontFamily readIfNeeded: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'NotoEgyptianHieroglyphs'.
+	(Text string: (Utf32String withWords: utf32) attribute: (TextFontFamilyAndSize familyName: fontFamily familyName pointSize: 60))
 		editLabel: 'Ancient Egyptian Hieroglyphs!!'.! !
 
 !Utf32String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/11/2022 10:30:14'!
@@ -8194,18 +8205,16 @@ demoArmenian
 	(Text string: (Utf32String withWords: utf32) attribute: (TextFontFamilyAndSize pointSize: 24))
 		editLabel: 'Armenian'.! !
 
-!Utf32String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/11/2022 10:29:04'!
+!Utf32String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/12/2022 10:22:54'!
 demoChinese
 	"
 	Utf32String demoChinese
 	"
-	| utf32 |
+	| utf32 fontFamily |
 	utf32 _ #(38899 21147 39208 20998 39423 22243 26131 21402 22909 25943 28988 38283 24247 20870 12290 25925 23567 22679 38754 25991 27211 36578 21839 38272 20250 29572 38283 21435 25152 27491 24819 35441 26469 12290 24180 20129 22971 23384 36523 25552 36895 20140 24235 26178 20028 27770 33021 12290 21496 23455 20869 23652 36074 21475 36002 27714 20844 38745 27841 21046 24341 26178 22343 39640 26032 12290 30906 26399 25968 38598 26408 35611 27490 27839 20633 36942 22269 36092 27178 21916 21047 24247 25104 23546 12290 35352 20998 21442 21628 23798 22269 35488 27177 22238 27491 24180 36557 27096 20170 20778 25991 31105 21542 12290 25972 24739 36259 31038 26126 26908 30058 26524 25512 31893 19990 26412 23567 28961 31216 30010 12290 25237 26684 21307 24460 20219 31995 36578 25919 26465 35441 25522 26376 29699 12290 24724 37240 35211 22825 20889 22793 21442 38520 22235 21517 21270 33495 21320 27835 38555 20303 35207 20024 25945 30028) asWordArray.
 
-	(FontFamily familyName: 'Kiwi Maru Light' pointSize: 24) ifNil: [
-		TrueTypeFontFamily readTrueTypeFontEntry:
-			DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'KiwiMaru' // 'KiwiMaru-Light.ttf' ].
-	(Text string: (Utf32String withWords: utf32) attribute: (TextFontFamilyAndSize familyName: 'Kiwi Maru Light' pointSize: 24))
+	fontFamily _ FontFamily readIfNeeded: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'KiwiMaru'.
+	(Text string: (Utf32String withWords: utf32) attribute: (TextFontFamilyAndSize familyName: fontFamily familyName pointSize: 24))
 		editLabel: 'Chinese'.! !
 
 !Utf32String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/11/2022 10:28:33'!
@@ -8294,18 +8303,16 @@ displayOnVectorEngine: engine from: startIndex to: stopIndex at: p font: aTrueTy
 		preventMirroring: true
 ! !
 
-!Utf8String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/11/2022 10:24:13'!
+!Utf8String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/12/2022 10:22:10'!
 demoAncientEgyptian
 	"
 	Utf8String demoAncientEgyptian.
 	"
-	| utf8 |
+	| utf8 fontFamily |
 	utf8 _  #[240 147 128 128 240 147 133 184 240 147 137 128 240 147 144 174 240 147 128 144 240 147 128 145 240 147 128 146 32 240 147 131 176 240 147 131 177 240 147 131 178 240 147 131 179 240 147 131 180 240 147 131 181 240 147 131 182 32 240 147 130 128 32 240 147 133 184 240 147 133 185 240 147 133 186 240 147 133 187 32 240 147 133 189 32 240 147 133 190 240 147 133 191 32 240 147 137 160 240 147 137 161 240 147 137 162 240 147 137 163 240 147 137 164 32 240 147 134 178 240 147 129 183 240 147 143 164 240 147 142 159 240 147 128 128 240 147 129 144 240 147 143 165 240 147 131 128 240 147 136 150 240 147 140 177 240 147 133 147 240 147 142 155 240 147 133 177 240 147 128 148 240 147 136 150 240 147 140 177 240 147 133 147 240 147 142 155 240 147 135 139 240 147 135 139 240 147 143 143 240 147 129 144 240 147 144 141 240 147 130 139 240 147 139 180 240 147 130 157 240 147 142 155 240 147 139 169 240 147 137 148 240 147 138 170 240 147 143 155 240 147 139 180 240 147 144 160 240 147 132 191 240 147 130 139 240 147 143 143 240 147 140 151 240 147 128 129 240 147 140 183 240 147 130 157 240 147 143 143 240 147 143 173 240 147 143 155 240 147 135 190 240 147 143 143 240 147 133 147 240 147 133 177 240 147 128 128 240 147 129 144 240 147 143 170 240 147 131 128 240 147 140 162 240 147 140 162 240 147 136 150 240 147 136 150 240 147 143 155].
 
-	(FontFamily familyName: 'Noto Sans EgyptHiero' pointSize: 60) ifNil: [
-		TrueTypeFontFamily readTrueTypeFontEntry:
-			DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'NotoEgyptianHieroglyphs' // 'NotoSansEgyptianHieroglyphs-Regular.ttf' ].
-	(Text string: (Utf8String withBytes: utf8) attribute: (TextFontFamilyAndSize familyName: 'Noto Sans EgyptHiero' pointSize: 60))
+	fontFamily _ FontFamily readIfNeeded: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'NotoEgyptianHieroglyphs'.
+	(Text string: (Utf8String withBytes: utf8) attribute: (TextFontFamilyAndSize familyName: fontFamily familyName pointSize: 60))
 		editLabel: 'Ancient Egyptian Hieroglyphs!!'.! !
 
 !Utf8String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/11/2022 10:20:53'!
@@ -8329,18 +8336,16 @@ demoArmenian
 	(Text string: (Utf8String withBytes: utf8) attribute: (TextFontFamilyAndSize pointSize: 24)) 
 		editLabel: 'Armenian'.! !
 
-!Utf8String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/11/2022 10:26:17'!
+!Utf8String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/12/2022 10:23:17'!
 demoChinese
 	"
 	Utf8String demoChinese
 	"
-	| utf8 |
+	| utf8 fontFamily |
 	utf8 _  #[233 159 179 229 138 155 233 164 168 229 136 134 233 167 191 229 155 163 230 152 147 229 142 154 229 165 189 230 149 151 231 132 188 233 150 139 229 186 183 229 134 134 227 128 130 230 149 133 229 176 143 229 162 151 233 157 162 230 150 135 230 169 139 232 187 162 229 149 143 233 150 128 228 188 154 231 142 132 233 150 139 229 142 187 230 137 128 230 173 163 230 131 179 232 169 177 230 157 165 227 128 130 229 185 180 228 186 161 229 166 187 229 173 152 232 186 171 230 143 144 233 128 159 228 186 172 229 186 171 230 153 130 228 184 188 230 177 186 232 131 189 227 128 130 229 143 184 229 174 159 229 134 133 229 177 164 232 179 170 229 143 163 232 178 162 230 177 130 229 133 172 233 157 153 230 179 129 229 136 182 229 188 149 230 153 130 229 157 135 233 171 152 230 150 176 227 128 130 231 162 186 230 156 159 230 149 176 233 155 134 230 156 168 232 172 155 230 173 162 230 178 191 229 130 153 233 129 142 229 155 189 232 179 188 230 168 170 229 150 156 229 136 183 229 186 183 230 136 144 229 175 186 227 128 130 232 168 152 229 136 134 229 143 130 229 145 188 229 179 182 229 155 189 232 170 160 230 168 169 229 155 158 230 173 163 229 185 180 232 187 141 230 167 152 228 187 138 229 132 170 230 150 135 231 166 129 229 144 166 227 128 130 230 149 180 230 130 163 232 182 163 231 164 190 230 152 142 230 164 156 231 149 170 230 158 156 230 142 168 231 178 149 228 184 150 230 156 172 229 176 143 231 132 161 231 167 176 231 148 186 227 128 130 230 138 149 230 160 188 229 140 187 229 190 140 228 187 187 231 179 187 232 187 162 230 148 191 230 157 161 232 169 177 230 142 178 230 156 136 231 144 131 227 128 130 230 130 148 233 133 184 232 166 139 229 164 169 229 134 153 229 164 137 229 143 130 233 153 184 229 155 155 229 144 141 229 140 150 232 139 151 229 141 136 230 178 187 233 154 155 228 189 143 232 166 135 228 184 184 230 149 153 231 149 140].
 
-	(FontFamily familyName: 'Kiwi Maru Light' pointSize: 24) ifNil: [
-		TrueTypeFontFamily readTrueTypeFontEntry:
-			DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'KiwiMaru' // 'KiwiMaru-Light.ttf' ].
-	(Text string: (Utf8String withBytes: utf8) attribute: (TextFontFamilyAndSize familyName: 'Kiwi Maru Light' pointSize: 24))
+	fontFamily _ FontFamily readIfNeeded: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts'/ 'KiwiMaru'.
+	(Text string: (Utf8String withBytes: utf8) attribute: (TextFontFamilyAndSize familyName: fontFamily familyName pointSize: 24))
 		editLabel: 'Chinese'.! !
 
 !Utf8String class methodsFor: '*VectorGraphics-demo' stamp: 'jmv 5/11/2022 10:26:27'!
