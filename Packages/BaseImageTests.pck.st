@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5135] on 5 May 2022 at 9:35:07 am'!
+'From Cuis 6.0 [latest update: #5151] on 12 May 2022 at 5:36:19 pm'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 283!
+!provides: 'BaseImageTests' 1 284!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -17790,7 +17790,7 @@ testComposition
 	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 12/9/2021 11:23:02'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:24'!
 testDisplayBounds
 	"
 	AffineTransformationTest new testDisplayBounds
@@ -17804,30 +17804,30 @@ testDisplayBounds
 	self assert: ((AffineTransformation withTranslation: 2) externalBoundingRectOf: (-4@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (-2@4 corner: 8@14).
 	self assert: ((AffineTransformation withTranslation: -4) externalBoundingRectOf: (2@ 2  extent: 10@10))
-		encompassingIntegerRectangle = (-2@-2 corner: 8@8).
+		encompassingIntegerRectangle = (-2@ -2 corner: 8@8).
 	self assert: ((AffineTransformation withTranslation: 2) externalBoundingRectOf: (-14@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (-12@4 corner: -2@14).
 	self assert: ((AffineTransformation withTranslation: 4) externalBoundingRectOf: (-12@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (-8@6 corner: 2@16).
 	self assert: ((AffineTransformation withTranslation: -4) externalBoundingRectOf: (12@ 2  extent: 10@10))
-		encompassingIntegerRectangle = (8@-2 corner: 18@8).
+		encompassingIntegerRectangle = (8 @ -2 corner: 18@8).
 	self assert: ((AffineTransformation withTranslation: -2) externalBoundingRectOf: (4@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (2@0 corner: 12@10).
 	self assert: ((AffineTransformation withTranslation: 4) externalBoundingRectOf: (-2@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (2@6 corner: 12@16).! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/21/2015 13:05'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:56:56'!
 testFloatInverseTransform
 	"
 	AffineTransformationTest new testFloatInverseTransform
 	"
 	self assert: (AffineTransformation new inverseTransform: (-2@ 2)) = (-2@2).
 	self assert: ((AffineTransformation withTranslation: 2) inverseTransform: (-4@ 2)) = (-6@0).
-	self assert: ((AffineTransformation withTranslation: 4) inverseTransform: (-2@ 2)) = (-6@-2).
+	self assert: ((AffineTransformation withTranslation: 4) inverseTransform: (-2@ 2)) = (-6@ -2).
 	self assert: ((AffineTransformation withTranslation: -2) inverseTransform: (4@ 2)) = (6@4).
 	self assert: ((AffineTransformation withTranslation: -4) inverseTransform: (2@ 2)) = (6@6)! !
 
-!AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/21/2015 13:06'!
+!AffineTransformationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:03'!
 testFloatTransform
 	"
 	AffineTransformationTest new testFloatTransform
@@ -17836,7 +17836,7 @@ testFloatTransform
 	self assert: ((AffineTransformation withTranslation: 2) transform: (-4@ 2)) = (-2@4).
 	self assert: ((AffineTransformation withTranslation: 4) transform: (-2@ 2)) = (2@6).
 	self assert: ((AffineTransformation withTranslation: -2) transform: (4@ 2)) = (2@0).
-	self assert: ((AffineTransformation withTranslation: -4) transform: (2@ 2)) = (-2@-2)! !
+	self assert: ((AffineTransformation withTranslation: -4) transform: (2@ 2)) = (-2@ -2)! !
 
 !AffineTransformationTest methodsFor: 'testing' stamp: 'jmv 1/14/2015 15:12'!
 testInverseTransformation
@@ -18095,7 +18095,7 @@ testComposition
 	self assert: (inner internalizeDelta: (outer internalizeDelta: 3@4)) = (composition internalizeDelta: 3@4).
 	self assert: (inner internalizeScalar: (outer internalizeScalar: 7)) = (composition internalizeScalar: 7).! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 12/9/2021 11:23:27'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:28'!
 testDisplayBounds
 	"
 	MorphicTranslationTest new testDisplayBounds
@@ -18108,26 +18108,26 @@ testDisplayBounds
 	self assert: ((MorphicTranslation withTranslation: 2)  externalBoundingRectOf: (-4@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (-2@4 corner: 8@14).
 	self assert: ((MorphicTranslation withTranslation: -4)  externalBoundingRectOf: (2@ 2  extent: 10@10))
-		encompassingIntegerRectangle = (-2@-2 corner: 8@8).
+		encompassingIntegerRectangle = (-2@ -2 corner: 8@8).
 	self assert: ((MorphicTranslation withTranslation: 2)  externalBoundingRectOf: (-14@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (-12@4 corner: -2@14).
 	self assert: ((MorphicTranslation withTranslation: 4)  externalBoundingRectOf: (-12@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (-8@6 corner: 2@16).
 	self assert: ((MorphicTranslation withTranslation: -4)  externalBoundingRectOf: (12@ 2  extent: 10@10))
-		encompassingIntegerRectangle = (8@-2 corner: 18@8).
+		encompassingIntegerRectangle = (8@ -2 corner: 18@8).
 	self assert: ((MorphicTranslation withTranslation: -2)  externalBoundingRectOf: (4@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (2@0 corner: 12@10).
 	self assert: ((MorphicTranslation withTranslation: 4)  externalBoundingRectOf: (-2@ 2  extent: 10@10))
 		encompassingIntegerRectangle = (2@6 corner: 12@16).! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/8/2015 10:21'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:12'!
 testInverseTransform
 	"
 	MorphicTranslationTest new testInverseTransform
 	"
 	self assert: (MorphicTranslation new inverseTransform: (-2@ 2)) = (-2@2).
 	self assert: ((MorphicTranslation withTranslation: 2)  inverseTransform: (-4@ 2)) = (-6@0).
-	self assert: ((MorphicTranslation withTranslation: 4)  inverseTransform: (-2@ 2)) = (-6@-2).
+	self assert: ((MorphicTranslation withTranslation: 4)  inverseTransform: (-2@ 2)) = (-6@ -2).
 	self assert: ((MorphicTranslation withTranslation: -2)  inverseTransform: (4@ 2)) = (6@4).
 	self assert: ((MorphicTranslation withTranslation: -4)  inverseTransform: (2@ 2)) = (6@6)! !
 
@@ -18149,7 +18149,7 @@ testInverseTransformation
 	self assert: (inverse internalizeDelta: 3@4) = (forward externalizeDelta: 3@4).
 	self assert: (inverse internalizeScalar: 7) = (forward externalizeScalar: 7)! !
 
-!MorphicTranslationTest methodsFor: 'testing' stamp: 'jmv 1/21/2015 13:08'!
+!MorphicTranslationTest methodsFor: 'testing' stamp: 'len 5/9/2022 17:57:17'!
 testTransform
 	"
 	MorphicTranslationTest new testTransform
@@ -18158,7 +18158,7 @@ testTransform
 	self assert: ((MorphicTranslation withTranslation: 2) transform: (-4@ 2)) = (-2@4).
 	self assert: ((MorphicTranslation withTranslation: 4) transform: (-2@ 2)) = (2@6).
 	self assert: ((MorphicTranslation withTranslation: -2) transform: (4@ 2)) = (2@0).
-	self assert: ((MorphicTranslation withTranslation: -4) transform: (2@ 2)) = (-2@-2)! !
+	self assert: ((MorphicTranslation withTranslation: -4) transform: (2@ 2)) = (-2@ -2)! !
 
 !WorldTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 15:58:12'!
 testDoOneCycleWorksWithDeferredQueue
