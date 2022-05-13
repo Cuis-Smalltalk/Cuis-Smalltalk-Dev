@@ -1,7 +1,7 @@
 'From Cuis 6.0 [latest update: #5148] on 12 May 2022 at 2:54:26 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 349!
-!requires: 'Cuis-Base' 60 5096 nil!
+!provides: 'VectorGraphics' 1 350!
+!requires: 'Cuis-Base' 60 5160 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
 SystemOrganization addCategory: 'VectorGraphics-PathCommands'!
@@ -951,7 +951,7 @@ family: aTrueTypeFontFamily ttFontDescription: aTTFontDescription pointSize: aNu
 !TrueTypeFont class methodsFor: 'initialization' stamp: 'jmv 3/21/2020 10:22:09'!
 assignmentGlyphSelectorPreferenceChanged
 	| selector |
-	selector _ Preferences assignmentGlyphSelector.
+	selector _ PreferenceNG at: #assignmentGlyphSelector.
 	TTFontDescription allInstancesDo: [ :ttFontDescription | ttFontDescription perform: selector ].
 	self allInstancesDo: [ :each | each resetAssignmentGlyph ]! !
 
@@ -1059,7 +1059,7 @@ readTrueTypeFontEntry: ttFontFileEntry
 				ifFalse: [fam addTTFontDescription: ttFontDescription].
 			fam clearCache ].
 	familyName = FontFamily defaultFamilyName ifTrue: [
-		Preferences setDefaultFont:	 familyName ].
+		PreferenceNG setDefaultFont:	 familyName ].
 	('loaded font ', familyName) print.! !
 
 !TrueTypeFontFamily class methodsFor: 'instance creation' stamp: 'jmv 7/18/2021 20:39:48'!
@@ -3542,7 +3542,7 @@ Display forceToScreen
 		^nil ].
 
 	currentTransformation isPureTranslation ifTrue: [
-		Preferences cacheTrueTypeGlyphs ifTrue: [
+		(PreferenceNG at: #cacheTrueTypeGlyphs) ifTrue: [
 			p1 _ currentTransformation transform: aPoint roundedHAFZ.
 			p1 _ p1 + (0@(0 - (aTrueTypeFont ascent + aTrueTypeFont lineGap-1))).
 			p1 _ p1 roundedHAFZ.
@@ -3980,7 +3980,7 @@ initialize
 		(FontFamily familyNamed: FontFamily defaultFamilyName) isTrueTypeFontFamily ifFalse: [
 			folder _ DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
 			family _ FontFamily familyNamed: (TrueTypeFontFamily read: folder) anyOne.
-			Preferences setDefaultFont: family familyName.
+			PreferenceNG setDefaultFont: family familyName.
 			FontFamily enableTrueTypeFontsOnly ].
 		(VectorEngineWithPlugin isPluginAvailable
 			ifTrue: [ MorphicCanvas activeSubclass: VectorCanvas ]
@@ -6768,10 +6768,10 @@ glyphsByIso8859s15: array8 glyphsByUtf8Bytes: arrayUtf8 unknownGlyph: theUnknown
 						tx _ AffineTransformation withScale: letterMTopSideBearing asFloat / arrowGlyphs second topSideBearing].
 					contourDataIndexesByIso8859s15 at: index put: stream position+1.
 					glyph addGlyphDataTo: stream tx: tx ]]].
-	self perform: Preferences assignmentGlyphSelector.
+	self perform: (PreferenceNG at: #assignmentGlyphSelector).
 
 	"This takes a significant amout of space."
-	Preferences loadOnlyLatinGlyphData ifFalse: [
+	(PreferenceNG at: #loadOnlyLatinGlyphData) ifFalse: [
 		contourDataIndexesByUtf8 _ (IntegerArray new: 256) as: OrderedCollection.
 		contourDataForUtf8 _ Float32Array streamContents: [ :stream |
 			theUnknownGlyph addGlyphDataTo: stream tx: nil.		"First data is for unknownGlyph"	
@@ -7137,7 +7137,7 @@ processCharacterMappingTable: entry
 		platformIDsAndEncodings at: i put: {platformID. platformSpecificEncodingID}.
 		offsets  at: i put: offset  ].
 	"see, for instance, https://docs.microsoft.com/en-us/typography/opentype/spec/cmap"
-	orderOfPreference _ Preferences loadOnlyLatinGlyphData
+	orderOfPreference _ (PreferenceNG at: #loadOnlyLatinGlyphData)
 		ifTrue: [  				"Prefer restricted range, to save some memory and time"
 			#(
 				#(0 3)  			"platform=Unicode, encoding=3 (Unicode, BMP only)"
