@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5148] on 12 May 2022 at 2:54:26 pm'!
+'From Cuis 6.0 [latest update: #5165] on 14 May 2022 at 4:31:36 pm'!
 'Description '!
-!provides: 'VectorGraphics' 1 350!
+!provides: 'VectorGraphics' 1 351!
 !requires: 'Cuis-Base' 60 5160 nil!
 !requires: 'Collections-CompactArrays' 1 10 nil!
 SystemOrganization addCategory: 'VectorGraphics-Kernel'!
@@ -7318,27 +7318,25 @@ numOfLongHorMetrics  	USHORT       Number of advance widths in metrics table (HT
 	fontDescription setAscent: ascent descent: descent lineGap: lineGap.
 	^numOfLongHorMetrics! !
 
-!TTFontReader methodsFor: 'processing' stamp: 'ar 11/2/1998 00:40'!
+!TTFontReader methodsFor: 'processing' stamp: 'jmv 5/12/2022 17:31:51'!
 processHorizontalMetricsTable: entry length: numHMetrics
-	"Extract the advance width, left side bearing, and right
-	side bearing for each glyph from the Horizontal Metrics Table."
-	|  index lastAW glyph |
-	index := 1.
-	[index <= numHMetrics] whileTrue:[
-		glyph := glyphs at: index.
-		glyph advanceWidth: entry nextUShort.
-		glyph leftSideBearing: entry nextShort.
-		glyph updateRightSideBearing.
-		index := index + 1].
-	index = (nGlyphs +1) ifTrue:[^true].
-	lastAW := (glyphs at: index-1) advanceWidth.
-
-	[index <= nGlyphs] whileTrue:[
-		glyph := glyphs at: index.
-		glyph advanceWidth: lastAW.
-		glyph leftSideBearing: entry nextShort.
-		glyph updateRightSideBearing.
-		index := index + 1].! !
+	| lastAW glyph |
+	1
+		to: numHMetrics
+		do: [ :i |
+			glyph _ glyphs at: i.
+			glyph advanceWidth: entry nextUShort.
+			glyph leftSideBearing: entry nextShort.
+			glyph updateRightSideBearing ].
+	numHMetrics = nGlyphs ifTrue: [ ^ true ].
+	lastAW _ (glyphs at: numHMetrics) advanceWidth.
+	numHMetrics + 1
+		to: nGlyphs
+		do: [ :i |
+			glyph _ glyphs at: i.
+			glyph advanceWidth: lastAW.
+			glyph leftSideBearing: entry nextShort.
+			glyph updateRightSideBearing ].! !
 
 !TTFontReader methodsFor: 'processing' stamp: 'ar 11/2/1998 00:43'!
 processIndexToLocationTable: entry format: indexToLocFormat
