@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5151] on 12 May 2022 at 5:36:19 pm'!
+'From Cuis 6.0 [latest update: #5169] on 16 May 2022 at 9:30:07 am'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 284!
+!provides: 'BaseImageTests' 1 285!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -23051,7 +23051,7 @@ assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNam
 		updatesTo: sourceCodeAfterRefactoring
 		usingLeftArrowAssignment: true! !
 
-!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'RNG 5/9/2020 15:10:44'!
+!ExtractToTemporaryTest methodsFor: 'test helpers' stamp: 'jmv 5/16/2022 08:58:01'!
 assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNamed: newVariable updatesTo: sourceCodeAfterRefactoring usingLeftArrowAssignment: leftArrowAssignmentPreference
 
 	| intervalToExtract methodToRefactor actualSourceCodeAfterRefactoring applyRefactoring |
@@ -23061,7 +23061,7 @@ assertExtracting: codeToExtract from: sourceCodeOfMethodToRefactor toVariableNam
 
 	applyRefactoring := [ actualSourceCodeAfterRefactoring := (ExtractToTemporary named: newVariable at: intervalToExtract from: methodToRefactor) apply ].
 	
-	Preferences
+	PreferenceNG
 		withTemporaryValue: leftArrowAssignmentPreference
 		of: #leftArrowAssignmentsInGeneratedCode
 		do: applyRefactoring.
@@ -26891,10 +26891,13 @@ assertIsLoggedTwice: aString
 
 	self assertIsLogged: aString times: 2 and: [:logContents :nextPosition | ] ! !
 
-!ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:50'!
+!ChangesTest methodsFor: 'user changes' stamp: 'jmv 5/16/2022 09:26:36'!
 changeUserChangesFileWhile: aBlock
 
-	^ Preferences use: self userChangesForTestsFileExtension asUserChangesFileNameExtensionWhile: aBlock ! !
+	^ PreferenceNG
+		withTemporaryValue: self userChangesForTestsFileExtension
+		of: #userChangesFileNameExtension
+		do: aBlock.! !
 
 !ChangesTest methodsFor: 'user changes' stamp: 'HAW 11/1/2019 17:07:57'!
 scanChangesFromFile
@@ -29285,14 +29288,14 @@ primTestTruncated
 	<primitive: 551>
 	^ #fail! !
 
-!Preferences class methodsFor: '*BaseImageTests' stamp: 'RNG 3/24/2020 22:44:27'!
+!PreferenceNG class methodsFor: '*BaseImageTests' stamp: 'jmv 5/16/2022 08:57:42'!
 withTemporaryValue: temporaryValue of: aPreferenceName do: aBlock
 	"Allows to execute a piece of code with a temporary value of the given preference. Useful for testing purposes."
 	
 	| currentValue |
-	currentValue := self perform: aPreferenceName.
-	self setPreference: aPreferenceName toValue: temporaryValue.
-	[ aBlock value ] ensure: [ self setPreference: aPreferenceName toValue: currentValue ]! !
+	currentValue := self at: aPreferenceName.
+	self at: aPreferenceName put: temporaryValue.
+	[ aBlock value ] ensure: [ self at: aPreferenceName put: currentValue ]! !
 
 !SmalltalkCompleter methodsFor: '*BaseImageTests' stamp: 'NPM 3/17/2020 03:12:11'!
 changePositionTo: newPosition 
