@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5169] on 16 May 2022 at 9:30:07 am'!
+'From Cuis 6.0 [latest update: #5169] on 16 May 2022 at 10:09:05 am'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 285!
+!provides: 'BaseImageTests' 1 286!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -10692,7 +10692,7 @@ test4DTerminate
 	self assert: a first & a second & a third.
 	self deny: a fourth.! !
 
-!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jar 1/17/2022 18:26:06'!
+!ProcessTerminateUnwindNonLocalReturn methodsFor: 'testing' stamp: 'jmv 5/16/2022 10:08:59'!
 test5ATerminate
 	"Terminate active process.
 	Test all nested unwind blocks are correctly unwound; 
@@ -10705,6 +10705,7 @@ test5ATerminate
 		] newProcess.
 	p resume.
 	"now let the process run and make sure all unwind blocks have finished"
+	Processor yield.
 	Processor yield.
 	self assert: p isTerminated.
 	self assert: a first & a third.
