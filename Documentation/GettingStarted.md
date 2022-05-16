@@ -13,6 +13,8 @@ If you want to contribute back to the community, you can do pull requests to thi
 Note: The '--depth 1' option avoids cloning all repo history (most likely you don't need it) and makes cloning the repo much faster, using less disk space.
 
 Note: If you are creating the main (or only) Cuis folder in your machine, you might prefer 'Cuis-Smalltalk' as the folder name instead of 'MyProject' or some specific project name.
+
+Note: Please do create a new folder, and don't use an existing one. Cuis looks for packages to load in sibling folders to Cuis-Smalltalk-Dev, and using an existing folder could mean trying to load conflicting, outdated versions of packages. Keeping each Cuis project in a separate folder is an easy way to avoid such problems.
 ```
 mkdir MyProject
 cd MyProject

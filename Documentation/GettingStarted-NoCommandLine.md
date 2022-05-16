@@ -3,7 +3,7 @@
 What follows are instructions for setting up Cuis on Windows or Mac OS X without using Git or the command line. If you are comfortable with Git, please see [Getting started using Git Bash](GettingStarted.md). This document describes the simplest way to run Cuis on your computer.
 
 ## On Windows ##
-* Create a new folder in your machine using Windows Explorer
+* Create a new folder in your machine using Windows Explorer (don't use an existing folder)
 * download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip), saving it to that folder.
 * extract the contents of the zip file right there ("extract here")
 * download [`squeak.cog.spur_win64x64.zip`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_win64x64.zip), saving it to yourFolder\Cuis-Smalltalk-Dev-master\ (the folder that was just created while extracting the first zip file).
@@ -13,7 +13,7 @@ What follows are instructions for setting up Cuis on Windows or Mac OS X without
 * If you get a message like "Windows protected your PC", then click on "More info", and click [Run anyway].
 
 ## On Mac OS X ##
-* Create a new folder in your machine using Mac Finder
+* Create a new folder in your machine using Mac Finder (don't use an existing folder)
 * download [`master.zip`](https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev/archive/master.zip) to your folder
 * extract the contents of the zip file (double click on it)
 * download [`squeak.cog.spur_macos64x64.dmg`](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_macos64x64.dmg), saving it to your folder
