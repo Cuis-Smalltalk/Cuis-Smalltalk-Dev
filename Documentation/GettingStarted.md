@@ -2,7 +2,7 @@
 
 Cuis Smalltalk is available in 64 bits and 32 bits variants. It also available in the 32 bits V3 (pre Spur) image format. All three of them share the full source code and have essentially the same behavior, providing full portability for your code between them. These instructions are for the recommended format for each system, although most systems support all of them. 
 
-In general, we recommend using VMs from [OpenSmalltalk GitHub releases](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/latest). In addition, the [SqueakJS](https://squeak.js.org) JavaScript Squeak VM that can run in a web browser can run our -32 and our -v3 images.
+In general, we recommend using VMs from [OpenSmalltalk GitHub releases](https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/latest). In addition, the [SqueakJS](https://squeak.js.org) JavaScript Squeak VM that can run Cuis.
 
 These instructions assume you have the Git code versioning system installed in your system. This has the advantage to set you up to easily contribute code back to Cuis packages, using Git pull requests. If you prefer not to use Git, see details at the end of this document. If you are on Windows or Mac, and prefer not using the command line, you might follow [Getting started using Mac Finder or Windows Explorer](GettingStarted-NoCommandLine.md).
 
@@ -41,7 +41,7 @@ Note: For 32 bits Linux on Intel/AMD, use ```*_linux32x86_*``` vm and the ```*-3
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_linux64x64.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202205110711/squeak.cog.spur_linux64x64.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspur64linuxht ./cogspur
 ```
@@ -66,7 +66,7 @@ Log out and log back in, or reboot the machine.
 ### Get and set up an appropriate VM ###
 ```
 cd MyProject
-curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_macos64x64.dmg
+curl -L -o CogSpur.dmg https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202205110711/squeak.cog.spur_macos64x64.dmg
 Open Finder on your folder
 Double click on the dmg file
 Drag Squeak.app to your MyProject folder
@@ -88,7 +88,7 @@ Note: For 32 bits Windows, use ```*_win32x86_*``` vm and the ```*-32.image``` Cu
 ```
 cd MyProject
 rm -r cogspur
-curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_win64x64.zip
+curl -k -L -o cogspur.zip https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202205110711/squeak.cog.spur_win64x64.zip
 unzip cogspur.zip -d cogspur
 ```
 
@@ -103,7 +103,7 @@ cogspur/Squeak.exe Cuis-Smalltalk-Dev/Cuis6.0-5171.image
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_linux32ARMv6.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202205110711/squeak.cog.spur_linux32ARMv6.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxhtRPi ./cogspur
 ```
@@ -126,7 +126,7 @@ Note: JIT (Just In Time) compiling is disabled by ChromeOS. This means that *_sq
 ```
 cd MyProject
 rm -r cogspur
-wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.cog.spur_linux32x86.tar.gz
+wget -O cogspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202205110711/squeak.cog.spur_linux32x86.tar.gz
 tar -zxvf cogspur.tgz
 mv ./sqcogspurlinuxht ./cogspur
 ```
@@ -134,7 +134,7 @@ mv ./sqcogspurlinuxht ./cogspur
 ```
 cd MyProject
 rm -r stkspur
-wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202112201228/squeak.stack.spur_linux32ARMv6.tar.gz
+wget -O stkspur.tgz https://github.com/OpenSmalltalk/opensmalltalk-vm/releases/download/202205110711/squeak.stack.spur_linux32ARMv6.tar.gz
 tar -zxvf stkspur.tgz
 mv ./sqstkspurlinuxhtRPi ./stkspur
 ```
