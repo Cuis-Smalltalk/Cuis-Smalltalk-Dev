@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5169] on 16 May 2022 at 10:09:05 am'!
+'From Cuis 6.0 [latest update: #5188] on 23 May 2022 at 11:30:45 am'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 286!
+!provides: 'BaseImageTests' 1 287!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -17869,7 +17869,7 @@ testInverseTransformation
 	self assert: ((inverse internalizeDelta: 3@4) - (forward externalizeDelta: 3@4)) r < 0.0001.
 	self assert: ((inverse internalizeScalar: 7) - (forward externalizeScalar: 7)) abs < 0.0001.! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 16:52:18'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/23/2022 11:29:37'!
 testLayout1
 	"
 	self new testLayout1
@@ -17909,7 +17909,13 @@ testLayout1
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row3 layoutSpec: (LayoutSpec fixedHeight: 60).
 	pane openInWorld: UISupervisor ui; morphExtent: 408@300.
-	UISupervisor ui doOneCycleNow.
+	Processor activeProcess animatedUI
+		ifNotNil: [ :ui | ui doOneCycleNow]
+		ifNil: [ | updated |
+			updated _ false.
+			UISupervisor whenUIinSafeState: [ updated _ true ].
+			[updated] whileFalse: [
+				Processor yield ]].
 
 	self assert: row1 morphWidth = (pane morphWidth - 10).
 	self assert: r1c1 morphWidth = 10.
@@ -17942,7 +17948,7 @@ testLayout1
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 16:52:35'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/23/2022 11:29:45'!
 testLayout2
 	"
 	self new testLayout2
@@ -17961,7 +17967,13 @@ testLayout2
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 0.7 offAxisEdgeWeight: #center).
 	pane addMorph: row layoutSpec: (LayoutSpec proportionalHeight: 0.9).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
-	UISupervisor ui doOneCycleNow.
+	Processor activeProcess animatedUI
+		ifNotNil: [ :ui | ui doOneCycleNow]
+		ifNil: [ | updated |
+			updated _ false.
+			UISupervisor whenUIinSafeState: [ updated _ true ].
+			[updated] whileFalse: [
+				Processor yield ]].
 
 	self assert: row morphWidth = (pane morphWidth - 10).
 	self assert: row morphHeight = 261.
@@ -17977,7 +17989,7 @@ testLayout2
 
 	pane delete! !
 
-!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 10/24/2020 16:52:42'!
+!LayoutMorphTest methodsFor: 'tests' stamp: 'jmv 5/23/2022 11:29:28'!
 testLayout3
 	"
 	self new testLayout3
@@ -18004,7 +18016,13 @@ testLayout3
 			layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
 	pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 200).
 	pane openInWorld: UISupervisor ui; morphExtent: 400@300.
-	UISupervisor ui doOneCycleNow.
+	Processor activeProcess animatedUI
+		ifNotNil: [ :ui | ui doOneCycleNow]
+		ifNil: [ | updated |
+			updated _ false.
+			UISupervisor whenUIinSafeState: [ updated _ true ].
+			[updated] whileFalse: [
+				Processor yield ]].
 
 	self assert: row displayBounds left = (pane displayBounds left + 5).
 	self assert: row morphWidth = (pane morphWidth - 10).
