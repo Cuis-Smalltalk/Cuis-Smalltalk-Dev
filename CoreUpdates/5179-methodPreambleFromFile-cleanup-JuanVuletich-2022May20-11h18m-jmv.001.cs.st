@@ -79,12 +79,15 @@ getPreamble
 	file ifNil: [^ ''].  "sources file not available"
 	"file does not exist happens in secure mode"
 	[
-		file name asFileEntry readStreamDo: [ :stream |
-			stream position: (0 max: self filePosition).
-			"Skip back blank space."
-			stream backChunk.
-			"Find and answer preamble chunk."
-			preamble _ stream backChunk ]
+		file name asFileEntry readStreamDo: [ :stream | | p |
+			preamble _ ''.
+			p _ 0 max: self filePosition.
+			p < stream size ifTrue: [
+				stream position: p.
+				"Skip back blank space."
+				stream backChunk.
+				"Find and answer preamble chunk."
+				preamble _ stream backChunk ]]
 	] on: FileDoesNotExistException do: [ :ex | preamble _ '' ].
 	^ preamble! !
 
