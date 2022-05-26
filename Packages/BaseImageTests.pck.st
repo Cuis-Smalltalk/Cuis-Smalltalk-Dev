@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5188] on 23 May 2022 at 11:30:45 am'!
+'From Cuis 6.0 [latest update: #5202] on 26 May 2022 at 12:45:10 pm'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 287!
+!provides: 'BaseImageTests' 1 288!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -12268,15 +12268,15 @@ testTestingMethods
 		('Aa¿‡¡·¬‚√„ƒ‰≈ÂEe»Ë…È ÍÀÎIiÃÏÕÌŒÓœÔOo“Ú”Û‘Ù’ı÷ˆUuŸ˘⁄˙€˚‹¸' allSatisfy: [ :c |
 			c isVowel ]).! !
 
-!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/20/2013 20:09'!
+!CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:31:12'!
 testFromUtf8
 	"
 	CharacterTest new testFromUtf8
 	"
-	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: '24')) hex = '16r24'.
-	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'C2A2')) hex = '16rA2'.
-	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'E282AC')) hex = '16r20AC'.
-	self assert: (Character unicodeCodePointOfUtf8Bytes: (ByteArray readHexFrom: 'F0A4ADA2')) hex = '16r24B62'! !
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: '24') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'C2A2') into: nil into: [ :codePoint | self assert: codePoint hex = '16rA2' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'E282AC') into: nil into: [ :codePoint | self assert: codePoint hex = '16r20AC' ].
+	Character utf8BytesAndCodePointAt: 1 in: (ByteArray readHexFrom: 'F0A4ADA2') into: nil into: [ :codePoint | self assert: codePoint hex = '16r24B62' ].! !
 
 !CharacterTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/5/2022 09:34:34'!
 testSomeLatinCharsFromUtf8
@@ -12462,14 +12462,14 @@ testBaseAndDerivedFontSanity
 				self assert: (f instVarNamed: 'derivativeFonts') isNil.
 				self assert: (f baseFont emphasized: f emphasis) == f ] ]! !
 
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 2/8/2013 08:17'!
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 12:00:49'!
 testAsUtf8
 	"
 	 StringTest new testAsUtf8
 	"
-	self assert: 'A¢§' asUtf8 hex = '41C2A2E282AC'! !
+	self assert: 'A¢§' asUtf8Bytes hex = '41C2A2E282AC'! !
 
-!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 1/27/2022 20:56:28'!
+!StringTest methodsFor: 'UTF-8 conversion' stamp: 'jmv 5/26/2022 11:59:35'!
 testAsUtf8WithNCRs
 	"
 	 StringTest new testAsUtf8WithNCRs
@@ -12477,20 +12477,20 @@ testAsUtf8WithNCRs
 	| stringWithDecimalNCRs stringWithHexNCRs utf8 |
 	utf8 _ ByteArray readHexFrom: ('CE BC 20 CE A8 20 CF 89 20 54 68 65 20 64 65 63 6F 6D 70 6F 73 69 74 69 6F 6E 20 6D 61 70 70 69 6E 67 20 69 73 20 3C EC B8 A0 2C 20 E1 86 B8 3E 2C 20 61 6E 64 20 6E 6F 74 20 3C E1 84 8E 2C 20 E1 85 B3 2C 20 31 31 42 38 3E 2E 0A 3C 70 3E 54 68 65 20 74 69 74 6C 65 20 73 61 79 73 20 E2 80 AB D7 A4 D7 A2 D7 99 D7 9C D7 95 D7 AA 20 D7 94 D7 91 D7 99 D7 A0 D7 90 D7 95 D7 9D 2C 20 57 33 43 E2 80 AC 20 69 6E 20 48 65 62 72 65 77 3C 2F 70 3E 0A 61 62 63 E0 A4 95 E0 A4 96 E0 A5 80 E5 9C 8B E9 9A 9B F0 90 8E 84 F0 90 8E 94 F0 90 8E 98' reject: [ :char  | char isSeparator ]).
 
-	stringWithDecimalNCRs _ String fromUtf8: utf8 hex: false trimLastNull: false.
-	stringWithHexNCRs _ String fromUtf8: utf8 hex: true trimLastNull: false.
+	stringWithDecimalNCRs _ String fromUtf8Bytes: utf8 hex: false trimLastNull: false.
+	stringWithHexNCRs _ String fromUtf8Bytes: utf8 hex: true trimLastNull: false.
 
 	self assert: stringWithDecimalNCRs =  '&#956; &#936; ò The decomposition mapping is <&#52768;, &#4536;>, and not <&#4366;, &#4467;, 11B8>.
 <p>The title says &#8235;&#1508;&#1506;&#1497;&#1500;&#1493;&#1514; &#1492;&#1489;&#1497;&#1504;&#1488;&#1493;&#1501;, W3C&#8236; in Hebrew</p>
 abc&#2325;&#2326;&#2368;&#22283;&#38555;&#66436;&#66452;&#66456;'.
 
-	self assert: (stringWithDecimalNCRs asUtf8: true) = utf8.
+	self assert: (stringWithDecimalNCRs asUtf8Bytes: true) = utf8.
 
 	self assert: stringWithHexNCRs = '&#x03BC; &#x03A8; ò The decomposition mapping is <&#xCE20;, &#x11B8;>, and not <&#x110E;, &#x1173;, 11B8>.
 <p>The title says &#x202B;&#x05E4;&#x05E2;&#x05D9;&#x05DC;&#x05D5;&#x05EA; &#x05D4;&#x05D1;&#x05D9;&#x05E0;&#x05D0;&#x05D5;&#x05DD;, W3C&#x202C; in Hebrew</p>
 abc&#x0915;&#x0916;&#x0940;&#x570B;&#x969B;&#x10384;&#x10394;&#x10398;'.
 
-	self assert: (stringWithHexNCRs asUtf8: true) = utf8! !
+	self assert: (stringWithHexNCRs asUtf8Bytes: true) = utf8! !
 
 !StringTest methodsFor: 'tests - converting' stamp: 'jmv 9/19/2016 09:55:39'!
 testBase64
@@ -19622,7 +19622,7 @@ test2ReadWithOutBinary
 	content := self class fileName asFileEntry textContents.
 	self deny: content = bytesOfExample1! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/21/2020 19:50:04'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:01:13'!
 test3ReadUtf8
 	
 	"see UnicodeNotes.md"
@@ -19631,10 +19631,10 @@ test3ReadUtf8
 	"
      | content byteArray |
 	byteArray _ self class fileName asFileEntry binaryContents.
-	content := String fromUtf8: byteArray.
+	content := String fromUtf8Bytes: byteArray.
 	self assert: content = 'abc ‡Ë§ àâä'! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:06'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:15'!
 test4BackConversion
 	
 	"see UnicodeNotes.md"
@@ -19644,12 +19644,12 @@ test4BackConversion
 	"
      | contentInternalString contentByteArray |
 
-	contentInternalString := String fromUtf8: self class fileName asFileEntry binaryContents.
+	contentInternalString := String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
 	contentByteArray := self class fileName asFileEntry binaryContents.
 
-	self assert: contentByteArray = (contentInternalString asUtf8: true)! !
+	self assert: contentByteArray = (contentInternalString asUtf8Bytes: true)! !
 
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/31/2016 11:24'!
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:29'!
 test5ReadWriteUtf8
 	
 	"see UnicodeNotes.md"
@@ -19663,13 +19663,13 @@ test5ReadWriteUtf8
 	"for NCR see http://en.wikipedia.org/wiki/Numeric_character_reference"
 	
 	byteArray := self class fileName asFileEntry binaryContents.
-	content := String fromUtf8: byteArray.
+	content := String fromUtf8Bytes: byteArray.
 	"NCRs were added to 'content' as needed"
 
 	"write internal string back to UTF8 file with NCRs converted back to UTF8 chars"
 	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
 		stream binary.
-		stream nextPutAll: (content asUtf8: true).  "true means: convert NCRs back to UTF8"
+		stream nextPutAll: (content asUtf8Bytes: true).  "true means: convert NCRs back to UTF8"
 		].
 
       "compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"

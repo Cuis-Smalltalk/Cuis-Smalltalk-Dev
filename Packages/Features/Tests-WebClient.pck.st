@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:33:15 pm'!
+'From Cuis 6.0 [latest update: #5202] on 26 May 2022 at 12:53:50 pm'!
 'Description '!
-!provides: 'Tests-WebClient' 1 0!
+!provides: 'Tests-WebClient' 1 1!
 !requires: 'WebClient' 1 19 nil!
 SystemOrganization addCategory: 'Tests-WebClient'!
 
@@ -142,7 +142,7 @@ testNumbers
 	self should: [self decode: '-.e'] raise: Error.
 ! !
 
-!WebClientServerTest methodsFor: 'tests - json' stamp: 'jmv 6/26/2017 19:58:18'!
+!WebClientServerTest methodsFor: 'tests - json' stamp: 'jmv 5/26/2022 12:05:09'!
 testStrings
 	"Test string encodings"
 
@@ -163,7 +163,7 @@ false ifTrue: [
 	self assert: (self encode: 'foo &#x100; bar') = '"foo \u0101 bar"' ].
 	self assert: (self encode: String crlfString) = '"\r\n"'.
 
-	self assert: (self encode: (String fromUtf8: #[208 159 209 128 208 176 208 178 208 180 208 176]))
+	self assert: (self encode: (String fromUtf8Bytes: #[208 159 209 128 208 176 208 178 208 180 208 176]))
 		equals:  '"&#1055;&#1088;&#1072;&#1074;&#1076;&#1072;"' .
 
 	self should: [self decode: '"hello'] raise: Error.

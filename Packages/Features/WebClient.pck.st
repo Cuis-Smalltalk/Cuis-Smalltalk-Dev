@@ -1,4 +1,4 @@
-'From Cuis 5.0 [latest update: #4804] on 24 August 2021 at 2:46:24 pm'!
+'From Cuis 6.0 [latest update: #5202] on 26 May 2022 at 12:53:53 pm'!
 'Description Description - This package is a port and refactoring of WebClient from http://ss3.gemstone.com/ss/WebClient.html with moderate changes by David Graham, Nicola Mingotti and Juan Vuletich.
 	- WebClient-Core-ul.100
 	- WebClient-Help-ar.10
@@ -6,7 +6,7 @@
 - Hernan Wilkinson: 
   - Added useDebugErrorHandler and debugErrorHandler to be able to debug a http request
   - Changed exampleDoIt to support Smalltalk expresions in the URL using GET'!
-!provides: 'WebClient' 1 22!
+!provides: 'WebClient' 1 23!
 !requires: 'Network-Kernel' 1 2 nil!
 !requires: 'Identities-UUID' 1 7 nil!
 !requires: 'Cryptography-DigitalSignatures' 1 7 nil!
@@ -331,82 +331,6 @@ WebUtils contains a number of utility methods used by WebClient/WebServer.!
 !SqueakSSL commentStamp: 'ar 7/16/2010 23:14' prior: 0!
 SqueakSSL provides an interface to the platforms SSL/TLS facilities.
 !
-
-!WebClient methodsFor: 'printing' stamp: 'ar 8/9/2010 08:50'!
-printOn: aStream
-	"Print the receiver on aStream"
-
-	aStream nextPutAll: self class name.
-	aStream nextPut: $(.
-	(stream notNil and:[stream isConnected]) ifTrue:[
-		aStream nextPutAll: 'Connected: '.
-	].
-	scheme ifNotNil:[aStream nextPutAll: scheme, '://'].
-	server ifNotNil:[aStream nextPutAll: server].
-	aStream nextPut:$).
-! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 8/5/2010 18:22'!
-comment
-	"Cookie comment"
-
-	^comment! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 8/5/2010 18:22'!
-comment: aString
-	"Cookie comment"
-
-	comment := aString! !
-
-!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
-name
-	"The name of the cookie"
-
-	^name! !
-
-!WebCookie methodsFor: 'printing' stamp: 'jmv 6/25/2017 19:15:34'!
-printOn: aStream
-	"Creates the string representation for this cookie"
-
-	aStream nextPutAll: name, '=', value asString.
-	expiry ifNotNil:[ 
-		aStream nextPutAll:'; expires='.
-		aStream nextPutAll: expiry dayOfWeekName ,  ', '.
-		expiry date printOn: aStream format: #(1 2 3 $- 2 2 2 ).
-		aStream nextPutAll: ' ', expiry time print24,' GMT'.
-	].
-	path ifNotNil:[
-		aStream nextPutAll:'; path=', (WebUtils quote: path).
-	].
-	domain ifNotNil:[
-		aStream nextPutAll:'; domain=', (WebUtils quote: domain).
-	].
-	version ifNotNil:[
-		aStream nextPutAll:'; version=', version asString.
-	].
-	secure ifTrue:[
-		aStream nextPutAll: '; secure'.
-	].
-	httpOnly ifTrue:[
-		aStream nextPutAll: '; HttpOnly'.
-	].
-! !
-
-!WebMessage methodsFor: 'printing' stamp: 'ar 2/20/2010 11:05'!
-printOn: aStream
-	"Prints the receiver"
-
-	aStream nextPutAll: self class name.
-	aStream nextPut: $(.
-	self writeOn: aStream.
-	aStream nextPut: $).! !
-
-!WebSocket methodsFor: 'private' stamp: 'ar 7/8/2010 21:48'!
-printOn: aStream
-	"Print the receiver"
-
-	aStream nextPutAll: self class name.
-	aStream nextPutAll: '(', name, ')'.! !
 
 !WebChunkedStream methodsFor: 'testing' stamp: 'ar 1/31/2012 14:26'!
 atEnd
@@ -1179,6 +1103,20 @@ sendData: buffer count: n
 		start := start + amount.
 	].! !
 
+!WebClient methodsFor: 'printing' stamp: 'ar 8/9/2010 08:50'!
+printOn: aStream
+	"Print the receiver on aStream"
+
+	aStream nextPutAll: self class name.
+	aStream nextPut: $(.
+	(stream notNil and:[stream isConnected]) ifTrue:[
+		aStream nextPutAll: 'Connected: '.
+	].
+	scheme ifNotNil:[aStream nextPutAll: scheme, '://'].
+	server ifNotNil:[aStream nextPutAll: server].
+	aStream nextPut:$).
+! !
+
 !WebClient methodsFor: 'cookies' stamp: 'ar 8/12/2010 21:40'!
 acceptCookie: aCookie host: reqHost path: path
 	"Accept a cookie from a prior response"
@@ -1436,7 +1374,7 @@ authDispatch: request from: response header: authHeader params: params
 	} otherwise:["ignore"].
 ! !
 
-!WebClient methodsFor: 'authentication' stamp: 'jmv 6/25/2017 20:43:27'!
+!WebClient methodsFor: 'authentication' stamp: 'jmv 5/26/2022 12:07:21'!
 basicAuth: request from: response header: header params: params
 	"Provide basic authentication for the request"
 
@@ -1449,7 +1387,7 @@ basicAuth: request from: response header: header params: params
 	
 	user := (params at: #username ifAbsent:[nil]) ifNil:[^self].
 	pass := (params at: #password ifAbsent:[nil]) ifNil:[^self].
-	authParams at: #authResponse put: (user, ':', pass value) asUtf8 base64Encoded! !
+	authParams at: #authResponse put: (user, ':', pass value) asUtf8Bytes base64Encoded! !
 
 !WebClient methodsFor: 'authentication' stamp: 'ar 8/26/2010 07:48'!
 digestAuth: request from: response header: authHeader params: params
@@ -2624,6 +2562,18 @@ webSocketTo: serverUrl protocol: protocol
 
 	^self webSocket00: serverUrl protocol: protocol! !
 
+!WebCookie methodsFor: 'accessing' stamp: 'ar 8/5/2010 18:22'!
+comment
+	"Cookie comment"
+
+	^comment! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 8/5/2010 18:22'!
+comment: aString
+	"Cookie comment"
+
+	comment := aString! !
+
 !WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
 domain
 	"Cookie domain"
@@ -2668,6 +2618,12 @@ httpOnly: aBool
 	See http://msdn2.microsoft.com/en-us/library/ms533046.aspx"
 
 	httpOnly := aBool! !
+
+!WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
+name
+	"The name of the cookie"
+
+	^name! !
 
 !WebCookie methodsFor: 'accessing' stamp: 'ar 2/20/2010 11:05'!
 name: aString
@@ -2722,6 +2678,34 @@ version: aString
 	"Cookie version"
 
 	version := aString! !
+
+!WebCookie methodsFor: 'printing' stamp: 'jmv 6/25/2017 19:15:34'!
+printOn: aStream
+	"Creates the string representation for this cookie"
+
+	aStream nextPutAll: name, '=', value asString.
+	expiry ifNotNil:[ 
+		aStream nextPutAll:'; expires='.
+		aStream nextPutAll: expiry dayOfWeekName ,  ', '.
+		expiry date printOn: aStream format: #(1 2 3 $- 2 2 2 ).
+		aStream nextPutAll: ' ', expiry time print24,' GMT'.
+	].
+	path ifNotNil:[
+		aStream nextPutAll:'; path=', (WebUtils quote: path).
+	].
+	domain ifNotNil:[
+		aStream nextPutAll:'; domain=', (WebUtils quote: domain).
+	].
+	version ifNotNil:[
+		aStream nextPutAll:'; version=', version asString.
+	].
+	secure ifTrue:[
+		aStream nextPutAll: '; secure'.
+	].
+	httpOnly ifTrue:[
+		aStream nextPutAll: '; HttpOnly'.
+	].
+! !
 
 !WebCookie methodsFor: 'comparing' stamp: 'ar 5/11/2010 08:58'!
 = aCookie
@@ -2796,6 +2780,15 @@ isExpired
 	
 	expiry ifNil:[^false].
 	^expiry asUTC < DateAndTime now asUTC! !
+
+!WebMessage methodsFor: 'printing' stamp: 'ar 2/20/2010 11:05'!
+printOn: aStream
+	"Prints the receiver"
+
+	aStream nextPutAll: self class name.
+	aStream nextPut: $(.
+	self writeOn: aStream.
+	aStream nextPut: $).! !
 
 !WebMessage methodsFor: 'printing' stamp: 'DSG 5/24/2012 17:38'!
 writeHeadersOn: aStream
@@ -3624,12 +3617,12 @@ url
 
 	^((rawUrl copyUpTo: $#) copyUpTo: $?) unescapePercents! !
 
-!WebRequest methodsFor: 'responses' stamp: 'DSG 12/5/2013 10:57'!
+!WebRequest methodsFor: 'responses' stamp: 'jmv 5/26/2022 12:07:45'!
 send200Response: aString
 	"Send a 200 OK response"
 
 	^self 
-		send200Response: (aString asUtf8) 
+		send200Response: aString asUtf8Bytes
 		contentType: 'text/plain; charset=utf-8'.! !
 
 !WebRequest methodsFor: 'responses' stamp: 'ar 2/20/2010 15:42'!
@@ -3694,7 +3687,7 @@ send3xxResponse: location code: statusCode do: aBlock
 	^self sendResponse: resp content: ''.
 ! !
 
-!WebRequest methodsFor: 'responses' stamp: 'DSG 3/28/2015 21:13'!
+!WebRequest methodsFor: 'responses' stamp: 'jmv 5/26/2022 12:07:36'!
 send400Response
 	"Send a 400 bad request response"
 
@@ -3705,7 +3698,7 @@ send400Response
 		</body></html>'.
 	
 	self sendResponseCode: 400 
-		content: message asUtf8
+		content: message asUtf8Bytes
 		type: 'text/plain; charset=utf-8'
 		close: true! !
 
@@ -3716,12 +3709,12 @@ send404Response
 	^self send404Response: '<html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1><p>The requested URL ',self rawUrl,' was not found on this server.</p></body></html>'.
 ! !
 
-!WebRequest methodsFor: 'responses' stamp: 'DSG 12/5/2013 10:57'!
+!WebRequest methodsFor: 'responses' stamp: 'jmv 5/26/2022 12:07:53'!
 send404Response: body
 	"Send a 404 not found response"
 
 	^self 
-		send404Response: (body asUtf8) 
+		send404Response: body asUtf8Bytes
 		do: [ :resp | resp headerAt: 'Content-Type' put: 'text/html; charset=utf-8' ]! !
 
 !WebRequest methodsFor: 'responses' stamp: 'ar 2/25/2010 16:32'!
@@ -3752,7 +3745,7 @@ send405Response: allowed content: body
 	]).
 	^self sendResponse: resp content: body.! !
 
-!WebRequest methodsFor: 'responses' stamp: 'jmv 5/19/2015 22:03'!
+!WebRequest methodsFor: 'responses' stamp: 'jmv 5/26/2022 12:07:57'!
 send500Response: errReport
 	"Send a 500 internal server error response"
 
@@ -3763,7 +3756,7 @@ send500Response: errReport
 		'</pre></body></html>'.
 
 	self sendResponseCode: 500
-				content: errLog asUtf8
+				content: errLog asUtf8Bytes
 				type: 'text/html; charset=utf-8'
 				close: true.
 ! !
@@ -4304,12 +4297,12 @@ authenticate: request realm: realm methods: accepted do: aBlock
 	request sendResponse: resp content: '<html><head><title>401 Unauthorized</title></head><body><h1>401 Unauthorized</h1><p>You are not authorized to access the requested URL</p></body></html>'.
 ! !
 
-!WebServer methodsFor: 'authentication' stamp: 'jmv 6/25/2017 20:42:21'!
+!WebServer methodsFor: 'authentication' stamp: 'jmv 5/26/2022 12:05:28'!
 basicAuth: request realm: realm header: authHeader
 	"Perform Basic auth for the given request"
 
 	| data user pass hash |
-	data := String fromUtf8: (authHeader copyAfter: $ ) base64Decoded.
+	data := String fromUtf8Bytes: (authHeader copyAfter: $ ) base64Decoded.
 	user := data copyUpTo: $:.
 	pass := data copyAfter: $:.
 	data atAllPut: $*. data := nil.
@@ -4885,7 +4878,7 @@ requestBenchmark: persistent
 		persistent: persistent] ensure:[WebServer reset].
 ! !
 
-!WebServer class methodsFor: 'examples' stamp: 'jmv 3/18/2019 13:16:32'!
+!WebServer class methodsFor: 'examples' stamp: 'jmv 5/26/2022 12:08:02'!
 browseDir: directory request: request
 	"Responds with a directory listing back to the original request"
 
@@ -4916,7 +4909,7 @@ browseDir: directory request: request
  	].
 
 	request
-		send200Response: listing asUtf8
+		send200Response: listing asUtf8Bytes
 		contentType: 'text/html; charset=utf-8'.
 
 ! !
@@ -5204,6 +5197,13 @@ handleMessage: msgData type: msgType
 
 	self handle: 'message' arguments: (Array with: msgData with: msgType with: self)! !
 
+!WebSocket methodsFor: 'private' stamp: 'ar 7/8/2010 21:48'!
+printOn: aStream
+	"Print the receiver"
+
+	aStream nextPutAll: self class name.
+	aStream nextPutAll: '(', name, ')'.! !
+
 !WebSocket methodsFor: 'initialize' stamp: 'ar 9/26/2011 13:06'!
 close
 	"Request graceful close"
@@ -5403,7 +5403,7 @@ run
 	].
 ! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 22:30:06'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:06:34'!
 readMessage
 	"Reads one frame worth of data"
 
@@ -5414,7 +5414,7 @@ readMessage
 	frameType := byte numericValue.
 	frameType < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
-		frameData := String fromUtf8: (stream upTo: 255 asCharacter) asByteArray.
+		frameData := String fromUtf8Bytes: (stream upTo: 255 asCharacter) asByteArray.
 	] ifFalse:[
 		"Frame type >= 128: Binary data with length prefix"
 		length := 0.
@@ -5432,7 +5432,7 @@ send: aString
 
 	^self send: aString type: 0! !
 
-!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 9/19/2016 21:54:06'!
+!WebSocket00 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:08:06'!
 send: data type: type
 	"Writes one frame worth of data using the given frame type"
 
@@ -5440,7 +5440,7 @@ send: data type: type
 	stream nextPut: (Character numericValue: type).
 	type < 128 ifTrue:[
 		"Frame type < 128: UTF-8 encoded text with 0xFF frame delimiter"
-		stream nextPutAll: data asString asUtf8.
+		stream nextPutAll: data asString asUtf8Bytes.
 		stream nextPut: (Character numericValue: 255).
 	] ifFalse:[ | prefix length |
 		"Frame type >= 128: Binary data with length prefix"
@@ -5527,30 +5527,30 @@ pong: data
 
 	self send: data code: 10.! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:08:10'!
 firstFragment: aStringOrBytes
 	"Writes the first fragment of data"
 
 	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes asUtf8 code: 1 final: false]
+		ifTrue:[^self send: aStringOrBytes asUtf8Bytes code: 1 final: false]
 		ifFalse:[^self send: aStringOrBytes code: 2 final: false].! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:08:13'!
 lastFragment: aStringOrBytes
 	"Writes the last fragment of data.
 	Note: Spec says that code is ZERO for final fragment."
 
 	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: true]
+		ifTrue:[^self send: aStringOrBytes asUtf8Bytes code: 0 final: true]
 		ifFalse:[^self send: aStringOrBytes code: 0 final: true].! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/19/2015 22:45'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:08:19'!
 nextFragment: aStringOrBytes
 	"Writes the first fragment of data
 	Note: Spec says that code is ZERO for intermediate fragments."
 
 	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes asUtf8 code: 0 final: false]
+		ifTrue:[^self send: aStringOrBytes asUtf8Bytes code: 0 final: false]
 		ifFalse:[^self send: aStringOrBytes code: 0 final: false].! !
 
 !WebSocket07 methodsFor: 'read/write' stamp: 'ar 9/27/2011 13:31'!
@@ -5559,7 +5559,7 @@ readFrame
 
 	^self readFrameFrom: stream! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 9/5/2016 22:30:33'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:06:53'!
 readFrameFrom: aStream
 	"Reads one frame worth of data"
 
@@ -5609,18 +5609,18 @@ readFrameFrom: aStream
 							inject: frameData first 
 							into:[:each :next| each, next].
 		].
-		frameType = 1 ifTrue:[payload := String fromUtf8: payload asByteArray].
+		frameType = 1 ifTrue:[payload := String fromUtf8Bytes: payload asByteArray].
 		self handleMessage: payload type: frameType.
 		frameType := frameData := nil.
 	].
 ! !
 
-!WebSocket07 methodsFor: 'read/write' stamp: 'DSG 3/28/2015 21:49'!
+!WebSocket07 methodsFor: 'read/write' stamp: 'jmv 5/26/2022 12:08:22'!
 send: aStringOrBytes
 	"Writes one frame worth of data"
 
 	aStringOrBytes isString 
-		ifTrue:[^self send: aStringOrBytes asString asUtf8 code: 1]
+		ifTrue:[^self send: aStringOrBytes asString asUtf8Bytes code: 1]
 		ifFalse:[^self send: aStringOrBytes code: 2].! !
 
 !WebSocket07 methodsFor: 'read/write' stamp: 'ar 9/26/2011 12:48'!
@@ -5921,7 +5921,7 @@ webSocketHash07: key
 	uid := '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'.
 	^(ByteArray newFrom: (SecureHashAlgorithm new hashMessage: key, uid)) reversed base64Encoded! !
 
-!WebUtils class methodsFor: 'auth' stamp: 'jmv 6/25/2017 19:55:56'!
+!WebUtils class methodsFor: 'auth' stamp: 'jmv 5/26/2022 12:07:05'!
 handleAuth: aBlock
 	"Utility method to handle web authentication requests interactively.
 
@@ -5940,8 +5940,8 @@ handleAuth: aBlock
 			user ifNotEmpty:[
 				"Just a little obfuscation to avoid completely plain passwords"
 				pass := (FillInTheBlankMorph request:
-					'Please enter the password for "', user,'":') asUtf8 base64Encoded.
-				 ex username: user password: [String fromUtf8: pass base64Decoded]]].
+					'Please enter the password for "', user,'":') asUtf8Bytes base64Encoded.
+				 ex username: user password: [String fromUtf8Bytes: pass base64Decoded]]].
 		ex pass].! !
 
 !WebUtils class methodsFor: 'oauth' stamp: 'DSG 3/28/2015 23:22'!

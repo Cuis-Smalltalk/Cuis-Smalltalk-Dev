@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4415] on 22 October 2020 at 9:22:45 pm'!
+'From Cuis 6.0 [latest update: #5202] on 26 May 2022 at 12:47:34 pm'!
 'Description '!
-!provides: 'ExtendedClipboard' 1 12!
+!provides: 'ExtendedClipboard' 1 13!
 !requires: 'FFI' 1 nil nil!
 !requires: 'Graphics-Files-Additional' 1 nil nil!
 SystemOrganization addCategory: 'ExtendedClipboard'!
@@ -57,17 +57,6 @@ ExtendedClipboardInterface subclass: #ExtendedClipboardWinInterface
 ExtendedClipboardWinInterface class
 	instanceVariableNames: ''!
 
-
-!ExtendedClipboardInterface class methodsFor: 'system startup' stamp: 'JSM 5/6/2006 15:33'!
-shutDown: quitting
-! !
-
-!ExtendedClipboardInterface class methodsFor: 'system startup' stamp: 'JSM 5/6/2006 15:33'!
-startUp: resuming
-	"The image is either being newly started (resuming is true), or it's just been snapshotted"
-
-	Current := nil.
-	self current.! !
 
 !Win32Bitmap methodsFor: 'accessing' stamp: 'mir 2/14/2008 22:47'!
 bmBits
@@ -239,10 +228,10 @@ fromRefStreamBytes: bytes
 fromTIFFBytes: bytes
 	^ (TIFFReadWriter on: bytes readStream) nextImage! !
 
-!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 2/25/2013 14:34'!
+!ExtendedClipboardInterface methodsFor: 'object from raw data' stamp: 'jmv 5/26/2022 11:58:51'!
 fromUTF8Bytes: bytes
 
-	^(String fromUtf8: bytes hex: false trimLastNull: true) withCuisLineEndings! !
+	^(String fromUtf8Bytes: bytes hex: false trimLastNull: true) withCuisLineEndings! !
 
 !ExtendedClipboardInterface methodsFor: 'initialization' stamp: 'tak 5/16/2007 12:03'!
 initialize
@@ -307,6 +296,17 @@ storeText: aText id: otherString
 	Cuis object id is usually at the end, but don't include it if we include a streamed representation."
 
 	^self subclassResponsibility! !
+
+!ExtendedClipboardInterface class methodsFor: 'system startup' stamp: 'JSM 5/6/2006 15:33'!
+shutDown: quitting
+! !
+
+!ExtendedClipboardInterface class methodsFor: 'system startup' stamp: 'JSM 5/6/2006 15:33'!
+startUp: resuming
+	"The image is either being newly started (resuming is true), or it's just been snapshotted"
+
+	Current := nil.
+	self current.! !
 
 !ExtendedClipboardInterface class methodsFor: 'accessing' stamp: 'jmv 1/11/2011 13:59'!
 current
@@ -386,13 +386,13 @@ storeForm: aForm id: otherString
 	"
 	self addClipboardData: otherString dataFormat: 'cuis-id'! !
 
-!ExtendedClipboardMacInterface methodsFor: 'api - store' stamp: 'jmv 2/14/2013 12:21'!
+!ExtendedClipboardMacInterface methodsFor: 'api - store' stamp: 'jmv 5/26/2022 12:08:29'!
 storeString: aString id: otherString
 	"I presume the order is: most preferred format first, least desirable format last.
 	Cuis object id at the end."
 	self clearClipboard.
 	self
-		addClipboardData: aString asUtf8
+		addClipboardData: aString asUtf8Bytes
 		dataFormat: 'public.utf8-plain-text'.
 	"Could be done in addition (maybe with cr line ending?)
 	self
@@ -401,7 +401,7 @@ storeString: aString id: otherString
 		"
 	self addClipboardData: otherString dataFormat: 'cuis-id'! !
 
-!ExtendedClipboardMacInterface methodsFor: 'api - store' stamp: 'jmv 11/13/2013 07:59'!
+!ExtendedClipboardMacInterface methodsFor: 'api - store' stamp: 'jmv 5/26/2022 12:08:32'!
 storeText: aText id: otherString
 	"I presume the order is: most preferred format first, least desirable format last.
 	Cuis object id is usually at the end, but don't include it if we include a streamed representation."
@@ -416,7 +416,7 @@ storeText: aText id: otherString
 
 	"Just the string"
 	self
-		addClipboardData: aText asString asUtf8
+		addClipboardData: aText asString asUtf8Bytes
 		dataFormat: 'public.utf8-plain-text'.
 
 	"If we store a streamed representation, don't store the id. In these cases, we prefer rebuilding the object, regardless of
@@ -475,17 +475,17 @@ storeForm: aForm id: otherString
 	self addClipboardData: (PNGReadWriter bytesFor: aForm) dataFormat: 'image/png'.
 	self addClipboardData: otherString dataFormat: 'cuis-id'! !
 
-!ExtendedClipboardUnixInterface methodsFor: 'api - store' stamp: 'jmv 2/14/2013 12:21'!
+!ExtendedClipboardUnixInterface methodsFor: 'api - store' stamp: 'jmv 5/26/2022 12:08:36'!
 storeString: aString id: otherString
 	"I presume the order is: most preferred format first, least desirable format last.
 	Cuis object id at the end."
 	self clearClipboard.
 	self
-		addClipboardData: aString asUtf8
+		addClipboardData: aString asUtf8Bytes
 		dataFormat: 'UTF8_STRING'.
 	self addClipboardData: otherString dataFormat: 'cuis-id'! !
 
-!ExtendedClipboardUnixInterface methodsFor: 'api - store' stamp: 'jmv 2/14/2013 12:21'!
+!ExtendedClipboardUnixInterface methodsFor: 'api - store' stamp: 'jmv 5/26/2022 12:08:43'!
 storeText: aText id: otherString
 	"I presume the order is: most preferred format first, least desirable format last.
 	Cuis object id is usually at the end, but don't include it if we include a streamed representation."
@@ -501,7 +501,7 @@ storeText: aText id: otherString
 		dataFormat: '????'
 	"
 	self
-		addClipboardData: aText asString asUtf8
+		addClipboardData: aText asString asUtf8Bytes
 		dataFormat: 'UTF8_STRING'.
 
 	"If we store a streamed representation, don't store the id. In these cases, we prefer rebuilding the object, regardless of
