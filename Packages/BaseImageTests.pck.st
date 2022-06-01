@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5202] on 26 May 2022 at 12:45:10 pm'!
+'From Cuis 6.0 [latest update: #5213] on 1 June 2022 at 9:24:29 am'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 288!
+!provides: 'BaseImageTests' 1 289!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -19708,7 +19708,7 @@ testValueWithinNonLocalReturnFixSimply
 	self valueWithinNonLocalReturn.
 	self shouldnt:[(Delay forMilliseconds: 50) wait] raise: TimedOut.! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 12/4/2012 20:35'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 5/31/2022 16:44:39'!
 testValueWithinTimingBasic
 	"Test timing of valueWithin:onTimeout:"
 	| time |
@@ -19716,7 +19716,7 @@ testValueWithinTimingBasic
 		[1000 milliSeconds asDelay wait]
 			valueWithin: 100 milliSeconds onTimeout: []
 	] durationToRun.
-	self assert: time < 150 milliSeconds.! !
+	self assert: time < 200 milliSeconds.! !
 
 !TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 11/7/2019 18:18:10'!
 testValueWithinTimingNestedInner
@@ -19745,7 +19745,7 @@ testValueWithinTimingNestedOuter
 	self assert: time < 200 milliSeconds.
 	! !
 
-!TestValueWithinFix methodsFor: 'tests' stamp: 'ar 12/4/2012 20:35'!
+!TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 5/31/2022 16:45:10'!
 testValueWithinTimingRepeat
 	"Test timing of valueWithin:onTimeout:"
 	| time |
@@ -19754,7 +19754,7 @@ testValueWithinTimingRepeat
 			[500 milliSeconds asDelay wait]
 				valueWithin: 100 milliSeconds onTimeout: []]
 	] durationToRun.
-	self assert: time < 350 milliSeconds.
+	self assert: time < 400 milliSeconds.
 ! !
 
 !TestValueWithinFix methodsFor: 'tests' stamp: 'ar 8/17/2007 13:37'!
