@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5213] on 1 June 2022 at 9:24:29 am'!
+'From Cuis 6.0 [latest update: #5216] on 3 June 2022 at 9:24:00 am'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 289!
+!provides: 'BaseImageTests' 1 291!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -23,8 +23,7 @@ SystemOrganization addCategory: 'BaseImageTests-Tools-Autocompletion'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Taskbar'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Testing'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Code Differ'!
-SystemOrganization addCategory: 'BaseImageTests-Unicode'!
-SystemOrganization addCategory: 'BaseImageTests-Bugs'!
+SystemOrganization addCategory: 'BaseImageTests-Fixed Bugs'!
 SystemOrganization addCategory: 'BaseImageTests-Tools-Refactoring'!
 SystemOrganization addCategory: 'BaseImageTests-Collections-Streams'!
 SystemOrganization addCategory: 'BaseImageTests-System-Support'!
@@ -588,6 +587,26 @@ TestCase subclass: #StringTest
 StringTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #UnicodeStringsTest category: 'BaseImageTests-Kernel'!
+TestCase subclass: #UnicodeStringsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel'!
+!classDefinition: 'UnicodeStringsTest class' category: 'BaseImageTests-Kernel'!
+UnicodeStringsTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #UnicodeTest category: 'BaseImageTests-Kernel'!
+TestCase subclass: #UnicodeTest
+	instanceVariableNames: 'bytesOfExample1'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel'!
+!classDefinition: 'UnicodeTest class' category: 'BaseImageTests-Kernel'!
+UnicodeTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #ArrayTest category: 'BaseImageTests-Collections-Arrayed'!
 TestCase subclass: #ArrayTest
 	instanceVariableNames: ''
@@ -1018,23 +1037,13 @@ TestCase subclass: #DifferenceFinderTest
 DifferenceFinderTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #UnicodeTest category: 'BaseImageTests-Unicode'!
-TestCase subclass: #UnicodeTest
-	instanceVariableNames: 'bytesOfExample1'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'BaseImageTests-Unicode'!
-!classDefinition: 'UnicodeTest class' category: 'BaseImageTests-Unicode'!
-UnicodeTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #TestValueWithinFix category: 'BaseImageTests-Bugs'!
+!classDefinition: #TestValueWithinFix category: 'BaseImageTests-Fixed Bugs'!
 TestCase subclass: #TestValueWithinFix
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'BaseImageTests-Bugs'!
-!classDefinition: 'TestValueWithinFix class' category: 'BaseImageTests-Bugs'!
+	category: 'BaseImageTests-Fixed Bugs'!
+!classDefinition: 'TestValueWithinFix class' category: 'BaseImageTests-Fixed Bugs'!
 TestValueWithinFix class
 	instanceVariableNames: ''!
 
@@ -12739,6 +12748,136 @@ testArticle
 		assert: 'Argentine' withArticle equals: 'an Argentine';
 		assert: 'user' withArticle equals: 'a user'! !
 
+!UnicodeStringsTest methodsFor: 'testing' stamp: 'jmv 6/2/2022 15:14:24'!
+test01
+
+	| asciiString asciiUtf32String asciiUtf8String latinString latinUtf32String latinUtf8String |
+	asciiString _ 'Hello world'.
+	latinString _ '¡Tomá agüita, Ñandú!!'.
+	asciiUtf8String _ asciiString asUtf8String.
+	latinUtf8String _ latinString asUtf8String.
+	asciiUtf32String _ asciiString asUtf32String.
+	latinUtf32String _ latinString asUtf32String.
+
+	self assert: asciiString hash = asciiUtf8String hash.
+	self assert: asciiString hash = asciiUtf32String hash.
+	self assert: asciiString = asciiUtf8String.
+	self assert: asciiString = asciiUtf32String.
+	self assert: asciiUtf8String = asciiString.
+	self assert: asciiUtf8String = asciiUtf32String.
+	self assert: asciiUtf32String = asciiString.
+	self assert: asciiUtf32String = asciiUtf8String.
+
+	self assert: latinString hash = latinUtf8String hash.
+	self assert: latinString hash = latinUtf32String hash.
+	self assert: latinString = latinUtf8String.
+	self assert: latinString = latinUtf32String.
+	self assert: latinUtf8String = latinString.
+	self assert: latinUtf8String = latinUtf32String.
+	self assert: latinUtf32String = latinString.
+	self assert: latinUtf32String = latinUtf8String.! !
+
+!UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
+setUp
+	"
+	self new setUp
+	"
+
+     bytesOfExample1 := #[16r61 16r62 16r63 16r20 16rC3 16rA0 16rC3 16rA8 16rE2 
+	                              16r82 16rAC 16r20 16rCE 16rB1 16rCE 16rB2 16rCE 16rB3].
+	
+	"see UnicodeNotes.md"
+	
+     "write the bytes of an UFT8 encoded string in binary mode to a file"
+	self class fileName asFileEntry forceWriteStreamDo: [ :stream |
+		stream binary.
+		stream nextPutAll: bytesOfExample1 ]! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:03'!
+test1ReadBinary
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test1ReadBinary
+	"
+     | content |
+	content := self class fileName asFileEntry binaryContents.
+	self assert: content = bytesOfExample1! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:04'!
+test2ReadWithOutBinary
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test2ReadWithOutBinary
+	"
+     | content |
+	content := self class fileName asFileEntry textContents.
+	self deny: content = bytesOfExample1! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:01:13'!
+test3ReadUtf8
+	
+	"see UnicodeNotes.md"
+     "
+	self new setUp test3ReadUtf8
+	"
+     | content byteArray |
+	byteArray _ self class fileName asFileEntry binaryContents.
+	content := String fromUtf8Bytes: byteArray.
+	self assert: content = 'abc àè¤ ˆ‰Š'! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:15'!
+test4BackConversion
+	
+	"see UnicodeNotes.md"
+	
+     "
+	self new setUp test4BackConversion
+	"
+     | contentInternalString contentByteArray |
+
+	contentInternalString := String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
+	contentByteArray := self class fileName asFileEntry binaryContents.
+
+	self assert: contentByteArray = (contentInternalString asUtf8Bytes: true)! !
+
+!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:29'!
+test5ReadWriteUtf8
+	
+	"see UnicodeNotes.md"
+	
+     "
+	self new setUp test5ReadWriteUtf8
+	"
+     | content byteArray byteArray2 |
+
+	"read UTF8 Unicode file into internal string with NCRs"
+	"for NCR see http://en.wikipedia.org/wiki/Numeric_character_reference"
+	
+	byteArray := self class fileName asFileEntry binaryContents.
+	content := String fromUtf8Bytes: byteArray.
+	"NCRs were added to 'content' as needed"
+
+	"write internal string back to UTF8 file with NCRs converted back to UTF8 chars"
+	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
+		stream binary.
+		stream nextPutAll: (content asUtf8Bytes: true).  "true means: convert NCRs back to UTF8"
+		].
+
+      "compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
+	byteArray := self class fileName asFileEntry binaryContents.
+	byteArray2 := self class fileName2 asFileEntry binaryContents.
+	self assert: byteArray = byteArray2! !
+
+!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
+fileName
+	^'UTF8abc-test.txt'! !
+
+!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 21:35'!
+fileName2
+	^'UTF8abc-test2.txt'! !
+
 !ArrayTest methodsFor: 'test - insert:ShiftingRight:' stamp: 'HAW 12/20/2018 14:41:00'!
 testCanNotInsertShiftingRightWhenInsertionPointIsBiggerThanSize
 
@@ -19583,107 +19722,6 @@ testWords
 					ifTrue: [strm nextPutAll: chunk]]].
 		self assert: y = ian]
 ! !
-
-!UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
-setUp
-	"
-	self new setUp
-	"
-
-     bytesOfExample1 := #[16r61 16r62 16r63 16r20 16rC3 16rA0 16rC3 16rA8 16rE2 
-	                              16r82 16rAC 16r20 16rCE 16rB1 16rCE 16rB2 16rCE 16rB3].
-	
-	"see UnicodeNotes.md"
-	
-     "write the bytes of an UFT8 encoded string in binary mode to a file"
-	self class fileName asFileEntry forceWriteStreamDo: [ :stream |
-		stream binary.
-		stream nextPutAll: bytesOfExample1 ]! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:03'!
-test1ReadBinary
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test1ReadBinary
-	"
-     | content |
-	content := self class fileName asFileEntry binaryContents.
-	self assert: content = bytesOfExample1! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 10/3/2015 20:04'!
-test2ReadWithOutBinary
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test2ReadWithOutBinary
-	"
-     | content |
-	content := self class fileName asFileEntry textContents.
-	self deny: content = bytesOfExample1! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:01:13'!
-test3ReadUtf8
-	
-	"see UnicodeNotes.md"
-     "
-	self new setUp test3ReadUtf8
-	"
-     | content byteArray |
-	byteArray _ self class fileName asFileEntry binaryContents.
-	content := String fromUtf8Bytes: byteArray.
-	self assert: content = 'abc àè¤ ˆ‰Š'! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:15'!
-test4BackConversion
-	
-	"see UnicodeNotes.md"
-	
-     "
-	self new setUp test4BackConversion
-	"
-     | contentInternalString contentByteArray |
-
-	contentInternalString := String fromUtf8Bytes: self class fileName asFileEntry binaryContents.
-	contentByteArray := self class fileName asFileEntry binaryContents.
-
-	self assert: contentByteArray = (contentInternalString asUtf8Bytes: true)! !
-
-!UnicodeTest methodsFor: 'testing' stamp: 'jmv 5/26/2022 12:00:29'!
-test5ReadWriteUtf8
-	
-	"see UnicodeNotes.md"
-	
-     "
-	self new setUp test5ReadWriteUtf8
-	"
-     | content byteArray byteArray2 |
-
-	"read UTF8 Unicode file into internal string with NCRs"
-	"for NCR see http://en.wikipedia.org/wiki/Numeric_character_reference"
-	
-	byteArray := self class fileName asFileEntry binaryContents.
-	content := String fromUtf8Bytes: byteArray.
-	"NCRs were added to 'content' as needed"
-
-	"write internal string back to UTF8 file with NCRs converted back to UTF8 chars"
-	self class fileName2 asFileEntry forceWriteStreamDo: [ :stream |
-		stream binary.
-		stream nextPutAll: (content asUtf8Bytes: true).  "true means: convert NCRs back to UTF8"
-		].
-
-      "compare the two versions: what is in file 'fileName' with what is in file 'fileName2'"
-	byteArray := self class fileName asFileEntry binaryContents.
-	byteArray2 := self class fileName2 asFileEntry binaryContents.
-	self assert: byteArray = byteArray2! !
-
-!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 19:25'!
-fileName
-	^'UTF8abc-test.txt'! !
-
-!UnicodeTest class methodsFor: 'as yet unclassified' stamp: 'hjh 2/12/2013 21:35'!
-fileName2
-	^'UTF8abc-test2.txt'! !
 
 !TestValueWithinFix methodsFor: 'tests' stamp: 'jmv 4/17/2013 12:11'!
 testValueWithinNonLocalReturnFixReal
