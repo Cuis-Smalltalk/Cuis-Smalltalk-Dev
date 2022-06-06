@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5216] on 3 June 2022 at 9:24:00 am'!
+'From Cuis 6.0 [latest update: #5229] on 6 June 2022 at 12:43:18 pm'!
 'Description Fix to assertRenamesToWithoutBlanks:'!
-!provides: 'BaseImageTests' 1 291!
+!provides: 'BaseImageTests' 1 292!
 !requires: '__Refactoring-TestData__' 1 0 nil!
 SystemOrganization addCategory: 'BaseImageTests-Collections'!
 SystemOrganization addCategory: 'BaseImageTests-Kernel-Classes'!
@@ -597,6 +597,16 @@ TestCase subclass: #UnicodeStringsTest
 UnicodeStringsTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #UnicodeSymbolsTest category: 'BaseImageTests-Kernel'!
+TestCase subclass: #UnicodeSymbolsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-Kernel'!
+!classDefinition: 'UnicodeSymbolsTest class' category: 'BaseImageTests-Kernel'!
+UnicodeSymbolsTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #UnicodeTest category: 'BaseImageTests-Kernel'!
 TestCase subclass: #UnicodeTest
 	instanceVariableNames: 'bytesOfExample1'
@@ -885,6 +895,16 @@ TestCase subclass: #TrieTest
 	category: 'BaseImageTests-System'!
 !classDefinition: 'TrieTest class' category: 'BaseImageTests-System'!
 TrieTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #TrieUnicodeTest category: 'BaseImageTests-System'!
+TestCase subclass: #TrieUnicodeTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'BaseImageTests-System'!
+!classDefinition: 'TrieUnicodeTest class' category: 'BaseImageTests-System'!
+TrieUnicodeTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #ReferenceStreamTest category: 'BaseImageTests-System-Object Storage'!
@@ -12777,6 +12797,158 @@ test01
 	self assert: latinUtf32String = latinString.
 	self assert: latinUtf32String = latinUtf8String.! !
 
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:33'!
+test01AsciiSymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ 'Stuff', Random next mantissaPart printString.
+	symbol _ str asSymbol.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:37:42'!
+test02LatinSymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
+	symbol _ str asSymbol.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:22'!
+test03AsciiUtf8SymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ 'Stuff', Random next mantissaPart printString.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+	symbol _ str asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
+!UnicodeSymbolsTest methodsFor: 'testing' stamp: 'jmv 6/3/2022 11:38:36'!
+test04LatinUtf8SymbolFirst
+	"Try a few things with pure ASCII.
+	Do #asSymbol before doing #asUtf8Symbol. The symbol created will be instance of Symbol."
+	
+	| str symbol utf8 utf8Symbol |
+	str _ '¡Tomá agüita, Ñandú!!', Random next mantissaPart printString.
+	utf8 _ str asUtf8String.
+	utf8Symbol _ utf8 asSymbol.
+	symbol _ str asSymbol.
+
+	self assert: str = str.
+	self assert: str == str.
+	self assert: symbol = symbol.
+	self assert: symbol == symbol.
+	self assert: utf8 = utf8.
+	self assert: utf8 == utf8.
+	self assert: utf8Symbol = utf8Symbol.
+	self assert: utf8Symbol == utf8Symbol.
+
+	self assert: str = symbol.
+	self assert: symbol = str.
+	self assert: utf8 = utf8Symbol.
+	self assert: utf8Symbol = utf8.
+
+	self assert: str = utf8.
+	self assert: utf8 = str.
+	self assert: symbol = utf8Symbol.
+	self assert: utf8Symbol = symbol.
+
+	self assert: str = utf8Symbol.
+	self assert: utf8Symbol = str.
+	self assert: symbol = utf8.
+	self assert: utf8 = symbol.
+
+	self assert: utf8Symbol == symbol.
+	self assert: symbol == utf8Symbol.! !
+
 !UnicodeTest methodsFor: 'set up' stamp: 'jmv 5/31/2016 11:24'!
 setUp
 	"
@@ -17015,6 +17187,90 @@ testSetProtocol
 	subject add: 'ÑANDÚ'.
 	controlGroup add: 'ÑANDÚ'.
 	self assert: subject isEquivalentToSet: controlGroup.! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 11:47:11'!
+test01
+	| t all |
+	t _ Trie new.
+	t add: #toto.
+	t at: #toton put: 47.
+	t add: 'carrr'.
+	t at: 'car' put: Float pi.
+	t at: 'cat' put: Date today.
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: #toto).
+	self assert: (t includes: 'toto').
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 5.
+	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
+	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrr'. String. 'carrr'. String}).
+	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. String. Date today. Date}).! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:13:02'!
+test02
+	| t all |
+	t _ Trie new.
+	t add: #toto.
+	t at: #toton put: 47.
+	t add: 'carrrs'.
+	t add: 'carrr' asUtf8String.
+	t at: 'car' asUtf8String put: Float pi.
+	t at: 'cat' put: Date today.
+	self assert: (t includesKey: 'carrrs').
+	self assert: (t includes: 'carrrs').
+	self assert: (t includesKey: 'carrrs' asUtf8String).
+	self assert: (t includes: 'carrrs' asUtf8String).
+	self assert: (t includesKey: 'carrr').
+	self assert: (t includes: 'carrr').
+	self assert: (t includesKey: 'carrr' asUtf8String).
+	self assert: (t includes: 'carrr' asUtf8String).
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: #toto).
+	self assert: (t includes: 'toto').
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 6.
+	self assert: (all includes: {#toto. Symbol. #toto. Symbol}).
+	self assert: (all includes: {#toton. Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrrs'. String. 'carrrs'. String}).
+	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
+	self assert: (all includes: {'car'. Utf8String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. String. Date today. Date}).! !
+
+!TrieUnicodeTest methodsFor: 'testing' stamp: 'jmv 6/6/2022 12:09:17'!
+test03
+	| t all s1 s2 |
+	t _ Trie new.
+	s1 _ ('totoU', Random next mantissaPart printString) asUtf8String asSymbol.
+	t add: s1.
+	s2 _ ('totoUn', Random next mantissaPart printString) asUtf8String asSymbol.
+	t at: s2 put: 47.
+	t add: 'carrr' asUtf8String.
+	t at: 'car' put: Float pi.
+	t at: 'cat' asUtf8String put: Date today.
+	self assert: (t includesKey: 'car').
+	self deny: (t includes: 'car').
+	self assert: (t includesKey: 'cat').
+	self deny: (t includes: 'cat').
+	self assert: (t includes: s1).
+	self assert: (t includes: s1 asString).
+	all _ Array streamContents: [ :strm |
+		t keysAndValuesDo: [ :k :v | strm nextPut: {k. k class. v. v class} ]].
+	self assert: all size = 5.
+	self assert: (all includes: {s1. Utf8Symbol. s1. Utf8Symbol}).
+	self assert: (all includes: {s2. Utf8Symbol. 47. SmallInteger}).
+	self assert: (all includes: {'carrr'. Utf8String. 'carrr'. Utf8String}).
+	self assert: (all includes: {'car'. String. Float pi. SmallFloat64}).
+	self assert: (all includes: {'cat'. Utf8String. Date today. Date}).! !
 
 !ReferenceStreamTest methodsFor: 'testing' stamp: 'jmv 9/25/2012 22:42'!
 testDiskProxy
